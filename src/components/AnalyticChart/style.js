@@ -1,0 +1,316 @@
+import styled from 'styled-components'
+import { Modal } from 'react-bootstrap';
+
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  padding: 20px 26px;
+  border-radius: 8px;
+  
+  position: relative;
+  transition: 0.25s;
+  color: ${props=>props.fontColor};
+
+  @media screen and (max-width: 992px) {
+    width: 100%;
+    // height: 400px;
+    margin-bottom: 15px;
+  }
+`
+
+const Header = styled.div`
+  font-size: 14px;
+  // padding: 20px 26px;
+  display: flex;
+  justify-content: space-between;
+`
+
+const Title = styled.h5`
+  font-size: 16px;
+  line-height: 21px;
+  font-weight: 700;
+  // width: 100%;
+  margin-bottom: 1rem;
+
+  img {
+    margin-right: 5px;
+  }
+`
+
+const Total = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  @media screen and (max-width: 1250px) {
+    display: block;
+  }
+`
+
+const MoreBtn = styled.button`
+  display: flex;
+  align-items: center;
+  padding: .8em .5em;
+  margin: 1em;
+  background: rgba(223, 0, 0, 0.06);
+  border-radius: 1em;
+  height: 15px;
+  color: #DF0000;
+  border: none;
+
+  img {
+    margin-right: .25em;
+  }
+`
+
+const ButtonGroup = styled.div`
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 1em 0em .25em auto;
+  color: #FFF;
+
+  button {
+    padding: .1em .3em;
+    border-radius: .4em;
+    // background: #F6F6F6;
+    margin-left: .25em;
+    font-weight: 400;
+  }
+`
+
+const ChartDiv = styled.div`
+  // display: flex;
+  min-height: 70%;
+  // background: white;
+  margin-bottom: 10px;
+`
+
+const FilterGroup = styled.div`
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-left: auto;
+  margin-right: 0;
+
+  @media screen and (max-width: 1250px) {
+    margin-top: 15px;
+  }
+`
+
+const PriceShow = styled.div`
+  display: flex;
+  
+  h2 {
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 26px;
+    padding: 0;
+    margin: 0 10px 0 0;
+  }
+
+  @media screen and (max-width: 992px) {
+    margin-bottom: 1rem;
+  }
+`
+
+const BlurBack = styled.div`
+  position: absolute;
+  background: #FAFAFA;
+  filter: blur(10px);
+  height: calc(100% - 20px);
+  width: calc(100% - 52px);
+`
+
+const ConnectButton = styled.button`
+  position: absolute;
+  top: calc(50% - 30px);
+  left: 35%;
+  font-size: 16px;
+  line-height: 21px;
+  font-weight: 700;
+  width: 30%;
+  background: #FF9400;
+  border-radius: 10px;
+  border: 0;
+  color: white;
+
+  &:hover {
+    background: #FF9400D0;
+  }
+
+  &:active {
+    background: #ef900c;
+  }
+
+  ${props => (props.connected ?
+    `
+      padding: 7px 45px 7px 11px;
+      background: none;
+      color: #1F2937;
+      border: 1px solid #1F2937;
+      filter: drop-shadow(0px 4px 52px rgba(0, 0, 0, 0.25));
+
+      &:hover {
+        background: #E6F8EB;
+      }
+    `
+    : 
+    `
+      padding: 15px 0px 15px 0px;
+    `
+  )}
+
+  img.connect-wallet {
+    margin-right: 25px;
+  }
+
+  @media screen and (max-width: 992px) {
+    display: flex;
+    ${props => (props.connected ?
+      `` : 
+    `padding: 15px 0px 15px 19px;`
+    )}
+
+    img.connect-wallet {
+      margin-right: 27px;
+    }
+  }
+
+  ${props =>
+    props.openHambuger
+      ? `
+  filter: blur(5px);
+  pointer-events: none;
+  `
+      : ``};
+`
+
+const FlexDiv = styled.div`
+  display: flex;
+  text-align: center;
+  label {
+    padding: 0.4rem;
+    display: flex;
+    justify-content: center;
+  }
+
+  input[type='checkbox'] {
+    accent-color: #188E54;
+    width: 20px;
+    height: 20px;
+    padding: 4px;
+    border-radius: 6px;
+}`
+
+const ConnectAvatar = styled.div`
+  display: flex;
+  align-items: center;
+  margin-right: ${props => (props.avatar ? '13px' : '-5px')};
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 16px;
+
+  img {
+    margin-right: 5px;
+  }
+`
+
+const Address = styled.span`
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 16px;
+`
+
+const ConnectWalletModal = styled(Modal)`
+  border-width: 0px;
+  margin: auto;
+  .modal-dialog {
+    .modal-content {
+      background: #188E54 !important;
+      border: 0px;
+      border-radius: 20px;
+
+      .modal-header {
+        border-top-left-radius: 20px;
+        border-top-right-radius: 20px;
+        img {
+          z-index: 100;
+        }
+      }
+
+      .modal-body {
+        background: #fff;
+        border-radius: 0 0 20px 20px;
+      }
+    }
+  }
+
+  @media screen and (max-width: 1200px) {
+    .modal-dialog {
+      position: absolute;
+      bottom: 0;
+
+      .modal-content {
+        border-radius: 20px 20px 0 0;
+
+        .modal-body {
+          border-radius: 0;
+        }
+      }
+    }
+  }
+`
+
+const ModalHeader = styled(Modal.Header)`
+  background: #188E54;
+  height: 100px;
+  border-radius: 20px 20px 0 0;
+  position: relative;
+`
+
+const HeaderImg = styled.img`
+  position: absolute;
+  top: calc(100% - 51px);
+  left: calc(50% - 51px);
+`
+
+const ModalTitle = styled.p`
+  font-weight: 600;
+  font-size: 30px;
+  line-height: 35px;
+  text-align: center;
+  color: #000000;
+  margin-top: 60px;
+`
+
+const WalletList = styled.div`
+  display: flex;
+  margin: 0.5rem 1rem;
+  background: #F6F6F6;
+  border-radius: 20px;
+  padding: 19px;
+  cursor: pointer;
+
+  &:hover {
+    background: white;
+  }
+  
+  img {
+    margin-right: 2rem;
+  }
+
+  div {
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 21px;
+    color: #000000;
+    margin: auto 0;
+  }
+`
+
+export { Container, Title, Header, Total, MoreBtn, ButtonGroup, ChartDiv, FilterGroup, PriceShow, BlurBack, ConnectButton,
+  FlexDiv, ConnectAvatar, Address, ConnectWalletModal, ModalHeader, HeaderImg, ModalTitle, WalletList }
