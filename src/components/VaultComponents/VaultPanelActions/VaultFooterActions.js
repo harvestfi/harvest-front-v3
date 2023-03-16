@@ -120,10 +120,10 @@ const VaultFooterActions = ({
           <InfoIcon className="info" width={isMobile ? 10 : 16} src={Info} alt="" data-tip data-for={`claim-tooltip-${tokenSymbol}`} filterColor={filterColor} />
         </SelectedVaultLabel>
       </SelectedVault>
-      {rewardTokenSymbols !== undefined && rewardTokenSymbols.slice(0, 1).map((symbol, symbolIdx) => {
+      {rewardTokenSymbols && rewardTokenSymbols.slice(0, 1).map((symbol, symbolIdx) => {
         const token = groupOfVaults[symbol]
         let usdPrice = 1
-        if(token !== undefined) {
+        if(token) {
           usdPrice = (symbol === FARM_TOKEN_SYMBOL ? token.data.lpTokenData && token.data.lpTokenData.price : token.usdPrice) || 1
         }
         return (

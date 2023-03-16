@@ -150,7 +150,7 @@ const Dashboard = () => {
           
           const token = find(groupOfVaults, vault => (vault.vaultAddress === fAssetPool.collateralAddress) || 
             (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress))
-          if(token !== undefined) {
+          if(token) {
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
             if(isSpecialVault) {
               fAssetPool = token.data
@@ -221,7 +221,7 @@ const Dashboard = () => {
               fAssetPool = token.data
             }
             let usdPrice = 1
-            if(token !== undefined) {
+            if(token) {
               usdPrice = (symbol === FARM_TOKEN_SYMBOL ? token.data.lpTokenData && token.data.lpTokenData.price : token.usdPrice) || 1
             }
             const unstake = fromWei(
@@ -245,7 +245,7 @@ const Dashboard = () => {
 
             const rewardToken = groupOfVaults[rewardTokenSymbols[0]]
             let usdRewardPrice = 1
-            if(rewardToken !== undefined) {
+            if(rewardToken) {
               usdRewardPrice = (rewardTokenSymbols[0] === FARM_TOKEN_SYMBOL ? rewardToken.data.lpTokenData && rewardToken.data.lpTokenData.price : rewardToken.usdPrice) || 1
             }
 

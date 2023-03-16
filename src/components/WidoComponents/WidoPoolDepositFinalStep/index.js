@@ -72,7 +72,7 @@ const WidoPoolDepositFinalStep = ( { finalStep, setFinalStep, setDepositWido, se
 
   useEffect(() => {
     setAmount(toWei(inputAmount, pickedToken.decimals))
-    if(account && pickedToken.address !== undefined && !new BigNumber(amount).isEqualTo(0) && finalStep) {
+    if(account && pickedToken.address && !new BigNumber(amount).isEqualTo(0) && finalStep) {
       const tokenAllowance = async () => {
         const { allowance } = await getTokenAllowance({
           chainId: chainId,
@@ -90,7 +90,7 @@ const WidoPoolDepositFinalStep = ( { finalStep, setFinalStep, setDepositWido, se
       tokenAllowance()
     }
 
-    if(pickedToken.address !== undefined) {
+    if(pickedToken.address) {
       setSymbolName(pickedToken.symbol)
     }
   }, [pickedToken, inputAmount, account, chainId, amount, toToken, finalStep])

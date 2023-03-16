@@ -227,40 +227,40 @@ const ApexChart = ({data, range, filter, decimal, lastTVL, lastAPY/*, userBalanc
 
       let tvlData = [], apyData = [], userBalanceData = []
       if(filter === 1) {
-        if(data && data.tvls !== undefined) {
+        if(data && data.tvls) {
           if(data.tvls.length === 0)  {
             setIsDataReady(false)
             return
           }
         }
-        tvlData = (data && data.tvls !== undefined) ? data.tvls : []
+        tvlData = (data && data.tvls) ? data.tvls : []
         
-        if(tvlData.length !== 0 && lastTVL !== undefined && !isNaN(lastTVL))
+        if(tvlData.length !== 0 && lastTVL && !isNaN(lastTVL))
           tvlData[0]["value"] = lastTVL
       }
       else if(filter === 0) {
-        if(data && (data.apyAutoCompounds !== undefined || data.apyRewards !== undefined)) {
+        if(data && (data.apyAutoCompounds || data.apyRewards)) {
           if(data.apyAutoCompounds.length === 0 && data.apyRewards.length === 0)  {
             setIsDataReady(false)
             return
           }
         }
-        let apyAutoCompounds = data.apyAutoCompounds !== undefined ? data.apyAutoCompounds : []
-        let apyRewards = data.apyRewards !== undefined ? data.apyRewards : []
+        let apyAutoCompounds = data.apyAutoCompounds ? data.apyAutoCompounds : []
+        let apyRewards = data.apyRewards ? data.apyRewards : []
 
         apyData = generateChartDataForApy(apyAutoCompounds, apyRewards, 'apy')
-        if(lastAPY !== undefined && !isNaN(lastAPY))
+        if(lastAPY && !isNaN(lastAPY))
           apyData[0]["apy"] = lastAPY
       }
       else {
-        if(data && data.userBalanceHistories !== undefined) {
+        if(data && data.userBalanceHistories) {
           if(data.userBalanceHistories.length === 0)  {
             setIsDataReady(false)
             return
           }
         }
-        userBalanceData = (data && data.userBalanceHistories !== undefined) ? data.userBalanceHistories : []
-        // if(userBalanceData.length !== 0 && userBalance !== undefined)
+        userBalanceData = (data && data.userBalanceHistories) ? data.userBalanceHistories : []
+        // if(userBalanceData.length !== 0 && userBalance)
         //   userBalanceData[0]["value"] = userBalance
       }
 

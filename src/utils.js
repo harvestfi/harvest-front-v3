@@ -953,7 +953,6 @@ export const getTotalApy = (vaultPool, token, isSpecialVault) => {
   // if(token === undefined) {
   //   return 0;
   // }
-  // let farmAPY = (token.hideFarmApy !== undefined && token.hideFarmApy)
   let farmAPY = token.hideFarmApy
       ? sumBy(
           vaultPool.rewardAPY.filter((_, index) => index !== 0),

@@ -230,16 +230,16 @@ const ApexChart = ({data, lastAPY, specVault }) => {
       let ago = 30
 
       let apyData = []
-      if(data && (data.apyAutoCompounds !== undefined || data.apyRewards !== undefined)) {
+      if(data && (data.apyAutoCompounds || data.apyRewards)) {
         if(data.apyAutoCompounds.length === 0 && data.apyRewards.length === 0)  {
           return
         }
       }
-      let apyAutoCompounds = data.apyAutoCompounds !== undefined ? data.apyAutoCompounds : []
-      let apyRewards = data.apyRewards !== undefined ? data.apyRewards : []
+      let apyAutoCompounds = data.apyAutoCompounds ? data.apyAutoCompounds : []
+      let apyRewards = data.apyRewards ? data.apyRewards : []
 
       apyData = generateChartDataForApy(apyAutoCompounds, apyRewards, 'apy')
-      if(lastAPY !== undefined && lastAPY !== 0 && apyData.length !== 0)
+      if(lastAPY && lastAPY !== 0 && apyData.length !== 0)
         apyData[0]["apy"] = lastAPY
 
       let slotCount = 30

@@ -32,7 +32,7 @@ const FAQ = () => {
           {FAQ_TOTAL.map(item => (
             <QuestionContainer key={uuid()}>
               <Collapsible
-                lazyRender={item.lazyRender !== undefined ? item.lazyRender : true}
+                lazyRender={item.lazyRender ? item.lazyRender : true}
                 triggerWhenOpen={
                   <Question open backColor={backColor} borderColor={borderColor}>
                     {item.question}
@@ -56,7 +56,7 @@ const FAQ = () => {
             {FAQ_ITEMS_FIRST.map(item => (
               <QuestionContainer key={uuid()}>
                 <Collapsible
-                  lazyRender={item.lazyRender !== undefined ? item.lazyRender : true}
+                  lazyRender={item.lazyRender ? item.lazyRender : true}
                   triggerWhenOpen={
                     <Question open >
                       {item.question}
@@ -79,7 +79,7 @@ const FAQ = () => {
             {FAQ_ITEMS_SECOND.map(item => (
               <QuestionContainer key={uuid()}>
                 <Collapsible
-                  lazyRender={item.lazyRender !== undefined ? item.lazyRender : true}
+                  lazyRender={item.lazyRender ? item.lazyRender : true}
                   triggerWhenOpen={
                     <Question open  backColor={backColor} borderColor={borderColor}>
                       {item.question}
