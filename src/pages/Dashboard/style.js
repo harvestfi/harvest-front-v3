@@ -1,6 +1,4 @@
 import styled from 'styled-components'
-import UsdIcon from '../../assets/images/ui/usd.svg'
-import TokensIcon from '../../assets/images/ui/tokens.svg'
 
 const Container = styled.div`
   width: 100%;
@@ -42,43 +40,25 @@ const Inner = styled.div`
 
 const SubPart = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: start;
 
   @media screen and (max-width: 1280px) {
     display: block;
-    // padding-top: 34px;
-  }
-`
-
-const TotalValueRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  
-  border-radius: 10px;
-  margin-bottom: 30px;
-
-  border: 1px solid ${props=>props.borderColor};
-  background: ${props=>props.backColor};
-  transition: 0.25s;
-`
-
-const SecondaryPart = styled.div`
-  width: 45%;
-
-  @media screen and (max-width: 1280px) {
-    width: 100%;
   }
 `
 
 const FarmTitle = styled.span`
   display: flex;
   justify-content: space-between;
-  margin-top: 30px;
-  margin-bottom: 30px;
+  border-bottom: 1px solid ${props=>props.borderColor};
+
+  // margin-top: 30px;
+  // margin-bottom: 30px;
   font-weight: 500;
   font-size: 16px;
   line-height: 21px;
   z-index: 3;
+  padding: 16px 20px;
 
   @media screen and (max-width: 992px) {
     margin-top: 15px;
@@ -88,10 +68,11 @@ const FarmTitle = styled.span`
 
 const TransactionDetails = styled.div`
   width: 100%;
-  border-radius: 5px;
+  border-radius: 10px;
   border: 1px solid ${props=>props.borderColor};
   background: ${props=>props.backColor};
   transition: 0.25s;
+  margin-top: 30px;
 `
 
 const DetailView = styled.div`
@@ -101,7 +82,10 @@ const DetailView = styled.div`
     ${props.lastElement === 'yes' ? '' 
       : 'border-bottom: 1px solid rgba(255, 255, 255, 0.5);'}
   ` : `
-    border: 1px solid #E9E9E9;
+    ${props.lastElement === 'yes' ? ``
+    : `
+      border-bottom: 1px solid #E9E9E9;
+    `}
   `}
   transition: 0.25s;
 
@@ -125,24 +109,17 @@ const FlexDiv = styled.div`
 `
 
 const MyFarm = styled.div`
-  font-size: 16px;
-  font-weight: 700;
-  line-height: 21px;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 23px;
+  display: flex;
+
+  color: #101828;
   align-self: center;
 
-  img {
-    margin-right: 15px;
-  }
-
   @media screen and (max-width: 992px) {
-    // margin-bottom: 15px;
     font-size: 14px;
     line-height: 18px;
-
-    img {
-      width: 15px;
-      height: 15px;
-    }
   }
 `
 
@@ -211,72 +188,18 @@ const ExploreFarm = styled.button`
   }
 `
 
-const FirstPart = styled.div`
-  display: flex;
-  width: 60%;
-
-  @media screen and (max-width: 992px) {
-    width: 100%;
-  }
-`
-
-const SecondPart = styled.div`
-  display: flex;
-  width: 40%;
-
-  @media screen and (max-width: 992px) {
-    width: 100%;
-    display: block;
-  }
-`
-
-const FirstContent = styled.div`
-  // padding-top: 10px;
-  width: ${props => props.width ? props => props.width : "auto"};
+const Content = styled.div`
+  width: ${props=>props.width};
+  ${props => props.display ? `
+    display: ${props.display};
+  ` : ''}
+  ${props => props.marginLeft ? `
+    margin-left: ${props.marginLeft};
+  ` : ''}
   font-weight: 400;
   font-size: 20px;
   line-height: 23px;
   align-self: center;
-  display: ${props=>props.display};
-  justify-content: center;
-
-  .coin {
-    width: 37px;
-    height: 37px;
-  }
-
-  .coin:not(:first-child) {
-    margin-left: -8px;
-  }
-
-  @media screen and (max-width: 992px) {
-    ${props => props.display ? `
-      display: ${props.display};
-      justify-content: center;
-      // margin-left: 10px;
-      align-self: flex-start;
-      margin-top: 14px;
-      width: 40%;
-    ` : 
-    ``};
-
-    .coin {
-      width: 32px;
-      height: 32px;
-    }
-
-    .coin:not(:first-child) {
-      margin-left: -8px;
-    }
-  }
-`
-
-const SecondContent = styled.div`
-  width: 50%;
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 23px;
-  // align-self: center;
 
   @media screen and (max-width: 992px) {
       display: flex;
@@ -288,7 +211,7 @@ const SecondContent = styled.div`
 `
 
 const BadgeIcon = styled.div`
-  position: absolute;
+  // position: absolute;
   left: 0;
   top: 0;
   width: 17px;
@@ -326,7 +249,7 @@ const ThemeMode = styled.div`
     }
   
     .switch-track {
-      background: ${props=>props.backColor};
+      background: #7F56D9;
       border: 1px solid ${props=>props.borderColor};
       height: 24px;
       width: 50px;
@@ -334,20 +257,20 @@ const ThemeMode = styled.div`
       transition: all 0.2s ease 0s;
     }
     .switch-thumb {
-      background: url(${props=>props.mode === "usd" ? UsdIcon : TokensIcon});
+      background: white;
       background-size: cover;
-      height: 22px;
-      left: 1px;
+      height: 20px;
+      left: 2px;
       position: absolute;
-      top: 1px;
-      width: 22px;
+      top: 2px;
+      width: 20px;
       // border-image: initial;
       border-radius: 50%;
       transition: all 0.25s ease 0s;
     }
   
     &:hover .switch-thumb {
-      box-shadow: 0 0 2px 3px #FF9400;
+      box-shadow: 0 0 2px 3px #7F56D9;
     }
   }
 
@@ -368,6 +291,92 @@ const ThemeMode = styled.div`
     `}
 `
 
-export { Container, SubPart, TotalValueRow, SecondaryPart, TransactionDetails, DetailView, FarmTitle, 
+const Div = styled.div`
+  width: 32%;
+`
+
+const Counter = styled.div`
+  ${props => props.count > 0 ? `
+  color: white;
+  ` : `
+  color: #1F2937;
+  `
+  }
+  background: #F2C94C;
+  width: 20px;
+  height: 20px;
+  border-radius: 13px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 10px;
+
+  @media screen and (max-width: 992px) {
+    // background: #FF7E00;
+    color: white;
+  }
+`
+
+const Header = styled.div`
+  width: 100%;
+  padding: 10px 6px;
+  background: #F9FAFB;
+  border-bottom: 1px solid ${props=>props.borderColor};
+  display: flex;
+`
+
+const Column = styled.div`
+  width: ${props=>props.width};
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 15px;
+  color: #475467;
+`
+
+const Status = styled.div`
+  ${props=>props.status === 'Active' ?  `
+      background: #ECFDF3;
+      color: #027A48;
+    ` : `
+      background: #FFE8C8;
+      color: #F2994A;
+      img {
+        filter: invert(60%) sepia(97%) saturate(5817%) hue-rotate(15deg) brightness(87%) contrast(86%);
+      }
+  `};
+
+  padding: 2px 7px;
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 500;
+  display: flex;
+  width: fit-content;
+  border-radius: 13px;
+  align-items: center;
+
+  img {
+    margin-right: 5px;
+  }
+`
+
+const Btn = styled.button`
+  border: 1px solid #D0D5DD;
+  box-shadow: 0px 1px 1px rgba(16, 24, 40, 0.05);
+  border-radius: 5px;
+  color: #344054;
+  padding: 6px 10px;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+`
+
+const SelField = styled.div`
+  height: 17px;
+  width: 17px;
+  border: 1px solid #D0D5DD;
+  border-radius: 5px;
+`
+
+export { Container, SubPart, TransactionDetails, DetailView, FarmTitle, 
   FlexDiv, MyFarm, FarmPic, BadgeIcon, Inner, EmptyPanel, EmptyInfo, EmptyImg, ExploreFarm,
-  FirstPart, FirstContent, SecondPart, SecondContent, ThemeMode }
+  Content, ThemeMode, Div, Counter, Header, Column, Status, Btn, SelField }

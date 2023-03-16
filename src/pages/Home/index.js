@@ -8,7 +8,6 @@ import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { FARM_TOKEN_SYMBOL, SPECIAL_VAULTS } from '../../constants'
 import ProfitSharingContainer from '../../components/ProfitSharing'
-import { directDetailUrl } from '../../constants'
 
 const vaultList = [
   { compText: "Stablecoin", directUrl: "notional_DAI" },
@@ -75,7 +74,7 @@ const Home = () => {
             </FarmCompInner>)
         })}
         </BottomPart>
-        <ProfitShare href={directDetailUrl + "FARM"}>
+        <ProfitShare>
           <ProfitSharingContainer height={"100%"} />
         </ProfitShare>
       </FarmContent>

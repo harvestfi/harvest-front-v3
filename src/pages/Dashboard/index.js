@@ -2,13 +2,12 @@ import React, { useState, useEffect, useMemo } from 'react'
 import { useHistory } from "react-router-dom"
 import { BigNumber } from "bignumber.js"
 import { get, isEmpty, find } from 'lodash'
-import { Container, SubPart, TotalValueRow, SecondaryPart, TransactionDetails, DetailView, FarmTitle, 
-  FlexDiv, MyFarm, Inner, EmptyPanel, EmptyInfo, EmptyImg, ExploreFarm, ThemeMode,
-  FirstPart, FirstContent, SecondPart, SecondContent, BadgeIcon } from './style'
+import { Container, SubPart, TransactionDetails, DetailView, FarmTitle, 
+  FlexDiv, MyFarm, Inner, EmptyPanel, EmptyInfo, EmptyImg, ExploreFarm, ThemeMode, Div,
+  Content, BadgeIcon, Counter, Header, Column, Status, Btn, SelField } from './style'
 import { useThemeContext } from '../../providers/useThemeContext'
-import Chart from '../../components/DashboardComponents/Chart'
 import TotalValue from '../../components/DashboardComponents/TotalValue'
-import Porto from '../../components/DashboardComponents/Porto'
+import ProfitSharing from '../../components/ProfitSharing'
 import ListItem from '../../components/DashboardComponents/ListItem'
 import { useWallet } from '../../providers/Wallet'
 import { usePools } from '../../providers/Pools'
@@ -20,14 +19,13 @@ import { CHAINS_ID, VAULT_CATEGORIES_IDS } from '../../data/constants'
 import { fromWei } from '../../services/web3'
 import { formatNumber } from '../../utils'
 import { addresses } from '../../data'
-import DashboardTVL from '../../assets/images/logos/common/tvl.svg'
-import DashboardClaim from '../../assets/images/logos/common/apy.svg'
-import MyFarmIcon from '../../assets/images/logos/dashboard/myfarm.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
 import EmptyIcon from '../../assets/images/logos/dashboard/empty.svg'
 import exploreFarm from '../../assets/images/logos/dashboard/exploreFarm.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
 import BNB from '../../assets/images/chains/bnb.svg'
+import Rating from '../../assets/images/logos/dashboard/dashboard_rating.svg'
+import DotIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 
 const getChainIcon = (chain) => {
   let chainLogo = ETHEREUM
@@ -126,6 +124,7 @@ const Dashboard = () => {
     setSwitchBalance(!switchBalance)
   }
   const [farmTokenList, setFarmTokenList] = useState([])
+  const [countList, setCountList] = useState(0)
   const [totalDeposit, setTotalDeposit] = useState(0)
   const [totalRewards, setTotalRewards] = useState(0)
 
@@ -197,7 +196,7 @@ const Dashboard = () => {
         let newStats = []
         let totalStake = 0, valueRewards = 0
         for(let i = 0; i < stakedVaults.length; i++) {
-          let stats = {chain: "", symbol: "", logos: [], platform: "", balance: "", unstake: "", stake: "", reward: 0, rewardSymbol: ""}
+          let stats = {chain: "", symbol: "", logos: [], platform: "", unstake: "", stake: "", reward: 0, rewardSymbol: ""}
           let symbol = ""
           if(stakedVaults[i] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
             symbol = FARM_TOKEN_SYMBOL
@@ -210,13 +209,12 @@ const Dashboard = () => {
           
           const token = find(groupOfVaults, vault => (vault.vaultAddress === fAssetPool.collateralAddress) || 
             (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress))
-          if(token !== undefined) {
+          if(token) {
             const useIFARM = symbol === FARM_TOKEN_SYMBOL
             stats["symbol"] = symbol
             stats["logos"] = token.logoUrl
             stats["chain"] = getChainIcon(token.chain)
             stats["platform"] = useIFARM ? tokens[IFARM_TOKEN_SYMBOL].subLabel : token.subLabel || ""
-            stats["balance"] = token.balance
             
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
             if(isSpecialVault) {
@@ -263,6 +261,7 @@ const Dashboard = () => {
         setTotalDeposit(formatNumber(totalStake, POOL_BALANCES_DECIMALS))
         setTotalRewards(formatNumber(valueRewards, POOL_BALANCES_DECIMALS))
         setFarmTokenList(newStats)
+        setCountList(newStats.length)
       }
 
       getFarmTokenInfo()
@@ -273,36 +272,47 @@ const Dashboard = () => {
     <Container pageBackColor={pageBackColor} fontColor={fontColor}>
       <Inner>
         <SubPart>
-          <SecondaryPart>
-            <TotalValueRow backColor={backColor} borderColor={borderColor}>
-              <TotalValue icon={DashboardTVL} content={"Deposits"} price={totalDeposit} />
-              <TotalValue icon={DashboardClaim} content={"Claimable Rewards"} price={totalRewards} />
-            </TotalValueRow>
-            <Porto />
-          </SecondaryPart>
-          <Chart />
+          <TotalValue icon={Rating} content={"Deposits"} price={totalDeposit} />
+          <TotalValue icon={Rating} content={"Claimable Rewards"} price={totalRewards} />
+          <Div>
+            <ProfitSharing height="100%" />
+          </Div>
         </SubPart>
-        <FarmTitle>
-          <MyFarm>
-            <img src={MyFarmIcon} alt="" />
-            My Farms
-          </MyFarm>
-          <ThemeMode mode={switchBalance ? "usd" : "token"} backColor={toggleBackColor} borderColor={borderColor}>
-            <div id="theme-switch">
-              <div className="switch-track">
-                <div className="switch-thumb"></div>
-              </div>
-
-              <input
-                type="checkbox"
-                checked={switchBalance}
-                onChange={switchBalanceStyle}
-                aria-label="Switch between dark and light mode"
-              />
-            </div>
-          </ThemeMode>
-        </FarmTitle>
+        
         <TransactionDetails backColor={backColor} borderColor={borderColor} >
+          <FarmTitle borderColor={borderColor}>
+            <MyFarm>
+              My Farms
+              <Counter count={countList}>{countList > 0 ? countList : ''}</Counter>&nbsp;
+            </MyFarm>
+            <ThemeMode mode={switchBalance ? "usd" : "token"} backColor={toggleBackColor} borderColor={borderColor}>
+              <div id="theme-switch">
+                <div className="switch-track">
+                  <div className="switch-thumb"></div>
+                </div>
+
+                <input
+                  type="checkbox"
+                  checked={switchBalance}
+                  onChange={switchBalanceStyle}
+                  aria-label="Switch between dark and light mode"
+                />
+              </div>
+            </ThemeMode>
+          </FarmTitle>
+          <Header borderColor={borderColor}>
+            <Column width={"5%"}>
+              <SelField />
+            </Column>
+            <Column width={"30%"}>
+              Farm Name
+            </Column>
+            <Column width={"10%"}>Status</Column>
+            <Column width={"15%"}>Unstaked</Column>
+            <Column width={"15%"}>Staked</Column>
+            <Column width={"15%"}>Rewards</Column>
+            <Column width={"10%"}></Column>
+          </Header>
           {
           connected ? 
             <>
@@ -312,36 +322,40 @@ const Dashboard = () => {
                   return (
                     <DetailView key={i} lastElement={i === farmTokenList.length-1 ? "yes" : "no" } mode={switchMode}>
                       <FlexDiv display="block">
-                        <BadgeIcon badgeBack={badgeIconBackColor}>
-                          <img src={info.chain} width={"10"} height={"10"} alt="" />
-                        </BadgeIcon>
-                        <FirstPart>
-                          <FirstContent width="40%" display="flex">
-                            {
-                              info.logos.length > 0 && info.logos.map((el, i) => (
-                                <img key={i} className="coin" width={37} src={el} alt="" />
-                              ))
-                            }
-                            
-                          </FirstContent>
-                          <FirstContent width="60%">
-                            <ListItem weight={400} size={16} height={21} value={info.symbol} />
+                        <Content width="5%">
+                          <BadgeIcon badgeBack={badgeIconBackColor}>
+                            <img src={info.chain} width={"17px"} height={"17px"} alt="" />
+                          </BadgeIcon>
+                        </Content>
+                        <Content width="30%" display="flex">
+                          {
+                            info.logos.length > 0 && info.logos.map((el, i) => (
+                              <img key={i} className="coin" width={37} src={el} alt="" />
+                            ))
+                          }
+                          <Content marginLeft="11px">
+                            <ListItem weight={600} size={12} height={17} value={info.symbol} />
                             <ListItem weight={400} size={12} height={16} value={info.platform} />
-                            <ListItem weight={400} size={12} height={16} color={"#27AE60"} value={info.balance} />
-                          </FirstContent>
-                        </FirstPart>
-                        <SecondPart>
-                          <SecondContent>
-                            <ListItem weight={700} size={16} height={21} label={"Unstaked"} percent={"5%"} up={true} />
-                            <ListItem weight={400} size={12} height={16} value={`$${info.unstake}`} />
-                            <ListItem weight={700} size={16} height={21} label={"Staked"} percent={"5%"} up={true} />
-                            <ListItem weight={400} size={12} height={16} value={`$${info.stake}`} />
-                          </SecondContent>
-                          <SecondContent>
-                            <ListItem weight={700} size={16} height={21} label={"Rewards"} />
-                            <ListItem weight={400} size={12} height={16} label={`$${info.reward}`} icon={`/icons/${info.rewardSymbol}`} />
-                          </SecondContent>
-                        </SecondPart>
+                          </Content>
+                        </Content>
+                        <Content width="10%">
+                          <Status status={info.status}>
+                            <img src={DotIcon} width={8} height={8} alt="" />
+                            {info.status}
+                          </Status>
+                        </Content>
+                        <Content width="15%">
+                          <ListItem weight={400} size={12} height={16} value={`$${info.unstake}`} />
+                        </Content>
+                        <Content width="15%">
+                          <ListItem weight={400} size={12} height={16} value={`$${info.stake}`} />
+                        </Content>
+                        <Content width="15%">
+                          <ListItem weight={400} size={12} height={16} label={`$${info.reward}`} icon={`/icons/${info.rewardSymbol}`} />
+                        </Content>
+                        <Content width="10%">
+                          <Btn>Manage</Btn>
+                        </Content>
                       </FlexDiv>
                     </DetailView>
                 )})

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react'
 import { displayAPY, getTotalApy, getDataQuery } from '../../utils'
-import { FARM_TOKEN_SYMBOL, SPECIAL_VAULTS, DECIMAL_PRECISION } from '../../constants'
+import { FARM_TOKEN_SYMBOL, SPECIAL_VAULTS, DECIMAL_PRECISION, directDetailUrl } from '../../constants'
 import { useStats } from '../../providers/Stats'
 import { usePools } from '../../providers/Pools'
 import { useWallet } from '../../providers/Wallet'
@@ -44,7 +44,7 @@ const ProfitSharingContainer = ({height}) => {
   }, [chainId])
 
   return (
-    <ProfitSharing height={height}>
+    <ProfitSharing href={directDetailUrl + FARM_TOKEN_SYMBOL} height={height}>
       <TopDiv>
         <img src={ProfitSharingIcon} alt="profit-sharing" />
         <img src={ProfitSharingTitle} alt="profit-sharing" />
@@ -54,7 +54,9 @@ const ProfitSharingContainer = ({height}) => {
           {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
           &nbsp;APR
         </div>
-        <SmallApexChart data={apiData} lastAPY={Number(totalApy)} />
+        <div className='chart'>
+          <SmallApexChart data={apiData} lastAPY={Number(totalApy)} />
+        </div>
       </BottomDiv>
     </ProfitSharing>
   )

@@ -2,7 +2,6 @@ import styled from 'styled-components'
 
 const Container = styled.div`
   display: flex;
-  margin-bottom: 5px;
   color: ${props=>props.fontColor};
   
   @media screen and (max-width: 992px) {

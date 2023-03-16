@@ -1,9 +1,9 @@
 import React from 'react'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { Container, Content, Label, /*Percent, TextInner*/ } from './style'
+import { Container, Content, Label } from './style'
 
-const ListItem = ({ weight, size, height, color, label, icon, percent, up, value }) => {
-  const { fontColor/*, dashboardListItemPercentBack, dashboardListItemPercentColor*/ } = useThemeContext()
+const ListItem = ({ weight, size, height, color, label, icon, value }) => {
+  const { fontColor } = useThemeContext()
   return (
     <Container fontColor={fontColor}>
       { label ? 
@@ -13,14 +13,7 @@ const ListItem = ({ weight, size, height, color, label, icon, percent, up, value
                 <img src={`${icon.toLowerCase()}.svg`} width={"16px"} height={"16px"} alt="" /> : 
                 <></>
             }
-            
             <Content weight={weight} size={size} height={height} color={color}>{label}</Content>
-            
-            {/* { percent ? 
-              <Percent dashboardBack={dashboardListItemPercentBack} dashboardColor={dashboardListItemPercentColor} up={up}>
-                <TextInner>{percent}</TextInner>
-              </Percent> : ""
-            } */}
           </Label> :
           ""
       }
