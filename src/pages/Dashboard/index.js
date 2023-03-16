@@ -308,8 +308,8 @@ const Dashboard = () => {
               Farm Name
             </Column>
             <Column width={"10%"}>Status</Column>
-            <Column width={"15%"}>Unstaked</Column>
-            <Column width={"15%"}>Staked</Column>
+            <Column width={"15%"} color="#FF9400">Unstaked</Column>
+            <Column width={"15%"} color="#129C3D">Staked</Column>
             <Column width={"15%"}>Rewards</Column>
             <Column width={"10%"}></Column>
           </Header>

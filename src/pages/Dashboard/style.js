@@ -330,7 +330,12 @@ const Column = styled.div`
   font-weight: 500;
   font-size: 12px;
   line-height: 15px;
-  color: #475467;
+  ${props=>props.color ? `
+    color: ${props.color};
+  ` : `
+    color: #475467;
+  `}
+  
 `
 
 const Status = styled.div`
