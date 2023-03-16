@@ -2,7 +2,8 @@ import React from 'react'
 import Collapsible from 'react-collapsible'
 import { useMediaQuery } from 'react-responsive'
 import uuid from 'react-uuid'
-import { FAQContainer, FAQContent, FAQHalfContent, DropdownToggle, Question, Answer, QuestionContainer } from './style'
+import { FAQContainer, FAQContent, FAQHalfContent, DropdownToggle, Question, Answer, QuestionContainer, FarmHeader, Title, Desc, FAQMain,
+  LeftPart, RightPart } from './style'
 import { FAQ_ITEMS_FIRST, FAQ_ITEMS_SECOND, FAQ_TOTAL } from '../../constants'
 import DropdownToggleImageOpen from '../../assets/images/ui/dropdown-toggle-closed-faq.svg'
 import DropdownToggleImageClosed from '../../assets/images/ui/dropdown-toggle-open-faq.svg'
@@ -14,6 +15,17 @@ const FAQ = () => {
 
   return (
     <FAQContainer pageBackColor={pageBackColor} fontColor={fontColor}>
+      <FarmHeader>
+        <Title>Support</Title>
+        <Desc>
+          <LeftPart>Top questions about Harvest</LeftPart>
+          <RightPart>
+            Need something cleared up? Here are<br/>
+            our most frequently asked questions.
+          </RightPart>
+        </Desc>
+      </FarmHeader>
+      <FAQMain>
       {
         isMobile ? 
         <FAQContent>
@@ -88,6 +100,7 @@ const FAQ = () => {
           </FAQHalfContent>
         </FAQContent>
       }
+      </FAQMain>
     </FAQContainer>
   )
 }

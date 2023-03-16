@@ -16,6 +16,7 @@ const FAQContainer = styled.div`
   transition: 0.25s;
   
   display: flex;
+  flex-direction: column;
   justify-content: center;
 
   @media screen and (max-width: 992px) {
@@ -30,7 +31,7 @@ const FAQContent = styled.div`
   justify-content: space-between;
 
   @media screen and (min-width: 1920px) {
-    width: 1250px;
+    width: 1450px;
   }
 
   @media screen and (max-width: 992px) {
@@ -122,4 +123,49 @@ const Answer = styled.div`
   }
 `
 
-export { FAQContainer, FAQBox, Question, Answer, DropdownToggle, QuestionContainer, FAQHalfContent, FAQContent }
+const FarmHeader = styled.div`
+  background: #15202B;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+  padding: 75px 88px 68px;
+`
+
+const Title = styled.div`
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 19px;
+  color: #FF9400;
+
+  margin-bottom: 19px;
+`
+
+const Desc = styled.div`
+  display: flex;
+  justify-content: space-between;
+  
+`
+
+const FAQMain = styled.div`
+  display: flex;
+  justify-content: center;
+`
+
+const LeftPart = styled.div`
+  font-weight: 600;
+  font-size: 38px;
+  line-height: 47px;
+
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+`
+
+const RightPart = styled.div`
+  font-weight: 400;
+  font-size: 15.6667px;
+  line-height: 24px;
+  color: #FF9400;
+`
+
+export { FAQContainer, FAQBox, Question, Answer, DropdownToggle, QuestionContainer, FAQHalfContent, FAQContent,
+  FarmHeader, Title, Desc, FAQMain, LeftPart, RightPart }
