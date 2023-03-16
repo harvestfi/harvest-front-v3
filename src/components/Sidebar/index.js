@@ -5,7 +5,7 @@ import { Container, Layout, LinksContainer, LinkContainer, Link, AboutHarvest, M
   FlexDiv, Follow, ConnectButtonStyle, MobileToggle, OffcanvasDiv,
   MobileView, MobileConnectBtn, MobileActionsContainer, MobileLinksContainer, MobileLinkContainer, 
   MobileLink, MobileFollow, ConnectAvatar, Address, ThemeMode, SideIcons, UserDropDown, UserDropDownItem, UserDropDownMenu,
-  ProfitSharing, TopDiv, BottomDiv
+  ProfitSharing, TopDiv, BottomDiv, TopTitle, ChartDiv
 } from './style'
 import Social from '../Social'
 import { useThemeContext } from '../../providers/useThemeContext'
@@ -13,9 +13,11 @@ import { ROUTES, FARM_TOKEN_SYMBOL, SPECIAL_VAULTS, DECIMAL_PRECISION } from '..
 import { useWallet } from '../../providers/Wallet'
 import { usePools } from '../../providers/Pools'
 import { useStats } from '../../providers/Stats'
-import { formatAddress, displayAPY, getTotalApy } from '../../utils'
+import { formatAddress, displayAPY, getTotalApy, getDataQuery } from '../../utils'
 import { CHAINS_ID } from '../../data/constants'
 import { Divider } from '../GlobalStyle'
+import SmallApexChart from '../SmallApexChart'
+import { addresses } from '../../data/index'
 import Home from '../../assets/images/logos/sidebar/home.svg'
 import Farms from '../../assets/images/logos/sidebar/farms.svg'
 import Dashboard from '../../assets/images/logos/sidebar/dashboard.svg'
@@ -38,8 +40,6 @@ import LogoutIcon from '../../assets/images/logos/sidebar/logout.svg'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 // import GradientBack from '../../assets/images/logos/gradient.svg'
 import ProfitSharingIcon from '../../assets/images/logos/sidebar/profit-sharing.svg'
-import ProfitSharingTitle from '../../assets/images/logos/sidebar/profit-sharing-title.svg'
-import Line from '../../assets/images/logos/sidebar/line.svg'
 import ConnectDisableIcon from '../../assets/images/logos/sidebar/connect-disable.svg'
 
 const sideLinks = [
@@ -175,6 +175,15 @@ const Sidebar = ( {width} ) => {
   const token = poolVaults["FARM"]
 
   const totalApy = getTotalApy(null, token, true)
+
+  const [apiData, setApiData] = useState({})
+  useEffect(()=>{
+    const initData = async () => {
+      let data = await getDataQuery(365, addresses.iFARM, chainId.toString(), null)
+      setApiData(data)
+    }
+    initData()
+  }, [chainId])
 
   return (
     <Container width={width} sidebarEffect={sidebarEffect} backColor={backColor} fontColor={fontColor}>
@@ -314,15 +323,18 @@ const Sidebar = ( {width} ) => {
       <ProfitSharing>
         <TopDiv>
           <img src={ProfitSharingIcon} alt="profit-sharing" />
-          <img src={ProfitSharingTitle} alt="profit-sharing" />
+          <TopTitle>
+            <img src={ConnectDisableIcon} width="7px" height="7px"  alt="" />
+            Profit-Sharing
+          </TopTitle>
         </TopDiv>
         <BottomDiv>
-          <div>
-            {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
-            <div>APR</div>
-          </div>
-          <img src={Line} alt="chart" />
+          {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
+          <div>APR</div>
         </BottomDiv>
+        <ChartDiv>
+          <SmallApexChart data={apiData} lastAPY={Number(totalApy)} />
+        </ChartDiv>
       </ProfitSharing>
 
       <Divider height="1px" marginTop="20px" backColor="#EAECF0" />

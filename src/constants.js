@@ -67,7 +67,7 @@ export const DECIMAL_PRECISION = 2
 export const FAQ_ITEMS_FIRST = [
   {
     id: 1, 
-    question: '1. What is yield farming?',
+    question: 'What is yield farming?',
     answer: (
       <>
         Yield farming is the practice of putting your crypto assets to work via staking or 
@@ -79,7 +79,7 @@ export const FAQ_ITEMS_FIRST = [
   },
   {
     id: 3,
-    question: '3. Why deposit with Harvest?',
+    question: 'Why deposit with Harvest?',
     answer: (
       <>
         <ul>
@@ -97,7 +97,7 @@ export const FAQ_ITEMS_FIRST = [
   },
   {
     id: 5,
-    question: '5. What are Harvest deposit/withdrawal fees?',
+    question: 'What are Harvest deposit/withdrawal fees?',
     answer: (
       <>
         Harvest does not charge you any deposit/withdrawal fee. 
@@ -108,7 +108,7 @@ export const FAQ_ITEMS_FIRST = [
   },
   {
     id: 7,
-    question: '7. What is a f_Token?',
+    question: 'What is a f_Token?',
     answer: (
       <>
         fDAI, fUSD, and other f-tokens are the yield-bearing versions of the corresponding assets that users deposit. 
@@ -118,7 +118,7 @@ export const FAQ_ITEMS_FIRST = [
   },
   {
     id: 9,
-    question: '9. Are there timelocks?',
+    question: 'Are there timelocks?',
     answer: (
       <>
         <div style={{color: "blue", textDecoration: "underline"}}>Yes, 12 hours.</div>
@@ -127,7 +127,7 @@ export const FAQ_ITEMS_FIRST = [
   },
   {
     id: 11,
-    question: '11. I deposited FARM into the FARM profit share, but I can’t find it anymore!',
+    question: 'I deposited FARM into the FARM profit share, but I can’t find it anymore!',
     answer: (
       <>
         Don’t worry; your funds are still there, under the iFARM pool. Uncheck “use iFARM” if you want to withdraw!
@@ -136,7 +136,7 @@ export const FAQ_ITEMS_FIRST = [
   },
   {
     id: 13,
-    question: '13. I deposited into a Pool for a few hours but still have no yield. Why?',
+    question: 'I deposited into a Pool for a few hours but still have no yield. Why?',
     answer: (
       <>
         While FARM emissions start accruing immediately after depositing, yields from farmed tokens come after a successful DoHardWork (a smart contract execution). Profitability analysis is done on when to harvest to ensure maximum yields and gas efficiency.
@@ -145,7 +145,7 @@ export const FAQ_ITEMS_FIRST = [
   },
   {
     id: 15,
-    question: '15. What is Profit-Sharing?',
+    question: 'What is Profit-Sharing?',
     answer: (
       <>
         Harvest’s flagship farm is called ‘Profit-Sharing’. It’s where anyone can deposit the native $FARM, $iFARM, 
@@ -155,7 +155,7 @@ export const FAQ_ITEMS_FIRST = [
   },
   {
     id: 17,
-    question: '17. What are the token economics for FARM?',
+    question: 'What are the token economics for FARM?',
     answer: (
       <ul>
         <li style={{ marginBottom: '10px' }}>
@@ -170,7 +170,7 @@ export const FAQ_ITEMS_FIRST = [
   },
   {
     id: 19,
-    question: '19. What are APR and APY, and how are they calculated?',
+    question: 'What are APR and APY, and how are they calculated?',
     answer: (
       <>
         See{' '}
@@ -198,7 +198,7 @@ export const FAQ_ITEMS_FIRST = [
   },
   {
     id: 21,
-    question: '21. Who is the Harvest team?',
+    question: 'Who is the Harvest team?',
     answer: (
       <>
         Just like Satoshi, the Harvest Finance launch team is anonymous.
@@ -207,7 +207,7 @@ export const FAQ_ITEMS_FIRST = [
   },
   {
     id: 23,
-    question: '23. Is Harvest audited?',
+    question: 'Is Harvest audited?',
     answer: (
       <>
         See Audits from PeckShield, Heachi, Certik & Least Authority {' '}
@@ -238,7 +238,7 @@ export const FAQ_ITEMS_FIRST = [
 export const FAQ_ITEMS_SECOND = [
   {
     id: 2,
-    question: '2. What is Harvest?',
+    question: 'What is Harvest?',
     answer: (
       <>
         Harvest is an international cooperative of users pooling resources to earn DeFi yields. 
@@ -249,7 +249,7 @@ export const FAQ_ITEMS_SECOND = [
   },
   {
     id: 4,
-    question: '4. What is Wido?',
+    question: 'What is Wido?',
     answer: (
       <>
         Wido is a 3rd party zap provider which Harvest uses under the hood. With Wido, users can deposit any token into any farm, 
@@ -261,7 +261,7 @@ export const FAQ_ITEMS_SECOND = [
   },
   {
     id: 6,
-    question: '6. Why do I need to Deposit and then additionally Stake my tokens?',
+    question: 'Why do I need to Deposit and then additionally Stake my tokens?',
     answer: (
       <>
         The first step to getting started farming with Harvest is to wrap your token into Harvest’s f_Token, such as fUSDC. 
@@ -274,7 +274,7 @@ export const FAQ_ITEMS_SECOND = [
   },
   {
     id: 8,
-    question: '8. Why is the gas fee for depositing and withdrawing so high?',
+    question: 'Why is the gas fee for depositing and withdrawing so high?',
     answer: (
       <>
         Interacting with our farms, whether depositing or withdrawing, comes with network fees. 
@@ -285,7 +285,7 @@ export const FAQ_ITEMS_SECOND = [
   },
   {
     id: 10,
-    question: '10. I can’t find the farm I deposited into weeks ago!',
+    question: 'I can’t find the farm I deposited into weeks ago!',
     answer: (
       <>
         Go to the dashboard, and look under the inactive section.
@@ -294,7 +294,7 @@ export const FAQ_ITEMS_SECOND = [
   },
   {
     id: 12,
-    question: '12. I withdrew from Harvest, but I can’t see my funds!',
+    question: 'I withdrew from Harvest, but I can’t see my funds!',
     answer: (
       <>
         Withdrawing is a two-step process. First, you need to unstake your fToken from Harvest. 
@@ -304,7 +304,7 @@ export const FAQ_ITEMS_SECOND = [
   },
   {
     id: 14,
-    question: '14. What are FARM, iFARM, miFarm, and bFARM?',
+    question: 'What are FARM, iFARM, miFarm, and bFARM?',
     answer: (
       <>
         Both <b>FARM</b> and <b>iFARM</b> are ERC-20 tokens on Ethereum.
@@ -385,7 +385,7 @@ export const FAQ_ITEMS_SECOND = [
   {
     id: 16,
     lazyRender: false,
-    question: '16. What is the utility of FARM token?',
+    question: 'What is the utility of FARM token?',
     answer: (
       <>
         FARM fuels the Harvest platform. It is simultaneously a reward token for users, a payment token for Harvest workers, and a governance token. 
@@ -412,7 +412,7 @@ export const FAQ_ITEMS_SECOND = [
   },
   {
     id: 18,
-    question: '18. What is the road map for Harvest?',
+    question: 'What is the road map for Harvest?',
     answer: `
       The long-term goal for Harvest is to become DeFi's go-to place for all yield farmers - big or small - by offering a clean and 
       intuitive interface to manage funds easily. Harvest is a decentralized cooperative shaped by dozens of users who believe in better, 
@@ -421,7 +421,7 @@ export const FAQ_ITEMS_SECOND = [
   },
   {
     id: 20,
-    question: '20. APR / APY Disclaimer',
+    question: 'APR / APY Disclaimer',
     answer: (
       <div>
         The stated APR/APY (the 'Rate') is denominated in terms of relevant underlying tokens in the vaults. 
@@ -439,7 +439,7 @@ export const FAQ_ITEMS_SECOND = [
   },
   {
     id: 22,
-    question: '22. Is the code open-source?',
+    question: 'Is the code open-source?',
     answer: (
       <div>
         <a href="https://github.com/harvest-finance/harvest" target="_blank" rel="noopener noreferrer">

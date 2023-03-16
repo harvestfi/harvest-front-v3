@@ -34,6 +34,10 @@ const BottomDiv = styled.div`
   font-weight: 600;
   display: flex;
   justify-content: space-between;
+
+  .apy {
+    align-self: center;
+  }
 `
 
 export { ProfitSharing, ProfitBack, TopDiv, BottomDiv }

@@ -76,19 +76,20 @@ const Question = styled.div`
   font-size: 16px;
   font-weight: 400;
   padding: 16px;
-  border-radius: 8px;
+  border-radius: 10px;
   transition: 0.25s;
-  background: ${props=>props.backColor};
-  border: 1px solid ${props=>props.borderColor};
+
+  &:hover {
+    background: #E9E9E9;
+  }
 
   ${props =>
     props.open
       ? `
   border-bottom-left-radius: 0px; 
   border-bottom-right-radius: 0px;
-  background: #FF9400;
-  border-radius: 8px 8px 0px 0px;
-  color: white;
+  border-radius: 10px 10px 0px 0px;
+    background: #E9E9E9;
   `
       : ``}
 
@@ -109,8 +110,7 @@ const DropdownToggle = styled.img`
 
 const Answer = styled.div`
   padding: 16px;
-  background: ${props=>props.backColor};
-  border: 1px solid ${props=>props.borderColor};
+  background: #E9E9E9;
   transition: 0.25s;
   border-radius: 0 0 10px 10px;
   border-top: none;

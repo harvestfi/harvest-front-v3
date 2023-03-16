@@ -1,15 +1,18 @@
-import React, { useMemo } from 'react'
-import { displayAPY, getTotalApy } from '../../utils'
+import React, { useState, useEffect, useMemo } from 'react'
+import { displayAPY, getTotalApy, getDataQuery } from '../../utils'
 import { FARM_TOKEN_SYMBOL, SPECIAL_VAULTS, DECIMAL_PRECISION } from '../../constants'
 import { useStats } from '../../providers/Stats'
 import { usePools } from '../../providers/Pools'
+import { useWallet } from '../../providers/Wallet'
+import SmallApexChart from '../SmallApexChart'
+import { addresses } from '../../data/index'
 import { ProfitSharing, TopDiv, BottomDiv } from './style'
 import ProfitSharingIcon from '../../assets/images/logos/sidebar/profit-sharing.svg'
 import ProfitSharingTitle from '../../assets/images/logos/sidebar/profit-sharing-title.svg'
-import Line from '../../assets/images/logos/sidebar/line.svg'
 
 const ProfitSharingContainer = ({height}) => {
   const { pools } = usePools()
+  const { chainId } = useWallet()
   const { profitShareAPY } = useStats()
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
@@ -31,6 +34,15 @@ const ProfitSharingContainer = ({height}) => {
   const token = poolVaults["FARM"]
   const totalApy = getTotalApy(null, token, true)
 
+  const [apiData, setApiData] = useState({})
+  useEffect(()=>{
+    const initData = async () => {
+      let data = await getDataQuery(365, addresses.iFARM, chainId.toString(), null)
+      setApiData(data)
+    }
+    initData()
+  }, [chainId])
+
   return (
     <ProfitSharing height={height}>
       <TopDiv>
@@ -38,11 +50,11 @@ const ProfitSharingContainer = ({height}) => {
         <img src={ProfitSharingTitle} alt="profit-sharing" />
       </TopDiv>
       <BottomDiv>
-        <div>
+        <div className="apy">
           {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
           &nbsp;APR
         </div>
-        <img src={Line} alt="chart" />
+        <SmallApexChart data={apiData} lastAPY={Number(totalApy)} />
       </BottomDiv>
     </ProfitSharing>
   )

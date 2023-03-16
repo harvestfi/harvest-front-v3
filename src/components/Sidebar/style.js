@@ -13,7 +13,7 @@ const Container = styled.div`
   color: ${props=>props.fontColor};
 
   min-height: 100%;
-  width: ${props => (props.width)};
+  min-width: ${props => (props.width)};
   max-width: 100%;
   // position: fixed;
   z-index: 100;
@@ -632,13 +632,34 @@ const BottomDiv = styled.div`
   color: white;
   line-height: 42px;
   font-weight: 600;
+`
+
+const TopTitle = styled.div`
   display: flex;
-  justify-content: space-between;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  color: #FFFFFF;
+  align-items: center;
+  padding: 4px 12px;
+  border: 2px solid #EAECF0;
+  border-radius: 14px;
+  img {
+    margin-right: 7px;
+    filter: brightness(0) saturate(100%) invert(100%) sepia(17%) saturate(0%) hue-rotate(338deg) brightness(101%) contrast(101%);
+  }
+`
+
+const ChartDiv = styled.div`
+  position: absolute;
+  bottom: -15px;
+  right: 0;
 `
 
 export { Container, Layout, LinksContainer, LinkContainer, Link, MiddleActionsContainer, FlexDiv, Address, 
   ConnectButtonStyle, Follow, AboutHarvest, MobileView, MobileConnectBtn, MobileToggle, OffcanvasDiv,
   MobileActionsContainer, MobileLinksContainer, MobileLinkContainer, MobileLink, 
   MobileFollow, ConnectAvatar, ThemeMode, SideIcons, UserDropDown, UserDropDownItem, UserDropDownMenu,
-  ProfitSharing, ProfitBack, TopDiv, BottomDiv
+  ProfitSharing, ProfitBack, TopDiv, BottomDiv, TopTitle, ChartDiv
 }

@@ -1,33 +1,33 @@
 import React, { useState, useEffect } from 'react'
 import Chart from 'react-apexcharts'
-import { ClipLoader } from 'react-spinners'
-import { LoadingDiv, NoData } from './style'
+// import { ClipLoader } from 'react-spinners'
+// import { LoadingDiv } from './style'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { ceil10, floor10 } from '../../utils'
 
-function numberWithCommas(x) {
-  if(x < 1000) 
-    return x
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-}
+// function numberWithCommas(x) {
+//   if(x < 1000) 
+//     return x
+//   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+// }
 
-function getRangeNumber(strRange) {
-  let ago = 30
-  if(strRange === '1D') {
-    ago = 1
-  }
-  else if(strRange === '1W') {
-    ago = 7
-  }
-  else if(strRange === '1M') {
-    ago = 30
-  }
-  else if(strRange === '1Y') {
-    ago = 365
-  }
+// function getRangeNumber(strRange) {
+//   let ago = 30
+//   if(strRange === '1D') {
+//     ago = 1
+//   }
+//   else if(strRange === '1W') {
+//     ago = 7
+//   }
+//   else if(strRange === '1M') {
+//     ago = 30
+//   }
+//   else if(strRange === '1Y') {
+//     ago = 365
+//   }
 
-  return ago
-}
+//   return ago
+// }
 
 function getTimeSlots(ago, slotCount) {
   let slots = []
@@ -132,9 +132,9 @@ function generateChartDataForApy(apyData1, apyData2, field) {
   return apyData
 }
 
-const ApexChart = ({data, range, lastAPY}) => {
+const ApexChart = ({data, lastAPY, specVault }) => {
 
-  const { backColor, fontColor } = useThemeContext()
+  const { backColor } = useThemeContext()
 
   const [mainSeries, setMainSeries] = useState([{
     name: 'TVL m$',
@@ -154,72 +154,84 @@ const ApexChart = ({data, range, lastAPY}) => {
       stacked: false,
       height: 350,
       foreColor: '#707070',
-      background: backColor,
+      background: 'transparent',
       animations: {
         enabled: false
       }
     },
-    colors: ['transparent'],
-    dataLabels: { enabled: false, },
-    markers: {
-      strokeColor: '#EDAE50',
-      strokeWidth: 2,
-      fillColor: '#fff',
-      hover: { size: 8 }
+    grid: {
+      show: false,
     },
     stroke: {
-      curve: 'straight',
-      colors: ['#EDAE50'],
-      width: 2,
+      // colors: [specVault === 'false' ? '#12B76A' : 'white'],
+      colors: ['#12B76A'],
+      width: 3
     },
-    xaxis: {
-      type: 'datetime',
-      axisBorder: {show: false},
-      axisTicks: {show: false},
-      labels: {
-        style: { fontFamily: "Work Sans" },
-      }
-    },
-    yaxis: {
-      opposite: false,
-      show: false,
-      tickAmount: 3,
-      labels: {
-        style: { fontFamily: "Work Sans" },
-        formatter: (val, ix) => ('$ ' + numberWithCommas(val.toFixed(0)))
-      }
+    dataLabels: {
+      enabled: false
     },
     fill: {
+      opacity: 1,
       enabled: false,
-      type: 'gradient',
       gradient: {
         shade: 'dark',
         type: "vertical",
         shadeIntensity: 0.5,
-        gradientToColors: ['#EDAE30'],
+        gradientToColors: ['#F8DD9C'],
         inverseColors: true,
         opacityFrom: 0.6,
         opacityTo: 0.2,
         stops: [0, 20, 100],
         colorStops: []
       }
+    },
+    tooltip: {
+      enabled: false
+    },
+    markers: {
+      strokeColor: '#EDAE50',
+      size: 0,
+      strokeWidth: 2,
+      fillColor: '#fff',
+      hover: { size: 8 }
+    },
+    yaxis: {
+      labels: {
+        show: false
+      },
+      axisBorder: {
+        show: false
+      },
+      axisTicks: {
+        show: false
+      }
+    },
+    xaxis: {
+      show: false,
+      labels: {
+        show: false
+      },
+      axisBorder: {
+        show: false
+      },
+      axisTicks: {
+        show: false
+      }
     }
   })
 
-  const [loading, setLoading] = useState(false)
-  const [isDataReady, setIsDataReady] = useState(true)
+  const [, setLoading] = useState(false)
 
   useEffect(() => {
     const init = async () => {
       let mainData = []
       
       setLoading(true)
-      let ago = getRangeNumber(range)
+      let ago = 30
 
       let apyData = []
       if(data && (data.apyAutoCompounds !== undefined || data.apyRewards !== undefined)) {
         if(data.apyAutoCompounds.length === 0 && data.apyRewards.length === 0)  {
-          setIsDataReady(false)
           return
         }
       }
@@ -227,16 +239,15 @@ const ApexChart = ({data, range, lastAPY}) => {
       let apyRewards = data.apyRewards !== undefined ? data.apyRewards : []
 
       apyData = generateChartDataForApy(apyAutoCompounds, apyRewards, 'apy')
-      if(lastAPY !== undefined && lastAPY !== 0)
+      if(lastAPY !== undefined && lastAPY !== 0 && apyData.length !== 0)
         apyData[0]["apy"] = lastAPY
 
-      let slotCount = 50
+      let slotCount = 30
       let slots = getTimeSlots(ago, slotCount)
 
       let maxAPY = lastAPY, minAPY
 
       if(apyData.length === 0) {
-        setIsDataReady(false)
         return
       }
       
@@ -318,7 +329,7 @@ const ApexChart = ({data, range, lastAPY}) => {
             show: false,
           },
           stroke: {
-            colors: ['white'],
+            colors: [specVault === 'false' ? '#12B76A' : 'white'],
             width: 3
           },
           dataLabels: {
@@ -339,15 +350,15 @@ const ApexChart = ({data, range, lastAPY}) => {
               colorStops: []
             }
           },
+          tooltip: {
+            enabled: false
+          },
           markers: {
             strokeColor: '#EDAE50',
             size: 0,
             strokeWidth: 2,
             fillColor: '#fff',
             hover: { size: 8 }
-          },
-          tooltip: {
-            show: false,
           },
           yaxis: yAxis,
           xaxis: {
@@ -368,24 +379,23 @@ const ApexChart = ({data, range, lastAPY}) => {
     }
 
     init()
-  }, [backColor, range, data, lastAPY, isDataReady])
+  }, [backColor, data, lastAPY, specVault])
 
   return (
     <>
       {
-        !loading ? 
+        // !loading ? 
         <Chart
             options={options}
             series={mainSeries}
             type="area"
-            height='100%'
+            height='100'
+            width="180"
         />
-        : 
-        <LoadingDiv>
-          {isDataReady ? 
-          <ClipLoader size={30} margin={2} color={fontColor}></ClipLoader>
-          : <NoData color={fontColor}>&nbsp;No data !</NoData>}
-        </LoadingDiv>
+        // : 
+        // <LoadingDiv>
+        //   {<ClipLoader size={30} margin={2} color={fontColor}></ClipLoader>}
+        // </LoadingDiv>
       }
     </>
   )

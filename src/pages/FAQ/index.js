@@ -46,19 +46,19 @@ const FAQ = () => {
                 <Collapsible
                   lazyRender={item.lazyRender !== undefined ? item.lazyRender : true}
                   triggerWhenOpen={
-                    <Question open backColor={backColor} borderColor={borderColor}>
+                    <Question open >
                       {item.question}
                       <DropdownToggle open src={DropdownToggleImageOpen} />
                     </Question>
                   }
                   trigger={
-                    <Question backColor={backColor} borderColor={borderColor}>
+                    <Question>
                         {item.question}
                       <DropdownToggle src={DropdownToggleImageClosed} />
                     </Question>
                   }
                 >
-                  <Answer backColor={backColor} borderColor={borderColor}>{item.answer}</Answer>
+                  <Answer>{item.answer}</Answer>
                 </Collapsible>
               </QuestionContainer>
             ))}

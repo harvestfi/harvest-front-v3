@@ -88,8 +88,8 @@ export function ThemeProvider({ children }) {
   const toggleInactiveBackColor = darkMode ? '' : '#F2F4F7'
   const toggleActiveBackColor = darkMode ? '' : '#7F56D9'
 
-  const sidebarFontColor = darkMode ? '' : '#344054'
-  const sidebarActiveFontColor = darkMode ? '' : '#101828'
+  const sidebarFontColor = darkMode ? 'white' : '#344054'
+  const sidebarActiveFontColor = darkMode ? '#D0D5DD' : '#101828'
   return (
     <ThemeContext.Provider value={{ darkMode, setDarkMode, switchMode, pageBackColor, fontColor, backColor, borderColor, filterColor, boxShadowColor, hoverImgColor,
       switchDarkIconFilter, switchLightIconFilter, switchLightBorder, switchDarkBorder, switchDarkBack, switchLightBack, sidebarEffect, 

@@ -8,9 +8,5 @@ const LoadingDiv = styled.div`
     justify-content: center;
 `
 
-const NoData = styled.div`
-    color: ${props=>props.fontColor};
-`
-
-export { LoadingDiv, NoData }
+export { LoadingDiv }
 
