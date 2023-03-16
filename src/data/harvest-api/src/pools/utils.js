@@ -7,7 +7,7 @@ const { default: BigNumber } = require('bignumber.js')
 const { getWeeklyCompound, getDailyCompound } = require('../lib/utils')
 const { getTokenPrice } = require('../prices')
 const tokenAddresses = require('../lib/data/addresses.json')
-const { web3Socket, web3 } = require('../lib/web3')
+const { web3 } = require('../lib/web3')
 const { pool: poolContractInfo, potPool: potPoolContractInfo } = require('../lib/web3/contracts')
 
 const getIncentivePoolStats = async (
@@ -15,19 +15,11 @@ const getIncentivePoolStats = async (
   poolContractData,
   lpTokenData,
   weeklyRewardRateOverride, // used to overwrite the reward amount per week (currently used for ampliFARM and INCENTIVE_BUYBACK pools)
-  basisPoolId,
   rewardTokenAddress,
   isPotPool,
 ) => {
   const {
-    methods: {
-      periodFinish,
-      rewardRate,
-      rewardRateForToken,
-      periodFinishForToken,
-      totalSupply,
-      rewardRatePerPool,
-    },
+    methods: { periodFinish, rewardRate, rewardRateForToken, periodFinishForToken, totalSupply },
     instance,
   } = poolContractData
 
@@ -40,8 +32,6 @@ const getIncentivePoolStats = async (
 
   const fetchedRewardRate = isPotPool
     ? new BigNumber(await rewardRateForToken(rewardTokenAddress, instance))
-    : !isUndefined(basisPoolId)
-    ? new BigNumber(await rewardRatePerPool(basisPoolId, instance))
     : new BigNumber(await rewardRate(instance))
 
   const fetchedTokenPrice = await getTokenPrice(rewardTokenAddress, pool.chain)
@@ -59,11 +49,7 @@ const getIncentivePoolStats = async (
     stakingTokenPrice = await getTokenPrice(lpTokenData.address, pool.chain)
   }
 
-  fetchedTotalSupply = new BigNumber(
-    !isUndefined(basisPoolId)
-      ? await totalSupply(basisPoolId, instance)
-      : await totalSupply(instance),
-  )
+  fetchedTotalSupply = new BigNumber(await totalSupply(instance))
 
   // Set to one in the case of zero to avoid division by zero
   if (fetchedTotalSupply.eq(0)) {
@@ -95,6 +81,10 @@ const getIncentivePoolStats = async (
   }
 }
 
+const isPotPool = pool => {
+  return size(pool.rewardTokens) >= 2 || pool.chain === CHAIN_TYPES.ARBITRUM_ONE
+}
+
 const getPoolStatsPerType = async (pool, poolContractData, lpTokenData, weeklyReward, fresh) => {
   let cachedStats
 
@@ -118,9 +108,8 @@ const getPoolStatsPerType = async (pool, poolContractData, lpTokenData, weeklyRe
           poolContractData,
           lpTokenData,
           undefined,
-          undefined,
           rewardTokenAddress,
-          size(pool.rewardTokens) >= 2,
+          isPotPool(pool),
         )
         if (pool.chain === CHAIN_TYPES.ETH) {
           poolStats.apy = getWeeklyCompound(poolStats.apr)
@@ -134,9 +123,8 @@ const getPoolStatsPerType = async (pool, poolContractData, lpTokenData, weeklyRe
           poolContractData,
           lpTokenData,
           undefined,
-          undefined,
           rewardTokenAddress,
-          size(pool.rewardTokens) >= 2,
+          isPotPool(pool),
         )
 
         if (rewardTokenAddress === addresses.iFARM) {
@@ -154,8 +142,8 @@ const getPoolStatsPerType = async (pool, poolContractData, lpTokenData, weeklyRe
           poolContractData,
           lpTokenData,
           undefined,
-          undefined,
           rewardTokenAddress,
+          isPotPool(pool),
         )
         poolStats.apy = getDailyCompound(poolStats.apr)
         break
@@ -167,7 +155,7 @@ const getPoolStatsPerType = async (pool, poolContractData, lpTokenData, weeklyRe
           (rewardTokenAddress === tokenAddresses.iFARM ||
             rewardTokenAddress === tokenAddresses.FARM)
         ) {
-          const wsPoolInstance = new web3Socket.eth.Contract(
+          const poolInstance = new web3.eth.Contract(
             rewardTokenAddress === tokenAddresses.iFARM
               ? potPoolContractInfo.contract.abi
               : poolContractInfo.contract.abi,
@@ -178,7 +166,7 @@ const getPoolStatsPerType = async (pool, poolContractData, lpTokenData, weeklyRe
           const blockTenDaysAgo = Number(mostRecentBlockNumber) - 64000 // Average blocks per day is ~6400, so this is ten days worth
 
           const rewardEvents = (
-            await wsPoolInstance.getPastEvents('RewardAdded', {
+            await poolInstance.getPastEvents('RewardAdded', {
               fromBlock: blockTenDaysAgo,
               toBlock: 'latest',
             })
@@ -229,9 +217,8 @@ const getPoolStatsPerType = async (pool, poolContractData, lpTokenData, weeklyRe
           poolContractData,
           lpTokenData,
           weeklyRewardRateOverride,
-          undefined,
           rewardTokenAddress,
-          size(pool.rewardTokens) >= 2,
+          isPotPool(pool),
         )
         poolStats.apy = getWeeklyCompound(poolStats.apr)
         break
@@ -270,4 +257,5 @@ const getPoolStatsPerType = async (pool, poolContractData, lpTokenData, weeklyRe
 module.exports = {
   getPoolStatsPerType,
   getIncentivePoolStats,
+  isPotPool,
 }

@@ -3,8 +3,8 @@ import styled from 'styled-components'
 const Container = styled.div`
   display: flex;
   margin-bottom: 5px;
-  color: ${props=>props.fontColor};
-  
+  color: ${props => props.fontColor};
+
   @media screen and (max-width: 992px) {
     // width: 100%;
   }
@@ -21,10 +21,10 @@ const Label = styled.div`
 
 const Content = styled.div`
   // width: 50%;
-  font-size: ${props => props.size }px;
-  font-weight: ${props => props.weight ? props => props.weight : "normal"};
-  line-height: ${props => props.height }px;
-  color: ${props => props.color };
+  font-size: ${props => props.size}px;
+  font-weight: ${props => (props.weight ? prop => prop.weight : 'normal')};
+  line-height: ${props => props.height}px;
+  color: ${props => props.color};
   align-self: center;
 `
 
@@ -34,10 +34,12 @@ const Percent = styled.div`
   margin-left: 10px;
 
   ${props =>
-    props.up ? `
+    props.up
+      ? `
       background: ${props.dashboardBack};
       color: ${props.dashboardColor};
-    ` : `
+    `
+      : `
       background: #FEE3E3;
       color: #E64D3E;
   `}
@@ -54,4 +56,4 @@ const TextInner = styled.div`
   }
 `
 
-export { Container, Label, Content, Percent, TextInner, }
+export { Container, Label, Content, Percent, TextInner }

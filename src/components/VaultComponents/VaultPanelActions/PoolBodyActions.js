@@ -1,32 +1,36 @@
-import React from 'react'
-import { get, size } from 'lodash'
-import ReactTooltip from 'react-tooltip'
 import BigNumber from 'bignumber.js'
+import { get, size } from 'lodash'
+import React from 'react'
+import ReactTooltip from 'react-tooltip'
 import {
   ACTIONS,
   FARM_TOKEN_SYMBOL,
-  POOL_BALANCES_DECIMALS,
   IFARM_TOKEN_SYMBOL,
+  POOL_BALANCES_DECIMALS,
   SPECIAL_VAULTS,
 } from '../../../constants'
 import { useActions } from '../../../providers/Actions'
 import { useContracts } from '../../../providers/Contracts'
-import { useThemeContext } from '../../../providers/useThemeContext'
 import { usePools } from '../../../providers/Pools'
+import { useThemeContext } from '../../../providers/useThemeContext'
 import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
-import Button from '../../Button'
-import { formatNumber, hasAmountGreaterThanZero, hasRequirementsForInteraction } from '../../../utils'
+import { fromWei } from '../../../services/web3'
 import {
-  SelectedVaultContainer,
+  formatNumber,
+  hasAmountGreaterThanZero,
+  hasRequirementsForInteraction,
+} from '../../../utils'
+import AnimatedDots from '../../AnimatedDots'
+import Button from '../../Button'
+import Counter from '../../Counter'
+import { Monospace, SmallLogo } from '../../GlobalStyle'
+import {
   SelectedVault,
+  SelectedVaultContainer,
   SelectedVaultLabel,
   SelectedVaultNumber,
 } from './style'
-import { fromWei } from '../../../services/web3'
-import AnimatedDots from '../../AnimatedDots'
-import { Monospace, SmallLogo } from '../../GlobalStyle'
-import Counter from '../../Counter'
 
 const { addresses, tokens } = require('../../../data')
 
@@ -63,7 +67,6 @@ const PoolBodyActions = ({
   rewardTokenSymbols,
   rewardsEarned,
   isSpecialVault,
-  hasHodlCategory,
 }) => {
   const { contracts } = useContracts()
   const { fetchUserPoolStats, userStats } = usePools()
@@ -101,7 +104,6 @@ const PoolBodyActions = ({
       {size(rewardTokenSymbols) >= 2 ? (
         rewardTokenSymbols.slice(1, size(rewardTokenSymbols)).map((symbol, symbolIdx) =>
           !hodlVaultId &&
-          !hasHodlCategory &&
           rewardTokenSymbols.length > 1 &&
           ((account &&
             Number(fAssetPool.rewardAPY[symbolIdx] || 0) === 0 &&
@@ -151,7 +153,7 @@ const PoolBodyActions = ({
         )
       ) : !hodlVaultId ? (
         <SelectedVault data-tip="" data-for={`${fAssetPool.id}-unstaked-details`}>
-          <SelectedVaultLabel fontColor={fontColor} justifyContent={"start"}>
+          <SelectedVaultLabel fontColor={fontColor} justifyContent="start">
             Your Unstaked <b>{fAssetSymbol}</b>
           </SelectedVaultLabel>
           <SelectedVaultNumber>
@@ -172,7 +174,7 @@ const PoolBodyActions = ({
           </SelectedVaultNumber>
         </SelectedVault>
       ) : null}
-      
+
       <ReactTooltip
         id={`${fAssetPool.id}-staked-details`}
         backgroundColor="#fffce6"
@@ -267,19 +269,23 @@ const PoolBodyActions = ({
             textColor="black"
           >
             <b>
-              {tokens[IFARM_TOKEN_SYMBOL].displayName}: Interest-bearing {FARM_TOKEN_SYMBOL}
+              {tokens[IFARM_TOKEN_SYMBOL].tokenNames.join(', ')}: Interest-bearing{' '}
+              {FARM_TOKEN_SYMBOL}
             </b>
             <br />
             <>
               {iFARMBalanceToEther <= 0 ? '1' : iFARMBalanceToEther}{' '}
-              <b>{tokens[IFARM_TOKEN_SYMBOL].displayName}</b> = {iFARMinFARMInEther}{' '}
+              <b>{tokens[IFARM_TOKEN_SYMBOL].tokenNames.join(', ')}</b> = {iFARMinFARMInEther}{' '}
               <b>{FARM_TOKEN_SYMBOL}</b>
             </>
           </ReactTooltip>
           <SelectedVault data-tip="" data-for="ifarm-details">
             <SelectedVaultLabel>
-              Your <b>{tokens[IFARM_TOKEN_SYMBOL].displayName}</b>&nbsp;
-              <SmallLogo src="/icons/ifarm.png" alt={tokens[IFARM_TOKEN_SYMBOL].displayName} />
+              Your <b>{tokens[IFARM_TOKEN_SYMBOL].tokenNames.join(', ')}</b>&nbsp;
+              <SmallLogo
+                src="/icons/ifarm.png"
+                alt={tokens[IFARM_TOKEN_SYMBOL].tokenNames.join(', ')}
+              />
             </SelectedVaultLabel>
             <SelectedVaultNumber>
               <Monospace>

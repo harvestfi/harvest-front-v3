@@ -1,24 +1,22 @@
 import React, { useEffect } from 'react'
 import { useThemeContext } from '../../providers/useThemeContext'
 import {
-  Container, FarmType, Text, ContentResult, ContentImg,
-  ContentMiddle, Percent, Img, ChartDiv
+  Container,
+  FarmType,
+  Text,
+  ContentResult,
+  ContentImg,
+  ContentMiddle,
+  Percent,
+  Img,
+  ChartDiv,
 } from './style'
 import { displayAPY, getTotalApy, getDataQuery } from '../../utils'
-import {
-  DECIMAL_PRECISION,
-  directDetailUrl,
-} from '../../constants'
+import { DECIMAL_PRECISION, directDetailUrl } from '../../constants'
 import SmallApexChart from '../SmallApexChart'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 
-const HomeComponentInfo = ({
-  token,
-  vaultPool,
-  tokenVault,
-  text,
-  url,
-}) => {
+const HomeComponentInfo = ({ token, vaultPool, tokenVault, text, url }) => {
   const isSpecialVault = token.liquidityPoolVault || token.poolVault
 
   const totalApy = isSpecialVault
@@ -28,13 +26,13 @@ const HomeComponentInfo = ({
   const { fontColor, backColor, borderColor } = useThemeContext()
 
   const chainId = token.chain || token.data.chain
-  let address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+  const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
   const [apiData, setApiData] = React.useState({})
-  
-  useEffect(()=>{
+
+  useEffect(() => {
     const initData = async () => {
-      let data = await getDataQuery(365, address, chainId, null)
-      
+      const data = await getDataQuery(365, address, chainId, null)
+
       setApiData(data)
     }
 
@@ -42,7 +40,7 @@ const HomeComponentInfo = ({
   }, [address, chainId])
 
   return (
-    <Container href={directDetailUrl + url} backColor={backColor} borderColor={borderColor} >
+    <Container href={directDetailUrl + url} backColor={backColor} borderColor={borderColor}>
       <ContentMiddle>
         <Img>
           {token.logoUrl
@@ -50,8 +48,8 @@ const HomeComponentInfo = ({
                 <ContentImg
                   key={symbol}
                   id={symbolIdx}
-                  width={'32px'}
-                  height={'32px'}
+                  width="32px"
+                  height="32px"
                   margin="0px 5px 0px 0px"
                   src={symbol}
                 />
@@ -70,7 +68,7 @@ const HomeComponentInfo = ({
           &nbsp;APY
         </Percent>
         <ChartDiv>
-          <SmallApexChart data={apiData} lastAPY={Number(totalApy)} specVault={"false"} />
+          <SmallApexChart data={apiData} lastAPY={Number(totalApy)} specVault="false" />
         </ChartDiv>
       </ContentResult>
     </Container>

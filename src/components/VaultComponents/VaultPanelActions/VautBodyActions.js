@@ -1,35 +1,36 @@
-import React from 'react'
-import { get, size } from 'lodash'
-import ReactTooltip from 'react-tooltip'
 import BigNumber from 'bignumber.js'
-import { useHistory } from 'react-router-dom'
+import { get, size } from 'lodash'
+import React from 'react'
+import ReactTooltip from 'react-tooltip'
 import {
   ACTIONS,
   FARM_TOKEN_SYMBOL,
-  POOL_BALANCES_DECIMALS,
   IFARM_TOKEN_SYMBOL,
-  AMPLIFARM_TOKEN_SYMBOL,
-  ROUTES,
+  POOL_BALANCES_DECIMALS,
   SPECIAL_VAULTS,
 } from '../../../constants'
 import { useActions } from '../../../providers/Actions'
 import { useContracts } from '../../../providers/Contracts'
 import { usePools } from '../../../providers/Pools'
+import { useThemeContext } from '../../../providers/useThemeContext'
 import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
-import Button from '../../Button'
-import { formatNumber, hasAmountGreaterThanZero, hasRequirementsForInteraction } from '../../../utils'
+import { fromWei } from '../../../services/web3'
 import {
-  SelectedVaultContainer,
+  formatNumber,
+  hasAmountGreaterThanZero,
+  hasRequirementsForInteraction,
+} from '../../../utils'
+import AnimatedDots from '../../AnimatedDots'
+import Button from '../../Button'
+import Counter from '../../Counter'
+import { Monospace, SmallLogo } from '../../GlobalStyle'
+import {
   SelectedVault,
+  SelectedVaultContainer,
   SelectedVaultLabel,
   SelectedVaultNumber,
 } from './style'
-import { fromWei } from '../../../services/web3'
-import AnimatedDots from '../../AnimatedDots'
-import { Monospace, SmallLogo } from '../../GlobalStyle'
-import Counter from '../../Counter'
-import { useThemeContext } from '../../../providers/useThemeContext'
 
 const { addresses, tokens } = require('../../../data')
 
@@ -62,7 +63,6 @@ const VaultBodyActions = ({
   iFARMBalanceToEther,
   totalTokensEarned,
   ratesPerDay,
-  hasHodlCategory,
   iFARMinFARMInEther,
   rewardTokenSymbols,
   rewardsEarned,
@@ -72,7 +72,6 @@ const VaultBodyActions = ({
   const { account, getWalletBalances, connected, balancesToLoad } = useWallet()
   const { vaultsData } = useVaults()
   const { handleStake } = useActions()
-  const { push } = useHistory()
 
   const hodlVaultId = get(vaultsData, `[${tokenSymbol}].hodlVaultId`)
 
@@ -104,7 +103,6 @@ const VaultBodyActions = ({
       {size(rewardTokenSymbols) >= 2 ? (
         rewardTokenSymbols.map((symbol, symbolIdx) =>
           (!hodlVaultId &&
-            !hasHodlCategory &&
             rewardTokenSymbols.length > 1 &&
             ((account &&
               Number(fAssetPool.rewardAPY[symbolIdx] || 0) === 0 &&
@@ -112,17 +110,6 @@ const VaultBodyActions = ({
               (!account && Number(fAssetPool.rewardAPY[symbolIdx] || 0) === 0))) ||
           symbolIdx === 0 ? null : (
             <SelectedVault key={`${symbol}-rewards-earned`}>
-              <SelectedVaultLabel
-                onClick={() => {
-                  if (symbol === AMPLIFARM_TOKEN_SYMBOL) {
-                    push(ROUTES.AMPLIFARM)
-                  }
-                }}
-                link={symbol === AMPLIFARM_TOKEN_SYMBOL}
-              >
-                Total <b>{symbol}</b>
-                &nbsp;Earned{' '}
-              </SelectedVaultLabel>
               <SelectedVaultNumber>
                 <Monospace>
                   {!connected ? (
@@ -184,7 +171,7 @@ const VaultBodyActions = ({
           </SelectedVaultNumber>
         </SelectedVault>
       ) : null}
-      
+
       <ReactTooltip
         id={`${fAssetPool.id}-staked-details`}
         backgroundColor="#fffce6"
@@ -288,19 +275,23 @@ const VaultBodyActions = ({
             textColor="black"
           >
             <b>
-              {tokens[IFARM_TOKEN_SYMBOL].displayName}: Interest-bearing {FARM_TOKEN_SYMBOL}
+              {tokens[IFARM_TOKEN_SYMBOL].tokenNames.join(', ')}: Interest-bearing{' '}
+              {FARM_TOKEN_SYMBOL}
             </b>
             <br />
             <>
               {iFARMBalanceToEther <= 0 ? '1' : iFARMBalanceToEther}{' '}
-              <b>{tokens[IFARM_TOKEN_SYMBOL].displayName}</b> = {iFARMinFARMInEther}{' '}
+              <b>{tokens[IFARM_TOKEN_SYMBOL].tokenNames.join(', ')}</b> = {iFARMinFARMInEther}{' '}
               <b>{FARM_TOKEN_SYMBOL}</b>
             </>
           </ReactTooltip>
           <SelectedVault data-tip="" data-for="ifarm-details">
             <SelectedVaultLabel>
-              Your <b>{tokens[IFARM_TOKEN_SYMBOL].displayName}</b>&nbsp;
-              <SmallLogo src="/icons/ifarm.png" alt={tokens[IFARM_TOKEN_SYMBOL].displayName} />
+              Your <b>{tokens[IFARM_TOKEN_SYMBOL].tokenNames.join(', ')}</b>&nbsp;
+              <SmallLogo
+                src="/icons/ifarm.png"
+                alt={tokens[IFARM_TOKEN_SYMBOL].tokenNames.join(', ')}
+              />
             </SelectedVaultLabel>
             <SelectedVaultNumber>
               <Monospace>

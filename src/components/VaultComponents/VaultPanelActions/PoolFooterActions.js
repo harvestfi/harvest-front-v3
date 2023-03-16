@@ -1,33 +1,42 @@
-import React, { useMemo } from 'react'
 import { get } from 'lodash'
+import React, { useMemo } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { ACTIONS, SPECIAL_VAULTS, FARM_TOKEN_SYMBOL, FARM_USDC_TOKEN_SYMBOL, FARM_WETH_TOKEN_SYMBOL,
-  FARM_GRAIN_TOKEN_SYMBOL } from '../../../constants'
-  import { VAULT_CATEGORIES_IDS } from '../../../data/constants'
+import {
+  ACTIONS,
+  FARM_GRAIN_TOKEN_SYMBOL,
+  FARM_TOKEN_SYMBOL,
+  FARM_USDC_TOKEN_SYMBOL,
+  FARM_WETH_TOKEN_SYMBOL,
+  SPECIAL_VAULTS,
+} from '../../../constants'
 import { useActions } from '../../../providers/Actions'
 import { usePools } from '../../../providers/Pools'
-import { useVaults } from '../../../providers/Vault'
-import { useWallet } from '../../../providers/Wallet'
 import { useStats } from '../../../providers/Stats'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import Button from '../../Button'
-import { formatNumber, hasAmountGreaterThanZero, hasRequirementsForInteraction } from '../../../utils'
+import { useVaults } from '../../../providers/Vault'
+import { useWallet } from '../../../providers/Wallet'
 import {
-  SelectedVaultContainer,
-  SelectedVault,
-  SelectedVaultLabel,
-  SelectedVaultNumber,
+  formatNumber,
+  hasAmountGreaterThanZero,
+  hasRequirementsForInteraction,
+} from '../../../utils'
+import Button from '../../Button'
+import {
+  Div,
   // MarginTopDiv,
   InfoIcon,
-  Div,
+  SelectedVault,
+  SelectedVaultContainer,
+  SelectedVaultLabel,
+  SelectedVaultNumber,
   USDValue,
 } from './style'
 // import VaultPanelModeSwitch from '../../VaultPanelModeSwitch'
-import { Monospace } from '../../GlobalStyle'
-import Counter from '../../Counter'
+import Info from '../../../assets/images/logos/earn/info.svg'
 import { fromWei } from '../../../services/web3'
 import AnimatedDots from '../../AnimatedDots'
-import Info from '../../../assets/images/logos/earn/info.svg'
+import Counter from '../../Counter'
+import { Monospace } from '../../GlobalStyle'
 
 const { tokens } = require('../../../data')
 
@@ -74,107 +83,83 @@ const PoolFooterActions = ({
         poolVault: true,
         profitShareAPY,
         data: farmProfitSharingPool,
-        logoUrl: ['./icons/iFarm.svg'],
+        logoUrl: ['./icons/ifarm.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
+        tokenNames: ['FARM'],
         isNew: tokens[FARM_TOKEN_SYMBOL].isNew,
         newDetails: tokens[FARM_TOKEN_SYMBOL].newDetails,
-        category: VAULT_CATEGORIES_IDS.GENERAL,
       },
       [FARM_WETH_TOKEN_SYMBOL]: {
         liquidityPoolVault: true,
-        displayName: 'FARM, ETH', //'FARM/ETH',
-        subLabel: 'Uniswap',
+        tokenNames: ['FARM, ETH'], // 'FARM/ETH',
+        platform: ['Uniswap'],
         data: farmWethPool,
         logoUrl: ['./icons/farm.svg', './icons/weth.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
         isNew: tokens[FARM_WETH_TOKEN_SYMBOL].isNew,
-        category: VAULT_CATEGORIES_IDS.LIQUIDITY,
       },
       [FARM_GRAIN_TOKEN_SYMBOL]: {
         liquidityPoolVault: true,
-        displayName: 'FARM, GRAIN', //'FARM/GRAIN',
-        subLabel: 'Uniswap',
+        tokenNames: ['FARM, GRAIN'], // 'FARM/GRAIN',
+        platform: ['Uniswap'],
         data: farmGrainPool,
         logoUrl: ['./icons/farm.svg', './icons/grain.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
         isNew: tokens[FARM_GRAIN_TOKEN_SYMBOL].isNew,
-        category: VAULT_CATEGORIES_IDS.LIQUIDITY,
       },
       [FARM_USDC_TOKEN_SYMBOL]: {
         liquidityPoolVault: true,
         inactive: true,
-        displayName: 'FARM/USDC',
+        tokenNames: ['FARM', 'USDC'],
+        platform: ['Uniswap'],
         data: farmUsdcPool,
         logoUrl: ['./icons/farm.svg', './icons/usdc.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
         isNew: tokens[FARM_USDC_TOKEN_SYMBOL].isNew,
       },
     }),
-    [
-      farmGrainPool,
-      farmWethPool,
-      farmUsdcPool,
-      farmProfitSharingPool,
-      profitShareAPY,
-    ],
+    [farmGrainPool, farmWethPool, farmUsdcPool, farmProfitSharingPool, profitShareAPY],
   )
   const groupOfVaults = { ...vaultsData, ...poolVaults }
 
   return (
-    <SelectedVaultContainer maxWidth="100%" margin="0px" padding="0px" borderWidth="0px" borderColor={borderColor}>
+    <SelectedVaultContainer
+      maxWidth="100%"
+      margin="0px"
+      padding="0px"
+      borderWidth="0px"
+      borderColor={borderColor}
+    >
       <SelectedVault alignItems="center" justifyContent="start">
         <SelectedVaultLabel fontSize="16px" lineHeight="21px" fontColor={fontColor}>
           Rewards
-          <InfoIcon className="info" width={isMobile ? 10 : 16} src={Info} alt="" data-tip data-for={`claim-tooltip-${tokenSymbol}`} filterColor={filterColor} />
+          <InfoIcon
+            className="info"
+            width={isMobile ? 10 : 16}
+            src={Info}
+            alt=""
+            data-tip
+            data-for={`claim-tooltip-${tokenSymbol}`}
+            filterColor={filterColor}
+          />
         </SelectedVaultLabel>
       </SelectedVault>
       {fAssetPool.id !== SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID &&
         rewardTokenSymbols.map((symbol, symbolIdx) => {
           const token = groupOfVaults[symbol]
           let usdPrice = 1
-          if(token !== undefined) {
-            usdPrice = (symbol === FARM_TOKEN_SYMBOL ? token.data.lpTokenData && token.data.lpTokenData.price : token.usdPrice) || 1
+          if (token !== undefined) {
+            usdPrice =
+              (symbol === FARM_TOKEN_SYMBOL
+                ? token.data.lpTokenData && token.data.lpTokenData.price
+                : token.usdPrice) || 1
           }
-        return (
-          <div key={symbolIdx}>
-            <SelectedVault key={`${symbol}-rewards-earned`}>
-              <SelectedVaultNumber display={"flex"}>
-                <img src={`/icons/${symbol.toLowerCase()}.svg`} width={40} height={40} alt="" />
-                <Div>
-                  <Monospace>
-                    {!connected ? (
-                      formatNumber(0, 8)
-                    ) : !isLoadingData &&
-                      get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`) ? (
-                      <Counter
-                        pool={fAssetPool}
-                        totalTokensEarned={
-                          rewardTokenSymbols.length > 1
-                            ? fromWei(
-                                get(rewardsEarned, symbol, 0),
-                                get(tokens[symbol], 'decimals', 18),
-                                4,
-                              )
-                            : totalTokensEarned
-                        }
-                        totalStaked={get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)}
-                        ratePerDay={get(ratesPerDay, symbolIdx, ratesPerDay[0])}
-                        rewardPerToken={get(
-                          fAssetPool,
-                          `rewardPerToken[${symbolIdx}]`,
-                          fAssetPool.rewardPerToken[0],
-                        )}
-                        rewardTokenAddress={get(
-                          fAssetPool,
-                          `rewardTokens[${symbolIdx}]`,
-                          fAssetPool.rewardTokens[0],
-                        )}
-                      />
-                    ) : (
-                      <AnimatedDots />
-                    )}
-                  </Monospace>
-                  <USDValue>
+          return (
+            <div key={symbolIdx}>
+              <SelectedVault key={`${symbol}-rewards-earned`}>
+                <SelectedVaultNumber display="flex">
+                  <img src={`/icons/${symbol.toLowerCase()}.svg`} width={40} height={40} alt="" />
+                  <Div>
                     <Monospace>
                       {!connected ? (
                         formatNumber(0, 8)
@@ -183,13 +168,13 @@ const PoolFooterActions = ({
                         <Counter
                           pool={fAssetPool}
                           totalTokensEarned={
-                            (rewardTokenSymbols.length > 1
+                            rewardTokenSymbols.length > 1
                               ? fromWei(
                                   get(rewardsEarned, symbol, 0),
                                   get(tokens[symbol], 'decimals', 18),
                                   4,
                                 )
-                              : totalTokensEarned) * usdPrice 
+                              : totalTokensEarned
                           }
                           totalStaked={get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)}
                           ratePerDay={get(ratesPerDay, symbolIdx, ratesPerDay[0])}
@@ -208,37 +193,72 @@ const PoolFooterActions = ({
                         <AnimatedDots />
                       )}
                     </Monospace>
-                  </USDValue>
-                </Div>
-              </SelectedVaultNumber>
-            </SelectedVault>
-            <SelectedVault alignItems="center">
-              <Button
-                width="100%"
-                size="md"
-                color="earn"
-                onClick={() =>
-                  handleClaim(account, fAssetPool, setPendingAction, async () => {
-                    await getWalletBalances([poolRewardSymbol])
-                    setLoadingDots(false, true)
-                    await fetchUserPoolStats([fAssetPool], account, userStats)
-                    setLoadingDots(false, false)
-                  })
-                }
-                disabled={
-                  !hasRequirementsForInteraction(
-                    loaded,
-                    pendingAction,
-                    vaultsData,
-                    loadingBalances,
-                  ) || !hasAmountGreaterThanZero(totalRewardsEarned)
-                }
-              >
-                {pendingAction === ACTIONS.CLAIM ? 'Processing...' : 'Claim'}
-              </Button>
-            </SelectedVault>
-          </div>
-        )})}
+                    <USDValue>
+                      <Monospace>
+                        {!connected ? (
+                          formatNumber(0, 8)
+                        ) : !isLoadingData &&
+                          get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`) ? (
+                          <Counter
+                            pool={fAssetPool}
+                            totalTokensEarned={
+                              (rewardTokenSymbols.length > 1
+                                ? fromWei(
+                                    get(rewardsEarned, symbol, 0),
+                                    get(tokens[symbol], 'decimals', 18),
+                                    4,
+                                  )
+                                : totalTokensEarned) * usdPrice
+                            }
+                            totalStaked={get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)}
+                            ratePerDay={get(ratesPerDay, symbolIdx, ratesPerDay[0])}
+                            rewardPerToken={get(
+                              fAssetPool,
+                              `rewardPerToken[${symbolIdx}]`,
+                              fAssetPool.rewardPerToken[0],
+                            )}
+                            rewardTokenAddress={get(
+                              fAssetPool,
+                              `rewardTokens[${symbolIdx}]`,
+                              fAssetPool.rewardTokens[0],
+                            )}
+                          />
+                        ) : (
+                          <AnimatedDots />
+                        )}
+                      </Monospace>
+                    </USDValue>
+                  </Div>
+                </SelectedVaultNumber>
+              </SelectedVault>
+              <SelectedVault alignItems="center">
+                <Button
+                  width="100%"
+                  size="md"
+                  color="earn"
+                  onClick={() =>
+                    handleClaim(account, fAssetPool, setPendingAction, async () => {
+                      await getWalletBalances([poolRewardSymbol])
+                      setLoadingDots(false, true)
+                      await fetchUserPoolStats([fAssetPool], account, userStats)
+                      setLoadingDots(false, false)
+                    })
+                  }
+                  disabled={
+                    !hasRequirementsForInteraction(
+                      loaded,
+                      pendingAction,
+                      vaultsData,
+                      loadingBalances,
+                    ) || !hasAmountGreaterThanZero(totalRewardsEarned)
+                  }
+                >
+                  {pendingAction === ACTIONS.CLAIM ? 'Processing...' : 'Claim'}
+                </Button>
+              </SelectedVault>
+            </div>
+          )
+        })}
     </SelectedVaultContainer>
   )
 }

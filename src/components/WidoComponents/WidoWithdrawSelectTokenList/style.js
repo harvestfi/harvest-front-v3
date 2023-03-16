@@ -9,12 +9,12 @@ const Container = styled.div`
   align-items: center;
 
   &:hover {
-    background: ${props=>props.hoverColor};
+    background: ${props => props.hoverColor};
     border-radius: 10px;
   }
 
   &.active {
-    background: ${props=>props.activeColor};
+    background: ${props => props.activeColor};
     border-radius: 10px;
   }
 `
@@ -42,7 +42,7 @@ const Content = styled.div`
   }
 
   &::-webkit-scrollbar-thumb {
-    background-color: #CAF1D5 ;
+    background-color: #caf1d5;
     border-radius: 6px;
     border: none;
   }

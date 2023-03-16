@@ -7,7 +7,7 @@ export const validateChain = async (
   // if (Number(currentWalletNetwork) !== Number(currentChain)) {
   //   onInvalid()
   // } else {
-    await onSuccess()
+  await onSuccess()
   // }
 }
 

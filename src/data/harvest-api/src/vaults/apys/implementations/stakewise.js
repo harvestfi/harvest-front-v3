@@ -70,17 +70,20 @@ const getRewardApr = async (liquidityPercent, tvl, lpAddress) => {
     swiseDistributionContract.address.mainnet,
   )
 
+  const currentBlock = await web3.eth.getBlockNumber()
+  const fromBlock = currentBlock - 215000 //~30 days
+
   const distributionEvents = orderBy(
     (
       await swiseDistributionInstance.getPastEvents('PeriodicDistributionAdded', {
         filter: { beneficiary: lpAddress },
-        fromBlock: 12651371, //start of distribution
+        fromBlock: fromBlock, //start of distribution
         toBlock: 'latest',
       })
     ).concat(
       await swiseDistributionInstance.getPastEvents('DistributionAdded', {
         filter: { beneficiary: lpAddress },
-        fromBlock: 12651371, //start of distribution
+        fromBlock: fromBlock, //start of distribution
         toBlock: 'latest',
       }),
     ),

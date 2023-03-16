@@ -21,7 +21,6 @@ const {
 } = require('../lib/web3/contracts/uniswap-v3-vault/methods')
 const contractData = require('../lib/web3/contracts/token/contract.json')
 const { getSymbol, getDecimals } = require('../lib/web3/contracts/token/methods.js')
-const { VAULT_CATEGORIES_IDS } = require('../../data/constants')
 const {
   DB_CACHE_IDS,
   DEBUG_MODE,
@@ -63,11 +62,16 @@ const fetchAndExpandVault = async symbol => {
 
   const vaultInstance = new web3Instance.eth.Contract(abi, vaultData.vaultAddress)
 
-  underlyingBalanceWithInvestment = await getUnderlyingBalanceWithInvestment(vaultInstance)
-
-  pricePerFullShare = await getPricePerFullShare(vaultInstance)
-
   totalSupply = await getTotalSupply(vaultInstance)
+
+  //HOTFIX
+  try {
+    underlyingBalanceWithInvestment = await getUnderlyingBalanceWithInvestment(vaultInstance)
+    pricePerFullShare = await getPricePerFullShare(vaultInstance)
+  } catch (error) {
+    underlyingBalanceWithInvestment = totalSupply
+    pricePerFullShare = 1
+  }
 
   const { estimatedApy, estimatedApyBreakdown } = await executeEstimateApyFunctions(
     symbol,
@@ -132,7 +136,7 @@ const fetchAndExpandVault = async symbol => {
     })
   }
 
-  if (vaultData.category === VAULT_CATEGORIES_IDS.UNIV3MANAGED) {
+  if (vaultData.isManaged) {
     let cap = [],
       capLimit = null,
       capToken = null,

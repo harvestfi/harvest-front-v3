@@ -5,14 +5,13 @@ import TokensIcon from '../../assets/images/ui/tokens.svg'
 const Container = styled.div`
   width: 100%;
   min-height: 100vh;
-  color: ${props=>props.fontColor};
+  color: ${props => props.fontColor};
 
   background: ${props => props.pageBackColor};
   transition: 0.25s;
   position: relative;
   z-index: 2;
   // margin-left: 320px;
-  
 
   @media screen and (min-width: 1920px) {
     display: flex;
@@ -29,7 +28,7 @@ const Container = styled.div`
 
 const Inner = styled.div`
   padding: 70px 76px 57px 76px;
-    
+
   @media screen and (min-width: 1920px) {
     width: 1450px;
   }
@@ -53,12 +52,12 @@ const SubPart = styled.div`
 const TotalValueRow = styled.div`
   display: flex;
   justify-content: space-between;
-  
+
   border-radius: 10px;
   margin-bottom: 30px;
 
-  border: 1px solid ${props=>props.borderColor};
-  background: ${props=>props.backColor};
+  border: 1px solid ${props => props.borderColor};
+  background: ${props => props.backColor};
   transition: 0.25s;
 `
 
@@ -89,18 +88,20 @@ const FarmTitle = styled.span`
 const TransactionDetails = styled.div`
   width: 100%;
   border-radius: 5px;
-  border: 1px solid ${props=>props.borderColor};
-  background: ${props=>props.backColor};
+  border: 1px solid ${props => props.borderColor};
+  background: ${props => props.backColor};
   transition: 0.25s;
 `
 
 const DetailView = styled.div`
   width: 100%;
   padding: 15px 6px;
-  ${props=>props.mode === 'dark' ? `
-    ${props.lastElement === 'yes' ? '' 
-      : 'border-bottom: 1px solid rgba(255, 255, 255, 0.5);'}
-  ` : `
+  ${props =>
+    props.mode === 'dark'
+      ? `
+    ${props.lastElement === 'yes' ? '' : 'border-bottom: 1px solid rgba(255, 255, 255, 0.5);'}
+  `
+      : `
     border: 1px solid #E9E9E9;
   `}
   transition: 0.25s;
@@ -113,14 +114,16 @@ const DetailView = styled.div`
 const FlexDiv = styled.div`
   display: flex;
   position: relative;
-  width: ${props => props.width ? props => props.width : "auto"};
+  width: ${props => (props.width ? props => props.width : 'auto')};
 
   @media screen and (max-width: 992px) {
-    ${props => props.display ? `
+    ${props =>
+      props.display
+        ? `
       display: ${props.display};
       // width: 50%;
-    ` : 
-    ``};
+    `
+        : ``};
   }
 `
 
@@ -156,7 +159,7 @@ const EmptyPanel = styled.div`
   // height: 50%;
   padding-top: 5%;
   padding-bottom: 5%;
-  
+
   border-radius: 5px;
   @media screen and (max-width: 992px) {
     padding-top: 70px;
@@ -168,38 +171,53 @@ const EmptyImg = styled.img`
 `
 
 const EmptyInfo = styled.div`
-  ${props => props.weight ? `
+  ${props =>
+    props.weight
+      ? `
     font-weight: ${props.weight};
-  ` : ''}
-  ${props => props.size ? `
+  `
+      : ''}
+  ${props =>
+    props.size
+      ? `
     font-size: ${props.size}px;
-  ` : ''}
-  ${props => props.height ? `
+  `
+      : ''}
+  ${props =>
+    props.height
+      ? `
     line-height: ${props.height}px;
-  ` : ''}
-  ${props => props.color ? `
+  `
+      : ''}
+  ${props =>
+    props.color
+      ? `
     color: ${props.color};
-  ` : ''}
-  ${props => props.marginTop ? `
+  `
+      : ''}
+  ${props =>
+    props.marginTop
+      ? `
     margin-top: ${props.marginTop};
-  ` : ''}
+  `
+      : ''}
 
   text-align: center;
 `
 
 const ExploreFarm = styled.button`
-  background: #27AE60;
+  background: #27ae60;
   border-radius: 12px;
   color: white;
   padding: 15px 130px;
   border: none;
 
   &:hover {
-    background: #27AE60D0;
+    background: #27ae60d0;
   }
 
   &:active {
-    background: #27AE60F0;
+    background: #27ae60f0;
   }
 
   img {
@@ -232,12 +250,12 @@ const SecondPart = styled.div`
 
 const FirstContent = styled.div`
   // padding-top: 10px;
-  width: ${props => props.width ? props => props.width : "auto"};
+  width: ${props => (props.width ? props => props.width : 'auto')};
   font-weight: 400;
   font-size: 20px;
   line-height: 23px;
   align-self: center;
-  display: ${props=>props.display};
+  display: ${props => props.display};
   justify-content: center;
 
   .coin {
@@ -250,15 +268,17 @@ const FirstContent = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    ${props => props.display ? `
+    ${props =>
+      props.display
+        ? `
       display: ${props.display};
       justify-content: center;
       // margin-left: 10px;
       align-self: flex-start;
       margin-top: 14px;
       width: 40%;
-    ` : 
-    ``};
+    `
+        : ``};
 
     .coin {
       width: 32px;
@@ -279,11 +299,11 @@ const SecondContent = styled.div`
   // align-self: center;
 
   @media screen and (max-width: 992px) {
-      display: flex;
-      justify-content: space-between;
-      align-self: flex-start;
-      margin-top: 14px;
-      width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-self: flex-start;
+    margin-top: 14px;
+    width: 100%;
   }
 `
 
@@ -296,7 +316,7 @@ const BadgeIcon = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: ${props=>props.badgeBack};
+  background: ${props => props.badgeBack};
   box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.15);
   border-radius: 8px;
 
@@ -314,7 +334,7 @@ const ThemeMode = styled.div`
     height: fit-content;
     touch-action: pan-x;
     user-select: none;
-  
+
     input {
       cursor: pointer;
       position: absolute;
@@ -324,17 +344,17 @@ const ThemeMode = styled.div`
       width: 100%;
       opacity: 0;
     }
-  
+
     .switch-track {
-      background: ${props=>props.backColor};
-      border: 1px solid ${props=>props.borderColor};
+      background: ${props => props.backColor};
+      border: 1px solid ${props => props.borderColor};
       height: 24px;
       width: 50px;
       border-radius: 30px;
       transition: all 0.2s ease 0s;
     }
     .switch-thumb {
-      background: url(${props=>props.mode === "usd" ? UsdIcon : TokensIcon});
+      background: url(${props => (props.mode === 'usd' ? UsdIcon : TokensIcon)});
       background-size: cover;
       height: 22px;
       left: 1px;
@@ -345,13 +365,15 @@ const ThemeMode = styled.div`
       border-radius: 50%;
       transition: all 0.25s ease 0s;
     }
-  
+
     &:hover .switch-thumb {
-      box-shadow: 0 0 2px 3px #FF9400;
+      box-shadow: 0 0 2px 3px #ff9400;
     }
   }
 
-  ${props=>props.mode === "token" ? `
+  ${props =>
+    props.mode === 'token'
+      ? `
       #theme-switch {
         .switch-check {
           opacity: 1;
@@ -363,11 +385,32 @@ const ThemeMode = styled.div`
           left: 27px;
         }
       }
-    ` : `
+    `
+      : `
       
     `}
 `
 
-export { Container, SubPart, TotalValueRow, SecondaryPart, TransactionDetails, DetailView, FarmTitle, 
-  FlexDiv, MyFarm, FarmPic, BadgeIcon, Inner, EmptyPanel, EmptyInfo, EmptyImg, ExploreFarm,
-  FirstPart, FirstContent, SecondPart, SecondContent, ThemeMode }
+export {
+  Container,
+  SubPart,
+  TotalValueRow,
+  SecondaryPart,
+  TransactionDetails,
+  DetailView,
+  FarmTitle,
+  FlexDiv,
+  MyFarm,
+  FarmPic,
+  BadgeIcon,
+  Inner,
+  EmptyPanel,
+  EmptyInfo,
+  EmptyImg,
+  ExploreFarm,
+  FirstPart,
+  FirstContent,
+  SecondPart,
+  SecondContent,
+  ThemeMode,
+}

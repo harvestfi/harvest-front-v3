@@ -1,20 +1,28 @@
 import React, { useMemo } from 'react'
 import { get, find } from 'lodash'
-import { FarmContainer, FarmContent, FarmCompInner, BottomPart, FarmHeader, Title, Desc, ProfitShare } from './style'
+import {
+  FarmContainer,
+  FarmContent,
+  FarmCompInner,
+  BottomPart,
+  FarmHeader,
+  Title,
+  Desc,
+  ProfitShare,
+} from './style'
 import HomeComponentInfo from '../../components/HomeComponentInfo'
 import { usePools } from '../../providers/Pools'
 import { useVaults } from '../../providers/Vault'
 import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
-import { FARM_TOKEN_SYMBOL, SPECIAL_VAULTS } from '../../constants'
+import { FARM_TOKEN_SYMBOL, SPECIAL_VAULTS, directDetailUrl } from '../../constants'
 import ProfitSharingContainer from '../../components/ProfitSharing'
-import { directDetailUrl } from '../../constants'
 
 const vaultList = [
-  { compText: "Stablecoin", directUrl: "notional_DAI" },
-  { compText: "Blue Chip", directUrl: "convex_cvxCRV" },
-  { compText: "LSD", directUrl: "crvSTETH" },
-  { compText: "NFT", directUrl: "LOOKS" },
+  { compText: 'Stablecoin', directUrl: 'notional_DAI' },
+  { compText: 'Blue Chip', directUrl: 'convex_cvxCRV' },
+  { compText: 'LSD', directUrl: 'crvSTETH' },
+  { compText: 'NFT', directUrl: 'LOOKS' },
 ]
 
 const Home = () => {
@@ -35,12 +43,9 @@ const Home = () => {
         logoUrl: ['./icons/ifarm.svg'],
       },
     }),
-    [
-      profitShareAPY,
-      farmProfitSharingPool,
-    ],
-  )  
-  
+    [profitShareAPY, farmProfitSharingPool],
+  )
+
   const groupOfVaults = { ...vaultsData, ...poolVaults }
 
   return (
@@ -51,32 +56,36 @@ const Home = () => {
       </FarmHeader>
       <FarmContent>
         <BottomPart>
-        {vaultList.map((vaultSymbol, i) => {
-          const token = groupOfVaults[vaultSymbol.directUrl]
-          if(!token) return <></>
-          const tokenVault = get(vaultsData, token.hodlVaultId || vaultSymbol.directUrl)
-          const isSpecialVault = token.liquidityPoolVault || token.poolVault
+          {vaultList.map((vaultSymbol, i) => {
+            const token = groupOfVaults[vaultSymbol.directUrl]
+            if (!token) return <></>
+            const tokenVault = get(vaultsData, token.hodlVaultId || vaultSymbol.directUrl)
+            const isSpecialVault = token.liquidityPoolVault || token.poolVault
 
-          let vaultPool
-          if (isSpecialVault) {
-            vaultPool = token.data
-          } else {
-            vaultPool = find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
-          }
-          return (
-            <FarmCompInner key={i}>
-              <HomeComponentInfo
-                text={vaultList[i].compText} 
-                token={token}
-                vaultPool={vaultPool}
-                tokenVault={tokenVault}
-                url={vaultList[i].directUrl}
-              />
-            </FarmCompInner>)
-        })}
+            let vaultPool
+            if (isSpecialVault) {
+              vaultPool = token.data
+            } else {
+              vaultPool = find(
+                pools,
+                pool => pool.collateralAddress === get(tokenVault, `vaultAddress`),
+              )
+            }
+            return (
+              <FarmCompInner key={i}>
+                <HomeComponentInfo
+                  text={vaultList[i].compText}
+                  token={token}
+                  vaultPool={vaultPool}
+                  tokenVault={tokenVault}
+                  url={vaultList[i].directUrl}
+                />
+              </FarmCompInner>
+            )
+          })}
         </BottomPart>
-        <ProfitShare href={directDetailUrl + "FARM"}>
-          <ProfitSharingContainer height={"100%"} />
+        <ProfitShare href={`${directDetailUrl}FARM`}>
+          <ProfitSharingContainer height="100%" />
         </ProfitShare>
       </FarmContent>
     </FarmContainer>

@@ -8,17 +8,20 @@ const VaultContainer = styled.div`
   position: relative;
   transition: 0.25s;
 
-  ${props=>props.lastElement ? `
+  ${props =>
+    props.lastElement
+      ? `
     border-radius: 0 0 10px 10px;
-  ` : ''}
+  `
+      : ''}
 
   span {
     font-size: 16px;
   }
 
   &:hover {
-    background: ${props=>props.hoverColor};
-    
+    background: ${props => props.hoverColor};
+
     ${ArrowContainer} {
       background: #f2b435;
 

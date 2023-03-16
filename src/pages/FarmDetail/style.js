@@ -3,8 +3,8 @@ import styled from 'styled-components'
 const DetailView = styled.div`
   width: 100%;
   margin-left: 320px;
-  background: ${props=>props.pageBackColor};
-  color: ${props=>props.fontColor};
+  background: ${props => props.pageBackColor};
+  color: ${props => props.fontColor};
 
   @media screen and (min-width: 1920px) {
     display: flex;
@@ -45,50 +45,72 @@ const NewLabel = styled.div`
   font-weight: ${props => props.weight || '400'};
   font-size: ${props => props.size || '20px'};
   line-height: ${props => props.height || '0px'};
-  ${props => props.color ? `
+  ${props =>
+    props.color
+      ? `
     color: ${props.color};
-  ` : ""   
-  }
-  ${props => props.position ? `
+  `
+      : ''}
+  ${props =>
+    props.position
+      ? `
     position: ${props.position};
-  ` : ""   
-  }
-  ${props => props.align ? `
+  `
+      : ''}
+  ${props =>
+    props.align
+      ? `
     text-align: ${props.align};
-  ` : ""   
-  }
-  ${props => props.justifyContent ? `
+  `
+      : ''}
+  ${props =>
+    props.justifyContent
+      ? `
     justify-content: ${props.justifyContent};
-  ` : ""   
-  }
-  ${props => props.marginTop ? `
+  `
+      : ''}
+  ${props =>
+    props.marginTop
+      ? `
     margin-top: ${props.marginTop};
-  ` : ""   
-  }
-  ${props => props.marginLeft ? `
+  `
+      : ''}
+  ${props =>
+    props.marginLeft
+      ? `
     margin-left: ${props.marginLeft};
-  ` : ""   
-  }
-  ${props => props.marginBottom ? `
+  `
+      : ''}
+  ${props =>
+    props.marginBottom
+      ? `
     margin-bottom: ${props.marginBottom};
-  ` : ""   
-  }
-  ${props => props.marginRight ? `
+  `
+      : ''}
+  ${props =>
+    props.marginRight
+      ? `
     margin-right: ${props.marginRight};
-  ` : ""
-  }
-  ${props => props.display ? `
+  `
+      : ''}
+  ${props =>
+    props.display
+      ? `
     display: ${props.display};
-  ` : ""
-  }
-  ${props => props.items ? `
+  `
+      : ''}
+  ${props =>
+    props.items
+      ? `
     align-items: ${props.items};
-  ` : ""
-  }
-  ${props => props.self ? `
+  `
+      : ''}
+  ${props =>
+    props.self
+      ? `
     align-self: ${props.self};
-  ` : ""
-  }
+  `
+      : ''}
 
   img.icon {
     margin-right: 10px;
@@ -106,7 +128,7 @@ const NewLabel = styled.div`
     img.icon {
       margin-right: 5px;
     }
-  
+
     img.info {
       margin-left: 5px;
     }
@@ -117,20 +139,24 @@ const TopDesc = styled(NewLabel)`
   margin-left: 22px;
   margin-right: 19px;
   align-self: center;
-  color: ${props=>props.fontColor};
+  color: ${props => props.fontColor};
 `
 const FlexDiv = styled.div`
   display: flex;
 
-  ${props => props.marginTop ? `
+  ${props =>
+    props.marginTop
+      ? `
     margin-top: ${props.marginTop};
-  ` : ""   
-  }
+  `
+      : ''}
 
-  ${props => props.justifyContent ? `
+  ${props =>
+    props.justifyContent
+      ? `
     justify-content: ${props.justifyContent};
-  ` : ""   
-  }
+  `
+      : ''}
 
   @media screen and (max-width: 992px) {
     display: block;
@@ -164,47 +190,54 @@ const HalfContent = styled.div`
 
   @media screen and (max-width: 992px) {
     width: 100%;
-    ${props => props.show ? `
+    ${props =>
+      props.show
+        ? `
       display: block;
-    ` : `display: none;`
-    }
+    `
+        : `display: none;`}
   }
 `
 
 const HalfInfo = styled.div`
-  ${props => props.padding ? `
+  ${props =>
+    props.padding
+      ? `
   padding: ${props.padding};
-  ` : ""   
-  }
-  ${props => props.display ? `
+  `
+      : ''}
+  ${props =>
+    props.display
+      ? `
   display: ${props.display};
-  ` : ""   
-  }
-  ${props => props.justifyContent ? `
+  `
+      : ''}
+  ${props =>
+    props.justifyContent
+      ? `
   justify-content: ${props.justifyContent};
-  ` : ""   
-  }
+  `
+      : ''}
 
-  background: ${props=>props.backColor};
-  border: 1px solid ${props=>props.borderColor};
-  
+  background: ${props => props.backColor};
+  border: 1px solid ${props => props.borderColor};
+
   // box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
   border-radius: 10px;
   margin-bottom: 39px;
   font-family: 'DM Sans';
 `
 
-
 const BackBtnRect = styled.a`
   position: relative;
   border-radius: 12px;
   width: 35px;
   height: 35px;
-  background: ${props=>props.backcolor};
+  background: ${props => props.backcolor};
   &:hover {
-    background: ${props=>props.backhovercolor};
+    background: ${props => props.backhovercolor};
   }
-  
+
   margin-right: 18px;
   cursor: pointer;
   display: flex;
@@ -213,7 +246,7 @@ const BackBtnRect = styled.a`
 
 const BackArrow = styled.img`
   margin: auto;
-  filter: ${props=>props.iconcolor};
+  filter: ${props => props.iconcolor};
 `
 
 const ValueShow = styled.div`
@@ -232,35 +265,43 @@ const DescInfo = styled.div`
   font-style: normal;
 
   a {
-    color: ${props=>props.fontColor} !important;
+    color: ${props => props.fontColor} !important;
   }
 `
 
 const InfoLabel = styled.a`
-  ${props => props.weight ? `
+  ${props =>
+    props.weight
+      ? `
   font-weight: ${props.weight};
-  ` : ""
-  }
-  ${props => props.display ? `
+  `
+      : ''}
+  ${props =>
+    props.display
+      ? `
   display: ${props.display};
-  ` : ""
-  }
-  ${props => props.size ? `
+  `
+      : ''}
+  ${props =>
+    props.size
+      ? `
   font-size: ${props.size};
-  ` : ""
-  }
-  ${props => props.height ? `
+  `
+      : ''}
+  ${props =>
+    props.height
+      ? `
   line-height: ${props.height};
-  ` : ""
-  }
+  `
+      : ''}
   margin-right: 15px;
-  background: #CED3E6;
+  background: #ced3e6;
   border-radius: 6px;
   text-decoration: none;
   padding: 9px 17px;
   align-self: center;
   position: relative;
-  color: #1F2937;
+  color: #1f2937;
 
   img.icon {
     margin-right: 5px;
@@ -273,8 +314,8 @@ const InfoLabel = styled.a`
   }
 
   &:hover {
-    color: #1F2937;
-    background: #CED3E6C0;
+    color: #1f2937;
+    background: #ced3e6c0;
     .address {
       font-weight: bold;
     }
@@ -291,36 +332,40 @@ const RestContent = styled.div`
 
 const RestPart = styled.div`
   padding: 20px 27px;
-  border: 1px solid ${props=>props.borderColor};
-  background: ${props=>props.backColor};
-  
+  border: 1px solid ${props => props.borderColor};
+  background: ${props => props.backColor};
+
   border-radius: 10px;
   height: fit-content;
 
   @media screen and (max-width: 992px) {
     width: 100%;
-    ${props => props.show ? `
+    ${props =>
+      props.show
+        ? `
       display: block;
-    ` : `display: none;`
-    }
+    `
+        : `display: none;`}
   }
 `
 
 const RewardPart = styled.div`
   margin-top: 15px;
   padding: 20px 27px;
-  border: 1px solid ${props=>props.borderColor};
-  background: ${props=>props.backColor};
-  
+  border: 1px solid ${props => props.borderColor};
+  background: ${props => props.backColor};
+
   border-radius: 10px;
   height: fit-content;
 
   @media screen and (max-width: 992px) {
     width: 100%;
-    ${props => props.show ? `
+    ${props =>
+      props.show
+        ? `
       display: block;
-    ` : `display: none;`
-    }
+    `
+        : `display: none;`}
   }
 `
 
@@ -329,30 +374,34 @@ const BalanceItem = styled.div`
   margin: 5px auto;
   // background: #F9FAFC;
   border-radius: 12px;
-  border: 1px solid ${props=>props.borderColor};
+  border: 1px solid ${props => props.borderColor};
   padding: 15px 20px;
   position: relative;
 `
 
 const DivFlex = styled.div`
   display: flex;
-  ${props => props.justify ? `
+  ${props =>
+    props.justify
+      ? `
     justify-content: ${props.justify};
-  ` : ""   
-  }
-  ${props => props.width ? `
+  `
+      : ''}
+  ${props =>
+    props.width
+      ? `
     width: ${props.width};
-  ` : ""   
-  }
+  `
+      : ''}
 `
 
 const SwitchTag = styled.div`
   width: 100%;
   // height: 40px;
-  border: 1px solid ${props=>props.borderColor};
-  
+  border: 1px solid ${props => props.borderColor};
+
   border-radius: 12px;
-  margin-bottom: 15px;  
+  margin-bottom: 15px;
   display: flex;
 `
 
@@ -381,15 +430,19 @@ const Tag = styled.div`
     margin-left: -8px;
   }
 
-  ${props => props.active1 ? `
+  ${props =>
+    props.active1
+      ? `
     width: 55%;
     background: rgba(39, 174, 96, 0.3);
     color: #27AE60;
     font-weight: bold;
-  ` : ``
-  }
-  
-  ${props => props.active2 ? `
+  `
+      : ``}
+
+  ${props =>
+    props.active2
+      ? `
     width: 55%;
     background: rgba(255, 169, 169, 0.3);
     color: #FFA9A9;
@@ -397,15 +450,15 @@ const Tag = styled.div`
     
     &.tag2 {
       img {
-        filter: ${props=>props.filterColor};
+        filter: ${props => props.filterColor};
       }
     }
-  ` : `
+  `
+      : `
     &.tag2 {
       border-left: 0;
     }
-  `
-  }
+  `}
 
   cursor: pointer;
 
@@ -448,7 +501,7 @@ const SwitchModeMobile = styled.div`
     border-width: 0;
     // border: 1px solid #D1D1D1;
     border-radius: 12px;
-    margin-bottom: 20px;  
+    margin-bottom: 20px;
     margin-top: 13px;
     display: flex;
   }
@@ -463,23 +516,27 @@ const TagMobile = styled.div`
   line-height: 23px;
   text-align: center;
   padding: 16px 28px;
-  border-bottom: 2px solid #E9E9E9;
-  color: #1F2937;
-  ${props => props.farm ? `
+  border-bottom: 2px solid #e9e9e9;
+  color: #1f2937;
+  ${props =>
+    props.farm
+      ? `
     // background: #CAF1D5;
     color: #1F2937;
     border-bottom: 4px solid #FFD984;
     // box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
-  ` : ""
-  }
+  `
+      : ''}
 
-  ${props => props.details ? `
+  ${props =>
+    props.details
+      ? `
     // background: #FFA9A9;
     color: #1F2937;
     border-bottom: 4px solid #FFD984;
     // box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
-  ` : ""
-  }
+  `
+      : ''}
   // border-radius: 12px;
   cursor: pointer;
 
@@ -493,7 +550,7 @@ const MobileTop = styled.div`
 
   @media screen and (max-width: 992px) {
     display: block;
-    background: radial-gradient(81.9% 81.9% at 50% 18.1%, #00FF82 0%, #188E54 100%);
+    background: radial-gradient(81.9% 81.9% at 50% 18.1%, #00ff82 0%, #188e54 100%);
     border-radius: 20px;
     padding: 14px 13px;
     position: relative;
@@ -508,7 +565,7 @@ const MobileTop = styled.div`
 
 const CollaboButton = styled.button`
   padding: 5px 10px;
-  background: #F3E8F7;
+  background: #f3e8f7;
   border-radius: 10px;
 `
 
@@ -541,20 +598,51 @@ const ChainBack = styled.div`
 
 const LogoImg = styled.img`
   margin-right: -5px;
-  ${props => props.zIndex ? `
+  ${props =>
+    props.zIndex
+      ? `
     z-index: ${props.zIndex};
-  ` : ``}
+  `
+      : ``}
 `
 
-
 const InfoIcon = styled.img`
-  filter: ${props=>props.filterColor};
+  filter: ${props => props.filterColor};
   cursor: pointer;
 `
 
-export { DetailView, TopPart, TopDesc, HalfContent, FlexDiv, DescInfo, 
-  BackBtnRect, BackArrow, ValueShow, HalfInfo, InfoLabel, RestContent, BalanceItem,  
-  NewLabel, DivFlex, RestPart, SwitchTag, Tag, RewardsContainer, 
-  MigrationLabel, FlexTopDiv, SwitchModeMobile, TagMobile, MobileTop, CollaboButton,
-  Inner, BigDiv, TooltipContent, Name,  ChainBack, LogoImg, InfoIcon, RewardPart,
+export {
+  DetailView,
+  TopPart,
+  TopDesc,
+  HalfContent,
+  FlexDiv,
+  DescInfo,
+  BackBtnRect,
+  BackArrow,
+  ValueShow,
+  HalfInfo,
+  InfoLabel,
+  RestContent,
+  BalanceItem,
+  NewLabel,
+  DivFlex,
+  RestPart,
+  SwitchTag,
+  Tag,
+  RewardsContainer,
+  MigrationLabel,
+  FlexTopDiv,
+  SwitchModeMobile,
+  TagMobile,
+  MobileTop,
+  CollaboButton,
+  Inner,
+  BigDiv,
+  TooltipContent,
+  Name,
+  ChainBack,
+  LogoImg,
+  InfoIcon,
+  RewardPart,
 }

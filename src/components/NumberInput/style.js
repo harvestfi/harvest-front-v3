@@ -46,7 +46,7 @@ const Container = styled.div`
     line-height: 20px;
     color: white;
     border-radius: 6px;
-    background: #FFD984;
+    background: #ffd984;
     padding: 0 5px;
 
     &:hover {
@@ -82,8 +82,8 @@ const CoinInfo = styled.div`
   position: absolute;
   top: 0px;
   right: 0px;
-  background: ${props=>props.backColor};
-  border: 1px solid ${props=>props.borderColor};
+  background: ${props => props.backColor};
+  border: 1px solid ${props => props.borderColor};
   // box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
   border-radius: 12px;
   display: flex;

@@ -9,7 +9,7 @@
   "scripts": {
     "start": "./run-standalone.sh",
     "dev": "nodemon src/index.js",
-    "test": "PORT=3030 MONGODB_DB_NAME=harvest-test-local ACTIVE_ENDPOINTS=all mocha ./test/integration/*  --timeout 600000",
+    "test": "PORT=3000 MONGODB_DB_NAME=harvest-test-local ACTIVE_ENDPOINTS=all mocha ./test/integration/*  --timeout 600000",
     "debug-web3": "DEBUG_MODE=true yarn start",
     "print-vault": "node ./test/cli/print-vault",
     "test-schema": "node ./test/cli/test-schema",
@@ -19,15 +19,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/devstar0718/harvest-api.git"
+    "url": "git+https://github.com/harvestfi/harvest-api.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/devstar0718/harvest-api/issues"
+    "url": "https://github.com/harvestfi/harvest-api/issues"
   },
-  "homepage": "https://github.com/devstar0718/harvest-api#readme",
+  "homepage": "https://github.com/harvestfi/harvest-api#readme",
   "dependencies": {
     "@uniswap/sdk-core": "3.0.0",
     "@uniswap/v3-sdk": "3.0.0",

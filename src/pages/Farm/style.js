@@ -7,8 +7,8 @@ const FarmContainer = styled.div`
   background: ${props => props.pageBackColor};
   transition: 0.25s;
   // @media screen and (min-width: 1920px) {
-    display: flex;
-    justify-content: center;
+  display: flex;
+  justify-content: center;
   // }
 
   @media screen and (max-width: 992px) {

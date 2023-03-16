@@ -7,7 +7,7 @@ const CountdownContainer = styled.div`
   line-height: 21px;
   text-align: center;
   width: 100%;
-  color: ${props=>props.fontColor};
+  color: ${props => props.fontColor};
 `
 
 const DaysLabel = styled.label`

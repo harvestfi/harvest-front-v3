@@ -23,10 +23,10 @@ const Header = styled.div`
   justify-content: center;
   align-items: center;
   padding: 27px 40px 27px 20px;
-  color: ${props=>props.fontColor};
+  color: ${props => props.fontColor};
 
   img.sort-icon {
-    filter: ${props=>props.filterColor};
+    filter: ${props => props.filterColor};
   }
 
   transition: 0.25s;
@@ -53,7 +53,7 @@ const HeaderCol = styled.div`
   .hoverable {
     &:hover {
       cursor: pointer;
-      color: #FF9400;
+      color: #ff9400;
     }
   }
 `
@@ -63,7 +63,7 @@ const FlexDiv = styled.div`
 `
 
 const EmptyPanel = styled.div`
-  color: ${props=>props.fontColor};
+  color: ${props => props.fontColor};
   padding-top: 10%;
   padding-bottom: 30%;
   @media screen and (max-width: 992px) {
@@ -76,26 +76,38 @@ const EmptyImg = styled.img`
 `
 
 const EmptyInfo = styled.div`
-  ${props => props.weight ? `
+  ${props =>
+    props.weight
+      ? `
     font-weight: ${props.weight};
-  ` : ''}
-  ${props => props.size ? `
+  `
+      : ''}
+  ${props =>
+    props.size
+      ? `
     font-size: ${props.size}px;
-  ` : ''}
-  ${props => props.height ? `
+  `
+      : ''}
+  ${props =>
+    props.height
+      ? `
     line-height: ${props.height}px;
-  ` : ''}
-  color: ${props=>props.fontColor};
-  ${props => props.marginTop ? `
+  `
+      : ''}
+  color: ${props => props.fontColor};
+  ${props =>
+    props.marginTop
+      ? `
     margin-top: ${props.marginTop};
-  ` : ''}
+  `
+      : ''}
 
   text-align: center;
 `
 
 const VaultsListBody = styled.div`
-  border: 1px solid ${props=>props.borderColor};
-  background: ${props=>props.backColor};
+  border: 1px solid ${props => props.borderColor};
+  background: ${props => props.backColor};
   transition: 0.25s;
   border-radius: 10px;
 `
@@ -105,7 +117,7 @@ const MobileListFilter = styled.div`
     display: none;
   }
 
-  @media screen and (max-width:992px) {
+  @media screen and (max-width: 992px) {
     width: 100%;
     height: 7.8rem;
     display: flex;
@@ -115,33 +127,33 @@ const MobileListFilter = styled.div`
     .filter-sort {
       display: block;
       margin: 10px 20px 15px 20px;
-      background: ${props=>props.mobileBackColor} !important;
-      border: ${props=>props.borderColor};
+      background: ${props => props.mobileBackColor} !important;
+      border: ${props => props.borderColor};
       border-radius: 5px;
       position: relative;
-      color: #888E8F;
-      
+      color: #888e8f;
+
       .menu {
         width: 100%;
-        background: ${props=>props.backColor} !important;
+        background: ${props => props.backColor} !important;
 
         .item {
           div {
-            color: ${props=>props.fontColor} !important;
+            color: ${props => props.fontColor} !important;
           }
         }
       }
 
       &.show {
         .toggle {
-          background: ${props=>props.mobileBackColor};
-          color: #888E8F;
+          background: ${props => props.mobileBackColor};
+          color: #888e8f;
           border: none;
         }
       }
       .toggle {
-        background: ${props=>props.mobileBackColor};
-        color: #888E8F;
+        background: ${props => props.mobileBackColor};
+        color: #888e8f;
         display: flex;
         border: none;
         width: 100%;
@@ -155,7 +167,7 @@ const MobileListFilter = styled.div`
         }
 
         input {
-          background: #F5F5F5;
+          background: #f5f5f5;
           width: 100%;
           border: 0px;
         }
@@ -163,7 +175,7 @@ const MobileListFilter = styled.div`
         img.sort {
           margin-right: 6px;
         }
-    
+
         img.narrow {
           position: absolute;
           right: 10px;
@@ -175,12 +187,11 @@ const MobileListFilter = styled.div`
 `
 
 const Filtersinput = styled.input`
-
-  background: #FFFFFF;
+  background: #ffffff;
   border: 0px;
   outline: 0;
   border-radius: 5px;
-  color: #888E8F;
+  color: #888e8f;
   padding: 12px 20px 12px 32px;
   width: 80%;
   font-size: 12px;
@@ -201,7 +212,7 @@ const ThemeMode = styled.div`
     height: fit-content;
     touch-action: pan-x;
     user-select: none;
-  
+
     input {
       cursor: pointer;
       position: absolute;
@@ -211,17 +222,17 @@ const ThemeMode = styled.div`
       width: 100%;
       opacity: 0;
     }
-  
+
     .switch-track {
-      background: ${props=>props.backColor};
-      border: 1px solid ${props=>props.borderColor};
+      background: ${props => props.backColor};
+      border: 1px solid ${props => props.borderColor};
       height: 24px;
       width: 50px;
       border-radius: 30px;
       transition: all 0.2s ease 0s;
     }
     .switch-thumb {
-      background: url(${props=>props.mode === "usd" ? UsdIcon : TokensIcon});
+      background: url(${props => (props.mode === 'usd' ? UsdIcon : TokensIcon)});
       background-size: cover;
       height: 22px;
       left: 1px;
@@ -232,13 +243,15 @@ const ThemeMode = styled.div`
       border-radius: 50%;
       transition: all 0.25s ease 0s;
     }
-  
+
     &:hover .switch-thumb {
-      box-shadow: 0 0 2px 3px #FF9400;
+      box-shadow: 0 0 2px 3px #ff9400;
     }
   }
 
-  ${props=>props.mode === "token" ? `
+  ${props =>
+    props.mode === 'token'
+      ? `
       #theme-switch {
         .switch-check {
           opacity: 1;
@@ -250,10 +263,22 @@ const ThemeMode = styled.div`
           left: 27px;
         }
       }
-    ` : `
+    `
+      : `
       
     `}
 `
 
-export { Container, Header, HeaderCol, EmptyPanel, EmptyImg, EmptyInfo, FlexDiv, VaultsListBody,
-  MobileListFilter, Filtersinput, ThemeMode }
+export {
+  Container,
+  Header,
+  HeaderCol,
+  EmptyPanel,
+  EmptyImg,
+  EmptyInfo,
+  FlexDiv,
+  VaultsListBody,
+  MobileListFilter,
+  Filtersinput,
+  ThemeMode,
+}

@@ -13,7 +13,7 @@ const ButtonSwitch = ({ checked, setChecked, options }) => {
       color="earn"
       size="md"
       height="38px"
-      width={"100%"}
+      width="100%"
       onClick={() => {
         if (!disabled) {
           setChecked(!checked)

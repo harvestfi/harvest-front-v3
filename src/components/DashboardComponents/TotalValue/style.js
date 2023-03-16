@@ -4,7 +4,7 @@ const Container = styled.div`
   width: 48%;
   margin: 30px 20px 30px 27px;
   &:first-child {
-    border-right: 1px solid ${props=>props.borderColor};
+    border-right: 1px solid ${props => props.borderColor};
   }
   font-weight: 700;
 
@@ -19,7 +19,7 @@ const Div = styled.div`
   font-size: 16px;
   line-height: 21px;
   align-items: center;
-  
+
   img {
     margin-right: 11px;
   }

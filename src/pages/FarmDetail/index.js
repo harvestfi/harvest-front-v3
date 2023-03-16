@@ -1,59 +1,100 @@
 import BigNumber from 'bignumber.js'
-import React, { useMemo, useState, useRef, useEffect, useCallback } from 'react'
-import { useMediaQuery } from 'react-responsive'
-import { useParams, useHistory } from "react-router-dom"
+import { find, get, isArray, isEmpty, sumBy } from 'lodash'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ReactHtmlParser from 'react-html-parser'
-import ReactTooltip from 'react-tooltip';
-import { DetailView, TopPart, TopDesc, HalfContent, FlexDiv, HalfInfo, DescInfo, RestContent, BigDiv,
-  BackBtnRect, BackArrow, ValueShow, InfoLabel, BalanceItem, NewLabel, DivFlex, RestPart, RewardPart,
-  SwitchTag, Tag, RewardsContainer, MigrationLabel, FlexTopDiv, SwitchModeMobile, TagMobile, 
-  MobileTop, CollaboButton, Inner, ChainBack, LogoImg, InfoIcon, TooltipContent, Name, } from './style'
-import { sumBy, get, find, isArray, isEmpty } from 'lodash'
-import { fromWei, newContractInstance, toWei } from '../../services/web3'
-import uniStatusViewerContractData from '../../services/web3/contracts/unistatus-viewer/contract.json'
-import uniStatusViewerContractMethods from '../../services/web3/contracts/unistatus-viewer/methods'
-import tokenContractMethods from '../../services/web3/contracts/token/methods'
-import tokenContractData from '../../services/web3/contracts/token/contract.json'
-import { addresses } from '../../data'
-import { VAULT_CATEGORIES_IDS, CHAINS_ID } from '../../data/constants'
-import { hasValidAmountForInputAndMaxButton, hasAmountLessThanOrEqualTo, getDetailText,
-  displayAPY, getTotalApy, formatNumber, hasRequirementsForInteraction, } 
-  from '../../utils'
-import { usePools } from '../../providers/Pools'
-import { useVaults } from '../../providers/Vault'
-import { useWallet } from '../../providers/Wallet'
-import { useStats } from '../../providers/Stats'
+import { useMediaQuery } from 'react-responsive'
+import { useHistory, useParams } from 'react-router-dom'
+import ReactTooltip from 'react-tooltip'
+import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
+import ETHEREUM from '../../assets/images/chains/ethereum.svg'
+import POLYGON from '../../assets/images/chains/polygon.svg'
+import APY from '../../assets/images/logos/earn/apy.svg'
+import Back from '../../assets/images/logos/earn/back.svg'
+import CollaboBack from '../../assets/images/logos/earn/collabo-back.svg'
+import Collaboration from '../../assets/images/logos/earn/collaboration.svg'
+import Daily from '../../assets/images/logos/earn/daily.svg'
+import ExternalLink from '../../assets/images/logos/earn/externallink.svg'
+import Info from '../../assets/images/logos/earn/info.svg'
+import StrategyIcon from '../../assets/images/logos/earn/strategyicon.svg'
+import TVL from '../../assets/images/logos/earn/tvl.svg'
+import Uniswap from '../../assets/images/logos/earn/uniswap.svg'
+import VaultIcon from '../../assets/images/logos/earn/vaulticon.svg'
 import AnimatedDots from '../../components/AnimatedDots'
+import FarmDetailChart from '../../components/FarmDetailChart'
 import NumberInput from '../../components/NumberInput'
 import VaultPanelActions from '../../components/VaultComponents/VaultPanelActions'
 import VaultPanelActionsFooter from '../../components/VaultComponents/VaultPanelActions/VaultPanelActionsFooter'
-import FarmDetailChart from '../../components/FarmDetailChart'
-import { FARM_TOKEN_SYMBOL, FARM_USDC_TOKEN_SYMBOL, FARM_WETH_TOKEN_SYMBOL, FARM_GRAIN_TOKEN_SYMBOL,
-  IFARM_TOKEN_SYMBOL, SPECIAL_VAULTS, DECIMAL_PRECISION, UNIV3_POOL_ID_REGEX, PANEL_ACTIONS_TYPE, 
+import {
+  DECIMAL_PRECISION,
+  FARM_GRAIN_TOKEN_SYMBOL,
+  FARM_TOKEN_SYMBOL,
+  FARM_USDC_TOKEN_SYMBOL,
+  FARM_WETH_TOKEN_SYMBOL,
+  IFARM_TOKEN_SYMBOL,
+  PANEL_ACTIONS_TYPE,
+  SPECIAL_VAULTS,
+  UNIV3_POOL_ID_REGEX,
 } from '../../constants'
-import { getExplorerLink } from '../../services/web3'
-import Back from '../../assets/images/logos/earn/back.svg'
-import Uniswap from '../../assets/images/logos/earn/uniswap.svg'
-import APY from '../../assets/images/logos/earn/apy.svg'
-import TVL from '../../assets/images/logos/earn/tvl.svg'
-import Daily from '../../assets/images/logos/earn/daily.svg'
-import Info from '../../assets/images/logos/earn/info.svg'
-import StrategyIcon from '../../assets/images/logos/earn/strategyicon.svg'
-import VaultIcon from '../../assets/images/logos/earn/vaulticon.svg'
-import ExternalLink from '../../assets/images/logos/earn/externallink.svg'
-import Collaboration from '../../assets/images/logos/earn/collaboration.svg'
-import CollaboBack from '../../assets/images/logos/earn/collabo-back.svg'
-import POLYGON from '../../assets/images/chains/polygon.svg'
-import BNB from '../../assets/images/chains/bnb.svg'
-import ETHEREUM from '../../assets/images/chains/ethereum.svg'
-import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
+import { CHAINS_ID } from '../../data/constants'
+import { usePools } from '../../providers/Pools'
+import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
+import { useVaults } from '../../providers/Vault'
+import { useWallet } from '../../providers/Wallet'
+import { fromWei, getExplorerLink, newContractInstance, toWei } from '../../services/web3'
+import tokenContractData from '../../services/web3/contracts/token/contract.json'
+import tokenContractMethods from '../../services/web3/contracts/token/methods'
+import uniStatusViewerContractData from '../../services/web3/contracts/unistatus-viewer/contract.json'
+import uniStatusViewerContractMethods from '../../services/web3/contracts/unistatus-viewer/methods'
+import {
+  displayAPY,
+  formatNumber,
+  getDetailText,
+  getTotalApy,
+  hasAmountLessThanOrEqualTo,
+  hasRequirementsForInteraction,
+  hasValidAmountForInputAndMaxButton,
+} from '../../utils'
+import {
+  BackArrow,
+  BackBtnRect,
+  BalanceItem,
+  BigDiv,
+  ChainBack,
+  CollaboButton,
+  DescInfo,
+  DetailView,
+  DivFlex,
+  FlexDiv,
+  FlexTopDiv,
+  HalfContent,
+  HalfInfo,
+  InfoIcon,
+  InfoLabel,
+  Inner,
+  LogoImg,
+  MigrationLabel,
+  MobileTop,
+  Name,
+  NewLabel,
+  RestContent,
+  RestPart,
+  RewardPart,
+  RewardsContainer,
+  SwitchModeMobile,
+  SwitchTag,
+  Tag,
+  TagMobile,
+  TooltipContent,
+  TopDesc,
+  TopPart,
+  ValueShow,
+} from './style'
 
 const chainList = [
-  { id: 1, name: "Ethereum", chainId: 1},
-  { id: 2, name: "Polygon", chainId: 137},
-  { id: 3, name: "BNB", chainId: 56},
-  { id: 4, name: "Arbitrum", chainId: 42161},
+  { id: 1, name: 'Ethereum', chainId: 1 },
+  { id: 2, name: 'Polygon', chainId: 137 },
+  { id: 4, name: 'Arbitrum', chainId: 42161 },
 ]
 
 const getVaultValue = token => {
@@ -81,23 +122,16 @@ const getVaultValue = token => {
   }
 }
 
-const FarmDetail = ( ) => {
-  let { id } = useParams()
-  const {loadingVaults, vaultsData} = useVaults()
+const FarmDetail = () => {
+  const { id } = useParams()
+  const { loadingVaults, vaultsData } = useVaults()
   const { account, balances, chain, connected } = useWallet()
 
   const { pools, fetchUserPoolStats, userStats } = usePools()
-  
-  const BadgeAry = [
-    ETHEREUM,
-    POLYGON,
-    BNB,
-    ARBITRUM,
-  ]
 
-  const {
-    profitShareAPY,
-  } = useStats()
+  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM]
+
+  const { profitShareAPY } = useStats()
 
   // Switch Tag (Deposit/Withdraw)
   const [active1, setActive1] = useState(true)
@@ -110,7 +144,7 @@ const FarmDetail = ( ) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const { tokens } = require('../../data')
-  
+
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )
@@ -124,61 +158,53 @@ const FarmDetail = ( ) => {
         poolVault: true,
         profitShareAPY,
         data: farmProfitSharingPool,
-        logoUrl: ['./icons/farm.svg'],
+        logoUrl: ['./icons/ifarm.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
+        tokenNames: ['FARM'],
         isNew: tokens[FARM_TOKEN_SYMBOL].isNew,
         newDetails: tokens[FARM_TOKEN_SYMBOL].newDetails,
-        category: VAULT_CATEGORIES_IDS.GENERAL,
       },
       [FARM_WETH_TOKEN_SYMBOL]: {
         liquidityPoolVault: true,
-        displayName: 'FARM, ETH', //'FARM/ETH',
-        subLabel: 'Uniswap',
+        tokenNames: ['FARM, ETH'], // 'FARM/ETH',
+        platform: ['Uniswap'],
         data: farmWethPool,
         logoUrl: ['./icons/farm.svg', './icons/weth.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
         isNew: tokens[FARM_WETH_TOKEN_SYMBOL].isNew,
-        category: VAULT_CATEGORIES_IDS.LIQUIDITY,
       },
       [FARM_GRAIN_TOKEN_SYMBOL]: {
         liquidityPoolVault: true,
-        displayName: 'FARM, GRAIN', //'FARM/GRAIN',
-        subLabel: 'Uniswap',
+        tokenNames: ['FARM, GRAIN'], // 'FARM/GRAIN',
+        platform: ['Uniswap'],
         data: farmGrainPool,
         logoUrl: ['./icons/farm.svg', './icons/grain.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
         isNew: tokens[FARM_GRAIN_TOKEN_SYMBOL].isNew,
-        category: VAULT_CATEGORIES_IDS.LIQUIDITY,
       },
       [FARM_USDC_TOKEN_SYMBOL]: {
         liquidityPoolVault: true,
         inactive: true,
-        displayName: 'FARM/USDC',
+        tokenNames: ['FARM', 'USDC'],
+        platform: ['Uniswap'],
         data: farmUsdcPool,
         logoUrl: ['./icons/farm.svg', './icons/usdc.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
         isNew: tokens[FARM_USDC_TOKEN_SYMBOL].isNew,
       },
     }),
-    [
-      tokens,
-      farmGrainPool,
-      farmWethPool,
-      farmUsdcPool,
-      farmProfitSharingPool,
-      profitShareAPY,
-    ],
+    [tokens, farmGrainPool, farmWethPool, farmUsdcPool, farmProfitSharingPool, profitShareAPY],
   )
 
   const groupOfVaults = { ...vaultsData, ...poolVaults }
 
   const [useIFARM, setIFARM] = useState(id === FARM_TOKEN_SYMBOL)
   const token = groupOfVaults[id]
-  let logoUrl = useIFARM ? tokens[IFARM_TOKEN_SYMBOL].logoUrl : token.logoUrl
+  const logoUrl = useIFARM ? tokens[IFARM_TOKEN_SYMBOL].logoUrl : token.logoUrl
 
-  //show chart only about one token for temp
-  const tokenChart = groupOfVaults['FARM']
-  let vaultPoolChart = tokenChart.data
+  // show chart only about one token for temp
+  const tokenChart = groupOfVaults.FARM
+  const vaultPoolChart = tokenChart.data
 
   const isSpecialVault = token.liquidityPoolVault || token.poolVault
   const tokenVault = get(vaultsData, token.hodlVaultId || id)
@@ -197,16 +223,15 @@ const FarmDetail = ( ) => {
     ? getTotalApy(null, token, true)
     : getTotalApy(vaultPool, tokenVault)
 
-  const isAmpliFARM = get(vaultPool, 'rewardTokens', []).includes(addresses.BSC.ampliFARM)
   const boostedRewardAPY = get(vaultPool, 'boostedRewardAPY', 0)
-  
+
   const chainId = token.chain || token.data.chain
   const [badgeId, setBadgeId] = useState(-1)
 
   useEffect(() => {
     const getBadge = () => {
-      chainList.forEach((el, i)=>{
-        if(el.chainId === Number(chainId)) {
+      chainList.forEach((el, i) => {
+        if (el.chainId === Number(chainId)) {
           setBadgeId(i)
         }
       })
@@ -214,15 +239,15 @@ const FarmDetail = ( ) => {
     getBadge()
   }, [chainId])
   const rewardTxt = getDetailText(
-      token,
-      vaultPool,
-      tradingApy,
-      farmAPY,
-      totalApy,
-      true,
-      boostedEstimatedAPY,
-      boostedRewardAPY,
-    )
+    token,
+    vaultPool,
+    tradingApy,
+    farmAPY,
+    totalApy,
+    true,
+    boostedEstimatedAPY,
+    boostedRewardAPY,
+  )
   const { push } = useHistory()
   const [autoUnStake, setUnAutoStake] = useState(true)
   const [zap, selectZapMode] = useState(!token.disableAutoSwap)
@@ -259,7 +284,7 @@ const FarmDetail = ( ) => {
       }),
     [id, tokens],
   )
-  
+
   const fAssetSymbol = isSpecialVault ? id : token.apyTokenSymbols[0]
   const [loadingFarmingBalance, setFarmingLoading] = useState(false)
   const [loadingLpStats, setLpStatsloading] = useState(false)
@@ -267,7 +292,7 @@ const FarmDetail = ( ) => {
   const [withdrawMode, setWithdrawMode] = useState(false)
   const [oldLpTokenBalance, setOldLpTokenBalance] = useState(null)
   const [oldAmountToExecute, setOldAmountToExecute] = useState(null)
-  
+
   const totalAmountToExecute = useMemo(() => sumBy(amountsToExecute, amount => Number(amount)), [
     amountsToExecute,
   ])
@@ -280,15 +305,15 @@ const FarmDetail = ( ) => {
 
   const showTVL = () => {
     return (
-    <>
-      {token.excludeVaultStats ? (
-        'N/A'
-      ) : vaultValue ? (
-        <>{formatNumber(vaultValue, 2)}</>
-      ) : (
-        <AnimatedDots />
-      )}
-    </>
+      <>
+        {token.excludeVaultStats ? (
+          'N/A'
+        ) : vaultValue ? (
+          <>{formatNumber(vaultValue, 2)}</>
+        ) : (
+          <AnimatedDots />
+        )}
+      </>
     )
   }
 
@@ -369,18 +394,13 @@ const FarmDetail = ( ) => {
       setAmountsForPosition(amounts)
     }
 
-    if (
-      multipleAssets &&
-      connected &&
-      chain === CHAINS_ID.ETH_MAINNET
-    ) {
+    if (multipleAssets && connected && chain === CHAINS_ID.ETH_MAINNET) {
       fetchAmountsForPosition()
     }
   }, [multipleAssets, token, chain, connected, id])
 
   useEffect(() => {
     const fetchUserPositions = async () => {
-            
       if (token.migrationInfo) {
         const { lpTokenAddress, lpTokenDecimals } = token.migrationInfo
 
@@ -394,7 +414,6 @@ const FarmDetail = ( ) => {
         setOldLpTokenBalance(fromWei(fetchedOldLpTokenBalance, lpTokenDecimals))
         setOldAmountToExecute(fromWei(fetchedOldLpTokenBalance, lpTokenDecimals))
       }
-
     }
 
     if (multipleAssets && connected && chain === CHAINS_ID.ETH_MAINNET) {
@@ -403,12 +422,7 @@ const FarmDetail = ( ) => {
   }, [totalAmountToExecute, multipleAssets, token, chain, account, connected])
 
   useEffect(() => {
-    if (
-      account &&
-      fAssetPool &&
-      fAssetPool.lpTokenData &&
-      !isEmpty(userStats)
-    ) {
+    if (account && fAssetPool && fAssetPool.lpTokenData && !isEmpty(userStats)) {
       const loadUserPoolsStats = async () => {
         const poolsToLoad = [fAssetPool]
         const hodlVaultId = get(vaultsData, `[${id}].hodlVaultId`)
@@ -427,15 +441,7 @@ const FarmDetail = ( ) => {
       }
       loadUserPoolsStats()
     }
-  }, [
-    account,
-    fAssetPool,
-    fetchUserPoolStats,
-    pools,
-    vaultsData,
-    id,
-    userStats,
-  ])
+  }, [account, fAssetPool, fetchUserPoolStats, pools, vaultsData, id, userStats])
 
   const viewComponentProps = {
     token,
@@ -469,32 +475,35 @@ const FarmDetail = ( ) => {
     selectZapMode,
   }
 
-  const { backColor, pageBackColor, fontColor, borderColor, filterColor, widoBackIconColor,
-    widoBackBtnBackColor, widoBackBtnBackHoverColor } = useThemeContext()
+  const {
+    backColor,
+    pageBackColor,
+    fontColor,
+    borderColor,
+    filterColor,
+    widoBackIconColor,
+    widoBackBtnBackColor,
+    widoBackBtnBackHoverColor,
+  } = useThemeContext()
 
   const showAPY = () => {
     return (
       <>
-      {
-        isSpecialVault ? (
-        token.data && token.data.loaded && (token.data.dataFetched === false || totalApy !== null) ? (
-          <div>
-            <RewardsContainer>
-              {token.inactive ? (
-                'Inactive'
-              ) : (
-                <>
-                  {totalApy ? displayAPY(totalApy) : null}
-                </>
-              )}
-            </RewardsContainer>
-          </div>
-        ) : (
-          <div>
-            <AnimatedDots />
-          </div>
-        )
-      ) : vaultPool.loaded && totalApy !== null && !loadingVaults ? (
+        {isSpecialVault ? (
+          token.data &&
+          token.data.loaded &&
+          (token.data.dataFetched === false || totalApy !== null) ? (
+            <div>
+              <RewardsContainer>
+                {token.inactive ? 'Inactive' : <>{totalApy ? displayAPY(totalApy) : null}</>}
+              </RewardsContainer>
+            </div>
+          ) : (
+            <div>
+              <AnimatedDots />
+            </div>
+          )
+        ) : vaultPool.loaded && totalApy !== null && !loadingVaults ? (
           <RewardsContainer>
             {token.inactive || token.testInactive || token.hideTotalApy || !token.dataFetched ? (
               token.inactive || token.testInactive ? (
@@ -503,62 +512,50 @@ const FarmDetail = ( ) => {
             ) : (
               <>
                 <b>
-                  {isAmpliFARM
-                    ? `${displayAPY(
-                        new BigNumber(totalApy).minus(boostedRewardAPY).toFixed(2),
-                        DECIMAL_PRECISION,
-                        10,
-                      )}→${displayAPY(totalApy, DECIMAL_PRECISION, 10)}`
-                    : displayAPY(totalApy, DECIMAL_PRECISION, 10)}
+                  {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
                   &nbsp;
                 </b>
               </>
             )}
           </RewardsContainer>
-      ) : (
-        <div>
-          <AnimatedDots />
-        </div>
-      )}
+        ) : (
+          <div>
+            <AnimatedDots />
+          </div>
+        )}
       </>
     )
   }
 
-  const apyDaily = totalApy ? ((Math.pow(Number(totalApy) / 100 + 1, 1 / 365) - 1) * 100).toFixed(3) : null
+  const apyDaily = totalApy
+    ? ((Math.pow(Number(totalApy) / 100 + 1, 1 / 365) - 1) * 100).toFixed(3)
+    : null
   const showApyDaily = () => {
     return (
       <>
-      {
-        isSpecialVault ? (
-        token.data && token.data.loaded && (token.data.dataFetched === false || totalApy !== null) ? (
+        {isSpecialVault ? (
+          token.data &&
+          token.data.loaded &&
+          (token.data.dataFetched === false || totalApy !== null) ? (
             <RewardsContainer>
-              {token.inactive ? (
-                'Inactive'
-              ) : (
-                <>
-                  {totalApy ? `${apyDaily}%` : null}
-                </>
-              )}
+              {token.inactive ? 'Inactive' : <>{totalApy ? `${apyDaily}%` : null}</>}
             </RewardsContainer>
-        ) : (
+          ) : (
             <AnimatedDots />
-        )
-      ) : vaultPool.loaded && totalApy !== null && !loadingVaults ? (
+          )
+        ) : vaultPool.loaded && totalApy !== null && !loadingVaults ? (
           <RewardsContainer>
             {token.inactive || token.testInactive || token.hideTotalApy || !token.dataFetched ? (
               token.inactive || token.testInactive ? (
                 'Inactive'
               ) : null
             ) : (
-                <b>
-                  {apyDaily}%
-                  &nbsp;
-                </b>
+              <b>{apyDaily}% &nbsp;</b>
             )}
           </RewardsContainer>
-      ) : (
+        ) : (
           <AnimatedDots />
-      )}
+        )}
       </>
     )
   }
@@ -567,72 +564,123 @@ const FarmDetail = ( ) => {
     <DetailView pageBackColor={pageBackColor} fontColor={fontColor}>
       <Inner>
         <TopPart>
-          <FlexTopDiv >
-            <BackBtnRect onClick={()=>{
-              push("/farm")
-            }} backcolor={widoBackBtnBackColor} backhovercolor={widoBackBtnBackHoverColor} >
+          <FlexTopDiv>
+            <BackBtnRect
+              onClick={() => {
+                push('/farm')
+              }}
+              backcolor={widoBackBtnBackColor}
+              backhovercolor={widoBackBtnBackHoverColor}
+            >
               <BackArrow src={Back} alt="" iconcolor={widoBackIconColor} />
             </BackBtnRect>
-            {
-              logoUrl.map((el, i)=>(
-                <LogoImg className="logo" zIndex={100-i} src={el.slice(1, el.length)} key={i} height={32} alt="" />
-              ))
-            }
-            <TopDesc weight={400} size={"16px"} height={"21px"}>{token.displayName || token.rewardSymbol}</TopDesc>
+            {logoUrl.map((el, i) => (
+              <LogoImg
+                className="logo"
+                zIndex={100 - i}
+                src={el.slice(1, el.length)}
+                key={i}
+                height={32}
+                alt=""
+              />
+            ))}
+            <TopDesc weight={400} size="16px" height="21px">
+              {token.tokenNames.join(', ') || token.rewardSymbol}
+            </TopDesc>
             <ChainBack>
               <img src={BadgeAry[badgeId]} width={11} height={15} alt="" />
             </ChainBack>
           </FlexTopDiv>
         </TopPart>
         <MobileTop>
-          <BackBtnRect onClick={()=>{
-            push("/farm")
-          }} backcolor={widoBackBtnBackColor} backhovercolor={widoBackBtnBackHoverColor} >
+          <BackBtnRect
+            onClick={() => {
+              push('/farm')
+            }}
+            backcolor={widoBackBtnBackColor}
+            backhovercolor={widoBackBtnBackHoverColor}
+          >
             <BackArrow src={Back} alt="" iconcolor={widoBackIconColor} />
           </BackBtnRect>
           <FlexTopDiv>
             <img src={logoUrl} height={32} alt="" />
-            <TopDesc weight={700} size={"24px"} height={"31px"} color={"#FFF"}>{token.displayName}</TopDesc>
+            <TopDesc weight={700} size="24px" height="31px" color="#FFF">
+              {token.tokenNames.join(', ')}
+            </TopDesc>
             <img src={Uniswap} width={20} alt="" />
           </FlexTopDiv>
-          <NewLabel size={"30px"} weight={700} height={"39px"} color={"#FFF"} marginBottom={"15px"}>25.43%</NewLabel>
-          <NewLabel size={"16px"} weight={700} height={"21px"} color={"#FFF"} marginBottom={"10px"}>Uniswap v3</NewLabel>
-          <NewLabel size={"16px"} weight={700} height={"21px"} color={"#FFF"} marginBottom={"10px"}>752.49%</NewLabel>
+          <NewLabel size="30px" weight={700} height="39px" color="#FFF" marginBottom="15px">
+            25.43%
+          </NewLabel>
+          <NewLabel size="16px" weight={700} height="21px" color="#FFF" marginBottom="10px">
+            Uniswap v3
+          </NewLabel>
+          <NewLabel size="16px" weight={700} height="21px" color="#FFF" marginBottom="10px">
+            752.49%
+          </NewLabel>
           <CollaboButton>
-            <img src={Collaboration} alt="" />Collaboration
+            <img src={Collaboration} alt="" />
+            Collaboration
           </CollaboButton>
-          <img className='collabo-back' src={CollaboBack} alt="" />
+          <img className="collabo-back" src={CollaboBack} alt="" />
         </MobileTop>
         <SwitchModeMobile>
-          <TagMobile farm={farmView} onClick={()=>{
-            setFarmView(true)
-            setDetailsView(false)
-          }}>
+          <TagMobile
+            farm={farmView}
+            onClick={() => {
+              setFarmView(true)
+              setDetailsView(false)
+            }}
+          >
             Farm
           </TagMobile>
-          <TagMobile details={detailsView} onClick={()=>{
-            setFarmView(false)
-            setDetailsView(true)
-          }}>
+          <TagMobile
+            details={detailsView}
+            onClick={() => {
+              setFarmView(false)
+              setDetailsView(true)
+            }}
+          >
             Details
           </TagMobile>
         </SwitchModeMobile>
-        
+
         <BigDiv>
           <HalfContent show={detailsView}>
-            <HalfInfo padding={!isMobile ? "25px" : "15px"} display={"flex"} justifyContent={"space-between"} backColor={backColor} borderColor={borderColor}>
+            <HalfInfo
+              padding={!isMobile ? '25px' : '15px'}
+              display="flex"
+              justifyContent="space-between"
+              backColor={backColor}
+              borderColor={borderColor}
+            >
               <div>
-                <NewLabel display={"flex"} weight={700} size={"16px"} height={"21px"} marginBottom={"30px"} align={"center"}>
+                <NewLabel
+                  display="flex"
+                  weight={700}
+                  size="16px"
+                  height="21px"
+                  marginBottom="30px"
+                  align="center"
+                >
                   <img className="icon" src={APY} width={20} height={20} alt="" />
                   APY
-                  <NewLabel display={"flex"} self={"center"}>
-                    <InfoIcon className="info" src={Info} alt="" data-tip data-for='tooltip-apy' filterColor={filterColor} />
-                    <ReactTooltip 
-                      id='tooltip-apy' 
+                  <NewLabel display="flex" self="center">
+                    <InfoIcon
+                      className="info"
+                      src={Info}
+                      alt=""
+                      data-tip
+                      data-for="tooltip-apy"
+                      filterColor={filterColor}
+                    />
+                    <ReactTooltip
+                      id="tooltip-apy"
                       backgroundColor="white"
                       borderColor="black"
                       border
-                      textColor="black">
+                      textColor="black"
+                    >
                       <TooltipContent>
                         <Name>APY</Name>
                         {showAPY()}
@@ -640,23 +688,29 @@ const FarmDetail = ( ) => {
                     </ReactTooltip>
                   </NewLabel>
                 </NewLabel>
-                <ValueShow>
-                  {showAPY()}
-                </ValueShow>
+                <ValueShow>{showAPY()}</ValueShow>
               </div>
 
               <div>
-                <NewLabel weight={700} size={"16px"} height={"21px"} marginBottom={"30px"} display={"flex"}>
+                <NewLabel weight={700} size="16px" height="21px" marginBottom="30px" display="flex">
                   <img className="icon" src={Daily} width={20} height={20} alt="" />
                   Daily
-                  <NewLabel display={"flex"} self={"center"}>
-                    <InfoIcon className="info" data-tip data-for='tooltip-daily' src={Info} alt="" filterColor={filterColor} />
-                    <ReactTooltip 
-                      id='tooltip-daily' 
+                  <NewLabel display="flex" self="center">
+                    <InfoIcon
+                      className="info"
+                      data-tip
+                      data-for="tooltip-daily"
+                      src={Info}
+                      alt=""
+                      filterColor={filterColor}
+                    />
+                    <ReactTooltip
+                      id="tooltip-daily"
                       backgroundColor="white"
                       borderColor="black"
                       border
-                      textColor="black">
+                      textColor="black"
+                    >
                       <TooltipContent>
                         <Name>Daily</Name>
                         {showApyDaily()}
@@ -664,23 +718,36 @@ const FarmDetail = ( ) => {
                     </ReactTooltip>
                   </NewLabel>
                 </NewLabel>
-                <ValueShow>
-                  {showApyDaily()}
-                </ValueShow>
+                <ValueShow>{showApyDaily()}</ValueShow>
               </div>
 
               <div>
-                <NewLabel weight={700} size={"16px"} height={"21px"} marginBottom={"30px"} display={"flex"} justifyContent={"center"}>
+                <NewLabel
+                  weight={700}
+                  size="16px"
+                  height="21px"
+                  marginBottom="30px"
+                  display="flex"
+                  justifyContent="center"
+                >
                   <img className="icon" src={TVL} width={20} height={20} alt="" />
                   TVL
-                  <NewLabel display={"flex"} self={"center"}>
-                  <InfoIcon className="info" src={Info} alt="" data-tip data-for='tooltip-tvl' filterColor={filterColor}/>
-                    <ReactTooltip 
-                      id='tooltip-tvl' 
+                  <NewLabel display="flex" self="center">
+                    <InfoIcon
+                      className="info"
+                      src={Info}
+                      alt=""
+                      data-tip
+                      data-for="tooltip-tvl"
+                      filterColor={filterColor}
+                    />
+                    <ReactTooltip
+                      id="tooltip-tvl"
                       backgroundColor="white"
                       borderColor="black"
                       border
-                      textColor="black">
+                      textColor="black"
+                    >
                       <TooltipContent>
                         <Name>TVL</Name>
                         {showTVL()}
@@ -688,44 +755,90 @@ const FarmDetail = ( ) => {
                     </ReactTooltip>
                   </NewLabel>
                 </NewLabel>
-                <ValueShow>
-                  {showTVL()}
-                </ValueShow>
+                <ValueShow>{showTVL()}</ValueShow>
               </div>
             </HalfInfo>
-            <HalfInfo padding={!isMobile ? "10px 20px" : "15px"} backColor={backColor} borderColor={borderColor}>
+            <HalfInfo
+              padding={!isMobile ? '10px 20px' : '15px'}
+              backColor={backColor}
+              borderColor={borderColor}
+            >
               <FarmDetailChart token={tokenChart} vaultPool={vaultPoolChart} />
             </HalfInfo>
-            <HalfInfo padding={!isMobile ? "20px" : "15px 20px"} backColor={backColor} borderColor={borderColor}>
-              <NewLabel weight={700} size={"16px"} height={"21px"}>APY Breakdown</NewLabel>
-              <div dangerouslySetInnerHTML={{__html: rewardTxt}}></div>
+            <HalfInfo
+              padding={!isMobile ? '20px' : '15px 20px'}
+              backColor={backColor}
+              borderColor={borderColor}
+            >
+              <NewLabel weight={700} size="16px" height="21px">
+                APY Breakdown
+              </NewLabel>
+              <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
             </HalfInfo>
-            <HalfInfo padding={!isMobile ? "24px 22px 44px 22px" : "15px 20px"} backColor={backColor} borderColor={borderColor}>
-              <NewLabel weight={700} size={"16px"} height={"21px"}>Farm Details</NewLabel>
-              <DescInfo fontColor={fontColor} >
+            <HalfInfo
+              padding={!isMobile ? '24px 22px 44px 22px' : '15px 20px'}
+              backColor={backColor}
+              borderColor={borderColor}
+            >
+              <NewLabel weight={700} size="16px" height="21px">
+                Farm Details
+              </NewLabel>
+              <DescInfo fontColor={fontColor}>
                 {ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)}
               </DescInfo>
-              <FlexDiv className="address" marginTop={"15px"}>
+              <FlexDiv className="address" marginTop="15px">
                 {token.vaultAddress && (
-                  <InfoLabel display={"flex"} href={`${getExplorerLink(token.chain)}/address/${token.vaultAddress}`} 
-                    target="_blank" onClick={e => e.stopPropagation()} rel="noopener noreferrer" weight={400} size={"12px"} height={"16px"}>
-                    <img className='icon' src={VaultIcon} alt="" />
-                    <NewLabel size={"12px"} weight={600} height={"16px"} self={"center"}>Vault Address</NewLabel>
+                  <InfoLabel
+                    display="flex"
+                    href={`${getExplorerLink(token.chain)}/address/${token.vaultAddress}`}
+                    target="_blank"
+                    onClick={e => e.stopPropagation()}
+                    rel="noopener noreferrer"
+                    weight={400}
+                    size="12px"
+                    height="16px"
+                  >
+                    <img className="icon" src={VaultIcon} alt="" />
+                    <NewLabel size="12px" weight={600} height="16px" self="center">
+                      Vault Address
+                    </NewLabel>
                     <img className="external-link" src={ExternalLink} alt="" />
                   </InfoLabel>
                 )}
                 {vaultPool.autoStakePoolAddress && (
-                  <InfoLabel display={"flex"} href={`${getExplorerLink(token.chain)}/address/${vaultPool.contractAddress}`}
-                    target="_blank" onClick={e => e.stopPropagation()} rel="noopener noreferrer" weight={400} size={"12px"} height={"16px"}>
-                    <img className='icon' src={StrategyIcon} alt="" />
-                    <NewLabel size={"12px"} weight={600} height={"16px"} self={"center"}>Strategy Address</NewLabel>
+                  <InfoLabel
+                    display="flex"
+                    href={`${getExplorerLink(token.chain)}/address/${vaultPool.contractAddress}`}
+                    target="_blank"
+                    onClick={e => e.stopPropagation()}
+                    rel="noopener noreferrer"
+                    weight={400}
+                    size="12px"
+                    height="16px"
+                  >
+                    <img className="icon" src={StrategyIcon} alt="" />
+                    <NewLabel size="12px" weight={600} height="16px" self="center">
+                      Strategy Address
+                    </NewLabel>
                     <img className="external-link" src={ExternalLink} alt="" />
                   </InfoLabel>
                 )}
-                <InfoLabel display={"flex"} href={`${getExplorerLink(token.chain)}/address/${vaultPool.autoStakePoolAddress || vaultPool.contractAddress}`} 
-                    onClick={e => e.stopPropagation()} rel="noopener noreferrer" target="_blank" weight={400} size={"12px"} height={"16px"}>
-                  <img className='icon' src={VaultIcon} alt="" />
-                  <NewLabel size={"12px"} weight={600} height={"16px"} self={"center"}>Pool Address</NewLabel>
+                <InfoLabel
+                  display="flex"
+                  href={`${getExplorerLink(token.chain)}/address/${
+                    vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+                  }`}
+                  onClick={e => e.stopPropagation()}
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  weight={400}
+                  size="12px"
+                  height="16px"
+                >
+                  <img className="icon" src={VaultIcon} alt="" />
+                  <NewLabel size="12px" weight={600} height="16px" self="center">
+                    Pool Address
+                  </NewLabel>
                   <img className="external-link" src={ExternalLink} alt="" />
                 </InfoLabel>
               </FlexDiv>
@@ -734,218 +847,236 @@ const FarmDetail = ( ) => {
           <RestContent show={farmView}>
             <RestPart borderColor={borderColor} backColor={backColor}>
               <SwitchTag borderColor={borderColor}>
-                <Tag className="tag1" active1={active1} onClick={()=>{
-                  setActive1(true)
-                  setActive2(false)
-                }}>
-                  Deposit</Tag>
-                <Tag className="tag2" filterColor={filterColor} active2={active2} onClick={()=>{
-                  setActive1(false)
-                  setActive2(true)
-                }}>
-                  Withdraw</Tag>
+                <Tag
+                  className="tag1"
+                  active1={active1}
+                  onClick={() => {
+                    setActive1(true)
+                    setActive2(false)
+                  }}
+                >
+                  Deposit
+                </Tag>
+                <Tag
+                  className="tag2"
+                  filterColor={filterColor}
+                  active2={active2}
+                  onClick={() => {
+                    setActive1(false)
+                    setActive2(true)
+                  }}
+                >
+                  Withdraw
+                </Tag>
               </SwitchTag>
+              <div>
+                {isUniV3ManagedVault && (
+                  <VaultPanelActions
+                    type={PANEL_ACTIONS_TYPE.UNIV3MANAGED}
+                    {...viewComponentProps}
+                  />
+                )}
                 <div>
-                  {isUniV3ManagedVault && (
-                    <VaultPanelActions type={PANEL_ACTIONS_TYPE.UNIV3MANAGED} {...viewComponentProps} />
-                  )}
-                  <div>
-                    {!withdrawMode && multipleAssets ? (
-                      multipleAssets.map((symbol, symbolIdx) => {
-                        const symbolToDisplay = withdrawMode ? fAssetSymbol : symbol
-                        const maxBalanceToDisplay = get(maxAssetsAmountToDisplay.current, symbolIdx, 0)
-                        const priceInUsd = get(
-                          vaultsData,
-                          `[${id}].uniswapV3UnderlyingTokenPrices[${symbolIdx}]`,
-                        )
+                  {!withdrawMode && multipleAssets ? (
+                    multipleAssets.map((symbol, symbolIdx) => {
+                      const symbolToDisplay = withdrawMode ? fAssetSymbol : symbol
+                      const maxBalanceToDisplay = get(
+                        maxAssetsAmountToDisplay.current,
+                        symbolIdx,
+                        0,
+                      )
+                      const priceInUsd = get(
+                        vaultsData,
+                        `[${id}].uniswapV3UnderlyingTokenPrices[${symbolIdx}]`,
+                      )
 
-                        return (
-                          <BalanceItem key={symbolIdx} borderColor={borderColor}>
-                            <DivFlex width="100%" key={symbolToDisplay}>
-                              <NumberInput
-                                data-tip=""
-                                data-for={`input----${symbolToDisplay}`}
-                                width="100%"
-                                label={`${symbolToDisplay}`}
-                                secondaryLabel={`${fromWei(
-                                  maxBalanceToDisplay,
-                                  tokens[symbol].decimals,
-                                )} ${
-                                  priceInUsd
-                                    ? `($${formatNumber(
-                                        new BigNumber(
-                                          fromWei(maxBalanceToDisplay, tokens[symbol].decimals),
-                                        ).multipliedBy(priceInUsd),
-                                        9,
-                                      )})`
-                                    : ''
-                                }`}
-                                onChange={e => {
-                                  const newAmountsToExecute = amountsToExecute.slice()
-                                  newAmountsToExecute[symbolIdx] = e.target.value
+                      return (
+                        <BalanceItem key={symbolIdx} borderColor={borderColor}>
+                          <DivFlex width="100%" key={symbolToDisplay}>
+                            <NumberInput
+                              data-tip=""
+                              data-for={`input----${symbolToDisplay}`}
+                              width="100%"
+                              label={`${symbolToDisplay}`}
+                              secondaryLabel={`${fromWei(
+                                maxBalanceToDisplay,
+                                tokens[symbol].decimals,
+                              )} ${
+                                priceInUsd
+                                  ? `($${formatNumber(
+                                      new BigNumber(
+                                        fromWei(maxBalanceToDisplay, tokens[symbol].decimals),
+                                      ).multipliedBy(priceInUsd),
+                                      9,
+                                    )})`
+                                  : ''
+                              }`}
+                              onChange={e => {
+                                const newAmountsToExecute = amountsToExecute.slice()
+                                newAmountsToExecute[symbolIdx] = e.target.value
 
-                                  setAmountsToExecute(newAmountsToExecute)
+                                setAmountsToExecute(newAmountsToExecute)
 
-                                  if (fAssetPool && new RegExp(UNIV3_POOL_ID_REGEX).test(fAssetPool.id)) {
-                                    setUniV3AssetRatio(symbolIdx, newAmountsToExecute)
-                                  }
-                                }}
-                                value={amountsToExecute[symbolIdx]}
-                                disabled={
-                                  !hasRequirementsForInteraction(
-                                    true,
-                                    null,
-                                    vaultsData,
-                                    loadingLpStats || loadingFarmingBalance,
-                                  ) ||
-                                  !hasValidAmountForInputAndMaxButton(
-                                    get(balances, symbol, 0),
-                                    null,
-                                    null,
-                                    symbol,
-                                  )
+                                if (
+                                  fAssetPool &&
+                                  new RegExp(UNIV3_POOL_ID_REGEX).test(fAssetPool.id)
+                                ) {
+                                  setUniV3AssetRatio(symbolIdx, newAmountsToExecute)
                                 }
-                                onClick={() => {
-                                  const newAmountsToExecute = amountsToExecute.slice()
-                                  newAmountsToExecute[symbolIdx] = fromWei(
-                                    get(balances, symbol, 0),
-                                    tokens[symbol].decimals,
-                                  )
-                                  setAmountsToExecute(newAmountsToExecute)
-
-                                  if (fAssetPool && new RegExp(UNIV3_POOL_ID_REGEX).test(fAssetPool.id)) {
-                                    setUniV3AssetRatio(symbolIdx, newAmountsToExecute)
-                                  }
-                                }}
-                                invalidAmount={
-                                  new RegExp(UNIV3_POOL_ID_REGEX).test(fAssetPool.id) &&
-                                  !hasAmountLessThanOrEqualTo(
-                                    amountsToExecute[symbolIdx],
-                                    fromWei(get(balances, symbol, 0), tokens[symbol].decimals),
-                                  )
-                                }
-                                placeholder="0"
-                              />
-                            </DivFlex>
-                          </BalanceItem>
-                        )
-                      })
-                    ) : (
-                      <BalanceItem borderColor={borderColor}>
-                        {
-                          token.logoUrl.map((el, i)=>(
-                          <NumberInput
-                            width="100%"
-                            key={i}
-                            label={`${
-                              withdrawMode
-                                ? fAssetPool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID && useIFARM
-                                  ? 'iFARM'
-                                  : fAssetSymbol
-                                : id
-                            }`}
-                            secondaryLabel={`${get(maxAssetsAmountToDisplay.current, '[0]', '-')}`}
-                            logo={`${el.slice(1, el.length)}`}
-                            onChange={e => setAmountsToExecute([e.target.value])}
-                            value={amountsToExecute[0]}
-                            disabled={
-                              !hasRequirementsForInteraction(
-                                true,
-                                null,
-                                vaultsData,
-                                loadingLpStats || loadingFarmingBalance,
-                              ) ||
-                              !hasValidAmountForInputAndMaxButton(
-                                userBalance,
-                                lpTokenBalance,
-                                totalStaked,
-                                id,
-                                withdrawMode,
-                                isSpecialVault,
-                                iFARMBalance,
-                                useIFARM,
-                              )
-                            }
-                            onClick={() => {
-                              let amount
-                              if (!withdrawMode) {
-                                amount = fromWei(
-                                  isSpecialVault ? lpTokenBalance : userBalance,
-                                  tokenDecimals,
-                                )
-                              } else if (isSpecialVault) {
-                                amount = fromWei(useIFARM ? iFARMBalance : totalStaked, tokenDecimals)
-                              } else {
-                                amount = fromWei(
-                                  autoUnStake ? totalBalanceToWithdraw : lpTokenBalance,
-                                  tokenDecimals,
+                              }}
+                              value={amountsToExecute[symbolIdx]}
+                              disabled={
+                                !hasRequirementsForInteraction(
+                                  true,
+                                  null,
+                                  vaultsData,
+                                  loadingLpStats || loadingFarmingBalance,
+                                ) ||
+                                !hasValidAmountForInputAndMaxButton(
+                                  get(balances, symbol, 0),
+                                  null,
+                                  null,
+                                  symbol,
                                 )
                               }
+                              onClick={() => {
+                                const newAmountsToExecute = amountsToExecute.slice()
+                                newAmountsToExecute[symbolIdx] = fromWei(
+                                  get(balances, symbol, 0),
+                                  tokens[symbol].decimals,
+                                )
+                                setAmountsToExecute(newAmountsToExecute)
 
-                              setAmountsToExecute([amount])
-                            }}
-                            placeholder="0"
-                          />
-                          ))
-                        }
-                      </BalanceItem>
-                    )}
-                    <VaultPanelActions type={PANEL_ACTIONS_TYPE.HEAD} {...viewComponentProps} />
-                  </div>
-                  {multipleAssets &&
-                  !withdrawMode &&
-                  tokens[id].migrationInfo &&
-                  new BigNumber(oldLpTokenBalance).gt(0) ? (
+                                if (
+                                  fAssetPool &&
+                                  new RegExp(UNIV3_POOL_ID_REGEX).test(fAssetPool.id)
+                                ) {
+                                  setUniV3AssetRatio(symbolIdx, newAmountsToExecute)
+                                }
+                              }}
+                              invalidAmount={
+                                new RegExp(UNIV3_POOL_ID_REGEX).test(fAssetPool.id) &&
+                                !hasAmountLessThanOrEqualTo(
+                                  amountsToExecute[symbolIdx],
+                                  fromWei(get(balances, symbol, 0), tokens[symbol].decimals),
+                                )
+                              }
+                              placeholder="0"
+                            />
+                          </DivFlex>
+                        </BalanceItem>
+                      )
+                    })
+                  ) : (
                     <BalanceItem borderColor={borderColor}>
-                      <DivFlex width="100%">
-                        <MigrationLabel>Migrate liquidity from Uniswap V2</MigrationLabel>
+                      {token.logoUrl.map((el, i) => (
                         <NumberInput
-                          data-tip=""
-                          data-for="input-migrate"
                           width="100%"
-                          label={`Balance <b>${tokens[id].migrationInfo.lpTokenName}</b>`}
-                          secondaryLabel={`${oldLpTokenBalance} ${
-                            get(vaultsData, `[${id}].usdPrice`)
-                              ? `($${formatNumber(
-                                  new BigNumber(oldLpTokenBalance).multipliedBy(
-                                    get(vaultsData, `[${id}].usdPrice`),
-                                  ),
-                                  9,
-                                )})`
-                              : ''
+                          key={i}
+                          label={`${
+                            withdrawMode
+                              ? fAssetPool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID &&
+                                useIFARM
+                                ? 'iFARM'
+                                : fAssetSymbol
+                              : id
                           }`}
-                          onChange={e => {
-                            setOldAmountToExecute(e.target.value)
-                          }}
-                          value={oldAmountToExecute}
+                          secondaryLabel={`${get(maxAssetsAmountToDisplay.current, '[0]', '-')}`}
+                          logo={`${el.slice(1, el.length)}`}
+                          onChange={e => setAmountsToExecute([e.target.value])}
+                          value={amountsToExecute[0]}
                           disabled={
                             !hasRequirementsForInteraction(
-                              loaded,
-                              pendingAction,
+                              true,
+                              null,
                               vaultsData,
                               loadingLpStats || loadingFarmingBalance,
                             ) ||
                             !hasValidAmountForInputAndMaxButton(
-                              oldLpTokenBalance,
-                              null,
-                              null,
+                              userBalance,
+                              lpTokenBalance,
+                              totalStaked,
                               id,
+                              withdrawMode,
+                              isSpecialVault,
+                              iFARMBalance,
+                              useIFARM,
                             )
                           }
+                          onClick={() => {
+                            let amount
+                            if (!withdrawMode) {
+                              amount = fromWei(
+                                isSpecialVault ? lpTokenBalance : userBalance,
+                                tokenDecimals,
+                              )
+                            } else if (isSpecialVault) {
+                              amount = fromWei(useIFARM ? iFARMBalance : totalStaked, tokenDecimals)
+                            } else {
+                              amount = fromWei(
+                                autoUnStake ? totalBalanceToWithdraw : lpTokenBalance,
+                                tokenDecimals,
+                              )
+                            }
+
+                            setAmountsToExecute([amount])
+                          }}
                           placeholder="0"
-                          onClick={() => setOldAmountToExecute(oldLpTokenBalance)}
                         />
-                      </DivFlex>
-                      <VaultPanelActions
-                        type={PANEL_ACTIONS_TYPE.MIGRATE}
-                        migrationInfo={token.migrationInfo}
-                        lpAmount={toWei(oldAmountToExecute, 18)}
-                        {...viewComponentProps}
-                      />
+                      ))}
                     </BalanceItem>
-                  ) : null}
-                  <VaultPanelActions {...viewComponentProps} />
+                  )}
+                  <VaultPanelActions type={PANEL_ACTIONS_TYPE.HEAD} {...viewComponentProps} />
                 </div>
+                {multipleAssets &&
+                !withdrawMode &&
+                tokens[id].migrationInfo &&
+                new BigNumber(oldLpTokenBalance).gt(0) ? (
+                  <BalanceItem borderColor={borderColor}>
+                    <DivFlex width="100%">
+                      <MigrationLabel>Migrate liquidity from Uniswap V2</MigrationLabel>
+                      <NumberInput
+                        data-tip=""
+                        data-for="input-migrate"
+                        width="100%"
+                        label={`Balance <b>${tokens[id].migrationInfo.lpTokenName}</b>`}
+                        secondaryLabel={`${oldLpTokenBalance} ${
+                          get(vaultsData, `[${id}].usdPrice`)
+                            ? `($${formatNumber(
+                                new BigNumber(oldLpTokenBalance).multipliedBy(
+                                  get(vaultsData, `[${id}].usdPrice`),
+                                ),
+                                9,
+                              )})`
+                            : ''
+                        }`}
+                        onChange={e => {
+                          setOldAmountToExecute(e.target.value)
+                        }}
+                        value={oldAmountToExecute}
+                        disabled={
+                          !hasRequirementsForInteraction(
+                            loaded,
+                            pendingAction,
+                            vaultsData,
+                            loadingLpStats || loadingFarmingBalance,
+                          ) ||
+                          !hasValidAmountForInputAndMaxButton(oldLpTokenBalance, null, null, id)
+                        }
+                        placeholder="0"
+                        onClick={() => setOldAmountToExecute(oldLpTokenBalance)}
+                      />
+                    </DivFlex>
+                    <VaultPanelActions
+                      type={PANEL_ACTIONS_TYPE.MIGRATE}
+                      migrationInfo={token.migrationInfo}
+                      lpAmount={toWei(oldAmountToExecute, 18)}
+                      {...viewComponentProps}
+                    />
+                  </BalanceItem>
+                ) : null}
+                <VaultPanelActions {...viewComponentProps} />
+              </div>
             </RestPart>
             <RewardPart borderColor={borderColor} backColor={backColor}>
               <VaultPanelActionsFooter {...viewComponentProps} />
@@ -954,6 +1085,7 @@ const FarmDetail = ( ) => {
         </BigDiv>
       </Inner>
     </DetailView>
-)}
+  )
+}
 
 export default FarmDetail
