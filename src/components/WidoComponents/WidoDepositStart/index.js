@@ -23,185 +23,281 @@ import IFARMIcon from '../../../assets/images/logos/wido/ifarm.svg'
 const CoinGeckoClient = new CoinGecko()
 
 const getPrice = async () => {
-  try{
-    let data = await CoinGeckoClient.simple.price({
+  try {
+    const data = await CoinGeckoClient.simple.price({
       ids: ['ethereum'],
       vs_currencies: ['usd'],
     })
 
     const result = data.success ? data.data.ethereum.usd : 1
     return result
-  } catch(e) {
+  } catch (e) {
     return 1
   }
 }
 
-const WidoDepositStart = ( { pickedToken, depositWido, setDepositWido, finalStep, setFinalStep, startRoutes, setStartRoutes, 
-startSlippage, setStartSlippage, slippagePercentage, inputAmount, token, tokenList, symbol, useIFARM, quoteValue, setQuoteValue } ) => {
-
+const WidoDepositStart = ({
+  pickedToken,
+  depositWido,
+  setDepositWido,
+  finalStep,
+  setFinalStep,
+  startRoutes,
+  setStartRoutes,
+  startSlippage,
+  setStartSlippage,
+  slippagePercentage,
+  inputAmount,
+  token,
+  tokenList,
+  symbol,
+  useIFARM,
+  quoteValue,
+  setQuoteValue,
+}) => {
   const { backColor, borderColor, filterColor } = useThemeContext()
   const { account } = useWallet()
 
   const chainId = token.chain || token.data.chain
-  
+
   const amount = toWei(inputAmount, pickedToken.decimals)
   const [txFee, setTxFee] = useState(0)
-  const [fromInfo, setFromInfo] = useState("")
-  const [toInfo, setToInfo] = useState("")
+  const [fromInfo, setFromInfo] = useState('')
+  const [toInfo, setToInfo] = useState('')
 
-  useEffect(()=>{
-    if(account && pickedToken.symbol !== "Select Token" && !new BigNumber(amount).isEqualTo(0) && depositWido) {
+  useEffect(() => {
+    if (
+      account &&
+      pickedToken.symbol !== 'Select Token' &&
+      !new BigNumber(amount).isEqualTo(0) &&
+      depositWido
+    ) {
       const getQuoteResult = async () => {
         setTxFee(0)
-        setFromInfo("")
-        setToInfo("")
+        setFromInfo('')
+        setToInfo('')
         setQuoteValue(null)
-        try{
+        try {
           const fromChainId = chainId
           const fromToken = pickedToken.address
           const toToken = token.vaultAddress || token.tokenAddress
           const toChainId = chainId
-          const user = account  
-          const quoteResult  = await quote({
-            fromChainId,  // Chain Id of from token
-            fromToken,  // Token address of from token
-            toChainId,  // Chain Id of to token
-            toToken,  // Token address of to token
-            amount,  // Token amount of from token
-            slippagePercentage,  // Acceptable max slippage for the swap
-            user, // Address of user placing the order.
-          }, mainWeb3.currentProvider)
+          const user = account
+          const quoteResult = await quote(
+            {
+              fromChainId, // Chain Id of from token
+              fromToken, // Token address of from token
+              toChainId, // Chain Id of to token
+              toToken, // Token address of to token
+              amount, // Token amount of from token
+              slippagePercentage, // Acceptable max slippage for the swap
+              user, // Address of user placing the order.
+            },
+            mainWeb3.currentProvider,
+          )
           setQuoteValue(quoteResult)
 
-          let curToken = tokenList.filter(token=>token.symbol === pickedToken.symbol)
+          let curToken = tokenList.filter(token => token.symbol === pickedToken.symbol)
           curToken = curToken[0]
 
-          const fromInfoTemp = formatNumberWido(fromWei(quoteResult.fromTokenAmount, curToken.decimals), WIDO_BALANCES_DECIMALS) + 
-            (quoteResult.fromTokenAmountUsdValue === null ? "" : " ($" + formatNumberWido(fromWei(quoteResult.fromTokenAmount, curToken.decimals) * quoteResult.fromTokenUsdPrice, WIDO_BALANCES_DECIMALS) + ")")
-          const toInfoTemp = formatNumberWido(fromWei(quoteResult.toTokenAmount, token.decimals || token.data.lpTokenData.decimals), WIDO_BALANCES_DECIMALS) + 
-            (quoteResult.toTokenAmountUsdValue === null ? "" : " ($" + formatNumberWido(fromWei(quoteResult.toTokenAmount, token.decimals || token.data.lpTokenData.decimals) * quoteResult.toTokenUsdPrice, WIDO_BALANCES_DECIMALS)  + ")")
+          const fromInfoTemp =
+            formatNumberWido(
+              fromWei(quoteResult.fromTokenAmount, curToken.decimals),
+              WIDO_BALANCES_DECIMALS,
+            ) +
+            (quoteResult.fromTokenAmountUsdValue === null
+              ? ''
+              : ` ($${formatNumberWido(
+                  fromWei(quoteResult.fromTokenAmount, curToken.decimals) *
+                    quoteResult.fromTokenUsdPrice,
+                  WIDO_BALANCES_DECIMALS,
+                )})`)
+          const toInfoTemp =
+            formatNumberWido(
+              fromWei(quoteResult.toTokenAmount, token.decimals || token.data.lpTokenData.decimals),
+              WIDO_BALANCES_DECIMALS,
+            ) +
+            (quoteResult.toTokenAmountUsdValue === null
+              ? ''
+              : ` ($${formatNumberWido(
+                  fromWei(
+                    quoteResult.toTokenAmount,
+                    token.decimals || token.data.lpTokenData.decimals,
+                  ) * quoteResult.toTokenUsdPrice,
+                  WIDO_BALANCES_DECIMALS,
+                )})`)
 
           setFromInfo(fromInfoTemp)
           setToInfo(toInfoTemp)
 
           try {
-            let gasFee = 0
-            let price = await getPrice()
-            await mainWeb3.eth.getGasPrice().then((result)=>{
-              gasFee = mainWeb3.utils.fromWei(result,'ether')
+            let gasFee = 0,
+              price = await getPrice()
+            await mainWeb3.eth.getGasPrice().then(result => {
+              gasFee = mainWeb3.utils.fromWei(result, 'ether')
               gasFee *= price
             })
-            
-            let fee = await mainWeb3.eth.estimateGas({
+
+            const fee = await mainWeb3.eth.estimateGas({
               from: quoteResult.from,
               to: quoteResult.to,
               data: quoteResult.data,
-              value: quoteResult.value
+              value: quoteResult.value,
             })
             setTxFee(formatNumberWido(fee * gasFee, WIDO_BALANCES_DECIMALS))
-          } catch(e) {
-            toast.error("Failed to get transaction cost!")
+          } catch (e) {
+            toast.error('Failed to get transaction cost!')
             return
           }
-        }
-        catch(e) {
-          toast.error("Failed to get quote!")
-          return
+        } catch (e) {
+          toast.error('Failed to get quote!')
         }
       }
 
       getQuoteResult()
     }
-  }, [account, amount, chainId, pickedToken, token, depositWido, slippagePercentage, tokenList, setQuoteValue])
+  }, [
+    account,
+    amount,
+    chainId,
+    pickedToken,
+    token,
+    depositWido,
+    slippagePercentage,
+    tokenList,
+    setQuoteValue,
+  ])
 
   return (
-    <SelectTokenWido show={depositWido && !finalStep && !startRoutes && !startSlippage} borderColor={borderColor} backColor={backColor}>
-      <NewLabel display={"flex"} justifyContent={"space-between"} marginBottom={"15px"} weight={"700"} size={"14px"} height={"18px"} align={"center"}>
-        <CloseBtn src={BackIcon} width={18} height={18} alt="" onClick={()=>{
-          setDepositWido(false)
-          // setStartSlippage(true)
-        }} filterColor={filterColor} />
+    <SelectTokenWido
+      show={depositWido && !finalStep && !startRoutes && !startSlippage}
+      borderColor={borderColor}
+      backColor={backColor}
+    >
+      <NewLabel
+        display="flex"
+        justifyContent="space-between"
+        marginBottom="15px"
+        weight="700"
+        size="14px"
+        height="18px"
+        align="center"
+      >
+        <CloseBtn
+          src={BackIcon}
+          width={18}
+          height={18}
+          alt=""
+          onClick={() => {
+            setDepositWido(false)
+            // setStartSlippage(true)
+          }}
+          filterColor={filterColor}
+        />
         You are about to swap
-        <CloseBtn src={SettingIcon} width={18} height={18} alt="" onClick={()=>{
-          setStartSlippage(true)
-        }} />
+        <CloseBtn
+          src={SettingIcon}
+          width={18}
+          height={18}
+          alt=""
+          onClick={() => {
+            setStartSlippage(true)
+          }}
+        />
       </NewLabel>
 
-      <NewLabel marginBottom={"15px"}>
-        <WidoSwapToken img={pickedToken.logoURI} 
-          name={fromInfo}
-          value={pickedToken.symbol} />
-        <NewLabel display={"flex"} justifyContent={"center"} marginBottom={"15px"} marginTop={"15px"}>
+      <NewLabel marginBottom="15px">
+        <WidoSwapToken img={pickedToken.logoURI} name={fromInfo} value={pickedToken.symbol} />
+        <NewLabel display="flex" justifyContent="center" marginBottom="15px" marginTop="15px">
           <img src={ArrowDownIcon} width={25} height={25} alt="" />
         </NewLabel>
-        <WidoSwapToken 
-          img={useIFARM ? IFARMIcon : Swap2Icon} 
-          name={toInfo} 
-          value={useIFARM ? symbol : token.balance} />
+        <WidoSwapToken
+          img={useIFARM ? IFARMIcon : Swap2Icon}
+          name={toInfo}
+          value={useIFARM ? symbol : token.balance}
+        />
       </NewLabel>
 
-      <NewLabel marginBottom={"15px"}>
-        <Divider height="1px" backColor={"#EAECF0"} />
+      <NewLabel marginBottom="15px">
+        <Divider height="1px" backColor="#EAECF0" />
       </NewLabel>
 
-      <NewLabel weight={400} size={"14px"} height={"18px"} marginBottom={"20px"} color={"#475467"}>
-        <NewLabel display={"flex"} justifyContent={"space-between"}  marginBottom={"15px"}>
+      <NewLabel weight={400} size="14px" height="18px" marginBottom="20px" color="#475467">
+        <NewLabel display="flex" justifyContent="space-between" marginBottom="15px">
           <NewLabel>Rate</NewLabel>
-          <NewLabel display={"flex"} items={"center"}>
-            {
-              quoteValue ? 
+          <NewLabel display="flex" items="center">
+            {quoteValue ? (
               <>
-              1&nbsp;<img src={pickedToken.logoURI} width={20} height={20} alt="" />&nbsp;=&nbsp;
-              {formatNumberWido(quoteValue.price, WIDO_BALANCES_DECIMALS)}
-              </> : 
-              <AnimatedDots />
-            }
-          </NewLabel>
-        </NewLabel>
-        <NewLabel display={"flex"} justifyContent={"space-between"} marginBottom={"15px"}>
-          <NewLabel>Expected Output</NewLabel>
-          <NewLabel weight={400} size={"14px"} height={"18px"} display={"flex"} items={"center"}>
-            {
-              quoteValue ? 
-                <>
-                  <img src={useIFARM ? IFARMIcon : Swap2Icon} width={20} height={20} alt="" />
-                  ~{formatNumberWido(fromWei(quoteValue.toTokenAmount, token.decimals || token.data.lpTokenData.decimals), WIDO_BALANCES_DECIMALS)}
-                </>
-              : <AnimatedDots />
-            }
-          </NewLabel>
-        </NewLabel>
-        <NewLabel display={"flex"} justifyContent={"space-between"} marginBottom={"15px"}>
-          <NewLabel>Minimum Recieved</NewLabel>
-          <NewLabel weight={400} size={"14px"} height={"18px"} display={"flex"} items={"center"}>
-            {
-              quoteValue ?
-              <>
-              <img src={useIFARM ? IFARMIcon : Swap2Icon} width={20} height={20} alt="" />
-              &nbsp;~{formatNumberWido(fromWei(quoteValue.minToTokenAmount, token.decimals || token.data.lpTokenData.decimals), WIDO_BALANCES_DECIMALS)}
+                1&nbsp;
+                <img src={pickedToken.logoURI} width={20} height={20} alt="" />
+                &nbsp;=&nbsp;
+                {formatNumberWido(quoteValue.price, WIDO_BALANCES_DECIMALS)}
               </>
-              : <AnimatedDots />
-            }
+            ) : (
+              <AnimatedDots />
+            )}
           </NewLabel>
         </NewLabel>
-        <NewLabel display={"flex"} justifyContent={"space-between"}>
-          <NewLabel>Transaction cost</NewLabel>
-          <NewLabel weight={400} size={"14px"} height={"18px"}>
-          {
-            txFee === 0 ? 
+        <NewLabel display="flex" justifyContent="space-between" marginBottom="15px">
+          <NewLabel>Expected Output</NewLabel>
+          <NewLabel weight={400} size="14px" height="18px" display="flex" items="center">
+            {quoteValue ? (
+              <>
+                <img src={useIFARM ? IFARMIcon : Swap2Icon} width={20} height={20} alt="" />~
+                {formatNumberWido(
+                  fromWei(
+                    quoteValue.toTokenAmount,
+                    token.decimals || token.data.lpTokenData.decimals,
+                  ),
+                  WIDO_BALANCES_DECIMALS,
+                )}
+              </>
+            ) : (
               <AnimatedDots />
-            : <>~${txFee}</>
-          }</NewLabel>
+            )}
+          </NewLabel>
+        </NewLabel>
+        <NewLabel display="flex" justifyContent="space-between" marginBottom="15px">
+          <NewLabel>Minimum Recieved</NewLabel>
+          <NewLabel weight={400} size="14px" height="18px" display="flex" items="center">
+            {quoteValue ? (
+              <>
+                <img src={useIFARM ? IFARMIcon : Swap2Icon} width={20} height={20} alt="" />
+                &nbsp;~
+                {formatNumberWido(
+                  fromWei(
+                    quoteValue.minToTokenAmount,
+                    token.decimals || token.data.lpTokenData.decimals,
+                  ),
+                  WIDO_BALANCES_DECIMALS,
+                )}
+              </>
+            ) : (
+              <AnimatedDots />
+            )}
+          </NewLabel>
+        </NewLabel>
+        <NewLabel display="flex" justifyContent="space-between">
+          <NewLabel>Transaction cost</NewLabel>
+          <NewLabel weight={400} size="14px" height="18px">
+            {txFee === 0 ? <AnimatedDots /> : <>~${txFee}</>}
+          </NewLabel>
         </NewLabel>
       </NewLabel>
 
-      <NewLabel size={"16px"} height={"21px"} weight={500} color={"#1F2937"}>
+      <NewLabel size="16px" height="21px" weight={500} color="#1F2937">
         {/* <Buttons onClick={()=>{ setStartRoutes(true) }} filterColor={filterColor}>
           Routes
           <img src={RouteIcon} alt="" />
         </Buttons> */}
 
-        <Buttons color={"continue"} onClick={()=>{ setFinalStep(true) }} filterColor={filterColor}>
+        <Buttons
+          color="continue"
+          onClick={() => {
+            setFinalStep(true)
+          }}
+          filterColor={filterColor}
+        >
           Continue Deposit
           <img src={ChevronRightIcon} alt="" />
         </Buttons>

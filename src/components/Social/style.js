@@ -5,9 +5,9 @@ const SocialsContainer = styled.div`
   flex-direction: row;
   transition: 0.25s;
   a {
-    background: ${props=>props.backColor};
+    background: ${props => props.backColor};
     img {
-      filter: ${props=>props.iconColor};
+      filter: ${props => props.iconColor};
     }
   }
 

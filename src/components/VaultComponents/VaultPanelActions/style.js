@@ -44,7 +44,7 @@ const SelectedVaultContainer = styled.div`
   width: 100%;
   padding: ${props => props.padding || '20px 0px'};
   max-width: ${props => props.maxWidth || '500px'};
-  border-color: ${props=>props.borderColor};
+  border-color: ${props => props.borderColor};
   border-style: solid;
   border-width: ${props => props.borderWidth || '1px 0px'};
   margin: ${props => props.margin || '15px 0px'};
@@ -110,9 +110,11 @@ const SelectedVaultLabel = styled.span`
 
 const SelectedVaultNumber = styled.span`
   ${props =>
-    props.display ? `
+    props.display
+      ? `
       display: ${props.display};
-    ` : ''}
+    `
+      : ''}
   font-weight: bold;
   font-size: 18px;
   line-height: 23px;
@@ -165,7 +167,7 @@ const Div = styled.div`
 `
 
 const InfoIcon = styled.img`
-  filter: ${props=>props.filterColor};
+  filter: ${props => props.filterColor};
   transition: 0.25s;
   cursor: pointer;
   margin-left: 5px;

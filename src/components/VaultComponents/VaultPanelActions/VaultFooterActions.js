@@ -1,25 +1,41 @@
-import React, { useMemo } from 'react'
 import { get } from 'lodash'
-import ReactTooltip from 'react-tooltip'
+import React, { useMemo } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { SelectedVaultContainer, SelectedVault, SelectedVaultLabel, SelectedVaultNumber, Div, InfoIcon, USDValue } from './style'
-import { fromWei } from '../../../services/web3'
-import { formatNumber, hasAmountGreaterThanZero, hasRequirementsForInteraction } from '../../../utils'
-import { Monospace } from '../../GlobalStyle'
-import AnimatedDots from '../../AnimatedDots'
-import Counter from '../../Counter'
-import { useWallet } from '../../../providers/Wallet'
-import { usePools } from '../../../providers/Pools'
-import { VAULT_CATEGORIES_IDS } from '../../../data/constants'
-import { ACTIONS, FARM_TOKEN_SYMBOL, FARM_USDC_TOKEN_SYMBOL, FARM_WETH_TOKEN_SYMBOL,
-  FARM_GRAIN_TOKEN_SYMBOL, SPECIAL_VAULTS, 
-} from '../../../constants'
-import { useVaults } from '../../../providers/Vault'
-import { useStats } from '../../../providers/Stats'
-import { useActions } from '../../../providers/Actions'
-import { useThemeContext } from '../../../providers/useThemeContext'
-import Button from '../../Button'
+import ReactTooltip from 'react-tooltip'
 import Info from '../../../assets/images/logos/earn/info.svg'
+import {
+  ACTIONS,
+  FARM_GRAIN_TOKEN_SYMBOL,
+  FARM_TOKEN_SYMBOL,
+  FARM_USDC_TOKEN_SYMBOL,
+  FARM_WETH_TOKEN_SYMBOL,
+  SPECIAL_VAULTS,
+} from '../../../constants'
+import { useActions } from '../../../providers/Actions'
+import { usePools } from '../../../providers/Pools'
+import { useStats } from '../../../providers/Stats'
+import { useThemeContext } from '../../../providers/useThemeContext'
+import { useVaults } from '../../../providers/Vault'
+import { useWallet } from '../../../providers/Wallet'
+import { fromWei } from '../../../services/web3'
+import {
+  formatNumber,
+  hasAmountGreaterThanZero,
+  hasRequirementsForInteraction,
+} from '../../../utils'
+import AnimatedDots from '../../AnimatedDots'
+import Button from '../../Button'
+import Counter from '../../Counter'
+import { Monospace } from '../../GlobalStyle'
+import {
+  Div,
+  InfoIcon,
+  SelectedVault,
+  SelectedVaultContainer,
+  SelectedVaultLabel,
+  SelectedVaultNumber,
+  USDValue,
+} from './style'
 
 const { tokens } = require('../../../data')
 
@@ -37,14 +53,13 @@ const VaultFooterActions = ({
   setLoadingDots,
   setPendingAction,
   pendingAction,
-  hasHodlCategory,
   loaded,
   withdrawMode,
   setWithdrawMode,
   setIFARM,
   poolRewardSymbol,
   fAssetSymbol,
-  rewardSymbol
+  rewardSymbol,
 }) => {
   const { fetchUserPoolStats, userStats, pools } = usePools()
   const { account, getWalletBalances, connected } = useWallet()
@@ -66,58 +81,65 @@ const VaultFooterActions = ({
         poolVault: true,
         profitShareAPY,
         data: farmProfitSharingPool,
-        logoUrl: ['./icons/iFarm.svg'],
+        logoUrl: ['./icons/ifarm.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
+        tokenNames: ['FARM'],
         isNew: tokens[FARM_TOKEN_SYMBOL].isNew,
         newDetails: tokens[FARM_TOKEN_SYMBOL].newDetails,
-        category: VAULT_CATEGORIES_IDS.GENERAL,
       },
       [FARM_WETH_TOKEN_SYMBOL]: {
         liquidityPoolVault: true,
-        displayName: 'FARM, ETH', //'FARM/ETH',
-        subLabel: 'Uniswap',
+        tokenNames: ['FARM, ETH'], // 'FARM/ETH',
+        platform: ['Uniswap'],
         data: farmWethPool,
         logoUrl: ['./icons/farm.svg', './icons/weth.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
         isNew: tokens[FARM_WETH_TOKEN_SYMBOL].isNew,
-        category: VAULT_CATEGORIES_IDS.LIQUIDITY,
       },
       [FARM_GRAIN_TOKEN_SYMBOL]: {
         liquidityPoolVault: true,
-        displayName: 'FARM, GRAIN', //'FARM/GRAIN',
-        subLabel: 'Uniswap',
+        tokenNames: ['FARM, GRAIN'], // 'FARM/GRAIN',
+        platform: ['Uniswap'],
         data: farmGrainPool,
         logoUrl: ['./icons/farm.svg', './icons/grain.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
         isNew: tokens[FARM_GRAIN_TOKEN_SYMBOL].isNew,
-        category: VAULT_CATEGORIES_IDS.LIQUIDITY,
       },
       [FARM_USDC_TOKEN_SYMBOL]: {
         liquidityPoolVault: true,
         inactive: true,
-        displayName: 'FARM/USDC',
+        tokenNames: ['FARM', 'USDC'],
+        platform: ['Uniswap'],
         data: farmUsdcPool,
         logoUrl: ['./icons/farm.svg', './icons/usdc.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
         isNew: tokens[FARM_USDC_TOKEN_SYMBOL].isNew,
       },
     }),
-    [
-      farmGrainPool,
-      farmWethPool,
-      farmUsdcPool,
-      farmProfitSharingPool,
-      profitShareAPY,
-    ],
+    [farmGrainPool, farmWethPool, farmUsdcPool, farmProfitSharingPool, profitShareAPY],
   )
   const groupOfVaults = { ...vaultsData, ...poolVaults }
 
   return (
-    <SelectedVaultContainer maxWidth="100%" margin="0px" padding="0px" borderWidth="0px" borderColor={borderColor}>
+    <SelectedVaultContainer
+      maxWidth="100%"
+      margin="0px"
+      padding="0px"
+      borderWidth="0px"
+      borderColor={borderColor}
+    >
       <SelectedVault alignItems="center" justifyContent="start">
         <SelectedVaultLabel fontSize="16px" lineHeight="21px" fontColor={fontColor}>
           Rewards
-          <InfoIcon className="info" width={isMobile ? 10 : 16} src={Info} alt="" data-tip data-for={`claim-tooltip-${tokenSymbol}`} filterColor={filterColor} />
+          <InfoIcon
+            className="info"
+            width={isMobile ? 10 : 16}
+            src={Info}
+            alt=""
+            data-tip
+            data-for={`claim-tooltip-${tokenSymbol}`}
+            filterColor={filterColor}
+          />
         </SelectedVaultLabel>
       </SelectedVault>
       {rewardTokenSymbols && rewardTokenSymbols.slice(0, 1).map((symbol, symbolIdx) => {
@@ -153,54 +175,48 @@ const VaultFooterActions = ({
                       `rewardPerToken[${symbolIdx}]`,
                       fAssetPool.rewardPerToken[0],
                     )}
-                    rewardTokenAddress={get(
-                      fAssetPool,
-                      `rewardTokens[${symbolIdx}]`,
-                      fAssetPool.rewardTokens[0],
-                    )}
-                  />
-                ) : (
-                  <AnimatedDots />
-                )}
-              </Monospace>
-              <USDValue>
-                <Monospace>
-                  ${!connected ? (
-                    formatNumber(0, 2)
-                  ) : !isLoadingData && get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`) ? (
-                    <Counter
-                      pool={fAssetPool}
-                      totalTokensEarned={
-                        (rewardTokenSymbols.length > 1 ?
-                          fromWei(
-                            get(rewardsEarned, symbol, 0),
-                            get(tokens[symbol], 'decimals', 18),
-                            4,
-                          )
-                        : totalTokensEarned) * usdPrice
-                      }
-                      totalStaked={get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)}
-                      ratePerDay={get(ratesPerDay, symbolIdx, ratesPerDay[0])}
-                      rewardPerToken={get(
-                        fAssetPool,
-                        `rewardPerToken[${symbolIdx}]`,
-                        fAssetPool.rewardPerToken[0],
+                  </Monospace>
+                  <USDValue>
+                    <Monospace>
+                      $
+                      {!connected ? (
+                        formatNumber(0, 2)
+                      ) : !isLoadingData &&
+                        get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`) ? (
+                        <Counter
+                          pool={fAssetPool}
+                          totalTokensEarned={
+                            (rewardTokenSymbols.length > 1
+                              ? fromWei(
+                                  get(rewardsEarned, symbol, 0),
+                                  get(tokens[symbol], 'decimals', 18),
+                                  4,
+                                )
+                              : totalTokensEarned) * usdPrice
+                          }
+                          totalStaked={get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)}
+                          ratePerDay={get(ratesPerDay, symbolIdx, ratesPerDay[0])}
+                          rewardPerToken={get(
+                            fAssetPool,
+                            `rewardPerToken[${symbolIdx}]`,
+                            fAssetPool.rewardPerToken[0],
+                          )}
+                          rewardTokenAddress={get(
+                            fAssetPool,
+                            `rewardTokens[${symbolIdx}]`,
+                            fAssetPool.rewardTokens[0],
+                          )}
+                        />
+                      ) : (
+                        <AnimatedDots />
                       )}
-                      rewardTokenAddress={get(
-                        fAssetPool,
-                        `rewardTokens[${symbolIdx}]`,
-                        fAssetPool.rewardTokens[0],
-                      )}
-                    />
-                  ) : (
-                    <AnimatedDots />
-                  )}
-                </Monospace>
-              </USDValue>
-            </Div>
-          </SelectedVaultNumber>
-        </SelectedVault>
-      )})}
+                    </Monospace>
+                  </USDValue>
+                </Div>
+              </SelectedVaultNumber>
+            </SelectedVault>
+          )
+        })}
       <ReactTooltip
         id={`claim-tooltip-${tokenSymbol}`}
         backgroundColor="#fffce6"

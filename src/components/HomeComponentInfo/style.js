@@ -10,8 +10,8 @@ const Container = styled.a`
   flex-direction: column;
   text-align: left;
   text-decoration: none;
-  background: ${props=>props.backColor};
-  border: 1px solid ${props=>props.borderColor};
+  background: ${props => props.backColor};
+  border: 1px solid ${props => props.borderColor};
   transition: 0.25s;
   padding: 20px;
 `
@@ -22,8 +22,8 @@ const FarmType = styled.div`
   border-radius: 16px;
   background: white;
   align-items: center;
-  
-  color: #027A48;
+
+  color: #027a48;
   padding: 4px 12px;
 `
 
@@ -39,7 +39,7 @@ const ContentImg = styled.img`
   width: ${props => props.width || '20px'};
   height: ${props => props.height || '20px'};
   margin: ${props => props.margin || '0px'};
-  z-index: ${props=>props.id};
+  z-index: ${props => props.id};
 
   &:not(:first-child) {
     margin-left: -15px;
@@ -51,7 +51,6 @@ const ContentMiddle = styled.div`
   margin-bottom: 30px;
   display: flex;
   justify-content: space-between;
-
 `
 
 const ContentResult = styled.div`
@@ -70,7 +69,7 @@ const Percent = styled.div`
   font-weight: 600;
   font-size: 30px;
   line-height: 38px;
-  color: ${props=>props.fontColor};
+  color: ${props => props.fontColor};
   transition: 0.25s;
 `
 
@@ -80,5 +79,14 @@ const ChartDiv = styled.div`
   right: 0;
 `
 
-export { Container, FarmType, Text, ContentResult, ContentImg,
-ContentMiddle, Img, Percent, ChartDiv }
+export {
+  Container,
+  FarmType,
+  Text,
+  ContentResult,
+  ContentImg,
+  ContentMiddle,
+  Img,
+  Percent,
+  ChartDiv,
+}

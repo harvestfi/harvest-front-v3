@@ -1,4 +1,4 @@
-const { web3Socket } = require('../../../lib/web3')
+const { web3 } = require('../../../lib/web3')
 const univ3EventsContract = require('../../../lib/web3/contracts/uniswap-v3-sharepriceEvents/contract.json')
 
 // fromBlock = 12429930: It was the earliest block when Uniswap V3 vaults were deployed
@@ -7,7 +7,7 @@ const getApy = async (vaultAddress, fromBlock = 12429930, toBlock = 'latest') =>
     latestHarvestsToAverageOver = 2,
     dailyAPRTotal = 0
 
-  const instance = new web3Socket.eth.Contract(univ3EventsContract.abi, vaultAddress)
+  const instance = new web3.eth.Contract(univ3EventsContract.abi, vaultAddress)
   const vaultEvents = (
     await instance.getPastEvents('SharePriceChangeTrading', {
       fromBlock,

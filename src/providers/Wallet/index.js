@@ -1,25 +1,23 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 // import detectEthereumProvider from "@metamask/detect-provider";
 // import { useWeb3React } from "@web3-react/core";
-import { isArray, /*get, isUndefined, toString*/ } from 'lodash'
-import { 
-  // validateAccount, 
-  validateChain } from './utils'
-import { useContracts } from '../Contracts'
+import { isArray } from 'lodash'
+import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../constants'
+import { CHAINS_ID } from '../../data/constants'
 import {
   // getAccount,
   getChainName,
   hasValidUpdatedBalance,
-  pollUpdatedBalance,
   mainWeb3,
-  // isMobileWeb3,
-  // getChainHexadecimal,
-  // connectors
+  pollUpdatedBalance,
 } from '../../services/web3'
 import tokenMethods from '../../services/web3/contracts/token/methods'
-import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../constants'
-import { CHAINS_ID } from '../../data/constants'
+import { useContracts } from '../Contracts'
+import {
+  // validateAccount,
+  validateChain,
+} from './utils'
 
 const { tokens } = require('../../data')
 
@@ -77,12 +75,24 @@ const useWallet = () => useContext(WalletContext)
 // }
 
 const WalletProvider = _ref => {
-  const { children, accountAddress, connectedStatus, chainObj, openConnectModal, openChainModal, openAccountModal } = _ref
+  const {
+    children,
+    accountAddress,
+    connectedStatus,
+    chainObj,
+    openConnectModal,
+    openChainModal,
+    openAccountModal,
+  } = _ref
   const web3Plugin = mainWeb3
   const [account, setAccount] = useState(null)
   const [connected, setConnected] = useState(false)
   const [chainId, setChainId] = useState(CHAINS_ID.ETH_MAINNET)
-  const [selChain, setSelChain] = useState([CHAINS_ID.ETH_MAINNET, CHAINS_ID.BSC_MAINNET, CHAINS_ID.MATIC_MAINNET])
+  const [selChain, setSelChain] = useState([
+    CHAINS_ID.ETH_MAINNET,
+    CHAINS_ID.MATIC_MAINNET,
+    CHAINS_ID.ARBITRUM_ONE,
+  ])
   const [balances, setBalances] = useState({})
   const [logout, setLogout] = useState(false)
   const [balancesToLoad, setBalancesToLoad] = useState([])
@@ -106,9 +116,10 @@ const WalletProvider = _ref => {
       setConnected(false)
       setBalances({})
       setLogout(true)
-    }, [
+    },
+    [
       // deactivate
-    ]
+    ],
   )
 
   const onNetworkChange = useCallback(
@@ -153,13 +164,13 @@ const WalletProvider = _ref => {
     }
   }, [web3Plugin, chainId, account, onNetworkChange])
 
-  useEffect(()=>{
-      const getAuthInfo = () => {
-        setAccount(accountAddress)
-        setConnected(connectedStatus)
-        setChainId(chainObj ? chainObj.id : CHAINS_ID.ETH_MAINNET)
-        setChainObject(chainObj)
-      }
+  useEffect(() => {
+    const getAuthInfo = () => {
+      setAccount(accountAddress)
+      setConnected(connectedStatus)
+      setChainId(chainObj ? chainObj.id : CHAINS_ID.ETH_MAINNET)
+      setChainObject(chainObj)
+    }
 
     getAuthInfo()
   }, [accountAddress, connectedStatus, chainObj])
@@ -279,7 +290,7 @@ const WalletProvider = _ref => {
     setLogout(false)
     // handleClose()
   }, [
-    // web3Plugin, 
+    // web3Plugin,
     openConnectModal,
     // activate, provider, chainId
   ])
@@ -326,7 +337,11 @@ const WalletProvider = _ref => {
                 contracts[token === IFARM_TOKEN_SYMBOL ? FARM_TOKEN_SYMBOL : token]
               const currApprovedAssetBalance = approvedBalances[token]
               const newApprovedAssetBalance = vaultAddress
-                ? await tokenMethods.getApprovedAmount(account, vaultAddress, approvalContract.instance)
+                ? await tokenMethods.getApprovedAmount(
+                    account,
+                    vaultAddress,
+                    approvalContract.instance,
+                  )
                 : '0'
 
               if (
@@ -363,8 +378,8 @@ const WalletProvider = _ref => {
     {
       value: {
         connect,
-        account: account,
-        setAccount: setAccount,
+        account,
+        setAccount,
         connected,
         setConnected,
         chainId,
@@ -380,7 +395,7 @@ const WalletProvider = _ref => {
         openChainModal,
         openAccountModal,
         logout,
-        chainObject
+        chainObject,
       },
     },
     children,

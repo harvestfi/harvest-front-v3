@@ -3,20 +3,22 @@ require('dotenv').config()
 module.exports = function () {
   const express = require('express')
   const { initRouter } = require('./router/index')
-  const { PORT, CORS_SETTINGS } = require('../lib/constants')
+  // const { CORS_SETTINGS } = require('../lib/constants')
 
   const app = express()
   const cors = require('cors')
   const { startPollers } = require('./pollers')
   const initDb = require('../lib/db')
 
-  app.use(cors(CORS_SETTINGS))
+  // app.use(cors(CORS_SETTINGS))
+  app.use(cors())
 
   initRouter(app)
+  const port = process.env.PORT || 3000
 
-  const server = app.listen(PORT, async () => {
+  const server = app.listen(port, async () => {
     await initDb()
-    console.log(`Harvest API listening on port: ${PORT}`)
+    console.log(`Harvest API listening on port: ${port}`)
     startPollers()
   })
 

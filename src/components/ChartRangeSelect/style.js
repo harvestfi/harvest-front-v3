@@ -12,34 +12,39 @@ const Container = styled.button`
   border-radius: 3px;
 
   &:hover {
-    border: 1px solid #FF9400;
-    filter: drop-shadow(0px 0px 4px #FF9400);
+    border: 1px solid #ff9400;
+    filter: drop-shadow(0px 0px 4px #ff9400);
   }
 
-  ${props => props.activeItem ? 
-    props.mode === 'dark' ? `
+  ${props =>
+    props.activeItem
+      ? props.mode === 'dark'
+        ? `
         background: white;
         border-radius: 3px;
-    ` :
-      `
+    `
+        : `
         background: #FFE6AF;
         border-radius: 3px;
-      ` 
-    : 
-    props.mode === 'dark' ? `
+      `
+      : props.mode === 'dark'
+      ? `
       background: none;
       border: 1px solid #15202B;
-    ` :`
+    `
+      : `
       background: white;
-      `
-  }
+      `}
 `
 
 const Text = styled.div`
   padding: 0 5px;
-  ${props => (props.state === props.text ? `
+  ${props =>
+    props.state === props.text
+      ? `
       // color: #DF0000;
-    ` : '')};
+    `
+      : ''};
 `
 
 export { Container, Text }

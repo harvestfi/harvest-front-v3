@@ -16,11 +16,8 @@ function convertFromForEthereumMainnet(filePath, vaultsObject, statefulEmissions
         'YCRV',
         'ThreePool',
         'crvUSDN',
-        'crvBUSD',
         'crvCOMPOUND',
-        'crvHUSD',
         'crvEURS',
-        'crvUST',
         'WBTC',
         'crvRenWBTC',
         'TBTCMixed',
@@ -29,8 +26,6 @@ function convertFromForEthereumMainnet(filePath, vaultsObject, statefulEmissions
         'oneInch_ETH_DAI',
         'oneInch_ETH_USDC',
         'oneInch_ETH_USDT',
-        'oneInch_ETH_WBTC',
-        'oneInch_ETH_1INCH',
         'sushi_DAI_WETH',
         'sushi_WBTC_WETH',
         'sushi_USDT_WETH',
@@ -39,18 +34,7 @@ function convertFromForEthereumMainnet(filePath, vaultsObject, statefulEmissions
         'uni_WETH_DPI',
         'UNI_MIC_USDT',
         'UNI_MIS_USDT',
-        'UNI_BAC_DAI',
-        'UNI_DAI_BAS',
-        'basisGold_DAI_BSG',
-        'basisGold_DAI_BSGS',
-        'mirrorGOOG',
-        'mirrorAAPL',
-        'mirrorTSLA',
-        'mirrorAMZN',
         'basisGold_DSD',
-        'basisGold_ESD',
-        'basisGold_BAC',
-        'crvAAVE',
         'crvGUSD',
       ].find(key => {
         try {
@@ -73,6 +57,7 @@ function convertFromForEthereumMainnet(filePath, vaultsObject, statefulEmissions
     StrategicReserve: '0xd00FCE4966821Da1EdD1221a02aF0AFc876365e4',
     ProfitSharing: '0x8f5adC58b32D4e5Ca02EAC0E293D35855999436C',
     Multisig: '0xF49440C1F012d041802b25A73e5B0B9166a75c02',
+    FARMSteadUSDCPool: '0x95D2e18C069175523F56B617F96be7575E381547',
   }
 
   // do not touch this, it needs to match the smart contract enums
@@ -109,6 +94,9 @@ function convertFromForEthereumMainnet(filePath, vaultsObject, statefulEmissions
         } else if (id === '__otherChainsCombined') {
           notificationType = NotificationType.TRANSFER
           address = statefulEmissionsHelperAddress
+        } else if (id === 'FARMsteadUSDC24') {
+          notificationType = NotificationType.IFARM
+          address = addresses.FARMSteadUSDCPool
         } else if (id === '__FarmWeth') {
           notificationType = NotificationType.FARM
           address = addresses.FARM_WETH_LP_TOKEN_REWARD_POOL

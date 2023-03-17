@@ -13,7 +13,7 @@ const Container = styled.a`
     border-radius: 10px;
 
     &:hover {
-      filter: drop-shadow(0px 4px 4px ${props=>props.boxShadowColor});
+      filter: drop-shadow(0px 4px 4px ${props => props.boxShadowColor});
     }
   }
 
@@ -24,14 +24,14 @@ const Container = styled.a`
     font-weight: 700;
     font-size: 25px;
     line-height: 33px;
-    color: #FFFFFF;
+    color: #ffffff;
   }
 
   .feature {
     position: absolute;
     left: 20px;
     bottom: 24px;
-    background: #FFFFFF;
+    background: #ffffff;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
     border-radius: 15px;
     display: flex;
@@ -39,13 +39,13 @@ const Container = styled.a`
     font-weight: 500;
     font-size: 12px;
     line-height: 15px;
-    color: #AB6AC2;
-    
+    color: #ab6ac2;
+
     img {
       margin-right: 6px;
     }
   }
-  
+
   @media screen and (max-width: 992px) {
     .title {
       font-size: 14px;
@@ -54,4 +54,4 @@ const Container = styled.a`
   }
 `
 
-export { Container }
+export default Container

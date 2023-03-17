@@ -3,27 +3,35 @@ import { Dropdown, Offcanvas } from 'react-bootstrap'
 
 const QuickFilterContainer = styled.div`
   display: flex;
-  ${props => props.justifyContent ? `
+  ${props =>
+    props.justifyContent
+      ? `
     justify-content: ${props.justifyContent};
-  ` : ''
-  }
-  ${props => props.sub ? `
-  ` : `padding: 15px 0 0;`
-  }
+  `
+      : ''}
+  ${props =>
+    props.sub
+      ? `
+  `
+      : `padding: 15px 0 0;`}
   
   &:first-child {
     padding: 0;
   }
 
-  ${props => props.position ? `
+  ${props =>
+    props.position
+      ? `
     position: ${props.position};
-  ` : ''
-  }
+  `
+      : ''}
 
-  ${props => props.width ? `
+  ${props =>
+    props.width
+      ? `
     width: ${props.width};
-  ` : ''
-  }
+  `
+      : ''}
 
   @media screen and (max-width: 1479px) {
     display: block;
@@ -52,9 +60,9 @@ const InputsContainer = styled.div`
 `
 
 const UserDropDown = styled(Dropdown.Toggle)`
-  background: ${props=>props.backcolor} !important;
-  border: 1px solid ${props=>props.bordercolor} !important;
-  color: ${props=>props.fontcolor} !important;
+  background: ${props => props.backcolor} !important;
+  border: 1px solid ${props => props.bordercolor} !important;
+  color: ${props => props.fontcolor} !important;
   border-radius: 10px;
   align-items: center;
   padding: 12px 15px !important;
@@ -66,7 +74,7 @@ const UserDropDown = styled(Dropdown.Toggle)`
   &:after {
     display: none !important;
   }
-  
+
   &:hover {
     background: white;
     color: black;
@@ -79,7 +87,7 @@ const UserDropDown = styled(Dropdown.Toggle)`
   }
 
   img {
-    filter: ${props=>props.filtercolor}
+    filter: ${props => props.filtercolor};
   }
 
   .chain-name {
@@ -98,7 +106,7 @@ const UserDropDown = styled(Dropdown.Toggle)`
 
 const UserDropDownMenu = styled(Dropdown.Menu)`
   background: white;
-  border: 1px solid #E9E9E9;
+  border: 1px solid #e9e9e9;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
   border-radius: 0 0 12px 12px;
   padding: 0;
@@ -111,14 +119,14 @@ const UserDropDownItem = styled(Dropdown.Item)`
   text-align: left;
   display: flex !important;
   background: white;
-  color: #888E8F;
+  color: #888e8f;
   font-size: 12px;
   font-weight: 400;
   line-height: 16px;
   align-items: center;
 
   &:hover {
-    background: #F6F6F6 !important;
+    background: #f6f6f6 !important;
     color: black;
     font-weight: 500;
   }
@@ -129,53 +137,75 @@ const UserDropDownItem = styled(Dropdown.Item)`
 `
 
 const DivWidth = styled.div`
-  ${props => props.width ? `
+  ${props =>
+    props.width
+      ? `
     width: ${props.width};
-  ` : 'width: auto;'
-  }
-  ${props => props.marginRight ? `
+  `
+      : 'width: auto;'}
+  ${props =>
+    props.marginRight
+      ? `
     margin-right: ${props.marginRight};
-  ` : ''
-  }
-  ${props => props.justifyContent ? `
+  `
+      : ''}
+  ${props =>
+    props.justifyContent
+      ? `
     justify-content: ${props.justifyContent};
-  ` : ''
-  }
-  ${props => props.display ? `
+  `
+      : ''}
+  ${props =>
+    props.display
+      ? `
     display: ${props.display};
-  ` : ''
-  }
-  ${props => props.padding ? `
+  `
+      : ''}
+  ${props =>
+    props.padding
+      ? `
     padding: ${props.padding};
-  ` : ''
-  }
-  ${props => props.position ? `
+  `
+      : ''}
+  ${props =>
+    props.position
+      ? `
     position: ${props.position};
-  ` : ''
-  }
-  ${props => props.top ? `
+  `
+      : ''}
+  ${props =>
+    props.top
+      ? `
     top: ${props.top}px;
-  ` : ''
-  }
-  ${props => props.left ? `
+  `
+      : ''}
+  ${props =>
+    props.left
+      ? `
     left: ${props.left}px;
-  ` : ''
-  }
-  ${props => props.right ? `
+  `
+      : ''}
+  ${props =>
+    props.right
+      ? `
     right: ${props.right}px;
-  ` : ''
-  }
-  ${props => props.boxShadow ? `
+  `
+      : ''}
+  ${props =>
+    props.boxShadow
+      ? `
     box-shadow: ${props.boxShadow};
-  ` : ''
-  }
-  ${props => props.borderRadius ? `
+  `
+      : ''}
+  ${props =>
+    props.borderRadius
+      ? `
     border-radius: ${props.borderRadius}px;
-  ` : ''
-  }
+  `
+      : ''}
 
-  background: ${props=>props.backColor};
-  
+  background: ${props => props.backColor};
+
   &.searchbar {
     width: 23%;
     position: absolute;
@@ -193,13 +223,15 @@ const DivWidth = styled.div`
       margin-bottom: 15px;
     }
 
-    ${props => props.marginBottom ? `
+    ${props =>
+      props.marginBottom
+        ? `
       margin-bottom: ${props.marginBottom};
-    ` : ''
-    }
+    `
+        : ''}
 
     width: max-content;
-    
+
     &.searchbar {
       position: absolute;
       top: 220px;
@@ -216,25 +248,25 @@ const ChainButton = styled.button`
   border: none;
   border-radius: 12px;
   margin-right: 21px;
-  border: 1px solid ${props=>props.borderColor};
-  background: ${props=>props.backColor};
-  
+  border: 1px solid ${props => props.borderColor};
+  background: ${props => props.backColor};
+
   padding: 7px 15px;
   display: flex;
   justify-content: center;
-  
+
   transition: 0.25s;
 
   &:hover {
-    background: ${props=>props.hoverColor} !important;
+    background: ${props => props.hoverColor} !important;
     border-radius: 12px;
   }
 
   &.active {
-    background: ${props=>props.backColor};
-    
+    background: ${props => props.backColor};
+
     border-radius: 12px;
-      
+
     img {
       opacity: 1;
     }
@@ -258,22 +290,22 @@ const ChainATag = styled.a`
   justify-content: center;
   transition: 0.25s;
 
-  border: 1px solid ${props=>props.borderColor};
-  background: ${props=>props.backColor};
+  border: 1px solid ${props => props.borderColor};
+  background: ${props => props.backColor};
 
   img.link {
-    filter: ${props=>props.filterColor};
+    filter: ${props => props.filterColor};
   }
 
   &:hover {
-    background: ${props=>props.hoverColor} !important;
+    background: ${props => props.hoverColor} !important;
     border-radius: 12px;
   }
 
   &.active {
-    background: ${props=>props.backColor};
+    background: ${props => props.backColor};
     border-radius: 12px;
-      
+
     img {
       opacity: 1;
     }
@@ -287,9 +319,9 @@ const ChainATag = styled.a`
 `
 
 const ClearFilter = styled.div`
-  background: ${props=>props.backColor};
-  color: ${props=>props.fontColor};
-  border: 1px solid ${props=>props.borderColor};
+  background: ${props => props.backColor};
+  color: ${props => props.fontColor};
+  border: 1px solid ${props => props.borderColor};
   font-size: 16px;
   font-weight: 500;
   line-height: 21px;
@@ -299,24 +331,26 @@ const ClearFilter = styled.div`
   height: 100%;
   display: flex;
   transition: 0.25s;
-  
+
   align-items: center;
   // box-shadow: 0px 0px 4px rgb(0 0 0 / 25%);
 
   &:hover {
-    color: #FF9400;
+    color: #ff9400;
   }
 `
 
 const Counter = styled.div`
-  ${props => props.count > 0 ? `
+  ${props =>
+    props.count > 0
+      ? `
   background: #FF7E00;
   color: white;
-  ` : `
+  `
+      : `
   background: #FF9400;
   color: #1F2937;
-  `
-  }
+  `}
   width: 20px;
   height: 20px;
   border-radius: 5px;
@@ -370,11 +404,11 @@ const FarmButtonPart = styled.div`
 `
 
 const Filtersinput = styled.input`
-  background: #FFFFFF;
+  background: #ffffff;
   border: 0px;
   outline: 0;
   border-radius: 5px;
-  color: #888E8F;
+  color: #888e8f;
   padding: 12px 20px 12px 32px;
   width: 80%;
   font-size: 12px;
@@ -395,10 +429,10 @@ const FarmFiltersPart = styled.div`
     // position: relative;
 
     button {
-      background: ${props=>props.backColor};
-      color: ${props=>props.fontColor};
+      background: ${props => props.backColor};
+      color: ${props => props.fontColor};
       width: 100%;
-      border: 1px solid ${props=>props.borderColor};
+      border: 1px solid ${props => props.borderColor};
       border-radius: 5px;
       padding: 11px 64px 13px 15px;
       font-size: 12px;
@@ -409,7 +443,7 @@ const FarmFiltersPart = styled.div`
 
     img {
       margin-right: 5px;
-      filter: ${props=>props.filterColor}
+      filter: ${props => props.filterColor};
     }
   }
 
@@ -426,13 +460,13 @@ const MobileListHeaderSearch = styled.div`
 
   .filter-sort {
     margin-top: 10px;
-    background: #F5F5F5;
+    background: #f5f5f5;
     border-radius: 5px;
     position: relative;
-    color: #888E8F;
+    color: #888e8f;
 
     input {
-      background: #F5F5F5;
+      background: #f5f5f5;
       width: 100%;
       border: 0px;
     }
@@ -451,12 +485,12 @@ const MobileClearFilter = styled(ClearFilter)`
   line-height: 16px;
   width: 100%;
   border-radius: 5px;
-  color: ${props=>props.fontColor};
+  color: ${props => props.fontColor};
 `
 
 const FilterOffCanvas = styled(Offcanvas)`
   width: 300px !important;
-  background: ${props=>props.backColor} !important;
+  background: ${props => props.backColor} !important;
 `
 
 const FilterOffCanvasHeader = styled(Offcanvas.Header)`
@@ -486,9 +520,9 @@ const FilterOffCanvasBody = styled(Offcanvas.Body)`
       font-size: 12px;
       font-weight: 500;
       line-height: 16px;
-      background: ${props=>props.backColor} !important;
-      border: 1px solid ${props=>props.borderColor} !important;
-      color: ${props=>props.fontColor} !important;
+      background: ${props => props.backColor} !important;
+      border: 1px solid ${props => props.borderColor} !important;
+      color: ${props => props.fontColor} !important;
       border-radius: 5px;
       width: 100%;
       position: relative;
@@ -502,7 +536,7 @@ const FilterOffCanvasBody = styled(Offcanvas.Body)`
 
       img {
         margin-right: 5px;
-        filter: ${props=>props.filterColor};
+        filter: ${props => props.filterColor};
       }
 
       &:after {
@@ -515,28 +549,28 @@ const FilterOffCanvasBody = styled(Offcanvas.Body)`
       font-weight: 500;
       line-height: 14px;
       width: 100%;
-      background: ${props=>props.backColor};
-      border: 1px solid ${props=>props.borderColor};
-      
+      background: ${props => props.backColor};
+      border: 1px solid ${props => props.borderColor};
+
       .item {
         display: flex;
         padding: 13px 18px 15px 18px;
-        color: ${props=>props.fontColor};
+        color: ${props => props.fontColor};
         img {
           margin-right: 6px;
-          filter: ${props=>props.filterColor};
+          filter: ${props => props.filterColor};
         }
       }
 
       .item.disabled {
-        color: ${props=>props.mobileFilterDisableColor};
+        color: ${props => props.mobileFilterDisableColor};
       }
     }
   }
 `
 
 const FarmFilter = styled.div`
-  color: ${props=>props.fontColor};
+  color: ${props => props.fontColor};
   font-weight: 700;
   font-size: 16px;
   line-height: 21px;
@@ -550,11 +584,30 @@ const BadgeText = styled.div`
   font-weight: 500;
   font-size: 5px;
   line-height: 7px;
-  color: ${props=>props.mobileFilterDisableColor};
+  color: ${props => props.mobileFilterDisableColor};
 `
 
-export { QuickFilterContainer, InputsContainer, Counter, UserDropDown, UserDropDownItem, 
-  UserDropDownMenu, DivWidth, ChainButton, ClearFilter, WebView, MobileView, FarmButtonPart, 
-  Filtersinput, FarmFiltersPart, MobileClearFilter, MobileListHeaderSearch, FarmFilter, 
-  FilterOffCanvas, FilterOffCanvasHeader, FilterOffCanvasBody, ChainATag, BadgeText,
+export {
+  QuickFilterContainer,
+  InputsContainer,
+  Counter,
+  UserDropDown,
+  UserDropDownItem,
+  UserDropDownMenu,
+  DivWidth,
+  ChainButton,
+  ClearFilter,
+  WebView,
+  MobileView,
+  FarmButtonPart,
+  Filtersinput,
+  FarmFiltersPart,
+  MobileClearFilter,
+  MobileListHeaderSearch,
+  FarmFilter,
+  FilterOffCanvas,
+  FilterOffCanvasHeader,
+  FilterOffCanvasBody,
+  ChainATag,
+  BadgeText,
 }

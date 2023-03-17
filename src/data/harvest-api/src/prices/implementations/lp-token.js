@@ -8,7 +8,7 @@ const uniNonFungibleContractData = require('../../lib/web3/contracts/uni-non-fun
 const { getAmountsForPosition } = require('../../lib/web3/contracts/unistatus-viewer/methods')
 const { getPositions } = require('../../lib/web3/contracts/uni-non-fungible-manager/methods')
 const { token: tokenContractData } = require('../../lib/web3/contracts')
-const { CHAIN_TYPES, UI_DATA_FILES } = require('../../lib/constants')
+const { UI_DATA_FILES } = require('../../lib/constants')
 const { getUIData } = require('../../lib/data')
 
 const { getPosId } = require('./uniswap-v3.js')
@@ -17,10 +17,10 @@ const { getTokenPrice } = require('..')
 const getPrice = async (contractAddress, firstToken, secondToken) => {
   const tokens = await getUIData(UI_DATA_FILES.TOKENS)
   const {
-    methods: { getTotalSupply, getBalance },
+    methods: { getTotalSupply, getBalance, getDecimals },
     contract: { abi },
   } = tokenContractData
-  let allFirstAssetInWei, allSecondAssetInWei, totalSupplyInWei
+  let allFirstAssetInWei, allSecondAssetInWei, totalSupplyInWei, pairDecimals
 
   const chainId = get(tokens, `[${firstToken}].chain`)
   const web3Instance = getWeb3(chainId)
@@ -46,6 +46,7 @@ const getPrice = async (contractAddress, firstToken, secondToken) => {
     const positions = await getPositions(posId, nonfungibleContractInstance)
 
     totalSupplyInWei = new BigNumber(positions.liquidity)
+    pairDecimals = 18
   } else {
     if (firstToken === 'ETH') {
       allFirstAssetInWei = new BigNumber(await web3Instance.eth.getBalance(contractAddress))
@@ -55,15 +56,12 @@ const getPrice = async (contractAddress, firstToken, secondToken) => {
       allFirstAssetInWei = new BigNumber(await getBalance(contractAddress, firstInstance))
     }
 
-    if (chainId === CHAIN_TYPES.BSC && secondToken === 'BNB') {
-      allSecondAssetInWei = new BigNumber(await web3Instance.eth.getBalance(contractAddress))
-      secondToken = 'wBNB'
-    } else {
-      const secondInstance = new web3Instance.eth.Contract(abi, tokens[secondToken].tokenAddress)
-      allSecondAssetInWei = new BigNumber(await getBalance(contractAddress, secondInstance))
-    }
+    const secondInstance = new web3Instance.eth.Contract(abi, tokens[secondToken].tokenAddress)
+    allSecondAssetInWei = new BigNumber(await getBalance(contractAddress, secondInstance))
+
     const tokenInstance = new web3Instance.eth.Contract(abi, contractAddress)
     totalSupplyInWei = new BigNumber(await getTotalSupply(tokenInstance))
+    pairDecimals = await getDecimals(tokenInstance)
   }
 
   const pricePerFirstAsset = new BigNumber(await getTokenPrice(firstToken))
@@ -76,11 +74,11 @@ const getPrice = async (contractAddress, firstToken, secondToken) => {
   const allFirstAssetInUSD = pricePerFirstAsset
     .multipliedBy(allFirstAssetInWei)
     .dividedBy(totalSupplyInWei)
-    .multipliedBy(new BigNumber(10).exponentiatedBy(18 - tokens[firstToken].decimals))
+    .multipliedBy(new BigNumber(10).exponentiatedBy(pairDecimals - tokens[firstToken].decimals))
   const allSecondAssetInUSD = pricePerSecondAsset
     .multipliedBy(allSecondAssetInWei)
     .dividedBy(totalSupplyInWei)
-    .multipliedBy(new BigNumber(10).exponentiatedBy(18 - tokens[secondToken].decimals))
+    .multipliedBy(new BigNumber(10).exponentiatedBy(pairDecimals - tokens[secondToken].decimals))
   return allFirstAssetInUSD.plus(allSecondAssetInUSD).toString(10)
 }
 

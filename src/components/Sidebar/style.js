@@ -3,17 +3,17 @@ import { Dropdown, Offcanvas } from 'react-bootstrap'
 import GradientBack from '../../assets/images/logos/gradient.svg'
 
 const Container = styled.div`
-  ${props=>props.sidebarEffect};
+  ${props => props.sidebarEffect};
 
   a.logo {
-    color: ${props=>props.fontColor};
+    color: ${props => props.fontColor};
   }
   transition: 0.25s;
-  background: ${props=>props.backColor};
-  color: ${props=>props.fontColor};
+  background: ${props => props.backColor};
+  color: ${props => props.fontColor};
 
   min-height: 100%;
-  min-width: ${props => (props.width)};
+  min-width: ${props => props.width};
   max-width: 100%;
   // position: fixed;
   z-index: 100;
@@ -35,7 +35,7 @@ const Layout = styled.div`
   align-items: center;
   max-width: 1790px;
   margin: auto;
-  
+
   margin-bottom: 50px;
 
   @media screen and (max-width: 992px) {
@@ -96,14 +96,13 @@ const LinkContainer = styled.div`
     margin-bottom: 0;
   }
 
-  
   @media screen and (min-width: 992px) {
     display: flex;
   }
 `
 
 const Link = styled.button`
-  color: ${props=>props.fontColor};
+  color: ${props => props.fontColor};
   transition: 0.25s;
   font-size: 16px;
   font-weight: 500;
@@ -125,10 +124,13 @@ const Link = styled.button`
   //   margin-bottom: 0.7rem;
   // }
 
-  ${props => props.active ? `
+  ${props =>
+    props.active
+      ? `
     color: ${props.activeColor};
     font-weight: bold;
-  ` : ``}
+  `
+      : ``}
 
   .sideIcon {
     margin-right: 17px;
@@ -162,11 +164,11 @@ const Link = styled.button`
 `
 
 const MiddleActionsContainer = styled.div`
-    flex-basis: 520px;
+  flex-basis: 520px;
 
-    @media screen and (max-width: 992px) {
-      display: none;
-    }
+  @media screen and (max-width: 992px) {
+    display: none;
+  }
 `
 
 const FlexDiv = styled.div`
@@ -183,12 +185,12 @@ const FlexDiv = styled.div`
   }
 
   input[type='checkbox'] {
-    accent-color: #188E54;
+    accent-color: #188e54;
     width: 20px;
     height: 20px;
     padding: 4px;
     border-radius: 6px;
-}
+  }
 `
 
 const Follow = styled.div`
@@ -214,12 +216,13 @@ const ConnectButtonStyle = styled.button`
   width: 100%;
   background: white;
   border-radius: 8px;
-  border: 1px solid #D0D5DD;
+  border: 1px solid #d0d5dd;
   color: #344054;
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
 
-  ${props => (props.connected ?
-    `
+  ${props =>
+    props.connected
+      ? `
       padding: 7px 45px 7px 11px;
       filter: drop-shadow(0px 4px 52px rgba(0, 0, 0, 0.25));
 
@@ -227,16 +230,15 @@ const ConnectButtonStyle = styled.button`
         background: #E6F8EB;
       }
     `
-    : 
-    `
+      : `
       padding: 15px 0px 15px 0px;
-    `
-  )}
+    `}
 
   &:hover {
-    box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05), 0px 0px 0px 4px #F2F4F7;
+    box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05), 0px 0px 0px 4px #f2f4f7;
     img.connect-wallet {
-      filter: brightness(0) saturate(100%) invert(69%) sepia(55%) saturate(4720%) hue-rotate(110deg) brightness(91%) contrast(86%);
+      filter: brightness(0) saturate(100%) invert(69%) sepia(55%) saturate(4720%) hue-rotate(110deg)
+        brightness(91%) contrast(86%);
     }
   }
 
@@ -248,21 +250,21 @@ const ConnectButtonStyle = styled.button`
     display: flex;
     align-items: center;
     margin: 43px 0 20px 13px;
-    
+
     width: 85%;
-    ${props => (props.connected ?
-      `
+    ${props =>
+      props.connected
+        ? `
       background: none;
       color: ${props.fontcolor};
       font-size: 11px;
       padding: 2px 16px 2px 7px;
       border: 1px solid ${props.bordercolor};
-      ` : 
       `
+        : `
       padding: 10px 11px;
       font-size: 13px;
-      `
-    )}
+      `}
 
     img.connect-wallet {
       margin-right: 15px;
@@ -275,7 +277,7 @@ const ConnectButtonStyle = styled.button`
 const AboutHarvest = styled.div`
   font-size: 16px;
   font-weight: 700;
-  
+
   margin-top: 30px;
   margin-bottom: 30px;
   padding-left: 13px;
@@ -320,7 +322,7 @@ const MobileLinksContainer = styled.div`
   justify-content: space-between;
   align-items: center;
   margin: 0 0px auto;
-  
+
   a.logo {
     display: flex;
     align-items: inherit;
@@ -332,7 +334,7 @@ const MobileLinksContainer = styled.div`
       margin-left: 22px;
       display: block;
       content: 'Harvest';
-      color: ${props=>props.color};
+      color: ${props => props.color};
     }
   }
 `
@@ -361,7 +363,7 @@ const MobileLink = styled.button`
   align-items: center;
   justify-content: start;
   // width: 100%;
-  color: ${props=>props.fontColor};
+  color: ${props => props.fontColor};
   background-color: transparent;
   cursor: pointer;
   margin-left: 1rem;
@@ -411,7 +413,6 @@ const Address = styled.span`
   font-size: 16px;
   font-weight: 600;
   line-height: 22px;
-
 `
 
 const ThemeMode = styled.div`
@@ -423,7 +424,7 @@ const ThemeMode = styled.div`
     height: fit-content;
     touch-action: pan-x;
     user-select: none;
-  
+
     input {
       cursor: pointer;
       position: absolute;
@@ -433,10 +434,10 @@ const ThemeMode = styled.div`
       width: 100%;
       opacity: 0;
     }
-  
+
     .switch-track {
-      background: ${props=>props.backColor};
-      border: 1px solid ${props=>props.borderColor};
+      background: ${props => props.backColor};
+      border: 1px solid ${props => props.borderColor};
       height: 24px;
       width: 50px;
       border-radius: 30px;
@@ -454,13 +455,15 @@ const ThemeMode = styled.div`
       border-radius: 50%;
       transition: all 0.25s ease 0s;
     }
-  
+
     &:hover .switch-thumb {
-      box-shadow: 0 0 2px 3px #FF9400;
+      box-shadow: 0 0 2px 3px #ff9400;
     }
   }
 
-  ${props=>props.mode === "light" ? `
+  ${props =>
+    props.mode === 'light'
+      ? `
       #theme-switch {
         .switch-check {
           opacity: 1;
@@ -472,15 +475,16 @@ const ThemeMode = styled.div`
           left: 27px;
         }
       }
-    ` : `
+    `
+      : `
       
     `}
 `
 
 const SideIcons = styled.img`
-  filter: ${props=>props.filterColor};
+  filter: ${props => props.filterColor};
   &:hover {
-    filter: ${props=>props.hoverImgColor};
+    filter: ${props => props.hoverImgColor};
   }
   transition: 0.25s;
 `
@@ -489,7 +493,7 @@ const UserDropDown = styled(Dropdown.Toggle)`
   background: white !important;
   border: none !important;
   border-radius: 10px !important;
-  color: #15202B !important;
+  color: #15202b !important;
   align-items: center;
   padding: 8px 18px 8px 9px !important;
   width: 100%;
@@ -502,9 +506,9 @@ const UserDropDown = styled(Dropdown.Toggle)`
   &:after {
     display: none !important;
   }
-  
+
   &:hover {
-    background: ${props=>props.hoverbackcolor} !important;
+    background: ${props => props.hoverbackcolor} !important;
     color: black;
     font-weight: 500;
   }
@@ -533,15 +537,15 @@ const UserDropDown = styled(Dropdown.Toggle)`
 `
 
 const UserDropDownMenu = styled(Dropdown.Menu)`
-  background-color: ${props=>props.backcolor} !important;
-  border: 1px solid ${props=>props.bordercolor} !important;
+  background-color: ${props => props.backcolor} !important;
+  border: 1px solid ${props => props.bordercolor} !important;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
   border-radius: 12px !important;
   padding: 0;
   min-width: 8rem;
   width: 100% !important;
   margin-top: 6px;
-  
+
   &:focus {
     box-shadow: none;
   }
@@ -554,25 +558,29 @@ const UserDropDownItem = styled(Dropdown.Item)`
   display: flex !important;
   justify-content: start;
   // background: white;
-  ${props=>props.bordercolor ? `
-    border-bottom: 0.5px solid ${props.bordercolor } !important;
-  ` : `
+  ${props =>
+    props.bordercolor
+      ? `
+    border-bottom: 0.5px solid ${props.bordercolor} !important;
+  `
+      : `
   `}
   width: auto !important;
-  color: ${props=>props.fontcolor} !important;
+  color: ${props => props.fontcolor} !important;
 
   img {
-    filter: ${props=>props.filtercolor};
+    filter: ${props => props.filtercolor};
   }
 
   &:hover {
     background: none !important;
 
     img {
-      filter: invert(63%) sepia(58%) saturate(3702%) hue-rotate(0deg) brightness(107%) contrast(105%);
+      filter: invert(63%) sepia(58%) saturate(3702%) hue-rotate(0deg) brightness(107%)
+        contrast(105%);
     }
     div {
-      color: #FF9400;
+      color: #ff9400;
     }
   }
 
@@ -594,15 +602,15 @@ const UserDropDownItem = styled(Dropdown.Item)`
 `
 
 const MobileToggle = styled.img`
-  filter: ${props=>props.toggleColor};
+  filter: ${props => props.toggleColor};
 `
 
 const OffcanvasDiv = styled(Offcanvas)`
-  background-color: ${props=>props.backcolor} !important;
-  color: ${props=>props.fontcolor};
+  background-color: ${props => props.backcolor} !important;
+  color: ${props => props.fontcolor};
   transition: 0.25s;
   a.logo {
-    color: ${props=>props.fontcolor};
+    color: ${props => props.fontcolor};
   }
 `
 
@@ -640,14 +648,15 @@ const TopTitle = styled.div`
   font-size: 14px;
   line-height: 20px;
   text-align: center;
-  color: #FFFFFF;
+  color: #ffffff;
   align-items: center;
   padding: 4px 12px;
-  border: 2px solid #EAECF0;
+  border: 2px solid #eaecf0;
   border-radius: 14px;
   img {
     margin-right: 7px;
-    filter: brightness(0) saturate(100%) invert(100%) sepia(17%) saturate(0%) hue-rotate(338deg) brightness(101%) contrast(101%);
+    filter: brightness(0) saturate(100%) invert(100%) sepia(17%) saturate(0%) hue-rotate(338deg)
+      brightness(101%) contrast(101%);
   }
 `
 
@@ -657,9 +666,37 @@ const ChartDiv = styled.div`
   right: 0;
 `
 
-export { Container, Layout, LinksContainer, LinkContainer, Link, MiddleActionsContainer, FlexDiv, Address, 
-  ConnectButtonStyle, Follow, AboutHarvest, MobileView, MobileConnectBtn, MobileToggle, OffcanvasDiv,
-  MobileActionsContainer, MobileLinksContainer, MobileLinkContainer, MobileLink, 
-  MobileFollow, ConnectAvatar, ThemeMode, SideIcons, UserDropDown, UserDropDownItem, UserDropDownMenu,
-  ProfitSharing, ProfitBack, TopDiv, BottomDiv, TopTitle, ChartDiv
+export {
+  Container,
+  Layout,
+  LinksContainer,
+  LinkContainer,
+  Link,
+  MiddleActionsContainer,
+  FlexDiv,
+  Address,
+  ConnectButtonStyle,
+  Follow,
+  AboutHarvest,
+  MobileView,
+  MobileConnectBtn,
+  MobileToggle,
+  OffcanvasDiv,
+  MobileActionsContainer,
+  MobileLinksContainer,
+  MobileLinkContainer,
+  MobileLink,
+  MobileFollow,
+  ConnectAvatar,
+  ThemeMode,
+  SideIcons,
+  UserDropDown,
+  UserDropDownItem,
+  UserDropDownMenu,
+  ProfitSharing,
+  ProfitBack,
+  TopDiv,
+  BottomDiv,
+  TopTitle,
+  ChartDiv,
 }

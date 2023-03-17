@@ -1,63 +1,87 @@
 import styled from 'styled-components'
 
 const BaseWido = styled.div`
-  ${props => props.show ? `
+  ${props =>
+    props.show
+      ? `
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     height: 100%;
-  ` : "display: none;"   
-  }
+  `
+      : 'display: none;'}
 `
 
 const NewLabel = styled.div`
   font-weight: ${props => props.weight || '400'};
   font-size: ${props => props.size || '20px'};
   line-height: ${props => props.height || '0px'};
-  ${props => props.color ? `
+  ${props =>
+    props.color
+      ? `
     color: ${props.color};
-  ` : ""   
-  }
-  ${props => props.position ? `
+  `
+      : ''}
+  ${props =>
+    props.position
+      ? `
     position: ${props.position};
-  ` : ""   
-  }
-  ${props => props.align ? `
+  `
+      : ''}
+  ${props =>
+    props.align
+      ? `
     text-align: ${props.align};
-  ` : ""   
-  }
-  ${props => props.justifyContent ? `
+  `
+      : ''}
+  ${props =>
+    props.justifyContent
+      ? `
     justify-content: ${props.justifyContent};
-  ` : ""   
-  }
-  ${props => props.marginTop ? `
+  `
+      : ''}
+  ${props =>
+    props.marginTop
+      ? `
     margin-top: ${props.marginTop};
-  ` : ""   
-  }
-  ${props => props.marginLeft ? `
+  `
+      : ''}
+  ${props =>
+    props.marginLeft
+      ? `
     margin-left: ${props.marginLeft};
-  ` : ""   
-  }
-  ${props => props.marginBottom ? `
+  `
+      : ''}
+  ${props =>
+    props.marginBottom
+      ? `
     margin-bottom: ${props.marginBottom};
-  ` : ""   
-  }
-  ${props => props.marginRight ? `
+  `
+      : ''}
+  ${props =>
+    props.marginRight
+      ? `
     margin-right: ${props.marginRight};
-  ` : ""
-  }
-  ${props => props.display ? `
+  `
+      : ''}
+  ${props =>
+    props.display
+      ? `
     display: ${props.display};
-  ` : ""
-  }
-  ${props => props.items ? `
+  `
+      : ''}
+  ${props =>
+    props.items
+      ? `
     align-items: ${props.items};
-  ` : ""
-  }
-  ${props => props.self ? `
+  `
+      : ''}
+  ${props =>
+    props.self
+      ? `
     align-self: ${props.self};
-  ` : ""
-  }
+  `
+      : ''}
 
   img.icon {
     margin-right: 10px;
@@ -75,7 +99,7 @@ const NewLabel = styled.div`
     img.icon {
       margin-right: 5px;
     }
-  
+
     img.info {
       margin-left: 5px;
     }
@@ -83,11 +107,11 @@ const NewLabel = styled.div`
 `
 
 const SelectToken = styled.div`
-  background: ${props=>props.backColor};
-  border: 1px solid ${props=>props.borderColor};
-  box-shadow: ${props=>props.shadow};
+  background: ${props => props.backColor};
+  border: 1px solid ${props => props.borderColor};
+  box-shadow: ${props => props.shadow};
   transition: 0.25s;
-  
+
   border-radius: 12px;
   padding: 30px 12px 12px 12px;
 `
@@ -105,10 +129,10 @@ const TokenAmount = styled.input`
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  background: ${props=>props.backColor};
+  background: ${props => props.backColor};
   border: none;
   outline: 0;
-  color: ${props=>props.fontColor};
+  color: ${props => props.fontColor};
   transition: 0.25s;
   padding: 0 10px 10px 0;
 
@@ -120,8 +144,8 @@ const TokenAmount = styled.input`
 `
 
 const TokenSelect = styled.button`
-  background: #F4F4F4;
-  border: 1px solid ${props=>props.borderColor};
+  background: #f4f4f4;
+  border: 1px solid ${props => props.borderColor};
   transition: 0.25s;
 
   border-radius: 15px;
@@ -131,8 +155,8 @@ const TokenSelect = styled.button`
   font-size: 14px;
   line-height: 24px;
   text-align: right;
-  color: ${props=>props.fontColor};
-  
+  color: ${props => props.fontColor};
+
   display: flex;
   align-items: center;
 
@@ -163,7 +187,7 @@ const BalanceInfo = styled.div`
 
   span {
     margin-left: 6px;
-    color: ${props=>props.fontColor};
+    color: ${props => props.fontColor};
     transition: 0.25s;
   }
 `
@@ -178,7 +202,7 @@ const PoweredByWido = styled.div`
   line-height: 13px;
 
   div {
-    color: #1ABC9C;
+    color: #1abc9c;
   }
 
   img {
@@ -198,8 +222,8 @@ const TokenName = styled.div`
   font-size: 14px;
   line-height: 18px;
   // text-decoration-line: underline;
-  background: #ECFDF3;
-  color: #027A48;
+  background: #ecfdf3;
+  color: #027a48;
   border-radius: 16px;
   padding: 5px 10px;
   width: fit-content;
@@ -225,11 +249,11 @@ const StakeAction = styled.div`
 `
 
 const BalanceInput = styled.input`
-  background: ${props=>props.backColor};
-  border: 1px solid ${props=>props.borderColor};
-  color: ${props=>props.fontColor};
+  background: ${props => props.backColor};
+  border: 1px solid ${props => props.borderColor};
+  color: ${props => props.fontColor};
   transition: 0.25s;
-  
+
   border-radius: 8px;
   width: 100%;
   height: 50px;
@@ -251,26 +275,28 @@ const Max = styled.button`
   right: 16px;
   top: 12px;
   border: none;
-  background: #FFAA34;
+  background: #ffaa34;
   border-radius: 1.5px;
   padding: 5px 8px;
   font-weight: 600;
   font-size: 12px;
   line-height: 16px;
-  color: #FFFFFF;
+  color: #ffffff;
 
   &:hover {
-    background: #FFAA34D0;
+    background: #ffaa34d0;
   }
 `
 
 const Part = styled.div`
-  position: relative;  
+  position: relative;
 
-  ${props => props.width ? `
+  ${props =>
+    props.width
+      ? `
     width: ${props.width};
-  ` : ""   
-  }
+  `
+      : ''}
 `
 
 const TokenUSD = styled.div`
@@ -285,15 +311,32 @@ const DepoTitle = styled.div`
   font-size: 14px;
   line-height: 20px;
   margin-bottom: 3px;
-  color: ${props=>props.fontColor};
+  color: ${props => props.fontColor};
 `
 
 const Line = styled.div`
   height: 1px;
-  background: #EAECF0;
+  background: #eaecf0;
   margin-bottom: 10px;
   margin-top: 10px;
 `
 
-export { BaseWido, NewLabel, SelectToken, TokenAmount, TokenInfo, TokenSelect, BalanceInfo, PoweredByWido, TokenName, StakeInfo,
-    Part, Max, BalanceInput, StakeAction, TokenUSD, DepoTitle, Line }
+export {
+  BaseWido,
+  NewLabel,
+  SelectToken,
+  TokenAmount,
+  TokenInfo,
+  TokenSelect,
+  BalanceInfo,
+  PoweredByWido,
+  TokenName,
+  StakeInfo,
+  Part,
+  Max,
+  BalanceInput,
+  StakeAction,
+  TokenUSD,
+  DepoTitle,
+  Line,
+}

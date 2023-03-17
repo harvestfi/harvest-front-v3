@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap'
 
 const Container = styled.div`
   display: flex;
@@ -9,10 +9,10 @@ const Container = styled.div`
   overflow: hidden;
   padding: 20px 26px;
   border-radius: 8px;
-  
+
   position: relative;
   transition: 0.25s;
-  color: ${props=>props.fontColor};
+  color: ${props => props.fontColor};
 
   @media screen and (max-width: 992px) {
     width: 100%;
@@ -44,7 +44,7 @@ const Total = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  
+
   @media screen and (max-width: 1250px) {
     display: block;
   }
@@ -53,16 +53,16 @@ const Total = styled.div`
 const MoreBtn = styled.button`
   display: flex;
   align-items: center;
-  padding: .8em .5em;
+  padding: 0.8em 0.5em;
   margin: 1em;
   background: rgba(223, 0, 0, 0.06);
   border-radius: 1em;
   height: 15px;
-  color: #DF0000;
+  color: #df0000;
   border: none;
 
   img {
-    margin-right: .25em;
+    margin-right: 0.25em;
   }
 `
 
@@ -70,14 +70,14 @@ const ButtonGroup = styled.div`
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  margin: 1em 0em .25em auto;
-  color: #FFF;
+  margin: 1em 0em 0.25em auto;
+  color: #fff;
 
   button {
-    padding: .1em .3em;
-    border-radius: .4em;
+    padding: 0.1em 0.3em;
+    border-radius: 0.4em;
     // background: #F6F6F6;
-    margin-left: .25em;
+    margin-left: 0.25em;
     font-weight: 400;
   }
 `
@@ -103,7 +103,7 @@ const FilterGroup = styled.div`
 
 const PriceShow = styled.div`
   display: flex;
-  
+
   h2 {
     font-size: 20px;
     font-weight: 700;
@@ -119,7 +119,7 @@ const PriceShow = styled.div`
 
 const BlurBack = styled.div`
   position: absolute;
-  background: #FAFAFA;
+  background: #fafafa;
   filter: blur(10px);
   height: calc(100% - 20px);
   width: calc(100% - 52px);
@@ -133,21 +133,22 @@ const ConnectButton = styled.button`
   line-height: 21px;
   font-weight: 700;
   width: 30%;
-  background: #FF9400;
+  background: #ff9400;
   border-radius: 10px;
   border: 0;
   color: white;
 
   &:hover {
-    background: #FF9400D0;
+    background: #ff9400d0;
   }
 
   &:active {
     background: #ef900c;
   }
 
-  ${props => (props.connected ?
-    `
+  ${props =>
+    props.connected
+      ? `
       padding: 7px 45px 7px 11px;
       background: none;
       color: #1F2937;
@@ -158,11 +159,9 @@ const ConnectButton = styled.button`
         background: #E6F8EB;
       }
     `
-    : 
-    `
+      : `
       padding: 15px 0px 15px 0px;
-    `
-  )}
+    `}
 
   img.connect-wallet {
     margin-right: 25px;
@@ -170,10 +169,7 @@ const ConnectButton = styled.button`
 
   @media screen and (max-width: 992px) {
     display: flex;
-    ${props => (props.connected ?
-      `` : 
-    `padding: 15px 0px 15px 19px;`
-    )}
+    ${props => (props.connected ? `` : `padding: 15px 0px 15px 19px;`)}
 
     img.connect-wallet {
       margin-right: 27px;
@@ -199,12 +195,13 @@ const FlexDiv = styled.div`
   }
 
   input[type='checkbox'] {
-    accent-color: #188E54;
+    accent-color: #188e54;
     width: 20px;
     height: 20px;
     padding: 4px;
     border-radius: 6px;
-}`
+  }
+`
 
 const ConnectAvatar = styled.div`
   display: flex;
@@ -230,7 +227,7 @@ const ConnectWalletModal = styled(Modal)`
   margin: auto;
   .modal-dialog {
     .modal-content {
-      background: #188E54 !important;
+      background: #188e54 !important;
       border: 0px;
       border-radius: 20px;
 
@@ -266,7 +263,7 @@ const ConnectWalletModal = styled(Modal)`
 `
 
 const ModalHeader = styled(Modal.Header)`
-  background: #188E54;
+  background: #188e54;
   height: 100px;
   border-radius: 20px 20px 0 0;
   position: relative;
@@ -290,7 +287,7 @@ const ModalTitle = styled.p`
 const WalletList = styled.div`
   display: flex;
   margin: 0.5rem 1rem;
-  background: #F6F6F6;
+  background: #f6f6f6;
   border-radius: 20px;
   padding: 19px;
   cursor: pointer;
@@ -298,7 +295,7 @@ const WalletList = styled.div`
   &:hover {
     background: white;
   }
-  
+
   img {
     margin-right: 2rem;
   }
@@ -312,5 +309,24 @@ const WalletList = styled.div`
   }
 `
 
-export { Container, Title, Header, Total, MoreBtn, ButtonGroup, ChartDiv, FilterGroup, PriceShow, BlurBack, ConnectButton,
-  FlexDiv, ConnectAvatar, Address, ConnectWalletModal, ModalHeader, HeaderImg, ModalTitle, WalletList }
+export {
+  Container,
+  Title,
+  Header,
+  Total,
+  MoreBtn,
+  ButtonGroup,
+  ChartDiv,
+  FilterGroup,
+  PriceShow,
+  BlurBack,
+  ConnectButton,
+  FlexDiv,
+  ConnectAvatar,
+  Address,
+  ConnectWalletModal,
+  ModalHeader,
+  HeaderImg,
+  ModalTitle,
+  WalletList,
+}

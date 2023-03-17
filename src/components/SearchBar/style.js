@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { AiOutlineSearch } from "react-icons/ai";
+import { AiOutlineSearch } from 'react-icons/ai'
 
 const Container = styled.div`
   display: flex;
@@ -8,12 +8,12 @@ const Container = styled.div`
   position: relative;
   border-radius: 10px;
   transition: 0.25s;
-  background: ${props=>props.backColor};
+  background: ${props => props.backColor};
   input {
-    background: ${props=>props.backColor};
+    background: ${props => props.backColor};
   }
-  border: 1px solid ${props=>props.borderColor};
-  
+  border: 1px solid ${props => props.borderColor};
+
   // width: 300px;
 
   input {
@@ -21,7 +21,7 @@ const Container = styled.div`
     border-width: 0px;
     box-sizing: border-box;
     border-radius: 10px;
-    color: ${props=>props.fontColor};
+    color: ${props => props.fontColor};
     transition: 0.25s;
     // height: 41px;
     margin: 0;
@@ -45,7 +45,7 @@ const Container = styled.div`
       font-weight: 400;
       font-size: 12px;
       line-height: 16px;
-      color: #888E8F;
+      color: #888e8f;
     }
   }
 
@@ -65,10 +65,10 @@ const Container = styled.div`
 const SearchIcon = styled(AiOutlineSearch)`
   width: 25px;
   font-size: 35px;
-  color: #888E8F;
+  color: #888e8f;
   margin-right: 5px;
   margin-left: 12px;
-  
+
   @media screen and (max-width: 992px) {
     width: 12px;
     margin-right: 10px;
@@ -80,27 +80,35 @@ const Icon = styled.img`
   position: absolute;
   z-index: 1;
 
-  filter: ${props=>props.iconColor};
+  filter: ${props => props.iconColor};
   transition: 0.25s;
-  ${props => props.left ? `
+  ${props =>
+    props.left
+      ? `
     left: ${props.left}px;
-  ` : ''
-  }
+  `
+      : ''}
 
-  ${props => props.right ? `
+  ${props =>
+    props.right
+      ? `
     right: ${props.right}px;
-  ` : ''
-  }
+  `
+      : ''}
 
-  ${props => props.cursor ? `
+  ${props =>
+    props.cursor
+      ? `
     cursor: ${props.cursor};
-  ` : ''
-  }
+  `
+      : ''}
 
-  ${props => props.opacity ? `
+  ${props =>
+    props.opacity
+      ? `
     opacity: ${props.opacity};
-  ` : ''
-  }
+  `
+      : ''}
 
   @media screen and (max-width: 992px) {
     display: none;

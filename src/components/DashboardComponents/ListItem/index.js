@@ -14,12 +14,17 @@ const ListItem = ({ weight, size, height, color, label, icon, value }) => {
                 <></>
             }
             <Content weight={weight} size={size} height={height} color={color}>{label}</Content>
-          </Label> :
-          ""
-      }
-      { value ? 
-      <Content weight={weight} size={size} height={height} color={color}>{value}</Content> : ""}
-      
+        </Label>
+      ) : (
+        ''
+      )}
+      {value ? (
+        <Content weight={weight} size={size} height={height} color={color}>
+          {value}
+        </Content>
+      ) : (
+        ''
+      )}
     </Container>
   )
 }

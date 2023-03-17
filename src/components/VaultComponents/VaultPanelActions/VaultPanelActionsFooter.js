@@ -1,40 +1,38 @@
-import React, { useCallback, useState } from 'react'
-import { find, get, isEmpty, isNaN } from 'lodash'
-import useDeepCompareEffect from 'use-deep-compare-effect'
 import BigNumber from 'bignumber.js'
+import { find, get, isEmpty, isNaN } from 'lodash'
+import React, { useCallback, useState } from 'react'
+import useDeepCompareEffect from 'use-deep-compare-effect'
 import {
-  BFARM_TOKEN_SYMBOL,
   FARM_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
   MIFARM_TOKEN_SYMBOL,
   POOL_BALANCES_DECIMALS,
   SPECIAL_VAULTS,
 } from '../../../constants'
-import { fromWei, newContractInstance, toWei } from '../../../services/web3'
-import { convertAmountToFARM, stringToArray } from '../../../utils'
-import { useWallet } from '../../../providers/Wallet'
+import { CHAINS_ID } from '../../../data/constants'
 import { usePools } from '../../../providers/Pools'
+import { calculateRewardsEarned } from '../../../providers/Pools/utils'
 import { useVaults } from '../../../providers/Vault'
+import { useWallet } from '../../../providers/Wallet'
+import { fromWei, newContractInstance, toWei } from '../../../services/web3'
+import poolMethods from '../../../services/web3/contracts/pool/methods'
 import tokenContract from '../../../services/web3/contracts/token/contract.json'
 import tokenMethods from '../../../services/web3/contracts/token/methods'
-import poolMethods from '../../../services/web3/contracts/pool/methods'
 import vaultMethods from '../../../services/web3/contracts/vault/methods'
-import { calculateRewardsEarned } from '../../../providers/Pools/utils'
-import VaultFooterActions from './VaultFooterActions'
+import { convertAmountToFARM } from '../../../utils'
 import PoolFooterActions from './PoolFooterActions'
-import { CHAINS_ID, VAULT_CATEGORIES_IDS } from '../../../data/constants'
+import VaultFooterActions from './VaultFooterActions'
 
 const { addresses, tokens } = require('../../../data')
 
 const getPoolRewardSymbol = chain => {
-  if(chain === CHAINS_ID.BSC_MAINNET) {
-    return BFARM_TOKEN_SYMBOL
+  if (chain === CHAINS_ID.ARBITRUM_ONE) {
+    return IFARM_TOKEN_SYMBOL
   }
-  else if(chain === CHAINS_ID.MATIC_MAINNET) {
+  if (chain === CHAINS_ID.MATIC_MAINNET) {
     return MIFARM_TOKEN_SYMBOL
   }
   return FARM_TOKEN_SYMBOL
-
 }
 
 const VaultPanelActionsFooter = ({
@@ -68,7 +66,7 @@ const VaultPanelActionsFooter = ({
     const [, selectedToken] = find(Object.entries(tokens), ([, tokenValues]) =>
       fAssetPool.rewardTokens.includes(tokenValues.tokenAddress),
     )
-    if(fAssetPool.rewardAPY !== null) {
+    if (fAssetPool.rewardAPY !== null) {
       fAssetPool.rewardAPY.forEach(rewardApy => {
         const ratePerDay = new BigNumber(rewardApy).dividedBy(365).dividedBy(100)
         ratesPerDay.push(
@@ -189,10 +187,6 @@ const VaultPanelActionsFooter = ({
 
   const isLoadingData = loadingBalances || loadingRewards || !fAssetPool.loaded
 
-  const hasHodlCategory = stringToArray(get(vaultsData, `[${tokenSymbol}].category`)).includes(
-    VAULT_CATEGORIES_IDS.SUSHI_HODL,
-  )
-
   const componentsProps = {
     token,
     amountsToExecuteInWei,
@@ -209,7 +203,6 @@ const VaultPanelActionsFooter = ({
     iFARMinFARMInEther,
     loadingBalances,
     isSpecialVault,
-    hasHodlCategory,
     poolRewardSymbol: getPoolRewardSymbol(chain),
     ...props,
   }

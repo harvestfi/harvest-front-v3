@@ -2,7 +2,7 @@ import React from 'react'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { CountdownContainer, DaysLabel } from './style'
 
-const CountdownLabel = ({ days, hours, minutes, /*seconds, milliseconds,*/ ...props }) => {
+const CountdownLabel = ({ days, hours, minutes, /* seconds, milliseconds, */ ...props }) => {
   const { fontColor } = useThemeContext()
   return (
     <CountdownContainer fontColor={fontColor} {...props}>

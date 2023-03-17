@@ -12,9 +12,9 @@ const FarmContainer = styled.div`
   background: ${props => props.pageBackColor};
 
   // @media screen and (min-width: 1920px) {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
   // }
 
   @media screen and (max-width: 992px) {
@@ -33,7 +33,6 @@ const FarmContent = styled.div`
   @media screen and (min-width: 1920px) {
     width: 1400px;
     height: fit-content;
-    
   }
 
   @media screen and (max-width: 992px) {
@@ -91,4 +90,13 @@ const ProfitShare = styled.div`
   text-decoration: none;
 `
 
-export { FarmContainer, FarmContent, FarmCompInner, BottomPart, FarmHeader, Title, Desc, ProfitShare }
+export {
+  FarmContainer,
+  FarmContent,
+  FarmCompInner,
+  BottomPart,
+  FarmHeader,
+  Title,
+  Desc,
+  ProfitShare,
+}

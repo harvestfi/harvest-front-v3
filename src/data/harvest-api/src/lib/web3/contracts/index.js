@@ -31,13 +31,11 @@ const poolContract = require('../contracts/pool/contract.json')
 const potPoolMethods = require('../contracts/pot-pool/methods')
 const potPoolContract = require('../contracts/pot-pool/contract.json')
 
-const basisPoolMethods = require('../contracts/basis-pool/methods')
-const basisPoolContract = require('../contracts/basis-pool/contract.json')
-
 const tokenMethods = require('../contracts/token/methods')
 const tokenContract = require('../contracts/token/contract.json')
 
-const amplifierContract = require('../contracts/amplifier/contract.json')
+const farmsteadUSDCMethods = require('../contracts/farmstead-usdc/methods')
+const farmsteadUSDCContract = require('../contracts/farmstead-usdc/contract.json')
 
 const balancerVaultMethods = require('../contracts/balancer-vault/methods')
 const balancerVaultContract = require('../contracts/balancer-vault/contract.json')
@@ -50,6 +48,12 @@ const uniNonFungibleManagerContract = require('../contracts/uni-non-fungible-man
 
 const balTokenAdminMethods = require('../contracts/bal-token-admin/methods')
 const balTokenAdminContract = require('../contracts/bal-token-admin/contract.json')
+
+const balLpTokenMethods = require('../contracts/bal-lp-token/methods')
+const balLpTokenContract = require('../contracts/bal-lp-token/contract.json')
+
+const balBoostLpTokenMethods = require('../contracts/bal-boost-lp-token/methods')
+const balBoostLpTokenContract = require('../contracts/bal-boost-lp-token/contract.json')
 
 module.exports = {
   vault: {
@@ -100,12 +104,9 @@ module.exports = {
     methods: potPoolMethods,
     contract: potPoolContract,
   },
-  basisPool: {
-    methods: basisPoolMethods,
-    contract: basisPoolContract,
-  },
-  amplifier: {
-    contract: amplifierContract,
+  farmsteadUSDC: {
+    contract: farmsteadUSDCContract,
+    methods: farmsteadUSDCMethods,
   },
   balancerVault: {
     contract: balancerVaultContract,
@@ -122,5 +123,13 @@ module.exports = {
   balTokenAdmin: {
     contract: balTokenAdminContract,
     methods: balTokenAdminMethods,
+  },
+  balLpToken: {
+    contract: balLpTokenContract,
+    methods: balLpTokenMethods,
+  },
+  balBoostLpToken: {
+    contract: balBoostLpTokenContract,
+    methods: balBoostLpTokenMethods,
   },
 }

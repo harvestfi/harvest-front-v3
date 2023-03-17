@@ -18,7 +18,6 @@ const NumberInput = ({
   invalidAmount,
   ...props
 }) => {
-
   const { backColor, borderColor } = useThemeContext()
 
   return (
@@ -50,10 +49,10 @@ const NumberInput = ({
           {secondaryLabel ? <Label>{ReactHtmlParser(secondaryLabel)}</Label> : null}
           {label ? <Label>{ReactHtmlParser(label)}</Label> : null}
           {!hideButton ? (
-          <Button color="secondary" size="sm" onClick={onClick} disabled={disabled}>
-            {buttonLabel || 'MAX'}
-          </Button>
-        ) : null}
+            <Button color="secondary" size="sm" onClick={onClick} disabled={disabled}>
+              {buttonLabel || 'MAX'}
+            </Button>
+          ) : null}
         </LabelContainer>
       ) : null}
     </Container>

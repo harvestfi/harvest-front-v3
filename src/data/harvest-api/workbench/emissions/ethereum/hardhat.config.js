@@ -515,6 +515,7 @@ task('view-exact', 'Views the outcome of the state recorded in the contract').se
     includeCustom['_OtherChainsCombined'] = {
       NewPool: '0x71316a3465e0fbcd08e665D6675caA8F7B1Dd40A',
     }
+    includeCustom['_FarmStead'] = { NewPool: '0x95D2e18C069175523F56B617F96be7575E381547' }
 
     await viewStateWithExactMint(
       helperAddresses.StatefulEmissionsHelper,
@@ -539,6 +540,7 @@ task('view', 'Views the current state recorded in the contract').setAction(async
   includeCustom['_FARM-WETH'] = { NewPool: '0x6555c79a8829b793F332f1535B0eFB1fE4C11958' }
   includeCustom['_GrainBuyBackBot'] = { NewPool: '0xF49440C1F012d041802b25A73e5B0B9166a75c02' }
   includeCustom['_OtherChainsCombined'] = { NewPool: '0x71316a3465e0fbcd08e665D6675caA8F7B1Dd40A' }
+  includeCustom['_FarmStead'] = { NewPool: '0x95D2e18C069175523F56B617F96be7575E381547' }
 
   await viewState(helperAddresses.StatefulEmissionsHelper, finalObj, 'farm', includeCustom)
   console.log(finalObj)
@@ -556,12 +558,12 @@ module.exports = {
         mnemonic: secret.mnemonic,
       },
       forking: {
-        url: 'https://eth-mainnet.alchemyapi.io/v2/' + secret.alchemyKey,
+        url: 'https://eth-mainnet.g.alchemy.com/v2/' + secret.alchemyKey,
         // blockNumber: 13984900,
       },
     },
     mainnet: {
-      url: 'https://eth-mainnet.alchemyapi.io/v2/' + secret.alchemyKey,
+      url: 'https://eth-mainnet.g.alchemy.com/v2/' + secret.alchemyKey,
       accounts: {
         mnemonic: secret.mnemonic,
       },

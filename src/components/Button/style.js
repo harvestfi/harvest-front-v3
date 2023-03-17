@@ -240,8 +240,7 @@ ${props =>
           background: #1F2937A0;
         }
         `
-      : ''
-    }
+        : ''}
 
     ${props =>
       props.color === 'wido-save'
@@ -273,8 +272,7 @@ ${props =>
           background: #027948A0;
         }
         `
-      : ''
-    }
+        : ''}
 
   ${props =>
     props.color === 'connectwallet'

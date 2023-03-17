@@ -14,11 +14,11 @@ import APRedemptionMethods from './ap-redemption/methods'
 import ReaderEthContract from './reader-eth/contract.json'
 import ReaderEthMethods from './reader-eth/methods'
 
-import ReaderBscContract from './reader-bsc/contract.json'
-import ReaderBscMethods from './reader-bsc/methods'
-
 import ReaderMaticContract from './reader-matic/contract.json'
 import ReaderMaticMethods from './reader-matic/methods'
+
+import ReaderArbitrumContract from './reader-arbitrum/contract.json'
+import ReaderArbitrumMethods from './reader-arbitrum/methods'
 
 import { CHAINS_ID } from '../../../data/constants'
 
@@ -64,15 +64,17 @@ export default {
     methods: ReaderEthMethods,
     chain: CHAINS_ID.ETH_MAINNET,
   },
-  readerBsc: {
-    contract: ReaderBscContract,
-    methods: ReaderBscMethods,
-    chain: CHAINS_ID.BSC_MAINNET,
-  },
+
   readerMatic: {
     contract: ReaderMaticContract,
     methods: ReaderMaticMethods,
     chain: CHAINS_ID.MATIC_MAINNET,
+  },
+
+  readerArbitrum: {
+    contract: ReaderArbitrumContract,
+    methods: ReaderArbitrumMethods,
+    chain: CHAINS_ID.ARBITRUM_ONE,
   },
   ...getTokensContracts(),
 }

@@ -2,8 +2,21 @@ import React from 'react'
 import Collapsible from 'react-collapsible'
 import { useMediaQuery } from 'react-responsive'
 import uuid from 'react-uuid'
-import { FAQContainer, FAQContent, FAQHalfContent, DropdownToggle, Question, Answer, QuestionContainer, FarmHeader, Title, Desc, FAQMain,
-  LeftPart, RightPart } from './style'
+import {
+  FAQContainer,
+  FAQContent,
+  FAQHalfContent,
+  DropdownToggle,
+  Question,
+  Answer,
+  QuestionContainer,
+  FarmHeader,
+  Title,
+  Desc,
+  FAQMain,
+  LeftPart,
+  RightPart,
+} from './style'
 import { FAQ_ITEMS_FIRST, FAQ_ITEMS_SECOND, FAQ_TOTAL } from '../../constants'
 import DropdownToggleImageOpen from '../../assets/images/ui/dropdown-toggle-closed-faq.svg'
 import DropdownToggleImageClosed from '../../assets/images/ui/dropdown-toggle-open-faq.svg'
@@ -20,7 +33,8 @@ const FAQ = () => {
         <Desc>
           <LeftPart>Top questions about Harvest</LeftPart>
           <RightPart>
-            Need something cleared up? Here are<br/>
+            Need something cleared up? Here are
+            <br />
             our most frequently asked questions.
           </RightPart>
         </Desc>
@@ -58,19 +72,21 @@ const FAQ = () => {
                 <Collapsible
                   lazyRender={item.lazyRender ? item.lazyRender : true}
                   triggerWhenOpen={
-                    <Question open >
+                    <Question open backColor={backColor} borderColor={borderColor}>
                       {item.question}
                       <DropdownToggle open src={DropdownToggleImageOpen} />
                     </Question>
                   }
                   trigger={
-                    <Question>
-                        {item.question}
+                    <Question backColor={backColor} borderColor={borderColor}>
+                      {item.question}
                       <DropdownToggle src={DropdownToggleImageClosed} />
                     </Question>
                   }
                 >
-                  <Answer>{item.answer}</Answer>
+                  <Answer backColor={backColor} borderColor={borderColor}>
+                    {item.answer}
+                  </Answer>
                 </Collapsible>
               </QuestionContainer>
             ))}
@@ -89,17 +105,48 @@ const FAQ = () => {
                   trigger={
                     <Question backColor={backColor} borderColor={borderColor}>
                         {item.question}
-                      <DropdownToggle src={DropdownToggleImageClosed} />
-                    </Question>
-                  }
-                >
-                  <Answer backColor={backColor} borderColor={borderColor}>{item.answer}</Answer>
-                </Collapsible>
-              </QuestionContainer>
-            ))}
-          </FAQHalfContent>
-        </FAQContent>
-      }
+                        <DropdownToggle open src={DropdownToggleImageOpen} />
+                      </Question>
+                    }
+                    trigger={
+                      <Question>
+                        {item.question}
+                        <DropdownToggle src={DropdownToggleImageClosed} />
+                      </Question>
+                    }
+                  >
+                    <Answer>{item.answer}</Answer>
+                  </Collapsible>
+                </QuestionContainer>
+              ))}
+            </FAQHalfContent>
+            <FAQHalfContent>
+              {FAQ_ITEMS_SECOND.map(item => (
+                <QuestionContainer key={uuid()}>
+                  <Collapsible
+                    lazyRender={item.lazyRender !== undefined ? item.lazyRender : true}
+                    triggerWhenOpen={
+                      <Question open backColor={backColor} borderColor={borderColor}>
+                        {item.question}
+                        <DropdownToggle open src={DropdownToggleImageOpen} />
+                      </Question>
+                    }
+                    trigger={
+                      <Question backColor={backColor} borderColor={borderColor}>
+                        {item.question}
+                        <DropdownToggle src={DropdownToggleImageClosed} />
+                      </Question>
+                    }
+                  >
+                    <Answer backColor={backColor} borderColor={borderColor}>
+                      {item.answer}
+                    </Answer>
+                  </Collapsible>
+                </QuestionContainer>
+              ))}
+            </FAQHalfContent>
+          </FAQContent>
+        )}
       </FAQMain>
     </FAQContainer>
   )

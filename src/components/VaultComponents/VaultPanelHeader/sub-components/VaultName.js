@@ -1,19 +1,23 @@
 import React from 'react'
-import { TokenNameContainer, TokenDescriptionContainer } from '../style'
+import { IFARM_TOKEN_SYMBOL } from '../../../../constants'
 import { tokens } from '../../../../data'
-import {
-  IFARM_TOKEN_SYMBOL,
-} from '../../../../constants'
+import { TokenDescriptionContainer, TokenNameContainer } from '../style'
 
-const VaultName = ({ token, tokenSymbol, useIFARM}) => {
+const VaultName = ({ token, tokenSymbol, useIFARM }) => {
   return (
     <TokenDescriptionContainer>
       <TokenNameContainer>
-        {useIFARM ? tokens[IFARM_TOKEN_SYMBOL].displayName : token.displayName || tokenSymbol}
+        {useIFARM
+          ? tokens[IFARM_TOKEN_SYMBOL].tokenNames.join(', ')
+          : token.tokenNames.join(', ') || tokenSymbol}
       </TokenNameContainer>
       {useIFARM
         ? tokens[IFARM_TOKEN_SYMBOL].subLabel
-        : token.subLabel && <small>{token.subLabel}</small>}
+          ? `${tokens[IFARM_TOKEN_SYMBOL].platform[0]} - ${tokens[IFARM_TOKEN_SYMBOL].subLabel}`
+          : tokens[IFARM_TOKEN_SYMBOL].platform[0]
+        : token.subLabel
+        ? token.platform[0] && <small>{`${token.platform[0]} - ${token.subLabel}`}</small>
+        : token.platform[0] && <small>{token.platform[0]}</small>}
     </TokenDescriptionContainer>
   )
 }

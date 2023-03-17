@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import "@fontsource/manrope";
+import '@fontsource/manrope'
 
 const FAQContainer = styled.div`
   // margin-left: 320px;
@@ -7,14 +7,14 @@ const FAQContainer = styled.div`
   position: relative;
   z-index: 2;
 
-  background: ${props=>props.pageBackColor};
-  color: ${props=>props.fontColor};
-  
+  background: ${props => props.pageBackColor};
+  color: ${props => props.fontColor};
+
   font-weight: 400;
   line-height: 150%;
   font-family: 'DM Sans';
   transition: 0.25s;
-  
+
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -26,7 +26,7 @@ const FAQContainer = styled.div`
 
 const FAQContent = styled.div`
   padding: 70px 46px 57px 46px;
-  
+
   display: flex;
   justify-content: space-between;
 
@@ -81,7 +81,7 @@ const Question = styled.div`
   transition: 0.25s;
 
   &:hover {
-    background: #E9E9E9;
+    background: #e9e9e9;
   }
 
   ${props =>
@@ -111,12 +111,12 @@ const DropdownToggle = styled.img`
 
 const Answer = styled.div`
   padding: 16px;
-  background: #E9E9E9;
+  background: #e9e9e9;
   transition: 0.25s;
   border-radius: 0 0 10px 10px;
   border-top: none;
   font-size: 14px;
-  
+
   @media screen and (max-width: 992px) {
     padding: 16px 20px;
     font-size: 12px;
@@ -124,7 +124,7 @@ const Answer = styled.div`
 `
 
 const FarmHeader = styled.div`
-  background: #15202B;
+  background: #15202b;
   background-repeat: no-repeat;
   background-position: center;
   background-size: 100%;
@@ -135,7 +135,7 @@ const Title = styled.div`
   font-weight: 600;
   font-size: 13px;
   line-height: 19px;
-  color: #FF9400;
+  color: #ff9400;
 
   margin-bottom: 19px;
 `
@@ -143,7 +143,6 @@ const Title = styled.div`
 const Desc = styled.div`
   display: flex;
   justify-content: space-between;
-  
 `
 
 const FAQMain = styled.div`
@@ -157,15 +156,29 @@ const LeftPart = styled.div`
   line-height: 47px;
 
   letter-spacing: -0.02em;
-  color: #FFFFFF;
+  color: #ffffff;
 `
 
 const RightPart = styled.div`
   font-weight: 400;
   font-size: 15.6667px;
   line-height: 24px;
-  color: #FF9400;
+  color: #ff9400;
 `
 
-export { FAQContainer, FAQBox, Question, Answer, DropdownToggle, QuestionContainer, FAQHalfContent, FAQContent,
-  FarmHeader, Title, Desc, FAQMain, LeftPart, RightPart }
+export {
+  FAQContainer,
+  FAQBox,
+  Question,
+  Answer,
+  DropdownToggle,
+  QuestionContainer,
+  FAQHalfContent,
+  FAQContent,
+  FarmHeader,
+  Title,
+  Desc,
+  FAQMain,
+  LeftPart,
+  RightPart,
+}

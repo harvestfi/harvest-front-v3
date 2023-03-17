@@ -4,7 +4,7 @@ const Container = styled.div`
   width: 32%;
   margin-right: 17px;
   &:first-child {
-    border-right: 1px solid ${props=>props.borderColor};
+    border-right: 1px solid ${props => props.borderColor};
   }
   font-weight: 700;
   background: #FFFFFF;

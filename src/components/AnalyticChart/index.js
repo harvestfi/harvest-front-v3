@@ -3,15 +3,15 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import { usePools } from '../../providers/Pools'
 import { Container, Title, Header, ButtonGroup, ChartDiv } from './style'
 import { SPECIAL_VAULTS } from '../../constants'
-import { getDataQuery } from '../../utils';
+import { getDataQuery } from '../../utils'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
 
 const recommendLinks = [
-  {name: "1D", type: 0, state: "1D" },
-  {name: "1W", type: 1, state: "1W" },
-  {name: "1M", type: 2, state: "1M" },
-  {name: "1Y", type: 3, state: "1Y" },
+  { name: '1D', type: 0, state: '1D' },
+  { name: '1W', type: 1, state: '1W' },
+  { name: '1M', type: 2, state: '1M' },
+  { name: '1Y', type: 3, state: '1Y' },
 ]
 
 const AnalyticChart = () => {
@@ -23,17 +23,18 @@ const AnalyticChart = () => {
 
   const chainId = farmProfitSharingPool.chain
 
-  const [clickedId, ] = useState(1)
+  const [clickedId] = useState(1)
 
-  const [selectedState, setSelectedState] = React.useState("1W")
+  const [selectedState, setSelectedState] = React.useState('1W')
 
-  let address = farmProfitSharingPool.autoStakePoolAddress || farmProfitSharingPool.contractAddress
+  const address =
+    farmProfitSharingPool.autoStakePoolAddress || farmProfitSharingPool.contractAddress
 
   const [apiData, setApiData] = React.useState([])
-  
-  useEffect(()=>{
+
+  useEffect(() => {
     const initData = async () => {
-      let data = await getDataQuery(365, address, chainId)
+      const data = await getDataQuery(365, address, chainId)
       setApiData(data)
     }
 
@@ -45,27 +46,23 @@ const AnalyticChart = () => {
   return (
     <Container fontColor={fontColor}>
       <Header>
-        <Title>
-          Harvest TVL Chart
-        </Title>
+        <Title>Harvest TVL Chart</Title>
       </Header>
       <ChartDiv>
         <ApexChart data={apiData} range={selectedState} filter={clickedId} />
       </ChartDiv>
       <ButtonGroup>
-        {
-          recommendLinks.map((item, i) => (
-            <ChartRangeSelect 
-              key={i}
-              onClick={()=>{
-                setSelectedState(item.state)
-              }}
-              state={selectedState} 
-              type={item.type} 
-              text={item.name} 
-            />
-          ))
-        }
+        {recommendLinks.map((item, i) => (
+          <ChartRangeSelect
+            key={i}
+            onClick={() => {
+              setSelectedState(item.state)
+            }}
+            state={selectedState}
+            type={item.type}
+            text={item.name}
+          />
+        ))}
       </ButtonGroup>
     </Container>
   )

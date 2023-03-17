@@ -6,9 +6,29 @@ import ReactTooltip from 'react-tooltip'
 import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import AnalyticChart from '../../components/AnalyticChart'
-import { Container, Content, FarmStatsContainer, FarmSubTitle, StatsBox, StatsContainer, StatsTooltip, EmissionsCountdownText,
-  StatsBoxTitle, StatsContainerRow, BigStats, BigStatsSubheader, ImgList, DataSource, DataSourceInner, StatsValue, 
-  StatsExchange, StatsChart, StatsExternal, DataSourceDirect, BigStatsExchange } from './style'
+import {
+  Container,
+  Content,
+  FarmStatsContainer,
+  FarmSubTitle,
+  StatsBox,
+  StatsContainer,
+  StatsTooltip,
+  EmissionsCountdownText,
+  StatsBoxTitle,
+  StatsContainerRow,
+  BigStats,
+  BigStatsSubheader,
+  ImgList,
+  DataSource,
+  DataSourceInner,
+  StatsValue,
+  StatsExchange,
+  StatsChart,
+  StatsExternal,
+  DataSourceDirect,
+  BigStatsExchange,
+} from './style'
 import { Divider, Monospace, TextContainer } from '../../components/GlobalStyle'
 import AnimatedDots from '../../components/AnimatedDots'
 import CountdownLabel from '../../components/CountdownLabel'
@@ -33,18 +53,53 @@ import ExternalFarm from '../../assets/images/logos/analytics/externalFarm.svg'
 const MemoizedCounter = React.memo(CountUp)
 const MemoizedCountdown = React.memo(Countdown)
 const imgList = [
-  {url: "https://pro.coinbase.com/trade/FARM-USD", img: ExchangeCoinbase},
-  {url: "https://www.binance.com/en/trade/FARM_USDT", img: ExchangeBinance},
-  {url: "https://trade.kraken.com/markets/kraken/farm/usd", img: ExchangeKraken},
-  {url: "https://crypto.com/exchange/trade/spot/FARM_USD", img: ExchangeCrypto},
-  {url: "https://app.sushi.com/swap?inputCurrency=0xa0246c9032bc3a600820415ae600c6388619a14d&outputCurrency=ETH", img: ExchangeSushiswap},
-  {url: "https://app.uniswap.org/#/swap?inputCurrency=0xa0246c9032bc3a600820415ae600c6388619a14d&outputCurrency=ETH", img: ExchangeUniswap},
-  {url: "https://app.bancor.network/trade?inputCurrency=farm&outputCurrency=bnt", img: ExchangeBancor},
+  { url: 'https://pro.coinbase.com/trade/FARM-USD', img: ExchangeCoinbase },
+  { url: 'https://www.binance.com/en/trade/FARM_USDT', img: ExchangeBinance },
+  { url: 'https://trade.kraken.com/markets/kraken/farm/usd', img: ExchangeKraken },
+  { url: 'https://crypto.com/exchange/trade/spot/FARM_USD', img: ExchangeCrypto },
+  {
+    url:
+      'https://app.sushi.com/swap?inputCurrency=0xa0246c9032bc3a600820415ae600c6388619a14d&outputCurrency=ETH',
+    img: ExchangeSushiswap,
+  },
+  {
+    url:
+      'https://app.uniswap.org/#/swap?inputCurrency=0xa0246c9032bc3a600820415ae600c6388619a14d&outputCurrency=ETH',
+    img: ExchangeUniswap,
+  },
+  {
+    url: 'https://app.bancor.network/trade?inputCurrency=farm&outputCurrency=bnt',
+    img: ExchangeBancor,
+  },
 ]
-const dataSources =  [
-  { id: 1, img: ExternalDefiLlama, text: "DefiLlama", url: "https://defillama.com/protocol/harvest-finance", soon: false, background: "rgba(0, 99, 238, 0.17)", color: "#013F92"},
-  { id: 2, img: ExternalDuno, text: "Dune Dashboard", url: "https://dune.com/shini/APWine-Dashboard", soon: false, background: "rgba(241, 96, 63, 0.21)", color: "#F1603F"},
-  { id: 3, img: ExternalFarm, text: "farmDashboard", url: "#", soon: true, background: "#E2FFC4", color: "#45423D"},
+const dataSources = [
+  {
+    id: 1,
+    img: ExternalDefiLlama,
+    text: 'DefiLlama',
+    url: 'https://defillama.com/protocol/harvest-finance',
+    soon: false,
+    background: 'rgba(0, 99, 238, 0.17)',
+    color: '#013F92',
+  },
+  {
+    id: 2,
+    img: ExternalDuno,
+    text: 'Dune Dashboard',
+    url: 'https://dune.com/shini/APWine-Dashboard',
+    soon: false,
+    background: 'rgba(241, 96, 63, 0.21)',
+    color: '#F1603F',
+  },
+  {
+    id: 3,
+    img: ExternalFarm,
+    text: 'farmDashboard',
+    url: '#',
+    soon: true,
+    background: '#E2FFC4',
+    color: '#45423D',
+  },
 ]
 
 const Analytic = () => {
@@ -59,42 +114,49 @@ const Analytic = () => {
 
   const ratePerDay = Number(CURVE_APY) / 365 / 100
   const { pageBackColor, fontColor, borderColor, backColor, boxShadowColor } = useThemeContext()
-  const MINUTE_MS = 60000;
+  const MINUTE_MS = 60000
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      
-    }, MINUTE_MS);
+    const interval = setInterval(() => {}, MINUTE_MS)
 
-    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+    return () => clearInterval(interval) // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
   }, [])
 
   return (
     <Container pageBackColor={pageBackColor}>
       <Content>
         <FarmStatsContainer>
-          <StatsBox width={isMobile ? "100%" : "32%"} align="flex-start" compNum={1} height="270px" minHheight="270px" fontColor={fontColor} backColor={backColor} borderColor={borderColor}>
+          <StatsBox
+            width={isMobile ? '100%' : '32%'}
+            align="flex-start"
+            compNum={1}
+            height="270px"
+            minHheight="270px"
+            fontColor={fontColor}
+            backColor={backColor}
+            borderColor={borderColor}
+          >
             <StatsBoxTitle>
               Total Deposits: <br />
             </StatsBoxTitle>
-            <FarmSubTitle bold={700} size={"17px"} lineHeight={"23px"}>
-                {Number(totalValueLocked) === 0 ? (
-                  <AnimatedDots />
-                ) : (
-                  <>
-                    <MemoizedCounter
-                      start={Number(totalValueLocked)}
-                      end={Number(totalValueLocked) + Number(totalValueLocked) * Number(ratePerDay)}
-                      separator=","
-                      useEasing={false}
-                      delay={0}
-                      decimals={0}
-                      duration={864000}
-                    />{' '}
-                    USD
-                  </>
-                )}
+            <FarmSubTitle bold={700} size="17px" lineHeight="23px">
+              {Number(totalValueLocked) === 0 ? (
+                <AnimatedDots />
+              ) : (
+                <>
+                  <MemoizedCounter
+                    start={Number(totalValueLocked)}
+                    end={Number(totalValueLocked) + Number(totalValueLocked) * Number(ratePerDay)}
+                    separator=","
+                    useEasing={false}
+                    delay={0}
+                    decimals={0}
+                    duration={864000}
+                  />{' '}
+                  USD
+                </>
+              )}
             </FarmSubTitle>
             {/* <Divider height="40px" /> */}
             <ReactTooltip
@@ -115,18 +177,32 @@ const Analytic = () => {
               {' '}
               Monthly <b>Profits</b> to Farmers:{' '}
             </StatsBoxTitle>
-            <FarmSubTitle data-tip data-for="profits-to-farmers" bold={700} size={"17px"} lineHeight={"23px"}>
-                {!monthlyProfit ? (
-                  <AnimatedDots />
-                ) : (
-                  <>
-                    {Number(truncateNumberString(monthlyProfit)).toLocaleString('en-US')}&nbsp;USD
-                  </>
-                )}
+            <FarmSubTitle
+              data-tip
+              data-for="profits-to-farmers"
+              bold={700}
+              size="17px"
+              lineHeight="23px"
+            >
+              {!monthlyProfit ? (
+                <AnimatedDots />
+              ) : (
+                <>{Number(truncateNumberString(monthlyProfit)).toLocaleString('en-US')}&nbsp;USD</>
+              )}
             </FarmSubTitle>
-            <img className='effect' src={DepositEffectImage} alt="DepositEffectImage" />
+            <img className="effect" src={DepositEffectImage} alt="DepositEffectImage" />
           </StatsBox>
-          <StatsBox width={isMobile ? "100%" : "32%"} align="flex-start" compNum={2} boxShadow="unset" height="270px" minHheight="270px" fontColor={fontColor} backColor={backColor} borderColor={borderColor}>
+          <StatsBox
+            width={isMobile ? '100%' : '32%'}
+            align="flex-start"
+            compNum={2}
+            boxShadow="unset"
+            height="270px"
+            minHheight="270px"
+            fontColor={fontColor}
+            backColor={backColor}
+            borderColor={borderColor}
+          >
             <div className="emission-header">
               <div className="rect">
                 <img src={Farm} width="120px" height="120px" alt="" />
@@ -150,7 +226,9 @@ const Analytic = () => {
                 }
                 return (
                   <>
-                    <EmissionsCountdownText fontColor={fontColor}>Next Emissions Decrease In:</EmissionsCountdownText>
+                    <EmissionsCountdownText fontColor={fontColor}>
+                      Next Emissions Decrease In:
+                    </EmissionsCountdownText>
                     <CountdownLabel
                       display="block"
                       days={days}
@@ -188,22 +266,29 @@ const Analytic = () => {
               </StatsTooltip>
             )}
           />
-          <StatsBox width={isMobile ? "100%" : "32%"} align="flex-start" compNum={3} data-tip="" data-for="details-box" height="270px" minHeight="270px" fontColor={fontColor} backColor={backColor} borderColor={borderColor}>
+          <StatsBox
+            width={isMobile ? '100%' : '32%'}
+            align="flex-start"
+            compNum={3}
+            data-tip=""
+            data-for="details-box"
+            height="270px"
+            minHeight="270px"
+            fontColor={fontColor}
+            backColor={backColor}
+            borderColor={borderColor}
+          >
             <StatsBoxTitle>
-              <span>
-                FARM staking APY:
-              </span>
+              <span>FARM staking APY:</span>
             </StatsBoxTitle>
-            <FarmSubTitle bold={700} size={"17px"} lineHeight={"23px"}>
+            <FarmSubTitle bold={700} size="17px" lineHeight="23px">
               {profitShareAPY ? `${Number(profitShareAPY).toFixed(2)}%` : <AnimatedDots />}
             </FarmSubTitle>
-            
+
             <StatsBoxTitle>
-              <span>
-                Total FARM staked:
-              </span>
+              <span>Total FARM staked:</span>
             </StatsBoxTitle>
-            <FarmSubTitle bold={700} size={"17px"} lineHeight={"23px"}>
+            <FarmSubTitle bold={700} size="17px" lineHeight="23px">
               {percentOfFarmStaked ? (
                 `${Math.round(Number(percentOfFarmStaked))}%`
               ) : (
@@ -215,11 +300,20 @@ const Analytic = () => {
         </FarmStatsContainer>
         <Divider height="20px" />
         <FarmStatsContainer>
-          <StatsValue width={isMobile ? "100%" : "56%"} direction="row" height={isMobile ? "fit-content" : "80px"} minHeight={isMobile ? "fit-content" : "152px"} fontColor={fontColor} backColor={backColor} borderColor={borderColor}>
+          <StatsValue
+            width={isMobile ? '100%' : '56%'}
+            direction="row"
+            height={isMobile ? 'fit-content' : '80px'}
+            minHeight={isMobile ? 'fit-content' : '152px'}
+            fontColor={fontColor}
+            backColor={backColor}
+            borderColor={borderColor}
+          >
             <StatsContainerRow width="auto">
               <StatsContainer>
                 <BigStatsSubheader>
-                  <img src={GasSavedImage} alt="" />Gas fees saved
+                  <img src={GasSavedImage} alt="" />
+                  Gas fees saved
                 </BigStatsSubheader>
                 <BigStats>
                   <Monospace>
@@ -235,7 +329,7 @@ const Analytic = () => {
                           useEasing={false}
                           delay={0}
                           decimals={0}
-                          duration={86400*200}
+                          duration={86400 * 200}
                         />
                       </>
                     )}
@@ -276,20 +370,26 @@ const Analytic = () => {
               </StatsContainer>
             </StatsContainerRow>
           </StatsValue>
-          <StatsExchange width={isMobile ? "100%" : "42%"} direction="row" height="80px" fontColor={fontColor} backColor={backColor} borderColor={borderColor}>
+          <StatsExchange
+            width={isMobile ? '100%' : '42%'}
+            direction="row"
+            height="80px"
+            fontColor={fontColor}
+            backColor={backColor}
+            borderColor={borderColor}
+          >
             <StatsContainerRow width="auto">
               <StatsContainer>
                 <BigStatsExchange>
-                  <img src={Farm} alt="" />$FARM on Exchanges
+                  <img src={Farm} alt="" />
+                  $FARM on Exchanges
                 </BigStatsExchange>
                 <ImgList>
-                  {
-                    imgList.map((el, i) => (
-                      <a key={i} href={el.url}>
-                        <img src={el.img} alt="" />
-                      </a>
-                    ))
-                  }
+                  {imgList.map((el, i) => (
+                    <a key={i} href={el.url}>
+                      <img src={el.img} alt="" />
+                    </a>
+                  ))}
                 </ImgList>
                 <Divider height="15px" />
               </StatsContainer>
@@ -298,34 +398,46 @@ const Analytic = () => {
         </FarmStatsContainer>
         <Divider height="20px" />
         <FarmStatsContainer>
-          <StatsChart width={isMobile ? "100%" : "60%"} align="flex-start" direction="row" height="350px" fontColor={fontColor} backColor={backColor} borderColor={borderColor}>
+          <StatsChart
+            width={isMobile ? '100%' : '60%'}
+            align="flex-start"
+            direction="row"
+            height="350px"
+            fontColor={fontColor}
+            backColor={backColor}
+            borderColor={borderColor}
+          >
             <AnalyticChart />
           </StatsChart>
-          <StatsExternal width={isMobile ? "100%" : "35%"} align="flex-start" direction="row" height="350px" fontColor={fontColor} backColor={backColor} borderColor={borderColor}>
+          <StatsExternal
+            width={isMobile ? '100%' : '35%'}
+            align="flex-start"
+            direction="row"
+            height="350px"
+            fontColor={fontColor}
+            backColor={backColor}
+            borderColor={borderColor}
+          >
             <StatsContainerRow margin="27px 29px" width="100%">
               <DataSourceInner>
-                <BigStatsExchange>
-                  External Data Sources
-                </BigStatsExchange>
-                {
-                  dataSources.map((el, i)=>(
-                    <DataSourceDirect key={i} href={el.url}>
-                      <div className='back'>
-                        <DataSource background={el.background} color={el.color} boxShadowColor={boxShadowColor}>
-                          <div className='avatar'>
-                            <img src={el.img} alt="" />
-                          </div>
-                          {el.text}
-                          {
-                            el.soon ? 
-                              <div className='soon'>Soon TM</div>
-                            : <></>
-                          }
-                        </DataSource>
-                      </div>
-                    </DataSourceDirect>
-                  ))
-                }
+                <BigStatsExchange>External Data Sources</BigStatsExchange>
+                {dataSources.map((el, i) => (
+                  <DataSourceDirect key={i} href={el.url}>
+                    <div className="back">
+                      <DataSource
+                        background={el.background}
+                        color={el.color}
+                        boxShadowColor={boxShadowColor}
+                      >
+                        <div className="avatar">
+                          <img src={el.img} alt="" />
+                        </div>
+                        {el.text}
+                        {el.soon ? <div className="soon">Soon TM</div> : <></>}
+                      </DataSource>
+                    </div>
+                  </DataSourceDirect>
+                ))}
                 <Divider height="15px" />
               </DataSourceInner>
             </StatsContainerRow>

@@ -1,22 +1,20 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
+import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
+import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
+import POLYGON from '../../../assets/images/logos/badge/polygon.svg'
 import { directDetailUrl } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { PanelContainer, ValueContainer, BadgeIcon, LogoImg } from './style'
-import VaultName from './sub-components/VaultName'
+import { BadgeIcon, LogoImg, PanelContainer, ValueContainer } from './style'
 import VaultApy from './sub-components/VaultApy'
-import VaultValue from './sub-components/VaultValue'
+import VaultName from './sub-components/VaultName'
 import VaultUserBalance from './sub-components/VaultUserBalance'
-import POLYGON from '../../../assets/images/logos/badge/polygon.svg'
-import BNB from '../../../assets/images/logos/badge/bnb.svg'
-import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
-import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
+import VaultValue from './sub-components/VaultValue'
 
 const chainList = [
   { id: 1, name: 'Ethereum', chainId: 1 },
   { id: 2, name: 'Polygon', chainId: 137 },
   { id: 3, name: 'Arbitrum', chainId: 42161 },
-  { id: 4, name: 'BNB', chainId: 56 },
 ]
 
 const DesktopPanelHeader = ({
@@ -29,12 +27,12 @@ const DesktopPanelHeader = ({
   loadedVault,
   loadingFarmingBalance,
 }) => {
-  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BNB]
+  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM]
 
   const chainId = token.chain || token.data.chain
   const [badgeId, setBadgeId] = useState(-1)
 
-  const logoUrl = token.logoUrl
+  const { logoUrl } = token
 
   const { push } = useHistory()
 
@@ -60,7 +58,7 @@ const DesktopPanelHeader = ({
           push(directDetailUrl + tokenSymbol)
         }}
       >
-        <ValueContainer width="5%"></ValueContainer>
+        <ValueContainer width="5%" />
         <ValueContainer width="20%" textAlign="left">
           {logoUrl.map((el, i) => (
             <LogoImg
@@ -74,7 +72,7 @@ const DesktopPanelHeader = ({
           ))}
           <BadgeIcon badgeBack={badgeIconBackColor}>
             {BadgeAry[badgeId] ? (
-              <img src={BadgeAry[badgeId]} width={'17px'} height={'17px'} alt="" />
+              <img src={BadgeAry[badgeId]} width="17px" height="17px" alt="" />
             ) : (
               <></>
             )}
