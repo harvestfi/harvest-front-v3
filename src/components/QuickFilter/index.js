@@ -80,7 +80,7 @@ const AssetsList = [
 ]
 
 const QuickFilter = ({
-  onCategoryClick = () => {},
+  onSelectActiveType = () => {},
   setSearchQuery,
   onDepositedOnlyClick = () => {},
   onAssetClick = () => {},
@@ -127,15 +127,15 @@ const QuickFilter = ({
         break
     }
 
-    onCategoryClick(text)
+    onSelectActiveType(text)
   }
 
   const [flag, setFlag] = useState(false)
 
   useEffect(() => {
-    onCategoryClick(['Active'])
+    onSelectActiveType(['Active'])
     setFlag(true)
-  }, [flag, onCategoryClick])
+  }, [flag, onSelectActiveType])
 
   const printAsset = id => {
     let text = '',
@@ -354,7 +354,7 @@ const QuickFilter = ({
                   onClick={() => {
                     document.getElementById('search-input').value = ''
                     setSearchQuery('')
-                    onCategoryClick(['Active'])
+                    onSelectActiveType(['Active'])
                     setStringSearch(false)
                     setRiskId(-1)
                     setAssetsId(-1)
@@ -409,7 +409,9 @@ const QuickFilter = ({
                     onClick={() => {
                       setMobileChainId(item.name)
                       setMobileChainImg(item.img)
-                      item.name === 'All Chains' ? onCategoryClick([]) : setSelChain([item.chainId])
+                      item.name === 'All Chains'
+                        ? onSelectActiveType([])
+                        : setSelChain([item.chainId])
                     }}
                   >
                     <img src={item.img} width="12" height="12" alt="" />
@@ -483,8 +485,8 @@ const QuickFilter = ({
                           setAssetsId(item.name)
                           setAssetsImg(item.img)
                           item.name === 'All Chains'
-                            ? onCategoryClick([])
-                            : onCategoryClick([item.name])
+                            ? onSelectActiveType([])
+                            : onSelectActiveType([item.name])
                         }}
                       >
                         <div>
@@ -515,8 +517,8 @@ const QuickFilter = ({
                           setRiskId(item.name)
                           setRiskImg(item.img)
                           item.name === 'All Chains'
-                            ? onCategoryClick([])
-                            : onCategoryClick([item.name])
+                            ? onSelectActiveType([])
+                            : onSelectActiveType([item.name])
                         }}
                       >
                         <div>
@@ -543,7 +545,7 @@ const QuickFilter = ({
                   document.getElementById('search-input').value = ''
                   setSearchQuery('')
                   setStringSearch(false)
-                  onCategoryClick(['active'])
+                  onSelectActiveType(['active'])
                   onSelectStableCoin(false)
                   onAssetClick('')
                   onSelectFarmType('')
