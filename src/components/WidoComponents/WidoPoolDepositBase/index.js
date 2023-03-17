@@ -42,6 +42,8 @@ import IFARMIcon from '../../../assets/images/logos/wido/ifarm.svg'
 import FARMIcon from '../../../assets/images/logos/wido/farm.svg'
 import HelpIcon from '../../../assets/images/logos/wido/help.svg'
 
+const { tokens } = require('../../../data')
+
 const CoinGeckoClient = new CoinGecko()
 
 const getPrice = async () => {
@@ -84,7 +86,6 @@ const WidoPoolDepositBase = ({
   legacyStaking,
   setLegacyStaking,
 }) => {
-  const { tokens } = require('../../../data')
   const { account, connect, balances } = useWallet()
   const { vaultsData } = useVaults()
   const [farmInfo, setFarmInfo] = useState(null)
@@ -263,14 +264,8 @@ const WidoPoolDepositBase = ({
         onClick={() => {
           if (account) {
             const balanceAmount = !legacyStaking
-              ? formatNumberWido(balance, WIDO_BALANCES_DECIMALS)
-              : FARMBalance &&
-                fromWei(
-                  FARMBalance,
-                  tokens[IFARM_TOKEN_SYMBOL].decimals,
-                  WIDO_BALANCES_DECIMALS,
-                  true,
-                )
+              ? balance
+              : FARMBalance && fromWEI(FARMBalance, tokens[IFARM_TOKEN_SYMBOL].decimals)
             setInputAmount(balanceAmount)
 
             setUsdValue(
@@ -285,14 +280,8 @@ const WidoPoolDepositBase = ({
         Balance:
         <span>
           {!legacyStaking
-            ? formatNumberWido(balance, WIDO_BALANCES_DECIMALS)
-            : FARMBalance &&
-              `${fromWei(
-                FARMBalance,
-                tokens[IFARM_TOKEN_SYMBOL].decimals,
-                WIDO_BALANCES_DECIMALS,
-                true,
-              )} FARM`}
+            ? balance
+            : FARMBalance && `${fromWEI(FARMBalance, tokens[IFARM_TOKEN_SYMBOL].decimals)} FARM`}
         </span>
       </BalanceInfo>
       <SwitchMode fontColor={widoTagActiveFontColor}>
@@ -347,7 +336,7 @@ const WidoPoolDepositBase = ({
           {symbol}
         </TokenName>
         <StakeInfo>
-          <label>{legacyStaking ? 'Unstaked' : 'Balance'}</label>
+          {legacyStaking ? 'Unstaked' : 'Balance'}
           <span>
             {!legacyStaking ? (
               !account ? (
@@ -391,12 +380,14 @@ const WidoPoolDepositBase = ({
           </ReactTooltip>
         )}
         <StakeInfo>
-          <label>
-            {legacyStaking ? 'Staked' : 'Underlying Balance'}
-            {!legacyStaking && (
+          {legacyStaking ? (
+            'Staked'
+          ) : (
+            <div>
+              Underlying Balance
               <HelpImg data-tip data-for="help-underlyingbalance" src={HelpIcon} alt="" />
-            )}
-          </label>
+            </div>
+          )}
           <span>
             {legacyStaking ? (
               !account ? (
@@ -426,7 +417,7 @@ const WidoPoolDepositBase = ({
 
       <div>
         <StakeInfo>
-          <label>Current Price</label>
+          Current Price
           <span>
             {legacyStaking ? (
               !account ? (
@@ -460,10 +451,10 @@ const WidoPoolDepositBase = ({
           </ReactTooltip>
         )}
         <StakeInfo>
-          <label>
+          <div>
             Total Value
             {legacyStaking && <HelpImg data-tip data-for="help-img" src={HelpIcon} alt="" />}
-          </label>
+          </div>
           <span>
             {legacyStaking ? (
               !account ? (

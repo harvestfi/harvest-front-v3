@@ -69,7 +69,7 @@ const WidoWithdrawBase = ({
       return
     }
 
-    const amountsToExecuteInWei = amountsToExecute.map((amount, amountIdx) => {
+    const amountsToExecuteInWei = amountsToExecute.map(amount => {
       if (isEmpty(amount)) {
         return null
       }
@@ -150,7 +150,7 @@ const WidoWithdrawBase = ({
           {token.balance}
         </TokenName>
         <StakeInfo>
-          <label>Staked</label>
+          Staked
           <span>
             {!connected ? (
               0
@@ -222,7 +222,7 @@ const WidoWithdrawBase = ({
       <Divider height="1px" backColor="#EAECF0" marginTop="15px" />
 
       <StakeInfo>
-        <label>Unstaked</label>
+        Unstaked
         <span>
           {!connected ? (
             0

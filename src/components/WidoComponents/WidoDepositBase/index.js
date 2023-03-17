@@ -137,7 +137,7 @@ const WidoDepositBase = ({
 
   useEffect(() => {
     if (pickedToken.usdPrice) {
-      setInputAmount(formatNumberWido(balance, WIDO_BALANCES_DECIMALS))
+      setInputAmount(balance)
       setUsdValue(formatNumberWido(balance * pickedToken.usdPrice), WIDO_BALANCES_DECIMALS)
     }
   }, [balance, setUsdValue, setInputAmount, pickedToken])
@@ -192,7 +192,7 @@ const WidoDepositBase = ({
       </SelectToken>
       <BalanceInfo fontColor={widoTagActiveFontColor}>
         Balance:
-        <span>{formatNumberWido(balance, WIDO_BALANCES_DECIMALS)}</span>
+        <span>{balance}</span>
       </BalanceInfo>
       <Button
         color="wido-deposit"
@@ -220,7 +220,7 @@ const WidoDepositBase = ({
           {token.balance}
         </TokenName>
         <StakeInfo>
-          <label>Unstaked</label>
+          Unstaked
           <span>
             {!connected ? (
               0
@@ -232,7 +232,7 @@ const WidoDepositBase = ({
           </span>
         </StakeInfo>
         <StakeInfo>
-          <label>Staked</label>
+          Staked
           <span>
             {!connected ? (
               0

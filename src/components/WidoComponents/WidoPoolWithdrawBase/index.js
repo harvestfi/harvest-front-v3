@@ -5,7 +5,12 @@ import { toast } from 'react-toastify'
 import { Spinner } from 'react-bootstrap'
 import { fromWei, toWei } from '../../../services/web3'
 import Button from '../../Button'
-import { WIDO_BALANCES_DECIMALS, FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../../constants'
+import {
+  WIDO_BALANCES_DECIMALS,
+  FARM_TOKEN_SYMBOL,
+  IFARM_TOKEN_SYMBOL,
+  fromWEI,
+} from '../../../constants'
 import AnimatedDots from '../../AnimatedDots'
 import { useWallet } from '../../../providers/Wallet'
 import { usePools } from '../../../providers/Pools'
@@ -151,7 +156,7 @@ const WidoPoolWithdrawBase = ({
         </TokenName>
         {legacyUnStaking ? (
           <StakeInfo>
-            <label>Staked</label>
+            Staked
             <span>
               {!connected ? (
                 ''
@@ -207,17 +212,12 @@ const WidoPoolWithdrawBase = ({
       )}
 
       <StakeInfo>
-        <label>{legacyUnStaking ? 'Unstaked' : 'Balance'}</label>
+        {legacyUnStaking ? 'Unstaked' : 'Balance'}
         <AmountInfo
           onClick={() => {
             if (!legacyUnStaking) {
-              setUnstakeBalance(
-                toWei(
-                  formatNumberWido(FARMBalance, WIDO_BALANCES_DECIMALS),
-                  fAssetPool.lpTokenData.decimals,
-                ),
-              )
-              setUnstakeInputValue(formatNumberWido(FARMBalance, WIDO_BALANCES_DECIMALS))
+              setUnstakeBalance(toWei(FARMBalance, fAssetPool.lpTokenData.decimals))
+              setUnstakeInputValue(FARMBalance)
             }
           }}
         >
@@ -225,12 +225,7 @@ const WidoPoolWithdrawBase = ({
             !connected ? (
               ''
             ) : lpTokenBalance ? (
-              fromWei(
-                lpTokenBalance,
-                tokens[FARM_TOKEN_SYMBOL].decimals,
-                WIDO_BALANCES_DECIMALS,
-                true,
-              )
+              fromWEI(lpTokenBalance, tokens[FARM_TOKEN_SYMBOL].decimals)
             ) : (
               <AnimatedDots />
             )
