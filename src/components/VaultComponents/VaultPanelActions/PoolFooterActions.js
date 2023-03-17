@@ -148,11 +148,8 @@ const PoolFooterActions = ({
         rewardTokenSymbols.map((symbol, symbolIdx) => {
           const token = groupOfVaults[symbol]
           let usdPrice = 1
-          if (token !== undefined) {
-            usdPrice =
-              (symbol === FARM_TOKEN_SYMBOL
-                ? token.data.lpTokenData && token.data.lpTokenData.price
-                : token.usdPrice) || 1
+          if(token) {
+            usdPrice = (symbol === FARM_TOKEN_SYMBOL ? token.data.lpTokenData && token.data.lpTokenData.price : token.usdPrice) || 1
           }
           return (
             <div key={symbolIdx}>

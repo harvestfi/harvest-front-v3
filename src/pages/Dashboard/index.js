@@ -1,59 +1,30 @@
-import { BigNumber } from 'bignumber.js'
-import { find, get, isEmpty } from 'lodash'
-import React, { useEffect, useMemo, useState } from 'react'
-import { useHistory } from 'react-router-dom'
-import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
-import ETHEREUM from '../../assets/images/chains/ethereum.svg'
-import POLYGON from '../../assets/images/chains/polygon.svg'
-import DashboardClaim from '../../assets/images/logos/common/apy.svg'
-import DashboardTVL from '../../assets/images/logos/common/tvl.svg'
-import EmptyIcon from '../../assets/images/logos/dashboard/empty.svg'
-import exploreFarm from '../../assets/images/logos/dashboard/exploreFarm.svg'
-import MyFarmIcon from '../../assets/images/logos/dashboard/myfarm.svg'
-import Chart from '../../components/DashboardComponents/Chart'
+import React, { useState, useEffect, useMemo } from 'react'
+import { useHistory } from "react-router-dom"
+import { BigNumber } from "bignumber.js"
+import { get, isEmpty, find } from 'lodash'
+import { Container, SubPart, TransactionDetails, DetailView, FarmTitle, 
+  FlexDiv, MyFarm, Inner, EmptyPanel, EmptyInfo, EmptyImg, ExploreFarm, ThemeMode, Div,
+  Content, BadgeIcon, Counter, Header, Column, Status, Btn, SelField } from './style'
+import { useThemeContext } from '../../providers/useThemeContext'
 import ListItem from '../../components/DashboardComponents/ListItem'
-import Porto from '../../components/DashboardComponents/Porto'
 import TotalValue from '../../components/DashboardComponents/TotalValue'
-import {
-  FARM_GRAIN_TOKEN_SYMBOL,
-  FARM_TOKEN_SYMBOL,
-  FARM_USDC_TOKEN_SYMBOL,
-  FARM_WETH_TOKEN_SYMBOL,
-  IFARM_TOKEN_SYMBOL,
-  POOL_BALANCES_DECIMALS,
-  SPECIAL_VAULTS
-} from '../../constants'
-import { addresses } from '../../data'
-import { CHAINS_ID } from '../../data/constants'
+import ProfitSharing from '../../components/ProfitSharing'
+import { useWallet } from '../../providers/Wallet'
 import { usePools } from '../../providers/Pools'
 import { useStats } from '../../providers/Stats'
-import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
-import { useWallet } from '../../providers/Wallet'
 import { fromWei } from '../../services/web3'
 import { formatNumber } from '../../utils'
-import {
-  BadgeIcon,
-  Container,
-  DetailView,
-  EmptyImg,
-  EmptyInfo,
-  EmptyPanel,
-  ExploreFarm,
-  FarmTitle,
-  FirstContent,
-  FirstPart,
-  FlexDiv,
-  Inner,
-  MyFarm,
-  SecondaryPart,
-  SecondContent,
-  SecondPart,
-  SubPart,
-  ThemeMode,
-  TotalValueRow,
-  TransactionDetails
-} from './style'
+import { addresses } from '../../data'
+import { CHAINS_ID } from '../../data/constants'
+import { POOL_BALANCES_DECIMALS, SPECIAL_VAULTS, FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, FARM_WETH_TOKEN_SYMBOL, FARM_GRAIN_TOKEN_SYMBOL, FARM_USDC_TOKEN_SYMBOL } from '../../constants'
+import ETHEREUM from '../../assets/images/chains/ethereum.svg'
+import EmptyIcon from '../../assets/images/logos/dashboard/empty.svg'
+import exploreFarm from '../../assets/images/logos/dashboard/exploreFarm.svg'
+import POLYGON from '../../assets/images/chains/polygon.svg'
+import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
+import Rating from '../../assets/images/logos/dashboard/dashboard_rating.svg'
+import DotIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 
 const getChainIcon = chain => {
   let chainLogo = ETHEREUM
@@ -152,6 +123,7 @@ const Dashboard = () => {
     setSwitchBalance(!switchBalance)
   }
   const [farmTokenList, setFarmTokenList] = useState([])
+  const [countList, setCountList] = useState(0)
   const [totalDeposit, setTotalDeposit] = useState(0)
   const [totalRewards, setTotalRewards] = useState(0)
 
@@ -167,19 +139,13 @@ const Dashboard = () => {
   useEffect(() => {
     if (account && !isEmpty(userStats) && !isEmpty(depositToken)) {
       const loadUserPoolsStats = async () => {
-        for (let i = 0; i < depositToken.length; i++) {
-          let fAssetPool =
-            depositToken[i] === FARM_TOKEN_SYMBOL
-              ? groupOfVaults[depositToken[i]].data
-              : find(pools, pool => pool.id === depositToken[i])
-
-          const token = find(
-            groupOfVaults,
-            vault =>
-              vault.vaultAddress === fAssetPool.collateralAddress ||
-              (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress),
-          )
-          if (token !== undefined) {
+        for(let i = 0; i < depositToken.length; i++) {
+          let fAssetPool = depositToken[i] === FARM_TOKEN_SYMBOL ? groupOfVaults[depositToken[i]].data :
+          find(pools, pool => pool.id === depositToken[i])
+          
+          const token = find(groupOfVaults, vault => (vault.vaultAddress === fAssetPool.collateralAddress) || 
+            (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress))
+          if(token) {
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
             if (isSpecialVault) {
               fAssetPool = token.data
@@ -227,56 +193,35 @@ const Dashboard = () => {
           setDepositToken(symbols)
         }
 
-        const newStats = []
-        let totalStake = 0,
-          valueRewards = 0
-        for (let i = 0; i < stakedVaults.length; i++) {
-          const stats = {
-              chain: '',
-              symbol: '',
-              logos: [],
-              platform: '',
-              balance: '',
-              unstake: '',
-              stake: '',
-              reward: 0,
-              rewardSymbol: '',
-            }
-          let symbol = ''
-          if (stakedVaults[i] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
+        let newStats = []
+        let totalStake = 0, valueRewards = 0
+        for(let i = 0; i < stakedVaults.length; i++) {
+          let stats = {chain: "", symbol: "", logos: [], platform: "", unstake: "", stake: "", reward: 0, rewardSymbol: ""}
+          let symbol = ""
+          if(stakedVaults[i] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
             symbol = FARM_TOKEN_SYMBOL
           } else {
             symbol = stakedVaults[i]
           }
-          let fAssetPool =
-            symbol === FARM_TOKEN_SYMBOL
-              ? groupOfVaults[symbol].data
-              : find(pools, pool => pool.id === symbol)
-
-          const token = find(
-            groupOfVaults,
-            vault =>
-              vault.vaultAddress === fAssetPool.collateralAddress ||
-              (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress),
-          )
-          if (token !== undefined) {
+          let fAssetPool = symbol === FARM_TOKEN_SYMBOL ? groupOfVaults[symbol].data :
+          find(pools, pool => pool.id === symbol)
+          
+          const token = find(groupOfVaults, vault => (vault.vaultAddress === fAssetPool.collateralAddress) || 
+            (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress))
+          if(token) {
             const useIFARM = symbol === FARM_TOKEN_SYMBOL
-            stats.symbol = symbol
-            stats.logos = token.logoUrl
-            stats.chain = getChainIcon(token.chain)
-            stats.platform = useIFARM ? tokens[IFARM_TOKEN_SYMBOL].subLabel : token.subLabel || ''
-            stats.balance = token.balance
-
+            stats["symbol"] = symbol
+            stats["logos"] = token.logoUrl
+            stats["chain"] = getChainIcon(token.chain)
+            stats["platform"] = useIFARM ? tokens[IFARM_TOKEN_SYMBOL].subLabel : token.subLabel || ""
+            
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
             if (isSpecialVault) {
               fAssetPool = token.data
             }
             let usdPrice = 1
-            if (token !== undefined) {
-              usdPrice =
-                (symbol === FARM_TOKEN_SYMBOL
-                  ? token.data.lpTokenData && token.data.lpTokenData.price
-                  : token.usdPrice) || 1
+            if(token) {
+              usdPrice = (symbol === FARM_TOKEN_SYMBOL ? token.data.lpTokenData && token.data.lpTokenData.price : token.usdPrice) || 1
             }
             const unstake =
               fromWei(
@@ -301,11 +246,8 @@ const Dashboard = () => {
 
             const rewardToken = groupOfVaults[rewardTokenSymbols[0]]
             let usdRewardPrice = 1
-            if (rewardToken !== undefined) {
-              usdRewardPrice =
-                (rewardTokenSymbols[0] === FARM_TOKEN_SYMBOL
-                  ? rewardToken.data.lpTokenData && rewardToken.data.lpTokenData.price
-                  : rewardToken.usdPrice) || 1
+            if(rewardToken) {
+              usdRewardPrice = (rewardTokenSymbols[0] === FARM_TOKEN_SYMBOL ? rewardToken.data.lpTokenData && rewardToken.data.lpTokenData.price : rewardToken.usdPrice) || 1
             }
 
             const rewards = userStats[stakedVaults[i]].totalRewardsEarned
@@ -323,6 +265,7 @@ const Dashboard = () => {
         setTotalDeposit(formatNumber(totalStake, POOL_BALANCES_DECIMALS))
         setTotalRewards(formatNumber(valueRewards, POOL_BALANCES_DECIMALS))
         setFarmTokenList(newStats)
+        setCountList(newStats.length)
       }
 
       getFarmTokenInfo()
@@ -333,109 +276,94 @@ const Dashboard = () => {
     <Container pageBackColor={pageBackColor} fontColor={fontColor}>
       <Inner>
         <SubPart>
-          <SecondaryPart>
-            <TotalValueRow backColor={backColor} borderColor={borderColor}>
-              <TotalValue icon={DashboardTVL} content="Deposits" price={totalDeposit} />
-              <TotalValue icon={DashboardClaim} content="Claimable Rewards" price={totalRewards} />
-            </TotalValueRow>
-            <Porto />
-          </SecondaryPart>
-          <Chart />
+          <TotalValue icon={Rating} content={"Deposits"} price={totalDeposit} />
+          <TotalValue icon={Rating} content={"Claimable Rewards"} price={totalRewards} />
+          <Div>
+            <ProfitSharing height="100%" />
+          </Div>
         </SubPart>
-        <FarmTitle>
-          <MyFarm>
-            <img src={MyFarmIcon} alt="" />
-            My Farms
-          </MyFarm>
-          <ThemeMode
-            mode={switchBalance ? 'usd' : 'token'}
-            backColor={toggleBackColor}
-            borderColor={borderColor}
-          >
-            <div id="theme-switch">
-              <div className="switch-track">
-                <div className="switch-thumb" />
-              </div>
+        
+        <TransactionDetails backColor={backColor} borderColor={borderColor} >
+          <FarmTitle borderColor={borderColor}>
+            <MyFarm>
+              My Farms
+              <Counter count={countList}>{countList > 0 ? countList : ''}</Counter>&nbsp;
+            </MyFarm>
+            <ThemeMode mode={switchBalance ? "usd" : "token"} backColor={toggleBackColor} borderColor={borderColor}>
+              <div id="theme-switch">
+                <div className="switch-track">
+                  <div className="switch-thumb"></div>
+                </div>
 
-              <input
-                type="checkbox"
-                checked={switchBalance}
-                onChange={switchBalanceStyle}
-                aria-label="Switch between dark and light mode"
-              />
-            </div>
-          </ThemeMode>
-        </FarmTitle>
-        <TransactionDetails backColor={backColor} borderColor={borderColor}>
-          {connected ? (
-            <>
-              {farmTokenList.map((el, i) => {
-                const info = farmTokenList[i]
-                return (
-                  <DetailView
-                    key={i}
-                    lastElement={i === farmTokenList.length - 1 ? 'yes' : 'no'}
-                    mode={switchMode}
-                  >
-                    <FlexDiv display="block">
-                      <BadgeIcon badgeBack={badgeIconBackColor}>
-                        <img src={info.chain} width="10" height="10" alt="" />
-                      </BadgeIcon>
-                      <FirstPart>
-                        <FirstContent width="40%" display="flex">
-                          {info.logos.length > 0 &&
-                            info.logos.map((el, i) => (
+                <input
+                  type="checkbox"
+                  checked={switchBalance}
+                  onChange={switchBalanceStyle}
+                  aria-label="Switch between dark and light mode"
+                />
+              </div>
+            </ThemeMode>
+          </FarmTitle>
+          <Header borderColor={borderColor}>
+            <Column width={"5%"}>
+              <SelField />
+            </Column>
+            <Column width={"30%"}>
+              Farm Name
+            </Column>
+            <Column width={"10%"}>Status</Column>
+            <Column width={"15%"} color="#FF9400">Unstaked</Column>
+            <Column width={"15%"} color="#129C3D">Staked</Column>
+            <Column width={"15%"}>Rewards</Column>
+            <Column width={"10%"}></Column>
+          </Header>
+          {
+          connected ? 
+          (  <>
+              {
+                farmTokenList.map((el, i) => {
+                  const info = farmTokenList[i]
+                  return (
+                    <DetailView key={i} lastElement={i === farmTokenList.length-1 ? "yes" : "no" } mode={switchMode}>
+                      <FlexDiv display="block">
+                        <Content width="5%">
+                          <BadgeIcon badgeBack={badgeIconBackColor}>
+                            <img src={info.chain} width={"17px"} height={"17px"} alt="" />
+                          </BadgeIcon>
+                        </Content>
+                        <Content width="30%" display="flex">
+                          {
+                            info.logos.length > 0 && info.logos.map((el, i) => (
                               <img key={i} className="coin" width={37} src={el} alt="" />
-                            ))}
-                        </FirstContent>
-                        <FirstContent width="60%">
-                          <ListItem weight={400} size={16} height={21} value={info.symbol} />
-                          <ListItem weight={400} size={12} height={16} value={info.platform} />
-                          <ListItem
-                            weight={400}
-                            size={12}
-                            height={16}
-                            color="#27AE60"
-                            value={info.balance}
-                          />
-                        </FirstContent>
-                      </FirstPart>
-                      <SecondPart>
-                        <SecondContent>
-                          <ListItem
-                            weight={700}
-                            size={16}
-                            height={21}
-                            label="Unstaked"
-                            percent="5%"
-                            up
-                          />
+                            ))
+                          }
+                          <Content marginLeft="11px">
+                            <ListItem weight={600} size={12} height={17} value={info.symbol} />
+                            <ListItem weight={400} size={12} height={16} value={info.platform} />
+                          </Content>
+                        </Content>
+                        <Content width="10%">
+                          <Status status={info.status}>
+                            <img src={DotIcon} width={8} height={8} alt="" />
+                            {info.status}
+                          </Status>
+                        </Content>
+                        <Content width="15%">
                           <ListItem weight={400} size={12} height={16} value={`$${info.unstake}`} />
-                          <ListItem
-                            weight={700}
-                            size={16}
-                            height={21}
-                            label="Staked"
-                            percent="5%"
-                            up
-                          />
+                        </Content>
+                        <Content width="15%">
                           <ListItem weight={400} size={12} height={16} value={`$${info.stake}`} />
-                        </SecondContent>
-                        <SecondContent>
-                          <ListItem weight={700} size={16} height={21} label="Rewards" />
-                          <ListItem
-                            weight={400}
-                            size={12}
-                            height={16}
-                            label={`$${info.reward}`}
-                            icon={`/icons/${info.rewardSymbol}`}
-                          />
-                        </SecondContent>
-                      </SecondPart>
-                    </FlexDiv>
-                  </DetailView>
-                )
-              })}
+                        </Content>
+                        <Content width="15%">
+                          <ListItem weight={400} size={12} height={16} label={`$${info.reward}`} icon={`/icons/${info.rewardSymbol}`} />
+                        </Content>
+                        <Content width="10%">
+                          <Btn>Manage</Btn>
+                        </Content>
+                      </FlexDiv>
+                    </DetailView>
+                )})
+              }
             </>
           ) : (
             <>

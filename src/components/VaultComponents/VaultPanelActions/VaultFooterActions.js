@@ -142,53 +142,48 @@ const VaultFooterActions = ({
           />
         </SelectedVaultLabel>
       </SelectedVault>
-      {rewardTokenSymbols !== undefined &&
-        rewardTokenSymbols.slice(0, 1).map((symbol, symbolIdx) => {
-          const token = groupOfVaults[symbol]
-          let usdPrice = 1
-          if (token !== undefined) {
-            usdPrice =
-              (symbol === FARM_TOKEN_SYMBOL
-                ? token.data.lpTokenData && token.data.lpTokenData.price
-                : token.usdPrice) || 1
-          }
-          return (
-            <SelectedVault key={`${symbol}-rewards-earned`}>
-              <SelectedVaultNumber display="flex">
-                <img src={`/icons/${symbol.toLowerCase()}.svg`} width={40} height={40} alt="" />
-                <Div>
-                  <Monospace>
-                    {!connected ? (
-                      formatNumber(0, 2)
-                    ) : !isLoadingData &&
-                      get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`) ? (
-                      <Counter
-                        pool={fAssetPool}
-                        totalTokensEarned={
-                          rewardTokenSymbols.length > 1
-                            ? fromWei(
-                                get(rewardsEarned, symbol, 0),
-                                get(tokens[symbol], 'decimals', 18),
-                                4,
-                              )
-                            : totalTokensEarned
-                        }
-                        totalStaked={get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)}
-                        ratePerDay={get(ratesPerDay, symbolIdx, ratesPerDay[0])}
-                        rewardPerToken={get(
-                          fAssetPool,
-                          `rewardPerToken[${symbolIdx}]`,
-                          fAssetPool.rewardPerToken[0],
-                        )}
-                        rewardTokenAddress={get(
-                          fAssetPool,
-                          `rewardTokens[${symbolIdx}]`,
-                          fAssetPool.rewardTokens[0],
-                        )}
-                      />
-                    ) : (
-                      <AnimatedDots />
+      {rewardTokenSymbols && rewardTokenSymbols.slice(0, 1).map((symbol, symbolIdx) => {
+        const token = groupOfVaults[symbol]
+        let usdPrice = 1
+        if(token) {
+          usdPrice = (symbol === FARM_TOKEN_SYMBOL ? token.data.lpTokenData && token.data.lpTokenData.price : token.usdPrice) || 1
+        }
+        return (
+        <SelectedVault key={`${symbol}-rewards-earned`}>
+          <SelectedVaultNumber display={"flex"}>
+            <img src={`/icons/${symbol.toLowerCase()}.svg`} width={40} height={40} alt="" />
+            <Div>
+              <Monospace>
+                {!connected ? (
+                  formatNumber(0, 2)
+                ) : !isLoadingData && get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`) ? (
+                  <Counter
+                    pool={fAssetPool}
+                    totalTokensEarned={
+                      rewardTokenSymbols.length > 1
+                        ? fromWei(
+                            get(rewardsEarned, symbol, 0),
+                            get(tokens[symbol], 'decimals', 18),
+                            4,
+                          )
+                        : totalTokensEarned
+                    }
+                    totalStaked={get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)}
+                    ratePerDay={get(ratesPerDay, symbolIdx, ratesPerDay[0])}
+                    rewardPerToken={get(
+                      fAssetPool,
+                      `rewardPerToken[${symbolIdx}]`,
+                      fAssetPool.rewardPerToken[0],
                     )}
+                    rewardTokenAddress={get(
+                      fAssetPool,
+                      `rewardTokens[${symbolIdx}]`,
+                      fAssetPool.rewardTokens[0],
+                    )}
+                  />
+                ): (
+                  <AnimatedDots/>
+                )}
                   </Monospace>
                   <USDValue>
                     <Monospace>

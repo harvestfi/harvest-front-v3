@@ -83,7 +83,7 @@ const Desc = styled.div`
   line-height: 22px;
 `
 
-const ProfitShare = styled.a`
+const ProfitShare = styled.div`
   width: 28%;
   margin: 16px 0;
   text-align: left;

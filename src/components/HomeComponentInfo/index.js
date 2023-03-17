@@ -46,7 +46,7 @@ const HomeComponentInfo = ({ token, vaultPool, tokenVault, text, url }) => {
           {token.logoUrl
             ? token.logoUrl.map((symbol, symbolIdx) => (
                 <ContentImg
-                  key={symbol}
+                  key={symbolIdx}
                   id={symbolIdx}
                   width="32px"
                   height="32px"

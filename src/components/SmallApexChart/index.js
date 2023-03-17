@@ -225,13 +225,13 @@ const ApexChart = ({ data, lastAPY, specVault }) => {
       const ago = 30
 
       let apyData = []
-      if (data && (data.apyAutoCompounds || data.apyRewards)) {
-        if (data.apyAutoCompounds.length === 0 && data.apyRewards.length === 0) {
+      if(data && (data.apyAutoCompounds || data.apyRewards)) {
+        if(data.apyAutoCompounds.length === 0 && data.apyRewards.length === 0)  {
           return
         }
       }
-      const apyAutoCompounds = data && data.apyAutoCompounds ? data.apyAutoCompounds : [],
-       apyRewards = data && data.apyRewards ? data.apyRewards : []
+      let apyAutoCompounds = data.apyAutoCompounds ? data.apyAutoCompounds : []
+      let apyRewards = data.apyRewards ? data.apyRewards : []
 
       apyData = generateChartDataForApy(apyAutoCompounds, apyRewards, 'apy')
       if (lastAPY && lastAPY !== 0 && apyData.length !== 0) apyData[0]['apy'] = lastAPY

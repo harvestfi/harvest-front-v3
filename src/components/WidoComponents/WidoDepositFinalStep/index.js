@@ -75,7 +75,7 @@ const WidoDepositFinalStep = ({
       tokenAllowance()
     }
 
-    if (pickedToken.address !== undefined) {
+    if(pickedToken.address) {
       setSymbolName(pickedToken.symbol)
     }
   }, [pickedToken, inputAmount, account, chainId, amount, toToken, finalStep])
