@@ -91,35 +91,6 @@ const FAQ = () => {
               </QuestionContainer>
             ))}
           </FAQHalfContent>
-          <FAQHalfContent>
-            {FAQ_ITEMS_SECOND.map(item => (
-              <QuestionContainer key={uuid()}>
-                <Collapsible
-                  lazyRender={item.lazyRender ? item.lazyRender : true}
-                  triggerWhenOpen={
-                    <Question open  backColor={backColor} borderColor={borderColor}>
-                      {item.question}
-                      <DropdownToggle open src={DropdownToggleImageOpen} />
-                    </Question>
-                  }
-                  trigger={
-                    <Question backColor={backColor} borderColor={borderColor}>
-                        {item.question}
-                        <DropdownToggle open src={DropdownToggleImageOpen} />
-                      </Question>
-                    }
-                    trigger={
-                      <Question>
-                        {item.question}
-                        <DropdownToggle src={DropdownToggleImageClosed} />
-                      </Question>
-                    }
-                  >
-                    <Answer>{item.answer}</Answer>
-                  </Collapsible>
-                </QuestionContainer>
-              ))}
-            </FAQHalfContent>
             <FAQHalfContent>
               {FAQ_ITEMS_SECOND.map(item => (
                 <QuestionContainer key={uuid()}>
@@ -146,7 +117,7 @@ const FAQ = () => {
               ))}
             </FAQHalfContent>
           </FAQContent>
-        )}
+        }
       </FAQMain>
     </FAQContainer>
   )

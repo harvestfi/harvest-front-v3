@@ -175,6 +175,15 @@ const VaultFooterActions = ({
                       `rewardPerToken[${symbolIdx}]`,
                       fAssetPool.rewardPerToken[0],
                     )}
+                    rewardTokenAddress={get(
+                      fAssetPool,
+                      `rewardTokens[${symbolIdx}]`,
+                      fAssetPool.rewardTokens[0],
+                    )}
+                  />
+                ): (
+                  <AnimatedDots/>
+                )}
                   </Monospace>
                   <USDValue>
                     <Monospace>

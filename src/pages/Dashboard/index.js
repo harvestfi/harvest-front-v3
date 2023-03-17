@@ -7,24 +7,22 @@ import { Container, SubPart, TransactionDetails, DetailView, FarmTitle,
   Content, BadgeIcon, Counter, Header, Column, Status, Btn, SelField } from './style'
 import { useThemeContext } from '../../providers/useThemeContext'
 import ListItem from '../../components/DashboardComponents/ListItem'
-import Porto from '../../components/DashboardComponents/Porto'
 import TotalValue from '../../components/DashboardComponents/TotalValue'
 import ProfitSharing from '../../components/ProfitSharing'
-import ListItem from '../../components/DashboardComponents/ListItem'
 import { useWallet } from '../../providers/Wallet'
 import { usePools } from '../../providers/Pools'
 import { useStats } from '../../providers/Stats'
-import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
-import { useWallet } from '../../providers/Wallet'
 import { fromWei } from '../../services/web3'
 import { formatNumber } from '../../utils'
 import { addresses } from '../../data'
+import { CHAINS_ID } from '../../data/constants'
+import { POOL_BALANCES_DECIMALS, SPECIAL_VAULTS, FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, FARM_WETH_TOKEN_SYMBOL, FARM_GRAIN_TOKEN_SYMBOL, FARM_USDC_TOKEN_SYMBOL } from '../../constants'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
 import EmptyIcon from '../../assets/images/logos/dashboard/empty.svg'
 import exploreFarm from '../../assets/images/logos/dashboard/exploreFarm.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
-import BNB from '../../assets/images/chains/bnb.svg'
+import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import Rating from '../../assets/images/logos/dashboard/dashboard_rating.svg'
 import DotIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 
@@ -321,7 +319,7 @@ const Dashboard = () => {
           </Header>
           {
           connected ? 
-            <>
+          (  <>
               {
                 farmTokenList.map((el, i) => {
                   const info = farmTokenList[i]

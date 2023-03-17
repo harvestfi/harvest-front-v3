@@ -15,7 +15,7 @@ import { usePools } from '../../providers/Pools'
 import { useVaults } from '../../providers/Vault'
 import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
-import { FARM_TOKEN_SYMBOL, SPECIAL_VAULTS, directDetailUrl } from '../../constants'
+import { FARM_TOKEN_SYMBOL, SPECIAL_VAULTS } from '../../constants'
 import ProfitSharingContainer from '../../components/ProfitSharing'
 
 const vaultList = [
