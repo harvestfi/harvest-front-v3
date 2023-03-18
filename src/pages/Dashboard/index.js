@@ -139,13 +139,13 @@ const Dashboard = () => {
   useEffect(() => {
     if (account && !isEmpty(userStats) && !isEmpty(depositToken)) {
       const loadUserPoolsStats = async () => {
-        for(let i = 0; i < depositToken.length; i++) {
+        for (let i = 0; i < depositToken.length; i++) {
           let fAssetPool = depositToken[i] === FARM_TOKEN_SYMBOL ? groupOfVaults[depositToken[i]].data :
           find(pools, pool => pool.id === depositToken[i])
           
           const token = find(groupOfVaults, vault => (vault.vaultAddress === fAssetPool.collateralAddress) || 
             (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress))
-          if(token) {
+          if (token) {
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
             if (isSpecialVault) {
               fAssetPool = token.data
@@ -165,7 +165,7 @@ const Dashboard = () => {
     tokens,
     depositToken,
     groupOfVaults,
-    userStats
+    userStats,
   ])
 
   useEffect(() => {
@@ -193,12 +193,23 @@ const Dashboard = () => {
           setDepositToken(symbols)
         }
 
-        let newStats = []
-        let totalStake = 0, valueRewards = 0
-        for(let i = 0; i < stakedVaults.length; i++) {
-          let stats = {chain: "", symbol: "", logos: [], platform: "", unstake: "", stake: "", reward: 0, rewardSymbol: ""}
-          let symbol = ""
-          if(stakedVaults[i] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
+        let newStats = [],
+          totalStake = 0,
+          valueRewards = 0
+        for (let i = 0; i < stakedVaults.length; i++) {
+          const stats = {
+            chain: '',
+            symbol: '',
+            logos: [],
+            status: 'Active',
+            platform: '',
+            unstake: '',
+            stake: '',
+            reward: 0,
+            rewardSymbol: '',
+          }
+          let symbol = ''
+          if (stakedVaults[i] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
             symbol = FARM_TOKEN_SYMBOL
           } else {
             symbol = stakedVaults[i]
@@ -210,11 +221,11 @@ const Dashboard = () => {
             (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress))
           if(token) {
             const useIFARM = symbol === FARM_TOKEN_SYMBOL
-            stats["symbol"] = symbol
-            stats["logos"] = token.logoUrl
-            stats["chain"] = getChainIcon(token.chain)
-            stats["platform"] = useIFARM ? tokens[IFARM_TOKEN_SYMBOL].subLabel : token.subLabel || ""
-            
+            stats.symbol = symbol
+            stats.logos = token.logoUrl
+            stats.chain = getChainIcon(token.chain)
+            stats.platform = useIFARM ? tokens[IFARM_TOKEN_SYMBOL].subLabel : token.subLabel || ""
+
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
             if (isSpecialVault) {
               fAssetPool = token.data
@@ -246,7 +257,7 @@ const Dashboard = () => {
 
             const rewardToken = groupOfVaults[rewardTokenSymbols[0]]
             let usdRewardPrice = 1
-            if(rewardToken) {
+            if (rewardToken) {
               usdRewardPrice = (rewardTokenSymbols[0] === FARM_TOKEN_SYMBOL ? rewardToken.data.lpTokenData && rewardToken.data.lpTokenData.price : rewardToken.usdPrice) || 1
             }
 
@@ -276,23 +287,27 @@ const Dashboard = () => {
     <Container pageBackColor={pageBackColor} fontColor={fontColor}>
       <Inner>
         <SubPart>
-          <TotalValue icon={Rating} content={"Deposits"} price={totalDeposit} />
-          <TotalValue icon={Rating} content={"Claimable Rewards"} price={totalRewards} />
+          <TotalValue icon={Rating} content="Deposits" price={totalDeposit} />
+          <TotalValue icon={Rating} content="Claimable Rewards" price={totalRewards} />
           <Div>
             <ProfitSharing height="100%" />
           </Div>
         </SubPart>
-        
+
         <TransactionDetails backColor={backColor} borderColor={borderColor} >
           <FarmTitle borderColor={borderColor}>
             <MyFarm>
               My Farms
               <Counter count={countList}>{countList > 0 ? countList : ''}</Counter>&nbsp;
             </MyFarm>
-            <ThemeMode mode={switchBalance ? "usd" : "token"} backColor={toggleBackColor} borderColor={borderColor}>
+            <ThemeMode
+              mode={switchBalance ? 'usd' : 'token'}
+              backColor={toggleBackColor}
+              borderColor={borderColor}
+            >
               <div id="theme-switch">
                 <div className="switch-track">
-                  <div className="switch-thumb"></div>
+                  <div className="switch-thumb" />
                 </div>
 
                 <input
@@ -305,17 +320,19 @@ const Dashboard = () => {
             </ThemeMode>
           </FarmTitle>
           <Header borderColor={borderColor}>
-            <Column width={"5%"}>
+            <Column width="5%">
               <SelField />
             </Column>
-            <Column width={"30%"}>
-              Farm Name
+            <Column width="30%">Farm Name</Column>
+            <Column width="10%">Status</Column>
+            <Column width="15%" color="#FF9400">
+              Unstaked
             </Column>
-            <Column width={"10%"}>Status</Column>
-            <Column width={"15%"} color="#FF9400">Unstaked</Column>
-            <Column width={"15%"} color="#129C3D">Staked</Column>
-            <Column width={"15%"}>Rewards</Column>
-            <Column width={"10%"}></Column>
+            <Column width="15%" color="#129C3D">
+              Staked
+            </Column>
+            <Column width="15%">Rewards</Column>
+            <Column width="10%" />
           </Header>
           {
           connected ? 
