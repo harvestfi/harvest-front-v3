@@ -9,7 +9,6 @@ const Container = styled.div`
   padding: 70px 66px 56px 66px;
 
   width: 90%;
-  // min-height: 1100px;
 
   position: relative;
 
@@ -239,7 +238,6 @@ const ThemeMode = styled.div`
       position: absolute;
       top: 1px;
       width: 22px;
-      // border-image: initial;
       border-radius: 50%;
       transition: all 0.25s ease 0s;
     }

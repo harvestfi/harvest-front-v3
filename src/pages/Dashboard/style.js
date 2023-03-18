@@ -347,23 +347,28 @@ const Header = styled.div`
 `
 
 const Column = styled.div`
-  width: ${props=>props.width};
+  width: ${props => props.width};
   font-weight: 500;
   font-size: 12px;
   line-height: 15px;
-  ${props=>props.color ? `
+  ${props =>
+    props.color
+      ? `
     color: ${props.color};
-  ` : `
+  `
+      : `
     color: #475467;
   `}
-  
 `
 
 const Status = styled.div`
-  ${props=>props.status === 'Active' ?  `
+  ${props =>
+    props.status === 'Active'
+      ? `
       background: #ECFDF3;
       color: #027A48;
-    ` : `
+    `
+      : `
       background: #FFE8C8;
       color: #F2994A;
       img {
@@ -386,7 +391,7 @@ const Status = styled.div`
 `
 
 const Btn = styled.button`
-  border: 1px solid #D0D5DD;
+  border: 1px solid #d0d5dd;
   box-shadow: 0px 1px 1px rgba(16, 24, 40, 0.05);
   border-radius: 5px;
   color: #344054;
@@ -399,10 +404,32 @@ const Btn = styled.button`
 const SelField = styled.div`
   height: 17px;
   width: 17px;
-  border: 1px solid #D0D5DD;
+  border: 1px solid #d0d5dd;
   border-radius: 5px;
 `
 
-export { Container, SubPart, TransactionDetails, DetailView, FarmTitle, 
-  FlexDiv, MyFarm, FarmPic, BadgeIcon, Inner, EmptyPanel, EmptyInfo, EmptyImg, ExploreFarm,
-  Content, ThemeMode, Div, Counter, Header, Column, Status, Btn, SelField }
+export {
+  Container,
+  SubPart,
+  TransactionDetails,
+  DetailView,
+  FarmTitle,
+  FlexDiv,
+  MyFarm,
+  FarmPic,
+  BadgeIcon,
+  Inner,
+  EmptyPanel,
+  EmptyInfo,
+  EmptyImg,
+  ExploreFarm,
+  Content,
+  ThemeMode,
+  Div,
+  Counter,
+  Header,
+  Column,
+  Status,
+  Btn,
+  SelField,
+}

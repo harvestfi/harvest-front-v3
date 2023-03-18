@@ -16,14 +16,12 @@ const Container = styled.div`
 
   @media screen and (max-width: 992px) {
     width: 100%;
-    // height: 400px;
     margin-bottom: 15px;
   }
 `
 
 const Header = styled.div`
   font-size: 14px;
-  // padding: 20px 26px;
   display: flex;
   justify-content: space-between;
 `
@@ -32,7 +30,6 @@ const Title = styled.h5`
   font-size: 16px;
   line-height: 21px;
   font-weight: 700;
-  // width: 100%;
   margin-bottom: 1rem;
 
   img {
@@ -76,16 +73,13 @@ const ButtonGroup = styled.div`
   button {
     padding: 0.1em 0.3em;
     border-radius: 0.4em;
-    // background: #F6F6F6;
     margin-left: 0.25em;
     font-weight: 400;
   }
 `
 
 const ChartDiv = styled.div`
-  // display: flex;
   min-height: 70%;
-  // background: white;
   margin-bottom: 10px;
 `
 

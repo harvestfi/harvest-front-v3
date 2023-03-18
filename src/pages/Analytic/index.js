@@ -212,11 +212,7 @@ const Analytic = () => {
               intervalDelay={50}
               precision={2}
               date={getNextEmissionsCutDate()}
-              renderer={({
-                formatted: { days, hours, minutes, seconds },
-                milliseconds,
-                completed,
-              }) => {
+              renderer={({ formatted: { days, hours, minutes }, completed }) => {
                 if (completed) {
                   return (
                     <span>

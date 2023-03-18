@@ -11,11 +11,9 @@ const FarmContainer = styled.div`
   color: ${props => props.fontColor};
   background: ${props => props.pageBackColor};
 
-  // @media screen and (min-width: 1920px) {
   display: flex;
   justify-content: center;
   flex-direction: column;
-  // }
 
   @media screen and (max-width: 992px) {
     margin-left: 0;
@@ -23,9 +21,6 @@ const FarmContainer = styled.div`
 `
 const FarmContent = styled.div`
   display: flex;
-  // flex-direction: column;
-
-  // flex-wrap: wrap;
   justify-content: space-between;
   padding: 70px 76px 94px 76px;
   margin: auto;

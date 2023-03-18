@@ -40,7 +40,6 @@ const MigrateOptionsContainer = styled.div`
 `
 
 const SelectedVaultContainer = styled.div`
-  // display: flex;
   width: 100%;
   padding: ${props => props.padding || '20px 0px'};
   max-width: ${props => props.maxWidth || '500px'};
@@ -52,7 +51,6 @@ const SelectedVaultContainer = styled.div`
 
   button {
     font-weight: 800;
-    // width: auto;
   }
 
   @media screen and (max-width: 670px) {

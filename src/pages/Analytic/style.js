@@ -88,7 +88,6 @@ const StatsBox = styled.div`
   `
       : props.compNum === 2
       ? `
-      // background: #ffffff; 
       color: black;
     `
       : props.compNum === 3
@@ -98,13 +97,11 @@ const StatsBox = styled.div`
     `
       : ``}
   transition: 0.25s;
-  // box-shadow: 0px 20px 60px rgba(0, 0, 0, 0.1);
   border: 1px solid ${props => props.borderColor};
   color: ${props => props.fontColor};
   background: ${props => props.backColor};
 
   border-radius: 12px 12px 10px 10px;
-  // padding-top: 20px;
   margin-bottom: 10px;
   width: ${props => props.width || '-webkit-fill-available'};
   height: ${props => props.height || '152px'};
@@ -161,7 +158,6 @@ const StatsContainerRow = styled.div`
 
   div:first-child {
     width: ${props => props.width || '135px'};
-    // margin-right: 38px;
   }
 
   &:not(:first-child) {
@@ -173,10 +169,6 @@ const StatsContainerRow = styled.div`
   @media screen and (max-width: 992px) {
     flex-direction: column;
     align-items: baseline;
-
-    div:first-child {
-      // margin-right: 0;
-    }
 
     &:not(:first-child) {
       padding-left: 15px;
@@ -259,7 +251,6 @@ const StatsTooltip = styled.div`
 
 const ImgList = styled.div`
   display: flex;
-  // margin-top: 20px;
   a {
     margin-right: 10px;
   }

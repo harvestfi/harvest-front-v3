@@ -112,7 +112,6 @@ const BadgeIcon = styled.div`
   background: ${props => props.badgeBack};
   box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.15);
   border-radius: 8px;
-  // padding: 5px 3px;
   width: 23px;
   height: 23px;
   display: flex;
@@ -191,7 +190,6 @@ const MobileVaultInfoContainer = styled.div`
 const MobileVaultValueContainer = styled.div`
   display: flex;
   justify-content: end;
-  // flex-direction: column;
   align-items: baseline;
   line-height: 2;
   font-size: 12px;
