@@ -391,8 +391,8 @@ const WidoDetail = () => {
   const rewardSymbol = isSpecialVault ? id : token.apyTokenSymbols[0]
   useEffect(() => {
     const getTokenBalance = async () => {
-      try{
-        if(chain) {
+      try {
+        if (chain) {
           const balances = await getBalances(account, [chain.toString()])
           setBalanceList(balances)
           const supList = await getSupportedTokens({
