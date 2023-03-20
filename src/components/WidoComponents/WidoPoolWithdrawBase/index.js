@@ -1,42 +1,42 @@
-import React, { useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { get } from 'lodash'
-import { toast } from 'react-toastify'
+import React, { useState } from 'react'
 import { Spinner } from 'react-bootstrap'
-import { fromWei, toWei } from '../../../services/web3'
-import Button from '../../Button'
+import { toast } from 'react-toastify'
+import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.svg'
+import DropDownIcon from '../../../assets/images/logos/wido/drop-down.svg'
+import FARMIcon from '../../../assets/images/logos/wido/farm.svg'
+import IFARMIcon from '../../../assets/images/logos/wido/ifarm.svg'
+import WidoIcon from '../../../assets/images/logos/wido/wido.svg'
 import {
-  WIDO_BALANCES_DECIMALS,
   FARM_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
+  WIDO_BALANCES_DECIMALS,
   fromWEI,
 } from '../../../constants'
-import AnimatedDots from '../../AnimatedDots'
-import { useWallet } from '../../../providers/Wallet'
-import { usePools } from '../../../providers/Pools'
 import { useActions } from '../../../providers/Actions'
+import { usePools } from '../../../providers/Pools'
 import { useThemeContext } from '../../../providers/useThemeContext'
+import { useWallet } from '../../../providers/Wallet'
+import { fromWei, toWei } from '../../../services/web3'
 import { formatNumberWido } from '../../../utils'
+import AnimatedDots from '../../AnimatedDots'
+import Button from '../../Button'
 import { Divider } from '../../GlobalStyle'
 import {
-  BaseWido,
-  TokenSelect,
-  TokenInfo,
-  PoweredByWido,
-  TokenName,
-  StakeInfo,
-  NewLabel,
+  AmountInfo,
   Balance,
-  TokenAmount,
+  BaseWido,
+  NewLabel,
+  PoweredByWido,
+  StakeInfo,
   SwitchMode,
   ThemeMode,
-  AmountInfo,
+  TokenAmount,
+  TokenInfo,
+  TokenName,
+  TokenSelect,
 } from './style'
-import WidoIcon from '../../../assets/images/logos/wido/wido.svg'
-import IFARMIcon from '../../../assets/images/logos/wido/ifarm.svg'
-import FARMIcon from '../../../assets/images/logos/wido/farm.svg'
-import DropDownIcon from '../../../assets/images/logos/wido/drop-down.svg'
-import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.svg'
 
 const { tokens } = require('../../../data')
 

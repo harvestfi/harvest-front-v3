@@ -41,4 +41,4 @@ const VaultContainer = styled.div`
   }
 `
 
-export { VaultContainer }
+export default VaultContainer

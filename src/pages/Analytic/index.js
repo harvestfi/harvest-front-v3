@@ -1,54 +1,54 @@
 import React, { useEffect } from 'react'
-import CountUp from 'react-countup'
 import Countdown from 'react-countdown'
+import CountUp from 'react-countup'
 import { useMediaQuery } from 'react-responsive'
 import ReactTooltip from 'react-tooltip'
-import { useStats } from '../../providers/Stats'
-import { useThemeContext } from '../../providers/useThemeContext'
-import AnalyticChart from '../../components/AnalyticChart'
-import {
-  Container,
-  Content,
-  FarmStatsContainer,
-  FarmSubTitle,
-  StatsBox,
-  StatsContainer,
-  StatsTooltip,
-  EmissionsCountdownText,
-  StatsBoxTitle,
-  StatsContainerRow,
-  BigStats,
-  BigStatsSubheader,
-  ImgList,
-  DataSource,
-  DataSourceInner,
-  StatsValue,
-  StatsExchange,
-  StatsChart,
-  StatsExternal,
-  DataSourceDirect,
-  BigStatsExchange,
-} from './style'
-import { Divider, Monospace, TextContainer } from '../../components/GlobalStyle'
-import AnimatedDots from '../../components/AnimatedDots'
-import CountdownLabel from '../../components/CountdownLabel'
-import { CURVE_APY } from '../../constants'
-import { truncateNumberString, getNextEmissionsCutDate } from '../../utils'
 import DepositEffectImage from '../../assets/images/logos/analytics/depositEffect.svg'
-import FarmStakingEffectImage from '../../assets/images/logos/analytics/farmStakingEffect.svg'
-import GasSavedImage from '../../assets/images/logos/common/tvl.svg'
-import TotalDepositsImage from '../../assets/images/logos/common/apy.svg'
-import Farm from '../../assets/images/logos/analytics/farm.svg'
-import ExchangeCoinbase from '../../assets/images/logos/analytics/exchange_coinbase.svg'
+import ExchangeBancor from '../../assets/images/logos/analytics/exchange_bancor.svg'
 import ExchangeBinance from '../../assets/images/logos/analytics/exchange_binance.svg'
-import ExchangeKraken from '../../assets/images/logos/analytics/exchange_kraken.svg'
+import ExchangeCoinbase from '../../assets/images/logos/analytics/exchange_coinbase.svg'
 import ExchangeCrypto from '../../assets/images/logos/analytics/exchange_crypto.svg'
+import ExchangeKraken from '../../assets/images/logos/analytics/exchange_kraken.svg'
 import ExchangeSushiswap from '../../assets/images/logos/analytics/exchange_sushiswap.svg'
 import ExchangeUniswap from '../../assets/images/logos/analytics/exchange_uniswap.svg'
-import ExchangeBancor from '../../assets/images/logos/analytics/exchange_bancor.svg'
 import ExternalDefiLlama from '../../assets/images/logos/analytics/externalDefiLlama.svg'
 import ExternalDuno from '../../assets/images/logos/analytics/externalDuno.svg'
 import ExternalFarm from '../../assets/images/logos/analytics/externalFarm.svg'
+import Farm from '../../assets/images/logos/analytics/farm.svg'
+import FarmStakingEffectImage from '../../assets/images/logos/analytics/farmStakingEffect.svg'
+import TotalDepositsImage from '../../assets/images/logos/common/apy.svg'
+import GasSavedImage from '../../assets/images/logos/common/tvl.svg'
+import AnalyticChart from '../../components/AnalyticChart'
+import AnimatedDots from '../../components/AnimatedDots'
+import CountdownLabel from '../../components/CountdownLabel'
+import { Divider, Monospace, TextContainer } from '../../components/GlobalStyle'
+import { CURVE_APY } from '../../constants'
+import { useStats } from '../../providers/Stats'
+import { useThemeContext } from '../../providers/useThemeContext'
+import { getNextEmissionsCutDate, truncateNumberString } from '../../utils'
+import {
+  BigStats,
+  BigStatsExchange,
+  BigStatsSubheader,
+  Container,
+  Content,
+  DataSource,
+  DataSourceDirect,
+  DataSourceInner,
+  EmissionsCountdownText,
+  FarmStatsContainer,
+  FarmSubTitle,
+  ImgList,
+  StatsBox,
+  StatsBoxTitle,
+  StatsChart,
+  StatsContainer,
+  StatsContainerRow,
+  StatsExchange,
+  StatsExternal,
+  StatsTooltip,
+  StatsValue,
+} from './style'
 
 const MemoizedCounter = React.memo(CountUp)
 const MemoizedCountdown = React.memo(Countdown)

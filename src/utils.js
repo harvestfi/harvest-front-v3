@@ -19,7 +19,7 @@ import {
   MAX_APY_DISPLAY,
   MIFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
-  UNIV3_POOL_ID_REGEX
+  UNIV3_POOL_ID_REGEX,
 } from './constants'
 import { CHAINS_ID } from './data/constants'
 import { addresses } from './data/index'
@@ -286,7 +286,7 @@ export const getRewardsText = (
           components.push(`<div style="display: flex; margin-bottom: 14px; font-size: 16px; line-height: 21px;">
           <div style="min-width: 75px;">
           ${token.apyIconUrls.map(
-            (item, i) => `<img src='${item.toLowerCase()}' key=${i} width=24 alt="" />`,
+            (item, index) => `<img src='${item.toLowerCase()}' key=${index} width=24 alt="" />`,
           )}</div>
             <div style="min-width: 60px; color: #1F2937; font-weight: 700;">${
               new BigNumber(token.estimatedApyBreakdown[i]).gt(0)
@@ -612,11 +612,11 @@ export const getDetailText = (
           <div class="detail-box">
             <div class="detail-icon">
               ${token.apyIconUrls.map(
-                (item, i) =>
+                (item, index) =>
                   `<img src='${item
                     .slice(1, item.length)
-                    .toLowerCase()}' key=${i} width=24 height=24 alt="" style='margin-left: ${
-                    i !== 0 ? '-15px;' : ''
+                    .toLowerCase()}' key=${index} width=24 height=24 alt="" style='margin-left: ${
+                    index !== 0 ? '-15px;' : ''
                   }' />`,
               )}
             </div>
@@ -1072,10 +1072,10 @@ export function CustomException(message, code) {
 }
 
 export const getTVLData = async (ago, address) => {
-  let nowDate = new Date()
+  let nowDate = new Date(),
+    data = []
   nowDate = Math.floor(nowDate.setDate(nowDate.getDate() - 1) / 1000)
-  let data = [],
-    startDate = nowDate - 3600 * 24 * ago
+  const startDate = nowDate - 3600 * 24 * ago
 
   const api = `https://ethparser-api.herokuapp.com/api/transactions/history/tvl/${address}?reduce=1&start=${startDate}&network=eth`
   try {
@@ -1099,10 +1099,10 @@ export const getTVLData = async (ago, address) => {
 }
 
 export const getDataQuery = async (ago, address, chainId, myWallet) => {
-  let nowDate = new Date()
+  let nowDate = new Date(),
+    data = {}
   nowDate = Math.floor(nowDate.setDate(nowDate.getDate() - 1) / 1000)
-  const data = {},
-    startDate = nowDate - 3600 * 24 * ago
+  const startDate = nowDate - 3600 * 24 * ago
 
   address = address.toLowerCase()
   if (myWallet) {
@@ -1172,7 +1172,7 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
     await fetch(url, requestOptions)
       .then(response => response.json())
       .then(result => {
-        const data = result.data
+        data = result.data
         console.log(data)
       })
       .catch(error => console.log('error', error))

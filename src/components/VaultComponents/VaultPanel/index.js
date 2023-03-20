@@ -1,12 +1,12 @@
-import React, { useState, useMemo, useEffect } from 'react'
-import { isArray, find, isEmpty } from 'lodash'
-import { useThemeContext } from '../../../providers/useThemeContext'
-import { VaultContainer } from './style'
-import VaultPanelHeader from '../VaultPanelHeader'
+import { find, isArray, isEmpty } from 'lodash'
+import React, { useEffect, useMemo, useState } from 'react'
 import { FARM_TOKEN_SYMBOL } from '../../../constants'
 import { usePools } from '../../../providers/Pools'
-import { useWallet } from '../../../providers/Wallet'
+import { useThemeContext } from '../../../providers/useThemeContext'
 import { useVaults } from '../../../providers/Vault'
+import { useWallet } from '../../../providers/Wallet'
+import VaultPanelHeader from '../VaultPanelHeader'
+import VaultContainer from './style'
 
 const { tokens } = require('../../../data')
 

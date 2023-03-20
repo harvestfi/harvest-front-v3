@@ -1,18 +1,18 @@
-import React from 'react'
+import { ConnectButton, getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit'
+import '@rainbow-me/rainbowkit/dist/index.css'
 import { Web3ReactProvider } from '@web3-react/core'
 import { ethers } from 'ethers'
-import { ConnectButton, getDefaultWallets, RainbowKitProvider } from '@rainbow-me/rainbowkit'
+import React from 'react'
 import { chain, configureChains, createClient, WagmiConfig } from 'wagmi'
-import { publicProvider } from 'wagmi/providers/public'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
-import { WalletProvider } from './Wallet'
+import { publicProvider } from 'wagmi/providers/public'
+import { ActionsProvider } from './Actions'
 import { ContractsProvider } from './Contracts'
 import { PoolsProvider } from './Pools'
-import { VaultsProvider } from './Vault'
-import { ActionsProvider } from './Actions'
 import { StatsProvider } from './Stats'
 import { ThemeProvider } from './useThemeContext'
-import '@rainbow-me/rainbowkit/dist/index.css'
+import { VaultsProvider } from './Vault'
+import { WalletProvider } from './Wallet'
 
 const { chains, provider } = configureChains(
   [chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum],
@@ -30,8 +30,8 @@ const wagmiClient = createClient({
   provider,
 })
 
-const getLibrary = provider => {
-  const library = new ethers.providers.Web3Provider(provider)
+const getLibrary = provider1 => {
+  const library = new ethers.providers.Web3Provider(provider1)
   library.pollingInterval = 8000
   return library
 }
@@ -44,7 +44,7 @@ const Providers = ({ children }) => (
           <ConnectButton.Custom>
             {({
               account,
-              chain,
+              curChain,
               openAccountModal,
               openChainModal,
               openConnectModal,
@@ -57,14 +57,14 @@ const Providers = ({ children }) => (
               const connected =
                 ready &&
                 account &&
-                chain &&
+                curChain &&
                 (!authenticationStatus || authenticationStatus === 'authenticated')
               const address = account ? account.address : null
               return (
                 <WalletProvider
                   accountAddress={address}
                   connectedStatus={connected}
-                  chainObj={chain}
+                  chainObj={curChain}
                   openConnectModal={openConnectModal}
                   openAccountModal={openAccountModal}
                   openChainModal={openChainModal}

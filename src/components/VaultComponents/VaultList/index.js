@@ -66,6 +66,7 @@ const formatVaults = (
   selectAsset,
   selectStableCoin,
   selectFarmType,
+  selectedActiveType,
 ) => {
   let vaultsSymbol = sortBy(keys(groupOfVaults), [
     // eslint-disable-next-line consistent-return
@@ -195,7 +196,20 @@ const formatVaults = (
     }
   }
 
-  if (!depositedOnly) {
+  if (selectedActiveType.length !== 0) {
+    let result = []
+    selectedActiveType.map(item => {
+      const temp = vaultsSymbol.filter(tokenSymbol => {
+        if (item === 'Active') {
+          return !(groupOfVaults[tokenSymbol].inactive || groupOfVaults[tokenSymbol].testInactive)
+        }
+        return groupOfVaults[tokenSymbol].inactive || groupOfVaults[tokenSymbol].testInactive
+      })
+      result = result.concat(temp)
+      return result
+    })
+    vaultsSymbol = [...result]
+  } else if (!depositedOnly) {
     vaultsSymbol = vaultsSymbol.filter(
       tokenSymbol =>
         !groupOfVaults[tokenSymbol].inactive && !groupOfVaults[tokenSymbol].testInactive,
@@ -289,6 +303,7 @@ const VaultList = () => {
   const [selectAsset, onSelectAsset] = useState('')
   const [selectStableCoin, onSelectStableCoin] = useState(false)
   const [selectFarmType, onSelectFarmType] = useState('')
+  const [selectedActiveType, selectActiveType] = useState([])
 
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
@@ -367,6 +382,7 @@ const VaultList = () => {
         selectAsset,
         selectStableCoin,
         selectFarmType,
+        selectedActiveType,
       ),
     [
       groupOfVaults,
@@ -382,6 +398,7 @@ const VaultList = () => {
       selectAsset,
       selectStableCoin,
       selectFarmType,
+      selectedActiveType,
     ],
   )
 
@@ -403,6 +420,7 @@ const VaultList = () => {
       const hasSwitchedVault = openVault !== prevOpenVault
 
       if (hasSwitchedChain) {
+        selectActiveType([])
         onSelectAsset('')
         onSelectStableCoin(false)
         setOpen(null)
@@ -498,6 +516,19 @@ const VaultList = () => {
     ],
   )
 
+  const setSortingParams = param => {
+    if (sortParam === param) {
+      if (sortOrder === 'desc') {
+        setSortOrder('asc')
+      } else {
+        setSortOrder('desc')
+      }
+    } else {
+      setSortOrder('desc')
+      setSortParam(param)
+    }
+  }
+
   useEffectWithPrevious(
     ([prevChain, prevAccount, prevUserStats]) => {
       const hasSwitchedChain = chain !== prevChain
@@ -525,19 +556,6 @@ const VaultList = () => {
     },
     [chain, account, userStats],
   )
-
-  const setSortingParams = param => {
-    if (sortParam === param) {
-      if (sortOrder === 'desc') {
-        setSortOrder('asc')
-      } else {
-        setSortOrder('desc')
-      }
-    } else {
-      setSortOrder('desc')
-      setSortParam(param)
-    }
-  }
 
   const [sortId, setSortId] = useState(-1)
 
@@ -577,6 +595,7 @@ const VaultList = () => {
         onAssetClick={onSelectAsset}
         onSelectStableCoin={onSelectStableCoin}
         onSelectFarmType={onSelectFarmType}
+        onSelectActiveType={selectActiveType}
       />
       <VaultsListBody borderColor={borderColor} backColor={backColor}>
         <MobileListFilter

@@ -43,7 +43,6 @@ const { tokens } = require('../../../data')
 const PoolFooterActions = ({
   fAssetPool,
   totalTokensEarned,
-  token,
   rewardTokenSymbols,
   isLoadingData,
   rewardsEarned,
@@ -55,11 +54,7 @@ const PoolFooterActions = ({
   setPendingAction,
   pendingAction,
   loaded,
-  withdrawMode,
-  setWithdrawMode,
-  setIFARM,
   poolRewardSymbol,
-  fAssetSymbol,
 }) => {
   const { fetchUserPoolStats, userStats, pools } = usePools()
   const { account, getWalletBalances, connected } = useWallet()
@@ -146,10 +141,13 @@ const PoolFooterActions = ({
       </SelectedVault>
       {fAssetPool.id !== SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID &&
         rewardTokenSymbols.map((symbol, symbolIdx) => {
-          const token = groupOfVaults[symbol]
+          const curtoken = groupOfVaults[symbol]
           let usdPrice = 1
-          if(token) {
-            usdPrice = (symbol === FARM_TOKEN_SYMBOL ? token.data.lpTokenData && token.data.lpTokenData.price : token.usdPrice) || 1
+          if (curtoken) {
+            usdPrice =
+              (symbol === FARM_TOKEN_SYMBOL
+                ? curtoken.data.lpTokenData && curtoken.data.lpTokenData.price
+                : curtoken.usdPrice) || 1
           }
           return (
             <div key={symbolIdx}>

@@ -1,44 +1,44 @@
-import React, { useState, useEffect } from 'react'
+import BigNumber from 'bignumber.js'
+import React, { useEffect, useState } from 'react'
 import { Spinner } from 'react-bootstrap'
 import { toast } from 'react-toastify'
-import BigNumber from 'bignumber.js'
-import { useThemeContext } from '../../../providers/useThemeContext'
-import Button from '../../Button'
-import { useWallet } from '../../../providers/Wallet'
-import { useActions } from '../../../providers/Actions'
-import { usePools } from '../../../providers/Pools'
-import { useContracts } from '../../../providers/Contracts'
-import { useVaults } from '../../../providers/Vault'
-import { fromWei, toWei } from '../../../services/web3'
-import AnimatedDots from '../../AnimatedDots'
+import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.svg'
+import DropDownIcon from '../../../assets/images/logos/wido/drop-down.svg'
+import FARMIcon from '../../../assets/images/logos/wido/farm.svg'
+import WidoIcon from '../../../assets/images/logos/wido/wido.svg'
 import { WIDO_BALANCES_DECIMALS } from '../../../constants'
+import { useActions } from '../../../providers/Actions'
+import { useContracts } from '../../../providers/Contracts'
+import { usePools } from '../../../providers/Pools'
+import { useThemeContext } from '../../../providers/useThemeContext'
+import { useVaults } from '../../../providers/Vault'
+import { useWallet } from '../../../providers/Wallet'
+import { fromWei, toWei } from '../../../services/web3'
 import {
+  formatNumberWido,
   hasAmountGreaterThanZero,
   hasRequirementsForInteraction,
-  formatNumberWido,
 } from '../../../utils'
+import AnimatedDots from '../../AnimatedDots'
+import Button from '../../Button'
 import {
-  BaseWido,
-  SelectToken,
-  TokenAmount,
-  TokenSelect,
-  TokenInfo,
   BalanceInfo,
-  PoweredByWido,
-  TokenName,
-  StakeInfo,
-  Part,
-  Max,
   BalanceInput,
-  StakeAction,
-  TokenUSD,
+  BaseWido,
   DepoTitle,
   Line,
+  Max,
+  Part,
+  PoweredByWido,
+  SelectToken,
+  StakeAction,
+  StakeInfo,
+  TokenAmount,
+  TokenInfo,
+  TokenName,
+  TokenSelect,
+  TokenUSD,
 } from './style'
-import WidoIcon from '../../../assets/images/logos/wido/wido.svg'
-import DropDownIcon from '../../../assets/images/logos/wido/drop-down.svg'
-import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.svg'
-import FARMIcon from '../../../assets/images/logos/wido/farm.svg'
 
 const WidoDepositBase = ({
   selectTokenWido,

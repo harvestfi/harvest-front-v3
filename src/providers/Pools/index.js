@@ -12,6 +12,7 @@ import axios from 'axios'
 import isEqual from 'fast-deep-equal/react'
 import { filter, get, map, sumBy } from 'lodash'
 import { forEach } from 'promised-loops'
+// eslint-disable-next-line import/no-unresolved
 import { useInterval } from 'react-interval-hook'
 import { toast } from 'react-toastify'
 import useEffectWithPrevious from 'use-effect-with-previous'
@@ -26,7 +27,9 @@ import { useContracts } from '../Contracts'
 import { useWallet } from '../Wallet'
 import { getLpTokenData, getUserStats } from './utils'
 
+/* eslint-disable global-require */
 const { pools: defaultPools, tokens } = require('../../data')
+/* eslint-enable global-require */
 
 const PoolsContext = createContext()
 const usePools = () => useContext(PoolsContext)
@@ -95,6 +98,7 @@ const PoolsProvider = _ref => {
             apiData && apiData.find(fetchedPool => fetchedPool && fetchedPool.id === pool.id)
 
           if (apiPool) {
+            // eslint-disable-next-line prefer-destructuring
             rewardAPY = map(apiPool.rewardAPY, apy => truncateNumberString(apy))
             rewardAPR = map(apiPool.rewardAPR, apr => truncateNumberString(apr))
             tradingApy = truncateNumberString(apiPool.tradingApy)
@@ -255,7 +259,8 @@ const PoolsProvider = _ref => {
           loadedInitialStakedAndUnstakedBalances.current = true
           const stats = {}
           // selChain.forEach( async (ch)=> {
-          for (let i = 0; i < selChain.length; i++) {
+          /* eslint-disable no-await-in-loop */
+          for (let i = 0; i < selChain.length; i += 1) {
             const ch = selChain[i]
             const readerType = getReader(ch, contracts)
             const poolAddresses = []
@@ -280,7 +285,7 @@ const PoolsProvider = _ref => {
               readerInstance,
             )
             // const stats = {}
-            await forEach(chLoadedPools, async (pool, i) => {
+            await forEach(chLoadedPools, async (pool, index) => {
               let lpTokenBalance
               const isSpecialVault = !vaultAddresses.includes(pool.lpTokenData.address)
 
@@ -308,10 +313,11 @@ const PoolsProvider = _ref => {
 
               stats[pool.id] = {
                 lpTokenBalance,
-                totalStaked: balances[1][i],
+                totalStaked: balances[1][index],
               }
             })
           }
+          /* eslint-enable no-await-in-loop */
           // })
           setUserStats(currStats => ({ ...currStats, ...stats }))
         }

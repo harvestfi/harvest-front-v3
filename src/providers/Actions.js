@@ -746,6 +746,7 @@ const ActionsProvider = ({ children }) => {
         params: {
           sellTokenAddress: selectedToken.value,
           ownerAddress,
+          /* eslint-disable camelcase */
           api_key: process.env.REACT_APP_ZAPPERFI_API_KEY,
         },
       })
@@ -767,6 +768,7 @@ const ActionsProvider = ({ children }) => {
             gasPrice,
             sellTokenAddress: selectedToken.value,
             ownerAddress,
+            /* eslint-disable camelcase */
             api_key: process.env.REACT_APP_ZAPPERFI_API_KEY,
           },
         })
@@ -805,6 +807,7 @@ const ActionsProvider = ({ children }) => {
             sellTokenAddress: selectedToken.value,
             sellAmount,
             ownerAddress,
+            /* eslint-disable camelcase */
             api_key: process.env.REACT_APP_ZAPPERFI_API_KEY,
           },
         })

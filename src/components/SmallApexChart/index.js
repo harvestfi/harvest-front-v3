@@ -31,11 +31,10 @@ import { ceil10, floor10 } from '../../utils'
 
 function getTimeSlots(ago, slotCount) {
   const slots = [],
-   nowDate = new Date(),
-   toDate = Math.floor(nowDate.getTime() / 1000),
-   fromDate = Math.floor(nowDate.setDate(nowDate.getDate() - ago) / 1000),
-  
-   between = (toDate - fromDate) / slotCount
+    nowDate = new Date(),
+    toDate = Math.floor(nowDate.getTime() / 1000),
+    fromDate = Math.floor(nowDate.setDate(nowDate.getDate() - ago) / 1000),
+    between = (toDate - fromDate) / slotCount
   for (let i = fromDate + between; i <= toDate; i += between) {
     slots.push(i)
   }
@@ -58,15 +57,15 @@ function findMin(data) {
 // kind: "value" - TVL, "apy" - APY
 function generateChartDataWithSlots(slots, apiData, kind) {
   const seriesData = []
-  for (let i = 0; i < slots.length; i++) {
-    for (let j = 0; j < apiData.length; j++) {
-      if (slots[i] > parseInt(apiData[j]['timestamp'])) {
+  for (let i = 0; i < slots.length; i += 1) {
+    for (let j = 0; j < apiData.length; j += 1) {
+      if (slots[i] > parseInt(apiData[j].timestamp, 10)) {
         const value = parseFloat(apiData[j][kind])
         seriesData.push([slots[i] * 1000, value])
         break
-      } else if(j === apiData.length-1) {
-          seriesData.push([slots[i]*1000, 0])
-        }
+      } else if (j === apiData.length - 1) {
+        seriesData.push([slots[i] * 1000, 0])
+      }
     }
   }
 
@@ -74,45 +73,42 @@ function generateChartDataWithSlots(slots, apiData, kind) {
 }
 
 function generateChartDataForApy(apyData1, apyData2, field) {
-  apyData1 = apyData1.map(function (x) {
+  apyData1 = apyData1.map(function reducer(x) {
     return [x.timestamp, Number(x[field]), 1]
   })
-  apyData2 = apyData2.map(function (x) {
+  apyData2 = apyData2.map(function reducer(x) {
     return [x.timestamp, Number(x[field]), 2]
   })
 
   let apyData = apyData1.concat(apyData2)
-  apyData = apyData.sort(function (a, b) {
+  apyData = apyData.sort(function reducer(a, b) {
     return b[0] - a[0]
   })
 
-  for (let i = 0; i < apyData.length; i++) {
+  for (let i = 0; i < apyData.length; i += 1) {
     if (i === 0) {
       if (apyData[i][2] !== apyData[i + 1][2]) apyData[i][1] += apyData[i + 1][1]
     } else if (i === apyData.length - 1) {
       if (apyData[i][2] !== apyData[i - 1][2]) {
         apyData[i][1] += apyData[i - 1][1]
       }
-    } else if(apyData[i][2] !== apyData[i+1][2]) {
-        if(apyData[i][2] !== apyData[i-1][2]) {
-          if(Math.abs(apyData[i][1] - apyData[i-1][1]) <= Math.abs(apyData[i][1] - apyData[i+1][1]))
-            apyData[i][1] += apyData[i-1][1]
-          else 
-            apyData[i][1] += apyData[i+1][1]
-        }
-        else {
-          apyData[i][1] += apyData[i+1][1]
-        }
+    } else if (apyData[i][2] !== apyData[i + 1][2]) {
+      if (apyData[i][2] !== apyData[i - 1][2]) {
+        if (
+          Math.abs(apyData[i][1] - apyData[i - 1][1]) <= Math.abs(apyData[i][1] - apyData[i + 1][1])
+        )
+          apyData[i][1] += apyData[i - 1][1]
+        else apyData[i][1] += apyData[i + 1][1]
+      } else {
+        apyData[i][1] += apyData[i + 1][1]
       }
-      else {
-        if(apyData[i][2] !== apyData[i-1][2]) {
-          apyData[i][1] += apyData[i-1][1]
-        }
-      }
+    } else if (apyData[i][2] !== apyData[i - 1][2]) {
+      apyData[i][1] += apyData[i - 1][1]
+    }
   }
 
-  apyData = apyData.map(function (x) {
-    let d = 1 / x[1]
+  apyData = apyData.map(function reducer(x) {
+    const d = 1 / x[1]
     if (d > 1) {
       const len = Math.ceil(d).toString().length + 1
       x[1] = x[1].toFixed(len)
@@ -219,27 +215,29 @@ const ApexChart = ({ data, lastAPY, specVault }) => {
 
   useEffect(() => {
     const init = async () => {
-      let mainData = []
-
+      let mainData = [],
+        apyData = [],
+        maxAPY = lastAPY,
+        len = 0,
+        unitBtw,
+        maxValue,
+        minValue
       setLoading(true)
       const ago = 30
 
-      let apyData = []
-      if(data && (data.apyAutoCompounds || data.apyRewards)) {
-        if(data.apyAutoCompounds.length === 0 && data.apyRewards.length === 0)  {
+      if (data && (data.apyAutoCompounds || data.apyRewards)) {
+        if (data.apyAutoCompounds.length === 0 && data.apyRewards.length === 0) {
           return
         }
       }
-      let apyAutoCompounds = data.apyAutoCompounds ? data.apyAutoCompounds : []
-      let apyRewards = data.apyRewards ? data.apyRewards : []
+      const apyAutoCompounds = data ? (data.apyAutoCompounds ? data.apyAutoCompounds : []) : [],
+        apyRewards = data ? (data.apyRewards ? data.apyRewards : []) : []
 
       apyData = generateChartDataForApy(apyAutoCompounds, apyRewards, 'apy')
-      if (lastAPY && lastAPY !== 0 && apyData.length !== 0) apyData[0]['apy'] = lastAPY
+      if (lastAPY && lastAPY !== 0 && apyData.length !== 0) apyData[0].apy = lastAPY
 
       const slotCount = 30,
-       slots = getTimeSlots(ago, slotCount)
-
-      let maxAPY = lastAPY, minAPY
+        slots = getTimeSlots(ago, slotCount)
 
       if (apyData.length === 0) {
         return
@@ -248,15 +246,13 @@ const ApexChart = ({ data, lastAPY, specVault }) => {
       mainData = generateChartDataWithSlots(slots, apyData, 'apy')
 
       maxAPY = findMax(mainData)
-      minAPY = findMin(mainData)
+      const minAPY = findMin(mainData)
 
-      let maxValue, minValue
       maxValue = maxAPY
       minValue = minAPY
 
       const between = maxValue - minValue
-      let len = 0,
-       unitBtw = between / 4
+      unitBtw = between / 4
       if (unitBtw >= 1) {
         unitBtw = Math.ceil(unitBtw)
         len = unitBtw.toString().length
@@ -265,8 +261,8 @@ const ApexChart = ({ data, lastAPY, specVault }) => {
         minValue = floor10(minValue, len - 1)
       } else if (unitBtw === 0) {
         len = Math.ceil(maxValue).toString().length
-        maxValue += Math.pow(10, len - 1)
-        minValue -= Math.pow(10, len - 1)
+        maxValue += 10 ** (len - 1)
+        minValue -= 10 ** (len - 1)
       } else {
         len = Math.ceil(1 / unitBtw).toString().length + 1
         unitBtw = ceil10(unitBtw, -len)
@@ -374,13 +370,7 @@ const ApexChart = ({ data, lastAPY, specVault }) => {
 
   return (
     <>
-      <Chart
-            options={options}
-            series={mainSeries}
-            type="area"
-            height='100'
-            width="180"
-        />
+      <Chart options={options} series={mainSeries} type="area" height="100" width="180" />
     </>
   )
 }

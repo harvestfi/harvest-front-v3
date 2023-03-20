@@ -80,7 +80,7 @@ const AssetsList = [
 ]
 
 const QuickFilter = ({
-  onCategoryClick = () => {},
+  onSelectActiveType = () => {},
   setSearchQuery,
   onDepositedOnlyClick = () => {},
   onAssetClick = () => {},
@@ -127,15 +127,15 @@ const QuickFilter = ({
         break
     }
 
-    onCategoryClick(text)
+    onSelectActiveType(text)
   }
 
   const [flag, setFlag] = useState(false)
 
   useEffect(() => {
-    onCategoryClick(['Active'])
+    onSelectActiveType(['Active'])
     setFlag(true)
-  }, [flag, onCategoryClick])
+  }, [flag, onSelectActiveType])
 
   const printAsset = id => {
     let text = '',
@@ -236,7 +236,11 @@ const QuickFilter = ({
 
   useEffect(() => {
     // pc - true, mobile - false
-    onlyWidth >= 992 ? setWindowMode(true) : setWindowMode(false)
+    if (onlyWidth >= 992) {
+      setWindowMode(true)
+    } else {
+      setWindowMode(false)
+    }
   }, [onlyWidth])
 
   const {
@@ -282,7 +286,7 @@ const QuickFilter = ({
                         if (!tempIds.includes(i)) {
                           tempIds.push(i)
                         } else {
-                          for (let el = 0; el < tempIds.length; el++) {
+                          for (let el = 0; el < tempIds.length; el += 1) {
                             if (tempIds[el] === i) {
                               tempIds.splice(el, 1)
                             }
@@ -295,12 +299,12 @@ const QuickFilter = ({
                         } else {
                           setSelectedClass(tempIds)
                         }
-                        tempIds.map(item => {
-                          return selectedClasses.push(ChainsList[item].name)
+                        tempIds.map(tempId => {
+                          return selectedClasses.push(ChainsList[tempId].name)
                         })
                         const tempChains = []
-                        for (let i = 0; i < tempIds.length; i++) {
-                          tempChains.push(ChainsList[tempIds[i]].chainId)
+                        for (let j = 0; j < tempIds.length; j += 1) {
+                          tempChains.push(ChainsList[tempIds[j]].chainId)
                         }
                         setSelChain(tempChains)
                         printFarm(farmId)
@@ -354,7 +358,7 @@ const QuickFilter = ({
                   onClick={() => {
                     document.getElementById('search-input').value = ''
                     setSearchQuery('')
-                    onCategoryClick(['Active'])
+                    onSelectActiveType(['Active'])
                     setStringSearch(false)
                     setRiskId(-1)
                     setAssetsId(-1)
@@ -409,7 +413,11 @@ const QuickFilter = ({
                     onClick={() => {
                       setMobileChainId(item.name)
                       setMobileChainImg(item.img)
-                      item.name === 'All Chains' ? onCategoryClick([]) : setSelChain([item.chainId])
+                      if (item.name === 'All Chains') {
+                        onSelectActiveType([])
+                      } else {
+                        setSelChain([item.chainId])
+                      }
                     }}
                   >
                     <img src={item.img} width="12" height="12" alt="" />
@@ -482,9 +490,11 @@ const QuickFilter = ({
                         onClick={() => {
                           setAssetsId(item.name)
                           setAssetsImg(item.img)
-                          item.name === 'All Chains'
-                            ? onCategoryClick([])
-                            : onCategoryClick([item.name])
+                          if (item.name === 'All Chains') {
+                            onSelectActiveType([])
+                          } else {
+                            onSelectActiveType([item.name])
+                          }
                         }}
                       >
                         <div>
@@ -514,9 +524,11 @@ const QuickFilter = ({
                         onClick={() => {
                           setRiskId(item.name)
                           setRiskImg(item.img)
-                          item.name === 'All Chains'
-                            ? onCategoryClick([])
-                            : onCategoryClick([item.name])
+                          if (item.name === 'All Chains') {
+                            onSelectActiveType([])
+                          } else {
+                            onSelectActiveType([item.name])
+                          }
                         }}
                       >
                         <div>
@@ -543,7 +555,7 @@ const QuickFilter = ({
                   document.getElementById('search-input').value = ''
                   setSearchQuery('')
                   setStringSearch(false)
-                  onCategoryClick(['active'])
+                  onSelectActiveType(['active'])
                   onSelectStableCoin(false)
                   onAssetClick('')
                   onSelectFarmType('')

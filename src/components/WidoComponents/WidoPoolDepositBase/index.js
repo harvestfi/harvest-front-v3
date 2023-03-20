@@ -1,48 +1,46 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { toast } from 'react-toastify'
 import BigNumber from 'bignumber.js'
-import ReactTooltip from 'react-tooltip'
-import { get, isEmpty } from 'lodash'
 import CoinGecko from 'coingecko-api'
-import { useThemeContext } from '../../../providers/useThemeContext'
-import Button from '../../Button'
-import { useWallet } from '../../../providers/Wallet'
-import { useVaults } from '../../../providers/Vault'
-import { fromWei } from '../../../services/web3'
-import AnimatedDots from '../../AnimatedDots'
-import {
-  FARM_TOKEN_SYMBOL,
-  WIDO_BALANCES_DECIMALS,
-  IFARM_TOKEN_SYMBOL,
-  fromWEI,
-} from '../../../constants'
-import { formatNumberWido } from '../../../utils'
-import {
-  BaseWido,
-  SelectToken,
-  TokenAmount,
-  TokenSelect,
-  TokenInfo,
-  BalanceInfo,
-  PoweredByWido,
-  TokenName,
-  StakeInfo,
-  TokenUSD,
-  DepoTitle,
-  Line,
-  HelpImg,
-  ThemeMode,
-  SwitchMode,
-  FarmInfo,
-} from './style'
-import WidoIcon from '../../../assets/images/logos/wido/wido.svg'
-import DropDownIcon from '../../../assets/images/logos/wido/drop-down.svg'
+import { get, isEmpty } from 'lodash'
+import React, { useEffect, useRef, useState } from 'react'
+import { toast } from 'react-toastify'
+import ReactTooltip from 'react-tooltip'
 import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.svg'
-import IFARMIcon from '../../../assets/images/logos/wido/ifarm.svg'
+import DropDownIcon from '../../../assets/images/logos/wido/drop-down.svg'
 import FARMIcon from '../../../assets/images/logos/wido/farm.svg'
 import HelpIcon from '../../../assets/images/logos/wido/help.svg'
-
-const { tokens } = require('../../../data')
+import IFARMIcon from '../../../assets/images/logos/wido/ifarm.svg'
+import WidoIcon from '../../../assets/images/logos/wido/wido.svg'
+import {
+  FARM_TOKEN_SYMBOL,
+  fromWEI,
+  IFARM_TOKEN_SYMBOL,
+  WIDO_BALANCES_DECIMALS,
+} from '../../../constants'
+import { useThemeContext } from '../../../providers/useThemeContext'
+import { useVaults } from '../../../providers/Vault'
+import { useWallet } from '../../../providers/Wallet'
+import { fromWei } from '../../../services/web3'
+import { formatNumberWido } from '../../../utils'
+import AnimatedDots from '../../AnimatedDots'
+import Button from '../../Button'
+import {
+  BalanceInfo,
+  BaseWido,
+  DepoTitle,
+  FarmInfo,
+  HelpImg,
+  Line,
+  PoweredByWido,
+  SelectToken,
+  StakeInfo,
+  SwitchMode,
+  ThemeMode,
+  TokenAmount,
+  TokenInfo,
+  TokenName,
+  TokenSelect,
+  TokenUSD,
+} from './style'
 
 const CoinGeckoClient = new CoinGecko()
 
@@ -50,6 +48,7 @@ const getPrice = async () => {
   try {
     const data = await CoinGeckoClient.simple.price({
       ids: ['ifarm'],
+      /* eslint-disable camelcase */
       vs_currencies: ['usd'],
     })
 
@@ -86,6 +85,8 @@ const WidoPoolDepositBase = ({
   legacyStaking,
   setLegacyStaking,
 }) => {
+  /* eslint-disable global-require */
+  const { tokens } = require('../../../data')
   const { account, connect, balances } = useWallet()
   const { vaultsData } = useVaults()
   const [farmInfo, setFarmInfo] = useState(null)
@@ -155,7 +156,7 @@ const WidoPoolDepositBase = ({
 
       getUnderlyingBalance()
     }
-  }, [account, vaultsData, underlyingValue]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, vaultsData, underlyingValue, tokens])
 
   const onClickDeposit = async () => {
     if (!legacyStaking && pickedToken.symbol === 'Select Token') {
@@ -189,7 +190,7 @@ const WidoPoolDepositBase = ({
         }
       }
     }
-  }, [legacyStaking, balanceList, vaultsData]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [legacyStaking, balanceList, vaultsData, account, setBalance, setPickedToken])
 
   const onInputBalance = e => {
     setInputAmount(e.currentTarget.value)
@@ -380,14 +381,12 @@ const WidoPoolDepositBase = ({
           </ReactTooltip>
         )}
         <StakeInfo>
-          {legacyStaking ? (
-            'Staked'
-          ) : (
-            <div>
-              Underlying Balance
+          <div>
+            {legacyStaking ? 'Staked' : 'Underlying Balance'}
+            {!legacyStaking && (
               <HelpImg data-tip data-for="help-underlyingbalance" src={HelpIcon} alt="" />
-            </div>
-          )}
+            )}
+          </div>
           <span>
             {legacyStaking ? (
               !account ? (

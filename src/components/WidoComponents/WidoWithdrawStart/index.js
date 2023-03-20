@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
+import CoinGecko from 'coingecko-api'
+import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { quote } from 'wido'
-import CoinGecko from 'coingecko-api'
-import AnimatedDots from '../../AnimatedDots'
-import { mainWeb3, fromWei } from '../../../services/web3'
-import { formatNumberWido } from '../../../utils'
+import ArrowDownIcon from '../../../assets/images/logos/wido/arrowdown.svg'
+import BackIcon from '../../../assets/images/logos/wido/back.svg'
+import SettingIcon from '../../../assets/images/logos/wido/setting.svg'
+import Swap2Icon from '../../../assets/images/logos/wido/swap2.svg'
 import { WIDO_BALANCES_DECIMALS } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
+import { fromWei, mainWeb3 } from '../../../services/web3'
+import { formatNumberWido } from '../../../utils'
+import AnimatedDots from '../../AnimatedDots'
 import { Divider } from '../../GlobalStyle'
-import { SelectTokenWido, CloseBtn, NewLabel, Buttons } from './style'
 import WidoSwapToken from '../WidoSwapToken'
-import BackIcon from '../../../assets/images/logos/wido/back.svg'
-import Swap2Icon from '../../../assets/images/logos/wido/swap2.svg'
-import SettingIcon from '../../../assets/images/logos/wido/setting.svg'
-import ArrowDownIcon from '../../../assets/images/logos/wido/arrowdown.svg'
+import { Buttons, CloseBtn, NewLabel, SelectTokenWido } from './style'
 // import RouteIcon from '../../../assets/images/logos/wido/route.svg'
 import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.svg'
 
@@ -25,6 +25,7 @@ const getPrice = async () => {
   try {
     const data = await CoinGeckoClient.simple.price({
       ids: ['ethereum'],
+      /* eslint-disable camelcase */
       vs_currencies: ['usd'],
     })
 
@@ -42,7 +43,6 @@ const WidoWithdrawStart = ({
   finalStep,
   setFinalStep,
   startRoutes,
-  setStartRoutes,
   startSlippage,
   setStartSlippage,
   token,
@@ -135,8 +135,8 @@ const WidoWithdrawStart = ({
           setToInfo(toInfoTemp)
 
           try {
-            let gasFee = 0,
-              price = await getPrice()
+            let gasFee = 0
+            const price = await getPrice()
             await mainWeb3.eth.getGasPrice().then(result => {
               gasFee = mainWeb3.utils.fromWei(result, 'ether')
               gasFee *= price

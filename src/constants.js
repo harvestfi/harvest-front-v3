@@ -198,7 +198,7 @@ export const FAQ_ITEMS_FIRST = [
         <br />
         <br />
         <b>
-          ​Remember: the APY is estimated on past performance. The APY may go up or down due to
+          Remember: the APY is estimated on past performance. The APY may go up or down due to
           several reasons:
         </b>
         <ul>
@@ -451,18 +451,18 @@ export const FAQ_ITEMS_SECOND = [
     question: 'APR / APY Disclaimer',
     answer: (
       <div>
-        The stated APR/APY (the 'Rate') is denominated in terms of relevant underlying tokens in the
-        vaults. The Rate is a forward-looking projection based on our good faith belief of how to
-        project results over the relevant period reasonably, but such belief is subject to numerous
-        assumptions, risks and uncertainties (including smart contract security risks and
-        third-party actions) which could result in a materially different (lower or higher)
-        token-denominated APR/APY. The Rate is not a promise, guarantee, or undertaking on the part
-        of any person or group of persons but depends entirely on the results of the operation of
-        smart contracts and other autonomous systems (including third-party systems) and how third
-        parties interact with those systems after the time of your deposit. Even if the Rate is
-        achieved as projected, you may still suffer a financial loss in fiat-denominated terms if
-        the fiat-denominated value of the relevant tokens (your deposit and any tokens allocated or
-        distributed to you pursuant to the Rate) declines during the deposit period.
+        The stated APR/APY (the &apos;Rate&apos;) is denominated in terms of relevant underlying
+        tokens in the vaults. The Rate is a forward-looking projection based on our good faith
+        belief of how to project results over the relevant period reasonably, but such belief is
+        subject to numerous assumptions, risks and uncertainties (including smart contract security
+        risks and third-party actions) which could result in a materially different (lower or
+        higher) token-denominated APR/APY. The Rate is not a promise, guarantee, or undertaking on
+        the part of any person or group of persons but depends entirely on the results of the
+        operation of smart contracts and other autonomous systems (including third-party systems)
+        and how third parties interact with those systems after the time of your deposit. Even if
+        the Rate is achieved as projected, you may still suffer a financial loss in fiat-denominated
+        terms if the fiat-denominated value of the relevant tokens (your deposit and any tokens
+        allocated or distributed to you pursuant to the Rate) declines during the deposit period.
       </div>
     ),
   },
