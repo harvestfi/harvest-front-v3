@@ -265,14 +265,8 @@ const WidoPoolDepositBase = ({
         onClick={() => {
           if (account) {
             const balanceAmount = !legacyStaking
-              ? formatNumberWido(balance, WIDO_BALANCES_DECIMALS)
-              : FARMBalance &&
-                fromWei(
-                  FARMBalance,
-                  tokens[IFARM_TOKEN_SYMBOL].decimals,
-                  WIDO_BALANCES_DECIMALS,
-                  true,
-                )
+              ? balance
+              : FARMBalance && fromWEI(FARMBalance, tokens[IFARM_TOKEN_SYMBOL].decimals)
             setInputAmount(balanceAmount)
 
             setUsdValue(
@@ -287,14 +281,8 @@ const WidoPoolDepositBase = ({
         Balance:
         <span>
           {!legacyStaking
-            ? formatNumberWido(balance, WIDO_BALANCES_DECIMALS)
-            : FARMBalance &&
-              `${fromWei(
-                FARMBalance,
-                tokens[IFARM_TOKEN_SYMBOL].decimals,
-                WIDO_BALANCES_DECIMALS,
-                true,
-              )} FARM`}
+            ? balance
+            : FARMBalance && `${fromWEI(FARMBalance, tokens[IFARM_TOKEN_SYMBOL].decimals)} FARM`}
         </span>
       </BalanceInfo>
       <SwitchMode fontColor={widoTagActiveFontColor}>
@@ -393,10 +381,12 @@ const WidoPoolDepositBase = ({
           </ReactTooltip>
         )}
         <StakeInfo>
-          {legacyStaking ? 'Staked' : 'Underlying Balance'}
-          {!legacyStaking && (
-            <HelpImg data-tip data-for="help-underlyingbalance" src={HelpIcon} alt="" />
-          )}
+          <div>
+            {legacyStaking ? 'Staked' : 'Underlying Balance'}
+            {!legacyStaking && (
+              <HelpImg data-tip data-for="help-underlyingbalance" src={HelpIcon} alt="" />
+            )}
+          </div>
           <span>
             {legacyStaking ? (
               !account ? (
@@ -460,8 +450,10 @@ const WidoPoolDepositBase = ({
           </ReactTooltip>
         )}
         <StakeInfo>
-          Total Value
-          {legacyStaking && <HelpImg data-tip data-for="help-img" src={HelpIcon} alt="" />}
+          <div>
+            Total Value
+            {legacyStaking && <HelpImg data-tip data-for="help-img" src={HelpIcon} alt="" />}
+          </div>
           <span>
             {legacyStaking ? (
               !account ? (

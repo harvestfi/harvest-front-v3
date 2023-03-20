@@ -62,9 +62,7 @@ const ButtonStyle = styled.button`
             opacity: 0.42;
           }
         `
-      : ``}// img {
-  //   // margin-right: 5px;
-  // }
+      : ``}
 `
 
 export { ButtonsGroup, ButtonStyle }

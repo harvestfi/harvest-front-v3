@@ -251,7 +251,6 @@ const CloseButton = styled.button`
   font-weight: 700;
 
   border-radius: 12px;
-  // padding: 15px 25px;
   border: none;
   outline: none;
   width: fit-content;

@@ -101,14 +101,6 @@ const Question = styled.div`
   }
 `
 
-const DropdownToggle = styled.img`
-  // margin-right: 40px;
-
-  @media screen and (max-width: 992px) {
-    // margin-right: 15px;
-  }
-`
-
 const Answer = styled.div`
   padding: 16px;
   background: #e9e9e9;
@@ -171,7 +163,6 @@ export {
   FAQBox,
   Question,
   Answer,
-  DropdownToggle,
   QuestionContainer,
   FAQHalfContent,
   FAQContent,

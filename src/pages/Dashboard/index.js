@@ -196,7 +196,7 @@ const Dashboard = () => {
       }
       loadUserPoolsStats()
     }
-  }, [account, fetchUserPoolStats, pools, tokens, depositToken, groupOfVaults, userStats])
+  }, [account, fetchUserPoolStats, pools, depositToken, groupOfVaults, userStats])
 
   useEffect(() => {
     if (!isEmpty(userStats) && account) {
@@ -231,20 +231,21 @@ const Dashboard = () => {
             chain: '',
             symbol: '',
             logos: [],
+            status: 'Active',
             platform: '',
             unstake: '',
             stake: '',
             reward: 0,
             rewardSymbol: '',
           }
-          let symbol = '',
-            fAssetPool
+          let symbol = ''
           if (stakedVaults[i] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
             symbol = FARM_TOKEN_SYMBOL
           } else {
             symbol = stakedVaults[i]
           }
-          fAssetPool =
+          // eslint-disable-next-line one-var
+          let fAssetPool =
             symbol === FARM_TOKEN_SYMBOL
               ? groupOfVaults[symbol].data
               : find(pools, pool => pool.id === symbol)
@@ -266,8 +267,7 @@ const Dashboard = () => {
             if (isSpecialVault) {
               fAssetPool = token.data
             }
-            let usdPrice = 1,
-              usdRewardPrice
+            let usdPrice = 1
             if (token) {
               usdPrice =
                 (symbol === FARM_TOKEN_SYMBOL
@@ -296,7 +296,8 @@ const Dashboard = () => {
             const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
 
             const rewardToken = groupOfVaults[rewardTokenSymbols[0]]
-            usdRewardPrice = 1
+            // eslint-disable-next-line one-var
+            let usdRewardPrice = 1
             if (rewardToken) {
               usdRewardPrice =
                 (rewardTokenSymbols[0] === FARM_TOKEN_SYMBOL

@@ -333,7 +333,6 @@ const ClearFilter = styled.div`
   transition: 0.25s;
 
   align-items: center;
-  // box-shadow: 0px 0px 4px rgb(0 0 0 / 25%);
 
   &:hover {
     color: #ff9400;
@@ -359,7 +358,6 @@ const Counter = styled.div`
   align-items: center;
 
   @media screen and (max-width: 992px) {
-    // background: #FF7E00;
     color: white;
   }
 `
@@ -426,7 +424,6 @@ const FarmFiltersPart = styled.div`
 
   .filter-part {
     width: 48%;
-    // position: relative;
 
     button {
       background: ${props => props.backColor};

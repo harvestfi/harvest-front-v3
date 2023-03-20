@@ -6,7 +6,6 @@ import {
   FAQContainer,
   FAQContent,
   FAQHalfContent,
-  DropdownToggle,
   Question,
   Answer,
   QuestionContainer,
@@ -49,13 +48,13 @@ const FAQ = () => {
                   triggerWhenOpen={
                     <Question open backColor={backColor} borderColor={borderColor}>
                       {item.question}
-                      <DropdownToggle open src={DropdownToggleImageOpen} />
+                      <img open src={DropdownToggleImageOpen} alt="" />
                     </Question>
                   }
                   trigger={
                     <Question backColor={backColor} borderColor={borderColor}>
                       {item.question}
-                      <DropdownToggle src={DropdownToggleImageClosed} />
+                      <img src={DropdownToggleImageClosed} alt="" />
                     </Question>
                   }
                 >
@@ -76,13 +75,13 @@ const FAQ = () => {
                     triggerWhenOpen={
                       <Question open backColor={backColor} borderColor={borderColor}>
                         {item.question}
-                        <DropdownToggle open src={DropdownToggleImageOpen} />
+                        <img open src={DropdownToggleImageOpen} alt="" />
                       </Question>
                     }
                     trigger={
                       <Question backColor={backColor} borderColor={borderColor}>
                         {item.question}
-                        <DropdownToggle src={DropdownToggleImageClosed} />
+                        <img src={DropdownToggleImageClosed} alt="" />
                       </Question>
                     }
                   >
@@ -101,13 +100,13 @@ const FAQ = () => {
                     triggerWhenOpen={
                       <Question open backColor={backColor} borderColor={borderColor}>
                         {item.question}
-                        <DropdownToggle open src={DropdownToggleImageOpen} />
+                        <img open src={DropdownToggleImageOpen} alt="" />
                       </Question>
                     }
                     trigger={
                       <Question backColor={backColor} borderColor={borderColor}>
                         {item.question}
-                        <DropdownToggle src={DropdownToggleImageClosed} />
+                        <img src={DropdownToggleImageClosed} alt="" />
                       </Question>
                     }
                   >

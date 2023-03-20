@@ -119,11 +119,6 @@ const Link = styled.button`
   padding-right: 0;
   border-width: 0;
 
-  // .item {
-  //   margin-top: 0.5rem;
-  //   margin-bottom: 0.7rem;
-  // }
-
   ${props =>
     props.active
       ? `
@@ -194,11 +189,7 @@ const FlexDiv = styled.div`
 `
 
 const Follow = styled.div`
-  // margin: 2% 10%;
   padding-top: 16px;
-  // padding-left: 25px;
-  // position: absolute;
-  // bottom: 23px;
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -349,11 +340,6 @@ const MobileLinkContainer = styled.div`
   &:last-child {
     margin-bottom: 0;
   }
-
-  // .item {
-  //   margin-top: 0.5rem;
-  //   margin-bottom: 0.5rem;
-  // }
 `
 
 const MobileLink = styled.button`
@@ -362,7 +348,6 @@ const MobileLink = styled.button`
   line-height: 19px;
   align-items: center;
   justify-content: start;
-  // width: 100%;
   color: ${props => props.fontColor};
   background-color: transparent;
   cursor: pointer;
@@ -451,7 +436,6 @@ const ThemeMode = styled.div`
       position: absolute;
       top: 2px;
       width: 20px;
-      // border-image: initial;
       border-radius: 50%;
       transition: all 0.25s ease 0s;
     }

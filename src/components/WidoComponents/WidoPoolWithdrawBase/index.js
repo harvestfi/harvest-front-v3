@@ -8,7 +8,12 @@ import DropDownIcon from '../../../assets/images/logos/wido/drop-down.svg'
 import FARMIcon from '../../../assets/images/logos/wido/farm.svg'
 import IFARMIcon from '../../../assets/images/logos/wido/ifarm.svg'
 import WidoIcon from '../../../assets/images/logos/wido/wido.svg'
-import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, WIDO_BALANCES_DECIMALS } from '../../../constants'
+import {
+  FARM_TOKEN_SYMBOL,
+  IFARM_TOKEN_SYMBOL,
+  WIDO_BALANCES_DECIMALS,
+  fromWEI,
+} from '../../../constants'
 import { useActions } from '../../../providers/Actions'
 import { usePools } from '../../../providers/Pools'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -211,13 +216,8 @@ const WidoPoolWithdrawBase = ({
         <AmountInfo
           onClick={() => {
             if (!legacyUnStaking) {
-              setUnstakeBalance(
-                toWei(
-                  formatNumberWido(FARMBalance, WIDO_BALANCES_DECIMALS),
-                  fAssetPool.lpTokenData.decimals,
-                ),
-              )
-              setUnstakeInputValue(formatNumberWido(FARMBalance, WIDO_BALANCES_DECIMALS))
+              setUnstakeBalance(toWei(FARMBalance, fAssetPool.lpTokenData.decimals))
+              setUnstakeInputValue(FARMBalance)
             }
           }}
         >
@@ -225,12 +225,7 @@ const WidoPoolWithdrawBase = ({
             !connected ? (
               ''
             ) : lpTokenBalance ? (
-              fromWei(
-                lpTokenBalance,
-                tokens[FARM_TOKEN_SYMBOL].decimals,
-                WIDO_BALANCES_DECIMALS,
-                true,
-              )
+              fromWEI(lpTokenBalance, tokens[FARM_TOKEN_SYMBOL].decimals)
             ) : (
               <AnimatedDots />
             )

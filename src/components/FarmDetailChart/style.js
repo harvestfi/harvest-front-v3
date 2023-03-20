@@ -3,7 +3,6 @@ import styled from 'styled-components'
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  // width: 53%;
   height: 400px;
   overflow: hidden;
   padding: 0px;
@@ -69,10 +68,7 @@ const ButtonGroup = styled.div`
   color: #fff;
 
   button {
-    // border: none;
     padding: 0.1em 0.6em;
-    // border-radius: .4em;
-    // background: #F6F6F6;
     margin-left: 0.5em;
     font-weight: 400;
   }

@@ -25,7 +25,6 @@ const ButtonStyle = styled.button`
     margin-right: 0px;
   }
   padding: 10px 16px;
-  // width: 110px;
 
   &.active {
     background: none;
@@ -41,13 +40,11 @@ const ButtonStyle = styled.button`
 
   img {
     margin-right: 5px;
-    // margin-top: 2px;
 
     filter: ${props => props.filterColor};
   }
 
   div {
-    // margin-top: 2px;
     width: max-content;
   }
 `

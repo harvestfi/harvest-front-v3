@@ -18,7 +18,6 @@ const Container = styled.div`
 
   @media screen and (max-width: 992px) {
     width: 100%;
-    // padding: 0 27px;
     height: 100%;
     margin: 0;
   }
@@ -51,8 +50,6 @@ const FarmTitle = styled.span`
   justify-content: space-between;
   border-bottom: 1px solid ${props => props.borderColor};
 
-  // margin-top: 30px;
-  // margin-bottom: 30px;
   font-weight: 500;
   font-size: 16px;
   line-height: 21px;
@@ -101,14 +98,13 @@ const DetailView = styled.div`
 const FlexDiv = styled.div`
   display: flex;
   position: relative;
-  width: ${props => (props.width ? prop => prop.width : 'auto')};
+  width: ${props => (props.width ? props.width : 'auto')};
 
   @media screen and (max-width: 992px) {
     ${props =>
       props.display
         ? `
       display: ${props.display};
-      // width: 50%;
     `
         : ``};
   }
@@ -136,7 +132,6 @@ const FarmPic = styled.img`
 `
 
 const EmptyPanel = styled.div`
-  // height: 50%;
   padding-top: 5%;
   padding-bottom: 5%;
 
@@ -238,7 +233,6 @@ const Content = styled.div`
 `
 
 const BadgeIcon = styled.div`
-  // position: absolute;
   left: 0;
   top: 0;
   width: 17px;
@@ -291,7 +285,6 @@ const ThemeMode = styled.div`
       position: absolute;
       top: 2px;
       width: 20px;
-      // border-image: initial;
       border-radius: 50%;
       transition: all 0.25s ease 0s;
     }
@@ -344,7 +337,6 @@ const Counter = styled.div`
   margin-left: 10px;
 
   @media screen and (max-width: 992px) {
-    // background: #FF7E00;
     color: white;
   }
 `

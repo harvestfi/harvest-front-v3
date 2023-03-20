@@ -20,7 +20,6 @@ const ButtonStyle = styled.button`
   ${props =>
     props.size === 'lg'
       ? `
-  // font-weight: 800;
   font-size: 20px;
   line-height: 24px;`
       : ''}
@@ -110,12 +109,6 @@ ${props =>
         }`
             : ''
         }
-      
-        &:active {
-          // border: 2px solid #997037;
-          // color: #4C351B;
-          // background: white;
-        }
         `
         : ''}
 
@@ -168,7 +161,6 @@ ${props =>
             ? `
         &:hover {
           background: #FF9400D0;
-          // box-shadow: 0px 14px 24px rgba(237, 174, 80, 0.2);
         }`
             : ''
         }
@@ -199,7 +191,6 @@ ${props =>
             ? `
         &:hover {
           background: #FFAA34D0;
-          // box-shadow: 0px 14px 24px rgba(237, 174, 80, 0.2);
         }`
             : ''
         }
@@ -231,7 +222,6 @@ ${props =>
             ? `
         &:hover {
           background: #1F2937D0;
-          // box-shadow: 0px 14px 24px rgba(237, 174, 80, 0.2);
         }`
             : ''
         }
@@ -263,7 +253,6 @@ ${props =>
             ? `
         &:hover {
           background: #027948D0;
-          // box-shadow: 0px 14px 24px rgba(237, 174, 80, 0.2);
         }`
             : ''
         }

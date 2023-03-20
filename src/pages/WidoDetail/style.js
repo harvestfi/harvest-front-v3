@@ -145,7 +145,6 @@ const Button = styled.button`
   background: #ffffff;
   padding: 10px 20px;
   border: 1px solid #e9e9e9;
-  // box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
   border-radius: 12px;
 `
 
@@ -224,7 +223,6 @@ const HalfInfo = styled.div`
   background: ${props => props.backColor};
   border: 1px solid ${props => props.borderColor};
   transition: 0.25s;
-  // box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
   border-radius: 10px;
   margin-bottom: 15px;
   font-family: 'DM Sans';
@@ -453,7 +451,6 @@ const SwitchModeMobile = styled.div`
   @media screen and (max-width: 992px) {
     width: 100%;
     border-width: 0;
-    // border: 1px solid #D1D1D1;
     border-radius: 12px;
     margin-bottom: 20px;
     margin-top: 13px;
@@ -471,7 +468,6 @@ const TagMobile = styled.div`
   text-align: center;
   padding: 10px 28px;
   border-bottom: 2px solid ${props => props.borderColor};
-  // color: #1F2937;
   ${props =>
     props.farm
       ? `
@@ -487,7 +483,6 @@ const TagMobile = styled.div`
     border-bottom: 4px solid #FF9400;
   `
       : ''}
-  // border-radius: 12px;
   cursor: pointer;
 
   img {

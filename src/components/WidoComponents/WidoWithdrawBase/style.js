@@ -244,7 +244,6 @@ const TokenName = styled.div`
   font-weight: 500;
   font-size: 14px;
   line-height: 18px;
-  // text-decoration-line: underline;
   background: #ecfdf3;
   color: #027a48;
   border-radius: 16px;

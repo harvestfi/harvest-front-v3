@@ -3,15 +3,10 @@ import styled from 'styled-components'
 const Container = styled.div`
   display: flex;
   color: ${props => props.fontColor};
-
-  @media screen and (max-width: 992px) {
-    // width: 100%;
-  }
 `
 
 const Label = styled.div`
   display: flex;
-  // width: 30%;
   img {
     margin-right: 5px;
     align-self: center;
@@ -19,7 +14,6 @@ const Label = styled.div`
 `
 
 const Content = styled.div`
-  // width: 50%;
   font-size: ${props => props.size}px;
   font-weight: ${props => (props.weight ? prop => prop.weight : 'normal')};
   line-height: ${props => props.height}px;

@@ -1166,7 +1166,9 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
   const subParam =
     chainId === CHAINS_ID.ETH_MAINNET
       ? process.env.REACT_APP_GRAPHQL_SUBPARAM_ETH
-      : process.env.REACT_APP_GRAPHQL_SUBPARAM_MATIC
+      : chainId === CHAINS_ID.MATIC_MAINNET
+      ? process.env.REACT_APP_GRAPHQL_SUBPARAM_MATIC
+      : process.env.REACT_APP_GRAPHQL_SUBPARAM_ARBITRUM
   const url = `https://api.thegraph.com/subgraphs/id/${subParam}`
   try {
     await fetch(url, requestOptions)
