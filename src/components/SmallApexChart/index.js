@@ -1,33 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Chart from 'react-apexcharts'
-// import { ClipLoader } from 'react-spinners'
-// import { LoadingDiv } from './style'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { ceil10, floor10 } from '../../utils'
-
-// function numberWithCommas(x) {
-//   if(x < 1000)
-//     return x
-//   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-// }
-
-// function getRangeNumber(strRange) {
-//   let ago = 30
-//   if(strRange === '1D') {
-//     ago = 1
-//   }
-//   else if(strRange === '1W') {
-//     ago = 7
-//   }
-//   else if(strRange === '1M') {
-//     ago = 30
-//   }
-//   else if(strRange === '1Y') {
-//     ago = 365
-//   }
-
-//   return ago
-// }
 
 function getTimeSlots(ago, slotCount) {
   const slots = [],
@@ -54,7 +28,6 @@ function findMin(data) {
   return min
 }
 
-// kind: "value" - TVL, "apy" - APY
 function generateChartDataWithSlots(slots, apiData, kind) {
   const seriesData = []
   for (let i = 0; i < slots.length; i += 1) {

@@ -196,16 +196,7 @@ const Dashboard = () => {
       }
       loadUserPoolsStats()
     }
-  }, [
-    // eslint-disable-line react-hooks/exhaustive-deps
-    account,
-    fetchUserPoolStats,
-    pools,
-    tokens,
-    depositToken,
-    groupOfVaults,
-    userStats,
-  ])
+  }, [account, fetchUserPoolStats, pools, depositToken, groupOfVaults, userStats])
 
   useEffect(() => {
     if (!isEmpty(userStats) && account) {
@@ -232,10 +223,10 @@ const Dashboard = () => {
           setDepositToken(symbols)
         }
 
-        let newStats = [],
-          totalStake = 0,
+        const newStats = []
+        let totalStake = 0,
           valueRewards = 0
-        for (let i = 0; i < stakedVaults.length; i++) {
+        for (let i = 0; i < stakedVaults.length; i += 1) {
           const stats = {
             chain: '',
             symbol: '',
@@ -253,6 +244,7 @@ const Dashboard = () => {
           } else {
             symbol = stakedVaults[i]
           }
+          // eslint-disable-next-line one-var
           let fAssetPool =
             symbol === FARM_TOKEN_SYMBOL
               ? groupOfVaults[symbol].data
@@ -269,7 +261,7 @@ const Dashboard = () => {
             stats.symbol = symbol
             stats.logos = token.logoUrl
             stats.chain = getChainIcon(token.chain)
-            stats.platform = useIFARM ? tokens[IFARM_TOKEN_SYMBOL].subLabel : token.subLabel || ""
+            stats.platform = useIFARM ? tokens[IFARM_TOKEN_SYMBOL].subLabel : token.subLabel || ''
 
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
             if (isSpecialVault) {
@@ -304,9 +296,13 @@ const Dashboard = () => {
             const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
 
             const rewardToken = groupOfVaults[rewardTokenSymbols[0]]
+            // eslint-disable-next-line one-var
             let usdRewardPrice = 1
             if (rewardToken) {
-              usdRewardPrice = (rewardTokenSymbols[0] === FARM_TOKEN_SYMBOL ? rewardToken.data.lpTokenData && rewardToken.data.lpTokenData.price : rewardToken.usdPrice) || 1
+              usdRewardPrice =
+                (rewardTokenSymbols[0] === FARM_TOKEN_SYMBOL
+                  ? rewardToken.data.lpTokenData && rewardToken.data.lpTokenData.price
+                  : rewardToken.usdPrice) || 1
             }
 
             const rewards = userStats[stakedVaults[i]].totalRewardsEarned
@@ -342,7 +338,7 @@ const Dashboard = () => {
           </Div>
         </SubPart>
 
-        <TransactionDetails backColor={backColor} borderColor={borderColor} >
+        <TransactionDetails backColor={backColor} borderColor={borderColor}>
           <FarmTitle borderColor={borderColor}>
             <MyFarm>
               My Farms
