@@ -40,34 +40,9 @@ const FAQ = () => {
         </Desc>
       </FarmHeader>
       <FAQMain>
-      {
-        isMobile ? 
-        <FAQContent>
-          {FAQ_TOTAL.map(item => (
-            <QuestionContainer key={uuid()}>
-              <Collapsible
-                lazyRender={item.lazyRender ? item.lazyRender : true}
-                triggerWhenOpen={
-                  <Question open backColor={backColor} borderColor={borderColor}>
-                    {item.question}
-                    <DropdownToggle open src={DropdownToggleImageOpen} />
-                  </Question>
-                }
-                trigger={
-                  <Question backColor={backColor} borderColor={borderColor}>
-                      {item.question}
-                    <DropdownToggle src={DropdownToggleImageClosed} />
-                  </Question>
-                }
-              >
-                <Answer backColor={backColor} borderColor={borderColor}>{item.answer}</Answer>
-              </Collapsible>
-            </QuestionContainer>
-          ))}
-        </FAQContent> :
-        <FAQContent>
-          <FAQHalfContent>
-            {FAQ_ITEMS_FIRST.map(item => (
+        {isMobile ? (
+          <FAQContent>
+            {FAQ_TOTAL.map(item => (
               <QuestionContainer key={uuid()}>
                 <Collapsible
                   lazyRender={item.lazyRender ? item.lazyRender : true}
@@ -90,7 +65,34 @@ const FAQ = () => {
                 </Collapsible>
               </QuestionContainer>
             ))}
-          </FAQHalfContent>
+          </FAQContent>
+        ) : (
+          <FAQContent>
+            <FAQHalfContent>
+              {FAQ_ITEMS_FIRST.map(item => (
+                <QuestionContainer key={uuid()}>
+                  <Collapsible
+                    lazyRender={item.lazyRender ? item.lazyRender : true}
+                    triggerWhenOpen={
+                      <Question open backColor={backColor} borderColor={borderColor}>
+                        {item.question}
+                        <DropdownToggle open src={DropdownToggleImageOpen} />
+                      </Question>
+                    }
+                    trigger={
+                      <Question backColor={backColor} borderColor={borderColor}>
+                        {item.question}
+                        <DropdownToggle src={DropdownToggleImageClosed} />
+                      </Question>
+                    }
+                  >
+                    <Answer backColor={backColor} borderColor={borderColor}>
+                      {item.answer}
+                    </Answer>
+                  </Collapsible>
+                </QuestionContainer>
+              ))}
+            </FAQHalfContent>
             <FAQHalfContent>
               {FAQ_ITEMS_SECOND.map(item => (
                 <QuestionContainer key={uuid()}>
@@ -117,7 +119,7 @@ const FAQ = () => {
               ))}
             </FAQHalfContent>
           </FAQContent>
-        }
+        )}
       </FAQMain>
     </FAQContainer>
   )

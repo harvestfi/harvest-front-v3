@@ -29,7 +29,9 @@ import { usePools } from '../Pools'
 import { useWallet } from '../Wallet'
 import { calculateFarmingBalance, filterVaults } from './utils'
 
+/* eslint-disable global-require */
 const { tokens, addresses } = require('../../data')
+/* eslint-enable global-require */
 
 const VaultsContext = createContext()
 const useVaults = () => useContext(VaultsContext)

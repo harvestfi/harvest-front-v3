@@ -8,4 +8,4 @@ const LoadingDiv = styled.div`
   justify-content: center;
 `
 
-export { LoadingDiv }
+export default LoadingDiv

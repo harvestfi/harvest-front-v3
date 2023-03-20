@@ -21,7 +21,7 @@ import {
   MobileVaultInfoContainer,
   MobileVaultValueContainer,
   PanelContainer,
-  TokenLogoContainer,
+  TokenLogoContainer
 } from './style'
 import VaultApy from './sub-components/VaultApy'
 import VaultName from './sub-components/VaultName'
@@ -84,8 +84,8 @@ const MobilePanelHeader = ({
     <PanelContainer fontColor={fontColor} borderColor={borderColor}>
       <DetailModal className="vault-detail" show={show} onHide={handleClose}>
         <Modal.Header>
-          Details
-          <img src={DetailClose} onClick={handleClose} alt="" />
+          {/* <img src={DetailClose} onClick={handleClose} alt="" /> */}
+          <input type="image" alt="" src={DetailClose} onClick={handleClose} />
         </Modal.Header>
         <Modal.Body>
           {getRewardsText(

@@ -19,7 +19,9 @@ import {
   validateChain,
 } from './utils'
 
+/* eslint-disable global-require */
 const { tokens } = require('../../data')
+/* eslint-enable global-require */
 
 const WalletContext = createContext()
 const useWallet = () => useContext(WalletContext)

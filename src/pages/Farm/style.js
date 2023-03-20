@@ -17,4 +17,4 @@ const FarmContainer = styled.div`
   }
 `
 
-export { FarmContainer }
+export default FarmContainer

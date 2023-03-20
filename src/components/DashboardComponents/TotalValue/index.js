@@ -7,9 +7,7 @@ const TotalValue = ({ icon, content, price }) => {
   return (
     <Container borderColor={borderColor}>
       <img src={icon} alt="" />
-      <Div>
-        {content}
-      </Div>
+      <Div>{content}</Div>
       <Price>$&nbsp;{price}</Price>
     </Container>
   )

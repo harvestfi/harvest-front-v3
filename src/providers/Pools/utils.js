@@ -1,14 +1,16 @@
+import BigNumber from 'bignumber.js'
 import equal from 'fast-deep-equal/react'
 import { get } from 'lodash'
 import { forEach } from 'promised-loops'
-import BigNumber from 'bignumber.js'
+import { POLL_POOL_USER_DATA_INTERVAL_MS } from '../../constants'
+import { newContractInstance } from '../../services/web3'
+import poolMethods from '../../services/web3/contracts/pool/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import tokenMethods from '../../services/web3/contracts/token/methods'
-import poolMethods from '../../services/web3/contracts/pool/methods'
-import { newContractInstance } from '../../services/web3'
-import { POLL_POOL_USER_DATA_INTERVAL_MS } from '../../constants'
 
+/* eslint-disable global-require */
 const { pools, tokens } = require('../../data')
+/* eslint-enable global-require */
 
 export const calculateTotalRewardsEarned = async (account, contractInstance) => {
   const { totalEarned: earned } = poolMethods

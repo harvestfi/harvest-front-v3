@@ -143,7 +143,9 @@ const FarmDetail = () => {
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
+  /* eslint-disable global-require */
   const { tokens } = require('../../data')
+  /* eslint-enable global-require */
 
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
@@ -528,7 +530,7 @@ const FarmDetail = () => {
   }
 
   const apyDaily = totalApy
-    ? ((Math.pow(Number(totalApy) / 100 + 1, 1 / 365) - 1) * 100).toFixed(3)
+    ? (((Number(totalApy) / 100 + 1) ** (1 / 365) - 1) * 100).toFixed(3)
     : null
   const showApyDaily = () => {
     return (
@@ -773,6 +775,7 @@ const FarmDetail = () => {
               <NewLabel weight={700} size="16px" height="21px">
                 APY Breakdown
               </NewLabel>
+              {/* eslint-disable react/no-danger */}
               <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
             </HalfInfo>
             <HalfInfo

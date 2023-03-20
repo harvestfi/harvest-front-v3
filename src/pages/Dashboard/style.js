@@ -49,7 +49,7 @@ const SubPart = styled.div`
 const FarmTitle = styled.span`
   display: flex;
   justify-content: space-between;
-  border-bottom: 1px solid ${props=>props.borderColor};
+  border-bottom: 1px solid ${props => props.borderColor};
 
   // margin-top: 30px;
   // margin-bottom: 30px;
@@ -83,10 +83,13 @@ const DetailView = styled.div`
     ${props.lastElement === 'yes' ? '' : 'border-bottom: 1px solid rgba(255, 255, 255, 0.5);'}
   `
       : `
-    ${props.lastElement === 'yes' ? ``
-    : `
+    ${
+      props.lastElement === 'yes'
+        ? ``
+        : `
       border-bottom: 1px solid #E9E9E9;
-    `}
+    `
+    }
   `}
   transition: 0.25s;
 
@@ -98,7 +101,7 @@ const DetailView = styled.div`
 const FlexDiv = styled.div`
   display: flex;
   position: relative;
-  width: ${props => (props.width ? props => props.width : 'auto')};
+  width: ${props => (props.width ? prop => prop.width : 'auto')};
 
   @media screen and (max-width: 992px) {
     ${props =>
@@ -207,13 +210,19 @@ const ExploreFarm = styled.button`
 `
 
 const Content = styled.div`
-  width: ${props=>props.width};
-  ${props => props.display ? `
+  width: ${props => props.width};
+  ${props =>
+    props.display
+      ? `
     display: ${props.display};
-  ` : ''}
-  ${props => props.marginLeft ? `
+  `
+      : ''}
+  ${props =>
+    props.marginLeft
+      ? `
     margin-left: ${props.marginLeft};
-  ` : ''}
+  `
+      : ''}
   font-weight: 400;
   font-size: 20px;
   line-height: 23px;
@@ -267,8 +276,8 @@ const ThemeMode = styled.div`
     }
 
     .switch-track {
-      background: #7F56D9;
-      border: 1px solid ${props=>props.borderColor};
+      background: #7f56d9;
+      border: 1px solid ${props => props.borderColor};
       height: 24px;
       width: 50px;
       border-radius: 30px;
@@ -288,7 +297,7 @@ const ThemeMode = styled.div`
     }
 
     &:hover .switch-thumb {
-      box-shadow: 0 0 2px 3px #7F56D9;
+      box-shadow: 0 0 2px 3px #7f56d9;
     }
   }
 
@@ -317,12 +326,14 @@ const Div = styled.div`
 `
 
 const Counter = styled.div`
-  ${props => props.count > 0 ? `
+  ${props =>
+    props.count > 0
+      ? `
   color: white;
-  ` : `
-  color: #1F2937;
   `
-  }
+      : `
+  color: #1F2937;
+  `}
   background: #F2C94C;
   width: 20px;
   height: 20px;
@@ -341,29 +352,34 @@ const Counter = styled.div`
 const Header = styled.div`
   width: 100%;
   padding: 10px 6px;
-  background: #F9FAFB;
-  border-bottom: 1px solid ${props=>props.borderColor};
+  background: #f9fafb;
+  border-bottom: 1px solid ${props => props.borderColor};
   display: flex;
 `
 
 const Column = styled.div`
-  width: ${props=>props.width};
+  width: ${props => props.width};
   font-weight: 500;
   font-size: 12px;
   line-height: 15px;
-  ${props=>props.color ? `
+  ${props =>
+    props.color
+      ? `
     color: ${props.color};
-  ` : `
+  `
+      : `
     color: #475467;
   `}
-  
 `
 
 const Status = styled.div`
-  ${props=>props.status === 'Active' ?  `
+  ${props =>
+    props.status === 'Active'
+      ? `
       background: #ECFDF3;
       color: #027A48;
-    ` : `
+    `
+      : `
       background: #FFE8C8;
       color: #F2994A;
       img {
@@ -386,7 +402,7 @@ const Status = styled.div`
 `
 
 const Btn = styled.button`
-  border: 1px solid #D0D5DD;
+  border: 1px solid #d0d5dd;
   box-shadow: 0px 1px 1px rgba(16, 24, 40, 0.05);
   border-radius: 5px;
   color: #344054;
@@ -399,10 +415,32 @@ const Btn = styled.button`
 const SelField = styled.div`
   height: 17px;
   width: 17px;
-  border: 1px solid #D0D5DD;
+  border: 1px solid #d0d5dd;
   border-radius: 5px;
 `
 
-export { Container, SubPart, TransactionDetails, DetailView, FarmTitle, 
-  FlexDiv, MyFarm, FarmPic, BadgeIcon, Inner, EmptyPanel, EmptyInfo, EmptyImg, ExploreFarm,
-  Content, ThemeMode, Div, Counter, Header, Column, Status, Btn, SelField }
+export {
+  Container,
+  SubPart,
+  TransactionDetails,
+  DetailView,
+  FarmTitle,
+  FlexDiv,
+  MyFarm,
+  FarmPic,
+  BadgeIcon,
+  Inner,
+  EmptyPanel,
+  EmptyInfo,
+  EmptyImg,
+  ExploreFarm,
+  Content,
+  ThemeMode,
+  Div,
+  Counter,
+  Header,
+  Column,
+  Status,
+  Btn,
+  SelField,
+}

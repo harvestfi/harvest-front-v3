@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import APY_active from '../../assets/images/logos/earn/apy.svg'
-import myBalance_active from '../../assets/images/logos/earn/mybalance.svg'
-import TVL_active from '../../assets/images/logos/earn/tvl.svg'
+import apyActive from '../../assets/images/logos/earn/apy.svg'
+import myBalanceActive from '../../assets/images/logos/earn/mybalance.svg'
+import tvlActive from '../../assets/images/logos/earn/tvl.svg'
 import { addresses } from '../../data/index'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
@@ -11,14 +11,19 @@ import ChartButtonsGroup from '../ChartButtonsGroup'
 import ChartRangeSelect from '../ChartRangeSelect'
 import {
   ButtonGroup,
-  ChartDiv, Container, FilterGroup,
-  FilterName, Header, Title, Total
+  ChartDiv,
+  Container,
+  FilterGroup,
+  FilterName,
+  Header,
+  Title,
+  Total,
 } from './style'
 
 const filterList = [
-  { id: 1, name: 'APY', img: APY_active },
-  { id: 2, name: 'TVL in USD', img: TVL_active },
-  { id: 3, name: 'My Balance', img: myBalance_active },
+  { id: 1, name: 'APY', img: apyActive },
+  { id: 2, name: 'TVL in USD', img: tvlActive },
+  { id: 3, name: 'My Balance', img: myBalanceActive },
 ]
 
 const recommendLinks = [

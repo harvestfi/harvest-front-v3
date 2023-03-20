@@ -516,6 +516,19 @@ const VaultList = () => {
     ],
   )
 
+  const setSortingParams = param => {
+    if (sortParam === param) {
+      if (sortOrder === 'desc') {
+        setSortOrder('asc')
+      } else {
+        setSortOrder('desc')
+      }
+    } else {
+      setSortOrder('desc')
+      setSortParam(param)
+    }
+  }
+
   useEffectWithPrevious(
     ([prevChain, prevAccount, prevUserStats]) => {
       const hasSwitchedChain = chain !== prevChain
@@ -543,19 +556,6 @@ const VaultList = () => {
     },
     [chain, account, userStats],
   )
-
-  const setSortingParams = param => {
-    if (sortParam === param) {
-      if (sortOrder === 'desc') {
-        setSortOrder('asc')
-      } else {
-        setSortOrder('desc')
-      }
-    } else {
-      setSortOrder('desc')
-      setSortParam(param)
-    }
-  }
 
   const [sortId, setSortId] = useState(-1)
 
@@ -641,7 +641,7 @@ const VaultList = () => {
             justifyContent="start"
             width="15%"
             textAlign="right"
-          // onClick={() => setSortingParams('displayName')}
+            // onClick={() => setSortingParams('displayName')}
           >
             <ThemeMode
               mode={switchBalance ? 'usd' : 'token'}

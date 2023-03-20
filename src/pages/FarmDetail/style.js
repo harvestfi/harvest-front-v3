@@ -450,7 +450,7 @@ const Tag = styled.div`
     
     &.tag2 {
       img {
-        filter: ${props => props.filterColor};
+        filter: ${prop => prop.filterColor};
       }
     }
   `

@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from 'react'
-import { quote, getTokenAllowance, approve } from 'wido'
+import BigNumber from 'bignumber.js'
+import React, { useEffect, useState } from 'react'
 import { Spinner } from 'react-bootstrap'
 import { toast } from 'react-toastify'
-import BigNumber from 'bignumber.js'
-import { mainWeb3, fromWei } from '../../../services/web3'
-import { formatNumberWido } from '../../../utils'
-import { WIDO_BALANCES_DECIMALS } from '../../../constants'
-import { useThemeContext } from '../../../providers/useThemeContext'
-import { useWallet } from '../../../providers/Wallet'
-import { usePools } from '../../../providers/Pools'
-import { SelectTokenWido, CloseBtn, NewLabel, Buttons, CloseButton, ExecuteButton } from './style'
-import WidoSwapToken from '../WidoSwapToken'
-import BackIcon from '../../../assets/images/logos/wido/back.svg'
-import Swap1WithIcon from '../../../assets/images/logos/wido/swap2.svg'
-import SettingIcon from '../../../assets/images/logos/wido/setting.svg'
+import { approve, getTokenAllowance, quote } from 'wido'
 import ArrowDownIcon from '../../../assets/images/logos/wido/arrowdown.svg'
+import BackIcon from '../../../assets/images/logos/wido/back.svg'
 import CheckIcon from '../../../assets/images/logos/wido/check-approve.svg'
 import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.svg'
+import SettingIcon from '../../../assets/images/logos/wido/setting.svg'
+import Swap1WithIcon from '../../../assets/images/logos/wido/swap2.svg'
 import WithdrawIcon from '../../../assets/images/logos/wido/withdraw-icon.svg'
+import { WIDO_BALANCES_DECIMALS } from '../../../constants'
+import { usePools } from '../../../providers/Pools'
+import { useThemeContext } from '../../../providers/useThemeContext'
+import { useWallet } from '../../../providers/Wallet'
+import { fromWei, mainWeb3 } from '../../../services/web3'
+import { formatNumberWido } from '../../../utils'
+import WidoSwapToken from '../WidoSwapToken'
+import { Buttons, CloseBtn, CloseButton, ExecuteButton, NewLabel, SelectTokenWido } from './style'
 
 const WidoWithdrawFinalStep = ({
   finalStep,
@@ -27,7 +27,6 @@ const WidoWithdrawFinalStep = ({
   symbol,
   useIFARM,
   setClickedTokenId,
-  setClickedVaultId,
   pickedToken,
   setPickedToken,
   token,

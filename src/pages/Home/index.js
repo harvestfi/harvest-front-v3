@@ -85,7 +85,7 @@ const Home = () => {
           })}
         </BottomPart>
         <ProfitShare>
-          <ProfitSharingContainer height={"100%"} />
+          <ProfitSharingContainer height="100%" />
         </ProfitShare>
       </FarmContent>
     </FarmContainer>

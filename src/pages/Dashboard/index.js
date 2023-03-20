@@ -1,30 +1,59 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import { useHistory } from "react-router-dom"
-import { BigNumber } from "bignumber.js"
-import { get, isEmpty, find } from 'lodash'
-import { Container, SubPart, TransactionDetails, DetailView, FarmTitle, 
-  FlexDiv, MyFarm, Inner, EmptyPanel, EmptyInfo, EmptyImg, ExploreFarm, ThemeMode, Div,
-  Content, BadgeIcon, Counter, Header, Column, Status, Btn, SelField } from './style'
-import { useThemeContext } from '../../providers/useThemeContext'
+import { BigNumber } from 'bignumber.js'
+import { find, get, isEmpty } from 'lodash'
+import React, { useEffect, useMemo, useState } from 'react'
+import { useHistory } from 'react-router-dom'
+import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
+import ETHEREUM from '../../assets/images/chains/ethereum.svg'
+import POLYGON from '../../assets/images/chains/polygon.svg'
+import Rating from '../../assets/images/logos/dashboard/dashboard_rating.svg'
+import EmptyIcon from '../../assets/images/logos/dashboard/empty.svg'
+import exploreFarm from '../../assets/images/logos/dashboard/exploreFarm.svg'
+import DotIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 import ListItem from '../../components/DashboardComponents/ListItem'
 import TotalValue from '../../components/DashboardComponents/TotalValue'
 import ProfitSharing from '../../components/ProfitSharing'
-import { useWallet } from '../../providers/Wallet'
-import { usePools } from '../../providers/Pools'
-import { useStats } from '../../providers/Stats'
-import { useVaults } from '../../providers/Vault'
-import { fromWei } from '../../services/web3'
-import { formatNumber } from '../../utils'
+import {
+  FARM_GRAIN_TOKEN_SYMBOL,
+  FARM_TOKEN_SYMBOL,
+  FARM_USDC_TOKEN_SYMBOL,
+  FARM_WETH_TOKEN_SYMBOL,
+  IFARM_TOKEN_SYMBOL,
+  POOL_BALANCES_DECIMALS,
+  SPECIAL_VAULTS,
+} from '../../constants'
 import { addresses } from '../../data'
 import { CHAINS_ID } from '../../data/constants'
-import { POOL_BALANCES_DECIMALS, SPECIAL_VAULTS, FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, FARM_WETH_TOKEN_SYMBOL, FARM_GRAIN_TOKEN_SYMBOL, FARM_USDC_TOKEN_SYMBOL } from '../../constants'
-import ETHEREUM from '../../assets/images/chains/ethereum.svg'
-import EmptyIcon from '../../assets/images/logos/dashboard/empty.svg'
-import exploreFarm from '../../assets/images/logos/dashboard/exploreFarm.svg'
-import POLYGON from '../../assets/images/chains/polygon.svg'
-import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
-import Rating from '../../assets/images/logos/dashboard/dashboard_rating.svg'
-import DotIcon from '../../assets/images/logos/sidebar/connect-success.svg'
+import { usePools } from '../../providers/Pools'
+import { useStats } from '../../providers/Stats'
+import { useThemeContext } from '../../providers/useThemeContext'
+import { useVaults } from '../../providers/Vault'
+import { useWallet } from '../../providers/Wallet'
+import { fromWei } from '../../services/web3'
+import { formatNumber } from '../../utils'
+import {
+  BadgeIcon,
+  Btn,
+  Column,
+  Container,
+  Content,
+  Counter,
+  DetailView,
+  Div,
+  EmptyImg,
+  EmptyInfo,
+  EmptyPanel,
+  ExploreFarm,
+  FarmTitle,
+  FlexDiv,
+  Header,
+  Inner,
+  MyFarm,
+  SelField,
+  Status,
+  SubPart,
+  ThemeMode,
+  TransactionDetails,
+} from './style'
 
 const getChainIcon = chain => {
   let chainLogo = ETHEREUM
@@ -48,7 +77,9 @@ const Dashboard = () => {
   const { userStats, fetchUserPoolStats, pools } = usePools()
   const { profitShareAPY } = useStats()
   const { vaultsData } = useVaults()
+  /* eslint-disable global-require */
   const { tokens } = require('../../data')
+  /* eslint-enable global-require */
   const {
     switchMode,
     pageBackColor,
@@ -139,13 +170,20 @@ const Dashboard = () => {
   useEffect(() => {
     if (account && !isEmpty(userStats) && !isEmpty(depositToken)) {
       const loadUserPoolsStats = async () => {
-        for(let i = 0; i < depositToken.length; i++) {
-          let fAssetPool = depositToken[i] === FARM_TOKEN_SYMBOL ? groupOfVaults[depositToken[i]].data :
-          find(pools, pool => pool.id === depositToken[i])
-          
-          const token = find(groupOfVaults, vault => (vault.vaultAddress === fAssetPool.collateralAddress) || 
-            (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress))
-          if(token) {
+        /* eslint-disable no-await-in-loop */
+        for (let i = 0; i < depositToken.length; i += 1) {
+          let fAssetPool =
+            depositToken[i] === FARM_TOKEN_SYMBOL
+              ? groupOfVaults[depositToken[i]].data
+              : find(pools, pool => pool.id === depositToken[i])
+
+          const token = find(
+            groupOfVaults,
+            vault =>
+              vault.vaultAddress === fAssetPool.collateralAddress ||
+              (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress),
+          )
+          if (token) {
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
             if (isSpecialVault) {
               fAssetPool = token.data
@@ -154,19 +192,11 @@ const Dashboard = () => {
             await fetchUserPoolStats(poolsToLoad, account, userStats)
           }
         }
+        /* eslint-enable no-await-in-loop */
       }
       loadUserPoolsStats()
     }
-  }, [
-    // eslint-disable-line react-hooks/exhaustive-deps
-    account,
-    fetchUserPoolStats,
-    pools,
-    tokens,
-    depositToken,
-    groupOfVaults,
-    userStats
-  ])
+  }, [account, fetchUserPoolStats, pools, tokens, depositToken, groupOfVaults, userStats])
 
   useEffect(() => {
     if (!isEmpty(userStats) && account) {
@@ -180,7 +210,7 @@ const Dashboard = () => {
         )
 
         const symbols = []
-        for (let i = 0; i < stakedVaults.length; i++) {
+        for (let i = 0; i < stakedVaults.length; i += 1) {
           let symbol = ''
           if (stakedVaults[i] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
             symbol = FARM_TOKEN_SYMBOL
@@ -193,35 +223,56 @@ const Dashboard = () => {
           setDepositToken(symbols)
         }
 
-        let newStats = []
-        let totalStake = 0, valueRewards = 0
-        for(let i = 0; i < stakedVaults.length; i++) {
-          let stats = {chain: "", symbol: "", logos: [], platform: "", unstake: "", stake: "", reward: 0, rewardSymbol: ""}
-          let symbol = ""
-          if(stakedVaults[i] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
+        const newStats = []
+        let totalStake = 0,
+          valueRewards = 0
+        for (let i = 0; i < stakedVaults.length; i += 1) {
+          const stats = {
+            chain: '',
+            symbol: '',
+            logos: [],
+            platform: '',
+            unstake: '',
+            stake: '',
+            reward: 0,
+            rewardSymbol: '',
+          }
+          let symbol = '',
+            fAssetPool
+          if (stakedVaults[i] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
             symbol = FARM_TOKEN_SYMBOL
           } else {
             symbol = stakedVaults[i]
           }
-          let fAssetPool = symbol === FARM_TOKEN_SYMBOL ? groupOfVaults[symbol].data :
-          find(pools, pool => pool.id === symbol)
-          
-          const token = find(groupOfVaults, vault => (vault.vaultAddress === fAssetPool.collateralAddress) || 
-            (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress))
-          if(token) {
+          fAssetPool =
+            symbol === FARM_TOKEN_SYMBOL
+              ? groupOfVaults[symbol].data
+              : find(pools, pool => pool.id === symbol)
+
+          const token = find(
+            groupOfVaults,
+            vault =>
+              vault.vaultAddress === fAssetPool.collateralAddress ||
+              (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress),
+          )
+          if (token) {
             const useIFARM = symbol === FARM_TOKEN_SYMBOL
-            stats["symbol"] = symbol
-            stats["logos"] = token.logoUrl
-            stats["chain"] = getChainIcon(token.chain)
-            stats["platform"] = useIFARM ? tokens[IFARM_TOKEN_SYMBOL].subLabel : token.subLabel || ""
-            
+            stats.symbol = symbol
+            stats.logos = token.logoUrl
+            stats.chain = getChainIcon(token.chain)
+            stats.platform = useIFARM ? tokens[IFARM_TOKEN_SYMBOL].subLabel : token.subLabel || ''
+
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
             if (isSpecialVault) {
               fAssetPool = token.data
             }
-            let usdPrice = 1
-            if(token) {
-              usdPrice = (symbol === FARM_TOKEN_SYMBOL ? token.data.lpTokenData && token.data.lpTokenData.price : token.usdPrice) || 1
+            let usdPrice = 1,
+              usdRewardPrice
+            if (token) {
+              usdPrice =
+                (symbol === FARM_TOKEN_SYMBOL
+                  ? token.data.lpTokenData && token.data.lpTokenData.price
+                  : token.usdPrice) || 1
             }
             const unstake =
               fromWei(
@@ -245,9 +296,12 @@ const Dashboard = () => {
             const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
 
             const rewardToken = groupOfVaults[rewardTokenSymbols[0]]
-            let usdRewardPrice = 1
-            if(rewardToken) {
-              usdRewardPrice = (rewardTokenSymbols[0] === FARM_TOKEN_SYMBOL ? rewardToken.data.lpTokenData && rewardToken.data.lpTokenData.price : rewardToken.usdPrice) || 1
+            usdRewardPrice = 1
+            if (rewardToken) {
+              usdRewardPrice =
+                (rewardTokenSymbols[0] === FARM_TOKEN_SYMBOL
+                  ? rewardToken.data.lpTokenData && rewardToken.data.lpTokenData.price
+                  : rewardToken.usdPrice) || 1
             }
 
             const rewards = userStats[stakedVaults[i]].totalRewardsEarned
@@ -270,29 +324,33 @@ const Dashboard = () => {
 
       getFarmTokenInfo()
     }
-  }, [account, userStats, balances]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, userStats, balances, depositToken, groupOfVaults, pools, tokens])
 
   return (
     <Container pageBackColor={pageBackColor} fontColor={fontColor}>
       <Inner>
         <SubPart>
-          <TotalValue icon={Rating} content={"Deposits"} price={totalDeposit} />
-          <TotalValue icon={Rating} content={"Claimable Rewards"} price={totalRewards} />
+          <TotalValue icon={Rating} content="Deposits" price={totalDeposit} />
+          <TotalValue icon={Rating} content="Claimable Rewards" price={totalRewards} />
           <Div>
             <ProfitSharing height="100%" />
           </Div>
         </SubPart>
-        
-        <TransactionDetails backColor={backColor} borderColor={borderColor} >
+
+        <TransactionDetails backColor={backColor} borderColor={borderColor}>
           <FarmTitle borderColor={borderColor}>
             <MyFarm>
               My Farms
               <Counter count={countList}>{countList > 0 ? countList : ''}</Counter>&nbsp;
             </MyFarm>
-            <ThemeMode mode={switchBalance ? "usd" : "token"} backColor={toggleBackColor} borderColor={borderColor}>
+            <ThemeMode
+              mode={switchBalance ? 'usd' : 'token'}
+              backColor={toggleBackColor}
+              borderColor={borderColor}
+            >
               <div id="theme-switch">
                 <div className="switch-track">
-                  <div className="switch-thumb"></div>
+                  <div className="switch-thumb" />
                 </div>
 
                 <input
@@ -305,65 +363,74 @@ const Dashboard = () => {
             </ThemeMode>
           </FarmTitle>
           <Header borderColor={borderColor}>
-            <Column width={"5%"}>
+            <Column width="5%">
               <SelField />
             </Column>
-            <Column width={"30%"}>
-              Farm Name
+            <Column width="30%">Farm Name</Column>
+            <Column width="10%">Status</Column>
+            <Column width="15%" color="#FF9400">
+              Unstaked
             </Column>
-            <Column width={"10%"}>Status</Column>
-            <Column width={"15%"} color="#FF9400">Unstaked</Column>
-            <Column width={"15%"} color="#129C3D">Staked</Column>
-            <Column width={"15%"}>Rewards</Column>
-            <Column width={"10%"}></Column>
+            <Column width="15%" color="#129C3D">
+              Staked
+            </Column>
+            <Column width="15%">Rewards</Column>
+            <Column width="10%" />
           </Header>
-          {
-          connected ? 
-          (  <>
-              {
-                farmTokenList.map((el, i) => {
-                  const info = farmTokenList[i]
-                  return (
-                    <DetailView key={i} lastElement={i === farmTokenList.length-1 ? "yes" : "no" } mode={switchMode}>
-                      <FlexDiv display="block">
-                        <Content width="5%">
-                          <BadgeIcon badgeBack={badgeIconBackColor}>
-                            <img src={info.chain} width={"17px"} height={"17px"} alt="" />
-                          </BadgeIcon>
+          {connected ? (
+            <>
+              {farmTokenList.map((el, i) => {
+                const info = farmTokenList[i]
+                return (
+                  <DetailView
+                    key={i}
+                    lastElement={i === farmTokenList.length - 1 ? 'yes' : 'no'}
+                    mode={switchMode}
+                  >
+                    <FlexDiv display="block">
+                      <Content width="5%">
+                        <BadgeIcon badgeBack={badgeIconBackColor}>
+                          <img src={info.chain} width="17px" height="17px" alt="" />
+                        </BadgeIcon>
+                      </Content>
+                      <Content width="30%" display="flex">
+                        {info.logos.length > 0 &&
+                          info.logos.map((elem, index) => (
+                            <img key={index} className="coin" width={37} src={elem} alt="" />
+                          ))}
+                        <Content marginLeft="11px">
+                          <ListItem weight={600} size={12} height={17} value={info.symbol} />
+                          <ListItem weight={400} size={12} height={16} value={info.platform} />
                         </Content>
-                        <Content width="30%" display="flex">
-                          {
-                            info.logos.length > 0 && info.logos.map((el, i) => (
-                              <img key={i} className="coin" width={37} src={el} alt="" />
-                            ))
-                          }
-                          <Content marginLeft="11px">
-                            <ListItem weight={600} size={12} height={17} value={info.symbol} />
-                            <ListItem weight={400} size={12} height={16} value={info.platform} />
-                          </Content>
-                        </Content>
-                        <Content width="10%">
-                          <Status status={info.status}>
-                            <img src={DotIcon} width={8} height={8} alt="" />
-                            {info.status}
-                          </Status>
-                        </Content>
-                        <Content width="15%">
-                          <ListItem weight={400} size={12} height={16} value={`$${info.unstake}`} />
-                        </Content>
-                        <Content width="15%">
-                          <ListItem weight={400} size={12} height={16} value={`$${info.stake}`} />
-                        </Content>
-                        <Content width="15%">
-                          <ListItem weight={400} size={12} height={16} label={`$${info.reward}`} icon={`/icons/${info.rewardSymbol}`} />
-                        </Content>
-                        <Content width="10%">
-                          <Btn>Manage</Btn>
-                        </Content>
-                      </FlexDiv>
-                    </DetailView>
-                )})
-              }
+                      </Content>
+                      <Content width="10%">
+                        <Status status={info.status}>
+                          <img src={DotIcon} width={8} height={8} alt="" />
+                          {info.status}
+                        </Status>
+                      </Content>
+                      <Content width="15%">
+                        <ListItem weight={400} size={12} height={16} value={`$${info.unstake}`} />
+                      </Content>
+                      <Content width="15%">
+                        <ListItem weight={400} size={12} height={16} value={`$${info.stake}`} />
+                      </Content>
+                      <Content width="15%">
+                        <ListItem
+                          weight={400}
+                          size={12}
+                          height={16}
+                          label={`$${info.reward}`}
+                          icon={`/icons/${info.rewardSymbol}`}
+                        />
+                      </Content>
+                      <Content width="10%">
+                        <Btn>Manage</Btn>
+                      </Content>
+                    </FlexDiv>
+                  </DetailView>
+                )
+              })}
             </>
           ) : (
             <>

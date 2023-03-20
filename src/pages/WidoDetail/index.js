@@ -139,7 +139,9 @@ const WidoDetail = () => {
   const { pools, userStats, fetchUserPoolStats } = usePools()
   const { account, balances, getWalletBalances } = useWallet()
   const { profitShareAPY } = useStats()
+  /* eslint-disable global-require */
   const { tokens } = require('../../data')
+  /* eslint-enable global-require */
 
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
@@ -244,7 +246,7 @@ const WidoDetail = () => {
   )
 
   const apyDaily = totalApy
-    ? ((Math.pow(Number(totalApy) / 100 + 1, 1 / 365) - 1) * 100).toFixed(3)
+    ? (((Number(totalApy) / 100 + 1) ** (1 / 365) - 1) * 100).toFixed(3)
     : null
   const showAPY = () => {
     return (
@@ -391,10 +393,10 @@ const WidoDetail = () => {
   const rewardSymbol = isSpecialVault ? id : token.apyTokenSymbols[0]
   useEffect(() => {
     const getTokenBalance = async () => {
-      try{
-        if(chain) {
-          const balances = await getBalances(account, [chain.toString()])
-          setBalanceList(balances)
+      try {
+        if (chain) {
+          const curBalances = await getBalances(account, [chain.toString()])
+          setBalanceList(curBalances)
           const supList = await getSupportedTokens({
             chainId: [chain],
           })

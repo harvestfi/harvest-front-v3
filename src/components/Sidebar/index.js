@@ -111,6 +111,7 @@ const SideLink = ({ item, subItem, isDropdownLink, fontColor, activeFontColor, f
   const { pathname } = useLocation()
 
   return (
+    /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
     <Link
       fontColor={fontColor}
       active={pathname.includes(item.path)}
@@ -201,9 +202,11 @@ const Sidebar = ({ width }) => {
 
   const switchTheme = () => setDarkMode(prev => !prev)
   useEffect(() => {
-    darkMode
-      ? document.documentElement.setAttribute('darkMode', '')
-      : document.documentElement.removeAttribute('darkMode', '')
+    if (darkMode) {
+      document.documentElement.setAttribute('darkMode', '')
+    } else {
+      document.documentElement.removeAttribute('darkMode', '')
+    }
   }, [darkMode])
 
   const { pathname } = useLocation()
@@ -448,7 +451,7 @@ const Sidebar = ({ width }) => {
       </Follow>
 
       <MobileView>
-        <button onClick={handleMobileShow}>
+        <button type="button" onClick={handleMobileShow}>
           <MobileToggle toggleColor={toggleColor} src={Toggle} alt="" />
         </button>
 

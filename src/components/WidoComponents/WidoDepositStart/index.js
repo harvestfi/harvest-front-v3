@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from 'react'
 import BigNumber from 'bignumber.js'
-import { quote } from 'wido'
-import { toast } from 'react-toastify'
 import CoinGecko from 'coingecko-api'
-import { useThemeContext } from '../../../providers/useThemeContext'
-import { SelectTokenWido, CloseBtn, NewLabel, Buttons } from './style'
-import WidoSwapToken from '../WidoSwapToken'
-import { mainWeb3, toWei, fromWei } from '../../../services/web3'
-import { useWallet } from '../../../providers/Wallet'
-import { formatNumberWido } from '../../../utils'
-import { Divider } from '../../GlobalStyle'
-import { WIDO_BALANCES_DECIMALS } from '../../../constants'
-import AnimatedDots from '../../AnimatedDots'
-import BackIcon from '../../../assets/images/logos/wido/back.svg'
+import React, { useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
+import { quote } from 'wido'
 import ArrowDownIcon from '../../../assets/images/logos/wido/arrowdown.svg'
+import BackIcon from '../../../assets/images/logos/wido/back.svg'
+import { WIDO_BALANCES_DECIMALS } from '../../../constants'
+import { useThemeContext } from '../../../providers/useThemeContext'
+import { useWallet } from '../../../providers/Wallet'
+import { fromWei, mainWeb3, toWei } from '../../../services/web3'
+import { formatNumberWido } from '../../../utils'
+import AnimatedDots from '../../AnimatedDots'
+import { Divider } from '../../GlobalStyle'
+import WidoSwapToken from '../WidoSwapToken'
+import { Buttons, CloseBtn, NewLabel, SelectTokenWido } from './style'
 // import RouteIcon from '../../../assets/images/logos/wido/route.svg'
 import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.svg'
+import IFARMIcon from '../../../assets/images/logos/wido/ifarm.svg'
 import SettingIcon from '../../../assets/images/logos/wido/setting.svg'
 import Swap2Icon from '../../../assets/images/logos/wido/swap2.svg'
-import IFARMIcon from '../../../assets/images/logos/wido/ifarm.svg'
 
 const CoinGeckoClient = new CoinGecko()
 
@@ -26,6 +26,7 @@ const getPrice = async () => {
   try {
     const data = await CoinGeckoClient.simple.price({
       ids: ['ethereum'],
+      /* eslint-disable camelcase */
       vs_currencies: ['usd'],
     })
 
@@ -43,7 +44,6 @@ const WidoDepositStart = ({
   finalStep,
   setFinalStep,
   startRoutes,
-  setStartRoutes,
   startSlippage,
   setStartSlippage,
   slippagePercentage,
@@ -97,7 +97,7 @@ const WidoDepositStart = ({
           )
           setQuoteValue(quoteResult)
 
-          let curToken = tokenList.filter(token => token.symbol === pickedToken.symbol)
+          let curToken = tokenList.filter(itoken => itoken.symbol === pickedToken.symbol)
           curToken = curToken[0]
 
           const fromInfoTemp =
@@ -131,8 +131,8 @@ const WidoDepositStart = ({
           setToInfo(toInfoTemp)
 
           try {
-            let gasFee = 0,
-              price = await getPrice()
+            let gasFee = 0
+            const price = await getPrice()
             await mainWeb3.eth.getGasPrice().then(result => {
               gasFee = mainWeb3.utils.fromWei(result, 'ether')
               gasFee *= price
