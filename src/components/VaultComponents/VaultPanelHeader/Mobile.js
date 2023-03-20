@@ -21,7 +21,7 @@ import {
   MobileVaultInfoContainer,
   MobileVaultValueContainer,
   PanelContainer,
-  TokenLogoContainer
+  TokenLogoContainer,
 } from './style'
 import VaultApy from './sub-components/VaultApy'
 import VaultName from './sub-components/VaultName'
