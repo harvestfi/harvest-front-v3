@@ -118,7 +118,7 @@ const Dashboard = () => {
         platform: ['Uniswap'],
         data: farmWethPool,
         vaultAddress: addresses.FARM_WETH_LP,
-        logoUrl: ['./icons/farm.svg', './icons/weth.svg'],
+        logoUrl: ['./icons/farm.svg', './icons/eth.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
         isNew: tokens[FARM_WETH_TOKEN_SYMBOL].isNew,
         balance: 'FARM_WETH_LP',
