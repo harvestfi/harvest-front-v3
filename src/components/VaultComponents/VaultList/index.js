@@ -1,16 +1,5 @@
 import BigNumber from 'bignumber.js'
-import {
-  debounce,
-  find,
-  get,
-  isArray,
-  isEqual,
-  keys,
-  orderBy,
-  sortBy,
-  uniq,
-  stringToArray,
-} from 'lodash'
+import { debounce, find, get, isArray, isEqual, keys, orderBy, sortBy, uniq } from 'lodash'
 import move from 'lodash-move'
 import React, { useMemo, useRef, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
@@ -28,7 +17,7 @@ import {
   IFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
 } from '../../../constants'
-import { CHAINS_ID, VAULT_CATEGORIES_IDS } from '../../../data/constants'
+import { CHAINS_ID } from '../../../data/constants'
 import { usePools } from '../../../providers/Pools'
 import { useStats } from '../../../providers/Stats'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -88,10 +77,7 @@ const formatVaults = (
     },
     // eslint-disable-next-line consistent-return
     key => {
-      if (
-        !get(groupOfVaults, `[${key}].isNew`, get(groupOfVaults, `[${key}].data.isNew`)) &&
-        stringToArray(groupOfVaults[key].category).includes(VAULT_CATEGORIES_IDS.GENERAL)
-      ) {
+      if (!get(groupOfVaults, `[${key}].isNew`, get(groupOfVaults, `[${key}].data.isNew`))) {
         return groupOfVaults[key]
       }
     },
