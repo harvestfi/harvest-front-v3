@@ -94,11 +94,6 @@ const WidoDepositSelectToken = ({
             setWidoPartHeight={setWidoPartHeight}
           />
         </NewLabel>
-
-        {/* <NewLabel marginBottom={"10px"}>
-          <NewLabel weight={"700"} size={"16px"} height={"21px"} color={"#1F2937"} marginBottom={"10px"}>Vaults</NewLabel>
-          <NewWidoTestDepositSelectTokenList withdraw={false} list={VaultList} clickId={clickVaultId} setClickedId={setClickedVaultId} setPickedToken={setPickedToken} setBalance={setBalance} />
-        </NewLabel> */}
       </SelectTokenWido>
     </SelectToken>
   )

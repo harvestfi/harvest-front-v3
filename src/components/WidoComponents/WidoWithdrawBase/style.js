@@ -14,30 +14,6 @@ const BaseWido = styled.div`
 
 const NewLabel = styled.div`
   ${props =>
-    props.left
-      ? `
-    left: ${props.left};
-  `
-      : ''}
-  ${props =>
-    props.zIndex
-      ? `
-    z-index: ${props.zIndex};
-  `
-      : ''}
-  ${props =>
-    props.top
-      ? `
-    top: ${props.top};
-  `
-      : ''}
-  ${props =>
-    props.right
-      ? `
-    right: ${props.right};
-  `
-      : ''}
-  ${props =>
     props.weight
       ? `
     font-weight: ${props.weight};
@@ -62,12 +38,6 @@ const NewLabel = styled.div`
   `
       : ''}
   ${props =>
-    props.align
-      ? `
-    text-align: ${props.align};
-  `
-      : ''}
-  ${props =>
     props.justifyContent
       ? `
     justify-content: ${props.justifyContent};
@@ -80,21 +50,9 @@ const NewLabel = styled.div`
   `
       : ''}
   ${props =>
-    props.marginLeft
-      ? `
-    margin-left: ${props.marginLeft};
-  `
-      : ''}
-  ${props =>
     props.marginBottom
       ? `
     margin-bottom: ${props.marginBottom};
-  `
-      : ''}
-  ${props =>
-    props.marginRight
-      ? `
-    margin-right: ${props.marginRight};
   `
       : ''}
   ${props =>
@@ -103,60 +61,6 @@ const NewLabel = styled.div`
     display: ${props.display};
   `
       : ''}
-  ${props =>
-    props.padding
-      ? `
-    padding: ${props.padding};
-  `
-      : ''}
-  ${props =>
-    props.background
-      ? `
-    background: ${props.background};
-  `
-      : ''}
-  ${props =>
-    props.items
-      ? `
-    align-items: ${props.items};
-  `
-      : ''}
-  ${props =>
-    props.self
-      ? `
-    align-self: ${props.self};
-  `
-      : ''}
-
-  img.icon {
-    margin-right: 10px;
-  }
-
-  img.info {
-    margin-left: 10px;
-  }
-
-  img.info-icon {
-    margin-left: 15px;
-  }
-
-  @media screen and (max-width: 992px) {
-    img.icon {
-      margin-right: 5px;
-    }
-
-    img.info {
-      margin-left: 5px;
-    }
-  }
-`
-
-const SelectToken = styled.div`
-  border: 1px solid #e9e9e9;
-  border-radius: 12px;
-  padding: 30px 15px 12px 15px;
-  margin-bottom: 30px;
-  margin-top: 10px;
 `
 
 const TokenInfo = styled.div`
@@ -198,21 +102,6 @@ const TokenSelect = styled.button`
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-`
-
-const BalanceInfo = styled.div`
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 21px;
-  color: #1f2937;
-
-  span {
-    margin-left: 6px;
-    font-weight: 700;
-    font-size: 16px;
-    line-height: 21px;
-    color: rgba(31, 41, 55, 0.7);
   }
 `
 
@@ -264,31 +153,6 @@ const StakeInfo = styled.div`
   line-height: 21px;
 `
 
-const StakeAction = styled.div`
-  margin-top: 34px;
-  display: flex;
-  justify-content: space-between;
-`
-
-const BalanceInput = styled.input`
-  background: rgba(255, 255, 255, 0.5);
-  border: 1px solid #e9e9e9;
-  border-radius: 12px;
-  width: 100%;
-  height: 50px;
-  padding: 10px 80px 10px 20px;
-  font-weight: 700;
-  font-size: 20px;
-  line-height: 26px;
-  outline: none;
-
-  &::-webkit-outer-spin-button,
-  &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-`
-
 const Max = styled.button`
   position: absolute;
   right: 16px;
@@ -302,17 +166,6 @@ const Max = styled.button`
   font-size: 12px;
   line-height: 20px;
   color: #ffffff;
-`
-
-const Part = styled.div`
-  position: relative;
-
-  ${props =>
-    props.width
-      ? `
-    width: ${props.width};
-  `
-      : ''}
 `
 
 const Balance = styled.div`
@@ -350,17 +203,12 @@ const TokenAmount = styled.input`
 export {
   BaseWido,
   NewLabel,
-  SelectToken,
   TokenAmount,
   TokenInfo,
   TokenSelect,
-  BalanceInfo,
   PoweredByWido,
   TokenName,
   StakeInfo,
-  Part,
   Max,
-  BalanceInput,
-  StakeAction,
   Balance,
 }

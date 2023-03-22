@@ -16,7 +16,6 @@ const VaultPanel = ({ token, loaded, tokenSymbol, tokenNum, vaultsCount, ...prop
   const { account, logout, chainId } = useWallet()
   const { vaultsData } = useVaults()
   const [loadingFarmingBalance] = useState(false)
-  // const [vaultLoading, setVaultLoading] = useState(true)
 
   const isSpecialVault = token.liquidityPoolVault || token.poolVault
 

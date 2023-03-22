@@ -54,18 +54,6 @@ const NewLabel = styled.div`
   `
       : ''}
   ${props =>
-    props.position
-      ? `
-    position: ${props.position};
-  `
-      : ''}
-  ${props =>
-    props.align
-      ? `
-    text-align: ${props.align};
-  `
-      : ''}
-  ${props =>
     props.justifyContent
       ? `
     justify-content: ${props.justifyContent};
@@ -101,40 +89,6 @@ const NewLabel = styled.div`
     display: ${props.display};
   `
       : ''}
-  ${props =>
-    props.items
-      ? `
-    align-items: ${props.items};
-  `
-      : ''}
-  ${props =>
-    props.self
-      ? `
-    align-self: ${props.self};
-  `
-      : ''}
-
-  img.icon {
-    margin-right: 10px;
-  }
-
-  img.info {
-    margin-left: 10px;
-  }
-
-  img.info-icon {
-    margin-left: 15px;
-  }
-
-  @media screen and (max-width: 992px) {
-    img.icon {
-      margin-right: 5px;
-    }
-
-    img.info {
-      margin-left: 5px;
-    }
-  }
 `
 
 const Search = styled.img`

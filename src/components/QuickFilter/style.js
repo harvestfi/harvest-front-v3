@@ -245,7 +245,6 @@ const ChainButton = styled.button`
   align-items: center;
   width: 50px;
   height: 50px;
-  border: none;
   border-radius: 12px;
   margin-right: 21px;
   border: 1px solid ${props => props.borderColor};

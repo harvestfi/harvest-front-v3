@@ -127,28 +127,6 @@ const NewLabel = styled.div`
     align-self: ${props.self};
   `
       : ''}
-
-  img.icon {
-    margin-right: 10px;
-  }
-
-  img.info {
-    margin-left: 10px;
-  }
-
-  img.info-icon {
-    margin-left: 15px;
-  }
-
-  @media screen and (max-width: 992px) {
-    img.icon {
-      margin-right: 5px;
-    }
-
-    img.info {
-      margin-left: 5px;
-    }
-  }
 `
 
 const SelectToken = styled.div`
@@ -244,7 +222,6 @@ const TokenName = styled.div`
   font-weight: 500;
   font-size: 14px;
   line-height: 18px;
-  // text-decoration-line: underline;
   background: #ecfdf3;
   color: #027a48;
   border-radius: 16px;

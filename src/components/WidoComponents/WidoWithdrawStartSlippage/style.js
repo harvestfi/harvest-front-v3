@@ -106,12 +106,6 @@ const NewLabel = styled.div`
   `
       : ''}
   ${props =>
-    props.marginTop
-      ? `
-    margin-top: ${props.marginTop};
-  `
-      : ''}
-  ${props =>
     props.marginLeft
       ? `
     margin-left: ${props.marginLeft};
@@ -121,12 +115,6 @@ const NewLabel = styled.div`
     props.marginBottom
       ? `
     margin-bottom: ${props.marginBottom};
-  `
-      : ''}
-  ${props =>
-    props.marginRight
-      ? `
-    margin-right: ${props.marginRight};
   `
       : ''}
   ${props =>
@@ -141,19 +129,6 @@ const NewLabel = styled.div`
     border-radius: ${props.borderRadius} !important;
   `
       : ''}
-  ${props =>
-    props.items
-      ? `
-    align-items: ${props.items};
-  `
-      : ''}
-  ${props =>
-    props.self
-      ? `
-    align-self: ${props.self};
-  `
-      : ''}
-
   ${props =>
     props.width
       ? `
@@ -170,9 +145,6 @@ const NewLabel = styled.div`
     border-top: 0px;
     border-left: 0px;
     border-bottom: 0px;
-  }
-
-  @media screen and (max-width: 992px) {
   }
 `
 

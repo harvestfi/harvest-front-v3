@@ -319,7 +319,6 @@ const Sidebar = ({ width }) => {
                       src={chainObject.iconUrl}
                       style={{ width: 17, height: 17 }}
                     />
-                    {/* <img className="narrow" src={DropDownNarrow} alt="" /> */}
                   </UserDropDown>
 
                   <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
@@ -524,7 +523,6 @@ const Sidebar = ({ width }) => {
                           src={chainObject.iconUrl}
                           style={{ width: 17, height: 17 }}
                         />
-                        {/* <img className="narrow" src={DropDownNarrow} alt="" /> */}
                       </UserDropDown>
 
                       <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
@@ -710,11 +708,9 @@ const Sidebar = ({ width }) => {
         ) : (
           <MobileConnectBtn
             color="connectwallet"
-            // openHambuger={openedHambuger}
             onClick={() => {
               connect()
             }}
-            // minWidth="auto"
           >
             <img src={MobileConnect} alt="" />
           </MobileConnectBtn>

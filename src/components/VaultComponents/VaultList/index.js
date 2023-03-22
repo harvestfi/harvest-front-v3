@@ -612,7 +612,6 @@ const VaultList = () => {
               <div>
                 Sort By: <b>{sortId === -1 ? '' : SortsList[sortId].name}</b>
               </div>
-              {/* <img className="narrow" src={DropDownNarrow} alt="" /> */}
             </Dropdown.Toggle>
 
             <Dropdown.Menu className="menu">
@@ -630,19 +629,10 @@ const VaultList = () => {
               ))}
             </Dropdown.Menu>
           </Dropdown>
-          {/* <div className='filter-sort'>
-            <Filtersinput placeholder='Sort by: (ex: APY)' onChange={updateSortQuery} />
-            <img src={MobileFilterSortIcon} alt="" />
-          </div> */}
         </MobileListFilter>
         <Header fontColor={fontColor} filterColor={filterColor}>
           <HeaderCol width="30%" />
-          <HeaderCol
-            justifyContent="start"
-            width="15%"
-            textAlign="right"
-            // onClick={() => setSortingParams('displayName')}
-          >
+          <HeaderCol justifyContent="start" width="15%" textAlign="right">
             <ThemeMode
               mode={switchBalance ? 'usd' : 'token'}
               backColor={toggleBackColor}

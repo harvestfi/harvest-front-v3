@@ -12,100 +12,6 @@ const BaseWido = styled.div`
       : 'display: none;'}
 `
 
-const NewLabel = styled.div`
-  font-weight: ${props => props.weight || '400'};
-  font-size: ${props => props.size || '20px'};
-  line-height: ${props => props.height || '0px'};
-  ${props =>
-    props.color
-      ? `
-    color: ${props.color};
-  `
-      : ''}
-  ${props =>
-    props.position
-      ? `
-    position: ${props.position};
-  `
-      : ''}
-  ${props =>
-    props.align
-      ? `
-    text-align: ${props.align};
-  `
-      : ''}
-  ${props =>
-    props.justifyContent
-      ? `
-    justify-content: ${props.justifyContent};
-  `
-      : ''}
-  ${props =>
-    props.marginTop
-      ? `
-    margin-top: ${props.marginTop};
-  `
-      : ''}
-  ${props =>
-    props.marginLeft
-      ? `
-    margin-left: ${props.marginLeft};
-  `
-      : ''}
-  ${props =>
-    props.marginBottom
-      ? `
-    margin-bottom: ${props.marginBottom};
-  `
-      : ''}
-  ${props =>
-    props.marginRight
-      ? `
-    margin-right: ${props.marginRight};
-  `
-      : ''}
-  ${props =>
-    props.display
-      ? `
-    display: ${props.display};
-  `
-      : ''}
-  ${props =>
-    props.items
-      ? `
-    align-items: ${props.items};
-  `
-      : ''}
-  ${props =>
-    props.self
-      ? `
-    align-self: ${props.self};
-  `
-      : ''}
-
-  img.icon {
-    margin-right: 10px;
-  }
-
-  img.info {
-    margin-left: 10px;
-  }
-
-  img.info-icon {
-    margin-left: 15px;
-  }
-
-  @media screen and (max-width: 992px) {
-    img.icon {
-      margin-right: 5px;
-    }
-
-    img.info {
-      margin-left: 5px;
-    }
-  }
-`
-
 const SelectToken = styled.div`
   background: ${props => props.backColor};
   border: 1px solid ${props => props.borderColor};
@@ -245,63 +151,6 @@ const StakeInfo = styled.div`
   line-height: 21px;
 `
 
-const StakeAction = styled.div`
-  margin-top: 20px;
-  display: flex;
-  justify-content: space-between;
-`
-
-const BalanceInput = styled.input`
-  background: ${props => props.backColor};
-  border: 1px solid ${props => props.borderColor};
-  color: ${props => props.fontColor};
-  transition: 0.25s;
-
-  border-radius: 8px;
-  width: 100%;
-  height: 50px;
-  padding: 18px 80px 18px 12px;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 24px;
-  outline: none;
-
-  &::-webkit-outer-spin-button,
-  &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-    margin: 0;
-  }
-`
-
-const Max = styled.button`
-  position: absolute;
-  right: 16px;
-  top: 12px;
-  border: none;
-  background: #ffaa34;
-  border-radius: 1.5px;
-  padding: 5px 8px;
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 16px;
-  color: #ffffff;
-
-  &:hover {
-    background: #ffaa34d0;
-  }
-`
-
-const Part = styled.div`
-  position: relative;
-
-  ${props =>
-    props.width
-      ? `
-    width: ${props.width};
-  `
-      : ''}
-`
-
 const TokenUSD = styled.div`
   font-size: 16px;
   line-height: 22px;
@@ -425,7 +274,6 @@ const FarmInfo = styled.div`
 
 export {
   BaseWido,
-  NewLabel,
   SelectToken,
   TokenAmount,
   TokenInfo,
@@ -434,10 +282,6 @@ export {
   PoweredByWido,
   TokenName,
   StakeInfo,
-  Part,
-  Max,
-  BalanceInput,
-  StakeAction,
   TokenUSD,
   DepoTitle,
   Line,

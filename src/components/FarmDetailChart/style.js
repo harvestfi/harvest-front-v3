@@ -75,7 +75,6 @@ const ButtonGroup = styled.div`
 `
 
 const ChartDiv = styled.div`
-  // display: flex;
   height: 100%;
 `
 

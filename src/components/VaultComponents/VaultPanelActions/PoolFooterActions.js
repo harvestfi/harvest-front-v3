@@ -23,7 +23,6 @@ import {
 import Button from '../../Button'
 import {
   Div,
-  // MarginTopDiv,
   InfoIcon,
   SelectedVault,
   SelectedVaultContainer,
@@ -31,7 +30,6 @@ import {
   SelectedVaultNumber,
   USDValue,
 } from './style'
-// import VaultPanelModeSwitch from '../../VaultPanelModeSwitch'
 import Info from '../../../assets/images/logos/earn/info.svg'
 import { fromWei } from '../../../services/web3'
 import AnimatedDots from '../../AnimatedDots'

@@ -14,8 +14,6 @@ const Container = styled.div`
   }
   border: 1px solid ${props => props.borderColor};
 
-  // width: 300px;
-
   input {
     width: 100%;
     border-width: 0px;
@@ -23,7 +21,6 @@ const Container = styled.div`
     border-radius: 10px;
     color: ${props => props.fontColor};
     transition: 0.25s;
-    // height: 41px;
     margin: 0;
     padding: 10px 30px 9px 0px;
     outline: 0;
