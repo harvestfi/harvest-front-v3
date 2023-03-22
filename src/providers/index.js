@@ -3,7 +3,7 @@ import '@rainbow-me/rainbowkit/dist/index.css'
 import { Web3ReactProvider } from '@web3-react/core'
 import { ethers } from 'ethers'
 import React from 'react'
-import { chain, configureChains, createClient, WagmiConfig } from 'wagmi'
+import { chain as curChain, configureChains, createClient, WagmiConfig } from 'wagmi'
 import { alchemyProvider } from 'wagmi/providers/alchemy'
 import { publicProvider } from 'wagmi/providers/public'
 import { ActionsProvider } from './Actions'
@@ -15,7 +15,7 @@ import { VaultsProvider } from './Vault'
 import { WalletProvider } from './Wallet'
 
 const { chains, provider } = configureChains(
-  [chain.mainnet, chain.polygon, chain.optimism, chain.arbitrum],
+  [curChain.mainnet, curChain.polygon, curChain.optimism, curChain.arbitrum],
   [alchemyProvider({ alchemyId: process.env.REACT_APP_INFURA_KEY }), publicProvider()],
 )
 
@@ -44,7 +44,7 @@ const Providers = ({ children }) => (
           <ConnectButton.Custom>
             {({
               account,
-              curChain,
+              chain,
               openAccountModal,
               openChainModal,
               openConnectModal,
@@ -57,14 +57,14 @@ const Providers = ({ children }) => (
               const connected =
                 ready &&
                 account &&
-                curChain &&
+                chain &&
                 (!authenticationStatus || authenticationStatus === 'authenticated')
               const address = account ? account.address : null
               return (
                 <WalletProvider
                   accountAddress={address}
                   connectedStatus={connected}
-                  chainObj={curChain}
+                  chainObj={chain}
                   openConnectModal={openConnectModal}
                   openAccountModal={openAccountModal}
                   openChainModal={openChainModal}
