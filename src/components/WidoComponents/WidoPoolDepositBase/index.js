@@ -171,7 +171,6 @@ const WidoPoolDepositBase = ({
       toast.error('Please input balance to deposit!')
       return
     }
-    // setStartSlippage(true)
     if (!legacyStaking) {
       setDepositWido(true)
     } else {

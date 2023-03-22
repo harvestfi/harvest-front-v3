@@ -541,7 +541,6 @@ const UserDropDownItem = styled(Dropdown.Item)`
   text-align: left;
   display: flex !important;
   justify-content: start;
-  // background: white;
   ${props =>
     props.bordercolor
       ? `

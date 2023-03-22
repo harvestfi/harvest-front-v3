@@ -21,11 +21,9 @@ import tokenMethods from '../../../services/web3/contracts/token/methods'
 import vaultMethods from '../../../services/web3/contracts/vault/methods'
 import { convertAmountToFARM } from '../../../utils'
 import UniV3ManagedVaultActions from './UniV3ManagedVaultActions'
-// import VaultFooterActions from './VaultFooterActions'
 import PoolHeadActions from './PoolHeadActions'
 import VaultHeadActions from './VaultHeadActions'
 import VaultBodyActions from './VautBodyActions'
-// import PoolFooterActions from './PoolFooterActions'
 import { CHAINS_ID } from '../../../data/constants'
 import PoolBodyActions from './PoolBodyActions'
 import VaultHeadActionsMigrate from './VaultHeadActionsMigrate'
@@ -40,15 +38,6 @@ const getPoolRewardSymbol = chain => {
     return MIFARM_TOKEN_SYMBOL
   }
   return FARM_TOKEN_SYMBOL
-
-  // switch (Number(chain)) {
-  //   case CHAINS_ID.BSC_MAINNET:
-  //     return BFARM_TOKEN_SYMBOL
-  //   case CHAINS_ID.MATIC_MAINNET:
-  //     return MIFARM_TOKEN_SYMBOL
-  //   default:
-  //     return FARM_TOKEN_SYMBOL
-  // }
 }
 
 const VaultPanelActions = ({
@@ -243,7 +232,6 @@ const VaultPanelActions = ({
     return (
       <>
         <PoolBodyActions {...componentsProps} />
-        {/* <PoolFooterActions {...componentsProps} /> */}
       </>
     )
   }
@@ -251,7 +239,6 @@ const VaultPanelActions = ({
   return (
     <>
       <VaultBodyActions {...componentsProps} />
-      {/* <VaultFooterActions {...componentsProps} /> */}
     </>
   )
 }

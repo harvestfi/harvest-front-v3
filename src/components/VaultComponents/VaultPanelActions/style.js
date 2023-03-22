@@ -155,10 +155,6 @@ const SelectedVaultTokenInfo = styled.div`
   align-items: center;
 `
 
-const MarginTopDiv = styled.div`
-  margin-top: 10px;
-`
-
 const Div = styled.div`
   margin-left: 20px;
   align-self: center;
@@ -191,7 +187,6 @@ export {
   VaultRangeContainer,
   VaultRange,
   MigrateOptionsContainer,
-  MarginTopDiv,
   Div,
   InfoIcon,
   USDValue,

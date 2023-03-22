@@ -127,7 +127,6 @@ const ApexChart = ({ data, lastAPY, specVault }) => {
       show: false,
     },
     stroke: {
-      // colors: [specVault === 'false' ? '#12B76A' : 'white'],
       colors: ['#12B76A'],
       width: 3,
     },

@@ -55,13 +55,6 @@ const NewLabel = styled.div`
     font-weight: ${props.weight};
   `
       : ''}
-  
-  ${props =>
-    props.position
-      ? `
-    position: ${props.position};
-  `
-      : ''}
   ${props =>
     props.align
       ? `
@@ -81,21 +74,9 @@ const NewLabel = styled.div`
   `
       : ''}
   ${props =>
-    props.marginLeft
-      ? `
-    margin-left: ${props.marginLeft};
-  `
-      : ''}
-  ${props =>
     props.marginBottom
       ? `
     margin-bottom: ${props.marginBottom};
-  `
-      : ''}
-  ${props =>
-    props.marginRight
-      ? `
-    margin-right: ${props.marginRight};
   `
       : ''}
   ${props =>
@@ -110,34 +91,6 @@ const NewLabel = styled.div`
     align-items: ${props.items};
   `
       : ''}
-  ${props =>
-    props.self
-      ? `
-    align-self: ${props.self};
-  `
-      : ''}
-
-  img.icon {
-    margin-right: 10px;
-  }
-
-  img.info {
-    margin-left: 10px;
-  }
-
-  img.info-icon {
-    margin-left: 15px;
-  }
-
-  @media screen and (max-width: 992px) {
-    img.icon {
-      margin-right: 5px;
-    }
-
-    img.info {
-      margin-left: 5px;
-    }
-  }
 `
 
 const Search = styled.img`

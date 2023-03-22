@@ -190,7 +190,6 @@ const WidoDepositStart = ({
           alt=""
           onClick={() => {
             setDepositWido(false)
-            // setStartSlippage(true)
           }}
           filterColor={filterColor}
         />

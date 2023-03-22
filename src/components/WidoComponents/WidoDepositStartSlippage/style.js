@@ -88,12 +88,6 @@ const NewLabel = styled.div`
   `
       : ''}
   ${props =>
-    props.position
-      ? `
-    position: ${props.position};
-  `
-      : ''}
-  ${props =>
     props.align
       ? `
     text-align: ${props.align};
@@ -121,12 +115,6 @@ const NewLabel = styled.div`
     props.marginBottom
       ? `
     margin-bottom: ${props.marginBottom};
-  `
-      : ''}
-  ${props =>
-    props.marginRight
-      ? `
-    margin-right: ${props.marginRight};
   `
       : ''}
   ${props =>

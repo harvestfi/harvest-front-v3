@@ -17,7 +17,6 @@ const WidoDepositStartSlippage = ({
 
   const percentList = [0.1, 0.5, 1]
 
-  // const [customInput, setCustomInput] = useState("")
   const { backColor, filterColor, widoInputPanelBorderColor } = useThemeContext()
   return (
     <SelectTokenWido show={startSlippage} backColor={backColor}>

@@ -131,7 +131,6 @@ const WidoDepositBase = ({
       toast.error('Please input amount for deposit!')
       return
     }
-    // setStartSlippage(true)
     setDepositWido(true)
   }
 

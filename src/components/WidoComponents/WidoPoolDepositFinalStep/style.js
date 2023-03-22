@@ -40,12 +40,6 @@ const FilterInput = styled.input`
 
 const NewLabel = styled.div`
   ${props =>
-    props.borderRadius
-      ? `
-    border-radius: ${props.borderRadius};
-    `
-      : ''}
-  ${props =>
     props.height
       ? `
     line-height: ${props.height};
@@ -64,24 +58,6 @@ const NewLabel = styled.div`
   `
       : ''}
   ${props =>
-    props.background
-      ? `
-    background: ${props.background};
-  `
-      : ''}
-  ${props =>
-    props.position
-      ? `
-    position: ${props.position};
-  `
-      : ''}
-  ${props =>
-    props.align
-      ? `
-    text-align: ${props.align};
-  `
-      : ''}
-  ${props =>
     props.justifyContent
       ? `
     justify-content: ${props.justifyContent};
@@ -94,21 +70,9 @@ const NewLabel = styled.div`
   `
       : ''}
   ${props =>
-    props.marginLeft
-      ? `
-    margin-left: ${props.marginLeft};
-  `
-      : ''}
-  ${props =>
     props.marginBottom
       ? `
     margin-bottom: ${props.marginBottom};
-  `
-      : ''}
-  ${props =>
-    props.marginRight
-      ? `
-    margin-right: ${props.marginRight};
   `
       : ''}
   ${props =>
@@ -117,52 +81,6 @@ const NewLabel = styled.div`
     display: ${props.display};
   `
       : ''}
-  ${props =>
-    props.padding
-      ? `
-    padding: ${props.padding};
-  `
-      : ''}
-  ${props =>
-    props.items
-      ? `
-    align-items: ${props.items};
-  `
-      : ''}
-  ${props =>
-    props.self
-      ? `
-    align-self: ${props.self};
-  `
-      : ''}
-
-  img.icon {
-    margin-right: 10px;
-  }
-
-  img.info {
-    margin-left: 10px;
-  }
-
-  img.info-icon {
-    margin-left: 15px;
-  }
-
-  @media screen and (max-width: 992px) {
-    img.icon {
-      margin-right: 5px;
-    }
-
-    img.info {
-      margin-left: 5px;
-    }
-  }
-`
-
-const Search = styled.img`
-  position: absolute;
-  left: 9px;
-  top: 13px;
 `
 
 const Buttons = styled.button`
@@ -252,7 +170,6 @@ const CloseButton = styled.button`
   font-weight: 700;
 
   border-radius: 12px;
-  // padding: 15px 25px;
   border: none;
   outline: none;
   width: fit-content;
@@ -260,13 +177,4 @@ const CloseButton = styled.button`
   margin: 15px auto 20px auto;
 `
 
-export {
-  SelectTokenWido,
-  CloseBtn,
-  FilterInput,
-  NewLabel,
-  Search,
-  Buttons,
-  ExecuteButton,
-  CloseButton,
-}
+export { SelectTokenWido, CloseBtn, FilterInput, NewLabel, Buttons, ExecuteButton, CloseButton }

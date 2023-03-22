@@ -84,7 +84,6 @@ const MobilePanelHeader = ({
     <PanelContainer fontColor={fontColor} borderColor={borderColor}>
       <DetailModal className="vault-detail" show={show} onHide={handleClose}>
         <Modal.Header>
-          {/* <img src={DetailClose} onClick={handleClose} alt="" /> */}
           <input type="image" alt="" src={DetailClose} onClick={handleClose} />
         </Modal.Header>
         <Modal.Body>
