@@ -32,6 +32,7 @@ const FarmContent = styled.div`
 
   @media screen and (max-width: 992px) {
     padding: 0px 10px;
+    display: block;
   }
 `
 
@@ -55,6 +56,10 @@ const BottomPart = styled.div`
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+
+  @media screen and (max-width: 992px) {
+    width: 100%;
+  }
 `
 
 const FarmHeader = styled.div`
@@ -83,6 +88,10 @@ const ProfitShare = styled.div`
   margin: 16px 0;
   text-align: left;
   text-decoration: none;
+
+  @media screen and (max-width: 992px) {
+    width: 100%;
+  }
 `
 
 export {

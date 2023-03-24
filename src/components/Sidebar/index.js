@@ -18,10 +18,8 @@ import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
 import ConnectButtonIcon from '../../assets/images/logos/sidebar/link_white_connect_button.svg'
 import LogoutIcon from '../../assets/images/logos/sidebar/logout.svg'
 import MobileConnect from '../../assets/images/logos/sidebar/mobileconnect.svg'
-import Moon from '../../assets/images/logos/sidebar/moon.svg'
 import polygon from '../../assets/images/logos/sidebar/polygon.svg'
 import ProfitSharingIcon from '../../assets/images/logos/sidebar/profit-sharing.svg'
-import Sun from '../../assets/images/logos/sidebar/sun.svg'
 import Toggle from '../../assets/images/logos/sidebar/toggle.svg'
 import { DECIMAL_PRECISION, FARM_TOKEN_SYMBOL, ROUTES, SPECIAL_VAULTS } from '../../constants'
 import { CHAINS_ID } from '../../data/constants'
@@ -186,12 +184,6 @@ const Sidebar = ({ width }) => {
     filterColor,
     hoverImgColor,
     sidebarEffect,
-    switchDarkIconFilter,
-    switchLightIconFilter,
-    switchLightBorder,
-    switchDarkBorder,
-    switchDarkBack,
-    switchLightBack,
     toggleColor,
     borderColor,
     connectWalletBtnBackColor,
@@ -650,26 +642,15 @@ const Sidebar = ({ width }) => {
             <MobileFollow>
               <Social />
               <ThemeMode
-                switchDarkIconFilter={switchDarkIconFilter}
-                switchLightIconFilter={switchLightIconFilter}
-                switchLightBorder={switchLightBorder}
-                switchDarkBorder={switchDarkBorder}
-                switchDarkBack={switchDarkBack}
-                switchLightBack={switchLightBack}
+                mode={darkMode ? 'dark' : 'light'}
+                backColor={toggleBackColor}
+                borderColor={borderColor}
               >
-                <div id="switch-theme" className="ms-3">
-                  <div className="track-switch">
-                    <div className="switch-light">
-                      <span className="switch-icon">
-                        <img src={Sun} alt="" />
-                      </span>
-                    </div>
-                    <div className="switch-dark">
-                      <span className="switch-icon">
-                        <img src={Moon} alt="" />
-                      </span>
-                    </div>
+                <div id="theme-switch">
+                  <div className="switch-track">
+                    <div className="switch-thumb" />
                   </div>
+
                   <input
                     type="checkbox"
                     checked={darkMode}
