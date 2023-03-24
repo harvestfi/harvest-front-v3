@@ -605,6 +605,10 @@ const ProfitSharing = styled.div`
   position: relative;
   padding: 15px 18px;
   border-radius: 13px;
+
+  @media screen and (max-width: 992px) {
+    display: none;
+  }
 `
 
 const ProfitBack = styled.img`

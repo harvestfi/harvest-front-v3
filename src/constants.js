@@ -25,7 +25,6 @@ export const ROUTES = {
   DOC: '/doc',
   FAQ: '/faq',
   GRAIN: '/grain',
-  FARMDETAIL: '/farm/:id',
   WIDODETAIL: '/wido-test/:id',
   WORK: '/work',
   POOL: '/pool',
