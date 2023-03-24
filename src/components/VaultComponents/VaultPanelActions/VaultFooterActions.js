@@ -87,7 +87,7 @@ const VaultFooterActions = ({
         tokenNames: ['FARM, ETH'], // 'FARM/ETH',
         platform: ['Uniswap'],
         data: farmWethPool,
-        logoUrl: ['./icons/farm.svg', './icons/weth.svg'],
+        logoUrl: ['./icons/farm.svg', './icons/eth.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
         isNew: tokens[FARM_WETH_TOKEN_SYMBOL].isNew,
       },
