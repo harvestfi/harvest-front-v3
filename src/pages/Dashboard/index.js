@@ -196,7 +196,7 @@ const Dashboard = () => {
       }
       loadUserPoolsStats()
     }
-  }, [account, fetchUserPoolStats, pools, depositToken, groupOfVaults, userStats])
+  }, [account, fetchUserPoolStats, pools, depositToken]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!isEmpty(userStats) && account) {
@@ -261,7 +261,7 @@ const Dashboard = () => {
             stats.symbol = symbol
             stats.logos = token.logoUrl
             stats.chain = getChainIcon(token.chain)
-            stats.platform = useIFARM ? tokens[IFARM_TOKEN_SYMBOL].subLabel : token.subLabel || ''
+            stats.platform = useIFARM ? 'FARM' : token.subLabel || ''
 
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
             if (isSpecialVault) {
@@ -309,7 +309,10 @@ const Dashboard = () => {
             stats.reward =
               rewards === '0'
                 ? 0
-                : fromWei(rewards, tokens[rewardTokenSymbols[0]].decimals) * usdRewardPrice
+                : fromWei(
+                    rewards,
+                    (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
+                  ) * usdRewardPrice
             stats.reward = formatNumber(stats.reward, POOL_BALANCES_DECIMALS)
             valueRewards += Number(stats.reward)
             stats.rewardSymbol = rewardTokenSymbols[0]
@@ -325,7 +328,7 @@ const Dashboard = () => {
 
       getFarmTokenInfo()
     }
-  }, [account, userStats, balances, depositToken, groupOfVaults, pools, tokens])
+  }, [account, userStats, balances]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Container pageBackColor={pageBackColor} fontColor={fontColor}>
