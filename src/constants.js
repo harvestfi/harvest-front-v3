@@ -49,8 +49,8 @@ export const POLL_BOOST_USER_DATA_INTERVAL_MS = 5000
 export const INFURA_URL = `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_INFURA_KEY}`
 export const MATIC_URL = `https://polygon-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_MATIC_INFURA_KEY}`
 // export const ETH_URL = `https://rpc.builder0x69.io`
-export const ETH_URL = 'https://rpc.ankr.com/eth'
-// export const ETH_URL = 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'
+// export const ETH_URL = 'https://rpc.ankr.com/eth'
+export const ETH_URL = 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'
 export const ARBITRUM_URL = `https://arb-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_INFURA_KEY}`
 
 export const ETHERSCAN_URL = 'https://etherscan.io'
@@ -519,6 +519,7 @@ export const SPECIAL_VAULTS = {
   FARM_WETH_POOL_ID: 'farm-weth',
   FARM_GRAIN_POOL_ID: 'farm-grain',
   FARM_USDC_POOL_ID: 'uni-farm-usdc',
+  FARMSTEAD_USDC_POOL_ID: 'farmstead-usdc',
 }
 
 export const DISABLED_DEPOSITS = [
