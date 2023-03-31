@@ -216,7 +216,7 @@ const WidoDepositBase = ({
       <div>
         <TokenName>
           <img src={FARMIcon} width={20} height={20} alt="" />
-          {token.balance}
+          {`f${symbol}`}
         </TokenName>
         <StakeInfo>
           Unstaked
