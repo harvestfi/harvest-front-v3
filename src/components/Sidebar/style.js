@@ -210,6 +210,7 @@ const ConnectButtonStyle = styled.button`
   border: 1px solid #d0d5dd;
   color: #344054;
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
+  cursor: pointer;
 
   ${props =>
     props.connected
