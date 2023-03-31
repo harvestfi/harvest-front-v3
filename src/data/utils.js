@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { infuraWeb3, newContractInstance } from '../services/web3'
-import addresses from './harvest-api/data/mainnet/addresses.json'
+import addresses from './harvest-api-v3/data/mainnet/addresses.json'
 import uniswapContract from '../services/web3/contracts/uniswap/contract.json'
 import uniswapMethods from '../services/web3/contracts/uniswap/methods'
 
