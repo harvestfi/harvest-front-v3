@@ -60,11 +60,11 @@ const VaultUserBalance = ({
   return (
     <Monospace
       borderBottom={connected && !isLoadingUserBalance && multipleAssets && '1px dotted black'}
-      fontWeight={'600'}
+      fontWeight="600"
     >
-      {!connected ? 
-        "" :
-      isLoadingUserBalance ? (
+      {!connected ? (
+        ''
+      ) : isLoadingUserBalance ? (
         <AnimatedDots />
       ) : (
         <>
@@ -77,13 +77,21 @@ const VaultUserBalance = ({
                 2,
               )}`
             : formatNumber(
-                new BigNumber(fromWei(
-                  userVaultBalance,
-                  isSpecialVault ? get(token, 'data.watchAsset.decimals', 18) : token.decimals,
-                  5,
-                ))
-                .multipliedBy(switchBalance ? (tokenSymbol === FARM_TOKEN_SYMBOL ? token.data.lpTokenData.price : token.usdPrice) || 1 : 1)
-                .toString(),
+                new BigNumber(
+                  fromWei(
+                    userVaultBalance,
+                    isSpecialVault ? get(token, 'data.watchAsset.decimals', 18) : token.decimals,
+                    5,
+                  ),
+                )
+                  .multipliedBy(
+                    switchBalance
+                      ? (tokenSymbol === FARM_TOKEN_SYMBOL
+                          ? token.data.lpTokenData.price
+                          : token.usdPrice) || 1
+                      : 1,
+                  )
+                  .toString(),
                 2,
               )}
         </>

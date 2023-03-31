@@ -1,15 +1,17 @@
 import styled from 'styled-components'
 
 const SelectToken = styled.div`
-  ${props => props.show ? `
+  ${props =>
+    props.show
+      ? `
     display: block;
     height: 100%;
-  ` : "display: none;"   
-  }
+  `
+      : 'display: none;'}
 `
 
 const SelectTokenWido = styled.div`
-  border: 1px solid ${props=>props.borderColor};
+  border: 1px solid ${props => props.borderColor};
   border-radius: 12px;
   padding: 12px 17px;
   transition: 0.25s;
@@ -19,16 +21,16 @@ const SelectTokenWido = styled.div`
 const CloseBtn = styled.img`
   cursor: pointer;
 
-  filter: ${props=>props.filterColor};
+  filter: ${props => props.filterColor};
 `
 
 const FilterInput = styled.input`
-  background: ##FFFFFF;
+  background: ##ffffff;
   border-radius: 8px;
   height: 40px;
   width: 100%;
-  border: 1px solid ${props=>props.borderColor};
-  box-shadow: ${props=>props.shadow};
+  border: 1px solid ${props => props.borderColor};
+  box-shadow: ${props => props.shadow};
   padding: 8px 9px 8px 40px;
   outline: none;
   font-weight: 400;
@@ -41,54 +43,78 @@ const NewLabel = styled.div`
   font-weight: ${props => props.weight || '400'};
   font-size: ${props => props.size || '20px'};
   line-height: ${props => props.height || '0px'};
-  ${props => props.color ? `
+  ${props =>
+    props.color
+      ? `
     color: ${props.color};
-  ` : ""   
-  }
-  ${props => props.position ? `
+  `
+      : ''}
+  ${props =>
+    props.position
+      ? `
     position: ${props.position};
-  ` : ""   
-  }
-  ${props => props.align ? `
+  `
+      : ''}
+  ${props =>
+    props.align
+      ? `
     text-align: ${props.align};
-  ` : ""   
-  }
-  ${props => props.justifyContent ? `
+  `
+      : ''}
+  ${props =>
+    props.justifyContent
+      ? `
     justify-content: ${props.justifyContent};
-  ` : ""   
-  }
-  ${props => props.marginTop ? `
+  `
+      : ''}
+  ${props =>
+    props.marginTop
+      ? `
     margin-top: ${props.marginTop};
-  ` : ""   
-  }
-  ${props => props.marginLeft ? `
+  `
+      : ''}
+  ${props =>
+    props.marginLeft
+      ? `
     margin-left: ${props.marginLeft};
-  ` : ""   
-  }
-  ${props => props.marginBottom ? `
+  `
+      : ''}
+  ${props =>
+    props.marginBottom
+      ? `
     margin-bottom: ${props.marginBottom};
-  ` : ""   
-  }
-  ${props => props.marginRight ? `
+  `
+      : ''}
+  ${props =>
+    props.marginRight
+      ? `
     margin-right: ${props.marginRight};
-  ` : ""
-  }
-  ${props => props.display ? `
+  `
+      : ''}
+  ${props =>
+    props.display
+      ? `
     display: ${props.display};
-  ` : ""
-  }
-  ${props => props.items ? `
+  `
+      : ''}
+  ${props =>
+    props.items
+      ? `
     align-items: ${props.items};
-  ` : ""
-  }
-  ${props => props.self ? `
+  `
+      : ''}
+  ${props =>
+    props.self
+      ? `
     align-self: ${props.self};
-  ` : ""
-  }
-  ${props => props.heightDiv ? `
+  `
+      : ''}
+  ${props =>
+    props.heightDiv
+      ? `
     height: ${props.heightDiv};
-  ` : ""
-  }
+  `
+      : ''}
 
   img.icon {
     margin-right: 10px;
@@ -106,7 +132,7 @@ const NewLabel = styled.div`
     img.icon {
       margin-right: 5px;
     }
-  
+
     img.info {
       margin-left: 5px;
     }
@@ -124,7 +150,7 @@ const DepoTitle = styled.div`
   font-size: 14px;
   line-height: 20px;
   margin-bottom: 3px;
-  color: ${props=>props.fontColor};
+  color: ${props => props.fontColor};
 `
 
 export { SelectToken, SelectTokenWido, CloseBtn, FilterInput, NewLabel, Search, DepoTitle }

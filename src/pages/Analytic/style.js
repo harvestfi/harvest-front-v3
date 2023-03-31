@@ -61,7 +61,7 @@ const EmissionsCountdownText = styled.span`
   font-size: 12px;
   line-height: 16px;
   text-align: center;
-  color: ${props=>props.fontColor};
+  color: ${props => props.fontColor};
   transition: 0.25s;
 `
 
@@ -80,28 +80,28 @@ const StatsBox = styled.div`
   position: relative;
   align-items: ${props => props.align || 'center'};
 
-  ${props => props.compNum === 1 ? `
+  ${props =>
+    props.compNum === 1
+      ? `
     background: linear-gradient(239.37deg, rgba(252, 172, 61, 0.8) 0%, rgba(255, 168, 47, 0.66) 98%) !important;
     color: white !important;
   `
-  : props.compNum === 2 ? `
-      // background: #ffffff; 
+      : props.compNum === 2
+      ? `
       color: black;
     `
-    : props.compNum === 3 ? `
+      : props.compNum === 3
+      ? `
       background: linear-gradient(223.19deg, #27AE60 2.14%, rgba(39, 174, 96, 0.66) 78.85%) !important;
       color: white !important;
     `
-      : ``
-  }
+      : ``}
   transition: 0.25s;
-  // box-shadow: 0px 20px 60px rgba(0, 0, 0, 0.1);
-  border: 1px solid ${props=>props.borderColor};
-  color: ${props=>props.fontColor};
-  background: ${props=>props.backColor};
-  
+  border: 1px solid ${props => props.borderColor};
+  color: ${props => props.fontColor};
+  background: ${props => props.backColor};
+
   border-radius: 12px 12px 10px 10px;
-  // padding-top: 20px;
   margin-bottom: 10px;
   width: ${props => props.width || '-webkit-fill-available'};
   height: ${props => props.height || '152px'};
@@ -117,7 +117,7 @@ const StatsBox = styled.div`
   }
 
   .emission-header {
-    background: linear-gradient(47.48deg, #FFA599 0.85%, #FFDD59 83.16%);
+    background: linear-gradient(47.48deg, #ffa599 0.85%, #ffdd59 83.16%);
     width: 100%;
     height: 70%;
     border-radius: 10px 10px 0 0;
@@ -131,10 +131,9 @@ const StatsBox = styled.div`
       width: 120px;
       min-height: 120px;
       display: flex;
-      
     }
   }
-  
+
   h2 {
     text-align: left;
   }
@@ -159,7 +158,6 @@ const StatsContainerRow = styled.div`
 
   div:first-child {
     width: ${props => props.width || '135px'};
-    // margin-right: 38px;
   }
 
   &:not(:first-child) {
@@ -171,10 +169,6 @@ const StatsContainerRow = styled.div`
   @media screen and (max-width: 992px) {
     flex-direction: column;
     align-items: baseline;
-
-    div:first-child {
-      // margin-right: 0;
-    }
 
     &:not(:first-child) {
       padding-left: 15px;
@@ -257,7 +251,6 @@ const StatsTooltip = styled.div`
 
 const ImgList = styled.div`
   display: flex;
-  // margin-top: 20px;
   a {
     margin-right: 10px;
   }
@@ -266,19 +259,19 @@ const ImgList = styled.div`
 const DataSource = styled.div`
   background: ${props => props.background || 'none'};
   color: ${props => props.color || 'black'};
-  
+
   padding: 15px 20px;
   display: flex;
   font-weight: 700;
   font-size: 16px;
   line-height: 21px;
-  
+
   border-radius: 10px;
   align-items: center;
   position: relative;
 
   &:hover {
-    box-shadow: 0px 4px 4px ${props=>props.boxShadowColor};
+    box-shadow: 0px 4px 4px ${props => props.boxShadowColor};
   }
 
   .avatar {
@@ -353,8 +346,26 @@ const BigStatsExchange = styled(BigStatsSubheader)`
   }
 `
 
-export { Container, Content, FarmStatsContainer, FarmSubTitle, StatsBox, StatsContainer, StatsTooltip,
-  EmissionsCountdownText, StatsBoxTitle, StatsContainerRow, BigStats, BigStatsSubheader, ImgList, DataSource,
-  DataSourceInner, StatsValue, StatsExchange, StatsChart, StatsExternal, DataSourceDirect,
+export {
+  Container,
+  Content,
+  FarmStatsContainer,
+  FarmSubTitle,
+  StatsBox,
+  StatsContainer,
+  StatsTooltip,
+  EmissionsCountdownText,
+  StatsBoxTitle,
+  StatsContainerRow,
+  BigStats,
+  BigStatsSubheader,
+  ImgList,
+  DataSource,
+  DataSourceInner,
+  StatsValue,
+  StatsExchange,
+  StatsChart,
+  StatsExternal,
+  DataSourceDirect,
   BigStatsExchange,
 }

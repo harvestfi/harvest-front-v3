@@ -6,10 +6,10 @@ const PanelContainer = styled.div`
   justify-content: start;
   align-items: center;
   padding: 20px 40px 20px 18px;
-  border-top: 1px solid ${props=>props.borderColor};
+  border-top: 1px solid ${props => props.borderColor};
   cursor: pointer;
-  color: ${props=>props.fontColor};
-  
+  color: ${props => props.fontColor};
+
   @media screen and (max-width: 992px) {
     flex-direction: row;
     align-items: baseline;
@@ -81,25 +81,27 @@ const ValueContainer = styled.div`
   text-align: ${props => props.textAlign || 'center'};
   display: flex;
   justify-content: end;
-  ${props => props.textAlign === 'left' ? 
-    `justify-content: start;`
-  : ''
-  }
+  ${props => (props.textAlign === 'left' ? `justify-content: start;` : '')}
   padding-right: ${props => props.paddingRight || '0px'};
   padding-left: ${props => props.paddingLeft || '0px'};
-  ${props => props.position ? `
+  ${props =>
+    props.position
+      ? `
     position: ${props.position};
-  ` : ''
-  }
+  `
+      : ''}
 `
 
 const LogoImg = styled.img`
   z-index: 100;
   &:not(:first-child) {
     margin-left: -7px;
-    ${props => props.zIndex ? `
+    ${props =>
+      props.zIndex
+        ? `
       z-index: ${props.zIndex};
-    ` : ``};
+    `
+        : ``};
   }
 `
 
@@ -107,10 +109,9 @@ const BadgeIcon = styled.div`
   position: absolute;
   top: 8px;
   left: 8px;
-  background: ${props=>props.badgeBack};
+  background: ${props => props.badgeBack};
   box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.15);
   border-radius: 8px;
-  // padding: 5px 3px;
   width: 23px;
   height: 23px;
   display: flex;
@@ -189,7 +190,6 @@ const MobileVaultInfoContainer = styled.div`
 const MobileVaultValueContainer = styled.div`
   display: flex;
   justify-content: end;
-  // flex-direction: column;
   align-items: baseline;
   line-height: 2;
   font-size: 12px;
@@ -220,18 +220,24 @@ const ApyInfo = styled.img`
 `
 
 const FlexDiv = styled.div`
-  ${props => props.alignSelf ? `
+  ${props =>
+    props.alignSelf
+      ? `
     align-self: ${props.alignSelf};
-  ` : ''
-  }
-  ${props => props.width ? `
+  `
+      : ''}
+  ${props =>
+    props.width
+      ? `
     width: ${props.width};
-  ` : 'width: auto;'
-  }
-  ${props => props.marginRight ? `
+  `
+      : 'width: auto;'}
+  ${props =>
+    props.marginRight
+      ? `
     margin-right: ${props.marginRight};
-  ` : ''
-  }
+  `
+      : ''}
 `
 
 const DetailModal = styled(Modal)`
@@ -261,8 +267,23 @@ const Value = styled.div`
 `
 
 export {
-  PanelContainer, TokenLogo, RewardsContainer, TokenLogoContainer, ValueContainer, NewBadge,
-  AdditionalBadge, TooltipText, ArrowContainer, TokenNameContainer, MobileVaultInfoContainer,
-  MobileVaultValueContainer, TokenDescriptionContainer, ApyInfo, BadgeIcon, FlexDiv,
-  DetailModal, Value, LogoImg,
+  PanelContainer,
+  TokenLogo,
+  RewardsContainer,
+  TokenLogoContainer,
+  ValueContainer,
+  NewBadge,
+  AdditionalBadge,
+  TooltipText,
+  ArrowContainer,
+  TokenNameContainer,
+  MobileVaultInfoContainer,
+  MobileVaultValueContainer,
+  TokenDescriptionContainer,
+  ApyInfo,
+  BadgeIcon,
+  FlexDiv,
+  DetailModal,
+  Value,
+  LogoImg,
 }

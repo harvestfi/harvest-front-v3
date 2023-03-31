@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useWallet } from "../../../providers/Wallet"
+import { useWallet } from '../../../providers/Wallet'
 import { usePools } from '../../../providers/Pools'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { Container, Title, Header, ButtonGroup, ChartDiv, ConnectButton, PortoArea } from './style'
@@ -10,10 +10,10 @@ import ChartRangeSelect from '../../ChartRangeSelect'
 import ConnectButtonIcon from '../../../assets/images/logos/sidebar/link_white_connect_button.svg'
 
 const recommendLinks = [
-  {name: "1D", type: 0, state: "1D" },
-  {name: "1W", type: 1, state: "1W" },
-  {name: "1M", type: 2, state: "1M" },
-  {name: "1Y", type: 3, state: "1Y" },
+  { name: '1D', type: 0, state: '1D' },
+  { name: '1W', type: 1, state: '1W' },
+  { name: '1M', type: 2, state: '1M' },
+  { name: '1Y', type: 3, state: '1Y' },
 ]
 
 const Chart = () => {
@@ -26,17 +26,18 @@ const Chart = () => {
 
   const chainId = farmProfitSharingPool.chain
 
-  const [clickedId, ] = useState(1)
+  const [clickedId] = useState(1)
 
-  const [selectedState, setSelectedState] = React.useState("1W")
+  const [selectedState, setSelectedState] = React.useState('1W')
 
-  let address = farmProfitSharingPool.autoStakePoolAddress || farmProfitSharingPool.contractAddress
+  const address =
+    farmProfitSharingPool.autoStakePoolAddress || farmProfitSharingPool.contractAddress
 
   const [apiData, setApiData] = React.useState([])
-  
-  useEffect(()=>{
+
+  useEffect(() => {
     const initData = async () => {
-      let data = await getDataQuery(365, address, chainId)   //GraphQL
+      const data = await getDataQuery(365, address, chainId) // GraphQL
       setApiData(data)
     }
 
@@ -47,52 +48,50 @@ const Chart = () => {
 
   return (
     <PortoArea borderColor={borderColor}>
-      <Container blur={connected ? false : true} backColor={backColor} fontColor={fontColor}>
+      <Container blur={!connected} backColor={backColor} fontColor={fontColor}>
         <Header>
-          <Title>
-            Total Balance
-          </Title>
-          <Title>
-            $&nbsp;0
-          </Title>
+          <Title>Total Balance</Title>
+          <Title>$&nbsp;0</Title>
         </Header>
         <ChartDiv>
           <ApexChart data={apiData} range={selectedState} filter={clickedId} />
         </ChartDiv>
         <ButtonGroup>
-          {
-            recommendLinks.map((item, i) => (
-              <ChartRangeSelect 
-                key={i}
-                onClick={()=>{
-                  setSelectedState(item.state)
-                }}
-                state={selectedState} 
-                type={item.type} 
-                text={item.name} 
-              />
-            ))
-          }
+          {recommendLinks.map((item, i) => (
+            <ChartRangeSelect
+              key={i}
+              onClick={() => {
+                setSelectedState(item.state)
+              }}
+              state={selectedState}
+              type={item.type}
+              text={item.name}
+            />
+          ))}
         </ButtonGroup>
       </Container>
-      {
-        !connected ?
-          <>
-            {account ? 
-              <></> :
-              <ConnectButton
-                color={'connectwallet'}
-                onClick={()=>{ connect() }}
-                minWidth="190px"
-                bordercolor={fontColor}
-                disabled={disableWallet}
-              >
-                <img src={ConnectButtonIcon} className="connect-wallet" alt="" />Connect Wallet
-              </ConnectButton>
-            }
-          </>
-        : <></>
-      }
+      {!connected ? (
+        <>
+          {account ? (
+            <></>
+          ) : (
+            <ConnectButton
+              color="connectwallet"
+              onClick={() => {
+                connect()
+              }}
+              minWidth="190px"
+              bordercolor={fontColor}
+              disabled={disableWallet}
+            >
+              <img src={ConnectButtonIcon} className="connect-wallet" alt="" />
+              Connect Wallet
+            </ConnectButton>
+          )}
+        </>
+      ) : (
+        <></>
+      )}
     </PortoArea>
   )
 }

@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import WelcomeBack from '../../assets/images/logos/gradient.svg'
 
 const FarmContainer = styled.div`
   margin: 0 auto;
@@ -10,11 +11,9 @@ const FarmContainer = styled.div`
   color: ${props => props.fontColor};
   background: ${props => props.pageBackColor};
 
-  // @media screen and (min-width: 1920px) {
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-  // }
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
 
   @media screen and (max-width: 992px) {
     margin-left: 0;
@@ -22,31 +21,29 @@ const FarmContainer = styled.div`
 `
 const FarmContent = styled.div`
   display: flex;
-  flex-direction: column;
-
-  // flex-wrap: wrap;
-  justify-content: center;
+  justify-content: space-between;
   padding: 70px 76px 94px 76px;
   margin: auto;
 
   @media screen and (min-width: 1920px) {
     width: 1400px;
     height: fit-content;
-    
   }
 
   @media screen and (max-width: 992px) {
     padding: 0px 10px;
+    display: block;
   }
 `
 
 const FarmCompInner = styled.div`
   &:hover {
-    filter: drop-shadow(0px 4px 4px ${props=>props.boxShadowColor});
+    box-shadow: 0px 1px 3px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06);
   }
 
-  margin: 25px 0px;
-  width: 30%;
+  margin: 16px 0px;
+  border-radius: 12px;
+  width: 48%;
 
   @media screen and (max-width: 992px) {
     width: 100%;
@@ -54,76 +51,56 @@ const FarmCompInner = styled.div`
     margin-bottom: 21px !important;
   }
 `
-
-const WelcomeBackPart = styled.div`
-  position: relative;
-  display: flex;
-  justify-content: center;
-  
-  img {
-    border-radius: 12px;
-  }
-
-  @media screen and (max-width: 992px) {
-    margin: 25px 10px;
-  }
-`
-
-const NavPart = styled.div`
-  position: absolute;
-  left: 5%;
-  top: calc(50% - 80px);
-  
-  @media screen and (max-width: 992px) {
-    display: flex;
-    flex-direction: column;
-    margin: auto auto 15px;
-    bottom: 5%;
-    top: unset;
-    left: unset;
-  }
-`
-
 const BottomPart = styled.div`
+  width: 69%;
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;  
-`
-
-const NavText = styled.div`
-  font-weight: 700;
-  font-size: 27.5745px;
-  line-height: 36px;
-  margin-bottom: 30px;
-  color: white;
+  justify-content: space-between;
 
   @media screen and (max-width: 992px) {
-    font-size: 26px;
-    line-height: 34px;
-    margin-bottom: 20px;
+    width: 100%;
   }
 `
 
-const NavButton = styled.button`
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 21px;
-  text-align: center;
-  color: #5A3A2C;
-  border-radius: 10px;
-  border: none;
-  padding: 15px 48px;
-  width: fit-content;
+const FarmHeader = styled.div`
+  background: url(${WelcomeBack});
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+  padding: 93px 0 70px 75px;
+  color: white;
+`
 
-  &:hover {
-    background: #FFFFFF;
+const Title = styled.div`
+  font-size: 28px;
+  line-height: 42px;
+  font-weight: 600;
+`
+
+const Desc = styled.div`
+  font-weight: 500;
+  font-size: 15px;
+  line-height: 22px;
+`
+
+const ProfitShare = styled.div`
+  width: 28%;
+  margin: 16px 0;
+  text-align: left;
+  text-decoration: none;
+
+  @media screen and (max-width: 992px) {
+    width: 100%;
   }
 `
 
-const ButtonDiv = styled.div`
-  display: flex;
-  justify-content: center;
-`
-
-export { FarmContainer, FarmContent, FarmCompInner, WelcomeBackPart, BottomPart, NavPart, NavText, 
-  NavButton, ButtonDiv }
+export {
+  FarmContainer,
+  FarmContent,
+  FarmCompInner,
+  BottomPart,
+  FarmHeader,
+  Title,
+  Desc,
+  ProfitShare,
+}

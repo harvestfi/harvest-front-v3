@@ -1,10 +1,10 @@
-import React, { useCallback } from 'react'
-import BigNumber from 'bignumber.js'
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import BigNumber from 'bignumber.js'
 import { get } from 'lodash'
-import ReactTooltip from 'react-tooltip'
+import React, { useCallback } from 'react'
 import ReactHtmlParser from 'react-html-parser'
+import ReactTooltip from 'react-tooltip'
 import {
   ACTIONS,
   DISABLED_DEPOSITS,
@@ -18,15 +18,15 @@ import { useContracts } from '../../../providers/Contracts'
 import { usePools } from '../../../providers/Pools'
 import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
-import Button from '../../Button'
-import { PrimaryActionsContainer } from './style'
 import {
+  hasAmountGreaterThanZero,
   hasAmountLessThanOrEqualTo,
   hasRequirementsForInteraction,
   hasValidAmountForWithdraw,
-  hasAmountGreaterThanZero,
 } from '../../../utils'
+import Button from '../../Button'
 import Checkbox from '../../Checkbox'
+import { PrimaryActionsContainer } from './style'
 
 const { tokens } = require('../../../data')
 
@@ -128,7 +128,7 @@ const PoolHeadActions = ({
                 name={IFARM_TOKEN_SYMBOL}
                 checked={useIFARM}
                 onChange={checked => setIFARM(checked)}
-                label={`Use ${tokens[IFARM_TOKEN_SYMBOL].displayName}`}
+                label={`Use ${tokens[IFARM_TOKEN_SYMBOL].tokenNames.join(', ')}`}
                 disabled={
                   !hasRequirementsForInteraction(
                     loaded,

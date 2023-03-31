@@ -18,7 +18,7 @@
       "ecmaVersion": 6
     },
     "plugins": [
-      "react", "jsx-a11y", "prettier"
+      "react", "jsx-a11y", "prettier", "react-hooks"
     ],
     "settings": {
       "react": {
@@ -47,6 +47,9 @@
       "prettier/prettier": ["error"],
       "react/display-name": 0,
       "react/no-array-index-key": 0,
-      "import/no-cycle": 0
+      "import/no-cycle": 0,
+      "prefer-destructuring": ["error", {"object": false, "array": false}],
+      "camelcase": ["error", {"allow": ["aa_bb"]}],
+      "react/no-danger": "off"
     }
 }

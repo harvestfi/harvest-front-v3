@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import "@fontsource/manrope";
+import '@fontsource/manrope'
 
 const FAQContainer = styled.div`
   // margin-left: 320px;
@@ -7,15 +7,16 @@ const FAQContainer = styled.div`
   position: relative;
   z-index: 2;
 
-  background: ${props=>props.pageBackColor};
-  color: ${props=>props.fontColor};
-  
+  background: ${props => props.pageBackColor};
+  color: ${props => props.fontColor};
+
   font-weight: 400;
   line-height: 150%;
   font-family: 'DM Sans';
   transition: 0.25s;
-  
+
   display: flex;
+  flex-direction: column;
   justify-content: center;
 
   @media screen and (max-width: 992px) {
@@ -25,12 +26,12 @@ const FAQContainer = styled.div`
 
 const FAQContent = styled.div`
   padding: 70px 46px 57px 46px;
-  
+
   display: flex;
   justify-content: space-between;
 
   @media screen and (min-width: 1920px) {
-    width: 1250px;
+    width: 1450px;
   }
 
   @media screen and (max-width: 992px) {
@@ -76,19 +77,20 @@ const Question = styled.div`
   font-size: 16px;
   font-weight: 400;
   padding: 16px;
-  border-radius: 8px;
+  border-radius: 10px;
   transition: 0.25s;
-  background: ${props=>props.backColor};
-  border: 1px solid ${props=>props.borderColor};
+
+  &:hover {
+    background: #e9e9e9;
+  }
 
   ${props =>
     props.open
       ? `
   border-bottom-left-radius: 0px; 
   border-bottom-right-radius: 0px;
-  background: #FF9400;
-  border-radius: 8px 8px 0px 0px;
-  color: white;
+  border-radius: 10px 10px 0px 0px;
+    background: #E9E9E9;
   `
       : ``}
 
@@ -99,27 +101,75 @@ const Question = styled.div`
   }
 `
 
-const DropdownToggle = styled.img`
-  // margin-right: 40px;
-
-  @media screen and (max-width: 992px) {
-    // margin-right: 15px;
-  }
-`
-
 const Answer = styled.div`
   padding: 16px;
-  background: ${props=>props.backColor};
-  border: 1px solid ${props=>props.borderColor};
+  background: #e9e9e9;
   transition: 0.25s;
   border-radius: 0 0 10px 10px;
   border-top: none;
   font-size: 14px;
-  
+
   @media screen and (max-width: 992px) {
     padding: 16px 20px;
     font-size: 12px;
   }
 `
 
-export { FAQContainer, FAQBox, Question, Answer, DropdownToggle, QuestionContainer, FAQHalfContent, FAQContent }
+const FarmHeader = styled.div`
+  background: #15202b;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 100%;
+  padding: 75px 88px 68px;
+`
+
+const Title = styled.div`
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 19px;
+  color: #ff9400;
+
+  margin-bottom: 19px;
+`
+
+const Desc = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
+
+const FAQMain = styled.div`
+  display: flex;
+  justify-content: center;
+`
+
+const LeftPart = styled.div`
+  font-weight: 600;
+  font-size: 38px;
+  line-height: 47px;
+
+  letter-spacing: -0.02em;
+  color: #ffffff;
+`
+
+const RightPart = styled.div`
+  font-weight: 400;
+  font-size: 15.6667px;
+  line-height: 24px;
+  color: #ff9400;
+`
+
+export {
+  FAQContainer,
+  FAQBox,
+  Question,
+  Answer,
+  QuestionContainer,
+  FAQHalfContent,
+  FAQContent,
+  FarmHeader,
+  Title,
+  Desc,
+  FAQMain,
+  LeftPart,
+  RightPart,
+}

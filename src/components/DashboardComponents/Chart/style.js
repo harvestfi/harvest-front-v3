@@ -4,8 +4,8 @@ const PortoArea = styled.div`
   width: 53%;
   height: auto;
   position: relative;
-  border: 1px solid ${props=>props.borderColor};
-  
+  border: 1px solid ${props => props.borderColor};
+
   border-radius: 20px;
 
   @media screen and (max-width: 1280px) {
@@ -21,21 +21,22 @@ const Container = styled.div`
   height: 100%;
   overflow: hidden;
   padding: 20px 26px 0 26px;
-  background: ${props=>props.backColor};
-  color: ${props=>props.fontColor};
+  background: ${props => props.backColor};
+  color: ${props => props.fontColor};
   transition: 0.25s;
   border-radius: 20px;
-  
-  ${props => props.blur ? `
+
+  ${props =>
+    props.blur
+      ? `
     filter: blur(2px);
     pointer-events: none;
-  ` : ``}
-  
+  `
+      : ``}
 
   @media screen and (max-width: 992px) {
     width: 100%;
     height: 300px;
-    // margin-bottom: 15px;
     padding: 6px 11px;
     border-radius: 10px;
   }
@@ -43,7 +44,6 @@ const Container = styled.div`
 
 const Header = styled.div`
   font-size: 14px;
-  // padding: 20px 26px;
   display: flex;
   justify-content: space-between;
 `
@@ -52,7 +52,6 @@ const Title = styled.h5`
   font-size: 16px;
   line-height: 21px;
   font-weight: 700;
-  // width: 100%;
   margin-bottom: 1rem;
 
   img {
@@ -64,7 +63,7 @@ const Total = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  
+
   @media screen and (max-width: 1250px) {
     display: block;
   }
@@ -74,15 +73,13 @@ const ButtonGroup = styled.div`
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  margin: 1em 0em .25em auto;
-  color: #FFF;
+  margin: 1em 0em 0.25em auto;
+  color: #fff;
 
   button {
-    // border: none;
-    padding: .1em .3em;
-    border-radius: .4em;
-    // background: #F6F6F6;
-    margin-left: .25em;
+    padding: 0.1em 0.3em;
+    border-radius: 0.4em;
+    margin-left: 0.25em;
     font-weight: 400;
   }
 `
@@ -100,21 +97,22 @@ const ConnectButton = styled.button`
   line-height: 21px;
   font-weight: 700;
   width: 200px;
-  background: #FF9400;
+  background: #ff9400;
   border-radius: 10px;
   border: 0;
   color: white;
 
   &:hover {
-    background: #FF9400D0;
+    background: #ff9400d0;
   }
 
   &:active {
     background: #ef900c;
   }
 
-  ${props => (props.connected ?
-    `
+  ${props =>
+    props.connected
+      ? `
       padding: 7px 45px 7px 11px;
       background: none;
       color: #1F2937;
@@ -125,11 +123,9 @@ const ConnectButton = styled.button`
         background: #E6F8EB;
       }
     `
-    : 
-    `
+      : `
       padding: 15px 0px 15px 0px;
-    `
-  )}
+    `}
 
   img.connect-wallet {
     margin-right: 25px;
@@ -138,14 +134,7 @@ const ConnectButton = styled.button`
   @media screen and (max-width: 992px) {
     display: flex;
     justify-content: space-between;
-    ${props => (props.connected ?
-      `` : 
-    `padding: 15px 19px;`
-    )}
-
-    img.connect-wallet {
-      // margin-right: 27px;
-    }
+    ${props => (props.connected ? `` : `padding: 15px 19px;`)}
   }
 `
 
@@ -159,18 +148,29 @@ const FlexDiv = styled.div`
   }
 
   input[type='checkbox'] {
-    accent-color: #188E54;
+    accent-color: #188e54;
     width: 20px;
     height: 20px;
     padding: 4px;
     border-radius: 6px;
-}`
+  }
+`
 
 const Address = styled.span`
   font-size: 14px;
   font-weight: bold;
   line-height: 16px;
-
 `
 
-export { PortoArea, Container, Title, Header, Total, ButtonGroup, ChartDiv, ConnectButton, FlexDiv, Address }
+export {
+  PortoArea,
+  Container,
+  Title,
+  Header,
+  Total,
+  ButtonGroup,
+  ChartDiv,
+  ConnectButton,
+  FlexDiv,
+  Address,
+}

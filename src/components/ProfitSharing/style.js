@@ -1,8 +1,9 @@
 import styled from 'styled-components'
 import GradientBack from '../../assets/images/logos/gradient.svg'
 
-const ProfitSharing = styled.div`
+const ProfitSharing = styled.a`
   background: url(${GradientBack});
+  text-decoration: none;
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
@@ -34,6 +35,17 @@ const BottomDiv = styled.div`
   font-weight: 600;
   display: flex;
   justify-content: space-between;
+  position: relative;
+
+  .apy {
+    align-self: center;
+  }
+
+  .chart {
+    position: absolute;
+    bottom: -50px;
+    right: 0;
+  }
 `
 
 export { ProfitSharing, ProfitBack, TopDiv, BottomDiv }

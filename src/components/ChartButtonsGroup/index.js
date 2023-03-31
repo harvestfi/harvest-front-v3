@@ -1,13 +1,12 @@
-import React from "react"
-import { ButtonsGroup, ButtonStyle } from "./style.js"
-import { useWallet } from "../../providers/Wallet/index.js"
-import { useThemeContext } from "../../providers/useThemeContext.js"
+import React from 'react'
+import { useThemeContext } from '../../providers/useThemeContext'
+import { useWallet } from '../../providers/Wallet/index'
+import { ButtonsGroup, ButtonStyle } from './style'
 
 const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {
-
   const { connected } = useWallet()
   const handleClick = (event, id) => {
-    if(connected || id !== 2) {
+    if (connected || id !== 2) {
       setClickedId(id)
     }
     // doSomethingAfterClick(event)
@@ -26,20 +25,20 @@ const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {
             key={i}
             btnNum={i}
             name={button.name}
-            onClick={(event) => handleClick(event, i)}
+            onClick={event => handleClick(event, i)}
             onMouseEnter={() => {
-              tempId !== -1 ? tempId = i : tempId = -1
+              tempId = tempId !== -1 ? i : -1
               setFocusId(i)
             }}
             onMouseLeave={() => {
               setFocusId(tempId)
               tempId = focusId
             }}
-            className={(i === clickedId || i === focusId) && (connected || i !== 2) ? "active" : ""}
-            wallet={connected && i === 2 ? true : false}
+            className={(i === clickedId || i === focusId) && (connected || i !== 2) ? 'active' : ''}
+            wallet={!!(connected && i === 2)}
             backcolor={chartBtnGroupBackColor}
           >
-            <img src={button.img} width={"20"} height={"20"} alt="" />
+            <img src={button.img} width="20" height="20" alt="" />
           </ButtonStyle>
         </div>
       ))}

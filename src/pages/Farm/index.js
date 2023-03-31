@@ -1,7 +1,7 @@
 import React from 'react'
-import { FarmContainer } from './style'
 import VaultList from '../../components/VaultComponents/VaultList'
 import { useThemeContext } from '../../providers/useThemeContext'
+import FarmContainer from './style'
 
 const Farm = () => {
   const { pageBackColor } = useThemeContext()

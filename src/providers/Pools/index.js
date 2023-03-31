@@ -1,32 +1,43 @@
-import React, { useCallback, createContext, useContext, useState, useMemo, useRef, useEffect } from 'react'
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
+// eslint-disable-next-line import/no-unresolved
+import axios from 'axios'
+import isEqual from 'fast-deep-equal/react'
+import { filter, get, map, sumBy } from 'lodash'
+import { forEach } from 'promised-loops'
 // eslint-disable-next-line import/no-unresolved
 import { useInterval } from 'react-interval-hook'
-import isEqual from 'fast-deep-equal/react'
-import axios from 'axios'
-import { filter, get, map, sumBy } from 'lodash'
-import useEffectWithPrevious from 'use-effect-with-previous'
 import { toast } from 'react-toastify'
-import { forEach } from 'promised-loops'
-import { getLpTokenData, getUserStats, /*pollUpdatedUserStats*/ } from './utils'
+import useEffectWithPrevious from 'use-effect-with-previous'
 import { POLL_POOL_DATA_INTERVAL_MS, POOLS_API_ENDPOINT, SPECIAL_VAULTS } from '../../constants'
-import { truncateNumberString } from '../../utils'
-import { newContractInstance, getWeb3, getWeb3Local } from '../../services/web3'
+import { CHAINS_ID } from '../../data/constants'
+import { getWeb3, getWeb3Local, newContractInstance } from '../../services/web3'
+import poolContractData from '../../services/web3/contracts/pool/contract.json'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import tokenMethods from '../../services/web3/contracts/token/methods'
-import poolContractData from '../../services/web3/contracts/pool/contract.json'
-import { useWallet } from '../Wallet'
+import { truncateNumberString } from '../../utils'
 import { useContracts } from '../Contracts'
-import { CHAINS_ID } from '../../data/constants'
+import { useWallet } from '../Wallet'
+import { getLpTokenData, getUserStats } from './utils'
 
+/* eslint-disable global-require */
 const { pools: defaultPools, tokens } = require('../../data')
+/* eslint-enable global-require */
 
 const PoolsContext = createContext()
 const usePools = () => useContext(PoolsContext)
 
 const getReader = (selectedChain, contracts) => {
   switch (String(selectedChain)) {
-    case CHAINS_ID.BSC_MAINNET:
-      return contracts.readerBsc
+    case CHAINS_ID.ARBITRUM_ONE:
+      return contracts.readerArbitrum
     case CHAINS_ID.MATIC_MAINNET:
       return contracts.readerMatic
     default:
@@ -45,7 +56,10 @@ const PoolsProvider = _ref => {
   const [disableWallet, setDisableWallet] = useState(true)
   const loadedUserPoolsWeb3Provider = useRef(false)
   const loadedInitialStakedAndUnstakedBalances = useRef(false)
-  const loadedPools = useMemo(() => filter(pools, pool => selChain.includes(pool.chain)), [selChain, pools])
+  const loadedPools = useMemo(() => filter(pools, pool => selChain.includes(pool.chain)), [
+    selChain,
+    pools,
+  ])
   const [finishPool, setFinishPool] = useState(false) // set true when getPoolsData success
   const formatPoolsData = useCallback(
     async apiData => {
@@ -84,6 +98,7 @@ const PoolsProvider = _ref => {
             apiData && apiData.find(fetchedPool => fetchedPool && fetchedPool.id === pool.id)
 
           if (apiPool) {
+            // eslint-disable-next-line prefer-destructuring
             rewardAPY = map(apiPool.rewardAPY, apy => truncateNumberString(apy))
             rewardAPR = map(apiPool.rewardAPR, apr => truncateNumberString(apr))
             tradingApy = truncateNumberString(apiPool.tradingApy)
@@ -150,7 +165,11 @@ const PoolsProvider = _ref => {
             contractLocalInstance,
             autoStakeContractInstance,
             autoStakeContractLocalInstance,
-            lpTokenData: { ...lpTokenData, instance: lpTokenInstance, localInstance: lpTokenLocalInstance },
+            lpTokenData: {
+              ...lpTokenData,
+              instance: lpTokenInstance,
+              localInstance: lpTokenLocalInstance,
+            },
             rewardPerToken,
             totalSupply,
             finishTime,
@@ -163,7 +182,7 @@ const PoolsProvider = _ref => {
       )
 
       // if (account) {
-        loadedUserPoolsWeb3Provider.current = true
+      loadedUserPoolsWeb3Provider.current = true
       // }
 
       return formattedPools
@@ -176,7 +195,7 @@ const PoolsProvider = _ref => {
     try {
       const apiResponse = await axios.get(POOLS_API_ENDPOINT)
       const apiData = get(apiResponse, 'data')
-      newPools = await formatPoolsData([...apiData.bsc, ...apiData.eth, ...apiData.matic])
+      newPools = await formatPoolsData([...apiData.eth, ...apiData.matic, ...apiData.arbitrum])
       setDisableWallet(false)
     } catch (err) {
       console.error(err)
@@ -198,7 +217,7 @@ const PoolsProvider = _ref => {
   }, [formatPoolsData])
 
   useEffect(() => {
-    if(logout) {
+    if (logout) {
       setUserStats([])
     }
   }, [logout])
@@ -207,7 +226,12 @@ const PoolsProvider = _ref => {
     _ref2 => {
       const [prevAccount] = _ref2
 
-      if (account !== prevAccount && account && !loadedUserPoolsWeb3Provider.current && finishPool) {
+      if (
+        account !== prevAccount &&
+        account &&
+        !loadedUserPoolsWeb3Provider.current &&
+        finishPool
+      ) {
         const setCurrentPoolsWithUserProvider = async () => {
           const poolsWithUpdatedProvider = await formatPoolsData(pools)
           setPools(poolsWithUpdatedProvider)
@@ -228,26 +252,34 @@ const PoolsProvider = _ref => {
         (hasSwitchedChain ||
           hasSwitchedAccount ||
           !loadedInitialStakedAndUnstakedBalances.current) &&
-        loadedUserPoolsWeb3Provider.current && account
+        loadedUserPoolsWeb3Provider.current &&
+        account
       ) {
         const loadInitialStakedAndUnstakedBalances = async () => {
           loadedInitialStakedAndUnstakedBalances.current = true
           const stats = {}
           // selChain.forEach( async (ch)=> {
-          for(let i = 0; i < selChain.length; i++) {
+          /* eslint-disable no-await-in-loop */
+          for (let i = 0; i < selChain.length; i += 1) {
             const ch = selChain[i]
             const readerType = getReader(ch, contracts)
             const poolAddresses = []
             const vaultAddresses = []
             const chLoadedPools = []
             loadedPools.forEach(pool => {
-              if(pool.chain === ch) {
-                poolAddresses.push(pool.contractAddress)
-                chLoadedPools.push(pool)
-              }
+              if (
+                pool.contractAddress !== '0x3DA9D911301f8144bdF5c3c67886e5373DCdff8e' &&
+                pool.contractAddress !== '0x4F7c28cCb0F1Dbd1388209C67eEc234273C878Bd' &&
+                pool.contractAddress !== '0x6ac4a7AB91E6fD098E13B7d347c6d4d1494994a2'
+              ) {
+                if (pool.chain === ch) {
+                  poolAddresses.push(pool.contractAddress)
+                  chLoadedPools.push(pool)
+                }
 
-              if (!Object.values(SPECIAL_VAULTS).includes(pool.id) && pool.chain === ch) {
-                vaultAddresses.push(pool.lpTokenData.address)
+                if (!Object.values(SPECIAL_VAULTS).includes(pool.id) && pool.chain === ch) {
+                  vaultAddresses.push(pool.lpTokenData.address)
+                }
               }
             })
             const readerInstance = readerType.instance
@@ -259,7 +291,7 @@ const PoolsProvider = _ref => {
               readerInstance,
             )
             // const stats = {}
-            await forEach(chLoadedPools, async (pool, i) => {
+            await forEach(chLoadedPools, async (pool, index) => {
               let lpTokenBalance
               const isSpecialVault = !vaultAddresses.includes(pool.lpTokenData.address)
 
@@ -267,14 +299,17 @@ const PoolsProvider = _ref => {
                 const lpSymbol = Object.keys(tokens).filter(
                   symbol => tokens[symbol].tokenAddress === pool.lpTokenData.address,
                 )
-                
+
                 const instance = await newContractInstance(
                   lpSymbol[0],
                   null,
                   null,
-                  getWeb3(ch, false))
+                  getWeb3(ch, false),
+                )
 
-                lpTokenBalance = !walletBalances[lpSymbol] ? await tokenMethods.getBalance(account, instance) : walletBalances[lpSymbol]
+                lpTokenBalance = !walletBalances[lpSymbol]
+                  ? await tokenMethods.getBalance(account, instance)
+                  : walletBalances[lpSymbol]
               } else {
                 const lpTokenBalanceIdx = vaultAddresses.findIndex(
                   address => address === pool.lpTokenData.address,
@@ -284,10 +319,11 @@ const PoolsProvider = _ref => {
 
               stats[pool.id] = {
                 lpTokenBalance,
-                totalStaked: balances[1][i],
+                totalStaked: balances[1][index],
               }
             })
           }
+          /* eslint-enable no-await-in-loop */
           // })
           setUserStats(currStats => ({ ...currStats, ...stats }))
         }
@@ -334,42 +370,43 @@ const PoolsProvider = _ref => {
           //   symbol => tokens[symbol].tokenAddress === pool.lpTokenData.address || tokens[symbol].vaultAddress === pool.lpTokenData.address,
           // )
           // if(lpSymbol.length !== 0) {
-            const tokenInstance = await newContractInstance(
-              null,
-              pool.lpTokenData.address,
-              poolContractData.abi,
-              web3Client)
+          const tokenInstance = await newContractInstance(
+            null,
+            pool.lpTokenData.address,
+            poolContractData.abi,
+            web3Client,
+          )
 
-            const fetchedStats = await getUserStats(
-              contractInstance,
-              tokenInstance,
-              pool.contractAddress,
-              pool.autoStakePoolAddress,
-              selectedAccount,
-              autoStakeContractInstance,
-            )
+          const fetchedStats = await getUserStats(
+            contractInstance,
+            tokenInstance,
+            pool.contractAddress,
+            pool.autoStakePoolAddress,
+            selectedAccount,
+            autoStakeContractInstance,
+          )
 
-            if (!isEqual(fetchedStats, currentStats[pool.id])) {
-              stats[pool.id] = fetchedStats
-            } else {
-              // await pollUpdatedUserStats(
-              //   getUserStats(
-              //     contractInstance,
-              //     tokenInstance,
-              //     pool.contractAddress,
-              //     pool.autoStakePoolAddress,
-              //     selectedAccount,
-              //     autoStakeContractInstance,
-              //   ),
-              //   currentStats,
-              //   () => {
-              //     console.error(`Something went wrong during the fetching of ${pool.id} user stats`)
-              //   },
-              //   updatedStats => {
-              //     stats[pool.id] = updatedStats
-              //   },
-              // )
-            }
+          if (!isEqual(fetchedStats, currentStats[pool.id])) {
+            stats[pool.id] = fetchedStats
+          } else {
+            // await pollUpdatedUserStats(
+            //   getUserStats(
+            //     contractInstance,
+            //     tokenInstance,
+            //     pool.contractAddress,
+            //     pool.autoStakePoolAddress,
+            //     selectedAccount,
+            //     autoStakeContractInstance,
+            //   ),
+            //   currentStats,
+            //   () => {
+            //     console.error(`Something went wrong during the fetching of ${pool.id} user stats`)
+            //   },
+            //   updatedStats => {
+            //     stats[pool.id] = updatedStats
+            //   },
+            // )
+          }
           // }
         }),
       )
@@ -391,7 +428,7 @@ const PoolsProvider = _ref => {
         loadingUserPoolStats,
         vaultLoading,
         setVaultLoading,
-        disableWallet
+        disableWallet,
       },
     },
     children,

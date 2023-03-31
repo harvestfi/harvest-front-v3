@@ -1,46 +1,91 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { toast } from 'react-toastify'
 import BigNumber from 'bignumber.js'
-import ReactTooltip from 'react-tooltip'
-import { get, isEmpty } from 'lodash'
 import CoinGecko from 'coingecko-api'
-import { useThemeContext } from '../../../providers/useThemeContext'
-import Button from '../../Button'
-import { useWallet } from '../../../providers/Wallet'
-import { useVaults } from '../../../providers/Vault'
-import { fromWei } from '../../../services/web3'
-import AnimatedDots from '../../AnimatedDots'
-import { FARM_TOKEN_SYMBOL, WIDO_BALANCES_DECIMALS, IFARM_TOKEN_SYMBOL, fromWEI } from '../../../constants'
-import { formatNumberWido } from '../../../utils'
-import { BaseWido, SelectToken, TokenAmount, TokenSelect, TokenInfo, BalanceInfo, PoweredByWido, TokenName, StakeInfo,
-  TokenUSD, DepoTitle, Line, HelpImg, ThemeMode, SwitchMode, FarmInfo } from './style'
-import WidoIcon from '../../../assets/images/logos/wido/wido.svg'
-import DropDownIcon from '../../../assets/images/logos/wido/drop-down.svg'
+import { get, isEmpty } from 'lodash'
+import React, { useEffect, useRef, useState } from 'react'
+import { toast } from 'react-toastify'
+import ReactTooltip from 'react-tooltip'
 import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.svg'
-import IFARMIcon from '../../../assets/images/logos/wido/ifarm.svg'
+import DropDownIcon from '../../../assets/images/logos/wido/drop-down.svg'
 import FARMIcon from '../../../assets/images/logos/wido/farm.svg'
 import HelpIcon from '../../../assets/images/logos/wido/help.svg'
+import IFARMIcon from '../../../assets/images/logos/wido/ifarm.svg'
+import WidoIcon from '../../../assets/images/logos/wido/wido.svg'
+import {
+  FARM_TOKEN_SYMBOL,
+  fromWEI,
+  IFARM_TOKEN_SYMBOL,
+  WIDO_BALANCES_DECIMALS,
+} from '../../../constants'
+import { useThemeContext } from '../../../providers/useThemeContext'
+import { useVaults } from '../../../providers/Vault'
+import { useWallet } from '../../../providers/Wallet'
+import { fromWei } from '../../../services/web3'
+import { formatNumberWido } from '../../../utils'
+import AnimatedDots from '../../AnimatedDots'
+import Button from '../../Button'
+import {
+  BalanceInfo,
+  BaseWido,
+  DepoTitle,
+  FarmInfo,
+  HelpImg,
+  Line,
+  PoweredByWido,
+  SelectToken,
+  StakeInfo,
+  SwitchMode,
+  ThemeMode,
+  TokenAmount,
+  TokenInfo,
+  TokenName,
+  TokenSelect,
+  TokenUSD,
+} from './style'
 
 const CoinGeckoClient = new CoinGecko()
 
 const getPrice = async () => {
   try {
-    let data = await CoinGeckoClient.simple.price({
+    const data = await CoinGeckoClient.simple.price({
       ids: ['ifarm'],
+      /* eslint-disable camelcase */
       vs_currencies: ['usd'],
     })
 
     const result = data.success ? data.data.ifarm.usd : 1
     return result
-  } catch(e) {
+  } catch (e) {
     return 0
   }
 }
 
-const WidoPoolDepositBase = ( { selectTokenWido, setSelectTokenWido, startSlippage, depositWido, setDepositWido, finalStep, setFinalStep, 
-  balance, setBalance, usdValue, setUsdValue, pickedToken, setPickedToken, inputAmount, setInputAmount, token, 
-  fAssetPool, balanceList, totalStaked, lpTokenBalance, symbol, setSymbol, legacyStaking, setLegacyStaking } ) => {
-  
+const WidoPoolDepositBase = ({
+  selectTokenWido,
+  setSelectTokenWido,
+  startSlippage,
+  depositWido,
+  setDepositWido,
+  finalStep,
+  setFinalStep,
+  balance,
+  setBalance,
+  usdValue,
+  setUsdValue,
+  pickedToken,
+  setPickedToken,
+  inputAmount,
+  setInputAmount,
+  token,
+  fAssetPool,
+  balanceList,
+  totalStaked,
+  lpTokenBalance,
+  symbol,
+  setSymbol,
+  legacyStaking,
+  setLegacyStaking,
+}) => {
+  /* eslint-disable global-require */
   const { tokens } = require('../../../data')
   const { account, connect, balances } = useWallet()
   const { vaultsData } = useVaults()
@@ -48,102 +93,118 @@ const WidoPoolDepositBase = ( { selectTokenWido, setSelectTokenWido, startSlippa
   const [price, setPrice] = useState(0)
 
   const FARMBalance = get(balances, FARM_TOKEN_SYMBOL, 0)
-  
-  const { backColor, borderColor, widoTagActiveFontColor, widoInputPanelBorderColor, widoInputBoxShadow, 
-    toggleActiveBackColor, toggleInactiveBackColor } = useThemeContext()
+
+  const {
+    backColor,
+    borderColor,
+    widoTagActiveFontColor,
+    widoInputPanelBorderColor,
+    widoInputBoxShadow,
+    toggleActiveBackColor,
+    toggleInactiveBackColor,
+  } = useThemeContext()
 
   const [totalValue, setTotalValue] = useState(0)
   const [underlyingValue, setUnderlyingValue] = useState(0)
-  
-  useEffect(()=>{
+
+  useEffect(() => {
     const getPriceValue = async () => {
-      let value = await getPrice()
+      const value = await getPrice()
       setPrice(value)
     }
 
     getPriceValue()
   }, [])
 
-  useEffect(()=>{
-    const total = Number(fromWei(
-      totalStaked, 
-      fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals, 
-      WIDO_BALANCES_DECIMALS,
-      true)) + 
-      Number(fromWei(
-        lpTokenBalance, 
-        fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals, 
-        WIDO_BALANCES_DECIMALS,
-        true))
+  useEffect(() => {
+    const total =
+      Number(
+        fromWei(
+          totalStaked,
+          fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals,
+          WIDO_BALANCES_DECIMALS,
+          true,
+        ),
+      ) +
+      Number(
+        fromWei(
+          lpTokenBalance,
+          fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals,
+          WIDO_BALANCES_DECIMALS,
+          true,
+        ),
+      )
     setTotalValue(total)
   }, [totalStaked, lpTokenBalance, fAssetPool])
 
   const firstUnderlyingBalance = useRef(true)
-  useEffect(()=>{
-      const hasZeroValue = underlyingValue === 0
-      if(account && hasZeroValue && 
-        (firstUnderlyingBalance.current || 
-          !isEmpty(vaultsData))
-      ) {
-        const getUnderlyingBalance = async () => {
-          firstUnderlyingBalance.current = false
-          const val = Number(fromWei(
+  useEffect(() => {
+    const hasZeroValue = underlyingValue === 0
+    if (account && hasZeroValue && (firstUnderlyingBalance.current || !isEmpty(vaultsData))) {
+      const getUnderlyingBalance = async () => {
+        firstUnderlyingBalance.current = false
+        const val = Number(
+          fromWei(
             get(vaultsData, `${IFARM_TOKEN_SYMBOL}.underlyingBalanceWithInvestmentForHolder`, 0),
             tokens[IFARM_TOKEN_SYMBOL].decimals,
             WIDO_BALANCES_DECIMALS,
             true,
-          ))
-          setUnderlyingValue(val)
-        }
-
-        getUnderlyingBalance()
+          ),
+        )
+        setUnderlyingValue(val)
       }
-  }, [account, vaultsData, underlyingValue])  // eslint-disable-line react-hooks/exhaustive-deps
+
+      getUnderlyingBalance()
+    }
+  }, [account, vaultsData, underlyingValue, tokens])
 
   const onClickDeposit = async () => {
-    if(!legacyStaking && pickedToken.symbol === "Select Token") {
-      toast.error("Please select token to deposit!")
+    if (!legacyStaking && pickedToken.symbol === 'Select Token') {
+      toast.error('Please select token to deposit!')
       return
     }
-    if(new BigNumber(inputAmount).isGreaterThan(balance)) {
-      toast.error("Please input sufficient balance!")
+    if (new BigNumber(inputAmount).isGreaterThan(balance)) {
+      toast.error('Please input sufficient balance!')
       return
     }
-    if(new BigNumber(inputAmount).isEqualTo(0)) {
-      toast.error("Please input balance to deposit!")
+    if (new BigNumber(inputAmount).isEqualTo(0)) {
+      toast.error('Please input balance to deposit!')
       return
     }
-    // setStartSlippage(true)
-    if(!legacyStaking) {
+    if (!legacyStaking) {
       setDepositWido(true)
-    }
-    else {
+    } else {
       setFinalStep(true)
     }
   }
 
-  useEffect(()=>{
-    if(account) {
-      if(legacyStaking) {
+  useEffect(() => {
+    if (account) {
+      if (legacyStaking) {
         const farmToken = balanceList.filter(bal => bal.symbol === FARM_TOKEN_SYMBOL)
-        if(farmToken.length > 0) {
+        if (farmToken.length > 0) {
           setFarmInfo(farmToken[0])
           setBalance(fromWEI(farmToken[0].balance, farmToken[0].decimals))
           setPickedToken(farmToken[0])
         }
       }
     }
-  }, [legacyStaking, balanceList, vaultsData]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [legacyStaking, balanceList, vaultsData, account, setBalance, setPickedToken])
 
-  const onInputBalance = (e) => {
+  const onInputBalance = e => {
     setInputAmount(e.currentTarget.value)
-    setUsdValue(formatNumberWido(e.currentTarget.value * (legacyStaking ? farmInfo.usdPrice : pickedToken.usdPrice || 1), WIDO_BALANCES_DECIMALS))
+    setUsdValue(
+      formatNumberWido(
+        e.currentTarget.value * (legacyStaking ? farmInfo.usdPrice : pickedToken.usdPrice || 1),
+        WIDO_BALANCES_DECIMALS,
+      ),
+    )
   }
 
   const switchLegacyStaking = () => {
     setLegacyStaking(!legacyStaking)
-    setSymbol(legacyStaking ? "iFARM" : FARM_TOKEN_SYMBOL)
-    setPickedToken({symbol: "Select Token"})
+    setSymbol(legacyStaking ? 'iFARM' : FARM_TOKEN_SYMBOL)
+    setPickedToken({ symbol: 'Select Token' })
     setInputAmount(0)
     setUsdValue(0)
     setBalance(0)
@@ -152,68 +213,87 @@ const WidoPoolDepositBase = ( { selectTokenWido, setSelectTokenWido, startSlippa
   return (
     <BaseWido show={!depositWido && !selectTokenWido && !startSlippage && !finalStep}>
       <DepoTitle fontColor={widoTagActiveFontColor}>I want to deposit</DepoTitle>
-      <SelectToken backColor={backColor} borderColor={widoInputPanelBorderColor} shadow={widoInputBoxShadow}>
+      <SelectToken
+        backColor={backColor}
+        borderColor={widoInputPanelBorderColor}
+        shadow={widoInputBoxShadow}
+      >
         <TokenInfo>
           <div>
-            <TokenAmount type="number" value={inputAmount} 
-              borderColor={borderColor} backColor={backColor} fontColor={widoTagActiveFontColor} onChange={onInputBalance}/>
-            <TokenUSD>
-              ${usdValue}
-            </TokenUSD>
+            <TokenAmount
+              type="number"
+              value={inputAmount}
+              borderColor={borderColor}
+              backColor={backColor}
+              fontColor={widoTagActiveFontColor}
+              onChange={onInputBalance}
+            />
+            <TokenUSD>${usdValue}</TokenUSD>
           </div>
 
-          {
-            !legacyStaking ? 
-              <TokenSelect type="button" onClick={ async ()=>{
+          {!legacyStaking ? (
+            <TokenSelect
+              type="button"
+              onClick={async () => {
                 setSelectTokenWido(true)
-                if(!account) {
+                if (!account) {
                   await connect()
                 }
-              }} fontColor={widoTagActiveFontColor} borderColor={borderColor}>
-                {
-                  pickedToken.logoURI ?
-                    <img className='logo' src={pickedToken.logoURI} width={24} height={24} alt="" /> : <></>
-                }
-                <span>{pickedToken.symbol}</span>
-                <img src={DropDownIcon} alt="" />
-              </TokenSelect> : 
-              <FarmInfo>
-                <img src={FARMIcon} height="29" width="29" alt="" />
-                <span>FARM</span>
-              </FarmInfo>}
+              }}
+              fontColor={widoTagActiveFontColor}
+              borderColor={borderColor}
+            >
+              {pickedToken.logoURI ? (
+                <img className="logo" src={pickedToken.logoURI} width={24} height={24} alt="" />
+              ) : (
+                <></>
+              )}
+              <span>{pickedToken.symbol}</span>
+              <img src={DropDownIcon} alt="" />
+            </TokenSelect>
+          ) : (
+            <FarmInfo>
+              <img src={FARMIcon} height="29" width="29" alt="" />
+              <span>FARM</span>
+            </FarmInfo>
+          )}
         </TokenInfo>
-        
       </SelectToken>
-      <BalanceInfo fontColor={widoTagActiveFontColor} onClick={()=>{
-        if(account) {
-          const balanceAmount = !legacyStaking ?
-            formatNumberWido(balance, WIDO_BALANCES_DECIMALS)
-          : FARMBalance && fromWei(FARMBalance, tokens[IFARM_TOKEN_SYMBOL].decimals,
-            WIDO_BALANCES_DECIMALS,
-            true,
-          )
-          setInputAmount(balanceAmount)
+      <BalanceInfo
+        fontColor={widoTagActiveFontColor}
+        onClick={() => {
+          if (account) {
+            const balanceAmount = !legacyStaking
+              ? balance
+              : FARMBalance && fromWEI(FARMBalance, tokens[IFARM_TOKEN_SYMBOL].decimals)
+            setInputAmount(balanceAmount)
 
-          setUsdValue(formatNumberWido(balanceAmount * (legacyStaking ? farmInfo.usdPrice : pickedToken.usdPrice || 1), WIDO_BALANCES_DECIMALS))
-        }
-      }}>
+            setUsdValue(
+              formatNumberWido(
+                balanceAmount * (legacyStaking ? farmInfo.usdPrice : pickedToken.usdPrice || 1),
+                WIDO_BALANCES_DECIMALS,
+              ),
+            )
+          }
+        }}
+      >
         Balance:
         <span>
-          {
-            !legacyStaking ?
-              formatNumberWido(balance, WIDO_BALANCES_DECIMALS)
-            : FARMBalance && fromWei(FARMBalance, tokens[IFARM_TOKEN_SYMBOL].decimals,
-              WIDO_BALANCES_DECIMALS,
-              true,
-            ) + " FARM"
-          }
+          {!legacyStaking
+            ? balance
+            : FARMBalance && `${fromWEI(FARMBalance, tokens[IFARM_TOKEN_SYMBOL].decimals)} FARM`}
         </span>
       </BalanceInfo>
       <SwitchMode fontColor={widoTagActiveFontColor}>
-        <ThemeMode mode={legacyStaking ? "true" : "false"} activeBackColor={toggleActiveBackColor} inactiveBackColor={toggleInactiveBackColor} borderColor={borderColor}>
+        <ThemeMode
+          mode={legacyStaking ? 'true' : 'false'}
+          activeBackColor={toggleActiveBackColor}
+          inactiveBackColor={toggleInactiveBackColor}
+          borderColor={borderColor}
+        >
           <div id="theme-switch">
             <div className="switch-track">
-              <div className="switch-thumb"></div>
+              <div className="switch-thumb" />
             </div>
 
             <input
@@ -230,22 +310,25 @@ const WidoPoolDepositBase = ( { selectTokenWido, setSelectTokenWido, startSlippa
         color="wido-deposit"
         width="100%"
         size="md"
-        onClick={()=>{ onClickDeposit() }}
+        onClick={() => {
+          onClickDeposit()
+        }}
       >
         Deposit
         <img src={ChevronRightIcon} alt="" />
       </Button>
 
-      {
-        !legacyStaking ? 
-          <PoweredByWido>
-            <div>Powered By</div>
-            <img src={WidoIcon} alt="" />
-            <span>wido</span>
-          </PoweredByWido> : 
-          <></>}
+      {!legacyStaking ? (
+        <PoweredByWido>
+          <div>Powered By</div>
+          <img src={WidoIcon} alt="" />
+          <span>wido</span>
+        </PoweredByWido>
+      ) : (
+        <></>
+      )}
 
-      <Line height="1px" backColor={"#EAECF0"} />
+      <Line height="1px" backColor="#EAECF0" />
 
       <div>
         <TokenName>
@@ -253,25 +336,38 @@ const WidoPoolDepositBase = ( { selectTokenWido, setSelectTokenWido, startSlippa
           {symbol}
         </TokenName>
         <StakeInfo>
-          <label>{legacyStaking ? "Unstaked" : "Balance"}</label>
+          {legacyStaking ? 'Unstaked' : 'Balance'}
           <span>
-            {
-              !legacyStaking ? 
-                !account ? '' : formatNumberWido(fromWei(get(balances, IFARM_TOKEN_SYMBOL, 0), tokens[IFARM_TOKEN_SYMBOL].decimals, WIDO_BALANCES_DECIMALS), WIDO_BALANCES_DECIMALS)
-              : 
+            {!legacyStaking ? (
               !account ? (
                 ''
-              ) : lpTokenBalance ? (
-                fromWei(lpTokenBalance, tokens[IFARM_TOKEN_SYMBOL].decimals, WIDO_BALANCES_DECIMALS, true)
               ) : (
-                <AnimatedDots />
+                formatNumberWido(
+                  fromWei(
+                    get(balances, IFARM_TOKEN_SYMBOL, 0),
+                    tokens[IFARM_TOKEN_SYMBOL].decimals,
+                    WIDO_BALANCES_DECIMALS,
+                  ),
+                  WIDO_BALANCES_DECIMALS,
+                )
               )
-            }
+            ) : !account ? (
+              ''
+            ) : lpTokenBalance ? (
+              fromWei(
+                lpTokenBalance,
+                tokens[IFARM_TOKEN_SYMBOL].decimals,
+                WIDO_BALANCES_DECIMALS,
+                true,
+              )
+            ) : (
+              <AnimatedDots />
+            )}
           </span>
         </StakeInfo>
-        {
-          !legacyStaking && <ReactTooltip
-            id={"help-underlyingbalance"}
+        {!legacyStaking && (
+          <ReactTooltip
+            id="help-underlyingbalance"
             backgroundColor="#fffce6"
             borderColor="black"
             border
@@ -282,57 +378,65 @@ const WidoPoolDepositBase = ( { selectTokenWido, setSelectTokenWido, startSlippa
           >
             Your iFARM earnings denominated in underlying FARM
           </ReactTooltip>
-        }
+        )}
         <StakeInfo>
-          <label>
-            {legacyStaking ? "Staked" : "Underlying Balance"}
-            {!legacyStaking && <HelpImg data-tip data-for={"help-underlyingbalance"} src={HelpIcon} alt="" />}
-          </label>
+          <div>
+            {legacyStaking ? 'Staked' : 'Underlying Balance'}
+            {!legacyStaking && (
+              <HelpImg data-tip data-for="help-underlyingbalance" src={HelpIcon} alt="" />
+            )}
+          </div>
           <span>
-            {
-            legacyStaking ? 
-              !account ? ('') :
-              totalStaked ? 
-                fromWei(totalStaked, tokens[FARM_TOKEN_SYMBOL].decimals, WIDO_BALANCES_DECIMALS, true)
-              : <AnimatedDots />
-            : !account ? (
-              ''
-            ) : 
-            isEmpty(vaultsData) ? 
-              <AnimatedDots /> : (
-                underlyingValue
+            {legacyStaking ? (
+              !account ? (
+                ''
+              ) : totalStaked ? (
+                fromWei(
+                  totalStaked,
+                  tokens[FARM_TOKEN_SYMBOL].decimals,
+                  WIDO_BALANCES_DECIMALS,
+                  true,
+                )
+              ) : (
+                <AnimatedDots />
               )
-            }
+            ) : !account ? (
+              ''
+            ) : isEmpty(vaultsData) ? (
+              <AnimatedDots />
+            ) : (
+              underlyingValue
+            )}
           </span>
         </StakeInfo>
       </div>
 
-      <Line height="1px" backColor={"#EAECF0"} />
+      <Line height="1px" backColor="#EAECF0" />
 
       <div>
         <StakeInfo>
-          <label>Current Price</label>
+          Current Price
           <span>
-            {
-              legacyStaking ? 
-                !account ? "" : token.data.lpTokenData ? (
-                  "$" + token.data.lpTokenData.price
-                ) : (
-                  <AnimatedDots />
-                ) :
-                !account ? (
-                  ""
-                ) : price ? (
-                  "$" + price
-                ) : (
-                  <AnimatedDots />
-                )
-            }
+            {legacyStaking ? (
+              !account ? (
+                ''
+              ) : token.data.lpTokenData ? (
+                `$${token.data.lpTokenData.price}`
+              ) : (
+                <AnimatedDots />
+              )
+            ) : !account ? (
+              ''
+            ) : price ? (
+              `$${price}`
+            ) : (
+              <AnimatedDots />
+            )}
           </span>
         </StakeInfo>
-        {
-          legacyStaking && <ReactTooltip
-            id={"help-img"}
+        {legacyStaking && (
+          <ReactTooltip
+            id="help-img"
             backgroundColor="#fffce6"
             borderColor="black"
             border
@@ -343,29 +447,38 @@ const WidoPoolDepositBase = ( { selectTokenWido, setSelectTokenWido, startSlippa
           >
             Total value of your Unstaked & Staked FARM
           </ReactTooltip>
-        }
+        )}
         <StakeInfo>
-          <label>
+          <div>
             Total Value
-            {legacyStaking && <HelpImg data-tip data-for={"help-img"} src={HelpIcon} alt="" />}
-          </label>
+            {legacyStaking && <HelpImg data-tip data-for="help-img" src={HelpIcon} alt="" />}
+          </div>
           <span>
-          {
-            legacyStaking ? 
-              !account ? '' : totalValue ? (
-                "$" + formatNumberWido(totalValue * token.data.lpTokenData.price, WIDO_BALANCES_DECIMALS)
+            {legacyStaking ? (
+              !account ? (
+                ''
+              ) : totalValue ? (
+                `$${formatNumberWido(
+                  totalValue * token.data.lpTokenData.price,
+                  WIDO_BALANCES_DECIMALS,
+                )}`
               ) : (
                 <AnimatedDots />
-              ) 
-            : 
-              !account ? ''
-              : ( get(balances, IFARM_TOKEN_SYMBOL, 0) && token.data.lpTokenData ? 
-                ("$" + formatNumberWido(fromWei(get(balances, IFARM_TOKEN_SYMBOL, 0), tokens[IFARM_TOKEN_SYMBOL].decimals, WIDO_BALANCES_DECIMALS) * price, WIDO_BALANCES_DECIMALS)) 
-                : (
-                  <AnimatedDots />
-                )
               )
-          }
+            ) : !account ? (
+              ''
+            ) : get(balances, IFARM_TOKEN_SYMBOL, 0) && token.data.lpTokenData ? (
+              `$${formatNumberWido(
+                fromWei(
+                  get(balances, IFARM_TOKEN_SYMBOL, 0),
+                  tokens[IFARM_TOKEN_SYMBOL].decimals,
+                  WIDO_BALANCES_DECIMALS,
+                ) * price,
+                WIDO_BALANCES_DECIMALS,
+              )}`
+            ) : (
+              <AnimatedDots />
+            )}
           </span>
         </StakeInfo>
       </div>

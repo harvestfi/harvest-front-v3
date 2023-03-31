@@ -1,27 +1,28 @@
-import Web3 from 'web3'
-import { SafeAppWeb3Modal } from '@gnosis.pm/safe-apps-web3modal'
-import BigNumber from 'bignumber.js'
-import WalletConnectProvider from '@walletconnect/web3-provider'
 import CoinbaseWalletSDK from '@coinbase/wallet-sdk'
+import { SafeAppWeb3Modal } from '@gnosis.pm/safe-apps-web3modal'
+import { loadConnectKit } from '@ledgerhq/connect-kit-loader'
+import WalletConnectProvider from '@walletconnect/web3-provider'
+import BigNumber from 'bignumber.js'
 import mobile from 'is-mobile'
 import { get } from 'lodash'
-import contracts from './contracts'
-import { formatNumber } from '../../utils'
-import {
-  BSCSCAN_URL,
-  BSC_URL,
-  ETHERSCAN_URL,
-  INFURA_URL,
-  POLL_BALANCES_INTERVAL_MS,
-  isDebugMode,
-  MATIC_URL,
-  ETH_URL,
-  MATICSCAN_URL,
-} from '../../constants'
+import Web3 from 'web3'
+import arbitrumLogo from '../../assets/images/logos/arbitrum.svg'
 import ethLogo from '../../assets/images/logos/eth.png'
-import bscLogo from '../../assets/images/logos/bsc.png'
 import maticLogo from '../../assets/images/logos/matic.svg'
+import {
+  ARBISCAN_URL,
+  ARBITRUM_URL,
+  ETHERSCAN_URL,
+  ETH_URL,
+  INFURA_URL,
+  isDebugMode,
+  MATICSCAN_URL,
+  MATIC_URL,
+  POLL_BALANCES_INTERVAL_MS,
+} from '../../constants'
 import { CHAINS_ID } from '../../data/constants'
+import { formatNumber } from '../../utils'
+import contracts from './contracts'
 // import { InjectedConnector } from "@web3-react/injected-connector"
 // import { WalletConnectConnector } from "@web3-react/walletconnect-connector"
 // import { WalletLinkConnector } from "@web3-react/walletlink-connector"
@@ -47,7 +48,6 @@ import { CHAINS_ID } from '../../data/constants'
 //   coinbaseWallet: walletLink,
 // }
 
-
 export const providerOptions = {
   injected: {
     package: null,
@@ -58,7 +58,7 @@ export const providerOptions = {
       appName: 'Harvest Finance',
       rpc: {
         [CHAINS_ID.ETH_MAINNET]: INFURA_URL,
-        [CHAINS_ID.BSC_MAINNET]: BSC_URL,
+        [CHAINS_ID.ARBITRUM_ONE]: ARBITRUM_URL,
         [CHAINS_ID.MATIC_MAINNET]: MATIC_URL,
       },
     },
@@ -68,7 +68,19 @@ export const providerOptions = {
     options: {
       infuraId: process.env.REACT_APP_INFURA_KEY,
       rpc: {
-        [CHAINS_ID.BSC_MAINNET]: BSC_URL,
+        [CHAINS_ID.ETH_MAINNET]: INFURA_URL,
+        [CHAINS_ID.MATIC_MAINNET]: MATIC_URL,
+        [CHAINS_ID.ARBITRUM_ONE]: ARBITRUM_URL,
+      },
+    },
+  },
+  ledger: {
+    package: loadConnectKit,
+    options: {
+      rpc: {
+        [CHAINS_ID.ETH_MAINNET]: INFURA_URL,
+        [CHAINS_ID.MATIC_MAINNET]: MATIC_URL,
+        [CHAINS_ID.ARBITRUM_ONE]: ARBITRUM_URL,
       },
     },
   },
@@ -79,13 +91,13 @@ const chains = {
     name: 'Ethereum',
     logo: ethLogo,
   },
-  [CHAINS_ID.BSC_MAINNET]: {
-    name: 'Binance Smart Chain',
-    logo: bscLogo,
-  },
   [CHAINS_ID.MATIC_MAINNET]: {
     name: 'Polygon (Matic)',
     logo: maticLogo,
+  },
+  [CHAINS_ID.ARBITRUM_ONE]: {
+    name: 'Arbitrum',
+    logo: arbitrumLogo,
   },
 }
 
@@ -101,9 +113,9 @@ export const web3Modal = new SafeAppWeb3Modal({
 
 export const mainWeb3 = new Web3(window.ethereum || INFURA_URL)
 export const infuraWeb3 = new Web3(INFURA_URL)
-export const bscWeb3 = new Web3(BSC_URL)
 export const maticWeb3 = new Web3(MATIC_URL)
 export const ethWeb3 = new Web3(ETH_URL)
+export const arbitrumWeb3 = new Web3(ARBITRUM_URL)
 
 export const connectWeb3 = async () => {
   const loadedAsSafeApp = await web3Modal.isSafeApp()
@@ -228,9 +240,9 @@ export const pollUpdatedBalance = (method, currentBalance, onTimeout, onSuccess,
 
 export const getChainName = chainId => {
   switch (Number(chainId)) {
-    case Number(CHAINS_ID.BSC_MAINNET):
-    case getChainHexadecimal(CHAINS_ID.BSC_MAINNET):
-      return 'Binance Smart Chain'
+    case Number(CHAINS_ID.ARBITRUM_ONE):
+    case getChainHexadecimal(CHAINS_ID.ARBITRUM_ONE):
+      return 'Arbitrum One'
     case Number(CHAINS_ID.ETH_MAINNET):
     case getChainHexadecimal(CHAINS_ID.ETH_MAINNET):
       return 'Ethereum Mainnet'
@@ -254,12 +266,12 @@ export const getWeb3 = (chainId, account) => {
     return ethWeb3
   }
 
-  if (chainId === CHAINS_ID.BSC_MAINNET) {
-    return bscWeb3
-  }
-
   if (chainId === CHAINS_ID.MATIC_MAINNET) {
     return maticWeb3
+  }
+
+  if (chainId === CHAINS_ID.ARBITRUM_ONE) {
+    return arbitrumWeb3
   }
 
   return infuraWeb3
@@ -273,8 +285,8 @@ export const getExplorerLink = chainId => {
   switch (chainId) {
     case CHAINS_ID.MATIC_MAINNET:
       return MATICSCAN_URL
-    case CHAINS_ID.BSC_MAINNET:
-      return BSCSCAN_URL
+    case CHAINS_ID.ARBITRUM_ONE:
+      return ARBISCAN_URL
     default:
       return ETHERSCAN_URL
   }
@@ -295,4 +307,3 @@ Params: ${params}
   const contractMethod = instance.methods[methodName]
   return contractMethod(...params).call()
 }
-

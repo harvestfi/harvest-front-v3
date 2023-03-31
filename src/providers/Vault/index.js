@@ -1,35 +1,37 @@
+import axios from 'axios'
+import BigNumber from 'bignumber.js'
+import { get, isArray, merge, pickBy } from 'lodash'
+import { forEach } from 'promised-loops'
 import React, {
   createContext,
-  useContext,
-  useState,
   useCallback,
+  useContext,
   useEffect,
-  useRef,
   useMemo,
+  useRef,
+  useState,
 } from 'react'
-import BigNumber from 'bignumber.js'
-import { forEach } from 'promised-loops'
-import axios from 'axios'
-import { get, pickBy, merge, isArray } from 'lodash'
 import { toast } from 'react-toastify'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import { calculateFarmingBalance, filterVaults } from './utils'
 import { IFARM_TOKEN_SYMBOL, VAULTS_API_ENDPOINT } from '../../constants'
-import { useWallet } from '../Wallet'
-import { usePools } from '../Pools'
-import vaultContractData from '../../services/web3/contracts/vault/contract.json'
-import vaultMethods from '../../services/web3/contracts/vault/methods'
-import univ3ContractData from '../../services/web3/contracts/uniswap-v3/contract.json'
+import { CHAINS_ID } from '../../data/constants'
 import {
   getWeb3,
   hasValidUpdatedBalance,
   newContractInstance,
   pollUpdatedBalance,
 } from '../../services/web3'
+import univ3ContractData from '../../services/web3/contracts/uniswap-v3/contract.json'
+import vaultContractData from '../../services/web3/contracts/vault/contract.json'
+import vaultMethods from '../../services/web3/contracts/vault/methods'
 import { abbreaviteNumber } from '../../utils'
-import { CHAINS_ID } from '../../data/constants'
+import { usePools } from '../Pools'
+import { useWallet } from '../Wallet'
+import { calculateFarmingBalance, filterVaults } from './utils'
 
+/* eslint-disable global-require */
 const { tokens, addresses } = require('../../data')
+/* eslint-enable global-require */
 
 const VaultsContext = createContext()
 const useVaults = () => useContext(VaultsContext)
@@ -39,7 +41,12 @@ const importedVaults = pickBy(
   token => token.vaultAddress || token.tokenAddress === addresses.iFARM,
 )
 
-const { getUnderlyingBalanceWithInvestment, getUnderlyingBalanceWithInvestmentForHolder, getPricePerFullShare, getTotalSupply } = vaultMethods
+const {
+  getUnderlyingBalanceWithInvestment,
+  getUnderlyingBalanceWithInvestmentForHolder,
+  getPricePerFullShare,
+  getTotalSupply,
+} = vaultMethods
 
 const VaultsProvider = _ref => {
   const { children } = _ref
@@ -184,7 +191,7 @@ const VaultsProvider = _ref => {
       if (loadedUserVaultsWeb3Provider.current) {
         setLoadingFarmingBalances(true)
         const curStats = updatedUserStats || userStats
-        if(curStats.length !== 0 && curStats !== {}) {
+        if (curStats.length !== 0 && curStats !== {}) {
           await Promise.all(
             filterVaults(selectedVaults).map(async vaultSymbol => {
               const fetchedBalance = await calculateFarmingBalance(
@@ -224,7 +231,7 @@ const VaultsProvider = _ref => {
     [pools, userStats, loadedVaults],
   )
   useEffect(() => {
-    if(logout) {
+    if (logout) {
       setFarmingBalances({})
     }
   }, [logout])
@@ -233,7 +240,7 @@ const VaultsProvider = _ref => {
       try {
         const apiResponse = await axios.get(VAULTS_API_ENDPOINT)
         const apiData = get(apiResponse, 'data')
-        await setFormattedVaults(merge(apiData.bsc, apiData.eth, apiData.matic))
+        await setFormattedVaults(merge(apiData.eth, apiData.matic, apiData.arbitrum))
         setLoadingVaults(false)
       } catch (err) {
         console.log(err)
@@ -253,9 +260,9 @@ const VaultsProvider = _ref => {
     }
 
     // if (initialFetch.current) {
-      // initialFetch.current = false
-      setLoadingVaults(true)
-      formatVaults()
+    // initialFetch.current = false
+    setLoadingVaults(true)
+    formatVaults()
     // }
   }, [setFormattedVaults])
   useEffectWithPrevious(

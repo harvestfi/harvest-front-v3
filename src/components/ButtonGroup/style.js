@@ -4,8 +4,8 @@ const ButtonsGroup = styled.div`
   display: flex;
   width: fit-content;
   border-radius: 10px;
-  border: 1px solid ${props=>props.borderColor};
-  background: ${props=>props.backColor};  
+  border: 1px solid ${props => props.borderColor};
+  background: ${props => props.backColor};
   padding: 15px 21px 14px 21px;
   transition: 0.25s;
 
@@ -17,7 +17,7 @@ const ButtonsGroup = styled.div`
 const ButtonStyle = styled.button`
   display: flex;
   background: transparent;
-  color: ${props=>props.fontColor};
+  color: ${props => props.fontColor};
   font-size: 16px;
   line-height: 21px;
   font-weight: 500;
@@ -27,30 +27,32 @@ const ButtonStyle = styled.button`
   opacity: 1;
   position: relative;
   transition: 0.25s;
-  ${
-    props => props.name === "Labs" ? `
+  ${props =>
+    props.name === 'Labs'
+      ? `
       opacity: 0.5 !important;
       cursor: unset !important;
       color: ${props.mode} !important;
       margin-right: 20px !important;
-    ` : ``
-  }
+    `
+      : ``}
 
   &:last-child {
     margin-right: 0px;
   }
-  padding: 0px ;
+  padding: 0px;
 
   &.active {
     background: none;
-    color: #FF9400;
+    color: #ff9400;
     border: none;
     border-radius: 7px;
     opacity: 1;
 
     img {
       transition: 0.25s;
-      filter: invert(57%) sepia(61%) saturate(2063%) hue-rotate(1deg) brightness(103%) contrast(105%);
+      filter: invert(57%) sepia(61%) saturate(2063%) hue-rotate(1deg) brightness(103%)
+        contrast(105%);
     }
   }
   transition: 0.25s;
@@ -62,7 +64,7 @@ const ButtonStyle = styled.button`
     margin-right: 10px;
     margin-top: 2px;
 
-    filter: ${props=>props.filterColor};
+    filter: ${props => props.filterColor};
   }
 
   div {

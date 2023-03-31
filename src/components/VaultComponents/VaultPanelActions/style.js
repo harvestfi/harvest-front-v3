@@ -40,11 +40,10 @@ const MigrateOptionsContainer = styled.div`
 `
 
 const SelectedVaultContainer = styled.div`
-  // display: flex;
   width: 100%;
   padding: ${props => props.padding || '20px 0px'};
   max-width: ${props => props.maxWidth || '500px'};
-  border-color: ${props=>props.borderColor};
+  border-color: ${props => props.borderColor};
   border-style: solid;
   border-width: ${props => props.borderWidth || '1px 0px'};
   margin: ${props => props.margin || '15px 0px'};
@@ -52,7 +51,6 @@ const SelectedVaultContainer = styled.div`
 
   button {
     font-weight: 800;
-    // width: auto;
   }
 
   @media screen and (max-width: 670px) {
@@ -110,9 +108,11 @@ const SelectedVaultLabel = styled.span`
 
 const SelectedVaultNumber = styled.span`
   ${props =>
-    props.display ? `
+    props.display
+      ? `
       display: ${props.display};
-    ` : ''}
+    `
+      : ''}
   font-weight: bold;
   font-size: 18px;
   line-height: 23px;
@@ -155,17 +155,13 @@ const SelectedVaultTokenInfo = styled.div`
   align-items: center;
 `
 
-const MarginTopDiv = styled.div`
-  margin-top: 10px;
-`
-
 const Div = styled.div`
   margin-left: 20px;
   align-self: center;
 `
 
 const InfoIcon = styled.img`
-  filter: ${props=>props.filterColor};
+  filter: ${props => props.filterColor};
   transition: 0.25s;
   cursor: pointer;
   margin-left: 5px;
@@ -191,7 +187,6 @@ export {
   VaultRangeContainer,
   VaultRange,
   MigrateOptionsContainer,
-  MarginTopDiv,
   Div,
   InfoIcon,
   USDValue,

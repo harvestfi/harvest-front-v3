@@ -6,10 +6,8 @@ const TotalValue = ({ icon, content, price }) => {
   const { borderColor } = useThemeContext()
   return (
     <Container borderColor={borderColor}>
-      <Div>
-        <img src={icon} alt="" />
-        {content}
-      </Div>
+      <img src={icon} alt="" />
+      <Div>{content}</Div>
       <Price>$&nbsp;{price}</Price>
     </Container>
   )

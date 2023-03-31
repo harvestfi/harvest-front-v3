@@ -2,12 +2,12 @@ export const validateChain = async (
   currentWalletNetwork,
   currentChain,
   onSuccess = Promise.resolve(),
-  onInvalid = () => {},
+  // onInvalid = () => {},
 ) => {
   // if (Number(currentWalletNetwork) !== Number(currentChain)) {
   //   onInvalid()
   // } else {
-    await onSuccess()
+  await onSuccess()
   // }
 }
 

@@ -9,15 +9,14 @@ import Farm from './pages/Farm'
 import Analytic from './pages/Analytic'
 import FAQ from './pages/FAQ'
 import Sidebar from './components/Sidebar'
-import FarmDetail from './pages/FarmDetail'
 import WidoDetail from './pages/WidoDetail'
 import { RESTRICTED_COUNTRIES, ROUTES } from './constants'
 import { Body, GlobalStyle } from './components/GlobalStyle'
 import Modal from './components/Modal'
 import HeaderBanner from './components/HeaderBanner'
 import Providers from './providers'
-import "@fontsource/work-sans"
-import "@fontsource/dm-sans"
+import '@fontsource/work-sans'
+import '@fontsource/dm-sans'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
 const RestrictCountries = () => {
@@ -84,14 +83,15 @@ const App = () => (
     <RestrictCountries />
     <Providers>
       <Body id="page-content">
-        <Sidebar width={"320px"} />
+        <Sidebar width="320px" />
         <Switch>
-          <Route exact path={ROUTES.MAIN}><Redirect to={ROUTES.HOME}></Redirect></Route>
+          <Route exact path={ROUTES.MAIN}>
+            <Redirect to={ROUTES.HOME} />
+          </Route>
           <Route exact path={ROUTES.HOME} component={Home} />
           <Route exact path={ROUTES.DASHBOARD} component={Dashboard} />
           <Route exact path={ROUTES.FARM} component={Farm} />
           <Route exact path={ROUTES.ANALYTIC} component={Analytic} />
-          <Route path={ROUTES.FARMDETAIL} component={FarmDetail} />
           <Route path={ROUTES.WIDODETAIL} component={WidoDetail} />
           <Route path={ROUTES.FAQ} component={FAQ} />
         </Switch>

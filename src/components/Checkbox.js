@@ -47,7 +47,7 @@ const Checkbox = props => {
         outline: 'none',
         cursor: disabled ? 'not-allowed' : 'pointer',
         marginTop: '15px',
-        marginBottom: '15px'
+        marginBottom: '15px',
       }}
       className={containerClassName}
       onClick={e => {

@@ -1,31 +1,28 @@
-import React from 'react'
-import BigNumber from 'bignumber.js'
-import { get, isArray, isEmpty, size as arraySize, sumBy, sum } from 'lodash'
 import axios from 'axios'
 import axiosRetry from 'axios-retry'
-import ReactHtmlParser from 'react-html-parser'
+import BigNumber from 'bignumber.js'
 import mobile from 'is-mobile'
-import { addresses } from './data/index'
+import { get, isArray, isEmpty, size as arraySize, sum, sumBy } from 'lodash'
+import React from 'react'
+import ReactHtmlParser from 'react-html-parser'
 import {
-  KEY_CODES,
   DECIMAL_PRECISION,
-  HARVEST_LAUNCH_DATE,
-  FARM_TOKEN_SYMBOL,
   DISABLED_DEPOSITS,
   DISABLED_WITHDRAWS,
-  MAX_APY_DISPLAY,
-  FARM_WETH_TOKEN_SYMBOL,
   FARM_GRAIN_TOKEN_SYMBOL,
+  FARM_TOKEN_SYMBOL,
   FARM_USDC_TOKEN_SYMBOL,
-  SPECIAL_VAULTS,
-  ROUTES,
-  AMPLIFARM_TOKEN_SYMBOL,
-  UNIV3_POOL_ID_REGEX,
+  FARM_WETH_TOKEN_SYMBOL,
+  HARVEST_LAUNCH_DATE,
   IFARM_TOKEN_SYMBOL,
-  BFARM_TOKEN_SYMBOL,
+  KEY_CODES,
+  MAX_APY_DISPLAY,
   MIFARM_TOKEN_SYMBOL,
+  SPECIAL_VAULTS,
+  UNIV3_POOL_ID_REGEX,
 } from './constants'
-import { CHAINS_ID, VAULT_CATEGORIES_IDS } from './data/constants'
+import { CHAINS_ID } from './data/constants'
+import { addresses } from './data/index'
 
 axiosRetry(axios, {
   retries: 1,
@@ -205,11 +202,7 @@ export const getUserVaultBalance = (
   }
 }
 
-export const getUserVaultBalanceInDetail = (
-  tokenSymbol,
-  totalStakedInPool,
-  iFARMinFARM,
-) => {
+export const getUserVaultBalanceInDetail = (tokenSymbol, totalStakedInPool, iFARMinFARM) => {
   switch (tokenSymbol) {
     case FARM_TOKEN_SYMBOL:
       return new BigNumber(totalStakedInPool).plus(iFARMinFARM).toString()
@@ -245,14 +238,10 @@ export const getVaultValue = token => {
 
 const getRewardSymbol = (vault, isIFARM, vaultPool) => {
   switch (true) {
-    case !stringToArray(vault.category).includes(VAULT_CATEGORIES_IDS.SUSHI_HODL) &&
-      vaultPool &&
-      vaultPool.rewardTokenSymbols.length > 1:
+    case vaultPool && vaultPool.rewardTokenSymbols.length > 1:
       return vaultPool.rewardTokenSymbols
         .filter((_, symbolIdx) => Number(get(vaultPool, `rewardAPY[${symbolIdx}]`, 0)) !== 0)
         .join(', ')
-    case vault.chain === CHAINS_ID.BSC_MAINNET:
-      return 'bFARM'
     case vault.chain === CHAINS_ID.MATIC_MAINNET:
       return 'miFARM'
     case isIFARM:
@@ -265,7 +254,9 @@ const getRewardSymbol = (vault, isIFARM, vaultPool) => {
 export const displayAPY = (apy, ...args) =>
   new BigNumber(apy).isGreaterThan(MAX_APY_DISPLAY)
     ? `${MAX_APY_DISPLAY}%+`
-    : new BigNumber(apy).isLessThanOrEqualTo(0) ? '0.00%' : `${truncateNumberString(apy, ...args)}%`
+    : new BigNumber(apy).isLessThanOrEqualTo(0)
+    ? '0.00%'
+    : `${truncateNumberString(apy, ...args)}%`
 
 export const getRewardsText = (
   token,
@@ -281,17 +272,10 @@ export const getRewardsText = (
   const components = []
 
   const isUniv3Vault = !!(vaultPool && new RegExp(UNIV3_POOL_ID_REGEX).test(vaultPool.id))
-  const hasAmplifarmReward = !!(
-    vaultPool && vaultPool.rewardTokenSymbols.find(symbol => symbol === AMPLIFARM_TOKEN_SYMBOL)
-  )
-  
-  const isHodlVault =
-  stringToArray(token.category).includes(VAULT_CATEGORIES_IDS.SUSHI_HODL) || token.hodlVaultId
 
-  if (
-    vaultPool &&
-    (isUniv3Vault || (vaultPool.rewardTokenSymbols.length > 1 && !hasAmplifarmReward))
-  ) {
+  const isHodlVault = token.hodlVaultId
+
+  if (vaultPool && (isUniv3Vault || vaultPool.rewardTokenSymbols.length > 1)) {
     const rewardSymbols = !isUniv3Vault
       ? token.apyTokenSymbols
       : token.apyTokenSymbols.filter(symbol => symbol !== 'UNI')
@@ -301,9 +285,9 @@ export const getRewardsText = (
         if (get(token, `estimatedApyBreakdown[${i}]`)) {
           components.push(`<div style="display: flex; margin-bottom: 14px; font-size: 16px; line-height: 21px;">
           <div style="min-width: 75px;">
-          ${token.apyIconUrls.map((item, i) => (
-            `<img src='${item.toLowerCase()}' key=${i} width=24 alt="" />`))
-            }</div>
+          ${token.apyIconUrls.map(
+            (item, index) => `<img src='${item.toLowerCase()}' key=${index} width=24 alt="" />`,
+          )}</div>
             <div style="min-width: 60px; color: #1F2937; font-weight: 700;">${
               new BigNumber(token.estimatedApyBreakdown[i]).gt(0)
                 ? `${displayAPY(token.estimatedApyBreakdown[i])}`
@@ -317,8 +301,7 @@ export const getRewardsText = (
                   ? rewardSymbols.join(', ')
                   : symbol
               }</span>`,
-            )}</div></div>`,
-          )
+            )}</div></div>`)
         }
       })
     }
@@ -338,12 +321,7 @@ export const getRewardsText = (
 
     if (Number(farmAPY) > 0) {
       vaultPool.rewardTokenSymbols.forEach((symbol, symbolIdx) => {
-        const farmSymbols = [
-          FARM_TOKEN_SYMBOL,
-          IFARM_TOKEN_SYMBOL,
-          BFARM_TOKEN_SYMBOL,
-          MIFARM_TOKEN_SYMBOL,
-        ]
+        const farmSymbols = [FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, MIFARM_TOKEN_SYMBOL]
 
         if (token.hideFarmApy && farmSymbols.includes(symbol)) {
           return
@@ -357,14 +335,12 @@ export const getRewardsText = (
           <div style='display: flex; margin-bottom: 14px; font-size: 16px; line-height: 21px;'>
             <div style='min-width: 75px'><img src='./icons/${symbol}.png' width=24 alt="" /></div>
             <div style="min-width: 60px; color: #1F2937; font-weight: 700;">
-              ${displayAPY(get(vaultPool, `rewardAPY[${symbolIdx}]`, 0),
-              )}
+              ${displayAPY(get(vaultPool, `rewardAPY[${symbolIdx}]`, 0))}
             </div>&nbsp;
             <div style="min-width: 150px; font-weight: 400; color: #888E8F;">
               <span style="color: #1F2937; font-weight: 700;">${symbol}</span>
               &nbsp;rewards
-            </div>`,
-          )
+            </div>`)
 
           if (Object.keys(get(vaultPool, 'vestingDescriptionOverride', [])).includes(symbol)) {
             components.push(vaultPool.vestingDescriptionOverride[symbol])
@@ -378,38 +354,42 @@ export const getRewardsText = (
       <div style='display: flex; margin-bottom: 14px; font-size: 16px; line-height: 21px;'>
         <div style='min-width: 75px;'>
 
-        ${token.apyIconUrls
-          ? token.apyIconUrls.map(url => (
-              `<img key=${url} width=24 src='${url}' />`
-            ))
-          : null}
-          ${!token.inactive &&
-          !isHodlVault &&
-          vaultPool.rewardTokenSymbols.length >= 2 ?
-          vaultPool.rewardTokenSymbols.map((symbol, symbolIdx) =>
-            symbolIdx !== 0 && symbolIdx < vaultPool.rewardTokens.length ? (
-              `<img
+        ${
+          token.apyIconUrls
+            ? token.apyIconUrls.map(url => `<img key=${url} width=24 src='${url}' />`)
+            : null
+        }
+          ${
+            !token.inactive && !isHodlVault && vaultPool.rewardTokenSymbols.length >= 2
+              ? vaultPool.rewardTokenSymbols.map((symbol, symbolIdx) =>
+                  symbolIdx !== 0 && symbolIdx < vaultPool.rewardTokens.length
+                    ? `<img
                 key=${symbol} width=24 style='margin-right: 10px;'
                 src='./icons/${symbol.toLowerCase()}.png'
               />`
-            ) : null
-          ) : ''}
+                    : null,
+                )
+              : ''
+          }
           </div>
           <div style="min-width: 60px; color: #1F2937; font-weight: 700;">0.00%</div>
           <div style="min-width: 150px; font-weight: 400; color: #888E8F;">Earn Uniswap v3 trading fees ${
-          new BigNumber(tradingApy).gt(0) ? `estimated at&nbsp; <b>${displayAPY(tradingApy)}</b>` : ``
-        }</div>`
-      )
+            new BigNumber(tradingApy).gt(0)
+              ? `estimated at&nbsp; <b>${displayAPY(tradingApy)}</b>`
+              : ``
+          }</div>`)
       // components.push(`
     } else if (Number(tradingApy) > 0) {
       components.push(`
       <div style="display: flex; margin-bottom: 14px; font-size: 16px; line-height: 21px;">
         <div style="min-width: 75px;"><img src='./icons/univ3.png' width=24 alt="" /></div>
-        <div style="min-width: 60px; color: #1F2937; font-weight: 700;">${displayAPY(tradingApy)}</div>
+        <div style="min-width: 60px; color: #1F2937; font-weight: 700;">${displayAPY(
+          tradingApy,
+        )}</div>
         <div style="min-width: 150px; color: #888E8F; font-weight: 500;">Liquidity Provider APY</div>
       </div>`)
     }
-        
+
     const tooltipText = `<ul style="list-style-type: none; margin: 5px; padding-left: 0px; text-align: left;">${components
       .filter(c => !isEmpty(c))
       .map(c => `<li align="left" style="margin: -5px;">${c}</li>`)
@@ -417,7 +397,7 @@ export const getRewardsText = (
 
     return ReactHtmlParser(tooltipText)
   }
-  
+
   if (vaultPool.id === 'fweth-farm') {
     components.push(`<b>${displayAPY(farmAPY)}:</b> <b>FARM</b> rewards`)
     if (Object.keys(get(vaultPool, 'vestingDescriptionOverride', [])).includes(FARM_TOKEN_SYMBOL)) {
@@ -438,14 +418,16 @@ export const getRewardsText = (
   }
 
   const isIFARM = vaultPool.rewardTokens[0] === addresses.iFARM
-  const isAmpliFARM = get(vaultPool, 'rewardTokens').includes(addresses.BSC.ampliFARM)
-  
 
   if (isSpecialVault && vaultPool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
     components.push(
       `<div style="display: flex; margin-bottom: 14px; font-size: 16px; line-height: 21px;">
-      <div style="width: 75px;"><img src='./icons/${token.rewardSymbol}.png' width=24 alt=${token.rewardSymbol} /></div>
-      <div style="min-width: 60px; color: #1F2937; font-weight: 700;"> ${specialVaultApy > 0 ? `${displayAPY(specialVaultApy)}` : 'N/A'}</div>
+      <div style="width: 75px;"><img src='./icons/${token.rewardSymbol}.png' width=24 alt=${
+        token.rewardSymbol
+      } /></div>
+      <div style="min-width: 60px; color: #1F2937; font-weight: 700;"> ${
+        specialVaultApy > 0 ? `${displayAPY(specialVaultApy)}` : 'N/A'
+      }</div>
       <div style="min-width: 150px; color: #888E8F; font-weight: 500;">
       <span style="color: #1F2937; font-weight: 700;">${
         token.rewardSymbol
@@ -456,9 +438,12 @@ export const getRewardsText = (
       if (Number(tradingApy) > 0) {
         components.push(`<div style="display: flex; margin-bottom: 14px; font-size: 16px; line-height: 21px;">
           <div style="min-width: 75px;"><img src='./icons/univ3.png' width=24 alt="" /></div>
-          <div style="min-width: 60px; color: #1F2937; font-weight: 700;">${displayAPY(tradingApy)}</div> 
+          <div style="min-width: 60px; color: #1F2937; font-weight: 700;">${displayAPY(
+            tradingApy,
+          )}</div> 
           <div style="min-width: 150px; color: #888E8F; font-weight: 500;">Liquidity Provider APY</div>
-        </div>`)}
+        </div>`)
+      }
 
       if (arraySize(token.apyTokenSymbols)) {
         if (token.apyOverride) {
@@ -485,16 +470,19 @@ export const getRewardsText = (
           } else {
             apyString = `<div style="display: flex; margin-bottom: 14px; font-size: 16px; line-height: 21px;"><div style="min-width: 75px;">`
             apyString += `${
-              token.apyIconUrls
-              ? token.apyIconUrls.map((url, i) => (
-                  `<img key='${i}' width=24 style={{margin:"0px 5px 0px 0px"}} src='${url}' />`
-                ))
-              : <>${
-                vaultPool.rewardTokenSymbols.map((symbol, idx)=>{
-                  return (
-                    `<img key=${idx} src='./icons/${symbol.toLowerCase()}.png' width=24 alt='${symbol}' />`
-                  )})
-              }</>
+              token.apyIconUrls ? (
+                token.apyIconUrls.map(
+                  (url, i) =>
+                    `<img key='${i}' width=24 style={{margin:"0px 5px 0px 0px"}} src='${url}' />`,
+                )
+              ) : (
+                <>
+                  $
+                  {vaultPool.rewardTokenSymbols.map((symbol, idx) => {
+                    return `<img key=${idx} src='./icons/${symbol.toLowerCase()}.png' width=24 alt='${symbol}' />`
+                  })}
+                </>
+              )
             }`
             apyString += '</div>'
             apyString += `<div style="min-width: 60px; color: #1F2937; font-weight: 700;">${
@@ -503,8 +491,14 @@ export const getRewardsText = (
                 : displayAPY(token.estimatedApy)
             }</div> <div style="min-width: 150px; color: #888E8F;">Auto ${
               isHodlVault ? 'hodling <b>SUSHI<b> in' : 'harvested'
-            }&nbsp; <span style="color: #1F2937; font-weight: 700;">${token.apyTokenSymbols.join(', ')}${
-              isIFARM && token.fullBuyback ? ` <span style="color: #1F2937; font-weight: 700;">(${displayAPY(token.estimatedApy)})</span>` : ``
+            }&nbsp; <span style="color: #1F2937; font-weight: 700;">${token.apyTokenSymbols.join(
+              ', ',
+            )}${
+              isIFARM && token.fullBuyback
+                ? ` <span style="color: #1F2937; font-weight: 700;">(${displayAPY(
+                    token.estimatedApy,
+                  )})</span>`
+                : ``
             }</span>${
               token.fullBuyback ||
               (token.tokenAddress !== addresses.V2.SUSHI.Underlying && isHodlVault)
@@ -550,16 +544,20 @@ export const getRewardsText = (
 
     if (!token.hideFarmApy && Number(farmAPY) > 0) {
       let apyString = `<div style="display: flex; margin-bottom: 14px; font-size: 16px; line-height: 21px;">
-        <div style="min-width: 75px;"><img src='./icons/${getRewardSymbol(token, isIFARM, vaultPool)}.png' width=24 alt='' /></div>`;
-      
+        <div style="min-width: 75px;"><img src='./icons/${getRewardSymbol(
+          token,
+          isIFARM,
+          vaultPool,
+        )}.png' width=24 alt='' /></div>`
+
       apyString += `<div style="min-width: 60px; color: #1F2937; font-weight: 700;">${
-        isIFARM || (isAmpliFARM && Number(boostedRewardAPY) > 0)
-          ? displayAPY(boostedRewardAPY)
-          : displayAPY(farmAPY)
-      }</div><div style="min-width: 150px; font-weight: 400; color: #888E8F;" ><span style="color: #1F2937; font-weight: 700;">${getRewardSymbol(token, isIFARM, vaultPool)}</span>&nbsp; rewards${
-        isIFARM || isAmpliFARM ? `` : ``
-      }${
-        isIFARM || (isAmpliFARM && Number(boostedRewardAPY) > 0)
+        isIFARM || Number(boostedRewardAPY) > 0 ? displayAPY(boostedRewardAPY) : displayAPY(farmAPY)
+      }</div><div style="min-width: 150px; font-weight: 400; color: #888E8F;" ><span style="color: #1F2937; font-weight: 700;">${getRewardSymbol(
+        token,
+        isIFARM,
+        vaultPool,
+      )}</span>&nbsp; rewards${isIFARM ? `` : ``}${
+        isIFARM || Number(boostedRewardAPY) > 0
           ? ` (<span style="color: #1F2937; font-weight: 700;">${displayAPY(farmAPY)}</span>)`
           : ''
       }&nbsp;`
@@ -574,16 +572,7 @@ export const getRewardsText = (
           )}</span> auto-compounding</div>`
         }
 
-        if (isAmpliFARM) {
-          apyString += ` boosted to <b>${displayAPY(
-            boostedRewardAPY,
-          )}</b> when <b>${truncateNumberString(
-            vaultPool.amountToStakeForBoost,
-          )}</b> <b>bFARM</b> is <a href='${
-            ROUTES.AMPLIFARM
-          }'>staked for 2 years on the Booster page</a>`
-        }
-        apyString += "</div>"
+        apyString += '</div>'
       }
 
       components.push(apyString)
@@ -608,17 +597,10 @@ export const getDetailText = (
   const components = []
 
   const isUniv3Vault = !!(vaultPool && new RegExp(UNIV3_POOL_ID_REGEX).test(vaultPool.id))
-  const hasAmplifarmReward = !!(
-    vaultPool && vaultPool.rewardTokenSymbols.find(symbol => symbol === AMPLIFARM_TOKEN_SYMBOL)
-  )
-  
-  const isHodlVault =
-  stringToArray(token.category).includes(VAULT_CATEGORIES_IDS.SUSHI_HODL) || token.hodlVaultId
 
-  if (
-    vaultPool &&
-    (isUniv3Vault || (vaultPool.rewardTokenSymbols.length > 1 && !hasAmplifarmReward))
-  ) {
+  const isHodlVault = !!token.hodlVaultId
+
+  if (vaultPool && (isUniv3Vault || vaultPool.rewardTokenSymbols.length > 1)) {
     const rewardSymbols = !isUniv3Vault
       ? token.apyTokenSymbols
       : token.apyTokenSymbols.filter(symbol => symbol !== 'UNI')
@@ -629,27 +611,33 @@ export const getDetailText = (
           components.push(`
           <div class="detail-box">
             <div class="detail-icon">
-              ${token.apyIconUrls.map((item, i) => (
-                `<img src='${(item.slice(1, item.length)).toLowerCase()}' key=${i} width=24 height=24 alt="" style='margin-left: ${i !== 0 ? "-15px;" : ""}' />`
-              ))}
+              ${token.apyIconUrls.map(
+                (item, index) =>
+                  `<img src='${item
+                    .slice(1, item.length)
+                    .toLowerCase()}' key=${index} width=24 height=24 alt="" style='margin-left: ${
+                    index !== 0 ? '-15px;' : ''
+                  }' />`,
+              )}
             </div>
             <div class="detail-apy">
-              ${new BigNumber(token.estimatedApyBreakdown[i]).gt(0)
-                ? `${displayAPY(token.estimatedApyBreakdown[i])}`
-                : `...`
+              ${
+                new BigNumber(token.estimatedApyBreakdown[i]).gt(0)
+                  ? `${displayAPY(token.estimatedApyBreakdown[i])}`
+                  : `...`
               }
             </div>
             <div class="detail-desc">
               Auto harvested:
             </div>
             <div class="detail-token">
-              ${rewardSymbols.length > 1 && token.estimatedApyBreakdown.length === 1
-                ? rewardSymbols.join(' ')
-                : symbol
+              ${
+                rewardSymbols.length > 1 && token.estimatedApyBreakdown.length === 1
+                  ? rewardSymbols.join(' ')
+                  : symbol
               }
             </div>
-          </div>`
-          )
+          </div>`)
         }
       })
     }
@@ -668,18 +656,12 @@ export const getDetailText = (
         <div class="detail-desc-no-width">
           iFARM auto-compounding rewards
         </div>
-      </div>`
-      )
+      </div>`)
     }
 
     if (Number(farmAPY) > 0) {
       vaultPool.rewardTokenSymbols.forEach((symbol, symbolIdx) => {
-        const farmSymbols = [
-          FARM_TOKEN_SYMBOL,
-          IFARM_TOKEN_SYMBOL,
-          BFARM_TOKEN_SYMBOL,
-          MIFARM_TOKEN_SYMBOL,
-        ]
+        const farmSymbols = [FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, MIFARM_TOKEN_SYMBOL]
 
         if (token.hideFarmApy && farmSymbols.includes(symbol)) {
           return
@@ -695,15 +677,12 @@ export const getDetailText = (
               <img src='/icons/${symbol}.svg' width=24 height=24 alt="" />
             </div>
             <div class="detail-apy">
-              <b>${displayAPY(
-                get(vaultPool, `rewardAPY[${symbolIdx}]`, 0),
-              )}</b>
+              <b>${displayAPY(get(vaultPool, `rewardAPY[${symbolIdx}]`, 0))}</b>
             </div>
             <div class="detail-desc">
               ${symbol} rewards
             </div>
-          </div>`
-          )
+          </div>`)
 
           if (Object.keys(get(vaultPool, 'vestingDescriptionOverride', [])).includes(symbol)) {
             components.push(vaultPool.vestingDescriptionOverride[symbol])
@@ -716,32 +695,37 @@ export const getDetailText = (
       components.push(`
       <div class='detail-box'>
         <div class='detail-icon'>
-          ${token.apyIconUrls
-            ? token.apyIconUrls.map((url, i) => (
-              `<img style='${i !== 0 ? "margin-left: -15px;" : ""}'
-                 key=${url} width=24 height=24 src='${url.slice(1, url.length)}' />`
-            ))
-          : null}
-          ${!token.inactive &&
-          !isHodlVault &&
-          vaultPool.rewardTokenSymbols.length >= 2 ?
-          vaultPool.rewardTokenSymbols.map((symbol, symbolIdx) =>
-            symbolIdx !== 0 && symbolIdx < vaultPool.rewardTokens.length ? (
-              `<img style='${symbolIdx !== 0 ? "margin-left: -15px;" : ""}'
+          ${
+            token.apyIconUrls
+              ? token.apyIconUrls.map(
+                  (url, i) =>
+                    `<img style='${i !== 0 ? 'margin-left: -15px;' : ''}'
+                 key=${url} width=24 height=24 src='${url.slice(1, url.length)}' />`,
+                )
+              : null
+          }
+          ${
+            !token.inactive && !isHodlVault && vaultPool.rewardTokenSymbols.length >= 2
+              ? vaultPool.rewardTokenSymbols.map((symbol, symbolIdx) =>
+                  symbolIdx !== 0 && symbolIdx < vaultPool.rewardTokens.length
+                    ? `<img style='${symbolIdx !== 0 ? 'margin-left: -15px;' : ''}'
                 key=${symbol} width=24 height=24 style='margin-right: 10px;'
                 src='/icons/${symbol.toLowerCase()}.svg'
               />`
-            ) : null
-          ) : ''}
+                    : null,
+                )
+              : ''
+          }
         </div>
         <div class="detail-apy">
           <b>${new BigNumber(tradingApy).gt(0) ? `${displayAPY(tradingApy)}` : `0.00%`}</b>
         </div>
         <div class="detail-token-no-width">Earn Uniswap v3 trading fees ${
-          new BigNumber(tradingApy).gt(0) ? `estimated at&nbsp; <b>${displayAPY(tradingApy)}</b>` : ``
+          new BigNumber(tradingApy).gt(0)
+            ? `estimated at&nbsp; <b>${displayAPY(tradingApy)}</b>`
+            : ``
         }</div>
-      </div>`
-      )
+      </div>`)
       // components.push(`
     } else if (Number(tradingApy) > 0) {
       components.push(`
@@ -755,10 +739,10 @@ export const getDetailText = (
         <div class="detail-desc-no-width">Liquidity Provider APY</div>
       </div>`)
     }
-        
+
     const tooltipText = `<div>${components
       .filter(c => !isEmpty(c))
-      .map(c =>`${c}`)
+      .map(c => `${c}`)
       .join('')}</div>`
 
     return tooltipText
@@ -774,7 +758,7 @@ export const getDetailText = (
     components.push(
       `<b>${displayAPY(token.estimatedApy)}</b>: Auto harvested <b>${token.apyTokenSymbols.join(
         ' ',
-      )}</b>`
+      )}</b>`,
     )
 
     const tooltipText = `<div>${components
@@ -786,16 +770,18 @@ export const getDetailText = (
   }
 
   const isIFARM = vaultPool.rewardTokens[0] === addresses.iFARM
-  const isAmpliFARM = get(vaultPool, 'rewardTokens').includes(addresses.BSC.ampliFARM)
-  
 
   if (isSpecialVault && vaultPool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
     components.push(
       `<div class="detail-box">
-        <div class="detail-icon"><img src='/icons/${token.rewardSymbol}.svg' width=24 height=24 alt=${token.rewardSymbol} /></div>
-        <div class="detail-apy"> ${specialVaultApy > 0 ? `${displayAPY(specialVaultApy)}</div>` : '...'} 
+        <div class="detail-icon"><img src='/icons/${
+          token.rewardSymbol
+        }.svg' width=24 height=24 alt=${token.rewardSymbol} /></div>
+        <div class="detail-apy"> ${
+          specialVaultApy > 0 ? `${displayAPY(specialVaultApy)}</div>` : '...'
+        } 
         <div style="detail-desc">${token.rewardSymbol} rewards</div>
-      </div>`
+      </div>`,
     )
   } else {
     if (!token.hideTokenApy) {
@@ -834,18 +820,24 @@ export const getDetailText = (
             apyString = `
             <div class="detail-box">
               <div class="detail-icon">`
-                apyString += `${
-                  token.apyIconUrls
-                  ? token.apyIconUrls.map((url, i) => (
-                      `<img key='${i}' width=24 height=24 style='margin:0px -15px 0px 0px;' src='${url.slice(1, url.length)}' />`
-                    ))
-                  : <>${
-                    vaultPool.rewardTokenSymbols.map((symbol, idx)=>{
-                      return (
-                        `<img key=${idx} src='/icons/${symbol.toLowerCase()}.svg' width=24 height=24 alt='${symbol}' />`
-                      )})
-                  }</>
-                }`
+            apyString += `${
+              token.apyIconUrls ? (
+                token.apyIconUrls.map(
+                  (url, i) =>
+                    `<img key='${i}' width=24 height=24 style='margin:0px -15px 0px 0px;' src='${url.slice(
+                      1,
+                      url.length,
+                    )}' />`,
+                )
+              ) : (
+                <>
+                  $
+                  {vaultPool.rewardTokenSymbols.map((symbol, idx) => {
+                    return `<img key=${idx} src='/icons/${symbol.toLowerCase()}.svg' width=24 height=24 alt='${symbol}' />`
+                  })}
+                </>
+              )
+            }`
             apyString += '</div>'
             apyString += `<div class="detail-apy">${
               isIFARM && token.fullBuyback
@@ -903,11 +895,13 @@ export const getDetailText = (
 
     if (!token.hideFarmApy && Number(farmAPY) > 0) {
       let apyString = `<div class="detail-box">
-        <div class="detail-icon"><img src='/icons/${getRewardSymbol(token, isIFARM, vaultPool)}.svg' width=24 height=24 alt='' /></div>`;
+        <div class="detail-icon"><img src='/icons/${getRewardSymbol(
+          token,
+          isIFARM,
+          vaultPool,
+        )}.svg' width=24 height=24 alt='' /></div>`
       apyString += `<div class="detail-apy">${
-        isIFARM || (isAmpliFARM && Number(boostedRewardAPY) > 0)
-          ? displayAPY(boostedRewardAPY)
-          : displayAPY(farmAPY)
+        isIFARM || Number(boostedRewardAPY) > 0 ? displayAPY(boostedRewardAPY) : displayAPY(farmAPY)
       }</div> <div class="detail-desc">${getRewardSymbol(token, isIFARM, vaultPool)} rewards</div>`
 
       if (Number(boostedRewardAPY) > 0) {
@@ -919,7 +913,6 @@ export const getDetailText = (
         //     true,
         //   )}</b> auto-compounding`
         // }
-
         // if (isAmpliFARM) {
         //   apyString += ` boosted to <b>${displayAPY(
         //     boostedRewardAPY,
@@ -944,7 +937,12 @@ export const getDetailText = (
 export const getTotalApy = (vaultPool, token, isSpecialVault) => {
   const vaultData = isSpecialVault ? token.data : vaultPool
 
-  if (isSpecialVault && /*vaultData.id &&*/ vaultData.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
+  if (
+    isSpecialVault &&
+    vaultData &&
+    vaultData.id &&
+    vaultData.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID
+  ) {
     if (Number(token.profitShareAPY) <= 0) {
       return null
     }
@@ -953,7 +951,6 @@ export const getTotalApy = (vaultPool, token, isSpecialVault) => {
   // if(token === undefined) {
   //   return 0;
   // }
-  // let farmAPY = (token.hideFarmApy !== undefined && token.hideFarmApy)
   let farmAPY = token.hideFarmApy
       ? sumBy(
           vaultPool.rewardAPY.filter((_, index) => index !== 0),
@@ -1075,51 +1072,47 @@ export function CustomException(message, code) {
 }
 
 export const getTVLData = async (ago, address) => {
-  let nowDate = new Date()
+  let nowDate = new Date(),
+    data = []
   nowDate = Math.floor(nowDate.setDate(nowDate.getDate() - 1) / 1000)
-  let data = []
-  
-  let startDate = nowDate -  (3600 * 24 * ago)
+  const startDate = nowDate - 3600 * 24 * ago
 
-  let api = `https://ethparser-api.herokuapp.com/api/transactions/history/tvl/${address}?reduce=1&start=${startDate}&network=eth`
+  const api = `https://ethparser-api.herokuapp.com/api/transactions/history/tvl/${address}?reduce=1&start=${startDate}&network=eth`
   try {
     await fetch(api)
-    .then(async(res)=>{
-      res = await res.json()
-      if(res !== []) {
-        data = res.map((a) => {
-          return [a.calculateTime, a.lastTvl]
-        })
-      }
-    })
-    .catch((err)=>{
-      console.log(err)
-    })
+      .then(async res => {
+        res = await res.json()
+        if (res !== []) {
+          data = res.map(a => {
+            return [a.calculateTime, a.lastTvl]
+          })
+        }
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  } catch (err) {
+    console.log('Fetch Chart Data error: ', err)
   }
-  catch(err) {
-    console.log("Fetch Chart Data error: ", err)
-  }
-  
+
   return data
 }
 
 export const getDataQuery = async (ago, address, chainId, myWallet) => {
-
-  let nowDate = new Date()
+  let nowDate = new Date(),
+    data = {}
   nowDate = Math.floor(nowDate.setDate(nowDate.getDate() - 1) / 1000)
-  let data = {}
-  
-  let startDate = nowDate -  (3600 * 24 * ago)
-  
+  const startDate = nowDate - 3600 * 24 * ago
+
   address = address.toLowerCase()
-  if(myWallet) {
+  if (myWallet) {
     myWallet = myWallet.toLowerCase()
   }
-  var myHeaders = new Headers();
-  myHeaders.append("Content-Type", "application/json");
+  const myHeaders = new Headers()
+  myHeaders.append('Content-Type', 'application/json')
 
-  var graphql = JSON.stringify({
-    query: `{
+  const graphql = JSON.stringify({
+      query: `{
       apyAutoCompounds(
         where: {
           vault: "${address}", 
@@ -1162,57 +1155,61 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
         value, timestamp
       }
     }`,
-    variables: {}
-  })
-
-  var requestOptions = {
-    method: 'POST',
-    headers: myHeaders,
-    body: graphql,
-    redirect: 'follow'
-  }
-  const subParam = chainId === CHAINS_ID.ETH_MAINNET ? process.env.REACT_APP_GRAPHQL_SUBPARAM_ETH : process.env.REACT_APP_GRAPHQL_SUBPARAM_MATIC
+      variables: {},
+    }),
+    requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: graphql,
+      redirect: 'follow',
+    }
+  const subParam =
+    chainId === CHAINS_ID.ETH_MAINNET
+      ? process.env.REACT_APP_GRAPHQL_SUBPARAM_ETH
+      : chainId === CHAINS_ID.MATIC_MAINNET
+      ? process.env.REACT_APP_GRAPHQL_SUBPARAM_MATIC
+      : process.env.REACT_APP_GRAPHQL_SUBPARAM_ARBITRUM
   const url = `https://api.thegraph.com/subgraphs/id/${subParam}`
   try {
     await fetch(url, requestOptions)
       .then(response => response.json())
-      .then((result) => {
+      .then(result => {
         data = result.data
         console.log(data)
-        
       })
       .catch(error => console.log('error', error))
-  } catch(err) {
-    console.log("Fetch data about subgraph: ", err)
+  } catch (err) {
+    console.log('Fetch data about subgraph: ', err)
   }
 
   return data
 }
 
 function decimalAdjust(type, value, exp) {
-  type = String(type);
-  if (!["round", "floor", "ceil"].includes(type)) {
+  type = String(type)
+  if (!['round', 'floor', 'ceil'].includes(type)) {
     throw new TypeError(
-      "The type of decimal adjustment must be one of 'round', 'floor', or 'ceil'."
-    );
+      "The type of decimal adjustment must be one of 'round', 'floor', or 'ceil'.",
+    )
   }
-  exp = Number(exp);
-  value = Number(value);
+  exp = Number(exp)
+  value = Number(value)
   if (exp % 1 !== 0 || Number.isNaN(value)) {
-    return NaN;
-  } else if (exp === 0) {
-    return Math[type](value);
+    return NaN
   }
-  const [magnitude, exponent = 0] = value.toString().split("e");
-  const adjustedValue = Math[type](`${magnitude}e${exponent - exp}`);
+  if (exp === 0) {
+    return Math[type](value)
+  }
+  const [magnitude, exponent = 0] = value.toString().split('e')
+  const adjustedValue = Math[type](`${magnitude}e${exponent - exp}`)
   // Shift back
-  const [newMagnitude, newExponent = 0] = adjustedValue.toString().split("e");
-  return Number(`${newMagnitude}e${+newExponent + exp}`);
+  const [newMagnitude, newExponent = 0] = adjustedValue.toString().split('e')
+  return Number(`${newMagnitude}e${+newExponent + exp}`)
 }
 
 // Decimal round
-export const round10 = (value, exp) => decimalAdjust("round", value, exp);
+export const round10 = (value, exp) => decimalAdjust('round', value, exp)
 // Decimal floor
-export const floor10 = (value, exp) => decimalAdjust("floor", value, exp);
+export const floor10 = (value, exp) => decimalAdjust('floor', value, exp)
 // Decimal ceil
-export const ceil10 = (value, exp) => decimalAdjust("ceil", value, exp);
+export const ceil10 = (value, exp) => decimalAdjust('ceil', value, exp)

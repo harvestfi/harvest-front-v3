@@ -1,9 +1,9 @@
+import axios from 'axios'
 import BigNumber from 'bignumber.js'
 import { find, get, isUndefined } from 'lodash'
+import { forEach } from 'promised-loops'
 import React, { createContext, useCallback, useContext } from 'react'
 import { toast } from 'react-toastify'
-import { forEach } from 'promised-loops'
-import axios from 'axios'
 import {
   ACTIONS,
   FARM_TOKEN_SYMBOL,
@@ -13,16 +13,16 @@ import {
   ZAPPER_FI_ZAP_IN_ENDPOINT,
 } from '../constants'
 import { formatWeb3PluginErrorMessage, mainWeb3, newContractInstance } from '../services/web3'
-import tokenMethods from '../services/web3/contracts/token/methods'
-import tokenContractData from '../services/web3/contracts/token/contract.json'
-import poolMethods from '../services/web3/contracts/pool/methods'
+import amplifierMethods from '../services/web3/contracts/amplifier/methods'
+import boostStakingMethods from '../services/web3/contracts/boost-staking/methods'
 import poolContractData from '../services/web3/contracts/pool/contract.json'
-import vaultMethods from '../services/web3/contracts/vault/methods'
-import univ3Methods from '../services/web3/contracts/uniswap-v3/methods'
+import poolMethods from '../services/web3/contracts/pool/methods'
+import tokenContractData from '../services/web3/contracts/token/contract.json'
+import tokenMethods from '../services/web3/contracts/token/methods'
 import uniStatusViewerContractData from '../services/web3/contracts/unistatus-viewer/contract.json'
 import uniStatusViewerContractMethods from '../services/web3/contracts/unistatus-viewer/methods'
-import boostStakingMethods from '../services/web3/contracts/boost-staking/methods'
-import amplifierMethods from '../services/web3/contracts/amplifier/methods'
+import univ3Methods from '../services/web3/contracts/uniswap-v3/methods'
+import vaultMethods from '../services/web3/contracts/vault/methods'
 import { CustomException } from '../utils'
 
 const { addresses, tokens, pools } = require('../data')
@@ -64,7 +64,9 @@ const ActionsProvider = ({ children }) => {
         await onSuccessApproval()
 
         toast.success(
-          `${get(tokens, `[${tokenSymbol}].displayName`, tokenSymbol)} approval completed`,
+          `${get(tokens, `[${tokenSymbol}].tokenNames`, tokenSymbol).join(
+            ', ',
+          )} approval completed`,
         )
 
         return false
@@ -437,7 +439,7 @@ const ActionsProvider = ({ children }) => {
       action = ACTIONS.STAKE,
     ) => {
       const poolInstance = poolData.autoStakeContractLocalInstance || poolData.contractLocalInstance
-      const tokenDisplayName = get(tokens, `[${tokenSymbol}].displayName`, tokenSymbol)
+      const tokenDisplayName = get(tokens, `[${tokenSymbol}].tokenNames`, tokenSymbol).join(', ')
 
       let hasDeniedRequest = false
 
@@ -702,7 +704,7 @@ const ActionsProvider = ({ children }) => {
         setPendingAction(action)
         await boostStakingMethods.unstake(amountToExecute, account, contracts.boostStakingInstance)
         setPendingAction(null)
-        toast.success(`${token.displayName} unstake completed`)
+        toast.success(`${token.tokenNames.join(', ')} unstake completed`)
         await onSuccessUnstake()
       } catch (err) {
         setPendingAction(null)
@@ -744,6 +746,7 @@ const ActionsProvider = ({ children }) => {
         params: {
           sellTokenAddress: selectedToken.value,
           ownerAddress,
+          /* eslint-disable camelcase */
           api_key: process.env.REACT_APP_ZAPPERFI_API_KEY,
         },
       })
@@ -765,6 +768,7 @@ const ActionsProvider = ({ children }) => {
             gasPrice,
             sellTokenAddress: selectedToken.value,
             ownerAddress,
+            /* eslint-disable camelcase */
             api_key: process.env.REACT_APP_ZAPPERFI_API_KEY,
           },
         })
@@ -803,6 +807,7 @@ const ActionsProvider = ({ children }) => {
             sellTokenAddress: selectedToken.value,
             sellAmount,
             ownerAddress,
+            /* eslint-disable camelcase */
             api_key: process.env.REACT_APP_ZAPPERFI_API_KEY,
           },
         })
