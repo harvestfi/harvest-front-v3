@@ -81,25 +81,28 @@ function generateChartDataForApy(apyData1, apyData2, field) {
     return b[0] - a[0]
   })
 
-  for (let i = 0; i < apyData.length; i += 1) {
-    if (i === 0) {
-      if (apyData[i][2] !== apyData[i + 1][2]) apyData[i][1] += apyData[i + 1][1]
-    } else if (i === apyData.length - 1) {
-      if (apyData[i][2] !== apyData[i - 1][2]) {
+  if (apyData.length > 1) {
+    for (let i = 0; i < apyData.length; i += 1) {
+      if (i === 0) {
+        if (apyData[i][2] !== apyData[i + 1][2]) apyData[i][1] += apyData[i + 1][1]
+      } else if (i === apyData.length - 1) {
+        if (apyData[i][2] !== apyData[i - 1][2]) {
+          apyData[i][1] += apyData[i - 1][1]
+        }
+      } else if (apyData[i][2] !== apyData[i + 1][2]) {
+        if (apyData[i][2] !== apyData[i - 1][2]) {
+          if (
+            Math.abs(apyData[i][1] - apyData[i - 1][1]) <=
+            Math.abs(apyData[i][1] - apyData[i + 1][1])
+          )
+            apyData[i][1] += apyData[i - 1][1]
+          else apyData[i][1] += apyData[i + 1][1]
+        } else {
+          apyData[i][1] += apyData[i + 1][1]
+        }
+      } else if (apyData[i][2] !== apyData[i - 1][2]) {
         apyData[i][1] += apyData[i - 1][1]
       }
-    } else if (apyData[i][2] !== apyData[i + 1][2]) {
-      if (apyData[i][2] !== apyData[i - 1][2]) {
-        if (
-          Math.abs(apyData[i][1] - apyData[i - 1][1]) <= Math.abs(apyData[i][1] - apyData[i + 1][1])
-        )
-          apyData[i][1] += apyData[i - 1][1]
-        else apyData[i][1] += apyData[i + 1][1]
-      } else {
-        apyData[i][1] += apyData[i + 1][1]
-      }
-    } else if (apyData[i][2] !== apyData[i - 1][2]) {
-      apyData[i][1] += apyData[i - 1][1]
     }
   }
 
