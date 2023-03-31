@@ -13,8 +13,8 @@ const isDevMode = process.env.NODE_ENV === 'development'
 const publicDir = `${isDevMode ? 'public' : 'build'}`
 
 const fetchIconsFromAPI = () => {
-  console.log(`Copying icons from harvest-api repo into ./${publicDir}/icons...`)
-  fs.copy('./src/data/harvest-api/data/icons', `./${publicDir}/icons`).catch(err =>
+  console.log(`Copying icons from harvest-api-v3 repo into ./${publicDir}/icons...`)
+  fs.copy('./src/data/harvest-api-v3/data/icons', `./${publicDir}/icons`).catch(err =>
     console.error(err),
   )
 }

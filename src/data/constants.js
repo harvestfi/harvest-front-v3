@@ -1,1 +1,1 @@
-module.exports = require('./harvest-api/data/constants')
+module.exports = require('./harvest-api-v3/data/constants')
