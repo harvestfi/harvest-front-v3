@@ -67,6 +67,7 @@ import {
   UserDropDown,
   UserDropDownItem,
   UserDropDownMenu,
+  BottomPart,
 } from './style'
 
 const sideLinks = [
@@ -388,7 +389,7 @@ const Sidebar = ({ width }) => {
             ))}
           </LinksContainer>
           <AboutHarvest>{/* About */}</AboutHarvest>
-          <LinksContainer totalItems={sideLinks1.length + 2}>
+          {/* <LinksContainer totalItems={sideLinks1.length + 2}>
             {sideLinks1.map(item => (
               <Fragment key={item.name}>
                 <LinkContainer
@@ -412,49 +413,77 @@ const Sidebar = ({ width }) => {
                 </LinkContainer>
               </Fragment>
             ))}
-          </LinksContainer>
+          </LinksContainer> */}
         </MiddleActionsContainer>
       </Layout>
-      <ProfitSharing>
-        <TopDiv>
-          <img src={ProfitSharingIcon} alt="profit-sharing" />
-          <TopTitle>
-            <img src={ConnectDisableIcon} width="7px" height="7px" alt="" />
-            Profit-Sharing
-          </TopTitle>
-        </TopDiv>
-        <BottomDiv>
-          {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
-          <div>APR</div>
-        </BottomDiv>
-        <ChartDiv>
-          <SmallApexChart data={apiData} lastAPY={Number(totalApy)} />
-        </ChartDiv>
-      </ProfitSharing>
 
-      <Divider height="1px" marginTop="20px" backColor="#EAECF0" />
+      <BottomPart>
+        <LinksContainer totalItems={sideLinks1.length + 2}>
+          {sideLinks1.map(item => (
+            <Fragment key={item.name}>
+              <LinkContainer
+                active={pathname.includes(item.path)}
+                hoverImgColor={hoverImgColor}
+                onClick={() => {
+                  if (item.newTab) {
+                    window.open(item.path, '_blank')
+                  } else {
+                    push(item.path)
+                  }
+                }}
+              >
+                <SideLink
+                  item={item}
+                  isDropdownLink={item.path === '#'}
+                  filterColor={filterColor}
+                  fontColor={sidebarFontColor}
+                  activeFontColor={sidebarActiveFontColor}
+                />
+              </LinkContainer>
+            </Fragment>
+          ))}
+        </LinksContainer>
+        <ProfitSharing>
+          <TopDiv>
+            <img src={ProfitSharingIcon} alt="profit-sharing" />
+            <TopTitle>
+              <img src={ConnectDisableIcon} width="7px" height="7px" alt="" />
+              Profit-Sharing
+            </TopTitle>
+          </TopDiv>
+          <BottomDiv>
+            {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
+            <div>APR</div>
+          </BottomDiv>
+          <ChartDiv>
+            <SmallApexChart data={apiData} lastAPY={Number(totalApy)} />
+          </ChartDiv>
+        </ProfitSharing>
 
-      <Follow>
-        <Social />
-        <ThemeMode
-          mode={darkMode ? 'dark' : 'light'}
-          backColor={toggleBackColor}
-          borderColor={borderColor}
-        >
-          <div id="theme-switch">
-            <div className="switch-track">
-              <div className="switch-thumb" />
+        <Divider height="1px" marginTop="20px" backColor="#EAECF0" />
+
+        <Follow>
+          <Social />
+          <ThemeMode
+            mode={darkMode ? 'dark' : 'light'}
+            backColor={toggleBackColor}
+            borderColor={borderColor}
+          >
+            <div id="theme-switch">
+              <div className="switch-track">
+                <div className="switch-thumb" />
+              </div>
+
+              <input
+                type="checkbox"
+                checked={darkMode}
+                onChange={switchTheme}
+                aria-label="Switch between dark and light mode"
+              />
             </div>
-
-            <input
-              type="checkbox"
-              checked={darkMode}
-              onChange={switchTheme}
-              aria-label="Switch between dark and light mode"
-            />
-          </div>
-        </ThemeMode>
-      </Follow>
+          </ThemeMode>
+        </Follow>
+      </BottomPart>
 
       <MobileView>
         <button type="button" onClick={handleMobileShow}>

@@ -93,7 +93,7 @@ const ValueContainer = styled.div`
 `
 
 const LogoImg = styled.img`
-  z-index: 100;
+  z-index: 10;
   &:not(:first-child) {
     margin-left: -7px;
     ${props =>
