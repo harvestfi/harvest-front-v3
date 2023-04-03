@@ -32,7 +32,6 @@ import { fromWei } from '../../services/web3'
 import { formatNumber } from '../../utils'
 import {
   BadgeIcon,
-  Btn,
   Column,
   Container,
   Content,
@@ -53,6 +52,7 @@ import {
   SubPart,
   ThemeMode,
   TransactionDetails,
+  LogoImg,
 } from './style'
 
 const getChainIcon = chain => {
@@ -88,9 +88,9 @@ const Dashboard = () => {
     borderColor,
     badgeIconBackColor,
     toggleBackColor,
-    switchBalance,
-    setSwitchBalance,
   } = useThemeContext()
+
+  const [switchBalance, setSwitchBalance] = useState(true)
 
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
@@ -280,7 +280,7 @@ const Dashboard = () => {
                 (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
                 POOL_BALANCES_DECIMALS,
                 true,
-              ) * usdPrice
+              ) * (switchBalance ? usdPrice : 1)
             stats.unstake = formatNumber(unstake, POOL_BALANCES_DECIMALS)
 
             const stake =
@@ -289,9 +289,25 @@ const Dashboard = () => {
                 (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
                 POOL_BALANCES_DECIMALS,
                 true,
-              ) * usdPrice
+              ) * (switchBalance ? usdPrice : 1)
             stats.stake = formatNumber(stake, POOL_BALANCES_DECIMALS)
-            totalStake += parseFloat(stake) + parseFloat(unstake)
+            totalStake +=
+              parseFloat(
+                fromWei(
+                  get(userStats, `[${stakedVaults[i]}]['totalStaked']`, 0),
+                  (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
+                  POOL_BALANCES_DECIMALS,
+                  true,
+                ) * usdPrice,
+              ) +
+              parseFloat(
+                fromWei(
+                  get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),
+                  (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
+                  POOL_BALANCES_DECIMALS,
+                  true,
+                ) * usdPrice,
+              )
 
             const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
 
@@ -312,9 +328,16 @@ const Dashboard = () => {
                 : fromWei(
                     rewards,
                     (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
-                  ) * usdRewardPrice
+                  ) * (switchBalance ? usdRewardPrice : 1)
             stats.reward = formatNumber(stats.reward, POOL_BALANCES_DECIMALS)
-            valueRewards += Number(stats.reward)
+            valueRewards += Number(
+              rewards === '0'
+                ? 0
+                : fromWei(
+                    rewards,
+                    (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
+                  ) * (switchBalance ? usdRewardPrice : 1),
+            )
             stats.rewardSymbol = rewardTokenSymbols[0]
           }
 
@@ -328,7 +351,7 @@ const Dashboard = () => {
 
       getFarmTokenInfo()
     }
-  }, [account, userStats, balances]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, userStats, balances, switchBalance]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Container pageBackColor={pageBackColor} fontColor={fontColor}>
@@ -400,7 +423,7 @@ const Dashboard = () => {
                       <Content width="30%" display="flex">
                         {info.logos.length > 0 &&
                           info.logos.map((elem, index) => (
-                            <img key={index} className="coin" width={37} src={elem} alt="" />
+                            <LogoImg key={index} className="coin" width={37} src={elem} alt="" />
                           ))}
                         <Content marginLeft="11px">
                           <ListItem weight={600} size={12} height={17} value={info.symbol} />
@@ -414,22 +437,29 @@ const Dashboard = () => {
                         </Status>
                       </Content>
                       <Content width="15%">
-                        <ListItem weight={400} size={12} height={16} value={`$${info.unstake}`} />
-                      </Content>
-                      <Content width="15%">
-                        <ListItem weight={400} size={12} height={16} value={`$${info.stake}`} />
+                        <ListItem
+                          weight={400}
+                          size={12}
+                          height={16}
+                          value={`${switchBalance ? '$' : ''}${info.unstake}`}
+                        />
                       </Content>
                       <Content width="15%">
                         <ListItem
                           weight={400}
                           size={12}
                           height={16}
-                          label={`$${info.reward}`}
-                          icon={`/icons/${info.rewardSymbol}`}
+                          value={`${switchBalance ? '$' : ''}${info.stake}`}
                         />
                       </Content>
-                      <Content width="10%">
-                        <Btn>Manage</Btn>
+                      <Content width="25%">
+                        <ListItem
+                          weight={400}
+                          size={12}
+                          height={16}
+                          label={`${switchBalance ? '$' : ''}${info.reward}`}
+                          icon={`/icons/${info.rewardSymbol}`}
+                        />
                       </Content>
                     </FlexDiv>
                   </DetailView>
