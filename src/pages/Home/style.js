@@ -4,7 +4,7 @@ import WelcomeBack from '../../assets/images/logos/gradient.svg'
 const FarmContainer = styled.div`
   margin: 0 auto;
   width: 100%;
-  // margin-left: 320px;
+  margin-left: 320px;
   position: relative;
   min-height: 100vh;
   transition: 0.25s;

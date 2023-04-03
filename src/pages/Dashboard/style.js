@@ -9,7 +9,7 @@ const Container = styled.div`
   transition: 0.25s;
   position: relative;
   z-index: 2;
-  // margin-left: 320px;
+  margin-left: 320px;
 
   @media screen and (min-width: 1920px) {
     display: flex;

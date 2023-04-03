@@ -15,7 +15,7 @@ const Container = styled.div`
   min-height: 100%;
   min-width: ${props => props.width};
   max-width: 100%;
-  // position: fixed;
+  position: fixed;
   z-index: 100;
   padding: 45px 25px 0px;
 
@@ -606,6 +606,7 @@ const ProfitSharing = styled.div`
   position: relative;
   padding: 15px 18px;
   border-radius: 13px;
+  margin-top: 50px;
 
   @media screen and (max-width: 992px) {
     display: none;
@@ -654,6 +655,12 @@ const ChartDiv = styled.div`
   right: 0;
 `
 
+const BottomPart = styled.div`
+  position: absolute;
+  bottom: 40px;
+  width: 270px;
+`
+
 export {
   Container,
   Layout,
@@ -687,4 +694,5 @@ export {
   BottomDiv,
   TopTitle,
   ChartDiv,
+  BottomPart,
 }
