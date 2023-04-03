@@ -21,6 +21,9 @@ import MobileConnect from '../../assets/images/logos/sidebar/mobileconnect.svg'
 import polygon from '../../assets/images/logos/sidebar/polygon.svg'
 import ProfitSharingIcon from '../../assets/images/logos/sidebar/profit-sharing.svg'
 import Toggle from '../../assets/images/logos/sidebar/toggle.svg'
+import Arbitrum from '../../assets/images/chains/arbitrum.svg'
+import Ethereum from '../../assets/images/chains/ethereum.svg'
+import Polygon from '../../assets/images/chains/polygon.svg'
 import { DECIMAL_PRECISION, FARM_TOKEN_SYMBOL, ROUTES, SPECIAL_VAULTS } from '../../constants'
 import { CHAINS_ID } from '../../data/constants'
 import { addresses } from '../../data/index'
@@ -142,16 +145,29 @@ const SideLink = ({ item, subItem, isDropdownLink, fontColor, activeFontColor, f
   )
 }
 
+const getChainIcon = chainNum => {
+  let icon = null
+  if (chainNum) {
+    switch (chainNum) {
+      case CHAINS_ID.ETH_MAINNET:
+        icon = Ethereum
+        break
+      case CHAINS_ID.MATIC_MAINNET:
+        icon = Polygon
+        break
+      case CHAINS_ID.ARBITRUM_ONE:
+        icon = Arbitrum
+        break
+      default:
+        icon = Ethereum
+        break
+    }
+  }
+  return icon
+}
+
 const Sidebar = ({ width }) => {
-  const {
-    account,
-    connect,
-    chainId,
-    connected,
-    openAccountModal,
-    openChainModal,
-    chainObject,
-  } = useWallet()
+  const { account, connect, disconnect, chainId, connected } = useWallet()
   const { pools, disableWallet } = usePools()
   const { profitShareAPY } = useStats()
 
@@ -274,7 +290,7 @@ const Sidebar = ({ width }) => {
 
               if (!chainId) {
                 return (
-                  <button onClick={openChainModal} type="button">
+                  <button onClick={disconnect} type="button">
                     Wrong network
                   </button>
                 )
@@ -295,20 +311,19 @@ const Sidebar = ({ width }) => {
                         <Address>{formatAddress(account)}</Address>
                         <br />
                         <ConnectAvatar>
-                          {chainObject && chainObject.iconUrl && (
-                            <img
-                              alt={chainObject.name ?? 'Chain icon'}
-                              src={ConnectSuccessIcon}
-                              style={{ width: 8, height: 8 }}
-                            />
-                          )}
+                          <img
+                            alt="Chain icon"
+                            src={ConnectSuccessIcon}
+                            style={{ width: 8, height: 8 }}
+                          />
+                          {/* )} */}
                           Connected
                         </ConnectAvatar>
                       </div>
                     </FlexDiv>
                     <img
-                      alt={chainObject.name ?? 'Chain icon'}
-                      src={chainObject.iconUrl}
+                      alt="chain icon"
+                      src={getChainIcon(chainId)}
                       style={{ width: 17, height: 17 }}
                     />
                   </UserDropDown>
@@ -316,7 +331,7 @@ const Sidebar = ({ width }) => {
                   <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
                     <UserDropDownItem
                       onClick={() => {
-                        openChainModal()
+                        disconnect()
                       }}
                       fontcolor={fontColor}
                       filtercolor={filterColor}
@@ -334,7 +349,7 @@ const Sidebar = ({ width }) => {
 
                     <UserDropDownItem
                       onClick={() => {
-                        openAccountModal()
+                        disconnect()
                       }}
                       fontcolor={fontColor}
                       filtercolor={filterColor}
@@ -478,7 +493,7 @@ const Sidebar = ({ width }) => {
 
                   if (!chainId) {
                     return (
-                      <button onClick={openChainModal} type="button">
+                      <button onClick={disconnect} type="button">
                         Wrong network
                       </button>
                     )
@@ -499,20 +514,18 @@ const Sidebar = ({ width }) => {
                             <Address>{formatAddress(account)}</Address>
                             <br />
                             <ConnectAvatar>
-                              {chainObject && chainObject.iconUrl && (
-                                <img
-                                  alt={chainObject.name ?? 'Chain icon'}
-                                  src={ConnectSuccessIcon}
-                                  style={{ width: 8, height: 8 }}
-                                />
-                              )}
+                              <img
+                                alt="Chain icon"
+                                src={ConnectSuccessIcon}
+                                style={{ width: 8, height: 8 }}
+                              />
                               Connected
                             </ConnectAvatar>
                           </div>
                         </FlexDiv>
                         <img
-                          alt={chainObject.name ?? 'Chain icon'}
-                          src={chainObject.iconUrl}
+                          alt="chain icon"
+                          src={getChainIcon(chainId)}
                           style={{ width: 17, height: 17 }}
                         />
                       </UserDropDown>
@@ -520,7 +533,7 @@ const Sidebar = ({ width }) => {
                       <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
                         <UserDropDownItem
                           onClick={() => {
-                            openChainModal()
+                            disconnect()
                           }}
                           fontcolor={fontColor}
                           filtercolor={filterColor}
@@ -538,7 +551,7 @@ const Sidebar = ({ width }) => {
 
                         <UserDropDownItem
                           onClick={() => {
-                            openAccountModal()
+                            disconnect()
                           }}
                           fontcolor={fontColor}
                           filtercolor={filterColor}
@@ -672,7 +685,7 @@ const Sidebar = ({ width }) => {
             color="connected"
             connected
             onClick={() => {
-              openAccountModal()
+              disconnect()
             }}
           >
             <FlexDiv>
