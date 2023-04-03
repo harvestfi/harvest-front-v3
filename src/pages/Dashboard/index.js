@@ -394,7 +394,7 @@ const Dashboard = () => {
                     <FlexDiv display="block">
                       <Content width="5%">
                         <BadgeIcon badgeBack={badgeIconBackColor}>
-                          <img src={info.chain} width="17px" height="17px" alt="" />
+                          <img src={info.chain} width="14px" height="14px" alt="" />
                         </BadgeIcon>
                       </Content>
                       <Content width="30%" display="flex">
