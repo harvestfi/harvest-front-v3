@@ -21,15 +21,7 @@ const WalletContext = createContext()
 const useWallet = () => useContext(WalletContext)
 
 const WalletProvider = _ref => {
-  const {
-    children,
-    accountAddress,
-    connectedStatus,
-    chainObj,
-    openConnectModal,
-    openChainModal,
-    openAccountModal,
-  } = _ref
+  const { children, onboard } = _ref
   const web3Plugin = mainWeb3
   const [account, setAccount] = useState(null)
   const [connected, setConnected] = useState(false)
@@ -45,11 +37,10 @@ const WalletProvider = _ref => {
   const [approvedBalances, setApprovedBalances] = useState({})
   const { contracts } = useContracts()
 
-  const [chainObject, setChainObject] = useState({})
-
   const disconnect = useCallback(
     () => {
       setConnected(false)
+      setAccount(null)
       setBalances({})
       setLogout(true)
     },
@@ -100,21 +91,17 @@ const WalletProvider = _ref => {
     }
   }, [web3Plugin, chainId, account, onNetworkChange])
 
-  useEffect(() => {
-    const getAuthInfo = () => {
-      setAccount(accountAddress)
-      setConnected(connectedStatus)
-      setChainId(chainObj ? chainObj.id : CHAINS_ID.ETH_MAINNET)
-      setChainObject(chainObj)
-    }
-
-    getAuthInfo()
-  }, [accountAddress, connectedStatus, chainObj])
-
   const connect = useCallback(async () => {
-    openConnectModal()
+    const wallets = await onboard.connectWallet()
+    if (wallets.length === 0) {
+      return
+    }
+    const chainNum = parseInt(wallets[0].chains[0].id, 16).toString()
+    setAccount(wallets[0].accounts[0].address)
+    setConnected(true)
+    setChainId(chainNum)
     setLogout(false)
-  }, [openConnectModal])
+  }, [onboard])
   const getWalletBalances = useCallback(
     // eslint-disable-next-line func-names
     async function (selectedTokens, newAccount, fresh) {
@@ -212,10 +199,7 @@ const WalletProvider = _ref => {
         selChain,
         setSelChain,
         disconnect,
-        openChainModal,
-        openAccountModal,
         logout,
-        chainObject,
       },
     },
     children,
