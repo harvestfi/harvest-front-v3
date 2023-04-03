@@ -64,7 +64,7 @@ const DesktopPanelHeader = ({
             <LogoImg
               key={i}
               className="logo-img"
-              zIndex={100 - i}
+              zIndex={10 - i}
               src={el}
               width={37}
               alt={tokenSymbol}

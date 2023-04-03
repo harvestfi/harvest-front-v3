@@ -9,7 +9,7 @@ const Container = styled.div`
   transition: 0.25s;
   position: relative;
   z-index: 2;
-  // margin-left: 320px;
+  margin-left: 320px;
 
   @media screen and (min-width: 1920px) {
     display: flex;
@@ -89,6 +89,10 @@ const DetailView = styled.div`
     }
   `}
   transition: 0.25s;
+  cursor: pointer;
+  &:hover {
+    background: #f8f8f9;
+  }
 
   @media screen and (max-width: 992px) {
     padding: 12px;
@@ -393,22 +397,24 @@ const Status = styled.div`
   }
 `
 
-const Btn = styled.button`
-  border: 1px solid #d0d5dd;
-  box-shadow: 0px 1px 1px rgba(16, 24, 40, 0.05);
-  border-radius: 5px;
-  color: #344054;
-  padding: 6px 10px;
-  font-weight: 600;
-  font-size: 14px;
-  line-height: 20px;
-`
-
 const SelField = styled.div`
   height: 17px;
   width: 17px;
   border: 1px solid #d0d5dd;
   border-radius: 5px;
+`
+
+const LogoImg = styled.img`
+  z-index: 10;
+  &:not(:first-child) {
+    margin-left: -7px;
+    ${props =>
+      props.zIndex
+        ? `
+      z-index: ${props.zIndex};
+    `
+        : ``};
+  }
 `
 
 export {
@@ -433,6 +439,6 @@ export {
   Header,
   Column,
   Status,
-  Btn,
   SelField,
+  LogoImg,
 }
