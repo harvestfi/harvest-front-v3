@@ -86,7 +86,7 @@ const dataSources = [
     id: 2,
     img: ExternalDuno,
     text: 'Dune Dashboard',
-    url: 'https://dune.com/shini/APWine-Dashboard',
+    url: 'https://dune.com/llama/Harvest-Finance',
     soon: false,
     background: 'rgba(241, 96, 63, 0.21)',
     color: '#F1603F',

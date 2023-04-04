@@ -1,4 +1,6 @@
 import styled from 'styled-components'
+import UsdIcon from '../../assets/images/ui/usd.svg'
+import TokensIcon from '../../assets/images/ui/tokens.svg'
 
 const Container = styled.div`
   width: 100%;
@@ -282,7 +284,7 @@ const ThemeMode = styled.div`
       transition: all 0.2s ease 0s;
     }
     .switch-thumb {
-      background: white;
+      background: url(${props => (props.mode === 'usd' ? UsdIcon : TokensIcon)});
       background-size: cover;
       height: 20px;
       left: 2px;
@@ -417,6 +419,10 @@ const LogoImg = styled.img`
   }
 `
 
+const Direct = styled.a`
+  text-decoration: none;
+`
+
 export {
   Container,
   SubPart,
@@ -441,4 +447,5 @@ export {
   Status,
   SelField,
   LogoImg,
+  Direct,
 }

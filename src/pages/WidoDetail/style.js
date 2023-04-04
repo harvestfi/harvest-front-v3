@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 const DetailView = styled.div`
   width: 100%;
-  // margin-left: 320px;
+  margin-left: 320px;
   background: ${props => props.pageBackColor};
   color: ${props => props.fontColor};
   transition: 0.25s;
