@@ -71,6 +71,16 @@ const Percent = styled.div`
   line-height: 38px;
   color: ${props => props.fontColor};
   transition: 0.25s;
+
+  @media screen and (max-width: 1352px) {
+    font-size: 18px;
+    line-height: 25px;
+  }
+
+  @media screen and (max-width: 992px) {
+    font-size: 30px;
+    line-height: 38px;
+  }
 `
 
 const ChartDiv = styled.div`
