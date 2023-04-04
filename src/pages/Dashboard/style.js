@@ -419,10 +419,6 @@ const LogoImg = styled.img`
   }
 `
 
-const Direct = styled.a`
-  text-decoration: none;
-`
-
 export {
   Container,
   SubPart,
@@ -447,5 +443,4 @@ export {
   Status,
   SelField,
   LogoImg,
-  Direct,
 }

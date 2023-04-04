@@ -74,7 +74,6 @@ import {
   UserDropDownItem,
   UserDropDownMenu,
   BottomPart,
-  Direct,
 } from './style'
 
 const sideLinks = [
@@ -450,24 +449,26 @@ const Sidebar = ({ width }) => {
             </Fragment>
           ))}
         </LinksContainer>
-        <Direct href={directDetailUrl + FARM_TOKEN_SYMBOL}>
-          <ProfitSharing>
-            <TopDiv>
-              <img src={ProfitSharingIcon} alt="profit-sharing" />
-              <TopTitle>
-                <img src={ConnectDisableIcon} width="7px" height="7px" alt="" />
-                Profit-Sharing
-              </TopTitle>
-            </TopDiv>
-            <BottomDiv>
-              {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
-              <div>APR</div>
-            </BottomDiv>
-            <ChartDiv>
-              <SmallApexChart data={apiData} lastAPY={Number(totalApy)} />
-            </ChartDiv>
-          </ProfitSharing>
-        </Direct>
+        <ProfitSharing
+          onClick={() => {
+            push(directDetailUrl + FARM_TOKEN_SYMBOL)
+          }}
+        >
+          <TopDiv>
+            <img src={ProfitSharingIcon} alt="profit-sharing" />
+            <TopTitle>
+              <img src={ConnectDisableIcon} width="7px" height="7px" alt="" />
+              Profit-Sharing
+            </TopTitle>
+          </TopDiv>
+          <BottomDiv>
+            {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
+            <div>APR</div>
+          </BottomDiv>
+          <ChartDiv>
+            <SmallApexChart data={apiData} lastAPY={Number(totalApy)} />
+          </ChartDiv>
+        </ProfitSharing>
 
         <Divider height="1px" marginTop="20px" backColor="#EAECF0" />
       </BottomPart>

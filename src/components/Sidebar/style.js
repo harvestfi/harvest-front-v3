@@ -666,10 +666,6 @@ const BottomPart = styled.div`
   // width: 270px;
 `
 
-const Direct = styled.a`
-  text-decoration: none;
-`
-
 export {
   Container,
   Layout,
@@ -704,5 +700,4 @@ export {
   TopTitle,
   ChartDiv,
   BottomPart,
-  Direct,
 }

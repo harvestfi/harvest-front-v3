@@ -55,7 +55,6 @@ import {
   ThemeMode,
   TransactionDetails,
   LogoImg,
-  Direct,
 } from './style'
 
 const getChainIcon = chain => {
@@ -419,61 +418,63 @@ const Dashboard = () => {
               {farmTokenList.map((el, i) => {
                 const info = farmTokenList[i]
                 return (
-                  <Direct key={i} href={directDetailUrl + info.symbol}>
-                    <DetailView
-                      lastElement={i === farmTokenList.length - 1 ? 'yes' : 'no'}
-                      mode={switchMode}
-                    >
-                      <FlexDiv display="block">
-                        <Content width="5%">
-                          <BadgeIcon badgeBack={badgeIconBackColor}>
-                            <img src={info.chain} width="14px" height="14px" alt="" />
-                          </BadgeIcon>
+                  <DetailView
+                    lastElement={i === farmTokenList.length - 1 ? 'yes' : 'no'}
+                    key={i}
+                    mode={switchMode}
+                    onClick={() => {
+                      push(directDetailUrl + info.symbol)
+                    }}
+                  >
+                    <FlexDiv display="block">
+                      <Content width="5%">
+                        <BadgeIcon badgeBack={badgeIconBackColor}>
+                          <img src={info.chain} width="14px" height="14px" alt="" />
+                        </BadgeIcon>
+                      </Content>
+                      <Content width="30%" display="flex">
+                        {info.logos.length > 0 &&
+                          info.logos.map((elem, index) => (
+                            <LogoImg key={index} className="coin" width={37} src={elem} alt="" />
+                          ))}
+                        <Content marginLeft="11px">
+                          <ListItem weight={600} size={12} height={17} value={info.symbol} />
+                          <ListItem weight={400} size={12} height={16} value={info.platform} />
                         </Content>
-                        <Content width="30%" display="flex">
-                          {info.logos.length > 0 &&
-                            info.logos.map((elem, index) => (
-                              <LogoImg key={index} className="coin" width={37} src={elem} alt="" />
-                            ))}
-                          <Content marginLeft="11px">
-                            <ListItem weight={600} size={12} height={17} value={info.symbol} />
-                            <ListItem weight={400} size={12} height={16} value={info.platform} />
-                          </Content>
-                        </Content>
-                        <Content width="10%">
-                          <Status status={info.status}>
-                            <img src={DotIcon} width={8} height={8} alt="" />
-                            {info.status}
-                          </Status>
-                        </Content>
-                        <Content width="15%">
-                          <ListItem
-                            weight={400}
-                            size={12}
-                            height={16}
-                            value={`${switchBalance ? '$' : ''}${info.unstake}`}
-                          />
-                        </Content>
-                        <Content width="15%">
-                          <ListItem
-                            weight={400}
-                            size={12}
-                            height={16}
-                            value={`${switchBalance ? '$' : ''}${info.stake}`}
-                          />
-                        </Content>
-                        <Content width="25%">
-                          <ListItem
-                            weight={400}
-                            size={12}
-                            height={16}
-                            label={`${switchBalance ? '$' : ''}${info.reward}`}
-                            icon={`/icons/${info.rewardSymbol}`}
-                          />
-                        </Content>
-                      </FlexDiv>
-                    </DetailView>
-                  </Direct>
+                      </Content>
+                      <Content width="10%">
+                        <Status status={info.status}>
+                          <img src={DotIcon} width={8} height={8} alt="" />
+                          {info.status}
+                        </Status>
+                      </Content>
+                      <Content width="15%">
+                        <ListItem
+                          weight={400}
+                          size={12}
+                          height={16}
+                          value={`${switchBalance ? '$' : ''}${info.unstake}`}
+                        />
+                      </Content>
+                      <Content width="15%">
+                        <ListItem
+                          weight={400}
+                          size={12}
+                          height={16}
+                          value={`${switchBalance ? '$' : ''}${info.stake}`}
+                        />
+                      </Content>
+                      <Content width="25%">
+                        <ListItem
+                          weight={400}
+                          size={12}
+                          height={16}
+                          label={`${switchBalance ? '$' : ''}${info.reward}`}
+                          icon={`/icons/${info.rewardSymbol}`}
+                        />
+                      </Content>
+                    </FlexDiv>
+                  </DetailView>
                 )
               })}
             </>

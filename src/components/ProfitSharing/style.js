@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import GradientBack from '../../assets/images/logos/gradient.svg'
 
-const ProfitSharing = styled.a`
+const ProfitSharing = styled.div`
   background: url(${GradientBack});
   text-decoration: none;
   background-position: center;
