@@ -261,7 +261,7 @@ const Dashboard = () => {
             stats.symbol = symbol
             stats.logos = token.logoUrl
             stats.chain = getChainIcon(token.chain)
-            stats.platform = useIFARM ? 'FARM' : token.subLabel || ''
+            stats.platform = useIFARM ? 'Harvest' : token.subLabel || ''
             stats.status = token.inactive ? 'Inactive' : 'Active'
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
             if (isSpecialVault) {
