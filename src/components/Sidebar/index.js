@@ -471,29 +471,28 @@ const Sidebar = ({ width }) => {
         </ProfitSharing>
 
         <Divider height="1px" marginTop="20px" backColor="#EAECF0" />
-      </BottomPart>
+        <Follow>
+          <Social />
+          <ThemeMode
+            mode={darkMode ? 'dark' : 'light'}
+            backColor={toggleBackColor}
+            borderColor={borderColor}
+          >
+            <div id="theme-switch">
+              <div className="switch-track">
+                <div className="switch-thumb" />
+              </div>
 
-      <Follow>
-        <Social />
-        <ThemeMode
-          mode={darkMode ? 'dark' : 'light'}
-          backColor={toggleBackColor}
-          borderColor={borderColor}
-        >
-          <div id="theme-switch">
-            <div className="switch-track">
-              <div className="switch-thumb" />
+              <input
+                type="checkbox"
+                checked={darkMode}
+                onChange={switchTheme}
+                aria-label="Switch between dark and light mode"
+              />
             </div>
-
-            <input
-              type="checkbox"
-              checked={darkMode}
-              onChange={switchTheme}
-              aria-label="Switch between dark and light mode"
-            />
-          </div>
-        </ThemeMode>
-      </Follow>
+          </ThemeMode>
+        </Follow>
+      </BottomPart>
 
       <MobileView>
         <button type="button" onClick={handleMobileShow}>
