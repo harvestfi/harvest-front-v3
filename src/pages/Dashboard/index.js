@@ -18,6 +18,7 @@ import {
   FARM_USDC_TOKEN_SYMBOL,
   FARM_WETH_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
+  MIFARM_TOKEN_SYMBOL,
   POOL_BALANCES_DECIMALS,
   SPECIAL_VAULTS,
   directDetailUrl,
@@ -312,13 +313,21 @@ const Dashboard = () => {
               )
 
             const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
+            // eslint-disable-next-line one-var
+            let rewardSymbol = rewardTokenSymbols[0].toUpperCase()
+            if (
+              rewardTokenSymbols.includes(FARM_TOKEN_SYMBOL) ||
+              rewardTokenSymbols.includes(MIFARM_TOKEN_SYMBOL)
+            ) {
+              rewardSymbol = FARM_TOKEN_SYMBOL
+            }
 
-            const rewardToken = groupOfVaults[rewardTokenSymbols[0]]
+            const rewardToken = groupOfVaults[rewardSymbol]
             // eslint-disable-next-line one-var
             let usdRewardPrice = 1
             if (rewardToken) {
               usdRewardPrice =
-                (rewardTokenSymbols[0] === FARM_TOKEN_SYMBOL
+                (rewardSymbol === FARM_TOKEN_SYMBOL
                   ? rewardToken.data.lpTokenData && rewardToken.data.lpTokenData.price
                   : rewardToken.usdPrice) || 1
             }
@@ -340,10 +349,9 @@ const Dashboard = () => {
                     (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
                   ) * usdRewardPrice,
             )
-            stats.rewardSymbol = rewardTokenSymbols[0]
+            stats.rewardSymbol = rewardSymbol
+            newStats.push(stats)
           }
-
-          newStats.push(stats)
         }
         setTotalDeposit(formatNumber(totalStake, POOL_BALANCES_DECIMALS))
         setTotalRewards(formatNumber(valueRewards, POOL_BALANCES_DECIMALS))
