@@ -190,9 +190,11 @@ const FlexDiv = styled.div`
 
 const Follow = styled.div`
   padding-top: 16px;
+  position: absolute;
+  bottom: 30px;
   display: flex;
   justify-content: space-between;
-  width: 100%;
+  width: 270px;
 
   @media screen and (max-width: 992px) {
     display: none;
@@ -656,9 +658,12 @@ const ChartDiv = styled.div`
 `
 
 const BottomPart = styled.div`
-  position: absolute;
-  bottom: 40px;
-  width: 270px;
+  // padding-top: 16px;
+  // position: absolute;
+  // bottom: 100px;
+  // display: flex;
+  // justify-content: space-between;
+  // width: 270px;
 `
 
 export {
