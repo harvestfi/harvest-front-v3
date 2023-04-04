@@ -18,8 +18,10 @@ import {
   FARM_USDC_TOKEN_SYMBOL,
   FARM_WETH_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
+  MIFARM_TOKEN_SYMBOL,
   POOL_BALANCES_DECIMALS,
   SPECIAL_VAULTS,
+  directDetailUrl,
 } from '../../constants'
 import { addresses } from '../../data'
 import { CHAINS_ID } from '../../data/constants'
@@ -53,6 +55,7 @@ import {
   ThemeMode,
   TransactionDetails,
   LogoImg,
+  Direct,
 } from './style'
 
 const getChainIcon = chain => {
@@ -90,7 +93,7 @@ const Dashboard = () => {
     toggleBackColor,
   } = useThemeContext()
 
-  const [switchBalance, setSwitchBalance] = useState(true)
+  const [switchBalance, setSwitchBalance] = useState(false)
 
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
@@ -231,7 +234,7 @@ const Dashboard = () => {
             chain: '',
             symbol: '',
             logos: [],
-            status: 'Active',
+            status: '',
             platform: '',
             unstake: '',
             stake: '',
@@ -261,8 +264,8 @@ const Dashboard = () => {
             stats.symbol = symbol
             stats.logos = token.logoUrl
             stats.chain = getChainIcon(token.chain)
-            stats.platform = useIFARM ? 'FARM' : token.subLabel || ''
-
+            stats.platform = useIFARM ? 'Harvest' : token.subLabel || ''
+            stats.status = token.inactive ? 'Inactive' : 'Active'
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
             if (isSpecialVault) {
               fAssetPool = token.data
@@ -310,13 +313,21 @@ const Dashboard = () => {
               )
 
             const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
+            // eslint-disable-next-line one-var
+            let rewardSymbol = rewardTokenSymbols[0].toUpperCase()
+            if (
+              rewardTokenSymbols.includes(FARM_TOKEN_SYMBOL) ||
+              rewardTokenSymbols.includes(MIFARM_TOKEN_SYMBOL)
+            ) {
+              rewardSymbol = FARM_TOKEN_SYMBOL
+            }
 
-            const rewardToken = groupOfVaults[rewardTokenSymbols[0]]
+            const rewardToken = groupOfVaults[rewardSymbol]
             // eslint-disable-next-line one-var
             let usdRewardPrice = 1
             if (rewardToken) {
               usdRewardPrice =
-                (rewardTokenSymbols[0] === FARM_TOKEN_SYMBOL
+                (rewardSymbol === FARM_TOKEN_SYMBOL
                   ? rewardToken.data.lpTokenData && rewardToken.data.lpTokenData.price
                   : rewardToken.usdPrice) || 1
             }
@@ -336,12 +347,11 @@ const Dashboard = () => {
                 : fromWei(
                     rewards,
                     (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
-                  ) * (switchBalance ? usdRewardPrice : 1),
+                  ) * usdRewardPrice,
             )
-            stats.rewardSymbol = rewardTokenSymbols[0]
+            stats.rewardSymbol = rewardSymbol
+            newStats.push(stats)
           }
-
-          newStats.push(stats)
         }
         setTotalDeposit(formatNumber(totalStake, POOL_BALANCES_DECIMALS))
         setTotalRewards(formatNumber(valueRewards, POOL_BALANCES_DECIMALS))
@@ -409,60 +419,61 @@ const Dashboard = () => {
               {farmTokenList.map((el, i) => {
                 const info = farmTokenList[i]
                 return (
-                  <DetailView
-                    key={i}
-                    lastElement={i === farmTokenList.length - 1 ? 'yes' : 'no'}
-                    mode={switchMode}
-                  >
-                    <FlexDiv display="block">
-                      <Content width="5%">
-                        <BadgeIcon badgeBack={badgeIconBackColor}>
-                          <img src={info.chain} width="14px" height="14px" alt="" />
-                        </BadgeIcon>
-                      </Content>
-                      <Content width="30%" display="flex">
-                        {info.logos.length > 0 &&
-                          info.logos.map((elem, index) => (
-                            <LogoImg key={index} className="coin" width={37} src={elem} alt="" />
-                          ))}
-                        <Content marginLeft="11px">
-                          <ListItem weight={600} size={12} height={17} value={info.symbol} />
-                          <ListItem weight={400} size={12} height={16} value={info.platform} />
+                  <Direct key={i} href={directDetailUrl + info.symbol}>
+                    <DetailView
+                      lastElement={i === farmTokenList.length - 1 ? 'yes' : 'no'}
+                      mode={switchMode}
+                    >
+                      <FlexDiv display="block">
+                        <Content width="5%">
+                          <BadgeIcon badgeBack={badgeIconBackColor}>
+                            <img src={info.chain} width="14px" height="14px" alt="" />
+                          </BadgeIcon>
                         </Content>
-                      </Content>
-                      <Content width="10%">
-                        <Status status={info.status}>
-                          <img src={DotIcon} width={8} height={8} alt="" />
-                          {info.status}
-                        </Status>
-                      </Content>
-                      <Content width="15%">
-                        <ListItem
-                          weight={400}
-                          size={12}
-                          height={16}
-                          value={`${switchBalance ? '$' : ''}${info.unstake}`}
-                        />
-                      </Content>
-                      <Content width="15%">
-                        <ListItem
-                          weight={400}
-                          size={12}
-                          height={16}
-                          value={`${switchBalance ? '$' : ''}${info.stake}`}
-                        />
-                      </Content>
-                      <Content width="25%">
-                        <ListItem
-                          weight={400}
-                          size={12}
-                          height={16}
-                          label={`${switchBalance ? '$' : ''}${info.reward}`}
-                          icon={`/icons/${info.rewardSymbol}`}
-                        />
-                      </Content>
-                    </FlexDiv>
-                  </DetailView>
+                        <Content width="30%" display="flex">
+                          {info.logos.length > 0 &&
+                            info.logos.map((elem, index) => (
+                              <LogoImg key={index} className="coin" width={37} src={elem} alt="" />
+                            ))}
+                          <Content marginLeft="11px">
+                            <ListItem weight={600} size={12} height={17} value={info.symbol} />
+                            <ListItem weight={400} size={12} height={16} value={info.platform} />
+                          </Content>
+                        </Content>
+                        <Content width="10%">
+                          <Status status={info.status}>
+                            <img src={DotIcon} width={8} height={8} alt="" />
+                            {info.status}
+                          </Status>
+                        </Content>
+                        <Content width="15%">
+                          <ListItem
+                            weight={400}
+                            size={12}
+                            height={16}
+                            value={`${switchBalance ? '$' : ''}${info.unstake}`}
+                          />
+                        </Content>
+                        <Content width="15%">
+                          <ListItem
+                            weight={400}
+                            size={12}
+                            height={16}
+                            value={`${switchBalance ? '$' : ''}${info.stake}`}
+                          />
+                        </Content>
+                        <Content width="25%">
+                          <ListItem
+                            weight={400}
+                            size={12}
+                            height={16}
+                            label={`${switchBalance ? '$' : ''}${info.reward}`}
+                            icon={`/icons/${info.rewardSymbol}`}
+                          />
+                        </Content>
+                      </FlexDiv>
+                    </DetailView>
+                  </Direct>
                 )
               })}
             </>

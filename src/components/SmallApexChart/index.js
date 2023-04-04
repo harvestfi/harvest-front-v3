@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useWindowWidth } from '@react-hook/window-size'
 import Chart from 'react-apexcharts'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { ceil10, floor10 } from '../../utils'
@@ -340,9 +341,16 @@ const ApexChart = ({ data, lastAPY, specVault }) => {
     init()
   }, [backColor, data, lastAPY, specVault])
 
+  const onlyWidth = useWindowWidth()
   return (
     <>
-      <Chart options={options} series={mainSeries} type="area" height="100" width="180" />
+      <Chart
+        options={options}
+        series={mainSeries}
+        type="area"
+        height="100"
+        width={`${onlyWidth > 1352 ? '100' : onlyWidth > 992 ? '60' : '100'}`}
+      />
     </>
   )
 }

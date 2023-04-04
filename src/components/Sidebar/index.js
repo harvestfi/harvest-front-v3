@@ -24,7 +24,13 @@ import Toggle from '../../assets/images/logos/sidebar/toggle.svg'
 import Arbitrum from '../../assets/images/chains/arbitrum.svg'
 import Ethereum from '../../assets/images/chains/ethereum.svg'
 import Polygon from '../../assets/images/chains/polygon.svg'
-import { DECIMAL_PRECISION, FARM_TOKEN_SYMBOL, ROUTES, SPECIAL_VAULTS } from '../../constants'
+import {
+  DECIMAL_PRECISION,
+  FARM_TOKEN_SYMBOL,
+  ROUTES,
+  SPECIAL_VAULTS,
+  directDetailUrl,
+} from '../../constants'
 import { CHAINS_ID } from '../../data/constants'
 import { addresses } from '../../data/index'
 import { usePools } from '../../providers/Pools'
@@ -68,6 +74,7 @@ import {
   UserDropDownItem,
   UserDropDownMenu,
   BottomPart,
+  Direct,
 } from './style'
 
 const sideLinks = [
@@ -443,47 +450,49 @@ const Sidebar = ({ width }) => {
             </Fragment>
           ))}
         </LinksContainer>
-        <ProfitSharing>
-          <TopDiv>
-            <img src={ProfitSharingIcon} alt="profit-sharing" />
-            <TopTitle>
-              <img src={ConnectDisableIcon} width="7px" height="7px" alt="" />
-              Profit-Sharing
-            </TopTitle>
-          </TopDiv>
-          <BottomDiv>
-            {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
-            <div>APR</div>
-          </BottomDiv>
-          <ChartDiv>
-            <SmallApexChart data={apiData} lastAPY={Number(totalApy)} />
-          </ChartDiv>
-        </ProfitSharing>
+        <Direct href={directDetailUrl + FARM_TOKEN_SYMBOL}>
+          <ProfitSharing>
+            <TopDiv>
+              <img src={ProfitSharingIcon} alt="profit-sharing" />
+              <TopTitle>
+                <img src={ConnectDisableIcon} width="7px" height="7px" alt="" />
+                Profit-Sharing
+              </TopTitle>
+            </TopDiv>
+            <BottomDiv>
+              {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
+              <div>APR</div>
+            </BottomDiv>
+            <ChartDiv>
+              <SmallApexChart data={apiData} lastAPY={Number(totalApy)} />
+            </ChartDiv>
+          </ProfitSharing>
+        </Direct>
 
         <Divider height="1px" marginTop="20px" backColor="#EAECF0" />
-
-        <Follow>
-          <Social />
-          <ThemeMode
-            mode={darkMode ? 'dark' : 'light'}
-            backColor={toggleBackColor}
-            borderColor={borderColor}
-          >
-            <div id="theme-switch">
-              <div className="switch-track">
-                <div className="switch-thumb" />
-              </div>
-
-              <input
-                type="checkbox"
-                checked={darkMode}
-                onChange={switchTheme}
-                aria-label="Switch between dark and light mode"
-              />
-            </div>
-          </ThemeMode>
-        </Follow>
       </BottomPart>
+
+      <Follow>
+        <Social />
+        <ThemeMode
+          mode={darkMode ? 'dark' : 'light'}
+          backColor={toggleBackColor}
+          borderColor={borderColor}
+        >
+          <div id="theme-switch">
+            <div className="switch-track">
+              <div className="switch-thumb" />
+            </div>
+
+            <input
+              type="checkbox"
+              checked={darkMode}
+              onChange={switchTheme}
+              aria-label="Switch between dark and light mode"
+            />
+          </div>
+        </ThemeMode>
+      </Follow>
 
       <MobileView>
         <button type="button" onClick={handleMobileShow}>
