@@ -231,7 +231,7 @@ const Dashboard = () => {
             chain: '',
             symbol: '',
             logos: [],
-            status: 'Active',
+            status: '',
             platform: '',
             unstake: '',
             stake: '',
@@ -262,7 +262,7 @@ const Dashboard = () => {
             stats.logos = token.logoUrl
             stats.chain = getChainIcon(token.chain)
             stats.platform = useIFARM ? 'FARM' : token.subLabel || ''
-
+            stats.status = token.inactive ? 'Inactive' : 'Active'
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
             if (isSpecialVault) {
               fAssetPool = token.data
