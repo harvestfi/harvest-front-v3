@@ -6,9 +6,18 @@ const builtDirectory = path.join(__dirname, 'prod')
 const PORT = process.env.PORT || '5000'
 const app = express()
 
+app.disable('x-powered-by')
 app.use(
   helmet({
-    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+    contentSecurityPolicy: {
+      directives: {
+        frameAncestors: ['https://dapp-browser.apps.ledger.com/', 'http://localhost:3000'],
+        scriptSrc: ["'self'", "'unsafe-inline'", 'https://static.cloudflareinsights.com'],
+        connectSrc: ["'self'", '*'],
+      },
+    },
+    frameguard: false,
   }),
 )
 

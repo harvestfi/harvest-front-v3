@@ -5,7 +5,6 @@ import useDeepCompareEffect from 'use-deep-compare-effect'
 import {
   FARM_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
-  MIFARM_TOKEN_SYMBOL,
   POOL_BALANCES_DECIMALS,
   SPECIAL_VAULTS,
 } from '../../../constants'
@@ -26,11 +25,8 @@ import VaultFooterActions from './VaultFooterActions'
 const { addresses, tokens } = require('../../../data')
 
 const getPoolRewardSymbol = chain => {
-  if (chain === CHAINS_ID.ARBITRUM_ONE) {
+  if (chain === CHAINS_ID.ARBITRUM_ONE || chain === CHAINS_ID.MATIC_MAINNET) {
     return IFARM_TOKEN_SYMBOL
-  }
-  if (chain === CHAINS_ID.MATIC_MAINNET) {
-    return MIFARM_TOKEN_SYMBOL
   }
   return FARM_TOKEN_SYMBOL
 }

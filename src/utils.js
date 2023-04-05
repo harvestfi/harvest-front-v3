@@ -17,9 +17,8 @@ import {
   IFARM_TOKEN_SYMBOL,
   KEY_CODES,
   MAX_APY_DISPLAY,
-  MIFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
-  UNIV3_POOL_ID_REGEX,
+  UNIV3_POOL_ID_REGEX
 } from './constants'
 import { CHAINS_ID } from './data/constants'
 import { addresses } from './data/index'
@@ -242,9 +241,7 @@ const getRewardSymbol = (vault, isIFARM, vaultPool) => {
       return vaultPool.rewardTokenSymbols
         .filter((_, symbolIdx) => Number(get(vaultPool, `rewardAPY[${symbolIdx}]`, 0)) !== 0)
         .join(', ')
-    case vault.chain === CHAINS_ID.MATIC_MAINNET:
-      return 'miFARM'
-    case isIFARM:
+    case vault.chain === CHAINS_ID.MATIC_MAINNET || isIFARM:
       return 'iFARM'
     default:
       return 'FARM'
@@ -321,7 +318,7 @@ export const getRewardsText = (
 
     if (Number(farmAPY) > 0) {
       vaultPool.rewardTokenSymbols.forEach((symbol, symbolIdx) => {
-        const farmSymbols = [FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, MIFARM_TOKEN_SYMBOL]
+        const farmSymbols = [FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL]
 
         if (token.hideFarmApy && farmSymbols.includes(symbol)) {
           return
@@ -661,7 +658,7 @@ export const getDetailText = (
 
     if (Number(farmAPY) > 0) {
       vaultPool.rewardTokenSymbols.forEach((symbol, symbolIdx) => {
-        const farmSymbols = [FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, MIFARM_TOKEN_SYMBOL]
+        const farmSymbols = [FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL]
 
         if (token.hideFarmApy && farmSymbols.includes(symbol)) {
           return
@@ -1213,3 +1210,23 @@ export const round10 = (value, exp) => decimalAdjust('round', value, exp)
 export const floor10 = (value, exp) => decimalAdjust('floor', value, exp)
 // Decimal ceil
 export const ceil10 = (value, exp) => decimalAdjust('ceil', value, exp)
+
+export const isInIframe = () => {
+  try {
+    return window.self !== window.top
+  } catch (e) {
+    return true
+  }
+}
+
+export const isLoadedInOtherDomain = domain => {
+  return (
+    isInIframe() &&
+    (window?.location?.ancestorOrigins?.[0]?.includes(domain) ||
+      document?.referrer?.includes(domain))
+  )
+}
+
+export const isLedgerLive = () => {
+  return isLoadedInOtherDomain('ledger')
+}

@@ -8,10 +8,12 @@ import {
   hasValidUpdatedBalance,
   mainWeb3,
   pollUpdatedBalance,
+  ledgerProvider,
 } from '../../services/web3'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import { useContracts } from '../Contracts'
 import { validateChain } from './utils'
+import { isLedgerLive } from '../../utils'
 
 /* eslint-disable global-require */
 const { tokens } = require('../../data')
@@ -37,12 +39,27 @@ const WalletProvider = _ref => {
   const [approvedBalances, setApprovedBalances] = useState({})
   const { contracts } = useContracts()
 
+  useEffect(() => {
+    const fetchData = async () => {
+      if (isLedgerLive()) {
+        const selectedChain = await ledgerProvider.getNetwork()
+        setChainId(selectedChain.chainId.toString())
+        const selectedAccount = await ledgerProvider.getSigner().getAddress()
+        setAccount(selectedAccount && selectedAccount.toLowerCase())
+        setConnected(true)
+      }
+    }
+    fetchData()
+  }, [isLedgerLive])
+
   const disconnect = useCallback(
     () => {
-      setConnected(false)
-      setAccount(null)
-      setBalances({})
-      setLogout(true)
+      if (!isLedgerLive()) {
+        setConnected(false)
+        setAccount(null)
+        setBalances({})
+        setLogout(true)
+      }
     },
     [
       // deactivate
@@ -51,45 +68,81 @@ const WalletProvider = _ref => {
 
   const onNetworkChange = useCallback(
     newChain => {
-      validateChain(
-        newChain,
-        chainId,
-        () => {
-          setConnected(true)
-          const chainNew = parseInt(newChain, 16).toString()
-          setChainId(chainNew)
-        },
-        () => {
-          toast.error(
-            `App network (${getChainName(
-              chainId,
-            )}) doesn't match to network selected in your wallet (${getChainName(
-              newChain,
-            )}).\nSwitch to the correct chain in your wallet`,
-          )
-          setConnected(false)
-        },
-      )
+      if (!isLedgerLive()) {
+        validateChain(
+          newChain,
+          chainId,
+          () => {
+            setConnected(true)
+            const chainNew = parseInt(newChain, 16).toString()
+            setChainId(chainNew)
+          },
+          () => {
+            toast.error(
+              `App network (${getChainName(
+                chainId,
+              )}) doesn't match to network selected in your wallet (${getChainName(
+                newChain,
+              )}).\nSwitch to the correct chain in your wallet`,
+            )
+            setConnected(false)
+          },
+        )
+      } else {
+        validateChain(
+          newChain,
+          chainId,
+          async () => {
+            setConnected(true)
+            const chainNew = parseInt(newChain, 16).toString()
+            setChainId(chainNew)
+            const selectedAccount = await ledgerProvider.getSigner().getAddress()
+            setAccount(selectedAccount && selectedAccount.toLowerCase())
+            setConnected(true)
+          },
+          () => {
+            toast.error(
+              `App network (${getChainName(
+                chainId,
+              )}) doesn't match to network selected in your wallet (${getChainName(
+                newChain,
+              )}).\nSwitch to the correct chain in your wallet`,
+            )
+            setConnected(false)
+          },
+        )
+      }
     },
-    [chainId],
+    [chainId, isLedgerLive],
   )
   useEffect(() => {
     let accountEmitter, networkEmitter
+    if (!isLedgerLive()) {
+      if (web3Plugin && web3Plugin._provider.on && account) {
+        networkEmitter = web3Plugin._provider.on('chainChanged', onNetworkChange)
+      }
 
-    if (web3Plugin && web3Plugin._provider.on && account) {
-      // accountEmitter = web3Plugin._provider.on('accountsChanged', accountAddress =>
-      //   validateAccount(accountAddress, setAccount),
-      // )
-      networkEmitter = web3Plugin._provider.on('chainChanged', onNetworkChange)
+      return () => {
+        if (accountEmitter && networkEmitter) {
+          accountEmitter.removeAllListeners('accountsChanged')
+          networkEmitter.removeListener('chainChanged', onNetworkChange)
+        }
+      }
     }
-
+    if (ledgerProvider && ledgerProvider.provider.on) {
+      accountEmitter = ledgerProvider.provider.on('accountsChanged', accountAddress => {
+        setAccount(accountAddress[0].toLowerCase())
+        setConnected(true)
+      })
+      networkEmitter = ledgerProvider.provider.on('chainChanged', onNetworkChange)
+    }
     return () => {
       if (accountEmitter && networkEmitter) {
         accountEmitter.removeAllListeners('accountsChanged')
         networkEmitter.removeListener('chainChanged', onNetworkChange)
       }
     }
-  }, [web3Plugin, chainId, account, onNetworkChange])
+  }, [web3Plugin, chainId, account, onNetworkChange, isLedgerLive, setAccount])
 
   const connect = useCallback(async () => {
     const wallets = await onboard.connectWallet()

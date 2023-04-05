@@ -6,6 +6,8 @@ import BigNumber from 'bignumber.js'
 import mobile from 'is-mobile'
 import { get } from 'lodash'
 import Web3 from 'web3'
+import { IFrameEthereumProvider } from '@ledgerhq/iframe-provider'
+import { ethers } from 'ethers'
 import arbitrumLogo from '../../assets/images/logos/arbitrum.svg'
 import ethLogo from '../../assets/images/logos/eth.png'
 import maticLogo from '../../assets/images/logos/matic.svg'
@@ -21,32 +23,8 @@ import {
   POLL_BALANCES_INTERVAL_MS,
 } from '../../constants'
 import { CHAINS_ID } from '../../data/constants'
-import { formatNumber } from '../../utils'
+import { formatNumber, isLedgerLive } from '../../utils'
 import contracts from './contracts'
-// import { InjectedConnector } from "@web3-react/injected-connector"
-// import { WalletConnectConnector } from "@web3-react/walletconnect-connector"
-// import { WalletLinkConnector } from "@web3-react/walletlink-connector"
-
-// const injected = new InjectedConnector({
-//   supportedChainIds: undefined,
-// })
-
-// const walletConnect = new WalletConnectConnector({
-//   rpc: { 1: `https://mainnet.infura.io/v3/${process.env.REACT_APP_MATIC_INFURA_KEY}` },
-//   bridge: "https://bridge.walletconnect.org",
-//   qrcode: true,
-// })
-
-// const walletLink = new WalletLinkConnector({
-//   url: `https://mainnet.infura.io/v3/${process.env.REACT_APP_MATIC_INFURA_KEY}`,
-//   appName: "world-enterprise",
-// })
-
-// export const connectors = {
-//   injected: injected,
-//   walletConnect: walletConnect,
-//   coinbaseWallet: walletLink,
-// }
 
 export const providerOptions = {
   injected: {
@@ -116,6 +94,8 @@ export const infuraWeb3 = new Web3(INFURA_URL)
 export const maticWeb3 = new Web3(MATIC_URL)
 export const ethWeb3 = new Web3(ETH_URL)
 export const arbitrumWeb3 = new Web3(ARBITRUM_URL)
+export const ledgerProvider = new ethers.providers.Web3Provider(new IFrameEthereumProvider())
+export const ledgerWeb3 = new Web3(new IFrameEthereumProvider())
 
 export const connectWeb3 = async () => {
   const loadedAsSafeApp = await web3Modal.isSafeApp()
@@ -258,6 +238,10 @@ export const getChainName = chainId => {
 }
 
 export const getWeb3 = (chainId, account) => {
+  if (isLedgerLive()) {
+    return ledgerWeb3
+  }
+
   if (account) {
     return mainWeb3
   }

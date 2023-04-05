@@ -5,11 +5,11 @@ import useDeepCompareEffect from 'use-deep-compare-effect'
 import {
   FARM_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
-  MIFARM_TOKEN_SYMBOL,
   PANEL_ACTIONS_TYPE,
   POOL_BALANCES_DECIMALS,
   SPECIAL_VAULTS,
 } from '../../../constants'
+import { CHAINS_ID } from '../../../data/constants'
 import { usePools } from '../../../providers/Pools'
 import { calculateRewardsEarned } from '../../../providers/Pools/utils'
 import { useVaults } from '../../../providers/Vault'
@@ -20,22 +20,18 @@ import tokenContract from '../../../services/web3/contracts/token/contract.json'
 import tokenMethods from '../../../services/web3/contracts/token/methods'
 import vaultMethods from '../../../services/web3/contracts/vault/methods'
 import { convertAmountToFARM } from '../../../utils'
-import UniV3ManagedVaultActions from './UniV3ManagedVaultActions'
-import PoolHeadActions from './PoolHeadActions'
-import VaultHeadActions from './VaultHeadActions'
-import VaultBodyActions from './VautBodyActions'
-import { CHAINS_ID } from '../../../data/constants'
 import PoolBodyActions from './PoolBodyActions'
+import PoolHeadActions from './PoolHeadActions'
+import UniV3ManagedVaultActions from './UniV3ManagedVaultActions'
+import VaultHeadActions from './VaultHeadActions'
 import VaultHeadActionsMigrate from './VaultHeadActionsMigrate'
+import VaultBodyActions from './VautBodyActions'
 
 const { addresses, tokens } = require('../../../data')
 
 const getPoolRewardSymbol = chain => {
-  if (chain === CHAINS_ID.ARBITRUM_ONE) {
+  if (chain === CHAINS_ID.ARBITRUM_ONE || chain === CHAINS_ID.MATIC_MAINNET) {
     return IFARM_TOKEN_SYMBOL
-  }
-  if (chain === CHAINS_ID.MATIC_MAINNET) {
-    return MIFARM_TOKEN_SYMBOL
   }
   return FARM_TOKEN_SYMBOL
 }
