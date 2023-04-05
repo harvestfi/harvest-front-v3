@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js'
-import { find, get, isEmpty } from 'lodash'
+import { find, get, isEmpty, sortBy } from 'lodash'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
@@ -55,6 +55,7 @@ import {
   ThemeMode,
   TransactionDetails,
   LogoImg,
+  Col,
 } from './style'
 
 const getChainIcon = chain => {
@@ -362,6 +363,11 @@ const Dashboard = () => {
     }
   }, [account, userStats, balances, switchBalance]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const sortCol = field => {
+    const tokenList = sortBy(farmTokenList, field)
+    setFarmTokenList(tokenList)
+  }
+
   return (
     <Container pageBackColor={pageBackColor} fontColor={fontColor}>
       <Inner>
@@ -402,15 +408,51 @@ const Dashboard = () => {
             <Column width="5%">
               <SelField />
             </Column>
-            <Column width="30%">Farm Name</Column>
-            <Column width="10%">Status</Column>
+            <Column width="30%">
+              <Col
+                onClick={() => {
+                  sortCol('symbol')
+                }}
+              >
+                Farm Name
+              </Col>
+            </Column>
+            <Column width="10%">
+              <Col
+                onClick={() => {
+                  sortCol('status')
+                }}
+              >
+                Status
+              </Col>
+            </Column>
             <Column width="15%" color="#FF9400">
-              Unstaked
+              <Col
+                onClick={() => {
+                  sortCol('unstake')
+                }}
+              >
+                Unstaked
+              </Col>
             </Column>
             <Column width="15%" color="#129C3D">
-              Staked
+              <Col
+                onClick={() => {
+                  sortCol('stake')
+                }}
+              >
+                Staked
+              </Col>
             </Column>
-            <Column width="15%">Rewards</Column>
+            <Column width="15%">
+              <Col
+                onClick={() => {
+                  sortCol('reward')
+                }}
+              >
+                Rewards
+              </Col>
+            </Column>
             <Column width="10%" />
           </Header>
           {connected ? (

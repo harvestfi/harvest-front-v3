@@ -419,6 +419,12 @@ const LogoImg = styled.img`
   }
 `
 
+const Col = styled.div`
+  display: flex;
+  cursor: pointer;
+  width: fit-content;
+`
+
 export {
   Container,
   SubPart,
@@ -443,4 +449,5 @@ export {
   Status,
   SelField,
   LogoImg,
+  Col,
 }
