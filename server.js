@@ -2,7 +2,7 @@ const express = require('express')
 const helmet = require('helmet')
 const path = require('path')
 
-const builtDirectory = path.join(__dirname, 'prod')
+const builtDirectory = path.join(__dirname, 'build')
 const PORT = process.env.PORT || '5000'
 const app = express()
 
@@ -12,7 +12,7 @@ app.use(
     crossOriginEmbedderPolicy: false,
     contentSecurityPolicy: {
       directives: {
-        frameAncestors: ['https://dapp-browser.apps.ledger.com/', 'http://localhost:3000'],
+        frameAncestors: ['https://dapp-browser.apps.ledger.com/'],
         scriptSrc: ["'self'", "'unsafe-inline'", 'https://static.cloudflareinsights.com'],
         connectSrc: ["'self'", '*'],
       },

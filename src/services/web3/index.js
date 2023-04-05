@@ -1,13 +1,13 @@
 import CoinbaseWalletSDK from '@coinbase/wallet-sdk'
 import { SafeAppWeb3Modal } from '@gnosis.pm/safe-apps-web3modal'
 import { loadConnectKit } from '@ledgerhq/connect-kit-loader'
+import { IFrameEthereumProvider } from '@ledgerhq/iframe-provider'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import BigNumber from 'bignumber.js'
+import { ethers } from 'ethers'
 import mobile from 'is-mobile'
 import { get } from 'lodash'
 import Web3 from 'web3'
-import { IFrameEthereumProvider } from '@ledgerhq/iframe-provider'
-import { ethers } from 'ethers'
 import arbitrumLogo from '../../assets/images/logos/arbitrum.svg'
 import ethLogo from '../../assets/images/logos/eth.png'
 import maticLogo from '../../assets/images/logos/matic.svg'
@@ -89,13 +89,13 @@ export const web3Modal = new SafeAppWeb3Modal({
   chains,
 })
 
-export const mainWeb3 = new Web3(window.ethereum || INFURA_URL)
 export const infuraWeb3 = new Web3(INFURA_URL)
 export const maticWeb3 = new Web3(MATIC_URL)
 export const ethWeb3 = new Web3(ETH_URL)
 export const arbitrumWeb3 = new Web3(ARBITRUM_URL)
 export const ledgerProvider = new ethers.providers.Web3Provider(new IFrameEthereumProvider())
 export const ledgerWeb3 = new Web3(new IFrameEthereumProvider())
+export const mainWeb3 = isLedgerLive() ? ledgerWeb3 : new Web3(window.ethereum || INFURA_URL)
 
 export const connectWeb3 = async () => {
   const loadedAsSafeApp = await web3Modal.isSafeApp()
@@ -262,7 +262,7 @@ export const getWeb3 = (chainId, account) => {
 }
 
 export const getWeb3Local = () => {
-  return mainWeb3
+  return isLedgerLive() ? ledgerWeb3 : mainWeb3
 }
 
 export const getExplorerLink = chainId => {
