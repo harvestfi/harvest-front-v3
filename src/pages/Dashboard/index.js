@@ -314,9 +314,7 @@ const Dashboard = () => {
             const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
             // eslint-disable-next-line one-var
             let rewardSymbol = rewardTokenSymbols[0].toUpperCase()
-            if (
-              rewardTokenSymbols.includes(FARM_TOKEN_SYMBOL)
-            ) {
+            if (rewardTokenSymbols.includes(FARM_TOKEN_SYMBOL)) {
               rewardSymbol = FARM_TOKEN_SYMBOL
             }
 

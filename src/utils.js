@@ -18,7 +18,7 @@ import {
   KEY_CODES,
   MAX_APY_DISPLAY,
   SPECIAL_VAULTS,
-  UNIV3_POOL_ID_REGEX
+  UNIV3_POOL_ID_REGEX,
 } from './constants'
 import { CHAINS_ID } from './data/constants'
 import { addresses } from './data/index'
