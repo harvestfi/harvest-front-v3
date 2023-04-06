@@ -49,31 +49,29 @@ import {
 } from './style'
 import { isLedgerLive } from '../../utils'
 
-const ChainsList = isLedgerLive() ?
-  [
-    { id: 0, name: 'Ethereum', img: ETHEREUM, chainId: CHAINS_ID.ETH_MAINNET },
-    { id: 1, name: 'Polygon', img: POLYGON, chainId: CHAINS_ID.MATIC_MAINNET },
-  ]
-  :
-  [
-    { id: 0, name: 'Ethereum', img: ETHEREUM, chainId: CHAINS_ID.ETH_MAINNET },
-    { id: 1, name: 'Polygon', img: POLYGON, chainId: CHAINS_ID.MATIC_MAINNET },
-    { id: 2, name: 'Arbitrum', img: ARBITRUM, chainId: CHAINS_ID.ARBITRUM_ONE },
-  ]
+const ChainsList = isLedgerLive()
+  ? [
+      { id: 0, name: 'Ethereum', img: ETHEREUM, chainId: CHAINS_ID.ETH_MAINNET },
+      { id: 1, name: 'Polygon', img: POLYGON, chainId: CHAINS_ID.MATIC_MAINNET },
+    ]
+  : [
+      { id: 0, name: 'Ethereum', img: ETHEREUM, chainId: CHAINS_ID.ETH_MAINNET },
+      { id: 1, name: 'Polygon', img: POLYGON, chainId: CHAINS_ID.MATIC_MAINNET },
+      { id: 2, name: 'Arbitrum', img: ARBITRUM, chainId: CHAINS_ID.ARBITRUM_ONE },
+    ]
 
-const MobileChainsList = isLedgerLive() ?
-  [
-    { id: 0, name: 'All Chains', img: AllChains, chainId: '' },
-    { id: 1, name: 'Ethereum', img: ETHEREUM, chainId: CHAINS_ID.ETH_MAINNET },
-    { id: 2, name: 'Polygon', img: POLYGON, chainId: CHAINS_ID.MATIC_MAINNET },
-  ]
-  :
-  [
-    { id: 0, name: 'All Chains', img: AllChains, chainId: '' },
-    { id: 1, name: 'Ethereum', img: ETHEREUM, chainId: CHAINS_ID.ETH_MAINNET },
-    { id: 2, name: 'Polygon', img: POLYGON, chainId: CHAINS_ID.MATIC_MAINNET },
-    { id: 3, name: 'Arbitrum', img: ARBITRUM, chainId: CHAINS_ID.ARBITRUM_ONE },
-  ]
+const MobileChainsList = isLedgerLive()
+  ? [
+      { id: 0, name: 'All Chains', img: AllChains, chainId: '' },
+      { id: 1, name: 'Ethereum', img: ETHEREUM, chainId: CHAINS_ID.ETH_MAINNET },
+      { id: 2, name: 'Polygon', img: POLYGON, chainId: CHAINS_ID.MATIC_MAINNET },
+    ]
+  : [
+      { id: 0, name: 'All Chains', img: AllChains, chainId: '' },
+      { id: 1, name: 'Ethereum', img: ETHEREUM, chainId: CHAINS_ID.ETH_MAINNET },
+      { id: 2, name: 'Polygon', img: POLYGON, chainId: CHAINS_ID.MATIC_MAINNET },
+      { id: 3, name: 'Arbitrum', img: ARBITRUM, chainId: CHAINS_ID.ARBITRUM_ONE },
+    ]
 
 const FarmsList = [
   { id: 1, name: 'All Farms', img: All },

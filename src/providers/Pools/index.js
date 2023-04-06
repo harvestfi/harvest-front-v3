@@ -179,9 +179,8 @@ const PoolsProvider = _ref => {
               boostedRewardAPY,
               dataFetched,
             }
-          } else {
-            return null
           }
+          return null
         }),
       )
       formattedPools = formattedPools.filter(pool => pool !== null)
@@ -278,13 +277,9 @@ const PoolsProvider = _ref => {
         const loadInitialStakedAndUnstakedBalances = async () => {
           loadedInitialStakedAndUnstakedBalances.current = true
           const stats = {}
-          let chains = isLedgerLive() ?
-            [
-              CHAINS_ID.ETH_MAINNET,
-              CHAINS_ID.MATIC_MAINNET
-            ]
-            :
-            selChain
+          const chains = isLedgerLive()
+            ? [CHAINS_ID.ETH_MAINNET, CHAINS_ID.MATIC_MAINNET]
+            : selChain
           // selChain.forEach( async (ch)=> {
           /* eslint-disable no-await-in-loop */
           for (let i = 0; i < chains.length; i += 1) {

@@ -12,17 +12,16 @@ import VaultUserBalance from './sub-components/VaultUserBalance'
 import VaultValue from './sub-components/VaultValue'
 import { isLedgerLive } from '../../../utils'
 
-const chainList = isLedgerLive() ?
-  [
-    { id: 1, name: 'Ethereum', chainId: 1 },
-    { id: 2, name: 'Polygon', chainId: 137 },
-  ]
-  :
-  [
-    { id: 1, name: 'Ethereum', chainId: 1 },
-    { id: 2, name: 'Polygon', chainId: 137 },
-    { id: 3, name: 'Arbitrum', chainId: 42161 },
-  ]
+const chainList = isLedgerLive()
+  ? [
+      { id: 1, name: 'Ethereum', chainId: 1 },
+      { id: 2, name: 'Polygon', chainId: 137 },
+    ]
+  : [
+      { id: 1, name: 'Ethereum', chainId: 1 },
+      { id: 2, name: 'Polygon', chainId: 137 },
+      { id: 3, name: 'Arbitrum', chainId: 42161 },
+    ]
 
 const DesktopPanelHeader = ({
   token,

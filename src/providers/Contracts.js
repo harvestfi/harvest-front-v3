@@ -8,7 +8,7 @@ import { CHAINS_ID } from '../data/constants'
 const ContractsContext = createContext()
 const useContracts = () => useContext(ContractsContext)
 
-const getWeb3 = (chainId) => {
+const getWeb3 = chainId => {
   if (chainId === CHAINS_ID.ETH_MAINNET) {
     return ethWeb3
   }

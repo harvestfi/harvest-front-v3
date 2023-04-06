@@ -85,7 +85,7 @@ const VaultsProvider = _ref => {
             { subLabel } = importedVaults[vaultSymbol],
             uniswapV3ManagedData = null,
             dataFetched = false
-  
+
           const isIFARM = vaultSymbol === IFARM_TOKEN_SYMBOL
           const hasMultipleAssets = isArray(importedVaults[vaultSymbol].tokenAddress)
           const instance = await newContractInstance(
@@ -96,7 +96,7 @@ const VaultsProvider = _ref => {
             hasMultipleAssets ? univ3ContractData.abi : vaultContractData.abi,
             web3Client,
           )
-  
+
           if (apiData && apiData[vaultSymbol]) {
             estimatedApy = apiData[vaultSymbol].estimatedApy
             estimatedApyBreakdown = apiData[vaultSymbol].estimatedApyBreakdown
@@ -136,7 +136,7 @@ const VaultsProvider = _ref => {
               ? importedVaults[vaultSymbol].pricePerFullShareOverride
               : await getPricePerFullShare(instance, web3Client)
           }
-  
+
           if (isIFARM && account && chainId === CHAINS_ID.ETH_MAINNET) {
             const userAddress = account
             underlyingBalanceWithInvestmentForHolder = await getUnderlyingBalanceWithInvestmentForHolder(
@@ -145,7 +145,7 @@ const VaultsProvider = _ref => {
               web3Client,
             )
           }
-  
+
           formattedVaults[vaultSymbol] = {
             ...importedVaults[vaultSymbol],
             vaultAddress: isIFARM
