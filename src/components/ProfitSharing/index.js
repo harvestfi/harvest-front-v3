@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react'
+import { useHistory } from 'react-router-dom'
 import { displayAPY, getTotalApy, getDataQuery } from '../../utils'
 import {
   FARM_TOKEN_SYMBOL,
@@ -19,6 +20,7 @@ const ProfitSharingContainer = ({ height }) => {
   const { pools } = usePools()
   const { chainId } = useWallet()
   const { profitShareAPY } = useStats()
+  const { push } = useHistory()
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )
@@ -46,7 +48,12 @@ const ProfitSharingContainer = ({ height }) => {
   }, [chainId])
 
   return (
-    <ProfitSharing href={directDetailUrl + FARM_TOKEN_SYMBOL} height={height}>
+    <ProfitSharing
+      onClick={() => {
+        push(directDetailUrl + FARM_TOKEN_SYMBOL)
+      }}
+      height={height}
+    >
       <TopDiv>
         <img src={ProfitSharingIcon} alt="profit-sharing" />
         <img src={ProfitSharingTitle} alt="profit-sharing" />

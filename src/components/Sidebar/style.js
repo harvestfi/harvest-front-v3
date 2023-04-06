@@ -190,8 +190,8 @@ const FlexDiv = styled.div`
 
 const Follow = styled.div`
   padding-top: 16px;
-  position: absolute;
-  bottom: 30px;
+  // position: absolute;
+  // bottom: 30px;
   display: flex;
   justify-content: space-between;
   width: 270px;
@@ -659,15 +659,11 @@ const ChartDiv = styled.div`
 
 const BottomPart = styled.div`
   // padding-top: 16px;
-  // position: absolute;
-  // bottom: 100px;
+  position: absolute;
+  bottom: 50px;
   // display: flex;
   // justify-content: space-between;
-  // width: 270px;
-`
-
-const Direct = styled.a`
-  text-decoration: none;
+  width: 270px;
 `
 
 export {
@@ -704,5 +700,4 @@ export {
   TopTitle,
   ChartDiv,
   BottomPart,
-  Direct,
 }
