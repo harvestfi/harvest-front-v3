@@ -394,7 +394,7 @@ const WidoDetail = () => {
   useEffect(() => {
     const getTokenBalance = async () => {
       try {
-        if (chain) {
+        if (chain && account) {
           const curBalances = await getBalances(account, [chain.toString()])
           setBalanceList(curBalances)
           const supList = await getSupportedTokens({

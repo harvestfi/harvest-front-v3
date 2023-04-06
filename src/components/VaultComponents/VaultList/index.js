@@ -551,7 +551,7 @@ const VaultList = () => {
       }
 
       if (hasSwitchedAccount) {
-        setSortingParams('balance')
+        setSortingParams('deposits')
       }
     },
     [chain, account, userStats],

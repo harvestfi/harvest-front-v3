@@ -99,6 +99,10 @@ const LinkContainer = styled.div`
   @media screen and (min-width: 992px) {
     display: flex;
   }
+
+  @media screen and (max-height: 650px) {
+    margin-bottom: 14px;
+  }
 `
 
 const Link = styled.button`
