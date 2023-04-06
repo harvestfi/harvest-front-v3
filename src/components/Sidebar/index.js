@@ -75,6 +75,7 @@ import {
   UserDropDownMenu,
   BottomPart,
 } from './style'
+import { isLedgerLive } from '../../utils'
 
 const sideLinks = [
   {
@@ -334,37 +335,41 @@ const Sidebar = ({ width }) => {
                       style={{ width: 17, height: 17 }}
                     />
                   </UserDropDown>
+                  {
+                    !isLedgerLive() ?
+                      <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
+                        <UserDropDownItem
+                          onClick={() => {
+                            disconnect()
+                          }}
+                          fontcolor={fontColor}
+                          filtercolor={filterColor}
+                          bordercolor={borderColor}
+                        >
+                          <img
+                            className="change-icon"
+                            src={ChangeWalletIcon}
+                            width="18px"
+                            height="18px"
+                            alt=""
+                          />
+                          <div>Change Network</div>
+                        </UserDropDownItem>
 
-                  <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
-                    <UserDropDownItem
-                      onClick={() => {
-                        disconnect()
-                      }}
-                      fontcolor={fontColor}
-                      filtercolor={filterColor}
-                      bordercolor={borderColor}
-                    >
-                      <img
-                        className="change-icon"
-                        src={ChangeWalletIcon}
-                        width="18px"
-                        height="18px"
-                        alt=""
-                      />
-                      <div>Change Network</div>
-                    </UserDropDownItem>
-
-                    <UserDropDownItem
-                      onClick={() => {
-                        disconnect()
-                      }}
-                      fontcolor={fontColor}
-                      filtercolor={filterColor}
-                    >
-                      <img src={LogoutIcon} width="18px" height="18px" alt="" />
-                      <div>Log Out</div>
-                    </UserDropDownItem>
-                  </UserDropDownMenu>
+                        <UserDropDownItem
+                          onClick={() => {
+                            disconnect()
+                          }}
+                          fontcolor={fontColor}
+                          filtercolor={filterColor}
+                        >
+                          <img src={LogoutIcon} width="18px" height="18px" alt="" />
+                          <div>Log Out</div>
+                        </UserDropDownItem>
+                      </UserDropDownMenu>
+                      :
+                      <></>
+                  }
                 </Dropdown>
               )
             })()}
@@ -568,36 +573,41 @@ const Sidebar = ({ width }) => {
                         />
                       </UserDropDown>
 
-                      <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
-                        <UserDropDownItem
-                          onClick={() => {
-                            disconnect()
-                          }}
-                          fontcolor={fontColor}
-                          filtercolor={filterColor}
-                          bordercolor={borderColor}
-                        >
-                          <img
-                            className="change-icon"
-                            src={ChangeWalletIcon}
-                            width="18px"
-                            height="18px"
-                            alt=""
-                          />
-                          <div>Change Network</div>
-                        </UserDropDownItem>
+                      {
+                        !isLedgerLive() ?
+                          <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
+                            <UserDropDownItem
+                              onClick={() => {
+                                disconnect()
+                              }}
+                              fontcolor={fontColor}
+                              filtercolor={filterColor}
+                              bordercolor={borderColor}
+                            >
+                              <img
+                                className="change-icon"
+                                src={ChangeWalletIcon}
+                                width="18px"
+                                height="18px"
+                                alt=""
+                              />
+                              <div>Change Network</div>
+                            </UserDropDownItem>
 
-                        <UserDropDownItem
-                          onClick={() => {
-                            disconnect()
-                          }}
-                          fontcolor={fontColor}
-                          filtercolor={filterColor}
-                        >
-                          <img src={LogoutIcon} width="18px" height="18px" alt="" />
-                          <div>Log Out</div>
-                        </UserDropDownItem>
-                      </UserDropDownMenu>
+                            <UserDropDownItem
+                              onClick={() => {
+                                disconnect()
+                              }}
+                              fontcolor={fontColor}
+                              filtercolor={filterColor}
+                            >
+                              <img src={LogoutIcon} width="18px" height="18px" alt="" />
+                              <div>Log Out</div>
+                            </UserDropDownItem>
+                          </UserDropDownMenu>
+                          :
+                          <></>
+                      }
                     </Dropdown>
                   )
                 })()}

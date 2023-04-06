@@ -1172,7 +1172,6 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
       .then(response => response.json())
       .then(result => {
         data = result.data
-        console.log(data)
       })
       .catch(error => console.log('error', error))
   } catch (err) {

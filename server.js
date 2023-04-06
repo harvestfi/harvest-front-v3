@@ -13,8 +13,9 @@ app.use(
     contentSecurityPolicy: {
       directives: {
         frameAncestors: ['https://dapp-browser.apps.ledger.com/'],
-        scriptSrc: ["'self'", "'unsafe-inline'", 'https://static.cloudflareinsights.com'],
+        scriptSrc: ["'self'", "'unsafe-inline'", 'https://static.cloudflareinsights.com', 'https://cdn.usefathom.com/script.js'],
         connectSrc: ["'self'", '*'],
+        imgSrc: ["'self'", "https: data:"],
       },
     },
     frameguard: false,

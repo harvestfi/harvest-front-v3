@@ -27,12 +27,19 @@ import VaultApy from './sub-components/VaultApy'
 import VaultName from './sub-components/VaultName'
 import VaultUserBalance from './sub-components/VaultUserBalance'
 import VaultValue from './sub-components/VaultValue'
+import { isLedgerLive } from '../../../utils'
 
-const chainList = [
-  { id: 1, name: 'Ethereum', chainId: 1 },
-  { id: 2, name: 'Polygon', chainId: 137 },
-  { id: 3, name: 'Arbitrum', chainId: 42161 },
-]
+const chainList = isLedgerLive() ?
+  [
+    { id: 1, name: 'Ethereum', chainId: 1 },
+    { id: 2, name: 'Polygon', chainId: 137 },
+  ]
+  :
+  [
+    { id: 1, name: 'Ethereum', chainId: 1 },
+    { id: 2, name: 'Polygon', chainId: 137 },
+    { id: 3, name: 'Arbitrum', chainId: 42161 },
+  ]
 
 const MobilePanelHeader = ({
   token,
@@ -44,7 +51,7 @@ const MobilePanelHeader = ({
   loadedVault,
   loadingFarmingBalance,
 }) => {
-  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM]
+  const BadgeAry = isLedgerLive() ? [ETHEREUM, POLYGON] : [ETHEREUM, POLYGON, ARBITRUM]
 
   const chainId = token.chain || token.data.chain
   const [badgeId, setBadgeId] = useState(-1)
