@@ -37,17 +37,14 @@ const WalletProvider = _ref => {
   const [approvedBalances, setApprovedBalances] = useState({})
   const { contracts } = useContracts()
 
-  const disconnect = useCallback(
-    () => {
-      setConnected(false)
-      setAccount(null)
-      setBalances({})
-      setLogout(true)
-    },
-    [
-      // deactivate
-    ],
-  )
+  const disconnect = useCallback(async () => {
+    const [primaryWallet] = onboard.state.get().wallets
+    await onboard.disconnectWallet({ label: primaryWallet.label })
+    setConnected(false)
+    setAccount(null)
+    setBalances({})
+    setLogout(true)
+  }, [onboard])
 
   const onNetworkChange = useCallback(
     newChain => {
