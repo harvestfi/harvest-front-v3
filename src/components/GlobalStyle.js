@@ -318,11 +318,11 @@ html {
   }
 
   .detail-icon {
-    width: 15%;
+    width: 8%;
   }
 
   .detail-apy {
-    width: 15%; 
+    width: 10%; 
     font-size: 16px; 
     font-weight: 700;
   }
