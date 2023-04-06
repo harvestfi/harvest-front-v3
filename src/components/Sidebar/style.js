@@ -108,7 +108,6 @@ const Link = styled.button`
   font-weight: 500;
   line-height: 21px;
   transition: 0.25s;
-  line-height: ${props => (props.subItem ? '22px' : '16px')};
   display: flex;
   align-items: center;
   justify-content: start;
@@ -156,6 +155,12 @@ const Link = styled.button`
     color: ${props => props.activeColor};
     font-weight: bold;
   }
+
+  @media screen and (max-height: 650px) {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+  }
 `
 
 const MiddleActionsContainer = styled.div`
@@ -190,11 +195,8 @@ const FlexDiv = styled.div`
 
 const Follow = styled.div`
   padding-top: 16px;
-  // position: absolute;
-  // bottom: 30px;
   display: flex;
   justify-content: space-between;
-  width: 270px;
 
   @media screen and (max-width: 992px) {
     display: none;
@@ -613,6 +615,10 @@ const ProfitSharing = styled.div`
   @media screen and (max-width: 992px) {
     display: none;
   }
+
+  @media screen and (max-height: 900px) {
+    display: none;
+  }
 `
 
 const ProfitBack = styled.img`
@@ -658,11 +664,8 @@ const ChartDiv = styled.div`
 `
 
 const BottomPart = styled.div`
-  // padding-top: 16px;
   position: absolute;
-  bottom: 50px;
-  // display: flex;
-  // justify-content: space-between;
+  bottom: 20px;
   width: 270px;
 `
 
