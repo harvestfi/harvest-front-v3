@@ -627,10 +627,8 @@ export const getDetailText = (
                   : `...`
               }
             </div>
-            <div class="detail-desc">
-              Auto harvested:
-            </div>
-            <div class="detail-token">
+            <div class="detail-desc-auto">
+              Auto harvested&nbsp;
               ${
                 rewardSymbols.length > 1 && token.estimatedApyBreakdown.length === 1
                   ? rewardSymbols.join(' ')
@@ -844,10 +842,10 @@ export const getDetailText = (
                 ? displayAPY(boostedEstimatedAPY)
                 : displayAPY(token.estimatedApy)
             }</div>
-            <div class="detail-desc">Auto ${
-              isHodlVault ? 'hodling <b>SUSHI<b> in' : 'harvested:&nbsp;'
-            }</div>
-            <div class="detail-token">${token.apyTokenSymbols.join(',  ')}</div>
+            <div class="detail-desc-auto">Auto ${
+              isHodlVault ? 'hodling <b>SUSHI<b> in' : 'harvested&nbsp;'
+            }
+            ${token.apyTokenSymbols.join(',  ')}</div>
             ${
               isIFARM && token.fullBuyback ? ` <b>(${displayAPY(token.estimatedApy)})</b>` : ``
             }</b>${

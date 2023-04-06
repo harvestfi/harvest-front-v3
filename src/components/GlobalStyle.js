@@ -333,6 +333,11 @@ html {
     font-weight: 400;
   }
 
+  .detail-desc-auto {
+    font-size: 13px; 
+    font-weight: 400;
+  }
+
   .detail-desc-no-width {
     font-size: 13px; 
     font-weight: 400;
