@@ -419,8 +419,10 @@ const LogoImg = styled.img`
   }
 `
 
-const Direct = styled.a`
-  text-decoration: none;
+const Col = styled.div`
+  display: flex;
+  cursor: pointer;
+  width: fit-content;
 `
 
 export {
@@ -447,5 +449,5 @@ export {
   Status,
   SelField,
   LogoImg,
-  Direct,
+  Col,
 }
