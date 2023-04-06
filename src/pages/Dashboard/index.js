@@ -18,7 +18,6 @@ import {
   FARM_USDC_TOKEN_SYMBOL,
   FARM_WETH_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
-  MIFARM_TOKEN_SYMBOL,
   POOL_BALANCES_DECIMALS,
   SPECIAL_VAULTS,
   directDetailUrl,
@@ -315,10 +314,7 @@ const Dashboard = () => {
             const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
             // eslint-disable-next-line one-var
             let rewardSymbol = rewardTokenSymbols[0].toUpperCase()
-            if (
-              rewardTokenSymbols.includes(FARM_TOKEN_SYMBOL) ||
-              rewardTokenSymbols.includes(MIFARM_TOKEN_SYMBOL)
-            ) {
+            if (rewardTokenSymbols.includes(FARM_TOKEN_SYMBOL)) {
               rewardSymbol = FARM_TOKEN_SYMBOL
             }
 

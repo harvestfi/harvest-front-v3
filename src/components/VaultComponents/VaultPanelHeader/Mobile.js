@@ -13,7 +13,7 @@ import { directDetailUrl, IFARM_TOKEN_SYMBOL } from '../../../constants'
 import { tokens } from '../../../data'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useVaults } from '../../../providers/Vault'
-import { getRewardsText, getTotalApy } from '../../../utils'
+import { getRewardsText, getTotalApy, isLedgerLive } from '../../../utils'
 import {
   BadgeIcon,
   DetailModal,
@@ -28,11 +28,16 @@ import VaultName from './sub-components/VaultName'
 import VaultUserBalance from './sub-components/VaultUserBalance'
 import VaultValue from './sub-components/VaultValue'
 
-const chainList = [
-  { id: 1, name: 'Ethereum', chainId: 1 },
-  { id: 2, name: 'Polygon', chainId: 137 },
-  { id: 3, name: 'Arbitrum', chainId: 42161 },
-]
+const chainList = isLedgerLive()
+  ? [
+      { id: 1, name: 'Ethereum', chainId: 1 },
+      { id: 2, name: 'Polygon', chainId: 137 },
+    ]
+  : [
+      { id: 1, name: 'Ethereum', chainId: 1 },
+      { id: 2, name: 'Polygon', chainId: 137 },
+      { id: 3, name: 'Arbitrum', chainId: 42161 },
+    ]
 
 const MobilePanelHeader = ({
   token,
@@ -44,7 +49,7 @@ const MobilePanelHeader = ({
   loadedVault,
   loadingFarmingBalance,
 }) => {
-  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM]
+  const BadgeAry = isLedgerLive() ? [ETHEREUM, POLYGON] : [ETHEREUM, POLYGON, ARBITRUM]
 
   const chainId = token.chain || token.data.chain
   const [badgeId, setBadgeId] = useState(-1)
