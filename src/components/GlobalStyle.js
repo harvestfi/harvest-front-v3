@@ -322,7 +322,7 @@ html {
   }
 
   .detail-apy {
-    width: 10%; 
+    width: 12%; 
     font-size: 16px; 
     font-weight: 700;
   }
