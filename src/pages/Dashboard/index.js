@@ -349,8 +349,8 @@ const Dashboard = () => {
             newStats.push(stats)
           }
         }
-        setTotalDeposit(formatNumber(totalStake, POOL_BALANCES_DECIMALS))
-        setTotalRewards(formatNumber(valueRewards, POOL_BALANCES_DECIMALS))
+        setTotalDeposit(formatNumber(totalStake, 2))
+        setTotalRewards(formatNumber(valueRewards, 2))
         setFarmTokenList(newStats)
         setCountList(newStats.length)
       }
