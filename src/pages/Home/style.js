@@ -41,6 +41,7 @@ const FarmCompInner = styled.div`
     box-shadow: 0px 1px 3px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06);
   }
 
+  cursor: pointer;
   margin: 16px 0px;
   border-radius: 12px;
   width: 48%;

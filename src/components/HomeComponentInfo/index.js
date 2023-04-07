@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useHistory } from 'react-router-dom'
 import { useThemeContext } from '../../providers/useThemeContext'
 import {
   Container,
@@ -17,6 +18,7 @@ import SmallApexChart from '../SmallApexChart'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 
 const HomeComponentInfo = ({ token, vaultPool, tokenVault, text, url }) => {
+  const { push } = useHistory()
   const isSpecialVault = token.liquidityPoolVault || token.poolVault
 
   const totalApy = isSpecialVault
@@ -40,7 +42,13 @@ const HomeComponentInfo = ({ token, vaultPool, tokenVault, text, url }) => {
   }, [address, chainId])
 
   return (
-    <Container href={directDetailUrl + url} backColor={backColor} borderColor={borderColor}>
+    <Container
+      onClick={() => {
+        push(directDetailUrl + url)
+      }}
+      backColor={backColor}
+      borderColor={borderColor}
+    >
       <ContentMiddle>
         <Img>
           {token.logoUrl
