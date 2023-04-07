@@ -276,23 +276,21 @@ const Dashboard = () => {
                   ? token.data.lpTokenData && token.data.lpTokenData.price
                   : token.usdPrice) || 1
             }
-            const unstake =
+            stats.unstake =
               fromWei(
                 get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),
                 (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
                 POOL_BALANCES_DECIMALS,
                 true,
               ) * (switchBalance ? usdPrice : 1)
-            stats.unstake = formatNumber(unstake, POOL_BALANCES_DECIMALS)
 
-            const stake =
+            stats.stake =
               fromWei(
                 get(userStats, `[${stakedVaults[i]}]['totalStaked']`, 0),
                 (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
                 POOL_BALANCES_DECIMALS,
                 true,
               ) * (switchBalance ? usdPrice : 1)
-            stats.stake = formatNumber(stake, POOL_BALANCES_DECIMALS)
             totalStake +=
               parseFloat(
                 fromWei(
@@ -336,7 +334,6 @@ const Dashboard = () => {
                     rewards,
                     (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
                   ) * (switchBalance ? usdRewardPrice : 1)
-            stats.reward = formatNumber(stats.reward, POOL_BALANCES_DECIMALS)
             valueRewards += Number(
               rewards === '0'
                 ? 0
@@ -491,7 +488,11 @@ const Dashboard = () => {
                           weight={400}
                           size={12}
                           height={16}
-                          value={`${switchBalance ? '$' : ''}${info.unstake}`}
+                          value={`${switchBalance ? '$' : ''}${
+                            switchBalance
+                              ? formatNumber(info.unstake, 2)
+                              : formatNumber(info.unstake, 6)
+                          }`}
                         />
                       </Content>
                       <Content width="15%">
@@ -499,7 +500,11 @@ const Dashboard = () => {
                           weight={400}
                           size={12}
                           height={16}
-                          value={`${switchBalance ? '$' : ''}${info.stake}`}
+                          value={`${switchBalance ? '$' : ''}${
+                            switchBalance
+                              ? formatNumber(info.stake, 2)
+                              : formatNumber(info.stake, 6)
+                          }`}
                         />
                       </Content>
                       <Content width="25%">
@@ -507,7 +512,11 @@ const Dashboard = () => {
                           weight={400}
                           size={12}
                           height={16}
-                          label={`${switchBalance ? '$' : ''}${info.reward}`}
+                          label={`${switchBalance ? '$' : ''}${
+                            switchBalance
+                              ? formatNumber(info.reward, 2)
+                              : formatNumber(info.reward, 6)
+                          }`}
                           icon={`/icons/${info.rewardSymbol}`}
                         />
                       </Content>
