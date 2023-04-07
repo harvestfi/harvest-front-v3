@@ -52,21 +52,16 @@ const WalletProvider = _ref => {
     fetchData()
   }, [])
 
-  const disconnect = useCallback(
-    async () => {
-      if (!isLedgerLive()) {
-        const [primaryWallet] = onboard.state.get().wallets
-        await onboard.disconnectWallet({ label: primaryWallet.label })
-        setConnected(false)
-        setAccount(null)
-        setBalances({})
-        setLogout(true)
-      }
-    },
-    [
-      // deactivate
-    ],
-  )
+  const disconnect = useCallback(async () => {
+    if (!isLedgerLive()) {
+      const [primaryWallet] = onboard.state.get().wallets
+      await onboard.disconnectWallet({ label: primaryWallet.label })
+      setConnected(false)
+      setAccount(null)
+      setBalances({})
+      setLogout(true)
+    }
+  }, [onboard])
 
   const onNetworkChange = useCallback(
     newChain => {
