@@ -1,7 +1,8 @@
 import { get } from 'lodash'
-import React, { useMemo } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import ReactTooltip from 'react-tooltip'
+import CoinGecko from 'coingecko-api'
 import Info from '../../../assets/images/logos/earn/info.svg'
 import {
   ACTIONS,
@@ -9,6 +10,7 @@ import {
   FARM_TOKEN_SYMBOL,
   FARM_USDC_TOKEN_SYMBOL,
   FARM_WETH_TOKEN_SYMBOL,
+  IFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
 } from '../../../constants'
 import { useActions } from '../../../providers/Actions'
@@ -38,6 +40,23 @@ import {
 } from './style'
 
 const { tokens } = require('../../../data')
+
+const CoinGeckoClient = new CoinGecko()
+
+const getPrice = async () => {
+  try {
+    const data = await CoinGeckoClient.simple.price({
+      ids: ['ifarm'],
+      /* eslint-disable camelcase */
+      vs_currencies: ['usd'],
+    })
+
+    const result = data.success ? data.data.ifarm.usd : 1
+    return result
+  } catch (e) {
+    return 1
+  }
+}
 
 const VaultFooterActions = ({
   fAssetPool,
@@ -114,6 +133,16 @@ const VaultFooterActions = ({
     [farmGrainPool, farmWethPool, farmUsdcPool, farmProfitSharingPool, profitShareAPY],
   )
   const groupOfVaults = { ...vaultsData, ...poolVaults }
+  const [price, setPrice] = useState(1)
+
+  useEffect(() => {
+    const getPriceValue = async () => {
+      const value = await getPrice()
+      setPrice(value)
+    }
+
+    getPriceValue()
+  }, [])
 
   return (
     <SelectedVaultContainer
@@ -201,7 +230,8 @@ const VaultFooterActions = ({
                                   get(tokens[symbol], 'decimals', 18),
                                   4,
                                 )
-                              : totalTokensEarned) * usdPrice
+                              : totalTokensEarned) *
+                            (symbol.toUpperCase() === IFARM_TOKEN_SYMBOL ? price : usdPrice)
                           }
                           totalStaked={get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)}
                           ratePerDay={get(ratesPerDay, symbolIdx, ratesPerDay[0])}
