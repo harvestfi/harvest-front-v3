@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { find, get, isArray, isEqual, sumBy } from 'lodash'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import ReactHtmlParser from 'react-html-parser'
+// import ReactHtmlParser from 'react-html-parser'
 import { useMediaQuery } from 'react-responsive'
 import { useHistory, useParams } from 'react-router-dom'
 import ReactTooltip from 'react-tooltip'
@@ -13,11 +13,11 @@ import POLYGON from '../../assets/images/chains/polygon.svg'
 import APY from '../../assets/images/logos/earn/apy.svg'
 import Back from '../../assets/images/logos/earn/back.svg'
 import Daily from '../../assets/images/logos/earn/daily.svg'
-import ExternalLink from '../../assets/images/logos/earn/externallink.svg'
+// import ExternalLink from '../../assets/images/logos/earn/externallink.svg'
 import Info from '../../assets/images/logos/earn/info.svg'
-import StrategyIcon from '../../assets/images/logos/earn/strategyicon.svg'
+// import StrategyIcon from '../../assets/images/logos/earn/strategyicon.svg'
 import TVL from '../../assets/images/logos/earn/tvl.svg'
-import VaultIcon from '../../assets/images/logos/earn/vaulticon.svg'
+// import VaultIcon from '../../assets/images/logos/earn/vaulticon.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import FarmDetailChart from '../../components/FarmDetailChart'
 import VaultPanelActionsFooter from '../../components/VaultComponents/VaultPanelActions/VaultPanelActionsFooter'
@@ -394,7 +394,7 @@ const WidoDetail = () => {
   useEffect(() => {
     const getTokenBalance = async () => {
       try {
-        if (chain) {
+        if (chain && account) {
           const curBalances = await getBalances(account, [chain.toString()])
           setBalanceList(curBalances)
           const supList = await getSupportedTokens({
@@ -780,15 +780,16 @@ const WidoDetail = () => {
               backColor={backColor}
               borderColor={borderColor}
             >
-              <NewLabel weight={700} size="16px" height="21px">
+              <NewLabel weight={700} size="16px" height="21px" marginBottom="12px">
                 Farm Details
               </NewLabel>
               <DescInfo fontColor={fontColor}>
-                {ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)}
+                The vault supplies B-POLYBASE in a Balancer farm to earn BAL. At every harvest, the
+                earned BAL is reinvested into more B-POLYBASE which is added to this farm to
+                compound your earnings. By participating in this vault, farmers are also entitled to
+                miFARM rewards that can be claimed separately.
+                {/* {ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)} */}
               </DescInfo>
-              {/* <DescInfo>
-              The vault deposits the user’s USDC-ETH in a CronaSwap farm, earning the platform’s govemance token. Earned Token is swapped for and in order to acquire more of the same LP.
-              </DescInfo> */}
               <FlexDiv className="address" marginTop="15px">
                 {token.vaultAddress && (
                   <InfoLabel
@@ -801,11 +802,11 @@ const WidoDetail = () => {
                     size="12px"
                     height="16px"
                   >
-                    <img className="icon" src={VaultIcon} alt="" />
+                    {/* <img className="icon" src={VaultIcon} alt="" /> */}
                     <NewLabel size="12px" weight={isMobile ? 400 : 600} height="16px" self="center">
                       Vault Address
                     </NewLabel>
-                    <img className="external-link" src={ExternalLink} alt="" />
+                    {/* <img className="external-link" src={ExternalLink} alt="" /> */}
                   </InfoLabel>
                 )}
                 {vaultPool.autoStakePoolAddress && (
@@ -819,11 +820,11 @@ const WidoDetail = () => {
                     size="12px"
                     height="16px"
                   >
-                    <img className="icon" src={StrategyIcon} alt="" />
+                    {/* <img className="icon" src={StrategyIcon} alt="" /> */}
                     <NewLabel size="12px" weight={isMobile ? 400 : 600} height="16px" self="center">
                       Strategy Address
                     </NewLabel>
-                    <img className="external-link" src={ExternalLink} alt="" />
+                    {/* <img className="external-link" src={ExternalLink} alt="" /> */}
                   </InfoLabel>
                 )}
                 <InfoLabel
@@ -838,11 +839,11 @@ const WidoDetail = () => {
                   size="12px"
                   height="16px"
                 >
-                  <img className="icon" src={VaultIcon} alt="" />
+                  {/* <img className="icon" src={VaultIcon} alt="" /> */}
                   <NewLabel size="12px" weight={isMobile ? 400 : 600} height="16px" self="center">
                     Pool Address
                   </NewLabel>
-                  <img className="external-link" src={ExternalLink} alt="" />
+                  {/* <img className="external-link" src={ExternalLink} alt="" /> */}
                 </InfoLabel>
               </FlexDiv>
             </HalfInfo>

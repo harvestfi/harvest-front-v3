@@ -2,13 +2,28 @@ const express = require('express')
 const helmet = require('helmet')
 const path = require('path')
 
-const builtDirectory = path.join(__dirname, 'prod')
+const builtDirectory = path.join(__dirname, 'build')
 const PORT = process.env.PORT || '5000'
 const app = express()
 
+app.disable('x-powered-by')
 app.use(
   helmet({
-    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
+    contentSecurityPolicy: {
+      directives: {
+        frameAncestors: ['https://dapp-browser.apps.ledger.com/'],
+        scriptSrc: [
+          "'self'",
+          "'unsafe-inline'",
+          'https://static.cloudflareinsights.com',
+          'https://cdn.usefathom.com/script.js',
+        ],
+        connectSrc: ["'self'", '*'],
+        imgSrc: ["'self'", 'https: data:'],
+      },
+    },
+    frameguard: false,
   }),
 )
 

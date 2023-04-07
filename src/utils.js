@@ -17,7 +17,6 @@ import {
   IFARM_TOKEN_SYMBOL,
   KEY_CODES,
   MAX_APY_DISPLAY,
-  MIFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
   UNIV3_POOL_ID_REGEX,
 } from './constants'
@@ -242,9 +241,7 @@ const getRewardSymbol = (vault, isIFARM, vaultPool) => {
       return vaultPool.rewardTokenSymbols
         .filter((_, symbolIdx) => Number(get(vaultPool, `rewardAPY[${symbolIdx}]`, 0)) !== 0)
         .join(', ')
-    case vault.chain === CHAINS_ID.MATIC_MAINNET:
-      return 'miFARM'
-    case isIFARM:
+    case vault.chain === CHAINS_ID.MATIC_MAINNET || isIFARM:
       return 'iFARM'
     default:
       return 'FARM'
@@ -321,7 +318,7 @@ export const getRewardsText = (
 
     if (Number(farmAPY) > 0) {
       vaultPool.rewardTokenSymbols.forEach((symbol, symbolIdx) => {
-        const farmSymbols = [FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, MIFARM_TOKEN_SYMBOL]
+        const farmSymbols = [FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL]
 
         if (token.hideFarmApy && farmSymbols.includes(symbol)) {
           return
@@ -627,15 +624,14 @@ export const getDetailText = (
                   : `...`
               }
             </div>
-            <div class="detail-desc">
-              Auto harvested:
-            </div>
-            <div class="detail-token">
+            <div class="detail-desc-auto">
+              Auto harvested&nbsp;
+              <span class="detail-token">
               ${
                 rewardSymbols.length > 1 && token.estimatedApyBreakdown.length === 1
                   ? rewardSymbols.join(' ')
                   : symbol
-              }
+              }</span>
             </div>
           </div>`)
         }
@@ -661,7 +657,7 @@ export const getDetailText = (
 
     if (Number(farmAPY) > 0) {
       vaultPool.rewardTokenSymbols.forEach((symbol, symbolIdx) => {
-        const farmSymbols = [FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, MIFARM_TOKEN_SYMBOL]
+        const farmSymbols = [FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL]
 
         if (token.hideFarmApy && farmSymbols.includes(symbol)) {
           return
@@ -844,10 +840,10 @@ export const getDetailText = (
                 ? displayAPY(boostedEstimatedAPY)
                 : displayAPY(token.estimatedApy)
             }</div>
-            <div class="detail-desc">Auto ${
-              isHodlVault ? 'hodling <b>SUSHI<b> in' : 'harvested:&nbsp;'
-            }</div>
-            <div class="detail-token">${token.apyTokenSymbols.join(',  ')}</div>
+            <div class="detail-desc-auto">Auto ${
+              isHodlVault ? 'hodling <b>SUSHI<b> in' : 'harvested&nbsp;'
+            }
+            <span class="detail-token">${token.apyTokenSymbols.join(',  ')}</span></div>
             ${
               isIFARM && token.fullBuyback ? ` <b>(${displayAPY(token.estimatedApy)})</b>` : ``
             }</b>${
@@ -1175,7 +1171,6 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
       .then(response => response.json())
       .then(result => {
         data = result.data
-        console.log(data)
       })
       .catch(error => console.log('error', error))
   } catch (err) {
@@ -1213,3 +1208,23 @@ export const round10 = (value, exp) => decimalAdjust('round', value, exp)
 export const floor10 = (value, exp) => decimalAdjust('floor', value, exp)
 // Decimal ceil
 export const ceil10 = (value, exp) => decimalAdjust('ceil', value, exp)
+
+export const isInIframe = () => {
+  try {
+    return window.self !== window.top
+  } catch (e) {
+    return true
+  }
+}
+
+export const isLoadedInOtherDomain = domain => {
+  return (
+    isInIframe() &&
+    (window?.location?.ancestorOrigins?.[0]?.includes(domain) ||
+      document?.referrer?.includes(domain))
+  )
+}
+
+export const isLedgerLive = () => {
+  return isLoadedInOtherDomain('ledger')
+}

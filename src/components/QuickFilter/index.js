@@ -47,19 +47,31 @@ import {
   UserDropDownMenu,
   WebView,
 } from './style'
+import { isLedgerLive } from '../../utils'
 
-const ChainsList = [
-  { id: 0, name: 'Ethereum', img: ETHEREUM, chainId: CHAINS_ID.ETH_MAINNET },
-  { id: 1, name: 'Polygon', img: POLYGON, chainId: CHAINS_ID.MATIC_MAINNET },
-  { id: 2, name: 'Arbitrum', img: ARBITRUM, chainId: CHAINS_ID.ARBITRUM_ONE },
-]
+const ChainsList = isLedgerLive()
+  ? [
+      { id: 0, name: 'Ethereum', img: ETHEREUM, chainId: CHAINS_ID.ETH_MAINNET },
+      { id: 1, name: 'Polygon', img: POLYGON, chainId: CHAINS_ID.MATIC_MAINNET },
+    ]
+  : [
+      { id: 0, name: 'Ethereum', img: ETHEREUM, chainId: CHAINS_ID.ETH_MAINNET },
+      { id: 1, name: 'Polygon', img: POLYGON, chainId: CHAINS_ID.MATIC_MAINNET },
+      { id: 2, name: 'Arbitrum', img: ARBITRUM, chainId: CHAINS_ID.ARBITRUM_ONE },
+    ]
 
-const MobileChainsList = [
-  { id: 0, name: 'All Chains', img: AllChains, chainId: '' },
-  { id: 1, name: 'Ethereum', img: ETHEREUM, chainId: CHAINS_ID.ETH_MAINNET },
-  { id: 2, name: 'Polygon', img: POLYGON, chainId: CHAINS_ID.MATIC_MAINNET },
-  { id: 3, name: 'Arbitrum', img: ARBITRUM, chainId: CHAINS_ID.ARBITRUM_ONE },
-]
+const MobileChainsList = isLedgerLive()
+  ? [
+      { id: 0, name: 'All Chains', img: AllChains, chainId: '' },
+      { id: 1, name: 'Ethereum', img: ETHEREUM, chainId: CHAINS_ID.ETH_MAINNET },
+      { id: 2, name: 'Polygon', img: POLYGON, chainId: CHAINS_ID.MATIC_MAINNET },
+    ]
+  : [
+      { id: 0, name: 'All Chains', img: AllChains, chainId: '' },
+      { id: 1, name: 'Ethereum', img: ETHEREUM, chainId: CHAINS_ID.ETH_MAINNET },
+      { id: 2, name: 'Polygon', img: POLYGON, chainId: CHAINS_ID.MATIC_MAINNET },
+      { id: 3, name: 'Arbitrum', img: ARBITRUM, chainId: CHAINS_ID.ARBITRUM_ONE },
+    ]
 
 const FarmsList = [
   { id: 1, name: 'All Farms', img: All },
@@ -294,8 +306,8 @@ const QuickFilter = ({
                         }
 
                         if (tempIds.length === 0 || tempIds.length === ChainsList.length) {
-                          setSelectedClass([0, 1, 2])
-                          tempIds = [0, 1, 2]
+                          tempIds = isLedgerLive() ? [0, 1] : [0, 1, 2]
+                          setSelectedClass(tempIds)
                         } else {
                           setSelectedClass(tempIds)
                         }
@@ -363,7 +375,7 @@ const QuickFilter = ({
                     setRiskId(-1)
                     setAssetsId(-1)
                     setFarmId(-1)
-                    setSelectedClass([0, 1, 2])
+                    setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2])
                     onSelectStableCoin(false)
                     onAssetClick('')
                     onSelectFarmType('')
@@ -566,7 +578,7 @@ const QuickFilter = ({
                   setMobileChainId('All Chains')
                   setMobileChainImg(AllChains)
                   setMobileFilterCount(0)
-                  setSelectedClass([0, 1, 2])
+                  setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2])
                 }}
                 borderColor={borderColor}
                 fontColor={fontColor}

@@ -246,7 +246,6 @@ const formatVaults = (
 
   if (selectAsset !== '') {
     vaultsSymbol = vaultsSymbol.filter(tokenSymbol => {
-      console.log('groupOfVaults[tokenSymbol]: ', groupOfVaults[tokenSymbol])
       const assetLength = groupOfVaults[tokenSymbol].tokenNames.length
       if (assetLength === 1 && selectAsset === 'Single Asset') {
         return true
@@ -551,7 +550,7 @@ const VaultList = () => {
       }
 
       if (hasSwitchedAccount) {
-        setSortingParams('balance')
+        setSortingParams('deposits')
       }
     },
     [chain, account, userStats],

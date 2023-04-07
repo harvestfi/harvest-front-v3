@@ -277,9 +277,9 @@ const ValueShow = styled.div`
 `
 
 const DescInfo = styled.div`
+  font-family: 'Inter';
   font-weight: 400;
-  font-size: 15px;
-  line-height: 23px;
+  font-size: 13px;
   display: flex;
   align-items: center;
   font-style: normal;
@@ -318,13 +318,13 @@ const InfoLabel = styled.a`
   `
       : ''}
   margin-right: 15px;
-  background: #ced3e6;
-  border-radius: 6px;
+  background: #f9fafb;
+  border-radius: 8px;
   text-decoration: none;
   padding: 9px 17px;
   align-self: center;
   position: relative;
-  color: #1f2937;
+  color: #15202b;
 
   img.icon {
     margin-right: 5px;

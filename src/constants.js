@@ -512,7 +512,6 @@ export const FARM_USDC_TOKEN_SYMBOL = 'UNI_FARM_USDC'
 export const FARM_WETH_TOKEN_SYMBOL = 'FARM_WETH_LP'
 export const FARM_GRAIN_TOKEN_SYMBOL = 'FARM_GRAIN_LP'
 export const IFARM_TOKEN_SYMBOL = 'IFARM'
-export const MIFARM_TOKEN_SYMBOL = 'miFARM'
 
 export const SPECIAL_VAULTS = {
   NEW_PROFIT_SHARING_POOL_ID: 'profit-sharing-farm',

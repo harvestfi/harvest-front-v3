@@ -1,8 +1,9 @@
+import Onboard from '@web3-onboard/core'
+import injectedModule from '@web3-onboard/injected-wallets'
+import ledgerModule from '@web3-onboard/ledger'
 import { Web3ReactProvider } from '@web3-react/core'
 import { ethers } from 'ethers'
 import React from 'react'
-import Onboard from '@web3-onboard/core'
-import injectedModule from '@web3-onboard/injected-wallets'
 import { ActionsProvider } from './Actions'
 import { ContractsProvider } from './Contracts'
 import { PoolsProvider } from './Pools'
@@ -12,11 +13,12 @@ import { VaultsProvider } from './Vault'
 import { WalletProvider } from './Wallet'
 
 const injected = injectedModule()
+const ledger = ledgerModule()
 
 const onboard = Onboard({
   // head to https://explorer.blocknative.com/account to sign up for free
   apiKey: process.env.REACT_APP_INFURA_KEY,
-  wallets: [injected],
+  wallets: [injected, ledger],
   chains: [
     {
       id: '0x1',
