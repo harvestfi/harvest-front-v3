@@ -15,10 +15,6 @@ const ProfitSharing = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-
-  @media screen and (max-width: 992px) {
-    margin: 0 10px;
-  }
 `
 
 const ProfitBack = styled.img`

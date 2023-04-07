@@ -322,6 +322,10 @@ const ThemeMode = styled.div`
 
 const Div = styled.div`
   width: 32%;
+
+  @media screen and (max-width: 992px) {
+    width: 100%;
+  }
 `
 
 const Counter = styled.div`
