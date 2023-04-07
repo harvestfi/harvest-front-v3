@@ -359,7 +359,6 @@ const Dashboard = () => {
   }, [account, userStats, balances, switchBalance]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const sortCol = field => {
-    debugger
     const tokenList = orderBy(farmTokenList, [field], [sortOrder ? 'asc' : 'desc'])
     setFarmTokenList(tokenList)
     setSortOrder(!sortOrder)
