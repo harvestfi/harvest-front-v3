@@ -537,7 +537,7 @@ const WidoDetail = () => {
             {logoUrl.map((el, i) => (
               <LogoImg
                 className="logo"
-                zIndex={100 - i}
+                zIndex={10 - i}
                 src={el.slice(1, el.length)}
                 key={i}
                 height={32}
