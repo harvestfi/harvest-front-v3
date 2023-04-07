@@ -53,8 +53,10 @@ const WalletProvider = _ref => {
   }, [])
 
   const disconnect = useCallback(
-    () => {
+    async () => {
       if (!isLedgerLive()) {
+        const [primaryWallet] = onboard.state.get().wallets
+        await onboard.disconnectWallet({ label: primaryWallet.label })
         setConnected(false)
         setAccount(null)
         setBalances({})
