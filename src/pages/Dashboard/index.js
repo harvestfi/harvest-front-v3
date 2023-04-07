@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js'
-import { find, get, isEmpty, sortBy } from 'lodash'
+import { find, get, isEmpty, orderBy } from 'lodash'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
@@ -161,6 +161,8 @@ const Dashboard = () => {
   const [totalRewards, setTotalRewards] = useState(0)
 
   const [depositToken, setDepositToken] = useState([])
+
+  const [sortOrder, setSortOrder] = useState(false)
 
   useEffect(() => {
     if (!connected) {
@@ -357,8 +359,10 @@ const Dashboard = () => {
   }, [account, userStats, balances, switchBalance]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const sortCol = field => {
-    const tokenList = sortBy(farmTokenList, field)
+    debugger
+    const tokenList = orderBy(farmTokenList, [field], [sortOrder ? 'asc' : 'desc'])
     setFarmTokenList(tokenList)
+    setSortOrder(!sortOrder)
   }
 
   return (
