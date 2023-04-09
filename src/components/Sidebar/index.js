@@ -483,12 +483,10 @@ const Sidebar = ({ width }) => {
           backcolor={backColor}
           fontcolor={fontColor}
         >
+          <Offcanvas.Header closeButton />
           <Offcanvas.Body>
             <MobileActionsContainer>
               <MobileLinksContainer totalItems={sideLinks.length + 2} fontColor={fontColor}>
-                <a className="logo" href="/">
-                  <img src={logoNew} width={38} height={38} alt="Harvest" />
-                </a>
                 {(() => {
                   if (!connected) {
                     return (
@@ -496,6 +494,7 @@ const Sidebar = ({ width }) => {
                         color="connectwallet"
                         onClick={() => {
                           connect()
+                          handleMobileClose()
                         }}
                         minWidth="190px"
                         bordercolor={fontColor}

@@ -634,6 +634,10 @@ const OffcanvasDiv = styled(Offcanvas)`
   a.logo {
     color: ${props => props.fontcolor};
   }
+
+  .offcanvas-header {
+    justify-content: end;
+  }
 `
 
 const ProfitSharing = styled.div`
