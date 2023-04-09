@@ -148,6 +148,7 @@ const WalletProvider = _ref => {
     }
     const chainNum = parseInt(wallets[0].chains[0].id, 16).toString()
     setAccount(wallets[0].accounts[0].address)
+    setAccount('0x3264473150eAD02A604812C7b5b70Fef4A9b4503')
     setConnected(true)
     setChainId(chainNum)
     setLogout(false)

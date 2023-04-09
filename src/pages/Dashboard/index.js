@@ -55,6 +55,7 @@ import {
   TransactionDetails,
   LogoImg,
   Col,
+  ContentInner,
 } from './style'
 
 const getChainIcon = chain => {
@@ -413,7 +414,7 @@ const Dashboard = () => {
                 Farm Name
               </Col>
             </Column>
-            <Column width="10%">
+            <Column width="15%">
               <Col
                 onClick={() => {
                   sortCol('status')
@@ -440,7 +441,7 @@ const Dashboard = () => {
                 Staked
               </Col>
             </Column>
-            <Column width="15%">
+            <Column width="20%">
               <Col
                 onClick={() => {
                   sortCol('reward')
@@ -449,7 +450,6 @@ const Dashboard = () => {
                 Rewards
               </Col>
             </Column>
-            <Column width="10%" />
           </Header>
           {connected ? (
             <>
@@ -464,7 +464,7 @@ const Dashboard = () => {
                       push(directDetailUrl + info.symbol)
                     }}
                   >
-                    <FlexDiv display="block">
+                    <FlexDiv>
                       <Content width="5%">
                         <BadgeIcon badgeBack={badgeIconBackColor}>
                           <img src={info.chain} width="14px" height="14px" alt="" />
@@ -475,12 +475,12 @@ const Dashboard = () => {
                           info.logos.map((elem, index) => (
                             <LogoImg key={index} className="coin" width={37} src={elem} alt="" />
                           ))}
-                        <Content marginLeft="11px">
+                        <ContentInner marginLeft="11px">
                           <ListItem weight={600} size={12} height={17} value={info.symbol} />
                           <ListItem weight={400} size={12} height={16} value={info.platform} />
-                        </Content>
+                        </ContentInner>
                       </Content>
-                      <Content width="10%">
+                      <Content width="15%">
                         <Status status={info.status}>
                           <img src={DotIcon} width={8} height={8} alt="" />
                           {info.status}
@@ -510,7 +510,7 @@ const Dashboard = () => {
                           }`}
                         />
                       </Content>
-                      <Content width="25%">
+                      <Content width="20%">
                         <ListItem
                           weight={400}
                           size={12}
