@@ -374,32 +374,7 @@ const Sidebar = ({ width }) => {
               </Fragment>
             ))}
           </LinksContainer>
-          <AboutHarvest>{/* About */}</AboutHarvest>
-          {/* <LinksContainer totalItems={sideLinks1.length + 2}>
-            {sideLinks1.map(item => (
-              <Fragment key={item.name}>
-                <LinkContainer
-                  active={pathname.includes(item.path)}
-                  hoverImgColor={hoverImgColor}
-                  onClick={() => {
-                    if (item.newTab) {
-                      window.open(item.path, '_blank')
-                    } else {
-                      push(item.path)
-                    }
-                  }}
-                >
-                  <SideLink
-                    item={item}
-                    isDropdownLink={item.path === '#'}
-                    filterColor={filterColor}
-                    fontColor={sidebarFontColor}
-                    activeFontColor={sidebarActiveFontColor}
-                  />
-                </LinkContainer>
-              </Fragment>
-            ))}
-          </LinksContainer> */}
+          <AboutHarvest />
         </MiddleActionsContainer>
       </Layout>
 

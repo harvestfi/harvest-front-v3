@@ -16,7 +16,7 @@ const Container = styled.div`
   min-width: ${props => props.width};
   max-width: 100%;
   position: fixed;
-  z-index: 100;
+  z-index: 10;
   padding: 45px 25px 0px;
 
   @media screen and (max-width: 992px) {
