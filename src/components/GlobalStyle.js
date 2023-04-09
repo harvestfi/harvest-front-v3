@@ -31,7 +31,7 @@ html {
     @media screen and (max-width: 992px) {
       .offcanvas {
         display: block;
-        width: 60%;
+        width: 75%;
 
         .offcanvas-body {
           padding: 0;
@@ -322,7 +322,7 @@ html {
   }
 
   .detail-apy {
-    width: 10%; 
+    width: 12%; 
     font-size: 16px; 
     font-weight: 700;
   }

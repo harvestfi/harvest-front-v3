@@ -229,13 +229,13 @@ const Content = styled.div`
   line-height: 23px;
   align-self: center;
 
-  @media screen and (max-width: 992px) {
-    display: flex;
-    justify-content: space-between;
-    align-self: flex-start;
-    margin-top: 14px;
-    width: 100%;
-  }
+  // @media screen and (max-width: 992px) {
+  //   display: flex;
+  //   justify-content: space-between;
+  //   align-self: flex-start;
+  //   margin-top: 14px;
+  //   width: 100%;
+  // }
 `
 
 const BadgeIcon = styled.div`
@@ -322,6 +322,10 @@ const ThemeMode = styled.div`
 
 const Div = styled.div`
   width: 32%;
+
+  @media screen and (max-width: 992px) {
+    width: 100%;
+  }
 `
 
 const Counter = styled.div`
@@ -360,6 +364,8 @@ const Column = styled.div`
   font-weight: 500;
   font-size: 12px;
   line-height: 15px;
+  display: flex;
+  justify-content: start;
   ${props =>
     props.color
       ? `
@@ -417,12 +423,44 @@ const LogoImg = styled.img`
     `
         : ``};
   }
+
+  // @media screen and (max-width: 992px) {
+  //   margin-top: 12px;
+  // }
 `
 
 const Col = styled.div`
   display: flex;
   cursor: pointer;
   width: fit-content;
+`
+
+const ContentInner = styled.div`
+  width: ${props => props.width};
+  ${props =>
+    props.display
+      ? `
+    display: ${props.display};
+  `
+      : ''}
+  ${props =>
+    props.marginLeft
+      ? `
+    margin-left: ${props.marginLeft};
+  `
+      : ''}
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 23px;
+  align-self: center;
+
+  @media screen and (max-width: 992px) {
+    // display: flex;
+    // justify-content: space-between;
+    align-self: flex-start;
+    // margin-top: 14px;
+    width: 100%;
+  }
 `
 
 export {
@@ -450,4 +488,5 @@ export {
   SelField,
   LogoImg,
   Col,
+  ContentInner,
 }

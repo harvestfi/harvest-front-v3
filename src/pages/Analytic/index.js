@@ -418,7 +418,7 @@ const Analytic = () => {
               <DataSourceInner>
                 <BigStatsExchange>External Data Sources</BigStatsExchange>
                 {dataSources.map((el, i) => (
-                  <DataSourceDirect key={i} href={el.url}>
+                  <DataSourceDirect key={i} href={el.url} target="_blank">
                     <div className="back">
                       <DataSource
                         background={el.background}

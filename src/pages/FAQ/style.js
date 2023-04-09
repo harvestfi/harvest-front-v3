@@ -149,6 +149,12 @@ const LeftPart = styled.div`
 
   letter-spacing: -0.02em;
   color: #ffffff;
+
+  @media screen and (max-width: 992px) {
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 19px;
+  }
 `
 
 const RightPart = styled.div`

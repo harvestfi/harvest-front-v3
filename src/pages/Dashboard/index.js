@@ -1,5 +1,5 @@
 import { BigNumber } from 'bignumber.js'
-import { find, get, isEmpty, sortBy } from 'lodash'
+import { find, get, isEmpty, orderBy } from 'lodash'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
@@ -55,6 +55,7 @@ import {
   TransactionDetails,
   LogoImg,
   Col,
+  ContentInner,
 } from './style'
 
 const getChainIcon = chain => {
@@ -161,6 +162,8 @@ const Dashboard = () => {
   const [totalRewards, setTotalRewards] = useState(0)
 
   const [depositToken, setDepositToken] = useState([])
+
+  const [sortOrder, setSortOrder] = useState(false)
 
   useEffect(() => {
     if (!connected) {
@@ -276,23 +279,21 @@ const Dashboard = () => {
                   ? token.data.lpTokenData && token.data.lpTokenData.price
                   : token.usdPrice) || 1
             }
-            const unstake =
+            stats.unstake =
               fromWei(
                 get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),
                 (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
                 POOL_BALANCES_DECIMALS,
                 true,
               ) * (switchBalance ? usdPrice : 1)
-            stats.unstake = formatNumber(unstake, POOL_BALANCES_DECIMALS)
 
-            const stake =
+            stats.stake =
               fromWei(
                 get(userStats, `[${stakedVaults[i]}]['totalStaked']`, 0),
                 (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
                 POOL_BALANCES_DECIMALS,
                 true,
               ) * (switchBalance ? usdPrice : 1)
-            stats.stake = formatNumber(stake, POOL_BALANCES_DECIMALS)
             totalStake +=
               parseFloat(
                 fromWei(
@@ -336,7 +337,6 @@ const Dashboard = () => {
                     rewards,
                     (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
                   ) * (switchBalance ? usdRewardPrice : 1)
-            stats.reward = formatNumber(stats.reward, POOL_BALANCES_DECIMALS)
             valueRewards += Number(
               rewards === '0'
                 ? 0
@@ -349,8 +349,8 @@ const Dashboard = () => {
             newStats.push(stats)
           }
         }
-        setTotalDeposit(formatNumber(totalStake, POOL_BALANCES_DECIMALS))
-        setTotalRewards(formatNumber(valueRewards, POOL_BALANCES_DECIMALS))
+        setTotalDeposit(formatNumber(totalStake, 2))
+        setTotalRewards(formatNumber(valueRewards, 2))
         setFarmTokenList(newStats)
         setCountList(newStats.length)
       }
@@ -360,8 +360,9 @@ const Dashboard = () => {
   }, [account, userStats, balances, switchBalance]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const sortCol = field => {
-    const tokenList = sortBy(farmTokenList, field)
+    const tokenList = orderBy(farmTokenList, [field], [sortOrder ? 'asc' : 'desc'])
     setFarmTokenList(tokenList)
+    setSortOrder(!sortOrder)
   }
 
   return (
@@ -413,7 +414,7 @@ const Dashboard = () => {
                 Farm Name
               </Col>
             </Column>
-            <Column width="10%">
+            <Column width="15%">
               <Col
                 onClick={() => {
                   sortCol('status')
@@ -440,7 +441,7 @@ const Dashboard = () => {
                 Staked
               </Col>
             </Column>
-            <Column width="15%">
+            <Column width="20%">
               <Col
                 onClick={() => {
                   sortCol('reward')
@@ -449,7 +450,6 @@ const Dashboard = () => {
                 Rewards
               </Col>
             </Column>
-            <Column width="10%" />
           </Header>
           {connected ? (
             <>
@@ -464,7 +464,7 @@ const Dashboard = () => {
                       push(directDetailUrl + info.symbol)
                     }}
                   >
-                    <FlexDiv display="block">
+                    <FlexDiv>
                       <Content width="5%">
                         <BadgeIcon badgeBack={badgeIconBackColor}>
                           <img src={info.chain} width="14px" height="14px" alt="" />
@@ -475,12 +475,12 @@ const Dashboard = () => {
                           info.logos.map((elem, index) => (
                             <LogoImg key={index} className="coin" width={37} src={elem} alt="" />
                           ))}
-                        <Content marginLeft="11px">
+                        <ContentInner marginLeft="11px">
                           <ListItem weight={600} size={12} height={17} value={info.symbol} />
                           <ListItem weight={400} size={12} height={16} value={info.platform} />
-                        </Content>
+                        </ContentInner>
                       </Content>
-                      <Content width="10%">
+                      <Content width="15%">
                         <Status status={info.status}>
                           <img src={DotIcon} width={8} height={8} alt="" />
                           {info.status}
@@ -491,7 +491,11 @@ const Dashboard = () => {
                           weight={400}
                           size={12}
                           height={16}
-                          value={`${switchBalance ? '$' : ''}${info.unstake}`}
+                          value={`${switchBalance ? '$' : ''}${
+                            switchBalance
+                              ? formatNumber(info.unstake, 2)
+                              : formatNumber(info.unstake, 6)
+                          }`}
                         />
                       </Content>
                       <Content width="15%">
@@ -499,15 +503,23 @@ const Dashboard = () => {
                           weight={400}
                           size={12}
                           height={16}
-                          value={`${switchBalance ? '$' : ''}${info.stake}`}
+                          value={`${switchBalance ? '$' : ''}${
+                            switchBalance
+                              ? formatNumber(info.stake, 2)
+                              : formatNumber(info.stake, 6)
+                          }`}
                         />
                       </Content>
-                      <Content width="25%">
+                      <Content width="20%">
                         <ListItem
                           weight={400}
                           size={12}
                           height={16}
-                          label={`${switchBalance ? '$' : ''}${info.reward}`}
+                          label={`${switchBalance ? '$' : ''}${
+                            switchBalance
+                              ? formatNumber(info.reward, 2)
+                              : formatNumber(info.reward, 6)
+                          }`}
                           icon={`/icons/${info.rewardSymbol}`}
                         />
                       </Content>

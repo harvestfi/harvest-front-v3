@@ -248,10 +248,11 @@ const ConnectButtonStyle = styled.button`
 
   @media screen and (max-width: 992px) {
     display: flex;
+    justify-content: center;
     align-items: center;
     margin: 43px 0 20px 13px;
 
-    width: 85%;
+    // width: 85%;
     ${props =>
       props.connected
         ? `
@@ -283,6 +284,12 @@ const AboutHarvest = styled.div`
   padding-left: 13px;
 
   height: 30px;
+
+  @media screen and (max-width: 992px) {
+    margin-bottom: 24px;
+    margin-top: 0;
+    height: 0;
+  }
 `
 
 const MobileView = styled.div`
@@ -304,6 +311,29 @@ const MobileView = styled.div`
 
 const MobileConnectBtn = styled.div`
   margin-top: 6px;
+  display: flex;
+  padding: 7px 12px;
+  background: white;
+
+  border: 0.5px solid #d0d5dd;
+  box-shadow: 0px 0.5px 1px rgba(16, 24, 40, 0.05);
+  border-radius: 4.5px;
+
+  ${props =>
+    props.connected
+      ? `
+      box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05), 0px 0px 0px 4px #f2f4f7;
+      img.connect-wallet {
+        filter: brightness(0) saturate(100%) invert(69%) sepia(55%) saturate(4720%) hue-rotate(110deg)
+          brightness(91%) contrast(86%);
+      }
+      `
+      : `
+      `}
+
+  .connect-wallet {
+    margin-right: 8px;
+  }
 `
 
 const MobileActionsContainer = styled.div`
@@ -342,7 +372,7 @@ const MobileLinksContainer = styled.div`
 const MobileLinkContainer = styled.div`
   display: flex;
   position: relative;
-  padding-left: 20px;
+  padding-left: 30px;
   margin-bottom: 24px;
   border-radius: 10px;
 
@@ -604,6 +634,10 @@ const OffcanvasDiv = styled(Offcanvas)`
   a.logo {
     color: ${props => props.fontcolor};
   }
+
+  .offcanvas-header {
+    justify-content: end;
+  }
 `
 
 const ProfitSharing = styled.div`
@@ -673,6 +707,31 @@ const BottomPart = styled.div`
   width: 270px;
 `
 
+const MobileProfitSharing = styled.div`
+  background: url(${GradientBack});
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  position: relative;
+  padding: 15px 18px;
+  border-radius: 13px;
+  margin: 50px 15px 0;
+
+  @media screen and (min-width: 992px) {
+    display: none;
+  }
+`
+
+const ProfitPart = styled.div`
+  position: absolute;
+  bottom: 60px;
+  width: 100%;
+
+  @media screen and (max-height: 670px) {
+    display: none;
+  }
+`
+
 export {
   Container,
   Layout,
@@ -707,4 +766,6 @@ export {
   TopTitle,
   ChartDiv,
   BottomPart,
+  MobileProfitSharing,
+  ProfitPart,
 }

@@ -2,23 +2,19 @@ import React, { Fragment, useEffect, useMemo, useState } from 'react'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import Analytics from '../../assets/images/logos/sidebar/analytics.svg'
-import arbitrum from '../../assets/images/logos/sidebar/arbitrum.svg'
 import ChangeWalletIcon from '../../assets/images/logos/sidebar/change_wallet.svg'
 import ConnectDisableIcon from '../../assets/images/logos/sidebar/connect-disable.svg'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 import connectAvatar from '../../assets/images/logos/sidebar/connectavatar.svg'
 import Dashboard from '../../assets/images/logos/sidebar/dashboard.svg'
 import Docs from '../../assets/images/logos/sidebar/docs.svg'
-import ethereum from '../../assets/images/logos/sidebar/ethereum.svg'
 import ExternalLink from '../../assets/images/logos/sidebar/external_link.svg'
 import FAQ from '../../assets/images/logos/sidebar/faq.svg'
 import Farms from '../../assets/images/logos/sidebar/farms.svg'
 import Home from '../../assets/images/logos/sidebar/home.svg'
 import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
-import ConnectButtonIcon from '../../assets/images/logos/sidebar/link_white_connect_button.svg'
 import LogoutIcon from '../../assets/images/logos/sidebar/logout.svg'
 import MobileConnect from '../../assets/images/logos/sidebar/mobileconnect.svg'
-import polygon from '../../assets/images/logos/sidebar/polygon.svg'
 import ProfitSharingIcon from '../../assets/images/logos/sidebar/profit-sharing.svg'
 import Toggle from '../../assets/images/logos/sidebar/toggle.svg'
 import Arbitrum from '../../assets/images/chains/arbitrum.svg'
@@ -74,6 +70,8 @@ import {
   UserDropDownItem,
   UserDropDownMenu,
   BottomPart,
+  MobileProfitSharing,
+  ProfitPart,
 } from './style'
 
 const sideLinks = [
@@ -177,27 +175,6 @@ const Sidebar = ({ width }) => {
   const { account, connect, disconnect, chainId, connected } = useWallet()
   const { pools, disableWallet } = usePools()
   const { profitShareAPY } = useStats()
-
-  const selectedChain = chain => {
-    let chainName = ''
-    chain = chain.toString()
-    switch (chain) {
-      case CHAINS_ID.ETH_MAINNET:
-        chainName = ethereum
-        break
-      case CHAINS_ID.ARBITRUM_ONE:
-        chainName = arbitrum
-        break
-      case CHAINS_ID.MATIC_MAINNET:
-        chainName = polygon
-        break
-
-      default:
-        chainName = ethereum
-        break
-    }
-    return chainName
-  }
 
   const {
     darkMode,
@@ -498,22 +475,18 @@ const Sidebar = ({ width }) => {
       </BottomPart>
 
       <MobileView>
-        <button type="button" onClick={handleMobileShow}>
-          <MobileToggle toggleColor={toggleColor} src={Toggle} alt="" />
-        </button>
-
         <OffcanvasDiv
           show={mobileShow}
           onHide={handleMobileClose}
+          placement="end"
+          backdrop={false}
           backcolor={backColor}
           fontcolor={fontColor}
         >
+          <Offcanvas.Header closeButton />
           <Offcanvas.Body>
             <MobileActionsContainer>
               <MobileLinksContainer totalItems={sideLinks.length + 2} fontColor={fontColor}>
-                <a className="logo" href="/">
-                  <img src={logoNew} width={38} height={38} alt="Harvest" />
-                </a>
                 {(() => {
                   if (!connected) {
                     return (
@@ -521,12 +494,13 @@ const Sidebar = ({ width }) => {
                         color="connectwallet"
                         onClick={() => {
                           connect()
+                          handleMobileClose()
                         }}
                         minWidth="190px"
                         bordercolor={fontColor}
                         disabled={disableWallet}
                       >
-                        <img src={ConnectButtonIcon} className="connect-wallet" alt="" />
+                        <img src={ConnectDisableIcon} className="connect-wallet" alt="" />
                         Connect Wallet
                       </ConnectButtonStyle>
                     )
@@ -617,7 +591,7 @@ const Sidebar = ({ width }) => {
                       hoverImgColor={hoverImgColor}
                     >
                       <div className="item">
-                        <SideIcons src={item.imgPath} width={15} height={15} alt="Harvest" />
+                        <SideIcons src={item.imgPath} width={20} height={20} alt="Harvest" />
                       </div>
                       <MobileLink
                         onClick={() => {
@@ -638,7 +612,7 @@ const Sidebar = ({ width }) => {
                   </Fragment>
                 ))}
               </MobileLinksContainer>
-              <AboutHarvest>About</AboutHarvest>
+              <AboutHarvest />
               {sideLinks1.map(item => (
                 <Fragment key={item.name}>
                   <MobileLinkContainer
@@ -649,8 +623,8 @@ const Sidebar = ({ width }) => {
                     <div className="item">
                       <SideIcons
                         src={item.imgPath}
-                        width={15}
-                        height={15}
+                        width={20}
+                        height={20}
                         alt="Harvest"
                         filterColor={filterColor}
                       />
@@ -697,6 +671,28 @@ const Sidebar = ({ width }) => {
                 </Fragment>
               ))}
             </MobileActionsContainer>
+            <ProfitPart>
+              <MobileProfitSharing
+                onClick={() => {
+                  push(directDetailUrl + FARM_TOKEN_SYMBOL)
+                }}
+              >
+                <TopDiv>
+                  <img src={ProfitSharingIcon} alt="profit-sharing" />
+                  <TopTitle>
+                    <img src={ConnectDisableIcon} width="7px" height="7px" alt="" />
+                    Profit-Sharing
+                  </TopTitle>
+                </TopDiv>
+                <BottomDiv>
+                  {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
+                  <div>APR</div>
+                </BottomDiv>
+                <ChartDiv>
+                  <SmallApexChart data={apiData} lastAPY={Number(totalApy)} />
+                </ChartDiv>
+              </MobileProfitSharing>
+            </ProfitPart>
             <MobileFollow>
               <Social />
               <ThemeMode
@@ -720,40 +716,22 @@ const Sidebar = ({ width }) => {
             </MobileFollow>
           </Offcanvas.Body>
         </OffcanvasDiv>
-
+        <MobileConnectBtn
+          color="connectwallet"
+          connected={connected}
+          onClick={() => {
+            connect()
+          }}
+        >
+          <img src={ConnectDisableIcon} className="connect-wallet" alt="" />
+          <img src={MobileConnect} alt="" />
+        </MobileConnectBtn>
         <a className="logo" href="/">
           <img src={logoNew} width={52} height={52} alt="Harvest" />
         </a>
-
-        {account ? (
-          <MobileConnectBtn
-            color="connected"
-            connected
-            onClick={() => {
-              disconnect()
-            }}
-          >
-            <FlexDiv>
-              <ConnectAvatar>
-                <img src={connectAvatar} width={37} height={37} alt="" />
-              </ConnectAvatar>
-              <div>
-                <ConnectAvatar>
-                  <img src={selectedChain(chainId)} height="15" width="15" alt="" />
-                </ConnectAvatar>
-              </div>
-            </FlexDiv>
-          </MobileConnectBtn>
-        ) : (
-          <MobileConnectBtn
-            color="connectwallet"
-            onClick={() => {
-              connect()
-            }}
-          >
-            <img src={MobileConnect} alt="" />
-          </MobileConnectBtn>
-        )}
+        <button type="button" onClick={handleMobileShow}>
+          <MobileToggle toggleColor={toggleColor} src={Toggle} alt="" />
+        </button>
       </MobileView>
     </Container>
   )
