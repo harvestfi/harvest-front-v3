@@ -250,7 +250,7 @@ const ConnectButtonStyle = styled.button`
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 43px 0 20px 13px;
+    margin: 0 0 20px 13px;
 
     // width: 85%;
     ${props =>
@@ -346,6 +346,10 @@ const MobileActionsContainer = styled.div`
   flex-direction: column;
   animation: fadeIn;
   animation-duration: 0.45s;
+
+  @media screen and (max-width: 992px) {
+    padding: 0 36px 15px 11px;
+  }
 `
 
 const MobileLinksContainer = styled.div`
