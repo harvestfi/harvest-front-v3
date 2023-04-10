@@ -106,10 +106,11 @@ const sideLinks1 = [
     external: false,
   },
   {
-    path: ROUTES.DOC,
+    path: 'https://harvest-finance.gitbook.io/harvest-finance',
     name: 'Docs',
     imgPath: Docs,
     external: false,
+    newTab: true,
   },
 ]
 
