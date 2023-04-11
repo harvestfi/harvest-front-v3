@@ -12,7 +12,6 @@ import sortIcon from '../../../assets/images/ui/sort.svg'
 import {
   FARM_GRAIN_TOKEN_SYMBOL,
   FARM_TOKEN_SYMBOL,
-  FARM_USDC_TOKEN_SYMBOL,
   FARM_WETH_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
@@ -307,7 +306,6 @@ const VaultList = () => {
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )
-  const farmUsdcPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_USDC_POOL_ID)
   const farmWethPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_WETH_POOL_ID)
   const farmGrainPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_GRAIN_POOL_ID)
 
@@ -349,18 +347,8 @@ const VaultList = () => {
         stableCoin: false,
         farmType: 'Advanced',
       },
-      [FARM_USDC_TOKEN_SYMBOL]: {
-        liquidityPoolVault: true,
-        inactive: true,
-        tokenNames: ['FARM', 'USDC'],
-        platform: ['Uniswap'],
-        data: farmUsdcPool,
-        logoUrl: ['./icons/farm.svg', './icons/usdc.svg'],
-        rewardSymbol: FARM_TOKEN_SYMBOL,
-        isNew: tokens[FARM_USDC_TOKEN_SYMBOL].isNew,
-      },
     }),
-    [farmGrainPool, farmWethPool, farmUsdcPool, farmProfitSharingPool, profitShareAPY],
+    [farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
   )
 
   const groupOfVaults = { ...vaultsData, ...poolVaults }
@@ -402,7 +390,6 @@ const VaultList = () => {
   )
 
   const hasLoadedSpecialEthPools =
-    !!get(farmUsdcPool, 'contractInstance') &&
     !!get(farmWethPool, 'contractInstance') &&
     !!get(farmGrainPool, 'contractInstance') &&
     !!get(farmProfitSharingPool, 'contractInstance')
@@ -433,7 +420,7 @@ const VaultList = () => {
         const fetchUserTotalStakedInFarmAndFarmUsdc = async () => {
           firstPoolsBalancesLoad.current = false
           await fetchUserPoolStats(
-            [farmUsdcPool, farmWethPool, farmGrainPool, farmProfitSharingPool],
+            [farmWethPool, farmGrainPool, farmProfitSharingPool],
             account,
             userStats,
           )
@@ -505,7 +492,6 @@ const VaultList = () => {
       loadedUserPoolsWeb3Provider,
       loadedUserVaultsWeb3Provider,
       farmProfitSharingPool,
-      farmUsdcPool,
       farmWethPool,
       farmGrainPool,
       fetchUserPoolStats,
