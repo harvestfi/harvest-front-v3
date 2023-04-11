@@ -2,7 +2,6 @@ import React, { Fragment, useEffect, useMemo, useState } from 'react'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import Analytics from '../../assets/images/logos/sidebar/analytics.svg'
-import ChangeWalletIcon from '../../assets/images/logos/sidebar/change_wallet.svg'
 import ConnectDisableIcon from '../../assets/images/logos/sidebar/connect-disable.svg'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 import connectAvatar from '../../assets/images/logos/sidebar/connectavatar.svg'
@@ -320,24 +319,6 @@ const Sidebar = ({ width }) => {
                         }}
                         fontcolor={fontColor}
                         filtercolor={filterColor}
-                        bordercolor={borderColor}
-                      >
-                        <img
-                          className="change-icon"
-                          src={ChangeWalletIcon}
-                          width="18px"
-                          height="18px"
-                          alt=""
-                        />
-                        <div>Change Network</div>
-                      </UserDropDownItem>
-
-                      <UserDropDownItem
-                        onClick={() => {
-                          disconnect()
-                        }}
-                        fontcolor={fontColor}
-                        filtercolor={filterColor}
                       >
                         <img src={LogoutIcon} width="18px" height="18px" alt="" />
                         <div>Log Out</div>
@@ -523,24 +504,6 @@ const Sidebar = ({ width }) => {
 
                       {!isLedgerLive() ? (
                         <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
-                          <UserDropDownItem
-                            onClick={() => {
-                              disconnect()
-                            }}
-                            fontcolor={fontColor}
-                            filtercolor={filterColor}
-                            bordercolor={borderColor}
-                          >
-                            <img
-                              className="change-icon"
-                              src={ChangeWalletIcon}
-                              width="18px"
-                              height="18px"
-                              alt=""
-                            />
-                            <div>Change Network</div>
-                          </UserDropDownItem>
-
                           <UserDropDownItem
                             onClick={() => {
                               disconnect()
