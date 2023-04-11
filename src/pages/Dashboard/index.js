@@ -279,38 +279,31 @@ const Dashboard = () => {
                   ? token.data.lpTokenData && token.data.lpTokenData.price
                   : token.usdPrice) || 1
             }
+            const unstake = fromWei(
+              get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),
+              (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
+              POOL_BALANCES_DECIMALS,
+              true,
+            )
             stats.unstake =
-              fromWei(
-                get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),
-                (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
-                POOL_BALANCES_DECIMALS,
-                true,
-              ) * (switchBalance ? usdPrice : 1)
+              unstake * (switchBalance ? usdPrice : 1)
+            if (isNaN(stats.unstake)) {
+              stats.unstake = 0
+            }
+            const stake = fromWei(
+              get(userStats, `[${stakedVaults[i]}]['totalStaked']`, 0),
+              (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
+              POOL_BALANCES_DECIMALS,
+              true,
+            )
+            stats.stake = stake * (switchBalance ? usdPrice : 1)
+            if (isNaN(stats.stake)) {
+              stats.stake = 0
+            }
 
-            stats.stake =
-              fromWei(
-                get(userStats, `[${stakedVaults[i]}]['totalStaked']`, 0),
-                (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
-                POOL_BALANCES_DECIMALS,
-                true,
-              ) * (switchBalance ? usdPrice : 1)
             totalStake +=
-              parseFloat(
-                fromWei(
-                  get(userStats, `[${stakedVaults[i]}]['totalStaked']`, 0),
-                  (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
-                  POOL_BALANCES_DECIMALS,
-                  true,
-                ) * usdPrice,
-              ) +
-              parseFloat(
-                fromWei(
-                  get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),
-                  (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
-                  POOL_BALANCES_DECIMALS,
-                  true,
-                ) * usdPrice,
-              )
+              (parseFloat((isNaN(stake) ? 0 : stake) * usdPrice),
+              +parseFloat((isNaN(unstake) ? 0 : unstake) * usdPrice))
 
             const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
             // eslint-disable-next-line one-var
