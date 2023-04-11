@@ -776,7 +776,7 @@ export const getDetailText = (
         <div class="detail-apy"> ${
           specialVaultApy > 0 ? `${displayAPY(specialVaultApy)}</div>` : '...'
         } 
-        <div style="detail-desc">${token.rewardSymbol} rewards</div>
+        <div class="detail-desc">${token.rewardSymbol} rewards</div>
       </div>`,
     )
   } else {
