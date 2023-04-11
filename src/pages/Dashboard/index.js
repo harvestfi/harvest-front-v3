@@ -285,8 +285,8 @@ const Dashboard = () => {
               POOL_BALANCES_DECIMALS,
               true,
             )
-            stats.unstake =
-              unstake * (switchBalance ? usdPrice : 1)
+            stats.unstake = unstake * (switchBalance ? usdPrice : 1)
+            // eslint-disable-next-line no-restricted-globals
             if (isNaN(stats.unstake)) {
               stats.unstake = 0
             }
@@ -297,12 +297,15 @@ const Dashboard = () => {
               true,
             )
             stats.stake = stake * (switchBalance ? usdPrice : 1)
+            // eslint-disable-next-line no-restricted-globals
             if (isNaN(stats.stake)) {
               stats.stake = 0
             }
 
             totalStake +=
+              // eslint-disable-next-line no-restricted-globals
               (parseFloat((isNaN(stake) ? 0 : stake) * usdPrice),
+              // eslint-disable-next-line no-restricted-globals
               +parseFloat((isNaN(unstake) ? 0 : unstake) * usdPrice))
 
             const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
