@@ -64,11 +64,12 @@ const onboard = Onboard({
     },
   ],
   appMetadata: {
-    name: 'Token Swap',
+    name: 'Harvest',
     icon: 'https://harvest-finance-v3.netlify.app/static/media/ifarm.ffb37908.svg',
-    // icon: myIcon, // svg string icon
     // logo: myLogo, // svg string logo
-    description: 'Swap tokens for other tokens',
+    description: 'Home to Yield Farming',
+    gettingStartedGuide: 'https://harvest-finance.gitbook.io/harvest-finance',
+    explore: 'https://harvest-finance.gitbook.io/harvest-finance/how-it-works/contract-addresses-1',
     recommendedInjectedWallets: [
       { name: 'MetaMask', url: 'https://metamask.io' },
       { name: 'Coinbase', url: 'https://wallet.coinbase.com/' },
