@@ -11,7 +11,6 @@ import {
   DISABLED_WITHDRAWS,
   FARM_GRAIN_TOKEN_SYMBOL,
   FARM_TOKEN_SYMBOL,
-  FARM_USDC_TOKEN_SYMBOL,
   FARM_WETH_TOKEN_SYMBOL,
   HARVEST_LAUNCH_DATE,
   IFARM_TOKEN_SYMBOL,
@@ -190,7 +189,6 @@ export const getUserVaultBalance = (
       return new BigNumber(totalStakedInPool).plus(iFARMinFARM).toString()
     case FARM_WETH_TOKEN_SYMBOL:
     case FARM_GRAIN_TOKEN_SYMBOL:
-    case FARM_USDC_TOKEN_SYMBOL:
       return totalStakedInPool
     default:
       return farmingBalances[tokenSymbol]
