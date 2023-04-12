@@ -10,7 +10,6 @@ const Container = styled.div`
   background: ${props => props.pageBackColor};
   transition: 0.25s;
   position: relative;
-  z-index: 2;
   margin-left: 320px;
 
   @media screen and (min-width: 1920px) {
@@ -228,14 +227,6 @@ const Content = styled.div`
   font-size: 20px;
   line-height: 23px;
   align-self: center;
-
-  // @media screen and (max-width: 992px) {
-  //   display: flex;
-  //   justify-content: space-between;
-  //   align-self: flex-start;
-  //   margin-top: 14px;
-  //   width: 100%;
-  // }
 `
 
 const BadgeIcon = styled.div`

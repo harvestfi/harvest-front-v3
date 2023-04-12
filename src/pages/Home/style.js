@@ -70,18 +70,31 @@ const FarmHeader = styled.div`
   background-size: 100%;
   padding: 93px 0 70px 75px;
   color: white;
+
+  @media screen and (max-width: 992px) {
+    padding: 93px 0 70px 0;
+  }
 `
 
 const Title = styled.div`
   font-size: 28px;
   line-height: 42px;
   font-weight: 600;
+
+  @media screen and (max-width: 992px) {
+    font-size: 20px;
+    text-align: center;
+  }
 `
 
 const Desc = styled.div`
   font-weight: 500;
   font-size: 15px;
   line-height: 22px;
+
+  @media screen and (max-width: 992px) {
+    text-align: center;
+  }
 `
 
 const ProfitShare = styled.div`

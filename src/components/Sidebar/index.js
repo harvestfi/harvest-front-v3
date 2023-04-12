@@ -2,7 +2,6 @@ import React, { Fragment, useEffect, useMemo, useState } from 'react'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import Analytics from '../../assets/images/logos/sidebar/analytics.svg'
-import ChangeWalletIcon from '../../assets/images/logos/sidebar/change_wallet.svg'
 import ConnectDisableIcon from '../../assets/images/logos/sidebar/connect-disable.svg'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 import connectAvatar from '../../assets/images/logos/sidebar/connectavatar.svg'
@@ -106,10 +105,11 @@ const sideLinks1 = [
     external: false,
   },
   {
-    path: ROUTES.DOC,
+    path: 'https://harvest-finance.gitbook.io/harvest-finance',
     name: 'Docs',
     imgPath: Docs,
     external: false,
+    newTab: true,
   },
 ]
 
@@ -319,24 +319,6 @@ const Sidebar = ({ width }) => {
                         }}
                         fontcolor={fontColor}
                         filtercolor={filterColor}
-                        bordercolor={borderColor}
-                      >
-                        <img
-                          className="change-icon"
-                          src={ChangeWalletIcon}
-                          width="18px"
-                          height="18px"
-                          alt=""
-                        />
-                        <div>Change Network</div>
-                      </UserDropDownItem>
-
-                      <UserDropDownItem
-                        onClick={() => {
-                          disconnect()
-                        }}
-                        fontcolor={fontColor}
-                        filtercolor={filterColor}
                       >
                         <img src={LogoutIcon} width="18px" height="18px" alt="" />
                         <div>Log Out</div>
@@ -374,32 +356,7 @@ const Sidebar = ({ width }) => {
               </Fragment>
             ))}
           </LinksContainer>
-          <AboutHarvest>{/* About */}</AboutHarvest>
-          {/* <LinksContainer totalItems={sideLinks1.length + 2}>
-            {sideLinks1.map(item => (
-              <Fragment key={item.name}>
-                <LinkContainer
-                  active={pathname.includes(item.path)}
-                  hoverImgColor={hoverImgColor}
-                  onClick={() => {
-                    if (item.newTab) {
-                      window.open(item.path, '_blank')
-                    } else {
-                      push(item.path)
-                    }
-                  }}
-                >
-                  <SideLink
-                    item={item}
-                    isDropdownLink={item.path === '#'}
-                    filterColor={filterColor}
-                    fontColor={sidebarFontColor}
-                    activeFontColor={sidebarActiveFontColor}
-                  />
-                </LinkContainer>
-              </Fragment>
-            ))}
-          </LinksContainer> */}
+          <AboutHarvest />
         </MiddleActionsContainer>
       </Layout>
 
@@ -547,24 +504,6 @@ const Sidebar = ({ width }) => {
 
                       {!isLedgerLive() ? (
                         <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
-                          <UserDropDownItem
-                            onClick={() => {
-                              disconnect()
-                            }}
-                            fontcolor={fontColor}
-                            filtercolor={filterColor}
-                            bordercolor={borderColor}
-                          >
-                            <img
-                              className="change-icon"
-                              src={ChangeWalletIcon}
-                              width="18px"
-                              height="18px"
-                              alt=""
-                            />
-                            <div>Change Network</div>
-                          </UserDropDownItem>
-
                           <UserDropDownItem
                             onClick={() => {
                               disconnect()

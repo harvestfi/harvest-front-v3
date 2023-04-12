@@ -382,7 +382,7 @@ const Analytic = () => {
                 </BigStatsExchange>
                 <ImgList>
                   {imgList.map((el, i) => (
-                    <a key={i} href={el.url}>
+                    <a key={i} href={el.url} target="_blank" rel="noopener noreferrer">
                       <img src={el.img} alt="" />
                     </a>
                   ))}

@@ -135,7 +135,7 @@ const WidoDetail = () => {
   const { push } = useHistory()
 
   const { loadingVaults, vaultsData } = useVaults()
-  const { pools, userStats, fetchUserPoolStats } = usePools()
+  const { pools, userStats } = usePools()
   const { account, balances, getWalletBalances } = useWallet()
   const { profitShareAPY } = useStats()
   /* eslint-disable global-require */
@@ -441,25 +441,11 @@ const WidoDetail = () => {
     [id, tokens],
   )
 
-  const firstUserPoolsLoad = useRef(true)
   const firstWalletBalanceLoad = useRef(true)
 
   useEffectWithPrevious(
-    ([prevAccount, prevUserStats, prevBalances]) => {
+    ([prevAccount, , prevBalances]) => {
       const hasSwitchedAccount = account !== prevAccount && account
-
-      if (
-        hasSwitchedAccount ||
-        firstUserPoolsLoad.current ||
-        (userStats && !isEqual(userStats, prevUserStats))
-      ) {
-        const loadUserPoolsStats = async () => {
-          firstUserPoolsLoad.current = false
-          const poolsToLoad = [fAssetPool]
-          await fetchUserPoolStats(poolsToLoad, account, userStats)
-        }
-        loadUserPoolsStats()
-      }
 
       if (
         hasSwitchedAccount ||

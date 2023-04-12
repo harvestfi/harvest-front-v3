@@ -123,7 +123,7 @@ const WidoDepositBase = ({
       toast.error('Please select token to deposit!')
       return
     }
-    if (!new BigNumber(inputAmount).isLessThan(balance)) {
+    if (new BigNumber(inputAmount).isGreaterThan(balance)) {
       toast.error('Please input sufficient amount for deposit!')
       return
     }
