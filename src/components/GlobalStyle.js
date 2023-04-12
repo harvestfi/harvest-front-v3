@@ -308,6 +308,10 @@ html {
     }
   }
 
+  :root {
+    --onboard-primary-500: #ff9400;
+  }
+
   .detail-box {
     display: flex; 
     align-items: center; 
