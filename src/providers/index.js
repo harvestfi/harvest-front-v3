@@ -65,6 +65,7 @@ const onboard = Onboard({
   ],
   appMetadata: {
     name: 'Token Swap',
+    icon: 'https://harvest-finance-v3.netlify.app/static/media/ifarm.ffb37908.svg',
     // icon: myIcon, // svg string icon
     // logo: myLogo, // svg string logo
     description: 'Swap tokens for other tokens',
