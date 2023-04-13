@@ -389,7 +389,7 @@ const MobileLink = styled.button`
   font-size: 16px;
   font-weight: 700;
   line-height: 19px;
-  align-items: center;
+  align-items: end;
   justify-content: start;
   color: ${props => props.fontColor};
   background-color: transparent;
