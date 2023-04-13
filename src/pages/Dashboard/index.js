@@ -90,6 +90,7 @@ const Dashboard = () => {
     borderColor,
     badgeIconBackColor,
     toggleBackColor,
+    vaultPanelHoverColor,
   } = useThemeContext()
 
   const [switchBalance, setSwitchBalance] = useState(false)
@@ -370,9 +371,12 @@ const Dashboard = () => {
 
         <TransactionDetails backColor={backColor} borderColor={borderColor}>
           <FarmTitle borderColor={borderColor}>
-            <MyFarm>
+            <MyFarm fontColor={fontColor}>
               My Farms
-              <Counter count={countList}>{countList > 0 ? countList : ''}</Counter>&nbsp;
+              <Counter fontColor={fontColor} count={countList}>
+                {countList > 0 ? countList : ''}
+              </Counter>
+              &nbsp;
             </MyFarm>
             <ThemeMode
               mode={switchBalance ? 'usd' : 'token'}
@@ -393,7 +397,7 @@ const Dashboard = () => {
               </div>
             </ThemeMode>
           </FarmTitle>
-          <Header borderColor={borderColor}>
+          <Header borderColor={borderColor} backColor={backColor}>
             <Column width="5%">
               <SelField />
             </Column>
@@ -452,6 +456,7 @@ const Dashboard = () => {
                     lastElement={i === farmTokenList.length - 1 ? 'yes' : 'no'}
                     key={i}
                     mode={switchMode}
+                    hoverColor={vaultPanelHoverColor}
                     onClick={() => {
                       push(directDetailUrl + info.symbol)
                     }}

@@ -40,7 +40,7 @@ const Inner = styled.div`
 
 const SubPart = styled.div`
   display: flex;
-  justify-content: start;
+  justify-content: space-between;
 
   @media screen and (max-width: 1280px) {
     display: block;
@@ -93,7 +93,7 @@ const DetailView = styled.div`
   transition: 0.25s;
   cursor: pointer;
   &:hover {
-    background: #f8f8f9;
+    background: ${props => props.hoverColor};
   }
 
   @media screen and (max-width: 992px) {
@@ -122,7 +122,7 @@ const MyFarm = styled.div`
   line-height: 23px;
   display: flex;
 
-  color: #101828;
+  color: ${props => props.fontColor};
   align-self: center;
 
   @media screen and (max-width: 992px) {
@@ -268,7 +268,7 @@ const ThemeMode = styled.div`
     }
 
     .switch-track {
-      background: #7f56d9;
+      background: ${props => props.backColor};
       border: 1px solid ${props => props.borderColor};
       height: 24px;
       width: 50px;
@@ -321,15 +321,8 @@ const Div = styled.div`
 `
 
 const Counter = styled.div`
-  ${props =>
-    props.count > 0
-      ? `
-  color: white;
-  `
-      : `
-  color: #1F2937;
-  `}
-  background: #F2C94C;
+  color: ${props => props.fontColor};
+  background: #f2c94c;
   width: 20px;
   height: 20px;
   border-radius: 13px;
@@ -337,16 +330,12 @@ const Counter = styled.div`
   justify-content: center;
   align-items: center;
   margin-left: 10px;
-
-  @media screen and (max-width: 992px) {
-    color: white;
-  }
 `
 
 const Header = styled.div`
   width: 100%;
   padding: 10px 6px;
-  background: #f9fafb;
+  background: ${props => props.backColor};
   border-bottom: 1px solid ${props => props.borderColor};
   display: flex;
 `
