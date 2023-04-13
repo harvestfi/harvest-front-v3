@@ -25,7 +25,7 @@ import tokenMethods from '../../services/web3/contracts/token/methods'
 import { isLedgerLive, truncateNumberString } from '../../utils'
 import { useContracts } from '../Contracts'
 import { useWallet } from '../Wallet'
-import { getLpTokenData, getUserStats } from './utils'
+import { getLpTokenData, getUserStats, pollUpdatedUserStats } from './utils'
 
 /* eslint-disable global-require */
 const { pools: defaultPools, tokens } = require('../../data')
@@ -411,23 +411,23 @@ const PoolsProvider = _ref => {
           if (!isEqual(fetchedStats, currentStats[pool.id])) {
             stats[pool.id] = fetchedStats
           } else {
-            // await pollUpdatedUserStats(
-            //   getUserStats(
-            //     contractInstance,
-            //     tokenInstance,
-            //     pool.contractAddress,
-            //     pool.autoStakePoolAddress,
-            //     selectedAccount,
-            //     autoStakeContractInstance,
-            //   ),
-            //   currentStats,
-            //   () => {
-            //     console.error(`Something went wrong during the fetching of ${pool.id} user stats`)
-            //   },
-            //   updatedStats => {
-            //     stats[pool.id] = updatedStats
-            //   },
-            // )
+            await pollUpdatedUserStats(
+              getUserStats(
+                contractInstance,
+                tokenInstance,
+                pool.contractAddress,
+                pool.autoStakePoolAddress,
+                selectedAccount,
+                autoStakeContractInstance,
+              ),
+              currentStats,
+              () => {
+                console.error(`Something went wrong during the fetching of ${pool.id} user stats`)
+              },
+              updatedStats => {
+                stats[pool.id] = updatedStats
+              },
+            )
           }
           // }
         }),
