@@ -24,8 +24,9 @@ const FarmContent = styled.div`
   justify-content: space-between;
   padding: 70px 76px 94px 76px;
   margin: auto;
+  width: 100%;
 
-  @media screen and (min-width: 1920px) {
+  @media screen and (min-width: 1921px) {
     width: 1400px;
     height: fit-content;
   }
