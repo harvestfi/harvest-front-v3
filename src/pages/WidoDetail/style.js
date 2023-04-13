@@ -225,7 +225,7 @@ const HalfInfo = styled.div`
   transition: 0.25s;
   border-radius: 10px;
   margin-bottom: 15px;
-  font-family: 'DM Sans';
+  font-family: 'Inter', sans-serif;
 `
 
 const TotalValueFarm = styled.div`
@@ -277,7 +277,7 @@ const ValueShow = styled.div`
 `
 
 const DescInfo = styled.div`
-  font-family: 'Inter';
+  font-family: 'Inter', sans-serif;
   font-weight: 400;
   font-size: 13px;
   display: flex;
@@ -565,7 +565,7 @@ const InfoIcon = styled.img`
 `
 
 const Monospace = styled.span`
-  font-family: Work Sans;
+  font-family: 'Inter', sans-serif;
   border-bottom: ${props => props.borderBottom || 'unset'};
 `
 

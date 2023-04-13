@@ -12,7 +12,8 @@ const FAQContainer = styled.div`
 
   font-weight: 400;
   line-height: 150%;
-  font-family: 'DM Sans';
+  // font-family: 'DM Sans';
+  font-family: 'Inter', sans-serif;
   transition: 0.25s;
 
   display: flex;
