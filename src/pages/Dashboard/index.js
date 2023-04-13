@@ -251,7 +251,14 @@ const Dashboard = () => {
           )
           if (token) {
             const useIFARM = symbol === FARM_TOKEN_SYMBOL
-            stats.symbol = symbol
+            let tokenName = ''
+            for (let k = 0; k < token.tokenNames.length; k += 1) {
+              tokenName += token.tokenNames[k]
+              if (k !== token.tokenNames.length - 1) {
+                tokenName += ', '
+              }
+            }
+            stats.symbol = tokenName
             stats.logos = token.logoUrl
             stats.chain = getChainIcon(token.chain)
             stats.platform = useIFARM ? 'Harvest' : token.subLabel || ''
@@ -260,6 +267,7 @@ const Dashboard = () => {
             if (isSpecialVault) {
               fAssetPool = token.data
             }
+            // eslint-disable-next-line one-var
             let usdPrice = 1
             if (token) {
               usdPrice =
