@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { find, get, isArray, isEqual, sumBy } from 'lodash'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-// import ReactHtmlParser from 'react-html-parser'
+import ReactHtmlParser from 'react-html-parser'
 import { useMediaQuery } from 'react-responsive'
 import { useHistory, useParams } from 'react-router-dom'
 import ReactTooltip from 'react-tooltip'
@@ -759,11 +759,7 @@ const WidoDetail = () => {
                 Farm Details
               </NewLabel>
               <DescInfo fontColor={fontColor}>
-                The vault supplies B-POLYBASE in a Balancer farm to earn BAL. At every harvest, the
-                earned BAL is reinvested into more B-POLYBASE which is added to this farm to
-                compound your earnings. By participating in this vault, farmers are also entitled to
-                miFARM rewards that can be claimed separately.
-                {/* {ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)} */}
+                {ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)}
               </DescInfo>
               <FlexDiv className="address" marginTop="15px">
                 {token.vaultAddress && (

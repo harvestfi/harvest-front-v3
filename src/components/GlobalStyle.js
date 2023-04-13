@@ -271,7 +271,7 @@ html {
   }
 
   .numeric-list {
-    padding-left: 10px;
+    padding-left: 20px;
     margin: 5px 0;
     
     li {
