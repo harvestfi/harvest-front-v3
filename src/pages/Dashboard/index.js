@@ -91,6 +91,7 @@ const Dashboard = () => {
     badgeIconBackColor,
     toggleBackColor,
     vaultPanelHoverColor,
+    totalValueFontColor,
   } = useThemeContext()
 
   const [switchBalance, setSwitchBalance] = useState(false)
@@ -401,7 +402,7 @@ const Dashboard = () => {
             <Column width="5%">
               <SelField />
             </Column>
-            <Column width="30%">
+            <Column width="30%" color={totalValueFontColor}>
               <Col
                 onClick={() => {
                   sortCol('symbol')
@@ -410,7 +411,7 @@ const Dashboard = () => {
                 Farm Name
               </Col>
             </Column>
-            <Column width="15%">
+            <Column width="15%" color={totalValueFontColor}>
               <Col
                 onClick={() => {
                   sortCol('status')
@@ -428,7 +429,7 @@ const Dashboard = () => {
                 Unstaked
               </Col>
             </Column>
-            <Column width="15%" color="#129C3D">
+            <Column width="15%" color="#129c3d">
               <Col
                 onClick={() => {
                   sortCol('stake')
@@ -437,7 +438,7 @@ const Dashboard = () => {
                 Staked
               </Col>
             </Column>
-            <Column width="20%">
+            <Column width="20%" color={totalValueFontColor}>
               <Col
                 onClick={() => {
                   sortCol('reward')

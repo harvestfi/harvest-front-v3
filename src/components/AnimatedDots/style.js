@@ -16,7 +16,8 @@ const AnimatedDotsContainer = styled.div`
   display: contents;
 
   span {
-    font-family: 'dDin', 'Helvetica', sans-serif;
+    // font-family: 'dDin', 'Helvetica', sans-serif;
+    font-family: 'Inter', sans-serif;
     animation: ${blink} 1.4s infinite both;
   }
 

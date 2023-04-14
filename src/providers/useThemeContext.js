@@ -113,6 +113,8 @@ export function ThemeProvider({ children }) {
 
   const sidebarFontColor = darkMode ? 'white' : '#344054'
   const sidebarActiveFontColor = darkMode ? '#D0D5DD' : '#101828'
+
+  const totalValueFontColor = darkMode ? '#c7c3c3' : '#475467'
   return (
     <ThemeContext.Provider
       value={{
@@ -173,6 +175,7 @@ export function ThemeProvider({ children }) {
         toggleActiveBackColor,
         sidebarFontColor,
         sidebarActiveFontColor,
+        totalValueFontColor,
       }}
     >
       {children}
