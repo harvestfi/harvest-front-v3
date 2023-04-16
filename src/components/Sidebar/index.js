@@ -439,6 +439,7 @@ const Sidebar = ({ width }) => {
           backdrop={false}
           backcolor={backColor}
           fontcolor={fontColor}
+          filterColor={filterColor}
         >
           <Offcanvas.Header closeButton />
           <Offcanvas.Body>

@@ -421,7 +421,7 @@ const MobileFollow = styled.div`
   justify-content: space-between;
   width: 90%;
   position: absolute;
-  bottom: 0;
+  bottom: 5px;
 `
 
 const ConnectAvatar = styled.div`
@@ -641,6 +641,10 @@ const OffcanvasDiv = styled(Offcanvas)`
 
   .offcanvas-header {
     justify-content: end;
+
+    .btn-close {
+      filter: ${props => props.filterColor};
+    }
   }
 `
 

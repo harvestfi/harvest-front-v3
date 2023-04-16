@@ -97,7 +97,7 @@ const DetailView = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 12px;
+    padding: 12px 6px;
   }
 `
 
@@ -113,6 +113,7 @@ const FlexDiv = styled.div`
       display: ${props.display};
     `
         : ``};
+    overflow: scroll;
   }
 `
 
@@ -228,11 +229,20 @@ const Content = styled.div`
   font-size: 20px;
   line-height: 23px;
   align-self: center;
+
+  @media screen and (max-width: 992px) {
+    ${props =>
+      props.firstColumn
+        ? `
+          min-width: 30px;
+        `
+        : `
+        min-width: 70px;
+      `}
+  }
 `
 
 const BadgeIcon = styled.div`
-  left: 0;
-  top: 0;
   width: 17px;
   height: 17px;
   display: flex;
@@ -241,10 +251,6 @@ const BadgeIcon = styled.div`
   background: ${props => props.badgeBack};
   box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.15);
   border-radius: 5px;
-
-  @media screen and (max-width: 992px) {
-    border-radius: 2px;
-  }
 `
 
 const ThemeMode = styled.div`
@@ -338,6 +344,10 @@ const Header = styled.div`
   background: ${props => props.backColor};
   border-bottom: 1px solid ${props => props.borderColor};
   display: flex;
+
+  @media screen and (max-width: 992px) {
+    overflow: scroll;
+  }
 `
 
 const Column = styled.div`
@@ -355,21 +365,36 @@ const Column = styled.div`
       : `
     color: #475467;
   `}
+
+  @media screen and (max-width: 992px) {
+    ${props =>
+      props.firstColumn
+        ? `
+          min-width: 30px;
+        `
+        : `
+        min-width: 70px;
+      `}
+  }
 `
 
 const Status = styled.div`
   ${props =>
-    props.status === 'Active'
+    props.darkMode
       ? `
-      background: #ECFDF3;
-      color: #027A48;
+      background: none;
     `
+      : props.status === 'Active'
+      ? `
+        background: #ECFDF3;
+        color: #027A48;
+      `
       : `
-      background: #FFE8C8;
-      color: #F2994A;
-      img {
-        filter: invert(60%) sepia(97%) saturate(5817%) hue-rotate(15deg) brightness(87%) contrast(86%);
-      }
+        background: #FFE8C8;
+        color: #F2994A;
+        img {
+          filter: invert(60%) sepia(97%) saturate(5817%) hue-rotate(15deg) brightness(87%) contrast(86%);
+        }
   `};
 
   padding: 2px 7px;
@@ -436,10 +461,7 @@ const ContentInner = styled.div`
   align-self: center;
 
   @media screen and (max-width: 992px) {
-    // display: flex;
-    // justify-content: space-between;
-    align-self: flex-start;
-    // margin-top: 14px;
+    margin-top: 10px;
     width: 100%;
   }
 `

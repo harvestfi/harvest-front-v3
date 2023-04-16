@@ -1,5 +1,6 @@
 import { BigNumber } from 'bignumber.js'
 import { find, get, isEmpty, orderBy } from 'lodash'
+import { useMediaQuery } from 'react-responsive'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
@@ -83,6 +84,7 @@ const Dashboard = () => {
   const { tokens } = require('../../data')
   /* eslint-enable global-require */
   const {
+    darkMode,
     switchMode,
     pageBackColor,
     backColor,
@@ -359,6 +361,8 @@ const Dashboard = () => {
     setSortOrder(!sortOrder)
   }
 
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+
   return (
     <Container pageBackColor={pageBackColor} fontColor={fontColor}>
       <Inner>
@@ -399,7 +403,7 @@ const Dashboard = () => {
             </ThemeMode>
           </FarmTitle>
           <Header borderColor={borderColor} backColor={backColor}>
-            <Column width="5%">
+            <Column width="5%" firstColumn>
               <SelField />
             </Column>
             <Column width="30%" color={totalValueFontColor}>
@@ -463,25 +467,25 @@ const Dashboard = () => {
                     }}
                   >
                     <FlexDiv>
-                      <Content width="5%">
+                      <Content width="5%" firstColumn>
                         <BadgeIcon badgeBack={badgeIconBackColor}>
                           <img src={info.chain} width="14px" height="14px" alt="" />
                         </BadgeIcon>
                       </Content>
-                      <Content width="30%" display="flex">
+                      <Content width="30%" display={isMobile ? 'block' : 'flex'}>
                         {info.logos.length > 0 &&
                           info.logos.map((elem, index) => (
                             <LogoImg key={index} className="coin" width={37} src={elem} alt="" />
                           ))}
-                        <ContentInner marginLeft="11px">
+                        <ContentInner marginLeft={isMobile ? '0px' : '11px'}>
                           <ListItem weight={600} size={12} height={17} value={info.symbol} />
                           <ListItem weight={400} size={12} height={16} value={info.platform} />
                         </ContentInner>
                       </Content>
                       <Content width="15%">
-                        <Status status={info.status}>
+                        <Status status={info.status} darkMode={darkMode}>
                           <img src={DotIcon} width={8} height={8} alt="" />
-                          {info.status}
+                          {isMobile ? '' : info.status}
                         </Status>
                       </Content>
                       <Content width="15%">
