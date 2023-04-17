@@ -34,7 +34,7 @@ const Inner = styled.div`
 
   @media screen and (max-width: 1280px) {
     width: 100%;
-    padding: 0px 12px 19px 12px;
+    padding: 19px 12px;
   }
 `
 
@@ -42,7 +42,7 @@ const SubPart = styled.div`
   display: flex;
   justify-content: space-between;
 
-  @media screen and (max-width: 1280px) {
+  @media screen and (max-width: 992px) {
     display: block;
   }
 `
@@ -113,7 +113,7 @@ const FlexDiv = styled.div`
       display: ${props.display};
     `
         : ``};
-    overflow: scroll;
+    padding-bottom: 10px;
   }
 `
 
@@ -234,10 +234,10 @@ const Content = styled.div`
     ${props =>
       props.firstColumn
         ? `
-          min-width: 30px;
+          // min-width: 30px;
         `
         : `
-        min-width: 70px;
+        // min-width: 70px;
       `}
   }
 `
@@ -321,6 +321,8 @@ const ThemeMode = styled.div`
 const Div = styled.div`
   width: 32%;
 
+  display: ${props => (props.mobileView ? 'none' : 'block')};
+
   @media screen and (max-width: 992px) {
     width: 100%;
   }
@@ -346,7 +348,7 @@ const Header = styled.div`
   display: flex;
 
   @media screen and (max-width: 992px) {
-    overflow: scroll;
+    width: ${props => props.width}px;
   }
 `
 
@@ -370,10 +372,10 @@ const Column = styled.div`
     ${props =>
       props.firstColumn
         ? `
-          min-width: 30px;
+          // min-width: 30px;
         `
         : `
-        min-width: 70px;
+        // min-width: 70px;
       `}
   }
 `
@@ -466,6 +468,13 @@ const ContentInner = styled.div`
   }
 `
 
+const TableContent = styled.div`
+  @media screen and (max-width: 992px) {
+    min-width: 380px;
+    overflow: scroll;
+  }
+`
+
 export {
   Container,
   SubPart,
@@ -492,4 +501,5 @@ export {
   LogoImg,
   Col,
   ContentInner,
+  TableContent,
 }

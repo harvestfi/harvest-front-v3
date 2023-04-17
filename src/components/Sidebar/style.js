@@ -643,7 +643,7 @@ const OffcanvasDiv = styled(Offcanvas)`
     justify-content: end;
 
     .btn-close {
-      filter: ${props => props.filterColor};
+      filter: ${props => props.filtercolor};
     }
   }
 `

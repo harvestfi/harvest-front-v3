@@ -112,7 +112,7 @@ const onboard = Onboard({
       minimal: true,
     },
     mobile: {
-      position: 'topRight',
+      position: 'topLeft',
       enabled: true,
       minimal: true,
     },

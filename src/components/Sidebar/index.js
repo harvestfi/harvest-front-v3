@@ -439,7 +439,7 @@ const Sidebar = ({ width }) => {
           backdrop={false}
           backcolor={backColor}
           fontcolor={fontColor}
-          filterColor={filterColor}
+          filtercolor={filterColor}
         >
           <Offcanvas.Header closeButton />
           <Offcanvas.Body>
@@ -531,7 +531,13 @@ const Sidebar = ({ width }) => {
                       hoverImgColor={hoverImgColor}
                     >
                       <div className="item">
-                        <SideIcons src={item.imgPath} width={20} height={20} alt="Harvest" />
+                        <SideIcons
+                          src={item.imgPath}
+                          width={20}
+                          height={20}
+                          filterColor={filterColor}
+                          alt="Harvest"
+                        />
                       </div>
                       <MobileLink
                         onClick={() => {

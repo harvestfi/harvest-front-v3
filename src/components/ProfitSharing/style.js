@@ -48,7 +48,11 @@ const BottomDiv = styled.div`
   .chart {
     position: absolute;
     bottom: -50px;
-    right: 0;
+    right: 0px;
+
+    @media screen and (max-width: 1280px) {
+      right: -15px;
+    }
   }
 `
 
