@@ -25,6 +25,7 @@ const Inner = styled.div`
 
   @media screen and (max-width: 992px) {
     padding: 20px 10px 10px;
+    height: 100vh;
   }
 `
 
