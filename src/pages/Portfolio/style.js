@@ -79,7 +79,11 @@ const DetailView = styled.div`
   ${props =>
     props.mode === 'dark'
       ? `
-    ${props.lastElement === 'yes' ? '' : 'border-bottom: 1px solid rgba(255, 255, 255, 0.5);'}
+    ${
+      props.lastElement === 'yes'
+        ? 'border-radius: 0 0 10px 10px;'
+        : 'border-bottom: 1px solid rgba(255, 255, 255, 0.5);'
+    }
   `
       : `
     ${
@@ -330,7 +334,7 @@ const Div = styled.div`
 `
 
 const Counter = styled.div`
-  color: ${props => props.fontColor};
+  color: #344054;
   background: #f2c94c;
   width: 20px;
   height: 20px;
@@ -470,6 +474,12 @@ const ContentInner = styled.div`
 `
 
 const TableContent = styled.div`
+  ${props =>
+    props.count === 0
+      ? `
+    margin-bottom: 10px;
+  `
+      : ``}
   @media screen and (max-width: 992px) {
     min-width: 380px;
     overflow: scroll;

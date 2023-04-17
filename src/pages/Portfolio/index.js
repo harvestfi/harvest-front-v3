@@ -380,9 +380,7 @@ const Portfolio = () => {
           <FarmTitle borderColor={borderColor}>
             <MyFarm fontColor={fontColor}>
               My Farms
-              <Counter fontColor={fontColor} count={countList}>
-                {countList > 0 ? countList : ''}
-              </Counter>
+              <Counter count={countList}>{countList > 0 ? countList : ''}</Counter>
               &nbsp;
             </MyFarm>
             <ThemeMode
@@ -404,7 +402,7 @@ const Portfolio = () => {
               </div>
             </ThemeMode>
           </FarmTitle>
-          <TableContent>
+          <TableContent count={farmTokenList.length}>
             <Header borderColor={borderColor} backColor={backColor} width={onlyWidth}>
               <Column width="7%" firstColumn>
                 <SelField />
