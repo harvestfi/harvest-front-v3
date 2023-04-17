@@ -482,7 +482,7 @@ const Dashboard = () => {
                               <LogoImg key={index} className="coin" width={37} src={elem} alt="" />
                             ))}
                           <ContentInner marginLeft={isMobile ? '0px' : '11px'}>
-                            <ListItem weight={700} size={12} height={17} value={info.symbol} />
+                            <ListItem weight={700} size={16} height={21} value={info.symbol} />
                             <ListItem weight={400} size={12} height={16} value={info.platform} />
                           </ContentInner>
                         </Content>

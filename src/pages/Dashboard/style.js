@@ -56,7 +56,7 @@ const FarmTitle = styled.span`
   font-size: 16px;
   line-height: 21px;
   z-index: 3;
-  padding: 16px 20px;
+  padding: 27px 20px;
 
   @media screen and (max-width: 992px) {
     margin-top: 15px;
@@ -75,7 +75,7 @@ const TransactionDetails = styled.div`
 
 const DetailView = styled.div`
   width: 100%;
-  padding: 15px 6px;
+  padding: 30px 6px;
   ${props =>
     props.mode === 'dark'
       ? `
@@ -98,6 +98,7 @@ const DetailView = styled.div`
 
   @media screen and (max-width: 992px) {
     padding: 12px 6px;
+    width: ${props => props.width}px;
   }
 `
 
