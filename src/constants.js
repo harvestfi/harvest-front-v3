@@ -313,7 +313,7 @@ export const FAQ_ITEMS_SECOND = [
   {
     id: 10,
     question: 'I can’t find the farm I deposited into weeks ago!',
-    answer: <>Go to the dashboard, and look under the inactive section.</>,
+    answer: <>Go to the Portfolio, and look under the inactive section.</>,
   },
   {
     id: 12,
