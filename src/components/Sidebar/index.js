@@ -5,7 +5,7 @@ import Analytics from '../../assets/images/logos/sidebar/analytics.svg'
 import ConnectDisableIcon from '../../assets/images/logos/sidebar/connect-disable.svg'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 import connectAvatar from '../../assets/images/logos/sidebar/connectavatar.svg'
-import Dashboard from '../../assets/images/logos/sidebar/dashboard.svg'
+import Portfolio from '../../assets/images/logos/sidebar/dashboard.svg'
 import Docs from '../../assets/images/logos/sidebar/docs.svg'
 import ExternalLink from '../../assets/images/logos/sidebar/external_link.svg'
 import FAQ from '../../assets/images/logos/sidebar/faq.svg'
@@ -85,9 +85,9 @@ const sideLinks = [
     imgPath: Farms,
   },
   {
-    path: ROUTES.DASHBOARD,
-    name: 'Dashboard',
-    imgPath: Dashboard,
+    path: ROUTES.PORTFOLIO,
+    name: 'Portfolio',
+    imgPath: Portfolio,
   },
 ]
 

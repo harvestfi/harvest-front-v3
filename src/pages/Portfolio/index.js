@@ -76,7 +76,7 @@ const getChainIcon = chain => {
   return chainLogo
 }
 
-const Dashboard = () => {
+const Portfolio = () => {
   const { push } = useHistory()
   const { connected, balances, account } = useWallet()
   const { userStats, fetchUserPoolStats, pools } = usePools()
@@ -567,4 +567,4 @@ const Dashboard = () => {
   )
 }
 
-export default Dashboard
+export default Portfolio

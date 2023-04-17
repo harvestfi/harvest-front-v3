@@ -20,7 +20,7 @@ export const ROUTES = {
   MAIN: '/',
   HOME: '/home',
   FARM: '/farm',
-  DASHBOARD: '/dashboard',
+  PORTFOLIO: '/portfolio',
   ANALYTIC: '/analytics',
   DOC: '/doc',
   FAQ: '/faq',
