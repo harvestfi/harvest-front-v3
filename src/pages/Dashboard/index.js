@@ -301,13 +301,11 @@ const Dashboard = () => {
             if (isNaN(stats.stake)) {
               stats.stake = 0
             }
-
-            totalStake +=
-              // eslint-disable-next-line no-restricted-globals
-              (parseFloat((isNaN(stake) ? 0 : stake) * usdPrice),
-              // eslint-disable-next-line no-restricted-globals
-              +parseFloat((isNaN(unstake) ? 0 : unstake) * usdPrice))
-
+            // eslint-disable-next-line no-restricted-globals
+            const totalStk = parseFloat((isNaN(Number(stake)) ? 0 : stake) * usdPrice)
+            // eslint-disable-next-line no-restricted-globals
+            const totalUnsk = parseFloat((isNaN(Number(unstake)) ? 0 : unstake) * usdPrice)
+            totalStake += totalStk + totalUnsk
             const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
             // eslint-disable-next-line one-var
             let rewardSymbol = rewardTokenSymbols[0].toUpperCase()
