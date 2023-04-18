@@ -6,7 +6,6 @@ import { useContracts } from './Contracts'
 import { getTotalFARMSupply } from '../utils'
 import { getFarmPriceFromUniswap } from '../data/utils'
 import {
-  CMC_API_ENDPOINT,
   REVENUE_MONTHLY_API_ENDPOINT,
   SPECIAL_VAULTS,
   TOKEN_STATS_API_ENDPOINT,
@@ -48,14 +47,10 @@ const StatsProvider = ({ children }) => {
       if (contracts.FARM && farmPool && farmPool.loaded) {
         firstStatsRender.current = false
 
-        const cmcApiResponse = await fetchDataFromAPI(CMC_API_ENDPOINT, { pools: [] })
         const tokensStatsApiResponse = await fetchDataFromAPI(TOKEN_STATS_API_ENDPOINT)
         const monthlyProfit = await fetchDataFromAPI(REVENUE_MONTHLY_API_ENDPOINT)
+        const totalValueLocked = await fetchDataFromAPI(TVL_API_ENDPOINT)
 
-        const totalValueLocked = cmcApiResponse.pools.reduce(
-          (acc, pool) => acc + Number(pool.totalStaked),
-          0,
-        )
         const farmTotalSupply = getTotalFARMSupply()
         const farmPrice = await getFarmPriceFromUniswap()
 
