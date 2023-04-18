@@ -454,7 +454,7 @@ const Portfolio = () => {
                 </Col>
               </Column>
             </Header>
-            {connected ? (
+            {connected || farmTokenList.length > 0 ? (
               <>
                 {farmTokenList.map((el, i) => {
                   const info = farmTokenList[i]

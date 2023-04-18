@@ -58,10 +58,10 @@ const FarmTitle = styled.span`
   z-index: 3;
   padding: 27px 20px;
 
-  @media screen and (max-width: 992px) {
-    // margin-top: 15px;
-    margin-bottom: 18px;
-  }
+  // @media screen and (max-width: 992px) {
+  //   margin-top: 15px;
+  //   margin-bottom: 18px;
+  // }
 `
 
 const TransactionDetails = styled.div`

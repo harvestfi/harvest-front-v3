@@ -171,7 +171,7 @@ const VaultFooterActions = ({
                 <Div>
                   <Monospace>
                     {!connected ? (
-                      formatNumber(0, 2)
+                      formatNumber(0, 8)
                     ) : !isLoadingData &&
                       get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`) ? (
                       <Counter
@@ -198,15 +198,17 @@ const VaultFooterActions = ({
                           fAssetPool.rewardTokens[0],
                         )}
                       />
-                    ) : (
+                    ) : userStats.length === 0 ? (
                       <AnimatedDots />
+                    ) : (
+                      formatNumber(0, 8)
                     )}
                   </Monospace>
                   <USDValue>
                     <Monospace>
                       $
                       {!connected ? (
-                        formatNumber(0, 2)
+                        formatNumber(0, 8)
                       ) : !isLoadingData &&
                         get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`) ? (
                         <Counter
@@ -234,8 +236,10 @@ const VaultFooterActions = ({
                             fAssetPool.rewardTokens[0],
                           )}
                         />
-                      ) : (
+                      ) : userStats.length === 0 ? (
                         <AnimatedDots />
+                      ) : (
+                        formatNumber(0, 8)
                       )}
                     </Monospace>
                   </USDValue>

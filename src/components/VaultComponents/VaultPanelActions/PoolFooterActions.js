@@ -170,8 +170,10 @@ const PoolFooterActions = ({
                             fAssetPool.rewardTokens[0],
                           )}
                         />
-                      ) : (
+                      ) : userStats.length === 0 ? (
                         <AnimatedDots />
+                      ) : (
+                        formatNumber(0, 8)
                       )}
                     </Monospace>
                     <USDValue>
@@ -204,8 +206,10 @@ const PoolFooterActions = ({
                               fAssetPool.rewardTokens[0],
                             )}
                           />
-                        ) : (
+                        ) : userStats.length === 0 ? (
                           <AnimatedDots />
+                        ) : (
+                          formatNumber(0, 8)
                         )}
                       </Monospace>
                     </USDValue>
