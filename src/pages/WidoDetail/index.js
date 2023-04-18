@@ -385,10 +385,18 @@ const WidoDetail = () => {
       try {
         if (chain && account) {
           const curBalances = await getBalances(account, [chain.toString()])
-          setBalanceList(curBalances)
           const supList = await getSupportedTokens({
             chainId: [chain],
           })
+
+          const curAvailableBalances = []
+          for (let i = 0; i < curBalances.length; i += 1) {
+            const supToken = supList.find(el => el.address === curBalances[i].address)
+            if (supToken) {
+              curAvailableBalances.push(curBalances[i])
+            }
+          }
+          setBalanceList(curAvailableBalances)
           setTokenList(supList)
         }
       } catch (err) {
