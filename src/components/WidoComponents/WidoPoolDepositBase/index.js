@@ -14,6 +14,7 @@ import {
   FARM_TOKEN_SYMBOL,
   fromWEI,
   IFARM_TOKEN_SYMBOL,
+  POOL_BALANCES_DECIMALS,
   WIDO_BALANCES_DECIMALS,
 } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -192,11 +193,11 @@ const WidoPoolDepositBase = ({
   }, [legacyStaking, balanceList, vaultsData, account, setBalance, setPickedToken])
 
   const onInputBalance = e => {
-    setInputAmount(e.currentTarget.value)
+    setInputAmount(formatNumberWido(e.currentTarget.value, POOL_BALANCES_DECIMALS))
     setUsdValue(
       formatNumberWido(
         e.currentTarget.value * (legacyStaking ? farmInfo.usdPrice : pickedToken.usdPrice || 1),
-        WIDO_BALANCES_DECIMALS,
+        2,
       ),
     )
   }
@@ -266,12 +267,12 @@ const WidoPoolDepositBase = ({
             const balanceAmount = !legacyStaking
               ? balance
               : FARMBalance && fromWEI(FARMBalance, tokens[IFARM_TOKEN_SYMBOL].decimals)
-            setInputAmount(balanceAmount)
+            setInputAmount(formatNumberWido(balanceAmount, POOL_BALANCES_DECIMALS))
 
             setUsdValue(
               formatNumberWido(
                 balanceAmount * (legacyStaking ? farmInfo.usdPrice : pickedToken.usdPrice || 1),
-                WIDO_BALANCES_DECIMALS,
+                2,
               ),
             )
           }

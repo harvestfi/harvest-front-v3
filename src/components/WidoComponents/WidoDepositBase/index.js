@@ -6,7 +6,7 @@ import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.sv
 import DropDownIcon from '../../../assets/images/logos/wido/drop-down.svg'
 import FARMIcon from '../../../assets/images/logos/wido/farm.svg'
 import WidoIcon from '../../../assets/images/logos/wido/wido.svg'
-import { WIDO_BALANCES_DECIMALS } from '../../../constants'
+import { WIDO_BALANCES_DECIMALS, POOL_BALANCES_DECIMALS } from '../../../constants'
 import { useActions } from '../../../providers/Actions'
 import { useContracts } from '../../../providers/Contracts'
 import { usePools } from '../../../providers/Pools'
@@ -136,16 +136,14 @@ const WidoDepositBase = ({
 
   useEffect(() => {
     if (pickedToken.usdPrice) {
-      setInputAmount(balance)
-      setUsdValue(formatNumberWido(balance * pickedToken.usdPrice), WIDO_BALANCES_DECIMALS)
+      setInputAmount(formatNumberWido(balance, POOL_BALANCES_DECIMALS))
+      setUsdValue(formatNumberWido(balance * pickedToken.usdPrice), 2)
     }
   }, [balance, setUsdValue, setInputAmount, pickedToken])
 
   const onInputBalance = e => {
-    setInputAmount(e.currentTarget.value)
-    setUsdValue(
-      formatNumberWido(e.currentTarget.value * pickedToken.usdPrice, WIDO_BALANCES_DECIMALS),
-    )
+    setInputAmount(formatNumberWido(e.currentTarget.value, POOL_BALANCES_DECIMALS))
+    setUsdValue(formatNumberWido(e.currentTarget.value * pickedToken.usdPrice, 2))
   }
 
   return (
