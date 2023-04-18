@@ -31,7 +31,7 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { fromWei } from '../../services/web3'
-import { formatNumber } from '../../utils'
+import { formatNumber, ceil10 } from '../../utils'
 import {
   BadgeIcon,
   Column,
@@ -160,6 +160,7 @@ const Portfolio = () => {
   const [sortOrder, setSortOrder] = useState(false)
   // get window width
   const onlyWidth = useWindowWidth()
+  const ceilWidth = ceil10(onlyWidth, onlyWidth.toString().length - 1)
 
   useEffect(() => {
     if (!connected) {
@@ -403,7 +404,7 @@ const Portfolio = () => {
             </ThemeMode>
           </FarmTitle>
           <TableContent count={farmTokenList.length}>
-            <Header borderColor={borderColor} backColor={backColor} width={onlyWidth}>
+            <Header borderColor={borderColor} backColor={backColor} width={ceilWidth}>
               <Column width="7%" firstColumn>
                 <SelField />
               </Column>
@@ -463,7 +464,7 @@ const Portfolio = () => {
                       key={i}
                       mode={switchMode}
                       hoverColor={vaultPanelHoverColor}
-                      width={onlyWidth}
+                      width={ceilWidth}
                       onClick={() => {
                         push(directDetailUrl + info.symbol)
                       }}
@@ -471,7 +472,7 @@ const Portfolio = () => {
                       <FlexDiv>
                         <Content width="7%" firstColumn>
                           <BadgeIcon badgeBack={badgeIconBackColor}>
-                            <img src={info.chain} width="14px" height="14px" alt="" />
+                            <img src={info.chain} width="10px" height="10px" alt="" />
                           </BadgeIcon>
                         </Content>
                         <Content width="23%" display={isMobile ? 'block' : 'flex'}>

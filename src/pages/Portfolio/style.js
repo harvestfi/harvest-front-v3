@@ -59,7 +59,7 @@ const FarmTitle = styled.span`
   padding: 27px 20px;
 
   @media screen and (max-width: 992px) {
-    margin-top: 15px;
+    // margin-top: 15px;
     margin-bottom: 18px;
   }
 `
@@ -248,14 +248,14 @@ const Content = styled.div`
 `
 
 const BadgeIcon = styled.div`
-  width: 17px;
-  height: 17px;
+  width: 14px;
+  height: 15px;
   display: flex;
   justify-content: center;
   align-items: center;
   background: ${props => props.badgeBack};
   box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.15);
-  border-radius: 5px;
+  border-radius: 2px;
 `
 
 const ThemeMode = styled.div`
