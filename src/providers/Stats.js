@@ -9,6 +9,7 @@ import {
   REVENUE_MONTHLY_API_ENDPOINT,
   SPECIAL_VAULTS,
   TOKEN_STATS_API_ENDPOINT,
+  TVL_API_ENDPOINT,
 } from '../constants'
 import { usePools } from './Pools'
 
