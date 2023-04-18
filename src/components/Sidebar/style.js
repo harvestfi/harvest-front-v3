@@ -667,6 +667,16 @@ const ProfitSharing = styled.div`
   }
 `
 
+const Divider = styled.div`
+  height: ${props => (props.height ? props.height : '20px')};
+  background: ${props => (props.backColor ? props.backColor : 'unset')};
+  margin-top: ${props => (props.marginTop ? props.marginTop : 'unset')};
+
+  @media screen and (max-width: 992px) {
+    display: none;
+  }
+`
+
 const ProfitBack = styled.img`
   border-radius: 13px;
 `
@@ -776,4 +786,5 @@ export {
   BottomPart,
   MobileProfitSharing,
   ProfitPart,
+  Divider,
 }

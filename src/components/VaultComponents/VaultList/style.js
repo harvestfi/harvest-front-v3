@@ -174,6 +174,7 @@ const MobileListFilter = styled.div`
 
         img.sort {
           margin-right: 6px;
+          filter: ${props => props.filterColor};
         }
 
         img.narrow {

@@ -33,7 +33,6 @@ import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { displayAPY, formatAddress, getDataQuery, getTotalApy, isLedgerLive } from '../../utils'
-import { Divider } from '../GlobalStyle'
 import SmallApexChart from '../SmallApexChart'
 import Social from '../Social'
 import {
@@ -71,6 +70,7 @@ import {
   BottomPart,
   MobileProfitSharing,
   ProfitPart,
+  Divider,
 } from './style'
 
 const sideLinks = [
