@@ -380,6 +380,8 @@ const WidoDetail = () => {
   const [tokenList, setTokenList] = useState([])
 
   const rewardSymbol = isSpecialVault ? id : token.apyTokenSymbols[0]
+  const toTokenAddress =
+    token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
   useEffect(() => {
     const getTokenBalance = async () => {
       try {
@@ -387,6 +389,8 @@ const WidoDetail = () => {
           const curBalances = await getBalances(account, [chain.toString()])
           const supList = await getSupportedTokens({
             chainId: [chain],
+            toToken: toTokenAddress,
+            toChainId: chain,
           })
 
           const curAvailableBalances = []
@@ -405,7 +409,7 @@ const WidoDetail = () => {
     }
 
     getTokenBalance()
-  }, [account, chain, id])
+  }, [account, chain, id, toTokenAddress])
 
   const {
     backColor,
