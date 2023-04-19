@@ -588,6 +588,7 @@ const VaultList = () => {
           backColor={backColor}
           borderColor={mobileFilterBorderColor}
           fontColor={fontColor}
+          filterColor={filterColor}
         >
           <Dropdown className="filter-sort">
             <Dropdown.Toggle className="toggle">

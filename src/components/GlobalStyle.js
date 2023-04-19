@@ -9,9 +9,10 @@ html {
   height: 100%;
 
   body {
-    font-family: 'DM Sans';
+    // font-family: 'DM Sans';
     // font-family: 'Work Sans';
     // font-family: 'Montserrat', 'Helvetica', sans-serif;
+    font-family: 'Inter', sans-serif;
     background-repeat: no-repeat;
     margin: 0px;
     // min-height: 100%;
@@ -93,7 +94,8 @@ html {
   .Toastify__toast--error, .Toastify__toast--success {
     box-shadow: 3px 3px black !important;
     color: white !important;
-    font-family: Work Sans;
+    // font-family: Work Sans;
+    font-family: 'Inter', sans-serif;
     font-size: 14px;
     padding: 20px;
     text-align: left;
@@ -271,7 +273,7 @@ html {
   }
 
   .numeric-list {
-    padding-left: 10px;
+    padding-left: 20px;
     margin: 5px 0;
     
     li {
@@ -306,6 +308,10 @@ html {
     h2 {
       margin-top: 0;
     }
+  }
+
+  :root {
+    --onboard-primary-500: #ff9400;
   }
 
   .detail-box {
@@ -406,7 +412,8 @@ const TableCell = styled.div`
 `
 
 const Monospace = styled.span`
-  font-family: Work Sans;
+  // font-family: Work Sans;
+  font-family: 'Inter', sans-serif;
   border-bottom: ${props => props.borderBottom || 'unset'};
 `
 
@@ -477,7 +484,8 @@ const NewBadgeLabel = styled.div`
   color: white;
   border-radius: 4px;
   margin-left: 5px;
-  font-family: Work Sans;
+  // font-family: Work Sans;
+  font-family: 'Inter', sans-serif;
   font-weight: 900;
   font-size: 11px;
   line-height: 13px;

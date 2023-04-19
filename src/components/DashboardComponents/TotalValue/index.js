@@ -3,12 +3,12 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { Container, Div, Price } from './style'
 
 const TotalValue = ({ icon, content, price }) => {
-  const { borderColor } = useThemeContext()
+  const { borderColor, backColor, totalValueFontColor, fontColor } = useThemeContext()
   return (
-    <Container borderColor={borderColor}>
+    <Container borderColor={borderColor} backColor={backColor}>
       <img src={icon} alt="" />
-      <Div>{content}</Div>
-      <Price>$&nbsp;{price}</Price>
+      <Div fontColor={totalValueFontColor}>{content}</Div>
+      <Price fontColor={fontColor}>$&nbsp;{price}</Price>
     </Container>
   )
 }

@@ -25,6 +25,7 @@ const Inner = styled.div`
 
   @media screen and (max-width: 992px) {
     padding: 20px 10px 10px;
+    height: 100%;
   }
 `
 
@@ -225,7 +226,7 @@ const HalfInfo = styled.div`
   transition: 0.25s;
   border-radius: 10px;
   margin-bottom: 15px;
-  font-family: 'DM Sans';
+  font-family: 'Inter', sans-serif;
 `
 
 const TotalValueFarm = styled.div`
@@ -265,7 +266,7 @@ const BackArrow = styled.img`
 `
 
 const ValueShow = styled.div`
-  font-weight: 700;
+  font-weight: 500;
   font-size: 16px;
   line-height: 21px;
   text-align: left;
@@ -277,7 +278,7 @@ const ValueShow = styled.div`
 `
 
 const DescInfo = styled.div`
-  font-family: 'Inter';
+  font-family: 'Inter', sans-serif;
   font-weight: 400;
   font-size: 13px;
   display: flex;
@@ -565,7 +566,7 @@ const InfoIcon = styled.img`
 `
 
 const Monospace = styled.span`
-  font-family: Work Sans;
+  font-family: 'Inter', sans-serif;
   border-bottom: ${props => props.borderBottom || 'unset'};
 `
 

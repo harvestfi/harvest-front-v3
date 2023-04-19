@@ -20,7 +20,7 @@ export const ROUTES = {
   MAIN: '/',
   HOME: '/home',
   FARM: '/farm',
-  DASHBOARD: '/dashboard',
+  PORTFOLIO: '/portfolio',
   ANALYTIC: '/analytics',
   DOC: '/doc',
   FAQ: '/faq',
@@ -313,7 +313,7 @@ export const FAQ_ITEMS_SECOND = [
   {
     id: 10,
     question: 'I can’t find the farm I deposited into weeks ago!',
-    answer: <>Go to the dashboard, and look under the inactive section.</>,
+    answer: <>Go to the Portfolio, and look under the inactive section.</>,
   },
   {
     id: 12,
@@ -500,8 +500,9 @@ export const POOLS_API_ENDPOINT = `${HARVEST_API_URL}/pools?key=${process.env.RE
 export const VAULTS_API_ENDPOINT = `${HARVEST_API_URL}/vaults?key=${process.env.REACT_APP_API_KEY}`
 export const REVENUE_MONTHLY_API_ENDPOINT = `${HARVEST_EXTERNAL_API_URL}/revenue/monthly?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`
 export const CMC_API_ENDPOINT = `${HARVEST_EXTERNAL_API_URL}/cmc?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`
+export const TVL_API_ENDPOINT = `${HARVEST_EXTERNAL_API_URL}/gmv/total?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`
 
-export const POOL_BALANCES_DECIMALS = 9
+export const POOL_BALANCES_DECIMALS = 8
 
 export const WIDO_BALANCES_DECIMALS = 5
 

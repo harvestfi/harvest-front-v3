@@ -26,22 +26,23 @@ const Container = styled.div`
 
 const Inner = styled.div`
   padding: 70px 76px 57px 76px;
+  width: 100%;
 
-  @media screen and (min-width: 1920px) {
+  @media screen and (min-width: 1921px) {
     width: 1450px;
   }
 
   @media screen and (max-width: 1280px) {
     width: 100%;
-    padding: 0px 12px 19px 12px;
+    padding: 19px 12px;
   }
 `
 
 const SubPart = styled.div`
   display: flex;
-  justify-content: start;
+  justify-content: space-between;
 
-  @media screen and (max-width: 1280px) {
+  @media screen and (max-width: 992px) {
     display: block;
   }
 `
@@ -55,12 +56,12 @@ const FarmTitle = styled.span`
   font-size: 16px;
   line-height: 21px;
   z-index: 3;
-  padding: 16px 20px;
+  padding: 27px 20px;
 
-  @media screen and (max-width: 992px) {
-    margin-top: 15px;
-    margin-bottom: 18px;
-  }
+  // @media screen and (max-width: 992px) {
+  //   margin-top: 15px;
+  //   margin-bottom: 18px;
+  // }
 `
 
 const TransactionDetails = styled.div`
@@ -74,11 +75,15 @@ const TransactionDetails = styled.div`
 
 const DetailView = styled.div`
   width: 100%;
-  padding: 15px 6px;
+  padding: 30px 6px;
   ${props =>
     props.mode === 'dark'
       ? `
-    ${props.lastElement === 'yes' ? '' : 'border-bottom: 1px solid rgba(255, 255, 255, 0.5);'}
+    ${
+      props.lastElement === 'yes'
+        ? 'border-radius: 0 0 10px 10px;'
+        : 'border-bottom: 1px solid rgba(255, 255, 255, 0.5);'
+    }
   `
       : `
     ${
@@ -92,11 +97,12 @@ const DetailView = styled.div`
   transition: 0.25s;
   cursor: pointer;
   &:hover {
-    background: #f8f8f9;
+    background: ${props => props.hoverColor};
   }
 
   @media screen and (max-width: 992px) {
-    padding: 12px;
+    padding: 12px 6px;
+    width: ${props => props.width}px;
   }
 `
 
@@ -112,6 +118,7 @@ const FlexDiv = styled.div`
       display: ${props.display};
     `
         : ``};
+    // padding-bottom: 10px;
   }
 `
 
@@ -121,7 +128,7 @@ const MyFarm = styled.div`
   line-height: 23px;
   display: flex;
 
-  color: #101828;
+  color: ${props => props.fontColor};
   align-self: center;
 
   @media screen and (max-width: 992px) {
@@ -227,23 +234,28 @@ const Content = styled.div`
   font-size: 20px;
   line-height: 23px;
   align-self: center;
+
+  @media screen and (max-width: 992px) {
+    ${props =>
+      props.firstColumn
+        ? `
+          // min-width: 30px;
+        `
+        : `
+        // min-width: 70px;
+      `}
+  }
 `
 
 const BadgeIcon = styled.div`
-  left: 0;
-  top: 0;
-  width: 17px;
-  height: 17px;
+  width: 14px;
+  height: 15px;
   display: flex;
   justify-content: center;
   align-items: center;
   background: ${props => props.badgeBack};
   box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.15);
-  border-radius: 5px;
-
-  @media screen and (max-width: 992px) {
-    border-radius: 2px;
-  }
+  border-radius: 2px;
 `
 
 const ThemeMode = styled.div`
@@ -267,7 +279,7 @@ const ThemeMode = styled.div`
     }
 
     .switch-track {
-      background: #7f56d9;
+      background: ${props => props.backColor};
       border: 1px solid ${props => props.borderColor};
       height: 24px;
       width: 50px;
@@ -314,21 +326,16 @@ const ThemeMode = styled.div`
 const Div = styled.div`
   width: 32%;
 
+  display: ${props => (props.mobileView ? 'none' : 'block')};
+
   @media screen and (max-width: 992px) {
     width: 100%;
   }
 `
 
 const Counter = styled.div`
-  ${props =>
-    props.count > 0
-      ? `
-  color: white;
-  `
-      : `
-  color: #1F2937;
-  `}
-  background: #F2C94C;
+  color: #344054;
+  background: #f2c94c;
   width: 20px;
   height: 20px;
   border-radius: 13px;
@@ -336,18 +343,18 @@ const Counter = styled.div`
   justify-content: center;
   align-items: center;
   margin-left: 10px;
-
-  @media screen and (max-width: 992px) {
-    color: white;
-  }
 `
 
 const Header = styled.div`
   width: 100%;
   padding: 10px 6px;
-  background: #f9fafb;
+  background: ${props => props.backColor};
   border-bottom: 1px solid ${props => props.borderColor};
   display: flex;
+
+  @media screen and (max-width: 992px) {
+    width: ${props => props.width}px;
+  }
 `
 
 const Column = styled.div`
@@ -365,21 +372,36 @@ const Column = styled.div`
       : `
     color: #475467;
   `}
+
+  @media screen and (max-width: 992px) {
+    ${props =>
+      props.firstColumn
+        ? `
+          // min-width: 30px;
+        `
+        : `
+        // min-width: 70px;
+      `}
+  }
 `
 
 const Status = styled.div`
   ${props =>
-    props.status === 'Active'
+    props.darkMode
       ? `
-      background: #ECFDF3;
-      color: #027A48;
+      background: none;
     `
+      : props.status === 'Active'
+      ? `
+        background: #ECFDF3;
+        color: #027A48;
+      `
       : `
-      background: #FFE8C8;
-      color: #F2994A;
-      img {
-        filter: invert(60%) sepia(97%) saturate(5817%) hue-rotate(15deg) brightness(87%) contrast(86%);
-      }
+        background: #FFE8C8;
+        color: #F2994A;
+        img {
+          filter: invert(60%) sepia(97%) saturate(5817%) hue-rotate(15deg) brightness(87%) contrast(86%);
+        }
   `};
 
   padding: 2px 7px;
@@ -387,12 +409,19 @@ const Status = styled.div`
   line-height: 18px;
   font-weight: 500;
   display: flex;
+  justify-content: center;
   width: fit-content;
   border-radius: 13px;
   align-items: center;
 
   img {
     margin-right: 5px;
+  }
+
+  @media screen and (max-width: 992px) {
+    img {
+      margin-right: 0;
+    }
   }
 `
 
@@ -446,11 +475,21 @@ const ContentInner = styled.div`
   align-self: center;
 
   @media screen and (max-width: 992px) {
-    // display: flex;
-    // justify-content: space-between;
-    align-self: flex-start;
-    // margin-top: 14px;
+    margin-top: 10px;
     width: 100%;
+  }
+`
+
+const TableContent = styled.div`
+  ${props =>
+    props.count === 0
+      ? `
+    margin-bottom: 10px;
+  `
+      : ``}
+  @media screen and (max-width: 992px) {
+    min-width: 380px;
+    overflow: scroll;
   }
 `
 
@@ -480,4 +519,5 @@ export {
   LogoImg,
   Col,
   ContentInner,
+  TableContent,
 }

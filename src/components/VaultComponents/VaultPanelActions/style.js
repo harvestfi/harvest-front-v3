@@ -80,7 +80,7 @@ const SelectedVault = styled.div`
       order: 10;
       border-right: unset;
       align-items: center;
-      border-top: 1px solid #dadfe6;
+      // border-top: 1px solid #dadfe6;
       padding-top: 20px;
     }
   }
@@ -130,7 +130,7 @@ const RangeGroup = styled.div`
   @media screen and (max-width: 670px) {
     align-items: center;
     border-left: unset;
-    border-top: 1px solid #dadfe6;
+    // border-top: 1px solid #dadfe6;
     padding-top: 20px;
     margin-top: 15px;
   }

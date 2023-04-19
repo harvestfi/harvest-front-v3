@@ -7,7 +7,7 @@ const Container = styled.div`
     border-right: 1px solid ${props => props.borderColor};
   }
   font-weight: 700;
-  background: #ffffff;
+  background: ${props => props.backColor};
   padding: 20px;
 
   border: 0.801546px solid #eaecf0;
@@ -17,7 +17,7 @@ const Container = styled.div`
 
   @media screen and (max-width: 992px) {
     width: 100%;
-    margin: 15px auto;
+    margin-bottom: 15px;
   }
 `
 
@@ -25,7 +25,7 @@ const Div = styled.div`
   font-weight: 500;
   font-size: 12px;
   line-height: 16px;
-  color: #475467;
+  color: ${props => props.fontColor};
   margin-top: 20px;
   margin-bottom: 7px;
   @media screen and (max-width: 992px) {
@@ -39,7 +39,7 @@ const Price = styled.div`
   font-size: 36px;
   line-height: 44px;
   margin-top: 10px;
-  color: #101828;
+  color: ${props => props.fontColor};
   @media screen and (max-width: 992px) {
     font-size: 14px;
     line-height: 18px;

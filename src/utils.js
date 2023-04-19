@@ -125,13 +125,13 @@ export const formatNumber = (number, decimals = DECIMAL_PRECISION) => {
 }
 
 export const formatNumberWido = (number, decimals = DECIMAL_PRECISION) => {
-  let result = number
-
+  let result = number.toString()
   if (countDecimals(result) > decimals) {
     result = result.substring(0, result.indexOf('.') + decimals + 1)
   }
 
-  return showNumber(Number(result), decimals)
+  // return showNumber(Number(result), decimals)
+  return result
 }
 
 export const formatAddress = address => {

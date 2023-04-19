@@ -5,7 +5,7 @@ import Analytics from '../../assets/images/logos/sidebar/analytics.svg'
 import ConnectDisableIcon from '../../assets/images/logos/sidebar/connect-disable.svg'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 import connectAvatar from '../../assets/images/logos/sidebar/connectavatar.svg'
-import Dashboard from '../../assets/images/logos/sidebar/dashboard.svg'
+import Portfolio from '../../assets/images/logos/sidebar/dashboard.svg'
 import Docs from '../../assets/images/logos/sidebar/docs.svg'
 import ExternalLink from '../../assets/images/logos/sidebar/external_link.svg'
 import FAQ from '../../assets/images/logos/sidebar/faq.svg'
@@ -33,7 +33,6 @@ import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { displayAPY, formatAddress, getDataQuery, getTotalApy, isLedgerLive } from '../../utils'
-import { Divider } from '../GlobalStyle'
 import SmallApexChart from '../SmallApexChart'
 import Social from '../Social'
 import {
@@ -71,6 +70,7 @@ import {
   BottomPart,
   MobileProfitSharing,
   ProfitPart,
+  Divider,
 } from './style'
 
 const sideLinks = [
@@ -85,9 +85,9 @@ const sideLinks = [
     imgPath: Farms,
   },
   {
-    path: ROUTES.DASHBOARD,
-    name: 'Dashboard',
-    imgPath: Dashboard,
+    path: ROUTES.PORTFOLIO,
+    name: 'Portfolio',
+    imgPath: Portfolio,
   },
 ]
 
@@ -439,6 +439,7 @@ const Sidebar = ({ width }) => {
           backdrop={false}
           backcolor={backColor}
           fontcolor={fontColor}
+          filtercolor={filterColor}
         >
           <Offcanvas.Header closeButton />
           <Offcanvas.Body>
@@ -530,7 +531,13 @@ const Sidebar = ({ width }) => {
                       hoverImgColor={hoverImgColor}
                     >
                       <div className="item">
-                        <SideIcons src={item.imgPath} width={20} height={20} alt="Harvest" />
+                        <SideIcons
+                          src={item.imgPath}
+                          width={20}
+                          height={20}
+                          filterColor={filterColor}
+                          alt="Harvest"
+                        />
                       </div>
                       <MobileLink
                         onClick={() => {

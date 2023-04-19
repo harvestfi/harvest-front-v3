@@ -306,6 +306,7 @@ const MobileView = styled.div`
     display: flex;
     justify-content: space-between;
     margin-bottom: 15px;
+    margin-top: 6px;
   }
 `
 
@@ -389,7 +390,7 @@ const MobileLink = styled.button`
   font-size: 16px;
   font-weight: 700;
   line-height: 19px;
-  align-items: center;
+  align-items: end;
   justify-content: start;
   color: ${props => props.fontColor};
   background-color: transparent;
@@ -421,7 +422,7 @@ const MobileFollow = styled.div`
   justify-content: space-between;
   width: 90%;
   position: absolute;
-  bottom: 0;
+  bottom: 5px;
 `
 
 const ConnectAvatar = styled.div`
@@ -641,6 +642,10 @@ const OffcanvasDiv = styled(Offcanvas)`
 
   .offcanvas-header {
     justify-content: end;
+
+    .btn-close {
+      filter: ${props => props.filtercolor};
+    }
   }
 `
 
@@ -659,6 +664,16 @@ const ProfitSharing = styled.div`
   }
 
   @media screen and (max-height: 900px) {
+    display: none;
+  }
+`
+
+const Divider = styled.div`
+  height: ${props => (props.height ? props.height : '20px')};
+  background: ${props => (props.backColor ? props.backColor : 'unset')};
+  margin-top: ${props => (props.marginTop ? props.marginTop : 'unset')};
+
+  @media screen and (max-width: 992px) {
     display: none;
   }
 `
@@ -772,4 +787,5 @@ export {
   BottomPart,
   MobileProfitSharing,
   ProfitPart,
+  Divider,
 }
