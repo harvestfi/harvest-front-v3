@@ -312,6 +312,7 @@ const MobileView = styled.div`
 
 const MobileConnectBtn = styled.div`
   margin-top: 6px;
+  margin-bottom: 6px;
   display: flex;
   padding: 7px 12px;
   background: white;
