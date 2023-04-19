@@ -270,7 +270,13 @@ const Portfolio = () => {
             stats.symbol = tokenName
             stats.logos = token.logoUrl
             stats.chain = getChainIcon(token.chain)
-            stats.platform = useIFARM ? 'Harvest' : token.subLabel || ''
+            stats.platform = useIFARM
+              ? tokens[IFARM_TOKEN_SYMBOL].subLabel
+                ? `${tokens[IFARM_TOKEN_SYMBOL].platform[0]} - ${tokens[IFARM_TOKEN_SYMBOL].subLabel}`
+                : tokens[IFARM_TOKEN_SYMBOL].platform[0]
+              : token.subLabel
+              ? token.platform[0] && `${token.platform[0]} - ${token.subLabel}`
+              : token.platform[0] && token.platform[0]
             stats.status = token.inactive ? 'Inactive' : 'Active'
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
             if (isSpecialVault) {
@@ -478,11 +484,28 @@ const Portfolio = () => {
                         <Content width="23%" display={isMobile ? 'block' : 'flex'}>
                           {info.logos.length > 0 &&
                             info.logos.map((elem, index) => (
-                              <LogoImg key={index} className="coin" width={37} src={elem} alt="" />
+                              <LogoImg
+                                key={index}
+                                className="coin"
+                                width={isMobile ? 19 : 37}
+                                src={elem}
+                                alt=""
+                              />
                             ))}
                           <ContentInner marginLeft={isMobile ? '0px' : '11px'}>
-                            <ListItem weight={700} size={16} height={21} value={info.symbol} />
-                            <ListItem weight={400} size={12} height={16} value={info.platform} />
+                            <ListItem
+                              weight={700}
+                              size={isMobile ? 12 : 16}
+                              height={isMobile ? 16 : 21}
+                              value={info.symbol}
+                              marginBottom={isMobile ? 10 : 0}
+                            />
+                            <ListItem
+                              weight={400}
+                              size={isMobile ? 10 : 12}
+                              height={isMobile ? 13 : 16}
+                              value={info.platform}
+                            />
                           </ContentInner>
                         </Content>
                         <Content width="15%">

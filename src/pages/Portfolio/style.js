@@ -118,7 +118,7 @@ const FlexDiv = styled.div`
       display: ${props.display};
     `
         : ``};
-    padding-bottom: 10px;
+    // padding-bottom: 10px;
   }
 `
 
@@ -409,12 +409,19 @@ const Status = styled.div`
   line-height: 18px;
   font-weight: 500;
   display: flex;
+  justify-content: center;
   width: fit-content;
   border-radius: 13px;
   align-items: center;
 
   img {
     margin-right: 5px;
+  }
+
+  @media screen and (max-width: 992px) {
+    img {
+      margin-right: 0;
+    }
   }
 `
 
