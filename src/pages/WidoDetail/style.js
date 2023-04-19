@@ -266,7 +266,7 @@ const BackArrow = styled.img`
 `
 
 const ValueShow = styled.div`
-  font-weight: 700;
+  font-weight: 500;
   font-size: 16px;
   line-height: 21px;
   text-align: left;
