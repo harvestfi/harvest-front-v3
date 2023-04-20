@@ -526,7 +526,7 @@ const WidoDetail = () => {
           <FlexTopDiv>
             <BackBtnRect
               onClick={() => {
-                push('/farm')
+                push('/home')
               }}
               backcolor={widoBackBtnBackColor}
               backhovercolor={widoBackBtnBackHoverColor}
@@ -556,7 +556,7 @@ const WidoDetail = () => {
             <FlexTopDiv>
               <BackBtnRect
                 onClick={() => {
-                  push('/farm')
+                  push('/home')
                 }}
                 backcolor={widoBackBtnBackColor}
                 backhovercolor={widoBackBtnBackHoverColor}

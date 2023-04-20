@@ -572,7 +572,7 @@ const Portfolio = () => {
                   <EmptyInfo weight={700} size={16} height={21} marginTop="45px">
                     <ExploreFarm
                       onClick={() => {
-                        push('/farm')
+                        push('/home')
                       }}
                     >
                       <img src={exploreFarm} alt="" />
