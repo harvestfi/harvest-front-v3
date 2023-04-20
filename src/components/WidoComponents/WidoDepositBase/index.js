@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useState } from 'react'
+import { useSetChain } from '@web3-onboard/react'
 import { Spinner } from 'react-bootstrap'
 import { toast } from 'react-toastify'
 import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.svg'
@@ -70,7 +71,7 @@ const WidoDepositBase = ({
   const { handleStake } = useActions()
   const { contracts } = useContracts()
   const { userStats, fetchUserPoolStats } = usePools()
-  const { connected, connect, account, getWalletBalances } = useWallet()
+  const { connected, connectAction, account, getWalletBalances } = useWallet()
   const { vaultsData } = useVaults()
   const {
     backColor,
@@ -81,6 +82,13 @@ const WidoDepositBase = ({
   } = useThemeContext()
   const [stakeClick, setStakeClick] = useState(false)
   const [stakeInputValue, setStakeInputValue] = useState('')
+
+  const [
+    {
+      connectedChain, // the current chain the user's wallet is connected to
+    },
+    setChain, // function to call to initiate user to switch chains in their wallet
+  ] = useSetChain()
 
   const onClickStake = async () => {
     if (stakeInputValue === '') {
@@ -131,6 +139,12 @@ const WidoDepositBase = ({
       toast.error('Please input amount for deposit!')
       return
     }
+    const tokenChain = token.chain || token.data.chain
+    const curChain = parseInt(connectedChain.id, 16).toString()
+    if (curChain !== tokenChain) {
+      const chainHex = `0x${Number(tokenChain).toString(16)}`
+      await setChain({ chainId: chainHex })
+    }
     setDepositWido(true)
   }
 
@@ -171,7 +185,7 @@ const WidoDepositBase = ({
             onClick={async () => {
               setSelectTokenWido(true)
               if (!connected) {
-                await connect()
+                await connectAction()
               }
             }}
             fontColor={widoTagActiveFontColor}

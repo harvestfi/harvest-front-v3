@@ -88,7 +88,7 @@ const WidoPoolDepositBase = ({
 }) => {
   /* eslint-disable global-require */
   const { tokens } = require('../../../data')
-  const { account, connect, balances } = useWallet()
+  const { account, connectAction, balances } = useWallet()
   const { vaultsData } = useVaults()
   const [farmInfo, setFarmInfo] = useState(null)
   const [price, setPrice] = useState(0)
@@ -238,7 +238,7 @@ const WidoPoolDepositBase = ({
               onClick={async () => {
                 setSelectTokenWido(true)
                 if (!account) {
-                  await connect()
+                  await connectAction()
                 }
               }}
               fontColor={widoTagActiveFontColor}

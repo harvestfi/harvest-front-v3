@@ -172,7 +172,7 @@ const getChainIcon = chainNum => {
 }
 
 const Sidebar = ({ width }) => {
-  const { account, connect, disconnect, chainId, connected } = useWallet()
+  const { account, connectAction, disconnectAction, chainId, connected } = useWallet()
   const { pools, disableWallet } = usePools()
   const { profitShareAPY } = useStats()
 
@@ -260,7 +260,7 @@ const Sidebar = ({ width }) => {
                   <ConnectButtonStyle
                     color="connectwallet"
                     onClick={() => {
-                      connect()
+                      connectAction()
                     }}
                     minWidth="190px"
                     bordercolor={fontColor}
@@ -274,7 +274,7 @@ const Sidebar = ({ width }) => {
 
               if (!chainId) {
                 return (
-                  <button onClick={disconnect} type="button">
+                  <button onClick={disconnectAction} type="button">
                     Wrong network
                   </button>
                 )
@@ -315,7 +315,7 @@ const Sidebar = ({ width }) => {
                     <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
                       <UserDropDownItem
                         onClick={() => {
-                          disconnect()
+                          disconnectAction()
                         }}
                         fontcolor={fontColor}
                         filtercolor={filterColor}
@@ -451,7 +451,7 @@ const Sidebar = ({ width }) => {
                       <ConnectButtonStyle
                         color="connectwallet"
                         onClick={() => {
-                          connect()
+                          connectAction()
                           handleMobileClose()
                         }}
                         minWidth="190px"
@@ -466,7 +466,7 @@ const Sidebar = ({ width }) => {
 
                   if (!chainId) {
                     return (
-                      <button onClick={disconnect} type="button">
+                      <button onClick={disconnectAction} type="button">
                         Wrong network
                       </button>
                     )
@@ -507,7 +507,7 @@ const Sidebar = ({ width }) => {
                         <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
                           <UserDropDownItem
                             onClick={() => {
-                              disconnect()
+                              disconnectAction()
                             }}
                             fontcolor={fontColor}
                             filtercolor={filterColor}
@@ -666,7 +666,7 @@ const Sidebar = ({ width }) => {
           color="connectwallet"
           connected={connected}
           onClick={() => {
-            connect()
+            connectAction()
           }}
         >
           <img src={ConnectDisableIcon} className="connect-wallet" alt="" />
