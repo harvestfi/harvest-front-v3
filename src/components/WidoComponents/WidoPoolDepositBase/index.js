@@ -23,6 +23,7 @@ import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
 import { fromWei } from '../../../services/web3'
 import { formatNumberWido } from '../../../utils'
+import { CHAINS_ID } from '../../../data/constants'
 import AnimatedDots from '../../AnimatedDots'
 import Button from '../../Button'
 import {
@@ -59,6 +60,22 @@ const getPrice = async () => {
   } catch (e) {
     return 0
   }
+}
+
+const getChainName = chain => {
+  let chainName = 'Ethereum'
+  switch (chain) {
+    case CHAINS_ID.MATIC_MAINNET:
+      chainName = 'Polygon'
+      break
+    case CHAINS_ID.ARBITRUM_ONE:
+      chainName = 'Arbitrum'
+      break
+    default:
+      chainName = 'Ethereum'
+      break
+  }
+  return chainName
 }
 
 const WidoPoolDepositBase = ({
@@ -167,29 +184,44 @@ const WidoPoolDepositBase = ({
     }
   }, [account, vaultsData, underlyingValue, tokens])
 
+  const tokenChain = token.chain || token.data.chain
+  const curChain = connectedChain ? parseInt(connectedChain.id, 16).toString() : ''
+  const [depositName, setDepositName] = useState('Deposit')
+
+  useEffect(() => {
+    if (account) {
+      if (curChain !== tokenChain) {
+        const chainName = getChainName(tokenChain)
+        setDepositName(`Switch to ${chainName}`)
+      } else {
+        setDepositName('Deposit')
+      }
+    }
+  }, [account, curChain, tokenChain])
+
   const onClickDeposit = async () => {
-    if (!legacyStaking && pickedToken.symbol === 'Select Token') {
-      toast.error('Please select token to deposit!')
-      return
-    }
-    if (new BigNumber(inputAmount).isGreaterThan(balance)) {
-      toast.error('Please input sufficient balance!')
-      return
-    }
-    if (new BigNumber(inputAmount).isEqualTo(0)) {
-      toast.error('Please input balance to deposit!')
-      return
-    }
-    const tokenChain = token.chain || token.data.chain
-    const curChain = parseInt(connectedChain.id, 16).toString()
     if (curChain !== tokenChain) {
       const chainHex = `0x${Number(tokenChain).toString(16)}`
       await setChain({ chainId: chainHex })
-    }
-    if (!legacyStaking) {
-      setDepositWido(true)
     } else {
-      setFinalStep(true)
+      if (!legacyStaking && pickedToken.symbol === 'Select Token') {
+        toast.error('Please select token to deposit!')
+        return
+      }
+      if (new BigNumber(inputAmount).isGreaterThan(balance)) {
+        toast.error('Please input sufficient balance!')
+        return
+      }
+      if (new BigNumber(inputAmount).isEqualTo(0)) {
+        toast.error('Please input balance to deposit!')
+        return
+      }
+
+      if (!legacyStaking) {
+        setDepositWido(true)
+      } else {
+        setFinalStep(true)
+      }
     }
   }
 
@@ -329,7 +361,7 @@ const WidoPoolDepositBase = ({
           onClickDeposit()
         }}
       >
-        Deposit
+        {depositName}
         <img src={ChevronRightIcon} alt="" />
       </Button>
 

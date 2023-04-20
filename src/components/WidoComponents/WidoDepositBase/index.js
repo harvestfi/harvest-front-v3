@@ -15,6 +15,7 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
 import { fromWei, toWei } from '../../../services/web3'
+import { CHAINS_ID } from '../../../data/constants'
 import {
   formatNumberWido,
   hasAmountGreaterThanZero,
@@ -40,6 +41,22 @@ import {
   TokenSelect,
   TokenUSD,
 } from './style'
+
+const getChainName = chain => {
+  let chainName = 'Ethereum'
+  switch (chain) {
+    case CHAINS_ID.MATIC_MAINNET:
+      chainName = 'Polygon'
+      break
+    case CHAINS_ID.ARBITRUM_ONE:
+      chainName = 'Arbitrum'
+      break
+    default:
+      chainName = 'Ethereum'
+      break
+  }
+  return chainName
+}
 
 const WidoDepositBase = ({
   selectTokenWido,
@@ -126,26 +143,40 @@ const WidoDepositBase = ({
     setStakeClick(false)
   }
 
+  const tokenChain = token.chain || token.data.chain
+  const curChain = connectedChain ? parseInt(connectedChain.id, 16).toString() : ''
+  const [depositName, setDepositName] = useState('Deposit')
+
+  useEffect(() => {
+    if (account) {
+      if (curChain !== tokenChain) {
+        const chainName = getChainName(tokenChain)
+        setDepositName(`Switch to ${chainName}`)
+      } else {
+        setDepositName('Deposit')
+      }
+    }
+  }, [account, curChain, tokenChain])
+
   const onClickDeposit = async () => {
-    if (pickedToken.symbol === 'Select Token') {
-      toast.error('Please select token to deposit!')
-      return
-    }
-    if (new BigNumber(inputAmount).isGreaterThan(balance)) {
-      toast.error('Please input sufficient amount for deposit!')
-      return
-    }
-    if (new BigNumber(inputAmount).isEqualTo(0)) {
-      toast.error('Please input amount for deposit!')
-      return
-    }
-    const tokenChain = token.chain || token.data.chain
-    const curChain = parseInt(connectedChain.id, 16).toString()
     if (curChain !== tokenChain) {
       const chainHex = `0x${Number(tokenChain).toString(16)}`
       await setChain({ chainId: chainHex })
+    } else {
+      if (pickedToken.symbol === 'Select Token') {
+        toast.error('Please select token to deposit!')
+        return
+      }
+      if (new BigNumber(inputAmount).isGreaterThan(balance)) {
+        toast.error('Please input sufficient amount for deposit!')
+        return
+      }
+      if (new BigNumber(inputAmount).isEqualTo(0)) {
+        toast.error('Please input amount for deposit!')
+        return
+      }
+      setDepositWido(true)
     }
-    setDepositWido(true)
   }
 
   useEffect(() => {
@@ -213,7 +244,7 @@ const WidoDepositBase = ({
           onClickDeposit()
         }}
       >
-        Deposit
+        {depositName}
         <img src={ChevronRightIcon} alt="" />
       </Button>
 
