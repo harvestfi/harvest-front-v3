@@ -893,7 +893,7 @@ export const getDetailText = (
           token,
           isIFARM,
           vaultPool,
-        )}.svg' width=24 height=24 alt='' /></div>`
+        ).toLowerCase()}.svg' width=24 height=24 alt='' /></div>`
       apyString += `<div class="detail-apy">${
         isIFARM || Number(boostedRewardAPY) > 0 ? displayAPY(boostedRewardAPY) : displayAPY(farmAPY)
       }</div> <div class="detail-desc">${getRewardSymbol(token, isIFARM, vaultPool)} rewards</div>`
