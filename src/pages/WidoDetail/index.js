@@ -380,8 +380,7 @@ const WidoDetail = () => {
   const [tokenList, setTokenList] = useState([])
 
   const rewardSymbol = isSpecialVault ? id : token.apyTokenSymbols[0]
-  const toTokenAddress =
-    token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+  const toTokenAddress = token.vaultAddress || token.tokenAddress
   useEffect(() => {
     const getTokenBalance = async () => {
       try {
