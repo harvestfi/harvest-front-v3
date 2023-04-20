@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js'
+import { useSetChain } from '@web3-onboard/react'
 import CoinGecko from 'coingecko-api'
 import { get, isEmpty } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
@@ -108,6 +109,13 @@ const WidoPoolDepositBase = ({
   const [totalValue, setTotalValue] = useState(0)
   const [underlyingValue, setUnderlyingValue] = useState(0)
 
+  const [
+    {
+      connectedChain, // the current chain the user's wallet is connected to
+    },
+    setChain, // function to call to initiate user to switch chains in their wallet
+  ] = useSetChain()
+
   useEffect(() => {
     const getPriceValue = async () => {
       const value = await getPrice()
@@ -171,6 +179,12 @@ const WidoPoolDepositBase = ({
     if (new BigNumber(inputAmount).isEqualTo(0)) {
       toast.error('Please input balance to deposit!')
       return
+    }
+    const tokenChain = token.chain || token.data.chain
+    const curChain = parseInt(connectedChain.id, 16).toString()
+    if (curChain !== tokenChain) {
+      const chainHex = `0x${Number(tokenChain).toString(16)}`
+      await setChain({ chainId: chainHex })
     }
     if (!legacyStaking) {
       setDepositWido(true)
