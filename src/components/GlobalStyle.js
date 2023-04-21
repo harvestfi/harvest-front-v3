@@ -312,6 +312,7 @@ html {
 
   :root {
     --onboard-primary-500: #ff9400;
+    --account-center-maximized-network-selector-color: #ff9400;
   }
 
   .detail-box {
