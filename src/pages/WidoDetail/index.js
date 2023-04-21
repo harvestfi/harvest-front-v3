@@ -376,6 +376,7 @@ const WidoDetail = () => {
 
   const [balanceList, setBalanceList] = useState([])
   const [tokenList, setTokenList] = useState([])
+  const [soonToSupList, setSoonToSupList] = useState([])
 
   const rewardSymbol = isSpecialVault ? id : token.apyTokenSymbols[0]
   const toTokenAddress = token.vaultAddress || token.tokenAddress
@@ -384,6 +385,7 @@ const WidoDetail = () => {
       try {
         if (chain && account) {
           const curBalances = await getBalances(account, [chain.toString()])
+          setSoonToSupList(curBalances)
           const supList = await getSupportedTokens({
             chainId: [chain],
             toToken: toTokenAddress,
@@ -941,6 +943,7 @@ const WidoDetail = () => {
                   setPickedToken={setPickedTokenDepo}
                   setBalance={setBalanceDepo}
                   balanceList={balanceList}
+                  soonToSupList={soonToSupList}
                   setWidoPartHeight={setWidoPartHeight}
                 />
 
