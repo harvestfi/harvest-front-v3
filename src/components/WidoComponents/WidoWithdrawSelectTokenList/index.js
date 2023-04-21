@@ -39,7 +39,7 @@ const WidoWithdrawSelectTokenList = ({
                 {data.symbol}
               </Text>
               <Text size="12px" height="16px" weight={400}>
-                {fromWEI(data.balance, data.decimals).toFixed(4)}
+                {data.balance ? fromWEI(data.balance, data.decimals).toFixed(4) : '0.0000'}
               </Text>
             </Vault>
           </Container>

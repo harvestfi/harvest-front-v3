@@ -70,7 +70,7 @@ const WidoWithdrawSelectToken = ({
           color={widoSelTokenSubTitleColor}
           marginBottom="10px"
         >
-          Soon to be Supporter
+          Soon to be Supported
         </NewLabel>
         <WidoWithdrawSelectTokenList
           list={soonToSupList}

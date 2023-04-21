@@ -101,7 +101,7 @@ const WidoDepositSelectToken = ({
             color={widoSelTokenSubTitleColor}
             marginBottom="10px"
           >
-            Soon to be Supporter
+            Soon to be Supported
           </NewLabel>
           <WidoSelectTokenList
             list={soonToSupList}
