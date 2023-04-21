@@ -15,7 +15,7 @@ const WidoSelectTokenList = ({
   const handleClick = id => {
     setClickedId(id)
     setPickedToken(list[id])
-    setBalance(fromWEI(list[id].balance, list[id].decimals))
+    setBalance(fromWEI(list[id].balance ? list[id].balance : 0, list[id].decimals))
     setSelectTokenWido(false)
     setWidoPartHeight(null)
   }
@@ -41,7 +41,7 @@ const WidoSelectTokenList = ({
                 {data.symbol}
               </Text>
               <Text size="12px" height="16px" weight={400}>
-                {fromWEI(data.balance, data.decimals).toFixed(4)}
+                {data.balance ? fromWEI(data.balance, data.decimals).toFixed(4) : '0.0000'}
               </Text>
             </Vault>
           </Container>
