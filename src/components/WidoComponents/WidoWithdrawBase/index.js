@@ -47,6 +47,7 @@ const WidoWithdrawBase = ({
   setPendingAction,
   multipleAssets,
   token,
+  supTokenList,
 }) => {
   const [amountsToExecute, setAmountsToExecute] = useState('')
   const [unstakeClick, setUnstakeClick] = useState(false)
@@ -127,6 +128,11 @@ const WidoWithdrawBase = ({
   const onClickWithdraw = async () => {
     if (pickedToken.symbol === 'Destination token') {
       toast.error('Please select token to withdraw!')
+      return
+    }
+    const supToken = supTokenList.find(el => el.symbol === pickedToken.symbol)
+    if (!supToken) {
+      toast.error("Can't Withdraw with Unsupported token!")
       return
     }
 

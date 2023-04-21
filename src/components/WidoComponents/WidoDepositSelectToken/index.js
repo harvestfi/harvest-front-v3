@@ -20,7 +20,7 @@ const WidoDepositSelectToken = ({
   setClickedTokenId,
   setPickedToken,
   setBalance,
-  balanceList,
+  supTokenList,
   soonToSupList,
   setWidoPartHeight,
 }) => {
@@ -86,7 +86,7 @@ const WidoDepositSelectToken = ({
             Supported Tokens
           </NewLabel>
           <WidoSelectTokenList
-            list={balanceList}
+            list={supTokenList}
             clickId={clickTokenId}
             setClickedId={setClickedTokenId}
             setPickedToken={setPickedToken}

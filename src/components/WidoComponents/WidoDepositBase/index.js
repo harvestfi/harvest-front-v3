@@ -84,6 +84,7 @@ const WidoDepositBase = ({
   multipleAssets,
   loaded,
   loadingBalances,
+  supTokenList,
 }) => {
   const { handleStake } = useActions()
   const { contracts } = useContracts()
@@ -165,6 +166,11 @@ const WidoDepositBase = ({
     } else {
       if (pickedToken.symbol === 'Select Token') {
         toast.error('Please select token to deposit!')
+        return
+      }
+      const supToken = supTokenList.find(el => el.symbol === pickedToken.symbol)
+      if (!supToken) {
+        toast.error("Can't Deposit with Unsupported token!")
         return
       }
       if (new BigNumber(inputAmount).isGreaterThan(balance)) {

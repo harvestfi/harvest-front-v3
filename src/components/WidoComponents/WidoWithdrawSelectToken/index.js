@@ -11,7 +11,7 @@ const WidoWithdrawSelectToken = ({
   clickTokenId,
   setClickedTokenId,
   setPickedToken,
-  balanceList,
+  supTokenList,
   soonToSupList,
   setWidoPartHeight,
 }) => {
@@ -56,7 +56,7 @@ const WidoWithdrawSelectToken = ({
           Supported Tokens
         </NewLabel>
         <WidoWithdrawSelectTokenList
-          list={balanceList}
+          list={supTokenList}
           clickId={clickTokenId}
           setClickedId={setClickedTokenId}
           setPickedToken={setPickedToken}

@@ -315,12 +315,10 @@ const WidoPoolDepositBase = ({
               : FARMBalance && fromWEI(FARMBalance, tokens[IFARM_TOKEN_SYMBOL].decimals)
             setInputAmount(formatNumberWido(balanceAmount, POOL_BALANCES_DECIMALS))
 
-            setUsdValue(
-              formatNumberWido(
-                balanceAmount * (legacyStaking ? farmInfo.usdPrice : pickedToken.usdPrice || 1),
-                2,
-              ),
-            )
+            const usdAmount = legacyStaking
+              ? balanceAmount * farmInfo.usdPrice
+              : pickedToken.usdValue
+            setUsdValue(formatNumberWido(usdAmount, 2))
           }
         }}
       >
