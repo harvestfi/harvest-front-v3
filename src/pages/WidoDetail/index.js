@@ -1076,7 +1076,8 @@ const WidoDetail = () => {
                   setClickedTokenId={setClickedTokenIdWith}
                   pickedToken={pickedTokenWith}
                   setPickedToken={setPickedTokenWith}
-                  balanceList={balanceList}
+                  balanceList={tokenList}
+                  soonToSupList={soonToSupList}
                   setWidoPartHeight={setWidoPartHeight}
                 />
 
