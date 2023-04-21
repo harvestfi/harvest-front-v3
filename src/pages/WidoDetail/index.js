@@ -263,10 +263,8 @@ const WidoDetail = () => {
                 ) : null
               ) : (
                 <>
-                  <b>
-                    {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
-                    &nbsp;
-                  </b>
+                  {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
+                  &nbsp;
                 </>
               )}
             </RewardsContainer>
@@ -320,7 +318,7 @@ const WidoDetail = () => {
                 'Inactive'
               ) : null
             ) : (
-              <b>{apyDaily}% &nbsp;</b>
+              <>{apyDaily}% &nbsp;</>
             )}
           </RewardsContainer>
         ) : (

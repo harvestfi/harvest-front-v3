@@ -330,7 +330,7 @@ html {
   .detail-apy {
     width: 80px; 
     font-size: 16px; 
-    font-weight: 700;
+    font-weight: 500;
   }
 
   .detail-desc {
@@ -352,7 +352,7 @@ html {
   .detail-token {
     width: 34%; 
     font-size: 13px; 
-    font-weight: 700; 
+    font-weight: 500; 
     text-decoration: underline;
   }
 
