@@ -25,7 +25,7 @@ export const ROUTES = {
   DOC: '/doc',
   FAQ: '/faq',
   GRAIN: '/grain',
-  WIDODETAIL: '/wido-test/:id',
+  WIDODETAIL: '/:network/:paramAddress',
   WORK: '/work',
   POOL: '/pool',
   ZAPPER: '/zapper',
@@ -741,4 +741,4 @@ export function fromWEI(number, digit) {
     .toNumber()
 }
 
-export const directDetailUrl = '/wido-test/'
+export const directDetailUrl = '/'

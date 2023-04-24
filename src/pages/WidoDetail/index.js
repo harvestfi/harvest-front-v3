@@ -121,7 +121,7 @@ const getVaultValue = token => {
 }
 
 const WidoDetail = () => {
-  const { id } = useParams()
+  const { paramAddress } = useParams()
   // Switch Tag (Deposit/Withdraw)
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM]
   const [active1, setActive1] = useState(true)
@@ -156,7 +156,7 @@ const WidoDetail = () => {
         profitShareAPY,
         data: farmProfitSharingPool,
         logoUrl: ['./icons/ifarm.svg'],
-        tokenAddress: addresses.iFARM,
+        tokenAddress: addresses.FARM,
         rewardSymbol: 'iFarm',
         isNew: tokens[IFARM_TOKEN_SYMBOL].isNew,
         newDetails: tokens[IFARM_TOKEN_SYMBOL].newDetails,
@@ -189,7 +189,13 @@ const WidoDetail = () => {
   )
 
   const groupOfVaults = { ...vaultsData, ...poolVaults }
-
+  const vaultsKey = Object.keys(groupOfVaults)
+  const vaultIds = vaultsKey.filter(
+    vaultId =>
+      groupOfVaults[vaultId].vaultAddress === paramAddress ||
+      groupOfVaults[vaultId].tokenAddress === paramAddress,
+  )
+  const id = vaultIds[0]
   const token = groupOfVaults[id]
 
   const { logoUrl } = token
@@ -427,7 +433,7 @@ const WidoDetail = () => {
     }
 
     getTokenBalance()
-  }, [account, chain, id, toTokenAddress])
+  }, [account, chain, toTokenAddress])
 
   const {
     backColor,
