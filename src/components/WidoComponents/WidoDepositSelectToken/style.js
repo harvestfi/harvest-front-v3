@@ -115,7 +115,26 @@ const NewLabel = styled.div`
     height: ${props.heightDiv};
   `
       : ''}
+  
+  ${props =>
+    props.scroll
+      ? `
+    overflow: ${props.scroll};
+    &::-webkit-scrollbar {
+      width: 5px;
+    }
 
+    &::-webkit-scrollbar-track {
+      background: none;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background-color: #caf1d5;
+      border-radius: 6px;
+      border: none;
+    }
+  `
+      : ''}
   img.icon {
     margin-right: 10px;
   }

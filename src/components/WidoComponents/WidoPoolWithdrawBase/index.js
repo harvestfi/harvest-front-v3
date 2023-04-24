@@ -63,7 +63,7 @@ const WidoPoolWithdrawBase = ({
 
   const walletBalancesToCheck = multipleAssets || [symbol]
 
-  const { account, balances, getWalletBalances, connected, connect } = useWallet()
+  const { account, balances, getWalletBalances, connected, connectAction } = useWallet()
   const { fetchUserPoolStats, userStats } = usePools()
   const { handleExit } = useActions()
   const {
@@ -265,7 +265,7 @@ const WidoPoolWithdrawBase = ({
                 onClick={async () => {
                   setSelectTokenWido(true)
                   if (!connected) {
-                    await connect()
+                    await connectAction()
                   }
                 }}
               >

@@ -47,6 +47,7 @@ const WidoWithdrawBase = ({
   setPendingAction,
   multipleAssets,
   token,
+  supTokenList,
 }) => {
   const [amountsToExecute, setAmountsToExecute] = useState('')
   const [unstakeClick, setUnstakeClick] = useState(false)
@@ -58,7 +59,7 @@ const WidoWithdrawBase = ({
 
   const walletBalancesToCheck = multipleAssets || [symbol]
 
-  const { account, getWalletBalances, connected, connect } = useWallet()
+  const { account, getWalletBalances, connected, connectAction } = useWallet()
   const { fetchUserPoolStats, userStats } = usePools()
   const { handleExit } = useActions()
   const { backColor, borderColor, fontColor } = useThemeContext()
@@ -129,6 +130,11 @@ const WidoWithdrawBase = ({
       toast.error('Please select token to withdraw!')
       return
     }
+    const supToken = supTokenList.find(el => el.symbol === pickedToken.symbol)
+    if (!supToken) {
+      toast.error("Can't Withdraw with Unsupported token!")
+      return
+    }
 
     if (new BigNumber(unstakeBalance).isEqualTo(0)) {
       toast.error('Please input amount to withdraw!')
@@ -147,7 +153,7 @@ const WidoWithdrawBase = ({
       <div>
         <TokenName>
           <img src={FARMIcon} width={20} height={20} alt="" />
-          {token.balance}
+          {`f${symbol}`}
         </TokenName>
         <StakeInfo>
           Staked
@@ -275,7 +281,7 @@ const WidoWithdrawBase = ({
             onClick={async () => {
               setSelectTokenWido(true)
               if (!connected) {
-                await connect()
+                await connectAction()
               }
             }}
           >

@@ -1,12 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { forEach } from 'promised-loops'
 import { find } from 'lodash'
-import {
-  FARM_GRAIN_TOKEN_SYMBOL,
-  FARM_TOKEN_SYMBOL,
-  FARM_USDC_TOKEN_SYMBOL,
-  FARM_WETH_TOKEN_SYMBOL,
-} from '../../constants'
+import { FARM_GRAIN_TOKEN_SYMBOL, FARM_TOKEN_SYMBOL, FARM_WETH_TOKEN_SYMBOL } from '../../constants'
 
 export const calculateTotalValueDeposited = async vaults => {
   let totalDeposited = new BigNumber(0)
@@ -31,10 +26,14 @@ export const calculateFarmingBalance = async (pools, userStats, vaultSymbol, vau
 
   const vaultPool = find(pools, pool => pool.collateralAddress === vaultAddress)
   try {
-    const userBalanceInVault = new BigNumber(userStats[vaultPool.id].lpTokenBalance)
+    const userBalanceInVault = new BigNumber(
+      userStats[vaultPool.id] && userStats[vaultPool.id].lpTokenBalance,
+    )
 
     if (vaultPool && vaultPool.contractInstance) {
-      const userBalanceInPool = new BigNumber(userStats[vaultPool.id].totalStaked)
+      const userBalanceInPool = new BigNumber(
+        userStats[vaultPool.id] && userStats[vaultPool.id].totalStaked,
+      )
 
       const underlyingPoolBalanceForHolder = new BigNumber(totalSupply).isGreaterThan(0)
         ? new BigNumber(underlyingBalanceWithInvestment)
@@ -57,7 +56,6 @@ export const calculateFarmingBalance = async (pools, userStats, vaultSymbol, vau
 export const filterVaults = selectedVaults =>
   selectedVaults.filter(
     vaultSymbol =>
-      vaultSymbol !== FARM_USDC_TOKEN_SYMBOL &&
       vaultSymbol !== FARM_TOKEN_SYMBOL &&
       vaultSymbol !== FARM_WETH_TOKEN_SYMBOL &&
       vaultSymbol !== FARM_GRAIN_TOKEN_SYMBOL,

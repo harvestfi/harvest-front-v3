@@ -18,7 +18,7 @@ const recommendLinks = [
 
 const Chart = () => {
   const { pools, disableWallet } = usePools()
-  const { account, connected, connect } = useWallet()
+  const { account, connected, connectAction } = useWallet()
 
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
@@ -78,7 +78,7 @@ const Chart = () => {
             <ConnectButton
               color="connectwallet"
               onClick={() => {
-                connect()
+                connectAction()
               }}
               minWidth="190px"
               bordercolor={fontColor}

@@ -24,8 +24,9 @@ const FarmContent = styled.div`
   justify-content: space-between;
   padding: 70px 76px 94px 76px;
   margin: auto;
+  width: 100%;
 
-  @media screen and (min-width: 1920px) {
+  @media screen and (min-width: 1921px) {
     width: 1400px;
     height: fit-content;
   }
@@ -41,6 +42,7 @@ const FarmCompInner = styled.div`
     box-shadow: 0px 1px 3px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06);
   }
 
+  cursor: pointer;
   margin: 16px 0px;
   border-radius: 12px;
   width: 48%;
@@ -69,18 +71,31 @@ const FarmHeader = styled.div`
   background-size: 100%;
   padding: 93px 0 70px 75px;
   color: white;
+
+  @media screen and (max-width: 992px) {
+    padding: 93px 0 70px 0;
+  }
 `
 
 const Title = styled.div`
   font-size: 28px;
   line-height: 42px;
   font-weight: 600;
+
+  @media screen and (max-width: 992px) {
+    font-size: 20px;
+    text-align: center;
+  }
 `
 
 const Desc = styled.div`
   font-weight: 500;
   font-size: 15px;
   line-height: 22px;
+
+  @media screen and (max-width: 992px) {
+    text-align: center;
+  }
 `
 
 const ProfitShare = styled.div`

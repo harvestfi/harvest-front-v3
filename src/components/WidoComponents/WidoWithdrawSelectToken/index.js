@@ -11,10 +11,11 @@ const WidoWithdrawSelectToken = ({
   clickTokenId,
   setClickedTokenId,
   setPickedToken,
-  balanceList,
+  supTokenList,
+  soonToSupList,
   setWidoPartHeight,
 }) => {
-  const { borderColor, backColor, filterColor } = useThemeContext()
+  const { borderColor, backColor, filterColor, widoSelTokenSubTitleColor } = useThemeContext()
 
   useEffect(() => {
     if (selectTokenWido) {
@@ -44,12 +45,35 @@ const WidoWithdrawSelectToken = ({
         <FilterInput placeholder="Select for ticker or full name" />
       </NewLabel>
 
-      <NewLabel marginBottom="10px" heightDiv="75%">
-        <NewLabel weight="700" size="16px" height="21px" marginBottom="10px">
-          Tokens
+      <NewLabel marginBottom="10px" heightDiv="75%" scroll="scroll">
+        <NewLabel
+          weight="500"
+          size="16px"
+          height="21px"
+          color={widoSelTokenSubTitleColor}
+          marginBottom="10px"
+        >
+          Supported Tokens
         </NewLabel>
         <WidoWithdrawSelectTokenList
-          list={balanceList}
+          list={supTokenList}
+          clickId={clickTokenId}
+          setClickedId={setClickedTokenId}
+          setPickedToken={setPickedToken}
+          setSelectTokenWido={setSelectTokenWido}
+          setWidoPartHeight={setWidoPartHeight}
+        />
+        <NewLabel
+          weight="500"
+          size="16px"
+          height="21px"
+          color={widoSelTokenSubTitleColor}
+          marginBottom="10px"
+        >
+          Soon to be Supported
+        </NewLabel>
+        <WidoWithdrawSelectTokenList
+          list={soonToSupList}
           clickId={clickTokenId}
           setClickedId={setClickedTokenId}
           setPickedToken={setPickedToken}

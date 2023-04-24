@@ -1,8 +1,10 @@
+// import Onboard from '@web3-onboard/core'
+import injectedModule from '@web3-onboard/injected-wallets'
+import ledgerModule from '@web3-onboard/ledger'
 import { Web3ReactProvider } from '@web3-react/core'
+import { init, Web3OnboardProvider } from '@web3-onboard/react'
 import { ethers } from 'ethers'
 import React from 'react'
-import Onboard from '@web3-onboard/core'
-import injectedModule from '@web3-onboard/injected-wallets'
 import { ActionsProvider } from './Actions'
 import { ContractsProvider } from './Contracts'
 import { PoolsProvider } from './Pools'
@@ -12,23 +14,18 @@ import { VaultsProvider } from './Vault'
 import { WalletProvider } from './Wallet'
 
 const injected = injectedModule()
+const ledger = ledgerModule()
 
-const onboard = Onboard({
+const web3Onboard = init({
   // head to https://explorer.blocknative.com/account to sign up for free
   apiKey: process.env.REACT_APP_INFURA_KEY,
-  wallets: [injected],
+  wallets: [injected, ledger],
   chains: [
     {
       id: '0x1',
       token: 'ETH',
       label: 'Ethereum Mainnet',
-      rpcUrl: `https://mainnet.infura.io/v3/${process.env.REACT_APP_INFURA_KEY}`,
-    },
-    {
-      id: '0x5',
-      token: 'ETH',
-      label: 'Goerli',
-      rpcUrl: `https://goerli.infura.io/v3/${process.env.REACT_APP_INFURA_KEY}`,
+      rpcUrl: `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_INFURA_KEY}`,
     },
     {
       id: 11155111,
@@ -68,10 +65,12 @@ const onboard = Onboard({
     },
   ],
   appMetadata: {
-    name: 'Token Swap',
-    // icon: myIcon, // svg string icon
+    name: 'Harvest',
+    icon: 'https://harvest-finance-v3.netlify.app/static/media/ifarm.ffb37908.svg',
     // logo: myLogo, // svg string logo
-    description: 'Swap tokens for other tokens',
+    description: 'Home to Yield Farming',
+    gettingStartedGuide: 'https://harvest-finance.gitbook.io/harvest-finance',
+    explore: 'https://harvest-finance.gitbook.io/harvest-finance/how-it-works/contract-addresses-1',
     recommendedInjectedWallets: [
       { name: 'MetaMask', url: 'https://metamask.io' },
       { name: 'Coinbase', url: 'https://wallet.coinbase.com/' },
@@ -114,7 +113,7 @@ const onboard = Onboard({
       minimal: true,
     },
     mobile: {
-      position: 'topRight',
+      position: 'topLeft',
       enabled: true,
       minimal: true,
     },
@@ -154,17 +153,19 @@ const getLibrary = provider1 => {
 const Providers = ({ children }) => (
   <Web3ReactProvider getLibrary={getLibrary}>
     <ContractsProvider>
-      <WalletProvider onboard={onboard}>
-        <PoolsProvider>
-          <VaultsProvider>
-            <ActionsProvider>
-              <StatsProvider>
-                <ThemeProvider>{children}</ThemeProvider>
-              </StatsProvider>
-            </ActionsProvider>
-          </VaultsProvider>
-        </PoolsProvider>
-      </WalletProvider>
+      <Web3OnboardProvider web3Onboard={web3Onboard}>
+        <WalletProvider>
+          <PoolsProvider>
+            <VaultsProvider>
+              <ActionsProvider>
+                <StatsProvider>
+                  <ThemeProvider>{children}</ThemeProvider>
+                </StatsProvider>
+              </ActionsProvider>
+            </VaultsProvider>
+          </PoolsProvider>
+        </WalletProvider>
+      </Web3OnboardProvider>
     </ContractsProvider>
   </Web3ReactProvider>
 )

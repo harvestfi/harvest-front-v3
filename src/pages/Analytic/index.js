@@ -86,7 +86,7 @@ const dataSources = [
     id: 2,
     img: ExternalDuno,
     text: 'Dune Dashboard',
-    url: 'https://dune.com/shini/APWine-Dashboard',
+    url: 'https://dune.com/llama/Harvest-Finance',
     soon: false,
     background: 'rgba(241, 96, 63, 0.21)',
     color: '#F1603F',
@@ -382,7 +382,7 @@ const Analytic = () => {
                 </BigStatsExchange>
                 <ImgList>
                   {imgList.map((el, i) => (
-                    <a key={i} href={el.url}>
+                    <a key={i} href={el.url} target="_blank" rel="noopener noreferrer">
                       <img src={el.img} alt="" />
                     </a>
                   ))}
@@ -418,7 +418,7 @@ const Analytic = () => {
               <DataSourceInner>
                 <BigStatsExchange>External Data Sources</BigStatsExchange>
                 {dataSources.map((el, i) => (
-                  <DataSourceDirect key={i} href={el.url}>
+                  <DataSourceDirect key={i} href={el.url} target="_blank">
                     <div className="back">
                       <DataSource
                         background={el.background}

@@ -9,9 +9,10 @@ html {
   height: 100%;
 
   body {
-    font-family: 'DM Sans';
+    // font-family: 'DM Sans';
     // font-family: 'Work Sans';
     // font-family: 'Montserrat', 'Helvetica', sans-serif;
+    font-family: 'Inter', sans-serif;
     background-repeat: no-repeat;
     margin: 0px;
     // min-height: 100%;
@@ -31,7 +32,7 @@ html {
     @media screen and (max-width: 992px) {
       .offcanvas {
         display: block;
-        width: 60%;
+        width: 75%;
 
         .offcanvas-body {
           padding: 0;
@@ -93,7 +94,8 @@ html {
   .Toastify__toast--error, .Toastify__toast--success {
     box-shadow: 3px 3px black !important;
     color: white !important;
-    font-family: Work Sans;
+    // font-family: Work Sans;
+    font-family: 'Inter', sans-serif;
     font-size: 14px;
     padding: 20px;
     text-align: left;
@@ -271,7 +273,7 @@ html {
   }
 
   .numeric-list {
-    padding-left: 10px;
+    padding-left: 20px;
     margin: 5px 0;
     
     li {
@@ -308,6 +310,11 @@ html {
     }
   }
 
+  :root {
+    --onboard-primary-500: #ff9400;
+    --account-center-maximized-network-selector-color: #ff9400;
+  }
+
   .detail-box {
     display: flex; 
     align-items: center; 
@@ -318,17 +325,22 @@ html {
   }
 
   .detail-icon {
-    width: 15%;
+    width: 60px;
   }
 
   .detail-apy {
-    width: 15%; 
+    width: 80px; 
     font-size: 16px; 
-    font-weight: 700;
+    font-weight: 500;
   }
 
   .detail-desc {
     width: 36%; 
+    font-size: 13px; 
+    font-weight: 400;
+  }
+
+  .detail-desc-auto {
     font-size: 13px; 
     font-weight: 400;
   }
@@ -341,7 +353,7 @@ html {
   .detail-token {
     width: 34%; 
     font-size: 13px; 
-    font-weight: 700; 
+    font-weight: 500; 
     text-decoration: underline;
   }
 
@@ -401,7 +413,8 @@ const TableCell = styled.div`
 `
 
 const Monospace = styled.span`
-  font-family: Work Sans;
+  // font-family: Work Sans;
+  font-family: 'Inter', sans-serif;
   border-bottom: ${props => props.borderBottom || 'unset'};
 `
 
@@ -472,7 +485,8 @@ const NewBadgeLabel = styled.div`
   color: white;
   border-radius: 4px;
   margin-left: 5px;
-  font-family: Work Sans;
+  // font-family: Work Sans;
+  font-family: 'Inter', sans-serif;
   font-weight: 900;
   font-size: 11px;
   line-height: 13px;

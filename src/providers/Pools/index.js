@@ -22,10 +22,10 @@ import { getWeb3, getWeb3Local, newContractInstance } from '../../services/web3'
 import poolContractData from '../../services/web3/contracts/pool/contract.json'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import tokenMethods from '../../services/web3/contracts/token/methods'
-import { truncateNumberString } from '../../utils'
+import { isLedgerLive, truncateNumberString } from '../../utils'
 import { useContracts } from '../Contracts'
 import { useWallet } from '../Wallet'
-import { getLpTokenData, getUserStats } from './utils'
+import { getLpTokenData, getUserStats, pollUpdatedUserStats } from './utils'
 
 /* eslint-disable global-require */
 const { pools: defaultPools, tokens } = require('../../data')
@@ -63,124 +63,127 @@ const PoolsProvider = _ref => {
   const [finishPool, setFinishPool] = useState(false) // set true when getPoolsData success
   const formatPoolsData = useCallback(
     async apiData => {
-      const formattedPools = await Promise.all(
+      let formattedPools = await Promise.all(
         defaultPools.map(async pool => {
-          const web3Client = getWeb3(pool.chain, account)
-          const web3ClientLocal = getWeb3Local()
-          let rewardAPY = ['0'],
-            rewardAPR = ['0'],
-            autoStakeContractInstance = null,
-            autoStakeContractLocalInstance = null,
-            lpTokenData,
-            rewardPerToken = ['0'],
-            totalSupply = '0',
-            finishTime = '0',
-            totalValueLocked = '0',
-            tradingApy = '0',
-            boostedRewardAPY = '0',
-            lpTokenInstance = null,
-            lpTokenLocalInstance = null,
-            amountToStakeForBoost = null,
-            dataFetched = null
-          const contractInstance = await newContractInstance(
-            null,
-            pool.contractAddress,
-            poolContractData.abi,
-            web3Client,
-          )
-          const contractLocalInstance = await newContractInstance(
-            null,
-            pool.contractAddress,
-            poolContractData.abi,
-            web3ClientLocal,
-          )
-          const apiPool =
-            apiData && apiData.find(fetchedPool => fetchedPool && fetchedPool.id === pool.id)
-
-          if (apiPool) {
-            // eslint-disable-next-line prefer-destructuring
-            rewardAPY = map(apiPool.rewardAPY, apy => truncateNumberString(apy))
-            rewardAPR = map(apiPool.rewardAPR, apr => truncateNumberString(apr))
-            tradingApy = truncateNumberString(apiPool.tradingApy)
-            lpTokenData = apiPool.lpTokenData
-            rewardPerToken = apiPool.rewardPerToken
-            totalSupply = apiPool.totalSupply
-            finishTime = apiPool.finishTime
-            totalValueLocked = apiPool.totalValueLocked
-            boostedRewardAPY = apiPool.boostedRewardAPY
-            amountToStakeForBoost = apiPool.amountToStakeForBoost
-            lpTokenInstance = await newContractInstance(
+          if (!isLedgerLive() || (isLedgerLive() && pool.chain !== CHAINS_ID.ARBITRUM_ONE)) {
+            const web3Client = getWeb3(pool.chain, account)
+            const web3ClientLocal = getWeb3Local()
+            let rewardAPY = ['0'],
+              rewardAPR = ['0'],
+              autoStakeContractInstance = null,
+              autoStakeContractLocalInstance = null,
+              lpTokenData,
+              rewardPerToken = ['0'],
+              totalSupply = '0',
+              finishTime = '0',
+              totalValueLocked = '0',
+              tradingApy = '0',
+              boostedRewardAPY = '0',
+              lpTokenInstance = null,
+              lpTokenLocalInstance = null,
+              amountToStakeForBoost = null,
+              dataFetched = null
+            const contractInstance = await newContractInstance(
               null,
-              apiPool.lpTokenData.address,
-              tokenContract.abi,
-              web3Client,
-            )
-            lpTokenLocalInstance = await newContractInstance(
-              null,
-              apiPool.lpTokenData.address,
-              tokenContract.abi,
-              web3ClientLocal,
-            )
-            dataFetched = true
-          } else if (!pool.breadPage && !pool.fake) {
-            lpTokenData = await getLpTokenData(contractInstance, web3Client)
-            lpTokenInstance = await newContractInstance(
-              null,
-              lpTokenData.address,
-              tokenContract.abi,
-              web3Client,
-            )
-            lpTokenLocalInstance = await newContractInstance(
-              null,
-              lpTokenData.address,
-              tokenContract.abi,
-              web3ClientLocal,
-            )
-            dataFetched = false
-          }
-
-          if (pool.autoStakePoolAddress) {
-            autoStakeContractInstance = await newContractInstance(
-              null,
-              pool.autoStakePoolAddress,
+              pool.contractAddress,
               poolContractData.abi,
               web3Client,
             )
-            autoStakeContractLocalInstance = await newContractInstance(
+            const contractLocalInstance = await newContractInstance(
               null,
-              pool.autoStakePoolAddress,
+              pool.contractAddress,
               poolContractData.abi,
               web3ClientLocal,
             )
-          }
+            const apiPool =
+              apiData && apiData.find(fetchedPool => fetchedPool && fetchedPool.id === pool.id)
 
-          return {
-            ...pool,
-            rewardAPY,
-            amountToStakeForBoost,
-            totalRewardAPY: sumBy(rewardAPY, apy => Number(apy)),
-            rewardAPR,
-            tradingApy,
-            contractInstance,
-            contractLocalInstance,
-            autoStakeContractInstance,
-            autoStakeContractLocalInstance,
-            lpTokenData: {
-              ...lpTokenData,
-              instance: lpTokenInstance,
-              localInstance: lpTokenLocalInstance,
-            },
-            rewardPerToken,
-            totalSupply,
-            finishTime,
-            totalValueLocked,
-            loaded: true,
-            boostedRewardAPY,
-            dataFetched,
+            if (apiPool) {
+              // eslint-disable-next-line prefer-destructuring
+              rewardAPY = map(apiPool.rewardAPY, apy => truncateNumberString(apy))
+              rewardAPR = map(apiPool.rewardAPR, apr => truncateNumberString(apr))
+              tradingApy = truncateNumberString(apiPool.tradingApy)
+              lpTokenData = apiPool.lpTokenData
+              rewardPerToken = apiPool.rewardPerToken
+              totalSupply = apiPool.totalSupply
+              finishTime = apiPool.finishTime
+              totalValueLocked = apiPool.totalValueLocked
+              boostedRewardAPY = apiPool.boostedRewardAPY
+              amountToStakeForBoost = apiPool.amountToStakeForBoost
+              lpTokenInstance = await newContractInstance(
+                null,
+                apiPool.lpTokenData.address,
+                tokenContract.abi,
+                web3Client,
+              )
+              lpTokenLocalInstance = await newContractInstance(
+                null,
+                apiPool.lpTokenData.address,
+                tokenContract.abi,
+                web3ClientLocal,
+              )
+              dataFetched = true
+            } else if (!pool.breadPage && !pool.fake) {
+              lpTokenData = await getLpTokenData(contractInstance, web3Client)
+              lpTokenInstance = await newContractInstance(
+                null,
+                lpTokenData.address,
+                tokenContract.abi,
+                web3Client,
+              )
+              lpTokenLocalInstance = await newContractInstance(
+                null,
+                lpTokenData.address,
+                tokenContract.abi,
+                web3ClientLocal,
+              )
+              dataFetched = false
+            }
+
+            if (pool.autoStakePoolAddress) {
+              autoStakeContractInstance = await newContractInstance(
+                null,
+                pool.autoStakePoolAddress,
+                poolContractData.abi,
+                web3Client,
+              )
+              autoStakeContractLocalInstance = await newContractInstance(
+                null,
+                pool.autoStakePoolAddress,
+                poolContractData.abi,
+                web3ClientLocal,
+              )
+            }
+
+            return {
+              ...pool,
+              rewardAPY,
+              amountToStakeForBoost,
+              totalRewardAPY: sumBy(rewardAPY, apy => Number(apy)),
+              rewardAPR,
+              tradingApy,
+              contractInstance,
+              contractLocalInstance,
+              autoStakeContractInstance,
+              autoStakeContractLocalInstance,
+              lpTokenData: {
+                ...lpTokenData,
+                instance: lpTokenInstance,
+                localInstance: lpTokenLocalInstance,
+              },
+              rewardPerToken,
+              totalSupply,
+              finishTime,
+              totalValueLocked,
+              loaded: true,
+              boostedRewardAPY,
+              dataFetched,
+            }
           }
+          return null
         }),
       )
-
+      formattedPools = formattedPools.filter(pool => pool !== null)
       // if (account) {
       loadedUserPoolsWeb3Provider.current = true
       // }
@@ -195,7 +198,11 @@ const PoolsProvider = _ref => {
     try {
       const apiResponse = await axios.get(POOLS_API_ENDPOINT)
       const apiData = get(apiResponse, 'data')
-      newPools = await formatPoolsData([...apiData.eth, ...apiData.matic, ...apiData.arbitrum])
+      if (isLedgerLive()) {
+        newPools = await formatPoolsData([...apiData.eth, ...apiData.matic])
+      } else {
+        newPools = await formatPoolsData([...apiData.eth, ...apiData.matic, ...apiData.arbitrum])
+      }
       setDisableWallet(false)
     } catch (err) {
       console.error(err)
@@ -230,7 +237,8 @@ const PoolsProvider = _ref => {
         account !== prevAccount &&
         account &&
         !loadedUserPoolsWeb3Provider.current &&
-        finishPool
+        finishPool &&
+        !isLedgerLive()
       ) {
         const setCurrentPoolsWithUserProvider = async () => {
           const poolsWithUpdatedProvider = await formatPoolsData(pools)
@@ -238,6 +246,17 @@ const PoolsProvider = _ref => {
         }
 
         setCurrentPoolsWithUserProvider()
+      } else if (
+        account !== prevAccount &&
+        account &&
+        !loadedUserPoolsWeb3Provider.current &&
+        finishPool &&
+        isLedgerLive()
+      ) {
+        const udpatePoolsData = async () => {
+          await getPoolsData()
+        }
+        udpatePoolsData()
       }
     },
     [account, pools],
@@ -258,10 +277,13 @@ const PoolsProvider = _ref => {
         const loadInitialStakedAndUnstakedBalances = async () => {
           loadedInitialStakedAndUnstakedBalances.current = true
           const stats = {}
+          const chains = isLedgerLive()
+            ? [CHAINS_ID.ETH_MAINNET, CHAINS_ID.MATIC_MAINNET]
+            : selChain
           // selChain.forEach( async (ch)=> {
           /* eslint-disable no-await-in-loop */
-          for (let i = 0; i < selChain.length; i += 1) {
-            const ch = selChain[i]
+          for (let i = 0; i < chains.length; i += 1) {
+            const ch = chains[i]
             const readerType = getReader(ch, contracts)
             const poolAddresses = []
             const vaultAddresses = []
@@ -389,23 +411,23 @@ const PoolsProvider = _ref => {
           if (!isEqual(fetchedStats, currentStats[pool.id])) {
             stats[pool.id] = fetchedStats
           } else {
-            // await pollUpdatedUserStats(
-            //   getUserStats(
-            //     contractInstance,
-            //     tokenInstance,
-            //     pool.contractAddress,
-            //     pool.autoStakePoolAddress,
-            //     selectedAccount,
-            //     autoStakeContractInstance,
-            //   ),
-            //   currentStats,
-            //   () => {
-            //     console.error(`Something went wrong during the fetching of ${pool.id} user stats`)
-            //   },
-            //   updatedStats => {
-            //     stats[pool.id] = updatedStats
-            //   },
-            // )
+            await pollUpdatedUserStats(
+              getUserStats(
+                contractInstance,
+                tokenInstance,
+                pool.contractAddress,
+                pool.autoStakePoolAddress,
+                selectedAccount,
+                autoStakeContractInstance,
+              ),
+              currentStats,
+              () => {
+                console.error(`Something went wrong during the fetching of ${pool.id} user stats`)
+              },
+              updatedStats => {
+                stats[pool.id] = updatedStats
+              },
+            )
           }
           // }
         }),

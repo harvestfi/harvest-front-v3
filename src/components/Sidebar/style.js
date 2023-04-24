@@ -16,7 +16,7 @@ const Container = styled.div`
   min-width: ${props => props.width};
   max-width: 100%;
   position: fixed;
-  z-index: 100;
+  z-index: 10;
   padding: 45px 25px 0px;
 
   @media screen and (max-width: 992px) {
@@ -99,6 +99,10 @@ const LinkContainer = styled.div`
   @media screen and (min-width: 992px) {
     display: flex;
   }
+
+  @media screen and (max-height: 650px) {
+    margin-bottom: 14px;
+  }
 `
 
 const Link = styled.button`
@@ -108,7 +112,6 @@ const Link = styled.button`
   font-weight: 500;
   line-height: 21px;
   transition: 0.25s;
-  line-height: ${props => (props.subItem ? '22px' : '16px')};
   display: flex;
   align-items: center;
   justify-content: start;
@@ -156,6 +159,12 @@ const Link = styled.button`
     color: ${props => props.activeColor};
     font-weight: bold;
   }
+
+  @media screen and (max-height: 650px) {
+    font-size: 12px;
+    font-weight: 500;
+    line-height: 16px;
+  }
 `
 
 const MiddleActionsContainer = styled.div`
@@ -192,7 +201,6 @@ const Follow = styled.div`
   padding-top: 16px;
   display: flex;
   justify-content: space-between;
-  width: 100%;
 
   @media screen and (max-width: 992px) {
     display: none;
@@ -240,10 +248,11 @@ const ConnectButtonStyle = styled.button`
 
   @media screen and (max-width: 992px) {
     display: flex;
+    justify-content: center;
     align-items: center;
-    margin: 43px 0 20px 13px;
+    margin: 0 0 20px 13px;
 
-    width: 85%;
+    // width: 85%;
     ${props =>
       props.connected
         ? `
@@ -275,6 +284,12 @@ const AboutHarvest = styled.div`
   padding-left: 13px;
 
   height: 30px;
+
+  @media screen and (max-width: 992px) {
+    margin-bottom: 24px;
+    margin-top: 0;
+    height: 0;
+  }
 `
 
 const MobileView = styled.div`
@@ -291,11 +306,36 @@ const MobileView = styled.div`
     display: flex;
     justify-content: space-between;
     margin-bottom: 15px;
+    margin-top: 6px;
   }
 `
 
 const MobileConnectBtn = styled.div`
   margin-top: 6px;
+  margin-bottom: 6px;
+  display: flex;
+  padding: 7px 12px;
+  background: white;
+
+  border: 0.5px solid #d0d5dd;
+  box-shadow: 0px 0.5px 1px rgba(16, 24, 40, 0.05);
+  border-radius: 4.5px;
+
+  ${props =>
+    props.connected
+      ? `
+      box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05), 0px 0px 0px 4px #f2f4f7;
+      img.connect-wallet {
+        filter: brightness(0) saturate(100%) invert(69%) sepia(55%) saturate(4720%) hue-rotate(110deg)
+          brightness(91%) contrast(86%);
+      }
+      `
+      : `
+      `}
+
+  .connect-wallet {
+    margin-right: 8px;
+  }
 `
 
 const MobileActionsContainer = styled.div`
@@ -308,6 +348,10 @@ const MobileActionsContainer = styled.div`
   flex-direction: column;
   animation: fadeIn;
   animation-duration: 0.45s;
+
+  @media screen and (max-width: 992px) {
+    padding: 0 36px 15px 11px;
+  }
 `
 
 const MobileLinksContainer = styled.div`
@@ -334,7 +378,7 @@ const MobileLinksContainer = styled.div`
 const MobileLinkContainer = styled.div`
   display: flex;
   position: relative;
-  padding-left: 20px;
+  padding-left: 30px;
   margin-bottom: 24px;
   border-radius: 10px;
 
@@ -347,7 +391,7 @@ const MobileLink = styled.button`
   font-size: 16px;
   font-weight: 700;
   line-height: 19px;
-  align-items: center;
+  align-items: end;
   justify-content: start;
   color: ${props => props.fontColor};
   background-color: transparent;
@@ -379,7 +423,7 @@ const MobileFollow = styled.div`
   justify-content: space-between;
   width: 90%;
   position: absolute;
-  bottom: 0;
+  bottom: 5px;
 `
 
 const ConnectAvatar = styled.div`
@@ -596,6 +640,14 @@ const OffcanvasDiv = styled(Offcanvas)`
   a.logo {
     color: ${props => props.fontcolor};
   }
+
+  .offcanvas-header {
+    justify-content: end;
+
+    .btn-close {
+      filter: ${props => props.filtercolor};
+    }
+  }
 `
 
 const ProfitSharing = styled.div`
@@ -607,6 +659,20 @@ const ProfitSharing = styled.div`
   padding: 15px 18px;
   border-radius: 13px;
   margin-top: 50px;
+
+  @media screen and (max-width: 992px) {
+    display: none;
+  }
+
+  @media screen and (max-height: 900px) {
+    display: none;
+  }
+`
+
+const Divider = styled.div`
+  height: ${props => (props.height ? props.height : '20px')};
+  background: ${props => (props.backColor ? props.backColor : 'unset')};
+  margin-top: ${props => (props.marginTop ? props.marginTop : 'unset')};
 
   @media screen and (max-width: 992px) {
     display: none;
@@ -657,8 +723,33 @@ const ChartDiv = styled.div`
 
 const BottomPart = styled.div`
   position: absolute;
-  bottom: 40px;
+  bottom: 20px;
   width: 270px;
+`
+
+const MobileProfitSharing = styled.div`
+  background: url(${GradientBack});
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  position: relative;
+  padding: 15px 18px;
+  border-radius: 13px;
+  margin: 50px 15px 0;
+
+  @media screen and (min-width: 992px) {
+    display: none;
+  }
+`
+
+const ProfitPart = styled.div`
+  position: absolute;
+  bottom: 60px;
+  width: 100%;
+
+  @media screen and (max-height: 670px) {
+    display: none;
+  }
 `
 
 export {
@@ -695,4 +786,7 @@ export {
   TopTitle,
   ChartDiv,
   BottomPart,
+  MobileProfitSharing,
+  ProfitPart,
+  Divider,
 }

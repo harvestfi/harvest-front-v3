@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js'
+import { useSetChain } from '@web3-onboard/react'
 import CoinGecko from 'coingecko-api'
 import { get, isEmpty } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
@@ -14,6 +15,7 @@ import {
   FARM_TOKEN_SYMBOL,
   fromWEI,
   IFARM_TOKEN_SYMBOL,
+  POOL_BALANCES_DECIMALS,
   WIDO_BALANCES_DECIMALS,
 } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -21,6 +23,7 @@ import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
 import { fromWei } from '../../../services/web3'
 import { formatNumberWido } from '../../../utils'
+import { CHAINS_ID } from '../../../data/constants'
 import AnimatedDots from '../../AnimatedDots'
 import Button from '../../Button'
 import {
@@ -59,6 +62,22 @@ const getPrice = async () => {
   }
 }
 
+const getChainName = chain => {
+  let chainName = 'Ethereum'
+  switch (chain) {
+    case CHAINS_ID.MATIC_MAINNET:
+      chainName = 'Polygon'
+      break
+    case CHAINS_ID.ARBITRUM_ONE:
+      chainName = 'Arbitrum'
+      break
+    default:
+      chainName = 'Ethereum'
+      break
+  }
+  return chainName
+}
+
 const WidoPoolDepositBase = ({
   selectTokenWido,
   setSelectTokenWido,
@@ -87,7 +106,7 @@ const WidoPoolDepositBase = ({
 }) => {
   /* eslint-disable global-require */
   const { tokens } = require('../../../data')
-  const { account, connect, balances } = useWallet()
+  const { account, connectAction, balances } = useWallet()
   const { vaultsData } = useVaults()
   const [farmInfo, setFarmInfo] = useState(null)
   const [price, setPrice] = useState(0)
@@ -106,6 +125,13 @@ const WidoPoolDepositBase = ({
 
   const [totalValue, setTotalValue] = useState(0)
   const [underlyingValue, setUnderlyingValue] = useState(0)
+
+  const [
+    {
+      connectedChain, // the current chain the user's wallet is connected to
+    },
+    setChain, // function to call to initiate user to switch chains in their wallet
+  ] = useSetChain()
 
   useEffect(() => {
     const getPriceValue = async () => {
@@ -158,23 +184,44 @@ const WidoPoolDepositBase = ({
     }
   }, [account, vaultsData, underlyingValue, tokens])
 
+  const tokenChain = token.chain || token.data.chain
+  const curChain = connectedChain ? parseInt(connectedChain.id, 16).toString() : ''
+  const [depositName, setDepositName] = useState('Deposit')
+
+  useEffect(() => {
+    if (account) {
+      if (curChain !== tokenChain) {
+        const chainName = getChainName(tokenChain)
+        setDepositName(`Switch to ${chainName}`)
+      } else {
+        setDepositName('Deposit')
+      }
+    }
+  }, [account, curChain, tokenChain])
+
   const onClickDeposit = async () => {
-    if (!legacyStaking && pickedToken.symbol === 'Select Token') {
-      toast.error('Please select token to deposit!')
-      return
-    }
-    if (new BigNumber(inputAmount).isGreaterThan(balance)) {
-      toast.error('Please input sufficient balance!')
-      return
-    }
-    if (new BigNumber(inputAmount).isEqualTo(0)) {
-      toast.error('Please input balance to deposit!')
-      return
-    }
-    if (!legacyStaking) {
-      setDepositWido(true)
+    if (curChain !== tokenChain) {
+      const chainHex = `0x${Number(tokenChain).toString(16)}`
+      await setChain({ chainId: chainHex })
     } else {
-      setFinalStep(true)
+      if (!legacyStaking && pickedToken.symbol === 'Select Token') {
+        toast.error('Please select token to deposit!')
+        return
+      }
+      if (new BigNumber(inputAmount).isGreaterThan(balance)) {
+        toast.error('Please input sufficient balance!')
+        return
+      }
+      if (new BigNumber(inputAmount).isEqualTo(0)) {
+        toast.error('Please input balance to deposit!')
+        return
+      }
+
+      if (!legacyStaking) {
+        setDepositWido(true)
+      } else {
+        setFinalStep(true)
+      }
     }
   }
 
@@ -192,11 +239,11 @@ const WidoPoolDepositBase = ({
   }, [legacyStaking, balanceList, vaultsData, account, setBalance, setPickedToken])
 
   const onInputBalance = e => {
-    setInputAmount(e.currentTarget.value)
+    setInputAmount(formatNumberWido(e.currentTarget.value, POOL_BALANCES_DECIMALS))
     setUsdValue(
       formatNumberWido(
         e.currentTarget.value * (legacyStaking ? farmInfo.usdPrice : pickedToken.usdPrice || 1),
-        WIDO_BALANCES_DECIMALS,
+        2,
       ),
     )
   }
@@ -237,7 +284,7 @@ const WidoPoolDepositBase = ({
               onClick={async () => {
                 setSelectTokenWido(true)
                 if (!account) {
-                  await connect()
+                  await connectAction()
                 }
               }}
               fontColor={widoTagActiveFontColor}
@@ -266,14 +313,12 @@ const WidoPoolDepositBase = ({
             const balanceAmount = !legacyStaking
               ? balance
               : FARMBalance && fromWEI(FARMBalance, tokens[IFARM_TOKEN_SYMBOL].decimals)
-            setInputAmount(balanceAmount)
+            setInputAmount(formatNumberWido(balanceAmount, POOL_BALANCES_DECIMALS))
 
-            setUsdValue(
-              formatNumberWido(
-                balanceAmount * (legacyStaking ? farmInfo.usdPrice : pickedToken.usdPrice || 1),
-                WIDO_BALANCES_DECIMALS,
-              ),
-            )
+            const usdAmount = legacyStaking
+              ? balanceAmount * farmInfo.usdPrice
+              : pickedToken.usdValue
+            setUsdValue(formatNumberWido(usdAmount, 2))
           }
         }}
       >
@@ -314,7 +359,7 @@ const WidoPoolDepositBase = ({
           onClickDeposit()
         }}
       >
-        Deposit
+        {depositName}
         <img src={ChevronRightIcon} alt="" />
       </Button>
 

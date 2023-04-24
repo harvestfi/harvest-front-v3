@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import GradientBack from '../../assets/images/logos/gradient.svg'
 
-const ProfitSharing = styled.a`
+const ProfitSharing = styled.div`
   background: url(${GradientBack});
   text-decoration: none;
   background-position: center;
@@ -15,6 +15,10 @@ const ProfitSharing = styled.a`
   display: flex;
   flex-direction: column;
   justify-content: center;
+
+  &:hover {
+    box-shadow: 4px 3px 3px rgba(16, 24, 40, 0.1), 3px 3px 4px rgba(16, 24, 40, 0.06);
+  }
 `
 
 const ProfitBack = styled.img`
@@ -44,7 +48,11 @@ const BottomDiv = styled.div`
   .chart {
     position: absolute;
     bottom: -50px;
-    right: 0;
+    right: 0px;
+
+    @media screen and (max-width: 1280px) {
+      right: -15px;
+    }
   }
 `
 

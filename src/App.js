@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-d
 import { ToastContainer } from 'react-toastify'
 import axios from 'axios'
 import { get } from 'lodash'
-import Home from './pages/Home'
-import Dashboard from './pages/Dashboard'
+// import Home from './pages/Home'
+import Portfolio from './pages/Portfolio'
 import Farm from './pages/Farm'
 import Analytic from './pages/Analytic'
 import FAQ from './pages/FAQ'
@@ -88,8 +88,8 @@ const App = () => (
           <Route exact path={ROUTES.MAIN}>
             <Redirect to={ROUTES.HOME} />
           </Route>
-          <Route exact path={ROUTES.HOME} component={Home} />
-          <Route exact path={ROUTES.DASHBOARD} component={Dashboard} />
+          <Route exact path={ROUTES.HOME} component={Farm} />
+          <Route exact path={ROUTES.PORTFOLIO} component={Portfolio} />
           <Route exact path={ROUTES.FARM} component={Farm} />
           <Route exact path={ROUTES.ANALYTIC} component={Analytic} />
           <Route path={ROUTES.WIDODETAIL} component={WidoDetail} />

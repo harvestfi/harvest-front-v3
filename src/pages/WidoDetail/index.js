@@ -13,11 +13,11 @@ import POLYGON from '../../assets/images/chains/polygon.svg'
 import APY from '../../assets/images/logos/earn/apy.svg'
 import Back from '../../assets/images/logos/earn/back.svg'
 import Daily from '../../assets/images/logos/earn/daily.svg'
-import ExternalLink from '../../assets/images/logos/earn/externallink.svg'
+// import ExternalLink from '../../assets/images/logos/earn/externallink.svg'
 import Info from '../../assets/images/logos/earn/info.svg'
-import StrategyIcon from '../../assets/images/logos/earn/strategyicon.svg'
+// import StrategyIcon from '../../assets/images/logos/earn/strategyicon.svg'
 import TVL from '../../assets/images/logos/earn/tvl.svg'
-import VaultIcon from '../../assets/images/logos/earn/vaulticon.svg'
+// import VaultIcon from '../../assets/images/logos/earn/vaulticon.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import FarmDetailChart from '../../components/FarmDetailChart'
 import VaultPanelActionsFooter from '../../components/VaultComponents/VaultPanelActions/VaultPanelActionsFooter'
@@ -40,10 +40,10 @@ import {
   DECIMAL_PRECISION,
   FARM_GRAIN_TOKEN_SYMBOL,
   FARM_TOKEN_SYMBOL,
-  FARM_USDC_TOKEN_SYMBOL,
   FARM_WETH_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
+  fromWEI,
 } from '../../constants'
 import { addresses } from '../../data'
 import { usePools } from '../../providers/Pools'
@@ -146,7 +146,6 @@ const WidoDetail = () => {
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )
-  const farmUsdcPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_USDC_POOL_ID)
   const farmWethPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_WETH_POOL_ID)
   const farmGrainPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_GRAIN_POOL_ID)
 
@@ -185,17 +184,8 @@ const WidoDetail = () => {
         isNew: tokens[FARM_GRAIN_TOKEN_SYMBOL].isNew,
         balance: 'FARM_GRAIN_LP',
       },
-      [FARM_USDC_TOKEN_SYMBOL]: {
-        liquidityPoolVault: true,
-        inactive: true,
-        tokenNames: ['FARM', 'USDC'],
-        data: farmUsdcPool,
-        logoUrl: ['./icons/farm.svg', './icons/usdc.svg'],
-        rewardSymbol: FARM_TOKEN_SYMBOL,
-        isNew: tokens[FARM_USDC_TOKEN_SYMBOL].isNew,
-      },
     }),
-    [tokens, farmGrainPool, farmWethPool, farmUsdcPool, farmProfitSharingPool, profitShareAPY],
+    [tokens, farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
   )
 
   const groupOfVaults = { ...vaultsData, ...poolVaults }
@@ -274,10 +264,8 @@ const WidoDetail = () => {
                 ) : null
               ) : (
                 <>
-                  <b>
-                    {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
-                    &nbsp;
-                  </b>
+                  {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
+                  &nbsp;
                 </>
               )}
             </RewardsContainer>
@@ -331,7 +319,7 @@ const WidoDetail = () => {
                 'Inactive'
               ) : null
             ) : (
-              <b>{apyDaily}% &nbsp;</b>
+              <>{apyDaily}% &nbsp;</>
             )}
           </RewardsContainer>
         ) : (
@@ -388,19 +376,50 @@ const WidoDetail = () => {
   const [quoteValueWith, setQuoteValueWith] = useState(null)
 
   const [balanceList, setBalanceList] = useState([])
-  const [tokenList, setTokenList] = useState([])
+  const [supTokenList, setSupTokenList] = useState([])
+  const [soonToSupList, setSoonToSupList] = useState([])
 
   const rewardSymbol = isSpecialVault ? id : token.apyTokenSymbols[0]
+  const toTokenAddress = token.vaultAddress || token.tokenAddress
   useEffect(() => {
     const getTokenBalance = async () => {
       try {
-        if (chain) {
+        if (chain && account) {
           const curBalances = await getBalances(account, [chain.toString()])
           setBalanceList(curBalances)
           const supList = await getSupportedTokens({
             chainId: [chain],
+            toToken: toTokenAddress,
+            toChainId: chain,
           })
-          setTokenList(supList)
+
+          const soonSupList = [],
+            supportedList = []
+          for (let i = 0; i < supList.length; i += 1) {
+            const supToken = curBalances.find(el => el.address === supList[i].address)
+            if (supToken) {
+              supList[i].balance = supToken.balance
+              supList[i].usdValue = supToken.balanceUsdValue
+              supportedList.push(supList[i])
+            } else {
+              supList[i].balance = '0'
+              supList[i].usdValue = '0'
+              supportedList.push(supList[i])
+            }
+          }
+          const supportedResultList = supportedList.sort(function reducer(a, b) {
+            return Number(fromWEI(b.balance, b.decimals)) - Number(fromWEI(a.balance, a.decimals))
+          })
+
+          for (let j = 0; j < curBalances.length; j += 1) {
+            const supToken = supList.find(el => el.address === curBalances[j].address)
+            if (!supToken) {
+              soonSupList.push(curBalances[j])
+            }
+          }
+
+          setSoonToSupList(soonSupList)
+          setSupTokenList(supportedResultList)
         }
       } catch (err) {
         console.error(err)
@@ -408,7 +427,7 @@ const WidoDetail = () => {
     }
 
     getTokenBalance()
-  }, [account, chain, id])
+  }, [account, chain, id, toTokenAddress])
 
   const {
     backColor,
@@ -451,7 +470,6 @@ const WidoDetail = () => {
       }),
     [id, tokens],
   )
-
   const firstUserPoolsLoad = useRef(true)
   const firstWalletBalanceLoad = useRef(true)
 
@@ -527,7 +545,7 @@ const WidoDetail = () => {
           <FlexTopDiv>
             <BackBtnRect
               onClick={() => {
-                push('/farm')
+                push('/home')
               }}
               backcolor={widoBackBtnBackColor}
               backhovercolor={widoBackBtnBackHoverColor}
@@ -537,7 +555,7 @@ const WidoDetail = () => {
             {logoUrl.map((el, i) => (
               <LogoImg
                 className="logo"
-                zIndex={100 - i}
+                zIndex={10 - i}
                 src={el.slice(1, el.length)}
                 key={i}
                 height={32}
@@ -557,7 +575,7 @@ const WidoDetail = () => {
             <FlexTopDiv>
               <BackBtnRect
                 onClick={() => {
-                  push('/farm')
+                  push('/home')
                 }}
                 backcolor={widoBackBtnBackColor}
                 backhovercolor={widoBackBtnBackHoverColor}
@@ -567,7 +585,7 @@ const WidoDetail = () => {
               {logoUrl.map((el, i) => (
                 <LogoImg
                   className="logo"
-                  zIndex={100 - i}
+                  zIndex={10 - i}
                   src={el.slice(1, el.length)}
                   key={i}
                   height={32}
@@ -780,15 +798,12 @@ const WidoDetail = () => {
               backColor={backColor}
               borderColor={borderColor}
             >
-              <NewLabel weight={700} size="16px" height="21px">
+              <NewLabel weight={700} size="16px" height="21px" marginBottom="12px">
                 Farm Details
               </NewLabel>
               <DescInfo fontColor={fontColor}>
                 {ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)}
               </DescInfo>
-              {/* <DescInfo>
-              The vault deposits the user’s USDC-ETH in a CronaSwap farm, earning the platform’s govemance token. Earned Token is swapped for and in order to acquire more of the same LP.
-              </DescInfo> */}
               <FlexDiv className="address" marginTop="15px">
                 {token.vaultAddress && (
                   <InfoLabel
@@ -801,11 +816,11 @@ const WidoDetail = () => {
                     size="12px"
                     height="16px"
                   >
-                    <img className="icon" src={VaultIcon} alt="" />
+                    {/* <img className="icon" src={VaultIcon} alt="" /> */}
                     <NewLabel size="12px" weight={isMobile ? 400 : 600} height="16px" self="center">
                       Vault Address
                     </NewLabel>
-                    <img className="external-link" src={ExternalLink} alt="" />
+                    {/* <img className="external-link" src={ExternalLink} alt="" /> */}
                   </InfoLabel>
                 )}
                 {vaultPool.autoStakePoolAddress && (
@@ -819,11 +834,11 @@ const WidoDetail = () => {
                     size="12px"
                     height="16px"
                   >
-                    <img className="icon" src={StrategyIcon} alt="" />
+                    {/* <img className="icon" src={StrategyIcon} alt="" /> */}
                     <NewLabel size="12px" weight={isMobile ? 400 : 600} height="16px" self="center">
                       Strategy Address
                     </NewLabel>
-                    <img className="external-link" src={ExternalLink} alt="" />
+                    {/* <img className="external-link" src={ExternalLink} alt="" /> */}
                   </InfoLabel>
                 )}
                 <InfoLabel
@@ -838,11 +853,11 @@ const WidoDetail = () => {
                   size="12px"
                   height="16px"
                 >
-                  <img className="icon" src={VaultIcon} alt="" />
+                  {/* <img className="icon" src={VaultIcon} alt="" /> */}
                   <NewLabel size="12px" weight={isMobile ? 400 : 600} height="16px" self="center">
                     Pool Address
                   </NewLabel>
-                  <img className="external-link" src={ExternalLink} alt="" />
+                  {/* <img className="external-link" src={ExternalLink} alt="" /> */}
                 </InfoLabel>
               </FlexDiv>
             </HalfInfo>
@@ -936,6 +951,7 @@ const WidoDetail = () => {
                     multipleAssets={multipleAssets}
                     loaded={loaded}
                     loadingBalances={loadingLpStats || loadingFarmingBalance}
+                    supTokenList={supTokenList}
                   />
                 )}
 
@@ -946,7 +962,8 @@ const WidoDetail = () => {
                   setClickedTokenId={setClickedTokenIdDepo}
                   setPickedToken={setPickedTokenDepo}
                   setBalance={setBalanceDepo}
-                  balanceList={balanceList}
+                  supTokenList={supTokenList}
+                  soonToSupList={soonToSupList}
                   setWidoPartHeight={setWidoPartHeight}
                 />
 
@@ -963,7 +980,7 @@ const WidoDetail = () => {
                   slippagePercentage={slippagePercentDepo}
                   inputAmount={inputAmountDepo}
                   token={token}
-                  tokenList={tokenList}
+                  balanceList={balanceList}
                   useIFARM={useIFARM}
                   symbol={symbolDepo}
                   quoteValue={quoteValueDepo}
@@ -1069,6 +1086,7 @@ const WidoDetail = () => {
                     setPendingAction={setPendingAction}
                     multipleAssets={multipleAssets}
                     token={token}
+                    supTokenList={supTokenList}
                   />
                 )}
 
@@ -1079,7 +1097,8 @@ const WidoDetail = () => {
                   setClickedTokenId={setClickedTokenIdWith}
                   pickedToken={pickedTokenWith}
                   setPickedToken={setPickedTokenWith}
-                  balanceList={balanceList}
+                  supTokenList={supTokenList}
+                  soonToSupList={soonToSupList}
                   setWidoPartHeight={setWidoPartHeight}
                 />
 
@@ -1096,7 +1115,7 @@ const WidoDetail = () => {
                   token={token}
                   unstakeBalance={unstakeBalance}
                   slippagePercentage={slippagePercentWith}
-                  tokenList={tokenList}
+                  balanceList={balanceList}
                   useIFARM={useIFARM}
                   symbol={symbolWith}
                   quoteValue={quoteValueWith}

@@ -155,7 +155,7 @@ const TokenSelect = styled.button`
   font-size: 14px;
   line-height: 24px;
   text-align: right;
-  color: ${props => props.fontColor};
+  color: #344054;
 
   display: flex;
   align-items: center;

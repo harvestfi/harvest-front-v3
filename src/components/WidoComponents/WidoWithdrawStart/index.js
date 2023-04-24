@@ -48,7 +48,7 @@ const WidoWithdrawStart = ({
   token,
   unstakeBalance,
   slippagePercentage,
-  tokenList,
+  balanceList,
   useIFARM,
   symbol,
   quoteValue,
@@ -96,7 +96,7 @@ const WidoWithdrawStart = ({
           )
           setQuoteValue(quoteResult)
 
-          let curToken = tokenList.filter(el => el.symbol === pickedToken.symbol)
+          let curToken = balanceList.filter(el => el.symbol === pickedToken.symbol)
           curToken = curToken[0]
 
           const fromInfoTemp =
@@ -165,7 +165,7 @@ const WidoWithdrawStart = ({
     unstakeBalance,
     withdrawWido,
     slippagePercentage,
-    tokenList,
+    balanceList,
     token,
     setQuoteValue,
   ])

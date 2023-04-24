@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 const DetailView = styled.div`
   width: 100%;
-  // margin-left: 320px;
+  margin-left: 320px;
   background: ${props => props.pageBackColor};
   color: ${props => props.fontColor};
   transition: 0.25s;
@@ -25,6 +25,7 @@ const Inner = styled.div`
 
   @media screen and (max-width: 992px) {
     padding: 20px 10px 10px;
+    height: 100%;
   }
 `
 
@@ -225,7 +226,7 @@ const HalfInfo = styled.div`
   transition: 0.25s;
   border-radius: 10px;
   margin-bottom: 15px;
-  font-family: 'DM Sans';
+  font-family: 'Inter', sans-serif;
 `
 
 const TotalValueFarm = styled.div`
@@ -265,7 +266,7 @@ const BackArrow = styled.img`
 `
 
 const ValueShow = styled.div`
-  font-weight: 700;
+  font-weight: 500;
   font-size: 16px;
   line-height: 21px;
   text-align: left;
@@ -277,9 +278,9 @@ const ValueShow = styled.div`
 `
 
 const DescInfo = styled.div`
+  font-family: 'Inter', sans-serif;
   font-weight: 400;
-  font-size: 15px;
-  line-height: 23px;
+  font-size: 13px;
   display: flex;
   align-items: center;
   font-style: normal;
@@ -318,13 +319,13 @@ const InfoLabel = styled.a`
   `
       : ''}
   margin-right: 15px;
-  background: #ced3e6;
-  border-radius: 6px;
+  background: #f9fafb;
+  border-radius: 8px;
   text-decoration: none;
   padding: 9px 17px;
   align-self: center;
   position: relative;
-  color: #1f2937;
+  color: #15202b;
 
   img.icon {
     margin-right: 5px;
@@ -565,7 +566,7 @@ const InfoIcon = styled.img`
 `
 
 const Monospace = styled.span`
-  font-family: Work Sans;
+  font-family: 'Inter', sans-serif;
   border-bottom: ${props => props.borderBottom || 'unset'};
 `
 

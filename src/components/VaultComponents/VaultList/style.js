@@ -6,14 +6,15 @@ const Container = styled.div`
   overflow: hidden;
 
   margin-bottom: 20px;
-  padding: 70px 66px 56px 66px;
+  padding: 70px 76px 56px;
 
-  width: 90%;
+  width: 100%;
 
   position: relative;
 
-  @media screen and (max-width: 860px) {
-    padding: 34px 27px;
+  @media screen and (max-width: 992px) {
+    padding: 20px 0px;
+    width: 93%;
   }
 `
 
@@ -173,6 +174,7 @@ const MobileListFilter = styled.div`
 
         img.sort {
           margin-right: 6px;
+          filter: ${props => props.filterColor};
         }
 
         img.narrow {

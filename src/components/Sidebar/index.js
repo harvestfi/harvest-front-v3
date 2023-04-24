@@ -2,37 +2,37 @@ import React, { Fragment, useEffect, useMemo, useState } from 'react'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import Analytics from '../../assets/images/logos/sidebar/analytics.svg'
-import arbitrum from '../../assets/images/logos/sidebar/arbitrum.svg'
-import ChangeWalletIcon from '../../assets/images/logos/sidebar/change_wallet.svg'
 import ConnectDisableIcon from '../../assets/images/logos/sidebar/connect-disable.svg'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 import connectAvatar from '../../assets/images/logos/sidebar/connectavatar.svg'
-import Dashboard from '../../assets/images/logos/sidebar/dashboard.svg'
+import Portfolio from '../../assets/images/logos/sidebar/dashboard.svg'
 import Docs from '../../assets/images/logos/sidebar/docs.svg'
-import ethereum from '../../assets/images/logos/sidebar/ethereum.svg'
 import ExternalLink from '../../assets/images/logos/sidebar/external_link.svg'
 import FAQ from '../../assets/images/logos/sidebar/faq.svg'
 import Farms from '../../assets/images/logos/sidebar/farms.svg'
-import Home from '../../assets/images/logos/sidebar/home.svg'
+// import Home from '../../assets/images/logos/sidebar/home.svg'
 import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
-import ConnectButtonIcon from '../../assets/images/logos/sidebar/link_white_connect_button.svg'
 import LogoutIcon from '../../assets/images/logos/sidebar/logout.svg'
 import MobileConnect from '../../assets/images/logos/sidebar/mobileconnect.svg'
-import polygon from '../../assets/images/logos/sidebar/polygon.svg'
 import ProfitSharingIcon from '../../assets/images/logos/sidebar/profit-sharing.svg'
 import Toggle from '../../assets/images/logos/sidebar/toggle.svg'
 import Arbitrum from '../../assets/images/chains/arbitrum.svg'
 import Ethereum from '../../assets/images/chains/ethereum.svg'
 import Polygon from '../../assets/images/chains/polygon.svg'
-import { DECIMAL_PRECISION, FARM_TOKEN_SYMBOL, ROUTES, SPECIAL_VAULTS } from '../../constants'
+import {
+  DECIMAL_PRECISION,
+  FARM_TOKEN_SYMBOL,
+  ROUTES,
+  SPECIAL_VAULTS,
+  directDetailUrl,
+} from '../../constants'
 import { CHAINS_ID } from '../../data/constants'
 import { addresses } from '../../data/index'
 import { usePools } from '../../providers/Pools'
 import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
-import { displayAPY, formatAddress, getDataQuery, getTotalApy } from '../../utils'
-import { Divider } from '../GlobalStyle'
+import { displayAPY, formatAddress, getDataQuery, getTotalApy, isLedgerLive } from '../../utils'
 import SmallApexChart from '../SmallApexChart'
 import Social from '../Social'
 import {
@@ -68,23 +68,26 @@ import {
   UserDropDownItem,
   UserDropDownMenu,
   BottomPart,
+  MobileProfitSharing,
+  ProfitPart,
+  Divider,
 } from './style'
 
 const sideLinks = [
   {
     path: ROUTES.HOME,
     name: 'Home',
-    imgPath: Home,
-  },
-  {
-    path: ROUTES.FARM,
-    name: 'Farms',
     imgPath: Farms,
   },
+  // {
+  //   path: ROUTES.FARM,
+  //   name: 'Farms',
+  //   imgPath: Farms,
+  // },
   {
-    path: ROUTES.DASHBOARD,
-    name: 'Dashboard',
-    imgPath: Dashboard,
+    path: ROUTES.PORTFOLIO,
+    name: 'Portfolio',
+    imgPath: Portfolio,
   },
 ]
 
@@ -102,10 +105,11 @@ const sideLinks1 = [
     external: false,
   },
   {
-    path: ROUTES.DOC,
+    path: 'https://harvest-finance.gitbook.io/harvest-finance',
     name: 'Docs',
     imgPath: Docs,
     external: false,
+    newTab: true,
   },
 ]
 
@@ -168,30 +172,9 @@ const getChainIcon = chainNum => {
 }
 
 const Sidebar = ({ width }) => {
-  const { account, connect, disconnect, chainId, connected } = useWallet()
+  const { account, connectAction, disconnectAction, chainId, connected } = useWallet()
   const { pools, disableWallet } = usePools()
   const { profitShareAPY } = useStats()
-
-  const selectedChain = chain => {
-    let chainName = ''
-    chain = chain.toString()
-    switch (chain) {
-      case CHAINS_ID.ETH_MAINNET:
-        chainName = ethereum
-        break
-      case CHAINS_ID.ARBITRUM_ONE:
-        chainName = arbitrum
-        break
-      case CHAINS_ID.MATIC_MAINNET:
-        chainName = polygon
-        break
-
-      default:
-        chainName = ethereum
-        break
-    }
-    return chainName
-  }
 
   const {
     darkMode,
@@ -277,7 +260,7 @@ const Sidebar = ({ width }) => {
                   <ConnectButtonStyle
                     color="connectwallet"
                     onClick={() => {
-                      connect()
+                      connectAction()
                     }}
                     minWidth="190px"
                     bordercolor={fontColor}
@@ -291,7 +274,7 @@ const Sidebar = ({ width }) => {
 
               if (!chainId) {
                 return (
-                  <button onClick={disconnect} type="button">
+                  <button onClick={disconnectAction} type="button">
                     Wrong network
                   </button>
                 )
@@ -328,37 +311,22 @@ const Sidebar = ({ width }) => {
                       style={{ width: 17, height: 17 }}
                     />
                   </UserDropDown>
-
-                  <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
-                    <UserDropDownItem
-                      onClick={() => {
-                        disconnect()
-                      }}
-                      fontcolor={fontColor}
-                      filtercolor={filterColor}
-                      bordercolor={borderColor}
-                    >
-                      <img
-                        className="change-icon"
-                        src={ChangeWalletIcon}
-                        width="18px"
-                        height="18px"
-                        alt=""
-                      />
-                      <div>Change Network</div>
-                    </UserDropDownItem>
-
-                    <UserDropDownItem
-                      onClick={() => {
-                        disconnect()
-                      }}
-                      fontcolor={fontColor}
-                      filtercolor={filterColor}
-                    >
-                      <img src={LogoutIcon} width="18px" height="18px" alt="" />
-                      <div>Log Out</div>
-                    </UserDropDownItem>
-                  </UserDropDownMenu>
+                  {!isLedgerLive() ? (
+                    <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
+                      <UserDropDownItem
+                        onClick={() => {
+                          disconnectAction()
+                        }}
+                        fontcolor={fontColor}
+                        filtercolor={filterColor}
+                      >
+                        <img src={LogoutIcon} width="18px" height="18px" alt="" />
+                        <div>Log Out</div>
+                      </UserDropDownItem>
+                    </UserDropDownMenu>
+                  ) : (
+                    <></>
+                  )}
                 </Dropdown>
               )
             })()}
@@ -388,32 +356,7 @@ const Sidebar = ({ width }) => {
               </Fragment>
             ))}
           </LinksContainer>
-          <AboutHarvest>{/* About */}</AboutHarvest>
-          {/* <LinksContainer totalItems={sideLinks1.length + 2}>
-            {sideLinks1.map(item => (
-              <Fragment key={item.name}>
-                <LinkContainer
-                  active={pathname.includes(item.path)}
-                  hoverImgColor={hoverImgColor}
-                  onClick={() => {
-                    if (item.newTab) {
-                      window.open(item.path, '_blank')
-                    } else {
-                      push(item.path)
-                    }
-                  }}
-                >
-                  <SideLink
-                    item={item}
-                    isDropdownLink={item.path === '#'}
-                    filterColor={filterColor}
-                    fontColor={sidebarFontColor}
-                    activeFontColor={sidebarActiveFontColor}
-                  />
-                </LinkContainer>
-              </Fragment>
-            ))}
-          </LinksContainer> */}
+          <AboutHarvest />
         </MiddleActionsContainer>
       </Layout>
 
@@ -443,7 +386,11 @@ const Sidebar = ({ width }) => {
             </Fragment>
           ))}
         </LinksContainer>
-        <ProfitSharing>
+        <ProfitSharing
+          onClick={() => {
+            push(directDetailUrl + FARM_TOKEN_SYMBOL)
+          }}
+        >
           <TopDiv>
             <img src={ProfitSharingIcon} alt="profit-sharing" />
             <TopTitle>
@@ -461,7 +408,6 @@ const Sidebar = ({ width }) => {
         </ProfitSharing>
 
         <Divider height="1px" marginTop="20px" backColor="#EAECF0" />
-
         <Follow>
           <Social />
           <ThemeMode
@@ -486,35 +432,33 @@ const Sidebar = ({ width }) => {
       </BottomPart>
 
       <MobileView>
-        <button type="button" onClick={handleMobileShow}>
-          <MobileToggle toggleColor={toggleColor} src={Toggle} alt="" />
-        </button>
-
         <OffcanvasDiv
           show={mobileShow}
           onHide={handleMobileClose}
+          placement="end"
+          backdrop={false}
           backcolor={backColor}
           fontcolor={fontColor}
+          filtercolor={filterColor}
         >
+          <Offcanvas.Header closeButton />
           <Offcanvas.Body>
             <MobileActionsContainer>
               <MobileLinksContainer totalItems={sideLinks.length + 2} fontColor={fontColor}>
-                <a className="logo" href="/">
-                  <img src={logoNew} width={38} height={38} alt="Harvest" />
-                </a>
                 {(() => {
                   if (!connected) {
                     return (
                       <ConnectButtonStyle
                         color="connectwallet"
                         onClick={() => {
-                          connect()
+                          connectAction()
+                          handleMobileClose()
                         }}
                         minWidth="190px"
                         bordercolor={fontColor}
                         disabled={disableWallet}
                       >
-                        <img src={ConnectButtonIcon} className="connect-wallet" alt="" />
+                        <img src={ConnectDisableIcon} className="connect-wallet" alt="" />
                         Connect Wallet
                       </ConnectButtonStyle>
                     )
@@ -522,7 +466,7 @@ const Sidebar = ({ width }) => {
 
                   if (!chainId) {
                     return (
-                      <button onClick={disconnect} type="button">
+                      <button onClick={disconnectAction} type="button">
                         Wrong network
                       </button>
                     )
@@ -559,36 +503,22 @@ const Sidebar = ({ width }) => {
                         />
                       </UserDropDown>
 
-                      <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
-                        <UserDropDownItem
-                          onClick={() => {
-                            disconnect()
-                          }}
-                          fontcolor={fontColor}
-                          filtercolor={filterColor}
-                          bordercolor={borderColor}
-                        >
-                          <img
-                            className="change-icon"
-                            src={ChangeWalletIcon}
-                            width="18px"
-                            height="18px"
-                            alt=""
-                          />
-                          <div>Change Network</div>
-                        </UserDropDownItem>
-
-                        <UserDropDownItem
-                          onClick={() => {
-                            disconnect()
-                          }}
-                          fontcolor={fontColor}
-                          filtercolor={filterColor}
-                        >
-                          <img src={LogoutIcon} width="18px" height="18px" alt="" />
-                          <div>Log Out</div>
-                        </UserDropDownItem>
-                      </UserDropDownMenu>
+                      {!isLedgerLive() ? (
+                        <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
+                          <UserDropDownItem
+                            onClick={() => {
+                              disconnectAction()
+                            }}
+                            fontcolor={fontColor}
+                            filtercolor={filterColor}
+                          >
+                            <img src={LogoutIcon} width="18px" height="18px" alt="" />
+                            <div>Log Out</div>
+                          </UserDropDownItem>
+                        </UserDropDownMenu>
+                      ) : (
+                        <></>
+                      )}
                     </Dropdown>
                   )
                 })()}
@@ -601,7 +531,13 @@ const Sidebar = ({ width }) => {
                       hoverImgColor={hoverImgColor}
                     >
                       <div className="item">
-                        <SideIcons src={item.imgPath} width={15} height={15} alt="Harvest" />
+                        <SideIcons
+                          src={item.imgPath}
+                          width={20}
+                          height={20}
+                          filterColor={filterColor}
+                          alt="Harvest"
+                        />
                       </div>
                       <MobileLink
                         onClick={() => {
@@ -622,7 +558,7 @@ const Sidebar = ({ width }) => {
                   </Fragment>
                 ))}
               </MobileLinksContainer>
-              <AboutHarvest>About</AboutHarvest>
+              <AboutHarvest />
               {sideLinks1.map(item => (
                 <Fragment key={item.name}>
                   <MobileLinkContainer
@@ -633,8 +569,8 @@ const Sidebar = ({ width }) => {
                     <div className="item">
                       <SideIcons
                         src={item.imgPath}
-                        width={15}
-                        height={15}
+                        width={20}
+                        height={20}
                         alt="Harvest"
                         filterColor={filterColor}
                       />
@@ -681,6 +617,28 @@ const Sidebar = ({ width }) => {
                 </Fragment>
               ))}
             </MobileActionsContainer>
+            <ProfitPart>
+              <MobileProfitSharing
+                onClick={() => {
+                  push(directDetailUrl + FARM_TOKEN_SYMBOL)
+                }}
+              >
+                <TopDiv>
+                  <img src={ProfitSharingIcon} alt="profit-sharing" />
+                  <TopTitle>
+                    <img src={ConnectDisableIcon} width="7px" height="7px" alt="" />
+                    Profit-Sharing
+                  </TopTitle>
+                </TopDiv>
+                <BottomDiv>
+                  {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
+                  <div>APR</div>
+                </BottomDiv>
+                <ChartDiv>
+                  <SmallApexChart data={apiData} lastAPY={Number(totalApy)} />
+                </ChartDiv>
+              </MobileProfitSharing>
+            </ProfitPart>
             <MobileFollow>
               <Social />
               <ThemeMode
@@ -704,40 +662,22 @@ const Sidebar = ({ width }) => {
             </MobileFollow>
           </Offcanvas.Body>
         </OffcanvasDiv>
-
+        <MobileConnectBtn
+          color="connectwallet"
+          connected={connected}
+          onClick={() => {
+            connectAction()
+          }}
+        >
+          <img src={ConnectDisableIcon} className="connect-wallet" alt="" />
+          <img src={MobileConnect} alt="" />
+        </MobileConnectBtn>
         <a className="logo" href="/">
           <img src={logoNew} width={52} height={52} alt="Harvest" />
         </a>
-
-        {account ? (
-          <MobileConnectBtn
-            color="connected"
-            connected
-            onClick={() => {
-              disconnect()
-            }}
-          >
-            <FlexDiv>
-              <ConnectAvatar>
-                <img src={connectAvatar} width={37} height={37} alt="" />
-              </ConnectAvatar>
-              <div>
-                <ConnectAvatar>
-                  <img src={selectedChain(chainId)} height="15" width="15" alt="" />
-                </ConnectAvatar>
-              </div>
-            </FlexDiv>
-          </MobileConnectBtn>
-        ) : (
-          <MobileConnectBtn
-            color="connectwallet"
-            onClick={() => {
-              connect()
-            }}
-          >
-            <img src={MobileConnect} alt="" />
-          </MobileConnectBtn>
-        )}
+        <button type="button" onClick={handleMobileShow}>
+          <MobileToggle toggleColor={toggleColor} src={Toggle} alt="" />
+        </button>
       </MobileView>
     </Container>
   )

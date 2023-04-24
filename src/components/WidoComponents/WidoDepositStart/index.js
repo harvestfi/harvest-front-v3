@@ -49,7 +49,7 @@ const WidoDepositStart = ({
   slippagePercentage,
   inputAmount,
   token,
-  tokenList,
+  balanceList,
   symbol,
   useIFARM,
   quoteValue,
@@ -97,7 +97,7 @@ const WidoDepositStart = ({
           )
           setQuoteValue(quoteResult)
 
-          let curToken = tokenList.filter(itoken => itoken.symbol === pickedToken.symbol)
+          let curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol)
           curToken = curToken[0]
 
           const fromInfoTemp =
@@ -164,7 +164,7 @@ const WidoDepositStart = ({
     token,
     depositWido,
     slippagePercentage,
-    tokenList,
+    balanceList,
     setQuoteValue,
   ])
 
