@@ -188,7 +188,12 @@ const WidoDepositBase = ({
   useEffect(() => {
     if (pickedToken.usdPrice) {
       setInputAmount(formatNumberWido(balance, POOL_BALANCES_DECIMALS))
-      setUsdValue(formatNumberWido(balance * pickedToken.usdPrice), 2)
+      setUsdValue(
+        formatNumberWido(
+          pickedToken.usdPrice !== '0.0' ? balance * pickedToken.usdPrice : pickedToken.usdValue,
+        ),
+        2,
+      )
     }
   }, [balance, setUsdValue, setInputAmount, pickedToken])
 
