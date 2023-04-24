@@ -20,7 +20,8 @@ const WidoDepositSelectToken = ({
   setClickedTokenId,
   setPickedToken,
   setBalance,
-  balanceList,
+  supTokenList,
+  soonToSupList,
   setWidoPartHeight,
 }) => {
   const [filter, setFilter] = useState('')
@@ -74,7 +75,7 @@ const WidoDepositSelectToken = ({
           />
         </NewLabel>
 
-        <NewLabel marginBottom="10px" heightDiv="75%">
+        <NewLabel marginBottom="10px" heightDiv="75%" scroll="scroll">
           <NewLabel
             weight="500"
             size="16px"
@@ -82,10 +83,28 @@ const WidoDepositSelectToken = ({
             color={widoSelTokenSubTitleColor}
             marginBottom="10px"
           >
-            Tokens
+            Supported Tokens
           </NewLabel>
           <WidoSelectTokenList
-            list={balanceList}
+            list={supTokenList}
+            clickId={clickTokenId}
+            setClickedId={setClickedTokenId}
+            setPickedToken={setPickedToken}
+            setBalance={setBalance}
+            setSelectTokenWido={setSelectTokenWido}
+            setWidoPartHeight={setWidoPartHeight}
+          />
+          <NewLabel
+            weight="500"
+            size="16px"
+            height="21px"
+            color={widoSelTokenSubTitleColor}
+            marginBottom="10px"
+          >
+            Soon to be Supported
+          </NewLabel>
+          <WidoSelectTokenList
+            list={soonToSupList}
             clickId={clickTokenId}
             setClickedId={setClickedTokenId}
             setPickedToken={setPickedToken}

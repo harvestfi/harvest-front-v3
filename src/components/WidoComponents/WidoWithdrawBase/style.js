@@ -196,6 +196,8 @@ const TokenAmount = styled.input`
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
     -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
     margin: 0;
   }
 `

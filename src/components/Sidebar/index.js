@@ -10,7 +10,7 @@ import Docs from '../../assets/images/logos/sidebar/docs.svg'
 import ExternalLink from '../../assets/images/logos/sidebar/external_link.svg'
 import FAQ from '../../assets/images/logos/sidebar/faq.svg'
 import Farms from '../../assets/images/logos/sidebar/farms.svg'
-import Home from '../../assets/images/logos/sidebar/home.svg'
+// import Home from '../../assets/images/logos/sidebar/home.svg'
 import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
 import LogoutIcon from '../../assets/images/logos/sidebar/logout.svg'
 import MobileConnect from '../../assets/images/logos/sidebar/mobileconnect.svg'
@@ -77,13 +77,13 @@ const sideLinks = [
   {
     path: ROUTES.HOME,
     name: 'Home',
-    imgPath: Home,
-  },
-  {
-    path: ROUTES.FARM,
-    name: 'Farms',
     imgPath: Farms,
   },
+  // {
+  //   path: ROUTES.FARM,
+  //   name: 'Farms',
+  //   imgPath: Farms,
+  // },
   {
     path: ROUTES.PORTFOLIO,
     name: 'Portfolio',
@@ -172,7 +172,7 @@ const getChainIcon = chainNum => {
 }
 
 const Sidebar = ({ width }) => {
-  const { account, connect, disconnect, chainId, connected } = useWallet()
+  const { account, connectAction, disconnectAction, chainId, connected } = useWallet()
   const { pools, disableWallet } = usePools()
   const { profitShareAPY } = useStats()
 
@@ -260,7 +260,7 @@ const Sidebar = ({ width }) => {
                   <ConnectButtonStyle
                     color="connectwallet"
                     onClick={() => {
-                      connect()
+                      connectAction()
                     }}
                     minWidth="190px"
                     bordercolor={fontColor}
@@ -274,7 +274,7 @@ const Sidebar = ({ width }) => {
 
               if (!chainId) {
                 return (
-                  <button onClick={disconnect} type="button">
+                  <button onClick={disconnectAction} type="button">
                     Wrong network
                   </button>
                 )
@@ -315,7 +315,7 @@ const Sidebar = ({ width }) => {
                     <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
                       <UserDropDownItem
                         onClick={() => {
-                          disconnect()
+                          disconnectAction()
                         }}
                         fontcolor={fontColor}
                         filtercolor={filterColor}
@@ -451,7 +451,7 @@ const Sidebar = ({ width }) => {
                       <ConnectButtonStyle
                         color="connectwallet"
                         onClick={() => {
-                          connect()
+                          connectAction()
                           handleMobileClose()
                         }}
                         minWidth="190px"
@@ -466,7 +466,7 @@ const Sidebar = ({ width }) => {
 
                   if (!chainId) {
                     return (
-                      <button onClick={disconnect} type="button">
+                      <button onClick={disconnectAction} type="button">
                         Wrong network
                       </button>
                     )
@@ -507,7 +507,7 @@ const Sidebar = ({ width }) => {
                         <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
                           <UserDropDownItem
                             onClick={() => {
-                              disconnect()
+                              disconnectAction()
                             }}
                             fontcolor={fontColor}
                             filtercolor={filterColor}
@@ -666,7 +666,7 @@ const Sidebar = ({ width }) => {
           color="connectwallet"
           connected={connected}
           onClick={() => {
-            connect()
+            connectAction()
           }}
         >
           <img src={ConnectDisableIcon} className="connect-wallet" alt="" />

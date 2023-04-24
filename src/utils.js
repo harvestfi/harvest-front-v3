@@ -377,7 +377,7 @@ export const getRewardsText = (
     } else if (Number(tradingApy) > 0) {
       components.push(`
       <div style="display: flex; margin-bottom: 14px; font-size: 16px; line-height: 21px;">
-        <div style="min-width: 75px;"><img src='./icons/univ3.png' width=24 alt="" /></div>
+        <div style="min-width: 75px;"><img src='./icons/swapfee.svg' width=24 alt="" /></div>
         <div style="min-width: 60px; color: #1F2937; font-weight: 700;">${displayAPY(
           tradingApy,
         )}</div>
@@ -432,7 +432,7 @@ export const getRewardsText = (
     if (!token.hideTokenApy) {
       if (Number(tradingApy) > 0) {
         components.push(`<div style="display: flex; margin-bottom: 14px; font-size: 16px; line-height: 21px;">
-          <div style="min-width: 75px;"><img src='./icons/univ3.png' width=24 alt="" /></div>
+          <div style="min-width: 75px;"><img src='./icons/swapfee.svg' width=24 alt="" /></div>
           <div style="min-width: 60px; color: #1F2937; font-weight: 700;">${displayAPY(
             tradingApy,
           )}</div> 
@@ -725,7 +725,7 @@ export const getDetailText = (
       components.push(`
       <div class="detail-box">
         <div class="detail-icon">
-          <img src='/icons/univ3.svg' width=24 height=24 alt="" />
+          <img src='/icons/swapfee.svg' width=24 height=24 alt="" />
         </div>
         <div class="detail-apy">
           <b>${displayAPY(tradingApy)}</b>
@@ -781,7 +781,7 @@ export const getDetailText = (
     if (!token.hideTokenApy) {
       if (Number(tradingApy) > 0) {
         components.push(`<div class="detail-box">
-          <div class="detail-icon"><img src='/icons/univ3.svg' width=24 height=24 alt="" /></div>
+          <div class="detail-icon"><img src='/icons/swapfee.svg' width=24 height=24 alt="" /></div>
           <div class="detail-apy">${displayAPY(tradingApy)}</div> 
           <div class="detail-desc-no-width">Liquidity Provider APY </div>
         </div>`)
@@ -893,7 +893,7 @@ export const getDetailText = (
           token,
           isIFARM,
           vaultPool,
-        )}.svg' width=24 height=24 alt='' /></div>`
+        ).toLowerCase()}.svg' width=24 height=24 alt='' /></div>`
       apyString += `<div class="detail-apy">${
         isIFARM || Number(boostedRewardAPY) > 0 ? displayAPY(boostedRewardAPY) : displayAPY(farmAPY)
       }</div> <div class="detail-desc">${getRewardSymbol(token, isIFARM, vaultPool)} rewards</div>`

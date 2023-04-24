@@ -95,12 +95,12 @@ export function ThemeProvider({ children }) {
   const widoDepoTokenListHoverColor = darkMode ? '#ECFDF3' : '#ECFDF3'
 
   const widoSwitchTagBorderColor = darkMode ? '#F2F4F7' : '#F2F4F7'
-  const widoSwitchTagBackColor = darkMode ? '#F9FAFB' : '#F9FAFB'
+  const widoSwitchTagBackColor = darkMode ? '#243648' : '#F9FAFB'
   const widoTagBackColor = darkMode ? '#15202B' : '#FFFFFF'
   const widoTagBoxShadow = darkMode
     ? '0px 1px 3px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06)'
     : '0px 1px 3px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06)'
-  const widoTagFontColor = darkMode ? '#667085' : '#667085'
+  const widoTagFontColor = darkMode ? '#b9bcc3' : '#667085'
   const widoTagActiveFontColor = darkMode ? 'white' : '#344054'
   const widoInputPanelBorderColor = darkMode ? '#D0D5DD' : '#D0D5DD'
   const widoInputBoxShadow = darkMode

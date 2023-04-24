@@ -43,6 +43,7 @@ import {
   FARM_WETH_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
+  fromWEI,
 } from '../../constants'
 import { addresses } from '../../data'
 import { usePools } from '../../providers/Pools'
@@ -135,7 +136,7 @@ const WidoDetail = () => {
   const { push } = useHistory()
 
   const { loadingVaults, vaultsData } = useVaults()
-  const { pools, userStats } = usePools()
+  const { pools, userStats, fetchUserPoolStats } = usePools()
   const { account, balances, getWalletBalances } = useWallet()
   const { profitShareAPY } = useStats()
   /* eslint-disable global-require */
@@ -263,10 +264,8 @@ const WidoDetail = () => {
                 ) : null
               ) : (
                 <>
-                  <b>
-                    {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
-                    &nbsp;
-                  </b>
+                  {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
+                  &nbsp;
                 </>
               )}
             </RewardsContainer>
@@ -320,7 +319,7 @@ const WidoDetail = () => {
                 'Inactive'
               ) : null
             ) : (
-              <b>{apyDaily}% &nbsp;</b>
+              <>{apyDaily}% &nbsp;</>
             )}
           </RewardsContainer>
         ) : (
@@ -377,31 +376,50 @@ const WidoDetail = () => {
   const [quoteValueWith, setQuoteValueWith] = useState(null)
 
   const [balanceList, setBalanceList] = useState([])
-  const [tokenList, setTokenList] = useState([])
+  const [supTokenList, setSupTokenList] = useState([])
+  const [soonToSupList, setSoonToSupList] = useState([])
 
   const rewardSymbol = isSpecialVault ? id : token.apyTokenSymbols[0]
-  const toTokenAddress =
-    token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+  const toTokenAddress = token.vaultAddress || token.tokenAddress
   useEffect(() => {
     const getTokenBalance = async () => {
       try {
         if (chain && account) {
           const curBalances = await getBalances(account, [chain.toString()])
+          setBalanceList(curBalances)
           const supList = await getSupportedTokens({
             chainId: [chain],
             toToken: toTokenAddress,
             toChainId: chain,
           })
 
-          const curAvailableBalances = []
-          for (let i = 0; i < curBalances.length; i += 1) {
-            const supToken = supList.find(el => el.address === curBalances[i].address)
+          const soonSupList = [],
+            supportedList = []
+          for (let i = 0; i < supList.length; i += 1) {
+            const supToken = curBalances.find(el => el.address === supList[i].address)
             if (supToken) {
-              curAvailableBalances.push(curBalances[i])
+              supList[i].balance = supToken.balance
+              supList[i].usdValue = supToken.balanceUsdValue
+              supportedList.push(supList[i])
+            } else {
+              supList[i].balance = '0'
+              supList[i].usdValue = '0'
+              supportedList.push(supList[i])
             }
           }
-          setBalanceList(curAvailableBalances)
-          setTokenList(supList)
+          const supportedResultList = supportedList.sort(function reducer(a, b) {
+            return Number(fromWEI(b.balance, b.decimals)) - Number(fromWEI(a.balance, a.decimals))
+          })
+
+          for (let j = 0; j < curBalances.length; j += 1) {
+            const supToken = supList.find(el => el.address === curBalances[j].address)
+            if (!supToken) {
+              soonSupList.push(curBalances[j])
+            }
+          }
+
+          setSoonToSupList(soonSupList)
+          setSupTokenList(supportedResultList)
         }
       } catch (err) {
         console.error(err)
@@ -452,12 +470,25 @@ const WidoDetail = () => {
       }),
     [id, tokens],
   )
-
+  const firstUserPoolsLoad = useRef(true)
   const firstWalletBalanceLoad = useRef(true)
 
   useEffectWithPrevious(
-    ([prevAccount, , prevBalances]) => {
+    ([prevAccount, prevUserStats, prevBalances]) => {
       const hasSwitchedAccount = account !== prevAccount && account
+
+      if (
+        hasSwitchedAccount ||
+        firstUserPoolsLoad.current ||
+        (userStats && !isEqual(userStats, prevUserStats))
+      ) {
+        const loadUserPoolsStats = async () => {
+          firstUserPoolsLoad.current = false
+          const poolsToLoad = [fAssetPool]
+          await fetchUserPoolStats(poolsToLoad, account, userStats)
+        }
+        loadUserPoolsStats()
+      }
 
       if (
         hasSwitchedAccount ||
@@ -514,7 +545,7 @@ const WidoDetail = () => {
           <FlexTopDiv>
             <BackBtnRect
               onClick={() => {
-                push('/farm')
+                push('/home')
               }}
               backcolor={widoBackBtnBackColor}
               backhovercolor={widoBackBtnBackHoverColor}
@@ -544,7 +575,7 @@ const WidoDetail = () => {
             <FlexTopDiv>
               <BackBtnRect
                 onClick={() => {
-                  push('/farm')
+                  push('/home')
                 }}
                 backcolor={widoBackBtnBackColor}
                 backhovercolor={widoBackBtnBackHoverColor}
@@ -920,6 +951,7 @@ const WidoDetail = () => {
                     multipleAssets={multipleAssets}
                     loaded={loaded}
                     loadingBalances={loadingLpStats || loadingFarmingBalance}
+                    supTokenList={supTokenList}
                   />
                 )}
 
@@ -930,7 +962,8 @@ const WidoDetail = () => {
                   setClickedTokenId={setClickedTokenIdDepo}
                   setPickedToken={setPickedTokenDepo}
                   setBalance={setBalanceDepo}
-                  balanceList={balanceList}
+                  supTokenList={supTokenList}
+                  soonToSupList={soonToSupList}
                   setWidoPartHeight={setWidoPartHeight}
                 />
 
@@ -947,7 +980,7 @@ const WidoDetail = () => {
                   slippagePercentage={slippagePercentDepo}
                   inputAmount={inputAmountDepo}
                   token={token}
-                  tokenList={tokenList}
+                  balanceList={balanceList}
                   useIFARM={useIFARM}
                   symbol={symbolDepo}
                   quoteValue={quoteValueDepo}
@@ -1053,6 +1086,7 @@ const WidoDetail = () => {
                     setPendingAction={setPendingAction}
                     multipleAssets={multipleAssets}
                     token={token}
+                    supTokenList={supTokenList}
                   />
                 )}
 
@@ -1063,7 +1097,8 @@ const WidoDetail = () => {
                   setClickedTokenId={setClickedTokenIdWith}
                   pickedToken={pickedTokenWith}
                   setPickedToken={setPickedTokenWith}
-                  balanceList={balanceList}
+                  supTokenList={supTokenList}
+                  soonToSupList={soonToSupList}
                   setWidoPartHeight={setWidoPartHeight}
                 />
 
@@ -1080,7 +1115,7 @@ const WidoDetail = () => {
                   token={token}
                   unstakeBalance={unstakeBalance}
                   slippagePercentage={slippagePercentWith}
-                  tokenList={tokenList}
+                  balanceList={balanceList}
                   useIFARM={useIFARM}
                   symbol={symbolWith}
                   quoteValue={quoteValueWith}

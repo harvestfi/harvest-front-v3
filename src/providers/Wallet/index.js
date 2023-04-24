@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
+import { useConnectWallet } from '@web3-onboard/react'
 import { isArray } from 'lodash'
 import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../constants'
 import { CHAINS_ID } from '../../data/constants'
@@ -23,7 +24,7 @@ const WalletContext = createContext()
 const useWallet = () => useContext(WalletContext)
 
 const WalletProvider = _ref => {
-  const { children, onboard } = _ref
+  const { children } = _ref
   const web3Plugin = mainWeb3
   const [account, setAccount] = useState(null)
   const [connected, setConnected] = useState(false)
@@ -38,6 +39,7 @@ const WalletProvider = _ref => {
   const [balancesToLoad, setBalancesToLoad] = useState([])
   const [approvedBalances, setApprovedBalances] = useState({})
   const { contracts } = useContracts()
+  const [{ wallet }, connect, disconnect] = useConnectWallet()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -52,16 +54,11 @@ const WalletProvider = _ref => {
     fetchData()
   }, [])
 
-  const disconnect = useCallback(async () => {
+  const disconnectAction = useCallback(async () => {
     if (!isLedgerLive()) {
-      const [primaryWallet] = onboard.state.get().wallets
-      await onboard.disconnectWallet({ label: primaryWallet.label })
-      setConnected(false)
-      setAccount(null)
-      setBalances({})
-      setLogout(true)
+      disconnect({ label: wallet.label })
     }
-  }, [onboard])
+  }, [disconnect, wallet])
 
   const onNetworkChange = useCallback(
     newChain => {
@@ -141,17 +138,24 @@ const WalletProvider = _ref => {
     }
   }, [web3Plugin, chainId, account, onNetworkChange, setAccount])
 
-  const connect = useCallback(async () => {
-    const wallets = await onboard.connectWallet()
-    if (wallets.length === 0) {
-      return
+  useEffect(() => {
+    if (wallet) {
+      const chainNum = parseInt(wallet.chains[0].id, 16).toString()
+      setAccount(wallet.accounts[0].address)
+      setConnected(true)
+      setChainId(chainNum)
+      setLogout(false)
+    } else {
+      setConnected(false)
+      setAccount(null)
+      setBalances({})
+      setLogout(true)
     }
-    const chainNum = parseInt(wallets[0].chains[0].id, 16).toString()
-    setAccount(wallets[0].accounts[0].address)
-    setConnected(true)
-    setChainId(chainNum)
-    setLogout(false)
-  }, [onboard])
+  }, [wallet])
+
+  const connectAction = useCallback(async () => {
+    await connect()
+  }, [connect])
   const getWalletBalances = useCallback(
     // eslint-disable-next-line func-names
     async function (selectedTokens, newAccount, fresh) {
@@ -235,7 +239,7 @@ const WalletProvider = _ref => {
     WalletContext.Provider,
     {
       value: {
-        connect,
+        connectAction,
         account,
         setAccount,
         connected,
@@ -248,7 +252,7 @@ const WalletProvider = _ref => {
         setChainId,
         selChain,
         setSelChain,
-        disconnect,
+        disconnectAction,
         logout,
       },
     },

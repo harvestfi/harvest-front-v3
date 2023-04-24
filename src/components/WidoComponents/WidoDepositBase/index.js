@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useState } from 'react'
+import { useSetChain } from '@web3-onboard/react'
 import { Spinner } from 'react-bootstrap'
 import { toast } from 'react-toastify'
 import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.svg'
@@ -14,6 +15,7 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
 import { fromWei, toWei } from '../../../services/web3'
+import { CHAINS_ID } from '../../../data/constants'
 import {
   formatNumberWido,
   hasAmountGreaterThanZero,
@@ -39,6 +41,22 @@ import {
   TokenSelect,
   TokenUSD,
 } from './style'
+
+const getChainName = chain => {
+  let chainName = 'Ethereum'
+  switch (chain) {
+    case CHAINS_ID.MATIC_MAINNET:
+      chainName = 'Polygon'
+      break
+    case CHAINS_ID.ARBITRUM_ONE:
+      chainName = 'Arbitrum'
+      break
+    default:
+      chainName = 'Ethereum'
+      break
+  }
+  return chainName
+}
 
 const WidoDepositBase = ({
   selectTokenWido,
@@ -66,11 +84,12 @@ const WidoDepositBase = ({
   multipleAssets,
   loaded,
   loadingBalances,
+  supTokenList,
 }) => {
   const { handleStake } = useActions()
   const { contracts } = useContracts()
   const { userStats, fetchUserPoolStats } = usePools()
-  const { connected, connect, account, getWalletBalances } = useWallet()
+  const { connected, connectAction, account, getWalletBalances } = useWallet()
   const { vaultsData } = useVaults()
   const {
     backColor,
@@ -81,6 +100,13 @@ const WidoDepositBase = ({
   } = useThemeContext()
   const [stakeClick, setStakeClick] = useState(false)
   const [stakeInputValue, setStakeInputValue] = useState('')
+
+  const [
+    {
+      connectedChain, // the current chain the user's wallet is connected to
+    },
+    setChain, // function to call to initiate user to switch chains in their wallet
+  ] = useSetChain()
 
   const onClickStake = async () => {
     if (stakeInputValue === '') {
@@ -118,20 +144,45 @@ const WidoDepositBase = ({
     setStakeClick(false)
   }
 
+  const tokenChain = token.chain || token.data.chain
+  const curChain = connectedChain ? parseInt(connectedChain.id, 16).toString() : ''
+  const [depositName, setDepositName] = useState('Deposit')
+
+  useEffect(() => {
+    if (account) {
+      if (curChain !== tokenChain) {
+        const chainName = getChainName(tokenChain)
+        setDepositName(`Switch to ${chainName}`)
+      } else {
+        setDepositName('Deposit')
+      }
+    }
+  }, [account, curChain, tokenChain])
+
   const onClickDeposit = async () => {
-    if (pickedToken.symbol === 'Select Token') {
-      toast.error('Please select token to deposit!')
-      return
+    if (curChain !== tokenChain) {
+      const chainHex = `0x${Number(tokenChain).toString(16)}`
+      await setChain({ chainId: chainHex })
+    } else {
+      if (pickedToken.symbol === 'Select Token') {
+        toast.error('Please select token to deposit!')
+        return
+      }
+      const supToken = supTokenList.find(el => el.symbol === pickedToken.symbol)
+      if (!supToken) {
+        toast.error("Can't Deposit with Unsupported token!")
+        return
+      }
+      if (new BigNumber(inputAmount).isGreaterThan(balance)) {
+        toast.error('Please input sufficient amount for deposit!')
+        return
+      }
+      if (new BigNumber(inputAmount).isEqualTo(0)) {
+        toast.error('Please input amount for deposit!')
+        return
+      }
+      setDepositWido(true)
     }
-    if (new BigNumber(inputAmount).isGreaterThan(balance)) {
-      toast.error('Please input sufficient amount for deposit!')
-      return
-    }
-    if (new BigNumber(inputAmount).isEqualTo(0)) {
-      toast.error('Please input amount for deposit!')
-      return
-    }
-    setDepositWido(true)
   }
 
   useEffect(() => {
@@ -171,7 +222,7 @@ const WidoDepositBase = ({
             onClick={async () => {
               setSelectTokenWido(true)
               if (!connected) {
-                await connect()
+                await connectAction()
               }
             }}
             fontColor={widoTagActiveFontColor}
@@ -199,7 +250,7 @@ const WidoDepositBase = ({
           onClickDeposit()
         }}
       >
-        Deposit
+        {depositName}
         <img src={ChevronRightIcon} alt="" />
       </Button>
 

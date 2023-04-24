@@ -1,7 +1,8 @@
-import Onboard from '@web3-onboard/core'
+// import Onboard from '@web3-onboard/core'
 import injectedModule from '@web3-onboard/injected-wallets'
 import ledgerModule from '@web3-onboard/ledger'
 import { Web3ReactProvider } from '@web3-react/core'
+import { init, Web3OnboardProvider } from '@web3-onboard/react'
 import { ethers } from 'ethers'
 import React from 'react'
 import { ActionsProvider } from './Actions'
@@ -15,7 +16,7 @@ import { WalletProvider } from './Wallet'
 const injected = injectedModule()
 const ledger = ledgerModule()
 
-const onboard = Onboard({
+const web3Onboard = init({
   // head to https://explorer.blocknative.com/account to sign up for free
   apiKey: process.env.REACT_APP_INFURA_KEY,
   wallets: [injected, ledger],
@@ -152,17 +153,19 @@ const getLibrary = provider1 => {
 const Providers = ({ children }) => (
   <Web3ReactProvider getLibrary={getLibrary}>
     <ContractsProvider>
-      <WalletProvider onboard={onboard}>
-        <PoolsProvider>
-          <VaultsProvider>
-            <ActionsProvider>
-              <StatsProvider>
-                <ThemeProvider>{children}</ThemeProvider>
-              </StatsProvider>
-            </ActionsProvider>
-          </VaultsProvider>
-        </PoolsProvider>
-      </WalletProvider>
+      <Web3OnboardProvider web3Onboard={web3Onboard}>
+        <WalletProvider>
+          <PoolsProvider>
+            <VaultsProvider>
+              <ActionsProvider>
+                <StatsProvider>
+                  <ThemeProvider>{children}</ThemeProvider>
+                </StatsProvider>
+              </ActionsProvider>
+            </VaultsProvider>
+          </PoolsProvider>
+        </WalletProvider>
+      </Web3OnboardProvider>
     </ContractsProvider>
   </Web3ReactProvider>
 )

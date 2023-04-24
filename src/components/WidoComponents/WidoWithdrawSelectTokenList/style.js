@@ -30,8 +30,8 @@ const Vault = styled.div`
 `
 
 const Content = styled.div`
-  height: 90%;
-  overflow-y: auto;
+  height: auto;
+  // overflow-y: auto;
 
   &::-webkit-scrollbar {
     width: 5px;
@@ -48,4 +48,13 @@ const Content = styled.div`
   }
 `
 
-export { Container, Text, Vault, Content }
+const EmptyContainer = styled.div`
+  margin-top: 10px;
+  margin-bottom: 10px;
+  text-align: center;
+  font-size: 14px;
+  line-height: 18px;
+  color: ${props => props.fontColor};
+`
+
+export { Container, Text, Vault, Content, EmptyContainer }
