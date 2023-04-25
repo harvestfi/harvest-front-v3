@@ -29,10 +29,6 @@ html {
       display: none;
     }
 
-    input[type="number"] {
-      -moz-appearance: none;
-    }
-
     @media screen and (max-width: 992px) {
       .offcanvas {
         display: block;
