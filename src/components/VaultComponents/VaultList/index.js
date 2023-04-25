@@ -46,9 +46,9 @@ import {
 const { tokens } = require('../../../data')
 
 const SortsList = [
-  { id: 0, name: 'APY' },
-  { id: 1, name: 'Daily' },
-  { id: 2, name: 'TVL' },
+  { id: 0, name: 'APY', type: 'apy' },
+  { id: 1, name: 'My Balance', type: 'balance' },
+  { id: 2, name: 'TVL', type: 'deposits' },
 ]
 
 const formatVaults = (
@@ -546,10 +546,13 @@ const VaultList = () => {
 
   const updateSortQuery = sort => {
     const debouncedFn = debounce(() => {
-      if (sort === 'APY') setSortingParams('apy')
-      else if (sort === 'DisplayName') setSortingParams('displayName')
-      else if (sort === 'TVL') setSortingParams('deposits')
-      else if (sort === 'Daily') setSortingParams('balance')
+      if (sort === 'balance') {
+        if (account) {
+          setSortingParams(sort)
+        }
+      } else {
+        setSortingParams(sort)
+      }
     }, 300)
 
     debouncedFn()
@@ -607,7 +610,7 @@ const VaultList = () => {
                   key={i}
                   onClick={() => {
                     setSortId(item.id)
-                    updateSortQuery(item.name)
+                    updateSortQuery(item.type)
                   }}
                 >
                   <div>{item.name}</div>
