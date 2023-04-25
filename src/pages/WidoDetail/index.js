@@ -406,6 +406,7 @@ const WidoDetail = () => {
             if (supToken) {
               supList[i].balance = supToken.balance
               supList[i].usdValue = supToken.balanceUsdValue
+              supList[i].usdPrice = supToken.usdPrice
               supportedList.push(supList[i])
             } else {
               supList[i].balance = '0'
