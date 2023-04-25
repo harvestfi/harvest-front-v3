@@ -153,21 +153,6 @@ const StakeInfo = styled.div`
   line-height: 21px;
 `
 
-const Max = styled.button`
-  position: absolute;
-  right: 16px;
-  top: 16px;
-  border: none;
-  background: #1f2937;
-  box-shadow: 0px 0.173536px 0.347072px rgba(16, 24, 40, 0.05);
-  border-radius: 3px;
-  padding: 5px 10px;
-  font-weight: 400;
-  font-size: 12px;
-  line-height: 20px;
-  color: #ffffff;
-`
-
 const Balance = styled.div`
   background: ${props => props.backColor};
   transition: 0.25s;
@@ -196,10 +181,13 @@ const TokenAmount = styled.input`
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
     -webkit-appearance: none;
-    -moz-appearance: none;
     appearance: none;
     margin: 0;
   }
+`
+
+const AmountInfo = styled.span`
+  cursor: pointer;
 `
 
 export {
@@ -211,6 +199,6 @@ export {
   PoweredByWido,
   TokenName,
   StakeInfo,
-  Max,
   Balance,
+  AmountInfo,
 }

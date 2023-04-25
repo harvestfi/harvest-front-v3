@@ -19,7 +19,6 @@ import { Divider } from '../../GlobalStyle'
 import {
   Balance,
   BaseWido,
-  Max,
   NewLabel,
   PoweredByWido,
   StakeInfo,
@@ -27,6 +26,7 @@ import {
   TokenInfo,
   TokenName,
   TokenSelect,
+  AmountInfo,
 } from './style'
 
 const { tokens } = require('../../../data')
@@ -157,29 +157,7 @@ const WidoWithdrawBase = ({
         </TokenName>
         <StakeInfo>
           Staked
-          <span>
-            {!connected ? (
-              0
-            ) : totalStaked ? (
-              fromWei(totalStaked, fAssetPool.lpTokenData.decimals, WIDO_BALANCES_DECIMALS, true)
-            ) : (
-              <AnimatedDots />
-            )}
-          </span>
-        </StakeInfo>
-      </div>
-
-      <NewLabel display="flex" justifyContent="space-between" marginTop="20px">
-        <Balance backColor={backColor} width="49%">
-          <TokenAmount
-            type="number"
-            value={stakeInputValue}
-            borderColor={borderColor}
-            backColor={backColor}
-            fontColor={fontColor}
-            onChange={onInputBalance}
-          />
-          <Max
+          <AmountInfo
             onClick={() => {
               setStakeInputValue(
                 Number(
@@ -196,8 +174,27 @@ const WidoWithdrawBase = ({
               ])
             }}
           >
-            Max
-          </Max>
+            {!connected ? (
+              0
+            ) : totalStaked ? (
+              fromWei(totalStaked, fAssetPool.lpTokenData.decimals, WIDO_BALANCES_DECIMALS, true)
+            ) : (
+              <AnimatedDots />
+            )}
+          </AmountInfo>
+        </StakeInfo>
+      </div>
+
+      <NewLabel display="flex" justifyContent="space-between" marginTop="20px">
+        <Balance backColor={backColor} width="49%">
+          <TokenAmount
+            type="number"
+            value={stakeInputValue}
+            borderColor={borderColor}
+            backColor={backColor}
+            fontColor={fontColor}
+            onChange={onInputBalance}
+          />
         </Balance>
 
         <Button
@@ -229,7 +226,21 @@ const WidoWithdrawBase = ({
 
       <StakeInfo>
         Unstaked
-        <span>
+        <AmountInfo
+          onClick={() => {
+            setUnstakeBalance(lpTokenBalance)
+            setUnstakeInputValue(
+              Number(
+                fromWei(
+                  lpTokenBalance,
+                  fAssetPool.lpTokenData.decimals,
+                  WIDO_BALANCES_DECIMALS,
+                  true,
+                ),
+              ),
+            )
+          }}
+        >
           {!connected ? (
             0
           ) : lpTokenBalance ? (
@@ -237,7 +248,7 @@ const WidoWithdrawBase = ({
           ) : (
             <AnimatedDots />
           )}
-        </span>
+        </AmountInfo>
       </StakeInfo>
 
       <NewLabel
@@ -256,23 +267,6 @@ const WidoWithdrawBase = ({
             fontColor={fontColor}
             onChange={onInputUnstake}
           />
-          <Max
-            onClick={() => {
-              setUnstakeBalance(lpTokenBalance)
-              setUnstakeInputValue(
-                Number(
-                  fromWei(
-                    lpTokenBalance,
-                    fAssetPool.lpTokenData.decimals,
-                    WIDO_BALANCES_DECIMALS,
-                    true,
-                  ),
-                ),
-              )
-            }}
-          >
-            Max
-          </Max>
         </Balance>
 
         <TokenInfo>
