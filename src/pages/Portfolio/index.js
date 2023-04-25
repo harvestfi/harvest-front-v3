@@ -31,7 +31,7 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { fromWei } from '../../services/web3'
-import { formatNumber, ceil10 } from '../../utils'
+import { formatNumber, ceil10, isLedgerLive } from '../../utils'
 import {
   BadgeIcon,
   Column,
@@ -75,6 +75,17 @@ const getChainIcon = chain => {
   }
   return chainLogo
 }
+
+const chainList = isLedgerLive()
+  ? [
+      { id: 1, name: 'Ethereum', chainId: 1 },
+      { id: 2, name: 'Polygon', chainId: 137 },
+    ]
+  : [
+      { id: 1, name: 'Ethereum', chainId: 1 },
+      { id: 2, name: 'Polygon', chainId: 137 },
+      { id: 3, name: 'Arbitrum', chainId: 42161 },
+    ]
 
 const Portfolio = () => {
   const { push } = useHistory()
@@ -239,6 +250,7 @@ const Portfolio = () => {
             stake: '',
             reward: 0,
             rewardSymbol: '',
+            token: {},
           }
           let symbol = ''
           if (stakedVaults[i] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
@@ -267,6 +279,7 @@ const Portfolio = () => {
                 tokenName += ', '
               }
             }
+            stats.token = token
             stats.symbol = tokenName
             stats.logos = token.logoUrl
             stats.chain = getChainIcon(token.chain)
@@ -472,7 +485,20 @@ const Portfolio = () => {
                       hoverColor={vaultPanelHoverColor}
                       width={ceilWidth}
                       onClick={() => {
-                        push(directDetailUrl + info.symbol)
+                        let badgeId = -1
+                        const token = info.token
+                        const chain = token.chain || token.data.chain
+                        chainList.forEach((obj, j) => {
+                          if (obj.chainId === Number(chain)) {
+                            badgeId = j
+                          }
+                        })
+                        const isSpecialVault = token.liquidityPoolVault || token.poolVault
+                        const network = chainList[badgeId].name.toLowerCase()
+                        const address = isSpecialVault
+                          ? token.data.collateralAddress
+                          : token.vaultAddress || token.tokenAddress
+                        push(`${directDetailUrl + network}/${address}`)
                       }}
                     >
                       <FlexDiv>

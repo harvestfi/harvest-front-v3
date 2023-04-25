@@ -130,6 +130,7 @@ const MyFarm = styled.div`
 
   color: ${props => props.fontColor};
   align-self: center;
+  align-items: center;
 
   @media screen and (max-width: 992px) {
     font-size: 14px;
