@@ -30,7 +30,7 @@ html {
     }
 
     input[type="number"] {
-      -moz-appearance: textfield;
+      -moz-appearance: none;
     }
 
     @media screen and (max-width: 992px) {
