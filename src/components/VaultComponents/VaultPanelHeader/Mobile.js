@@ -86,7 +86,17 @@ const MobilePanelHeader = ({
 
   const { badgeIconBackColor, fontColor, borderColor } = useThemeContext()
   return (
-    <PanelContainer fontColor={fontColor} borderColor={borderColor}>
+    <PanelContainer
+      fontColor={fontColor}
+      borderColor={borderColor}
+      onClick={() => {
+        const network = chainList[badgeId].name.toLowerCase()
+        const address = isSpecialVault
+          ? token.data.collateralAddress
+          : token.vaultAddress || token.tokenAddress
+        push(`${directDetailUrl + network}/${address}`)
+      }}
+    >
       <DetailModal className="vault-detail" show={show} onHide={handleClose}>
         <Modal.Header>
           <input type="image" alt="" src={DetailClose} onClick={handleClose} />
