@@ -278,7 +278,7 @@ const WidoDepositBase = ({
             {!connected ? (
               0
             ) : lpTokenBalance ? (
-              fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, WIDO_BALANCES_DECIMALS, true)
+              fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, POOL_BALANCES_DECIMALS, true)
             ) : (
               <AnimatedDots />
             )}
@@ -290,7 +290,7 @@ const WidoDepositBase = ({
             {!connected ? (
               0
             ) : totalStaked ? (
-              fromWei(totalStaked, fAssetPool.lpTokenData.decimals, WIDO_BALANCES_DECIMALS, true)
+              fromWei(totalStaked, fAssetPool.lpTokenData.decimals, POOL_BALANCES_DECIMALS, true)
             ) : (
               <AnimatedDots />
             )}

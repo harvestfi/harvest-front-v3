@@ -7,7 +7,7 @@ import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.sv
 import DropDownIcon from '../../../assets/images/logos/wido/drop-down.svg'
 import FARMIcon from '../../../assets/images/logos/wido/farm.svg'
 import WidoIcon from '../../../assets/images/logos/wido/wido.svg'
-import { WIDO_BALANCES_DECIMALS } from '../../../constants'
+import { POOL_BALANCES_DECIMALS } from '../../../constants'
 import { useActions } from '../../../providers/Actions'
 import { usePools } from '../../../providers/Pools'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -164,20 +164,20 @@ const WidoWithdrawBase = ({
                   fromWei(
                     totalStaked,
                     fAssetPool.lpTokenData.decimals,
-                    WIDO_BALANCES_DECIMALS,
+                    POOL_BALANCES_DECIMALS,
                     true,
                   ),
                 ),
               )
               setAmountsToExecute([
-                fromWei(totalStaked, fAssetPool.lpTokenData.decimals, WIDO_BALANCES_DECIMALS, true),
+                fromWei(totalStaked, fAssetPool.lpTokenData.decimals, POOL_BALANCES_DECIMALS, true),
               ])
             }}
           >
             {!connected ? (
               0
             ) : totalStaked ? (
-              fromWei(totalStaked, fAssetPool.lpTokenData.decimals, WIDO_BALANCES_DECIMALS, true)
+              fromWei(totalStaked, fAssetPool.lpTokenData.decimals, POOL_BALANCES_DECIMALS, true)
             ) : (
               <AnimatedDots />
             )}
@@ -234,7 +234,7 @@ const WidoWithdrawBase = ({
                 fromWei(
                   lpTokenBalance,
                   fAssetPool.lpTokenData.decimals,
-                  WIDO_BALANCES_DECIMALS,
+                  POOL_BALANCES_DECIMALS,
                   true,
                 ),
               ),
@@ -244,7 +244,7 @@ const WidoWithdrawBase = ({
           {!connected ? (
             0
           ) : lpTokenBalance ? (
-            fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, WIDO_BALANCES_DECIMALS, true)
+            fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, POOL_BALANCES_DECIMALS, true)
           ) : (
             <AnimatedDots />
           )}
