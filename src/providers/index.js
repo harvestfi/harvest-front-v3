@@ -3,6 +3,7 @@ import injectedModule from '@web3-onboard/injected-wallets'
 import ledgerModule from '@web3-onboard/ledger'
 import { Web3ReactProvider } from '@web3-react/core'
 import { init, Web3OnboardProvider } from '@web3-onboard/react'
+import walletConnectModule from '@web3-onboard/walletconnect'
 import { ethers } from 'ethers'
 import React from 'react'
 import { ActionsProvider } from './Actions'
@@ -15,11 +16,17 @@ import { WalletProvider } from './Wallet'
 
 const injected = injectedModule()
 const ledger = ledgerModule()
+const walletConnect = walletConnectModule({
+  bridge: 'https://bridge.walletconnect.org',
+  qrcodeModalOptions: {
+    mobileLinks: ['rainbow', 'metamask', 'argent', 'trust', 'imtoken', 'pillar'],
+  },
+})
 
 const web3Onboard = init({
   // head to https://explorer.blocknative.com/account to sign up for free
   apiKey: process.env.REACT_APP_INFURA_KEY,
-  wallets: [injected, ledger],
+  wallets: [injected, ledger, walletConnect],
   chains: [
     {
       id: '0x1',

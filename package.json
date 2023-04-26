@@ -118,18 +118,11 @@
     "extends": "react-app"
   },
   "config-overrides-path": "./rewire-config/index.js",
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
-  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not op_mini all"
+  ],
   "devDependencies": {
     "babel-eslint": "10.1.0",
     "eslint": "6.6.0",
