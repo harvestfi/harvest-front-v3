@@ -220,6 +220,11 @@ const WidoDetail = () => {
   const [badgeId, setBadgeId] = useState(-1)
 
   useEffect(() => {
+    // 👇️ scroll to top on page load
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+  }, [])
+
+  useEffect(() => {
     const getBadge = () => {
       chainList.forEach((el, i) => {
         if (el.chainId === Number(chain)) {
