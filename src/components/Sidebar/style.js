@@ -12,7 +12,8 @@ const Container = styled.div`
   background: ${props => props.backColor};
   color: ${props => props.fontColor};
 
-  min-height: 100%;
+  min-height: 560px;
+  height: 100%;
   min-width: ${props => props.width};
   max-width: 100%;
   position: fixed;
@@ -99,10 +100,6 @@ const LinkContainer = styled.div`
   @media screen and (min-width: 992px) {
     display: flex;
   }
-
-  @media screen and (max-height: 650px) {
-    margin-bottom: 14px;
-  }
 `
 
 const Link = styled.button`
@@ -158,12 +155,6 @@ const Link = styled.button`
   &:hover {
     color: ${props => props.activeColor};
     font-weight: bold;
-  }
-
-  @media screen and (max-height: 650px) {
-    font-size: 12px;
-    font-weight: 500;
-    line-height: 16px;
   }
 `
 
