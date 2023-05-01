@@ -25,7 +25,7 @@ const CloseBtn = styled.img`
 `
 
 const FilterInput = styled.input`
-  background: ##ffffff;
+  background: #ffffff;
   border-radius: 8px;
   height: 40px;
   width: 100%;
