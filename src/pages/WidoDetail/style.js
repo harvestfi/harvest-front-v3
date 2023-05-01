@@ -372,6 +372,7 @@ const RestContent = styled.div`
 const RestPart = styled.div`
   padding: 20px 18px;
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.06);
+  border: 1px solid rgba(217, 217, 217, 0.5);
   background: ${props => props.backColor};
 
   border-radius: 10px;
