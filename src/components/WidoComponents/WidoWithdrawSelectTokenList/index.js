@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { fromWEI } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { Container, Text, Vault, Content, EmptyContainer } from './style'
@@ -10,6 +10,7 @@ const WidoWithdrawSelectTokenList = ({
   setPickedToken,
   setSelectTokenWido,
   setWidoPartHeight,
+  filterWord,
 }) => {
   const handleClick = id => {
     setClickedId(id)
@@ -18,12 +19,27 @@ const WidoWithdrawSelectTokenList = ({
     setWidoPartHeight(null)
   }
 
+  const [tokenList, setTokenList] = useState(list)
+
+  useEffect(() => {
+    if (list.length !== 0 && filterWord !== undefined && filterWord !== '') {
+      const newList = list.filter(el =>
+        el.symbol.toLowerCase().includes(filterWord.toLowerCase().trim()),
+      )
+      setTokenList(newList)
+    }
+
+    if (filterWord === '') {
+      setTokenList(list)
+    }
+  }, [filterWord, list]) // eslint-disable-line react-hooks/exhaustive-deps
+
   const { widoDepoTokenListActiveColor, widoDepoTokenListHoverColor, fontColor } = useThemeContext()
 
   return (
     <Content>
-      {list.length > 0 ? (
-        list.map((data, i) => (
+      {tokenList.length > 0 ? (
+        tokenList.map((data, i) => (
           <Container
             key={i}
             className={i === clickId ? 'active' : ''}
