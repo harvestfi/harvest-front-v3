@@ -24,10 +24,10 @@ const WidoDepositSelectToken = ({
   soonToSupList,
   setWidoPartHeight,
 }) => {
-  const [filter, setFilter] = useState('')
+  const [filterWord, setFilterWord] = useState('')
 
   const onFilter = async e => {
-    setFilter(e.target.value)
+    setFilterWord(e.target.value)
   }
 
   useEffect(() => {
@@ -67,7 +67,7 @@ const WidoDepositSelectToken = ({
         <NewLabel position="relative" marginBottom="10px">
           <Search src={SearchIcon} />
           <FilterInput
-            value={filter}
+            value={filterWord}
             placeholder="Search for ticker or full name"
             shadow={widoInputBoxShadow}
             borderColor={widoInputPanelBorderColor}
@@ -93,6 +93,7 @@ const WidoDepositSelectToken = ({
             setBalance={setBalance}
             setSelectTokenWido={setSelectTokenWido}
             setWidoPartHeight={setWidoPartHeight}
+            filterWord={filterWord}
           />
           <NewLabel
             weight="500"
@@ -111,6 +112,7 @@ const WidoDepositSelectToken = ({
             setBalance={setBalance}
             setSelectTokenWido={setSelectTokenWido}
             setWidoPartHeight={setWidoPartHeight}
+            filterWord={filterWord}
           />
         </NewLabel>
       </SelectTokenWido>

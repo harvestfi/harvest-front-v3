@@ -92,7 +92,7 @@ export function ThemeProvider({ children }) {
     : ''
 
   const widoDepoTokenListActiveColor = darkMode ? '#ECFDF3' : '#ECFDF3'
-  const widoDepoTokenListHoverColor = darkMode ? '#ECFDF3' : '#ECFDF3'
+  const widoDepoTokenListHoverColor = darkMode ? '#7b8b81' : '#ECFDF3'
 
   const widoSwitchTagBorderColor = darkMode ? '#F2F4F7' : '#F2F4F7'
   const widoSwitchTagBackColor = darkMode ? '#243648' : '#F9FAFB'
