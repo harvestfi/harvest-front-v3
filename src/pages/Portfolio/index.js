@@ -22,6 +22,7 @@ import {
   POOL_BALANCES_DECIMALS,
   SPECIAL_VAULTS,
   directDetailUrl,
+  fromWEI,
 } from '../../constants'
 import { addresses } from '../../data'
 import { CHAINS_ID } from '../../data/constants'
@@ -30,7 +31,6 @@ import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
-import { fromWei } from '../../services/web3'
 import { formatNumber, ceil10, isLedgerLive } from '../../utils'
 import {
   BadgeIcon,
@@ -303,7 +303,7 @@ const Portfolio = () => {
                   ? token.data.lpTokenData && token.data.lpTokenData.price
                   : token.usdPrice) || 1
             }
-            const unstake = fromWei(
+            const unstake = fromWEI(
               get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),
               (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
               POOL_BALANCES_DECIMALS,
@@ -314,7 +314,7 @@ const Portfolio = () => {
             if (isNaN(stats.unstake)) {
               stats.unstake = 0
             }
-            const stake = fromWei(
+            const stake = fromWEI(
               get(userStats, `[${stakedVaults[i]}]['totalStaked']`, 0),
               (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
               POOL_BALANCES_DECIMALS,
@@ -351,14 +351,14 @@ const Portfolio = () => {
             stats.reward =
               rewards === '0'
                 ? 0
-                : fromWei(
+                : fromWEI(
                     rewards,
                     (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
                   ) * (switchBalance ? usdRewardPrice : 1)
             valueRewards += Number(
               rewards === '0'
                 ? 0
-                : fromWei(
+                : fromWEI(
                     rewards,
                     (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
                   ) * usdRewardPrice,
