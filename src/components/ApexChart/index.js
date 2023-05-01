@@ -209,6 +209,10 @@ const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBal
   useEffect(() => {
     const init = async () => {
       setLoading(true)
+      if (data === undefined) {
+        setIsDataReady(false)
+        return
+      }
       const ago = getRangeNumber(range)
 
       let mainData = [],
