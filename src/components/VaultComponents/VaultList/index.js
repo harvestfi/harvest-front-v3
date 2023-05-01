@@ -109,6 +109,20 @@ const formatVaults = (
           groupOfVaults[symbol].tokenNames
             .join(', ')
             .toLowerCase()
+            .includes(searchQuery.toLowerCase().trim())) ||
+        (get(groupOfVaults[symbol], 'subLabel') &&
+          groupOfVaults[symbol].subLabel
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase().trim())) ||
+        (get(
+          symbol === FARM_TOKEN_SYMBOL ? tokens[IFARM_TOKEN_SYMBOL] : groupOfVaults[symbol],
+          'platform',
+        )[0] &&
+          (symbol === FARM_TOKEN_SYMBOL
+            ? tokens[IFARM_TOKEN_SYMBOL]
+            : groupOfVaults[symbol]
+          ).platform[0]
+            .toLowerCase()
             .includes(searchQuery.toLowerCase().trim())),
     )
   }
