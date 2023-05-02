@@ -23,7 +23,7 @@ import { useThemeContext } from '../../providers/useThemeContext'
 
 const FAQ = () => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const { pageBackColor, backColor, fontColor, borderColor } = useThemeContext()
+  const { pageBackColor, backColor, fontColor, borderColor, faqQueHoverColor } = useThemeContext()
 
   return (
     <FAQContainer pageBackColor={pageBackColor} fontColor={fontColor}>
@@ -50,19 +50,32 @@ const FAQ = () => {
                 <Collapsible
                   lazyRender={item.lazyRender ? item.lazyRender : true}
                   triggerWhenOpen={
-                    <Question open backColor={backColor} borderColor={borderColor}>
+                    <Question
+                      open
+                      backColor={backColor}
+                      borderColor={borderColor}
+                      hoverColor={faqQueHoverColor}
+                    >
                       {item.question}
                       <img open src={DropdownToggleImageOpen} alt="" />
                     </Question>
                   }
                   trigger={
-                    <Question backColor={backColor} borderColor={borderColor}>
+                    <Question
+                      backColor={backColor}
+                      borderColor={borderColor}
+                      hoverColor={faqQueHoverColor}
+                    >
                       {item.question}
                       <img src={DropdownToggleImageClosed} alt="" />
                     </Question>
                   }
                 >
-                  <Answer backColor={backColor} borderColor={borderColor}>
+                  <Answer
+                    backColor={backColor}
+                    borderColor={borderColor}
+                    hoverColor={faqQueHoverColor}
+                  >
                     {item.answer}
                   </Answer>
                 </Collapsible>
@@ -77,19 +90,32 @@ const FAQ = () => {
                   <Collapsible
                     lazyRender={item.lazyRender ? item.lazyRender : true}
                     triggerWhenOpen={
-                      <Question open backColor={backColor} borderColor={borderColor}>
+                      <Question
+                        open
+                        backColor={backColor}
+                        borderColor={borderColor}
+                        hoverColor={faqQueHoverColor}
+                      >
                         {item.question}
                         <img open src={DropdownToggleImageOpen} alt="" />
                       </Question>
                     }
                     trigger={
-                      <Question backColor={backColor} borderColor={borderColor}>
+                      <Question
+                        backColor={backColor}
+                        borderColor={borderColor}
+                        hoverColor={faqQueHoverColor}
+                      >
                         {item.question}
                         <img src={DropdownToggleImageClosed} alt="" />
                       </Question>
                     }
                   >
-                    <Answer backColor={backColor} borderColor={borderColor}>
+                    <Answer
+                      backColor={backColor}
+                      borderColor={borderColor}
+                      hoverColor={faqQueHoverColor}
+                    >
                       {item.answer}
                     </Answer>
                   </Collapsible>
@@ -102,19 +128,32 @@ const FAQ = () => {
                   <Collapsible
                     lazyRender={item.lazyRender !== undefined ? item.lazyRender : true}
                     triggerWhenOpen={
-                      <Question open backColor={backColor} borderColor={borderColor}>
+                      <Question
+                        open
+                        backColor={backColor}
+                        borderColor={borderColor}
+                        hoverColor={faqQueHoverColor}
+                      >
                         {item.question}
                         <img open src={DropdownToggleImageOpen} alt="" />
                       </Question>
                     }
                     trigger={
-                      <Question backColor={backColor} borderColor={borderColor}>
+                      <Question
+                        backColor={backColor}
+                        borderColor={borderColor}
+                        hoverColor={faqQueHoverColor}
+                      >
                         {item.question}
                         <img src={DropdownToggleImageClosed} alt="" />
                       </Question>
                     }
                   >
-                    <Answer backColor={backColor} borderColor={borderColor}>
+                    <Answer
+                      backColor={backColor}
+                      borderColor={borderColor}
+                      hoverColor={faqQueHoverColor}
+                    >
                       {item.answer}
                     </Answer>
                   </Collapsible>

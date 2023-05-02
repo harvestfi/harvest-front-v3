@@ -81,7 +81,7 @@ const Question = styled.div`
   transition: 0.25s;
 
   &:hover {
-    background: #e9e9e9;
+    background: ${props => props.hoverColor};
   }
 
   ${props =>
@@ -90,7 +90,7 @@ const Question = styled.div`
   border-bottom-left-radius: 0px; 
   border-bottom-right-radius: 0px;
   border-radius: 10px 10px 0px 0px;
-    background: #E9E9E9;
+    background: ${props.hoverColor};
   `
       : ``}
 
@@ -103,7 +103,7 @@ const Question = styled.div`
 
 const Answer = styled.div`
   padding: 16px;
-  background: #e9e9e9;
+  background: ${props => props.hoverColor};
   transition: 0.25s;
   border-radius: 0 0 10px 10px;
   border-top: none;

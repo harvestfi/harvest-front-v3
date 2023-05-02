@@ -115,6 +115,9 @@ export function ThemeProvider({ children }) {
   const sidebarActiveFontColor = darkMode ? '#D0D5DD' : '#101828'
 
   const totalValueFontColor = darkMode ? '#c7c3c3' : '#475467'
+
+  const faqQueHoverColor = darkMode ? '#293744' : '#e9e9e9'
+
   return (
     <ThemeContext.Provider
       value={{
@@ -176,6 +179,7 @@ export function ThemeProvider({ children }) {
         sidebarFontColor,
         sidebarActiveFontColor,
         totalValueFontColor,
+        faqQueHoverColor,
       }}
     >
       {children}
