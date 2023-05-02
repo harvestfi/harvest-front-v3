@@ -61,7 +61,7 @@ const WidoWithdrawSelectTokenList = ({
           </Container>
         ))
       ) : (
-        <EmptyContainer fontColor={fontColor}>Nothing to Supported</EmptyContainer>
+        <EmptyContainer fontColor={fontColor}>Nothing to Support</EmptyContainer>
       )}
     </Content>
   )
