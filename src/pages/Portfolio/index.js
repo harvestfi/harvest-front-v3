@@ -31,7 +31,7 @@ import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
-import { formatNumber, ceil10, isLedgerLive } from '../../utils'
+import { formatNumber, formatNumberWido, ceil10, isLedgerLive } from '../../utils'
 import {
   BadgeIcon,
   Column,
@@ -349,14 +349,14 @@ const Portfolio = () => {
 
             const rewards = userStats[stakedVaults[i]].totalRewardsEarned
             stats.reward =
-              rewards === '0'
+              rewards === undefined
                 ? 0
                 : fromWEI(
                     rewards,
                     (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
                   ) * (switchBalance ? usdRewardPrice : 1)
             valueRewards += Number(
-              rewards === '0'
+              rewards === undefined
                 ? 0
                 : fromWEI(
                     rewards,
@@ -571,8 +571,8 @@ const Portfolio = () => {
                             height={16}
                             label={`${switchBalance ? '$' : ''}${
                               switchBalance
-                                ? formatNumber(info.reward, 2)
-                                : formatNumber(info.reward, 6)
+                                ? formatNumberWido(info.reward, 2)
+                                : formatNumberWido(info.reward, 6)
                             }`}
                             icon={`/icons/${info.rewardSymbol}`}
                           />

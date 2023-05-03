@@ -489,7 +489,7 @@ const TableContent = styled.div`
   `
       : ``}
   @media screen and (max-width: 992px) {
-    min-width: 380px;
+    // min-width: 380px;
     overflow: scroll;
   }
 `
