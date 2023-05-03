@@ -123,11 +123,19 @@ const QuickFilter = ({
       const searchString = event.target.value
       setSearchQuery(searchString)
       setStringSearch(searchString.length > 0)
-      const updateValue = { search: searchString }
-      setParamObj(newParamObj => ({
-        ...newParamObj,
-        ...updateValue,
-      }))
+      if (searchString !== '') {
+        const updateValue = { search: searchString }
+        setParamObj(newParamObj => ({
+          ...newParamObj,
+          ...updateValue,
+        }))
+      } else {
+        const newObj = { ...paramObj }
+        delete newObj.search
+        setParamObj(() => ({
+          ...newObj,
+        }))
+      }
     }, 300)
 
     if (event.key === 'Enter') {
@@ -315,10 +323,10 @@ const QuickFilter = ({
     document.getElementById('search-input').value = ''
     setSearchQuery('')
     setStringSearch(false)
-    const updateValue = { search: '' }
-    setParamObj(newParamObj => ({
-      ...newParamObj,
-      ...updateValue,
+    const newObj = { ...paramObj }
+    delete newObj.search
+    setParamObj(() => ({
+      ...newObj,
     }))
   }
 
