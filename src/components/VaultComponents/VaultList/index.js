@@ -317,6 +317,12 @@ const VaultList = () => {
   const [selectFarmType, onSelectFarmType] = useState('')
   const [selectedActiveType, selectActiveType] = useState([])
 
+  const [loadComplete, setLoadComplete] = useState(false)
+
+  React.useEffect(() => {
+    setLoadComplete(true)
+  }, [])
+
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )
@@ -593,11 +599,11 @@ const VaultList = () => {
       <VaultsListHeader
         setSearchQuery={setSearchQuery}
         onDepositedOnlyClick={selectDepositedOnly}
-        depositedOnly={depositedOnly}
         onAssetClick={onSelectAsset}
         onSelectStableCoin={onSelectStableCoin}
         onSelectFarmType={onSelectFarmType}
         onSelectActiveType={selectActiveType}
+        loadComplete={loadComplete}
       />
       <VaultsListBody borderColor={borderColor} backColor={backColor}>
         <MobileListFilter

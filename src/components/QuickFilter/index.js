@@ -1,3 +1,4 @@
+import { useHistory, useLocation } from 'react-router-dom'
 import { useWindowWidth } from '@react-hook/window-size'
 import { debounce } from 'lodash'
 import React, { useEffect, useState } from 'react'
@@ -74,21 +75,21 @@ const MobileChainsList = isLedgerLive()
     ]
 
 const FarmsList = [
-  { id: 1, name: 'All Farms', img: All },
-  { id: 2, name: 'My Farms', img: My },
-  { id: 3, name: 'Inactive', img: Moon },
+  { id: 1, name: 'All Farms', img: All, filter: 'allfarm' },
+  { id: 2, name: 'My Farms', img: My, filter: 'myfarm' },
+  { id: 3, name: 'Inactive', img: Moon, filter: 'inactive' },
 ]
 
 const RiskList = [
-  { id: 1, name: 'Beginners', img: Beginner },
-  { id: 2, name: 'Advanced', img: Degen },
+  { id: 1, name: 'Beginners', img: Beginner, filter: 'beginners' },
+  { id: 2, name: 'Advanced', img: Degen, filter: 'advanced' },
   { id: 3, name: 'Labs', img: RadioActive },
 ]
 
 const AssetsList = [
-  { id: 1, name: 'LP Tokens', img: LPTokens },
-  { id: 2, name: 'Single Stakes', img: SingleStakes },
-  { id: 3, name: 'Stablecoins', img: Stable },
+  { id: 1, name: 'LP Tokens', img: LPTokens, filter: 'lptokens' },
+  { id: 2, name: 'Single Stakes', img: SingleStakes, filter: 'singlestakes' },
+  { id: 3, name: 'Stablecoins', img: Stable, filter: 'stablecoins' },
 ]
 
 const QuickFilter = ({
@@ -98,15 +99,22 @@ const QuickFilter = ({
   onAssetClick = () => {},
   onSelectStableCoin = () => {},
   onSelectFarmType = () => {},
+  loadComplete = false,
 }) => {
   // Search string is null, it will be false, otherwise true.
   const [stringSearch, setStringSearch] = useState(false)
 
-  const clearQuery = () => {
-    document.getElementById('search-input').value = ''
-    setSearchQuery('')
-    setStringSearch(false)
-  }
+  const [flag, setFlag] = useState(false)
+
+  useEffect(() => {
+    onSelectActiveType(['Active'])
+    setFlag(true)
+  }, [flag, onSelectActiveType])
+
+  const { pathname } = useLocation()
+  const { push } = useHistory()
+
+  const [paramObj, setParamObj] = useState({})
 
   const updateSearchQuery = event => {
     event.persist()
@@ -115,9 +123,16 @@ const QuickFilter = ({
       const searchString = event.target.value
       setSearchQuery(searchString)
       setStringSearch(searchString.length > 0)
+      const updateValue = { search: searchString }
+      setParamObj(newParamObj => ({
+        ...newParamObj,
+        ...updateValue,
+      }))
     }, 300)
 
-    debouncedFn()
+    if (event.key === 'Enter') {
+      debouncedFn()
+    }
   }
 
   const printFarm = id => {
@@ -127,7 +142,6 @@ const QuickFilter = ({
         text = ['Inactive']
         break
       case 1:
-        // text = ["Deposited"]
         onDepositedOnlyClick(true)
         break
       case 0:
@@ -138,16 +152,13 @@ const QuickFilter = ({
         text = ['Active']
         break
     }
-
+    const updateValue = { farm: FarmsList[id].filter }
+    setParamObj(newParamObj => ({
+      ...newParamObj,
+      ...updateValue,
+    }))
     onSelectActiveType(text)
   }
-
-  const [flag, setFlag] = useState(false)
-
-  useEffect(() => {
-    onSelectActiveType(['Active'])
-    setFlag(true)
-  }, [flag, onSelectActiveType])
 
   const printAsset = id => {
     let text = '',
@@ -166,6 +177,11 @@ const QuickFilter = ({
       default:
         break
     }
+    const updateValue = { asset: AssetsList[id].filter }
+    setParamObj(newParamObj => ({
+      ...newParamObj,
+      ...updateValue,
+    }))
     onAssetClick(text)
     onSelectStableCoin(stable)
   }
@@ -182,6 +198,11 @@ const QuickFilter = ({
       default:
         break
     }
+    const updateValue = { risk: RiskList[id].filter }
+    setParamObj(newParamObj => ({
+      ...newParamObj,
+      ...updateValue,
+    }))
     onSelectFarmType(text)
   }
 
@@ -213,6 +234,93 @@ const QuickFilter = ({
   const [selectedClass, setSelectedClass] = useState(curChain)
 
   const selectedClasses = []
+
+  useEffect(() => {
+    const setUrlData = () => {
+      const chains = [],
+        chainIds = []
+      const params = new URLSearchParams(window.location.search)
+      // eslint-disable-next-line no-restricted-syntax
+      for (const [key, value] of params.entries()) {
+        if (key === 'risk') {
+          for (let j = 0; j < RiskList.length; j += 1) {
+            if (RiskList[j].filter === value) {
+              printRisk(j)
+              setRiskId(j)
+              break
+            }
+          }
+        } else if (key === 'asset') {
+          for (let i = 0; i < AssetsList.length; i += 1) {
+            if (AssetsList[i].filter === value) {
+              printAsset(i)
+              setAssetsId(i)
+              break
+            }
+          }
+        } else if (key === 'farm') {
+          for (let k = 0; k < FarmsList.length; k += 1) {
+            if (FarmsList[k].filter === value) {
+              printFarm(k)
+              setFarmId(k)
+              break
+            }
+          }
+        } else if (key === 'search') {
+          document.getElementById('search-input').value = value
+          setSearchQuery(value)
+          const updateValue = { search: value }
+          setParamObj(newParamObj => ({
+            ...newParamObj,
+            ...updateValue,
+          }))
+          setStringSearch(true)
+        } else if (key === 'chain') {
+          for (let i = 0; i < ChainsList.length; i += 1) {
+            if (ChainsList[i].chainId === value.toString()) {
+              chains.push(ChainsList[i].chainId)
+              chainIds.push(ChainsList[i].id)
+              break
+            }
+          }
+        }
+      }
+      if (chains.length !== 0) {
+        setSelectedClass(chainIds)
+        setSelChain(chains)
+      }
+    }
+
+    setUrlData()
+  }, [loadComplete]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!(Object.keys(paramObj).length === 0 && paramObj.constructor === Object)) {
+      const params = new URLSearchParams(paramObj)
+      if (selectedClass.length !== 0 && selectedClass.length !== ChainsList.length) {
+        for (let i = 0; i < selectedClass.length; i += 1) {
+          params.append('chain', ChainsList[selectedClass[i]].chainId)
+        }
+      }
+      push(`${pathname}?${params.toString()}`)
+    }
+  }, [selectedClass, paramObj]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const clearFilter = () => {
+    setParamObj({})
+    push(pathname)
+  }
+
+  const clearQuery = () => {
+    document.getElementById('search-input').value = ''
+    setSearchQuery('')
+    setStringSearch(false)
+    const updateValue = { search: '' }
+    setParamObj(newParamObj => ({
+      ...newParamObj,
+      ...updateValue,
+    }))
+  }
 
   useEffect(() => {
     let count =
@@ -384,6 +492,7 @@ const QuickFilter = ({
                       CHAINS_ID.MATIC_MAINNET,
                       CHAINS_ID.ARBITRUM_ONE,
                     ])
+                    clearFilter()
                   }}
                 >
                   <Counter count={filterCount}>{filterCount > 0 ? filterCount : ''}</Counter>&nbsp;
@@ -395,7 +504,8 @@ const QuickFilter = ({
               <InputsContainer>
                 <SearchBar
                   placeholder="Search assets"
-                  onChange={updateSearchQuery}
+                  // onChange={updateSearchQuery}
+                  onKeyDown={updateSearchQuery}
                   onClose={clearQuery}
                 />
               </InputsContainer>
@@ -579,6 +689,7 @@ const QuickFilter = ({
                   setMobileChainImg(AllChains)
                   setMobileFilterCount(0)
                   setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2])
+                  clearFilter()
                 }}
                 borderColor={borderColor}
                 fontColor={fontColor}

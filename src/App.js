@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import axios from 'axios'
 import { get } from 'lodash'
@@ -85,9 +85,6 @@ const App = () => (
       <Body id="page-content">
         <Sidebar width="320px" />
         <Switch>
-          <Route exact path={ROUTES.MAIN}>
-            <Redirect to={ROUTES.HOME} />
-          </Route>
           <Route exact path={ROUTES.HOME} component={Farm} />
           <Route exact path={ROUTES.PORTFOLIO} component={Portfolio} />
           <Route exact path={ROUTES.FARM} component={Farm} />

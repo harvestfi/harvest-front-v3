@@ -10,7 +10,6 @@ import Docs from '../../assets/images/logos/sidebar/docs.svg'
 import ExternalLink from '../../assets/images/logos/sidebar/external_link.svg'
 import FAQ from '../../assets/images/logos/sidebar/faq.svg'
 import Farms from '../../assets/images/logos/sidebar/farms.svg'
-// import Home from '../../assets/images/logos/sidebar/home.svg'
 import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
 import LogoutIcon from '../../assets/images/logos/sidebar/logout.svg'
 import MobileConnect from '../../assets/images/logos/sidebar/mobileconnect.svg'
@@ -79,11 +78,6 @@ const sideLinks = [
     name: 'Home',
     imgPath: Farms,
   },
-  // {
-  //   path: ROUTES.FARM,
-  //   name: 'Farms',
-  //   imgPath: Farms,
-  // },
   {
     path: ROUTES.PORTFOLIO,
     name: 'Portfolio',

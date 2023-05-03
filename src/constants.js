@@ -18,7 +18,7 @@ export const SOCIAL_LINKS = {
 
 export const ROUTES = {
   MAIN: '/',
-  HOME: '/home',
+  HOME: '/',
   FARM: '/farm',
   PORTFOLIO: '/portfolio',
   ANALYTIC: '/analytics',
