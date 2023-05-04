@@ -486,7 +486,7 @@ const MobileClearFilter = styled(ClearFilter)`
 
 const FilterOffCanvas = styled(Offcanvas)`
   width: 300px !important;
-  background: ${props => props.backColor} !important;
+  background: ${props => props.backcolor} !important;
 `
 
 const FilterOffCanvasHeader = styled(Offcanvas.Header)`

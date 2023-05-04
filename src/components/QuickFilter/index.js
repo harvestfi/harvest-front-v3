@@ -591,7 +591,7 @@ const QuickFilter = ({
               show={filterShow}
               onHide={handleFilterClose}
               placement="end"
-              backColor={backColor}
+              backcolor={backColor}
             >
               <FilterOffCanvasHeader closeButton>
                 <FarmFilter fontColor={fontColor}>Farm Filters</FarmFilter>
@@ -688,7 +688,7 @@ const QuickFilter = ({
                   document.getElementById('search-input').value = ''
                   setSearchQuery('')
                   setStringSearch(false)
-                  onSelectActiveType(['active'])
+                  onSelectActiveType(['Active'])
                   onSelectStableCoin(false)
                   onAssetClick('')
                   onSelectFarmType('')
@@ -700,6 +700,11 @@ const QuickFilter = ({
                   setMobileChainImg(AllChains)
                   setMobileFilterCount(0)
                   setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2])
+                  setSelChain([
+                    CHAINS_ID.ETH_MAINNET,
+                    CHAINS_ID.MATIC_MAINNET,
+                    CHAINS_ID.ARBITRUM_ONE,
+                  ])
                   clearFilter()
                 }}
                 borderColor={borderColor}
