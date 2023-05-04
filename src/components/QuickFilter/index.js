@@ -303,17 +303,14 @@ const QuickFilter = ({
   }, [loadComplete]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (
-      !(Object.keys(paramObj).length === 0 && paramObj.constructor === Object) ||
-      (selectedClass.length !== 0 && selectedClass.length !== ChainsList.length)
-    ) {
-      const params = new URLSearchParams(paramObj)
+    const params = new URLSearchParams(paramObj)
 
+    if (selectedClass.length !== 0 && selectedClass.length !== ChainsList.length) {
       for (let i = 0; i < selectedClass.length; i += 1) {
         params.append('chain', ChainsList[selectedClass[i]].chainId)
       }
-      push(`${pathname}?${params.toString()}`)
     }
+    push(`${pathname}?${params.toString()}`)
   }, [selectedClass, paramObj]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const clearFilter = () => {
