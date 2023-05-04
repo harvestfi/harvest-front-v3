@@ -437,7 +437,9 @@ const QuickFilter = ({
                           tempChains.push(ChainsList[tempIds[j]].chainId)
                         }
                         setSelChain(tempChains)
-                        // printFarm(farmId)
+                        if (farmId !== -1) {
+                          printFarm(farmId)
+                        }
                       }}
                     >
                       <img src={item.img} width={25} height={25} alt="" />
