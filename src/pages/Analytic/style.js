@@ -154,7 +154,7 @@ const StatsContainerRow = styled.div`
   width: 100%;
   align-items: center;
   text-align: left;
-  margin: ${props => props.margin || '20px 30px 10px 30px'};
+  margin: ${props => props.margin || '20px 30px 10px'};
 
   div:first-child {
     width: ${props => props.width || '135px'};
@@ -251,6 +251,7 @@ const StatsTooltip = styled.div`
 
 const ImgList = styled.div`
   display: flex;
+  justify-content: space-between;
   a {
     margin-right: 10px;
   }

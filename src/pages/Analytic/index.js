@@ -374,7 +374,10 @@ const Analytic = () => {
             backColor={backColor}
             borderColor={borderColor}
           >
-            <StatsContainerRow width="auto">
+            <StatsContainerRow
+              width="auto"
+              margin={isMobile ? '10px 10px 10px 30px' : '20px 30px 10px'}
+            >
               <StatsContainer>
                 <BigStatsExchange>
                   <img src={Farm} alt="" />
