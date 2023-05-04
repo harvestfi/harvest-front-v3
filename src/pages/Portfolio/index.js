@@ -1,8 +1,9 @@
 import { BigNumber } from 'bignumber.js'
 import { useWindowWidth } from '@react-hook/window-size'
-import { find, get, isEmpty, orderBy } from 'lodash'
+import useEffectWithPrevious from 'use-effect-with-previous'
+import { find, get, isEmpty, orderBy, isEqual } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useRef, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
@@ -31,7 +32,14 @@ import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
-import { formatNumber, formatNumberWido, ceil10, isLedgerLive } from '../../utils'
+import {
+  formatNumber,
+  formatNumberWido,
+  ceil10,
+  isLedgerLive,
+  convertAmountToFARM,
+  getUserVaultBalance,
+} from '../../utils'
 import {
   BadgeIcon,
   Column,
@@ -89,10 +97,10 @@ const chainList = isLedgerLive()
 
 const Portfolio = () => {
   const { push } = useHistory()
-  const { connected, balances, account } = useWallet()
+  const { connected, balances, account, getWalletBalances } = useWallet()
   const { userStats, fetchUserPoolStats, pools } = usePools()
   const { profitShareAPY } = useStats()
-  const { vaultsData } = useVaults()
+  const { vaultsData, farmingBalances, getFarmingBalances } = useVaults()
   /* eslint-disable global-require */
   const { tokens } = require('../../data')
   /* eslint-enable global-require */
@@ -173,6 +181,26 @@ const Portfolio = () => {
   const onlyWidth = useWindowWidth()
   const ceilWidth = ceil10(onlyWidth, onlyWidth.toString().length - 1)
 
+  const firstWalletBalanceLoad = useRef(true)
+  useEffectWithPrevious(
+    ([prevAccount, prevBalances]) => {
+      const hasSwitchedAccount = account !== prevAccount && account
+      if (
+        hasSwitchedAccount ||
+        firstWalletBalanceLoad.current ||
+        (balances && !isEqual(balances, prevBalances))
+      ) {
+        const getBalance = async () => {
+          firstWalletBalanceLoad.current = false
+          await getWalletBalances([IFARM_TOKEN_SYMBOL, FARM_TOKEN_SYMBOL], false, true)
+        }
+
+        getBalance()
+      }
+    },
+    [account, balances],
+  )
+
   useEffect(() => {
     if (!connected) {
       setTotalDeposit(0)
@@ -205,6 +233,7 @@ const Portfolio = () => {
             await fetchUserPoolStats(poolsToLoad, account, userStats)
           }
         }
+        await getFarmingBalances(depositToken)
         /* eslint-enable no-await-in-loop */
       }
       loadUserPoolsStats()
@@ -314,12 +343,21 @@ const Portfolio = () => {
             if (isNaN(stats.unstake)) {
               stats.unstake = 0
             }
-            const stake = fromWEI(
-              get(userStats, `[${stakedVaults[i]}]['totalStaked']`, 0),
-              (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
-              POOL_BALANCES_DECIMALS,
-              true,
-            )
+            const stakeTemp = get(userStats, `[${stakedVaults[i]}]['totalStaked']`, 0)
+            // eslint-disable-next-line one-var
+            let farmBalance = 0
+            if (useIFARM) {
+              const iFARMBalance = get(balances, IFARM_TOKEN_SYMBOL, 0)
+              farmBalance = convertAmountToFARM(
+                IFARM_TOKEN_SYMBOL,
+                iFARMBalance,
+                tokens[FARM_TOKEN_SYMBOL].decimals,
+                vaultsData,
+              )
+            }
+            const finalStake = getUserVaultBalance(symbol, farmingBalances, stakeTemp, farmBalance)
+            const stake = fromWEI(finalStake, token.decimals || token.data.watchAsset.decimals, 3)
+
             stats.stake = stake * (switchBalance ? usdPrice : 1)
             // eslint-disable-next-line no-restricted-globals
             if (isNaN(stats.stake)) {
@@ -375,7 +413,7 @@ const Portfolio = () => {
 
       getFarmTokenInfo()
     }
-  }, [account, userStats, balances, switchBalance]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, userStats, balances, farmingBalances, switchBalance]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const sortCol = field => {
     const tokenList = orderBy(farmTokenList, [field], [sortOrder ? 'asc' : 'desc'])
@@ -424,10 +462,10 @@ const Portfolio = () => {
           </FarmTitle>
           <TableContent count={farmTokenList.length}>
             <Header borderColor={borderColor} backColor={backColor} width={ceilWidth}>
-              <Column width="7%" firstColumn>
+              <Column width="5%" firstColumn>
                 <SelField />
               </Column>
-              <Column width="23%" color={totalValueFontColor}>
+              <Column width="35%" color={totalValueFontColor}>
                 <Col
                   onClick={() => {
                     sortCol('symbol')
@@ -445,7 +483,7 @@ const Portfolio = () => {
                   Status
                 </Col>
               </Column>
-              <Column width="20%" color="#FF9400">
+              <Column width="15%" color="#FF9400">
                 <Col
                   onClick={() => {
                     sortCol('unstake')
@@ -454,7 +492,7 @@ const Portfolio = () => {
                   Unstaked
                 </Col>
               </Column>
-              <Column width="20%" color="#129c3d">
+              <Column width="15%" color="#129c3d">
                 <Col
                   onClick={() => {
                     sortCol('stake')
@@ -502,23 +540,25 @@ const Portfolio = () => {
                       }}
                     >
                       <FlexDiv>
-                        <Content width="7%" firstColumn>
+                        <Content width="5%" firstColumn>
                           <BadgeIcon badgeBack={badgeIconBackColor}>
                             <img src={info.chain} width="10px" height="10px" alt="" />
                           </BadgeIcon>
                         </Content>
-                        <Content width="23%" display={isMobile ? 'block' : 'flex'}>
-                          {info.logos.length > 0 &&
-                            info.logos.map((elem, index) => (
-                              <LogoImg
-                                key={index}
-                                className="coin"
-                                width={isMobile ? 19 : 37}
-                                src={elem}
-                                alt=""
-                              />
-                            ))}
-                          <ContentInner marginLeft={isMobile ? '0px' : '11px'}>
+                        <Content width="35%" display={isMobile ? 'block' : 'flex'}>
+                          <ContentInner width="40%">
+                            {info.logos.length > 0 &&
+                              info.logos.map((elem, index) => (
+                                <LogoImg
+                                  key={index}
+                                  className="coin"
+                                  width={isMobile ? 19 : 37}
+                                  src={elem}
+                                  alt=""
+                                />
+                              ))}
+                          </ContentInner>
+                          <ContentInner width="55%" marginLeft={isMobile ? '0px' : '11px'}>
                             <ListItem
                               weight={700}
                               size={isMobile ? 12 : 16}
@@ -540,7 +580,7 @@ const Portfolio = () => {
                             {isMobile ? '' : info.status}
                           </Status>
                         </Content>
-                        <Content width="20%">
+                        <Content width="15%">
                           <ListItem
                             weight={400}
                             size={12}
@@ -552,7 +592,7 @@ const Portfolio = () => {
                             }`}
                           />
                         </Content>
-                        <Content width="20%">
+                        <Content width="15%">
                           <ListItem
                             weight={400}
                             size={12}

@@ -57,11 +57,6 @@ const FarmTitle = styled.span`
   line-height: 21px;
   z-index: 3;
   padding: 27px 20px;
-
-  // @media screen and (max-width: 992px) {
-  //   margin-top: 15px;
-  //   margin-bottom: 18px;
-  // }
 `
 
 const TransactionDetails = styled.div`
@@ -118,7 +113,6 @@ const FlexDiv = styled.div`
       display: ${props.display};
     `
         : ``};
-    // padding-bottom: 10px;
   }
 `
 
@@ -235,17 +229,7 @@ const Content = styled.div`
   font-size: 20px;
   line-height: 23px;
   align-self: center;
-
-  @media screen and (max-width: 992px) {
-    ${props =>
-      props.firstColumn
-        ? `
-          // min-width: 30px;
-        `
-        : `
-        // min-width: 70px;
-      `}
-  }
+  justify-content: space-between;
 `
 
 const BadgeIcon = styled.div`
@@ -373,17 +357,6 @@ const Column = styled.div`
       : `
     color: #475467;
   `}
-
-  @media screen and (max-width: 992px) {
-    ${props =>
-      props.firstColumn
-        ? `
-          // min-width: 30px;
-        `
-        : `
-        // min-width: 70px;
-      `}
-  }
 `
 
 const Status = styled.div`
@@ -444,10 +417,6 @@ const LogoImg = styled.img`
     `
         : ``};
   }
-
-  // @media screen and (max-width: 992px) {
-  //   margin-top: 12px;
-  // }
 `
 
 const Col = styled.div`
@@ -457,7 +426,12 @@ const Col = styled.div`
 `
 
 const ContentInner = styled.div`
-  width: ${props => props.width};
+  ${props =>
+    props.width
+      ? `
+    width: ${props.width}
+  `
+      : ``};
   ${props =>
     props.display
       ? `
@@ -489,8 +463,7 @@ const TableContent = styled.div`
   `
       : ``}
   @media screen and (max-width: 992px) {
-    // min-width: 380px;
-    overflow: scroll;
+    overflow-x: scroll;
   }
 `
 
