@@ -565,14 +565,7 @@ const WidoDetail = () => {
               <BackArrow src={Back} alt="" iconcolor={widoBackIconColor} />
             </BackBtnRect>
             {logoUrl.map((el, i) => (
-              <LogoImg
-                className="logo"
-                zIndex={10 - i}
-                src={el.slice(1, el.length)}
-                key={i}
-                height={32}
-                alt=""
-              />
+              <LogoImg className="logo" src={el.slice(1, el.length)} key={i} height={32} alt="" />
             ))}
             <TopDesc weight={400} size="16px" height="21px" fontColor={fontColor}>
               {token.tokenNames.join(', ') || token.rewardSymbol}
@@ -595,14 +588,7 @@ const WidoDetail = () => {
                 <BackArrow src={Back} alt="" iconcolor={widoBackIconColor} />
               </BackBtnRect>
               {logoUrl.map((el, i) => (
-                <LogoImg
-                  className="logo"
-                  zIndex={10 - i}
-                  src={el.slice(1, el.length)}
-                  key={i}
-                  height={32}
-                  alt=""
-                />
+                <LogoImg className="logo" src={el.slice(1, el.length)} key={i} height={32} alt="" />
               ))}
             </FlexTopDiv>
 
