@@ -598,18 +598,18 @@ const QuickFilter = ({
               </FilterOffCanvasHeader>
               <FilterOffCanvasBody
                 className="filter-show"
-                filterColor={filterColor}
-                backColor={backColor}
-                fontColor={fontColor}
-                borderColor={borderColor}
-                mobileFilterDisableColor={mobileFilterDisableColor}
+                filtercolor={filterColor}
+                backcolor={backColor}
+                fontcolor={fontColor}
+                bordercolor={borderColor}
+                mobilefilterdisablecolor={mobileFilterDisableColor}
               >
                 <Dropdown className="asset-type">
                   <Dropdown.Toggle className="toggle">
                     <div>
                       <img width={12} height={12} src={assetsImg} alt="" />
                     </div>
-                    <div>{assetsId === -1 ? 'Asset Type' : assetsId}</div>
+                    <div>{assetsId === -1 ? 'Asset Type' : AssetsList[assetsId].name}</div>
                     <img className="narrow" src={DropDownNarrow} alt="" />
                   </Dropdown.Toggle>
 
@@ -619,8 +619,9 @@ const QuickFilter = ({
                         className="item"
                         key={i}
                         onClick={() => {
-                          setAssetsId(item.name)
+                          setAssetsId(i)
                           setAssetsImg(item.img)
+                          printAsset(i)
                           if (item.name === 'All Chains') {
                             onSelectActiveType([])
                           } else {
@@ -642,7 +643,7 @@ const QuickFilter = ({
                     <div>
                       <img width={12} height={12} src={riskImg} alt="" />
                     </div>
-                    <div>{riskId === -1 ? 'Farm Type' : riskId}</div>
+                    <div>{riskId === -1 ? 'Farm Type' : RiskList[riskId].name}</div>
                     <img className="narrow" src={DropDownNarrow} alt="" />
                   </Dropdown.Toggle>
 
@@ -653,8 +654,9 @@ const QuickFilter = ({
                         key={i}
                         disabled={item.name === 'Labs'}
                         onClick={() => {
-                          setRiskId(item.name)
+                          setRiskId(i)
                           setRiskImg(item.img)
+                          printRisk(i)
                           if (item.name === 'All Chains') {
                             onSelectActiveType([])
                           } else {
@@ -667,7 +669,7 @@ const QuickFilter = ({
                         </div>
                         <div>{item.name}</div>
                         {item.name === 'Labs' ? (
-                          <BadgeText mobileFilterDisableColor={mobileFilterDisableColor}>
+                          <BadgeText mobilefilterdisablecolor={mobileFilterDisableColor}>
                             Soon TM
                           </BadgeText>
                         ) : (

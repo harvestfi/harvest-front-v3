@@ -516,9 +516,9 @@ const FilterOffCanvasBody = styled(Offcanvas.Body)`
       font-size: 12px;
       font-weight: 500;
       line-height: 16px;
-      background: ${props => props.backColor} !important;
-      border: 1px solid ${props => props.borderColor} !important;
-      color: ${props => props.fontColor} !important;
+      background: ${props => props.backcolor} !important;
+      border: 1px solid ${props => props.bordercolor} !important;
+      color: ${props => props.fontcolor} !important;
       border-radius: 5px;
       width: 100%;
       position: relative;
@@ -532,7 +532,7 @@ const FilterOffCanvasBody = styled(Offcanvas.Body)`
 
       img {
         margin-right: 5px;
-        filter: ${props => props.filterColor};
+        filter: ${props => props.filtercolor};
       }
 
       &:after {
@@ -545,21 +545,21 @@ const FilterOffCanvasBody = styled(Offcanvas.Body)`
       font-weight: 500;
       line-height: 14px;
       width: 100%;
-      background: ${props => props.backColor};
-      border: 1px solid ${props => props.borderColor};
+      background: ${props => props.backcolor};
+      border: 1px solid ${props => props.bordercolor};
 
       .item {
         display: flex;
         padding: 13px 18px 15px 18px;
-        color: ${props => props.fontColor};
+        color: ${props => props.fontcolor};
         img {
           margin-right: 6px;
-          filter: ${props => props.filterColor};
+          filter: ${props => props.filtercolor};
         }
       }
 
       .item.disabled {
-        color: ${props => props.mobileFilterDisableColor};
+        color: ${props => props.mobilefilterdisablecolor};
       }
     }
   }
@@ -580,7 +580,7 @@ const BadgeText = styled.div`
   font-weight: 500;
   font-size: 5px;
   line-height: 7px;
-  color: ${props => props.mobileFilterDisableColor};
+  color: ${props => props.mobilefilterdisablecolor};
 `
 
 export {
