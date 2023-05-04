@@ -62,7 +62,7 @@ const LinksContainer = styled.div`
   margin: 0 0px auto;
   transition: 0.25s;
 
-  a.logo {
+  div.logo {
     display: flex;
     align-items: inherit;
     text-decoration: none;
@@ -125,7 +125,11 @@ const Link = styled.button`
     color: ${props.activeColor};
     font-weight: bold;
   `
-      : ``}
+      : `
+    img {
+      filter: ${props.activeIconColor};
+    }
+      `}
 
   .sideIcon {
     margin-right: 17px;
@@ -155,6 +159,9 @@ const Link = styled.button`
   &:hover {
     color: ${props => props.activeColor};
     font-weight: bold;
+    img {
+      filter: invert(0%) sepia(8%) saturate(7500%) hue-rotate(300deg) brightness(90%) contrast(110%);
+    }
   }
 `
 
@@ -743,6 +750,10 @@ const ProfitPart = styled.div`
   }
 `
 
+const Logo = styled.div`
+  cursor: pointer;
+`
+
 export {
   Container,
   Layout,
@@ -780,4 +791,5 @@ export {
   MobileProfitSharing,
   ProfitPart,
   Divider,
+  Logo,
 }

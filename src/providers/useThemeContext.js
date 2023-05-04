@@ -113,10 +113,15 @@ export function ThemeProvider({ children }) {
 
   const sidebarFontColor = darkMode ? 'white' : '#344054'
   const sidebarActiveFontColor = darkMode ? '#D0D5DD' : '#101828'
+  const sidebarActiveIconColor = darkMode
+    ? 'invert(95%) sepia(4%) saturate(441%) hue-rotate(183deg) brightness(89%) contrast(94%)'
+    : 'invert(46%) sepia(10%) saturate(767%) hue-rotate(183deg) brightness(92%) contrast(90%)'
 
   const totalValueFontColor = darkMode ? '#c7c3c3' : '#475467'
 
   const faqQueHoverColor = darkMode ? '#293744' : '#e9e9e9'
+
+  const [curPage, setCurPage] = usePersistedState('curpage', '')
 
   return (
     <ThemeContext.Provider
@@ -178,8 +183,11 @@ export function ThemeProvider({ children }) {
         toggleActiveBackColor,
         sidebarFontColor,
         sidebarActiveFontColor,
+        sidebarActiveIconColor,
         totalValueFontColor,
         faqQueHoverColor,
+        curPage,
+        setCurPage,
       }}
     >
       {children}

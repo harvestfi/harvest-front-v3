@@ -70,6 +70,7 @@ import {
   MobileProfitSharing,
   ProfitPart,
   Divider,
+  Logo,
 } from './style'
 
 const sideLinks = [
@@ -107,39 +108,35 @@ const sideLinks1 = [
   },
 ]
 
-const SideLink = ({ item, subItem, isDropdownLink, fontColor, activeFontColor, filterColor }) => {
-  const { pathname } = useLocation()
-
+const SideLink = ({
+  item,
+  subItem,
+  isDropdownLink,
+  fontColor,
+  activeFontColor,
+  activeIconColor,
+  curPage,
+}) => {
   return (
     /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
     <Link
       fontColor={fontColor}
-      active={pathname.includes(item.path)}
+      active={curPage === item.name}
       subItem={subItem}
       isDropdownLink={isDropdownLink}
       activeColor={activeFontColor}
+      activeIconColor={activeIconColor}
     >
       <div className="item">
         <SideIcons
           className="sideIcon"
           src={item.imgPath}
           alt="Harvest"
-          filterColor={filterColor}
+          width="27px"
+          height="27px"
         />
       </div>
       {item.name}
-      {item.external ? (
-        <div className="item">
-          <SideIcons
-            className="external-link"
-            src={ExternalLink}
-            alt="external-link"
-            filterColor={filterColor}
-          />
-        </div>
-      ) : (
-        <></>
-      )}
     </Link>
   )
 }
@@ -184,6 +181,9 @@ const Sidebar = ({ width }) => {
     toggleBackColor,
     sidebarFontColor,
     sidebarActiveFontColor,
+    sidebarActiveIconColor,
+    curPage,
+    setCurPage,
   } = useThemeContext()
 
   const switchTheme = () => setDarkMode(prev => !prev)
@@ -242,9 +242,14 @@ const Sidebar = ({ width }) => {
       <Layout>
         <MiddleActionsContainer>
           <LinksContainer totalItems={sideLinks.length + 2}>
-            <a className="logo" href="/">
+            <Logo
+              className="logo"
+              onClick={() => {
+                push('/')
+              }}
+            >
               <img src={logoNew} width={52} height={52} alt="Harvest" />
-            </a>
+            </Logo>
 
             <Divider height="1px" marginTop="36px" backColor="#EAECF0" />
 
@@ -337,14 +342,16 @@ const Sidebar = ({ width }) => {
                     } else {
                       push(item.path)
                     }
+                    setCurPage(item.name)
                   }}
                 >
                   <SideLink
                     item={item}
                     isDropdownLink={item.path === '#'}
-                    filterColor={filterColor}
                     fontColor={sidebarFontColor}
                     activeFontColor={sidebarActiveFontColor}
+                    activeIconColor={sidebarActiveIconColor}
+                    curPage={curPage}
                   />
                 </LinkContainer>
               </Fragment>
@@ -367,14 +374,16 @@ const Sidebar = ({ width }) => {
                   } else {
                     push(item.path)
                   }
+                  setCurPage(item.name)
                 }}
               >
                 <SideLink
                   item={item}
                   isDropdownLink={item.path === '#'}
-                  filterColor={filterColor}
                   fontColor={sidebarFontColor}
                   activeFontColor={sidebarActiveFontColor}
+                  activeIconColor={sidebarActiveIconColor}
+                  curPage={curPage}
                 />
               </LinkContainer>
             </Fragment>
@@ -604,6 +613,7 @@ const Sidebar = ({ width }) => {
                           fontColor={fontColor}
                           filterColor={filterColor}
                           activeFontColor={sidebarActiveFontColor}
+                          activeIconColor={sidebarActiveIconColor}
                         />
                       ))}
                     </LinkContainer>
