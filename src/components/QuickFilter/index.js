@@ -303,12 +303,14 @@ const QuickFilter = ({
   }, [loadComplete]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!(Object.keys(paramObj).length === 0 && paramObj.constructor === Object)) {
+    if (
+      !(Object.keys(paramObj).length === 0 && paramObj.constructor === Object) ||
+      (selectedClass.length !== 0 && selectedClass.length !== ChainsList.length)
+    ) {
       const params = new URLSearchParams(paramObj)
-      if (selectedClass.length !== 0 && selectedClass.length !== ChainsList.length) {
-        for (let i = 0; i < selectedClass.length; i += 1) {
-          params.append('chain', ChainsList[selectedClass[i]].chainId)
-        }
+
+      for (let i = 0; i < selectedClass.length; i += 1) {
+        params.append('chain', ChainsList[selectedClass[i]].chainId)
       }
       push(`${pathname}?${params.toString()}`)
     }
@@ -435,7 +437,7 @@ const QuickFilter = ({
                           tempChains.push(ChainsList[tempIds[j]].chainId)
                         }
                         setSelChain(tempChains)
-                        printFarm(farmId)
+                        // printFarm(farmId)
                       }}
                     >
                       <img src={item.img} width={25} height={25} alt="" />
