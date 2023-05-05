@@ -167,7 +167,14 @@ const VaultFooterActions = ({
           return (
             <SelectedVault key={`${symbol}-rewards-earned`}>
               <SelectedVaultNumber display="flex">
-                <img src={`/icons/${symbol.toLowerCase()}.svg`} width={40} height={40} alt="" />
+                <img
+                  src={`/icons/${
+                    symbol.toLowerCase() === 'mifarm' ? 'ifarm' : symbol.toLowerCase()
+                  }.svg`}
+                  width={40}
+                  height={40}
+                  alt=""
+                />
                 <Div>
                   <Monospace>
                     {!connected ? (
