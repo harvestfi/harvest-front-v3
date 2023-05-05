@@ -124,6 +124,15 @@ const Link = styled.button`
       ? `
     color: ${props.activeColor};
     font-weight: bold;
+    ${
+      props.darkMode
+        ? `
+      img {
+        filter: invert(97%) sepia(0%) saturate(7489%) hue-rotate(281deg) brightness(106%) contrast(103%);
+      }
+    `
+        : ``
+    }
   `
       : `
     img {
@@ -160,7 +169,14 @@ const Link = styled.button`
     color: ${props => props.activeColor};
     font-weight: bold;
     img {
-      filter: invert(0%) sepia(8%) saturate(7500%) hue-rotate(300deg) brightness(90%) contrast(110%);
+      ${props =>
+        props.darkMode
+          ? `
+          filter: invert(97%) sepia(0%) saturate(7489%) hue-rotate(281deg) brightness(106%) contrast(103%);
+      `
+          : `
+          filter: invert(0%) sepia(8%) saturate(7500%) hue-rotate(300deg) brightness(90%) contrast(110%);
+          `}
     }
   }
 `

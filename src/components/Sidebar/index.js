@@ -115,6 +115,7 @@ const SideLink = ({
   fontColor,
   activeFontColor,
   activeIconColor,
+  darkMode,
 }) => {
   const { pathname } = useLocation()
   const pageName = pathname === '/' ? 'home' : pathname
@@ -127,6 +128,7 @@ const SideLink = ({
       isDropdownLink={isDropdownLink}
       activeColor={activeFontColor}
       activeIconColor={activeIconColor}
+      darkMode={darkMode}
     >
       <div className="item">
         <SideIcons
@@ -349,6 +351,7 @@ const Sidebar = ({ width }) => {
                     fontColor={sidebarFontColor}
                     activeFontColor={sidebarActiveFontColor}
                     activeIconColor={sidebarActiveIconColor}
+                    darkMode={darkMode}
                   />
                 </LinkContainer>
               </Fragment>
@@ -379,6 +382,7 @@ const Sidebar = ({ width }) => {
                   fontColor={sidebarFontColor}
                   activeFontColor={sidebarActiveFontColor}
                   activeIconColor={sidebarActiveIconColor}
+                  darkMode={darkMode}
                 />
               </LinkContainer>
             </Fragment>
@@ -608,6 +612,7 @@ const Sidebar = ({ width }) => {
                           fontColor={fontColor}
                           activeFontColor={sidebarActiveFontColor}
                           activeIconColor={sidebarActiveIconColor}
+                          darkMode={darkMode}
                         />
                       ))}
                     </LinkContainer>
