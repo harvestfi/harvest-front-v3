@@ -115,13 +115,14 @@ const SideLink = ({
   fontColor,
   activeFontColor,
   activeIconColor,
-  curPage,
 }) => {
+  const { pathname } = useLocation()
+  const pageName = pathname === '/' ? 'home' : pathname
   return (
     /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
     <Link
       fontColor={fontColor}
-      active={curPage === item.name}
+      active={pageName.includes(item.name.toLowerCase())}
       subItem={subItem}
       isDropdownLink={isDropdownLink}
       activeColor={activeFontColor}
@@ -182,8 +183,6 @@ const Sidebar = ({ width }) => {
     sidebarFontColor,
     sidebarActiveFontColor,
     sidebarActiveIconColor,
-    curPage,
-    setCurPage,
   } = useThemeContext()
 
   const switchTheme = () => setDarkMode(prev => !prev)
@@ -342,7 +341,6 @@ const Sidebar = ({ width }) => {
                     } else {
                       push(item.path)
                     }
-                    setCurPage(item.name)
                   }}
                 >
                   <SideLink
@@ -351,7 +349,6 @@ const Sidebar = ({ width }) => {
                     fontColor={sidebarFontColor}
                     activeFontColor={sidebarActiveFontColor}
                     activeIconColor={sidebarActiveIconColor}
-                    curPage={curPage}
                   />
                 </LinkContainer>
               </Fragment>
@@ -374,7 +371,6 @@ const Sidebar = ({ width }) => {
                   } else {
                     push(item.path)
                   }
-                  setCurPage(item.name)
                 }}
               >
                 <SideLink
@@ -383,7 +379,6 @@ const Sidebar = ({ width }) => {
                   fontColor={sidebarFontColor}
                   activeFontColor={sidebarActiveFontColor}
                   activeIconColor={sidebarActiveIconColor}
-                  curPage={curPage}
                 />
               </LinkContainer>
             </Fragment>
@@ -611,7 +606,6 @@ const Sidebar = ({ width }) => {
                           key={subItem.name}
                           item={subItem}
                           fontColor={fontColor}
-                          filterColor={filterColor}
                           activeFontColor={sidebarActiveFontColor}
                           activeIconColor={sidebarActiveIconColor}
                         />

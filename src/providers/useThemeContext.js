@@ -121,8 +121,6 @@ export function ThemeProvider({ children }) {
 
   const faqQueHoverColor = darkMode ? '#293744' : '#e9e9e9'
 
-  const [curPage, setCurPage] = usePersistedState('curpage', '')
-
   return (
     <ThemeContext.Provider
       value={{
@@ -186,8 +184,6 @@ export function ThemeProvider({ children }) {
         sidebarActiveIconColor,
         totalValueFontColor,
         faqQueHoverColor,
-        curPage,
-        setCurPage,
       }}
     >
       {children}
