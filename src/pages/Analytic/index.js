@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import Countdown from 'react-countdown'
 import CountUp from 'react-countup'
 import { useMediaQuery } from 'react-responsive'
@@ -117,7 +117,10 @@ const Analytic = () => {
   const MINUTE_MS = 60000
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
+  const [loadComplete, setLoadComplete] = useState(false)
+
   useEffect(() => {
+    setLoadComplete(true)
     const interval = setInterval(() => {}, MINUTE_MS)
 
     return () => clearInterval(interval) // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
@@ -406,7 +409,7 @@ const Analytic = () => {
             backColor={backColor}
             borderColor={borderColor}
           >
-            <AnalyticChart />
+            <AnalyticChart loadComplete={loadComplete} />
           </StatsChart>
           <StatsExternal
             width={isMobile ? '100%' : '35%'}
