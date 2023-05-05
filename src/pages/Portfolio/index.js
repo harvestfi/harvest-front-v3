@@ -465,7 +465,7 @@ const Portfolio = () => {
               <Column width="5%" firstColumn>
                 <SelField />
               </Column>
-              <Column width={isMobile ? '25%' : '35%'} color={totalValueFontColor}>
+              <Column width={isMobile ? '23%' : '35%'} color={totalValueFontColor}>
                 <Col
                   onClick={() => {
                     sortCol('symbol')
@@ -474,7 +474,7 @@ const Portfolio = () => {
                   Name
                 </Col>
               </Column>
-              <Column width="15%" color={totalValueFontColor}>
+              <Column width={isMobile ? '12%' : '15%'} color={totalValueFontColor}>
                 <Col
                   onClick={() => {
                     sortCol('status')
@@ -501,7 +501,7 @@ const Portfolio = () => {
                   Staked
                 </Col>
               </Column>
-              <Column width="15%" color={totalValueFontColor}>
+              <Column width={isMobile ? '20%' : '15%'} color={totalValueFontColor}>
                 <Col
                   onClick={() => {
                     sortCol('reward')
@@ -546,7 +546,7 @@ const Portfolio = () => {
                           </BadgeIcon>
                         </Content>
                         <Content
-                          width={isMobile ? '25%' : '35%'}
+                          width={isMobile ? '23%' : '35%'}
                           display={isMobile ? 'block' : 'flex'}
                         >
                           <ContentInner width="40%">
@@ -577,7 +577,7 @@ const Portfolio = () => {
                             />
                           </ContentInner>
                         </Content>
-                        <Content width="15%">
+                        <Content width={isMobile ? '12%' : '15%'}>
                           <Status status={info.status} darkMode={darkMode}>
                             <img src={DotIcon} width={8} height={8} alt="" />
                             {isMobile ? '' : info.status}
@@ -607,7 +607,7 @@ const Portfolio = () => {
                             }`}
                           />
                         </Content>
-                        <Content width="15%">
+                        <Content width={isMobile ? '20%' : '15%'}>
                           <ListItem
                             weight={400}
                             size={12}

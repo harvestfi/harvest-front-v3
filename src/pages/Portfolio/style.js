@@ -361,11 +361,7 @@ const Column = styled.div`
 
 const Status = styled.div`
   ${props =>
-    props.darkMode
-      ? `
-      background: none;
-    `
-      : props.status === 'Active'
+    props.status === 'Active'
       ? `
         background: #ECFDF3;
         color: #027A48;
