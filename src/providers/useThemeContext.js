@@ -91,7 +91,7 @@ export function ThemeProvider({ children }) {
     ? 'invert(100%) sepia(20%) saturate(0%) hue-rotate(40deg) brightness(104%) contrast(101%)'
     : ''
 
-  const widoDepoTokenListActiveColor = darkMode ? '#ECFDF3' : '#ECFDF3'
+  const widoDepoTokenListActiveColor = darkMode ? '#7b8b81' : '#ECFDF3'
   const widoDepoTokenListHoverColor = darkMode ? '#7b8b81' : '#ECFDF3'
 
   const widoSwitchTagBorderColor = darkMode ? '#F2F4F7' : '#F2F4F7'
