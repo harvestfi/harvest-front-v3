@@ -5,7 +5,6 @@ const FAQContainer = styled.div`
   margin-left: 320px;
   width: 100%;
   position: relative;
-  z-index: 2;
 
   background: ${props => props.pageBackColor};
   color: ${props => props.fontColor};
@@ -130,6 +129,10 @@ const FarmHeader = styled.div`
   background-position: center;
   background-size: 100%;
   padding: 75px 88px 68px;
+
+  @media screen and (max-width: 992px) {
+    padding: 64px 16px;
+  }
 `
 
 const Title = styled.div`
@@ -139,11 +142,23 @@ const Title = styled.div`
   color: #ff9400;
 
   margin-bottom: 19px;
+
+  @media screen and (max-width: 992px) {
+    text-align: center;
+    color: white;
+    margin-bottom: 12px;
+    font-size: 14px;
+    line-height: 20px;
+  }
 `
 
 const Desc = styled.div`
   display: flex;
   justify-content: space-between;
+
+  @media screen and (max-width: 992px) {
+    display: block;
+  }
 `
 
 const FAQMain = styled.div`
@@ -161,16 +176,24 @@ const LeftPart = styled.div`
 
   @media screen and (max-width: 992px) {
     font-weight: 600;
-    font-size: 13px;
-    line-height: 19px;
+    font-size: 36px;
+    line-height: 44px;
+    text-align: center;
   }
 `
 
 const RightPart = styled.div`
   font-weight: 400;
-  font-size: 15.6667px;
+  font-size: 16px;
   line-height: 24px;
   color: #ff9400;
+
+  @media screen and (max-width: 992px) {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 18px;
+    line-height: 28px;
+  }
 `
 
 export {

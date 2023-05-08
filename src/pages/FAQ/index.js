@@ -30,16 +30,12 @@ const FAQ = () => {
       <FarmHeader>
         <Title>Support</Title>
         <Desc>
-          <LeftPart>{isMobile ? 'FAQ' : 'Top questions about Harvest'}</LeftPart>
-          {isMobile ? (
-            <></>
-          ) : (
-            <RightPart>
-              Need something cleared up? Here are
-              <br />
-              our most frequently asked questions.
-            </RightPart>
-          )}
+          <LeftPart>Top questions about Harvest</LeftPart>
+          <RightPart>
+            Need something cleared up? Here are
+            <br />
+            our most frequently asked questions.
+          </RightPart>
         </Desc>
       </FarmHeader>
       <FAQMain>
