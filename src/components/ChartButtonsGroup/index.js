@@ -15,7 +15,7 @@ const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {
   const [focusId, setFocusId] = React.useState(-1)
   let tempId = -1
 
-  const { chartBtnGroupBackColor, backColor, borderColor } = useThemeContext()
+  const { chartBtnGroupBackColor, backColor, borderColor, darkMode } = useThemeContext()
 
   return (
     <ButtonsGroup backColor={backColor} borderColor={borderColor}>
@@ -37,6 +37,7 @@ const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {
             className={(i === clickedId || i === focusId) && (connected || i !== 2) ? 'active' : ''}
             wallet={!!(connected && i === 2)}
             backcolor={chartBtnGroupBackColor}
+            mode={darkMode}
           >
             <img src={button.img} width="20" height="20" alt="" />
           </ButtonStyle>
