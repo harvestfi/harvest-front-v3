@@ -584,6 +584,7 @@ const Sidebar = ({ width }) => {
                         } else {
                           push(item.path)
                         }
+                        handleMobileClose()
                       }}
                       active={pathname.includes(item.path)}
                       fontColor={fontColor}
