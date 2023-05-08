@@ -111,8 +111,8 @@ export function ThemeProvider({ children }) {
   const toggleInactiveBackColor = darkMode ? '' : '#F2F4F7'
   const toggleActiveBackColor = darkMode ? '' : '#7F56D9'
 
-  const sidebarFontColor = darkMode ? 'white' : '#344054'
-  const sidebarActiveFontColor = darkMode ? '#D0D5DD' : '#101828'
+  const sidebarFontColor = darkMode ? '#D0D5DD' : '#344054'
+  const sidebarActiveFontColor = darkMode ? 'white' : '#101828'
   const sidebarActiveIconColor = darkMode
     ? 'invert(95%) sepia(4%) saturate(441%) hue-rotate(183deg) brightness(89%) contrast(94%)'
     : 'invert(46%) sepia(10%) saturate(767%) hue-rotate(183deg) brightness(92%) contrast(90%)'
