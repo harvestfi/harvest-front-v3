@@ -121,7 +121,7 @@ export const FAQ_ITEMS_FIRST = [
     question: 'Are there timelocks?',
     answer: (
       <>
-        <div style={{ color: 'blue', textDecoration: 'underline' }}>Yes, 12 hours.</div>
+        <div style={{ color: '#ff9400', textDecoration: 'underline' }}>Yes, 12 hours.</div>
       </>
     ),
   },

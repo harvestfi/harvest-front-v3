@@ -109,6 +109,15 @@ const Answer = styled.div`
   border-top: none;
   font-size: 14px;
 
+  a {
+    color: #ff9400;
+    font-weight: bold;
+
+    &:hover {
+      color: #ffaa34;
+    }
+  }
+
   @media screen and (max-width: 992px) {
     padding: 16px 20px;
     font-size: 12px;
