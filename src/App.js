@@ -76,11 +76,49 @@ const RestrictCountries = () => {
   )
 }
 
+const NewLoginModal = () => {
+  const newLogin = sessionStorage.getItem('newLogin')
+  const [open, setOpen] = useState(false)
+
+  useEffect(() => {
+    if (newLogin === null || newLogin === 'true') {
+      sessionStorage.setItem('newLogin', true)
+      setOpen(true)
+    }
+  }, [newLogin])
+
+  return (
+    <>
+      {newLogin ? (
+        <Modal
+          title="Important Notice"
+          confirmationLabel="I certify that I read and agree with this warning"
+          open={open}
+          onClose={() => {
+            setOpen(false)
+            sessionStorage.setItem('newLogin', false)
+          }}
+        >
+          Due to regulatory uncertainty, Harvest Finance is not available to people or companies,
+          who are residents in the <b>United States</b> or other restricted territory, or who are
+          subject to other restrictions. <br /> <br /> By interacting with the Harvest Finance
+          website and/or smart contracts, the user acknowledges the experimental nature of yield
+          farming with Harvest Finance, its dependency on 3rd party protocols, and the potential for
+          total loss of funds deposited. The user accepts full liability for their usage of Harvest
+          Finance, and no financial responsibility is placed on the protocol developers and
+          contributors.
+        </Modal>
+      ) : null}
+    </>
+  )
+}
+
 const App = () => (
   <Router>
     <GlobalStyle />
     <ToastContainer />
     <RestrictCountries />
+    <NewLoginModal />
     <Providers>
       <Body id="page-content">
         <Sidebar width="320px" />

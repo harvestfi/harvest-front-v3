@@ -366,6 +366,53 @@ html {
     font-weight: 700; 
     text-decoration: underline;
   }
+
+  .fade.modal.show {
+    background: rgba(240, 240, 240, 0.3);
+  }
+
+  .modal-notification {
+    .modal-content {
+      border: none;
+      border-radius: 12px;
+      .modal-header {
+        background: #FFB54F;
+        font-weight: 600;
+        font-size: 18px;
+        line-height: 28px;
+        text-align: center;
+        color: #FFFFFF;
+        justify-content: center;
+        padding: 24px;
+      }
+      .modal-body {
+        padding: 24px;
+        font-weight: 400;
+        font-size: 13px;
+        line-height: 20px;
+        color: #475467;
+      }
+      .modal-footer {
+        justify-content: center;
+        padding: 24px;
+  
+        .confirm {
+          background: #FFAE3E;
+          box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
+          border: none;
+          color: white;
+          border-radius: 8px;
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          padding: 10px 18px;
+          width: 100%;
+          margin: 0;
+        }
+      }
+    }
+  }
 `
 
 const Divider = styled.div`
