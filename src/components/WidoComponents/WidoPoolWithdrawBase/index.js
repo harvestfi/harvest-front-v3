@@ -116,7 +116,7 @@ const WidoPoolWithdrawBase = ({
   const switchLegacyUnStaking = () => {
     setLegacyUnStaking(!legacyUnStaking)
     setSymbol(legacyUnStaking ? 'iFARM' : FARM_TOKEN_SYMBOL)
-    setPickedToken({ symbol: 'Select Token' })
+    setPickedToken({ symbol: 'Destination Token' })
     setUnstakeBalance(0)
   }
 
