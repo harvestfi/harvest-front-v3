@@ -415,6 +415,11 @@ const Portfolio = () => {
     }
   }, [account, userStats, balances, farmingBalances, switchBalance]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const [loadComplete, setLoadComplete] = useState(false)
+  useEffect(() => {
+    setLoadComplete(true)
+  }, [])
+
   const sortCol = field => {
     const tokenList = orderBy(farmTokenList, [field], [sortOrder ? 'asc' : 'desc'])
     setFarmTokenList(tokenList)
@@ -430,7 +435,7 @@ const Portfolio = () => {
           <TotalValue icon={Rating} content="Deposits" price={totalDeposit} />
           <TotalValue icon={Rating} content="Claimable Rewards" price={totalRewards} />
           <Div mobileView={isMobile}>
-            <ProfitSharing height="100%" />
+            <ProfitSharing height="100%" loadComplete={loadComplete} />
           </Div>
         </SubPart>
 

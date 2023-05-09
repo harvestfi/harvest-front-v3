@@ -216,9 +216,12 @@ const WidoDetail = () => {
   const chain = token.chain || token.data.chain
   const [badgeId, setBadgeId] = useState(-1)
 
+  const [loadComplete, setLoadComplete] = useState(false)
   useEffect(() => {
     // 👇️ scroll to top on page load
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+
+    setLoadComplete(true)
   }, [])
 
   useEffect(() => {
@@ -776,6 +779,7 @@ const WidoDetail = () => {
                 vaultPool={vaultPool}
                 lastTVL={Number(vaultValue)}
                 lastAPY={Number(totalApy)}
+                loadComplete={loadComplete}
               />
             </HalfInfo>
             <HalfInfo
@@ -947,6 +951,7 @@ const WidoDetail = () => {
                     loaded={loaded}
                     loadingBalances={loadingLpStats || loadingFarmingBalance}
                     supTokenList={supTokenList}
+                    loadComplete={loadComplete}
                   />
                 )}
 
