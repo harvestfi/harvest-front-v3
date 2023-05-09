@@ -108,8 +108,11 @@ const Buttons = styled.button`
 
   img {
     margin-left: 7px;
-    filter: ${props => props.filterColor};
   }
 `
 
-export { SelectTokenWido, CloseBtn, NewLabel, Search, Buttons }
+const IconArrowDown = styled.img`
+  filter: ${props => props.filterColor};
+`
+
+export { SelectTokenWido, CloseBtn, NewLabel, Search, Buttons, IconArrowDown }

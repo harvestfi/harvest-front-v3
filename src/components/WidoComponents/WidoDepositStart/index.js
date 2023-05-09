@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js'
 import CoinGecko from 'coingecko-api'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
-import { quote } from 'wido'
+import { quote, approve, getTokenAllowance } from 'wido'
 import ArrowDownIcon from '../../../assets/images/logos/wido/arrowdown.svg'
 import BackIcon from '../../../assets/images/logos/wido/back.svg'
 import { WIDO_BALANCES_DECIMALS } from '../../../constants'
@@ -18,6 +18,7 @@ import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.sv
 import IFARMIcon from '../../../assets/images/logos/wido/ifarm.svg'
 import SettingIcon from '../../../assets/images/logos/wido/setting.svg'
 import Swap2Icon from '../../../assets/images/logos/wido/swap2.svg'
+import { CHAINS_ID } from '../../../data/constants'
 
 const CoinGeckoClient = new CoinGecko()
 
@@ -69,7 +70,8 @@ const WidoDepositStart = ({
       account &&
       pickedToken.symbol !== 'Select Token' &&
       !new BigNumber(amount).isEqualTo(0) &&
-      depositWido
+      depositWido &&
+      balanceList.length !== 0
     ) {
       const getQuoteResult = async () => {
         setTxFee(0)
@@ -130,19 +132,48 @@ const WidoDepositStart = ({
           setToInfo(toInfoTemp)
 
           try {
-            let gasFee = 0
-            const price = await getPrice()
-            await mainWeb3.eth.getGasPrice().then(result => {
-              gasFee = mainWeb3.utils.fromWei(result, 'ether')
-              gasFee *= price
+            let gasFee = 0,
+              fee = 0,
+              price = 0
+
+            const { allowance } = await getTokenAllowance({
+              chainId,
+              fromToken: pickedToken.address,
+              toToken,
+              accountAddress: account, // User
             })
 
-            const fee = await mainWeb3.eth.estimateGas({
-              from: quoteResult.from,
-              to: quoteResult.to,
-              data: quoteResult.data,
-              value: quoteResult.value,
-            })
+            if (new BigNumber(allowance).gte(amount)) {
+              fee = await mainWeb3.eth.estimateGas({
+                from: quoteResult.from,
+                to: quoteResult.to,
+                data: quoteResult.data,
+                value: quoteResult.value,
+              })
+            } else {
+              const { data, to } = await approve({
+                chainId,
+                tokenAddress: pickedToken.address,
+                amount,
+              })
+              price = await getPrice()
+              await mainWeb3.eth.getGasPrice().then(result => {
+                gasFee = mainWeb3.utils.fromWei(result, 'ether')
+                gasFee *= price
+              })
+              if (chainId === CHAINS_ID.MATIC_MAINNET) {
+                fee = await mainWeb3.eth.estimateGas({
+                  from: account,
+                  to,
+                  data,
+                })
+              } else {
+                fee = await mainWeb3.eth.estimateGas({
+                  to,
+                  data,
+                })
+              }
+            }
             setTxFee(formatNumberWido(fee * gasFee, WIDO_BALANCES_DECIMALS))
           } catch (e) {
             toast.error('Failed to get transaction cost!')
@@ -207,7 +238,13 @@ const WidoDepositStart = ({
       <NewLabel marginBottom="15px">
         <WidoSwapToken img={pickedToken.logoURI} name={fromInfo} value={pickedToken.symbol} />
         <NewLabel display="flex" justifyContent="center" marginBottom="15px" marginTop="15px">
-          <img src={ArrowDownIcon} width={25} height={25} alt="" />
+          <IconArrowDown
+            filterColor={filterColor}
+            src={ArrowDownIcon}
+            width={25}
+            height={25}
+            alt=""
+          />
         </NewLabel>
         <WidoSwapToken
           img={useIFARM ? IFARMIcon : Swap2Icon}
@@ -284,17 +321,11 @@ const WidoDepositStart = ({
       </NewLabel>
 
       <NewLabel size="16px" height="21px" weight={500} color="#1F2937">
-        {/* <Buttons onClick={()=>{ setStartRoutes(true) }} filterColor={filterColor}>
-          Routes
-          <img src={RouteIcon} alt="" />
-        </Buttons> */}
-
         <Buttons
           color="continue"
           onClick={() => {
             setFinalStep(true)
           }}
-          filterColor={filterColor}
         >
           Continue Deposit
           <img src={ChevronRightIcon} alt="" />
