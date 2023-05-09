@@ -10,6 +10,7 @@ import {
   DepoTitle,
 } from './style'
 import WidoSelectTokenList from '../WidoSelectTokenList'
+import WidoSoonToSupportTokenList from '../WidoSoonToSupportTokenList'
 import CloseIcon from '../../../assets/images/logos/wido/close.svg'
 import SearchIcon from '../../../assets/images/logos/wido/search.svg'
 
@@ -104,16 +105,7 @@ const WidoDepositSelectToken = ({
           >
             Soon to be Supported
           </NewLabel>
-          <WidoSelectTokenList
-            list={soonToSupList}
-            clickId={clickTokenId}
-            setClickedId={setClickedTokenId}
-            setPickedToken={setPickedToken}
-            setBalance={setBalance}
-            setSelectTokenWido={setSelectTokenWido}
-            setWidoPartHeight={setWidoPartHeight}
-            filterWord={filterWord}
-          />
+          <WidoSoonToSupportTokenList list={soonToSupList} filterWord={filterWord} />
         </NewLabel>
       </SelectTokenWido>
     </SelectToken>
