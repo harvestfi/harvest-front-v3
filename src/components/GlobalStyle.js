@@ -340,29 +340,29 @@ html {
 
   .detail-desc {
     width: 36%; 
-    font-size: 13px; 
+    font-size: 16px; 
     font-weight: 400;
   }
 
   .detail-desc-auto {
-    font-size: 13px; 
+    font-size: 16px; 
     font-weight: 400;
   }
 
   .detail-desc-no-width {
-    font-size: 13px; 
+    font-size: 16px; 
     font-weight: 400;
   }
 
   .detail-token {
     width: 34%; 
-    font-size: 13px; 
+    font-size: 16px; 
     font-weight: 500; 
     text-decoration: underline;
   }
 
   .detail-token-no-width {
-    font-size: 13px; 
+    font-size: 16px; 
     font-weight: 700; 
     text-decoration: underline;
   }

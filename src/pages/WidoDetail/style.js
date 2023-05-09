@@ -280,7 +280,7 @@ const ValueShow = styled.div`
 const DescInfo = styled.div`
   font-family: 'Inter', sans-serif;
   font-weight: 400;
-  font-size: 13px;
+  font-size: 16px;
   display: flex;
   align-items: center;
   font-style: normal;
