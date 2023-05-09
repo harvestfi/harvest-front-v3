@@ -37,7 +37,7 @@ const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {
             className={(i === clickedId || i === focusId) && (connected || i !== 2) ? 'active' : ''}
             wallet={!!(connected && i === 2)}
             backcolor={chartBtnGroupBackColor}
-            mode={darkMode}
+            mode={darkMode.toString()}
           >
             <img src={button.img} width="20" height="20" alt="" />
           </ButtonStyle>

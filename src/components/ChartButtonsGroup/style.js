@@ -50,7 +50,7 @@ const ButtonStyle = styled.button`
     }
   `
       : props.btnNum === 2
-      ? props.mode
+      ? props.mode === 'true'
         ? `
           img {
             filter: invert(99%) sepia(1%) saturate(38%) hue-rotate(115deg) brightness(113%) contrast(100%);
