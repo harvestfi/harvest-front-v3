@@ -342,16 +342,28 @@ html {
     width: 36%; 
     font-size: 16px; 
     font-weight: 400;
+
+    @media screen and (max-width: 992px) {
+      font-size: 13px;
+    }
   }
 
   .detail-desc-auto {
     font-size: 16px; 
     font-weight: 400;
+
+    @media screen and (max-width: 992px) {
+      font-size: 13px;
+    }
   }
 
   .detail-desc-no-width {
     font-size: 16px; 
     font-weight: 400;
+
+    @media screen and (max-width: 992px) {
+      font-size: 13px;
+    }
   }
 
   .detail-token {
@@ -359,12 +371,20 @@ html {
     font-size: 16px; 
     font-weight: 500; 
     text-decoration: underline;
+
+    @media screen and (max-width: 992px) {
+      font-size: 13px;
+    }
   }
 
   .detail-token-no-width {
     font-size: 16px; 
     font-weight: 700; 
     text-decoration: underline;
+
+    @media screen and (max-width: 992px) {
+      font-size: 13px;
+    }
   }
 
   .fade.modal.show {

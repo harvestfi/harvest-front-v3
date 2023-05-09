@@ -13,11 +13,8 @@ import POLYGON from '../../assets/images/chains/polygon.svg'
 import APY from '../../assets/images/logos/earn/apy.svg'
 import Back from '../../assets/images/logos/earn/back.svg'
 import Daily from '../../assets/images/logos/earn/daily.svg'
-// import ExternalLink from '../../assets/images/logos/earn/externallink.svg'
 import Info from '../../assets/images/logos/earn/info.svg'
-// import StrategyIcon from '../../assets/images/logos/earn/strategyicon.svg'
 import TVL from '../../assets/images/logos/earn/tvl.svg'
-// import VaultIcon from '../../assets/images/logos/earn/vaulticon.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import FarmDetailChart from '../../components/FarmDetailChart'
 import VaultPanelActionsFooter from '../../components/VaultComponents/VaultPanelActions/VaultPanelActionsFooter'
@@ -782,7 +779,7 @@ const WidoDetail = () => {
               />
             </HalfInfo>
             <HalfInfo
-              padding={!isMobile ? '20px' : '15px 10px'}
+              padding={!isMobile ? '20px' : '15px'}
               backColor={backColor}
               borderColor={borderColor}
             >
@@ -792,7 +789,7 @@ const WidoDetail = () => {
               <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
             </HalfInfo>
             <HalfInfo
-              padding={!isMobile ? '24px 22px 44px 22px' : '15px 20px'}
+              padding={!isMobile ? '24px 22px 44px 22px' : '15px'}
               backColor={backColor}
               borderColor={borderColor}
             >
