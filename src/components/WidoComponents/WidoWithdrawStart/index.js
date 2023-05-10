@@ -1,8 +1,7 @@
 import BigNumber from 'bignumber.js'
-import CoinGecko from 'coingecko-api'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
-import { quote, getTokenAllowance, approve } from 'wido'
+import { quote } from 'wido'
 import ArrowDownIcon from '../../../assets/images/logos/wido/arrowdown.svg'
 import BackIcon from '../../../assets/images/logos/wido/back.svg'
 import SettingIcon from '../../../assets/images/logos/wido/setting.svg'
@@ -17,23 +16,6 @@ import { Divider } from '../../GlobalStyle'
 import WidoSwapToken from '../WidoSwapToken'
 import { Buttons, CloseBtn, NewLabel, SelectTokenWido, IconArrowDown } from './style'
 import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.svg'
-
-const CoinGeckoClient = new CoinGecko()
-
-const getPrice = async () => {
-  try {
-    const data = await CoinGeckoClient.simple.price({
-      ids: ['ethereum'],
-      /* eslint-disable camelcase */
-      vs_currencies: ['usd'],
-    })
-
-    const result = data.success ? data.data.ethereum.usd : 1
-    return result
-  } catch (e) {
-    return 1
-  }
-}
 
 const WidoWithdrawStart = ({
   withdrawWido,
@@ -57,8 +39,6 @@ const WidoWithdrawStart = ({
   const { backColor, filterColor } = useThemeContext()
   const { account } = useWallet()
 
-  const [txFee, setTxFee] = useState(0)
-
   const [fromInfo, setFromInfo] = useState('')
   const [toInfo, setToInfo] = useState('')
 
@@ -70,7 +50,6 @@ const WidoWithdrawStart = ({
       withdrawWido
     ) {
       const getQuoteResult = async () => {
-        setTxFee(0)
         setFromInfo('')
         setToInfo('')
         setQuoteValue(null)
@@ -133,49 +112,6 @@ const WidoWithdrawStart = ({
 
           setFromInfo(fromInfoTemp)
           setToInfo(toInfoTemp)
-
-          try {
-            let gasFee = 0,
-              fee = 0,
-              price = 0
-
-            const { allowance } = await getTokenAllowance({
-              chainId,
-              fromToken,
-              toToken,
-              accountAddress: account, // User
-            })
-
-            price = await getPrice()
-            await mainWeb3.eth.getGasPrice().then(result => {
-              gasFee = mainWeb3.utils.fromWei(result, 'ether')
-              gasFee *= price
-            })
-
-            if (new BigNumber(allowance).gte(amount)) {
-              fee = await mainWeb3.eth.estimateGas({
-                from: quoteResult.from,
-                to: quoteResult.to,
-                data: quoteResult.data,
-                value: quoteResult.value,
-              })
-            } else {
-              const { data, to } = await approve({
-                chainId,
-                tokenAddress: fromToken,
-                amount,
-              })
-              fee = await mainWeb3.eth.estimateGas({
-                from: account,
-                to,
-                data,
-              })
-            }
-            setTxFee(formatNumberWido(fee * gasFee, WIDO_BALANCES_DECIMALS))
-          } catch (e) {
-            toast.error('Failed to get transaction cost!')
-            return
-          }
         } catch (e) {
           toast.error('Failed to get quote!')
         }
@@ -307,12 +243,6 @@ const WidoWithdrawStart = ({
             ) : (
               <AnimatedDots />
             )}
-          </NewLabel>
-        </NewLabel>
-        <NewLabel display="flex" justifyContent="space-between">
-          <NewLabel>Transaction cost</NewLabel>
-          <NewLabel weight={400} size="14px" height="18px">
-            {txFee !== 0 ? <>~${txFee}</> : <AnimatedDots />}
           </NewLabel>
         </NewLabel>
       </NewLabel>

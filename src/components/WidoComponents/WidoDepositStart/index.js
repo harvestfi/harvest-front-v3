@@ -1,8 +1,7 @@
 import BigNumber from 'bignumber.js'
-import CoinGecko from 'coingecko-api'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
-import { quote, approve, getTokenAllowance } from 'wido'
+import { quote } from 'wido'
 import ArrowDownIcon from '../../../assets/images/logos/wido/arrowdown.svg'
 import BackIcon from '../../../assets/images/logos/wido/back.svg'
 import { WIDO_BALANCES_DECIMALS } from '../../../constants'
@@ -18,24 +17,6 @@ import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.sv
 import IFARMIcon from '../../../assets/images/logos/wido/ifarm.svg'
 import SettingIcon from '../../../assets/images/logos/wido/setting.svg'
 import Swap2Icon from '../../../assets/images/logos/wido/swap2.svg'
-import { CHAINS_ID } from '../../../data/constants'
-
-const CoinGeckoClient = new CoinGecko()
-
-const getPrice = async () => {
-  try {
-    const data = await CoinGeckoClient.simple.price({
-      ids: ['ethereum'],
-      /* eslint-disable camelcase */
-      vs_currencies: ['usd'],
-    })
-
-    const result = data.success ? data.data.ethereum.usd : 1
-    return result
-  } catch (e) {
-    return 1
-  }
-}
 
 const WidoDepositStart = ({
   pickedToken,
@@ -62,7 +43,6 @@ const WidoDepositStart = ({
   const chainId = token.chain || token.data.chain
 
   const amount = toWei(inputAmount, pickedToken.decimals)
-  const [txFee, setTxFee] = useState(0)
   const [fromInfo, setFromInfo] = useState('')
   const [toInfo, setToInfo] = useState('')
 
@@ -75,7 +55,6 @@ const WidoDepositStart = ({
       balanceList.length !== 0
     ) {
       const getQuoteResult = async () => {
-        setTxFee(0)
         setFromInfo('')
         setToInfo('')
         setQuoteValue(null)
@@ -131,54 +110,6 @@ const WidoDepositStart = ({
 
           setFromInfo(fromInfoTemp)
           setToInfo(toInfoTemp)
-
-          try {
-            let gasFee = 0,
-              fee = 0,
-              price = 0
-
-            const { allowance } = await getTokenAllowance({
-              chainId,
-              fromToken: pickedToken.address,
-              toToken,
-              accountAddress: account, // User
-            })
-            price = await getPrice()
-            await mainWeb3.eth.getGasPrice().then(result => {
-              gasFee = mainWeb3.utils.fromWei(result, 'ether')
-              gasFee *= price
-            })
-            if (new BigNumber(allowance).gte(amount)) {
-              fee = await mainWeb3.eth.estimateGas({
-                from: quoteResult.from,
-                to: quoteResult.to,
-                data: quoteResult.data,
-                value: quoteResult.value,
-              })
-            } else {
-              const { data, to } = await approve({
-                chainId,
-                tokenAddress: pickedToken.address,
-                amount,
-              })
-              if (chainId === CHAINS_ID.MATIC_MAINNET) {
-                fee = await mainWeb3.eth.estimateGas({
-                  from: account,
-                  to,
-                  data,
-                })
-              } else {
-                fee = await mainWeb3.eth.estimateGas({
-                  to,
-                  data,
-                })
-              }
-            }
-            setTxFee(formatNumberWido(fee * gasFee, WIDO_BALANCES_DECIMALS))
-          } catch (e) {
-            toast.error('Failed to get transaction cost!')
-            return
-          }
         } catch (e) {
           toast.error('Failed to get quote!')
         }
@@ -310,12 +241,6 @@ const WidoDepositStart = ({
             ) : (
               <AnimatedDots />
             )}
-          </NewLabel>
-        </NewLabel>
-        <NewLabel display="flex" justifyContent="space-between">
-          <NewLabel>Transaction cost</NewLabel>
-          <NewLabel weight={400} size="14px" height="18px">
-            {txFee === 0 ? <AnimatedDots /> : <>~${txFee}</>}
           </NewLabel>
         </NewLabel>
       </NewLabel>
