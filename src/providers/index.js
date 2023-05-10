@@ -1,10 +1,7 @@
-// import Onboard from '@web3-onboard/core'
 import injectedModule from '@web3-onboard/injected-wallets'
 import ledgerModule from '@web3-onboard/ledger'
-import { Web3ReactProvider } from '@web3-react/core'
 import { init, Web3OnboardProvider } from '@web3-onboard/react'
 import walletConnectModule from '@web3-onboard/walletconnect'
-import { ethers } from 'ethers'
 import React from 'react'
 import { ActionsProvider } from './Actions'
 import { ContractsProvider } from './Contracts'
@@ -151,30 +148,22 @@ const web3Onboard = init({
   },
 })
 
-const getLibrary = provider1 => {
-  const library = new ethers.providers.Web3Provider(provider1)
-  library.pollingInterval = 8000
-  return library
-}
-
 const Providers = ({ children }) => (
-  <Web3ReactProvider getLibrary={getLibrary}>
-    <ContractsProvider>
-      <Web3OnboardProvider web3Onboard={web3Onboard}>
-        <WalletProvider>
-          <PoolsProvider>
-            <VaultsProvider>
-              <ActionsProvider>
-                <StatsProvider>
-                  <ThemeProvider>{children}</ThemeProvider>
-                </StatsProvider>
-              </ActionsProvider>
-            </VaultsProvider>
-          </PoolsProvider>
-        </WalletProvider>
-      </Web3OnboardProvider>
-    </ContractsProvider>
-  </Web3ReactProvider>
+  <ContractsProvider>
+    <Web3OnboardProvider web3Onboard={web3Onboard}>
+      <WalletProvider>
+        <PoolsProvider>
+          <VaultsProvider>
+            <ActionsProvider>
+              <StatsProvider>
+                <ThemeProvider>{children}</ThemeProvider>
+              </StatsProvider>
+            </ActionsProvider>
+          </VaultsProvider>
+        </PoolsProvider>
+      </WalletProvider>
+    </Web3OnboardProvider>
+  </ContractsProvider>
 )
 
 export default Providers
