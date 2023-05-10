@@ -125,7 +125,6 @@ const App = () => (
         <Switch>
           <Route exact path={ROUTES.HOME} component={Farm} />
           <Route exact path={ROUTES.PORTFOLIO} component={Portfolio} />
-          <Route exact path={ROUTES.FARM} component={Farm} />
           <Route exact path={ROUTES.ANALYTIC} component={Analytic} />
           <Route path={ROUTES.WIDODETAIL} component={WidoDetail} />
           <Route path={ROUTES.FAQ} component={FAQ} />
