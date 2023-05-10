@@ -319,6 +319,7 @@ const InfoLabel = styled.a`
   `
       : ''}
   margin-right: 15px;
+  justify-content: center;
   background: #f9fafb;
   border-radius: 8px;
   text-decoration: none;
