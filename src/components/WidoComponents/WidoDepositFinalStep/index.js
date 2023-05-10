@@ -238,11 +238,7 @@ const WidoDepositFinalStep = ({
       </NewLabel>
 
       <NewLabel marginBottom="20px">
-        <WidoSwapToken
-          img={pickedToken.logoURI}
-          name={fromInfo}
-          value={`${pickedToken.symbol} by harvest.finance`}
-        />
+        <WidoSwapToken img={pickedToken.logoURI} name={fromInfo} value={pickedToken.symbol} />
         <NewLabel display="flex" justifyContent="center" marginTop="15px" marginBottom="15px">
           <img src={ArrowDownIcon} width={25} height={25} alt="" />
         </NewLabel>
