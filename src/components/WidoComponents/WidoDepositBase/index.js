@@ -244,7 +244,17 @@ const WidoDepositBase = ({
           </TokenSelect>
         </TokenInfo>
       </SelectToken>
-      <BalanceInfo fontColor={widoTagActiveFontColor}>
+      <BalanceInfo
+        fontColor={widoTagActiveFontColor}
+        onClick={() => {
+          if (account) {
+            setInputAmount(formatNumberWido(balance, POOL_BALANCES_DECIMALS))
+            const usdAmount =
+              pickedToken.usdPrice !== '0.0' ? balance * pickedToken.usdPrice : pickedToken.usdValue
+            setUsdValue(formatNumberWido(usdAmount, 2))
+          }
+        }}
+      >
         Balance:
         <span>{formatNumberWido(balance, POOL_BALANCES_DECIMALS)}</span>
       </BalanceInfo>

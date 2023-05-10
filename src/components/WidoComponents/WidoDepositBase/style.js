@@ -185,6 +185,7 @@ const BalanceInfo = styled.div`
 
   margin-top: 13px;
   margin-bottom: 13px;
+  cursor: pointer;
 
   span {
     margin-left: 6px;
