@@ -25,6 +25,7 @@ const WidoWithdrawFinalStep = ({
   setWithdrawWido,
   setSelectTokenWith,
   symbol,
+  tokenSymbol,
   useIFARM,
   setClickedTokenId,
   pickedToken,
@@ -252,7 +253,7 @@ const WidoWithdrawFinalStep = ({
         <WidoSwapToken
           img={Swap1WithIcon}
           name={fromInfo}
-          value={useIFARM ? symbol : token.balance}
+          value={useIFARM ? symbol : `f${tokenSymbol}`}
         />
         <NewLabel display="flex" justifyContent="center" marginBottom="10px">
           <img src={ArrowDownIcon} width={25} height={25} alt="" />
@@ -269,12 +270,12 @@ const WidoWithdrawFinalStep = ({
         >
           {approveValue === 2 ? (
             <>
-              {useIFARM ? symbol : token.balance} withdrawal approved
+              {useIFARM ? symbol : tokenSymbol} withdrawal approved
               <img src={CheckIcon} alt="" />
             </>
           ) : (
             <>
-              Approve {useIFARM ? symbol : token.balance} withdrawal
+              Approve {useIFARM ? symbol : tokenSymbol} withdrawal
               {approveValue === 1 ? (
                 <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
               ) : (

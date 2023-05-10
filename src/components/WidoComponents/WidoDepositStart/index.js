@@ -51,6 +51,7 @@ const WidoDepositStart = ({
   token,
   balanceList,
   symbol,
+  tokenSymbol,
   useIFARM,
   quoteValue,
   setQuoteValue,
@@ -249,7 +250,7 @@ const WidoDepositStart = ({
         <WidoSwapToken
           img={useIFARM ? IFARMIcon : Swap2Icon}
           name={toInfo}
-          value={useIFARM ? symbol : token.balance}
+          value={useIFARM ? symbol : `f${tokenSymbol}`}
         />
       </NewLabel>
 

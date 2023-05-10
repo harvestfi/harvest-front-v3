@@ -459,7 +459,7 @@ const WidoDetail = () => {
     widoTagActiveFontColor,
   } = useThemeContext()
 
-  const fAssetSymbol = isSpecialVault ? id : token.balance
+  const fAssetSymbol = isSpecialVault ? id : `f${id}`
   const [loadingFarmingBalance, setFarmingLoading] = useState(false)
   const [loadingLpStats, setLpStatsloading] = useState(false)
   const [withdrawMode, setWithdrawMode] = useState(false)
@@ -983,6 +983,7 @@ const WidoDetail = () => {
                   balanceList={balanceList}
                   useIFARM={useIFARM}
                   symbol={symbolDepo}
+                  tokenSymbol={id}
                   quoteValue={quoteValueDepo}
                   setQuoteValue={setQuoteValueDepo}
                 />
@@ -1043,6 +1044,7 @@ const WidoDetail = () => {
                     token={token}
                     useIFARM={useIFARM}
                     symbol={symbolDepo}
+                    tokenSymbol={id}
                     quoteValue={quoteValueDepo}
                     fAssetPool={fAssetPool}
                   />
@@ -1118,6 +1120,7 @@ const WidoDetail = () => {
                   balanceList={balanceList}
                   useIFARM={useIFARM}
                   symbol={symbolWith}
+                  tokenSymbol={id}
                   quoteValue={quoteValueWith}
                   setQuoteValue={setQuoteValueWith}
                 />
@@ -1149,6 +1152,7 @@ const WidoDetail = () => {
                   slippagePercentage={slippagePercentWith}
                   useIFARM={useIFARM}
                   symbol={symbolWith}
+                  tokenSymbol={id}
                   fAssetPool={fAssetPool}
                   quoteValue={quoteValueWith}
                 />

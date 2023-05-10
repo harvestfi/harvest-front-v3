@@ -51,6 +51,7 @@ const WidoWithdrawStart = ({
   balanceList,
   useIFARM,
   symbol,
+  tokenSymbol,
   quoteValue,
   setQuoteValue,
 }) => {
@@ -209,7 +210,11 @@ const WidoWithdrawStart = ({
       </NewLabel>
 
       <div>
-        <WidoSwapToken img={Swap2Icon} name={fromInfo} value={useIFARM ? symbol : token.balance} />
+        <WidoSwapToken
+          img={Swap2Icon}
+          name={fromInfo}
+          value={useIFARM ? symbol : `f${tokenSymbol}`}
+        />
         <NewLabel display="flex" justifyContent="center" marginBottom="10px">
           <img src={ArrowDownIcon} width={25} height={25} alt="" />
         </NewLabel>

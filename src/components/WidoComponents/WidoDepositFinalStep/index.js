@@ -36,6 +36,7 @@ const WidoDepositFinalStep = ({
   token,
   useIFARM,
   symbol,
+  tokenSymbol,
   quoteValue,
   fAssetPool,
 }) => {
@@ -245,7 +246,7 @@ const WidoDepositFinalStep = ({
         <WidoSwapToken
           img={useIFARM ? IFARMIcon : Swap2Icon}
           name={toInfo}
-          value={useIFARM ? symbol : token.balance}
+          value={useIFARM ? symbol : `f${tokenSymbol}`}
         />
       </NewLabel>
 
