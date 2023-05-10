@@ -22,6 +22,7 @@ export const calculateTotalValueDeposited = async vaults => {
 
 export const calculateFarmingBalance = async (pools, userStats, vaultSymbol, vaultsData) => {
   let farmedBalance = '0'
+  if (!vaultsData[vaultSymbol]) return '0'
   const { vaultAddress, underlyingBalanceWithInvestment, totalSupply } = vaultsData[vaultSymbol]
 
   const vaultPool = find(pools, pool => pool.collateralAddress === vaultAddress)
