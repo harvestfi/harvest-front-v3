@@ -325,7 +325,7 @@ const WidoPoolDepositBase = ({
         Balance:
         <span>
           {!legacyStaking
-            ? balance
+            ? formatNumberWido(balance, POOL_BALANCES_DECIMALS)
             : FARMBalance && `${fromWEI(FARMBalance, tokens[IFARM_TOKEN_SYMBOL].decimals)} FARM`}
         </span>
       </BalanceInfo>

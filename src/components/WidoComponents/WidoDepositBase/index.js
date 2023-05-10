@@ -246,7 +246,7 @@ const WidoDepositBase = ({
       </SelectToken>
       <BalanceInfo fontColor={widoTagActiveFontColor}>
         Balance:
-        <span>{balance}</span>
+        <span>{formatNumberWido(balance, POOL_BALANCES_DECIMALS)}</span>
       </BalanceInfo>
       <Button
         color="wido-deposit"
