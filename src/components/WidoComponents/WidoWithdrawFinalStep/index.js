@@ -17,7 +17,15 @@ import { useWallet } from '../../../providers/Wallet'
 import { fromWei, mainWeb3 } from '../../../services/web3'
 import { formatNumberWido } from '../../../utils'
 import WidoSwapToken from '../WidoSwapToken'
-import { Buttons, CloseBtn, CloseButton, ExecuteButton, NewLabel, SelectTokenWido } from './style'
+import {
+  Buttons,
+  CloseBtn,
+  CloseButton,
+  ExecuteButton,
+  NewLabel,
+  SelectTokenWido,
+  IconArrowDown,
+} from './style'
 
 const WidoWithdrawFinalStep = ({
   finalStep,
@@ -256,7 +264,13 @@ const WidoWithdrawFinalStep = ({
           value={useIFARM ? symbol : `f${tokenSymbol}`}
         />
         <NewLabel display="flex" justifyContent="center" marginBottom="10px">
-          <img src={ArrowDownIcon} width={25} height={25} alt="" />
+          <IconArrowDown
+            filterColor={filterColor}
+            src={ArrowDownIcon}
+            width={25}
+            height={25}
+            alt=""
+          />
         </NewLabel>
         <WidoSwapToken img={pickedToken.logoURI} name={toInfo} value={pickedToken.symbol} />
       </NewLabel>

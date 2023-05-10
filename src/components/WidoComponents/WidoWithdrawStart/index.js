@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js'
 import CoinGecko from 'coingecko-api'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
-import { quote } from 'wido'
+import { quote, getTokenAllowance, approve } from 'wido'
 import ArrowDownIcon from '../../../assets/images/logos/wido/arrowdown.svg'
 import BackIcon from '../../../assets/images/logos/wido/back.svg'
 import SettingIcon from '../../../assets/images/logos/wido/setting.svg'
@@ -15,8 +15,7 @@ import { formatNumberWido } from '../../../utils'
 import AnimatedDots from '../../AnimatedDots'
 import { Divider } from '../../GlobalStyle'
 import WidoSwapToken from '../WidoSwapToken'
-import { Buttons, CloseBtn, NewLabel, SelectTokenWido } from './style'
-// import RouteIcon from '../../../assets/images/logos/wido/route.svg'
+import { Buttons, CloseBtn, NewLabel, SelectTokenWido, IconArrowDown } from './style'
 import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.svg'
 
 const CoinGeckoClient = new CoinGecko()
@@ -136,19 +135,42 @@ const WidoWithdrawStart = ({
           setToInfo(toInfoTemp)
 
           try {
-            let gasFee = 0
-            const price = await getPrice()
+            let gasFee = 0,
+              fee = 0,
+              price = 0
+
+            const { allowance } = await getTokenAllowance({
+              chainId,
+              fromToken,
+              toToken,
+              accountAddress: account, // User
+            })
+
+            price = await getPrice()
             await mainWeb3.eth.getGasPrice().then(result => {
               gasFee = mainWeb3.utils.fromWei(result, 'ether')
               gasFee *= price
             })
 
-            const fee = await mainWeb3.eth.estimateGas({
-              from: quoteResult.from,
-              to: quoteResult.to,
-              data: quoteResult.data,
-              value: quoteResult.value,
-            })
+            if (new BigNumber(allowance).gte(amount)) {
+              fee = await mainWeb3.eth.estimateGas({
+                from: quoteResult.from,
+                to: quoteResult.to,
+                data: quoteResult.data,
+                value: quoteResult.value,
+              })
+            } else {
+              const { data, to } = await approve({
+                chainId,
+                tokenAddress: fromToken,
+                amount,
+              })
+              fee = await mainWeb3.eth.estimateGas({
+                from: account,
+                to,
+                data,
+              })
+            }
             setTxFee(formatNumberWido(fee * gasFee, WIDO_BALANCES_DECIMALS))
           } catch (e) {
             toast.error('Failed to get transaction cost!')
@@ -193,7 +215,6 @@ const WidoWithdrawStart = ({
           alt=""
           onClick={() => {
             setWithdrawWido(false)
-            // setStartSlippage(true)
           }}
           filterColor={filterColor}
         />
@@ -216,7 +237,13 @@ const WidoWithdrawStart = ({
           value={useIFARM ? symbol : `f${tokenSymbol}`}
         />
         <NewLabel display="flex" justifyContent="center" marginBottom="10px">
-          <img src={ArrowDownIcon} width={25} height={25} alt="" />
+          <IconArrowDown
+            filterColor={filterColor}
+            src={ArrowDownIcon}
+            width={25}
+            height={25}
+            alt=""
+          />
         </NewLabel>
         <WidoSwapToken img={pickedToken.logoURI} name={toInfo} value={pickedToken.symbol} />
       </div>
@@ -298,20 +325,11 @@ const WidoWithdrawStart = ({
         weight={500}
         color="#1F2937"
       >
-        {/* <Buttons onClick={()=>{ setStartRoutes(true) }} filterColor={filterColor}>
-          Routes
-          <img src={RouteIcon} alt="" />
-        </Buttons> */}
-        {/* <Buttons onClick={()=>{ setStartSlippage(true) }} filterColor={filterColor}>
-          Slippage
-          <img src={GearsIcon} alt="" />
-        </Buttons> */}
         <Buttons
           color="continue"
           onClick={() => {
             setFinalStep(true)
           }}
-          filterColor={filterColor}
         >
           Continue Withdrawal
           <img src={ChevronRightIcon} alt="" />
