@@ -77,12 +77,12 @@ const RestrictCountries = () => {
 }
 
 const NewLoginModal = () => {
-  const newLogin = sessionStorage.getItem('newLogin')
+  const newLogin = localStorage.getItem('newLogin')
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
     if (newLogin === null || newLogin === 'true') {
-      sessionStorage.setItem('newLogin', true)
+      localStorage.setItem('newLogin', true)
       setOpen(true)
     }
   }, [newLogin])
@@ -96,7 +96,7 @@ const NewLoginModal = () => {
           open={open}
           onClose={() => {
             setOpen(false)
-            sessionStorage.setItem('newLogin', false)
+            localStorage.setItem('newLogin', false)
           }}
         >
           Due to regulatory uncertainty, Harvest Finance is not available to people or companies,
