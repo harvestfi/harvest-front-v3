@@ -86,7 +86,7 @@ const dataSources = [
     id: 2,
     img: ExternalDuno,
     text: 'Dune Dashboard',
-    url: 'https://dune.com/llama/Harvest-Finance',
+    url: 'https://dune.com/cryptjs13/harvest-finance',
     soon: false,
     background: 'rgba(241, 96, 63, 0.21)',
     color: '#F1603F',
