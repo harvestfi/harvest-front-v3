@@ -57,7 +57,6 @@ import {
   Header,
   Inner,
   MyFarm,
-  SelField,
   Status,
   SubPart,
   ThemeMode,
@@ -252,12 +251,12 @@ const Portfolio = () => {
         )
 
         const symbols = []
-        for (let i = 0; i < stakedVaults.length; i += 1) {
+        for (let j = 0; j < stakedVaults.length; j += 1) {
           let symbol = ''
-          if (stakedVaults[i] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
+          if (stakedVaults[j] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
             symbol = FARM_TOKEN_SYMBOL
           } else {
-            symbol = stakedVaults[i]
+            symbol = stakedVaults[j]
           }
           symbols.push(symbol)
         }
@@ -377,29 +376,28 @@ const Portfolio = () => {
 
             const rewardToken = groupOfVaults[rewardSymbol]
             // eslint-disable-next-line one-var
-            let usdRewardPrice = 1
+            let usdRewardPrice = 1,
+              rewardDecimal = 18
             if (rewardToken) {
               usdRewardPrice =
                 (rewardSymbol === FARM_TOKEN_SYMBOL
                   ? rewardToken.data.lpTokenData && rewardToken.data.lpTokenData.price
                   : rewardToken.usdPrice) || 1
+
+              rewardDecimal =
+                rewardToken.decimals ||
+                (rewardToken.data &&
+                  rewardToken.data.lpTokenData &&
+                  rewardToken.data.lpTokenData.decimals)
             }
 
             const rewards = userStats[stakedVaults[i]].totalRewardsEarned
             stats.reward =
               rewards === undefined
                 ? 0
-                : fromWEI(
-                    rewards,
-                    (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
-                  ) * (switchBalance ? usdRewardPrice : 1)
+                : fromWEI(rewards, rewardDecimal) * (switchBalance ? usdRewardPrice : 1)
             valueRewards += Number(
-              rewards === undefined
-                ? 0
-                : fromWEI(
-                    rewards,
-                    (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
-                  ) * usdRewardPrice,
+              rewards === undefined ? 0 : fromWEI(rewards, rewardDecimal) * usdRewardPrice,
             )
             stats.rewardSymbol = rewardSymbol
             newStats.push(stats)
@@ -467,9 +465,7 @@ const Portfolio = () => {
           </FarmTitle>
           <TableContent count={farmTokenList.length}>
             <Header borderColor={borderColor} backColor={backColor} width={ceilWidth}>
-              <Column width="5%" firstColumn>
-                <SelField />
-              </Column>
+              <Column width="5%" />
               <Column width={isMobile ? '23%' : '35%'} color={totalValueFontColor}>
                 <Col
                   onClick={() => {

@@ -395,13 +395,6 @@ const Status = styled.div`
   }
 `
 
-const SelField = styled.div`
-  height: 17px;
-  width: 17px;
-  border: 1px solid #d0d5dd;
-  border-radius: 5px;
-`
-
 const LogoImg = styled.img`
   z-index: 10;
   &:not(:first-child) {
@@ -485,7 +478,6 @@ export {
   Header,
   Column,
   Status,
-  SelField,
   LogoImg,
   Col,
   ContentInner,
