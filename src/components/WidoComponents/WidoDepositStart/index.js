@@ -143,7 +143,11 @@ const WidoDepositStart = ({
               toToken,
               accountAddress: account, // User
             })
-
+            price = await getPrice()
+            await mainWeb3.eth.getGasPrice().then(result => {
+              gasFee = mainWeb3.utils.fromWei(result, 'ether')
+              gasFee *= price
+            })
             if (new BigNumber(allowance).gte(amount)) {
               fee = await mainWeb3.eth.estimateGas({
                 from: quoteResult.from,
@@ -156,11 +160,6 @@ const WidoDepositStart = ({
                 chainId,
                 tokenAddress: pickedToken.address,
                 amount,
-              })
-              price = await getPrice()
-              await mainWeb3.eth.getGasPrice().then(result => {
-                gasFee = mainWeb3.utils.fromWei(result, 'ether')
-                gasFee *= price
               })
               if (chainId === CHAINS_ID.MATIC_MAINNET) {
                 fee = await mainWeb3.eth.estimateGas({
