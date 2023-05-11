@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
-import GradientBack from '../../assets/images/logos/gradient.svg'
+import Pattern from '../../assets/images/logos/pattern.png'
 
 const Container = styled.div`
   ${props => props.sidebarEffect};
@@ -665,7 +665,7 @@ const OffcanvasDiv = styled(Offcanvas)`
 `
 
 const ProfitSharing = styled.div`
-  background: url(${GradientBack});
+  background: url(${Pattern});
   background-position: center;
   background-repeat: no-repeat;
   cursor: pointer;
@@ -742,7 +742,7 @@ const BottomPart = styled.div`
 `
 
 const MobileProfitSharing = styled.div`
-  background: url(${GradientBack});
+  background: url(${Pattern});
   background-position: center;
   background-repeat: no-repeat;
   cursor: pointer;
