@@ -188,18 +188,21 @@ const EmptyInfo = styled.div`
 `
 
 const ExploreFarm = styled.button`
-  background: #27ae60;
+  background: white;
   border-radius: 12px;
-  color: white;
+  color: #1e1f20;
   padding: 15px 130px;
-  border: none;
+  border: 2px solid #1e1f20;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 21px;
 
   &:hover {
-    background: #27ae60d0;
+    background: #f0f0f0;
   }
 
   &:active {
-    background: #27ae60f0;
+    background: #e5e5e5;
   }
 
   img {

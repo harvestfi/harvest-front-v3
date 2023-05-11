@@ -639,8 +639,9 @@ const Portfolio = () => {
                     Let’s put your assets to work!
                   </EmptyInfo>
 
-                  <EmptyInfo weight={700} size={16} height={21} marginTop="45px">
+                  <EmptyInfo weight={500} size={16} height={21} marginTop="45px">
                     <ExploreFarm
+                      borderColor={borderColor}
                       onClick={() => {
                         push('/')
                       }}
