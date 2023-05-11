@@ -8,10 +8,10 @@ const Container = styled.div`
 
   background: ${props => props.pageBackColor};
   transition: 0.25s;
-  @media screen and (min-width: 1921px) {
-    display: flex;
-    justify-content: center;
-  }
+  // @media screen and (min-width: 1921px) {
+  //   display: flex;
+  //   justify-content: center;
+  // }
 
   @media screen and (max-width: 992px) {
     margin: 0;
@@ -82,6 +82,9 @@ const StatsBox = styled.div`
 
   .emission-header {
     background: url(${Pattern});
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100vw auto;
     width: 100%;
     height: 50%;
     border-radius: 10px 10px 0 0;
