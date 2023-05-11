@@ -17,7 +17,7 @@ export function ThemeProvider({ children }) {
   const switchMode = darkMode ? 'dark' : 'light'
 
   const pageBackColor = darkMode ? '#15202B' : '#FAFAFA'
-  const fontColor = darkMode ? 'white' : '#15202B'
+  const fontColor = darkMode ? 'white' : '#475467'
   const backColor = darkMode ? '#15202B' : 'white'
   const borderColor = darkMode ? 'rgba(217, 217, 217, 0.5)' : '#EAECF0'
   const filterColor = darkMode
