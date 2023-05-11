@@ -357,11 +357,12 @@ const Analytic = () => {
             <StatsValue width="100%" direction="row" fontColor={fontColor}>
               <ValueComponent
                 borderColor={borderColor}
-                fontColor={analyticTitleColor}
+                fontColor={fontColor}
                 backColor={backColor}
                 width="48%"
+                className="child first-comp"
               >
-                <CompHeader>
+                <CompHeader fontColor={analyticTitleColor}>
                   <img src={GasSavedImage} alt="" />
                   Gas fees saved
                 </CompHeader>
@@ -394,10 +395,11 @@ const Analytic = () => {
               <ValueComponent
                 borderColor={borderColor}
                 backColor={backColor}
-                fontColor={analyticTitleColor}
+                fontColor={fontColor}
                 width="48%"
+                className="child"
               >
-                <CompHeader>
+                <CompHeader fontColor={analyticTitleColor}>
                   <img src={AutoHarvest} alt="" />
                   Auto Harvesting Yields
                 </CompHeader>
@@ -429,7 +431,7 @@ const Analytic = () => {
                 </FarmSubTitle>
               </ValueComponent>
             </StatsValue>
-            <Divider height="15px" />
+            <Divider height="20px" />
             <StatsExternal
               width="100%"
               align="flex-start"

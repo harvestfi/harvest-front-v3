@@ -439,10 +439,6 @@ const Divider = styled.div`
   height: ${props => (props.height ? props.height : '20px')};
   background: ${props => (props.backColor ? props.backColor : 'unset')};
   margin-top: ${props => (props.marginTop ? props.marginTop : 'unset')};
-
-  @media screen and (max-width: 860px) {
-    height: ${props => (props.height ? `${parseInt(props.height, 10) - 10}px` : '20px')};
-  }
 `
 
 const ClickGate = styled.div`

@@ -106,10 +106,10 @@ const StatsBox = styled.div`
     order: ${props => props.mobileOrder || 'unset'};
   }
 
-  @media screen and (min-width: 1921px) {
-    min-width: 440px;
-    width: 440px;
-  }
+  // @media screen and (min-width: 1921px) {
+  //   min-width: 440px;
+  //   width: 440px;
+  // }
 `
 
 const StatsContainerRow = styled.div`
@@ -187,18 +187,17 @@ const StatsTooltip = styled.div`
 `
 
 const ImgList = styled.div`
-  display: flex;
+  display: block;
   a {
     margin-right: 23px;
+    img {
+      margin-bottom: 20px;
+    }
   }
 
   @media screen and (max-width: 992px) {
-    display: block;
     a {
       margin-right: 10px;
-      img {
-        margin-bottom: 10px;
-      }
     }
   }
 `
@@ -235,9 +234,17 @@ const DataSourceInner = styled(StatsContainer)`
 const StatsValue = styled(StatsBox)`
   border: none;
   justify-content: space-between;
-  @media screen and (min-width: 1921px) {
-    min-width: 850px;
-    width: 850px;
+
+  @media screen and (max-width: 1530px) {
+    display: block;
+
+    .first-comp {
+      margin-bottom: 20px;
+    }
+
+    .child {
+      width: 100% !important;
+    }
   }
 `
 
@@ -248,17 +255,17 @@ const StatsExchange = styled(StatsBox)`
 `
 
 const StatsChart = styled(StatsBox)`
-  @media screen and (min-width: 1921px) {
-    min-width: 1000px;
-    width: 1000px;
-  }
+  // @media screen and (min-width: 1921px) {
+  //   min-width: 1000px;
+  //   width: 1000px;
+  // }
 `
 
 const StatsExternal = styled(StatsBox)`
-  @media screen and (min-width: 1921px) {
-    min-width: 350px;
-    width: 350px;
-  }
+  // @media screen and (min-width: 1921px) {
+  //   min-width: 350px;
+  //   width: 350px;
+  // }
 `
 
 const DataSourceDirect = styled.a`
@@ -313,7 +320,15 @@ const FlexDiv = styled.div`
   display: flex;
   justify-content: start;
 
-  @media screen and (max-width: 460px) {
+  @media screen and (max-width: 1350px) {
+    display: block;
+  }
+
+  @media screen and (max-width: 992px) {
+    display: flex;
+  }
+
+  @media screen and (max-width: 500px) {
     display: block;
   }
 `
