@@ -298,7 +298,6 @@ const ValueComponent = styled.div`
   padding: 28px 24px;
   border-radius: 12px;
   width: ${props => props.width};
-  font-color
 
   display: flex;
   flex-direction: column;
