@@ -142,6 +142,7 @@ const ConnectButton = styled.button`
 
   @media screen and (max-width: 992px) {
     display: flex;
+    width: auto;
   }
 `
 
