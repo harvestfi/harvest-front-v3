@@ -15,6 +15,9 @@ const Container = styled.div`
   transition: 0.25s;
   color: ${props => props.fontColor};
 
+  filter: blur(2px);
+  pointer-events: none;
+
   @media screen and (max-width: 992px) {
     width: 100%;
     margin-bottom: 15px;
@@ -125,59 +128,21 @@ const ConnectButton = styled.button`
   top: calc(50% - 30px);
   left: 35%;
   font-size: 16px;
-  line-height: 21px;
-  font-weight: 700;
+  line-height: 24px;
+  font-weight: 600;
   width: 30%;
-  background: #ff9400;
-  border-radius: 10px;
+  background: white;
+  border-radius: 8px;
   border: 0;
-  color: white;
-
-  &:hover {
-    background: #ff9400d0;
-  }
-
-  &:active {
-    background: #ef900c;
-  }
-
-  ${props =>
-    props.connected
-      ? `
-      padding: 7px 45px 7px 11px;
-      background: none;
-      color: #1F2937;
-      border: 1px solid #1F2937;
-      filter: drop-shadow(0px 4px 52px rgba(0, 0, 0, 0.25));
-
-      &:hover {
-        background: #E6F8EB;
-      }
-    `
-      : `
-      padding: 15px 0px 15px 0px;
-    `}
-
-  img.connect-wallet {
-    margin-right: 25px;
-  }
+  color: #344054;
+  padding: 12px 21px;
+  cursor: pointer;
+  border: 1px solid #d0d5dd;
+  box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
 
   @media screen and (max-width: 992px) {
     display: flex;
-    ${props => (props.connected ? `` : `padding: 15px 0px 15px 19px;`)}
-
-    img.connect-wallet {
-      margin-right: 27px;
-    }
   }
-
-  ${props =>
-    props.openHambuger
-      ? `
-  filter: blur(5px);
-  pointer-events: none;
-  `
-      : ``};
 `
 
 const FlexDiv = styled.div`

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { usePools } from '../../providers/Pools'
-import { Container, Title, Header, ButtonGroup, ChartDiv } from './style'
+import { Container, Title, Header, ButtonGroup, ChartDiv, ConnectButton } from './style'
 import { SPECIAL_VAULTS } from '../../constants'
 import { getDataQuery } from '../../utils'
 import ApexChart from '../ApexChart'
@@ -46,27 +46,32 @@ const AnalyticChart = ({ loadComplete }) => {
   const { fontColor } = useThemeContext()
 
   return (
-    <Container fontColor={fontColor}>
-      <Header>
-        <Title>Harvest TVL Chart</Title>
-      </Header>
-      <ChartDiv>
-        <ApexChart data={apiData} range={selectedState} filter={clickedId} />
-      </ChartDiv>
-      <ButtonGroup>
-        {recommendLinks.map((item, i) => (
-          <ChartRangeSelect
-            key={i}
-            onClick={() => {
-              setSelectedState(item.state)
-            }}
-            state={selectedState}
-            type={item.type}
-            text={item.name}
-          />
-        ))}
-      </ButtonGroup>
-    </Container>
+    <>
+      <Container fontColor={fontColor}>
+        <Header>
+          <Title>Harvest TVL Chart</Title>
+        </Header>
+        <ChartDiv>
+          <ApexChart data={apiData} range={selectedState} filter={clickedId} />
+        </ChartDiv>
+        <ButtonGroup>
+          {recommendLinks.map((item, i) => (
+            <ChartRangeSelect
+              key={i}
+              onClick={() => {
+                setSelectedState(item.state)
+              }}
+              state={selectedState}
+              type={item.type}
+              text={item.name}
+            />
+          ))}
+        </ButtonGroup>
+      </Container>
+      <ConnectButton color="connectwallet" minWidth="190px" bordercolor={fontColor}>
+        Comming Soon
+      </ConnectButton>
+    </>
   )
 }
 export default AnalyticChart
