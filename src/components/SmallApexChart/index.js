@@ -96,7 +96,7 @@ function generateChartDataForApy(apyData1, apyData2, field) {
   return apyData
 }
 
-const ApexChart = ({ data, lastAPY, specVault }) => {
+const ApexChart = ({ data, lastAPY }) => {
   const { backColor } = useThemeContext()
 
   const [mainSeries, setMainSeries] = useState([
@@ -289,7 +289,7 @@ const ApexChart = ({ data, lastAPY, specVault }) => {
           show: false,
         },
         stroke: {
-          colors: [specVault === 'false' ? '#12B76A' : 'white'],
+          colors: ['#ffffff'],
           width: 3,
         },
         dataLabels: {
@@ -339,7 +339,7 @@ const ApexChart = ({ data, lastAPY, specVault }) => {
     }
 
     init()
-  }, [backColor, data, lastAPY, specVault])
+  }, [backColor, data, lastAPY])
 
   const onlyWidth = useWindowWidth()
   return (
@@ -347,7 +347,7 @@ const ApexChart = ({ data, lastAPY, specVault }) => {
       <Chart
         options={options}
         series={mainSeries}
-        type="area"
+        type="line"
         height="100"
         width={`${onlyWidth > 1352 ? '100' : onlyWidth > 992 ? '60' : '100'}`}
       />
