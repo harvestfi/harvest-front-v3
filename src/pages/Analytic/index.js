@@ -8,7 +8,6 @@ import ExchangeBinance from '../../assets/images/logos/analytics/exchange_binanc
 import ExchangeCoinbase from '../../assets/images/logos/analytics/exchange_coinbase.svg'
 import ExchangeCrypto from '../../assets/images/logos/analytics/exchange_crypto.svg'
 import ExchangeKraken from '../../assets/images/logos/analytics/exchange_kraken.svg'
-import ExchangeSushiswap from '../../assets/images/logos/analytics/exchange_sushiswap.svg'
 import ExchangeUniswap from '../../assets/images/logos/analytics/exchange_uniswap.svg'
 import ExternalDefiLlama from '../../assets/images/logos/analytics/externalDefiLlama.svg'
 import ExternalDuno from '../../assets/images/logos/analytics/externalDuno.svg'
@@ -56,21 +55,16 @@ const MemoizedCounter = React.memo(CountUp)
 const MemoizedCountdown = React.memo(Countdown)
 const imgList = [
   { url: 'https://pro.coinbase.com/trade/FARM-USD', img: ExchangeCoinbase },
-  { url: 'https://trade.kraken.com/markets/kraken/farm/usd', img: ExchangeKraken },
+  { url: 'https://pro.kraken.com/app/trade/farm-usd', img: ExchangeKraken },
   { url: 'https://www.binance.com/en/trade/FARM_USDT', img: ExchangeBinance },
   { url: 'https://crypto.com/exchange/trade/spot/FARM_USD', img: ExchangeCrypto },
   {
-    url:
-      'https://app.sushi.com/swap?inputCurrency=0xa0246c9032bc3a600820415ae600c6388619a14d&outputCurrency=ETH',
-    img: ExchangeSushiswap,
-  },
-  {
-    url:
-      'https://app.uniswap.org/#/swap?inputCurrency=0xa0246c9032bc3a600820415ae600c6388619a14d&outputCurrency=ETH',
+    url: 'https://app.uniswap.org/#/tokens/ethereum/0xa0246c9032bc3a600820415ae600c6388619a14d',
     img: ExchangeUniswap,
   },
   {
-    url: 'https://app.bancor.network/trade?inputCurrency=farm&outputCurrency=bnt',
+    url:
+      'https://app.bancor.network/trade?from=0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE&to=0xa0246c9032bC3A600820415aE600c6388619A14D',
     img: ExchangeBancor,
   },
 ]
