@@ -1,6 +1,7 @@
 import { get } from 'lodash'
 import React, { useMemo } from 'react'
 import { useMediaQuery } from 'react-responsive'
+import { useSetChain } from '@web3-onboard/react'
 import {
   ACTIONS,
   FARM_GRAIN_TOKEN_SYMBOL,
@@ -39,6 +40,7 @@ const { tokens } = require('../../../data')
 
 const PoolFooterActions = ({
   fAssetPool,
+  token,
   totalTokensEarned,
   rewardTokenSymbols,
   isLoadingData,
@@ -67,6 +69,16 @@ const PoolFooterActions = ({
   const farmGrainPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_GRAIN_POOL_ID)
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+
+  const [
+    {
+      connectedChain, // the current chain the user's wallet is connected to
+    },
+    setChain, // function to call to initiate user to switch chains in their wallet
+  ] = useSetChain()
+
+  const tokenChain = token.chain || token.data.chain
+  const curChain = connectedChain ? parseInt(connectedChain.id, 16).toString() : ''
 
   const poolVaults = useMemo(
     () => ({
@@ -221,14 +233,19 @@ const PoolFooterActions = ({
                   width="100%"
                   size="md"
                   color="earn"
-                  onClick={() =>
-                    handleClaim(account, fAssetPool, setPendingAction, async () => {
-                      await getWalletBalances([poolRewardSymbol])
-                      setLoadingDots(false, true)
-                      await fetchUserPoolStats([fAssetPool], account, userStats)
-                      setLoadingDots(false, false)
-                    })
-                  }
+                  onClick={async () => {
+                    if (curChain !== tokenChain) {
+                      const chainHex = `0x${Number(tokenChain).toString(16)}`
+                      await setChain({ chainId: chainHex })
+                    } else {
+                      handleClaim(account, fAssetPool, setPendingAction, async () => {
+                        await getWalletBalances([poolRewardSymbol])
+                        setLoadingDots(false, true)
+                        await fetchUserPoolStats([fAssetPool], account, userStats)
+                        setLoadingDots(false, false)
+                      })
+                    }
+                  }}
                   disabled={
                     !hasRequirementsForInteraction(
                       loaded,
