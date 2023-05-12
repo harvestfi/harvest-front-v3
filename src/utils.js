@@ -772,7 +772,7 @@ export const getDetailText = (
           token.rewardSymbol
         }.svg' width=24 height=24 alt=${token.rewardSymbol} /></div>
         <div class="detail-apy"> ${
-          specialVaultApy > 0 ? `${displayAPY(specialVaultApy)}</div>` : '...'
+          specialVaultApy > 0 ? `${displayAPY(specialVaultApy)}</div>` : '...</div>'
         } 
         <div class="detail-desc">${token.rewardSymbol} rewards</div>
       </div>`,

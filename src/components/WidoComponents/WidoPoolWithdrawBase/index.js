@@ -8,12 +8,7 @@ import DropDownIcon from '../../../assets/images/logos/wido/drop-down.svg'
 import FARMIcon from '../../../assets/images/logos/wido/farm.svg'
 import IFARMIcon from '../../../assets/images/logos/wido/ifarm.svg'
 import WidoIcon from '../../../assets/images/logos/wido/wido.svg'
-import {
-  FARM_TOKEN_SYMBOL,
-  IFARM_TOKEN_SYMBOL,
-  WIDO_BALANCES_DECIMALS,
-  fromWEI,
-} from '../../../constants'
+import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, POOL_BALANCES_DECIMALS } from '../../../constants'
 import { useActions } from '../../../providers/Actions'
 import { usePools } from '../../../providers/Pools'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -78,7 +73,7 @@ const WidoPoolWithdrawBase = ({
   const FARMBalance = fromWei(
     get(balances, IFARM_TOKEN_SYMBOL, 0),
     tokens[IFARM_TOKEN_SYMBOL].decimals,
-    WIDO_BALANCES_DECIMALS,
+    POOL_BALANCES_DECIMALS,
   )
 
   const onClickUnStake = async () => {
@@ -121,7 +116,7 @@ const WidoPoolWithdrawBase = ({
   const switchLegacyUnStaking = () => {
     setLegacyUnStaking(!legacyUnStaking)
     setSymbol(legacyUnStaking ? 'iFARM' : FARM_TOKEN_SYMBOL)
-    setPickedToken({ symbol: 'Select Token' })
+    setPickedToken({ symbol: 'Destination Token' })
     setUnstakeBalance(0)
   }
 
@@ -164,7 +159,7 @@ const WidoPoolWithdrawBase = ({
                 fromWei(
                   totalStaked,
                   tokens[FARM_TOKEN_SYMBOL].decimals,
-                  WIDO_BALANCES_DECIMALS,
+                  POOL_BALANCES_DECIMALS,
                   true,
                 )
               ) : (
@@ -225,14 +220,19 @@ const WidoPoolWithdrawBase = ({
             !connected ? (
               ''
             ) : lpTokenBalance ? (
-              fromWEI(lpTokenBalance, tokens[FARM_TOKEN_SYMBOL].decimals)
+              fromWei(
+                lpTokenBalance,
+                tokens[FARM_TOKEN_SYMBOL].decimals,
+                POOL_BALANCES_DECIMALS,
+                true,
+              )
             ) : (
               <AnimatedDots />
             )
           ) : !connected ? (
             ''
           ) : (
-            formatNumberWido(FARMBalance, WIDO_BALANCES_DECIMALS)
+            formatNumberWido(FARMBalance, POOL_BALANCES_DECIMALS)
           )}
         </AmountInfo>
       </StakeInfo>

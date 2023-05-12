@@ -7,7 +7,7 @@ import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.sv
 import DropDownIcon from '../../../assets/images/logos/wido/drop-down.svg'
 import FARMIcon from '../../../assets/images/logos/wido/farm.svg'
 import WidoIcon from '../../../assets/images/logos/wido/wido.svg'
-import { WIDO_BALANCES_DECIMALS } from '../../../constants'
+import { POOL_BALANCES_DECIMALS } from '../../../constants'
 import { useActions } from '../../../providers/Actions'
 import { usePools } from '../../../providers/Pools'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -19,7 +19,6 @@ import { Divider } from '../../GlobalStyle'
 import {
   Balance,
   BaseWido,
-  Max,
   NewLabel,
   PoweredByWido,
   StakeInfo,
@@ -27,6 +26,7 @@ import {
   TokenInfo,
   TokenName,
   TokenSelect,
+  AmountInfo,
 } from './style'
 
 const { tokens } = require('../../../data')
@@ -157,15 +157,31 @@ const WidoWithdrawBase = ({
         </TokenName>
         <StakeInfo>
           Staked
-          <span>
+          <AmountInfo
+            onClick={() => {
+              setStakeInputValue(
+                Number(
+                  fromWei(
+                    totalStaked,
+                    fAssetPool.lpTokenData.decimals,
+                    POOL_BALANCES_DECIMALS,
+                    true,
+                  ),
+                ),
+              )
+              setAmountsToExecute([
+                fromWei(totalStaked, fAssetPool.lpTokenData.decimals, POOL_BALANCES_DECIMALS, true),
+              ])
+            }}
+          >
             {!connected ? (
               0
             ) : totalStaked ? (
-              fromWei(totalStaked, fAssetPool.lpTokenData.decimals, WIDO_BALANCES_DECIMALS, true)
+              fromWei(totalStaked, fAssetPool.lpTokenData.decimals, POOL_BALANCES_DECIMALS, true)
             ) : (
               <AnimatedDots />
             )}
-          </span>
+          </AmountInfo>
         </StakeInfo>
       </div>
 
@@ -179,25 +195,6 @@ const WidoWithdrawBase = ({
             fontColor={fontColor}
             onChange={onInputBalance}
           />
-          <Max
-            onClick={() => {
-              setStakeInputValue(
-                Number(
-                  fromWei(
-                    totalStaked,
-                    fAssetPool.lpTokenData.decimals,
-                    WIDO_BALANCES_DECIMALS,
-                    true,
-                  ),
-                ),
-              )
-              setAmountsToExecute([
-                fromWei(totalStaked, fAssetPool.lpTokenData.decimals, WIDO_BALANCES_DECIMALS, true),
-              ])
-            }}
-          >
-            Max
-          </Max>
         </Balance>
 
         <Button
@@ -229,15 +226,29 @@ const WidoWithdrawBase = ({
 
       <StakeInfo>
         Unstaked
-        <span>
+        <AmountInfo
+          onClick={() => {
+            setUnstakeBalance(lpTokenBalance)
+            setUnstakeInputValue(
+              Number(
+                fromWei(
+                  lpTokenBalance,
+                  fAssetPool.lpTokenData.decimals,
+                  POOL_BALANCES_DECIMALS,
+                  true,
+                ),
+              ),
+            )
+          }}
+        >
           {!connected ? (
             0
           ) : lpTokenBalance ? (
-            fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, WIDO_BALANCES_DECIMALS, true)
+            fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, POOL_BALANCES_DECIMALS, true)
           ) : (
             <AnimatedDots />
           )}
-        </span>
+        </AmountInfo>
       </StakeInfo>
 
       <NewLabel
@@ -256,23 +267,6 @@ const WidoWithdrawBase = ({
             fontColor={fontColor}
             onChange={onInputUnstake}
           />
-          <Max
-            onClick={() => {
-              setUnstakeBalance(lpTokenBalance)
-              setUnstakeInputValue(
-                Number(
-                  fromWei(
-                    lpTokenBalance,
-                    fAssetPool.lpTokenData.decimals,
-                    WIDO_BALANCES_DECIMALS,
-                    true,
-                  ),
-                ),
-              )
-            }}
-          >
-            Max
-          </Max>
         </Balance>
 
         <TokenInfo>

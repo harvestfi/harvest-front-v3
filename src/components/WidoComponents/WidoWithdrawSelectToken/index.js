@@ -1,7 +1,8 @@
-import React, { useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { SelectTokenWido, CloseBtn, FilterInput, NewLabel, Search } from './style'
 import WidoWithdrawSelectTokenList from '../WidoWithdrawSelectTokenList'
+import WidoSoonToSupportTokenList from '../WidoSoonToSupportTokenList'
 import CloseIcon from '../../../assets/images/logos/wido/close.svg'
 import SearchIcon from '../../../assets/images/logos/wido/search.svg'
 
@@ -15,7 +16,20 @@ const WidoWithdrawSelectToken = ({
   soonToSupList,
   setWidoPartHeight,
 }) => {
-  const { borderColor, backColor, filterColor, widoSelTokenSubTitleColor } = useThemeContext()
+  const {
+    borderColor,
+    backColor,
+    filterColor,
+    widoSelTokenSubTitleColor,
+    widoInputBoxShadow,
+    widoInputPanelBorderColor,
+  } = useThemeContext()
+
+  const [filterWord, setFilterWord] = useState('')
+
+  const onFilter = async e => {
+    setFilterWord(e.target.value)
+  }
 
   useEffect(() => {
     if (selectTokenWido) {
@@ -42,7 +56,13 @@ const WidoWithdrawSelectToken = ({
 
       <NewLabel position="relative" marginBottom="10px">
         <Search src={SearchIcon} />
-        <FilterInput placeholder="Select for ticker or full name" />
+        <FilterInput
+          value={filterWord}
+          placeholder="Search for ticker or full name"
+          shadow={widoInputBoxShadow}
+          borderColor={widoInputPanelBorderColor}
+          onChange={onFilter}
+        />
       </NewLabel>
 
       <NewLabel marginBottom="10px" heightDiv="75%" scroll="scroll">
@@ -62,6 +82,7 @@ const WidoWithdrawSelectToken = ({
           setPickedToken={setPickedToken}
           setSelectTokenWido={setSelectTokenWido}
           setWidoPartHeight={setWidoPartHeight}
+          filterWord={filterWord}
         />
         <NewLabel
           weight="500"
@@ -72,14 +93,7 @@ const WidoWithdrawSelectToken = ({
         >
           Soon to be Supported
         </NewLabel>
-        <WidoWithdrawSelectTokenList
-          list={soonToSupList}
-          clickId={clickTokenId}
-          setClickedId={setClickedTokenId}
-          setPickedToken={setPickedToken}
-          setSelectTokenWido={setSelectTokenWido}
-          setWidoPartHeight={setWidoPartHeight}
-        />
+        <WidoSoonToSupportTokenList list={soonToSupList} filterWord={filterWord} />
       </NewLabel>
     </SelectTokenWido>
   )

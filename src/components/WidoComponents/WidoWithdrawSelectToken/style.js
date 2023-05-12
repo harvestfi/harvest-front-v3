@@ -23,15 +23,16 @@ const CloseBtn = styled.img`
 `
 
 const FilterInput = styled.input`
-  background: #f5f5f5;
-  border-radius: 10px;
+  background: #ffffff;
+  border-radius: 8px;
   height: 40px;
   width: 100%;
-  border: none;
-  padding: 9.5px 10px 9.5px 40px;
+  border: 1px solid ${props => props.borderColor};
+  box-shadow: ${props => props.shadow};
+  padding: 8px 9px 8px 40px;
   outline: none;
-  font-weight: 500;
-  font-size: 16px;
+  font-weight: 400;
+  font-size: 13px;
   line-height: 21px;
   color: #101828;
 `

@@ -19,7 +19,7 @@ const VaultApy = ({ token, tokenSymbol, vaultPool, isSpecialVault }) => {
   }
 
   return isSpecialVault ? (
-    token.data && token.data.loaded && (token.data.dataFetched === false || totalApy !== null) ? (
+    token.data && (token.data.dataFetched === false || totalApy !== null) ? (
       <RewardsContainer>
         {token.inactive ? 'Inactive' : <>{totalApy ? displayAPY(totalApy) : null}</>}
       </RewardsContainer>
@@ -28,7 +28,7 @@ const VaultApy = ({ token, tokenSymbol, vaultPool, isSpecialVault }) => {
         <AnimatedDots />
       </b>
     )
-  ) : vaultPool.loaded && totalApy !== null && !loadingVaults ? (
+  ) : totalApy !== null && !loadingVaults ? (
     <RewardsContainer>
       {token.inactive || token.testInactive || token.hideTotalApy || !token.dataFetched ? (
         token.inactive || token.testInactive ? (

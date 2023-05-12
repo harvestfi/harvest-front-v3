@@ -289,19 +289,13 @@ const PoolsProvider = _ref => {
             const vaultAddresses = []
             const chLoadedPools = []
             loadedPools.forEach(pool => {
-              if (
-                pool.contractAddress !== '0x3DA9D911301f8144bdF5c3c67886e5373DCdff8e' &&
-                pool.contractAddress !== '0x4F7c28cCb0F1Dbd1388209C67eEc234273C878Bd' &&
-                pool.contractAddress !== '0x6ac4a7AB91E6fD098E13B7d347c6d4d1494994a2'
-              ) {
-                if (pool.chain === ch) {
-                  poolAddresses.push(pool.contractAddress)
-                  chLoadedPools.push(pool)
-                }
+              if (pool.chain === ch) {
+                poolAddresses.push(pool.contractAddress)
+                chLoadedPools.push(pool)
+              }
 
-                if (!Object.values(SPECIAL_VAULTS).includes(pool.id) && pool.chain === ch) {
-                  vaultAddresses.push(pool.lpTokenData.address)
-                }
+              if (!Object.values(SPECIAL_VAULTS).includes(pool.id) && pool.chain === ch) {
+                vaultAddresses.push(pool.lpTokenData.address)
               }
             })
             const readerInstance = readerType.instance

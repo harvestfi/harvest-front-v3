@@ -1,12 +1,12 @@
 import styled from 'styled-components'
-import GradientBack from '../../assets/images/logos/gradient.svg'
+import Pattern from '../../assets/images/logos/pattern.png'
 
 const ProfitSharing = styled.div`
-  background: url(${GradientBack});
+  background: url(${Pattern});
   text-decoration: none;
   background-position: center;
   background-repeat: no-repeat;
-  background-size: cover;
+  // background-size: cover;
   cursor: pointer;
   position: relative;
   padding: 15px 18px;

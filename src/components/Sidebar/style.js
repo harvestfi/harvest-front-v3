@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
-import GradientBack from '../../assets/images/logos/gradient.svg'
+import Pattern from '../../assets/images/logos/pattern.png'
 
 const Container = styled.div`
   ${props => props.sidebarEffect};
@@ -12,7 +12,8 @@ const Container = styled.div`
   background: ${props => props.backColor};
   color: ${props => props.fontColor};
 
-  min-height: 100%;
+  min-height: 560px;
+  height: 100%;
   min-width: ${props => props.width};
   max-width: 100%;
   position: fixed;
@@ -61,7 +62,7 @@ const LinksContainer = styled.div`
   margin: 0 0px auto;
   transition: 0.25s;
 
-  a.logo {
+  div.logo {
     display: flex;
     align-items: inherit;
     text-decoration: none;
@@ -99,10 +100,6 @@ const LinkContainer = styled.div`
   @media screen and (min-width: 992px) {
     display: flex;
   }
-
-  @media screen and (max-height: 650px) {
-    margin-bottom: 14px;
-  }
 `
 
 const Link = styled.button`
@@ -127,8 +124,21 @@ const Link = styled.button`
       ? `
     color: ${props.activeColor};
     font-weight: bold;
+    ${
+      props.darkMode
+        ? `
+      img {
+        filter: invert(97%) sepia(0%) saturate(7489%) hue-rotate(281deg) brightness(106%) contrast(103%);
+      }
+    `
+        : ``
+    }
   `
-      : ``}
+      : `
+    img {
+      filter: ${props.activeIconColor};
+    }
+      `}
 
   .sideIcon {
     margin-right: 17px;
@@ -158,12 +168,16 @@ const Link = styled.button`
   &:hover {
     color: ${props => props.activeColor};
     font-weight: bold;
-  }
-
-  @media screen and (max-height: 650px) {
-    font-size: 12px;
-    font-weight: 500;
-    line-height: 16px;
+    img {
+      ${props =>
+        props.darkMode
+          ? `
+          filter: invert(97%) sepia(0%) saturate(7489%) hue-rotate(281deg) brightness(106%) contrast(103%);
+      `
+          : `
+          filter: invert(0%) sepia(8%) saturate(7500%) hue-rotate(300deg) brightness(90%) contrast(110%);
+          `}
+    }
   }
 `
 
@@ -651,7 +665,7 @@ const OffcanvasDiv = styled(Offcanvas)`
 `
 
 const ProfitSharing = styled.div`
-  background: url(${GradientBack});
+  background: url(${Pattern});
   background-position: center;
   background-repeat: no-repeat;
   cursor: pointer;
@@ -728,7 +742,7 @@ const BottomPart = styled.div`
 `
 
 const MobileProfitSharing = styled.div`
-  background: url(${GradientBack});
+  background: url(${Pattern});
   background-position: center;
   background-repeat: no-repeat;
   cursor: pointer;
@@ -750,6 +764,10 @@ const ProfitPart = styled.div`
   @media screen and (max-height: 670px) {
     display: none;
   }
+`
+
+const Logo = styled.div`
+  cursor: pointer;
 `
 
 export {
@@ -789,4 +807,5 @@ export {
   MobileProfitSharing,
   ProfitPart,
   Divider,
+  Logo,
 }

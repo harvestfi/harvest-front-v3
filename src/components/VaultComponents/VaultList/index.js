@@ -46,9 +46,9 @@ import {
 const { tokens } = require('../../../data')
 
 const SortsList = [
-  { id: 0, name: 'APY' },
-  { id: 1, name: 'Daily' },
-  { id: 2, name: 'TVL' },
+  { id: 0, name: 'APY', type: 'apy' },
+  { id: 1, name: 'My Balance', type: 'balance' },
+  { id: 2, name: 'TVL', type: 'deposits' },
 ]
 
 const formatVaults = (
@@ -108,6 +108,20 @@ const formatVaults = (
         (get(groupOfVaults[symbol], 'displayName') &&
           groupOfVaults[symbol].tokenNames
             .join(', ')
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase().trim())) ||
+        (get(groupOfVaults[symbol], 'subLabel') &&
+          groupOfVaults[symbol].subLabel
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase().trim())) ||
+        (get(
+          symbol === FARM_TOKEN_SYMBOL ? tokens[IFARM_TOKEN_SYMBOL] : groupOfVaults[symbol],
+          'platform',
+        )[0] &&
+          (symbol === FARM_TOKEN_SYMBOL
+            ? tokens[IFARM_TOKEN_SYMBOL]
+            : groupOfVaults[symbol]
+          ).platform[0]
             .toLowerCase()
             .includes(searchQuery.toLowerCase().trim())),
     )
@@ -302,6 +316,12 @@ const VaultList = () => {
   const [selectStableCoin, onSelectStableCoin] = useState(false)
   const [selectFarmType, onSelectFarmType] = useState('')
   const [selectedActiveType, selectActiveType] = useState([])
+
+  const [loadComplete, setLoadComplete] = useState(false)
+
+  React.useEffect(() => {
+    setLoadComplete(true)
+  }, [])
 
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
@@ -546,10 +566,13 @@ const VaultList = () => {
 
   const updateSortQuery = sort => {
     const debouncedFn = debounce(() => {
-      if (sort === 'APY') setSortingParams('apy')
-      else if (sort === 'DisplayName') setSortingParams('displayName')
-      else if (sort === 'TVL') setSortingParams('deposits')
-      else if (sort === 'Daily') setSortingParams('balance')
+      if (sort === 'balance') {
+        if (account) {
+          setSortingParams(sort)
+        }
+      } else {
+        setSortingParams(sort)
+      }
     }, 300)
 
     debouncedFn()
@@ -576,11 +599,11 @@ const VaultList = () => {
       <VaultsListHeader
         setSearchQuery={setSearchQuery}
         onDepositedOnlyClick={selectDepositedOnly}
-        depositedOnly={depositedOnly}
         onAssetClick={onSelectAsset}
         onSelectStableCoin={onSelectStableCoin}
         onSelectFarmType={onSelectFarmType}
         onSelectActiveType={selectActiveType}
+        loadComplete={loadComplete}
       />
       <VaultsListBody borderColor={borderColor} backColor={backColor}>
         <MobileListFilter
@@ -607,7 +630,7 @@ const VaultList = () => {
                   key={i}
                   onClick={() => {
                     setSortId(item.id)
-                    updateSortQuery(item.name)
+                    updateSortQuery(item.type)
                   }}
                 >
                   <div>{item.name}</div>

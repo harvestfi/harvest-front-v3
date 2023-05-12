@@ -3,8 +3,8 @@ import styled from 'styled-components'
 const CountdownContainer = styled.div`
   display: ${props => (props.display ? props.display : 'flex')};
   font-weight: 700;
-  font-size: 16px;
-  line-height: 21px;
+  font-size: 38px;
+  line-height: 50px;
   text-align: center;
   width: 100%;
   color: ${props => props.fontColor};
