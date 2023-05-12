@@ -61,7 +61,11 @@ const DesktopPanelHeader = ({
         fontColor={fontColor}
         borderColor={borderColor}
         onClick={() => {
-          push(directDetailUrl + tokenSymbol)
+          const network = chainList[badgeId].name.toLowerCase()
+          const address = isSpecialVault
+            ? token.data.collateralAddress
+            : token.vaultAddress || token.tokenAddress
+          push(`${directDetailUrl + network}/${address}`)
         }}
       >
         <ValueContainer width="5%" />

@@ -17,15 +17,13 @@ export const SOCIAL_LINKS = {
 }
 
 export const ROUTES = {
-  MAIN: '/',
-  HOME: '/home',
-  FARM: '/farm',
+  HOME: '/',
   PORTFOLIO: '/portfolio',
   ANALYTIC: '/analytics',
   DOC: '/doc',
   FAQ: '/faq',
   GRAIN: '/grain',
-  WIDODETAIL: '/wido-test/:id',
+  WIDODETAIL: '/:network/:paramAddress',
   WORK: '/work',
   POOL: '/pool',
   ZAPPER: '/zapper',
@@ -121,7 +119,7 @@ export const FAQ_ITEMS_FIRST = [
     question: 'Are there timelocks?',
     answer: (
       <>
-        <div style={{ color: 'blue', textDecoration: 'underline' }}>Yes, 12 hours.</div>
+        <div style={{ color: '#ff9400', textDecoration: 'underline' }}>Yes, 12 hours.</div>
       </>
     ),
   },
@@ -741,4 +739,4 @@ export function fromWEI(number, digit) {
     .toNumber()
 }
 
-export const directDetailUrl = '/wido-test/'
+export const directDetailUrl = '/'

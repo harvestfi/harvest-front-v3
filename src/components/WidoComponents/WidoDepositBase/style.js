@@ -139,6 +139,7 @@ const TokenAmount = styled.input`
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
     -webkit-appearance: none;
+    -moz-appearance: textfield;
     margin: 0;
   }
 `
@@ -184,6 +185,7 @@ const BalanceInfo = styled.div`
 
   margin-top: 13px;
   margin-bottom: 13px;
+  cursor: pointer;
 
   span {
     margin-left: 6px;

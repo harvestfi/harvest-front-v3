@@ -57,11 +57,6 @@ const FarmTitle = styled.span`
   line-height: 21px;
   z-index: 3;
   padding: 27px 20px;
-
-  // @media screen and (max-width: 992px) {
-  //   margin-top: 15px;
-  //   margin-bottom: 18px;
-  // }
 `
 
 const TransactionDetails = styled.div`
@@ -118,7 +113,6 @@ const FlexDiv = styled.div`
       display: ${props.display};
     `
         : ``};
-    // padding-bottom: 10px;
   }
 `
 
@@ -130,6 +124,7 @@ const MyFarm = styled.div`
 
   color: ${props => props.fontColor};
   align-self: center;
+  align-items: center;
 
   @media screen and (max-width: 992px) {
     font-size: 14px;
@@ -193,18 +188,21 @@ const EmptyInfo = styled.div`
 `
 
 const ExploreFarm = styled.button`
-  background: #27ae60;
+  background: white;
   border-radius: 12px;
-  color: white;
+  color: #1e1f20;
   padding: 15px 130px;
-  border: none;
+  border: 2px solid #1e1f20;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 21px;
 
   &:hover {
-    background: #27ae60d0;
+    background: #f0f0f0;
   }
 
   &:active {
-    background: #27ae60f0;
+    background: #e5e5e5;
   }
 
   img {
@@ -234,17 +232,7 @@ const Content = styled.div`
   font-size: 20px;
   line-height: 23px;
   align-self: center;
-
-  @media screen and (max-width: 992px) {
-    ${props =>
-      props.firstColumn
-        ? `
-          // min-width: 30px;
-        `
-        : `
-        // min-width: 70px;
-      `}
-  }
+  justify-content: space-between;
 `
 
 const BadgeIcon = styled.div`
@@ -372,26 +360,11 @@ const Column = styled.div`
       : `
     color: #475467;
   `}
-
-  @media screen and (max-width: 992px) {
-    ${props =>
-      props.firstColumn
-        ? `
-          // min-width: 30px;
-        `
-        : `
-        // min-width: 70px;
-      `}
-  }
 `
 
 const Status = styled.div`
   ${props =>
-    props.darkMode
-      ? `
-      background: none;
-    `
-      : props.status === 'Active'
+    props.status === 'Active'
       ? `
         background: #ECFDF3;
         color: #027A48;
@@ -425,13 +398,6 @@ const Status = styled.div`
   }
 `
 
-const SelField = styled.div`
-  height: 17px;
-  width: 17px;
-  border: 1px solid #d0d5dd;
-  border-radius: 5px;
-`
-
 const LogoImg = styled.img`
   z-index: 10;
   &:not(:first-child) {
@@ -443,10 +409,6 @@ const LogoImg = styled.img`
     `
         : ``};
   }
-
-  // @media screen and (max-width: 992px) {
-  //   margin-top: 12px;
-  // }
 `
 
 const Col = styled.div`
@@ -456,7 +418,12 @@ const Col = styled.div`
 `
 
 const ContentInner = styled.div`
-  width: ${props => props.width};
+  ${props =>
+    props.width
+      ? `
+    width: ${props.width}
+  `
+      : ``};
   ${props =>
     props.display
       ? `
@@ -488,8 +455,7 @@ const TableContent = styled.div`
   `
       : ``}
   @media screen and (max-width: 992px) {
-    min-width: 380px;
-    overflow: scroll;
+    overflow-x: scroll;
   }
 `
 
@@ -515,7 +481,6 @@ export {
   Header,
   Column,
   Status,
-  SelField,
   LogoImg,
   Col,
   ContentInner,

@@ -1,17 +1,24 @@
 import React from 'react'
-import RModal from 'react-modal'
-import Button from './Button'
+import Modal from 'react-bootstrap/Modal'
 
-RModal.setAppElement('body')
-
-const Modal = ({ title, open, onClose, children, confirmationLabel }) => (
-  <RModal isOpen={open} onRequestClose={onClose} shouldCloseOnOverlayClick={false}>
-    <h2>{title}</h2>
-    {children}
-    <Button size="sm" onClick={onClose} margin="20px auto auto">
-      {confirmationLabel}
-    </Button>
-  </RModal>
+const MainModal = ({ title, open, onClose, children, confirmationLabel }) => (
+  <Modal
+    show={open}
+    onHide={onClose}
+    dialogClassName="modal-notification"
+    aria-labelledby="contained-modal-title-vcenter"
+    centered
+  >
+    <Modal.Header>
+      <Modal.Title id="example-custom-modal-styling-title">{title}</Modal.Title>
+    </Modal.Header>
+    <Modal.Body>{children}</Modal.Body>
+    <Modal.Footer>
+      <button type="button" className="confirm" onClick={onClose}>
+        {confirmationLabel}
+      </button>
+    </Modal.Footer>
+  </Modal>
 )
 
-export default Modal
+export default MainModal

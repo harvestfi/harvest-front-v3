@@ -9,7 +9,15 @@ import { useWallet } from '../../../providers/Wallet'
 import { usePools } from '../../../providers/Pools'
 import { formatNumberWido } from '../../../utils'
 import { WIDO_BALANCES_DECIMALS } from '../../../constants'
-import { SelectTokenWido, CloseBtn, NewLabel, Buttons, CloseButton, ExecuteButton } from './style'
+import {
+  SelectTokenWido,
+  CloseBtn,
+  NewLabel,
+  Buttons,
+  CloseButton,
+  ExecuteButton,
+  IconArrowDown,
+} from './style'
 import WidoSwapToken from '../WidoSwapToken'
 import BackIcon from '../../../assets/images/logos/wido/back.svg'
 import Swap2Icon from '../../../assets/images/logos/wido/swap2.svg'
@@ -36,10 +44,11 @@ const WidoDepositFinalStep = ({
   token,
   useIFARM,
   symbol,
+  tokenSymbol,
   quoteValue,
   fAssetPool,
 }) => {
-  const [approveValue, setApproveValue] = React.useState(0)
+  const [approveValue, setApproveValue] = useState(0)
   const { account } = useWallet()
   const { fetchUserPoolStats, userStats } = usePools()
   const toToken = token.vaultAddress || token.tokenAddress
@@ -160,7 +169,7 @@ const WidoDepositFinalStep = ({
     }
   }
 
-  const [executeValue, setExecuteValue] = React.useState(0)
+  const [executeValue, setExecuteValue] = useState(0)
   const onClickExecute = async () => {
     if (approveValue !== 2) {
       toast.error('Please approve first!')
@@ -238,18 +247,20 @@ const WidoDepositFinalStep = ({
       </NewLabel>
 
       <NewLabel marginBottom="20px">
-        <WidoSwapToken
-          img={pickedToken.logoURI}
-          name={fromInfo}
-          value={`${pickedToken.symbol} by harvest.finance`}
-        />
+        <WidoSwapToken img={pickedToken.logoURI} name={fromInfo} value={pickedToken.symbol} />
         <NewLabel display="flex" justifyContent="center" marginTop="15px" marginBottom="15px">
-          <img src={ArrowDownIcon} width={25} height={25} alt="" />
+          <IconArrowDown
+            filterColor={filterColor}
+            src={ArrowDownIcon}
+            width={25}
+            height={25}
+            alt=""
+          />
         </NewLabel>
         <WidoSwapToken
           img={useIFARM ? IFARMIcon : Swap2Icon}
           name={toInfo}
-          value={useIFARM ? symbol : token.balance}
+          value={useIFARM ? symbol : `f${tokenSymbol}`}
         />
       </NewLabel>
 

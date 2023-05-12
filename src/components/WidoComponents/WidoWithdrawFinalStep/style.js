@@ -162,4 +162,8 @@ const CloseButton = styled.button`
   margin: 15px auto 20px auto;
 `
 
-export { SelectTokenWido, CloseBtn, NewLabel, Buttons, ExecuteButton, CloseButton }
+const IconArrowDown = styled.img`
+  filter: ${props => props.filterColor};
+`
+
+export { SelectTokenWido, CloseBtn, NewLabel, Buttons, ExecuteButton, CloseButton, IconArrowDown }

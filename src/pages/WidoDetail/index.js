@@ -13,11 +13,8 @@ import POLYGON from '../../assets/images/chains/polygon.svg'
 import APY from '../../assets/images/logos/earn/apy.svg'
 import Back from '../../assets/images/logos/earn/back.svg'
 import Daily from '../../assets/images/logos/earn/daily.svg'
-// import ExternalLink from '../../assets/images/logos/earn/externallink.svg'
 import Info from '../../assets/images/logos/earn/info.svg'
-// import StrategyIcon from '../../assets/images/logos/earn/strategyicon.svg'
 import TVL from '../../assets/images/logos/earn/tvl.svg'
-// import VaultIcon from '../../assets/images/logos/earn/vaulticon.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import FarmDetailChart from '../../components/FarmDetailChart'
 import VaultPanelActionsFooter from '../../components/VaultComponents/VaultPanelActions/VaultPanelActionsFooter'
@@ -121,7 +118,7 @@ const getVaultValue = token => {
 }
 
 const WidoDetail = () => {
-  const { id } = useParams()
+  const { paramAddress } = useParams()
   // Switch Tag (Deposit/Withdraw)
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM]
   const [active1, setActive1] = useState(true)
@@ -156,7 +153,7 @@ const WidoDetail = () => {
         profitShareAPY,
         data: farmProfitSharingPool,
         logoUrl: ['./icons/ifarm.svg'],
-        tokenAddress: addresses.iFARM,
+        tokenAddress: addresses.FARM,
         rewardSymbol: 'iFarm',
         isNew: tokens[IFARM_TOKEN_SYMBOL].isNew,
         newDetails: tokens[IFARM_TOKEN_SYMBOL].newDetails,
@@ -189,7 +186,13 @@ const WidoDetail = () => {
   )
 
   const groupOfVaults = { ...vaultsData, ...poolVaults }
-
+  const vaultsKey = Object.keys(groupOfVaults)
+  const vaultIds = vaultsKey.filter(
+    vaultId =>
+      groupOfVaults[vaultId].vaultAddress === paramAddress ||
+      groupOfVaults[vaultId].tokenAddress === paramAddress,
+  )
+  const id = vaultIds[0]
   const token = groupOfVaults[id]
 
   const { logoUrl } = token
@@ -212,6 +215,14 @@ const WidoDetail = () => {
 
   const chain = token.chain || token.data.chain
   const [badgeId, setBadgeId] = useState(-1)
+
+  const [loadComplete, setLoadComplete] = useState(false)
+  useEffect(() => {
+    // 👇️ scroll to top on page load
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+
+    setLoadComplete(true)
+  }, [])
 
   useEffect(() => {
     const getBadge = () => {
@@ -400,6 +411,7 @@ const WidoDetail = () => {
             if (supToken) {
               supList[i].balance = supToken.balance
               supList[i].usdValue = supToken.balanceUsdValue
+              supList[i].usdPrice = supToken.usdPrice
               supportedList.push(supList[i])
             } else {
               supList[i].balance = '0'
@@ -427,7 +439,7 @@ const WidoDetail = () => {
     }
 
     getTokenBalance()
-  }, [account, chain, id, toTokenAddress])
+  }, [account, chain, toTokenAddress])
 
   const {
     backColor,
@@ -447,7 +459,7 @@ const WidoDetail = () => {
     widoTagActiveFontColor,
   } = useThemeContext()
 
-  const fAssetSymbol = isSpecialVault ? id : token.balance
+  const fAssetSymbol = isSpecialVault ? id : `f${id}`
   const [loadingFarmingBalance, setFarmingLoading] = useState(false)
   const [loadingLpStats, setLpStatsloading] = useState(false)
   const [withdrawMode, setWithdrawMode] = useState(false)
@@ -545,7 +557,7 @@ const WidoDetail = () => {
           <FlexTopDiv>
             <BackBtnRect
               onClick={() => {
-                push('/home')
+                push('/')
               }}
               backcolor={widoBackBtnBackColor}
               backhovercolor={widoBackBtnBackHoverColor}
@@ -553,14 +565,7 @@ const WidoDetail = () => {
               <BackArrow src={Back} alt="" iconcolor={widoBackIconColor} />
             </BackBtnRect>
             {logoUrl.map((el, i) => (
-              <LogoImg
-                className="logo"
-                zIndex={10 - i}
-                src={el.slice(1, el.length)}
-                key={i}
-                height={32}
-                alt=""
-              />
+              <LogoImg className="logo" src={el.slice(1, el.length)} key={i} height={32} alt="" />
             ))}
             <TopDesc weight={400} size="16px" height="21px" fontColor={fontColor}>
               {token.tokenNames.join(', ') || token.rewardSymbol}
@@ -575,7 +580,7 @@ const WidoDetail = () => {
             <FlexTopDiv>
               <BackBtnRect
                 onClick={() => {
-                  push('/home')
+                  push('/')
                 }}
                 backcolor={widoBackBtnBackColor}
                 backhovercolor={widoBackBtnBackHoverColor}
@@ -583,14 +588,7 @@ const WidoDetail = () => {
                 <BackArrow src={Back} alt="" iconcolor={widoBackIconColor} />
               </BackBtnRect>
               {logoUrl.map((el, i) => (
-                <LogoImg
-                  className="logo"
-                  zIndex={10 - i}
-                  src={el.slice(1, el.length)}
-                  key={i}
-                  height={32}
-                  alt=""
-                />
+                <LogoImg className="logo" src={el.slice(1, el.length)} key={i} height={32} alt="" />
               ))}
             </FlexTopDiv>
 
@@ -781,10 +779,11 @@ const WidoDetail = () => {
                 vaultPool={vaultPool}
                 lastTVL={Number(vaultValue)}
                 lastAPY={Number(totalApy)}
+                loadComplete={loadComplete}
               />
             </HalfInfo>
             <HalfInfo
-              padding={!isMobile ? '20px' : '15px 10px'}
+              padding={!isMobile ? '20px' : '15px'}
               backColor={backColor}
               borderColor={borderColor}
             >
@@ -794,7 +793,7 @@ const WidoDetail = () => {
               <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
             </HalfInfo>
             <HalfInfo
-              padding={!isMobile ? '24px 22px 44px 22px' : '15px 20px'}
+              padding={!isMobile ? '24px 22px 44px 22px' : '15px'}
               backColor={backColor}
               borderColor={borderColor}
             >
@@ -952,6 +951,7 @@ const WidoDetail = () => {
                     loaded={loaded}
                     loadingBalances={loadingLpStats || loadingFarmingBalance}
                     supTokenList={supTokenList}
+                    loadComplete={loadComplete}
                   />
                 )}
 
@@ -983,6 +983,7 @@ const WidoDetail = () => {
                   balanceList={balanceList}
                   useIFARM={useIFARM}
                   symbol={symbolDepo}
+                  tokenSymbol={id}
                   quoteValue={quoteValueDepo}
                   setQuoteValue={setQuoteValueDepo}
                 />
@@ -1043,6 +1044,7 @@ const WidoDetail = () => {
                     token={token}
                     useIFARM={useIFARM}
                     symbol={symbolDepo}
+                    tokenSymbol={id}
                     quoteValue={quoteValueDepo}
                     fAssetPool={fAssetPool}
                   />
@@ -1118,6 +1120,7 @@ const WidoDetail = () => {
                   balanceList={balanceList}
                   useIFARM={useIFARM}
                   symbol={symbolWith}
+                  tokenSymbol={id}
                   quoteValue={quoteValueWith}
                   setQuoteValue={setQuoteValueWith}
                 />
@@ -1149,6 +1152,7 @@ const WidoDetail = () => {
                   slippagePercentage={slippagePercentWith}
                   useIFARM={useIFARM}
                   symbol={symbolWith}
+                  tokenSymbol={id}
                   fAssetPool={fAssetPool}
                   quoteValue={quoteValueWith}
                 />

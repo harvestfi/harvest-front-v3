@@ -1,22 +1,16 @@
-import { get } from 'lodash'
 import React, { useEffect, useState } from 'react'
-import { Modal } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
 import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
 import ETHEREUM from '../../../assets/images/chains/ethereum.svg'
 import POLYGON from '../../../assets/images/chains/polygon.svg'
-import DetailClose from '../../../assets/images/logos/farm/farm-detail-close.svg'
 import APYIcon from '../../../assets/images/logos/farm/MobileAPYIcon.svg'
 import DailyIcon from '../../../assets/images/logos/farm/MobileDailyIcon.svg'
 import TVLIcon from '../../../assets/images/logos/farm/MobileTVLIcon.svg'
-import { directDetailUrl, IFARM_TOKEN_SYMBOL } from '../../../constants'
-import { tokens } from '../../../data'
+import { directDetailUrl } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { useVaults } from '../../../providers/Vault'
-import { getRewardsText, getTotalApy, isLedgerLive } from '../../../utils'
+import { isLedgerLive } from '../../../utils'
 import {
   BadgeIcon,
-  DetailModal,
   FlexDiv,
   MobileVaultInfoContainer,
   MobileVaultValueContainer,
@@ -67,44 +61,21 @@ const MobilePanelHeader = ({
     getBadge()
   }, [chainId])
 
-  // Detail Modal
-  const [show, setShow] = useState(false)
-  const handleClose = () => setShow(false)
-  const handleShow = () => setShow(true)
-
-  const { vaultsData } = useVaults()
-  const tokenVault = get(vaultsData, token.hodlVaultId || tokenSymbol)
-  const farmAPY = get(vaultPool, 'totalRewardAPY', 0)
-  const tradingApy = get(vaultPool, 'tradingApy', 0)
-  const boostedEstimatedAPY = get(tokenVault, 'boostedEstimatedAPY', 0)
-  const boostedRewardAPY = get(vaultPool, 'boostedRewardAPY', 0)
-  const totalApy = isSpecialVault
-    ? getTotalApy(null, token, true)
-    : getTotalApy(vaultPool, tokenVault)
-
-  const logoUrl = useIFARM ? tokens[IFARM_TOKEN_SYMBOL].logoUrl : token.logoUrl
+  const { logoUrl } = token
 
   const { badgeIconBackColor, fontColor, borderColor } = useThemeContext()
   return (
-    <PanelContainer fontColor={fontColor} borderColor={borderColor}>
-      <DetailModal className="vault-detail" show={show} onHide={handleClose}>
-        <Modal.Header>
-          <input type="image" alt="" src={DetailClose} onClick={handleClose} />
-        </Modal.Header>
-        <Modal.Body>
-          {getRewardsText(
-            token,
-            tokens,
-            vaultPool,
-            tradingApy,
-            farmAPY,
-            totalApy,
-            true,
-            boostedEstimatedAPY,
-            boostedRewardAPY,
-          )}
-        </Modal.Body>
-      </DetailModal>
+    <PanelContainer
+      fontColor={fontColor}
+      borderColor={borderColor}
+      onClick={() => {
+        const network = chainList[badgeId].name.toLowerCase()
+        const address = isSpecialVault
+          ? token.data.collateralAddress
+          : token.vaultAddress || token.tokenAddress
+        push(`${directDetailUrl + network}/${address}`)
+      }}
+    >
       <FlexDiv width="10%">
         <BadgeIcon badgeBack={badgeIconBackColor}>
           {BadgeAry[badgeId] ? (
@@ -135,7 +106,7 @@ const MobilePanelHeader = ({
       </FlexDiv>
       <FlexDiv width="20%">
         <MobileVaultInfoContainer>
-          <MobileVaultValueContainer onClick={handleShow}>
+          <MobileVaultValueContainer>
             <VaultApy
               token={token}
               tokenSymbol={tokenSymbol}

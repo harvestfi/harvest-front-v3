@@ -17,7 +17,7 @@ export function ThemeProvider({ children }) {
   const switchMode = darkMode ? 'dark' : 'light'
 
   const pageBackColor = darkMode ? '#15202B' : '#FAFAFA'
-  const fontColor = darkMode ? 'white' : '#15202B'
+  const fontColor = darkMode ? 'white' : '#475467'
   const backColor = darkMode ? '#15202B' : 'white'
   const borderColor = darkMode ? 'rgba(217, 217, 217, 0.5)' : '#EAECF0'
   const filterColor = darkMode
@@ -91,8 +91,8 @@ export function ThemeProvider({ children }) {
     ? 'invert(100%) sepia(20%) saturate(0%) hue-rotate(40deg) brightness(104%) contrast(101%)'
     : ''
 
-  const widoDepoTokenListActiveColor = darkMode ? '#ECFDF3' : '#ECFDF3'
-  const widoDepoTokenListHoverColor = darkMode ? '#ECFDF3' : '#ECFDF3'
+  const widoDepoTokenListActiveColor = darkMode ? '#7b8b81' : '#ECFDF3'
+  const widoDepoTokenListHoverColor = darkMode ? '#585e5b' : '#e1e5e3'
 
   const widoSwitchTagBorderColor = darkMode ? '#F2F4F7' : '#F2F4F7'
   const widoSwitchTagBackColor = darkMode ? '#243648' : '#F9FAFB'
@@ -111,10 +111,17 @@ export function ThemeProvider({ children }) {
   const toggleInactiveBackColor = darkMode ? '' : '#F2F4F7'
   const toggleActiveBackColor = darkMode ? '' : '#7F56D9'
 
-  const sidebarFontColor = darkMode ? 'white' : '#344054'
-  const sidebarActiveFontColor = darkMode ? '#D0D5DD' : '#101828'
+  const sidebarFontColor = darkMode ? '#D0D5DD' : '#344054'
+  const sidebarActiveFontColor = darkMode ? 'white' : '#101828'
+  const sidebarActiveIconColor = darkMode
+    ? 'invert(95%) sepia(4%) saturate(441%) hue-rotate(183deg) brightness(89%) contrast(94%)'
+    : 'invert(46%) sepia(10%) saturate(767%) hue-rotate(183deg) brightness(92%) contrast(90%)'
 
   const totalValueFontColor = darkMode ? '#c7c3c3' : '#475467'
+
+  const faqQueHoverColor = darkMode ? '#293744' : '#e9e9e9'
+
+  const analyticTitleColor = darkMode ? 'white' : '#475467'
   return (
     <ThemeContext.Provider
       value={{
@@ -175,7 +182,10 @@ export function ThemeProvider({ children }) {
         toggleActiveBackColor,
         sidebarFontColor,
         sidebarActiveFontColor,
+        sidebarActiveIconColor,
         totalValueFontColor,
+        faqQueHoverColor,
+        analyticTitleColor,
       }}
     >
       {children}

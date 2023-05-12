@@ -85,6 +85,7 @@ const WidoDepositBase = ({
   loaded,
   loadingBalances,
   supTokenList,
+  loadComplete,
 }) => {
   const { handleStake } = useActions()
   const { contracts } = useContracts()
@@ -149,7 +150,7 @@ const WidoDepositBase = ({
   const [depositName, setDepositName] = useState('Deposit')
 
   useEffect(() => {
-    if (account) {
+    if (account && loadComplete) {
       if (curChain !== tokenChain) {
         const chainName = getChainName(tokenChain)
         setDepositName(`Switch to ${chainName}`)
@@ -157,7 +158,7 @@ const WidoDepositBase = ({
         setDepositName('Deposit')
       }
     }
-  }, [account, curChain, tokenChain])
+  }, [account, curChain, tokenChain, loadComplete])
 
   const onClickDeposit = async () => {
     if (curChain !== tokenChain) {
@@ -186,11 +187,16 @@ const WidoDepositBase = ({
   }
 
   useEffect(() => {
-    if (pickedToken.usdPrice) {
+    if (pickedToken.usdPrice && loadComplete) {
       setInputAmount(formatNumberWido(balance, POOL_BALANCES_DECIMALS))
-      setUsdValue(formatNumberWido(balance * pickedToken.usdPrice), 2)
+      setUsdValue(
+        formatNumberWido(
+          pickedToken.usdPrice !== '0.0' ? balance * pickedToken.usdPrice : pickedToken.usdValue,
+        ),
+        2,
+      )
     }
-  }, [balance, setUsdValue, setInputAmount, pickedToken])
+  }, [balance, setUsdValue, setInputAmount, pickedToken, loadComplete])
 
   const onInputBalance = e => {
     setInputAmount(formatNumberWido(e.currentTarget.value, POOL_BALANCES_DECIMALS))
@@ -238,9 +244,19 @@ const WidoDepositBase = ({
           </TokenSelect>
         </TokenInfo>
       </SelectToken>
-      <BalanceInfo fontColor={widoTagActiveFontColor}>
+      <BalanceInfo
+        fontColor={widoTagActiveFontColor}
+        onClick={() => {
+          if (account) {
+            setInputAmount(formatNumberWido(balance, POOL_BALANCES_DECIMALS))
+            const usdAmount =
+              pickedToken.usdPrice !== '0.0' ? balance * pickedToken.usdPrice : pickedToken.usdValue
+            setUsdValue(formatNumberWido(usdAmount, 2))
+          }
+        }}
+      >
         Balance:
-        <span>{balance}</span>
+        <span>{formatNumberWido(balance, POOL_BALANCES_DECIMALS)}</span>
       </BalanceInfo>
       <Button
         color="wido-deposit"
@@ -273,7 +289,7 @@ const WidoDepositBase = ({
             {!connected ? (
               0
             ) : lpTokenBalance ? (
-              fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, WIDO_BALANCES_DECIMALS, true)
+              fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, POOL_BALANCES_DECIMALS, true)
             ) : (
               <AnimatedDots />
             )}
@@ -285,7 +301,7 @@ const WidoDepositBase = ({
             {!connected ? (
               0
             ) : totalStaked ? (
-              fromWei(totalStaked, fAssetPool.lpTokenData.decimals, WIDO_BALANCES_DECIMALS, true)
+              fromWei(totalStaked, fAssetPool.lpTokenData.decimals, POOL_BALANCES_DECIMALS, true)
             ) : (
               <AnimatedDots />
             )}

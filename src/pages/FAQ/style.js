@@ -5,7 +5,6 @@ const FAQContainer = styled.div`
   margin-left: 320px;
   width: 100%;
   position: relative;
-  z-index: 2;
 
   background: ${props => props.pageBackColor};
   color: ${props => props.fontColor};
@@ -81,7 +80,7 @@ const Question = styled.div`
   transition: 0.25s;
 
   &:hover {
-    background: #e9e9e9;
+    background: ${props => props.hoverColor};
   }
 
   ${props =>
@@ -90,7 +89,7 @@ const Question = styled.div`
   border-bottom-left-radius: 0px; 
   border-bottom-right-radius: 0px;
   border-radius: 10px 10px 0px 0px;
-    background: #E9E9E9;
+    background: ${props.hoverColor};
   `
       : ``}
 
@@ -103,11 +102,20 @@ const Question = styled.div`
 
 const Answer = styled.div`
   padding: 16px;
-  background: #e9e9e9;
+  background: ${props => props.hoverColor};
   transition: 0.25s;
   border-radius: 0 0 10px 10px;
   border-top: none;
   font-size: 14px;
+
+  a {
+    color: #ff9400;
+    font-weight: bold;
+
+    &:hover {
+      color: #ffaa34;
+    }
+  }
 
   @media screen and (max-width: 992px) {
     padding: 16px 20px;
@@ -121,6 +129,10 @@ const FarmHeader = styled.div`
   background-position: center;
   background-size: 100%;
   padding: 75px 88px 68px;
+
+  @media screen and (max-width: 992px) {
+    padding: 64px 16px;
+  }
 `
 
 const Title = styled.div`
@@ -130,11 +142,23 @@ const Title = styled.div`
   color: #ff9400;
 
   margin-bottom: 19px;
+
+  @media screen and (max-width: 992px) {
+    text-align: center;
+    color: white;
+    margin-bottom: 12px;
+    font-size: 14px;
+    line-height: 20px;
+  }
 `
 
 const Desc = styled.div`
   display: flex;
   justify-content: space-between;
+
+  @media screen and (max-width: 992px) {
+    display: block;
+  }
 `
 
 const FAQMain = styled.div`
@@ -152,16 +176,24 @@ const LeftPart = styled.div`
 
   @media screen and (max-width: 992px) {
     font-weight: 600;
-    font-size: 13px;
-    line-height: 19px;
+    font-size: 36px;
+    line-height: 44px;
+    text-align: center;
   }
 `
 
 const RightPart = styled.div`
   font-weight: 400;
-  font-size: 15.6667px;
+  font-size: 16px;
   line-height: 24px;
   color: #ff9400;
+
+  @media screen and (max-width: 992px) {
+    text-align: center;
+    margin-top: 18px;
+    font-size: 18px;
+    line-height: 28px;
+  }
 `
 
 export {

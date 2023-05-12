@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import Pattern from '../../assets/images/logos/pattern.png'
 
 const Container = styled.div`
   margin-left: 320px;
@@ -7,10 +8,10 @@ const Container = styled.div`
 
   background: ${props => props.pageBackColor};
   transition: 0.25s;
-  @media screen and (min-width: 1921px) {
-    display: flex;
-    justify-content: center;
-  }
+  // @media screen and (min-width: 1921px) {
+  //   display: flex;
+  //   justify-content: center;
+  // }
 
   @media screen and (max-width: 992px) {
     margin: 0;
@@ -44,33 +45,20 @@ const FarmSubTitle = styled.h2`
   line-height: ${props => (props.lineHeight ? props.lineHeight : 'auto')};
   height: ${props => (props.height ? props.height : 'auto')};
 
-  margin: 0 30px;
-
   a {
     color: black;
   }
 `
 
 const EmissionsCountdownText = styled.span`
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 17.07px;
-  margin-bottom: 10px;
-  width: 100%;
+  font-size: 18px;
   font-weight: 400;
-  font-size: 12px;
-  line-height: 16px;
+  line-height: 24px;
+  margin-bottom: 23px;
+  width: 100%;
   text-align: center;
   color: ${props => props.fontColor};
   transition: 0.25s;
-`
-
-const StatsBoxTitle = styled.span`
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 17px;
-  // margin-bottom: 10px;
-  margin: 20px 30px 10px 30px;
 `
 
 const StatsBox = styled.div`
@@ -80,22 +68,6 @@ const StatsBox = styled.div`
   position: relative;
   align-items: ${props => props.align || 'center'};
 
-  ${props =>
-    props.compNum === 1
-      ? `
-    background: linear-gradient(239.37deg, rgba(252, 172, 61, 0.8) 0%, rgba(255, 168, 47, 0.66) 98%) !important;
-    color: white !important;
-  `
-      : props.compNum === 2
-      ? `
-      color: black;
-    `
-      : props.compNum === 3
-      ? `
-      background: linear-gradient(223.19deg, #27AE60 2.14%, rgba(39, 174, 96, 0.66) 78.85%) !important;
-      color: white !important;
-    `
-      : ``}
   transition: 0.25s;
   border: 1px solid ${props => props.borderColor};
   color: ${props => props.fontColor};
@@ -104,22 +76,17 @@ const StatsBox = styled.div`
   border-radius: 12px 12px 10px 10px;
   margin-bottom: 10px;
   width: ${props => props.width || '-webkit-fill-available'};
-  height: ${props => props.height || '152px'};
+  height: ${props => props.height};
   min-height: ${props => props.minHeight || '152px'};
   margin: ${props => props.margin || 'unset'};
 
-  img.effect {
-    position: absolute;
-    bottom: -1px;
-    left: -2px;
-    border-radius: 0 0 10px 10px;
-    width: 100.5%;
-  }
-
   .emission-header {
-    background: linear-gradient(47.48deg, #ffa599 0.85%, #ffdd59 83.16%);
+    background: url(${Pattern});
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 100vw auto;
     width: 100%;
-    height: 70%;
+    height: 50%;
     border-radius: 10px 10px 0 0;
     position: relative;
     margin-bottom: 70px;
@@ -142,49 +109,22 @@ const StatsBox = styled.div`
     order: ${props => props.mobileOrder || 'unset'};
   }
 
-  @media screen and (min-width: 1921px) {
-    min-width: 440px;
-    width: 440px;
-  }
+  // @media screen and (min-width: 1921px) {
+  //   min-width: 440px;
+  //   width: 440px;
+  // }
 `
 
 const StatsContainerRow = styled.div`
   display: flex;
   justify-content: flex-start;
-  width: 100%;
   align-items: center;
   text-align: left;
-  margin: ${props => props.margin || '20px 30px 10px 30px'};
-
-  div:first-child {
-    width: ${props => props.width || '135px'};
-  }
-
-  &:not(:first-child) {
-    border-left: 1px solid rgba(0, 0, 0, 0.15);
-    margin-left: 0;
-    padding-left: 30px;
-  }
+  margin: ${props => props.margin || '20px 30px 10px'};
 
   @media screen and (max-width: 992px) {
     flex-direction: column;
     align-items: baseline;
-
-    &:not(:first-child) {
-      padding-left: 15px;
-    }
-  }
-`
-
-const BigStats = styled.div`
-  font-size: 21px !important;
-  font-weight: 700 !important;
-  line-height: 27px !important;
-
-  @media screen and (max-width: 992px) {
-    font-weight: 700 !important;
-    font-size: 14px !important;
-    line-height: 18px !important;
   }
 `
 
@@ -250,9 +190,18 @@ const StatsTooltip = styled.div`
 `
 
 const ImgList = styled.div`
-  display: flex;
+  display: block;
   a {
-    margin-right: 10px;
+    margin-right: 23px;
+    img {
+      margin-bottom: 20px;
+    }
+  }
+
+  @media screen and (max-width: 992px) {
+    a {
+      margin-right: 10px;
+    }
   }
 `
 
@@ -263,8 +212,8 @@ const DataSource = styled.div`
   padding: 15px 20px;
   display: flex;
   font-weight: 700;
-  font-size: 16px;
-  line-height: 21px;
+  font-size: 12px;
+  line-height: 16px;
 
   border-radius: 10px;
   align-items: center;
@@ -275,25 +224,9 @@ const DataSource = styled.div`
   }
 
   .avatar {
-    width: 40px !important;
+    height: 23px;
     margin-right: 20px;
     text-align: right;
-  }
-
-  .soon {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-weight: 500;
-    font-size: 7px;
-    line-height: 9px;
-    color: rgba(31, 41, 55, 0.47);
-  }
-
-  @media screen and (max-width: 992px) {
-    .soon {
-      right: 140px;
-    }
   }
 `
 
@@ -302,36 +235,45 @@ const DataSourceInner = styled(StatsContainer)`
 `
 
 const StatsValue = styled(StatsBox)`
-  @media screen and (min-width: 1921px) {
-    min-width: 850px;
-    width: 850px;
+  border: none;
+  justify-content: space-between;
+
+  @media screen and (max-width: 1530px) {
+    display: block;
+
+    .first-comp {
+      margin-bottom: 20px;
+    }
+
+    .child {
+      width: 100% !important;
+    }
   }
 `
 
 const StatsExchange = styled(StatsBox)`
-  @media screen and (min-width: 1921px) {
-    min-width: 500px;
-    width: 500px;
-  }
+  padding: 28px 24px;
+  display: block;
+  justify-content: start;
 `
 
 const StatsChart = styled(StatsBox)`
-  @media screen and (min-width: 1921px) {
-    min-width: 1000px;
-    width: 1000px;
-  }
+  // @media screen and (min-width: 1921px) {
+  //   min-width: 1000px;
+  //   width: 1000px;
+  // }
 `
 
 const StatsExternal = styled(StatsBox)`
-  @media screen and (min-width: 1921px) {
-    min-width: 350px;
-    width: 350px;
-  }
+  // @media screen and (min-width: 1921px) {
+  //   min-width: 350px;
+  //   width: 350px;
+  // }
 `
 
 const DataSourceDirect = styled.a`
   text-decoration: none;
-  margin-bottom: 20px;
+  margin-right: 24px;
   div.back {
     background: white;
     border-radius: 10px;
@@ -339,10 +281,57 @@ const DataSourceDirect = styled.a`
 `
 
 const BigStatsExchange = styled(BigStatsSubheader)`
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  align-items: center;
+  margin-bottom: 17px !important;
+
+  color: ${props => props.fontColor};
+`
+
+const ValueComponent = styled.div`
+  box-shadow: 0px 1px 3px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06);
+  border: 1px solid ${props => props.borderColor};
+  background: ${props => props.backColor};
+  color: ${props => props.fontColor};
+  padding: 28px 24px;
+  border-radius: 12px;
+  width: ${props => props.width};
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`
+
+const CompHeader = styled.div`
+  display: flex;
+  margin-bottom: 18px;
+  align-items: center;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 500;
+  color: ${props => props.fontColor};
+
+  img {
+    margin-right: 10px;
+  }
+`
+
+const FlexDiv = styled.div`
+  display: flex;
+  justify-content: start;
+
+  @media screen and (max-width: 1350px) {
+    display: block;
+  }
+
   @media screen and (max-width: 992px) {
-    font-weight: 700;
-    font-size: 16px;
-    line-height: 21px;
+    display: flex;
+  }
+
+  @media screen and (max-width: 500px) {
+    display: block;
   }
 `
 
@@ -355,9 +344,7 @@ export {
   StatsContainer,
   StatsTooltip,
   EmissionsCountdownText,
-  StatsBoxTitle,
   StatsContainerRow,
-  BigStats,
   BigStatsSubheader,
   ImgList,
   DataSource,
@@ -368,4 +355,7 @@ export {
   StatsExternal,
   DataSourceDirect,
   BigStatsExchange,
+  ValueComponent,
+  CompHeader,
+  FlexDiv,
 }

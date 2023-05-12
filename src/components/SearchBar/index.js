@@ -3,12 +3,22 @@ import { Container, Icon, SearchIcon } from './style'
 import { useThemeContext } from '../../providers/useThemeContext'
 import closeImg from '../../assets/images/logos/close.svg'
 
-const VaultSearchBar = ({ placeholder, onChange = () => {}, onClose = () => {} }) => {
+const VaultSearchBar = ({
+  placeholder,
+  // onChange = () => {},
+  onKeyDown = () => {},
+  onClose = () => {},
+}) => {
   const { searchBackColor, fontColor, searchBorderColor, searchIconColor } = useThemeContext()
   return (
     <Container borderColor={searchBorderColor} backColor={searchBackColor} fontColor={fontColor}>
       <SearchIcon />
-      <input id="search-input" onChange={onChange} placeholder={placeholder} />
+      <input
+        id="search-input"
+        // onChange={onChange}
+        onKeyDown={onKeyDown}
+        placeholder={placeholder}
+      />
       <Icon
         src={closeImg}
         width={12}

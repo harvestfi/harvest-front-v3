@@ -280,7 +280,7 @@ const ValueShow = styled.div`
 const DescInfo = styled.div`
   font-family: 'Inter', sans-serif;
   font-weight: 400;
-  font-size: 13px;
+  font-size: 16px;
   display: flex;
   align-items: center;
   font-style: normal;
@@ -319,6 +319,7 @@ const InfoLabel = styled.a`
   `
       : ''}
   margin-right: 15px;
+  justify-content: center;
   background: #f9fafb;
   border-radius: 8px;
   text-decoration: none;
@@ -372,6 +373,7 @@ const RestContent = styled.div`
 const RestPart = styled.div`
   padding: 20px 18px;
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.06);
+  border: 1px solid rgba(217, 217, 217, 0.5);
   background: ${props => props.backColor};
 
   border-radius: 10px;
