@@ -80,8 +80,6 @@ const SelectedVault = styled.div`
       order: 10;
       border-right: unset;
       align-items: center;
-      // border-top: 1px solid #dadfe6;
-      padding-top: 20px;
     }
   }
 
