@@ -1,4 +1,8 @@
 [submodule "src/data/harvest-api-v3"]
 	path = src/data/harvest-api-v3
 	url = https://github.com/harvestfi/harvest-api-v3
+<<<<<<< HEAD
+	branch = dev
+=======
 	branch = master
+>>>>>>> b7ee8a114bcd3d7420b8d59ed28f9acb9421ea9e
