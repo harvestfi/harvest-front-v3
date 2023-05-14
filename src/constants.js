@@ -46,13 +46,7 @@ export const POLL_BOOST_USER_DATA_INTERVAL_MS = 5000
 
 export const INFURA_URL = `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 export const MATIC_URL = `https://polygon-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
-<<<<<<< HEAD
-// export const ETH_URL = `https://rpc.builder0x69.io`
-// export const ETH_URL = 'https://rpc.ankr.com/eth'
-export const ETH_URL = 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'
-=======
 export const ETH_URL = `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
->>>>>>> b7ee8a114bcd3d7420b8d59ed28f9acb9421ea9e
 export const ARBITRUM_URL = `https://arb-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 
 export const ETHERSCAN_URL = 'https://etherscan.io'
