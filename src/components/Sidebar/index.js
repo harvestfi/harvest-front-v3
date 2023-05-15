@@ -608,7 +608,7 @@ const Sidebar = ({ width }) => {
             <ProfitPart>
               <MobileProfitSharing
                 onClick={() => {
-                  push(directDetailUrl + FARM_TOKEN_SYMBOL)
+                  push(`${directDetailUrl}ethereum/${addresses.FARM}`)
                 }}
               >
                 <TopDiv>
