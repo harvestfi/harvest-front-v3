@@ -260,7 +260,7 @@ const Analytic = () => {
             backColor={backColor}
             borderColor={borderColor}
           >
-            <AnalyticChart loadComplete={loadComplete} />
+            {loadComplete && <AnalyticChart />}
           </StatsChart>
           <StatsBox
             width={isMobile ? '100%' : '50%'}
