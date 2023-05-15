@@ -596,15 +596,16 @@ const VaultList = () => {
 
   return (
     <Container id="vault-list">
-      <VaultsListHeader
-        setSearchQuery={setSearchQuery}
-        onDepositedOnlyClick={selectDepositedOnly}
-        onAssetClick={onSelectAsset}
-        onSelectStableCoin={onSelectStableCoin}
-        onSelectFarmType={onSelectFarmType}
-        onSelectActiveType={selectActiveType}
-        loadComplete={loadComplete}
-      />
+      {loadComplete && (
+        <VaultsListHeader
+          setSearchQuery={setSearchQuery}
+          onDepositedOnlyClick={selectDepositedOnly}
+          onAssetClick={onSelectAsset}
+          onSelectStableCoin={onSelectStableCoin}
+          onSelectFarmType={onSelectFarmType}
+          onSelectActiveType={selectActiveType}
+        />
+      )}
       <VaultsListBody borderColor={borderColor} backColor={backColor}>
         <MobileListFilter
           mobileBackColor={mobileFilterBackColor}
