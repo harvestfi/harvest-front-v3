@@ -85,14 +85,7 @@ const MobilePanelHeader = ({
           )}
         </BadgeIcon>
       </FlexDiv>
-      <FlexDiv
-        width="70%"
-        alignSelf="center"
-        marginRight="18px"
-        onClick={() => {
-          push(directDetailUrl + tokenSymbol)
-        }}
-      >
+      <FlexDiv width="70%" alignSelf="center" marginRight="18px">
         <div>
           {logoUrl.map((el, i) => (
             <img key={i} src={el} width={19} alt={tokenSymbol} />
