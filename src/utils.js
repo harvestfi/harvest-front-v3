@@ -668,7 +668,7 @@ export const getDetailText = (
           components.push(`
           <div class='detail-box'>
             <div class='detail-icon'>
-              <img src='/icons/${symbol}.svg' width=24 height=24 alt="" />
+              <img src='/icons/${symbol.toLowerCase()}.svg' width=24 height=24 alt="" />
             </div>
             <div class="detail-apy">
               <b>${displayAPY(get(vaultPool, `rewardAPY[${symbolIdx}]`, 0))}</b>
@@ -764,9 +764,9 @@ export const getDetailText = (
   if (isSpecialVault && vaultPool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
     components.push(
       `<div class="detail-box">
-        <div class="detail-icon"><img src='/icons/${
-          token.rewardSymbol
-        }.svg' width=24 height=24 alt=${token.rewardSymbol} /></div>
+        <div class="detail-icon"><img src='/icons/${token.rewardSymbol.toLowerCase()}.svg' width=24 height=24 alt=${
+        token.rewardSymbol
+      } /></div>
         <div class="detail-apy"> ${
           specialVaultApy > 0 ? `${displayAPY(specialVaultApy)}</div>` : '...</div>'
         } 
