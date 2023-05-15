@@ -774,13 +774,14 @@ const WidoDetail = () => {
               backColor={backColor}
               borderColor={borderColor}
             >
-              <FarmDetailChart
-                token={token}
-                vaultPool={vaultPool}
-                lastTVL={Number(vaultValue)}
-                lastAPY={Number(totalApy)}
-                loadComplete={loadComplete}
-              />
+              {loadComplete && (
+                <FarmDetailChart
+                  token={token}
+                  vaultPool={vaultPool}
+                  lastTVL={Number(vaultValue)}
+                  lastAPY={Number(totalApy)}
+                />
+              )}
             </HalfInfo>
             <HalfInfo
               padding={!isMobile ? '20px' : '15px'}
@@ -924,35 +925,36 @@ const WidoDetail = () => {
                     setLegacyStaking={setLegacyStaking}
                   />
                 ) : (
-                  <WidoDepositBase
-                    selectTokenWido={selectTokenDepo}
-                    setSelectTokenWido={setSelectTokenDepo}
-                    startSlippage={startSlippageDepo}
-                    depositWido={depositWido}
-                    setDepositWido={setDepositWido}
-                    finalStep={depositFinalStep}
-                    balance={balanceDepo}
-                    usdValue={usdValue}
-                    setUsdValue={setUsdValue}
-                    pickedToken={pickedTokenDepo}
-                    inputAmount={inputAmountDepo}
-                    setInputAmount={setInputAmountDepo}
-                    symbol={id}
-                    token={token}
-                    totalStaked={totalStaked}
-                    lpTokenBalance={lpTokenBalance}
-                    setLoadingDots={setLoadingDots}
-                    pendingAction={pendingAction}
-                    setPendingAction={setPendingAction}
-                    setAmountsToExecute={setAmountsToExecute}
-                    lpTokenApprovedBalance={lpTokenApprovedBalance}
-                    fAssetPool={fAssetPool}
-                    multipleAssets={multipleAssets}
-                    loaded={loaded}
-                    loadingBalances={loadingLpStats || loadingFarmingBalance}
-                    supTokenList={supTokenList}
-                    loadComplete={loadComplete}
-                  />
+                  loadComplete && (
+                    <WidoDepositBase
+                      selectTokenWido={selectTokenDepo}
+                      setSelectTokenWido={setSelectTokenDepo}
+                      startSlippage={startSlippageDepo}
+                      depositWido={depositWido}
+                      setDepositWido={setDepositWido}
+                      finalStep={depositFinalStep}
+                      balance={balanceDepo}
+                      usdValue={usdValue}
+                      setUsdValue={setUsdValue}
+                      pickedToken={pickedTokenDepo}
+                      inputAmount={inputAmountDepo}
+                      setInputAmount={setInputAmountDepo}
+                      symbol={id}
+                      token={token}
+                      totalStaked={totalStaked}
+                      lpTokenBalance={lpTokenBalance}
+                      setLoadingDots={setLoadingDots}
+                      pendingAction={pendingAction}
+                      setPendingAction={setPendingAction}
+                      setAmountsToExecute={setAmountsToExecute}
+                      lpTokenApprovedBalance={lpTokenApprovedBalance}
+                      fAssetPool={fAssetPool}
+                      multipleAssets={multipleAssets}
+                      loaded={loaded}
+                      loadingBalances={loadingLpStats || loadingFarmingBalance}
+                      supTokenList={supTokenList}
+                    />
+                  )
                 )}
 
                 <WidoDepositSelectToken
