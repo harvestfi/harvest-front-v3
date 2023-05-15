@@ -16,7 +16,7 @@ import { ProfitSharing, TopDiv, BottomDiv } from './style'
 import ProfitSharingIcon from '../../assets/images/logos/sidebar/profit-sharing.svg'
 import ProfitSharingTitle from '../../assets/images/logos/sidebar/profit-sharing-title.svg'
 
-const ProfitSharingContainer = ({ height, loadComplete }) => {
+const ProfitSharingContainer = ({ height }) => {
   const { pools } = usePools()
   const { chainId } = useWallet()
   const { profitShareAPY } = useStats()
@@ -44,10 +44,8 @@ const ProfitSharingContainer = ({ height, loadComplete }) => {
       const data = await getDataQuery(365, addresses.iFARM, chainId.toString(), null)
       setApiData(data)
     }
-    if (loadComplete) {
-      initData()
-    }
-  }, [chainId, loadComplete])
+    initData()
+  }, [chainId])
 
   return (
     <ProfitSharing

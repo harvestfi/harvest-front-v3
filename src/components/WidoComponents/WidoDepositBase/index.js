@@ -85,7 +85,6 @@ const WidoDepositBase = ({
   loaded,
   loadingBalances,
   supTokenList,
-  loadComplete,
 }) => {
   const { handleStake } = useActions()
   const { contracts } = useContracts()
@@ -150,7 +149,7 @@ const WidoDepositBase = ({
   const [depositName, setDepositName] = useState('Deposit')
 
   useEffect(() => {
-    if (account && loadComplete) {
+    if (account) {
       if (curChain !== tokenChain) {
         const chainName = getChainName(tokenChain)
         setDepositName(`Switch to ${chainName}`)
@@ -158,7 +157,7 @@ const WidoDepositBase = ({
         setDepositName('Deposit')
       }
     }
-  }, [account, curChain, tokenChain, loadComplete])
+  }, [account, curChain, tokenChain])
 
   const onClickDeposit = async () => {
     if (curChain !== tokenChain) {
@@ -187,7 +186,7 @@ const WidoDepositBase = ({
   }
 
   useEffect(() => {
-    if (pickedToken.usdPrice && loadComplete) {
+    if (pickedToken.usdPrice) {
       setInputAmount(formatNumberWido(balance, POOL_BALANCES_DECIMALS))
       setUsdValue(
         formatNumberWido(
@@ -196,7 +195,7 @@ const WidoDepositBase = ({
         2,
       )
     }
-  }, [balance, setUsdValue, setInputAmount, pickedToken, loadComplete])
+  }, [balance, setUsdValue, setInputAmount, pickedToken])
 
   const onInputBalance = e => {
     setInputAmount(formatNumberWido(e.currentTarget.value, POOL_BALANCES_DECIMALS))

@@ -33,7 +33,7 @@ const recommendLinks = [
   { name: '1Y', type: 3, state: '1Y' },
 ]
 
-const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY, loadComplete }) => {
+const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
   const [clickedId, setClickedId] = useState(1)
 
   const [selectedState, setSelectedState] = React.useState('1M')
@@ -63,10 +63,8 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY, loadComplete }) =
       setApiData(data)
     }
 
-    if (loadComplete) {
-      initData()
-    }
-  }, [address, chainId, account, token, loadComplete])
+    initData()
+  }, [address, chainId, account, token])
 
   const { fontColor, backColor } = useThemeContext()
 
