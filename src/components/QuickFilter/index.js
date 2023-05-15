@@ -99,7 +99,6 @@ const QuickFilter = ({
   onAssetClick = () => {},
   onSelectStableCoin = () => {},
   onSelectFarmType = () => {},
-  loadComplete = false,
 }) => {
   // Search string is null, it will be false, otherwise true.
   const [stringSearch, setStringSearch] = useState(false)
@@ -300,7 +299,7 @@ const QuickFilter = ({
     }
 
     setUrlData()
-  }, [loadComplete]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const params = new URLSearchParams(paramObj)
