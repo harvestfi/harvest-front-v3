@@ -22,14 +22,14 @@ const walletConnect = walletConnectModule({
 
 const web3Onboard = init({
   // head to https://explorer.blocknative.com/account to sign up for free
-  apiKey: process.env.REACT_APP_INFURA_KEY,
+  apiKey: process.env.REACT_APP_ALCHEMY_KEY,
   wallets: [injected, ledger, walletConnect],
   chains: [
     {
       id: '0x1',
       token: 'ETH',
       label: 'Ethereum Mainnet',
-      rpcUrl: `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_INFURA_KEY}`,
+      rpcUrl: `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`,
     },
     {
       id: 11155111,
