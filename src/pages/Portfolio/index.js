@@ -396,6 +396,7 @@ const Portfolio = () => {
               rewards === undefined
                 ? 0
                 : fromWEI(rewards, rewardDecimal) * (switchBalance ? usdRewardPrice : 1)
+            stats.reward = stats.reward.toFixed(POOL_BALANCES_DECIMALS)
             valueRewards += Number(
               rewards === undefined ? 0 : fromWEI(rewards, rewardDecimal) * usdRewardPrice,
             )
