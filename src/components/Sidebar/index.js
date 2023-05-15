@@ -52,7 +52,6 @@ import {
   MobileActionsContainer,
   MobileConnectBtn,
   MobileFollow,
-  MobileLink,
   MobileLinkContainer,
   MobileLinksContainer,
   MobileToggle,
@@ -531,31 +530,23 @@ const Sidebar = ({ width }) => {
                       active={pathname.includes(item.path)}
                       activeColor={item.activeColor}
                       hoverImgColor={hoverImgColor}
+                      onClick={() => {
+                        if (item.newTab) {
+                          window.open(item.path, '_blank')
+                        } else {
+                          push(item.path)
+                        }
+                        handleMobileClose()
+                      }}
                     >
-                      <div className="item">
-                        <SideIcons
-                          src={item.imgPath}
-                          width={20}
-                          height={20}
-                          filterColor={filterColor}
-                          alt="Harvest"
-                        />
-                      </div>
-                      <MobileLink
-                        onClick={() => {
-                          if (item.newTab) {
-                            window.open(item.path, '_blank')
-                          } else {
-                            push(item.path)
-                          }
-                          handleMobileClose()
-                        }}
-                        active={pathname.includes(item.path)}
-                        fontColor={fontColor}
+                      <SideLink
+                        item={item}
+                        isDropdownLink={item.path === '#'}
+                        fontColor={sidebarFontColor}
                         activeFontColor={sidebarActiveFontColor}
-                      >
-                        {item.name}
-                      </MobileLink>
+                        activeIconColor={sidebarActiveIconColor}
+                        darkMode={darkMode}
+                      />
                     </MobileLinkContainer>
                   </Fragment>
                 ))}
@@ -567,30 +558,23 @@ const Sidebar = ({ width }) => {
                     active={pathname.includes(item.path)}
                     activeColor={item.activeColor}
                     hoverImgColor={hoverImgColor}
+                    onClick={() => {
+                      if (item.newTab) {
+                        window.open(item.path, '_blank')
+                      } else {
+                        push(item.path)
+                      }
+                      handleMobileClose()
+                    }}
                   >
-                    <div className="item">
-                      <SideIcons
-                        src={item.imgPath}
-                        width={20}
-                        height={20}
-                        alt="Harvest"
-                        filterColor={filterColor}
-                      />
-                    </div>
-                    <MobileLink
-                      onClick={() => {
-                        if (item.newTab) {
-                          window.open(item.path, '_blank')
-                        } else {
-                          push(item.path)
-                        }
-                        handleMobileClose()
-                      }}
-                      active={pathname.includes(item.path)}
-                      fontColor={fontColor}
-                    >
-                      {item.name}
-                    </MobileLink>
+                    <SideLink
+                      item={item}
+                      isDropdownLink={item.path === '#'}
+                      fontColor={sidebarFontColor}
+                      activeFontColor={sidebarActiveFontColor}
+                      activeIconColor={sidebarActiveIconColor}
+                      darkMode={darkMode}
+                    />
                     {item.external ? (
                       <div className="item">
                         <SideIcons
