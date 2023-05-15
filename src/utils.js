@@ -714,11 +714,7 @@ export const getDetailText = (
         <div class="detail-apy">
           <b>${new BigNumber(tradingApy).gt(0) ? `${displayAPY(tradingApy)}` : `0.00%`}</b>
         </div>
-        <div class="detail-token-no-width">Liquidity Provision ${
-          new BigNumber(tradingApy).gt(0)
-            ? `estimated at&nbsp; <b>${displayAPY(tradingApy)}</b>`
-            : ``
-        }</div>
+        <div class="detail-token-no-width">Liquidity Provision</div>
       </div>`)
       // components.push(`
     } else if (Number(tradingApy) > 0) {
