@@ -714,7 +714,7 @@ export const getDetailText = (
         <div class="detail-apy">
           <b>${new BigNumber(tradingApy).gt(0) ? `${displayAPY(tradingApy)}` : `0.00%`}</b>
         </div>
-        <div class="detail-token-no-width">Earn Uniswap v3 trading fees ${
+        <div class="detail-token-no-width">Liquidity Provision ${
           new BigNumber(tradingApy).gt(0)
             ? `estimated at&nbsp; <b>${displayAPY(tradingApy)}</b>`
             : ``
@@ -730,7 +730,7 @@ export const getDetailText = (
         <div class="detail-apy">
           <b>${displayAPY(tradingApy)}</b>
         </div>
-        <div class="detail-desc-no-width">Liquidity Provider APY</div>
+        <div class="detail-desc-no-width">Liquidity Provision</div>
       </div>`)
     }
 
@@ -783,7 +783,7 @@ export const getDetailText = (
         components.push(`<div class="detail-box">
           <div class="detail-icon"><img src='/icons/swapfee.svg' width=24 height=24 alt="" /></div>
           <div class="detail-apy">${displayAPY(tradingApy)}</div> 
-          <div class="detail-desc-no-width">Liquidity Provider APY </div>
+          <div class="detail-desc-no-width">Liquidity Provision </div>
         </div>`)
       }
 
