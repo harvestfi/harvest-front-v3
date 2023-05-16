@@ -49,6 +49,12 @@ export const MATIC_URL = `https://polygon-mainnet.g.alchemy.com/v2/${process.env
 export const ETH_URL = `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 export const ARBITRUM_URL = `https://arb-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 
+export const GRAPH_URL_MAINNET = 'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance'
+export const GRAPH_URL_POLYGON =
+  'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance-polygon'
+export const GRAPH_URL_ARBITRUM =
+  'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance-arbitrum'
+
 export const ETHERSCAN_URL = 'https://etherscan.io'
 
 export const MATICSCAN_URL = 'https://polygonscan.com'

@@ -396,6 +396,7 @@ const Portfolio = () => {
               rewards === undefined
                 ? 0
                 : fromWEI(rewards, rewardDecimal) * (switchBalance ? usdRewardPrice : 1)
+            stats.reward = stats.reward.toFixed(POOL_BALANCES_DECIMALS)
             valueRewards += Number(
               rewards === undefined ? 0 : fromWEI(rewards, rewardDecimal) * usdRewardPrice,
             )
@@ -432,9 +433,7 @@ const Portfolio = () => {
         <SubPart>
           <TotalValue icon={Rating} content="Deposits" price={totalDeposit} />
           <TotalValue icon={Rating} content="Claimable Rewards" price={totalRewards} />
-          <Div mobileView={isMobile}>
-            <ProfitSharing height="100%" loadComplete={loadComplete} />
-          </Div>
+          <Div mobileView={isMobile}>{loadComplete && <ProfitSharing height="100%" />}</Div>
         </SubPart>
 
         <TransactionDetails backColor={backColor} borderColor={borderColor}>

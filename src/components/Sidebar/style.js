@@ -151,18 +151,20 @@ const Link = styled.button`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 30px 0 20px 30px;
     ${props =>
       props.active
         ? `
         font-weight: bold;
-        border-width: 0 0 0 4px;
     `
         : `
         font-weight: 500;
     `}
-    color: white;
     display: ${props => (props.isDropdownLink ? 'none' : 'flex')};
+
+    img {
+      width: 20px;
+      height: 20px;
+    }
   }
 
   &:hover {

@@ -44,7 +44,6 @@ export const providerOptions = {
   walletconnect: {
     package: WalletConnectProvider,
     options: {
-      infuraId: process.env.REACT_APP_INFURA_KEY,
       rpc: {
         [CHAINS_ID.ETH_MAINNET]: INFURA_URL,
         [CHAINS_ID.MATIC_MAINNET]: MATIC_URL,

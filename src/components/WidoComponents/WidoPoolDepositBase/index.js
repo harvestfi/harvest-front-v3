@@ -174,7 +174,6 @@ const WidoPoolDepositBase = ({
             get(vaultsData, `${IFARM_TOKEN_SYMBOL}.underlyingBalanceWithInvestmentForHolder`, 0),
             tokens[IFARM_TOKEN_SYMBOL].decimals,
             WIDO_BALANCES_DECIMALS,
-            true,
           ),
         )
         setUnderlyingValue(val)
@@ -450,7 +449,7 @@ const WidoPoolDepositBase = ({
             ) : isEmpty(vaultsData) ? (
               <AnimatedDots />
             ) : (
-              underlyingValue
+              formatNumberWido(underlyingValue, WIDO_BALANCES_DECIMALS)
             )}
           </span>
         </StakeInfo>

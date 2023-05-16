@@ -18,6 +18,9 @@ import {
   MAX_APY_DISPLAY,
   SPECIAL_VAULTS,
   UNIV3_POOL_ID_REGEX,
+  GRAPH_URL_MAINNET,
+  GRAPH_URL_POLYGON,
+  GRAPH_URL_ARBITRUM,
 } from './constants'
 import { CHAINS_ID } from './data/constants'
 import { addresses } from './data/index'
@@ -668,7 +671,7 @@ export const getDetailText = (
           components.push(`
           <div class='detail-box'>
             <div class='detail-icon'>
-              <img src='/icons/${symbol}.svg' width=24 height=24 alt="" />
+              <img src='/icons/${symbol.toLowerCase()}.svg' width=24 height=24 alt="" />
             </div>
             <div class="detail-apy">
               <b>${displayAPY(get(vaultPool, `rewardAPY[${symbolIdx}]`, 0))}</b>
@@ -714,11 +717,7 @@ export const getDetailText = (
         <div class="detail-apy">
           <b>${new BigNumber(tradingApy).gt(0) ? `${displayAPY(tradingApy)}` : `0.00%`}</b>
         </div>
-        <div class="detail-token-no-width">Earn Uniswap v3 trading fees ${
-          new BigNumber(tradingApy).gt(0)
-            ? `estimated at&nbsp; <b>${displayAPY(tradingApy)}</b>`
-            : ``
-        }</div>
+        <div class="detail-token-no-width">Liquidity Provision</div>
       </div>`)
       // components.push(`
     } else if (Number(tradingApy) > 0) {
@@ -730,7 +729,7 @@ export const getDetailText = (
         <div class="detail-apy">
           <b>${displayAPY(tradingApy)}</b>
         </div>
-        <div class="detail-desc-no-width">Liquidity Provider APY</div>
+        <div class="detail-desc-no-width">Liquidity Provision</div>
       </div>`)
     }
 
@@ -768,9 +767,9 @@ export const getDetailText = (
   if (isSpecialVault && vaultPool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
     components.push(
       `<div class="detail-box">
-        <div class="detail-icon"><img src='/icons/${
-          token.rewardSymbol
-        }.svg' width=24 height=24 alt=${token.rewardSymbol} /></div>
+        <div class="detail-icon"><img src='/icons/${token.rewardSymbol.toLowerCase()}.svg' width=24 height=24 alt=${
+        token.rewardSymbol
+      } /></div>
         <div class="detail-apy"> ${
           specialVaultApy > 0 ? `${displayAPY(specialVaultApy)}</div>` : '...</div>'
         } 
@@ -783,7 +782,7 @@ export const getDetailText = (
         components.push(`<div class="detail-box">
           <div class="detail-icon"><img src='/icons/swapfee.svg' width=24 height=24 alt="" /></div>
           <div class="detail-apy">${displayAPY(tradingApy)}</div> 
-          <div class="detail-desc-no-width">Liquidity Provider APY </div>
+          <div class="detail-desc-no-width">Liquidity Provision </div>
         </div>`)
       }
 
@@ -1157,13 +1156,13 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
       body: graphql,
       redirect: 'follow',
     }
-  const subParam =
+  const url =
     chainId === CHAINS_ID.ETH_MAINNET
-      ? process.env.REACT_APP_GRAPHQL_SUBPARAM_ETH
+      ? GRAPH_URL_MAINNET
       : chainId === CHAINS_ID.MATIC_MAINNET
-      ? process.env.REACT_APP_GRAPHQL_SUBPARAM_MATIC
-      : process.env.REACT_APP_GRAPHQL_SUBPARAM_ARBITRUM
-  const url = `https://api.thegraph.com/subgraphs/id/${subParam}`
+      ? GRAPH_URL_POLYGON
+      : GRAPH_URL_ARBITRUM
+
   try {
     await fetch(url, requestOptions)
       .then(response => response.json())

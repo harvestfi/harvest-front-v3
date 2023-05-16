@@ -379,8 +379,8 @@ html {
 
   .detail-token-no-width {
     font-size: 16px; 
-    font-weight: 700; 
-    text-decoration: underline;
+    font-weight: 400; 
+    // text-decoration: underline;
 
     @media screen and (max-width: 992px) {
       font-size: 13px;

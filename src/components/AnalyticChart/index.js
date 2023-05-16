@@ -14,7 +14,7 @@ const recommendLinks = [
   { name: '1Y', type: 3, state: '1Y' },
 ]
 
-const AnalyticChart = ({ loadComplete }) => {
+const AnalyticChart = () => {
   const { pools } = usePools()
 
   const farmProfitSharingPool = pools.find(
@@ -38,10 +38,8 @@ const AnalyticChart = ({ loadComplete }) => {
       setApiData(data)
     }
 
-    if (loadComplete) {
-      initData()
-    }
-  }, [address, chainId, loadComplete])
+    initData()
+  }, [address, chainId])
 
   const { fontColor } = useThemeContext()
 
