@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { isEmpty } from 'lodash'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useSetChain } from '@web3-onboard/react'
 import { Spinner } from 'react-bootstrap'
 import { toast } from 'react-toastify'
 import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.svg'
@@ -15,6 +16,7 @@ import { useWallet } from '../../../providers/Wallet'
 import { fromWei, toWei } from '../../../services/web3'
 import AnimatedDots from '../../AnimatedDots'
 import Button from '../../Button'
+import { CHAINS_ID } from '../../../data/constants'
 import { Divider } from '../../GlobalStyle'
 import {
   Balance,
@@ -30,6 +32,22 @@ import {
 } from './style'
 
 const { tokens } = require('../../../data')
+
+const getChainName = chain => {
+  let chainName = 'Ethereum'
+  switch (chain) {
+    case CHAINS_ID.MATIC_MAINNET:
+      chainName = 'Polygon'
+      break
+    case CHAINS_ID.ARBITRUM_ONE:
+      chainName = 'Arbitrum'
+      break
+    default:
+      chainName = 'Ethereum'
+      break
+  }
+  return chainName
+}
 
 const WidoWithdrawBase = ({
   selectTokenWido,
@@ -64,9 +82,36 @@ const WidoWithdrawBase = ({
   const { handleExit } = useActions()
   const { backColor, borderColor, fontColor } = useThemeContext()
 
+  const [
+    {
+      connectedChain, // the current chain the user's wallet is connected to
+    },
+    setChain, // function to call to initiate user to switch chains in their wallet
+  ] = useSetChain()
+
+  const tokenChain = token.chain || token.data.chain
+  const curChain = connectedChain ? parseInt(connectedChain.id, 16).toString() : ''
+  const [withdrawName, setWithdrawName] = useState('Withdraw to Wallet')
+
+  useEffect(() => {
+    if (account) {
+      if (curChain !== tokenChain) {
+        const chainName = getChainName(tokenChain)
+        setWithdrawName(`Switch to ${chainName}`)
+      } else {
+        setWithdrawName('Withdraw to Wallet')
+      }
+    }
+  }, [account, curChain, tokenChain])
+
   const onClickUnStake = async () => {
     if (new BigNumber(totalStaked).isEqualTo(0)) {
       toast.error('Please stake first!')
+      return
+    }
+
+    if (amountsToExecute === '') {
+      toast.error('Please input amount for unstake!')
       return
     }
 
@@ -201,8 +246,13 @@ const WidoWithdrawBase = ({
           color="wido-stake"
           width="49%"
           height="auto"
-          onClick={() => {
-            onClickUnStake()
+          onClick={async () => {
+            if (curChain !== tokenChain) {
+              const chainHex = `0x${Number(tokenChain).toString(16)}`
+              await setChain({ chainId: chainHex })
+            } else {
+              onClickUnStake()
+            }
           }}
         >
           <NewLabel size="16px" weight="bold" height="21px">
@@ -296,12 +346,17 @@ const WidoWithdrawBase = ({
         color="wido-deposit"
         width="100%"
         size="md"
-        onClick={() => {
-          onClickWithdraw()
+        onClick={async () => {
+          if (curChain !== tokenChain) {
+            const chainHex = `0x${Number(tokenChain).toString(16)}`
+            await setChain({ chainId: chainHex })
+          } else {
+            onClickWithdraw()
+          }
         }}
       >
         <NewLabel size="16px" weight="600" height="21px">
-          Withdraw to Wallet
+          {withdrawName}
         </NewLabel>
         <img src={ChevronRightIcon} alt="" />
       </Button>
