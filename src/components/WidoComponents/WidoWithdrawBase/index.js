@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { isEmpty } from 'lodash'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSetChain } from '@web3-onboard/react'
 import { Spinner } from 'react-bootstrap'
 import { toast } from 'react-toastify'
@@ -16,6 +16,7 @@ import { useWallet } from '../../../providers/Wallet'
 import { fromWei, toWei } from '../../../services/web3'
 import AnimatedDots from '../../AnimatedDots'
 import Button from '../../Button'
+import { CHAINS_ID } from '../../../data/constants'
 import { Divider } from '../../GlobalStyle'
 import {
   Balance,
@@ -31,6 +32,22 @@ import {
 } from './style'
 
 const { tokens } = require('../../../data')
+
+const getChainName = chain => {
+  let chainName = 'Ethereum'
+  switch (chain) {
+    case CHAINS_ID.MATIC_MAINNET:
+      chainName = 'Polygon'
+      break
+    case CHAINS_ID.ARBITRUM_ONE:
+      chainName = 'Arbitrum'
+      break
+    default:
+      chainName = 'Ethereum'
+      break
+  }
+  return chainName
+}
 
 const WidoWithdrawBase = ({
   selectTokenWido,
@@ -74,6 +91,18 @@ const WidoWithdrawBase = ({
 
   const tokenChain = token.chain || token.data.chain
   const curChain = connectedChain ? parseInt(connectedChain.id, 16).toString() : ''
+  const [withdrawName, setWithdrawName] = useState('Withdraw to Wallet')
+
+  useEffect(() => {
+    if (account) {
+      if (curChain !== tokenChain) {
+        const chainName = getChainName(tokenChain)
+        setWithdrawName(`Switch to ${chainName}`)
+      } else {
+        setWithdrawName('Withdraw to Wallet')
+      }
+    }
+  }, [account, curChain, tokenChain])
 
   const onClickUnStake = async () => {
     if (new BigNumber(totalStaked).isEqualTo(0)) {
@@ -327,7 +356,7 @@ const WidoWithdrawBase = ({
         }}
       >
         <NewLabel size="16px" weight="600" height="21px">
-          Withdraw to Wallet
+          {withdrawName}
         </NewLabel>
         <img src={ChevronRightIcon} alt="" />
       </Button>
