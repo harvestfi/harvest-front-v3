@@ -173,7 +173,7 @@ const TokenAmount = styled.input`
   transition: 0.25s;
   outline: 0;
 
-  padding: 18px 52px 18px 12px;
+  padding: 18px 12px;
   border-radius: 8px;
 
   margin-bottom: 0.25rem;

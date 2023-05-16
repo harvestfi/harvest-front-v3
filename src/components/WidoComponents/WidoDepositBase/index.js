@@ -7,7 +7,7 @@ import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.sv
 import DropDownIcon from '../../../assets/images/logos/wido/drop-down.svg'
 import FARMIcon from '../../../assets/images/logos/wido/farm.svg'
 import WidoIcon from '../../../assets/images/logos/wido/wido.svg'
-import { WIDO_BALANCES_DECIMALS, POOL_BALANCES_DECIMALS } from '../../../constants'
+import { POOL_BALANCES_DECIMALS } from '../../../constants'
 import { useActions } from '../../../providers/Actions'
 import { useContracts } from '../../../providers/Contracts'
 import { usePools } from '../../../providers/Pools'
@@ -322,14 +322,7 @@ const WidoDepositBase = ({
           />
           <Max
             onClick={() => {
-              setStakeInputValue(
-                fromWei(
-                  lpTokenBalance,
-                  fAssetPool.lpTokenData.decimals,
-                  WIDO_BALANCES_DECIMALS,
-                  true,
-                ),
-              )
+              setStakeInputValue(fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals))
             }}
           >
             Max
