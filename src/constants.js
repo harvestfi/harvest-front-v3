@@ -10,7 +10,7 @@ export const SOCIAL_LINKS = {
   DISCORD: 'https://discord.gg/gzWAG3Wx7Y',
   REDDIT: 'https://www.reddit.com/r/HarvestFinance/',
   GITHUB: 'https://github.com/harvest-finance',
-  WIKI: 'https://harvest-finance.gitbook.io/harvest-finance',
+  WIKI: 'https://docs.harvest.finance',
   WIKI_CHINEESE: 'https://farm.chainwiki.dev/zh/%E7%AD%96%E7%95%A5',
   AUDITS: 'https://github.com/harvest-finance/harvest/tree/master/audits',
   BUG_BOUNTY: 'https://immunefi.com/bounty/harvest/',
@@ -28,7 +28,7 @@ export const ROUTES = {
   POOL: '/pool',
   ZAPPER: '/zapper',
   VESTING: 'https://vest.harvest.finance/',
-  WIKI: 'https://harvest-finance.gitbook.io/harvest-finance/',
+  WIKI: 'https://docs.harvest.finance/',
   WIKI_ZH: 'https://farm.chainwiki.dev/zh/%E7%AD%96%E7%95%A5',
   CLAIM_EXT: 'https://claim.harvest.finance',
   STATS: 'https://farmdashboard.xyz',
@@ -182,7 +182,7 @@ export const FAQ_ITEMS_FIRST = [
       <>
         See{' '}
         <a
-          href="https://harvest-finance.gitbook.io/harvest-finance/general-info/how-to-use-1/how-to-understand-how-much-you-earn/apy-calculation"
+          href="https://docs.harvest.finance/general-info/how-to-use-1/how-to-understand-how-much-you-earn/apy-calculation"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -190,7 +190,7 @@ export const FAQ_ITEMS_FIRST = [
         </a>{' '}
         and{' '}
         <a
-          href="https://harvest-finance.gitbook.io/harvest-finance/general-info/how-to-use-1/how-to-understand-how-much-you-earn/interest-rate-guide"
+          href="https://docs.harvest.finance/general-info/how-to-use-1/how-to-understand-how-much-you-earn/interest-rate-guide"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -232,7 +232,7 @@ export const FAQ_ITEMS_FIRST = [
       <>
         See Audits from PeckShield, Heachi, Certik & Least Authority{' '}
         <a
-          href="https://harvest-finance.gitbook.io/harvest-finance/general-info/security/audites"
+          href="https://docs.harvest.finance/general-info/security/audites"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -347,7 +347,7 @@ export const FAQ_ITEMS_SECOND = [
             </a>{' '}
             is a cashflow token for Harvest. Find out{' '}
             <a
-              href="https://harvest-finance.gitbook.io/harvest-finance/general-info/how-to-use-1/where-trade-farm-bfarm"
+              href="https://docs.harvest.finance/general-info/how-to-use-1/where-trade-farm-bfarm"
               rel="noopener noreferrer"
               target="_blank"
             >
@@ -420,7 +420,7 @@ export const FAQ_ITEMS_SECOND = [
         <br />
         You can read more{' '}
         <a
-          href="https://harvest-finance.gitbook.io/harvest-finance/general-info/what-do-we-do/profit-sharing-pool-ps"
+          href="https://docs.harvest.finance/general-info/what-do-we-do/profit-sharing-pool-ps"
           target="_blank"
           rel="noopener noreferrer"
         >
