@@ -204,19 +204,8 @@ const WidoWithdrawBase = ({
           Staked
           <AmountInfo
             onClick={() => {
-              setStakeInputValue(
-                Number(
-                  fromWei(
-                    totalStaked,
-                    fAssetPool.lpTokenData.decimals,
-                    POOL_BALANCES_DECIMALS,
-                    true,
-                  ),
-                ),
-              )
-              setAmountsToExecute([
-                fromWei(totalStaked, fAssetPool.lpTokenData.decimals, POOL_BALANCES_DECIMALS, true),
-              ])
+              setStakeInputValue(Number(fromWei(totalStaked, fAssetPool.lpTokenData.decimals)))
+              setAmountsToExecute([fromWei(totalStaked, fAssetPool.lpTokenData.decimals)])
             }}
           >
             {!connected ? (
@@ -279,16 +268,7 @@ const WidoWithdrawBase = ({
         <AmountInfo
           onClick={() => {
             setUnstakeBalance(lpTokenBalance)
-            setUnstakeInputValue(
-              Number(
-                fromWei(
-                  lpTokenBalance,
-                  fAssetPool.lpTokenData.decimals,
-                  POOL_BALANCES_DECIMALS,
-                  true,
-                ),
-              ),
-            )
+            setUnstakeInputValue(Number(fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals)))
           }}
         >
           {!connected ? (
