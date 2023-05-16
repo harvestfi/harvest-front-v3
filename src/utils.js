@@ -242,6 +242,8 @@ const getRewardSymbol = (vault, isIFARM, vaultPool) => {
       return vaultPool.rewardTokenSymbols
         .filter((_, symbolIdx) => Number(get(vaultPool, `rewardAPY[${symbolIdx}]`, 0)) !== 0)
         .join(', ')
+    case vaultPool && vaultPool.rewardTokenSymbols.length === 1:
+      return vaultPool.rewardTokenSymbols[0]
     case vault.chain === CHAINS_ID.MATIC_MAINNET || isIFARM:
       return 'iFARM'
     default:
