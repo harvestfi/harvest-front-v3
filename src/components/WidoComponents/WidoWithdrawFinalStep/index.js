@@ -130,7 +130,8 @@ const WidoWithdrawFinalStep = ({
   const approveZap = async amnt => {
     const { data, to } = await approve({
       chainId,
-      tokenAddress: fromToken,
+      fromToken,
+      toToken: pickedToken.address,
       amount: amnt,
     })
     await mainWeb3.eth.sendTransaction({
@@ -159,7 +160,6 @@ const WidoWithdrawFinalStep = ({
       })
 
       console.debug('Allowance Spender: ', spender)
-      console.debug('Allowance Amount: ', allowance)
 
       if (!new BigNumber(allowance).gte(unstakeBalance)) {
         const amountToApprove = new BigNumber(unstakeBalance).minus(allowance)

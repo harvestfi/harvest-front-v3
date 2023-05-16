@@ -158,7 +158,8 @@ const WidoPoolDepositFinalStep = ({
   const approveZap = async amnt => {
     const { data, to } = await approve({
       chainId,
-      tokenAddress: pickedToken.address,
+      fromToken: pickedToken.address,
+      toToken,
       amount: amnt,
     })
     await mainWeb3.eth.sendTransaction({
@@ -189,7 +190,6 @@ const WidoPoolDepositFinalStep = ({
       })
 
       console.debug('Allowance Spender: ', spender)
-      console.debug('Allowance Amount: ', allowance)
 
       if (!new BigNumber(allowance).gte(amount)) {
         const amountToApprove = new BigNumber(amount).minus(allowance)
