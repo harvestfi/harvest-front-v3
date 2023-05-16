@@ -340,8 +340,13 @@ const WidoDepositBase = ({
             width="100%"
             color="wido-stake"
             height="50px"
-            onClick={() => {
-              onClickStake()
+            onClick={async () => {
+              if (curChain !== tokenChain) {
+                const chainHex = `0x${Number(tokenChain).toString(16)}`
+                await setChain({ chainId: chainHex })
+              } else {
+                onClickStake()
+              }
             }}
             disabled={
               !hasRequirementsForInteraction(loaded, pendingAction, vaultsData, loadingBalances) ||
