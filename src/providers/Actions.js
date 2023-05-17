@@ -12,7 +12,12 @@ import {
   UNIV3_TOLERANCE,
   ZAPPER_FI_ZAP_IN_ENDPOINT,
 } from '../constants'
-import { formatWeb3PluginErrorMessage, mainWeb3, newContractInstance } from '../services/web3'
+import {
+  formatWeb3PluginErrorMessage,
+  mainWeb3,
+  newContractInstance,
+  maxUint256,
+} from '../services/web3'
 import amplifierMethods from '../services/web3/contracts/amplifier/methods'
 import boostStakingMethods from '../services/web3/contracts/boost-staking/methods'
 import poolContractData from '../services/web3/contracts/pool/contract.json'
@@ -45,20 +50,17 @@ const ActionsProvider = ({ children }) => {
 
       try {
         if (poolData) {
-          const totalSupply = await tokenMethods.getTotalSupply(poolData.lpTokenData.instance)
           await tokenMethods.approve(
             poolData.autoStakePoolAddress || poolData.contractAddress,
             account,
-            totalSupply,
+            maxUint256(),
             poolData.lpTokenData.localInstance,
           )
         } else {
           const { methods, instance } = contracts[
             tokenSymbol === IFARM_TOKEN_SYMBOL ? FARM_TOKEN_SYMBOL : tokenSymbol
           ]
-
-          const totalSupply = await tokenMethods.getTotalSupply(instance)
-          await methods.approve(address, account, totalSupply, instance)
+          await methods.approve(address, account, maxUint256(), instance)
         }
 
         await onSuccessApproval()
@@ -108,8 +110,7 @@ const ActionsProvider = ({ children }) => {
         setPendingAction(ACTIONS.APPROVE_MIGRATE)
 
         try {
-          const totalSupply = await tokenMethods.getTotalSupply(tokenInstance)
-          await tokenMethods.approve(vaultData.vaultAddress, account, totalSupply, tokenInstance)
+          await tokenMethods.approve(vaultData.vaultAddress, account, maxUint256(), tokenInstance)
 
           toast.success(`${lpTokenName} approval completed`)
 
@@ -225,12 +226,10 @@ const ActionsProvider = ({ children }) => {
             if (new BigNumber(stakingTokenApprovedBalance).lt(stakingTokenBalance)) {
               setPendingAction(ACTIONS.APPROVE_MIGRATE)
 
-              const totalSupply = await tokenMethods.getTotalSupply(stakingTokenInstance)
-
               await tokenMethods.approve(
                 stakingPool.contractAddress,
                 account,
-                totalSupply,
+                maxUint256(),
                 stakingTokenInstance,
               )
 

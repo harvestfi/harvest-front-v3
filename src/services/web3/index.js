@@ -142,6 +142,10 @@ export const toWei = (token, decimals, decimalsToDisplay) => {
   return '0'
 }
 
+export const maxUint256 = () => {
+  return ethers.constants.MaxUint256
+}
+
 export const formatWeb3PluginErrorMessage = (error, customMessage) => {
   console.error(error)
 

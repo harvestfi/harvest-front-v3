@@ -3,7 +3,7 @@ import { quote, getTokenAllowance, approve } from 'wido'
 import BigNumber from 'bignumber.js'
 import { toast } from 'react-toastify'
 import { Spinner } from 'react-bootstrap'
-import { mainWeb3, toWei, fromWei } from '../../../services/web3'
+import { mainWeb3, toWei, fromWei, maxUint256 } from '../../../services/web3'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { usePools } from '../../../providers/Pools'
@@ -159,7 +159,7 @@ const WidoDepositFinalStep = ({
       console.debug('Allowance Spender: ', spender)
 
       if (!new BigNumber(allowance).gte(amount)) {
-        const amountToApprove = new BigNumber(amount).minus(allowance)
+        const amountToApprove = maxUint256()
         await approveZap(amountToApprove) // Approve for Zap
       }
       setApproveValue(2)

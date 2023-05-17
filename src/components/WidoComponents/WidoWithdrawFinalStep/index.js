@@ -14,7 +14,7 @@ import { WIDO_BALANCES_DECIMALS } from '../../../constants'
 import { usePools } from '../../../providers/Pools'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
-import { fromWei, mainWeb3 } from '../../../services/web3'
+import { fromWei, mainWeb3, maxUint256 } from '../../../services/web3'
 import { formatNumberWido } from '../../../utils'
 import WidoSwapToken from '../WidoSwapToken'
 import {
@@ -162,7 +162,7 @@ const WidoWithdrawFinalStep = ({
       console.debug('Allowance Spender: ', spender)
 
       if (!new BigNumber(allowance).gte(unstakeBalance)) {
-        const amountToApprove = new BigNumber(unstakeBalance).minus(allowance)
+        const amountToApprove = maxUint256()
         await approveZap(amountToApprove) // Approve for Zap
       }
       setApproveValue(2)
