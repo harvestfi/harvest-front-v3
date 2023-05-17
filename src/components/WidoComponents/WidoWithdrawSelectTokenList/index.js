@@ -12,14 +12,13 @@ const WidoWithdrawSelectTokenList = ({
   setWidoPartHeight,
   filterWord,
 }) => {
+  const [tokenList, setTokenList] = useState(list)
   const handleClick = id => {
     setClickedId(id)
-    setPickedToken(list[id])
+    setPickedToken(tokenList[id])
     setSelectTokenWido(false)
     setWidoPartHeight(null)
   }
-
-  const [tokenList, setTokenList] = useState(list)
 
   useEffect(() => {
     if (list.length !== 0 && filterWord !== undefined && filterWord !== '') {

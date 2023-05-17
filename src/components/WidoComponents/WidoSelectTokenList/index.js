@@ -13,15 +13,14 @@ const WidoSelectTokenList = ({
   setWidoPartHeight,
   filterWord,
 }) => {
+  const [tokenList, setTokenList] = useState(list)
   const handleClick = id => {
     setClickedId(id)
-    setPickedToken(list[id])
-    setBalance(fromWEI(list[id].balance ? list[id].balance : 0, list[id].decimals))
+    setPickedToken(tokenList[id])
+    setBalance(fromWEI(tokenList[id].balance ? tokenList[id].balance : 0, tokenList[id].decimals))
     setSelectTokenWido(false)
     setWidoPartHeight(null)
   }
-
-  const [tokenList, setTokenList] = useState(list)
 
   useEffect(() => {
     if (list.length !== 0 && filterWord !== undefined && filterWord !== '') {
