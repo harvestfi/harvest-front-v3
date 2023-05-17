@@ -99,7 +99,7 @@ const sideLinks1 = [
     external: false,
   },
   {
-    path: 'https://harvest-finance.gitbook.io/harvest-finance',
+    path: 'https://docs.harvest.finance',
     name: 'Docs',
     imgPath: Docs,
     external: false,

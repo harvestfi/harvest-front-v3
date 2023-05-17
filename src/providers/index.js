@@ -73,8 +73,8 @@ const web3Onboard = init({
     icon: 'https://harvest-finance-v3.netlify.app/static/media/ifarm.ffb37908.svg',
     // logo: myLogo, // svg string logo
     description: 'Home to Yield Farming',
-    gettingStartedGuide: 'https://harvest-finance.gitbook.io/harvest-finance',
-    explore: 'https://harvest-finance.gitbook.io/harvest-finance/how-it-works/contract-addresses-1',
+    gettingStartedGuide: 'https://docs.harvest.finance',
+    explore: 'https://docs.harvest.finance/how-it-works/contract-addresses-1',
     recommendedInjectedWallets: [
       { name: 'MetaMask', url: 'https://metamask.io' },
       { name: 'Coinbase', url: 'https://wallet.coinbase.com/' },
