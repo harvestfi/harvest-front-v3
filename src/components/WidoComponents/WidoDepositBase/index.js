@@ -20,6 +20,7 @@ import {
   formatNumberWido,
   hasAmountGreaterThanZero,
   hasRequirementsForInteraction,
+  isSafeApp,
 } from '../../../utils'
 import AnimatedDots from '../../AnimatedDots'
 import Button from '../../Button'
@@ -89,7 +90,7 @@ const WidoDepositBase = ({
   const { handleStake } = useActions()
   const { contracts } = useContracts()
   const { userStats, fetchUserPoolStats } = usePools()
-  const { connected, connectAction, account, getWalletBalances } = useWallet()
+  const { connected, connectAction, account, getWalletBalances, chainId } = useWallet()
   const { vaultsData } = useVaults()
   const {
     backColor,
@@ -145,7 +146,11 @@ const WidoDepositBase = ({
   }
 
   const tokenChain = token.chain || token.data.chain
-  const curChain = connectedChain ? parseInt(connectedChain.id, 16).toString() : ''
+  const curChain = isSafeApp()
+    ? chainId
+    : connectedChain
+    ? parseInt(connectedChain.id, 16).toString()
+    : ''
   const [depositName, setDepositName] = useState('Deposit')
 
   useEffect(() => {

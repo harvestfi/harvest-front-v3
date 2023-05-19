@@ -1227,3 +1227,7 @@ export const isLoadedInOtherDomain = domain => {
 export const isLedgerLive = () => {
   return isLoadedInOtherDomain('ledger')
 }
+
+export const isSafeApp = () => {
+  return isLoadedInOtherDomain('app.safe.global')
+}

@@ -21,7 +21,7 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
 import { fromWei } from '../../../services/web3'
-import { formatNumberWido } from '../../../utils'
+import { formatNumberWido, isSafeApp } from '../../../utils'
 import { CHAINS_ID } from '../../../data/constants'
 import AnimatedDots from '../../AnimatedDots'
 import Button from '../../Button'
@@ -97,7 +97,7 @@ const WidoPoolDepositBase = ({
 }) => {
   /* eslint-disable global-require */
   const { tokens } = require('../../../data')
-  const { account, connectAction, balances } = useWallet()
+  const { account, connectAction, balances, chainId } = useWallet()
   const { vaultsData } = useVaults()
   const [farmInfo, setFarmInfo] = useState(null)
   const [price, setPrice] = useState(0)
@@ -174,7 +174,11 @@ const WidoPoolDepositBase = ({
   }, [account, vaultsData, underlyingValue, tokens])
 
   const tokenChain = token.chain || token.data.chain
-  const curChain = connectedChain ? parseInt(connectedChain.id, 16).toString() : ''
+  const curChain = isSafeApp()
+    ? chainId
+    : connectedChain
+    ? parseInt(connectedChain.id, 16).toString()
+    : ''
   const [depositName, setDepositName] = useState('Deposit')
 
   useEffect(() => {
