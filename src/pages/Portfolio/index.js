@@ -355,7 +355,11 @@ const Portfolio = () => {
               )
             }
             const finalStake = getUserVaultBalance(symbol, farmingBalances, stakeTemp, farmBalance)
-            const stake = fromWEI(finalStake, token.decimals || token.data.watchAsset.decimals, 3)
+            const stake = fromWEI(
+              useIFARM ? finalStake : stakeTemp,
+              token.decimals || token.data.watchAsset.decimals,
+              3,
+            )
 
             stats.stake = stake * (switchBalance ? usdPrice : 1)
             // eslint-disable-next-line no-restricted-globals
