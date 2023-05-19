@@ -3,7 +3,7 @@ const helmet = require('helmet')
 const path = require('path')
 
 const builtDirectory = path.join(__dirname, 'build')
-const PORT = process.env.PORT || '5000'
+const PORT = process.env.PORT || '3000'
 const app = express()
 
 app.disable('x-powered-by')
@@ -28,15 +28,15 @@ app.use(
   }),
 )
 
-app.use('/manifest.json', function addOrigin(req, res, next) {
-  res.set({
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'GET',
-    'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
-  })
+// app.use('/manifest.json', function addOrigin(req, res, next) {
+//   res.set({
+//     'Access-Control-Allow-Origin': '*',
+//     'Access-Control-Allow-Methods': 'GET',
+//     'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
+//   })
 
-  next()
-})
+//   next()
+// })
 
 app.use(express.static(builtDirectory))
 app.get('*', (req, res) => res.sendFile(path.join(builtDirectory, 'index.html')))

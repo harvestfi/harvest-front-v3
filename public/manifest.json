@@ -1,5 +1,5 @@
 {
-  "short_name": "HarvestFinance",
+  "short_name": "Harvest",
   "name": "Harvest Finance",
   "description": "Grow your crypto. Leverage the power of auto-compounding with Harvest and watch your crypto assets grow.",
   "providedBy": {
@@ -22,8 +22,5 @@
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#000000",
-  "background_color": "#ffffff",
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET",
-  "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
+  "background_color": "#ffffff"
 }
