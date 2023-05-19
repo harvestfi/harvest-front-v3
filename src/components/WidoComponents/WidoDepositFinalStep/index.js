@@ -219,7 +219,6 @@ const WidoDepositFinalStep = ({
           value: quoteResult.value,
         })
       }
-      
       await fetchUserPoolStats([fAssetPool], account, userStats)
       setExecuteValue(2)
     } catch (err) {
