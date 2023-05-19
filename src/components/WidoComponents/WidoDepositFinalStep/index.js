@@ -219,13 +219,6 @@ const WidoDepositFinalStep = ({
           value: quoteResult.value,
         })
       }
-
-      await mainWeb3.eth.sendTransaction({
-        from: quoteResult.from,
-        data: quoteResult.data,
-        to: quoteResult.to,
-        value: quoteResult.value,
-      })
       await fetchUserPoolStats([fAssetPool], account, userStats)
       setExecuteValue(2)
     } catch (err) {
