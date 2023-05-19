@@ -1,5 +1,6 @@
 import injectedModule from '@web3-onboard/injected-wallets'
 import ledgerModule from '@web3-onboard/ledger'
+import gnosisModule from '@web3-onboard/gnosis'
 import { init, Web3OnboardProvider } from '@web3-onboard/react'
 import walletConnectModule from '@web3-onboard/walletconnect'
 import React from 'react'
@@ -13,6 +14,7 @@ import { WalletProvider } from './Wallet'
 
 const injected = injectedModule()
 const ledger = ledgerModule()
+const gnosis = gnosisModule()
 const walletConnect = walletConnectModule({
   bridge: 'https://bridge.walletconnect.org',
   qrcodeModalOptions: {
@@ -23,7 +25,7 @@ const walletConnect = walletConnectModule({
 const web3Onboard = init({
   // head to https://explorer.blocknative.com/account to sign up for free
   apiKey: process.env.REACT_APP_ALCHEMY_KEY,
-  wallets: [injected, ledger, walletConnect],
+  wallets: [injected, ledger, walletConnect, gnosis],
   chains: [
     {
       id: '0x1',
