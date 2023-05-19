@@ -28,15 +28,14 @@ app.use(
   }),
 )
 
-// app.use('/manifest.json', function addOrigin(req, res, next) {
-//   res.set({
-//     'Access-Control-Allow-Origin': '*',
-//     'Access-Control-Allow-Methods': 'GET',
-//     'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
-//   })
-
-//   next()
-// })
+app.use('/manifest.json', function addOrigin(req, res, next) {
+  res.set({
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET',
+    'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
+  })
+  next()
+})
 
 app.use(express.static(builtDirectory))
 app.get('*', (req, res) => res.sendFile(path.join(builtDirectory, 'index.html')))
