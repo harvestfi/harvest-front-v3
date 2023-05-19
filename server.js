@@ -10,6 +10,7 @@ app.disable('x-powered-by')
 app.use(
   helmet({
     crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: false,
     contentSecurityPolicy: {
       directives: {
         frameAncestors: ['https://dapp-browser.apps.ledger.com/', 'https://app.safe.global/'],

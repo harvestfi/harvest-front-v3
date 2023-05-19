@@ -6,9 +6,15 @@
     "name": "Harvest",
     "url": "https://harvest.finance"
   },
+  "iconPath": "./farm_logo.svg",
   "icons": [
     {
-      "src": "/farm_logo.svg",
+      "src": "favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "farm_logo.svg",
       "sizes": "128x128",
       "type": "image/svg+xml"
     }
