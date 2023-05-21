@@ -404,23 +404,32 @@ const WidoDetail = () => {
             toChainId: chain,
           })
 
-          const soonSupList = [],
+          const tokenAddress = token.tokenAddress || token.vaultAddress
+          let first = {},
             supportedList = []
+          const soonSupList = []
           for (let i = 0; i < supList.length; i += 1) {
             const supToken = curBalances.find(el => el.address === supList[i].address)
             if (supToken) {
               supList[i].balance = supToken.balance
               supList[i].usdValue = supToken.balanceUsdValue
               supList[i].usdPrice = supToken.usdPrice
-              supportedList.push(supList[i])
             } else {
               supList[i].balance = '0'
               supList[i].usdValue = '0'
-              supportedList.push(supList[i])
+            }
+            supportedList.push(supList[i])
+            if (supList[i].address.toLowerCase() === tokenAddress.toLowerCase()) {
+              first = supList[i]
             }
           }
-          const supportedResultList = supportedList.sort(function reducer(a, b) {
+
+          supportedList = supportedList.sort(function reducer(a, b) {
             return Number(fromWEI(b.balance, b.decimals)) - Number(fromWEI(a.balance, a.decimals))
+          })
+
+          supportedList = supportedList.sort(function result(x, y) {
+            return x === first ? -1 : y === first ? 1 : 0
           })
 
           for (let j = 0; j < curBalances.length; j += 1) {
@@ -431,7 +440,7 @@ const WidoDetail = () => {
           }
 
           setSoonToSupList(soonSupList)
-          setSupTokenList(supportedResultList)
+          setSupTokenList(supportedList)
         }
       } catch (err) {
         console.error(err)
@@ -439,7 +448,7 @@ const WidoDetail = () => {
     }
 
     getTokenBalance()
-  }, [account, chain, toTokenAddress])
+  }, [account, chain, toTokenAddress, token])
 
   const {
     backColor,
