@@ -232,7 +232,7 @@ const WidoPoolDepositBase = ({
   }, [legacyStaking, balanceList, vaultsData, account, setBalance, setPickedToken])
 
   const onInputBalance = e => {
-    setInputAmount(formatNumberWido(e.currentTarget.value, POOL_BALANCES_DECIMALS))
+    setInputAmount(e.currentTarget.value)
     setUsdValue(
       formatNumberWido(
         e.currentTarget.value * (legacyStaking ? farmInfo.usdPrice : pickedToken.usdPrice || 1),
@@ -306,7 +306,7 @@ const WidoPoolDepositBase = ({
             const balanceAmount = !legacyStaking
               ? balance
               : FARMBalance && fromWEI(FARMBalance, tokens[IFARM_TOKEN_SYMBOL].decimals)
-            setInputAmount(formatNumberWido(balanceAmount, POOL_BALANCES_DECIMALS))
+            setInputAmount(balanceAmount)
 
             const usdAmount = legacyStaking
               ? balanceAmount * farmInfo.usdPrice
