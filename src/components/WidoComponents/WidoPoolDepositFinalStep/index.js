@@ -109,6 +109,53 @@ const WidoPoolDepositFinalStep = ({
       !new BigNumber(amount).isEqualTo(0) &&
       finalStep
     ) {
+      const getQuoteResultForLegacy = async () => {
+        setFromInfo('')
+        try {
+          const fromChainId = chainId
+          const fromToken = pickedToken.address
+          const toChainId = chainId
+          const user = account
+          const quoteResult = await quote(
+            {
+              fromChainId, // Chain Id of from token
+              fromToken, // Token address of from token
+              toChainId, // Chain Id of to token
+              toToken, // Token address of to token
+              amount, // Token amount of from token
+              slippagePercentage, // Acceptable max slippage for the swap
+              user, // Address of user placing the order.
+            },
+            mainWeb3.currentProvider,
+          )
+
+          const fromInfoTemp =
+            formatNumberWido(
+              fromWei(
+                quoteResult.fromTokenAmount,
+                token.decimals || token.data.lpTokenData.decimals,
+              ),
+              WIDO_BALANCES_DECIMALS,
+            ) +
+            (quoteResult.fromTokenAmountUsdValue === null
+              ? ''
+              : ` ($${formatNumberWido(
+                  fromWei(
+                    quoteResult.fromTokenAmount,
+                    token.decimals || token.data.lpTokenData.decimals,
+                  ) * quoteResult.fromTokenUsdPrice,
+                  WIDO_BALANCES_DECIMALS,
+                )})`)
+          setFromInfo(fromInfoTemp)
+        } catch (e) {
+          toast.error('Failed to get quote!')
+        }
+      }
+
+      if (legacyStaking) {
+        getQuoteResultForLegacy()
+      }
+
       const tokenAllowance = async () => {
         const { allowance } = await getTokenAllowance({
           chainId,
@@ -128,7 +175,18 @@ const WidoPoolDepositFinalStep = ({
     if (pickedToken.address) {
       setSymbolName(pickedToken.symbol)
     }
-  }, [pickedToken, inputAmount, account, chainId, amount, toToken, finalStep])
+  }, [
+    pickedToken,
+    inputAmount,
+    account,
+    chainId,
+    amount,
+    toToken,
+    finalStep,
+    legacyStaking,
+    slippagePercentage,
+    token,
+  ])
 
   useEffect(() => {
     if (quoteValue) {
@@ -386,7 +444,7 @@ const WidoPoolDepositFinalStep = ({
             </>
           ) : executeValue === 2 ? (
             <>
-              Deposit Complete!
+              Conversion Complete
               <img src={CheckIcon} alt="" />
             </>
           ) : (
@@ -403,7 +461,7 @@ const WidoPoolDepositFinalStep = ({
             onClickClose()
           }}
         >
-          Click here to go back
+          Go back to finalize deposit
         </CloseButton>
       </NewLabel>
     </SelectTokenWido>

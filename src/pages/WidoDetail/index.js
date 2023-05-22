@@ -404,8 +404,7 @@ const WidoDetail = () => {
             toToken: toTokenAddress,
             toChainId: chain,
           })
-
-          const tokenAddress = token.tokenAddress || token.vaultAddress
+          const tokenAddress = token.tokenAddress
           let first = {},
             supportedList = []
           const soonSupList = []
@@ -420,6 +419,7 @@ const WidoDetail = () => {
               supList[i].usdValue = '0'
             }
             supportedList.push(supList[i])
+
             if (tokenAddress.length !== 2) {
               if (supList[i].address.toLowerCase() === tokenAddress.toLowerCase()) {
                 first = supList[i]
@@ -431,9 +431,11 @@ const WidoDetail = () => {
             return Number(fromWEI(b.balance, b.decimals)) - Number(fromWEI(a.balance, a.decimals))
           })
 
-          supportedList = supportedList.sort(function result(x, y) {
-            return x === first ? -1 : y === first ? 1 : 0
-          })
+          if (first !== {}) {
+            supportedList = supportedList.sort(function result(x, y) {
+              return x === first ? -1 : y === first ? 1 : 0
+            })
+          }
 
           for (let j = 0; j < curBalances.length; j += 1) {
             const supToken = supList.find(el => el.address === curBalances[j].address)
