@@ -444,7 +444,7 @@ const WidoPoolDepositFinalStep = ({
             </>
           ) : executeValue === 2 ? (
             <>
-              Deposit Complete!
+              Conversion Complete
               <img src={CheckIcon} alt="" />
             </>
           ) : (
@@ -461,7 +461,7 @@ const WidoPoolDepositFinalStep = ({
             onClickClose()
           }}
         >
-          Click here to go back
+          Go back to finalize deposit
         </CloseButton>
       </NewLabel>
     </SelectTokenWido>

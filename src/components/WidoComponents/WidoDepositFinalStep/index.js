@@ -324,7 +324,7 @@ const WidoDepositFinalStep = ({
             </>
           ) : executeValue === 2 ? (
             <>
-              Deposit Complete!
+              Conversion Complete
               <img src={CheckIcon} alt="" />
             </>
           ) : (
@@ -341,7 +341,7 @@ const WidoDepositFinalStep = ({
             onClickClose()
           }}
         >
-          Click here to go back
+          Go back to finalize deposit
         </CloseButton>
       </NewLabel>
     </SelectTokenWido>
