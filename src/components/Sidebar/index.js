@@ -31,7 +31,14 @@ import { usePools } from '../../providers/Pools'
 import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
-import { displayAPY, formatAddress, getDataQuery, getTotalApy, isLedgerLive } from '../../utils'
+import {
+  displayAPY,
+  formatAddress,
+  getDataQuery,
+  getTotalApy,
+  isLedgerLive,
+  isSafeApp,
+} from '../../utils'
 import SmallApexChart from '../SmallApexChart'
 import Social from '../Social'
 import {
@@ -99,7 +106,7 @@ const sideLinks1 = [
     external: false,
   },
   {
-    path: 'https://harvest-finance.gitbook.io/harvest-finance',
+    path: 'https://docs.harvest.finance',
     name: 'Docs',
     imgPath: Docs,
     external: false,
@@ -310,7 +317,7 @@ const Sidebar = ({ width }) => {
                       style={{ width: 17, height: 17 }}
                     />
                   </UserDropDown>
-                  {!isLedgerLive() ? (
+                  {!isLedgerLive() && !isSafeApp() ? (
                     <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
                       <UserDropDownItem
                         onClick={() => {
@@ -504,7 +511,7 @@ const Sidebar = ({ width }) => {
                         />
                       </UserDropDown>
 
-                      {!isLedgerLive() ? (
+                      {!isLedgerLive() && !isSafeApp() ? (
                         <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
                           <UserDropDownItem
                             onClick={() => {

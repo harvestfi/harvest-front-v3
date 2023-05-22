@@ -30,6 +30,7 @@ import {
   TokenSelect,
   AmountInfo,
 } from './style'
+import { isSafeApp } from '../../../utils'
 
 const { tokens } = require('../../../data')
 
@@ -77,7 +78,7 @@ const WidoWithdrawBase = ({
 
   const walletBalancesToCheck = multipleAssets || [symbol]
 
-  const { account, getWalletBalances, connected, connectAction } = useWallet()
+  const { account, getWalletBalances, connected, connectAction, chainId } = useWallet()
   const { fetchUserPoolStats, userStats } = usePools()
   const { handleExit } = useActions()
   const { backColor, borderColor, fontColor } = useThemeContext()
@@ -90,7 +91,11 @@ const WidoWithdrawBase = ({
   ] = useSetChain()
 
   const tokenChain = token.chain || token.data.chain
-  const curChain = connectedChain ? parseInt(connectedChain.id, 16).toString() : ''
+  const curChain = isSafeApp()
+    ? chainId
+    : connectedChain
+    ? parseInt(connectedChain.id, 16).toString()
+    : ''
   const [withdrawName, setWithdrawName] = useState('Withdraw to Wallet')
 
   useEffect(() => {

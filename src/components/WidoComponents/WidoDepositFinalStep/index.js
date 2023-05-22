@@ -3,11 +3,11 @@ import { quote, getTokenAllowance, approve } from 'wido'
 import BigNumber from 'bignumber.js'
 import { toast } from 'react-toastify'
 import { Spinner } from 'react-bootstrap'
-import { mainWeb3, toWei, fromWei } from '../../../services/web3'
+import { mainWeb3, toWei, fromWei, maxUint256, safeWeb3 } from '../../../services/web3'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { usePools } from '../../../providers/Pools'
-import { formatNumberWido } from '../../../utils'
+import { formatNumberWido, isSafeApp } from '../../../utils'
 import { WIDO_BALANCES_DECIMALS } from '../../../constants'
 import {
   SelectTokenWido,
@@ -129,11 +129,20 @@ const WidoDepositFinalStep = ({
       toToken,
       amount: amnt,
     })
-    await mainWeb3.eth.sendTransaction({
-      from: account,
-      data,
-      to,
-    })
+    if (isSafeApp()) {
+      const safeWeb = await safeWeb3()
+      await safeWeb.eth.sendTransaction({
+        from: account,
+        data,
+        to,
+      })
+    } else {
+      await mainWeb3.eth.sendTransaction({
+        from: account,
+        data,
+        to,
+      })
+    }
   }
 
   const onClickApprove = async () => {
@@ -159,7 +168,7 @@ const WidoDepositFinalStep = ({
       console.debug('Allowance Spender: ', spender)
 
       if (!new BigNumber(allowance).gte(amount)) {
-        const amountToApprove = new BigNumber(amount).minus(allowance)
+        const amountToApprove = maxUint256()
         await approveZap(amountToApprove) // Approve for Zap
       }
       setApproveValue(2)
@@ -181,6 +190,10 @@ const WidoDepositFinalStep = ({
       const fromChainId = chainId
       const fromToken = pickedToken.address
       const toChainId = chainId
+      let safeWeb
+      if (isSafeApp()) {
+        safeWeb = await safeWeb3()
+      }
       const quoteResult = await quote(
         {
           fromChainId, // Chain Id of from token
@@ -191,15 +204,24 @@ const WidoDepositFinalStep = ({
           slippagePercentage, // Acceptable max slippage for the swap
           user, // Address of user placing the order.
         },
-        mainWeb3.currentProvider,
+        isSafeApp() ? safeWeb.currentProvider : mainWeb3.currentProvider,
       )
 
-      await mainWeb3.eth.sendTransaction({
-        from: quoteResult.from,
-        data: quoteResult.data,
-        to: quoteResult.to,
-        value: quoteResult.value,
-      })
+      if (isSafeApp()) {
+        await safeWeb.eth.sendTransaction({
+          from: quoteResult.from,
+          data: quoteResult.data,
+          to: quoteResult.to,
+          value: quoteResult.value,
+        })
+      } else {
+        await mainWeb3.eth.sendTransaction({
+          from: quoteResult.from,
+          data: quoteResult.data,
+          to: quoteResult.to,
+          value: quoteResult.value,
+        })
+      }
       await fetchUserPoolStats([fAssetPool], account, userStats)
       setExecuteValue(2)
     } catch (err) {

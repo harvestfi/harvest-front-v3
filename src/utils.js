@@ -18,6 +18,9 @@ import {
   MAX_APY_DISPLAY,
   SPECIAL_VAULTS,
   UNIV3_POOL_ID_REGEX,
+  GRAPH_URL_MAINNET,
+  GRAPH_URL_POLYGON,
+  GRAPH_URL_ARBITRUM,
 } from './constants'
 import { CHAINS_ID } from './data/constants'
 import { addresses } from './data/index'
@@ -1155,13 +1158,13 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
       body: graphql,
       redirect: 'follow',
     }
-  const subParam =
+  const url =
     chainId === CHAINS_ID.ETH_MAINNET
-      ? process.env.REACT_APP_GRAPHQL_SUBPARAM_ETH
+      ? GRAPH_URL_MAINNET
       : chainId === CHAINS_ID.MATIC_MAINNET
-      ? process.env.REACT_APP_GRAPHQL_SUBPARAM_MATIC
-      : process.env.REACT_APP_GRAPHQL_SUBPARAM_ARBITRUM
-  const url = `https://api.thegraph.com/subgraphs/id/${subParam}`
+      ? GRAPH_URL_POLYGON
+      : GRAPH_URL_ARBITRUM
+
   try {
     await fetch(url, requestOptions)
       .then(response => response.json())
@@ -1223,4 +1226,8 @@ export const isLoadedInOtherDomain = domain => {
 
 export const isLedgerLive = () => {
   return isLoadedInOtherDomain('ledger')
+}
+
+export const isSafeApp = () => {
+  return isLoadedInOtherDomain('app.safe.global')
 }

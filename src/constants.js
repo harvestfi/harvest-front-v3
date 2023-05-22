@@ -10,7 +10,7 @@ export const SOCIAL_LINKS = {
   DISCORD: 'https://discord.gg/gzWAG3Wx7Y',
   REDDIT: 'https://www.reddit.com/r/HarvestFinance/',
   GITHUB: 'https://github.com/harvest-finance',
-  WIKI: 'https://harvest-finance.gitbook.io/harvest-finance',
+  WIKI: 'https://docs.harvest.finance',
   WIKI_CHINEESE: 'https://farm.chainwiki.dev/zh/%E7%AD%96%E7%95%A5',
   AUDITS: 'https://github.com/harvest-finance/harvest/tree/master/audits',
   BUG_BOUNTY: 'https://immunefi.com/bounty/harvest/',
@@ -28,7 +28,7 @@ export const ROUTES = {
   POOL: '/pool',
   ZAPPER: '/zapper',
   VESTING: 'https://vest.harvest.finance/',
-  WIKI: 'https://harvest-finance.gitbook.io/harvest-finance/',
+  WIKI: 'https://docs.harvest.finance/',
   WIKI_ZH: 'https://farm.chainwiki.dev/zh/%E7%AD%96%E7%95%A5',
   CLAIM_EXT: 'https://claim.harvest.finance',
   STATS: 'https://farmdashboard.xyz',
@@ -44,12 +44,16 @@ export const POLL_POOL_DATA_INTERVAL_MS = window.ethereum ? 900000 : 36000000
 export const POLL_POOL_USER_DATA_INTERVAL_MS = 2000
 export const POLL_BOOST_USER_DATA_INTERVAL_MS = 5000
 
-export const INFURA_URL = `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_INFURA_KEY}`
-export const MATIC_URL = `https://polygon-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_MATIC_INFURA_KEY}`
-// export const ETH_URL = `https://rpc.builder0x69.io`
-// export const ETH_URL = 'https://rpc.ankr.com/eth'
-export const ETH_URL = 'https://mainnet.infura.io/v3/9aa3d95b3bc440fa88ea12eaa4456161'
-export const ARBITRUM_URL = `https://arb-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_INFURA_KEY}`
+export const INFURA_URL = `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
+export const MATIC_URL = `https://polygon-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
+export const ETH_URL = `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
+export const ARBITRUM_URL = `https://arb-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
+
+export const GRAPH_URL_MAINNET = 'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance'
+export const GRAPH_URL_POLYGON =
+  'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance-polygon'
+export const GRAPH_URL_ARBITRUM =
+  'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance-arbitrum'
 
 export const ETHERSCAN_URL = 'https://etherscan.io'
 
@@ -178,7 +182,7 @@ export const FAQ_ITEMS_FIRST = [
       <>
         See{' '}
         <a
-          href="https://harvest-finance.gitbook.io/harvest-finance/general-info/how-to-use-1/how-to-understand-how-much-you-earn/apy-calculation"
+          href="https://docs.harvest.finance/general-info/how-to-use-1/how-to-understand-how-much-you-earn/apy-calculation"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -186,7 +190,7 @@ export const FAQ_ITEMS_FIRST = [
         </a>{' '}
         and{' '}
         <a
-          href="https://harvest-finance.gitbook.io/harvest-finance/general-info/how-to-use-1/how-to-understand-how-much-you-earn/interest-rate-guide"
+          href="https://docs.harvest.finance/general-info/how-to-use-1/how-to-understand-how-much-you-earn/interest-rate-guide"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -228,7 +232,7 @@ export const FAQ_ITEMS_FIRST = [
       <>
         See Audits from PeckShield, Heachi, Certik & Least Authority{' '}
         <a
-          href="https://harvest-finance.gitbook.io/harvest-finance/general-info/security/audites"
+          href="https://docs.harvest.finance/general-info/security/audites"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -343,7 +347,7 @@ export const FAQ_ITEMS_SECOND = [
             </a>{' '}
             is a cashflow token for Harvest. Find out{' '}
             <a
-              href="https://harvest-finance.gitbook.io/harvest-finance/general-info/how-to-use-1/where-trade-farm-bfarm"
+              href="https://docs.harvest.finance/general-info/how-to-use-1/where-trade-farm-bfarm"
               rel="noopener noreferrer"
               target="_blank"
             >
@@ -416,7 +420,7 @@ export const FAQ_ITEMS_SECOND = [
         <br />
         You can read more{' '}
         <a
-          href="https://harvest-finance.gitbook.io/harvest-finance/general-info/what-do-we-do/profit-sharing-pool-ps"
+          href="https://docs.harvest.finance/general-info/what-do-we-do/profit-sharing-pool-ps"
           target="_blank"
           rel="noopener noreferrer"
         >
