@@ -762,7 +762,10 @@ const ActionsProvider = ({ children }) => {
     async (selectedToken, ownerAddress, setPendingAction, action = ACTIONS.APPROVE_DEPOSIT) => {
       try {
         setPendingAction(action)
-        const safeWeb = await safeWeb3()
+        let safeWeb
+        if (isSafeApp()) {
+          safeWeb = await safeWeb3()
+        }
         const gasPrice = isSafeApp() ? safeWeb.eth.getGasPrice() : await mainWeb3.eth.getGasPrice()
         const apiResponse = await axios.get(`${ZAPPER_FI_ZAP_IN_ENDPOINT}/approval-transaction`, {
           params: {
@@ -803,7 +806,10 @@ const ActionsProvider = ({ children }) => {
     ) => {
       try {
         setPendingAction(action)
-        const safeWeb = await safeWeb3()
+        let safeWeb
+        if (isSafeApp()) {
+          safeWeb = await safeWeb3()
+        }
         const gasPrice = isSafeApp() ? safeWeb.eth.getGasPrice() : await mainWeb3.eth.getGasPrice()
         const apiResponse = await axios.get(`${ZAPPER_FI_ZAP_IN_ENDPOINT}/transaction`, {
           params: {

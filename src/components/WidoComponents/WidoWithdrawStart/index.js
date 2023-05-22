@@ -62,7 +62,11 @@ const WidoWithdrawStart = ({
           const toToken = pickedToken.address
           const toChainId = chainId
           const user = account
-          const safeWeb = await safeWeb3()
+          let safeWeb,
+            curToken = balanceList.filter(el => el.symbol === pickedToken.symbol)
+          if (isSafeApp()) {
+            safeWeb = await safeWeb3()
+          }
           const quoteResult = await quote(
             {
               fromChainId, // Chain Id of from token
@@ -77,7 +81,6 @@ const WidoWithdrawStart = ({
           )
           setQuoteValue(quoteResult)
 
-          let curToken = balanceList.filter(el => el.symbol === pickedToken.symbol)
           curToken = curToken[0]
 
           const fromInfoTemp =

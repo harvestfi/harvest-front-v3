@@ -420,8 +420,10 @@ const WidoDetail = () => {
               supList[i].usdValue = '0'
             }
             supportedList.push(supList[i])
-            if (supList[i].address.toLowerCase() === tokenAddress.toLowerCase()) {
-              first = supList[i]
+            if (tokenAddress.length !== 2) {
+              if (supList[i].address.toLowerCase() === tokenAddress.toLowerCase()) {
+                first = supList[i]
+              }
             }
           }
 

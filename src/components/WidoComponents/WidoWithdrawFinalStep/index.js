@@ -135,8 +135,8 @@ const WidoWithdrawFinalStep = ({
       toToken: pickedToken.address,
       amount: amnt,
     })
-    const safeWeb = await safeWeb3()
     if (isSafeApp()) {
+      const safeWeb = await safeWeb3()
       await safeWeb.eth.sendTransaction({
         from: account,
         data,
@@ -195,7 +195,10 @@ const WidoWithdrawFinalStep = ({
       const fromChainId = chainId
       const toChainId = chainId
       const toToken = pickedToken.address
-      const safeWeb = await safeWeb3()
+      let safeWeb
+      if (isSafeApp()) {
+        safeWeb = await safeWeb3()
+      }
       const quoteResult = await quote(
         {
           fromChainId, // Chain Id of from token

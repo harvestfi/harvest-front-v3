@@ -65,7 +65,11 @@ const WidoDepositStart = ({
           const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
           const toChainId = chainId
           const user = account
-          const safeWeb = await safeWeb3()
+          let safeWeb,
+            curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol)
+          if (isSafeApp()) {
+            safeWeb = await safeWeb3()
+          }
           const quoteResult = await quote(
             {
               fromChainId, // Chain Id of from token
@@ -80,7 +84,6 @@ const WidoDepositStart = ({
           )
           setQuoteValue(quoteResult)
 
-          let curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol)
           curToken = curToken[0]
 
           const fromInfoTemp =

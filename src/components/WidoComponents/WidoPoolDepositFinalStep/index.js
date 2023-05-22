@@ -171,8 +171,8 @@ const WidoPoolDepositFinalStep = ({
       toToken,
       amount: amnt,
     })
-    const safeWeb = await safeWeb3()
     if (isSafeApp()) {
+      const safeWeb = await safeWeb3()
       await safeWeb.eth.sendTransaction({
         from: account,
         data,
@@ -251,7 +251,10 @@ const WidoPoolDepositFinalStep = ({
         const fromChainId = chainId
         const fromToken = pickedToken.address
         const toChainId = chainId
-        const safeWeb = await safeWeb3()
+        let safeWeb
+        if (isSafeApp()) {
+          safeWeb = await safeWeb3()
+        }
         const quoteResult = await quote(
           {
             fromChainId, // Chain Id of from token
