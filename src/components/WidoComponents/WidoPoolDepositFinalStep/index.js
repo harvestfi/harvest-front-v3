@@ -11,8 +11,17 @@ import { useActions } from '../../../providers/Actions'
 import { usePools } from '../../../providers/Pools'
 import { formatNumberWido } from '../../../utils'
 import { WIDO_BALANCES_DECIMALS, FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../../constants'
-import { SelectTokenWido, CloseBtn, NewLabel, Buttons, CloseButton, ExecuteButton } from './style'
+import {
+  SelectTokenWido,
+  CloseBtn,
+  NewLabel,
+  Buttons,
+  CloseButton,
+  ExecuteButton,
+  IconArrowDown,
+} from './style'
 import WidoSwapToken from '../WidoSwapToken'
+import { addresses } from '../../../data'
 import BackIcon from '../../../assets/images/logos/wido/back.svg'
 import FarmIcon from '../../../assets/images/logos/wido/farm.svg'
 import IFarmIcon from '../../../assets/images/logos/wido/ifarm.svg'
@@ -51,7 +60,7 @@ const WidoPoolDepositFinalStep = ({
   const { handleStake } = useActions()
   const { contracts } = useContracts()
   const { fetchUserPoolStats, userStats } = usePools()
-  const toToken = token.vaultAddress || token.tokenAddress
+  const toToken = addresses.iFARM
   const chainId = token.chain || token.data.chain
 
   const [amount, setAmount] = useState('0')
@@ -302,7 +311,13 @@ const WidoPoolDepositFinalStep = ({
       <NewLabel marginBottom="20px">
         <WidoSwapToken img={pickedToken.logoURI} name={fromInfo} value={pickedToken.symbol} />
         <NewLabel display="flex" justifyContent="center" marginTop="15px" marginBottom="15px">
-          <img src={ArrowDownIcon} width={25} height={25} alt="" />
+          <IconArrowDown
+            src={ArrowDownIcon}
+            filterColor={filterColor}
+            width={25}
+            height={25}
+            alt=""
+          />
         </NewLabel>
         {legacyStaking ? (
           <WidoSwapToken img={FarmIcon} name="Profit-sharing vault" value={null} />

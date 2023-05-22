@@ -391,7 +391,7 @@ const WidoDetail = () => {
   const [soonToSupList, setSoonToSupList] = useState([])
 
   const rewardSymbol = isSpecialVault ? id : token.apyTokenSymbols[0]
-  const toTokenAddress = token.vaultAddress || token.tokenAddress
+  const toTokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
   useEffect(() => {
     const getTokenBalance = async () => {
       try {
