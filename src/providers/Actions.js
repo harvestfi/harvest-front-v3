@@ -12,7 +12,13 @@ import {
   UNIV3_TOLERANCE,
   ZAPPER_FI_ZAP_IN_ENDPOINT,
 } from '../constants'
-import { formatWeb3PluginErrorMessage, mainWeb3, newContractInstance } from '../services/web3'
+import {
+  formatWeb3PluginErrorMessage,
+  mainWeb3,
+  newContractInstance,
+  maxUint256,
+  safeWeb3,
+} from '../services/web3'
 import amplifierMethods from '../services/web3/contracts/amplifier/methods'
 import boostStakingMethods from '../services/web3/contracts/boost-staking/methods'
 import poolContractData from '../services/web3/contracts/pool/contract.json'
@@ -23,7 +29,7 @@ import uniStatusViewerContractData from '../services/web3/contracts/unistatus-vi
 import uniStatusViewerContractMethods from '../services/web3/contracts/unistatus-viewer/methods'
 import univ3Methods from '../services/web3/contracts/uniswap-v3/methods'
 import vaultMethods from '../services/web3/contracts/vault/methods'
-import { CustomException } from '../utils'
+import { CustomException, isSafeApp } from '../utils'
 
 const { addresses, tokens, pools } = require('../data')
 
@@ -45,20 +51,17 @@ const ActionsProvider = ({ children }) => {
 
       try {
         if (poolData) {
-          const totalSupply = await tokenMethods.getTotalSupply(poolData.lpTokenData.instance)
           await tokenMethods.approve(
             poolData.autoStakePoolAddress || poolData.contractAddress,
             account,
-            totalSupply,
+            maxUint256(),
             poolData.lpTokenData.localInstance,
           )
         } else {
           const { methods, instance } = contracts[
             tokenSymbol === IFARM_TOKEN_SYMBOL ? FARM_TOKEN_SYMBOL : tokenSymbol
           ]
-
-          const totalSupply = await tokenMethods.getTotalSupply(instance)
-          await methods.approve(address, account, totalSupply, instance)
+          await methods.approve(address, account, maxUint256(), instance)
         }
 
         await onSuccessApproval()
@@ -108,8 +111,7 @@ const ActionsProvider = ({ children }) => {
         setPendingAction(ACTIONS.APPROVE_MIGRATE)
 
         try {
-          const totalSupply = await tokenMethods.getTotalSupply(tokenInstance)
-          await tokenMethods.approve(vaultData.vaultAddress, account, totalSupply, tokenInstance)
+          await tokenMethods.approve(vaultData.vaultAddress, account, maxUint256(), tokenInstance)
 
           toast.success(`${lpTokenName} approval completed`)
 
@@ -225,12 +227,10 @@ const ActionsProvider = ({ children }) => {
             if (new BigNumber(stakingTokenApprovedBalance).lt(stakingTokenBalance)) {
               setPendingAction(ACTIONS.APPROVE_MIGRATE)
 
-              const totalSupply = await tokenMethods.getTotalSupply(stakingTokenInstance)
-
               await tokenMethods.approve(
                 stakingPool.contractAddress,
                 account,
-                totalSupply,
+                maxUint256(),
                 stakingTokenInstance,
               )
 
@@ -762,7 +762,11 @@ const ActionsProvider = ({ children }) => {
     async (selectedToken, ownerAddress, setPendingAction, action = ACTIONS.APPROVE_DEPOSIT) => {
       try {
         setPendingAction(action)
-        const gasPrice = await mainWeb3.eth.getGasPrice()
+        let safeWeb
+        if (isSafeApp()) {
+          safeWeb = await safeWeb3()
+        }
+        const gasPrice = isSafeApp() ? safeWeb.eth.getGasPrice() : await mainWeb3.eth.getGasPrice()
         const apiResponse = await axios.get(`${ZAPPER_FI_ZAP_IN_ENDPOINT}/approval-transaction`, {
           params: {
             gasPrice,
@@ -773,7 +777,11 @@ const ActionsProvider = ({ children }) => {
           },
         })
         const apiData = get(apiResponse, 'data')
-        await mainWeb3.eth.sendTransaction(apiData)
+        if (isSafeApp()) {
+          await safeWeb.eth.sendTransaction(apiData)
+        } else {
+          await mainWeb3.eth.sendTransaction(apiData)
+        }
         toast.success(`${selectedToken.symbol} approval completed`)
         setPendingAction(null)
       } catch (err) {
@@ -798,7 +806,11 @@ const ActionsProvider = ({ children }) => {
     ) => {
       try {
         setPendingAction(action)
-        const gasPrice = await mainWeb3.eth.getGasPrice()
+        let safeWeb
+        if (isSafeApp()) {
+          safeWeb = await safeWeb3()
+        }
+        const gasPrice = isSafeApp() ? safeWeb.eth.getGasPrice() : await mainWeb3.eth.getGasPrice()
         const apiResponse = await axios.get(`${ZAPPER_FI_ZAP_IN_ENDPOINT}/transaction`, {
           params: {
             slippagePercentage,
@@ -812,7 +824,11 @@ const ActionsProvider = ({ children }) => {
           },
         })
         const apiData = get(apiResponse, 'data')
-        await mainWeb3.eth.sendTransaction(apiData)
+        if (isSafeApp()) {
+          await safeWeb.eth.sendTransaction(apiData)
+        } else {
+          await mainWeb3.eth.sendTransaction(apiData)
+        }
         toast.success(`${selectedToken.symbol} deposit completed`)
         await onSuccess()
       } catch (err) {

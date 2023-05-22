@@ -329,7 +329,7 @@ const Portfolio = () => {
               usdPrice =
                 (symbol === FARM_TOKEN_SYMBOL
                   ? token.data.lpTokenData && token.data.lpTokenData.price
-                  : token.usdPrice) || 1
+                  : token.vaultPrice) || 1
             }
             const unstake = fromWEI(
               get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),

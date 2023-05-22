@@ -1,5 +1,6 @@
 import injectedModule from '@web3-onboard/injected-wallets'
 import ledgerModule from '@web3-onboard/ledger'
+import gnosisModule from '@web3-onboard/gnosis'
 import { init, Web3OnboardProvider } from '@web3-onboard/react'
 import walletConnectModule from '@web3-onboard/walletconnect'
 import React from 'react'
@@ -13,6 +14,7 @@ import { WalletProvider } from './Wallet'
 
 const injected = injectedModule()
 const ledger = ledgerModule()
+const gnosis = gnosisModule()
 const walletConnect = walletConnectModule({
   bridge: 'https://bridge.walletconnect.org',
   qrcodeModalOptions: {
@@ -22,14 +24,14 @@ const walletConnect = walletConnectModule({
 
 const web3Onboard = init({
   // head to https://explorer.blocknative.com/account to sign up for free
-  apiKey: process.env.REACT_APP_INFURA_KEY,
-  wallets: [injected, ledger, walletConnect],
+  apiKey: process.env.REACT_APP_ALCHEMY_KEY,
+  wallets: [injected, ledger, walletConnect, gnosis],
   chains: [
     {
       id: '0x1',
       token: 'ETH',
       label: 'Ethereum Mainnet',
-      rpcUrl: `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_INFURA_KEY}`,
+      rpcUrl: `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`,
     },
     {
       id: 11155111,
@@ -73,8 +75,8 @@ const web3Onboard = init({
     icon: 'https://harvest-finance-v3.netlify.app/static/media/ifarm.ffb37908.svg',
     // logo: myLogo, // svg string logo
     description: 'Home to Yield Farming',
-    gettingStartedGuide: 'https://harvest-finance.gitbook.io/harvest-finance',
-    explore: 'https://harvest-finance.gitbook.io/harvest-finance/how-it-works/contract-addresses-1',
+    gettingStartedGuide: 'https://docs.harvest.finance',
+    explore: 'https://docs.harvest.finance/how-it-works/contract-addresses-1',
     recommendedInjectedWallets: [
       { name: 'MetaMask', url: 'https://metamask.io' },
       { name: 'Coinbase', url: 'https://wallet.coinbase.com/' },

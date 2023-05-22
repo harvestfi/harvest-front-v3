@@ -2,6 +2,8 @@ import CoinbaseWalletSDK from '@coinbase/wallet-sdk'
 import { SafeAppWeb3Modal } from '@gnosis.pm/safe-apps-web3modal'
 import { loadConnectKit } from '@ledgerhq/connect-kit-loader'
 import { IFrameEthereumProvider } from '@ledgerhq/iframe-provider'
+import { SafeAppProvider } from '@safe-global/safe-apps-provider'
+import SafeAppsSDK from '@safe-global/safe-apps-sdk'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
@@ -44,7 +46,6 @@ export const providerOptions = {
   walletconnect: {
     package: WalletConnectProvider,
     options: {
-      infuraId: process.env.REACT_APP_INFURA_KEY,
       rpc: {
         [CHAINS_ID.ETH_MAINNET]: INFURA_URL,
         [CHAINS_ID.MATIC_MAINNET]: MATIC_URL,
@@ -88,13 +89,26 @@ export const web3Modal = new SafeAppWeb3Modal({
   providerOptions,
   chains,
 })
-
+const SDK = new SafeAppsSDK()
 export const infuraWeb3 = new Web3(INFURA_URL)
 export const maticWeb3 = new Web3(MATIC_URL)
 export const ethWeb3 = new Web3(ETH_URL)
 export const arbitrumWeb3 = new Web3(ARBITRUM_URL)
 export const ledgerProvider = new ethers.providers.Web3Provider(new IFrameEthereumProvider())
 export const ledgerWeb3 = new Web3(new IFrameEthereumProvider())
+export const safeProvider = async () => {
+  const safe = await SDK.safe.getInfo()
+  return new ethers.providers.Web3Provider(new SafeAppProvider(safe, SDK))
+}
+export const safeWeb3Provider = async () => {
+  const safe = await SDK.safe.getInfo()
+  return new SafeAppProvider(safe, SDK)
+}
+export const safeWeb3 = async () => {
+  const safe = await SDK.safe.getInfo()
+  return new Web3(new SafeAppProvider(safe, SDK))
+}
+
 export const mainWeb3 = isLedgerLive() ? ledgerWeb3 : new Web3(window.ethereum || INFURA_URL)
 
 export const getContract = contractName => {
@@ -141,6 +155,10 @@ export const toWei = (token, decimals, decimalsToDisplay) => {
     return tokenAmountInBN.toString(10)
   }
   return '0'
+}
+
+export const maxUint256 = () => {
+  return ethers.constants.MaxUint256
 }
 
 export const formatWeb3PluginErrorMessage = (error, customMessage) => {

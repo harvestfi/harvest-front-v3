@@ -154,6 +154,7 @@ const WidoDetail = () => {
         data: farmProfitSharingPool,
         logoUrl: ['./icons/ifarm.svg'],
         tokenAddress: addresses.FARM,
+        vaultAddress: addresses.iFARM,
         rewardSymbol: 'iFarm',
         isNew: tokens[IFARM_TOKEN_SYMBOL].isNew,
         newDetails: tokens[IFARM_TOKEN_SYMBOL].newDetails,

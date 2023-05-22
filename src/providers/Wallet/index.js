@@ -10,11 +10,13 @@ import {
   mainWeb3,
   pollUpdatedBalance,
   ledgerProvider,
+  safeWeb3Provider,
+  safeProvider,
 } from '../../services/web3'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import { useContracts } from '../Contracts'
 import { validateChain } from './utils'
-import { isLedgerLive } from '../../utils'
+import { isLedgerLive, isSafeApp } from '../../utils'
 
 /* eslint-disable global-require */
 const { tokens } = require('../../data')
@@ -50,9 +52,19 @@ const WalletProvider = _ref => {
         setAccount(selectedAccount && selectedAccount.toLowerCase())
         setConnected(true)
       }
+      if (isSafeApp()) {
+        const safeAppProvider = await safeProvider()
+        const selectedChain = await safeAppProvider.getNetwork()
+        const provider = await safeWeb3Provider()
+        web3Plugin.setProvider(provider)
+        setChainId(selectedChain.chainId.toString())
+        const selectedAccount = await safeAppProvider.getSigner().getAddress()
+        setAccount(selectedAccount && selectedAccount.toLowerCase())
+        setConnected(true)
+      }
     }
     fetchData()
-  }, [])
+  }, [web3Plugin])
 
   const disconnectAction = useCallback(async () => {
     if (!isLedgerLive()) {

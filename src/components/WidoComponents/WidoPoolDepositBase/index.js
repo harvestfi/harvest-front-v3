@@ -1,6 +1,5 @@
 import BigNumber from 'bignumber.js'
 import { useSetChain } from '@web3-onboard/react'
-import CoinGecko from 'coingecko-api'
 import { get, isEmpty } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 import { toast } from 'react-toastify'
@@ -22,7 +21,7 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
 import { fromWei } from '../../../services/web3'
-import { formatNumberWido } from '../../../utils'
+import { formatNumberWido, isSafeApp } from '../../../utils'
 import { CHAINS_ID } from '../../../data/constants'
 import AnimatedDots from '../../AnimatedDots'
 import Button from '../../Button'
@@ -45,17 +44,9 @@ import {
   TokenUSD,
 } from './style'
 
-const CoinGeckoClient = new CoinGecko()
-
-const getPrice = async () => {
+const getPrice = async vaultsData => {
   try {
-    const data = await CoinGeckoClient.simple.price({
-      ids: ['ifarm'],
-      /* eslint-disable camelcase */
-      vs_currencies: ['usd'],
-    })
-
-    const result = data.success ? data.data.ifarm.usd : 1
+    const result = Number(get(vaultsData, `${IFARM_TOKEN_SYMBOL}.usdPrice`, 0)).toFixed(2)
     return result
   } catch (e) {
     return 0
@@ -106,11 +97,10 @@ const WidoPoolDepositBase = ({
 }) => {
   /* eslint-disable global-require */
   const { tokens } = require('../../../data')
-  const { account, connectAction, balances } = useWallet()
+  const { account, connectAction, balances, chainId } = useWallet()
   const { vaultsData } = useVaults()
   const [farmInfo, setFarmInfo] = useState(null)
   const [price, setPrice] = useState(0)
-
   const FARMBalance = get(balances, FARM_TOKEN_SYMBOL, 0)
 
   const {
@@ -135,12 +125,12 @@ const WidoPoolDepositBase = ({
 
   useEffect(() => {
     const getPriceValue = async () => {
-      const value = await getPrice()
+      const value = await getPrice(vaultsData)
       setPrice(value)
     }
 
     getPriceValue()
-  }, [])
+  }, [vaultsData])
 
   useEffect(() => {
     const total =
@@ -184,7 +174,11 @@ const WidoPoolDepositBase = ({
   }, [account, vaultsData, underlyingValue, tokens])
 
   const tokenChain = token.chain || token.data.chain
-  const curChain = connectedChain ? parseInt(connectedChain.id, 16).toString() : ''
+  const curChain = isSafeApp()
+    ? chainId
+    : connectedChain
+    ? parseInt(connectedChain.id, 16).toString()
+    : ''
   const [depositName, setDepositName] = useState('Deposit')
 
   useEffect(() => {
@@ -518,7 +512,7 @@ const WidoPoolDepositBase = ({
                   tokens[IFARM_TOKEN_SYMBOL].decimals,
                   WIDO_BALANCES_DECIMALS,
                 ) * price,
-                WIDO_BALANCES_DECIMALS,
+                2,
               )}`
             ) : (
               <AnimatedDots />

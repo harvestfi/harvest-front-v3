@@ -51,13 +51,12 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
   useEffect(() => {
     const initData = async () => {
       const data = await getDataQuery(365, address, chainId, account)
-      const isIFARM = token.tokenAddress === addresses.iFARM
+      const isIFARM = token.tokenAddress === addresses.FARM
       if (isIFARM) {
         const dataIFarm = await getDataQuery(365, token.tokenAddress, chainId, account)
         if (dataIFarm) {
-          data.apyAutoCompounds = dataIFarm.apyAutoCompounds
           data.apyRewards = dataIFarm.apyRewards
-          data.userBalanceHistories = dataIFarm.userBalanceHistories
+          data.tvls = dataIFarm.tvls
         }
       }
       setApiData(data)

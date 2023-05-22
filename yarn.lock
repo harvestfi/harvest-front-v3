@@ -2225,10 +2225,34 @@
     "@gnosis.pm/safe-apps-sdk" "4.0.0"
     events "^3.3.0"
 
+"@gnosis.pm/safe-apps-provider@^0.9.2":
+  version "0.9.3"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-apps-provider/-/safe-apps-provider-0.9.3.tgz#d8913b0f8abc15fdca229571eefc5f9385c82ea7"
+  integrity sha512-WzsfEMrOTd7/epEKs7S0QBB+sgw25d1B4SeLCD7q9RYi0vYLaeWT3jTuVXVGqwAlT3tFyedmvXnryLV5SUwiug==
+  dependencies:
+    "@gnosis.pm/safe-apps-sdk" "6.2.0"
+    events "^3.3.0"
+
 "@gnosis.pm/safe-apps-sdk@4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-apps-sdk/-/safe-apps-sdk-4.0.0.tgz#2fa53ba3e6a88c606787cc7c4d7836181e256024"
   integrity sha512-D+jFrRnhzmDbuA3D6tLH615WXdOtBEsv3qCAbBfXFDUiDbXFPVZbMdgnWUowA8he6PBbBYTn7LbSJaq/K5T3ZA==
+
+"@gnosis.pm/safe-apps-sdk@6.2.0":
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-apps-sdk/-/safe-apps-sdk-6.2.0.tgz#05751b4ae4c6cfa7e19839d3655e7d9b5fb72dfe"
+  integrity sha512-dOpVBlu+Nv7bOrOl9llTeRriEpdUnnbXEM/RgTkS1v8Q2swT6+M+WIKTuKB/cadFXbjUsBD/nd3IsihHP24b5g==
+  dependencies:
+    "@gnosis.pm/safe-react-gateway-sdk" "^2.5.6"
+    ethers "^5.4.7"
+
+"@gnosis.pm/safe-apps-sdk@^6.1.1":
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-apps-sdk/-/safe-apps-sdk-6.3.0.tgz#19f8bff136bdfdf9003745e4202e1cb85322e493"
+  integrity sha512-atUiUj1JEGnZwxDrKbuxfkwPsNQtoxnQqNjvB9cVODxSdR9OiLy5XdW2wz3Y/Gq+sjWc6lAUy3M5ovTY7qmbrg==
+  dependencies:
+    "@gnosis.pm/safe-react-gateway-sdk" "^2.8.5"
+    ethers "^5.4.7"
 
 "@gnosis.pm/safe-apps-web3modal@0.6.0":
   version "0.6.0"
@@ -2236,6 +2260,13 @@
   integrity sha512-GRySH+t6RXGlqkNmI0J3vJUwW6DyTGPKVfL3kGt4y07hLFUUhbuB3HzR+hkOSWywMysiUO5JsmSUUpPBqLD7iw==
   dependencies:
     "@gnosis.pm/safe-apps-provider" "0.6.0"
+
+"@gnosis.pm/safe-react-gateway-sdk@^2.5.6", "@gnosis.pm/safe-react-gateway-sdk@^2.8.5":
+  version "2.10.3"
+  resolved "https://registry.yarnpkg.com/@gnosis.pm/safe-react-gateway-sdk/-/safe-react-gateway-sdk-2.10.3.tgz#4537442a78eb0508c483aabcac19296335a77ac3"
+  integrity sha512-ukaLACozdJQb2YGSAZgBUkF4CT9iKVjpnKFCKUnGGghXqp+Yyn9jpdcfFK0VYQJ6ZSwAm40tHtQaN3K9817Bcg==
+  dependencies:
+    cross-fetch "^3.1.5"
 
 "@hapi/address@2.x.x":
   version "2.1.4"
@@ -2761,6 +2792,29 @@
     dom-helpers "^5.2.0"
     uncontrollable "^7.2.1"
     warning "^4.0.3"
+
+"@safe-global/safe-apps-provider@^0.17.0":
+  version "0.17.0"
+  resolved "https://registry.yarnpkg.com/@safe-global/safe-apps-provider/-/safe-apps-provider-0.17.0.tgz#1bd42ffb112e758975edb6a4d803abb06fffe9c6"
+  integrity sha512-76WLj0qwMLnKJb2HhxPjDszdsypqkxD/7Jsny+b4lI3v76BG4bddQPqz6offzcLq2aT/k2kaZTaMh23lgaFREA==
+  dependencies:
+    "@safe-global/safe-apps-sdk" "7.11.0"
+    events "^3.3.0"
+
+"@safe-global/safe-apps-sdk@7.11.0", "@safe-global/safe-apps-sdk@^7.11.0":
+  version "7.11.0"
+  resolved "https://registry.yarnpkg.com/@safe-global/safe-apps-sdk/-/safe-apps-sdk-7.11.0.tgz#2cbc164fb70141cdf4d3331ff222cd98a2529316"
+  integrity sha512-RDamzPM1Lhhiiz0O+Dn6FkFqIh47jmZX+HCV/BBnBBOSKfBJE//IGD3+02zMgojXHTikQAburdPes9qmH1SA1A==
+  dependencies:
+    "@safe-global/safe-gateway-typescript-sdk" "^3.5.3"
+    ethers "^5.7.2"
+
+"@safe-global/safe-gateway-typescript-sdk@^3.5.3":
+  version "3.7.3"
+  resolved "https://registry.yarnpkg.com/@safe-global/safe-gateway-typescript-sdk/-/safe-gateway-typescript-sdk-3.7.3.tgz#68ec7d82711e2d0f82ce2e577b1df67ba8da2bed"
+  integrity sha512-O6JCgXNZWG0Vv8FnOEjKfcbsP0WxGvoPJk5ufqUrsyBlHup16It6oaLnn+25nXFLBZOHI1bz8429JlqAc2t2hg==
+  dependencies:
+    cross-fetch "^3.1.5"
 
 "@sideway/address@^4.1.3":
   version "4.1.4"
@@ -3725,6 +3779,15 @@
     ethers "5.5.4"
     joi "17.9.1"
 
+"@web3-onboard/common@^2.3.2":
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/@web3-onboard/common/-/common-2.3.2.tgz#bf2868e3a093a20a1390eea596e82922c2af8cd8"
+  integrity sha512-BmMc7MhqrpWD3RxJ2IWppF7AKRRFdaUrcIUvUa3/MNV6IrwFoHcg9eTsFPlF0cUqJip+oQz0XGCqdlVgcSLAcQ==
+  dependencies:
+    bignumber.js "^9.1.0"
+    ethers "5.5.4"
+    joi "17.9.1"
+
 "@web3-onboard/core@^2.16.2", "@web3-onboard/core@^2.17.0":
   version "2.17.0"
   resolved "https://registry.yarnpkg.com/@web3-onboard/core/-/core-2.17.0.tgz#5c0a0114e1d53cfc473f9b0aef5bae355b50e502"
@@ -3743,6 +3806,15 @@
     rxjs "^7.5.5"
     svelte "^3.49.0"
     svelte-i18n "^3.3.13"
+
+"@web3-onboard/gnosis@^2.1.9":
+  version "2.1.9"
+  resolved "https://registry.yarnpkg.com/@web3-onboard/gnosis/-/gnosis-2.1.9.tgz#1b228513f361bef88bd1fdb9310a5c267ed54f54"
+  integrity sha512-nBBK8rtLMiS4yhlKh75f0CW86HEp9qQfOf2wI1wyeNlcFDrYvnIdSvAXtH+mZQCNu0v5qSCF2lR5buUbu+i0tw==
+  dependencies:
+    "@gnosis.pm/safe-apps-provider" "^0.9.2"
+    "@gnosis.pm/safe-apps-sdk" "^6.1.1"
+    "@web3-onboard/common" "^2.3.2"
 
 "@web3-onboard/injected-wallets@^2.8.3":
   version "2.8.5"
@@ -6061,6 +6133,13 @@ cross-fetch@^3.1.4:
   dependencies:
     node-fetch "2.6.7"
 
+cross-fetch@^3.1.5:
+  version "3.1.6"
+  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.6.tgz#bae05aa31a4da760969756318feeee6e70f15d6c"
+  integrity sha512-riRvo06crlE8HiqOwIpQhxwdOk4fOeR7FVM/wXoxchFEqMNUjvbs3bfo4OTgMEMHzppd4DxFBDbyySj8Cv781g==
+  dependencies:
+    node-fetch "^2.6.11"
+
 cross-spawn@7.0.1:
   version "7.0.1"
   resolved "https://registry.yarnpkg.com/cross-spawn/-/cross-spawn-7.0.1.tgz#0ab56286e0f7c24e153d04cc2aa027e43a9a5d14"
@@ -7793,7 +7872,7 @@ ethers@5.5.4:
     "@ethersproject/web" "5.5.1"
     "@ethersproject/wordlists" "5.5.0"
 
-ethers@5.7.2:
+ethers@5.7.2, ethers@^5.4.7, ethers@^5.7.2:
   version "5.7.2"
   resolved "https://registry.yarnpkg.com/ethers/-/ethers-5.7.2.tgz#3a7deeabbb8c030d4126b24f84e525466145872e"
   integrity sha512-wswUsmWo1aOK8rR7DIKiWSw9DbLWe6x98Jrn8wcTflTVvaXhAMaB5zGAXy0GYQEQp9iO1iSHWVyARQm11zUtyg==
@@ -11624,6 +11703,13 @@ node-fetch@^2.6.0, node-fetch@^2.6.1, node-fetch@^2.6.7:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.9.tgz#7c7f744b5cc6eb5fd404e0c7a9fec630a55657e6"
   integrity sha512-DJm/CJkZkRjKKj4Zi4BsKVZh3ValV5IR5s7LVZnW+6YMh0W1BfNA8XSs6DLMGYlId5F3KnA70uu2qepcR08Qqg==
+  dependencies:
+    whatwg-url "^5.0.0"
+
+node-fetch@^2.6.11:
+  version "2.6.11"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.11.tgz#cde7fc71deef3131ef80a738919f999e6edfff25"
+  integrity sha512-4I6pdBY1EthSqDmJkiNk3JIT8cswwR9nfeW/cPdUagJYEQG7R95WRH74wpz7ma8Gh/9dI9FP+OU+0E4FvtA55w==
   dependencies:
     whatwg-url "^5.0.0"
 
