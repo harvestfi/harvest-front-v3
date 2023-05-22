@@ -403,7 +403,7 @@ const WidoDetail = () => {
             toToken: toTokenAddress,
             toChainId: chain,
           })
-
+          const tokenAddress = token.tokenAddress
           let first = {},
             supportedList = []
           const soonSupList = []
@@ -419,8 +419,7 @@ const WidoDetail = () => {
             }
             supportedList.push(supList[i])
 
-            const tokenAddress = token.tokenAddress
-            if (typeof tokenAddress === 'string') {
+            if (tokenAddress.length !== 2) {
               if (supList[i].address.toLowerCase() === tokenAddress.toLowerCase()) {
                 first = supList[i]
               }
