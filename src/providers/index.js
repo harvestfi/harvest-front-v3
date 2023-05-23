@@ -24,7 +24,7 @@ const walletConnect = walletConnectModule({
 
 const web3Onboard = init({
   // head to https://explorer.blocknative.com/account to sign up for free
-  apiKey: process.env.REACT_APP_ALCHEMY_KEY,
+  apiKey: process.env.REACT_APP_BLOCKNATIVE_KEY,
   wallets: [injected, ledger, walletConnect, gnosis],
   chains: [
     {
@@ -34,40 +34,16 @@ const web3Onboard = init({
       rpcUrl: `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`,
     },
     {
-      id: 11155111,
-      token: 'ETH',
-      label: 'Sepolia',
-      rpcUrl: 'https://rpc.sepolia.org/',
-    },
-    {
-      id: '0x38',
-      token: 'BNB',
-      label: 'Binance Smart Chain',
-      rpcUrl: 'https://bsc-dataseed.binance.org/',
-    },
-    {
       id: '0x89',
       token: 'MATIC',
-      label: 'Matic Mainnet',
+      label: 'Polygon Mainnet',
       rpcUrl: 'https://matic-mainnet.chainstacklabs.com',
     },
     {
-      id: 10,
-      token: 'OETH',
-      label: 'Optimism',
-      rpcUrl: 'https://mainnet.optimism.io',
-    },
-    {
       id: 42161,
-      token: 'ARB-ETH',
+      token: 'AETH',
       label: 'Arbitrum',
       rpcUrl: 'https://rpc.ankr.com/arbitrum',
-    },
-    {
-      id: 84531,
-      token: 'ETH',
-      label: 'Base Goerli',
-      rpcUrl: 'https://goerli.base.org',
     },
   ],
   appMetadata: {
@@ -91,7 +67,7 @@ const web3Onboard = init({
         if (transaction.eventCode === 'txPool') {
           return {
             type: 'success',
-            message: 'Your transaction from #1 DApp is in the mempool',
+            message: 'Your transaction from Harvest Finance is in the mempool',
           }
         }
       },
@@ -105,7 +81,7 @@ const web3Onboard = init({
         if (transaction.eventCode === 'txPool') {
           return {
             type: 'success',
-            message: 'Your transaction from #1 DApp is in the mempool',
+            message: 'Your transaction from Harvest Finance is in the mempool',
           }
         }
       },
@@ -124,29 +100,8 @@ const web3Onboard = init({
       minimal: true,
     },
   },
-  i18n: {
-    en: {
-      connect: {
-        selectingWallet: {
-          header: 'custom text header',
-        },
-      },
-      notify: {
-        transaction: {
-          txStuck: 'custom text for this notification event',
-        },
-        watched: {
-          // Any words in brackets can be re-ordered or removed to fit your dapps desired verbiage
-          txPool:
-            'Your account is {verb} {formattedValue} {asset} {preposition} {counterpartyShortened}',
-        },
-      },
-    },
-    es: {
-      transaction: {
-        txRequest: 'Su transacción está esperando que confirme',
-      },
-    },
+  connect: {
+    autoConnectLastWallet: true,
   },
 })
 
