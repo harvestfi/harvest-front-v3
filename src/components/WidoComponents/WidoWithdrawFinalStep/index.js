@@ -14,8 +14,8 @@ import { WIDO_BALANCES_DECIMALS } from '../../../constants'
 import { usePools } from '../../../providers/Pools'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
-import { fromWei, mainWeb3, maxUint256 } from '../../../services/web3'
-import { formatNumberWido } from '../../../utils'
+import { fromWei, mainWeb3, maxUint256, safeWeb3 } from '../../../services/web3'
+import { formatNumberWido, isSafeApp } from '../../../utils'
 import WidoSwapToken from '../WidoSwapToken'
 import { addresses } from '../../../data'
 import {
@@ -135,12 +135,20 @@ const WidoWithdrawFinalStep = ({
       toToken: pickedToken.address,
       amount: amnt,
     })
-    const mainWeb = await mainWeb3()
-    await mainWeb.eth.sendTransaction({
-      from: account,
-      data,
-      to,
-    })
+    if (isSafeApp()) {
+      const safeWeb = await safeWeb3()
+      await safeWeb.eth.sendTransaction({
+        from: account,
+        data,
+        to,
+      })
+    } else {
+      await mainWeb3.eth.sendTransaction({
+        from: account,
+        data,
+        to,
+      })
+    }
   }
 
   const onClickApprove = async () => {
@@ -187,7 +195,10 @@ const WidoWithdrawFinalStep = ({
       const fromChainId = chainId
       const toChainId = chainId
       const toToken = pickedToken.address
-      const mainWeb = await mainWeb3()
+      let safeWeb
+      if (isSafeApp()) {
+        safeWeb = await safeWeb3()
+      }
       const quoteResult = await quote(
         {
           fromChainId, // Chain Id of from token
@@ -198,15 +209,24 @@ const WidoWithdrawFinalStep = ({
           slippagePercentage, // Acceptable max slippage for the swap
           user, // Address of user placing the order.
         },
-        mainWeb.currentProvider,
+        isSafeApp() ? safeWeb.currentProvider : mainWeb3.currentProvider,
       )
 
-      await mainWeb.eth.sendTransaction({
-        from: quoteResult.from,
-        data: quoteResult.data,
-        to: quoteResult.to,
-        value: quoteResult.value,
-      })
+      if (isSafeApp()) {
+        await safeWeb.eth.sendTransaction({
+          from: quoteResult.from,
+          data: quoteResult.data,
+          to: quoteResult.to,
+          value: quoteResult.value,
+        })
+      } else {
+        await mainWeb3.eth.sendTransaction({
+          from: quoteResult.from,
+          data: quoteResult.data,
+          to: quoteResult.to,
+          value: quoteResult.value,
+        })
+      }
       await fetchUserPoolStats([fAssetPool], account, userStats)
       setExecuteValue(2)
     } catch (err) {

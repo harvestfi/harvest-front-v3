@@ -1,8 +1,8 @@
+import { useHistory, useLocation } from 'react-router-dom'
 import { useWindowWidth } from '@react-hook/window-size'
 import { debounce } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
-import { useHistory, useLocation } from 'react-router-dom'
 import AllChains from '../../assets/images/chains/all_chain.svg'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
@@ -23,7 +23,6 @@ import RadioActive from '../../assets/images/logos/filter/risks/radioactive.svg'
 import { CHAINS_ID } from '../../data/constants'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
-import { isLedgerLive, isSafeApp } from '../../utils'
 import ButtonGroup from '../ButtonGroup'
 import MobileButtonGroup from '../MobileButtonGroup'
 import SearchBar from '../SearchBar'
@@ -49,6 +48,7 @@ import {
   UserDropDownMenu,
   WebView,
 } from './style'
+import { isLedgerLive } from '../../utils'
 
 const ChainsList = isLedgerLive()
   ? [
@@ -225,7 +225,7 @@ const QuickFilter = ({
   const [mobileChainName, setMobileChainId] = useState('All Chains') // for mobilechain
   const [mobileChainImg, setMobileChainImg] = useState(AllChains) // for mobilechain
 
-  const { selChain, setSelChain, chainId } = useWallet()
+  const { selChain, setSelChain } = useWallet()
   // for Chain
   const curChain = []
   if (selChain.includes(CHAINS_ID.ETH_MAINNET)) {
@@ -305,11 +305,8 @@ const QuickFilter = ({
     const params = new URLSearchParams(paramObj)
 
     if (selectedClass.length !== 0 && selectedClass.length !== ChainsList.length) {
-      if (isLedgerLive() || isSafeApp()) params.append('chain', chainId)
-      else {
-        for (let i = 0; i < selectedClass.length; i += 1) {
-          params.append('chain', ChainsList[selectedClass[i]].name.toLowerCase())
-        }
+      for (let i = 0; i < selectedClass.length; i += 1) {
+        params.append('chain', ChainsList[selectedClass[i]].name.toLowerCase())
       }
     }
     push(`${pathname}?${params.toString()}`)
@@ -396,59 +393,55 @@ const QuickFilter = ({
                 justifyContent="start"
                 backColor={backColor}
               >
-                {isLedgerLive() || isSafeApp() ? (
-                  <></>
-                ) : (
-                  <>
-                    {ChainsList.map((item, i) => (
-                      <ChainButton
-                        backColor={backColor}
-                        hoverColor={filterChainHoverColor}
-                        borderColor={borderColor}
-                        className={`${selectedClass.includes(i) ? 'active' : ''}`}
-                        data-tip
-                        data-for={`chain-${item.name}`}
-                        key={i}
-                        onClick={() => {
-                          let tempIds = []
-                          if (selectedClass.length !== ChainsList.length) {
-                            tempIds = [...selectedClass]
-                          }
+                <>
+                  {ChainsList.map((item, i) => (
+                    <ChainButton
+                      backColor={backColor}
+                      hoverColor={filterChainHoverColor}
+                      borderColor={borderColor}
+                      className={`${selectedClass.includes(i) ? 'active' : ''}`}
+                      data-tip
+                      data-for={`chain-${item.name}`}
+                      key={i}
+                      onClick={() => {
+                        let tempIds = []
+                        if (selectedClass.length !== ChainsList.length) {
+                          tempIds = [...selectedClass]
+                        }
 
-                          if (!tempIds.includes(i)) {
-                            tempIds.push(i)
-                          } else {
-                            for (let el = 0; el < tempIds.length; el += 1) {
-                              if (tempIds[el] === i) {
-                                tempIds.splice(el, 1)
-                              }
+                        if (!tempIds.includes(i)) {
+                          tempIds.push(i)
+                        } else {
+                          for (let el = 0; el < tempIds.length; el += 1) {
+                            if (tempIds[el] === i) {
+                              tempIds.splice(el, 1)
                             }
                           }
+                        }
 
-                          if (tempIds.length === 0 || tempIds.length === ChainsList.length) {
-                            tempIds = isLedgerLive() ? [0, 1] : [0, 1, 2]
-                            setSelectedClass(tempIds)
-                          } else {
-                            setSelectedClass(tempIds)
-                          }
-                          tempIds.map(tempId => {
-                            return selectedClasses.push(ChainsList[tempId].name)
-                          })
-                          const tempChains = []
-                          for (let j = 0; j < tempIds.length; j += 1) {
-                            tempChains.push(ChainsList[tempIds[j]].chainId)
-                          }
-                          setSelChain(tempChains)
-                          if (farmId !== -1) {
-                            printFarm(farmId)
-                          }
-                        }}
-                      >
-                        <img src={item.img} width={25} height={25} alt="" />
-                      </ChainButton>
-                    ))}
-                  </>
-                )}
+                        if (tempIds.length === 0 || tempIds.length === ChainsList.length) {
+                          tempIds = isLedgerLive() ? [0, 1] : [0, 1, 2]
+                          setSelectedClass(tempIds)
+                        } else {
+                          setSelectedClass(tempIds)
+                        }
+                        tempIds.map(tempId => {
+                          return selectedClasses.push(ChainsList[tempId].name)
+                        })
+                        const tempChains = []
+                        for (let j = 0; j < tempIds.length; j += 1) {
+                          tempChains.push(ChainsList[tempIds[j]].chainId)
+                        }
+                        setSelChain(tempChains)
+                        if (farmId !== -1) {
+                          printFarm(farmId)
+                        }
+                      }}
+                    >
+                      <img src={item.img} width={25} height={25} alt="" />
+                    </ChainButton>
+                  ))}
+                </>
               </DivWidth>
             </DivWidth>
             <DivWidth borderRadius="10" backColor={backColor}>
@@ -543,29 +536,25 @@ const QuickFilter = ({
                 <img className="narrow" src={DropDownNarrow} alt="" />
               </UserDropDown>
 
-              {isLedgerLive() || isSafeApp() ? (
-                <></>
-              ) : (
-                <UserDropDownMenu>
-                  {MobileChainsList.map((item, i) => (
-                    <UserDropDownItem
-                      key={i}
-                      onClick={() => {
-                        setMobileChainId(item.name)
-                        setMobileChainImg(item.img)
-                        if (item.name === 'All Chains') {
-                          onSelectActiveType([])
-                        } else {
-                          setSelChain([item.chainId])
-                        }
-                      }}
-                    >
-                      <img src={item.img} width="12" height="12" alt="" />
-                      <div>{item.name}</div>
-                    </UserDropDownItem>
-                  ))}
-                </UserDropDownMenu>
-              )}
+              <UserDropDownMenu>
+                {MobileChainsList.map((item, i) => (
+                  <UserDropDownItem
+                    key={i}
+                    onClick={() => {
+                      setMobileChainId(item.name)
+                      setMobileChainImg(item.img)
+                      if (item.name === 'All Chains') {
+                        onSelectActiveType([])
+                      } else {
+                        setSelChain([item.chainId])
+                      }
+                    }}
+                  >
+                    <img src={item.img} width="12" height="12" alt="" />
+                    <div>{item.name}</div>
+                  </UserDropDownItem>
+                ))}
+              </UserDropDownMenu>
             </Dropdown>
           </FarmButtonPart>
 

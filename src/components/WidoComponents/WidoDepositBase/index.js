@@ -20,7 +20,6 @@ import {
   formatNumberWido,
   hasAmountGreaterThanZero,
   hasRequirementsForInteraction,
-  isLedgerLive,
   isSafeApp,
 } from '../../../utils'
 import AnimatedDots from '../../AnimatedDots'
@@ -147,12 +146,11 @@ const WidoDepositBase = ({
   }
 
   const tokenChain = token.chain || token.data.chain
-  const curChain =
-    isLedgerLive() || isSafeApp()
-      ? chainId
-      : connectedChain
-      ? parseInt(connectedChain.id, 16).toString()
-      : ''
+  const curChain = isSafeApp()
+    ? chainId
+    : connectedChain
+    ? parseInt(connectedChain.id, 16).toString()
+    : ''
   const [depositName, setDepositName] = useState('Deposit')
 
   useEffect(() => {
@@ -169,7 +167,7 @@ const WidoDepositBase = ({
   const onClickDeposit = async () => {
     if (curChain !== tokenChain) {
       const chainHex = `0x${Number(tokenChain).toString(16)}`
-      if (!isLedgerLive() && !isSafeApp()) await setChain({ chainId: chainHex })
+      await setChain({ chainId: chainHex })
     } else {
       if (pickedToken.symbol === 'Select Token') {
         toast.error('Please select token to deposit!')

@@ -9,8 +9,8 @@ import Swap2Icon from '../../../assets/images/logos/wido/swap2.svg'
 import { WIDO_BALANCES_DECIMALS } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
-import { fromWei, mainWeb3 } from '../../../services/web3'
-import { formatNumberWido } from '../../../utils'
+import { fromWei, mainWeb3, safeWeb3 } from '../../../services/web3'
+import { formatNumberWido, isSafeApp } from '../../../utils'
 import AnimatedDots from '../../AnimatedDots'
 import { Divider } from '../../GlobalStyle'
 import WidoSwapToken from '../WidoSwapToken'
@@ -62,8 +62,11 @@ const WidoWithdrawStart = ({
           const toToken = pickedToken.address
           const toChainId = chainId
           const user = account
-          let curToken = balanceList.filter(el => el.symbol === pickedToken.symbol)
-          const mainWeb = await mainWeb3()
+          let safeWeb,
+            curToken = balanceList.filter(el => el.symbol === pickedToken.symbol)
+          if (isSafeApp()) {
+            safeWeb = await safeWeb3()
+          }
           const quoteResult = await quote(
             {
               fromChainId, // Chain Id of from token
@@ -74,7 +77,7 @@ const WidoWithdrawStart = ({
               slippagePercentage, // Acceptable max slippage for the swap
               user, // Address of user placing the order.
             },
-            mainWeb.currentProvider,
+            isSafeApp() ? safeWeb.currentProvider : mainWeb3.currentProvider,
           )
           setQuoteValue(quoteResult)
 

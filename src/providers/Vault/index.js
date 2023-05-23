@@ -13,7 +13,7 @@ import React, {
 } from 'react'
 import { toast } from 'react-toastify'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import { IFARM_TOKEN_SYMBOL, SPECIAL_VAULTS, VAULTS_API_ENDPOINT } from '../../constants'
+import { IFARM_TOKEN_SYMBOL, VAULTS_API_ENDPOINT } from '../../constants'
 import { CHAINS_ID } from '../../data/constants'
 import {
   getWeb3,
@@ -24,7 +24,7 @@ import {
 import univ3ContractData from '../../services/web3/contracts/uniswap-v3/contract.json'
 import vaultContractData from '../../services/web3/contracts/vault/contract.json'
 import vaultMethods from '../../services/web3/contracts/vault/methods'
-import { abbreaviteNumber, isLedgerLive, isSafeApp } from '../../utils'
+import { abbreaviteNumber, isLedgerLive } from '../../utils'
 import { usePools } from '../Pools'
 import { useWallet } from '../Wallet'
 import { calculateFarmingBalance, filterVaults } from './utils'
@@ -56,13 +56,10 @@ const VaultsProvider = _ref => {
   const [loadingFarmingBalances, setLoadingFarmingBalances] = useState(false)
   const [farmingBalances, setFarmingBalances] = useState({})
   const [vaultsData, setVaults] = useState(importedVaults)
-  const loadedVaults = useMemo(
-    () =>
-      pickBy(vaultsData, vault =>
-        isLedgerLive() || isSafeApp() ? vault.chain === chainId : selChain.includes(vault.chain),
-      ),
-    [selChain, vaultsData, chainId],
-  )
+  const loadedVaults = useMemo(() => pickBy(vaultsData, vault => selChain.includes(vault.chain)), [
+    selChain,
+    vaultsData,
+  ])
   // const initialFetch = useRef(true)
   const loadedUserVaultsWeb3Provider = useRef(false)
   const setFormattedVaults = useCallback(
@@ -71,8 +68,11 @@ const VaultsProvider = _ref => {
       await forEach(Object.keys(importedVaults), async vaultSymbol => {
         const vaultChain = get(importedVaults, `[${vaultSymbol}].chain`)
         if (!isLedgerLive() || (isLedgerLive() && vaultChain !== CHAINS_ID.ARBITRUM_ONE)) {
-          let web3Client = await getWeb3(vaultChain, account),
-            estimatedApy = null,
+          const web3Client = getWeb3(vaultChain, account)
+          const tokenPool = pools.find(
+            pool => pool.collateralAddress === importedVaults[vaultSymbol].vaultAddress,
+          )
+          let estimatedApy = null,
             estimatedApyBreakdown = [],
             usdPrice = null,
             vaultPrice = null,
@@ -86,16 +86,6 @@ const VaultsProvider = _ref => {
             { subLabel } = importedVaults[vaultSymbol],
             uniswapV3ManagedData = null,
             dataFetched = false
-          if (
-            (Object.values(SPECIAL_VAULTS).includes(vaultSymbol) &&
-              chainId !== CHAINS_ID.ETH_MAINNET) ||
-            vaultChain !== chainId
-          ) {
-            web3Client = await getWeb3(vaultChain, null)
-          }
-          const tokenPool = pools.find(
-            pool => pool.collateralAddress === importedVaults[vaultSymbol].vaultAddress,
-          )
 
           const isIFARM = vaultSymbol === IFARM_TOKEN_SYMBOL
           const hasMultipleAssets = isArray(importedVaults[vaultSymbol].tokenAddress)
@@ -257,10 +247,8 @@ const VaultsProvider = _ref => {
       try {
         const apiResponse = await axios.get(VAULTS_API_ENDPOINT)
         const apiData = get(apiResponse, 'data')
-        if (isLedgerLive() || isSafeApp()) {
-          if (chainId === CHAINS_ID.ETH_MAINNET) await setFormattedVaults(apiData.eth)
-          else if (chainId === CHAINS_ID.MATIC_MAINNET) await setFormattedVaults(apiData.matic)
-          else await setFormattedVaults(apiData.arbitrum)
+        if (isLedgerLive()) {
+          await setFormattedVaults(merge(apiData.eth, apiData.matic))
         } else {
           await setFormattedVaults(merge(apiData.eth, apiData.matic, apiData.arbitrum))
         }
@@ -287,7 +275,7 @@ const VaultsProvider = _ref => {
     setLoadingVaults(true)
     formatVaults()
     // }
-  }, [setFormattedVaults, chainId])
+  }, [setFormattedVaults])
   useEffectWithPrevious(
     _ref2 => {
       const [prevAccount] = _ref2

@@ -27,8 +27,6 @@ import {
   getTotalApy,
   getUserVaultBalance,
   getVaultValue,
-  isLedgerLive,
-  isSafeApp,
 } from '../../../utils'
 import VaultPanel from '../VaultPanel'
 import VaultsListHeader from '../VaultsListHeader'
@@ -60,7 +58,6 @@ const formatVaults = (
   balances,
   farmingBalances,
   selChain,
-  chainId,
   searchQuery = '',
   sortParam,
   sortOrder,
@@ -85,10 +82,7 @@ const formatVaults = (
     },
   ])
 
-  if (
-    ((isLedgerLive() || isSafeApp()) && chainId === CHAINS_ID.ETH_MAINNET) ||
-    (!isLedgerLive() && !isSafeApp() && selChain.includes(CHAINS_ID.ETH_MAINNET))
-  ) {
+  if (selChain.includes(CHAINS_ID.ETH_MAINNET)) {
     const farmIdx = vaultsSymbol.findIndex(symbol => symbol === FARM_TOKEN_SYMBOL)
     vaultsSymbol = move(vaultsSymbol, farmIdx, 0)
 
@@ -311,7 +305,7 @@ const VaultList = () => {
   } = useVaults()
   const { profitShareAPY } = useStats()
   const { pools, fetchUserPoolStats, userStats, loadedUserPoolsWeb3Provider } = usePools()
-  const { account, chain, selChain, getWalletBalances, balances, chainId } = useWallet()
+  const { account, chain, selChain, getWalletBalances, balances } = useWallet()
   const [openVault, setOpen] = useState(null)
   const [loaded, setLoaded] = useState(null)
   const [sortParam, setSortParam] = useState(null)
@@ -377,13 +371,7 @@ const VaultList = () => {
     [farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
   )
 
-  let groupOfVaults = []
-  if (isSafeApp() || isLedgerLive()) {
-    if (chainId === CHAINS_ID.ETH_MAINNET) groupOfVaults = { ...vaultsData, ...poolVaults }
-    else groupOfVaults = { ...vaultsData }
-  } else {
-    groupOfVaults = { ...vaultsData, ...poolVaults }
-  }
+  const groupOfVaults = { ...vaultsData, ...poolVaults }
 
   const vaultsSymbol = useMemo(
     () =>
@@ -394,7 +382,6 @@ const VaultList = () => {
         balances,
         farmingBalances,
         selChain,
-        chainId,
         searchQuery,
         sortParam,
         sortOrder,
@@ -411,7 +398,6 @@ const VaultList = () => {
       balances,
       farmingBalances,
       selChain,
-      chainId,
       searchQuery,
       sortParam,
       sortOrder,

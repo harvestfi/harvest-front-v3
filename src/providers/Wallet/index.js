@@ -7,11 +7,11 @@ import { CHAINS_ID } from '../../data/constants'
 import {
   getChainName,
   hasValidUpdatedBalance,
+  mainWeb3,
   pollUpdatedBalance,
   ledgerProvider,
   safeWeb3Provider,
   safeProvider,
-  defaultWeb3,
 } from '../../services/web3'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import { useContracts } from '../Contracts'
@@ -27,7 +27,7 @@ const useWallet = () => useContext(WalletContext)
 
 const WalletProvider = _ref => {
   const { children } = _ref
-  const web3Plugin = defaultWeb3
+  const web3Plugin = mainWeb3
   const [account, setAccount] = useState(null)
   const [connected, setConnected] = useState(false)
   const [chainId, setChainId] = useState(CHAINS_ID.ETH_MAINNET)
@@ -49,8 +49,7 @@ const WalletProvider = _ref => {
         const selectedChain = await ledgerProvider.getNetwork()
         setChainId(selectedChain.chainId.toString())
         const selectedAccount = await ledgerProvider.getSigner().getAddress()
-        setAccount(selectedAccount.toLowerCase())
-        setSelChain([selectedChain.chainId.toString()])
+        setAccount(selectedAccount && selectedAccount.toLowerCase())
         setConnected(true)
       }
       if (isSafeApp()) {
@@ -60,8 +59,7 @@ const WalletProvider = _ref => {
         web3Plugin.setProvider(provider)
         setChainId(selectedChain.chainId.toString())
         const selectedAccount = await safeAppProvider.getSigner().getAddress()
-        setAccount(selectedAccount.toLowerCase())
-        setSelChain([selectedChain.chainId.toString()])
+        setAccount(selectedAccount && selectedAccount.toLowerCase())
         setConnected(true)
       }
     }
@@ -76,41 +74,14 @@ const WalletProvider = _ref => {
 
   const onNetworkChange = useCallback(
     newChain => {
-      if (isLedgerLive()) {
+      if (!isLedgerLive()) {
         validateChain(
           newChain,
           chainId,
-          async () => {
-            setConnected(true)
-            const chainNew = parseInt(newChain, 16).toString()
-            setChainId(chainNew)
-            const selectedAccount = await ledgerProvider.getSigner().getAddress()
-            setAccount(selectedAccount && selectedAccount.toLowerCase())
-            setSelChain([chainNew])
-          },
           () => {
-            toast.error(
-              `App network (${getChainName(
-                chainId,
-              )}) doesn't match to network selected in your wallet (${getChainName(
-                newChain,
-              )}).\nSwitch to the correct chain in your wallet`,
-            )
-            setConnected(false)
-          },
-        )
-      } else if (isSafeApp()) {
-        validateChain(
-          newChain,
-          chainId,
-          async () => {
             setConnected(true)
             const chainNew = parseInt(newChain, 16).toString()
             setChainId(chainNew)
-            const safeweb3Provider = await safeProvider()
-            const selectedAccount = await safeweb3Provider.getSigner().getAddress()
-            setAccount(selectedAccount && selectedAccount.toLowerCase())
-            setSelChain([chainNew])
           },
           () => {
             toast.error(
@@ -127,10 +98,13 @@ const WalletProvider = _ref => {
         validateChain(
           newChain,
           chainId,
-          () => {
+          async () => {
             setConnected(true)
             const chainNew = parseInt(newChain, 16).toString()
             setChainId(chainNew)
+            const selectedAccount = await ledgerProvider.getSigner().getAddress()
+            setAccount(selectedAccount && selectedAccount.toLowerCase())
+            setConnected(true)
           },
           () => {
             toast.error(
@@ -149,38 +123,7 @@ const WalletProvider = _ref => {
   )
   useEffect(() => {
     let accountEmitter, networkEmitter
-    const fetchData = async () => {
-      if (isLedgerLive()) {
-        if (ledgerProvider && ledgerProvider.provider.on) {
-          networkEmitter = ledgerProvider.provider.on('chainChanged', onNetworkChange)
-          accountEmitter = ledgerProvider.provider.on('accountsChanged', accountAddress => {
-            setAccount(accountAddress[0].toLowerCase())
-            setConnected(true)
-          })
-        }
-        return () => {
-          if (accountEmitter && networkEmitter) {
-            accountEmitter.removeAllListeners('accountsChanged')
-            networkEmitter.removeListener('chainChanged', onNetworkChange)
-          }
-        }
-      }
-      if (isSafeApp()) {
-        const safeweb3Provider = await safeProvider()
-        if (safeweb3Provider && safeweb3Provider.provider.on) {
-          networkEmitter = safeweb3Provider.provider.on('chainChanged', onNetworkChange)
-          accountEmitter = safeweb3Provider.provider.on('accountsChanged', accountAddress => {
-            setAccount(accountAddress[0].toLowerCase())
-            setConnected(true)
-          })
-        }
-        return () => {
-          if (accountEmitter && networkEmitter) {
-            accountEmitter.removeAllListeners('accountsChanged')
-            networkEmitter.removeListener('chainChanged', onNetworkChange)
-          }
-        }
-      }
+    if (!isLedgerLive()) {
       if (web3Plugin && web3Plugin._provider.on && account) {
         networkEmitter = web3Plugin._provider.on('chainChanged', onNetworkChange)
       }
@@ -192,7 +135,19 @@ const WalletProvider = _ref => {
         }
       }
     }
-    fetchData()
+    if (ledgerProvider && ledgerProvider.provider.on) {
+      accountEmitter = ledgerProvider.provider.on('accountsChanged', accountAddress => {
+        setAccount(accountAddress[0].toLowerCase())
+        setConnected(true)
+      })
+      networkEmitter = ledgerProvider.provider.on('chainChanged', onNetworkChange)
+    }
+    return () => {
+      if (accountEmitter && networkEmitter) {
+        accountEmitter.removeAllListeners('accountsChanged')
+        networkEmitter.removeListener('chainChanged', onNetworkChange)
+      }
+    }
   }, [web3Plugin, chainId, account, onNetworkChange, setAccount])
 
   useEffect(() => {

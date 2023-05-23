@@ -25,7 +25,7 @@ import {
   POLL_BALANCES_INTERVAL_MS,
 } from '../../constants'
 import { CHAINS_ID } from '../../data/constants'
-import { formatNumber, isLedgerLive, isSafeApp } from '../../utils'
+import { formatNumber, isLedgerLive } from '../../utils'
 import contracts from './contracts'
 
 export const providerOptions = {
@@ -109,17 +109,7 @@ export const safeWeb3 = async () => {
   return new Web3(new SafeAppProvider(safe, SDK))
 }
 
-export const defaultWeb3 = new Web3(window.ethereum || INFURA_URL)
-
-export const mainWeb3 = async () => {
-  let safeWeb = null
-  if (isSafeApp()) safeWeb = await safeWeb3()
-  return isSafeApp()
-    ? safeWeb
-    : isLedgerLive()
-    ? ledgerWeb3
-    : new Web3(window.ethereum || INFURA_URL)
-}
+export const mainWeb3 = isLedgerLive() ? ledgerWeb3 : new Web3(window.ethereum || INFURA_URL)
 
 export const getContract = contractName => {
   return !!Object.keys(contracts).find(contractKey => contractKey === contractName)
@@ -132,7 +122,7 @@ export const newContractInstance = async (contractName, address, customAbi, web3
   const contractAbi = getContract(contractName) ? contracts[contractName].contract.abi : customAbi
 
   if (contractAddress) {
-    const web3Instance = web3Provider || (await mainWeb3())
+    const web3Instance = web3Provider || mainWeb3
     return new web3Instance.eth.Contract(contractAbi, contractAddress)
   }
   return null
@@ -229,18 +219,13 @@ export const getChainName = chainId => {
   }
 }
 
-export const getWeb3 = async (chainId, account) => {
-  if (account) {
-    if (isLedgerLive()) {
-      return ledgerWeb3
-    }
+export const getWeb3 = (chainId, account) => {
+  if (isLedgerLive()) {
+    return ledgerWeb3
+  }
 
-    if (isSafeApp()) {
-      const web3 = await safeWeb3()
-      return web3
-    }
-    const web3 = await mainWeb3()
-    return web3
+  if (account) {
+    return mainWeb3
   }
 
   if (chainId === CHAINS_ID.ETH_MAINNET) {
@@ -258,9 +243,8 @@ export const getWeb3 = async (chainId, account) => {
   return infuraWeb3
 }
 
-export const getWeb3Local = async () => {
-  const web3 = await mainWeb3()
-  return web3
+export const getWeb3Local = () => {
+  return isLedgerLive() ? ledgerWeb3 : mainWeb3
 }
 
 export const getExplorerLink = chainId => {
