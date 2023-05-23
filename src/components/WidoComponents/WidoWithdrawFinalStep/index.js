@@ -17,6 +17,7 @@ import { useWallet } from '../../../providers/Wallet'
 import { fromWei, mainWeb3, maxUint256, safeWeb3 } from '../../../services/web3'
 import { formatNumberWido, isSafeApp } from '../../../utils'
 import WidoSwapToken from '../WidoSwapToken'
+import { addresses } from '../../../data'
 import {
   Buttons,
   CloseBtn,
@@ -51,7 +52,7 @@ const WidoWithdrawFinalStep = ({
   const [fromInfo, setFromInfo] = useState('')
   const [toInfo, setToInfo] = useState('')
 
-  const fromToken = token.vaultAddress || token.tokenAddress
+  const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
   const chainId = token.chain || token.data.chain
 
   useEffect(() => {
@@ -134,8 +135,8 @@ const WidoWithdrawFinalStep = ({
       toToken: pickedToken.address,
       amount: amnt,
     })
-    const safeWeb = await safeWeb3()
     if (isSafeApp()) {
+      const safeWeb = await safeWeb3()
       await safeWeb.eth.sendTransaction({
         from: account,
         data,
@@ -194,7 +195,10 @@ const WidoWithdrawFinalStep = ({
       const fromChainId = chainId
       const toChainId = chainId
       const toToken = pickedToken.address
-      const safeWeb = await safeWeb3()
+      let safeWeb
+      if (isSafeApp()) {
+        safeWeb = await safeWeb3()
+      }
       const quoteResult = await quote(
         {
           fromChainId, // Chain Id of from token

@@ -11,8 +11,17 @@ import { useActions } from '../../../providers/Actions'
 import { usePools } from '../../../providers/Pools'
 import { formatNumberWido, isSafeApp } from '../../../utils'
 import { WIDO_BALANCES_DECIMALS, FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../../constants'
-import { SelectTokenWido, CloseBtn, NewLabel, Buttons, CloseButton, ExecuteButton } from './style'
+import {
+  SelectTokenWido,
+  CloseBtn,
+  NewLabel,
+  Buttons,
+  CloseButton,
+  ExecuteButton,
+  IconArrowDown,
+} from './style'
 import WidoSwapToken from '../WidoSwapToken'
+import { addresses } from '../../../data'
 import BackIcon from '../../../assets/images/logos/wido/back.svg'
 import FarmIcon from '../../../assets/images/logos/wido/farm.svg'
 import IFarmIcon from '../../../assets/images/logos/wido/ifarm.svg'
@@ -48,10 +57,10 @@ const WidoPoolDepositFinalStep = ({
 }) => {
   const [approveValue, setApproveValue] = useState(0)
   const { account, getWalletBalances } = useWallet()
-  const { handleStake } = useActions()
+  const { handleApproval, handleStake } = useActions()
   const { contracts } = useContracts()
   const { fetchUserPoolStats, userStats } = usePools()
-  const toToken = token.vaultAddress || token.tokenAddress
+  const toToken = addresses.iFARM
   const chainId = token.chain || token.data.chain
 
   const [amount, setAmount] = useState('0')
@@ -100,14 +109,44 @@ const WidoPoolDepositFinalStep = ({
       !new BigNumber(amount).isEqualTo(0) &&
       finalStep
     ) {
+      const getQuoteResultForLegacy = async () => {
+        setFromInfo('')
+        try {
+          const price = token.data && token.data.lpTokenData && token.data.lpTokenData.price
+          const fromAmount = new BigNumber(amount).multipliedBy(price)
+          const fromInfoTemp = `${formatNumberWido(
+            inputAmount,
+            WIDO_BALANCES_DECIMALS,
+          )} ($${formatNumberWido(
+            fromWei(fromAmount, token.decimals || token.data.lpTokenData.decimals),
+            WIDO_BALANCES_DECIMALS,
+          )})`
+          setFromInfo(fromInfoTemp)
+        } catch (e) {
+          toast.error('Failed to get quote!')
+        }
+      }
+
+      if (legacyStaking) {
+        getQuoteResultForLegacy()
+      }
+
       const tokenAllowance = async () => {
-        const { allowance } = await getTokenAllowance({
-          chainId,
-          fromToken: pickedToken.address,
-          toToken,
-          accountAddress: account, // User
-        })
-        if (!new BigNumber(allowance).gte(amount)) {
+        let allowanceCheck
+        if (legacyStaking) {
+          allowanceCheck = lpTokenApprovedBalance
+        } else {
+          const { allowance } = await getTokenAllowance({
+            chainId,
+            fromToken: pickedToken.address,
+            toToken,
+            accountAddress: account, // User
+          })
+          allowanceCheck = allowance
+        }
+        console.log(allowanceCheck)
+        console.log(amount)
+        if (!new BigNumber(allowanceCheck).gte(amount)) {
           setApproveValue(0)
         } else {
           setApproveValue(2)
@@ -119,7 +158,18 @@ const WidoPoolDepositFinalStep = ({
     if (pickedToken.address) {
       setSymbolName(pickedToken.symbol)
     }
-  }, [pickedToken, inputAmount, account, chainId, amount, toToken, finalStep])
+  }, [
+    pickedToken,
+    inputAmount,
+    account,
+    chainId,
+    amount,
+    toToken,
+    finalStep,
+    legacyStaking,
+    slippagePercentage,
+    token,
+  ])
 
   useEffect(() => {
     if (quoteValue) {
@@ -156,25 +206,39 @@ const WidoPoolDepositFinalStep = ({
   }, [quoteValue, pickedToken, token])
 
   const approveZap = async amnt => {
-    const { data, to } = await approve({
-      chainId,
-      fromToken: pickedToken.address,
-      toToken,
-      amount: amnt,
-    })
-    const safeWeb = await safeWeb3()
-    if (isSafeApp()) {
-      await safeWeb.eth.sendTransaction({
-        from: account,
-        data,
-        to,
-      })
+    if (legacyStaking) {
+      await handleApproval(
+        account,
+        contracts,
+        tokenSymbol,
+        null,
+        fAssetPool,
+        setPendingAction,
+        async () => {
+          await reloadStats()
+        },
+      )
     } else {
-      await mainWeb3.eth.sendTransaction({
-        from: account,
-        data,
-        to,
+      const { data, to } = await approve({
+        chainId,
+        fromToken: pickedToken.address,
+        toToken,
+        amount: amnt,
       })
+      if (isSafeApp()) {
+        const safeWeb = await safeWeb3()
+        await safeWeb.eth.sendTransaction({
+          from: account,
+          data,
+          to,
+        })
+      } else {
+        await mainWeb3.eth.sendTransaction({
+          from: account,
+          data,
+          to,
+        })
+      }
     }
   }
 
@@ -191,16 +255,24 @@ const WidoPoolDepositFinalStep = ({
     }
 
     try {
-      const { spender, allowance } = await getTokenAllowance({
-        chainId,
-        fromToken: pickedToken.address,
-        toToken,
-        accountAddress: account, // User
-      })
+      let allowanceCheck, spenderCheck
+      if (legacyStaking) {
+        allowanceCheck = lpTokenApprovedBalance
+        spenderCheck = fAssetPool.autoStakePoolAddress
+      } else {
+        const { spender, allowance } = await getTokenAllowance({
+          chainId,
+          fromToken: pickedToken.address,
+          toToken,
+          accountAddress: account, // User
+        })
+        spenderCheck = spender
+        allowanceCheck = allowance
+      }
 
-      console.debug('Allowance Spender: ', spender)
+      console.debug('Allowance Spender: ', spenderCheck)
 
-      if (!new BigNumber(allowance).gte(amount)) {
+      if (!new BigNumber(allowanceCheck).gte(amount)) {
         const amountToApprove = maxUint256()
         await approveZap(amountToApprove) // Approve for Zap
       }
@@ -213,6 +285,11 @@ const WidoPoolDepositFinalStep = ({
 
   const [executeValue, setExecuteValue] = useState(0)
   const onClickExecute = async () => {
+    if (approveValue !== 2) {
+      toast.error('Please approve first!')
+      return
+    }
+    setExecuteValue(1)
     if (legacyStaking) {
       await handleStake(
         token,
@@ -231,18 +308,18 @@ const WidoPoolDepositFinalStep = ({
           await reloadStats()
         },
       )
+      await fetchUserPoolStats([fAssetPool], account, userStats)
+      setExecuteValue(2)
     } else {
-      if (approveValue !== 2) {
-        toast.error('Please approve first!')
-        return
-      }
-      setExecuteValue(1)
       const user = account
       try {
         const fromChainId = chainId
         const fromToken = pickedToken.address
         const toChainId = chainId
-        const safeWeb = await safeWeb3()
+        let safeWeb
+        if (isSafeApp()) {
+          safeWeb = await safeWeb3()
+        }
         const quoteResult = await quote(
           {
             fromChainId, // Chain Id of from token
@@ -255,7 +332,6 @@ const WidoPoolDepositFinalStep = ({
           },
           isSafeApp() ? safeWeb.currentProvider : mainWeb3.currentProvider,
         )
-
         if (isSafeApp()) {
           await safeWeb.eth.sendTransaction({
             from: quoteResult.from,
@@ -321,7 +397,13 @@ const WidoPoolDepositFinalStep = ({
       <NewLabel marginBottom="20px">
         <WidoSwapToken img={pickedToken.logoURI} name={fromInfo} value={pickedToken.symbol} />
         <NewLabel display="flex" justifyContent="center" marginTop="15px" marginBottom="15px">
-          <img src={ArrowDownIcon} width={25} height={25} alt="" />
+          <IconArrowDown
+            src={ArrowDownIcon}
+            filterColor={filterColor}
+            width={25}
+            height={25}
+            alt=""
+          />
         </NewLabel>
         {legacyStaking ? (
           <WidoSwapToken img={FarmIcon} name="Profit-sharing vault" value={null} />
@@ -368,7 +450,7 @@ const WidoPoolDepositFinalStep = ({
             </>
           ) : executeValue === 2 ? (
             <>
-              Deposit Complete!
+              Conversion Complete
               <img src={CheckIcon} alt="" />
             </>
           ) : (
@@ -385,7 +467,7 @@ const WidoPoolDepositFinalStep = ({
             onClickClose()
           }}
         >
-          Click here to go back
+          Go back to finalize deposit
         </CloseButton>
       </NewLabel>
     </SelectTokenWido>
