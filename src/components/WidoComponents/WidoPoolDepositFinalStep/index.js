@@ -169,6 +169,7 @@ const WidoPoolDepositFinalStep = ({
     legacyStaking,
     slippagePercentage,
     token,
+    lpTokenApprovedBalance,
   ])
 
   useEffect(() => {
@@ -231,6 +232,7 @@ const WidoPoolDepositFinalStep = ({
         data,
         to,
       })
+    }
   }
 
   const onClickApprove = async () => {

@@ -62,6 +62,7 @@ const WidoWithdrawStart = ({
           const toToken = pickedToken.address
           const toChainId = chainId
           const user = account
+          let curToken = balanceList.filter(el => el.symbol === pickedToken.symbol)
           const mainWeb = await mainWeb3()
           const quoteResult = await quote(
             {
