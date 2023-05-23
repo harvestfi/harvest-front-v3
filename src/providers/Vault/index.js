@@ -75,6 +75,7 @@ const VaultsProvider = _ref => {
             estimatedApy = null,
             estimatedApyBreakdown = [],
             usdPrice = null,
+            vaultPrice = null,
             underlyingBalanceWithInvestment = '0',
             underlyingBalanceWithInvestmentForHolder = '0',
             pricePerFullShare = '0',
@@ -117,6 +118,9 @@ const VaultsProvider = _ref => {
             pricePerFullShare = importedVaults[vaultSymbol].pricePerFullShareOverride
               ? importedVaults[vaultSymbol].pricePerFullShareOverride
               : apiData[vaultSymbol].pricePerFullShare
+            vaultPrice = new BigNumber(usdPrice)
+              .times(pricePerFullShare)
+              .div(10 ** apiData[vaultSymbol].decimals)
             uniswapV3PositionId = apiData[vaultSymbol].uniswapV3PositionId
             uniswapV3UnderlyingTokenPrices = apiData[vaultSymbol].uniswapV3UnderlyingTokenPrices
             if (apiData[vaultSymbol].uniswapV3ManagedData) {
@@ -167,6 +171,7 @@ const VaultsProvider = _ref => {
             apyIconUrls: importedVaults[vaultSymbol].apyIconUrls,
             apyTokenSymbols: importedVaults[vaultSymbol].apyTokenSymbols,
             usdPrice,
+            vaultPrice,
             underlyingBalanceWithInvestment,
             underlyingBalanceWithInvestmentForHolder,
             pricePerFullShare,

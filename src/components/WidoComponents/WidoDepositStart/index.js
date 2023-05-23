@@ -13,6 +13,7 @@ import AnimatedDots from '../../AnimatedDots'
 import { Divider } from '../../GlobalStyle'
 import WidoSwapToken from '../WidoSwapToken'
 import { Buttons, CloseBtn, NewLabel, SelectTokenWido, IconArrowDown } from './style'
+import { addresses } from '../../../data'
 import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.svg'
 import IFARMIcon from '../../../assets/images/logos/wido/ifarm.svg'
 import SettingIcon from '../../../assets/images/logos/wido/setting.svg'
@@ -61,10 +62,11 @@ const WidoDepositStart = ({
         try {
           const fromChainId = chainId
           const fromToken = pickedToken.address
-          const toToken = token.vaultAddress || token.tokenAddress
+          const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
           const toChainId = chainId
           const user = account
           const mainWeb = await mainWeb3()
+
           const quoteResult = await quote(
             {
               fromChainId, // Chain Id of from token
@@ -79,7 +81,6 @@ const WidoDepositStart = ({
           )
           setQuoteValue(quoteResult)
 
-          let curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol)
           curToken = curToken[0]
 
           const fromInfoTemp =
@@ -128,6 +129,7 @@ const WidoDepositStart = ({
     slippagePercentage,
     balanceList,
     setQuoteValue,
+    useIFARM,
   ])
 
   return (

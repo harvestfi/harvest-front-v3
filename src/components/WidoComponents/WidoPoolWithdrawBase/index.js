@@ -73,7 +73,6 @@ const WidoPoolWithdrawBase = ({
   const FARMBalance = fromWei(
     get(balances, IFARM_TOKEN_SYMBOL, 0),
     tokens[IFARM_TOKEN_SYMBOL].decimals,
-    POOL_BALANCES_DECIMALS,
   )
 
   const onClickUnStake = async () => {
@@ -105,7 +104,7 @@ const WidoPoolWithdrawBase = ({
       return
     }
     if (!legacyUnStaking) {
-      if (new BigNumber(FARMBalance).isLessThanOrEqualTo(unstakeInputValue)) {
+      if (new BigNumber(FARMBalance).isLessThan(unstakeInputValue)) {
         toast.error('Please input sufficient amount to withdraw!')
         return
       }

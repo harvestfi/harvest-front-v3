@@ -284,7 +284,7 @@ const QuickFilter = ({
           setStringSearch(true)
         } else if (key === 'chain') {
           for (let i = 0; i < ChainsList.length; i += 1) {
-            if (ChainsList[i].chainId === value.toString()) {
+            if (ChainsList[i].name.toLowerCase() === value.toString()) {
               chains.push(ChainsList[i].chainId)
               chainIds.push(ChainsList[i].id)
               break
@@ -308,7 +308,7 @@ const QuickFilter = ({
       if (isLedgerLive() || isSafeApp()) params.append('chain', chainId)
       else {
         for (let i = 0; i < selectedClass.length; i += 1) {
-          params.append('chain', ChainsList[selectedClass[i]].chainId)
+          params.append('chain', ChainsList[selectedClass[i]].name.toLowerCase())
         }
       }
     }
@@ -511,7 +511,7 @@ const QuickFilter = ({
                   }}
                 >
                   <Counter count={filterCount}>{filterCount > 0 ? filterCount : ''}</Counter>&nbsp;
-                  Clear Filters
+                  {onlyWidth > 1520 ? 'Clear Filters' : 'Clear'}
                 </ClearFilter>
               </DivWidth>
             </QuickFilterContainer>

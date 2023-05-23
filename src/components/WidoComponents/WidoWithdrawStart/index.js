@@ -14,6 +14,7 @@ import { formatNumberWido } from '../../../utils'
 import AnimatedDots from '../../AnimatedDots'
 import { Divider } from '../../GlobalStyle'
 import WidoSwapToken from '../WidoSwapToken'
+import { addresses } from '../../../data'
 import { Buttons, CloseBtn, NewLabel, SelectTokenWido, IconArrowDown } from './style'
 import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.svg'
 
@@ -56,7 +57,7 @@ const WidoWithdrawStart = ({
         const amount = unstakeBalance
         try {
           const chainId = token.chain || token.data.chain
-          const fromToken = token.vaultAddress || token.tokenAddress
+          const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
           const fromChainId = chainId
           const toToken = pickedToken.address
           const toChainId = chainId
@@ -76,7 +77,6 @@ const WidoWithdrawStart = ({
           )
           setQuoteValue(quoteResult)
 
-          let curToken = balanceList.filter(el => el.symbol === pickedToken.symbol)
           curToken = curToken[0]
 
           const fromInfoTemp =
@@ -128,6 +128,7 @@ const WidoWithdrawStart = ({
     balanceList,
     token,
     setQuoteValue,
+    useIFARM,
   ])
 
   return (

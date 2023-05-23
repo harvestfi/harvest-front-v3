@@ -194,7 +194,7 @@ const WidoDepositBase = ({
 
   useEffect(() => {
     if (pickedToken.usdPrice) {
-      setInputAmount(formatNumberWido(balance, POOL_BALANCES_DECIMALS))
+      setInputAmount(balance)
       setUsdValue(
         formatNumberWido(
           pickedToken.usdPrice !== '0.0' ? balance * pickedToken.usdPrice : pickedToken.usdValue,
@@ -205,7 +205,7 @@ const WidoDepositBase = ({
   }, [balance, setUsdValue, setInputAmount, pickedToken])
 
   const onInputBalance = e => {
-    setInputAmount(formatNumberWido(e.currentTarget.value, POOL_BALANCES_DECIMALS))
+    setInputAmount(e.currentTarget.value)
     setUsdValue(formatNumberWido(e.currentTarget.value * pickedToken.usdPrice, 2))
   }
 
