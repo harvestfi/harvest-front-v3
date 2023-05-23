@@ -112,40 +112,15 @@ const WidoPoolDepositFinalStep = ({
       const getQuoteResultForLegacy = async () => {
         setFromInfo('')
         try {
-          const fromChainId = chainId
-          const fromToken = pickedToken.address
-          const toChainId = chainId
-          const user = account
-          const quoteResult = await quote(
-            {
-              fromChainId, // Chain Id of from token
-              fromToken, // Token address of from token
-              toChainId, // Chain Id of to token
-              toToken, // Token address of to token
-              amount, // Token amount of from token
-              slippagePercentage, // Acceptable max slippage for the swap
-              user, // Address of user placing the order.
-            },
-            mainWeb3.currentProvider,
-          )
-
-          const fromInfoTemp =
-            formatNumberWido(
-              fromWei(
-                quoteResult.fromTokenAmount,
-                token.decimals || token.data.lpTokenData.decimals,
-              ),
-              WIDO_BALANCES_DECIMALS,
-            ) +
-            (quoteResult.fromTokenAmountUsdValue === null
-              ? ''
-              : ` ($${formatNumberWido(
-                  fromWei(
-                    quoteResult.fromTokenAmount,
-                    token.decimals || token.data.lpTokenData.decimals,
-                  ) * quoteResult.fromTokenUsdPrice,
-                  WIDO_BALANCES_DECIMALS,
-                )})`)
+          const price = token.data && token.data.lpTokenData && token.data.lpTokenData.price
+          const fromAmount = new BigNumber(amount).multipliedBy(price)
+          const fromInfoTemp = `${formatNumberWido(
+            inputAmount,
+            WIDO_BALANCES_DECIMALS,
+          )} ($${formatNumberWido(
+            fromWei(fromAmount, token.decimals || token.data.lpTokenData.decimals),
+            WIDO_BALANCES_DECIMALS,
+          )})`
           setFromInfo(fromInfoTemp)
         } catch (e) {
           toast.error('Failed to get quote!')
