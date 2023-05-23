@@ -30,7 +30,7 @@ import {
   TokenSelect,
   AmountInfo,
 } from './style'
-import { isSafeApp } from '../../../utils'
+import { isLedgerLive, isSafeApp } from '../../../utils'
 
 const { tokens } = require('../../../data')
 
@@ -91,11 +91,12 @@ const WidoWithdrawBase = ({
   ] = useSetChain()
 
   const tokenChain = token.chain || token.data.chain
-  const curChain = isSafeApp()
-    ? chainId
-    : connectedChain
-    ? parseInt(connectedChain.id, 16).toString()
-    : ''
+  const curChain =
+    isLedgerLive() || isSafeApp()
+      ? chainId
+      : connectedChain
+      ? parseInt(connectedChain.id, 16).toString()
+      : ''
   const [withdrawName, setWithdrawName] = useState('Withdraw to Wallet')
 
   useEffect(() => {
@@ -243,7 +244,7 @@ const WidoWithdrawBase = ({
           onClick={async () => {
             if (curChain !== tokenChain) {
               const chainHex = `0x${Number(tokenChain).toString(16)}`
-              await setChain({ chainId: chainHex })
+              if (!isLedgerLive() && !isSafeApp()) await setChain({ chainId: chainHex })
             } else {
               onClickUnStake()
             }

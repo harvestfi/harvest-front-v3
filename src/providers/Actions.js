@@ -17,7 +17,6 @@ import {
   mainWeb3,
   newContractInstance,
   maxUint256,
-  safeWeb3,
 } from '../services/web3'
 import amplifierMethods from '../services/web3/contracts/amplifier/methods'
 import boostStakingMethods from '../services/web3/contracts/boost-staking/methods'
@@ -29,7 +28,7 @@ import uniStatusViewerContractData from '../services/web3/contracts/unistatus-vi
 import uniStatusViewerContractMethods from '../services/web3/contracts/unistatus-viewer/methods'
 import univ3Methods from '../services/web3/contracts/uniswap-v3/methods'
 import vaultMethods from '../services/web3/contracts/vault/methods'
-import { CustomException, isSafeApp } from '../utils'
+import { CustomException } from '../utils'
 
 const { addresses, tokens, pools } = require('../data')
 
@@ -762,11 +761,8 @@ const ActionsProvider = ({ children }) => {
     async (selectedToken, ownerAddress, setPendingAction, action = ACTIONS.APPROVE_DEPOSIT) => {
       try {
         setPendingAction(action)
-        let safeWeb
-        if (isSafeApp()) {
-          safeWeb = await safeWeb3()
-        }
-        const gasPrice = isSafeApp() ? safeWeb.eth.getGasPrice() : await mainWeb3.eth.getGasPrice()
+        const mainWeb = await mainWeb3()
+        const gasPrice = mainWeb.eth.getGasPrice()
         const apiResponse = await axios.get(`${ZAPPER_FI_ZAP_IN_ENDPOINT}/approval-transaction`, {
           params: {
             gasPrice,
@@ -777,11 +773,7 @@ const ActionsProvider = ({ children }) => {
           },
         })
         const apiData = get(apiResponse, 'data')
-        if (isSafeApp()) {
-          await safeWeb.eth.sendTransaction(apiData)
-        } else {
-          await mainWeb3.eth.sendTransaction(apiData)
-        }
+        await mainWeb.eth.sendTransaction(apiData)
         toast.success(`${selectedToken.symbol} approval completed`)
         setPendingAction(null)
       } catch (err) {
@@ -806,11 +798,8 @@ const ActionsProvider = ({ children }) => {
     ) => {
       try {
         setPendingAction(action)
-        let safeWeb
-        if (isSafeApp()) {
-          safeWeb = await safeWeb3()
-        }
-        const gasPrice = isSafeApp() ? safeWeb.eth.getGasPrice() : await mainWeb3.eth.getGasPrice()
+        const mainWeb = await mainWeb3()
+        const gasPrice = mainWeb.eth.getGasPrice()
         const apiResponse = await axios.get(`${ZAPPER_FI_ZAP_IN_ENDPOINT}/transaction`, {
           params: {
             slippagePercentage,
@@ -824,11 +813,7 @@ const ActionsProvider = ({ children }) => {
           },
         })
         const apiData = get(apiResponse, 'data')
-        if (isSafeApp()) {
-          await safeWeb.eth.sendTransaction(apiData)
-        } else {
-          await mainWeb3.eth.sendTransaction(apiData)
-        }
+        await mainWeb.eth.sendTransaction(apiData)
         toast.success(`${selectedToken.symbol} deposit completed`)
         await onSuccess()
       } catch (err) {

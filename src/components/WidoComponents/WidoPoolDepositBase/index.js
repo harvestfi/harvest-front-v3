@@ -21,7 +21,7 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
 import { fromWei } from '../../../services/web3'
-import { formatNumberWido, isSafeApp } from '../../../utils'
+import { formatNumberWido, isLedgerLive, isSafeApp } from '../../../utils'
 import { CHAINS_ID } from '../../../data/constants'
 import AnimatedDots from '../../AnimatedDots'
 import Button from '../../Button'
@@ -174,11 +174,12 @@ const WidoPoolDepositBase = ({
   }, [account, vaultsData, underlyingValue, tokens])
 
   const tokenChain = token.chain || token.data.chain
-  const curChain = isSafeApp()
-    ? chainId
-    : connectedChain
-    ? parseInt(connectedChain.id, 16).toString()
-    : ''
+  const curChain =
+    isLedgerLive() || isSafeApp()
+      ? chainId
+      : connectedChain
+      ? parseInt(connectedChain.id, 16).toString()
+      : ''
   const [depositName, setDepositName] = useState('Deposit')
 
   useEffect(() => {
@@ -195,7 +196,7 @@ const WidoPoolDepositBase = ({
   const onClickDeposit = async () => {
     if (curChain !== tokenChain) {
       const chainHex = `0x${Number(tokenChain).toString(16)}`
-      await setChain({ chainId: chainHex })
+      if (!isLedgerLive() || !isSafeApp()) await setChain({ chainId: chainHex })
     } else {
       if (!legacyStaking && pickedToken.symbol === 'Select Token') {
         toast.error('Please select token to deposit!')

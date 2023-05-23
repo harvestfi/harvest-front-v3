@@ -18,11 +18,11 @@ import { toast } from 'react-toastify'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { POLL_POOL_DATA_INTERVAL_MS, POOLS_API_ENDPOINT, SPECIAL_VAULTS } from '../../constants'
 import { CHAINS_ID } from '../../data/constants'
-import { getWeb3, getWeb3Local, newContractInstance } from '../../services/web3'
+import { getWeb3, newContractInstance, safeProvider } from '../../services/web3'
 import poolContractData from '../../services/web3/contracts/pool/contract.json'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import tokenMethods from '../../services/web3/contracts/token/methods'
-import { isLedgerLive, truncateNumberString } from '../../utils'
+import { isLedgerLive, truncateNumberString, isSafeApp } from '../../utils'
 import { useContracts } from '../Contracts'
 import { useWallet } from '../Wallet'
 import { getLpTokenData, getUserStats, pollUpdatedUserStats } from './utils'
@@ -56,19 +56,24 @@ const PoolsProvider = _ref => {
   const [disableWallet, setDisableWallet] = useState(true)
   const loadedUserPoolsWeb3Provider = useRef(false)
   const loadedInitialStakedAndUnstakedBalances = useRef(false)
-  const loadedPools = useMemo(() => filter(pools, pool => selChain.includes(pool.chain)), [
-    selChain,
-    pools,
-  ])
+  const loadedPools = useMemo(
+    () =>
+      filter(pools, pool =>
+        isLedgerLive() || isSafeApp() ? pool.chain === chainId : selChain.includes(pool.chain),
+      ),
+    [selChain, pools, chainId],
+  )
   const [finishPool, setFinishPool] = useState(false) // set true when getPoolsData success
   const formatPoolsData = useCallback(
     async apiData => {
       let formattedPools = await Promise.all(
         defaultPools.map(async pool => {
           if (!isLedgerLive() || (isLedgerLive() && pool.chain !== CHAINS_ID.ARBITRUM_ONE)) {
-            const web3Client = getWeb3(pool.chain, account)
-            const web3ClientLocal = getWeb3Local()
-            let rewardAPY = ['0'],
+            let curChain = chainId,
+              selectedAccount = account,
+              web3Client = await getWeb3(pool.chain, selectedAccount),
+              web3ClientLocal = await getWeb3(pool.chain, selectedAccount),
+              rewardAPY = ['0'],
               rewardAPR = ['0'],
               autoStakeContractInstance = null,
               autoStakeContractLocalInstance = null,
@@ -83,6 +88,23 @@ const PoolsProvider = _ref => {
               lpTokenLocalInstance = null,
               amountToStakeForBoost = null,
               dataFetched = null
+            if (isSafeApp()) {
+              const safeAppProvider = await safeProvider()
+              const selectedChain = await safeAppProvider.getNetwork()
+              curChain = selectedChain.chainId.toString()
+              selectedAccount = await safeAppProvider.getSigner().getAddress()
+              web3Client = await getWeb3(pool.chain, selectedAccount.toLowerCase())
+              web3ClientLocal = await getWeb3(pool.chain, selectedAccount.toLowerCase())
+            }
+            if (
+              (Object.values(SPECIAL_VAULTS).includes(pool.id) &&
+                curChain !== CHAINS_ID.ETH_MAINNET) ||
+              pool.chain !== curChain
+            ) {
+              web3Client = await getWeb3(pool.chain, null)
+              web3ClientLocal = await getWeb3(pool.chain, null)
+            }
+
             const contractInstance = await newContractInstance(
               null,
               pool.contractAddress,
@@ -190,7 +212,7 @@ const PoolsProvider = _ref => {
 
       return formattedPools
     },
-    [account],
+    [account, chainId],
   )
   const getPoolsData = useCallback(async () => {
     let newPools = []
@@ -238,7 +260,8 @@ const PoolsProvider = _ref => {
         account &&
         !loadedUserPoolsWeb3Provider.current &&
         finishPool &&
-        !isLedgerLive()
+        !isLedgerLive() &&
+        !isSafeApp()
       ) {
         const setCurrentPoolsWithUserProvider = async () => {
           const poolsWithUpdatedProvider = await formatPoolsData(pools)
@@ -251,7 +274,7 @@ const PoolsProvider = _ref => {
         account &&
         !loadedUserPoolsWeb3Provider.current &&
         finishPool &&
-        isLedgerLive()
+        (isLedgerLive() || isSafeApp())
       ) {
         const udpatePoolsData = async () => {
           await getPoolsData()
@@ -277,9 +300,7 @@ const PoolsProvider = _ref => {
         const loadInitialStakedAndUnstakedBalances = async () => {
           loadedInitialStakedAndUnstakedBalances.current = true
           const stats = {}
-          const chains = isLedgerLive()
-            ? [CHAINS_ID.ETH_MAINNET, CHAINS_ID.MATIC_MAINNET]
-            : selChain
+          const chains = isLedgerLive() ? [chainId] : selChain
           // selChain.forEach( async (ch)=> {
           /* eslint-disable no-await-in-loop */
           for (let i = 0; i < chains.length; i += 1) {
@@ -307,37 +328,38 @@ const PoolsProvider = _ref => {
               readerInstance,
             )
             // const stats = {}
-            await forEach(chLoadedPools, async (pool, index) => {
-              let lpTokenBalance
-              const isSpecialVault = !vaultAddresses.includes(pool.lpTokenData.address)
+            if (chLoadedPools.length > 0)
+              await forEach(chLoadedPools, async (pool, index) => {
+                let lpTokenBalance
+                const isSpecialVault = !vaultAddresses.includes(pool.lpTokenData.address)
 
-              if (isSpecialVault) {
-                const lpSymbol = Object.keys(tokens).filter(
-                  symbol => tokens[symbol].tokenAddress === pool.lpTokenData.address,
-                )
+                if (isSpecialVault) {
+                  const lpSymbol = Object.keys(tokens).filter(
+                    symbol => tokens[symbol].tokenAddress === pool.lpTokenData.address,
+                  )
 
-                const instance = await newContractInstance(
-                  lpSymbol[0],
-                  null,
-                  null,
-                  getWeb3(ch, false),
-                )
+                  const instance = await newContractInstance(
+                    lpSymbol[0],
+                    null,
+                    null,
+                    await getWeb3(ch, false),
+                  )
 
-                lpTokenBalance = !walletBalances[lpSymbol]
-                  ? await tokenMethods.getBalance(account, instance)
-                  : walletBalances[lpSymbol]
-              } else {
-                const lpTokenBalanceIdx = vaultAddresses.findIndex(
-                  address => address === pool.lpTokenData.address,
-                )
-                lpTokenBalance = balances[0][lpTokenBalanceIdx]
-              }
+                  lpTokenBalance = !walletBalances[lpSymbol]
+                    ? await tokenMethods.getBalance(account, instance)
+                    : walletBalances[lpSymbol]
+                } else {
+                  const lpTokenBalanceIdx = vaultAddresses.findIndex(
+                    address => address === pool.lpTokenData.address,
+                  )
+                  lpTokenBalance = balances[0][lpTokenBalanceIdx]
+                }
 
-              stats[pool.id] = {
-                lpTokenBalance,
-                totalStaked: balances[1][index],
-              }
-            })
+                stats[pool.id] = {
+                  lpTokenBalance,
+                  totalStaked: balances[1][index],
+                }
+              })
           }
           /* eslint-enable no-await-in-loop */
           // })
@@ -369,7 +391,7 @@ const PoolsProvider = _ref => {
       setLoadingUserPoolStats(true)
       await Promise.all(
         selectedPools.map(async pool => {
-          const web3Client = getWeb3(pool.chain, null)
+          const web3Client = await getWeb3(pool.chain, null)
           const contractInstance = await newContractInstance(
             null,
             pool.contractAddress,
