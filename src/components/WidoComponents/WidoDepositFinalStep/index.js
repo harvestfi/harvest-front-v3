@@ -107,10 +107,19 @@ const WidoDepositFinalStep = ({
                 )
               : ''
           })`
-          toInfoTemp = formatNumberWido(
+          toInfoTemp = `${formatNumberWido(
             new BigNumber(amount).dividedBy(pricePerFullShare).toString(),
             WIDO_BALANCES_DECIMALS,
-          )
+          )} ($${
+            pickedToken.usdPrice !== '0.0'
+              ? formatNumberWido(
+                  new BigNumber(amount)
+                    .multipliedBy(pickedToken.usdPrice)
+                    .dividedBy(new BigNumber(10).exponentiatedBy(pickedToken.decimals)),
+                  WIDO_BALANCES_DECIMALS,
+                )
+              : ''
+          })`
         } else {
           fromInfoTemp =
             quoteValue &&
@@ -120,7 +129,10 @@ const WidoDepositFinalStep = ({
             ) +
               (quoteValue.fromTokenAmountUsdValue === null
                 ? ''
-                : ` ($${quoteValue.fromTokenAmountUsdValue})`)
+                : ` ($${formatNumberWido(
+                    quoteValue.fromTokenAmountUsdValue,
+                    WIDO_BALANCES_DECIMALS,
+                  )})`)
           toInfoTemp =
             quoteValue &&
             formatNumberWido(
@@ -129,7 +141,10 @@ const WidoDepositFinalStep = ({
             ) +
               (quoteValue.toTokenAmountUsdValue === null
                 ? ''
-                : ` ($${quoteValue.toTokenAmountUsdValue})`)
+                : ` ($${formatNumberWido(
+                    quoteValue.toTokenAmountUsdValue,
+                    WIDO_BALANCES_DECIMALS,
+                  )})`)
         }
         setFromInfo(fromInfoTemp)
         setToInfo(toInfoTemp)

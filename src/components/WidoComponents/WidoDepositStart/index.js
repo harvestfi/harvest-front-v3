@@ -48,6 +48,8 @@ const WidoDepositStart = ({
   const [fromInfo, setFromInfo] = useState('')
   const [toInfo, setToInfo] = useState('')
 
+  const pricePerFullShare = get(token, `pricePerFullShare`, 0)
+
   useEffect(() => {
     if (
       account &&
@@ -64,7 +66,6 @@ const WidoDepositStart = ({
           let fromInfoTemp = '',
             toInfoTemp = ''
           if (pickedToken.default && !useIFARM) {
-            const pricePerFullShare = get(token, `pricePerFullShare`, 0)
             fromInfoTemp = `${formatNumberWido(inputAmount, WIDO_BALANCES_DECIMALS)} ($${
               pickedToken.usdPrice !== '0.0'
                 ? formatNumberWido(
@@ -75,10 +76,19 @@ const WidoDepositStart = ({
                   )
                 : ''
             })`
-            toInfoTemp = formatNumberWido(
+            toInfoTemp = `${formatNumberWido(
               new BigNumber(amount).dividedBy(pricePerFullShare).toString(),
               WIDO_BALANCES_DECIMALS,
-            )
+            )} ($${
+              pickedToken.usdPrice !== '0.0'
+                ? formatNumberWido(
+                    new BigNumber(amount)
+                      .multipliedBy(pickedToken.usdPrice)
+                      .dividedBy(new BigNumber(10).exponentiatedBy(pickedToken.decimals)),
+                    WIDO_BALANCES_DECIMALS,
+                  )
+                : ''
+            })`
           } else {
             const fromChainId = chainId
             const fromToken = pickedToken.address
@@ -156,6 +166,7 @@ const WidoDepositStart = ({
     setQuoteValue,
     useIFARM,
     inputAmount,
+    pricePerFullShare,
   ])
 
   return (
@@ -221,13 +232,23 @@ const WidoDepositStart = ({
         <NewLabel display="flex" justifyContent="space-between" marginBottom="15px">
           <NewLabel>Rate</NewLabel>
           <NewLabel display="flex" items="center">
-            {quoteValue ? (
+            {
               <>
                 1&nbsp;
                 <img src={pickedToken.logoURI} width={20} height={20} alt="" />
                 &nbsp;=&nbsp;
-                {formatNumberWido(quoteValue.price, WIDO_BALANCES_DECIMALS)}
               </>
+            }
+            {pickedToken.default && !useIFARM ? (
+              formatNumberWido(
+                fromWei(
+                  get(token, `pricePerFullShare`, 0),
+                  token.decimals || token.data.lpTokenData.decimals,
+                ),
+                WIDO_BALANCES_DECIMALS,
+              )
+            ) : quoteValue ? (
+              <>{formatNumberWido(quoteValue.price, WIDO_BALANCES_DECIMALS)}</>
             ) : (
               <AnimatedDots />
             )}
@@ -236,9 +257,18 @@ const WidoDepositStart = ({
         <NewLabel display="flex" justifyContent="space-between" marginBottom="15px">
           <NewLabel>Expected Output</NewLabel>
           <NewLabel weight={400} size="14px" height="18px" display="flex" items="center">
-            {quoteValue ? (
+            {
               <>
                 <img src={useIFARM ? IFARMIcon : Swap2Icon} width={20} height={20} alt="" />~
+              </>
+            }
+            {pickedToken.default && !useIFARM ? (
+              formatNumberWido(
+                new BigNumber(amount).dividedBy(pricePerFullShare).toString(),
+                WIDO_BALANCES_DECIMALS,
+              )
+            ) : quoteValue ? (
+              <>
                 {formatNumberWido(
                   fromWei(
                     quoteValue.toTokenAmount,
@@ -255,10 +285,19 @@ const WidoDepositStart = ({
         <NewLabel display="flex" justifyContent="space-between" marginBottom="15px">
           <NewLabel>Minimum Recieved</NewLabel>
           <NewLabel weight={400} size="14px" height="18px" display="flex" items="center">
-            {quoteValue ? (
+            {
               <>
                 <img src={useIFARM ? IFARMIcon : Swap2Icon} width={20} height={20} alt="" />
                 &nbsp;~
+              </>
+            }
+            {pickedToken.default && !useIFARM ? (
+              formatNumberWido(
+                new BigNumber(amount).dividedBy(pricePerFullShare).toString(),
+                WIDO_BALANCES_DECIMALS,
+              )
+            ) : quoteValue ? (
+              <>
                 {formatNumberWido(
                   fromWei(
                     quoteValue.minToTokenAmount,
