@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { quote, getTokenAllowance, approve } from 'wido'
+import { quote, getTokenAllowance as getTokenAllowanceWido, approve as approveWido } from 'wido'
 import BigNumber from 'bignumber.js'
 import { toast } from 'react-toastify'
 import { Spinner } from 'react-bootstrap'
@@ -57,7 +57,7 @@ const WidoPoolDepositFinalStep = ({
 }) => {
   const [approveValue, setApproveValue] = useState(0)
   const { account, getWalletBalances } = useWallet()
-  const { handleStake } = useActions()
+  const { handleApproval, handleStake } = useActions()
   const { contracts } = useContracts()
   const { fetchUserPoolStats, userStats } = usePools()
   const toToken = addresses.iFARM
@@ -132,13 +132,21 @@ const WidoPoolDepositFinalStep = ({
       }
 
       const tokenAllowance = async () => {
-        const { allowance } = await getTokenAllowance({
-          chainId,
-          fromToken: pickedToken.address,
-          toToken,
-          accountAddress: account, // User
-        })
-        if (!new BigNumber(allowance).gte(amount)) {
+        let allowanceCheck;
+        if (legacyStaking) {
+          allowanceCheck = lpTokenApprovedBalance
+        } else {
+          const { allowance } = await getTokenAllowanceWido({
+            chainId,
+            fromToken: pickedToken.address,
+            toToken,
+            accountAddress: account, // User
+          })
+          allowanceCheck = allowance
+        }
+        console.log(allowanceCheck)
+        console.log(amount)
+        if (!new BigNumber(allowanceCheck).gte(amount)) {
           setApproveValue(0)
         } else {
           setApproveValue(2)
@@ -198,25 +206,39 @@ const WidoPoolDepositFinalStep = ({
   }, [quoteValue, pickedToken, token])
 
   const approveZap = async amnt => {
-    const { data, to } = await approve({
-      chainId,
-      fromToken: pickedToken.address,
-      toToken,
-      amount: amnt,
-    })
-    if (isSafeApp()) {
-      const safeWeb = await safeWeb3()
-      await safeWeb.eth.sendTransaction({
-        from: account,
-        data,
-        to,
-      })
+    if (legacyStaking) {
+      await handleApproval(
+        account,
+        contracts,
+        tokenSymbol,
+        null,
+        fAssetPool,
+        setPendingAction,
+        async () => {
+          await reloadStats()
+        },
+      )    
     } else {
-      await mainWeb3.eth.sendTransaction({
-        from: account,
-        data,
-        to,
+      const { data, to } = await approveWido({
+        chainId,
+        fromToken: pickedToken.address,
+        toToken,
+        amount: amnt,
       })
+      if (isSafeApp()) {
+        const safeWeb = await safeWeb3()
+        await safeWeb.eth.sendTransaction({
+          from: account,
+          data,
+          to,
+        })
+      } else {
+        await mainWeb3.eth.sendTransaction({
+          from: account,
+          data,
+          to,
+        })
+      }  
     }
   }
 
@@ -233,16 +255,24 @@ const WidoPoolDepositFinalStep = ({
     }
 
     try {
-      const { spender, allowance } = await getTokenAllowance({
-        chainId,
-        fromToken: pickedToken.address,
-        toToken,
-        accountAddress: account, // User
-      })
+      let allowanceCheck, spenderCheck
+      if (legacyStaking) {
+        allowanceCheck = lpTokenApprovedBalance
+        spenderCheck = fAssetPool.autoStakePoolAddress
+      } else {
+        const { spender, allowance } = await getTokenAllowanceWido({
+          chainId,
+          fromToken: pickedToken.address,
+          toToken,
+          accountAddress: account, // User
+        })
+        spenderCheck = spender
+        allowanceCheck = allowance
+      }
 
-      console.debug('Allowance Spender: ', spender)
+      console.debug('Allowance Spender: ', spenderCheck)
 
-      if (!new BigNumber(allowance).gte(amount)) {
+      if (!new BigNumber(allowanceCheck).gte(amount)) {
         const amountToApprove = maxUint256()
         await approveZap(amountToApprove) // Approve for Zap
       }
@@ -255,6 +285,11 @@ const WidoPoolDepositFinalStep = ({
 
   const [executeValue, setExecuteValue] = useState(0)
   const onClickExecute = async () => {
+    if (approveValue !== 2) {
+      toast.error('Please approve first!')
+      return
+    }
+    setExecuteValue(1)
     if (legacyStaking) {
       await handleStake(
         token,
@@ -273,12 +308,9 @@ const WidoPoolDepositFinalStep = ({
           await reloadStats()
         },
       )
+      await fetchUserPoolStats([fAssetPool], account, userStats)
+      setExecuteValue(2)
     } else {
-      if (approveValue !== 2) {
-        toast.error('Please approve first!')
-        return
-      }
-      setExecuteValue(1)
       const user = account
       try {
         const fromChainId = chainId
@@ -300,7 +332,6 @@ const WidoPoolDepositFinalStep = ({
           },
           isSafeApp() ? safeWeb.currentProvider : mainWeb3.currentProvider,
         )
-
         if (isSafeApp()) {
           await safeWeb.eth.sendTransaction({
             from: quoteResult.from,
