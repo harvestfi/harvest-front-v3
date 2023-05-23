@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js'
+import { get } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { quote } from 'wido'
@@ -60,58 +61,79 @@ const WidoDepositStart = ({
         setToInfo('')
         setQuoteValue(null)
         try {
-          const fromChainId = chainId
-          const fromToken = pickedToken.address
-          const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
-          const toChainId = chainId
-          const user = account
-          let safeWeb,
-            curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol)
-          if (isSafeApp()) {
-            safeWeb = await safeWeb3()
+          let fromInfoTemp = '',
+            toInfoTemp = ''
+          if (pickedToken.default && !useIFARM) {
+            const pricePerFullShare = get(token, `pricePerFullShare`, 0)
+            fromInfoTemp = `${formatNumberWido(inputAmount, WIDO_BALANCES_DECIMALS)} ($${
+              pickedToken.usdPrice !== '0.0'
+                ? formatNumberWido(
+                    new BigNumber(amount)
+                      .multipliedBy(pickedToken.usdPrice)
+                      .dividedBy(new BigNumber(10).exponentiatedBy(pickedToken.decimals)),
+                    WIDO_BALANCES_DECIMALS,
+                  )
+                : ''
+            })`
+            toInfoTemp = formatNumberWido(
+              new BigNumber(amount).dividedBy(pricePerFullShare).toString(),
+              WIDO_BALANCES_DECIMALS,
+            )
+          } else {
+            const fromChainId = chainId
+            const fromToken = pickedToken.address
+            const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
+            const toChainId = chainId
+            const user = account
+            let safeWeb,
+              curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol)
+            if (isSafeApp()) {
+              safeWeb = await safeWeb3()
+            }
+            const quoteResult = await quote(
+              {
+                fromChainId, // Chain Id of from token
+                fromToken, // Token address of from token
+                toChainId, // Chain Id of to token
+                toToken, // Token address of to token
+                amount, // Token amount of from token
+                slippagePercentage, // Acceptable max slippage for the swap
+                user, // Address of user placing the order.
+              },
+              isSafeApp() ? safeWeb.currentProvider : mainWeb3.currentProvider,
+            )
+            setQuoteValue(quoteResult)
+            curToken = curToken[0]
+            fromInfoTemp =
+              formatNumberWido(
+                fromWei(quoteResult.fromTokenAmount, curToken.decimals),
+                WIDO_BALANCES_DECIMALS,
+              ) +
+              (quoteResult.fromTokenAmountUsdValue === null
+                ? ''
+                : ` ($${formatNumberWido(
+                    fromWei(quoteResult.fromTokenAmount, curToken.decimals) *
+                      quoteResult.fromTokenUsdPrice,
+                    WIDO_BALANCES_DECIMALS,
+                  )})`)
+            toInfoTemp =
+              formatNumberWido(
+                fromWei(
+                  quoteResult.toTokenAmount,
+                  token.decimals || token.data.lpTokenData.decimals,
+                ),
+                WIDO_BALANCES_DECIMALS,
+              ) +
+              (quoteResult.toTokenAmountUsdValue === null
+                ? ''
+                : ` ($${formatNumberWido(
+                    fromWei(
+                      quoteResult.toTokenAmount,
+                      token.decimals || token.data.lpTokenData.decimals,
+                    ) * quoteResult.toTokenUsdPrice,
+                    WIDO_BALANCES_DECIMALS,
+                  )})`)
           }
-          const quoteResult = await quote(
-            {
-              fromChainId, // Chain Id of from token
-              fromToken, // Token address of from token
-              toChainId, // Chain Id of to token
-              toToken, // Token address of to token
-              amount, // Token amount of from token
-              slippagePercentage, // Acceptable max slippage for the swap
-              user, // Address of user placing the order.
-            },
-            isSafeApp() ? safeWeb.currentProvider : mainWeb3.currentProvider,
-          )
-          setQuoteValue(quoteResult)
-
-          curToken = curToken[0]
-
-          const fromInfoTemp =
-            formatNumberWido(
-              fromWei(quoteResult.fromTokenAmount, curToken.decimals),
-              WIDO_BALANCES_DECIMALS,
-            ) +
-            (quoteResult.fromTokenAmountUsdValue === null
-              ? ''
-              : ` ($${formatNumberWido(
-                  fromWei(quoteResult.fromTokenAmount, curToken.decimals) *
-                    quoteResult.fromTokenUsdPrice,
-                  WIDO_BALANCES_DECIMALS,
-                )})`)
-          const toInfoTemp =
-            formatNumberWido(
-              fromWei(quoteResult.toTokenAmount, token.decimals || token.data.lpTokenData.decimals),
-              WIDO_BALANCES_DECIMALS,
-            ) +
-            (quoteResult.toTokenAmountUsdValue === null
-              ? ''
-              : ` ($${formatNumberWido(
-                  fromWei(
-                    quoteResult.toTokenAmount,
-                    token.decimals || token.data.lpTokenData.decimals,
-                  ) * quoteResult.toTokenUsdPrice,
-                  WIDO_BALANCES_DECIMALS,
-                )})`)
 
           setFromInfo(fromInfoTemp)
           setToInfo(toInfoTemp)
@@ -133,6 +155,7 @@ const WidoDepositStart = ({
     balanceList,
     setQuoteValue,
     useIFARM,
+    inputAmount,
   ])
 
   return (

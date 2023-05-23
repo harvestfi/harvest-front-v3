@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { quote, getTokenAllowance, approve } from 'wido'
+import { get } from 'lodash'
 import BigNumber from 'bignumber.js'
 import { toast } from 'react-toastify'
 import { Spinner } from 'react-bootstrap'
@@ -90,10 +91,28 @@ const WidoDepositFinalStep = ({
   }, [pickedToken, inputAmount, account, chainId, amount, toToken, finalStep])
 
   useEffect(() => {
-    if (quoteValue) {
-      const getQuoteResult = async () => {
-        try {
-          const fromInfoTemp =
+    const getQuoteResult = async () => {
+      try {
+        let fromInfoTemp = '',
+          toInfoTemp = ''
+        if (pickedToken.default && !useIFARM) {
+          const pricePerFullShare = get(token, `pricePerFullShare`, 0)
+          fromInfoTemp = `${formatNumberWido(inputAmount, WIDO_BALANCES_DECIMALS)} ($${
+            pickedToken.usdPrice !== '0.0'
+              ? formatNumberWido(
+                  new BigNumber(amount)
+                    .multipliedBy(pickedToken.usdPrice)
+                    .dividedBy(new BigNumber(10).exponentiatedBy(pickedToken.decimals)),
+                  WIDO_BALANCES_DECIMALS,
+                )
+              : ''
+          })`
+          toInfoTemp = formatNumberWido(
+            new BigNumber(amount).dividedBy(pricePerFullShare).toString(),
+            WIDO_BALANCES_DECIMALS,
+          )
+        } else {
+          fromInfoTemp =
             quoteValue &&
             formatNumberWido(
               fromWei(quoteValue.fromTokenAmount, pickedToken.decimals),
@@ -102,7 +121,7 @@ const WidoDepositFinalStep = ({
               (quoteValue.fromTokenAmountUsdValue === null
                 ? ''
                 : ` ($${quoteValue.fromTokenAmountUsdValue})`)
-          const toInfoTemp =
+          toInfoTemp =
             quoteValue &&
             formatNumberWido(
               fromWei(quoteValue.toTokenAmount, token.decimals || token.data.lpTokenData.decimals),
@@ -111,16 +130,16 @@ const WidoDepositFinalStep = ({
               (quoteValue.toTokenAmountUsdValue === null
                 ? ''
                 : ` ($${quoteValue.toTokenAmountUsdValue})`)
-          setFromInfo(fromInfoTemp)
-          setToInfo(toInfoTemp)
-        } catch (e) {
-          toast.error('Failed to get quote!')
         }
+        setFromInfo(fromInfoTemp)
+        setToInfo(toInfoTemp)
+      } catch (e) {
+        toast.error('Failed to get quote!')
       }
-
-      getQuoteResult()
     }
-  }, [pickedToken, token, quoteValue])
+
+    getQuoteResult()
+  }, [pickedToken, token, quoteValue, inputAmount, amount, useIFARM])
 
   const approveZap = async amnt => {
     const { data, to } = await approve({

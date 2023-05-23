@@ -418,6 +418,7 @@ const WidoDetail = () => {
               supList[i].balance = '0'
               supList[i].usdValue = '0'
             }
+            supList[i].default = false
             supportedList.push(supList[i])
 
             if (tokenAddress.length !== 2) {
@@ -435,6 +436,7 @@ const WidoDetail = () => {
             supportedList = supportedList.sort(function result(x, y) {
               return x === first ? -1 : y === first ? 1 : 0
             })
+            supportedList[0].default = true
           }
 
           for (let j = 0; j < curBalances.length; j += 1) {
