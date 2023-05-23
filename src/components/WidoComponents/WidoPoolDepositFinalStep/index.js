@@ -144,6 +144,8 @@ const WidoPoolDepositFinalStep = ({
           })
           allowanceCheck = allowance
         }
+        console.log(allowanceCheck)
+        console.log(amount)
         if (!new BigNumber(allowanceCheck).gte(amount)) {
           setApproveValue(0)
         } else {
