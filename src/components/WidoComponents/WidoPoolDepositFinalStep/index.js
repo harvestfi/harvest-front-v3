@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { quote, getTokenAllowance as getTokenAllowanceWido, approve as approveWido } from 'wido'
+import { quote, getTokenAllowance, approve } from 'wido'
 import BigNumber from 'bignumber.js'
 import { toast } from 'react-toastify'
 import { Spinner } from 'react-bootstrap'
@@ -132,11 +132,11 @@ const WidoPoolDepositFinalStep = ({
       }
 
       const tokenAllowance = async () => {
-        let allowanceCheck;
+        let allowanceCheck
         if (legacyStaking) {
           allowanceCheck = lpTokenApprovedBalance
         } else {
-          const { allowance } = await getTokenAllowanceWido({
+          const { allowance } = await getTokenAllowance({
             chainId,
             fromToken: pickedToken.address,
             toToken,
@@ -217,9 +217,9 @@ const WidoPoolDepositFinalStep = ({
         async () => {
           await reloadStats()
         },
-      )    
+      )
     } else {
-      const { data, to } = await approveWido({
+      const { data, to } = await approve({
         chainId,
         fromToken: pickedToken.address,
         toToken,
@@ -238,7 +238,7 @@ const WidoPoolDepositFinalStep = ({
           data,
           to,
         })
-      }  
+      }
     }
   }
 
@@ -260,7 +260,7 @@ const WidoPoolDepositFinalStep = ({
         allowanceCheck = lpTokenApprovedBalance
         spenderCheck = fAssetPool.autoStakePoolAddress
       } else {
-        const { spender, allowance } = await getTokenAllowanceWido({
+        const { spender, allowance } = await getTokenAllowance({
           chainId,
           fromToken: pickedToken.address,
           toToken,
