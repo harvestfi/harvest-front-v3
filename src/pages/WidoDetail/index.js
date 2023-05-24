@@ -1089,6 +1089,7 @@ const WidoDetail = () => {
                     multipleAssets={multipleAssets}
                     symbol={symbolWith}
                     setSymbol={setSymbolWith}
+                    token={token}
                   />
                 ) : (
                   <WidoWithdrawBase
