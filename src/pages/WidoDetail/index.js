@@ -1174,6 +1174,8 @@ const WidoDetail = () => {
                   tokenSymbol={id}
                   fAssetPool={fAssetPool}
                   quoteValue={quoteValueWith}
+                  multipleAssets={multipleAssets}
+                  setPendingAction={setPendingAction}
                 />
               </WithdrawComponents>
             </RestPart>

@@ -303,7 +303,7 @@ const WidoDepositFinalStep = ({
             await getWalletBalances(walletBalancesToCheck)
             const updatedStats = await fetchUserPoolStats([fAssetPool], account, userStats)
             await getFarmingBalances([tokenSymbol], farmingBalances, updatedStats)
-
+            setAmountsToExecute(['', ''])
             await fetchUserPoolStats([fAssetPool], account, userStats)
             setExecuteValue(2)
           },

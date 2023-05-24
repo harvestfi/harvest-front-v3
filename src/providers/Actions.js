@@ -557,6 +557,7 @@ const ActionsProvider = ({ children }) => {
       multipleAssets,
       selectedAsset,
       onSuccess = () => {},
+      onFailure = () => {},
       action = ACTIONS.WITHDRAW,
     ) => {
       setPendingAction(action)
@@ -630,6 +631,7 @@ const ActionsProvider = ({ children }) => {
         setPendingAction(null)
         const errorMessage = formatWeb3PluginErrorMessage(err)
         toast.error(errorMessage)
+        onFailure()
       }
     },
     [],
