@@ -31,8 +31,6 @@ import {
 import { useActions } from '../../../providers/Actions'
 import { useVaults } from '../../../providers/Vault'
 
-// const { tokens } = require('../../../data')
-
 const WidoWithdrawFinalStep = ({
   finalStep,
   setFinalStep,
@@ -67,9 +65,6 @@ const WidoWithdrawFinalStep = ({
   const walletBalancesToCheck = multipleAssets || [tokenSymbol]
   const selectedAsset = !token.isSingleAssetWithdrawalAllowed ? -1 : 0
 
-  // const isSpecialVault = token.liquidityPoolVault || token.poolVault
-  // const tokenDecimals = token.decimals || tokens[symbol].decimals
-
   const [amountsToExecute, setAmountsToExecute] = useState([])
 
   const amountsToExecuteInWei = amountsToExecute.map(amt => {
@@ -78,10 +73,6 @@ const WidoWithdrawFinalStep = ({
     }
 
     return amt
-    // if (multipleAssets) {
-    //   return toWei(amt, token.decimals, 0)
-    // }
-    // return toWei(amt, isSpecialVault ? tokenDecimals : token.decimals)
   })
 
   useEffect(() => {
@@ -323,7 +314,6 @@ const WidoWithdrawFinalStep = ({
   const onClickClose = () => {
     initState()
     setClickedTokenId(-1)
-    // setClickedVaultId(-1)
     setPickedToken({ symbol: 'Destination token' })
     setFinalStep(false)
     setWithdrawWido(false)
