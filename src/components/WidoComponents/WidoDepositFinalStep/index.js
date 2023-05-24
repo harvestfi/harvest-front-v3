@@ -3,6 +3,7 @@ import { quote, getTokenAllowance, approve } from 'wido'
 import BigNumber from 'bignumber.js'
 import { toast } from 'react-toastify'
 import { Spinner } from 'react-bootstrap'
+import { useConnectWallet } from '@web3-onboard/react'
 import { mainWeb3, toWei, fromWei, maxUint256 } from '../../../services/web3'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
@@ -59,6 +60,7 @@ const WidoDepositFinalStep = ({
 
   const [fromInfo, setFromInfo] = useState('')
   const [toInfo, setToInfo] = useState('')
+  const [{ wallet }] = useConnectWallet()
 
   useEffect(() => {
     setAmount(toWei(inputAmount, pickedToken.decimals))
@@ -129,7 +131,7 @@ const WidoDepositFinalStep = ({
       toToken,
       amount: amnt,
     })
-    const mainWeb = await mainWeb3()
+    const mainWeb = await mainWeb3(wallet)
     await mainWeb.eth.sendTransaction({
       from: account,
       data,
@@ -182,7 +184,7 @@ const WidoDepositFinalStep = ({
       const fromChainId = chainId
       const fromToken = pickedToken.address
       const toChainId = chainId
-      const mainWeb = await mainWeb3()
+      const mainWeb = await mainWeb3(wallet)
 
       const quoteResult = await quote(
         {

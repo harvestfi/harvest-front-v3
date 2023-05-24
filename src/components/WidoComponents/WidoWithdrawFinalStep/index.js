@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { Spinner } from 'react-bootstrap'
 import { toast } from 'react-toastify'
 import { approve, getTokenAllowance, quote } from 'wido'
+import { useConnectWallet } from '@web3-onboard/react'
 import ArrowDownIcon from '../../../assets/images/logos/wido/arrowdown.svg'
 import BackIcon from '../../../assets/images/logos/wido/back.svg'
 import CheckIcon from '../../../assets/images/logos/wido/check-approve.svg'
@@ -51,6 +52,7 @@ const WidoWithdrawFinalStep = ({
   const { fetchUserPoolStats, userStats } = usePools()
   const [fromInfo, setFromInfo] = useState('')
   const [toInfo, setToInfo] = useState('')
+  const [{ wallet }] = useConnectWallet()
 
   const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
   const chainId = token.chain || token.data.chain
@@ -135,7 +137,7 @@ const WidoWithdrawFinalStep = ({
       toToken: pickedToken.address,
       amount: amnt,
     })
-    const mainWeb = await mainWeb3()
+    const mainWeb = await mainWeb3(wallet)
     await mainWeb.eth.sendTransaction({
       from: account,
       data,
@@ -187,7 +189,7 @@ const WidoWithdrawFinalStep = ({
       const fromChainId = chainId
       const toChainId = chainId
       const toToken = pickedToken.address
-      const mainWeb = await mainWeb3()
+      const mainWeb = await mainWeb3(wallet)
       const quoteResult = await quote(
         {
           fromChainId, // Chain Id of from token

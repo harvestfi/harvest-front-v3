@@ -17,7 +17,6 @@ import {
   ARBISCAN_URL,
   ARBITRUM_URL,
   ETHERSCAN_URL,
-  ETH_URL,
   INFURA_URL,
   isDebugMode,
   MATICSCAN_URL,
@@ -92,7 +91,6 @@ export const web3Modal = new SafeAppWeb3Modal({
 const SDK = new SafeAppsSDK()
 export const infuraWeb3 = new Web3(INFURA_URL)
 export const maticWeb3 = new Web3(MATIC_URL)
-export const ethWeb3 = new Web3(ETH_URL)
 export const arbitrumWeb3 = new Web3(ARBITRUM_URL)
 export const ledgerProvider = new ethers.providers.Web3Provider(new IFrameEthereumProvider())
 export const ledgerWeb3 = new Web3(new IFrameEthereumProvider())
@@ -111,13 +109,15 @@ export const safeWeb3 = async () => {
 
 export const defaultWeb3 = new Web3(window.ethereum || INFURA_URL)
 
-export const mainWeb3 = async () => {
+export const mainWeb3 = async (wallet = null) => {
   let safeWeb = null
   if (isSafeApp()) safeWeb = await safeWeb3()
   return isSafeApp()
     ? safeWeb
     : isLedgerLive()
     ? ledgerWeb3
+    : wallet
+    ? new Web3(wallet.provider)
     : new Web3(window.ethereum || INFURA_URL)
 }
 
@@ -229,7 +229,7 @@ export const getChainName = chainId => {
   }
 }
 
-export const getWeb3 = async (chainId, account) => {
+export const getWeb3 = async (chainId, account, wallet = null) => {
   if (account) {
     if (isLedgerLive()) {
       return ledgerWeb3
@@ -239,12 +239,8 @@ export const getWeb3 = async (chainId, account) => {
       const web3 = await safeWeb3()
       return web3
     }
-    const web3 = await mainWeb3()
+    const web3 = await mainWeb3(wallet)
     return web3
-  }
-
-  if (chainId === CHAINS_ID.ETH_MAINNET) {
-    return ethWeb3
   }
 
   if (chainId === CHAINS_ID.MATIC_MAINNET) {
@@ -256,11 +252,6 @@ export const getWeb3 = async (chainId, account) => {
   }
 
   return infuraWeb3
-}
-
-export const getWeb3Local = async () => {
-  const web3 = await mainWeb3()
-  return web3
 }
 
 export const getExplorerLink = chainId => {

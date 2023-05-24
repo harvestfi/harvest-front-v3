@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { quote } from 'wido'
+import { useConnectWallet } from '@web3-onboard/react'
 import ArrowDownIcon from '../../../assets/images/logos/wido/arrowdown.svg'
 import BackIcon from '../../../assets/images/logos/wido/back.svg'
 import SettingIcon from '../../../assets/images/logos/wido/setting.svg'
@@ -42,6 +43,7 @@ const WidoWithdrawStart = ({
 
   const [fromInfo, setFromInfo] = useState('')
   const [toInfo, setToInfo] = useState('')
+  const [{ wallet }] = useConnectWallet()
 
   useEffect(() => {
     if (
@@ -63,7 +65,7 @@ const WidoWithdrawStart = ({
           const toChainId = chainId
           const user = account
           let curToken = balanceList.filter(el => el.symbol === pickedToken.symbol)
-          const mainWeb = await mainWeb3()
+          const mainWeb = await mainWeb3(wallet)
           const quoteResult = await quote(
             {
               fromChainId, // Chain Id of from token
@@ -130,6 +132,7 @@ const WidoWithdrawStart = ({
     token,
     setQuoteValue,
     useIFARM,
+    wallet,
   ])
 
   return (

@@ -13,13 +13,16 @@ app.use(
     crossOriginResourcePolicy: false,
     contentSecurityPolicy: {
       directives: {
-        frameAncestors: ['https://dapp-browser.apps.ledger.com/', 'https://app.safe.global/'],
+        frameAncestors: [
+          'https://dapp-browser.apps.ledger.com/',
+          'https://app.safe.global/',
+        ],
         scriptSrc: [
           "'self'",
           "'unsafe-inline'",
           'https://static.cloudflareinsights.com',
           'https://cdn.usefathom.com/script.js',
-          'https://cdn.jsdelivr.net/npm/@ledgerhq/connect-kit@1'
+          'https://cdn.jsdelivr.net/npm/@ledgerhq/connect-kit@1',
         ],
         connectSrc: ["'self'", '*'],
         imgSrc: ["'self'", 'https: data:'],

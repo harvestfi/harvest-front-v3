@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { quote } from 'wido'
+import { useConnectWallet } from '@web3-onboard/react'
 import ArrowDownIcon from '../../../assets/images/logos/wido/arrowdown.svg'
 import BackIcon from '../../../assets/images/logos/wido/back.svg'
 import { WIDO_BALANCES_DECIMALS } from '../../../constants'
@@ -40,6 +41,7 @@ const WidoDepositStart = ({
 }) => {
   const { backColor, borderColor, filterColor } = useThemeContext()
   const { account } = useWallet()
+  const [{ wallet }] = useConnectWallet()
 
   const chainId = token.chain || token.data.chain
 
@@ -66,7 +68,7 @@ const WidoDepositStart = ({
           const toChainId = chainId
           const user = account
           let curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol)
-          const mainWeb = await mainWeb3()
+          const mainWeb = await mainWeb3(wallet)
 
           const quoteResult = await quote(
             {
@@ -131,6 +133,7 @@ const WidoDepositStart = ({
     balanceList,
     setQuoteValue,
     useIFARM,
+    wallet,
   ])
 
   return (

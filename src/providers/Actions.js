@@ -4,6 +4,7 @@ import { find, get, isUndefined } from 'lodash'
 import { forEach } from 'promised-loops'
 import React, { createContext, useCallback, useContext } from 'react'
 import { toast } from 'react-toastify'
+import { useConnectWallet } from '@web3-onboard/react'
 import {
   ACTIONS,
   FARM_TOKEN_SYMBOL,
@@ -36,6 +37,7 @@ const ActionsContext = createContext()
 const useActions = () => useContext(ActionsContext)
 
 const ActionsProvider = ({ children }) => {
+  const [{ wallet }] = useConnectWallet()
   const handleApproval = useCallback(
     async (
       account,
@@ -47,7 +49,6 @@ const ActionsProvider = ({ children }) => {
       onSuccessApproval = () => {},
     ) => {
       const address = vaultAddress || tokens[tokenSymbol].vaultAddress
-
       try {
         if (poolData) {
           await tokenMethods.approve(
@@ -761,7 +762,7 @@ const ActionsProvider = ({ children }) => {
     async (selectedToken, ownerAddress, setPendingAction, action = ACTIONS.APPROVE_DEPOSIT) => {
       try {
         setPendingAction(action)
-        const mainWeb = await mainWeb3()
+        const mainWeb = await mainWeb3(wallet)
         const gasPrice = mainWeb.eth.getGasPrice()
         const apiResponse = await axios.get(`${ZAPPER_FI_ZAP_IN_ENDPOINT}/approval-transaction`, {
           params: {
@@ -782,7 +783,7 @@ const ActionsProvider = ({ children }) => {
         setPendingAction(null)
       }
     },
-    [],
+    [wallet],
   )
 
   const handleZapIn = useCallback(
@@ -798,7 +799,7 @@ const ActionsProvider = ({ children }) => {
     ) => {
       try {
         setPendingAction(action)
-        const mainWeb = await mainWeb3()
+        const mainWeb = await mainWeb3(wallet)
         const gasPrice = mainWeb.eth.getGasPrice()
         const apiResponse = await axios.get(`${ZAPPER_FI_ZAP_IN_ENDPOINT}/transaction`, {
           params: {
@@ -824,7 +825,7 @@ const ActionsProvider = ({ children }) => {
         setPendingAction(null)
       }
     },
-    [],
+    [wallet],
   )
 
   return (

@@ -7,6 +7,7 @@ import React, {
   useRef,
   useState,
 } from 'react'
+import { useConnectWallet } from '@web3-onboard/react'
 // eslint-disable-next-line import/no-unresolved
 import axios from 'axios'
 import isEqual from 'fast-deep-equal/react'
@@ -22,7 +23,7 @@ import { getWeb3, newContractInstance, safeProvider } from '../../services/web3'
 import poolContractData from '../../services/web3/contracts/pool/contract.json'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import tokenMethods from '../../services/web3/contracts/token/methods'
-import { isLedgerLive, truncateNumberString, isSafeApp } from '../../utils'
+import { isLedgerLive, isSafeApp, truncateNumberString } from '../../utils'
 import { useContracts } from '../Contracts'
 import { useWallet } from '../Wallet'
 import { getLpTokenData, getUserStats, pollUpdatedUserStats } from './utils'
@@ -56,12 +57,15 @@ const PoolsProvider = _ref => {
   const [disableWallet, setDisableWallet] = useState(true)
   const loadedUserPoolsWeb3Provider = useRef(false)
   const loadedInitialStakedAndUnstakedBalances = useRef(false)
+  const [{ wallet }] = useConnectWallet()
   const loadedPools = useMemo(
     () =>
       filter(pools, pool =>
-        isLedgerLive() || isSafeApp() ? pool.chain === chainId : selChain.includes(pool.chain),
+        isLedgerLive() || isSafeApp() || wallet?.label === 'Ledger'
+          ? pool.chain === chainId
+          : selChain.includes(pool.chain),
       ),
-    [selChain, pools, chainId],
+    [selChain, pools, chainId, wallet],
   )
   const [finishPool, setFinishPool] = useState(false) // set true when getPoolsData success
   const formatPoolsData = useCallback(
@@ -71,8 +75,8 @@ const PoolsProvider = _ref => {
           if (!isLedgerLive() || (isLedgerLive() && pool.chain !== CHAINS_ID.ARBITRUM_ONE)) {
             let curChain = chainId,
               selectedAccount = account,
-              web3Client = await getWeb3(pool.chain, selectedAccount),
-              web3ClientLocal = await getWeb3(pool.chain, selectedAccount),
+              web3Client = await getWeb3(pool.chain, selectedAccount, wallet),
+              web3ClientLocal = await getWeb3(pool.chain, selectedAccount, wallet),
               rewardAPY = ['0'],
               rewardAPR = ['0'],
               autoStakeContractInstance = null,
@@ -206,13 +210,12 @@ const PoolsProvider = _ref => {
         }),
       )
       formattedPools = formattedPools.filter(pool => pool !== null)
-      // if (account) {
       loadedUserPoolsWeb3Provider.current = true
-      // }
+      setFinishPool(true)
 
       return formattedPools
     },
-    [account, chainId],
+    [account, chainId, wallet],
   )
   const getPoolsData = useCallback(async () => {
     let newPools = []
@@ -220,7 +223,7 @@ const PoolsProvider = _ref => {
     try {
       const apiResponse = await axios.get(POOLS_API_ENDPOINT)
       const apiData = get(apiResponse, 'data')
-      if (isLedgerLive()) {
+      if (isLedgerLive() || wallet?.label === 'Ledger') {
         newPools = await formatPoolsData([...apiData.eth, ...apiData.matic])
       } else {
         newPools = await formatPoolsData([...apiData.eth, ...apiData.matic, ...apiData.arbitrum])
@@ -243,7 +246,7 @@ const PoolsProvider = _ref => {
 
     setPools(newPools)
     setFinishPool(true)
-  }, [formatPoolsData])
+  }, [formatPoolsData, wallet])
 
   useEffect(() => {
     if (logout) {
@@ -255,14 +258,7 @@ const PoolsProvider = _ref => {
     _ref2 => {
       const [prevAccount] = _ref2
 
-      if (
-        account !== prevAccount &&
-        account &&
-        !loadedUserPoolsWeb3Provider.current &&
-        finishPool &&
-        !isLedgerLive() &&
-        !isSafeApp()
-      ) {
+      if (account !== prevAccount && account && finishPool && !isLedgerLive() && !isSafeApp()) {
         const setCurrentPoolsWithUserProvider = async () => {
           const poolsWithUpdatedProvider = await formatPoolsData(pools)
           setPools(poolsWithUpdatedProvider)
@@ -272,7 +268,6 @@ const PoolsProvider = _ref => {
       } else if (
         account !== prevAccount &&
         account &&
-        !loadedUserPoolsWeb3Provider.current &&
         finishPool &&
         (isLedgerLive() || isSafeApp())
       ) {

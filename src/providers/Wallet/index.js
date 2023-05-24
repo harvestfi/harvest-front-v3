@@ -1,22 +1,22 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
-import { toast } from 'react-toastify'
 import { useConnectWallet } from '@web3-onboard/react'
 import { isArray } from 'lodash'
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
 import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../constants'
 import { CHAINS_ID } from '../../data/constants'
 import {
+  defaultWeb3,
   getChainName,
   hasValidUpdatedBalance,
-  pollUpdatedBalance,
   ledgerProvider,
-  safeWeb3Provider,
+  pollUpdatedBalance,
   safeProvider,
-  defaultWeb3,
+  safeWeb3Provider,
 } from '../../services/web3'
 import tokenMethods from '../../services/web3/contracts/token/methods'
+import { isLedgerLive, isSafeApp } from '../../utils'
 import { useContracts } from '../Contracts'
 import { validateChain } from './utils'
-import { isLedgerLive, isSafeApp } from '../../utils'
 
 /* eslint-disable global-require */
 const { tokens } = require('../../data')
@@ -198,9 +198,10 @@ const WalletProvider = _ref => {
   useEffect(() => {
     if (wallet) {
       const chainNum = parseInt(wallet.chains[0].id, 16).toString()
-      setAccount(wallet.accounts[0].address)
+      setAccount(wallet.accounts[0].address.toLowerCase())
       setConnected(true)
       setChainId(chainNum)
+      web3Plugin.setProvider(wallet.provider)
       setLogout(false)
     } else {
       setConnected(false)
@@ -208,7 +209,7 @@ const WalletProvider = _ref => {
       setBalances({})
       setLogout(true)
     }
-  }, [wallet])
+  }, [wallet, web3Plugin])
 
   const connectAction = useCallback(async () => {
     await connect()
