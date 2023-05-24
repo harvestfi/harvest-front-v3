@@ -201,7 +201,7 @@ const WalletProvider = _ref => {
       setAccount(wallet.accounts[0].address.toLowerCase())
       setConnected(true)
       setChainId(chainNum)
-      web3Plugin.setProvider(wallet.provider)
+      if (wallet.label === 'Ledger') web3Plugin.setProvider(wallet.provider)
       setLogout(false)
     } else {
       setConnected(false)

@@ -116,7 +116,7 @@ export const mainWeb3 = async (wallet = null) => {
     ? safeWeb
     : isLedgerLive()
     ? ledgerWeb3
-    : wallet
+    : wallet && wallet.label === 'Ledger'
     ? new Web3(wallet.provider)
     : new Web3(window.ethereum || INFURA_URL)
 }
