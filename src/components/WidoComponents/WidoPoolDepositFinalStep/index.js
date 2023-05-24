@@ -302,13 +302,16 @@ const WidoPoolDepositFinalStep = ({
         false,
         async () => {
           await reloadStats()
+          await fetchUserPoolStats([fAssetPool], account, userStats)
+          setExecuteValue(2)
         },
         async () => {
           await reloadStats()
         },
+        async () => {
+          setExecuteValue(0)
+        },
       )
-      await fetchUserPoolStats([fAssetPool], account, userStats)
-      setExecuteValue(2)
     } else {
       const user = account
       try {

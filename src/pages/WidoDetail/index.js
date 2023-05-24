@@ -525,7 +525,7 @@ const WidoDetail = () => {
       ) {
         const getBalance = async () => {
           firstWalletBalanceLoad.current = false
-          await getWalletBalances([IFARM_TOKEN_SYMBOL, FARM_TOKEN_SYMBOL], false, true)
+          await getWalletBalances([IFARM_TOKEN_SYMBOL, FARM_TOKEN_SYMBOL, id], false, true)
         }
 
         getBalance()
@@ -1055,7 +1055,6 @@ const WidoDetail = () => {
                     setUsdValue={setUsdValue}
                     setBalance={setBalanceDepo}
                     setClickedTokenId={setClickedTokenIdDepo}
-                    setClickedVaultId={setClickedVaultIdDepo}
                     pickedToken={pickedTokenDepo}
                     setPickedToken={setPickedTokenDepo}
                     slippagePercentage={slippagePercentDepo}
@@ -1065,6 +1064,8 @@ const WidoDetail = () => {
                     tokenSymbol={id}
                     quoteValue={quoteValueDepo}
                     fAssetPool={fAssetPool}
+                    setPendingAction={setPendingAction}
+                    multipleAssets={multipleAssets}
                   />
                 )}
               </DepositComponets>
