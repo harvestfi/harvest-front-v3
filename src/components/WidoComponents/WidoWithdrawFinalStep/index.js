@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useState } from 'react'
 import { Spinner } from 'react-bootstrap'
+import { get } from 'lodash'
 import { toast } from 'react-toastify'
 import { approve, getTokenAllowance, quote } from 'wido'
 import ArrowDownIcon from '../../../assets/images/logos/wido/arrowdown.svg'
@@ -54,6 +55,7 @@ const WidoWithdrawFinalStep = ({
 
   const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
   const chainId = token.chain || token.data.chain
+  const pricePerFullShare = get(token, `pricePerFullShare`, 0)
 
   useEffect(() => {
     if (
@@ -81,10 +83,34 @@ const WidoWithdrawFinalStep = ({
   }, [pickedToken, account, chainId, fromToken, unstakeBalance, finalStep, token])
 
   useEffect(() => {
-    if (quoteValue) {
-      const getQuoteResult = async () => {
-        try {
-          const fromInfoTemp =
+    const getQuoteResult = async () => {
+      try {
+        let fromInfoTemp, toInfoTemp
+        if (pickedToken.default && !useIFARM) {
+          fromInfoTemp = `${formatNumberWido(
+            fromWei(unstakeBalance, pickedToken.decimals),
+            WIDO_BALANCES_DECIMALS,
+          )}`
+          toInfoTemp = `${formatNumberWido(
+            new BigNumber(fromWei(unstakeBalance, pickedToken.decimals)).multipliedBy(
+              fromWei(pricePerFullShare, pickedToken.decimals),
+            ),
+            WIDO_BALANCES_DECIMALS,
+          )}`
+          const price =
+            pickedToken.usdPrice !== '0.0'
+              ? formatNumberWido(
+                  new BigNumber(fromWei(unstakeBalance, pickedToken.decimals))
+                    .multipliedBy(fromWei(pricePerFullShare, pickedToken.decimals))
+                    .multipliedBy(pickedToken.usdPrice),
+                  WIDO_BALANCES_DECIMALS,
+                )
+              : 0
+
+          fromInfoTemp += ` ($${price})`
+          toInfoTemp += ` ($${price})`
+        } else {
+          fromInfoTemp =
             quoteValue &&
             formatNumberWido(
               fromWei(
@@ -102,7 +128,7 @@ const WidoWithdrawFinalStep = ({
                     ),
                     WIDO_BALANCES_DECIMALS,
                   )})`)
-          const toInfoTemp =
+          toInfoTemp =
             quoteValue &&
             formatNumberWido(
               fromWei(quoteValue.toTokenAmount, pickedToken.decimals),
@@ -117,16 +143,16 @@ const WidoWithdrawFinalStep = ({
                     ),
                     WIDO_BALANCES_DECIMALS,
                   )})`)
-          setFromInfo(fromInfoTemp)
-          setToInfo(toInfoTemp)
-        } catch (e) {
-          toast.error('Failed to get quote!')
         }
+        setFromInfo(fromInfoTemp)
+        setToInfo(toInfoTemp)
+      } catch (e) {
+        toast.error('Failed to get quote!')
       }
-
-      getQuoteResult()
     }
-  }, [pickedToken, token, quoteValue])
+
+    getQuoteResult()
+  }, [pickedToken, token, quoteValue, pricePerFullShare, unstakeBalance, useIFARM])
 
   const approveZap = async amnt => {
     const { data, to } = await approve({
@@ -276,7 +302,7 @@ const WidoWithdrawFinalStep = ({
           }}
           filterColor={filterColor}
         />
-        You are about to swap
+        Final Step
         <CloseBtn src={SettingIcon} width={18} height={18} alt="" onClick={() => {}} />
       </NewLabel>
 

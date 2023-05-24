@@ -241,10 +241,7 @@ const WidoDepositStart = ({
             }
             {pickedToken.default && !useIFARM ? (
               formatNumberWido(
-                fromWei(
-                  get(token, `pricePerFullShare`, 0),
-                  token.decimals || token.data.lpTokenData.decimals,
-                ),
+                fromWei(pricePerFullShare, token.decimals || token.data.lpTokenData.decimals),
                 WIDO_BALANCES_DECIMALS,
               )
             ) : quoteValue ? (

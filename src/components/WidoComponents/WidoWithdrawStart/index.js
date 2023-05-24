@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { quote } from 'wido'
+import { get } from 'lodash'
 import ArrowDownIcon from '../../../assets/images/logos/wido/arrowdown.svg'
 import BackIcon from '../../../assets/images/logos/wido/back.svg'
 import SettingIcon from '../../../assets/images/logos/wido/setting.svg'
@@ -43,6 +44,8 @@ const WidoWithdrawStart = ({
   const [fromInfo, setFromInfo] = useState('')
   const [toInfo, setToInfo] = useState('')
 
+  const pricePerFullShare = get(token, `pricePerFullShare`, 0)
+
   useEffect(() => {
     if (
       account &&
@@ -56,64 +59,90 @@ const WidoWithdrawStart = ({
         setQuoteValue(null)
         const amount = unstakeBalance
         try {
-          const chainId = token.chain || token.data.chain
-          const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
-          const fromChainId = chainId
-          const toToken = pickedToken.address
-          const toChainId = chainId
-          const user = account
-          let safeWeb,
-            curToken = balanceList.filter(el => el.symbol === pickedToken.symbol)
-          if (isSafeApp()) {
-            safeWeb = await safeWeb3()
-          }
-          const quoteResult = await quote(
-            {
-              fromChainId, // Chain Id of from token
-              fromToken, // Token address of from token
-              toChainId, // Chain Id of to token
-              toToken, // Token address of to token
-              amount, // Token amount of from token
-              slippagePercentage, // Acceptable max slippage for the swap
-              user, // Address of user placing the order.
-            },
-            isSafeApp() ? safeWeb.currentProvider : mainWeb3.currentProvider,
-          )
-          setQuoteValue(quoteResult)
-
-          curToken = curToken[0]
-
-          const fromInfoTemp =
-            formatNumberWido(
-              fromWei(
-                quoteResult.fromTokenAmount,
-                token.decimals || token.data.lpTokenData.decimals,
+          let fromInfoTemp, toInfoTemp
+          if (pickedToken.default && !useIFARM) {
+            fromInfoTemp = `${formatNumberWido(
+              fromWei(amount, pickedToken.decimals),
+              WIDO_BALANCES_DECIMALS,
+            )}`
+            toInfoTemp = `${formatNumberWido(
+              new BigNumber(fromWei(amount, pickedToken.decimals)).multipliedBy(
+                fromWei(pricePerFullShare, pickedToken.decimals),
               ),
               WIDO_BALANCES_DECIMALS,
-            ) +
-            (quoteResult.fromTokenAmountUsdValue === null
-              ? ''
-              : ` ($${formatNumberWido(
-                  fromWei(
-                    quoteResult.fromTokenAmount * quoteResult.fromTokenUsdPrice,
-                    token.decimals || token.data.lpTokenData.decimals,
-                  ),
-                  WIDO_BALANCES_DECIMALS,
-                )})`)
-          const toInfoTemp =
-            formatNumberWido(
-              fromWei(quoteResult.toTokenAmount, curToken.decimals),
-              WIDO_BALANCES_DECIMALS,
-            ) +
-            (quoteResult.toTokenUsdPrice === null
-              ? ''
-              : ` ($${formatNumberWido(
-                  fromWei(
-                    quoteResult.toTokenAmount * quoteResult.toTokenUsdPrice,
-                    curToken.decimals,
-                  ),
-                  WIDO_BALANCES_DECIMALS,
-                )})`)
+            )}`
+            const price =
+              pickedToken.usdPrice !== '0.0'
+                ? formatNumberWido(
+                    new BigNumber(fromWei(amount, pickedToken.decimals))
+                      .multipliedBy(fromWei(pricePerFullShare, pickedToken.decimals))
+                      .multipliedBy(pickedToken.usdPrice),
+                    WIDO_BALANCES_DECIMALS,
+                  )
+                : 0
+
+            fromInfoTemp += ` ($${price})`
+            toInfoTemp += ` ($${price})`
+          } else {
+            const chainId = token.chain || token.data.chain
+            const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
+            const fromChainId = chainId
+            const toToken = pickedToken.address
+            const toChainId = chainId
+            const user = account
+            let safeWeb,
+              curToken = balanceList.filter(el => el.symbol === pickedToken.symbol)
+            if (isSafeApp()) {
+              safeWeb = await safeWeb3()
+            }
+            const quoteResult = await quote(
+              {
+                fromChainId, // Chain Id of from token
+                fromToken, // Token address of from token
+                toChainId, // Chain Id of to token
+                toToken, // Token address of to token
+                amount, // Token amount of from token
+                slippagePercentage, // Acceptable max slippage for the swap
+                user, // Address of user placing the order.
+              },
+              isSafeApp() ? safeWeb.currentProvider : mainWeb3.currentProvider,
+            )
+            setQuoteValue(quoteResult)
+
+            curToken = curToken[0]
+
+            fromInfoTemp =
+              formatNumberWido(
+                fromWei(
+                  quoteResult.fromTokenAmount,
+                  token.decimals || token.data.lpTokenData.decimals,
+                ),
+                WIDO_BALANCES_DECIMALS,
+              ) +
+              (quoteResult.fromTokenAmountUsdValue === null
+                ? ''
+                : ` ($${formatNumberWido(
+                    fromWei(
+                      quoteResult.fromTokenAmount * quoteResult.fromTokenUsdPrice,
+                      token.decimals || token.data.lpTokenData.decimals,
+                    ),
+                    WIDO_BALANCES_DECIMALS,
+                  )})`)
+            toInfoTemp =
+              formatNumberWido(
+                fromWei(quoteResult.toTokenAmount, curToken.decimals),
+                WIDO_BALANCES_DECIMALS,
+              ) +
+              (quoteResult.toTokenUsdPrice === null
+                ? ''
+                : ` ($${formatNumberWido(
+                    fromWei(
+                      quoteResult.toTokenAmount * quoteResult.toTokenUsdPrice,
+                      curToken.decimals,
+                    ),
+                    WIDO_BALANCES_DECIMALS,
+                  )})`)
+          }
 
           setFromInfo(fromInfoTemp)
           setToInfo(toInfoTemp)
@@ -133,6 +162,7 @@ const WidoWithdrawStart = ({
     token,
     setQuoteValue,
     useIFARM,
+    pricePerFullShare,
   ])
 
   return (
@@ -198,9 +228,18 @@ const WidoWithdrawStart = ({
         <NewLabel display="flex" justifyContent="space-between" marginBottom="15px">
           <NewLabel>Rate</NewLabel>
           <NewLabel display="flex" items="center">
-            {quoteValue ? (
+            {<>1&nbsp; =</>}
+            {pickedToken.default && !useIFARM ? (
               <>
-                1&nbsp; =
+                {formatNumberWido(
+                  fromWei(pricePerFullShare, pickedToken.decimals),
+                  WIDO_BALANCES_DECIMALS,
+                )}
+                &nbsp;&nbsp;
+                <img src={pickedToken.logoURI} width={20} height={20} alt="" />
+              </>
+            ) : quoteValue ? (
+              <>
                 {quoteValue &&
                   quoteValue !== {} &&
                   formatNumberWido(quoteValue.price, WIDO_BALANCES_DECIMALS)}
@@ -216,10 +255,21 @@ const WidoWithdrawStart = ({
         <NewLabel display="flex" justifyContent="space-between" marginBottom="15px">
           <NewLabel>Expected Output</NewLabel>
           <NewLabel weight={400} size="14px" height="18px" display="flex" items="center">
-            {quoteValue ? (
+            {
               <>
                 <img src={pickedToken.logoURI} width={20} height={20} alt="" />
                 &nbsp;~
+              </>
+            }
+            {pickedToken.default && !useIFARM ? (
+              formatNumberWido(
+                new BigNumber(fromWei(unstakeBalance, pickedToken.decimals)).multipliedBy(
+                  fromWei(pricePerFullShare, pickedToken.decimals),
+                ),
+                WIDO_BALANCES_DECIMALS,
+              )
+            ) : quoteValue ? (
+              <>
                 {quoteValue &&
                   quoteValue !== {} &&
                   formatNumberWido(
@@ -235,10 +285,21 @@ const WidoWithdrawStart = ({
         <NewLabel display="flex" justifyContent="space-between" marginBottom="15px">
           <NewLabel>Minimum Recieved</NewLabel>
           <NewLabel weight={400} size="14px" height="18px" display="flex" items="center">
-            {quoteValue ? (
+            {
               <>
                 <img src={pickedToken.logoURI} width={20} height={20} alt="" />
                 &nbsp;~
+              </>
+            }
+            {pickedToken.default && !useIFARM ? (
+              formatNumberWido(
+                new BigNumber(fromWei(unstakeBalance, pickedToken.decimals)).multipliedBy(
+                  fromWei(pricePerFullShare, pickedToken.decimals),
+                ),
+                WIDO_BALANCES_DECIMALS,
+              )
+            ) : quoteValue ? (
+              <>
                 {quoteValue && quoteValue !== {}
                   ? formatNumberWido(
                       fromWei(quoteValue.minToTokenAmount, pickedToken.decimals),
