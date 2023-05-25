@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useState } from 'react'
 import { Spinner } from 'react-bootstrap'
+import { get, isEmpty } from 'lodash'
 import { toast } from 'react-toastify'
 import { approve, getTokenAllowance, quote } from 'wido'
 import ArrowDownIcon from '../../../assets/images/logos/wido/arrowdown.svg'
@@ -10,7 +11,7 @@ import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.sv
 import SettingIcon from '../../../assets/images/logos/wido/setting.svg'
 import Swap1WithIcon from '../../../assets/images/logos/wido/swap2.svg'
 import WithdrawIcon from '../../../assets/images/logos/wido/withdraw-icon.svg'
-import { WIDO_BALANCES_DECIMALS } from '../../../constants'
+import { WIDO_BALANCES_DECIMALS, IFARM_TOKEN_SYMBOL } from '../../../constants'
 import { usePools } from '../../../providers/Pools'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
@@ -27,6 +28,8 @@ import {
   SelectTokenWido,
   IconArrowDown,
 } from './style'
+import { useActions } from '../../../providers/Actions'
+import { useVaults } from '../../../providers/Vault'
 
 const WidoWithdrawFinalStep = ({
   finalStep,
@@ -45,15 +48,35 @@ const WidoWithdrawFinalStep = ({
   slippagePercentage,
   fAssetPool,
   quoteValue,
+  multipleAssets,
+  setPendingAction,
 }) => {
   const [approveValue, setApproveValue] = React.useState(0)
-  const { account } = useWallet()
+  const { account, getWalletBalances } = useWallet()
   const { fetchUserPoolStats, userStats } = usePools()
+  const { vaultsData, farmingBalances, getFarmingBalances } = useVaults()
+  const { handleWithdraw } = useActions()
   const [fromInfo, setFromInfo] = useState('')
   const [toInfo, setToInfo] = useState('')
 
   const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
   const chainId = token.chain || token.data.chain
+  const pricePerFullShare = useIFARM
+    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
+    : get(token, `pricePerFullShare`, 0)
+
+  const walletBalancesToCheck = multipleAssets || [tokenSymbol]
+  const selectedAsset = !token.isSingleAssetWithdrawalAllowed ? -1 : 0
+
+  const [amountsToExecute, setAmountsToExecute] = useState([])
+
+  const amountsToExecuteInWei = amountsToExecute.map(amt => {
+    if (isEmpty(amt)) {
+      return null
+    }
+
+    return amt
+  })
 
   useEffect(() => {
     if (
@@ -62,29 +85,58 @@ const WidoWithdrawFinalStep = ({
       !new BigNumber(unstakeBalance).isEqualTo(0) &&
       finalStep
     ) {
+      setAmountsToExecute([unstakeBalance.toString()])
       const tokenAllowance = async () => {
-        const { allowance } = await getTokenAllowance({
-          chainId,
-          fromToken,
-          toToken: pickedToken.address,
-          accountAddress: account, // User
-        })
-        if (!new BigNumber(allowance).gte(unstakeBalance)) {
-          setApproveValue(0)
-        } else {
+        if (pickedToken.default) {
           setApproveValue(2)
+        } else {
+          const { allowance } = await getTokenAllowance({
+            chainId,
+            fromToken,
+            toToken: pickedToken.address,
+            accountAddress: account, // User
+          })
+          if (!new BigNumber(allowance).gte(unstakeBalance)) {
+            setApproveValue(0)
+          } else {
+            setApproveValue(2)
+          }
         }
       }
 
       tokenAllowance()
     }
-  }, [pickedToken, account, chainId, fromToken, unstakeBalance, finalStep, token])
+  }, [pickedToken, account, chainId, fromToken, unstakeBalance, finalStep, token, useIFARM])
 
   useEffect(() => {
-    if (quoteValue) {
-      const getQuoteResult = async () => {
-        try {
-          const fromInfoTemp =
+    const getQuoteResult = async () => {
+      try {
+        let fromInfoTemp, toInfoTemp
+        if (pickedToken.default) {
+          fromInfoTemp = `${formatNumberWido(
+            fromWei(unstakeBalance, pickedToken.decimals),
+            WIDO_BALANCES_DECIMALS,
+          )}`
+          toInfoTemp = `${formatNumberWido(
+            new BigNumber(fromWei(unstakeBalance, pickedToken.decimals)).multipliedBy(
+              fromWei(pricePerFullShare, pickedToken.decimals),
+            ),
+            WIDO_BALANCES_DECIMALS,
+          )}`
+          const price =
+            pickedToken.usdPrice !== '0.0'
+              ? formatNumberWido(
+                  new BigNumber(fromWei(unstakeBalance, pickedToken.decimals))
+                    .multipliedBy(fromWei(pricePerFullShare, pickedToken.decimals))
+                    .multipliedBy(pickedToken.usdPrice),
+                  WIDO_BALANCES_DECIMALS,
+                )
+              : 0
+
+          fromInfoTemp += ` ($${price})`
+          toInfoTemp += ` ($${price})`
+        } else {
+          fromInfoTemp =
             quoteValue &&
             formatNumberWido(
               fromWei(
@@ -102,7 +154,7 @@ const WidoWithdrawFinalStep = ({
                     ),
                     WIDO_BALANCES_DECIMALS,
                   )})`)
-          const toInfoTemp =
+          toInfoTemp =
             quoteValue &&
             formatNumberWido(
               fromWei(quoteValue.toTokenAmount, pickedToken.decimals),
@@ -117,16 +169,16 @@ const WidoWithdrawFinalStep = ({
                     ),
                     WIDO_BALANCES_DECIMALS,
                   )})`)
-          setFromInfo(fromInfoTemp)
-          setToInfo(toInfoTemp)
-        } catch (e) {
-          toast.error('Failed to get quote!')
         }
+        setFromInfo(fromInfoTemp)
+        setToInfo(toInfoTemp)
+      } catch (e) {
+        toast.error('Failed to get quote!')
       }
-
-      getQuoteResult()
     }
-  }, [pickedToken, token, quoteValue])
+
+    getQuoteResult()
+  }, [pickedToken, token, quoteValue, pricePerFullShare, unstakeBalance, useIFARM])
 
   const approveZap = async amnt => {
     const { data, to } = await approve({
@@ -192,43 +244,65 @@ const WidoWithdrawFinalStep = ({
     const user = account
     const amount = unstakeBalance
     try {
-      const fromChainId = chainId
-      const toChainId = chainId
-      const toToken = pickedToken.address
-      let safeWeb
-      if (isSafeApp()) {
-        safeWeb = await safeWeb3()
-      }
-      const quoteResult = await quote(
-        {
-          fromChainId, // Chain Id of from token
-          fromToken, // Token address of from token
-          toChainId, // Chain Id of to token
-          toToken, // Token address of to token
-          amount, // Token amount of from token
-          slippagePercentage, // Acceptable max slippage for the swap
-          user, // Address of user placing the order.
-        },
-        isSafeApp() ? safeWeb.currentProvider : mainWeb3.currentProvider,
-      )
-
-      if (isSafeApp()) {
-        await safeWeb.eth.sendTransaction({
-          from: quoteResult.from,
-          data: quoteResult.data,
-          to: quoteResult.to,
-          value: quoteResult.value,
-        })
+      if (pickedToken.default) {
+        await handleWithdraw(
+          account,
+          useIFARM ? IFARM_TOKEN_SYMBOL : tokenSymbol,
+          amountsToExecuteInWei[0],
+          vaultsData,
+          setPendingAction,
+          multipleAssets,
+          selectedAsset,
+          async () => {
+            setAmountsToExecute(['', ''])
+            const updatedStats = await fetchUserPoolStats([fAssetPool], account, userStats)
+            await getWalletBalances(walletBalancesToCheck)
+            await getFarmingBalances([tokenSymbol], farmingBalances, updatedStats)
+            setExecuteValue(2)
+          },
+          async () => {
+            setExecuteValue(0)
+          },
+        )
       } else {
-        await mainWeb3.eth.sendTransaction({
-          from: quoteResult.from,
-          data: quoteResult.data,
-          to: quoteResult.to,
-          value: quoteResult.value,
-        })
+        const fromChainId = chainId
+        const toChainId = chainId
+        const toToken = pickedToken.address
+        let safeWeb
+        if (isSafeApp()) {
+          safeWeb = await safeWeb3()
+        }
+        const quoteResult = await quote(
+          {
+            fromChainId, // Chain Id of from token
+            fromToken, // Token address of from token
+            toChainId, // Chain Id of to token
+            toToken, // Token address of to token
+            amount, // Token amount of from token
+            slippagePercentage, // Acceptable max slippage for the swap
+            user, // Address of user placing the order.
+          },
+          isSafeApp() ? safeWeb.currentProvider : mainWeb3.currentProvider,
+        )
+
+        if (isSafeApp()) {
+          await safeWeb.eth.sendTransaction({
+            from: quoteResult.from,
+            data: quoteResult.data,
+            to: quoteResult.to,
+            value: quoteResult.value,
+          })
+        } else {
+          await mainWeb3.eth.sendTransaction({
+            from: quoteResult.from,
+            data: quoteResult.data,
+            to: quoteResult.to,
+            value: quoteResult.value,
+          })
+        }
+        await fetchUserPoolStats([fAssetPool], account, userStats)
+        setExecuteValue(2)
       }
-      await fetchUserPoolStats([fAssetPool], account, userStats)
-      setExecuteValue(2)
     } catch (err) {
       toast.error('Failed to execute!')
       setExecuteValue(0)
@@ -243,7 +317,6 @@ const WidoWithdrawFinalStep = ({
   const onClickClose = () => {
     initState()
     setClickedTokenId(-1)
-    // setClickedVaultId(-1)
     setPickedToken({ symbol: 'Destination token' })
     setFinalStep(false)
     setWithdrawWido(false)
@@ -276,7 +349,7 @@ const WidoWithdrawFinalStep = ({
           }}
           filterColor={filterColor}
         />
-        You are about to swap
+        Final Step
         <CloseBtn src={SettingIcon} width={18} height={18} alt="" onClick={() => {}} />
       </NewLabel>
 
@@ -299,28 +372,36 @@ const WidoWithdrawFinalStep = ({
       </NewLabel>
 
       <NewLabel size="16px" height="21px" weight={600}>
-        <Buttons
-          show={approveValue}
-          onClick={() => {
-            onClickApprove()
-          }}
-        >
-          {approveValue === 2 ? (
-            <>
-              {useIFARM ? symbol : tokenSymbol} withdrawal approved
-              <img src={CheckIcon} alt="" />
-            </>
-          ) : (
-            <>
-              Approve {useIFARM ? symbol : tokenSymbol} withdrawal
-              {approveValue === 1 ? (
-                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-              ) : (
-                <img src={ChevronRightIcon} alt="" />
-              )}
-            </>
-          )}
-        </Buttons>
+        {pickedToken.default && !useIFARM ? null : (
+          <Buttons
+            show={approveValue}
+            onClick={() => {
+              onClickApprove()
+            }}
+          >
+            {approveValue === 2 ? (
+              <>
+                {useIFARM ? symbol : tokenSymbol} withdrawal approved
+                <img src={CheckIcon} alt="" />
+              </>
+            ) : (
+              <>
+                Approve {useIFARM ? symbol : tokenSymbol} withdrawal
+                {approveValue === 1 ? (
+                  <Spinner
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <img src={ChevronRightIcon} alt="" />
+                )}
+              </>
+            )}
+          </Buttons>
+        )}
         <ExecuteButton
           approve={approveValue}
           execute={executeValue}

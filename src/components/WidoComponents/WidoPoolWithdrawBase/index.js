@@ -1,8 +1,9 @@
 import BigNumber from 'bignumber.js'
 import { get } from 'lodash'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Spinner } from 'react-bootstrap'
 import { toast } from 'react-toastify'
+import { useSetChain } from '@web3-onboard/react'
 import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.svg'
 import DropDownIcon from '../../../assets/images/logos/wido/drop-down.svg'
 import FARMIcon from '../../../assets/images/logos/wido/farm.svg'
@@ -14,7 +15,8 @@ import { usePools } from '../../../providers/Pools'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { fromWei, toWei } from '../../../services/web3'
-import { formatNumberWido } from '../../../utils'
+import { formatNumberWido, isSafeApp } from '../../../utils'
+import { CHAINS_ID } from '../../../data/constants'
 import AnimatedDots from '../../AnimatedDots'
 import Button from '../../Button'
 import { Divider } from '../../GlobalStyle'
@@ -35,6 +37,22 @@ import {
 
 const { tokens } = require('../../../data')
 
+const getChainName = chain => {
+  let chainName = 'Ethereum'
+  switch (chain) {
+    case CHAINS_ID.MATIC_MAINNET:
+      chainName = 'Polygon'
+      break
+    case CHAINS_ID.ARBITRUM_ONE:
+      chainName = 'Arbitrum'
+      break
+    default:
+      chainName = 'Ethereum'
+      break
+  }
+  return chainName
+}
+
 const WidoPoolWithdrawBase = ({
   selectTokenWido,
   setSelectTokenWido,
@@ -51,6 +69,7 @@ const WidoPoolWithdrawBase = ({
   multipleAssets,
   symbol,
   setSymbol,
+  token,
 }) => {
   const [legacyUnStaking, setLegacyUnStaking] = useState(false)
   const [unstakeClick, setUnstakeClick] = React.useState(false)
@@ -58,9 +77,24 @@ const WidoPoolWithdrawBase = ({
 
   const walletBalancesToCheck = multipleAssets || [symbol]
 
-  const { account, balances, getWalletBalances, connected, connectAction } = useWallet()
+  const { account, balances, getWalletBalances, connected, connectAction, chainId } = useWallet()
   const { fetchUserPoolStats, userStats } = usePools()
   const { handleExit } = useActions()
+
+  const [
+    {
+      connectedChain, // the current chain the user's wallet is connected to
+    },
+    setChain, // function to call to initiate user to switch chains in their wallet
+  ] = useSetChain()
+
+  const tokenChain = token.chain || token.data.chain
+  const curChain = isSafeApp()
+    ? chainId
+    : connectedChain
+    ? parseInt(connectedChain.id, 16).toString()
+    : ''
+  const [withdrawName, setWithdrawName] = useState('Withdraw to Wallet')
   const {
     backColor,
     borderColor,
@@ -69,6 +103,17 @@ const WidoPoolWithdrawBase = ({
     toggleActiveBackColor,
     toggleInactiveBackColor,
   } = useThemeContext()
+
+  useEffect(() => {
+    if (account) {
+      if (curChain !== tokenChain) {
+        const chainName = getChainName(tokenChain)
+        setWithdrawName(`Switch to ${chainName}`)
+      } else {
+        setWithdrawName('Withdraw to Wallet')
+      }
+    }
+  }, [account, curChain, tokenChain])
 
   const FARMBalance = fromWei(
     get(balances, IFARM_TOKEN_SYMBOL, 0),
@@ -178,8 +223,13 @@ const WidoPoolWithdrawBase = ({
               color="wido-stake"
               width="100%"
               height="auto"
-              onClick={() => {
-                onClickUnStake()
+              onClick={async () => {
+                if (curChain !== tokenChain) {
+                  const chainHex = `0x${Number(tokenChain).toString(16)}`
+                  await setChain({ chainId: chainHex })
+                } else {
+                  onClickUnStake()
+                }
               }}
             >
               <NewLabel size="16px" weight="bold" height="21px">
@@ -285,12 +335,17 @@ const WidoPoolWithdrawBase = ({
             color="wido-deposit"
             width="100%"
             size="md"
-            onClick={() => {
-              onClickWithdraw()
+            onClick={async () => {
+              if (curChain !== tokenChain) {
+                const chainHex = `0x${Number(tokenChain).toString(16)}`
+                await setChain({ chainId: chainHex })
+              } else {
+                onClickWithdraw()
+              }
             }}
           >
             <NewLabel size="16px" weight="600" height="21px">
-              Withdraw to Wallet
+              {withdrawName}
             </NewLabel>
             <img src={ChevronRightIcon} alt="" />
           </Button>

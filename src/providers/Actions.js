@@ -46,6 +46,7 @@ const ActionsProvider = ({ children }) => {
       poolData,
       setPendingAction,
       onSuccessApproval = () => {},
+      onFailureApproval = () => {},
     ) => {
       const address = vaultAddress || tokens[tokenSymbol].vaultAddress
 
@@ -77,7 +78,7 @@ const ActionsProvider = ({ children }) => {
         setPendingAction(null)
         const errorMessage = formatWeb3PluginErrorMessage(err)
         toast.error(errorMessage)
-
+        onFailureApproval()
         return true
       }
     },
@@ -278,6 +279,7 @@ const ActionsProvider = ({ children }) => {
       zap,
       onSuccessDeposit = () => {},
       onSuccessApproval = () => {},
+      onFailureDeposit = () => {},
     ) => {
       let hasDeniedRequest = false,
         updatedLpTokenBalance,
@@ -417,6 +419,7 @@ const ActionsProvider = ({ children }) => {
 
           const errorMessage = formatWeb3PluginErrorMessage(err, get(err, 'message'))
           toast.error(errorMessage)
+          onFailureDeposit()
         }
       }
     },
@@ -436,6 +439,7 @@ const ActionsProvider = ({ children }) => {
       multipleAssets,
       onSuccessStake = () => {},
       onSuccessApproval = () => {},
+      onFailureStake = () => {},
       action = ACTIONS.STAKE,
     ) => {
       const poolInstance = poolData.autoStakeContractLocalInstance || poolData.contractLocalInstance
@@ -475,6 +479,7 @@ const ActionsProvider = ({ children }) => {
           setPendingAction(null)
           const errorMessage = formatWeb3PluginErrorMessage(err)
           toast.error(errorMessage)
+          onFailureStake()
         }
       }
     },
@@ -553,6 +558,7 @@ const ActionsProvider = ({ children }) => {
       multipleAssets,
       selectedAsset,
       onSuccess = () => {},
+      onFailure = () => {},
       action = ACTIONS.WITHDRAW,
     ) => {
       setPendingAction(action)
@@ -626,6 +632,7 @@ const ActionsProvider = ({ children }) => {
         setPendingAction(null)
         const errorMessage = formatWeb3PluginErrorMessage(err)
         toast.error(errorMessage)
+        onFailure()
       }
     },
     [],

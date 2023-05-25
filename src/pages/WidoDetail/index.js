@@ -418,6 +418,7 @@ const WidoDetail = () => {
               supList[i].balance = '0'
               supList[i].usdValue = '0'
             }
+            supList[i].default = false
             supportedList.push(supList[i])
 
             if (tokenAddress.length !== 2) {
@@ -435,6 +436,7 @@ const WidoDetail = () => {
             supportedList = supportedList.sort(function result(x, y) {
               return x === first ? -1 : y === first ? 1 : 0
             })
+            supportedList[0].default = true
           }
 
           for (let j = 0; j < curBalances.length; j += 1) {
@@ -523,7 +525,7 @@ const WidoDetail = () => {
       ) {
         const getBalance = async () => {
           firstWalletBalanceLoad.current = false
-          await getWalletBalances([IFARM_TOKEN_SYMBOL, FARM_TOKEN_SYMBOL], false, true)
+          await getWalletBalances([IFARM_TOKEN_SYMBOL, FARM_TOKEN_SYMBOL, id], false, true)
         }
 
         getBalance()
@@ -1038,9 +1040,9 @@ const WidoDetail = () => {
                     fAssetPool={fAssetPool}
                     lpTokenApprovedBalance={lpTokenApprovedBalance}
                     setPendingAction={setPendingAction}
-                    setAmountsToExecute={setAmountsToExecute}
                     setLoadingDots={setLoadingDots}
                     quoteValue={quoteValueDepo}
+                    multipleAssets={multipleAssets}
                   />
                 ) : (
                   <WidoDepositFinalStep
@@ -1053,7 +1055,6 @@ const WidoDetail = () => {
                     setUsdValue={setUsdValue}
                     setBalance={setBalanceDepo}
                     setClickedTokenId={setClickedTokenIdDepo}
-                    setClickedVaultId={setClickedVaultIdDepo}
                     pickedToken={pickedTokenDepo}
                     setPickedToken={setPickedTokenDepo}
                     slippagePercentage={slippagePercentDepo}
@@ -1063,6 +1064,8 @@ const WidoDetail = () => {
                     tokenSymbol={id}
                     quoteValue={quoteValueDepo}
                     fAssetPool={fAssetPool}
+                    setPendingAction={setPendingAction}
+                    multipleAssets={multipleAssets}
                   />
                 )}
               </DepositComponets>
@@ -1086,6 +1089,7 @@ const WidoDetail = () => {
                     multipleAssets={multipleAssets}
                     symbol={symbolWith}
                     setSymbol={setSymbolWith}
+                    token={token}
                   />
                 ) : (
                   <WidoWithdrawBase
@@ -1171,6 +1175,8 @@ const WidoDetail = () => {
                   tokenSymbol={id}
                   fAssetPool={fAssetPool}
                   quoteValue={quoteValueWith}
+                  multipleAssets={multipleAssets}
+                  setPendingAction={setPendingAction}
                 />
               </WithdrawComponents>
             </RestPart>
