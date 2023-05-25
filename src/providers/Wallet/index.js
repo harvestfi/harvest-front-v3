@@ -5,13 +5,12 @@ import { toast } from 'react-toastify'
 import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../constants'
 import { CHAINS_ID } from '../../data/constants'
 import {
-  defaultWeb3,
   getChainName,
   hasValidUpdatedBalance,
   ledgerProvider,
+  mainWeb3,
   pollUpdatedBalance,
   safeProvider,
-  safeWeb3Provider,
 } from '../../services/web3'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import { isLedgerLive, isSafeApp } from '../../utils'
@@ -27,7 +26,7 @@ const useWallet = () => useContext(WalletContext)
 
 const WalletProvider = _ref => {
   const { children } = _ref
-  const web3Plugin = defaultWeb3
+  const web3Plugin = mainWeb3
   const [account, setAccount] = useState(null)
   const [connected, setConnected] = useState(false)
   const [chainId, setChainId] = useState(CHAINS_ID.ETH_MAINNET)
@@ -56,8 +55,6 @@ const WalletProvider = _ref => {
       if (isSafeApp()) {
         const safeAppProvider = await safeProvider()
         const selectedChain = await safeAppProvider.getNetwork()
-        const provider = await safeWeb3Provider()
-        web3Plugin.setProvider(provider)
         setChainId(selectedChain.chainId.toString())
         const selectedAccount = await safeAppProvider.getSigner().getAddress()
         setAccount(selectedAccount.toLowerCase())
@@ -66,7 +63,7 @@ const WalletProvider = _ref => {
       }
     }
     fetchData()
-  }, [web3Plugin])
+  }, [])
 
   const disconnectAction = useCallback(async () => {
     if (!isLedgerLive()) {
@@ -181,8 +178,16 @@ const WalletProvider = _ref => {
           }
         }
       }
+      if (web3Plugin && wallet && wallet?.label === 'Ledger')
+        web3Plugin.setProvider(wallet.provider)
       if (web3Plugin && web3Plugin._provider.on && account) {
         networkEmitter = web3Plugin._provider.on('chainChanged', onNetworkChange)
+        accountEmitter = web3Plugin._provider.on('accountsChanged', accountAddress => {
+          if (accountAddress.length > 0) {
+            setAccount(accountAddress[0]?.toLowerCase())
+            setConnected(true)
+          }
+        })
       }
 
       return () => {
@@ -193,23 +198,25 @@ const WalletProvider = _ref => {
       }
     }
     fetchData()
-  }, [web3Plugin, chainId, account, onNetworkChange, setAccount])
+  }, [web3Plugin, chainId, account, onNetworkChange, setAccount, wallet])
 
   useEffect(() => {
-    if (wallet) {
-      const chainNum = parseInt(wallet.chains[0].id, 16).toString()
-      setAccount(wallet.accounts[0].address.toLowerCase())
-      setConnected(true)
-      setChainId(chainNum)
-      if (wallet.label === 'Ledger') web3Plugin.setProvider(wallet.provider)
-      setLogout(false)
-    } else {
-      setConnected(false)
-      setAccount(null)
-      setBalances({})
-      setLogout(true)
+    console.log('wallet: ', wallet)
+    if (!isSafeApp()) {
+      if (wallet) {
+        const chainNum = parseInt(wallet.chains[0].id, 16).toString()
+        setAccount(wallet.accounts[0].address.toLowerCase())
+        setChainId(chainNum)
+        setConnected(true)
+        setLogout(false)
+      } else {
+        setConnected(false)
+        setAccount(null)
+        setBalances({})
+        setLogout(true)
+      }
     }
-  }, [wallet, web3Plugin])
+  }, [wallet])
 
   const connectAction = useCallback(async () => {
     await connect()

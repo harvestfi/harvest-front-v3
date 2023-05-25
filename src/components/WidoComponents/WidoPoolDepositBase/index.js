@@ -97,7 +97,7 @@ const WidoPoolDepositBase = ({
 }) => {
   /* eslint-disable global-require */
   const { tokens } = require('../../../data')
-  const { account, connectAction, balances, chainId } = useWallet()
+  const { account, connectAction, balances, chainId, setChainId } = useWallet()
   const { vaultsData } = useVaults()
   const [farmInfo, setFarmInfo] = useState(null)
   const [price, setPrice] = useState(0)
@@ -196,7 +196,10 @@ const WidoPoolDepositBase = ({
   const onClickDeposit = async () => {
     if (curChain !== tokenChain) {
       const chainHex = `0x${Number(tokenChain).toString(16)}`
-      if (!isLedgerLive() || !isSafeApp()) await setChain({ chainId: chainHex })
+      if (!isLedgerLive() && !isSafeApp()) {
+        await setChain({ chainId: chainHex })
+        setChainId(tokenChain)
+      }
     } else {
       if (!legacyStaking && pickedToken.symbol === 'Select Token') {
         toast.error('Please select token to deposit!')

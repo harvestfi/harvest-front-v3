@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js'
 import { toast } from 'react-toastify'
 import { Spinner } from 'react-bootstrap'
 import { useConnectWallet } from '@web3-onboard/react'
-import { mainWeb3, toWei, fromWei, maxUint256 } from '../../../services/web3'
+import { toWei, fromWei, maxUint256, getWeb3 } from '../../../services/web3'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { usePools } from '../../../providers/Pools'
@@ -131,7 +131,7 @@ const WidoDepositFinalStep = ({
       toToken,
       amount: amnt,
     })
-    const mainWeb = await mainWeb3(wallet)
+    const mainWeb = await getWeb3(chainId, account, wallet)
     await mainWeb.eth.sendTransaction({
       from: account,
       data,
@@ -184,7 +184,7 @@ const WidoDepositFinalStep = ({
       const fromChainId = chainId
       const fromToken = pickedToken.address
       const toChainId = chainId
-      const mainWeb = await mainWeb3(wallet)
+      const mainWeb = await getWeb3(chainId, account, wallet)
 
       const quoteResult = await quote(
         {

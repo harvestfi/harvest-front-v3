@@ -91,7 +91,7 @@ const WidoDepositBase = ({
   const { handleStake } = useActions()
   const { contracts } = useContracts()
   const { userStats, fetchUserPoolStats } = usePools()
-  const { connected, connectAction, account, getWalletBalances, chainId } = useWallet()
+  const { connected, connectAction, account, getWalletBalances, chainId, setChainId } = useWallet()
   const { vaultsData } = useVaults()
   const {
     backColor,
@@ -169,7 +169,10 @@ const WidoDepositBase = ({
   const onClickDeposit = async () => {
     if (curChain !== tokenChain) {
       const chainHex = `0x${Number(tokenChain).toString(16)}`
-      if (!isLedgerLive() && !isSafeApp()) await setChain({ chainId: chainHex })
+      if (!isLedgerLive() && !isSafeApp()) {
+        await setChain({ chainId: chainHex })
+        setChainId(tokenChain)
+      }
     } else {
       if (pickedToken.symbol === 'Select Token') {
         toast.error('Please select token to deposit!')

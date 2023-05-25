@@ -107,35 +107,10 @@ export const safeWeb3 = async () => {
   return new Web3(new SafeAppProvider(safe, SDK))
 }
 
-export const defaultWeb3 = new Web3(window.ethereum || INFURA_URL)
-
-export const mainWeb3 = async (wallet = null) => {
-  let safeWeb = null
-  if (isSafeApp()) safeWeb = await safeWeb3()
-  return isSafeApp()
-    ? safeWeb
-    : isLedgerLive()
-    ? ledgerWeb3
-    : wallet && wallet.label === 'Ledger'
-    ? new Web3(wallet.provider)
-    : new Web3(window.ethereum || INFURA_URL)
-}
+export const mainWeb3 = isLedgerLive() ? ledgerWeb3 : new Web3(window.ethereum || INFURA_URL)
 
 export const getContract = contractName => {
   return !!Object.keys(contracts).find(contractKey => contractKey === contractName)
-}
-
-export const newContractInstance = async (contractName, address, customAbi, web3Provider) => {
-  const contractAddress = getContract(contractName)
-    ? contracts[contractName].contract.address
-    : address
-  const contractAbi = getContract(contractName) ? contracts[contractName].contract.abi : customAbi
-
-  if (contractAddress) {
-    const web3Instance = web3Provider || (await mainWeb3())
-    return new web3Instance.eth.Contract(contractAbi, contractAddress)
-  }
-  return null
 }
 
 export const fromWei = (wei, decimals, decimalsToDisplay = 2, format = false, radix = 10) => {
@@ -231,16 +206,16 @@ export const getChainName = chainId => {
 
 export const getWeb3 = async (chainId, account, wallet = null) => {
   if (account) {
-    if (isLedgerLive()) {
-      return ledgerWeb3
-    }
-
     if (isSafeApp()) {
       const web3 = await safeWeb3()
       return web3
     }
-    const web3 = await mainWeb3(wallet)
-    return web3
+
+    if (wallet && wallet?.label === 'Ledger') {
+      return new Web3(wallet.provider)
+    }
+
+    return mainWeb3
   }
 
   if (chainId === CHAINS_ID.MATIC_MAINNET) {
@@ -252,6 +227,19 @@ export const getWeb3 = async (chainId, account, wallet = null) => {
   }
 
   return infuraWeb3
+}
+
+export const newContractInstance = async (contractName, address, customAbi, web3Provider) => {
+  const contractAddress = getContract(contractName)
+    ? contracts[contractName].contract.address
+    : address
+  const contractAbi = getContract(contractName) ? contracts[contractName].contract.abi : customAbi
+
+  if (contractAddress) {
+    const web3Instance = web3Provider || (await getWeb3(null, true, null))
+    return new web3Instance.eth.Contract(contractAbi, contractAddress)
+  }
+  return null
 }
 
 export const getExplorerLink = chainId => {
