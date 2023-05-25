@@ -280,7 +280,7 @@ const WidoDepositStart = ({
           </NewLabel>
         </NewLabel>
         <NewLabel display="flex" justifyContent="space-between" marginBottom="15px">
-          <NewLabel>Minimum Recieved</NewLabel>
+          <NewLabel>Minimum Received</NewLabel>
           <NewLabel weight={400} size="14px" height="18px" display="flex" items="center">
             {
               <>
