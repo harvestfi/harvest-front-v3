@@ -105,8 +105,7 @@ const PoolsProvider = _ref => {
                 curChain !== CHAINS_ID.ETH_MAINNET) ||
               pool.chain !== curChain
             ) {
-              web3Client = await getWeb3(pool.chain, null)
-              web3ClientLocal = await getWeb3(pool.chain, null)
+              web3Client = await getWeb3(pool.chain, null, null)
             }
 
             const contractInstance = await newContractInstance(
@@ -258,7 +257,14 @@ const PoolsProvider = _ref => {
     _ref2 => {
       const [prevAccount] = _ref2
 
-      if (account !== prevAccount && account && finishPool && !isLedgerLive() && !isSafeApp()) {
+      if (
+        account !== prevAccount &&
+        account &&
+        !loadedUserPoolsWeb3Provider.current &&
+        finishPool &&
+        !isLedgerLive() &&
+        !isSafeApp()
+      ) {
         const setCurrentPoolsWithUserProvider = async () => {
           const poolsWithUpdatedProvider = await formatPoolsData(pools)
           setPools(poolsWithUpdatedProvider)
@@ -268,6 +274,7 @@ const PoolsProvider = _ref => {
       } else if (
         account !== prevAccount &&
         account &&
+        !loadedUserPoolsWeb3Provider.current &&
         finishPool &&
         (isLedgerLive() || isSafeApp())
       ) {
@@ -295,7 +302,7 @@ const PoolsProvider = _ref => {
         const loadInitialStakedAndUnstakedBalances = async () => {
           loadedInitialStakedAndUnstakedBalances.current = true
           const stats = {}
-          const chains = isLedgerLive() ? [chainId] : selChain
+          const chains = isLedgerLive() || isSafeApp() ? [chainId] : selChain
           // selChain.forEach( async (ch)=> {
           /* eslint-disable no-await-in-loop */
           for (let i = 0; i < chains.length; i += 1) {

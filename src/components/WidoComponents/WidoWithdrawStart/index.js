@@ -10,7 +10,7 @@ import Swap2Icon from '../../../assets/images/logos/wido/swap2.svg'
 import { WIDO_BALANCES_DECIMALS } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
-import { fromWei, mainWeb3 } from '../../../services/web3'
+import { fromWei, getWeb3 } from '../../../services/web3'
 import { formatNumberWido } from '../../../utils'
 import AnimatedDots from '../../AnimatedDots'
 import { Divider } from '../../GlobalStyle'
@@ -65,7 +65,7 @@ const WidoWithdrawStart = ({
           const toChainId = chainId
           const user = account
           let curToken = balanceList.filter(el => el.symbol === pickedToken.symbol)
-          const mainWeb = await mainWeb3(wallet)
+          const mainWeb = await getWeb3(chainId, account, wallet)
           const quoteResult = await quote(
             {
               fromChainId, // Chain Id of from token

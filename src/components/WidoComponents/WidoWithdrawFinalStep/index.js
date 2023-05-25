@@ -15,7 +15,7 @@ import { WIDO_BALANCES_DECIMALS } from '../../../constants'
 import { usePools } from '../../../providers/Pools'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
-import { fromWei, mainWeb3, maxUint256 } from '../../../services/web3'
+import { fromWei, maxUint256, getWeb3 } from '../../../services/web3'
 import { formatNumberWido } from '../../../utils'
 import WidoSwapToken from '../WidoSwapToken'
 import { addresses } from '../../../data'
@@ -137,7 +137,7 @@ const WidoWithdrawFinalStep = ({
       toToken: pickedToken.address,
       amount: amnt,
     })
-    const mainWeb = await mainWeb3(wallet)
+    const mainWeb = await getWeb3(chainId, account, wallet)
     await mainWeb.eth.sendTransaction({
       from: account,
       data,
@@ -189,7 +189,7 @@ const WidoWithdrawFinalStep = ({
       const fromChainId = chainId
       const toChainId = chainId
       const toToken = pickedToken.address
-      const mainWeb = await mainWeb3(wallet)
+      const mainWeb = await getWeb3(chainId, account, wallet)
       const quoteResult = await quote(
         {
           fromChainId, // Chain Id of from token

@@ -15,9 +15,9 @@ import {
 } from '../constants'
 import {
   formatWeb3PluginErrorMessage,
-  mainWeb3,
   newContractInstance,
   maxUint256,
+  getWeb3,
 } from '../services/web3'
 import amplifierMethods from '../services/web3/contracts/amplifier/methods'
 import boostStakingMethods from '../services/web3/contracts/boost-staking/methods'
@@ -762,7 +762,7 @@ const ActionsProvider = ({ children }) => {
     async (selectedToken, ownerAddress, setPendingAction, action = ACTIONS.APPROVE_DEPOSIT) => {
       try {
         setPendingAction(action)
-        const mainWeb = await mainWeb3(wallet)
+        const mainWeb = await getWeb3(null, true, wallet)
         const gasPrice = mainWeb.eth.getGasPrice()
         const apiResponse = await axios.get(`${ZAPPER_FI_ZAP_IN_ENDPOINT}/approval-transaction`, {
           params: {
@@ -799,7 +799,7 @@ const ActionsProvider = ({ children }) => {
     ) => {
       try {
         setPendingAction(action)
-        const mainWeb = await mainWeb3(wallet)
+        const mainWeb = await getWeb3(null, true, wallet)
         const gasPrice = mainWeb.eth.getGasPrice()
         const apiResponse = await axios.get(`${ZAPPER_FI_ZAP_IN_ENDPOINT}/transaction`, {
           params: {

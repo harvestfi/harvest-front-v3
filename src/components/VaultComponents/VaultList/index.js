@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 import { debounce, find, get, isArray, isEqual, keys, orderBy, sortBy, uniq } from 'lodash'
 import move from 'lodash-move'
 import React, { useMemo, useRef, useState } from 'react'
+import { useConnectWallet } from '@web3-onboard/react'
 import { Dropdown } from 'react-bootstrap'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import MobileFilterSortIcon from '../../../assets/images/chains/mobilesort.svg'
@@ -61,6 +62,7 @@ const formatVaults = (
   farmingBalances,
   selChain,
   chainId,
+  wallet,
   searchQuery = '',
   sortParam,
   sortOrder,
@@ -86,7 +88,8 @@ const formatVaults = (
   ])
 
   if (
-    ((isLedgerLive() || isSafeApp()) && chainId === CHAINS_ID.ETH_MAINNET) ||
+    ((isLedgerLive() || isSafeApp() || wallet?.label === 'Ledger') &&
+      chainId === CHAINS_ID.ETH_MAINNET) ||
     (!isLedgerLive() && !isSafeApp() && selChain.includes(CHAINS_ID.ETH_MAINNET))
   ) {
     const farmIdx = vaultsSymbol.findIndex(symbol => symbol === FARM_TOKEN_SYMBOL)
@@ -99,9 +102,9 @@ const formatVaults = (
   vaultsSymbol = vaultsSymbol.filter(
     tokenSymbol =>
       tokenSymbol !== IFARM_TOKEN_SYMBOL &&
-      (selChain.includes(groupOfVaults[tokenSymbol].chain) ||
-        (groupOfVaults[tokenSymbol].data &&
-          selChain.includes(groupOfVaults[tokenSymbol].data.chain))),
+      (selChain.includes(groupOfVaults[tokenSymbol]?.chain) ||
+        (groupOfVaults[tokenSymbol]?.data &&
+          selChain.includes(groupOfVaults[tokenSymbol]?.data.chain))),
   )
 
   if (searchQuery) {
@@ -287,7 +290,7 @@ const formatVaults = (
       tokenSymbol => groupOfVaults[tokenSymbol].farmType === selectFarmType,
     )
   }
-
+  vaultsSymbol = [...new Set(vaultsSymbol)]
   return vaultsSymbol
 }
 
@@ -312,6 +315,7 @@ const VaultList = () => {
   const { profitShareAPY } = useStats()
   const { pools, fetchUserPoolStats, userStats, loadedUserPoolsWeb3Provider } = usePools()
   const { account, chain, selChain, getWalletBalances, balances, chainId } = useWallet()
+  const [{ wallet }] = useConnectWallet()
   const [openVault, setOpen] = useState(null)
   const [loaded, setLoaded] = useState(null)
   const [sortParam, setSortParam] = useState(null)
@@ -378,7 +382,7 @@ const VaultList = () => {
   )
 
   let groupOfVaults = []
-  if (isSafeApp() || isLedgerLive()) {
+  if (isSafeApp() || isLedgerLive() || wallet?.label === 'Ledger') {
     if (chainId === CHAINS_ID.ETH_MAINNET) groupOfVaults = { ...vaultsData, ...poolVaults }
     else groupOfVaults = { ...vaultsData }
   } else {
@@ -395,6 +399,7 @@ const VaultList = () => {
         farmingBalances,
         selChain,
         chainId,
+        wallet,
         searchQuery,
         sortParam,
         sortOrder,
@@ -412,6 +417,7 @@ const VaultList = () => {
       farmingBalances,
       selChain,
       chainId,
+      wallet,
       searchQuery,
       sortParam,
       sortOrder,
