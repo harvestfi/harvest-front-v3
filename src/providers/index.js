@@ -31,18 +31,18 @@ const web3Onboard = init({
       id: '0x1',
       token: 'ETH',
       label: 'Ethereum Mainnet',
-      rpcUrl: `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`,
+      rpcUrl: `https://rpc.ankr.com/eth`,
     },
     {
       id: '0x89',
       token: 'MATIC',
       label: 'Polygon Mainnet',
-      rpcUrl: 'https://matic-mainnet.chainstacklabs.com',
+      rpcUrl: 'https://rpc.ankr.com/polygon',
     },
     {
       id: 42161,
       token: 'AETH',
-      label: 'Arbitrum',
+      label: 'Arbitrum One',
       rpcUrl: 'https://rpc.ankr.com/arbitrum',
     },
   ],
@@ -57,36 +57,6 @@ const web3Onboard = init({
       { name: 'MetaMask', url: 'https://metamask.io' },
       { name: 'Coinbase', url: 'https://wallet.coinbase.com/' },
     ],
-  },
-  notify: {
-    desktop: {
-      enabled: true,
-      // eslint-disable-next-line consistent-return
-      transactionHandler: transaction => {
-        console.log({ transaction })
-        if (transaction.eventCode === 'txPool') {
-          return {
-            type: 'success',
-            message: 'Your transaction from Harvest Finance is in the mempool',
-          }
-        }
-      },
-      position: 'bottomLeft',
-    },
-    mobile: {
-      enabled: true,
-      // eslint-disable-next-line consistent-return
-      transactionHandler: transaction => {
-        console.log({ transaction })
-        if (transaction.eventCode === 'txPool') {
-          return {
-            type: 'success',
-            message: 'Your transaction from Harvest Finance is in the mempool',
-          }
-        }
-      },
-      position: 'topRight',
-    },
   },
   accountCenter: {
     desktop: {
