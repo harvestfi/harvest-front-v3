@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { quote, getTokenAllowance, approve } from 'wido'
+import { get, isEmpty } from 'lodash'
 import BigNumber from 'bignumber.js'
 import { toast } from 'react-toastify'
 import { Spinner } from 'react-bootstrap'
@@ -29,6 +30,9 @@ import ArrowDownIcon from '../../../assets/images/logos/wido/arrowdown.svg'
 import CheckIcon from '../../../assets/images/logos/wido/check-approve.svg'
 import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.svg'
 import DepositIcon from '../../../assets/images/logos/wido/deposit-icon.svg'
+import { useVaults } from '../../../providers/Vault'
+
+const { tokens } = require('../../../data')
 
 const WidoPoolDepositFinalStep = ({
   finalStep,
@@ -51,14 +55,15 @@ const WidoPoolDepositFinalStep = ({
   fAssetPool,
   lpTokenApprovedBalance,
   setPendingAction,
-  setAmountsToExecute,
   setLoadingDots,
   quoteValue,
+  multipleAssets,
 }) => {
   const [approveValue, setApproveValue] = useState(0)
-  const { account, getWalletBalances } = useWallet()
-  const { handleApproval, handleStake } = useActions()
+  const { account, getWalletBalances, approvedBalances } = useWallet()
+  const { handleApproval, handleStake, handleDeposit } = useActions()
   const { contracts } = useContracts()
+  const { vaultsData, farmingBalances, getFarmingBalances } = useVaults()
   const { fetchUserPoolStats, userStats } = usePools()
   const toToken = addresses.iFARM
   const chainId = token.chain || token.data.chain
@@ -67,6 +72,27 @@ const WidoPoolDepositFinalStep = ({
   const [symbolName, setSymbolName] = useState('')
   const [fromInfo, setFromInfo] = useState('')
   const [toInfo, setToInfo] = useState('')
+
+  const walletBalancesToCheck = multipleAssets || [tokenSymbol]
+  const zap = !token.disableAutoSwap
+
+  const isSpecialVault = token.liquidityPoolVault || token.poolVault
+  const tokenDecimals = tokens[FARM_TOKEN_SYMBOL].decimals
+
+  const pricePerFullShare = get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
+
+  const [amountsToExecute, setAmountsToExecute] = useState([])
+
+  const amountsToExecuteInWei = amountsToExecute.map(amt => {
+    if (isEmpty(amt)) {
+      return null
+    }
+
+    if (multipleAssets) {
+      return toWei(amt, token.decimals, 0)
+    }
+    return toWei(amt, isSpecialVault ? tokenDecimals : token.decimals)
+  })
 
   const reloadStats = useCallback(
     async (depositedOrTaken, iFARM) => {
@@ -103,6 +129,7 @@ const WidoPoolDepositFinalStep = ({
 
   useEffect(() => {
     setAmount(toWei(inputAmount, pickedToken.decimals))
+    setAmountsToExecute([inputAmount.toString()])
     if (
       account &&
       pickedToken.address !== undefined &&
@@ -135,6 +162,8 @@ const WidoPoolDepositFinalStep = ({
         let allowanceCheck
         if (legacyStaking) {
           allowanceCheck = lpTokenApprovedBalance
+        } else if (pickedToken.default) {
+          allowanceCheck = approvedBalances[IFARM_TOKEN_SYMBOL]
         } else {
           const { allowance } = await getTokenAllowance({
             chainId,
@@ -168,13 +197,41 @@ const WidoPoolDepositFinalStep = ({
     slippagePercentage,
     token,
     lpTokenApprovedBalance,
+    tokenSymbol,
+    approvedBalances,
   ])
 
   useEffect(() => {
-    if (quoteValue) {
-      const getQuoteResult = async () => {
-        try {
-          const fromTokenInfo =
+    const getQuoteResult = async () => {
+      try {
+        let fromInfoTemp = '',
+          toInfoTemp = ''
+        if (pickedToken.default) {
+          fromInfoTemp = `${formatNumberWido(inputAmount, WIDO_BALANCES_DECIMALS)} ($${
+            pickedToken.usdPrice !== '0.0'
+              ? formatNumberWido(
+                  new BigNumber(amount)
+                    .multipliedBy(pickedToken.usdPrice)
+                    .dividedBy(new BigNumber(10).exponentiatedBy(pickedToken.decimals)),
+                  WIDO_BALANCES_DECIMALS,
+                )
+              : ''
+          })`
+          toInfoTemp = `${formatNumberWido(
+            new BigNumber(amount).dividedBy(pricePerFullShare).toString(),
+            WIDO_BALANCES_DECIMALS,
+          )} ($${
+            pickedToken.usdPrice !== '0.0'
+              ? formatNumberWido(
+                  new BigNumber(amount)
+                    .multipliedBy(pickedToken.usdPrice)
+                    .dividedBy(new BigNumber(10).exponentiatedBy(pickedToken.decimals)),
+                  WIDO_BALANCES_DECIMALS,
+                )
+              : ''
+          })`
+        } else if (quoteValue) {
+          fromInfoTemp =
             formatNumberWido(
               fromWei(quoteValue.fromTokenAmount, pickedToken.decimals),
               WIDO_BALANCES_DECIMALS,
@@ -185,7 +242,7 @@ const WidoPoolDepositFinalStep = ({
                   quoteValue.fromTokenAmountUsdValue,
                   WIDO_BALANCES_DECIMALS,
                 )})`)
-          const toTokenInfo =
+          toInfoTemp =
             formatNumberWido(
               fromWei(quoteValue.toTokenAmount, token.decimals || token.data.lpTokenData.decimals),
               WIDO_BALANCES_DECIMALS,
@@ -193,16 +250,16 @@ const WidoPoolDepositFinalStep = ({
             (quoteValue.toTokenAmountUsdValue === null
               ? ''
               : ` ($${formatNumberWido(quoteValue.toTokenAmountUsdValue, WIDO_BALANCES_DECIMALS)})`)
-          setFromInfo(fromTokenInfo)
-          setToInfo(toTokenInfo)
-        } catch (e) {
-          toast.error('Failed to get quote!')
         }
+        setFromInfo(fromInfoTemp)
+        setToInfo(toInfoTemp)
+      } catch (e) {
+        toast.error('Failed to get quote!')
       }
-
-      getQuoteResult()
     }
-  }, [quoteValue, pickedToken, token])
+
+    getQuoteResult()
+  }, [quoteValue, pickedToken, token, amount, inputAmount, pricePerFullShare])
 
   const approveZap = async amnt => {
     if (legacyStaking) {
@@ -215,6 +272,26 @@ const WidoPoolDepositFinalStep = ({
         setPendingAction,
         async () => {
           await reloadStats()
+          setApproveValue(2)
+        },
+        async () => {
+          setApproveValue(0)
+        },
+      )
+    } else if (pickedToken.default) {
+      await handleApproval(
+        account,
+        contracts,
+        tokenSymbol,
+        token.vaultAddress,
+        fAssetPool,
+        setPendingAction,
+        async () => {
+          await reloadStats()
+          setApproveValue(2)
+        },
+        async () => {
+          setApproveValue(0)
         },
       )
     } else {
@@ -238,6 +315,7 @@ const WidoPoolDepositFinalStep = ({
           to,
         })
       }
+      setApproveValue(2)
     }
   }
 
@@ -255,8 +333,8 @@ const WidoPoolDepositFinalStep = ({
 
     try {
       let allowanceCheck, spenderCheck
-      if (legacyStaking) {
-        allowanceCheck = lpTokenApprovedBalance
+      if (pickedToken.default || legacyStaking) {
+        allowanceCheck = approvedBalances[tokenSymbol]
         spenderCheck = fAssetPool.autoStakePoolAddress
       } else {
         const { spender, allowance } = await getTokenAllowance({
@@ -275,7 +353,6 @@ const WidoPoolDepositFinalStep = ({
         const amountToApprove = maxUint256()
         await approveZap(amountToApprove) // Approve for Zap
       }
-      setApproveValue(2)
     } catch (err) {
       toast.error('Failed to approve!')
       setApproveValue(0)
@@ -312,6 +389,40 @@ const WidoPoolDepositFinalStep = ({
           setExecuteValue(0)
         },
       )
+    } else if (pickedToken.default) {
+      try {
+        await handleDeposit(
+          token,
+          account,
+          tokenSymbol,
+          amountsToExecuteInWei,
+          approvedBalances[IFARM_TOKEN_SYMBOL],
+          contracts,
+          vaultsData[IFARM_TOKEN_SYMBOL],
+          setPendingAction,
+          false,
+          fAssetPool,
+          multipleAssets,
+          zap,
+          async () => {
+            await getWalletBalances(walletBalancesToCheck)
+            const updatedStats = await fetchUserPoolStats([fAssetPool], account, userStats)
+            await getFarmingBalances([tokenSymbol], farmingBalances, updatedStats)
+            setAmountsToExecute(['', ''])
+            await fetchUserPoolStats([fAssetPool], account, userStats)
+            setExecuteValue(2)
+          },
+          async () => {
+            await getWalletBalances(walletBalancesToCheck, false, true)
+          },
+          async () => {
+            setExecuteValue(0)
+          },
+        )
+      } catch (err) {
+        toast.error('Failed to deposit: ', err)
+        setExecuteValue(0)
+      }
     } else {
       const user = account
       try {

@@ -75,6 +75,8 @@ const WidoDepositFinalStep = ({
   const isSpecialVault = token.liquidityPoolVault || token.poolVault
   const tokenDecimals = token.decimals || tokens[symbol].decimals
 
+  const pricePerFullShare = get(token, `pricePerFullShare`, 0)
+
   const [amountsToExecute, setAmountsToExecute] = useState([])
 
   const amountsToExecuteInWei = amountsToExecute.map(amt => {
@@ -141,8 +143,7 @@ const WidoDepositFinalStep = ({
       try {
         let fromInfoTemp = '',
           toInfoTemp = ''
-        if (pickedToken.default && !useIFARM) {
-          const pricePerFullShare = get(token, `pricePerFullShare`, 0)
+        if (pickedToken.default) {
           fromInfoTemp = `${formatNumberWido(inputAmount, WIDO_BALANCES_DECIMALS)} ($${
             pickedToken.usdPrice !== '0.0'
               ? formatNumberWido(
@@ -200,7 +201,7 @@ const WidoDepositFinalStep = ({
     }
 
     getQuoteResult()
-  }, [pickedToken, token, quoteValue, inputAmount, amount, useIFARM])
+  }, [pickedToken, token, quoteValue, inputAmount, amount, pricePerFullShare])
 
   const approveZap = async amnt => {
     if (pickedToken.default) {
@@ -214,6 +215,10 @@ const WidoDepositFinalStep = ({
         async () => {
           await fetchUserPoolStats([fAssetPool], account, userStats)
           await getWalletBalances([tokenSymbol], false, true)
+          setApproveValue(2)
+        },
+        async () => {
+          setApproveValue(0)
         },
       )
     } else {
@@ -237,6 +242,7 @@ const WidoDepositFinalStep = ({
           to,
         })
       }
+      setApproveValue(2)
     }
   }
 
@@ -270,7 +276,6 @@ const WidoDepositFinalStep = ({
         const amountToApprove = maxUint256()
         await approveZap(amountToApprove) // Approve for Zap
       }
-      setApproveValue(2)
     } catch (err) {
       toast.error('Failed to approve!')
       setApproveValue(0)

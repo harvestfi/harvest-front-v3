@@ -5,7 +5,7 @@ import { toast } from 'react-toastify'
 import { quote } from 'wido'
 import ArrowDownIcon from '../../../assets/images/logos/wido/arrowdown.svg'
 import BackIcon from '../../../assets/images/logos/wido/back.svg'
-import { WIDO_BALANCES_DECIMALS } from '../../../constants'
+import { IFARM_TOKEN_SYMBOL, WIDO_BALANCES_DECIMALS } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { fromWei, mainWeb3, toWei, safeWeb3 } from '../../../services/web3'
@@ -19,6 +19,7 @@ import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.sv
 import IFARMIcon from '../../../assets/images/logos/wido/ifarm.svg'
 import SettingIcon from '../../../assets/images/logos/wido/setting.svg'
 import Swap2Icon from '../../../assets/images/logos/wido/swap2.svg'
+import { useVaults } from '../../../providers/Vault'
 
 const WidoDepositStart = ({
   pickedToken,
@@ -41,6 +42,7 @@ const WidoDepositStart = ({
 }) => {
   const { backColor, borderColor, filterColor } = useThemeContext()
   const { account } = useWallet()
+  const { vaultsData } = useVaults()
 
   const chainId = token.chain || token.data.chain
 
@@ -48,7 +50,9 @@ const WidoDepositStart = ({
   const [fromInfo, setFromInfo] = useState('')
   const [toInfo, setToInfo] = useState('')
 
-  const pricePerFullShare = get(token, `pricePerFullShare`, 0)
+  const pricePerFullShare = useIFARM
+    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
+    : get(token, `pricePerFullShare`, 0)
 
   useEffect(() => {
     if (
@@ -65,7 +69,7 @@ const WidoDepositStart = ({
         try {
           let fromInfoTemp = '',
             toInfoTemp = ''
-          if (pickedToken.default && !useIFARM) {
+          if (pickedToken.default) {
             fromInfoTemp = `${formatNumberWido(inputAmount, WIDO_BALANCES_DECIMALS)} ($${
               pickedToken.usdPrice !== '0.0'
                 ? formatNumberWido(
@@ -239,7 +243,7 @@ const WidoDepositStart = ({
                 &nbsp;=&nbsp;
               </>
             }
-            {pickedToken.default && !useIFARM ? (
+            {pickedToken.default ? (
               formatNumberWido(
                 1 / fromWei(pricePerFullShare, token.decimals || token.data.lpTokenData.decimals),
                 WIDO_BALANCES_DECIMALS,
@@ -259,7 +263,7 @@ const WidoDepositStart = ({
                 <img src={useIFARM ? IFARMIcon : Swap2Icon} width={20} height={20} alt="" />~
               </>
             }
-            {pickedToken.default && !useIFARM ? (
+            {pickedToken.default ? (
               formatNumberWido(
                 new BigNumber(amount).dividedBy(pricePerFullShare).toString(),
                 WIDO_BALANCES_DECIMALS,
@@ -288,7 +292,7 @@ const WidoDepositStart = ({
                 &nbsp;~
               </>
             }
-            {pickedToken.default && !useIFARM ? (
+            {pickedToken.default ? (
               formatNumberWido(
                 new BigNumber(amount).dividedBy(pricePerFullShare).toString(),
                 WIDO_BALANCES_DECIMALS,

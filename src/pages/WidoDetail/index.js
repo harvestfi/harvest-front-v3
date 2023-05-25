@@ -1040,9 +1040,9 @@ const WidoDetail = () => {
                     fAssetPool={fAssetPool}
                     lpTokenApprovedBalance={lpTokenApprovedBalance}
                     setPendingAction={setPendingAction}
-                    setAmountsToExecute={setAmountsToExecute}
                     setLoadingDots={setLoadingDots}
                     quoteValue={quoteValueDepo}
+                    multipleAssets={multipleAssets}
                   />
                 ) : (
                   <WidoDepositFinalStep

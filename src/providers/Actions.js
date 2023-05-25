@@ -46,6 +46,7 @@ const ActionsProvider = ({ children }) => {
       poolData,
       setPendingAction,
       onSuccessApproval = () => {},
+      onFailureApproval = () => {},
     ) => {
       const address = vaultAddress || tokens[tokenSymbol].vaultAddress
 
@@ -77,7 +78,7 @@ const ActionsProvider = ({ children }) => {
         setPendingAction(null)
         const errorMessage = formatWeb3PluginErrorMessage(err)
         toast.error(errorMessage)
-
+        onFailureApproval()
         return true
       }
     },
