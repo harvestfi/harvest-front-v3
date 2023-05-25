@@ -11,7 +11,7 @@ import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.sv
 import SettingIcon from '../../../assets/images/logos/wido/setting.svg'
 import Swap1WithIcon from '../../../assets/images/logos/wido/swap2.svg'
 import WithdrawIcon from '../../../assets/images/logos/wido/withdraw-icon.svg'
-import { WIDO_BALANCES_DECIMALS } from '../../../constants'
+import { WIDO_BALANCES_DECIMALS, IFARM_TOKEN_SYMBOL } from '../../../constants'
 import { usePools } from '../../../providers/Pools'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
@@ -61,7 +61,10 @@ const WidoWithdrawFinalStep = ({
 
   const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
   const chainId = token.chain || token.data.chain
-  const pricePerFullShare = get(token, `pricePerFullShare`, 0)
+  const pricePerFullShare = useIFARM
+    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
+    : get(token, `pricePerFullShare`, 0)
+
   const walletBalancesToCheck = multipleAssets || [tokenSymbol]
   const selectedAsset = !token.isSingleAssetWithdrawalAllowed ? -1 : 0
 
@@ -84,7 +87,7 @@ const WidoWithdrawFinalStep = ({
     ) {
       setAmountsToExecute([unstakeBalance.toString()])
       const tokenAllowance = async () => {
-        if (pickedToken.default && !useIFARM) {
+        if (pickedToken.default) {
           setApproveValue(2)
         } else {
           const { allowance } = await getTokenAllowance({
@@ -109,7 +112,7 @@ const WidoWithdrawFinalStep = ({
     const getQuoteResult = async () => {
       try {
         let fromInfoTemp, toInfoTemp
-        if (pickedToken.default && !useIFARM) {
+        if (pickedToken.default) {
           fromInfoTemp = `${formatNumberWido(
             fromWei(unstakeBalance, pickedToken.decimals),
             WIDO_BALANCES_DECIMALS,
@@ -241,10 +244,10 @@ const WidoWithdrawFinalStep = ({
     const user = account
     const amount = unstakeBalance
     try {
-      if (pickedToken.default && !useIFARM) {
+      if (pickedToken.default) {
         await handleWithdraw(
           account,
-          tokenSymbol,
+          useIFARM ? IFARM_TOKEN_SYMBOL : tokenSymbol,
           amountsToExecuteInWei[0],
           vaultsData,
           setPendingAction,

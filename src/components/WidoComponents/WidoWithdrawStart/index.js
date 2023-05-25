@@ -7,9 +7,10 @@ import ArrowDownIcon from '../../../assets/images/logos/wido/arrowdown.svg'
 import BackIcon from '../../../assets/images/logos/wido/back.svg'
 import SettingIcon from '../../../assets/images/logos/wido/setting.svg'
 import Swap2Icon from '../../../assets/images/logos/wido/swap2.svg'
-import { WIDO_BALANCES_DECIMALS } from '../../../constants'
+import { WIDO_BALANCES_DECIMALS, IFARM_TOKEN_SYMBOL } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
+import { useVaults } from '../../../providers/Vault'
 import { fromWei, mainWeb3, safeWeb3 } from '../../../services/web3'
 import { formatNumberWido, isSafeApp } from '../../../utils'
 import AnimatedDots from '../../AnimatedDots'
@@ -40,11 +41,14 @@ const WidoWithdrawStart = ({
 }) => {
   const { backColor, filterColor } = useThemeContext()
   const { account } = useWallet()
+  const { vaultsData } = useVaults()
 
   const [fromInfo, setFromInfo] = useState('')
   const [toInfo, setToInfo] = useState('')
 
-  const pricePerFullShare = get(token, `pricePerFullShare`, 0)
+  const pricePerFullShare = useIFARM
+    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
+    : get(token, `pricePerFullShare`, 0)
 
   useEffect(() => {
     if (
@@ -60,7 +64,7 @@ const WidoWithdrawStart = ({
         const amount = unstakeBalance
         try {
           let fromInfoTemp, toInfoTemp
-          if (pickedToken.default && !useIFARM) {
+          if (pickedToken.default) {
             fromInfoTemp = `${formatNumberWido(
               fromWei(amount, pickedToken.decimals),
               WIDO_BALANCES_DECIMALS,
@@ -229,7 +233,7 @@ const WidoWithdrawStart = ({
           <NewLabel>Rate</NewLabel>
           <NewLabel display="flex" items="center">
             {<>1&nbsp; =</>}
-            {pickedToken.default && !useIFARM ? (
+            {pickedToken.default ? (
               <>
                 {formatNumberWido(
                   fromWei(pricePerFullShare, pickedToken.decimals),
@@ -261,7 +265,7 @@ const WidoWithdrawStart = ({
                 &nbsp;~
               </>
             }
-            {pickedToken.default && !useIFARM ? (
+            {pickedToken.default ? (
               formatNumberWido(
                 new BigNumber(fromWei(unstakeBalance, pickedToken.decimals)).multipliedBy(
                   fromWei(pricePerFullShare, pickedToken.decimals),
@@ -291,7 +295,7 @@ const WidoWithdrawStart = ({
                 &nbsp;~
               </>
             }
-            {pickedToken.default && !useIFARM ? (
+            {pickedToken.default ? (
               formatNumberWido(
                 new BigNumber(fromWei(unstakeBalance, pickedToken.decimals)).multipliedBy(
                   fromWei(pricePerFullShare, pickedToken.decimals),
