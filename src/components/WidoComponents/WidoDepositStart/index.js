@@ -286,12 +286,8 @@ const WidoDepositStart = ({
         <NewLabel display="flex" justifyContent="space-between" marginBottom="15px">
           <NewLabel>Minimum Received</NewLabel>
           <NewLabel weight={400} size="14px" height="18px" display="flex" items="center">
-            {
-              <>
-                <img src={useIFARM ? IFARMIcon : Swap2Icon} width={20} height={20} alt="" />
-                &nbsp;~
-              </>
-            }
+            <img src={useIFARM ? IFARMIcon : Swap2Icon} width={20} height={20} alt="" />
+            &nbsp;
             {pickedToken.default ? (
               formatNumberWido(
                 new BigNumber(amount).dividedBy(pricePerFullShare).toString(),
