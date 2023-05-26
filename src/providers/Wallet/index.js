@@ -40,6 +40,7 @@ const WalletProvider = _ref => {
   const [logout, setLogout] = useState(false)
   const [balancesToLoad, setBalancesToLoad] = useState([])
   const [approvedBalances, setApprovedBalances] = useState({})
+  const [directApprovedBalances, setDirectApprovedBalances] = useState({})
   const { contracts } = useContracts()
   const [{ wallet }, connect, disconnect] = useConnectWallet()
 
@@ -179,6 +180,7 @@ const WalletProvider = _ref => {
       if (account && selectedTokens && selectedTokens.length) {
         const fetchedBalances = {}
         const fetchedApprovedBalances = {}
+        const fetchedDirectApprovedBalances = {}
         setBalancesToLoad(selectedTokens)
         await Promise.all(
           selectedTokens
@@ -234,6 +236,43 @@ const WalletProvider = _ref => {
                   },
                 )
               }
+
+              const tokenAddress = tokens[token].tokenAddress
+              const direcApprovalContract =
+                contracts[token === IFARM_TOKEN_SYMBOL ? FARM_TOKEN_SYMBOL : token]
+              const currDirectApprovedAssetBalance = approvedBalances[token]
+              const newDirectApprovedAssetBalance = tokenAddress
+                ? await tokenMethods.getApprovedAmount(
+                    account,
+                    tokenAddress,
+                    direcApprovalContract.instance,
+                  )
+                : '0'
+
+              if (
+                hasValidUpdatedBalance(
+                  newDirectApprovedAssetBalance,
+                  currDirectApprovedAssetBalance,
+                  fresh,
+                )
+              ) {
+                fetchedDirectApprovedBalances[token] = newDirectApprovedAssetBalance
+              } else {
+                await pollUpdatedBalance(
+                  tokenMethods.getApprovedAmount(
+                    account,
+                    tokenAddress,
+                    direcApprovalContract.instance,
+                  ),
+                  currDirectApprovedAssetBalance,
+                  () => {
+                    fetchedDirectApprovedBalances[token] = newDirectApprovedAssetBalance
+                  },
+                  fetchedBalance => {
+                    fetchedDirectApprovedBalances[token] = fetchedBalance
+                  },
+                )
+              }
             }),
         )
         setBalancesToLoad([])
@@ -241,6 +280,10 @@ const WalletProvider = _ref => {
         setApprovedBalances(currApprovedBalances => ({
           ...(newAccount ? {} : currApprovedBalances),
           ...fetchedApprovedBalances,
+        }))
+        setDirectApprovedBalances(currApprovedBalances => ({
+          ...(newAccount ? {} : currApprovedBalances),
+          ...fetchedDirectApprovedBalances,
         }))
       }
     },
@@ -266,6 +309,7 @@ const WalletProvider = _ref => {
         setSelChain,
         disconnectAction,
         logout,
+        directApprovedBalances,
       },
     },
     children,

@@ -56,7 +56,7 @@ const WidoDepositFinalStep = ({
   multipleAssets,
 }) => {
   const [approveValue, setApproveValue] = useState(0)
-  const { account, getWalletBalances, approvedBalances } = useWallet()
+  const { account, getWalletBalances, directApprovedBalances } = useWallet()
   const { fetchUserPoolStats, userStats } = usePools()
   const { vaultsData, farmingBalances, getFarmingBalances } = useVaults()
   const { handleDeposit, handleApproval } = useActions()
@@ -104,7 +104,7 @@ const WidoDepositFinalStep = ({
       const tokenAllowance = async () => {
         let allowanceCheck
         if (pickedToken.default) {
-          allowanceCheck = approvedBalances[tokenSymbol]
+          allowanceCheck = directApprovedBalances[tokenSymbol]
         } else {
           const { allowance } = await getTokenAllowance({
             chainId,
@@ -134,7 +134,7 @@ const WidoDepositFinalStep = ({
     amount,
     toToken,
     finalStep,
-    approvedBalances,
+    directApprovedBalances,
     tokenSymbol,
   ])
 
@@ -261,7 +261,7 @@ const WidoDepositFinalStep = ({
     try {
       let allowanceCheck
       if (pickedToken.default) {
-        allowanceCheck = approvedBalances[tokenSymbol]
+        allowanceCheck = directApprovedBalances[tokenSymbol]
       } else {
         const { allowance } = await getTokenAllowance({
           chainId,
@@ -296,7 +296,7 @@ const WidoDepositFinalStep = ({
           account,
           tokenSymbol,
           amountsToExecuteInWei,
-          approvedBalances[tokenSymbol],
+          directApprovedBalances[tokenSymbol],
           contracts,
           vaultsData[tokenSymbol],
           setPendingAction,
