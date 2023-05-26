@@ -289,12 +289,8 @@ const WidoWithdrawStart = ({
         <NewLabel display="flex" justifyContent="space-between" marginBottom="15px">
           <NewLabel>Minimum Received</NewLabel>
           <NewLabel weight={400} size="14px" height="18px" display="flex" items="center">
-            {
-              <>
-                <img src={pickedToken.logoURI} width={20} height={20} alt="" />
-                &nbsp;~
-              </>
-            }
+            <img src={pickedToken.logoURI} width={20} height={20} alt="" />
+            &nbsp;
             {pickedToken.default ? (
               formatNumberWido(
                 new BigNumber(fromWei(unstakeBalance, pickedToken.decimals)).multipliedBy(

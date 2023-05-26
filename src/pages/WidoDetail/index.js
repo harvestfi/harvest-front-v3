@@ -7,6 +7,7 @@ import { useHistory, useParams } from 'react-router-dom'
 import ReactTooltip from 'react-tooltip'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { getBalances, getSupportedTokens } from 'wido'
+import tokenMethods from '../../services/web3/contracts/token/methods'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
@@ -48,7 +49,7 @@ import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
-import { getExplorerLink } from '../../services/web3'
+import { getExplorerLink, newContractInstance, getWeb3 } from '../../services/web3'
 import { displayAPY, formatNumber, getDetailText, getTotalApy } from '../../utils'
 import {
   BackArrow,
@@ -405,7 +406,8 @@ const WidoDetail = () => {
             toChainId: chain,
           })
           const tokenAddress = token.tokenAddress
-          let first = {},
+          let directInSup = {},
+            directInBalance = {},
             supportedList = []
           const soonSupList = []
           for (let i = 0; i < supList.length; i += 1) {
@@ -423,7 +425,7 @@ const WidoDetail = () => {
 
             if (tokenAddress.length !== 2) {
               if (supList[i].address.toLowerCase() === tokenAddress.toLowerCase()) {
-                first = supList[i]
+                directInSup = supList[i]
               }
             }
           }
@@ -432,18 +434,43 @@ const WidoDetail = () => {
             return Number(fromWEI(b.balance, b.decimals)) - Number(fromWEI(a.balance, a.decimals))
           })
 
-          if (first !== {}) {
-            supportedList = supportedList.sort(function result(x, y) {
-              return x === first ? -1 : y === first ? 1 : 0
-            })
-            supportedList[0].default = true
-          }
-
           for (let j = 0; j < curBalances.length; j += 1) {
             const supToken = supList.find(el => el.address === curBalances[j].address)
             if (!supToken) {
               soonSupList.push(curBalances[j])
             }
+
+            if (tokenAddress.length !== 2) {
+              if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
+                directInBalance = curBalances[j]
+              }
+            }
+          }
+
+          if (directInSup !== {}) {
+            supportedList = supportedList.sort(function result(x, y) {
+              return x === directInSup ? -1 : y === directInSup ? 1 : 0
+            })
+            supportedList[0].default = true
+          } else if (directInBalance !== {}) {
+            supportedList = [directInBalance].push(supportedList)
+            supportedList[0].default = true
+          } else {
+            const web3Client = getWeb3(chain, null)
+            const { getSymbol } = tokenMethods
+            const lpInstance = await newContractInstance(id, tokenAddress, null, web3Client)
+            const lpSymbol = await getSymbol(lpInstance)
+            const direct = {
+              symbol: lpSymbol,
+              balance: '0',
+              address: tokenAddress,
+              default: true,
+              usdPrice: '0.0',
+              usdValue: '0.0',
+              logoURI: '',
+              decimal: tokenDecimals,
+            }
+            supportedList = [direct].push(supportedList)
           }
 
           setSoonToSupList(soonSupList)
@@ -455,7 +482,7 @@ const WidoDetail = () => {
     }
 
     getTokenBalance()
-  }, [account, chain, toTokenAddress, token])
+  }, [account, chain, toTokenAddress, token, id, tokenDecimals])
 
   const {
     backColor,

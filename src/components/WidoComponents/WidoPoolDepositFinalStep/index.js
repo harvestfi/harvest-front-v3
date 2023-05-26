@@ -286,7 +286,7 @@ const WidoPoolDepositFinalStep = ({
         contracts,
         tokenSymbol,
         token.vaultAddress,
-        fAssetPool,
+        null,
         setPendingAction,
         async () => {
           await reloadStats()
