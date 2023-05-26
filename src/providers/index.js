@@ -58,6 +58,9 @@ const web3Onboard = init({
       { name: 'Coinbase', url: 'https://wallet.coinbase.com/' },
     ],
   },
+  notify: {
+    enabled: false,
+  },
   accountCenter: {
     desktop: {
       position: 'topRight',
