@@ -173,8 +173,6 @@ const WidoPoolDepositFinalStep = ({
           })
           allowanceCheck = allowance
         }
-        console.log(allowanceCheck)
-        console.log(amount)
         if (!new BigNumber(allowanceCheck).gte(amount)) {
           setApproveValue(0)
         } else {
@@ -290,6 +288,7 @@ const WidoPoolDepositFinalStep = ({
         setPendingAction,
         async () => {
           await reloadStats()
+          await getWalletBalances([IFARM_TOKEN_SYMBOL], false, true)
           setApproveValue(2)
         },
         async () => {
@@ -335,9 +334,12 @@ const WidoPoolDepositFinalStep = ({
 
     try {
       let allowanceCheck, spenderCheck
-      if (pickedToken.default || legacyStaking) {
+      if (legacyStaking) {
         allowanceCheck = approvedBalances[tokenSymbol]
         spenderCheck = fAssetPool.autoStakePoolAddress
+      } else if (pickedToken.default) {
+        allowanceCheck = approvedBalances[IFARM_TOKEN_SYMBOL]
+        spenderCheck = token.vaultAddress
       } else {
         const { spender, allowance } = await getTokenAllowance({
           chainId,
