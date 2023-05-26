@@ -59,10 +59,10 @@ const ActionsProvider = ({ children }) => {
             poolData.lpTokenData.localInstance,
           )
         } else {
-          const { methods, instance } = contracts[
+          const { methods, localInstance } = contracts[
             tokenSymbol === IFARM_TOKEN_SYMBOL ? FARM_TOKEN_SYMBOL : tokenSymbol
           ]
-          await methods.approve(address, account, maxUint256(), instance)
+          await methods.approve(address, account, maxUint256(), localInstance)
         }
 
         await onSuccessApproval()

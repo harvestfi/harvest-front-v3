@@ -209,8 +209,8 @@ const WidoDepositFinalStep = ({
         account,
         contracts,
         tokenSymbol,
+        pickedToken.address,
         null,
-        fAssetPool,
         setPendingAction,
         async () => {
           await fetchUserPoolStats([fAssetPool], account, userStats)

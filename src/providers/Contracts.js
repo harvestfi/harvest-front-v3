@@ -1,7 +1,14 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import promiseObject from 'promise-all-object'
 import importedContracts from '../services/web3/contracts'
-import { newContractInstance, ethWeb3, maticWeb3, arbitrumWeb3, infuraWeb3 } from '../services/web3'
+import {
+  newContractInstance,
+  ethWeb3,
+  maticWeb3,
+  arbitrumWeb3,
+  infuraWeb3,
+  getWeb3Local,
+} from '../services/web3'
 import { isLedgerLive } from '../utils'
 import { CHAINS_ID } from '../data/constants'
 
@@ -40,6 +47,7 @@ const ContractsProvider = _ref => {
                 null,
                 getWeb3(importedContracts[contract].chain),
               ),
+              localInstance: newContractInstance(contract, null, null, getWeb3Local()),
               methods: importedContracts[contract].methods,
               address: importedContracts[contract].contract.address,
             },
