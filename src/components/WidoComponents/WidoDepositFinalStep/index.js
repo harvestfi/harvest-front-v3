@@ -209,7 +209,7 @@ const WidoDepositFinalStep = ({
         account,
         contracts,
         tokenSymbol,
-        pickedToken.address,
+        null,
         null,
         setPendingAction,
         async () => {
