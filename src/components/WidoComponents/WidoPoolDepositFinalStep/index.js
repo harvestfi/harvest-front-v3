@@ -218,7 +218,7 @@ const WidoPoolDepositFinalStep = ({
               : ''
           })`
           toInfoTemp = `${formatNumberWido(
-            new BigNumber(amount).dividedBy(pricePerFullShare).toString(),
+            new BigNumber(amount).dividedBy(pricePerFullShare).toFixed(),
             WIDO_BALANCES_DECIMALS,
           )} ($${
             pickedToken.usdPrice !== '0.0'

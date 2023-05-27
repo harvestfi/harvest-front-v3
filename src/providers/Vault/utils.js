@@ -42,9 +42,9 @@ export const calculateFarmingBalance = async (pools, userStats, vaultSymbol, vau
             .dividedBy(totalSupply)
         : userBalanceInPool.plus(userBalanceInVault)
 
-      farmedBalance = underlyingPoolBalanceForHolder.toString()
+      farmedBalance = underlyingPoolBalanceForHolder.toFixed()
     } else {
-      farmedBalance = userBalanceInVault.toString()
+      farmedBalance = userBalanceInVault.toFixed()
     }
   } catch (err) {
     console.error(err)
