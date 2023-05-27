@@ -467,20 +467,18 @@ const WidoDetail = () => {
 
           if (directInSup !== {}) {
             directInSup.balance = directBalance
-            directInSup.usdPrice = directInSup.usdPrice ? directInSup.usdPrice : directUsdPrice
-            directInSup.usdValue = directInSup.usdValue ? directInSup.usdValue : directUsdValue
+            directInSup.usdPrice = directInSup.usdPrice > 0 ? directInSup.usdPrice : directUsdPrice
+            directInSup.usdValue = directInSup.usdValue > 0 ? directInSup.usdValue : directUsdValue
             supportedList = supportedList.sort(function result(x, y) {
               return x === directInSup ? -1 : y === directInSup ? 1 : 0
             })
             supportedList[0].default = true
           } else if (directInBalance !== {}) {
             directInBalance.balance = directBalance
-            directInBalance.usdPrice = directInBalance.usdPrice
-              ? directInBalance.usdPrice
-              : directUsdPrice
-            directInBalance.usdValue = directInBalance.usdValue
-              ? directInBalance.usdValue
-              : directUsdValue
+            directInBalance.usdPrice =
+              directInBalance.usdPrice > 0 ? directInBalance.usdPrice : directUsdPrice
+            directInBalance.usdValue =
+              directInBalance.usdValue > 0 ? directInBalance.usdValue : directUsdValue
             supportedList = [directInBalance].push(supportedList)
             supportedList[0].default = true
           } else {
