@@ -408,7 +408,8 @@ const WidoDetail = () => {
           const tokenAddress = token.tokenAddress
           let directInSup = {},
             directInBalance = {},
-            supportedList = []
+            supportedList = [],
+            vaultId
           const soonSupList = []
           for (let i = 0; i < supList.length; i += 1) {
             const supToken = curBalances.find(el => el.address === supList[i].address)
@@ -447,26 +448,39 @@ const WidoDetail = () => {
             }
           }
 
-          const vaultId = Object.keys(vaultsData).find(key => vaultsData[key] === token)
+          vaultId = Object.keys(vaultsData).find(
+            key => vaultsData[key].tokenAddress === tokenAddress,
+          )
+          if (!vaultId) {
+            vaultId = Object.keys(poolVaults).find(
+              key => poolVaults[key].tokenAddress === tokenAddress,
+            )
+          }
           const directBalance = balances[vaultId]
           const directUsdPrice = token.usdPrice
-          const directUsdValue = new BigNumber(directBalance)
-            .div(10 ** tokenDecimals)
-            .times(directUsdPrice)
-            .toFixed(4)
+          const directUsdValue = directUsdPrice
+            ? new BigNumber(directBalance)
+                .div(10 ** tokenDecimals)
+                .times(directUsdPrice)
+                .toFixed(4)
+            : '0'
 
           if (directInSup !== {}) {
             directInSup.balance = directBalance
-            directInSup.usdPrice = directUsdPrice
-            directInSup.usdValue = directUsdValue
+            directInSup.usdPrice = directInSup.usdPrice ? directInSup.usdPrice : directUsdPrice
+            directInSup.usdValue = directInSup.usdValue ? directInSup.usdValue : directUsdValue
             supportedList = supportedList.sort(function result(x, y) {
               return x === directInSup ? -1 : y === directInSup ? 1 : 0
             })
             supportedList[0].default = true
           } else if (directInBalance !== {}) {
             directInBalance.balance = directBalance
-            directInBalance.usdPrice = directUsdPrice
-            directInBalance.usdValue = directUsdValue
+            directInBalance.usdPrice = directInBalance.usdPrice
+              ? directInBalance.usdPrice
+              : directUsdPrice
+            directInBalance.usdValue = directInBalance.usdValue
+              ? directInBalance.usdValue
+              : directUsdValue
             supportedList = [directInBalance].push(supportedList)
             supportedList[0].default = true
           } else {
@@ -495,7 +509,7 @@ const WidoDetail = () => {
     }
 
     getTokenBalance()
-  }, [account, chain, toTokenAddress, token, id, tokenDecimals, balances])
+  }, [account, chain, toTokenAddress, token, id, tokenDecimals, balances, poolVaults, vaultsData])
 
   const {
     backColor,

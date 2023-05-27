@@ -73,7 +73,12 @@ const WidoDepositFinalStep = ({
   const zap = !token.disableAutoSwap
 
   const isSpecialVault = token.liquidityPoolVault || token.poolVault
-  const tokenDecimals = token.decimals || tokens[symbol].decimals
+  let tokenDecimals
+  if (isSpecialVault) {
+    tokenDecimals = 18
+  } else {
+    tokenDecimals = token.decimals || tokens[symbol].decimals
+  }
 
   const pricePerFullShare = get(token, `pricePerFullShare`, 0)
 
