@@ -129,7 +129,10 @@ export const newContractInstance = async (contractName, address, customAbi, web3
 }
 
 export const fromWei = (wei, decimals, decimalsToDisplay = 2, format = false, radix = 10) => {
-  const weiAmountInBN = new BigNumber(wei.toString())
+  if (wei != null) {
+    wei = wei.toString()
+  }
+  const weiAmountInBN = new BigNumber(wei)
   let result = '0'
 
   if (typeof decimals !== 'undefined' && weiAmountInBN.isGreaterThan(0)) {
@@ -143,6 +146,9 @@ export const fromWei = (wei, decimals, decimalsToDisplay = 2, format = false, ra
 }
 
 export const toWei = (token, decimals, decimalsToDisplay) => {
+  if (token != null) {
+    token = token.toString()
+  }
   let tokenAmountInBN = new BigNumber(token.toString())
 
   if (typeof decimals !== 'undefined' && tokenAmountInBN.isGreaterThan(0)) {
