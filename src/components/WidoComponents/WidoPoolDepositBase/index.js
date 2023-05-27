@@ -12,7 +12,6 @@ import IFARMIcon from '../../../assets/images/logos/wido/ifarm.svg'
 import WidoIcon from '../../../assets/images/logos/wido/wido.svg'
 import {
   FARM_TOKEN_SYMBOL,
-  fromWEI,
   IFARM_TOKEN_SYMBOL,
   POOL_BALANCES_DECIMALS,
   WIDO_BALANCES_DECIMALS,
@@ -224,7 +223,7 @@ const WidoPoolDepositBase = ({
         const farmToken = balanceList.filter(bal => bal.symbol === FARM_TOKEN_SYMBOL)
         if (farmToken.length > 0) {
           setFarmInfo(farmToken[0])
-          setBalance(fromWEI(farmToken[0].balance, farmToken[0].decimals))
+          setBalance(fromWei(farmToken[0].balance, farmToken[0].decimals))
           setPickedToken(farmToken[0])
         }
       }
@@ -305,7 +304,7 @@ const WidoPoolDepositBase = ({
           if (account) {
             const balanceAmount = !legacyStaking
               ? balance
-              : FARMBalance && fromWEI(FARMBalance, tokens[IFARM_TOKEN_SYMBOL].decimals)
+              : FARMBalance && fromWei(FARMBalance, tokens[IFARM_TOKEN_SYMBOL].decimals)
             setInputAmount(balanceAmount)
 
             const usdAmount = legacyStaking
@@ -319,7 +318,7 @@ const WidoPoolDepositBase = ({
         <span>
           {!legacyStaking
             ? formatNumberWido(balance, POOL_BALANCES_DECIMALS)
-            : FARMBalance && `${fromWEI(FARMBalance, tokens[IFARM_TOKEN_SYMBOL].decimals)} FARM`}
+            : FARMBalance && `${fromWei(FARMBalance, tokens[IFARM_TOKEN_SYMBOL].decimals)} FARM`}
         </span>
       </BalanceInfo>
       <SwitchMode fontColor={widoTagActiveFontColor}>

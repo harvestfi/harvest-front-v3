@@ -23,7 +23,6 @@ import {
   POOL_BALANCES_DECIMALS,
   SPECIAL_VAULTS,
   directDetailUrl,
-  fromWEI,
 } from '../../constants'
 import { addresses } from '../../data'
 import { CHAINS_ID } from '../../data/constants'
@@ -32,6 +31,7 @@ import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
+import { fromWei } from '../../services/web3'
 import {
   formatNumber,
   formatNumberWido,
@@ -331,7 +331,7 @@ const Portfolio = () => {
                   ? token.data.lpTokenData && token.data.lpTokenData.price
                   : token.vaultPrice) || 1
             }
-            const unstake = fromWEI(
+            const unstake = fromWei(
               get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),
               (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
               POOL_BALANCES_DECIMALS,
@@ -355,10 +355,11 @@ const Portfolio = () => {
               )
             }
             const finalStake = getUserVaultBalance(symbol, farmingBalances, stakeTemp, farmBalance)
-            const stake = fromWEI(
+            const stake = fromWei(
               useIFARM ? finalStake : stakeTemp,
               token.decimals || token.data.watchAsset.decimals,
-              3,
+              4,
+              true,
             )
 
             stats.stake = stake * (switchBalance ? usdPrice : 1)
@@ -399,10 +400,10 @@ const Portfolio = () => {
             stats.reward =
               rewards === undefined
                 ? 0
-                : fromWEI(rewards, rewardDecimal) * (switchBalance ? usdRewardPrice : 1)
+                : fromWei(rewards, rewardDecimal) * (switchBalance ? usdRewardPrice : 1)
             stats.reward = stats.reward.toFixed(POOL_BALANCES_DECIMALS)
             valueRewards += Number(
-              rewards === undefined ? 0 : fromWEI(rewards, rewardDecimal) * usdRewardPrice,
+              rewards === undefined ? 0 : fromWei(rewards, rewardDecimal) * usdRewardPrice,
             )
             stats.rewardSymbol = rewardSymbol
             newStats.push(stats)

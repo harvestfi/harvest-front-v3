@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js'
 import React from 'react'
 
 export const HARVEST_LAUNCH_DATE = new Date(1598986800000)
@@ -731,16 +730,6 @@ export const MIGRATION_STEPS = {
   UNSTAKE: 0,
   APPROVE: 1,
   MIGRATE: 2,
-}
-
-export function toWEI(number, digit) {
-  return BigNumber(number).shiftedBy(digit)
-}
-
-export function fromWEI(number, digit) {
-  return BigNumber(number)
-    .shiftedBy(-1 * digit)
-    .toNumber()
 }
 
 export const directDetailUrl = '/'

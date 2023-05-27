@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { fromWEI } from '../../../constants'
+import { fromWei } from '../../../services/web3'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { Container, Text, Vault, Content, EmptyContainer } from './style'
 
@@ -17,7 +17,7 @@ const WidoSelectTokenList = ({
   const handleClick = id => {
     setClickedId(id)
     setPickedToken(tokenList[id])
-    setBalance(fromWEI(tokenList[id].balance ? tokenList[id].balance : 0, tokenList[id].decimals))
+    setBalance(fromWei(tokenList[id].balance ? tokenList[id].balance : 0, tokenList[id].decimals))
     setSelectTokenWido(false)
     setWidoPartHeight(null)
   }
@@ -56,7 +56,7 @@ const WidoSelectTokenList = ({
                 {data.symbol}
               </Text>
               <Text size="12px" height="16px" weight={400}>
-                {data.balance ? fromWEI(data.balance, data.decimals).toFixed(4) : '0.0000'}
+                {data.balance ? fromWei(data.balance, data.decimals, 4, true) : '0.0000'}
               </Text>
             </Vault>
           </Container>

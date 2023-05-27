@@ -41,15 +41,15 @@ import {
   FARM_WETH_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
-  fromWEI,
 } from '../../constants'
+import { fromWei, getExplorerLink, newContractInstance, getWeb3 } from '../../services/web3'
 import { addresses } from '../../data'
 import { usePools } from '../../providers/Pools'
 import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
-import { getExplorerLink, newContractInstance, getWeb3 } from '../../services/web3'
+
 import { displayAPY, formatNumber, getDetailText, getTotalApy } from '../../utils'
 import {
   BackArrow,
@@ -431,7 +431,7 @@ const WidoDetail = () => {
           }
 
           supportedList = supportedList.sort(function reducer(a, b) {
-            return Number(fromWEI(b.balance, b.decimals)) - Number(fromWEI(a.balance, a.decimals))
+            return Number(fromWei(b.balance, b.decimals)) - Number(fromWei(a.balance, a.decimals))
           })
 
           for (let j = 0; j < curBalances.length; j += 1) {
@@ -447,12 +447,26 @@ const WidoDetail = () => {
             }
           }
 
+          const vaultId = Object.keys(vaultsData).find(key => vaultsData[key] === token)
+          const directBalance = balances[vaultId]
+          const directUsdPrice = token.usdPrice
+          const directUsdValue = new BigNumber(directBalance)
+            .div(10 ** tokenDecimals)
+            .times(directUsdPrice)
+            .toFixed(4)
+
           if (directInSup !== {}) {
+            directInSup.balance = directBalance
+            directInSup.usdPrice = directUsdPrice
+            directInSup.usdValue = directUsdValue
             supportedList = supportedList.sort(function result(x, y) {
               return x === directInSup ? -1 : y === directInSup ? 1 : 0
             })
             supportedList[0].default = true
           } else if (directInBalance !== {}) {
+            directInBalance.balance = directBalance
+            directInBalance.usdPrice = directUsdPrice
+            directInBalance.usdValue = directUsdValue
             supportedList = [directInBalance].push(supportedList)
             supportedList[0].default = true
           } else {
@@ -462,17 +476,16 @@ const WidoDetail = () => {
             const lpSymbol = await getSymbol(lpInstance)
             const direct = {
               symbol: lpSymbol,
-              balance: '0',
+              balance: directBalance,
               address: tokenAddress,
               default: true,
-              usdPrice: '0.0',
-              usdValue: '0.0',
+              usdPrice: directUsdPrice,
+              usdValue: directUsdValue,
               logoURI: '',
               decimal: tokenDecimals,
             }
             supportedList = [direct].push(supportedList)
           }
-
           setSoonToSupList(soonSupList)
           setSupTokenList(supportedList)
         }
@@ -482,7 +495,7 @@ const WidoDetail = () => {
     }
 
     getTokenBalance()
-  }, [account, chain, toTokenAddress, token, id, tokenDecimals])
+  }, [account, chain, toTokenAddress, token, id, tokenDecimals, balances])
 
   const {
     backColor,
