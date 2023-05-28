@@ -81,8 +81,6 @@ const WalletProvider = _ref => {
             setConnected(true)
             const chainNew = parseInt(newChain, 16).toString()
             setChainId(chainNew)
-            const selectedAccount = await ledgerProvider.getSigner().getAddress()
-            setAccount(selectedAccount && selectedAccount.toLowerCase())
             setSelChain([chainNew])
           },
           () => {
@@ -178,16 +176,8 @@ const WalletProvider = _ref => {
           }
         }
       }
-      if (web3Plugin && wallet && wallet?.label === 'Ledger')
-        web3Plugin.setProvider(wallet.provider)
       if (web3Plugin && web3Plugin._provider.on && account) {
         networkEmitter = web3Plugin._provider.on('chainChanged', onNetworkChange)
-        accountEmitter = web3Plugin._provider.on('accountsChanged', accountAddress => {
-          if (accountAddress.length > 0) {
-            setAccount(accountAddress[0]?.toLowerCase())
-            setConnected(true)
-          }
-        })
       }
 
       return () => {
@@ -198,11 +188,10 @@ const WalletProvider = _ref => {
       }
     }
     fetchData()
-  }, [web3Plugin, chainId, account, onNetworkChange, setAccount, wallet])
+  }, [web3Plugin, chainId, account, onNetworkChange, setAccount])
 
   useEffect(() => {
-    console.log('wallet: ', wallet)
-    if (!isSafeApp()) {
+    if (!isSafeApp() && !isLedgerLive()) {
       if (wallet) {
         const chainNum = parseInt(wallet.chains[0].id, 16).toString()
         setAccount(wallet.accounts[0].address.toLowerCase())

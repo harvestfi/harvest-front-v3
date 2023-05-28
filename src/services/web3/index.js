@@ -1,18 +1,11 @@
-import CoinbaseWalletSDK from '@coinbase/wallet-sdk'
-import { SafeAppWeb3Modal } from '@gnosis.pm/safe-apps-web3modal'
-import { loadConnectKit } from '@ledgerhq/connect-kit-loader'
 import { IFrameEthereumProvider } from '@ledgerhq/iframe-provider'
 import { SafeAppProvider } from '@safe-global/safe-apps-provider'
 import SafeAppsSDK from '@safe-global/safe-apps-sdk'
-import WalletConnectProvider from '@walletconnect/web3-provider'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
 import mobile from 'is-mobile'
 import { get } from 'lodash'
 import Web3 from 'web3'
-import arbitrumLogo from '../../assets/images/logos/arbitrum.svg'
-import ethLogo from '../../assets/images/logos/eth.png'
-import maticLogo from '../../assets/images/logos/matic.svg'
 import {
   ARBISCAN_URL,
   ARBITRUM_URL,
@@ -27,67 +20,8 @@ import { CHAINS_ID } from '../../data/constants'
 import { formatNumber, isLedgerLive, isSafeApp } from '../../utils'
 import contracts from './contracts'
 
-export const providerOptions = {
-  injected: {
-    package: null,
-  },
-  coinbasewallet: {
-    package: CoinbaseWalletSDK,
-    options: {
-      appName: 'Harvest Finance',
-      rpc: {
-        [CHAINS_ID.ETH_MAINNET]: INFURA_URL,
-        [CHAINS_ID.ARBITRUM_ONE]: ARBITRUM_URL,
-        [CHAINS_ID.MATIC_MAINNET]: MATIC_URL,
-      },
-    },
-  },
-  walletconnect: {
-    package: WalletConnectProvider,
-    options: {
-      rpc: {
-        [CHAINS_ID.ETH_MAINNET]: INFURA_URL,
-        [CHAINS_ID.MATIC_MAINNET]: MATIC_URL,
-        [CHAINS_ID.ARBITRUM_ONE]: ARBITRUM_URL,
-      },
-    },
-  },
-  ledger: {
-    package: loadConnectKit,
-    options: {
-      rpc: {
-        [CHAINS_ID.ETH_MAINNET]: INFURA_URL,
-        [CHAINS_ID.MATIC_MAINNET]: MATIC_URL,
-        [CHAINS_ID.ARBITRUM_ONE]: ARBITRUM_URL,
-      },
-    },
-  },
-}
-
-const chains = {
-  [CHAINS_ID.ETH_MAINNET]: {
-    name: 'Ethereum',
-    logo: ethLogo,
-  },
-  [CHAINS_ID.MATIC_MAINNET]: {
-    name: 'Polygon (Matic)',
-    logo: maticLogo,
-  },
-  [CHAINS_ID.ARBITRUM_ONE]: {
-    name: 'Arbitrum',
-    logo: arbitrumLogo,
-  },
-}
-
 export const getChainHexadecimal = chainId => `0x${Number(chainId).toString(16)}`
 
-export const web3Modal = new SafeAppWeb3Modal({
-  network: 'mainnet',
-  cacheProvider: false,
-  disableInjectedProvider: false,
-  providerOptions,
-  chains,
-})
 const SDK = new SafeAppsSDK()
 export const infuraWeb3 = new Web3(INFURA_URL)
 export const maticWeb3 = new Web3(MATIC_URL)
@@ -204,17 +138,12 @@ export const getChainName = chainId => {
   }
 }
 
-export const getWeb3 = async (chainId, account, wallet = null) => {
+export const getWeb3 = async (chainId, account) => {
   if (account) {
     if (isSafeApp()) {
       const web3 = await safeWeb3()
       return web3
     }
-
-    if (wallet && wallet?.label === 'Ledger') {
-      return new Web3(wallet.provider)
-    }
-
     return mainWeb3
   }
 
@@ -236,7 +165,7 @@ export const newContractInstance = async (contractName, address, customAbi, web3
   const contractAbi = getContract(contractName) ? contracts[contractName].contract.abi : customAbi
 
   if (contractAddress) {
-    const web3Instance = web3Provider || (await getWeb3(null, true, null))
+    const web3Instance = web3Provider || (await getWeb3(null, true))
     return new web3Instance.eth.Contract(contractAbi, contractAddress)
   }
   return null

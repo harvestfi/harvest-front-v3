@@ -1,4 +1,3 @@
-import { useConnectWallet } from '@web3-onboard/react'
 import axios from 'axios'
 import BigNumber from 'bignumber.js'
 import { get, isArray, merge, pickBy } from 'lodash'
@@ -14,13 +13,14 @@ import React, {
 } from 'react'
 import { toast } from 'react-toastify'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import { IFARM_TOKEN_SYMBOL, SPECIAL_VAULTS, VAULTS_API_ENDPOINT } from '../../constants'
+import { IFARM_TOKEN_SYMBOL, VAULTS_API_ENDPOINT } from '../../constants'
 import { CHAINS_ID } from '../../data/constants'
 import {
   getWeb3,
   hasValidUpdatedBalance,
   newContractInstance,
   pollUpdatedBalance,
+  ledgerWeb3,
 } from '../../services/web3'
 import univ3ContractData from '../../services/web3/contracts/uniswap-v3/contract.json'
 import vaultContractData from '../../services/web3/contracts/vault/contract.json'
@@ -57,32 +57,33 @@ const VaultsProvider = _ref => {
   const [loadingFarmingBalances, setLoadingFarmingBalances] = useState(false)
   const [farmingBalances, setFarmingBalances] = useState({})
   const [vaultsData, setVaults] = useState(importedVaults)
-  const [{ wallet }] = useConnectWallet()
   const loadedVaults = useMemo(
     () =>
       pickBy(vaultsData, vault =>
-        isLedgerLive() || isSafeApp() || wallet?.label === 'Ledger'
-          ? vault.chain === chainId
-          : selChain.includes(vault.chain),
+        isLedgerLive() || isSafeApp() ? vault.chain === chainId : selChain.includes(vault.chain),
       ),
-    [selChain, vaultsData, chainId, wallet],
+    [selChain, vaultsData, chainId],
   )
   // const initialFetch = useRef(true)
   const loadedUserVaultsWeb3Provider = useRef(false)
   const setFormattedVaults = useCallback(
     async (apiData, apiFailed) => {
       const formattedVaults = {}
+      let curChainId = chainId
+      try {
+        if (isLedgerLive()) {
+          const selectedChain = await ledgerWeb3.eth.net.getId()
+          curChainId = selectedChain.toString()
+        }
+      } catch (e) {
+        console.log(e)
+      }
+
       await forEach(Object.keys(importedVaults), async vaultSymbol => {
         const vaultChain = get(importedVaults, `[${vaultSymbol}].chain`)
         try {
-          if (
-            (!isLedgerLive() &&
-              (wallet?.label !== 'Ledger' ||
-                (wallet?.label === 'Ledger' &&
-                  vaultChain === parseInt(wallet?.chains[0].id, 16).toString()))) ||
-            (isLedgerLive() && vaultChain !== CHAINS_ID.ARBITRUM_ONE)
-          ) {
-            let web3Client = await getWeb3(vaultChain, account, wallet),
+          if (!isLedgerLive() || (isLedgerLive() && vaultChain !== CHAINS_ID.ARBITRUM_ONE)) {
+            let web3Client = await getWeb3(vaultChain, account),
               estimatedApy = null,
               estimatedApyBreakdown = [],
               usdPrice = null,
@@ -97,12 +98,8 @@ const VaultsProvider = _ref => {
               { subLabel } = importedVaults[vaultSymbol],
               uniswapV3ManagedData = null,
               dataFetched = false
-            if (
-              (Object.values(SPECIAL_VAULTS).includes(vaultSymbol) &&
-                chainId !== CHAINS_ID.ETH_MAINNET) ||
-              vaultChain !== chainId
-            ) {
-              web3Client = await getWeb3(vaultChain, null, null)
+            if (vaultChain !== chainId) {
+              web3Client = await getWeb3(vaultChain, false)
             }
             const tokenPool = pools.find(
               pool => pool.collateralAddress === importedVaults[vaultSymbol].vaultAddress,
@@ -161,7 +158,7 @@ const VaultsProvider = _ref => {
                 : await getPricePerFullShare(instance, web3Client)
             }
 
-            if (isIFARM && account && chainId === CHAINS_ID.ETH_MAINNET) {
+            if (isIFARM && account && curChainId === CHAINS_ID.ETH_MAINNET) {
               underlyingBalanceWithInvestmentForHolder = await getUnderlyingBalanceWithInvestmentForHolder(
                 account,
                 instance,
@@ -205,7 +202,7 @@ const VaultsProvider = _ref => {
 
       setVaults(formattedVaults)
     },
-    [pools, account, chainId, wallet],
+    [pools, account, chainId],
   )
   const getFarmingBalances = useCallback(
     // eslint-disable-next-line func-names
@@ -273,12 +270,6 @@ const VaultsProvider = _ref => {
           if (chainId === CHAINS_ID.ETH_MAINNET) await setFormattedVaults(apiData.eth)
           else if (chainId === CHAINS_ID.MATIC_MAINNET) await setFormattedVaults(apiData.matic)
           else await setFormattedVaults(apiData.arbitrum)
-        } else if (wallet?.label === 'Ledger') {
-          const chainNum = parseInt(wallet.chains[0].id, 16).toString()
-          console.log('chainNum: ', chainNum)
-          if (chainNum === CHAINS_ID.ETH_MAINNET) await setFormattedVaults(apiData.eth)
-          else if (chainNum === CHAINS_ID.MATIC_MAINNET) await setFormattedVaults(apiData.matic)
-          else await setFormattedVaults(merge(apiData.eth, apiData.matic))
         } else {
           await setFormattedVaults(merge(apiData.eth, apiData.matic, apiData.arbitrum))
         }
@@ -305,7 +296,7 @@ const VaultsProvider = _ref => {
     setLoadingVaults(true)
     formatVaults()
     // }
-  }, [setFormattedVaults, chainId, wallet])
+  }, [setFormattedVaults, chainId])
   useEffectWithPrevious(
     _ref2 => {
       const [prevAccount] = _ref2

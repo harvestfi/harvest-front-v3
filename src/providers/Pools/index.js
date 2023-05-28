@@ -7,7 +7,6 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { useConnectWallet } from '@web3-onboard/react'
 // eslint-disable-next-line import/no-unresolved
 import axios from 'axios'
 import isEqual from 'fast-deep-equal/react'
@@ -57,15 +56,12 @@ const PoolsProvider = _ref => {
   const [disableWallet, setDisableWallet] = useState(true)
   const loadedUserPoolsWeb3Provider = useRef(false)
   const loadedInitialStakedAndUnstakedBalances = useRef(false)
-  const [{ wallet }] = useConnectWallet()
   const loadedPools = useMemo(
     () =>
       filter(pools, pool =>
-        isLedgerLive() || isSafeApp() || wallet?.label === 'Ledger'
-          ? pool.chain === chainId
-          : selChain.includes(pool.chain),
+        isLedgerLive() || isSafeApp() ? pool.chain === chainId : selChain.includes(pool.chain),
       ),
-    [selChain, pools, chainId, wallet],
+    [selChain, pools, chainId],
   )
   const [finishPool, setFinishPool] = useState(false) // set true when getPoolsData success
   const formatPoolsData = useCallback(
@@ -75,8 +71,8 @@ const PoolsProvider = _ref => {
           if (!isLedgerLive() || (isLedgerLive() && pool.chain !== CHAINS_ID.ARBITRUM_ONE)) {
             let curChain = chainId,
               selectedAccount = account,
-              web3Client = await getWeb3(pool.chain, selectedAccount, wallet),
-              web3ClientLocal = await getWeb3(pool.chain, selectedAccount, wallet),
+              web3Client = await getWeb3(pool.chain, selectedAccount),
+              web3ClientLocal = await getWeb3(pool.chain, selectedAccount),
               rewardAPY = ['0'],
               rewardAPR = ['0'],
               autoStakeContractInstance = null,
@@ -214,7 +210,7 @@ const PoolsProvider = _ref => {
 
       return formattedPools
     },
-    [account, chainId, wallet],
+    [account, chainId],
   )
   const getPoolsData = useCallback(async () => {
     let newPools = []
@@ -222,7 +218,7 @@ const PoolsProvider = _ref => {
     try {
       const apiResponse = await axios.get(POOLS_API_ENDPOINT)
       const apiData = get(apiResponse, 'data')
-      if (isLedgerLive() || wallet?.label === 'Ledger') {
+      if (isLedgerLive()) {
         newPools = await formatPoolsData([...apiData.eth, ...apiData.matic])
       } else {
         newPools = await formatPoolsData([...apiData.eth, ...apiData.matic, ...apiData.arbitrum])
@@ -245,7 +241,7 @@ const PoolsProvider = _ref => {
 
     setPools(newPools)
     setFinishPool(true)
-  }, [formatPoolsData, wallet])
+  }, [formatPoolsData])
 
   useEffect(() => {
     if (logout) {
@@ -257,14 +253,7 @@ const PoolsProvider = _ref => {
     _ref2 => {
       const [prevAccount] = _ref2
 
-      if (
-        account !== prevAccount &&
-        account &&
-        !loadedUserPoolsWeb3Provider.current &&
-        finishPool &&
-        !isLedgerLive() &&
-        !isSafeApp()
-      ) {
+      if (account !== prevAccount && account && finishPool && !isLedgerLive() && !isSafeApp()) {
         const setCurrentPoolsWithUserProvider = async () => {
           const poolsWithUpdatedProvider = await formatPoolsData(pools)
           setPools(poolsWithUpdatedProvider)
@@ -274,7 +263,6 @@ const PoolsProvider = _ref => {
       } else if (
         account !== prevAccount &&
         account &&
-        !loadedUserPoolsWeb3Provider.current &&
         finishPool &&
         (isLedgerLive() || isSafeApp())
       ) {

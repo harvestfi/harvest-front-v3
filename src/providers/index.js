@@ -1,5 +1,4 @@
 import injectedModule from '@web3-onboard/injected-wallets'
-import ledgerModule from '@web3-onboard/ledger'
 import gnosisModule from '@web3-onboard/gnosis'
 import { init, Web3OnboardProvider } from '@web3-onboard/react'
 import walletConnectModule from '@web3-onboard/walletconnect'
@@ -13,7 +12,6 @@ import { VaultsProvider } from './Vault'
 import { WalletProvider } from './Wallet'
 
 const injected = injectedModule()
-const ledger = ledgerModule()
 const gnosis = gnosisModule()
 const walletConnect = walletConnectModule({
   bridge: 'https://bridge.walletconnect.org',
@@ -25,7 +23,7 @@ const walletConnect = walletConnectModule({
 const web3Onboard = init({
   // head to https://explorer.blocknative.com/account to sign up for free
   apiKey: process.env.REACT_APP_BLOCKNATIVE_KEY,
-  wallets: [injected, ledger, walletConnect, gnosis],
+  wallets: [injected, walletConnect, gnosis],
   chains: [
     {
       id: '0x1',
