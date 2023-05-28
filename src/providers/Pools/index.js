@@ -253,7 +253,14 @@ const PoolsProvider = _ref => {
     _ref2 => {
       const [prevAccount] = _ref2
 
-      if (account !== prevAccount && account && finishPool && !isLedgerLive() && !isSafeApp()) {
+      if (
+        account !== prevAccount &&
+        account &&
+        !loadedUserPoolsWeb3Provider.current &&
+        finishPool &&
+        !isLedgerLive() &&
+        !isSafeApp()
+      ) {
         const setCurrentPoolsWithUserProvider = async () => {
           const poolsWithUpdatedProvider = await formatPoolsData(pools)
           setPools(poolsWithUpdatedProvider)
@@ -263,6 +270,7 @@ const PoolsProvider = _ref => {
       } else if (
         account !== prevAccount &&
         account &&
+        !loadedUserPoolsWeb3Provider.current &&
         finishPool &&
         (isLedgerLive() || isSafeApp())
       ) {
