@@ -1,5 +1,4 @@
 import { useWindowWidth } from '@react-hook/window-size'
-import { useConnectWallet } from '@web3-onboard/react'
 import { debounce } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
@@ -105,7 +104,6 @@ const QuickFilter = ({
   const [stringSearch, setStringSearch] = useState(false)
 
   const [flag, setFlag] = useState(false)
-  const [{ wallet }] = useConnectWallet()
 
   useEffect(() => {
     onSelectActiveType(['Active'])
@@ -307,8 +305,7 @@ const QuickFilter = ({
     const params = new URLSearchParams(paramObj)
 
     if (selectedClass.length !== 0 && selectedClass.length !== ChainsList.length) {
-      if (isLedgerLive() || isSafeApp() || wallet?.label === 'Ledger')
-        params.append('chain', chainId)
+      if (isLedgerLive() || isSafeApp()) params.append('chain', chainId)
       else {
         for (let i = 0; i < selectedClass.length; i += 1) {
           params.append('chain', ChainsList[selectedClass[i]].name.toLowerCase())
@@ -316,7 +313,7 @@ const QuickFilter = ({
       }
     }
     push(`${pathname}?${params.toString()}`)
-  }, [selectedClass, paramObj, wallet]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [selectedClass, paramObj]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const clearFilter = () => {
     setParamObj({})
@@ -399,7 +396,7 @@ const QuickFilter = ({
                 justifyContent="start"
                 backColor={backColor}
               >
-                {isLedgerLive() || isSafeApp() || wallet?.label === 'Ledger' ? (
+                {isLedgerLive() || isSafeApp() ? (
                   <></>
                 ) : (
                   <>
