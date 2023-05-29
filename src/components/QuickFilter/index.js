@@ -709,7 +709,7 @@ const QuickFilter = ({
           <MobileListHeaderSearch>
             <SearchBar
               placeholder="Search assets"
-              onChange={updateSearchQuery}
+              onKeyDown={updateSearchQuery}
               onClose={clearQuery}
             />
           </MobileListHeaderSearch>
