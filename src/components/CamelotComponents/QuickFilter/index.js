@@ -19,7 +19,7 @@ import My from '../../../assets/images/logos/filter/farms/my.svg'
 import FarmTypeMobile from '../../../assets/images/logos/filter/farmtype-mobile.svg'
 import Beginner from '../../../assets/images/logos/filter/risks/beginner.svg'
 import Degen from '../../../assets/images/logos/filter/risks/degens.svg'
-import RadioActive from '../../../assets/images/logos/filter/risks/radioactive.svg'
+import Camelot from '../../../assets/images/logos/camelot/camelot_black.svg'
 import { CHAINS_ID } from '../../../data/constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
@@ -83,7 +83,7 @@ const FarmsList = [
 const RiskList = [
   { id: 1, name: 'Beginners', img: Beginner, filter: 'beginners' },
   { id: 2, name: 'Advanced', img: Degen, filter: 'advanced' },
-  { id: 3, name: 'Camelot', img: RadioActive, filter: 'camelot' },
+  { id: 3, name: 'Camelot', img: Camelot, filter: 'camelot' },
 ]
 
 const AssetsList = [
@@ -504,7 +504,7 @@ const QuickFilter = ({
                   }}
                 >
                   <Counter count={filterCount}>{filterCount > 0 ? filterCount : ''}</Counter>&nbsp;
-                  {onlyWidth > 1520 ? 'Clear Filters' : 'Clear'}
+                  {onlyWidth > 1570 ? 'Clear Filters' : 'Clear'}
                 </ClearFilter>
               </DivWidth>
             </QuickFilterContainer>
