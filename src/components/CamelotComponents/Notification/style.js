@@ -40,6 +40,10 @@ const NotificationMain = styled.div`
 
       border: 1px solid #f9f5ff;
       border-radius: 8px;
+
+      &:hover {
+        color: black;
+      }
     }
 
     .close {
@@ -55,26 +59,30 @@ const NotificationMain = styled.div`
   @media screen and (max-width: 992px) {
     margin: 5px;
     .left-part {
+      align-items: center;
       img.main-img {
         margin-right: 7px;
+        width: 21px;
+        height: 21px;
       }
 
       .main-desc {
         font-weight: 600;
-        font-size: 10px;
+        font-size: 8px;
         line-height: 14px;
       }
     }
 
     .right-part {
       .announcement {
-        font-size: 10px;
+        font-size: 8px;
         line-height: 14px;
+        padding: 4px 7px;
       }
       .close {
         width: 10px;
-        margin-left: 10px;
-        margin-right: 10px;
+        margin-left: 7px;
+        margin-right: 0;
       }
     }
   }
