@@ -83,7 +83,7 @@ const FarmsList = [
 const RiskList = [
   { id: 1, name: 'Beginners', img: Beginner, filter: 'beginners' },
   { id: 2, name: 'Advanced', img: Degen, filter: 'advanced' },
-  { id: 3, name: 'Labs', img: RadioActive, filter: 'labs' },
+  { id: 3, name: 'Camelot', img: RadioActive, filter: 'camelot' },
 ]
 
 const AssetsList = [
