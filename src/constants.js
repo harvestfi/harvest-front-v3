@@ -23,6 +23,7 @@ export const ROUTES = {
   DOC: '/doc',
   FAQ: '/faq',
   GRAIN: '/grain',
+  CAMELOT: '/camelot',
   WIDODETAIL: '/:network/:paramAddress',
   WORK: '/work',
   POOL: '/pool',
