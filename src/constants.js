@@ -99,85 +99,6 @@ export const FAQ_ITEMS_FIRST = [
   },
   {
     id: 5,
-    question: 'What are Harvest deposit/withdrawal fees?',
-    answer: (
-      <>
-        Harvest does not charge you any deposit/withdrawal fee. There is only a performance fee
-        applied to your earned rewards (30% on Ethereum Network, 8% on other chains). The APY values
-        of our farms are estimated by taking the performance fee into account.
-      </>
-    ),
-  },
-  {
-    id: 7,
-    question: 'What is a f_Token?',
-    answer: (
-      <>
-        fDAI, fUSD, and other f-tokens are the yield-bearing versions of the corresponding assets
-        that users deposit. It’s also proof of deposit. F_tokens can be redeemed anytime for DAI,
-        USDC, or any other asset via our integration with Wido.
-      </>
-    ),
-  },
-  {
-    id: 9,
-    question: 'Are there timelocks?',
-    answer: (
-      <>
-        <div style={{ color: '#ff9400', textDecoration: 'underline' }}>Yes, 12 hours.</div>
-      </>
-    ),
-  },
-  {
-    id: 11,
-    question: 'I deposited FARM into the FARM profit share, but I can’t find it anymore!',
-    answer: (
-      <>
-        Don’t worry; your funds are still there, under the iFARM pool. Uncheck “use iFARM” if you
-        want to withdraw!
-      </>
-    ),
-  },
-  {
-    id: 13,
-    question: 'I deposited into a Pool for a few hours but still have no yield. Why?',
-    answer: (
-      <>
-        While FARM emissions start accruing immediately after depositing, yields from farmed tokens
-        come after a successful DoHardWork (a smart contract execution). Profitability analysis is
-        done on when to harvest to ensure maximum yields and gas efficiency.
-      </>
-    ),
-  },
-  {
-    id: 15,
-    question: 'What is Profit-Sharing?',
-    answer: (
-      <>
-        Harvest’s flagship farm is called ‘Profit-Sharing’. It’s where anyone can deposit the native
-        $FARM, $iFARM, or any other token deposited via Wido to be entitled to a part of the yield
-        from all other farming strategies at Harvest.
-      </>
-    ),
-  },
-  {
-    id: 17,
-    question: 'What are the token economics for FARM?',
-    answer: (
-      <ul>
-        <li style={{ marginBottom: '10px' }}>
-          Circulating supply at launch: <b>0</b>.
-        </li>
-        <li style={{ marginBottom: '10px' }}>
-          FARM has a total supply over 4 years of <b>690,420.</b> distributed over four years since
-          the project’s inception in August 2020
-        </li>
-        <li>Harvest was bootstrapped entirely, with no VCs and no premine.</li>
-      </ul>
-    ),
-  },
-  {
-    id: 19,
     question: 'What are APR and APY, and how are they calculated?',
     answer: (
       <>
@@ -218,7 +139,104 @@ export const FAQ_ITEMS_FIRST = [
             volume generally in an LP position captures more fees driving up the APY.
           </li>
         </ul>
+        <br />
+        <div>APR / APY Disclaimer</div>
+        <br />
+        <div>
+          The stated APR/APY (the &apos;Rate&apos;) is denominated in terms of relevant underlying
+          tokens in the vaults. The Rate is a forward-looking projection based on our good faith
+          belief of how to project results over the relevant period reasonably, but such belief is
+          subject to numerous assumptions, risks and uncertainties (including smart contract
+          security risks and third-party actions) which could result in a materially different
+          (lower or higher) token-denominated APR/APY. The Rate is not a promise, guarantee, or
+          undertaking on the part of any person or group of persons but depends entirely on the
+          results of the operation of smart contracts and other autonomous systems (including
+          third-party systems) and how third parties interact with those systems after the time of
+          your deposit. Even if the Rate is achieved as projected, you may still suffer a financial
+          loss in fiat-denominated terms if the fiat-denominated value of the relevant tokens (your
+          deposit and any tokens allocated or distributed to you pursuant to the Rate) declines
+          during the deposit period.
+        </div>
       </>
+    ),
+  },
+  {
+    id: 7,
+    question: 'What are Harvest deposit/withdrawal fees?',
+    answer: (
+      <>
+        Harvest does not charge you any deposit/withdrawal fee. There is only a performance fee
+        applied to your earned rewards (30% on Ethereum Network, 8% on other chains). The APY values
+        of our farms are estimated by taking the performance fee into account.
+      </>
+    ),
+  },
+  {
+    id: 9,
+    question: 'What is a f_Token?',
+    answer: (
+      <>
+        fDAI, fUSD, and other f-tokens are the yield-bearing versions of the corresponding assets
+        that users deposit. It’s also proof of deposit. F_tokens can be redeemed anytime for DAI,
+        USDC, or any other asset via our integration with Wido.
+      </>
+    ),
+  },
+  {
+    id: 11,
+    question: 'Are there timelocks?',
+    answer: (
+      <>
+        <div style={{ color: '#ff9400', textDecoration: 'underline' }}>Yes, 12 hours.</div>
+      </>
+    ),
+  },
+  {
+    id: 13,
+    question: 'I deposited FARM into the FARM profit share, but I can’t find it anymore!',
+    answer: (
+      <>
+        Don’t worry; your funds are still there, under the iFARM pool. Uncheck “use iFARM” if you
+        want to withdraw!
+      </>
+    ),
+  },
+  {
+    id: 15,
+    question: 'I deposited into a Pool for a few hours but still have no yield. Why?',
+    answer: (
+      <>
+        While FARM emissions start accruing immediately after depositing, yields from farmed tokens
+        come after a successful DoHardWork (a smart contract execution). Profitability analysis is
+        done on when to harvest to ensure maximum yields and gas efficiency.
+      </>
+    ),
+  },
+  {
+    id: 17,
+    question: 'What is Profit-Sharing?',
+    answer: (
+      <>
+        Harvest’s flagship farm is called ‘Profit-Sharing’. It’s where anyone can deposit the native
+        $FARM, $iFARM, or any other token deposited via Wido to be entitled to a part of the yield
+        from all other farming strategies at Harvest.
+      </>
+    ),
+  },
+  {
+    id: 19,
+    question: 'What are the token economics for FARM?',
+    answer: (
+      <ul>
+        <li style={{ marginBottom: '10px' }}>
+          Circulating supply at launch: <b>0</b>.
+        </li>
+        <li style={{ marginBottom: '10px' }}>
+          FARM has a total supply over 4 years of <b>690,420.</b> distributed over four years since
+          the project’s inception in August 2020
+        </li>
+        <li>Harvest was bootstrapped entirely, with no VCs and no premine.</li>
+      </ul>
     ),
   },
   {
@@ -450,26 +468,6 @@ export const FAQ_ITEMS_SECOND = [
   },
   {
     id: 20,
-    question: 'APR / APY Disclaimer',
-    answer: (
-      <div>
-        The stated APR/APY (the &apos;Rate&apos;) is denominated in terms of relevant underlying
-        tokens in the vaults. The Rate is a forward-looking projection based on our good faith
-        belief of how to project results over the relevant period reasonably, but such belief is
-        subject to numerous assumptions, risks and uncertainties (including smart contract security
-        risks and third-party actions) which could result in a materially different (lower or
-        higher) token-denominated APR/APY. The Rate is not a promise, guarantee, or undertaking on
-        the part of any person or group of persons but depends entirely on the results of the
-        operation of smart contracts and other autonomous systems (including third-party systems)
-        and how third parties interact with those systems after the time of your deposit. Even if
-        the Rate is achieved as projected, you may still suffer a financial loss in fiat-denominated
-        terms if the fiat-denominated value of the relevant tokens (your deposit and any tokens
-        allocated or distributed to you pursuant to the Rate) declines during the deposit period.
-      </div>
-    ),
-  },
-  {
-    id: 22,
     question: 'Is the code open-source?',
     answer: (
       <div>
