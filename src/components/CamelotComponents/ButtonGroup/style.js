@@ -29,25 +29,35 @@ const ButtonStyle = styled.button`
   transition: 0.25s;
 
   &:first-child {
-    border-radius: 10px 0 0 10px;
+    border-radius: 7px 0 0 7px;
   }
 
   &:last-child {
-    border-radius: 0 10px 10px 0;
+    border-radius: 0 7px 7px 0;
     margin-right: 0px;
   }
   padding: 12px 20px;
+
+  ${props =>
+    props.name === 'Camelot'
+      ? `
+    background: url(${HoverBack});
+    color: white;
+    `
+      : ``}
 
   &.active {
     ${props =>
       props.name === 'Camelot'
         ? `
       background: url(${HoverBack});
+      background-repeat: no-repeat;
+      background-size: unset;
       color: white;
     `
         : `
-      background: #ffe1b7;
-      color: #475467;
+      background: transparent;
+      color: #ffab37;
     `}
 
     border: none;
@@ -66,7 +76,7 @@ const ButtonStyle = styled.button`
         ? `
       background:  url(${HoverBack});
       background-repeat: no-repeat;
-      background-size: cover;
+      background-size: unset;
       color: #ffab37;
     `
         : `background: transparent;
