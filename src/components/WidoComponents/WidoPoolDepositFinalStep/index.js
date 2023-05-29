@@ -218,7 +218,7 @@ const WidoPoolDepositFinalStep = ({
               : ''
           })`
           toInfoTemp = `${formatNumberWido(
-            new BigNumber(amount).dividedBy(pricePerFullShare).toString(),
+            new BigNumber(amount).dividedBy(pricePerFullShare).toFixed(),
             WIDO_BALANCES_DECIMALS,
           )} ($${
             pickedToken.usdPrice !== '0.0'
@@ -288,6 +288,7 @@ const WidoPoolDepositFinalStep = ({
         setPendingAction,
         async () => {
           await reloadStats()
+          await getWalletBalances([IFARM_TOKEN_SYMBOL], false, true)
           setApproveValue(2)
         },
         async () => {
@@ -333,9 +334,12 @@ const WidoPoolDepositFinalStep = ({
 
     try {
       let allowanceCheck, spenderCheck
-      if (pickedToken.default || legacyStaking) {
+      if (legacyStaking) {
         allowanceCheck = approvedBalances[tokenSymbol]
         spenderCheck = fAssetPool.autoStakePoolAddress
+      } else if (pickedToken.default) {
+        allowanceCheck = approvedBalances[IFARM_TOKEN_SYMBOL]
+        spenderCheck = token.vaultAddress
       } else {
         const { spender, allowance } = await getTokenAllowance({
           chainId,

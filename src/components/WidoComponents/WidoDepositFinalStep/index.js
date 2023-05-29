@@ -73,7 +73,12 @@ const WidoDepositFinalStep = ({
   const zap = !token.disableAutoSwap
 
   const isSpecialVault = token.liquidityPoolVault || token.poolVault
-  const tokenDecimals = token.decimals || tokens[symbol].decimals
+  let tokenDecimals
+  if (isSpecialVault) {
+    tokenDecimals = 18
+  } else {
+    tokenDecimals = token.decimals || tokens[symbol].decimals
+  }
 
   const pricePerFullShare = get(token, `pricePerFullShare`, 0)
 
@@ -155,7 +160,7 @@ const WidoDepositFinalStep = ({
               : ''
           })`
           toInfoTemp = `${formatNumberWido(
-            new BigNumber(amount).dividedBy(pricePerFullShare).toString(),
+            new BigNumber(amount).dividedBy(pricePerFullShare).toFixed(),
             WIDO_BALANCES_DECIMALS,
           )} ($${
             pickedToken.usdPrice !== '0.0'

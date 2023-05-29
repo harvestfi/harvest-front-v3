@@ -81,7 +81,7 @@ const WidoDepositStart = ({
                 : ''
             })`
             toInfoTemp = `${formatNumberWido(
-              new BigNumber(amount).dividedBy(pricePerFullShare).toString(),
+              new BigNumber(amount).dividedBy(pricePerFullShare).toFixed(),
               WIDO_BALANCES_DECIMALS,
             )} ($${
               pickedToken.usdPrice !== '0.0'
@@ -265,7 +265,7 @@ const WidoDepositStart = ({
             }
             {pickedToken.default ? (
               formatNumberWido(
-                new BigNumber(amount).dividedBy(pricePerFullShare).toString(),
+                new BigNumber(amount).dividedBy(pricePerFullShare).toFixed(),
                 WIDO_BALANCES_DECIMALS,
               )
             ) : quoteValue ? (
@@ -290,7 +290,7 @@ const WidoDepositStart = ({
             &nbsp;
             {pickedToken.default ? (
               formatNumberWido(
-                new BigNumber(amount).dividedBy(pricePerFullShare).toString(),
+                new BigNumber(amount).dividedBy(pricePerFullShare).toFixed(),
                 WIDO_BALANCES_DECIMALS,
               )
             ) : quoteValue ? (
