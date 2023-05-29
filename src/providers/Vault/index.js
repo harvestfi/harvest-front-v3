@@ -51,7 +51,7 @@ const {
 
 const VaultsProvider = _ref => {
   const { children } = _ref
-  const { account, chainId, selChain, logout } = useWallet()
+  const { account, chainId, web3, selChain, logout } = useWallet()
   const { pools, userStats } = usePools()
   const [loadingVaults, setLoadingVaults] = useState(true)
   const [loadingFarmingBalances, setLoadingFarmingBalances] = useState(false)
@@ -98,6 +98,9 @@ const VaultsProvider = _ref => {
               { subLabel } = importedVaults[vaultSymbol],
               uniswapV3ManagedData = null,
               dataFetched = false
+            if (!isLedgerLive() && !isSafeApp()) {
+              web3Client = web3
+            }
             if (vaultChain !== chainId) {
               web3Client = await getWeb3(vaultChain, false)
             }
@@ -202,7 +205,7 @@ const VaultsProvider = _ref => {
 
       setVaults(formattedVaults)
     },
-    [pools, account, chainId],
+    [pools, account, chainId, web3],
   )
   const getFarmingBalances = useCallback(
     // eslint-disable-next-line func-names

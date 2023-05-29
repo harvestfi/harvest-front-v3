@@ -18,7 +18,7 @@ import { toast } from 'react-toastify'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { POLL_POOL_DATA_INTERVAL_MS, POOLS_API_ENDPOINT, SPECIAL_VAULTS } from '../../constants'
 import { CHAINS_ID } from '../../data/constants'
-import { getWeb3, newContractInstance, safeProvider, ledgerWeb3 } from '../../services/web3'
+import { getWeb3, ledgerWeb3, newContractInstance, safeProvider } from '../../services/web3'
 import poolContractData from '../../services/web3/contracts/pool/contract.json'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import tokenMethods from '../../services/web3/contracts/token/methods'
@@ -47,7 +47,7 @@ const getReader = (selectedChain, contracts) => {
 
 const PoolsProvider = _ref => {
   const { children } = _ref
-  const { account, selChain, chainId, balances: walletBalances, logout } = useWallet()
+  const { account, selChain, chainId, web3, balances: walletBalances, logout } = useWallet()
   const { contracts } = useContracts()
   const [pools, setPools] = useState(defaultPools)
   const [userStats, setUserStats] = useState([])
@@ -104,6 +104,10 @@ const PoolsProvider = _ref => {
               selectedAccount = await safeAppProvider.getSigner().getAddress()
               web3Client = await getWeb3(pool.chain, selectedAccount.toLowerCase())
               web3ClientLocal = await getWeb3(pool.chain, selectedAccount.toLowerCase())
+            }
+            if (!isLedgerLive() && !isSafeApp()) {
+              web3Client = web3
+              web3ClientLocal = web3
             }
             if (
               (Object.values(SPECIAL_VAULTS).includes(pool.id) &&
@@ -218,7 +222,7 @@ const PoolsProvider = _ref => {
 
       return formattedPools
     },
-    [account, chainId],
+    [account, chainId, web3],
   )
   const getPoolsData = useCallback(async () => {
     let newPools = []
@@ -264,7 +268,7 @@ const PoolsProvider = _ref => {
       if (
         account !== prevAccount &&
         account &&
-        !loadedUserPoolsWeb3Provider.current &&
+        // !loadedUserPoolsWeb3Provider.current &&
         finishPool &&
         !isLedgerLive() &&
         !isSafeApp()

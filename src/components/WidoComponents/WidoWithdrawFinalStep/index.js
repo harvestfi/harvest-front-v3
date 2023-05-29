@@ -15,7 +15,7 @@ import { usePools } from '../../../providers/Pools'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { fromWei, maxUint256, getWeb3 } from '../../../services/web3'
-import { formatNumberWido } from '../../../utils'
+import { formatNumberWido, isLedgerLive, isSafeApp } from '../../../utils'
 import WidoSwapToken from '../WidoSwapToken'
 import { addresses } from '../../../data'
 import {
@@ -47,7 +47,7 @@ const WidoWithdrawFinalStep = ({
   quoteValue,
 }) => {
   const [approveValue, setApproveValue] = React.useState(0)
-  const { account } = useWallet()
+  const { account, web3 } = useWallet()
   const { fetchUserPoolStats, userStats } = usePools()
   const [fromInfo, setFromInfo] = useState('')
   const [toInfo, setToInfo] = useState('')
@@ -135,7 +135,11 @@ const WidoWithdrawFinalStep = ({
       toToken: pickedToken.address,
       amount: amnt,
     })
-    const mainWeb = await getWeb3(chainId, account)
+    let mainWeb = await getWeb3(chainId, account)
+    if (!isLedgerLive() && !isSafeApp()) {
+      mainWeb = web3
+      console.log('zapWeb3: ', web3)
+    }
     await mainWeb.eth.sendTransaction({
       from: account,
       data,
@@ -187,7 +191,10 @@ const WidoWithdrawFinalStep = ({
       const fromChainId = chainId
       const toChainId = chainId
       const toToken = pickedToken.address
-      const mainWeb = await getWeb3(chainId, account)
+      let mainWeb = await getWeb3(chainId, account)
+      if (!isLedgerLive() && !isSafeApp()) {
+        mainWeb = web3
+      }
       const quoteResult = await quote(
         {
           fromChainId, // Chain Id of from token
