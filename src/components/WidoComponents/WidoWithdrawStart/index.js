@@ -10,7 +10,7 @@ import { WIDO_BALANCES_DECIMALS } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { fromWei, getWeb3 } from '../../../services/web3'
-import { formatNumberWido } from '../../../utils'
+import { formatNumberWido, isLedgerLive, isSafeApp } from '../../../utils'
 import AnimatedDots from '../../AnimatedDots'
 import { Divider } from '../../GlobalStyle'
 import WidoSwapToken from '../WidoSwapToken'
@@ -38,7 +38,7 @@ const WidoWithdrawStart = ({
   setQuoteValue,
 }) => {
   const { backColor, filterColor } = useThemeContext()
-  const { account } = useWallet()
+  const { account, web3 } = useWallet()
 
   const [fromInfo, setFromInfo] = useState('')
   const [toInfo, setToInfo] = useState('')
@@ -62,8 +62,11 @@ const WidoWithdrawStart = ({
           const toToken = pickedToken.address
           const toChainId = chainId
           const user = account
-          let curToken = balanceList.filter(el => el.symbol === pickedToken.symbol)
-          const mainWeb = await getWeb3(chainId, account)
+          let curToken = balanceList.filter(el => el.symbol === pickedToken.symbol),
+            mainWeb = await getWeb3(chainId, account)
+          if (!isLedgerLive() && !isSafeApp()) {
+            mainWeb = web3
+          }
           const quoteResult = await quote(
             {
               fromChainId, // Chain Id of from token
@@ -130,6 +133,7 @@ const WidoWithdrawStart = ({
     token,
     setQuoteValue,
     useIFARM,
+    web3,
   ])
 
   return (

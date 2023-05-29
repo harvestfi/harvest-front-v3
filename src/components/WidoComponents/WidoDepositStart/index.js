@@ -8,7 +8,7 @@ import { WIDO_BALANCES_DECIMALS } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { fromWei, toWei, getWeb3 } from '../../../services/web3'
-import { formatNumberWido } from '../../../utils'
+import { formatNumberWido, isLedgerLive, isSafeApp } from '../../../utils'
 import AnimatedDots from '../../AnimatedDots'
 import { Divider } from '../../GlobalStyle'
 import WidoSwapToken from '../WidoSwapToken'
@@ -39,7 +39,7 @@ const WidoDepositStart = ({
   setQuoteValue,
 }) => {
   const { backColor, borderColor, filterColor } = useThemeContext()
-  const { account } = useWallet()
+  const { account, web3 } = useWallet()
 
   const chainId = token.chain || token.data.chain
 
@@ -65,9 +65,11 @@ const WidoDepositStart = ({
           const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
           const toChainId = chainId
           const user = account
-          let curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol)
-          const mainWeb = await getWeb3(chainId, account)
-
+          let curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol),
+            mainWeb = await getWeb3(chainId, account)
+          if (!isLedgerLive() && !isSafeApp()) {
+            mainWeb = web3
+          }
           const quoteResult = await quote(
             {
               fromChainId, // Chain Id of from token
@@ -131,6 +133,7 @@ const WidoDepositStart = ({
     balanceList,
     setQuoteValue,
     useIFARM,
+    web3,
   ])
 
   return (

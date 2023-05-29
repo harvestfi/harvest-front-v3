@@ -2,6 +2,7 @@ import { useConnectWallet } from '@web3-onboard/react'
 import { isArray } from 'lodash'
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
+import Web3 from 'web3'
 import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../constants'
 import { CHAINS_ID } from '../../data/constants'
 import {
@@ -26,10 +27,10 @@ const useWallet = () => useContext(WalletContext)
 
 const WalletProvider = _ref => {
   const { children } = _ref
-  const web3Plugin = mainWeb3
   const [account, setAccount] = useState(null)
   const [connected, setConnected] = useState(false)
   const [chainId, setChainId] = useState(CHAINS_ID.ETH_MAINNET)
+  const [web3, setWeb3] = useState(mainWeb3)
   const [selChain, setSelChain] = useState([
     CHAINS_ID.ETH_MAINNET,
     CHAINS_ID.MATIC_MAINNET,
@@ -176,8 +177,8 @@ const WalletProvider = _ref => {
           }
         }
       }
-      if (web3Plugin && web3Plugin._provider.on && account) {
-        networkEmitter = web3Plugin._provider.on('chainChanged', onNetworkChange)
+      if (web3 && web3._provider.on && account) {
+        networkEmitter = web3._provider.on('chainChanged', onNetworkChange)
       }
 
       return () => {
@@ -188,7 +189,7 @@ const WalletProvider = _ref => {
       }
     }
     fetchData()
-  }, [web3Plugin, chainId, account, onNetworkChange, setAccount])
+  }, [web3, chainId, account, onNetworkChange, setAccount])
 
   useEffect(() => {
     if (!isSafeApp() && !isLedgerLive()) {
@@ -196,6 +197,10 @@ const WalletProvider = _ref => {
         const chainNum = parseInt(wallet.chains[0].id, 16).toString()
         setAccount(wallet.accounts[0].address.toLowerCase())
         setChainId(chainNum)
+        if (wallet?.provider) {
+          const newWeb3 = new Web3(wallet.provider)
+          setWeb3(newWeb3)
+        }
         setConnected(true)
         setLogout(false)
       } else {
@@ -299,6 +304,7 @@ const WalletProvider = _ref => {
         connected,
         setConnected,
         chainId,
+        web3,
         balances,
         approvedBalances,
         getWalletBalances,

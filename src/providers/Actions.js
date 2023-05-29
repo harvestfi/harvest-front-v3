@@ -28,7 +28,8 @@ import uniStatusViewerContractData from '../services/web3/contracts/unistatus-vi
 import uniStatusViewerContractMethods from '../services/web3/contracts/unistatus-viewer/methods'
 import univ3Methods from '../services/web3/contracts/uniswap-v3/methods'
 import vaultMethods from '../services/web3/contracts/vault/methods'
-import { CustomException } from '../utils'
+import { CustomException, isLedgerLive, isSafeApp } from '../utils'
+import { useWallet } from './Wallet'
 
 const { addresses, tokens, pools } = require('../data')
 
@@ -36,6 +37,7 @@ const ActionsContext = createContext()
 const useActions = () => useContext(ActionsContext)
 
 const ActionsProvider = ({ children }) => {
+  const { web3 } = useWallet
   const handleApproval = useCallback(
     async (
       account,
@@ -760,7 +762,10 @@ const ActionsProvider = ({ children }) => {
     async (selectedToken, ownerAddress, setPendingAction, action = ACTIONS.APPROVE_DEPOSIT) => {
       try {
         setPendingAction(action)
-        const mainWeb = await getWeb3(null, true)
+        let mainWeb = await getWeb3(null, true)
+        if (!isLedgerLive() && !isSafeApp()) {
+          mainWeb = web3
+        }
         const gasPrice = mainWeb.eth.getGasPrice()
         const apiResponse = await axios.get(`${ZAPPER_FI_ZAP_IN_ENDPOINT}/approval-transaction`, {
           params: {
@@ -781,7 +786,7 @@ const ActionsProvider = ({ children }) => {
         setPendingAction(null)
       }
     },
-    [],
+    [web3],
   )
 
   const handleZapIn = useCallback(
@@ -797,7 +802,10 @@ const ActionsProvider = ({ children }) => {
     ) => {
       try {
         setPendingAction(action)
-        const mainWeb = await getWeb3(null, true)
+        let mainWeb = await getWeb3(null, true)
+        if (!isLedgerLive() && !isSafeApp()) {
+          mainWeb = web3
+        }
         const gasPrice = mainWeb.eth.getGasPrice()
         const apiResponse = await axios.get(`${ZAPPER_FI_ZAP_IN_ENDPOINT}/transaction`, {
           params: {
@@ -823,7 +831,7 @@ const ActionsProvider = ({ children }) => {
         setPendingAction(null)
       }
     },
-    [],
+    [web3],
   )
 
   return (
