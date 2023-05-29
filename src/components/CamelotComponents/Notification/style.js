@@ -13,7 +13,7 @@ const NotificationMain = styled.div`
   .left-part {
     display: flex;
     width: 75%;
-
+    margin-right: 15px;
     img.main-img {
       margin-right: 16px;
     }
@@ -56,6 +56,14 @@ const NotificationMain = styled.div`
     }
   }
 
+  @media screen and (max-width: 1150px) {
+    .left-part {
+      .main-desc {
+        font-size: 10px;
+      }
+    }
+  }
+
   @media screen and (max-width: 992px) {
     margin: 5px;
     .left-part {
@@ -68,7 +76,7 @@ const NotificationMain = styled.div`
 
       .main-desc {
         font-weight: 600;
-        font-size: 8px;
+        font-size: 10px;
         line-height: 14px;
       }
     }
@@ -83,6 +91,14 @@ const NotificationMain = styled.div`
         width: 10px;
         margin-left: 7px;
         margin-right: 0;
+      }
+    }
+  }
+
+  @media screen and (max-width: 500px) {
+    .left-part {
+      .main-desc {
+        font-size: 7px;
       }
     }
   }
