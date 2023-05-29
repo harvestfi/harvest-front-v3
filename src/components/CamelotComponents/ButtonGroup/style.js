@@ -1,10 +1,10 @@
 import styled from 'styled-components'
+import HoverBack from '../../../assets/images/logos/camelot/hover_filter.svg'
 
 const ButtonsGroup = styled.div`
   display: flex;
   width: fit-content;
   border-radius: 10px;
-  border: 1px solid ${props => props.borderColor};
   background: ${props => props.backColor};
   // padding: 15px 21px 14px 21px;
   transition: 0.25s;
@@ -29,18 +29,27 @@ const ButtonStyle = styled.button`
   transition: 0.25s;
 
   &:first-child {
-    border-radius: 7px 0 0 7px;
+    border-radius: 10px 0 0 10px;
   }
 
   &:last-child {
-    border-radius: 0 7px 7px 0;
+    border-radius: 0 10px 10px 0;
     margin-right: 0px;
   }
   padding: 12px 20px;
 
   &.active {
-    background: #ffe1b7;
-    color: #475467;
+    ${props =>
+      props.name === 'Camelot'
+        ? `
+      background: url(${HoverBack});
+      color: white;
+    `
+        : `
+      background: #ffe1b7;
+      color: #475467;
+    `}
+
     border: none;
     opacity: 1;
 
@@ -52,8 +61,16 @@ const ButtonStyle = styled.button`
   }
   transition: 0.25s;
   &:hover {
-    background: #ffe1b7;
-    color: #475467;
+    ${props =>
+      props.name === 'Camelot'
+        ? `
+      background:  url(${HoverBack});
+      background-repeat: no-repeat;
+      background-size: cover;
+      color: #ffab37;
+    `
+        : `background: transparent;
+        color: #ffab37;`}
   }
 
   img {
