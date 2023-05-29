@@ -18,7 +18,7 @@ import { toast } from 'react-toastify'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { POLL_POOL_DATA_INTERVAL_MS, POOLS_API_ENDPOINT, SPECIAL_VAULTS } from '../../constants'
 import { CHAINS_ID } from '../../data/constants'
-import { getWeb3, newContractInstance, safeProvider } from '../../services/web3'
+import { getWeb3, newContractInstance, safeProvider, ledgerWeb3 } from '../../services/web3'
 import poolContractData from '../../services/web3/contracts/pool/contract.json'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import tokenMethods from '../../services/web3/contracts/token/methods'
@@ -66,13 +66,22 @@ const PoolsProvider = _ref => {
   const [finishPool, setFinishPool] = useState(false) // set true when getPoolsData success
   const formatPoolsData = useCallback(
     async apiData => {
-      let formattedPools = await Promise.all(
+      let curChain = chainId,
+        formattedPools
+      try {
+        if (isLedgerLive()) {
+          const selectedChain = await ledgerWeb3.eth.net.getId()
+          curChain = selectedChain.toString()
+        }
+      } catch (e) {
+        console.log(e)
+      }
+      formattedPools = await Promise.all(
         defaultPools.map(async pool => {
           if (!isLedgerLive() || (isLedgerLive() && pool.chain !== CHAINS_ID.ARBITRUM_ONE)) {
-            let curChain = chainId,
-              selectedAccount = account,
+            let selectedAccount = account,
               web3Client = await getWeb3(pool.chain, selectedAccount),
-              web3ClientLocal = await getWeb3(pool.chain, selectedAccount),
+              web3ClientLocal = await getWeb3(pool.chain, true),
               rewardAPY = ['0'],
               rewardAPR = ['0'],
               autoStakeContractInstance = null,
@@ -101,7 +110,7 @@ const PoolsProvider = _ref => {
                 curChain !== CHAINS_ID.ETH_MAINNET) ||
               pool.chain !== curChain
             ) {
-              web3Client = await getWeb3(pool.chain, null, null)
+              web3Client = await getWeb3(pool.chain, null)
             }
 
             const contractInstance = await newContractInstance(
@@ -206,7 +215,6 @@ const PoolsProvider = _ref => {
       )
       formattedPools = formattedPools.filter(pool => pool !== null)
       loadedUserPoolsWeb3Provider.current = true
-      setFinishPool(true)
 
       return formattedPools
     },
