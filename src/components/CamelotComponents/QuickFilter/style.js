@@ -208,7 +208,7 @@ const DivWidth = styled.div`
     width: 23%;
     position: absolute;
     border: none;
-    top: 185px;
+    top: ${props => (props.status === '1' ? `185px` : `95px`)};
     left: 20px;
   }
 

@@ -7,8 +7,9 @@ const NotificationMain = styled.div`
   border-radius: 12px;
   padding: 12px;
 
-  display: flex;
   justify-content: space-between;
+
+  ${props => (props.status === '0' ? `display: flex;` : `display: none;`)}
 
   .left-part {
     display: flex;

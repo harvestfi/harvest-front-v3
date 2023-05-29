@@ -376,7 +376,20 @@ const QuickFilter = ({
     filterColor,
     filterChainHoverColor,
     mobileFilterDisableColor,
+    openNotify,
+    setOpenNotify,
   } = useThemeContext()
+
+  const newNotify = localStorage.getItem('newNotify')
+
+  useEffect(() => {
+    if (newNotify === null || newNotify === 'true') {
+      localStorage.setItem('newNotify', true)
+      setOpenNotify(true)
+    } else {
+      setOpenNotify(false)
+    }
+  }, [newNotify, setOpenNotify])
 
   return (
     <div>
@@ -508,7 +521,7 @@ const QuickFilter = ({
                 </ClearFilter>
               </DivWidth>
             </QuickFilterContainer>
-            <DivWidth className="searchbar" backColor={backColor}>
+            <DivWidth className="searchbar" backColor={backColor} status={openNotify ? '1' : '0'}>
               <InputsContainer>
                 <SearchBar
                   placeholder="Search assets"
