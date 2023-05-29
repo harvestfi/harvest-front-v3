@@ -227,7 +227,6 @@ const WidoPoolDepositFinalStep = ({
       let mainWeb = await getWeb3(chainId, account)
       if (!isLedgerLive() && !isSafeApp()) {
         mainWeb = web3
-        console.log('zapWeb3: ', web3)
       }
       await mainWeb.eth.sendTransaction({
         from: account,
