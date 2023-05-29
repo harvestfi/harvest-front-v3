@@ -621,11 +621,6 @@ const QuickFilter = ({
                           setAssetsId(i)
                           setAssetsImg(item.img)
                           printAsset(i)
-                          if (item.name === 'All Chains') {
-                            onSelectActiveType([])
-                          } else {
-                            onSelectActiveType([item.name])
-                          }
                         }}
                       >
                         <div>
@@ -656,11 +651,6 @@ const QuickFilter = ({
                           setRiskId(i)
                           setRiskImg(item.img)
                           printRisk(i)
-                          if (item.name === 'All Chains') {
-                            onSelectActiveType([])
-                          } else {
-                            onSelectActiveType([item.name])
-                          }
                         }}
                       >
                         <div>

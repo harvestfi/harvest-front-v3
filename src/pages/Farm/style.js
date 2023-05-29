@@ -14,6 +14,7 @@ const FarmContainer = styled.div`
   @media screen and (max-width: 992px) {
     margin-left: 0;
     width: 100%;
+    min-height: 100vh;
   }
 `
 
