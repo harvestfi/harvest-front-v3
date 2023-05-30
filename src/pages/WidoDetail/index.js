@@ -503,11 +503,12 @@ const WidoDetail = () => {
             const direct = {
               symbol: lpSymbol,
               address: tokenAddress,
+              balance: directBalance,
               default: true,
               usdPrice: directUsdPrice === undefined ? '0' : directUsdPrice,
               usdValue: directUsdValue === undefined ? '0' : directUsdValue,
               logoURI: 'https://etherscan.io/images/main/empty-token.png',
-              decimal: tokenDecimals,
+              decimals: tokenDecimals,
             }
             if (supportedList.length > 0) {
               supportedList = [direct].push(supportedList)
