@@ -277,8 +277,9 @@ const Portfolio = () => {
             platform: '',
             unstake: '',
             stake: '',
-            reward: 0,
-            rewardSymbol: '',
+            reward: [],
+            rewardSymbol: [],
+            totalRewardUsd: 0,
             token: {},
           }
           let symbol = ''
@@ -374,39 +375,47 @@ const Portfolio = () => {
             const totalUnsk = parseFloat((isNaN(Number(unstake)) ? 0 : unstake) * usdPrice)
             totalStake += totalStk + totalUnsk
             const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
-            // eslint-disable-next-line one-var
-            let rewardSymbol = rewardTokenSymbols[0].toUpperCase()
-            if (rewardTokenSymbols.includes(FARM_TOKEN_SYMBOL)) {
-              rewardSymbol = FARM_TOKEN_SYMBOL
+            for (let k = 0; k < rewardTokenSymbols.length; k += 1) {
+              // eslint-disable-next-line one-var
+              let rewardSymbol = rewardTokenSymbols[k].toUpperCase()
+              if (rewardTokenSymbols.includes(FARM_TOKEN_SYMBOL)) {
+                rewardSymbol = FARM_TOKEN_SYMBOL
+              }
+
+              const rewardToken = groupOfVaults[rewardSymbol]
+              // eslint-disable-next-line one-var
+              let usdRewardPrice = 1,
+                rewardDecimal = 18
+
+              const rewards = userStats[stakedVaults[i]].totalRewardsEarned
+              if (rewardToken) {
+                usdRewardPrice =
+                  (rewardSymbol === FARM_TOKEN_SYMBOL
+                    ? rewardToken.data.lpTokenData && rewardToken.data.lpTokenData.price
+                    : rewardToken.usdPrice) || 1
+
+                rewardDecimal =
+                  rewardToken.decimals ||
+                  (rewardToken.data &&
+                    rewardToken.data.lpTokenData &&
+                    rewardToken.data.lpTokenData.decimals)
+              }
+
+              // eslint-disable-next-line one-var
+              let rewardValues = rewards === undefined ? 0 : fromWei(rewards, rewardDecimal)
+              if (switchBalance) {
+                rewardValues *= usdRewardPrice
+              }
+              stats.reward.push(Number(rewardValues).toFixed(POOL_BALANCES_DECIMALS))
+
+              stats.totalRewardUsd += Number(
+                rewards === undefined ? 0 : fromWei(rewards, rewardDecimal) * usdRewardPrice,
+              )
+              valueRewards += Number(
+                rewards === undefined ? 0 : fromWei(rewards, rewardDecimal) * usdRewardPrice,
+              )
+              stats.rewardSymbol.push(rewardSymbol)
             }
-
-            const rewardToken = groupOfVaults[rewardSymbol]
-            // eslint-disable-next-line one-var
-            let usdRewardPrice = 1,
-              rewardDecimal = 18
-            if (rewardToken) {
-              usdRewardPrice =
-                (rewardSymbol === FARM_TOKEN_SYMBOL
-                  ? rewardToken.data.lpTokenData && rewardToken.data.lpTokenData.price
-                  : rewardToken.usdPrice) || 1
-
-              rewardDecimal =
-                rewardToken.decimals ||
-                (rewardToken.data &&
-                  rewardToken.data.lpTokenData &&
-                  rewardToken.data.lpTokenData.decimals)
-            }
-
-            const rewards = userStats[stakedVaults[i]].totalRewardsEarned
-            stats.reward =
-              rewards === undefined
-                ? 0
-                : fromWei(rewards, rewardDecimal) * (switchBalance ? usdRewardPrice : 1)
-            stats.reward = Number(stats.reward.toFixed(POOL_BALANCES_DECIMALS))
-            valueRewards += Number(
-              rewards === undefined ? 0 : fromWei(rewards, rewardDecimal) * usdRewardPrice,
-            )
-            stats.rewardSymbol = rewardSymbol
             newStats.push(stats)
           }
         }
@@ -510,7 +519,7 @@ const Portfolio = () => {
               <Column width={isMobile ? '20%' : '15%'} color={totalValueFontColor}>
                 <Col
                   onClick={() => {
-                    sortCol('reward')
+                    sortCol('totalRewardUsd')
                   }}
                 >
                   Rewards
@@ -594,11 +603,10 @@ const Portfolio = () => {
                             weight={400}
                             size={12}
                             height={16}
-                            value={`${switchBalance ? '$' : ''}${
-                              switchBalance
-                                ? formatNumber(info.unstake, 2)
-                                : formatNumber(info.unstake, 6)
-                            }`}
+                            value={`${switchBalance ? '$' : ''}${formatNumber(
+                              info.unstake,
+                              switchBalance ? 2 : 6,
+                            )}`}
                           />
                         </Content>
                         <Content width={isMobile ? '20%' : '15%'}>
@@ -606,25 +614,27 @@ const Portfolio = () => {
                             weight={400}
                             size={12}
                             height={16}
-                            value={`${switchBalance ? '$' : ''}${
-                              switchBalance
-                                ? formatNumber(info.stake, 2)
-                                : formatNumber(info.stake, 6)
-                            }`}
+                            value={`${switchBalance ? '$' : ''}${formatNumber(
+                              info.stake,
+                              switchBalance ? 2 : 6,
+                            )}`}
                           />
                         </Content>
                         <Content width={isMobile ? '20%' : '15%'}>
-                          <ListItem
-                            weight={400}
-                            size={12}
-                            height={16}
-                            label={`${switchBalance ? '$' : ''}${
-                              switchBalance
-                                ? formatNumberWido(info.reward, 2)
-                                : formatNumberWido(info.reward, 6)
-                            }`}
-                            icon={`/icons/${info.rewardSymbol}`}
-                          />
+                          {info.reward.map((rw, key) => (
+                            <ListItem
+                              weight={400}
+                              size={12}
+                              height={16}
+                              key={key}
+                              marginBottom={5}
+                              label={`${switchBalance ? '$' : ''}${formatNumberWido(
+                                rw,
+                                switchBalance ? 2 : 6,
+                              )}`}
+                              icon={`/icons/${info.rewardSymbol[key]}`}
+                            />
+                          ))}
                         </Content>
                       </FlexDiv>
                     </DetailView>
