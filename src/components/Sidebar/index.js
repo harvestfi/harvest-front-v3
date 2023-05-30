@@ -31,14 +31,7 @@ import { usePools } from '../../providers/Pools'
 import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
-import {
-  displayAPY,
-  formatAddress,
-  getDataQuery,
-  getTotalApy,
-  isLedgerLive,
-  isSafeApp,
-} from '../../utils'
+import { displayAPY, formatAddress, getDataQuery, getTotalApy, isSpecialApp } from '../../utils'
 import SmallApexChart from '../SmallApexChart'
 import Social from '../Social'
 import {
@@ -317,7 +310,7 @@ const Sidebar = ({ width }) => {
                       style={{ width: 17, height: 17 }}
                     />
                   </UserDropDown>
-                  {!isLedgerLive() && !isSafeApp() ? (
+                  {!isSpecialApp ? (
                     <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
                       <UserDropDownItem
                         onClick={() => {
@@ -511,7 +504,7 @@ const Sidebar = ({ width }) => {
                         />
                       </UserDropDown>
 
-                      {!isLedgerLive() && !isSafeApp() ? (
+                      {!isSpecialApp ? (
                         <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
                           <UserDropDownItem
                             onClick={() => {

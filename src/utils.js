@@ -1231,3 +1231,5 @@ export const isLedgerLive = () => {
 export const isSafeApp = () => {
   return isLoadedInOtherDomain('app.safe.global')
 }
+
+export const isSpecialApp = isLedgerLive() || isSafeApp()

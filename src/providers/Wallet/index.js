@@ -14,7 +14,7 @@ import {
   safeProvider,
 } from '../../services/web3'
 import tokenMethods from '../../services/web3/contracts/token/methods'
-import { isLedgerLive, isSafeApp } from '../../utils'
+import { isLedgerLive, isSafeApp, isSpecialApp } from '../../utils'
 import { useContracts } from '../Contracts'
 import { validateChain } from './utils'
 
@@ -192,7 +192,7 @@ const WalletProvider = _ref => {
   }, [web3, chainId, account, onNetworkChange, setAccount])
 
   useEffect(() => {
-    if (!isSafeApp() && !isLedgerLive()) {
+    if (!isSpecialApp) {
       if (wallet) {
         const chainNum = parseInt(wallet.chains[0].id, 16).toString()
         setAccount(wallet.accounts[0].address.toLowerCase())
