@@ -1,6 +1,5 @@
 import BigNumber from 'bignumber.js'
 import { debounce, find, get, isArray, isEqual, keys, orderBy, sortBy, uniq } from 'lodash'
-import move from 'lodash-move'
 import React, { useMemo, useRef, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import useEffectWithPrevious from 'use-effect-with-previous'
@@ -84,13 +83,10 @@ const formatVaults = (
     },
   ])
 
-  if (selChain.includes(CHAINS_ID.ETH_MAINNET)) {
-    const farmIdx = vaultsSymbol.findIndex(symbol => symbol === FARM_TOKEN_SYMBOL)
-    vaultsSymbol = move(vaultsSymbol, farmIdx, 0)
-
-    const wethIdx = vaultsSymbol.findIndex(symbol => symbol === 'WETH')
-    vaultsSymbol = move(vaultsSymbol, wethIdx, 1)
-  }
+  const camelot = 'Camelot'
+  vaultsSymbol = vaultsSymbol.filter(symbol =>
+    symbol.toLowerCase().includes(camelot.toLowerCase().trim()),
+  )
 
   vaultsSymbol = vaultsSymbol.filter(
     tokenSymbol =>
@@ -218,7 +214,10 @@ const formatVaults = (
         if (item === 'Active') {
           return !(groupOfVaults[tokenSymbol].inactive || groupOfVaults[tokenSymbol].testInactive)
         }
-        return groupOfVaults[tokenSymbol].inactive || groupOfVaults[tokenSymbol].testInactive
+        if (item === 'Inactive') {
+          return groupOfVaults[tokenSymbol].inactive || groupOfVaults[tokenSymbol].testInactive
+        }
+        return tokenSymbol
       })
       result = result.concat(temp)
       return result
