@@ -9,7 +9,7 @@ const ButtonsGroup = styled.div`
   // padding: 15px 21px 14px 21px;
   transition: 0.25s;
 
-  @media screen and (max-width: 1475px) {
+  @media screen and (max-width: 1510px) {
     padding: 10px 20px;
   }
 `
@@ -94,7 +94,7 @@ const ButtonStyle = styled.button`
     width: max-content;
   }
 
-  @media screen and (max-width: 1475px) {
+  @media screen and (max-width: 1510px) {
     font-size: 14px;
     line-height: 18px;
 

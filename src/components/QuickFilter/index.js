@@ -363,7 +363,7 @@ const QuickFilter = ({
 
   useEffect(() => {
     // pc - true, mobile - false
-    if (onlyWidth >= 992) {
+    if (onlyWidth >= 1510) {
       setWindowMode(true)
     } else {
       setWindowMode(false)
@@ -514,7 +514,7 @@ const QuickFilter = ({
                   }}
                 >
                   <Counter count={filterCount}>{filterCount > 0 ? filterCount : ''}</Counter>&nbsp;
-                  {onlyWidth > 1520 ? 'Clear Filters' : 'Clear'}
+                  {onlyWidth > 1570 ? 'Clear Filters' : 'Clear'}
                 </ClearFilter>
               </DivWidth>
             </QuickFilterContainer>

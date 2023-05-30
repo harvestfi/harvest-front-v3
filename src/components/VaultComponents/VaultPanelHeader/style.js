@@ -10,7 +10,7 @@ const PanelContainer = styled.div`
   cursor: pointer;
   color: ${props => props.fontColor};
 
-  @media screen and (max-width: 992px) {
+  @media screen and (max-width: 1510px) {
     flex-direction: row;
     align-items: baseline;
     position: relative;
@@ -22,7 +22,7 @@ const TokenLogo = styled.img`
   max-width: 30px;
   float: left;
 
-  @media screen and (max-width: 992px) {
+  @media screen and (max-width: 1510px) {
     margin-left: 0;
   }
 `
@@ -33,7 +33,7 @@ const TokenNameContainer = styled.div`
   font-weight: 600;
   font-size: 16px;
 
-  @media screen and (max-width: 992px) {
+  @media screen and (max-width: 1510px) {
     font-size: 12px;
     line-height: 16px;
     font-weight: 700;
@@ -50,7 +50,7 @@ const TokenDescriptionContainer = styled.div`
     font-size: 10px;
   }
 
-  @media screen and (max-width: 992px) {
+  @media screen and (max-width: 1510px) {
     font-weight: 400;
     font-size: 10px;
     line-height: 13px;
@@ -118,7 +118,7 @@ const BadgeIcon = styled.div`
   justify-content: center;
   align-items: center;
 
-  @media screen and (max-width: 992px) {
+  @media screen and (max-width: 1510px) {
     left: 5px;
     top: 5px;
     border-radius: 2px;
@@ -137,7 +137,7 @@ const TokenLogoContainer = styled.div`
   text-align: left;
   position: relative;
 
-  @media screen and (max-width: 992px) {
+  @media screen and (max-width: 1510px) {
     margin-top: 10px;
   }
 `
@@ -244,7 +244,7 @@ const DetailModal = styled(Modal)`
   display: none;
   position: relative;
 
-  @media screen and (max-width: 992px) {
+  @media screen and (max-width: 1510px) {
     .modal-dialog {
       width: -webkit-fill-available;
       position: absolute;
