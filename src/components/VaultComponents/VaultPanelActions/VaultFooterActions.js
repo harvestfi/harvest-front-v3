@@ -166,7 +166,7 @@ const VaultFooterActions = ({
         </SelectedVaultLabel>
       </SelectedVault>
       {rewardTokenSymbols &&
-        rewardTokenSymbols.map((symbol, symbolIdx) => {
+        rewardTokenSymbols.slice(0, 1).map((symbol, symbolIdx) => {
           const curtoken = groupOfVaults[symbol]
           let usdPrice = 1
           if (curtoken) {
