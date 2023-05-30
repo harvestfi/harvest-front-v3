@@ -400,16 +400,22 @@ const WidoDetail = () => {
         if (chain && account) {
           const curBalances = await getBalances(account, [chain.toString()])
           setBalanceList(curBalances)
-          const supList = await getSupportedTokens({
-            chainId: [chain],
-            toToken: toTokenAddress,
-            toChainId: chain,
-          })
-          const tokenAddress = token.tokenAddress
-          let directInSup = {},
+          let supList = [],
+            directInSup = {},
             directInBalance = {},
             supportedList = [],
             vaultId
+          try {
+            supList = await getSupportedTokens({
+              chainId: [chain],
+              toToken: toTokenAddress,
+              toChainId: chain,
+            })
+          } catch (err) {
+            console.log('getSupportedTokens of Wido: ', err)
+          }
+          const tokenAddress = token.tokenAddress
+
           const soonSupList = []
           for (let i = 0; i < supList.length; i += 1) {
             const supToken = curBalances.find(el => el.address === supList[i].address)
@@ -465,21 +471,29 @@ const WidoDetail = () => {
                 .toFixed(4)
             : '0'
 
-          if (directInSup !== {}) {
+          if (!(Object.keys(directInSup).length === 0 && directInSup.constructor === Object)) {
             directInSup.balance = directBalance
             directInSup.usdPrice = directInSup.usdPrice > 0 ? directInSup.usdPrice : directUsdPrice
             directInSup.usdValue = directInSup.usdValue > 0 ? directInSup.usdValue : directUsdValue
             supportedList = supportedList.sort(function result(x, y) {
               return x === directInSup ? -1 : y === directInSup ? 1 : 0
             })
+            if (supportedList.length === 0) {
+              supportedList.push(directInSup)
+            }
             supportedList[0].default = true
-          } else if (directInBalance !== {}) {
+          } else if (
+            !(Object.keys(directInBalance).length === 0 && directInBalance.constructor === Object)
+          ) {
             directInBalance.balance = directBalance
             directInBalance.usdPrice =
               directInBalance.usdPrice > 0 ? directInBalance.usdPrice : directUsdPrice
             directInBalance.usdValue =
               directInBalance.usdValue > 0 ? directInBalance.usdValue : directUsdValue
             supportedList = [directInBalance].push(supportedList)
+            if (supportedList.length === 0) {
+              supportedList.push(directInBalance)
+            }
             supportedList[0].default = true
           } else {
             const web3Client = getWeb3(chain, null)
@@ -488,21 +502,25 @@ const WidoDetail = () => {
             const lpSymbol = await getSymbol(lpInstance)
             const direct = {
               symbol: lpSymbol,
-              balance: directBalance,
               address: tokenAddress,
+              balance: directBalance,
               default: true,
-              usdPrice: directUsdPrice,
-              usdValue: directUsdValue,
-              logoURI: '',
-              decimal: tokenDecimals,
+              usdPrice: directUsdPrice === undefined ? '0' : directUsdPrice,
+              usdValue: directUsdValue === undefined ? '0' : directUsdValue,
+              logoURI: 'https://etherscan.io/images/main/empty-token.png',
+              decimals: tokenDecimals,
             }
-            supportedList = [direct].push(supportedList)
+            if (supportedList.length > 0) {
+              supportedList = [direct].push(supportedList)
+            } else {
+              supportedList.push(direct)
+            }
           }
           setSoonToSupList(soonSupList)
           setSupTokenList(supportedList)
         }
       } catch (err) {
-        console.error(err)
+        console.log('getTokenBalance: ', err)
       }
     }
 
