@@ -19,11 +19,12 @@ import My from '../../assets/images/logos/filter/farms/my.svg'
 import FarmTypeMobile from '../../assets/images/logos/filter/farmtype-mobile.svg'
 import Beginner from '../../assets/images/logos/filter/risks/beginner.svg'
 import Degen from '../../assets/images/logos/filter/risks/degens.svg'
-import RadioActive from '../../assets/images/logos/filter/risks/radioactive.svg'
+import Camelot from '../../assets/images/logos/camelot/camelot_black.svg'
 import { CHAINS_ID } from '../../data/constants'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import ButtonGroup from '../ButtonGroup'
+import RiskButtonGroup from '../CamelotComponents/RiskButtonGroup'
 import MobileButtonGroup from '../MobileButtonGroup'
 import SearchBar from '../SearchBar'
 import {
@@ -47,6 +48,7 @@ import {
   UserDropDownItem,
   UserDropDownMenu,
   WebView,
+  CamelotButton,
 } from './style'
 import { isLedgerLive } from '../../utils'
 
@@ -83,7 +85,6 @@ const FarmsList = [
 const RiskList = [
   { id: 1, name: 'Beginners', img: Beginner, filter: 'beginners' },
   { id: 2, name: 'Advanced', img: Degen, filter: 'advanced' },
-  { id: 3, name: 'Labs', img: RadioActive },
 ]
 
 const AssetsList = [
@@ -454,13 +455,22 @@ const QuickFilter = ({
             </DivWidth>
           </QuickFilterContainer>
           <QuickFilterContainer position="relative" justifyContent="space-between">
-            <DivWidth className="first" borderRadius="10" backColor={backColor}>
-              <ButtonGroup
+            <DivWidth className="first" borderRadius="10" backColor={backColor} display="flex">
+              <RiskButtonGroup
                 buttons={RiskList}
                 doSomethingAfterClick={printRisk}
                 clickedId={riskId}
                 setClickedId={setRiskId}
               />
+              <CamelotButton
+                type="button"
+                onClick={() => {
+                  push('/camelot')
+                }}
+              >
+                <img src={Camelot} alt="" />
+                Camelot
+              </CamelotButton>
             </DivWidth>
 
             <QuickFilterContainer sub justifyContent="space-between">
