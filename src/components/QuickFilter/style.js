@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
+import HoverBack from '../../assets/images/logos/camelot/hover_filter.svg'
 
 const QuickFilterContainer = styled.div`
   display: flex;
@@ -583,6 +584,38 @@ const BadgeText = styled.div`
   color: ${props => props.mobilefilterdisablecolor};
 `
 
+const CamelotButton = styled.button`
+  background: url(${HoverBack});
+  background-repeat: no-repeat;
+  background-size: unset;
+  color: white;
+
+  padding: 12px 20px;
+  border-radius: 0 7px 7px 0;
+  border: none;
+
+  img {
+    margin-right: 10px;
+  }
+
+  &:hover {
+    color: #ffab37;
+    img {
+      transition: 0.25s;
+      filter: invert(57%) sepia(61%) saturate(2063%) hue-rotate(1deg) brightness(103%)
+        contrast(105%);
+    }
+  }
+  transition: 0.25s;
+  &:active {
+    color: white;
+    img {
+      filter: invert(57%) sepia(61%) saturate(2063%) hue-rotate(1deg) brightness(103%)
+        contrast(105%);
+    }
+  }
+`
+
 export {
   QuickFilterContainer,
   InputsContainer,
@@ -606,4 +639,5 @@ export {
   FilterOffCanvasBody,
   ChainATag,
   BadgeText,
+  CamelotButton,
 }
