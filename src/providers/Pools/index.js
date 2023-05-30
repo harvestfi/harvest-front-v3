@@ -22,7 +22,7 @@ import { getWeb3, ledgerWeb3, newContractInstance, safeProvider } from '../../se
 import poolContractData from '../../services/web3/contracts/pool/contract.json'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import tokenMethods from '../../services/web3/contracts/token/methods'
-import { isLedgerLive, isSafeApp, truncateNumberString } from '../../utils'
+import { isLedgerLive, isSafeApp, isSpecialApp, truncateNumberString } from '../../utils'
 import { useContracts } from '../Contracts'
 import { useWallet } from '../Wallet'
 import { getLpTokenData, getUserStats, pollUpdatedUserStats } from './utils'
@@ -59,7 +59,7 @@ const PoolsProvider = _ref => {
   const loadedPools = useMemo(
     () =>
       filter(pools, pool =>
-        isLedgerLive() || isSafeApp() ? pool.chain === chainId : selChain.includes(pool.chain),
+        isSpecialApp ? pool.chain === chainId : selChain.includes(pool.chain),
       ),
     [selChain, pools, chainId],
   )
@@ -67,11 +67,19 @@ const PoolsProvider = _ref => {
   const formatPoolsData = useCallback(
     async apiData => {
       let curChain = chainId,
+        selectedAccount = account,
         formattedPools
       try {
         if (isLedgerLive()) {
           const selectedChain = await ledgerWeb3.eth.net.getId()
           curChain = selectedChain.toString()
+        }
+        if (isSafeApp()) {
+          const safeAppProvider = await safeProvider()
+          const selectedChain = await safeAppProvider.getNetwork()
+          curChain = selectedChain.chainId.toString()
+          const accountAdrs = await safeAppProvider.getSigner().getAddress()
+          selectedAccount = accountAdrs.toLowerCase()
         }
       } catch (e) {
         console.log(e)
@@ -79,8 +87,7 @@ const PoolsProvider = _ref => {
       formattedPools = await Promise.all(
         defaultPools.map(async pool => {
           if (!isLedgerLive() || (isLedgerLive() && pool.chain !== CHAINS_ID.ARBITRUM_ONE)) {
-            let selectedAccount = account,
-              web3Client = await getWeb3(pool.chain, selectedAccount),
+            let web3Client = await getWeb3(pool.chain, selectedAccount),
               web3ClientLocal = await getWeb3(pool.chain, true),
               rewardAPY = ['0'],
               rewardAPR = ['0'],
@@ -98,14 +105,10 @@ const PoolsProvider = _ref => {
               amountToStakeForBoost = null,
               dataFetched = null
             if (isSafeApp()) {
-              const safeAppProvider = await safeProvider()
-              const selectedChain = await safeAppProvider.getNetwork()
-              curChain = selectedChain.chainId.toString()
-              selectedAccount = await safeAppProvider.getSigner().getAddress()
-              web3Client = await getWeb3(pool.chain, selectedAccount.toLowerCase())
-              web3ClientLocal = await getWeb3(pool.chain, selectedAccount.toLowerCase())
+              web3Client = await getWeb3(pool.chain, selectedAccount)
+              web3ClientLocal = await getWeb3(pool.chain, selectedAccount)
             }
-            if (!isLedgerLive() && !isSafeApp()) {
+            if (!isSpecialApp) {
               web3Client = web3
               web3ClientLocal = web3
             }
@@ -270,8 +273,7 @@ const PoolsProvider = _ref => {
         account &&
         // !loadedUserPoolsWeb3Provider.current &&
         finishPool &&
-        !isLedgerLive() &&
-        !isSafeApp()
+        !isSpecialApp
       ) {
         const setCurrentPoolsWithUserProvider = async () => {
           const poolsWithUpdatedProvider = await formatPoolsData(pools)
@@ -284,7 +286,7 @@ const PoolsProvider = _ref => {
         account &&
         !loadedUserPoolsWeb3Provider.current &&
         finishPool &&
-        (isLedgerLive() || isSafeApp())
+        isSpecialApp
       ) {
         const udpatePoolsData = async () => {
           await getPoolsData()
@@ -310,7 +312,7 @@ const PoolsProvider = _ref => {
         const loadInitialStakedAndUnstakedBalances = async () => {
           loadedInitialStakedAndUnstakedBalances.current = true
           const stats = {}
-          const chains = isLedgerLive() || isSafeApp() ? [chainId] : selChain
+          const chains = isSpecialApp ? [chainId] : selChain
           // selChain.forEach( async (ch)=> {
           /* eslint-disable no-await-in-loop */
           for (let i = 0; i < chains.length; i += 1) {

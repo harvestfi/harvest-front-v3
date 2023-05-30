@@ -8,7 +8,7 @@ import { WIDO_BALANCES_DECIMALS } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { fromWei, toWei, getWeb3 } from '../../../services/web3'
-import { formatNumberWido, isLedgerLive, isSafeApp } from '../../../utils'
+import { formatNumberWido, isSpecialApp } from '../../../utils'
 import AnimatedDots from '../../AnimatedDots'
 import { Divider } from '../../GlobalStyle'
 import WidoSwapToken from '../WidoSwapToken'
@@ -67,7 +67,7 @@ const WidoDepositStart = ({
           const user = account
           let curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol),
             mainWeb = await getWeb3(chainId, account)
-          if (!isLedgerLive() && !isSafeApp()) {
+          if (!isSpecialApp) {
             mainWeb = web3
           }
           const quoteResult = await quote(

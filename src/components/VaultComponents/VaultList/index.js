@@ -27,8 +27,7 @@ import {
   getTotalApy,
   getUserVaultBalance,
   getVaultValue,
-  isLedgerLive,
-  isSafeApp,
+  isSpecialApp,
 } from '../../../utils'
 import VaultPanel from '../VaultPanel'
 import VaultsListHeader from '../VaultsListHeader'
@@ -86,8 +85,8 @@ const formatVaults = (
   ])
 
   if (
-    ((isLedgerLive() || isSafeApp()) && chainId === CHAINS_ID.ETH_MAINNET) ||
-    (!isLedgerLive() && !isSafeApp() && selChain.includes(CHAINS_ID.ETH_MAINNET))
+    (isSpecialApp && chainId === CHAINS_ID.ETH_MAINNET) ||
+    (!isSpecialApp && selChain.includes(CHAINS_ID.ETH_MAINNET))
   ) {
     const farmIdx = vaultsSymbol.findIndex(symbol => symbol === FARM_TOKEN_SYMBOL)
     vaultsSymbol = move(vaultsSymbol, farmIdx, 0)
@@ -378,7 +377,7 @@ const VaultList = () => {
   )
 
   let groupOfVaults = []
-  if (isSafeApp() || isLedgerLive()) {
+  if (isSpecialApp) {
     if (chainId === CHAINS_ID.ETH_MAINNET) groupOfVaults = { ...vaultsData, ...poolVaults }
     else groupOfVaults = { ...vaultsData }
   } else {

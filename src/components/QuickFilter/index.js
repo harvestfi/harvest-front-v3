@@ -23,7 +23,7 @@ import RadioActive from '../../assets/images/logos/filter/risks/radioactive.svg'
 import { CHAINS_ID } from '../../data/constants'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
-import { isLedgerLive, isSafeApp } from '../../utils'
+import { isLedgerLive, isSpecialApp } from '../../utils'
 import ButtonGroup from '../ButtonGroup'
 import MobileButtonGroup from '../MobileButtonGroup'
 import SearchBar from '../SearchBar'
@@ -305,7 +305,7 @@ const QuickFilter = ({
     const params = new URLSearchParams(paramObj)
 
     if (selectedClass.length !== 0 && selectedClass.length !== ChainsList.length) {
-      if (isLedgerLive() || isSafeApp()) params.append('chain', chainId)
+      if (isSpecialApp) params.append('chain', chainId)
       else {
         for (let i = 0; i < selectedClass.length; i += 1) {
           params.append('chain', ChainsList[selectedClass[i]].name.toLowerCase())
@@ -396,7 +396,7 @@ const QuickFilter = ({
                 justifyContent="start"
                 backColor={backColor}
               >
-                {isLedgerLive() || isSafeApp() ? (
+                {isSpecialApp ? (
                   <></>
                 ) : (
                   <>
@@ -543,7 +543,7 @@ const QuickFilter = ({
                 <img className="narrow" src={DropDownNarrow} alt="" />
               </UserDropDown>
 
-              {isLedgerLive() || isSafeApp() ? (
+              {isSpecialApp ? (
                 <></>
               ) : (
                 <UserDropDownMenu>

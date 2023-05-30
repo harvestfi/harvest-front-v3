@@ -25,7 +25,7 @@ import {
 import univ3ContractData from '../../services/web3/contracts/uniswap-v3/contract.json'
 import vaultContractData from '../../services/web3/contracts/vault/contract.json'
 import vaultMethods from '../../services/web3/contracts/vault/methods'
-import { abbreaviteNumber, isLedgerLive, isSafeApp } from '../../utils'
+import { abbreaviteNumber, isSpecialApp, isLedgerLive } from '../../utils'
 import { usePools } from '../Pools'
 import { useWallet } from '../Wallet'
 import { calculateFarmingBalance, filterVaults } from './utils'
@@ -60,7 +60,7 @@ const VaultsProvider = _ref => {
   const loadedVaults = useMemo(
     () =>
       pickBy(vaultsData, vault =>
-        isLedgerLive() || isSafeApp() ? vault.chain === chainId : selChain.includes(vault.chain),
+        isSpecialApp ? vault.chain === chainId : selChain.includes(vault.chain),
       ),
     [selChain, vaultsData, chainId],
   )
@@ -98,7 +98,7 @@ const VaultsProvider = _ref => {
               { subLabel } = importedVaults[vaultSymbol],
               uniswapV3ManagedData = null,
               dataFetched = false
-            if (!isLedgerLive() && !isSafeApp()) {
+            if (!isSpecialApp) {
               web3Client = web3
             }
             if (vaultChain !== chainId) {
@@ -269,7 +269,7 @@ const VaultsProvider = _ref => {
       try {
         const apiResponse = await axios.get(VAULTS_API_ENDPOINT)
         const apiData = get(apiResponse, 'data')
-        if (isLedgerLive() || isSafeApp()) {
+        if (isSpecialApp) {
           if (chainId === CHAINS_ID.ETH_MAINNET) await setFormattedVaults(apiData.eth)
           else if (chainId === CHAINS_ID.MATIC_MAINNET) await setFormattedVaults(apiData.matic)
           else await setFormattedVaults(apiData.arbitrum)

@@ -28,7 +28,7 @@ import uniStatusViewerContractData from '../services/web3/contracts/unistatus-vi
 import uniStatusViewerContractMethods from '../services/web3/contracts/unistatus-viewer/methods'
 import univ3Methods from '../services/web3/contracts/uniswap-v3/methods'
 import vaultMethods from '../services/web3/contracts/vault/methods'
-import { CustomException, isLedgerLive, isSafeApp } from '../utils'
+import { CustomException, isSpecialApp } from '../utils'
 import { useWallet } from './Wallet'
 
 const { addresses, tokens, pools } = require('../data')
@@ -763,7 +763,7 @@ const ActionsProvider = ({ children }) => {
       try {
         setPendingAction(action)
         let mainWeb = await getWeb3(null, true)
-        if (!isLedgerLive() && !isSafeApp()) {
+        if (!isSpecialApp) {
           mainWeb = web3
         }
         const gasPrice = mainWeb.eth.getGasPrice()
@@ -803,7 +803,7 @@ const ActionsProvider = ({ children }) => {
       try {
         setPendingAction(action)
         let mainWeb = await getWeb3(null, true)
-        if (!isLedgerLive() && !isSafeApp()) {
+        if (!isSpecialApp) {
           mainWeb = web3
         }
         const gasPrice = mainWeb.eth.getGasPrice()
