@@ -106,7 +106,7 @@ const QuickFilter = ({
   const [flag, setFlag] = useState(false)
 
   useEffect(() => {
-    onSelectActiveType([''])
+    onSelectActiveType(['Active'])
     setFlag(true)
   }, [flag, onSelectActiveType])
 
@@ -499,7 +499,7 @@ const QuickFilter = ({
                   onClick={() => {
                     document.getElementById('search-input').value = ''
                     setSearchQuery('')
-                    onSelectActiveType([''])
+                    onSelectActiveType(['Active'])
                     setStringSearch(false)
                     setRiskId(-1)
                     setAssetsId(-1)
@@ -557,7 +557,7 @@ const QuickFilter = ({
                       setMobileChainId(item.name)
                       setMobileChainImg(item.img)
                       if (item.name === 'All Chains') {
-                        onSelectActiveType([''])
+                        onSelectActiveType(['Active'])
                       } else {
                         setSelChain([item.chainId])
                       }
@@ -690,7 +690,7 @@ const QuickFilter = ({
                   document.getElementById('search-input').value = ''
                   setSearchQuery('')
                   setStringSearch(false)
-                  onSelectActiveType([''])
+                  onSelectActiveType(['Active'])
                   onSelectStableCoin(false)
                   onAssetClick('')
                   onSelectFarmType('')

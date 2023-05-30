@@ -84,8 +84,20 @@ const formatVaults = (
   ])
 
   const camelot = 'Camelot'
-  vaultsSymbol = vaultsSymbol.filter(symbol =>
-    symbol.toLowerCase().includes(camelot.toLowerCase().trim()),
+  // Get 'Camelot' vaults with symbol and platform
+  vaultsSymbol = vaultsSymbol.filter(
+    symbol =>
+      symbol.toLowerCase().includes(camelot.toLowerCase().trim()) ||
+      (get(
+        symbol === FARM_TOKEN_SYMBOL ? tokens[IFARM_TOKEN_SYMBOL] : groupOfVaults[symbol],
+        'platform',
+      )[0] &&
+        (symbol === FARM_TOKEN_SYMBOL
+          ? tokens[IFARM_TOKEN_SYMBOL]
+          : groupOfVaults[symbol]
+        ).platform[0]
+          .toLowerCase()
+          .includes(camelot.toLowerCase().trim())),
   )
 
   vaultsSymbol = vaultsSymbol.filter(
@@ -214,10 +226,7 @@ const formatVaults = (
         if (item === 'Active') {
           return !(groupOfVaults[tokenSymbol].inactive || groupOfVaults[tokenSymbol].testInactive)
         }
-        if (item === 'Inactive') {
-          return groupOfVaults[tokenSymbol].inactive || groupOfVaults[tokenSymbol].testInactive
-        }
-        return tokenSymbol
+        return groupOfVaults[tokenSymbol].inactive || groupOfVaults[tokenSymbol].testInactive
       })
       result = result.concat(temp)
       return result
