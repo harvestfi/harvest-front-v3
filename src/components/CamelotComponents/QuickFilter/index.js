@@ -319,6 +319,27 @@ const QuickFilter = ({
     push(pathname)
   }
 
+  const onClickClearFilter = () => {
+    document.getElementById('search-input').value = ''
+    setSearchQuery('')
+    onSelectActiveType(['Active'])
+    setStringSearch(false)
+    setRiskId(-1)
+    setAssetsId(-1)
+    setFarmId(-1)
+    setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2])
+    onSelectStableCoin(false)
+    onAssetClick('')
+    onSelectFarmType('')
+    setSelChain([CHAINS_ID.ETH_MAINNET, CHAINS_ID.MATIC_MAINNET, CHAINS_ID.ARBITRUM_ONE])
+    clearFilter()
+
+    onDepositedOnlyClick(false)
+    setMobileChainId('All Chains')
+    setMobileChainImg(AllChains)
+    setMobileFilterCount(0)
+  }
+
   const clearQuery = () => {
     document.getElementById('search-input').value = ''
     setSearchQuery('')
@@ -479,7 +500,7 @@ const QuickFilter = ({
               <CamelotButton
                 type="button"
                 onClick={() => {
-                  window.location.href = '/camelot'
+                  onClickClearFilter()
                 }}
               >
                 <img src={Camelot} alt="" />
@@ -508,23 +529,7 @@ const QuickFilter = ({
                   backColor={backColor}
                   borderColor={borderColor}
                   onClick={() => {
-                    document.getElementById('search-input').value = ''
-                    setSearchQuery('')
-                    onSelectActiveType(['Active'])
-                    setStringSearch(false)
-                    setRiskId(-1)
-                    setAssetsId(-1)
-                    setFarmId(-1)
-                    setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2])
-                    onSelectStableCoin(false)
-                    onAssetClick('')
-                    onSelectFarmType('')
-                    setSelChain([
-                      CHAINS_ID.ETH_MAINNET,
-                      CHAINS_ID.MATIC_MAINNET,
-                      CHAINS_ID.ARBITRUM_ONE,
-                    ])
-                    clearFilter()
+                    onClickClearFilter()
                   }}
                 >
                   <Counter count={filterCount}>{filterCount > 0 ? filterCount : ''}</Counter>&nbsp;
@@ -698,27 +703,7 @@ const QuickFilter = ({
             <div className="clear-filter">
               <MobileClearFilter
                 onClick={() => {
-                  document.getElementById('search-input').value = ''
-                  setSearchQuery('')
-                  setStringSearch(false)
-                  onSelectActiveType(['Active'])
-                  onSelectStableCoin(false)
-                  onAssetClick('')
-                  onSelectFarmType('')
-                  onDepositedOnlyClick(false)
-                  setAssetsId(-1)
-                  setRiskId(-1)
-                  setFarmId(-1)
-                  setMobileChainId('All Chains')
-                  setMobileChainImg(AllChains)
-                  setMobileFilterCount(0)
-                  setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2])
-                  setSelChain([
-                    CHAINS_ID.ETH_MAINNET,
-                    CHAINS_ID.MATIC_MAINNET,
-                    CHAINS_ID.ARBITRUM_ONE,
-                  ])
-                  clearFilter()
+                  onClickClearFilter()
                 }}
                 borderColor={borderColor}
                 fontColor={fontColor}
