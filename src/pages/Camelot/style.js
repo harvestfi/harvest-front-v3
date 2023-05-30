@@ -17,7 +17,7 @@ const FarmContainer = styled.div`
     display: none;
   }
 
-  @media screen and (max-width: 1475px) {
+  @media screen and (max-width: 1510px) {
     width: 100%;
     min-height: 100vh;
 
@@ -43,7 +43,7 @@ const FarmContainer = styled.div`
 const NotificationCenter = styled.div`
   display: none;
 
-  @media screen and (max-width: 1475px) {
+  @media screen and (max-width: 1510px) {
     display: block;
     margin: 15px 7px;
   }

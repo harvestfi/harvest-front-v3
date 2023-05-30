@@ -15,7 +15,7 @@ const VaultPanelHeader = ({
   loadedVault,
   loadingFarmingBalance,
 }) => {
-  const isMobile = useMediaQuery({ query: '(max-width: 1475px)' })
+  const isMobile = useMediaQuery({ query: '(max-width: 1510px)' })
   const { pools } = usePools()
   const { vaultsData } = useVaults()
 

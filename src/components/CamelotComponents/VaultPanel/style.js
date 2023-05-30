@@ -31,7 +31,7 @@ const VaultContainer = styled.div`
     }
   }
 
-  @media screen and (max-width: 1475px) {
+  @media screen and (max-width: 1510px) {
     overflow: hidden;
     position: relative;
 

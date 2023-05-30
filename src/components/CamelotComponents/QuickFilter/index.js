@@ -385,7 +385,7 @@ const QuickFilter = ({
 
   useEffect(() => {
     // pc - true, mobile - false
-    if (onlyWidth >= 1475) {
+    if (onlyWidth >= 1510) {
       setWindowMode(true)
     } else {
       setWindowMode(false)

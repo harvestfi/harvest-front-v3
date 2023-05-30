@@ -38,7 +38,7 @@ const Container = styled.div`
       color: #a9aeb3;
     }
 
-    @media screen and (max-width: 1475px) {
+    @media screen and (max-width: 1510px) {
       font-weight: 400;
       font-size: 12px;
       line-height: 16px;
@@ -50,7 +50,7 @@ const Container = styled.div`
     width: auto;
   }
 
-  @media screen and (max-width: 1475px) {
+  @media screen and (max-width: 1510px) {
     width: 100%;
 
     input {
@@ -66,7 +66,7 @@ const SearchIcon = styled(AiOutlineSearch)`
   margin-right: 5px;
   margin-left: 12px;
 
-  @media screen and (max-width: 1475px) {
+  @media screen and (max-width: 1510px) {
     width: 12px;
     margin-right: 10px;
     margin-left: 13px;
@@ -107,7 +107,7 @@ const Icon = styled.img`
   `
       : ''}
 
-  @media screen and (max-width: 1475px) {
+  @media screen and (max-width: 1510px) {
     display: none;
   }
 `

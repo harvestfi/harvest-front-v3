@@ -3,7 +3,7 @@ import styled from 'styled-components'
 const HeaderContainer = styled.div`
   margin-bottom: 15px;
 
-  @media screen and (max-width: 1475px) {
+  @media screen and (max-width: 1510px) {
     margin-bottom: 15px;
   }
 `

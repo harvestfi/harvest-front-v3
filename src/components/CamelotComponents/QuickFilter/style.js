@@ -348,7 +348,7 @@ const Counter = styled.div`
   justify-content: center;
   align-items: center;
 
-  @media screen and (max-width: 1475px) {
+  @media screen and (max-width: 1510px) {
     color: white;
   }
 `
@@ -356,7 +356,7 @@ const Counter = styled.div`
 const WebView = styled.div`
   display: block;
 
-  @media screen and (max-width: 1475px) {
+  @media screen and (max-width: 1510px) {
     display: none;
   }
 `
@@ -364,7 +364,7 @@ const WebView = styled.div`
 const MobileView = styled.div`
   display: none;
 
-  @media screen and (max-width: 1475px) {
+  @media screen and (max-width: 1510px) {
     display: flex;
     flex-direction: column;
     position: relative;
