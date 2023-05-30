@@ -515,7 +515,6 @@ const WidoDetail = () => {
               supportedList.push(direct)
             }
           }
-          console.log(supportedList)
           setSoonToSupList(soonSupList)
           setSupTokenList(supportedList)
         }
