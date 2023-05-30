@@ -210,6 +210,7 @@ const Portfolio = () => {
   useEffect(() => {
     if (account && !isEmpty(userStats) && !isEmpty(depositToken)) {
       const loadUserPoolsStats = async () => {
+        const poolsToLoad = []
         /* eslint-disable no-await-in-loop */
         for (let i = 0; i < depositToken.length; i += 1) {
           let fAssetPool =
@@ -228,16 +229,16 @@ const Portfolio = () => {
             if (isSpecialVault) {
               fAssetPool = token.data
             }
-            const poolsToLoad = [fAssetPool]
-            await fetchUserPoolStats(poolsToLoad, account, userStats)
+            poolsToLoad.push(fAssetPool)
           }
         }
+        await fetchUserPoolStats(poolsToLoad, account, userStats)
         await getFarmingBalances(depositToken)
         /* eslint-enable no-await-in-loop */
       }
       loadUserPoolsStats()
     }
-  }, [account, fetchUserPoolStats, pools, depositToken]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, pools, depositToken]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!isEmpty(userStats) && account) {
@@ -401,7 +402,7 @@ const Portfolio = () => {
               rewards === undefined
                 ? 0
                 : fromWei(rewards, rewardDecimal) * (switchBalance ? usdRewardPrice : 1)
-            stats.reward = stats.reward.toFixed(POOL_BALANCES_DECIMALS)
+            stats.reward = Number(stats.reward.toFixed(POOL_BALANCES_DECIMALS))
             valueRewards += Number(
               rewards === undefined ? 0 : fromWei(rewards, rewardDecimal) * usdRewardPrice,
             )
