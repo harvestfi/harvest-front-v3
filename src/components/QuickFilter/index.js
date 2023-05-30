@@ -554,7 +554,7 @@ const QuickFilter = ({
                       setMobileChainId(item.name)
                       setMobileChainImg(item.img)
                       if (item.name === 'All Chains') {
-                        onSelectActiveType([])
+                        onSelectActiveType(['Active'])
                       } else {
                         setSelChain([item.chainId])
                       }
