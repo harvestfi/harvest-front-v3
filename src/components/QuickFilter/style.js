@@ -590,7 +590,7 @@ const CamelotButton = styled.button`
   background-size: unset;
   color: white;
 
-  padding: 12px 20px;
+  padding: 11px 20px;
   border-radius: 0 7px 7px 0;
   border: none;
 
