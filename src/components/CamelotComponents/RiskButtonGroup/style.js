@@ -37,7 +37,7 @@ const ButtonStyle = styled.button`
     border-radius: 0 7px 7px 0;
     margin-right: 0px;
   }
-  padding: 12px 20px;
+  padding: 11px 20px;
 
   &.active {
     background: transparent;
