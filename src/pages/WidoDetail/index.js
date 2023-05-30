@@ -464,12 +464,13 @@ const WidoDetail = () => {
           }
           const directBalance = balances[vaultId]
           const directUsdPrice = token.usdPrice
-          const directUsdValue = directUsdPrice
-            ? new BigNumber(directBalance)
-                .div(10 ** tokenDecimals)
-                .times(directUsdPrice)
-                .toFixed(4)
-            : '0'
+          const directUsdValue =
+            directUsdPrice && directBalance
+              ? new BigNumber(directBalance)
+                  .div(10 ** tokenDecimals)
+                  .times(directUsdPrice)
+                  .toFixed(4)
+              : '0'
 
           if (!(Object.keys(directInSup).length === 0 && directInSup.constructor === Object)) {
             directInSup.balance = directBalance
@@ -485,7 +486,7 @@ const WidoDetail = () => {
           } else if (
             !(Object.keys(directInBalance).length === 0 && directInBalance.constructor === Object)
           ) {
-            directInBalance.balance = directBalance
+            directInBalance.balance = directBalance || '0'
             directInBalance.usdPrice =
               directInBalance.usdPrice > 0 ? directInBalance.usdPrice : directUsdPrice
             directInBalance.usdValue =
@@ -503,10 +504,10 @@ const WidoDetail = () => {
             const direct = {
               symbol: lpSymbol,
               address: tokenAddress,
-              balance: directBalance,
+              balance: directBalance || '0',
               default: true,
-              usdPrice: directUsdPrice === undefined ? '0' : directUsdPrice,
-              usdValue: directUsdValue === undefined ? '0' : directUsdValue,
+              usdPrice: directUsdPrice || '0',
+              usdValue: directUsdValue || '0',
               logoURI: 'https://etherscan.io/images/main/empty-token.png',
               decimals: tokenDecimals,
             }
