@@ -262,10 +262,10 @@ const PoolsProvider = _ref => {
 
   useEffectWithPrevious(
     _ref2 => {
-      const [prevAccount] = _ref2
+      const [prevAccount, prevChainId] = _ref2
 
       if (
-        account !== prevAccount &&
+        (account !== prevAccount || prevChainId !== chainId) &&
         account &&
         // !loadedUserPoolsWeb3Provider.current &&
         finishPool &&
@@ -290,7 +290,7 @@ const PoolsProvider = _ref => {
         udpatePoolsData()
       }
     },
-    [account, pools],
+    [account, chainId, pools],
   )
   useEffectWithPrevious(
     _ref3 => {
