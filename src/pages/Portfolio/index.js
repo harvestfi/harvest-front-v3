@@ -375,9 +375,11 @@ const Portfolio = () => {
             const totalUnsk = parseFloat((isNaN(Number(unstake)) ? 0 : unstake) * usdPrice)
             totalStake += totalStk + totalUnsk
             const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
-            for (let k = 0; k < rewardTokenSymbols.length; k += 1) {
+            for (let l = 0; l < rewardTokenSymbols.length; l += 1) {
               // eslint-disable-next-line one-var
-              let rewardSymbol = rewardTokenSymbols[k].toUpperCase()
+              let rewardSymbol = rewardTokenSymbols[l].toUpperCase(),
+                rewards
+
               if (rewardTokenSymbols.includes(FARM_TOKEN_SYMBOL)) {
                 rewardSymbol = FARM_TOKEN_SYMBOL
               }
@@ -387,7 +389,17 @@ const Portfolio = () => {
               let usdRewardPrice = 1,
                 rewardDecimal = 18
 
-              const rewards = userStats[stakedVaults[i]].totalRewardsEarned
+              if (rewardTokenSymbols.length > 1) {
+                const rewardsEarned = userStats[stakedVaults[i]].rewardsEarned
+                if (
+                  rewardsEarned !== undefined &&
+                  !(Object.keys(rewardsEarned).length === 0 && rewardsEarned.constructor === Object)
+                ) {
+                  rewards = rewardsEarned[rewardTokenSymbols[l]]
+                }
+              } else {
+                rewards = userStats[stakedVaults[i]].totalRewardsEarned
+              }
               if (rewardToken) {
                 usdRewardPrice =
                   (rewardSymbol === FARM_TOKEN_SYMBOL
