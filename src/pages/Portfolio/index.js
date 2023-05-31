@@ -333,19 +333,16 @@ const Portfolio = () => {
                   ? token.data.lpTokenData && token.data.lpTokenData.price
                   : token.vaultPrice) || 1
             }
-            console.log("unstake before:", get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0))
             const unstake = fromWei(
               get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),
               (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
               POOL_BALANCES_DECIMALS,
             )
-            console.log("unstake after:", unstake)
             stats.unstake = unstake * (switchBalance ? usdPrice : 1)
             // eslint-disable-next-line no-restricted-globals
             if (isNaN(stats.unstake)) {
               stats.unstake = 0
             }
-            console.log("unstake check:", stats.unstake)
             const stakeTemp = get(userStats, `[${stakedVaults[i]}]['totalStaked']`, 0)
             // eslint-disable-next-line one-var
             let farmBalance = 0
