@@ -232,7 +232,6 @@ const Content = styled.div`
   font-size: 20px;
   line-height: 23px;
   align-self: center;
-  justify-content: space-between;
 `
 
 const BadgeIcon = styled.div`
