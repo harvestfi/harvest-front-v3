@@ -28,7 +28,7 @@ import uniStatusViewerContractData from '../services/web3/contracts/unistatus-vi
 import uniStatusViewerContractMethods from '../services/web3/contracts/unistatus-viewer/methods'
 import univ3Methods from '../services/web3/contracts/uniswap-v3/methods'
 import vaultMethods from '../services/web3/contracts/vault/methods'
-import { CustomException, isSpecialApp } from '../utils'
+import { CustomException } from '../utils'
 import { useWallet } from './Wallet'
 
 const { addresses, tokens, pools } = require('../data')
@@ -762,10 +762,8 @@ const ActionsProvider = ({ children }) => {
     async (selectedToken, ownerAddress, setPendingAction, action = ACTIONS.APPROVE_DEPOSIT) => {
       try {
         setPendingAction(action)
-        let mainWeb = await getWeb3(null, true)
-        if (!isSpecialApp) {
-          mainWeb = web3
-        }
+        const mainWeb = await getWeb3(null, true, web3)
+
         const gasPrice = mainWeb.eth.getGasPrice()
         const apiResponse = await axios.get(`${ZAPPER_FI_ZAP_IN_ENDPOINT}/approval-transaction`, {
           params: {
@@ -802,10 +800,8 @@ const ActionsProvider = ({ children }) => {
     ) => {
       try {
         setPendingAction(action)
-        let mainWeb = await getWeb3(null, true)
-        if (!isSpecialApp) {
-          mainWeb = web3
-        }
+        const mainWeb = await getWeb3(null, true, web3)
+
         const gasPrice = mainWeb.eth.getGasPrice()
         const apiResponse = await axios.get(`${ZAPPER_FI_ZAP_IN_ENDPOINT}/transaction`, {
           params: {

@@ -13,10 +13,7 @@ app.use(
     crossOriginResourcePolicy: false,
     contentSecurityPolicy: {
       directives: {
-        frameAncestors: [
-          'https://dapp-browser.apps.ledger.com/',
-          'https://app.safe.global/',
-        ],
+        frameAncestors: ['https://dapp-browser.apps.ledger.com/', 'https://app.safe.global/'],
         scriptSrc: [
           "'self'",
           "'unsafe-inline'",

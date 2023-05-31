@@ -41,7 +41,7 @@ export const safeWeb3 = async () => {
   return new Web3(new SafeAppProvider(safe, SDK))
 }
 
-export const mainWeb3 = isLedgerLive() ? ledgerWeb3 : new Web3(window.ethereum || INFURA_URL)
+export const mainWeb3 = new Web3(window.ethereum || INFURA_URL)
 
 export const getContract = contractName => {
   return !!Object.keys(contracts).find(contractKey => contractKey === contractName)
@@ -138,13 +138,16 @@ export const getChainName = chainId => {
   }
 }
 
-export const getWeb3 = async (chainId, account) => {
+export const getWeb3 = async (chainId, account, web3 = null) => {
   if (account) {
     if (isSafeApp()) {
-      const web3 = await safeWeb3()
-      return web3
+      const safeWeb = await safeWeb3()
+      return safeWeb
     }
-    return mainWeb3
+    if (isLedgerLive()) {
+      return ledgerWeb3
+    }
+    return web3 || mainWeb3
   }
 
   if (chainId === CHAINS_ID.MATIC_MAINNET) {
