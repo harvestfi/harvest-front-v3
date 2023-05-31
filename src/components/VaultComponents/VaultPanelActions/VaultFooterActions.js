@@ -1,9 +1,8 @@
 import { get } from 'lodash'
-import React, { useMemo, useState, useEffect } from 'react'
+import React, { useMemo } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { useSetChain } from '@web3-onboard/react'
 import ReactTooltip from 'react-tooltip'
-import CoinGecko from 'coingecko-api'
 import Info from '../../../assets/images/logos/earn/info.svg'
 import {
   ACTIONS,
@@ -40,23 +39,6 @@ import {
 } from './style'
 
 const { tokens } = require('../../../data')
-
-const CoinGeckoClient = new CoinGecko()
-
-const getPrice = async () => {
-  try {
-    const data = await CoinGeckoClient.simple.price({
-      ids: ['ifarm'],
-      /* eslint-disable camelcase */
-      vs_currencies: ['usd'],
-    })
-
-    const result = data.success ? data.data.ifarm.usd : 1
-    return result
-  } catch (e) {
-    return 1
-  }
-}
 
 const VaultFooterActions = ({
   fAssetPool,
@@ -132,16 +114,6 @@ const VaultFooterActions = ({
     [farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
   )
   const groupOfVaults = { ...vaultsData, ...poolVaults }
-  const [price, setPrice] = useState(1)
-
-  useEffect(() => {
-    const getPriceValue = async () => {
-      const value = await getPrice()
-      setPrice(value)
-    }
-
-    getPriceValue()
-  }, [])
 
   return (
     <SelectedVaultContainer
@@ -167,11 +139,12 @@ const VaultFooterActions = ({
       </SelectedVault>
       {rewardTokenSymbols &&
         rewardTokenSymbols.map((symbol, symbolIdx) => {
-          const curtoken = groupOfVaults[symbol]
+          const tokenName = symbol.toUpperCase()
+          const curtoken = groupOfVaults[tokenName]
           let usdPrice = 1
           if (curtoken) {
             usdPrice =
-              (symbol === FARM_TOKEN_SYMBOL
+              (tokenName === FARM_TOKEN_SYMBOL
                 ? curtoken.data.lpTokenData && curtoken.data.lpTokenData.price
                 : curtoken.usdPrice) || 1
           }
@@ -222,45 +195,46 @@ const VaultFooterActions = ({
                       formatNumber(0, 8)
                     )}
                   </Monospace>
-                  <USDValue>
-                    <Monospace>
-                      $
-                      {!connected ? (
-                        formatNumber(0, 8)
-                      ) : !isLoadingData &&
-                        get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`) ? (
-                        <Counter
-                          pool={fAssetPool}
-                          totalTokensEarned={
-                            (rewardTokenSymbols.length > 1
-                              ? fromWei(
-                                  get(rewardsEarned, symbol, 0),
-                                  get(tokens[symbol], 'decimals', 18),
-                                  4,
-                                )
-                              : totalTokensEarned) *
-                            (symbol.toUpperCase() === IFARM_TOKEN_SYMBOL ? price : usdPrice)
-                          }
-                          totalStaked={get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)}
-                          ratePerDay={get(ratesPerDay, symbolIdx, ratesPerDay[0])}
-                          rewardPerToken={get(
-                            fAssetPool,
-                            `rewardPerToken[${symbolIdx}]`,
-                            fAssetPool.rewardPerToken[0],
-                          )}
-                          rewardTokenAddress={get(
-                            fAssetPool,
-                            `rewardTokens[${symbolIdx}]`,
-                            fAssetPool.rewardTokens[0],
-                          )}
-                        />
-                      ) : userStats.length === 0 ? (
-                        <AnimatedDots />
-                      ) : (
-                        formatNumber(0, 8)
-                      )}
-                    </Monospace>
-                  </USDValue>
+                  {usdPrice === 1 && tokenName !== IFARM_TOKEN_SYMBOL ? null : (
+                    <USDValue>
+                      <Monospace>
+                        $
+                        {!connected ? (
+                          formatNumber(0, 8)
+                        ) : !isLoadingData &&
+                          get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`) ? (
+                          <Counter
+                            pool={fAssetPool}
+                            totalTokensEarned={
+                              (rewardTokenSymbols.length > 1
+                                ? fromWei(
+                                    get(rewardsEarned, symbol, 0),
+                                    get(tokens[symbol], 'decimals', 18),
+                                    4,
+                                  )
+                                : totalTokensEarned) * usdPrice
+                            }
+                            totalStaked={get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)}
+                            ratePerDay={get(ratesPerDay, symbolIdx, ratesPerDay[0])}
+                            rewardPerToken={get(
+                              fAssetPool,
+                              `rewardPerToken[${symbolIdx}]`,
+                              fAssetPool.rewardPerToken[0],
+                            )}
+                            rewardTokenAddress={get(
+                              fAssetPool,
+                              `rewardTokens[${symbolIdx}]`,
+                              fAssetPool.rewardTokens[0],
+                            )}
+                          />
+                        ) : userStats.length === 0 ? (
+                          <AnimatedDots />
+                        ) : (
+                          formatNumber(0, 8)
+                        )}
+                      </Monospace>
+                    </USDValue>
+                  )}
                 </Div>
               </SelectedVaultNumber>
             </SelectedVault>
