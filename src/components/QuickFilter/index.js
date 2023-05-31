@@ -1,8 +1,8 @@
+import { useHistory, useLocation } from 'react-router-dom'
 import { useWindowWidth } from '@react-hook/window-size'
 import { debounce } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
-import { useHistory, useLocation } from 'react-router-dom'
 import AllChains from '../../assets/images/chains/all_chain.svg'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
@@ -632,11 +632,6 @@ const QuickFilter = ({
                           setAssetsId(i)
                           setAssetsImg(item.img)
                           printAsset(i)
-                          if (item.name === 'All Chains') {
-                            onSelectActiveType([])
-                          } else {
-                            onSelectActiveType([item.name])
-                          }
                         }}
                       >
                         <div>
@@ -667,11 +662,6 @@ const QuickFilter = ({
                           setRiskId(i)
                           setRiskImg(item.img)
                           printRisk(i)
-                          if (item.name === 'All Chains') {
-                            onSelectActiveType([])
-                          } else {
-                            onSelectActiveType([item.name])
-                          }
                         }}
                       >
                         <div>
@@ -730,7 +720,7 @@ const QuickFilter = ({
           <MobileListHeaderSearch>
             <SearchBar
               placeholder="Search assets"
-              onChange={updateSearchQuery}
+              onKeyDown={updateSearchQuery}
               onClose={clearQuery}
             />
           </MobileListHeaderSearch>

@@ -257,19 +257,9 @@ const StatsExchange = styled(StatsBox)`
   justify-content: start;
 `
 
-const StatsChart = styled(StatsBox)`
-  // @media screen and (min-width: 1921px) {
-  //   min-width: 1000px;
-  //   width: 1000px;
-  // }
-`
+const StatsChart = styled(StatsBox)``
 
-const StatsExternal = styled(StatsBox)`
-  // @media screen and (min-width: 1921px) {
-  //   min-width: 350px;
-  //   width: 350px;
-  // }
-`
+const StatsExternal = styled(StatsBox)``
 
 const DataSourceDirect = styled.a`
   text-decoration: none;

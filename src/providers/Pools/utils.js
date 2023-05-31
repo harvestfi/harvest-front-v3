@@ -101,13 +101,17 @@ export const getUserStats = async (
       totalRewardsEarned = new BigNumber(0)
 
       await forEach(rewardTokenSymbols, async (symbol, index) => {
-        const rewardAddress = rewardTokens[index] || tokens[symbol].tokenAddress
+        let rewardAddress = ''
+        try {
+          rewardAddress = rewardTokens[index] || tokens[symbol].tokenAddress
+        } catch (err) {
+          console.log('rewardSymbol: ', rewardTokenSymbols, symbol)
+        }
 
-        rewardsEarned[symbol] = await calculateRewardsEarned(
-          rewardAddress,
-          account,
-          poolContractInstance,
-        )
+        rewardsEarned[symbol] =
+          rewardAddress !== ''
+            ? await calculateRewardsEarned(rewardAddress, account, poolContractInstance)
+            : '0'
         totalRewardsEarned = totalRewardsEarned.plus(new BigNumber(rewardsEarned[symbol]))
       })
 

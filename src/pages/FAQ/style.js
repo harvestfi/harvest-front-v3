@@ -36,6 +36,7 @@ const FAQContent = styled.div`
   @media screen and (max-width: 992px) {
     display: block;
     padding: 30px 10px;
+    width: 70%;
   }
 `
 

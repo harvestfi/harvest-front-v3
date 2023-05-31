@@ -115,6 +115,11 @@ const formatVaults = (
             .join(', ')
             .toLowerCase()
             .includes(searchQuery.toLowerCase().trim())) ||
+        (get(groupOfVaults[symbol], 'tokenNames') &&
+          groupOfVaults[symbol].tokenNames
+            .join(', ')
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase().trim())) ||
         (get(groupOfVaults[symbol], 'subLabel') &&
           groupOfVaults[symbol].subLabel
             .toLowerCase()
@@ -410,7 +415,6 @@ const VaultList = () => {
       balances,
       farmingBalances,
       selChain,
-      chainId,
       searchQuery,
       sortParam,
       sortOrder,

@@ -126,7 +126,7 @@ const BlurBack = styled.div`
 const ConnectButton = styled.button`
   position: absolute;
   top: calc(50% - 30px);
-  left: 35%;
+  left: calc(50% - 70px);
   font-size: 16px;
   line-height: 24px;
   font-weight: 600;
@@ -142,7 +142,7 @@ const ConnectButton = styled.button`
 
   @media screen and (max-width: 992px) {
     display: flex;
-    width: auto;
+    width: 170px;
   }
 `
 

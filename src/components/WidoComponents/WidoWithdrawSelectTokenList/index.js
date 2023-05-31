@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { fromWEI } from '../../../constants'
+import { fromWei } from '../../../services/web3'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { Container, Text, Vault, Content, EmptyContainer } from './style'
 
@@ -54,7 +54,7 @@ const WidoWithdrawSelectTokenList = ({
                 {data.symbol}
               </Text>
               <Text size="12px" height="16px" weight={400}>
-                {data.balance ? fromWEI(data.balance, data.decimals).toFixed(4) : '0.0000'}
+                {data.balance ? fromWei(data.balance, data.decimals, 4, true) : '0.0000'}
               </Text>
             </Vault>
           </Container>

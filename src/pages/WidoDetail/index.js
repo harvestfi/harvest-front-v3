@@ -7,6 +7,7 @@ import { useHistory, useParams } from 'react-router-dom'
 import ReactTooltip from 'react-tooltip'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { getBalances, getSupportedTokens } from 'wido'
+import tokenMethods from '../../services/web3/contracts/token/methods'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
@@ -40,15 +41,15 @@ import {
   FARM_WETH_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
-  fromWEI,
 } from '../../constants'
+import { fromWei, getExplorerLink, newContractInstance, getWeb3 } from '../../services/web3'
 import { addresses } from '../../data'
 import { usePools } from '../../providers/Pools'
 import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
-import { getExplorerLink } from '../../services/web3'
+
 import { displayAPY, formatNumber, getDetailText, getTotalApy } from '../../utils'
 import {
   BackArrow,
@@ -399,14 +400,22 @@ const WidoDetail = () => {
         if (chain && account) {
           const curBalances = await getBalances(account, [chain.toString()])
           setBalanceList(curBalances)
-          const supList = await getSupportedTokens({
-            chainId: [chain],
-            toToken: toTokenAddress,
-            toChainId: chain,
-          })
+          let supList = [],
+            directInSup = {},
+            directInBalance = {},
+            supportedList = [],
+            vaultId
+          try {
+            supList = await getSupportedTokens({
+              chainId: [chain],
+              toToken: toTokenAddress,
+              toChainId: chain,
+            })
+          } catch (err) {
+            console.log('getSupportedTokens of Wido: ', err)
+          }
           const tokenAddress = token.tokenAddress
-          let first = {},
-            supportedList = []
+
           const soonSupList = []
           for (let i = 0; i < supList.length; i += 1) {
             const supToken = curBalances.find(el => el.address === supList[i].address)
@@ -418,42 +427,106 @@ const WidoDetail = () => {
               supList[i].balance = '0'
               supList[i].usdValue = '0'
             }
+            supList[i].default = false
             supportedList.push(supList[i])
 
             if (tokenAddress.length !== 2) {
               if (supList[i].address.toLowerCase() === tokenAddress.toLowerCase()) {
-                first = supList[i]
+                directInSup = supList[i]
               }
             }
           }
 
           supportedList = supportedList.sort(function reducer(a, b) {
-            return Number(fromWEI(b.balance, b.decimals)) - Number(fromWEI(a.balance, a.decimals))
+            return Number(fromWei(b.balance, b.decimals)) - Number(fromWei(a.balance, a.decimals))
           })
-
-          if (first !== {}) {
-            supportedList = supportedList.sort(function result(x, y) {
-              return x === first ? -1 : y === first ? 1 : 0
-            })
-          }
 
           for (let j = 0; j < curBalances.length; j += 1) {
             const supToken = supList.find(el => el.address === curBalances[j].address)
             if (!supToken) {
               soonSupList.push(curBalances[j])
             }
+
+            if (tokenAddress.length !== 2) {
+              if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
+                directInBalance = curBalances[j]
+              }
+            }
           }
 
+          vaultId = Object.keys(vaultsData).find(
+            key => vaultsData[key].tokenAddress === tokenAddress,
+          )
+          if (!vaultId) {
+            vaultId = Object.keys(poolVaults).find(
+              key => poolVaults[key].tokenAddress === tokenAddress,
+            )
+          }
+          const directBalance = balances[vaultId]
+          const directUsdPrice = token.usdPrice
+          const directUsdValue =
+            directUsdPrice && directBalance
+              ? new BigNumber(directBalance)
+                  .div(10 ** tokenDecimals)
+                  .times(directUsdPrice)
+                  .toFixed(4)
+              : '0'
+
+          if (!(Object.keys(directInSup).length === 0 && directInSup.constructor === Object)) {
+            directInSup.balance = directBalance
+            directInSup.usdPrice = directInSup.usdPrice > 0 ? directInSup.usdPrice : directUsdPrice
+            directInSup.usdValue = directInSup.usdValue > 0 ? directInSup.usdValue : directUsdValue
+            supportedList = supportedList.sort(function result(x, y) {
+              return x === directInSup ? -1 : y === directInSup ? 1 : 0
+            })
+            if (supportedList.length === 0) {
+              supportedList.push(directInSup)
+            }
+            supportedList[0].default = true
+          } else if (
+            !(Object.keys(directInBalance).length === 0 && directInBalance.constructor === Object)
+          ) {
+            directInBalance.balance = directBalance || '0'
+            directInBalance.usdPrice =
+              directInBalance.usdPrice > 0 ? directInBalance.usdPrice : directUsdPrice
+            directInBalance.usdValue =
+              directInBalance.usdValue > 0 ? directInBalance.usdValue : directUsdValue
+            supportedList = [directInBalance].push(supportedList)
+            if (supportedList.length === 0) {
+              supportedList.push(directInBalance)
+            }
+            supportedList[0].default = true
+          } else {
+            const web3Client = await getWeb3(chain, null)
+            const { getSymbol } = tokenMethods
+            const lpInstance = await newContractInstance(id, tokenAddress, null, web3Client)
+            const lpSymbol = await getSymbol(lpInstance)
+            const direct = {
+              symbol: lpSymbol,
+              address: tokenAddress,
+              balance: directBalance || '0',
+              default: true,
+              usdPrice: directUsdPrice || '0',
+              usdValue: directUsdValue || '0',
+              logoURI: 'https://etherscan.io/images/main/empty-token.png',
+              decimals: tokenDecimals,
+            }
+            if (supportedList.length > 0) {
+              supportedList = [direct].push(supportedList)
+            } else {
+              supportedList.push(direct)
+            }
+          }
           setSoonToSupList(soonSupList)
           setSupTokenList(supportedList)
         }
       } catch (err) {
-        console.error(err)
+        console.log('getTokenBalance: ', err)
       }
     }
 
     getTokenBalance()
-  }, [account, chain, toTokenAddress, token])
+  }, [account, chain, toTokenAddress, token, id, tokenDecimals, balances, poolVaults, vaultsData])
 
   const {
     backColor,
@@ -523,7 +596,7 @@ const WidoDetail = () => {
       ) {
         const getBalance = async () => {
           firstWalletBalanceLoad.current = false
-          await getWalletBalances([IFARM_TOKEN_SYMBOL, FARM_TOKEN_SYMBOL], false, true)
+          await getWalletBalances([IFARM_TOKEN_SYMBOL, FARM_TOKEN_SYMBOL, id], false, true)
         }
 
         getBalance()
@@ -1038,9 +1111,9 @@ const WidoDetail = () => {
                     fAssetPool={fAssetPool}
                     lpTokenApprovedBalance={lpTokenApprovedBalance}
                     setPendingAction={setPendingAction}
-                    setAmountsToExecute={setAmountsToExecute}
                     setLoadingDots={setLoadingDots}
                     quoteValue={quoteValueDepo}
+                    multipleAssets={multipleAssets}
                   />
                 ) : (
                   <WidoDepositFinalStep
@@ -1053,7 +1126,6 @@ const WidoDetail = () => {
                     setUsdValue={setUsdValue}
                     setBalance={setBalanceDepo}
                     setClickedTokenId={setClickedTokenIdDepo}
-                    setClickedVaultId={setClickedVaultIdDepo}
                     pickedToken={pickedTokenDepo}
                     setPickedToken={setPickedTokenDepo}
                     slippagePercentage={slippagePercentDepo}
@@ -1063,6 +1135,8 @@ const WidoDetail = () => {
                     tokenSymbol={id}
                     quoteValue={quoteValueDepo}
                     fAssetPool={fAssetPool}
+                    setPendingAction={setPendingAction}
+                    multipleAssets={multipleAssets}
                   />
                 )}
               </DepositComponets>
@@ -1086,6 +1160,7 @@ const WidoDetail = () => {
                     multipleAssets={multipleAssets}
                     symbol={symbolWith}
                     setSymbol={setSymbolWith}
+                    token={token}
                   />
                 ) : (
                   <WidoWithdrawBase
@@ -1171,6 +1246,8 @@ const WidoDetail = () => {
                   tokenSymbol={id}
                   fAssetPool={fAssetPool}
                   quoteValue={quoteValueWith}
+                  multipleAssets={multipleAssets}
+                  setPendingAction={setPendingAction}
                 />
               </WithdrawComponents>
             </RestPart>

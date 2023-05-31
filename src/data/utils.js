@@ -14,12 +14,12 @@ export const getFarmPriceFromUniswap = async () => {
   )
 
   const result = await uniswapMethods.getAmountsOut(
-    new BigNumber(10).pow(18).toString(),
+    new BigNumber(10).pow(18).toFixed(),
     [addresses.FARM, addresses.WETH, addresses.USDC],
     uniswapInstance,
   )
 
   const price = new BigNumber(result[2]).dividedBy(new BigNumber(10).pow(6))
 
-  return price.toString()
+  return price.toFixed()
 }

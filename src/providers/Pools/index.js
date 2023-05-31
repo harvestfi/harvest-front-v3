@@ -336,38 +336,37 @@ const PoolsProvider = _ref => {
               readerInstance,
             )
             // const stats = {}
-            if (chLoadedPools.length > 0)
-              await forEach(chLoadedPools, async (pool, index) => {
-                let lpTokenBalance
-                const isSpecialVault = !vaultAddresses.includes(pool.lpTokenData.address)
+            await forEach(chLoadedPools, async (pool, index) => {
+              let lpTokenBalance
+              const isSpecialVault = !vaultAddresses.includes(pool.lpTokenData.address)
 
-                if (isSpecialVault) {
-                  const lpSymbol = Object.keys(tokens).filter(
-                    symbol => tokens[symbol].tokenAddress === pool.lpTokenData.address,
-                  )
+              if (isSpecialVault) {
+                const lpSymbol = Object.keys(tokens).filter(
+                  symbol => tokens[symbol].tokenAddress === pool.lpTokenData.address,
+                )
 
-                  const instance = await newContractInstance(
-                    lpSymbol[0],
-                    null,
-                    null,
-                    await getWeb3(ch, false),
-                  )
+                const instance = await newContractInstance(
+                  lpSymbol[0],
+                  null,
+                  null,
+                  await getWeb3(ch, false),
+                )
 
-                  lpTokenBalance = !walletBalances[lpSymbol]
-                    ? await tokenMethods.getBalance(account, instance)
-                    : walletBalances[lpSymbol]
-                } else {
-                  const lpTokenBalanceIdx = vaultAddresses.findIndex(
-                    address => address === pool.lpTokenData.address,
-                  )
-                  lpTokenBalance = balances[0][lpTokenBalanceIdx]
-                }
+                lpTokenBalance = !walletBalances[lpSymbol]
+                  ? await tokenMethods.getBalance(account, instance)
+                  : walletBalances[lpSymbol]
+              } else {
+                const lpTokenBalanceIdx = vaultAddresses.findIndex(
+                  address => address === pool.lpTokenData.address,
+                )
+                lpTokenBalance = balances[0][lpTokenBalanceIdx]
+              }
 
-                stats[pool.id] = {
-                  lpTokenBalance,
-                  totalStaked: balances[1][index],
-                }
-              })
+              stats[pool.id] = {
+                lpTokenBalance,
+                totalStaked: balances[1][index],
+              }
+            })
           }
           /* eslint-enable no-await-in-loop */
           // })

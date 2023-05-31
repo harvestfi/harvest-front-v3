@@ -116,7 +116,7 @@ const WidoDepositBase = ({
     }
     const stakeAmount = toWei(stakeInputValue, fAssetPool.lpTokenData.decimals, 0)
     if (new BigNumber(stakeAmount).isGreaterThan(lpTokenBalance)) {
-      toast.error('Please input sufficient value!')
+      toast.error('Cannot stake more than balance!')
       return
     }
 
@@ -182,11 +182,11 @@ const WidoDepositBase = ({
         return
       }
       if (new BigNumber(inputAmount).isGreaterThan(balance)) {
-        toast.error('Please input sufficient amount for deposit!')
+        toast.error('Cannot deposit more than balance!')
         return
       }
       if (new BigNumber(inputAmount).isEqualTo(0)) {
-        toast.error('Please input amount for deposit!')
+        toast.error('Cannot deposit 0!')
         return
       }
       setDepositWido(true)
@@ -255,7 +255,7 @@ const WidoDepositBase = ({
         fontColor={widoTagActiveFontColor}
         onClick={() => {
           if (account) {
-            setInputAmount(formatNumberWido(balance, POOL_BALANCES_DECIMALS))
+            setInputAmount(balance)
             const usdAmount =
               pickedToken.usdPrice !== '0.0' ? balance * pickedToken.usdPrice : pickedToken.usdValue
             setUsdValue(formatNumberWido(usdAmount, 2))
