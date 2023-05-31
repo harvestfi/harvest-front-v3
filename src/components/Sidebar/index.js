@@ -387,26 +387,30 @@ const Sidebar = ({ width }) => {
             </Fragment>
           ))}
         </LinksContainer>
-        <ProfitSharing
-          onClick={() => {
-            push(`${directDetailUrl}ethereum/${addresses.FARM}`)
-          }}
-        >
-          <TopDiv>
-            <img src={ProfitSharingIcon} alt="profit-sharing" />
-            <TopTitle>
-              <img src={ConnectDisableIcon} width="7px" height="7px" alt="" />
-              Profit-Sharing
-            </TopTitle>
-          </TopDiv>
-          <BottomDiv>
-            {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
-            <div>APR</div>
-          </BottomDiv>
-          <ChartDiv>
-            <SmallApexChart data={apiData} lastAPY={Number(totalApy)} />
-          </ChartDiv>
-        </ProfitSharing>
+        {isSpecialApp && chainId !== CHAINS_ID.ETH_MAINNET ? (
+          <></>
+        ) : (
+          <ProfitSharing
+            onClick={() => {
+              push(`${directDetailUrl}ethereum/${addresses.FARM}`)
+            }}
+          >
+            <TopDiv>
+              <img src={ProfitSharingIcon} alt="profit-sharing" />
+              <TopTitle>
+                <img src={ConnectDisableIcon} width="7px" height="7px" alt="" />
+                Profit-Sharing
+              </TopTitle>
+            </TopDiv>
+            <BottomDiv>
+              {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
+              <div>APR</div>
+            </BottomDiv>
+            <ChartDiv>
+              <SmallApexChart data={apiData} lastAPY={Number(totalApy)} />
+            </ChartDiv>
+          </ProfitSharing>
+        )}
 
         <Divider height="1px" marginTop="20px" backColor="#EAECF0" />
         <Follow>

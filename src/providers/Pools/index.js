@@ -87,8 +87,8 @@ const PoolsProvider = _ref => {
       formattedPools = await Promise.all(
         defaultPools.map(async pool => {
           if (!isLedgerLive() || (isLedgerLive() && pool.chain !== CHAINS_ID.ARBITRUM_ONE)) {
-            let web3Client = await getWeb3(pool.chain, selectedAccount),
-              web3ClientLocal = await getWeb3(pool.chain, true),
+            let web3Client = await getWeb3(pool.chain, selectedAccount, web3),
+              web3ClientLocal = await getWeb3(pool.chain, true, web3),
               rewardAPY = ['0'],
               rewardAPR = ['0'],
               autoStakeContractInstance = null,
@@ -108,16 +108,12 @@ const PoolsProvider = _ref => {
               web3Client = await getWeb3(pool.chain, selectedAccount)
               web3ClientLocal = await getWeb3(pool.chain, selectedAccount)
             }
-            if (!isSpecialApp) {
-              web3Client = web3
-              web3ClientLocal = web3
-            }
             if (
               (Object.values(SPECIAL_VAULTS).includes(pool.id) &&
                 curChain !== CHAINS_ID.ETH_MAINNET) ||
               pool.chain !== curChain
             ) {
-              web3Client = await getWeb3(pool.chain, null)
+              web3Client = await getWeb3(pool.chain, false)
             }
 
             const contractInstance = await newContractInstance(
@@ -403,7 +399,7 @@ const PoolsProvider = _ref => {
       setLoadingUserPoolStats(true)
       await Promise.all(
         selectedPools.map(async pool => {
-          const web3Client = await getWeb3(pool.chain, null)
+          const web3Client = await getWeb3(pool.chain, false)
           const contractInstance = await newContractInstance(
             null,
             pool.contractAddress,

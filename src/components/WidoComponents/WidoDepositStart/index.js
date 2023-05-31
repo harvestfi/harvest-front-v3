@@ -8,7 +8,7 @@ import { WIDO_BALANCES_DECIMALS } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { fromWei, toWei, getWeb3 } from '../../../services/web3'
-import { formatNumberWido, isSpecialApp } from '../../../utils'
+import { formatNumberWido } from '../../../utils'
 import AnimatedDots from '../../AnimatedDots'
 import { Divider } from '../../GlobalStyle'
 import WidoSwapToken from '../WidoSwapToken'
@@ -65,11 +65,9 @@ const WidoDepositStart = ({
           const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
           const toChainId = chainId
           const user = account
-          let curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol),
-            mainWeb = await getWeb3(chainId, account)
-          if (!isSpecialApp) {
-            mainWeb = web3
-          }
+          let curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol)
+          const mainWeb = await getWeb3(chainId, account, web3)
+
           const quoteResult = await quote(
             {
               fromChainId, // Chain Id of from token
