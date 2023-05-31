@@ -386,7 +386,7 @@ const Portfolio = () => {
 
               const rewardToken = groupOfVaults[rewardSymbol]
               // eslint-disable-next-line one-var
-              let usdRewardPrice = 1,
+              let usdRewardPrice = 0,
                 rewardDecimal = 18
 
               if (rewardTokenSymbols.length > 1) {
@@ -404,7 +404,7 @@ const Portfolio = () => {
                 usdRewardPrice =
                   (rewardSymbol === FARM_TOKEN_SYMBOL
                     ? rewardToken.data.lpTokenData && rewardToken.data.lpTokenData.price
-                    : rewardToken.usdPrice) || 1
+                    : rewardToken.usdPrice) || 0
 
                 rewardDecimal =
                   rewardToken.decimals ||
