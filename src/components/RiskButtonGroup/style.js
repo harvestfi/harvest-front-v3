@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import HoverBack from '../../../assets/images/logos/camelot/hover_filter.svg'
+import HoverBack from '../../assets/images/logos/camelot/hover_filter.svg'
 
 const ButtonsGroup = styled.div`
   display: flex;

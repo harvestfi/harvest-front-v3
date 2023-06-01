@@ -209,7 +209,7 @@ const DivWidth = styled.div`
     width: 23%;
     position: absolute;
     border: none;
-    top: ${props => (props.status === '1' ? `185px` : `95px`)};
+    top: ${props => (props.status === '1' ? `185px` : `100px`)};
     left: 20px;
   }
 
@@ -217,16 +217,19 @@ const DivWidth = styled.div`
     background: none;
   }
   transition: 0.25s;
-  @media screen and (max-width: 1478px) {
-    &.first {
-      // margin-bottom: 15px;
-    }
 
-    width: max-content;
-
+  @media screen and (max-width: 1480px) {
     &.searchbar {
       position: absolute;
-      top: 190px;
+      top: ${props => (props.status === '1' ? `173px` : `83px`)};
+    }
+
+    position: unset;
+  }
+
+  @media screen and (max-width: 1280px) {
+    &.searchbar {
+      top: ${props => (props.status === '1' ? `158px` : `68px`)};
     }
 
     position: unset;
@@ -265,6 +268,34 @@ const ChainButton = styled.button`
 
   img {
     opacity: 0.3;
+    width: 25px;
+    height: 25px;
+  }
+
+  @media screen and (max-width: 1480px) {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    &.active {
+      border-radius: 10px;
+    }
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  @media screen and (max-width: 1280px) {
+    width: 32px;
+    height: 32px;
+    border-radius: 7px;
+    &.active {
+      border-radius: 7px;
+    }
+    img {
+      width: 15px;
+      height: 15px;
+    }
   }
 `
 
@@ -328,6 +359,18 @@ const ClearFilter = styled.div`
   &:hover {
     color: #ff9400;
   }
+
+  @media screen and (max-width: 1480px) {
+    padding: 10px 15px;
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  @media screen and (max-width: 1280px) {
+    padding: 5px 10px;
+    font-size: 8px;
+    line-height: 14px;
+  }
 `
 
 const Counter = styled.div`
@@ -348,7 +391,18 @@ const Counter = styled.div`
   justify-content: center;
   align-items: center;
 
-  @media screen and (max-width: 1510px) {
+  @media screen and (max-width: 1480px) {
+    width: 15px;
+    height: 15px;
+  }
+
+  @media screen and (max-width: 1280px) {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+  }
+
+  @media screen and (max-width: 992px) {
     color: white;
   }
 `
@@ -356,7 +410,7 @@ const Counter = styled.div`
 const WebView = styled.div`
   display: block;
 
-  @media screen and (max-width: 1510px) {
+  @media screen and (max-width: 992px) {
     display: none;
   }
 `
@@ -364,7 +418,7 @@ const WebView = styled.div`
 const MobileView = styled.div`
   display: none;
 
-  @media screen and (max-width: 1510px) {
+  @media screen and (max-width: 992px) {
     display: flex;
     flex-direction: column;
     position: relative;
@@ -603,6 +657,28 @@ const CamelotButton = styled.button`
     img {
       filter: invert(57%) sepia(61%) saturate(2063%) hue-rotate(1deg) brightness(103%)
         contrast(105%);
+    }
+  }
+
+  @media screen and (max-width: 1480px) {
+    padding: 5px 10px;
+    font-size: 12px;
+    line-height: 16px;
+
+    img {
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  @media screen and (max-width: 1280px) {
+    padding: 5px 10px;
+    font-size: 8px;
+    line-height: 14px;
+
+    img {
+      width: 10px;
+      height: 10px;
     }
   }
 `

@@ -17,9 +17,10 @@ const FarmContainer = styled.div`
     display: none;
   }
 
-  @media screen and (max-width: 1510px) {
+  @media screen and (max-width: 992px) {
     width: 100%;
     min-height: 100vh;
+    margin-left: 0;
 
     img.camelot-bg {
       display: none;
@@ -34,16 +35,12 @@ const FarmContainer = styled.div`
       justify-content: center;
     }
   }
-
-  @media screen and (max-width: 992px) {
-    margin-left: 0;
-  }
 `
 
 const NotificationCenter = styled.div`
   display: none;
 
-  @media screen and (max-width: 1510px) {
+  @media screen and (max-width: 992px) {
     display: block;
     margin: 15px 7px;
   }
