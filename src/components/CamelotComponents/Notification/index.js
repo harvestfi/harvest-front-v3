@@ -27,7 +27,16 @@ const Notification = () => {
         </div>
       </div>
       <div className="right-part">
-        <button className="announcement" type="button">
+        <button
+          className="announcement"
+          type="button"
+          onClick={() => {
+            window.open(
+              'https://medium.com/harvest-finance/harvest-launches-dedicated-farming-section-for-camelot-11895f3f8ca0',
+              '_blank',
+            )
+          }}
+        >
           Announcement
         </button>
         <div className="close">

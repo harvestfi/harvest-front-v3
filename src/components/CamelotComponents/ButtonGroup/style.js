@@ -6,6 +6,7 @@ const ButtonsGroup = styled.div`
   width: fit-content;
   border-radius: 10px;
   background: ${props => props.backColor};
+  border: 1px solid ${props => props.borderColor};
   // padding: 15px 21px 14px 21px;
   transition: 0.25s;
 

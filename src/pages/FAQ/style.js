@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import '@fontsource/manrope'
 
 const FAQContainer = styled.div`
-  margin-left: 320px;
+  margin-left: 280px;
   width: 100%;
   position: relative;
 
@@ -31,6 +31,10 @@ const FAQContent = styled.div`
 
   @media screen and (min-width: 1920px) {
     width: 1450px;
+  }
+
+  @media screen and (max-width: 1480px) {
+    padding: 70px 30px 40px;
   }
 
   @media screen and (max-width: 992px) {
