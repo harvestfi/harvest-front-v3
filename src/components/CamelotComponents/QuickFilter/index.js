@@ -3,30 +3,29 @@ import { useWindowWidth } from '@react-hook/window-size'
 import { debounce } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
-import AllChains from '../../assets/images/chains/all_chain.svg'
-import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
-import ETHEREUM from '../../assets/images/chains/ethereum.svg'
-import MobileFiltersIcon from '../../assets/images/chains/mobilefiltersicon.svg'
-import POLYGON from '../../assets/images/chains/polygon.svg'
-import LPTokens from '../../assets/images/logos/filter/assets/lptokens.svg'
-import SingleStakes from '../../assets/images/logos/filter/assets/singlestakes.svg'
-import Stable from '../../assets/images/logos/filter/assets/stablecoin.svg'
-import AssetTypeMobile from '../../assets/images/logos/filter/assettype-mobile.svg'
-import DropDownNarrow from '../../assets/images/logos/filter/dropdown-narrow.svg'
-import All from '../../assets/images/logos/filter/farms/all.svg'
-import Moon from '../../assets/images/logos/filter/farms/moon.svg'
-import My from '../../assets/images/logos/filter/farms/my.svg'
-import FarmTypeMobile from '../../assets/images/logos/filter/farmtype-mobile.svg'
-import Beginner from '../../assets/images/logos/filter/risks/beginner.svg'
-import Degen from '../../assets/images/logos/filter/risks/degens.svg'
-import Camelot from '../../assets/images/logos/camelot/camelot_black.svg'
-import { CHAINS_ID } from '../../data/constants'
-import { useThemeContext } from '../../providers/useThemeContext'
-import { useWallet } from '../../providers/Wallet'
-import { isLedgerLive, isSpecialApp } from '../../utils'
+import AllChains from '../../../assets/images/chains/all_chain.svg'
+import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
+import ETHEREUM from '../../../assets/images/chains/ethereum.svg'
+import MobileFiltersIcon from '../../../assets/images/chains/mobilefiltersicon.svg'
+import POLYGON from '../../../assets/images/chains/polygon.svg'
+import LPTokens from '../../../assets/images/logos/filter/assets/lptokens.svg'
+import SingleStakes from '../../../assets/images/logos/filter/assets/singlestakes.svg'
+import Stable from '../../../assets/images/logos/filter/assets/stablecoin.svg'
+import AssetTypeMobile from '../../../assets/images/logos/filter/assettype-mobile.svg'
+import DropDownNarrow from '../../../assets/images/logos/filter/dropdown-narrow.svg'
+import All from '../../../assets/images/logos/filter/farms/all.svg'
+import Moon from '../../../assets/images/logos/filter/farms/moon.svg'
+import My from '../../../assets/images/logos/filter/farms/my.svg'
+import FarmTypeMobile from '../../../assets/images/logos/filter/farmtype-mobile.svg'
+import Beginner from '../../../assets/images/logos/filter/risks/beginner.svg'
+import Degen from '../../../assets/images/logos/filter/risks/degens.svg'
+import Camelot from '../../../assets/images/logos/camelot/camelot_black.svg'
+import { CHAINS_ID } from '../../../data/constants'
+import { useThemeContext } from '../../../providers/useThemeContext'
+import { useWallet } from '../../../providers/Wallet'
 import ButtonGroup from '../ButtonGroup'
-import RiskButtonGroup from '../CamelotComponents/RiskButtonGroup'
-import MobileButtonGroup from '../MobileButtonGroup'
+import RiskButtonGroup from '../RiskButtonGroup'
+import MobileButtonGroup from '../../MobileButtonGroup'
 import SearchBar from '../SearchBar'
 import {
   BadgeText,
@@ -51,6 +50,7 @@ import {
   WebView,
   CamelotButton,
 } from './style'
+import { isLedgerLive } from '../../../utils'
 
 const ChainsList = isLedgerLive()
   ? [
@@ -85,6 +85,7 @@ const FarmsList = [
 const RiskList = [
   { id: 1, name: 'Beginners', img: Beginner, filter: 'beginners' },
   { id: 2, name: 'Advanced', img: Degen, filter: 'advanced' },
+  // { id: 3, name: 'Camelot', img: Camelot, filter: 'camelot' },
 ]
 
 const MobileRiskList = [
@@ -232,7 +233,7 @@ const QuickFilter = ({
   const [mobileChainName, setMobileChainId] = useState('All Chains') // for mobilechain
   const [mobileChainImg, setMobileChainImg] = useState(AllChains) // for mobilechain
 
-  const { selChain, setSelChain, chainId } = useWallet()
+  const { selChain, setSelChain } = useWallet()
   // for Chain
   const curChain = []
   if (selChain.includes(CHAINS_ID.ETH_MAINNET)) {
@@ -312,11 +313,8 @@ const QuickFilter = ({
     const params = new URLSearchParams(paramObj)
 
     if (selectedClass.length !== 0 && selectedClass.length !== ChainsList.length) {
-      if (isSpecialApp) params.append('chain', chainId)
-      else {
-        for (let i = 0; i < selectedClass.length; i += 1) {
-          params.append('chain', ChainsList[selectedClass[i]].name.toLowerCase())
-        }
+      for (let i = 0; i < selectedClass.length; i += 1) {
+        params.append('chain', ChainsList[selectedClass[i]].name.toLowerCase())
       }
     }
     push(`${pathname}?${params.toString()}`)
@@ -325,6 +323,27 @@ const QuickFilter = ({
   const clearFilter = () => {
     setParamObj({})
     push(pathname)
+  }
+
+  const onClickClearFilter = () => {
+    document.getElementById('search-input').value = ''
+    setSearchQuery('')
+    onSelectActiveType(['Active'])
+    setStringSearch(false)
+    setRiskId(-1)
+    setAssetsId(-1)
+    setFarmId(-1)
+    setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2])
+    onSelectStableCoin(false)
+    onAssetClick('')
+    onSelectFarmType('')
+    setSelChain([CHAINS_ID.ETH_MAINNET, CHAINS_ID.MATIC_MAINNET, CHAINS_ID.ARBITRUM_ONE])
+    clearFilter()
+
+    onDepositedOnlyClick(false)
+    setMobileChainId('All Chains')
+    setMobileChainImg(AllChains)
+    setMobileFilterCount(0)
   }
 
   const clearQuery = () => {
@@ -386,7 +405,20 @@ const QuickFilter = ({
     filterColor,
     filterChainHoverColor,
     mobileFilterDisableColor,
+    openNotify,
+    setOpenNotify,
   } = useThemeContext()
+
+  const newNotify = localStorage.getItem('newNotify')
+
+  useEffect(() => {
+    if (newNotify === null || newNotify === 'true') {
+      localStorage.setItem('newNotify', true)
+      setOpenNotify(true)
+    } else {
+      setOpenNotify(false)
+    }
+  }, [newNotify, setOpenNotify])
 
   return (
     <div>
@@ -403,59 +435,55 @@ const QuickFilter = ({
                 justifyContent="start"
                 backColor={backColor}
               >
-                {isSpecialApp ? (
-                  <></>
-                ) : (
-                  <>
-                    {ChainsList.map((item, i) => (
-                      <ChainButton
-                        backColor={backColor}
-                        hoverColor={filterChainHoverColor}
-                        borderColor={borderColor}
-                        className={`${selectedClass.includes(i) ? 'active' : ''}`}
-                        data-tip
-                        data-for={`chain-${item.name}`}
-                        key={i}
-                        onClick={() => {
-                          let tempIds = []
-                          if (selectedClass.length !== ChainsList.length) {
-                            tempIds = [...selectedClass]
-                          }
+                <>
+                  {ChainsList.map((item, i) => (
+                    <ChainButton
+                      backColor={backColor}
+                      hoverColor={filterChainHoverColor}
+                      borderColor={borderColor}
+                      className={`${selectedClass.includes(i) ? 'active' : ''}`}
+                      data-tip
+                      data-for={`chain-${item.name}`}
+                      key={i}
+                      onClick={() => {
+                        let tempIds = []
+                        if (selectedClass.length !== ChainsList.length) {
+                          tempIds = [...selectedClass]
+                        }
 
-                          if (!tempIds.includes(i)) {
-                            tempIds.push(i)
-                          } else {
-                            for (let el = 0; el < tempIds.length; el += 1) {
-                              if (tempIds[el] === i) {
-                                tempIds.splice(el, 1)
-                              }
+                        if (!tempIds.includes(i)) {
+                          tempIds.push(i)
+                        } else {
+                          for (let el = 0; el < tempIds.length; el += 1) {
+                            if (tempIds[el] === i) {
+                              tempIds.splice(el, 1)
                             }
                           }
+                        }
 
-                          if (tempIds.length === 0 || tempIds.length === ChainsList.length) {
-                            tempIds = isLedgerLive() ? [0, 1] : [0, 1, 2]
-                            setSelectedClass(tempIds)
-                          } else {
-                            setSelectedClass(tempIds)
-                          }
-                          tempIds.map(tempId => {
-                            return selectedClasses.push(ChainsList[tempId].name)
-                          })
-                          const tempChains = []
-                          for (let j = 0; j < tempIds.length; j += 1) {
-                            tempChains.push(ChainsList[tempIds[j]].chainId)
-                          }
-                          setSelChain(tempChains)
-                          if (farmId !== -1) {
-                            printFarm(farmId)
-                          }
-                        }}
-                      >
-                        <img src={item.img} width={25} height={25} alt="" />
-                      </ChainButton>
-                    ))}
-                  </>
-                )}
+                        if (tempIds.length === 0 || tempIds.length === ChainsList.length) {
+                          tempIds = isLedgerLive() ? [0, 1] : [0, 1, 2]
+                          setSelectedClass(tempIds)
+                        } else {
+                          setSelectedClass(tempIds)
+                        }
+                        tempIds.map(tempId => {
+                          return selectedClasses.push(ChainsList[tempId].name)
+                        })
+                        const tempChains = []
+                        for (let j = 0; j < tempIds.length; j += 1) {
+                          tempChains.push(ChainsList[tempIds[j]].chainId)
+                        }
+                        setSelChain(tempChains)
+                        if (farmId !== -1) {
+                          printFarm(farmId)
+                        }
+                      }}
+                    >
+                      <img src={item.img} width={25} height={25} alt="" />
+                    </ChainButton>
+                  ))}
+                </>
               </DivWidth>
             </DivWidth>
             <DivWidth borderRadius="10" backColor={backColor}>
@@ -478,7 +506,7 @@ const QuickFilter = ({
               <CamelotButton
                 type="button"
                 onClick={() => {
-                  push('/camelot')
+                  onClickClearFilter()
                 }}
               >
                 <img src={Camelot} alt="" />
@@ -507,23 +535,7 @@ const QuickFilter = ({
                   backColor={backColor}
                   borderColor={borderColor}
                   onClick={() => {
-                    document.getElementById('search-input').value = ''
-                    setSearchQuery('')
-                    onSelectActiveType(['Active'])
-                    setStringSearch(false)
-                    setRiskId(-1)
-                    setAssetsId(-1)
-                    setFarmId(-1)
-                    setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2])
-                    onSelectStableCoin(false)
-                    onAssetClick('')
-                    onSelectFarmType('')
-                    setSelChain([
-                      CHAINS_ID.ETH_MAINNET,
-                      CHAINS_ID.MATIC_MAINNET,
-                      CHAINS_ID.ARBITRUM_ONE,
-                    ])
-                    clearFilter()
+                    onClickClearFilter()
                   }}
                 >
                   <Counter count={filterCount}>{filterCount > 0 ? filterCount : ''}</Counter>&nbsp;
@@ -531,7 +543,7 @@ const QuickFilter = ({
                 </ClearFilter>
               </DivWidth>
             </QuickFilterContainer>
-            <DivWidth className="searchbar" backColor={backColor}>
+            <DivWidth className="searchbar" backColor={backColor} status={openNotify ? '1' : '0'}>
               <InputsContainer>
                 <SearchBar
                   placeholder="Search assets"
@@ -559,29 +571,25 @@ const QuickFilter = ({
                 <img className="narrow" src={DropDownNarrow} alt="" />
               </UserDropDown>
 
-              {isSpecialApp ? (
-                <></>
-              ) : (
-                <UserDropDownMenu>
-                  {MobileChainsList.map((item, i) => (
-                    <UserDropDownItem
-                      key={i}
-                      onClick={() => {
-                        setMobileChainId(item.name)
-                        setMobileChainImg(item.img)
-                        if (item.name === 'All Chains') {
-                          onSelectActiveType([])
-                        } else {
-                          setSelChain([item.chainId])
-                        }
-                      }}
-                    >
-                      <img src={item.img} width="12" height="12" alt="" />
-                      <div>{item.name}</div>
-                    </UserDropDownItem>
-                  ))}
-                </UserDropDownMenu>
-              )}
+              <UserDropDownMenu>
+                {MobileChainsList.map((item, i) => (
+                  <UserDropDownItem
+                    key={i}
+                    onClick={() => {
+                      setMobileChainId(item.name)
+                      setMobileChainImg(item.img)
+                      if (item.name === 'All Chains') {
+                        onSelectActiveType(['Active'])
+                      } else {
+                        setSelChain([item.chainId])
+                      }
+                    }}
+                  >
+                    <img src={item.img} width="12" height="12" alt="" />
+                    <div>{item.name}</div>
+                  </UserDropDownItem>
+                ))}
+              </UserDropDownMenu>
             </Dropdown>
           </FarmButtonPart>
 
@@ -676,7 +684,8 @@ const QuickFilter = ({
                         disabled={item.name === 'Labs'}
                         onClick={() => {
                           if (item.name === 'Camelot') {
-                            push('/camelot')
+                            onClickClearFilter()
+                            handleFilterClose()
                           } else {
                             setRiskId(i)
                             setRiskImg(item.img)
@@ -705,27 +714,7 @@ const QuickFilter = ({
             <div className="clear-filter">
               <MobileClearFilter
                 onClick={() => {
-                  document.getElementById('search-input').value = ''
-                  setSearchQuery('')
-                  setStringSearch(false)
-                  onSelectActiveType(['Active'])
-                  onSelectStableCoin(false)
-                  onAssetClick('')
-                  onSelectFarmType('')
-                  onDepositedOnlyClick(false)
-                  setAssetsId(-1)
-                  setRiskId(-1)
-                  setFarmId(-1)
-                  setMobileChainId('All Chains')
-                  setMobileChainImg(AllChains)
-                  setMobileFilterCount(0)
-                  setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2])
-                  setSelChain([
-                    CHAINS_ID.ETH_MAINNET,
-                    CHAINS_ID.MATIC_MAINNET,
-                    CHAINS_ID.ARBITRUM_ONE,
-                  ])
-                  clearFilter()
+                  onClickClearFilter()
                 }}
                 borderColor={borderColor}
                 fontColor={fontColor}

@@ -1,8 +1,9 @@
 import { get } from 'lodash'
-import React, { useMemo } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { useSetChain } from '@web3-onboard/react'
 import ReactTooltip from 'react-tooltip'
+import CoinGecko from 'coingecko-api'
 import Info from '../../../assets/images/logos/earn/info.svg'
 import {
   ACTIONS,
@@ -23,7 +24,6 @@ import {
   formatNumber,
   hasAmountGreaterThanZero,
   hasRequirementsForInteraction,
-  isSpecialApp,
 } from '../../../utils'
 import AnimatedDots from '../../AnimatedDots'
 import Button from '../../Button'
@@ -40,6 +40,23 @@ import {
 } from './style'
 
 const { tokens } = require('../../../data')
+
+const CoinGeckoClient = new CoinGecko()
+
+const getPrice = async () => {
+  try {
+    const data = await CoinGeckoClient.simple.price({
+      ids: ['ifarm'],
+      /* eslint-disable camelcase */
+      vs_currencies: ['usd'],
+    })
+
+    const result = data.success ? data.data.ifarm.usd : 1
+    return result
+  } catch (e) {
+    return 1
+  }
+}
 
 const VaultFooterActions = ({
   fAssetPool,
@@ -59,7 +76,7 @@ const VaultFooterActions = ({
   poolRewardSymbol,
 }) => {
   const { fetchUserPoolStats, userStats, pools } = usePools()
-  const { account, getWalletBalances, connected, chainId } = useWallet()
+  const { account, getWalletBalances, connected } = useWallet()
   const { vaultsData } = useVaults()
   const { profitShareAPY } = useStats()
   const { handleClaim } = useActions()
@@ -79,11 +96,7 @@ const VaultFooterActions = ({
   ] = useSetChain()
 
   const tokenChain = token.chain || token.data.chain
-  const curChain = isSpecialApp
-    ? chainId
-    : connectedChain
-    ? parseInt(connectedChain.id, 16).toString()
-    : ''
+  const curChain = connectedChain ? parseInt(connectedChain.id, 16).toString() : ''
 
   const poolVaults = useMemo(
     () => ({
@@ -119,6 +132,16 @@ const VaultFooterActions = ({
     [farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
   )
   const groupOfVaults = { ...vaultsData, ...poolVaults }
+  const [price, setPrice] = useState(1)
+
+  useEffect(() => {
+    const getPriceValue = async () => {
+      const value = await getPrice()
+      setPrice(value)
+    }
+
+    getPriceValue()
+  }, [])
 
   return (
     <SelectedVaultContainer
@@ -143,13 +166,12 @@ const VaultFooterActions = ({
         </SelectedVaultLabel>
       </SelectedVault>
       {rewardTokenSymbols &&
-        rewardTokenSymbols.map((symbol, symbolIdx) => {
-          const tokenName = symbol.toUpperCase()
-          const curtoken = groupOfVaults[tokenName]
+        rewardTokenSymbols.slice(0, 1).map((symbol, symbolIdx) => {
+          const curtoken = groupOfVaults[symbol]
           let usdPrice = 1
           if (curtoken) {
             usdPrice =
-              (tokenName === FARM_TOKEN_SYMBOL
+              (symbol === FARM_TOKEN_SYMBOL
                 ? curtoken.data.lpTokenData && curtoken.data.lpTokenData.price
                 : curtoken.usdPrice) || 1
           }
@@ -200,46 +222,45 @@ const VaultFooterActions = ({
                       formatNumber(0, 8)
                     )}
                   </Monospace>
-                  {usdPrice === 1 && tokenName !== IFARM_TOKEN_SYMBOL ? null : (
-                    <USDValue>
-                      <Monospace>
-                        $
-                        {!connected ? (
-                          formatNumber(0, 8)
-                        ) : !isLoadingData &&
-                          get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`) ? (
-                          <Counter
-                            pool={fAssetPool}
-                            totalTokensEarned={
-                              (rewardTokenSymbols.length > 1
-                                ? fromWei(
-                                    get(rewardsEarned, symbol, 0),
-                                    get(tokens[symbol], 'decimals', 18),
-                                    4,
-                                  )
-                                : totalTokensEarned) * usdPrice
-                            }
-                            totalStaked={get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)}
-                            ratePerDay={get(ratesPerDay, symbolIdx, ratesPerDay[0])}
-                            rewardPerToken={get(
-                              fAssetPool,
-                              `rewardPerToken[${symbolIdx}]`,
-                              fAssetPool.rewardPerToken[0],
-                            )}
-                            rewardTokenAddress={get(
-                              fAssetPool,
-                              `rewardTokens[${symbolIdx}]`,
-                              fAssetPool.rewardTokens[0],
-                            )}
-                          />
-                        ) : userStats.length === 0 ? (
-                          <AnimatedDots />
-                        ) : (
-                          formatNumber(0, 8)
-                        )}
-                      </Monospace>
-                    </USDValue>
-                  )}
+                  <USDValue>
+                    <Monospace>
+                      $
+                      {!connected ? (
+                        formatNumber(0, 8)
+                      ) : !isLoadingData &&
+                        get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`) ? (
+                        <Counter
+                          pool={fAssetPool}
+                          totalTokensEarned={
+                            (rewardTokenSymbols.length > 1
+                              ? fromWei(
+                                  get(rewardsEarned, symbol, 0),
+                                  get(tokens[symbol], 'decimals', 18),
+                                  4,
+                                )
+                              : totalTokensEarned) *
+                            (symbol.toUpperCase() === IFARM_TOKEN_SYMBOL ? price : usdPrice)
+                          }
+                          totalStaked={get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)}
+                          ratePerDay={get(ratesPerDay, symbolIdx, ratesPerDay[0])}
+                          rewardPerToken={get(
+                            fAssetPool,
+                            `rewardPerToken[${symbolIdx}]`,
+                            fAssetPool.rewardPerToken[0],
+                          )}
+                          rewardTokenAddress={get(
+                            fAssetPool,
+                            `rewardTokens[${symbolIdx}]`,
+                            fAssetPool.rewardTokens[0],
+                          )}
+                        />
+                      ) : userStats.length === 0 ? (
+                        <AnimatedDots />
+                      ) : (
+                        formatNumber(0, 8)
+                      )}
+                    </Monospace>
+                  </USDValue>
                 </Div>
               </SelectedVaultNumber>
             </SelectedVault>
@@ -273,7 +294,7 @@ const VaultFooterActions = ({
         onClick={async () => {
           if (curChain !== tokenChain) {
             const chainHex = `0x${Number(tokenChain).toString(16)}`
-            if (!isSpecialApp) await setChain({ chainId: chainHex })
+            await setChain({ chainId: chainHex })
           } else {
             handleClaim(account, fAssetPool, setPendingAction, async () => {
               await getWalletBalances([poolRewardSymbol])

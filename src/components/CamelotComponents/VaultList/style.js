@@ -269,6 +269,12 @@ const ThemeMode = styled.div`
     `}
 `
 
+const NotifyContent = styled.div`
+  @media screen and (max-width: 1510px) {
+    display: none;
+  }
+`
+
 export {
   Container,
   Header,
@@ -281,4 +287,5 @@ export {
   MobileListFilter,
   Filtersinput,
   ThemeMode,
+  NotifyContent,
 }

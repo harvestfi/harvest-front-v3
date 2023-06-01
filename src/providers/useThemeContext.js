@@ -122,6 +122,8 @@ export function ThemeProvider({ children }) {
   const faqQueHoverColor = darkMode ? '#293744' : '#e9e9e9'
 
   const analyticTitleColor = darkMode ? 'white' : '#475467'
+
+  const [openNotify, setOpenNotify] = useState(false) // true : USD, false: Token
   return (
     <ThemeContext.Provider
       value={{
@@ -186,6 +188,8 @@ export function ThemeProvider({ children }) {
         totalValueFontColor,
         faqQueHoverColor,
         analyticTitleColor,
+        openNotify,
+        setOpenNotify,
       }}
     >
       {children}
