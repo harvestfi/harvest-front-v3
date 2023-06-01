@@ -22,8 +22,8 @@ const Notification = () => {
       <div className="left-part">
         <img className="main-img" src={AnnounceImg} alt="" />
         <div className="main-desc">
-          Harvest partnered with Camelot to offer tailored farms for its LPs. Maximize APY today
-          with farms in this section.
+          Read about our collaboration with Camelot to bring DeFi&apos;s first farms on top of their
+          liquidity pools.
         </div>
       </div>
       <div className="right-part">
