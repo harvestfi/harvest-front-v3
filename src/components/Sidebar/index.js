@@ -172,7 +172,7 @@ const getChainIcon = chainNum => {
 }
 
 const Sidebar = ({ width }) => {
-  const { account, connectAction, disconnectAction, chainId, connected } = useWallet()
+  const { account, connectAction, disconnectAction, chainId, connected, setSelChain } = useWallet()
   const { pools, disableWallet } = usePools()
   const { profitShareAPY } = useStats()
 
@@ -238,6 +238,13 @@ const Sidebar = ({ width }) => {
     }
     initData()
   }, [chainId])
+
+  const directAction = path => {
+    if (path === ROUTES.PORTFOLIO || path === ROUTES.ANALYTIC) {
+      setSelChain([CHAINS_ID.ETH_MAINNET, CHAINS_ID.MATIC_MAINNET, CHAINS_ID.ARBITRUM_ONE])
+    }
+    push(path)
+  }
 
   return (
     <Container
@@ -347,7 +354,7 @@ const Sidebar = ({ width }) => {
                     if (item.newTab) {
                       window.open(item.path, '_blank')
                     } else {
-                      push(item.path)
+                      directAction(item.path)
                     }
                   }}
                 >
@@ -378,7 +385,7 @@ const Sidebar = ({ width }) => {
                   if (item.newTab) {
                     window.open(item.path, '_blank')
                   } else {
-                    push(item.path)
+                    directAction(item.path)
                   }
                 }}
               >
@@ -541,7 +548,7 @@ const Sidebar = ({ width }) => {
                         if (item.newTab) {
                           window.open(item.path, '_blank')
                         } else {
-                          push(item.path)
+                          directAction(item.path)
                         }
                         handleMobileClose()
                       }}
@@ -569,7 +576,7 @@ const Sidebar = ({ width }) => {
                       if (item.newTab) {
                         window.open(item.path, '_blank')
                       } else {
-                        push(item.path)
+                        directAction(item.path)
                       }
                       handleMobileClose()
                     }}
