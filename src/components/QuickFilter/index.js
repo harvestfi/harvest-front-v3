@@ -87,6 +87,12 @@ const RiskList = [
   { id: 2, name: 'Advanced', img: Degen, filter: 'advanced' },
 ]
 
+const MobileRiskList = [
+  { id: 1, name: 'Beginners', img: Beginner, filter: 'beginners' },
+  { id: 2, name: 'Advanced', img: Degen, filter: 'advanced' },
+  { id: 3, name: 'Camelot', img: Camelot },
+]
+
 const AssetsList = [
   { id: 1, name: 'LP Tokens', img: LPTokens, filter: 'lptokens' },
   { id: 2, name: 'Single Stakes', img: SingleStakes, filter: 'singlestakes' },
@@ -652,15 +658,19 @@ const QuickFilter = ({
                   </Dropdown.Toggle>
 
                   <Dropdown.Menu className="menu">
-                    {RiskList.map((item, i) => (
+                    {MobileRiskList.map((item, i) => (
                       <Dropdown.Item
                         className="item"
                         key={i}
                         disabled={item.name === 'Labs'}
                         onClick={() => {
-                          setRiskId(i)
-                          setRiskImg(item.img)
-                          printRisk(i)
+                          if (item.name === 'Camelot') {
+                            push('/camelot')
+                          } else {
+                            setRiskId(i)
+                            setRiskImg(item.img)
+                            printRisk(i)
+                          }
                         }}
                       >
                         <div>
