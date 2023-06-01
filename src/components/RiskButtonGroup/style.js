@@ -1,13 +1,15 @@
 import styled from 'styled-components'
+import HoverBack from '../../assets/images/logos/camelot/hover_filter.svg'
 
 const ButtonsGroup = styled.div`
   display: flex;
   width: fit-content;
-  border-radius: 10px;
+  border-radius: 10px 0 0 10px;
   border: 1px solid ${props => props.borderColor};
   background: ${props => props.backColor};
-  padding: 15px 21px 14px 21px;
   transition: 0.25s;
+  align-items: center;
+  padding: 11px 20px;
 
   @media screen and (max-width: 1480px) {
     padding: 10px 15px;
@@ -15,10 +17,6 @@ const ButtonsGroup = styled.div`
 
   @media screen and (max-width: 1280px) {
     padding: 5px 10px;
-  }
-
-  @media screen and (max-width: 992px) {
-    padding: 10px 20px;
   }
 `
 
@@ -31,30 +29,27 @@ const ButtonStyle = styled.button`
   font-weight: 500;
   border: none;
   cursor: pointer;
-  margin-right: 30px;
+  // margin-right: 30px;
   opacity: 1;
   position: relative;
   transition: 0.25s;
-  ${props =>
-    props.name === 'Labs'
-      ? `
-      opacity: 0.5 !important;
-      cursor: unset !important;
-      color: ${props.mode} !important;
-      margin-right: 20px !important;
-    `
-      : ``}
+
+  &:first-child {
+    border-radius: 7px 0 0 7px;
+    margin-right: 20px;
+  }
 
   &:last-child {
+    border-radius: 0 7px 7px 0;
     margin-right: 0px;
   }
-  padding: 0px;
+  padding: 0;
 
   &.active {
-    background: none;
-    color: #ff9400;
+    background: transparent;
+    color: #ffab37;
+
     border: none;
-    border-radius: 7px;
     opacity: 1;
 
     img {
@@ -65,7 +60,16 @@ const ButtonStyle = styled.button`
   }
   transition: 0.25s;
   &:hover {
-    background: none;
+    ${props =>
+      props.name === 'Camelot'
+        ? `
+      background:  url(${HoverBack});
+      background-repeat: no-repeat;
+      background-size: unset;
+      color: #ffab37;
+    `
+        : `background: transparent;
+        color: #ffab37;`}
   }
 
   img {
@@ -79,16 +83,6 @@ const ButtonStyle = styled.button`
     width: max-content;
   }
 
-  @media screen and (max-width: 992px) {
-    font-size: 14px;
-    line-height: 18px;
-
-    img {
-      width: 13px;
-      height: 13px;
-    }
-  }
-
   @media screen and (max-width: 1480px) {
     font-size: 12px;
     line-height: 16px;
@@ -100,13 +94,16 @@ const ButtonStyle = styled.button`
     line-height: 14px;
     align-items: center;
   }
+
+  @media screen and (max-width: 992px) {
+    font-size: 14px;
+    line-height: 18px;
+
+    img {
+      width: 13px;
+      height: 13px;
+    }
+  }
 `
 
-const Soon = styled.div`
-  font-size: 8px;
-  position: absolute;
-  top: -10px;
-  right: -24px;
-`
-
-export { ButtonsGroup, ButtonStyle, Soon }
+export { ButtonsGroup, ButtonStyle }

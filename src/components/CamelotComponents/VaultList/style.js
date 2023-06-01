@@ -57,7 +57,7 @@ const HeaderCol = styled.div`
   margin: ${props => props.margin || 'unset'};
   font-weight: 700;
   font-size: 16px;
-  line-height: 24px;
+  line-height: 14px;
 
   img.sort-icon {
     margin-left: 10px;
@@ -292,6 +292,12 @@ const ThemeMode = styled.div`
     `}
 `
 
+const NotifyContent = styled.div`
+  @media screen and (max-width: 992px) {
+    display: none;
+  }
+`
+
 export {
   Container,
   Header,
@@ -304,4 +310,5 @@ export {
   MobileListFilter,
   Filtersinput,
   ThemeMode,
+  NotifyContent,
 }

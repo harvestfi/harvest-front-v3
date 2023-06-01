@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import Portfolio from './pages/Portfolio'
 import Farm from './pages/Farm'
+import Camelot from './pages/Camelot'
 import Analytic from './pages/Analytic'
 import FAQ from './pages/FAQ'
 import Sidebar from './components/Sidebar'
@@ -59,13 +60,14 @@ const App = () => (
     <NewLoginModal />
     <Providers>
       <Body id="page-content">
-        <Sidebar width="320px" />
+        <Sidebar width="280px" />
         <Switch>
           <Route exact path={ROUTES.HOME} component={Farm} />
           <Route exact path={ROUTES.PORTFOLIO} component={Portfolio} />
           <Route exact path={ROUTES.ANALYTIC} component={Analytic} />
           <Route path={ROUTES.WIDODETAIL} component={WidoDetail} />
           <Route path={ROUTES.FAQ} component={FAQ} />
+          <Route exact path={ROUTES.CAMELOT} component={Camelot} />
         </Switch>
       </Body>
     </Providers>

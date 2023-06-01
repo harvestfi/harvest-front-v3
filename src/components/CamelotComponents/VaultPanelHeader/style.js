@@ -50,7 +50,7 @@ const TokenDescriptionContainer = styled.div`
     font-size: 10px;
   }
 
-  @media screen and (max-width: 1480px) {
+  @media screen and (max-width: 992px) {
     font-weight: 400;
     font-size: 10px;
     line-height: 13px;
@@ -109,7 +109,6 @@ const LogoImg = styled.img`
     `
         : ``};
   }
-
   @media screen and (max-width: 1480px) {
     width: 25px;
     height: 25px;

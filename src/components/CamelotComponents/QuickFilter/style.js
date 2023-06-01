@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
-import HoverBack from '../../assets/images/logos/camelot/hover_filter.svg'
+import HoverBack from '../../../assets/images/logos/camelot/hover_filter.svg'
 
 const QuickFilterContainer = styled.div`
   display: flex;
@@ -33,6 +33,10 @@ const QuickFilterContainer = styled.div`
     width: ${props.width};
   `
       : ''}
+
+  @media screen and (max-width: 1479px) {
+    // display: block;
+  }
 
   @media screen and (max-width: 950px) {
     background: white;
@@ -201,13 +205,11 @@ const DivWidth = styled.div`
   `
       : ''}
 
-  background: ${props => props.backColor};
-
   &.searchbar {
     width: 23%;
     position: absolute;
     border: none;
-    top: 100px;
+    top: ${props => (props.status === '1' ? `185px` : `100px`)};
     left: 20px;
   }
 
@@ -215,9 +217,11 @@ const DivWidth = styled.div`
     background: none;
   }
   transition: 0.25s;
+
   @media screen and (max-width: 1480px) {
     &.searchbar {
-      top: 83px;
+      position: absolute;
+      top: ${props => (props.status === '1' ? `173px` : `83px`)};
     }
 
     position: unset;
@@ -225,7 +229,7 @@ const DivWidth = styled.div`
 
   @media screen and (max-width: 1280px) {
     &.searchbar {
-      top: 68px;
+      top: ${props => (props.status === '1' ? `158px` : `68px`)};
     }
 
     position: unset;
