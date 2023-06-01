@@ -415,6 +415,7 @@ const VaultList = () => {
       balances,
       farmingBalances,
       selChain,
+      chainId,
       searchQuery,
       sortParam,
       sortOrder,

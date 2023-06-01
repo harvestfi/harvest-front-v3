@@ -56,13 +56,14 @@ const ActionsProvider = ({ children }) => {
             poolData.autoStakePoolAddress || poolData.contractAddress,
             account,
             maxUint256(),
-            poolData.lpTokenData.instance,
+            poolData.lpTokenData.localInstance,
           )
         } else {
-          const { methods, instance } = contracts[
-            tokenSymbol === IFARM_TOKEN_SYMBOL ? FARM_TOKEN_SYMBOL : tokenSymbol
-          ]
-          await methods.approve(address, account, maxUint256(), instance)
+          const contract =
+            contracts[tokenSymbol === IFARM_TOKEN_SYMBOL ? FARM_TOKEN_SYMBOL : tokenSymbol]
+          const web3Instance = await getWeb3(false, account, web3)
+          contract.instance.setProvider(web3Instance)
+          await contract.methods.approve(address, account, maxUint256(), contract.instance)
         }
 
         await onSuccessApproval()
@@ -82,7 +83,7 @@ const ActionsProvider = ({ children }) => {
         return true
       }
     },
-    [],
+    [web3],
   )
 
   const handleMigrate = useCallback(
