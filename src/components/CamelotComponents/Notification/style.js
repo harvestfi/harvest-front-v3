@@ -43,7 +43,7 @@ const NotificationMain = styled.div`
       border-radius: 8px;
 
       &:hover {
-        color: black;
+        color: #ff9400a0;
       }
     }
 
