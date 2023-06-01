@@ -12,7 +12,11 @@ const Container = styled.div`
 
   position: relative;
 
-  @media screen and (max-width: 1510px) {
+  @media screen and (max-width: 1480px) {
+    padding: 70px 30px 40px;
+  }
+
+  @media screen and (max-width: 992px) {
     padding: 20px 0px;
     width: 93%;
   }
@@ -30,7 +34,16 @@ const Header = styled.div`
   }
 
   transition: 0.25s;
-  @media screen and (max-width: 1510px) {
+
+  @media screen and (max-width: 1480px) {
+    padding: 17px 30px 17px 10px;
+  }
+
+  @media screen and (max-width: 1280px) {
+    padding: 12px 25px 12px 5px;
+  }
+
+  @media screen and (max-width: 992px) {
     display: none;
   }
 `
@@ -56,6 +69,16 @@ const HeaderCol = styled.div`
       color: #ff9400;
     }
   }
+
+  @media screen and (max-width: 1480px) {
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  @media screen and (max-width: 1280px) {
+    font-size: 8px;
+    line-height: 12px;
+  }
 `
 
 const FlexDiv = styled.div`
@@ -66,7 +89,7 @@ const EmptyPanel = styled.div`
   color: ${props => props.fontColor};
   padding-top: 10%;
   padding-bottom: 30%;
-  @media screen and (max-width: 1510px) {
+  @media screen and (max-width: 992px) {
     padding-top: 70px;
   }
 `
@@ -117,7 +140,7 @@ const MobileListFilter = styled.div`
     display: none;
   }
 
-  @media screen and (max-width: 1510px) {
+  @media screen and (max-width: 992px) {
     width: 100%;
     height: 7.8rem;
     display: flex;
@@ -270,7 +293,7 @@ const ThemeMode = styled.div`
 `
 
 const NotifyContent = styled.div`
-  @media screen and (max-width: 1510px) {
+  @media screen and (max-width: 992px) {
     display: none;
   }
 `

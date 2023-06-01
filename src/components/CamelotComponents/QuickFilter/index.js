@@ -23,8 +23,8 @@ import Camelot from '../../../assets/images/logos/camelot/camelot_black.svg'
 import { CHAINS_ID } from '../../../data/constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
-import ButtonGroup from '../ButtonGroup'
-import RiskButtonGroup from '../RiskButtonGroup'
+import ButtonGroup from '../../ButtonGroup'
+import RiskButtonGroup from '../../RiskButtonGroup'
 import MobileButtonGroup from '../../MobileButtonGroup'
 import SearchBar from '../SearchBar'
 import {
@@ -391,7 +391,7 @@ const QuickFilter = ({
 
   useEffect(() => {
     // pc - true, mobile - false
-    if (onlyWidth >= 1510) {
+    if (onlyWidth >= 992) {
       setWindowMode(true)
     } else {
       setWindowMode(false)
@@ -480,7 +480,7 @@ const QuickFilter = ({
                         }
                       }}
                     >
-                      <img src={item.img} width={25} height={25} alt="" />
+                      <img src={item.img} alt="" />
                     </ChainButton>
                   ))}
                 </>
@@ -539,7 +539,7 @@ const QuickFilter = ({
                   }}
                 >
                   <Counter count={filterCount}>{filterCount > 0 ? filterCount : ''}</Counter>&nbsp;
-                  {onlyWidth > 1570 ? 'Clear Filters' : 'Clear'}
+                  {onlyWidth > 1280 ? 'Clear Filters' : 'Clear'}
                 </ClearFilter>
               </DivWidth>
             </QuickFilterContainer>

@@ -24,7 +24,7 @@ import { CHAINS_ID } from '../../data/constants'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import ButtonGroup from '../ButtonGroup'
-import RiskButtonGroup from '../CamelotComponents/RiskButtonGroup'
+import RiskButtonGroup from '../RiskButtonGroup'
 import MobileButtonGroup from '../MobileButtonGroup'
 import SearchBar from '../SearchBar'
 import {
