@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 const DetailView = styled.div`
   width: 100%;
-  margin-left: 320px;
+  margin-left: 280px;
   background: ${props => props.pageBackColor};
   color: ${props => props.fontColor};
   transition: 0.25s;
@@ -21,6 +21,10 @@ const Inner = styled.div`
 
   @media screen and (min-width: 1920px) {
     width: 1450px;
+  }
+
+  @media screen and (max-width: 1480px) {
+    padding: 70px 30px 40px;
   }
 
   @media screen and (max-width: 992px) {

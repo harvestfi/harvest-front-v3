@@ -9,9 +9,14 @@ const ButtonsGroup = styled.div`
   background: ${props => props.backColor};
   transition: 0.25s;
   align-items: center;
+  padding: 11px 20px;
 
-  @media screen and (max-width: 1510px) {
-    padding: 10px 20px;
+  @media screen and (max-width: 1480px) {
+    padding: 10px 15px;
+  }
+
+  @media screen and (max-width: 1280px) {
+    padding: 5px 10px;
   }
 `
 
@@ -31,13 +36,14 @@ const ButtonStyle = styled.button`
 
   &:first-child {
     border-radius: 7px 0 0 7px;
+    margin-right: 20px;
   }
 
   &:last-child {
     border-radius: 0 7px 7px 0;
     margin-right: 0px;
   }
-  padding: 11px 20px;
+  padding: 0;
 
   &.active {
     background: transparent;
@@ -77,7 +83,19 @@ const ButtonStyle = styled.button`
     width: max-content;
   }
 
-  @media screen and (max-width: 1510px) {
+  @media screen and (max-width: 1480px) {
+    font-size: 12px;
+    line-height: 16px;
+    align-items: center;
+  }
+
+  @media screen and (max-width: 1280px) {
+    font-size: 8px;
+    line-height: 14px;
+    align-items: center;
+  }
+
+  @media screen and (max-width: 992px) {
     font-size: 14px;
     line-height: 18px;
 

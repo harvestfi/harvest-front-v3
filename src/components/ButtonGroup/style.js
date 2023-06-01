@@ -9,6 +9,14 @@ const ButtonsGroup = styled.div`
   padding: 15px 21px 14px 21px;
   transition: 0.25s;
 
+  @media screen and (max-width: 1480px) {
+    padding: 10px 15px;
+  }
+
+  @media screen and (max-width: 1280px) {
+    padding: 5px 10px;
+  }
+
   @media screen and (max-width: 992px) {
     padding: 10px 20px;
   }
@@ -79,6 +87,18 @@ const ButtonStyle = styled.button`
       width: 13px;
       height: 13px;
     }
+  }
+
+  @media screen and (max-width: 1480px) {
+    font-size: 12px;
+    line-height: 16px;
+    align-items: center;
+  }
+
+  @media screen and (max-width: 1280px) {
+    font-size: 8px;
+    line-height: 14px;
+    align-items: center;
   }
 `
 

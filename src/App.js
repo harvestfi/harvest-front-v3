@@ -60,7 +60,7 @@ const App = () => (
     <NewLoginModal />
     <Providers>
       <Body id="page-content">
-        <Sidebar width="320px" />
+        <Sidebar width="280px" />
         <Switch>
           <Route exact path={ROUTES.HOME} component={Farm} />
           <Route exact path={ROUTES.PORTFOLIO} component={Portfolio} />

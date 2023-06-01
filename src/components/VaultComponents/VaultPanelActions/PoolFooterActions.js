@@ -68,7 +68,7 @@ const PoolFooterActions = ({
   const farmWethPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_WETH_POOL_ID)
   const farmGrainPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_GRAIN_POOL_ID)
 
-  const isMobile = useMediaQuery({ query: '(max-width: 1510px)' })
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const [
     {

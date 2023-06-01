@@ -740,7 +740,7 @@ const ChartDiv = styled.div`
 const BottomPart = styled.div`
   position: absolute;
   bottom: 20px;
-  width: 270px;
+  width: 240px;
 `
 
 const MobileProfitSharing = styled.div`
