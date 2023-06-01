@@ -38,6 +38,11 @@ const Container = styled.div`
       color: #a9aeb3;
     }
 
+    @media screen and (max-width: 1480px) {
+      font-size: 10px;
+      line-height: 14px;
+    }
+
     @media screen and (max-width: 992px) {
       font-weight: 400;
       font-size: 12px;

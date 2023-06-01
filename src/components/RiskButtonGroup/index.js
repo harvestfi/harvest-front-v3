@@ -1,5 +1,5 @@
 import React from 'react'
-import { useThemeContext } from '../../../providers/useThemeContext'
+import { useThemeContext } from '../../providers/useThemeContext'
 import { ButtonsGroup, ButtonStyle } from './style'
 
 const ButtonGroup = ({ buttons, doSomethingAfterClick, clickedId, setClickedId }) => {

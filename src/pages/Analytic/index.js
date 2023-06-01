@@ -3,6 +3,7 @@ import Countdown from 'react-countdown'
 import CountUp from 'react-countup'
 import { useMediaQuery } from 'react-responsive'
 import ReactTooltip from 'react-tooltip'
+import { useWindowWidth } from '@react-hook/window-size'
 import ExchangeBancor from '../../assets/images/logos/analytics/exchange_bancor.svg'
 import ExchangeBinance from '../../assets/images/logos/analytics/exchange_binance.svg'
 import ExchangeCoinbase from '../../assets/images/logos/analytics/exchange_coinbase.svg'
@@ -109,6 +110,7 @@ const Analytic = () => {
     analyticTitleColor,
   } = useThemeContext()
   const MINUTE_MS = 60000
+  const onlyWidth = useWindowWidth()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const [loadComplete, setLoadComplete] = useState(false)
@@ -123,12 +125,12 @@ const Analytic = () => {
   return (
     <Container pageBackColor={pageBackColor}>
       <Content>
-        <FarmStatsContainer>
+        <FarmStatsContainer firstLine>
           <ValueComponent
             borderColor={borderColor}
             backColor={backColor}
             fontColor={fontColor}
-            width={isMobile ? '100%' : '25%'}
+            width={onlyWidth < 1310 ? '48%' : '25%'}
           >
             <CompHeader fontColor={analyticTitleColor}>
               <img src={TotalDeposit} alt="total deposit" />
@@ -158,7 +160,7 @@ const Analytic = () => {
             borderColor={borderColor}
             backColor={backColor}
             fontColor={fontColor}
-            width={isMobile ? '100%' : '25%'}
+            width={onlyWidth < 1310 ? '48%' : '25%'}
           >
             <CompHeader fontColor={analyticTitleColor}>
               <img src={MonthlyProfit} alt="monthly profit" />
@@ -197,7 +199,7 @@ const Analytic = () => {
             borderColor={borderColor}
             backColor={backColor}
             fontColor={fontColor}
-            width={isMobile ? '100%' : '25%'}
+            width={onlyWidth < 1310 ? '48%' : '25%'}
           >
             <CompHeader fontColor={analyticTitleColor}>
               <img src={Farm} width="32px" height="32px" alt="" />
@@ -211,7 +213,7 @@ const Analytic = () => {
             fontColor={fontColor}
             borderColor={borderColor}
             backColor={backColor}
-            width={isMobile ? '100%' : '25%'}
+            width={onlyWidth < 1310 ? '48%' : '25%'}
           >
             <CompHeader fontColor={analyticTitleColor}>
               <img src={Farm} width="32px" height="32px" alt="" />

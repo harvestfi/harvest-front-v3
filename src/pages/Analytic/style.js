@@ -2,16 +2,12 @@ import styled from 'styled-components'
 import Pattern from '../../assets/images/logos/pattern.png'
 
 const Container = styled.div`
-  margin-left: 320px;
+  margin-left: 280px;
   width: 100%;
   min-height: 100vh;
 
   background: ${props => props.pageBackColor};
   transition: 0.25s;
-  // @media screen and (min-width: 1921px) {
-  //   display: flex;
-  //   justify-content: center;
-  // }
 
   @media screen and (max-width: 992px) {
     margin: 0;
@@ -20,6 +16,10 @@ const Container = styled.div`
 
 const Content = styled.div`
   padding: 70px 76px 50px 76px;
+
+  @media screen and (max-width: 1480px) {
+    padding: 70px 30px 40px;
+  }
 
   @media screen and (max-width: 992px) {
     padding: 16px 10px;
@@ -31,8 +31,17 @@ const FarmStatsContainer = styled.div`
   justify-content: space-between;
   gap: 20px;
 
+  @media screen and (max-width: 1310px) {
+    ${props =>
+      props.firstLine
+        ? `
+      display: inline-flex;
+      flex-wrap: wrap;
+      `
+        : ``}
+  }
+
   @media screen and (max-width: 992px) {
-    flex-direction: column;
     margin: 0;
   }
 `
@@ -292,6 +301,10 @@ const ValueComponent = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
+  @media screen and (max-width: 992px) {
+    width: 100%;
+  }
 `
 
 const CompHeader = styled.div`

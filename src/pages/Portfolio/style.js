@@ -10,7 +10,7 @@ const Container = styled.div`
   background: ${props => props.pageBackColor};
   transition: 0.25s;
   position: relative;
-  margin-left: 320px;
+  margin-left: 280px;
 
   @media screen and (min-width: 1920px) {
     display: flex;
@@ -32,9 +32,9 @@ const Inner = styled.div`
     width: 1450px;
   }
 
-  @media screen and (max-width: 1280px) {
+  @media screen and (max-width: 1480px) {
     width: 100%;
-    padding: 19px 12px;
+    padding: 70px 30px 40px;
   }
 `
 

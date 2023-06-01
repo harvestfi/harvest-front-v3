@@ -64,7 +64,7 @@ const VaultFooterActions = ({
   const { profitShareAPY } = useStats()
   const { handleClaim } = useActions()
   const { fontColor, borderColor, filterColor } = useThemeContext()
-  const isMobile = useMediaQuery({ query: '(max-width: 1510px)' })
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )

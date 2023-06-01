@@ -22,12 +22,21 @@ const Notification = () => {
       <div className="left-part">
         <img className="main-img" src={AnnounceImg} alt="" />
         <div className="main-desc">
-          Harvest partnered with Camelot to offer tailored farms for its LPs. Maximize APY today
-          with farms in this section.
+          Read about our collaboration with Camelot to bring DeFi&apos;s first farms on top of their
+          liquidity pools.
         </div>
       </div>
       <div className="right-part">
-        <button className="announcement" type="button">
+        <button
+          className="announcement"
+          type="button"
+          onClick={() => {
+            window.open(
+              'https://medium.com/harvest-finance/harvest-launches-dedicated-farming-section-for-camelot-11895f3f8ca0',
+              '_blank',
+            )
+          }}
+        >
           Announcement
         </button>
         <div className="close">

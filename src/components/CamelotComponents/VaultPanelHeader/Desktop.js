@@ -71,14 +71,7 @@ const DesktopPanelHeader = ({
         <ValueContainer width="5%" />
         <ValueContainer width="20%" textAlign="left">
           {logoUrl.map((el, i) => (
-            <LogoImg
-              key={i}
-              className="logo-img"
-              zIndex={10 - i}
-              src={el}
-              width={37}
-              alt={tokenSymbol}
-            />
+            <LogoImg key={i} className="logo-img" zIndex={10 - i} src={el} alt={tokenSymbol} />
           ))}
           <BadgeIcon badgeBack={badgeIconBackColor}>
             {BadgeAry[badgeId] ? (

@@ -25,7 +25,7 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { isLedgerLive, isSpecialApp } from '../../utils'
 import ButtonGroup from '../ButtonGroup'
-import RiskButtonGroup from '../CamelotComponents/RiskButtonGroup'
+import RiskButtonGroup from '../RiskButtonGroup'
 import MobileButtonGroup from '../MobileButtonGroup'
 import SearchBar from '../SearchBar'
 import {
@@ -372,7 +372,7 @@ const QuickFilter = ({
 
   useEffect(() => {
     // pc - true, mobile - false
-    if (onlyWidth >= 1510) {
+    if (onlyWidth >= 992) {
       setWindowMode(true)
     } else {
       setWindowMode(false)
@@ -432,30 +432,29 @@ const QuickFilter = ({
                             }
                           }
 
-                          if (tempIds.length === 0 || tempIds.length === ChainsList.length) {
-                            tempIds = isLedgerLive() ? [0, 1] : [0, 1, 2]
-                            setSelectedClass(tempIds)
-                          } else {
-                            setSelectedClass(tempIds)
-                          }
-                          tempIds.map(tempId => {
-                            return selectedClasses.push(ChainsList[tempId].name)
-                          })
-                          const tempChains = []
-                          for (let j = 0; j < tempIds.length; j += 1) {
-                            tempChains.push(ChainsList[tempIds[j]].chainId)
-                          }
-                          setSelChain(tempChains)
-                          if (farmId !== -1) {
-                            printFarm(farmId)
-                          }
-                        }}
-                      >
-                        <img src={item.img} width={25} height={25} alt="" />
-                      </ChainButton>
-                    ))}
-                  </>
-                )}
+                        if (tempIds.length === 0 || tempIds.length === ChainsList.length) {
+                          tempIds = isLedgerLive() ? [0, 1] : [0, 1, 2]
+                          setSelectedClass(tempIds)
+                        } else {
+                          setSelectedClass(tempIds)
+                        }
+                        tempIds.map(tempId => {
+                          return selectedClasses.push(ChainsList[tempId].name)
+                        })
+                        const tempChains = []
+                        for (let j = 0; j < tempIds.length; j += 1) {
+                          tempChains.push(ChainsList[tempIds[j]].chainId)
+                        }
+                        setSelChain(tempChains)
+                        if (farmId !== -1) {
+                          printFarm(farmId)
+                        }
+                      }}
+                    >
+                      <img src={item.img} alt="" />
+                    </ChainButton>
+                  ))}
+                </>
               </DivWidth>
             </DivWidth>
             <DivWidth borderRadius="10" backColor={backColor}>
@@ -527,7 +526,7 @@ const QuickFilter = ({
                   }}
                 >
                   <Counter count={filterCount}>{filterCount > 0 ? filterCount : ''}</Counter>&nbsp;
-                  {onlyWidth > 1570 ? 'Clear Filters' : 'Clear'}
+                  {onlyWidth > 1280 ? 'Clear Filters' : 'Clear'}
                 </ClearFilter>
               </DivWidth>
             </QuickFilterContainer>
