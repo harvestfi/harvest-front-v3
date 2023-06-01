@@ -432,29 +432,30 @@ const QuickFilter = ({
                             }
                           }
 
-                        if (tempIds.length === 0 || tempIds.length === ChainsList.length) {
-                          tempIds = isLedgerLive() ? [0, 1] : [0, 1, 2]
-                          setSelectedClass(tempIds)
-                        } else {
-                          setSelectedClass(tempIds)
-                        }
-                        tempIds.map(tempId => {
-                          return selectedClasses.push(ChainsList[tempId].name)
-                        })
-                        const tempChains = []
-                        for (let j = 0; j < tempIds.length; j += 1) {
-                          tempChains.push(ChainsList[tempIds[j]].chainId)
-                        }
-                        setSelChain(tempChains)
-                        if (farmId !== -1) {
-                          printFarm(farmId)
-                        }
-                      }}
-                    >
-                      <img src={item.img} alt="" />
-                    </ChainButton>
-                  ))}
-                </>
+                          if (tempIds.length === 0 || tempIds.length === ChainsList.length) {
+                            tempIds = isLedgerLive() ? [0, 1] : [0, 1, 2]
+                            setSelectedClass(tempIds)
+                          } else {
+                            setSelectedClass(tempIds)
+                          }
+                          tempIds.map(tempId => {
+                            return selectedClasses.push(ChainsList[tempId].name)
+                          })
+                          const tempChains = []
+                          for (let j = 0; j < tempIds.length; j += 1) {
+                            tempChains.push(ChainsList[tempIds[j]].chainId)
+                          }
+                          setSelChain(tempChains)
+                          if (farmId !== -1) {
+                            printFarm(farmId)
+                          }
+                        }}
+                      >
+                        <img src={item.img} alt="" />
+                      </ChainButton>
+                    ))}
+                  </>
+                )}
               </DivWidth>
             </DivWidth>
             <DivWidth borderRadius="10" backColor={backColor}>
