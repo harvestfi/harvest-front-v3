@@ -131,6 +131,8 @@ const ConnectButton = styled.button`
   line-height: 24px;
   font-weight: 600;
   width: 30%;
+  min-width: 170px;
+  text-align: center;
   background: white;
   border-radius: 8px;
   border: 0;
