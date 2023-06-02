@@ -32,13 +32,13 @@ const WidoSoonToSupportTokenList = ({ list, filterWord }) => {
                 {data.symbol}
               </Text>
               <Text size="12px" height="16px" weight={400}>
-                {data.balance ? fromWei(data.balance, data.decimals, 4, true) : '0.0000'}
+                {data.balance ? `${1 * fromWei(data.balance, data.decimals)}` : '0.00'}
               </Text>
             </Vault>
           </Container>
         ))
       ) : (
-        <EmptyContainer fontColor={fontColor}>Nothing to Support</EmptyContainer>
+        <EmptyContainer fontColor={fontColor} />
       )}
     </Content>
   )
