@@ -40,16 +40,15 @@ import {
   FarmSubTitle,
   ImgList,
   StatsBox,
-  StatsChart,
   StatsContainer,
   StatsContainerRow,
   StatsExchange,
-  StatsExternal,
   StatsTooltip,
   StatsValue,
   ValueComponent,
   CompHeader,
   FlexDiv,
+  FarmStatsLastContainer,
 } from './style'
 
 const MemoizedCounter = React.memo(CountUp)
@@ -130,7 +129,7 @@ const Analytic = () => {
             borderColor={borderColor}
             backColor={backColor}
             fontColor={fontColor}
-            width={onlyWidth < 1310 ? '48%' : '25%'}
+            width={onlyWidth <= 1310 ? '48%' : '25%'}
           >
             <CompHeader fontColor={analyticTitleColor}>
               <img src={TotalDeposit} alt="total deposit" />
@@ -160,7 +159,7 @@ const Analytic = () => {
             borderColor={borderColor}
             backColor={backColor}
             fontColor={fontColor}
-            width={onlyWidth < 1310 ? '48%' : '25%'}
+            width={onlyWidth <= 1310 ? '48%' : '25%'}
           >
             <CompHeader fontColor={analyticTitleColor}>
               <img src={MonthlyProfit} alt="monthly profit" />
@@ -199,7 +198,7 @@ const Analytic = () => {
             borderColor={borderColor}
             backColor={backColor}
             fontColor={fontColor}
-            width={onlyWidth < 1310 ? '48%' : '25%'}
+            width={onlyWidth <= 1310 ? '48%' : '25%'}
           >
             <CompHeader fontColor={analyticTitleColor}>
               <img src={Farm} width="32px" height="32px" alt="" />
@@ -213,7 +212,7 @@ const Analytic = () => {
             fontColor={fontColor}
             borderColor={borderColor}
             backColor={backColor}
-            width={onlyWidth < 1310 ? '48%' : '25%'}
+            width={onlyWidth <= 1310 ? '48%' : '25%'}
           >
             <CompHeader fontColor={analyticTitleColor}>
               <img src={Farm} width="32px" height="32px" alt="" />
@@ -253,7 +252,7 @@ const Analytic = () => {
         </FarmStatsContainer>
         <Divider height="20px" />
         <FarmStatsContainer>
-          <StatsChart
+          <StatsBox
             width={isMobile ? '100%' : '50%'}
             align="flex-start"
             direction="row"
@@ -263,7 +262,7 @@ const Analytic = () => {
             borderColor={borderColor}
           >
             {loadComplete && <AnalyticChart />}
-          </StatsChart>
+          </StatsBox>
           <StatsBox
             width={isMobile ? '100%' : '50%'}
             align="flex-start"
@@ -310,14 +309,14 @@ const Analytic = () => {
           </StatsBox>
         </FarmStatsContainer>
         <Divider height="30px" />
-        <FarmStatsContainer>
+        <FarmStatsLastContainer>
           <StatsValue width={isMobile ? '100%' : '50%'}>
             <StatsValue width="100%" direction="row" fontColor={fontColor}>
               <ValueComponent
                 borderColor={borderColor}
                 fontColor={fontColor}
                 backColor={backColor}
-                width="48%"
+                width="49%"
                 className="child first-comp"
               >
                 <CompHeader fontColor={analyticTitleColor}>
@@ -354,7 +353,7 @@ const Analytic = () => {
                 borderColor={borderColor}
                 backColor={backColor}
                 fontColor={fontColor}
-                width="48%"
+                width="49%"
                 className="child"
               >
                 <CompHeader fontColor={analyticTitleColor}>
@@ -390,7 +389,7 @@ const Analytic = () => {
               </ValueComponent>
             </StatsValue>
             <Divider height="20px" />
-            <StatsExternal
+            <StatsBox
               width="100%"
               align="flex-start"
               direction="column"
@@ -424,7 +423,7 @@ const Analytic = () => {
                   </FlexDiv>
                 </DataSourceInner>
               </StatsContainerRow>
-            </StatsExternal>
+            </StatsBox>
           </StatsValue>
           <StatsExchange
             width={isMobile ? '100%' : '50%'}
@@ -457,7 +456,7 @@ const Analytic = () => {
               </ImgList>
             </StatsContainer>
           </StatsExchange>
-        </FarmStatsContainer>
+        </FarmStatsLastContainer>
       </Content>
     </Container>
   )
