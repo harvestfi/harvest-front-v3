@@ -184,6 +184,8 @@ const EmptyInfo = styled.div`
   `
       : ''}
 
+  display: flex;
+  justify-content: center;
   text-align: center;
 `
 
@@ -196,6 +198,8 @@ const ExploreFarm = styled.button`
   font-weight: 500;
   font-size: 16px;
   line-height: 21px;
+  display: flex;
+  align-self: center;
 
   &:hover {
     background: #f0f0f0;
