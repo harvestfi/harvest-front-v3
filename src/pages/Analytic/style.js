@@ -46,6 +46,12 @@ const FarmStatsContainer = styled.div`
   }
 `
 
+const FarmStatsLastContainer = styled(FarmStatsContainer)`
+  @media screen and (max-width: 992px) {
+    flex-direction: column;
+  }
+`
+
 const FarmSubTitle = styled.h2`
   position: relative;
 
@@ -266,10 +272,6 @@ const StatsExchange = styled(StatsBox)`
   justify-content: start;
 `
 
-const StatsChart = styled(StatsBox)``
-
-const StatsExternal = styled(StatsBox)``
-
 const DataSourceDirect = styled.a`
   text-decoration: none;
   margin-right: 24px;
@@ -354,11 +356,10 @@ export {
   DataSourceInner,
   StatsValue,
   StatsExchange,
-  StatsChart,
-  StatsExternal,
   DataSourceDirect,
   BigStatsExchange,
   ValueComponent,
   CompHeader,
   FlexDiv,
+  FarmStatsLastContainer,
 }

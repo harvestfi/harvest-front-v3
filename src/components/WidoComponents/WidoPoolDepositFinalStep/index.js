@@ -127,6 +127,7 @@ const WidoPoolDepositFinalStep = ({
     ],
   )
 
+  const [checkFlag, setCheckFlag] = useState(false)
   useEffect(() => {
     setAmount(toWei(inputAmount, pickedToken.decimals))
     setAmountsToExecute([inputAmount.toString()])
@@ -134,7 +135,8 @@ const WidoPoolDepositFinalStep = ({
       account &&
       pickedToken.address !== undefined &&
       !new BigNumber(amount).isEqualTo(0) &&
-      finalStep
+      finalStep &&
+      !checkFlag
     ) {
       const getQuoteResultForLegacy = async () => {
         setFromInfo('')
@@ -199,6 +201,7 @@ const WidoPoolDepositFinalStep = ({
     lpTokenApprovedBalance,
     tokenSymbol,
     approvedBalances,
+    checkFlag,
   ])
 
   useEffect(() => {
@@ -271,6 +274,7 @@ const WidoPoolDepositFinalStep = ({
         fAssetPool,
         setPendingAction,
         async () => {
+          setCheckFlag(true)
           await reloadStats()
           setApproveValue(2)
         },
@@ -375,11 +379,13 @@ const WidoPoolDepositFinalStep = ({
         setPendingAction,
         false,
         async () => {
+          setCheckFlag(true)
           await reloadStats()
           await fetchUserPoolStats([fAssetPool], account, userStats)
           setExecuteValue(2)
         },
         async () => {
+          setCheckFlag(true)
           await reloadStats()
         },
         async () => {
@@ -402,6 +408,7 @@ const WidoPoolDepositFinalStep = ({
           multipleAssets,
           zap,
           async () => {
+            setCheckFlag(true)
             await getWalletBalances(walletBalancesToCheck)
             const updatedStats = await fetchUserPoolStats([fAssetPool], account, userStats)
             await getFarmingBalances([tokenSymbol], farmingBalances, updatedStats)
@@ -410,6 +417,7 @@ const WidoPoolDepositFinalStep = ({
             setExecuteValue(2)
           },
           async () => {
+            setCheckFlag(true)
             await getWalletBalances(walletBalancesToCheck, false, true)
           },
           async () => {
@@ -461,6 +469,7 @@ const WidoPoolDepositFinalStep = ({
   }
 
   const onClickClose = () => {
+    setCheckFlag(false)
     initState()
     setBalance(0)
     setUsdValue(0)
@@ -482,6 +491,7 @@ const WidoPoolDepositFinalStep = ({
           src={BackIcon}
           alt=""
           onClick={() => {
+            setCheckFlag(false)
             initState()
             setFinalStep(false)
           }}

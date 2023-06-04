@@ -97,6 +97,8 @@ const WidoDepositFinalStep = ({
 
   const walletBalancesToCheck = multipleAssets || [tokenSymbol]
 
+  const [checkFlag, setCheckFlag] = useState(false)
+
   useEffect(() => {
     setAmount(toWei(inputAmount, pickedToken.decimals))
     setAmountsToExecute([inputAmount.toString()])
@@ -104,7 +106,8 @@ const WidoDepositFinalStep = ({
       account &&
       pickedToken.address !== undefined &&
       !new BigNumber(amount).isEqualTo(0) &&
-      finalStep
+      finalStep &&
+      !checkFlag
     ) {
       const tokenAllowance = async () => {
         let allowanceCheck
@@ -141,6 +144,7 @@ const WidoDepositFinalStep = ({
     finalStep,
     approvedBalances,
     tokenSymbol,
+    checkFlag,
   ])
 
   useEffect(() => {
@@ -218,6 +222,7 @@ const WidoDepositFinalStep = ({
         null,
         setPendingAction,
         async () => {
+          setCheckFlag(true)
           await fetchUserPoolStats([fAssetPool], account, userStats)
           await getWalletBalances([tokenSymbol], false, true)
           setApproveValue(2)
@@ -302,6 +307,7 @@ const WidoDepositFinalStep = ({
           multipleAssets,
           zap,
           async () => {
+            setCheckFlag(true)
             await getWalletBalances(walletBalancesToCheck)
             const updatedStats = await fetchUserPoolStats([fAssetPool], account, userStats)
             await getFarmingBalances([tokenSymbol], farmingBalances, updatedStats)
@@ -310,6 +316,7 @@ const WidoDepositFinalStep = ({
             setExecuteValue(2)
           },
           async () => {
+            setCheckFlag(true)
             await getWalletBalances(walletBalancesToCheck, false, true)
           },
           async () => {
@@ -362,6 +369,7 @@ const WidoDepositFinalStep = ({
   }
 
   const onClickClose = () => {
+    setCheckFlag(false)
     initState()
     setBalance(0)
     setUsdValue(0)
@@ -382,6 +390,7 @@ const WidoDepositFinalStep = ({
           src={BackIcon}
           alt=""
           onClick={() => {
+            setCheckFlag(false)
             initState()
             setFinalStep(false)
           }}

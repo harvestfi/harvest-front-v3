@@ -22,7 +22,7 @@ const Notification = () => {
       <div className="left-part">
         <img className="main-img" src={AnnounceImg} alt="" />
         <div className="main-desc">
-          Read about our collaboration with Camelot to bring DeFi&apos;s first farms on top of their
+          Read about our collaboration with Camelot to bring DeFi&apos;s first farms on top of V2
           liquidity pools.
         </div>
       </div>
