@@ -1,22 +1,22 @@
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
-import { toast } from 'react-toastify'
 import { useConnectWallet } from '@web3-onboard/react'
 import { isArray } from 'lodash'
+import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { toast } from 'react-toastify'
+import Web3 from 'web3'
 import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../constants'
 import { CHAINS_ID } from '../../data/constants'
 import {
   getChainName,
   hasValidUpdatedBalance,
+  ledgerProvider,
   mainWeb3,
   pollUpdatedBalance,
-  ledgerProvider,
-  safeWeb3Provider,
   safeProvider,
 } from '../../services/web3'
 import tokenMethods from '../../services/web3/contracts/token/methods'
+import { isLedgerLive, isSafeApp, isSpecialApp } from '../../utils'
 import { useContracts } from '../Contracts'
 import { validateChain } from './utils'
-import { isLedgerLive, isSafeApp } from '../../utils'
 
 /* eslint-disable global-require */
 const { tokens } = require('../../data')
@@ -27,10 +27,10 @@ const useWallet = () => useContext(WalletContext)
 
 const WalletProvider = _ref => {
   const { children } = _ref
-  const web3Plugin = mainWeb3
   const [account, setAccount] = useState(null)
   const [connected, setConnected] = useState(false)
   const [chainId, setChainId] = useState(CHAINS_ID.ETH_MAINNET)
+  const [web3, setWeb3] = useState(mainWeb3)
   const [selChain, setSelChain] = useState([
     CHAINS_ID.ETH_MAINNET,
     CHAINS_ID.MATIC_MAINNET,
@@ -55,8 +55,6 @@ const WalletProvider = _ref => {
       if (isSafeApp()) {
         const safeAppProvider = await safeProvider()
         const selectedChain = await safeAppProvider.getNetwork()
-        const provider = await safeWeb3Provider()
-        web3Plugin.setProvider(provider)
         setChainId(selectedChain.chainId.toString())
         const selectedAccount = await safeAppProvider.getSigner().getAddress()
         setAccount(selectedAccount && selectedAccount.toLowerCase())
@@ -64,7 +62,7 @@ const WalletProvider = _ref => {
       }
     }
     fetchData()
-  }, [web3Plugin])
+  }, [])
 
   const disconnectAction = useCallback(async () => {
     if (!isLedgerLive()) {
@@ -78,6 +76,12 @@ const WalletProvider = _ref => {
         validateChain(
           newChain,
           chainId,
+          async () => {
+            setConnected(true)
+            const chainNew = parseInt(newChain, 16).toString()
+            setChainId(chainNew)
+            setSelChain([chainNew])
+          },
           () => {
             setConnected(true)
             const chainNew = parseInt(newChain, 16).toString()
@@ -123,9 +127,40 @@ const WalletProvider = _ref => {
   )
   useEffect(() => {
     let accountEmitter, networkEmitter
-    if (!isLedgerLive()) {
-      if (web3Plugin && web3Plugin._provider.on && account) {
-        networkEmitter = web3Plugin._provider.on('chainChanged', onNetworkChange)
+    const fetchData = async () => {
+      if (isLedgerLive()) {
+        if (ledgerProvider && ledgerProvider.provider.on) {
+          networkEmitter = ledgerProvider.provider.on('chainChanged', onNetworkChange)
+          accountEmitter = ledgerProvider.provider.on('accountsChanged', accountAddress => {
+            setAccount(accountAddress[0].toLowerCase())
+            setConnected(true)
+          })
+        }
+        return () => {
+          if (accountEmitter && networkEmitter) {
+            accountEmitter.removeAllListeners('accountsChanged')
+            networkEmitter.removeListener('chainChanged', onNetworkChange)
+          }
+        }
+      }
+      if (isSafeApp()) {
+        const safeweb3Provider = await safeProvider()
+        if (safeweb3Provider && safeweb3Provider.provider.on) {
+          networkEmitter = safeweb3Provider.provider.on('chainChanged', onNetworkChange)
+          accountEmitter = safeweb3Provider.provider.on('accountsChanged', accountAddress => {
+            setAccount(accountAddress[0].toLowerCase())
+            setConnected(true)
+          })
+        }
+        return () => {
+          if (accountEmitter && networkEmitter) {
+            accountEmitter.removeAllListeners('accountsChanged')
+            networkEmitter.removeListener('chainChanged', onNetworkChange)
+          }
+        }
+      }
+      if (web3 && web3._provider.on && account) {
+        networkEmitter = web3._provider.on('chainChanged', onNetworkChange)
       }
 
       return () => {
@@ -135,33 +170,27 @@ const WalletProvider = _ref => {
         }
       }
     }
-    if (ledgerProvider && ledgerProvider.provider.on) {
-      accountEmitter = ledgerProvider.provider.on('accountsChanged', accountAddress => {
-        setAccount(accountAddress[0].toLowerCase())
-        setConnected(true)
-      })
-      networkEmitter = ledgerProvider.provider.on('chainChanged', onNetworkChange)
-    }
-    return () => {
-      if (accountEmitter && networkEmitter) {
-        accountEmitter.removeAllListeners('accountsChanged')
-        networkEmitter.removeListener('chainChanged', onNetworkChange)
-      }
-    }
-  }, [web3Plugin, chainId, account, onNetworkChange, setAccount])
+    fetchData()
+  }, [web3, chainId, account, onNetworkChange, setAccount])
 
   useEffect(() => {
-    if (wallet) {
-      const chainNum = parseInt(wallet.chains[0].id, 16).toString()
-      setAccount(wallet.accounts[0].address)
-      setConnected(true)
-      setChainId(chainNum)
-      setLogout(false)
-    } else {
-      setConnected(false)
-      setAccount(null)
-      setBalances({})
-      setLogout(true)
+    if (!isSpecialApp) {
+      if (wallet) {
+        const chainNum = parseInt(wallet.chains[0].id, 16).toString()
+        setAccount(wallet.accounts[0].address.toLowerCase())
+        setChainId(chainNum)
+        if (wallet?.provider) {
+          const newWeb3 = new Web3(wallet.provider)
+          setWeb3(newWeb3)
+        }
+        setConnected(true)
+        setLogout(false)
+      } else {
+        setConnected(false)
+        setAccount(null)
+        setBalances({})
+        setLogout(true)
+      }
     }
   }, [wallet])
 
@@ -257,6 +286,7 @@ const WalletProvider = _ref => {
         connected,
         setConnected,
         chainId,
+        web3,
         balances,
         approvedBalances,
         getWalletBalances,

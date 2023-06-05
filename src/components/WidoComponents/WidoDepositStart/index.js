@@ -12,8 +12,8 @@ import {
 } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
-import { fromWei, mainWeb3, toWei, safeWeb3 } from '../../../services/web3'
-import { formatNumberWido, isSafeApp } from '../../../utils'
+import { fromWei, toWei, getWeb3 } from '../../../services/web3'
+import { formatNumberWido } from '../../../utils'
 import AnimatedDots from '../../AnimatedDots'
 import { Divider } from '../../GlobalStyle'
 import WidoSwapToken from '../WidoSwapToken'
@@ -45,7 +45,7 @@ const WidoDepositStart = ({
   setQuoteValue,
 }) => {
   const { backColor, borderColor, filterColor } = useThemeContext()
-  const { account } = useWallet()
+  const { account, web3 } = useWallet()
   const { vaultsData } = useVaults()
 
   const chainId = token.chain || token.data.chain
@@ -103,11 +103,9 @@ const WidoDepositStart = ({
             const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
             const toChainId = chainId
             const user = account
-            let safeWeb,
-              curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol)
-            if (isSafeApp()) {
-              safeWeb = await safeWeb3()
-            }
+            const mainWeb = await getWeb3(chainId, account, web3)
+            let curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol)
+
             const quoteResult = await quote(
               {
                 fromChainId, // Chain Id of from token
@@ -118,7 +116,7 @@ const WidoDepositStart = ({
                 slippagePercentage, // Acceptable max slippage for the swap
                 user, // Address of user placing the order.
               },
-              isSafeApp() ? safeWeb.currentProvider : mainWeb3.currentProvider,
+              mainWeb.currentProvider,
             )
             setQuoteValue(quoteResult)
             curToken = curToken[0]
@@ -173,6 +171,7 @@ const WidoDepositStart = ({
     balanceList,
     setQuoteValue,
     useIFARM,
+    web3,
     inputAmount,
     pricePerFullShare,
   ])

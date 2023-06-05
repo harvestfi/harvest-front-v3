@@ -31,14 +31,7 @@ import { usePools } from '../../providers/Pools'
 import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
-import {
-  displayAPY,
-  formatAddress,
-  getDataQuery,
-  getTotalApy,
-  isLedgerLive,
-  isSafeApp,
-} from '../../utils'
+import { displayAPY, formatAddress, getDataQuery, getTotalApy, isSpecialApp } from '../../utils'
 import SmallApexChart from '../SmallApexChart'
 import Social from '../Social'
 import {
@@ -324,7 +317,7 @@ const Sidebar = ({ width }) => {
                       style={{ width: 17, height: 17 }}
                     />
                   </UserDropDown>
-                  {!isLedgerLive() && !isSafeApp() ? (
+                  {!isSpecialApp ? (
                     <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
                       <UserDropDownItem
                         onClick={() => {
@@ -401,26 +394,30 @@ const Sidebar = ({ width }) => {
             </Fragment>
           ))}
         </LinksContainer>
-        <ProfitSharing
-          onClick={() => {
-            push(`${directDetailUrl}ethereum/${addresses.FARM}`)
-          }}
-        >
-          <TopDiv>
-            <img src={ProfitSharingIcon} alt="profit-sharing" />
-            <TopTitle>
-              <img src={ConnectDisableIcon} width="7px" height="7px" alt="" />
-              Profit-Sharing
-            </TopTitle>
-          </TopDiv>
-          <BottomDiv>
-            {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
-            <div>APR</div>
-          </BottomDiv>
-          <ChartDiv>
-            <SmallApexChart data={apiData} lastAPY={Number(totalApy)} />
-          </ChartDiv>
-        </ProfitSharing>
+        {isSpecialApp && chainId !== CHAINS_ID.ETH_MAINNET ? (
+          <></>
+        ) : (
+          <ProfitSharing
+            onClick={() => {
+              push(`${directDetailUrl}ethereum/${addresses.FARM}`)
+            }}
+          >
+            <TopDiv>
+              <img src={ProfitSharingIcon} alt="profit-sharing" />
+              <TopTitle>
+                <img src={ConnectDisableIcon} width="7px" height="7px" alt="" />
+                Profit-Sharing
+              </TopTitle>
+            </TopDiv>
+            <BottomDiv>
+              {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
+              <div>APR</div>
+            </BottomDiv>
+            <ChartDiv>
+              <SmallApexChart data={apiData} lastAPY={Number(totalApy)} />
+            </ChartDiv>
+          </ProfitSharing>
+        )}
 
         <Divider height="1px" marginTop="20px" backColor="#EAECF0" />
         <Follow>
@@ -518,7 +515,7 @@ const Sidebar = ({ width }) => {
                         />
                       </UserDropDown>
 
-                      {!isLedgerLive() && !isSafeApp() ? (
+                      {!isSpecialApp ? (
                         <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
                           <UserDropDownItem
                             onClick={() => {

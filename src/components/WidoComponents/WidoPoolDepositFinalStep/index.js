@@ -4,13 +4,13 @@ import { get, isEmpty } from 'lodash'
 import BigNumber from 'bignumber.js'
 import { toast } from 'react-toastify'
 import { Spinner } from 'react-bootstrap'
-import { mainWeb3, toWei, fromWei, maxUint256, safeWeb3 } from '../../../services/web3'
+import { toWei, fromWei, maxUint256, getWeb3 } from '../../../services/web3'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { useContracts } from '../../../providers/Contracts'
 import { useActions } from '../../../providers/Actions'
 import { usePools } from '../../../providers/Pools'
-import { formatNumberWido, isSafeApp } from '../../../utils'
+import { formatNumberWido } from '../../../utils'
 import {
   WIDO_BALANCES_DECIMALS,
   FARM_TOKEN_SYMBOL,
@@ -65,7 +65,7 @@ const WidoPoolDepositFinalStep = ({
   multipleAssets,
 }) => {
   const [approveValue, setApproveValue] = useState(0)
-  const { account, getWalletBalances, approvedBalances } = useWallet()
+  const { account, getWalletBalances, approvedBalances, web3 } = useWallet()
   const { handleApproval, handleStake, handleDeposit } = useActions()
   const { contracts } = useContracts()
   const { vaultsData, farmingBalances, getFarmingBalances } = useVaults()
@@ -311,20 +311,13 @@ const WidoPoolDepositFinalStep = ({
         toToken,
         amount: amnt,
       })
-      if (isSafeApp()) {
-        const safeWeb = await safeWeb3()
-        await safeWeb.eth.sendTransaction({
-          from: account,
-          data,
-          to,
-        })
-      } else {
-        await mainWeb3.eth.sendTransaction({
-          from: account,
-          data,
-          to,
-        })
-      }
+      const mainWeb = await getWeb3(chainId, account, web3)
+
+      await mainWeb.eth.sendTransaction({
+        from: account,
+        data,
+        to,
+      })
       setApproveValue(2)
     }
   }
@@ -446,10 +439,8 @@ const WidoPoolDepositFinalStep = ({
         const fromChainId = chainId
         const fromToken = pickedToken.address
         const toChainId = chainId
-        let safeWeb
-        if (isSafeApp()) {
-          safeWeb = await safeWeb3()
-        }
+        const mainWeb = await getWeb3(chainId, account, web3)
+
         const quoteResult = await quote(
           {
             fromChainId, // Chain Id of from token
@@ -460,23 +451,14 @@ const WidoPoolDepositFinalStep = ({
             slippagePercentage, // Acceptable max slippage for the swap
             user, // Address of user placing the order.
           },
-          isSafeApp() ? safeWeb.currentProvider : mainWeb3.currentProvider,
+          mainWeb.currentProvider,
         )
-        if (isSafeApp()) {
-          await safeWeb.eth.sendTransaction({
-            from: quoteResult.from,
-            data: quoteResult.data,
-            to: quoteResult.to,
-            value: quoteResult.value,
-          })
-        } else {
-          await mainWeb3.eth.sendTransaction({
-            from: quoteResult.from,
-            data: quoteResult.data,
-            to: quoteResult.to,
-            value: quoteResult.value,
-          })
-        }
+        await mainWeb.eth.sendTransaction({
+          from: quoteResult.from,
+          data: quoteResult.data,
+          to: quoteResult.to,
+          value: quoteResult.value,
+        })
         await fetchUserPoolStats([fAssetPool], account, userStats)
         setExecuteValue(2)
       } catch (err) {

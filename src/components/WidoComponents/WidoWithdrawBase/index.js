@@ -30,7 +30,7 @@ import {
   TokenSelect,
   AmountInfo,
 } from './style'
-import { isSafeApp } from '../../../utils'
+import { isSpecialApp } from '../../../utils'
 
 const { tokens } = require('../../../data')
 
@@ -91,7 +91,7 @@ const WidoWithdrawBase = ({
   ] = useSetChain()
 
   const tokenChain = token.chain || token.data.chain
-  const curChain = isSafeApp()
+  const curChain = isSpecialApp
     ? chainId
     : connectedChain
     ? parseInt(connectedChain.id, 16).toString()
@@ -243,7 +243,7 @@ const WidoWithdrawBase = ({
           onClick={async () => {
             if (curChain !== tokenChain) {
               const chainHex = `0x${Number(tokenChain).toString(16)}`
-              await setChain({ chainId: chainHex })
+              if (!isSpecialApp) await setChain({ chainId: chainHex })
             } else {
               onClickUnStake()
             }

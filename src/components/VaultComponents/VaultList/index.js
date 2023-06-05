@@ -27,6 +27,7 @@ import {
   getTotalApy,
   getUserVaultBalance,
   getVaultValue,
+  isSpecialApp,
 } from '../../../utils'
 import VaultPanel from '../VaultPanel'
 import VaultsListHeader from '../VaultsListHeader'
@@ -58,6 +59,7 @@ const formatVaults = (
   balances,
   farmingBalances,
   selChain,
+  chainId,
   searchQuery = '',
   sortParam,
   sortOrder,
@@ -82,7 +84,10 @@ const formatVaults = (
     },
   ])
 
-  if (selChain.includes(CHAINS_ID.ETH_MAINNET)) {
+  if (
+    (isSpecialApp && chainId === CHAINS_ID.ETH_MAINNET) ||
+    (!isSpecialApp && selChain.includes(CHAINS_ID.ETH_MAINNET))
+  ) {
     const farmIdx = vaultsSymbol.findIndex(symbol => symbol === FARM_TOKEN_SYMBOL)
     vaultsSymbol = move(vaultsSymbol, farmIdx, 0)
 
@@ -93,9 +98,9 @@ const formatVaults = (
   vaultsSymbol = vaultsSymbol.filter(
     tokenSymbol =>
       tokenSymbol !== IFARM_TOKEN_SYMBOL &&
-      (selChain.includes(groupOfVaults[tokenSymbol].chain) ||
-        (groupOfVaults[tokenSymbol].data &&
-          selChain.includes(groupOfVaults[tokenSymbol].data.chain))),
+      (selChain.includes(groupOfVaults[tokenSymbol]?.chain) ||
+        (groupOfVaults[tokenSymbol]?.data &&
+          selChain.includes(groupOfVaults[tokenSymbol]?.data.chain))),
   )
 
   if (searchQuery) {
@@ -286,7 +291,7 @@ const formatVaults = (
       tokenSymbol => groupOfVaults[tokenSymbol].farmType === selectFarmType,
     )
   }
-
+  vaultsSymbol = [...new Set(vaultsSymbol)]
   return vaultsSymbol
 }
 
@@ -310,7 +315,7 @@ const VaultList = () => {
   } = useVaults()
   const { profitShareAPY } = useStats()
   const { pools, fetchUserPoolStats, userStats, loadedUserPoolsWeb3Provider } = usePools()
-  const { account, chain, selChain, getWalletBalances, balances } = useWallet()
+  const { account, chain, selChain, getWalletBalances, balances, chainId } = useWallet()
   const [openVault, setOpen] = useState(null)
   const [loaded, setLoaded] = useState(null)
   const [sortParam, setSortParam] = useState(null)
@@ -376,7 +381,13 @@ const VaultList = () => {
     [farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
   )
 
-  const groupOfVaults = { ...vaultsData, ...poolVaults }
+  let groupOfVaults = []
+  if (isSpecialApp) {
+    if (chainId === CHAINS_ID.ETH_MAINNET) groupOfVaults = { ...vaultsData, ...poolVaults }
+    else groupOfVaults = { ...vaultsData }
+  } else {
+    groupOfVaults = { ...vaultsData, ...poolVaults }
+  }
 
   const vaultsSymbol = useMemo(
     () =>
@@ -387,6 +398,7 @@ const VaultList = () => {
         balances,
         farmingBalances,
         selChain,
+        chainId,
         searchQuery,
         sortParam,
         sortOrder,
@@ -403,6 +415,7 @@ const VaultList = () => {
       balances,
       farmingBalances,
       selChain,
+      chainId,
       searchQuery,
       sortParam,
       sortOrder,

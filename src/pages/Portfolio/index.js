@@ -337,7 +337,6 @@ const Portfolio = () => {
               get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),
               (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
               POOL_BALANCES_DECIMALS,
-              true,
             )
             stats.unstake = unstake * (switchBalance ? usdPrice : 1)
             // eslint-disable-next-line no-restricted-globals
@@ -361,7 +360,6 @@ const Portfolio = () => {
               useIFARM ? finalStake : stakeTemp,
               token.decimals || token.data.watchAsset.decimals,
               4,
-              true,
             )
 
             stats.stake = stake * (switchBalance ? usdPrice : 1)

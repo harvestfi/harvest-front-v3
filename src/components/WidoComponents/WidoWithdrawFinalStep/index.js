@@ -19,8 +19,8 @@ import {
 import { usePools } from '../../../providers/Pools'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
-import { fromWei, mainWeb3, maxUint256, safeWeb3 } from '../../../services/web3'
-import { formatNumberWido, isSafeApp } from '../../../utils'
+import { fromWei, maxUint256, getWeb3 } from '../../../services/web3'
+import { formatNumberWido } from '../../../utils'
 import WidoSwapToken from '../WidoSwapToken'
 import { addresses } from '../../../data'
 import {
@@ -56,7 +56,7 @@ const WidoWithdrawFinalStep = ({
   setPendingAction,
 }) => {
   const [approveValue, setApproveValue] = React.useState(0)
-  const { account, getWalletBalances } = useWallet()
+  const { account, getWalletBalances, web3 } = useWallet()
   const { fetchUserPoolStats, userStats } = usePools()
   const { vaultsData, farmingBalances, getFarmingBalances } = useVaults()
   const { handleWithdraw } = useActions()
@@ -191,20 +191,13 @@ const WidoWithdrawFinalStep = ({
       toToken: pickedToken.address,
       amount: amnt,
     })
-    if (isSafeApp()) {
-      const safeWeb = await safeWeb3()
-      await safeWeb.eth.sendTransaction({
-        from: account,
-        data,
-        to,
-      })
-    } else {
-      await mainWeb3.eth.sendTransaction({
-        from: account,
-        data,
-        to,
-      })
-    }
+    const mainWeb = await getWeb3(chainId, account, web3)
+
+    await mainWeb.eth.sendTransaction({
+      from: account,
+      data,
+      to,
+    })
   }
 
   const onClickApprove = async () => {
@@ -272,10 +265,7 @@ const WidoWithdrawFinalStep = ({
         const fromChainId = chainId
         const toChainId = chainId
         const toToken = pickedToken.address
-        let safeWeb
-        if (isSafeApp()) {
-          safeWeb = await safeWeb3()
-        }
+        const mainWeb = await getWeb3(chainId, account, web3)
         const quoteResult = await quote(
           {
             fromChainId, // Chain Id of from token
@@ -286,24 +276,15 @@ const WidoWithdrawFinalStep = ({
             slippagePercentage, // Acceptable max slippage for the swap
             user, // Address of user placing the order.
           },
-          isSafeApp() ? safeWeb.currentProvider : mainWeb3.currentProvider,
+          mainWeb.currentProvider,
         )
 
-        if (isSafeApp()) {
-          await safeWeb.eth.sendTransaction({
-            from: quoteResult.from,
-            data: quoteResult.data,
-            to: quoteResult.to,
-            value: quoteResult.value,
-          })
-        } else {
-          await mainWeb3.eth.sendTransaction({
-            from: quoteResult.from,
-            data: quoteResult.data,
-            to: quoteResult.to,
-            value: quoteResult.value,
-          })
-        }
+        await mainWeb.eth.sendTransaction({
+          from: quoteResult.from,
+          data: quoteResult.data,
+          to: quoteResult.to,
+          value: quoteResult.value,
+        })
         await fetchUserPoolStats([fAssetPool], account, userStats)
         setExecuteValue(2)
       }

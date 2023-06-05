@@ -1,23 +1,15 @@
-import CoinbaseWalletSDK from '@coinbase/wallet-sdk'
-import { SafeAppWeb3Modal } from '@gnosis.pm/safe-apps-web3modal'
-import { loadConnectKit } from '@ledgerhq/connect-kit-loader'
 import { IFrameEthereumProvider } from '@ledgerhq/iframe-provider'
 import { SafeAppProvider } from '@safe-global/safe-apps-provider'
 import SafeAppsSDK from '@safe-global/safe-apps-sdk'
-import WalletConnectProvider from '@walletconnect/web3-provider'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
 import mobile from 'is-mobile'
 import { get } from 'lodash'
 import Web3 from 'web3'
-import arbitrumLogo from '../../assets/images/logos/arbitrum.svg'
-import ethLogo from '../../assets/images/logos/eth.png'
-import maticLogo from '../../assets/images/logos/matic.svg'
 import {
   ARBISCAN_URL,
   ARBITRUM_URL,
   ETHERSCAN_URL,
-  ETH_URL,
   INFURA_URL,
   isDebugMode,
   MATICSCAN_URL,
@@ -25,74 +17,14 @@ import {
   POLL_BALANCES_INTERVAL_MS,
 } from '../../constants'
 import { CHAINS_ID } from '../../data/constants'
-import { formatNumber, isLedgerLive } from '../../utils'
+import { formatNumber, isLedgerLive, isSafeApp } from '../../utils'
 import contracts from './contracts'
-
-export const providerOptions = {
-  injected: {
-    package: null,
-  },
-  coinbasewallet: {
-    package: CoinbaseWalletSDK,
-    options: {
-      appName: 'Harvest Finance',
-      rpc: {
-        [CHAINS_ID.ETH_MAINNET]: INFURA_URL,
-        [CHAINS_ID.ARBITRUM_ONE]: ARBITRUM_URL,
-        [CHAINS_ID.MATIC_MAINNET]: MATIC_URL,
-      },
-    },
-  },
-  walletconnect: {
-    package: WalletConnectProvider,
-    options: {
-      rpc: {
-        [CHAINS_ID.ETH_MAINNET]: INFURA_URL,
-        [CHAINS_ID.MATIC_MAINNET]: MATIC_URL,
-        [CHAINS_ID.ARBITRUM_ONE]: ARBITRUM_URL,
-      },
-    },
-  },
-  ledger: {
-    package: loadConnectKit,
-    options: {
-      rpc: {
-        [CHAINS_ID.ETH_MAINNET]: INFURA_URL,
-        [CHAINS_ID.MATIC_MAINNET]: MATIC_URL,
-        [CHAINS_ID.ARBITRUM_ONE]: ARBITRUM_URL,
-      },
-    },
-  },
-}
-
-const chains = {
-  [CHAINS_ID.ETH_MAINNET]: {
-    name: 'Ethereum',
-    logo: ethLogo,
-  },
-  [CHAINS_ID.MATIC_MAINNET]: {
-    name: 'Polygon (Matic)',
-    logo: maticLogo,
-  },
-  [CHAINS_ID.ARBITRUM_ONE]: {
-    name: 'Arbitrum',
-    logo: arbitrumLogo,
-  },
-}
 
 export const getChainHexadecimal = chainId => `0x${Number(chainId).toString(16)}`
 
-export const web3Modal = new SafeAppWeb3Modal({
-  network: 'mainnet',
-  cacheProvider: false,
-  disableInjectedProvider: false,
-  providerOptions,
-  chains,
-})
 const SDK = new SafeAppsSDK()
 export const infuraWeb3 = new Web3(INFURA_URL)
 export const maticWeb3 = new Web3(MATIC_URL)
-export const ethWeb3 = new Web3(ETH_URL)
 export const arbitrumWeb3 = new Web3(ARBITRUM_URL)
 export const ledgerProvider = new ethers.providers.Web3Provider(new IFrameEthereumProvider())
 export const ledgerWeb3 = new Web3(new IFrameEthereumProvider())
@@ -109,23 +41,10 @@ export const safeWeb3 = async () => {
   return new Web3(new SafeAppProvider(safe, SDK))
 }
 
-export const mainWeb3 = isLedgerLive() ? ledgerWeb3 : new Web3(window.ethereum || INFURA_URL)
+export const mainWeb3 = new Web3(window.ethereum || INFURA_URL)
 
 export const getContract = contractName => {
   return !!Object.keys(contracts).find(contractKey => contractKey === contractName)
-}
-
-export const newContractInstance = async (contractName, address, customAbi, web3Provider) => {
-  const contractAddress = getContract(contractName)
-    ? contracts[contractName].contract.address
-    : address
-  const contractAbi = getContract(contractName) ? contracts[contractName].contract.abi : customAbi
-
-  if (contractAddress) {
-    const web3Instance = web3Provider || mainWeb3
-    return new web3Instance.eth.Contract(contractAbi, contractAddress)
-  }
-  return null
 }
 
 export const fromWei = (wei, decimals, decimalsToDisplay = 2, format = false) => {
@@ -225,17 +144,16 @@ export const getChainName = chainId => {
   }
 }
 
-export const getWeb3 = (chainId, account) => {
-  if (isLedgerLive()) {
-    return ledgerWeb3
-  }
-
+export const getWeb3 = async (chainId, account, web3 = null) => {
   if (account) {
-    return mainWeb3
-  }
-
-  if (chainId === CHAINS_ID.ETH_MAINNET) {
-    return ethWeb3
+    if (isSafeApp()) {
+      const safeWeb = await safeWeb3()
+      return safeWeb
+    }
+    if (isLedgerLive()) {
+      return ledgerWeb3
+    }
+    return web3 || mainWeb3
   }
 
   if (chainId === CHAINS_ID.MATIC_MAINNET) {
@@ -249,8 +167,17 @@ export const getWeb3 = (chainId, account) => {
   return infuraWeb3
 }
 
-export const getWeb3Local = () => {
-  return isLedgerLive() ? ledgerWeb3 : mainWeb3
+export const newContractInstance = async (contractName, address, customAbi, web3Provider) => {
+  const contractAddress = getContract(contractName)
+    ? contracts[contractName].contract.address
+    : address
+  const contractAbi = getContract(contractName) ? contracts[contractName].contract.abi : customAbi
+
+  if (contractAddress) {
+    const web3Instance = web3Provider || mainWeb3
+    return new web3Instance.eth.Contract(contractAbi, contractAddress)
+  }
+  return null
 }
 
 export const getExplorerLink = chainId => {

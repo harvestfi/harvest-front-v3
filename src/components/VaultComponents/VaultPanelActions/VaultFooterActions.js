@@ -23,6 +23,7 @@ import {
   formatNumber,
   hasAmountGreaterThanZero,
   hasRequirementsForInteraction,
+  isSpecialApp,
 } from '../../../utils'
 import AnimatedDots from '../../AnimatedDots'
 import Button from '../../Button'
@@ -58,7 +59,7 @@ const VaultFooterActions = ({
   poolRewardSymbol,
 }) => {
   const { fetchUserPoolStats, userStats, pools } = usePools()
-  const { account, getWalletBalances, connected } = useWallet()
+  const { account, getWalletBalances, connected, chainId } = useWallet()
   const { vaultsData } = useVaults()
   const { profitShareAPY } = useStats()
   const { handleClaim } = useActions()
@@ -78,7 +79,11 @@ const VaultFooterActions = ({
   ] = useSetChain()
 
   const tokenChain = token.chain || token.data.chain
-  const curChain = connectedChain ? parseInt(connectedChain.id, 16).toString() : ''
+  const curChain = isSpecialApp
+    ? chainId
+    : connectedChain
+    ? parseInt(connectedChain.id, 16).toString()
+    : ''
 
   const poolVaults = useMemo(
     () => ({
@@ -268,7 +273,7 @@ const VaultFooterActions = ({
         onClick={async () => {
           if (curChain !== tokenChain) {
             const chainHex = `0x${Number(tokenChain).toString(16)}`
-            await setChain({ chainId: chainHex })
+            if (!isSpecialApp) await setChain({ chainId: chainHex })
           } else {
             handleClaim(account, fAssetPool, setPendingAction, async () => {
               await getWalletBalances([poolRewardSymbol])

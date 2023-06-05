@@ -497,7 +497,7 @@ const WidoDetail = () => {
             }
             supportedList[0].default = true
           } else {
-            const web3Client = getWeb3(chain, null)
+            const web3Client = await getWeb3(chain, null)
             const { getSymbol } = tokenMethods
             const lpInstance = await newContractInstance(id, tokenAddress, null, web3Client)
             const lpSymbol = await getSymbol(lpInstance)

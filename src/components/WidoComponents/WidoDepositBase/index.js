@@ -20,7 +20,7 @@ import {
   formatNumberWido,
   hasAmountGreaterThanZero,
   hasRequirementsForInteraction,
-  isSafeApp,
+  isSpecialApp,
 } from '../../../utils'
 import AnimatedDots from '../../AnimatedDots'
 import Button from '../../Button'
@@ -90,7 +90,7 @@ const WidoDepositBase = ({
   const { handleStake } = useActions()
   const { contracts } = useContracts()
   const { userStats, fetchUserPoolStats } = usePools()
-  const { connected, connectAction, account, getWalletBalances, chainId } = useWallet()
+  const { connected, connectAction, account, getWalletBalances, chainId, setChainId } = useWallet()
   const { vaultsData } = useVaults()
   const {
     backColor,
@@ -146,7 +146,7 @@ const WidoDepositBase = ({
   }
 
   const tokenChain = token.chain || token.data.chain
-  const curChain = isSafeApp()
+  const curChain = isSpecialApp
     ? chainId
     : connectedChain
     ? parseInt(connectedChain.id, 16).toString()
@@ -167,7 +167,10 @@ const WidoDepositBase = ({
   const onClickDeposit = async () => {
     if (curChain !== tokenChain) {
       const chainHex = `0x${Number(tokenChain).toString(16)}`
-      await setChain({ chainId: chainHex })
+      if (!isSpecialApp) {
+        await setChain({ chainId: chainHex })
+        setChainId(tokenChain)
+      }
     } else {
       if (pickedToken.symbol === 'Select Token') {
         toast.error('Please select token to deposit!')
