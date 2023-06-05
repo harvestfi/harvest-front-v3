@@ -11,7 +11,12 @@ import { useContracts } from '../../../providers/Contracts'
 import { useActions } from '../../../providers/Actions'
 import { usePools } from '../../../providers/Pools'
 import { formatNumberWido, isSafeApp } from '../../../utils'
-import { WIDO_BALANCES_DECIMALS, FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../../constants'
+import {
+  WIDO_BALANCES_DECIMALS,
+  FARM_TOKEN_SYMBOL,
+  IFARM_TOKEN_SYMBOL,
+  WIDO_EXTEND_DECIMALS,
+} from '../../../constants'
 import {
   SelectTokenWido,
   CloseBtn,
@@ -145,7 +150,7 @@ const WidoPoolDepositFinalStep = ({
           const fromAmount = new BigNumber(amount).multipliedBy(price)
           const fromInfoTemp = `${formatNumberWido(
             inputAmount,
-            WIDO_BALANCES_DECIMALS,
+            WIDO_EXTEND_DECIMALS,
           )} ($${formatNumberWido(
             fromWei(fromAmount, token.decimals || token.data.lpTokenData.decimals),
             WIDO_BALANCES_DECIMALS,
@@ -210,7 +215,7 @@ const WidoPoolDepositFinalStep = ({
         let fromInfoTemp = '',
           toInfoTemp = ''
         if (pickedToken.default) {
-          fromInfoTemp = `${formatNumberWido(inputAmount, WIDO_BALANCES_DECIMALS)} ($${
+          fromInfoTemp = `${formatNumberWido(inputAmount, WIDO_EXTEND_DECIMALS)} ($${
             pickedToken.usdPrice !== '0.0'
               ? formatNumberWido(
                   new BigNumber(amount)
@@ -222,7 +227,7 @@ const WidoPoolDepositFinalStep = ({
           })`
           toInfoTemp = `${formatNumberWido(
             new BigNumber(amount).dividedBy(pricePerFullShare).toFixed(),
-            WIDO_BALANCES_DECIMALS,
+            WIDO_EXTEND_DECIMALS,
           )} ($${
             pickedToken.usdPrice !== '0.0'
               ? formatNumberWido(
@@ -237,7 +242,7 @@ const WidoPoolDepositFinalStep = ({
           fromInfoTemp =
             formatNumberWido(
               fromWei(quoteValue.fromTokenAmount, pickedToken.decimals),
-              WIDO_BALANCES_DECIMALS,
+              WIDO_EXTEND_DECIMALS,
             ) +
             (quoteValue.fromTokenAmountUsdValue === null
               ? ''
@@ -248,7 +253,7 @@ const WidoPoolDepositFinalStep = ({
           toInfoTemp =
             formatNumberWido(
               fromWei(quoteValue.toTokenAmount, token.decimals || token.data.lpTokenData.decimals),
-              WIDO_BALANCES_DECIMALS,
+              WIDO_EXTEND_DECIMALS,
             ) +
             (quoteValue.toTokenAmountUsdValue === null
               ? ''

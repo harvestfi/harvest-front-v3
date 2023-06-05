@@ -7,7 +7,11 @@ import ArrowDownIcon from '../../../assets/images/logos/wido/arrowdown.svg'
 import BackIcon from '../../../assets/images/logos/wido/back.svg'
 import SettingIcon from '../../../assets/images/logos/wido/setting.svg'
 import Swap2Icon from '../../../assets/images/logos/wido/swap2.svg'
-import { WIDO_BALANCES_DECIMALS, IFARM_TOKEN_SYMBOL } from '../../../constants'
+import {
+  WIDO_BALANCES_DECIMALS,
+  IFARM_TOKEN_SYMBOL,
+  WIDO_EXTEND_DECIMALS,
+} from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { useVaults } from '../../../providers/Vault'
@@ -67,13 +71,13 @@ const WidoWithdrawStart = ({
           if (pickedToken.default) {
             fromInfoTemp = `${formatNumberWido(
               fromWei(amount, pickedToken.decimals),
-              WIDO_BALANCES_DECIMALS,
+              WIDO_EXTEND_DECIMALS,
             )}`
             toInfoTemp = `${formatNumberWido(
               new BigNumber(fromWei(amount, pickedToken.decimals)).multipliedBy(
                 fromWei(pricePerFullShare, pickedToken.decimals),
               ),
-              WIDO_BALANCES_DECIMALS,
+              WIDO_EXTEND_DECIMALS,
             )}`
             const price =
               pickedToken.usdPrice !== '0.0'
@@ -121,7 +125,7 @@ const WidoWithdrawStart = ({
                   quoteResult.fromTokenAmount,
                   token.decimals || token.data.lpTokenData.decimals,
                 ),
-                WIDO_BALANCES_DECIMALS,
+                WIDO_EXTEND_DECIMALS,
               ) +
               (quoteResult.fromTokenAmountUsdValue === null
                 ? ''
@@ -135,7 +139,7 @@ const WidoWithdrawStart = ({
             toInfoTemp =
               formatNumberWido(
                 fromWei(quoteResult.toTokenAmount, curToken.decimals),
-                WIDO_BALANCES_DECIMALS,
+                WIDO_EXTEND_DECIMALS,
               ) +
               (quoteResult.toTokenUsdPrice === null
                 ? ''
@@ -270,7 +274,7 @@ const WidoWithdrawStart = ({
                 new BigNumber(fromWei(unstakeBalance, pickedToken.decimals)).multipliedBy(
                   fromWei(pricePerFullShare, pickedToken.decimals),
                 ),
-                WIDO_BALANCES_DECIMALS,
+                WIDO_EXTEND_DECIMALS,
               )
             ) : quoteValue ? (
               <>
@@ -278,7 +282,7 @@ const WidoWithdrawStart = ({
                   quoteValue !== {} &&
                   formatNumberWido(
                     fromWei(quoteValue.toTokenAmount, pickedToken.decimals),
-                    WIDO_BALANCES_DECIMALS,
+                    WIDO_EXTEND_DECIMALS,
                   )}
               </>
             ) : (
@@ -296,14 +300,14 @@ const WidoWithdrawStart = ({
                 new BigNumber(fromWei(unstakeBalance, pickedToken.decimals)).multipliedBy(
                   fromWei(pricePerFullShare, pickedToken.decimals),
                 ),
-                WIDO_BALANCES_DECIMALS,
+                WIDO_EXTEND_DECIMALS,
               )
             ) : quoteValue ? (
               <>
                 {quoteValue && quoteValue !== {}
                   ? formatNumberWido(
                       fromWei(quoteValue.minToTokenAmount, pickedToken.decimals),
-                      WIDO_BALANCES_DECIMALS,
+                      WIDO_EXTEND_DECIMALS,
                     )
                   : ''}
               </>

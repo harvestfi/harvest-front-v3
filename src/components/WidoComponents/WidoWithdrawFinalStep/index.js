@@ -11,7 +11,11 @@ import ChevronRightIcon from '../../../assets/images/logos/wido/chevron-right.sv
 import SettingIcon from '../../../assets/images/logos/wido/setting.svg'
 import Swap1WithIcon from '../../../assets/images/logos/wido/swap2.svg'
 import WithdrawIcon from '../../../assets/images/logos/wido/withdraw-icon.svg'
-import { WIDO_BALANCES_DECIMALS, IFARM_TOKEN_SYMBOL } from '../../../constants'
+import {
+  WIDO_BALANCES_DECIMALS,
+  IFARM_TOKEN_SYMBOL,
+  WIDO_EXTEND_DECIMALS,
+} from '../../../constants'
 import { usePools } from '../../../providers/Pools'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
@@ -115,13 +119,13 @@ const WidoWithdrawFinalStep = ({
         if (pickedToken.default) {
           fromInfoTemp = `${formatNumberWido(
             fromWei(unstakeBalance, pickedToken.decimals),
-            WIDO_BALANCES_DECIMALS,
+            WIDO_EXTEND_DECIMALS,
           )}`
           toInfoTemp = `${formatNumberWido(
             new BigNumber(fromWei(unstakeBalance, pickedToken.decimals)).multipliedBy(
               fromWei(pricePerFullShare, pickedToken.decimals),
             ),
-            WIDO_BALANCES_DECIMALS,
+            WIDO_EXTEND_DECIMALS,
           )}`
           const price =
             pickedToken.usdPrice !== '0.0'
@@ -143,7 +147,7 @@ const WidoWithdrawFinalStep = ({
                 quoteValue.fromTokenAmount,
                 token.decimals || token.data.lpTokenData.decimals,
               ),
-              WIDO_BALANCES_DECIMALS,
+              WIDO_EXTEND_DECIMALS,
             ) +
               (quoteValue.fromTokenUsdPrice === null
                 ? ''
@@ -158,7 +162,7 @@ const WidoWithdrawFinalStep = ({
             quoteValue &&
             formatNumberWido(
               fromWei(quoteValue.toTokenAmount, pickedToken.decimals),
-              WIDO_BALANCES_DECIMALS,
+              WIDO_EXTEND_DECIMALS,
             ) +
               (quoteValue.toTokenUsdPrice === null
                 ? ''
