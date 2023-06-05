@@ -9,7 +9,7 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { usePools } from '../../../providers/Pools'
 import { formatNumberWido, isSafeApp } from '../../../utils'
-import { WIDO_BALANCES_DECIMALS } from '../../../constants'
+import { WIDO_BALANCES_DECIMALS, WIDO_EXTEND_DECIMALS } from '../../../constants'
 import {
   SelectTokenWido,
   CloseBtn,
@@ -153,7 +153,7 @@ const WidoDepositFinalStep = ({
         let fromInfoTemp = '',
           toInfoTemp = ''
         if (pickedToken.default) {
-          fromInfoTemp = `${formatNumberWido(inputAmount, WIDO_BALANCES_DECIMALS)} ($${
+          fromInfoTemp = `${formatNumberWido(inputAmount, WIDO_EXTEND_DECIMALS)} ($${
             pickedToken.usdPrice !== '0.0'
               ? formatNumberWido(
                   new BigNumber(amount)
@@ -165,7 +165,7 @@ const WidoDepositFinalStep = ({
           })`
           toInfoTemp = `${formatNumberWido(
             new BigNumber(amount).dividedBy(pricePerFullShare).toFixed(),
-            WIDO_BALANCES_DECIMALS,
+            WIDO_EXTEND_DECIMALS,
           )} ($${
             pickedToken.usdPrice !== '0.0'
               ? formatNumberWido(
@@ -181,7 +181,7 @@ const WidoDepositFinalStep = ({
             quoteValue &&
             formatNumberWido(
               fromWei(quoteValue.fromTokenAmount, pickedToken.decimals),
-              WIDO_BALANCES_DECIMALS,
+              WIDO_EXTEND_DECIMALS,
             ) +
               (quoteValue.fromTokenAmountUsdValue === null
                 ? ''
@@ -193,7 +193,7 @@ const WidoDepositFinalStep = ({
             quoteValue &&
             formatNumberWido(
               fromWei(quoteValue.toTokenAmount, token.decimals || token.data.lpTokenData.decimals),
-              WIDO_BALANCES_DECIMALS,
+              WIDO_EXTEND_DECIMALS,
             ) +
               (quoteValue.toTokenAmountUsdValue === null
                 ? ''
