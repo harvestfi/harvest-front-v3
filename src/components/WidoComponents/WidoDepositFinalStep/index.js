@@ -9,7 +9,7 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { usePools } from '../../../providers/Pools'
 import { formatNumberWido } from '../../../utils'
-import { WIDO_BALANCES_DECIMALS, WIDO_EXTENDED_DECIMALS } from '../../../constants'
+import { WIDO_BALANCES_DECIMALS, WIDO_EXTEND_DECIMALS } from '../../../constants'
 import {
   SelectTokenWido,
   CloseBtn,
