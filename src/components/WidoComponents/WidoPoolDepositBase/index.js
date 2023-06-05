@@ -138,7 +138,6 @@ const WidoPoolDepositBase = ({
           totalStaked,
           fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals,
           WIDO_BALANCES_DECIMALS,
-          true,
         ),
       ) +
       Number(
@@ -146,7 +145,6 @@ const WidoPoolDepositBase = ({
           lpTokenBalance,
           fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals,
           WIDO_BALANCES_DECIMALS,
-          true,
         ),
       )
     setTotalValue(total)
