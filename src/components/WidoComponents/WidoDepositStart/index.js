@@ -5,7 +5,11 @@ import { toast } from 'react-toastify'
 import { quote } from 'wido'
 import ArrowDownIcon from '../../../assets/images/logos/wido/arrowdown.svg'
 import BackIcon from '../../../assets/images/logos/wido/back.svg'
-import { IFARM_TOKEN_SYMBOL, WIDO_BALANCES_DECIMALS } from '../../../constants'
+import {
+  IFARM_TOKEN_SYMBOL,
+  WIDO_BALANCES_DECIMALS,
+  WIDO_EXTEND_DECIMALS,
+} from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { fromWei, toWei, getWeb3 } from '../../../services/web3'
@@ -70,7 +74,7 @@ const WidoDepositStart = ({
           let fromInfoTemp = '',
             toInfoTemp = ''
           if (pickedToken.default) {
-            fromInfoTemp = `${formatNumberWido(inputAmount, WIDO_BALANCES_DECIMALS)} ($${
+            fromInfoTemp = `${formatNumberWido(inputAmount, WIDO_EXTEND_DECIMALS)} ($${
               pickedToken.usdPrice !== '0.0'
                 ? formatNumberWido(
                     new BigNumber(amount)
@@ -82,7 +86,7 @@ const WidoDepositStart = ({
             })`
             toInfoTemp = `${formatNumberWido(
               new BigNumber(amount).dividedBy(pricePerFullShare).toFixed(),
-              WIDO_BALANCES_DECIMALS,
+              WIDO_EXTEND_DECIMALS,
             )} ($${
               pickedToken.usdPrice !== '0.0'
                 ? formatNumberWido(
@@ -119,7 +123,7 @@ const WidoDepositStart = ({
             fromInfoTemp =
               formatNumberWido(
                 fromWei(quoteResult.fromTokenAmount, curToken.decimals),
-                WIDO_BALANCES_DECIMALS,
+                WIDO_EXTEND_DECIMALS,
               ) +
               (quoteResult.fromTokenAmountUsdValue === null
                 ? ''
@@ -134,7 +138,7 @@ const WidoDepositStart = ({
                   quoteResult.toTokenAmount,
                   token.decimals || token.data.lpTokenData.decimals,
                 ),
-                WIDO_BALANCES_DECIMALS,
+                WIDO_EXTEND_DECIMALS,
               ) +
               (quoteResult.toTokenAmountUsdValue === null
                 ? ''
@@ -265,7 +269,7 @@ const WidoDepositStart = ({
             {pickedToken.default ? (
               formatNumberWido(
                 new BigNumber(amount).dividedBy(pricePerFullShare).toFixed(),
-                WIDO_BALANCES_DECIMALS,
+                WIDO_EXTEND_DECIMALS,
               )
             ) : quoteValue ? (
               <>
@@ -274,7 +278,7 @@ const WidoDepositStart = ({
                     quoteValue.toTokenAmount,
                     token.decimals || token.data.lpTokenData.decimals,
                   ),
-                  WIDO_BALANCES_DECIMALS,
+                  WIDO_EXTEND_DECIMALS,
                 )}
               </>
             ) : (
@@ -290,7 +294,7 @@ const WidoDepositStart = ({
             {pickedToken.default ? (
               formatNumberWido(
                 new BigNumber(amount).dividedBy(pricePerFullShare).toFixed(),
-                WIDO_BALANCES_DECIMALS,
+                WIDO_EXTEND_DECIMALS,
               )
             ) : quoteValue ? (
               <>
@@ -299,7 +303,7 @@ const WidoDepositStart = ({
                     quoteValue.minToTokenAmount,
                     token.decimals || token.data.lpTokenData.decimals,
                   ),
-                  WIDO_BALANCES_DECIMALS,
+                  WIDO_EXTEND_DECIMALS,
                 )}
               </>
             ) : (
