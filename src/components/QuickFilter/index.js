@@ -176,7 +176,7 @@ const QuickFilter = ({
 
   const printAsset = id => {
     let text = '',
-      stable = false
+      stable = ''
     switch (id) {
       case 0:
         text = 'LP Token'
@@ -186,7 +186,7 @@ const QuickFilter = ({
         break
       case 2:
         text = ''
-        stable = true
+        stable = 'Stable'
         break
       default:
         break

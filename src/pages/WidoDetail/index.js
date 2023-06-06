@@ -16,6 +16,7 @@ import Back from '../../assets/images/logos/earn/back.svg'
 import Daily from '../../assets/images/logos/earn/daily.svg'
 import Info from '../../assets/images/logos/earn/info.svg'
 import TVL from '../../assets/images/logos/earn/tvl.svg'
+import LSD from '../../assets/images/logos/lsd.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import FarmDetailChart from '../../components/FarmDetailChart'
 import VaultPanelActionsFooter from '../../components/VaultComponents/VaultPanelActions/VaultPanelActionsFooter'
@@ -196,6 +197,8 @@ const WidoDetail = () => {
   )
   const id = vaultIds[0]
   const token = groupOfVaults[id]
+
+  const lsdToken = get(token, 'tags') && token.tags.join(', ').toLowerCase().includes('lsd')
 
   const { logoUrl } = token
 
@@ -660,6 +663,7 @@ const WidoDetail = () => {
             <ChainBack>
               <img src={BadgeAry[badgeId]} width={11} height={15} alt="" />
             </ChainBack>
+            {lsdToken ? <img className="lsd" src={LSD} alt="" /> : null}
           </FlexTopDiv>
         </TopPart>
         <MobileTop borderColor={borderColor}>
@@ -679,9 +683,12 @@ const WidoDetail = () => {
               ))}
             </FlexTopDiv>
 
-            <ChainBack>
-              <img src={BadgeAry[badgeId]} width={11} height={15} alt="" />
-            </ChainBack>
+            <div className="right-part">
+              <ChainBack>
+                <img src={BadgeAry[badgeId]} width={11} height={15} alt="" />
+              </ChainBack>
+              {lsdToken ? <img className="lsd" src={LSD} alt="" /> : null}
+            </div>
           </FlexMobileTopDiv>
           <div>
             <TopDesc weight={700} size="16px" height="21px" fontColor={fontColor}>
