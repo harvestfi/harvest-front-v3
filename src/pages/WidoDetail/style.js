@@ -553,6 +553,8 @@ const ChainBack = styled.div`
   justify-content: center;
   align-self: center;
   padding: 4px;
+
+  margin-right: 10px;
 `
 
 const LogoImg = styled.img`
@@ -593,6 +595,10 @@ const FlexMobileTopDiv = styled(FlexTopDiv)`
 
   @media screen and (max-width: 992px) {
     margin-bottom: 11px;
+
+    .right-part {
+      display: flex;
+    }
   }
 `
 

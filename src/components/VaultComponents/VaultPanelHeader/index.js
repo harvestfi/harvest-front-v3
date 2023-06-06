@@ -5,9 +5,6 @@ import { usePools } from '../../../providers/Pools'
 import { useVaults } from '../../../providers/Vault'
 import DesktopPanelHeader from './Desktop'
 import MobilePanelHeader from './Mobile'
-import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../../constants'
-
-const { tokens } = require('../../../data')
 
 const VaultPanelHeader = ({
   token,
@@ -32,28 +29,7 @@ const VaultPanelHeader = ({
     vaultPool = find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
   }
 
-  const lsdToken =
-    tokenSymbol.toLowerCase().includes('steth') ||
-    tokenSymbol.toLowerCase().includes('reth') ||
-    tokenSymbol.toLowerCase().includes('crvusd') ||
-    (get(token, 'tokenNames') && token.tokenNames.join(', ').toLowerCase().includes('steth')) ||
-    (get(token, 'tokenNames') && token.tokenNames.join(', ').toLowerCase().includes('reth')) ||
-    (get(token, 'tokenNames') && token.tokenNames.join(', ').toLowerCase().includes('crvusd')) ||
-    (get(token, 'subLabel') && token.subLabel.toLowerCase().includes('steth')) ||
-    (get(token, 'subLabel') && token.subLabel.toLowerCase().includes('reth')) ||
-    (get(token, 'subLabel') && token.subLabel.toLowerCase().includes('crvusd')) ||
-    (get(tokenSymbol === FARM_TOKEN_SYMBOL ? tokens[IFARM_TOKEN_SYMBOL] : token, 'platform')[0] &&
-      (tokenSymbol === FARM_TOKEN_SYMBOL ? tokens[IFARM_TOKEN_SYMBOL] : token).platform[0]
-        .toLowerCase()
-        .includes('steth')) ||
-    (get(tokenSymbol === FARM_TOKEN_SYMBOL ? tokens[IFARM_TOKEN_SYMBOL] : token, 'platform')[0] &&
-      (tokenSymbol === FARM_TOKEN_SYMBOL ? tokens[IFARM_TOKEN_SYMBOL] : token).platform[0]
-        .toLowerCase()
-        .includes('reth')) ||
-    (get(tokenSymbol === FARM_TOKEN_SYMBOL ? tokens[IFARM_TOKEN_SYMBOL] : token, 'platform')[0] &&
-      (tokenSymbol === FARM_TOKEN_SYMBOL ? tokens[IFARM_TOKEN_SYMBOL] : token).platform[0]
-        .toLowerCase()
-        .includes('crvusd'))
+  const lsdToken = get(token, 'tags') && token.tags.join(', ').toLowerCase().includes('lsd')
 
   const componentsProps = {
     token,
