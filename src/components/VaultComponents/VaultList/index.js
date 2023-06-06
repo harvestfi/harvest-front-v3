@@ -104,37 +104,92 @@ const formatVaults = (
   )
 
   if (searchQuery) {
-    vaultsSymbol = vaultsSymbol.filter(
-      symbol =>
-        symbol.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
-        (get(groupOfVaults[symbol], 'tokenAddress') &&
-          !isArray(groupOfVaults[symbol].tokenAddress) &&
-          groupOfVaults[symbol].tokenAddress.toLowerCase() === searchQuery.toLowerCase()) ||
-        (get(groupOfVaults[symbol], 'displayName') &&
-          groupOfVaults[symbol].tokenNames
-            .join(', ')
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase().trim())) ||
-        (get(groupOfVaults[symbol], 'tokenNames') &&
-          groupOfVaults[symbol].tokenNames
-            .join(', ')
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase().trim())) ||
-        (get(groupOfVaults[symbol], 'subLabel') &&
-          groupOfVaults[symbol].subLabel
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase().trim())) ||
-        (get(
-          symbol === FARM_TOKEN_SYMBOL ? tokens[IFARM_TOKEN_SYMBOL] : groupOfVaults[symbol],
-          'platform',
-        )[0] &&
-          (symbol === FARM_TOKEN_SYMBOL
-            ? tokens[IFARM_TOKEN_SYMBOL]
-            : groupOfVaults[symbol]
-          ).platform[0]
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase().trim())),
-    )
+    if (searchQuery.toLowerCase() === 'lsd') {
+      vaultsSymbol = vaultsSymbol.filter(
+        symbol =>
+          symbol.toLowerCase().includes('steth') ||
+          symbol.toLowerCase().includes('reth') ||
+          symbol.toLowerCase().includes('crvusd') ||
+          (get(groupOfVaults[symbol], 'tokenNames') &&
+            groupOfVaults[symbol].tokenNames
+              .join(', ')
+              .toLowerCase()
+              .includes('steth'.toLowerCase().trim())) ||
+          (get(groupOfVaults[symbol], 'tokenNames') &&
+            groupOfVaults[symbol].tokenNames
+              .join(', ')
+              .toLowerCase()
+              .includes('reth'.toLowerCase().trim())) ||
+          (get(groupOfVaults[symbol], 'tokenNames') &&
+            groupOfVaults[symbol].tokenNames
+              .join(', ')
+              .toLowerCase()
+              .includes('crvusd'.toLowerCase().trim())) ||
+          (get(groupOfVaults[symbol], 'subLabel') &&
+            groupOfVaults[symbol].subLabel.toLowerCase().includes('steth'.toLowerCase().trim())) ||
+          (get(groupOfVaults[symbol], 'subLabel') &&
+            groupOfVaults[symbol].subLabel.toLowerCase().includes('reth'.toLowerCase().trim())) ||
+          (get(groupOfVaults[symbol], 'subLabel') &&
+            groupOfVaults[symbol].subLabel.toLowerCase().includes('crvusd'.toLowerCase().trim())) ||
+          (get(
+            symbol === FARM_TOKEN_SYMBOL ? tokens[IFARM_TOKEN_SYMBOL] : groupOfVaults[symbol],
+            'platform',
+          )[0] &&
+            (symbol === FARM_TOKEN_SYMBOL
+              ? tokens[IFARM_TOKEN_SYMBOL]
+              : groupOfVaults[symbol]
+            ).platform[0]
+              .toLowerCase()
+              .includes('steth'.toLowerCase().trim())) ||
+          (get(
+            symbol === FARM_TOKEN_SYMBOL ? tokens[IFARM_TOKEN_SYMBOL] : groupOfVaults[symbol],
+            'platform',
+          )[0] &&
+            (symbol === FARM_TOKEN_SYMBOL
+              ? tokens[IFARM_TOKEN_SYMBOL]
+              : groupOfVaults[symbol]
+            ).platform[0]
+              .toLowerCase()
+              .includes('reth'.toLowerCase().trim())) ||
+          (get(
+            symbol === FARM_TOKEN_SYMBOL ? tokens[IFARM_TOKEN_SYMBOL] : groupOfVaults[symbol],
+            'platform',
+          )[0] &&
+            (symbol === FARM_TOKEN_SYMBOL
+              ? tokens[IFARM_TOKEN_SYMBOL]
+              : groupOfVaults[symbol]
+            ).platform[0]
+              .toLowerCase()
+              .includes('crvusd'.toLowerCase().trim())),
+      )
+    } else {
+      vaultsSymbol = vaultsSymbol.filter(
+        symbol =>
+          symbol.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+          (get(groupOfVaults[symbol], 'tokenAddress') &&
+            !isArray(groupOfVaults[symbol].tokenAddress) &&
+            groupOfVaults[symbol].tokenAddress.toLowerCase() === searchQuery.toLowerCase()) ||
+          (get(groupOfVaults[symbol], 'tokenNames') &&
+            groupOfVaults[symbol].tokenNames
+              .join(', ')
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase().trim())) ||
+          (get(groupOfVaults[symbol], 'subLabel') &&
+            groupOfVaults[symbol].subLabel
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase().trim())) ||
+          (get(
+            symbol === FARM_TOKEN_SYMBOL ? tokens[IFARM_TOKEN_SYMBOL] : groupOfVaults[symbol],
+            'platform',
+          )[0] &&
+            (symbol === FARM_TOKEN_SYMBOL
+              ? tokens[IFARM_TOKEN_SYMBOL]
+              : groupOfVaults[symbol]
+            ).platform[0]
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase().trim())),
+      )
+    }
   }
 
   if (sortParam) {

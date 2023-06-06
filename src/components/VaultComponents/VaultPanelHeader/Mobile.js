@@ -6,6 +6,7 @@ import POLYGON from '../../../assets/images/chains/polygon.svg'
 import APYIcon from '../../../assets/images/logos/farm/MobileAPYIcon.svg'
 import DailyIcon from '../../../assets/images/logos/farm/MobileDailyIcon.svg'
 import TVLIcon from '../../../assets/images/logos/farm/MobileTVLIcon.svg'
+import LSD from '../../../assets/images/logos/lsd.svg'
 import { directDetailUrl } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { isLedgerLive } from '../../../utils'
@@ -42,6 +43,7 @@ const MobilePanelHeader = ({
   multipleAssets,
   loadedVault,
   loadingFarmingBalance,
+  lsdToken,
 }) => {
   const BadgeAry = isLedgerLive() ? [ETHEREUM, POLYGON] : [ETHEREUM, POLYGON, ARBITRUM]
 
@@ -76,7 +78,7 @@ const MobilePanelHeader = ({
         push(`${directDetailUrl + network}/${address}`)
       }}
     >
-      <FlexDiv width="10%">
+      <FlexDiv width="15%">
         <BadgeIcon badgeBack={badgeIconBackColor}>
           {BadgeAry[badgeId] ? (
             <img src={BadgeAry[badgeId]} width="10" height="10" alt="" />
@@ -84,8 +86,9 @@ const MobilePanelHeader = ({
             <></>
           )}
         </BadgeIcon>
+        {lsdToken ? <img className="lsd" src={LSD} alt="" /> : null}
       </FlexDiv>
-      <FlexDiv width="70%" alignSelf="center" marginRight="18px">
+      <FlexDiv width="65%" alignSelf="center" marginRight="18px">
         <div>
           {logoUrl.map((el, i) => (
             <img key={i} src={el} width={19} alt={tokenSymbol} />
