@@ -38,13 +38,16 @@ const StatsProvider = ({ children }) => {
   })
 
   const { contracts } = useContracts()
-  const { pools } = usePools()
+  const { totalPools } = usePools()
 
   const firstStatsRender = useRef(true)
 
   useEffect(() => {
     const fetchStats = async () => {
-      const farmPool = find(pools, pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID)
+      const farmPool = find(
+        totalPools,
+        pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
+      )
       if (contracts.FARM && farmPool && farmPool.loaded) {
         firstStatsRender.current = false
 
@@ -87,7 +90,7 @@ const StatsProvider = ({ children }) => {
     if (firstStatsRender.current) {
       fetchStats()
     }
-  }, [contracts.FARM, pools])
+  }, [contracts.FARM, totalPools])
 
   return <StatsContext.Provider value={{ ...stats }}>{children}</StatsContext.Provider>
 }
