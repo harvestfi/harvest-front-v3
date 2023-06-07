@@ -50,6 +50,7 @@ const PoolsProvider = _ref => {
   const { account, selChain, chainId, balances: walletBalances, logout } = useWallet()
   const { contracts } = useContracts()
   const [pools, setPools] = useState(defaultPools)
+  const [totalPools, setTotalPools] = useState(defaultPools)
   const [userStats, setUserStats] = useState([])
   const [vaultLoading, setVaultLoading] = useState(true)
   const [loadingUserPoolStats, setLoadingUserPoolStats] = useState(false)
@@ -220,6 +221,7 @@ const PoolsProvider = _ref => {
     }
 
     setPools(newPools)
+    setTotalPools(newPools)
     setFinishPool(true)
   }, [formatPoolsData])
 
@@ -445,6 +447,7 @@ const PoolsProvider = _ref => {
         vaultLoading,
         setVaultLoading,
         disableWallet,
+        totalPools,
       },
     },
     children,

@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useMemo, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import Analytics from '../../assets/images/logos/sidebar/analytics.svg'
@@ -18,27 +18,14 @@ import Toggle from '../../assets/images/logos/sidebar/toggle.svg'
 import Arbitrum from '../../assets/images/chains/arbitrum.svg'
 import Ethereum from '../../assets/images/chains/ethereum.svg'
 import Polygon from '../../assets/images/chains/polygon.svg'
-import {
-  DECIMAL_PRECISION,
-  FARM_TOKEN_SYMBOL,
-  ROUTES,
-  SPECIAL_VAULTS,
-  directDetailUrl,
-} from '../../constants'
+import { ROUTES, directDetailUrl } from '../../constants'
 import { CHAINS_ID } from '../../data/constants'
 import { addresses } from '../../data/index'
 import { usePools } from '../../providers/Pools'
 import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
-import {
-  displayAPY,
-  formatAddress,
-  getDataQuery,
-  getTotalApy,
-  isLedgerLive,
-  isSafeApp,
-} from '../../utils'
+import { formatAddress, getDataQuery, isLedgerLive, isSafeApp } from '../../utils'
 import SmallApexChart from '../SmallApexChart'
 import Social from '../Social'
 import {
@@ -173,7 +160,7 @@ const getChainIcon = chainNum => {
 
 const Sidebar = ({ width }) => {
   const { account, connectAction, disconnectAction, chainId, connected, setSelChain } = useWallet()
-  const { pools, disableWallet } = usePools()
+  const { disableWallet } = usePools()
   const { profitShareAPY } = useStats()
 
   const {
@@ -211,25 +198,6 @@ const Sidebar = ({ width }) => {
   const handleMobileClose = () => setMobileShow(false)
   const handleMobileShow = () => setMobileShow(true)
 
-  const farmProfitSharingPool = pools.find(
-    pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
-  )
-
-  const poolVaults = useMemo(
-    () => ({
-      [FARM_TOKEN_SYMBOL]: {
-        poolVault: true,
-        profitShareAPY,
-        data: farmProfitSharingPool,
-        logoUrl: ['./icons/ifarm.svg'],
-      },
-    }),
-    [profitShareAPY, farmProfitSharingPool],
-  )
-  const token = poolVaults.FARM
-
-  const totalApy = getTotalApy(null, token, true)
-
   const [apiData, setApiData] = useState({})
   useEffect(() => {
     const initData = async () => {
@@ -240,7 +208,7 @@ const Sidebar = ({ width }) => {
   }, [chainId])
 
   const directAction = path => {
-    if (path === ROUTES.PORTFOLIO || path === ROUTES.ANALYTIC) {
+    if (path === ROUTES.PORTFOLIO) {
       setSelChain([CHAINS_ID.ETH_MAINNET, CHAINS_ID.MATIC_MAINNET, CHAINS_ID.ARBITRUM_ONE])
     }
     push(path)
@@ -414,11 +382,10 @@ const Sidebar = ({ width }) => {
             </TopTitle>
           </TopDiv>
           <BottomDiv>
-            {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
-            <div>APR</div>
+            {Number(profitShareAPY).toFixed(2)}%<div>APR</div>
           </BottomDiv>
           <ChartDiv>
-            <SmallApexChart data={apiData} lastAPY={Number(totalApy)} />
+            <SmallApexChart data={apiData} lastAPY={Number(profitShareAPY)} />
           </ChartDiv>
         </ProfitSharing>
 
@@ -633,11 +600,10 @@ const Sidebar = ({ width }) => {
                   </TopTitle>
                 </TopDiv>
                 <BottomDiv>
-                  {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
-                  <div>APR</div>
+                  {Number(profitShareAPY).toFixed(2)}%<div>APR</div>
                 </BottomDiv>
                 <ChartDiv>
-                  <SmallApexChart data={apiData} lastAPY={Number(totalApy)} />
+                  <SmallApexChart data={apiData} lastAPY={Number(profitShareAPY)} />
                 </ChartDiv>
               </MobileProfitSharing>
             </ProfitPart>

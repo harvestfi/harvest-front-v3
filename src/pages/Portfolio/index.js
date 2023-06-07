@@ -97,7 +97,7 @@ const chainList = isLedgerLive()
 const Portfolio = () => {
   const { push } = useHistory()
   const { connected, balances, account, getWalletBalances } = useWallet()
-  const { userStats, fetchUserPoolStats, pools } = usePools()
+  const { userStats, fetchUserPoolStats, totalPools } = usePools()
   const { profitShareAPY } = useStats()
   const { vaultsData, farmingBalances, getFarmingBalances } = useVaults()
   /* eslint-disable global-require */
@@ -118,11 +118,11 @@ const Portfolio = () => {
 
   const [switchBalance, setSwitchBalance] = useState(false)
 
-  const farmProfitSharingPool = pools.find(
+  const farmProfitSharingPool = totalPools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )
-  const farmWethPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_WETH_POOL_ID)
-  const farmGrainPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_GRAIN_POOL_ID)
+  const farmWethPool = totalPools.find(pool => pool.id === SPECIAL_VAULTS.FARM_WETH_POOL_ID)
+  const farmGrainPool = totalPools.find(pool => pool.id === SPECIAL_VAULTS.FARM_GRAIN_POOL_ID)
   const poolVaults = useMemo(
     () => ({
       [FARM_TOKEN_SYMBOL]: {
@@ -216,7 +216,7 @@ const Portfolio = () => {
           let fAssetPool =
             depositToken[i] === FARM_TOKEN_SYMBOL
               ? groupOfVaults[depositToken[i]].data
-              : find(pools, pool => pool.id === depositToken[i])
+              : find(totalPools, pool => pool.id === depositToken[i])
 
           const token = find(
             groupOfVaults,
@@ -238,7 +238,7 @@ const Portfolio = () => {
       }
       loadUserPoolsStats()
     }
-  }, [account, pools, depositToken]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, totalPools, depositToken]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!isEmpty(userStats) && account) {
@@ -292,7 +292,7 @@ const Portfolio = () => {
           let fAssetPool =
             symbol === FARM_TOKEN_SYMBOL
               ? groupOfVaults[symbol].data
-              : find(pools, pool => pool.id === symbol)
+              : find(totalPools, pool => pool.id === symbol)
 
           const token = find(
             groupOfVaults,
