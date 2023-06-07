@@ -29,6 +29,8 @@ const VaultPanelHeader = ({
     vaultPool = find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
   }
 
+  const lsdToken = get(token, 'tags') && token.tags.join(', ').toLowerCase().includes('lsd')
+
   const componentsProps = {
     token,
     tokenSymbol,
@@ -38,6 +40,7 @@ const VaultPanelHeader = ({
     multipleAssets,
     loadedVault,
     loadingFarmingBalance,
+    lsdToken,
   }
 
   return (

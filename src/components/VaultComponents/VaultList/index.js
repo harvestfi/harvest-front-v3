@@ -104,37 +104,43 @@ const formatVaults = (
   )
 
   if (searchQuery) {
-    vaultsSymbol = vaultsSymbol.filter(
-      symbol =>
-        symbol.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
-        (get(groupOfVaults[symbol], 'tokenAddress') &&
-          !isArray(groupOfVaults[symbol].tokenAddress) &&
-          groupOfVaults[symbol].tokenAddress.toLowerCase() === searchQuery.toLowerCase()) ||
-        (get(groupOfVaults[symbol], 'displayName') &&
-          groupOfVaults[symbol].tokenNames
+    if (searchQuery.toLowerCase() === 'lsd') {
+      vaultsSymbol = vaultsSymbol.filter(
+        symbol =>
+          get(groupOfVaults[symbol], 'tags') &&
+          groupOfVaults[symbol].tags
             .join(', ')
             .toLowerCase()
-            .includes(searchQuery.toLowerCase().trim())) ||
-        (get(groupOfVaults[symbol], 'tokenNames') &&
-          groupOfVaults[symbol].tokenNames
-            .join(', ')
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase().trim())) ||
-        (get(groupOfVaults[symbol], 'subLabel') &&
-          groupOfVaults[symbol].subLabel
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase().trim())) ||
-        (get(
-          symbol === FARM_TOKEN_SYMBOL ? tokens[IFARM_TOKEN_SYMBOL] : groupOfVaults[symbol],
-          'platform',
-        )[0] &&
-          (symbol === FARM_TOKEN_SYMBOL
-            ? tokens[IFARM_TOKEN_SYMBOL]
-            : groupOfVaults[symbol]
-          ).platform[0]
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase().trim())),
-    )
+            .includes(searchQuery.toLowerCase().trim()),
+      )
+    } else {
+      vaultsSymbol = vaultsSymbol.filter(
+        symbol =>
+          symbol.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+          (get(groupOfVaults[symbol], 'tokenAddress') &&
+            !isArray(groupOfVaults[symbol].tokenAddress) &&
+            groupOfVaults[symbol].tokenAddress.toLowerCase() === searchQuery.toLowerCase()) ||
+          (get(groupOfVaults[symbol], 'tokenNames') &&
+            groupOfVaults[symbol].tokenNames
+              .join(', ')
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase().trim())) ||
+          (get(groupOfVaults[symbol], 'subLabel') &&
+            groupOfVaults[symbol].subLabel
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase().trim())) ||
+          (get(
+            symbol === FARM_TOKEN_SYMBOL ? tokens[IFARM_TOKEN_SYMBOL] : groupOfVaults[symbol],
+            'platform',
+          )[0] &&
+            (symbol === FARM_TOKEN_SYMBOL
+              ? tokens[IFARM_TOKEN_SYMBOL]
+              : groupOfVaults[symbol]
+            ).platform[0]
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase().trim())),
+      )
+    }
   }
 
   if (sortParam) {
@@ -282,13 +288,23 @@ const formatVaults = (
 
   if (selectStableCoin) {
     vaultsSymbol = vaultsSymbol.filter(
-      tokenSymbol => groupOfVaults[tokenSymbol].stableCoin === selectStableCoin,
+      tokenSymbol =>
+        get(groupOfVaults[tokenSymbol], 'tags') &&
+        groupOfVaults[tokenSymbol].tags
+          .join(', ')
+          .toLowerCase()
+          .includes(selectStableCoin.toLowerCase().trim()),
     )
   }
 
   if (selectFarmType !== '') {
     vaultsSymbol = vaultsSymbol.filter(
-      tokenSymbol => groupOfVaults[tokenSymbol].farmType === selectFarmType,
+      tokenSymbol =>
+        get(groupOfVaults[tokenSymbol], 'tags') &&
+        groupOfVaults[tokenSymbol].tags
+          .join(', ')
+          .toLowerCase()
+          .includes(selectFarmType.toLowerCase().trim()),
     )
   }
   vaultsSymbol = [...new Set(vaultsSymbol)]
@@ -323,7 +339,7 @@ const VaultList = () => {
   const [depositedOnly, selectDepositedOnly] = useState(false)
   const [searchQuery, setSearchQuery] = useState('')
   const [selectAsset, onSelectAsset] = useState('')
-  const [selectStableCoin, onSelectStableCoin] = useState(false)
+  const [selectStableCoin, onSelectStableCoin] = useState('')
   const [selectFarmType, onSelectFarmType] = useState('')
   const [selectedActiveType, selectActiveType] = useState([])
 
@@ -351,8 +367,7 @@ const VaultList = () => {
         newDetails: tokens[FARM_TOKEN_SYMBOL].newDetails,
         tokenNames: ['FARM'],
         platform: ['Uniswap'],
-        stableCoin: false,
-        farmType: 'Beginners',
+        tags: ['Beginners'],
       },
       [FARM_WETH_TOKEN_SYMBOL]: {
         liquidityPoolVault: true,
@@ -363,8 +378,7 @@ const VaultList = () => {
         isNew: tokens[FARM_WETH_TOKEN_SYMBOL].isNew,
         tokenNames: ['FARM', 'ETH'],
         assetType: 'LP Token',
-        stableCoin: false,
-        farmType: 'Advanced',
+        tags: ['Advanced'],
       },
       [FARM_GRAIN_TOKEN_SYMBOL]: {
         liquidityPoolVault: true,
@@ -374,8 +388,7 @@ const VaultList = () => {
         logoUrl: ['./icons/farm.svg', './icons/grain.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
         isNew: tokens[FARM_GRAIN_TOKEN_SYMBOL].isNew,
-        stableCoin: false,
-        farmType: 'Advanced',
+        tags: ['Advanced'],
       },
     }),
     [farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
