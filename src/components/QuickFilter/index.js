@@ -386,6 +386,7 @@ const QuickFilter = ({
     filterColor,
     filterChainHoverColor,
     mobileFilterDisableColor,
+    mobileFilterHoverColor,
   } = useThemeContext()
 
   return (
@@ -628,6 +629,7 @@ const QuickFilter = ({
                 backcolor={backColor}
                 fontcolor={fontColor}
                 bordercolor={borderColor}
+                hovercolor={mobileFilterHoverColor}
                 mobilefilterdisablecolor={mobileFilterDisableColor}
               >
                 <Dropdown className="asset-type">
