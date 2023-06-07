@@ -17,7 +17,7 @@ import { useInterval } from 'react-interval-hook'
 import { toast } from 'react-toastify'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { POLL_POOL_DATA_INTERVAL_MS, POOLS_API_ENDPOINT, SPECIAL_VAULTS } from '../../constants'
-import { CHAINS_ID } from '../../data/constants'
+import { CHAIN_IDS } from '../../data/constants'
 import { getWeb3, ledgerWeb3, newContractInstance, safeProvider } from '../../services/web3'
 import poolContractData from '../../services/web3/contracts/pool/contract.json'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
@@ -36,9 +36,9 @@ const usePools = () => useContext(PoolsContext)
 
 const getReader = (selectedChain, contracts) => {
   switch (String(selectedChain)) {
-    case CHAINS_ID.ARBITRUM_ONE:
+    case CHAIN_IDS.ARBITRUM_ONE:
       return contracts.readerArbitrum
-    case CHAINS_ID.MATIC_MAINNET:
+    case CHAIN_IDS.POLYGON_MAINNET:
       return contracts.readerMatic
     default:
       return contracts.readerEth
@@ -86,7 +86,7 @@ const PoolsProvider = _ref => {
       }
       formattedPools = await Promise.all(
         defaultPools.map(async pool => {
-          if (!isLedgerLive() || (isLedgerLive() && pool.chain !== CHAINS_ID.ARBITRUM_ONE)) {
+          if (!isLedgerLive() || (isLedgerLive() && pool.chain !== CHAIN_IDS.ARBITRUM_ONE)) {
             let web3Client = await getWeb3(pool.chain, selectedAccount, web3),
               web3ClientLocal = await getWeb3(pool.chain, true, web3),
               rewardAPY = ['0'],
@@ -110,7 +110,7 @@ const PoolsProvider = _ref => {
             }
             if (
               (Object.values(SPECIAL_VAULTS).includes(pool.id) &&
-                curChain !== CHAINS_ID.ETH_MAINNET) ||
+                curChain !== CHAIN_IDS.ETH_MAINNET) ||
               pool.chain !== curChain
             ) {
               web3Client = await getWeb3(pool.chain, false)

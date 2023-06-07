@@ -21,7 +21,7 @@ import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
 import { fromWei } from '../../../services/web3'
 import { formatNumberWido, isSpecialApp } from '../../../utils'
-import { CHAINS_ID } from '../../../data/constants'
+import { CHAIN_IDS } from '../../../data/constants'
 import AnimatedDots from '../../AnimatedDots'
 import Button from '../../Button'
 import {
@@ -55,10 +55,10 @@ const getPrice = async vaultsData => {
 const getChainName = chain => {
   let chainName = 'Ethereum'
   switch (chain) {
-    case CHAINS_ID.MATIC_MAINNET:
+    case CHAIN_IDS.POLYGON_MAINNET:
       chainName = 'Polygon'
       break
-    case CHAINS_ID.ARBITRUM_ONE:
+    case CHAIN_IDS.ARBITRUM_ONE:
       chainName = 'Arbitrum'
       break
     default:

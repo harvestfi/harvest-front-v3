@@ -20,7 +20,7 @@ import FarmTypeMobile from '../../assets/images/logos/filter/farmtype-mobile.svg
 import Beginner from '../../assets/images/logos/filter/risks/beginner.svg'
 import Degen from '../../assets/images/logos/filter/risks/degens.svg'
 import Camelot from '../../assets/images/logos/camelot/camelot_black.svg'
-import { CHAINS_ID } from '../../data/constants'
+import { CHAIN_IDS } from '../../data/constants'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { isLedgerLive, isSpecialApp } from '../../utils'
@@ -54,26 +54,26 @@ import {
 
 const ChainsList = isLedgerLive()
   ? [
-      { id: 0, name: 'Ethereum', img: ETHEREUM, chainId: CHAINS_ID.ETH_MAINNET },
-      { id: 1, name: 'Polygon', img: POLYGON, chainId: CHAINS_ID.MATIC_MAINNET },
+      { id: 0, name: 'Ethereum', img: ETHEREUM, chainId: CHAIN_IDS.ETH_MAINNET },
+      { id: 1, name: 'Polygon', img: POLYGON, chainId: CHAIN_IDS.POLYGON_MAINNET },
     ]
   : [
-      { id: 0, name: 'Ethereum', img: ETHEREUM, chainId: CHAINS_ID.ETH_MAINNET },
-      { id: 1, name: 'Polygon', img: POLYGON, chainId: CHAINS_ID.MATIC_MAINNET },
-      { id: 2, name: 'Arbitrum', img: ARBITRUM, chainId: CHAINS_ID.ARBITRUM_ONE },
+      { id: 0, name: 'Ethereum', img: ETHEREUM, chainId: CHAIN_IDS.ETH_MAINNET },
+      { id: 1, name: 'Polygon', img: POLYGON, chainId: CHAIN_IDS.POLYGON_MAINNET },
+      { id: 2, name: 'Arbitrum', img: ARBITRUM, chainId: CHAIN_IDS.ARBITRUM_ONE },
     ]
 
 const MobileChainsList = isLedgerLive()
   ? [
       { id: 0, name: 'All Chains', img: AllChains, chainId: '' },
-      { id: 1, name: 'Ethereum', img: ETHEREUM, chainId: CHAINS_ID.ETH_MAINNET },
-      { id: 2, name: 'Polygon', img: POLYGON, chainId: CHAINS_ID.MATIC_MAINNET },
+      { id: 1, name: 'Ethereum', img: ETHEREUM, chainId: CHAIN_IDS.ETH_MAINNET },
+      { id: 2, name: 'Polygon', img: POLYGON, chainId: CHAIN_IDS.POLYGON_MAINNET },
     ]
   : [
       { id: 0, name: 'All Chains', img: AllChains, chainId: '' },
-      { id: 1, name: 'Ethereum', img: ETHEREUM, chainId: CHAINS_ID.ETH_MAINNET },
-      { id: 2, name: 'Polygon', img: POLYGON, chainId: CHAINS_ID.MATIC_MAINNET },
-      { id: 3, name: 'Arbitrum', img: ARBITRUM, chainId: CHAINS_ID.ARBITRUM_ONE },
+      { id: 1, name: 'Ethereum', img: ETHEREUM, chainId: CHAIN_IDS.ETH_MAINNET },
+      { id: 2, name: 'Polygon', img: POLYGON, chainId: CHAIN_IDS.POLYGON_MAINNET },
+      { id: 3, name: 'Arbitrum', img: ARBITRUM, chainId: CHAIN_IDS.ARBITRUM_ONE },
     ]
 
 const FarmsList = [
@@ -235,13 +235,13 @@ const QuickFilter = ({
   const { selChain, setSelChain, chainId } = useWallet()
   // for Chain
   const curChain = []
-  if (selChain.includes(CHAINS_ID.ETH_MAINNET)) {
+  if (selChain.includes(CHAIN_IDS.ETH_MAINNET)) {
     curChain.push(0)
   }
-  if (selChain.includes(CHAINS_ID.MATIC_MAINNET)) {
+  if (selChain.includes(CHAIN_IDS.POLYGON_MAINNET)) {
     curChain.push(1)
   }
-  if (selChain.includes(CHAINS_ID.ARBITRUM_ONE)) {
+  if (selChain.includes(CHAIN_IDS.ARBITRUM_ONE)) {
     curChain.push(2)
   }
 
@@ -519,9 +519,9 @@ const QuickFilter = ({
                     onAssetClick('')
                     onSelectFarmType('')
                     setSelChain([
-                      CHAINS_ID.ETH_MAINNET,
-                      CHAINS_ID.MATIC_MAINNET,
-                      CHAINS_ID.ARBITRUM_ONE,
+                      CHAIN_IDS.ETH_MAINNET,
+                      CHAIN_IDS.POLYGON_MAINNET,
+                      CHAIN_IDS.ARBITRUM_ONE,
                     ])
                     clearFilter()
                   }}
@@ -721,9 +721,9 @@ const QuickFilter = ({
                   setMobileFilterCount(0)
                   setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2])
                   setSelChain([
-                    CHAINS_ID.ETH_MAINNET,
-                    CHAINS_ID.MATIC_MAINNET,
-                    CHAINS_ID.ARBITRUM_ONE,
+                    CHAIN_IDS.ETH_MAINNET,
+                    CHAIN_IDS.POLYGON_MAINNET,
+                    CHAIN_IDS.ARBITRUM_ONE,
                   ])
                   clearFilter()
                 }}

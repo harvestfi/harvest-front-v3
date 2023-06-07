@@ -16,7 +16,7 @@ import {
   MATIC_URL,
   POLL_BALANCES_INTERVAL_MS,
 } from '../../constants'
-import { CHAINS_ID } from '../../data/constants'
+import { CHAIN_IDS } from '../../data/constants'
 import { formatNumber, isLedgerLive, isSafeApp } from '../../utils'
 import contracts from './contracts'
 
@@ -127,17 +127,17 @@ export const pollUpdatedBalance = (method, currentBalance, onTimeout, onSuccess,
 
 export const getChainName = chainId => {
   switch (Number(chainId)) {
-    case Number(CHAINS_ID.ARBITRUM_ONE):
-    case getChainHexadecimal(CHAINS_ID.ARBITRUM_ONE):
+    case Number(CHAIN_IDS.ARBITRUM_ONE):
+    case getChainHexadecimal(CHAIN_IDS.ARBITRUM_ONE):
       return 'Arbitrum One'
-    case Number(CHAINS_ID.ETH_MAINNET):
-    case getChainHexadecimal(CHAINS_ID.ETH_MAINNET):
+    case Number(CHAIN_IDS.ETH_MAINNET):
+    case getChainHexadecimal(CHAIN_IDS.ETH_MAINNET):
       return 'Ethereum Mainnet'
-    case Number(CHAINS_ID.ETH_ROPSTEN):
-    case getChainHexadecimal(CHAINS_ID.ETH_ROPSTEN):
+    case Number(CHAIN_IDS.ETH_ROPSTEN):
+    case getChainHexadecimal(CHAIN_IDS.ETH_ROPSTEN):
       return 'Ethereum Ropsten'
-    case Number(CHAINS_ID.MATIC_MAINNET):
-    case getChainHexadecimal(CHAINS_ID.MATIC_MAINNET):
+    case Number(CHAIN_IDS.POLYGON_MAINNET):
+    case getChainHexadecimal(CHAIN_IDS.POLYGON_MAINNET):
       return 'Polygon (Matic)'
     default:
       return `Unknown(${chainId})`
@@ -156,11 +156,11 @@ export const getWeb3 = async (chainId, account, web3 = null) => {
     return web3 || mainWeb3
   }
 
-  if (chainId === CHAINS_ID.MATIC_MAINNET) {
+  if (chainId === CHAIN_IDS.POLYGON_MAINNET) {
     return maticWeb3
   }
 
-  if (chainId === CHAINS_ID.ARBITRUM_ONE) {
+  if (chainId === CHAIN_IDS.ARBITRUM_ONE) {
     return arbitrumWeb3
   }
 
@@ -182,9 +182,9 @@ export const newContractInstance = async (contractName, address, customAbi, web3
 
 export const getExplorerLink = chainId => {
   switch (chainId) {
-    case CHAINS_ID.MATIC_MAINNET:
+    case CHAIN_IDS.POLYGON_MAINNET:
       return MATICSCAN_URL
-    case CHAINS_ID.ARBITRUM_ONE:
+    case CHAIN_IDS.ARBITRUM_ONE:
       return ARBISCAN_URL
     default:
       return ETHERSCAN_URL
