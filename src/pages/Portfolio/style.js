@@ -239,8 +239,8 @@ const Content = styled.div`
 `
 
 const BadgeIcon = styled.div`
-  width: 14px;
-  height: 15px;
+  width: 21px;
+  height: 22px;
   display: flex;
   justify-content: center;
   align-items: center;

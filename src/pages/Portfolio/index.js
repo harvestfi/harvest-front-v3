@@ -569,7 +569,7 @@ const Portfolio = () => {
                       <FlexDiv>
                         <Content width="5%" firstColumn>
                           <BadgeIcon badgeBack={badgeIconBackColor}>
-                            <img src={info.chain} width="10px" height="10px" alt="" />
+                            <img src={info.chain} width="15px" height="15px" alt="" />
                           </BadgeIcon>
                         </Content>
                         <Content
@@ -582,7 +582,7 @@ const Portfolio = () => {
                                 <LogoImg
                                   key={index}
                                   className="coin"
-                                  width={isMobile ? 19 : 37}
+                                  width={isMobile ? 30 : 37}
                                   src={elem}
                                   alt=""
                                 />
