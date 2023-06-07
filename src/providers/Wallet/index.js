@@ -4,7 +4,7 @@ import React, { createContext, useCallback, useContext, useEffect, useState } fr
 import { toast } from 'react-toastify'
 import Web3 from 'web3'
 import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../constants'
-import { CHAINS_ID } from '../../data/constants'
+import { CHAIN_IDS } from '../../data/constants'
 import {
   getChainName,
   hasValidUpdatedBalance,
@@ -29,12 +29,12 @@ const WalletProvider = _ref => {
   const { children } = _ref
   const [account, setAccount] = useState(null)
   const [connected, setConnected] = useState(false)
-  const [chainId, setChainId] = useState(CHAINS_ID.ETH_MAINNET)
+  const [chainId, setChainId] = useState(CHAIN_IDS.ETH_MAINNET)
   const [web3, setWeb3] = useState(mainWeb3)
   const [selChain, setSelChain] = useState([
-    CHAINS_ID.ETH_MAINNET,
-    CHAINS_ID.MATIC_MAINNET,
-    CHAINS_ID.ARBITRUM_ONE,
+    CHAIN_IDS.ETH_MAINNET,
+    CHAIN_IDS.POLYGON_MAINNET,
+    CHAIN_IDS.ARBITRUM_ONE,
   ])
   const [balances, setBalances] = useState({})
   const [logout, setLogout] = useState(false)

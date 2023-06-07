@@ -16,7 +16,7 @@ import {
   IFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
 } from '../../../constants'
-import { CHAINS_ID } from '../../../data/constants'
+import { CHAIN_IDS } from '../../../data/constants'
 import { usePools } from '../../../providers/Pools'
 import { useStats } from '../../../providers/Stats'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -85,8 +85,8 @@ const formatVaults = (
   ])
 
   if (
-    (isSpecialApp && chainId === CHAINS_ID.ETH_MAINNET) ||
-    (!isSpecialApp && selChain.includes(CHAINS_ID.ETH_MAINNET))
+    (isSpecialApp && chainId === CHAIN_IDS.ETH_MAINNET) ||
+    (!isSpecialApp && selChain.includes(CHAIN_IDS.ETH_MAINNET))
   ) {
     const farmIdx = vaultsSymbol.findIndex(symbol => symbol === FARM_TOKEN_SYMBOL)
     vaultsSymbol = move(vaultsSymbol, farmIdx, 0)
@@ -396,7 +396,7 @@ const VaultList = () => {
 
   let groupOfVaults = []
   if (isSpecialApp) {
-    if (chainId === CHAINS_ID.ETH_MAINNET) groupOfVaults = { ...vaultsData, ...poolVaults }
+    if (chainId === CHAIN_IDS.ETH_MAINNET) groupOfVaults = { ...vaultsData, ...poolVaults }
     else groupOfVaults = { ...vaultsData }
   } else {
     groupOfVaults = { ...vaultsData, ...poolVaults }
@@ -452,7 +452,7 @@ const VaultList = () => {
   useEffectWithPrevious(
     ([prevChain, prevAccount, prevOpenVault]) => {
       const hasSwitchedChain = chain !== prevChain
-      const hasSwitchedChainToETH = hasSwitchedChain && chain === CHAINS_ID.ETH_MAINNET
+      const hasSwitchedChainToETH = hasSwitchedChain && chain === CHAIN_IDS.ETH_MAINNET
       const hasSwitchedAccount = account !== prevAccount && account
       const hasSwitchedVault = openVault !== prevOpenVault
 
@@ -493,7 +493,7 @@ const VaultList = () => {
           if (
             firstVaultsBalancesLoad.current &&
             !selectedVault &&
-            selChain.includes(CHAINS_ID.ETH_MAINNET)
+            selChain.includes(CHAIN_IDS.ETH_MAINNET)
           ) {
             // firstVaultsBalancesLoad.current = false
             balancesToLoad = [
@@ -515,7 +515,7 @@ const VaultList = () => {
               balancesToLoad = [...balancesToLoad, ...multipleAssets]
             }
 
-            if (chain === CHAINS_ID.ETH_MAINNET) {
+            if (chain === CHAIN_IDS.ETH_MAINNET) {
               balancesToLoad = [
                 ...balancesToLoad,
                 FARM_TOKEN_SYMBOL,

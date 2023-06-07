@@ -25,7 +25,7 @@ import {
   directDetailUrl,
 } from '../../constants'
 import { addresses } from '../../data'
-import { CHAINS_ID } from '../../data/constants'
+import { CHAIN_IDS } from '../../data/constants'
 import { usePools } from '../../providers/Pools'
 import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
@@ -70,10 +70,10 @@ import {
 const getChainIcon = chain => {
   let chainLogo = ETHEREUM
   switch (chain) {
-    case CHAINS_ID.MATIC_MAINNET:
+    case CHAIN_IDS.POLYGON_MAINNET:
       chainLogo = POLYGON
       break
-    case CHAINS_ID.ARBITRUM_ONE:
+    case CHAIN_IDS.ARBITRUM_ONE:
       chainLogo = ARBITRUM
       break
     default:

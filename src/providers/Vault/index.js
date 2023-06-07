@@ -14,7 +14,7 @@ import React, {
 import { toast } from 'react-toastify'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { IFARM_TOKEN_SYMBOL, VAULTS_API_ENDPOINT } from '../../constants'
-import { CHAINS_ID } from '../../data/constants'
+import { CHAIN_IDS } from '../../data/constants'
 import {
   getWeb3,
   hasValidUpdatedBalance,
@@ -82,7 +82,7 @@ const VaultsProvider = _ref => {
       await forEach(Object.keys(importedVaults), async vaultSymbol => {
         const vaultChain = get(importedVaults, `[${vaultSymbol}].chain`)
         try {
-          if (!isLedgerLive() || (isLedgerLive() && vaultChain !== CHAINS_ID.ARBITRUM_ONE)) {
+          if (!isLedgerLive() || (isLedgerLive() && vaultChain !== CHAIN_IDS.ARBITRUM_ONE)) {
             let web3Client = await getWeb3(vaultChain, account),
               estimatedApy = null,
               estimatedApyBreakdown = [],
@@ -161,7 +161,7 @@ const VaultsProvider = _ref => {
                 : await getPricePerFullShare(instance, web3Client)
             }
 
-            if (isIFARM && account && curChainId === CHAINS_ID.ETH_MAINNET) {
+            if (isIFARM && account && curChainId === CHAIN_IDS.ETH_MAINNET) {
               underlyingBalanceWithInvestmentForHolder = await getUnderlyingBalanceWithInvestmentForHolder(
                 account,
                 instance,
@@ -270,8 +270,8 @@ const VaultsProvider = _ref => {
         const apiResponse = await axios.get(VAULTS_API_ENDPOINT)
         const apiData = get(apiResponse, 'data')
         if (isSpecialApp) {
-          if (chainId === CHAINS_ID.ETH_MAINNET) await setFormattedVaults(apiData.eth)
-          else if (chainId === CHAINS_ID.MATIC_MAINNET) await setFormattedVaults(apiData.matic)
+          if (chainId === CHAIN_IDS.ETH_MAINNET) await setFormattedVaults(apiData.eth)
+          else if (chainId === CHAIN_IDS.POLYGON_MAINNET) await setFormattedVaults(apiData.matic)
           else await setFormattedVaults(apiData.arbitrum)
         } else {
           await setFormattedVaults(merge(apiData.eth, apiData.matic, apiData.arbitrum))

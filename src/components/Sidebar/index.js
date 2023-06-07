@@ -18,8 +18,14 @@ import Toggle from '../../assets/images/logos/sidebar/toggle.svg'
 import Arbitrum from '../../assets/images/chains/arbitrum.svg'
 import Ethereum from '../../assets/images/chains/ethereum.svg'
 import Polygon from '../../assets/images/chains/polygon.svg'
-import { ROUTES, directDetailUrl } from '../../constants'
-import { CHAINS_ID } from '../../data/constants'
+import {
+  DECIMAL_PRECISION,
+  FARM_TOKEN_SYMBOL,
+  ROUTES,
+  SPECIAL_VAULTS,
+  directDetailUrl,
+} from '../../constants'
+import { CHAIN_IDS } from '../../data/constants'
 import { addresses } from '../../data/index'
 import { usePools } from '../../providers/Pools'
 import { useStats } from '../../providers/Stats'
@@ -141,13 +147,13 @@ const getChainIcon = chainNum => {
   let icon = null
   if (chainNum) {
     switch (chainNum) {
-      case CHAINS_ID.ETH_MAINNET:
+      case CHAIN_IDS.ETH_MAINNET:
         icon = Ethereum
         break
-      case CHAINS_ID.MATIC_MAINNET:
+      case CHAIN_IDS.POLYGON_MAINNET:
         icon = Polygon
         break
-      case CHAINS_ID.ARBITRUM_ONE:
+      case CHAIN_IDS.ARBITRUM_ONE:
         icon = Arbitrum
         break
       default:
@@ -209,7 +215,7 @@ const Sidebar = ({ width }) => {
 
   const directAction = path => {
     if (path === ROUTES.PORTFOLIO || path === ROUTES.ANALYTIC) {
-      setSelChain([CHAINS_ID.ETH_MAINNET, CHAINS_ID.MATIC_MAINNET, CHAINS_ID.ARBITRUM_ONE])
+      setSelChain([CHAIN_IDS.ETH_MAINNET, CHAIN_IDS.POLYGON_MAINNET, CHAIN_IDS.ARBITRUM_ONE])
     }
     push(path)
   }
@@ -369,7 +375,7 @@ const Sidebar = ({ width }) => {
             </Fragment>
           ))}
         </LinksContainer>
-        {isSpecialApp && chainId !== CHAINS_ID.ETH_MAINNET ? (
+        {isSpecialApp && chainId !== CHAIN_IDS.ETH_MAINNET ? (
           <></>
         ) : (
           <ProfitSharing
