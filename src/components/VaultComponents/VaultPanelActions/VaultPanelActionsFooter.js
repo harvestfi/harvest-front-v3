@@ -8,7 +8,7 @@ import {
   POOL_BALANCES_DECIMALS,
   SPECIAL_VAULTS,
 } from '../../../constants'
-import { CHAINS_ID } from '../../../data/constants'
+import { CHAIN_IDS } from '../../../data/constants'
 import { usePools } from '../../../providers/Pools'
 import { calculateRewardsEarned } from '../../../providers/Pools/utils'
 import { useVaults } from '../../../providers/Vault'
@@ -25,7 +25,7 @@ import VaultFooterActions from './VaultFooterActions'
 const { addresses, tokens } = require('../../../data')
 
 const getPoolRewardSymbol = chain => {
-  if (chain === CHAINS_ID.ARBITRUM_ONE || chain === CHAINS_ID.MATIC_MAINNET) {
+  if (chain === CHAIN_IDS.ARBITRUM_ONE || chain === CHAIN_IDS.POLYGON_MAINNET) {
     return IFARM_TOKEN_SYMBOL
   }
   return FARM_TOKEN_SYMBOL

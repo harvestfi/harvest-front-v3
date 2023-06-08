@@ -20,7 +20,7 @@ import ReaderMaticMethods from './reader-matic/methods'
 import ReaderArbitrumContract from './reader-arbitrum/contract.json'
 import ReaderArbitrumMethods from './reader-arbitrum/methods'
 
-import { CHAINS_ID } from '../../../data/constants'
+import { CHAIN_IDS } from '../../../data/constants'
 
 const { tokens } = require('../../../data')
 
@@ -47,34 +47,34 @@ export default {
   depositHelper: {
     contract: DepositHelperContract,
     methods: DepositHelperMethods,
-    chain: CHAINS_ID.ETH_MAINNET,
+    chain: CHAIN_IDS.ETH_MAINNET,
   },
   uniswap: {
     contract: UniswapContract,
     methods: UniswapMethods,
-    chain: CHAINS_ID.ETH_MAINNET,
+    chain: CHAIN_IDS.ETH_MAINNET,
   },
   apRedemtion: {
     contract: APRedemptionContract,
     methods: APRedemptionMethods,
-    chain: CHAINS_ID.ETH_MAINNET,
+    chain: CHAIN_IDS.ETH_MAINNET,
   },
   readerEth: {
     contract: ReaderEthContract,
     methods: ReaderEthMethods,
-    chain: CHAINS_ID.ETH_MAINNET,
+    chain: CHAIN_IDS.ETH_MAINNET,
   },
 
   readerMatic: {
     contract: ReaderMaticContract,
     methods: ReaderMaticMethods,
-    chain: CHAINS_ID.MATIC_MAINNET,
+    chain: CHAIN_IDS.POLYGON_MAINNET,
   },
 
   readerArbitrum: {
     contract: ReaderArbitrumContract,
     methods: ReaderArbitrumMethods,
-    chain: CHAINS_ID.ARBITRUM_ONE,
+    chain: CHAIN_IDS.ARBITRUM_ONE,
   },
   ...getTokensContracts(),
 }

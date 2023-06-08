@@ -3,17 +3,17 @@ import promiseObject from 'promise-all-object'
 import importedContracts from '../services/web3/contracts'
 import { newContractInstance, maticWeb3, arbitrumWeb3, infuraWeb3 } from '../services/web3'
 import { isLedgerLive } from '../utils'
-import { CHAINS_ID } from '../data/constants'
+import { CHAIN_IDS } from '../data/constants'
 
 const ContractsContext = createContext()
 const useContracts = () => useContext(ContractsContext)
 
 const getWeb3 = chainId => {
-  if (chainId === CHAINS_ID.MATIC_MAINNET) {
+  if (chainId === CHAIN_IDS.POLYGON_MAINNET) {
     return maticWeb3
   }
 
-  if (chainId === CHAINS_ID.ARBITRUM_ONE) {
+  if (chainId === CHAIN_IDS.ARBITRUM_ONE) {
     return arbitrumWeb3
   }
 
@@ -27,7 +27,7 @@ const ContractsProvider = _ref => {
     const initializeContracts = async () => {
       const temporaryGroupOfContracts = {}
       Object.keys(importedContracts).forEach(contract => {
-        if (!isLedgerLive() || (isLedgerLive() && contract.chain !== CHAINS_ID.ARBITRUM_ONE)) {
+        if (!isLedgerLive() || (isLedgerLive() && contract.chain !== CHAIN_IDS.ARBITRUM_ONE)) {
           Object.assign(temporaryGroupOfContracts, {
             [contract]: {
               instance: newContractInstance(

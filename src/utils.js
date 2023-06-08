@@ -22,7 +22,7 @@ import {
   GRAPH_URL_POLYGON,
   GRAPH_URL_ARBITRUM,
 } from './constants'
-import { CHAINS_ID } from './data/constants'
+import { CHAIN_IDS } from './data/constants'
 import { addresses } from './data/index'
 
 axiosRetry(axios, {
@@ -244,7 +244,7 @@ const getRewardSymbol = (vault, isIFARM, vaultPool) => {
         .join(', ')
     case vaultPool && vaultPool.rewardTokenSymbols.length === 1:
       return vaultPool.rewardTokenSymbols[0]
-    case vault.chain === CHAINS_ID.MATIC_MAINNET || isIFARM:
+    case vault.chain === CHAIN_IDS.POLYGON_MAINNET || isIFARM:
       return 'iFARM'
     default:
       return 'FARM'
@@ -1159,9 +1159,9 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
       redirect: 'follow',
     }
   const url =
-    chainId === CHAINS_ID.ETH_MAINNET
+    chainId === CHAIN_IDS.ETH_MAINNET
       ? GRAPH_URL_MAINNET
-      : chainId === CHAINS_ID.MATIC_MAINNET
+      : chainId === CHAIN_IDS.POLYGON_MAINNET
       ? GRAPH_URL_POLYGON
       : GRAPH_URL_ARBITRUM
 
