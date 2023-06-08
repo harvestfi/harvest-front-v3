@@ -322,7 +322,7 @@ const QuickFilter = ({
 
   const clearFilter = () => {
     setParamObj({})
-    push(pathname)
+    push('/')
   }
 
   const onClickClearFilter = () => {

@@ -594,10 +594,16 @@ const FilterOffCanvasBody = styled(Offcanvas.Body)`
         display: flex;
         padding: 13px 18px 15px 18px;
         color: ${props => props.fontcolor};
+        background: none;
         img {
           margin-right: 6px;
           filter: ${props => props.filtercolor};
         }
+      }
+
+      .item:hover,
+      .item:active {
+        background: ${props => props.hovercolor};
       }
 
       .item.disabled {

@@ -18,13 +18,7 @@ import Toggle from '../../assets/images/logos/sidebar/toggle.svg'
 import Arbitrum from '../../assets/images/chains/arbitrum.svg'
 import Ethereum from '../../assets/images/chains/ethereum.svg'
 import Polygon from '../../assets/images/chains/polygon.svg'
-import {
-  DECIMAL_PRECISION,
-  FARM_TOKEN_SYMBOL,
-  ROUTES,
-  SPECIAL_VAULTS,
-  directDetailUrl,
-} from '../../constants'
+import { ROUTES, directDetailUrl } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
 import { addresses } from '../../data/index'
 import { usePools } from '../../providers/Pools'
