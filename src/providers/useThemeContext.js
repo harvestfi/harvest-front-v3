@@ -123,6 +123,8 @@ export function ThemeProvider({ children }) {
 
   const analyticTitleColor = darkMode ? 'white' : '#475467'
 
+  const mobileFilterHoverColor = darkMode ? '#808081' : '#e9e9e9'
+
   const [openNotify, setOpenNotify] = useState(false) // true : USD, false: Token
   return (
     <ThemeContext.Provider
@@ -190,6 +192,7 @@ export function ThemeProvider({ children }) {
         analyticTitleColor,
         openNotify,
         setOpenNotify,
+        mobileFilterHoverColor,
       }}
     >
       {children}
