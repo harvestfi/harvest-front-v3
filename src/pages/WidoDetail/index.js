@@ -345,7 +345,7 @@ const WidoDetail = () => {
     )
   }
 
-  const [useIFARM, setIFARM] = useState(id === FARM_TOKEN_SYMBOL)
+  const useIFARM = id === FARM_TOKEN_SYMBOL
   const fAssetPool = isSpecialVault
     ? token.data
     : find(pools, pool => pool.collateralAddress === tokens[id].vaultAddress)
@@ -626,7 +626,6 @@ const WidoDetail = () => {
     setAmountsToExecute,
     setLoadingDots,
     setPendingAction,
-    setIFARM,
     setWithdrawMode,
     loaded,
     loadingBalances: loadingLpStats || loadingFarmingBalance,
