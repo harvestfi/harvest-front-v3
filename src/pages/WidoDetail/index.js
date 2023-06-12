@@ -131,7 +131,7 @@ const WidoDetail = () => {
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
-  const { push } = useHistory()
+  const history = useHistory()
 
   const { loadingVaults, vaultsData } = useVaults()
   const { pools, userStats, fetchUserPoolStats } = usePools()
@@ -645,7 +645,7 @@ const WidoDetail = () => {
           <FlexTopDiv>
             <BackBtnRect
               onClick={() => {
-                push('/')
+                history.goBack()
               }}
               backcolor={widoBackBtnBackColor}
               backhovercolor={widoBackBtnBackHoverColor}
@@ -669,7 +669,7 @@ const WidoDetail = () => {
             <FlexTopDiv>
               <BackBtnRect
                 onClick={() => {
-                  push('/')
+                  history.goBack()
                 }}
                 backcolor={widoBackBtnBackColor}
                 backhovercolor={widoBackBtnBackHoverColor}
