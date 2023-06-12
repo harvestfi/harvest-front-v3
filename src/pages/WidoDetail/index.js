@@ -123,8 +123,7 @@ const WidoDetail = () => {
   const { paramAddress } = useParams()
   // Switch Tag (Deposit/Withdraw)
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM]
-  const [active1, setActive1] = useState(true)
-  const [active2, setActive2] = useState(false)
+  const [activeDepo, setActiveDepo] = useState(true)
 
   // Switch Tag (Farm/Details in mobile)
   const [farmView, setFarmView] = useState(true)
@@ -368,7 +367,6 @@ const WidoDetail = () => {
   // Show/Hide Deposit
   const [depositWido, setDepositWido] = useState(false)
   const [clickTokenIdDepo, setClickedTokenIdDepo] = useState(-1)
-  const [, setClickedVaultIdDepo] = useState(-1)
   const [balanceDepo, setBalanceDepo] = useState(0)
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
   const [depositFinalStep, setDepositFinalStep] = useState(false)
@@ -634,7 +632,8 @@ const WidoDetail = () => {
     rewardSymbol,
   }
 
-  const [widoPartHeight, setWidoPartHeight] = useState(null)
+  const [widoPartHeightDepo, setWidoPartHeightDepo] = useState(null)
+  const [widoPartHeightWith, setWidoPartHeightWith] = useState(null)
   const [symbolDepo, setSymbolDepo] = useState('iFARM')
   const [symbolWith, setSymbolWith] = useState('iFARM')
   const [legacyStaking, setLegacyStaking] = useState(false)
@@ -956,7 +955,11 @@ const WidoDetail = () => {
             </HalfInfo>
           </HalfContent>
           <RestContent show={farmView}>
-            <RestPart borderColor={borderColor} backColor={backColor} widoHeight={widoPartHeight}>
+            <RestPart
+              borderColor={borderColor}
+              backColor={backColor}
+              widoHeight={activeDepo ? widoPartHeightDepo : widoPartHeightWith}
+            >
               <SwitchTag borderColor={widoSwitchTagBorderColor} backColor={widoSwitchTagBackColor}>
                 <Tag
                   className="tag1"
@@ -964,10 +967,9 @@ const WidoDetail = () => {
                   shadow={widoTagBoxShadow}
                   fontColor={widoTagFontColor}
                   fontActiveColor={widoTagActiveFontColor}
-                  active={active1}
+                  active={activeDepo}
                   onClick={() => {
-                    setActive1(true)
-                    setActive2(false)
+                    setActiveDepo(true)
                   }}
                 >
                   Deposit
@@ -978,10 +980,9 @@ const WidoDetail = () => {
                   shadow={widoTagBoxShadow}
                   fontColor={widoTagFontColor}
                   fontActiveColor={widoTagActiveFontColor}
-                  active={active2}
+                  active={!activeDepo}
                   onClick={() => {
-                    setActive1(false)
-                    setActive2(true)
+                    setActiveDepo(false)
                   }}
                 >
                   Withdraw
@@ -989,7 +990,7 @@ const WidoDetail = () => {
               </SwitchTag>
 
               {/* Components for Deposit */}
-              <DepositComponets show={active1}>
+              <DepositComponets show={activeDepo}>
                 {useIFARM ? (
                   <WidoPoolDepositBase // for IFarm
                     selectTokenWido={selectTokenDepo}
@@ -1059,7 +1060,7 @@ const WidoDetail = () => {
                   setBalance={setBalanceDepo}
                   supTokenList={supTokenList}
                   soonToSupList={soonToSupList}
-                  setWidoPartHeight={setWidoPartHeight}
+                  setWidoPartHeight={setWidoPartHeightDepo}
                 />
 
                 <WidoDepositStart
@@ -1106,7 +1107,6 @@ const WidoDetail = () => {
                     setUsdValue={setUsdValue}
                     setBalance={setBalanceDepo}
                     setClickedTokenId={setClickedTokenIdDepo}
-                    setClickedVaultId={setClickedVaultIdDepo}
                     pickedToken={pickedTokenDepo}
                     setPickedToken={setPickedTokenDepo}
                     slippagePercentage={slippagePercentDepo}
@@ -1148,7 +1148,7 @@ const WidoDetail = () => {
               </DepositComponets>
 
               {/* Components for Withdraw */}
-              <WithdrawComponents show={active2}>
+              <WithdrawComponents show={!activeDepo}>
                 {useIFARM ? (
                   <WidoPoolWithdrawBase
                     selectTokenWido={selectTokenWith}
@@ -1198,7 +1198,7 @@ const WidoDetail = () => {
                   setPickedToken={setPickedTokenWith}
                   supTokenList={supTokenList}
                   soonToSupList={soonToSupList}
-                  setWidoPartHeight={setWidoPartHeight}
+                  setWidoPartHeight={setWidoPartHeightWith}
                 />
 
                 <WidoWithdrawStart
