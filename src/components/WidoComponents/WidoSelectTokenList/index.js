@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { fromWei } from '../../../services/web3'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { Container, Text, Vault, Content, EmptyContainer } from './style'
+import AnimatedDots from '../../AnimatedDots'
 
 const WidoSelectTokenList = ({
   list,
@@ -62,7 +63,10 @@ const WidoSelectTokenList = ({
           </Container>
         ))
       ) : (
-        <EmptyContainer fontColor={fontColor}>Loading Token list...</EmptyContainer>
+        <EmptyContainer fontColor={fontColor}>
+          Loading Token list
+          <AnimatedDots />
+        </EmptyContainer>
       )}
     </Content>
   )

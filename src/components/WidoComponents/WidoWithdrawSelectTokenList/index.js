@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { fromWei } from '../../../services/web3'
+import AnimatedDots from '../../AnimatedDots'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { Container, Text, Vault, Content, EmptyContainer } from './style'
 
@@ -60,7 +61,10 @@ const WidoWithdrawSelectTokenList = ({
           </Container>
         ))
       ) : (
-        <EmptyContainer fontColor={fontColor}>Loading Token list...</EmptyContainer>
+        <EmptyContainer fontColor={fontColor}>
+          Loading Token list
+          <AnimatedDots />
+        </EmptyContainer>
       )}
     </Content>
   )
