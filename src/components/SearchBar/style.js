@@ -8,21 +8,18 @@ const Container = styled.div`
   position: relative;
   border-radius: 10px;
   transition: 0.25s;
-  background: ${props => props.backColor};
-  input {
-    background: ${props => props.backColor};
-  }
-  border: 1px solid ${props => props.borderColor};
+  border: 1px solid #d0d5dd;
 
   input {
     width: 100%;
     border-width: 0px;
     box-sizing: border-box;
-    border-radius: 10px;
+    border-radius: 10px 0 0 10px;
     color: ${props => props.fontColor};
+    background: none;
     transition: 0.25s;
     margin: 0;
-    padding: 10px 30px 9px 0px;
+    padding: 10px 10px 9px 45px;
     outline: 0;
     font-weight: 400;
     font-size: 16px;
@@ -35,7 +32,7 @@ const Container = styled.div`
     }
 
     &::placeholder {
-      color: #a9aeb3;
+      color: #667085;
     }
 
     @media screen and (max-width: 1480px) {
@@ -65,9 +62,11 @@ const Container = styled.div`
 `
 
 const SearchIcon = styled(AiOutlineSearch)`
-  width: 25px;
-  font-size: 35px;
-  color: #888e8f;
+  position: absolute;
+  left: 0px;
+  width: 20px;
+  font-size: 20px;
+  color: #667085;
   margin-right: 5px;
   margin-left: 12px;
 
@@ -117,4 +116,35 @@ const Icon = styled.img`
   }
 `
 
-export { Container, Icon, SearchIcon }
+const SearchBtn = styled.button`
+  background: #15202b;
+  border-radius: 0px 10px 10px 0px;
+  padding: 10px 18px;
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 24px;
+  color: white;
+  border: none;
+  ${props =>
+    props.darkMode
+      ? `
+    border-left: 1px solid #d0d5dd;
+  `
+      : `
+  `}
+
+  &:hover {
+    background: #37495b;
+  }
+
+  @media screen and (max-width: 1480px) {
+    font-size: 10px;
+    line-height: 14px;
+  }
+
+  @media screen and (max-width: 992px) {
+    height: 45px;
+  }
+`
+
+export { Container, Icon, SearchIcon, SearchBtn }

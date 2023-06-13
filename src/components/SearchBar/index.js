@@ -1,35 +1,26 @@
 import React from 'react'
-import { Container, Icon, SearchIcon } from './style'
+import { Container, SearchIcon, SearchBtn } from './style'
 import { useThemeContext } from '../../providers/useThemeContext'
-import closeImg from '../../assets/images/logos/close.svg'
 
-const VaultSearchBar = ({
-  placeholder,
-  // onChange = () => {},
-  onKeyDown = () => {},
-  onClose = () => {},
-}) => {
-  const { searchBackColor, fontColor, searchBorderColor, searchIconColor } = useThemeContext()
+const VaultSearchBar = ({ placeholder, onKeyDown = () => {}, onSearch = () => {} }) => {
+  const { darkMode, fontColor } = useThemeContext()
+  const [inputText, setInputText] = React.useState('')
+
+  const onChange = e => {
+    setInputText(e.target.value)
+  }
   return (
-    <Container borderColor={searchBorderColor} backColor={searchBackColor} fontColor={fontColor}>
+    <Container fontColor={fontColor}>
       <SearchIcon />
       <input
         id="search-input"
-        // onChange={onChange}
+        onChange={onChange}
         onKeyDown={onKeyDown}
         placeholder={placeholder}
       />
-      <Icon
-        src={closeImg}
-        width={12}
-        height={12}
-        alt="close"
-        right={12}
-        opacity="0.6"
-        cursor="pointer"
-        iconColor={searchIconColor}
-        onClick={onClose}
-      />
+      <SearchBtn type="button" darkMode={darkMode} onClick={() => onSearch(inputText)}>
+        Search
+      </SearchBtn>
     </Container>
   )
 }

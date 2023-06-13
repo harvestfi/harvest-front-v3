@@ -149,6 +149,25 @@ const QuickFilter = ({
     }
   }
 
+  const onClickSearch = text => {
+    const searchString = text
+    setSearchQuery(searchString)
+    setStringSearch(searchString.length > 0)
+    if (searchString !== '') {
+      const updateValue = { search: searchString }
+      setParamObj(newParamObj => ({
+        ...newParamObj,
+        ...updateValue,
+      }))
+    } else {
+      const newObj = { ...paramObj }
+      delete newObj.search
+      setParamObj(() => ({
+        ...newObj,
+      }))
+    }
+  }
+
   const printFarm = id => {
     let text = []
     switch (id) {
@@ -325,17 +344,6 @@ const QuickFilter = ({
   const clearFilter = () => {
     setParamObj({})
     push(pathname)
-  }
-
-  const clearQuery = () => {
-    document.getElementById('search-input').value = ''
-    setSearchQuery('')
-    setStringSearch(false)
-    const newObj = { ...paramObj }
-    delete newObj.search
-    setParamObj(() => ({
-      ...newObj,
-    }))
   }
 
   useEffect(() => {
@@ -535,10 +543,9 @@ const QuickFilter = ({
             <DivWidth className="searchbar" backColor={backColor}>
               <InputsContainer>
                 <SearchBar
-                  placeholder="Search assets"
-                  // onChange={updateSearchQuery}
+                  placeholder="Assets, platforms..."
                   onKeyDown={updateSearchQuery}
-                  onClose={clearQuery}
+                  onSearch={onClickSearch}
                 />
               </InputsContainer>
             </DivWidth>
@@ -741,9 +748,9 @@ const QuickFilter = ({
           </FarmFiltersPart>
           <MobileListHeaderSearch>
             <SearchBar
-              placeholder="Search assets"
+              placeholder="Assets, platforms..."
               onKeyDown={updateSearchQuery}
-              onClose={clearQuery}
+              onSearch={onClickSearch}
             />
           </MobileListHeaderSearch>
         </MobileView>
