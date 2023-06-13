@@ -49,7 +49,6 @@ const WidoPoolDepositFinalStep = ({
   setUsdValue,
   setBalance,
   setClickedTokenId,
-  setClickedVaultId,
   pickedToken,
   setPickedToken,
   slippagePercentage,
@@ -480,7 +479,6 @@ const WidoPoolDepositFinalStep = ({
     setUsdValue(0)
     setInputAmount(0)
     setClickedTokenId(-1)
-    setClickedVaultId(-1)
     setPickedToken({ symbol: 'Select Token' })
     setFinalStep(false)
     setDepositWido(false)
