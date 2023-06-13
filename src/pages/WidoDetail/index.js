@@ -60,7 +60,6 @@ import {
   DepositComponets,
   DescInfo,
   DetailView,
-  DivideBar,
   FlexDiv,
   FlexMobileTopDiv,
   FlexTopDiv,
@@ -86,6 +85,7 @@ import {
   TopPart,
   ValueShow,
   WithdrawComponents,
+  DetailTopInfo,
 } from './style'
 
 const chainList = [
@@ -712,13 +712,13 @@ const WidoDetail = () => {
         <BigDiv>
           <HalfContent show={detailsView}>
             <HalfInfo
-              padding={!isMobile ? '20px 30px' : '20px 25px'}
+              padding={!isMobile ? '0px 20px' : '0px 25px'}
               display="flex"
-              justifyContent={isMobile ? 'space-between' : 'space-around'}
+              justifyContent="space-between"
               backColor={backColor}
               borderColor={borderColor}
             >
-              <div>
+              <DetailTopInfo borderColor={widoDetailDividerColor}>
                 <NewLabel
                   display="flex"
                   weight={700}
@@ -747,24 +747,22 @@ const WidoDetail = () => {
                     />
                     <ReactTooltip
                       id="tooltip-apy"
-                      backgroundColor="white"
+                      backgroundColor="black"
                       borderColor="black"
                       border
-                      textColor="black"
+                      textColor="white"
                     >
                       <TooltipContent>
-                        <Name>APY</Name>
+                        <Name>Annual Percentage Yield</Name>
                         {showAPY()}
                       </TooltipContent>
                     </ReactTooltip>
                   </NewLabel>
                 </NewLabel>
                 <ValueShow>{showAPY()}</ValueShow>
-              </div>
+              </DetailTopInfo>
 
-              <DivideBar height="50px" backcolor={widoDetailDividerColor} />
-
-              <div>
+              <DetailTopInfo borderColor={widoDetailDividerColor}>
                 <NewLabel
                   display="flex"
                   weight={700}
@@ -793,24 +791,22 @@ const WidoDetail = () => {
                     />
                     <ReactTooltip
                       id="tooltip-daily"
-                      backgroundColor="white"
+                      backgroundColor="black"
                       borderColor="black"
                       border
-                      textColor="black"
+                      textColor="white"
                     >
                       <TooltipContent>
-                        <Name>Daily</Name>
+                        <Name>Daily APY</Name>
                         {showApyDaily()}
                       </TooltipContent>
                     </ReactTooltip>
                   </NewLabel>
                 </NewLabel>
                 <ValueShow>{showApyDaily()}</ValueShow>
-              </div>
+              </DetailTopInfo>
 
-              <DivideBar height="50px" backcolor={widoDetailDividerColor} />
-
-              <div>
+              <DetailTopInfo>
                 <NewLabel
                   display="flex"
                   weight={700}
@@ -839,20 +835,20 @@ const WidoDetail = () => {
                     />
                     <ReactTooltip
                       id="tooltip-tvl"
-                      backgroundColor="white"
+                      backgroundColor="black"
                       borderColor="black"
                       border
-                      textColor="black"
+                      textColor="white"
                     >
                       <TooltipContent>
-                        <Name>TVL</Name>
+                        <Name>Total Value Locked</Name>
                         {showTVL()}
                       </TooltipContent>
                     </ReactTooltip>
                   </NewLabel>
                 </NewLabel>
                 <ValueShow>{showTVL()}</ValueShow>
-              </div>
+              </DetailTopInfo>
             </HalfInfo>
             <HalfInfo
               padding={!isMobile ? '10px 20px' : '15px'}

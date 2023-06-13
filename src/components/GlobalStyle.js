@@ -217,7 +217,7 @@ html {
   .__react_component_tooltip {
     border: 2px solid black !important;
     border-radius: 8px !important;
-    background-color: white !important;
+    background-color: black !important;
     padding: 8px !important;
     padding-left: 12px !important;
     padding-right: 12px !important;
