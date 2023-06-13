@@ -398,14 +398,12 @@ const WidoDetail = () => {
   useEffect(() => {
     const getTokenBalance = async () => {
       try {
-        if (chain && account) {
+        if (chain && account && Object.keys(balances).length !== 0) {
           const curBalances = await getBalances(account, [chain.toString()])
           setBalanceList(curBalances)
           let supList = [],
             directInSup = {},
-            directInBalance = {},
-            supportedList = [],
-            vaultId
+            directInBalance = {}
           try {
             supList = await getSupportedTokens({
               chainId: [chain],
@@ -418,27 +416,27 @@ const WidoDetail = () => {
           const tokenAddress = token.tokenAddress
 
           const soonSupList = []
-          for (let i = 0; i < supList.length; i += 1) {
-            const supToken = curBalances.find(el => el.address === supList[i].address)
+          supList = supList.map(sup => {
+            const supToken = curBalances.find(el => el.address === sup.address)
             if (supToken) {
-              supList[i].balance = supToken.balance
-              supList[i].usdValue = supToken.balanceUsdValue
-              supList[i].usdPrice = supToken.usdPrice
+              sup.balance = supToken.balance
+              sup.usdValue = supToken.balanceUsdValue
+              sup.usdPrice = supToken.usdPrice
             } else {
-              supList[i].balance = '0'
-              supList[i].usdValue = '0'
+              sup.balance = '0'
+              sup.usdValue = '0'
             }
-            supList[i].default = false
-            supportedList.push(supList[i])
+            sup.default = false
 
-            if (tokenAddress.length !== 2) {
-              if (supList[i].address.toLowerCase() === tokenAddress.toLowerCase()) {
-                directInSup = supList[i]
+            if (Object.keys(directInSup).length === 0 && tokenAddress.length !== 2) {
+              if (sup.address.toLowerCase() === tokenAddress.toLowerCase()) {
+                directInSup = sup
               }
             }
-          }
+            return sup
+          })
 
-          supportedList = supportedList.sort(function reducer(a, b) {
+          supList = supList.sort(function reducer(a, b) {
             return Number(fromWei(b.balance, b.decimals)) - Number(fromWei(a.balance, a.decimals))
           })
 
@@ -448,21 +446,16 @@ const WidoDetail = () => {
               soonSupList.push(curBalances[j])
             }
 
-            if (tokenAddress.length !== 2) {
+            if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
               if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
                 directInBalance = curBalances[j]
               }
             }
           }
 
-          vaultId = Object.keys(vaultsData).find(
-            key => vaultsData[key].tokenAddress === tokenAddress,
+          const vaultId = Object.keys(groupOfVaults).find(
+            key => groupOfVaults[key].tokenAddress === tokenAddress,
           )
-          if (!vaultId) {
-            vaultId = Object.keys(poolVaults).find(
-              key => poolVaults[key].tokenAddress === tokenAddress,
-            )
-          }
           const directBalance = balances[vaultId]
           const directUsdPrice = token.usdPrice
           const directUsdValue =
@@ -477,13 +470,13 @@ const WidoDetail = () => {
             directInSup.balance = directBalance
             directInSup.usdPrice = directInSup.usdPrice > 0 ? directInSup.usdPrice : directUsdPrice
             directInSup.usdValue = directInSup.usdValue > 0 ? directInSup.usdValue : directUsdValue
-            supportedList = supportedList.sort(function result(x, y) {
+            supList = supList.sort(function result(x, y) {
               return x === directInSup ? -1 : y === directInSup ? 1 : 0
             })
-            if (supportedList.length === 0) {
-              supportedList.push(directInSup)
+            if (supList.length === 0) {
+              supList.push(directInSup)
             }
-            supportedList[0].default = true
+            supList[0].default = true
           } else if (
             !(Object.keys(directInBalance).length === 0 && directInBalance.constructor === Object)
           ) {
@@ -492,11 +485,11 @@ const WidoDetail = () => {
               directInBalance.usdPrice > 0 ? directInBalance.usdPrice : directUsdPrice
             directInBalance.usdValue =
               directInBalance.usdValue > 0 ? directInBalance.usdValue : directUsdValue
-            supportedList = [directInBalance].push(supportedList)
-            if (supportedList.length === 0) {
-              supportedList.push(directInBalance)
+            supList = [directInBalance].push(supList)
+            if (supList.length === 0) {
+              supList.push(directInBalance)
             }
-            supportedList[0].default = true
+            supList[0].default = true
           } else {
             const web3Client = await getWeb3(chain, null)
             const { getSymbol } = tokenMethods
@@ -512,14 +505,14 @@ const WidoDetail = () => {
               logoURI: 'https://etherscan.io/images/main/empty-token.png',
               decimals: tokenDecimals,
             }
-            if (supportedList.length > 0) {
-              supportedList = [direct].push(supportedList)
+            if (supList.length > 0) {
+              supList = [direct].push(supList)
             } else {
-              supportedList.push(direct)
+              supList.push(direct)
             }
           }
           setSoonToSupList(soonSupList)
-          setSupTokenList(supportedList)
+          setSupTokenList(supList)
         }
       } catch (err) {
         console.log('getTokenBalance: ', err)
@@ -527,7 +520,7 @@ const WidoDetail = () => {
     }
 
     getTokenBalance()
-  }, [account, chain, toTokenAddress, token, id, tokenDecimals, balances, poolVaults, vaultsData])
+  }, [account, chain, balances]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const {
     backColor,
