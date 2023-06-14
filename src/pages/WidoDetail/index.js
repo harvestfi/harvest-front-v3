@@ -132,6 +132,7 @@ const WidoDetail = () => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const history = useHistory()
+  const { push } = useHistory()
 
   const { loadingVaults, vaultsData } = useVaults()
   const { pools, userStats, fetchUserPoolStats } = usePools()
@@ -638,7 +639,13 @@ const WidoDetail = () => {
           <FlexTopDiv>
             <BackBtnRect
               onClick={() => {
-                history.goBack()
+                const prevUrl = document.referrer
+                const filterUrl = window.location.origin
+                if (prevUrl.includes(filterUrl)) {
+                  history.goBack()
+                } else {
+                  push('/')
+                }
               }}
               backcolor={widoBackBtnBackColor}
               backhovercolor={widoBackBtnBackHoverColor}
@@ -662,7 +669,13 @@ const WidoDetail = () => {
             <FlexTopDiv>
               <BackBtnRect
                 onClick={() => {
-                  history.goBack()
+                  const prevUrl = document.referrer
+                  const filterUrl = window.location.origin
+                  if (prevUrl.includes(filterUrl)) {
+                    history.goBack()
+                  } else {
+                    push('/')
+                  }
                 }}
                 backcolor={widoBackBtnBackColor}
                 backhovercolor={widoBackBtnBackHoverColor}
