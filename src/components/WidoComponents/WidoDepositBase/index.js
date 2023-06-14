@@ -254,7 +254,7 @@ const WidoDepositBase = ({
       <BalanceInfo
         fontColor={widoTagActiveFontColor}
         onClick={() => {
-          if (account) {
+          if (account && pickedToken.symbol !== 'Select Token') {
             setInputAmount(balance)
             const usdAmount =
               pickedToken.usdPrice !== '0.0' ? balance * pickedToken.usdPrice : pickedToken.usdValue
