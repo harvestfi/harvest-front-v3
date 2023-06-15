@@ -513,10 +513,9 @@ const QuickFilter = ({
                     id="dropdown-basic"
                     backcolor={CollaborationBack}
                     bordercolor={borderColor}
-                    filtercolor={filterColor}
                     fontcolor={fontColor}
                   >
-                    <div className="chain-name">{collaborationName}</div>
+                    <div className="name">{collaborationName}</div>
                     <img className="narrow" src={SpecNarrowDown} alt="" />
                   </SpecDropDown>
 
@@ -546,10 +545,9 @@ const QuickFilter = ({
                     id="dropdown-basic"
                     backcolor={TrendsBack}
                     bordercolor={borderColor}
-                    filtercolor={filterColor}
                     fontcolor={fontColor}
                   >
-                    <div className="chain-name">{trendName}</div>
+                    <div className="name">{trendName}</div>
                     <img className="narrow" src={SpecNarrowDown} alt="" />
                   </SpecDropDown>
 
@@ -621,14 +619,15 @@ const QuickFilter = ({
                   {onlyWidth > 1750 ? 'Clear Filters' : 'Clear'}
                 </ClearFilter>
               </DivWidth>
-              <DivWidth borderRadius="10" backColor={backColor}>
+              <DivWidth borderRadius="10">
                 <ChainGroup borderColor={borderColor}>
                   {SwitchBalanceList.map((item, num) => (
                     <SwitchBalanceButton
                       key={num}
                       backColor={backColor}
                       borderColor={borderColor}
-                      filterColor={hoverImgColor}
+                      hoverColor={hoverImgColor}
+                      filterColor={filterColor}
                       className={clickBalanceId === num ? 'active' : ''}
                       onClick={event => handleClickSwitch(event, num)}
                     >

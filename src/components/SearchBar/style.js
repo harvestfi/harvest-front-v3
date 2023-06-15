@@ -4,6 +4,7 @@ import { AiOutlineSearch } from 'react-icons/ai'
 const Container = styled.div`
   display: flex;
   justify-content: ${props => props.justify};
+  background: ${props => props.backColor};
   align-items: center;
   position: relative;
   border-radius: 10px;
@@ -21,7 +22,7 @@ const Container = styled.div`
     background: none;
     transition: 0.25s;
     margin: 0;
-    padding: 9px 10px 9px 45px;
+    padding: 9px 10px;
     outline: 0;
     font-weight: 400;
     font-size: 14px;
@@ -38,9 +39,14 @@ const Container = styled.div`
     }
 
     @media screen and (max-width: 1480px) {
-      padding: 6px 10px 6px 40px;
+      padding: 6px 10px;
+      font-size: 12px;
+      line-height: 16px;
+    }
+
+    @media screen and (max-width: 1480px) {
       font-size: 8px;
-      line-height: 12px;
+      line-height: 14px;
     }
 
     @media screen and (max-width: 992px) {
@@ -65,18 +71,18 @@ const Container = styled.div`
 `
 
 const SearchIcon = styled(AiOutlineSearch)`
-  position: absolute;
-  left: 0px;
-  width: 20px;
   font-size: 20px;
-  color: #667085;
-  margin-right: 5px;
-  margin-left: 12px;
+
+  @media screen and (max-width: 1480px) {
+    font-size: 14px;
+  }
+
+  @media screen and (max-width: 1280px) {
+    font-size: 13px;
+  }
 
   @media screen and (max-width: 992px) {
     width: 12px;
-    margin-right: 10px;
-    margin-left: 13px;
   }
 `
 
@@ -147,12 +153,7 @@ const SearchBtn = styled.button`
   }
 
   @media screen and (max-width: 1280px) {
-    padding: 5px 10px;
-    border-radius: 0px 8px 8px 0px;
-  }
-
-  @media screen and (max-width: 1024px) {
-    display: none;
+    padding: 6px 10px;
   }
 
   @media screen and (max-width: 992px) {

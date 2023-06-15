@@ -29,6 +29,7 @@ const ButtonStyle = styled.button`
 
   &:last-child {
     border-radius: 0 8px 8px 0;
+    border-right: none;
   }
 
   &.active {

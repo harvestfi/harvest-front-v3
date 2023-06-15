@@ -3,15 +3,14 @@ import { Container, SearchIcon, SearchBtn } from './style'
 import { useThemeContext } from '../../providers/useThemeContext'
 
 const VaultSearchBar = ({ placeholder, onKeyDown = () => {}, onSearch = () => {} }) => {
-  const { darkMode, fontColor } = useThemeContext()
+  const { darkMode, fontColor, backColor } = useThemeContext()
   const [inputText, setInputText] = React.useState('')
 
   const onChange = e => {
     setInputText(e.target.value)
   }
   return (
-    <Container fontColor={fontColor}>
-      <SearchIcon />
+    <Container fontColor={fontColor} backColor={backColor}>
       <input
         id="search-input"
         onChange={onChange}
@@ -19,7 +18,7 @@ const VaultSearchBar = ({ placeholder, onKeyDown = () => {}, onSearch = () => {}
         placeholder={placeholder}
       />
       <SearchBtn type="button" darkMode={darkMode} onClick={() => onSearch(inputText)}>
-        Search
+        <SearchIcon />
       </SearchBtn>
     </Container>
   )

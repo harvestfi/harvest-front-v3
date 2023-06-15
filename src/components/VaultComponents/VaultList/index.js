@@ -664,7 +664,9 @@ const VaultList = () => {
           </Dropdown>
         </MobileListFilter>
         <Header fontColor={fontColor} filterColor={filterColor}>
-          <HeaderCol width="45%" />
+          <HeaderCol width="45%" justifyContent="start">
+            Farm
+          </HeaderCol>
           <HeaderCol width="15%" textAlign="left" onClick={() => setSortingParams('apy')}>
             <div className="hoverable">APY</div>
             <SortingIcon

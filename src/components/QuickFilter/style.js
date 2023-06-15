@@ -357,7 +357,7 @@ const ClearFilter = styled.div`
 
   @media screen and (max-width: 1480px) {
     padding: 9px 13px;
-    font-size: 12px;
+    font-size: 11px;
     line-height: 16px;
   }
 
@@ -721,9 +721,13 @@ const SwitchBalanceButton = styled.button`
 
   transition: 0.25s;
 
+  img {
+    filter: ${props => props.filterColor};
+  }
+
   &:hover {
     img {
-      filter: ${props => props.filterColor};
+      filter: ${props => props.hoverColor};
     }
   }
 
@@ -731,7 +735,7 @@ const SwitchBalanceButton = styled.button`
     background: ${props => props.backColor};
 
     img {
-      filter: ${props => props.filterColor};
+      filter: ${props => props.hoverColor};
     }
   }
 
@@ -774,7 +778,7 @@ const SpecDropDown = styled(Dropdown.Toggle)`
   line-height: 20px;
   border-radius: 10px;
   align-items: center;
-  padding: 12px 15px;
+  padding: 10px 15px;
   width: 100%;
   display: flex;
   text-align: left;
@@ -789,18 +793,10 @@ const SpecDropDown = styled(Dropdown.Toggle)`
     font-weight: 500;
   }
 
-  &:active {
-  }
-
-  img {
-    filter: ${props => props.filtercolor};
-  }
-
-  .chain-name {
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 16px;
-    // margin-left: 5px;
+  .name {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
   }
 
   img.narrow {
@@ -809,6 +805,11 @@ const SpecDropDown = styled(Dropdown.Toggle)`
 
   @media screen and (max-width: 1480px) {
     padding: 9px 12px;
+    .name {
+      font-weight: 600;
+      font-size: 12px;
+      line-height: 16px;
+    }
   }
 
   @media screen and (max-width: 1280px) {
@@ -816,8 +817,7 @@ const SpecDropDown = styled(Dropdown.Toggle)`
     font-size: 8px;
     line-height: 14px;
 
-    .chain-name {
-      font-weight: 400;
+    .name {
       font-size: 8px;
       line-height: 14px;
     }
@@ -865,8 +865,8 @@ const SpecDropDownItem = styled(Dropdown.Item)`
   }
 
   @media screen and (max-width: 1280px) {
-    font-size: 9px;
-    line-height: 13px;
+    font-size: 8px;
+    line-height: 12px;
     padding: 7px 10px;
   }
 `
