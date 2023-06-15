@@ -840,6 +840,7 @@ const SpecDropDownItem = styled(Dropdown.Item)`
   display: flex;
   justify-content: center;
   background: url(${props => props.backimg});
+  background-size: 100%;
   color: white !important;
   font-size: 16px;
   font-weight: 600;
