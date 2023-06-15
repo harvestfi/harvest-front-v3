@@ -618,7 +618,7 @@ const QuickFilter = ({
                   }}
                 >
                   <Counter count={filterCount}>{filterCount > 0 ? filterCount : ''}</Counter>&nbsp;
-                  {onlyWidth > 1600 ? 'Clear Filters' : 'Clear'}
+                  {onlyWidth > 1750 ? 'Clear Filters' : 'Clear'}
                 </ClearFilter>
               </DivWidth>
               <DivWidth borderRadius="10" backColor={backColor}>
