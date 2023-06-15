@@ -9,6 +9,8 @@ const Container = styled.div`
   border-radius: 10px;
   transition: 0.25s;
   border: 1px solid #d0d5dd;
+  margin-right: 15px;
+  height: fit-content;
 
   input {
     width: 100%;
@@ -19,11 +21,11 @@ const Container = styled.div`
     background: none;
     transition: 0.25s;
     margin: 0;
-    padding: 10px 10px 9px 45px;
+    padding: 9px 10px 9px 45px;
     outline: 0;
     font-weight: 400;
-    font-size: 16px;
-    line-height: 21px;
+    font-size: 14px;
+    line-height: 22px;
 
     &:disabled {
       background-color: #fffce6;
@@ -36,8 +38,9 @@ const Container = styled.div`
     }
 
     @media screen and (max-width: 1480px) {
-      font-size: 10px;
-      line-height: 14px;
+      padding: 6px 10px 6px 40px;
+      font-size: 8px;
+      line-height: 12px;
     }
 
     @media screen and (max-width: 992px) {
@@ -121,8 +124,8 @@ const SearchBtn = styled.button`
   border-radius: 0px 10px 10px 0px;
   padding: 10px 18px;
   font-weight: 600;
-  font-size: 16px;
-  line-height: 24px;
+  font-size: 14px;
+  line-height: 20px;
   color: white;
   border: none;
   ${props =>
@@ -140,6 +143,16 @@ const SearchBtn = styled.button`
   @media screen and (max-width: 1480px) {
     font-size: 10px;
     line-height: 14px;
+    padding: 10px 15px;
+  }
+
+  @media screen and (max-width: 1280px) {
+    padding: 5px 10px;
+    border-radius: 0px 8px 8px 0px;
+  }
+
+  @media screen and (max-width: 1024px) {
+    display: none;
   }
 
   @media screen and (max-width: 992px) {

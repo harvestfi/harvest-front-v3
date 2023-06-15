@@ -8,24 +8,24 @@ import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
 import MobileFiltersIcon from '../../assets/images/chains/mobilefiltersicon.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
-import LPTokens from '../../assets/images/logos/filter/assets/lptokens.svg'
-import SingleStakes from '../../assets/images/logos/filter/assets/singlestakes.svg'
-import Stable from '../../assets/images/logos/filter/assets/stablecoin.svg'
 import AssetTypeMobile from '../../assets/images/logos/filter/assettype-mobile.svg'
 import DropDownNarrow from '../../assets/images/logos/filter/dropdown-narrow.svg'
-import All from '../../assets/images/logos/filter/farms/all.svg'
-import Moon from '../../assets/images/logos/filter/farms/moon.svg'
-import My from '../../assets/images/logos/filter/farms/my.svg'
 import FarmTypeMobile from '../../assets/images/logos/filter/farmtype-mobile.svg'
 import Beginner from '../../assets/images/logos/filter/risks/beginner.svg'
 import Degen from '../../assets/images/logos/filter/risks/degens.svg'
 import Camelot from '../../assets/images/logos/camelot/camelot_black.svg'
+import UsdIcon from '../../assets/images/ui/usd.svg'
+import TokensIcon from '../../assets/images/ui/tokens.svg'
+import CollaborationBack from '../../assets/images/logos/filter/collaborationback.svg'
+import TrendsBack from '../../assets/images/logos/filter/trendsback.svg'
+import SpecNarrowDown from '../../assets/images/logos/filter/spec-narrowdown.svg'
+import DesciBack from '../../assets/images/logos/filter/desciback.svg'
+import LSDBack from '../../assets/images/logos/filter/lsdback.svg'
 import { CHAIN_IDS } from '../../data/constants'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { isLedgerLive, isSpecialApp } from '../../utils'
 import ButtonGroup from '../ButtonGroup'
-import RiskButtonGroup from '../RiskButtonGroup'
 import MobileButtonGroup from '../MobileButtonGroup'
 import SearchBar from '../SearchBar'
 import {
@@ -40,7 +40,6 @@ import {
   FilterOffCanvas,
   FilterOffCanvasBody,
   FilterOffCanvasHeader,
-  InputsContainer,
   MobileClearFilter,
   MobileListHeaderSearch,
   MobileView,
@@ -49,7 +48,11 @@ import {
   UserDropDownItem,
   UserDropDownMenu,
   WebView,
-  CamelotButton,
+  SpecDropDown,
+  SpecDropDownMenu,
+  SpecDropDownItem,
+  ChainGroup,
+  SwitchBalanceButton,
 } from './style'
 
 const ChainsList = isLedgerLive()
@@ -62,6 +65,16 @@ const ChainsList = isLedgerLive()
       { id: 1, name: 'Polygon', img: POLYGON, chainId: CHAIN_IDS.POLYGON_MAINNET },
       { id: 2, name: 'Arbitrum', img: ARBITRUM, chainId: CHAIN_IDS.ARBITRUM_ONE },
     ]
+
+const SwitchBalanceList = [
+  { id: 0, img: UsdIcon },
+  { id: 1, img: TokensIcon },
+]
+
+const TrendsList = [
+  { id: 0, name: 'LSD', backImg: LSDBack },
+  { id: 1, name: 'DeSci', backImg: DesciBack },
+]
 
 const MobileChainsList = isLedgerLive()
   ? [
@@ -77,14 +90,14 @@ const MobileChainsList = isLedgerLive()
     ]
 
 const FarmsList = [
-  { id: 1, name: 'All Farms', img: All, filter: 'allfarm' },
-  { id: 2, name: 'My Farms', img: My, filter: 'myfarm' },
-  { id: 3, name: 'Inactive', img: Moon, filter: 'inactive' },
+  { id: 1, name: 'All Farms', filter: 'allfarm' },
+  { id: 2, name: 'My Farms', filter: 'myfarm' },
+  { id: 3, name: 'Inactive', filter: 'inactive' },
 ]
 
 const RiskList = [
-  { id: 1, name: 'Beginners', img: Beginner, filter: 'beginners' },
-  { id: 2, name: 'Advanced', img: Degen, filter: 'advanced' },
+  { id: 1, name: 'Beginners', filter: 'beginners' },
+  { id: 2, name: 'Advanced', filter: 'advanced' },
 ]
 
 const MobileRiskList = [
@@ -94,9 +107,9 @@ const MobileRiskList = [
 ]
 
 const AssetsList = [
-  { id: 1, name: 'LP Tokens', img: LPTokens, filter: 'lptokens' },
-  { id: 2, name: 'Single Stakes', img: SingleStakes, filter: 'singlestakes' },
-  { id: 3, name: 'Stablecoins', img: Stable, filter: 'stablecoins' },
+  { id: 1, name: 'LP', filter: 'lptokens' },
+  { id: 2, name: 'Single', filter: 'singlestakes' },
+  { id: 3, name: 'Stable', filter: 'stablecoins' },
 ]
 
 const QuickFilter = ({
@@ -395,7 +408,19 @@ const QuickFilter = ({
     filterChainHoverColor,
     mobileFilterDisableColor,
     mobileFilterHoverColor,
+    switchBalance,
+    setSwitchBalance,
+    hoverImgColor,
   } = useThemeContext()
+
+  const [clickBalanceId, setClickBalanceId] = useState(1)
+  const handleClickSwitch = (event, id) => {
+    setClickBalanceId(id)
+    setSwitchBalance(!switchBalance)
+  }
+
+  const [collaborationName, setCollaborationName] = useState('Collaboration')
+  const [trendName, setTrendName] = useState('Trends')
 
   return (
     <div>
@@ -408,14 +433,13 @@ const QuickFilter = ({
                 background="none"
                 width="100%"
                 display="flex"
-                padding="2px 0 0 0"
                 justifyContent="start"
                 backColor={backColor}
               >
                 {isSpecialApp ? (
                   <></>
                 ) : (
-                  <>
+                  <ChainGroup borderColor={borderColor}>
                     {ChainsList.map((item, i) => (
                       <ChainButton
                         backColor={backColor}
@@ -463,11 +487,11 @@ const QuickFilter = ({
                         <img src={item.img} alt="" />
                       </ChainButton>
                     ))}
-                  </>
+                  </ChainGroup>
                 )}
               </DivWidth>
             </DivWidth>
-            <DivWidth borderRadius="10" backColor={backColor}>
+            <DivWidth borderRadius="10">
               <ButtonGroup
                 buttons={FarmsList}
                 doSomethingAfterClick={printFarm}
@@ -477,31 +501,87 @@ const QuickFilter = ({
             </DivWidth>
           </QuickFilterContainer>
           <QuickFilterContainer position="relative" justifyContent="space-between">
-            <DivWidth className="first" borderRadius="10" backColor={backColor} display="flex">
-              <RiskButtonGroup
-                buttons={RiskList}
-                doSomethingAfterClick={printRisk}
-                clickedId={riskId}
-                setClickedId={setRiskId}
+            <DivWidth className="first" borderRadius="10" display="flex">
+              <SearchBar
+                placeholder="Assets, platforms..."
+                onKeyDown={updateSearchQuery}
+                onSearch={onClickSearch}
               />
-              <CamelotButton
-                type="button"
-                onClick={() => {
-                  push('/camelot')
-                }}
-              >
-                <img src={Camelot} alt="" />
-                Camelot
-              </CamelotButton>
-            </DivWidth>
+              <DivWidth marginRight="15px" height="fit-content">
+                <Dropdown>
+                  <SpecDropDown
+                    id="dropdown-basic"
+                    backcolor={CollaborationBack}
+                    bordercolor={borderColor}
+                    filtercolor={filterColor}
+                    fontcolor={fontColor}
+                  >
+                    <div className="chain-name">{collaborationName}</div>
+                    <img className="narrow" src={SpecNarrowDown} alt="" />
+                  </SpecDropDown>
 
-            <QuickFilterContainer sub justifyContent="space-between">
-              <DivWidth
-                borderRadius="10"
-                marginBottom="15px"
-                marginRight="20px"
-                backColor={backColor}
-              >
+                  {isSpecialApp ? (
+                    <></>
+                  ) : (
+                    <SpecDropDownMenu>
+                      {TrendsList.map((item, i) => (
+                        <SpecDropDownItem
+                          key={i}
+                          className={i === 0 ? 'first' : i === TrendsList.length - 1 ? 'last' : ''}
+                          backimg={item.backImg}
+                          onClick={() => {
+                            setCollaborationName(item.name)
+                          }}
+                        >
+                          <div>{item.name}</div>
+                        </SpecDropDownItem>
+                      ))}
+                    </SpecDropDownMenu>
+                  )}
+                </Dropdown>
+              </DivWidth>
+              <DivWidth marginRight="15px" height="fit-content">
+                <Dropdown>
+                  <SpecDropDown
+                    id="dropdown-basic"
+                    backcolor={TrendsBack}
+                    bordercolor={borderColor}
+                    filtercolor={filterColor}
+                    fontcolor={fontColor}
+                  >
+                    <div className="chain-name">{trendName}</div>
+                    <img className="narrow" src={SpecNarrowDown} alt="" />
+                  </SpecDropDown>
+
+                  {isSpecialApp ? (
+                    <></>
+                  ) : (
+                    <SpecDropDownMenu>
+                      {TrendsList.map((item, i) => (
+                        <SpecDropDownItem
+                          key={i}
+                          className={i === 0 ? 'first' : i === TrendsList.length - 1 ? 'last' : ''}
+                          backimg={item.backImg}
+                          onClick={() => {
+                            setTrendName(item.name)
+                          }}
+                        >
+                          <div>{item.name}</div>
+                        </SpecDropDownItem>
+                      ))}
+                    </SpecDropDownMenu>
+                  )}
+                </Dropdown>
+              </DivWidth>
+              <DivWidth borderRadius="10" marginRight="15px" backColor={backColor}>
+                <ButtonGroup
+                  buttons={RiskList}
+                  doSomethingAfterClick={printRisk}
+                  clickedId={riskId}
+                  setClickedId={setRiskId}
+                />
+              </DivWidth>
+              <DivWidth borderRadius="10" marginRight="15px" backColor={backColor}>
                 <ButtonGroup
                   buttons={AssetsList}
                   doSomethingAfterClick={printAsset}
@@ -509,8 +589,10 @@ const QuickFilter = ({
                   setClickedId={setAssetsId}
                 />
               </DivWidth>
+            </DivWidth>
 
-              <DivWidth right="0" borderRadius="10" backColor={backColor}>
+            <QuickFilterContainer sub justifyContent="space-between">
+              <DivWidth right="0" marginRight="15px" borderRadius="10" backColor={backColor}>
                 <ClearFilter
                   fontColor={fontColor}
                   backColor={backColor}
@@ -536,19 +618,26 @@ const QuickFilter = ({
                   }}
                 >
                   <Counter count={filterCount}>{filterCount > 0 ? filterCount : ''}</Counter>&nbsp;
-                  {onlyWidth > 1280 ? 'Clear Filters' : 'Clear'}
+                  {onlyWidth > 1600 ? 'Clear Filters' : 'Clear'}
                 </ClearFilter>
               </DivWidth>
+              <DivWidth borderRadius="10" backColor={backColor}>
+                <ChainGroup borderColor={borderColor}>
+                  {SwitchBalanceList.map((item, num) => (
+                    <SwitchBalanceButton
+                      key={num}
+                      backColor={backColor}
+                      borderColor={borderColor}
+                      filterColor={hoverImgColor}
+                      className={clickBalanceId === num ? 'active' : ''}
+                      onClick={event => handleClickSwitch(event, num)}
+                    >
+                      <img src={item.img} alt="" />
+                    </SwitchBalanceButton>
+                  ))}
+                </ChainGroup>
+              </DivWidth>
             </QuickFilterContainer>
-            <DivWidth className="searchbar" backColor={backColor}>
-              <InputsContainer>
-                <SearchBar
-                  placeholder="Assets, platforms..."
-                  onKeyDown={updateSearchQuery}
-                  onSearch={onClickSearch}
-                />
-              </InputsContainer>
-            </DivWidth>
           </QuickFilterContainer>
         </WebView>
       ) : (

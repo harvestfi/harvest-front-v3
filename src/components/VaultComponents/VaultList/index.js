@@ -40,7 +40,6 @@ import {
   Header,
   HeaderCol,
   MobileListFilter,
-  ThemeMode,
   VaultsListBody,
 } from './style'
 
@@ -616,14 +615,7 @@ const VaultList = () => {
     backColor,
     mobileFilterBackColor,
     mobileFilterBorderColor,
-    toggleBackColor,
-    switchBalance,
-    setSwitchBalance,
   } = useThemeContext()
-
-  const switchBalanceStyle = () => {
-    setSwitchBalance(!switchBalance)
-  }
 
   return (
     <Container id="vault-list">
@@ -672,27 +664,7 @@ const VaultList = () => {
           </Dropdown>
         </MobileListFilter>
         <Header fontColor={fontColor} filterColor={filterColor}>
-          <HeaderCol width="30%" />
-          <HeaderCol justifyContent="start" width="15%" textAlign="right">
-            <ThemeMode
-              mode={switchBalance ? 'usd' : 'token'}
-              backColor={toggleBackColor}
-              borderColor={borderColor}
-            >
-              <div id="theme-switch">
-                <div className="switch-track">
-                  <div className="switch-thumb" />
-                </div>
-
-                <input
-                  type="checkbox"
-                  checked={switchBalance}
-                  onChange={switchBalanceStyle}
-                  aria-label="Switch between dark and light mode"
-                />
-              </div>
-            </ThemeMode>
-          </HeaderCol>
+          <HeaderCol width="45%" />
           <HeaderCol width="15%" textAlign="left" onClick={() => setSortingParams('apy')}>
             <div className="hoverable">APY</div>
             <SortingIcon

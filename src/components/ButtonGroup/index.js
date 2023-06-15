@@ -1,6 +1,6 @@
 import React from 'react'
 import { useThemeContext } from '../../providers/useThemeContext'
-import { ButtonsGroup, ButtonStyle, Soon } from './style'
+import { ButtonsGroup, ButtonStyle } from './style'
 
 const ButtonGroup = ({ buttons, doSomethingAfterClick, clickedId, setClickedId }) => {
   const { backColor, borderColor, fontColor, filterColor } = useThemeContext()
@@ -28,13 +28,14 @@ const ButtonGroup = ({ buttons, doSomethingAfterClick, clickedId, setClickedId }
             setFocusId(tempId)
             tempId = focusId
           }}
-          className={(i === clickedId || i === focusId) && button.name !== 'Labs' ? 'active' : ''}
+          num={i}
+          className={i === clickedId || i === focusId ? 'active' : ''}
           fontColor={fontColor}
           filterColor={filterColor}
+          borderColor={borderColor}
         >
-          <img src={button.img} width="18" height="18" alt="" />
+          {button.img && <img src={button.img} width="18" height="18" alt="" />}
           <div>{button.name}</div>
-          {button.name === 'Labs' ? <Soon>Soon TM</Soon> : <></>}
         </ButtonStyle>
       ))}
     </ButtonsGroup>

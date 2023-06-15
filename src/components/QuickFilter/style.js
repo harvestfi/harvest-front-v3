@@ -200,7 +200,12 @@ const DivWidth = styled.div`
     border-radius: ${props.borderRadius}px;
   `
       : ''}
-
+  ${props =>
+    props.height
+      ? `
+    height: ${props.height};
+  `
+      : ''}
   background: ${props => props.backColor};
 
   &.searchbar {
@@ -221,6 +226,7 @@ const DivWidth = styled.div`
     }
 
     position: unset;
+    height: fit-content;
   }
 
   @media screen and (max-width: 1280px) {
@@ -229,19 +235,25 @@ const DivWidth = styled.div`
     }
 
     position: unset;
+    margin-right: 3px;
   }
 `
 
 const ChainButton = styled.button`
   align-items: center;
-  width: 50px;
-  height: 50px;
-  border-radius: 12px;
-  margin-right: 21px;
-  border: 1px solid ${props => props.borderColor};
+  &:first-child {
+    border-radius: 10px 0 0 10px;
+  }
+
+  &:last-child {
+    border-radius: 0 10px 10px 0;
+  }
+
+  border: none;
+  border-right: 1px solid ${props => props.borderColor};
   background: ${props => props.backColor};
 
-  padding: 7px 15px;
+  padding: 9px 14px;
   display: flex;
   justify-content: center;
 
@@ -249,13 +261,10 @@ const ChainButton = styled.button`
 
   &:hover {
     background: ${props => props.hoverColor} !important;
-    border-radius: 12px;
   }
 
   &.active {
     background: ${props => props.backColor};
-
-    border-radius: 12px;
 
     img {
       opacity: 1;
@@ -264,17 +273,12 @@ const ChainButton = styled.button`
 
   img {
     opacity: 0.3;
-    width: 25px;
-    height: 25px;
+    width: 22px;
+    height: 22px;
   }
 
   @media screen and (max-width: 1480px) {
-    width: 42px;
-    height: 42px;
-    border-radius: 10px;
-    &.active {
-      border-radius: 10px;
-    }
+    padding: 7px 12px;
     img {
       width: 20px;
       height: 20px;
@@ -282,15 +286,10 @@ const ChainButton = styled.button`
   }
 
   @media screen and (max-width: 1280px) {
-    width: 32px;
-    height: 32px;
-    border-radius: 7px;
-    &.active {
-      border-radius: 7px;
-    }
+    padding: 5px 10px;
     img {
-      width: 15px;
-      height: 15px;
+      width: 14px;
+      height: 14px;
     }
   }
 `
@@ -340,10 +339,10 @@ const ClearFilter = styled.div`
   background: ${props => props.backColor};
   color: ${props => props.fontColor};
   border: 1px solid ${props => props.borderColor};
-  font-size: 16px;
-  font-weight: 500;
-  line-height: 21px;
-  padding: 10px 21px 9px 21px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  padding: 10px 16px;
   border-radius: 10px;
   cursor: pointer;
   height: 100%;
@@ -357,7 +356,7 @@ const ClearFilter = styled.div`
   }
 
   @media screen and (max-width: 1480px) {
-    padding: 10px 15px;
+    padding: 9px 13px;
     font-size: 12px;
     line-height: 16px;
   }
@@ -637,7 +636,7 @@ const CamelotButton = styled.button`
   background-size: unset;
   color: white;
 
-  padding: 11px 20px;
+  padding: 9px 20px;
   border-radius: 0 7px 7px 0;
   border: none;
 
@@ -685,6 +684,192 @@ const CamelotButton = styled.button`
   }
 `
 
+const SpecButtons = styled.button`
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  border: none;
+
+  margin-right: 15px;
+`
+
+const ChainGroup = styled.div`
+  display: flex;
+  border-radius: 10px;
+  border: 1px solid ${props => props.borderColor};
+`
+
+const SwitchBalanceButton = styled.button`
+  align-items: center;
+  &:first-child {
+    border-radius: 10px 0 0 10px;
+  }
+
+  &:last-child {
+    border-radius: 0 10px 10px 0;
+  }
+
+  border: none;
+  border-right: 1px solid ${props => props.borderColor};
+  background: ${props => props.backColor};
+
+  padding: 9px 14px;
+  display: flex;
+  justify-content: center;
+
+  transition: 0.25s;
+
+  &:hover {
+    img {
+      filter: ${props => props.filterColor};
+    }
+  }
+
+  &.active {
+    background: ${props => props.backColor};
+
+    img {
+      filter: ${props => props.filterColor};
+    }
+  }
+
+  img {
+    width: 22px;
+    height: 22px;
+  }
+
+  @media screen and (max-width: 1480px) {
+    border-radius: 10px;
+    padding: 7px 12px;
+    &.active {
+      // border-radius: 10px;
+    }
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  @media screen and (max-width: 1280px) {
+    padding: 5px 10px;
+    // border-radius: 7px;
+    &.active {
+      // border-radius: 7px;
+    }
+    img {
+      width: 14px;
+      height: 14px;
+    }
+  }
+`
+
+const SpecDropDown = styled(Dropdown.Toggle)`
+  background: url(${props => props.backcolor}) !important;
+  border: 1px solid ${props => props.bordercolor} !important;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  border-radius: 10px;
+  align-items: center;
+  padding: 12px 15px;
+  width: 100%;
+  display: flex;
+  text-align: left;
+  position: relative;
+
+  &:after {
+    display: none !important;
+  }
+
+  &:hover {
+    opacity: 0.6;
+    font-weight: 500;
+  }
+
+  &:active {
+  }
+
+  img {
+    filter: ${props => props.filtercolor};
+  }
+
+  .chain-name {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    // margin-left: 5px;
+  }
+
+  img.narrow {
+    margin-left: 10px;
+  }
+
+  @media screen and (max-width: 1480px) {
+    padding: 9px 12px;
+  }
+
+  @media screen and (max-width: 1280px) {
+    padding: 5px 10px;
+    font-size: 8px;
+    line-height: 14px;
+
+    .chain-name {
+      font-weight: 400;
+      font-size: 8px;
+      line-height: 14px;
+    }
+  }
+`
+
+const SpecDropDownMenu = styled(Dropdown.Menu)`
+  background: white;
+  border: 1px solid #e9e9e9;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  padding: 0;
+  width: 100% !important;
+  min-width: unset;
+`
+
+const SpecDropDownItem = styled(Dropdown.Item)`
+  padding: 12px 15px;
+  text-align: left;
+  display: flex;
+  justify-content: center;
+  background: url(${props => props.backimg});
+  color: white !important;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  align-items: center;
+
+  &.first {
+    border-radius: 8px 8px 0 0;
+  }
+
+  &.last {
+    border-radius: 0 0 8px 8px;
+  }
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  @media screen and (max-width: 1480px) {
+    font-size: 12px;
+    line-height: 16px;
+  }
+
+  @media screen and (max-width: 1280px) {
+    font-size: 9px;
+    line-height: 13px;
+    padding: 7px 10px;
+  }
+`
+
 export {
   QuickFilterContainer,
   InputsContainer,
@@ -709,4 +894,10 @@ export {
   ChainATag,
   BadgeText,
   CamelotButton,
+  SpecButtons,
+  ChainGroup,
+  SwitchBalanceButton,
+  SpecDropDown,
+  SpecDropDownMenu,
+  SpecDropDownItem,
 }
