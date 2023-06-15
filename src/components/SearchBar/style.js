@@ -44,7 +44,7 @@ const Container = styled.div`
       line-height: 16px;
     }
 
-    @media screen and (max-width: 1480px) {
+    @media screen and (max-width: 1280px) {
       font-size: 8px;
       line-height: 14px;
     }
