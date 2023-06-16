@@ -892,17 +892,225 @@ const SpecDropDownMenu = styled(Dropdown.Menu)`
 `
 
 const SpecDropDownItem = styled(Dropdown.Item)`
+  text-align: left;
+  display: flex;
+  justify-content: center;
+  ${props =>
+    props.num === 0
+      ? `
+      background-color: #0085FF !important;
+      padding: 15px;
+  `
+      : props.num === 1
+      ? `
+      background-color: #A92A66 !important;
+      padding: 8px;
+      `
+      : `
+      padding: 18px;
+      background-color: #FFAF1D !important;`}
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  color: white !important;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  align-items: center;
+
+  &.first {
+    border-radius: 8px 8px 0 0;
+  }
+
+  &.last {
+    border-radius: 0 0 8px 8px;
+  }
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  @media screen and (max-width: 1480px) {
+    font-size: 12px;
+    line-height: 16px;
+    ${props =>
+      props.num === 0
+        ? `
+        padding: 11px 15px;
+        img {
+          width: 45px;
+        }
+    `
+        : props.num === 1
+        ? `
+        padding: 5px;
+        img {
+          width: 32px;
+        }
+        `
+        : `
+        padding: 14px;
+        img {
+          width: 55px;
+        }
+        `}
+  }
+
+  @media screen and (max-width: 1280px) {
+    font-size: 8px;
+    line-height: 12px;
+    padding: 7px 10px;
+    ${props =>
+      props.num === 0
+        ? `
+        img {
+          width: 40px;
+        }
+    `
+        : props.num === 1
+        ? `
+        padding: 2px 8px;
+        img {
+          width: 30px;
+        }
+        `
+        : `
+        padding: 12px 10px;
+        img {
+          width: 50px;
+        }
+        `}
+  }
+
+  @media screen and (max-width: 992px) {
+    font-size: 16px;
+    line-height: 24px;
+    padding: 12px;
+  }
+`
+
+const TrendDropDown = styled(Dropdown.Toggle)`
+  ${props =>
+    props.num === -1
+      ? `
+    background: #4e54c8;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #8f94fb, #4e54c8);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #8f94fb, #4e54c8); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+    `
+      : props.num === 0
+      ? `
+      background: #12c2e9;  /* fallback for old browsers */
+      background: -webkit-linear-gradient(to right, #f64f59, #c471ed, #12c2e9);  /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(to right, #f64f59, #c471ed, #12c2e9); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    `
+      : `
+      background: #134E5E;  /* fallback for old browsers */
+      background: -webkit-linear-gradient(to right, #71B280, #134E5E);  /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(to right, #71B280, #134E5E); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    `}
+
+  ${props =>
+    props.backcolor
+      ? `
+    background: ${props.backcolor} !important;
+    `
+      : `
+  `}
+
+  background-size: 100% !important;
+  border: 1px solid ${props => props.bordercolor} !important;
+  color: white;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  border-radius: 10px;
+  align-items: center;
+  padding: 10px 15px;
+  width: ${props => (props.type === 'collab' ? '140px' : '102px')};
+  display: flex;
+  justify-content: space-between;
+  text-align: left;
+  position: relative;
+
+  &:after {
+    display: none !important;
+  }
+
+  &:hover {
+    opacity: 0.6;
+    font-weight: 500;
+  }
+
+  .name {
+    font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+  }
+
+  img.narrow {
+    margin-left: 10px;
+  }
+
+  @media screen and (max-width: 1480px) {
+    padding: 9px 12px;
+    width: ${props => (props.type === 'collab' ? '125px' : '90px')};
+    .name {
+      font-weight: 600;
+      font-size: 12px;
+      line-height: 16px;
+    }
+  }
+
+  @media screen and (max-width: 1280px) {
+    padding: 5px 10px;
+    font-size: 8px;
+    line-height: 14px;
+    width: ${props => (props.type === 'collab' ? '100px' : '72px')};
+    .name {
+      font-size: 8px;
+      line-height: 14px;
+    }
+  }
+
+  @media screen and (max-width: 992px) {
+    justify-content: space-between;
+    padding: 10px 16px;
+    width: 100%;
+    .name {
+      font-size: 14px;
+      line-height: 20px;
+    }
+  }
+`
+
+const TrendDropDownMenu = styled(Dropdown.Menu)`
+  background: white;
+  border: 1px solid #e9e9e9;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 8px;
+  padding: 0;
+  width: 100% !important;
+  min-width: unset;
+`
+
+const TrendDropDownItem = styled(Dropdown.Item)`
   padding: 12px 15px;
   text-align: left;
   display: flex;
   justify-content: center;
   ${props =>
-    props.backimg
+    props.num === 0
       ? `
-    background: url(${props.backimg});
+    background: #12c2e9;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #f64f59, #c471ed, #12c2e9);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #f64f59, #c471ed, #12c2e9); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   `
-      : ``}
-  // height: 48px;
+      : `
+    background: #134E5E;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #71B280, #134E5E);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #71B280, #134E5E); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+      `}
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -992,5 +1200,8 @@ export {
   SpecDropDown,
   SpecDropDownMenu,
   SpecDropDownItem,
+  TrendDropDown,
+  TrendDropDownMenu,
+  TrendDropDownItem,
   ApplyFilterBtn,
 }

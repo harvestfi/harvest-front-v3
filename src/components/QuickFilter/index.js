@@ -10,7 +10,6 @@ import POLYGON from '../../assets/images/chains/polygon.svg'
 import UsdIcon from '../../assets/images/ui/usd.svg'
 import TokensIcon from '../../assets/images/ui/tokens.svg'
 import CollaborationBack from '../../assets/images/logos/filter/collaborationback.jpg'
-import TrendsBack from '../../assets/images/logos/filter/trendsback.jpg'
 import SpecNarrowDown from '../../assets/images/logos/filter/spec-narrowdown.svg'
 import DesciBack from '../../assets/images/logos/filter/desciback.jpg'
 import LSDBack from '../../assets/images/logos/filter/lsdback.jpg'
@@ -45,6 +44,9 @@ import {
   SpecDropDown,
   SpecDropDownMenu,
   SpecDropDownItem,
+  TrendDropDown,
+  TrendDropDownMenu,
+  TrendDropDownItem,
   ChainGroup,
   SwitchBalanceButton,
   ApplyFilterBtn,
@@ -401,7 +403,7 @@ const QuickFilter = ({
   const [collaborationName, setCollaborationName] = useState('Collaboration')
   const [collaborationBackColor, setCollaborationBackColor] = useState(null)
   const [trendName, setTrendName] = useState('Trends')
-  const [trendsBackImg, setTrendsBackImg] = useState(TrendsBack)
+  const [trendsBackNum, setTrendsBackNum] = useState(-1)
 
   return (
     <div>
@@ -491,7 +493,6 @@ const QuickFilter = ({
               <DivWidth marginRight="15px" height="fit-content">
                 <Dropdown>
                   <SpecDropDown
-                    id="dropdown-basic"
                     backimg={CollaborationBack}
                     backcolor={collaborationBackColor}
                     bordercolor={borderColor}
@@ -512,13 +513,14 @@ const QuickFilter = ({
                           className={
                             i === 0 ? 'first' : i === CollaborationList.length - 1 ? 'last' : ''
                           }
+                          num={i}
                           backimg={item.backImg}
                           onClick={() => {
                             setCollaborationName(item.name)
                             setCollaborationBackColor(item.backColor)
                           }}
                         >
-                          <div>&nbsp;</div>
+                          <img src={item.logoImg} alt="" />
                         </SpecDropDownItem>
                       ))}
                     </SpecDropDownMenu>
@@ -527,34 +529,33 @@ const QuickFilter = ({
               </DivWidth>
               <DivWidth marginRight="15px" height="fit-content">
                 <Dropdown>
-                  <SpecDropDown
-                    id="dropdown-basic"
-                    backimg={trendsBackImg}
+                  <TrendDropDown
+                    num={trendsBackNum}
                     bordercolor={borderColor}
                     fontcolor={fontColor}
                   >
                     <div className="name">{trendName}</div>
                     <img className="narrow" src={SpecNarrowDown} alt="" />
-                  </SpecDropDown>
+                  </TrendDropDown>
 
                   {isSpecialApp ? (
                     <></>
                   ) : (
-                    <SpecDropDownMenu>
+                    <TrendDropDownMenu>
                       {TrendsList.map((item, i) => (
-                        <SpecDropDownItem
+                        <TrendDropDownItem
                           key={i}
                           className={i === 0 ? 'first' : i === TrendsList.length - 1 ? 'last' : ''}
-                          backimg={item.backImg}
+                          num={i}
                           onClick={() => {
                             setTrendName(item.name)
-                            setTrendsBackImg(item.backImg)
+                            setTrendsBackNum(i)
                           }}
                         >
                           <div>{item.name}</div>
-                        </SpecDropDownItem>
+                        </TrendDropDownItem>
                       ))}
-                    </SpecDropDownMenu>
+                    </TrendDropDownMenu>
                   )}
                 </Dropdown>
               </DivWidth>
@@ -797,36 +798,35 @@ const QuickFilter = ({
                 </DivWidth>
                 <DivWidth mobileMarginBottom="10px" height="fit-content">
                   <Dropdown>
-                    <SpecDropDown
-                      id="dropdown-basic"
-                      backimg={trendsBackImg}
+                    <TrendDropDown
+                      num={trendsBackNum}
                       bordercolor={borderColor}
                       fontcolor={fontColor}
                     >
                       <div className="name">{trendName}</div>
                       <img className="narrow" src={SpecNarrowDown} alt="" />
-                    </SpecDropDown>
+                    </TrendDropDown>
 
                     {isSpecialApp ? (
                       <></>
                     ) : (
-                      <SpecDropDownMenu>
+                      <TrendDropDownMenu>
                         {TrendsList.map((item, i) => (
-                          <SpecDropDownItem
+                          <TrendDropDownItem
                             key={i}
                             className={
                               i === 0 ? 'first' : i === TrendsList.length - 1 ? 'last' : ''
                             }
-                            backimg={item.backImg}
+                            num={i}
                             onClick={() => {
                               setTrendName(item.name)
-                              setTrendsBackImg(item.backImg)
+                              setTrendsBackNum(i)
                             }}
                           >
                             <div>{item.name}</div>
-                          </SpecDropDownItem>
+                          </TrendDropDownItem>
                         ))}
-                      </SpecDropDownMenu>
+                      </TrendDropDownMenu>
                     )}
                   </Dropdown>
                 </DivWidth>
