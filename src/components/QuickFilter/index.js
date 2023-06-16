@@ -13,10 +13,10 @@ import SpecNarrowDown from '../../assets/images/logos/filter/spec-narrowdown.svg
 import DesciBack from '../../assets/images/logos/filter/desciback.jpg'
 import LSDBack from '../../assets/images/logos/filter/lsdback.jpg'
 import LogoVerse from '../../assets/images/logos/filter/logo-verse.svg'
-import LogoPods from '../../assets/images/logos/filter/logo-pods.svg'
+// import LogoPods from '../../assets/images/logos/filter/logo-pods.svg'
 import LogoCamelot from '../../assets/images/logos/filter/logo-camelot.svg'
 import CollabVerse from '../../assets/images/logos/filter/collab-verse.svg'
-import CollabPods from '../../assets/images/logos/filter/collab-pods.svg'
+// import CollabPods from '../../assets/images/logos/filter/collab-pods.svg'
 import CollabCamelot from '../../assets/images/logos/filter/collab-camelot.svg'
 import { CHAIN_IDS } from '../../data/constants'
 import { useThemeContext } from '../../providers/useThemeContext'
@@ -69,7 +69,7 @@ const SwitchBalanceList = [
 
 const CollaborationList = [
   { id: 0, name: 'Verse', backColor: '#0085FF', backImg: CollabVerse, logoImg: LogoVerse },
-  { id: 1, name: 'pods', backColor: '#A92A66', backImg: CollabPods, logoImg: LogoPods },
+  // { id: 1, name: 'pods', backColor: '#A92A66', backImg: CollabPods, logoImg: LogoPods },
   { id: 2, name: 'Camelot', backColor: '#FFAF1D', backImg: CollabCamelot, logoImg: LogoCamelot },
 ]
 
@@ -144,6 +144,8 @@ const QuickFilter = ({
       debouncedFn()
     }
   }
+
+  const [inputText, setInputText] = React.useState('')
 
   const onClickSearch = text => {
     const searchString = text
@@ -404,6 +406,8 @@ const QuickFilter = ({
   const [trendName, setTrendName] = useState('Trends')
   const [trendsBackNum, setTrendsBackNum] = useState(-1)
 
+  const [collabVerseStatus, setCollabVerseStatus] = useState('')
+
   return (
     <div>
       {windowMode ? (
@@ -488,6 +492,8 @@ const QuickFilter = ({
                 placeholder="Assets, platforms..."
                 onKeyDown={updateSearchQuery}
                 onSearch={onClickSearch}
+                inputText={inputText}
+                setInputText={setInputText}
               />
               <DivWidth marginRight="15px" height="fit-content">
                 <Dropdown>
@@ -511,11 +517,17 @@ const QuickFilter = ({
                           className={
                             i === 0 ? 'first' : i === CollaborationList.length - 1 ? 'last' : ''
                           }
-                          num={i}
+                          num={item.id}
                           backimg={item.backImg}
                           onClick={() => {
                             setCollaborationName(item.name)
                             setCollaborationBackColor(item.backColor)
+                            if (i === 0) {
+                              setInputText('verse')
+                              onClickSearch('verse')
+                            } else {
+                              push('/camelot')
+                            }
                           }}
                         >
                           <img src={item.logoImg} alt="" />
@@ -584,6 +596,9 @@ const QuickFilter = ({
                   onClick={() => {
                     document.getElementById('search-input').value = ''
                     setSearchQuery('')
+                    setInputText('')
+                    setCollaborationName('Collaboration')
+                    setCollaborationBackColor(null)
                     onSelectActiveType(['Active'])
                     setStringSearch(false)
                     setRiskId(-1)
@@ -779,11 +794,16 @@ const QuickFilter = ({
                             className={
                               i === 0 ? 'first' : i === CollaborationList.length - 1 ? 'last' : ''
                             }
-                            num={i}
+                            num={item.id}
                             backimg={item.backImg}
                             onClick={() => {
                               setCollaborationName(item.name)
                               setCollaborationBackColor(item.backColor)
+                              if (i === 0) {
+                                setCollabVerseStatus('verse')
+                              } else {
+                                push('/camelot')
+                              }
                             }}
                           >
                             <img src={item.logoImg} alt="" />
@@ -830,8 +850,16 @@ const QuickFilter = ({
                 <ApplyFilterBtn
                   type="button"
                   onClick={() => {
-                    printRisk(riskId)
-                    printAsset(assetsId)
+                    if (riskId !== -1) {
+                      printRisk(riskId)
+                    }
+                    if (assetsId !== -1) {
+                      printAsset(assetsId)
+                    }
+                    if (collabVerseStatus === 'verse') {
+                      setInputText('verse')
+                      onClickSearch('verse')
+                    }
                   }}
                 >
                   Apply Filters
@@ -844,6 +872,9 @@ const QuickFilter = ({
                 onClick={() => {
                   document.getElementById('search-input').value = ''
                   setSearchQuery('')
+                  setInputText('')
+                  setCollaborationName('Collaboration')
+                  setCollaborationBackColor(null)
                   setStringSearch(false)
                   onSelectActiveType(['Active'])
                   onSelectStableCoin(false)
@@ -878,6 +909,8 @@ const QuickFilter = ({
               placeholder="Assets, platforms..."
               onKeyDown={updateSearchQuery}
               onSearch={onClickSearch}
+              inputText={inputText}
+              setInputText={setInputText}
             />
           </MobileListHeaderSearch>
         </MobileView>

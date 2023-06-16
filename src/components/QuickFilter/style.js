@@ -883,7 +883,13 @@ const SpecDropDownMenu = styled(Dropdown.Menu)`
   border-radius: 8px;
   padding: 0;
   width: 100% !important;
-  min-width: unset;
+  min-width: 200%;
+  left: -100% !important;
+
+  @media screen and (max-width: 992px) {
+    left: unset !important;
+    min-width: unset;
+  }
 `
 
 const SpecDropDownItem = styled(Dropdown.Item)`
