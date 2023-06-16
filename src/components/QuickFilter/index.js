@@ -528,7 +528,7 @@ const QuickFilter = ({
                           onClick={() => {
                             setCollaborationName(item.name)
                             setCollaborationBackColor(item.backColor)
-                            if (i === 0) {
+                            if (item.id === 0) {
                               setInputText('verse')
                               onClickSearch('verse')
                             } else {
