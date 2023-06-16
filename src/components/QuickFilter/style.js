@@ -800,19 +800,14 @@ const SwitchBalanceButton = styled.button`
 
 const SpecDropDown = styled(Dropdown.Toggle)`
   ${props =>
-    props.backimg
-      ? `
-    background: url(${props.backimg}) !important;
-    `
-      : `
-  `}
-
-  ${props =>
     props.backcolor
       ? `
     background: ${props.backcolor} !important;
     `
       : `
+      background: #ff9966;  /* fallback for old browsers */
+      background: -webkit-linear-gradient(to right, #ff5e62, #ff9966);  /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(to right, #ff5e62, #ff9966); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   `}
 
   background-size: 100% !important;
@@ -986,6 +981,27 @@ const SpecDropDownItem = styled(Dropdown.Item)`
     font-size: 16px;
     line-height: 24px;
     padding: 12px;
+    ${props =>
+      props.num === 0
+        ? `
+        padding: 15px;
+        img {
+          width: unset;
+        }
+    `
+        : props.num === 1
+        ? `
+        padding: 8px;
+        img {
+          width: unset;
+        }
+        `
+        : `
+        padding: 18px;
+        img {
+          width: unset;
+        }
+        `}
   }
 `
 

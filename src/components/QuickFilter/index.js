@@ -9,7 +9,6 @@ import MobileFiltersIcon from '../../assets/images/chains/mobilefiltersicon.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
 import UsdIcon from '../../assets/images/ui/usd.svg'
 import TokensIcon from '../../assets/images/ui/tokens.svg'
-import CollaborationBack from '../../assets/images/logos/filter/collaborationback.jpg'
 import SpecNarrowDown from '../../assets/images/logos/filter/spec-narrowdown.svg'
 import DesciBack from '../../assets/images/logos/filter/desciback.jpg'
 import LSDBack from '../../assets/images/logos/filter/lsdback.jpg'
@@ -493,7 +492,6 @@ const QuickFilter = ({
               <DivWidth marginRight="15px" height="fit-content">
                 <Dropdown>
                   <SpecDropDown
-                    backimg={CollaborationBack}
                     backcolor={collaborationBackColor}
                     bordercolor={borderColor}
                     fontcolor={fontColor}
@@ -763,8 +761,6 @@ const QuickFilter = ({
                 <DivWidth mobileMarginBottom="10px" height="fit-content">
                   <Dropdown>
                     <SpecDropDown
-                      id="dropdown-basic"
-                      backimg={CollaborationBack}
                       backcolor={collaborationBackColor}
                       bordercolor={borderColor}
                       fontcolor={fontColor}
@@ -783,13 +779,14 @@ const QuickFilter = ({
                             className={
                               i === 0 ? 'first' : i === CollaborationList.length - 1 ? 'last' : ''
                             }
+                            num={i}
                             backimg={item.backImg}
                             onClick={() => {
                               setCollaborationName(item.name)
                               setCollaborationBackColor(item.backColor)
                             }}
                           >
-                            <div>&nbsp;</div>
+                            <img src={item.logoImg} alt="" />
                           </SpecDropDownItem>
                         ))}
                       </SpecDropDownMenu>
