@@ -9,11 +9,11 @@ import MobileFiltersIcon from '../../assets/images/chains/mobilefiltersicon.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
 import UsdIcon from '../../assets/images/ui/usd.svg'
 import TokensIcon from '../../assets/images/ui/tokens.svg'
-import CollaborationBack from '../../assets/images/logos/filter/collaborationback.svg'
-import TrendsBack from '../../assets/images/logos/filter/trendsback.svg'
+import CollaborationBack from '../../assets/images/logos/filter/collaborationback.jpg'
+import TrendsBack from '../../assets/images/logos/filter/trendsback.jpg'
 import SpecNarrowDown from '../../assets/images/logos/filter/spec-narrowdown.svg'
-import DesciBack from '../../assets/images/logos/filter/desciback.svg'
-import LSDBack from '../../assets/images/logos/filter/lsdback.svg'
+import DesciBack from '../../assets/images/logos/filter/desciback.jpg'
+import LSDBack from '../../assets/images/logos/filter/lsdback.jpg'
 import LogoVerse from '../../assets/images/logos/filter/logo-verse.svg'
 import LogoPods from '../../assets/images/logos/filter/logo-pods.svg'
 import LogoCamelot from '../../assets/images/logos/filter/logo-camelot.svg'
@@ -603,7 +603,7 @@ const QuickFilter = ({
                   }}
                 >
                   <Counter count={filterCount}>{filterCount > 0 ? filterCount : ''}</Counter>
-                  Clear
+                  &nbsp;Clear
                 </ClearFilter>
               </DivWidth>
               <DivWidth borderRadius="10">
