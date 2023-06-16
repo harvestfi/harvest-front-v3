@@ -51,22 +51,15 @@ const Container = styled.div`
 
     @media screen and (max-width: 992px) {
       font-weight: 400;
-      font-size: 12px;
-      line-height: 16px;
+      font-size: 14px;
+      line-height: 22px;
       color: #888e8f;
+      padding: 9px 10px;
     }
-  }
-
-  @media screen and (max-width: 1400px) {
-    width: auto;
   }
 
   @media screen and (max-width: 992px) {
-    width: 100%;
-
-    input {
-      height: 45px;
-    }
+    margin-right: 0;
   }
 `
 
@@ -82,7 +75,7 @@ const SearchIcon = styled(AiOutlineSearch)`
   }
 
   @media screen and (max-width: 992px) {
-    width: 12px;
+    font-size: 20px;
   }
 `
 
@@ -157,7 +150,7 @@ const SearchBtn = styled.button`
   }
 
   @media screen and (max-width: 992px) {
-    height: 45px;
+    padding: 10px 18px;
   }
 `
 

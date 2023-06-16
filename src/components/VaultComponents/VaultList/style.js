@@ -141,20 +141,19 @@ const MobileListFilter = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    width: 100%;
-    height: 7.8rem;
     display: flex;
-    justify-content: end;
+    justify-content: space-between;
     flex-direction: column;
-
+    margin: 15px 12px;
     .filter-sort {
+      position: relative;
+      width: 100%;
       display: block;
-      margin: 10px 20px 15px 20px;
       background: ${props => props.mobileBackColor} !important;
       border: ${props => props.borderColor};
-      border-radius: 5px;
+      border-radius: 8px;
       position: relative;
-      color: #888e8f;
+      color: #667085;
 
       .menu {
         width: 100%;
@@ -163,6 +162,19 @@ const MobileListFilter = styled.div`
         .item {
           div {
             color: ${props => props.fontColor} !important;
+          }
+
+          img.checked {
+            display: none;
+          }
+        }
+
+        .item.active-item {
+          display: flex;
+          justify-content: space-between;
+          background: transparent;
+          img.checked {
+            display: block;
           }
         }
       }
@@ -176,14 +188,16 @@ const MobileListFilter = styled.div`
       }
       .toggle {
         background: ${props => props.mobileBackColor};
-        color: #888e8f;
+        color: #667085;
         display: flex;
+        justify-content: space-between;
         border: none;
         width: 100%;
         font-weight: 400;
-        font-size: 12px;
-        line-height: 16px;
-        padding: 12px 11px 11px 11px;
+        font-size: 14px;
+        line-height: 22px;
+        padding: 0px 0px 0px 10px;
+        align-items: center;
 
         &:after {
           display: none;
@@ -292,6 +306,32 @@ const ThemeMode = styled.div`
     `}
 `
 
+const MobileFilterBtn = styled.button`
+  background: #15202b;
+  border-radius: 0px 8px 8px 0px;
+  padding: 10px 18px;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: white;
+  border: none;
+  ${props =>
+    props.darkMode
+      ? `
+    border-left: 1px solid #d0d5dd;
+  `
+      : `
+  `}
+
+  &:hover {
+    background: #37495b;
+  }
+
+  @media screen and (max-width: 992px) {
+    padding: 10px 18px;
+  }
+`
+
 export {
   Container,
   Header,
@@ -304,4 +344,5 @@ export {
   MobileListFilter,
   Filtersinput,
   ThemeMode,
+  MobileFilterBtn,
 }

@@ -7,10 +7,15 @@ const ButtonsGroup = styled.div`
   border: 1px solid ${props => props.borderColor};
   background: ${props => props.backColor};
   transition: 0.25s;
+
+  @media screen and (max-width: 992px) {
+    width: 100%;
+  }
 `
 
 const ButtonStyle = styled.button`
   display: flex;
+  justify-content: center;
   background: transparent;
   color: ${props => props.fontColor};
   font-size: 14px;
@@ -48,16 +53,6 @@ const ButtonStyle = styled.button`
     width: max-content;
   }
 
-  @media screen and (max-width: 992px) {
-    font-size: 14px;
-    line-height: 18px;
-
-    img {
-      width: 13px;
-      height: 13px;
-    }
-  }
-
   @media screen and (max-width: 1480px) {
     font-size: 12px;
     line-height: 16px;
@@ -70,6 +65,13 @@ const ButtonStyle = styled.button`
     line-height: 14px;
     align-items: center;
     padding: 5px 10px;
+  }
+
+  @media screen and (max-width: 992px) {
+    font-size: 14px;
+    line-height: 20px;
+    padding: 10px 26px;
+    width: ${props => props.percent}%;
   }
 `
 

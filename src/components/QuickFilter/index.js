@@ -3,17 +3,10 @@ import { useWindowWidth } from '@react-hook/window-size'
 import { debounce } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
-import AllChains from '../../assets/images/chains/all_chain.svg'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
 import MobileFiltersIcon from '../../assets/images/chains/mobilefiltersicon.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
-import AssetTypeMobile from '../../assets/images/logos/filter/assettype-mobile.svg'
-import DropDownNarrow from '../../assets/images/logos/filter/dropdown-narrow.svg'
-import FarmTypeMobile from '../../assets/images/logos/filter/farmtype-mobile.svg'
-import Beginner from '../../assets/images/logos/filter/risks/beginner.svg'
-import Degen from '../../assets/images/logos/filter/risks/degens.svg'
-import Camelot from '../../assets/images/logos/camelot/camelot_black.svg'
 import UsdIcon from '../../assets/images/ui/usd.svg'
 import TokensIcon from '../../assets/images/ui/tokens.svg'
 import CollaborationBack from '../../assets/images/logos/filter/collaborationback.svg'
@@ -21,15 +14,19 @@ import TrendsBack from '../../assets/images/logos/filter/trendsback.svg'
 import SpecNarrowDown from '../../assets/images/logos/filter/spec-narrowdown.svg'
 import DesciBack from '../../assets/images/logos/filter/desciback.svg'
 import LSDBack from '../../assets/images/logos/filter/lsdback.svg'
+import LogoVerse from '../../assets/images/logos/filter/logo-verse.svg'
+import LogoPods from '../../assets/images/logos/filter/logo-pods.svg'
+import LogoCamelot from '../../assets/images/logos/filter/logo-camelot.svg'
+import CollabVerse from '../../assets/images/logos/filter/collab-verse.svg'
+import CollabPods from '../../assets/images/logos/filter/collab-pods.svg'
+import CollabCamelot from '../../assets/images/logos/filter/collab-camelot.svg'
 import { CHAIN_IDS } from '../../data/constants'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { isLedgerLive, isSpecialApp } from '../../utils'
 import ButtonGroup from '../ButtonGroup'
-import MobileButtonGroup from '../MobileButtonGroup'
 import SearchBar from '../SearchBar'
 import {
-  BadgeText,
   ChainButton,
   ClearFilter,
   Counter,
@@ -44,15 +41,13 @@ import {
   MobileListHeaderSearch,
   MobileView,
   QuickFilterContainer,
-  UserDropDown,
-  UserDropDownItem,
-  UserDropDownMenu,
   WebView,
   SpecDropDown,
   SpecDropDownMenu,
   SpecDropDownItem,
   ChainGroup,
   SwitchBalanceButton,
+  ApplyFilterBtn,
 } from './style'
 
 const ChainsList = isLedgerLive()
@@ -71,23 +66,16 @@ const SwitchBalanceList = [
   { id: 1, img: TokensIcon },
 ]
 
+const CollaborationList = [
+  { id: 0, name: 'Verse', backColor: '#0085FF', backImg: CollabVerse, logoImg: LogoVerse },
+  { id: 1, name: 'pods', backColor: '#A92A66', backImg: CollabPods, logoImg: LogoPods },
+  { id: 2, name: 'Camelot', backColor: '#FFAF1D', backImg: CollabCamelot, logoImg: LogoCamelot },
+]
+
 const TrendsList = [
   { id: 0, name: 'LSD', backImg: LSDBack },
   { id: 1, name: 'DeSci', backImg: DesciBack },
 ]
-
-const MobileChainsList = isLedgerLive()
-  ? [
-      { id: 0, name: 'All Chains', img: AllChains, chainId: '' },
-      { id: 1, name: 'Ethereum', img: ETHEREUM, chainId: CHAIN_IDS.ETH_MAINNET },
-      { id: 2, name: 'Polygon', img: POLYGON, chainId: CHAIN_IDS.POLYGON_MAINNET },
-    ]
-  : [
-      { id: 0, name: 'All Chains', img: AllChains, chainId: '' },
-      { id: 1, name: 'Ethereum', img: ETHEREUM, chainId: CHAIN_IDS.ETH_MAINNET },
-      { id: 2, name: 'Polygon', img: POLYGON, chainId: CHAIN_IDS.POLYGON_MAINNET },
-      { id: 3, name: 'Arbitrum', img: ARBITRUM, chainId: CHAIN_IDS.ARBITRUM_ONE },
-    ]
 
 const FarmsList = [
   { id: 1, name: 'All Farms', filter: 'allfarm' },
@@ -98,12 +86,6 @@ const FarmsList = [
 const RiskList = [
   { id: 1, name: 'Beginners', filter: 'beginners' },
   { id: 2, name: 'Advanced', filter: 'advanced' },
-]
-
-const MobileRiskList = [
-  { id: 1, name: 'Beginners', img: Beginner, filter: 'beginners' },
-  { id: 2, name: 'Advanced', img: Degen, filter: 'advanced' },
-  { id: 3, name: 'Camelot', img: Camelot },
 ]
 
 const AssetsList = [
@@ -256,13 +238,8 @@ const QuickFilter = ({
   const [mobileFilterCount, setMobileFilterCount] = useState(0)
 
   const [riskId, setRiskId] = useState(-1) // for risk id
-  const [riskImg, setRiskImg] = useState(FarmTypeMobile) // for risk img
   const [assetsId, setAssetsId] = useState(-1) // for asset id
-  const [assetsImg, setAssetsImg] = useState(AssetTypeMobile) // for asset img
   const [farmId, setFarmId] = useState(-1) // for chain
-
-  const [mobileChainName, setMobileChainId] = useState('All Chains') // for mobilechain
-  const [mobileChainImg, setMobileChainImg] = useState(AllChains) // for mobilechain
 
   const { selChain, setSelChain, chainId } = useWallet()
   // for Chain
@@ -375,10 +352,12 @@ const QuickFilter = ({
       (riskId !== -1 ? 1 : 0) +
       (assetsId !== -1 ? 1 : 0) +
       (farmId >= 0 ? 1 : 0) +
-      (mobileChainName !== 'All Chains' ? 1 : 0) +
+      (selectedClass.length === 0 || selectedClass.length === ChainsList.length
+        ? 0
+        : selectedClass.length) +
       (stringSearch ? 1 : 0)
     setMobileFilterCount(count >= 0 ? count : 0)
-  }, [riskId, assetsId, farmId, selectedClass, mobileChainName, stringSearch])
+  }, [riskId, assetsId, farmId, selectedClass, stringSearch])
 
   // When clicked 'filter' button, show filter panel
   const [filterShow, setFilterShow] = useState(false)
@@ -408,7 +387,6 @@ const QuickFilter = ({
     filterChainHoverColor,
     mobileFilterDisableColor,
     mobileFilterHoverColor,
-    switchBalance,
     setSwitchBalance,
     hoverImgColor,
   } = useThemeContext()
@@ -416,11 +394,14 @@ const QuickFilter = ({
   const [clickBalanceId, setClickBalanceId] = useState(1)
   const handleClickSwitch = (event, id) => {
     setClickBalanceId(id)
-    setSwitchBalance(!switchBalance)
+    const flagBalance = id === 0
+    setSwitchBalance(flagBalance)
   }
 
   const [collaborationName, setCollaborationName] = useState('Collaboration')
+  const [collaborationBackColor, setCollaborationBackColor] = useState(null)
   const [trendName, setTrendName] = useState('Trends')
+  const [trendsBackImg, setTrendsBackImg] = useState(TrendsBack)
 
   return (
     <div>
@@ -511,9 +492,11 @@ const QuickFilter = ({
                 <Dropdown>
                   <SpecDropDown
                     id="dropdown-basic"
-                    backcolor={CollaborationBack}
+                    backimg={CollaborationBack}
+                    backcolor={collaborationBackColor}
                     bordercolor={borderColor}
                     fontcolor={fontColor}
+                    type="collab"
                   >
                     <div className="name">{collaborationName}</div>
                     <img className="narrow" src={SpecNarrowDown} alt="" />
@@ -523,16 +506,19 @@ const QuickFilter = ({
                     <></>
                   ) : (
                     <SpecDropDownMenu>
-                      {TrendsList.map((item, i) => (
+                      {CollaborationList.map((item, i) => (
                         <SpecDropDownItem
                           key={i}
-                          className={i === 0 ? 'first' : i === TrendsList.length - 1 ? 'last' : ''}
+                          className={
+                            i === 0 ? 'first' : i === CollaborationList.length - 1 ? 'last' : ''
+                          }
                           backimg={item.backImg}
                           onClick={() => {
                             setCollaborationName(item.name)
+                            setCollaborationBackColor(item.backColor)
                           }}
                         >
-                          <div>{item.name}</div>
+                          <div>&nbsp;</div>
                         </SpecDropDownItem>
                       ))}
                     </SpecDropDownMenu>
@@ -543,7 +529,7 @@ const QuickFilter = ({
                 <Dropdown>
                   <SpecDropDown
                     id="dropdown-basic"
-                    backcolor={TrendsBack}
+                    backimg={trendsBackImg}
                     bordercolor={borderColor}
                     fontcolor={fontColor}
                   >
@@ -562,6 +548,7 @@ const QuickFilter = ({
                           backimg={item.backImg}
                           onClick={() => {
                             setTrendName(item.name)
+                            setTrendsBackImg(item.backImg)
                           }}
                         >
                           <div>{item.name}</div>
@@ -615,8 +602,8 @@ const QuickFilter = ({
                     clearFilter()
                   }}
                 >
-                  <Counter count={filterCount}>{filterCount > 0 ? filterCount : ''}</Counter>&nbsp;
-                  {onlyWidth > 1750 ? 'Clear Filters' : 'Clear'}
+                  <Counter count={filterCount}>{filterCount > 0 ? filterCount : ''}</Counter>
+                  Clear
                 </ClearFilter>
               </DivWidth>
               <DivWidth borderRadius="10">
@@ -641,48 +628,60 @@ const QuickFilter = ({
         </WebView>
       ) : (
         <MobileView>
-          <FarmButtonPart>
-            <Dropdown>
-              <UserDropDown
-                id="dropdown-basic"
-                backcolor={backColor}
-                bordercolor={borderColor}
-                filtercolor={filterColor}
-                fontcolor={fontColor}
-              >
-                <img width={12} height={12} src={mobileChainImg} alt="" />
-                <div className="chain-name">{mobileChainName}</div>
-                <img className="narrow" src={DropDownNarrow} alt="" />
-              </UserDropDown>
+          <FarmButtonPart justifyContent="start">
+            <ChainGroup borderColor={borderColor}>
+              {ChainsList.map((item, i) => (
+                <ChainButton
+                  backColor={backColor}
+                  hoverColor={filterChainHoverColor}
+                  borderColor={borderColor}
+                  className={`${selectedClass.includes(i) ? 'active' : ''}`}
+                  data-tip
+                  data-for={`chain-${item.name}`}
+                  key={i}
+                  onClick={() => {
+                    let tempIds = []
+                    if (selectedClass.length !== ChainsList.length) {
+                      tempIds = [...selectedClass]
+                    }
 
-              {isSpecialApp ? (
-                <></>
-              ) : (
-                <UserDropDownMenu>
-                  {MobileChainsList.map((item, i) => (
-                    <UserDropDownItem
-                      key={i}
-                      onClick={() => {
-                        setMobileChainId(item.name)
-                        setMobileChainImg(item.img)
-                        if (item.name === 'All Chains') {
-                          onSelectActiveType([])
-                        } else {
-                          setSelChain([item.chainId])
+                    if (!tempIds.includes(i)) {
+                      tempIds.push(i)
+                    } else {
+                      for (let el = 0; el < tempIds.length; el += 1) {
+                        if (tempIds[el] === i) {
+                          tempIds.splice(el, 1)
                         }
-                      }}
-                    >
-                      <img src={item.img} width="12" height="12" alt="" />
-                      <div>{item.name}</div>
-                    </UserDropDownItem>
-                  ))}
-                </UserDropDownMenu>
-              )}
-            </Dropdown>
+                      }
+                    }
+
+                    if (tempIds.length === 0 || tempIds.length === ChainsList.length) {
+                      tempIds = isLedgerLive() ? [0, 1] : [0, 1, 2]
+                      setSelectedClass(tempIds)
+                    } else {
+                      setSelectedClass(tempIds)
+                    }
+                    tempIds.map(tempId => {
+                      return selectedClasses.push(ChainsList[tempId].name)
+                    })
+                    const tempChains = []
+                    for (let j = 0; j < tempIds.length; j += 1) {
+                      tempChains.push(ChainsList[tempIds[j]].chainId)
+                    }
+                    setSelChain(tempChains)
+                    if (farmId !== -1) {
+                      printFarm(farmId)
+                    }
+                  }}
+                >
+                  <img src={item.img} alt="" />
+                </ChainButton>
+              ))}
+            </ChainGroup>
           </FarmButtonPart>
 
           <FarmButtonPart>
-            <MobileButtonGroup
+            <ButtonGroup
               buttons={FarmsList}
               doSomethingAfterClick={printFarm}
               clickedId={farmId}
@@ -696,6 +695,23 @@ const QuickFilter = ({
             borderColor={borderColor}
             filterColor={filterColor}
           >
+            <div className="switch-balance">
+              <ChainGroup borderColor={borderColor}>
+                {SwitchBalanceList.map((item, num) => (
+                  <SwitchBalanceButton
+                    key={num}
+                    backColor={backColor}
+                    borderColor={borderColor}
+                    hoverColor={hoverImgColor}
+                    filterColor={filterColor}
+                    className={clickBalanceId === num ? 'active' : ''}
+                    onClick={event => handleClickSwitch(event, num)}
+                  >
+                    <img src={item.img} alt="" />
+                  </SwitchBalanceButton>
+                ))}
+              </ChainGroup>
+            </div>
             <div className="filter-part">
               <button
                 type="button"
@@ -727,75 +743,102 @@ const QuickFilter = ({
                 hovercolor={mobileFilterHoverColor}
                 mobilefilterdisablecolor={mobileFilterDisableColor}
               >
-                <Dropdown className="asset-type">
-                  <Dropdown.Toggle className="toggle">
-                    <div>
-                      <img width={12} height={12} src={assetsImg} alt="" />
-                    </div>
-                    <div>{assetsId === -1 ? 'Asset Type' : AssetsList[assetsId].name}</div>
-                    <img className="narrow" src={DropDownNarrow} alt="" />
-                  </Dropdown.Toggle>
+                <DivWidth mobileMarginBottom="10px">
+                  <ButtonGroup
+                    buttons={RiskList}
+                    doSomethingAfterClick={() => {}}
+                    clickedId={riskId}
+                    setClickedId={setRiskId}
+                  />
+                </DivWidth>
+                <DivWidth mobileMarginBottom="10px">
+                  <ButtonGroup
+                    buttons={AssetsList}
+                    doSomethingAfterClick={() => {}}
+                    clickedId={assetsId}
+                    setClickedId={setAssetsId}
+                  />
+                </DivWidth>
+                <DivWidth mobileMarginBottom="10px" height="fit-content">
+                  <Dropdown>
+                    <SpecDropDown
+                      id="dropdown-basic"
+                      backimg={CollaborationBack}
+                      backcolor={collaborationBackColor}
+                      bordercolor={borderColor}
+                      fontcolor={fontColor}
+                    >
+                      <div className="name">{collaborationName}</div>
+                      <img className="narrow" src={SpecNarrowDown} alt="" />
+                    </SpecDropDown>
 
-                  <Dropdown.Menu className="menu">
-                    {AssetsList.map((item, i) => (
-                      <Dropdown.Item
-                        className="item"
-                        key={i}
-                        onClick={() => {
-                          setAssetsId(i)
-                          setAssetsImg(item.img)
-                          printAsset(i)
-                        }}
-                      >
-                        <div>
-                          <img src={item.img} width="12" height="12" alt="" />
-                        </div>
-                        <div>{item.name}</div>
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
-                </Dropdown>
+                    {isSpecialApp ? (
+                      <></>
+                    ) : (
+                      <SpecDropDownMenu>
+                        {CollaborationList.map((item, i) => (
+                          <SpecDropDownItem
+                            key={i}
+                            className={
+                              i === 0 ? 'first' : i === CollaborationList.length - 1 ? 'last' : ''
+                            }
+                            backimg={item.backImg}
+                            onClick={() => {
+                              setCollaborationName(item.name)
+                              setCollaborationBackColor(item.backColor)
+                            }}
+                          >
+                            <div>&nbsp;</div>
+                          </SpecDropDownItem>
+                        ))}
+                      </SpecDropDownMenu>
+                    )}
+                  </Dropdown>
+                </DivWidth>
+                <DivWidth mobileMarginBottom="10px" height="fit-content">
+                  <Dropdown>
+                    <SpecDropDown
+                      id="dropdown-basic"
+                      backimg={trendsBackImg}
+                      bordercolor={borderColor}
+                      fontcolor={fontColor}
+                    >
+                      <div className="name">{trendName}</div>
+                      <img className="narrow" src={SpecNarrowDown} alt="" />
+                    </SpecDropDown>
 
-                <Dropdown className="risk-type">
-                  <Dropdown.Toggle className="toggle">
-                    <div>
-                      <img width={12} height={12} src={riskImg} alt="" />
-                    </div>
-                    <div>{riskId === -1 ? 'Farm Type' : RiskList[riskId].name}</div>
-                    <img className="narrow" src={DropDownNarrow} alt="" />
-                  </Dropdown.Toggle>
-
-                  <Dropdown.Menu className="menu">
-                    {MobileRiskList.map((item, i) => (
-                      <Dropdown.Item
-                        className="item"
-                        key={i}
-                        disabled={item.name === 'Labs'}
-                        onClick={() => {
-                          if (item.name === 'Camelot') {
-                            push('/camelot')
-                          } else {
-                            setRiskId(i)
-                            setRiskImg(item.img)
-                            printRisk(i)
-                          }
-                        }}
-                      >
-                        <div>
-                          <img src={item.img} width="12" height="12" alt="" />
-                        </div>
-                        <div>{item.name}</div>
-                        {item.name === 'Labs' ? (
-                          <BadgeText mobilefilterdisablecolor={mobileFilterDisableColor}>
-                            Soon TM
-                          </BadgeText>
-                        ) : (
-                          <></>
-                        )}
-                      </Dropdown.Item>
-                    ))}
-                  </Dropdown.Menu>
-                </Dropdown>
+                    {isSpecialApp ? (
+                      <></>
+                    ) : (
+                      <SpecDropDownMenu>
+                        {TrendsList.map((item, i) => (
+                          <SpecDropDownItem
+                            key={i}
+                            className={
+                              i === 0 ? 'first' : i === TrendsList.length - 1 ? 'last' : ''
+                            }
+                            backimg={item.backImg}
+                            onClick={() => {
+                              setTrendName(item.name)
+                              setTrendsBackImg(item.backImg)
+                            }}
+                          >
+                            <div>{item.name}</div>
+                          </SpecDropDownItem>
+                        ))}
+                      </SpecDropDownMenu>
+                    )}
+                  </Dropdown>
+                </DivWidth>
+                <ApplyFilterBtn
+                  type="button"
+                  onClick={() => {
+                    printRisk(riskId)
+                    printAsset(assetsId)
+                  }}
+                >
+                  Apply Filters
+                </ApplyFilterBtn>
               </FilterOffCanvasBody>
             </FilterOffCanvas>
 
@@ -813,8 +856,6 @@ const QuickFilter = ({
                   setAssetsId(-1)
                   setRiskId(-1)
                   setFarmId(-1)
-                  setMobileChainId('All Chains')
-                  setMobileChainImg(AllChains)
                   setMobileFilterCount(0)
                   setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2])
                   setSelChain([
@@ -826,11 +867,12 @@ const QuickFilter = ({
                 }}
                 borderColor={borderColor}
                 fontColor={fontColor}
+                backColor={backColor}
               >
                 <Counter count={mobileFilterCount}>
                   {mobileFilterCount > 0 ? mobileFilterCount : ''}
                 </Counter>
-                &nbsp; Clear All Filters
+                &nbsp;Clear
               </MobileClearFilter>
             </div>
           </FarmFiltersPart>

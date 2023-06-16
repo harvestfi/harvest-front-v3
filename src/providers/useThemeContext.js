@@ -57,8 +57,10 @@ export function ThemeProvider({ children }) {
     ? 'invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%)'
     : ''
 
-  const mobileFilterBackColor = darkMode ? 'none' : '#F5F5F5'
-  const mobileFilterBorderColor = darkMode ? '1px solid rgba(217, 217, 217, 0.5)' : 'none'
+  const mobileFilterBackColor = darkMode ? 'none' : 'white'
+  const mobileFilterBorderColor = darkMode
+    ? '1px solid rgba(217, 217, 217, 0.5)'
+    : '1px solid #d0d5dd'
 
   const mobileFilterDisableColor = darkMode ? '#94949f' : 'rgba(21, 32, 43, 0.5)'
 

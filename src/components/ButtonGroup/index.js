@@ -18,6 +18,7 @@ const ButtonGroup = ({ buttons, doSomethingAfterClick, clickedId, setClickedId }
       {buttons.map((button, i) => (
         <ButtonStyle
           key={i}
+          percent={100 / buttons.length}
           name={button.name}
           onClick={event => handleClick(event, i)}
           onMouseEnter={() => {

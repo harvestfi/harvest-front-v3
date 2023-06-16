@@ -237,6 +237,16 @@ const DivWidth = styled.div`
     position: unset;
     margin-right: 3px;
   }
+
+  @media screen and (max-width: 992px) {
+    margin-right: 0px;
+    ${props =>
+      props.mobileMarginBottom
+        ? `
+      margin-bottom: ${props.mobileMarginBottom};
+    `
+        : ''}
+  }
 `
 
 const ChainButton = styled.button`
@@ -290,6 +300,14 @@ const ChainButton = styled.button`
     img {
       width: 14px;
       height: 14px;
+    }
+  }
+
+  @media screen and (max-width: 992px) {
+    padding: 9px 12px;
+    img {
+      width: 22px;
+      height: 22px;
     }
   }
 `
@@ -399,6 +417,8 @@ const Counter = styled.div`
 
   @media screen and (max-width: 992px) {
     color: white;
+    width: 20px;
+    height: 20px;
   }
 `
 
@@ -422,7 +442,7 @@ const MobileView = styled.div`
 
 const FarmButtonPart = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: ${props => (props.justifyContent ? props.justifyContent : 'center')};
   margin-bottom: 15px;
   width: 100%;
 
@@ -462,38 +482,43 @@ const FarmFiltersPart = styled.div`
   display: flex;
   justify-content: space-between;
 
+  .switch-balance {
+    width: 32%;
+  }
+
   .filter-part {
-    width: 48%;
+    width: 32%;
 
     button {
       background: ${props => props.backColor};
       color: ${props => props.fontColor};
       width: 100%;
       border: 1px solid ${props => props.borderColor};
-      border-radius: 5px;
-      padding: 11px 64px 13px 15px;
-      font-size: 12px;
-      line-height: 16px;
-      font-weight: 400;
+      border-radius: 8px;
+      padding: 10px 15px;
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 600;
       text-align: left;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
     img {
-      margin-right: 5px;
+      margin-right: 10px;
       filter: ${props => props.filterColor};
     }
   }
 
   .clear-filter {
-    width: 48%;
+    width: 32%;
   }
 `
 
 const MobileListHeaderSearch = styled.div`
-  position: absolute;
   width: 100%;
-  bottom: -75px;
-  padding: 0px 20px;
+  margin-top: 15px;
 
   .filter-sort {
     margin-top: 10px;
@@ -517,12 +542,14 @@ const MobileListHeaderSearch = styled.div`
 `
 
 const MobileClearFilter = styled(ClearFilter)`
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
   width: 100%;
-  border-radius: 5px;
+  border-radius: 8px;
   color: ${props => props.fontColor};
+  background: ${props => props.backColor};
+  justify-content: center;
 `
 
 const FilterOffCanvas = styled(Offcanvas)`
@@ -747,9 +774,6 @@ const SwitchBalanceButton = styled.button`
   @media screen and (max-width: 1480px) {
     border-radius: 10px;
     padding: 7px 12px;
-    &.active {
-      // border-radius: 10px;
-    }
     img {
       width: 20px;
       height: 20px;
@@ -758,19 +782,40 @@ const SwitchBalanceButton = styled.button`
 
   @media screen and (max-width: 1280px) {
     padding: 5px 10px;
-    // border-radius: 7px;
-    &.active {
-      // border-radius: 7px;
-    }
     img {
       width: 14px;
       height: 14px;
     }
   }
+
+  @media screen and (max-width: 992px) {
+    width: 50%;
+    padding: 9px 10px;
+    img {
+      width: 22px;
+      height: 22px;
+    }
+  }
 `
 
 const SpecDropDown = styled(Dropdown.Toggle)`
-  background: url(${props => props.backcolor}) !important;
+  ${props =>
+    props.backimg
+      ? `
+    background: url(${props.backimg}) !important;
+    `
+      : `
+  `}
+
+  ${props =>
+    props.backcolor
+      ? `
+    background: ${props.backcolor} !important;
+    `
+      : `
+  `}
+
+  background-size: 100% !important;
   border: 1px solid ${props => props.bordercolor} !important;
   color: white;
   font-weight: 600;
@@ -779,8 +824,9 @@ const SpecDropDown = styled(Dropdown.Toggle)`
   border-radius: 10px;
   align-items: center;
   padding: 10px 15px;
-  width: 100%;
+  width: ${props => (props.type === 'collab' ? '140px' : '102px')};
   display: flex;
+  justify-content: space-between;
   text-align: left;
   position: relative;
 
@@ -805,6 +851,7 @@ const SpecDropDown = styled(Dropdown.Toggle)`
 
   @media screen and (max-width: 1480px) {
     padding: 9px 12px;
+    width: ${props => (props.type === 'collab' ? '125px' : '90px')};
     .name {
       font-weight: 600;
       font-size: 12px;
@@ -816,10 +863,20 @@ const SpecDropDown = styled(Dropdown.Toggle)`
     padding: 5px 10px;
     font-size: 8px;
     line-height: 14px;
-
+    width: ${props => (props.type === 'collab' ? '100px' : '72px')};
     .name {
       font-size: 8px;
       line-height: 14px;
+    }
+  }
+
+  @media screen and (max-width: 992px) {
+    justify-content: space-between;
+    padding: 10px 16px;
+    width: 100%;
+    .name {
+      font-size: 14px;
+      line-height: 20px;
     }
   }
 `
@@ -839,8 +896,16 @@ const SpecDropDownItem = styled(Dropdown.Item)`
   text-align: left;
   display: flex;
   justify-content: center;
-  background: url(${props => props.backimg});
-  background-size: 100%;
+  ${props =>
+    props.backimg
+      ? `
+    background: url(${props.backimg});
+  `
+      : ``}
+  // height: 48px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
   color: white !important;
   font-size: 16px;
   font-weight: 600;
@@ -856,7 +921,7 @@ const SpecDropDownItem = styled(Dropdown.Item)`
   }
 
   &:hover {
-    opacity: 0.8;
+    opacity: 0.9;
   }
 
   @media screen and (max-width: 1480px) {
@@ -868,6 +933,32 @@ const SpecDropDownItem = styled(Dropdown.Item)`
     font-size: 8px;
     line-height: 12px;
     padding: 7px 10px;
+  }
+
+  @media screen and (max-width: 992px) {
+    font-size: 16px;
+    line-height: 24px;
+    padding: 12px;
+  }
+`
+
+const ApplyFilterBtn = styled.button`
+  display: flex;
+  justify-content: center;
+  padding: 10px 16px;
+  background: #ced3e6;
+  box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
+  border-radius: 8px;
+  width: 100%;
+  border: none;
+  color: #2e3d53;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
+  opacity: 1;
+
+  &:hover {
+    opacity: 0.8;
   }
 `
 
@@ -901,4 +992,5 @@ export {
   SpecDropDown,
   SpecDropDownMenu,
   SpecDropDownItem,
+  ApplyFilterBtn,
 }
