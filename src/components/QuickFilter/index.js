@@ -68,6 +68,12 @@ const SwitchBalanceList = [
 ]
 
 const CollaborationList = [
+  { id: 2, name: 'Camelot', backColor: '#FFAF1D', backImg: CollabCamelot, logoImg: LogoCamelot },
+  { id: 0, name: 'Verse', backColor: '#0085FF', backImg: CollabVerse, logoImg: LogoVerse },
+  // { id: 1, name: 'pods', backColor: '#A92A66', backImg: CollabPods, logoImg: LogoPods },
+]
+
+const MobileCollaborationList = [
   { id: 0, name: 'Verse', backColor: '#0085FF', backImg: CollabVerse, logoImg: LogoVerse },
   // { id: 1, name: 'pods', backColor: '#A92A66', backImg: CollabPods, logoImg: LogoPods },
   { id: 2, name: 'Camelot', backColor: '#FFAF1D', backImg: CollabCamelot, logoImg: LogoCamelot },
@@ -788,11 +794,15 @@ const QuickFilter = ({
                       <></>
                     ) : (
                       <SpecDropDownMenu>
-                        {CollaborationList.map((item, i) => (
+                        {MobileCollaborationList.map((item, i) => (
                           <SpecDropDownItem
                             key={i}
                             className={
-                              i === 0 ? 'first' : i === CollaborationList.length - 1 ? 'last' : ''
+                              i === 0
+                                ? 'first'
+                                : i === MobileCollaborationList.length - 1
+                                ? 'last'
+                                : ''
                             }
                             num={item.id}
                             backimg={item.backImg}
