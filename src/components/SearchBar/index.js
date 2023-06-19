@@ -9,13 +9,13 @@ const VaultSearchBar = ({
   inputText,
   setInputText,
 }) => {
-  const { darkMode, fontColor, backColor } = useThemeContext()
+  const { darkMode, fontColor, backColor, borderColor } = useThemeContext()
 
   const onChange = e => {
     setInputText(e.target.value)
   }
   return (
-    <Container fontColor={fontColor} backColor={backColor}>
+    <Container fontColor={fontColor} borderColor={borderColor} backColor={backColor}>
       <input
         id="search-input"
         value={inputText}

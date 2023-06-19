@@ -3,7 +3,13 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import { ButtonsGroup, ButtonStyle } from './style'
 
 const ButtonGroup = ({ buttons, doSomethingAfterClick, clickedId, setClickedId }) => {
-  const { backColor, borderColor, fontColor, filterColor } = useThemeContext()
+  const {
+    backColor,
+    borderColor,
+    fontColor,
+    filterColor,
+    filterChainHoverColor,
+  } = useThemeContext()
 
   const handleClick = (event, id) => {
     if (buttons[id].name !== 'Labs') {
@@ -34,6 +40,7 @@ const ButtonGroup = ({ buttons, doSomethingAfterClick, clickedId, setClickedId }
           fontColor={fontColor}
           filterColor={filterColor}
           borderColor={borderColor}
+          hoverColor={filterChainHoverColor}
         >
           {button.img && <img src={button.img} width="18" height="18" alt="" />}
           <div>{button.name}</div>

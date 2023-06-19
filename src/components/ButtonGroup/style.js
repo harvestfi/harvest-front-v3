@@ -37,13 +37,11 @@ const ButtonStyle = styled.button`
     border-right: none;
   }
 
-  &.active {
-    background: #f9fafb;
+  &.active,
+  &:hover {
+    background: ${props => props.hoverColor};
   }
   transition: 0.25s;
-  &:hover {
-    background: #f9fafb;
-  }
 
   img {
     filter: ${props => props.filterColor};

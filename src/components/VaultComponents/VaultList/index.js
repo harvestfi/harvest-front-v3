@@ -594,7 +594,7 @@ const VaultList = () => {
     [chain, account, userStats],
   )
 
-  const [sortId, setSortId] = useState(-1)
+  const [sortId, setSortId] = useState(0)
 
   const updateSortQuery = sort => {
     const debouncedFn = debounce(() => {
@@ -643,7 +643,7 @@ const VaultList = () => {
           <Dropdown className="filter-sort">
             <Dropdown.Toggle className="toggle">
               <div>Sort By: {sortId === -1 ? '' : SortsList[sortId].name}</div>
-              <MobileFilterBtn type="button" darkMode={darkMode} onClick={() => {}}>
+              <MobileFilterBtn type="button" darkmode={darkMode ? 'true' : 'false'}>
                 <img src={SortFilterIcon} alt="" />
               </MobileFilterBtn>
             </Dropdown.Toggle>

@@ -9,7 +9,7 @@ const Container = styled.div`
   position: relative;
   border-radius: 10px;
   transition: 0.25s;
-  border: 1px solid #d0d5dd;
+  border: 1px solid ${props => props.borderColor};
   margin-right: 15px;
   height: fit-content;
 

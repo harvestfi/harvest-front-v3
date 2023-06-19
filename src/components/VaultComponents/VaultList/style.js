@@ -306,7 +306,7 @@ const ThemeMode = styled.div`
     `}
 `
 
-const MobileFilterBtn = styled.button`
+const MobileFilterBtn = styled.div`
   background: #15202b;
   border-radius: 0px 8px 8px 0px;
   padding: 10px 18px;
@@ -316,7 +316,7 @@ const MobileFilterBtn = styled.button`
   color: white;
   border: none;
   ${props =>
-    props.darkMode
+    props.darkmode === 'true'
       ? `
     border-left: 1px solid #d0d5dd;
   `
