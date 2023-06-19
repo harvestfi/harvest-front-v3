@@ -57,8 +57,10 @@ export function ThemeProvider({ children }) {
     ? 'invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%)'
     : ''
 
-  const mobileFilterBackColor = darkMode ? 'none' : '#F5F5F5'
-  const mobileFilterBorderColor = darkMode ? '1px solid rgba(217, 217, 217, 0.5)' : 'none'
+  const mobileFilterBackColor = darkMode ? 'none' : 'white'
+  const mobileFilterBorderColor = darkMode
+    ? '1px solid rgba(217, 217, 217, 0.5)'
+    : '1px solid #d0d5dd'
 
   const mobileFilterDisableColor = darkMode ? '#94949f' : 'rgba(21, 32, 43, 0.5)'
 
@@ -71,7 +73,7 @@ export function ThemeProvider({ children }) {
 
   const chartBtnGroupBackColor = darkMode ? '#FFFFFF' : '#FCDC67'
 
-  const widoDetailDividerColor = darkMode ? 'rgba(255, 255, 255, 0.27)' : 'rgba(31, 41, 55, 0.27)'
+  const widoDetailDividerColor = darkMode ? 'rgba(255, 255, 255, 0.27)' : '#EAECF0'
 
   const widoBackBtnBackColor = darkMode ? '#FF9400' : 'rgba(255, 148, 0, 0.35)'
   const widoBackBtnBackHoverColor = darkMode ? 'rgba(255, 148, 0, 0.8)' : 'rgba(255, 148, 0, 0.25)'

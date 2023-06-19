@@ -4,11 +4,12 @@ import move from 'lodash-move'
 import React, { useMemo, useRef, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import MobileFilterSortIcon from '../../../assets/images/chains/mobilesort.svg'
 import EmptyIcon from '../../../assets/images/logos/farm/empty.svg'
 import sortAscIcon from '../../../assets/images/ui/asc.svg'
 import sortDescIcon from '../../../assets/images/ui/desc.svg'
 import sortIcon from '../../../assets/images/ui/sort.svg'
+import SortFilterIcon from '../../../assets/images/logos/filter/sort-icon.svg'
+import MobileSortCheckedIcon from '../../../assets/images/logos/filter/mobile-sort-checked.svg'
 import {
   FARM_GRAIN_TOKEN_SYMBOL,
   FARM_TOKEN_SYMBOL,
@@ -40,8 +41,8 @@ import {
   Header,
   HeaderCol,
   MobileListFilter,
-  ThemeMode,
   VaultsListBody,
+  MobileFilterBtn,
 } from './style'
 
 const { tokens } = require('../../../data')
@@ -593,7 +594,7 @@ const VaultList = () => {
     [chain, account, userStats],
   )
 
-  const [sortId, setSortId] = useState(-1)
+  const [sortId, setSortId] = useState(2)
 
   const updateSortQuery = sort => {
     const debouncedFn = debounce(() => {
@@ -616,14 +617,8 @@ const VaultList = () => {
     backColor,
     mobileFilterBackColor,
     mobileFilterBorderColor,
-    toggleBackColor,
-    switchBalance,
-    setSwitchBalance,
+    darkMode,
   } = useThemeContext()
-
-  const switchBalanceStyle = () => {
-    setSwitchBalance(!switchBalance)
-  }
 
   return (
     <Container id="vault-list">
@@ -647,18 +642,18 @@ const VaultList = () => {
         >
           <Dropdown className="filter-sort">
             <Dropdown.Toggle className="toggle">
-              <div>
-                <img className="sort" src={MobileFilterSortIcon} alt="" />
-              </div>
-              <div>
-                Sort By: <b>{sortId === -1 ? '' : SortsList[sortId].name}</b>
-              </div>
+              <div>Sort By: {sortId === -1 ? '' : SortsList[sortId].name}</div>
+              <MobileFilterBtn type="button" darkmode={darkMode ? 'true' : 'false'}>
+                <img src={SortFilterIcon} alt="" />
+              </MobileFilterBtn>
             </Dropdown.Toggle>
 
             <Dropdown.Menu className="menu">
               {SortsList.map((item, i) => (
                 <Dropdown.Item
-                  className="item"
+                  className={`item ${
+                    sortId !== -1 && item.type === SortsList[sortId].type ? 'active-item' : ''
+                  }`}
                   key={i}
                   onClick={() => {
                     setSortId(item.id)
@@ -666,32 +661,15 @@ const VaultList = () => {
                   }}
                 >
                   <div>{item.name}</div>
+                  <img className="checked" src={MobileSortCheckedIcon} alt="" />
                 </Dropdown.Item>
               ))}
             </Dropdown.Menu>
           </Dropdown>
         </MobileListFilter>
         <Header fontColor={fontColor} filterColor={filterColor}>
-          <HeaderCol width="30%" />
-          <HeaderCol justifyContent="start" width="15%" textAlign="right">
-            <ThemeMode
-              mode={switchBalance ? 'usd' : 'token'}
-              backColor={toggleBackColor}
-              borderColor={borderColor}
-            >
-              <div id="theme-switch">
-                <div className="switch-track">
-                  <div className="switch-thumb" />
-                </div>
-
-                <input
-                  type="checkbox"
-                  checked={switchBalance}
-                  onChange={switchBalanceStyle}
-                  aria-label="Switch between dark and light mode"
-                />
-              </div>
-            </ThemeMode>
+          <HeaderCol width="45%" justifyContent="start">
+            Farm
           </HeaderCol>
           <HeaderCol width="15%" textAlign="left" onClick={() => setSortingParams('apy')}>
             <div className="hoverable">APY</div>

@@ -60,7 +60,6 @@ import {
   DepositComponets,
   DescInfo,
   DetailView,
-  DivideBar,
   FlexDiv,
   FlexMobileTopDiv,
   FlexTopDiv,
@@ -86,6 +85,7 @@ import {
   TopPart,
   ValueShow,
   WithdrawComponents,
+  DetailTopInfo,
 } from './style'
 
 const chainList = [
@@ -132,6 +132,7 @@ const WidoDetail = () => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const history = useHistory()
+  const { push } = useHistory()
 
   const { loadingVaults, vaultsData } = useVaults()
   const { pools, userStats, fetchUserPoolStats } = usePools()
@@ -398,14 +399,12 @@ const WidoDetail = () => {
   useEffect(() => {
     const getTokenBalance = async () => {
       try {
-        if (chain && account) {
+        if (chain && account && Object.keys(balances).length !== 0) {
           const curBalances = await getBalances(account, [chain.toString()])
           setBalanceList(curBalances)
           let supList = [],
             directInSup = {},
-            directInBalance = {},
-            supportedList = [],
-            vaultId
+            directInBalance = {}
           try {
             supList = await getSupportedTokens({
               chainId: [chain],
@@ -418,27 +417,27 @@ const WidoDetail = () => {
           const tokenAddress = token.tokenAddress
 
           const soonSupList = []
-          for (let i = 0; i < supList.length; i += 1) {
-            const supToken = curBalances.find(el => el.address === supList[i].address)
+          supList = supList.map(sup => {
+            const supToken = curBalances.find(el => el.address === sup.address)
             if (supToken) {
-              supList[i].balance = supToken.balance
-              supList[i].usdValue = supToken.balanceUsdValue
-              supList[i].usdPrice = supToken.usdPrice
+              sup.balance = supToken.balance
+              sup.usdValue = supToken.balanceUsdValue
+              sup.usdPrice = supToken.usdPrice
             } else {
-              supList[i].balance = '0'
-              supList[i].usdValue = '0'
+              sup.balance = '0'
+              sup.usdValue = '0'
             }
-            supList[i].default = false
-            supportedList.push(supList[i])
+            sup.default = false
 
-            if (tokenAddress.length !== 2) {
-              if (supList[i].address.toLowerCase() === tokenAddress.toLowerCase()) {
-                directInSup = supList[i]
+            if (Object.keys(directInSup).length === 0 && tokenAddress.length !== 2) {
+              if (sup.address.toLowerCase() === tokenAddress.toLowerCase()) {
+                directInSup = sup
               }
             }
-          }
+            return sup
+          })
 
-          supportedList = supportedList.sort(function reducer(a, b) {
+          supList = supList.sort(function reducer(a, b) {
             return Number(fromWei(b.balance, b.decimals)) - Number(fromWei(a.balance, a.decimals))
           })
 
@@ -448,21 +447,16 @@ const WidoDetail = () => {
               soonSupList.push(curBalances[j])
             }
 
-            if (tokenAddress.length !== 2) {
+            if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
               if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
                 directInBalance = curBalances[j]
               }
             }
           }
 
-          vaultId = Object.keys(vaultsData).find(
-            key => vaultsData[key].tokenAddress === tokenAddress,
+          const vaultId = Object.keys(groupOfVaults).find(
+            key => groupOfVaults[key].tokenAddress === tokenAddress,
           )
-          if (!vaultId) {
-            vaultId = Object.keys(poolVaults).find(
-              key => poolVaults[key].tokenAddress === tokenAddress,
-            )
-          }
           const directBalance = balances[vaultId]
           const directUsdPrice = token.usdPrice
           const directUsdValue =
@@ -477,13 +471,13 @@ const WidoDetail = () => {
             directInSup.balance = directBalance
             directInSup.usdPrice = directInSup.usdPrice > 0 ? directInSup.usdPrice : directUsdPrice
             directInSup.usdValue = directInSup.usdValue > 0 ? directInSup.usdValue : directUsdValue
-            supportedList = supportedList.sort(function result(x, y) {
+            supList = supList.sort(function result(x, y) {
               return x === directInSup ? -1 : y === directInSup ? 1 : 0
             })
-            if (supportedList.length === 0) {
-              supportedList.push(directInSup)
+            if (supList.length === 0) {
+              supList.push(directInSup)
             }
-            supportedList[0].default = true
+            supList[0].default = true
           } else if (
             !(Object.keys(directInBalance).length === 0 && directInBalance.constructor === Object)
           ) {
@@ -492,11 +486,11 @@ const WidoDetail = () => {
               directInBalance.usdPrice > 0 ? directInBalance.usdPrice : directUsdPrice
             directInBalance.usdValue =
               directInBalance.usdValue > 0 ? directInBalance.usdValue : directUsdValue
-            supportedList = [directInBalance].push(supportedList)
-            if (supportedList.length === 0) {
-              supportedList.push(directInBalance)
+            supList = [directInBalance].push(supList)
+            if (supList.length === 0) {
+              supList.push(directInBalance)
             }
-            supportedList[0].default = true
+            supList[0].default = true
           } else {
             const web3Client = await getWeb3(chain, null)
             const { getSymbol } = tokenMethods
@@ -512,14 +506,14 @@ const WidoDetail = () => {
               logoURI: 'https://etherscan.io/images/main/empty-token.png',
               decimals: tokenDecimals,
             }
-            if (supportedList.length > 0) {
-              supportedList = [direct].push(supportedList)
+            if (supList.length > 0) {
+              supList = [direct].push(supList)
             } else {
-              supportedList.push(direct)
+              supList.push(direct)
             }
           }
           setSoonToSupList(soonSupList)
-          setSupTokenList(supportedList)
+          setSupTokenList(supList)
         }
       } catch (err) {
         console.log('getTokenBalance: ', err)
@@ -527,7 +521,7 @@ const WidoDetail = () => {
     }
 
     getTokenBalance()
-  }, [account, chain, toTokenAddress, token, id, tokenDecimals, balances, poolVaults, vaultsData])
+  }, [account, chain, balances]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const {
     backColor,
@@ -645,7 +639,13 @@ const WidoDetail = () => {
           <FlexTopDiv>
             <BackBtnRect
               onClick={() => {
-                history.goBack()
+                const prevUrl = document.referrer
+                const filterUrl = window.location.origin
+                if (prevUrl.includes(filterUrl)) {
+                  history.goBack()
+                } else {
+                  push('/')
+                }
               }}
               backcolor={widoBackBtnBackColor}
               backhovercolor={widoBackBtnBackHoverColor}
@@ -669,7 +669,13 @@ const WidoDetail = () => {
             <FlexTopDiv>
               <BackBtnRect
                 onClick={() => {
-                  history.goBack()
+                  const prevUrl = document.referrer
+                  const filterUrl = window.location.origin
+                  if (prevUrl.includes(filterUrl)) {
+                    history.goBack()
+                  } else {
+                    push('/')
+                  }
                 }}
                 backcolor={widoBackBtnBackColor}
                 backhovercolor={widoBackBtnBackHoverColor}
@@ -719,13 +725,13 @@ const WidoDetail = () => {
         <BigDiv>
           <HalfContent show={detailsView}>
             <HalfInfo
-              padding={!isMobile ? '20px 30px' : '20px 25px'}
+              padding={!isMobile ? '0px 20px' : '0px 25px'}
               display="flex"
-              justifyContent={isMobile ? 'space-between' : 'space-around'}
+              justifyContent="space-between"
               backColor={backColor}
               borderColor={borderColor}
             >
-              <div>
+              <DetailTopInfo borderColor={widoDetailDividerColor}>
                 <NewLabel
                   display="flex"
                   weight={700}
@@ -754,24 +760,22 @@ const WidoDetail = () => {
                     />
                     <ReactTooltip
                       id="tooltip-apy"
-                      backgroundColor="white"
+                      backgroundColor="black"
                       borderColor="black"
                       border
-                      textColor="black"
+                      textColor="white"
                     >
                       <TooltipContent>
-                        <Name>APY</Name>
+                        <Name>Annual Percentage Yield</Name>
                         {showAPY()}
                       </TooltipContent>
                     </ReactTooltip>
                   </NewLabel>
                 </NewLabel>
                 <ValueShow>{showAPY()}</ValueShow>
-              </div>
+              </DetailTopInfo>
 
-              <DivideBar height="50px" backcolor={widoDetailDividerColor} />
-
-              <div>
+              <DetailTopInfo borderColor={widoDetailDividerColor}>
                 <NewLabel
                   display="flex"
                   weight={700}
@@ -800,24 +804,22 @@ const WidoDetail = () => {
                     />
                     <ReactTooltip
                       id="tooltip-daily"
-                      backgroundColor="white"
+                      backgroundColor="black"
                       borderColor="black"
                       border
-                      textColor="black"
+                      textColor="white"
                     >
                       <TooltipContent>
-                        <Name>Daily</Name>
+                        <Name>Daily APY</Name>
                         {showApyDaily()}
                       </TooltipContent>
                     </ReactTooltip>
                   </NewLabel>
                 </NewLabel>
                 <ValueShow>{showApyDaily()}</ValueShow>
-              </div>
+              </DetailTopInfo>
 
-              <DivideBar height="50px" backcolor={widoDetailDividerColor} />
-
-              <div>
+              <DetailTopInfo>
                 <NewLabel
                   display="flex"
                   weight={700}
@@ -846,20 +848,20 @@ const WidoDetail = () => {
                     />
                     <ReactTooltip
                       id="tooltip-tvl"
-                      backgroundColor="white"
+                      backgroundColor="black"
                       borderColor="black"
                       border
-                      textColor="black"
+                      textColor="white"
                     >
                       <TooltipContent>
-                        <Name>TVL</Name>
+                        <Name>Total Value Locked</Name>
                         {showTVL()}
                       </TooltipContent>
                     </ReactTooltip>
                   </NewLabel>
                 </NewLabel>
                 <ValueShow>{showTVL()}</ValueShow>
-              </div>
+              </DetailTopInfo>
             </HalfInfo>
             <HalfInfo
               padding={!isMobile ? '10px 20px' : '15px'}

@@ -1,9 +1,15 @@
 import React from 'react'
 import { useThemeContext } from '../../providers/useThemeContext'
-import { ButtonsGroup, ButtonStyle, Soon } from './style'
+import { ButtonsGroup, ButtonStyle } from './style'
 
 const ButtonGroup = ({ buttons, doSomethingAfterClick, clickedId, setClickedId }) => {
-  const { backColor, borderColor, fontColor, filterColor } = useThemeContext()
+  const {
+    backColor,
+    borderColor,
+    fontColor,
+    filterColor,
+    filterChainHoverColor,
+  } = useThemeContext()
 
   const handleClick = (event, id) => {
     if (buttons[id].name !== 'Labs') {
@@ -18,6 +24,7 @@ const ButtonGroup = ({ buttons, doSomethingAfterClick, clickedId, setClickedId }
       {buttons.map((button, i) => (
         <ButtonStyle
           key={i}
+          percent={100 / buttons.length}
           name={button.name}
           onClick={event => handleClick(event, i)}
           onMouseEnter={() => {
@@ -28,13 +35,15 @@ const ButtonGroup = ({ buttons, doSomethingAfterClick, clickedId, setClickedId }
             setFocusId(tempId)
             tempId = focusId
           }}
-          className={(i === clickedId || i === focusId) && button.name !== 'Labs' ? 'active' : ''}
+          num={i}
+          className={i === clickedId || i === focusId ? 'active' : ''}
           fontColor={fontColor}
           filterColor={filterColor}
+          borderColor={borderColor}
+          hoverColor={filterChainHoverColor}
         >
-          <img src={button.img} width="18" height="18" alt="" />
+          {button.img && <img src={button.img} width="18" height="18" alt="" />}
           <div>{button.name}</div>
-          {button.name === 'Labs' ? <Soon>Soon TM</Soon> : <></>}
         </ButtonStyle>
       ))}
     </ButtonsGroup>

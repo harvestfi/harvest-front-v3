@@ -6,72 +6,44 @@ const ButtonsGroup = styled.div`
   border-radius: 10px;
   border: 1px solid ${props => props.borderColor};
   background: ${props => props.backColor};
-  padding: 15px 21px 14px 21px;
   transition: 0.25s;
 
-  @media screen and (max-width: 1480px) {
-    padding: 10px 15px;
-  }
-
-  @media screen and (max-width: 1280px) {
-    padding: 5px 10px;
-  }
-
   @media screen and (max-width: 992px) {
-    padding: 10px 20px;
+    width: 100%;
   }
 `
 
 const ButtonStyle = styled.button`
   display: flex;
+  justify-content: center;
   background: transparent;
   color: ${props => props.fontColor};
-  font-size: 16px;
-  line-height: 21px;
-  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 600;
   border: none;
+  border-right: 1px solid ${props => props.borderColor};
   cursor: pointer;
-  margin-right: 30px;
-  opacity: 1;
+  padding: 10px 16px;
   position: relative;
   transition: 0.25s;
-  ${props =>
-    props.name === 'Labs'
-      ? `
-      opacity: 0.5 !important;
-      cursor: unset !important;
-      color: ${props.mode} !important;
-      margin-right: 20px !important;
-    `
-      : ``}
+
+  &:first-child {
+    border-radius: 8px 0 0 8px;
+  }
 
   &:last-child {
-    margin-right: 0px;
+    border-radius: 0 8px 8px 0;
+    border-right: none;
   }
-  padding: 0px;
 
-  &.active {
-    background: none;
-    color: #ff9400;
-    border: none;
-    border-radius: 7px;
-    opacity: 1;
-
-    img {
-      transition: 0.25s;
-      filter: invert(57%) sepia(61%) saturate(2063%) hue-rotate(1deg) brightness(103%)
-        contrast(105%);
-    }
+  &.active,
+  &:hover {
+    background: ${props => props.hoverColor};
   }
   transition: 0.25s;
-  &:hover {
-    background: none;
-  }
 
   img {
-    margin-right: 10px;
-    margin-top: 2px;
-
     filter: ${props => props.filterColor};
   }
 
@@ -79,34 +51,26 @@ const ButtonStyle = styled.button`
     width: max-content;
   }
 
-  @media screen and (max-width: 992px) {
-    font-size: 14px;
-    line-height: 18px;
-
-    img {
-      width: 13px;
-      height: 13px;
-    }
-  }
-
   @media screen and (max-width: 1480px) {
     font-size: 12px;
     line-height: 16px;
     align-items: center;
+    padding: 9px 14px;
   }
 
   @media screen and (max-width: 1280px) {
     font-size: 8px;
     line-height: 14px;
     align-items: center;
+    padding: 5px 10px;
+  }
+
+  @media screen and (max-width: 992px) {
+    font-size: 14px;
+    line-height: 20px;
+    padding: 10px 26px;
+    width: ${props => props.percent}%;
   }
 `
 
-const Soon = styled.div`
-  font-size: 8px;
-  position: absolute;
-  top: -10px;
-  right: -24px;
-`
-
-export { ButtonsGroup, ButtonStyle, Soon }
+export { ButtonsGroup, ButtonStyle }

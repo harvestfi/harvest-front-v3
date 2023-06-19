@@ -128,6 +128,10 @@ const NewLabel = styled.div`
     margin-left: 15px;
   }
 
+  #info .tooltip-inner {
+    background: black;
+  }
+
   @media screen and (max-width: 992px) {
     img.icon {
       margin-right: 5px;
@@ -534,7 +538,7 @@ const BigDiv = styled(FlexDiv)`
 
 const TooltipContent = styled.div`
   display: flex;
-  color: black !important;
+  color: white !important;
   padding: 10px 0;
   font-weight: 800;
 `
@@ -578,13 +582,6 @@ const Monospace = styled.span`
   border-bottom: ${props => props.borderBottom || 'unset'};
 `
 
-const DivideBar = styled.div`
-  height: ${props => (props.height ? props.height : '20px')};
-  width: 1px;
-  background: ${props => props.backcolor};
-  margin: auto 0;
-`
-
 const FlexMobileTopDiv = styled(FlexTopDiv)`
   display: flex;
   justify-content: space-between;
@@ -615,6 +612,17 @@ const RewardPart = styled.div`
   @media screen and (max-width: 992px) {
     width: 100%;
   }
+`
+
+const DetailTopInfo = styled.div`
+  width: 33%;
+  padding: 24px 16px;
+  ${props =>
+    props.borderColor
+      ? `
+    border-right: 1px solid ${props.borderColor};
+  `
+      : ``}
 `
 
 export {
@@ -651,7 +659,7 @@ export {
   LogoImg,
   InfoIcon,
   Monospace,
-  DivideBar,
   FlexMobileTopDiv,
   RewardPart,
+  DetailTopInfo,
 }

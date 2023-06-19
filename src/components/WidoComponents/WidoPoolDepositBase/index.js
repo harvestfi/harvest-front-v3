@@ -302,7 +302,7 @@ const WidoPoolDepositBase = ({
       <BalanceInfo
         fontColor={widoTagActiveFontColor}
         onClick={() => {
-          if (account) {
+          if (account && pickedToken.symbol !== 'Select Token') {
             const balanceAmount = !legacyStaking
               ? balance
               : FARMBalance && fromWei(FARMBalance, tokens[IFARM_TOKEN_SYMBOL].decimals)

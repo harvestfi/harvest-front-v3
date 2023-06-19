@@ -26,7 +26,7 @@ import { useWallet } from '../../../providers/Wallet'
 import ButtonGroup from '../../ButtonGroup'
 import RiskButtonGroup from '../../RiskButtonGroup'
 import MobileButtonGroup from '../../MobileButtonGroup'
-import SearchBar from '../SearchBar'
+import SearchBar from '../../SearchBar'
 import {
   BadgeText,
   ChainButton,
@@ -147,6 +147,25 @@ const QuickFilter = ({
 
     if (event.key === 'Enter') {
       debouncedFn()
+    }
+  }
+
+  const onClickSearch = text => {
+    const searchString = text
+    setSearchQuery(searchString)
+    setStringSearch(searchString.length > 0)
+    if (searchString !== '') {
+      const updateValue = { search: searchString }
+      setParamObj(newParamObj => ({
+        ...newParamObj,
+        ...updateValue,
+      }))
+    } else {
+      const newObj = { ...paramObj }
+      delete newObj.search
+      setParamObj(() => ({
+        ...newObj,
+      }))
     }
   }
 
@@ -346,17 +365,6 @@ const QuickFilter = ({
     setMobileFilterCount(0)
   }
 
-  const clearQuery = () => {
-    document.getElementById('search-input').value = ''
-    setSearchQuery('')
-    setStringSearch(false)
-    const newObj = { ...paramObj }
-    delete newObj.search
-    setParamObj(() => ({
-      ...newObj,
-    }))
-  }
-
   useEffect(() => {
     let count =
       (riskId >= 0 ? 1 : 0) +
@@ -546,10 +554,9 @@ const QuickFilter = ({
             <DivWidth className="searchbar" backColor={backColor} status={openNotify ? '1' : '0'}>
               <InputsContainer>
                 <SearchBar
-                  placeholder="Search assets"
-                  // onChange={updateSearchQuery}
+                  placeholder="Assets, platforms..."
                   onKeyDown={updateSearchQuery}
-                  onClose={clearQuery}
+                  onSearch={onClickSearch}
                 />
               </InputsContainer>
             </DivWidth>
@@ -728,9 +735,9 @@ const QuickFilter = ({
           </FarmFiltersPart>
           <MobileListHeaderSearch>
             <SearchBar
-              placeholder="Search assets"
+              placeholder="Assets, platforms..."
               onKeyDown={updateSearchQuery}
-              onClose={clearQuery}
+              onSearch={onClickSearch}
             />
           </MobileListHeaderSearch>
         </MobileView>
