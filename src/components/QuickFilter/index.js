@@ -80,8 +80,8 @@ const MobileCollaborationList = [
 ]
 
 const TrendsList = [
-  { id: 0, name: 'LSD', backImg: LSDBack },
-  { id: 1, name: 'DeSci', backImg: DesciBack },
+  { id: 0, name: 'LSD', backImg: LSDBack, status: 'LSD' },
+  { id: 1, name: 'DeSci', backImg: DesciBack, status: 'DeSci' },
 ]
 
 const FarmsList = [
@@ -267,6 +267,23 @@ const QuickFilter = ({
 
   const selectedClasses = []
 
+  const [collaborationName, setCollaborationName] = useState('Collaboration')
+  const [collaborationBackColor, setCollaborationBackColor] = useState(null)
+  const [trendName, setTrendName] = useState('Trends')
+  const [trendsBackNum, setTrendsBackNum] = useState(-1)
+
+  const [collabVerseStatus, setCollabVerseStatus] = useState('')
+  const [trendStatus, setTrendStatus] = useState('')
+
+  const onClearSpecDropdowns = () => {
+    setCollaborationName('Collaboration')
+    setCollaborationBackColor(null)
+    setTrendsBackNum(-1)
+    setTrendName('Trends')
+    setTrendStatus('')
+    setCollabVerseStatus('')
+  }
+
   useEffect(() => {
     const setUrlData = () => {
       const chains = [],
@@ -299,7 +316,20 @@ const QuickFilter = ({
             }
           }
         } else if (key === 'search') {
-          document.getElementById('search-input').value = value
+          setInputText(value)
+          if (value.toLowerCase() === 'verse') {
+            setCollabVerseStatus('Verse')
+            setCollaborationName('Verse')
+            setCollaborationBackColor('#0085FF')
+          } else if (value.toLowerCase() === 'lsd') {
+            setTrendName('LSD')
+            setTrendsBackNum(0)
+            setTrendStatus('LSD')
+          } else if (value.toLowerCase() === 'desci') {
+            setTrendName('DeSci')
+            setTrendsBackNum(1)
+            setTrendStatus('DeSci')
+          }
           setSearchQuery(value)
           const updateValue = { search: value }
           setParamObj(newParamObj => ({
@@ -346,25 +376,15 @@ const QuickFilter = ({
   }
 
   useEffect(() => {
-    let count =
+    const count =
       (riskId >= 0 ? 1 : 0) +
       (assetsId >= 0 ? 1 : 0) +
       (farmId >= 0 ? 1 : 0) +
       (selectedClass.length === 0 || selectedClass.length === ChainsList.length
         ? 0
         : selectedClass.length) +
-      // (platform !== 'All Platform' ? 1 : 0) +
       (stringSearch ? 1 : 0)
     setFilterCount(count >= 0 ? count : 0)
-
-    count =
-      (riskId !== -1 ? 1 : 0) +
-      (assetsId !== -1 ? 1 : 0) +
-      (farmId >= 0 ? 1 : 0) +
-      (selectedClass.length === 0 || selectedClass.length === ChainsList.length
-        ? 0
-        : selectedClass.length) +
-      (stringSearch ? 1 : 0)
     setMobileFilterCount(count >= 0 ? count : 0)
   }, [riskId, assetsId, farmId, selectedClass, stringSearch])
 
@@ -406,13 +426,6 @@ const QuickFilter = ({
     const flagBalance = id === 0
     setSwitchBalance(flagBalance)
   }
-
-  const [collaborationName, setCollaborationName] = useState('Collaboration')
-  const [collaborationBackColor, setCollaborationBackColor] = useState(null)
-  const [trendName, setTrendName] = useState('Trends')
-  const [trendsBackNum, setTrendsBackNum] = useState(-1)
-
-  const [collabVerseStatus, setCollabVerseStatus] = useState('')
 
   return (
     <div>
@@ -529,8 +542,8 @@ const QuickFilter = ({
                             setCollaborationName(item.name)
                             setCollaborationBackColor(item.backColor)
                             if (item.id === 0) {
-                              setInputText('verse')
-                              onClickSearch('verse')
+                              setInputText('Verse')
+                              onClickSearch('Verse')
                             } else {
                               push('/camelot')
                             }
@@ -564,6 +577,8 @@ const QuickFilter = ({
                           className={i === 0 ? 'first' : i === TrendsList.length - 1 ? 'last' : ''}
                           num={i}
                           onClick={() => {
+                            setInputText(item.status)
+                            onClickSearch(item.status)
                             setTrendName(item.name)
                             setTrendsBackNum(i)
                           }}
@@ -603,8 +618,8 @@ const QuickFilter = ({
                     document.getElementById('search-input').value = ''
                     setSearchQuery('')
                     setInputText('')
-                    setCollaborationName('Collaboration')
-                    setCollaborationBackColor(null)
+                    // clear collaboration and trends
+                    onClearSpecDropdowns()
                     onSelectActiveType(['Active'])
                     setStringSearch(false)
                     setRiskId(-1)
@@ -810,7 +825,7 @@ const QuickFilter = ({
                               setCollaborationName(item.name)
                               setCollaborationBackColor(item.backColor)
                               if (i === 0) {
-                                setCollabVerseStatus('verse')
+                                setCollabVerseStatus('Verse')
                               } else {
                                 push('/camelot')
                               }
@@ -848,6 +863,7 @@ const QuickFilter = ({
                             onClick={() => {
                               setTrendName(item.name)
                               setTrendsBackNum(i)
+                              setTrendStatus(item.status)
                             }}
                           >
                             <div>{item.name}</div>
@@ -866,9 +882,13 @@ const QuickFilter = ({
                     if (assetsId !== -1) {
                       printAsset(assetsId)
                     }
-                    if (collabVerseStatus === 'verse') {
-                      setInputText('verse')
-                      onClickSearch('verse')
+                    if (collabVerseStatus === 'Verse') {
+                      setInputText('Verse')
+                      onClickSearch('Verse')
+                    }
+                    if (trendStatus !== '') {
+                      setInputText(trendStatus)
+                      onClickSearch(trendStatus)
                     }
                   }}
                 >
@@ -883,8 +903,8 @@ const QuickFilter = ({
                   document.getElementById('search-input').value = ''
                   setSearchQuery('')
                   setInputText('')
-                  setCollaborationName('Collaboration')
-                  setCollaborationBackColor(null)
+                  // clear collaboration and trends
+                  onClearSpecDropdowns()
                   setStringSearch(false)
                   onSelectActiveType(['Active'])
                   onSelectStableCoin(false)
