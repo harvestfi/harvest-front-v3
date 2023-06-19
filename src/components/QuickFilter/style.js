@@ -555,6 +555,11 @@ const MobileClearFilter = styled(ClearFilter)`
 const FilterOffCanvas = styled(Offcanvas)`
   width: 300px !important;
   background: ${props => props.backcolor} !important;
+  .offcanvas-header {
+    .btn-close {
+      filter: ${props => props.filtercolor};
+    }
+  }
 `
 
 const FilterOffCanvasHeader = styled(Offcanvas.Header)`
@@ -1173,12 +1178,12 @@ const ApplyFilterBtn = styled.button`
   display: flex;
   justify-content: center;
   padding: 10px 16px;
-  background: #ced3e6;
+  background: #ff7e00;
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
   border-radius: 8px;
   width: 100%;
   border: none;
-  color: #2e3d53;
+  color: white;
   font-size: 14px;
   line-height: 20px;
   font-weight: 600;

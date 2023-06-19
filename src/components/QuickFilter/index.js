@@ -765,6 +765,7 @@ const QuickFilter = ({
               onHide={handleFilterClose}
               placement="end"
               backcolor={backColor}
+              filtercolor={filterColor}
             >
               <FilterOffCanvasHeader closeButton>
                 <FarmFilter fontColor={fontColor}>Farm Filters</FarmFilter>
