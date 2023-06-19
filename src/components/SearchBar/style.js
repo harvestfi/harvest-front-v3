@@ -45,6 +45,7 @@ const Container = styled.div`
     }
 
     @media screen and (max-width: 1280px) {
+      padding: 5px 10px;
       font-size: 8px;
       line-height: 14px;
     }
@@ -146,7 +147,7 @@ const SearchBtn = styled.button`
   }
 
   @media screen and (max-width: 1280px) {
-    padding: 6px 10px;
+    padding: 5px 10px;
   }
 
   @media screen and (max-width: 992px) {
