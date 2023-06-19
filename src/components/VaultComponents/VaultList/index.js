@@ -594,7 +594,7 @@ const VaultList = () => {
     [chain, account, userStats],
   )
 
-  const [sortId, setSortId] = useState(0)
+  const [sortId, setSortId] = useState(2)
 
   const updateSortQuery = sort => {
     const debouncedFn = debounce(() => {
