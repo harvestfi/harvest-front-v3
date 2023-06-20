@@ -762,7 +762,6 @@ const WidoDetail = () => {
                       id="tooltip-apy"
                       backgroundColor="black"
                       borderColor="black"
-                      border
                       textColor="white"
                     >
                       <TooltipContent>
@@ -806,7 +805,6 @@ const WidoDetail = () => {
                       id="tooltip-daily"
                       backgroundColor="black"
                       borderColor="black"
-                      border
                       textColor="white"
                     >
                       <TooltipContent>
@@ -850,7 +848,6 @@ const WidoDetail = () => {
                       id="tooltip-tvl"
                       backgroundColor="black"
                       borderColor="black"
-                      border
                       textColor="white"
                     >
                       <TooltipContent>
