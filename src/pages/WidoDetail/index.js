@@ -476,9 +476,7 @@ const WidoDetail = () => {
             supList = supList.sort(function result(x, y) {
               return x === directInSup ? -1 : y === directInSup ? 1 : 0
             })
-            if (supList.length === 0) {
-              supList.push(directInSup)
-            }
+            supList.unshift(directInSup)
             supList[0].default = true
           } else if (
             !(Object.keys(directInBalance).length === 0 && directInBalance.constructor === Object)
@@ -488,10 +486,7 @@ const WidoDetail = () => {
               directInBalance.usdPrice > 0 ? directInBalance.usdPrice : directUsdPrice
             directInBalance.usdValue =
               directInBalance.usdValue > 0 ? directInBalance.usdValue : directUsdValue
-            supList = [directInBalance].push(supList)
-            if (supList.length === 0) {
-              supList.push(directInBalance)
-            }
+            supList.unshift(directInBalance)
             supList[0].default = true
           } else {
             const web3Client = await getWeb3(chain, null)
@@ -507,12 +502,9 @@ const WidoDetail = () => {
               usdValue: directUsdValue || '0',
               logoURI: 'https://etherscan.io/images/main/empty-token.png',
               decimals: tokenDecimals,
+              chainId: parseInt(chain, 0),
             }
-            if (supList.length > 0) {
-              supList = [direct].push(supList)
-            } else {
-              supList.push(direct)
-            }
+            supList.unshift(direct)
           }
           setSoonToSupList(soonSupList)
           setSupTokenList(supList)
