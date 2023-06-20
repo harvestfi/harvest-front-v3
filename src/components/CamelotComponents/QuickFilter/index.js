@@ -12,9 +12,9 @@ import TokensIcon from '../../../assets/images/ui/tokens.svg'
 import SpecNarrowDown from '../../../assets/images/logos/filter/spec-narrowdown.svg'
 import DesciBack from '../../../assets/images/logos/filter/desciback.jpg'
 import LSDBack from '../../../assets/images/logos/filter/lsdback.jpg'
-import LogoVerse from '../../../assets/images/logos/filter/logo-verse.svg'
+import { ReactComponent as LogoVerse } from '../../../assets/images/logos/filter/logo-verse.svg'
 // import LogoPods from '../../assets/images/logos/filter/logo-pods.svg'
-import LogoCamelot from '../../../assets/images/logos/filter/logo-camelot.svg'
+import { ReactComponent as LogoCamelot } from '../../../assets/images/logos/filter/logo-camelot.svg'
 import CollabVerse from '../../../assets/images/logos/filter/collab-verse.svg'
 // import CollabPods from '../../assets/images/logos/filter/collab-pods.svg'
 import CollabCamelot from '../../../assets/images/logos/filter/collab-camelot.svg'
@@ -68,15 +68,15 @@ const SwitchBalanceList = [
 ]
 
 const CollaborationList = [
-  { id: 2, name: 'Camelot', backColor: '#FFAF1D', backImg: CollabCamelot, logoImg: LogoCamelot },
-  { id: 0, name: 'Verse', backColor: '#0085FF', backImg: CollabVerse, logoImg: LogoVerse },
-  // { id: 1, name: 'pods', backColor: '#A92A66', backImg: CollabPods, logoImg: LogoPods },
+  { id: 2, name: 'Camelot', backColor: '#FFAF1D', backImg: CollabCamelot },
+  { id: 0, name: 'Verse', backColor: '#0085FF', backImg: CollabVerse },
+  // { id: 1, name: 'pods', backColor: '#A92A66', backImg: CollabPods },
 ]
 
 const MobileCollaborationList = [
-  { id: 0, name: 'Verse', backColor: '#0085FF', backImg: CollabVerse, logoImg: LogoVerse },
-  // { id: 1, name: 'pods', backColor: '#A92A66', backImg: CollabPods, logoImg: LogoPods },
-  { id: 2, name: 'Camelot', backColor: '#FFAF1D', backImg: CollabCamelot, logoImg: LogoCamelot },
+  { id: 0, name: 'Verse', backColor: '#0085FF', backImg: CollabVerse },
+  // { id: 1, name: 'pods', backColor: '#A92A66', backImg: CollabPods },
+  { id: 2, name: 'Camelot', backColor: '#FFAF1D', backImg: CollabCamelot },
 ]
 
 const TrendsList = [
@@ -560,7 +560,7 @@ const QuickFilter = ({
                             }
                           }}
                         >
-                          <img src={item.logoImg} alt="" />
+                          {i === 0 ? <LogoCamelot /> : <LogoVerse />}
                         </SpecDropDownItem>
                       ))}
                     </SpecDropDownMenu>
@@ -835,7 +835,7 @@ const QuickFilter = ({
                               }
                             }}
                           >
-                            <img src={item.logoImg} alt="" />
+                            {i === 1 ? <LogoCamelot /> : <LogoVerse />}
                           </SpecDropDownItem>
                         ))}
                       </SpecDropDownMenu>
