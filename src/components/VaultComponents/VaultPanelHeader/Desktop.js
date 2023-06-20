@@ -4,6 +4,7 @@ import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
 import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
 import POLYGON from '../../../assets/images/logos/badge/polygon.svg'
 import LSD from '../../../assets/images/logos/lsd.svg'
+import DESCI from '../../../assets/images/logos/DeSci.svg'
 import { directDetailUrl } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { BadgeIcon, LogoImg, PanelContainer, ValueContainer } from './style'
@@ -34,6 +35,7 @@ const DesktopPanelHeader = ({
   loadedVault,
   loadingFarmingBalance,
   lsdToken,
+  desciToken,
 }) => {
   const BadgeAry = isLedgerLive() ? [ETHEREUM, POLYGON] : [ETHEREUM, POLYGON, ARBITRUM]
 
@@ -82,7 +84,8 @@ const DesktopPanelHeader = ({
               <></>
             )}
           </BadgeIcon>
-          {lsdToken ? <img className="lsd" src={LSD} alt="" /> : null}
+          {lsdToken ? <img className="tag" src={LSD} alt="" /> : null}
+          {desciToken ? <img className="tag" src={DESCI} alt="" /> : null}
         </ValueContainer>
         <ValueContainer width="25%" textAlign="left" paddingLeft="0%">
           <VaultName token={token} tokenSymbol={tokenSymbol} useIFARM={useIFARM} />

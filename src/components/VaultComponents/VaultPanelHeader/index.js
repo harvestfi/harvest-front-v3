@@ -30,6 +30,7 @@ const VaultPanelHeader = ({
   }
 
   const lsdToken = get(token, 'tags') && token.tags.join(', ').toLowerCase().includes('lsd')
+  const desciToken = get(token, 'tags') && token.tags.join(', ').toLowerCase().includes('desci')
 
   const componentsProps = {
     token,
@@ -41,6 +42,7 @@ const VaultPanelHeader = ({
     loadedVault,
     loadingFarmingBalance,
     lsdToken,
+    desciToken,
   }
 
   return (
