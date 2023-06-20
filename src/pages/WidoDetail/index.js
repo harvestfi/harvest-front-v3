@@ -17,6 +17,7 @@ import Daily from '../../assets/images/logos/earn/daily.svg'
 import Info from '../../assets/images/logos/earn/info.svg'
 import TVL from '../../assets/images/logos/earn/tvl.svg'
 import LSD from '../../assets/images/logos/lsd.svg'
+import DESCI from '../../assets/images/logos/DeSci.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import FarmDetailChart from '../../components/FarmDetailChart'
 import VaultPanelActionsFooter from '../../components/VaultComponents/VaultPanelActions/VaultPanelActionsFooter'
@@ -199,6 +200,7 @@ const WidoDetail = () => {
   const token = groupOfVaults[id]
 
   const lsdToken = get(token, 'tags') && token.tags.join(', ').toLowerCase().includes('lsd')
+  const desciToken = get(token, 'tags') && token.tags.join(', ').toLowerCase().includes('desci')
 
   const { logoUrl } = token
 
@@ -661,7 +663,8 @@ const WidoDetail = () => {
             <ChainBack>
               <img src={BadgeAry[badgeId]} width={11} height={15} alt="" />
             </ChainBack>
-            {lsdToken ? <img className="lsd" src={LSD} alt="" /> : null}
+            {lsdToken ? <img className="tag" src={LSD} alt="" /> : null}
+            {desciToken ? <img className="tag" src={DESCI} alt="" /> : null}
           </FlexTopDiv>
         </TopPart>
         <MobileTop borderColor={borderColor}>
@@ -691,7 +694,8 @@ const WidoDetail = () => {
               <ChainBack>
                 <img src={BadgeAry[badgeId]} width={11} height={15} alt="" />
               </ChainBack>
-              {lsdToken ? <img className="lsd" src={LSD} alt="" /> : null}
+              {lsdToken ? <img className="tag" src={LSD} alt="" /> : null}
+              {desciToken ? <img className="tag" src={DESCI} alt="" /> : null}
             </div>
           </FlexMobileTopDiv>
           <div>
