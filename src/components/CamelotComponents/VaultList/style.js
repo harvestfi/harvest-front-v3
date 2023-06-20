@@ -142,7 +142,6 @@ const MobileListFilter = styled.div`
 
   @media screen and (max-width: 992px) {
     width: 100%;
-    height: 7.8rem;
     display: flex;
     justify-content: end;
     flex-direction: column;
@@ -163,6 +162,19 @@ const MobileListFilter = styled.div`
         .item {
           div {
             color: ${props => props.fontColor} !important;
+          }
+
+          img.checked {
+            display: none;
+          }
+        }
+
+        .item.active-item {
+          display: flex;
+          justify-content: space-between;
+          background: transparent;
+          img.checked {
+            display: block;
           }
         }
       }
@@ -298,6 +310,32 @@ const NotifyContent = styled.div`
   }
 `
 
+const MobileFilterBtn = styled.div`
+  background: #15202b;
+  border-radius: 0px 8px 8px 0px;
+  padding: 10px 18px;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 20px;
+  color: white;
+  border: none;
+  ${props =>
+    props.darkmode === 'true'
+      ? `
+    border-left: 1px solid #d0d5dd;
+  `
+      : `
+  `}
+
+  &:hover {
+    background: #37495b;
+  }
+
+  @media screen and (max-width: 992px) {
+    padding: 10px 18px;
+  }
+`
+
 export {
   Container,
   Header,
@@ -311,4 +349,5 @@ export {
   Filtersinput,
   ThemeMode,
   NotifyContent,
+  MobileFilterBtn,
 }

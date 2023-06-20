@@ -1,7 +1,7 @@
 import React from 'react'
 import { Container, SearchBtn } from './style'
-import { useThemeContext } from '../../providers/useThemeContext'
-import SearchIcon from '../../assets/images/logos/filter/search.svg'
+import { useThemeContext } from '../../../providers/useThemeContext'
+import SearchIcon from '../../../assets/images/logos/filter/search.svg'
 
 const VaultSearchBar = ({
   placeholder,
@@ -10,13 +10,13 @@ const VaultSearchBar = ({
   inputText,
   setInputText,
 }) => {
-  const { darkMode, fontColor, backColor, borderColor } = useThemeContext()
+  const { darkMode, fontColor, backColor, filterBorderColor } = useThemeContext()
 
   const onChange = e => {
     setInputText(e.target.value)
   }
   return (
-    <Container fontColor={fontColor} borderColor={borderColor} backColor={backColor}>
+    <Container fontColor={fontColor} borderColor={filterBorderColor} backColor={backColor}>
       <input
         id="search-input"
         value={inputText}
@@ -25,7 +25,7 @@ const VaultSearchBar = ({
         placeholder={placeholder}
       />
       <SearchBtn type="button" darkMode={darkMode} onClick={() => onSearch(inputText)}>
-        <img src={SearchIcon} height={20} alt="" />
+        <img src={SearchIcon} alt="" />
       </SearchBtn>
     </Container>
   )

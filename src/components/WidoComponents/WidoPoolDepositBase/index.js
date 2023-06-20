@@ -406,10 +406,9 @@ const WidoPoolDepositBase = ({
         {!legacyStaking && (
           <ReactTooltip
             id="help-underlyingbalance"
-            backgroundColor="#fffce6"
+            backgroundColor="black"
             borderColor="black"
-            border
-            textColor="black"
+            textColor="white"
             effect="solid"
             delayHide={50}
             clickable
@@ -475,10 +474,9 @@ const WidoPoolDepositBase = ({
         {legacyStaking && (
           <ReactTooltip
             id="help-img"
-            backgroundColor="#fffce6"
+            backgroundColor="black"
             borderColor="black"
-            border
-            textColor="black"
+            textColor="white"
             effect="solid"
             delayHide={50}
             clickable

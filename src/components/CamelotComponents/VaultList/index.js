@@ -8,6 +8,7 @@ import EmptyIcon from '../../../assets/images/logos/farm/empty.svg'
 import sortAscIcon from '../../../assets/images/ui/asc.svg'
 import sortDescIcon from '../../../assets/images/ui/desc.svg'
 import sortIcon from '../../../assets/images/ui/sort.svg'
+import MobileSortCheckedIcon from '../../../assets/images/logos/filter/mobile-sort-checked.svg'
 import {
   FARM_GRAIN_TOKEN_SYMBOL,
   FARM_TOKEN_SYMBOL,
@@ -39,7 +40,6 @@ import {
   Header,
   HeaderCol,
   MobileListFilter,
-  ThemeMode,
   VaultsListBody,
   NotifyContent,
 } from './style'
@@ -572,7 +572,7 @@ const VaultList = () => {
     [chain, account, userStats],
   )
 
-  const [sortId, setSortId] = useState(-1)
+  const [sortId, setSortId] = useState(2)
 
   const updateSortQuery = sort => {
     const debouncedFn = debounce(() => {
@@ -595,14 +595,7 @@ const VaultList = () => {
     backColor,
     mobileFilterBackColor,
     mobileFilterBorderColor,
-    toggleBackColor,
-    switchBalance,
-    setSwitchBalance,
   } = useThemeContext()
-
-  const switchBalanceStyle = () => {
-    setSwitchBalance(!switchBalance)
-  }
 
   return (
     <Container id="vault-list">
@@ -640,7 +633,9 @@ const VaultList = () => {
             <Dropdown.Menu className="menu">
               {SortsList.map((item, i) => (
                 <Dropdown.Item
-                  className="item"
+                  className={`item ${
+                    sortId !== -1 && item.type === SortsList[sortId].type ? 'active-item' : ''
+                  }`}
                   key={i}
                   onClick={() => {
                     setSortId(item.id)
@@ -648,32 +643,15 @@ const VaultList = () => {
                   }}
                 >
                   <div>{item.name}</div>
+                  <img className="checked" src={MobileSortCheckedIcon} alt="" />
                 </Dropdown.Item>
               ))}
             </Dropdown.Menu>
           </Dropdown>
         </MobileListFilter>
         <Header fontColor={fontColor} filterColor={filterColor}>
-          <HeaderCol width="30%" />
-          <HeaderCol justifyContent="start" width="15%" textAlign="right">
-            <ThemeMode
-              mode={switchBalance ? 'usd' : 'token'}
-              backColor={toggleBackColor}
-              borderColor={borderColor}
-            >
-              <div id="theme-switch">
-                <div className="switch-track">
-                  <div className="switch-thumb" />
-                </div>
-
-                <input
-                  type="checkbox"
-                  checked={switchBalance}
-                  onChange={switchBalanceStyle}
-                  aria-label="Switch between dark and light mode"
-                />
-              </div>
-            </ThemeMode>
+          <HeaderCol justifyContent="start" width="45%" textAlign="right">
+            Farm
           </HeaderCol>
           <HeaderCol width="15%" textAlign="left" onClick={() => setSortingParams('apy')}>
             <div className="hoverable">APY</div>
