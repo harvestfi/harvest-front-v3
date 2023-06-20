@@ -444,7 +444,7 @@ const QuickFilter = ({
                 {isSpecialApp ? (
                   <></>
                 ) : (
-                  <ChainGroup borderColor={borderColor}>
+                  <ChainGroup>
                     {ChainsList.map((item, i) => (
                       <ChainButton
                         backColor={backColor}
@@ -642,7 +642,7 @@ const QuickFilter = ({
                 </ClearFilter>
               </DivWidth>
               <DivWidth borderRadius="10">
-                <ChainGroup borderColor={borderColor}>
+                <ChainGroup>
                   {SwitchBalanceList.map((item, num) => (
                     <SwitchBalanceButton
                       key={num}

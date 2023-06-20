@@ -366,8 +366,20 @@ const QuickFilter = ({
           params.append('chain', ChainsList[selectedClass[i]].name.toLowerCase())
         }
       }
+      push(`${pathname}?${params.toString()}`)
+    } else if (params.length === 0) {
+      push(`${pathname}?${params.toString()}`)
+    } else if (paramObj && paramObj.search) {
+      if (
+        paramObj.search.toLowerCase() === 'verse' ||
+        paramObj.search.toLowerCase() === 'lsd' ||
+        paramObj.search.toLowerCase() === 'desci'
+      ) {
+        push(`/?${params.toString()}`)
+      } else {
+        push(`${pathname}?${params.toString()}`)
+      }
     }
-    push(`${pathname}?${params.toString()}`)
   }, [selectedClass, paramObj]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const clearFilter = () => {

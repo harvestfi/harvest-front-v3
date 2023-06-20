@@ -834,8 +834,7 @@ const SpecDropDown = styled(Dropdown.Toggle)`
   }
 
   &:hover {
-    opacity: 0.6;
-    font-weight: 500;
+    filter: brightness(120%);
   }
 
   .name {
@@ -1060,8 +1059,7 @@ const TrendDropDown = styled(Dropdown.Toggle)`
   }
 
   &:hover {
-    opacity: 0.6;
-    font-weight: 500;
+    filter: brightness(120%);
   }
 
   .name {
