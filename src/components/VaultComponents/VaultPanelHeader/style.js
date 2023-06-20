@@ -89,7 +89,7 @@ const ValueContainer = styled.div`
   padding-right: ${props => props.paddingRight || '0px'};
   padding-left: ${props => props.paddingLeft || '0px'};
 
-  .lsd {
+  .tag {
     position: absolute;
     left: 37px;
     top: 12px;
@@ -257,7 +257,7 @@ const FlexDiv = styled.div`
   `
       : ''}
 
-  .lsd {
+  .tag {
     position: absolute;
     left: 20px;
     top: 5px;

@@ -247,10 +247,9 @@ const VaultFooterActions = ({
         })}
       <ReactTooltip
         id={`claim-tooltip-${tokenSymbol}`}
-        backgroundColor="#fffce6"
+        backgroundColor="black"
         borderColor="black"
-        border
-        textColor="black"
+        textColor="white"
         getContent={() =>
           token.hodlVaultId ? (
             <>

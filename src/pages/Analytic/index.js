@@ -180,10 +180,9 @@ const Analytic = () => {
             </FarmSubTitle>
             <ReactTooltip
               id="profits-to-farmers"
-              backgroundColor="white"
+              backgroundColor="black"
               borderColor="black"
-              border
-              textColor="black"
+              textColor="white"
               effect="float"
               getContent={() => (
                 <TextContainer textAlign="left" margin="0px">
@@ -227,10 +226,9 @@ const Analytic = () => {
             </FarmSubTitle>
             <ReactTooltip
               id="details-box"
-              backgroundColor="white"
+              backgroundColor="black"
               borderColor="black"
-              border
-              textColor="black"
+              textColor="white"
               effect="float"
               getContent={() => (
                 <StatsTooltip>
