@@ -23,7 +23,7 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { isLedgerLive, isSpecialApp } from '../../../utils'
 import ButtonGroup from '../../ButtonGroup'
-import SearchBar from '../../SearchBar'
+import SearchBar from '../SearchBar'
 import {
   ChainButton,
   ClearFilter,
@@ -444,7 +444,7 @@ const QuickFilter = ({
                 {isSpecialApp ? (
                   <></>
                 ) : (
-                  <ChainGroup borderColor={borderColor}>
+                  <ChainGroup>
                     {ChainsList.map((item, i) => (
                       <ChainButton
                         backColor={backColor}
@@ -518,7 +518,6 @@ const QuickFilter = ({
                 <Dropdown>
                   <SpecDropDown
                     backcolor={collaborationBackColor}
-                    bordercolor={borderColor}
                     fontcolor={fontColor}
                     type="collab"
                   >
@@ -558,11 +557,7 @@ const QuickFilter = ({
               </DivWidth>
               <DivWidth marginRight="15px" height="fit-content">
                 <Dropdown>
-                  <TrendDropDown
-                    num={trendsBackNum}
-                    bordercolor={borderColor}
-                    fontcolor={fontColor}
-                  >
+                  <TrendDropDown num={trendsBackNum} fontcolor={fontColor}>
                     <div className="name">{trendName}</div>
                     <img className="narrow" src={SpecNarrowDown} alt="" />
                   </TrendDropDown>
@@ -642,7 +637,7 @@ const QuickFilter = ({
                 </ClearFilter>
               </DivWidth>
               <DivWidth borderRadius="10">
-                <ChainGroup borderColor={borderColor}>
+                <ChainGroup>
                   {SwitchBalanceList.map((item, num) => (
                     <SwitchBalanceButton
                       key={num}
@@ -797,11 +792,7 @@ const QuickFilter = ({
                 </DivWidth>
                 <DivWidth mobileMarginBottom="10px" height="fit-content">
                   <Dropdown>
-                    <SpecDropDown
-                      backcolor={collaborationBackColor}
-                      bordercolor={borderColor}
-                      fontcolor={fontColor}
-                    >
+                    <SpecDropDown backcolor={collaborationBackColor} fontcolor={fontColor}>
                       <div className="name">{collaborationName}</div>
                       <img className="narrow" src={SpecNarrowDown} alt="" />
                     </SpecDropDown>
@@ -841,11 +832,7 @@ const QuickFilter = ({
                 </DivWidth>
                 <DivWidth mobileMarginBottom="10px" height="fit-content">
                   <Dropdown>
-                    <TrendDropDown
-                      num={trendsBackNum}
-                      bordercolor={borderColor}
-                      fontcolor={fontColor}
-                    >
+                    <TrendDropDown num={trendsBackNum} fontcolor={fontColor}>
                       <div className="name">{trendName}</div>
                       <img className="narrow" src={SpecNarrowDown} alt="" />
                     </TrendDropDown>

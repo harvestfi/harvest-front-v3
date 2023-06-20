@@ -251,16 +251,17 @@ const DivWidth = styled.div`
 
 const ChainButton = styled.button`
   align-items: center;
+  border: 1px solid ${props => props.borderColor};
   &:first-child {
     border-radius: 10px 0 0 10px;
+    border-right: none;
   }
 
   &:last-child {
     border-radius: 0 10px 10px 0;
+    border-left: none;
   }
 
-  border: none;
-  border-right: 1px solid ${props => props.borderColor};
   background: ${props => props.backColor};
 
   padding: 9px 14px;
@@ -730,21 +731,20 @@ const SpecButtons = styled.button`
 const ChainGroup = styled.div`
   display: flex;
   border-radius: 10px;
-  border: 1px solid ${props => props.borderColor};
 `
 
 const SwitchBalanceButton = styled.button`
   align-items: center;
+  border: 1px solid ${props => props.borderColor};
   &:first-child {
     border-radius: 10px 0 0 10px;
+    border-right: none;
   }
 
   &:last-child {
     border-radius: 0 10px 10px 0;
   }
 
-  border: none;
-  border-right: 1px solid ${props => props.borderColor};
   background: ${props => props.backColor};
 
   padding: 9px 14px;
@@ -815,15 +815,14 @@ const SpecDropDown = styled(Dropdown.Toggle)`
       background: linear-gradient(to right, #ff5e62, #ff9966); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   `}
 
-  background-size: 100% !important;
-  border: 1px solid ${props => props.bordercolor} !important;
+  border: none !important;
   color: white;
   font-weight: 600;
   font-size: 14px;
   line-height: 20px;
   border-radius: 10px;
   align-items: center;
-  padding: 10px 15px;
+  padding: 11px 15px;
   width: ${props => (props.type === 'collab' ? '140px' : '102px')};
   display: flex;
   justify-content: space-between;
@@ -850,7 +849,7 @@ const SpecDropDown = styled(Dropdown.Toggle)`
   }
 
   @media screen and (max-width: 1480px) {
-    padding: 9px 12px;
+    padding: 10px 12px;
     width: ${props => (props.type === 'collab' ? '125px' : '90px')};
     .name {
       font-weight: 600;
@@ -860,7 +859,7 @@ const SpecDropDown = styled(Dropdown.Toggle)`
   }
 
   @media screen and (max-width: 1280px) {
-    padding: 5px 10px;
+    padding: 6px 10px;
     font-size: 8px;
     line-height: 14px;
     width: ${props => (props.type === 'collab' ? '100px' : '72px')};
@@ -872,7 +871,7 @@ const SpecDropDown = styled(Dropdown.Toggle)`
 
   @media screen and (max-width: 992px) {
     justify-content: space-between;
-    padding: 10px 16px;
+    padding: 11px 16px;
     width: 100%;
     .name {
       font-size: 14px;
@@ -1042,15 +1041,14 @@ const TrendDropDown = styled(Dropdown.Toggle)`
       : `
   `}
 
-  background-size: 100% !important;
-  border: 1px solid ${props => props.bordercolor} !important;
+  border: none !important;
   color: white;
   font-weight: 600;
   font-size: 14px;
   line-height: 20px;
   border-radius: 10px;
   align-items: center;
-  padding: 10px 15px;
+  padding: 11px 15px;
   width: ${props => (props.type === 'collab' ? '140px' : '102px')};
   display: flex;
   justify-content: space-between;
@@ -1077,7 +1075,7 @@ const TrendDropDown = styled(Dropdown.Toggle)`
   }
 
   @media screen and (max-width: 1480px) {
-    padding: 9px 12px;
+    padding: 10px 12px;
     width: ${props => (props.type === 'collab' ? '125px' : '90px')};
     .name {
       font-weight: 600;
@@ -1087,7 +1085,7 @@ const TrendDropDown = styled(Dropdown.Toggle)`
   }
 
   @media screen and (max-width: 1280px) {
-    padding: 5px 10px;
+    padding: 6px 10px;
     font-size: 8px;
     line-height: 14px;
     width: ${props => (props.type === 'collab' ? '100px' : '72px')};
@@ -1099,7 +1097,7 @@ const TrendDropDown = styled(Dropdown.Toggle)`
 
   @media screen and (max-width: 992px) {
     justify-content: space-between;
-    padding: 10px 16px;
+    padding: 11px 16px;
     width: 100%;
     .name {
       font-size: 14px;

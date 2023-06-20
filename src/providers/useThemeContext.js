@@ -127,6 +127,8 @@ export function ThemeProvider({ children }) {
 
   const mobileFilterHoverColor = darkMode ? '#808081' : '#e9e9e9'
 
+  const filterBorderColor = darkMode ? 'rgba(217, 217, 217, 0.5)' : '#15202b'
+
   const [openNotify, setOpenNotify] = useState(false) // true : USD, false: Token
   return (
     <ThemeContext.Provider
@@ -195,6 +197,7 @@ export function ThemeProvider({ children }) {
         openNotify,
         setOpenNotify,
         mobileFilterHoverColor,
+        filterBorderColor,
       }}
     >
       {children}
