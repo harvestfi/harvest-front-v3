@@ -163,6 +163,19 @@ const MobileListFilter = styled.div`
           div {
             color: ${props => props.fontColor} !important;
           }
+
+          img.checked {
+            display: none;
+          }
+        }
+
+        .item.active-item {
+          display: flex;
+          justify-content: space-between;
+          background: transparent;
+          img.checked {
+            display: block;
+          }
         }
       }
 
