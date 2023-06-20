@@ -67,7 +67,7 @@ const AnalyticChart = () => {
         </ButtonGroup>
       </Container>
       <ConnectButton color="connectwallet" minWidth="190px" bordercolor={fontColor}>
-        Comming Soon
+        Coming Soon
       </ConnectButton>
     </>
   )
