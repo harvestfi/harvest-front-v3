@@ -105,7 +105,7 @@ const formatVaults = (
   )
 
   if (searchQuery) {
-    if (searchQuery.toLowerCase() === 'lsd') {
+    if (searchQuery.toLowerCase() === 'lsd' || searchQuery.toLowerCase() === 'desci') {
       vaultsSymbol = vaultsSymbol.filter(
         symbol =>
           get(groupOfVaults[symbol], 'tags') &&
