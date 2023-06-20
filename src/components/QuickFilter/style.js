@@ -251,16 +251,17 @@ const DivWidth = styled.div`
 
 const ChainButton = styled.button`
   align-items: center;
+  border: 1px solid ${props => props.borderColor};
   &:first-child {
     border-radius: 10px 0 0 10px;
+    border-right: none;
   }
 
   &:last-child {
     border-radius: 0 10px 10px 0;
+    border-left: none;
   }
 
-  border: none;
-  border-right: 1px solid ${props => props.borderColor};
   background: ${props => props.backColor};
 
   padding: 9px 14px;
@@ -730,20 +731,20 @@ const SpecButtons = styled.button`
 const ChainGroup = styled.div`
   display: flex;
   border-radius: 10px;
-  border: 1px solid ${props => props.borderColor};
 `
 
 const SwitchBalanceButton = styled.button`
   align-items: center;
+  border: 1px solid ${props => props.borderColor};
   &:first-child {
     border-radius: 10px 0 0 10px;
+    border-right: none;
   }
 
   &:last-child {
     border-radius: 0 10px 10px 0;
   }
 
-  border: none;
   border-right: 1px solid ${props => props.borderColor};
   background: ${props => props.backColor};
 
