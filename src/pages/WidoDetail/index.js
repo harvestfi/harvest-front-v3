@@ -95,7 +95,6 @@ import {
   WithdrawComponents,
   DetailTopInfo,
   LastHarvestInfo,
-  LastHarvestTooltip,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 
@@ -1326,24 +1325,22 @@ const WidoDetail = () => {
                     borderColor="black"
                     textColor="white"
                   >
-                    <LastHarvestTooltip>
-                      <FlexDiv justifyContent="space-between">
-                        <NewLabel weight="500" size="13px" height="16px">
-                          Harvest Treasury
-                        </NewLabel>
-                        <NewLabel weight="500" size="13px" height="16px" marginLeft="20px">
-                          {harvestTreasury}%
-                        </NewLabel>
-                      </FlexDiv>
-                      <FlexDiv justifyContent="space-between" marginTop="12px">
-                        <NewLabel weight="500" size="13px" height="16px">
-                          Profit Sharing
-                        </NewLabel>
-                        <NewLabel weight="500" size="13px" height="16px" marginLeft="20px">
-                          {profitShare}%
-                        </NewLabel>
-                      </FlexDiv>
-                    </LastHarvestTooltip>
+                    <FlexDiv justifyContent="space-between">
+                      <NewLabel weight="500" size="13px" height="16px">
+                        Harvest Treasury
+                      </NewLabel>
+                      <NewLabel weight="500" size="13px" height="16px" marginLeft="20px">
+                        {harvestTreasury}%
+                      </NewLabel>
+                    </FlexDiv>
+                    <FlexDiv justifyContent="space-between" marginTop="12px">
+                      <NewLabel weight="500" size="13px" height="16px">
+                        Profit Sharing
+                      </NewLabel>
+                      <NewLabel weight="500" size="13px" height="16px" marginLeft="20px">
+                        {profitShare}%
+                      </NewLabel>
+                    </FlexDiv>
                   </ReactTooltip>
                 </NewLabel>
               </FlexDiv>

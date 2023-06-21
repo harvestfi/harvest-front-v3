@@ -634,10 +634,6 @@ const LastHarvestInfo = styled.div`
   border-radius: 10px;
 `
 
-const LastHarvestTooltip = styled.div`
-  padding: 5px;
-`
-
 export {
   DetailView,
   TopPart,
@@ -676,5 +672,4 @@ export {
   RewardPart,
   DetailTopInfo,
   LastHarvestInfo,
-  LastHarvestTooltip,
 }
