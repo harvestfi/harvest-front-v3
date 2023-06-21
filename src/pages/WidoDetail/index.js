@@ -1333,7 +1333,7 @@ const WidoDetail = () => {
                           Profit Sharing
                         </NewLabel>
                         <NewLabel weight="500" size="13px" height="16px" marginLeft="20px">
-                          3.5%
+                          {Number(profitShareAPY).toFixed(2)}%
                         </NewLabel>
                       </FlexDiv>
                     </LastHarvestTooltip>
