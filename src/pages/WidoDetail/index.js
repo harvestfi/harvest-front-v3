@@ -1355,7 +1355,7 @@ const WidoDetail = () => {
                   Last Harvest
                 </NewLabel>
                 <NewLabel size="13px" weight="500" height="16px">
-                  {lastHarvest !== '' ? `${lastHarvest} ago` : ''}
+                  {lastHarvest !== '' ? `${lastHarvest} ago` : '-'}
                 </NewLabel>
               </FlexDiv>
             </LastHarvestInfo>
