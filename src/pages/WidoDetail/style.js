@@ -625,6 +625,19 @@ const DetailTopInfo = styled.div`
       : ``}
 `
 
+const LastHarvestInfo = styled.div`
+  margin-top: 18px;
+  padding: 20px;
+
+  background: ${props => props.backColor};
+  border: 1px solid ${props => props.borderColor};
+  border-radius: 10px;
+`
+
+const LastHarvestTooltip = styled.div`
+  padding: 5px;
+`
+
 export {
   DetailView,
   TopPart,
@@ -662,4 +675,6 @@ export {
   FlexMobileTopDiv,
   RewardPart,
   DetailTopInfo,
+  LastHarvestInfo,
+  LastHarvestTooltip,
 }

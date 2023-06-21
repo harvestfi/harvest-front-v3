@@ -1233,3 +1233,87 @@ export const isSafeApp = () => {
 }
 
 export const isSpecialApp = isLedgerLive() || isSafeApp()
+
+export const getLastHarvestInfo = async (address, chainId) => {
+  // eslint-disable-next-line no-unused-vars
+  let nowDate = new Date(),
+    data = {},
+    result = ''
+
+  nowDate = Math.floor(nowDate.setDate(nowDate.getDate()) / 1000)
+
+  const myHeaders = new Headers()
+  myHeaders.append('Content-Type', 'application/json')
+
+  address = address.toLowerCase()
+
+  const graphql = JSON.stringify({
+      query: `{
+      rewards(
+        where: {
+          pool_: {
+            vault: "${address}"
+          }
+        },
+        orderBy: timestamp,
+        orderDirection: desc,
+        first: 1
+      ) {
+        timestamp
+      }
+    }`,
+      variables: {},
+    }),
+    requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: graphql,
+      redirect: 'follow',
+    }
+
+  const url =
+    chainId === CHAIN_IDS.ETH_MAINNET
+      ? GRAPH_URL_MAINNET
+      : chainId === CHAIN_IDS.POLYGON_MAINNET
+      ? GRAPH_URL_POLYGON
+      : GRAPH_URL_ARBITRUM
+
+  try {
+    await fetch(url, requestOptions)
+      .then(response => response.json())
+      .then(res => {
+        data = res.data.rewards
+        if (data.length !== 0) {
+          const timeStamp = data[0].timestamp
+          const duration = Number(nowDate) - Number(timeStamp)
+          let min = floor10(duration / 60, 0),
+            hour,
+            day
+          if (min >= 60) {
+            hour = floor10(min / 60, 0)
+            min %= 60
+            if (hour >= 24) {
+              day = hour / 24
+              hour %= 24
+            }
+          }
+
+          // const day = parseInt(duration / 3600 / 24),
+          //   hour = Number((duration - day * 3600 * 24) / 3600),
+          //   min = Number((duration - day * 3600 * 24 - 3600 * hour) / 60)
+
+          const dayString = `${day > 0 ? day + (day === 1 ? ' day' : ' days') : ''}`
+          const hourString = `${hour > 0 ? hour + (hour === 1 ? ' hour' : ' hours') : ''}`
+          const minString = `${min > 0 ? min + (min === 1 ? ' minute' : ' minutes') : ''}`
+          result = `${
+            `${dayString !== '' ? `${dayString} ` : ''}` +
+            `${hourString !== '' ? `${hourString} ` : ''}`
+          }${minString}`
+        }
+      })
+      .catch(error => console.log('error', error))
+  } catch (err) {
+    console.log('Fetch data about last harvest: ', err)
+  }
+  return result
+}

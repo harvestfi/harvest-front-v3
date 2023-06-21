@@ -44,6 +44,7 @@ import {
   IFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
 } from '../../constants'
+import { Divider } from '../../components/GlobalStyle'
 import { fromWei, getExplorerLink, newContractInstance, getWeb3 } from '../../services/web3'
 import { addresses } from '../../data'
 import { usePools } from '../../providers/Pools'
@@ -52,7 +53,13 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 
-import { displayAPY, formatNumber, getDetailText, getTotalApy } from '../../utils'
+import {
+  displayAPY,
+  formatNumber,
+  getDetailText,
+  getTotalApy,
+  getLastHarvestInfo,
+} from '../../utils'
 import {
   BackArrow,
   BackBtnRect,
@@ -87,6 +94,8 @@ import {
   ValueShow,
   WithdrawComponents,
   DetailTopInfo,
+  LastHarvestInfo,
+  LastHarvestTooltip,
 } from './style'
 
 const chainList = [
@@ -221,6 +230,18 @@ const WidoDetail = () => {
   const boostedRewardAPY = get(vaultPool, 'boostedRewardAPY', 0)
 
   const chain = token.chain || token.data.chain
+
+  // Get Harvest Info (ex: 1 day ago)
+  const [lastHarvest, setLastHarvest] = useState('')
+  useEffect(() => {
+    const getLastHarvest = async () => {
+      const value = await getLastHarvestInfo(paramAddress, chain)
+      setLastHarvest(value)
+    }
+
+    getLastHarvest()
+  }, [paramAddress, chain])
+
   const [badgeId, setBadgeId] = useState(-1)
 
   const [loadComplete, setLoadComplete] = useState(false)
@@ -1260,6 +1281,77 @@ const WidoDetail = () => {
                 />
               </WithdrawComponents>
             </RestPart>
+            <LastHarvestInfo borderColor={borderColor} backColor={backColor}>
+              <FlexDiv justifyContent="space-between">
+                <NewLabel size="13px" weight="500" height="16px">
+                  Deposit Fee
+                </NewLabel>
+                <NewLabel size="13px" weight="500" height="16px">
+                  0%
+                </NewLabel>
+              </FlexDiv>
+              <FlexDiv justifyContent="space-between" marginTop="12px">
+                <NewLabel size="13px" weight="500" height="16px">
+                  Withdrawal Fee
+                </NewLabel>
+                <NewLabel size="13px" weight="500" height="16px">
+                  0%
+                </NewLabel>
+              </FlexDiv>
+              <FlexDiv justifyContent="space-between" marginTop="12px">
+                <NewLabel size="13px" weight="300" height="16px">
+                  The APY shown already considers the performance fee taken only from generated
+                  yield and not deposits.
+                </NewLabel>
+                <NewLabel display="flex" self="center">
+                  <InfoIcon
+                    className="info"
+                    width={isMobile ? 10 : 16}
+                    src={Info}
+                    alt=""
+                    data-tip
+                    data-for="tooltip-last-harvest"
+                    filterColor={filterColor}
+                  />
+                  <ReactTooltip
+                    id="tooltip-last-harvest"
+                    backgroundColor="black"
+                    borderColor="black"
+                    textColor="white"
+                  >
+                    <LastHarvestTooltip>
+                      <FlexDiv justifyContent="space-between">
+                        <NewLabel weight="500" size="13px" height="16px">
+                          Harvest Treasury
+                        </NewLabel>
+                        <NewLabel weight="500" size="13px" height="16px" marginLeft="20px">
+                          5%
+                        </NewLabel>
+                      </FlexDiv>
+                      <FlexDiv justifyContent="space-between" marginTop="12px">
+                        <NewLabel weight="500" size="13px" height="16px">
+                          Profit Sharing
+                        </NewLabel>
+                        <NewLabel weight="500" size="13px" height="16px" marginLeft="20px">
+                          3.5%
+                        </NewLabel>
+                      </FlexDiv>
+                    </LastHarvestTooltip>
+                  </ReactTooltip>
+                </NewLabel>
+              </FlexDiv>
+
+              <Divider height="1px" marginTop="12px" backColor="#e9e9e9" />
+
+              <FlexDiv justifyContent="space-between" marginTop="12px">
+                <NewLabel size="13px" weight="500" height="16px">
+                  Last Harvest
+                </NewLabel>
+                <NewLabel size="13px" weight="500" height="16px">
+                  {lastHarvest !== '' ? `${lastHarvest} ago` : ''}
+                </NewLabel>
+              </FlexDiv>
+            </LastHarvestInfo>
             {id === FARM_TOKEN_SYMBOL ? null : (
               <RewardPart borderColor={borderColor} backColor={backColor}>
                 <VaultPanelActionsFooter {...viewComponentProps} />
