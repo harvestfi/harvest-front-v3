@@ -97,6 +97,7 @@ import {
   LastHarvestInfo,
   LastHarvestTooltip,
 } from './style'
+import { CHAIN_IDS } from '../../data/constants'
 
 const chainList = [
   { id: 1, name: 'Ethereum', chainId: 1 },
@@ -241,6 +242,12 @@ const WidoDetail = () => {
 
     getLastHarvest()
   }, [paramAddress, chain])
+
+  // Tooltip info in Last Harvest box
+  const profitShare =
+    chain === CHAIN_IDS.ETH_MAINNET ? '10' : chain === CHAIN_IDS.POLYGON_MAINNET ? '5' : '7'
+  const harvestTreasury =
+    chain === CHAIN_IDS.ETH_MAINNET ? '10' : chain === CHAIN_IDS.POLYGON_MAINNET ? '3' : '3'
 
   const [badgeId, setBadgeId] = useState(-1)
 
@@ -1325,7 +1332,7 @@ const WidoDetail = () => {
                           Harvest Treasury
                         </NewLabel>
                         <NewLabel weight="500" size="13px" height="16px" marginLeft="20px">
-                          5%
+                          {harvestTreasury}%
                         </NewLabel>
                       </FlexDiv>
                       <FlexDiv justifyContent="space-between" marginTop="12px">
@@ -1333,7 +1340,7 @@ const WidoDetail = () => {
                           Profit Sharing
                         </NewLabel>
                         <NewLabel weight="500" size="13px" height="16px" marginLeft="20px">
-                          {Number(profitShareAPY).toFixed(2)}%
+                          {profitShare}%
                         </NewLabel>
                       </FlexDiv>
                     </LastHarvestTooltip>

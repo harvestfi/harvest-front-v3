@@ -1293,14 +1293,10 @@ export const getLastHarvestInfo = async (address, chainId) => {
             hour = floor10(min / 60, 0)
             min %= 60
             if (hour >= 24) {
-              day = hour / 24
+              day = floor10(hour / 24, 0)
               hour %= 24
             }
           }
-
-          // const day = parseInt(duration / 3600 / 24),
-          //   hour = Number((duration - day * 3600 * 24) / 3600),
-          //   min = Number((duration - day * 3600 * 24 - 3600 * hour) / 60)
 
           const dayString = `${day > 0 ? day + (day === 1 ? ' day' : ' days') : ''}`
           const hourString = `${hour > 0 ? hour + (hour === 1 ? ' hour' : ' hours') : ''}`
