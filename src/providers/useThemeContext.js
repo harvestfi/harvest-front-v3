@@ -130,6 +130,9 @@ export function ThemeProvider({ children }) {
   const filterBorderColor = darkMode ? 'rgba(217, 217, 217, 0.5)' : '#15202b'
 
   const [openNotify, setOpenNotify] = useState(false) // true : USD, false: Token
+
+  const [prevPage, setPrevPage] = useState('')
+
   return (
     <ThemeContext.Provider
       value={{
@@ -198,6 +201,8 @@ export function ThemeProvider({ children }) {
         setOpenNotify,
         mobileFilterHoverColor,
         filterBorderColor,
+        prevPage,
+        setPrevPage,
       }}
     >
       {children}

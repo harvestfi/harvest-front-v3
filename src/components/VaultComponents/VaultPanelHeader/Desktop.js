@@ -46,7 +46,7 @@ const DesktopPanelHeader = ({
 
   const { push } = useHistory()
 
-  const { fontColor, borderColor, badgeIconBackColor } = useThemeContext()
+  const { fontColor, borderColor, badgeIconBackColor, setPrevPage } = useThemeContext()
 
   useEffect(() => {
     const getBadge = () => {
@@ -69,6 +69,7 @@ const DesktopPanelHeader = ({
           const address = isSpecialVault
             ? token.data.collateralAddress
             : token.vaultAddress || token.tokenAddress
+          setPrevPage(window.location.href)
           push(`${directDetailUrl + network}/${address}`)
         }}
       >
