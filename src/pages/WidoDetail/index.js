@@ -568,6 +568,8 @@ const WidoDetail = () => {
     widoTagBoxShadow,
     widoTagFontColor,
     widoTagActiveFontColor,
+    prevPage,
+    setPrevPage,
   } = useThemeContext()
 
   const fAssetSymbol = isSpecialVault ? id : `f${id}`
@@ -668,9 +670,8 @@ const WidoDetail = () => {
           <FlexTopDiv>
             <BackBtnRect
               onClick={() => {
-                const prevUrl = document.referrer
-                const filterUrl = window.location.origin
-                if (prevUrl.includes(filterUrl)) {
+                if (prevPage !== '') {
+                  setPrevPage('')
                   history.goBack()
                 } else {
                   push('/')
