@@ -1285,18 +1285,20 @@ export const getLastHarvestInfo = async (address, chainId) => {
         data = res.data.rewards
         if (data.length !== 0) {
           const timeStamp = data[0].timestamp
-          const duration = Number(nowDate) - Number(timeStamp)
-          let min = floor10(duration / 60, 0),
-            hour,
-            day
-          if (min >= 60) {
-            hour = floor10(min / 60, 0)
-            min %= 60
-            if (hour >= 24) {
-              day = floor10(hour / 24, 0)
-              hour %= 24
-            }
-          }
+          let duration = Number(nowDate) - Number(timeStamp),
+            day = 0,
+            hour = 0,
+            min = 0
+          // calculate (and subtract) whole days
+          day = Math.floor(duration / 86400)
+          duration -= day * 86400
+
+          // calculate (and subtract) whole hours
+          hour = Math.floor(duration / 3600) % 24
+          duration -= hour * 3600
+
+          // calculate (and subtract) whole minutes
+          min = Math.floor(duration / 60) % 60
 
           const dayString = `${day > 0 ? day + (day === 1 ? ' day' : ' days') : ''}`
           const hourString = `${hour > 0 ? hour + (hour === 1 ? ' hour' : ' hours') : ''}`
