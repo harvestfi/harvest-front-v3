@@ -6,8 +6,6 @@ import POLYGON from '../../../assets/images/chains/polygon.svg'
 import APYIcon from '../../../assets/images/logos/farm/MobileAPYIcon.svg'
 import DailyIcon from '../../../assets/images/logos/farm/MobileDailyIcon.svg'
 import TVLIcon from '../../../assets/images/logos/farm/MobileTVLIcon.svg'
-import LSD from '../../../assets/images/logos/lsd.svg'
-import DESCI from '../../../assets/images/logos/DeSci.svg'
 import { directDetailUrl } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { isLedgerLive } from '../../../utils'
@@ -44,8 +42,6 @@ const MobilePanelHeader = ({
   multipleAssets,
   loadedVault,
   loadingFarmingBalance,
-  lsdToken,
-  desciToken,
 }) => {
   const BadgeAry = isLedgerLive() ? [ETHEREUM, POLYGON] : [ETHEREUM, POLYGON, ARBITRUM]
 
@@ -88,8 +84,6 @@ const MobilePanelHeader = ({
             <></>
           )}
         </BadgeIcon>
-        {lsdToken ? <img className="tag" src={LSD} alt="" /> : null}
-        {desciToken ? <img className="tag" src={DESCI} alt="" /> : null}
       </FlexDiv>
       <FlexDiv width="70%" alignSelf="center" marginRight="18px">
         <div>

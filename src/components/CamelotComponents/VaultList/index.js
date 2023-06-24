@@ -109,43 +109,32 @@ const formatVaults = (
   )
 
   if (searchQuery) {
-    if (searchQuery.toLowerCase() === 'lsd' || searchQuery.toLowerCase() === 'desci') {
-      vaultsSymbol = vaultsSymbol.filter(
-        symbol =>
-          get(groupOfVaults[symbol], 'tags') &&
-          groupOfVaults[symbol].tags
+    vaultsSymbol = vaultsSymbol.filter(
+      symbol =>
+        symbol.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
+        (get(groupOfVaults[symbol], 'tokenAddress') &&
+          !isArray(groupOfVaults[symbol].tokenAddress) &&
+          groupOfVaults[symbol].tokenAddress.toLowerCase() === searchQuery.toLowerCase()) ||
+        (get(groupOfVaults[symbol], 'displayName') &&
+          groupOfVaults[symbol].tokenNames
             .join(', ')
             .toLowerCase()
-            .includes(searchQuery.toLowerCase().trim()),
-      )
-    } else {
-      vaultsSymbol = vaultsSymbol.filter(
-        symbol =>
-          symbol.toLowerCase().includes(searchQuery.toLowerCase().trim()) ||
-          (get(groupOfVaults[symbol], 'tokenAddress') &&
-            !isArray(groupOfVaults[symbol].tokenAddress) &&
-            groupOfVaults[symbol].tokenAddress.toLowerCase() === searchQuery.toLowerCase()) ||
-          (get(groupOfVaults[symbol], 'displayName') &&
-            groupOfVaults[symbol].tokenNames
-              .join(', ')
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase().trim())) ||
-          (get(groupOfVaults[symbol], 'subLabel') &&
-            groupOfVaults[symbol].subLabel
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase().trim())) ||
-          (get(
-            symbol === FARM_TOKEN_SYMBOL ? tokens[IFARM_TOKEN_SYMBOL] : groupOfVaults[symbol],
-            'platform',
-          )[0] &&
-            (symbol === FARM_TOKEN_SYMBOL
-              ? tokens[IFARM_TOKEN_SYMBOL]
-              : groupOfVaults[symbol]
-            ).platform[0]
-              .toLowerCase()
-              .includes(searchQuery.toLowerCase().trim())),
-      )
-    }
+            .includes(searchQuery.toLowerCase().trim())) ||
+        (get(groupOfVaults[symbol], 'subLabel') &&
+          groupOfVaults[symbol].subLabel
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase().trim())) ||
+        (get(
+          symbol === FARM_TOKEN_SYMBOL ? tokens[IFARM_TOKEN_SYMBOL] : groupOfVaults[symbol],
+          'platform',
+        )[0] &&
+          (symbol === FARM_TOKEN_SYMBOL
+            ? tokens[IFARM_TOKEN_SYMBOL]
+            : groupOfVaults[symbol]
+          ).platform[0]
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase().trim())),
+    )
   }
 
   if (sortParam) {
