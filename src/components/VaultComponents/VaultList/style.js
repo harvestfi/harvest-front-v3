@@ -150,7 +150,7 @@ const MobileListFilter = styled.div`
       width: 100%;
       display: block;
       background: ${props => props.mobileBackColor} !important;
-      border: ${props => props.borderColor};
+      border: 1px solid rgba(217, 217, 217, 0.5);
       border-radius: 8px;
       position: relative;
       color: #667085;
