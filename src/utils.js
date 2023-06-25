@@ -1249,11 +1249,9 @@ export const getLastHarvestInfo = async (address, chainId) => {
 
   const graphql = JSON.stringify({
       query: `{
-      rewards(
+        sharePrices(
         where: {
-          pool_: {
-            vault: "${address}"
-          }
+          vault: "${address}"
         },
         orderBy: timestamp,
         orderDirection: desc,
@@ -1282,7 +1280,7 @@ export const getLastHarvestInfo = async (address, chainId) => {
     await fetch(url, requestOptions)
       .then(response => response.json())
       .then(res => {
-        data = res.data.rewards
+        data = res.data.sharePrices
         if (data.length !== 0) {
           const timeStamp = data[0].timestamp
           let duration = Number(nowDate) - Number(timeStamp),

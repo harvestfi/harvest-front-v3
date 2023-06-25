@@ -1,6 +1,6 @@
 import styled from 'styled-components'
-import UsdIcon from '../../assets/images/ui/usd.svg'
-import TokensIcon from '../../assets/images/ui/tokens.svg'
+import UsdIcon from '../../assets/images/ui/usd-port.svg'
+import TokensIcon from '../../assets/images/ui/tokens-port.svg'
 
 const Container = styled.div`
   width: 100%;
