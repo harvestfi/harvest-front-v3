@@ -443,7 +443,7 @@ const WidoDetail = () => {
           } catch (err) {
             console.log('getSupportedTokens of Wido: ', err)
           }
-          const tokenAddress = token.tokenAddress
+          const tokenAddress = token.tokenAddress || token.vaultAddress
 
           const soonSupList = []
           supList = supList.map(sup => {
@@ -503,7 +503,6 @@ const WidoDetail = () => {
             supList = supList.sort(function result(x, y) {
               return x === directInSup ? -1 : y === directInSup ? 1 : 0
             })
-            supList.unshift(directInSup)
             supList[0].default = true
           } else if (
             !(Object.keys(directInBalance).length === 0 && directInBalance.constructor === Object)
