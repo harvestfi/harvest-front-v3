@@ -244,7 +244,7 @@ const WidoDetail = () => {
 
   // Tooltip info in Last Harvest box
   const profitShare =
-    chain === CHAIN_IDS.ETH_MAINNET ? '5' : chain === CHAIN_IDS.POLYGON_MAINNET ? '5' : '7'
+    chain === CHAIN_IDS.ETH_MAINNET ? '10' : chain === CHAIN_IDS.POLYGON_MAINNET ? '5' : '7'
   const harvestTreasury =
     chain === CHAIN_IDS.ETH_MAINNET ? '5' : chain === CHAIN_IDS.POLYGON_MAINNET ? '3' : '3'
 

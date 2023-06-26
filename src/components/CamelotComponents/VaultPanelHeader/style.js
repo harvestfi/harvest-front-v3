@@ -88,6 +88,12 @@ const ValueContainer = styled.div`
   ${props => (props.textAlign === 'left' ? `justify-content: start;` : '')}
   padding-right: ${props => props.paddingRight || '0px'};
   padding-left: ${props => props.paddingLeft || '0px'};
+  .tag {
+    position: absolute;
+    left: 37px;
+    top: 12px;
+  }
+
   ${props =>
     props.position
       ? `
@@ -248,6 +254,11 @@ const FlexDiv = styled.div`
     margin-right: ${props.marginRight};
   `
       : ''}
+  .tag {
+    position: absolute;
+    left: 20px;
+    top: 5px;
+  }
 `
 
 const DetailModal = styled(Modal)`

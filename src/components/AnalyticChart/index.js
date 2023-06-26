@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { usePools } from '../../providers/Pools'
-import { Container, Title, Header, ButtonGroup, ChartDiv, ConnectButton } from './style'
+import { Container, Title, Header, ButtonGroup, ChartDiv /* , ConnectButton */ } from './style'
 import { SPECIAL_VAULTS } from '../../constants'
-import { getDataQuery } from '../../utils'
-import ApexChart from '../ApexChart'
+import { getTotalTVLData } from '../../utils'
+import ApexChart from '../AnalyticComponents/ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
 
 const recommendLinks = [
@@ -23,18 +23,16 @@ const AnalyticChart = () => {
 
   const chainId = farmProfitSharingPool.chain
 
-  const [clickedId] = useState(1)
-
-  const [selectedState, setSelectedState] = React.useState('1W')
+  const [selectedState, setSelectedState] = useState('1Y')
 
   const address =
     farmProfitSharingPool.autoStakePoolAddress || farmProfitSharingPool.contractAddress
 
-  const [apiData, setApiData] = React.useState([])
+  const [apiData, setApiData] = useState([])
 
   useEffect(() => {
     const initData = async () => {
-      const data = await getDataQuery(365, address, chainId)
+      const data = await getTotalTVLData()
       setApiData(data)
     }
 
@@ -50,7 +48,7 @@ const AnalyticChart = () => {
           <Title>Harvest TVL Chart</Title>
         </Header>
         <ChartDiv>
-          <ApexChart data={apiData} range={selectedState} filter={clickedId} />
+          <ApexChart data={apiData} range={selectedState} />
         </ChartDiv>
         <ButtonGroup>
           {recommendLinks.map((item, i) => (
@@ -66,9 +64,9 @@ const AnalyticChart = () => {
           ))}
         </ButtonGroup>
       </Container>
-      <ConnectButton color="connectwallet" minWidth="190px" bordercolor={fontColor}>
-        Coming Soon
-      </ConnectButton>
+      {/* <ConnectButton color="connectwallet" minWidth="190px" bordercolor={fontColor}>
+        Comming Soon
+      </ConnectButton> */}
     </>
   )
 }
