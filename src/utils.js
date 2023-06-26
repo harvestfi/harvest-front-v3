@@ -21,6 +21,7 @@ import {
   GRAPH_URL_MAINNET,
   GRAPH_URL_POLYGON,
   GRAPH_URL_ARBITRUM,
+  TOTAL_TVL_API_ENDPOINT,
 } from './constants'
 import { CHAIN_IDS } from './data/constants'
 import { addresses } from './data/index'
@@ -1233,6 +1234,17 @@ export const isSafeApp = () => {
 }
 
 export const isSpecialApp = isLedgerLive() || isSafeApp()
+
+// eslint-disable-next-line consistent-return
+export const getTotalTVLData = async () => {
+  try {
+    const apiResponse = await axios.get(TOTAL_TVL_API_ENDPOINT)
+    const apiData = get(apiResponse, 'data')
+    return apiData
+  } catch (err) {
+    console.log(err)
+  }
+}
 
 export const getLastHarvestInfo = async (address, chainId) => {
   // eslint-disable-next-line no-unused-vars

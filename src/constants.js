@@ -487,10 +487,7 @@ export const FAQ_TOTAL = FAQ_ITEMS_SECOND.reduce(
 ).sort((a, b) => a.id - b.id)
 export const CURVE_APY = 79.02
 
-export const HARVEST_API_URL =
-  // process.env.REACT_APP_HARVEST_API_URL || 'https://api-ui.harvest.finance'
-  process.env.REACT_APP_HARVEST_API_URL
-// process.env.REACT_APP_HARVEST_API_URL || 'https://alex-wang-staging.herokuapp.com'
+export const HARVEST_API_URL = process.env.REACT_APP_HARVEST_API_URL
 
 export const HARVEST_EXTERNAL_API_URL = process.env.REACT_APP_HARVEST_EXTERNAL_API_URL
 
@@ -500,6 +497,7 @@ export const VAULTS_API_ENDPOINT = `${HARVEST_API_URL}/vaults?key=${process.env.
 export const REVENUE_MONTHLY_API_ENDPOINT = `${HARVEST_EXTERNAL_API_URL}/revenue/monthly?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`
 export const CMC_API_ENDPOINT = `${HARVEST_EXTERNAL_API_URL}/cmc?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`
 export const TVL_API_ENDPOINT = `${HARVEST_EXTERNAL_API_URL}/gmv/total?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`
+export const TOTAL_TVL_API_ENDPOINT = `${process.env.REACT_APP_GRAPHQL_URL}/tvl?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`
 
 export const POOL_BALANCES_DECIMALS = 8
 

@@ -15,8 +15,8 @@ const Container = styled.div`
   transition: 0.25s;
   color: ${props => props.fontColor};
 
-  filter: blur(2px);
-  pointer-events: none;
+  // filter: blur(2px);
+  // pointer-events: none;
 
   @media screen and (max-width: 992px) {
     width: 100%;
