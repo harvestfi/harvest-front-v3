@@ -3,16 +3,12 @@ import styled from 'styled-components'
 const Container = styled.div`
   width: 32%;
   margin-right: 17px;
-  &:first-child {
-    border-right: 1px solid ${props => props.borderColor};
-  }
   font-weight: 700;
   background: ${props => props.backColor};
   padding: 20px;
 
-  border: 0.801546px solid #eaecf0;
-  box-shadow: 0px 0.801546px 2.40464px rgba(16, 24, 40, 0.1),
-    0px 0.801546px 1.60309px rgba(16, 24, 40, 0.06);
+  border: 1px solid #eaecf0;
+  box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06);
   border-radius: 10px;
 
   @media screen and (max-width: 992px) {
