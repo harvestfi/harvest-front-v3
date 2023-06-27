@@ -418,7 +418,7 @@ const WidoDetail = () => {
             console.log('getSupportedTokens of Wido: ', err)
           }
           const tokenAddress =
-            token.tokenAddress !== null && token.tokenAddress.length !== 2
+            token.tokenAddress !== undefined && token.tokenAddress.length !== 2
               ? token.tokenAddress
               : token.vaultAddress
 
