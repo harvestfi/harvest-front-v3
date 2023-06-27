@@ -1,6 +1,6 @@
 import styled from 'styled-components'
-import UsdIcon from '../../assets/images/ui/usd.svg'
-import TokensIcon from '../../assets/images/ui/tokens.svg'
+import UsdIcon from '../../assets/images/ui/usd-port.svg'
+import TokensIcon from '../../assets/images/ui/tokens-port.svg'
 
 const Container = styled.div`
   width: 100%;
@@ -35,6 +35,10 @@ const Inner = styled.div`
   @media screen and (max-width: 1480px) {
     width: 100%;
     padding: 70px 30px 40px;
+  }
+
+  @media screen and (max-width: 992px) {
+    padding: 16px 10px;
   }
 `
 
