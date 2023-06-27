@@ -8,6 +8,7 @@ import ReactTooltip from 'react-tooltip'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { getBalances, getSupportedTokens } from 'wido'
 import tokenMethods from '../../services/web3/contracts/token/methods'
+import tokenContract from '../../services/web3/contracts/token/contract.json'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
@@ -443,7 +444,10 @@ const WidoDetail = () => {
           } catch (err) {
             console.log('getSupportedTokens of Wido: ', err)
           }
-          const tokenAddress = token.tokenAddress || token.vaultAddress
+          const tokenAddress =
+            token.tokenAddress !== undefined && token.tokenAddress.length !== 2
+              ? token.tokenAddress
+              : token.vaultAddress
 
           const soonSupList = []
           supList = supList.map(sup => {
@@ -517,7 +521,12 @@ const WidoDetail = () => {
           } else {
             const web3Client = await getWeb3(chain, null)
             const { getSymbol } = tokenMethods
-            const lpInstance = await newContractInstance(id, tokenAddress, null, web3Client)
+            const lpInstance = await newContractInstance(
+              id,
+              tokenAddress,
+              tokenContract.abi,
+              web3Client,
+            )
             const lpSymbol = await getSymbol(lpInstance)
             const direct = {
               symbol: lpSymbol,

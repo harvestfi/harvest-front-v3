@@ -249,7 +249,7 @@ const Analytic = () => {
           </ValueComponent>
         </FarmStatsContainer>
         <Divider height="20px" />
-        <FarmStatsContainer>
+        <FarmStatsLastContainer>
           <StatsBox
             width={isMobile ? '100%' : '50%'}
             align="flex-start"
@@ -305,7 +305,7 @@ const Analytic = () => {
               }}
             />
           </StatsBox>
-        </FarmStatsContainer>
+        </FarmStatsLastContainer>
         <Divider height="30px" />
         <FarmStatsLastContainer>
           <StatsValue width={isMobile ? '100%' : '50%'}>

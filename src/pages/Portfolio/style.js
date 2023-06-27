@@ -36,6 +36,10 @@ const Inner = styled.div`
     width: 100%;
     padding: 70px 30px 40px;
   }
+
+  @media screen and (max-width: 992px) {
+    padding: 16px 10px;
+  }
 `
 
 const SubPart = styled.div`

@@ -67,7 +67,7 @@ const MobilePanelHeader = ({
 
   const { logoUrl } = token
 
-  const { badgeIconBackColor, fontColor, borderColor } = useThemeContext()
+  const { badgeIconBackColor, fontColor, borderColor, setPrevPage } = useThemeContext()
   return (
     <PanelContainer
       fontColor={fontColor}
@@ -77,6 +77,7 @@ const MobilePanelHeader = ({
         const address = isSpecialVault
           ? token.data.collateralAddress
           : token.vaultAddress || token.tokenAddress
+        setPrevPage(window.location.href)
         push(`${directDetailUrl + network}/${address}`)
       }}
     >
