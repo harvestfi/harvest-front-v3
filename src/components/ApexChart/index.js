@@ -51,7 +51,7 @@ function findMin(data) {
 }
 
 // kind: "value" - TVL, "apy" - APY
-function generateChartDataWithSlots(slots, apiData, filter, decimal, kind) {
+function generateChartDataWithSlots(slots, apiData, kind) {
   const seriesData = []
   for (let i = 0; i < slots.length; i += 1) {
     for (let j = 0; j < apiData.length; j += 1) {
@@ -119,6 +119,37 @@ function generateChartDataForApy(apyData1, apyData2, field) {
   })
 
   return apyData
+}
+
+function formatDateTime(value) {
+  const date = new Date(value)
+  const year = date.getFullYear()
+  const monthNames = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
+  const monthNum = date.getMonth()
+  const month = monthNames[monthNum]
+  const day = date.getDate()
+  let hour = date.getHours(),
+    min = date.getMinutes()
+  const ampm = hour >= 12 ? 'PM' : 'AM'
+  hour %= 12
+  hour = hour || 12 // the hour '0' should be '12'
+  hour = hour < 10 ? `0${hour}` : hour
+  min = min < 10 ? `0${min}` : min
+
+  return `${month} ${day}, ${year} ${hour}:${min} ${ampm}`
 }
 
 const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBalance */ }) => {
@@ -220,134 +251,216 @@ const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBal
         apyData = [],
         userBalanceData = [],
         maxAPY = lastAPY,
-        minAPY,
         maxTVL = lastTVL,
-        minTVL,
-        maxBalance,
+        maxBalance = 0,
         minBalance,
-        maxValue,
-        minValue,
-        len = 0,
-        unitBtw,
-        roundNum
+        maxTVLValue,
+        minTVLValue,
+        lenTVL = 0,
+        unitTVLBtw,
+        roundNumTVL,
+        maxAPYValue,
+        minAPYValue,
+        lenAPY = 0,
+        unitAPYBtw,
+        maxBalValue,
+        minBalValue,
+        lenBal = 0,
+        unitBalBtw
 
-      if (filter === 1) {
-        if (data && data.tvls) {
-          if (data.tvls.length === 0) {
-            setIsDataReady(false)
-            return
-          }
+      // if (filter === 1) {
+      if (data && data.tvls) {
+        if (data.tvls.length === 0) {
+          setIsDataReady(false)
+          return
         }
-        tvlData = data && data.tvls ? data.tvls : []
-
-        if (tvlData.length !== 0 && lastTVL && !Number.isNaN(lastTVL)) tvlData[0].value = lastTVL
-      } else if (filter === 0) {
-        if (data && (data.apyAutoCompounds || data.apyRewards)) {
-          if (data.apyAutoCompounds.length === 0 && data.apyRewards.length === 0) {
-            setIsDataReady(false)
-            return
-          }
-        }
-        const apyAutoCompounds = data.apyAutoCompounds !== undefined ? data.apyAutoCompounds : [],
-          apyRewards = data.apyRewards !== undefined ? data.apyRewards : []
-
-        apyData = generateChartDataForApy(apyAutoCompounds, apyRewards, 'apy')
-        if (lastAPY && !Number.isNaN(lastAPY)) apyData[0].apy = lastAPY
-      } else {
-        if (data && data.userBalanceHistories) {
-          if (data.userBalanceHistories.length === 0) {
-            setIsDataReady(false)
-            return
-          }
-        }
-        userBalanceData = data && data.userBalanceHistories ? data.userBalanceHistories : []
-        // if(userBalanceData.length !== 0 && userBalance)
-        //   userBalanceData[0]["value"] = userBalance
       }
+      tvlData = data && data.tvls ? data.tvls : []
+
+      if (tvlData.length !== 0 && lastTVL && !Number.isNaN(lastTVL)) tvlData[0].value = lastTVL
+      // } else if (filter === 0) {
+      if (data && (data.apyAutoCompounds || data.apyRewards)) {
+        if (data.apyAutoCompounds.length === 0 && data.apyRewards.length === 0) {
+          setIsDataReady(false)
+          return
+        }
+      }
+      const apyAutoCompounds = data.apyAutoCompounds !== undefined ? data.apyAutoCompounds : [],
+        apyRewards = data.apyRewards !== undefined ? data.apyRewards : []
+
+      apyData = generateChartDataForApy(apyAutoCompounds, apyRewards, 'apy')
+      if (lastAPY && !Number.isNaN(lastAPY) && apyData.length > 0) apyData[0].apy = lastAPY
+      // } else {
+      if (data && data.userBalanceHistories) {
+        if (data.userBalanceHistories.length === 0) {
+          setIsDataReady(false)
+          return
+        }
+      }
+      userBalanceData = data && data.userBalanceHistories ? data.userBalanceHistories : []
+      // }
 
       const slotCount = 50,
         slots = getTimeSlots(ago, slotCount)
+
+      const tvlMainData = generateChartDataWithSlots(slots, tvlData, 'value')
+      maxTVL = findMax(tvlMainData)
+      const minTVL = findMin(tvlMainData)
+
+      const apyMainData = generateChartDataWithSlots(slots, apyData, 'apy')
+      maxAPY = findMax(apyMainData)
+      const minAPY = findMin(apyMainData)
+
+      const balMainData = generateChartDataWithSlots(slots, userBalanceData, 'value')
+      maxBalance = findMax(balMainData)
+      minBalance = findMin(balMainData)
+      minBalance /= 2
 
       if (filter === 1) {
         if (tvlData.length === 0) {
           // setIsDataReady(false)
           return
         }
-        mainData = generateChartDataWithSlots(slots, tvlData, filter, decimal, 'value')
-        maxTVL = findMax(mainData)
-        minTVL = findMin(mainData)
+        mainData = generateChartDataWithSlots(slots, tvlData, 'value')
       } else if (filter === 0) {
         if (apyData.length === 0) {
           setIsDataReady(false)
           return
         }
 
-        mainData = generateChartDataWithSlots(slots, apyData, filter, decimal, 'apy')
-
-        maxAPY = findMax(mainData)
-        minAPY = findMin(mainData)
+        mainData = generateChartDataWithSlots(slots, apyData, 'apy')
       } else {
         if (userBalanceData.length === 0) {
           return
         }
-        mainData = generateChartDataWithSlots(slots, userBalanceData, filter, decimal, 'value')
-        maxBalance = findMax(mainData)
-        minBalance = findMin(mainData)
-        minBalance /= 2
-        // maxBalance *= 2
+        mainData = generateChartDataWithSlots(slots, userBalanceData, 'value')
       }
 
-      maxValue = filter === 0 ? maxAPY : filter === 1 ? maxTVL : maxBalance
-      minValue = filter === 0 ? minAPY : filter === 1 ? minTVL : minBalance
+      // TVL
 
-      const between = maxValue - minValue
-      unitBtw = between / 4
-      if (unitBtw >= 1) {
-        unitBtw = Math.ceil(unitBtw)
-        len = unitBtw.toString().length
-        unitBtw = ceil10(unitBtw, len - 1)
-        maxValue = ceil10(maxValue, len - 1)
-        minValue = floor10(minValue, len - 1)
-      } else if (unitBtw === 0) {
-        len = Math.ceil(maxValue).toString().length
-        maxValue += 10 ** (len - 1)
-        minValue -= 10 ** (len - 1)
+      maxTVLValue = maxTVL
+      minTVLValue = minTVL
+
+      const betweenTVL = maxTVLValue - minTVLValue
+      unitTVLBtw = betweenTVL / 4
+      if (unitTVLBtw >= 1) {
+        unitTVLBtw = Math.ceil(unitTVLBtw)
+        lenTVL = unitTVLBtw.toString().length
+        unitTVLBtw = ceil10(unitTVLBtw, lenTVL - 1)
+        maxTVLValue = ceil10(maxTVLValue, lenTVL - 1)
+        minTVLValue = floor10(minTVLValue, lenTVL - 1)
+      } else if (unitTVLBtw === 0) {
+        lenTVL = Math.ceil(maxTVLValue).toString().length
+        maxTVLValue += 10 ** (lenTVL - 1)
+        minTVLValue -= 10 ** (lenTVL - 1)
       } else {
-        len = Math.ceil(1 / unitBtw).toString().length + 1
-        unitBtw = ceil10(unitBtw, -len)
-        maxValue = ceil10(maxValue, -len)
-        minValue = floor10(minValue, -len + 1)
+        lenTVL = Math.ceil(1 / unitTVLBtw).toString().length + 1
+        unitTVLBtw = ceil10(unitTVLBtw, -lenTVL)
+        maxTVLValue = ceil10(maxTVLValue, -lenTVL)
+        minTVLValue = floor10(minTVLValue, -lenTVL + 1)
       }
       /**
        * Set min value with 0, and max value *1.5 - trello card
        */
-      if (unitBtw !== 0) {
-        maxValue *= 1.5
-        minValue = 0
+      if (unitTVLBtw !== 0) {
+        maxTVLValue *= 1.5
+        minTVLValue = 0
       } else {
-        unitBtw = (maxValue - minValue) / 4
+        unitTVLBtw = (maxTVLValue - minTVLValue) / 4
       }
 
-      if (filter === 1) {
-        if (unitBtw === 0) {
-          roundNum = 0
-        } else {
-          roundNum = len - 2
-        }
+      if (unitTVLBtw === 0) {
+        roundNumTVL = 0
       } else {
-        roundNum = -len
+        roundNumTVL = lenTVL - 2
       }
+
+      // APY
+
+      maxAPYValue = maxAPY
+      minAPYValue = minAPY
+
+      const betweenAPY = maxAPYValue - minAPYValue
+      unitAPYBtw = betweenAPY / 4
+      if (unitAPYBtw >= 1) {
+        unitAPYBtw = Math.ceil(unitAPYBtw)
+        lenAPY = unitAPYBtw.toString().length
+        unitAPYBtw = ceil10(unitAPYBtw, lenAPY - 1)
+        maxAPYValue = ceil10(maxAPYValue, lenAPY - 1)
+        minAPYValue = floor10(minAPYValue, lenAPY - 1)
+      } else if (unitAPYBtw === 0) {
+        lenAPY = Math.ceil(maxAPYValue).toString().length
+        maxAPYValue += 10 ** (lenAPY - 1)
+        minAPYValue -= 10 ** (lenAPY - 1)
+      } else {
+        lenAPY = Math.ceil(1 / unitAPYBtw).toString().length + 1
+        unitAPYBtw = ceil10(unitAPYBtw, -lenAPY)
+        maxAPYValue = ceil10(maxAPYValue, -lenAPY)
+        minAPYValue = floor10(minAPYValue, -lenAPY + 1)
+      }
+      /**
+       * Set min value with 0, and max value *1.5 - trello card
+       */
+      if (unitAPYBtw !== 0) {
+        maxAPYValue *= 1.5
+        minAPYValue = 0
+      } else {
+        unitAPYBtw = (maxAPYValue - minAPYValue) / 4
+      }
+
+      const roundNumAPY = -lenAPY
+
+      // UserBalance
+
+      maxBalValue = maxBalance
+      minBalValue = minBalance
+
+      const betweenBal = maxBalValue - minBalValue
+      unitBalBtw = betweenBal / 4
+      if (unitBalBtw >= 1) {
+        unitBalBtw = Math.ceil(unitBalBtw)
+        lenBal = unitBalBtw.toString().length
+        unitBalBtw = ceil10(unitBalBtw, lenBal - 1)
+        maxBalValue = ceil10(maxBalValue, lenBal - 1)
+        minBalValue = floor10(minBalValue, lenBal - 1)
+      } else if (unitBalBtw === 0) {
+        lenBal = Math.ceil(maxBalValue).toString().length
+        maxBalValue += 10 ** (lenBal - 1)
+        minBalValue -= 10 ** (lenBal - 1)
+      } else {
+        lenBal = Math.ceil(1 / unitBalBtw).toString().length + 1
+        unitBalBtw = ceil10(unitBalBtw, -lenBal)
+        maxBalValue = ceil10(maxBalValue, -lenBal)
+        minBalValue = floor10(minBalValue, -lenBal + 1)
+      }
+      /**
+       * Set min value with 0, and max value *1.5 - trello card
+       */
+      if (unitBalBtw !== 0) {
+        maxBalValue *= 1.5
+        minBalValue = 0
+      } else {
+        unitBalBtw = (maxBalValue - minBalValue) / 4
+      }
+
+      const roundNumBal = -lenBal
 
       const yAxis = {
         opposite: false,
-        min: minValue,
-        max: maxValue,
+        min: filter === 1 ? minTVLValue : filter === 0 ? minAPYValue : minBalValue,
+        max: filter === 1 ? maxTVLValue : filter === 0 ? maxAPYValue : maxBalValue,
         tickAmount: 4,
         labels: {
           style: { fontFamily: 'Work Sans' },
           formatter: val =>
             numberWithCommas(
-              (filter === 1 ? round10(val, roundNum) : val).toFixed(filter === 1 ? 0 : len),
+              (filter === 1
+                ? round10(
+                    val,
+                    filter === 1 ? roundNumTVL : filter === 0 ? roundNumAPY : roundNumBal,
+                  )
+                : val
+              ).toFixed(filter === 1 ? 0 : filter === 0 ? lenAPY : lenBal),
             ),
         },
       }
@@ -423,15 +536,14 @@ const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBal
           hover: { size: 8 },
         },
         tooltip: {
-          x: {
-            format: 'dd MMM - HH : mm ',
-          },
-          custom({ series, dataPointIndex }) {
-            return `${'<div style="padding: 5px;"><h1 style="font-size: 12px; color: #888E8F">'}${
-              filter === 1 ? '$' : ''
-            }${numberWithCommas(series[0][dataPointIndex].toFixed(filter === 1 ? 0 : len - 1))}${
-              filter === 0 ? '%' : ''
-            }</h1></div>`
+          custom({ dataPointIndex }) {
+            return `${'<div style="padding: 15px; height: 100%; background: black; color: white;"><h1 style="font-size: 16px;">'}${formatDateTime(
+              mainData[dataPointIndex][0],
+            )}</h1><div style="font-size: 16px;">APY: ${numberWithCommas(
+              apyMainData[dataPointIndex][1].toFixed(lenAPY - 1),
+            )}%</div><div style="font-size: 16px;">TVL: $${numberWithCommas(
+              tvlMainData[dataPointIndex][1].toFixed(0),
+            )}</div></div>`
           },
         },
         yaxis: yAxis,
@@ -441,6 +553,9 @@ const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBal
           axisTicks: { show: false },
           labels: {
             style: { fontFamily: 'Work Sans' },
+          },
+          tooltip: {
+            enabled: false,
           },
         },
       })
