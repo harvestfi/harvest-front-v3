@@ -454,9 +454,9 @@ const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBal
             return `${'<div style="padding: 15px; height: 100%; background: black; color: white; opacity: 0.9; display: flex; flex-direction: column; justify-content: space-between;"><h1 style="font-size: 16px;">'}${formatDateTime(
               mainData[dataPointIndex][0],
             )}</h1><div style="font-size: 16px; display: flex; justify-content: space-between;"><div>${
-              filter === 1 ? 'TVL:' : filter === 0 ? 'APY: ' : 'Balance:'
+              filter === 1 ? 'TVL ' : filter === 0 ? 'APY ' : 'Balance '
             }</div><div>${filter === 0 ? '' : '$'}${numberWithCommas(
-              mainData[dataPointIndex][1].toFixed(len - 1),
+              mainData[dataPointIndex][1].toFixed(filter === 1 ? 0 : len),
             )}${filter === 0 ? '%' : ''}</div></div></div>`
           },
         },

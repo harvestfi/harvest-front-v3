@@ -16,35 +16,34 @@ const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {
   const [focusId, setFocusId] = React.useState(-1)
   let tempId = -1
 
-  const { chartBtnGroupBackColor, backColor, borderColor, darkMode } = useThemeContext()
+  const { backColor, borderColor, darkMode, filterChainHoverColor } = useThemeContext()
 
   return (
     <ButtonsGroup backColor={backColor} borderColor={borderColor}>
       {buttons.map((button, i) => (
-        <div key={i}>
-          <ButtonStyle
-            key={i}
-            btnNum={i}
-            name={button.name}
-            onClick={event => handleClick(event, i)}
-            onMouseEnter={() => {
-              tempId = tempId !== -1 ? i : -1
-              setFocusId(i)
-            }}
-            data-tip={!!(i === 2 && !connected)}
-            data-for={i === 2 && !connected ? 'tooltip-balance-chart' : ''}
-            onMouseLeave={() => {
-              setFocusId(tempId)
-              tempId = focusId
-            }}
-            className={(i === clickedId || i === focusId) && (connected || i !== 2) ? 'active' : ''}
-            wallet={!!(connected && i === 2)}
-            backcolor={chartBtnGroupBackColor}
-            mode={darkMode.toString()}
-          >
-            <img src={button.img} width="20" height="20" alt="" />
-          </ButtonStyle>
-        </div>
+        <ButtonStyle
+          key={i}
+          btnNum={i}
+          name={button.name}
+          onClick={event => handleClick(event, i)}
+          onMouseEnter={() => {
+            tempId = tempId !== -1 ? i : -1
+            setFocusId(i)
+          }}
+          data-tip={!!(i === 2 && !connected)}
+          data-for={i === 2 && !connected ? 'tooltip-balance-chart' : ''}
+          onMouseLeave={() => {
+            setFocusId(tempId)
+            tempId = focusId
+          }}
+          className={(i === clickedId || i === focusId) && (connected || i !== 2) ? 'active' : ''}
+          wallet={!!(connected && i === 2)}
+          backcolor={filterChainHoverColor}
+          mode={darkMode.toString()}
+          borderColor={borderColor}
+        >
+          <img src={button.img} width="20" height="20" alt="" />
+        </ButtonStyle>
       ))}
       {!connected && (
         <ReactTooltip
