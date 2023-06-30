@@ -65,4 +65,12 @@ const ButtonStyle = styled.button`
       : ``}
 `
 
-export { ButtonsGroup, ButtonStyle }
+const TooltipContent = styled.div`
+  display: flex;
+  color: white !important;
+  font-weight: 500;
+  font-size: 13px;
+  line-height: 16px;
+`
+
+export { ButtonsGroup, ButtonStyle, TooltipContent }

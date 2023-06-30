@@ -436,8 +436,16 @@ html {
 
   .farm-detail-chart {
     .apexcharts-tooltip {
-      height: 45% !important;
+      height: 35% !important;
       border-radius: 10px !important;
+      bottom: 35px !important;
+      top: unset !important;
+    }
+
+    .apexcharts-xcrosshairs.apexcharts-active {
+      stroke: #282F3D;
+      stroke-dasharray: 0;
+      stroke-width: 1;
     }
   }
 `

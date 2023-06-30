@@ -1,7 +1,8 @@
 import React from 'react'
+import ReactTooltip from 'react-tooltip'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet/index'
-import { ButtonsGroup, ButtonStyle } from './style'
+import { ButtonsGroup, ButtonStyle, TooltipContent } from './style'
 
 const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {
   const { connected } = useWallet()
@@ -30,6 +31,8 @@ const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {
               tempId = tempId !== -1 ? i : -1
               setFocusId(i)
             }}
+            data-tip={!!(i === 2 && !connected)}
+            data-for={i === 2 && !connected ? 'tooltip-balance-chart' : ''}
             onMouseLeave={() => {
               setFocusId(tempId)
               tempId = focusId
@@ -43,6 +46,19 @@ const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {
           </ButtonStyle>
         </div>
       ))}
+      {!connected && (
+        <ReactTooltip
+          id="tooltip-balance-chart"
+          backgroundColor="black"
+          borderColor="black"
+          textColor="white"
+        >
+          <TooltipContent>
+            Connect your wallet <br />
+            to see balance chart
+          </TooltipContent>
+        </ReactTooltip>
+      )}
     </ButtonsGroup>
   )
 }
