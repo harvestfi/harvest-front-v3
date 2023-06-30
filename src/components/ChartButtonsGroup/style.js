@@ -6,7 +6,7 @@ const ButtonsGroup = styled.div`
   background: ${props => props.backColor};
   transition: 0.25s;
 
-  border-radius: 15px;
+  border-radius: 10px;
   border: 1px solid ${props => props.borderColor};
   overflow: hidden;
 `
@@ -51,6 +51,12 @@ const ButtonStyle = styled.button`
 
   &:hover {
     background-color: ${props => props.backcolor};
+    ${props =>
+      props.wallet === false
+        ? `
+      background-color: transparent;
+          `
+        : ``}
   }
 
   ${props =>
