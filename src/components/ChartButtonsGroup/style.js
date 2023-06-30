@@ -39,7 +39,7 @@ const ButtonStyle = styled.button`
 
   &.active {
     cursor: pointer !important;
-    background-color: ${props => props.backcolor};
+    background: transparent;
     color: ${props => (props.activeColor ? props.activeColor : 'black')};
     font-weight: bold;
 
@@ -47,6 +47,10 @@ const ButtonStyle = styled.button`
       filter: invert(63%) sepia(58%) saturate(3702%) hue-rotate(0deg) brightness(107%)
         contrast(105%);
     }
+  }
+
+  &:hover {
+    background-color: ${props => props.backcolor};
   }
 
   ${props =>
