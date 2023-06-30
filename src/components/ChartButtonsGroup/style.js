@@ -6,7 +6,7 @@ const ButtonsGroup = styled.div`
   background: ${props => props.backColor};
   transition: 0.25s;
 
-  border-radius: 10px;
+  border-radius: 8px;
   border: 1px solid ${props => props.borderColor};
   overflow: hidden;
 `
@@ -24,7 +24,7 @@ const ButtonStyle = styled.button`
   ${props =>
     props.btnNum === 0
       ? `
-    border-radius: 10px 0 0 10px !important;
+    border-radius: 8px 0 0 8px !important;
     border-right: 1px solid ${props.borderColor};
   `
       : prop =>
@@ -33,7 +33,7 @@ const ButtonStyle = styled.button`
       border-radius: 0 !important;
     `
             : `
-        border-radius: 0 10px 10px 0 !important;
+        border-radius: 0 8px 8px 0 !important;
         border-left: 1px solid ${props.borderColor};
       `}
 
@@ -52,7 +52,7 @@ const ButtonStyle = styled.button`
   &:hover {
     background-color: ${props => props.backcolor};
     ${props =>
-      props.wallet === false
+      props.wallet === false && props.btnNum === 2
         ? `
       background-color: transparent;
           `
