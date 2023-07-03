@@ -370,7 +370,9 @@ const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBal
         min: minValue,
         max: maxValue,
         tickAmount: 4,
+        floating: true,
         labels: {
+          align: 'left',
           style: { fontFamily: 'Work Sans' },
           formatter: val =>
             numberWithCommas(
@@ -467,6 +469,12 @@ const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBal
           axisTicks: { show: false },
           labels: {
             style: { fontFamily: 'Work Sans' },
+            datetimeFormatter: {
+              year: 'yyyy',
+              month: "MMM 'yy",
+              day: 'MM / dd',
+              hour: 'HH:mm',
+            },
           },
           tooltip: {
             enabled: false,
