@@ -441,6 +441,10 @@ html {
     .apexcharts-tooltip {
       display: none;
     }
+
+    .apexcharts-xcrosshairs.apexcharts-active {
+      stroke: #FF9400;
+    }
   }
 `
 
