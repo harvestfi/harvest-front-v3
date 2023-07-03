@@ -433,13 +433,6 @@ html {
       }
     }
   }
-
-  .farm-detail-chart {
-    .apexcharts-tooltip {
-      height: 45% !important;
-      border-radius: 10px !important;
-    }
-  }
 `
 
 const Divider = styled.div`
