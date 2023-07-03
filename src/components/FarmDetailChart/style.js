@@ -38,10 +38,6 @@ const Total = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-
-  @media screen and (max-width: 1250px) {
-    display: block;
-  }
 `
 
 const MoreBtn = styled.button`
@@ -84,10 +80,6 @@ const FilterGroup = styled.div`
   flex-wrap: wrap;
   margin-left: auto;
   margin-right: 0;
-
-  @media screen and (max-width: 1250px) {
-    margin-top: 15px;
-  }
 `
 
 const PriceShow = styled.div`
@@ -109,6 +101,10 @@ const PriceShow = styled.div`
 const FilterName = styled.div`
   text-align: right;
   margin-top: 1rem;
+
+  @media screen and (max-width: 992px) {
+    margin-top: 0.5rem;
+  }
 `
 
 export {
