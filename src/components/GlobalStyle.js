@@ -435,6 +435,9 @@ html {
   }
 
   .farm-detail-chart {
+    .apexcharts-svg.apexcharts-zoomable.hovering-pan {
+      cursor: default !important;
+    }
     .apexcharts-tooltip {
       height: 35% !important;
       border-radius: 10px !important;
