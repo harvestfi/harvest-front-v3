@@ -15,7 +15,7 @@ const Container = styled.button`
     background: ${props =>
       props.mode === 'dark'
         ? `
-          #15202B
+          #3b3c3e
         `
         : `#e9f0f7`};
     // filter: drop-shadow(0px 0px 4px #ff9400);
