@@ -899,11 +899,7 @@ const WidoDetail = () => {
                 <ValueShow>{showTVL()}</ValueShow>
               </DetailTopInfo>
             </HalfInfo>
-            <HalfInfo
-              padding={!isMobile ? '10px 20px' : '15px'}
-              backColor={backColor}
-              borderColor={borderColor}
-            >
+            <HalfInfo padding="25px 18px" backColor={backColor} borderColor={borderColor}>
               {loadComplete && (
                 <FarmDetailChart
                   token={token}

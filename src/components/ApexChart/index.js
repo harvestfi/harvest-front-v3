@@ -141,19 +141,28 @@ function formatDateTime(value) {
   const monthNum = date.getMonth()
   const month = monthNames[monthNum]
   const day = date.getDate()
-  let hour = date.getHours(),
-    min = date.getMinutes()
-  const ampm = hour >= 12 ? 'PM' : 'AM'
-  hour %= 12
-  hour = hour || 12 // the hour '0' should be '12'
-  hour = hour < 10 ? `0${hour}` : hour
-  min = min < 10 ? `0${min}` : min
+  // let hour = date.getHours(),
+  // min = date.getMinutes()
+  // const ampm = hour >= 12 ? 'PM' : 'AM'
+  // hour %= 12
+  // hour = hour || 12 // the hour '0' should be '12'
+  // hour = hour < 10 ? `0${hour}` : hour
+  // min = min < 10 ? `0${min}` : min
 
-  return `${month} ${day}, ${year} ${hour}:${min} ${ampm}`
+  return `${month} ${day} ${year}`
 }
 
-const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBalance */ }) => {
-  const { backColor, fontColor } = useThemeContext()
+const ApexChart = ({
+  data,
+  range,
+  filter,
+  decimal,
+  lastTVL,
+  lastAPY,
+  setCurDate,
+  setCurContent,
+}) => {
+  const { darkMode, backColor, fontColor } = useThemeContext()
 
   const [mainSeries, setMainSeries] = useState([
     {
@@ -370,10 +379,8 @@ const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBal
         min: minValue,
         max: maxValue,
         tickAmount: 4,
-        floating: true,
         labels: {
-          align: 'left',
-          style: { fontFamily: 'Work Sans' },
+          style: { colors: darkMode ? 'white' : 'black', fontFamily: 'Work Sans' },
           formatter: val =>
             numberWithCommas(
               (filter === 1 ? round10(val, roundNum) : val).toFixed(filter === 1 ? 0 : len),
@@ -412,13 +419,7 @@ const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBal
           },
         },
         grid: {
-          show: true,
-          borderColor: '#E3E3E3',
-          yaxis: {
-            lines: {
-              show: true,
-            },
-          },
+          show: false,
         },
         colors: ['#F4BE37'],
         stroke: {
@@ -428,22 +429,22 @@ const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBal
         dataLabels: {
           enabled: false,
         },
-        fill: {
-          opacity: 1,
-          enabled: false,
-          type: 'gradient',
-          gradient: {
-            shade: 'dark',
-            type: 'vertical',
-            shadeIntensity: 0.5,
-            gradientToColors: ['#F8DD9C'],
-            inverseColors: true,
-            opacityFrom: 0.6,
-            opacityTo: 0.2,
-            stops: [0, 20, 100],
-            colorStops: [],
-          },
-        },
+        // fill: {
+        //   opacity: 1,
+        //   enabled: false,
+        //   type: 'gradient',
+        //   gradient: {
+        //     shade: 'dark',
+        //     type: 'vertical',
+        //     shadeIntensity: 0.5,
+        //     gradientToColors: ['#F8DD9C'],
+        //     inverseColors: true,
+        //     opacityFrom: 0.6,
+        //     opacityTo: 0.2,
+        //     stops: [0, 20, 100],
+        //     colorStops: [],
+        //   },
+        // },
         markers: {
           strokeColor: '#EDAE50',
           size: 0,
@@ -453,27 +454,40 @@ const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBal
         },
         tooltip: {
           custom({ dataPointIndex }) {
-            return `${'<div style="padding: 15px; height: 100%; background: black; color: white; opacity: 0.9; display: flex; flex-direction: column; justify-content: space-between;"><h1 style="font-size: 16px;">'}${formatDateTime(
-              mainData[dataPointIndex][0],
-            )}</h1><div style="font-size: 16px; display: flex; justify-content: space-between;"><div>${
+            setCurDate(formatDateTime(mainData[dataPointIndex][0]))
+            const content = `<div style="font-size: 13px; line-height: 16px; display: flex;"><div style="font-weight: 700;">${
               filter === 1 ? 'TVL ' : filter === 0 ? 'APY ' : 'Balance '
-            }</div><div>${filter === 0 ? '' : '$'}${numberWithCommas(
-              mainData[dataPointIndex][1].toFixed(filter === 1 ? 0 : len),
-            )}${filter === 0 ? '%' : ''}</div></div></div>`
+            }</div><div style="color: #ff9400; font-weight: 500;">&nbsp;${
+              filter === 0 ? '' : '$'
+            }${numberWithCommas(mainData[dataPointIndex][1].toFixed(filter === 1 ? 0 : len))}${
+              filter === 0 ? '%' : ''
+            }</div></div>`
+            setCurContent(content)
+            // return `${'<div style="padding: 15px; height: 100%; background: black; color: white; opacity: 0.9; display: flex; flex-direction: column; justify-content: space-between;"><h1 style="font-size: 16px;">'}${formatDateTime(
+            //   mainData[dataPointIndex][0],
+            // )}</h1><div style="font-size: 16px; display: flex; justify-content: space-between;"><div>${
+            //   filter === 1 ? 'TVL ' : filter === 0 ? 'APY ' : 'Balance '
+            // }</div><div>${filter === 0 ? '' : '$'}${numberWithCommas(
+            //   mainData[dataPointIndex][1].toFixed(filter === 1 ? 0 : len),
+            // )}${filter === 0 ? '%' : ''}</div></div></div>`
           },
         },
         yaxis: yAxis,
         xaxis: {
-          type: 'datetime',
+          type: 'category',
+          tickAmount: 7,
           axisBorder: { show: false },
           axisTicks: { show: false },
           labels: {
-            style: { fontFamily: 'Work Sans' },
-            datetimeFormatter: {
-              year: 'yyyy',
-              month: "MMM 'yy",
-              day: 'MM / dd',
-              hour: 'HH:mm',
+            style: { colors: darkMode ? 'white' : 'black', fontFamily: 'Work Sans' },
+            formatter(value, timestamp) {
+              const date = new Date(timestamp)
+              const dateString = `${date.getMonth() + 1} / ${date.getDate()}`
+              const timeString = `${date.getHours()}:${date.getMinutes()}`
+              if (range === '1D') {
+                return timeString
+              }
+              return dateString
             },
           },
           tooltip: {
@@ -486,12 +500,24 @@ const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBal
     }
 
     init()
-  }, [backColor, range, filter, decimal, data, lastTVL, lastAPY, /* userBalance, */ isDataReady])
+  }, [
+    backColor,
+    range,
+    filter,
+    decimal,
+    data,
+    lastTVL,
+    lastAPY,
+    isDataReady,
+    darkMode,
+    setCurDate,
+    setCurContent,
+  ])
 
   return (
     <>
       {!loading ? (
-        <Chart options={options} series={mainSeries} type="area" height="100%" />
+        <Chart options={options} series={mainSeries} type="line" height="100%" />
       ) : (
         <LoadingDiv>
           {isDataReady ? (

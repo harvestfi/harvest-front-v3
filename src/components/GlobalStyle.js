@@ -439,16 +439,7 @@ html {
       cursor: default !important;
     }
     .apexcharts-tooltip {
-      height: 35% !important;
-      border-radius: 10px !important;
-      bottom: 35px !important;
-      top: unset !important;
-    }
-
-    .apexcharts-xcrosshairs.apexcharts-active {
-      stroke: #282F3D;
-      stroke-dasharray: 0;
-      stroke-width: 1;
+      display: none;
     }
   }
 `

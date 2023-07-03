@@ -20,7 +20,7 @@ const ButtonStyle = styled.button`
   line-height: 21px;
   border: none;
   cursor: unset !important;
-  padding: 8px;
+  padding: 10px 16px;
   ${props =>
     props.btnNum === 0
       ? `
