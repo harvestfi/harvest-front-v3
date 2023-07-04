@@ -18,7 +18,6 @@ const Container = styled.div`
 
 const Header = styled.div`
   font-size: 14px;
-  // padding: 1em 5px 0 5px;
 `
 
 const Title = styled.h5`
@@ -79,6 +78,7 @@ const ChartDiv = styled.div`
 
 const FilterGroup = styled.div`
   display: flex;
+  justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
 `
@@ -128,6 +128,7 @@ const FlexDiv = styled.div`
 
   @media screen and (max-width: 992px) {
     display: block;
+    width: 100%;
   }
 `
 

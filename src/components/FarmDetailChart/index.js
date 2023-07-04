@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useMediaQuery } from 'react-responsive'
 import apyActive from '../../assets/images/logos/earn/filter_apy.svg'
 import myBalanceActive from '../../assets/images/logos/earn/filter_mybalance.svg'
 import tvlActive from '../../assets/images/logos/earn/filter_tvl.svg'
@@ -49,6 +50,8 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
   const [curDate, setCurDate] = useState('')
   const [curContent, setCurContent] = useState('')
 
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+
   useEffect(() => {
     const initData = async () => {
       const data = await getDataQuery(365, address, chainId, account)
@@ -80,25 +83,42 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
                 clickedId={clickedId}
                 setClickedId={setClickedId}
               />
+              {isMobile && (
+                <ButtonGroup>
+                  {recommendLinks.map((item, i) => (
+                    <ChartRangeSelect
+                      key={i}
+                      onClick={() => {
+                        setSelectedState(item.state)
+                      }}
+                      state={selectedState}
+                      type={item.type}
+                      text={item.name}
+                    />
+                  ))}
+                </ButtonGroup>
+              )}
             </FilterGroup>
             <TooltipInfo>
               <CurDate>{curDate}</CurDate>
               <div dangerouslySetInnerHTML={{ __html: curContent }} />
             </TooltipInfo>
           </FlexDiv>
-          <ButtonGroup>
-            {recommendLinks.map((item, i) => (
-              <ChartRangeSelect
-                key={i}
-                onClick={() => {
-                  setSelectedState(item.state)
-                }}
-                state={selectedState}
-                type={item.type}
-                text={item.name}
-              />
-            ))}
-          </ButtonGroup>
+          {!isMobile && (
+            <ButtonGroup>
+              {recommendLinks.map((item, i) => (
+                <ChartRangeSelect
+                  key={i}
+                  onClick={() => {
+                    setSelectedState(item.state)
+                  }}
+                  state={selectedState}
+                  type={item.type}
+                  text={item.name}
+                />
+              ))}
+            </ButtonGroup>
+          )}
         </Total>
         {/* <FilterName>{filterList[clickedId].name}</FilterName> */}
       </Header>
