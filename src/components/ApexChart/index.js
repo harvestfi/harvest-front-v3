@@ -141,13 +141,6 @@ function formatDateTime(value) {
   const monthNum = date.getMonth()
   const month = monthNames[monthNum]
   const day = date.getDate()
-  // let hour = date.getHours(),
-  // min = date.getMinutes()
-  // const ampm = hour >= 12 ? 'PM' : 'AM'
-  // hour %= 12
-  // hour = hour || 12 // the hour '0' should be '12'
-  // hour = hour < 10 ? `0${hour}` : hour
-  // min = min < 10 ? `0${min}` : min
 
   return `${month} ${day} ${year}`
 }
@@ -448,7 +441,7 @@ const ApexChart = ({
             const content = `<div style="font-size: 13px; line-height: 16px; display: flex;"><div style="font-weight: 700;">${
               filter === 1 ? 'TVL ' : filter === 0 ? 'APY ' : 'Balance '
             }</div><div style="color: #ff9400; font-weight: 500;">&nbsp;${
-              filter === 0 ? '' : '$'
+              filter === 1 ? '$' : ''
             }${numberWithCommas(mainData[dataPointIndex][1].toFixed(filter === 1 ? 0 : len))}${
               filter === 0 ? '%' : ''
             }</div></div>`

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { usePools } from '../../providers/Pools'
-import { Container, Title, Header, ButtonGroup, ChartDiv /* , ConnectButton */ } from './style'
+import { Container, Header, ButtonGroup, ChartDiv, TooltipContent, CurDate } from './style'
 import { SPECIAL_VAULTS } from '../../constants'
 import { getTotalTVLData } from '../../utils'
 import ApexChart from '../AnalyticComponents/ApexChart'
@@ -30,6 +30,9 @@ const AnalyticChart = () => {
 
   const [apiData, setApiData] = useState([])
 
+  const [curDate, setCurDate] = useState('')
+  const [curContent, setCurContent] = useState('')
+
   useEffect(() => {
     const initData = async () => {
       const data = await getTotalTVLData()
@@ -45,28 +48,33 @@ const AnalyticChart = () => {
     <>
       <Container fontColor={fontColor}>
         <Header>
-          <Title>Harvest TVL Chart</Title>
+          <TooltipContent>
+            <CurDate>{curDate}</CurDate>
+            <div dangerouslySetInnerHTML={{ __html: curContent }} />
+          </TooltipContent>
+          <ButtonGroup>
+            {recommendLinks.map((item, i) => (
+              <ChartRangeSelect
+                key={i}
+                onClick={() => {
+                  setSelectedState(item.state)
+                }}
+                state={selectedState}
+                type={item.type}
+                text={item.name}
+              />
+            ))}
+          </ButtonGroup>
         </Header>
         <ChartDiv>
-          <ApexChart data={apiData} range={selectedState} />
+          <ApexChart
+            data={apiData}
+            range={selectedState}
+            setCurDate={setCurDate}
+            setCurContent={setCurContent}
+          />
         </ChartDiv>
-        <ButtonGroup>
-          {recommendLinks.map((item, i) => (
-            <ChartRangeSelect
-              key={i}
-              onClick={() => {
-                setSelectedState(item.state)
-              }}
-              state={selectedState}
-              type={item.type}
-              text={item.name}
-            />
-          ))}
-        </ButtonGroup>
       </Container>
-      {/* <ConnectButton color="connectwallet" minWidth="190px" bordercolor={fontColor}>
-        Comming Soon
-      </ConnectButton> */}
     </>
   )
 }
