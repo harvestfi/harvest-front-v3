@@ -408,6 +408,15 @@ const ApexChart = ({
             enabled: false,
           },
         },
+        fill: {
+          type: 'pattern',
+          pattern: {
+            style: 'squares',
+            width: 4,
+            height: 4,
+            strokeWidth: 1,
+          },
+        },
         grid: {
           show: true,
           borderColor: 'rgba(228, 228, 228, 0.2)',
@@ -491,7 +500,7 @@ const ApexChart = ({
   return (
     <>
       {!loading ? (
-        <Chart options={options} series={mainSeries} type="line" height="100%" />
+        <Chart options={options} series={mainSeries} type="area" height="100%" />
       ) : (
         <LoadingDiv>
           {isDataReady ? (
