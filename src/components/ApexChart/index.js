@@ -303,7 +303,7 @@ const ApexChart = ({
         userBalanceData = data && data.userBalanceHistories ? data.userBalanceHistories : []
       }
 
-      const slotCount = 20,
+      const slotCount = 50,
         slots = getTimeSlots(ago, slotCount)
 
       if (filter === 1) {
