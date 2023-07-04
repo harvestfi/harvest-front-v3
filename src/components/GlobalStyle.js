@@ -435,9 +435,15 @@ html {
   }
 
   .farm-detail-chart {
+    .apexcharts-svg.apexcharts-zoomable.hovering-pan {
+      cursor: default !important;
+    }
     .apexcharts-tooltip {
-      height: 45% !important;
-      border-radius: 10px !important;
+      display: none;
+    }
+
+    .apexcharts-xcrosshairs.apexcharts-active {
+      stroke: #FF9400;
     }
   }
 `

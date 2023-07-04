@@ -899,11 +899,7 @@ const WidoDetail = () => {
                 <ValueShow>{showTVL()}</ValueShow>
               </DetailTopInfo>
             </HalfInfo>
-            <HalfInfo
-              padding={!isMobile ? '10px 20px' : '15px'}
-              backColor={backColor}
-              borderColor={borderColor}
-            >
+            <HalfInfo padding="25px 18px" backColor={backColor} borderColor={borderColor}>
               {loadComplete && (
                 <FarmDetailChart
                   token={token}
@@ -1314,7 +1310,7 @@ const WidoDetail = () => {
               </FlexDiv>
               <FlexDiv justifyContent="space-between" marginTop="12px">
                 <NewLabel size="13px" weight="300" height="16px">
-                  The APY shown already considers the performance fee taken only from generated
+                  The shown APY already considers the performance fee taken only from generated
                   yield and not deposits.
                 </NewLabel>
                 <NewLabel display="flex" self="center">

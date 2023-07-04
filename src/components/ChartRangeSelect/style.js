@@ -7,30 +7,38 @@ const Container = styled.button`
   display: flex;
   text-align: left;
   margin-left: 20px;
-  border: 1px solid white;
-  color: #ff9400;
+  border: none;
+  color: #282f3d;
   border-radius: 3px;
 
   &:hover {
-    border: 1px solid #ff9400;
-    filter: drop-shadow(0px 0px 4px #ff9400);
+    background: ${props =>
+      props.mode === 'dark'
+        ? `
+          #3b3c3e
+        `
+        : `#e9f0f7`};
+    // filter: drop-shadow(0px 0px 4px #ff9400);
   }
 
   ${props =>
     props.activeItem
       ? props.mode === 'dark'
         ? `
-        background: white;
+        background: none;
         border-radius: 3px;
+        color: #ff9400;
     `
         : `
-        background: #FFE6AF;
+        background: none;
         border-radius: 3px;
+        color: #ff9400;
       `
       : props.mode === 'dark'
       ? `
       background: none;
-      border: 1px solid #15202B;
+      border: none;
+      color: white;
     `
       : `
       background: white;
