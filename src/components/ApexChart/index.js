@@ -145,8 +145,38 @@ function formatDateTime(value) {
   return `${month} ${day} ${year}`
 }
 
+function generateIFARMTVLWithSlots(slots, apiData) {
+  const seriesData = []
+  for (let i = 0; i < slots.length; i += 1) {
+    const ethData = apiData.ETH.reduce((prev, curr) =>
+      Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
+        ? curr
+        : prev,
+    )
+
+    const polygonData = apiData.MATIC.reduce((prev, curr) =>
+      Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
+        ? curr
+        : prev,
+    )
+
+    const arbData = apiData.ARBITRUM.reduce((prev, curr) =>
+      Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
+        ? curr
+        : prev,
+    )
+
+    const value = Number(ethData.value) + Number(polygonData.value) + Number(arbData.value)
+    seriesData.push([slots[i] * 1000, value])
+  }
+
+  return seriesData
+}
+
 const ApexChart = ({
   data,
+  iFarmTVL,
+  isIFARM,
   range,
   filter,
   decimal,
@@ -265,15 +295,29 @@ const ApexChart = ({
         roundNum
 
       if (filter === 1) {
-        if (data && data.tvls) {
-          if (data.tvls.length === 0) {
-            setIsDataReady(false)
+        if (isIFARM) {
+          if (iFarmTVL && iFarmTVL.ETH && iFarmTVL.MATIC && iFarmTVL.ARBITRUM) {
+            if (
+              iFarmTVL.ETH.length === 0 &&
+              iFarmTVL.MATIC.length === 0 &&
+              iFarmTVL.ARBITRUM.length === 0
+            ) {
+              setIsDataReady(false)
+              return
+            }
+          } else {
             return
           }
+        } else {
+          if (data && data.tvls) {
+            if (data.tvls.length === 0) {
+              setIsDataReady(false)
+              return
+            }
+          }
+          tvlData = data && data.tvls ? data.tvls : []
+          if (tvlData.length !== 0 && lastTVL && !Number.isNaN(lastTVL)) tvlData[0].value = lastTVL
         }
-        tvlData = data && data.tvls ? data.tvls : []
-
-        if (tvlData.length !== 0 && lastTVL && !Number.isNaN(lastTVL)) tvlData[0].value = lastTVL
       } else if (filter === 0) {
         if (data && (data.apyAutoCompounds || data.apyRewards)) {
           if (data.apyAutoCompounds.length === 0 && data.apyRewards.length === 0) {
@@ -300,11 +344,18 @@ const ApexChart = ({
         slots = getTimeSlots(ago, slotCount)
 
       if (filter === 1) {
-        if (tvlData.length === 0) {
-          // setIsDataReady(false)
-          return
+        if (isIFARM) {
+          if (iFarmTVL.length === 0) {
+            return
+          }
+          mainData = generateIFARMTVLWithSlots(slots, iFarmTVL, 'value')
+        } else {
+          if (tvlData.length === 0) {
+            // setIsDataReady(false)
+            return
+          }
+          mainData = generateChartDataWithSlots(slots, tvlData, 'value')
         }
-        mainData = generateChartDataWithSlots(slots, tvlData, 'value')
         maxTVL = findMax(mainData)
         minTVL = findMin(mainData)
       } else if (filter === 0) {
@@ -488,6 +539,8 @@ const ApexChart = ({
     darkMode,
     setCurDate,
     setCurContent,
+    isIFARM,
+    iFarmTVL,
   ])
 
   return (

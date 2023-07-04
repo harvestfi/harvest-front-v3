@@ -6,7 +6,7 @@ import tvlActive from '../../assets/images/logos/earn/filter_tvl.svg'
 import { addresses } from '../../data/index'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
-import { getDataQuery } from '../../utils'
+import { getDataQuery, getTotalTVLData } from '../../utils'
 import ApexChart from '../ApexChart'
 import ChartButtonsGroup from '../ChartButtonsGroup'
 import ChartRangeSelect from '../ChartRangeSelect'
@@ -15,9 +15,7 @@ import {
   ChartDiv,
   Container,
   FilterGroup,
-  // FilterName,
   Header,
-  // Title,
   Total,
   CurDate,
   TooltipInfo,
@@ -47,27 +45,31 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
   const decimal = token.decimals
 
   const [apiData, setApiData] = useState({})
+  const [iFarmTVLData, setIFarmTVLData] = useState({})
   const [curDate, setCurDate] = useState('')
   const [curContent, setCurContent] = useState('')
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+  const isIFARM = token.tokenAddress === addresses.FARM
 
   useEffect(() => {
     const initData = async () => {
       const data = await getDataQuery(365, address, chainId, account)
-      const isIFARM = token.tokenAddress === addresses.FARM
       if (isIFARM) {
         const dataIFarm = await getDataQuery(365, token.tokenAddress, chainId, account)
         if (dataIFarm) {
           data.apyRewards = dataIFarm.apyRewards
           data.tvls = dataIFarm.tvls
         }
+
+        const iFarmTVL = await getTotalTVLData()
+        setIFarmTVLData(iFarmTVL)
       }
       setApiData(data)
     }
 
     initData()
-  }, [address, chainId, account, token])
+  }, [address, chainId, account, token, isIFARM])
 
   const { fontColor, backColor } = useThemeContext()
 
@@ -75,7 +77,6 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
     <Container backColor={backColor} fontColor={fontColor}>
       <Header>
         <Total>
-          {/* <Title>Historical Data</Title> */}
           <FlexDiv>
             <FilterGroup>
               <ChartButtonsGroup
@@ -120,11 +121,12 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
             </ButtonGroup>
           )}
         </Total>
-        {/* <FilterName>{filterList[clickedId].name}</FilterName> */}
       </Header>
       <ChartDiv className="farm-detail-chart">
         <ApexChart
           data={apiData}
+          iFarmTVL={iFarmTVLData}
+          isIFARM={isIFARM}
           range={selectedState}
           filter={clickedId}
           decimal={decimal}

@@ -20,18 +20,6 @@ const Header = styled.div`
   font-size: 14px;
 `
 
-const Title = styled.h5`
-  font-size: 16px;
-  line-height: 21px;
-  font-weight: bold;
-  width: 100%;
-  margin-bottom: 1rem;
-
-  img {
-    margin-right: 5px;
-  }
-`
-
 const Total = styled.div`
   display: flex;
   justify-content: space-between;
@@ -134,7 +122,6 @@ const FlexDiv = styled.div`
 
 export {
   Container,
-  Title,
   Header,
   Total,
   MoreBtn,
