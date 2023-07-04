@@ -440,7 +440,7 @@ const ApexChart = ({
           size: 0,
           strokeWidth: 2,
           fillColor: '#fff',
-          hover: { size: 8 },
+          hover: { size: 0 },
         },
         tooltip: {
           custom({ dataPointIndex }) {
