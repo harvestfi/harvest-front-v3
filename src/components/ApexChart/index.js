@@ -303,7 +303,7 @@ const ApexChart = ({
         userBalanceData = data && data.userBalanceHistories ? data.userBalanceHistories : []
       }
 
-      const slotCount = 50,
+      const slotCount = 20,
         slots = getTimeSlots(ago, slotCount)
 
       if (filter === 1) {
@@ -380,7 +380,7 @@ const ApexChart = ({
         max: maxValue,
         tickAmount: 4,
         labels: {
-          style: { colors: darkMode ? 'white' : 'black', fontFamily: 'Work Sans' },
+          style: { colors: darkMode ? 'white' : 'black', fontFamily: 'Roboto, sans-serif' },
           formatter: val =>
             numberWithCommas(
               (filter === 1 ? round10(val, roundNum) : val).toFixed(filter === 1 ? 0 : len),
@@ -405,46 +405,27 @@ const ApexChart = ({
           stacked: false,
           background: backColor,
           zoom: {
-            type: 'x',
-            enabled: true,
-            autoScaleXaxis: true,
-          },
-          events: {
-            scrolled(chartContext, { xaxis }) {
-              console.log(
-                new Date(xaxis.min).toLocaleDateString(),
-                new Date(xaxis.max).toLocaleDateString(),
-              )
-            },
+            enabled: false,
           },
         },
         grid: {
-          show: false,
+          show: true,
+          borderColor: 'rgba(228, 228, 228, 0.2)',
+          yaxis: {
+            lines: {
+              show: true,
+            },
+          },
         },
         colors: ['#F4BE37'],
         stroke: {
-          colors: ['#F4BE37'],
+          colors: ['#FF9400'],
+          curve: ['smooth'],
           width: 3,
         },
         dataLabels: {
           enabled: false,
         },
-        // fill: {
-        //   opacity: 1,
-        //   enabled: false,
-        //   type: 'gradient',
-        //   gradient: {
-        //     shade: 'dark',
-        //     type: 'vertical',
-        //     shadeIntensity: 0.5,
-        //     gradientToColors: ['#F8DD9C'],
-        //     inverseColors: true,
-        //     opacityFrom: 0.6,
-        //     opacityTo: 0.2,
-        //     stops: [0, 20, 100],
-        //     colorStops: [],
-        //   },
-        // },
         markers: {
           strokeColor: '#EDAE50',
           size: 0,
@@ -463,23 +444,16 @@ const ApexChart = ({
               filter === 0 ? '%' : ''
             }</div></div>`
             setCurContent(content)
-            // return `${'<div style="padding: 15px; height: 100%; background: black; color: white; opacity: 0.9; display: flex; flex-direction: column; justify-content: space-between;"><h1 style="font-size: 16px;">'}${formatDateTime(
-            //   mainData[dataPointIndex][0],
-            // )}</h1><div style="font-size: 16px; display: flex; justify-content: space-between;"><div>${
-            //   filter === 1 ? 'TVL ' : filter === 0 ? 'APY ' : 'Balance '
-            // }</div><div>${filter === 0 ? '' : '$'}${numberWithCommas(
-            //   mainData[dataPointIndex][1].toFixed(filter === 1 ? 0 : len),
-            // )}${filter === 0 ? '%' : ''}</div></div></div>`
           },
         },
         yaxis: yAxis,
         xaxis: {
           type: 'category',
-          tickAmount: 7,
+          tickAmount: 5,
           axisBorder: { show: false },
           axisTicks: { show: false },
           labels: {
-            style: { colors: darkMode ? 'white' : 'black', fontFamily: 'Work Sans' },
+            style: { colors: darkMode ? 'white' : 'black', fontFamily: 'Roboto, sans-serif' },
             formatter(value, timestamp) {
               const date = new Date(timestamp)
               const dateString = `${date.getMonth() + 1} / ${date.getDate()}`
