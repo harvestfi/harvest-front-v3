@@ -433,7 +433,6 @@ html {
       }
     }
   }
-
   .farm-detail-chart {
     .apexcharts-svg.apexcharts-zoomable.hovering-pan {
       cursor: default !important;

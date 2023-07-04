@@ -122,7 +122,7 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
         </Total>
         {/* <FilterName>{filterList[clickedId].name}</FilterName> */}
       </Header>
-      <ChartDiv className="farm-detail-chart">
+      <ChartDiv>
         <ApexChart
           data={apiData}
           range={selectedState}

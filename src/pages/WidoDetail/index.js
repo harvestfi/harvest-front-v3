@@ -433,7 +433,6 @@ const WidoDetail = () => {
           const curBalances = await getBalances(account, [chain.toString()])
           setBalanceList(curBalances)
           let supList = [],
-            soonSupList = [],
             directInSup = {},
             directInBalance = {}
           try {
@@ -450,6 +449,7 @@ const WidoDetail = () => {
               ? token.tokenAddress
               : token.vaultAddress
 
+          const soonSupList = []
           supList = supList.map(sup => {
             const supToken = curBalances.find(el => el.address === sup.address)
             if (supToken) {
@@ -471,7 +471,7 @@ const WidoDetail = () => {
           })
 
           supList = supList.sort(function reducer(a, b) {
-            return Number(fromWei(b.usdValue, b.decimals)) - Number(fromWei(a.usdValue, a.decimals))
+            return Number(fromWei(b.balance, b.decimals)) - Number(fromWei(a.balance, a.decimals))
           })
 
           for (let j = 0; j < curBalances.length; j += 1) {
@@ -486,13 +486,6 @@ const WidoDetail = () => {
               }
             }
           }
-
-          soonSupList = soonSupList.sort(function reducer(a, b) {
-            return (
-              Number(fromWei(b.balanceUsdValue, b.decimals)) -
-              Number(fromWei(a.balanceUsdValue, a.decimals))
-            )
-          })
 
           const vaultId = Object.keys(groupOfVaults).find(
             key => groupOfVaults[key].tokenAddress === tokenAddress,

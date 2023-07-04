@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { fromWei } from '../../../services/web3'
-import { formatNumberWido } from '../../../utils'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { Container, Text, Vault, Content, EmptyContainer } from './style'
 import AnimatedDots from '../../AnimatedDots'
@@ -58,9 +57,7 @@ const WidoSelectTokenList = ({
                 {data.symbol}
               </Text>
               <Text size="12px" height="16px" weight={400}>
-                {data.balance
-                  ? `${1 * formatNumberWido(fromWei(data.balance, data.decimals), data.decimals)}`
-                  : '0.00'}
+                {data.balance ? `${1 * fromWei(data.balance, data.decimals)}` : '0.00'}
               </Text>
             </Vault>
           </Container>
