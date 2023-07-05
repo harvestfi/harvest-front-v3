@@ -148,26 +148,13 @@ function formatDateTime(value) {
 function generateIFARMTVLWithSlots(slots, apiData) {
   const seriesData = []
   for (let i = 0; i < slots.length; i += 1) {
-    const ethData = apiData.ETH.reduce((prev, curr) =>
+    const data = apiData.FARM.reduce((prev, curr) =>
       Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
         ? curr
         : prev,
     )
 
-    const polygonData = apiData.MATIC.reduce((prev, curr) =>
-      Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
-        ? curr
-        : prev,
-    )
-
-    const arbData = apiData.ARBITRUM.reduce((prev, curr) =>
-      Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
-        ? curr
-        : prev,
-    )
-
-    const value = Number(ethData.value) + Number(polygonData.value) + Number(arbData.value)
-    seriesData.push([slots[i] * 1000, value])
+    seriesData.push([slots[i] * 1000, Number(data.value)])
   }
 
   return seriesData
@@ -296,12 +283,8 @@ const ApexChart = ({
 
       if (filter === 1) {
         if (isIFARM) {
-          if (iFarmTVL && iFarmTVL.ETH && iFarmTVL.MATIC && iFarmTVL.ARBITRUM) {
-            if (
-              iFarmTVL.ETH.length === 0 &&
-              iFarmTVL.MATIC.length === 0 &&
-              iFarmTVL.ARBITRUM.length === 0
-            ) {
+          if (iFarmTVL && iFarmTVL.FARM) {
+            if (iFarmTVL.FARM.length === 0) {
               setIsDataReady(false)
               return
             }
