@@ -51,7 +51,7 @@ function findMin(data) {
 }
 
 // kind: "value" - TVL, "apy" - APY
-function generateChartDataWithSlots(slots, apiData, filter, decimal, kind) {
+function generateChartDataWithSlots(slots, apiData, kind) {
   const seriesData = []
   for (let i = 0; i < slots.length; i += 1) {
     for (let j = 0; j < apiData.length; j += 1) {
@@ -516,6 +516,9 @@ const ApexChart = ({
               }
               return dateString
             },
+          },
+          tooltip: {
+            enabled: false,
           },
         },
       })
