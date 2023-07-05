@@ -51,7 +51,7 @@ function findMin(data) {
 }
 
 // kind: "value" - TVL, "apy" - APY
-function generateChartDataWithSlots(slots, apiData, kind) {
+function generateChartDataWithSlots(slots, apiData, filter, decimal, kind) {
   const seriesData = []
   for (let i = 0; i < slots.length; i += 1) {
     for (let j = 0; j < apiData.length; j += 1) {
@@ -329,6 +329,7 @@ const ApexChart = ({
           apyRewards = data.apyRewards !== undefined ? data.apyRewards : []
 
         apyData = generateChartDataForApy(apyAutoCompounds, apyRewards, 'apy')
+
         if (lastAPY && !Number.isNaN(lastAPY) && apyData.length > 0) apyData[0].apy = lastAPY
       } else {
         if (data && data.userBalanceHistories) {
@@ -363,7 +364,6 @@ const ApexChart = ({
           setIsDataReady(false)
           return
         }
-
         mainData = generateChartDataWithSlots(slots, apyData, 'apy')
         maxAPY = findMax(mainData)
         minAPY = findMin(mainData)
@@ -516,9 +516,6 @@ const ApexChart = ({
               }
               return dateString
             },
-          },
-          tooltip: {
-            enabled: false,
           },
         },
       })
