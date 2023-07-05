@@ -51,7 +51,7 @@ function findMin(data) {
 }
 
 // kind: "value" - TVL, "apy" - APY
-function generateChartDataWithSlots(slots, apiData, filter, decimal, kind) {
+function generateChartDataWithSlots(slots, apiData, kind) {
   const seriesData = []
   for (let i = 0; i < slots.length; i += 1) {
     for (let j = 0; j < apiData.length; j += 1) {
@@ -121,8 +121,58 @@ function generateChartDataForApy(apyData1, apyData2, field) {
   return apyData
 }
 
-const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBalance */ }) => {
-  const { backColor, fontColor } = useThemeContext()
+function formatDateTime(value) {
+  const date = new Date(value)
+  const year = date.getFullYear()
+  const monthNames = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
+  const monthNum = date.getMonth()
+  const month = monthNames[monthNum]
+  const day = date.getDate()
+
+  return `${month} ${day} ${year}`
+}
+
+function generateIFARMTVLWithSlots(slots, apiData) {
+  const seriesData = []
+  for (let i = 0; i < slots.length; i += 1) {
+    const data = apiData.FARM.reduce((prev, curr) =>
+      Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
+        ? curr
+        : prev,
+    )
+
+    seriesData.push([slots[i] * 1000, Number(data.value)])
+  }
+
+  return seriesData
+}
+
+const ApexChart = ({
+  data,
+  iFarmTVL,
+  isIFARM,
+  range,
+  filter,
+  decimal,
+  lastTVL,
+  lastAPY,
+  setCurDate,
+  setCurContent,
+}) => {
+  const { darkMode, backColor, fontColor } = useThemeContext()
 
   const [mainSeries, setMainSeries] = useState([
     {
@@ -232,15 +282,25 @@ const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBal
         roundNum
 
       if (filter === 1) {
-        if (data && data.tvls) {
-          if (data.tvls.length === 0) {
-            setIsDataReady(false)
+        if (isIFARM) {
+          if (iFarmTVL && iFarmTVL.FARM) {
+            if (iFarmTVL.FARM.length === 0) {
+              setIsDataReady(false)
+              return
+            }
+          } else {
             return
           }
+        } else {
+          if (data && data.tvls) {
+            if (data.tvls.length === 0) {
+              setIsDataReady(false)
+              return
+            }
+          }
+          tvlData = data && data.tvls ? data.tvls : []
+          if (tvlData.length !== 0 && lastTVL && !Number.isNaN(lastTVL)) tvlData[0].value = lastTVL
         }
-        tvlData = data && data.tvls ? data.tvls : []
-
-        if (tvlData.length !== 0 && lastTVL && !Number.isNaN(lastTVL)) tvlData[0].value = lastTVL
       } else if (filter === 0) {
         if (data && (data.apyAutoCompounds || data.apyRewards)) {
           if (data.apyAutoCompounds.length === 0 && data.apyRewards.length === 0) {
@@ -252,7 +312,8 @@ const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBal
           apyRewards = data.apyRewards !== undefined ? data.apyRewards : []
 
         apyData = generateChartDataForApy(apyAutoCompounds, apyRewards, 'apy')
-        if (lastAPY && !Number.isNaN(lastAPY)) apyData[0].apy = lastAPY
+
+        if (lastAPY && !Number.isNaN(lastAPY) && apyData.length > 0) apyData[0].apy = lastAPY
       } else {
         if (data && data.userBalanceHistories) {
           if (data.userBalanceHistories.length === 0) {
@@ -261,19 +322,24 @@ const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBal
           }
         }
         userBalanceData = data && data.userBalanceHistories ? data.userBalanceHistories : []
-        // if(userBalanceData.length !== 0 && userBalance)
-        //   userBalanceData[0]["value"] = userBalance
       }
 
       const slotCount = 50,
         slots = getTimeSlots(ago, slotCount)
 
       if (filter === 1) {
-        if (tvlData.length === 0) {
-          // setIsDataReady(false)
-          return
+        if (isIFARM) {
+          if (iFarmTVL.length === 0) {
+            return
+          }
+          mainData = generateIFARMTVLWithSlots(slots, iFarmTVL, 'value')
+        } else {
+          if (tvlData.length === 0) {
+            // setIsDataReady(false)
+            return
+          }
+          mainData = generateChartDataWithSlots(slots, tvlData, 'value')
         }
-        mainData = generateChartDataWithSlots(slots, tvlData, filter, decimal, 'value')
         maxTVL = findMax(mainData)
         minTVL = findMin(mainData)
       } else if (filter === 0) {
@@ -281,20 +347,17 @@ const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBal
           setIsDataReady(false)
           return
         }
-
-        mainData = generateChartDataWithSlots(slots, apyData, filter, decimal, 'apy')
-
+        mainData = generateChartDataWithSlots(slots, apyData, 'apy')
         maxAPY = findMax(mainData)
         minAPY = findMin(mainData)
       } else {
         if (userBalanceData.length === 0) {
           return
         }
-        mainData = generateChartDataWithSlots(slots, userBalanceData, filter, decimal, 'value')
+        mainData = generateChartDataWithSlots(slots, userBalanceData, 'value')
         maxBalance = findMax(mainData)
         minBalance = findMin(mainData)
         minBalance /= 2
-        // maxBalance *= 2
       }
 
       maxValue = filter === 0 ? maxAPY : filter === 1 ? maxTVL : maxBalance
@@ -344,7 +407,7 @@ const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBal
         max: maxValue,
         tickAmount: 4,
         labels: {
-          style: { fontFamily: 'Work Sans' },
+          style: { colors: darkMode ? 'white' : 'black', fontFamily: 'Roboto, sans-serif' },
           formatter: val =>
             numberWithCommas(
               (filter === 1 ? round10(val, roundNum) : val).toFixed(filter === 1 ? 0 : len),
@@ -369,22 +432,21 @@ const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBal
           stacked: false,
           background: backColor,
           zoom: {
-            type: 'x',
-            enabled: true,
-            autoScaleXaxis: true,
+            enabled: false,
           },
-          events: {
-            scrolled(chartContext, { xaxis }) {
-              console.log(
-                new Date(xaxis.min).toLocaleDateString(),
-                new Date(xaxis.max).toLocaleDateString(),
-              )
-            },
+        },
+        fill: {
+          type: 'pattern',
+          pattern: {
+            style: 'squares',
+            width: 4,
+            height: 4,
+            strokeWidth: 1,
           },
         },
         grid: {
           show: true,
-          borderColor: '#E3E3E3',
+          borderColor: 'rgba(228, 228, 228, 0.2)',
           yaxis: {
             lines: {
               show: true,
@@ -393,54 +455,53 @@ const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBal
         },
         colors: ['#F4BE37'],
         stroke: {
-          colors: ['#F4BE37'],
+          colors: ['#FF9400'],
+          curve: ['smooth'],
           width: 3,
         },
         dataLabels: {
           enabled: false,
-        },
-        fill: {
-          opacity: 1,
-          enabled: false,
-          type: 'gradient',
-          gradient: {
-            shade: 'dark',
-            type: 'vertical',
-            shadeIntensity: 0.5,
-            gradientToColors: ['#F8DD9C'],
-            inverseColors: true,
-            opacityFrom: 0.6,
-            opacityTo: 0.2,
-            stops: [0, 20, 100],
-            colorStops: [],
-          },
         },
         markers: {
           strokeColor: '#EDAE50',
           size: 0,
           strokeWidth: 2,
           fillColor: '#fff',
-          hover: { size: 8 },
+          hover: { size: 0 },
         },
         tooltip: {
-          x: {
-            format: 'dd MMM - HH : mm ',
-          },
-          custom({ series, dataPointIndex }) {
-            return `${'<div style="padding: 5px;"><h1 style="font-size: 12px; color: #888E8F">'}${
+          custom({ dataPointIndex }) {
+            setCurDate(formatDateTime(mainData[dataPointIndex][0]))
+            const content = `<div style="font-size: 13px; line-height: 16px; display: flex;"><div style="font-weight: 700;">${
+              filter === 1 ? 'TVL ' : filter === 0 ? 'APY ' : 'Balance '
+            }</div><div style="color: #ff9400; font-weight: 500;">&nbsp;${
               filter === 1 ? '$' : ''
-            }${numberWithCommas(series[0][dataPointIndex].toFixed(filter === 1 ? 0 : len - 1))}${
+            }${numberWithCommas(mainData[dataPointIndex][1].toFixed(filter === 1 ? 0 : len))}${
               filter === 0 ? '%' : ''
-            }</h1></div>`
+            }</div></div>`
+            setCurContent(content)
           },
         },
         yaxis: yAxis,
         xaxis: {
-          type: 'datetime',
+          type: 'category',
+          tickAmount: 5,
           axisBorder: { show: false },
           axisTicks: { show: false },
           labels: {
-            style: { fontFamily: 'Work Sans' },
+            style: { colors: darkMode ? 'white' : 'black', fontFamily: 'Roboto, sans-serif' },
+            formatter(value, timestamp) {
+              const date = new Date(timestamp)
+              const dateString = `${date.getMonth() + 1} / ${date.getDate()}`
+              const timeString = `${date.getHours()}:${date.getMinutes()}`
+              if (range === '1D') {
+                return timeString
+              }
+              return dateString
+            },
+          },
+          tooltip: {
+            enabled: false,
           },
         },
       })
@@ -449,7 +510,21 @@ const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBal
     }
 
     init()
-  }, [backColor, range, filter, decimal, data, lastTVL, lastAPY, /* userBalance, */ isDataReady])
+  }, [
+    backColor,
+    range,
+    filter,
+    decimal,
+    data,
+    lastTVL,
+    lastAPY,
+    isDataReady,
+    darkMode,
+    setCurDate,
+    setCurContent,
+    isIFARM,
+    iFarmTVL,
+  ])
 
   return (
     <>
@@ -460,7 +535,7 @@ const ApexChart = ({ data, range, filter, decimal, lastTVL, lastAPY /* , userBal
           {isDataReady ? (
             <ClipLoader size={30} margin={2} color={fontColor} />
           ) : (
-            <NoData color={fontColor}>&nbsp;No data !</NoData>
+            <NoData color={fontColor}>You don&apos;t have any active deposits in this farm.</NoData>
           )}
         </LoadingDiv>
       )}

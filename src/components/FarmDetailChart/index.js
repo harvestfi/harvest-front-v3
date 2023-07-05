@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import apyActive from '../../assets/images/logos/earn/apy.svg'
-import myBalanceActive from '../../assets/images/logos/earn/mybalance.svg'
-import tvlActive from '../../assets/images/logos/earn/tvl.svg'
+import { useMediaQuery } from 'react-responsive'
+import apyActive from '../../assets/images/logos/earn/filter_apy.svg'
+import myBalanceActive from '../../assets/images/logos/earn/filter_mybalance.svg'
+import tvlActive from '../../assets/images/logos/earn/filter_tvl.svg'
 import { addresses } from '../../data/index'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
-import { getDataQuery } from '../../utils'
+import { getDataQuery, getTotalTVLData } from '../../utils'
 import ApexChart from '../ApexChart'
 import ChartButtonsGroup from '../ChartButtonsGroup'
 import ChartRangeSelect from '../ChartRangeSelect'
@@ -14,10 +15,11 @@ import {
   ChartDiv,
   Container,
   FilterGroup,
-  FilterName,
   Header,
-  Title,
   Total,
+  CurDate,
+  TooltipInfo,
+  FlexDiv,
 } from './style'
 
 const filterList = [
@@ -35,35 +37,39 @@ const recommendLinks = [
 
 const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
   const [clickedId, setClickedId] = useState(1)
-
-  const [selectedState, setSelectedState] = React.useState('1M')
+  const [selectedState, setSelectedState] = useState('1M')
 
   const { account } = useWallet()
-
   const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
-
   const chainId = token.chain || token.data.chain
-
   const decimal = token.decimals
 
-  const [apiData, setApiData] = React.useState({})
+  const [apiData, setApiData] = useState({})
+  const [iFarmTVLData, setIFarmTVLData] = useState({})
+  const [curDate, setCurDate] = useState('')
+  const [curContent, setCurContent] = useState('')
+
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+  const isIFARM = token.tokenAddress === addresses.FARM
 
   useEffect(() => {
     const initData = async () => {
       const data = await getDataQuery(365, address, chainId, account)
-      const isIFARM = token.tokenAddress === addresses.FARM
       if (isIFARM) {
         const dataIFarm = await getDataQuery(365, token.tokenAddress, chainId, account)
         if (dataIFarm) {
           data.apyRewards = dataIFarm.apyRewards
           data.tvls = dataIFarm.tvls
         }
+
+        const iFarmTVL = await getTotalTVLData()
+        setIFarmTVLData(iFarmTVL)
       }
       setApiData(data)
     }
 
     initData()
-  }, [address, chainId, account, token])
+  }, [address, chainId, account, token, isIFARM])
 
   const { fontColor, backColor } = useThemeContext()
 
@@ -71,40 +77,65 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
     <Container backColor={backColor} fontColor={fontColor}>
       <Header>
         <Total>
-          <Title>Historical Data</Title>
-          <FilterGroup>
-            <ChartButtonsGroup
-              buttons={filterList}
-              clickedId={clickedId}
-              setClickedId={setClickedId}
-            />
-          </FilterGroup>
+          <FlexDiv>
+            <FilterGroup>
+              <ChartButtonsGroup
+                buttons={filterList}
+                clickedId={clickedId}
+                setClickedId={setClickedId}
+              />
+              {isMobile && (
+                <ButtonGroup>
+                  {recommendLinks.map((item, i) => (
+                    <ChartRangeSelect
+                      key={i}
+                      onClick={() => {
+                        setSelectedState(item.state)
+                      }}
+                      state={selectedState}
+                      type={item.type}
+                      text={item.name}
+                    />
+                  ))}
+                </ButtonGroup>
+              )}
+            </FilterGroup>
+            <TooltipInfo>
+              <CurDate>{curDate}</CurDate>
+              <div dangerouslySetInnerHTML={{ __html: curContent }} />
+            </TooltipInfo>
+          </FlexDiv>
+          {!isMobile && (
+            <ButtonGroup>
+              {recommendLinks.map((item, i) => (
+                <ChartRangeSelect
+                  key={i}
+                  onClick={() => {
+                    setSelectedState(item.state)
+                  }}
+                  state={selectedState}
+                  type={item.type}
+                  text={item.name}
+                />
+              ))}
+            </ButtonGroup>
+          )}
         </Total>
-        <FilterName>{filterList[clickedId].name}</FilterName>
       </Header>
       <ChartDiv>
         <ApexChart
           data={apiData}
+          iFarmTVL={iFarmTVLData}
+          isIFARM={isIFARM}
           range={selectedState}
           filter={clickedId}
           decimal={decimal}
           lastTVL={lastTVL}
           lastAPY={lastAPY}
+          setCurDate={setCurDate}
+          setCurContent={setCurContent}
         />
       </ChartDiv>
-      <ButtonGroup>
-        {recommendLinks.map((item, i) => (
-          <ChartRangeSelect
-            key={i}
-            onClick={() => {
-              setSelectedState(item.state)
-            }}
-            state={selectedState}
-            type={item.type}
-            text={item.name}
-          />
-        ))}
-      </ButtonGroup>
     </Container>
   )
 }

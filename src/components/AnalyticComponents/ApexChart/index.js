@@ -10,6 +10,30 @@ function numberWithCommas(x) {
   return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
+function formatDateTime(value) {
+  const date = new Date(value)
+  const year = date.getFullYear()
+  const monthNames = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
+  const monthNum = date.getMonth()
+  const month = monthNames[monthNum]
+  const day = date.getDate()
+
+  return `${month} ${day} ${year}`
+}
+
 function getRangeNumber(strRange) {
   let ago = 30
   if (strRange === '1D') {
@@ -79,8 +103,8 @@ function generateChartDataWithSlots(slots, apiData) {
   return seriesData
 }
 
-const ApexChart = ({ data, range }) => {
-  const { backColor, fontColor } = useThemeContext()
+const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
+  const { backColor, fontColor, darkMode } = useThemeContext()
 
   const [mainSeries, setMainSeries] = useState([
     {
@@ -187,13 +211,10 @@ const ApexChart = ({ data, range }) => {
         }
       }
 
-      // if (data.length !== 0 && lastTVL && !Number.isNaN(lastTVL)) tvlData[0].value = lastTVL
-
       const slotCount = 50,
         slots = getTimeSlots(ago, slotCount)
 
       if (data.length === 0) {
-        // setIsDataReady(false)
         return
       }
       mainData = generateChartDataWithSlots(slots, data, 'value')
@@ -221,9 +242,7 @@ const ApexChart = ({ data, range }) => {
         maxValue = ceil10(maxValue, -len)
         minValue = floor10(minValue, -len + 1)
       }
-      /**
-       * Set min value with 0, and max value *1.5 - trello card
-       */
+
       if (unitBtw !== 0) {
         maxValue *= 1.5
         minValue = 0
@@ -243,7 +262,7 @@ const ApexChart = ({ data, range }) => {
         max: maxValue,
         tickAmount: 4,
         labels: {
-          style: { fontFamily: 'Work Sans' },
+          style: { colors: darkMode ? 'white' : 'black', fontFamily: 'Roboto, sans-serif' },
           formatter: val => numberWithCommas(round10(val, roundNum).toFixed(0)),
         },
       }
@@ -265,22 +284,21 @@ const ApexChart = ({ data, range }) => {
           stacked: false,
           background: backColor,
           zoom: {
-            type: 'x',
-            enabled: true,
-            autoScaleXaxis: true,
+            enabled: false,
           },
-          events: {
-            scrolled(chartContext, { xaxis }) {
-              console.log(
-                new Date(xaxis.min).toLocaleDateString(),
-                new Date(xaxis.max).toLocaleDateString(),
-              )
-            },
+        },
+        fill: {
+          type: 'pattern',
+          pattern: {
+            style: 'squares',
+            width: 4,
+            height: 4,
+            strokeWidth: 1,
           },
         },
         grid: {
           show: true,
-          borderColor: '#E3E3E3',
+          borderColor: 'rgba(228, 228, 228, 0.2)',
           yaxis: {
             lines: {
               show: true,
@@ -295,45 +313,42 @@ const ApexChart = ({ data, range }) => {
         dataLabels: {
           enabled: false,
         },
-        fill: {
-          opacity: 1,
-          enabled: false,
-          type: 'gradient',
-          gradient: {
-            shade: 'dark',
-            type: 'vertical',
-            shadeIntensity: 0.5,
-            gradientToColors: ['#F8DD9C'],
-            inverseColors: true,
-            opacityFrom: 0.6,
-            opacityTo: 0.2,
-            stops: [0, 20, 100],
-            colorStops: [],
-          },
-        },
         markers: {
           strokeColor: '#EDAE50',
           size: 0,
           strokeWidth: 2,
           fillColor: '#fff',
-          hover: { size: 8 },
+          hover: { size: 0 },
         },
         tooltip: {
-          x: {
-            format: 'dd MMM - HH : mm ',
-          },
-          custom({ series, dataPointIndex }) {
-            return `${'<div style="padding: 5px;"><h1 style="font-size: 12px; color: #888E8F">$'}
-            ${numberWithCommas(series[0][dataPointIndex].toFixed(0))}</h1></div>`
+          custom({ dataPointIndex }) {
+            setCurDate(formatDateTime(mainData[dataPointIndex][0]))
+            const content = `<div style="font-size: 13px; line-height: 16px; display: flex;"><div style="font-weight: 700;">TVL 
+            </div><div style="color: #ff9400; font-weight: 500;">$
+            ${numberWithCommas(mainData[dataPointIndex][1].toFixed(0))}</div></div>`
+            setCurContent(content)
           },
         },
         yaxis: yAxis,
         xaxis: {
-          type: 'datetime',
+          type: 'category',
+          tickAmount: 5,
           axisBorder: { show: false },
           axisTicks: { show: false },
           labels: {
-            style: { fontFamily: 'Work Sans' },
+            style: { colors: darkMode ? 'white' : 'black', fontFamily: 'Roboto, sans-serif' },
+            formatter(value, timestamp) {
+              const date = new Date(timestamp)
+              const dateString = `${date.getMonth() + 1} / ${date.getDate()}`
+              const timeString = `${date.getHours()}:${date.getMinutes()}`
+              if (range === '1D') {
+                return timeString
+              }
+              return dateString
+            },
+          },
+          tooltip: {
+            enabled: false,
           },
         },
       })
@@ -342,7 +357,7 @@ const ApexChart = ({ data, range }) => {
     }
 
     init()
-  }, [backColor, range, data, isDataReady])
+  }, [backColor, range, data, isDataReady, setCurDate, setCurContent, darkMode])
 
   return (
     <>
@@ -353,7 +368,7 @@ const ApexChart = ({ data, range }) => {
           {isDataReady ? (
             <ClipLoader size={30} margin={2} color={fontColor} />
           ) : (
-            <NoData color={fontColor}>&nbsp;No data !</NoData>
+            <NoData color={fontColor}>You don&apos;t have any active deposits in this farm.</NoData>
           )}
         </LoadingDiv>
       )}

@@ -4,7 +4,6 @@ import { Modal } from 'react-bootstrap'
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -35,6 +34,7 @@ const Title = styled.h5`
   line-height: 21px;
   font-weight: 700;
   margin-bottom: 1rem;
+  display: flex;
 
   img {
     margin-right: 5px;
@@ -71,7 +71,6 @@ const ButtonGroup = styled.div`
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  margin: 1em 0em 0.25em auto;
   color: #fff;
 
   button {
@@ -83,7 +82,7 @@ const ButtonGroup = styled.div`
 `
 
 const ChartDiv = styled.div`
-  min-height: 70%;
+  min-height: 90%;
   margin-bottom: 10px;
 `
 
@@ -272,6 +271,21 @@ const WalletList = styled.div`
   }
 `
 
+const TooltipContent = styled.div`
+  margin-left: 10px;
+  align-self: center;
+`
+
+const CurDate = styled.div`
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 700;
+
+  @media screen and (max-width: 992px) {
+    margin-top: 0.5rem;
+  }
+`
+
 export {
   Container,
   Title,
@@ -292,4 +306,6 @@ export {
   HeaderImg,
   ModalTitle,
   WalletList,
+  TooltipContent,
+  CurDate,
 }

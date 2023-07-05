@@ -8,7 +8,6 @@ const Container = styled.div`
   padding: 0px;
   transition: 0.25s;
   background: ${props => props.backColor};
-  color: ${props => props.fontColor};
 
   @media screen and (max-width: 992px) {
     width: 100%;
@@ -19,28 +18,15 @@ const Container = styled.div`
 
 const Header = styled.div`
   font-size: 14px;
-  padding: 1em 5px 0 5px;
-`
-
-const Title = styled.h5`
-  font-size: 16px;
-  line-height: 21px;
-  font-weight: bold;
-  width: 100%;
-  margin-bottom: 1rem;
-
-  img {
-    margin-right: 5px;
-  }
 `
 
 const Total = styled.div`
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
 
-  @media screen and (max-width: 1250px) {
-    display: block;
+  @media screen and (max-width: 992px) {
+    align-items: start;
   }
 `
 
@@ -64,7 +50,7 @@ const ButtonGroup = styled.div`
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  margin: 0.8em 1em 0.25em auto;
+  // margin: 0.8em 1em 0.25em auto;
   color: #fff;
 
   button {
@@ -80,14 +66,9 @@ const ChartDiv = styled.div`
 
 const FilterGroup = styled.div`
   display: flex;
+  justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-  margin-left: auto;
-  margin-right: 0;
-
-  @media screen and (max-width: 1250px) {
-    margin-top: 15px;
-  }
 `
 
 const PriceShow = styled.div`
@@ -109,11 +90,38 @@ const PriceShow = styled.div`
 const FilterName = styled.div`
   text-align: right;
   margin-top: 1rem;
+
+  @media screen and (max-width: 992px) {
+    margin-top: 0.5rem;
+  }
+`
+
+const CurDate = styled.div`
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 700;
+
+  @media screen and (max-width: 992px) {
+    margin-top: 0.5rem;
+  }
+`
+
+const TooltipInfo = styled.div`
+  margin-left: 10px;
+  align-self: center;
+`
+
+const FlexDiv = styled.div`
+  display: flex;
+
+  @media screen and (max-width: 992px) {
+    display: block;
+    width: 100%;
+  }
 `
 
 export {
   Container,
-  Title,
   Header,
   Total,
   MoreBtn,
@@ -122,4 +130,7 @@ export {
   FilterGroup,
   PriceShow,
   FilterName,
+  CurDate,
+  TooltipInfo,
+  FlexDiv,
 }
