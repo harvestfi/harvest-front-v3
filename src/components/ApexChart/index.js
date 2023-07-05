@@ -141,19 +141,42 @@ function formatDateTime(value) {
   const monthNum = date.getMonth()
   const month = monthNames[monthNum]
   const day = date.getDate()
-  // let hour = date.getHours(),
-  // min = date.getMinutes()
-  // const ampm = hour >= 12 ? 'PM' : 'AM'
-  // hour %= 12
-  // hour = hour || 12 // the hour '0' should be '12'
-  // hour = hour < 10 ? `0${hour}` : hour
-  // min = min < 10 ? `0${min}` : min
 
   return `${month} ${day} ${year}`
 }
 
+function generateIFARMTVLWithSlots(slots, apiData) {
+  const seriesData = []
+  for (let i = 0; i < slots.length; i += 1) {
+    const ethData = apiData.ETH.reduce((prev, curr) =>
+      Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
+        ? curr
+        : prev,
+    )
+
+    const polygonData = apiData.MATIC.reduce((prev, curr) =>
+      Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
+        ? curr
+        : prev,
+    )
+
+    const arbData = apiData.ARBITRUM.reduce((prev, curr) =>
+      Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
+        ? curr
+        : prev,
+    )
+
+    const value = Number(ethData.value) + Number(polygonData.value) + Number(arbData.value)
+    seriesData.push([slots[i] * 1000, value])
+  }
+
+  return seriesData
+}
+
 const ApexChart = ({
   data,
+  iFarmTVL,
+  isIFARM,
   range,
   filter,
   decimal,
@@ -272,15 +295,29 @@ const ApexChart = ({
         roundNum
 
       if (filter === 1) {
-        if (data && data.tvls) {
-          if (data.tvls.length === 0) {
-            setIsDataReady(false)
+        if (isIFARM) {
+          if (iFarmTVL && iFarmTVL.ETH && iFarmTVL.MATIC && iFarmTVL.ARBITRUM) {
+            if (
+              iFarmTVL.ETH.length === 0 &&
+              iFarmTVL.MATIC.length === 0 &&
+              iFarmTVL.ARBITRUM.length === 0
+            ) {
+              setIsDataReady(false)
+              return
+            }
+          } else {
             return
           }
+        } else {
+          if (data && data.tvls) {
+            if (data.tvls.length === 0) {
+              setIsDataReady(false)
+              return
+            }
+          }
+          tvlData = data && data.tvls ? data.tvls : []
+          if (tvlData.length !== 0 && lastTVL && !Number.isNaN(lastTVL)) tvlData[0].value = lastTVL
         }
-        tvlData = data && data.tvls ? data.tvls : []
-
-        if (tvlData.length !== 0 && lastTVL && !Number.isNaN(lastTVL)) tvlData[0].value = lastTVL
       } else if (filter === 0) {
         if (data && (data.apyAutoCompounds || data.apyRewards)) {
           if (data.apyAutoCompounds.length === 0 && data.apyRewards.length === 0) {
@@ -308,11 +345,18 @@ const ApexChart = ({
         slots = getTimeSlots(ago, slotCount)
 
       if (filter === 1) {
-        if (tvlData.length === 0) {
-          // setIsDataReady(false)
-          return
+        if (isIFARM) {
+          if (iFarmTVL.length === 0) {
+            return
+          }
+          mainData = generateIFARMTVLWithSlots(slots, iFarmTVL, 'value')
+        } else {
+          if (tvlData.length === 0) {
+            // setIsDataReady(false)
+            return
+          }
+          mainData = generateChartDataWithSlots(slots, tvlData, 'value')
         }
-        mainData = generateChartDataWithSlots(slots, tvlData, 'value')
         maxTVL = findMax(mainData)
         minTVL = findMin(mainData)
       } else if (filter === 0) {
@@ -448,7 +492,7 @@ const ApexChart = ({
             const content = `<div style="font-size: 13px; line-height: 16px; display: flex;"><div style="font-weight: 700;">${
               filter === 1 ? 'TVL ' : filter === 0 ? 'APY ' : 'Balance '
             }</div><div style="color: #ff9400; font-weight: 500;">&nbsp;${
-              filter === 0 ? '' : '$'
+              filter === 1 ? '$' : ''
             }${numberWithCommas(mainData[dataPointIndex][1].toFixed(filter === 1 ? 0 : len))}${
               filter === 0 ? '%' : ''
             }</div></div>`
@@ -492,6 +536,8 @@ const ApexChart = ({
     darkMode,
     setCurDate,
     setCurContent,
+    isIFARM,
+    iFarmTVL,
   ])
 
   return (

@@ -433,13 +433,16 @@ html {
       }
     }
   }
+
+  .apexcharts-tooltip {
+    display: none !important;
+  }
+
   .farm-detail-chart {
     .apexcharts-svg.apexcharts-zoomable.hovering-pan {
       cursor: default !important;
     }
-    .apexcharts-tooltip {
-      display: none;
-    }
+
 
     .apexcharts-xcrosshairs.apexcharts-active {
       stroke: #FF9400;
