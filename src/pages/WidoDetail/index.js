@@ -5,6 +5,7 @@ import ReactHtmlParser from 'react-html-parser'
 import { useMediaQuery } from 'react-responsive'
 import { useHistory, useParams } from 'react-router-dom'
 import ReactTooltip from 'react-tooltip'
+import Chart from 'react-apexcharts'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { getBalances, getSupportedTokens } from 'wido'
 import tokenMethods from '../../services/web3/contracts/token/methods'
@@ -96,6 +97,7 @@ import {
   WithdrawComponents,
   DetailTopInfo,
   LastHarvestInfo,
+  LPTokenBalance,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 
@@ -663,6 +665,43 @@ const WidoDetail = () => {
   const [symbolWith, setSymbolWith] = useState('iFARM')
   const [legacyStaking, setLegacyStaking] = useState(false)
 
+  const series = [44, 55]
+  const options = {
+    chart: {
+      type: 'donut',
+    },
+    fill: {
+      colors: ['#FFB753', '#FCD38C'],
+    },
+    legend: {
+      show: false,
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    responsive: [
+      {
+        breakpoint: 480,
+        options: {
+          chart: {
+            width: 100,
+          },
+          legend: {
+            position: 'bottom',
+          },
+        },
+      },
+    ],
+    plotOptions: {
+      pie: {
+        expandOnClick: false,
+        donut: {
+          size: '55%',
+        },
+      },
+    },
+  }
+
   return (
     <DetailView pageBackColor={pageBackColor} fontColor={fontColor}>
       <Inner>
@@ -979,6 +1018,43 @@ const WidoDetail = () => {
                   {/* <img className="external-link" src={ExternalLink} alt="" /> */}
                 </InfoLabel>
               </FlexDiv>
+            </HalfInfo>
+
+            <HalfInfo
+              padding={!isMobile ? '20px' : '15px'}
+              backColor={backColor}
+              borderColor={borderColor}
+            >
+              <NewLabel weight={700} size="16px" height="21px">
+                LP Token Composition
+              </NewLabel>
+              <NewLabel display="flex" justifyContent="space-between" marginTop="15px">
+                <NewLabel width="20%">
+                  <Chart
+                    options={options}
+                    series={series}
+                    type="donut"
+                    height="100%"
+                    width="100%"
+                  />
+                </NewLabel>
+                <NewLabel width="-webkit-fill-available" marginRight="15px">
+                  <ul>
+                    <LPTokenBalance>
+                      <span>
+                        <span className="before">•</span>&nbsp;CNG
+                      </span>
+                      <span>19.04123 ($500)</span>
+                    </LPTokenBalance>
+                    <LPTokenBalance>
+                      <span>
+                        <span className="before">•</span>&nbsp;WETH
+                      </span>
+                      <span>0.12321 ($400)</span>
+                    </LPTokenBalance>
+                  </ul>
+                </NewLabel>
+              </NewLabel>
             </HalfInfo>
           </HalfContent>
           <RestContent show={farmView}>
