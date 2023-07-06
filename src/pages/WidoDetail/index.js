@@ -211,6 +211,8 @@ const WidoDetail = () => {
   const id = vaultIds[0]
   const token = groupOfVaults[id]
 
+  const isLPToken = token.tokenNames.length === 2
+
   const lsdToken = get(token, 'tags') && token.tags.join(', ').toLowerCase().includes('lsd')
   const desciToken = get(token, 'tags') && token.tags.join(', ').toLowerCase().includes('desci')
 
@@ -1020,42 +1022,44 @@ const WidoDetail = () => {
               </FlexDiv>
             </HalfInfo>
 
-            <HalfInfo
-              padding={!isMobile ? '20px' : '15px'}
-              backColor={backColor}
-              borderColor={borderColor}
-            >
-              <NewLabel weight={700} size="16px" height="21px">
-                LP Token Composition
-              </NewLabel>
-              <NewLabel display="flex" justifyContent="space-between" marginTop="15px">
-                <NewLabel width="20%">
-                  <Chart
-                    options={options}
-                    series={series}
-                    type="donut"
-                    height="100%"
-                    width="100%"
-                  />
+            {isLPToken && (
+              <HalfInfo
+                padding={!isMobile ? '20px' : '15px'}
+                backColor={backColor}
+                borderColor={borderColor}
+              >
+                <NewLabel weight={700} size="16px" height="21px">
+                  LP Token Composition
                 </NewLabel>
-                <NewLabel width="-webkit-fill-available" marginRight="15px">
-                  <ul>
-                    <LPTokenBalance>
-                      <span>
-                        <span className="before">•</span>&nbsp;CNG
-                      </span>
-                      <span>19.04123 ($500)</span>
-                    </LPTokenBalance>
-                    <LPTokenBalance>
-                      <span>
-                        <span className="before">•</span>&nbsp;WETH
-                      </span>
-                      <span>0.12321 ($400)</span>
-                    </LPTokenBalance>
-                  </ul>
+                <NewLabel display="flex" justifyContent="space-between" marginTop="15px">
+                  <NewLabel width="20%">
+                    <Chart
+                      options={options}
+                      series={series}
+                      type="donut"
+                      height="100%"
+                      width="100%"
+                    />
+                  </NewLabel>
+                  <NewLabel width="-webkit-fill-available" marginRight="15px">
+                    <ul>
+                      <LPTokenBalance>
+                        <span>
+                          <span className="before">•</span>&nbsp;CNG
+                        </span>
+                        <span>19.04123 ($500)</span>
+                      </LPTokenBalance>
+                      <LPTokenBalance>
+                        <span>
+                          <span className="before">•</span>&nbsp;WETH
+                        </span>
+                        <span>0.12321 ($400)</span>
+                      </LPTokenBalance>
+                    </ul>
+                  </NewLabel>
                 </NewLabel>
-              </NewLabel>
-            </HalfInfo>
+              </HalfInfo>
+            )}
           </HalfContent>
           <RestContent show={farmView}>
             <RestPart
