@@ -451,6 +451,10 @@ html {
     font-size: 12px;
     font-weight: 400;
   }
+
+  .recharts-cartesian-axis-line {
+    stroke: none;
+  }
 `
 
 const Divider = styled.div`

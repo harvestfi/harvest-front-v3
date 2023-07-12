@@ -437,8 +437,8 @@ const ApexChart = ({
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="0" strokeLinecap='butt' stroke="rgba(228, 228, 228, 0.2)" vertical={false} />
-            <XAxis dataKey="x" tickCount={5} tick={renderCustomXAxisTick} />
-            <YAxis dataKey="y" tickCount={5} tick={renderCustomYAxisTick} ticks={yAxisTicks} domain={[minVal, maxVal]} />
+            <XAxis dataKey="x" tickLine={false} tickCount={5} tick={renderCustomXAxisTick} />
+            <YAxis dataKey="y" tickLine={false} tickCount={5} tick={renderCustomYAxisTick} ticks={yAxisTicks} domain={[minVal, maxVal]} />
             <Line dataKey="y" type="monotone" unit="M" strokeLinecap="round" strokeWidth={2}
               stroke="#FF9400"
               dot={false}
