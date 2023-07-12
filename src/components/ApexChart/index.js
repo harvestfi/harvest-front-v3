@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import Chart from 'react-apexcharts'
+import { AreaChart, XAxis, YAxis, Area, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts'
 import { ClipLoader } from 'react-spinners'
+import { useWindowWidth } from '@react-hook/window-size'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { ceil10, floor10, round10 } from '../../utils'
 import { LoadingDiv, NoData } from './style'
@@ -39,13 +40,13 @@ function getTimeSlots(ago, slotCount) {
 }
 
 function findMax(data) {
-  const ary = data.map(el => el[1])
+  const ary = data.map(el => el.y)
   const max = Math.max(...ary)
   return max
 }
 
 function findMin(data) {
-  const ary = data.map(el => el[1])
+  const ary = data.map(el => el.y)
   const min = Math.min(...ary)
   return min
 }
@@ -57,10 +58,10 @@ function generateChartDataWithSlots(slots, apiData, kind) {
     for (let j = 0; j < apiData.length; j += 1) {
       if (slots[i] > parseInt(apiData[j].timestamp, 10)) {
         const value = parseFloat(apiData[j][kind])
-        seriesData.push([slots[i] * 1000, value])
+        seriesData.push({x: slots[i] * 1000, y: value})
         break
       } else if (j === apiData.length - 1) {
-        seriesData.push([slots[i] * 1000, 0])
+        seriesData.push({x: slots[i] * 1000, y: 0})
       }
     }
   }
@@ -145,6 +146,28 @@ function formatDateTime(value) {
   return `${month} ${day} ${year}`
 }
 
+function formatXAxis(value, range) {
+  const date = new Date(value)
+
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+
+  const hour = date.getHours()
+  const mins = date.getMinutes()
+
+  return range === '1D' ? `${hour}:${mins}` : `${month} / ${day}`
+}
+
+function getYAxisValues(min, max, roundNum) {
+  const duration = max - min
+  const ary = []
+  for (let i = min; i <= max; i += duration / 4) {
+    const val = round10(i, roundNum)
+    ary.push(val)
+  }
+  return ary
+}
+
 function generateIFARMTVLWithSlots(slots, apiData) {
   const seriesData = []
   for (let i = 0; i < slots.length; i += 1) {
@@ -180,80 +203,46 @@ const ApexChart = ({
     },
   ])
 
-  const [options, setOptions] = useState({
-    chart: {
-      id: 'apexchart-example',
-      zoom: {
-        type: 'x',
-        enabled: true,
-        autoScaleYaxis: true,
-      },
-      toolbar: {
-        autoSelected: 'zoom',
-      },
-      type: 'area',
-      stacked: false,
-      height: 350,
-      foreColor: '#707070',
-      background: backColor,
-      animations: {
-        enabled: false,
-      },
-    },
-    colors: ['#000'],
-    dataLabels: { enabled: false },
-    markers: {
-      strokeColor: '#EDAE50',
-      strokeWidth: 2,
-      fillColor: '#fff',
-      hover: { size: 8 },
-    },
-    tooltip: {
-      custom() {
-        return '<div style="padding: 5px;"></div>'
-      },
-    },
-    stroke: {
-      curve: 'straight',
-      colors: ['#EDAE50'],
-      width: 2,
-    },
-    xaxis: {
-      type: 'datetime',
-      axisBorder: { show: false },
-      axisTicks: { show: false },
-      labels: {
-        style: { fontFamily: 'Work Sans' },
-      },
-    },
-    yaxis: {
-      opposite: false,
-      show: false,
-      tickAmount: 3,
-      labels: {
-        style: { fontFamily: 'Work Sans' },
-        formatter: val => `$ ${numberWithCommas(val.toFixed(0))}`,
-      },
-    },
-    fill: {
-      enabled: false,
-      type: 'gradient',
-      gradient: {
-        shade: 'dark',
-        type: 'vertical',
-        shadeIntensity: 0.5,
-        gradientToColors: ['#EDAE30'],
-        inverseColors: true,
-        opacityFrom: 0.6,
-        opacityTo: 0.2,
-        stops: [0, 20, 100],
-        colorStops: [],
-      },
-    },
-  })
+  const onlyWidth = useWindowWidth()
 
   const [loading, setLoading] = useState(false)
   const [isDataReady, setIsDataReady] = useState(true)
+
+  const [fixedLen, setFixedLen] = useState(0)
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      setCurDate(formatDateTime(payload[0].payload.x))
+      const content = `<div style="font-size: 13px; line-height: 16px; display: flex;"><div style="font-weight: 700;">${
+        filter === 1 ? 'TVL ' : filter === 0 ? 'APY ' : 'Balance '
+      }</div><div style="color: #ff9400; font-weight: 500;">&nbsp;${
+        filter === 1 ? '$' : ''
+      }${numberWithCommas(Number(payload[0].payload.y.toFixed(filter === 1 ? 0 : fixedLen)))}${
+        filter === 0 ? '%' : ''
+      }</div></div>`
+      setCurContent(content)
+    }
+  
+    return null
+  }
+
+  const renderCustomAxisTick = ({ x, y, payload }) => {
+    let path = ''
+  
+    if (payload.value !== '') {
+      path = formatXAxis(payload.value, range)
+    }
+    return (
+      <text orientation={"bottom"} x={x - 12} y={y + 4} width={24} height={24} viewBox="0 0 1024 1024" fill="#666">
+        <tspan dy="0.71em">{path}</tspan>
+      </text>
+    );
+  };
+
+  const [minVal, setMinVal] = useState(0)
+  const [maxVal, setMaxVal] = useState(0)
+  const [yAxisTicks, setYAxisTicks] = useState([])
+  
 
   useEffect(() => {
     const init = async () => {
@@ -400,110 +389,15 @@ const ApexChart = ({
         roundNum = -len
       }
 
-      const yAxis = {
-        opposite: false,
-        min: minValue,
-        max: maxValue,
-        tickAmount: 4,
-        labels: {
-          style: { colors: darkMode ? 'white' : 'black', fontFamily: 'Roboto, sans-serif' },
-          formatter: val =>
-            numberWithCommas(
-              (filter === 1 ? round10(val, roundNum) : val).toFixed(filter === 1 ? 0 : len),
-            ),
-        },
-      }
+      setMinVal(minValue)
+      setMaxVal(maxValue)
+      
+      const yAxisAry = getYAxisValues(minValue, maxValue, roundNum)
+      setYAxisTicks(yAxisAry)
 
-      setMainSeries([
-        {
-          data: mainData,
-        },
-      ])
+      setFixedLen(filter === 1 ? 0 : len)
 
-      setOptions({
-        chart: {
-          id: 'chartArea',
-          toolbar: {
-            autoSelected: 'pan',
-            show: false,
-          },
-          foreColor: '#707070',
-          stacked: false,
-          background: backColor,
-          zoom: {
-            enabled: false,
-          },
-        },
-        fill: {
-          type: 'pattern',
-          pattern: {
-            style: 'squares',
-            width: 4,
-            height: 4,
-            strokeWidth: 1,
-          },
-        },
-        grid: {
-          show: true,
-          borderColor: 'rgba(228, 228, 228, 0.2)',
-          yaxis: {
-            lines: {
-              show: true,
-            },
-          },
-        },
-        colors: ['#F4BE37'],
-        stroke: {
-          colors: ['#FF9400'],
-          curve: ['smooth'],
-          width: 3,
-        },
-        dataLabels: {
-          enabled: false,
-        },
-        markers: {
-          strokeColor: '#EDAE50',
-          size: 0,
-          strokeWidth: 2,
-          fillColor: '#fff',
-          hover: { size: 0 },
-        },
-        tooltip: {
-          custom({ dataPointIndex }) {
-            setCurDate(formatDateTime(mainData[dataPointIndex][0]))
-            const content = `<div style="font-size: 13px; line-height: 16px; display: flex;"><div style="font-weight: 700;">${
-              filter === 1 ? 'TVL ' : filter === 0 ? 'APY ' : 'Balance '
-            }</div><div style="color: #ff9400; font-weight: 500;">&nbsp;${
-              filter === 1 ? '$' : ''
-            }${numberWithCommas(mainData[dataPointIndex][1].toFixed(filter === 1 ? 0 : len))}${
-              filter === 0 ? '%' : ''
-            }</div></div>`
-            setCurContent(content)
-          },
-        },
-        yaxis: yAxis,
-        xaxis: {
-          type: 'category',
-          tickAmount: 5,
-          axisBorder: { show: false },
-          axisTicks: { show: false },
-          labels: {
-            style: { colors: darkMode ? 'white' : 'black', fontFamily: 'Roboto, sans-serif' },
-            formatter(value, timestamp) {
-              const date = new Date(timestamp)
-              const dateString = `${date.getMonth() + 1} / ${date.getDate()}`
-              const timeString = `${date.getHours()}:${date.getMinutes()}`
-              if (range === '1D') {
-                return timeString
-              }
-              return dateString
-            },
-          },
-          tooltip: {
-            enabled: false,
-          },
-        },
-      })
+      setMainSeries(mainData)
 
       setLoading(false)
     }
@@ -526,7 +420,22 @@ const ApexChart = ({
   return (
     <>
       {!loading ? (
-        <Chart options={options} series={mainSeries} type="area" height="100%" />
+        // <Chart options={options} series={mainSeries} type="area" height="100%" />
+        <ResponsiveContainer width="100%" height={onlyWidth > 1250 ? 380 : onlyWidth > 992 ? 350 : 330}>
+          <AreaChart
+            id="farm-detail"
+            data={mainSeries}
+            margin={{
+              top: 20, right: 20, bottom: 20, left: 20,
+            }}
+          >
+            <CartesianGrid strokeDasharray="0" strokeLinecap='butt' stroke="rgba(228, 228, 228, 0.2)" vertical={false} />
+            <XAxis dataKey="x" tickCount={5} tick={renderCustomAxisTick} />
+            <YAxis dataKey="y" tickCount={5} ticks={yAxisTicks} domain={[minVal, maxVal]} />
+            <Area dataKey="y" type="monotone" stroke="#FF9400" fill="#F4BE37" strokeLinecap="round" />
+            <Tooltip content={CustomTooltip} legendType="none" dot={false} />
+          </AreaChart>
+        </ResponsiveContainer>
       ) : (
         <LoadingDiv>
           {isDataReady ? (

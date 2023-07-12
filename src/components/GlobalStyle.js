@@ -445,6 +445,12 @@ html {
   .apexcharts-svg.apexcharts-zoomable.hovering-pan {
     cursor: default !important;
   }
+
+  .recharts-cartesian-axis-tick {
+    font-family: 'Roboto', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+  }
 `
 
 const Divider = styled.div`
