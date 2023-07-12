@@ -177,7 +177,7 @@ function generateIFARMTVLWithSlots(slots, apiData) {
         : prev,
     )
 
-    seriesData.push([slots[i] * 1000, Number(data.value)])
+    seriesData.push({x: slots[i] * 1000, y: Number(data.value)})
   }
 
   return seriesData
@@ -194,14 +194,9 @@ const ApexChart = ({
   setCurDate,
   setCurContent,
 }) => {
-  const { darkMode, backColor, fontColor } = useThemeContext()
+  const { fontColor } = useThemeContext()
 
-  const [mainSeries, setMainSeries] = useState([
-    {
-      name: 'TVL m$',
-      data: [],
-    },
-  ])
+  const [mainSeries, setMainSeries] = useState([])
 
   const onlyWidth = useWindowWidth()
 
@@ -255,7 +250,6 @@ const ApexChart = ({
   const [minVal, setMinVal] = useState(0)
   const [maxVal, setMaxVal] = useState(0)
   const [yAxisTicks, setYAxisTicks] = useState([])
-  
 
   useEffect(() => {
     const init = async () => {
@@ -417,15 +411,11 @@ const ApexChart = ({
 
     init()
   }, [
-    backColor,
     range,
     filter,
     data,
     lastTVL,
     lastAPY,
-    darkMode,
-    setCurDate,
-    setCurContent,
     isIFARM,
     iFarmTVL,
   ])
