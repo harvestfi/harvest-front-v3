@@ -243,7 +243,7 @@ const ApexChart = ({
     let path = ''
   
     if (payload.value !== '') {
-      path = `${filter === 1 ? '$' : ''}${payload.value} ${filter === 0 ? '%' : ''}`
+      path = `${filter === 1 ? '$' : ''}${numberWithCommas(payload.value)} ${filter === 0 ? '%' : ''}`
     }
     return (
       <text orientation={"left"} class="recharts-text recharts-cartesian-axis-tick-value" x={x} y={y} width={60} height={310} stroke="none" fill="#666" text-anchor="end">
