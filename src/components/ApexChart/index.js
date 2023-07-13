@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { AreaChart, XAxis, YAxis, Area, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts'
+import { ComposedChart, XAxis, YAxis, Line, Area, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts'
 import { ClipLoader } from 'react-spinners'
 import { useWindowWidth } from '@react-hook/window-size'
 import { useThemeContext } from '../../providers/useThemeContext'
@@ -422,19 +422,28 @@ const ApexChart = ({
       {!loading ? (
         // <Chart options={options} series={mainSeries} type="area" height="100%" />
         <ResponsiveContainer width="100%" height={onlyWidth > 1250 ? 380 : onlyWidth > 992 ? 350 : 330}>
-          <AreaChart
-            id="farm-detail"
+          <ComposedChart
             data={mainSeries}
             margin={{
               top: 20, right: 20, bottom: 20, left: 20,
             }}
           >
+            <defs>
+              <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#F4BE37" stopOpacity={0.1}/>
+                <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1}/>
+              </linearGradient>
+            </defs>
             <CartesianGrid strokeDasharray="0" strokeLinecap='butt' stroke="rgba(228, 228, 228, 0.2)" vertical={false} />
             <XAxis dataKey="x" tickCount={5} tick={renderCustomAxisTick} />
             <YAxis dataKey="y" tickCount={5} ticks={yAxisTicks} domain={[minVal, maxVal]} />
-            <Area dataKey="y" type="monotone" stroke="#FF9400" fill="#F4BE37" strokeLinecap="round" />
+            <Line dataKey="y" type="monotone" unit="M" strokeLinecap="round" strokeWidth={2}
+              stroke="#FF9400"
+              dot={false}
+              legendType="none" />
+            <Area type="monotone" dataKey="y" stroke={false} strokeWidth={2} fillOpacity={1} fill="url(#colorUv)" />
             <Tooltip content={CustomTooltip} legendType="none" dot={false} />
-          </AreaChart>
+          </ComposedChart>
         </ResponsiveContainer>
       ) : (
         <LoadingDiv>
