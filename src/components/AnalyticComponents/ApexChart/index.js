@@ -336,7 +336,7 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
             <Area
               type="monotone"
               dataKey="y"
-              stroke="false"
+              stroke="#ff9400"
               strokeWidth={2}
               fillOpacity={1}
               fill="url(#colorUv)"
