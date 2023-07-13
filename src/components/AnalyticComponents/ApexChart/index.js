@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { ComposedChart, XAxis, YAxis, Line, Area, Tooltip, CartesianGrid, ResponsiveContainer } from 'recharts'
+import {
+  ComposedChart,
+  XAxis,
+  YAxis,
+  Line,
+  Area,
+  Tooltip,
+  CartesianGrid,
+  ResponsiveContainer,
+} from 'recharts'
 import { useWindowWidth } from '@react-hook/window-size'
 import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -98,7 +107,7 @@ function generateChartDataWithSlots(slots, apiData) {
     )
 
     const value = Number(ethData.value) + Number(polygonData.value) + Number(arbData.value)
-    seriesData.push({x: slots[i] * 1000, y: value})
+    seriesData.push({ x: slots[i] * 1000, y: value })
   }
 
   return seriesData
@@ -136,7 +145,7 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
   const [loading, setLoading] = useState(false)
   const [isDataReady, setIsDataReady] = useState(true)
 
-  const CustomTooltip = ({ active, payload, label }) => {
+  const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       setCurDate(formatDateTime(payload[0].payload.x))
       const content = `<div style="font-size: 13px; line-height: 16px; display: flex;"><div style="font-weight: 700;">TVL
@@ -144,18 +153,26 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
       ${numberWithCommas(Number(payload[0].payload.y.toFixed(0)))}</div></div>`
       setCurContent(content)
     }
-  
+
     return null
   }
 
   const renderCustomXAxisTick = ({ x, y, payload }) => {
     let path = ''
-  
+
     if (payload.value !== '') {
       path = formatXAxis(payload.value, range)
     }
     return (
-      <text orientation={"bottom"} x={x - 12} y={y + 4} width={24} height={24} viewBox="0 0 1024 1024" fill="#666">
+      <text
+        orientation="bottom"
+        x={x - 12}
+        y={y + 4}
+        width={24}
+        height={24}
+        viewBox="0 0 1024 1024"
+        fill="#666"
+      >
         <tspan dy="0.71em">{path}</tspan>
       </text>
     )
@@ -163,13 +180,25 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
 
   const renderCustomYAxisTick = ({ x, y, payload }) => {
     let path = ''
-  
+
     if (payload.value !== '') {
       path = `$${numberWithCommas(payload.value)}`
     }
     return (
-      <text orientation={"left"} class="recharts-text recharts-cartesian-axis-tick-value" x={x} y={y} width={60} height={310} stroke="none" fill="#666" text-anchor="end">
-        <tspan dx={0} dy="0.355em">{path}</tspan>
+      <text
+        orientation="left"
+        className="recharts-text recharts-cartesian-axis-tick-value"
+        x={x}
+        y={y}
+        width={60}
+        height={310}
+        stroke="none"
+        fill="#666"
+        textAnchor="end"
+      >
+        <tspan dx={0} dy="0.355em">
+          {path}
+        </tspan>
       </text>
     )
   }
@@ -245,7 +274,7 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
 
       setMinVal(minValue)
       setMaxVal(maxValue)
-      
+
       const yAxisAry = getYAxisValues(minValue, maxValue, roundNum)
       setYAxisTicks(yAxisAry)
 
@@ -260,27 +289,58 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
   return (
     <>
       {!loading ? (
-        <ResponsiveContainer width="100%" height={onlyWidth > 1250 ? 380 : onlyWidth > 992 ? 350 : 330}>
+        <ResponsiveContainer
+          width="100%"
+          height={onlyWidth > 1250 ? 380 : onlyWidth > 992 ? 350 : 330}
+        >
           <ComposedChart
             data={mainSeries}
             margin={{
-              top: 20, right: 20, bottom: 20, left: 20,
+              top: 20,
+              right: 20,
+              bottom: 20,
+              left: 20,
             }}
           >
             <defs>
               <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#F4BE37" stopOpacity={0.1}/>
-                <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1}/>
+                <stop offset="5%" stopColor="#F4BE37" stopOpacity={0.1} />
+                <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1} />
               </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="0" strokeLinecap='butt' stroke="rgba(228, 228, 228, 0.2)" vertical={false} />
+            <CartesianGrid
+              strokeDasharray="0"
+              strokeLinecap="butt"
+              stroke="rgba(228, 228, 228, 0.2)"
+              vertical={false}
+            />
             <XAxis dataKey="x" tickLine={false} tickCount={5} tick={renderCustomXAxisTick} />
-            <YAxis dataKey="y" tickLine={false} tickCount={5} tick={renderCustomYAxisTick} ticks={yAxisTicks} domain={[minVal, maxVal]} />
-            <Line dataKey="y" type="monotone" unit="M" strokeLinecap="round" strokeWidth={2}
+            <YAxis
+              dataKey="y"
+              tickLine={false}
+              tickCount={5}
+              tick={renderCustomYAxisTick}
+              ticks={yAxisTicks}
+              domain={[minVal, maxVal]}
+            />
+            <Line
+              dataKey="y"
+              type="monotone"
+              unit="M"
+              strokeLinecap="round"
+              strokeWidth={2}
               stroke="#FF9400"
               dot={false}
-              legendType="none" />
-            <Area type="monotone" dataKey="y" stroke="false" strokeWidth={2} fillOpacity={1} fill="url(#colorUv)" />
+              legendType="none"
+            />
+            <Area
+              type="monotone"
+              dataKey="y"
+              stroke="false"
+              strokeWidth={2}
+              fillOpacity={1}
+              fill="url(#colorUv)"
+            />
             <Tooltip content={CustomTooltip} />
           </ComposedChart>
         </ResponsiveContainer>
