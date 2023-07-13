@@ -252,7 +252,10 @@ const ApexChart = ({
     )
   }
 
+  const [minVal, setMinVal] = useState(0)
+  const [maxVal, setMaxVal] = useState(0)
   const [yAxisTicks, setYAxisTicks] = useState([])
+  
 
   useEffect(() => {
     const init = async () => {
@@ -399,6 +402,9 @@ const ApexChart = ({
         roundNum = -len
       }
 
+      setMinVal(minValue)
+      setMaxVal(maxValue)
+      
       const yAxisAry = getYAxisValues(minValue, maxValue, roundNum)
       setYAxisTicks(yAxisAry)
 
@@ -442,7 +448,7 @@ const ApexChart = ({
             </defs>
             <CartesianGrid strokeDasharray="0" strokeLinecap='butt' stroke="rgba(228, 228, 228, 0.2)" vertical={false} />
             <XAxis dataKey="x" tickCount={5} tick={renderCustomXAxisTick} />
-            <YAxis dataKey="y" tickCount={5} tick={renderCustomYAxisTick} ticks={yAxisTicks} />
+            <YAxis dataKey="y" tickCount={5} tick={renderCustomYAxisTick} ticks={yAxisTicks} domain={[minVal, maxVal]} />
             <Line dataKey="y" type="monotone" unit="M" strokeLinecap="round" strokeWidth={2}
               stroke="#FF9400"
               dot={false}
