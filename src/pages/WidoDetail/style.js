@@ -115,7 +115,13 @@ const NewLabel = styled.div`
     align-self: ${props.self};
   `
       : ''}
-
+  
+  ${props =>
+    props.width
+      ? `
+    width: ${props.width};
+  `
+      : ''}
   img.icon {
     margin-right: 10px;
   }
@@ -634,6 +640,17 @@ const LastHarvestInfo = styled.div`
   border-radius: 10px;
 `
 
+const LPTokenBalance = styled.li`
+  font-size: 13px;
+  line-height: 16px;
+  font-weight: 500;
+
+  margin-bottom: 10px;
+
+  display: flex;
+  justify-content: space-between;
+`
+
 export {
   DetailView,
   TopPart,
@@ -672,4 +689,5 @@ export {
   RewardPart,
   DetailTopInfo,
   LastHarvestInfo,
+  LPTokenBalance,
 }

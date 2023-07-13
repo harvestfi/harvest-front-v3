@@ -438,15 +438,22 @@ html {
     display: none !important;
   }
 
-  .farm-detail-chart {
-    .apexcharts-svg.apexcharts-zoomable.hovering-pan {
-      cursor: default !important;
-    }
+  .apexcharts-xcrosshairs.apexcharts-active {
+    stroke: #FF9400;
+  }
 
+  .apexcharts-svg.apexcharts-zoomable.hovering-pan {
+    cursor: default !important;
+  }
 
-    .apexcharts-xcrosshairs.apexcharts-active {
-      stroke: #FF9400;
-    }
+  .recharts-cartesian-axis-tick {
+    font-family: 'Roboto', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+  }
+
+  .recharts-cartesian-axis-line {
+    stroke: none;
   }
 `
 
