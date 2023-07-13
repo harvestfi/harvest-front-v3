@@ -226,7 +226,7 @@ const ApexChart = ({
     return null
   }
 
-  const renderCustomAxisTick = ({ x, y, payload }) => {
+  const renderCustomXAxisTick = ({ x, y, payload }) => {
     let path = ''
   
     if (payload.value !== '') {
@@ -236,13 +236,23 @@ const ApexChart = ({
       <text orientation={"bottom"} x={x - 12} y={y + 4} width={24} height={24} viewBox="0 0 1024 1024" fill="#666">
         <tspan dy="0.71em">{path}</tspan>
       </text>
-    );
-  };
+    )
+  }
 
-  const [minVal, setMinVal] = useState(0)
-  const [maxVal, setMaxVal] = useState(0)
-  const [yAxisTicks, setYAxisTicks] = useState([])
+  const renderCustomYAxisTick = ({ x, y, payload }) => {
+    let path = ''
   
+    if (payload.value !== '') {
+      path = `${payload.value} ${filter === 1 ? '$' : filter === 0 ? '%' : ''}`
+    }
+    return (
+      <text orientation={"left"} class="recharts-text recharts-cartesian-axis-tick-value" x={x} y={y} width={60} height={310} stroke="none" fill="#666" text-anchor="end">
+        <tspan dx={0} dy="0.355em">{path}</tspan>
+      </text>
+    )
+  }
+
+  const [yAxisTicks, setYAxisTicks] = useState([])
 
   useEffect(() => {
     const init = async () => {
@@ -389,9 +399,6 @@ const ApexChart = ({
         roundNum = -len
       }
 
-      setMinVal(minValue)
-      setMaxVal(maxValue)
-      
       const yAxisAry = getYAxisValues(minValue, maxValue, roundNum)
       setYAxisTicks(yAxisAry)
 
@@ -420,7 +427,6 @@ const ApexChart = ({
   return (
     <>
       {!loading ? (
-        // <Chart options={options} series={mainSeries} type="area" height="100%" />
         <ResponsiveContainer width="100%" height={onlyWidth > 1250 ? 380 : onlyWidth > 992 ? 350 : 330}>
           <ComposedChart
             data={mainSeries}
@@ -435,8 +441,8 @@ const ApexChart = ({
               </linearGradient>
             </defs>
             <CartesianGrid strokeDasharray="0" strokeLinecap='butt' stroke="rgba(228, 228, 228, 0.2)" vertical={false} />
-            <XAxis dataKey="x" tickCount={5} tick={renderCustomAxisTick} />
-            <YAxis dataKey="y" tickCount={5} ticks={yAxisTicks} domain={[minVal, maxVal]} />
+            <XAxis dataKey="x" tickCount={5} tick={renderCustomXAxisTick} />
+            <YAxis dataKey="y" tickCount={5} tick={renderCustomYAxisTick} ticks={yAxisTicks} />
             <Line dataKey="y" type="monotone" unit="M" strokeLinecap="round" strokeWidth={2}
               stroke="#FF9400"
               dot={false}
