@@ -341,7 +341,14 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
               fillOpacity={1}
               fill="url(#colorUv)"
             />
-            <Tooltip content={CustomTooltip} />
+            <Tooltip
+              content={CustomTooltip}
+              cursor={{
+                stroke: '#FF9400',
+                strokeDasharray: 3,
+                strokeLinecap: 'butt',
+              }}
+            />
           </ComposedChart>
         </ResponsiveContainer>
       ) : (
