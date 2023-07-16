@@ -42,7 +42,6 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
   const { account } = useWallet()
   const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
   const chainId = token.chain || token.data.chain
-  const decimal = token.decimals
 
   const [apiData, setApiData] = useState({})
   const [iFarmTVLData, setIFarmTVLData] = useState({})
@@ -129,7 +128,6 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
           isIFARM={isIFARM}
           range={selectedState}
           filter={clickedId}
-          decimal={decimal}
           lastTVL={lastTVL}
           lastAPY={lastAPY}
           setCurDate={setCurDate}
