@@ -78,59 +78,6 @@ function generateChartDataWithSlots(slots, apiData, kind) {
   return seriesData
 }
 
-function generateChartDataForApy(apyData1, apyData2, field) {
-  apyData1 = apyData1.map(function reducer(x) {
-    return [x.timestamp, Number(x[field]), 1]
-  })
-  apyData2 = apyData2.map(function reducer(x) {
-    return [x.timestamp, Number(x[field]), 2]
-  })
-
-  let apyData = apyData1.concat(apyData2)
-  apyData = apyData.sort(function reducer(a, b) {
-    return b[0] - a[0]
-  })
-
-  if (apyData.length > 1) {
-    for (let i = 0; i < apyData.length; i += 1) {
-      if (i === 0) {
-        if (apyData[i][2] !== apyData[i + 1][2]) apyData[i][1] += apyData[i + 1][1]
-      } else if (i === apyData.length - 1) {
-        if (apyData[i][2] !== apyData[i - 1][2]) {
-          apyData[i][1] += apyData[i - 1][1]
-        }
-      } else if (apyData[i][2] !== apyData[i + 1][2]) {
-        if (apyData[i][2] !== apyData[i - 1][2]) {
-          if (
-            Math.abs(apyData[i][1] - apyData[i - 1][1]) <=
-            Math.abs(apyData[i][1] - apyData[i + 1][1])
-          )
-            apyData[i][1] += apyData[i - 1][1]
-          else apyData[i][1] += apyData[i + 1][1]
-        } else {
-          apyData[i][1] += apyData[i + 1][1]
-        }
-      } else if (apyData[i][2] !== apyData[i - 1][2]) {
-        apyData[i][1] += apyData[i - 1][1]
-      }
-    }
-  }
-
-  apyData = apyData.map(function reducer(x) {
-    const d = 1 / x[1]
-    if (d > 1) {
-      const len = Math.ceil(d).toString().length + 1
-      x[1] = x[1].toFixed(len)
-    }
-    const obj = {}
-    obj.timestamp = x[0]
-    obj[field] = x[1]
-    return obj
-  })
-
-  return apyData
-}
-
 function formatDateTime(value) {
   const date = new Date(value)
   const year = date.getFullYear()
@@ -328,16 +275,13 @@ const ApexChart = ({
           if (tvlData.length !== 0 && lastTVL && !Number.isNaN(lastTVL)) tvlData[0].value = lastTVL
         }
       } else if (filter === 0) {
-        if (data && (data.apyAutoCompounds || data.apyRewards)) {
-          if (data.apyAutoCompounds.length === 0 && data.apyRewards.length === 0) {
+        if (data && data.generalApies) {
+          if (data.generalApies.length === 0) {
             setIsDataReady(false)
             return
           }
         }
-        const apyAutoCompounds = data.apyAutoCompounds !== undefined ? data.apyAutoCompounds : [],
-          apyRewards = data.apyRewards !== undefined ? data.apyRewards : []
-
-        apyData = generateChartDataForApy(apyAutoCompounds, apyRewards, 'apy')
+        apyData = data.generalApies !== undefined ? data.generalApies : []
 
         if (lastAPY && !Number.isNaN(lastAPY) && apyData.length > 0) apyData[0].apy = lastAPY
       } else {

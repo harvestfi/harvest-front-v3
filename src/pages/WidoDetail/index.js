@@ -211,7 +211,9 @@ const WidoDetail = () => {
   const id = vaultIds[0]
   const token = groupOfVaults[id]
 
-  const isLPToken = token.tokenNames.length === 2
+  // const isLPToken = token.tokenNames.length === 2
+  // const isLPToken = token.tokenNames[0] === 'CNG' && token.tokenNames[1] === 'ETH'
+  const isLPToken = false
 
   const lsdToken = get(token, 'tags') && token.tags.join(', ').toLowerCase().includes('lsd')
   const desciToken = get(token, 'tags') && token.tags.join(', ').toLowerCase().includes('desci')
