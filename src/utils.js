@@ -1109,7 +1109,7 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
 
   const graphql = JSON.stringify({
       query: `{
-      apyAutoCompounds(
+      generalApies(
         where: {
           vault: "${address}", 
           timestamp_gte: "${startDate}"
@@ -1117,16 +1117,6 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
         orderBy: createAtBlock, 
         orderDirection: desc
       ) { 
-        apy, timestamp
-      }
-      apyRewards(
-        where: {
-          vault: "${address}", 
-          timestamp_gte: "${startDate}"
-        },
-        orderBy: createAtBlock, 
-        orderDirection: desc
-      ) {
         apy, timestamp
       }
       tvls(
