@@ -46,6 +46,7 @@ export const POLL_BOOST_USER_DATA_INTERVAL_MS = 5000
 
 export const INFURA_URL = `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 export const MATIC_URL = `https://polygon-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
+export const BASE_URL = `https://developer-access-mainnet.base.org`
 export const ARBITRUM_URL = `https://arb-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 
 export const GRAPH_URL_MAINNET = 'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance'
@@ -57,6 +58,8 @@ export const GRAPH_URL_ARBITRUM =
 export const ETHERSCAN_URL = 'https://etherscan.io'
 
 export const MATICSCAN_URL = 'https://polygonscan.com'
+
+export const BASESCAN_URL = 'https://basescan.org'
 
 export const ARBISCAN_URL = 'https://arbiscan.io'
 

@@ -41,6 +41,12 @@ const web3Onboard = init({
       rpcUrl: 'https://rpc.ankr.com/polygon',
     },
     {
+      id: 8453,
+      token: 'BETH',
+      label: 'Base Mainnet',
+      rpcUrl: 'https://developer-access-mainnet.base.org',
+    },
+    {
       id: 42161,
       token: 'AETH',
       label: 'Arbitrum One',
