@@ -483,7 +483,7 @@ const QuickFilter = ({
                           }
 
                           if (tempIds.length === 0 || tempIds.length === ChainsList.length) {
-                            tempIds = isLedgerLive() ? [0, 1] : [0, 1, 2]
+                            tempIds = isLedgerLive() ? [0, 1] : [0, 1, 2, 3]
                             setSelectedClass(tempIds)
                           } else {
                             setSelectedClass(tempIds)
@@ -632,7 +632,7 @@ const QuickFilter = ({
                     setRiskId(-1)
                     setAssetsId(-1)
                     setFarmId(-1)
-                    setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2])
+                    setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2, 3])
                     onSelectStableCoin(false)
                     onAssetClick('')
                     onSelectFarmType('')
@@ -698,7 +698,7 @@ const QuickFilter = ({
                     }
 
                     if (tempIds.length === 0 || tempIds.length === ChainsList.length) {
-                      tempIds = isLedgerLive() ? [0, 1] : [0, 1, 2]
+                      tempIds = isLedgerLive() ? [0, 1] : [0, 1, 2, 3]
                       setSelectedClass(tempIds)
                     } else {
                       setSelectedClass(tempIds)
@@ -915,7 +915,7 @@ const QuickFilter = ({
                   setRiskId(-1)
                   setFarmId(-1)
                   setMobileFilterCount(0)
-                  setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2])
+                  setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2, 3])
                   setSelChain([
                     CHAIN_IDS.ETH_MAINNET,
                     CHAIN_IDS.POLYGON_MAINNET,

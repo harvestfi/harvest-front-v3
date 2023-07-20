@@ -6,6 +6,7 @@ import { useMediaQuery } from 'react-responsive'
 import React, { useRef, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
+import BASE from '../../assets/images/chains/base.png'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
 import Rating from '../../assets/images/logos/dashboard/dashboard_rating.svg'
@@ -76,6 +77,9 @@ const getChainIcon = chain => {
     case CHAIN_IDS.ARBITRUM_ONE:
       chainLogo = ARBITRUM
       break
+    case CHAIN_IDS.BASE:
+      chainLogo = BASE
+      break
     default:
       chainLogo = ETHEREUM
       break
@@ -92,6 +96,7 @@ const chainList = isLedgerLive()
       { id: 1, name: 'Ethereum', chainId: 1 },
       { id: 2, name: 'Polygon', chainId: 137 },
       { id: 3, name: 'Arbitrum', chainId: 42161 },
+      { id: 4, name: 'Base', chainId: 8453 },
     ]
 
 const Portfolio = () => {

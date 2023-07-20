@@ -4,6 +4,7 @@ import { debounce } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
+import BASE from '../../assets/images/chains/base.png'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
 import MobileFiltersIcon from '../../assets/images/chains/mobilefiltersicon.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
@@ -60,6 +61,7 @@ const ChainsList = isLedgerLive()
       { id: 0, name: 'Ethereum', img: ETHEREUM, chainId: CHAIN_IDS.ETH_MAINNET },
       { id: 1, name: 'Polygon', img: POLYGON, chainId: CHAIN_IDS.POLYGON_MAINNET },
       { id: 2, name: 'Arbitrum', img: ARBITRUM, chainId: CHAIN_IDS.ARBITRUM_ONE },
+      { id: 3, name: 'Base', img: BASE, chainId: CHAIN_IDS.BASE },
     ]
 
 const SwitchBalanceList = [
@@ -261,6 +263,9 @@ const QuickFilter = ({
   }
   if (selChain.includes(CHAIN_IDS.ARBITRUM_ONE)) {
     curChain.push(2)
+  }
+  if (selChain.includes(CHAIN_IDS.BASE)) {
+    curChain.push(3)
   }
 
   const [selectedClass, setSelectedClass] = useState(curChain)
@@ -471,7 +476,7 @@ const QuickFilter = ({
                           }
 
                           if (tempIds.length === 0 || tempIds.length === ChainsList.length) {
-                            tempIds = isLedgerLive() ? [0, 1] : [0, 1, 2]
+                            tempIds = isLedgerLive() ? [0, 1] : [0, 1, 2, 3]
                             setSelectedClass(tempIds)
                           } else {
                             setSelectedClass(tempIds)
@@ -626,7 +631,7 @@ const QuickFilter = ({
                     setRiskId(-1)
                     setAssetsId(-1)
                     setFarmId(-1)
-                    setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2])
+                    setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2, 3])
                     onSelectStableCoin(false)
                     onAssetClick('')
                     onSelectFarmType('')
@@ -634,6 +639,7 @@ const QuickFilter = ({
                       CHAIN_IDS.ETH_MAINNET,
                       CHAIN_IDS.POLYGON_MAINNET,
                       CHAIN_IDS.ARBITRUM_ONE,
+                      CHAIN_IDS.BASE,
                     ])
                     clearFilter()
                   }}
@@ -692,7 +698,7 @@ const QuickFilter = ({
                     }
 
                     if (tempIds.length === 0 || tempIds.length === ChainsList.length) {
-                      tempIds = isLedgerLive() ? [0, 1] : [0, 1, 2]
+                      tempIds = isLedgerLive() ? [0, 1] : [0, 1, 2, 3]
                       setSelectedClass(tempIds)
                     } else {
                       setSelectedClass(tempIds)
@@ -917,11 +923,12 @@ const QuickFilter = ({
                   setRiskId(-1)
                   setFarmId(-1)
                   setMobileFilterCount(0)
-                  setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2])
+                  setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2, 3])
                   setSelChain([
                     CHAIN_IDS.ETH_MAINNET,
                     CHAIN_IDS.POLYGON_MAINNET,
                     CHAIN_IDS.ARBITRUM_ONE,
+                    CHAIN_IDS.BASE,
                   ])
                   clearFilter()
                 }}

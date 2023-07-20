@@ -11,6 +11,7 @@ import { getBalances, getSupportedTokens } from 'wido'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
+import BASE from '../../assets/images/chains/base.png'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
 import APY from '../../assets/images/logos/earn/apy.svg'
@@ -104,7 +105,8 @@ import { CHAIN_IDS } from '../../data/constants'
 const chainList = [
   { id: 1, name: 'Ethereum', chainId: 1 },
   { id: 2, name: 'Polygon', chainId: 137 },
-  { id: 4, name: 'Arbitrum', chainId: 42161 },
+  { id: 3, name: 'Arbitrum', chainId: 42161 },
+  { id: 4, name: 'Base', chainId: 8453 },
 ]
 
 const getVaultValue = token => {
@@ -135,7 +137,7 @@ const getVaultValue = token => {
 const WidoDetail = () => {
   const { paramAddress } = useParams()
   // Switch Tag (Deposit/Withdraw)
-  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM]
+  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE]
   const [activeDepo, setActiveDepo] = useState(true)
 
   // Switch Tag (Farm/Details in mobile)
