@@ -82,7 +82,12 @@ const VaultsProvider = _ref => {
       await forEach(Object.keys(importedVaults), async vaultSymbol => {
         const vaultChain = get(importedVaults, `[${vaultSymbol}].chain`)
         try {
-          if (!isLedgerLive() || (isLedgerLive() && vaultChain !== CHAIN_IDS.ARBITRUM_ONE && vaultChain !== CHAIN_IDS.BASE)) {
+          if (
+            !isLedgerLive() ||
+            (isLedgerLive() &&
+              vaultChain !== CHAIN_IDS.ARBITRUM_ONE &&
+              vaultChain !== CHAIN_IDS.BASE)
+          ) {
             let web3Client = await getWeb3(vaultChain, account),
               estimatedApy = null,
               estimatedApyBreakdown = [],
@@ -275,7 +280,9 @@ const VaultsProvider = _ref => {
           else if (chainId === CHAIN_IDS.BASE) await setFormattedVaults(apiData.base)
           else await setFormattedVaults(apiData.arbitrum)
         } else {
-          await setFormattedVaults(merge(apiData.eth, apiData.matic, apiData.arbitrum, apiData.base))
+          await setFormattedVaults(
+            merge(apiData.eth, apiData.matic, apiData.arbitrum, apiData.base),
+          )
         }
         setLoadingVaults(false)
       } catch (err) {

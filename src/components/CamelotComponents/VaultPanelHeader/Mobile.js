@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
-import BASE from '../../../assets/images/chains/base.png'
+import BASE from '../../../assets/images/chains/base.svg'
 import ETHEREUM from '../../../assets/images/chains/ethereum.svg'
 import POLYGON from '../../../assets/images/chains/polygon.svg'
 import APYIcon from '../../../assets/images/logos/farm/MobileAPYIcon.svg'
