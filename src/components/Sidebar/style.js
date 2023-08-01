@@ -522,13 +522,13 @@ const UserDropDown = styled(Dropdown.Toggle)`
   border-radius: 10px !important;
   color: #15202b !important;
   align-items: center;
-  padding: 8px 18px 8px 9px !important;
+  padding: 8px 18px 8px 0px !important;
   width: 100%;
   display: flex !important;
   justify-content: space-between;
   text-align: left;
   position: relative;
-  margin: 20px 5px;
+  margin: 20px 0px;
 
   &:after {
     display: none !important;
