@@ -5,11 +5,13 @@ import Analytics from '../../assets/images/logos/sidebar/analytics.svg'
 import ConnectDisableIcon from '../../assets/images/logos/sidebar/connect-disable.svg'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 import connectAvatar from '../../assets/images/logos/sidebar/connectavatar.svg'
-import Portfolio from '../../assets/images/logos/sidebar/dashboard.svg'
+import Portfolio from '../../assets/images/logos/sidebar/portfolio.svg'
 import Docs from '../../assets/images/logos/sidebar/docs.svg'
 import ExternalLink from '../../assets/images/logos/sidebar/external_link.svg'
 import FAQ from '../../assets/images/logos/sidebar/faq.svg'
-import Farms from '../../assets/images/logos/sidebar/farms.svg'
+import Home from '../../assets/images/logos/sidebar/home.svg'
+import Beginners from '../../assets/images/logos/sidebar/beginners.svg'
+import Advanced from '../../assets/images/logos/sidebar/advanced.svg'
 import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
 import LogoutIcon from '../../assets/images/logos/sidebar/logout.svg'
 import MobileConnect from '../../assets/images/logos/sidebar/mobileconnect.svg'
@@ -37,7 +39,6 @@ import {
   ConnectButtonStyle,
   Container,
   FlexDiv,
-  Follow,
   Layout,
   Link,
   LinkContainer,
@@ -51,7 +52,6 @@ import {
   MobileToggle,
   MobileView,
   OffcanvasDiv,
-  ProfitSharing,
   SideIcons,
   ThemeMode,
   TopDiv,
@@ -62,15 +62,25 @@ import {
   BottomPart,
   MobileProfitSharing,
   ProfitPart,
-  Divider,
   Logo,
+  Desktop,
 } from './style'
 
 const sideLinks = [
   {
     path: ROUTES.HOME,
     name: 'Home',
-    imgPath: Farms,
+    imgPath: Home,
+  },
+  {
+    path: ROUTES.BEGINNERS,
+    name: 'Beginners',
+    imgPath: Beginners,
+  },
+  {
+    path: ROUTES.ADVANCED,
+    name: 'Advanced',
+    imgPath: Advanced,
   },
   {
     path: ROUTES.PORTFOLIO,
@@ -101,15 +111,7 @@ const sideLinks1 = [
   },
 ]
 
-const SideLink = ({
-  item,
-  subItem,
-  isDropdownLink,
-  fontColor,
-  activeFontColor,
-  activeIconColor,
-  darkMode,
-}) => {
+const SideLink = ({ item, subItem, isDropdownLink, fontColor, activeIconColor, darkMode }) => {
   const { pathname } = useLocation()
   const pageName = pathname === '/' ? 'home' : pathname
   return (
@@ -119,7 +121,6 @@ const SideLink = ({
       active={pageName.includes(item.name.toLowerCase())}
       subItem={subItem}
       isDropdownLink={isDropdownLink}
-      activeColor={activeFontColor}
       activeIconColor={activeIconColor}
       darkMode={darkMode}
     >
@@ -221,102 +222,130 @@ const Sidebar = ({ width }) => {
       backColor={backColor}
       fontColor={fontColor}
     >
-      <Layout>
-        <MiddleActionsContainer>
-          <LinksContainer totalItems={sideLinks.length + 2}>
-            <Logo
-              className="logo"
-              onClick={() => {
-                push('/')
-              }}
-            >
-              <img src={logoNew} width={52} height={52} alt="Harvest" />
-            </Logo>
+      <Desktop>
+        <Layout>
+          <MiddleActionsContainer>
+            <LinksContainer totalItems={sideLinks.length + 2}>
+              <Logo
+                className="logo"
+                onClick={() => {
+                  push('/')
+                }}
+              >
+                <img src={logoNew} width={52} height={52} alt="Harvest" />
+              </Logo>
 
-            <Divider height="1px" marginTop="36px" backColor="#EAECF0" />
+              {(() => {
+                if (!connected) {
+                  return (
+                    <ConnectButtonStyle
+                      color="connectwallet"
+                      onClick={() => {
+                        connectAction()
+                      }}
+                      minWidth="190px"
+                      bordercolor={fontColor}
+                      disabled={disableWallet}
+                    >
+                      <img src={ConnectDisableIcon} className="connect-wallet" alt="" />
+                      Connect Wallet
+                    </ConnectButtonStyle>
+                  )
+                }
 
-            {(() => {
-              if (!connected) {
+                if (!chainId) {
+                  return (
+                    <button onClick={disconnectAction} type="button">
+                      Wrong network
+                    </button>
+                  )
+                }
+
                 return (
-                  <ConnectButtonStyle
-                    color="connectwallet"
-                    onClick={() => {
-                      connectAction()
-                    }}
-                    minWidth="190px"
-                    bordercolor={fontColor}
-                    disabled={disableWallet}
-                  >
-                    <img src={ConnectDisableIcon} className="connect-wallet" alt="" />
-                    Connect Wallet
-                  </ConnectButtonStyle>
-                )
-              }
-
-              if (!chainId) {
-                return (
-                  <button onClick={disconnectAction} type="button">
-                    Wrong network
-                  </button>
-                )
-              }
-
-              return (
-                <Dropdown>
-                  <UserDropDown
-                    id="dropdown-basic"
-                    fontcolor={fontColor}
-                    hoverbackcolor={connectWalletBtnBackColor}
-                  >
-                    <FlexDiv>
-                      <ConnectAvatar avatar>
-                        <img src={connectAvatar} alt="" />
-                      </ConnectAvatar>
-                      <div className="detail-info">
-                        <Address>{formatAddress(account)}</Address>
-                        <br />
-                        <ConnectAvatar>
-                          <img
-                            alt="Chain icon"
-                            src={ConnectSuccessIcon}
-                            style={{ width: 8, height: 8 }}
-                          />
-                          {/* )} */}
-                          Connected
+                  <Dropdown>
+                    <UserDropDown
+                      id="dropdown-basic"
+                      fontcolor={fontColor}
+                      hoverbackcolor={connectWalletBtnBackColor}
+                    >
+                      <FlexDiv>
+                        <ConnectAvatar avatar>
+                          <img src={connectAvatar} alt="" />
                         </ConnectAvatar>
-                      </div>
-                    </FlexDiv>
-                    <img
-                      alt="chain icon"
-                      src={getChainIcon(chainId)}
-                      style={{ width: 17, height: 17 }}
-                    />
-                  </UserDropDown>
-                  {!isSpecialApp ? (
-                    <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
-                      <UserDropDownItem
-                        onClick={() => {
-                          disconnectAction()
-                        }}
-                        fontcolor={fontColor}
-                        filtercolor={filterColor}
-                      >
-                        <img src={LogoutIcon} width="18px" height="18px" alt="" />
-                        <div>Log Out</div>
-                      </UserDropDownItem>
-                    </UserDropDownMenu>
-                  ) : (
-                    <></>
-                  )}
-                </Dropdown>
-              )
-            })()}
+                        <div className="detail-info">
+                          <Address>{formatAddress(account)}</Address>
+                          <br />
+                          <ConnectAvatar>
+                            <img
+                              alt="Chain icon"
+                              src={ConnectSuccessIcon}
+                              style={{ width: 8, height: 8 }}
+                            />
+                            {/* )} */}
+                            Connected
+                          </ConnectAvatar>
+                        </div>
+                      </FlexDiv>
+                      <img
+                        alt="chain icon"
+                        src={getChainIcon(chainId)}
+                        style={{ width: 17, height: 17 }}
+                      />
+                    </UserDropDown>
+                    {!isSpecialApp ? (
+                      <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
+                        <UserDropDownItem
+                          onClick={() => {
+                            disconnectAction()
+                          }}
+                          fontcolor={fontColor}
+                          filtercolor={filterColor}
+                        >
+                          <img src={LogoutIcon} width="18px" height="18px" alt="" />
+                          <div>Log Out</div>
+                        </UserDropDownItem>
+                      </UserDropDownMenu>
+                    ) : (
+                      <></>
+                    )}
+                  </Dropdown>
+                )
+              })()}
 
-            {sideLinks.map(item => (
+              {sideLinks.map(item => (
+                <Fragment key={item.name}>
+                  <LinkContainer
+                    active={pathname.includes(item.path)}
+                    activeColor={item.activeColor}
+                    hoverImgColor={hoverImgColor}
+                    onClick={() => {
+                      if (item.newTab) {
+                        window.open(item.path, '_blank')
+                      } else {
+                        directAction(item.path)
+                      }
+                    }}
+                  >
+                    <SideLink
+                      item={item}
+                      isDropdownLink={item.path === '#'}
+                      fontColor={sidebarFontColor}
+                      activeIconColor={sidebarActiveIconColor}
+                      darkMode={darkMode}
+                    />
+                  </LinkContainer>
+                </Fragment>
+              ))}
+            </LinksContainer>
+          </MiddleActionsContainer>
+        </Layout>
+
+        <BottomPart>
+          <LinksContainer totalItems={sideLinks1.length + 2}>
+            {sideLinks1.map(item => (
               <Fragment key={item.name}>
                 <LinkContainer
                   active={pathname.includes(item.path)}
-                  activeColor={item.activeColor}
                   hoverImgColor={hoverImgColor}
                   onClick={() => {
                     if (item.newTab) {
@@ -338,85 +367,8 @@ const Sidebar = ({ width }) => {
               </Fragment>
             ))}
           </LinksContainer>
-          <AboutHarvest />
-        </MiddleActionsContainer>
-      </Layout>
-
-      <BottomPart>
-        <LinksContainer totalItems={sideLinks1.length + 2}>
-          {sideLinks1.map(item => (
-            <Fragment key={item.name}>
-              <LinkContainer
-                active={pathname.includes(item.path)}
-                hoverImgColor={hoverImgColor}
-                onClick={() => {
-                  if (item.newTab) {
-                    window.open(item.path, '_blank')
-                  } else {
-                    directAction(item.path)
-                  }
-                }}
-              >
-                <SideLink
-                  item={item}
-                  isDropdownLink={item.path === '#'}
-                  fontColor={sidebarFontColor}
-                  activeFontColor={sidebarActiveFontColor}
-                  activeIconColor={sidebarActiveIconColor}
-                  darkMode={darkMode}
-                />
-              </LinkContainer>
-            </Fragment>
-          ))}
-        </LinksContainer>
-        {isSpecialApp && chainId !== CHAIN_IDS.ETH_MAINNET ? (
-          <></>
-        ) : (
-          <ProfitSharing
-            onClick={() => {
-              push(`${directDetailUrl}ethereum/${addresses.FARM}`)
-            }}
-          >
-            <TopDiv>
-              <img src={ProfitSharingIcon} alt="profit-sharing" />
-              <TopTitle>
-                <img src={ConnectDisableIcon} width="7px" height="7px" alt="" />
-                Profit-Sharing
-              </TopTitle>
-            </TopDiv>
-            <BottomDiv>
-              {Number(profitShareAPY).toFixed(2)}%<div>APR</div>
-            </BottomDiv>
-            <ChartDiv>
-              <SmallApexChart data={apiData} lastAPY={Number(profitShareAPY)} />
-            </ChartDiv>
-          </ProfitSharing>
-        )}
-
-        <Divider height="1px" marginTop="20px" backColor="#EAECF0" />
-        <Follow>
-          <Social />
-          <ThemeMode
-            mode={darkMode ? 'dark' : 'light'}
-            backColor={toggleBackColor}
-            borderColor={borderColor}
-          >
-            <div id="theme-switch">
-              <div className="switch-track">
-                <div className="switch-thumb" />
-              </div>
-
-              <input
-                type="checkbox"
-                checked={darkMode}
-                onChange={switchTheme}
-                aria-label="Switch between dark and light mode"
-              />
-            </div>
-          </ThemeMode>
-        </Follow>
-      </BottomPart>
-
+        </BottomPart>
+      </Desktop>
       <MobileView>
         <OffcanvasDiv
           show={mobileShow}

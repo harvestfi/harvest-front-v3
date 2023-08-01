@@ -12,13 +12,13 @@ const Container = styled.div`
   background: ${props => props.backColor};
   color: ${props => props.fontColor};
 
-  min-height: 560px;
+  min-height: 593px;
   height: 100%;
   min-width: ${props => props.width};
   max-width: 100%;
   position: fixed;
   z-index: 10;
-  padding: 45px 25px 0px;
+  padding: 25px 25px 50px;
 
   @media screen and (max-width: 992px) {
     display: flex;
@@ -35,9 +35,6 @@ const Container = styled.div`
 const Layout = styled.div`
   align-items: center;
   max-width: 1790px;
-  margin: auto;
-
-  margin-bottom: 50px;
 
   @media screen and (max-width: 992px) {
     display: none;
@@ -68,7 +65,6 @@ const LinksContainer = styled.div`
     text-decoration: none;
     font-weight: 700;
     font-size: 24px;
-    padding-left: 1rem;
 
     &:after {
       margin-left: 22px;
@@ -88,9 +84,7 @@ const LinksContainer = styled.div`
 
 const LinkContainer = styled.div`
   position: relative;
-  margin-left: 20px;
-  margin-bottom: 24px;
-  border-radius: 10px;
+  margin-bottom: 18px;
   cursor: pointer;
 
   &:last-child {
@@ -105,9 +99,9 @@ const LinkContainer = styled.div`
 const Link = styled.button`
   color: ${props => props.fontColor};
   transition: 0.25s;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 500;
-  line-height: 21px;
+  line-height: 24px;
   transition: 0.25s;
   display: flex;
   align-items: center;
@@ -118,12 +112,13 @@ const Link = styled.button`
   padding-left: 0;
   padding-right: 0;
   border-width: 0;
+  border-radius: 5px;
+  padding: 5px;
 
   ${props =>
     props.active
       ? `
-    color: ${props.activeColor};
-    font-weight: bold;
+    background: #f5f5f5;
     ${
       props.darkMode
         ? `
@@ -135,13 +130,10 @@ const Link = styled.button`
     }
   `
       : `
-    img {
-      filter: ${props.activeIconColor};
-    }
       `}
 
   .sideIcon {
-    margin-right: 17px;
+    margin-right: 13px;
   }
 
   .external-link {
@@ -174,10 +166,10 @@ const Link = styled.button`
       ${props =>
         props.darkMode
           ? `
-          filter: invert(97%) sepia(0%) saturate(7489%) hue-rotate(281deg) brightness(106%) contrast(103%);
+          // filter: invert(97%) sepia(0%) saturate(7489%) hue-rotate(281deg) brightness(106%) contrast(103%);
       `
           : `
-          filter: invert(0%) sepia(8%) saturate(7500%) hue-rotate(300deg) brightness(90%) contrast(110%);
+          // filter: invert(0%) sepia(8%) saturate(7500%) hue-rotate(300deg) brightness(90%) contrast(110%);
           `}
     }
   }
@@ -213,21 +205,11 @@ const FlexDiv = styled.div`
   }
 `
 
-const Follow = styled.div`
-  padding-top: 16px;
-  display: flex;
-  justify-content: space-between;
-
-  @media screen and (max-width: 992px) {
-    display: none;
-  }
-`
-
 const ConnectButtonStyle = styled.button`
   font-size: 16px;
-  line-height: 21px;
-  font-weight: 700;
-  margin: 20px 5px;
+  line-height: 20px;
+  font-weight: 600;
+  margin: 25px 0px;
   width: 100%;
   background: white;
   border-radius: 8px;
@@ -666,35 +648,6 @@ const OffcanvasDiv = styled(Offcanvas)`
   }
 `
 
-const ProfitSharing = styled.div`
-  background: url(${Pattern});
-  background-position: center;
-  background-repeat: no-repeat;
-  cursor: pointer;
-  position: relative;
-  padding: 15px 18px;
-  border-radius: 13px;
-  margin-top: 50px;
-
-  @media screen and (max-width: 992px) {
-    display: none;
-  }
-
-  @media screen and (max-height: 900px) {
-    display: none;
-  }
-`
-
-const Divider = styled.div`
-  height: ${props => (props.height ? props.height : '20px')};
-  background: ${props => (props.backColor ? props.backColor : 'unset')};
-  margin-top: ${props => (props.marginTop ? props.marginTop : 'unset')};
-
-  @media screen and (max-width: 992px) {
-    display: none;
-  }
-`
-
 const ProfitBack = styled.img`
   border-radius: 13px;
 `
@@ -737,11 +690,7 @@ const ChartDiv = styled.div`
   right: 0;
 `
 
-const BottomPart = styled.div`
-  position: absolute;
-  bottom: 20px;
-  width: 240px;
-`
+const BottomPart = styled.div``
 
 const MobileProfitSharing = styled.div`
   background: url(${Pattern});
@@ -772,6 +721,13 @@ const Logo = styled.div`
   cursor: pointer;
 `
 
+const Desktop = styled.div`
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+`
+
 export {
   Container,
   Layout,
@@ -782,7 +738,6 @@ export {
   FlexDiv,
   Address,
   ConnectButtonStyle,
-  Follow,
   AboutHarvest,
   MobileView,
   MobileConnectBtn,
@@ -799,7 +754,6 @@ export {
   UserDropDown,
   UserDropDownItem,
   UserDropDownMenu,
-  ProfitSharing,
   ProfitBack,
   TopDiv,
   BottomDiv,
@@ -808,6 +762,6 @@ export {
   BottomPart,
   MobileProfitSharing,
   ProfitPart,
-  Divider,
   Logo,
+  Desktop,
 }
