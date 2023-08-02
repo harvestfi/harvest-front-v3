@@ -14,6 +14,10 @@ const Container = styled.div`
   justify-content: center;
   font-family: Inter;
 
+  @media screen and (min-width: 1921px) {
+    flex-direction: row;
+  }
+
   @media screen and (max-width: 992px) {
     width: 100%;
     height: 100%;
@@ -27,6 +31,12 @@ const Inner = styled.div`
   min-height: 670px;
   display: flex;
   gap: 10px;
+
+  @media screen and (min-width: 1921px) {
+    width: 1450px;
+    height: 70%;
+    padding-top: 100px;
+  }
 
   @media screen and (max-width: 1480px) {
     width: 100%;
