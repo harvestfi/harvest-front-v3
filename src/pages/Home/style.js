@@ -28,23 +28,23 @@ const Container = styled.div`
 const Inner = styled.div`
   padding: 0px 41px;
   width: 100%;
-  min-height: 670px;
+  min-height: 775px;
   display: flex;
   gap: 10px;
 
   @media screen and (min-width: 1921px) {
     width: 1450px;
-    height: 70%;
-    padding-top: 100px;
+    height: 775px;
+    padding: 100px 0 0;
   }
 
   @media screen and (max-width: 1480px) {
     width: 100%;
-    padding: 70px 30px 40px;
+    padding: 0px 30px 0px;
   }
 
   @media screen and (max-width: 992px) {
-    padding: 16px 10px;
+    padding: 0px 10px;
   }
 `
 
