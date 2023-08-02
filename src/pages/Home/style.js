@@ -28,14 +28,14 @@ const Container = styled.div`
 const Inner = styled.div`
   padding: 0px 41px;
   width: 100%;
-  min-height: 775px;
+  min-height: 765px;
   display: flex;
   gap: 10px;
 
   @media screen and (min-width: 1921px) {
     width: 1450px;
-    height: 775px;
-    padding: 100px 0 0;
+    height: 800px;
+    padding: 35px 0 0;
   }
 
   @media screen and (max-width: 1480px) {

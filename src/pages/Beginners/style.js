@@ -26,14 +26,14 @@ const Container = styled.div`
 `
 
 const Inner = styled.div`
-  padding: 50px 41px;
+  padding: 0px 41px;
   width: 100%;
-  min-height: 775px;
+  min-height: 765px;
 
   @media screen and (min-width: 1921px) {
     width: 1450px;
-    padding: 10px 0 0;
-    height: 775px;
+    padding: 35px 0 0;
+    height: 800px;
   }
 
   @media screen and (max-width: 1480px) {
@@ -99,7 +99,7 @@ const HeaderDesc = styled.div`
   color: #475467;
   font-size: 16px;
   font-weight: 400;
-  line-height: 24px;
+  line-height: 23px;
 
   margin-top: 4px;
   margin-bottom: 35px;
