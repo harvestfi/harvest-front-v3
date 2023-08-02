@@ -1,7 +1,13 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import promiseObject from 'promise-all-object'
 import importedContracts from '../services/web3/contracts'
-import { newContractInstance, maticWeb3, arbitrumWeb3, infuraWeb3 } from '../services/web3'
+import {
+  newContractInstance,
+  maticWeb3,
+  arbitrumWeb3,
+  baseWeb3,
+  infuraWeb3,
+} from '../services/web3'
 import { isLedgerLive } from '../utils'
 import { CHAIN_IDS } from '../data/constants'
 
@@ -17,6 +23,10 @@ const getWeb3 = chainId => {
     return arbitrumWeb3
   }
 
+  if (chainId === CHAIN_IDS.BASE) {
+    return baseWeb3
+  }
+
   return infuraWeb3
 }
 
@@ -27,7 +37,12 @@ const ContractsProvider = _ref => {
     const initializeContracts = async () => {
       const temporaryGroupOfContracts = {}
       Object.keys(importedContracts).forEach(contract => {
-        if (!isLedgerLive() || (isLedgerLive() && contract.chain !== CHAIN_IDS.ARBITRUM_ONE)) {
+        if (
+          !isLedgerLive() ||
+          (isLedgerLive() &&
+            contract.chain !== CHAIN_IDS.ARBITRUM_ONE &&
+            contract.chain !== CHAIN_IDS.BASE)
+        ) {
           Object.assign(temporaryGroupOfContracts, {
             [contract]: {
               instance: newContractInstance(
