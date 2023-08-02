@@ -20,6 +20,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 const NewLoginModal = () => {
   const newLogin = localStorage.getItem('newLogin')
   const [open, setOpen] = useState(false)
+  localStorage.setItem('darkmode', false)
 
   useEffect(() => {
     if (newLogin === null || newLogin === 'true') {
