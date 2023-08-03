@@ -54,10 +54,11 @@ const Home = () => {
             }
 
             return (
-              <UnitPart key={i} num={i}>
+              <UnitPart key={i}>
                 <BeginnersAPRSection
                   token={token}
                   img={el.img}
+                  num={i}
                   vaultPool={vaultPool}
                   tokenVault={tokenVault}
                 />

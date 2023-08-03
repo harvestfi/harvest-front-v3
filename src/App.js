@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import Home from './pages/Home'
 import Beginners from './pages/Beginners'
+import BeginnersFarm from './pages/BeginnersFarm'
 import Portfolio from './pages/Portfolio'
 import Farm from './pages/Farm'
 import Camelot from './pages/Camelot'
@@ -67,6 +68,7 @@ const App = () => (
         <Switch>
           <Route exact path={ROUTES.HOME} component={Home} />
           <Route exact path={ROUTES.BEGINNERS} component={Beginners} />
+          <Route exact path={ROUTES.BEGINNERSFARM} component={BeginnersFarm} />
           <Route exact path={ROUTES.ADVANCED} component={Farm} />
           <Route exact path={ROUTES.PORTFOLIO} component={Portfolio} />
           <Route exact path={ROUTES.ANALYTIC} component={Analytic} />

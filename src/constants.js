@@ -26,6 +26,7 @@ export const ROUTES = {
   GRAIN: '/grain',
   CAMELOT: '/camelot',
   WIDODETAIL: '/:network/:paramAddress',
+  BEGINNERSFARM: '/beginner/:paramAddress',
   WORK: '/work',
   POOL: '/pool',
   ZAPPER: '/zapper',

@@ -174,12 +174,12 @@ ${props =>
     ${props =>
       props.color === 'wido-deposit'
         ? `
-        background: #FFAA34;
+        background: #FF9400;
         font-weight: 600;
         font-size: 16px;
         line-height: 28px;
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         align-items: center;
         text-align: center;
         color: white;
