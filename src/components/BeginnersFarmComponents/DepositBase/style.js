@@ -4,7 +4,6 @@ const BaseWido = styled.div`
   ${props =>
     props.show
       ? `
-    height: 100%;
   `
       : 'display: none;'}
 `

@@ -16,11 +16,8 @@ const DetailView = styled.div`
 
 const Inner = styled.div`
   padding: 70px 72px 0px 76px;
-
-  @media screen and (min-width: 1920px) {
-    display: flex;
-    justify-content: center;
-  }
+  display: flex;
+  justify-content: center;
 
   @media screen and (max-width: 1480px) {
     padding: 70px 30px 40px;
@@ -33,7 +30,7 @@ const Inner = styled.div`
 `
 
 const TopPart = styled.div`
-  padding: 70px 200px 70px 50px;
+  padding: 70px 100px 70px 50px;
   display: flex;
   justify-content: space-between;
 
@@ -234,6 +231,7 @@ const FlexTopDiv = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: start;
+  align-self: center;
 
   img {
     align-self: center;
@@ -242,10 +240,14 @@ const FlexTopDiv = styled.div`
 
 const HalfContent = styled.div`
   width: 70%;
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
   margin-right: 25px;
   padding: 20px;
   border-radius: 10px;
   background: #fff;
+  border: 1px solid #dadada;
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.06);
 
   @media screen and (max-width: 992px) {
@@ -315,11 +317,37 @@ const RestContent = styled.div`
 `
 
 const BigDiv = styled(FlexDiv)`
-  justify-content: start;
+  width: 70%;
+
+  @media screen and (min-width: 1920px) {
+    width: unset;
+  }
+
+  @media screen and (max-width: 1368px) {
+    width: 80%;
+  }
+
+  @media screen and (max-width: 1256px) {
+    width: 85%;
+  }
+
+  @media screen and (max-width: 1112px) {
+    width: 100%;
+  }
 `
 
 const LogoImg = styled.img`
   margin-right: -5px;
+  width: 357px;
+
+  @media screen and (max-width: 1368px) {
+    width: 200px;
+  }
+
+  @media screen and (max-width: 1136px) {
+    width: 150px;
+  }
+
   ${props =>
     props.zIndex
       ? `
@@ -342,6 +370,7 @@ const Monospace = styled.span`
 const MyBalance = styled.div`
   background: ${props => props.backColor};
   border-radius: 15px;
+  border: 1px solid #e7e7e7;
 `
 
 const GuideSection = styled.div`
@@ -352,6 +381,7 @@ const GuideSection = styled.div`
 const GuidePart = styled.div`
   display: flex;
   width: fit-content;
+  align-items: center;
   border-radius: 18px;
   padding: 3px 11px 3px 9px;
   background: #f2f4f7;

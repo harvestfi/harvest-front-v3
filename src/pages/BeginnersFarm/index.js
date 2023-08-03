@@ -387,7 +387,7 @@ const BeginnersFarm = () => {
             </GuidePart>
           </GuideSection>
           <TopDesc weight={600} size="68px" height="82px" marginBottom="10px">
-            {token.tokenNames.join(', ') || token.rewardSymbol}&nbsp;Farm
+            {token.tokenNames.join(', ')}&nbsp;Farm
           </TopDesc>
           <NewLabel weight={400} size="18px" height="26px" marginBottom="10px" color="white">
             Deposit USDC or any token from your wallet to start earning.
@@ -399,7 +399,7 @@ const BeginnersFarm = () => {
         </FlexTopDiv>
         <FlexTopDiv>
           {logoUrl.map((el, i) => (
-            <LogoImg className="logo" src={el.slice(1, el.length)} key={i} height={357} alt="" />
+            <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
           ))}
         </FlexTopDiv>
       </TopPart>
@@ -449,7 +449,7 @@ const BeginnersFarm = () => {
                 padding="10px 15px"
                 borderBottom="1px solid #EBEBEB"
               >
-                Deposit Fee
+                My Balance
               </NewLabel>
               <FlexDiv justifyContent="space-between" marginTop="12px" padding="10px 15px">
                 <NewLabel size="14px" weight="500" height="24px">
@@ -480,10 +480,10 @@ const BeginnersFarm = () => {
                 </NewLabel>
               </FlexDiv>
               <FlexDiv justifyContent="space-between" padding="10px 15px">
-                <NewLabel size="14px" weight="500" height="24px" color="#344054">
+                <NewLabel size="14px" weight="500" height="24px" color="#344054" self="center">
                   Est. Value
                 </NewLabel>
-                <NewLabel weight="500" size="13px" height="16px" color="black">
+                <NewLabel weight="500" size="13px" height="16px" color="black" self="center">
                   $100.00051
                 </NewLabel>
               </FlexDiv>
