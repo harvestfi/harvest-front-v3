@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { useSetChain } from '@web3-onboard/react'
 import { toast } from 'react-toastify'
 import DropDownIcon from '../../../assets/images/logos/wido/drop-down.svg'
-import WidoIcon from '../../../assets/images/logos/wido/wido.svg'
+import WalletIcon from '../../../assets/images/logos/beginners/wallet-in-button.svg'
 import { POOL_BALANCES_DECIMALS } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
@@ -14,11 +14,11 @@ import {
   BalanceInfo,
   BaseWido,
   DepoTitle,
-  PoweredByWido,
-  SelectToken,
   TokenAmount,
   TokenInfo,
   TokenSelect,
+  NewLabel,
+  AmountSection,
 } from './style'
 
 const getChainName = chain => {
@@ -71,7 +71,7 @@ const DepositBase = ({
 
   useEffect(() => {
     if (account) {
-      if (curChain !== tokenChain) {
+      if (curChain !== '' && curChain !== tokenChain) {
         const chainName = getChainName(tokenChain)
         setDepositName(`Switch to ${chainName}`)
       } else {
@@ -80,7 +80,19 @@ const DepositBase = ({
     }
   }, [account, curChain, tokenChain])
 
+  useEffect(() => {
+    if (connected) {
+      setDepositName('Deposit')
+    } else {
+      setDepositName('Connect Wallet to Get Started')
+    }
+  }, [connected])
+
   const onClickDeposit = async () => {
+    if (!connected) {
+      connectAction()
+      return
+    }
     if (curChain !== tokenChain) {
       const chainHex = `0x${Number(tokenChain).toString(16)}`
       if (!isSpecialApp) {
@@ -121,11 +133,12 @@ const DepositBase = ({
 
   return (
     <BaseWido show={!depositWido && !selectTokenWido && !startSlippage && !finalStep}>
-      <DepoTitle fontColor={widoTagActiveFontColor}>
-        Deposit USDC or other token from your wallet to get started.
-      </DepoTitle>
-      <SelectToken>
-        <TokenInfo>
+      <DepoTitle>Deposit USDC or other token from your wallet to get started.</DepoTitle>
+      <TokenInfo>
+        <AmountSection>
+          <NewLabel size="14px" height="20px" weight="500" color="#344054" marginBottom="6px">
+            Amount to Deposit
+          </NewLabel>
           <TokenAmount
             type="number"
             value={inputAmount}
@@ -134,6 +147,11 @@ const DepositBase = ({
             fontColor={widoTagActiveFontColor}
             onChange={onInputBalance}
           />
+        </AmountSection>
+        <div>
+          <NewLabel size="14px" height="20px" weight="500" color="#344054" marginBottom="6px">
+            Deposit Token
+          </NewLabel>
           <TokenSelect
             type="button"
             onClick={async () => {
@@ -153,8 +171,8 @@ const DepositBase = ({
             <span>{pickedToken.symbol}</span>
             <img src={DropDownIcon} alt="" />
           </TokenSelect>
-        </TokenInfo>
-      </SelectToken>
+        </div>
+      </TokenInfo>
       <BalanceInfo
         fontColor={widoTagActiveFontColor}
         onClick={() => {
@@ -163,7 +181,7 @@ const DepositBase = ({
           }
         }}
       >
-        Balance:
+        USDC Balance Available:
         <span>{formatNumberWido(balance, POOL_BALANCES_DECIMALS)}</span>
       </BalanceInfo>
       <Button
@@ -175,13 +193,8 @@ const DepositBase = ({
         }}
       >
         {depositName}
+        <img src={WalletIcon} alt="" />
       </Button>
-
-      <PoweredByWido>
-        <div>Powered By</div>
-        <img src={WidoIcon} alt="" />
-        <span>wido</span>
-      </PoweredByWido>
     </BaseWido>
   )
 }

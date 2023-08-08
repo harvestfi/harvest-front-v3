@@ -13,9 +13,10 @@ import BeginnerFriendly from '../../assets/images/logos/beginners/beginner-frien
 import WithdrawAnytime from '../../assets/images/logos/beginners/withdraw-anytime.svg'
 import Thumbsup from '../../assets/images/logos/beginners/thumbs-up.svg'
 import DOT from '../../assets/images/logos/beginners/dot.svg'
+import CreditCard from '../../assets/images/logos/beginners/credit-card-shield.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/BeginnersFarmComponents/DepositBase'
-// import WidoDepositSelectToken from '../../components/WidoComponents/WidoDepositSelectToken'
+import DepositSelectToken from '../../components/BeginnersFarmComponents/DepositSelectToken'
 import {
   DECIMAL_PRECISION,
   FARM_GRAIN_TOKEN_SYMBOL,
@@ -55,6 +56,7 @@ import {
   GuidePart,
   ThemeMode,
   APRShow,
+  CreditCardBox,
 } from './style'
 
 const BeginnersCoinGroup = ['DAI', 'ETH', 'USDT', 'USDC']
@@ -181,15 +183,15 @@ const BeginnersFarm = () => {
 
   // Show/Hide Deposit
   const [depositWido, setDepositWido] = useState(false)
-  const [balanceDepo] = useState(0)
-  const [pickedTokenDepo] = useState({ symbol: 'Select Token' })
+  const [clickTokenIdDepo, setClickedTokenIdDepo] = useState(-1)
+  const [balanceDepo, setBalanceDepo] = useState(0)
+  const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
   const [depositFinalStep] = useState(false)
   const [startSlippageDepo] = useState(false)
   const [inputAmountDepo, setInputAmountDepo] = useState(0)
 
   const [, setBalanceList] = useState([])
   const [supTokenList, setSupTokenList] = useState([])
-  const [, setSoonToSupList] = useState([])
 
   const toTokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
   useEffect(() => {
@@ -215,7 +217,6 @@ const BeginnersFarm = () => {
               ? token.tokenAddress
               : token.vaultAddress
 
-          const soonSupList = []
           supList = supList.map(sup => {
             const supToken = curBalances.find(el => el.address === sup.address)
             if (supToken) {
@@ -241,11 +242,6 @@ const BeginnersFarm = () => {
           })
 
           for (let j = 0; j < curBalances.length; j += 1) {
-            const supToken = supList.find(el => el.address === curBalances[j].address)
-            if (!supToken) {
-              soonSupList.push(curBalances[j])
-            }
-
             if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
               if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
                 directInBalance = curBalances[j]
@@ -307,7 +303,6 @@ const BeginnersFarm = () => {
             }
             supList.unshift(direct)
           }
-          setSoonToSupList(soonSupList)
           setSupTokenList(supList)
         }
       } catch (err) {
@@ -357,6 +352,7 @@ const BeginnersFarm = () => {
   )
 
   const switchMethod = () => setActiveDepo(prev => !prev)
+  const [partHeightDepo, setPartHeightDepo] = useState(null)
 
   return (
     <DetailView pageBackColor={pageBackColor} fontColor={fontColor}>
@@ -405,26 +401,33 @@ const BeginnersFarm = () => {
       </TopPart>
       <Inner>
         <BigDiv>
-          <HalfContent show={detailsView}>
-            <NewLabel display="flex" justifyContent="space-between">
-              <NewLabel size="16px" height="21px" weight="600">
-                Deposit
-              </NewLabel>
-              <ThemeMode mode={activeDepo ? 'deposit' : 'withdraw'}>
-                <div id="theme-switch">
-                  <div className="switch-track">
-                    <div className="switch-thumb" />
-                  </div>
+          <HalfContent show={detailsView} partHeight={partHeightDepo} isSelToken={selectTokenDepo}>
+            {!selectTokenDepo && (
+              <>
+                <NewLabel display="flex" justifyContent="space-between" marginBottom="16px">
+                  <CreditCardBox>
+                    <img src={CreditCard} alt="" />
+                  </CreditCardBox>
+                  <ThemeMode mode={activeDepo ? 'deposit' : 'withdraw'}>
+                    <div id="theme-switch">
+                      <div className="switch-track">
+                        <div className="switch-thumb" />
+                      </div>
 
-                  <input
-                    type="checkbox"
-                    checked={activeDepo}
-                    onChange={switchMethod}
-                    aria-label="Switch between dark and light mode"
-                  />
-                </div>
-              </ThemeMode>
-            </NewLabel>
+                      <input
+                        type="checkbox"
+                        checked={activeDepo}
+                        onChange={switchMethod}
+                        aria-label="Switch between dark and light mode"
+                      />
+                    </div>
+                  </ThemeMode>
+                </NewLabel>
+                <NewLabel size="18px" height="28px" weight="600" color="#101828">
+                  Deposit
+                </NewLabel>
+              </>
+            )}
             <DepositBase
               selectTokenWido={selectTokenDepo}
               setSelectTokenWido={setSelectTokenDepo}
@@ -439,6 +442,16 @@ const BeginnersFarm = () => {
               token={token}
               supTokenList={supTokenList}
             />
+            <DepositSelectToken
+              selectTokenWido={selectTokenDepo}
+              setSelectTokenWido={setSelectTokenDepo}
+              clickTokenId={clickTokenIdDepo}
+              setClickedTokenId={setClickedTokenIdDepo}
+              setPickedToken={setPickedTokenDepo}
+              setBalance={setBalanceDepo}
+              supTokenList={supTokenList}
+              setPartHeight={setPartHeightDepo}
+            />
           </HalfContent>
           <RestContent show={farmView}>
             <MyBalance backColor={backColor}>
@@ -446,13 +459,14 @@ const BeginnersFarm = () => {
                 size="14px"
                 weight="700"
                 height="24px"
+                color="#344054"
                 padding="10px 15px"
                 borderBottom="1px solid #EBEBEB"
               >
                 My Balance
               </NewLabel>
-              <FlexDiv justifyContent="space-between" marginTop="12px" padding="10px 15px">
-                <NewLabel size="14px" weight="500" height="24px">
+              <FlexDiv justifyContent="space-between" padding="10px 15px">
+                <NewLabel size="14px" weight="500" height="24px" color="#344054">
                   {`f${id}`}
                   <InfoIcon
                     className="info"
@@ -483,7 +497,7 @@ const BeginnersFarm = () => {
                 <NewLabel size="14px" weight="500" height="24px" color="#344054" self="center">
                   Est. Value
                 </NewLabel>
-                <NewLabel weight="500" size="13px" height="16px" color="black" self="center">
+                <NewLabel weight="500" size="14px" height="16px" color="black" self="center">
                   $100.00051
                 </NewLabel>
               </FlexDiv>
@@ -507,9 +521,9 @@ const BeginnersFarm = () => {
                   </NewLabel>
                 </APRShow>
               </NewLabel>
-              <NewLabel padding="20px 15px" size="13px" height="20px" weight="500">
+              <NewLabel padding="20px 15px" size="13px" height="20px" weight="500" color="#475467">
                 This farm offers a yield from Idle Finance strategy relying on a combination of top
-                DeFi protocols (Compound, Aave, Clearpool, and Morpho) to boost your earnings .
+                DeFi protocols (Compound, Aave, Clearpool, and Morpho) to boost your earnings.
               </NewLabel>
             </MyBalance>
           </RestContent>

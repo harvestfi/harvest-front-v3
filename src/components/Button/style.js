@@ -174,29 +174,33 @@ ${props =>
     ${props =>
       props.color === 'wido-deposit'
         ? `
-        background: #FF9400;
+        background: #000;
+        border: 1px solid #000
         font-weight: 600;
         font-size: 16px;
-        line-height: 28px;
+        line-height: 24px;
         display: flex;
         justify-content: center;
         align-items: center;
         text-align: center;
         color: white;
-        padding: 16px 28px;
-        box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
+        padding: 10px 18px;
+        box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
         border-radius: 8px;
+        img {
+          margin-left: 8px;
+        }
         ${
           !props.disabled
             ? `
         &:hover {
-          background: #FFAA34D0;
+          background: #000000D0;
         }`
             : ''
         }
   
         &:active {
-          background: #FFAA34A0;
+          background: #000000A0;
         }
         `
         : ''}

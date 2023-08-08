@@ -102,14 +102,6 @@ const NewLabel = styled.div`
   }
 `
 
-const SelectToken = styled.div`
-  border: 1px solid #d8d5dd;
-  transition: 0.25s;
-
-  border-radius: 8px;
-  padding: 15px;
-`
-
 const TokenInfo = styled.div`
   display: flex;
   justify-content: space-between;
@@ -118,14 +110,16 @@ const TokenInfo = styled.div`
 const TokenAmount = styled.input`
   font-weight: 700;
   font-size: 18px;
-  line-height: 22px;
+  line-height: 24px;
   width: 100%;
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  background: ${props => props.backColor};
-  border: none;
+  background: #fff;
+  border: 1px solid #d0d5dd;
   outline: 0;
+  padding: 10px 14px;
+  border-radius: 8px;
   color: ${props => props.fontColor};
   transition: 0.25s;
 
@@ -139,11 +133,12 @@ const TokenAmount = styled.input`
 
 const TokenSelect = styled.button`
   background: white;
-  border: 1px solid #eaecf0;
+  border: 1px solid #d0d5dd;
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
   transition: 0.25s;
 
   border-radius: 8px;
-  padding: 8px 12px;
+  padding: 10px 14px;
   height: fit-content;
   font-weight: 600;
   font-size: 14px;
@@ -176,58 +171,37 @@ const BalanceInfo = styled.div`
   font-size: 14px;
   line-height: 20px;
 
-  margin-top: 13px;
-  margin-bottom: 13px;
+  margin-top: 5px;
+  margin-bottom: 25px;
   cursor: pointer;
 
   span {
     margin-left: 6px;
-    color: ${props => props.fontColor};
+    color: #475467;
     transition: 0.25s;
   }
 `
 
-const PoweredByWido = styled.div`
-  margin-top: 15px;
-  display: flex;
-  align-items: center;
-  justify-content: end;
-  font-weight: 700;
-  font-size: 10px;
-  line-height: 13px;
-
-  div {
-    color: #1abc9c;
-  }
-
-  img {
-    margin-left: 5px;
-  }
-
-  span {
-    margin-left: 5px;
-    font-weight: 700;
-    font-size: 12px;
-    line-height: 16px;
-  }
-`
-
 const DepoTitle = styled.div`
-  font-weight: 500;
+  font-weight: 400;
   font-size: 14px;
   line-height: 20px;
-  margin: 10px 0;
-  color: ${props => props.fontColor};
+  margin: 4px 0 20px;
+  color: #475467;
+`
+
+const AmountSection = styled.div`
+  width: -webkit-fill-available;
+  padding-right: 16px;
 `
 
 export {
   BaseWido,
   NewLabel,
-  SelectToken,
   TokenAmount,
   TokenInfo,
   TokenSelect,
   BalanceInfo,
-  PoweredByWido,
   DepoTitle,
+  AmountSection,
 }

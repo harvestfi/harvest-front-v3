@@ -15,7 +15,7 @@ const DetailView = styled.div`
 `
 
 const Inner = styled.div`
-  padding: 70px 72px 0px 76px;
+  padding: 80px 72px 200px 76px;
   display: flex;
   justify-content: center;
 
@@ -162,10 +162,6 @@ const NewLabel = styled.div`
     margin-right: 10px;
   }
 
-  img.info {
-    margin-left: 10px;
-  }
-
   img.info-icon {
     margin-left: 15px;
   }
@@ -239,16 +235,22 @@ const FlexTopDiv = styled.div`
 `
 
 const HalfContent = styled.div`
-  width: 70%;
+  width: 60%;
   display: flex;
   flex-direction: column;
   height: fit-content;
-  margin-right: 25px;
-  padding: 20px;
-  border-radius: 10px;
+  margin-right: 50px;
+  padding: ${props => (props.isSelToken ? `0px` : '24px')};
   background: #fff;
-  border: 1px solid #dadada;
-  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.06);
+  border-radius: 12px;
+  box-shadow: 0px 8px 8px -4px rgba(16, 24, 40, 0.03), 0px 20px 24px -4px rgba(16, 24, 40, 0.08);
+  height: ${props =>
+    props.partHeight
+      ? `
+    ${props.partHeight}px`
+      : `
+      unset
+    `};
 
   @media screen and (max-width: 992px) {
     width: 100%;
@@ -299,9 +301,9 @@ const BackArrow = styled.img`
 `
 
 const RestContent = styled.div`
-  width: 30%;
+  width: 40%;
 
-  @media screen and (min-width: 1920px) {
+  @media screen and (min-width: 1921px) {
     width: 500px;
   }
 
@@ -319,7 +321,7 @@ const RestContent = styled.div`
 const BigDiv = styled(FlexDiv)`
   width: 70%;
 
-  @media screen and (min-width: 1920px) {
+  @media screen and (min-width: 1921px) {
     width: unset;
   }
 
@@ -360,6 +362,7 @@ const InfoIcon = styled.img`
   filter: ${props => props.filterColor};
   transition: 0.25s;
   cursor: pointer;
+  margin-left: 5px;
 `
 
 const Monospace = styled.span`
@@ -368,9 +371,9 @@ const Monospace = styled.span`
 `
 
 const MyBalance = styled.div`
-  background: ${props => props.backColor};
-  border-radius: 15px;
-  border: 1px solid #e7e7e7;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0px 8px 8px -4px rgba(16, 24, 40, 0.03), 0px 20px 24px -4px rgba(16, 24, 40, 0.08);
 `
 
 const GuideSection = styled.div`
@@ -421,7 +424,7 @@ const ThemeMode = styled.div`
     }
 
     .switch-track {
-      background: #414141;
+      background: #000;
       border: 1px solid ${props => props.borderColor};
       height: 24px;
       width: 50px;
@@ -482,6 +485,14 @@ const APRShow = styled.div`
   }
 `
 
+const CreditCardBox = styled.div`
+  border-radius: 10px;
+  border: 1px solid var(--gray-200, #eaecf0);
+  background: var(--base-white, #fff);
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  padding: 12px;
+`
+
 export {
   DetailView,
   TopPart,
@@ -505,4 +516,5 @@ export {
   GuidePart,
   ThemeMode,
   APRShow,
+  CreditCardBox,
 }
