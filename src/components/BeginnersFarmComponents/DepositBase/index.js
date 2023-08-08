@@ -127,6 +127,7 @@ const DepositBase = ({
         return
       }
       setDepositWido(true)
+      setShowWarning(false)
     }
   }
 
