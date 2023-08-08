@@ -107,7 +107,7 @@ const DepositStart = ({
             fromInfoUsdValue =
               quoteResult.fromTokenAmountUsdValue === null
                 ? ''
-                : ` ${formatNumberWido(
+                : `${formatNumberWido(
                     fromWei(quoteResult.fromTokenAmount, curToken.decimals) *
                       quoteResult.fromTokenUsdPrice,
                     BEGINNERS_BALANCES_DECIMALS,
@@ -232,7 +232,13 @@ const DepositStart = ({
           <NewLabel color="#475467" size="14px" height="20px" weight="400" marginBottom="5px">
             It is a proof-of-deposit token, which entitles you to deposit and any accrued yield.
           </NewLabel>
-          <GotItBtn>Got it</GotItBtn>
+          <GotItBtn
+            onClick={() => {
+              setShowDesc(false)
+            }}
+          >
+            Got it
+          </GotItBtn>
         </NewLabel>
         <NewLabel>
           <ImgBtn
