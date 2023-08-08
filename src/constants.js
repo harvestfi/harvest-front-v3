@@ -508,6 +508,8 @@ export const WIDO_BALANCES_DECIMALS = 5
 
 export const WIDO_EXTEND_DECIMALS = 9
 
+export const BEGINNERS_BALANCES_DECIMALS = 2
+
 export const MIGRATING_VAULTS = []
 
 export const FARM_TOKEN_SYMBOL = 'FARM'

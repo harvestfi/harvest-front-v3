@@ -12,6 +12,7 @@ import {
   IFARM_TOKEN_SYMBOL,
   WIDO_BALANCES_DECIMALS,
   WIDO_EXTEND_DECIMALS,
+  BEGINNERS_BALANCES_DECIMALS,
 } from '../../../constants'
 import { useWallet } from '../../../providers/Wallet'
 import { fromWei, toWei, getWeb3 } from '../../../services/web3'
@@ -106,11 +107,11 @@ const DepositStart = ({
             fromInfoUsdValue =
               quoteResult.fromTokenAmountUsdValue === null
                 ? ''
-                : ` (${formatNumberWido(
+                : ` ${formatNumberWido(
                     fromWei(quoteResult.fromTokenAmount, curToken.decimals) *
                       quoteResult.fromTokenUsdPrice,
-                    WIDO_BALANCES_DECIMALS,
-                  )})`
+                    BEGINNERS_BALANCES_DECIMALS,
+                  )}`
           }
 
           setFromInfoAmount(fromInfoValue)

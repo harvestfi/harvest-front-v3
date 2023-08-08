@@ -81,6 +81,12 @@ const NewLabel = styled.div`
     align-self: ${props.self};
   `
       : ''}
+  ${props =>
+    props.widthDiv
+      ? `
+    width: ${props.widthDiv};
+  `
+      : ''}
 
   img.icon {
     margin-right: 10px;
@@ -91,7 +97,7 @@ const NewLabel = styled.div`
   }
 
   img.info-icon {
-    margin-left: 15px;
+    margin-right: 5px;
   }
 
   @media screen and (max-width: 992px) {

@@ -213,11 +213,11 @@ const DepositBase = ({
         <span>{formatNumberWido(balance, POOL_BALANCES_DECIMALS)}</span>
       </BalanceInfo>
       <InsufficientSection isShow={showWarning ? 'true' : 'false'}>
-        <NewLabel marginRight="12px">
-          <img src={InfoIcon} alt="" />
-        </NewLabel>
-        <NewLabel size="14px" height="20px" weight="600" color="#344054">
-          Insufficient {pickedToken.symbol} balance on your wallet
+        <NewLabel display="flex" widthDiv="80%" items="center">
+          <img className="info-icon" src={InfoIcon} alt="" />
+          <NewLabel size="14px" height="20px" weight="600" color="#344054">
+            Insufficient {pickedToken.symbol} balance on your wallet
+          </NewLabel>
         </NewLabel>
         <div>
           <CloseBtn
