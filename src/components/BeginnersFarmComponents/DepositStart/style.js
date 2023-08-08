@@ -158,6 +158,7 @@ const GotItBtn = styled.button`
   text-decoration-line: underline;
   border: none;
   background: none;
+  padding: 0;
 `
 
 export { SelectTokenWido, ImgBtn, NewLabel, Buttons, FTokenInfo, IconCard, GotItBtn }
