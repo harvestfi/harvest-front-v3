@@ -1,6 +1,9 @@
 import styled from 'styled-components'
+import Plus from '../../../assets/images/logos/beginners/plus.svg'
+import Minus from '../../../assets/images/logos/beginners/minus.svg'
 
 const BaseWido = styled.div`
+  padding: 24px;
   ${props =>
     props.show
       ? `
@@ -172,7 +175,6 @@ const BalanceInfo = styled.div`
   line-height: 20px;
 
   margin-top: 5px;
-  margin-bottom: 25px;
   cursor: pointer;
 
   span {
@@ -195,6 +197,106 @@ const AmountSection = styled.div`
   padding-right: 16px;
 `
 
+const CreditCardBox = styled.div`
+  border-radius: 10px;
+  border: 1px solid var(--gray-200, #eaecf0);
+  background: var(--base-white, #fff);
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  padding: 12px;
+`
+
+const ThemeMode = styled.div`
+  display: flex;
+
+  #theme-switch {
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+    touch-action: pan-x;
+    user-select: none;
+
+    input {
+      cursor: pointer;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      opacity: 0;
+    }
+
+    .switch-track {
+      background: #000;
+      border: 1px solid ${props => props.borderColor};
+      height: 24px;
+      width: 50px;
+      border-radius: 30px;
+      transition: all 0.2s ease 0s;
+    }
+    .switch-thumb {
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-color: white;
+      height: 20px;
+      left: 2px;
+      position: absolute;
+      top: 2px;
+      width: 20px;
+      border-radius: 50%;
+      transition: all 0.25s ease 0s;
+    }
+
+    &:hover .switch-thumb {
+      box-shadow: 0 0 2px 3px #ff9400;
+    }
+  }
+
+  ${props =>
+    props.mode === 'deposit'
+      ? `
+      #theme-switch {
+        .switch-check {
+          opacity: 1;
+        }
+        .switch-x {
+          opacity: 0;
+        }
+        .switch-thumb {
+          left: 27px;
+          background-image: url(${Plus});
+        }
+      }
+    `
+      : `
+      #theme-switch {
+        .switch-thumb {
+          background-image: url(${Minus});
+        }
+      }
+    `}
+`
+
+const InsufficientSection = styled.div`
+  border-radius: 12px;
+  border: 1px solid #d0d5dd;
+  background: #fcfcfd;
+  padding: 16px;
+  ${props =>
+    props.isShow === 'true'
+      ? `
+    display: flex;
+    justify-content: space-between;
+  `
+      : `
+    display: none;
+  `}
+  margin-top: 20px;
+`
+
+const CloseBtn = styled.img`
+  cursor: pointer;
+`
+
 export {
   BaseWido,
   NewLabel,
@@ -204,4 +306,8 @@ export {
   BalanceInfo,
   DepoTitle,
   AmountSection,
+  CreditCardBox,
+  ThemeMode,
+  InsufficientSection,
+  CloseBtn,
 }

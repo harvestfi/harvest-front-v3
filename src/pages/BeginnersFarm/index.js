@@ -13,10 +13,10 @@ import BeginnerFriendly from '../../assets/images/logos/beginners/beginner-frien
 import WithdrawAnytime from '../../assets/images/logos/beginners/withdraw-anytime.svg'
 import Thumbsup from '../../assets/images/logos/beginners/thumbs-up.svg'
 import DOT from '../../assets/images/logos/beginners/dot.svg'
-import CreditCard from '../../assets/images/logos/beginners/credit-card-shield.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/BeginnersFarmComponents/DepositBase'
 import DepositSelectToken from '../../components/BeginnersFarmComponents/DepositSelectToken'
+import DepositStart from '../../components/BeginnersFarmComponents/DepositStart'
 import {
   DECIMAL_PRECISION,
   FARM_GRAIN_TOKEN_SYMBOL,
@@ -54,9 +54,7 @@ import {
   MyBalance,
   GuideSection,
   GuidePart,
-  ThemeMode,
   APRShow,
-  CreditCardBox,
 } from './style'
 
 const BeginnersCoinGroup = ['DAI', 'ETH', 'USDT', 'USDC']
@@ -175,8 +173,8 @@ const BeginnersFarm = () => {
     : find(pools, pool => pool.collateralAddress === tokens[id].vaultAddress)
 
   const tokenDecimals = token.decimals || tokens[id].decimals
-
   const lpTokenBalance = get(userStats, `[${fAssetPool.id}]['lpTokenBalance']`, 0)
+  const usdPrice = token.usdPrice
 
   // Show/Hide Select Token Component
   const [selectTokenDepo, setSelectTokenDepo] = useState(false)
@@ -186,11 +184,13 @@ const BeginnersFarm = () => {
   const [clickTokenIdDepo, setClickedTokenIdDepo] = useState(-1)
   const [balanceDepo, setBalanceDepo] = useState(0)
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
-  const [depositFinalStep] = useState(false)
-  const [startSlippageDepo] = useState(false)
+  const [depositFinalStep, setDepositFinalStep] = useState(false)
+  const [startRoutesDepo, setStartRoutesDepo] = useState(false)
+  const [quoteValueDepo, setQuoteValueDepo] = useState(null)
+  const [slippagePercentDepo] = useState(0.005)
   const [inputAmountDepo, setInputAmountDepo] = useState(0)
 
-  const [, setBalanceList] = useState([])
+  const [balanceList, setBalanceList] = useState([])
   const [supTokenList, setSupTokenList] = useState([])
 
   const toTokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
@@ -401,37 +401,10 @@ const BeginnersFarm = () => {
       </TopPart>
       <Inner>
         <BigDiv>
-          <HalfContent show={detailsView} partHeight={partHeightDepo} isSelToken={selectTokenDepo}>
-            {!selectTokenDepo && (
-              <>
-                <NewLabel display="flex" justifyContent="space-between" marginBottom="16px">
-                  <CreditCardBox>
-                    <img src={CreditCard} alt="" />
-                  </CreditCardBox>
-                  <ThemeMode mode={activeDepo ? 'deposit' : 'withdraw'}>
-                    <div id="theme-switch">
-                      <div className="switch-track">
-                        <div className="switch-thumb" />
-                      </div>
-
-                      <input
-                        type="checkbox"
-                        checked={activeDepo}
-                        onChange={switchMethod}
-                        aria-label="Switch between dark and light mode"
-                      />
-                    </div>
-                  </ThemeMode>
-                </NewLabel>
-                <NewLabel size="18px" height="28px" weight="600" color="#101828">
-                  Deposit
-                </NewLabel>
-              </>
-            )}
+          <HalfContent show={detailsView} partHeight={partHeightDepo}>
             <DepositBase
               selectTokenWido={selectTokenDepo}
               setSelectTokenWido={setSelectTokenDepo}
-              startSlippage={startSlippageDepo}
               depositWido={depositWido}
               setDepositWido={setDepositWido}
               finalStep={depositFinalStep}
@@ -441,6 +414,8 @@ const BeginnersFarm = () => {
               setInputAmount={setInputAmountDepo}
               token={token}
               supTokenList={supTokenList}
+              activeDepo={activeDepo}
+              switchMethod={switchMethod}
             />
             <DepositSelectToken
               selectTokenWido={selectTokenDepo}
@@ -451,6 +426,23 @@ const BeginnersFarm = () => {
               setBalance={setBalanceDepo}
               supTokenList={supTokenList}
               setPartHeight={setPartHeightDepo}
+            />
+            <DepositStart
+              pickedToken={pickedTokenDepo}
+              depositWido={depositWido}
+              setDepositWido={setDepositWido}
+              finalStep={depositFinalStep}
+              setFinalStep={setDepositFinalStep}
+              startRoutes={startRoutesDepo}
+              setStartRoutes={setStartRoutesDepo}
+              slippagePercentage={slippagePercentDepo}
+              inputAmount={inputAmountDepo}
+              token={token}
+              balanceList={balanceList}
+              useIFARM={useIFARM}
+              tokenSymbol={id}
+              quoteValue={quoteValueDepo}
+              setQuoteValue={setQuoteValueDepo}
             />
           </HalfContent>
           <RestContent show={farmView}>
@@ -498,7 +490,18 @@ const BeginnersFarm = () => {
                   Est. Value
                 </NewLabel>
                 <NewLabel weight="500" size="14px" height="16px" color="black" self="center">
-                  $100.00051
+                  {!connected ? (
+                    0
+                  ) : lpTokenBalance ? (
+                    fromWei(
+                      lpTokenBalance,
+                      fAssetPool.lpTokenData.decimals,
+                      POOL_BALANCES_DECIMALS,
+                      true,
+                    ) * usdPrice
+                  ) : (
+                    <AnimatedDots />
+                  )}
                 </NewLabel>
               </FlexDiv>
             </MyBalance>

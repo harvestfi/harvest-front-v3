@@ -4,6 +4,9 @@ import { useSetChain } from '@web3-onboard/react'
 import { toast } from 'react-toastify'
 import DropDownIcon from '../../../assets/images/logos/wido/drop-down.svg'
 import WalletIcon from '../../../assets/images/logos/beginners/wallet-in-button.svg'
+import CreditCard from '../../../assets/images/logos/beginners/credit-card-shield.svg'
+import InfoIcon from '../../../assets/images/logos/beginners/info-circle.svg'
+import CloseIcon from '../../../assets/images/logos/beginners/close.svg'
 import { POOL_BALANCES_DECIMALS } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
@@ -19,6 +22,10 @@ import {
   TokenSelect,
   NewLabel,
   AmountSection,
+  CreditCardBox,
+  ThemeMode,
+  InsufficientSection,
+  CloseBtn,
 } from './style'
 
 const getChainName = chain => {
@@ -40,7 +47,6 @@ const getChainName = chain => {
 const DepositBase = ({
   selectTokenWido,
   setSelectTokenWido,
-  startSlippage,
   depositWido,
   setDepositWido,
   finalStep,
@@ -50,6 +56,8 @@ const DepositBase = ({
   setInputAmount,
   token,
   supTokenList,
+  activeDepo,
+  switchMethod,
 }) => {
   const { connected, connectAction, account, chainId, setChainId } = useWallet()
   const { backColor, borderColor, widoTagActiveFontColor } = useThemeContext()
@@ -68,6 +76,7 @@ const DepositBase = ({
     ? parseInt(connectedChain.id, 16).toString()
     : ''
   const [depositName, setDepositName] = useState('Deposit')
+  const [showWarning, setShowWarning] = useState(false)
 
   useEffect(() => {
     if (account) {
@@ -110,7 +119,7 @@ const DepositBase = ({
         return
       }
       if (new BigNumber(inputAmount).isGreaterThan(balance)) {
-        toast.error('Cannot deposit more than balance!')
+        setShowWarning(true)
         return
       }
       if (new BigNumber(inputAmount).isEqualTo(0)) {
@@ -132,7 +141,29 @@ const DepositBase = ({
   }
 
   return (
-    <BaseWido show={!depositWido && !selectTokenWido && !startSlippage && !finalStep}>
+    <BaseWido show={!depositWido && !selectTokenWido && !finalStep}>
+      <NewLabel display="flex" justifyContent="space-between" marginBottom="16px">
+        <CreditCardBox>
+          <img src={CreditCard} alt="" />
+        </CreditCardBox>
+        <ThemeMode mode={activeDepo ? 'deposit' : 'withdraw'}>
+          <div id="theme-switch">
+            <div className="switch-track">
+              <div className="switch-thumb" />
+            </div>
+
+            <input
+              type="checkbox"
+              checked={activeDepo}
+              onChange={switchMethod}
+              aria-label="Switch between dark and light mode"
+            />
+          </div>
+        </ThemeMode>
+      </NewLabel>
+      <NewLabel size="18px" height="28px" weight="600" color="#101828">
+        Deposit
+      </NewLabel>
       <DepoTitle>Deposit USDC or other token from your wallet to get started.</DepoTitle>
       <TokenInfo>
         <AmountSection>
@@ -156,9 +187,6 @@ const DepositBase = ({
             type="button"
             onClick={async () => {
               setSelectTokenWido(true)
-              if (!connected) {
-                await connectAction()
-              }
             }}
             fontColor={widoTagActiveFontColor}
             borderColor={borderColor}
@@ -184,17 +212,36 @@ const DepositBase = ({
         USDC Balance Available:
         <span>{formatNumberWido(balance, POOL_BALANCES_DECIMALS)}</span>
       </BalanceInfo>
-      <Button
-        color="wido-deposit"
-        width="100%"
-        size="md"
-        onClick={() => {
-          onClickDeposit()
-        }}
-      >
-        {depositName}
-        <img src={WalletIcon} alt="" />
-      </Button>
+      <InsufficientSection isShow={showWarning ? 'true' : 'false'}>
+        <NewLabel marginRight="12px">
+          <img src={InfoIcon} alt="" />
+        </NewLabel>
+        <NewLabel size="14px" height="20px" weight="600" color="#344054">
+          Insufficient {pickedToken.symbol} balance on your wallet
+        </NewLabel>
+        <div>
+          <CloseBtn
+            src={CloseIcon}
+            alt=""
+            onClick={() => {
+              setShowWarning(false)
+            }}
+          />
+        </div>
+      </InsufficientSection>
+      <NewLabel marginTop="25px">
+        <Button
+          color="wido-deposit"
+          width="100%"
+          size="md"
+          onClick={() => {
+            onClickDeposit()
+          }}
+        >
+          {depositName}
+          <img src={WalletIcon} alt="" />
+        </Button>
+      </NewLabel>
     </BaseWido>
   )
 }

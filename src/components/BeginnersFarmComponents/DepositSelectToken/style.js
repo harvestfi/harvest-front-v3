@@ -170,4 +170,31 @@ const Search = styled.img`
   top: 10px;
 `
 
-export { SelectToken, SelectTokenWido, CloseBtn, FilterInput, NewLabel, Search }
+const NotConnectedWallet = styled.div`
+  border-radius: 12px;
+  border: 1px solid #d0d5dd;
+  background: #fcfcfd;
+  padding: 16px;
+  ${props =>
+    props.isShow === 'true'
+      ? `
+    display: flex;
+    justify-content: space-between;
+    `
+      : 'display: none;'};
+`
+
+const ImgBtn = styled.img`
+  cursor: pointer;
+`
+
+export {
+  SelectToken,
+  SelectTokenWido,
+  CloseBtn,
+  FilterInput,
+  NewLabel,
+  Search,
+  NotConnectedWallet,
+  ImgBtn,
+}
