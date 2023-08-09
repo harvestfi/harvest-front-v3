@@ -9,6 +9,8 @@ import BackIcon from '../../../assets/images/logos/beginners/arrow-left.svg'
 import HelpIcon from '../../../assets/images/logos/beginners/help-circle.svg'
 import FaceSmileIcon from '../../../assets/images/logos/beginners/face-smile.svg'
 import CloseIcon from '../../../assets/images/logos/beginners/close.svg'
+import AlertIcon from '../../../assets/images/logos/beginners/alert-triangle.svg'
+import AlertCloseIcon from '../../../assets/images/logos/beginners/alert-close.svg'
 import {
   IFARM_TOKEN_SYMBOL,
   WIDO_BALANCES_DECIMALS,
@@ -22,7 +24,16 @@ import { usePools } from '../../../providers/Pools'
 import { fromWei, toWei, maxUint256, getWeb3 } from '../../../services/web3'
 import { formatNumberWido } from '../../../utils'
 import AnimatedDots from '../../AnimatedDots'
-import { Buttons, ImgBtn, NewLabel, SelectTokenWido, FTokenInfo, IconCard, GotItBtn } from './style'
+import {
+  Buttons,
+  ImgBtn,
+  NewLabel,
+  SelectTokenWido,
+  FTokenInfo,
+  IconCard,
+  GotItBtn,
+  FTokenWrong,
+} from './style'
 import { addresses } from '../../../data'
 import { useVaults } from '../../../providers/Vault'
 
@@ -30,6 +41,8 @@ const DepositStart = ({
   pickedToken,
   depositWido,
   setDepositWido,
+  finalStep,
+  setFinalStep,
   inputAmount,
   token,
   balanceList,
@@ -163,72 +176,64 @@ const DepositStart = ({
 
   const toToken = token.vaultAddress || token.tokenAddress
 
-  const [startExecute, setStartExecute] = useState(false)
+  const [startSpinner, setStartSpinner] = useState(false) // State of Spinner for 'Finalize Deposit' button
+
+  const [depositFailed, setDepositFailed] = useState(false)
 
   const onDeposit = async () => {
     if (pickedToken.default) {
-      try {
-        await handleDeposit(
-          token,
-          account,
-          tokenSymbol,
-          amountsToExecuteInWei,
-          approvedBalances[tokenSymbol],
-          contracts,
-          vaultsData[tokenSymbol],
-          null,
-          false,
-          fAssetPool,
-          multipleAssets,
-          zap,
-          async () => {
-            await getWalletBalances(walletBalancesToCheck)
-            const updatedStats = await fetchUserPoolStats([fAssetPool], account, userStats)
-            await getFarmingBalances([tokenSymbol], farmingBalances, updatedStats)
-            setAmountsToExecute(['', ''])
-            await fetchUserPoolStats([fAssetPool], account, userStats)
-          },
-          async () => {
-            await getWalletBalances(walletBalancesToCheck, false, true)
-          },
-          async () => {},
-        )
-      } catch (err) {
-        toast.error('Failed to deposit ', err)
-        setStartExecute(false)
-      }
+      await handleDeposit(
+        token,
+        account,
+        tokenSymbol,
+        amountsToExecuteInWei,
+        approvedBalances[tokenSymbol],
+        contracts,
+        vaultsData[tokenSymbol],
+        null,
+        false,
+        fAssetPool,
+        multipleAssets,
+        zap,
+        async () => {
+          await getWalletBalances(walletBalancesToCheck)
+          const updatedStats = await fetchUserPoolStats([fAssetPool], account, userStats)
+          await getFarmingBalances([tokenSymbol], farmingBalances, updatedStats)
+          setAmountsToExecute(['', ''])
+          await fetchUserPoolStats([fAssetPool], account, userStats)
+        },
+        async () => {
+          await getWalletBalances(walletBalancesToCheck, false, true)
+        },
+        async () => {},
+      )
     } else {
       const user = account
-      try {
-        const fromChainId = chainId
-        const fromToken = pickedToken.address
-        const toChainId = chainId
-        const mainWeb = await getWeb3(chainId, account, web3)
-        const quoteResult = await quote(
-          {
-            fromChainId, // Chain Id of from token
-            fromToken, // Token address of from token
-            toChainId, // Chain Id of to token
-            toToken, // Token address of to token
-            amount, // Token amount of from token
-            slippagePercentage, // Acceptable max slippage for the swap
-            user, // Address of user placing the order.
-          },
-          mainWeb.currentProvider,
-        )
+      const fromChainId = chainId
+      const fromToken = pickedToken.address
+      const toChainId = chainId
+      const mainWeb = await getWeb3(chainId, account, web3)
+      const quoteResult = await quote(
+        {
+          fromChainId, // Chain Id of from token
+          fromToken, // Token address of from token
+          toChainId, // Chain Id of to token
+          toToken, // Token address of to token
+          amount, // Token amount of from token
+          slippagePercentage, // Acceptable max slippage for the swap
+          user, // Address of user placing the order.
+        },
+        mainWeb.currentProvider,
+      )
 
-        await mainWeb.eth.sendTransaction({
-          from: quoteResult.from,
-          data: quoteResult.data,
-          to: quoteResult.to,
-          value: quoteResult.value,
-        })
+      await mainWeb.eth.sendTransaction({
+        from: quoteResult.from,
+        data: quoteResult.data,
+        to: quoteResult.to,
+        value: quoteResult.value,
+      })
 
-        await fetchUserPoolStats([fAssetPool], account, userStats)
-      } catch (err) {
-        toast.error('Failed to execute ', err)
-        setStartExecute(false)
-      }
+      await fetchUserPoolStats([fAssetPool], account, userStats)
     }
   }
 
@@ -264,7 +269,7 @@ const DepositStart = ({
   }
 
   const startDeposit = async () => {
-    setStartExecute(true)
+    setStartSpinner(true)
     let stepFlag = false
     try {
       let allowanceCheck
@@ -286,19 +291,28 @@ const DepositStart = ({
       }
       stepFlag = true // Finish approve successfully
     } catch (err) {
-      toast.error('Failed to approve!')
-      setStartExecute(false)
+      setStartSpinner(false)
+      setDepositFailed(true)
+      return
     }
 
     if (stepFlag) {
-      await onDeposit()
+      try {
+        await onDeposit()
+      } catch (err) {
+        setDepositFailed(true)
+        setStartSpinner(false)
+        return
+      }
     }
     // End Approve and Deposit successfully
-    setStartExecute(false)
+    setStartSpinner(false)
+    setDepositFailed(false)
+    setFinalStep(true)
   }
 
   return (
-    <SelectTokenWido show={depositWido}>
+    <SelectTokenWido show={depositWido && !finalStep}>
       <NewLabel
         display="flex"
         marginBottom="16px"
@@ -407,13 +421,38 @@ const DepositStart = ({
         </NewLabel>
       </FTokenInfo>
 
+      <FTokenWrong isShow={depositFailed ? 'true' : 'false'}>
+        <NewLabel marginRight="12px" display="flex">
+          <div>
+            <img src={AlertIcon} alt="" />
+          </div>
+          <NewLabel marginLeft="12px">
+            <NewLabel color="#B54708" size="14px" height="20px" weight="600" marginBottom="4px">
+              Whoops, something went wrong.
+            </NewLabel>
+            <NewLabel color="#B54708" size="14px" height="20px" weight="400" marginBottom="5px">
+              Please try to repeat the transaction in your wallet.
+            </NewLabel>
+          </NewLabel>
+        </NewLabel>
+        <NewLabel>
+          <ImgBtn
+            src={AlertCloseIcon}
+            alt=""
+            onClick={() => {
+              setDepositFailed(false)
+            }}
+          />
+        </NewLabel>
+      </FTokenWrong>
+
       <NewLabel size="16px" height="21px" weight={500} color="#1F2937" marginTop="25px">
         <Buttons
           onClick={() => {
             startDeposit()
           }}
         >
-          {!startExecute ? (
+          {!startSpinner ? (
             'Finalize Deposit'
           ) : (
             <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />

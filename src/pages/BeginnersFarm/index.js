@@ -17,6 +17,7 @@ import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/BeginnersFarmComponents/DepositBase'
 import DepositSelectToken from '../../components/BeginnersFarmComponents/DepositSelectToken'
 import DepositStart from '../../components/BeginnersFarmComponents/DepositStart'
+import DepositResult from '../../components/BeginnersFarmComponents/DepositResult'
 import {
   DECIMAL_PRECISION,
   FARM_GRAIN_TOKEN_SYMBOL,
@@ -195,6 +196,7 @@ const BeginnersFarm = () => {
   const [clickTokenIdDepo, setClickedTokenIdDepo] = useState(-1)
   const [balanceDepo, setBalanceDepo] = useState(0)
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
+  const [depositFinalStep, setDepositFinalStep] = useState(false)
   const [quoteValueDepo, setQuoteValueDepo] = useState(null)
   const [inputAmountDepo, setInputAmountDepo] = useState(0)
 
@@ -411,10 +413,11 @@ const BeginnersFarm = () => {
         <BigDiv>
           <HalfContent show={detailsView} partHeight={partHeightDepo}>
             <DepositBase
-              selectTokenWido={selectTokenDepo}
-              setSelectTokenWido={setSelectTokenDepo}
-              depositWido={depositWido}
-              setDepositWido={setDepositWido}
+              selectToken={selectTokenDepo}
+              setSelectToken={setSelectTokenDepo}
+              deposit={depositWido}
+              setDeposit={setDepositWido}
+              finalStep={depositFinalStep}
               balance={balanceDepo}
               pickedToken={pickedTokenDepo}
               inputAmount={inputAmountDepo}
@@ -425,8 +428,8 @@ const BeginnersFarm = () => {
               switchMethod={switchMethod}
             />
             <DepositSelectToken
-              selectTokenWido={selectTokenDepo}
-              setSelectTokenWido={setSelectTokenDepo}
+              selectToken={selectTokenDepo}
+              setSelectToken={setSelectTokenDepo}
               clickTokenId={clickTokenIdDepo}
               setClickedTokenId={setClickedTokenIdDepo}
               setPickedToken={setPickedTokenDepo}
@@ -438,6 +441,8 @@ const BeginnersFarm = () => {
               pickedToken={pickedTokenDepo}
               depositWido={depositWido}
               setDepositWido={setDepositWido}
+              finalStep={depositFinalStep}
+              setFinalStep={setDepositFinalStep}
               inputAmount={inputAmountDepo}
               token={token}
               balanceList={balanceList}
@@ -447,6 +452,18 @@ const BeginnersFarm = () => {
               setQuoteValue={setQuoteValueDepo}
               fAssetPool={fAssetPool}
               multipleAssets={multipleAssets}
+            />
+            <DepositResult
+              pickedToken={pickedTokenDepo}
+              finalStep={depositFinalStep}
+              setFinalStep={setDepositFinalStep}
+              setSelectToken={setSelectTokenDepo}
+              setDeposit={setDepositWido}
+              inputAmount={inputAmountDepo}
+              token={token}
+              tokenSymbol={id}
+              quoteValue={quoteValueDepo}
+              setQuoteValue={setQuoteValueDepo}
             />
           </HalfContent>
           <RestContent show={farmView}>

@@ -45,10 +45,11 @@ const getChainName = chain => {
 }
 
 const DepositBase = ({
-  selectTokenWido,
-  setSelectTokenWido,
-  depositWido,
-  setDepositWido,
+  selectToken,
+  setSelectToken,
+  deposit,
+  setDeposit,
+  finalStep,
   balance,
   pickedToken,
   inputAmount,
@@ -125,7 +126,7 @@ const DepositBase = ({
         toast.error('Cannot deposit 0!')
         return
       }
-      setDepositWido(true)
+      setDeposit(true)
       setShowWarning(false)
     }
   }
@@ -141,7 +142,7 @@ const DepositBase = ({
   }
 
   return (
-    <BaseWido show={!depositWido && !selectTokenWido}>
+    <BaseWido show={!deposit && !selectToken && !finalStep}>
       <NewLabel display="flex" justifyContent="space-between" marginBottom="16px">
         <CreditCardBox>
           <img src={CreditCard} alt="" />
@@ -186,7 +187,7 @@ const DepositBase = ({
           <TokenSelect
             type="button"
             onClick={async () => {
-              setSelectTokenWido(true)
+              setSelectToken(true)
             }}
             fontColor={widoTagActiveFontColor}
             borderColor={borderColor}

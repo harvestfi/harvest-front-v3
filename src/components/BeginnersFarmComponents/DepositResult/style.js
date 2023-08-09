@@ -8,7 +8,6 @@ const SelectTokenWido = styled.div`
     props.show
       ? `
     display: block;
-    height: 100%;
   `
       : 'display: none;'}
 `
@@ -138,9 +137,10 @@ const Buttons = styled.button`
 const FTokenInfo = styled.div`
   border-radius: 12px;
   border: 1px solid #d0d5dd;
-  background: #fff;
+  background: #f6fef9;
   padding: 16px;
   display: ${props => (props.isShow === 'true' ? `flex` : 'none')};
+  justify-content: space-between;
   gap: 12px 0;
   margin-top: 15px;
 `
@@ -156,26 +156,4 @@ const IconCard = styled.div`
   align-items: center;
 `
 
-const GotItBtn = styled.button`
-  color: #edae50;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 20px; /* 142.857% */
-  text-decoration-line: underline;
-  border: none;
-  background: none;
-  padding: 0;
-`
-
-const FTokenWrong = styled.div`
-  border-radius: 12px;
-  border: 1px solid #fec84b;
-  background: #fffcf5;
-  padding: 16px;
-  display: ${props => (props.isShow === 'true' ? `flex` : 'none')};
-  gap: 12px 0;
-  margin-top: 15px;
-  justify-content: space-between;
-`
-
-export { SelectTokenWido, ImgBtn, NewLabel, Buttons, FTokenInfo, IconCard, GotItBtn, FTokenWrong }
+export { SelectTokenWido, ImgBtn, NewLabel, Buttons, FTokenInfo, IconCard }

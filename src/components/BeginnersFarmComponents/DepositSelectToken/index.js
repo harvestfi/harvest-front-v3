@@ -16,8 +16,8 @@ import SearchIcon from '../../../assets/images/logos/beginners/search.svg'
 import InfoIcon from '../../../assets/images/logos/beginners/info-circle.svg'
 
 const DepositSelectToken = ({
-  selectTokenWido,
-  setSelectTokenWido,
+  selectToken,
+  setSelectToken,
   clickTokenId,
   setClickedTokenId,
   setPickedToken,
@@ -34,13 +34,13 @@ const DepositSelectToken = ({
   }
 
   useEffect(() => {
-    if (selectTokenWido) {
+    if (selectToken) {
       setPartHeight(350) // Set fixed height for select token part
     }
-  }, [selectTokenWido, setPartHeight])
+  }, [selectToken, setPartHeight])
 
   return (
-    <SelectToken show={selectTokenWido}>
+    <SelectToken show={selectToken}>
       <SelectTokenWido>
         <NewLabel position="relative">
           <Search src={SearchIcon} />
@@ -53,7 +53,7 @@ const DepositSelectToken = ({
             src={CloseIcon}
             alt=""
             onClick={() => {
-              setSelectTokenWido(false)
+              setSelectToken(false)
               setPartHeight(null)
             }}
           />
@@ -74,7 +74,7 @@ const DepositSelectToken = ({
               setClickedId={setClickedTokenId}
               setPickedToken={setPickedToken}
               setBalance={setBalance}
-              setSelectTokenWido={setSelectTokenWido}
+              setSelectTokenWido={setSelectToken}
               setPartHeight={setPartHeight}
               filterWord={filterWord}
             />

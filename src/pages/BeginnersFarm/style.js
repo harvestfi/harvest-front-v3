@@ -245,7 +245,7 @@ const HalfContent = styled.div`
       ? `
     ${props.partHeight}px`
       : `
-      unset
+      fit-content
     `};
 
   @media screen and (max-width: 992px) {
