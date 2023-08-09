@@ -62,7 +62,7 @@ import {
   APRShow,
 } from './style'
 
-const BeginnersCoinGroup = ['DAI', 'ETH', 'USDT', 'USDC']
+const BeginnersCoinGroup = ['DAI', 'ETH', 'USDT', 'xGRAIL']
 
 const BeginnersFarm = () => {
   const { paramAddress } = useParams()

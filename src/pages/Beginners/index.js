@@ -19,7 +19,7 @@ const IconAry = [
   { name: 'DAI', img: DAI, bottomImg: DAIBottom },
   { name: 'WETH', img: ETH, bottomImg: ETHBottom },
   { name: 'USDT', img: USDT, bottomImg: USDTBottom },
-  { name: 'USDC', img: USDC, bottomImg: USDCBottom },
+  { name: 'xGRAIL', img: USDC, bottomImg: USDCBottom },
 ]
 
 const Home = () => {
