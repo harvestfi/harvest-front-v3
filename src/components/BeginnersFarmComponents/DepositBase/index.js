@@ -49,7 +49,6 @@ const DepositBase = ({
   setSelectTokenWido,
   depositWido,
   setDepositWido,
-  finalStep,
   balance,
   pickedToken,
   inputAmount,
@@ -142,7 +141,7 @@ const DepositBase = ({
   }
 
   return (
-    <BaseWido show={!depositWido && !selectTokenWido && !finalStep}>
+    <BaseWido show={!depositWido && !selectTokenWido}>
       <NewLabel display="flex" justifyContent="space-between" marginBottom="16px">
         <CreditCardBox>
           <img src={CreditCard} alt="" />

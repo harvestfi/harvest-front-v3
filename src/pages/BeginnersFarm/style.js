@@ -66,7 +66,6 @@ const NewLabel = styled.div`
   font-weight: ${props => props.weight || '400'};
   font-size: ${props => props.size || '20px'};
   line-height: ${props => props.height || '0px'};
-  align-items: center;
   ${props =>
     props.borderBottom
       ? `

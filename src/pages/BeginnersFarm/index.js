@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { find, get, isEqual } from 'lodash'
+import { find, get, isEqual, isArray } from 'lodash'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { useHistory, useParams } from 'react-router-dom'
@@ -35,7 +35,7 @@ import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
-import { displayAPY, getTotalApy } from '../../utils'
+import { displayAPY, getTotalApy, formatNumber } from '../../utils'
 import {
   BackArrow,
   BackBtnRect,
@@ -168,9 +168,20 @@ const BeginnersFarm = () => {
   }, [token])
 
   const useIFARM = id === FARM_TOKEN_SYMBOL
-  const fAssetPool = isSpecialVault
-    ? token.data
-    : find(pools, pool => pool.collateralAddress === tokens[id].vaultAddress)
+  const fAssetPool = find(pools, pool => pool.collateralAddress === tokens[id].vaultAddress)
+  const multipleAssets = useMemo(
+    () =>
+      isArray(tokens[id].tokenAddress) &&
+      tokens[id].tokenAddress.map(address => {
+        const selectedSymbol = Object.keys(tokens).find(
+          symbol =>
+            !isArray(tokens[symbol].tokenAddress) &&
+            tokens[symbol].tokenAddress.toLowerCase() === address.toLowerCase(),
+        )
+        return selectedSymbol
+      }),
+    [id, tokens],
+  )
 
   const tokenDecimals = token.decimals || tokens[id].decimals
   const lpTokenBalance = get(userStats, `[${fAssetPool.id}]['lpTokenBalance']`, 0)
@@ -184,10 +195,7 @@ const BeginnersFarm = () => {
   const [clickTokenIdDepo, setClickedTokenIdDepo] = useState(-1)
   const [balanceDepo, setBalanceDepo] = useState(0)
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
-  const [depositFinalStep, setDepositFinalStep] = useState(false)
-  const [startRoutesDepo, setStartRoutesDepo] = useState(false)
   const [quoteValueDepo, setQuoteValueDepo] = useState(null)
-  const [slippagePercentDepo] = useState(0.005)
   const [inputAmountDepo, setInputAmountDepo] = useState(0)
 
   const [balanceList, setBalanceList] = useState([])
@@ -407,7 +415,6 @@ const BeginnersFarm = () => {
               setSelectTokenWido={setSelectTokenDepo}
               depositWido={depositWido}
               setDepositWido={setDepositWido}
-              finalStep={depositFinalStep}
               balance={balanceDepo}
               pickedToken={pickedTokenDepo}
               inputAmount={inputAmountDepo}
@@ -431,11 +438,6 @@ const BeginnersFarm = () => {
               pickedToken={pickedTokenDepo}
               depositWido={depositWido}
               setDepositWido={setDepositWido}
-              finalStep={depositFinalStep}
-              setFinalStep={setDepositFinalStep}
-              startRoutes={startRoutesDepo}
-              setStartRoutes={setStartRoutesDepo}
-              slippagePercentage={slippagePercentDepo}
               inputAmount={inputAmountDepo}
               token={token}
               balanceList={balanceList}
@@ -443,6 +445,8 @@ const BeginnersFarm = () => {
               tokenSymbol={id}
               quoteValue={quoteValueDepo}
               setQuoteValue={setQuoteValueDepo}
+              fAssetPool={fAssetPool}
+              multipleAssets={multipleAssets}
             />
           </HalfContent>
           <RestContent show={farmView}>
@@ -489,16 +493,19 @@ const BeginnersFarm = () => {
                 <NewLabel size="14px" weight="500" height="24px" color="#344054" self="center">
                   Est. Value
                 </NewLabel>
-                <NewLabel weight="500" size="14px" height="16px" color="black" self="center">
+                <NewLabel weight="500" size="14px" height="24px" color="black" self="center">
                   {!connected ? (
                     0
                   ) : lpTokenBalance ? (
-                    fromWei(
-                      lpTokenBalance,
-                      fAssetPool.lpTokenData.decimals,
+                    formatNumber(
+                      fromWei(
+                        lpTokenBalance,
+                        fAssetPool.lpTokenData.decimals,
+                        POOL_BALANCES_DECIMALS,
+                        true,
+                      ) * usdPrice,
                       POOL_BALANCES_DECIMALS,
-                      true,
-                    ) * usdPrice
+                    )
                   ) : (
                     <AnimatedDots />
                   )}
@@ -524,7 +531,7 @@ const BeginnersFarm = () => {
                   </NewLabel>
                 </APRShow>
               </NewLabel>
-              <NewLabel padding="20px 15px" size="13px" height="20px" weight="500" color="#475467">
+              <NewLabel padding="20px 15px" size="13px" height="24px" weight="500" color="#475467">
                 This farm offers a yield from Idle Finance strategy relying on a combination of top
                 DeFi protocols (Compound, Aave, Clearpool, and Morpho) to boost your earnings.
               </NewLabel>
