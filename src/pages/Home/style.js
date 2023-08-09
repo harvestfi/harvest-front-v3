@@ -116,8 +116,22 @@ const FirstFarmingPart = styled.div`
   flex-direction: column;
   justify-content: center;
   padding: 34px;
-
   color: white;
+  position: relative;
+
+  img.sun {
+    width: 150px;
+    position: absolute;
+    top: 10%;
+    right: 10%;
+  }
+
+  img.bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+  }
 `
 
 const DirectBtn = styled.button`
@@ -139,19 +153,29 @@ const AdvancedFarms = styled.div`
   background: url(${AdvancedBack});
   background-size: cover;
   background-repeat: no-repeat;
-
   box-shadow: 0px 4px 4px -2px rgba(16, 24, 40, 0.03), 0px 10px 12px -2px rgba(16, 24, 40, 0.08);
-
   border-radius: 13px;
-
   display: flex;
   flex-direction: column;
   justify-content: center;
   padding: 34px;
   color: #fff;
-
   position: relative;
   overflow: hidden;
+
+  img.sun {
+    position: absolute;
+    left: 45%;
+    bottom: 12%;
+    width: 150px;
+  }
+
+  img.bottom {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+  }
 `
 
 export {
