@@ -1,4 +1,8 @@
 import styled from 'styled-components'
+import ETH from '../../assets/images/logos/beginnershome/eth.svg'
+import DAI from '../../assets/images/logos/beginnershome/dai.svg'
+import USDT from '../../assets/images/logos/beginnershome/usdt.svg'
+import USDC from '../../assets/images/logos/beginnershome/usdc.svg'
 
 const Container = styled.a`
   transition: 0.25s;
@@ -11,31 +15,31 @@ const Container = styled.a`
   text-decoration: none;
   border-radius: 13px;
   box-shadow: 0px 4px 4px -2px rgba(16, 24, 40, 0.03), 0px 10px 12px -2px rgba(16, 24, 40, 0.08);
-
+  position: relative;
   ${props =>
     props.num === 0
       ? `
-    background: #fceabb;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to left, #f8b500, #fceabb);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to left, #f8b500, #fceabb); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: url(${DAI});
   `
       : props.num === 1
       ? `
-    background: #a8c0ff;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to left, #3f2b96, #a8c0ff);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to left, #3f2b96, #a8c0ff); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: url(${ETH});
   `
       : props.num === 2
       ? `
-    background: #134E5E;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to left, #71B280, #134E5E);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to left, #71B280, #134E5E); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: url(${USDT});
   `
       : `
-    background: #2193b0;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to left, #6dd5ed, #2193b0);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to left, #6dd5ed, #2193b0); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: url(${USDC});
   `}
+  background-size: cover;
+  background-repeat: no-repeat;
+
+  img.bottom {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+  }
 `
 
 const Percent = styled.div`

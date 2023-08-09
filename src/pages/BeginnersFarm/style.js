@@ -1,4 +1,8 @@
 import styled from 'styled-components'
+import ETH from '../../assets/images/logos/beginnershome/eth.svg'
+import DAI from '../../assets/images/logos/beginnershome/dai.svg'
+import USDT from '../../assets/images/logos/beginnershome/usdt.svg'
+import USDC from '../../assets/images/logos/beginnershome/usdc.svg'
 
 const DetailView = styled.div`
   width: 100%;
@@ -28,34 +32,37 @@ const Inner = styled.div`
 `
 
 const TopPart = styled.div`
-  padding: 70px 100px 70px 50px;
+  padding: 70px 100px 170px 50px;
   display: flex;
   justify-content: space-between;
 
   ${props =>
     props.num === 0
       ? `
-    background: #fceabb;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to left, #f8b500, #fceabb);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to left, #f8b500, #fceabb); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: url(${DAI});
   `
       : props.num === 1
       ? `
-    background: #a8c0ff;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to left, #3f2b96, #a8c0ff);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to left, #3f2b96, #a8c0ff); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: url(${ETH});
   `
       : props.num === 2
       ? `
-    background: #134E5E;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to left, #71B280, #134E5E);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to left, #71B280, #134E5E); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: url(${USDT});
   `
       : `
-    background: #2193b0;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to left, #6dd5ed, #2193b0);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to left, #6dd5ed, #2193b0); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: url(${USDC});
   `}
+  background-size: cover;
+  background-repeat: no-repeat;
+
+  position: relative;
+
+  img.bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+  }
 
   @media screen and (max-width: 992px) {
     display: none;
@@ -336,7 +343,7 @@ const BigDiv = styled(FlexDiv)`
 
 const LogoImg = styled.img`
   margin-right: -5px;
-  width: 357px;
+  width: 257px;
 
   @media screen and (max-width: 1368px) {
     width: 200px;

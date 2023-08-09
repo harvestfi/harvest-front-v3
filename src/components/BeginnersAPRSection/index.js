@@ -5,7 +5,7 @@ import { displayAPY, getTotalApy } from '../../utils'
 import { DECIMAL_PRECISION } from '../../constants'
 import DOT from '../../assets/images/logos/beginners/dot.svg'
 
-const BeginnersAPRSection = ({ token, img, num, vaultPool, tokenVault }) => {
+const BeginnersAPRSection = ({ token, img, bottomImg, num, vaultPool, tokenVault }) => {
   const { push } = useHistory()
   const isSpecialVault = token.liquidityPoolVault || token.poolVault
 
@@ -31,6 +31,7 @@ const BeginnersAPRSection = ({ token, img, num, vaultPool, tokenVault }) => {
           &nbsp;APY
         </Percent>
       </Section>
+      <img className="bottom" src={bottomImg} alt="" />
     </Container>
   )
 }

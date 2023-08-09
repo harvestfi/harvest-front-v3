@@ -4,18 +4,22 @@ import BeginnersAPRSection from '../../components/BeginnersAPRSection'
 import { useVaults } from '../../providers/Vault'
 import { usePools } from '../../providers/Pools'
 import { useThemeContext } from '../../providers/useThemeContext'
-import DAI from '../../assets/images/logos/beginners/dai.svg'
-import ETH from '../../assets/images/logos/beginners/eth.svg'
-import USDT from '../../assets/images/logos/beginners/usdt.svg'
-import USDC from '../../assets/images/logos/beginners/usdc.svg'
+import DAI from '../../assets/images/logos/beginnershome/dai-icon.svg'
+import ETH from '../../assets/images/logos/beginnershome/eth-icon.svg'
+import USDT from '../../assets/images/logos/beginnershome/usdt-icon.svg'
+import USDC from '../../assets/images/logos/beginnershome/usdc-icon.svg'
+import DAIBottom from '../../assets/images/logos/beginnershome/dai-bottom.svg'
+import ETHBottom from '../../assets/images/logos/beginnershome/eth-bottom.svg'
+import USDTBottom from '../../assets/images/logos/beginnershome/usdt-bottom.svg'
+import USDCBottom from '../../assets/images/logos/beginnershome/usdc-bottom.svg'
 
 import { Container, Inner, UnitPart, HeaderTitle, HeaderDesc, CoinSection } from './style'
 
 const IconAry = [
-  { name: 'DAI', img: DAI },
-  { name: 'WETH', img: ETH },
-  { name: 'USDT', img: USDT },
-  { name: 'USDC', img: USDC },
+  { name: 'DAI', img: DAI, bottomImg: DAIBottom },
+  { name: 'WETH', img: ETH, bottomImg: ETHBottom },
+  { name: 'USDT', img: USDT, bottomImg: USDTBottom },
+  { name: 'USDC', img: USDC, bottomImg: USDCBottom },
 ]
 
 const Home = () => {
@@ -58,6 +62,7 @@ const Home = () => {
                 <BeginnersAPRSection
                   token={token}
                   img={el.img}
+                  bottomImg={el.bottomImg}
                   num={i}
                   vaultPool={vaultPool}
                   tokenVault={tokenVault}

@@ -13,6 +13,10 @@ import BeginnerFriendly from '../../assets/images/logos/beginners/beginner-frien
 import WithdrawAnytime from '../../assets/images/logos/beginners/withdraw-anytime.svg'
 import Thumbsup from '../../assets/images/logos/beginners/thumbs-up.svg'
 import DOT from '../../assets/images/logos/beginners/dot.svg'
+import DAIBottom from '../../assets/images/logos/beginnershome/dai-bottom.svg'
+import ETHBottom from '../../assets/images/logos/beginnershome/eth-bottom.svg'
+import USDTBottom from '../../assets/images/logos/beginnershome/usdt-bottom.svg'
+import USDCBottom from '../../assets/images/logos/beginnershome/usdc-bottom.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/BeginnersFarmComponents/DepositBase'
 import DepositSelectToken from '../../components/BeginnersFarmComponents/DepositSelectToken'
@@ -157,16 +161,23 @@ const BeginnersFarm = () => {
     // 👇️ scroll to top on page load
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
   }, [])
-
+  const tokenName = token.tokenNames.join(', ') || token.rewardSymbol
+  const bottomImg =
+    tokenName === 'DAI'
+      ? DAIBottom
+      : tokenName === 'ETH'
+      ? ETHBottom
+      : tokenName === 'USDT'
+      ? USDTBottom
+      : USDCBottom
   useEffect(() => {
-    const tokenName = token.tokenNames.join(', ') || token.rewardSymbol
     // eslint-disable-next-line array-callback-return
     BeginnersCoinGroup.map((el, i) => {
       if (el === tokenName) {
         setCoinId(i)
       }
     })
-  }, [token])
+  }, [token, tokenName])
 
   const useIFARM = id === FARM_TOKEN_SYMBOL
   const fAssetPool = find(pools, pool => pool.collateralAddress === tokens[id].vaultAddress)
@@ -408,6 +419,7 @@ const BeginnersFarm = () => {
             <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
           ))}
         </FlexTopDiv>
+        <img className="bottom" src={bottomImg} alt="" />
       </TopPart>
       <Inner>
         <BigDiv>
