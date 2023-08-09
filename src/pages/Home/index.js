@@ -1,8 +1,6 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { useThemeContext } from '../../providers/useThemeContext'
-import CoinGroup from '../../assets/images/logos/home/coin-group.svg'
-import AdvancedBack from '../../assets/images/logos/home/advanced-back.svg'
 import {
   Container,
   Inner,
@@ -36,7 +34,6 @@ const Home = () => {
               Start Earning Now
             </StartBeginners>
           </FirstBack>
-          <img className="coin-group" src={CoinGroup} alt="" />
         </FirstPart>
         <SecondPart>
           <FirstFarmingPart>
@@ -48,7 +45,6 @@ const Home = () => {
             <Title>Advanced Farms</Title>
             <Desc>Farm with a curated list of 100 farms</Desc>
             <DirectBtn>View List</DirectBtn>
-            <img src={AdvancedBack} alt="" />
           </AdvancedFarms>
         </SecondPart>
       </Inner>
