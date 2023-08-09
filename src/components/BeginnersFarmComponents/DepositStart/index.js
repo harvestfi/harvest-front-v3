@@ -139,7 +139,7 @@ const DepositStart = ({
               WIDO_EXTEND_DECIMALS,
             )
             fromInfoUsdValue =
-              quoteResult.fromTokenAmountUsdValue === null
+              quoteResult.fromTokenAmount === null
                 ? ''
                 : `${formatNumberWido(
                     fromWei(quoteResult.fromTokenAmount, curToken.decimals) *
@@ -179,6 +179,7 @@ const DepositStart = ({
   const [startSpinner, setStartSpinner] = useState(false) // State of Spinner for 'Finalize Deposit' button
 
   const [depositFailed, setDepositFailed] = useState(false)
+  const [, setPendingAction] = useState(null)
 
   const onDeposit = async () => {
     if (pickedToken.default) {
@@ -190,7 +191,7 @@ const DepositStart = ({
         approvedBalances[tokenSymbol],
         contracts,
         vaultsData[tokenSymbol],
-        null,
+        setPendingAction,
         false,
         fAssetPool,
         multipleAssets,
@@ -245,7 +246,7 @@ const DepositStart = ({
         tokenSymbol,
         null,
         null,
-        null,
+        setPendingAction,
         async () => {
           await fetchUserPoolStats([fAssetPool], account, userStats)
           await getWalletBalances([tokenSymbol], false, true)
