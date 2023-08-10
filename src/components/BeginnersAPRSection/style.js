@@ -43,6 +43,10 @@ const Container = styled.a`
     width: 100%;
     bottom: 0;
   }
+
+  @media screen and (max-width: 992px) {
+    min-height: 200px;
+  }
 `
 
 const Percent = styled.div`
@@ -60,12 +64,26 @@ const Percent = styled.div`
   img {
     margin-right: 5px;
   }
+
+  @media screen and (max-width: 992px) {
+    margin-top: 8px;
+    font-size: 8px;
+    line-height: 12px;
+    font-weight: 500;
+  }
 `
 
 const Section = styled.div`
   display: flex;
   justify-content: center;
   flex-direction: column;
+
+  @media screen and (max-width: 992px) {
+    img.token-icon {
+      width: 73px;
+      height: 73px;
+    }
+  }
 `
 
 export { Container, Percent, Section }

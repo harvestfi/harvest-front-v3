@@ -24,7 +24,7 @@ const BeginnersAPRSection = ({ token, img, bottomImg, num, vaultPool, tokenVault
       }}
     >
       <Section>
-        <img src={img} alt="" />
+        <img className="token-icon" src={img} alt="" />
         <Percent>
           <img src={DOT} alt="" />
           {displayAPY(totalApy, DECIMAL_PRECISION, 10)}

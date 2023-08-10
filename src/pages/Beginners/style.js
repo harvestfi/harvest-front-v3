@@ -42,7 +42,7 @@ const Inner = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 16px 10px;
+    padding: 0px;
   }
 `
 
@@ -52,10 +52,17 @@ const CoinSection = styled.div`
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 25px;
+
+  @media screen and (max-width: 992px) {
+    padding: 0 22px 116px 24px;
+  }
 `
 
 const UnitPart = styled.div`
   width: 48%;
+  @media screen and (max-width: 992px) {
+    width: 100%;
+  }
 `
 
 const HeaderTitle = styled.div`
@@ -63,6 +70,10 @@ const HeaderTitle = styled.div`
   font-weight: 600;
   line-height: 38px;
   color: #101828;
+
+  @media screen and (max-width: 992px) {
+    padding: 30px 28px 0px 24px;
+  }
 `
 
 const HeaderDesc = styled.div`
@@ -72,7 +83,11 @@ const HeaderDesc = styled.div`
   line-height: 23px;
 
   margin-top: 4px;
-  margin-bottom: 35px;
+  margin-bottom: 21px;
+
+  @media screen and (max-width: 992px) {
+    padding: 0 28px 0 24px;
+  }
 `
 
 export { Container, Inner, CoinSection, UnitPart, HeaderTitle, HeaderDesc }
