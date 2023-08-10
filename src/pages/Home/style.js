@@ -56,6 +56,7 @@ const FirstPart = styled.div`
   display: flex;
   box-shadow: 0px 4px 4px -2px rgba(16, 24, 40, 0.03), 0px 10px 12px -2px rgba(16, 24, 40, 0.08);
   position: relative;
+  border-radius: 13px;
 `
 
 const FirstBack = styled.div`
@@ -70,6 +71,9 @@ const FirstBack = styled.div`
   padding: 34px;
   color: white;
   border-radius: 13px;
+  &:hover {
+    box-shadow: 0px 4px 4px -2px rgba(16, 24, 40, 0.03), 0px 10px 12px -2px rgba(16, 24, 40, 0.08);
+  }
 `
 
 const Title = styled.div`
@@ -120,6 +124,7 @@ const FirstFarmingPart = styled.div`
   padding: 34px;
   color: white;
   position: relative;
+  overflow: hidden;
 
   img.sun {
     width: 150px;
@@ -133,7 +138,10 @@ const FirstFarmingPart = styled.div`
     bottom: 0;
     left: 0;
     width: 100%;
-    border-radius: 0 0 13px 13px;
+  }
+
+  &:hover {
+    box-shadow: 0px 4px 4px -2px rgba(16, 24, 40, 0.03), 0px 10px 12px -2px rgba(16, 24, 40, 0.08);
   }
 `
 
@@ -156,7 +164,6 @@ const AdvancedFarms = styled.div`
   background: url(${AdvancedBack});
   background-size: cover;
   background-repeat: no-repeat;
-  box-shadow: 0px 4px 4px -2px rgba(16, 24, 40, 0.03), 0px 10px 12px -2px rgba(16, 24, 40, 0.08);
   border-radius: 13px;
   display: flex;
   flex-direction: column;
@@ -178,6 +185,10 @@ const AdvancedFarms = styled.div`
     width: 100%;
     bottom: 0;
     left: 0;
+  }
+
+  &:hover {
+    box-shadow: 0px 4px 4px -2px rgba(16, 24, 40, 0.03), 0px 10px 12px -2px rgba(16, 24, 40, 0.08);
   }
 `
 

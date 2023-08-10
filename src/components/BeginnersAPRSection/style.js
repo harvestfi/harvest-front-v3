@@ -14,8 +14,11 @@ const Container = styled.a`
   cursor: pointer;
   text-decoration: none;
   border-radius: 13px;
-  box-shadow: 0px 4px 4px -2px rgba(16, 24, 40, 0.03), 0px 10px 12px -2px rgba(16, 24, 40, 0.08);
+  &:hover {
+    box-shadow: 0px 4px 4px -2px rgba(16, 24, 40, 0.03), 0px 10px 12px -2px rgba(16, 24, 40, 0.08);
+  }
   position: relative;
+  overflow: hidden;
   ${props =>
     props.num === 0
       ? `
@@ -39,7 +42,6 @@ const Container = styled.a`
     position: absolute;
     width: 100%;
     bottom: 0;
-    border-radius: 0 0 13px 13px;
   }
 `
 
