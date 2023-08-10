@@ -209,7 +209,7 @@ const Sidebar = ({ width }) => {
   }, [chainId])
 
   const directAction = path => {
-    if (path === ROUTES.PORTFOLIO || path === ROUTES.ANALYTIC) {
+    if (path === ROUTES.PORTFOLIO || path === ROUTES.ANALYTIC || path === ROUTES.BEGINNERS) {
       setSelChain([CHAIN_IDS.ETH_MAINNET, CHAIN_IDS.POLYGON_MAINNET, CHAIN_IDS.ARBITRUM_ONE])
     }
     push(path)
