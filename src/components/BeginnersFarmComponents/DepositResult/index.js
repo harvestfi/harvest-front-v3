@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { get } from 'lodash'
 import React, { useState } from 'react'
-import ReactTooltip from 'react-tooltip'
 import HelpIcon from '../../../assets/images/logos/beginners/help-circle.svg'
 import CheckIcon from '../../../assets/images/logos/beginners/success-check.svg'
 import CloseIcon from '../../../assets/images/logos/beginners/close.svg'
@@ -53,17 +52,6 @@ const DepositResult = ({
           <NewLabel className="beginners" weight="500">
             Received
             <img className="help-icon" src={HelpIcon} alt="" data-tip data-for="min-help" />
-            <ReactTooltip
-              id="min-help"
-              backgroundColor="white"
-              borderColor="white"
-              textColor="#344054"
-              place="right"
-            >
-              <NewLabel size="12px" height="18px" weight="600" color="#344054">
-                You will receive no less f{tokenSymbol} than the displayed amount.
-              </NewLabel>
-            </ReactTooltip>
           </NewLabel>
           <NewLabel weight="600">
             {pickedToken.default ? (
