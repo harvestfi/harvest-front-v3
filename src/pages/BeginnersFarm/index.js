@@ -69,10 +69,6 @@ const BeginnersFarm = () => {
   // Switch Tag (Deposit/Withdraw)
   const [activeDepo, setActiveDepo] = useState(true)
 
-  // Switch Tag (Farm/Details in mobile)
-  const [farmView] = useState(true)
-  const [detailsView] = useState(false)
-
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const { push } = useHistory()
@@ -334,7 +330,7 @@ const BeginnersFarm = () => {
     getTokenBalance()
   }, [account, chain, balances]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const { backColor, pageBackColor, fontColor, filterColor } = useThemeContext()
+  const { pageBackColor, fontColor, filterColor } = useThemeContext()
 
   const firstUserPoolsLoad = useRef(true)
   const firstWalletBalanceLoad = useRef(true)
@@ -379,7 +375,7 @@ const BeginnersFarm = () => {
     <DetailView pageBackColor={pageBackColor} fontColor={fontColor}>
       <TopPart num={coinId}>
         <FlexTopDiv>
-          <div>
+          <div className="back-btn">
             <BackBtnRect
               onClick={() => {
                 push(ROUTES.BEGINNERS)
@@ -388,13 +384,25 @@ const BeginnersFarm = () => {
               <BackArrow src={Back} alt="" />
             </BackBtnRect>
           </div>
+          <div>
+            {logoUrl.map((el, i) => (
+              <img
+                className="mobile-logo"
+                width={46}
+                height={46}
+                src={el.slice(1, el.length)}
+                key={i}
+                alt=""
+              />
+            ))}
+          </div>
           <GuideSection>
             <GuidePart>
-              <img src={BeginnerFriendly} alt="" />
+              <img className="icon" src={BeginnerFriendly} alt="" />
               Beginner Friendly
             </GuidePart>
             <GuidePart>
-              <img src={WithdrawAnytime} alt="" />
+              <img className="icon" src={WithdrawAnytime} alt="" />
               Withdraw Anytime
             </GuidePart>
             <GuidePart>
@@ -403,18 +411,34 @@ const BeginnersFarm = () => {
               &nbsp;APR
             </GuidePart>
           </GuideSection>
-          <TopDesc weight={600} size="68px" height="82px" marginBottom="10px">
+          <TopDesc
+            weight={600}
+            size={isMobile ? '37px' : '68px'}
+            height={isMobile ? '45px' : '82px'}
+            marginBottom={isMobile ? '5px' : '10px'}
+          >
             {token.tokenNames.join(', ')}&nbsp;Farm
           </TopDesc>
-          <NewLabel weight={400} size="18px" height="26px" marginBottom="10px" color="white">
+          <NewLabel
+            weight={400}
+            size={isMobile ? '9px' : '18px'}
+            height={isMobile ? '14px' : '26px'}
+            marginBottom={isMobile ? '8px' : '10px'}
+            color="white"
+          >
             Deposit USDC or any token from your wallet to start earning.
           </NewLabel>
-          <NewLabel weight={700} size="18px" height="26px" color="white">
+          <NewLabel
+            weight={700}
+            size={isMobile ? '9px' : '18px'}
+            height={isMobile ? '14px' : '26px'}
+            color="white"
+          >
             <img className="thumbs-up" src={Thumbsup} alt="" />
             Currently used by 265 other users.
           </NewLabel>
         </FlexTopDiv>
-        <FlexTopDiv>
+        <FlexTopDiv className="desktop-logo">
           {logoUrl.map((el, i) => (
             <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
           ))}
@@ -423,7 +447,7 @@ const BeginnersFarm = () => {
       </TopPart>
       <Inner>
         <BigDiv>
-          <HalfContent show={detailsView} partHeight={partHeightDepo}>
+          <HalfContent partHeight={partHeightDepo}>
             <DepositBase
               selectToken={selectTokenDepo}
               setSelectToken={setSelectTokenDepo}
@@ -478,20 +502,25 @@ const BeginnersFarm = () => {
               setQuoteValue={setQuoteValueDepo}
             />
           </HalfContent>
-          <RestContent show={farmView}>
-            <MyBalance backColor={backColor}>
+          <RestContent>
+            <MyBalance>
               <NewLabel
-                size="14px"
+                size={isMobile ? '12px' : '14px'}
                 weight="700"
-                height="24px"
+                height={isMobile ? '21px' : '24px'}
                 color="#344054"
-                padding="10px 15px"
+                padding={isMobile ? '9px 13px' : '10px 15px'}
                 borderBottom="1px solid #EBEBEB"
               >
                 My Balance
               </NewLabel>
-              <FlexDiv justifyContent="space-between" padding="10px 15px">
-                <NewLabel size="14px" weight="500" height="24px" color="#344054">
+              <FlexDiv justifyContent="space-between" padding={isMobile ? '9px 13px' : '10px 15px'}>
+                <NewLabel
+                  size={isMobile ? '12px' : '14px'}
+                  weight="500"
+                  height={isMobile ? '21px' : '24px'}
+                  color="#344054"
+                >
                   {`f${id}`}
                   <InfoIcon
                     className="info"
@@ -503,7 +532,12 @@ const BeginnersFarm = () => {
                     filterColor={filterColor}
                   />
                 </NewLabel>
-                <NewLabel size="14px" weight="700" height="24px" color="#00D26B">
+                <NewLabel
+                  size={isMobile ? '12px' : '14px'}
+                  height={isMobile ? '21px' : '24px'}
+                  weight="700"
+                  color="#00D26B"
+                >
                   {!connected ? (
                     0
                   ) : lpTokenBalance ? (
@@ -518,11 +552,23 @@ const BeginnersFarm = () => {
                   )}
                 </NewLabel>
               </FlexDiv>
-              <FlexDiv justifyContent="space-between" padding="10px 15px">
-                <NewLabel size="14px" weight="500" height="24px" color="#344054" self="center">
+              <FlexDiv justifyContent="space-between" padding={isMobile ? '9px 13px' : '10px 15px'}>
+                <NewLabel
+                  size={isMobile ? '12px' : '14px'}
+                  height={isMobile ? '21px' : '24px'}
+                  weight="500"
+                  color="#344054"
+                  self="center"
+                >
                   Est. Value
                 </NewLabel>
-                <NewLabel weight="500" size="14px" height="24px" color="black" self="center">
+                <NewLabel
+                  weight="500"
+                  size={isMobile ? '12px' : '14px'}
+                  height={isMobile ? '21px' : '24px'}
+                  color="black"
+                  self="center"
+                >
                   {!connected ? (
                     0
                   ) : lpTokenBalance ? (
@@ -541,26 +587,42 @@ const BeginnersFarm = () => {
                 </NewLabel>
               </FlexDiv>
             </MyBalance>
-            <Divider height="unset" marginTop="25px" />
-            <MyBalance backColor={backColor}>
+            <Divider height="unset" marginTop={isMobile ? '22px' : '25px'} />
+            <MyBalance>
               <NewLabel
                 display="flex"
-                padding="10px 15px"
+                padding={isMobile ? '9px 13px' : '10px 15px'}
                 justifyContent="space-between"
                 borderBottom="1px solid #ebebeb"
               >
-                <NewLabel size="14px" weight="700" height="24px" color="#344054">
+                <NewLabel
+                  size={isMobile ? '12px' : '14px'}
+                  height={isMobile ? '21px' : '24px'}
+                  weight="700"
+                  color="#344054"
+                >
                   Farm Info
                 </NewLabel>
                 <APRShow>
                   <img src={DOT} alt="" />
-                  <NewLabel size="14px" weight="500" height="20px" color="#344054">
+                  <NewLabel
+                    size={isMobile ? '12px' : '14px'}
+                    height={isMobile ? '17px' : '20px'}
+                    weight="500"
+                    color="#344054"
+                  >
                     {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
                     &nbsp;APR
                   </NewLabel>
                 </APRShow>
               </NewLabel>
-              <NewLabel padding="20px 15px" size="13px" height="24px" weight="500" color="#475467">
+              <NewLabel
+                padding={isMobile ? '9px 13px' : '10px 15px'}
+                size={isMobile ? '11px' : '12px'}
+                height={isMobile ? '21px' : '24px'}
+                weight="500"
+                color="#475467"
+              >
                 This farm offers a yield from Idle Finance strategy relying on a combination of top
                 DeFi protocols (Compound, Aave, Clearpool, and Morpho) to boost your earnings.
               </NewLabel>

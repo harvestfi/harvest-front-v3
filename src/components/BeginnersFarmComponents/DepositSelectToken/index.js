@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { useMediaQuery } from 'react-responsive'
 import { useWallet } from '../../../providers/Wallet'
 import {
   SelectToken,
@@ -39,6 +40,8 @@ const DepositSelectToken = ({
     }
   }, [selectToken, setPartHeight])
 
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+
   return (
     <SelectToken show={selectToken}>
       <SelectTokenWido>
@@ -59,9 +62,18 @@ const DepositSelectToken = ({
           />
         </NewLabel>
 
-        <NewLabel heightDiv="85%" divScroll="scroll" padding="15px 17px 0">
+        <NewLabel
+          heightDiv="85%"
+          divScroll="scroll"
+          padding={isMobile ? '9px 12px 0' : '15px 17px 0'}
+        >
           {connected ? (
-            <NewLabel weight="500" size="13px" height="19px" color="#475467">
+            <NewLabel
+              weight="500"
+              size={isMobile ? '10px' : '13px'}
+              height={isMobile ? '15px' : '19px'}
+              color="#475467"
+            >
               Tokens on your connected wallet that you can use as a deposit:
             </NewLabel>
           ) : (
@@ -80,15 +92,28 @@ const DepositSelectToken = ({
             />
           ) : (
             <NotConnectedWallet isShow={showDesc ? 'true' : 'false'}>
-              <NewLabel marginRight="12px">
-                <img src={InfoIcon} alt="" />
-              </NewLabel>
-              <NewLabel marginRight="12px">
-                <NewLabel color="#344054" size="14px" height="20px" weight="600" marginBottom="4px">
-                  Wallet not connected.
-                </NewLabel>
-                <NewLabel color="#475467" size="14px" height="20px" weight="400">
-                  Please connect wallet to see the list of available tokens to deposit.
+              <NewLabel marginRight="12px" display="flex">
+                <div>
+                  <img width={isMobile ? '15px' : '21px'} src={InfoIcon} alt="" />
+                </div>
+                <NewLabel marginLeft={isMobile ? '9px' : '12px'}>
+                  <NewLabel
+                    color="#344054"
+                    size={isMobile ? '10px' : '14px'}
+                    height={isMobile ? '15px' : '20px'}
+                    weight="600"
+                    marginBottom="4px"
+                  >
+                    Wallet not connected.
+                  </NewLabel>
+                  <NewLabel
+                    color="#475467"
+                    size={isMobile ? '10px' : '14px'}
+                    height={isMobile ? '15px' : '20px'}
+                    weight="400"
+                  >
+                    Please connect wallet to see the list of available tokens to deposit.
+                  </NewLabel>
                 </NewLabel>
               </NewLabel>
               <div>

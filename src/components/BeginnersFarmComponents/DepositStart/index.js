@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 import { get, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
+import { useMediaQuery } from 'react-responsive'
 import { quote, getTokenAllowance, approve } from 'wido'
 import ReactTooltip from 'react-tooltip'
 import { Spinner } from 'react-bootstrap'
@@ -312,17 +313,18 @@ const DepositStart = ({
     setFinalStep(true)
   }
 
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   return (
     <SelectTokenWido show={deposit && !finalStep}>
       <NewLabel
         display="flex"
-        marginBottom="16px"
+        marginBottom={isMobile ? '0px' : '16px'}
         padding="10px 0"
         width="fit-content"
         cursorType="pointer"
         weight="600"
-        size="14px"
-        height="20px"
+        size={isMobile ? '12px' : '14px'}
+        height={isMobile ? '17px' : '20px'}
         color="#EDAE50"
         align="center"
         onClick={() => {
@@ -333,24 +335,46 @@ const DepositStart = ({
         Back
       </NewLabel>
 
-      <NewLabel color="#101828" size="18px" weight="600" height="28px" marginBottom="10px">
+      <NewLabel
+        color="#101828"
+        size={isMobile ? '16px' : '18px'}
+        weight="600"
+        height={isMobile ? '24px' : '28px'}
+        marginBottom={isMobile ? '5px' : '10px'}
+      >
         Summary
       </NewLabel>
 
-      <NewLabel size="14px" height="24px" color="#344054">
-        <NewLabel display="flex" justifyContent="space-between" padding="10px 0">
+      <NewLabel
+        size={isMobile ? '12px' : '14px'}
+        height={isMobile ? '21px' : '24px'}
+        color="#344054"
+      >
+        <NewLabel
+          display="flex"
+          justifyContent="space-between"
+          padding={isMobile ? '5px 0' : '10px 0'}
+        >
           <NewLabel weight="500">Depositing</NewLabel>
           <NewLabel weight="600">
             {fromInfoAmount !== '' ? fromInfoAmount : <AnimatedDots />}&nbsp;{pickedToken.symbol}
           </NewLabel>
         </NewLabel>
-        <NewLabel display="flex" justifyContent="space-between" padding="10px 0">
+        <NewLabel
+          display="flex"
+          justifyContent="space-between"
+          padding={isMobile ? '5px 0' : '10px 0'}
+        >
           <NewLabel weight="500">Est. USD Value</NewLabel>
           <NewLabel weight="600">
             ${fromInfoUsdAmount !== '' ? fromInfoUsdAmount : <AnimatedDots />}
           </NewLabel>
         </NewLabel>
-        <NewLabel display="flex" justifyContent="space-between" padding="10px 0">
+        <NewLabel
+          display="flex"
+          justifyContent="space-between"
+          padding={isMobile ? '5px 0' : '10px 0'}
+        >
           <NewLabel className="beginners" weight="500">
             Min. Received
             <img className="help-icon" src={HelpIcon} alt="" data-tip data-for="min-help" />
@@ -361,7 +385,12 @@ const DepositStart = ({
               textColor="#344054"
               place="right"
             >
-              <NewLabel size="12px" height="18px" weight="600" color="#344054">
+              <NewLabel
+                size={isMobile ? '10px' : '12px'}
+                height={isMobile ? '15px' : '18px'}
+                weight="600"
+                color="#344054"
+              >
                 You will receive no less f{tokenSymbol} than the displayed amount.
               </NewLabel>
             </ReactTooltip>
@@ -397,10 +426,22 @@ const DepositStart = ({
           </IconCard>
         </NewLabel>
         <NewLabel marginRight="12px">
-          <NewLabel color="#344054" size="14px" height="20px" weight="600" marginBottom="4px">
+          <NewLabel
+            color="#344054"
+            size={isMobile ? '12px' : '14px'}
+            height={isMobile ? '17px' : '20px'}
+            weight="600"
+            marginBottom="4px"
+          >
             What is fUSDC?
           </NewLabel>
-          <NewLabel color="#475467" size="14px" height="20px" weight="400" marginBottom="5px">
+          <NewLabel
+            color="#475467"
+            size={isMobile ? '12px' : '14px'}
+            height={isMobile ? '17px' : '20px'}
+            weight="400"
+            marginBottom="5px"
+          >
             It is a proof-of-deposit token, which entitles you to deposit and any accrued yield.
           </NewLabel>
           <GotItBtn
@@ -428,10 +469,22 @@ const DepositStart = ({
             <img src={AlertIcon} alt="" />
           </div>
           <NewLabel marginLeft="12px">
-            <NewLabel color="#B54708" size="14px" height="20px" weight="600" marginBottom="4px">
+            <NewLabel
+              color="#B54708"
+              size={isMobile ? '12px' : '14px'}
+              height={isMobile ? '17px' : '20px'}
+              weight="600"
+              marginBottom="4px"
+            >
               Whoops, something went wrong.
             </NewLabel>
-            <NewLabel color="#B54708" size="14px" height="20px" weight="400" marginBottom="5px">
+            <NewLabel
+              color="#B54708"
+              size={isMobile ? '12px' : '14px'}
+              height={isMobile ? '17px' : '20px'}
+              weight="400"
+              marginBottom="5px"
+            >
               Please try to repeat the transaction in your wallet.
             </NewLabel>
           </NewLabel>
@@ -447,7 +500,13 @@ const DepositStart = ({
         </NewLabel>
       </FTokenWrong>
 
-      <NewLabel size="16px" height="21px" weight={500} color="#1F2937" marginTop="25px">
+      <NewLabel
+        size={isMobile ? '12px' : '16px'}
+        height={isMobile ? '21px' : '24px'}
+        weight={600}
+        color="#1F2937"
+        marginTop="25px"
+      >
         <Buttons
           onClick={() => {
             startDeposit()

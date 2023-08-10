@@ -9,6 +9,10 @@ const BaseWido = styled.div`
       ? `
   `
       : 'display: none;'}
+
+  @media screen and (max-width: 992px) {
+    padding: 18px;
+  }
 `
 
 const NewLabel = styled.div`
@@ -108,6 +112,10 @@ const NewLabel = styled.div`
     img.info {
       margin-left: 5px;
     }
+
+    img.info-icon {
+      width: 16px;
+    }
   }
 `
 
@@ -138,6 +146,12 @@ const TokenAmount = styled.input`
     -moz-appearance: textfield;
     margin: 0;
   }
+
+  @media screen and (max-width: 992px) {
+    font-size: 10px;
+    line-height: 18px;
+    padding: 7px 10px;
+  }
 `
 
 const TokenSelect = styled.button`
@@ -148,7 +162,6 @@ const TokenSelect = styled.button`
 
   border-radius: 8px;
   padding: 10px 14px;
-  height: fit-content;
   font-weight: 600;
   font-size: 14px;
   line-height: 24px;
@@ -173,6 +186,23 @@ const TokenSelect = styled.button`
     text-overflow: ellipsis;
     margin-right: 4px;
   }
+
+  @media screen and (max-width: 992px) {
+    font-size: 10px;
+    line-height: 18px;
+    padding: 7px 10px;
+
+    img.logo {
+      width: 16px;
+      height: 16px;
+      margin-right: 5px;
+    }
+
+    img.dropdown-icon {
+      width: 15px;
+      height: 16px;
+    }
+  }
 `
 
 const BalanceInfo = styled.div`
@@ -188,6 +218,12 @@ const BalanceInfo = styled.div`
     color: #475467;
     transition: 0.25s;
   }
+
+  @media screen and (max-width: 992px) {
+    font-size: 10px;
+    line-height: 18px;
+    margin-top: 3px;
+  }
 `
 
 const DepoTitle = styled.div`
@@ -196,6 +232,12 @@ const DepoTitle = styled.div`
   line-height: 20px;
   margin: 4px 0 20px;
   color: #475467;
+
+  @media screen and (max-width: 992px) {
+    font-size: 10px;
+    line-height: 15px;
+    margin: 0 0 15px;
+  }
 `
 
 const AmountSection = styled.div`
@@ -209,6 +251,14 @@ const CreditCardBox = styled.div`
   background: var(--base-white, #fff);
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
   padding: 12px;
+
+  @media screen and (max-width: 992px) {
+    padding: 9px;
+
+    img {
+      width: 18px;
+    }
+  }
 `
 
 const ThemeMode = styled.div`
@@ -280,6 +330,35 @@ const ThemeMode = styled.div`
         }
       }
     `}
+
+  @media screen and (max-width: 992px) {
+    #theme-switch {
+      .switch-track {
+        width: 24px;
+        height: 12px;
+      }
+
+      .switch-thumb {
+        width: 10px;
+        height: 10px;
+        top: 1px;
+      }
+    }
+
+    ${props =>
+      props.mode === 'deposit'
+        ? `
+        #theme-switch {
+          .switch-thumb {
+            left: 12px;
+          }
+      `
+        : `
+        #theme-switch {
+        .switch-thumb {
+          left: 2px;
+        }
+      `}
 `
 
 const InsufficientSection = styled.div`
@@ -297,10 +376,20 @@ const InsufficientSection = styled.div`
     display: none;
   `}
   margin-top: 20px;
+
+  @media screen and (max-width: 992px) {
+    padding: 10px;
+    margin-top: 14px;
+  }
 `
 
 const CloseBtn = styled.img`
   cursor: pointer;
+
+  @media screen and (max-width: 992px) {
+    width: 17px;
+    height: 16px;
+  }
 `
 
 export {

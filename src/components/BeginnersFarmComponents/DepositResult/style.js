@@ -15,7 +15,11 @@ const SelectTokenWido = styled.div`
 const ImgBtn = styled.img`
   cursor: pointer;
   transition: 0.25s;
-  margin-right: 8px;
+
+  @media screen and (max-width: 992px) {
+    width: 17px;
+    height: 16px;
+  }
 `
 
 const NewLabel = styled.div`
@@ -114,6 +118,13 @@ const NewLabel = styled.div`
     margin-left: 5px;
     cursor: pointer;
   }
+
+  @media screen and (max-width: 992px) {
+    img.help-icon {
+      width: 12px;
+      height: 12px;
+    }
+  }
 `
 
 const Buttons = styled.button`
@@ -121,9 +132,6 @@ const Buttons = styled.button`
   background: #000;
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
   color: white;
-  font-weight: 600;
-  font-size: 16px;
-  line-height: 24px;
   border-radius: 8px;
   padding: 10px 18px;
   align-items: center;
@@ -132,17 +140,26 @@ const Buttons = styled.button`
   &:hover {
     background: #000000d0;
   }
+
+  @media screen and (max-width: 992px) {
+    padding: 7px 14px;
+  }
 `
 
 const FTokenInfo = styled.div`
   border-radius: 12px;
-  border: 1px solid #d0d5dd;
+  border: 1px solid #6ce9a6;
   background: #f6fef9;
   padding: 16px;
   display: ${props => (props.isShow === 'true' ? `flex` : 'none')};
   justify-content: space-between;
   gap: 12px 0;
   margin-top: 15px;
+
+  @media screen and (max-width: 992px) {
+    padding: 12px;
+    margin-top: 12px;
+  }
 `
 
 const IconCard = styled.div`

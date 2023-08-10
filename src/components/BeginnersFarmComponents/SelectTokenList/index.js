@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useMediaQuery } from 'react-responsive'
 import { fromWei } from '../../../services/web3'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { Container, Text, Vault, Content, EmptyContainer } from './style'
@@ -37,7 +38,7 @@ const SelectTokenList = ({
   }, [filterWord, list]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const { widoDepoTokenListActiveColor, widoDepoTokenListHoverColor, fontColor } = useThemeContext()
-
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   return (
     <Content cnt={tokenList.length}>
       {tokenList.length > 0 ? (
@@ -53,10 +54,18 @@ const SelectTokenList = ({
           >
             <img src={data.logoURI} width={25} height={25} alt="" />
             <Vault>
-              <Text size="14px" height="18px" weight={700}>
+              <Text
+                size={isMobile ? '12px' : '14px'}
+                height={isMobile ? '15px' : '18px'}
+                weight={700}
+              >
                 {data.symbol}
               </Text>
-              <Text size="12px" height="16px" weight={400}>
+              <Text
+                size={isMobile ? '9px' : '12px'}
+                height={isMobile ? '12px' : '16px'}
+                weight={400}
+              >
                 {data.balance ? `${1 * fromWei(data.balance, data.decimals)}` : '0.00'}
               </Text>
             </Vault>

@@ -65,7 +65,7 @@ const TopPart = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    display: none;
+    padding: 41px 61px 90px 30px;
   }
 `
 
@@ -182,6 +182,11 @@ const NewLabel = styled.div`
     img.info {
       margin-left: 5px;
     }
+
+    img.thumbs-up {
+      margin-right: 5px;
+      width: 11px;
+    }
   }
 `
 
@@ -236,6 +241,24 @@ const FlexTopDiv = styled.div`
   img {
     align-self: center;
   }
+
+  img.mobile-logo {
+    display: none;
+  }
+
+  @media screen and (max-width: 992px) {
+    &.desktop-logo {
+      display: none;
+    }
+
+    img.mobile-logo {
+      display: block;
+    }
+
+    .back-btn {
+      display: none;
+    }
+  }
 `
 
 const HalfContent = styled.div`
@@ -258,12 +281,7 @@ const HalfContent = styled.div`
   @media screen and (max-width: 992px) {
     width: 100%;
     margin-right: 0px;
-    ${props =>
-      props.show
-        ? `
-      display: block;
-    `
-        : `display: none;`}
+    margin-bottom: 18px;
   }
 `
 
@@ -312,12 +330,6 @@ const RestContent = styled.div`
 
   @media screen and (max-width: 992px) {
     width: 100%;
-    ${props =>
-      props.show
-        ? `
-      display: block;
-    `
-        : `display: none;`}
   }
 `
 
@@ -338,6 +350,10 @@ const BigDiv = styled(FlexDiv)`
 
   @media screen and (max-width: 1112px) {
     width: 100%;
+  }
+
+  @media screen and (max-width: 992px) {
+    display: block;
   }
 `
 
@@ -382,6 +398,10 @@ const MyBalance = styled.div`
 const GuideSection = styled.div`
   display: flex;
   margin-bottom: 10px;
+
+  @media screen and (max-width: 992px) {
+    margin-top: 19px;
+  }
 `
 
 const GuidePart = styled.div`
@@ -403,6 +423,19 @@ const GuidePart = styled.div`
 
   img {
     margin-right: 7px;
+  }
+
+  @media screen and (max-width: 992px) {
+    font-size: 8px;
+    line-height: 12px;
+
+    img {
+      margin-right: 3px;
+    }
+
+    img.icon {
+      width: 11px;
+    }
   }
 `
 

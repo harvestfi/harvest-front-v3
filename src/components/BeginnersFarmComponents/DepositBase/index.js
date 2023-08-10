@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useState } from 'react'
 import { useSetChain } from '@web3-onboard/react'
+import { useMediaQuery } from 'react-responsive'
 import { toast } from 'react-toastify'
 import DropDownIcon from '../../../assets/images/logos/wido/drop-down.svg'
 import WalletIcon from '../../../assets/images/logos/beginners/wallet-in-button.svg'
@@ -141,9 +142,16 @@ const DepositBase = ({
     setInputAmount(e.currentTarget.value)
   }
 
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+
   return (
     <BaseWido show={!deposit && !selectToken && !finalStep}>
-      <NewLabel display="flex" justifyContent="space-between" marginBottom="16px">
+      <NewLabel
+        display="flex"
+        justifyContent="space-between"
+        marginBottom={isMobile ? '12px' : '16px'}
+        items="center"
+      >
         <CreditCardBox>
           <img src={CreditCard} alt="" />
         </CreditCardBox>
@@ -162,13 +170,24 @@ const DepositBase = ({
           </div>
         </ThemeMode>
       </NewLabel>
-      <NewLabel size="18px" height="28px" weight="600" color="#101828">
+      <NewLabel
+        size={isMobile ? '14px' : '18px'}
+        height={isMobile ? '21px' : '28px'}
+        weight="600"
+        color="#101828"
+      >
         Deposit
       </NewLabel>
       <DepoTitle>Deposit USDC or other token from your wallet to get started.</DepoTitle>
       <TokenInfo>
         <AmountSection>
-          <NewLabel size="14px" height="20px" weight="500" color="#344054" marginBottom="6px">
+          <NewLabel
+            size={isMobile ? '10px' : '14px'}
+            height={isMobile ? '15px' : '20px'}
+            weight="500"
+            color="#344054"
+            marginBottom="6px"
+          >
             Amount to Deposit
           </NewLabel>
           <TokenAmount
@@ -181,7 +200,13 @@ const DepositBase = ({
           />
         </AmountSection>
         <div>
-          <NewLabel size="14px" height="20px" weight="500" color="#344054" marginBottom="6px">
+          <NewLabel
+            size={isMobile ? '10px' : '14px'}
+            height={isMobile ? '15px' : '20px'}
+            weight="500"
+            color="#344054"
+            marginBottom="6px"
+          >
             Deposit Token
           </NewLabel>
           <TokenSelect
@@ -198,7 +223,7 @@ const DepositBase = ({
               <></>
             )}
             <span>{pickedToken.symbol}</span>
-            <img src={DropDownIcon} alt="" />
+            <img className="dropdown-icon" src={DropDownIcon} alt="" />
           </TokenSelect>
         </div>
       </TokenInfo>
@@ -216,7 +241,12 @@ const DepositBase = ({
       <InsufficientSection isShow={showWarning ? 'true' : 'false'}>
         <NewLabel display="flex" widthDiv="80%" items="center">
           <img className="info-icon" src={InfoIcon} alt="" />
-          <NewLabel size="14px" height="20px" weight="600" color="#344054">
+          <NewLabel
+            size={isMobile ? '10px' : '14px'}
+            height={isMobile ? '15px' : '20px'}
+            weight="600"
+            color="#344054"
+          >
             Insufficient {pickedToken.symbol} balance on your wallet
           </NewLabel>
         </NewLabel>
@@ -230,7 +260,7 @@ const DepositBase = ({
           />
         </div>
       </InsufficientSection>
-      <NewLabel marginTop="25px">
+      <NewLabel marginTop={isMobile ? '19px' : '25px'}>
         <Button
           color="wido-deposit"
           width="100%"

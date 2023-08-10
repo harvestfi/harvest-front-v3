@@ -1,5 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { get } from 'lodash'
+import { useMediaQuery } from 'react-responsive'
 import React, { useState } from 'react'
 import HelpIcon from '../../../assets/images/logos/beginners/help-circle.svg'
 import CheckIcon from '../../../assets/images/logos/beginners/success-check.svg'
@@ -34,21 +35,40 @@ const DepositResult = ({
     setSelectToken(false)
     setDeposit(false)
   }
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   return (
     <SelectTokenWido show={finalStep}>
-      <NewLabel color="#101828" size="18px" weight="600" height="28px" marginBottom="10px">
+      <NewLabel
+        color="#101828"
+        size={isMobile ? '16px' : '18px'}
+        weight="600"
+        height={isMobile ? '24px' : '28px'}
+        marginBottom={isMobile ? '0px' : '10px'}
+      >
         Summary
       </NewLabel>
 
-      <NewLabel size="14px" height="24px" color="#344054">
-        <NewLabel display="flex" justifyContent="space-between" padding="10px 0">
+      <NewLabel
+        size={isMobile ? '12px' : '14px'}
+        height={isMobile ? '21px' : '24px'}
+        color="#344054"
+      >
+        <NewLabel
+          display="flex"
+          justifyContent="space-between"
+          padding={isMobile ? '5px 0' : '10px 0'}
+        >
           <NewLabel weight="500">Deposited</NewLabel>
           <NewLabel weight="600">
             {inputAmount}&nbsp;{pickedToken.symbol}
           </NewLabel>
         </NewLabel>
-        <NewLabel display="flex" justifyContent="space-between" padding="10px 0">
+        <NewLabel
+          display="flex"
+          justifyContent="space-between"
+          padding={isMobile ? '5px 0' : '10px 0'}
+        >
           <NewLabel className="beginners" weight="500">
             Received
             <img className="help-icon" src={HelpIcon} alt="" data-tip data-for="min-help" />
@@ -78,15 +98,27 @@ const DepositResult = ({
       </NewLabel>
 
       <FTokenInfo isShow={showDesc ? 'true' : 'false'}>
-        <NewLabel marginRight="12px" display="flex">
+        <NewLabel marginRight={isMobile ? '8px' : '12px'} display="flex">
           <div>
-            <img src={CheckIcon} alt="" />
+            <img width={isMobile ? 15 : 20} src={CheckIcon} alt="" />
           </div>
-          <NewLabel marginLeft="12px">
-            <NewLabel color="#027A48" size="14px" height="20px" weight="600" marginBottom="4px">
+          <NewLabel marginLeft={isMobile ? '8px' : '12px'}>
+            <NewLabel
+              color="#027A48"
+              size={isMobile ? '10px' : '14px'}
+              height={isMobile ? '15px' : '20px'}
+              weight="600"
+              marginBottom="4px"
+            >
               Deposit Complete!
             </NewLabel>
-            <NewLabel color="#027A48" size="14px" height="20px" weight="400" marginBottom="5px">
+            <NewLabel
+              color="#027A48"
+              size={isMobile ? '10px' : '14px'}
+              height={isMobile ? '15px' : '20px'}
+              weight="400"
+              marginBottom="5px"
+            >
               You are now earning yield on your deposit.
             </NewLabel>
           </NewLabel>
@@ -102,7 +134,13 @@ const DepositResult = ({
         </NewLabel>
       </FTokenInfo>
 
-      <NewLabel size="16px" height="21px" weight={500} color="#1F2937" marginTop="25px">
+      <NewLabel
+        size={isMobile ? '12px' : '16px'}
+        height={isMobile ? '17px' : '21px'}
+        weight={600}
+        color="#1F2937"
+        marginTop={isMobile ? '18px' : '25px'}
+      >
         <Buttons
           onClick={() => {
             onClose()

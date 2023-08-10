@@ -55,6 +55,11 @@ const EmptyContainer = styled.div`
   font-size: 14px;
   line-height: 18px;
   color: ${props => props.fontColor};
+
+  @media screen and (max-width: 992px) {
+    font-size: 12px;
+    line-height: 15px;
+  }
 `
 
 export { Container, Text, Vault, Content, EmptyContainer }
