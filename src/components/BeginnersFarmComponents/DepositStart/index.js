@@ -39,8 +39,8 @@ import { useVaults } from '../../../providers/Vault'
 
 const DepositStart = ({
   pickedToken,
-  depositWido,
-  setDepositWido,
+  deposit,
+  setDeposit,
   finalStep,
   setFinalStep,
   inputAmount,
@@ -91,7 +91,7 @@ const DepositStart = ({
       account &&
       pickedToken.symbol !== 'Select Token' &&
       !new BigNumber(amount).isEqualTo(0) &&
-      depositWido &&
+      deposit &&
       balanceList.length !== 0
     ) {
       const getQuoteResult = async () => {
@@ -163,7 +163,7 @@ const DepositStart = ({
     chainId,
     pickedToken,
     token,
-    depositWido,
+    deposit,
     balanceList,
     setQuoteValue,
     useIFARM,
@@ -313,7 +313,7 @@ const DepositStart = ({
   }
 
   return (
-    <SelectTokenWido show={depositWido && !finalStep}>
+    <SelectTokenWido show={deposit && !finalStep}>
       <NewLabel
         display="flex"
         marginBottom="16px"
@@ -326,7 +326,7 @@ const DepositStart = ({
         color="#EDAE50"
         align="center"
         onClick={() => {
-          setDepositWido(false)
+          setDeposit(false)
         }}
       >
         <ImgBtn src={BackIcon} alt="" />

@@ -238,6 +238,7 @@ html {
   .beginners .__react_component_tooltip {
     border-radius: 8px !important;
     box-shadow: 0px 4px 6px -2px rgba(16, 24, 40, 0.03), 0px 12px 16px -4px rgba(16, 24, 40, 0.08);
+    opacity: 1 !important;
   }
 
   .web3modal-modal-lightbox {

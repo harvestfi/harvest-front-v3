@@ -203,7 +203,7 @@ const BeginnersFarm = () => {
   const [selectTokenDepo, setSelectTokenDepo] = useState(false)
 
   // Show/Hide Deposit
-  const [depositWido, setDepositWido] = useState(false)
+  const [depositStart, setDepositStart] = useState(false)
   const [clickTokenIdDepo, setClickedTokenIdDepo] = useState(-1)
   const [balanceDepo, setBalanceDepo] = useState(0)
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
@@ -427,8 +427,8 @@ const BeginnersFarm = () => {
             <DepositBase
               selectToken={selectTokenDepo}
               setSelectToken={setSelectTokenDepo}
-              deposit={depositWido}
-              setDeposit={setDepositWido}
+              deposit={depositStart}
+              setDeposit={setDepositStart}
               finalStep={depositFinalStep}
               balance={balanceDepo}
               pickedToken={pickedTokenDepo}
@@ -451,8 +451,8 @@ const BeginnersFarm = () => {
             />
             <DepositStart
               pickedToken={pickedTokenDepo}
-              depositWido={depositWido}
-              setDepositWido={setDepositWido}
+              deposit={depositStart}
+              setDeposit={setDepositStart}
               finalStep={depositFinalStep}
               setFinalStep={setDepositFinalStep}
               inputAmount={inputAmountDepo}
@@ -470,7 +470,7 @@ const BeginnersFarm = () => {
               finalStep={depositFinalStep}
               setFinalStep={setDepositFinalStep}
               setSelectToken={setSelectTokenDepo}
-              setDeposit={setDepositWido}
+              setDeposit={setDepositStart}
               inputAmount={inputAmountDepo}
               token={token}
               tokenSymbol={id}
