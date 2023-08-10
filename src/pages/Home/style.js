@@ -53,10 +53,8 @@ const Inner = styled.div`
 
 const FirstPart = styled.div`
   width: 50%;
-
   display: flex;
   box-shadow: 0px 4px 4px -2px rgba(16, 24, 40, 0.03), 0px 10px 12px -2px rgba(16, 24, 40, 0.08);
-  border-radius: 13px;
   position: relative;
 `
 
@@ -70,32 +68,36 @@ const FirstBack = styled.div`
   flex-direction: column;
   justify-content: center;
   padding: 34px;
-  color: black;
+  color: white;
+  border-radius: 13px;
 `
 
 const Title = styled.div`
-  font-size: 30px;
+  font-size: 39px;
   font-weight: 600;
-  line-height: 36px;
-  margin-bottom: 17px;
+  line-height: 48px;
+  margin-bottom: 21px;
 `
 
 const Desc = styled.div`
-  font-size: 17px;
+  font-size: 21px;
   font-weight: 400;
-  line-height: 24px;
+  line-height: 32px;
   margin-bottom: 21px;
 `
 
 const StartBeginners = styled.button`
-  border-radius: 7px;
-  border: 1px solid #000;
-  background: #000;
+  border-radius: 9px;
+  border: 1px solid #fff;
+  background: #fff;
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-  color: white;
-  padding: 10px 18px;
+  color: #1f2937;
+  padding: 14px 24px;
   display: flex;
   width: fit-content;
+  font-size: 19px;
+  line-height: 28px;
+  font-weight: 600;
 `
 
 const SecondPart = styled.div`
@@ -131,6 +133,7 @@ const FirstFarmingPart = styled.div`
     bottom: 0;
     left: 0;
     width: 100%;
+    border-radius: 0 0 13px 13px;
   }
 `
 
@@ -141,10 +144,10 @@ const DirectBtn = styled.button`
   box-shadow: 0px 1px 1px 0px rgba(16, 24, 40, 0.05);
   display: flex;
   width: fit-content;
-  padding: 8px 14px;
-  font-size: 16px;
+  padding: 9px 15px;
+  font-size: 12px;
   font-weight: 600;
-  line-height: 24px;
+  line-height: 18px;
   color: #232323;
 `
 
@@ -178,6 +181,48 @@ const AdvancedFarms = styled.div`
   }
 `
 
+const FirstFarmTitle = styled.div`
+  font-size: 33px;
+  font-weight: 600;
+  line-height: 32px;
+  margin-bottom: 15px;
+`
+
+const FirstFarmDesc = styled.div`
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 22px;
+  margin-bottom: 24px;
+`
+
+const AdvancedTitle = styled.div`
+  font-size: 33px;
+  font-weight: 600;
+  line-height: 32px;
+  margin-bottom: 15px;
+`
+
+const AdvancedDesc = styled.div`
+  font-size: 18px;
+  font-weight: 400;
+  line-height: 22px;
+  margin-bottom: 24px;
+`
+
+const AdvancedDirectBtn = styled.button`
+  border: 1px solid white;
+  background: white;
+  border-radius: 6px;
+  box-shadow: 0px 1px 1px 0px rgba(16, 24, 40, 0.05);
+  display: flex;
+  width: fit-content;
+  padding: 9px 15px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 18px;
+  color: #232323;
+`
+
 export {
   Container,
   Inner,
@@ -190,4 +235,9 @@ export {
   FirstFarmingPart,
   DirectBtn,
   AdvancedFarms,
+  FirstFarmTitle,
+  FirstFarmDesc,
+  AdvancedTitle,
+  AdvancedDesc,
+  AdvancedDirectBtn,
 }

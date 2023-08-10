@@ -17,6 +17,11 @@ import {
   FirstFarmingPart,
   DirectBtn,
   AdvancedFarms,
+  FirstFarmTitle,
+  FirstFarmDesc,
+  AdvancedTitle,
+  AdvancedDesc,
+  AdvancedDirectBtn,
 } from './style'
 
 const Home = () => {
@@ -41,16 +46,16 @@ const Home = () => {
         </FirstPart>
         <SecondPart>
           <FirstFarmingPart>
-            <Title>First time Farming?</Title>
-            <Desc>Learn how to earn with Harvest in 5 minutes. </Desc>
-            <DirectBtn>Get Started</DirectBtn>
+            <FirstFarmTitle>First time Farming?</FirstFarmTitle>
+            <FirstFarmDesc>Learn how to earn with Harvest in 5 minutes. </FirstFarmDesc>
+            <DirectBtn>Learn Now</DirectBtn>
             <img className="sun" src={FirstFarmSun} alt="" />
             <img className="bottom" src={FirstFarmBottom} alt="" />
           </FirstFarmingPart>
           <AdvancedFarms>
-            <Title>Advanced Farms</Title>
-            <Desc>Farm with a curated list of 100 farms</Desc>
-            <DirectBtn>View List</DirectBtn>
+            <AdvancedTitle>Advanced Farms</AdvancedTitle>
+            <AdvancedDesc>Over 100 farms on Ethereum, Polygon and Arbitrum await!</AdvancedDesc>
+            <AdvancedDirectBtn>Discover</AdvancedDirectBtn>
             <img className="sun" src={AdvancedSun} alt="" />
             <img className="bottom" src={AdvancedBottom} alt="" />
           </AdvancedFarms>
