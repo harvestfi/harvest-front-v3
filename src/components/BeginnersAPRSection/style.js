@@ -39,6 +39,7 @@ const Container = styled.a`
     position: absolute;
     width: 100%;
     bottom: 0;
+    border-radius: 0 0 13px 13px;
   }
 `
 
