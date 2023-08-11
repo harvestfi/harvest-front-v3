@@ -3,6 +3,8 @@ import ETH from '../../assets/images/logos/beginnershome/eth.svg'
 import DAI from '../../assets/images/logos/beginnershome/dai.svg'
 import USDT from '../../assets/images/logos/beginnershome/usdt.svg'
 import USDC from '../../assets/images/logos/beginnershome/usdc.svg'
+import Plus from '../../assets/images/logos/beginners/plus.svg'
+import Minus from '../../assets/images/logos/beginners/minus.svg'
 
 const DetailView = styled.div`
   width: 100%;
@@ -450,6 +452,145 @@ const APRShow = styled.div`
   }
 `
 
+const DepositSection = styled.div`
+  ${props =>
+    props.isShow
+      ? `
+    display: block;
+    height: 100%;
+  `
+      : `
+    display: none;
+  `}
+`
+
+const WithdrawSection = styled.div`
+  ${props =>
+    props.isShow
+      ? `
+    display: block;
+  `
+      : `
+    display: none;
+  `}
+`
+
+const CreditCardBox = styled.div`
+  border-radius: 10px;
+  border: 1px solid var(--gray-200, #eaecf0);
+  background: var(--base-white, #fff);
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  padding: 12px;
+
+  @media screen and (max-width: 992px) {
+    padding: 9px;
+
+    img {
+      width: 18px;
+    }
+  }
+`
+
+const ThemeMode = styled.div`
+  display: flex;
+
+  #theme-switch {
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+    touch-action: pan-x;
+    user-select: none;
+
+    input {
+      cursor: pointer;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      opacity: 0;
+    }
+
+    .switch-track {
+      background: #000;
+      border: 1px solid ${props => props.borderColor};
+      height: 24px;
+      width: 50px;
+      border-radius: 30px;
+      transition: all 0.2s ease 0s;
+    }
+    .switch-thumb {
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-color: white;
+      height: 20px;
+      left: 2px;
+      position: absolute;
+      top: 2px;
+      width: 20px;
+      border-radius: 50%;
+      transition: all 0.25s ease 0s;
+    }
+
+    &:hover .switch-thumb {
+      box-shadow: 0 0 2px 3px #ff9400;
+    }
+  }
+
+  ${props =>
+    props.mode === 'deposit'
+      ? `
+      #theme-switch {
+        .switch-check {
+          opacity: 1;
+        }
+        .switch-x {
+          opacity: 0;
+        }
+        .switch-thumb {
+          left: 27px;
+          background-image: url(${Plus});
+        }
+      }
+    `
+      : `
+      #theme-switch {
+        .switch-thumb {
+          background-image: url(${Minus});
+        }
+      }
+    `}
+
+  @media screen and (max-width: 992px) {
+    #theme-switch {
+      .switch-track {
+        width: 24px;
+        height: 12px;
+      }
+
+      .switch-thumb {
+        width: 10px;
+        height: 10px;
+        top: 1px;
+      }
+    }
+
+    ${props =>
+      props.mode === 'deposit'
+        ? `
+        #theme-switch {
+          .switch-thumb {
+            left: 12px;
+          }
+      `
+        : `
+        #theme-switch {
+        .switch-thumb {
+          left: 2px;
+        }
+      `}
+`
+
 export {
   DetailView,
   TopPart,
@@ -472,4 +613,8 @@ export {
   GuideSection,
   GuidePart,
   APRShow,
+  DepositSection,
+  WithdrawSection,
+  CreditCardBox,
+  ThemeMode,
 }

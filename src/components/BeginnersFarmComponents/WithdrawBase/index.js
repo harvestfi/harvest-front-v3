@@ -1,32 +1,33 @@
 import BigNumber from 'bignumber.js'
-import React, { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useSetChain } from '@web3-onboard/react'
-import { useMediaQuery } from 'react-responsive'
 import { toast } from 'react-toastify'
-import DropDownIcon from '../../../assets/images/logos/wido/drop-down.svg'
-import WalletIcon from '../../../assets/images/logos/beginners/wallet-in-button.svg'
-import CreditCard from '../../../assets/images/logos/beginners/credit-card-shield.svg'
+import { useMediaQuery } from 'react-responsive'
+import ArrowRightIcon from '../../../assets/images/logos/beginners/arrow-right.svg'
 import InfoIcon from '../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../assets/images/logos/beginners/close.svg'
+import CreditCard from '../../../assets/images/logos/beginners/credit-card-shield.svg'
 import { POOL_BALANCES_DECIMALS } from '../../../constants'
 import { useWallet } from '../../../providers/Wallet'
-import { CHAIN_IDS } from '../../../data/constants'
-import { formatNumberWido, isSpecialApp } from '../../../utils'
+import { fromWei, toWei } from '../../../services/web3'
+import AnimatedDots from '../../AnimatedDots'
 import Button from '../../Button'
+import { CHAIN_IDS } from '../../../data/constants'
 import {
-  BalanceInfo,
   BaseWido,
-  DepoTitle,
+  NewLabel,
   TokenAmount,
   TokenInfo,
   TokenSelect,
-  NewLabel,
+  Title,
   AmountSection,
-  CreditCardBox,
-  ThemeMode,
+  BalanceInfo,
   InsufficientSection,
   CloseBtn,
+  CreditCardBox,
+  ThemeMode,
 } from './style'
+import { isSpecialApp } from '../../../utils'
 
 const getChainName = chain => {
   let chainName = 'Ethereum'
@@ -44,23 +45,24 @@ const getChainName = chain => {
   return chainName
 }
 
-const DepositBase = ({
-  selectToken,
-  setSelectToken,
-  deposit,
-  setDeposit,
+const WithdrawBase = ({
+  withdrawStart,
+  setWithdrawStart,
   finalStep,
-  balance,
   pickedToken,
-  inputAmount,
-  setInputAmount,
+  setPickedToken,
+  unstakeBalance,
+  setUnstakeBalance,
+  symbol,
+  fAssetPool,
+  lpTokenBalance,
   token,
   supTokenList,
   activeDepo,
   switchMethod,
-  tokenSymbol,
 }) => {
-  const { connected, connectAction, account, chainId, setChainId } = useWallet()
+  const [unstakeInputValue, setUnstakeInputValue] = useState(0)
+  const { account, connected, chainId } = useWallet()
 
   const [
     {
@@ -75,76 +77,58 @@ const DepositBase = ({
     : connectedChain
     ? parseInt(connectedChain.id, 16).toString()
     : ''
-  const [depositName, setDepositName] = useState('Deposit')
+  const [withdrawName, setWithdrawName] = useState('Withdraw')
   const [showWarning, setShowWarning] = useState(false)
 
   useEffect(() => {
     if (account) {
-      if (curChain !== '' && curChain !== tokenChain) {
+      if (curChain !== tokenChain) {
         const chainName = getChainName(tokenChain)
-        setDepositName(`Switch to ${chainName}`)
+        setWithdrawName(`Switch to ${chainName}`)
       } else {
-        setDepositName('Deposit')
+        setWithdrawName('Withdraw')
       }
     }
   }, [account, curChain, tokenChain])
 
   useEffect(() => {
-    if (connected) {
-      setDepositName('Deposit')
-    } else {
-      setDepositName('Connect Wallet to Get Started')
+    if (supTokenList.length > 0) {
+      // eslint-disable-next-line no-plusplus
+      for (let i = 0; i < supTokenList.length; i++) {
+        if (supTokenList[i].symbol === symbol) {
+          setPickedToken(supTokenList[i])
+        }
+      }
     }
-  }, [connected])
+  }, [supTokenList, setPickedToken, symbol])
 
-  const onClickDeposit = async () => {
-    if (!connected) {
-      connectAction()
+  const onInputUnstake = e => {
+    setUnstakeInputValue(e.currentTarget.value)
+    setUnstakeBalance(toWei(e.currentTarget.value, token.decimals))
+  }
+
+  const onClickWithdraw = async () => {
+    const supToken = supTokenList.find(el => el.symbol === pickedToken.symbol)
+    if (!supToken) {
+      toast.error("Can't Withdraw with Unsupported token!")
       return
     }
-    if (curChain !== tokenChain) {
-      const chainHex = `0x${Number(tokenChain).toString(16)}`
-      if (!isSpecialApp) {
-        await setChain({ chainId: chainHex })
-        setChainId(tokenChain)
-      }
-    } else {
-      if (pickedToken.symbol === 'Select Token') {
-        toast.error('Please select token to deposit!')
-        return
-      }
-      const supToken = supTokenList.find(el => el.symbol === pickedToken.symbol)
-      if (!supToken) {
-        toast.error("Can't Deposit with Unsupported token!")
-        return
-      }
-      if (new BigNumber(inputAmount).isGreaterThan(balance)) {
-        setShowWarning(true)
-        return
-      }
-      if (new BigNumber(inputAmount).isEqualTo(0)) {
-        toast.error('Cannot deposit 0!')
-        return
-      }
-      setDeposit(true)
-      setShowWarning(false)
+
+    if (new BigNumber(unstakeBalance).isEqualTo(0)) {
+      toast.error('Please input amount to withdraw!')
+      return
     }
-  }
 
-  useEffect(() => {
-    if (pickedToken.usdPrice) {
-      setInputAmount(balance)
+    if (!new BigNumber(unstakeBalance).isLessThanOrEqualTo(lpTokenBalance)) {
+      setShowWarning(true)
+      return
     }
-  }, [balance, setInputAmount, pickedToken])
-
-  const onInputBalance = e => {
-    setInputAmount(e.currentTarget.value)
+    setWithdrawStart(true)
   }
-
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   return (
-    <BaseWido show={!deposit && !selectToken && !finalStep}>
+    <BaseWido show={!withdrawStart && !finalStep}>
       <NewLabel
         display="flex"
         justifyContent="space-between"
@@ -175,9 +159,9 @@ const DepositBase = ({
         weight="600"
         color="#101828"
       >
-        Deposit
+        Withdraw
       </NewLabel>
-      <DepoTitle>Deposit USDC or other token from your wallet to get started.</DepoTitle>
+      <Title>Withdraw your deposit back to USDC.</Title>
       <TokenInfo>
         <AmountSection>
           <NewLabel
@@ -187,9 +171,9 @@ const DepositBase = ({
             color="#344054"
             marginBottom="6px"
           >
-            Amount to Deposit
+            Amount to Withdraw
           </NewLabel>
-          <TokenAmount type="number" value={inputAmount} onChange={onInputBalance} />
+          <TokenAmount type="number" value={unstakeInputValue} onChange={onInputUnstake} />
         </AmountSection>
         <div>
           <NewLabel
@@ -199,34 +183,38 @@ const DepositBase = ({
             color="#344054"
             marginBottom="6px"
           >
-            Deposit Token
+            Withdraw to
           </NewLabel>
-          <TokenSelect
-            type="button"
-            onClick={async () => {
-              setSelectToken(true)
-            }}
-          >
+          <TokenSelect>
             {pickedToken.logoURI ? (
               <img className="logo" src={pickedToken.logoURI} width={24} height={24} alt="" />
             ) : (
               <></>
             )}
             <span>{pickedToken.symbol}</span>
-            <img className="dropdown-icon" src={DropDownIcon} alt="" />
           </TokenSelect>
         </div>
       </TokenInfo>
       <BalanceInfo
         onClick={() => {
           if (account && pickedToken.symbol !== 'Select Token') {
-            setInputAmount(balance)
+            setUnstakeBalance(lpTokenBalance)
+            setUnstakeInputValue(Number(fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals)))
           }
         }}
       >
-        {tokenSymbol} Balance Available:
-        <span>{formatNumberWido(balance, POOL_BALANCES_DECIMALS)}</span>
+        {`f${symbol}`} Balance Available:
+        <span>
+          {!connected ? (
+            0
+          ) : lpTokenBalance ? (
+            fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, POOL_BALANCES_DECIMALS, true)
+          ) : (
+            <AnimatedDots />
+          )}
+        </span>
       </BalanceInfo>
+
       <InsufficientSection isShow={showWarning ? 'true' : 'false'}>
         <NewLabel display="flex" widthDiv="80%" items="center">
           <img className="info-icon" src={InfoIcon} alt="" />
@@ -236,7 +224,7 @@ const DepositBase = ({
             weight="600"
             color="#344054"
           >
-            Insufficient {pickedToken.symbol} balance on your wallet
+            The amount of {`f${symbol}`} you entered exceeds deposited balance.
           </NewLabel>
         </NewLabel>
         <div>
@@ -249,20 +237,28 @@ const DepositBase = ({
           />
         </div>
       </InsufficientSection>
+
       <NewLabel marginTop={isMobile ? '19px' : '25px'}>
         <Button
           color="wido-deposit"
           width="100%"
           size="md"
-          onClick={() => {
-            onClickDeposit()
+          onClick={async () => {
+            if (curChain !== tokenChain) {
+              const chainHex = `0x${Number(tokenChain).toString(16)}`
+              await setChain({ chainId: chainHex })
+            } else {
+              onClickWithdraw()
+            }
           }}
         >
-          {depositName}
-          <img src={WalletIcon} alt="" />
+          <NewLabel size="16px" weight="600" height="21px">
+            {withdrawName}
+          </NewLabel>
+          <img src={ArrowRightIcon} alt="" />
         </Button>
       </NewLabel>
     </BaseWido>
   )
 }
-export default DepositBase
+export default WithdrawBase

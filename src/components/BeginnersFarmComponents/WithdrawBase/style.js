@@ -16,25 +16,28 @@ const BaseWido = styled.div`
 `
 
 const NewLabel = styled.div`
-  font-weight: ${props => props.weight || '400'};
-  font-size: ${props => props.size || '20px'};
-  line-height: ${props => props.height || '0px'};
   ${props =>
-    props.color
+    props.weight
       ? `
-    color: ${props.color};
+    font-weight: ${props.weight};
+  `
+      : ''}
+  ${props =>
+    props.size
+      ? `
+    font-size: ${props.size};
+  `
+      : ''}
+  ${props =>
+    props.height
+      ? `
+    line-height: ${props.height};
   `
       : ''}
   ${props =>
     props.position
       ? `
     position: ${props.position};
-  `
-      : ''}
-  ${props =>
-    props.align
-      ? `
-    text-align: ${props.align};
   `
       : ''}
   ${props =>
@@ -50,21 +53,9 @@ const NewLabel = styled.div`
   `
       : ''}
   ${props =>
-    props.marginLeft
-      ? `
-    margin-left: ${props.marginLeft};
-  `
-      : ''}
-  ${props =>
     props.marginBottom
       ? `
     margin-bottom: ${props.marginBottom};
-  `
-      : ''}
-  ${props =>
-    props.marginRight
-      ? `
-    margin-right: ${props.marginRight};
   `
       : ''}
   ${props =>
@@ -79,42 +70,18 @@ const NewLabel = styled.div`
     align-items: ${props.items};
   `
       : ''}
-  ${props =>
-    props.self
-      ? `
-    align-self: ${props.self};
-  `
-      : ''}
-  ${props =>
-    props.widthDiv
-      ? `
-    width: ${props.widthDiv};
-  `
-      : ''}
-
-  img.icon {
-    margin-right: 10px;
-  }
-
-  img.info {
-    margin-left: 10px;
-  }
-
+  
   img.info-icon {
-    margin-right: 5px;
+    margin-right: 12px;
+    width: 20px;
+    height: 20px;
   }
 
   @media screen and (max-width: 992px) {
-    img.icon {
-      margin-right: 5px;
-    }
-
-    img.info {
-      margin-left: 5px;
-    }
-
     img.info-icon {
-      width: 16px;
+      margin-right: 5px;
+      width: 14px;
+      height: 14px;
     }
   }
 `
@@ -122,6 +89,48 @@ const NewLabel = styled.div`
 const TokenInfo = styled.div`
   display: flex;
   justify-content: space-between;
+`
+
+const TokenSelect = styled.div`
+  background: white;
+  border: 1px solid #d0d5dd;
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  transition: 0.25s;
+
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 24px;
+  text-align: right;
+  color: #344054;
+
+  display: flex;
+  align-items: center;
+
+  img.logo {
+    margin-right: 8px;
+  }
+
+  span {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 4px;
+  }
+
+  @media screen and (max-width: 992px) {
+    font-size: 10px;
+    line-height: 18px;
+    padding: 7px 10px;
+
+    img.logo {
+      width: 16px;
+      height: 16px;
+      margin-right: 5px;
+    }
+  }
 `
 
 const TokenAmount = styled.input`
@@ -154,55 +163,23 @@ const TokenAmount = styled.input`
   }
 `
 
-const TokenSelect = styled.button`
-  background: white;
-  border: 1px solid #d0d5dd;
-  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-  transition: 0.25s;
-
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-weight: 600;
+const Title = styled.div`
+  font-weight: 400;
   font-size: 14px;
-  line-height: 24px;
-  text-align: right;
-  color: #344054;
-
-  display: flex;
-  align-items: center;
-
-  &:hover {
-    background: rgba(203, 203, 203, 0.7);
-  }
-
-  img.logo {
-    margin-right: 8px;
-  }
-
-  span {
-    max-width: 150px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-right: 4px;
-  }
+  line-height: 20px;
+  margin: 4px 0 20px;
+  color: #475467;
 
   @media screen and (max-width: 992px) {
     font-size: 10px;
-    line-height: 18px;
-    padding: 7px 10px;
-
-    img.logo {
-      width: 16px;
-      height: 16px;
-      margin-right: 5px;
-    }
-
-    img.dropdown-icon {
-      width: 15px;
-      height: 16px;
-    }
+    line-height: 15px;
+    margin: 0 0 15px;
   }
+`
+
+const AmountSection = styled.div`
+  width: -webkit-fill-available;
+  padding-right: 16px;
 `
 
 const BalanceInfo = styled.div`
@@ -226,23 +203,37 @@ const BalanceInfo = styled.div`
   }
 `
 
-const DepoTitle = styled.div`
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 20px;
-  margin: 4px 0 20px;
-  color: #475467;
+const InsufficientSection = styled.div`
+  border-radius: 12px;
+  border: 1px solid #d0d5dd;
+  background: #fcfcfd;
+  padding: 16px;
+  ${props =>
+    props.isShow === 'true'
+      ? `
+    display: flex;
+    justify-content: space-between;
+  `
+      : `
+    display: none;
+  `}
+  margin-top: 20px;
 
   @media screen and (max-width: 992px) {
-    font-size: 10px;
-    line-height: 15px;
-    margin: 0 0 15px;
+    padding: 10px;
+    margin-top: 14px;
   }
 `
 
-const AmountSection = styled.div`
-  width: -webkit-fill-available;
-  padding-right: 16px;
+const CloseBtn = styled.img`
+  cursor: pointer;
+  width: 20px;
+  height: 20px;
+
+  @media screen and (max-width: 992px) {
+    width: 17px;
+    height: 16px;
+  }
 `
 
 const CreditCardBox = styled.div`
@@ -361,48 +352,17 @@ const ThemeMode = styled.div`
       `}
 `
 
-const InsufficientSection = styled.div`
-  border-radius: 12px;
-  border: 1px solid #d0d5dd;
-  background: #fcfcfd;
-  padding: 16px;
-  ${props =>
-    props.isShow === 'true'
-      ? `
-    display: flex;
-    justify-content: space-between;
-  `
-      : `
-    display: none;
-  `}
-  margin-top: 20px;
-
-  @media screen and (max-width: 992px) {
-    padding: 10px;
-    margin-top: 14px;
-  }
-`
-
-const CloseBtn = styled.img`
-  cursor: pointer;
-
-  @media screen and (max-width: 992px) {
-    width: 17px;
-    height: 16px;
-  }
-`
-
 export {
   BaseWido,
   NewLabel,
   TokenAmount,
   TokenInfo,
   TokenSelect,
-  BalanceInfo,
-  DepoTitle,
+  Title,
   AmountSection,
-  CreditCardBox,
-  ThemeMode,
+  BalanceInfo,
   InsufficientSection,
   CloseBtn,
+  CreditCardBox,
+  ThemeMode,
 }

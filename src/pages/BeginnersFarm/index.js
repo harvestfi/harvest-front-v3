@@ -11,6 +11,7 @@ import Back from '../../assets/images/logos/earn/back.svg'
 import Info from '../../assets/images/logos/earn/info.svg'
 import BeginnerFriendly from '../../assets/images/logos/beginners/beginner-friendly.svg'
 import WithdrawAnytime from '../../assets/images/logos/beginners/withdraw-anytime.svg'
+// import CreditCard from '../../assets/images/logos/beginners/credit-card-shield.svg'
 import Thumbsup from '../../assets/images/logos/beginners/thumbs-up.svg'
 import DOT from '../../assets/images/logos/beginners/dot.svg'
 import DAIBottom from '../../assets/images/logos/beginnershome/dai-bottom.svg'
@@ -22,6 +23,7 @@ import DepositBase from '../../components/BeginnersFarmComponents/DepositBase'
 import DepositSelectToken from '../../components/BeginnersFarmComponents/DepositSelectToken'
 import DepositStart from '../../components/BeginnersFarmComponents/DepositStart'
 import DepositResult from '../../components/BeginnersFarmComponents/DepositResult'
+import WithdrawBase from '../../components/BeginnersFarmComponents/WithdrawBase'
 import {
   DECIMAL_PRECISION,
   FARM_GRAIN_TOKEN_SYMBOL,
@@ -60,6 +62,10 @@ import {
   GuideSection,
   GuidePart,
   APRShow,
+  DepositSection,
+  WithdrawSection,
+  // CreditCardBox,
+  // ThemeMode,
 } from './style'
 
 const BeginnersCoinGroup = ['DAI', 'ETH', 'USDT', 'xGRAIL']
@@ -67,7 +73,7 @@ const BeginnersCoinGroup = ['DAI', 'ETH', 'USDT', 'xGRAIL']
 const BeginnersFarm = () => {
   const { paramAddress } = useParams()
   // Switch Tag (Deposit/Withdraw)
-  const [activeDepo, setActiveDepo] = useState(true)
+  const [activeDepo, setActiveDepo] = useState(false)
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
@@ -206,6 +212,11 @@ const BeginnersFarm = () => {
   const [depositFinalStep, setDepositFinalStep] = useState(false)
   const [quoteValueDepo, setQuoteValueDepo] = useState(null)
   const [inputAmountDepo, setInputAmountDepo] = useState(0)
+
+  const [withdrawStart, setWithdrawStart] = useState(false)
+  const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select Token' })
+  const [withdrawFinalStep] = useState(false)
+  const [unstakeBalance, setUnstakeBalance] = useState('0')
 
   const [balanceList, setBalanceList] = useState([])
   const [supTokenList, setSupTokenList] = useState([])
@@ -448,59 +459,109 @@ const BeginnersFarm = () => {
       <Inner>
         <BigDiv>
           <HalfContent partHeight={partHeightDepo}>
-            <DepositBase
-              selectToken={selectTokenDepo}
-              setSelectToken={setSelectTokenDepo}
-              deposit={depositStart}
-              setDeposit={setDepositStart}
-              finalStep={depositFinalStep}
-              balance={balanceDepo}
-              pickedToken={pickedTokenDepo}
-              inputAmount={inputAmountDepo}
-              setInputAmount={setInputAmountDepo}
-              token={token}
-              supTokenList={supTokenList}
-              activeDepo={activeDepo}
-              switchMethod={switchMethod}
-            />
-            <DepositSelectToken
-              selectToken={selectTokenDepo}
-              setSelectToken={setSelectTokenDepo}
-              clickTokenId={clickTokenIdDepo}
-              setClickedTokenId={setClickedTokenIdDepo}
-              setPickedToken={setPickedTokenDepo}
-              setBalance={setBalanceDepo}
-              supTokenList={supTokenList}
-              setPartHeight={setPartHeightDepo}
-            />
-            <DepositStart
-              pickedToken={pickedTokenDepo}
-              deposit={depositStart}
-              setDeposit={setDepositStart}
-              finalStep={depositFinalStep}
-              setFinalStep={setDepositFinalStep}
-              inputAmount={inputAmountDepo}
-              token={token}
-              balanceList={balanceList}
-              useIFARM={useIFARM}
-              tokenSymbol={id}
-              quoteValue={quoteValueDepo}
-              setQuoteValue={setQuoteValueDepo}
-              fAssetPool={fAssetPool}
-              multipleAssets={multipleAssets}
-            />
-            <DepositResult
-              pickedToken={pickedTokenDepo}
-              finalStep={depositFinalStep}
-              setFinalStep={setDepositFinalStep}
-              setSelectToken={setSelectTokenDepo}
-              setDeposit={setDepositStart}
-              inputAmount={inputAmountDepo}
-              token={token}
-              tokenSymbol={id}
-              quoteValue={quoteValueDepo}
-              setQuoteValue={setQuoteValueDepo}
-            />
+            {/* {activeDepo
+              ? !selectTokenDepo && !depositStart && !depositFinalStep
+              : !withdrawStart &&
+                !withdrawFinalStep && (
+                  <NewLabel
+                    display="flex"
+                    justifyContent="space-between"
+                    padding={isMobile ? '18px 18px 0' : '24px 24px 0'}
+                    items="center"
+                  >
+                    <CreditCardBox>
+                      <img src={CreditCard} alt="" />
+                    </CreditCardBox>
+                    <ThemeMode mode={activeDepo ? 'deposit' : 'withdraw'}>
+                      <div id="theme-switch">
+                        <div className="switch-track">
+                          <div className="switch-thumb" />
+                        </div>
+
+                        <input
+                          type="checkbox"
+                          checked={activeDepo}
+                          onChange={switchMethod}
+                          aria-label="Switch between dark and light mode"
+                        />
+                      </div>
+                    </ThemeMode>
+                  </NewLabel>
+                )} */}
+            <DepositSection isShow={activeDepo}>
+              <DepositBase
+                selectToken={selectTokenDepo}
+                setSelectToken={setSelectTokenDepo}
+                deposit={depositStart}
+                setDeposit={setDepositStart}
+                finalStep={depositFinalStep}
+                balance={balanceDepo}
+                pickedToken={pickedTokenDepo}
+                inputAmount={inputAmountDepo}
+                setInputAmount={setInputAmountDepo}
+                token={token}
+                supTokenList={supTokenList}
+                activeDepo={activeDepo}
+                switchMethod={switchMethod}
+                tokenSymbol={id}
+              />
+              <DepositSelectToken
+                selectToken={selectTokenDepo}
+                setSelectToken={setSelectTokenDepo}
+                clickTokenId={clickTokenIdDepo}
+                setClickedTokenId={setClickedTokenIdDepo}
+                setPickedToken={setPickedTokenDepo}
+                setBalance={setBalanceDepo}
+                supTokenList={supTokenList}
+                setPartHeight={setPartHeightDepo}
+              />
+              <DepositStart
+                pickedToken={pickedTokenDepo}
+                deposit={depositStart}
+                setDeposit={setDepositStart}
+                finalStep={depositFinalStep}
+                setFinalStep={setDepositFinalStep}
+                inputAmount={inputAmountDepo}
+                token={token}
+                balanceList={balanceList}
+                useIFARM={useIFARM}
+                tokenSymbol={id}
+                quoteValue={quoteValueDepo}
+                setQuoteValue={setQuoteValueDepo}
+                fAssetPool={fAssetPool}
+                multipleAssets={multipleAssets}
+              />
+              <DepositResult
+                pickedToken={pickedTokenDepo}
+                finalStep={depositFinalStep}
+                setFinalStep={setDepositFinalStep}
+                setSelectToken={setSelectTokenDepo}
+                setDeposit={setDepositStart}
+                inputAmount={inputAmountDepo}
+                token={token}
+                tokenSymbol={id}
+                quoteValue={quoteValueDepo}
+                setQuoteValue={setQuoteValueDepo}
+              />
+            </DepositSection>
+            <WithdrawSection isShow={!activeDepo}>
+              <WithdrawBase
+                withdrawStart={withdrawStart}
+                setWithdrawStart={setWithdrawStart}
+                finalStep={withdrawFinalStep}
+                pickedToken={pickedTokenWith}
+                setPickedToken={setPickedTokenWith}
+                unstakeBalance={unstakeBalance}
+                setUnstakeBalance={setUnstakeBalance}
+                symbol={id}
+                fAssetPool={fAssetPool}
+                lpTokenBalance={lpTokenBalance}
+                token={token}
+                supTokenList={supTokenList}
+                activeDepo={activeDepo}
+                switchMethod={switchMethod}
+              />
+            </WithdrawSection>
           </HalfContent>
           <RestContent>
             <MyBalance>
