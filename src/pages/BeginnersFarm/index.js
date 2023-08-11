@@ -73,7 +73,7 @@ const BeginnersCoinGroup = ['DAI', 'ETH', 'USDT', 'xGRAIL']
 const BeginnersFarm = () => {
   const { paramAddress } = useParams()
   // Switch Tag (Deposit/Withdraw)
-  const [activeDepo, setActiveDepo] = useState(false)
+  const [activeDepo, setActiveDepo] = useState(true)
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 

@@ -92,6 +92,14 @@ const WithdrawBase = ({
   }, [account, curChain, tokenChain])
 
   useEffect(() => {
+    if (connected) {
+      setWithdrawName('Withdraw')
+    } else {
+      setWithdrawName('Connect Wallet to Get Started')
+    }
+  }, [connected])
+
+  useEffect(() => {
     if (supTokenList.length > 0) {
       // eslint-disable-next-line no-plusplus
       for (let i = 0; i < supTokenList.length; i++) {
