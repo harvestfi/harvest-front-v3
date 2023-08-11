@@ -24,6 +24,7 @@ import DepositSelectToken from '../../components/BeginnersFarmComponents/Deposit
 import DepositStart from '../../components/BeginnersFarmComponents/DepositStart'
 import DepositResult from '../../components/BeginnersFarmComponents/DepositResult'
 import WithdrawBase from '../../components/BeginnersFarmComponents/WithdrawBase'
+import WithdrawStart from '../../components/BeginnersFarmComponents/WithdrawStart'
 import {
   DECIMAL_PRECISION,
   FARM_GRAIN_TOKEN_SYMBOL,
@@ -215,7 +216,7 @@ const BeginnersFarm = () => {
 
   const [withdrawStart, setWithdrawStart] = useState(false)
   const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select Token' })
-  const [withdrawFinalStep] = useState(false)
+  const [withdrawFinalStep, setWithdrawFinalStep] = useState(false)
   const [unstakeBalance, setUnstakeBalance] = useState('0')
 
   const [balanceList, setBalanceList] = useState([])
@@ -560,6 +561,17 @@ const BeginnersFarm = () => {
                 supTokenList={supTokenList}
                 activeDepo={activeDepo}
                 switchMethod={switchMethod}
+              />
+              <WithdrawStart
+                withdrawStart={withdrawStart}
+                setWithdrawStart={setWithdrawStart}
+                pickedToken={pickedTokenWith}
+                finalStep={withdrawFinalStep}
+                setFinalStep={setWithdrawFinalStep}
+                token={token}
+                unstakeBalance={unstakeBalance}
+                balanceList={balanceList}
+                tokenSymbol={id}
               />
             </WithdrawSection>
           </HalfContent>
