@@ -17,6 +17,12 @@ const BaseWido = styled.div`
 
 const NewLabel = styled.div`
   ${props =>
+    props.color
+      ? `
+    color: ${props.color};
+  `
+      : ''}
+  ${props =>
     props.weight
       ? `
     font-weight: ${props.weight};

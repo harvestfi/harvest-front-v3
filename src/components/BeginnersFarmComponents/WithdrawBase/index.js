@@ -260,9 +260,7 @@ const WithdrawBase = ({
             }
           }}
         >
-          <NewLabel size="16px" weight="600" height="21px">
-            {withdrawName}
-          </NewLabel>
+          {withdrawName}
           <img src={ArrowRightIcon} alt="" />
         </Button>
       </NewLabel>
