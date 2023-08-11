@@ -18,8 +18,8 @@ const ImgBtn = styled.img`
   margin-right: 8px;
 
   @media screen and (max-width: 992px) {
-    width: 17px;
-    height: 16px;
+    width: 24px;
+    height: 24px;
   }
 `
 
@@ -82,6 +82,12 @@ const NewLabel = styled.div`
     props.marginBottom
       ? `
     margin-bottom: ${props.marginBottom};
+  `
+      : ''}
+  ${props =>
+    props.marginLeft
+      ? `
+    margin-left: ${props.marginLeft};
   `
       : ''}
   ${props =>

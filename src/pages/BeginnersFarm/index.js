@@ -572,6 +572,8 @@ const BeginnersFarm = () => {
                 unstakeBalance={unstakeBalance}
                 balanceList={balanceList}
                 tokenSymbol={id}
+                fAssetPool={fAssetPool}
+                multipleAssets={multipleAssets}
               />
             </WithdrawSection>
           </HalfContent>

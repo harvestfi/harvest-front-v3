@@ -67,7 +67,7 @@ const TopPart = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 41px 61px 90px 30px;
+    padding: 41px 30px 90px 30px;
   }
 `
 

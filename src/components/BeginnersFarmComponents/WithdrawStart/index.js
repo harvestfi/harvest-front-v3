@@ -1,7 +1,8 @@
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
-import { get } from 'lodash'
+import { get, isEmpty } from 'lodash'
+import { getTokenAllowance, approve } from 'wido'
 import { useMediaQuery } from 'react-responsive'
 import ReactTooltip from 'react-tooltip'
 import { Spinner } from 'react-bootstrap'
@@ -11,10 +12,13 @@ import AlertIcon from '../../../assets/images/logos/beginners/alert-triangle.svg
 import AlertCloseIcon from '../../../assets/images/logos/beginners/alert-close.svg'
 import { WIDO_BALANCES_DECIMALS, WIDO_EXTEND_DECIMALS } from '../../../constants'
 import { useWallet } from '../../../providers/Wallet'
-import { fromWei } from '../../../services/web3'
+import { useActions } from '../../../providers/Actions'
+import { fromWei, maxUint256, getWeb3 } from '../../../services/web3'
 import { formatNumberWido } from '../../../utils'
 import AnimatedDots from '../../AnimatedDots'
 import { Buttons, ImgBtn, NewLabel, SelectTokenWido, FTokenWrong } from './style'
+import { usePools } from '../../../providers/Pools'
+import { useVaults } from '../../../providers/Vault'
 
 const WithdrawStart = ({
   withdrawStart,
@@ -26,10 +30,30 @@ const WithdrawStart = ({
   unstakeBalance,
   balanceList,
   tokenSymbol,
+  fAssetPool,
+  multipleAssets,
 }) => {
-  const { account, web3 } = useWallet()
+  const { account, web3, getWalletBalances } = useWallet()
+  const { handleWithdraw } = useActions()
+  const { fetchUserPoolStats, userStats } = usePools()
+  const { vaultsData, getFarmingBalances, farmingBalances } = useVaults()
+
+  const [, setPendingAction] = useState(null)
 
   const pricePerFullShare = get(token, `pricePerFullShare`, 0)
+
+  const walletBalancesToCheck = multipleAssets || [tokenSymbol]
+  const selectedAsset = !token.isSingleAssetWithdrawalAllowed ? -1 : 0
+
+  const [amountsToExecute, setAmountsToExecute] = useState([])
+
+  const amountsToExecuteInWei = amountsToExecute.map(amt => {
+    if (isEmpty(amt)) {
+      return null
+    }
+
+    return amt
+  })
 
   const [fromInfoAmount, setFromInfoAmount] = useState('')
   const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('')
@@ -41,6 +65,7 @@ const WithdrawStart = ({
       !new BigNumber(unstakeBalance).isEqualTo(0) &&
       withdrawStart
     ) {
+      setAmountsToExecute([unstakeBalance.toString()])
       const getQuoteResult = async () => {
         setFromInfoAmount('')
         const amount = unstakeBalance
@@ -77,9 +102,83 @@ const WithdrawStart = ({
   ])
 
   const [withdrawFailed, setWithdrawFailed] = useState(false)
-  const [startSpinner] = useState(false) // State of Spinner for 'Finalize Deposit' button
+  const [startSpinner, setStartSpinner] = useState(false) // State of Spinner for 'Finalize Deposit' button
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+
+  const chainId = token.chain || token.data.chain
+  const fromToken = token.vaultAddress || token.tokenAddress
+
+  const approveZap = async amnt => {
+    const { data, to } = await approve({
+      chainId,
+      fromToken,
+      toToken: pickedToken.address,
+      amount: amnt,
+    })
+    const mainWeb = await getWeb3(chainId, account, web3)
+
+    await mainWeb.eth.sendTransaction({
+      from: account,
+      data,
+      to,
+    })
+  }
+
+  const startWithdraw = async () => {
+    setStartSpinner(true)
+    let approveSuccessed = false
+    try {
+      const { spender, allowance } = await getTokenAllowance({
+        chainId,
+        fromToken,
+        toToken: pickedToken.address,
+        accountAddress: account, // User
+      })
+
+      console.debug('Allowance Spender: ', spender)
+
+      if (!new BigNumber(allowance).gte(unstakeBalance)) {
+        const amountToApprove = maxUint256()
+        await approveZap(amountToApprove) // Approve for Zap
+      }
+      approveSuccessed = true
+    } catch (err) {
+      setStartSpinner(false)
+      setWithdrawFailed(true)
+      return
+    }
+
+    if (approveSuccessed) {
+      try {
+        await handleWithdraw(
+          account,
+          tokenSymbol,
+          amountsToExecuteInWei[0],
+          vaultsData,
+          setPendingAction,
+          multipleAssets,
+          selectedAsset,
+          async () => {
+            setAmountsToExecute(['', ''])
+            const updatedStats = await fetchUserPoolStats([fAssetPool], account, userStats)
+            await getWalletBalances(walletBalancesToCheck)
+            await getFarmingBalances([tokenSymbol], farmingBalances, updatedStats)
+            setWithdrawFailed(false)
+            setStartSpinner(false)
+            // setFinalStep(true)
+          },
+          async () => {
+            setWithdrawFailed(true)
+            setStartSpinner(false)
+          },
+        )
+      } catch (err) {
+        setWithdrawFailed(true)
+        setStartSpinner(false)
+      }
+    }
+  }
   return (
     <SelectTokenWido show={withdrawStart && !finalStep}>
       <NewLabel
@@ -238,7 +337,7 @@ const WithdrawStart = ({
       >
         <Buttons
           onClick={() => {
-            // startDeposit()
+            startWithdraw()
           }}
         >
           {!startSpinner ? (
