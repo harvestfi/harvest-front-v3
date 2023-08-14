@@ -97,6 +97,7 @@ const DepositStart = ({
     ) {
       const getQuoteResult = async () => {
         setFromInfoAmount('')
+        setFromInfoUsdAmount('')
         setQuoteValue(null)
         try {
           let fromInfoValue = '',
@@ -111,7 +112,7 @@ const DepositStart = ({
                       .dividedBy(new BigNumber(10).exponentiatedBy(pickedToken.decimals)),
                     WIDO_BALANCES_DECIMALS,
                   )
-                : ''
+                : '0'
           } else {
             const fromChainId = chainId
             const fromToken = pickedToken.address
@@ -141,16 +142,20 @@ const DepositStart = ({
             )
             fromInfoUsdValue =
               quoteResult.fromTokenAmount === null
-                ? ''
-                : `${formatNumberWido(
+                ? '0'
+                : formatNumberWido(
                     fromWei(quoteResult.fromTokenAmount, curToken.decimals) *
                       quoteResult.fromTokenUsdPrice,
                     BEGINNERS_BALANCES_DECIMALS,
-                  )}`
+                  )
           }
 
           setFromInfoAmount(fromInfoValue)
-          setFromInfoUsdAmount(fromInfoUsdValue)
+          if (Number(fromInfoUsdValue) < 0.01) {
+            setFromInfoUsdAmount('<$0.01')
+          } else {
+            setFromInfoUsdAmount(`$${fromInfoUsdValue}`)
+          }
         } catch (e) {
           toast.error('Failed to get quote!')
         }
@@ -181,6 +186,8 @@ const DepositStart = ({
 
   const [depositFailed, setDepositFailed] = useState(false)
   const [, setPendingAction] = useState(null)
+
+  const [buttonName, setButtonName] = useState('Finalize Deposit')
 
   const onDeposit = async () => {
     if (pickedToken.default) {
@@ -272,6 +279,7 @@ const DepositStart = ({
 
   const startDeposit = async () => {
     setStartSpinner(true)
+    setButtonName('(1/2) Approve Token Spending in Wallet')
     let stepFlag = false
     try {
       let allowanceCheck
@@ -295,21 +303,25 @@ const DepositStart = ({
     } catch (err) {
       setStartSpinner(false)
       setDepositFailed(true)
+      setButtonName('Finalize Deposit')
       return
     }
 
     if (stepFlag) {
       try {
+        setButtonName('(2/2) Confirm Deposit in Wallet')
         await onDeposit()
       } catch (err) {
         setDepositFailed(true)
         setStartSpinner(false)
+        setButtonName('Finalize Deposit')
         return
       }
     }
     // End Approve and Deposit successfully
     setStartSpinner(false)
     setDepositFailed(false)
+    setButtonName('Finalize Deposit')
     setFinalStep(true)
   }
 
@@ -367,7 +379,7 @@ const DepositStart = ({
         >
           <NewLabel weight="500">Est. USD Value</NewLabel>
           <NewLabel weight="600">
-            ${fromInfoUsdAmount !== '' ? fromInfoUsdAmount : <AnimatedDots />}
+            {fromInfoUsdAmount !== '' ? fromInfoUsdAmount : <AnimatedDots />}
           </NewLabel>
         </NewLabel>
         <NewLabel
@@ -512,8 +524,9 @@ const DepositStart = ({
             startDeposit()
           }}
         >
+          {buttonName}&nbsp;
           {!startSpinner ? (
-            'Finalize Deposit'
+            <></>
           ) : (
             <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
           )}
