@@ -136,6 +136,10 @@ const StartBeginners = styled.button`
   line-height: 28px;
   font-weight: 600;
 
+  &:hover {
+    color: #576f91;
+  }
+
   @media screen and (max-width: 992px) {
     padding: 8px 13px;
     font-size: 10px;
@@ -222,6 +226,9 @@ const DirectBtn = styled.button`
   font-weight: 600;
   line-height: 18px;
   color: #232323;
+  &:hover {
+    color: #576f91;
+  }
 
   @media screen and (max-width: 992px) {
     padding: 5px 8px;
@@ -347,6 +354,9 @@ const AdvancedDirectBtn = styled.button`
   font-weight: 600;
   line-height: 18px;
   color: #232323;
+  &:hover {
+    color: #576f91;
+  }
 
   @media screen and (max-width: 992px) {
     font-size: 6px;
