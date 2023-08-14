@@ -49,7 +49,7 @@ const Inner = styled.div`
 const CoinSection = styled.div`
   width: 100%;
   display: flex;
-  justify-content: center;
+  justify-content: start;
   flex-wrap: wrap;
   gap: 10px;
 
