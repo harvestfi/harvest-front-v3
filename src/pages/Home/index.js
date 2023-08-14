@@ -23,6 +23,7 @@ import {
   AdvancedDesc,
   AdvancedDirectBtn,
 } from './style'
+import { ROUTES } from '../../constants'
 
 const Home = () => {
   const { push } = useHistory()
@@ -32,12 +33,16 @@ const Home = () => {
     <Container pageBackColor={pageBackColor} fontColor={fontColor}>
       <Inner>
         <FirstPart>
-          <FirstBack>
+          <FirstBack
+            onClick={() => {
+              push(ROUTES.BEGINNERS)
+            }}
+          >
             <Title>Farms of Beginners</Title>
             <Desc>The easiest way to put your crypto tokens to work.</Desc>
             <StartBeginners
               onClick={() => {
-                push('/beginners')
+                push(ROUTES.BEGINNERS)
               }}
             >
               Start Earning Now
@@ -52,10 +57,20 @@ const Home = () => {
             <img className="sun" src={FirstFarmSun} alt="" />
             <img className="bottom" src={FirstFarmBottom} alt="" />
           </FirstFarmingPart>
-          <AdvancedFarms>
+          <AdvancedFarms
+            onClick={() => {
+              push(ROUTES.ADVANCED)
+            }}
+          >
             <AdvancedTitle>Advanced Farms</AdvancedTitle>
             <AdvancedDesc>Over 100 farms on Ethereum, Polygon and Arbitrum await!</AdvancedDesc>
-            <AdvancedDirectBtn>Discover</AdvancedDirectBtn>
+            <AdvancedDirectBtn
+              onClick={() => {
+                push(ROUTES.ADVANCED)
+              }}
+            >
+              Discover
+            </AdvancedDirectBtn>
             <img className="sun" src={AdvancedSun} alt="" />
             <img className="bottom" src={AdvancedBottom} alt="" />
           </AdvancedFarms>
