@@ -58,6 +58,8 @@ const WithdrawStart = ({
   const [fromInfoAmount, setFromInfoAmount] = useState('')
   const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('')
 
+  const [buttonName, setButtonName] = useState('Finalize Withdraw')
+
   useEffect(() => {
     if (
       account &&
@@ -68,6 +70,7 @@ const WithdrawStart = ({
       setAmountsToExecute([unstakeBalance.toString()])
       const getQuoteResult = async () => {
         setFromInfoAmount('')
+        setFromInfoUsdAmount('')
         const amount = unstakeBalance
         try {
           let fromInfoValue = '',
@@ -83,7 +86,11 @@ const WithdrawStart = ({
             WIDO_BALANCES_DECIMALS,
           )
           setFromInfoAmount(fromInfoValue)
-          setFromInfoUsdAmount(fromInfoUsdValue)
+          if (Number(fromInfoUsdValue) < 0.01) {
+            setFromInfoUsdAmount('<$0.01')
+          } else {
+            setFromInfoUsdAmount(`$${fromInfoUsdValue}`)
+          }
         } catch (e) {
           toast.error('Failed to get quote!')
         }
@@ -127,6 +134,7 @@ const WithdrawStart = ({
 
   const startWithdraw = async () => {
     setStartSpinner(true)
+    setButtonName('(1/2) Approve Token Spending in Wallet')
     let approveSuccessed = false
     try {
       const { spender, allowance } = await getTokenAllowance({
@@ -146,11 +154,13 @@ const WithdrawStart = ({
     } catch (err) {
       setStartSpinner(false)
       setWithdrawFailed(true)
+      setButtonName('Finalize Withdraw')
       return
     }
 
     if (approveSuccessed) {
       try {
+        setButtonName('(2/2) Confirm Withdraw in Wallet')
         await handleWithdraw(
           account,
           tokenSymbol,
@@ -166,16 +176,19 @@ const WithdrawStart = ({
             await getFarmingBalances([tokenSymbol], farmingBalances, updatedStats)
             setWithdrawFailed(false)
             setStartSpinner(false)
+            setButtonName('Finalize Withdraw')
             setFinalStep(true)
           },
           async () => {
             setWithdrawFailed(true)
             setStartSpinner(false)
+            setButtonName('Finalize Withdraw')
           },
         )
       } catch (err) {
         setWithdrawFailed(true)
         setStartSpinner(false)
+        setButtonName('Finalize Withdraw')
       }
     }
   }
@@ -246,12 +259,12 @@ const WithdrawStart = ({
                 weight="600"
                 color="#344054"
               >
-                Combined value of deposit and accrued yield.
+                Combined value of withdraw and accrued yield.
               </NewLabel>
             </ReactTooltip>
           </NewLabel>
           <NewLabel weight="600">
-            ${fromInfoUsdAmount !== '' ? fromInfoUsdAmount : <AnimatedDots />}
+            {fromInfoUsdAmount !== '' ? fromInfoUsdAmount : <AnimatedDots />}
           </NewLabel>
         </NewLabel>
         <NewLabel
@@ -340,8 +353,9 @@ const WithdrawStart = ({
             startWithdraw()
           }}
         >
+          {buttonName}&nbsp;
           {!startSpinner ? (
-            'Finalize Withdraw'
+            <></>
           ) : (
             <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
           )}
