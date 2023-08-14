@@ -625,6 +625,7 @@ const BeginnersFarm = () => {
                   color="black"
                   self="center"
                 >
+                  $
                   {!connected ? (
                     0
                   ) : lpTokenBalance ? (
