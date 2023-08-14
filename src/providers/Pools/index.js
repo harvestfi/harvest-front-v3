@@ -38,6 +38,8 @@ const getReader = (selectedChain, contracts) => {
   switch (String(selectedChain)) {
     case CHAIN_IDS.ARBITRUM_ONE:
       return contracts.readerArbitrum
+    case CHAIN_IDS.BASE:
+      return contracts.readerBase
     case CHAIN_IDS.POLYGON_MAINNET:
       return contracts.readerMatic
     default:
@@ -87,7 +89,12 @@ const PoolsProvider = _ref => {
       }
       formattedPools = await Promise.all(
         defaultPools.map(async pool => {
-          if (!isLedgerLive() || (isLedgerLive() && pool.chain !== CHAIN_IDS.ARBITRUM_ONE)) {
+          if (
+            !isLedgerLive() ||
+            (isLedgerLive() &&
+              pool.chain !== CHAIN_IDS.ARBITRUM_ONE &&
+              pool.chain !== CHAIN_IDS.BASE)
+          ) {
             let web3Client = await getWeb3(pool.chain, selectedAccount, web3),
               web3ClientLocal = await getWeb3(pool.chain, true, web3),
               rewardAPY = ['0'],
@@ -233,7 +240,12 @@ const PoolsProvider = _ref => {
       if (isLedgerLive()) {
         newPools = await formatPoolsData([...apiData.eth, ...apiData.matic])
       } else {
-        newPools = await formatPoolsData([...apiData.eth, ...apiData.matic, ...apiData.arbitrum])
+        newPools = await formatPoolsData([
+          ...apiData.eth,
+          ...apiData.matic,
+          ...apiData.arbitrum,
+          ...apiData.base,
+        ])
       }
       setDisableWallet(false)
     } catch (err) {

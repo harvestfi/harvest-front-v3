@@ -9,6 +9,8 @@ import Web3 from 'web3'
 import {
   ARBISCAN_URL,
   ARBITRUM_URL,
+  BASE_URL,
+  BASESCAN_URL,
   ETHERSCAN_URL,
   INFURA_URL,
   isDebugMode,
@@ -26,6 +28,7 @@ const SDK = new SafeAppsSDK()
 export const infuraWeb3 = new Web3(INFURA_URL)
 export const maticWeb3 = new Web3(MATIC_URL)
 export const arbitrumWeb3 = new Web3(ARBITRUM_URL)
+export const baseWeb3 = new Web3(BASE_URL)
 export const ledgerProvider = new ethers.providers.Web3Provider(new IFrameEthereumProvider())
 export const ledgerWeb3 = new Web3(new IFrameEthereumProvider())
 export const safeProvider = async () => {
@@ -130,6 +133,8 @@ export const getChainName = chainId => {
     case Number(CHAIN_IDS.ARBITRUM_ONE):
     case getChainHexadecimal(CHAIN_IDS.ARBITRUM_ONE):
       return 'Arbitrum One'
+    case getChainHexadecimal(CHAIN_IDS.BASE):
+      return 'Base'
     case Number(CHAIN_IDS.ETH_MAINNET):
     case getChainHexadecimal(CHAIN_IDS.ETH_MAINNET):
       return 'Ethereum Mainnet'
@@ -164,6 +169,10 @@ export const getWeb3 = async (chainId, account, web3 = null) => {
     return arbitrumWeb3
   }
 
+  if (chainId === CHAIN_IDS.BASE) {
+    return baseWeb3
+  }
+
   return infuraWeb3
 }
 
@@ -186,6 +195,8 @@ export const getExplorerLink = chainId => {
       return MATICSCAN_URL
     case CHAIN_IDS.ARBITRUM_ONE:
       return ARBISCAN_URL
+    case CHAIN_IDS.BASE:
+      return BASESCAN_URL
     default:
       return ETHERSCAN_URL
   }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
+import BASE from '../../../assets/images/chains/base.svg'
 import ETHEREUM from '../../../assets/images/chains/ethereum.svg'
 import POLYGON from '../../../assets/images/chains/polygon.svg'
 import APYIcon from '../../../assets/images/logos/farm/MobileAPYIcon.svg'
@@ -33,6 +34,7 @@ const chainList = isLedgerLive()
       { id: 1, name: 'Ethereum', chainId: 1 },
       { id: 2, name: 'Polygon', chainId: 137 },
       { id: 3, name: 'Arbitrum', chainId: 42161 },
+      { id: 4, name: 'Base', chainId: 8453 },
     ]
 
 const MobilePanelHeader = ({
@@ -47,7 +49,7 @@ const MobilePanelHeader = ({
   lsdToken,
   desciToken,
 }) => {
-  const BadgeAry = isLedgerLive() ? [ETHEREUM, POLYGON] : [ETHEREUM, POLYGON, ARBITRUM]
+  const BadgeAry = isLedgerLive() ? [ETHEREUM, POLYGON] : [ETHEREUM, POLYGON, ARBITRUM, BASE]
 
   const chainId = token.chain || token.data.chain
   const [badgeId, setBadgeId] = useState(-1)

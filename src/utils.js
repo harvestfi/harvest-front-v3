@@ -22,6 +22,7 @@ import {
   GRAPH_URL_POLYGON,
   GRAPH_URL_ARBITRUM,
   TOTAL_TVL_API_ENDPOINT,
+  GRAPH_URL_BASE,
 } from './constants'
 import { CHAIN_IDS } from './data/constants'
 import { addresses } from './data/index'
@@ -1154,6 +1155,8 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
       ? GRAPH_URL_MAINNET
       : chainId === CHAIN_IDS.POLYGON_MAINNET
       ? GRAPH_URL_POLYGON
+      : chainId === CHAIN_IDS.BASE
+      ? GRAPH_URL_BASE
       : GRAPH_URL_ARBITRUM
 
   try {
@@ -1276,6 +1279,8 @@ export const getLastHarvestInfo = async (address, chainId) => {
       ? GRAPH_URL_MAINNET
       : chainId === CHAIN_IDS.POLYGON_MAINNET
       ? GRAPH_URL_POLYGON
+      : chainId === CHAIN_IDS.BASE
+      ? GRAPH_URL_BASE
       : GRAPH_URL_ARBITRUM
 
   try {

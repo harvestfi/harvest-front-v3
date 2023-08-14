@@ -20,6 +20,9 @@ import ReaderMaticMethods from './reader-matic/methods'
 import ReaderArbitrumContract from './reader-arbitrum/contract.json'
 import ReaderArbitrumMethods from './reader-arbitrum/methods'
 
+import ReaderBaseContract from './reader-base/contract.json'
+import ReaderBaseMethods from './reader-base/methods'
+
 import { CHAIN_IDS } from '../../../data/constants'
 
 const { tokens } = require('../../../data')
@@ -75,6 +78,12 @@ export default {
     contract: ReaderArbitrumContract,
     methods: ReaderArbitrumMethods,
     chain: CHAIN_IDS.ARBITRUM_ONE,
+  },
+
+  readerBase: {
+    contract: ReaderBaseContract,
+    methods: ReaderBaseMethods,
+    chain: CHAIN_IDS.BASE,
   },
   ...getTokensContracts(),
 }

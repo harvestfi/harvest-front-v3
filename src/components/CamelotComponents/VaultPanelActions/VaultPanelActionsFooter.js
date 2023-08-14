@@ -25,7 +25,11 @@ import VaultFooterActions from './VaultFooterActions'
 const { addresses, tokens } = require('../../../data')
 
 const getPoolRewardSymbol = chain => {
-  if (chain === CHAIN_IDS.ARBITRUM_ONE || chain === CHAIN_IDS.POLYGON_MAINNET) {
+  if (
+    chain === CHAIN_IDS.ARBITRUM_ONE ||
+    chain === CHAIN_IDS.POLYGON_MAINNET ||
+    chain === CHAIN_IDS.BASE
+  ) {
     return IFARM_TOKEN_SYMBOL
   }
   return FARM_TOKEN_SYMBOL

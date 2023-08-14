@@ -18,6 +18,7 @@ import MobileConnect from '../../assets/images/logos/sidebar/mobileconnect.svg'
 import ProfitSharingIcon from '../../assets/images/logos/sidebar/profit-sharing.svg'
 import Toggle from '../../assets/images/logos/sidebar/toggle.svg'
 import Arbitrum from '../../assets/images/chains/arbitrum.svg'
+import Base from '../../assets/images/chains/base.svg'
 import Ethereum from '../../assets/images/chains/ethereum.svg'
 import Polygon from '../../assets/images/chains/polygon.svg'
 import { ROUTES, directDetailUrl } from '../../constants'
@@ -151,6 +152,9 @@ const getChainIcon = chainNum => {
       case CHAIN_IDS.ARBITRUM_ONE:
         icon = Arbitrum
         break
+      case CHAIN_IDS.BASE:
+        icon = Base
+        break
       default:
         icon = Ethereum
         break
@@ -210,7 +214,12 @@ const Sidebar = ({ width }) => {
 
   const directAction = path => {
     if (path === ROUTES.PORTFOLIO || path === ROUTES.ANALYTIC || path === ROUTES.BEGINNERS) {
-      setSelChain([CHAIN_IDS.ETH_MAINNET, CHAIN_IDS.POLYGON_MAINNET, CHAIN_IDS.ARBITRUM_ONE])
+      setSelChain([
+        CHAIN_IDS.ETH_MAINNET,
+        CHAIN_IDS.POLYGON_MAINNET,
+        CHAIN_IDS.ARBITRUM_ONE,
+        CHAIN_IDS.BASE,
+      ])
     }
     push(path)
   }

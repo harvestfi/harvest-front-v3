@@ -14,7 +14,10 @@ import { WalletProvider } from './Wallet'
 const injected = injectedModule()
 const gnosis = gnosisModule()
 const walletConnect = walletConnectModule({
+  version: 2,
+  projectId: '6931eace1272646ed84e46c55fac0311',
   bridge: 'https://bridge.walletconnect.org',
+  requiredChains: [1, 137, 42161],
   qrcodeModalOptions: {
     mobileLinks: ['rainbow', 'metamask', 'argent', 'trust', 'imtoken', 'pillar'],
   },
@@ -36,6 +39,12 @@ const web3Onboard = init({
       token: 'MATIC',
       label: 'Polygon Mainnet',
       rpcUrl: 'https://rpc.ankr.com/polygon',
+    },
+    {
+      id: 8453,
+      token: 'BETH',
+      label: 'Base Mainnet',
+      rpcUrl: 'https://developer-access-mainnet.base.org',
     },
     {
       id: 42161,
