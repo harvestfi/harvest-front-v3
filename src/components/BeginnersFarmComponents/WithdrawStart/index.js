@@ -286,7 +286,7 @@ const WithdrawStart = ({
               ),
               WIDO_EXTEND_DECIMALS,
             )}
-            {tokenSymbol}
+            &nbsp;{tokenSymbol}
           </NewLabel>
         </NewLabel>
       </NewLabel>
