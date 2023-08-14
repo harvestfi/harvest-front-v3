@@ -49,9 +49,9 @@ const Inner = styled.div`
 const CoinSection = styled.div`
   width: 100%;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   flex-wrap: wrap;
-  gap: 25px;
+  gap: 10px;
 
   @media screen and (max-width: 992px) {
     padding: 0 22px 116px 24px;
