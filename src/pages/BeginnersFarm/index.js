@@ -25,6 +25,7 @@ import DepositStart from '../../components/BeginnersFarmComponents/DepositStart'
 import DepositResult from '../../components/BeginnersFarmComponents/DepositResult'
 import WithdrawBase from '../../components/BeginnersFarmComponents/WithdrawBase'
 import WithdrawStart from '../../components/BeginnersFarmComponents/WithdrawStart'
+import WithdrawResult from '../../components/BeginnersFarmComponents/WithdrawResult'
 import {
   DECIMAL_PRECISION,
   FARM_GRAIN_TOKEN_SYMBOL,
@@ -460,35 +461,6 @@ const BeginnersFarm = () => {
       <Inner>
         <BigDiv>
           <HalfContent partHeight={partHeightDepo}>
-            {/* {activeDepo
-              ? !selectTokenDepo && !depositStart && !depositFinalStep
-              : !withdrawStart &&
-                !withdrawFinalStep && (
-                  <NewLabel
-                    display="flex"
-                    justifyContent="space-between"
-                    padding={isMobile ? '18px 18px 0' : '24px 24px 0'}
-                    items="center"
-                  >
-                    <CreditCardBox>
-                      <img src={CreditCard} alt="" />
-                    </CreditCardBox>
-                    <ThemeMode mode={activeDepo ? 'deposit' : 'withdraw'}>
-                      <div id="theme-switch">
-                        <div className="switch-track">
-                          <div className="switch-thumb" />
-                        </div>
-
-                        <input
-                          type="checkbox"
-                          checked={activeDepo}
-                          onChange={switchMethod}
-                          aria-label="Switch between dark and light mode"
-                        />
-                      </div>
-                    </ThemeMode>
-                  </NewLabel>
-                )} */}
             <DepositSection isShow={activeDepo}>
               <DepositBase
                 selectToken={selectTokenDepo}
@@ -574,6 +546,15 @@ const BeginnersFarm = () => {
                 tokenSymbol={id}
                 fAssetPool={fAssetPool}
                 multipleAssets={multipleAssets}
+              />
+              <WithdrawResult
+                pickedToken={pickedTokenWith}
+                finalStep={withdrawFinalStep}
+                setFinalStep={setWithdrawFinalStep}
+                setWithdraw={setWithdrawStart}
+                unstakeBalance={unstakeBalance}
+                token={token}
+                tokenSymbol={id}
               />
             </WithdrawSection>
           </HalfContent>

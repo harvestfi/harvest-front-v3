@@ -25,7 +25,7 @@ const WithdrawStart = ({
   setWithdrawStart,
   pickedToken,
   finalStep,
-  // setFinalStep,
+  setFinalStep,
   token,
   unstakeBalance,
   balanceList,
@@ -166,7 +166,7 @@ const WithdrawStart = ({
             await getFarmingBalances([tokenSymbol], farmingBalances, updatedStats)
             setWithdrawFailed(false)
             setStartSpinner(false)
-            // setFinalStep(true)
+            setFinalStep(true)
           },
           async () => {
             setWithdrawFailed(true)
