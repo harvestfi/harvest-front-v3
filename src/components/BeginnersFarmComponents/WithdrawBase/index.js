@@ -53,7 +53,7 @@ const WithdrawBase = ({
   setPickedToken,
   unstakeBalance,
   setUnstakeBalance,
-  symbol,
+  tokenSymbol,
   fAssetPool,
   lpTokenBalance,
   token,
@@ -103,12 +103,12 @@ const WithdrawBase = ({
     if (supTokenList.length > 0) {
       // eslint-disable-next-line no-plusplus
       for (let i = 0; i < supTokenList.length; i++) {
-        if (supTokenList[i].symbol === symbol) {
+        if (supTokenList[i].symbol === tokenSymbol) {
           setPickedToken(supTokenList[i])
         }
       }
     }
-  }, [supTokenList, setPickedToken, symbol])
+  }, [supTokenList, setPickedToken, tokenSymbol])
 
   const onInputUnstake = e => {
     setUnstakeInputValue(e.currentTarget.value)
@@ -169,7 +169,7 @@ const WithdrawBase = ({
       >
         Withdraw
       </NewLabel>
-      <Title>Withdraw your deposit back to USDC.</Title>
+      <Title>Withdraw your deposit back to {tokenSymbol}.</Title>
       <TokenInfo>
         <AmountSection>
           <NewLabel
@@ -211,7 +211,7 @@ const WithdrawBase = ({
           }
         }}
       >
-        {`f${symbol}`} Balance Available:
+        {`f${tokenSymbol}`} Balance Available:
         <span>
           {!connected ? (
             0
@@ -232,7 +232,7 @@ const WithdrawBase = ({
             weight="600"
             color="#344054"
           >
-            The amount of {`f${symbol}`} you entered exceeds deposited balance.
+            The amount of {`f${tokenSymbol}`} you entered exceeds deposited balance.
           </NewLabel>
         </NewLabel>
         <div>

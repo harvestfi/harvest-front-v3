@@ -104,7 +104,7 @@ const WithdrawResult = ({
               weight="400"
               marginBottom="5px"
             >
-              You have received USDC directly to your wallet.
+              You have received {tokenSymbol} directly to your wallet.
             </NewLabel>
           </NewLabel>
         </NewLabel>

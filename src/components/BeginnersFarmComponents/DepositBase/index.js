@@ -177,7 +177,7 @@ const DepositBase = ({
       >
         Deposit
       </NewLabel>
-      <DepoTitle>Deposit USDC or other token from your wallet to get started.</DepoTitle>
+      <DepoTitle>Deposit {tokenSymbol} or other token from your wallet to get started.</DepoTitle>
       <TokenInfo>
         <AmountSection>
           <NewLabel

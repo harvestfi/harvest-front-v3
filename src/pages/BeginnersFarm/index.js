@@ -439,7 +439,7 @@ const BeginnersFarm = () => {
             marginBottom={isMobile ? '8px' : '10px'}
             color="white"
           >
-            Deposit USDC or any token from your wallet to start earning.
+            Deposit {id} or any token from your wallet to start earning.
           </NewLabel>
           <NewLabel
             weight={700}
@@ -526,7 +526,7 @@ const BeginnersFarm = () => {
                 setPickedToken={setPickedTokenWith}
                 unstakeBalance={unstakeBalance}
                 setUnstakeBalance={setUnstakeBalance}
-                symbol={id}
+                tokenSymbol={id}
                 fAssetPool={fAssetPool}
                 lpTokenBalance={lpTokenBalance}
                 token={token}

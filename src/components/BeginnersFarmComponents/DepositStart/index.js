@@ -433,7 +433,7 @@ const DepositStart = ({
             weight="600"
             marginBottom="4px"
           >
-            What is fUSDC?
+            What is {`f${tokenSymbol}`}?
           </NewLabel>
           <NewLabel
             color="#475467"
