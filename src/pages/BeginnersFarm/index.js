@@ -389,7 +389,6 @@ const BeginnersFarm = () => {
   const [holderCount, setHolderCount] = useState(0)
   useEffect(() => {
     const getTokenHolder = async () => {
-      const tokenAddress = token.tokenAddress
       const chainName =
         chain === CHAIN_IDS.ETH_MAINNET
           ? 'eth'
@@ -411,7 +410,7 @@ const BeginnersFarm = () => {
           method: 'ankr_getTokenHolders',
           params: {
             blockchain: chainName,
-            contractAddress: tokenAddress,
+            contractAddress: paramAddress,
           },
           id: 1,
         },
