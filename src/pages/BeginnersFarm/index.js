@@ -459,17 +459,19 @@ const BeginnersFarm = () => {
           </div>
           <GuideSection>
             <GuidePart>
+              <img src={DOT} alt="" />
+              <b>
+                {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
+                &nbsp;APR
+              </b>
+            </GuidePart>
+            <GuidePart>
               <img className="icon" src={BeginnerFriendly} alt="" />
               Beginner Friendly
             </GuidePart>
             <GuidePart>
               <img className="icon" src={WithdrawAnytime} alt="" />
               Withdraw Anytime
-            </GuidePart>
-            <GuidePart>
-              <img src={DOT} alt="" />
-              {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
-              &nbsp;APR
             </GuidePart>
           </GuideSection>
           <TopDesc
