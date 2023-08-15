@@ -5,6 +5,7 @@ import { useMediaQuery } from 'react-responsive'
 import { useHistory, useParams } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { getBalances, getSupportedTokens } from 'wido'
+import axios from 'axios'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import Back from '../../assets/images/logos/earn/back.svg'
@@ -69,6 +70,7 @@ import {
   // CreditCardBox,
   // ThemeMode,
 } from './style'
+import { CHAIN_IDS } from '../../data/constants'
 
 const BeginnersCoinGroup = ['DAI', 'ETH', 'USDT', 'xGRAIL']
 
@@ -384,6 +386,53 @@ const BeginnersFarm = () => {
   const switchMethod = () => setActiveDepo(prev => !prev)
   const [partHeightDepo, setPartHeightDepo] = useState(null)
 
+  const [holderCount, setHolderCount] = useState(0)
+  useEffect(() => {
+    const getTokenHolder = async () => {
+      const tokenAddress = token.tokenAddress
+      const chainName =
+        chain === CHAIN_IDS.ETH_MAINNET
+          ? 'eth'
+          : chain === CHAIN_IDS.ARBITRUM_ONE
+          ? 'arbitrum'
+          : chain === CHAIN_IDS.POLYGON_MAINNET
+          ? 'polygon'
+          : ''
+
+      const options = {
+        method: 'POST',
+        url:
+          'https://rpc.ankr.com/multichain/79258ce7f7ee046decc3b5292a24eb4bf7c910d7e39b691384c7ce0cfb839a01/',
+        // eslint-disable-next-line camelcase
+        params: { ankr_getTokenHolders: '' },
+        headers: { accept: 'application/json', 'content-type': 'application/json' },
+        data: {
+          jsonrpc: '2.0',
+          method: 'ankr_getTokenHolders',
+          params: {
+            blockchain: chainName,
+            contractAddress: tokenAddress,
+          },
+          id: 1,
+        },
+      }
+
+      axios
+        .request(options)
+        .then(response => {
+          if (response.data.result === undefined) {
+            return
+          }
+          setHolderCount(response.data.result.holdersCount)
+        })
+        .catch(error => {
+          console.error(error)
+        })
+    }
+
+    getTokenHolder()
+  }, [paramAddress, chain, token])
+
   return (
     <DetailView pageBackColor={pageBackColor} fontColor={fontColor}>
       <TopPart num={coinId}>
@@ -448,7 +497,7 @@ const BeginnersFarm = () => {
             color="white"
           >
             <img className="thumbs-up" src={Thumbsup} alt="" />
-            Currently used by 265 other users.
+            Currently used by {holderCount} other users.
           </NewLabel>
         </FlexTopDiv>
         <FlexTopDiv className="desktop-logo">
