@@ -488,7 +488,7 @@ const BeginnersFarm = () => {
             marginBottom={isMobile ? '8px' : '10px'}
             color="white"
           >
-            Deposit {id} or any token from your wallet to start earning.
+            Deposit {id} or any token from your wallet to start earning yield.
           </NewLabel>
           <NewLabel
             weight={700}
