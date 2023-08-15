@@ -64,6 +64,7 @@ const TopPart = styled.div`
     bottom: 0;
     left: 0;
     width: 100%;
+    z-index: 0;
   }
 
   @media screen and (max-width: 992px) {
@@ -239,6 +240,7 @@ const FlexTopDiv = styled.div`
   flex-direction: column;
   justify-content: start;
   align-self: center;
+  z-index: 1;
 
   img {
     align-self: center;
