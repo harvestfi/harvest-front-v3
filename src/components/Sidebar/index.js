@@ -135,7 +135,7 @@ const SideLink = ({ item, subItem, isDropdownLink, fontColor, activeIconColor, d
         />
       </div>
       {item.name}
-      {item.new ? <NewTag>New</NewTag> : <></>}
+      {item.new ? <NewTag>Soon</NewTag> : <></>}
     </Link>
   )
 }

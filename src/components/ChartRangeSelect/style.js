@@ -3,10 +3,10 @@ import styled from 'styled-components'
 const Container = styled.button`
   font-weight: 400;
   font-size: 12px;
-  padding: 6px 15px;
+  padding: 3px 15px;
   display: flex;
   text-align: left;
-  margin-left: 20px;
+  // margin-left: 20px;
   border: none;
   color: #282f3d;
   border-radius: 3px;
