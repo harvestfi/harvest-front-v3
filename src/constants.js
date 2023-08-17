@@ -18,6 +18,7 @@ export const SOCIAL_LINKS = {
 export const ROUTES = {
   HOME: '/',
   BEGINNERS: '/beginners',
+  COLLABORATIONS: '/collaborations',
   ADVANCED: '/advanced',
   PORTFOLIO: '/portfolio',
   ANALYTIC: '/analytics',

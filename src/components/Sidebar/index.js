@@ -11,6 +11,7 @@ import ExternalLink from '../../assets/images/logos/sidebar/external_link.svg'
 import FAQ from '../../assets/images/logos/sidebar/faq.svg'
 import Home from '../../assets/images/logos/sidebar/home.svg'
 import Beginners from '../../assets/images/logos/sidebar/beginners.svg'
+import Collaborations from '../../assets/images/logos/sidebar/collaborations.svg'
 import Advanced from '../../assets/images/logos/sidebar/advanced.svg'
 import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
 import LogoutIcon from '../../assets/images/logos/sidebar/logout.svg'
@@ -65,6 +66,7 @@ import {
   ProfitPart,
   Logo,
   Desktop,
+  NewTag,
 } from './style'
 
 const sideLinks = [
@@ -77,6 +79,13 @@ const sideLinks = [
     path: ROUTES.BEGINNERS,
     name: 'Beginners',
     imgPath: Beginners,
+  },
+  {
+    path: ROUTES.COLLABORATIONS,
+    name: 'Collaborations',
+    imgPath: Collaborations,
+    new: true,
+    enabled: false,
   },
   {
     path: ROUTES.ADVANCED,
@@ -124,6 +133,7 @@ const SideLink = ({ item, subItem, isDropdownLink, fontColor, activeIconColor, d
       isDropdownLink={isDropdownLink}
       activeIconColor={activeIconColor}
       darkMode={darkMode}
+      enabled={item.enabled === false ? 'false' : 'true'}
     >
       <div className="item">
         <SideIcons
@@ -135,6 +145,7 @@ const SideLink = ({ item, subItem, isDropdownLink, fontColor, activeIconColor, d
         />
       </div>
       {item.name}
+      {item.new ? <NewTag>New</NewTag> : <></>}
     </Link>
   )
 }
@@ -330,7 +341,7 @@ const Sidebar = ({ width }) => {
                     onClick={() => {
                       if (item.newTab) {
                         window.open(item.path, '_blank')
-                      } else {
+                      } else if (item.enabled !== false) {
                         directAction(item.path)
                       }
                     }}

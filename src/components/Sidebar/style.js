@@ -12,7 +12,7 @@ const Container = styled.div`
   background: ${props => props.backColor};
   color: ${props => props.fontColor};
 
-  min-height: 593px;
+  min-height: 652px;
   height: 100%;
   min-width: ${props => props.width};
   max-width: 100%;
@@ -114,6 +114,17 @@ const Link = styled.button`
   border-width: 0;
   border-radius: 5px;
   padding: 5px;
+  ${props =>
+    props.enabled === 'false'
+      ? `
+      pointer-events: none;
+      color: #a4a4a4;
+
+      img.sideIcon {
+        filter: invert(81%) sepia(0%) saturate(1%) hue-rotate(315deg) brightness(82%) contrast(85%);
+      }
+    `
+      : ``}
 
   ${props =>
     props.active
@@ -160,8 +171,8 @@ const Link = styled.button`
   }
 
   &:hover {
-    color: ${props => props.activeColor};
-    font-weight: bold;
+    color: #848484;
+    // font-weight: bold;
     img {
       ${props =>
         props.darkMode
@@ -509,10 +520,6 @@ const ThemeMode = styled.div`
 `
 
 const SideIcons = styled.img`
-  filter: ${props => props.filterColor};
-  &:hover {
-    filter: ${props => props.hoverImgColor};
-  }
   transition: 0.25s;
 `
 
@@ -728,6 +735,17 @@ const Desktop = styled.div`
   justify-content: space-between;
 `
 
+const NewTag = styled.div`
+  border-radius: 16px;
+  background: #7f56d9;
+  padding: 2px 8px;
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 500;
+  color: white !important;
+  margin-left: 10px;
+`
+
 export {
   Container,
   Layout,
@@ -764,4 +782,5 @@ export {
   ProfitPart,
   Logo,
   Desktop,
+  NewTag,
 }
