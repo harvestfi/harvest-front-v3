@@ -1,6 +1,5 @@
 import styled from 'styled-components'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
-import Pattern from '../../assets/images/logos/pattern.png'
 
 const Container = styled.div`
   ${props => props.sidebarEffect};
@@ -659,70 +658,7 @@ const ProfitBack = styled.img`
   border-radius: 13px;
 `
 
-const TopDiv = styled.div`
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 23px;
-`
-
-const BottomDiv = styled.div`
-  font-size: 25px;
-  color: white;
-  line-height: 42px;
-  font-weight: 600;
-`
-
-const TopTitle = styled.div`
-  display: flex;
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 20px;
-  text-align: center;
-  color: #ffffff;
-  align-items: center;
-  padding: 4px 12px;
-  border: 2px solid #eaecf0;
-  border-radius: 14px;
-  img {
-    margin-right: 7px;
-    filter: brightness(0) saturate(100%) invert(100%) sepia(17%) saturate(0%) hue-rotate(338deg)
-      brightness(101%) contrast(101%);
-  }
-`
-
-const ChartDiv = styled.div`
-  position: absolute;
-  bottom: -15px;
-  right: 0;
-`
-
 const BottomPart = styled.div``
-
-const MobileProfitSharing = styled.div`
-  background: url(${Pattern});
-  background-position: center;
-  background-repeat: no-repeat;
-  cursor: pointer;
-  position: relative;
-  padding: 15px 18px;
-  border-radius: 13px;
-  margin: 50px 15px 0;
-
-  @media screen and (min-width: 992px) {
-    display: none;
-  }
-`
-
-const ProfitPart = styled.div`
-  position: absolute;
-  bottom: 60px;
-  width: 100%;
-
-  @media screen and (max-height: 670px) {
-    display: none;
-  }
-`
 
 const Logo = styled.div`
   cursor: pointer;
@@ -773,13 +709,7 @@ export {
   UserDropDownItem,
   UserDropDownMenu,
   ProfitBack,
-  TopDiv,
-  BottomDiv,
-  TopTitle,
-  ChartDiv,
   BottomPart,
-  MobileProfitSharing,
-  ProfitPart,
   Logo,
   Desktop,
   NewTag,

@@ -555,7 +555,7 @@ const Body = styled.div`
   min-height: 100vh;
 
   @media screen and (max-width: 992px) {
-    display: block;
+    flex-direction: column-reverse;
   }
 
   @media screen and (max-width: 860px) {

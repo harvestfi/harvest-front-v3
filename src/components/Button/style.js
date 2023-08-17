@@ -175,7 +175,7 @@ ${props =>
       props.color === 'wido-deposit'
         ? `
         background: #000;
-        border: 1px solid #000
+        border: 1px solid #000;
         font-weight: 600;
         font-size: 16px;
         line-height: 24px;

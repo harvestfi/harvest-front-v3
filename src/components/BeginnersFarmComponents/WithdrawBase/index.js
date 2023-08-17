@@ -6,7 +6,6 @@ import { useMediaQuery } from 'react-responsive'
 import ArrowRightIcon from '../../../assets/images/logos/beginners/arrow-right.svg'
 import InfoIcon from '../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../assets/images/logos/beginners/close.svg'
-import CreditCard from '../../../assets/images/logos/beginners/credit-card-shield.svg'
 import { POOL_BALANCES_DECIMALS } from '../../../constants'
 import { useWallet } from '../../../providers/Wallet'
 import { fromWei, toWei } from '../../../services/web3'
@@ -24,7 +23,6 @@ import {
   BalanceInfo,
   InsufficientSection,
   CloseBtn,
-  CreditCardBox,
   ThemeMode,
 } from './style'
 import { isSpecialApp } from '../../../utils'
@@ -138,14 +136,14 @@ const WithdrawBase = ({
   return (
     <BaseWido show={!withdrawStart && !finalStep}>
       <NewLabel
+        size={isMobile ? '14px' : '18px'}
+        height={isMobile ? '21px' : '28px'}
+        weight="600"
+        color="#101828"
         display="flex"
         justifyContent="space-between"
-        marginBottom={isMobile ? '12px' : '16px'}
-        items="center"
       >
-        <CreditCardBox>
-          <img src={CreditCard} alt="" />
-        </CreditCardBox>
+        Withdraw
         <ThemeMode mode={activeDepo ? 'deposit' : 'withdraw'}>
           <div id="theme-switch">
             <div className="switch-track">
@@ -160,14 +158,6 @@ const WithdrawBase = ({
             />
           </div>
         </ThemeMode>
-      </NewLabel>
-      <NewLabel
-        size={isMobile ? '14px' : '18px'}
-        height={isMobile ? '21px' : '28px'}
-        weight="600"
-        color="#101828"
-      >
-        Withdraw
       </NewLabel>
       <Title>Withdraw your deposit back to {tokenSymbol}.</Title>
       <TokenInfo>

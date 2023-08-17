@@ -245,22 +245,6 @@ const AmountSection = styled.div`
   padding-right: 16px;
 `
 
-const CreditCardBox = styled.div`
-  border-radius: 10px;
-  border: 1px solid var(--gray-200, #eaecf0);
-  background: var(--base-white, #fff);
-  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-  padding: 12px;
-
-  @media screen and (max-width: 992px) {
-    padding: 9px;
-
-    img {
-      width: 18px;
-    }
-  }
-`
-
 const ThemeMode = styled.div`
   display: flex;
 
@@ -401,7 +385,6 @@ export {
   BalanceInfo,
   DepoTitle,
   AmountSection,
-  CreditCardBox,
   ThemeMode,
   InsufficientSection,
   CloseBtn,

@@ -12,7 +12,6 @@ import Back from '../../assets/images/logos/earn/back.svg'
 import Info from '../../assets/images/logos/earn/info.svg'
 import BeginnerFriendly from '../../assets/images/logos/beginners/beginner-friendly.svg'
 import WithdrawAnytime from '../../assets/images/logos/beginners/withdraw-anytime.svg'
-// import CreditCard from '../../assets/images/logos/beginners/credit-card-shield.svg'
 import Thumbsup from '../../assets/images/logos/beginners/thumbs-up.svg'
 import DOT from '../../assets/images/logos/beginners/dot.svg'
 import DAIBottom from '../../assets/images/logos/beginnershome/dai-bottom.svg'
@@ -27,6 +26,7 @@ import DepositResult from '../../components/BeginnersFarmComponents/DepositResul
 import WithdrawBase from '../../components/BeginnersFarmComponents/WithdrawBase'
 import WithdrawStart from '../../components/BeginnersFarmComponents/WithdrawStart'
 import WithdrawResult from '../../components/BeginnersFarmComponents/WithdrawResult'
+import DetailChart from '../../components/BeginnersFarmComponents/DetailChart'
 import {
   DECIMAL_PRECISION,
   FARM_GRAIN_TOKEN_SYMBOL,
@@ -67,8 +67,7 @@ import {
   APRShow,
   DepositSection,
   WithdrawSection,
-  // CreditCardBox,
-  // ThemeMode,
+  MainSection,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 
@@ -510,111 +509,102 @@ const BeginnersFarm = () => {
       </TopPart>
       <Inner>
         <BigDiv>
-          <HalfContent partHeight={partHeightDepo}>
-            <DepositSection isShow={activeDepo}>
-              <DepositBase
-                selectToken={selectTokenDepo}
-                setSelectToken={setSelectTokenDepo}
-                deposit={depositStart}
-                setDeposit={setDepositStart}
-                finalStep={depositFinalStep}
-                balance={balanceDepo}
-                pickedToken={pickedTokenDepo}
-                inputAmount={inputAmountDepo}
-                setInputAmount={setInputAmountDepo}
-                token={token}
-                supTokenList={supTokenList}
-                activeDepo={activeDepo}
-                switchMethod={switchMethod}
-                tokenSymbol={id}
-              />
-              <DepositSelectToken
-                selectToken={selectTokenDepo}
-                setSelectToken={setSelectTokenDepo}
-                clickTokenId={clickTokenIdDepo}
-                setClickedTokenId={setClickedTokenIdDepo}
-                setPickedToken={setPickedTokenDepo}
-                setBalance={setBalanceDepo}
-                supTokenList={supTokenList}
-                setPartHeight={setPartHeightDepo}
-              />
-              <DepositStart
-                pickedToken={pickedTokenDepo}
-                deposit={depositStart}
-                setDeposit={setDepositStart}
-                finalStep={depositFinalStep}
-                setFinalStep={setDepositFinalStep}
-                inputAmount={inputAmountDepo}
-                token={token}
-                balanceList={balanceList}
-                useIFARM={useIFARM}
-                tokenSymbol={id}
-                quoteValue={quoteValueDepo}
-                setQuoteValue={setQuoteValueDepo}
-                fAssetPool={fAssetPool}
-                multipleAssets={multipleAssets}
-              />
-              <DepositResult
-                pickedToken={pickedTokenDepo}
-                finalStep={depositFinalStep}
-                setFinalStep={setDepositFinalStep}
-                setSelectToken={setSelectTokenDepo}
-                setDeposit={setDepositStart}
-                inputAmount={inputAmountDepo}
-                token={token}
-                tokenSymbol={id}
-                quoteValue={quoteValueDepo}
-                setQuoteValue={setQuoteValueDepo}
-              />
-            </DepositSection>
-            <WithdrawSection isShow={!activeDepo}>
-              <WithdrawBase
-                withdrawStart={withdrawStart}
-                setWithdrawStart={setWithdrawStart}
-                finalStep={withdrawFinalStep}
-                pickedToken={pickedTokenWith}
-                setPickedToken={setPickedTokenWith}
-                unstakeBalance={unstakeBalance}
-                setUnstakeBalance={setUnstakeBalance}
-                tokenSymbol={id}
-                fAssetPool={fAssetPool}
-                lpTokenBalance={lpTokenBalance}
-                token={token}
-                supTokenList={supTokenList}
-                activeDepo={activeDepo}
-                switchMethod={switchMethod}
-              />
-              <WithdrawStart
-                withdrawStart={withdrawStart}
-                setWithdrawStart={setWithdrawStart}
-                pickedToken={pickedTokenWith}
-                finalStep={withdrawFinalStep}
-                setFinalStep={setWithdrawFinalStep}
-                token={token}
-                unstakeBalance={unstakeBalance}
-                balanceList={balanceList}
-                tokenSymbol={id}
-                fAssetPool={fAssetPool}
-                multipleAssets={multipleAssets}
-              />
-              <WithdrawResult
-                pickedToken={pickedTokenWith}
-                finalStep={withdrawFinalStep}
-                setFinalStep={setWithdrawFinalStep}
-                setWithdraw={setWithdrawStart}
-                unstakeBalance={unstakeBalance}
-                token={token}
-                tokenSymbol={id}
-              />
-            </WithdrawSection>
-          </HalfContent>
+          <MainSection>
+            <DetailChart token={token} vaultPool={vaultPool} tokenSymbol={id} />
+            {!isMobile ? (
+              <MyBalance>
+                <NewLabel
+                  display="flex"
+                  padding={isMobile ? '9px 13px' : '10px 15px'}
+                  justifyContent="space-between"
+                  borderBottom="1px solid #ebebeb"
+                >
+                  <NewLabel
+                    size={isMobile ? '12px' : '16px'}
+                    height={isMobile ? '24px' : '24px'}
+                    weight="700"
+                    color="#344054"
+                  >
+                    About
+                  </NewLabel>
+                  <APRShow>
+                    <img src={DOT} alt="" />
+                    <NewLabel
+                      size={isMobile ? '12px' : '14px'}
+                      height={isMobile ? '17px' : '20px'}
+                      weight="500"
+                      color="#344054"
+                    >
+                      {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
+                      &nbsp;APR
+                    </NewLabel>
+                  </APRShow>
+                </NewLabel>
+                <NewLabel
+                  padding={isMobile ? '9px 13px' : '10px 15px'}
+                  size={isMobile ? '11px' : '14px'}
+                  height={isMobile ? '21px' : '24px'}
+                  weight="500"
+                  color="#475467"
+                >
+                  This farm offers a yield from Idle Finance strategy relying on a combination of
+                  top DeFi protocols (Compound, Aave, Clearpool, and Morpho) to boost your earnings.
+                </NewLabel>
+              </MyBalance>
+            ) : (
+              <></>
+            )}
+          </MainSection>
           <RestContent>
-            <MyBalance>
+            {isMobile ? (
+              <MyBalance marginBottom="15px">
+                <NewLabel
+                  display="flex"
+                  padding={isMobile ? '9px 13px' : '10px 15px'}
+                  justifyContent="space-between"
+                  borderBottom="1px solid #ebebeb"
+                >
+                  <NewLabel
+                    size={isMobile ? '12px' : '16px'}
+                    height={isMobile ? '24px' : '24px'}
+                    weight="700"
+                    color="#344054"
+                  >
+                    About
+                  </NewLabel>
+                  <APRShow>
+                    <img src={DOT} alt="" />
+                    <NewLabel
+                      size={isMobile ? '12px' : '14px'}
+                      height={isMobile ? '17px' : '20px'}
+                      weight="500"
+                      color="#344054"
+                    >
+                      {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
+                      &nbsp;APR
+                    </NewLabel>
+                  </APRShow>
+                </NewLabel>
+                <NewLabel
+                  padding={isMobile ? '9px 13px' : '10px 15px'}
+                  size={isMobile ? '11px' : '14px'}
+                  height={isMobile ? '21px' : '24px'}
+                  weight="500"
+                  color="#475467"
+                >
+                  This farm offers a yield from Idle Finance strategy relying on a combination of
+                  top DeFi protocols (Compound, Aave, Clearpool, and Morpho) to boost your earnings.
+                </NewLabel>
+              </MyBalance>
+            ) : (
+              <></>
+            )}
+            <MyBalance marginBottom="23px">
               <NewLabel
-                size={isMobile ? '12px' : '14px'}
-                weight="700"
-                height={isMobile ? '21px' : '24px'}
-                color="#344054"
+                size={isMobile ? '12px' : '16px'}
+                weight="600"
+                height={isMobile ? '18px' : '24px'}
+                color="#000"
                 padding={isMobile ? '9px 13px' : '10px 15px'}
                 borderBottom="1px solid #EBEBEB"
               >
@@ -694,46 +684,105 @@ const BeginnersFarm = () => {
                 </NewLabel>
               </FlexDiv>
             </MyBalance>
-            <Divider height="unset" marginTop={isMobile ? '22px' : '25px'} />
-            <MyBalance>
-              <NewLabel
-                display="flex"
-                padding={isMobile ? '9px 13px' : '10px 15px'}
-                justifyContent="space-between"
-                borderBottom="1px solid #ebebeb"
-              >
-                <NewLabel
-                  size={isMobile ? '12px' : '14px'}
-                  height={isMobile ? '21px' : '24px'}
-                  weight="700"
-                  color="#344054"
-                >
-                  Farm Info
-                </NewLabel>
-                <APRShow>
-                  <img src={DOT} alt="" />
-                  <NewLabel
-                    size={isMobile ? '12px' : '14px'}
-                    height={isMobile ? '17px' : '20px'}
-                    weight="500"
-                    color="#344054"
-                  >
-                    {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
-                    &nbsp;APR
-                  </NewLabel>
-                </APRShow>
-              </NewLabel>
-              <NewLabel
-                padding={isMobile ? '9px 13px' : '10px 15px'}
-                size={isMobile ? '11px' : '12px'}
-                height={isMobile ? '21px' : '24px'}
-                weight="500"
-                color="#475467"
-              >
-                This farm offers a yield from Idle Finance strategy relying on a combination of top
-                DeFi protocols (Compound, Aave, Clearpool, and Morpho) to boost your earnings.
-              </NewLabel>
-            </MyBalance>
+            <Divider height="unset" marginTop={isMobile ? '23px' : '20px'} />
+            <HalfContent partHeight={partHeightDepo}>
+              <DepositSection isShow={activeDepo}>
+                <DepositBase
+                  selectToken={selectTokenDepo}
+                  setSelectToken={setSelectTokenDepo}
+                  deposit={depositStart}
+                  setDeposit={setDepositStart}
+                  finalStep={depositFinalStep}
+                  balance={balanceDepo}
+                  pickedToken={pickedTokenDepo}
+                  inputAmount={inputAmountDepo}
+                  setInputAmount={setInputAmountDepo}
+                  token={token}
+                  supTokenList={supTokenList}
+                  activeDepo={activeDepo}
+                  switchMethod={switchMethod}
+                  tokenSymbol={id}
+                />
+                <DepositSelectToken
+                  selectToken={selectTokenDepo}
+                  setSelectToken={setSelectTokenDepo}
+                  clickTokenId={clickTokenIdDepo}
+                  setClickedTokenId={setClickedTokenIdDepo}
+                  setPickedToken={setPickedTokenDepo}
+                  setBalance={setBalanceDepo}
+                  supTokenList={supTokenList}
+                  setPartHeight={setPartHeightDepo}
+                />
+                <DepositStart
+                  pickedToken={pickedTokenDepo}
+                  deposit={depositStart}
+                  setDeposit={setDepositStart}
+                  finalStep={depositFinalStep}
+                  setFinalStep={setDepositFinalStep}
+                  inputAmount={inputAmountDepo}
+                  token={token}
+                  balanceList={balanceList}
+                  useIFARM={useIFARM}
+                  tokenSymbol={id}
+                  quoteValue={quoteValueDepo}
+                  setQuoteValue={setQuoteValueDepo}
+                  fAssetPool={fAssetPool}
+                  multipleAssets={multipleAssets}
+                />
+                <DepositResult
+                  pickedToken={pickedTokenDepo}
+                  finalStep={depositFinalStep}
+                  setFinalStep={setDepositFinalStep}
+                  setSelectToken={setSelectTokenDepo}
+                  setDeposit={setDepositStart}
+                  inputAmount={inputAmountDepo}
+                  token={token}
+                  tokenSymbol={id}
+                  quoteValue={quoteValueDepo}
+                  setQuoteValue={setQuoteValueDepo}
+                />
+              </DepositSection>
+              <WithdrawSection isShow={!activeDepo}>
+                <WithdrawBase
+                  withdrawStart={withdrawStart}
+                  setWithdrawStart={setWithdrawStart}
+                  finalStep={withdrawFinalStep}
+                  pickedToken={pickedTokenWith}
+                  setPickedToken={setPickedTokenWith}
+                  unstakeBalance={unstakeBalance}
+                  setUnstakeBalance={setUnstakeBalance}
+                  tokenSymbol={id}
+                  fAssetPool={fAssetPool}
+                  lpTokenBalance={lpTokenBalance}
+                  token={token}
+                  supTokenList={supTokenList}
+                  activeDepo={activeDepo}
+                  switchMethod={switchMethod}
+                />
+                <WithdrawStart
+                  withdrawStart={withdrawStart}
+                  setWithdrawStart={setWithdrawStart}
+                  pickedToken={pickedTokenWith}
+                  finalStep={withdrawFinalStep}
+                  setFinalStep={setWithdrawFinalStep}
+                  token={token}
+                  unstakeBalance={unstakeBalance}
+                  balanceList={balanceList}
+                  tokenSymbol={id}
+                  fAssetPool={fAssetPool}
+                  multipleAssets={multipleAssets}
+                />
+                <WithdrawResult
+                  pickedToken={pickedTokenWith}
+                  finalStep={withdrawFinalStep}
+                  setFinalStep={setWithdrawFinalStep}
+                  setWithdraw={setWithdrawStart}
+                  unstakeBalance={unstakeBalance}
+                  token={token}
+                  tokenSymbol={id}
+                />
+              </WithdrawSection>
+            </HalfContent>
           </RestContent>
         </BigDiv>
       </Inner>

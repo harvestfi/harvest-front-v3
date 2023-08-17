@@ -16,27 +16,21 @@ import Advanced from '../../assets/images/logos/sidebar/advanced.svg'
 import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
 import LogoutIcon from '../../assets/images/logos/sidebar/logout.svg'
 import MobileConnect from '../../assets/images/logos/sidebar/mobileconnect.svg'
-import ProfitSharingIcon from '../../assets/images/logos/sidebar/profit-sharing.svg'
 import Toggle from '../../assets/images/logos/sidebar/toggle.svg'
 import Arbitrum from '../../assets/images/chains/arbitrum.svg'
 import Base from '../../assets/images/chains/base.svg'
 import Ethereum from '../../assets/images/chains/ethereum.svg'
 import Polygon from '../../assets/images/chains/polygon.svg'
-import { ROUTES, directDetailUrl } from '../../constants'
+import { ROUTES } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
-import { addresses } from '../../data/index'
 import { usePools } from '../../providers/Pools'
-import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
-import { formatAddress, getDataQuery, isSpecialApp } from '../../utils'
-import SmallApexChart from '../SmallApexChart'
-import Social from '../Social'
+import { formatAddress, isSpecialApp } from '../../utils'
+// import Social from '../Social'
 import {
   AboutHarvest,
   Address,
-  BottomDiv,
-  ChartDiv,
   ConnectAvatar,
   ConnectButtonStyle,
   Container,
@@ -48,22 +42,18 @@ import {
   MiddleActionsContainer,
   MobileActionsContainer,
   MobileConnectBtn,
-  MobileFollow,
+  // MobileFollow,
   MobileLinkContainer,
   MobileLinksContainer,
   MobileToggle,
   MobileView,
   OffcanvasDiv,
   SideIcons,
-  ThemeMode,
-  TopDiv,
-  TopTitle,
+  // ThemeMode,
   UserDropDown,
   UserDropDownItem,
   UserDropDownMenu,
   BottomPart,
-  MobileProfitSharing,
-  ProfitPart,
   Logo,
   Desktop,
   NewTag,
@@ -177,11 +167,10 @@ const getChainIcon = chainNum => {
 const Sidebar = ({ width }) => {
   const { account, connectAction, disconnectAction, chainId, connected, setSelChain } = useWallet()
   const { disableWallet } = usePools()
-  const { profitShareAPY } = useStats()
 
   const {
     darkMode,
-    setDarkMode,
+    // setDarkMode,
     backColor,
     fontColor,
     filterColor,
@@ -190,13 +179,13 @@ const Sidebar = ({ width }) => {
     toggleColor,
     borderColor,
     connectWalletBtnBackColor,
-    toggleBackColor,
+    // toggleBackColor,
     sidebarFontColor,
     sidebarActiveFontColor,
     sidebarActiveIconColor,
   } = useThemeContext()
 
-  const switchTheme = () => setDarkMode(prev => !prev)
+  // const switchTheme = () => setDarkMode(prev => !prev)
   useEffect(() => {
     if (darkMode) {
       document.documentElement.setAttribute('darkMode', '')
@@ -213,15 +202,6 @@ const Sidebar = ({ width }) => {
 
   const handleMobileClose = () => setMobileShow(false)
   const handleMobileShow = () => setMobileShow(true)
-
-  const [apiData, setApiData] = useState({})
-  useEffect(() => {
-    const initData = async () => {
-      const data = await getDataQuery(365, addresses.iFARM, chainId.toString(), null)
-      setApiData(data)
-    }
-    initData()
-  }, [chainId])
 
   const directAction = path => {
     if (path === ROUTES.PORTFOLIO || path === ROUTES.ANALYTIC || path === ROUTES.BEGINNERS) {
@@ -562,28 +542,7 @@ const Sidebar = ({ width }) => {
                 </Fragment>
               ))}
             </MobileActionsContainer>
-            <ProfitPart>
-              <MobileProfitSharing
-                onClick={() => {
-                  push(`${directDetailUrl}ethereum/${addresses.FARM}`)
-                }}
-              >
-                <TopDiv>
-                  <img src={ProfitSharingIcon} alt="profit-sharing" />
-                  <TopTitle>
-                    <img src={ConnectDisableIcon} width="7px" height="7px" alt="" />
-                    Profit-Sharing
-                  </TopTitle>
-                </TopDiv>
-                <BottomDiv>
-                  {Number(profitShareAPY).toFixed(2)}%<div>APR</div>
-                </BottomDiv>
-                <ChartDiv>
-                  <SmallApexChart data={apiData} lastAPY={Number(profitShareAPY)} />
-                </ChartDiv>
-              </MobileProfitSharing>
-            </ProfitPart>
-            <MobileFollow>
+            {/* <MobileFollow>
               <Social />
               <ThemeMode
                 mode={darkMode ? 'dark' : 'light'}
@@ -603,7 +562,7 @@ const Sidebar = ({ width }) => {
                   />
                 </div>
               </ThemeMode>
-            </MobileFollow>
+            </MobileFollow> */}
           </Offcanvas.Body>
         </OffcanvasDiv>
         <MobileConnectBtn

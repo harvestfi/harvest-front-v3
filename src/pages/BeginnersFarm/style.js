@@ -3,8 +3,6 @@ import ETH from '../../assets/images/logos/beginnershome/eth.svg'
 import DAI from '../../assets/images/logos/beginnershome/dai.svg'
 import USDT from '../../assets/images/logos/beginnershome/usdt.svg'
 import USDC from '../../assets/images/logos/beginnershome/usdc.svg'
-import Plus from '../../assets/images/logos/beginners/plus.svg'
-import Minus from '../../assets/images/logos/beginners/minus.svg'
 
 const DetailView = styled.div`
   width: 100%;
@@ -27,8 +25,12 @@ const Inner = styled.div`
     padding: 70px 30px 40px;
   }
 
+  @media screen and (max-width: 1024px) {
+    padding: 50px 20px 20px;
+  }
+
   @media screen and (max-width: 992px) {
-    padding: 20px 10px 10px;
+    padding: 20px 29px 0px 31px;
     height: 100%;
   }
 `
@@ -222,6 +224,13 @@ const FlexDiv = styled.div`
       : ''}
 
   ${props =>
+    props.marginBottom
+      ? `
+    margin-bottom: ${props.marginBottom};
+  `
+      : ''}
+
+  ${props =>
     props.justifyContent
       ? `
     justify-content: ${props.justifyContent};
@@ -266,11 +275,10 @@ const FlexTopDiv = styled.div`
 `
 
 const HalfContent = styled.div`
-  width: 60%;
+  width: 100%;
   display: flex;
   flex-direction: column;
   height: fit-content;
-  margin-right: 50px;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0px 8px 8px -4px rgba(16, 24, 40, 0.03), 0px 20px 24px -4px rgba(16, 24, 40, 0.08);
@@ -281,12 +289,6 @@ const HalfContent = styled.div`
       : `
       fit-content
     `};
-
-  @media screen and (max-width: 992px) {
-    width: 100%;
-    margin-right: 0px;
-    margin-bottom: 18px;
-  }
 `
 
 const TotalValueFarm = styled.div`
@@ -334,25 +336,27 @@ const RestContent = styled.div`
 
   @media screen and (max-width: 992px) {
     width: 100%;
+    display: flex;
+    flex-direction: column-reverse;
   }
 `
 
 const BigDiv = styled(FlexDiv)`
-  width: 70%;
+  width: 80%;
 
   @media screen and (min-width: 1921px) {
-    width: unset;
+    width: 1200px;
   }
 
-  @media screen and (max-width: 1368px) {
-    width: 80%;
-  }
-
-  @media screen and (max-width: 1256px) {
+  @media screen and (max-width: 1624px) {
     width: 85%;
   }
 
-  @media screen and (max-width: 1112px) {
+  @media screen and (max-width: 1368px) {
+    width: 90%;
+  }
+
+  @media screen and (max-width: 1156px) {
     width: 100%;
   }
 
@@ -371,6 +375,10 @@ const LogoImg = styled.img`
 
   @media screen and (max-width: 1136px) {
     width: 150px;
+  }
+
+  @media screen and (max-width: 1024px) {
+    width: 100px;
   }
 
   ${props =>
@@ -397,6 +405,15 @@ const MyBalance = styled.div`
   border-radius: 12px;
   background: #fff;
   box-shadow: 0px 8px 8px -4px rgba(16, 24, 40, 0.03), 0px 20px 24px -4px rgba(16, 24, 40, 0.08);
+
+  @media screen and (max-width: 992px) {
+    ${props =>
+      props.marginBottom
+        ? `
+        margin-bottom: ${props.marginBottom};
+      `
+        : ``}
+  }
 `
 
 const GuideSection = styled.div`
@@ -477,120 +494,26 @@ const WithdrawSection = styled.div`
   `}
 `
 
-const CreditCardBox = styled.div`
-  border-radius: 10px;
-  border: 1px solid var(--gray-200, #eaecf0);
-  background: var(--base-white, #fff);
-  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-  padding: 12px;
-
-  @media screen and (max-width: 992px) {
-    padding: 9px;
-
-    img {
-      width: 18px;
-    }
-  }
-`
-
-const ThemeMode = styled.div`
+const MainSection = styled.div`
+  width: 58%;
+  margin-right: 20px;
   display: flex;
-
-  #theme-switch {
-    position: relative;
-    width: fit-content;
-    height: fit-content;
-    touch-action: pan-x;
-    user-select: none;
-
-    input {
-      cursor: pointer;
-      position: absolute;
-      top: 0;
-      left: 0;
-      height: 100%;
-      width: 100%;
-      opacity: 0;
-    }
-
-    .switch-track {
-      background: #000;
-      border: 1px solid ${props => props.borderColor};
-      height: 24px;
-      width: 50px;
-      border-radius: 30px;
-      transition: all 0.2s ease 0s;
-    }
-    .switch-thumb {
-      background-size: cover;
-      background-repeat: no-repeat;
-      background-color: white;
-      height: 20px;
-      left: 2px;
-      position: absolute;
-      top: 2px;
-      width: 20px;
-      border-radius: 50%;
-      transition: all 0.25s ease 0s;
-    }
-
-    &:hover .switch-thumb {
-      box-shadow: 0 0 2px 3px #ff9400;
-    }
-  }
-
-  ${props =>
-    props.mode === 'deposit'
+  flex-direction: column;
+  height: fit-content;
+  border-radius: 12px;
+  height: ${props =>
+    props.partHeight
       ? `
-      #theme-switch {
-        .switch-check {
-          opacity: 1;
-        }
-        .switch-x {
-          opacity: 0;
-        }
-        .switch-thumb {
-          left: 27px;
-          background-image: url(${Plus});
-        }
-      }
-    `
+    ${props.partHeight}px`
       : `
-      #theme-switch {
-        .switch-thumb {
-          background-image: url(${Minus});
-        }
-      }
-    `}
+      fit-content
+    `};
 
   @media screen and (max-width: 992px) {
-    #theme-switch {
-      .switch-track {
-        width: 24px;
-        height: 12px;
-      }
-
-      .switch-thumb {
-        width: 10px;
-        height: 10px;
-        top: 1px;
-      }
-    }
-
-    ${props =>
-      props.mode === 'deposit'
-        ? `
-        #theme-switch {
-          .switch-thumb {
-            left: 12px;
-          }
-      `
-        : `
-        #theme-switch {
-        .switch-thumb {
-          left: 2px;
-        }
-      `}
+    width: 100%;
+    margin-right: 0px;
+    margin-bottom: 23px;
+  }
 `
 
 export {
@@ -617,6 +540,5 @@ export {
   APRShow,
   DepositSection,
   WithdrawSection,
-  CreditCardBox,
-  ThemeMode,
+  MainSection,
 }

@@ -5,7 +5,6 @@ import { useMediaQuery } from 'react-responsive'
 import { toast } from 'react-toastify'
 import DropDownIcon from '../../../assets/images/logos/wido/drop-down.svg'
 import WalletIcon from '../../../assets/images/logos/beginners/wallet-in-button.svg'
-import CreditCard from '../../../assets/images/logos/beginners/credit-card-shield.svg'
 import InfoIcon from '../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../assets/images/logos/beginners/close.svg'
 import { POOL_BALANCES_DECIMALS } from '../../../constants'
@@ -22,7 +21,6 @@ import {
   TokenSelect,
   NewLabel,
   AmountSection,
-  CreditCardBox,
   ThemeMode,
   InsufficientSection,
   CloseBtn,
@@ -146,14 +144,14 @@ const DepositBase = ({
   return (
     <BaseWido show={!deposit && !selectToken && !finalStep}>
       <NewLabel
+        size={isMobile ? '12px' : '16px'}
+        height={isMobile ? '21px' : '28px'}
+        weight="600"
+        color="#101828"
         display="flex"
         justifyContent="space-between"
-        marginBottom={isMobile ? '12px' : '16px'}
-        items="center"
       >
-        <CreditCardBox>
-          <img src={CreditCard} alt="" />
-        </CreditCardBox>
+        Deposit
         <ThemeMode mode={activeDepo ? 'deposit' : 'withdraw'}>
           <div id="theme-switch">
             <div className="switch-track">
@@ -169,15 +167,7 @@ const DepositBase = ({
           </div>
         </ThemeMode>
       </NewLabel>
-      <NewLabel
-        size={isMobile ? '14px' : '18px'}
-        height={isMobile ? '21px' : '28px'}
-        weight="600"
-        color="#101828"
-      >
-        Deposit
-      </NewLabel>
-      <DepoTitle>Deposit {tokenSymbol} or other token from your wallet to get started.</DepoTitle>
+      <DepoTitle>Turn any token from your wallet into {tokenSymbol}.</DepoTitle>
       <TokenInfo>
         <AmountSection>
           <NewLabel
@@ -253,7 +243,6 @@ const DepositBase = ({
         <Button
           color="wido-deposit"
           width="100%"
-          size="md"
           onClick={() => {
             onClickDeposit()
           }}

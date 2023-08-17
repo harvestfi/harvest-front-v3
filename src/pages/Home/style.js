@@ -48,7 +48,9 @@ const Inner = styled.div`
 
   @media screen and (max-width: 992px) {
     padding: 25px 24px 32px 17px;
-    display: block;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
   }
 `
 
@@ -61,7 +63,6 @@ const FirstPart = styled.div`
 
   @media screen and (max-width: 992px) {
     width: 100%;
-    margin-bottom: 13px;
   }
 `
 
