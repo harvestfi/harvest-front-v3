@@ -136,8 +136,8 @@ const WithdrawBase = ({
   return (
     <BaseWido show={!withdrawStart && !finalStep}>
       <NewLabel
-        size={isMobile ? '14px' : '18px'}
-        height={isMobile ? '21px' : '28px'}
+        size={isMobile ? '14px' : '16px'}
+        height={isMobile ? '21px' : '24px'}
         weight="600"
         color="#101828"
         display="flex"

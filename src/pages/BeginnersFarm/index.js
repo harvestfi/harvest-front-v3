@@ -522,7 +522,7 @@ const BeginnersFarm = () => {
                   <NewLabel
                     size={isMobile ? '12px' : '16px'}
                     height={isMobile ? '24px' : '24px'}
-                    weight="700"
+                    weight="600"
                     color="#344054"
                   >
                     About
@@ -567,7 +567,7 @@ const BeginnersFarm = () => {
                   <NewLabel
                     size={isMobile ? '12px' : '16px'}
                     height={isMobile ? '24px' : '24px'}
-                    weight="700"
+                    weight="600"
                     color="#344054"
                   >
                     About

@@ -110,7 +110,7 @@ const FilterName = styled.div`
 `
 
 const TokenSymbol = styled.div`
-  font-size: 18px;
+  font-size: 16px;
   line-height: 24px;
   font-weight: 600;
   margin-bottom: 5px;

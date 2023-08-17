@@ -215,9 +215,9 @@ const WithdrawStart = ({
 
       <NewLabel
         color="#101828"
-        size={isMobile ? '16px' : '18px'}
+        size={isMobile ? '14px' : '16px'}
         weight="600"
-        height={isMobile ? '24px' : '28px'}
+        height={isMobile ? '21px' : '24px'}
         marginBottom={isMobile ? '5px' : '10px'}
       >
         Summary
