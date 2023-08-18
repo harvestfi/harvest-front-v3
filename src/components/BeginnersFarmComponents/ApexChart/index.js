@@ -12,7 +12,7 @@ import {
 import { useWindowWidth } from '@react-hook/window-size'
 import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { ceil10, floor10, round10 } from '../../../utils'
+import { ceil10, floor10 } from '../../../utils'
 import { LoadingDiv, NoData } from './style'
 
 function numberWithCommas(x) {
@@ -88,26 +88,13 @@ function findMin(data) {
 function generateChartDataWithSlots(slots, apiData) {
   const seriesData = []
   for (let i = 0; i < slots.length; i += 1) {
-    const ethData = apiData.ETH.reduce((prev, curr) =>
+    const data = apiData.reduce((prev, curr) =>
       Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
         ? curr
         : prev,
     )
 
-    const polygonData = apiData.MATIC.reduce((prev, curr) =>
-      Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
-        ? curr
-        : prev,
-    )
-
-    const arbData = apiData.ARBITRUM.reduce((prev, curr) =>
-      Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
-        ? curr
-        : prev,
-    )
-
-    const value = Number(ethData.value) + Number(polygonData.value) + Number(arbData.value)
-    seriesData.push({ x: slots[i] * 1000, y: value })
+    seriesData.push({ x: slots[i] * 1000, y: data.value })
   }
 
   return seriesData
@@ -129,13 +116,13 @@ function getYAxisValues(min, max, roundNum) {
   const duration = max - min
   const ary = []
   for (let i = min; i <= max; i += duration / 4) {
-    const val = round10(i, roundNum)
+    const val = floor10(i, roundNum)
     ary.push(val)
   }
   return ary
 }
 
-const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
+const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => {
   const { fontColor } = useThemeContext()
 
   const [mainSeries, setMainSeries] = useState([])
@@ -148,7 +135,8 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       setCurDate(formatDateTime(payload[0].payload.x))
-      setCurContent(`$${numberWithCommas(Number(payload[0].payload.y.toFixed(0)))}`)
+      const price = numberWithCommas(Number(payload[0].payload.y).toFixed(0))
+      setCurContent(`$${price}`)
     }
 
     return null
@@ -217,14 +205,11 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
         maxValue,
         minValue,
         len = 0,
-        unitBtw,
-        roundNum
+        unitBtw
 
-      if (data && data.ETH && data.MATIC && data.ARBITRUM) {
-        if (data.ETH.length === 0 && data.MATIC.length === 0 && data.ARBITRUM.length === 0) {
-          setIsDataReady(false)
-          return
-        }
+      if ((data && data.length === 0) || !loadComplete) {
+        setIsDataReady(false)
+        return
       }
 
       const slotCount = 50,
@@ -263,16 +248,10 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
         unitBtw = (maxValue - minValue) / 4
       }
 
-      if (unitBtw === 0) {
-        roundNum = 0
-      } else {
-        roundNum = len - 2
-      }
-
       setMinVal(minValue)
       setMaxVal(maxValue)
 
-      const yAxisAry = getYAxisValues(minValue, maxValue, roundNum)
+      const yAxisAry = getYAxisValues(minValue, maxValue, 0)
       setYAxisTicks(yAxisAry)
 
       setMainSeries(mainData)
@@ -281,7 +260,7 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
     }
 
     init()
-  }, [range, data, isDataReady])
+  }, [range, data, isDataReady, loadComplete])
 
   return (
     <>

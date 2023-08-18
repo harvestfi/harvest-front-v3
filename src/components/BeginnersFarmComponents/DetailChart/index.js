@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useWallet } from '../../../providers/Wallet'
-import { getTotalTVLData } from '../../../utils'
+import { getPriceFeed } from '../../../utils'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../../ChartRangeSelect'
 import {
@@ -24,22 +23,23 @@ const recommendLinks = [
 const DetailChart = ({ token, vaultPool, tokenSymbol }) => {
   const [selectedState, setSelectedState] = useState('1M')
 
-  const { account } = useWallet()
   const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
   const chainId = token.chain || token.data.chain
 
   const [apiData, setApiData] = useState({})
+  const [loadComplete, setLoadComplete] = useState(true)
   const [curDate, setCurDate] = useState('')
   const [curContent, setCurContent] = useState('')
 
   useEffect(() => {
     const initData = async () => {
-      const data = await getTotalTVLData()
+      const { data, flag } = await getPriceFeed(address, chainId)
+      setLoadComplete(flag)
       setApiData(data)
     }
 
     initData()
-  }, [address, chainId, account])
+  }, [address, chainId])
 
   return (
     <Container>
@@ -72,6 +72,7 @@ const DetailChart = ({ token, vaultPool, tokenSymbol }) => {
       <ChartDiv>
         <ApexChart
           data={apiData}
+          loadComplete={loadComplete}
           range={selectedState}
           setCurDate={setCurDate}
           setCurContent={setCurContent}

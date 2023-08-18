@@ -1320,3 +1320,64 @@ export const getLastHarvestInfo = async (address, chainId) => {
   }
   return result
 }
+
+export const getPriceFeed = async (address, chainId) => {
+  // eslint-disable-next-line no-unused-vars
+  let nowDate = new Date(),
+    data = {},
+    flag = true
+
+  nowDate = Math.floor(nowDate.setDate(nowDate.getDate()) / 1000)
+
+  const myHeaders = new Headers()
+  myHeaders.append('Content-Type', 'application/json')
+
+  address = address.toLowerCase()
+
+  const graphql = JSON.stringify({
+      query: `{
+        priceFeeds(
+        where: {
+          value_gt: 0,
+          vault: "${address}"
+        },
+        orderBy: createAtBlock,
+        orderDirection: desc,
+      ) {
+        value, timestamp
+      }
+    }`,
+      variables: {},
+    }),
+    requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: graphql,
+      redirect: 'follow',
+    }
+
+  const url =
+    chainId === CHAIN_IDS.ETH_MAINNET
+      ? GRAPH_URL_MAINNET
+      : chainId === CHAIN_IDS.POLYGON_MAINNET
+      ? GRAPH_URL_POLYGON
+      : chainId === CHAIN_IDS.BASE
+      ? GRAPH_URL_BASE
+      : GRAPH_URL_ARBITRUM
+
+  try {
+    await fetch(url, requestOptions)
+      .then(response => response.json())
+      .then(res => {
+        data = res.data.priceFeeds
+      })
+      .catch(error => {
+        console.log('error', error)
+        flag = false
+      })
+  } catch (err) {
+    console.log('Fetch data about last harvest: ', err)
+    flag = false
+  }
+  return { data, flag }
+}
