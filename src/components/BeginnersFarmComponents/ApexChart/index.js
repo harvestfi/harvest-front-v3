@@ -118,7 +118,7 @@ function getYAxisValues(min, max, unitBtw, roundNum) {
     const val = floor10(i, -roundNum)
     ary.push(val)
   }
-  ary.push(max)
+  ary.push(floor10(max, -roundNum))
   return ary
 }
 
@@ -244,6 +244,8 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
 
       if (unitBtw === 0) {
         unitBtw = (maxValue - minValue) / 4
+      } else {
+        maxValue += unitBtw * 0.4
       }
 
       if (unitBtw === 0) {
