@@ -115,15 +115,15 @@ function formatXAxis(value, range) {
 function getYAxisValues(min, max, roundNum) {
   const ary = []
   const bet = max - min
-  for (let i = min; i <= max; i += bet / 4) {
+  for (let i = min; i < max; i += bet / 4) {
     const val = floor10(i, -roundNum)
     ary.push(val)
   }
-
+  ary.push(floor10(max, -roundNum))
   return ary
 }
 
-const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => {
+const PriceChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => {
   const { fontColor } = useThemeContext()
 
   const [mainSeries, setMainSeries] = useState([])
@@ -297,7 +297,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
             }}
           >
             <defs>
-              <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="colorUv1" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#00D26B" stopOpacity={0.1} />
                 <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1} />
               </linearGradient>
@@ -333,7 +333,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
               stroke="#00D26B80"
               strokeWidth={2}
               fillOpacity={1}
-              fill="url(#colorUv)"
+              fill="url(#colorUv1)"
             />
             <Tooltip
               content={CustomTooltip}
@@ -358,4 +358,4 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
   )
 }
 
-export default ApexChart
+export default PriceChart

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { getPriceFeed } from '../../../utils'
-import ApexChart from '../ApexChart'
+import PriceChart from '../PriceChart'
 import ChartRangeSelect from '../ChartRangeSelect'
 import {
   ButtonGroup,
@@ -20,7 +20,7 @@ const recommendLinks = [
   { name: '1Y', type: 3, state: '1Y' },
 ]
 
-const DetailChart = ({ token, vaultPool, tokenSymbol }) => {
+const PriceShareData = ({ token, vaultPool, tokenSymbol }) => {
   const [selectedState, setSelectedState] = useState('1Y')
 
   const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
@@ -70,7 +70,7 @@ const DetailChart = ({ token, vaultPool, tokenSymbol }) => {
         </Total>
       </Header>
       <ChartDiv>
-        <ApexChart
+        <PriceChart
           data={apiData}
           loadComplete={loadComplete}
           range={selectedState}
@@ -81,4 +81,4 @@ const DetailChart = ({ token, vaultPool, tokenSymbol }) => {
     </Container>
   )
 }
-export default DetailChart
+export default PriceShareData

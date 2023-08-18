@@ -101,6 +101,7 @@ import {
   LPTokenBalance,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
+import PriceShareData from '../../components/VaultComponents/PriceShareData'
 
 const chainList = [
   { id: 1, name: 'Ethereum', chainId: 1 },
@@ -946,6 +947,9 @@ const WidoDetail = () => {
                   lastAPY={Number(totalApy)}
                 />
               )}
+            </HalfInfo>
+            <HalfInfo padding="0px" backColor={backColor} borderColor={borderColor}>
+              <PriceShareData token={token} vaultPool={vaultPool} tokenSymbol={id} />
             </HalfInfo>
             <HalfInfo
               padding={!isMobile ? '20px' : '15px'}
