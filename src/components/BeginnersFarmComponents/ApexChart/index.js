@@ -135,7 +135,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       setCurDate(formatDateTime(payload[0].payload.x))
-      const price = numberWithCommas(Number(payload[0].payload.y).toFixed(4))
+      const price = numberWithCommas(Number(payload[0].payload.y).toFixed(2))
       setCurContent(`$${price}`)
     }
 
