@@ -50,7 +50,7 @@ const DetailChart = ({ token, vaultPool, tokenSymbol }) => {
               <TokenSymbol>{`f${tokenSymbol} Price`}</TokenSymbol>
               <FlexDiv>
                 <CurContent color="#1b1b1b">{curDate}&nbsp;:&nbsp;</CurContent>
-                <CurContent color="#ff9400">{curContent}</CurContent>
+                <CurContent color="#00D26B">{curContent}</CurContent>
               </FlexDiv>
             </TooltipInfo>
           </FlexDiv>

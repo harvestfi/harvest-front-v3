@@ -242,9 +242,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
         minValue = floor10(minValue, -len + 1)
       }
 
-      if (unitBtw !== 0) {
-        // maxValue *= 1.5
-      } else {
+      if (unitBtw === 0) {
         unitBtw = (maxValue - minValue) / 4
       }
 
@@ -296,7 +294,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
           >
             <defs>
               <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#F4BE37" stopOpacity={0.1} />
+                <stop offset="5%" stopColor="#00D26B" stopOpacity={0.1} />
                 <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1} />
               </linearGradient>
             </defs>
@@ -321,14 +319,14 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
               unit="M"
               strokeLinecap="round"
               strokeWidth={2}
-              stroke="#FF9400"
+              stroke="#00D26B80"
               dot={false}
               legendType="none"
             />
             <Area
               type="monotone"
               dataKey="y"
-              stroke="#ff9400"
+              stroke="#00D26B80"
               strokeWidth={2}
               fillOpacity={1}
               fill="url(#colorUv)"
@@ -336,7 +334,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
             <Tooltip
               content={CustomTooltip}
               cursor={{
-                stroke: '#FF9400',
+                stroke: '#00D26B',
                 strokeDasharray: 3,
                 strokeLinecap: 'butt',
               }}
