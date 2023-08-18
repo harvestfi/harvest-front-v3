@@ -1344,7 +1344,7 @@ export const getPriceFeed = async (address, chainId) => {
         orderBy: createAtBlock,
         orderDirection: desc,
       ) {
-        value, timestamp
+        value, sharePrice, timestamp
       }
     }`,
       variables: {},

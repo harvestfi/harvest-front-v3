@@ -94,7 +94,7 @@ function generateChartDataWithSlots(slots, apiData) {
         : prev,
     )
 
-    seriesData.push({ x: slots[i] * 1000, y: data.value })
+    seriesData.push({ x: slots[i] * 1000, y: data.sharePrice })
   }
 
   return seriesData
