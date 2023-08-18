@@ -21,7 +21,7 @@ const recommendLinks = [
 ]
 
 const DetailChart = ({ token, vaultPool, tokenSymbol }) => {
-  const [selectedState, setSelectedState] = useState('1M')
+  const [selectedState, setSelectedState] = useState('1Y')
 
   const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
   const chainId = token.chain || token.data.chain
