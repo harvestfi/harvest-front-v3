@@ -132,11 +132,12 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
 
   const [loading, setLoading] = useState(false)
   const [isDataReady, setIsDataReady] = useState(true)
+  const [roundedDecimal, setRoundedDecimal] = useState(2)
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       setCurDate(formatDateTime(payload[0].payload.x))
-      const price = numberWithCommas(Number(payload[0].payload.y).toFixed(2))
+      const price = numberWithCommas(Number(payload[0].payload.y).toFixed(roundedDecimal))
       setCurContent(`$${price}`)
     }
 
@@ -228,7 +229,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
       unitBtw = between / 4
       if (unitBtw >= 1) {
         unitBtw = Math.ceil(unitBtw)
-        len = unitBtw.toString().length
+        len = 0
         unitBtw = ceil10(unitBtw, len - 1)
         maxValue = ceil10(maxValue, len - 1)
         minValue = floor10(minValue, len - 1)
@@ -255,7 +256,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
       } else {
         roundNum = len
       }
-
+      setRoundedDecimal(roundNum)
       setMinVal(minValue)
       setMaxVal(maxValue)
 

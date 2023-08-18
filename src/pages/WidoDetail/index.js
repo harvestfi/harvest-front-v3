@@ -45,6 +45,7 @@ import {
   FARM_TOKEN_SYMBOL,
   FARM_WETH_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
+  ROUTES,
   SPECIAL_VAULTS,
 } from '../../constants'
 import { Divider } from '../../components/GlobalStyle'
@@ -720,7 +721,7 @@ const WidoDetail = () => {
                   setPrevPage('')
                   history.goBack()
                 } else {
-                  push('/')
+                  push(ROUTES.ADVANCED)
                 }
               }}
               backcolor={widoBackBtnBackColor}
@@ -751,7 +752,7 @@ const WidoDetail = () => {
                   if (prevUrl.includes(filterUrl)) {
                     history.goBack()
                   } else {
-                    push('/')
+                    push(ROUTES.ADVANCED)
                   }
                 }}
                 backcolor={widoBackBtnBackColor}
