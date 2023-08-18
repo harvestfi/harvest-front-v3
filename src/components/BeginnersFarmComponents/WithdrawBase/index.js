@@ -159,7 +159,9 @@ const WithdrawBase = ({
           </div>
         </ThemeMode>
       </NewLabel>
-      <Title>Withdraw your deposit back to {tokenSymbol}.</Title>
+      <Title>
+        Withdraw your f{tokenSymbol} back to {tokenSymbol}.
+      </Title>
       <TokenInfo>
         <AmountSection>
           <NewLabel

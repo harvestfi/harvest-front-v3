@@ -167,7 +167,7 @@ const DepositBase = ({
           </div>
         </ThemeMode>
       </NewLabel>
-      <DepoTitle>Turn any token from your wallet into {tokenSymbol}.</DepoTitle>
+      <DepoTitle>Turn any token from your wallet into f{tokenSymbol}.</DepoTitle>
       <TokenInfo>
         <AmountSection>
           <NewLabel
