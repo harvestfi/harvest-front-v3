@@ -112,13 +112,13 @@ function formatXAxis(value, range) {
   return range === '1D' ? `${hour}:${mins}` : `${month} / ${day}`
 }
 
-function getYAxisValues(min, max, roundNum) {
-  const duration = max - min
+function getYAxisValues(min, max, unitBtw, roundNum) {
   const ary = []
-  for (let i = min; i <= max; i += duration / 4) {
-    const val = floor10(i, roundNum)
+  for (let i = min; i <= max; i += unitBtw) {
+    const val = floor10(i, -roundNum)
     ary.push(val)
   }
+  ary.push(max)
   return ary
 }
 
@@ -135,7 +135,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       setCurDate(formatDateTime(payload[0].payload.x))
-      const price = numberWithCommas(Number(payload[0].payload.y).toFixed(0))
+      const price = numberWithCommas(Number(payload[0].payload.y).toFixed(4))
       setCurContent(`$${price}`)
     }
 
@@ -205,7 +205,8 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
         maxValue,
         minValue,
         len = 0,
-        unitBtw
+        unitBtw,
+        roundNum
 
       if ((data && data.length === 0) || !loadComplete) {
         setIsDataReady(false)
@@ -235,23 +236,28 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
         maxValue += 10 ** (len - 1)
         minValue -= 10 ** (len - 1)
       } else {
-        len = Math.ceil(1 / unitBtw).toString().length + 1
-        unitBtw = ceil10(unitBtw, -len)
+        len = Math.ceil(1 / unitBtw).toString().length
+        unitBtw = ceil10(between, -len)
         maxValue = ceil10(maxValue, -len)
         minValue = floor10(minValue, -len + 1)
       }
 
       if (unitBtw !== 0) {
-        maxValue *= 1.5
-        minValue = 0
+        // maxValue *= 1.5
       } else {
         unitBtw = (maxValue - minValue) / 4
+      }
+
+      if (unitBtw === 0) {
+        roundNum = 0
+      } else {
+        roundNum = len
       }
 
       setMinVal(minValue)
       setMaxVal(maxValue)
 
-      const yAxisAry = getYAxisValues(minValue, maxValue, 0)
+      const yAxisAry = getYAxisValues(minValue, maxValue, unitBtw, roundNum)
       setYAxisTicks(yAxisAry)
 
       setMainSeries(mainData)
