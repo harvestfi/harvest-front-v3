@@ -311,7 +311,7 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
             <CartesianGrid
               strokeDasharray="0"
               strokeLinecap="butt"
-              stroke="rgba(228, 228, 228, 1)"
+              stroke="rgba(228, 228, 228, 0.2)"
               vertical={false}
             />
             <XAxis dataKey="x" tickLine={false} tickCount={5} tick={renderCustomXAxisTick} />
