@@ -56,7 +56,8 @@ import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
-
+import { CHAIN_IDS } from '../../data/constants'
+import PriceShareData from '../../components/WidoComponents/PriceShareData'
 import {
   displayAPY,
   formatNumber,
@@ -101,8 +102,6 @@ import {
   LastHarvestInfo,
   LPTokenBalance,
 } from './style'
-import { CHAIN_IDS } from '../../data/constants'
-import PriceShareData from '../../components/VaultComponents/PriceShareData'
 
 const chainList = [
   { id: 1, name: 'Ethereum', chainId: 1 },
