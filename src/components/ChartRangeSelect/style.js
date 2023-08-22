@@ -3,6 +3,7 @@ import styled from 'styled-components'
 const Container = styled.button`
   font-weight: 400;
   font-size: 12px;
+  line-height: 18px;
   padding: 3px 15px;
   display: flex;
   text-align: left;
@@ -32,7 +33,7 @@ const Container = styled.button`
         : `
         background: none;
         border-radius: 3px;
-        color: #ff9400;
+        color: #5B5181;
       `
       : props.mode === 'dark'
       ? `
@@ -47,12 +48,6 @@ const Container = styled.button`
 
 const Text = styled.div`
   padding: 0 5px;
-  ${props =>
-    props.state === props.text
-      ? `
-      // color: #DF0000;
-    `
-      : ''};
 `
 
 export { Container, Text }

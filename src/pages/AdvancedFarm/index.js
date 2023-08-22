@@ -2,7 +2,8 @@ import BigNumber from 'bignumber.js'
 import { find, get, isEqual, isArray } from 'lodash'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { useHistory, useParams } from 'react-router-dom'
+import ReactHtmlParser from 'react-html-parser'
+import { useHistory, useLocation, useParams } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { getBalances, getSupportedTokens } from 'wido'
 import axios from 'axios'
@@ -27,7 +28,8 @@ import DepositResult from '../../components/AdvancedFarmComponents/DepositResult
 import WithdrawBase from '../../components/AdvancedFarmComponents/WithdrawBase'
 import WithdrawStart from '../../components/AdvancedFarmComponents/WithdrawStart'
 import WithdrawResult from '../../components/AdvancedFarmComponents/WithdrawResult'
-import DetailChart from '../../components/AdvancedFarmComponents/DetailChart'
+import PriceShareData from '../../components/AdvancedFarmComponents/PriceShareData'
+import FarmDetailChart from '../../components/FarmDetailChart'
 import {
   DECIMAL_PRECISION,
   FARM_GRAIN_TOKEN_SYMBOL,
@@ -39,7 +41,7 @@ import {
   POOL_BALANCES_DECIMALS,
 } from '../../constants'
 import { Divider } from '../../components/GlobalStyle'
-import { fromWei, newContractInstance, getWeb3 } from '../../services/web3'
+import { fromWei, newContractInstance, getWeb3, getExplorerLink } from '../../services/web3'
 import { addresses } from '../../data'
 import { usePools } from '../../providers/Pools'
 import { useStats } from '../../providers/Stats'
@@ -71,6 +73,9 @@ import {
   ChainBack,
   MainTag,
   InternalSection,
+  HalfInfo,
+  InfoLabel,
+  DescInfo,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 
@@ -82,6 +87,31 @@ const chainList = [
 ]
 
 const mainTags = ['Overview', 'Stake', 'Details']
+
+const getVaultValue = token => {
+  const poolId = get(token, 'data.id')
+
+  switch (poolId) {
+    case SPECIAL_VAULTS.FARM_WETH_POOL_ID:
+      return get(token, 'data.lpTokenData.liquidity')
+    case SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID: {
+      if (!get(token, 'data.lpTokenData.price')) {
+        return null
+      }
+
+      return new BigNumber(get(token, 'data.totalValueLocked', 0))
+    }
+    case SPECIAL_VAULTS.FARM_GRAIN_POOL_ID:
+    case SPECIAL_VAULTS.FARM_USDC_POOL_ID:
+      return get(token, 'data.totalValueLocked')
+    default:
+      return token.usdPrice
+        ? new BigNumber(token.underlyingBalanceWithInvestment)
+            .times(token.usdPrice)
+            .dividedBy(new BigNumber(10).pow(token.decimals))
+        : null
+  }
+}
 
 const AdvancedFarm = () => {
   const { paramAddress } = useParams()
@@ -437,7 +467,15 @@ const AdvancedFarm = () => {
     getTokenHolder()
   }, [paramAddress, chain, token])
 
-  const [activeMainTag, setActiveMainTag] = useState(0)
+  const [activeMainTag, setActiveMainTag] = useState(2)
+
+  const [vaultValue, setVaultValue] = useState(null)
+
+  useEffect(() => {
+    setVaultValue(getVaultValue(token))
+  }, [token])
+
+  const { pathname } = useLocation()
 
   return (
     <DetailView pageBackColor={pageBackColor} fontColor={fontColor}>
@@ -515,6 +553,11 @@ const AdvancedFarm = () => {
                 active={activeMainTag === i ? 'true' : 'false'}
                 onClick={() => {
                   setActiveMainTag(i)
+                  if (i !== 0) {
+                    push(`${pathname}#${tag.toLowerCase()}`)
+                  } else {
+                    push(pathname)
+                  }
                 }}
               >
                 {tag}
@@ -524,7 +567,91 @@ const AdvancedFarm = () => {
           <InternalSection>
             <MainSection>
               {activeMainTag === 0 ? (
-                <DetailChart token={token} vaultPool={vaultPool} tokenSymbol={id} />
+                <PriceShareData token={token} vaultPool={vaultPool} tokenSymbol={id} />
+              ) : activeMainTag === 2 ? (
+                <>
+                  <HalfInfo padding="25px 18px">
+                    <FarmDetailChart
+                      token={token}
+                      vaultPool={vaultPool}
+                      lastTVL={Number(vaultValue)}
+                      lastAPY={Number(totalApy)}
+                    />
+                  </HalfInfo>
+                  <HalfInfo>
+                    <NewLabel
+                      weight={700}
+                      size="14px"
+                      height="24px"
+                      padding="10px 15px"
+                      borderRadius="15px 15px 0 0"
+                    >
+                      Source of Yield
+                    </NewLabel>
+                    <DescInfo>{ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)}</DescInfo>
+                    <FlexDiv className="address" padding="0 15px 20px">
+                      {token.vaultAddress && (
+                        <InfoLabel
+                          display="flex"
+                          href={`${getExplorerLink(token.chain)}/address/${token.vaultAddress}`}
+                          target="_blank"
+                          onClick={e => e.stopPropagation()}
+                          rel="noopener noreferrer"
+                        >
+                          <NewLabel
+                            size="12px"
+                            weight={isMobile ? 400 : 600}
+                            height="16px"
+                            self="center"
+                            color="#15202b"
+                          >
+                            Vault Address
+                          </NewLabel>
+                        </InfoLabel>
+                      )}
+                      {vaultPool.autoStakePoolAddress && (
+                        <InfoLabel
+                          display="flex"
+                          href={`${getExplorerLink(token.chain)}/address/${
+                            vaultPool.contractAddress
+                          }`}
+                          target="_blank"
+                          onClick={e => e.stopPropagation()}
+                          rel="noopener noreferrer"
+                        >
+                          <NewLabel
+                            size="12px"
+                            weight={isMobile ? 400 : 600}
+                            height="16px"
+                            self="center"
+                            color="#15202b"
+                          >
+                            Strategy Address
+                          </NewLabel>
+                        </InfoLabel>
+                      )}
+                      <InfoLabel
+                        display="flex"
+                        href={`${getExplorerLink(token.chain)}/address/${
+                          vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+                        }`}
+                        onClick={e => e.stopPropagation()}
+                        rel="noopener noreferrer"
+                        target="_blank"
+                      >
+                        <NewLabel
+                          size="12px"
+                          weight={isMobile ? 400 : 600}
+                          height="16px"
+                          self="center"
+                          color="#15202b"
+                        >
+                          Pool Address
+                        </NewLabel>
+                      </InfoLabel>
+                    </FlexDiv>
+                  </HalfInfo>
+                </>
               ) : (
                 <></>
               )}

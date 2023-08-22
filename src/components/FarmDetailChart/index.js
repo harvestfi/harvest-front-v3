@@ -121,7 +121,7 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
           )}
         </Total>
       </Header>
-      <ChartDiv>
+      <ChartDiv className="advanced-farm">
         <ApexChart
           data={apiData}
           iFarmTVL={iFarmTVLData}

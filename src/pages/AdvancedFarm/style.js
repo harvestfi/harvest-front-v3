@@ -144,6 +144,12 @@ const NewLabel = styled.div`
     width: ${props.width};
   `
       : ''}
+  ${props =>
+    props.borderRadius
+      ? `
+    border-radius: ${props.borderRadius};
+    `
+      : ``}
   img.icon {
     margin-right: 10px;
   }
@@ -533,6 +539,126 @@ const MainTag = styled.div`
   cursor: pointer;
 `
 
+const HalfInfo = styled.div`
+  ${props =>
+    props.padding
+      ? `
+  padding: ${props.padding};
+  `
+      : ''}
+  ${props =>
+    props.display
+      ? `
+  display: ${props.display};
+  `
+      : ''}
+  ${props =>
+    props.justifyContent
+      ? `
+  justify-content: ${props.justifyContent};
+  `
+      : ''}
+
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0px 10px 18px -6.300000190734863px rgba(0, 0, 0, 0.08);
+  transition: 0.25s;
+  margin-bottom: 23px;
+  font-family: 'Inter', sans-serif;
+`
+
+const InfoLabel = styled.a`
+  ${props =>
+    props.weight
+      ? `
+  font-weight: ${props.weight};
+  `
+      : ''}
+  ${props =>
+    props.display
+      ? `
+  display: ${props.display};
+  `
+      : ''}
+  ${props =>
+    props.size
+      ? `
+  font-size: ${props.size};
+  `
+      : ''}
+  ${props =>
+    props.height
+      ? `
+  line-height: ${props.height};
+  `
+      : ''}
+  margin-right: 15px;
+  justify-content: center;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #eee;
+  text-decoration: none;
+  padding: 9px 17px;
+  align-self: center;
+  position: relative;
+  color: #15202b;
+
+  img.icon {
+    margin-right: 5px;
+  }
+
+  img.external-link {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+  }
+
+  &:hover {
+    color: #1f2937;
+    background: #ced3e6c0;
+    .address {
+      font-weight: bold;
+    }
+  }
+
+  @media screen and (max-width: 992px) {
+    margin-bottom: 10px;
+    margin-right: 0px;
+  }
+`
+
+const DescInfo = styled.div`
+  font-family: 'Inter', sans-serif;
+  color: #475467;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  padding: 10px 15px;
+  display: flex;
+  align-items: center;
+  font-style: normal;
+  border-top: 1px solid #ebebeb;
+
+  .help-message {
+    margin-top: 0;
+    p {
+      margin-bottom: 0;
+
+      a {
+        color: #475467;
+        font-weight: 500;
+        pointer-events: none;
+        cursor: default;
+        text-decoration: none;
+      }
+    }
+  }
+
+  @media screen and (max-width: 992px) {
+    font-size: 13px;
+  }
+`
+
 export {
   DetailView,
   TopPart,
@@ -560,4 +686,7 @@ export {
   ChainBack,
   MainTag,
   InternalSection,
+  HalfInfo,
+  InfoLabel,
+  DescInfo,
 }

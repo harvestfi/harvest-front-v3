@@ -98,8 +98,8 @@ const FilterName = styled.div`
 
 const CurDate = styled.div`
   font-size: 13px;
-  line-height: 16px;
-  font-weight: 700;
+  line-height: normal;
+  font-weight: 500;
 
   @media screen and (max-width: 992px) {
     margin-top: 0.5rem;

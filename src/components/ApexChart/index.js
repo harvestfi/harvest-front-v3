@@ -4,7 +4,6 @@ import {
   XAxis,
   YAxis,
   Line,
-  Area,
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
@@ -164,9 +163,9 @@ const ApexChart = ({
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       setCurDate(formatDateTime(payload[0].payload.x))
-      const content = `<div style="font-size: 13px; line-height: 16px; display: flex;"><div style="font-weight: 700;">${
+      const content = `<div style="font-size: 13px; display: flex;"><div style="color: #1b1b1b; font-weight: 700;">${
         filter === 1 ? 'TVL ' : filter === 0 ? 'APY ' : 'Balance '
-      }</div><div style="color: #ff9400; font-weight: 500;">&nbsp;${
+      }</div><div style="color: #5B5181; font-weight: 500;">&nbsp;${
         filter === 1 ? '$' : ''
       }${numberWithCommas(Number(payload[0].payload.y.toFixed(filter === 1 ? 0 : fixedLen)))}${
         filter === 0 ? '%' : ''
@@ -191,7 +190,7 @@ const ApexChart = ({
         width={24}
         height={24}
         viewBox="0 0 1024 1024"
-        fill="#666"
+        fill="#000"
       >
         <tspan dy="0.71em">{path}</tspan>
       </text>
@@ -215,7 +214,7 @@ const ApexChart = ({
         width={60}
         height={310}
         stroke="none"
-        fill="#666"
+        fill="#000"
         textAnchor="end"
       >
         <tspan dx={0} dy="0.355em">
@@ -403,12 +402,6 @@ const ApexChart = ({
               left: 20,
             }}
           >
-            <defs>
-              <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#F4BE37" stopOpacity={0.1} />
-                <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1} />
-              </linearGradient>
-            </defs>
             <CartesianGrid
               strokeDasharray="0"
               strokeLinecap="butt"
@@ -429,25 +422,17 @@ const ApexChart = ({
               type="monotone"
               unit="M"
               strokeLinecap="round"
-              strokeWidth={2}
-              stroke="#FF9400"
+              strokeWidth={2.5}
+              stroke="#5B5181"
               dot={false}
               legendType="none"
-            />
-            <Area
-              type="monotone"
-              dataKey="y"
-              stroke="#ff9400"
-              strokeWidth={2}
-              fillOpacity={1}
-              fill="url(#colorUv)"
             />
             <Tooltip
               content={CustomTooltip}
               legendType="none"
               dot={false}
               cursor={{
-                stroke: '#FF9400',
+                stroke: '#5B5181',
                 strokeDasharray: 3,
                 strokeLinecap: 'butt',
               }}

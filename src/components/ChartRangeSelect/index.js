@@ -15,9 +15,7 @@ const ChartRangeSelect = ({ state, type, text, onClick }) => {
         onClick()
       }}
     >
-      <Text state={state} text={text} type={type}>
-        {text}
-      </Text>
+      <Text>{text}</Text>
     </Container>
   )
 }
