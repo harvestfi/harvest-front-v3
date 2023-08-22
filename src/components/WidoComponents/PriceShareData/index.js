@@ -13,6 +13,7 @@ import {
   FlexDiv,
   CurContent,
 } from './style'
+import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../../constants'
 
 const recommendLinks = [
   { name: '1W', type: 1, state: '1W' },
@@ -31,6 +32,8 @@ const PriceShareData = ({ token, vaultPool, tokenSymbol }) => {
   const [curDate, setCurDate] = useState('')
   const [curContent, setCurContent] = useState('')
 
+  const symbol = tokenSymbol === FARM_TOKEN_SYMBOL ? IFARM_TOKEN_SYMBOL : `f${tokenSymbol}`
+
   useEffect(() => {
     const initData = async () => {
       const { data, flag } = await getPriceFeed(address, chainId)
@@ -47,7 +50,7 @@ const PriceShareData = ({ token, vaultPool, tokenSymbol }) => {
         <Total>
           <FlexDiv>
             <TooltipInfo>
-              <TokenSymbol>{`f${tokenSymbol} Price`}</TokenSymbol>
+              <TokenSymbol>{`${symbol} Price`}</TokenSymbol>
               <FlexDiv>
                 <CurContent color="#1b1b1b">{curDate}&nbsp;:&nbsp;</CurContent>
                 <CurContent color="#00D26B">{curContent}</CurContent>
