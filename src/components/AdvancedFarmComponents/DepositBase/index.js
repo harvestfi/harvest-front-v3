@@ -144,8 +144,8 @@ const DepositBase = ({
   return (
     <BaseWido show={!deposit && !selectToken && !finalStep}>
       <NewLabel
-        size={isMobile ? '12px' : '16px'}
-        height={isMobile ? '21px' : '24px'}
+        size={isMobile ? '12px' : '14px'}
+        height={isMobile ? '24px' : '28px'}
         weight="600"
         color="#101828"
         display="flex"
@@ -214,7 +214,7 @@ const DepositBase = ({
           }
         }}
       >
-        {tokenSymbol} Balance Available:
+        Balance Available:
         <span>{formatNumberWido(balance, POOL_BALANCES_DECIMALS)}</span>
       </BalanceInfo>
       <InsufficientSection isShow={showWarning ? 'true' : 'false'}>

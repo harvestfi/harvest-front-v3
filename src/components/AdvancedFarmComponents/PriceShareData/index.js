@@ -69,7 +69,7 @@ const PriceShareData = ({ token, vaultPool, tokenSymbol }) => {
           </ButtonGroup>
         </Total>
       </Header>
-      <ChartDiv>
+      <ChartDiv className="advanced-price">
         <ApexChart
           data={apiData}
           loadComplete={loadComplete}

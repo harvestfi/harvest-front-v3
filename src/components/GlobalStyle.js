@@ -327,6 +327,7 @@ html {
 
   .detail-box {
     display: flex; 
+    justify-content: space-between;
     align-items: center; 
     width: 100%;
     border-radius: 12px; 
@@ -334,20 +335,34 @@ html {
     margin-bottom: 7px;
   }
 
+  .detail-box-main {
+    display: flex;
+  }
+
   .detail-icon {
-    width: 60px;
+    margin-right: 5px;
+
+    img {
+      margin: 0 -15px 0 0;
+
+      &:last-child {
+        margin: 0;
+      }
+    }
   }
 
   .detail-apy {
-    width: 80px; 
-    font-size: 16px; 
+    font-size: 14px; 
+    line-height: 24px;
     font-weight: 500;
+    color: #000;
   }
 
   .detail-desc {
-    width: 36%; 
-    font-size: 16px; 
-    font-weight: 400;
+    font-size: 14px; 
+    line-height: 24px;
+    font-weight: 500;
+    color: #344054;
 
     @media screen and (max-width: 992px) {
       font-size: 13px;
@@ -355,8 +370,10 @@ html {
   }
 
   .detail-desc-auto {
-    font-size: 16px; 
-    font-weight: 400;
+    font-size: 14px; 
+    line-height: 24px;
+    font-weight: 500;
+    color: #344054;
 
     @media screen and (max-width: 992px) {
       font-size: 13px;
@@ -364,8 +381,10 @@ html {
   }
 
   .detail-desc-no-width {
-    font-size: 16px; 
-    font-weight: 400;
+    font-size: 14px; 
+    line-height: 24px;
+    font-weight: 500;
+    color: #344054;
 
     @media screen and (max-width: 992px) {
       font-size: 13px;
@@ -373,9 +392,6 @@ html {
   }
 
   .detail-token {
-    width: 34%; 
-    font-size: 16px; 
-    font-weight: 500; 
     text-decoration: underline;
 
     @media screen and (max-width: 992px) {
@@ -384,8 +400,6 @@ html {
   }
 
   .detail-token-no-width {
-    font-size: 16px; 
-    font-weight: 400; 
     // text-decoration: underline;
 
     @media screen and (max-width: 992px) {
@@ -456,6 +470,12 @@ html {
     font-family: 'Roboto', sans-serif;
     font-size: 12px;
     font-weight: 400;
+  }
+
+  .advanced-price .recharts-cartesian-axis-tick {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
   }
 
   .advanced-farm .recharts-cartesian-axis-tick {

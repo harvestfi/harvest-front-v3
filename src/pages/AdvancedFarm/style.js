@@ -401,14 +401,12 @@ const MyBalance = styled.div`
   background: #fff;
   box-shadow: 0px 8px 8px -4px rgba(16, 24, 40, 0.03), 0px 20px 24px -4px rgba(16, 24, 40, 0.08);
 
-  @media screen and (max-width: 992px) {
-    ${props =>
-      props.marginBottom
-        ? `
-        margin-bottom: ${props.marginBottom};
-      `
-        : ``}
-  }
+  ${props =>
+    props.marginBottom
+      ? `
+      margin-bottom: ${props.marginBottom};
+    `
+      : ``}
 `
 
 const GuideSection = styled.div`
@@ -563,7 +561,7 @@ const HalfInfo = styled.div`
   background: #fff;
   box-shadow: 0px 10px 18px -6.300000190734863px rgba(0, 0, 0, 0.08);
   transition: 0.25s;
-  margin-bottom: 23px;
+  margin-bottom: ${props => props.marginBottom};
   font-family: 'Inter', sans-serif;
 `
 
@@ -659,6 +657,21 @@ const DescInfo = styled.div`
   }
 `
 
+const LastHarvestInfo = styled.div`
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0px 10px 18px 0px rgba(0, 0, 0, 0.08);
+  border-radius: 10px;
+  margin-bottom: 30px;
+`
+
+const RestInternal = styled.div`
+  display: flex;
+  justify-content: space-between;
+  flex-direction: column;
+  height: 100%;
+`
+
 export {
   DetailView,
   TopPart,
@@ -689,4 +702,6 @@ export {
   HalfInfo,
   InfoLabel,
   DescInfo,
+  LastHarvestInfo,
+  RestInternal,
 }

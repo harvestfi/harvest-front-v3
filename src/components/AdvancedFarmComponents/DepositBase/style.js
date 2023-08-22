@@ -209,13 +209,12 @@ const BalanceInfo = styled.div`
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
-
+  color: #475467;
   margin-top: 5px;
   cursor: pointer;
 
   span {
     margin-left: 6px;
-    color: #475467;
     transition: 0.25s;
   }
 

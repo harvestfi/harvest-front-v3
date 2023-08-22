@@ -3,6 +3,7 @@ import { find, get, isEqual, isArray } from 'lodash'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import ReactHtmlParser from 'react-html-parser'
+import ReactTooltip from 'react-tooltip'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { getBalances, getSupportedTokens } from 'wido'
@@ -48,7 +49,13 @@ import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
-import { displayAPY, getTotalApy, formatNumber } from '../../utils'
+import {
+  displayAPY,
+  getTotalApy,
+  formatNumber,
+  getAdvancedRewardText,
+  getLastHarvestInfo,
+} from '../../utils'
 import {
   BackArrow,
   BackBtnRect,
@@ -76,6 +83,8 @@ import {
   HalfInfo,
   InfoLabel,
   DescInfo,
+  LastHarvestInfo,
+  RestInternal,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 
@@ -122,7 +131,7 @@ const AdvancedFarm = () => {
 
   const { push } = useHistory()
 
-  const { vaultsData } = useVaults()
+  const { vaultsData, loadingVaults } = useVaults()
   const { pools, userStats, fetchUserPoolStats } = usePools()
   const { connected, account, balances, getWalletBalances } = useWallet()
   const { profitShareAPY } = useStats()
@@ -195,6 +204,10 @@ const AdvancedFarm = () => {
     ? token.data
     : find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
 
+  const farmAPY = get(vaultPool, 'totalRewardAPY', 0)
+  const tradingApy = get(vaultPool, 'tradingApy', 0)
+  const boostedEstimatedAPY = get(tokenVault, 'boostedEstimatedAPY', 0)
+  const boostedRewardAPY = get(vaultPool, 'boostedRewardAPY', 0)
   const totalApy = isSpecialVault
     ? getTotalApy(null, token, true)
     : getTotalApy(vaultPool, tokenVault)
@@ -221,7 +234,9 @@ const AdvancedFarm = () => {
   }, [])
 
   const useIFARM = id === FARM_TOKEN_SYMBOL
-  const fAssetPool = find(pools, pool => pool.collateralAddress === tokens[id].vaultAddress)
+  const fAssetPool = isSpecialVault
+    ? token.data
+    : find(pools, pool => pool.collateralAddress === tokens[id].vaultAddress)
   const multipleAssets = useMemo(
     () =>
       isArray(tokens[id].tokenAddress) &&
@@ -467,7 +482,7 @@ const AdvancedFarm = () => {
     getTokenHolder()
   }, [paramAddress, chain, token])
 
-  const [activeMainTag, setActiveMainTag] = useState(2)
+  const [activeMainTag, setActiveMainTag] = useState(0)
 
   const [vaultValue, setVaultValue] = useState(null)
 
@@ -476,6 +491,110 @@ const AdvancedFarm = () => {
   }, [token])
 
   const { pathname } = useLocation()
+
+  const apyDaily = totalApy
+    ? (((Number(totalApy) / 100 + 1) ** (1 / 365) - 1) * 100).toFixed(3)
+    : null
+
+  const showAPY = () => {
+    return (
+      <>
+        {isSpecialVault ? (
+          token.data &&
+          token.data.loaded &&
+          (token.data.dataFetched === false || totalApy !== null) ? (
+            <div>{token.inactive ? 'Inactive' : <>{totalApy ? displayAPY(totalApy) : null}</>}</div>
+          ) : (
+            <div>
+              <AnimatedDots />
+            </div>
+          )
+        ) : vaultPool.loaded && totalApy !== null && !loadingVaults ? (
+          <div>
+            {token.inactive || token.testInactive || token.hideTotalApy || !token.dataFetched ? (
+              token.inactive || token.testInactive ? (
+                'Inactive'
+              ) : null
+            ) : (
+              <>{displayAPY(totalApy, DECIMAL_PRECISION, 10)}</>
+            )}
+          </div>
+        ) : (
+          <div>
+            <AnimatedDots />
+          </div>
+        )}
+      </>
+    )
+  }
+
+  const showTVL = () => {
+    return (
+      <>
+        {token.excludeVaultStats ? (
+          'N/A'
+        ) : vaultValue ? (
+          <>${formatNumber(vaultValue, 2)}</>
+        ) : (
+          <AnimatedDots />
+        )}
+      </>
+    )
+  }
+
+  const showApyDaily = () => {
+    return (
+      <>
+        {isSpecialVault ? (
+          token.data &&
+          token.data.loaded &&
+          (token.data.dataFetched === false || totalApy !== null) ? (
+            <div>{token.inactive ? 'Inactive' : <>{totalApy ? `${apyDaily}%` : null}</>}</div>
+          ) : (
+            <AnimatedDots />
+          )
+        ) : vaultPool.loaded && totalApy !== null && !loadingVaults ? (
+          <div>
+            {token.inactive || token.testInactive || token.hideTotalApy || !token.dataFetched ? (
+              token.inactive || token.testInactive ? (
+                'Inactive'
+              ) : null
+            ) : (
+              <>{apyDaily}%</>
+            )}
+          </div>
+        ) : (
+          <AnimatedDots />
+        )}
+      </>
+    )
+  }
+
+  const rewardTxt = getAdvancedRewardText(
+    token,
+    vaultPool,
+    tradingApy,
+    farmAPY,
+    totalApy,
+    true,
+    boostedEstimatedAPY,
+    boostedRewardAPY,
+  )
+
+  const profitShare =
+    chain === CHAIN_IDS.ETH_MAINNET ? '10' : chain === CHAIN_IDS.POLYGON_MAINNET ? '5' : '7'
+  const harvestTreasury =
+    chain === CHAIN_IDS.ETH_MAINNET ? '5' : chain === CHAIN_IDS.POLYGON_MAINNET ? '3' : '3'
+
+  const [lastHarvest, setLastHarvest] = useState('')
+  useEffect(() => {
+    const getLastHarvest = async () => {
+      const value = await getLastHarvestInfo(paramAddress, chain)
+      setLastHarvest(value)
+    }
+
+    getLastHarvest()
+  }, [paramAddress, chain])
 
   return (
     <DetailView pageBackColor={pageBackColor} fontColor={fontColor}>
@@ -570,7 +689,7 @@ const AdvancedFarm = () => {
                 <PriceShareData token={token} vaultPool={vaultPool} tokenSymbol={id} />
               ) : activeMainTag === 2 ? (
                 <>
-                  <HalfInfo padding="25px 18px">
+                  <HalfInfo padding="25px 18px" marginBottom="23px">
                     <FarmDetailChart
                       token={token}
                       vaultPool={vaultPool}
@@ -578,7 +697,7 @@ const AdvancedFarm = () => {
                       lastAPY={Number(totalApy)}
                     />
                   </HalfInfo>
-                  <HalfInfo>
+                  <HalfInfo marginBottom="unset">
                     <NewLabel
                       weight={700}
                       size="14px"
@@ -850,6 +969,189 @@ const AdvancedFarm = () => {
                     </WithdrawSection>
                   </HalfContent>
                 </>
+              ) : activeMainTag === 2 ? (
+                <RestInternal>
+                  <MyBalance marginBottom="32px">
+                    <NewLabel
+                      size={isMobile ? '12px' : '14px'}
+                      weight="700"
+                      height={isMobile ? '18px' : '24px'}
+                      color="#344054"
+                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      borderBottom="1px solid #EBEBEB"
+                    >
+                      Overview
+                    </NewLabel>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                    >
+                      <NewLabel
+                        size={isMobile ? '12px' : '14px'}
+                        weight="500"
+                        height={isMobile ? '21px' : '24px'}
+                        color="#344054"
+                      >
+                        APY
+                      </NewLabel>
+                      <NewLabel
+                        size={isMobile ? '12px' : '14px'}
+                        height={isMobile ? '21px' : '24px'}
+                        weight="500"
+                        color="#000"
+                      >
+                        {showAPY()}
+                      </NewLabel>
+                    </FlexDiv>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                    >
+                      <NewLabel
+                        size={isMobile ? '12px' : '14px'}
+                        height={isMobile ? '21px' : '24px'}
+                        weight="500"
+                        color="#344054"
+                      >
+                        Daily APY
+                      </NewLabel>
+                      <NewLabel
+                        weight="500"
+                        size={isMobile ? '12px' : '14px'}
+                        height={isMobile ? '21px' : '24px'}
+                        color="black"
+                      >
+                        {showApyDaily()}
+                      </NewLabel>
+                    </FlexDiv>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                    >
+                      <NewLabel
+                        size={isMobile ? '12px' : '14px'}
+                        height={isMobile ? '21px' : '24px'}
+                        weight="500"
+                        color="#344054"
+                      >
+                        TVL
+                      </NewLabel>
+                      <NewLabel
+                        weight="500"
+                        size={isMobile ? '12px' : '14px'}
+                        height={isMobile ? '21px' : '24px'}
+                        color="black"
+                      >
+                        {showTVL()}
+                      </NewLabel>
+                    </FlexDiv>
+                  </MyBalance>
+                  <MyBalance marginBottom="32px">
+                    <NewLabel
+                      size={isMobile ? '12px' : '14px'}
+                      weight="700"
+                      height={isMobile ? '18px' : '24px'}
+                      color="#344054"
+                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      borderBottom="1px solid #EBEBEB"
+                    >
+                      APY Breakdown
+                    </NewLabel>
+                    <NewLabel padding={isMobile ? '9px 13px' : '10px 15px'}>
+                      <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
+                    </NewLabel>
+                  </MyBalance>
+                  <LastHarvestInfo>
+                    <NewLabel
+                      size={isMobile ? '12px' : '14px'}
+                      weight="700"
+                      height={isMobile ? '18px' : '24px'}
+                      color="#344054"
+                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      borderBottom="1px solid #EBEBEB"
+                    >
+                      Fees
+                    </NewLabel>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                    >
+                      <NewLabel size="14px" weight="500" height="24px" color="#344054">
+                        Deposit Fee
+                      </NewLabel>
+                      <NewLabel size="14px" weight="500" height="24px" color="#000">
+                        0%
+                      </NewLabel>
+                    </FlexDiv>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                    >
+                      <NewLabel size="14px" weight="500" height="24px" color="#344054">
+                        Withdrawal Fee
+                      </NewLabel>
+                      <NewLabel size="14px" weight="500" height="24px" color="#000">
+                        0%
+                      </NewLabel>
+                    </FlexDiv>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                    >
+                      <NewLabel size="13px" weight="300" height="normal" color="#15202b">
+                        The APY shown already considers the performance fee taken only from
+                        generated yield and not deposits.
+                      </NewLabel>
+                      <NewLabel display="flex" self="center">
+                        <InfoIcon
+                          className="info"
+                          width={isMobile ? 10 : 16}
+                          src={Info}
+                          alt=""
+                          data-tip
+                          data-for="tooltip-last-harvest"
+                          filterColor={filterColor}
+                        />
+                        <ReactTooltip
+                          id="tooltip-last-harvest"
+                          backgroundColor="black"
+                          borderColor="black"
+                          textColor="white"
+                        >
+                          <FlexDiv justifyContent="space-between">
+                            <NewLabel weight="500" size="13px" height="16px">
+                              Harvest Treasury
+                            </NewLabel>
+                            <NewLabel weight="500" size="13px" height="16px" marginLeft="20px">
+                              {harvestTreasury}%
+                            </NewLabel>
+                          </FlexDiv>
+                          <FlexDiv justifyContent="space-between" marginTop="12px">
+                            <NewLabel weight="500" size="13px" height="16px">
+                              Profit Sharing
+                            </NewLabel>
+                            <NewLabel weight="500" size="13px" height="16px" marginLeft="20px">
+                              {profitShare}%
+                            </NewLabel>
+                          </FlexDiv>
+                        </ReactTooltip>
+                      </NewLabel>
+                    </FlexDiv>
+                  </LastHarvestInfo>
+                  <MyBalance>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                    >
+                      <NewLabel size="14px" weight="700" height="24px" color="#344054">
+                        Last Harvest
+                      </NewLabel>
+                      <NewLabel size="14px" weight="700" height="24px" color="#000">
+                        {lastHarvest !== '' ? `${lastHarvest} ago` : '-'}
+                      </NewLabel>
+                    </FlexDiv>
+                  </MyBalance>
+                </RestInternal>
               ) : (
                 <></>
               )}
