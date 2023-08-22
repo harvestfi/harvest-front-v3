@@ -4,6 +4,7 @@ import {
   XAxis,
   YAxis,
   Line,
+  Area,
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
@@ -296,6 +297,12 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
               left: 20,
             }}
           >
+            <defs>
+              <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#00D26B" stopOpacity={0.1} />
+                <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1} />
+              </linearGradient>
+            </defs>
             <CartesianGrid
               strokeDasharray="0"
               strokeLinecap="butt"
@@ -316,10 +323,18 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
               type="monotone"
               unit="M"
               strokeLinecap="round"
-              strokeWidth={2.5}
+              strokeWidth={2}
               stroke="#00D26B"
               dot={false}
               legendType="none"
+            />
+            <Area
+              type="monotone"
+              dataKey="y"
+              stroke="#00D26B"
+              strokeWidth={2}
+              fillOpacity={1}
+              fill="url(#colorUv)"
             />
             <Tooltip
               content={CustomTooltip}
