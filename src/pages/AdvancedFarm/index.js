@@ -70,6 +70,7 @@ import {
   MainSection,
   ChainBack,
   MainTag,
+  InternalSection,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 
@@ -520,7 +521,7 @@ const AdvancedFarm = () => {
               </MainTag>
             ))}
           </FlexDiv>
-          <FlexDiv>
+          <InternalSection>
             <MainSection>
               {activeMainTag === 0 ? (
                 <DetailChart token={token} vaultPool={vaultPool} tokenSymbol={id} />
@@ -726,7 +727,7 @@ const AdvancedFarm = () => {
                 <></>
               )}
             </RestContent>
-          </FlexDiv>
+          </InternalSection>
         </BigDiv>
       </Inner>
     </DetailView>

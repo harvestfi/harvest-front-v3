@@ -225,6 +225,14 @@ const FlexDiv = styled.div`
   }
 `
 
+const InternalSection = styled.div`
+  display: flex;
+
+  @media screen and (max-width: 992px) {
+    display: block;
+  }
+`
+
 const FlexTopDiv = styled.div`
   display: flex;
   flex-direction: column;
@@ -551,4 +559,5 @@ export {
   MainSection,
   ChainBack,
   MainTag,
+  InternalSection,
 }
