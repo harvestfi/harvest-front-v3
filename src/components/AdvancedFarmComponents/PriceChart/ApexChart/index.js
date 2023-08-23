@@ -260,6 +260,11 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
       setMinVal(minValue)
       setMaxVal(maxValue)
 
+      // Set date and price with latest value by default
+      setCurDate(formatDateTime(mainData[slotCount - 1].x))
+      const price = numberWithCommas(Number(mainData[slotCount - 1].y).toFixed(roundedDecimal))
+      setCurContent(`$${price}`)
+
       const yAxisAry = getYAxisValues(minValue, maxValue, roundNum)
       setYAxisTicks(yAxisAry)
 
@@ -269,7 +274,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
     }
 
     init()
-  }, [range, data, isDataReady, loadComplete])
+  }, [range, data, isDataReady, loadComplete, roundedDecimal, setCurContent, setCurDate])
 
   return (
     <>
