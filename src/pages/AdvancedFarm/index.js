@@ -33,6 +33,7 @@ import PriceShareData from '../../components/AdvancedFarmComponents/PriceChart/P
 import FarmDetailChart from '../../components/FarmDetailChart'
 import VaultPanelActionsFooter from '../../components/AdvancedFarmComponents/Rewards/VaultPanelActionsFooter'
 import StakeBase from '../../components/AdvancedFarmComponents/Stake/StakeBase'
+import StakeResult from '../../components/AdvancedFarmComponents/Stake/StakeResult'
 import {
   DECIMAL_PRECISION,
   FARM_GRAIN_TOKEN_SYMBOL,
@@ -254,7 +255,6 @@ const AdvancedFarm = () => {
     [id, tokens],
   )
 
-  const [, setAmountsToExecute] = useState([''])
   const tokenDecimals = token.decimals || tokens[id].decimals
   const lpTokenBalance = get(userStats, `[${fAssetPool.id}]['lpTokenBalance']`, 0)
   const totalStaked = get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)
@@ -279,6 +279,10 @@ const AdvancedFarm = () => {
   const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select Token' })
   const [withdrawFinalStep, setWithdrawFinalStep] = useState(false)
   const [unstakeBalance, setUnstakeBalance] = useState('0')
+
+  // Stake
+  const [inputAmountStake, setInputAmountStake] = useState(0)
+  const [stakeFinalStep, setStakeFinalStep] = useState(false)
 
   const [balanceList, setBalanceList] = useState([])
   const [supTokenList, setSupTokenList] = useState([])
@@ -490,7 +494,7 @@ const AdvancedFarm = () => {
     getTokenHolder()
   }, [paramAddress, chain, token])
 
-  const [activeMainTag, setActiveMainTag] = useState(1)
+  const [activeMainTag, setActiveMainTag] = useState(0)
 
   const [vaultValue, setVaultValue] = useState(null)
 
@@ -1112,9 +1116,10 @@ const AdvancedFarm = () => {
                   <HalfContent>
                     <StakeSection isShow={activeStake}>
                       <StakeBase
-                        finalStep={depositFinalStep}
-                        inputAmount={inputAmountDepo}
-                        setInputAmount={setInputAmountDepo}
+                        finalStep={stakeFinalStep}
+                        setFinalStep={setStakeFinalStep}
+                        inputAmount={inputAmountStake}
+                        setInputAmount={setInputAmountStake}
                         token={token}
                         activeStake={activeStake}
                         switchMethod={switchStakeMethod}
@@ -1124,8 +1129,13 @@ const AdvancedFarm = () => {
                         lpTokenApprovedBalance={lpTokenApprovedBalance}
                         setPendingAction={setPendingAction}
                         multipleAssets={multipleAssets}
-                        setAmountsToExecute={setAmountsToExecute}
                         setLoadingDots={setLoadingDots}
+                      />
+                      <StakeResult
+                        finalStep={stakeFinalStep}
+                        setFinalStep={setStakeFinalStep}
+                        inputAmount={inputAmountStake}
+                        tokenSymbol={id}
                       />
                     </StakeSection>
                   </HalfContent>

@@ -52,6 +52,7 @@ const getChainName = chain => {
 
 const StakeBase = ({
   finalStep,
+  setFinalStep,
   inputAmount,
   setInputAmount,
   token,
@@ -63,7 +64,6 @@ const StakeBase = ({
   lpTokenApprovedBalance,
   setPendingAction,
   multipleAssets,
-  setAmountsToExecute,
   setLoadingDots,
 }) => {
   const { connected, connectAction, account, chainId, setChainId, getWalletBalances } = useWallet()
@@ -120,6 +120,7 @@ const StakeBase = ({
       setShowWarning(true)
       return
     }
+    let bStakeSuccess = false
     setBtnName('(1/2) Approve Token Spending in Wallet')
     setStartSpinner(true)
     try {
@@ -134,7 +135,6 @@ const StakeBase = ({
         setPendingAction,
         multipleAssets,
         async () => {
-          setAmountsToExecute(['', ''])
           setLoadingDots(false, true)
           await fetchUserPoolStats([fAssetPool], account, userStats)
           await getWalletBalances([tokenSymbol], false, true)
@@ -142,6 +142,8 @@ const StakeBase = ({
 
           setBtnName('Stake & Earn Rewards')
           setStartSpinner(false)
+          setFinalStep(true)
+          bStakeSuccess = true
         },
         async () => {
           await fetchUserPoolStats([fAssetPool], account, userStats)
@@ -160,7 +162,9 @@ const StakeBase = ({
     }
     setStartSpinner(false)
     setBtnName('Stake & Earn Rewards')
-    setStakeFailed(true)
+    if (bStakeSuccess) {
+      setFinalStep(true)
+    }
   }
 
   const onInputBalance = e => {
