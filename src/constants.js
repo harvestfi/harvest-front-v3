@@ -55,7 +55,7 @@ export const GRAPH_URL_POLYGON =
 export const GRAPH_URL_ARBITRUM =
   'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance-arbitrum'
 export const GRAPH_URL_BASE =
-  'https://api.thegraph.com/subgraphs/name/alexandersazonof/harvest-base'
+  'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance-base'
 
 export const ETHERSCAN_URL = 'https://etherscan.io'
 
