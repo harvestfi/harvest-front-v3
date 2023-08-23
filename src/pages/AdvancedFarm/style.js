@@ -672,6 +672,18 @@ const RestInternal = styled.div`
   height: 100%;
 `
 
+const StakeSection = styled.div`
+  ${props =>
+    props.isShow
+      ? `
+    display: block;
+    height: 100%;
+  `
+      : `
+    display: none;
+  `}
+`
+
 export {
   DetailView,
   TopPart,
@@ -704,4 +716,5 @@ export {
   DescInfo,
   LastHarvestInfo,
   RestInternal,
+  StakeSection,
 }

@@ -32,6 +32,7 @@ import WithdrawResult from '../../components/AdvancedFarmComponents/Withdraw/Wit
 import PriceShareData from '../../components/AdvancedFarmComponents/PriceChart/PriceShareData'
 import FarmDetailChart from '../../components/FarmDetailChart'
 import VaultPanelActionsFooter from '../../components/AdvancedFarmComponents/Rewards/VaultPanelActionsFooter'
+import StakeBase from '../../components/AdvancedFarmComponents/Stake/StakeBase'
 import {
   DECIMAL_PRECISION,
   FARM_GRAIN_TOKEN_SYMBOL,
@@ -86,6 +87,7 @@ import {
   DescInfo,
   LastHarvestInfo,
   RestInternal,
+  StakeSection,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 
@@ -252,9 +254,12 @@ const AdvancedFarm = () => {
     [id, tokens],
   )
 
+  const [, setAmountsToExecute] = useState([''])
   const tokenDecimals = token.decimals || tokens[id].decimals
   const lpTokenBalance = get(userStats, `[${fAssetPool.id}]['lpTokenBalance']`, 0)
   const totalStaked = get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)
+  const lpTokenApprovedBalance = get(userStats, `[${fAssetPool.id}]['lpTokenApprovedBalance']`, 0)
+
   const usdPrice =
     token.usdPrice || (token.data && token.data.lpTokenData && token.data.lpTokenData.price)
 
@@ -436,7 +441,7 @@ const AdvancedFarm = () => {
     [account, userStats, balances],
   )
 
-  const switchMethod = () => setActiveDepo(prev => !prev)
+  const switchDepoMethod = () => setActiveDepo(prev => !prev)
   const [partHeightDepo, setPartHeightDepo] = useState(null)
 
   const [holderCount, setHolderCount] = useState(0)
@@ -485,7 +490,7 @@ const AdvancedFarm = () => {
     getTokenHolder()
   }, [paramAddress, chain, token])
 
-  const [activeMainTag, setActiveMainTag] = useState(0)
+  const [activeMainTag, setActiveMainTag] = useState(1)
 
   const [vaultValue, setVaultValue] = useState(null)
 
@@ -621,6 +626,9 @@ const AdvancedFarm = () => {
     loadingBalances: loadingLpStats || loadingFarmingBalance,
     isSpecialVault,
   }
+
+  const [activeStake, setActiveStake] = useState(true)
+  const switchStakeMethod = () => setActiveStake(prev => !prev)
 
   return (
     <DetailView pageBackColor={pageBackColor} fontColor={fontColor}>
@@ -925,7 +933,7 @@ const AdvancedFarm = () => {
                         token={token}
                         supTokenList={supTokenList}
                         activeDepo={activeDepo}
-                        switchMethod={switchMethod}
+                        switchMethod={switchDepoMethod}
                         tokenSymbol={id}
                       />
                       <DepositSelectToken
@@ -982,7 +990,7 @@ const AdvancedFarm = () => {
                         token={token}
                         supTokenList={supTokenList}
                         activeDepo={activeDepo}
-                        switchMethod={switchMethod}
+                        switchMethod={switchStakeMethod}
                       />
                       <WithdrawStart
                         withdrawStart={withdrawStart}
@@ -1100,6 +1108,27 @@ const AdvancedFarm = () => {
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
+                  <Divider height="unset" marginTop={isMobile ? '23px' : '20px'} />
+                  <HalfContent>
+                    <StakeSection isShow={activeStake}>
+                      <StakeBase
+                        finalStep={depositFinalStep}
+                        inputAmount={inputAmountDepo}
+                        setInputAmount={setInputAmountDepo}
+                        token={token}
+                        activeStake={activeStake}
+                        switchMethod={switchStakeMethod}
+                        tokenSymbol={id}
+                        lpTokenBalance={lpTokenBalance}
+                        fAssetPool={fAssetPool}
+                        lpTokenApprovedBalance={lpTokenApprovedBalance}
+                        setPendingAction={setPendingAction}
+                        multipleAssets={multipleAssets}
+                        setAmountsToExecute={setAmountsToExecute}
+                        setLoadingDots={setLoadingDots}
+                      />
+                    </StakeSection>
+                  </HalfContent>
                 </>
               ) : (
                 <RestInternal>
