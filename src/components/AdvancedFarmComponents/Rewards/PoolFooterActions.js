@@ -123,7 +123,7 @@ const PoolFooterActions = ({
                   lineHeight="20px"
                   color="#475467"
                 >
-                  You can only claim your rewards all at once.
+                  Claim all rewards directly into your wallet.
                 </SelectedVaultLabel>
                 <Button
                   // width="100%"
