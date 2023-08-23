@@ -143,6 +143,37 @@ ${props =>
       `
       : ''}
     
+  ${props =>
+    props.color === 'advanced-reward'
+      ? `
+      background: #000;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 24px;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      color: #fff;
+      padding: 10px 56px;
+      border-radius: 8px;
+
+      ${
+        !props.disabled
+          ? `
+      &:hover {
+        background: #27AE60;
+        color: white;
+      }`
+          : ''
+      }
+
+      &:active {
+        background: #27AE60;
+        color: white;
+      }
+      `
+      : ''}
+
     ${props =>
       props.color === 'earn'
         ? `

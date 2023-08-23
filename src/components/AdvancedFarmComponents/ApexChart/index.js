@@ -230,9 +230,9 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
       if (unitBtw >= 1) {
         unitBtw = Math.ceil(unitBtw)
         len = 0
-        unitBtw = ceil10(unitBtw, len - 1)
-        maxValue = ceil10(maxValue, len - 1)
-        minValue = floor10(minValue, len - 1)
+        unitBtw = ceil10(unitBtw, len)
+        maxValue = ceil10(maxValue, len)
+        minValue = floor10(minValue, len)
       } else if (unitBtw === 0) {
         len = Math.ceil(maxValue).toString().length
         maxValue += 10 ** (len - 1)
