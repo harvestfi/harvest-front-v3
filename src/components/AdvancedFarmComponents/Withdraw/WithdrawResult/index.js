@@ -2,38 +2,32 @@ import BigNumber from 'bignumber.js'
 import { get } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import React, { useState } from 'react'
-import HelpIcon from '../../../assets/images/logos/beginners/help-circle.svg'
-import CheckIcon from '../../../assets/images/logos/beginners/success-check.svg'
-import CloseIcon from '../../../assets/images/logos/beginners/close.svg'
-import { WIDO_EXTEND_DECIMALS } from '../../../constants'
-import { fromWei, toWei } from '../../../services/web3'
-import { formatNumberWido } from '../../../utils'
-import AnimatedDots from '../../AnimatedDots'
+import CheckIcon from '../../../../assets/images/logos/beginners/success-check.svg'
+import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
+import { WIDO_EXTEND_DECIMALS } from '../../../../constants'
+import { fromWei } from '../../../../services/web3'
+import { formatNumberWido } from '../../../../utils'
+import AnimatedDots from '../../../AnimatedDots'
 import { Buttons, ImgBtn, NewLabel, SelectTokenWido, FTokenInfo } from './style'
 
-const DepositResult = ({
+const WithdrawResult = ({
   pickedToken,
   finalStep,
   setFinalStep,
-  setSelectToken,
-  setDeposit,
-  inputAmount,
+  setWithdraw,
+  unstakeBalance,
   token,
   tokenSymbol,
-  quoteValue,
-  setQuoteValue,
 }) => {
-  const amount = toWei(inputAmount, pickedToken.decimals)
+  const amount = fromWei(unstakeBalance, pickedToken.decimals)
 
   const pricePerFullShare = get(token, `pricePerFullShare`, 0)
 
   const [showDesc, setShowDesc] = useState(true)
 
   const onClose = () => {
-    setQuoteValue(null)
     setFinalStep(false)
-    setSelectToken(false)
-    setDeposit(false)
+    setWithdraw(false)
   }
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
@@ -59,9 +53,9 @@ const DepositResult = ({
           justifyContent="space-between"
           padding={isMobile ? '5px 0' : '10px 0'}
         >
-          <NewLabel weight="500">Deposited</NewLabel>
+          <NewLabel weight="500">Withdrawn</NewLabel>
           <NewLabel weight="600">
-            {inputAmount}&nbsp;{pickedToken.symbol}
+            {amount}&nbsp;{`f${tokenSymbol}`}
           </NewLabel>
         </NewLabel>
         <NewLabel
@@ -71,28 +65,19 @@ const DepositResult = ({
         >
           <NewLabel className="beginners" weight="500">
             Received
-            <img className="help-icon" src={HelpIcon} alt="" data-tip data-for="min-help" />
           </NewLabel>
           <NewLabel weight="600">
             {pickedToken.default ? (
               formatNumberWido(
-                new BigNumber(amount).dividedBy(pricePerFullShare).toFixed(),
+                new BigNumber(amount)
+                  .multipliedBy(fromWei(pricePerFullShare, pickedToken.decimals))
+                  .toFixed(),
                 WIDO_EXTEND_DECIMALS,
               )
-            ) : quoteValue ? (
-              <>
-                {formatNumberWido(
-                  fromWei(
-                    quoteValue.toTokenAmount,
-                    token.decimals || token.data.lpTokenData.decimals,
-                  ),
-                  WIDO_EXTEND_DECIMALS,
-                )}
-              </>
             ) : (
               <AnimatedDots />
             )}
-            &nbsp;{`f${tokenSymbol}`}
+            &nbsp;{pickedToken.symbol}
           </NewLabel>
         </NewLabel>
       </NewLabel>
@@ -110,7 +95,7 @@ const DepositResult = ({
               weight="600"
               marginBottom="4px"
             >
-              Deposit Complete!
+              Withdraw Complete!
             </NewLabel>
             <NewLabel
               color="#027A48"
@@ -119,7 +104,7 @@ const DepositResult = ({
               weight="400"
               marginBottom="5px"
             >
-              You are now earning yield on your deposit.
+              You have received {tokenSymbol} directly to your wallet.
             </NewLabel>
           </NewLabel>
         </NewLabel>
@@ -152,4 +137,4 @@ const DepositResult = ({
     </SelectTokenWido>
   )
 }
-export default DepositResult
+export default WithdrawResult

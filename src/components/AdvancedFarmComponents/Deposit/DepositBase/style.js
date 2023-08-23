@@ -1,6 +1,6 @@
 import styled from 'styled-components'
-import Plus from '../../../assets/images/logos/beginners/plus.svg'
-import Minus from '../../../assets/images/logos/beginners/minus.svg'
+import Plus from '../../../../assets/images/logos/beginners/plus.svg'
+import Minus from '../../../../assets/images/logos/beginners/minus.svg'
 
 const BaseWido = styled.div`
   padding: 16px 24px 24px;

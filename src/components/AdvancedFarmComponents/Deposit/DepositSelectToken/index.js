@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { useWallet } from '../../../providers/Wallet'
+import { useWallet } from '../../../../providers/Wallet'
 import {
   SelectToken,
   SelectTokenWido,
@@ -12,9 +12,9 @@ import {
   ImgBtn,
 } from './style'
 import SelectTokenList from '../SelectTokenList'
-import CloseIcon from '../../../assets/images/logos/beginners/close.svg'
-import SearchIcon from '../../../assets/images/logos/beginners/search.svg'
-import InfoIcon from '../../../assets/images/logos/beginners/info-circle.svg'
+import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
+import SearchIcon from '../../../../assets/images/logos/beginners/search.svg'
+import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 
 const DepositSelectToken = ({
   selectToken,

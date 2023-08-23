@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { fromWei } from '../../../services/web3'
-import { useThemeContext } from '../../../providers/useThemeContext'
+import { fromWei } from '../../../../services/web3'
+import { useThemeContext } from '../../../../providers/useThemeContext'
 import { Container, Text, Vault, Content, EmptyContainer } from './style'
-import AnimatedDots from '../../AnimatedDots'
+import AnimatedDots from '../../../AnimatedDots'
 
 const SelectTokenList = ({
   list,

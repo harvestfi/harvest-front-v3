@@ -6,25 +6,25 @@ import { useMediaQuery } from 'react-responsive'
 import { quote, getTokenAllowance, approve } from 'wido'
 import ReactTooltip from 'react-tooltip'
 import { Spinner } from 'react-bootstrap'
-import BackIcon from '../../../assets/images/logos/beginners/arrow-left.svg'
-import HelpIcon from '../../../assets/images/logos/beginners/help-circle.svg'
-import FaceSmileIcon from '../../../assets/images/logos/beginners/face-smile.svg'
-import CloseIcon from '../../../assets/images/logos/beginners/close.svg'
-import AlertIcon from '../../../assets/images/logos/beginners/alert-triangle.svg'
-import AlertCloseIcon from '../../../assets/images/logos/beginners/alert-close.svg'
+import BackIcon from '../../../../assets/images/logos/beginners/arrow-left.svg'
+import HelpIcon from '../../../../assets/images/logos/beginners/help-circle.svg'
+import FaceSmileIcon from '../../../../assets/images/logos/beginners/face-smile.svg'
+import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
+import AlertIcon from '../../../../assets/images/logos/beginners/alert-triangle.svg'
+import AlertCloseIcon from '../../../../assets/images/logos/beginners/alert-close.svg'
 import {
   IFARM_TOKEN_SYMBOL,
   WIDO_BALANCES_DECIMALS,
   WIDO_EXTEND_DECIMALS,
   BEGINNERS_BALANCES_DECIMALS,
-} from '../../../constants'
-import { useWallet } from '../../../providers/Wallet'
-import { useActions } from '../../../providers/Actions'
-import { useContracts } from '../../../providers/Contracts'
-import { usePools } from '../../../providers/Pools'
-import { fromWei, toWei, maxUint256, getWeb3 } from '../../../services/web3'
-import { formatNumberWido } from '../../../utils'
-import AnimatedDots from '../../AnimatedDots'
+} from '../../../../constants'
+import { useWallet } from '../../../../providers/Wallet'
+import { useActions } from '../../../../providers/Actions'
+import { useContracts } from '../../../../providers/Contracts'
+import { usePools } from '../../../../providers/Pools'
+import { fromWei, toWei, maxUint256, getWeb3 } from '../../../../services/web3'
+import { formatNumberWido } from '../../../../utils'
+import AnimatedDots from '../../../AnimatedDots'
 import {
   Buttons,
   ImgBtn,
@@ -35,8 +35,8 @@ import {
   GotItBtn,
   FTokenWrong,
 } from './style'
-import { addresses } from '../../../data'
-import { useVaults } from '../../../providers/Vault'
+import { addresses } from '../../../../data'
+import { useVaults } from '../../../../providers/Vault'
 
 const DepositStart = ({
   pickedToken,

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { getPriceFeed } from '../../../utils'
+import { getPriceFeed } from '../../../../utils'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
 import {
