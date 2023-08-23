@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { useThemeContext } from '../../providers/useThemeContext'
-import { usePools } from '../../providers/Pools'
+import { useThemeContext } from '../../../providers/useThemeContext'
+import { usePools } from '../../../providers/Pools'
 import { Container, Header, ButtonGroup, ChartDiv, TooltipContent, CurDate } from './style'
-import { SPECIAL_VAULTS } from '../../constants'
-import { getTotalTVLData } from '../../utils'
-import ApexChart from '../AnalyticComponents/ApexChart'
+import { SPECIAL_VAULTS } from '../../../constants'
+import { getTotalTVLData } from '../../../utils'
+import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
 
 const recommendLinks = [

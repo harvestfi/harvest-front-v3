@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactTooltip from 'react-tooltip'
-import { useThemeContext } from '../../providers/useThemeContext'
-import { useWallet } from '../../providers/Wallet/index'
+import { useThemeContext } from '../../../providers/useThemeContext'
+import { useWallet } from '../../../providers/Wallet'
 import { ButtonsGroup, ButtonStyle, TooltipContent } from './style'
 
 const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {

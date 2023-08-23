@@ -1,5 +1,5 @@
 import React from 'react'
-import { useThemeContext } from '../../providers/useThemeContext'
+import { useThemeContext } from '../../../../providers/useThemeContext'
 import { Container, Text } from './style'
 
 const ChartRangeSelect = ({ state, type, text, onClick }) => {

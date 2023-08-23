@@ -11,8 +11,8 @@ import {
 } from 'recharts'
 import { ClipLoader } from 'react-spinners'
 import { useWindowWidth } from '@react-hook/window-size'
-import { useThemeContext } from '../../providers/useThemeContext'
-import { ceil10, floor10, round10 } from '../../utils'
+import { useThemeContext } from '../../../../providers/useThemeContext'
+import { ceil10, floor10, round10 } from '../../../../utils'
 import { LoadingDiv, NoData } from './style'
 
 function numberWithCommas(x) {
