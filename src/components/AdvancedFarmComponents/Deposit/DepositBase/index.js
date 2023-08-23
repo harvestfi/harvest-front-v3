@@ -144,8 +144,8 @@ const DepositBase = ({
   return (
     <BaseWido show={!deposit && !selectToken && !finalStep}>
       <NewLabel
-        size={isMobile ? '12px' : '14px'}
-        height={isMobile ? '24px' : '28px'}
+        size={isMobile ? '12px' : '16px'}
+        height={isMobile ? '24px' : '24px'}
         weight="600"
         color="#101828"
         display="flex"

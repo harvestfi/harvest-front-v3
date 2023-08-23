@@ -997,7 +997,7 @@ const AdvancedFarm = () => {
                         token={token}
                         supTokenList={supTokenList}
                         activeDepo={activeDepo}
-                        switchMethod={switchStakeMethod}
+                        switchMethod={switchDepoMethod}
                       />
                       <WithdrawStart
                         withdrawStart={withdrawStart}
