@@ -30,7 +30,7 @@ import WithdrawBase from '../../components/AdvancedFarmComponents/Withdraw/Withd
 import WithdrawStart from '../../components/AdvancedFarmComponents/Withdraw/WithdrawStart'
 import WithdrawResult from '../../components/AdvancedFarmComponents/Withdraw/WithdrawResult'
 import PriceShareData from '../../components/AdvancedFarmComponents/PriceChart/PriceShareData'
-import FarmDetailChart from '../../components/FarmDetailChart'
+import FarmDetailChart from '../../components/AdvancedFarmComponents/DetailChart/FarmDetailChart'
 import VaultPanelActionsFooter from '../../components/AdvancedFarmComponents/Rewards/VaultPanelActionsFooter'
 import StakeBase from '../../components/AdvancedFarmComponents/Stake/StakeBase'
 import StakeResult from '../../components/AdvancedFarmComponents/Stake/StakeResult'
@@ -263,11 +263,9 @@ const AdvancedFarm = () => {
   const usdPrice =
     token.usdPrice || (token.data && token.data.lpTokenData && token.data.lpTokenData.price)
 
-  // Show/Hide Select Token Component
-  const [selectTokenDepo, setSelectTokenDepo] = useState(false)
-
-  // Show/Hide Deposit
+  // Deposit
   const [depositStart, setDepositStart] = useState(false)
+  const [selectTokenDepo, setSelectTokenDepo] = useState(false)
   const [clickTokenIdDepo, setClickedTokenIdDepo] = useState(-1)
   const [balanceDepo, setBalanceDepo] = useState(0)
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
@@ -275,6 +273,7 @@ const AdvancedFarm = () => {
   const [quoteValueDepo, setQuoteValueDepo] = useState(null)
   const [inputAmountDepo, setInputAmountDepo] = useState(0)
 
+  // Withdraw
   const [withdrawStart, setWithdrawStart] = useState(false)
   const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select Token' })
   const [withdrawFinalStep, setWithdrawFinalStep] = useState(false)
@@ -445,9 +444,12 @@ const AdvancedFarm = () => {
     [account, userStats, balances],
   )
 
+  // Switch Deposit / Withdraw
   const switchDepoMethod = () => setActiveDepo(prev => !prev)
+  // Height of Deposit section
   const [partHeightDepo, setPartHeightDepo] = useState(null)
 
+  // Count of users that used token
   const [holderCount, setHolderCount] = useState(0)
   useEffect(() => {
     const getTokenHolder = async () => {
@@ -494,6 +496,7 @@ const AdvancedFarm = () => {
     getTokenHolder()
   }, [paramAddress, chain, token])
 
+  // Overview / Stake / Details
   const [activeMainTag, setActiveMainTag] = useState(0)
 
   const [vaultValue, setVaultValue] = useState(null)
