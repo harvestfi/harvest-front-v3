@@ -506,6 +506,15 @@ const AdvancedFarm = () => {
   // Overview / Stake / Details
   const [activeMainTag, setActiveMainTag] = useState(0)
 
+  const curUrl = document.location.href
+  useEffect(() => {
+    if (curUrl.includes('#stake')) {
+      setActiveMainTag(1)
+    } else if (curUrl.includes('#details')) {
+      setActiveMainTag(2)
+    }
+  }, [curUrl])
+
   const [vaultValue, setVaultValue] = useState(null)
 
   useEffect(() => {
