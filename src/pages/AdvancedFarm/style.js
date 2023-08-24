@@ -684,6 +684,18 @@ const StakeSection = styled.div`
   `}
 `
 
+const UnstakeSection = styled.div`
+  ${props =>
+    props.isShow
+      ? `
+    display: block;
+    height: 100%;
+  `
+      : `
+    display: none;
+  `}
+`
+
 export {
   DetailView,
   TopPart,
@@ -717,4 +729,5 @@ export {
   LastHarvestInfo,
   RestInternal,
   StakeSection,
+  UnstakeSection,
 }

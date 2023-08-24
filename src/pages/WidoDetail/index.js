@@ -959,7 +959,7 @@ const WidoDetail = () => {
               <NewLabel weight={700} size="16px" height="21px">
                 APY Breakdown
               </NewLabel>
-              <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
+              <div className="farm-detail-reward" dangerouslySetInnerHTML={{ __html: rewardTxt }} />
             </HalfInfo>
             <HalfInfo
               padding={!isMobile ? '24px 22px 44px 22px' : '15px'}

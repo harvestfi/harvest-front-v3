@@ -407,6 +407,77 @@ html {
     }
   }
 
+  .farm-detail-reward {
+    .detail-box {
+      display: flex; 
+      justify-content: start;
+      align-items: center; 
+      width: 100%;
+      border-radius: 12px; 
+      padding-top: 15px;
+      margin-bottom: 7px;
+    }
+
+    .detail-icon {
+      width: 60px;
+    }
+
+    .detail-apy {
+      width: 80px; 
+      font-size: 16px; 
+      font-weight: 500;
+    }
+
+    .detail-desc {
+      width: 36%; 
+      font-size: 16px; 
+      font-weight: 400;
+
+      @media screen and (max-width: 992px) {
+        font-size: 13px;
+      }
+    }
+
+    .detail-desc-auto {
+      font-size: 16px; 
+      font-weight: 400;
+
+      @media screen and (max-width: 992px) {
+        font-size: 13px;
+      }
+    }
+
+    .detail-desc-no-width {
+      font-size: 16px; 
+      font-weight: 400;
+
+      @media screen and (max-width: 992px) {
+        font-size: 13px;
+      }
+    }
+
+    .detail-token {
+      width: 34%; 
+      font-size: 16px; 
+      font-weight: 500; 
+      text-decoration: underline;
+
+      @media screen and (max-width: 992px) {
+        font-size: 13px;
+      }
+    }
+
+    .detail-token-no-width {
+      font-size: 16px; 
+      font-weight: 400; 
+      // text-decoration: underline;
+
+      @media screen and (max-width: 992px) {
+        font-size: 13px;
+      }
+    }
+  }
+
   .fade.modal.show {
     background: rgba(240, 240, 240, 0.3);
   }

@@ -34,6 +34,8 @@ import FarmDetailChart from '../../components/AdvancedFarmComponents/DetailChart
 import VaultPanelActionsFooter from '../../components/AdvancedFarmComponents/Rewards/VaultPanelActionsFooter'
 import StakeBase from '../../components/AdvancedFarmComponents/Stake/StakeBase'
 import StakeResult from '../../components/AdvancedFarmComponents/Stake/StakeResult'
+import UnstakeBase from '../../components/AdvancedFarmComponents/Unstake/UnstakeBase'
+import UnstakeResult from '../../components/AdvancedFarmComponents/Unstake/UnstakeResult'
 import {
   DECIMAL_PRECISION,
   FARM_GRAIN_TOKEN_SYMBOL,
@@ -89,6 +91,7 @@ import {
   LastHarvestInfo,
   RestInternal,
   StakeSection,
+  UnstakeSection,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 
@@ -282,6 +285,10 @@ const AdvancedFarm = () => {
   // Stake
   const [inputAmountStake, setInputAmountStake] = useState(0)
   const [stakeFinalStep, setStakeFinalStep] = useState(false)
+
+  // Unstake
+  const [inputAmountUnstake, setInputAmountUnstake] = useState(0)
+  const [unstakeFinalStep, setUnstakeFinalStep] = useState(false)
 
   const [balanceList, setBalanceList] = useState([])
   const [supTokenList, setSupTokenList] = useState([])
@@ -1141,6 +1148,29 @@ const AdvancedFarm = () => {
                         tokenSymbol={id}
                       />
                     </StakeSection>
+                    <UnstakeSection isShow={!activeStake}>
+                      <UnstakeBase
+                        finalStep={unstakeFinalStep}
+                        setFinalStep={setUnstakeFinalStep}
+                        inputAmount={inputAmountUnstake}
+                        setInputAmount={setInputAmountUnstake}
+                        token={token}
+                        activeStake={activeStake}
+                        switchMethod={switchStakeMethod}
+                        tokenSymbol={id}
+                        totalStaked={totalStaked}
+                        fAssetPool={fAssetPool}
+                        setPendingAction={setPendingAction}
+                        multipleAssets={multipleAssets}
+                      />
+                      <UnstakeResult
+                        finalStep={unstakeFinalStep}
+                        setFinalStep={setUnstakeFinalStep}
+                        inputAmount={inputAmountUnstake}
+                        setInputAmount={setInputAmountUnstake}
+                        tokenSymbol={id}
+                      />
+                    </UnstakeSection>
                   </HalfContent>
                 </>
               ) : (

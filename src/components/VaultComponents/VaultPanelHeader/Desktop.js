@@ -72,7 +72,13 @@ const DesktopPanelHeader = ({
             ? token.data.collateralAddress
             : token.vaultAddress || token.tokenAddress
           setPrevPage(window.location.href)
-          push(`${directDetailUrl + network}/${address}`)
+          // Show 'advancedfarm' page for only 2 tokens because of the test. Show 'farm detail' page for other tokens.
+          if (tokenSymbol === 'crvSTETH' || tokenSymbol === 'xGRAIL') {
+            const url = `${directDetailUrl}advance/${network}/${address}`
+            push(url)
+          } else {
+            push(`${directDetailUrl + network}/${address}`)
+          }
         }}
       >
         <ValueContainer width="5%" />
