@@ -114,7 +114,7 @@ function formatXAxis(value, range) {
 
 function getYAxisValues(min, max, roundNum) {
   const ary = []
-  const bet = max - min
+  const bet = Number((max - min).toFixed(roundNum))
   for (let i = min; i <= max; i += bet / 4) {
     const val = floor10(i, -roundNum)
     ary.push(val)
@@ -249,6 +249,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
       } else {
         const rate = Number((unitBtw / maxValue).toFixed(2)) + 1
         maxValue *= rate
+        maxValue = ceil10(maxValue, len)
       }
 
       if (unitBtw === 0) {
@@ -297,9 +298,9 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
             data={mainSeries}
             margin={{
               top: 20,
-              right: 20,
-              bottom: 20,
-              left: 20,
+              right: 0,
+              bottom: 0,
+              left: -14,
             }}
           >
             <defs>
