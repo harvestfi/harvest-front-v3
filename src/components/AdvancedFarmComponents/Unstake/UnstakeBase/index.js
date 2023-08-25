@@ -212,7 +212,7 @@ const UnstakeBase = ({
           </div>
         </ThemeMode>
       </NewLabel>
-      <DepoTitle>Unstake your f{tokenSymbol} to earn extra rewards.</DepoTitle>
+      <DepoTitle>Unstake your f{tokenSymbol}.</DepoTitle>
       <AmountSection>
         <NewLabel
           size={isMobile ? '10px' : '14px'}
