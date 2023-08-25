@@ -1089,9 +1089,24 @@ const AdvancedFarm = () => {
                           src={Info}
                           alt=""
                           data-tip
-                          data-for="tooltip-last-harvest"
+                          data-for="tooltip-stake-balance"
                           filterColor={filterColor}
                         />
+                        <ReactTooltip
+                          id="tooltip-stake-balance"
+                          backgroundColor="black"
+                          borderColor="black"
+                          textColor="white"
+                        >
+                          <NewLabel
+                            size={isMobile ? '10px' : '12px'}
+                            height={isMobile ? '15px' : '18px'}
+                            weight="600"
+                            color="white"
+                          >
+                            This token represents your share of this farm.
+                          </NewLabel>
+                        </ReactTooltip>
                       </NewLabel>
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}
