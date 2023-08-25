@@ -2,7 +2,6 @@ import BigNumber from 'bignumber.js'
 import { get } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import React, { useState } from 'react'
-import HelpIcon from '../../../../assets/images/logos/beginners/help-circle.svg'
 import CheckIcon from '../../../../assets/images/logos/beginners/success-check.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import { WIDO_EXTEND_DECIMALS } from '../../../../constants'
@@ -71,7 +70,6 @@ const DepositResult = ({
         >
           <NewLabel className="beginners" weight="500">
             Received
-            <img className="help-icon" src={HelpIcon} alt="" data-tip data-for="min-help" />
           </NewLabel>
           <NewLabel weight="600">
             {pickedToken.default ? (

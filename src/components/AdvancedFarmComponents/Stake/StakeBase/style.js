@@ -402,7 +402,7 @@ const AmountInputSection = styled.div`
   button.max-btn {
     position: absolute;
     right: 14px;
-    top: 10px;
+    top: 12px;
     border: none;
     background: none;
     font-size: 14px;

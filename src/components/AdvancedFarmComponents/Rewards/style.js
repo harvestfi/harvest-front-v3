@@ -82,11 +82,6 @@ const SelectedVault = styled.div`
       align-items: center;
     }
   }
-
-  @media screen and (max-width: 670px) {
-    border-right: unset;
-    justify-content: start;
-  }
 `
 const SelectedVaultLabel = styled.span`
   display: flex;
@@ -188,6 +183,19 @@ const BottomPart = styled.div`
   padding: 25px 24px 24px;
   display: flex;
   justify-content: space-between;
+  gap: 10px;
+
+  @media screen and (max-width: 1320px) {
+    flex-direction: column;
+  }
+
+  @media screen and (max-width: 992px) {
+    flex-direction: row;
+  }
+
+  @media screen and (max-width: 570px) {
+    flex-direction: column;
+  }
 `
 
 export {
