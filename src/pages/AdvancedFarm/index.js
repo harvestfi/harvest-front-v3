@@ -673,10 +673,8 @@ const AdvancedFarm = () => {
           <GuideSection>
             <GuidePart fontWeight="600">
               <img src={DOT} alt="" />
-              <b>
-                {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
-                &nbsp;APR
-              </b>
+              {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
+              &nbsp;APR
             </GuidePart>
             <GuidePart fontWeight="500">
               <img className="icon" src={BeginnerFriendly} alt="" />
