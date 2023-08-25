@@ -1378,7 +1378,7 @@ const AdvancedFarm = () => {
                       <NewLabel size="14px" weight="700" height="24px" color="#344054">
                         Last Harvest
                       </NewLabel>
-                      <NewLabel size="14px" weight="700" height="24px" color="#000">
+                      <NewLabel size="14px" weight="500" height="24px" color="#000">
                         {lastHarvest !== '' ? `${lastHarvest} ago` : '-'}
                       </NewLabel>
                     </FlexDiv>

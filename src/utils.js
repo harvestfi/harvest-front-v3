@@ -1627,9 +1627,9 @@ export const getLastHarvestInfo = async (address, chainId) => {
           // calculate (and subtract) whole minutes
           min = Math.floor(duration / 60) % 60
 
-          const dayString = `${day > 0 ? day + (day === 1 ? ' day' : ' days') : ''}`
-          const hourString = `${hour > 0 ? hour + (hour === 1 ? ' hour' : ' hours') : ''}`
-          const minString = `${min > 0 ? min + (min === 1 ? ' minute' : ' minutes') : ''}`
+          const dayString = `${day > 0 ? `${day}d` : ''}`
+          const hourString = `${hour > 0 ? `${hour}h` : ''}`
+          const minString = `${min > 0 ? `${min}m` : ''}`
           result = `${
             `${dayString !== '' ? `${dayString} ` : ''}` +
             `${hourString !== '' ? `${hourString} ` : ''}`
