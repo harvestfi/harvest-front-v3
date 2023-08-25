@@ -73,7 +73,7 @@ const WithdrawSelectToken = ({
               height={isMobile ? '15px' : '19px'}
               color="#475467"
             >
-              Tokens on your connected wallet that you can use as a deposit:
+              Select any token from the list below for your withdrawal.
             </NewLabel>
           ) : (
             <></>
