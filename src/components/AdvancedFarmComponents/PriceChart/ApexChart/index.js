@@ -90,11 +90,11 @@ function findMax(data) {
   return max
 }
 
-function findMin(data) {
-  const ary = data.map(el => el.y)
-  const min = Math.min(...ary)
-  return min
-}
+// function findMin(data) {
+//   const ary = data.map(el => el.y)
+//   const min = Math.min(...ary)
+//   return min
+// }
 
 function generateChartDataWithSlots(slots, apiData) {
   const seriesData = []
@@ -235,7 +235,8 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
         slots = getAllTimeSlots(data, slotCount)
       mainData = generateChartDataWithSlots(slots, data)
       maxValue = findMax(mainData)
-      minValue = findMin(mainData)
+      // minValue = findMin(mainData)
+      minValue = 0
 
       const between = maxValue - minValue
       unitBtw = between / 4
