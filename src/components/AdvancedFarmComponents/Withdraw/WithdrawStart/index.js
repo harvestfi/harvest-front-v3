@@ -38,7 +38,6 @@ const WithdrawStart = ({
   fAssetPool,
   multipleAssets,
   useIFARM,
-  quoteValue,
   setQuoteValue,
 }) => {
   const { account, web3, getWalletBalances } = useWallet()
@@ -70,7 +69,7 @@ const WithdrawStart = ({
   const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('')
 
   const [buttonName, setButtonName] = useState('Finalize Withdraw')
-
+  const [minReceivedAmount, setMinReceivedAmount] = useState('')
   useEffect(() => {
     if (
       account &&
@@ -85,7 +84,8 @@ const WithdrawStart = ({
         const amount = unstakeBalance
         try {
           let fromInfoValue = '',
-            fromInfoUsdValue = ''
+            fromInfoUsdValue = '',
+            minReceivedString = ''
 
           if (pickedToken.default) {
             fromInfoValue = `${formatNumberWido(
@@ -97,6 +97,12 @@ const WithdrawStart = ({
                 .multipliedBy(fromWei(pricePerFullShare, pickedToken.decimals))
                 .multipliedBy(token.usdPrice),
               WIDO_BALANCES_DECIMALS,
+            )
+            minReceivedString = formatNumberWido(
+              new BigNumber(fromWei(unstakeBalance, pickedToken.decimals)).multipliedBy(
+                fromWei(pricePerFullShare, pickedToken.decimals),
+              ),
+              WIDO_EXTEND_DECIMALS,
             )
           } else {
             const fromChainId = chainId
@@ -134,7 +140,13 @@ const WithdrawStart = ({
                       quoteResult.fromTokenUsdPrice,
                     BEGINNERS_BALANCES_DECIMALS,
                   )
+
+            minReceivedString = formatNumberWido(
+              fromWei(quoteResult.minToTokenAmount, pickedToken.decimals),
+              WIDO_EXTEND_DECIMALS,
+            )
           }
+          setMinReceivedAmount(minReceivedString)
           setFromInfoAmount(fromInfoValue)
           if (Number(fromInfoUsdValue) < 0.01) {
             setFromInfoUsdAmount('<$0.01')
@@ -316,8 +328,9 @@ const WithdrawStart = ({
           padding={isMobile ? '5px 0' : '10px 0'}
         >
           <NewLabel weight="500">Withdrawing</NewLabel>
-          <NewLabel weight="600">
-            {fromInfoAmount !== '' ? fromInfoAmount : <AnimatedDots />}&nbsp;{`f${tokenSymbol}`}
+          <NewLabel weight="600" textAlign="right">
+            {fromInfoAmount !== '' ? fromInfoAmount : <AnimatedDots />}
+            {(fromInfoAmount + tokenSymbol).length > 20 ? <br /> : ' '} {`f${tokenSymbol}`}
           </NewLabel>
         </NewLabel>
         <NewLabel
@@ -345,7 +358,7 @@ const WithdrawStart = ({
               </NewLabel>
             </ReactTooltip>
           </NewLabel>
-          <NewLabel weight="600">
+          <NewLabel weight="600" textAlign="right">
             {fromInfoUsdAmount !== '' ? fromInfoUsdAmount : <AnimatedDots />}
           </NewLabel>
         </NewLabel>
@@ -374,27 +387,10 @@ const WithdrawStart = ({
               </NewLabel>
             </ReactTooltip>
           </NewLabel>
-          <NewLabel weight="600">
-            {pickedToken.default ? (
-              formatNumberWido(
-                new BigNumber(fromWei(unstakeBalance, pickedToken.decimals)).multipliedBy(
-                  fromWei(pricePerFullShare, pickedToken.decimals),
-                ),
-                WIDO_EXTEND_DECIMALS,
-              )
-            ) : quoteValue ? (
-              <>
-                {quoteValue && quoteValue !== {}
-                  ? formatNumberWido(
-                      fromWei(quoteValue.minToTokenAmount, pickedToken.decimals),
-                      WIDO_EXTEND_DECIMALS,
-                    )
-                  : ''}
-              </>
-            ) : (
-              <AnimatedDots />
-            )}
-            &nbsp;{pickedToken.symbol}
+          <NewLabel weight="600" textAlign="right">
+            {minReceivedAmount !== '' ? minReceivedAmount : <AnimatedDots />}
+            {(minReceivedAmount + pickedToken.symbol).length > 20 ? <br /> : ' '}
+            {pickedToken.symbol}
           </NewLabel>
         </NewLabel>
       </NewLabel>

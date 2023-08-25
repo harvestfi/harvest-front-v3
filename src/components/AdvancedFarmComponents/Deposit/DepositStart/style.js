@@ -120,6 +120,12 @@ const NewLabel = styled.div`
     width: ${props.width};
   `
       : ''}
+  ${props =>
+    props.textAlign
+      ? `
+    text-align: ${props.textAlign};
+  `
+      : ''}
   img.help-icon {
     margin-left: 5px;
     cursor: pointer;

@@ -25,6 +25,12 @@ const ImgBtn = styled.img`
 
 const NewLabel = styled.div`
   ${props =>
+    props.textAlign
+      ? `
+    text-align: ${props.textAlign};
+  `
+      : ''}
+  ${props =>
     props.width
       ? `
     width: ${props.width};

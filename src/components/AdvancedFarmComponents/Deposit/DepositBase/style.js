@@ -155,6 +155,7 @@ const TokenAmount = styled.input`
 `
 
 const TokenSelect = styled.button`
+  width: 100%;
   background: white;
   border: 1px solid #d0d5dd;
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
@@ -242,6 +243,7 @@ const DepoTitle = styled.div`
 const AmountSection = styled.div`
   width: -webkit-fill-available;
   padding-right: 16px;
+  min-width: 50%;
 `
 
 const ThemeMode = styled.div`
@@ -375,6 +377,10 @@ const CloseBtn = styled.img`
   }
 `
 
+const DepositTokenSection = styled.div`
+  max-width: 50%;
+`
+
 export {
   BaseWido,
   NewLabel,
@@ -387,4 +393,5 @@ export {
   ThemeMode,
   InsufficientSection,
   CloseBtn,
+  DepositTokenSection,
 }

@@ -49,7 +49,6 @@ const DepositStart = ({
   balanceList,
   tokenSymbol,
   useIFARM,
-  quoteValue,
   setQuoteValue,
   fAssetPool,
   multipleAssets,
@@ -66,6 +65,7 @@ const DepositStart = ({
   const amount = toWei(inputAmount, pickedToken.decimals)
   const [fromInfoAmount, setFromInfoAmount] = useState('')
   const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('')
+  const [minReceiveAmountString, setMinReceiveAmountString] = useState('')
 
   const pricePerFullShare = useIFARM
     ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
@@ -101,7 +101,8 @@ const DepositStart = ({
         setQuoteValue(null)
         try {
           let fromInfoValue = '',
-            fromInfoUsdValue = ''
+            fromInfoUsdValue = '',
+            minReceiveAmount = ''
           if (pickedToken.default) {
             fromInfoValue = `${formatNumberWido(inputAmount, WIDO_EXTEND_DECIMALS)}`
             fromInfoUsdValue =
@@ -113,6 +114,11 @@ const DepositStart = ({
                     WIDO_BALANCES_DECIMALS,
                   )
                 : '0'
+
+            minReceiveAmount = formatNumberWido(
+              new BigNumber(amount).dividedBy(pricePerFullShare).toFixed(),
+              WIDO_EXTEND_DECIMALS,
+            )
           } else {
             const fromChainId = chainId
             const fromToken = pickedToken.address
@@ -148,8 +154,15 @@ const DepositStart = ({
                       quoteResult.fromTokenUsdPrice,
                     BEGINNERS_BALANCES_DECIMALS,
                   )
+            minReceiveAmount = formatNumberWido(
+              fromWei(
+                quoteResult.minToTokenAmount,
+                token.decimals || token.data.lpTokenData.decimals,
+              ),
+              WIDO_EXTEND_DECIMALS,
+            )
           }
-
+          setMinReceiveAmountString(minReceiveAmount)
           setFromInfoAmount(fromInfoValue)
           if (Number(fromInfoUsdValue) < 0.01) {
             setFromInfoUsdAmount('<$0.01')
@@ -280,7 +293,8 @@ const DepositStart = ({
   const startDeposit = async () => {
     setStartSpinner(true)
     setButtonName('(1/2) Approve Token Spending in Wallet')
-    let stepFlag = false
+    let stepFlag = false,
+      isSuccess = false
     try {
       let allowanceCheck
       if (pickedToken.default) {
@@ -311,6 +325,7 @@ const DepositStart = ({
       try {
         setButtonName('(2/2) Confirm Deposit in Wallet')
         await onDeposit()
+        isSuccess = true
       } catch (err) {
         setDepositFailed(true)
         setStartSpinner(false)
@@ -322,7 +337,9 @@ const DepositStart = ({
     setStartSpinner(false)
     setDepositFailed(false)
     setButtonName('Finalize Deposit')
-    setFinalStep(true)
+    if (isSuccess) {
+      setFinalStep(true)
+    }
   }
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
@@ -368,8 +385,9 @@ const DepositStart = ({
           padding={isMobile ? '5px 0' : '10px 0'}
         >
           <NewLabel weight="500">Depositing</NewLabel>
-          <NewLabel weight="600">
-            {fromInfoAmount !== '' ? fromInfoAmount : <AnimatedDots />}&nbsp;{pickedToken.symbol}
+          <NewLabel weight="600" textAlign="right">
+            {fromInfoAmount !== '' ? fromInfoAmount : <AnimatedDots />}
+            {(fromInfoAmount + pickedToken.symbol).length > 20 ? <br /> : ' '} {pickedToken.symbol}
           </NewLabel>
         </NewLabel>
         <NewLabel
@@ -378,7 +396,7 @@ const DepositStart = ({
           padding={isMobile ? '5px 0' : '10px 0'}
         >
           <NewLabel weight="500">Est. USD Value</NewLabel>
-          <NewLabel weight="600">
+          <NewLabel weight="600" textAlign="right">
             {fromInfoUsdAmount !== '' ? fromInfoUsdAmount : <AnimatedDots />}
           </NewLabel>
         </NewLabel>
@@ -407,26 +425,9 @@ const DepositStart = ({
               </NewLabel>
             </ReactTooltip>
           </NewLabel>
-          <NewLabel weight="600">
-            {pickedToken.default ? (
-              formatNumberWido(
-                new BigNumber(amount).dividedBy(pricePerFullShare).toFixed(),
-                WIDO_EXTEND_DECIMALS,
-              )
-            ) : quoteValue ? (
-              <>
-                {formatNumberWido(
-                  fromWei(
-                    quoteValue.minToTokenAmount,
-                    token.decimals || token.data.lpTokenData.decimals,
-                  ),
-                  WIDO_EXTEND_DECIMALS,
-                )}
-              </>
-            ) : (
-              <AnimatedDots />
-            )}
-            &nbsp;{`f${tokenSymbol}`}
+          <NewLabel weight="600" textAlign="right">
+            {minReceiveAmountString !== '' ? minReceiveAmountString : <AnimatedDots />}
+            {(minReceiveAmountString + tokenSymbol).length > 20 ? <br /> : ' '} {`f${tokenSymbol}`}
           </NewLabel>
         </NewLabel>
       </NewLabel>

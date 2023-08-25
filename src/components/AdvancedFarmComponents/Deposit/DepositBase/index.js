@@ -24,6 +24,7 @@ import {
   ThemeMode,
   InsufficientSection,
   CloseBtn,
+  DepositTokenSection,
 } from './style'
 
 const getChainName = chain => {
@@ -181,7 +182,7 @@ const DepositBase = ({
           </NewLabel>
           <TokenAmount type="number" value={inputAmount} onChange={onInputBalance} />
         </AmountSection>
-        <div>
+        <DepositTokenSection>
           <NewLabel
             size={isMobile ? '10px' : '14px'}
             height={isMobile ? '15px' : '20px'}
@@ -205,7 +206,7 @@ const DepositBase = ({
             <span>{pickedToken.symbol}</span>
             <img className="dropdown-icon" src={DropDownIcon} alt="" />
           </TokenSelect>
-        </div>
+        </DepositTokenSection>
       </TokenInfo>
       <BalanceInfo
         onClick={() => {

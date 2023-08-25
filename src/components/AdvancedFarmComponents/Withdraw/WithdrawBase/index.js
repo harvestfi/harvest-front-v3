@@ -25,6 +25,7 @@ import {
   InsufficientSection,
   CloseBtn,
   ThemeMode,
+  TokenSelectSection,
 } from './style'
 import { isSpecialApp } from '../../../../utils'
 
@@ -165,7 +166,7 @@ const WithdrawBase = ({
           </NewLabel>
           <TokenAmount type="number" value={unstakeInputValue} onChange={onInputUnstake} />
         </AmountSection>
-        <div>
+        <TokenSelectSection>
           <NewLabel
             size={isMobile ? '10px' : '14px'}
             height={isMobile ? '15px' : '20px'}
@@ -189,7 +190,7 @@ const WithdrawBase = ({
             <span>{pickedToken.symbol}</span>
             <img className="dropdown-icon" src={DropDownIcon} alt="" />
           </TokenSelect>
-        </div>
+        </TokenSelectSection>
       </TokenInfo>
       <BalanceInfo
         onClick={() => {

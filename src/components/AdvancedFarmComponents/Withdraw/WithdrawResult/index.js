@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { get } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import CheckIcon from '../../../../assets/images/logos/beginners/success-check.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import { WIDO_EXTEND_DECIMALS } from '../../../../constants'
@@ -32,6 +32,25 @@ const WithdrawResult = ({
   }
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
+  const [receiveAmount, setReceiveAmount] = useState('')
+
+  useEffect(() => {
+    const receiveString = pickedToken.default
+      ? formatNumberWido(
+          new BigNumber(amount)
+            .multipliedBy(fromWei(pricePerFullShare, pickedToken.decimals))
+            .toFixed(),
+          WIDO_EXTEND_DECIMALS,
+        )
+      : quoteValue
+      ? formatNumberWido(
+          fromWei(quoteValue.toTokenAmount, pickedToken.decimals),
+          WIDO_EXTEND_DECIMALS,
+        )
+      : ''
+    setReceiveAmount(receiveString)
+  }, [amount, quoteValue, pickedToken, pricePerFullShare])
+
   return (
     <SelectTokenWido show={finalStep}>
       <NewLabel
@@ -55,8 +74,10 @@ const WithdrawResult = ({
           padding={isMobile ? '5px 0' : '10px 0'}
         >
           <NewLabel weight="500">Withdrawn</NewLabel>
-          <NewLabel weight="600">
-            {amount}&nbsp;{`f${tokenSymbol}`}
+          <NewLabel weight="600" textAlign="right">
+            {formatNumberWido(amount, WIDO_EXTEND_DECIMALS)}
+            {(amount + tokenSymbol).length > 20 ? <br /> : ' '}
+            {`f${tokenSymbol}`}
           </NewLabel>
         </NewLabel>
         <NewLabel
@@ -67,27 +88,10 @@ const WithdrawResult = ({
           <NewLabel className="beginners" weight="500">
             Received
           </NewLabel>
-          <NewLabel weight="600">
-            {pickedToken.default ? (
-              formatNumberWido(
-                new BigNumber(amount)
-                  .multipliedBy(fromWei(pricePerFullShare, pickedToken.decimals))
-                  .toFixed(),
-                WIDO_EXTEND_DECIMALS,
-              )
-            ) : quoteValue ? (
-              <>
-                {quoteValue && quoteValue !== {}
-                  ? formatNumberWido(
-                      fromWei(quoteValue.toTokenAmount, pickedToken.decimals),
-                      WIDO_EXTEND_DECIMALS,
-                    )
-                  : ''}
-              </>
-            ) : (
-              <AnimatedDots />
-            )}
-            &nbsp;{pickedToken.symbol}
+          <NewLabel weight="600" textAlign="right">
+            {receiveAmount !== '' ? receiveAmount : <AnimatedDots />}
+            {(receiveAmount + pickedToken.symbol).length > 20 ? <br /> : ' '}
+            {pickedToken.symbol}
           </NewLabel>
         </NewLabel>
       </NewLabel>
