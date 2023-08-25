@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js'
 import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
 import { get, isEmpty } from 'lodash'
-import { getTokenAllowance, approve } from 'wido'
+import { getTokenAllowance, approve, quote } from 'wido'
 import { useMediaQuery } from 'react-responsive'
 import ReactTooltip from 'react-tooltip'
 import { Spinner } from 'react-bootstrap'
@@ -10,7 +10,11 @@ import BackIcon from '../../../../assets/images/logos/beginners/arrow-left.svg'
 import HelpIcon from '../../../../assets/images/logos/beginners/help-circle.svg'
 import AlertIcon from '../../../../assets/images/logos/beginners/alert-triangle.svg'
 import AlertCloseIcon from '../../../../assets/images/logos/beginners/alert-close.svg'
-import { WIDO_BALANCES_DECIMALS, WIDO_EXTEND_DECIMALS } from '../../../../constants'
+import {
+  WIDO_BALANCES_DECIMALS,
+  WIDO_EXTEND_DECIMALS,
+  BEGINNERS_BALANCES_DECIMALS,
+} from '../../../../constants'
 import { useWallet } from '../../../../providers/Wallet'
 import { useActions } from '../../../../providers/Actions'
 import { usePools } from '../../../../providers/Pools'
@@ -18,6 +22,7 @@ import { useVaults } from '../../../../providers/Vault'
 import { fromWei, maxUint256, getWeb3 } from '../../../../services/web3'
 import { formatNumberWido } from '../../../../utils'
 import AnimatedDots from '../../../AnimatedDots'
+import { addresses } from '../../../../data'
 import { Buttons, ImgBtn, NewLabel, SelectTokenWido, FTokenWrong } from './style'
 
 const WithdrawStart = ({
@@ -32,6 +37,9 @@ const WithdrawStart = ({
   tokenSymbol,
   fAssetPool,
   multipleAssets,
+  useIFARM,
+  quoteValue,
+  setQuoteValue,
 }) => {
   const { account, web3, getWalletBalances } = useWallet()
   const { handleWithdraw } = useActions()
@@ -41,6 +49,9 @@ const WithdrawStart = ({
   const [, setPendingAction] = useState(null)
 
   const pricePerFullShare = get(token, `pricePerFullShare`, 0)
+  const slippagePercentage = 0.005 // Default slippage Percent
+  const chainId = token.chain || token.data.chain
+  const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
 
   const walletBalancesToCheck = multipleAssets || [tokenSymbol]
   const selectedAsset = !token.isSingleAssetWithdrawalAllowed ? -1 : 0
@@ -75,16 +86,55 @@ const WithdrawStart = ({
         try {
           let fromInfoValue = '',
             fromInfoUsdValue = ''
-          fromInfoValue = `${formatNumberWido(
-            fromWei(amount, pickedToken.decimals),
-            WIDO_EXTEND_DECIMALS,
-          )}`
-          fromInfoUsdValue = formatNumberWido(
-            new BigNumber(fromWei(amount, pickedToken.decimals))
-              .multipliedBy(fromWei(pricePerFullShare, pickedToken.decimals))
-              .multipliedBy(token.usdPrice),
-            WIDO_BALANCES_DECIMALS,
-          )
+
+          if (pickedToken.default) {
+            fromInfoValue = `${formatNumberWido(
+              fromWei(amount, pickedToken.decimals),
+              WIDO_EXTEND_DECIMALS,
+            )}`
+            fromInfoUsdValue = formatNumberWido(
+              new BigNumber(fromWei(amount, pickedToken.decimals))
+                .multipliedBy(fromWei(pricePerFullShare, pickedToken.decimals))
+                .multipliedBy(token.usdPrice),
+              WIDO_BALANCES_DECIMALS,
+            )
+          } else {
+            const fromChainId = chainId
+            const toToken = pickedToken.address
+            const toChainId = chainId
+            const user = account
+            const mainWeb = await getWeb3(chainId, account, web3)
+            let curToken = balanceList.filter(el => el.symbol === pickedToken.symbol)
+
+            const quoteResult = await quote(
+              {
+                fromChainId, // Chain Id of from token
+                fromToken, // Token address of from token
+                toChainId, // Chain Id of to token
+                toToken, // Token address of to token
+                amount, // Token amount of from token
+                slippagePercentage, // Acceptable max slippage for the swap
+                user, // Address of user placing the order.
+              },
+              mainWeb.currentProvider,
+            )
+            setQuoteValue(quoteResult)
+
+            curToken = curToken[0]
+
+            fromInfoValue = formatNumberWido(
+              fromWei(quoteResult.fromTokenAmount, curToken.decimals),
+              WIDO_EXTEND_DECIMALS,
+            )
+            fromInfoUsdValue =
+              quoteResult.fromTokenAmount === null
+                ? '0'
+                : formatNumberWido(
+                    fromWei(quoteResult.fromTokenAmount, curToken.decimals) *
+                      quoteResult.fromTokenUsdPrice,
+                    BEGINNERS_BALANCES_DECIMALS,
+                  )
+          }
           setFromInfoAmount(fromInfoValue)
           if (Number(fromInfoUsdValue) < 0.01) {
             setFromInfoUsdAmount('<$0.01')
@@ -106,15 +156,15 @@ const WithdrawStart = ({
     token,
     pricePerFullShare,
     web3,
+    setQuoteValue,
+    chainId,
+    fromToken,
   ])
 
   const [withdrawFailed, setWithdrawFailed] = useState(false)
   const [startSpinner, setStartSpinner] = useState(false) // State of Spinner for 'Finalize Deposit' button
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-
-  const chainId = token.chain || token.data.chain
-  const fromToken = token.vaultAddress || token.tokenAddress
 
   const approveZap = async amnt => {
     const { data, to } = await approve({
@@ -161,30 +211,62 @@ const WithdrawStart = ({
     if (approveSuccessed) {
       try {
         setButtonName('(2/2) Confirm Withdraw in Wallet')
-        await handleWithdraw(
-          account,
-          tokenSymbol,
-          amountsToExecuteInWei[0],
-          vaultsData,
-          setPendingAction,
-          multipleAssets,
-          selectedAsset,
-          async () => {
-            setAmountsToExecute(['', ''])
-            const updatedStats = await fetchUserPoolStats([fAssetPool], account, userStats)
-            await getWalletBalances(walletBalancesToCheck)
-            await getFarmingBalances([tokenSymbol], farmingBalances, updatedStats)
-            setWithdrawFailed(false)
-            setStartSpinner(false)
-            setButtonName('Finalize Withdraw')
-            setFinalStep(true)
-          },
-          async () => {
-            setWithdrawFailed(true)
-            setStartSpinner(false)
-            setButtonName('Finalize Withdraw')
-          },
-        )
+        if (pickedToken.default) {
+          await handleWithdraw(
+            account,
+            tokenSymbol,
+            amountsToExecuteInWei[0],
+            vaultsData,
+            setPendingAction,
+            multipleAssets,
+            selectedAsset,
+            async () => {
+              setAmountsToExecute(['', ''])
+              const updatedStats = await fetchUserPoolStats([fAssetPool], account, userStats)
+              await getWalletBalances(walletBalancesToCheck)
+              await getFarmingBalances([tokenSymbol], farmingBalances, updatedStats)
+              setWithdrawFailed(false)
+              setStartSpinner(false)
+              setButtonName('Finalize Withdraw')
+              setFinalStep(true)
+            },
+            async () => {
+              setWithdrawFailed(true)
+              setStartSpinner(false)
+              setButtonName('Finalize Withdraw')
+            },
+          )
+        } else {
+          const amount = unstakeBalance
+          const fromChainId = chainId
+          const toChainId = chainId
+          const toToken = pickedToken.address
+          const mainWeb = await getWeb3(chainId, account, web3)
+          const quoteResult = await quote(
+            {
+              fromChainId, // Chain Id of from token
+              fromToken, // Token address of from token
+              toChainId, // Chain Id of to token
+              toToken, // Token address of to token
+              amount, // Token amount of from token
+              slippagePercentage, // Acceptable max slippage for the swap
+              user: account, // Address of user placing the order.
+            },
+            mainWeb.currentProvider,
+          )
+
+          await mainWeb.eth.sendTransaction({
+            from: quoteResult.from,
+            data: quoteResult.data,
+            to: quoteResult.to,
+            value: quoteResult.value,
+          })
+          await fetchUserPoolStats([fAssetPool], account, userStats)
+          setWithdrawFailed(false)
+          setStartSpinner(false)
+          setButtonName('Finalize Withdraw')
+          setFinalStep(true)
+        }
       } catch (err) {
         setWithdrawFailed(true)
         setStartSpinner(false)
@@ -259,7 +341,7 @@ const WithdrawStart = ({
                 weight="600"
                 color="#344054"
               >
-                Combined value of withdraw and accrued yield.
+                USD value of the token balance you’re withdrawing.
               </NewLabel>
             </ReactTooltip>
           </NewLabel>
@@ -288,18 +370,31 @@ const WithdrawStart = ({
                 weight="600"
                 color="#344054"
               >
-                You will receive no less {tokenSymbol} than the displayed amount.
+                You will receive no less than displayed amount into your wallet.
               </NewLabel>
             </ReactTooltip>
           </NewLabel>
           <NewLabel weight="600">
-            {formatNumberWido(
-              new BigNumber(fromWei(unstakeBalance, pickedToken.decimals)).multipliedBy(
-                fromWei(pricePerFullShare, pickedToken.decimals),
-              ),
-              WIDO_EXTEND_DECIMALS,
+            {pickedToken.default ? (
+              formatNumberWido(
+                new BigNumber(fromWei(unstakeBalance, pickedToken.decimals)).multipliedBy(
+                  fromWei(pricePerFullShare, pickedToken.decimals),
+                ),
+                WIDO_EXTEND_DECIMALS,
+              )
+            ) : quoteValue ? (
+              <>
+                {quoteValue && quoteValue !== {}
+                  ? formatNumberWido(
+                      fromWei(quoteValue.minToTokenAmount, pickedToken.decimals),
+                      WIDO_EXTEND_DECIMALS,
+                    )
+                  : ''}
+              </>
+            ) : (
+              <AnimatedDots />
             )}
-            &nbsp;{tokenSymbol}
+            &nbsp;{pickedToken.symbol}
           </NewLabel>
         </NewLabel>
       </NewLabel>

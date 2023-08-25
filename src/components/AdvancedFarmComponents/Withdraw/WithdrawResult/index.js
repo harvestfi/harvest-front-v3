@@ -18,6 +18,7 @@ const WithdrawResult = ({
   unstakeBalance,
   token,
   tokenSymbol,
+  quoteValue,
 }) => {
   const amount = fromWei(unstakeBalance, pickedToken.decimals)
 
@@ -74,6 +75,15 @@ const WithdrawResult = ({
                   .toFixed(),
                 WIDO_EXTEND_DECIMALS,
               )
+            ) : quoteValue ? (
+              <>
+                {quoteValue && quoteValue !== {}
+                  ? formatNumberWido(
+                      fromWei(quoteValue.toTokenAmount, pickedToken.decimals),
+                      WIDO_EXTEND_DECIMALS,
+                    )
+                  : ''}
+              </>
             ) : (
               <AnimatedDots />
             )}

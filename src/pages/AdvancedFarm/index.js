@@ -27,6 +27,7 @@ import DepositSelectToken from '../../components/AdvancedFarmComponents/Deposit/
 import DepositStart from '../../components/AdvancedFarmComponents/Deposit/DepositStart'
 import DepositResult from '../../components/AdvancedFarmComponents/Deposit/DepositResult'
 import WithdrawBase from '../../components/AdvancedFarmComponents/Withdraw/WithdrawBase'
+import WithdrawSelectToken from '../../components/AdvancedFarmComponents/Withdraw/WithdrawSelectToken'
 import WithdrawStart from '../../components/AdvancedFarmComponents/Withdraw/WithdrawStart'
 import WithdrawResult from '../../components/AdvancedFarmComponents/Withdraw/WithdrawResult'
 import PriceShareData from '../../components/AdvancedFarmComponents/PriceChart/PriceShareData'
@@ -275,12 +276,17 @@ const AdvancedFarm = () => {
   const [depositFinalStep, setDepositFinalStep] = useState(false)
   const [quoteValueDepo, setQuoteValueDepo] = useState(null)
   const [inputAmountDepo, setInputAmountDepo] = useState(0)
+  const [partHeightDepo, setPartHeightDepo] = useState(null)
 
   // Withdraw
   const [withdrawStart, setWithdrawStart] = useState(false)
-  const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select Token' })
+  const [selectTokenWith, setSelectTokenWith] = useState(false)
+  const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select' })
   const [withdrawFinalStep, setWithdrawFinalStep] = useState(false)
   const [unstakeBalance, setUnstakeBalance] = useState('0')
+  const [clickTokenIdWith, setClickedTokenIdWith] = useState(-1)
+  const [partHeightWith, setPartHeightWith] = useState(null)
+  const [quoteValueWith, setQuoteValueWith] = useState(null)
 
   // Stake
   const [inputAmountStake, setInputAmountStake] = useState(0)
@@ -453,8 +459,6 @@ const AdvancedFarm = () => {
 
   // Switch Deposit / Withdraw
   const switchDepoMethod = () => setActiveDepo(prev => !prev)
-  // Height of Deposit section
-  const [partHeightDepo, setPartHeightDepo] = useState(null)
 
   // Count of users that used token
   const [holderCount, setHolderCount] = useState(0)
@@ -941,7 +945,7 @@ const AdvancedFarm = () => {
                     </FlexDiv>
                   </MyBalance>
                   <Divider height="unset" marginTop={isMobile ? '23px' : '20px'} />
-                  <HalfContent partHeight={partHeightDepo}>
+                  <HalfContent partHeight={activeDepo ? partHeightDepo : partHeightWith}>
                     <DepositSection isShow={activeDepo}>
                       <DepositBase
                         selectToken={selectTokenDepo}
@@ -1000,6 +1004,8 @@ const AdvancedFarm = () => {
                     </DepositSection>
                     <WithdrawSection isShow={!activeDepo}>
                       <WithdrawBase
+                        selectToken={selectTokenWith}
+                        setSelectToken={setSelectTokenWith}
                         withdrawStart={withdrawStart}
                         setWithdrawStart={setWithdrawStart}
                         finalStep={withdrawFinalStep}
@@ -1015,6 +1021,15 @@ const AdvancedFarm = () => {
                         activeDepo={activeDepo}
                         switchMethod={switchDepoMethod}
                       />
+                      <WithdrawSelectToken
+                        selectToken={selectTokenWith}
+                        setSelectToken={setSelectTokenWith}
+                        clickTokenId={clickTokenIdWith}
+                        setClickedTokenId={setClickedTokenIdWith}
+                        setPickedToken={setPickedTokenWith}
+                        supTokenList={supTokenList}
+                        setPartHeight={setPartHeightWith}
+                      />
                       <WithdrawStart
                         withdrawStart={withdrawStart}
                         setWithdrawStart={setWithdrawStart}
@@ -1027,6 +1042,9 @@ const AdvancedFarm = () => {
                         tokenSymbol={id}
                         fAssetPool={fAssetPool}
                         multipleAssets={multipleAssets}
+                        useIFARM={useIFARM}
+                        quoteValue={quoteValueWith}
+                        setQuoteValue={setQuoteValueWith}
                       />
                       <WithdrawResult
                         pickedToken={pickedTokenWith}
@@ -1036,6 +1054,7 @@ const AdvancedFarm = () => {
                         unstakeBalance={unstakeBalance}
                         token={token}
                         tokenSymbol={id}
+                        quoteValue={quoteValueWith}
                       />
                     </WithdrawSection>
                   </HalfContent>
@@ -1184,7 +1203,7 @@ const AdvancedFarm = () => {
                 </>
               ) : (
                 <RestInternal>
-                  <MyBalance marginBottom="32px">
+                  <MyBalance marginBottom="20px">
                     <NewLabel
                       size={isMobile ? '12px' : '14px'}
                       weight="700"
@@ -1259,7 +1278,7 @@ const AdvancedFarm = () => {
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
-                  <MyBalance marginBottom="32px">
+                  <MyBalance marginBottom="20px">
                     <NewLabel
                       size={isMobile ? '12px' : '14px'}
                       weight="700"

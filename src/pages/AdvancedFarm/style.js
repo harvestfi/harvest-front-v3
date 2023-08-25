@@ -470,6 +470,7 @@ const WithdrawSection = styled.div`
     props.isShow
       ? `
     display: block;
+    height: 100%;
   `
       : `
     display: none;
@@ -662,7 +663,7 @@ const LastHarvestInfo = styled.div`
   border-radius: 15px;
   box-shadow: 0px 10px 18px 0px rgba(0, 0, 0, 0.08);
   border-radius: 10px;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 `
 
 const RestInternal = styled.div`

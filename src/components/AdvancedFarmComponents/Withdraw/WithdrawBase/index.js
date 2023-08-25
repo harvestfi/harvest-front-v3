@@ -4,6 +4,7 @@ import { useSetChain } from '@web3-onboard/react'
 import { toast } from 'react-toastify'
 import { useMediaQuery } from 'react-responsive'
 import ArrowRightIcon from '../../../../assets/images/logos/beginners/arrow-right.svg'
+import DropDownIcon from '../../../../assets/images/logos/wido/drop-down.svg'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import { POOL_BALANCES_DECIMALS } from '../../../../constants'
@@ -44,11 +45,13 @@ const getChainName = chain => {
 }
 
 const WithdrawBase = ({
+  selectToken,
+  setSelectToken,
   withdrawStart,
   setWithdrawStart,
   finalStep,
   pickedToken,
-  setPickedToken,
+  // setPickedToken,
   unstakeBalance,
   setUnstakeBalance,
   tokenSymbol,
@@ -97,17 +100,6 @@ const WithdrawBase = ({
     }
   }, [connected])
 
-  useEffect(() => {
-    if (supTokenList.length > 0) {
-      // eslint-disable-next-line no-plusplus
-      for (let i = 0; i < supTokenList.length; i++) {
-        if (supTokenList[i].symbol === tokenSymbol) {
-          setPickedToken(supTokenList[i])
-        }
-      }
-    }
-  }, [supTokenList, setPickedToken, tokenSymbol])
-
   const onInputUnstake = e => {
     setUnstakeInputValue(e.currentTarget.value)
     setUnstakeBalance(toWei(e.currentTarget.value, token.decimals))
@@ -134,7 +126,7 @@ const WithdrawBase = ({
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   return (
-    <BaseWido show={!withdrawStart && !finalStep}>
+    <BaseWido show={!withdrawStart && !selectToken && !finalStep}>
       <NewLabel
         size={isMobile ? '14px' : '16px'}
         height={isMobile ? '21px' : '24px'}
@@ -159,9 +151,7 @@ const WithdrawBase = ({
           </div>
         </ThemeMode>
       </NewLabel>
-      <Title>
-        Withdraw your f{tokenSymbol} back to {tokenSymbol}.
-      </Title>
+      <Title>Withdraw f{tokenSymbol} into any token to your wallet.</Title>
       <TokenInfo>
         <AmountSection>
           <NewLabel
@@ -183,15 +173,21 @@ const WithdrawBase = ({
             color="#344054"
             marginBottom="6px"
           >
-            Withdraw to
+            Output Token
           </NewLabel>
-          <TokenSelect>
+          <TokenSelect
+            type="button"
+            onClick={async () => {
+              setSelectToken(true)
+            }}
+          >
             {pickedToken.logoURI ? (
               <img className="logo" src={pickedToken.logoURI} width={24} height={24} alt="" />
             ) : (
               <></>
             )}
             <span>{pickedToken.symbol}</span>
+            <img className="dropdown-icon" src={DropDownIcon} alt="" />
           </TokenSelect>
         </div>
       </TokenInfo>
