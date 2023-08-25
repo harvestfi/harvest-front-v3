@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { getPriceFeed } from '../../../../utils'
 import ApexChart from '../ApexChart'
-// import ChartRangeSelect from '../ChartRangeSelect'
+import ChartRangeSelect from '../ChartRangeSelect'
 import {
-  // ButtonGroup,
+  ButtonGroup,
   ChartDiv,
   Container,
   Header,
@@ -14,14 +14,14 @@ import {
   CurContent,
 } from './style'
 
-// const recommendLinks = [
-//   { name: '1W', type: 1, state: '1W' },
-//   { name: '1M', type: 2, state: '1M' },
-//   { name: '1Y', type: 3, state: '1Y' },
-// ]
+const recommendLinks = [
+  { name: '1W', type: 1, state: '1W' },
+  { name: '1M', type: 2, state: '1M' },
+  { name: '1Y', type: 3, state: '1Y' },
+]
 
 const PriceShareData = ({ token, vaultPool, tokenSymbol }) => {
-  // const [selectedState, setSelectedState] = useState('1Y')
+  const [selectedState, setSelectedState] = useState('1Y')
 
   const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
   const chainId = token.chain || token.data.chain
@@ -54,7 +54,7 @@ const PriceShareData = ({ token, vaultPool, tokenSymbol }) => {
               </FlexDiv>
             </TooltipInfo>
           </FlexDiv>
-          {/* <ButtonGroup>
+          <ButtonGroup>
             {recommendLinks.map((item, i) => (
               <ChartRangeSelect
                 key={i}
@@ -66,14 +66,14 @@ const PriceShareData = ({ token, vaultPool, tokenSymbol }) => {
                 text={item.name}
               />
             ))}
-          </ButtonGroup> */}
+          </ButtonGroup>
         </Total>
       </Header>
       <ChartDiv className="advanced-price">
         <ApexChart
           data={apiData}
           loadComplete={loadComplete}
-          // range={selectedState}
+          range={selectedState}
           setCurDate={setCurDate}
           setCurContent={setCurContent}
         />

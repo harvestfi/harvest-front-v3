@@ -44,38 +44,26 @@ function formatDateTime(value) {
   return `${day} ${month} ${year}`
 }
 
-// function getRangeNumber(strRange) {
-//   let ago = 30
-//   if (strRange === '1D') {
-//     ago = 1
-//   } else if (strRange === '1W') {
-//     ago = 7
-//   } else if (strRange === '1M') {
-//     ago = 30
-//   } else if (strRange === '1Y') {
-//     ago = 365
-//   }
+function getRangeNumber(strRange) {
+  let ago = 30
+  if (strRange === '1D') {
+    ago = 1
+  } else if (strRange === '1W') {
+    ago = 7
+  } else if (strRange === '1M') {
+    ago = 30
+  } else if (strRange === '1Y') {
+    ago = 365
+  }
 
-//   return ago
-// }
+  return ago
+}
 
-// function getTimeSlots(ago, slotCount) {
-//   const slots = [],
-//     nowDate = new Date(),
-//     toDate = Math.floor(nowDate.getTime() / 1000),
-//     fromDate = Math.floor(nowDate.setDate(nowDate.getDate() - ago) / 1000),
-//     between = (toDate - fromDate) / slotCount
-//   for (let i = fromDate + between; i <= toDate; i += between) {
-//     slots.push(i)
-//   }
-
-//   return slots
-// }
-
-function getAllTimeSlots(data, slotCount) {
+function getTimeSlots(ago, slotCount) {
   const slots = [],
-    toDate = Number(data[0].timestamp),
-    fromDate = Number(data[data.length - 1].timestamp),
+    nowDate = new Date(),
+    toDate = Math.floor(nowDate.getTime() / 1000),
+    fromDate = Math.floor(nowDate.setDate(nowDate.getDate() - ago) / 1000),
     between = (toDate - fromDate) / slotCount
   for (let i = fromDate + between; i <= toDate; i += between) {
     slots.push(i)
@@ -83,6 +71,18 @@ function getAllTimeSlots(data, slotCount) {
 
   return slots
 }
+
+// function getAllTimeSlots(data, slotCount) {
+//   const slots = [],
+//     toDate = Number(data[0].timestamp),
+//     fromDate = Number(data[data.length - 1].timestamp),
+//     between = (toDate - fromDate) / slotCount
+//   for (let i = fromDate + between; i <= toDate; i += between) {
+//     slots.push(i)
+//   }
+
+//   return slots
+// }
 
 function findMax(data) {
   const ary = data.map(el => el.y)
@@ -230,9 +230,9 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
       }
       const slotCount = 50,
         // Remove range. Set default for all data.
-        // ago = getRangeNumber(range),
-        // slots = getTimeSlots(ago, slotCount)
-        slots = getAllTimeSlots(data, slotCount)
+        ago = getRangeNumber(range),
+        slots = getTimeSlots(ago, slotCount)
+      // slots = getAllTimeSlots(data, slotCount)
       mainData = generateChartDataWithSlots(slots, data)
       maxValue = findMax(mainData)
       // minValue = findMin(mainData)
