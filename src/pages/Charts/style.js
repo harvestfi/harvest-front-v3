@@ -27,7 +27,7 @@ const Container = styled.div`
 
 const Inner = styled.div`
   padding: 40px 41px;
-  width: 50%;
+  width: 100%;
   min-height: 765px;
   display: flex;
   flex-direction: column;
@@ -69,6 +69,12 @@ const Title = styled.div`
 
 const ChartSection = styled.div`
   width: 100%;
+  display: flex;
+  gap: 20px;
+
+  @media screen and (max-width: 1368px) {
+    flex-direction: column;
+  }
 `
 
 export { Container, Inner, Title, ChartSection }

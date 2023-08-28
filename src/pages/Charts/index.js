@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { find, get, keys, orderBy, sortBy } from 'lodash'
 import move from 'lodash-move'
 import { CHAIN_IDS } from '../../data/constants'
-import { getVaultValue, isSpecialApp } from '../../utils'
+import { getVaultValue, getTotalApy, isSpecialApp } from '../../utils'
 import {
   FARM_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
@@ -15,10 +15,10 @@ import { usePools } from '../../providers/Pools'
 import { useStats } from '../../providers/Stats'
 import { useWallet } from '../../providers/Wallet'
 import { useThemeContext } from '../../providers/useThemeContext'
-import PriceShareData from '../../components/WidoComponents/PriceShareData'
+import PriceShareData from '../../components/ChartsComponents/PriceShareData'
+import FarmDetailChart from '../../components/ChartsComponents/DetailChart/FarmDetailChart'
 import { Container, Inner, Title, ChartSection } from './style'
-
-const { tokens } = require('../../data')
+import { addresses, tokens } from '../../data'
 
 const formatVaults = (groupOfVaults, chainId) => {
   let vaultsSymbol = sortBy(keys(groupOfVaults), [
@@ -85,12 +85,12 @@ const Charts = () => {
         profitShareAPY,
         data: farmProfitSharingPool,
         logoUrl: ['./icons/ifarm.svg'],
-        rewardSymbol: FARM_TOKEN_SYMBOL,
-        isNew: tokens[FARM_TOKEN_SYMBOL].isNew,
-        newDetails: tokens[FARM_TOKEN_SYMBOL].newDetails,
+        tokenAddress: addresses.FARM,
+        vaultAddress: addresses.iFARM,
+        rewardSymbol: 'iFarm',
+        isNew: tokens[IFARM_TOKEN_SYMBOL].isNew,
+        newDetails: tokens[IFARM_TOKEN_SYMBOL].newDetails,
         tokenNames: ['FARM'],
-        platform: ['Uniswap'],
-        tags: ['Beginners'],
       },
       [FARM_WETH_TOKEN_SYMBOL]: {
         liquidityPoolVault: true,
@@ -128,15 +128,12 @@ const Charts = () => {
   const ethVaultsSymbol = useMemo(() => formatVaults(groupOfVaults, CHAIN_IDS.ETH_MAINNET), [
     groupOfVaults,
   ])
-  console.log('eth: ', ethVaultsSymbol)
   const polVaultsSymbol = useMemo(() => formatVaults(groupOfVaults, CHAIN_IDS.POLYGON_MAINNET), [
     groupOfVaults,
   ])
-  console.log('pol: ', polVaultsSymbol)
   const arbVaultsSymbol = useMemo(() => formatVaults(groupOfVaults, CHAIN_IDS.ARBITRUM_ONE), [
     groupOfVaults,
   ])
-  console.log('arb: ', arbVaultsSymbol)
 
   return (
     <Container pageBackColor={pageBackColor} fontColor={fontColor}>
@@ -158,9 +155,20 @@ const Charts = () => {
             )
           }
 
+          const vaultValue = getVaultValue(token)
+          const totalApy = isSpecialVault
+            ? getTotalApy(null, token, true)
+            : getTotalApy(vaultPool, tokenVault)
+
           return (
             <ChartSection key={i}>
               <PriceShareData token={token} vaultPool={vaultPool} tokenSymbol={symbol} />
+              <FarmDetailChart
+                token={token}
+                vaultPool={vaultPool}
+                lastTVL={Number(vaultValue)}
+                lastAPY={Number(totalApy)}
+              />
             </ChartSection>
           )
         })}
@@ -181,7 +189,22 @@ const Charts = () => {
             )
           }
 
-          return <PriceShareData key={i} token={token} vaultPool={vaultPool} tokenSymbol={symbol} />
+          const vaultValue = getVaultValue(token)
+          const totalApy = isSpecialVault
+            ? getTotalApy(null, token, true)
+            : getTotalApy(vaultPool, tokenVault)
+
+          return (
+            <ChartSection key={i}>
+              <PriceShareData key={i} token={token} vaultPool={vaultPool} tokenSymbol={symbol} />
+              <FarmDetailChart
+                token={token}
+                vaultPool={vaultPool}
+                lastTVL={Number(vaultValue)}
+                lastAPY={Number(totalApy)}
+              />
+            </ChartSection>
+          )
         })}
         <Title>Arbitrum: </Title>
         {arbVaultsSymbol.map((symbol, i) => {
@@ -200,7 +223,22 @@ const Charts = () => {
             )
           }
 
-          return <PriceShareData key={i} token={token} vaultPool={vaultPool} tokenSymbol={symbol} />
+          const vaultValue = getVaultValue(token)
+          const totalApy = isSpecialVault
+            ? getTotalApy(null, token, true)
+            : getTotalApy(vaultPool, tokenVault)
+
+          return (
+            <ChartSection key={i}>
+              <PriceShareData key={i} token={token} vaultPool={vaultPool} tokenSymbol={symbol} />
+              <FarmDetailChart
+                token={token}
+                vaultPool={vaultPool}
+                lastTVL={Number(vaultValue)}
+                lastAPY={Number(totalApy)}
+              />
+            </ChartSection>
+          )
         })}
       </Inner>
     </Container>
