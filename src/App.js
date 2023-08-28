@@ -12,6 +12,7 @@ import FAQ from './pages/FAQ'
 import Sidebar from './components/Sidebar'
 import AdvancedFarm from './pages/AdvancedFarm'
 import WidoDetail from './pages/WidoDetail'
+import Charts from './pages/Charts'
 import { ROUTES } from './constants'
 import { Body, GlobalStyle } from './components/GlobalStyle'
 import Modal from './components/Modal'
@@ -77,6 +78,7 @@ const App = () => (
           <Route path={ROUTES.WIDODETAIL} component={WidoDetail} />
           <Route path={ROUTES.FAQ} component={FAQ} />
           <Route exact path={ROUTES.CAMELOT} component={Camelot} />
+          <Route exact path={ROUTES.CHARTS} component={Charts} />
         </Switch>
       </Body>
     </Providers>

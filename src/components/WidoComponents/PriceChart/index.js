@@ -78,13 +78,12 @@ function findMax(data) {
   return max
 }
 
-function findMin(data) {
-  const ary = data.map(el => el.y)
-  const min = Math.min(...ary)
-  return min
-}
+// function findMin(data) {
+//   const ary = data.map(el => el.y)
+//   const min = Math.min(...ary)
+//   return min
+// }
 
-// kind: "value" - TVL, "apy" - APY
 function generateChartDataWithSlots(slots, apiData) {
   const seriesData = []
   for (let i = 0; i < slots.length; i += 1) {
@@ -94,7 +93,7 @@ function generateChartDataWithSlots(slots, apiData) {
         : prev,
     )
 
-    seriesData.push({ x: slots[i] * 1000, y: data.sharePrice })
+    seriesData.push({ x: slots[i] * 1000, y: data.value })
   }
 
   return seriesData
@@ -114,16 +113,16 @@ function formatXAxis(value, range) {
 
 function getYAxisValues(min, max, roundNum) {
   const ary = []
-  const bet = max - min
-  for (let i = min; i < max; i += bet / 4) {
+  const bet = Number((max - min).toFixed(roundNum))
+  for (let i = min; i <= max; i += bet / 4) {
     const val = floor10(i, -roundNum)
     ary.push(val)
   }
-  ary.push(floor10(max, -roundNum))
+
   return ary
 }
 
-const PriceChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => {
+const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => {
   const { fontColor } = useThemeContext()
 
   const [mainSeries, setMainSeries] = useState([])
@@ -158,7 +157,7 @@ const PriceChart = ({ data, loadComplete, range, setCurDate, setCurContent }) =>
         width={24}
         height={24}
         viewBox="0 0 1024 1024"
-        fill="#666"
+        fill="#000"
       >
         <tspan dy="0.71em">{path}</tspan>
       </text>
@@ -180,7 +179,7 @@ const PriceChart = ({ data, loadComplete, range, setCurDate, setCurContent }) =>
         width={60}
         height={310}
         stroke="none"
-        fill="#666"
+        fill="#000"
         textAnchor="end"
       >
         <tspan dx={0} dy="0.355em">
@@ -201,7 +200,6 @@ const PriceChart = ({ data, loadComplete, range, setCurDate, setCurContent }) =>
         setIsDataReady(false)
         return
       }
-      const ago = getRangeNumber(range)
 
       let mainData = [],
         maxValue,
@@ -215,24 +213,26 @@ const PriceChart = ({ data, loadComplete, range, setCurDate, setCurContent }) =>
         return
       }
 
-      const slotCount = 50,
-        slots = getTimeSlots(ago, slotCount)
-
       if ((Object.keys(data).length === 0 && data.constructor === Object) || data.length === 0) {
         return
       }
+      const slotCount = 50,
+        // Remove range. Set default for all data.
+        ago = getRangeNumber(range),
+        slots = getTimeSlots(ago, slotCount)
       mainData = generateChartDataWithSlots(slots, data)
       maxValue = findMax(mainData)
-      minValue = findMin(mainData)
+      // minValue = findMin(mainData)
+      minValue = 0
 
       const between = maxValue - minValue
       unitBtw = between / 4
       if (unitBtw >= 1) {
         unitBtw = Math.ceil(unitBtw)
         len = 0
-        unitBtw = ceil10(unitBtw, len - 1)
-        maxValue = ceil10(maxValue, len - 1)
-        minValue = floor10(minValue, len - 1)
+        unitBtw = ceil10(unitBtw, len)
+        maxValue = ceil10(maxValue, len)
+        minValue = floor10(minValue, len)
       } else if (unitBtw === 0) {
         len = Math.ceil(maxValue).toString().length
         maxValue += 10 ** (len - 1)
@@ -249,6 +249,7 @@ const PriceChart = ({ data, loadComplete, range, setCurDate, setCurContent }) =>
       } else {
         const rate = Number((unitBtw / maxValue).toFixed(2)) + 1
         maxValue *= rate
+        maxValue = ceil10(maxValue, len)
       }
 
       if (unitBtw === 0) {
@@ -260,6 +261,11 @@ const PriceChart = ({ data, loadComplete, range, setCurDate, setCurContent }) =>
       setMinVal(minValue)
       setMaxVal(maxValue)
 
+      // Set date and price with latest value by default
+      setCurDate(formatDateTime(mainData[slotCount - 1].x))
+      const price = numberWithCommas(Number(mainData[slotCount - 1].y).toFixed(roundedDecimal))
+      setCurContent(`$${price}`)
+
       const yAxisAry = getYAxisValues(minValue, maxValue, roundNum)
       setYAxisTicks(yAxisAry)
 
@@ -269,7 +275,7 @@ const PriceChart = ({ data, loadComplete, range, setCurDate, setCurContent }) =>
     }
 
     init()
-  }, [range, data, isDataReady, loadComplete])
+  }, [range, data, isDataReady, loadComplete, roundedDecimal, setCurContent, setCurDate])
 
   return (
     <>
@@ -292,13 +298,13 @@ const PriceChart = ({ data, loadComplete, range, setCurDate, setCurContent }) =>
             data={mainSeries}
             margin={{
               top: 20,
-              right: 20,
-              bottom: 20,
-              left: 20,
+              right: 0,
+              bottom: 0,
+              left: -14,
             }}
           >
             <defs>
-              <linearGradient id="colorUv1" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#00D26B" stopOpacity={0.1} />
                 <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1} />
               </linearGradient>
@@ -324,17 +330,17 @@ const PriceChart = ({ data, loadComplete, range, setCurDate, setCurContent }) =>
               unit="M"
               strokeLinecap="round"
               strokeWidth={2}
-              stroke="#00D26B80"
+              stroke="#00D26B"
               dot={false}
               legendType="none"
             />
             <Area
               type="monotone"
               dataKey="y"
-              stroke="#00D26B80"
+              stroke="#00D26B"
               strokeWidth={2}
               fillOpacity={1}
-              fill="url(#colorUv1)"
+              fill="url(#colorUv)"
             />
             <Tooltip
               content={CustomTooltip}
@@ -359,4 +365,4 @@ const PriceChart = ({ data, loadComplete, range, setCurDate, setCurContent }) =>
   )
 }
 
-export default PriceChart
+export default ApexChart

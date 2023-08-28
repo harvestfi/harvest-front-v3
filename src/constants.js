@@ -29,6 +29,7 @@ export const ROUTES = {
   WIDODETAIL: '/:network/:paramAddress',
   ADVANCEDFARM: '/advance/:network/:paramAddress',
   BEGINNERSFARM: '/beginner/:paramAddress',
+  CHARTS: '/charts',
   WORK: '/work',
   POOL: '/pool',
   ZAPPER: '/zapper',
