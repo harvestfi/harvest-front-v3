@@ -16,7 +16,7 @@ import { useStats } from '../../providers/Stats'
 import { useWallet } from '../../providers/Wallet'
 import { useThemeContext } from '../../providers/useThemeContext'
 import PriceShareData from '../../components/WidoComponents/PriceShareData'
-import { Container, Inner, Title } from './style'
+import { Container, Inner, Title, ChartSection } from './style'
 
 const { tokens } = require('../../data')
 
@@ -158,7 +158,11 @@ const Charts = () => {
             )
           }
 
-          return <PriceShareData key={i} token={token} vaultPool={vaultPool} tokenSymbol={symbol} />
+          return (
+            <ChartSection key={i}>
+              <PriceShareData token={token} vaultPool={vaultPool} tokenSymbol={symbol} />
+            </ChartSection>
+          )
         })}
         <Title>Polygon: </Title>
         {polVaultsSymbol.map((symbol, i) => {

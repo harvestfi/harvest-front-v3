@@ -40,7 +40,7 @@ const Inner = styled.div`
   }
 
   @media screen and (max-width: 1480px) {
-    width: 100%;
+    width: 95%;
     padding: 0px 30px 0px;
   }
 
@@ -49,6 +49,7 @@ const Inner = styled.div`
     display: flex;
     flex-direction: column;
     gap: 5px;
+    width: 100%;
   }
 `
 
@@ -66,4 +67,8 @@ const Title = styled.div`
   }
 `
 
-export { Container, Inner, Title }
+const ChartSection = styled.div`
+  width: 100%;
+`
+
+export { Container, Inner, Title, ChartSection }
