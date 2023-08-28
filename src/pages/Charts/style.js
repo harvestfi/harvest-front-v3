@@ -10,7 +10,6 @@ const Container = styled.div`
   position: relative;
   margin-left: 280px;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   font-family: Inter;
 
