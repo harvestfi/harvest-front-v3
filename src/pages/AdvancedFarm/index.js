@@ -30,7 +30,6 @@ import WithdrawBase from '../../components/AdvancedFarmComponents/Withdraw/Withd
 import WithdrawSelectToken from '../../components/AdvancedFarmComponents/Withdraw/WithdrawSelectToken'
 import WithdrawStart from '../../components/AdvancedFarmComponents/Withdraw/WithdrawStart'
 import WithdrawResult from '../../components/AdvancedFarmComponents/Withdraw/WithdrawResult'
-import PriceShareData from '../../components/AdvancedFarmComponents/PriceChart/PriceShareData'
 import FarmDetailChart from '../../components/AdvancedFarmComponents/DetailChart/FarmDetailChart'
 import VaultPanelActionsFooter from '../../components/AdvancedFarmComponents/Rewards/VaultPanelActionsFooter'
 import StakeBase from '../../components/AdvancedFarmComponents/Stake/StakeBase'
@@ -745,7 +744,14 @@ const AdvancedFarm = () => {
           <InternalSection>
             <MainSection>
               {activeMainTag === 0 ? (
-                <PriceShareData token={token} vaultPool={vaultPool} tokenSymbol={id} />
+                <HalfInfo padding="25px 18px" marginBottom="23px">
+                  <FarmDetailChart
+                    token={token}
+                    vaultPool={vaultPool}
+                    lastTVL={Number(vaultValue)}
+                    lastAPY={Number(totalApy)}
+                  />
+                </HalfInfo>
               ) : activeMainTag === 1 ? (
                 <MyBalance marginBottom="23px">
                   <NewLabel
@@ -764,15 +770,7 @@ const AdvancedFarm = () => {
                 </MyBalance>
               ) : (
                 <>
-                  <HalfInfo padding="25px 18px" marginBottom="23px">
-                    <FarmDetailChart
-                      token={token}
-                      vaultPool={vaultPool}
-                      lastTVL={Number(vaultValue)}
-                      lastAPY={Number(totalApy)}
-                    />
-                  </HalfInfo>
-                  <HalfInfo marginBottom="unset">
+                  <HalfInfo marginBottom="20px">
                     <NewLabel
                       weight={700}
                       size="14px"
@@ -845,6 +843,21 @@ const AdvancedFarm = () => {
                       </InfoLabel>
                     </FlexDiv>
                   </HalfInfo>
+                  <MyBalance>
+                    <NewLabel
+                      size={isMobile ? '12px' : '14px'}
+                      weight="700"
+                      height={isMobile ? '18px' : '24px'}
+                      color="#344054"
+                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      borderBottom="1px solid #EBEBEB"
+                    >
+                      APY Breakdown
+                    </NewLabel>
+                    <NewLabel padding={isMobile ? '9px 13px' : '10px 15px'}>
+                      <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
+                    </NewLabel>
+                  </MyBalance>
                 </>
               )}
             </MainSection>
@@ -1290,21 +1303,6 @@ const AdvancedFarm = () => {
                         {showTVL()}
                       </NewLabel>
                     </FlexDiv>
-                  </MyBalance>
-                  <MyBalance marginBottom="20px">
-                    <NewLabel
-                      size={isMobile ? '12px' : '14px'}
-                      weight="700"
-                      height={isMobile ? '18px' : '24px'}
-                      color="#344054"
-                      padding={isMobile ? '9px 13px' : '10px 15px'}
-                      borderBottom="1px solid #EBEBEB"
-                    >
-                      APY Breakdown
-                    </NewLabel>
-                    <NewLabel padding={isMobile ? '9px 13px' : '10px 15px'}>
-                      <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
-                    </NewLabel>
                   </MyBalance>
                   <LastHarvestInfo>
                     <NewLabel

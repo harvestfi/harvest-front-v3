@@ -400,7 +400,7 @@ const ApexChart = ({
               top: 20,
               right: 0,
               bottom: 0,
-              left: -12,
+              left: 0,
             }}
           >
             <defs>

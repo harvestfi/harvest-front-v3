@@ -3,7 +3,7 @@ import styled from 'styled-components'
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  height: 400px;
+  height: 430px;
   overflow: hidden;
   padding: 0px;
   transition: 0.25s;
