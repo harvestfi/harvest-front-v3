@@ -392,7 +392,7 @@ const ApexChart = ({
       {!loading ? (
         <ResponsiveContainer
           width="100%"
-          height={onlyWidth > 1250 ? 380 : onlyWidth > 1050 ? 350 : 330}
+          height={onlyWidth > 1250 ? 350 : onlyWidth > 1050 ? 330 : 300}
         >
           <ComposedChart
             data={mainSeries}
