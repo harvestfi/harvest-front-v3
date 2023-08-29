@@ -374,10 +374,20 @@ const ApexChart = ({
       setMinVal(minValue)
       setMaxVal(maxValue)
 
+      setFixedLen(filter === 1 ? 0 : len)
+
+      setCurDate(formatDateTime(mainData[slotCount - 1].x))
+      const content = `<div style="font-size: 13px; display: flex;"><div style="color: #1b1b1b; font-weight: 700;">${
+        filter === 1 ? 'TVL ' : filter === 0 ? 'APY ' : 'Balance '
+      }</div><div style="color: #5B5181; font-weight: 500;">&nbsp;${
+        filter === 1 ? '$' : ''
+      }${numberWithCommas(Number(mainData[slotCount - 1].y.toFixed(filter === 1 ? 0 : fixedLen)))}${
+        filter === 0 ? '%' : ''
+      }</div></div>`
+      setCurContent(content)
+
       const yAxisAry = getYAxisValues(minValue, maxValue, roundNum)
       setYAxisTicks(yAxisAry)
-
-      setFixedLen(filter === 1 ? 0 : len)
 
       setMainSeries(mainData)
 
@@ -385,7 +395,18 @@ const ApexChart = ({
     }
 
     init()
-  }, [range, filter, data, lastTVL, lastAPY, isIFARM, iFarmTVL])
+  }, [
+    range,
+    filter,
+    data,
+    lastTVL,
+    lastAPY,
+    isIFARM,
+    iFarmTVL,
+    fixedLen,
+    setCurContent,
+    setCurDate,
+  ])
 
   return (
     <>
