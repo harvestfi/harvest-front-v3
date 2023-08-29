@@ -248,6 +248,7 @@ const AmountSection = styled.div`
 
 const ThemeMode = styled.div`
   display: flex;
+  align-items: center;
 
   #theme-switch {
     position: relative;

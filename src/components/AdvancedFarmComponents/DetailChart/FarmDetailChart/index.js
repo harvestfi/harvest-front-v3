@@ -80,21 +80,6 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
                 clickedId={clickedId}
                 setClickedId={setClickedId}
               />
-              {isMobile && (
-                <ButtonGroup>
-                  {recommendLinks.map((item, i) => (
-                    <ChartRangeSelect
-                      key={i}
-                      onClick={() => {
-                        setSelectedState(item.state)
-                      }}
-                      state={selectedState}
-                      type={item.type}
-                      text={item.name}
-                    />
-                  ))}
-                </ButtonGroup>
-              )}
             </FilterGroup>
             <TooltipInfo>
               <CurDate>{curDate}</CurDate>
@@ -117,6 +102,21 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
             </ButtonGroup>
           )}
         </Total>
+        {isMobile && (
+          <ButtonGroup>
+            {recommendLinks.map((item, i) => (
+              <ChartRangeSelect
+                key={i}
+                onClick={() => {
+                  setSelectedState(item.state)
+                }}
+                state={selectedState}
+                type={item.type}
+                text={item.name}
+              />
+            ))}
+          </ButtonGroup>
+        )}
       </Header>
       <ChartDiv className="advanced-farm">
         <ApexChart

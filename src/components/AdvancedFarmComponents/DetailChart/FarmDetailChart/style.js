@@ -57,6 +57,14 @@ const ButtonGroup = styled.div`
     margin-left: 0.5em;
     font-weight: 400;
   }
+
+  @media screen and (max-width: 992px) {
+    margin-top: 15px;
+    width: 100%;
+    flex-wrap: wrap;
+    gap: 50px;
+    justify-content: center;
+  }
 `
 
 const ChartDiv = styled.div`
@@ -99,10 +107,6 @@ const CurDate = styled.div`
   font-size: 13px;
   line-height: normal;
   font-weight: 500;
-
-  @media screen and (max-width: 992px) {
-    margin-top: 0.5rem;
-  }
 `
 
 const TooltipInfo = styled.div`
@@ -114,7 +118,6 @@ const FlexDiv = styled.div`
   display: flex;
 
   @media screen and (max-width: 992px) {
-    display: block;
     width: 100%;
   }
 `

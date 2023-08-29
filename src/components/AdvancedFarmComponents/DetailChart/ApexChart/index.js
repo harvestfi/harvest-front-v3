@@ -439,15 +439,22 @@ const ApexChart = ({
               stroke="rgba(228, 228, 228, 0.2)"
               vertical={false}
             />
-            <XAxis dataKey="x" tickLine={false} tickCount={5} tick={renderCustomXAxisTick} />
-            <YAxis
-              dataKey="y"
+            <XAxis
+              dataKey="x"
               tickLine={false}
-              tickCount={5}
-              tick={renderCustomYAxisTick}
-              ticks={yAxisTicks}
-              domain={[minVal, maxVal]}
+              tickCount={isMobile ? 7 : 5}
+              tick={renderCustomXAxisTick}
             />
+            {!isMobile && (
+              <YAxis
+                dataKey="y"
+                tickLine={false}
+                tickCount={5}
+                tick={renderCustomYAxisTick}
+                ticks={yAxisTicks}
+                domain={[minVal, maxVal]}
+              />
+            )}
             <Line
               dataKey="y"
               type="monotone"
