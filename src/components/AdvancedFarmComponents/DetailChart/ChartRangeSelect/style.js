@@ -48,6 +48,19 @@ const Container = styled.button`
 
 const Text = styled.div`
   padding: 0 5px;
+
+  @media screen and (max-width: 992px) {
+    ${props =>
+      props.activeItem
+        ? `
+          color: #5b5181;
+          font-weight: 700;
+        `
+        : `
+          color: #282F3D;
+          font-weight: 400;
+        `}
+  }
 `
 
 export { Container, Text }
