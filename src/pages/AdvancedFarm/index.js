@@ -744,7 +744,7 @@ const AdvancedFarm = () => {
           <InternalSection>
             <MainSection>
               {activeMainTag === 0 ? (
-                <HalfInfo padding="25px 18px" marginBottom="23px">
+                <HalfInfo padding="25px 18px">
                   <FarmDetailChart
                     token={token}
                     vaultPool={vaultPool}
