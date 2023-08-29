@@ -7,12 +7,11 @@ const Container = styled.div`
   overflow: hidden;
   padding: 0px;
   transition: 0.25s;
-  background: ${props => props.backColor};
+  background: #fff;
 
   @media screen and (max-width: 992px) {
     width: 100%;
     height: 400px;
-    margin-bottom: 15px;
   }
 `
 

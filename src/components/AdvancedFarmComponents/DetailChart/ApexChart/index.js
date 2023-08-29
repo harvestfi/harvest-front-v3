@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useMediaQuery } from 'react-responsive'
 import {
   ComposedChart,
   XAxis,
@@ -161,6 +162,8 @@ const ApexChart = ({
 
   const [fixedLen, setFixedLen] = useState(0)
 
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       setCurDate(formatDateTime(payload[0].payload.x))
@@ -210,7 +213,7 @@ const ApexChart = ({
       <text
         orientation="left"
         className="recharts-text recharts-cartesian-axis-tick-value"
-        x={x}
+        x={isMobile ? x + 30 : x}
         y={y}
         width={60}
         height={310}
@@ -421,7 +424,7 @@ const ApexChart = ({
               top: 20,
               right: 0,
               bottom: 0,
-              left: 0,
+              left: isMobile ? -20 : 0,
             }}
           >
             <defs>

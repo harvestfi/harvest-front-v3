@@ -4,7 +4,6 @@ import apyActive from '../../../../assets/images/logos/earn/filter_apy.svg'
 import myBalanceActive from '../../../../assets/images/logos/earn/filter_mybalance.svg'
 import tvlActive from '../../../../assets/images/logos/earn/filter_tvl.svg'
 import { addresses } from '../../../../data/index'
-import { useThemeContext } from '../../../../providers/useThemeContext'
 import { useWallet } from '../../../../providers/Wallet'
 import { getDataQuery, getTotalTVLData } from '../../../../utils'
 import ApexChart from '../ApexChart'
@@ -70,10 +69,8 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
     initData()
   }, [address, chainId, account, token, isIFARM])
 
-  const { fontColor, backColor } = useThemeContext()
-
   return (
-    <Container backColor={backColor} fontColor={fontColor}>
+    <Container>
       <Header>
         <Total>
           <FlexDiv>
