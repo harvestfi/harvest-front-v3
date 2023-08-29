@@ -61,9 +61,7 @@ const ButtonGroup = styled.div`
   @media screen and (max-width: 992px) {
     margin-top: 15px;
     width: 100%;
-    flex-wrap: wrap;
-    gap: 50px;
-    justify-content: center;
+    justify-content: space-around;
   }
 `
 
