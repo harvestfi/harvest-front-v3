@@ -54,8 +54,6 @@ const ButtonGroup = styled.div`
 
   button {
     padding: 0.1em 0.6em;
-    margin-left: 0.5em;
-    font-weight: 400;
   }
 
   @media screen and (max-width: 992px) {
