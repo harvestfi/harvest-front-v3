@@ -13,7 +13,7 @@ const SelectTokenWido = styled.div`
       : 'display: none;'}
 
   @media screen and (max-width: 992px) {
-    padding: 16px;
+    padding: 12px 12px 18px;
   }
 `
 
@@ -129,6 +129,13 @@ const NewLabel = styled.div`
   img.help-icon {
     margin-left: 5px;
     cursor: pointer;
+  }
+
+  @media screen and (max-width: 992px) {
+    img.help-icon {
+      width: 12px;
+      height: 12px;
+    }
   }
 `
 

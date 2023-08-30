@@ -11,7 +11,7 @@ const BaseSection = styled.div`
       : 'display: none;'}
 
   @media screen and (max-width: 992px) {
-    padding: 12px 18px 18px;
+    padding: 12px 12px 18px;
   }
 `
 
@@ -19,6 +19,12 @@ const NewLabel = styled.div`
   font-weight: ${props => props.weight || '400'};
   font-size: ${props => props.size || '20px'};
   line-height: ${props => props.height || '0px'};
+  ${props =>
+    props.padding
+      ? `
+    padding: ${props.padding};
+  `
+      : ''}
   ${props =>
     props.color
       ? `
@@ -220,7 +226,7 @@ const BalanceInfo = styled.div`
 
   @media screen and (max-width: 992px) {
     font-size: 10px;
-    line-height: 18px;
+    line-height: 15px;
     margin-top: 3px;
   }
 `
@@ -409,6 +415,15 @@ const AmountInputSection = styled.div`
     font-weight: 300;
     line-height: 20px;
     color: #000;
+  }
+
+  @media screen and (max-width: 992px) {
+    button.max-btn {
+      right: 5px;
+      top: 9px;
+      font-size: 10px;
+      line-height: 15px;
+    }
   }
 `
 

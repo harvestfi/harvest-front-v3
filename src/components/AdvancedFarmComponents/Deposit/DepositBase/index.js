@@ -215,7 +215,7 @@ const DepositBase = ({
           }
         }}
       >
-        {isMobile && (pickedToken.symbol === 'Select Token' ? '' : pickedToken.symbol)}&nbsp;
+        {isMobile && (pickedToken.symbol === 'Select Token' ? '' : `${pickedToken.symbol} `)}
         Balance Available:
         <span>{formatNumberWido(balance, POOL_BALANCES_DECIMALS)}</span>
       </BalanceInfo>

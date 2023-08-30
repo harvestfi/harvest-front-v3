@@ -28,6 +28,7 @@ const Inner = styled.div`
   @media screen and (max-width: 992px) {
     padding: 24px 29px 50px 31px;
     height: 100%;
+    background: #fff;
   }
 `
 
@@ -271,8 +272,13 @@ const HalfContent = styled.div`
   flex-direction: column;
   height: fit-content;
   background: #fff;
-  border-radius: 12px;
   box-shadow: 0px 8px 8px -4px rgba(16, 24, 40, 0.03), 0px 20px 24px -4px rgba(16, 24, 40, 0.08);
+  ${props =>
+    props.borderRadius
+      ? `
+    border-radius: ${props.borderRadius};
+  `
+      : ''}
   ${props =>
     props.marginTop
       ? `
@@ -505,6 +511,7 @@ const MainSection = styled.div`
   @media screen and (max-width: 992px) {
     width: 100%;
     margin-right: 0px;
+    display: none;
   }
 `
 
@@ -725,6 +732,15 @@ const FirstPartSection = styled.div`
   }
 `
 
+const SecondPartSection = styled.div`
+  width: 100%;
+
+  @media screen and (max-width: 992px) {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+`
+
 export {
   DetailView,
   TopPart,
@@ -761,4 +777,5 @@ export {
   UnstakeSection,
   MainTagPanel,
   FirstPartSection,
+  SecondPartSection,
 }

@@ -23,8 +23,8 @@ const StakeResult = ({ finalStep, setFinalStep, inputAmount, tokenSymbol }) => {
         Summary
       </NewLabel>
       <NewLabel
-        size={isMobile ? '12px' : '14px'}
-        height={isMobile ? '21px' : '24px'}
+        size={isMobile ? '10px' : '14px'}
+        height={isMobile ? '18px' : '24px'}
         color="#344054"
       >
         <NewLabel

@@ -190,11 +190,12 @@ const UnstakeBase = ({
     <BaseSection show={!finalStep}>
       <NewLabel
         size={isMobile ? '12px' : '16px'}
-        height={isMobile ? '24px' : '28px'}
+        height={isMobile ? '21px' : '28px'}
         weight="600"
         color="#101828"
         display="flex"
         justifyContent="space-between"
+        items="center"
       >
         Unstake
         <ThemeMode mode={activeStake ? 'deposit' : 'withdraw'}>
@@ -289,8 +290,8 @@ const UnstakeBase = ({
           <NewLabel marginLeft="12px">
             <NewLabel
               color="#B54708"
-              size={isMobile ? '12px' : '14px'}
-              height={isMobile ? '17px' : '20px'}
+              size={isMobile ? '10px' : '14px'}
+              height={isMobile ? '15px' : '20px'}
               weight="600"
               marginBottom="4px"
             >
@@ -298,8 +299,8 @@ const UnstakeBase = ({
             </NewLabel>
             <NewLabel
               color="#B54708"
-              size={isMobile ? '12px' : '14px'}
-              height={isMobile ? '17px' : '20px'}
+              size={isMobile ? '10px' : '14px'}
+              height={isMobile ? '15px' : '20px'}
               weight="400"
               marginBottom="5px"
             >
@@ -318,7 +319,7 @@ const UnstakeBase = ({
         </NewLabel>
       </FTokenWrong>
 
-      <NewLabel marginTop={isMobile ? '19px' : '25px'}>
+      <NewLabel marginTop={isMobile ? '19px' : '25px'} padding={isMobile ? '0 7px' : '0'}>
         <Button
           color="wido-deposit"
           width="100%"

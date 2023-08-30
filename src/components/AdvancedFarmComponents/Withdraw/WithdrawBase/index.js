@@ -129,12 +129,13 @@ const WithdrawBase = ({
   return (
     <BaseWido show={!withdrawStart && !selectToken && !finalStep}>
       <NewLabel
-        size={isMobile ? '14px' : '16px'}
+        size={isMobile ? '12px' : '16px'}
         height={isMobile ? '21px' : '24px'}
         weight="600"
         color="#101828"
         display="flex"
         justifyContent="space-between"
+        items="center"
       >
         Withdraw
         <ThemeMode mode={activeDepo ? 'deposit' : 'withdraw'}>
@@ -235,7 +236,7 @@ const WithdrawBase = ({
         </div>
       </InsufficientSection>
 
-      <NewLabel marginTop={isMobile ? '19px' : '25px'}>
+      <NewLabel marginTop={isMobile ? '19px' : '25px'} padding={isMobile ? '0 7px' : '0'}>
         <Button
           color="wido-deposit"
           width="100%"

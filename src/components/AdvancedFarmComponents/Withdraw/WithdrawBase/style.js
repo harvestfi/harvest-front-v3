@@ -11,11 +11,17 @@ const BaseWido = styled.div`
       : 'display: none;'}
 
   @media screen and (max-width: 992px) {
-    padding: 12px 18px 18px;
+    padding: 12px 12px 18px;
   }
 `
 
 const NewLabel = styled.div`
+  ${props =>
+    props.padding
+      ? `
+    padding: ${props.padding};
+  `
+      : ''}
   ${props =>
     props.color
       ? `
@@ -137,6 +143,11 @@ const TokenSelect = styled.div`
       height: 16px;
       margin-right: 5px;
     }
+
+    img.dropdown-icon {
+      width: 15px;
+      height: 16px;
+    }
   }
 `
 
@@ -206,7 +217,7 @@ const BalanceInfo = styled.div`
 
   @media screen and (max-width: 992px) {
     font-size: 10px;
-    line-height: 18px;
+    line-height: 15px;
     margin-top: 3px;
   }
 `

@@ -10,6 +10,10 @@ const SelectTokenWido = styled.div`
     display: block;
   `
       : 'display: none;'}
+
+  @media screen and (max-width: 992px) {
+    padding: 12px 12px 18px;
+  }
 `
 
 const ImgBtn = styled.img`

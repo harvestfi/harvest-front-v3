@@ -46,7 +46,6 @@ import {
   SPECIAL_VAULTS,
   POOL_BALANCES_DECIMALS,
 } from '../../constants'
-import { Divider } from '../../components/GlobalStyle'
 import { fromWei, newContractInstance, getWeb3, getExplorerLink } from '../../services/web3'
 import { addresses } from '../../data'
 import { usePools } from '../../providers/Pools'
@@ -94,6 +93,7 @@ import {
   UnstakeSection,
   MainTagPanel,
   FirstPartSection,
+  SecondPartSection,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 
@@ -755,16 +755,14 @@ const AdvancedFarm = () => {
           <InternalSection>
             <MainSection>
               {activeMainTag === 0 ? (
-                !isMobile && (
-                  <HalfInfo padding="25px 18px">
-                    <FarmDetailChart
-                      token={token}
-                      vaultPool={vaultPool}
-                      lastTVL={Number(vaultValue)}
-                      lastAPY={Number(totalApy)}
-                    />
-                  </HalfInfo>
-                )
+                <HalfInfo padding="25px 18px">
+                  <FarmDetailChart
+                    token={token}
+                    vaultPool={vaultPool}
+                    lastTVL={Number(vaultValue)}
+                    lastAPY={Number(totalApy)}
+                  />
+                </HalfInfo>
               ) : activeMainTag === 1 ? (
                 <MyBalance marginBottom="23px">
                   <NewLabel
@@ -1000,6 +998,7 @@ const AdvancedFarm = () => {
                   <HalfContent
                     marginBottom={isMobile ? '24px' : '0px'}
                     partHeight={activeDepo ? partHeightDepo : partHeightWith}
+                    borderRadius={isMobile ? '9px' : '12px'}
                   >
                     <DepositSection isShow={activeDepo}>
                       <DepositBase
@@ -1115,8 +1114,8 @@ const AdvancedFarm = () => {
                   </HalfContent>
                 </FirstPartSection>
               ) : activeMainTag === 1 ? (
-                <>
-                  <MyBalance marginBottom="23px">
+                <SecondPartSection>
+                  <MyBalance marginBottom={isMobile ? '0' : '23px'}>
                     <NewLabel
                       size={isMobile ? '12px' : '14px'}
                       weight="600"
@@ -1206,8 +1205,27 @@ const AdvancedFarm = () => {
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
-                  <Divider height="unset" marginTop={isMobile ? '23px' : '20px'} />
-                  <HalfContent>
+                  {isMobile && (
+                    <MyBalance marginBottom="24px">
+                      <NewLabel
+                        size={isMobile ? '12px' : '14px'}
+                        weight="600"
+                        height={isMobile ? '18px' : '24px'}
+                        color="#000"
+                        padding={isMobile ? '9px 13px' : '10px 15px'}
+                        borderBottom="1px solid #EBEBEB"
+                      >
+                        My Extra Rewards
+                      </NewLabel>
+                      <FlexDiv>
+                        <VaultPanelActionsFooter {...viewComponentProps} />
+                      </FlexDiv>
+                    </MyBalance>
+                  )}
+                  <HalfContent
+                    marginBottom={isMobile ? '24px' : '0px'}
+                    borderRadius={isMobile ? '9px' : '12px'}
+                  >
                     <StakeSection isShow={activeStake}>
                       <StakeBase
                         finalStep={stakeFinalStep}
@@ -1256,7 +1274,7 @@ const AdvancedFarm = () => {
                       />
                     </UnstakeSection>
                   </HalfContent>
-                </>
+                </SecondPartSection>
               ) : (
                 <RestInternal>
                   <MyBalance marginBottom="20px">
