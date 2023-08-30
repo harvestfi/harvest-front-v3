@@ -92,6 +92,8 @@ import {
   RestInternal,
   StakeSection,
   UnstakeSection,
+  MainTagPanel,
+  FirstPartSection,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 
@@ -102,7 +104,7 @@ const chainList = [
   { id: 4, name: 'Base', chainId: 8453 },
 ]
 
-const mainTags = ['Overview', 'Stake', 'Details']
+const mainTags = ['Deposit', 'Stake', 'Details']
 
 const getVaultValue = token => {
   const poolId = get(token, 'data.id')
@@ -506,7 +508,7 @@ const AdvancedFarm = () => {
     getTokenHolder()
   }, [paramAddress, chain, token])
 
-  // Overview / Stake / Details
+  // Deposit / Stake / Details
   const [activeMainTag, setActiveMainTag] = useState(0)
 
   const curUrl = document.location.href
@@ -732,7 +734,7 @@ const AdvancedFarm = () => {
       </TopPart>
       <Inner>
         <BigDiv>
-          <FlexDiv marginBottom="39px">
+          <MainTagPanel>
             {mainTags.map((tag, i) => (
               <MainTag
                 key={i}
@@ -749,18 +751,20 @@ const AdvancedFarm = () => {
                 {tag}
               </MainTag>
             ))}
-          </FlexDiv>
+          </MainTagPanel>
           <InternalSection>
             <MainSection>
               {activeMainTag === 0 ? (
-                <HalfInfo padding="25px 18px">
-                  <FarmDetailChart
-                    token={token}
-                    vaultPool={vaultPool}
-                    lastTVL={Number(vaultValue)}
-                    lastAPY={Number(totalApy)}
-                  />
-                </HalfInfo>
+                !isMobile && (
+                  <HalfInfo padding="25px 18px">
+                    <FarmDetailChart
+                      token={token}
+                      vaultPool={vaultPool}
+                      lastTVL={Number(vaultValue)}
+                      lastAPY={Number(totalApy)}
+                    />
+                  </HalfInfo>
+                )
               ) : activeMainTag === 1 ? (
                 <MyBalance marginBottom="23px">
                   <NewLabel
@@ -872,27 +876,30 @@ const AdvancedFarm = () => {
             </MainSection>
             <RestContent>
               {activeMainTag === 0 ? (
-                <>
-                  <MyBalance marginBottom="23px">
+                <FirstPartSection>
+                  <MyBalance
+                    marginBottom={isMobile ? '0' : '23px'}
+                    marginTop={isMobile ? '24px' : '0'}
+                  >
                     <NewLabel
                       size={isMobile ? '12px' : '16px'}
                       weight="600"
                       height={isMobile ? '18px' : '24px'}
                       color="#000"
-                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      padding={isMobile ? '7px 11px' : '10px 15px'}
                       borderBottom="1px solid #EBEBEB"
                     >
                       My Balance
                     </NewLabel>
                     <FlexDiv
                       justifyContent="space-between"
-                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      padding={isMobile ? '7px 11px' : '10px 15px'}
                     >
                       <NewLabel
                         display="flex"
-                        size={isMobile ? '12px' : '14px'}
+                        size={isMobile ? '10px' : '14px'}
                         weight="500"
-                        height={isMobile ? '21px' : '24px'}
+                        height={isMobile ? '18px' : '24px'}
                         color="#344054"
                       >
                         {`f${id}`}
@@ -922,8 +929,8 @@ const AdvancedFarm = () => {
                         </ReactTooltip>
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        height={isMobile ? '21px' : '24px'}
+                        size={isMobile ? '10px' : '14px'}
+                        height={isMobile ? '18px' : '24px'}
                         weight="700"
                         color="#00D26B"
                       >
@@ -943,11 +950,11 @@ const AdvancedFarm = () => {
                     </FlexDiv>
                     <FlexDiv
                       justifyContent="space-between"
-                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      padding={isMobile ? '7px 11px' : '10px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        height={isMobile ? '21px' : '24px'}
+                        size={isMobile ? '10px' : '14px'}
+                        height={isMobile ? '18px' : '24px'}
                         weight="500"
                         color="#344054"
                         self="center"
@@ -956,8 +963,8 @@ const AdvancedFarm = () => {
                       </NewLabel>
                       <NewLabel
                         weight="500"
-                        size={isMobile ? '12px' : '14px'}
-                        height={isMobile ? '21px' : '24px'}
+                        size={isMobile ? '10px' : '14px'}
+                        height={isMobile ? '18px' : '24px'}
                         color="black"
                         self="center"
                       >
@@ -980,8 +987,20 @@ const AdvancedFarm = () => {
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
-                  <Divider height="unset" marginTop={isMobile ? '23px' : '20px'} />
-                  <HalfContent partHeight={activeDepo ? partHeightDepo : partHeightWith}>
+                  {isMobile && (
+                    <HalfInfo padding="12px 0px">
+                      <FarmDetailChart
+                        token={token}
+                        vaultPool={vaultPool}
+                        lastTVL={Number(vaultValue)}
+                        lastAPY={Number(totalApy)}
+                      />
+                    </HalfInfo>
+                  )}
+                  <HalfContent
+                    marginBottom={isMobile ? '24px' : '0px'}
+                    partHeight={activeDepo ? partHeightDepo : partHeightWith}
+                  >
                     <DepositSection isShow={activeDepo}>
                       <DepositBase
                         selectToken={selectTokenDepo}
@@ -1094,7 +1113,7 @@ const AdvancedFarm = () => {
                       />
                     </WithdrawSection>
                   </HalfContent>
-                </>
+                </FirstPartSection>
               ) : activeMainTag === 1 ? (
                 <>
                   <MyBalance marginBottom="23px">

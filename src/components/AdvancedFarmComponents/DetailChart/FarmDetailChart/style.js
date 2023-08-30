@@ -17,6 +17,10 @@ const Container = styled.div`
 
 const Header = styled.div`
   font-size: 14px;
+
+  @media screen and (max-width: 992px) {
+    padding: 0 12px;
+  }
 `
 
 const Total = styled.div`
@@ -52,12 +56,9 @@ const ButtonGroup = styled.div`
   // margin: 0.8em 1em 0.25em auto;
   color: #fff;
 
-  button {
-    padding: 0.1em 0.6em;
-  }
-
   @media screen and (max-width: 992px) {
     margin-top: 15px;
+    margin-bottom: 10px;
     width: 100%;
     justify-content: space-around;
   }

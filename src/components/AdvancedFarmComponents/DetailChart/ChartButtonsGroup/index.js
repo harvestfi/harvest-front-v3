@@ -1,11 +1,13 @@
 import React from 'react'
 import ReactTooltip from 'react-tooltip'
+import { useMediaQuery } from 'react-responsive'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { useWallet } from '../../../../providers/Wallet'
 import { ButtonsGroup, ButtonStyle, TooltipContent } from './style'
 
 const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {
   const { connected } = useWallet()
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const handleClick = (event, id) => {
     if (connected || id !== 2) {
       setClickedId(id)
@@ -42,7 +44,12 @@ const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {
           mode={darkMode.toString()}
           borderColor={borderColor}
         >
-          <img src={button.img} width="20" height="20" alt="" />
+          <img
+            src={button.img}
+            width={isMobile ? '15' : '20'}
+            height={isMobile ? '15' : '20'}
+            alt=""
+          />
         </ButtonStyle>
       ))}
       {!connected && (

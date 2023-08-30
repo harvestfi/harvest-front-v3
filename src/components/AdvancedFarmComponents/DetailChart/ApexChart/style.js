@@ -10,6 +10,11 @@ const LoadingDiv = styled.div`
 
 const NoData = styled.div`
   color: ${props => props.fontColor};
+
+  @media screen and (max-width: 992px) {
+    font-size: 12px;
+    line-height: 18px;
+  }
 `
 
 export { LoadingDiv, NoData }

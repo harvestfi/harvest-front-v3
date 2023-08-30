@@ -416,7 +416,7 @@ const ApexChart = ({
               top: 20,
               right: 0,
               bottom: 0,
-              left: isMobile ? -20 : 0,
+              left: isMobile ? 0 : 0,
             }}
           >
             <defs>

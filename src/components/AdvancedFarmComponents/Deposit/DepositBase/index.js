@@ -146,7 +146,7 @@ const DepositBase = ({
     <BaseWido show={!deposit && !selectToken && !finalStep}>
       <NewLabel
         size={isMobile ? '12px' : '16px'}
-        height={isMobile ? '24px' : '24px'}
+        height={isMobile ? '21px' : '24px'}
         weight="600"
         color="#101828"
         display="flex"
@@ -240,7 +240,7 @@ const DepositBase = ({
           />
         </div>
       </InsufficientSection>
-      <NewLabel marginTop={isMobile ? '19px' : '25px'}>
+      <NewLabel marginTop={isMobile ? '19px' : '25px'} padding={isMobile ? '0 7px' : '0'}>
         <Button
           color="wido-deposit"
           width="100%"

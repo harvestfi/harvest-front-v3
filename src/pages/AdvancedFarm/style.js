@@ -26,7 +26,7 @@ const Inner = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 20px 29px 0px 31px;
+    padding: 24px 29px 50px 31px;
     height: 100%;
   }
 `
@@ -273,6 +273,20 @@ const HalfContent = styled.div`
   background: #fff;
   border-radius: 12px;
   box-shadow: 0px 8px 8px -4px rgba(16, 24, 40, 0.03), 0px 20px 24px -4px rgba(16, 24, 40, 0.08);
+  ${props =>
+    props.marginTop
+      ? `
+    margin-top: ${props.marginTop};
+  `
+      : ''}
+
+  ${props =>
+    props.marginBottom
+      ? `
+    margin-bottom: ${props.marginBottom};
+  `
+      : ''}
+
   height: ${props =>
     props.partHeight
       ? `
@@ -328,8 +342,6 @@ const RestContent = styled.div`
 
   @media screen and (max-width: 992px) {
     width: 100%;
-    display: flex;
-    flex-direction: column-reverse;
   }
 `
 
@@ -390,6 +402,13 @@ const MyBalance = styled.div`
   border-radius: 12px;
   background: #fff;
   box-shadow: 0px 8px 8px -4px rgba(16, 24, 40, 0.03), 0px 20px 24px -4px rgba(16, 24, 40, 0.08);
+
+  ${props =>
+    props.marginTop
+      ? `
+      margin-top: ${props.marginTop};
+    `
+      : ``}
 
   ${props =>
     props.marginBottom
@@ -486,7 +505,6 @@ const MainSection = styled.div`
   @media screen and (max-width: 992px) {
     width: 100%;
     margin-right: 0px;
-    margin-bottom: 23px;
   }
 `
 
@@ -688,6 +706,25 @@ const UnstakeSection = styled.div`
   `}
 `
 
+const MainTagPanel = styled.div`
+  display: flex;
+  margin-bottom: 39px;
+
+  @media screen and (max-width: 992px) {
+    margin-bottom: 24px;
+    justify-content: space-between;
+  }
+`
+
+const FirstPartSection = styled.div`
+  width: 100%;
+
+  @media screen and (max-width: 992px) {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+`
+
 export {
   DetailView,
   TopPart,
@@ -722,4 +759,6 @@ export {
   RestInternal,
   StakeSection,
   UnstakeSection,
+  MainTagPanel,
+  FirstPartSection,
 }
