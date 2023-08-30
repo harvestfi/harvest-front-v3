@@ -1121,20 +1121,20 @@ const AdvancedFarm = () => {
                       weight="600"
                       height={isMobile ? '18px' : '24px'}
                       color="#000"
-                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      padding={isMobile ? '7px 11px' : '10px 15px'}
                       borderBottom="1px solid #EBEBEB"
                     >
                       My Staked Balance
                     </NewLabel>
                     <FlexDiv
                       justifyContent="space-between"
-                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      padding={isMobile ? '7px 11px' : '10px 15px'}
                     >
                       <NewLabel
                         display="flex"
-                        size={isMobile ? '12px' : '14px'}
+                        size={isMobile ? '10px' : '14px'}
                         weight="500"
-                        height={isMobile ? '21px' : '24px'}
+                        height={isMobile ? '18px' : '24px'}
                         color="#344054"
                       >
                         {`f${id}`}
@@ -1149,10 +1149,10 @@ const AdvancedFarm = () => {
                         />
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        height={isMobile ? '21px' : '24px'}
-                        weight="700"
-                        color="#00D26B"
+                        size={isMobile ? '10px' : '14px'}
+                        height={isMobile ? '18px' : '24px'}
+                        weight={isMobile ? '500' : '700'}
+                        color={isMobile ? '#15202b' : '#00D26B'}
                       >
                         {!connected ? (
                           0
@@ -1170,11 +1170,11 @@ const AdvancedFarm = () => {
                     </FlexDiv>
                     <FlexDiv
                       justifyContent="space-between"
-                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      padding={isMobile ? '7px 11px' : '10px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        height={isMobile ? '21px' : '24px'}
+                        size={isMobile ? '10px' : '14px'}
+                        height={isMobile ? '18px' : '24px'}
                         weight="500"
                         color="#344054"
                       >
@@ -1182,9 +1182,9 @@ const AdvancedFarm = () => {
                       </NewLabel>
                       <NewLabel
                         weight="500"
-                        size={isMobile ? '12px' : '14px'}
-                        height={isMobile ? '21px' : '24px'}
-                        color="black"
+                        size={isMobile ? '10px' : '14px'}
+                        height={isMobile ? '18px' : '24px'}
+                        color={isMobile ? '#15202b' : 'black'}
                       >
                         $
                         {!connected ? (
@@ -1212,7 +1212,7 @@ const AdvancedFarm = () => {
                         weight="600"
                         height={isMobile ? '18px' : '24px'}
                         color="#000"
-                        padding={isMobile ? '9px 13px' : '10px 15px'}
+                        padding={isMobile ? '7px 11px' : '10px 15px'}
                         borderBottom="1px solid #EBEBEB"
                       >
                         My Extra Rewards

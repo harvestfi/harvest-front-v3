@@ -77,7 +77,7 @@ const PoolFooterActions = ({
             <div key={symbolIdx}>
               <SelectedVault key={`${symbol}-rewards-earned`}>
                 <Div>
-                  <img src={`/icons/${symbol.toLowerCase()}.svg`} width={24} height={24} alt="" />
+                  <img src={`/icons/${symbol.toLowerCase()}.svg`} alt="" />
                   {symbol}
                 </Div>
                 <Monospace>
@@ -117,13 +117,8 @@ const PoolFooterActions = ({
                 </Monospace>
               </SelectedVault>
               <BottomPart>
-                <SelectedVaultLabel
-                  fontWeight="400"
-                  fontSize="14px"
-                  lineHeight="20px"
-                  color="#475467"
-                >
-                  Claim all rewards directly into your wallet.
+                <SelectedVaultLabel fontWeight="400" lineHeight="20px" color="#475467">
+                  You can only claim your rewards all at once.
                 </SelectedVaultLabel>
                 <Button
                   // width="100%"

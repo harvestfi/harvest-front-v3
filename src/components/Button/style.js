@@ -163,13 +163,21 @@ ${props =>
       &:hover {
         background: #27AE60;
         color: white;
-      }`
+      }
+      `
           : ''
       }
 
       &:active {
         background: #27AE60;
         color: white;
+      }
+      @media screen and (max-width: 992px) {
+        font-size: 12px;
+        line-height: 18px;
+        padding: 7px 13px;
+        border-radius: 6px;
+        margin: 0 7px 7px;
       }
       `
       : ''}

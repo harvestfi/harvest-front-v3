@@ -49,10 +49,6 @@ const SelectedVaultContainer = styled.div`
   margin: ${props => props.margin || '15px 0px'};
   gap: 20px;
 
-  button {
-    font-weight: 800;
-  }
-
   @media screen and (max-width: 670px) {
     justify-content: start;
     flex-direction: column;
@@ -82,19 +78,27 @@ const SelectedVault = styled.div`
       align-items: center;
     }
   }
+
+  @media screen and (max-width: 992px) {
+    padding: 7px 11px;
+  }
 `
 const SelectedVaultLabel = styled.span`
   display: flex;
   align-items: center;
-  justify-content: ${props => props.justifyContent || 'center'};
   white-space: pre;
   flex-wrap: wrap;
   font-weight: ${props => props.fontWeight || '700'};
-  font-size: ${props => props.fontSize || '16px'} !important;
+  font-size: 14px;
   line-height: ${props => props.lineHeight || '24px'};
   color: ${props => props.color};
   text-decoration: ${props => (props.link ? 'underline' : 'unset')};
   cursor ${props => (props.link ? 'pointer' : 'unset')};
+
+  @media screen and (max-width: 992px) {
+    font-size: 10px;
+    margin-bottom: 8px;
+  }
 `
 
 const SelectedVaultNumber = styled.span`
@@ -155,6 +159,18 @@ const Div = styled.div`
   color: #344054;
   img {
     margin-right: 5px;
+    width: 24px;
+    height: 24px;
+  }
+
+  @media screen and (max-width: 992px) {
+    font-size: 10px;
+    line-height: 18px;
+    img {
+      margin-right: 4px;
+      width: 18px;
+      height: 18px;
+    }
   }
 `
 
@@ -177,24 +193,26 @@ const Monospace = styled.div`
   font-weight: 500;
   line-height: 24px;
   color: #000;
+
+  @media screen and (max-width: 992px) {
+    font-size: 10px;
+    line-height: 18px;
+  }
 `
 
 const BottomPart = styled.div`
   padding: 25px 24px 24px;
   display: flex;
   justify-content: space-between;
-  gap: 10px;
 
   @media screen and (max-width: 1320px) {
     flex-direction: column;
   }
 
   @media screen and (max-width: 992px) {
-    flex-direction: row;
-  }
-
-  @media screen and (max-width: 570px) {
+    padding: 7px 11px;
     flex-direction: column;
+    justify-content: start;
   }
 `
 

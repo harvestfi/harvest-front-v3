@@ -82,8 +82,6 @@ const VaultFooterActions = ({
                   src={`/icons/${
                     symbol.toLowerCase() === 'mifarm' ? 'ifarm' : symbol.toLowerCase()
                   }.svg`}
-                  width={24}
-                  height={24}
                   alt=""
                 />
                 {symbol.toLowerCase() === 'mifarm' ? 'iFARM' : symbol}
@@ -146,8 +144,8 @@ const VaultFooterActions = ({
         }
       />
       <BottomPart>
-        <SelectedVaultLabel fontWeight="400" fontSize="14px" lineHeight="20px" color="#475467">
-          Claim all rewards directly into your wallet.
+        <SelectedVaultLabel fontWeight="400" lineHeight="20px" color="#475467">
+          You can only claim your rewards all at once.
         </SelectedVaultLabel>
         <Button
           color="advanced-reward"
