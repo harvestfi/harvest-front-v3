@@ -377,8 +377,6 @@ ${props =>
     }
 
     @media screen and (max-width: 992px) {
-      font-size: 14px;
-
       ${props =>
         props.color === 'wido-deposit'
           ? `
