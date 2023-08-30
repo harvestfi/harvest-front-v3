@@ -94,6 +94,7 @@ import {
   MainTagPanel,
   FirstPartSection,
   SecondPartSection,
+  APRValueShow,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 
@@ -865,7 +866,7 @@ const AdvancedFarm = () => {
                     >
                       APY Breakdown
                     </NewLabel>
-                    <NewLabel padding={isMobile ? '9px 13px' : '10px 15px'}>
+                    <NewLabel padding={isMobile ? '9px 13px' : '0px 15px 10px'}>
                       <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
                     </NewLabel>
                   </MyBalance>
@@ -1277,66 +1278,90 @@ const AdvancedFarm = () => {
                 </SecondPartSection>
               ) : (
                 <RestInternal>
-                  <MyBalance marginBottom="20px">
+                  {isMobile && (
+                    <MyBalance marginBottom={isMobile ? '24px' : '0'}>
+                      <NewLabel
+                        size={isMobile ? '12px' : '14px'}
+                        weight={isMobile ? '600' : '700'}
+                        height={isMobile ? '18px' : '24px'}
+                        color="#344054"
+                        padding="10px 15px"
+                        borderBottom="1px solid #EBEBEB"
+                        display="flex"
+                        justifyContent="space-between"
+                      >
+                        APY Breakdown
+                        <APRValueShow>
+                          <img src={DOT} alt="" />
+                          {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
+                          &nbsp;APR
+                        </APRValueShow>
+                      </NewLabel>
+                      <NewLabel padding={isMobile ? '0' : '10px 15px'}>
+                        <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
+                      </NewLabel>
+                    </MyBalance>
+                  )}
+                  <MyBalance marginBottom={isMobile ? '24px' : '20px'}>
                     <NewLabel
                       size={isMobile ? '12px' : '14px'}
-                      weight="700"
+                      weight={isMobile ? '600' : '700'}
                       height={isMobile ? '18px' : '24px'}
-                      color="#344054"
-                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      color={isMobile ? 'black' : '#344054'}
+                      padding={isMobile ? '7px 11px' : '10px 15px'}
                       borderBottom="1px solid #EBEBEB"
                     >
                       Overview
                     </NewLabel>
                     <FlexDiv
                       justifyContent="space-between"
-                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      padding={isMobile ? '7px 11px' : '10px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '12px' : '14px'}
+                        size={isMobile ? '10px' : '14px'}
                         weight="500"
-                        height={isMobile ? '21px' : '24px'}
+                        height={isMobile ? '18px' : '24px'}
                         color="#344054"
                       >
                         APY
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        height={isMobile ? '21px' : '24px'}
+                        size={isMobile ? '10px' : '14px'}
+                        height={isMobile ? '18px' : '24px'}
                         weight="500"
-                        color="#000"
+                        color={isMobile ? '#15202B' : '#000'}
                       >
                         {showAPY()}
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
                       justifyContent="space-between"
-                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      padding={isMobile ? '7px 11px' : '10px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        height={isMobile ? '21px' : '24px'}
+                        size={isMobile ? '10px' : '14px'}
+                        height={isMobile ? '18px' : '24px'}
                         weight="500"
                         color="#344054"
                       >
-                        Daily APY
+                        Daily APR
                       </NewLabel>
                       <NewLabel
                         weight="500"
-                        size={isMobile ? '12px' : '14px'}
-                        height={isMobile ? '21px' : '24px'}
-                        color="black"
+                        size={isMobile ? '10px' : '14px'}
+                        height={isMobile ? '18px' : '24px'}
+                        color={isMobile ? '#15202B' : '#000'}
                       >
                         {showApyDaily()}
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
                       justifyContent="space-between"
-                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      padding={isMobile ? '7px 11px' : '10px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        height={isMobile ? '21px' : '24px'}
+                        size={isMobile ? '10px' : '14px'}
+                        height={isMobile ? '18px' : '24px'}
                         weight="500"
                         color="#344054"
                       >
@@ -1344,9 +1369,9 @@ const AdvancedFarm = () => {
                       </NewLabel>
                       <NewLabel
                         weight="500"
-                        size={isMobile ? '12px' : '14px'}
-                        height={isMobile ? '21px' : '24px'}
-                        color="black"
+                        size={isMobile ? '10px' : '14px'}
+                        height={isMobile ? '18px' : '24px'}
+                        color={isMobile ? '#15202B' : '#000'}
                       >
                         {showTVL()}
                       </NewLabel>
@@ -1355,41 +1380,66 @@ const AdvancedFarm = () => {
                   <LastHarvestInfo>
                     <NewLabel
                       size={isMobile ? '12px' : '14px'}
-                      weight="700"
+                      weight={isMobile ? '600' : '700'}
                       height={isMobile ? '18px' : '24px'}
-                      color="#344054"
-                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      color={isMobile ? '#000' : '#344054'}
+                      padding={isMobile ? '7px 11px' : '10px 15px'}
                       borderBottom="1px solid #EBEBEB"
                     >
                       Fees
                     </NewLabel>
                     <FlexDiv
                       justifyContent="space-between"
-                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      padding={isMobile ? '7px 11px' : '10px 15px'}
                     >
-                      <NewLabel size="14px" weight="500" height="24px" color="#344054">
+                      <NewLabel
+                        size={isMobile ? '10px' : '14px'}
+                        weight="500"
+                        height={isMobile ? '18px' : '24px'}
+                        color="#344054"
+                      >
                         Deposit Fee
                       </NewLabel>
-                      <NewLabel size="14px" weight="500" height="24px" color="#000">
+                      <NewLabel
+                        size={isMobile ? '10px' : '14px'}
+                        weight="500"
+                        height={isMobile ? '18px' : '24px'}
+                        color={isMobile ? '#15202B' : '#000'}
+                      >
                         0%
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
                       justifyContent="space-between"
-                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      padding={isMobile ? '7px 11px' : '10px 15px'}
                     >
-                      <NewLabel size="14px" weight="500" height="24px" color="#344054">
+                      <NewLabel
+                        size={isMobile ? '10px' : '14px'}
+                        weight="500"
+                        height={isMobile ? '18px' : '24px'}
+                        color="#344054"
+                      >
                         Withdrawal Fee
                       </NewLabel>
-                      <NewLabel size="14px" weight="500" height="24px" color="#000">
+                      <NewLabel
+                        size={isMobile ? '10px' : '14px'}
+                        weight="500"
+                        height={isMobile ? '18px' : '24px'}
+                        color={isMobile ? '#15202B' : '#000'}
+                      >
                         0%
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
                       justifyContent="space-between"
-                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      padding={isMobile ? '7px 11px' : '10px 15px'}
                     >
-                      <NewLabel size="13px" weight="300" height="normal" color="#15202b">
+                      <NewLabel
+                        size={isMobile ? '8px' : '13px'}
+                        weight="300"
+                        height="normal"
+                        color="#15202b"
+                      >
                         The APY shown already considers the performance fee taken only from
                         generated yield and not deposits.
                       </NewLabel>
@@ -1408,38 +1458,62 @@ const AdvancedFarm = () => {
                           backgroundColor="black"
                           borderColor="black"
                           textColor="white"
+                          place={isMobile ? 'left' : 'top'}
                         >
-                          <FlexDiv justifyContent="space-between">
-                            <NewLabel weight="500" size="13px" height="16px">
-                              Harvest Treasury
-                            </NewLabel>
-                            <NewLabel weight="500" size="13px" height="16px" marginLeft="20px">
-                              {harvestTreasury}%
-                            </NewLabel>
-                          </FlexDiv>
-                          <FlexDiv justifyContent="space-between" marginTop="12px">
-                            <NewLabel weight="500" size="13px" height="16px">
-                              Profit Sharing
-                            </NewLabel>
-                            <NewLabel weight="500" size="13px" height="16px" marginLeft="20px">
-                              {profitShare}%
-                            </NewLabel>
-                          </FlexDiv>
+                          <NewLabel
+                            weight="500"
+                            size={isMobile ? '10px' : '13px'}
+                            height={isMobile ? '12px' : '16px'}
+                          >
+                            <FlexDiv gap="15px" justifyContent="space-between">
+                              <div>Harvest Treasury</div>
+                              <div>{harvestTreasury}%</div>
+                            </FlexDiv>
+                            <FlexDiv gap="15px" justifyContent="space-between" marginTop="12px">
+                              <div>Profit Sharing</div>
+                              <div>{profitShare}%</div>
+                            </FlexDiv>
+                          </NewLabel>
                         </ReactTooltip>
                       </NewLabel>
                     </FlexDiv>
                   </LastHarvestInfo>
+                  {isMobile && (
+                    <HalfInfo marginBottom="24px">
+                      <NewLabel
+                        weight={700}
+                        size="12px"
+                        height="18px"
+                        padding="7px 11px"
+                        color="#000"
+                      >
+                        Source of Yield
+                      </NewLabel>
+                      <DescInfo>{ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)}</DescInfo>
+                    </HalfInfo>
+                  )}
                   <MyBalance>
                     <FlexDiv
                       justifyContent="space-between"
-                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      padding={isMobile ? '7px 11px' : '10px 15px'}
                     >
-                      <NewLabel size="14px" weight="700" height="24px" color="#344054">
+                      <NewLabel
+                        size={isMobile ? '12px' : '14px'}
+                        height={isMobile ? '18px' : '24px'}
+                        weight="600"
+                        color="#000"
+                      >
                         Last Harvest
                       </NewLabel>
-                      <NewLabel size="14px" weight="500" height="24px" color="#000">
-                        {lastHarvest !== '' ? `${lastHarvest} ago` : '-'}
-                      </NewLabel>
+                      {isMobile ? (
+                        <NewLabel size="10px" height="18px" weight="500" color="#15202B">
+                          {lastHarvest !== '' ? `${lastHarvest} ago` : '-'}
+                        </NewLabel>
+                      ) : (
+                        <NewLabel size="14px" height="24px" weight="500" color="#000">
+                          {lastHarvest !== '' ? `${lastHarvest} ago` : '-'}
+                        </NewLabel>
+                      )}
                     </FlexDiv>
                   </MyBalance>
                 </RestInternal>

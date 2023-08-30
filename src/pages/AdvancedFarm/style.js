@@ -198,6 +198,13 @@ const FlexDiv = styled.div`
   display: flex;
 
   ${props =>
+    props.gap
+      ? `
+      gap: ${props.gap};
+    `
+      : ''}
+
+  ${props =>
     props.padding
       ? `
       padding: ${props.padding};
@@ -670,7 +677,9 @@ const DescInfo = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    font-size: 13px;
+    font-size: 10px;
+    line-height: 20px;
+    padding: 7px 11px;
   }
 `
 
@@ -741,6 +750,25 @@ const SecondPartSection = styled.div`
   }
 `
 
+const APRValueShow = styled.div`
+  padding: 1.466px 7.331px 1.466px 5.865px;
+  border-radius: 11.729px;
+  background: #f2f4f7;
+  color: #344054;
+  text-align: center;
+  font-size: 10.73px;
+  font-weight: 500;
+  line-height: 14.662px;
+  display: flex;
+  align-items: center;
+
+  img {
+    margin-right: 4px;
+    width: 6px;
+    height: 6px;
+  }
+`
+
 export {
   DetailView,
   TopPart,
@@ -778,4 +806,5 @@ export {
   MainTagPanel,
   FirstPartSection,
   SecondPartSection,
+  APRValueShow,
 }

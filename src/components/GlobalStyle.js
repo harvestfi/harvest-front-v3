@@ -333,6 +333,11 @@ html {
     border-radius: 12px; 
     padding-top: 15px;
     margin-bottom: 7px;
+
+    @media screen and (max-width: 992px) {
+      padding: 7px 11px;
+      margin-bottom: 0;
+    }
   }
 
   .detail-box-main {
@@ -348,6 +353,11 @@ html {
       &:last-child {
         margin: 0;
       }
+
+      @media screen and (max-width: 992px) {
+        width: 18px;
+        height: 18px;
+      }
     }
   }
 
@@ -356,6 +366,12 @@ html {
     line-height: 24px;
     font-weight: 500;
     color: #000;
+
+    @media screen and (max-width: 992px) {
+      font-size: 10px;
+      line-height: 18px;
+      color: #15202B;
+    }
   }
 
   .detail-desc {
@@ -365,7 +381,8 @@ html {
     color: #344054;
 
     @media screen and (max-width: 992px) {
-      font-size: 13px;
+      font-size: 10px;
+      line-height: 18px;
     }
   }
 
@@ -376,7 +393,8 @@ html {
     color: #344054;
 
     @media screen and (max-width: 992px) {
-      font-size: 13px;
+      font-size: 10px;
+      line-height: 18px;
     }
   }
 
@@ -387,7 +405,8 @@ html {
     color: #344054;
 
     @media screen and (max-width: 992px) {
-      font-size: 13px;
+      font-size: 10px;
+      line-height: 18px;
     }
   }
 
@@ -395,7 +414,8 @@ html {
     text-decoration: underline;
 
     @media screen and (max-width: 992px) {
-      font-size: 13px;
+      font-size: 10px;
+      line-height: 18px;
     }
   }
 
@@ -403,7 +423,8 @@ html {
     // text-decoration: underline;
 
     @media screen and (max-width: 992px) {
-      font-size: 13px;
+      font-size: 10px;
+      line-height: 18px;
     }
   }
 
