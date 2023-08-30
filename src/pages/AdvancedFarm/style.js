@@ -51,7 +51,7 @@ const TopPart = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 41px 30px 90px 30px;
+    padding: 41px 30px 50px 30px;
   }
 `
 
@@ -262,10 +262,6 @@ const FlexTopDiv = styled.div`
     img.mobile-logo {
       display: block;
     }
-
-    .back-btn {
-      display: none;
-    }
   }
 `
 
@@ -310,10 +306,12 @@ const BackBtnRect = styled.a`
   display: flex;
 
   @media screen and (max-width: 992px) {
-    border-radius: 8px;
-    width: 24px;
-    height: 24px;
+    width: 35px;
+    height: 35px;
     margin-right: 15px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.35);
   }
 `
 
@@ -364,16 +362,8 @@ const LogoImg = styled.img`
   margin-right: -5px;
   width: 64px;
 
-  @media screen and (max-width: 1368px) {
-    width: 200px;
-  }
-
-  @media screen and (max-width: 1136px) {
-    width: 150px;
-  }
-
-  @media screen and (max-width: 1024px) {
-    width: 100px;
+  @media screen and (max-width: 992px) {
+    width: 32px;
   }
 
   ${props =>
@@ -415,6 +405,7 @@ const GuideSection = styled.div`
 
   @media screen and (max-width: 992px) {
     margin-top: 19px;
+    margin-bottom: 5px;
   }
 `
 

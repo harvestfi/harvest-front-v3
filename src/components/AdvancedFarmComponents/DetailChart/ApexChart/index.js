@@ -167,13 +167,9 @@ const ApexChart = ({
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       setCurDate(formatDateTime(payload[0].payload.x))
-      const content = `<div style="font-size: 13px; display: flex;"><div style="color: #1b1b1b; font-weight: 700;">${
-        filter === 1 ? 'TVL ' : filter === 0 ? 'APY ' : 'Balance '
-      }</div><div style="color: #5B5181; font-weight: 500;">&nbsp;${
-        filter === 1 ? '$' : ''
-      }${numberWithCommas(Number(payload[0].payload.y.toFixed(filter === 1 ? 0 : fixedLen)))}${
-        filter === 0 ? '%' : ''
-      }</div></div>`
+      const content = numberWithCommas(
+        Number(payload[0].payload.y.toFixed(filter === 1 ? 0 : fixedLen)),
+      )
       setCurContent(content)
     }
 
@@ -380,13 +376,9 @@ const ApexChart = ({
       setFixedLen(filter === 1 ? 0 : len)
 
       setCurDate(formatDateTime(mainData[slotCount - 1].x))
-      const content = `<div style="font-size: 13px; display: flex;"><div style="color: #1b1b1b; font-weight: 700;">${
-        filter === 1 ? 'TVL ' : filter === 0 ? 'APY ' : 'Balance '
-      }</div><div style="color: #5B5181; font-weight: 500;">&nbsp;${
-        filter === 1 ? '$' : ''
-      }${numberWithCommas(Number(mainData[slotCount - 1].y.toFixed(filter === 1 ? 0 : fixedLen)))}${
-        filter === 0 ? '%' : ''
-      }</div></div>`
+      const content = numberWithCommas(
+        Number(mainData[slotCount - 1].y.toFixed(filter === 1 ? 0 : fixedLen)),
+      )
       setCurContent(content)
 
       const yAxisAry = getYAxisValues(minValue, maxValue, roundNum)
@@ -416,7 +408,7 @@ const ApexChart = ({
       {!loading ? (
         <ResponsiveContainer
           width="100%"
-          height={onlyWidth > 1250 ? 350 : onlyWidth > 1050 ? 330 : 300}
+          height={onlyWidth > 1250 ? 350 : onlyWidth > 1050 ? 330 : 330}
         >
           <ComposedChart
             data={mainSeries}

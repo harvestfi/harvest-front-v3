@@ -669,6 +669,13 @@ const AdvancedFarm = () => {
               <BackArrow src={Back} alt="" />
             </BackBtnRect>
           </div>
+          {isMobile && (
+            <FlexDiv>
+              {logoUrl.map((el, i) => (
+                <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
+              ))}
+            </FlexDiv>
+          )}
           <GuideSection>
             <GuidePart fontWeight="600">
               <img src={DOT} alt="" />
@@ -684,17 +691,19 @@ const AdvancedFarm = () => {
               Withdraw Anytime
             </GuidePart>
           </GuideSection>
-          <FlexDiv>
-            {logoUrl.map((el, i) => (
-              <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
-            ))}
-            <ChainBack>
-              <img src={BadgeAry[badgeId]} width={10} height={15} alt="" />
-            </ChainBack>
-          </FlexDiv>
+          {!isMobile && (
+            <FlexDiv>
+              {logoUrl.map((el, i) => (
+                <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
+              ))}
+              <ChainBack>
+                <img src={BadgeAry[badgeId]} width={10} height={15} alt="" />
+              </ChainBack>
+            </FlexDiv>
+          )}
           <TopDesc
             weight={600}
-            size={isMobile ? '37px' : '35px'}
+            size={isMobile ? '22px' : '35px'}
             height={isMobile ? '45px' : '82px'}
             marginBottom={isMobile ? '5px' : '10px'}
           >
@@ -880,6 +889,7 @@ const AdvancedFarm = () => {
                       padding={isMobile ? '9px 13px' : '10px 15px'}
                     >
                       <NewLabel
+                        display="flex"
                         size={isMobile ? '12px' : '14px'}
                         weight="500"
                         height={isMobile ? '21px' : '24px'}
@@ -1103,6 +1113,7 @@ const AdvancedFarm = () => {
                       padding={isMobile ? '9px 13px' : '10px 15px'}
                     >
                       <NewLabel
+                        display="flex"
                         size={isMobile ? '12px' : '14px'}
                         weight="500"
                         height={isMobile ? '21px' : '24px'}

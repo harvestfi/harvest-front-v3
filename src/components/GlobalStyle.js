@@ -553,6 +553,12 @@ html {
     font-size: 11px;
     font-weight: 500;
     line-height: 16px;
+
+    @media screen and (max-width: 992px) {
+      font-size: 6px;
+      font-weight: 400;
+      line-height: 8px;
+    }
   }
 
   .recharts-cartesian-axis-line {

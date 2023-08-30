@@ -19,6 +19,7 @@ import {
   CurDate,
   TooltipInfo,
   FlexDiv,
+  LabelInfo,
 } from './style'
 
 const filterList = [
@@ -49,6 +50,13 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const isIFARM = token.tokenAddress === addresses.FARM
+
+  const [tooltipLabel, setTooltipLabel] = useState('')
+
+  useEffect(() => {
+    const label = clickedId === 0 ? 'APY' : clickedId === 1 ? 'TVL' : 'Balance'
+    setTooltipLabel(label)
+  }, [clickedId])
 
   useEffect(() => {
     const initData = async () => {
@@ -83,7 +91,11 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
             </FilterGroup>
             <TooltipInfo>
               <CurDate>{curDate}</CurDate>
-              <div dangerouslySetInnerHTML={{ __html: curContent }} />
+              <LabelInfo>
+                {tooltipLabel}&nbsp;{clickedId === 1 ? '$' : ''}
+                {curContent}
+                {clickedId === 0 ? '%' : ''}
+              </LabelInfo>
             </TooltipInfo>
           </FlexDiv>
           {!isMobile && (

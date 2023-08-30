@@ -103,6 +103,10 @@ const CurDate = styled.div`
   font-size: 13px;
   line-height: normal;
   font-weight: 500;
+
+  @media screen and (max-width: 992px) {
+    font-size: 10px;
+  }
 `
 
 const TooltipInfo = styled.div`
@@ -115,6 +119,18 @@ const FlexDiv = styled.div`
 
   @media screen and (max-width: 992px) {
     width: 100%;
+  }
+`
+
+const LabelInfo = styled.div`
+  display: flex;
+  color: #1b1b1b;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: normal;
+
+  @media screen and (max-width: 992px) {
+    font-size: 10px;
   }
 `
 
@@ -131,4 +147,5 @@ export {
   CurDate,
   TooltipInfo,
   FlexDiv,
+  LabelInfo,
 }

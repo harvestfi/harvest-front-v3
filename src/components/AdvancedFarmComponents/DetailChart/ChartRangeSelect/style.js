@@ -44,6 +44,11 @@ const Container = styled.button`
       : `
       background: white;
       `}
+
+  @media screen and (max-width: 992px) {
+    font-size: 8px;
+    line-height: 8px;
+  }
 `
 
 const Text = styled.div`

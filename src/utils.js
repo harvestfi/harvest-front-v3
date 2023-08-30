@@ -1698,7 +1698,7 @@ export const getPriceFeed = async (address, chainId) => {
         flag = false
       })
   } catch (err) {
-    console.log('Fetch data about last harvest: ', err)
+    console.log('Fetch data about price feed: ', err)
     flag = false
   }
   return { data, flag }
