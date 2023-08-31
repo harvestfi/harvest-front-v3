@@ -80,7 +80,16 @@ const MobilePanelHeader = ({
           ? token.data.collateralAddress
           : token.vaultAddress || token.tokenAddress
         setPrevPage(window.location.href)
-        push(`${directDetailUrl + network}/${address}`)
+        // Show 'advancedfarm' page for only 2 tokens because of the test. Show 'farm detail' page for other tokens.
+        if (
+          tokenSymbol === 'balancer_wstETH_wETH_arbitrum' ||
+          tokenSymbol === 'camelot_GNOME_ETH'
+        ) {
+          const url = `${directDetailUrl}advanced/${network}/${address}`
+          push(url)
+        } else {
+          push(`${directDetailUrl + network}/${address}`)
+        }
       }}
     >
       <FlexDiv width="15%">
