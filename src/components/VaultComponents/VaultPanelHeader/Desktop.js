@@ -77,7 +77,7 @@ const DesktopPanelHeader = ({
             tokenSymbol === 'balancer_wstETH_wETH_arbitrum' ||
             tokenSymbol === 'camelot_GNOME_ETH'
           ) {
-            const url = `${directDetailUrl}advance/${network}/${address}`
+            const url = `${directDetailUrl}advanced/${network}/${address}`
             push(url)
           } else {
             push(`${directDetailUrl + network}/${address}`)
