@@ -677,6 +677,9 @@ const AdvancedFarm = () => {
               {logoUrl.map((el, i) => (
                 <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
               ))}
+              <ChainBack>
+                <img src={BadgeAry[badgeId]} width={6} height={10} alt="" />
+              </ChainBack>
             </FlexDiv>
           )}
           <GuideSection>

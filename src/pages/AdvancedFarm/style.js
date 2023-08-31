@@ -534,6 +534,12 @@ const ChainBack = styled.div`
   padding: 4px;
 
   margin-left: 15px;
+
+  @media screen and (max-width: 992px) {
+    width: 12px;
+    height: 12px;
+    margin-left: 10px;
+  }
 `
 
 const MainTag = styled.div`
