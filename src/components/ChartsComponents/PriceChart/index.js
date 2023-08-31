@@ -93,7 +93,7 @@ function generateChartDataWithSlots(slots, apiData) {
         : prev,
     )
 
-    seriesData.push({ x: slots[i] * 1000, y: data.value })
+    seriesData.push({ x: slots[i] * 1000, y: data.sharePrice })
   }
 
   return seriesData
@@ -249,7 +249,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
       } else {
         const rate = Number((unitBtw / maxValue).toFixed(2)) + 1
         maxValue *= rate
-        maxValue = ceil10(maxValue, len)
+        maxValue = ceil10(maxValue, -len)
       }
 
       if (unitBtw === 0) {
