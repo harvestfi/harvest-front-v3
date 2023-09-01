@@ -300,11 +300,11 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
               top: 20,
               right: 0,
               bottom: 0,
-              left: -14,
+              left: 0,
             }}
           >
             <defs>
-              <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+              <linearGradient id="colorUv1" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#00D26B" stopOpacity={0.1} />
                 <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1} />
               </linearGradient>
@@ -340,7 +340,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
               stroke="#00D26B"
               strokeWidth={2}
               fillOpacity={1}
-              fill="url(#colorUv)"
+              fill="url(#colorUv1)"
             />
             <Tooltip
               content={CustomTooltip}

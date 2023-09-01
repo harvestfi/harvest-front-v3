@@ -398,9 +398,9 @@ const ApexChart = ({
             data={mainSeries}
             margin={{
               top: 20,
-              right: 20,
-              bottom: 20,
-              left: 20,
+              right: 0,
+              bottom: 0,
+              left: 0,
             }}
           >
             <defs>
