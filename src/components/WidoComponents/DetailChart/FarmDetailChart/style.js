@@ -3,7 +3,7 @@ import styled from 'styled-components'
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  height: 400px;
+  min-height: 400px;
   overflow: hidden;
   padding: 0px;
   transition: 0.25s;
@@ -12,7 +12,6 @@ const Container = styled.div`
   @media screen and (max-width: 992px) {
     width: 100%;
     height: 400px;
-    margin-bottom: 15px;
   }
 `
 
