@@ -82,6 +82,8 @@ const WithdrawBase = ({
   const [withdrawName, setWithdrawName] = useState('Withdraw')
   const [showWarning, setShowWarning] = useState(false)
 
+  const [warningContent, setWarningContent] = useState('')
+
   useEffect(() => {
     if (account) {
       if (curChain !== tokenChain) {
@@ -107,6 +109,10 @@ const WithdrawBase = ({
   }
 
   const onClickWithdraw = async () => {
+    if (pickedToken.symbol === 'Select') {
+      toast.error('Please choose your Output Token.')
+      return
+    }
     const supToken = supTokenList.find(el => el.symbol === pickedToken.symbol)
     if (!supToken) {
       toast.error("Can't Withdraw with Unsupported token!")
@@ -114,11 +120,13 @@ const WithdrawBase = ({
     }
 
     if (new BigNumber(unstakeBalance).isEqualTo(0)) {
+      setWarningContent('The amount to stake must be greater than 0.')
       toast.error('Please input amount to withdraw!')
       return
     }
 
     if (!new BigNumber(unstakeBalance).isLessThanOrEqualTo(lpTokenBalance)) {
+      setWarningContent('The amount to stake must be less than withdraw balance.')
       setShowWarning(true)
       return
     }
@@ -222,7 +230,7 @@ const WithdrawBase = ({
             weight="600"
             color="#344054"
           >
-            The amount of {`f${tokenSymbol}`} you entered exceeds deposited balance.
+            {warningContent}
           </NewLabel>
         </NewLabel>
         <div>

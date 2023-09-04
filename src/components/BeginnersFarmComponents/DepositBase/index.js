@@ -108,7 +108,7 @@ const DepositBase = ({
       }
     } else {
       if (pickedToken.symbol === 'Select Token') {
-        toast.error('Please select token to deposit!')
+        toast.error('Please choose your Output Token.')
         return
       }
       const supToken = supTokenList.find(el => el.symbol === pickedToken.symbol)
