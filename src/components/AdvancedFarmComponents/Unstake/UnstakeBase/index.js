@@ -82,6 +82,7 @@ const UnstakeBase = ({
     : ''
   const [btnName, setBtnName] = useState('Unstake')
   const [showWarning, setShowWarning] = useState(false)
+  const [warningContent, setWarningContent] = useState('')
   const [unstakeFailed, setUnstakeFailed] = useState(false)
 
   const { handleExit } = useActions()
@@ -115,11 +116,13 @@ const UnstakeBase = ({
 
   const onClickUnStake = async () => {
     if (new BigNumber(totalStaked).isEqualTo(0)) {
+      setWarningContent('The amount to unstake must be greater than 0.')
       setShowWarning(true)
       return
     }
 
     if (amountsToExecute === '') {
+      setWarningContent('The amount to unstake must be greater than 0.')
       setShowWarning(true)
       return
     }
@@ -136,6 +139,7 @@ const UnstakeBase = ({
     })
 
     if (new BigNumber(amountsToExecuteInWei[0]) === 0) {
+      setWarningContent('The amount to unstake must be greater than 0.')
       setShowWarning(true)
       return
     }
@@ -145,6 +149,7 @@ const UnstakeBase = ({
     )
 
     if (!isAvailableUnstake) {
+      setWarningContent(`Insufficient f${tokenSymbol} balance`)
       setShowWarning(true)
       return
     }
@@ -259,7 +264,7 @@ const UnstakeBase = ({
         </span>
       </BalanceInfo>
       <InsufficientSection isShow={showWarning ? 'true' : 'false'}>
-        <NewLabel display="flex" widthDiv="80%" items="center">
+        <NewLabel display="flex" widthDiv="80%" items="start">
           <img className="info-icon" src={InfoIcon} alt="" />
           <NewLabel
             size={isMobile ? '10px' : '14px'}
@@ -267,7 +272,7 @@ const UnstakeBase = ({
             weight="600"
             color="#344054"
           >
-            Insufficient f{tokenSymbol} balance
+            {warningContent}
           </NewLabel>
         </NewLabel>
         <div>

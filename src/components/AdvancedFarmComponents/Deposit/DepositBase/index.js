@@ -76,7 +76,6 @@ const DepositBase = ({
     : ''
   const [depositName, setDepositName] = useState('Deposit')
   const [showWarning, setShowWarning] = useState(false)
-  const [warningContent, setWarningContent] = useState('')
 
   useEffect(() => {
     if (account) {
@@ -119,13 +118,11 @@ const DepositBase = ({
         return
       }
       if (new BigNumber(inputAmount).isGreaterThan(balance)) {
-        setWarningContent('The amount to stake must be less than token balance.')
         setShowWarning(true)
         return
       }
       if (new BigNumber(inputAmount).isEqualTo(0)) {
-        setWarningContent('The amount to stake must be greater than 0.')
-        setShowWarning(true)
+        toast.error('Cannot deposit 0!')
         return
       }
       setDeposit(true)
@@ -223,7 +220,7 @@ const DepositBase = ({
         <span>{formatNumberWido(balance, POOL_BALANCES_DECIMALS)}</span>
       </BalanceInfo>
       <InsufficientSection isShow={showWarning ? 'true' : 'false'}>
-        <NewLabel display="flex" widthDiv="80%" items="center">
+        <NewLabel display="flex" widthDiv="80%" items="start">
           <img className="info-icon" src={InfoIcon} alt="" />
           <NewLabel
             size={isMobile ? '10px' : '14px'}
@@ -231,7 +228,7 @@ const DepositBase = ({
             weight="600"
             color="#344054"
           >
-            {warningContent}
+            Insufficient {pickedToken.symbol} balance on your wallet
           </NewLabel>
         </NewLabel>
         <div>

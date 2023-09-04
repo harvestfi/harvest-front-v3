@@ -82,6 +82,7 @@ const StakeBase = ({
     : ''
   const [btnName, setBtnName] = useState('Stake & Earn Rewards')
   const [showWarning, setShowWarning] = useState(false)
+  const [warningContent, setWarningContent] = useState('')
   const [stakeFailed, setStakeFailed] = useState(false)
 
   const { handleStake } = useActions()
@@ -111,11 +112,13 @@ const StakeBase = ({
 
   const onClickStake = async () => {
     if (inputAmount === '' || inputAmount === 0) {
+      setWarningContent('The amount to stake must be greater than 0.')
       setShowWarning(true)
       return
     }
     const stakeAmount = toWei(inputAmount, fAssetPool.lpTokenData.decimals)
     if (new BigNumber(stakeAmount).isGreaterThan(lpTokenBalance)) {
+      setWarningContent(`Insufficient f${tokenSymbol} balance`)
       setShowWarning(true)
       return
     }
@@ -244,7 +247,7 @@ const StakeBase = ({
         </span>
       </BalanceInfo>
       <InsufficientSection isShow={showWarning ? 'true' : 'false'}>
-        <NewLabel display="flex" widthDiv="80%" items="center">
+        <NewLabel display="flex" widthDiv="80%" items="start">
           <img className="info-icon" src={InfoIcon} alt="" />
           <NewLabel
             size={isMobile ? '10px' : '14px'}
@@ -252,7 +255,7 @@ const StakeBase = ({
             weight="600"
             color="#344054"
           >
-            Insufficient f{tokenSymbol} balance
+            {warningContent}
           </NewLabel>
         </NewLabel>
         <div>

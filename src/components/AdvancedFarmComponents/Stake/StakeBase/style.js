@@ -141,7 +141,7 @@ const TokenAmount = styled.input`
   background: #fff;
   border: 1px solid #d0d5dd;
   outline: 0;
-  padding: 10px 14px;
+  padding: 10px 55px 10px 14px;
   border-radius: 8px;
   color: #344054;
   transition: 0.25s;

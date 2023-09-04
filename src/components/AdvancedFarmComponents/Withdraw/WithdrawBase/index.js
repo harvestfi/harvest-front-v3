@@ -82,8 +82,6 @@ const WithdrawBase = ({
   const [withdrawName, setWithdrawName] = useState('Withdraw')
   const [showWarning, setShowWarning] = useState(false)
 
-  const [warningContent, setWarningContent] = useState('')
-
   useEffect(() => {
     if (account) {
       if (curChain !== tokenChain) {
@@ -120,13 +118,11 @@ const WithdrawBase = ({
     }
 
     if (new BigNumber(unstakeBalance).isEqualTo(0)) {
-      setWarningContent('The amount to stake must be greater than 0.')
       toast.error('Please input amount to withdraw!')
       return
     }
 
     if (!new BigNumber(unstakeBalance).isLessThanOrEqualTo(lpTokenBalance)) {
-      setWarningContent('The amount to stake must be less than withdraw balance.')
       setShowWarning(true)
       return
     }
@@ -222,7 +218,7 @@ const WithdrawBase = ({
       </BalanceInfo>
 
       <InsufficientSection isShow={showWarning ? 'true' : 'false'}>
-        <NewLabel display="flex" widthDiv="80%" items="center">
+        <NewLabel display="flex" widthDiv="80%" items="start">
           <img className="info-icon" src={InfoIcon} alt="" />
           <NewLabel
             size={isMobile ? '10px' : '14px'}
@@ -230,7 +226,7 @@ const WithdrawBase = ({
             weight="600"
             color="#344054"
           >
-            {warningContent}
+            The amount of {`f${tokenSymbol}`} you entered exceeds deposited balance.
           </NewLabel>
         </NewLabel>
         <div>
