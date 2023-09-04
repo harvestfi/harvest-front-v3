@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import { useSetChain } from '@web3-onboard/react'
 import { Spinner } from 'react-bootstrap'
 import { useMediaQuery } from 'react-responsive'
-import { toast } from 'react-toastify'
 import WalletIcon from '../../../../assets/images/logos/beginners/wallet-in-button.svg'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
@@ -111,8 +110,8 @@ const StakeBase = ({
   const [startSpinner, setStartSpinner] = useState(false)
 
   const onClickStake = async () => {
-    if (inputAmount === '') {
-      toast.error('Please input value!')
+    if (inputAmount === '' || inputAmount === 0) {
+      setShowWarning(true)
       return
     }
     const stakeAmount = toWei(inputAmount, fAssetPool.lpTokenData.decimals)
@@ -168,7 +167,7 @@ const StakeBase = ({
   }
 
   const onInputBalance = e => {
-    setInputAmount(e.currentTarget.value)
+    setInputAmount(Number(e.currentTarget.value))
   }
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })

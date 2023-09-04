@@ -220,6 +220,8 @@ const BalanceInfo = styled.div`
   margin-top: 5px;
   cursor: pointer;
 
+  width: fit-content;
+
   span {
     margin-left: 6px;
     transition: 0.25s;

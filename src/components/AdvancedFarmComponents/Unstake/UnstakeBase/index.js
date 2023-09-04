@@ -4,7 +4,6 @@ import { useSetChain } from '@web3-onboard/react'
 import { Spinner } from 'react-bootstrap'
 import { isEmpty } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
-import { toast } from 'react-toastify'
 import WalletIcon from '../../../../assets/images/logos/beginners/wallet-in-button.svg'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
@@ -116,7 +115,7 @@ const UnstakeBase = ({
 
   const onClickUnStake = async () => {
     if (new BigNumber(totalStaked).isEqualTo(0)) {
-      toast.error('Please stake first!')
+      setShowWarning(true)
       return
     }
 
@@ -180,7 +179,7 @@ const UnstakeBase = ({
   }
 
   const onInputBalance = e => {
-    setInputAmount(e.currentTarget.value)
+    setInputAmount(Number(e.currentTarget.value))
     setAmountsToExecute([e.currentTarget.value])
   }
 

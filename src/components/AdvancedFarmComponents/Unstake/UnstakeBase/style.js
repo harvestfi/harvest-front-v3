@@ -219,6 +219,8 @@ const BalanceInfo = styled.div`
   margin-top: 5px;
   cursor: pointer;
 
+  width: fit-content;
+
   span {
     margin-left: 6px;
     transition: 0.25s;
@@ -408,7 +410,7 @@ const AmountInputSection = styled.div`
   button.max-btn {
     position: absolute;
     right: 14px;
-    top: 10px;
+    top: 12px;
     border: none;
     background: none;
     font-size: 14px;

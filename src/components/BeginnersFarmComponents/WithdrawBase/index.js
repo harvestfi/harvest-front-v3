@@ -121,7 +121,7 @@ const WithdrawBase = ({
     }
 
     if (new BigNumber(unstakeBalance).isEqualTo(0)) {
-      toast.error('Please input amount to withdraw!')
+      setShowWarning(true)
       return
     }
 

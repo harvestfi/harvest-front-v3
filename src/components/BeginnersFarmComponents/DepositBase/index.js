@@ -121,7 +121,7 @@ const DepositBase = ({
         return
       }
       if (new BigNumber(inputAmount).isEqualTo(0)) {
-        toast.error('Cannot deposit 0!')
+        setShowWarning(true)
         return
       }
       setDeposit(true)
