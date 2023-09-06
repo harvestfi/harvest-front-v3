@@ -72,29 +72,17 @@ function getTimeSlots(ago, slotCount) {
   return slots
 }
 
-// function getAllTimeSlots(data, slotCount) {
-//   const slots = [],
-//     toDate = Number(data[0].timestamp),
-//     fromDate = Number(data[data.length - 1].timestamp),
-//     between = (toDate - fromDate) / slotCount
-//   for (let i = fromDate + between; i <= toDate; i += between) {
-//     slots.push(i)
-//   }
-
-//   return slots
-// }
-
 function findMax(data) {
   const ary = data.map(el => el.y)
   const max = Math.max(...ary)
   return max
 }
 
-// function findMin(data) {
-//   const ary = data.map(el => el.y)
-//   const min = Math.min(...ary)
-//   return min
-// }
+function findMin(data) {
+  const ary = data.map(el => el.y)
+  const min = Math.min(...ary)
+  return min
+}
 
 function generateChartDataWithSlots(slots, apiData) {
   const seriesData = []
@@ -105,7 +93,7 @@ function generateChartDataWithSlots(slots, apiData) {
         : prev,
     )
 
-    seriesData.push({ x: slots[i] * 1000, y: data.value })
+    seriesData.push({ x: slots[i] * 1000, y: data.sharePrice })
   }
 
   return seriesData
@@ -124,14 +112,22 @@ function formatXAxis(value, range) {
 }
 
 function getYAxisValues(min, max, roundNum) {
-  const ary = []
-  const bet = Number((max - min).toFixed(roundNum))
+  const ary = [],
+    result = []
+  const bet = Number(max - min)
   for (let i = min; i <= max; i += bet / 4) {
-    const val = floor10(i, -roundNum)
-    ary.push(val)
+    ary.push(i)
+  }
+  if (ary.length === 4) {
+    ary.push(max)
   }
 
-  return ary
+  for (let j = 0; j < ary.length; j += 1) {
+    const val = ary[j].toFixed(roundNum)
+    result.push(val)
+  }
+
+  return result
 }
 
 const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => {
@@ -232,26 +228,23 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
         // Remove range. Set default for all data.
         ago = getRangeNumber(range),
         slots = getTimeSlots(ago, slotCount)
-      // slots = getAllTimeSlots(data, slotCount)
       mainData = generateChartDataWithSlots(slots, data)
       maxValue = findMax(mainData)
-      // minValue = findMin(mainData)
-      minValue = 0
+      minValue = findMin(mainData)
 
       const between = maxValue - minValue
       unitBtw = between / 4
       if (unitBtw >= 1) {
-        unitBtw = Math.ceil(unitBtw)
-        len = 0
-        unitBtw = ceil10(unitBtw, len)
-        maxValue = ceil10(maxValue, len)
-        minValue = floor10(minValue, len)
+        len = (1 / unitBtw).toString().length
+        // unitBtw = ceil10(unitBtw, -len)
+        maxValue = ceil10(maxValue, -len)
+        minValue = floor10(minValue, -len)
       } else if (unitBtw === 0) {
-        len = Math.ceil(maxValue).toString().length
-        maxValue += 10 ** (len - 1)
-        minValue -= 10 ** (len - 1)
+        len = (1 / maxValue).toString().length
+        maxValue += 1
+        minValue -= 1
       } else {
-        len = Math.ceil(1 / unitBtw).toString().length
+        len = (1 / unitBtw).toString().length
         // unitBtw = ceil10(between, -len)
         maxValue = ceil10(maxValue, -len)
         minValue = floor10(minValue, -len + 1)
@@ -262,7 +255,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
       } else {
         const rate = Number((unitBtw / maxValue).toFixed(2)) + 1
         maxValue *= rate
-        maxValue = ceil10(maxValue, len)
+        maxValue = ceil10(maxValue, -len)
       }
 
       if (unitBtw === 0) {
@@ -270,7 +263,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
       } else {
         roundNum = len
       }
-      setRoundedDecimal(roundNum)
+      setRoundedDecimal(roundNum > 3 ? 3 : roundNum)
       setMinVal(minValue)
       setMaxVal(maxValue)
 
@@ -279,7 +272,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
       const price = numberWithCommas(Number(mainData[slotCount - 1].y).toFixed(roundedDecimal))
       setCurContent(`$${price}`)
 
-      const yAxisAry = getYAxisValues(minValue, maxValue, roundNum)
+      const yAxisAry = getYAxisValues(minValue, maxValue, roundedDecimal)
       setYAxisTicks(yAxisAry)
 
       setMainSeries(mainData)

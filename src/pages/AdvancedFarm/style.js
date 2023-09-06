@@ -704,7 +704,7 @@ const LastHarvestInfo = styled.div`
 
 const RestInternal = styled.div`
   display: flex;
-  justify-content: space-between;
+  // justify-content: space-between;
   flex-direction: column;
   height: 100%;
 `

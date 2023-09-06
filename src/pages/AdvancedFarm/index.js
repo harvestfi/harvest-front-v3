@@ -31,6 +31,7 @@ import WithdrawSelectToken from '../../components/AdvancedFarmComponents/Withdra
 import WithdrawStart from '../../components/AdvancedFarmComponents/Withdraw/WithdrawStart'
 import WithdrawResult from '../../components/AdvancedFarmComponents/Withdraw/WithdrawResult'
 import FarmDetailChart from '../../components/AdvancedFarmComponents/DetailChart/FarmDetailChart'
+import PriceShareData from '../../components/AdvancedFarmComponents/PriceChart/PriceShareData'
 import VaultPanelActionsFooter from '../../components/AdvancedFarmComponents/Rewards/VaultPanelActionsFooter'
 import StakeBase from '../../components/AdvancedFarmComponents/Stake/StakeBase'
 import StakeResult from '../../components/AdvancedFarmComponents/Stake/StakeResult'
@@ -759,14 +760,7 @@ const AdvancedFarm = () => {
           <InternalSection>
             <MainSection>
               {activeMainTag === 0 ? (
-                <HalfInfo padding="25px 18px">
-                  <FarmDetailChart
-                    token={token}
-                    vaultPool={vaultPool}
-                    lastTVL={Number(vaultValue)}
-                    lastAPY={Number(totalApy)}
-                  />
-                </HalfInfo>
+                <PriceShareData token={token} vaultPool={vaultPool} tokenSymbol={id} />
               ) : activeMainTag === 1 ? (
                 <MyBalance marginBottom="23px">
                   <NewLabel
@@ -785,6 +779,14 @@ const AdvancedFarm = () => {
                 </MyBalance>
               ) : (
                 <>
+                  <HalfInfo padding="25px 18px" marginBottom="23px">
+                    <FarmDetailChart
+                      token={token}
+                      vaultPool={vaultPool}
+                      lastTVL={Number(vaultValue)}
+                      lastAPY={Number(totalApy)}
+                    />
+                  </HalfInfo>
                   <HalfInfo marginBottom="20px">
                     <NewLabel
                       weight={700}
@@ -858,21 +860,6 @@ const AdvancedFarm = () => {
                       </InfoLabel>
                     </FlexDiv>
                   </HalfInfo>
-                  <MyBalance>
-                    <NewLabel
-                      size={isMobile ? '12px' : '14px'}
-                      weight="700"
-                      height={isMobile ? '18px' : '24px'}
-                      color="#344054"
-                      padding={isMobile ? '9px 13px' : '10px 15px'}
-                      borderBottom="1px solid #EBEBEB"
-                    >
-                      APY Breakdown
-                    </NewLabel>
-                    <NewLabel padding={isMobile ? '9px 13px' : '0px 15px 10px'}>
-                      <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
-                    </NewLabel>
-                  </MyBalance>
                 </>
               )}
             </MainSection>
@@ -990,14 +977,7 @@ const AdvancedFarm = () => {
                     </FlexDiv>
                   </MyBalance>
                   {isMobile && (
-                    <HalfInfo padding="12px 0px">
-                      <FarmDetailChart
-                        token={token}
-                        vaultPool={vaultPool}
-                        lastTVL={Number(vaultValue)}
-                        lastAPY={Number(totalApy)}
-                      />
-                    </HalfInfo>
+                    <PriceShareData token={token} vaultPool={vaultPool} tokenSymbol={id} />
                   )}
                   <HalfContent
                     marginBottom={isMobile ? '24px' : '0px'}
@@ -1380,6 +1360,21 @@ const AdvancedFarm = () => {
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
+                  <MyBalance marginBottom={isMobile ? '24px' : '20px'}>
+                    <NewLabel
+                      size={isMobile ? '12px' : '14px'}
+                      weight="700"
+                      height={isMobile ? '18px' : '24px'}
+                      color="#344054"
+                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      borderBottom="1px solid #EBEBEB"
+                    >
+                      APY Breakdown
+                    </NewLabel>
+                    <NewLabel padding={isMobile ? '9px 13px' : '0px 15px 10px'}>
+                      <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
+                    </NewLabel>
+                  </MyBalance>
                   <LastHarvestInfo>
                     <NewLabel
                       size={isMobile ? '12px' : '14px'}
@@ -1482,18 +1477,28 @@ const AdvancedFarm = () => {
                     </FlexDiv>
                   </LastHarvestInfo>
                   {isMobile && (
-                    <HalfInfo marginBottom="24px">
-                      <NewLabel
-                        weight={700}
-                        size="12px"
-                        height="18px"
-                        padding="7px 11px"
-                        color="#000"
-                      >
-                        Source of Yield
-                      </NewLabel>
-                      <DescInfo>{ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)}</DescInfo>
-                    </HalfInfo>
+                    <>
+                      <HalfInfo padding="25px 18px" marginBottom="23px">
+                        <FarmDetailChart
+                          token={token}
+                          vaultPool={vaultPool}
+                          lastTVL={Number(vaultValue)}
+                          lastAPY={Number(totalApy)}
+                        />
+                      </HalfInfo>
+                      <HalfInfo marginBottom="24px">
+                        <NewLabel
+                          weight={700}
+                          size="12px"
+                          height="18px"
+                          padding="7px 11px"
+                          color="#000"
+                        >
+                          Source of Yield
+                        </NewLabel>
+                        <DescInfo>{ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)}</DescInfo>
+                      </HalfInfo>
+                    </>
                   )}
                   <MyBalance>
                     <FlexDiv
@@ -1504,7 +1509,7 @@ const AdvancedFarm = () => {
                         size={isMobile ? '12px' : '14px'}
                         height={isMobile ? '18px' : '24px'}
                         weight="600"
-                        color="#000"
+                        color={isMobile ? '#000' : '#344054'}
                       >
                         Last Harvest
                       </NewLabel>
