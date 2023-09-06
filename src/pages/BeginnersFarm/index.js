@@ -26,7 +26,7 @@ import DepositResult from '../../components/BeginnersFarmComponents/DepositResul
 import WithdrawBase from '../../components/BeginnersFarmComponents/WithdrawBase'
 import WithdrawStart from '../../components/BeginnersFarmComponents/WithdrawStart'
 import WithdrawResult from '../../components/BeginnersFarmComponents/WithdrawResult'
-import DetailChart from '../../components/BeginnersFarmComponents/DetailChart'
+import PriceShareData from '../../components/PriceShareChart/PriceShareData'
 import {
   DECIMAL_PRECISION,
   FARM_GRAIN_TOKEN_SYMBOL,
@@ -510,7 +510,7 @@ const BeginnersFarm = () => {
       <Inner>
         <BigDiv>
           <MainSection>
-            <DetailChart token={token} vaultPool={vaultPool} tokenSymbol={id} />
+            <PriceShareData token={token} vaultPool={vaultPool} tokenSymbol={id} />
             {!isMobile ? (
               <MyBalance>
                 <NewLabel

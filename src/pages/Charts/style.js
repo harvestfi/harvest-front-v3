@@ -76,4 +76,17 @@ const ChartSection = styled.div`
   }
 `
 
-export { Container, Inner, Title, ChartSection }
+const PriceChartArea = styled.div`
+  width: 50%;
+  @media screen and (max-width: 1368px) {
+    width: 100%;
+  }
+
+  @media screen and (max-width: 992px) {
+    width: 100%;
+    min-height: 400px;
+    margin-bottom: 15px;
+  }
+`
+
+export { Container, Inner, Title, ChartSection, PriceChartArea }

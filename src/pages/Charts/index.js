@@ -15,9 +15,9 @@ import { usePools } from '../../providers/Pools'
 import { useStats } from '../../providers/Stats'
 import { useWallet } from '../../providers/Wallet'
 import { useThemeContext } from '../../providers/useThemeContext'
-import PriceShareData from '../../components/ChartsComponents/PriceShareData'
+import PriceShareData from '../../components/PriceShareChart/PriceShareData'
 import FarmDetailChart from '../../components/ChartsComponents/DetailChart/FarmDetailChart'
-import { Container, Inner, Title, ChartSection } from './style'
+import { Container, Inner, Title, ChartSection, PriceChartArea } from './style'
 import { addresses, tokens } from '../../data'
 
 const formatVaults = (groupOfVaults, chainId) => {
@@ -162,7 +162,9 @@ const Charts = () => {
 
           return (
             <ChartSection key={i}>
-              <PriceShareData token={token} vaultPool={vaultPool} tokenSymbol={symbol} />
+              <PriceChartArea>
+                <PriceShareData token={token} vaultPool={vaultPool} tokenSymbol={symbol} />
+              </PriceChartArea>
               <FarmDetailChart
                 token={token}
                 vaultPool={vaultPool}
@@ -196,7 +198,9 @@ const Charts = () => {
 
           return (
             <ChartSection key={i}>
-              <PriceShareData key={i} token={token} vaultPool={vaultPool} tokenSymbol={symbol} />
+              <PriceChartArea>
+                <PriceShareData token={token} vaultPool={vaultPool} tokenSymbol={symbol} />
+              </PriceChartArea>
               <FarmDetailChart
                 token={token}
                 vaultPool={vaultPool}
@@ -230,7 +234,9 @@ const Charts = () => {
 
           return (
             <ChartSection key={i}>
-              <PriceShareData key={i} token={token} vaultPool={vaultPool} tokenSymbol={symbol} />
+              <PriceChartArea>
+                <PriceShareData token={token} vaultPool={vaultPool} tokenSymbol={symbol} />
+              </PriceChartArea>
               <FarmDetailChart
                 token={token}
                 vaultPool={vaultPool}

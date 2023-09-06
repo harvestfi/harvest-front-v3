@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { getPriceFeed } from '../../../../utils'
+import { getPriceFeed } from '../../../utils'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
 import {
