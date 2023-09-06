@@ -78,11 +78,11 @@ function findMax(data) {
   return max
 }
 
-// function findMin(data) {
-//   const ary = data.map(el => el.y)
-//   const min = Math.min(...ary)
-//   return min
-// }
+function findMin(data) {
+  const ary = data.map(el => el.y)
+  const min = Math.min(...ary)
+  return min
+}
 
 function generateChartDataWithSlots(slots, apiData) {
   const seriesData = []
@@ -112,14 +112,20 @@ function formatXAxis(value, range) {
 }
 
 function getYAxisValues(min, max, roundNum) {
-  const ary = []
+  const ary = [],
+    result = []
   const bet = Number(max - min)
   for (let i = min; i <= max; i += bet / 4) {
-    const val = floor10(i, -roundNum)
+    const val = i
     ary.push(val)
   }
 
-  return ary
+  for (let j = 0; j < ary.length; j += 1) {
+    const val = ary[j].toFixed(roundNum)
+    result.push(val)
+  }
+
+  return result
 }
 
 const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => {
@@ -222,8 +228,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
         slots = getTimeSlots(ago, slotCount)
       mainData = generateChartDataWithSlots(slots, data)
       maxValue = findMax(mainData)
-      // minValue = findMin(mainData)
-      minValue = 0
+      minValue = findMin(mainData)
 
       const between = maxValue - minValue
       unitBtw = between / 4
@@ -233,9 +238,9 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
         maxValue = ceil10(maxValue, -len)
         minValue = floor10(minValue, -len)
       } else if (unitBtw === 0) {
-        len = Math.ceil(maxValue).toString().length
-        maxValue += 10 ** (len - 1)
-        minValue -= 10 ** (len - 1)
+        len = (1 / maxValue).toString().length
+        maxValue += 1
+        minValue -= 1
       } else {
         len = (1 / unitBtw).toString().length
         // unitBtw = ceil10(between, -len)
