@@ -113,7 +113,7 @@ function formatXAxis(value, range) {
 
 function getYAxisValues(min, max, roundNum) {
   const ary = []
-  const bet = Number((max - min).toFixed(roundNum))
+  const bet = Number(max - min)
   for (let i = min; i <= max; i += bet / 4) {
     const val = floor10(i, -roundNum)
     ary.push(val)
@@ -136,9 +136,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       setCurDate(formatDateTime(payload[0].payload.x))
-      // const price = numberWithCommas(Number(payload[0].payload.y).toFixed(roundedDecimal))
-      // Change decimal to 3 for all
-      const price = numberWithCommas(Number(payload[0].payload.y).toFixed(3))
+      const price = numberWithCommas(Number(payload[0].payload.y).toFixed(roundedDecimal))
       setCurContent(`$${price}`)
     }
 
@@ -170,8 +168,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
     let path = ''
 
     if (payload.value !== '') {
-      // path = `$${numberWithCommas(payload.value)}`
-      path = `$${numberWithCommas(Number(payload.value).toFixed(3))}`
+      path = `$${numberWithCommas(payload.value)}`
     }
     return (
       <text
@@ -231,17 +228,16 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
       const between = maxValue - minValue
       unitBtw = between / 4
       if (unitBtw >= 1) {
-        unitBtw = Math.ceil(unitBtw)
-        len = 0
-        unitBtw = ceil10(unitBtw, len)
-        maxValue = ceil10(maxValue, len)
-        minValue = floor10(minValue, len)
+        len = (1 / unitBtw).toString().length
+        // unitBtw = ceil10(unitBtw, -len)
+        maxValue = ceil10(maxValue, -len)
+        minValue = floor10(minValue, -len)
       } else if (unitBtw === 0) {
         len = Math.ceil(maxValue).toString().length
         maxValue += 10 ** (len - 1)
         minValue -= 10 ** (len - 1)
       } else {
-        len = Math.ceil(1 / unitBtw).toString().length
+        len = (1 / unitBtw).toString().length
         // unitBtw = ceil10(between, -len)
         maxValue = ceil10(maxValue, -len)
         minValue = floor10(minValue, -len + 1)
@@ -260,18 +256,16 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
       } else {
         roundNum = len
       }
-      setRoundedDecimal(roundNum)
+      setRoundedDecimal(roundNum > 3 ? 3 : roundNum)
       setMinVal(minValue)
       setMaxVal(maxValue)
 
       // Set date and price with latest value by default
       setCurDate(formatDateTime(mainData[slotCount - 1].x))
-      // const price = numberWithCommas(Number(mainData[slotCount - 1].y).toFixed(roundedDecimal))
-      // Change decimal to 3 for price share chart
-      const price = numberWithCommas(Number(mainData[slotCount - 1].y).toFixed(3))
+      const price = numberWithCommas(Number(mainData[slotCount - 1].y).toFixed(roundedDecimal))
       setCurContent(`$${price}`)
 
-      const yAxisAry = getYAxisValues(minValue, maxValue, roundNum)
+      const yAxisAry = getYAxisValues(minValue, maxValue, roundedDecimal)
       setYAxisTicks(yAxisAry)
 
       setMainSeries(mainData)
