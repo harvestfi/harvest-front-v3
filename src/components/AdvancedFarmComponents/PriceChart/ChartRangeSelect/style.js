@@ -3,6 +3,7 @@ import styled from 'styled-components'
 const Container = styled.button`
   font-weight: 400;
   font-size: 12px;
+  line-height: 18px;
   padding: 3px 15px;
   display: flex;
   text-align: left;
@@ -43,16 +44,35 @@ const Container = styled.button`
       : `
       background: white;
       `}
+
+  @media screen and (max-width: 992px) {
+    font-size: 8px;
+    line-height: 8px;
+    padding: 0.986px 5.628px 0.995px 5.968px;
+    ${props =>
+      props.activeItem
+        ? `
+        border-radius: 1.357px;
+        border: 0.452px solid #FFF;
+        background: #E9F0F7;
+        `
+        : ``}
+  }
 `
 
 const Text = styled.div`
-  padding: 0 5px;
-  ${props =>
-    props.state === props.text
-      ? `
-      // color: #DF0000;
-    `
-      : ''};
+  @media screen and (max-width: 992px) {
+    ${props =>
+      props.activeItem
+        ? `
+          color: #00D26B;
+          font-weight: 700;
+        `
+        : `
+          color: #282F3D;
+          font-weight: 400;
+        `}
+  }
 `
 
 export { Container, Text }

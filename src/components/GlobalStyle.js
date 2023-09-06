@@ -568,6 +568,11 @@ html {
     font-size: 12px;
     font-weight: 400;
     line-height: 16px;
+    @media screen and (max-width: 992px) {
+      font-size: 6px;
+      font-weight: 400;
+      line-height: 8px;
+    }
   }
 
   .advanced-farm .recharts-cartesian-axis-tick {

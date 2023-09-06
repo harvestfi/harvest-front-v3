@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useMediaQuery } from 'react-responsive'
 import { getPriceFeed } from '../../../../utils'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
@@ -31,6 +32,8 @@ const PriceShareData = ({ token, vaultPool, tokenSymbol }) => {
   const [curDate, setCurDate] = useState('')
   const [curContent, setCurContent] = useState('')
 
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+
   useEffect(() => {
     const initData = async () => {
       const { data, flag } = await getPriceFeed(address, chainId)
@@ -54,21 +57,38 @@ const PriceShareData = ({ token, vaultPool, tokenSymbol }) => {
               </FlexDiv>
             </TooltipInfo>
           </FlexDiv>
-          <ButtonGroup>
-            {recommendLinks.map((item, i) => (
-              <ChartRangeSelect
-                key={i}
-                onClick={() => {
-                  setSelectedState(item.state)
-                }}
-                state={selectedState}
-                type={item.type}
-                text={item.name}
-              />
-            ))}
-          </ButtonGroup>
+          {!isMobile && (
+            <ButtonGroup>
+              {recommendLinks.map((item, i) => (
+                <ChartRangeSelect
+                  key={i}
+                  onClick={() => {
+                    setSelectedState(item.state)
+                  }}
+                  state={selectedState}
+                  type={item.type}
+                  text={item.name}
+                />
+              ))}
+            </ButtonGroup>
+          )}
         </Total>
       </Header>
+      {isMobile && (
+        <ButtonGroup>
+          {recommendLinks.map((item, i) => (
+            <ChartRangeSelect
+              key={i}
+              onClick={() => {
+                setSelectedState(item.state)
+              }}
+              state={selectedState}
+              type={item.type}
+              text={item.name}
+            />
+          ))}
+        </ButtonGroup>
+      )}
       <ChartDiv className="advanced-price">
         <ApexChart
           data={apiData}

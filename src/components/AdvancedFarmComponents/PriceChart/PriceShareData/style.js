@@ -50,11 +50,12 @@ const ButtonGroup = styled.div`
   // margin: 0.8em 1em 0.25em auto;
   color: #fff;
 
-  // button {
-  //   padding: 0.1em 0.6em;
-  //   margin-left: 0.5em;
-  //   font-weight: 400;
-  // }
+  @media screen and (max-width: 992px) {
+    margin-top: 14px;
+    margin-bottom: 9px;
+    width: 100%;
+    justify-content: space-around;
+  }
 `
 
 const ChartDiv = styled.div`
@@ -117,7 +118,9 @@ const TokenSymbol = styled.div`
   color: #000;
 
   @media screen and (max-width: 992px) {
-    margin-top: 0.5rem;
+    // margin-top: 0.5rem;
+    font-size: 12px;
+    line-height: 18px;
   }
 `
 
@@ -133,6 +136,10 @@ const CurContent = styled.div`
   color: ${props => props.color};
   font-size: 13px;
   font-weight: 500;
+
+  @media screen and (max-width: 992px) {
+    font-size: 10px;
+  }
 `
 
 export {
