@@ -136,7 +136,9 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       setCurDate(formatDateTime(payload[0].payload.x))
-      const price = numberWithCommas(Number(payload[0].payload.y).toFixed(roundedDecimal))
+      // const price = numberWithCommas(Number(payload[0].payload.y).toFixed(roundedDecimal))
+      // Change decimal to 3 for all
+      const price = numberWithCommas(Number(payload[0].payload.y).toFixed(3))
       setCurContent(`$${price}`)
     }
 
@@ -168,7 +170,8 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
     let path = ''
 
     if (payload.value !== '') {
-      path = `$${numberWithCommas(payload.value)}`
+      // path = `$${numberWithCommas(payload.value)}`
+      path = `$${numberWithCommas(Number(payload.value).toFixed(3))}`
     }
     return (
       <text
@@ -263,7 +266,9 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
 
       // Set date and price with latest value by default
       setCurDate(formatDateTime(mainData[slotCount - 1].x))
-      const price = numberWithCommas(Number(mainData[slotCount - 1].y).toFixed(roundedDecimal))
+      // const price = numberWithCommas(Number(mainData[slotCount - 1].y).toFixed(roundedDecimal))
+      // Change decimal to 3 for price share chart
+      const price = numberWithCommas(Number(mainData[slotCount - 1].y).toFixed(3))
       setCurContent(`$${price}`)
 
       const yAxisAry = getYAxisValues(minValue, maxValue, roundNum)
