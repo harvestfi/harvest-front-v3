@@ -948,7 +948,7 @@ const WidoDetail = () => {
                 />
               )}
             </HalfInfo>
-            <HalfInfo padding="0px" backColor={backColor} borderColor={borderColor}>
+            <HalfInfo padding="0px" borderColor="none">
               <PriceShareData token={token} vaultPool={vaultPool} tokenSymbol={id} />
             </HalfInfo>
             <HalfInfo
