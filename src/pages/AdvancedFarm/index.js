@@ -1360,21 +1360,23 @@ const AdvancedFarm = () => {
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
-                  <MyBalance marginBottom={isMobile ? '24px' : '20px'}>
-                    <NewLabel
-                      size={isMobile ? '12px' : '14px'}
-                      weight="700"
-                      height={isMobile ? '18px' : '24px'}
-                      color="#344054"
-                      padding={isMobile ? '9px 13px' : '10px 15px'}
-                      borderBottom="1px solid #EBEBEB"
-                    >
-                      APY Breakdown
-                    </NewLabel>
-                    <NewLabel padding={isMobile ? '9px 13px' : '0px 15px 10px'}>
-                      <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
-                    </NewLabel>
-                  </MyBalance>
+                  {!isMobile && (
+                    <MyBalance marginBottom={isMobile ? '24px' : '20px'}>
+                      <NewLabel
+                        size={isMobile ? '12px' : '14px'}
+                        weight="700"
+                        height={isMobile ? '18px' : '24px'}
+                        color="#344054"
+                        padding={isMobile ? '9px 13px' : '10px 15px'}
+                        borderBottom="1px solid #EBEBEB"
+                      >
+                        APY Breakdown
+                      </NewLabel>
+                      <NewLabel padding={isMobile ? '9px 13px' : '0px 15px 10px'}>
+                        <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
+                      </NewLabel>
+                    </MyBalance>
+                  )}
                   <LastHarvestInfo>
                     <NewLabel
                       size={isMobile ? '12px' : '14px'}
