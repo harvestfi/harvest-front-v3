@@ -42,7 +42,7 @@ const Inner = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 0px;
+    padding: 22px 37px;
   }
 `
 
@@ -54,7 +54,7 @@ const CoinSection = styled.div`
   gap: 25px;
 
   @media screen and (max-width: 992px) {
-    padding: 0 22px 116px 24px;
+    gap: 22px;
   }
 `
 
@@ -70,10 +70,6 @@ const HeaderTitle = styled.div`
   font-weight: 600;
   line-height: 38px;
   color: #101828;
-
-  @media screen and (max-width: 992px) {
-    padding: 30px 28px 0px 24px;
-  }
 `
 
 const HeaderDesc = styled.div`
@@ -86,7 +82,7 @@ const HeaderDesc = styled.div`
   margin-bottom: 35px;
 
   @media screen and (max-width: 992px) {
-    padding: 0 28px 0 24px;
+    margin-bottom: 22px;
   }
 `
 
