@@ -51,7 +51,7 @@ const CoinSection = styled.div`
   display: flex;
   justify-content: start;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 25px;
 
   @media screen and (max-width: 992px) {
     padding: 0 22px 116px 24px;
@@ -80,10 +80,10 @@ const HeaderDesc = styled.div`
   color: #475467;
   font-size: 16px;
   font-weight: 400;
-  line-height: 23px;
+  line-height: 24px;
 
   margin-top: 4px;
-  margin-bottom: 21px;
+  margin-bottom: 35px;
 
   @media screen and (max-width: 992px) {
     padding: 0 28px 0 24px;

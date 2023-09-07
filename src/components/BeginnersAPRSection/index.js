@@ -1,11 +1,13 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
-import { Container, Percent, Section } from './style'
+import { Container, Percent, Section, TopSection, Network } from './style'
 import { displayAPY, getTotalApy } from '../../utils'
 import { DECIMAL_PRECISION } from '../../constants'
 import DOT from '../../assets/images/logos/beginners/dot.svg'
+import Bottom from '../../assets/images/logos/beginnershome/bottom.svg'
+import Base from '../../assets/images/logos/beginnershome/base.svg'
 
-const BeginnersAPRSection = ({ token, img, bottomImg, num, vaultPool, tokenVault }) => {
+const BeginnersAPRSection = ({ token, img, num, vaultPool, tokenVault }) => {
   const { push } = useHistory()
   const isSpecialVault = token.liquidityPoolVault || token.poolVault
 
@@ -23,15 +25,21 @@ const BeginnersAPRSection = ({ token, img, bottomImg, num, vaultPool, tokenVault
         push(`/beginner/${address}`)
       }}
     >
-      <Section>
-        <img className="token-icon" src={img} alt="" />
+      <TopSection>
+        <Network>
+          <img src={Base} alt="" />
+          Base
+        </Network>
         <Percent>
           <img src={DOT} alt="" />
           {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
           &nbsp;APY
         </Percent>
+      </TopSection>
+      <Section>
+        <img className="token-icon" width={240} height={240} src={img} alt="" />
       </Section>
-      <img className="bottom" src={bottomImg} alt="" />
+      <img className="bottom" src={Bottom} alt="" />
     </Container>
   )
 }
