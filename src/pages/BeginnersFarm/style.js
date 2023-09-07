@@ -32,7 +32,7 @@ const Inner = styled.div`
 `
 
 const TopPart = styled.div`
-  padding: 70px 100px 170px 50px;
+  padding: 70px 100px 170px 100px;
   display: flex;
   justify-content: space-between;
   background: #0052ff;
