@@ -1,8 +1,4 @@
 import styled from 'styled-components'
-import ETH from '../../assets/images/logos/beginnershome/eth.svg'
-import DAI from '../../assets/images/logos/beginnershome/dai.svg'
-import USDT from '../../assets/images/logos/beginnershome/usdt.svg'
-import USDC from '../../assets/images/logos/beginnershome/usdc.svg'
 
 const DetailView = styled.div`
   width: 100%;
@@ -39,23 +35,8 @@ const TopPart = styled.div`
   padding: 70px 100px 170px 50px;
   display: flex;
   justify-content: space-between;
+  background: #0052ff;
 
-  ${props =>
-    props.num === 0
-      ? `
-    background: url(${DAI});
-  `
-      : props.num === 1
-      ? `
-    background: url(${ETH});
-  `
-      : props.num === 2
-      ? `
-    background: url(${USDT});
-  `
-      : `
-    background: url(${USDC});
-  `}
   background-size: cover;
   background-repeat: no-repeat;
 
@@ -366,8 +347,9 @@ const BigDiv = styled(FlexDiv)`
 `
 
 const LogoImg = styled.img`
-  margin-right: -5px;
-  width: 257px;
+  margin-left: 15px;
+  margin-top: 30px;
+  width: 238px;
 
   @media screen and (max-width: 1368px) {
     width: 200px;

@@ -50,7 +50,7 @@ const PriceShareData = ({ token, vaultPool, tokenSymbol }) => {
         <Total>
           <FlexDiv>
             <TooltipInfo>
-              <TokenSymbol>{`f${tokenSymbol} Price`}</TokenSymbol>
+              <TokenSymbol>{`f${tokenSymbol}`}</TokenSymbol>
               <FlexDiv>
                 <CurContent color="#1b1b1b">{curDate}&nbsp;:&nbsp;</CurContent>
                 <CurContent color="#00D26B">{curContent}</CurContent>

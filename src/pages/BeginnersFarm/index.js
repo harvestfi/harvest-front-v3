@@ -5,19 +5,16 @@ import { useMediaQuery } from 'react-responsive'
 import { useHistory, useParams } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { getBalances, getSupportedTokens } from 'wido'
-import axios from 'axios'
+// import axios from 'axios'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import Back from '../../assets/images/logos/earn/back.svg'
 import Info from '../../assets/images/logos/earn/info.svg'
 import BeginnerFriendly from '../../assets/images/logos/beginners/beginner-friendly.svg'
 import WithdrawAnytime from '../../assets/images/logos/beginners/withdraw-anytime.svg'
-import Thumbsup from '../../assets/images/logos/beginners/thumbs-up.svg'
+// import Thumbsup from '../../assets/images/logos/beginners/thumbs-up.svg'
 import DOT from '../../assets/images/logos/beginners/dot.svg'
-import DAIBottom from '../../assets/images/logos/beginnershome/dai-bottom.svg'
-import ETHBottom from '../../assets/images/logos/beginnershome/eth-bottom.svg'
-import USDTBottom from '../../assets/images/logos/beginnershome/usdt-bottom.svg'
-import USDCBottom from '../../assets/images/logos/beginnershome/usdc-bottom.svg'
+import Bottom from '../../assets/images/logos/beginners/bottom.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/BeginnersFarmComponents/DepositBase'
 import DepositSelectToken from '../../components/BeginnersFarmComponents/DepositSelectToken'
@@ -69,9 +66,11 @@ import {
   WithdrawSection,
   MainSection,
 } from './style'
-import { CHAIN_IDS } from '../../data/constants'
+import ETH from '../../assets/images/logos/beginnershome/eth-icon.svg'
+import USDC from '../../assets/images/logos/beginnershome/usdc-icon.svg'
+// import { CHAIN_IDS } from '../../data/constants'
 
-const BeginnersCoinGroup = ['DAI', 'ETH', 'USDT', 'xGRAIL']
+const BeginnersCoinGroup = ['WETH', 'xGRAIL']
 
 const BeginnersFarm = () => {
   const { paramAddress } = useParams()
@@ -167,14 +166,7 @@ const BeginnersFarm = () => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
   }, [])
   const tokenName = token.tokenNames.join(', ') || token.rewardSymbol
-  const bottomImg =
-    tokenName === 'DAI'
-      ? DAIBottom
-      : tokenName === 'ETH'
-      ? ETHBottom
-      : tokenName === 'USDT'
-      ? USDTBottom
-      : USDCBottom
+
   useEffect(() => {
     // eslint-disable-next-line array-callback-return
     BeginnersCoinGroup.map((el, i) => {
@@ -385,51 +377,52 @@ const BeginnersFarm = () => {
   const switchMethod = () => setActiveDepo(prev => !prev)
   const [partHeightDepo, setPartHeightDepo] = useState(null)
 
-  const [holderCount, setHolderCount] = useState(0)
-  useEffect(() => {
-    const getTokenHolder = async () => {
-      const chainName =
-        chain === CHAIN_IDS.ETH_MAINNET
-          ? 'eth'
-          : chain === CHAIN_IDS.ARBITRUM_ONE
-          ? 'arbitrum'
-          : chain === CHAIN_IDS.POLYGON_MAINNET
-          ? 'polygon'
-          : ''
+  const logoImage = id === 'WETH' ? ETH : USDC
+  // const [holderCount, setHolderCount] = useState(0)
+  // useEffect(() => {
+  //   const getTokenHolder = async () => {
+  //     const chainName =
+  //       chain === CHAIN_IDS.ETH_MAINNET
+  //         ? 'eth'
+  //         : chain === CHAIN_IDS.ARBITRUM_ONE
+  //         ? 'arbitrum'
+  //         : chain === CHAIN_IDS.POLYGON_MAINNET
+  //         ? 'polygon'
+  //         : ''
 
-      const options = {
-        method: 'POST',
-        url:
-          'https://rpc.ankr.com/multichain/79258ce7f7ee046decc3b5292a24eb4bf7c910d7e39b691384c7ce0cfb839a01/',
-        // eslint-disable-next-line camelcase
-        params: { ankr_getTokenHolders: '' },
-        headers: { accept: 'application/json', 'content-type': 'application/json' },
-        data: {
-          jsonrpc: '2.0',
-          method: 'ankr_getTokenHolders',
-          params: {
-            blockchain: chainName,
-            contractAddress: paramAddress,
-          },
-          id: 1,
-        },
-      }
+  //     const options = {
+  //       method: 'POST',
+  //       url:
+  //         'https://rpc.ankr.com/multichain/79258ce7f7ee046decc3b5292a24eb4bf7c910d7e39b691384c7ce0cfb839a01/',
+  //       // eslint-disable-next-line camelcase
+  //       params: { ankr_getTokenHolders: '' },
+  //       headers: { accept: 'application/json', 'content-type': 'application/json' },
+  //       data: {
+  //         jsonrpc: '2.0',
+  //         method: 'ankr_getTokenHolders',
+  //         params: {
+  //           blockchain: chainName,
+  //           contractAddress: paramAddress,
+  //         },
+  //         id: 1,
+  //       },
+  //     }
 
-      axios
-        .request(options)
-        .then(response => {
-          if (response.data.result === undefined) {
-            return
-          }
-          setHolderCount(response.data.result.holdersCount)
-        })
-        .catch(error => {
-          console.error(error)
-        })
-    }
+  //     axios
+  //       .request(options)
+  //       .then(response => {
+  //         if (response.data.result === undefined) {
+  //           return
+  //         }
+  //         setHolderCount(response.data.result.holdersCount)
+  //       })
+  //       .catch(error => {
+  //         console.error(error)
+  //       })
+  //   }
 
-    getTokenHolder()
-  }, [paramAddress, chain, token])
+  //   getTokenHolder()
+  // }, [paramAddress, chain, token])
 
   return (
     <DetailView pageBackColor={pageBackColor} fontColor={fontColor}>
@@ -490,7 +483,7 @@ const BeginnersFarm = () => {
           >
             Deposit {id} or any token from your wallet to start earning yield.
           </NewLabel>
-          <NewLabel
+          {/* <NewLabel
             weight={700}
             size={isMobile ? '9px' : '18px'}
             height={isMobile ? '14px' : '26px'}
@@ -498,14 +491,12 @@ const BeginnersFarm = () => {
           >
             <img className="thumbs-up" src={Thumbsup} alt="" />
             Currently used by {holderCount} other users.
-          </NewLabel>
+          </NewLabel> */}
         </FlexTopDiv>
         <FlexTopDiv className="desktop-logo">
-          {logoUrl.map((el, i) => (
-            <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
-          ))}
+          <LogoImg className="logo" src={logoImage} alt="" />
         </FlexTopDiv>
-        <img className="bottom" src={bottomImg} alt="" />
+        <img className="bottom" src={Bottom} alt="" />
       </TopPart>
       <Inner>
         <BigDiv>
@@ -547,8 +538,9 @@ const BeginnersFarm = () => {
                   weight="500"
                   color="#475467"
                 >
-                  This farm offers a yield from Idle Finance strategy relying on a combination of
-                  top DeFi protocols (Compound, Aave, Clearpool, and Morpho) to boost your earnings.
+                  This farm supplies your ETH to Compound Finance, a platform backed by Coinbase
+                  Ventures. It earns $COMP rewards, which are reinvested into more ETH to compound
+                  your earnings.
                 </NewLabel>
               </MyBalance>
             ) : (

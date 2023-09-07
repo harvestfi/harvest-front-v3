@@ -176,7 +176,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
     let path = ''
 
     if (payload.value !== '') {
-      path = `$${numberWithCommas(payload.value)}`
+      path = `${numberWithCommas(payload.value)}`
     }
     return (
       <text
