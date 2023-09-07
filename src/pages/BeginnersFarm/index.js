@@ -70,7 +70,7 @@ import ETH from '../../assets/images/logos/beginnershome/eth-icon.svg'
 import USDC from '../../assets/images/logos/beginnershome/usdc-icon.svg'
 // import { CHAIN_IDS } from '../../data/constants'
 
-const BeginnersCoinGroup = ['WETH', 'xGRAIL']
+const BeginnersCoinGroup = ['WETH_base', 'USDC_base']
 
 const BeginnersFarm = () => {
   const { paramAddress } = useParams()
@@ -377,7 +377,7 @@ const BeginnersFarm = () => {
   const switchMethod = () => setActiveDepo(prev => !prev)
   const [partHeightDepo, setPartHeightDepo] = useState(null)
 
-  const logoImage = id === 'WETH' ? ETH : USDC
+  const logoImage = id === 'WETH_base' ? ETH : USDC
   // const [holderCount, setHolderCount] = useState(0)
   // useEffect(() => {
   //   const getTokenHolder = async () => {
@@ -538,9 +538,9 @@ const BeginnersFarm = () => {
                   weight="500"
                   color="#475467"
                 >
-                  This farm supplies your ETH to Compound Finance, a platform backed by Coinbase
-                  Ventures. It earns $COMP rewards, which are reinvested into more ETH to compound
-                  your earnings.
+                  This farm supplies your {id === 'WETH_base' ? 'ETH' : 'USDC'} to Compound Finance,
+                  a platform backed by Coinbase Ventures. It earns $COMP rewards, which are
+                  reinvested into more ETH to compound your earnings.
                 </NewLabel>
               </MyBalance>
             ) : (
