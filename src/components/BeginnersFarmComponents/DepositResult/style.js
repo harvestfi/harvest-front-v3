@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 const SelectTokenWido = styled.div`
   transition: 0.25s;
-  padding: 12px 16px;
+  padding: 12px 15px 12px 16px;
 
   ${props =>
     props.show
