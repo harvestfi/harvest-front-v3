@@ -145,8 +145,6 @@ const BeginnersFarm = () => {
   const id = vaultIds[0]
   const token = groupOfVaults[id]
 
-  const { logoUrl } = token
-
   const isSpecialVault = token.liquidityPoolVault || token.poolVault
   const tokenVault = get(vaultsData, token.hodlVaultId || id)
 
@@ -438,16 +436,7 @@ const BeginnersFarm = () => {
             </BackBtnRect>
           </div>
           <div>
-            {logoUrl.map((el, i) => (
-              <img
-                className="mobile-logo"
-                width={46}
-                height={46}
-                src={el.slice(1, el.length)}
-                key={i}
-                alt=""
-              />
-            ))}
+            <LogoImg className="mobile-logo" src={logoImage} alt="" />
           </div>
           <GuideSection>
             <GuidePart>

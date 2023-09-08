@@ -248,10 +248,6 @@ const FlexTopDiv = styled.div`
     img.mobile-logo {
       display: block;
     }
-
-    .back-btn {
-      display: none;
-    }
   }
 `
 
@@ -301,6 +297,7 @@ const BackBtnRect = styled.a`
     width: 24px;
     height: 24px;
     margin-right: 15px;
+    margin-bottom: 20px;
   }
 `
 
@@ -361,6 +358,12 @@ const LogoImg = styled.img`
 
   @media screen and (max-width: 1024px) {
     width: 100px;
+  }
+
+  @media screen and (max-width: 992px) {
+    width: 46px;
+    margin-left: 0;
+    margin-top: 0;
   }
 
   ${props =>
