@@ -470,7 +470,8 @@ const BeginnersFarm = () => {
             marginBottom={isMobile ? '8px' : '10px'}
             color="white"
           >
-            Deposit {id} or any token from your wallet to start earning yield.
+            Deposit {id === 'WETH_base' ? 'ETH' : 'USDC'} or any token from your wallet to start
+            earning yield.
           </NewLabel>
           {/* <NewLabel
             weight={700}
@@ -501,9 +502,9 @@ const BeginnersFarm = () => {
                 >
                   <NewLabel
                     size={isMobile ? '12px' : '16px'}
-                    height={isMobile ? '24px' : '24px'}
                     weight="600"
-                    color="#344054"
+                    height={isMobile ? '18px' : '24px'}
+                    color="#000"
                   >
                     About
                   </NewLabel>
@@ -547,9 +548,9 @@ const BeginnersFarm = () => {
                 >
                   <NewLabel
                     size={isMobile ? '12px' : '16px'}
-                    height={isMobile ? '24px' : '24px'}
                     weight="600"
-                    color="#344054"
+                    height={isMobile ? '18px' : '24px'}
+                    color="#000"
                   >
                     About
                   </NewLabel>

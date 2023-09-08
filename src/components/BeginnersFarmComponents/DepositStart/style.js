@@ -13,7 +13,7 @@ const SelectTokenWido = styled.div`
       : 'display: none;'}
 
   @media screen and (max-width: 992px) {
-    padding: 16px;
+    padding: 16px 12px;
   }
 `
 
