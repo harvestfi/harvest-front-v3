@@ -18,7 +18,6 @@ app.use(
           "'self'",
           "'unsafe-inline'",
           'https://static.cloudflareinsights.com',
-          'https://cdn.usefathom.com/script.js',
           'https://cdn.jsdelivr.net/npm/@ledgerhq/connect-kit@1',
         ],
         connectSrc: ["'self'", '*'],
