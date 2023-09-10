@@ -20,6 +20,10 @@ const Container = styled.a`
   background-size: cover;
   background-repeat: no-repeat;
 
+  img.bottom {
+    width: 100%;
+  }
+
   @media screen and (max-width: 992px) {
     min-height: 200px;
     border-radius: 5px;
