@@ -37,11 +37,6 @@ const Inner = styled.div`
     height: 800px;
   }
 
-  @media screen and (max-width: 1480px) {
-    width: 100%;
-    padding: 70px 30px 40px;
-  }
-
   @media screen and (max-width: 992px) {
     padding: 22px 37px;
   }
