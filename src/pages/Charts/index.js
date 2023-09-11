@@ -3,13 +3,7 @@ import { find, get, keys, orderBy, sortBy } from 'lodash'
 import move from 'lodash-move'
 import { CHAIN_IDS } from '../../data/constants'
 import { getVaultValue, getTotalApy, isSpecialApp } from '../../utils'
-import {
-  FARM_TOKEN_SYMBOL,
-  IFARM_TOKEN_SYMBOL,
-  SPECIAL_VAULTS,
-  FARM_WETH_TOKEN_SYMBOL,
-  FARM_GRAIN_TOKEN_SYMBOL,
-} from '../../constants'
+import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, SPECIAL_VAULTS } from '../../constants'
 import { useVaults } from '../../providers/Vault'
 import { usePools } from '../../providers/Pools'
 import { useStats } from '../../providers/Stats'
@@ -55,8 +49,11 @@ const formatVaults = (groupOfVaults, chainId) => {
       tokenSymbol !== 'WETH' &&
       tokenSymbol !== 'USDT' &&
       tokenSymbol !== 'USDC' &&
+      tokenSymbol !== 'SUSHI_GNOME_ETH' &&
+      tokenSymbol !== 'SUSHI_GENE_ETH' &&
       (chainId === groupOfVaults[tokenSymbol]?.chain ||
-        (groupOfVaults[tokenSymbol]?.data && chainId === groupOfVaults[tokenSymbol]?.data.chain)),
+        (groupOfVaults[tokenSymbol]?.data && chainId === groupOfVaults[tokenSymbol]?.data.chain)) &&
+      !groupOfVaults[tokenSymbol].inactive,
   )
   vaultsSymbol = orderBy(vaultsSymbol, v => Number(getVaultValue(groupOfVaults[v])), 'desc')
 
@@ -75,8 +72,6 @@ const Charts = () => {
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )
-  const farmWethPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_WETH_POOL_ID)
-  const farmGrainPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_GRAIN_POOL_ID)
 
   const poolVaults = useMemo(
     () => ({
@@ -92,29 +87,8 @@ const Charts = () => {
         newDetails: tokens[IFARM_TOKEN_SYMBOL].newDetails,
         tokenNames: ['FARM'],
       },
-      [FARM_WETH_TOKEN_SYMBOL]: {
-        liquidityPoolVault: true,
-        platform: ['Uniswap'],
-        data: farmWethPool,
-        logoUrl: ['./icons/farm.svg', './icons/eth.svg'],
-        rewardSymbol: FARM_TOKEN_SYMBOL,
-        isNew: tokens[FARM_WETH_TOKEN_SYMBOL].isNew,
-        tokenNames: ['FARM', 'ETH'],
-        assetType: 'LP Token',
-        tags: ['Advanced'],
-      },
-      [FARM_GRAIN_TOKEN_SYMBOL]: {
-        liquidityPoolVault: true,
-        tokenNames: ['FARM', 'GRAIN'],
-        platform: ['Uniswap'],
-        data: farmGrainPool,
-        logoUrl: ['./icons/farm.svg', './icons/grain.svg'],
-        rewardSymbol: FARM_TOKEN_SYMBOL,
-        isNew: tokens[FARM_GRAIN_TOKEN_SYMBOL].isNew,
-        tags: ['Advanced'],
-      },
     }),
-    [farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
+    [farmProfitSharingPool, profitShareAPY],
   )
 
   let groupOfVaults = []
