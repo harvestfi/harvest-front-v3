@@ -1692,6 +1692,9 @@ export const getPriceFeed = async (address, chainId) => {
       .then(response => response.json())
       .then(res => {
         data = res.data.priceFeeds
+        if (data.length === 0) {
+          flag = false
+        }
       })
       .catch(error => {
         console.log('error', error)

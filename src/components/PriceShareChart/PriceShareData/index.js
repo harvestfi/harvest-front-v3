@@ -21,7 +21,7 @@ const recommendLinks = [
   { name: '1Y', type: 3, state: '1Y' },
 ]
 
-const PriceShareData = ({ token, vaultPool, tokenSymbol }) => {
+const PriceShareData = ({ token, vaultPool, tokenSymbol, setLoadData }) => {
   const [selectedState, setSelectedState] = useState('1Y')
 
   const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
@@ -38,11 +38,12 @@ const PriceShareData = ({ token, vaultPool, tokenSymbol }) => {
     const initData = async () => {
       const { data, flag } = await getPriceFeed(address, chainId)
       setLoadComplete(flag)
+      setLoadData(flag)
       setApiData(data)
     }
 
     initData()
-  }, [address, chainId])
+  }, [address, chainId, setLoadData])
 
   return (
     <Container>

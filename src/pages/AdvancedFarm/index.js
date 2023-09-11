@@ -523,6 +523,23 @@ const AdvancedFarm = () => {
   }, [curUrl])
 
   const [vaultValue, setVaultValue] = useState(null)
+  const [loadingFarmingBalance, setFarmingLoading] = useState(false)
+  const [loadingLpStats, setLpStatsloading] = useState(false)
+  const [pendingAction, setPendingAction] = useState(null)
+  const loaded = true
+  const [lastHarvest, setLastHarvest] = useState('')
+  const [activeStake, setActiveStake] = useState(true)
+  const switchStakeMethod = () => setActiveStake(prev => !prev)
+
+  const [loadData, setLoadData] = useState(true)
+  useEffect(() => {
+    const getLastHarvest = async () => {
+      const value = await getLastHarvestInfo(paramAddress, chain)
+      setLastHarvest(value)
+    }
+
+    getLastHarvest()
+  }, [paramAddress, chain])
 
   useEffect(() => {
     setVaultValue(getVaultValue(token))
@@ -624,20 +641,6 @@ const AdvancedFarm = () => {
   const harvestTreasury =
     chain === CHAIN_IDS.ETH_MAINNET ? '5' : chain === CHAIN_IDS.POLYGON_MAINNET ? '3' : '3'
 
-  const [lastHarvest, setLastHarvest] = useState('')
-  useEffect(() => {
-    const getLastHarvest = async () => {
-      const value = await getLastHarvestInfo(paramAddress, chain)
-      setLastHarvest(value)
-    }
-
-    getLastHarvest()
-  }, [paramAddress, chain])
-
-  const [loadingFarmingBalance, setFarmingLoading] = useState(false)
-  const [loadingLpStats, setLpStatsloading] = useState(false)
-  const [pendingAction, setPendingAction] = useState(null)
-  const loaded = true
   const setLoadingDots = (loadingFarm, loadingLp) => {
     setFarmingLoading(loadingFarm)
     setLpStatsloading(loadingLp)
@@ -656,9 +659,6 @@ const AdvancedFarm = () => {
     loadingBalances: loadingLpStats || loadingFarmingBalance,
     isSpecialVault,
   }
-
-  const [activeStake, setActiveStake] = useState(true)
-  const switchStakeMethod = () => setActiveStake(prev => !prev)
 
   return (
     <DetailView pageBackColor={pageBackColor} fontColor={fontColor}>
@@ -760,7 +760,23 @@ const AdvancedFarm = () => {
           <InternalSection>
             <MainSection>
               {activeMainTag === 0 ? (
-                <PriceShareData token={token} vaultPool={vaultPool} tokenSymbol={id} />
+                loadData ? (
+                  <PriceShareData
+                    token={token}
+                    vaultPool={vaultPool}
+                    tokenSymbol={id}
+                    setLoadData={setLoadData}
+                  />
+                ) : (
+                  <HalfInfo padding="25px 18px" marginBottom="23px">
+                    <FarmDetailChart
+                      token={token}
+                      vaultPool={vaultPool}
+                      lastTVL={Number(vaultValue)}
+                      lastAPY={Number(totalApy)}
+                    />
+                  </HalfInfo>
+                )
               ) : activeMainTag === 1 ? (
                 <MyBalance marginBottom="23px">
                   <NewLabel
@@ -779,14 +795,16 @@ const AdvancedFarm = () => {
                 </MyBalance>
               ) : (
                 <>
-                  <HalfInfo padding="25px 18px" marginBottom="23px">
-                    <FarmDetailChart
-                      token={token}
-                      vaultPool={vaultPool}
-                      lastTVL={Number(vaultValue)}
-                      lastAPY={Number(totalApy)}
-                    />
-                  </HalfInfo>
+                  {loadData && (
+                    <HalfInfo padding="25px 18px" marginBottom="23px">
+                      <FarmDetailChart
+                        token={token}
+                        vaultPool={vaultPool}
+                        lastTVL={Number(vaultValue)}
+                        lastAPY={Number(totalApy)}
+                      />
+                    </HalfInfo>
+                  )}
                   <HalfInfo marginBottom="20px">
                     <NewLabel
                       weight={700}
@@ -860,6 +878,23 @@ const AdvancedFarm = () => {
                       </InfoLabel>
                     </FlexDiv>
                   </HalfInfo>
+                  {!isMobile && !loadData && (
+                    <MyBalance marginBottom={isMobile ? '24px' : '20px'}>
+                      <NewLabel
+                        size={isMobile ? '12px' : '14px'}
+                        weight="700"
+                        height={isMobile ? '18px' : '24px'}
+                        color="#344054"
+                        padding={isMobile ? '9px 13px' : '10px 15px'}
+                        borderBottom="1px solid #EBEBEB"
+                      >
+                        APY Breakdown
+                      </NewLabel>
+                      <NewLabel padding={isMobile ? '9px 13px' : '0px 15px 10px'}>
+                        <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
+                      </NewLabel>
+                    </MyBalance>
+                  )}
                 </>
               )}
             </MainSection>
@@ -976,8 +1011,26 @@ const AdvancedFarm = () => {
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
-                  {isMobile && (
-                    <PriceShareData token={token} vaultPool={vaultPool} tokenSymbol={id} />
+                  {isMobile ? (
+                    loadData ? (
+                      <PriceShareData
+                        token={token}
+                        vaultPool={vaultPool}
+                        tokenSymbol={id}
+                        setLoadData={setLoadData}
+                      />
+                    ) : (
+                      <HalfInfo padding="25px 18px" marginBottom="23px">
+                        <FarmDetailChart
+                          token={token}
+                          vaultPool={vaultPool}
+                          lastTVL={Number(vaultValue)}
+                          lastAPY={Number(totalApy)}
+                        />
+                      </HalfInfo>
+                    )
+                  ) : (
+                    <></>
                   )}
                   <HalfContent
                     marginBottom={isMobile ? '24px' : '0px'}
@@ -1360,7 +1413,7 @@ const AdvancedFarm = () => {
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
-                  {!isMobile && (
+                  {!isMobile && loadData && (
                     <MyBalance marginBottom={isMobile ? '24px' : '20px'}>
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}
@@ -1480,14 +1533,16 @@ const AdvancedFarm = () => {
                   </LastHarvestInfo>
                   {isMobile && (
                     <>
-                      <HalfInfo padding="25px 18px" marginBottom="23px">
-                        <FarmDetailChart
-                          token={token}
-                          vaultPool={vaultPool}
-                          lastTVL={Number(vaultValue)}
-                          lastAPY={Number(totalApy)}
-                        />
-                      </HalfInfo>
+                      {loadData && (
+                        <HalfInfo padding="25px 18px" marginBottom="23px">
+                          <FarmDetailChart
+                            token={token}
+                            vaultPool={vaultPool}
+                            lastTVL={Number(vaultValue)}
+                            lastAPY={Number(totalApy)}
+                          />
+                        </HalfInfo>
+                      )}
                       <HalfInfo marginBottom="24px">
                         <NewLabel
                           weight={700}
