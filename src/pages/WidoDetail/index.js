@@ -672,6 +672,8 @@ const WidoDetail = () => {
   const [symbolWith, setSymbolWith] = useState('iFARM')
   const [legacyStaking, setLegacyStaking] = useState(false)
 
+  const [, setLoadData] = useState(true)
+
   const series = [44, 55]
   const options = {
     chart: {
@@ -949,7 +951,12 @@ const WidoDetail = () => {
               )}
             </HalfInfo>
             <HalfInfo padding="0px" borderColor="none">
-              <PriceShareData token={token} vaultPool={vaultPool} tokenSymbol={id} />
+              <PriceShareData
+                token={token}
+                vaultPool={vaultPool}
+                tokenSymbol={id}
+                setLoadData={setLoadData}
+              />
             </HalfInfo>
             <HalfInfo
               padding={!isMobile ? '20px' : '15px'}

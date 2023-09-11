@@ -214,6 +214,8 @@ const BeginnersFarm = () => {
   const [balanceList, setBalanceList] = useState([])
   const [supTokenList, setSupTokenList] = useState([])
 
+  const [partHeightDepo, setPartHeightDepo] = useState(null)
+
   const toTokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
   useEffect(() => {
     const getTokenBalance = async () => {
@@ -373,7 +375,8 @@ const BeginnersFarm = () => {
   )
 
   const switchMethod = () => setActiveDepo(prev => !prev)
-  const [partHeightDepo, setPartHeightDepo] = useState(null)
+
+  const [, setLoadData] = useState(true)
 
   const logoImage = id === 'WETH_base' ? ETH : USDC
   // const [holderCount, setHolderCount] = useState(0)
@@ -491,7 +494,12 @@ const BeginnersFarm = () => {
       <Inner>
         <BigDiv>
           <MainSection>
-            <PriceShareData token={token} vaultPool={vaultPool} tokenSymbol={id} />
+            <PriceShareData
+              token={token}
+              vaultPool={vaultPool}
+              tokenSymbol={id}
+              setLoadData={setLoadData}
+            />
             {!isMobile ? (
               <MyBalance>
                 <NewLabel
