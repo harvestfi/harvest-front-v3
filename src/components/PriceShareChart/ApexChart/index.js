@@ -145,7 +145,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
     if (active && payload && payload.length) {
       setCurDate(formatDateTime(payload[0].payload.x))
       const price = numberWithCommas(Number(payload[0].payload.y).toFixed(roundedDecimal))
-      setCurContent(`$${price}`)
+      setCurContent(price)
     }
 
     return null
@@ -225,7 +225,6 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
         return
       }
       const slotCount = 50,
-        // Remove range. Set default for all data.
         ago = getRangeNumber(range),
         slots = getTimeSlots(ago, slotCount)
       mainData = generateChartDataWithSlots(slots, data)
@@ -271,7 +270,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
       // Set date and price with latest value by default
       setCurDate(formatDateTime(mainData[slotCount - 1].x))
       const price = numberWithCommas(Number(mainData[slotCount - 1].y).toFixed(roundedDecimal))
-      setCurContent(`$${price}`)
+      setCurContent(price)
 
       const yAxisAry = getYAxisValues(minValue, maxValue, roundedDecimal)
       setYAxisTicks(yAxisAry)
