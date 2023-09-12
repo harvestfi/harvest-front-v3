@@ -347,10 +347,14 @@ const BackArrow = styled.img`
 `
 
 const RestContent = styled.div`
-  width: 40%;
+  width: 43%;
 
   @media screen and (min-width: 1921px) {
     width: 500px;
+  }
+
+  @media screen and (max-width: 1480px) {
+    width: 48%;
   }
 
   @media screen and (max-width: 992px) {
@@ -367,14 +371,6 @@ const BigDiv = styled(FlexDiv)`
   }
 
   @media screen and (max-width: 1624px) {
-    width: 85%;
-  }
-
-  @media screen and (max-width: 1368px) {
-    width: 90%;
-  }
-
-  @media screen and (max-width: 1156px) {
     width: 100%;
   }
 
@@ -506,7 +502,7 @@ const WithdrawSection = styled.div`
 `
 
 const MainSection = styled.div`
-  width: 58%;
+  width: 55%;
   margin-right: 20px;
   display: flex;
   flex-direction: column;
@@ -519,6 +515,10 @@ const MainSection = styled.div`
       : `
       fit-content
     `};
+
+  @media screen and (max-width: 1480px) {
+    width: 49%;
+  }
 
   @media screen and (max-width: 992px) {
     width: 100%;

@@ -768,7 +768,7 @@ const AdvancedFarm = () => {
                     setLoadData={setLoadData}
                   />
                 ) : (
-                  <HalfInfo padding="25px 18px" marginBottom="23px">
+                  <HalfInfo padding="25px 18px" marginBottom="0">
                     <FarmDetailChart
                       token={token}
                       vaultPool={vaultPool}
