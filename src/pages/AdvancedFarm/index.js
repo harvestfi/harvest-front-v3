@@ -7,7 +7,7 @@ import ReactTooltip from 'react-tooltip'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { getBalances, getSupportedTokens } from 'wido'
-import axios from 'axios'
+// import axios from 'axios'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
@@ -18,7 +18,7 @@ import Back from '../../assets/images/logos/earn/back.svg'
 import Info from '../../assets/images/logos/earn/info.svg'
 import BeginnerFriendly from '../../assets/images/logos/beginners/beginner-friendly.svg'
 import WithdrawAnytime from '../../assets/images/logos/beginners/withdraw-anytime.svg'
-import Thumbsup from '../../assets/images/logos/beginners/thumbs-up.svg'
+// import Thumbsup from '../../assets/images/logos/beginners/thumbs-up.svg'
 import DOT from '../../assets/images/logos/beginners/dot.svg'
 import BottomEffect from '../../assets/images/logos/wido/bottom-effect.svg'
 import AnimatedDots from '../../components/AnimatedDots'
@@ -464,51 +464,51 @@ const AdvancedFarm = () => {
   const switchDepoMethod = () => setActiveDepo(prev => !prev)
 
   // Count of users that used token
-  const [holderCount, setHolderCount] = useState(0)
-  useEffect(() => {
-    const getTokenHolder = async () => {
-      const chainName =
-        chain === CHAIN_IDS.ETH_MAINNET
-          ? 'eth'
-          : chain === CHAIN_IDS.ARBITRUM_ONE
-          ? 'arbitrum'
-          : chain === CHAIN_IDS.POLYGON_MAINNET
-          ? 'polygon'
-          : ''
+  // const [holderCount, setHolderCount] = useState(0)
+  // useEffect(() => {
+  //   const getTokenHolder = async () => {
+  //     const chainName =
+  //       chain === CHAIN_IDS.ETH_MAINNET
+  //         ? 'eth'
+  //         : chain === CHAIN_IDS.ARBITRUM_ONE
+  //         ? 'arbitrum'
+  //         : chain === CHAIN_IDS.POLYGON_MAINNET
+  //         ? 'polygon'
+  //         : ''
 
-      const options = {
-        method: 'POST',
-        url:
-          'https://rpc.ankr.com/multichain/79258ce7f7ee046decc3b5292a24eb4bf7c910d7e39b691384c7ce0cfb839a01/',
-        // eslint-disable-next-line camelcase
-        params: { ankr_getTokenHolders: '' },
-        headers: { accept: 'application/json', 'content-type': 'application/json' },
-        data: {
-          jsonrpc: '2.0',
-          method: 'ankr_getTokenHolders',
-          params: {
-            blockchain: chainName,
-            contractAddress: paramAddress,
-          },
-          id: 1,
-        },
-      }
+  //     const options = {
+  //       method: 'POST',
+  //       url:
+  //         'https://rpc.ankr.com/multichain/79258ce7f7ee046decc3b5292a24eb4bf7c910d7e39b691384c7ce0cfb839a01/',
+  //       // eslint-disable-next-line camelcase
+  //       params: { ankr_getTokenHolders: '' },
+  //       headers: { accept: 'application/json', 'content-type': 'application/json' },
+  //       data: {
+  //         jsonrpc: '2.0',
+  //         method: 'ankr_getTokenHolders',
+  //         params: {
+  //           blockchain: chainName,
+  //           contractAddress: paramAddress,
+  //         },
+  //         id: 1,
+  //       },
+  //     }
 
-      axios
-        .request(options)
-        .then(response => {
-          if (response.data.result === undefined) {
-            return
-          }
-          setHolderCount(response.data.result.holdersCount)
-        })
-        .catch(error => {
-          console.error(error)
-        })
-    }
+  //     axios
+  //       .request(options)
+  //       .then(response => {
+  //         if (response.data.result === undefined) {
+  //           return
+  //         }
+  //         setHolderCount(response.data.result.holdersCount)
+  //       })
+  //       .catch(error => {
+  //         console.error(error)
+  //       })
+  //   }
 
-    getTokenHolder()
-  }, [paramAddress, chain, token])
+  //   getTokenHolder()
+  // }, [paramAddress, chain, token])
 
   // Deposit / Stake / Details
   const [activeMainTag, setActiveMainTag] = useState(0)
@@ -725,7 +725,7 @@ const AdvancedFarm = () => {
           >
             Deposit any token from your wallet to start earning yield.
           </NewLabel>
-          <NewLabel
+          {/* <NewLabel
             weight={700}
             size={isMobile ? '9px' : '18px'}
             height={isMobile ? '14px' : '26px'}
@@ -733,7 +733,7 @@ const AdvancedFarm = () => {
           >
             <img className="thumbs-up" src={Thumbsup} alt="" />
             Currently used by {holderCount} users.
-          </NewLabel>
+          </NewLabel> */}
         </FlexTopDiv>
         <img className="bottom" src={BottomEffect} alt="" />
       </TopPart>
