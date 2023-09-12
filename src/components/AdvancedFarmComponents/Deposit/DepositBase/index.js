@@ -151,6 +151,7 @@ const DepositBase = ({
         color="#101828"
         display="flex"
         justifyContent="space-between"
+        padding={isMobile ? '0' : '6px 0'}
       >
         Deposit
         <ThemeMode mode={activeDepo ? 'deposit' : 'withdraw'}>

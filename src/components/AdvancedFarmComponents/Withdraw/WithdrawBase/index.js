@@ -140,6 +140,7 @@ const WithdrawBase = ({
         display="flex"
         justifyContent="space-between"
         items="center"
+        padding={isMobile ? '0' : '6px 0'}
       >
         Withdraw
         <ThemeMode mode={activeDepo ? 'deposit' : 'withdraw'}>
