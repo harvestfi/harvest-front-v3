@@ -214,8 +214,12 @@ const DepositBase = ({
           }
         }}
       >
-        {tokenSymbol} Balance Available:
-        <span>{formatNumberWido(balance, POOL_BALANCES_DECIMALS)}</span>
+        {pickedToken.symbol !== 'Select Token' ? 'Balance Available:' : ''}
+        {pickedToken.symbol !== 'Select Token' ? (
+          <span>{formatNumberWido(balance, POOL_BALANCES_DECIMALS)}</span>
+        ) : (
+          ''
+        )}
       </BalanceInfo>
       <InsufficientSection isShow={showWarning ? 'true' : 'false'}>
         <NewLabel display="flex" widthDiv="80%" items="start">

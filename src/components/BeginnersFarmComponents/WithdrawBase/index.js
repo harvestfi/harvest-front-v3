@@ -203,7 +203,7 @@ const WithdrawBase = ({
           }
         }}
       >
-        {`f${tokenSymbol}`} Balance Available:
+        Balance Available:
         <span>
           {!connected ? (
             0
