@@ -202,7 +202,7 @@ const StakeBase = ({
           </div>
         </ThemeMode>
       </NewLabel>
-      <DepoTitle>Stake your f{tokenSymbol} to earn extra rewards.</DepoTitle>
+      <DepoTitle>Stake your f{tokenSymbol} to be entitled to extra rewards.</DepoTitle>
       <AmountSection>
         <NewLabel
           size={isMobile ? '10px' : '14px'}

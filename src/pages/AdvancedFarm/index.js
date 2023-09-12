@@ -723,7 +723,7 @@ const AdvancedFarm = () => {
             marginBottom={isMobile ? '8px' : '16px'}
             color="white"
           >
-            Deposit any token from your wallet to start earning yield.
+            Deposit any token from your wallet to get started.
           </NewLabel>
           {/* <NewLabel
             weight={700}
