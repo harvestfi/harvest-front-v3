@@ -679,14 +679,8 @@ const DescInfo = styled.div`
   .help-message {
     margin-top: 0;
     p {
-      margin-bottom: 0;
-
       a {
-        color: #475467;
-        font-weight: 500;
-        pointer-events: none;
-        cursor: default;
-        text-decoration: none;
+        cursor: pointer;
       }
     }
   }
