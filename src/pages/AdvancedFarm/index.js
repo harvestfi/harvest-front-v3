@@ -1242,6 +1242,50 @@ const AdvancedFarm = () => {
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
+                  <MyBalance marginBottom={isMobile ? '0' : '23px'}>
+                    <NewLabel
+                      size={isMobile ? '12px' : '14px'}
+                      weight="600"
+                      height={isMobile ? '18px' : '24px'}
+                      color="#000"
+                      padding={isMobile ? '7px 11px' : '10px 15px'}
+                      borderBottom="1px solid #EBEBEB"
+                    >
+                      Deposit Available to Stake
+                    </NewLabel>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '7px 11px' : '10px 15px'}
+                    >
+                      <NewLabel
+                        size={isMobile ? '10px' : '14px'}
+                        weight="500"
+                        height={isMobile ? '18px' : '24px'}
+                        color="#344054"
+                      >
+                        {`f${id}`}
+                      </NewLabel>
+                      <NewLabel
+                        size={isMobile ? '10px' : '14px'}
+                        height={isMobile ? '18px' : '24px'}
+                        weight={isMobile ? '500' : '700'}
+                        color="#15202b"
+                      >
+                        {!connected ? (
+                          0
+                        ) : lpTokenBalance ? (
+                          fromWei(
+                            lpTokenBalance,
+                            fAssetPool.lpTokenData.decimals,
+                            POOL_BALANCES_DECIMALS,
+                            true,
+                          )
+                        ) : (
+                          <AnimatedDots />
+                        )}
+                      </NewLabel>
+                    </FlexDiv>
+                  </MyBalance>
                   {isMobile && (
                     <MyBalance marginBottom="24px">
                       <NewLabel
