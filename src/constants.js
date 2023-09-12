@@ -52,7 +52,7 @@ export const POLL_BOOST_USER_DATA_INTERVAL_MS = 5000
 
 export const INFURA_URL = `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 export const MATIC_URL = `https://polygon-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
-export const BASE_URL = process.env.REACT_APP_BASE_RPC_URL || `https://developer-access-mainnet.base.org`
+export const BASE_URL = `https://base-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 export const ARBITRUM_URL = `https://arb-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 
 export const GRAPH_URL_MAINNET = 'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance'
@@ -61,7 +61,7 @@ export const GRAPH_URL_POLYGON =
 export const GRAPH_URL_ARBITRUM =
   'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance-arbitrum'
 export const GRAPH_URL_BASE =
-  'https://api.thegraph.com/subgraphs/name/alexandersazonof/harvest-base'
+  'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance-base'
 
 export const ETHERSCAN_URL = 'https://etherscan.io'
 
