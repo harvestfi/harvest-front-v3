@@ -473,8 +473,7 @@ const BeginnersFarm = () => {
             marginBottom={isMobile ? '8px' : '10px'}
             color="white"
           >
-            Deposit {id === 'WETH_base' ? 'ETH' : 'USDC'} or any token from your wallet to start
-            earning yield.
+            Get started with any token from your wallet and let Harvest auto-compound your crypto.
           </NewLabel>
           {/* <NewLabel
             weight={700}
