@@ -3,7 +3,7 @@ import Plus from '../../../../assets/images/logos/beginners/plus.svg'
 import Minus from '../../../../assets/images/logos/beginners/minus.svg'
 
 const BaseWido = styled.div`
-  padding: 16px 24px 24px;
+  padding: 16px 15px 24px;
   ${props =>
     props.show
       ? `
