@@ -689,10 +689,7 @@ const Body = styled.div`
 
   @media screen and (max-width: 992px) {
     flex-direction: column-reverse;
-  }
-
-  @media screen and (max-width: 860px) {
-    margin-bottom: 160px;
+    justify-content: space-between;
   }
 `
 

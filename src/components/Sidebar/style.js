@@ -710,6 +710,10 @@ const Desktop = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+
+  @media screen and (max-width: 992px) {
+    display: none;
+  }
 `
 
 const NewTag = styled.div`
