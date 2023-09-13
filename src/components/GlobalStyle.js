@@ -33,10 +33,14 @@ html {
       -moz-appearance: textfield;
     }
 
+    .offcanvas-backdrop {
+      background: none;
+    }
+
     @media screen and (max-width: 992px) {
       .offcanvas {
         display: block;
-        width: 75%;
+        width: 60% !important;
 
         .offcanvas-body {
           padding: 0;

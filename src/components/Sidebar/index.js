@@ -15,12 +15,19 @@ import Collaborations from '../../assets/images/logos/sidebar/collaborations.svg
 import Advanced from '../../assets/images/logos/sidebar/advanced.svg'
 import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
 import LogoutIcon from '../../assets/images/logos/sidebar/logout.svg'
-import MobileConnect from '../../assets/images/logos/sidebar/mobileconnect.svg'
-import Toggle from '../../assets/images/logos/sidebar/toggle.svg'
+import Toggle from '../../assets/images/logos/sidebar/more-mobile.svg'
 import Arbitrum from '../../assets/images/chains/arbitrum.svg'
 import Base from '../../assets/images/chains/base.svg'
 import Ethereum from '../../assets/images/chains/ethereum.svg'
 import Polygon from '../../assets/images/chains/polygon.svg'
+import HomeMobile from '../../assets/images/logos/sidebar/home-mobile.svg'
+import PortfolioMobile from '../../assets/images/logos/sidebar/portfolio-mobile.svg'
+import BeginnersMobile from '../../assets/images/logos/sidebar/beginners-mobile.svg'
+import AdvancedMobile from '../../assets/images/logos/sidebar/advanced-mobile.svg'
+import CollaborationsMobile from '../../assets/images/logos/sidebar/collaborations-mobile.svg'
+import AnalyticsMobile from '../../assets/images/logos/sidebar/analytics-mobile.svg'
+import FAQMobile from '../../assets/images/logos/sidebar/faq-mobile.svg'
+import DocsMobile from '../../assets/images/logos/sidebar/docs-mobile.svg'
 import { ROUTES } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
 import { usePools } from '../../providers/Pools'
@@ -29,7 +36,6 @@ import { useWallet } from '../../providers/Wallet'
 import { formatAddress, isSpecialApp } from '../../utils'
 // import Social from '../Social'
 import {
-  AboutHarvest,
   Address,
   ConnectAvatar,
   ConnectButtonStyle,
@@ -44,7 +50,7 @@ import {
   MobileConnectBtn,
   // MobileFollow,
   MobileLinkContainer,
-  MobileLinksContainer,
+  // MobileLinksContainer,
   MobileToggle,
   MobileView,
   OffcanvasDiv,
@@ -57,6 +63,11 @@ import {
   Logo,
   Desktop,
   NewTag,
+  LinkMobile,
+  MobileMenuContainer,
+  Mobile,
+  ConnectSection,
+  MoreBtn,
 } from './style'
 
 const sideLinks = [
@@ -111,6 +122,58 @@ const sideLinks1 = [
   },
 ]
 
+const sideLinksMobile = [
+  {
+    path: ROUTES.HOME,
+    name: 'Home',
+    imgPath: HomeMobile,
+  },
+  {
+    path: ROUTES.BEGINNERS,
+    name: 'Beginners',
+    imgPath: BeginnersMobile,
+  },
+  {
+    path: ROUTES.PORTFOLIO,
+    name: 'Portfolio',
+    imgPath: PortfolioMobile,
+  },
+  {
+    path: ROUTES.ADVANCED,
+    name: 'Advanced',
+    imgPath: AdvancedMobile,
+  },
+]
+
+const sideLinksMobile1 = [
+  {
+    path: ROUTES.COLLABORATIONS,
+    name: 'Collaborations',
+    imgPath: CollaborationsMobile,
+    new: true,
+    enabled: false,
+  },
+  {
+    path: ROUTES.ANALYTIC,
+    name: 'Analytics',
+    imgPath: AnalyticsMobile,
+    external: false,
+  },
+  {
+    path: ROUTES.FAQ,
+    name: 'FAQ',
+    imgPath: FAQMobile,
+    external: false,
+  },
+  {
+    path: 'https://docs.harvest.finance',
+    name: 'Docs',
+    imgPath: DocsMobile,
+    external: false,
+    newTab: true,
+  },
+]
+
 const SideLink = ({ item, subItem, isDropdownLink, fontColor, activeIconColor, darkMode }) => {
   const { pathname } = useLocation()
   const pageName = pathname === '/' ? 'home' : pathname
@@ -137,6 +200,44 @@ const SideLink = ({ item, subItem, isDropdownLink, fontColor, activeIconColor, d
       {item.name}
       {item.new ? <NewTag>Soon</NewTag> : <></>}
     </Link>
+  )
+}
+
+const MobileMenu = ({
+  item,
+  subItem,
+  isDropdownLink,
+  fontColor,
+  activeIconColor,
+  darkMode,
+  isMobile,
+}) => {
+  const { pathname } = useLocation()
+  const pageName = pathname === '/' ? 'home' : pathname
+  return (
+    /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
+    <LinkMobile
+      fontColor={fontColor}
+      active={pageName.includes(item.name.toLowerCase())}
+      subItem={subItem}
+      isDropdownLink={isDropdownLink}
+      activeIconColor={activeIconColor}
+      darkMode={darkMode}
+      enabled={item.enabled === false ? 'false' : 'true'}
+      isMobile={isMobile}
+    >
+      <div className="item">
+        <SideIcons
+          className="sideIcon"
+          src={item.imgPath}
+          alt="Harvest"
+          width="27px"
+          height="27px"
+        />
+      </div>
+      {item.name}
+      {item.new ? <NewTag>Soon</NewTag> : <></>}
+    </LinkMobile>
   )
 }
 
@@ -369,99 +470,28 @@ const Sidebar = ({ width }) => {
           </LinksContainer>
         </BottomPart>
       </Desktop>
-      <MobileView>
-        <OffcanvasDiv
-          show={mobileShow}
-          onHide={handleMobileClose}
-          placement="end"
-          backdrop={false}
-          backcolor={backColor}
-          fontcolor={fontColor}
-          filtercolor={filterColor}
-        >
-          <Offcanvas.Header closeButton />
-          <Offcanvas.Body>
-            <MobileActionsContainer>
-              <MobileLinksContainer totalItems={sideLinks.length + 2} fontColor={fontColor}>
-                {(() => {
-                  if (!connected) {
-                    return (
-                      <ConnectButtonStyle
-                        color="connectwallet"
-                        onClick={() => {
-                          connectAction()
-                          handleMobileClose()
-                        }}
-                        minWidth="190px"
-                        bordercolor={fontColor}
-                        disabled={disableWallet}
-                      >
-                        <img src={ConnectDisableIcon} className="connect-wallet" alt="" />
-                        Connect Wallet
-                      </ConnectButtonStyle>
-                    )
-                  }
-
-                  if (!chainId) {
-                    return (
-                      <button onClick={disconnectAction} type="button">
-                        Wrong network
-                      </button>
-                    )
-                  }
-
-                  return (
-                    <Dropdown>
-                      <UserDropDown
-                        id="dropdown-basic"
-                        fontcolor={fontColor}
-                        hoverbackcolor={connectWalletBtnBackColor}
-                      >
-                        <FlexDiv>
-                          <ConnectAvatar avatar>
-                            <img src={connectAvatar} alt="" />
-                          </ConnectAvatar>
-                          <div className="detail-info">
-                            <Address>{formatAddress(account)}</Address>
-                            <br />
-                            <ConnectAvatar>
-                              <img
-                                alt="Chain icon"
-                                src={ConnectSuccessIcon}
-                                style={{ width: 8, height: 8 }}
-                              />
-                              Connected
-                            </ConnectAvatar>
-                          </div>
-                        </FlexDiv>
-                        <img
-                          alt="chain icon"
-                          src={getChainIcon(chainId)}
-                          style={{ width: 17, height: 17 }}
-                        />
-                      </UserDropDown>
-
-                      {!isSpecialApp ? (
-                        <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
-                          <UserDropDownItem
-                            onClick={() => {
-                              disconnectAction()
-                            }}
-                            fontcolor={fontColor}
-                            filtercolor={filterColor}
-                          >
-                            <img src={LogoutIcon} width="18px" height="18px" alt="" />
-                            <div>Log Out</div>
-                          </UserDropDownItem>
-                        </UserDropDownMenu>
-                      ) : (
-                        <></>
-                      )}
-                    </Dropdown>
-                  )
-                })()}
-
-                {sideLinks.map(item => (
+      <Mobile>
+        <MobileView>
+          <OffcanvasDiv
+            show={mobileShow}
+            onHide={handleMobileClose}
+            placement="end"
+            backcolor={backColor}
+            fontcolor={fontColor}
+            filtercolor={filterColor}
+          >
+            <Offcanvas.Body>
+              <MobileActionsContainer>
+                <Logo
+                  className="logo"
+                  onClick={() => {
+                    push('/')
+                  }}
+                >
+                  <img src={logoNew} width={52} height={52} alt="Harvest" />
+                  Harvest
+                </Logo>
+                {sideLinksMobile1.map(item => (
                   <Fragment key={item.name}>
                     <MobileLinkContainer
                       active={pathname.includes(item.path)}
@@ -484,104 +514,83 @@ const Sidebar = ({ width }) => {
                         activeIconColor={sidebarActiveIconColor}
                         darkMode={darkMode}
                       />
+                      {item.external ? (
+                        <div className="item">
+                          <SideIcons
+                            className="external-link"
+                            src={ExternalLink}
+                            alt="external-link"
+                            filterColor={filterColor}
+                          />
+                        </div>
+                      ) : (
+                        <></>
+                      )}
                     </MobileLinkContainer>
+                    {item.subItems ? (
+                      <LinkContainer hideOnDesktop>
+                        {item.subItems.map(subItem => (
+                          <SideLink
+                            key={subItem.name}
+                            item={subItem}
+                            fontColor={fontColor}
+                            activeFontColor={sidebarActiveFontColor}
+                            activeIconColor={sidebarActiveIconColor}
+                            darkMode={darkMode}
+                          />
+                        ))}
+                      </LinkContainer>
+                    ) : null}
                   </Fragment>
                 ))}
-              </MobileLinksContainer>
-              <AboutHarvest />
-              {sideLinks1.map(item => (
-                <Fragment key={item.name}>
-                  <MobileLinkContainer
-                    active={pathname.includes(item.path)}
-                    activeColor={item.activeColor}
-                    hoverImgColor={hoverImgColor}
-                    onClick={() => {
-                      if (item.newTab) {
-                        window.open(item.path, '_blank')
-                      } else {
-                        directAction(item.path)
-                      }
-                      handleMobileClose()
-                    }}
-                  >
-                    <SideLink
-                      item={item}
-                      isDropdownLink={item.path === '#'}
-                      fontColor={sidebarFontColor}
-                      activeFontColor={sidebarActiveFontColor}
-                      activeIconColor={sidebarActiveIconColor}
-                      darkMode={darkMode}
-                    />
-                    {item.external ? (
-                      <div className="item">
-                        <SideIcons
-                          className="external-link"
-                          src={ExternalLink}
-                          alt="external-link"
-                          filterColor={filterColor}
-                        />
-                      </div>
-                    ) : (
-                      <></>
-                    )}
-                  </MobileLinkContainer>
-                  {item.subItems ? (
-                    <LinkContainer hideOnDesktop>
-                      {item.subItems.map(subItem => (
-                        <SideLink
-                          key={subItem.name}
-                          item={subItem}
-                          fontColor={fontColor}
-                          activeFontColor={sidebarActiveFontColor}
-                          activeIconColor={sidebarActiveIconColor}
-                          darkMode={darkMode}
-                        />
-                      ))}
-                    </LinkContainer>
-                  ) : null}
-                </Fragment>
-              ))}
-            </MobileActionsContainer>
-            {/* <MobileFollow>
-              <Social />
-              <ThemeMode
-                mode={darkMode ? 'dark' : 'light'}
-                backColor={toggleBackColor}
-                borderColor={borderColor}
+              </MobileActionsContainer>
+            </Offcanvas.Body>
+          </OffcanvasDiv>
+          {sideLinksMobile.map(item => (
+            <Fragment key={item.name}>
+              <MobileMenuContainer
+                active={pathname.includes(item.path)}
+                activeColor={item.activeColor}
+                hoverImgColor={hoverImgColor}
+                onClick={() => {
+                  if (item.newTab) {
+                    window.open(item.path, '_blank')
+                  } else {
+                    directAction(item.path)
+                  }
+                  handleMobileClose()
+                }}
               >
-                <div id="theme-switch">
-                  <div className="switch-track">
-                    <div className="switch-thumb" />
-                  </div>
+                <MobileMenu
+                  item={item}
+                  isDropdownLink={item.path === '#'}
+                  fontColor={sidebarFontColor}
+                  activeFontColor={sidebarActiveFontColor}
+                  activeIconColor={sidebarActiveIconColor}
+                  darkMode={darkMode}
+                  isMobile
+                />
+              </MobileMenuContainer>
+            </Fragment>
+          ))}
 
-                  <input
-                    type="checkbox"
-                    checked={darkMode}
-                    onChange={switchTheme}
-                    aria-label="Switch between dark and light mode"
-                  />
-                </div>
-              </ThemeMode>
-            </MobileFollow> */}
-          </Offcanvas.Body>
-        </OffcanvasDiv>
-        <MobileConnectBtn
-          color="connectwallet"
-          connected={connected}
-          onClick={() => {
-            connectAction()
-          }}
-        >
-          <img src={ConnectDisableIcon} className="connect-wallet" alt="" />
-          <img src={MobileConnect} alt="" />
-        </MobileConnectBtn>
-        <a className="logo" href="/">
-          <img src={logoNew} width={52} height={52} alt="Harvest" />
-        </a>
-        <button type="button" onClick={handleMobileShow}>
-          <MobileToggle toggleColor={toggleColor} src={Toggle} alt="" />
-        </button>
-      </MobileView>
+          <MoreBtn type="button" onClick={handleMobileShow}>
+            <MobileToggle toggleColor={toggleColor} width={27} height={27} src={Toggle} alt="" />
+            More
+          </MoreBtn>
+        </MobileView>
+        <ConnectSection connected={connected}>
+          <MobileConnectBtn
+            color="connectwallet"
+            connected={connected}
+            onClick={() => {
+              connectAction()
+            }}
+          >
+            Connect Wallet
+          </MobileConnectBtn>
+        </ConnectSection>
+      </Mobile>
     </Container>
   )
 }
