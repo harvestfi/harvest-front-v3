@@ -28,6 +28,8 @@ const Container = styled.div`
     padding: 11px 35px 0 35px;
     position: unset;
     min-height: auto;
+    box-shadow: 0px -5px 5px 0px rgba(215, 215, 215, 0.28);
+    border: none;
   }
 `
 
@@ -663,6 +665,10 @@ const OffcanvasDiv = styled(Offcanvas)`
   background-color: ${props => props.backcolor} !important;
   color: ${props => props.fontcolor};
   transition: 0.25s;
+  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
+  border-top: 1px solid #e9e9e9;
+  border-right: 1px solid #e9e9e9;
+  border-left: 1px solid #e9e9e9 !important;
   a.logo {
     color: ${props => props.fontcolor};
   }

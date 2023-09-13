@@ -500,10 +500,10 @@ const Sidebar = ({ width }) => {
                       onClick={() => {
                         if (item.newTab) {
                           window.open(item.path, '_blank')
-                        } else {
+                        } else if (item.enabled) {
                           directAction(item.path)
+                          handleMobileClose()
                         }
-                        handleMobileClose()
                       }}
                     >
                       <SideLink
