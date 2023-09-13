@@ -70,8 +70,6 @@ import ETH from '../../assets/images/logos/beginnershome/eth-icon.svg'
 import USDC from '../../assets/images/logos/beginnershome/usdc-icon.svg'
 // import { CHAIN_IDS } from '../../data/constants'
 
-const BeginnersCoinGroup = ['WETH_base', 'USDC_base']
-
 const BeginnersFarm = () => {
   const { paramAddress } = useParams()
   // Switch Tag (Deposit/Withdraw)
@@ -158,21 +156,10 @@ const BeginnersFarm = () => {
 
   const chain = token.chain || token.data.chain
 
-  const [coinId, setCoinId] = useState(-1)
   useEffect(() => {
     // 👇️ scroll to top on page load
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
   }, [])
-  const tokenName = token.tokenNames.join(', ') || token.rewardSymbol
-
-  useEffect(() => {
-    // eslint-disable-next-line array-callback-return
-    BeginnersCoinGroup.map((el, i) => {
-      if (el === tokenName) {
-        setCoinId(i)
-      }
-    })
-  }, [token, tokenName])
 
   const useIFARM = id === FARM_TOKEN_SYMBOL
   const fAssetPool = find(pools, pool => pool.collateralAddress === tokens[id].vaultAddress)
@@ -427,7 +414,7 @@ const BeginnersFarm = () => {
 
   return (
     <DetailView pageBackColor={pageBackColor} fontColor={fontColor}>
-      <TopPart num={coinId}>
+      <TopPart>
         <FlexTopDiv>
           <div className="back-btn">
             <BackBtnRect

@@ -11,7 +11,7 @@ import { Container, Inner, UnitPart, HeaderTitle, HeaderDesc, CoinSection } from
 
 const IconAry = [
   { name: 'WETH_base', img: ETH },
-  { name: 'USDC_base', img: USDC },
+  { name: 'USDBc_base', img: USDC },
 ]
 
 const Home = () => {
