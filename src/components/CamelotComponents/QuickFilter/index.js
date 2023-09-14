@@ -20,6 +20,7 @@ import CollabVerse from '../../../assets/images/logos/filter/collab-verse.svg'
 // import CollabPods from '../../assets/images/logos/filter/collab-pods.svg'
 import CollabCamelot from '../../../assets/images/logos/filter/collab-camelot.svg'
 import { CHAIN_IDS } from '../../../data/constants'
+import { ROUTES } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { isLedgerLive, isSpecialApp } from '../../../utils'
@@ -380,7 +381,7 @@ const QuickFilter = ({
         paramObj.search.toLowerCase() === 'lsd' ||
         paramObj.search.toLowerCase() === 'desci'
       ) {
-        push(`/?${params.toString()}`)
+        push(`${ROUTES.ADVANCED}?${params.toString()}`)
       } else {
         push(`${pathname}?${params.toString()}`)
       }
