@@ -96,7 +96,6 @@ ${props =>
       props.color === 'max'
         ? `
         background: #FF9940;
-        // border: 2px solid #F2B435;
         color: #FFFFFF;
         border-radius: 6px;
       
@@ -104,7 +103,6 @@ ${props =>
           !props.disabled
             ? `
         &:hover {
-          // border: 2px solid #FFD69D;
           background: #FF9400D0;
         }`
             : ''

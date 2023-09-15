@@ -58,7 +58,6 @@ const ButtonGroup = styled.div`
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  // margin: 0.8em 1em 0.25em auto;
   color: #fff;
 
   button {

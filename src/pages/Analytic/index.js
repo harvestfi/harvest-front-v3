@@ -448,9 +448,7 @@ const Analytic = () => {
                 iFARM Exchanges
               </BigStatsExchange>
               <ImgList>
-                {/* <a href="#" target="_blank" rel="noopener noreferrer"> */}
                 <img src={ExternalCamelot} alt="" />
-                {/* </a> */}
               </ImgList>
             </StatsContainer>
           </StatsExchange>

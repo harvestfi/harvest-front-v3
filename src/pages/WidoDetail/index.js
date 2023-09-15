@@ -991,11 +991,9 @@ const WidoDetail = () => {
                     size="12px"
                     height="16px"
                   >
-                    {/* <img className="icon" src={VaultIcon} alt="" /> */}
                     <NewLabel size="12px" weight={isMobile ? 400 : 600} height="16px" self="center">
                       Vault Address
                     </NewLabel>
-                    {/* <img className="external-link" src={ExternalLink} alt="" /> */}
                   </InfoLabel>
                 )}
                 {vaultPool.autoStakePoolAddress && (
@@ -1009,11 +1007,9 @@ const WidoDetail = () => {
                     size="12px"
                     height="16px"
                   >
-                    {/* <img className="icon" src={StrategyIcon} alt="" /> */}
                     <NewLabel size="12px" weight={isMobile ? 400 : 600} height="16px" self="center">
                       Strategy Address
                     </NewLabel>
-                    {/* <img className="external-link" src={ExternalLink} alt="" /> */}
                   </InfoLabel>
                 )}
                 <InfoLabel
@@ -1028,11 +1024,9 @@ const WidoDetail = () => {
                   size="12px"
                   height="16px"
                 >
-                  {/* <img className="icon" src={VaultIcon} alt="" /> */}
                   <NewLabel size="12px" weight={isMobile ? 400 : 600} height="16px" self="center">
                     Pool Address
                   </NewLabel>
-                  {/* <img className="external-link" src={ExternalLink} alt="" /> */}
                 </InfoLabel>
               </FlexDiv>
             </HalfInfo>

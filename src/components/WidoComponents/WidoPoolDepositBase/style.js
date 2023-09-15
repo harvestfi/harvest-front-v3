@@ -220,7 +220,6 @@ const ThemeMode = styled.div`
       position: absolute;
       top: 2px;
       width: 20px;
-      // border-image: initial;
       border-radius: 50%;
       transition: all 0.25s ease 0s;
     }

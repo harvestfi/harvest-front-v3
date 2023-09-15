@@ -47,7 +47,6 @@ const ButtonGroup = styled.div`
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  // margin: 0.8em 1em 0.25em auto;
   color: #fff;
 
   @media screen and (max-width: 992px) {
@@ -118,7 +117,6 @@ const TokenSymbol = styled.div`
   color: #000;
 
   @media screen and (max-width: 992px) {
-    // margin-top: 0.5rem;
     font-size: 12px;
     line-height: 18px;
   }

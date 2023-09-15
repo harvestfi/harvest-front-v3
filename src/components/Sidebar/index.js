@@ -271,7 +271,6 @@ const Sidebar = ({ width }) => {
 
   const {
     darkMode,
-    // setDarkMode,
     backColor,
     fontColor,
     filterColor,
@@ -280,7 +279,6 @@ const Sidebar = ({ width }) => {
     toggleColor,
     borderColor,
     connectWalletBtnBackColor,
-    // toggleBackColor,
     sidebarFontColor,
     sidebarActiveFontColor,
     sidebarActiveIconColor,
@@ -382,7 +380,6 @@ const Sidebar = ({ width }) => {
                               src={ConnectSuccessIcon}
                               style={{ width: 8, height: 8 }}
                             />
-                            {/* )} */}
                             Connected
                           </ConnectAvatar>
                         </div>

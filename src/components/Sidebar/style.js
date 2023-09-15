@@ -188,17 +188,6 @@ const Link = styled.button`
 
   &:hover {
     color: #848484;
-    // font-weight: bold;
-    img {
-      ${props =>
-        props.darkMode
-          ? `
-          // filter: invert(97%) sepia(0%) saturate(7489%) hue-rotate(281deg) brightness(106%) contrast(103%);
-      `
-          : `
-          // filter: invert(0%) sepia(8%) saturate(7500%) hue-rotate(300deg) brightness(90%) contrast(110%);
-          `}
-    }
   }
 `
 
@@ -277,7 +266,6 @@ const ConnectButtonStyle = styled.button`
     align-items: center;
     margin: 0 0 20px 13px;
 
-    // width: 85%;
     ${props =>
       props.connected
         ? `

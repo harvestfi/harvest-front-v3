@@ -1101,7 +1101,6 @@ const AdvancedFarm = () => {
                         setWithdrawStart={setWithdrawStart}
                         finalStep={withdrawFinalStep}
                         pickedToken={pickedTokenWith}
-                        setPickedToken={setPickedTokenWith}
                         unstakeBalance={unstakeBalance}
                         setUnstakeBalance={setUnstakeBalance}
                         tokenSymbol={id}

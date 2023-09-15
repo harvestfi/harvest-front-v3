@@ -29,7 +29,6 @@ const ButtonStyle = styled.button`
   font-weight: 500;
   border: none;
   cursor: pointer;
-  // margin-right: 30px;
   opacity: 1;
   position: relative;
   transition: 0.25s;

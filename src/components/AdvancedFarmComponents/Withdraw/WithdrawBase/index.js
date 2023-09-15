@@ -52,7 +52,6 @@ const WithdrawBase = ({
   setWithdrawStart,
   finalStep,
   pickedToken,
-  // setPickedToken,
   unstakeBalance,
   setUnstakeBalance,
   tokenSymbol,

@@ -11,12 +11,6 @@ const SocialsContainer = styled.div`
     }
   }
 
-  // @media screen and (max-width: 1200px) {
-  //   flex-direction: row;
-  //   position: unset;
-  //   margin-bottom: 40px;
-  // }
-
   z-index: 99999;
 `
 

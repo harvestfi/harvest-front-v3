@@ -7,7 +7,6 @@ const Container = styled.button`
   padding: 3px 15px;
   display: flex;
   text-align: left;
-  // margin-left: 20px;
   border: none;
   color: #282f3d;
   border-radius: 3px;
@@ -19,7 +18,6 @@ const Container = styled.button`
           #3b3c3e
         `
         : `#e9f0f7`};
-    // filter: drop-shadow(0px 0px 4px #ff9400);
   }
 
   ${props =>

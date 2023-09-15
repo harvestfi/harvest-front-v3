@@ -123,11 +123,6 @@ const StatsBox = styled.div`
   @media screen and (max-width: 992px) {
     order: ${props => props.mobileOrder || 'unset'};
   }
-
-  // @media screen and (min-width: 1921px) {
-  //   min-width: 440px;
-  //   width: 440px;
-  // }
 `
 
 const StatsContainerRow = styled.div`
