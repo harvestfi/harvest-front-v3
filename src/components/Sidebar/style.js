@@ -98,7 +98,7 @@ const LinkContainer = styled.div`
 `
 
 const Link = styled.button`
-  color: ${props => props.fontColor};
+  color: #475467;
   transition: 0.25s;
   font-size: 18px;
   font-weight: 500;
