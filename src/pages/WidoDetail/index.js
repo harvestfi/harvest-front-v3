@@ -24,21 +24,21 @@ import DESCI from '../../assets/images/logos/DeSci.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
 import VaultPanelActionsFooter from '../../components/VaultComponents/VaultPanelActions/VaultPanelActionsFooter'
-import WidoDepositBase from '../../components/WidoComponents/WidoDepositBase'
-import WidoDepositFinalStep from '../../components/WidoComponents/WidoDepositFinalStep'
-import WidoDepositSelectToken from '../../components/WidoComponents/WidoDepositSelectToken'
-import WidoDepositStart from '../../components/WidoComponents/WidoDepositStart'
-import WidoDepositStartRoutes from '../../components/WidoComponents/WidoDepositStartRoutes'
-import WidoDepositStartSlippage from '../../components/WidoComponents/WidoDepositStartSlippage'
-import WidoPoolDepositBase from '../../components/WidoComponents/WidoPoolDepositBase'
-import WidoPoolDepositFinalStep from '../../components/WidoComponents/WidoPoolDepositFinalStep'
-import WidoPoolWithdrawBase from '../../components/WidoComponents/WidoPoolWithdrawBase'
-import WidoWithdrawBase from '../../components/WidoComponents/WidoWithdrawBase'
-import WidoWithdrawFinalStep from '../../components/WidoComponents/WidoWithdrawFinalStep'
-import WidoWithdrawSelectToken from '../../components/WidoComponents/WidoWithdrawSelectToken'
-import WidoWithdrawStart from '../../components/WidoComponents/WidoWithdrawStart'
-import WidoWithdrawStartRoutes from '../../components/WidoComponents/WidoWithdrawStartRoutes'
-import WidoWithdrawStartSlippage from '../../components/WidoComponents/WidoWithdrawStartSlippage'
+import DepositBase from '../../components/WidoComponents/Deposit/DepositBase'
+import DepositFinalStep from '../../components/WidoComponents/Deposit/DepositFinalStep'
+import DepositSelectToken from '../../components/WidoComponents/Deposit/DepositSelectToken'
+import DepositStart from '../../components/WidoComponents/Deposit/DepositStart'
+import DepositStartRoutes from '../../components/WidoComponents/Deposit/DepositStartRoutes'
+import DepositStartSlippage from '../../components/WidoComponents/Deposit/DepositStartSlippage'
+import PoolDepositBase from '../../components/WidoComponents/Deposit/PoolDepositBase'
+import PoolDepositFinalStep from '../../components/WidoComponents/Deposit/PoolDepositFinalStep'
+import PoolWithdrawBase from '../../components/WidoComponents/Withdraw/PoolWithdrawBase'
+import WithdrawBase from '../../components/WidoComponents/Withdraw/WithdrawBase'
+import WithdrawFinalStep from '../../components/WidoComponents/Withdraw/WithdrawFinalStep'
+import WithdrawSelectToken from '../../components/WidoComponents/Withdraw/WithdrawSelectToken'
+import WithdrawStart from '../../components/WidoComponents/Withdraw/WithdrawStart'
+import WithdrawStartRoutes from '../../components/WidoComponents/Withdraw/WithdrawStartRoutes'
+import WithdrawStartSlippage from '../../components/WidoComponents/Withdraw/WithdrawStartSlippage'
 import {
   DECIMAL_PRECISION,
   FARM_GRAIN_TOKEN_SYMBOL,
@@ -1102,7 +1102,7 @@ const WidoDetail = () => {
               {/* Components for Deposit */}
               <DepositComponets show={activeDepo}>
                 {useIFARM ? (
-                  <WidoPoolDepositBase // for IFarm
+                  <PoolDepositBase // for IFarm
                     selectTokenWido={selectTokenDepo}
                     setSelectTokenWido={setSelectTokenDepo}
                     startSlippage={startSlippageDepo}
@@ -1130,7 +1130,7 @@ const WidoDetail = () => {
                   />
                 ) : (
                   loadComplete && (
-                    <WidoDepositBase
+                    <DepositBase
                       selectTokenWido={selectTokenDepo}
                       setSelectTokenWido={setSelectTokenDepo}
                       startSlippage={startSlippageDepo}
@@ -1161,7 +1161,7 @@ const WidoDetail = () => {
                   )
                 )}
 
-                <WidoDepositSelectToken
+                <DepositSelectToken
                   selectTokenWido={selectTokenDepo}
                   setSelectTokenWido={setSelectTokenDepo}
                   clickTokenId={clickTokenIdDepo}
@@ -1173,7 +1173,7 @@ const WidoDetail = () => {
                   setWidoPartHeight={setWidoPartHeightDepo}
                 />
 
-                <WidoDepositStart
+                <DepositStart
                   pickedToken={pickedTokenDepo}
                   depositWido={depositWido}
                   setDepositWido={setDepositWido}
@@ -1194,12 +1194,12 @@ const WidoDetail = () => {
                   setQuoteValue={setQuoteValueDepo}
                 />
 
-                <WidoDepositStartRoutes
+                <DepositStartRoutes
                   startRoutes={startRoutesDepo}
                   setStartRoutes={setStartRoutesDepo}
                 />
 
-                <WidoDepositStartSlippage
+                <DepositStartSlippage
                   startSlippage={startSlippageDepo}
                   setStartSlippage={setStartSlippageDepo}
                   setSlippagePercent={setSlippagePercentDepo}
@@ -1207,7 +1207,7 @@ const WidoDetail = () => {
                 />
 
                 {useIFARM ? (
-                  <WidoPoolDepositFinalStep
+                  <PoolDepositFinalStep
                     finalStep={depositFinalStep}
                     setFinalStep={setDepositFinalStep}
                     setDepositWido={setDepositWido}
@@ -1232,7 +1232,7 @@ const WidoDetail = () => {
                     multipleAssets={multipleAssets}
                   />
                 ) : (
-                  <WidoDepositFinalStep
+                  <DepositFinalStep
                     finalStep={depositFinalStep}
                     setFinalStep={setDepositFinalStep}
                     setDepositWido={setDepositWido}
@@ -1260,7 +1260,7 @@ const WidoDetail = () => {
               {/* Components for Withdraw */}
               <WithdrawComponents show={!activeDepo}>
                 {useIFARM ? (
-                  <WidoPoolWithdrawBase
+                  <PoolWithdrawBase
                     selectTokenWido={selectTokenWith}
                     setSelectTokenWido={setSelectTokenWith}
                     withdrawWido={withdrawWido}
@@ -1279,7 +1279,7 @@ const WidoDetail = () => {
                     token={token}
                   />
                 ) : (
-                  <WidoWithdrawBase
+                  <WithdrawBase
                     selectTokenWido={selectTokenWith}
                     setSelectTokenWido={setSelectTokenWith}
                     withdrawWido={withdrawWido}
@@ -1299,7 +1299,7 @@ const WidoDetail = () => {
                   />
                 )}
 
-                <WidoWithdrawSelectToken
+                <WithdrawSelectToken
                   selectTokenWido={selectTokenWith}
                   setSelectTokenWido={setSelectTokenWith}
                   clickTokenId={clickTokenIdWith}
@@ -1311,7 +1311,7 @@ const WidoDetail = () => {
                   setWidoPartHeight={setWidoPartHeightWith}
                 />
 
-                <WidoWithdrawStart
+                <WithdrawStart
                   withdrawWido={withdrawWido}
                   setWithdrawWido={setWithdrawWido}
                   pickedToken={pickedTokenWith}
@@ -1332,12 +1332,12 @@ const WidoDetail = () => {
                   setQuoteValue={setQuoteValueWith}
                 />
 
-                <WidoWithdrawStartRoutes
+                <WithdrawStartRoutes
                   startRoutes={startRoutesWith}
                   setStartRoutes={setStartRoutesWith}
                 />
 
-                <WidoWithdrawStartSlippage
+                <WithdrawStartSlippage
                   startSlippage={startSlippageWith}
                   setStartSlippage={setStartSlippageWith}
                   slippagePercent={slippagePercentWith}
@@ -1345,7 +1345,7 @@ const WidoDetail = () => {
                   setWithdrawWido={setWithdrawWido}
                 />
 
-                <WidoWithdrawFinalStep
+                <WithdrawFinalStep
                   finalStep={withdrawFinalStep}
                   setFinalStep={setWithdrawFinalStep}
                   setWithdrawWido={setWithdrawWido}
