@@ -262,6 +262,7 @@ const CreditCardBox = styled.div`
 
 const ThemeMode = styled.div`
   display: flex;
+  align-items: center;
 
   #theme-switch {
     position: relative;
@@ -283,8 +284,8 @@ const ThemeMode = styled.div`
     .switch-track {
       background: #000;
       border: 1px solid ${props => props.borderColor};
-      height: 24px;
-      width: 50px;
+      height: 16px;
+      width: 32px;
       border-radius: 30px;
       transition: all 0.2s ease 0s;
     }
@@ -292,11 +293,11 @@ const ThemeMode = styled.div`
       background-size: cover;
       background-repeat: no-repeat;
       background-color: white;
-      height: 20px;
-      left: 2px;
+      height: 14px;
+      left: 1px;
       position: absolute;
-      top: 2px;
-      width: 20px;
+      top: 1px;
+      width: 14px;
       border-radius: 50%;
       transition: all 0.25s ease 0s;
     }
@@ -317,7 +318,7 @@ const ThemeMode = styled.div`
           opacity: 0;
         }
         .switch-thumb {
-          left: 27px;
+          left: 16px;
           background-image: url(${Plus});
         }
       }
