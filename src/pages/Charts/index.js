@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useState, useMemo } from 'react'
 import { find, get, keys, orderBy, sortBy } from 'lodash'
 import move from 'lodash-move'
 import { CHAIN_IDS } from '../../data/constants'
@@ -81,7 +81,7 @@ const Charts = () => {
         data: farmProfitSharingPool,
         logoUrl: ['./icons/ifarm.svg'],
         tokenAddress: addresses.FARM,
-        vaultAddress: addresses.iFARM,
+        vaultAddress: addresses.FARM,
         rewardSymbol: 'iFarm',
         isNew: tokens[IFARM_TOKEN_SYMBOL].isNew,
         newDetails: tokens[IFARM_TOKEN_SYMBOL].newDetails,
@@ -108,6 +108,8 @@ const Charts = () => {
   const arbVaultsSymbol = useMemo(() => formatVaults(groupOfVaults, CHAIN_IDS.ARBITRUM_ONE), [
     groupOfVaults,
   ])
+
+  const [, setLoadData] = useState(true)
 
   return (
     <Container pageBackColor={pageBackColor} fontColor={fontColor}>
@@ -137,7 +139,12 @@ const Charts = () => {
           return (
             <ChartSection key={i}>
               <PriceChartArea>
-                <PriceShareData token={token} vaultPool={vaultPool} tokenSymbol={symbol} />
+                <PriceShareData
+                  token={token}
+                  vaultPool={vaultPool}
+                  tokenSymbol={symbol}
+                  setLoadData={setLoadData}
+                />
               </PriceChartArea>
               <FarmDetailChart
                 token={token}
@@ -173,7 +180,12 @@ const Charts = () => {
           return (
             <ChartSection key={i}>
               <PriceChartArea>
-                <PriceShareData token={token} vaultPool={vaultPool} tokenSymbol={symbol} />
+                <PriceShareData
+                  token={token}
+                  vaultPool={vaultPool}
+                  tokenSymbol={symbol}
+                  setLoadData={setLoadData}
+                />
               </PriceChartArea>
               <FarmDetailChart
                 token={token}
@@ -209,7 +221,12 @@ const Charts = () => {
           return (
             <ChartSection key={i}>
               <PriceChartArea>
-                <PriceShareData token={token} vaultPool={vaultPool} tokenSymbol={symbol} />
+                <PriceShareData
+                  token={token}
+                  vaultPool={vaultPool}
+                  tokenSymbol={symbol}
+                  setLoadData={setLoadData}
+                />
               </PriceChartArea>
               <FarmDetailChart
                 token={token}

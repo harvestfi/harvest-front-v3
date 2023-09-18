@@ -164,7 +164,7 @@ const AdvancedFarm = () => {
         data: farmProfitSharingPool,
         logoUrl: ['./icons/ifarm.svg'],
         tokenAddress: addresses.FARM,
-        vaultAddress: addresses.iFARM,
+        vaultAddress: addresses.FARM,
         rewardSymbol: 'iFarm',
         isNew: tokens[IFARM_TOKEN_SYMBOL].isNew,
         newDetails: tokens[IFARM_TOKEN_SYMBOL].newDetails,
