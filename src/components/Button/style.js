@@ -159,7 +159,7 @@ ${props =>
         !props.disabled
           ? `
       &:hover {
-        background: #27AE60;
+        background: #000000A0;
         color: white;
       }
       `
@@ -167,7 +167,7 @@ ${props =>
       }
 
       &:active {
-        background: #27AE60;
+        background: #000000D0;
         color: white;
       }
       @media screen and (max-width: 992px) {
