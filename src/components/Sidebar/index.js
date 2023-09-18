@@ -176,7 +176,7 @@ const sideLinksMobile1 = [
 
 const SideLink = ({ item, subItem, isDropdownLink, fontColor, activeIconColor, darkMode }) => {
   const { pathname } = useLocation()
-  const pageName = pathname === '/' ? 'home' : pathname
+  const pageName = pathname === '/' ? 'home' : pathname === ROUTES.ADVANCED ? 'advanced' : pathname
   return (
     /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
     <Link
