@@ -12,7 +12,7 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import PriceShareData from '../../components/PriceShareChart/PriceShareData'
 import FarmDetailChart from '../../components/ChartsComponents/DetailChart/FarmDetailChart'
 import { Container, Inner, Title, ChartSection, PriceChartArea } from './style'
-import { addresses, tokens } from '../../data'
+import { addresses } from '../../data'
 
 const formatVaults = (groupOfVaults, chainId) => {
   let vaultsSymbol = sortBy(keys(groupOfVaults), [
@@ -83,8 +83,6 @@ const Charts = () => {
         tokenAddress: addresses.FARM,
         vaultAddress: addresses.FARM,
         rewardSymbol: 'iFarm',
-        isNew: tokens[IFARM_TOKEN_SYMBOL].isNew,
-        newDetails: tokens[IFARM_TOKEN_SYMBOL].newDetails,
         tokenNames: ['FARM'],
       },
     }),

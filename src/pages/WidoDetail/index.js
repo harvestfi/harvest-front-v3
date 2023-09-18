@@ -174,8 +174,6 @@ const WidoDetail = () => {
         tokenAddress: addresses.FARM,
         vaultAddress: addresses.iFARM,
         rewardSymbol: 'iFarm',
-        isNew: tokens[IFARM_TOKEN_SYMBOL].isNew,
-        newDetails: tokens[IFARM_TOKEN_SYMBOL].newDetails,
         tokenNames: ['FARM'],
       },
       [FARM_WETH_TOKEN_SYMBOL]: {
@@ -186,8 +184,6 @@ const WidoDetail = () => {
         vaultAddress: addresses.FARM_WETH_LP,
         logoUrl: ['./icons/farm.svg', './icons/eth.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
-        isNew: tokens[FARM_WETH_TOKEN_SYMBOL].isNew,
-        balance: 'FARM_WETH_LP',
       },
       [FARM_GRAIN_TOKEN_SYMBOL]: {
         liquidityPoolVault: true,
@@ -197,11 +193,9 @@ const WidoDetail = () => {
         vaultAddress: addresses.FARM_GRAIN_LP,
         logoUrl: ['./icons/farm.svg', './icons/grain.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
-        isNew: tokens[FARM_GRAIN_TOKEN_SYMBOL].isNew,
-        balance: 'FARM_GRAIN_LP',
       },
     }),
-    [tokens, farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
+    [farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
   )
 
   const groupOfVaults = { ...vaultsData, ...poolVaults }
