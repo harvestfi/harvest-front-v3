@@ -14,7 +14,7 @@ import EmptyIcon from '../../assets/images/logos/dashboard/empty.svg'
 import exploreFarm from '../../assets/images/logos/dashboard/exploreFarm.svg'
 import DotIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 import ListItem from '../../components/DashboardComponents/ListItem'
-import TotalValue from '../../components/DashboardComponents/TotalValue'
+import TotalValue from '../../components/TotalValue'
 import ProfitSharing from '../../components/ProfitSharing'
 import {
   FARM_GRAIN_TOKEN_SYMBOL,

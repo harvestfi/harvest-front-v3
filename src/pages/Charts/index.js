@@ -10,7 +10,7 @@ import { useStats } from '../../providers/Stats'
 import { useWallet } from '../../providers/Wallet'
 import { useThemeContext } from '../../providers/useThemeContext'
 import PriceShareData from '../../components/PriceShareChart/PriceShareData'
-import FarmDetailChart from '../../components/ChartsComponents/DetailChart/FarmDetailChart'
+import FarmDetailChart from '../../components/ChartsComponents/FarmDetailChart'
 import { Container, Inner, Title, ChartSection, PriceChartArea } from './style'
 import { addresses } from '../../data'
 

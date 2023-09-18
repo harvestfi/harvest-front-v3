@@ -5,7 +5,7 @@ import { Container, Header, ButtonGroup, ChartDiv, TooltipContent, CurDate } fro
 import { SPECIAL_VAULTS } from '../../../constants'
 import { getTotalTVLData } from '../../../utils'
 import ApexChart from '../ApexChart'
-import ChartRangeSelect from '../ChartRangeSelect'
+import ChartRangeSelect from '../../ChartRangeSelect'
 
 const recommendLinks = [
   { name: '1D', type: 0, state: '1D' },

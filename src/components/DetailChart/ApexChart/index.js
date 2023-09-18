@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useMediaQuery } from 'react-responsive'
 import {
   ComposedChart,
   XAxis,
@@ -11,8 +12,8 @@ import {
 } from 'recharts'
 import { ClipLoader } from 'react-spinners'
 import { useWindowWidth } from '@react-hook/window-size'
-import { useThemeContext } from '../../../../providers/useThemeContext'
-import { ceil10, floor10, round10 } from '../../../../utils'
+import { useThemeContext } from '../../../providers/useThemeContext'
+import { ceil10, floor10, round10 } from '../../../utils'
 import { LoadingDiv, NoData } from './style'
 
 function numberWithCommas(x) {
@@ -161,16 +162,14 @@ const ApexChart = ({
 
   const [fixedLen, setFixedLen] = useState(0)
 
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       setCurDate(formatDateTime(payload[0].payload.x))
-      const content = `<div style="font-size: 13px; display: flex;"><div style="color: #1b1b1b; font-weight: 700;">${
-        filter === 1 ? 'TVL ' : filter === 0 ? 'APY ' : 'Balance '
-      }</div><div style="color: #5B5181; font-weight: 500;">&nbsp;${
-        filter === 1 ? '$' : ''
-      }${numberWithCommas(Number(payload[0].payload.y.toFixed(filter === 1 ? 0 : fixedLen)))}${
-        filter === 0 ? '%' : ''
-      }</div></div>`
+      const content = numberWithCommas(
+        Number(payload[0].payload.y.toFixed(filter === 1 ? 0 : fixedLen)),
+      )
       setCurContent(content)
     }
 
@@ -210,7 +209,7 @@ const ApexChart = ({
       <text
         orientation="left"
         className="recharts-text recharts-cartesian-axis-tick-value"
-        x={x}
+        x={isMobile ? x + 30 : x}
         y={y}
         width={60}
         height={310}
@@ -374,10 +373,16 @@ const ApexChart = ({
       setMinVal(minValue)
       setMaxVal(maxValue)
 
+      setFixedLen(filter === 1 ? 0 : len)
+
+      setCurDate(formatDateTime(mainData[slotCount - 1].x))
+      const content = numberWithCommas(
+        Number(mainData[slotCount - 1].y.toFixed(filter === 1 ? 0 : fixedLen)),
+      )
+      setCurContent(content)
+
       const yAxisAry = getYAxisValues(minValue, maxValue, roundNum)
       setYAxisTicks(yAxisAry)
-
-      setFixedLen(filter === 1 ? 0 : len)
 
       setMainSeries(mainData)
 
@@ -385,14 +390,25 @@ const ApexChart = ({
     }
 
     init()
-  }, [range, filter, data, lastTVL, lastAPY, isIFARM, iFarmTVL])
+  }, [
+    range,
+    filter,
+    data,
+    lastTVL,
+    lastAPY,
+    isIFARM,
+    iFarmTVL,
+    fixedLen,
+    setCurContent,
+    setCurDate,
+  ])
 
   return (
     <>
       {!loading ? (
         <ResponsiveContainer
           width="100%"
-          height={onlyWidth > 1250 ? 380 : onlyWidth > 1050 ? 350 : 330}
+          height={onlyWidth > 1250 ? 350 : onlyWidth > 1050 ? 330 : 330}
         >
           <ComposedChart
             data={mainSeries}
@@ -400,7 +416,7 @@ const ApexChart = ({
               top: 20,
               right: 0,
               bottom: 0,
-              left: 0,
+              left: isMobile ? 0 : 0,
             }}
           >
             <defs>
@@ -415,15 +431,24 @@ const ApexChart = ({
               stroke="rgba(228, 228, 228, 0.2)"
               vertical={false}
             />
-            <XAxis dataKey="x" tickLine={false} tickCount={5} tick={renderCustomXAxisTick} />
-            <YAxis
-              dataKey="y"
+            <XAxis
+              dataKey="x"
               tickLine={false}
-              tickCount={5}
-              tick={renderCustomYAxisTick}
-              ticks={yAxisTicks}
-              domain={[minVal, maxVal]}
+              interval={10}
+              tickCount={isMobile ? 7 : 5}
+              tick={renderCustomXAxisTick}
+              padding={{ right: 10 }}
             />
+            {!isMobile && (
+              <YAxis
+                dataKey="y"
+                tickLine={false}
+                tickCount={5}
+                tick={renderCustomYAxisTick}
+                ticks={yAxisTicks}
+                domain={[minVal, maxVal]}
+              />
+            )}
             <Line
               dataKey="y"
               type="monotone"

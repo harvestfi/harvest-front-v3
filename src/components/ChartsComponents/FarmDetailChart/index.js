@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { addresses } from '../../../../data/index'
-import { useWallet } from '../../../../providers/Wallet'
-import { getDataQuery, getTotalTVLData } from '../../../../utils'
+import { addresses } from '../../../data/index'
+import { useWallet } from '../../../providers/Wallet'
+import { getDataQuery, getTotalTVLData } from '../../../utils'
 import ApexChart from '../ApexChart'
-import ChartRangeSelect from '../ChartRangeSelect'
+import ChartRangeSelect from '../../ChartRangeSelect'
 import {
   ButtonGroup,
   ChartDiv,

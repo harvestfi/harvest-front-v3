@@ -1,5 +1,5 @@
 import React from 'react'
-import { useThemeContext } from '../../../providers/useThemeContext'
+import { useThemeContext } from '../../providers/useThemeContext'
 import { Container, Div, Price } from './style'
 
 const TotalValue = ({ icon, content, price }) => {

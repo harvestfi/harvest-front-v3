@@ -30,7 +30,7 @@ import WithdrawBase from '../../components/AdvancedFarmComponents/Withdraw/Withd
 import WithdrawSelectToken from '../../components/AdvancedFarmComponents/Withdraw/WithdrawSelectToken'
 import WithdrawStart from '../../components/AdvancedFarmComponents/Withdraw/WithdrawStart'
 import WithdrawResult from '../../components/AdvancedFarmComponents/Withdraw/WithdrawResult'
-import FarmDetailChart from '../../components/AdvancedFarmComponents/DetailChart/FarmDetailChart'
+import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
 import PriceShareData from '../../components/PriceShareChart/PriceShareData'
 import VaultPanelActionsFooter from '../../components/AdvancedFarmComponents/Rewards/VaultPanelActionsFooter'
 import StakeBase from '../../components/AdvancedFarmComponents/Stake/StakeBase'
@@ -1069,7 +1069,6 @@ const AdvancedFarm = () => {
                         balanceList={balanceList}
                         useIFARM={useIFARM}
                         tokenSymbol={id}
-                        quoteValue={quoteValueDepo}
                         setQuoteValue={setQuoteValueDepo}
                         fAssetPool={fAssetPool}
                         multipleAssets={multipleAssets}
@@ -1127,7 +1126,6 @@ const AdvancedFarm = () => {
                         fAssetPool={fAssetPool}
                         multipleAssets={multipleAssets}
                         useIFARM={useIFARM}
-                        quoteValue={quoteValueWith}
                         setQuoteValue={setQuoteValueWith}
                       />
                       <WithdrawResult

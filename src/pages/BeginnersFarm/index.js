@@ -15,6 +15,8 @@ import WithdrawAnytime from '../../assets/images/logos/beginners/withdraw-anytim
 // import Thumbsup from '../../assets/images/logos/beginners/thumbs-up.svg'
 import DOT from '../../assets/images/logos/beginners/dot.svg'
 import Bottom from '../../assets/images/logos/beginners/bottom.svg'
+import ETH from '../../assets/images/logos/beginnershome/eth-icon.svg'
+import USDC from '../../assets/images/logos/beginnershome/usdc-icon.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/BeginnersFarmComponents/DepositBase'
 import DepositSelectToken from '../../components/BeginnersFarmComponents/DepositSelectToken'
@@ -66,8 +68,6 @@ import {
   WithdrawSection,
   MainSection,
 } from './style'
-import ETH from '../../assets/images/logos/beginnershome/eth-icon.svg'
-import USDC from '../../assets/images/logos/beginnershome/usdc-icon.svg'
 // import { CHAIN_IDS } from '../../data/constants'
 
 const BeginnersFarm = () => {
