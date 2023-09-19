@@ -21,6 +21,7 @@ const FarmContainer = styled.div`
     width: 100%;
     min-height: 100vh;
     margin-left: 0;
+    padding-bottom: 100px;
 
     img.camelot-bg {
       display: none;

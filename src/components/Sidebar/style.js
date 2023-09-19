@@ -30,6 +30,9 @@ const Container = styled.div`
     min-height: auto;
     box-shadow: 0px -5px 5px 0px rgba(215, 215, 215, 0.28);
     border: none;
+    position: fixed;
+    bottom: 0;
+    height: 90px;
   }
 `
 

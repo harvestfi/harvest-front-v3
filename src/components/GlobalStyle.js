@@ -40,7 +40,7 @@ html {
     @media screen and (max-width: 992px) {
       .offcanvas {
         display: block;
-        width: 60% !important;
+        width: 70% !important;
 
         .offcanvas-body {
           padding: 0;
