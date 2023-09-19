@@ -897,7 +897,7 @@ const AdvancedFarm = () => {
                 <FirstPartSection>
                   <MyBalance
                     marginBottom={isMobile ? '0' : '23px'}
-                    marginTop={isMobile ? '24px' : '0'}
+                    marginTop={isMobile ? '0px' : '0'}
                   >
                     <NewLabel
                       size={isMobile ? '12px' : '16px'}
@@ -1005,27 +1005,6 @@ const AdvancedFarm = () => {
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
-                  {isMobile ? (
-                    loadData ? (
-                      <PriceShareData
-                        token={token}
-                        vaultPool={vaultPool}
-                        tokenSymbol={id}
-                        setLoadData={setLoadData}
-                      />
-                    ) : (
-                      <HalfInfo padding="25px 18px" marginBottom="23px">
-                        <FarmDetailChart
-                          token={token}
-                          vaultPool={vaultPool}
-                          lastTVL={Number(vaultValue)}
-                          lastAPY={Number(totalApy)}
-                        />
-                      </HalfInfo>
-                    )
-                  ) : (
-                    <></>
-                  )}
                   <HalfContent
                     marginBottom={isMobile ? '24px' : '0px'}
                     partHeight={activeDepo ? partHeightDepo : partHeightWith}
@@ -1140,6 +1119,27 @@ const AdvancedFarm = () => {
                       />
                     </WithdrawSection>
                   </HalfContent>
+                  {isMobile ? (
+                    loadData ? (
+                      <PriceShareData
+                        token={token}
+                        vaultPool={vaultPool}
+                        tokenSymbol={id}
+                        setLoadData={setLoadData}
+                      />
+                    ) : (
+                      <HalfInfo padding="25px 18px" marginBottom="23px">
+                        <FarmDetailChart
+                          token={token}
+                          vaultPool={vaultPool}
+                          lastTVL={Number(vaultValue)}
+                          lastAPY={Number(totalApy)}
+                        />
+                      </HalfInfo>
+                    )
+                  ) : (
+                    <></>
+                  )}
                 </FirstPartSection>
               ) : activeMainTag === 1 ? (
                 <SecondPartSection>
