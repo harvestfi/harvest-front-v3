@@ -1233,7 +1233,7 @@ const AdvancedFarm = () => {
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
-                  <MyBalance marginBottom={isMobile ? '0' : '23px'}>
+                  <MyBalance marginBottom={isMobile ? '24px' : '23px'}>
                     <NewLabel
                       size={isMobile ? '12px' : '14px'}
                       weight="600"
