@@ -497,7 +497,7 @@ const Sidebar = ({ width }) => {
                       onClick={() => {
                         if (item.newTab) {
                           window.open(item.path, '_blank')
-                        } else if (item.enabled) {
+                        } else if (item.enabled !== false) {
                           directAction(item.path)
                           handleMobileClose()
                         }

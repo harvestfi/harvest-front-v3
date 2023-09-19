@@ -13,7 +13,7 @@ const FarmContainer = styled.div`
     margin-left: 0;
     width: 100%;
     min-height: 100vh;
-    padding-bottom: 100px;
+    padding-bottom: 150px;
   }
 `
 

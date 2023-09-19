@@ -26,13 +26,12 @@ const Container = styled.div`
     align-items: baseline;
     width: 100%;
     padding: 11px 35px 0 35px;
-    position: unset;
     min-height: auto;
     box-shadow: 0px -5px 5px 0px rgba(215, 215, 215, 0.28);
     border: none;
-    position: fixed;
     bottom: 0;
-    height: 90px;
+    height: fit-content;
+    z-index: 1048;
   }
 `
 
@@ -778,7 +777,7 @@ const MobileMenuContainer = styled.div`
 const ConnectSection = styled.div`
   display: flex;
   justify-content: center;
-  padding: 7px 15px 40px;
+  padding: 7px 15px 20px;
 
   ${props =>
     props.connected
