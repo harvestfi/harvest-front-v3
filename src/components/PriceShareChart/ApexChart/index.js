@@ -213,8 +213,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
         maxValue,
         minValue,
         len = 0,
-        unitBtw,
-        roundNum
+        unitBtw
 
       if ((data && data.length === 0) || !loadComplete) {
         setIsDataReady(false)
@@ -258,12 +257,12 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
         minValue /= rate
       }
 
-      if (unitBtw === 0) {
-        roundNum = 0
-      } else {
-        roundNum = len
-      }
-      setRoundedDecimal(roundNum > 3 ? 3 : roundNum)
+      // if (unitBtw === 0) {
+      //   roundNum = 0
+      // } else {
+      //   roundNum = len
+      // }
+      setRoundedDecimal(maxValue - minValue < 0.001 ? 6 : 3)
       setMinVal(minValue)
       setMaxVal(maxValue)
 
@@ -306,7 +305,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
               top: 20,
               right: 0,
               bottom: 0,
-              left: -14,
+              left: roundedDecimal === 3 ? -14 : 0,
             }}
           >
             <defs>
