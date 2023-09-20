@@ -50,6 +50,18 @@ const DesktopPanelHeader = ({
 
   const { fontColor, borderColor, badgeIconBackColor, setPrevPage } = useThemeContext()
 
+  const mouseDownHandler = event => {
+    if (event.button === 1) {
+      const network = chainList[badgeId].name.toLowerCase()
+      const address = isSpecialVault
+        ? token.data.collateralAddress
+        : token.vaultAddress || token.tokenAddress
+      setPrevPage(window.location.href)
+      const url = `${directDetailUrl}advanced/${network}/${address}`
+      window.open(url, '_blank')
+    }
+  }
+
   useEffect(() => {
     const getBadge = () => {
       chainList.forEach((el, i) => {
@@ -66,15 +78,20 @@ const DesktopPanelHeader = ({
       <PanelContainer
         fontColor={fontColor}
         borderColor={borderColor}
-        onClick={() => {
+        onClick={e => {
           const network = chainList[badgeId].name.toLowerCase()
           const address = isSpecialVault
             ? token.data.collateralAddress
             : token.vaultAddress || token.tokenAddress
           setPrevPage(window.location.href)
           const url = `${directDetailUrl}advanced/${network}/${address}`
-          push(url)
+          if (e.ctrlKey) {
+            window.open(url, '_blank')
+          } else {
+            push(url)
+          }
         }}
+        onMouseDown={mouseDownHandler}
       >
         <ValueContainer width="5%" />
         <ValueContainer width="20%" textAlign="left">
