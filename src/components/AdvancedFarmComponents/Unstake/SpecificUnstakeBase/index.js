@@ -100,20 +100,14 @@ const UnstakeBase = ({
     if (account) {
       if (curChain !== '' && curChain !== tokenChain) {
         const chainName = getChainName(tokenChain)
-        setBtnName(`Switch to ${chainName}`)
+        setBtnName(`Change Network to ${chainName}`)
       } else {
         setBtnName('Unstake')
       }
-    }
-  }, [account, curChain, tokenChain])
-
-  useEffect(() => {
-    if (connected) {
-      setBtnName('Unstake')
     } else {
       setBtnName('Connect Wallet to Get Started')
     }
-  }, [connected])
+  }, [account, curChain, tokenChain])
 
   const [startSpinner, setStartSpinner] = useState(false)
 

@@ -96,20 +96,14 @@ const StakeBase = ({
     if (account) {
       if (curChain !== '' && curChain !== tokenChain) {
         const chainName = getChainName(tokenChain)
-        setBtnName(`Switch to ${chainName}`)
+        setBtnName(`Change Network to ${chainName}`)
       } else {
         setBtnName('Stake & Earn Rewards')
       }
-    }
-  }, [account, curChain, tokenChain])
-
-  useEffect(() => {
-    if (connected) {
-      setBtnName('Stake & Earn Rewards')
     } else {
       setBtnName('Connect Wallet to Get Started')
     }
-  }, [connected])
+  }, [account, curChain, tokenChain])
 
   const [startSpinner, setStartSpinner] = useState(false)
 

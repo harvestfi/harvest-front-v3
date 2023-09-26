@@ -686,18 +686,20 @@ const AdvancedFarm = () => {
 
   return (
     <DetailView pageBackColor={pageBackColor} fontColor={fontColor}>
-      <TopBtnInner>
-        <TopButton className="back-btn">
-          <BackBtnRect
-            onClick={() => {
-              push(ROUTES.ADVANCED)
-            }}
-          >
-            <BackArrow src={Back} alt="" />
-            <BackText>Back</BackText>
-          </BackBtnRect>
-        </TopButton>
-      </TopBtnInner>
+      {!isMobile && (
+        <TopBtnInner>
+          <TopButton className="back-btn">
+            <BackBtnRect
+              onClick={() => {
+                push(ROUTES.ADVANCED)
+              }}
+            >
+              <BackArrow src={Back} alt="" />
+              <BackText>Back</BackText>
+            </BackBtnRect>
+          </TopButton>
+        </TopBtnInner>
+      )}
       <TopInner>
         <TopPart>
           <FlexTopDiv>

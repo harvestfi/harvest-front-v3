@@ -78,25 +78,21 @@ const DepositBase = ({
     : ''
   const [depositName, setDepositName] = useState('Deposit')
   const [showWarning, setShowWarning] = useState(false)
+  const [showDepositIcon, setShowDepositIcon] = useState(true)
 
   useEffect(() => {
     if (account) {
       if (curChain !== '' && curChain !== tokenChain) {
         const chainName = getChainName(tokenChain)
-        setDepositName(`Switch to ${chainName}`)
+        setDepositName(`Change Network to ${chainName}`)
+        setShowDepositIcon(false)
       } else {
         setDepositName('Deposit')
       }
-    }
-  }, [account, curChain, tokenChain])
-
-  useEffect(() => {
-    if (connected) {
-      setDepositName('Deposit')
     } else {
       setDepositName('Connect Wallet to Get Started')
     }
-  }, [connected])
+  }, [account, curChain, tokenChain])
 
   const onClickDeposit = async () => {
     if (!connected) {
@@ -268,7 +264,7 @@ const DepositBase = ({
           }}
         >
           {depositName}
-          <img src={WalletIcon} alt="" />
+          {showDepositIcon && <img src={WalletIcon} alt="" />}
         </Button>
       </NewLabel>
     </BaseWido>

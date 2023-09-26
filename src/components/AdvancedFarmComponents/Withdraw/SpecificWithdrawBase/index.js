@@ -82,25 +82,21 @@ const WithdrawBase = ({
     : ''
   const [withdrawName, setWithdrawName] = useState('Withdraw')
   const [showWarning, setShowWarning] = useState(false)
+  const [showWithdrawIcon, setShowWithdrawIcon] = useState(true)
 
   useEffect(() => {
     if (account) {
       if (curChain !== tokenChain) {
         const chainName = getChainName(tokenChain)
-        setWithdrawName(`Switch to ${chainName}`)
+        setWithdrawName(`Change Network to ${chainName}`)
+        setShowWithdrawIcon(false)
       } else {
         setWithdrawName('Withdraw')
       }
-    }
-  }, [account, curChain, tokenChain])
-
-  useEffect(() => {
-    if (connected) {
-      setWithdrawName('Withdraw')
     } else {
       setWithdrawName('Connect Wallet to Get Started')
     }
-  }, [connected])
+  }, [account, curChain, tokenChain])
 
   const onInputUnstake = e => {
     setUnstakeInputValue(e.currentTarget.value)
@@ -271,7 +267,7 @@ const WithdrawBase = ({
           }}
         >
           {withdrawName}
-          <img src={ArrowRightIcon} alt="" />
+          {showWithdrawIcon && <img src={ArrowRightIcon} alt="" />}
         </Button>
       </NewLabel>
     </BaseWido>
