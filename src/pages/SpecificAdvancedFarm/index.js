@@ -23,7 +23,7 @@ import Diamond from '../../assets/images/logos/beginners/diamond-01.svg'
 import BarChart from '../../assets/images/logos/beginners/bar-chart-01.svg'
 // import Thumbsup from '../../assets/images/logos/beginners/thumbs-up.svg'
 import DOT from '../../assets/images/logos/beginners/dot.svg'
-import BottomEffect from '../../assets/images/logos/wido/bottom-chart.svg'
+import BottomEffect from '../../assets/images/logos/beginners/Top Banner.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/AdvancedFarmComponents/Deposit/SpecificDepositBase'
 import DepositSelectToken from '../../components/AdvancedFarmComponents/Deposit/DepositSelectToken'
@@ -104,6 +104,7 @@ import {
   FirstPartSection,
   SecondPartSection,
   APRValueShow,
+  BorderBottomDiv,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 
@@ -715,6 +716,9 @@ const AdvancedFarm = () => {
                 {logoUrl.map((el, i) => (
                   <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
                 ))}
+                <ChainBack>
+                  <img src={BadgeAry[badgeId]} width={10} height={15} alt="" />
+                </ChainBack>
               </FlexDiv>
             )}
             <TopDesc
@@ -747,6 +751,7 @@ const AdvancedFarm = () => {
             </NewLabel> */}
           </FlexTopDiv>
           <img className="bottom" src={BottomEffect} alt="" />
+          <BorderBottomDiv />
         </TopPart>
       </TopInner>
       <Inner>

@@ -83,6 +83,7 @@ const TopPart = styled.div`
   background-repeat: no-repeat;
   position: relative;
   border-radius: 10px;
+  overflow: hidden;
 
   img.bottom {
     position: absolute;
@@ -871,6 +872,15 @@ const APRValueShow = styled.div`
   }
 `
 
+const BorderBottomDiv = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 15px;
+  background: #036666;
+  bottom: 0;
+  right: 0;
+`
+
 export {
   DetailView,
   TopPart,
@@ -914,4 +924,5 @@ export {
   FirstPartSection,
   SecondPartSection,
   APRValueShow,
+  BorderBottomDiv,
 }
