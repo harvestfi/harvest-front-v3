@@ -90,7 +90,7 @@ const DesktopPanelHeader = ({
             token.tokenNames[1] === 'ETH' &&
             network === 'arbitrum'
           ) {
-            url = `${directDetailUrl}farm/advanced/${network}/${address}`
+            url = `${directDetailUrl}specadvance/${network}/${address}`
           } else {
             url = `${directDetailUrl}advanced/${network}/${address}`
           }

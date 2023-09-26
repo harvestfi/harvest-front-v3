@@ -28,7 +28,7 @@ export const ROUTES = {
   CAMELOT: '/camelot',
   WIDODETAIL: '/:network/:paramAddress',
   ADVANCEDFARM: '/advanced/:network/:paramAddress',
-  SPECIFICADVANCEDFARM: '/farm/advanced/:network/:paramAddress',
+  SPECIFICADVANCEDFARM: '/specadvance/:network/:paramAddress',
   BEGINNERSFARM: '/beginner/:paramAddress',
   CHARTS: '/charts',
   WORK: '/work',
