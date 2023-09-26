@@ -57,7 +57,7 @@ const PriceShareData = ({ token, vaultPool, tokenSymbol, setLoadData }) => {
         const curTimestamp = new Date().getTime() / 1000
         const between = curTimestamp - Number(data[data.length - 1].timestamp)
         const day = between / (24 * 3600)
-        setSelectedState(day < 180 ? '1M' : '1Y')
+        setSelectedState(day < 90 ? '1M' : '1Y')
       }
     }
 
