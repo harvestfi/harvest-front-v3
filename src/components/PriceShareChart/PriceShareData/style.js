@@ -10,7 +10,7 @@ const Container = styled.div`
   border-radius: 10px;
   // box-shadow: 0px 8px 8px -4px rgba(16, 24, 40, 0.03), 0px 20px 24px -4px rgba(16, 24, 40, 0.08);
   background: #fff;
-  margin-bottom: 15px;
+  justify-content: space-around;
 
   @media screen and (max-width: 992px) {
     margin-bottom: 24px;
@@ -114,7 +114,7 @@ const TokenSymbol = styled.div`
   line-height: 24px;
   font-weight: 600;
   margin-bottom: 5px;
-  color: #000;
+  color: #344054;
 
   img {
     padding-left: 5px;

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import ReactTooltip from 'react-tooltip'
-import CheckCircle from '../../../assets/images/logos/beginners/check-green-circle.svg'
-import Close from '../../../assets/images/logos/beginners/x-close.svg'
+// import CheckCircle from '../../../assets/images/logos/beginners/check-green-circle.svg'
+// import Close from '../../../assets/images/logos/beginners/x-close.svg'
 import Help from '../../../assets/images/logos/beginners/help-circle.svg'
 import { getPriceFeed } from '../../../utils'
 import ApexChart from '../ApexChart'
@@ -17,13 +17,13 @@ import {
   TooltipInfo,
   FlexDiv,
   CurContent,
-  ChartInfo,
-  ChartHeaderDiv,
-  ChartDescText,
-  ChartBottom,
-  ChartBottomAction,
-  ChartBottomHide,
-  ChartClose,
+  // ChartInfo,
+  // ChartHeaderDiv,
+  // ChartDescText,
+  // ChartBottom,
+  // ChartBottomAction,
+  // ChartBottomHide,
+  // ChartClose,
   NewLabel,
 } from './style'
 
@@ -43,7 +43,7 @@ const PriceShareData = ({ token, vaultPool, tokenSymbol, setLoadData }) => {
   const [loadComplete, setLoadComplete] = useState(true)
   const [curDate, setCurDate] = useState('')
   const [curContent, setCurContent] = useState('')
-  const [chartShow, setChartShow] = useState(!localStorage.getItem('chartInfoShow'))
+  // const [chartShow, setChartShow] = useState(!localStorage.getItem('chartInfoShow'))
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
@@ -137,7 +137,7 @@ const PriceShareData = ({ token, vaultPool, tokenSymbol, setLoadData }) => {
           setCurContent={setCurContent}
         />
       </ChartDiv>
-      {chartShow ? (
+      {/* {chartShow ? (
         <ChartInfo>
           <div>
             <img src={CheckCircle} alt="check" />
@@ -179,7 +179,7 @@ const PriceShareData = ({ token, vaultPool, tokenSymbol, setLoadData }) => {
         </ChartInfo>
       ) : (
         <></>
-      )}
+      )} */}
     </Container>
   )
 }

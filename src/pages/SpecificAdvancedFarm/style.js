@@ -313,6 +313,7 @@ const FlexDiv = styled.div`
 const InternalSection = styled.div`
   display: flex;
   justify-content: space-between;
+  height: ${props => props.height};
 
   @media screen and (max-width: 992px) {
     display: block;
@@ -417,6 +418,7 @@ const BackText = styled.p`
 
 const RestContent = styled.div`
   width: 43%;
+  height: ${props => props.height};
 
   @media screen and (min-width: 1921px) {
     width: 500px;
@@ -581,13 +583,7 @@ const MainSection = styled.div`
   flex-direction: column;
   height: fit-content;
   border-radius: 12px;
-  height: ${props =>
-    props.partHeight
-      ? `
-    ${props.partHeight}px`
-      : `
-      fit-content
-    `};
+  height: ${props => props.height};
 
   @media screen and (max-width: 1480px) {
     width: 49%;
@@ -836,6 +832,10 @@ const MainTagPanel = styled.div`
 
 const FirstPartSection = styled.div`
   width: 100%;
+  height: 100%;
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
 
   @media screen and (max-width: 992px) {
     display: flex;

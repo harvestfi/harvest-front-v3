@@ -784,8 +784,8 @@ const AdvancedFarm = () => {
               decisions.
             </MainDescText>
           )}
-          <InternalSection>
-            <MainSection>
+          <InternalSection height={activeMainTag === 0 ? '500px' : 'unset'}>
+            <MainSection height={activeMainTag === 0 ? '100%' : 'fit-content'}>
               {activeMainTag === 0 ? (
                 loadData ? (
                   <PriceShareData
@@ -810,7 +810,7 @@ const AdvancedFarm = () => {
                     size={isMobile ? '12px' : '14px'}
                     weight="600"
                     height={isMobile ? '18px' : '24px'}
-                    color="#000"
+                    color="#344054"
                     padding={isMobile ? '9px 13px' : '10px 15px'}
                     borderBottom="1px solid #EBEBEB"
                   >
@@ -925,7 +925,7 @@ const AdvancedFarm = () => {
                 </>
               )}
             </MainSection>
-            <RestContent>
+            <RestContent height={activeMainTag === 0 ? '100%' : 'fit-content'}>
               {activeMainTag === 0 ? (
                 <FirstPartSection>
                   <MyBalance
@@ -933,10 +933,10 @@ const AdvancedFarm = () => {
                     marginTop={isMobile ? '0px' : '0'}
                   >
                     <NewLabel
-                      size={isMobile ? '12px' : '16px'}
+                      size={isMobile ? '12px' : '14px'}
                       weight="600"
                       height={isMobile ? '18px' : '24px'}
-                      color="#000"
+                      color="#344054"
                       padding={isMobile ? '7px 11px' : '10px 15px'}
                       borderBottom="1px solid #EBEBEB"
                     >
@@ -1181,7 +1181,7 @@ const AdvancedFarm = () => {
                       size={isMobile ? '12px' : '14px'}
                       weight="600"
                       height={isMobile ? '18px' : '24px'}
-                      color="#000"
+                      color="#344054"
                       padding={isMobile ? '7px 11px' : '10px 15px'}
                       borderBottom="1px solid #EBEBEB"
                     >
@@ -1271,7 +1271,7 @@ const AdvancedFarm = () => {
                       size={isMobile ? '12px' : '14px'}
                       weight="600"
                       height={isMobile ? '18px' : '24px'}
-                      color="#000"
+                      color="#344054"
                       padding={isMobile ? '7px 11px' : '10px 15px'}
                       borderBottom="1px solid #EBEBEB"
                     >

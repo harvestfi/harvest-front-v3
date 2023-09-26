@@ -421,7 +421,7 @@ const ApexChart = ({
           >
             <defs>
               <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#FFFFFF" stopOpacity={0.1} />
+                <stop offset="5%" stopColor="#00D26B" stopOpacity={0.1} />
                 <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1} />
               </linearGradient>
             </defs>
