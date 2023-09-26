@@ -76,7 +76,7 @@ const PriceShareData = ({ token, vaultPool, tokenSymbol, setLoadData }) => {
                 {!isMobile && (
                   <ReactTooltip id="tooltip-priceShare" backgroundColor="white">
                     <NewLabel
-                      size={isMobile ? '10px' : '12px'}
+                      size={isMobile ? '10px' : '14px'}
                       height={isMobile ? '15px' : '18px'}
                       color="#344054"
                     >
