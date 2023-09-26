@@ -421,7 +421,7 @@ const ApexChart = ({
           >
             <defs>
               <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#5B5181" stopOpacity={0.1} />
+                <stop offset="5%" stopColor="#FFFFFF" stopOpacity={0.1} />
                 <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1} />
               </linearGradient>
             </defs>
@@ -455,14 +455,14 @@ const ApexChart = ({
               unit="M"
               strokeLinecap="round"
               strokeWidth={2.5}
-              stroke="#5B5181"
+              stroke="#00D26B"
               dot={false}
               legendType="none"
             />
             <Area
               type="monotone"
               dataKey="y"
-              stroke="#5B5181"
+              stroke="#00D26B"
               strokeWidth={2}
               fillOpacity={1}
               fill="url(#colorUv)"
@@ -472,7 +472,7 @@ const ApexChart = ({
               legendType="none"
               dot={false}
               cursor={{
-                stroke: '#5B5181',
+                stroke: '#00D26B',
                 strokeDasharray: 3,
                 strokeLinecap: 'butt',
               }}

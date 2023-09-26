@@ -11,6 +11,7 @@ import Analytic from './pages/Analytic'
 import FAQ from './pages/FAQ'
 import Sidebar from './components/Sidebar'
 import AdvancedFarm from './pages/AdvancedFarm'
+import SpecificAdvancedFarm from './pages/SpecificAdvancedFarm'
 import WidoDetail from './pages/WidoDetail'
 import Charts from './pages/Charts'
 import { ROUTES } from './constants'
@@ -75,6 +76,7 @@ const App = () => (
           <Route exact path={ROUTES.PORTFOLIO} component={Portfolio} />
           <Route exact path={ROUTES.ANALYTIC} component={Analytic} />
           <Route path={ROUTES.ADVANCEDFARM} component={AdvancedFarm} />
+          <Route path={ROUTES.SPECIFICADVANCEDFARM} component={SpecificAdvancedFarm} />
           <Route path={ROUTES.WIDODETAIL} component={WidoDetail} />
           <Route path={ROUTES.FAQ} component={FAQ} />
           <Route exact path={ROUTES.CAMELOT} component={Camelot} />

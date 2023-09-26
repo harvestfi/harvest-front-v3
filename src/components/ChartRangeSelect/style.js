@@ -33,7 +33,7 @@ const Container = styled.button`
         : `
         background: none;
         border-radius: 3px;
-        color: #5B5181;
+        color: #00D26B;
       `
       : props.mode === 'dark'
       ? `

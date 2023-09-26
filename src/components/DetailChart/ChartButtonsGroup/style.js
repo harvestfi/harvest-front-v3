@@ -44,7 +44,8 @@ const ButtonStyle = styled.button`
     font-weight: bold;
 
     img {
-      filter: invert(29%) sepia(65%) saturate(323%) hue-rotate(212deg) brightness(98%) contrast(91%);
+      filter: invert(50%) sepia(90%) saturate(1885%) hue-rotate(116deg) brightness(103%)
+        contrast(105%);
     }
   }
 

@@ -133,6 +133,11 @@ const LabelInfo = styled.div`
   @media screen and (max-width: 992px) {
     font-size: 10px;
   }
+
+  p {
+    color: #00d26b;
+    margin-bottom: 0px;
+  }
 `
 
 export {

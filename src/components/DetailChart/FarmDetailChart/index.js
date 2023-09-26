@@ -92,9 +92,12 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
             <TooltipInfo>
               <CurDate>{curDate}</CurDate>
               <LabelInfo>
-                {tooltipLabel}&nbsp;{clickedId === 1 ? '$' : ''}
-                {curContent}
-                {clickedId === 0 ? '%' : ''}
+                {tooltipLabel}&nbsp;
+                <p>
+                  {clickedId === 1 ? '$' : ''}
+                  {curContent}
+                  {clickedId === 0 ? '%' : ''}
+                </p>
               </LabelInfo>
             </TooltipInfo>
           </FlexDiv>

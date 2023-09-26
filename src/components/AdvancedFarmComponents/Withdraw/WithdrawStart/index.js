@@ -14,6 +14,7 @@ import {
   WIDO_BALANCES_DECIMALS,
   WIDO_EXTEND_DECIMALS,
   BEGINNERS_BALANCES_DECIMALS,
+  IFARM_TOKEN_SYMBOL,
 } from '../../../../constants'
 import { useWallet } from '../../../../providers/Wallet'
 import { useActions } from '../../../../providers/Actions'
@@ -47,7 +48,10 @@ const WithdrawStart = ({
 
   const [, setPendingAction] = useState(null)
 
-  const pricePerFullShare = get(token, `pricePerFullShare`, 0)
+  const pricePerFullShare = useIFARM
+    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
+    : get(token, `pricePerFullShare`, 0)
+
   const slippagePercentage = 0.005 // Default slippage Percent
   const chainId = token.chain || token.data.chain
   const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
@@ -95,7 +99,7 @@ const WithdrawStart = ({
             fromInfoUsdValue = formatNumberWido(
               new BigNumber(fromWei(amount, pickedToken.decimals))
                 .multipliedBy(fromWei(pricePerFullShare, pickedToken.decimals))
-                .multipliedBy(token.usdPrice),
+                .multipliedBy(pickedToken.usdPrice),
               WIDO_BALANCES_DECIMALS,
             )
             minReceivedString = formatNumberWido(
