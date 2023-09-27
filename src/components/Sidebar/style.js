@@ -17,7 +17,7 @@ const Container = styled.div`
   max-width: 100%;
   position: fixed;
   z-index: 10;
-  padding: 25px 25px 50px;
+  padding: 25px 25px;
 
   @media screen and (max-width: 992px) {
     display: flex;
