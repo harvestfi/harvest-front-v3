@@ -12,10 +12,10 @@ import TokensIcon from '../../../assets/images/ui/tokens.svg'
 import SpecNarrowDown from '../../../assets/images/logos/filter/spec-narrowdown.svg'
 import DesciBack from '../../../assets/images/logos/filter/desciback.jpg'
 import LSDBack from '../../../assets/images/logos/filter/lsdback.jpg'
-import { ReactComponent as LogoVerse } from '../../../assets/images/logos/filter/logo-verse.svg'
+import { ReactComponent as LogoBswap } from '../../../assets/images/logos/filter/logo-bswap.svg'
 // import LogoPods from '../../assets/images/logos/filter/logo-pods.svg'
 import { ReactComponent as LogoCamelot } from '../../../assets/images/logos/filter/logo-camelot.svg'
-import CollabVerse from '../../../assets/images/logos/filter/collab-verse.svg'
+import CollabBswap from '../../../assets/images/logos/filter/collab-bswap.svg'
 // import CollabPods from '../../assets/images/logos/filter/collab-pods.svg'
 import CollabCamelot from '../../../assets/images/logos/filter/collab-camelot.svg'
 import { CHAIN_IDS } from '../../../data/constants'
@@ -69,12 +69,12 @@ const SwitchBalanceList = [
 
 const CollaborationList = [
   { id: 2, name: 'Camelot', backColor: '#FFAF1D', backImg: CollabCamelot },
-  { id: 0, name: 'Verse', backColor: '#0085FF', backImg: CollabVerse },
+  { id: 0, name: 'BaseSwap', backColor: '#0085FF', backImg: CollabBswap },
   // { id: 1, name: 'pods', backColor: '#A92A66', backImg: CollabPods },
 ]
 
 const MobileCollaborationList = [
-  { id: 0, name: 'Verse', backColor: '#0085FF', backImg: CollabVerse },
+  { id: 0, name: 'BaseSwap', backColor: '#0085FF', backImg: CollabBswap },
   // { id: 1, name: 'pods', backColor: '#A92A66', backImg: CollabPods },
   { id: 2, name: 'Camelot', backColor: '#FFAF1D', backImg: CollabCamelot },
 ]
@@ -272,7 +272,7 @@ const QuickFilter = ({
   const [trendName, setTrendName] = useState('Trends')
   const [trendsBackNum, setTrendsBackNum] = useState(-1)
 
-  const [collabVerseStatus, setCollabVerseStatus] = useState('')
+  const [collabBswapStatus, setCollabBswapStatus] = useState('')
   const [trendStatus, setTrendStatus] = useState('')
 
   const onClearSpecDropdowns = () => {
@@ -281,7 +281,7 @@ const QuickFilter = ({
     setTrendsBackNum(-1)
     setTrendName('Trends')
     setTrendStatus('')
-    setCollabVerseStatus('')
+    setCollabBswapStatus('')
   }
 
   useEffect(() => {
@@ -317,9 +317,9 @@ const QuickFilter = ({
           }
         } else if (key === 'search') {
           setInputText(value)
-          if (value.toLowerCase() === 'verse') {
-            setCollabVerseStatus('Verse')
-            setCollaborationName('Verse')
+          if (value.toLowerCase() === 'baseswap') {
+            setCollabBswapStatus('BaseSwap')
+            setCollaborationName('BaseSwap')
             setCollaborationBackColor('#0085FF')
           } else if (value.toLowerCase() === 'lsd') {
             setTrendName('LSD')
@@ -371,7 +371,7 @@ const QuickFilter = ({
       push(`${pathname}?${params.toString()}`)
     } else if (paramObj && paramObj.search) {
       if (
-        paramObj.search.toLowerCase() === 'verse' ||
+        paramObj.search.toLowerCase() === 'baseswap' ||
         paramObj.search.toLowerCase() === 'lsd' ||
         paramObj.search.toLowerCase() === 'desci'
       ) {
@@ -553,14 +553,14 @@ const QuickFilter = ({
                             setCollaborationName(item.name)
                             setCollaborationBackColor(item.backColor)
                             if (item.id === 0) {
-                              setInputText('Verse')
-                              onClickSearch('Verse')
+                              setInputText('BaseSwap')
+                              onClickSearch('BaseSwap')
                             } else {
                               push('/')
                             }
                           }}
                         >
-                          {i === 0 ? <LogoCamelot /> : <LogoVerse />}
+                          {i === 0 ? <LogoCamelot /> : <LogoBswap />}
                         </SpecDropDownItem>
                       ))}
                     </SpecDropDownMenu>
@@ -829,13 +829,13 @@ const QuickFilter = ({
                               setCollaborationName(item.name)
                               setCollaborationBackColor(item.backColor)
                               if (i === 0) {
-                                setCollabVerseStatus('Verse')
+                                setCollabBswapStatus('BaseSwap')
                               } else {
                                 push('/')
                               }
                             }}
                           >
-                            {i === 1 ? <LogoCamelot /> : <LogoVerse />}
+                            {i === 1 ? <LogoCamelot /> : <LogoBswap />}
                           </SpecDropDownItem>
                         ))}
                       </SpecDropDownMenu>
@@ -882,9 +882,9 @@ const QuickFilter = ({
                     if (assetsId !== -1) {
                       printAsset(assetsId)
                     }
-                    if (collabVerseStatus === 'Verse') {
-                      setInputText('Verse')
-                      onClickSearch('Verse')
+                    if (collabBswapStatus === 'BaseSwap') {
+                      setInputText('BaseSwap')
+                      onClickSearch('BaseSwap')
                     }
                     if (trendStatus !== '') {
                       setInputText(trendStatus)
