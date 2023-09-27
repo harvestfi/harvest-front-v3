@@ -295,7 +295,7 @@ const AdvancedFarm = () => {
   const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select' })
   const [withdrawFinalStep, setWithdrawFinalStep] = useState(false)
   const [unstakeBalance, setUnstakeBalance] = useState('0')
-  const [clickTokenIdWith, setClickedTokenIdWith] = useState(-1)
+  // const [clickTokenIdWith, setClickedTokenIdWith] = useState(-1)
   const [partHeightWith, setPartHeightWith] = useState(null)
   const [quoteValueWith, setQuoteValueWith] = useState(null)
 

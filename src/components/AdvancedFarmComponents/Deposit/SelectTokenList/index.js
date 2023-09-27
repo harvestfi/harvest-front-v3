@@ -56,7 +56,9 @@ const SelectTokenList = ({
 
   useEffect(() => {
     if (
+      supTokenNoBalanceList &&
       supTokenNoBalanceList.length !== 0 &&
+      balanceList &&
       balanceList.length !== 0 &&
       filterWord !== undefined &&
       filterWord !== ''
@@ -81,9 +83,14 @@ const SelectTokenList = ({
   // const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   useEffect(() => {
-    const count = !(Object.keys(defaultToken).length === 0 && defaultToken.constructor === Object)
-      ? 1
-      : 0 + balanceList.length + supTokenNoBalanceList.length + soonToSupList.length
+    const count =
+      defaultToken &&
+      !(Object.keys(defaultToken).length === 0 && defaultToken.constructor === Object)
+        ? 1
+        : 0 +
+          (balanceList && balanceList.length) +
+          (supTokenNoBalanceList && supTokenNoBalanceList.length) +
+          (soonToSupList && soonToSupList.length)
     if (count > 0) {
       setShowList(true)
     }

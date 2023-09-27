@@ -90,9 +90,9 @@ const DesktopPanelHeader = ({
             token.tokenNames[1] === 'ETH' &&
             network === 'arbitrum'
           ) {
-            url = `${directDetailUrl}specadvance/${network}/${address}`
-          } else {
             url = `${directDetailUrl}advanced/${network}/${address}`
+          } else {
+            url = `${directDetailUrl}specadvance/${network}/${address}`
           }
           if (e.ctrlKey) {
             window.open(url, '_blank')
