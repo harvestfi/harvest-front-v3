@@ -1015,7 +1015,7 @@ const AdvancedFarm = () => {
                             weight="600"
                             color="white"
                           >
-                            This token represents your share of this farm.
+                            This fToken represents your share in this farm.
                           </NewLabel>
                         </ReactTooltip>
                       </NewLabel>
