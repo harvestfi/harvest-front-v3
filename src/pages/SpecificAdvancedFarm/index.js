@@ -319,7 +319,10 @@ const AdvancedFarm = () => {
       try {
         if (chain && account && Object.keys(balances).length !== 0) {
           const curBalances = await getBalances(account, [chain.toString()])
-          setBalanceList(curBalances)
+          const curSortedBalances = curBalances.sort(function reducer(a, b) {
+            return Number(fromWei(b.balance, b.decimals)) - Number(fromWei(a.balance, a.decimals))
+          })
+          setBalanceList(curSortedBalances)
           let supList = [],
             directInSup = {},
             directInBalance = {}

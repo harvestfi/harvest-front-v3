@@ -54,28 +54,34 @@ const SelectTokenList = ({
     setPartHeight(null)
   }
 
-  useEffect(() => {
-    if (
-      supTokenNoBalanceList &&
-      supTokenNoBalanceList.length !== 0 &&
-      balanceList &&
-      balanceList.length !== 0 &&
-      filterWord !== undefined &&
-      filterWord !== ''
-    ) {
-      let newList = supTokenNoBalanceList.filter(el =>
-        el.symbol.toLowerCase().includes(filterWord.toLowerCase().trim()),
-      )
-      setSupTokenList(newList)
+  const [defaultCurToken, setDefaultCurToken] = useState(defaultToken)
 
-      newList = balanceList.filter(el =>
-        el.symbol.toLowerCase().includes(filterWord.toLowerCase().trim()),
-      )
-      setBalanceTokenList(newList)
+  useEffect(() => {
+    if (supTokenNoBalanceList && balanceList && filterWord !== undefined && filterWord !== '') {
+      if (supTokenNoBalanceList.length !== 0) {
+        const newList = supTokenNoBalanceList.filter(el =>
+          el.symbol.toLowerCase().includes(filterWord.toLowerCase().trim()),
+        )
+        setSupTokenList(newList)
+      }
+      if (!(Object.keys(defaultToken).length === 0 && defaultToken.constructor === Object)) {
+        if (defaultToken.symbol.includes(filterWord.toLowerCase().trim())) {
+          setDefaultCurToken(defaultToken)
+        } else {
+          setDefaultCurToken(null)
+        }
+      }
+      if (balanceList.length !== 0) {
+        const newList = balanceList.filter(el =>
+          el.symbol.toLowerCase().includes(filterWord.toLowerCase().trim()),
+        )
+        setBalanceTokenList(newList)
+      }
     }
     if (filterWord === '') {
       setSupTokenList(supTokenNoBalanceList)
       setBalanceTokenList(balanceList)
+      setDefaultCurToken(defaultToken)
     }
   }, [filterWord, supTokenNoBalanceList, balanceList]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -100,8 +106,10 @@ const SelectTokenList = ({
     <>
       {showList ? (
         <Content>
-          {defaultToken &&
-            !(Object.keys(defaultToken).length === 0 && defaultToken.constructor === Object) && (
+          {defaultCurToken &&
+            !(
+              Object.keys(defaultCurToken).length === 0 && defaultCurToken.constructor === Object
+            ) && (
               <>
                 <Label>Default deposit token </Label>
                 <Container
@@ -111,14 +119,14 @@ const SelectTokenList = ({
                   hoverColor={widoDepoTokenListHoverColor}
                   activeColor={widoDepoTokenListActiveColor}
                 >
-                  <img src={defaultToken.logoURI} width={37} height={37} alt="" />
+                  <img src={defaultCurToken.logoURI} width={37} height={37} alt="" />
                   <Vault>
                     <Text weight={500} color="#101828">
-                      {defaultToken.symbol}
+                      {defaultCurToken.symbol}
                     </Text>
                     <Text weight={400} color="#475467">
-                      {defaultToken.balance
-                        ? `${1 * fromWei(defaultToken.balance, defaultToken.decimals)}`
+                      {defaultCurToken.balance
+                        ? `${1 * fromWei(defaultCurToken.balance, defaultCurToken.decimals)}`
                         : '0.00'}
                     </Text>
                   </Vault>
