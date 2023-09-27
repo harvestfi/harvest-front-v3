@@ -632,8 +632,8 @@ const MainTag = styled.div`
   ${props =>
     props.active === 'true'
       ? `
-      color: #1F2937;
-      background: #EAF1FF;
+      color: #036666;
+      background: #EDF4F4;
       box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10);
     `
       : `
@@ -650,6 +650,7 @@ const MainTag = styled.div`
     ${props =>
       props.active === 'true'
         ? `
+        filter: invert(17%) sepia(99%) saturate(7041%) hue-rotate(176deg) brightness(86%) contrast(98%);
       `
         : `
         filter: invert(43%) sepia(5%) saturate(1510%) hue-rotate(183deg) brightness(99%) contrast(86%);

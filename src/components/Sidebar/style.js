@@ -132,15 +132,20 @@ const Link = styled.button`
   ${props =>
     props.active
       ? `
-    background: #f5f5f5;
+    color: #036666;
+    background: rgba(3, 102, 102, 0.07);
     ${
       props.darkMode
         ? `
       img {
-        filter: invert(97%) sepia(0%) saturate(7489%) hue-rotate(281deg) brightness(106%) contrast(103%);
+        filter: invert(17%) sepia(99%) saturate(7041%) hue-rotate(176deg) brightness(86%) contrast(98%);
       }
     `
-        : ``
+        : `
+        img {
+          filter: invert(17%) sepia(99%) saturate(7041%) hue-rotate(176deg) brightness(86%) contrast(98%);
+        }
+      `
     }
   `
       : `
@@ -189,7 +194,11 @@ const Link = styled.button`
   }
 
   &:hover {
-    color: #101828;
+    color: #036666;
+    img {
+      filter: invert(17%) sepia(99%) saturate(7041%) hue-rotate(176deg) brightness(86%)
+        contrast(98%);
+    }
   }
 `
 
