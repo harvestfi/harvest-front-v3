@@ -157,7 +157,7 @@ const WithdrawBase = ({
           </div>
         </ThemeMode>
       </NewLabel>
-      <Title>Withdraw f{tokenSymbol} into any token.</Title>
+      <Title>Withdraw f{tokenSymbol} into any token</Title>
       <TokenInfo>
         <AmountSection>
           <NewLabel

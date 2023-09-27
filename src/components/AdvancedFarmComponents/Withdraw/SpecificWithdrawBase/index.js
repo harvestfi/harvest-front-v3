@@ -169,7 +169,7 @@ const WithdrawBase = ({
           </SwitchTabTag>
         ))}
       </NewLabel>
-      <Title>Withdraw f{tokenSymbol} into any token to your wallet.</Title>
+      <Title>Withdraw f{tokenSymbol} into any token</Title>
       <TokenInfo>
         <AmountSection>
           <NewLabel
