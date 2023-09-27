@@ -9,7 +9,7 @@ import Portfolio from '../../assets/images/logos/sidebar/portfolio.svg'
 import Docs from '../../assets/images/logos/sidebar/docs.svg'
 import ExternalLink from '../../assets/images/logos/sidebar/external_link.svg'
 import FAQ from '../../assets/images/logos/sidebar/faq.svg'
-import Home from '../../assets/images/logos/sidebar/home.svg'
+import Home from '../../assets/images/logos/sidebar/home-line.svg'
 import Beginners from '../../assets/images/logos/sidebar/beginners.svg'
 import Collaborations from '../../assets/images/logos/sidebar/collaborations.svg'
 import Advanced from '../../assets/images/logos/sidebar/advanced.svg'
@@ -34,7 +34,7 @@ import { usePools } from '../../providers/Pools'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { formatAddress, isSpecialApp } from '../../utils'
-// import Social from '../Social'
+import Social from '../Social'
 import {
   Address,
   ConnectAvatar,
@@ -82,6 +82,11 @@ const sideLinks = [
     imgPath: Beginners,
   },
   {
+    path: ROUTES.ADVANCED,
+    name: 'Advanced',
+    imgPath: Advanced,
+  },
+  {
     path: ROUTES.COLLABORATIONS,
     name: 'Collaborations',
     imgPath: Collaborations,
@@ -89,13 +94,8 @@ const sideLinks = [
     enabled: false,
   },
   {
-    path: ROUTES.ADVANCED,
-    name: 'Advanced',
-    imgPath: Advanced,
-  },
-  {
     path: ROUTES.PORTFOLIO,
-    name: 'Portfolio',
+    name: 'My Earnings',
     imgPath: Portfolio,
   },
 ]
@@ -176,12 +176,19 @@ const sideLinksMobile1 = [
 
 const SideLink = ({ item, subItem, isDropdownLink, fontColor, activeIconColor, darkMode }) => {
   const { pathname } = useLocation()
-  const pageName = pathname === '/' ? 'home' : pathname === ROUTES.ADVANCED ? 'advanced' : pathname
+  const pageName =
+    pathname === '/'
+      ? 'home'
+      : pathname === ROUTES.ADVANCED
+      ? 'advanced'
+      : pathname === ROUTES.PORTFOLIO
+      ? 'my earnings'
+      : pathname
   return (
     /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
     <Link
       fontColor={fontColor}
-      active={pageName.includes(item.name.toLowerCase())}
+      active={pageName.includes(item.name.toLowerCase().trim())}
       subItem={subItem}
       isDropdownLink={isDropdownLink}
       activeIconColor={activeIconColor}
@@ -465,6 +472,7 @@ const Sidebar = ({ width }) => {
               </Fragment>
             ))}
           </LinksContainer>
+          <Social />
         </BottomPart>
       </Desktop>
       <Mobile>

@@ -73,6 +73,7 @@ const LinksContainer = styled.div`
       margin-left: 22px;
       display: block;
       content: 'Harvest';
+      color: #475467;
     }
   }
 
@@ -87,7 +88,7 @@ const LinksContainer = styled.div`
 
 const LinkContainer = styled.div`
   position: relative;
-  margin-bottom: 18px;
+  margin-bottom: 10px;
   cursor: pointer;
 
   &:last-child {
@@ -103,7 +104,7 @@ const Link = styled.button`
   color: #475467;
   transition: 0.25s;
   font-size: 18px;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 24px;
   transition: 0.25s;
   display: flex;
@@ -112,8 +113,7 @@ const Link = styled.button`
   width: 100%;
   background-color: transparent;
   cursor: pointer;
-  padding-left: 0;
-  padding-right: 0;
+  padding: 8px 12px;
   border-width: 0;
   border-radius: 5px;
   padding: 5px;
@@ -189,7 +189,7 @@ const Link = styled.button`
   }
 
   &:hover {
-    color: #848484;
+    color: #101828;
   }
 `
 
@@ -708,7 +708,7 @@ const Desktop = styled.div`
 
 const NewTag = styled.div`
   border-radius: 16px;
-  background: #7f56d9;
+  background: #036666;
   padding: 2px 8px;
   font-size: 12px;
   line-height: 18px;
