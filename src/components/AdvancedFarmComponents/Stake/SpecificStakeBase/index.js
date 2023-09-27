@@ -58,7 +58,6 @@ const StakeBase = ({
   inputAmount,
   setInputAmount,
   token,
-  // activeStake,
   switchMethod,
   tokenSymbol,
   lpTokenBalance,

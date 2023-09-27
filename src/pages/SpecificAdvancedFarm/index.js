@@ -107,6 +107,7 @@ import {
   BorderBottomDiv,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
+// import { array } from 'prop-types'
 
 const chainList = [
   { id: 1, name: 'Ethereum', chainId: 1 },
@@ -280,7 +281,7 @@ const AdvancedFarm = () => {
   // Deposit
   const [depositStart, setDepositStart] = useState(false)
   const [selectTokenDepo, setSelectTokenDepo] = useState(false)
-  const [clickTokenIdDepo, setClickedTokenIdDepo] = useState(-1)
+  // const [clickTokenIdDepo, setClickedTokenIdDepo] = useState(-1)
   const [balanceDepo, setBalanceDepo] = useState(0)
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
   const [depositFinalStep, setDepositFinalStep] = useState(false)
@@ -308,6 +309,9 @@ const AdvancedFarm = () => {
 
   const [balanceList, setBalanceList] = useState([])
   const [supTokenList, setSupTokenList] = useState([])
+  const [supTokenNoBalanceList, setSupTokenNoBalanceList] = useState([])
+  const [defaultToken, setDefaultToken] = useState({})
+  const [soonToSupList, setSoonToSupList] = useState([])
 
   const toTokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
   useEffect(() => {
@@ -419,7 +423,36 @@ const AdvancedFarm = () => {
             }
             supList.unshift(direct)
           }
+          if (supList[0].default) {
+            setDefaultToken(supList[0])
+          }
+          supList.shift()
           setSupTokenList(supList)
+
+          const supNoBalanceList = []
+          if (supList !== []) {
+            for (let i = 0; i < supList.length; i += 1) {
+              if (Number(supList[i].balance) === 0) {
+                supNoBalanceList.push(supList[i])
+              }
+            }
+          }
+          setSupTokenNoBalanceList(supNoBalanceList)
+
+          const soonSupList = []
+          for (let j = 0; j < curBalances.length; j += 1) {
+            const supToken = supList.find(el => el.address === curBalances[j].address)
+            if (!supToken) {
+              soonSupList.push(curBalances[j])
+            }
+
+            if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
+              if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
+                directInBalance = curBalances[j]
+              }
+            }
+          }
+          setSoonToSupList(soonSupList)
         }
       } catch (err) {
         console.log('getTokenBalance: ', err)
@@ -1063,18 +1096,21 @@ const AdvancedFarm = () => {
                         setInputAmount={setInputAmountDepo}
                         token={token}
                         supTokenList={supTokenList}
-                        activeDepo={activeDepo}
                         switchMethod={switchDepoMethod}
                         tokenSymbol={id}
                       />
                       <DepositSelectToken
                         selectToken={selectTokenDepo}
                         setSelectToken={setSelectTokenDepo}
-                        clickTokenId={clickTokenIdDepo}
-                        setClickedTokenId={setClickedTokenIdDepo}
+                        // clickTokenId={clickTokenIdDepo}
+                        // setClickedTokenId={setClickedTokenIdDepo}
                         setPickedToken={setPickedTokenDepo}
                         setBalance={setBalanceDepo}
                         supTokenList={supTokenList}
+                        supTokenNoBalanceList={supTokenNoBalanceList}
+                        balanceList={balanceList}
+                        defaultToken={defaultToken}
+                        soonToSupList={soonToSupList}
                         setPartHeight={setPartHeightDepo}
                       />
                       <DepositStart
@@ -1120,16 +1156,19 @@ const AdvancedFarm = () => {
                         lpTokenBalance={lpTokenBalance}
                         token={token}
                         supTokenList={supTokenList}
-                        activeDepo={activeDepo}
                         switchMethod={switchDepoMethod}
                       />
                       <WithdrawSelectToken
                         selectToken={selectTokenWith}
                         setSelectToken={setSelectTokenWith}
-                        clickTokenId={clickTokenIdWith}
-                        setClickedTokenId={setClickedTokenIdWith}
+                        // clickTokenId={clickTokenIdWith}
+                        // setClickedTokenId={setClickedTokenIdWith}
                         setPickedToken={setPickedTokenWith}
                         supTokenList={supTokenList}
+                        supTokenNoBalanceList={supTokenNoBalanceList}
+                        balanceList={balanceList}
+                        defaultToken={defaultToken}
+                        soonToSupList={soonToSupList}
                         setPartHeight={setPartHeightWith}
                       />
                       <WithdrawStart
@@ -1345,7 +1384,6 @@ const AdvancedFarm = () => {
                         inputAmount={inputAmountStake}
                         setInputAmount={setInputAmountStake}
                         token={token}
-                        activeStake={activeStake}
                         switchMethod={switchStakeMethod}
                         tokenSymbol={id}
                         lpTokenBalance={lpTokenBalance}
@@ -1369,7 +1407,6 @@ const AdvancedFarm = () => {
                         inputAmount={inputAmountUnstake}
                         setInputAmount={setInputAmountUnstake}
                         token={token}
-                        activeStake={activeStake}
                         switchMethod={switchStakeMethod}
                         tokenSymbol={id}
                         totalStaked={totalStaked}

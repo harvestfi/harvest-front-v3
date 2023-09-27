@@ -2,80 +2,195 @@ import React, { useEffect, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { fromWei } from '../../../../services/web3'
 import { useThemeContext } from '../../../../providers/useThemeContext'
-import { Container, Text, Vault, Content, EmptyContainer } from './style'
+import { Container, Text, Vault, Content, EmptyContainer, Label } from './style'
 import AnimatedDots from '../../../AnimatedDots'
 
 const SelectTokenList = ({
-  list,
-  clickId,
-  setClickedId,
+  balanceList,
+  supTokenNoBalanceList,
+  defaultToken,
+  soonToSupList,
   setPickedToken,
-  setSelectTokenWido,
+  setSelectToken,
   setPartHeight,
   filterWord,
 }) => {
-  const [tokenList, setTokenList] = useState(list)
-  const handleClick = id => {
-    setClickedId(id)
-    setPickedToken(tokenList[id])
-    setSelectTokenWido(false)
+  const [showList, setShowList] = useState(false)
+
+  const [supTokenList, setSupTokenList] = useState(supTokenNoBalanceList)
+  const [clicksupTokenNoBalanceListId, setClickSupTokenNoBalanceListId] = useState(-1)
+  const handleSupTokenNoBalanceListClick = id => {
+    setClickSupTokenNoBalanceListId(id)
+    setPickedToken(supTokenList[id])
+    setSelectToken(false)
+    setPartHeight(null)
+  }
+
+  // Supported token with balance in my wallet
+  const [balanceTokenList, setBalanceTokenList] = useState(balanceList)
+  const [clickBalanceListId, setClickBalanceListId] = useState(-1)
+  const handleBalanceListClick = id => {
+    setClickBalanceListId(id)
+    setPickedToken(balanceTokenList[id])
+    setSelectToken(false)
+    setPartHeight(null)
+  }
+
+  // Default Token
+  const handleDefaultToken = () => {
+    setClickBalanceListId(-1)
+    setClickSupTokenNoBalanceListId(-1)
+    setPickedToken(defaultToken)
+    setSelectToken(false)
     setPartHeight(null)
   }
 
   useEffect(() => {
-    if (list.length !== 0 && filterWord !== undefined && filterWord !== '') {
-      const newList = list.filter(el =>
+    if (
+      supTokenNoBalanceList.length !== 0 &&
+      balanceList.length !== 0 &&
+      filterWord !== undefined &&
+      filterWord !== ''
+    ) {
+      let newList = supTokenNoBalanceList.filter(el =>
         el.symbol.toLowerCase().includes(filterWord.toLowerCase().trim()),
       )
-      setTokenList(newList)
-    }
+      setSupTokenList(newList)
 
-    if (filterWord === '') {
-      setTokenList(list)
+      newList = balanceList.filter(el =>
+        el.symbol.toLowerCase().includes(filterWord.toLowerCase().trim()),
+      )
+      setBalanceTokenList(newList)
     }
-  }, [filterWord, list]) // eslint-disable-line react-hooks/exhaustive-deps
+    if (filterWord === '') {
+      setSupTokenList(supTokenNoBalanceList)
+      setBalanceTokenList(balanceList)
+    }
+  }, [filterWord, supTokenNoBalanceList, balanceList]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const { widoDepoTokenListActiveColor, widoDepoTokenListHoverColor, fontColor } = useThemeContext()
-  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+  // const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+
+  useEffect(() => {
+    const count = !(Object.keys(defaultToken).length === 0 && defaultToken.constructor === Object)
+      ? 1
+      : 0 + balanceList.length + supTokenNoBalanceList.length + soonToSupList.length
+    if (count > 0) {
+      setShowList(true)
+    }
+  }, [defaultToken, balanceList, supTokenNoBalanceList, soonToSupList])
+
   return (
-    <Content cnt={tokenList.length}>
-      {tokenList.length > 0 ? (
-        tokenList.map((data, i) => (
-          <Container
-            key={i}
-            className={i === clickId ? 'active' : ''}
-            onClick={() => {
-              handleClick(i)
-            }}
-            hoverColor={widoDepoTokenListHoverColor}
-            activeColor={widoDepoTokenListActiveColor}
-          >
-            <img src={data.logoURI} width={25} height={25} alt="" />
-            <Vault>
-              <Text
-                size={isMobile ? '12px' : '14px'}
-                height={isMobile ? '15px' : '18px'}
-                weight={700}
-              >
-                {data.symbol}
-              </Text>
-              <Text
-                size={isMobile ? '9px' : '12px'}
-                height={isMobile ? '12px' : '16px'}
-                weight={400}
-              >
-                {data.balance ? `${1 * fromWei(data.balance, data.decimals)}` : '0.00'}
-              </Text>
-            </Vault>
-          </Container>
-        ))
+    <>
+      {showList ? (
+        <Content>
+          {defaultToken &&
+            !(Object.keys(defaultToken).length === 0 && defaultToken.constructor === Object) && (
+              <>
+                <Label>Default token to withdraw to </Label>
+                <Container
+                  onClick={() => {
+                    handleDefaultToken()
+                  }}
+                  hoverColor={widoDepoTokenListHoverColor}
+                  activeColor={widoDepoTokenListActiveColor}
+                >
+                  <img src={defaultToken.logoURI} width={37} height={37} alt="" />
+                  <Vault>
+                    <Text weight={500} color="#101828">
+                      {defaultToken.symbol}
+                    </Text>
+                    <Text weight={400} color="#475467">
+                      {defaultToken.balance
+                        ? `${1 * fromWei(defaultToken.balance, defaultToken.decimals)}`
+                        : '0.00'}
+                    </Text>
+                  </Vault>
+                </Container>
+              </>
+            )}
+          {balanceTokenList.length > 0 && (
+            <>
+              <Label>Tokens on your wallet that you can withdraw to </Label>
+              {balanceTokenList.map((data, i) => (
+                <Container
+                  key={i}
+                  className={i === clickBalanceListId ? 'active' : ''}
+                  onClick={() => {
+                    handleBalanceListClick(i)
+                  }}
+                  hoverColor={widoDepoTokenListHoverColor}
+                  activeColor={widoDepoTokenListActiveColor}
+                >
+                  <img src={data.logoURI} width={37} height={37} alt="" />
+                  <Vault>
+                    <Text weight={500} color="#101828">
+                      {data.symbol}
+                    </Text>
+                    <Text weight={400} color="#475467">
+                      {data.balance ? `${1 * fromWei(data.balance, data.decimals)}` : '0.00'}
+                    </Text>
+                  </Vault>
+                </Container>
+              ))}
+            </>
+          )}
+          {supTokenList.length > 0 && (
+            <>
+              <Label>Other supported tokens, which you can withdraw to </Label>
+              {supTokenList.map((data, i) => (
+                <Container
+                  key={i}
+                  className={i === clicksupTokenNoBalanceListId ? 'active' : ''}
+                  onClick={() => {
+                    handleSupTokenNoBalanceListClick(i)
+                  }}
+                  hoverColor={widoDepoTokenListHoverColor}
+                  activeColor={widoDepoTokenListActiveColor}
+                >
+                  <img src={data.logoURI} width={37} height={37} alt="" />
+                  <Vault>
+                    <Text weight={500} color="#101828">
+                      {data.symbol}
+                    </Text>
+                    <Text weight={400} color="#475467">
+                      {data.balance ? `${1 * fromWei(data.balance, data.decimals)}` : '0.00'}
+                    </Text>
+                  </Vault>
+                </Container>
+              ))}
+            </>
+          )}
+          {soonToSupList.length > 0 && (
+            <>
+              <Label>Soon to be supported</Label>
+              {balanceList.map((data, i) => (
+                <Container
+                  key={i}
+                  hoverColor={widoDepoTokenListHoverColor}
+                  activeColor={widoDepoTokenListActiveColor}
+                >
+                  <img src={data.logoURI} width={37} height={37} alt="" />
+                  <Vault>
+                    <Text weight={500} color="#101828">
+                      {data.symbol}
+                    </Text>
+                    <Text weight={400} color="#475467">
+                      {data.balance ? `${1 * fromWei(data.balance, data.decimals)}` : '0.00'}
+                    </Text>
+                  </Vault>
+                </Container>
+              ))}
+            </>
+          )}
+        </Content>
       ) : (
         <EmptyContainer fontColor={fontColor}>
           Loading Token list
           <AnimatedDots />
         </EmptyContainer>
       )}
-    </Content>
+    </>
   )
 }
 export default SelectTokenList

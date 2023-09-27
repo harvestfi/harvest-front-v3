@@ -60,7 +60,6 @@ const UnstakeBase = ({
   inputAmount,
   setInputAmount,
   token,
-  // activeStake,
   switchMethod,
   tokenSymbol,
   totalStaked,

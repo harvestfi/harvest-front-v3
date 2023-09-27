@@ -19,11 +19,13 @@ import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 const DepositSelectToken = ({
   selectToken,
   setSelectToken,
-  clickTokenId,
-  setClickedTokenId,
   setPickedToken,
   setBalance,
-  supTokenList,
+  // supTokenList,
+  soonToSupList,
+  supTokenNoBalanceList,
+  balanceList,
+  defaultToken,
   setPartHeight,
 }) => {
   const { connected } = useWallet()
@@ -68,25 +70,14 @@ const DepositSelectToken = ({
           padding={isMobile ? '9px 12px 0' : '15px 17px 0'}
         >
           {connected ? (
-            <NewLabel
-              weight="500"
-              size={isMobile ? '10px' : '13px'}
-              height={isMobile ? '15px' : '19px'}
-              color="#475467"
-            >
-              Tokens on your connected wallet that you can use as a deposit:
-            </NewLabel>
-          ) : (
-            <></>
-          )}
-          {connected ? (
             <SelectTokenList
-              list={supTokenList}
-              clickId={clickTokenId}
-              setClickedId={setClickedTokenId}
+              balanceList={balanceList}
+              supTokenNoBalanceList={supTokenNoBalanceList}
+              defaultToken={defaultToken}
+              soonToSupList={soonToSupList}
               setPickedToken={setPickedToken}
               setBalance={setBalance}
-              setSelectTokenWido={setSelectToken}
+              setSelectToken={setSelectToken}
               setPartHeight={setPartHeight}
               filterWord={filterWord}
             />

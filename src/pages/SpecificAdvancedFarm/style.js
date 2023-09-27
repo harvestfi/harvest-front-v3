@@ -634,6 +634,7 @@ const MainTag = styled.div`
       ? `
       color: #1F2937;
       background: #EAF1FF;
+      box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10);
     `
       : `
       color: #667085;
