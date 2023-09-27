@@ -289,7 +289,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
           width="100%"
           height={
             onlyWidth > 1291
-              ? 335
+              ? 390
               : onlyWidth > 1262
               ? 353
               : onlyWidth > 1035

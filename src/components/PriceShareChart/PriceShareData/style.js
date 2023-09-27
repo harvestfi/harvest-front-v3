@@ -5,12 +5,12 @@ const Container = styled.div`
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  padding: 25px 18px;
+  padding: 10px 18px 25px;
   transition: 0.25s;
   border-radius: 10px;
   // box-shadow: 0px 8px 8px -4px rgba(16, 24, 40, 0.03), 0px 20px 24px -4px rgba(16, 24, 40, 0.08);
   background: #fff;
-  justify-content: space-around;
+  justify-content: space-between;
 
   @media screen and (max-width: 992px) {
     margin-bottom: 24px;
@@ -58,7 +58,7 @@ const ButtonGroup = styled.div`
 `
 
 const ChartDiv = styled.div`
-  height: 335px;
+  height: 390px;
 
   @media screen and (max-width: 1291px) {
     height: 353px;
