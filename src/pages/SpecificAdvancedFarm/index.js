@@ -1248,15 +1248,6 @@ const AdvancedFarm = () => {
                         color="#344054"
                       >
                         {`f${id}`}
-                        <InfoIcon
-                          className="info"
-                          width={isMobile ? 10 : 16}
-                          src={Info}
-                          alt=""
-                          data-tip
-                          data-for="tooltip-stake-balance"
-                          filterColor={filterColor}
-                        />
                       </NewLabel>
                       <NewLabel
                         size={isMobile ? '10px' : '14px'}
