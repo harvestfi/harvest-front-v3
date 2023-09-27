@@ -6,10 +6,7 @@ const SocialsContainer = styled.div`
   transition: 0.25s;
   margin-top: 15px;
   a {
-    background: ${props => props.backColor};
-    img {
-      filter: ${props => props.iconColor};
-    }
+    background: #344054;
   }
 
   @media screen and (max-width: 1200px) {
