@@ -101,9 +101,9 @@ const LinkContainer = styled.div`
 `
 
 const Link = styled.button`
-  color: #475467;
+  color: #344054;
   transition: 0.25s;
-  font-size: 18px;
+  font-size: 16px;
   font-weight: 600;
   line-height: 24px;
   transition: 0.25s;
