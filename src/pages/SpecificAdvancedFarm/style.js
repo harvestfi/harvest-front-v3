@@ -75,7 +75,7 @@ const TopBtnInner = styled.div`
 
 const TopPart = styled.div`
   width: 80%;
-  padding: 60px 45px 100px 45px;
+  padding: 60px 45px 60px 45px;
   display: flex;
   justify-content: space-between;
   background: #eaf1ff;
