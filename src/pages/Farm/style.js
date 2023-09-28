@@ -9,6 +9,10 @@ const FarmContainer = styled.div`
   display: flex;
   justify-content: center;
 
+  img.bswap-bg {
+    position: absolute;
+  }
+
   @media screen and (max-width: 992px) {
     margin-left: 0;
     width: 100%;
