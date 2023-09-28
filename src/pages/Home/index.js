@@ -1,9 +1,8 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
-import FirstFarmBottom from '../../assets/images/logos/home/first-farming-bottom.svg'
-import FirstFarmSun from '../../assets/images/logos/home/first-farming-sun.svg'
+import FristBg from '../../assets/images/logos/home/beginner-back.svg'
+import FirstFarmCloud from '../../assets/images/logos/home/first-farming-cloud.svg'
 import AdvancedBottom from '../../assets/images/logos/home/advanced-bottom.svg'
-import AdvancedSun from '../../assets/images/logos/home/advanced-sun.svg'
 import { useThemeContext } from '../../providers/useThemeContext'
 import {
   Container,
@@ -39,23 +38,23 @@ const Home = () => {
             }}
           >
             <Title>Farms of Beginners</Title>
-            <Desc>The easiest way to put your crypto tokens to work.</Desc>
+            <Desc>Make your first deposits in less than 2 minutes.</Desc>
             <StartBeginners
               onClick={() => {
                 push(ROUTES.BEGINNERS)
               }}
             >
-              Start Earning Now
+              Get Started Now
             </StartBeginners>
+            <img src={FristBg} alt="bg" />
           </FirstBack>
         </FirstPart>
         <SecondPart>
           <FirstFarmingPart>
-            <FirstFarmTitle>First time Farming?</FirstFarmTitle>
-            <FirstFarmDesc>Learn how to earn with Harvest in 5 minutes. </FirstFarmDesc>
-            <DirectBtn>Learn Now</DirectBtn>
-            <img className="sun" src={FirstFarmSun} alt="" />
-            <img className="bottom" src={FirstFarmBottom} alt="" />
+            <FirstFarmTitle>New to Farming?</FirstFarmTitle>
+            <FirstFarmDesc>Learn how to earn with Harvest.</FirstFarmDesc>
+            <DirectBtn>Learn</DirectBtn>
+            <img className="cloud" src={FirstFarmCloud} alt="" />
           </FirstFarmingPart>
           <AdvancedFarms
             onClick={() => {
@@ -63,7 +62,7 @@ const Home = () => {
             }}
           >
             <AdvancedTitle>Advanced Farms</AdvancedTitle>
-            <AdvancedDesc>Over 100 farms on Ethereum, Polygon and Arbitrum await!</AdvancedDesc>
+            <AdvancedDesc>Over 100 farms on Polygon, Base, Arbitrum & L1.</AdvancedDesc>
             <AdvancedDirectBtn
               onClick={() => {
                 push(ROUTES.ADVANCED)
@@ -71,7 +70,6 @@ const Home = () => {
             >
               Discover
             </AdvancedDirectBtn>
-            <img className="sun" src={AdvancedSun} alt="" />
             <img className="bottom" src={AdvancedBottom} alt="" />
           </AdvancedFarms>
         </SecondPart>

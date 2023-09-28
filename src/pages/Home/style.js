@@ -1,7 +1,4 @@
 import styled from 'styled-components'
-import BeginnersBack from '../../assets/images/logos/home/beginner-back.svg'
-import FirstFarmingBack from '../../assets/images/logos/home/first-farming-back.svg'
-import AdvancedBack from '../../assets/images/logos/home/advanced-back.svg'
 
 const Container = styled.div`
   width: 100%;
@@ -34,7 +31,7 @@ const Inner = styled.div`
   width: 100%;
   min-height: 765px;
   display: flex;
-  gap: 10px;
+  gap: 25px;
 
   @media screen and (min-width: 1921px) {
     width: 1450px;
@@ -70,9 +67,7 @@ const FirstPart = styled.div`
 const FirstBack = styled.div`
   width: 100%;
   height: 100%;
-  background: url(${BeginnersBack});
-  background-size: cover;
-  background-repeat: no-repeat;
+  background-color: #eaf1ff;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -97,6 +92,15 @@ const FirstBack = styled.div`
   @media screen and (max-width: 512px) {
     height: 380px;
   }
+
+  img {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+    border-bottom-right-radius: 13px;
+    border-bottom-left-radius: 13px;
+  }
 `
 
 const Title = styled.div`
@@ -104,6 +108,7 @@ const Title = styled.div`
   font-weight: 600;
   line-height: 48px;
   margin-bottom: 21px;
+  color: #1f2937;
 
   @media screen and (max-width: 992px) {
     font-size: 22px;
@@ -117,6 +122,7 @@ const Desc = styled.div`
   font-weight: 400;
   line-height: 32px;
   margin-bottom: 21px;
+  color: #1f2937;
 
   @media screen and (max-width: 992px) {
     font-size: 12px;
@@ -153,7 +159,7 @@ const SecondPart = styled.div`
   width: 50%;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 25px;
 
   @media screen and (max-width: 992px) {
     width: 100%;
@@ -165,9 +171,7 @@ const FirstFarmingPart = styled.div`
   height: 50%;
   width: 100%;
   border-radius: 13px;
-  background: url(${FirstFarmingBack});
-  background-size: cover;
-  background-repeat: no-repeat;
+  background-color: #eaf1ff;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -176,19 +180,13 @@ const FirstFarmingPart = styled.div`
   position: relative;
   overflow: hidden;
 
-  img.sun {
-    width: 150px;
+  img.cloud {
+    width: 230px;
     position: absolute;
-    top: 10%;
-    right: 10%;
+    bottom: -5%;
+    right: 5%;
   }
 
-  img.bottom {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-  }
   transition: 0.25s;
   cursor: pointer;
   box-shadow: 0px 4px 4px -2px rgba(16, 24, 40, 0.03), 0px 10px 12px -2px rgba(16, 24, 40, 0.08);
@@ -227,7 +225,7 @@ const DirectBtn = styled.button`
   font-size: 12px;
   font-weight: 600;
   line-height: 18px;
-  color: #232323;
+  color: #1f2937;
   &:hover {
     color: #576f91;
   }
@@ -241,9 +239,7 @@ const DirectBtn = styled.button`
 
 const AdvancedFarms = styled.div`
   height: 50%;
-  background: url(${AdvancedBack});
-  background-size: cover;
-  background-repeat: no-repeat;
+  background-color: #eaf1ff;
   border-radius: 13px;
   display: flex;
   flex-direction: column;
@@ -297,6 +293,7 @@ const FirstFarmTitle = styled.div`
   font-weight: 600;
   line-height: 32px;
   margin-bottom: 15px;
+  color: #1f2937;
 
   @media screen and (max-width: 992px) {
     font-size: 19px;
@@ -310,6 +307,7 @@ const FirstFarmDesc = styled.div`
   font-weight: 400;
   line-height: 22px;
   margin-bottom: 24px;
+  color: #1f2937;
 
   @media screen and (max-width: 992px) {
     font-size: 10px;
@@ -323,6 +321,7 @@ const AdvancedTitle = styled.div`
   font-weight: 600;
   line-height: 32px;
   margin-bottom: 15px;
+  color: #1f2937;
 
   @media screen and (max-width: 992px) {
     font-size: 19px;
@@ -336,6 +335,7 @@ const AdvancedDesc = styled.div`
   font-weight: 400;
   line-height: 22px;
   margin-bottom: 24px;
+  color: #1f2937;
 
   @media screen and (max-width: 992px) {
     font-size: 10px;
@@ -355,7 +355,7 @@ const AdvancedDirectBtn = styled.button`
   font-size: 12px;
   font-weight: 600;
   line-height: 18px;
-  color: #232323;
+  color: #1f2937;
   &:hover {
     color: #576f91;
   }
