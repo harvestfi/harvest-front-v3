@@ -200,7 +200,8 @@ const Link = styled.button`
   &:hover {
     color: #036666;
     img {
-      filter: invert(32%) sepia(12%) saturate(4979%) hue-rotate(141deg) brightness(88%) contrast(98%);
+      filter: invert(32%) sepia(12%) saturate(4979%) hue-rotate(141deg) brightness(88%)
+        contrast(98%);
     }
   }
 `

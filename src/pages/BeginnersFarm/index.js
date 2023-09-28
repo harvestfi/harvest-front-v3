@@ -680,7 +680,7 @@ const BeginnersFarm = () => {
           <TopButton className="back-btn">
             <BackBtnRect
               onClick={() => {
-                push(ROUTES.ADVANCED)
+                push(ROUTES.BEGINNERS)
               }}
             >
               <BackArrow src={Back} alt="" />
