@@ -117,6 +117,12 @@ const Link = styled.button`
   border-width: 0;
   border-radius: 5px;
   padding: 5px;
+
+  .sideIcon {
+    margin-right: 13px;
+    filter: invert(48%) sepia(4%) saturate(2341%) hue-rotate(183deg) brightness(87%) contrast(80%);
+  }
+
   ${props =>
     props.enabled === 'false'
       ? `
@@ -143,17 +149,13 @@ const Link = styled.button`
     `
         : `
         img {
-          filter: invert(27%) sepia(77%) saturate(807%) hue-rotate(139deg) brightness(92%) contrast(98%);
+          filter: invert(27%) sepia(77%) saturate(807%) hue-rotate(139deg) brightness(92%) contrast(98%) !important;
         }
       `
     }
   `
       : `
       `}
-
-  .sideIcon {
-    margin-right: 13px;
-  }
 
   .external-link {
     margin-left: 5px;
