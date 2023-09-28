@@ -138,12 +138,12 @@ const Link = styled.button`
       props.darkMode
         ? `
       img {
-        filter: invert(17%) sepia(99%) saturate(7041%) hue-rotate(176deg) brightness(86%) contrast(98%);
+        filter: invert(27%) sepia(77%) saturate(807%) hue-rotate(139deg) brightness(92%) contrast(98%);
       }
     `
         : `
         img {
-          filter: invert(17%) sepia(99%) saturate(7041%) hue-rotate(176deg) brightness(86%) contrast(98%);
+          filter: invert(27%) sepia(77%) saturate(807%) hue-rotate(139deg) brightness(92%) contrast(98%);
         }
       `
     }
@@ -196,8 +196,7 @@ const Link = styled.button`
   &:hover {
     color: #036666;
     img {
-      filter: invert(17%) sepia(99%) saturate(7041%) hue-rotate(176deg) brightness(86%)
-        contrast(98%);
+      filter: invert(27%) sepia(77%) saturate(807%) hue-rotate(139deg) brightness(92%) contrast(98%);
     }
   }
 `
