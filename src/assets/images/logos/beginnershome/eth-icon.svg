@@ -1,14 +1,23 @@
-<svg width="240" height="239" viewBox="0 0 240 239" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M235.675 119.407C235.675 183.293 183.886 235.083 120 235.083C56.114 235.083 4.32422 183.293 4.32422 119.407C4.32422 55.5212 56.114 3.73145 120 3.73145C183.886 3.73145 235.675 55.5212 235.675 119.407Z" stroke="white" stroke-width="3.7907"/>
-<mask id="mask0_2670_115306" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="30" y="29" width="180" height="180">
-<path d="M209.555 29.8516H30.4443V208.962H209.555V29.8516Z" fill="white"/>
+<svg width="193" height="193" viewBox="0 0 193 193" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="eth.svg">
+<path id="Vector" d="M189.984 96.5C189.984 148.13 148.13 189.984 96.5 189.984C44.87 189.984 3.01562 148.13 3.01562 96.5C3.01562 44.87 44.87 3.01562 96.5 3.01562C148.13 3.01562 189.984 44.87 189.984 96.5Z" fill="white"/>
+<g id="Clip path group">
+<mask id="mask0_3218_141164" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="24" y="24" width="145" height="145">
+<g id="clip0_3_27775">
+<path id="Vector_2" d="M168.875 24.125H24.125V168.875H168.875V24.125Z" fill="white"/>
+</g>
 </mask>
-<g mask="url(#mask0_2670_115306)">
-<path d="M122.787 60.1997V103.963L159.776 120.491L122.787 60.1997Z" fill="white" fill-opacity="0.602"/>
-<path d="M122.791 60.1997L85.7969 120.491L122.791 103.963V60.1997Z" fill="white"/>
-<path d="M122.787 148.851V178.587L159.8 127.378L122.787 148.851Z" fill="white" fill-opacity="0.602"/>
-<path d="M122.791 178.587V148.846L85.7969 127.378L122.791 178.587Z" fill="white"/>
-<path d="M122.787 141.967L159.776 120.49L122.787 103.972V141.967Z" fill="white" fill-opacity="0.2"/>
-<path d="M85.7969 120.49L122.791 141.967V103.972L85.7969 120.49Z" fill="white" fill-opacity="0.602"/>
+<g mask="url(#mask0_3218_141164)">
+<g id="Group">
+<path id="Vector_3" d="M165.859 96.5C165.859 134.806 134.806 165.859 96.5 165.859C58.1939 165.859 27.1406 134.806 27.1406 96.5C27.1406 58.1939 58.1939 27.1406 96.5 27.1406C134.806 27.1406 165.859 58.1939 165.859 96.5Z" fill="#627EEA" stroke="#627EEA"/>
+<path id="Vector_4" d="M98.7539 48.6509V84.0185L128.647 97.3759L98.7539 48.6509Z" fill="white" fill-opacity="0.602"/>
+<path id="Vector_5" d="M98.7524 48.6509L68.8555 97.3759L98.7524 84.0185V48.6509Z" fill="white"/>
+<path id="Vector_6" d="M98.7539 120.295V144.327L128.666 102.942L98.7539 120.295Z" fill="white" fill-opacity="0.602"/>
+<path id="Vector_7" d="M98.7524 144.327V120.291L68.8555 102.942L98.7524 144.327Z" fill="white"/>
+<path id="Vector_8" d="M98.7539 114.732L128.647 97.375L98.7539 84.0254V114.732Z" fill="white" fill-opacity="0.2"/>
+<path id="Vector_9" d="M68.8555 97.375L98.7524 114.732V84.0254L68.8555 97.375Z" fill="white" fill-opacity="0.602"/>
+</g>
+</g>
+</g>
 </g>
 </svg>

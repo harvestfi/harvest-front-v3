@@ -16,7 +16,7 @@ const Container = styled.a`
   }
   position: relative;
   overflow: hidden;
-  background: #0052ff;
+  background: #eaf1ff;
   background-size: cover;
   background-repeat: no-repeat;
 
@@ -80,8 +80,8 @@ const TopSection = styled.div`
 
 const Network = styled.div`
   border-radius: 25.23px;
-  border: 1.805px solid #fff;
-  color: #fff;
+  border: 1.805px solid #036666;
+  color: #036666;
   padding: 6.016px 16.845px;
   text-align: center;
   font-size: 16.845px;

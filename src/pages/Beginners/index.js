@@ -10,8 +10,8 @@ import USDC from '../../assets/images/logos/beginnershome/usdc-icon.svg'
 import { Container, Inner, UnitPart, HeaderTitle, HeaderDesc, CoinSection } from './style'
 
 const IconAry = [
-  { name: 'WETH_base', img: ETH },
   { name: 'USDbC_base', img: USDC },
+  { name: 'WETH_base', img: ETH },
 ]
 
 const Home = () => {

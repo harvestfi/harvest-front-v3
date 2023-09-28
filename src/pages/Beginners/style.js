@@ -28,7 +28,7 @@ const Container = styled.div`
 `
 
 const Inner = styled.div`
-  padding: 0px 41px;
+  padding: 0px 100px;
   width: 100%;
   min-height: 765px;
 
@@ -46,9 +46,9 @@ const Inner = styled.div`
 const CoinSection = styled.div`
   width: 100%;
   display: flex;
-  justify-content: start;
+  justify-content: space-between;
   flex-wrap: wrap;
-  gap: 25px;
+  // gap: 25px;
 
   @media screen and (max-width: 992px) {
     gap: 22px;
@@ -56,7 +56,7 @@ const CoinSection = styled.div`
 `
 
 const UnitPart = styled.div`
-  width: 48%;
+  width: 49%;
   @media screen and (max-width: 992px) {
     width: 100%;
   }
