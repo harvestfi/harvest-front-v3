@@ -597,7 +597,9 @@ const Portfolio = () => {
                           display={isMobile ? 'block' : 'flex'}
                         >
                           <ContentInner width="50%" display="flex">
-                            <BadgeIcon>
+                            <BadgeIcon
+                              borderColor={info.status === 'Active' ? '#29ce84' : 'orange'}
+                            >
                               <img src={info.chain} width="15px" height="15px" alt="" />
                             </BadgeIcon>
                             {info.logos.length > 0 &&

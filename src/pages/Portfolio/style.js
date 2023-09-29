@@ -250,7 +250,7 @@ const BadgeIcon = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 8px;
-  border: 2px solid #29ce84;
+  border: 2px solid ${props => props.borderColor};
   background: rgba(255, 255, 255, 0.6);
   box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.15);
 `
