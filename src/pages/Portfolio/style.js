@@ -433,6 +433,10 @@ const Col = styled.div`
   display: flex;
   cursor: pointer;
   width: fit-content;
+
+  img.sortIcon {
+    padding-left: 5px;
+  }
 `
 
 const ContentInner = styled.div`

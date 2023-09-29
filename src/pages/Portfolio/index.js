@@ -14,6 +14,7 @@ import Safe from '../../assets/images/logos/dashboard/safe.svg'
 import Coin1 from '../../assets/images/logos/dashboard/coins-stacked-02.svg'
 import Coin2 from '../../assets/images/logos/dashboard/coins-stacked-04.svg'
 import Diamond from '../../assets/images/logos/dashboard/diamond-01.svg'
+import Sort from '../../assets/images/logos/dashboard/sort.svg'
 import ListItem from '../../components/DashboardComponents/ListItem'
 import TotalValue from '../../components/TotalValue'
 import {
@@ -529,37 +530,33 @@ const Portfolio = () => {
               <Column width={isMobile ? '12%' : '13%'} color={totalValueFontColor}>
                 <Col
                   onClick={() => {
-                    sortCol('status')
+                    sortCol('apy')
                   }}
                 >
                   APY
+                  <img className="sortIcon" src={Sort} alt="sort" />
                 </Col>
               </Column>
               <Column width={isMobile ? '20%' : '11%'}>
-                <Col
-                  onClick={() => {
-                    sortCol('unstake')
-                  }}
-                >
+                <Col>
                   Monthly Yield
+                  <img className="sortIcon" src={Sort} alt="sort" />
                 </Col>
               </Column>
               <Column width={isMobile ? '20%' : '11%'}>
-                <Col
-                  onClick={() => {
-                    sortCol('stake')
-                  }}
-                >
+                <Col>
                   Daily Yield
+                  <img className="sortIcon" src={Sort} alt="sort" />
                 </Col>
               </Column>
               <Column width={isMobile ? '20%' : '11%'} color={totalValueFontColor}>
                 <Col
                   onClick={() => {
-                    sortCol('totalRewardUsd')
+                    sortCol('balance')
                   }}
                 >
                   My Balance
+                  <img className="sortIcon" src={Sort} alt="sort" />
                 </Col>
               </Column>
               <Column width={isMobile ? '20%' : '11%'} color={totalValueFontColor}>
@@ -569,14 +566,11 @@ const Portfolio = () => {
                   }}
                 >
                   Rewards
+                  <img className="sortIcon" src={Sort} alt="sort" />
                 </Col>
               </Column>
               <Column width={isMobile ? '20%' : '3%'} color={totalValueFontColor}>
-                <Col
-                  onClick={() => {
-                    sortCol('totalRewardUsd')
-                  }}
-                />
+                <Col />
               </Column>
             </Header>
             {connected || farmTokenList.length > 0 ? (
