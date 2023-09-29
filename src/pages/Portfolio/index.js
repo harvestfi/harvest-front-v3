@@ -583,7 +583,7 @@ const Portfolio = () => {
                       key={i}
                       mode={switchMode}
                       width={ceilWidth}
-                      background={showDetail[i] ? 'rgba(147, 228, 181, 0.13)' : 'unset'}
+                      background={showDetail[i] ? 'rgba(234, 241, 255, 0.53)' : 'unset'}
                     >
                       <FlexDiv padding={isMobile ? '15px' : '0'}>
                         <Content
