@@ -424,8 +424,8 @@ const LogoImg = styled.img`
 
 const Img = styled.img`
   padding-right: 6px;
-  width: 26px;
-  height: 26px;
+  width: 37px;
+  height: 37px;
   margin: auto 0px;
 `
 
