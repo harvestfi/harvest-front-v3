@@ -347,7 +347,7 @@ const Portfolio = () => {
 
             stats.stake = stake
             const finalBalance = Number(stake) + Number(unstake)
-            stats.balance = finalBalance
+            stats.balance = finalBalance * usdPrice
             // eslint-disable-next-line no-restricted-globals
             if (isNaN(stats.stake)) {
               stats.stake = 0
@@ -650,7 +650,7 @@ const Portfolio = () => {
                             size={14}
                             height={20}
                             color="#101828"
-                            value={`${formatNumber(info.balance, 5)}`}
+                            value={`$ ${formatNumber(info.balance, 2)}`}
                           />
                         </Content>
                         <Content width={isMobile ? '20%' : '11%'}>
