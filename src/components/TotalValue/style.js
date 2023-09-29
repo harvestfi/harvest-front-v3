@@ -1,8 +1,7 @@
 import styled from 'styled-components'
 
 const Container = styled.div`
-  width: 32%;
-  margin-right: 17px;
+  width: 24%;
   font-weight: 700;
   background: ${props => props.backColor};
   padding: 20px;
@@ -19,7 +18,7 @@ const Container = styled.div`
 
 const Div = styled.div`
   font-weight: 500;
-  font-size: 12px;
+  font-size: 14px;
   line-height: 16px;
   color: ${props => props.fontColor};
   margin-top: 20px;
@@ -34,8 +33,8 @@ const Price = styled.div`
   font-weight: 600;
   font-size: 36px;
   line-height: 44px;
-  margin-top: 10px;
-  color: ${props => props.fontColor};
+  margin-top: 8px;
+  color: #101828;
   @media screen and (max-width: 992px) {
     font-size: 14px;
     line-height: 18px;
