@@ -204,7 +204,7 @@ const ExploreFarm = styled.button`
   align-self: center;
 
   &:hover {
-    background: #f0f0f0;
+    background: #037474;
   }
 
   &:active {
