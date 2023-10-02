@@ -881,7 +881,9 @@ const AdvancedFarm = () => {
           </MainTagPanel>
           {activeMainTag === 0 ? (
             <MainDescText>
-              Turn any token from your wallet into auto-compounding fToken to start farming.
+              {useIFARM
+                ? 'Turn any token from your wallet into interest-bearing iFARM to earn Harvest’s platform rewards.'
+                : 'Turn any token from your wallet into auto-compounding fToken to start farming.'}
             </MainDescText>
           ) : activeMainTag === 1 ? (
             <MainDescText>
