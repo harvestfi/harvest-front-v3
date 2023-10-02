@@ -5,6 +5,7 @@ import ReactTooltip from 'react-tooltip'
 // import Close from '../../../assets/images/logos/beginners/x-close.svg'
 import Help from '../../../assets/images/logos/beginners/help-circle.svg'
 import { getPriceFeed } from '../../../utils'
+import { FARM_TOKEN_SYMBOL } from '../../../constants'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
 import {
@@ -71,7 +72,7 @@ const PriceShareData = ({ token, vaultPool, tokenSymbol, setLoadData }) => {
           <FlexDiv>
             <TooltipInfo>
               <TokenSymbol className="priceshare">
-                {`f${tokenSymbol}`}
+                {tokenSymbol === FARM_TOKEN_SYMBOL ? 'iFARM' : `f${tokenSymbol}`}
                 <img src={Help} alt="Help" data-tip data-for="tooltip-priceShare" />
                 {!isMobile && (
                   <ReactTooltip id="tooltip-priceShare" backgroundColor="white">
