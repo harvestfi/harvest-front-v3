@@ -1305,7 +1305,7 @@ const AdvancedFarm = () => {
                           padding={isMobile ? '7px 11px' : '10px 15px'}
                           borderBottom="1px solid #EBEBEB"
                         >
-                          Farm(Legacy)
+                          Farm (Legacy)
                           <ThemeMode mode={!showLegacyFarm ? 'iFarm ' : 'Farm(Legacy)'}>
                             <div id="theme-switch">
                               <div className="switch-track">
