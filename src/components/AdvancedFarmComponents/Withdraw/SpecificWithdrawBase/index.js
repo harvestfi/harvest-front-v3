@@ -233,7 +233,7 @@ const WithdrawBase = ({
       </BalanceInfo>
 
       <InsufficientSection isShow={showWarning ? 'true' : 'false'}>
-        <NewLabel display="flex" widthDiv="80%" items="start">
+        <NewLabel display="flex" widthDiv="80%" items="center">
           <img className="info-icon" src={InfoIcon} alt="" />
           <NewLabel
             size={isMobile ? '10px' : '14px'}
