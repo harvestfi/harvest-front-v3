@@ -5,7 +5,6 @@ import { find, get, isEmpty, orderBy, isEqual } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import React, { useRef, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
-import { BiDotsVerticalRounded } from 'react-icons/bi'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import BASE from '../../assets/images/chains/base.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
@@ -15,6 +14,7 @@ import Coin1 from '../../assets/images/logos/dashboard/coins-stacked-02.svg'
 import Coin2 from '../../assets/images/logos/dashboard/coins-stacked-04.svg'
 import Diamond from '../../assets/images/logos/dashboard/diamond-01.svg'
 import Sort from '../../assets/images/logos/dashboard/sort.svg'
+import File from '../../assets/images/logos/dashboard/file-02.svg'
 import ListItem from '../../components/DashboardComponents/ListItem'
 import TotalValue from '../../components/TotalValue'
 import {
@@ -25,6 +25,7 @@ import {
   POOL_BALANCES_DECIMALS,
   SPECIAL_VAULTS,
   DECIMAL_PRECISION,
+  directDetailUrl,
 } from '../../constants'
 import { addresses } from '../../data'
 import { CHAIN_IDS } from '../../data/constants'
@@ -40,6 +41,7 @@ import {
   ceil10,
   displayAPY,
   getTotalApy,
+  isLedgerLive,
   convertAmountToFARM,
   getUserVaultBalance,
 } from '../../utils'
@@ -84,6 +86,17 @@ const getChainIcon = chain => {
   }
   return chainLogo
 }
+
+const chainList = isLedgerLive()
+  ? [
+      { id: 1, name: 'Ethereum', chainId: 1 },
+      { id: 2, name: 'Polygon', chainId: 137 },
+    ]
+  : [
+      { id: 1, name: 'Ethereum', chainId: 1 },
+      { id: 2, name: 'Polygon', chainId: 137 },
+      { id: 3, name: 'Arbitrum', chainId: 42161 },
+    ]
 
 const Portfolio = () => {
   const { push } = useHistory()
@@ -527,7 +540,7 @@ const Portfolio = () => {
                   Farm
                 </Col>
               </Column>
-              <Column width={isMobile ? '12%' : '13%'} color={totalValueFontColor}>
+              <Column width={isMobile ? '12%' : '11%'} color={totalValueFontColor}>
                 <Col
                   onClick={() => {
                     sortCol('apy')
@@ -569,7 +582,7 @@ const Portfolio = () => {
                   <img className="sortIcon" src={Sort} alt="sort" />
                 </Col>
               </Column>
-              <Column width={isMobile ? '20%' : '3%'} color={totalValueFontColor}>
+              <Column width={isMobile ? '20%' : '5%'} color={totalValueFontColor}>
                 <Col />
               </Column>
             </Header>
@@ -584,6 +597,24 @@ const Portfolio = () => {
                       mode={switchMode}
                       width={ceilWidth}
                       background={showDetail[i] ? 'rgba(234, 241, 255, 0.53)' : 'unset'}
+                      onClick={() => {
+                        let badgeId = -1
+                        const token = info.token
+                        const chain = token.chain || token.data.chain
+                        chainList.forEach((obj, j) => {
+                          if (obj.chainId === Number(chain)) {
+                            badgeId = j
+                          }
+                        })
+                        const isSpecialVault = token.liquidityPoolVault || token.poolVault
+                        const network = chainList[badgeId].name.toLowerCase()
+                        const address = isSpecialVault
+                          ? token.data.collateralAddress
+                          : token.vaultAddress || token.tokenAddress
+                        push(
+                          `${`${directDetailUrl}advanced`}${directDetailUrl + network}/${address}`,
+                        )
+                      }}
                     >
                       <FlexDiv padding={isMobile ? '15px' : '0'}>
                         <Content
@@ -625,7 +656,7 @@ const Portfolio = () => {
                             />
                           </ContentInner>
                         </Content>
-                        <Content width={isMobile ? '12%' : '13%'}>
+                        <Content width={isMobile ? '12%' : '11%'}>
                           <ListItem
                             color="#101828"
                             weight={400}
@@ -658,15 +689,21 @@ const Portfolio = () => {
                             label={`$ ${formatNumberWido(info.totalRewardUsd, 6)}`}
                           />
                         </Content>
-                        <Content width={isMobile ? '20%' : '3%'} cursor="pointer">
-                          <BiDotsVerticalRounded
-                            onClick={() => {
-                              const updatedShowDetail = [...showDetail]
-                              updatedShowDetail[i] = !updatedShowDetail[i]
-                              setShowDetail(updatedShowDetail)
-                            }}
-                            color="#98A2B3"
-                          />
+                        <Content
+                          onClick={event => {
+                            event.stopPropagation()
+                            const updatedShowDetail = [...showDetail]
+                            updatedShowDetail[i] = !updatedShowDetail[i]
+                            setShowDetail(updatedShowDetail)
+                          }}
+                          width={isMobile ? '20%' : '5%'}
+                          cursor="pointer"
+                        >
+                          {showDetail[i] ? (
+                            <img src={File} className="active-file-icon" alt="file" />
+                          ) : (
+                            <img src={File} className="file-icon" alt="file" />
+                          )}
                         </Content>
                       </FlexDiv>
                       {showDetail[i] && (
@@ -710,7 +747,7 @@ const Portfolio = () => {
                               />
                             </ContentInner>
                           </Content>
-                          <Content width={isMobile ? '12%' : '13%'}>
+                          <Content width={isMobile ? '12%' : '11%'}>
                             <ListItem
                               weight={500}
                               size={isMobile ? 12 : 14}
@@ -752,7 +789,7 @@ const Portfolio = () => {
                               </div>
                             </Content>
                           ))}
-                          <Content width={isMobile ? '20%' : '3%'} />
+                          <Content width={isMobile ? '20%' : '5%'} />
                         </FlexDiv>
                       )}
                     </DetailView>

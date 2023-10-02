@@ -96,6 +96,10 @@ const DetailView = styled.div`
   `}
   transition: 0.25s;
 
+  &:hover {
+    background: #f3f7ff;
+  }
+
   @media screen and (max-width: 992px) {
     padding: 12px 6px;
     width: ${props => props.width}px;
@@ -240,6 +244,27 @@ const Content = styled.div`
   font-size: 20px;
   line-height: 23px;
   align-self: center;
+
+  img.file-icon {
+    padding: 18px;
+    background: #f3f7ff;
+    border-radius: 8px;
+    border: 1px solid #fff;
+  }
+
+  img.active-file-icon {
+    background: #eaf1ff;
+    padding: 18px;
+    border-radius: 8px;
+  }
+
+  img.active-file-icon:hover {
+    background: #eaf1ff;
+  }
+
+  img.file-icon:hover {
+    background: #eaf1ff;
+  }
 `
 
 const BadgeIcon = styled.div`
