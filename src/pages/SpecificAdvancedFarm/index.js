@@ -916,21 +916,41 @@ const AdvancedFarm = () => {
                   </HalfInfo>
                 )
               ) : activeMainTag === 1 ? (
-                <MyBalance marginBottom="23px">
-                  <NewLabel
-                    size={isMobile ? '12px' : '14px'}
-                    weight="600"
-                    height={isMobile ? '18px' : '24px'}
-                    color="#344054"
-                    padding={isMobile ? '9px 13px' : '10px 15px'}
-                    borderBottom="1px solid #EBEBEB"
-                  >
-                    My Extra Rewards
-                  </NewLabel>
-                  <FlexDiv>
-                    <VaultPanelActionsFooter {...viewComponentProps} />
-                  </FlexDiv>
-                </MyBalance>
+                useIFARM ? (
+                  <HalfInfo marginBottom="20px">
+                    <NewLabel
+                      weight={700}
+                      size="14px"
+                      height="24px"
+                      padding="10px 15px"
+                      borderRadius="15px 15px 0 0"
+                    >
+                      Staking details
+                    </NewLabel>
+                    <DescInfo>
+                      In this module you can only stake FARM to be entitled to platform profits,
+                      paid out in FARM. You cannot stake iFARM as it’s an interest-bearing token,
+                      which is also entitled to platform rewards by simply holding it in your
+                      wallet.
+                    </DescInfo>
+                  </HalfInfo>
+                ) : (
+                  <MyBalance marginBottom="23px">
+                    <NewLabel
+                      size={isMobile ? '12px' : '14px'}
+                      weight="600"
+                      height={isMobile ? '18px' : '24px'}
+                      color="#344054"
+                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      borderBottom="1px solid #EBEBEB"
+                    >
+                      My Extra Rewards
+                    </NewLabel>
+                    <FlexDiv>
+                      <VaultPanelActionsFooter {...viewComponentProps} />
+                    </FlexDiv>
+                  </MyBalance>
+                )
               ) : (
                 <>
                   {loadData && (
@@ -1731,7 +1751,7 @@ const AdvancedFarm = () => {
                         height={isMobile ? '18px' : '24px'}
                         color="#344054"
                       >
-                        {`f${id}`}
+                        {useIFARM ? 'iFARM' : `f${id}`}
                       </NewLabel>
                       <NewLabel
                         size={isMobile ? '10px' : '14px'}
@@ -1811,7 +1831,7 @@ const AdvancedFarm = () => {
                         height={isMobile ? '18px' : '24px'}
                         color="#344054"
                       >
-                        {`f${id}`}
+                        {useIFARM ? 'iFARM' : `f${id}`}
                       </NewLabel>
                       <NewLabel
                         size={isMobile ? '10px' : '14px'}
