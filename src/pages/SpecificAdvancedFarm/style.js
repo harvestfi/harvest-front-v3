@@ -255,6 +255,107 @@ const NewLabel = styled.div`
   }
 `
 
+const ThemeMode = styled.div`
+  display: flex;
+  align-items: center;
+
+  #theme-switch {
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+    touch-action: pan-x;
+    user-select: none;
+
+    input {
+      cursor: pointer;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      opacity: 0;
+    }
+
+    .switch-track {
+      background: #036666;
+      height: 16px;
+      width: 32px;
+      border-radius: 30px;
+      transition: all 0.2s ease 0s;
+    }
+    .switch-thumb {
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-color: white;
+      height: 14px;
+      left: 1px;
+      position: absolute;
+      top: 1px;
+      width: 14px;
+      border-radius: 50%;
+      transition: all 0.25s ease 0s;
+    }
+
+    &:hover .switch-thumb {
+      box-shadow: 0 0 2px 3px #ff9400;
+    }
+  }
+
+  ${props =>
+    props.mode === 'Farm(Legacy)'
+      ? `
+      #theme-switch {
+        .switch-check {
+          opacity: 1;
+        }
+        .switch-x {
+          opacity: 0;
+        }
+        .switch-thumb {
+          left: 16px;
+        }
+        .switch-track {
+          background: #A9A9A9 ;
+        } 
+      }
+    `
+      : `
+      #theme-switch {
+        .switch-thumb {
+        }
+      }
+    `}
+
+  @media screen and (max-width: 992px) {
+    #theme-switch {
+      .switch-track {
+        width: 24px;
+        height: 12px;
+      }
+
+      .switch-thumb {
+        width: 10px;
+        height: 10px;
+        top: 1px;
+      }
+    }
+
+    ${props =>
+      props.mode === 'deposit'
+        ? `
+        #theme-switch {
+          .switch-thumb {
+            left: 12px;
+          }
+      `
+        : `
+        #theme-switch {
+        .switch-thumb {
+          left: 2px;
+        }
+      `}
+`
+
 const TopDesc = styled(NewLabel)`
   color: #344054;
 `
@@ -487,6 +588,35 @@ const MyBalance = styled.div`
   border-radius: 12px;
   background: #fff;
   // box-shadow: 0px 8px 8px -4px rgba(16, 24, 40, 0.03), 0px 20px 24px -4px rgba(16, 24, 40, 0.08);
+
+  ${props =>
+    props.marginTop
+      ? `
+      margin-top: ${props.marginTop};
+    `
+      : ``}
+
+  ${props =>
+    props.marginBottom
+      ? `
+      margin-bottom: ${props.marginBottom};
+    `
+      : ``}
+`
+
+const FarmInfo = styled.div`
+  border-radius: 12px;
+  background: #fff;
+  // box-shadow: 0px 8px 8px -4px rgba(16, 24, 40, 0.03), 0px 20px 24px -4px rgba(16, 24, 40, 0.08);
+
+  ${props =>
+    props.isShow
+      ? `
+      display: block;
+    `
+      : `
+        display: none;
+      `}
 
   ${props =>
     props.marginTop
@@ -906,6 +1036,8 @@ export {
   InfoIcon,
   Monospace,
   MyBalance,
+  FarmInfo,
+  ThemeMode,
   GuideSection,
   GuidePart,
   DepositSection,

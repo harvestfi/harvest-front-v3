@@ -38,7 +38,10 @@ const SelectTokenList = ({
     setClickBalanceListId(id)
     setPickedToken(balanceTokenList[id])
     setBalance(
-      fromWei(supTokenList[id].balance ? supTokenList[id].balance : 0, supTokenList[id].decimals),
+      fromWei(
+        balanceTokenList[id].balance ? balanceTokenList[id].balance : 0,
+        balanceTokenList[id].decimals,
+      ),
     )
     setSelectToken(false)
     setPartHeight(null)

@@ -86,9 +86,10 @@ const DesktopPanelHeader = ({
           setPrevPage(window.location.href)
           let url
           if (
-            token.tokenNames[0] === 'stETH' &&
-            token.tokenNames[1] === 'ETH' &&
-            network === 'arbitrum'
+            (token.tokenNames[0] === 'stETH' &&
+              token.tokenNames[1] === 'ETH' &&
+              network === 'arbitrum') ||
+            useIFARM
           ) {
             url = `${directDetailUrl}advanced/${network}/${address}`
           } else {
