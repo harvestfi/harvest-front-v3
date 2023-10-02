@@ -881,7 +881,7 @@ const AdvancedFarm = () => {
           </MainTagPanel>
           {activeMainTag === 0 ? (
             <MainDescText>
-              Turn any token from your wallet into fToken to start farming.
+              Turn any token from your wallet into auto-compounding fToken to start farming.
             </MainDescText>
           ) : activeMainTag === 1 ? (
             <MainDescText>
@@ -889,7 +889,7 @@ const AdvancedFarm = () => {
             </MainDescText>
           ) : (
             <MainDescText>
-              Preview historical data and APY breakdown to make better and informed farming
+              Preview live data, APY breakdown and source of yield to make informed farming
               decisions.
             </MainDescText>
           )}
