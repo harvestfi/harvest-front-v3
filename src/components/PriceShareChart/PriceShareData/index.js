@@ -80,11 +80,12 @@ const PriceShareData = ({ token, vaultPool, tokenSymbol, setLoadData }) => {
                       height={isMobile ? '15px' : '18px'}
                       color="#344054"
                     >
-                      <p weight="600">The power of auto-compounding</p>
+                      <p weight="600">The auto-compounding fToken</p>
                       <p className="priceShareText" weight="500">
-                        It is the exchange rate between the auto-compounding
-                        <span>fToken</span> and its underlying token. When a farm is launched,
-                        harvested rewards are compounded, it grows.
+                        The chart below illustrates the exchange rate between the
+                        <span>fToken</span> and its underlying token. When a farm is launched, the
+                        exchange rate isexactly 1:1. As harvested rewards are compounded, the chart
+                        grows.
                       </p>
                     </NewLabel>
                   </ReactTooltip>
