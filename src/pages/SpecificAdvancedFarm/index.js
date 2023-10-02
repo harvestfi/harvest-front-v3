@@ -2204,30 +2204,32 @@ const AdvancedFarm = () => {
                       </HalfInfo>
                     </>
                   )}
-                  <MyBalance>
-                    <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
-                    >
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        height={isMobile ? '18px' : '24px'}
-                        weight="600"
-                        color={isMobile ? '#000' : '#344054'}
+                  {!useIFARM && (
+                    <MyBalance>
+                      <FlexDiv
+                        justifyContent="space-between"
+                        padding={isMobile ? '7px 11px' : '10px 15px'}
                       >
-                        Last Harvest
-                      </NewLabel>
-                      {isMobile ? (
-                        <NewLabel size="10px" height="18px" weight="500" color="#15202B">
-                          {lastHarvest !== '' ? `${lastHarvest} ago` : '-'}
+                        <NewLabel
+                          size={isMobile ? '12px' : '14px'}
+                          height={isMobile ? '18px' : '24px'}
+                          weight="600"
+                          color={isMobile ? '#000' : '#344054'}
+                        >
+                          Last Harvest
                         </NewLabel>
-                      ) : (
-                        <NewLabel size="14px" height="24px" weight="500" color="#000">
-                          {lastHarvest !== '' ? `${lastHarvest} ago` : '-'}
-                        </NewLabel>
-                      )}
-                    </FlexDiv>
-                  </MyBalance>
+                        {isMobile ? (
+                          <NewLabel size="10px" height="18px" weight="500" color="#15202B">
+                            {lastHarvest !== '' ? `${lastHarvest} ago` : '-'}
+                          </NewLabel>
+                        ) : (
+                          <NewLabel size="14px" height="24px" weight="500" color="#000">
+                            {lastHarvest !== '' ? `${lastHarvest} ago` : '-'}
+                          </NewLabel>
+                        )}
+                      </FlexDiv>
+                    </MyBalance>
+                  )}
                 </RestInternal>
               )}
             </RestContent>
