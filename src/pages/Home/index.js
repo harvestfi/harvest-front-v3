@@ -37,7 +37,7 @@ const Home = () => {
               push(ROUTES.BEGINNERS)
             }}
           >
-            <Title>Farms of Beginners</Title>
+            <Title>Farms for Beginners</Title>
             <Desc>Make your first deposits in less than 2 minutes.</Desc>
             <StartBeginners
               onClick={() => {
