@@ -495,8 +495,8 @@ const Portfolio = () => {
       <Inner>
         <SubPart>
           <TotalValue icon={Safe} content="Total Balance" price={totalDeposit} />
-          <TotalValue icon={Coin1} content="Monthly Yield" price="0" />
-          <TotalValue icon={Coin2} content="Daily Yield" price="0" />
+          <TotalValue icon={Coin1} content="Est.Monthly Yield" price="0" />
+          <TotalValue icon={Coin2} content="Est.Daily Yield" price="0" />
           <TotalValue icon={Diamond} content="Rewards" price={totalRewards} />
           {/* <Div mobileView={isMobile}>{loadComplete && <ProfitSharing height="100%" />}</Div> */}
         </SubPart>
