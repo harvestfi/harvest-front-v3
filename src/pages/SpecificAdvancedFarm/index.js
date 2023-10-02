@@ -1870,6 +1870,7 @@ const AdvancedFarm = () => {
                         setPendingAction={setPendingAction}
                         multipleAssets={multipleAssets}
                         setLoadingDots={setLoadingDots}
+                        useIFARM={useIFARM}
                       />
                       <StakeResult
                         finalStep={stakeFinalStep}

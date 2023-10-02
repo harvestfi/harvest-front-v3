@@ -66,6 +66,7 @@ const StakeBase = ({
   setPendingAction,
   multipleAssets,
   setLoadingDots,
+  useIFARM,
 }) => {
   const { connected, connectAction, account, chainId, setChainId, getWalletBalances } = useWallet()
 
@@ -213,7 +214,11 @@ const StakeBase = ({
           </SwitchTabTag>
         ))}
       </NewLabel>
-      <DepoTitle>Stake your deposit to be entitled to extra rewards.</DepoTitle>
+      <DepoTitle>
+        {useIFARM
+          ? 'Stake your deposit to earn platform rewards paid out in FARM.'
+          : 'Stake your deposit to be entitled to extra rewards.'}
+      </DepoTitle>
       <AmountSection>
         <NewLabel
           size={isMobile ? '10px' : '14px'}
