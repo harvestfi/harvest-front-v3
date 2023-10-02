@@ -973,7 +973,43 @@ const AdvancedFarm = () => {
                     >
                       Source of Yield
                     </NewLabel>
-                    <DescInfo>{ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)}</DescInfo>
+                    <DescInfo>
+                      {useIFARM ? (
+                        <div>
+                          <p>
+                            When you supply{' '}
+                            <a
+                              href="https://etherscan.io/token/0xa0246c9032bC3A600820415aE600c6388619A14D"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              FARM
+                            </a>{' '}
+                            you will be rewarded with a share of the profits of the platform paid
+                            out in{' '}
+                            <a
+                              href="https://etherscan.io/token/0xa0246c9032bC3A600820415aE600c6388619A14D"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              FARM
+                            </a>{' '}
+                            rewards. When depositing into the vault you obtain the yield-bearing
+                            yield-bearing token{' '}
+                            <a
+                              href="https://etherscan.io/token/0x1571eD0bed4D987fe2b498DdBaE7DFA19519F651"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              iFARM
+                            </a>
+                            . You can swap iFARM for the underlying FARM at any time.
+                          </p>
+                        </div>
+                      ) : (
+                        ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)
+                      )}
+                    </DescInfo>
                     <FlexDiv className="address" padding="0 15px 20px">
                       {token.vaultAddress && (
                         <InfoLabel
