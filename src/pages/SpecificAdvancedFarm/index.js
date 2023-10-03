@@ -1522,7 +1522,7 @@ const AdvancedFarm = () => {
                         padding={isMobile ? '7px 11px' : '10px 15px'}
                         borderBottom="1px solid #EBEBEB"
                       >
-                        My Balance
+                        Deposit Balance
                       </NewLabel>
                       <FlexDiv
                         justifyContent="space-between"
@@ -1774,7 +1774,7 @@ const AdvancedFarm = () => {
                       padding={isMobile ? '7px 11px' : '10px 15px'}
                       borderBottom="1px solid #EBEBEB"
                     >
-                      My Staked Balance
+                      Stake Balance
                     </NewLabel>
                     <FlexDiv
                       justifyContent="space-between"
