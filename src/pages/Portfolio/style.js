@@ -75,6 +75,7 @@ const TransactionDetails = styled.div`
 const DetailView = styled.div`
   width: 100%;
   padding: 16px 24px;
+  cursor: pointer;
   background: ${props => props.background};
   ${props =>
     props.mode === 'dark'
