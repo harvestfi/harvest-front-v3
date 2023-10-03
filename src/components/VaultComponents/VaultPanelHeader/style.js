@@ -46,7 +46,7 @@ const TokenNameContainer = styled.div`
 const TokenDescriptionContainer = styled.div`
   display: flex;
   flex-direction: column;
-  font-size: 12px;
+  font-size: 14px;
 
   small {
     font-size: 14px;
