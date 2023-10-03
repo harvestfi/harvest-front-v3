@@ -3,7 +3,6 @@ import BigNumber from 'bignumber.js'
 import { get } from 'lodash'
 import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, SPECIAL_VAULTS } from '../../../../constants'
 import { useVaults } from '../../../../providers/Vault'
-import { useThemeContext } from '../../../../providers/useThemeContext'
 import { tokens } from '../../../../data'
 import { fromWei } from '../../../../services/web3'
 import { convertAmountToFARM, formatNumber, getUserVaultBalance } from '../../../../utils'
@@ -55,8 +54,6 @@ const VaultUserBalance = ({
             !balances[IFARM_TOKEN_SYMBOL]))
       : userVaultBalance === false)
 
-  const { switchBalance } = useThemeContext()
-
   return (
     <Monospace
       borderBottom={connected && !isLoadingUserBalance && multipleAssets && '1px dotted black'}
@@ -68,7 +65,7 @@ const VaultUserBalance = ({
         <AnimatedDots />
       ) : (
         <>
-          {switchBalance ? '$' : ''}
+          $
           {multipleAssets
             ? `${formatNumber(
                 new BigNumber(fromWei(userVaultBalance, token.decimals, 3))
@@ -85,11 +82,9 @@ const VaultUserBalance = ({
                   ),
                 )
                   .multipliedBy(
-                    switchBalance
-                      ? (tokenSymbol === FARM_TOKEN_SYMBOL
-                          ? token.data.lpTokenData.price
-                          : token.usdPrice) || 1
-                      : 1,
+                    (tokenSymbol === FARM_TOKEN_SYMBOL
+                      ? token.data.lpTokenData.price
+                      : token.usdPrice) || 1,
                   )
                   .toString(),
                 2,

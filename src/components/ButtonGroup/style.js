@@ -45,6 +45,8 @@ const ButtonStyle = styled.button`
 
   img {
     filter: ${props => props.filterColor};
+    padding-right: 8px;
+    width: 24px;
   }
 
   div {

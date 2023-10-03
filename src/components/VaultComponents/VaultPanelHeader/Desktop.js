@@ -10,6 +10,7 @@ import { directDetailUrl } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { BadgeIcon, LogoImg, PanelContainer, ValueContainer } from './style'
 import VaultApy from './sub-components/VaultApy'
+import VaultDailyApy from './sub-components/VaultDailyApy'
 import VaultName from './sub-components/VaultName'
 import VaultUserBalance from './sub-components/VaultUserBalance'
 import VaultValue from './sub-components/VaultValue'
@@ -108,7 +109,10 @@ const DesktopPanelHeader = ({
           {logoUrl.map((el, i) => (
             <LogoImg key={i} className="logo-img" zIndex={10 - i} src={el} alt={tokenSymbol} />
           ))}
-          <BadgeIcon badgeBack={badgeIconBackColor}>
+          <BadgeIcon
+            badgeBack={badgeIconBackColor}
+            borderColor={token.inactive ? 'orange' : '#29ce84'}
+          >
             {BadgeAry[badgeId] ? (
               <img src={BadgeAry[badgeId]} width="17px" height="17px" alt="" />
             ) : (
@@ -118,10 +122,10 @@ const DesktopPanelHeader = ({
           {lsdToken ? <img className="tag" src={LSD} alt="" /> : null}
           {desciToken ? <img className="tag" src={DESCI} alt="" /> : null}
         </ValueContainer>
-        <ValueContainer width="25%" textAlign="left" paddingLeft="0%">
+        <ValueContainer width="20%" textAlign="left" paddingLeft="0%">
           <VaultName token={token} tokenSymbol={tokenSymbol} useIFARM={useIFARM} />
         </ValueContainer>
-        <ValueContainer width="10%">
+        <ValueContainer width="15%">
           <VaultApy
             token={token}
             tokenSymbol={tokenSymbol}
@@ -129,10 +133,18 @@ const DesktopPanelHeader = ({
             isSpecialVault={isSpecialVault}
           />
         </ValueContainer>
-        <ValueContainer width="20%">
+        <ValueContainer width="15%">
+          <VaultDailyApy
+            token={token}
+            tokenSymbol={tokenSymbol}
+            vaultPool={vaultPool}
+            isSpecialVault={isSpecialVault}
+          />
+        </ValueContainer>
+        <ValueContainer width="15%">
           <VaultValue token={token} />
         </ValueContainer>
-        <ValueContainer width="20%">
+        <ValueContainer width="10%">
           <VaultUserBalance
             token={token}
             tokenSymbol={tokenSymbol}

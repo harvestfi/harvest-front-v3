@@ -27,6 +27,7 @@ const Header = styled.div`
   align-items: center;
   padding: 27px 40px 27px 20px;
   color: ${props => props.fontColor};
+  border-bottom: 1px solid #eaecf0;
 
   img.sort-icon {
     filter: ${props => props.filterColor};
@@ -54,9 +55,9 @@ const HeaderCol = styled.div`
   width: ${props => props.width || 'auto'};
   text-align: ${props => props.textAlign || 'center'};
   margin: ${props => props.margin || 'unset'};
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 24px;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 18px;
 
   img.sort-icon {
     margin-left: 10px;
@@ -128,10 +129,10 @@ const EmptyInfo = styled.div`
 `
 
 const VaultsListBody = styled.div`
-  border: 1px solid ${props => props.borderColor};
+  border-top-right-radius: 15px;
+  border-top-left-radius: 15px;
   background: ${props => props.backColor};
   transition: 0.25s;
-  border-radius: 10px;
 `
 
 const MobileListFilter = styled.div`

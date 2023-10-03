@@ -652,6 +652,10 @@ const Monospace = styled.span`
   // font-family: Work Sans;
   font-family: 'Inter', sans-serif;
   border-bottom: ${props => props.borderBottom || 'unset'};
+  color: #101828;
+  font-size: 14px !important;
+  font-weight: 400;
+  line-height: 20px;
 `
 
 const Box = styled.div`

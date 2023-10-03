@@ -2,14 +2,8 @@ import React from 'react'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { ButtonsGroup, ButtonStyle } from './style'
 
-const ButtonGroup = ({ buttons, doSomethingAfterClick, clickedId, setClickedId }) => {
-  const {
-    backColor,
-    borderColor,
-    fontColor,
-    filterColor,
-    filterChainHoverColor,
-  } = useThemeContext()
+const ButtonGroup = ({ buttons, doSomethingAfterClick, clickedId, setClickedId, fontColor }) => {
+  const { backColor, borderColor, filterColor, filterChainHoverColor } = useThemeContext()
 
   const handleClick = (event, id) => {
     if (buttons[id].name !== 'Labs') {

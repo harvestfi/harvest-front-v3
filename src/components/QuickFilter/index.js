@@ -13,6 +13,8 @@ import TokensIcon from '../../assets/images/ui/tokens.svg'
 import SpecNarrowDown from '../../assets/images/logos/filter/spec-narrowdown.svg'
 import DesciBack from '../../assets/images/logos/filter/desciback.jpg'
 import LSDBack from '../../assets/images/logos/filter/lsdback.jpg'
+import Rocket from '../../assets/images/logos/filter/rocket-01.svg'
+import Zap from '../../assets/images/logos/filter/zap.svg'
 import { ReactComponent as LogoBswap } from '../../assets/images/logos/filter/logo-bswap.svg'
 // import LogoPods from '../../assets/images/logos/filter/logo-pods.svg'
 import { ReactComponent as LogoCamelot } from '../../assets/images/logos/filter/logo-camelot.svg'
@@ -69,11 +71,10 @@ const SwitchBalanceList = [
   { id: 1, img: TokensIcon },
 ]
 
-const CollaborationList = [
-  { id: 2, name: 'Camelot', backColor: '#FFAF1D', backImg: CollabCamelot },
-  { id: 0, name: 'BaseSwap', backColor: '#0085FF', backImg: CollabBswap },
-  // { id: 1, name: 'pods', backColor: '#A92A66', backImg: CollabPods, logoImg: LogoPods },
-]
+// const CollaborationList = [
+//   { id: 2, name: 'Camelot', backColor: '#FFAF1D', backImg: CollabCamelot },
+//   { id: 0, name: 'BaseSwap', backColor: '#0085FF', backImg: CollabBswap },
+// ]
 
 const MobileCollaborationList = [
   { id: 0, name: 'BaseSwap', backColor: '#0085FF', backImg: CollabBswap },
@@ -93,8 +94,8 @@ const FarmsList = [
 ]
 
 const RiskList = [
-  { id: 1, name: 'Beginners', filter: 'beginners' },
-  { id: 2, name: 'Advanced', filter: 'advanced' },
+  { id: 1, name: 'New', img: Zap, filter: 'beginners' },
+  { id: 2, name: 'Popular Now', img: Rocket, filter: 'advanced' },
 ]
 
 const AssetsList = [
@@ -501,13 +502,38 @@ const QuickFilter = ({
                 )}
               </DivWidth>
             </DivWidth>
-            <DivWidth borderRadius="10">
-              <ButtonGroup
-                buttons={FarmsList}
-                doSomethingAfterClick={printFarm}
-                clickedId={farmId}
-                setClickedId={setFarmId}
-              />
+            <DivWidth right="0" marginRight="15px" borderRadius="10" backColor={backColor}>
+              <ClearFilter
+                fontColor="#344054"
+                backColor={backColor}
+                borderColor={borderColor}
+                onClick={() => {
+                  document.getElementById('search-input').value = ''
+                  setSearchQuery('')
+                  setInputText('')
+                  // clear collaboration and trends
+                  onClearSpecDropdowns()
+                  onSelectActiveType(['Active'])
+                  setStringSearch(false)
+                  setRiskId(-1)
+                  setAssetsId(-1)
+                  setFarmId(-1)
+                  setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2, 3])
+                  onSelectStableCoin(false)
+                  onAssetClick('')
+                  onSelectFarmType('')
+                  setSelChain([
+                    CHAIN_IDS.ETH_MAINNET,
+                    CHAIN_IDS.POLYGON_MAINNET,
+                    CHAIN_IDS.ARBITRUM_ONE,
+                    CHAIN_IDS.BASE,
+                  ])
+                  clearFilter()
+                }}
+              >
+                <Counter count={filterCount}>{filterCount > 0 ? filterCount : ''}</Counter>
+                &nbsp;Clear Filters
+              </ClearFilter>
             </DivWidth>
           </QuickFilterContainer>
           <QuickFilterContainer position="relative" justifyContent="space-between">
@@ -519,7 +545,7 @@ const QuickFilter = ({
                 inputText={inputText}
                 setInputText={setInputText}
               />
-              <DivWidth marginRight="15px" height="fit-content">
+              {/* <DivWidth marginRight="15px" height="fit-content">
                 <Dropdown>
                   <SpecDropDown
                     backcolor={collaborationBackColor}
@@ -554,13 +580,21 @@ const QuickFilter = ({
                             }
                           }}
                         >
-                          {/* <img src={item.logoImg} alt="" /> */}
                           {i === 0 ? <LogoCamelot /> : <LogoBswap />}
                         </SpecDropDownItem>
                       ))}
                     </SpecDropDownMenu>
                   )}
                 </Dropdown>
+              </DivWidth> */}
+              <DivWidth borderRadius="10" marginRight="15px" backColor={backColor}>
+                <ButtonGroup
+                  buttons={RiskList}
+                  doSomethingAfterClick={printRisk}
+                  clickedId={riskId}
+                  setClickedId={setRiskId}
+                  fontColor="#1D2939"
+                />
               </DivWidth>
               <DivWidth marginRight="15px" height="fit-content">
                 <Dropdown>
@@ -598,23 +632,16 @@ const QuickFilter = ({
               </DivWidth>
               <DivWidth borderRadius="10" marginRight="15px" backColor={backColor}>
                 <ButtonGroup
-                  buttons={RiskList}
-                  doSomethingAfterClick={printRisk}
-                  clickedId={riskId}
-                  setClickedId={setRiskId}
-                />
-              </DivWidth>
-              <DivWidth borderRadius="10" marginRight="15px" backColor={backColor}>
-                <ButtonGroup
                   buttons={AssetsList}
                   doSomethingAfterClick={printAsset}
                   clickedId={assetsId}
                   setClickedId={setAssetsId}
+                  fontColor="#344054"
                 />
               </DivWidth>
             </DivWidth>
 
-            <QuickFilterContainer sub justifyContent="space-between">
+            {/* <QuickFilterContainer sub justifyContent="space-between">
               <DivWidth right="0" marginRight="15px" borderRadius="10" backColor={backColor}>
                 <ClearFilter
                   fontColor={fontColor}
@@ -665,7 +692,16 @@ const QuickFilter = ({
                   ))}
                 </ChainGroup>
               </DivWidth>
-            </QuickFilterContainer>
+            </QuickFilterContainer> */}
+            <DivWidth borderRadius="10">
+              <ButtonGroup
+                buttons={FarmsList}
+                doSomethingAfterClick={printFarm}
+                clickedId={farmId}
+                setClickedId={setFarmId}
+                fontColor="#344054"
+              />
+            </DivWidth>
           </QuickFilterContainer>
         </WebView>
       ) : (

@@ -216,7 +216,18 @@ const formatVaults = (
             }
             const poolId = get(vaultPool, 'id')
             const totalStakedInPool = get(userStats, `[${poolId}]['totalStaked']`, 0)
-            return Number(getUserVaultBalance(v, farmingBalances, totalStakedInPool, iFARMinFARM))
+
+            // eslint-disable-next-line one-var
+            let usdPrice
+            if (isSpecialVault) {
+              usdPrice = groupOfVaults[v].data && groupOfVaults[v].data.lpTokenData?.price
+            } else {
+              usdPrice = groupOfVaults[v].usdPrice
+            }
+            return (
+              Number(getUserVaultBalance(v, farmingBalances, totalStakedInPool, iFARMinFARM)) *
+              Number(usdPrice)
+            )
           },
           sortOrder,
         )
@@ -609,7 +620,6 @@ const VaultList = () => {
   const {
     fontColor,
     filterColor,
-    borderColor,
     backColor,
     mobileFilterBackColor,
     mobileFilterBorderColor,
@@ -628,7 +638,7 @@ const VaultList = () => {
           onSelectActiveType={selectActiveType}
         />
       )}
-      <VaultsListBody borderColor={borderColor} backColor={backColor}>
+      <VaultsListBody backColor={backColor}>
         <MobileListFilter
           mobileBackColor={mobileFilterBackColor}
           backColor={backColor}
@@ -667,8 +677,27 @@ const VaultList = () => {
           <HeaderCol width="45%" justifyContent="start">
             Farm
           </HeaderCol>
-          <HeaderCol width="15%" textAlign="left" onClick={() => setSortingParams('apy')}>
+          <HeaderCol
+            width="15%"
+            justifyContent="start"
+            textAlign="left"
+            onClick={() => setSortingParams('apy')}
+          >
             <div className="hoverable">APY</div>
+            <SortingIcon
+              className="sort-icon"
+              sortType={sortOrder}
+              sortField={sortParam}
+              selectedField="apy"
+            />
+          </HeaderCol>
+          <HeaderCol
+            width="15%"
+            justifyContent="start"
+            textAlign="left"
+            onClick={() => setSortingParams('apy')}
+          >
+            <div className="hoverable">Daily APY</div>
             <SortingIcon
               className="sort-icon"
               sortType={sortOrder}
@@ -679,7 +708,8 @@ const VaultList = () => {
           <HeaderCol
             data-tip
             data-for="total-deposits-column-header"
-            width="20%"
+            width="15%"
+            justifyContent="start"
             textAlign="left"
             onClick={() => setSortingParams('deposits')}
           >
@@ -691,7 +721,12 @@ const VaultList = () => {
               selectedField="deposits"
             />
           </HeaderCol>
-          <HeaderCol onClick={() => setSortingParams('balance')} width="20%" textAlign="left">
+          <HeaderCol
+            onClick={() => setSortingParams('balance')}
+            justifyContent="start"
+            width="10%"
+            textAlign="left"
+          >
             <div className="hoverable">My Balance </div>
             <SortingIcon
               className="sort-icon"

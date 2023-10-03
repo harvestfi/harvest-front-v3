@@ -5,8 +5,8 @@ const PanelContainer = styled.div`
   display: flex;
   justify-content: start;
   align-items: center;
-  padding: 20px 40px 20px 18px;
-  border-top: 1px solid ${props => props.borderColor};
+  padding: 16px 24px;
+  border-bottom: 1px solid ${props => props.borderColor};
   cursor: pointer;
   color: ${props => props.fontColor};
 
@@ -30,8 +30,10 @@ const TokenLogo = styled.img`
 const TokenNameContainer = styled.div`
   display: flex;
   align-items: center;
-  font-weight: 600;
-  font-size: 16px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  color: #101828;
 
   @media screen and (max-width: 1480px) {
     font-size: 12px;
@@ -47,7 +49,7 @@ const TokenDescriptionContainer = styled.div`
   font-size: 12px;
 
   small {
-    font-size: 10px;
+    font-size: 14px;
   }
 
   @media screen and (max-width: 1480px) {
@@ -61,7 +63,10 @@ const RewardsContainer = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  font-weight: 600;
+  color: #101828;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
 
   span {
     font-size: 20px;
@@ -84,15 +89,15 @@ const ValueContainer = styled.div`
   min-width: ${props => props.minWidth || 'auto'};
   text-align: ${props => props.textAlign || 'center'};
   display: flex;
-  justify-content: end;
+  justify-content: start;
   ${props => (props.textAlign === 'left' ? `justify-content: start;` : '')}
   padding-right: ${props => props.paddingRight || '0px'};
   padding-left: ${props => props.paddingLeft || '0px'};
 
   .tag {
     position: absolute;
-    left: 37px;
-    top: 12px;
+    left: 50px;
+    top: 31px;
   }
 
   ${props =>
@@ -125,10 +130,10 @@ const LogoImg = styled.img`
 
 const BadgeIcon = styled.div`
   position: absolute;
-  top: 8px;
-  left: 8px;
+  top: 26px;
+  left: 24px;
   background: ${props => props.badgeBack};
-  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.15);
+  border: 2px solid ${props => props.borderColor};
   border-radius: 8px;
   width: 23px;
   height: 23px;
@@ -287,7 +292,10 @@ const DetailModal = styled(Modal)`
   }
 `
 const Value = styled.div`
-  font-weight: 600;
+  color: #101828;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
 `
 
 export {

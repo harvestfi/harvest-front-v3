@@ -250,10 +250,15 @@ const DivWidth = styled.div`
 `
 
 const ChainButton = styled.button`
+  width: 50px;
   align-items: center;
   border: 1px solid ${props => props.borderColor};
   &:first-child {
     border-radius: 10px 0 0 10px;
+    border-right: none;
+  }
+
+  &:nth-child(2) {
     border-right: none;
   }
 
@@ -355,6 +360,7 @@ const ChainATag = styled.a`
 `
 
 const ClearFilter = styled.div`
+  width: max-content;
   background: ${props => props.backColor};
   color: ${props => props.fontColor};
   border: 1px solid ${props => props.borderColor};
@@ -371,7 +377,7 @@ const ClearFilter = styled.div`
   align-items: center;
 
   &:hover {
-    color: #ff9400;
+    color: #036666;
   }
 
   @media screen and (max-width: 1480px) {
@@ -391,19 +397,20 @@ const Counter = styled.div`
   ${props =>
     props.count > 0
       ? `
-  background: #FF7E00;
+  background: #036666;
   color: white;
   `
       : `
-  background: #FF9400;
+  background: #036666;
   color: #1F2937;
   `}
   width: 20px;
   height: 20px;
-  border-radius: 5px;
+  border-radius: 4px;
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-right: 8px;
 
   @media screen and (max-width: 1480px) {
     width: 15px;
@@ -1014,34 +1021,7 @@ const SpecDropDownItem = styled(Dropdown.Item)`
 `
 
 const TrendDropDown = styled(Dropdown.Toggle)`
-  ${props =>
-    props.num === -1
-      ? `
-    background: #4e54c8;  /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right, #8f94fb, #4e54c8);  /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #8f94fb, #4e54c8); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-
-    `
-      : props.num === 0
-      ? `
-      background: #12c2e9;  /* fallback for old browsers */
-      background: -webkit-linear-gradient(to right, #f64f59, #c471ed, #12c2e9);  /* Chrome 10-25, Safari 5.1-6 */
-      background: linear-gradient(to right, #f64f59, #c471ed, #12c2e9); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    `
-      : `
-      background: #134E5E;  /* fallback for old browsers */
-      background: -webkit-linear-gradient(to right, #71B280, #134E5E);  /* Chrome 10-25, Safari 5.1-6 */
-      background: linear-gradient(to right, #71B280, #134E5E); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
-    `}
-
-  ${props =>
-    props.backcolor
-      ? `
-    background: ${props.backcolor} !important;
-    `
-      : `
-  `}
-
+  background: #036666;
   background-size: 100% !important;
   border: 1px solid ${props => props.bordercolor} !important;
   color: white;
@@ -1062,7 +1042,11 @@ const TrendDropDown = styled(Dropdown.Toggle)`
   }
 
   &:hover {
-    filter: brightness(120%);
+    background: #067a7a;
+  }
+
+  &.show {
+    background: #067a7a;
   }
 
   .name {

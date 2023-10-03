@@ -64,7 +64,7 @@ const Container = styled.div`
 `
 
 const SearchBtn = styled.button`
-  background: #15202b;
+  background: #036666;
   border-radius: 0px 8px 8px 0px;
   padding: 8px 18px;
   color: white;
@@ -78,7 +78,7 @@ const SearchBtn = styled.button`
   `}
 
   &:hover {
-    background: #37495b;
+    background: #067a7a;
   }
 
   img {
