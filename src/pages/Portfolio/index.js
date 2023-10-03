@@ -468,7 +468,8 @@ const Portfolio = () => {
         }
         setTotalDeposit(formatNumber(totalStake, 2))
         setTotalRewards(formatNumber(valueRewards, 2))
-        setFarmTokenList(newStats)
+        const sortedTokenList = orderBy(newStats, ['balance'], ['desc'])
+        setFarmTokenList(sortedTokenList)
         // setCountList(newStats.length)
       }
 
