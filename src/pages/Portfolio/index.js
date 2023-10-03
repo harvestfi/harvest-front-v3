@@ -641,7 +641,7 @@ const Portfolio = () => {
                           </ContentInner>
                           <ContentInner width="50%" marginLeft={isMobile ? '0px' : '11px'}>
                             <ListItem
-                              weight={500}
+                              weight={600}
                               size={isMobile ? 12 : 14}
                               height={isMobile ? 16 : 20}
                               value={info.symbol}
@@ -649,7 +649,7 @@ const Portfolio = () => {
                               color="#101828"
                             />
                             <ListItem
-                              weight={400}
+                              weight={500}
                               size={isMobile ? 10 : 14}
                               height={isMobile ? 13 : 20}
                               value={info.platform}
@@ -660,21 +660,21 @@ const Portfolio = () => {
                         <Content width={isMobile ? '12%' : '11%'}>
                           <ListItem
                             color="#101828"
-                            weight={400}
+                            weight={500}
                             size={14}
                             height={20}
                             value={`${formatNumberWido(info.apy, 6)}`}
                           />
                         </Content>
                         <Content width={isMobile ? '20%' : '11%'}>
-                          <ListItem weight={400} size={14} height={20} color="#101828" value="$0" />
+                          <ListItem weight={500} size={14} height={20} color="#101828" value="$0" />
                         </Content>
                         <Content width={isMobile ? '20%' : '11%'}>
-                          <ListItem weight={400} size={14} height={20} color="#101828" value="$0" />
+                          <ListItem weight={500} size={14} height={20} color="#101828" value="$0" />
                         </Content>
                         <Content width={isMobile ? '20%' : '11%'}>
                           <ListItem
-                            weight={400}
+                            weight={500}
                             size={14}
                             height={20}
                             color="#101828"
@@ -683,7 +683,7 @@ const Portfolio = () => {
                         </Content>
                         <Content width={isMobile ? '20%' : '11%'}>
                           <ListItem
-                            weight={400}
+                            weight={500}
                             size={14}
                             height={20}
                             color="#101828"
@@ -715,7 +715,7 @@ const Portfolio = () => {
                           >
                             <ContentInner width="50%">
                               <ListItem
-                                weight={500}
+                                weight={600}
                                 size={isMobile ? 12 : 14}
                                 height={isMobile ? 16 : 20}
                                 value="Unstaked"
@@ -723,7 +723,7 @@ const Portfolio = () => {
                                 color="#101828"
                               />
                               <ListItem
-                                weight={400}
+                                weight={500}
                                 size={isMobile ? 10 : 14}
                                 height={isMobile ? 13 : 20}
                                 value={`${formatNumberWido(info.unstake, 6)}`}
@@ -732,7 +732,7 @@ const Portfolio = () => {
                             </ContentInner>
                             <ContentInner width="50%" marginLeft={isMobile ? '0px' : '11px'}>
                               <ListItem
-                                weight={500}
+                                weight={600}
                                 size={isMobile ? 12 : 14}
                                 height={isMobile ? 16 : 20}
                                 value="Staked"
@@ -740,7 +740,7 @@ const Portfolio = () => {
                                 color="#101828"
                               />
                               <ListItem
-                                weight={400}
+                                weight={500}
                                 size={isMobile ? 10 : 14}
                                 height={isMobile ? 13 : 20}
                                 value={`${formatNumberWido(info.stake, 6)}`}
@@ -750,7 +750,7 @@ const Portfolio = () => {
                           </Content>
                           <Content width={isMobile ? '12%' : '11%'}>
                             <ListItem
-                              weight={500}
+                              weight={600}
                               size={isMobile ? 12 : 14}
                               height={isMobile ? 16 : 20}
                               value="Rewards"
@@ -758,7 +758,7 @@ const Portfolio = () => {
                               color="#101828"
                             />
                             <ListItem
-                              weight={500}
+                              weight={600}
                               size={isMobile ? 12 : 14}
                               height={isMobile ? 16 : 20}
                               value="Breakdown"
@@ -774,14 +774,14 @@ const Portfolio = () => {
                               />
                               <div>
                                 <ListItem
-                                  weight={400}
+                                  weight={500}
                                   size={isMobile ? 10 : 14}
                                   height={isMobile ? 13 : 20}
                                   value={`${formatNumberWido(info.reward[key], 5)}`}
                                   color="#475467"
                                 />
                                 <ListItem
-                                  weight={400}
+                                  weight={500}
                                   size={isMobile ? 10 : 14}
                                   height={isMobile ? 13 : 20}
                                   value={`$ ${formatNumberWido(info.rewardUSD[key], 2)}`}
