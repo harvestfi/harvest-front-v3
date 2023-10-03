@@ -19,6 +19,7 @@ const WithdrawResult = ({
   token,
   tokenSymbol,
   quoteValue,
+  useIFARM,
 }) => {
   const amount = fromWei(unstakeBalance, pickedToken.decimals)
 
@@ -77,7 +78,7 @@ const WithdrawResult = ({
           <NewLabel weight="600" textAlign="right">
             {formatNumberWido(amount, WIDO_EXTEND_DECIMALS)}
             {(amount + tokenSymbol).length > 20 ? <br /> : ' '}
-            {`f${tokenSymbol}`}
+            {useIFARM ? `i${tokenSymbol}` : `f${tokenSymbol}`}
           </NewLabel>
         </NewLabel>
         <NewLabel

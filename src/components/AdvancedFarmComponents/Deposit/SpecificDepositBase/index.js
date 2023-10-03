@@ -63,6 +63,7 @@ const DepositBase = ({
   supTokenList,
   switchMethod,
   tokenSymbol,
+  useIFARM,
 }) => {
   const { connected, connectAction, account, chainId, setChainId } = useWallet()
 
@@ -185,7 +186,11 @@ const DepositBase = ({
           </SwitchTabTag>
         ))}
       </NewLabel>
-      <DepoTitle>Turn any token from your wallet into f{tokenSymbol}.</DepoTitle>
+      <DepoTitle>
+        {useIFARM
+          ? `Turn any token from your wallet into i${tokenSymbol}.`
+          : `Turn any token from your wallet into f${tokenSymbol}.`}
+      </DepoTitle>
       <TokenInfo>
         <AmountSection>
           <NewLabel

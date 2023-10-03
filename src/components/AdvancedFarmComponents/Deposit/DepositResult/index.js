@@ -21,6 +21,7 @@ const DepositResult = ({
   tokenSymbol,
   quoteValue,
   setQuoteValue,
+  useIFARM,
 }) => {
   const amount = toWei(inputAmount, pickedToken.decimals)
 
@@ -91,7 +92,8 @@ const DepositResult = ({
           </NewLabel>
           <NewLabel weight="600" textAlign="right">
             {receiveAmount !== '' ? receiveAmount : <AnimatedDots />}
-            {(receiveAmount + tokenSymbol).length > 20 ? <br /> : ' '} {`f${tokenSymbol}`}
+            {(receiveAmount + tokenSymbol).length > 20 ? <br /> : ' '}{' '}
+            {useIFARM ? `i${tokenSymbol}` : `f${tokenSymbol}`}
           </NewLabel>
         </NewLabel>
       </NewLabel>

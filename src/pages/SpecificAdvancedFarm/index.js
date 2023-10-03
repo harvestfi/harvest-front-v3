@@ -1641,6 +1641,7 @@ const AdvancedFarm = () => {
                         supTokenList={supTokenList}
                         switchMethod={switchDepoMethod}
                         tokenSymbol={id}
+                        useIFARM={useIFARM}
                       />
                       <DepositSelectToken
                         selectToken={selectTokenDepo}
@@ -1679,6 +1680,7 @@ const AdvancedFarm = () => {
                         setDeposit={setDepositStart}
                         inputAmount={inputAmountDepo}
                         token={token}
+                        useIFARM={useIFARM}
                         tokenSymbol={id}
                         quoteValue={quoteValueDepo}
                         setQuoteValue={setQuoteValueDepo}
@@ -1700,6 +1702,7 @@ const AdvancedFarm = () => {
                         token={token}
                         supTokenList={supTokenList}
                         switchMethod={switchDepoMethod}
+                        useIFARM={useIFARM}
                       />
                       <WithdrawSelectToken
                         selectToken={selectTokenWith}
@@ -1738,6 +1741,7 @@ const AdvancedFarm = () => {
                         token={token}
                         tokenSymbol={id}
                         quoteValue={quoteValueWith}
+                        useIFARM={useIFARM}
                       />
                     </WithdrawSection>
                   </HalfContent>

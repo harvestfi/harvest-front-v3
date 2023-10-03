@@ -66,6 +66,7 @@ const WithdrawBase = ({
   token,
   supTokenList,
   switchMethod,
+  useIFARM,
 }) => {
   const [unstakeInputValue, setUnstakeInputValue] = useState(0)
   const { account, connected, chainId } = useWallet()
@@ -172,7 +173,11 @@ const WithdrawBase = ({
           </SwitchTabTag>
         ))}
       </NewLabel>
-      <Title>Withdraw f{tokenSymbol} into any token</Title>
+      <Title>
+        {useIFARM
+          ? `Withdraw i${tokenSymbol} into any token`
+          : `Withdraw f${tokenSymbol} into any token`}
+      </Title>
       <TokenInfo>
         <AmountSection>
           <NewLabel

@@ -334,7 +334,8 @@ const WithdrawStart = ({
           <NewLabel weight="500">Withdrawing</NewLabel>
           <NewLabel weight="600" textAlign="right">
             {fromInfoAmount !== '' ? fromInfoAmount : <AnimatedDots />}
-            {(fromInfoAmount + tokenSymbol).length > 20 ? <br /> : ' '} {`f${tokenSymbol}`}
+            {(fromInfoAmount + tokenSymbol).length > 20 ? <br /> : ' '}{' '}
+            {useIFARM ? `i${tokenSymbol}` : `f${tokenSymbol}`}
           </NewLabel>
         </NewLabel>
         <NewLabel

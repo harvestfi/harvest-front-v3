@@ -421,13 +421,16 @@ const DepositStart = ({
                 weight="600"
                 color="#344054"
               >
-                You will receive no less f{tokenSymbol} than the displayed amount.
+                {useIFARM
+                  ? `You will receive no less i{tokenSymbol} than the displayed amount.`
+                  : `You will receive no less f{tokenSymbol} than the displayed amount.`}
               </NewLabel>
             </ReactTooltip>
           </NewLabel>
           <NewLabel weight="600" textAlign="right">
             {minReceiveAmountString !== '' ? minReceiveAmountString : <AnimatedDots />}
-            {(minReceiveAmountString + tokenSymbol).length > 20 ? <br /> : ' '} {`f${tokenSymbol}`}
+            {(minReceiveAmountString + tokenSymbol).length > 20 ? <br /> : ' '}{' '}
+            {useIFARM ? `i${tokenSymbol}` : `f${tokenSymbol}`}
           </NewLabel>
         </NewLabel>
       </NewLabel>
@@ -446,7 +449,7 @@ const DepositStart = ({
             weight="600"
             marginBottom="4px"
           >
-            What is {`f${tokenSymbol}`}?
+            What is {useIFARM ? `i${tokenSymbol}` : `f${tokenSymbol}`}?
           </NewLabel>
           <NewLabel
             color="#475467"
