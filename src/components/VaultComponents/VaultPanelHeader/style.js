@@ -30,7 +30,7 @@ const TokenLogo = styled.img`
 const TokenNameContainer = styled.div`
   display: flex;
   align-items: center;
-  font-weight: 500;
+  font-weight: 600;
   font-size: 14px;
   line-height: 20px;
   color: #101828;
@@ -65,7 +65,7 @@ const RewardsContainer = styled.div`
   align-items: center;
   color: #101828;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 20px;
 
   span {
@@ -84,7 +84,7 @@ const RewardsContainer = styled.div`
 `
 
 const ValueContainer = styled.div`
-  font-weight: 400;
+  font-weight: 500;
   width: ${props => props.width || 'auto'};
   min-width: ${props => props.minWidth || 'auto'};
   text-align: ${props => props.textAlign || 'center'};
@@ -294,7 +294,7 @@ const DetailModal = styled(Modal)`
 const Value = styled.div`
   color: #101828;
   font-size: 14px;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 20px;
 `
 

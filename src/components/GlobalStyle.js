@@ -654,7 +654,7 @@ const Monospace = styled.span`
   border-bottom: ${props => props.borderBottom || 'unset'};
   color: #101828;
   font-size: 14px !important;
-  font-weight: 400;
+  font-weight: 500;
   line-height: 20px;
 `
 
