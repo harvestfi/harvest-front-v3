@@ -1673,8 +1673,8 @@ const AdvancedFarm = () => {
                               weight="600"
                               color="white"
                             >
-                              The number of staked FARM earning you more FARM from platform's profit
-                              sharing pool.
+                              The number of staked FARM earning you more FARM from platform&apos;s
+                              profit sharing pool.
                             </NewLabel>
                           </ReactTooltip>
                         </NewLabel>
