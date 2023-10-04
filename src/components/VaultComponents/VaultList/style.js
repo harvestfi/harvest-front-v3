@@ -25,7 +25,7 @@ const Header = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 27px 40px 27px 20px;
+  padding: 27px 24px 27px 24px;
   color: ${props => props.fontColor};
   border-bottom: 1px solid #eaecf0;
 
@@ -36,11 +36,11 @@ const Header = styled.div`
   transition: 0.25s;
 
   @media screen and (max-width: 1480px) {
-    padding: 17px 30px 17px 10px;
+    padding: 17px 24px 17px 24px;
   }
 
   @media screen and (max-width: 1280px) {
-    padding: 12px 25px 12px 5px;
+    padding: 12px 24px 12px 24px;
   }
 
   @media screen and (max-width: 992px) {
