@@ -216,7 +216,7 @@ const StakeBase = ({
       </NewLabel>
       <DepoTitle>
         {useIFARM
-          ? 'Stake your deposit to earn platform rewards paid out in FARM.'
+          ? 'Stake your FARM to be entitled to platform rewards.'
           : 'Stake your deposit to be entitled to extra rewards.'}
       </DepoTitle>
       <AmountSection>

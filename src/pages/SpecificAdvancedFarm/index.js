@@ -87,7 +87,6 @@ import {
   TopPart,
   MyBalance,
   FarmInfo,
-  ThemeMode,
   GuideSection,
   GuidePart,
   DepositSection,
@@ -155,7 +154,6 @@ const AdvancedFarm = () => {
   const { paramAddress } = useParams()
   // Switch Tag (Deposit/Withdraw)
   const [activeDepo, setActiveDepo] = useState(true)
-  const [showLegacyFarm, setShowLegacyFarm] = useState(false)
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
@@ -1096,419 +1094,218 @@ const AdvancedFarm = () => {
               {activeMainTag === 0 ? (
                 <FirstPartSection>
                   {useIFARM ? (
-                    <>
-                      <FarmInfo
-                        isShow={!showLegacyFarm}
-                        marginBottom={isMobile ? '0' : '23px'}
-                        marginTop={isMobile ? '0px' : '0'}
+                    <FarmInfo
+                      marginBottom={isMobile ? '0' : '23px'}
+                      marginTop={isMobile ? '0px' : '0'}
+                    >
+                      <NewLabel
+                        display="flex"
+                        justifyContent="space-between"
+                        size={isMobile ? '12px' : '14px'}
+                        weight="600"
+                        height={isMobile ? '18px' : '24px'}
+                        color="#344054"
+                        padding={isMobile ? '7px 11px' : '10px 15px'}
+                        borderBottom="1px solid #EBEBEB"
+                      >
+                        iFarm
+                      </NewLabel>
+                      <FlexDiv
+                        justifyContent="space-between"
+                        padding={isMobile ? '7px 11px' : '10px 15px'}
                       >
                         <NewLabel
                           display="flex"
-                          justifyContent="space-between"
-                          size={isMobile ? '12px' : '14px'}
-                          weight="600"
+                          size={isMobile ? '10px' : '14px'}
+                          weight="500"
                           height={isMobile ? '18px' : '24px'}
                           color="#344054"
-                          padding={isMobile ? '7px 11px' : '10px 15px'}
-                          borderBottom="1px solid #EBEBEB"
                         >
-                          iFarm
-                          <ThemeMode mode={!showLegacyFarm ? 'iFarm ' : 'Farm(Legacy)'}>
-                            <div id="theme-switch">
-                              <div className="switch-track">
-                                <div className="switch-thumb" />
-                              </div>
-
-                              <input
-                                type="checkbox"
-                                checked={showLegacyFarm}
-                                onChange={() => setShowLegacyFarm(true)}
-                                aria-label="Switch between dark and light mode"
-                              />
-                            </div>
-                          </ThemeMode>
+                          Balance
+                          <InfoIcon
+                            className="info"
+                            width={isMobile ? 10 : 16}
+                            src={Info}
+                            alt=""
+                            data-tip
+                            data-for="tooltip-balance"
+                            filterColor={filterColor}
+                          />
+                          <ReactTooltip
+                            id="tooltip-balance"
+                            backgroundColor="black"
+                            borderColor="black"
+                            textColor="white"
+                          >
+                            <NewLabel
+                              size={isMobile ? '10px' : '12px'}
+                              height={isMobile ? '15px' : '18px'}
+                              weight="600"
+                              color="white"
+                            >
+                              The number of iFARM tokens on your wallet.
+                            </NewLabel>
+                          </ReactTooltip>
                         </NewLabel>
-                        <FlexDiv
-                          justifyContent="space-between"
-                          padding={isMobile ? '7px 11px' : '10px 15px'}
+                        <NewLabel
+                          size={isMobile ? '10px' : '14px'}
+                          height={isMobile ? '18px' : '24px'}
+                          weight="700"
+                          color="#00D26B"
                         >
-                          <NewLabel
-                            display="flex"
-                            size={isMobile ? '10px' : '14px'}
-                            weight="500"
-                            height={isMobile ? '18px' : '24px'}
-                            color="#344054"
-                          >
-                            Balance
-                            <InfoIcon
-                              className="info"
-                              width={isMobile ? 10 : 16}
-                              src={Info}
-                              alt=""
-                              data-tip
-                              data-for="tooltip-balance"
-                              filterColor={filterColor}
-                            />
-                            <ReactTooltip
-                              id="tooltip-balance"
-                              backgroundColor="black"
-                              borderColor="black"
-                              textColor="white"
-                            >
-                              <NewLabel
-                                size={isMobile ? '10px' : '12px'}
-                                height={isMobile ? '15px' : '18px'}
-                                weight="600"
-                                color="white"
-                              >
-                                Description is here.
-                              </NewLabel>
-                            </ReactTooltip>
-                          </NewLabel>
-                          <NewLabel
-                            size={isMobile ? '10px' : '14px'}
-                            height={isMobile ? '18px' : '24px'}
-                            weight="700"
-                            color="#00D26B"
-                          >
-                            {!connected ? (
-                              0
-                            ) : lpTokenBalance ? (
-                              formatNumberWido(
-                                fromWei(
-                                  get(balances, IFARM_TOKEN_SYMBOL, 0),
-                                  tokens[IFARM_TOKEN_SYMBOL].decimals,
-                                  WIDO_BALANCES_DECIMALS,
-                                ),
+                          {!connected ? (
+                            0
+                          ) : lpTokenBalance ? (
+                            formatNumberWido(
+                              fromWei(
+                                get(balances, IFARM_TOKEN_SYMBOL, 0),
+                                tokens[IFARM_TOKEN_SYMBOL].decimals,
                                 WIDO_BALANCES_DECIMALS,
-                              )
-                            ) : (
-                              <AnimatedDots />
-                            )}
-                          </NewLabel>
-                        </FlexDiv>
-                        <FlexDiv
-                          justifyContent="space-between"
-                          padding={isMobile ? '7px 11px' : '10px 15px'}
-                        >
-                          <NewLabel
-                            size={isMobile ? '10px' : '14px'}
-                            height={isMobile ? '18px' : '24px'}
-                            weight="500"
-                            color="#344054"
-                            self="center"
-                          >
-                            Underlying Balance
-                            <InfoIcon
-                              className="info"
-                              width={isMobile ? 10 : 16}
-                              src={Info}
-                              alt=""
-                              data-tip
-                              data-for="tooltip-balance"
-                              filterColor={filterColor}
-                            />
-                            <ReactTooltip
-                              id="tooltip-balance"
-                              backgroundColor="black"
-                              borderColor="black"
-                              textColor="white"
-                            >
-                              <NewLabel
-                                size={isMobile ? '10px' : '12px'}
-                                height={isMobile ? '15px' : '18px'}
-                                weight="600"
-                                color="white"
-                              >
-                                Description is here.
-                              </NewLabel>
-                            </ReactTooltip>
-                          </NewLabel>
-                          <NewLabel
-                            weight="500"
-                            size={isMobile ? '10px' : '14px'}
-                            height={isMobile ? '18px' : '24px'}
-                            color="black"
-                            self="center"
-                          >
-                            {!connected ? (
-                              0
-                            ) : isEmpty(vaultsData) ? (
-                              <AnimatedDots />
-                            ) : (
-                              formatNumberWido(underlyingValue, WIDO_BALANCES_DECIMALS)
-                            )}
-                          </NewLabel>
-                        </FlexDiv>
-                        <FlexDiv
-                          justifyContent="space-between"
-                          padding={isMobile ? '7px 11px' : '10px 15px'}
-                        >
-                          <NewLabel
-                            size={isMobile ? '10px' : '14px'}
-                            height={isMobile ? '18px' : '24px'}
-                            weight="500"
-                            color="#344054"
-                            self="center"
-                          >
-                            iFARM Price
-                            <InfoIcon
-                              className="info"
-                              width={isMobile ? 10 : 16}
-                              src={Info}
-                              alt=""
-                              data-tip
-                              data-for="tooltip-balance"
-                              filterColor={filterColor}
-                            />
-                            <ReactTooltip
-                              id="tooltip-balance"
-                              backgroundColor="black"
-                              borderColor="black"
-                              textColor="white"
-                            >
-                              <NewLabel
-                                size={isMobile ? '10px' : '12px'}
-                                height={isMobile ? '15px' : '18px'}
-                                weight="600"
-                                color="white"
-                              >
-                                Description is here.
-                              </NewLabel>
-                            </ReactTooltip>
-                          </NewLabel>
-                          <NewLabel
-                            weight="500"
-                            size={isMobile ? '10px' : '14px'}
-                            height={isMobile ? '18px' : '24px'}
-                            color="black"
-                            self="center"
-                          >
-                            {!account ? '' : price ? `$${price}` : <AnimatedDots />}
-                          </NewLabel>
-                        </FlexDiv>
-                        <FlexDiv
-                          justifyContent="space-between"
-                          padding={isMobile ? '7px 11px' : '10px 15px'}
-                        >
-                          <NewLabel
-                            size={isMobile ? '10px' : '14px'}
-                            height={isMobile ? '18px' : '24px'}
-                            weight="500"
-                            color="#344054"
-                            self="center"
-                          >
-                            Total Price
-                            <InfoIcon
-                              className="info"
-                              width={isMobile ? 10 : 16}
-                              src={Info}
-                              alt=""
-                              data-tip
-                              data-for="tooltip-balance"
-                              filterColor={filterColor}
-                            />
-                            <ReactTooltip
-                              id="tooltip-balance"
-                              backgroundColor="black"
-                              borderColor="black"
-                              textColor="white"
-                            >
-                              <NewLabel
-                                size={isMobile ? '10px' : '12px'}
-                                height={isMobile ? '15px' : '18px'}
-                                weight="600"
-                                color="white"
-                              >
-                                Description is here.
-                              </NewLabel>
-                            </ReactTooltip>
-                          </NewLabel>
-                          <NewLabel
-                            weight="500"
-                            size={isMobile ? '10px' : '14px'}
-                            height={isMobile ? '18px' : '24px'}
-                            color="black"
-                            self="center"
-                          >
-                            {!account ? (
-                              ''
-                            ) : get(balances, IFARM_TOKEN_SYMBOL, 0) && token.data.lpTokenData ? (
-                              `$${formatNumberWido(
-                                fromWei(
-                                  get(balances, IFARM_TOKEN_SYMBOL, 0),
-                                  tokens[IFARM_TOKEN_SYMBOL].decimals,
-                                  WIDO_BALANCES_DECIMALS,
-                                ) * price,
-                                2,
-                              )}`
-                            ) : (
-                              <AnimatedDots />
-                            )}
-                          </NewLabel>
-                        </FlexDiv>
-                      </FarmInfo>
-                      <FarmInfo
-                        isShow={showLegacyFarm}
-                        marginBottom={isMobile ? '0' : '23px'}
-                        marginTop={isMobile ? '0px' : '0'}
+                              ),
+                              WIDO_BALANCES_DECIMALS,
+                            )
+                          ) : (
+                            <AnimatedDots />
+                          )}
+                        </NewLabel>
+                      </FlexDiv>
+                      <FlexDiv
+                        justifyContent="space-between"
+                        padding={isMobile ? '7px 11px' : '10px 15px'}
                       >
                         <NewLabel
-                          display="flex"
-                          justifyContent="space-between"
-                          size={isMobile ? '12px' : '14px'}
-                          weight="600"
+                          size={isMobile ? '10px' : '14px'}
                           height={isMobile ? '18px' : '24px'}
+                          weight="500"
                           color="#344054"
-                          padding={isMobile ? '7px 11px' : '10px 15px'}
-                          borderBottom="1px solid #EBEBEB"
+                          self="center"
                         >
-                          Farm (Legacy)
-                          <ThemeMode mode={!showLegacyFarm ? 'iFarm ' : 'Farm(Legacy)'}>
-                            <div id="theme-switch">
-                              <div className="switch-track">
-                                <div className="switch-thumb" />
-                              </div>
-
-                              <input
-                                type="checkbox"
-                                checked={showLegacyFarm}
-                                onChange={() => setShowLegacyFarm(false)}
-                                aria-label="Switch between dark and light mode"
-                              />
-                            </div>
-                          </ThemeMode>
+                          Underlying Balance
+                          <InfoIcon
+                            className="info"
+                            width={isMobile ? 10 : 16}
+                            src={Info}
+                            alt=""
+                            data-tip
+                            data-for="tooltip-underlying-balance"
+                            filterColor={filterColor}
+                          />
+                          <ReactTooltip
+                            id="tooltip-underlying-balance"
+                            backgroundColor="black"
+                            borderColor="black"
+                            textColor="white"
+                          >
+                            <NewLabel
+                              size={isMobile ? '10px' : '12px'}
+                              height={isMobile ? '15px' : '18px'}
+                              weight="600"
+                              color="white"
+                            >
+                              Your iFARM earnings denominated in underlying FARM.
+                            </NewLabel>
+                          </ReactTooltip>
                         </NewLabel>
-                        <FlexDiv
-                          justifyContent="space-between"
-                          padding={isMobile ? '7px 11px' : '10px 15px'}
+                        <NewLabel
+                          weight="500"
+                          size={isMobile ? '10px' : '14px'}
+                          height={isMobile ? '18px' : '24px'}
+                          color="black"
+                          self="center"
                         >
-                          <NewLabel
-                            display="flex"
-                            size={isMobile ? '10px' : '14px'}
-                            weight="500"
-                            height={isMobile ? '18px' : '24px'}
-                            color="#344054"
+                          {!connected ? (
+                            0
+                          ) : isEmpty(vaultsData) ? (
+                            <AnimatedDots />
+                          ) : (
+                            formatNumberWido(underlyingValue, WIDO_BALANCES_DECIMALS)
+                          )}
+                        </NewLabel>
+                      </FlexDiv>
+                      <FlexDiv
+                        justifyContent="space-between"
+                        padding={isMobile ? '7px 11px' : '10px 15px'}
+                      >
+                        <NewLabel
+                          size={isMobile ? '10px' : '14px'}
+                          height={isMobile ? '18px' : '24px'}
+                          weight="500"
+                          color="#344054"
+                          self="center"
+                        >
+                          iFARM Price
+                        </NewLabel>
+                        <NewLabel
+                          weight="500"
+                          size={isMobile ? '10px' : '14px'}
+                          height={isMobile ? '18px' : '24px'}
+                          color="black"
+                          self="center"
+                        >
+                          {!account ? '' : price ? `$${price}` : <AnimatedDots />}
+                        </NewLabel>
+                      </FlexDiv>
+                      <FlexDiv
+                        justifyContent="space-between"
+                        padding={isMobile ? '7px 11px' : '10px 15px'}
+                      >
+                        <NewLabel
+                          size={isMobile ? '10px' : '14px'}
+                          height={isMobile ? '18px' : '24px'}
+                          weight="500"
+                          color="#344054"
+                          self="center"
+                        >
+                          Total Value
+                          <InfoIcon
+                            className="info"
+                            width={isMobile ? 10 : 16}
+                            src={Info}
+                            alt=""
+                            data-tip
+                            data-for="tooltip-total-value"
+                            filterColor={filterColor}
+                          />
+                          <ReactTooltip
+                            id="tooltip-total-value"
+                            backgroundColor="black"
+                            borderColor="black"
+                            textColor="white"
                           >
-                            Unstaked
-                          </NewLabel>
-                          <NewLabel
-                            size={isMobile ? '10px' : '14px'}
-                            height={isMobile ? '18px' : '24px'}
-                            weight="700"
-                            color="#00D26B"
-                          >
-                            {!connected ? (
-                              0
-                            ) : lpTokenBalance ? (
+                            <NewLabel
+                              size={isMobile ? '10px' : '12px'}
+                              height={isMobile ? '15px' : '18px'}
+                              weight="600"
+                              color="white"
+                            >
+                              Total value in USD of your iFARM holdings.
+                            </NewLabel>
+                          </ReactTooltip>
+                        </NewLabel>
+                        <NewLabel
+                          weight="500"
+                          size={isMobile ? '10px' : '14px'}
+                          height={isMobile ? '18px' : '24px'}
+                          color="black"
+                          self="center"
+                        >
+                          {!account ? (
+                            ''
+                          ) : get(balances, IFARM_TOKEN_SYMBOL, 0) && token.data.lpTokenData ? (
+                            `$${formatNumberWido(
                               fromWei(
-                                lpTokenBalance,
-                                fAssetPool.lpTokenData.decimals,
-                                POOL_BALANCES_DECIMALS,
-                                true,
-                              )
-                            ) : (
-                              <AnimatedDots />
-                            )}
-                          </NewLabel>
-                        </FlexDiv>
-                        <FlexDiv
-                          justifyContent="space-between"
-                          padding={isMobile ? '7px 11px' : '10px 15px'}
-                        >
-                          <NewLabel
-                            size={isMobile ? '10px' : '14px'}
-                            height={isMobile ? '18px' : '24px'}
-                            weight="500"
-                            color="#344054"
-                            self="center"
-                          >
-                            Staked
-                          </NewLabel>
-                          <NewLabel
-                            weight="500"
-                            size={isMobile ? '10px' : '14px'}
-                            height={isMobile ? '18px' : '24px'}
-                            color="black"
-                            self="center"
-                          >
-                            {!account ? (
-                              ''
-                            ) : totalStaked ? (
-                              fromWei(
-                                totalStaked,
-                                tokens[FARM_TOKEN_SYMBOL].decimals,
+                                get(balances, IFARM_TOKEN_SYMBOL, 0),
+                                tokens[IFARM_TOKEN_SYMBOL].decimals,
                                 WIDO_BALANCES_DECIMALS,
-                                true,
-                              )
-                            ) : (
-                              <AnimatedDots />
-                            )}
-                          </NewLabel>
-                        </FlexDiv>
-                        <FlexDiv
-                          justifyContent="space-between"
-                          padding={isMobile ? '7px 11px' : '10px 15px'}
-                        >
-                          <NewLabel
-                            size={isMobile ? '10px' : '14px'}
-                            height={isMobile ? '18px' : '24px'}
-                            weight="500"
-                            color="#344054"
-                            self="center"
-                          >
-                            iFARM Price
-                          </NewLabel>
-                          <NewLabel
-                            weight="500"
-                            size={isMobile ? '10px' : '14px'}
-                            height={isMobile ? '18px' : '24px'}
-                            color="black"
-                            self="center"
-                          >
-                            {!account ? (
-                              ''
-                            ) : token.data.lpTokenData ? (
-                              `$${token.data.lpTokenData.price}`
-                            ) : (
-                              <AnimatedDots />
-                            )}
-                          </NewLabel>
-                        </FlexDiv>
-                        <FlexDiv
-                          justifyContent="space-between"
-                          padding={isMobile ? '7px 11px' : '10px 15px'}
-                        >
-                          <NewLabel
-                            size={isMobile ? '10px' : '14px'}
-                            height={isMobile ? '18px' : '24px'}
-                            weight="500"
-                            color="#344054"
-                            self="center"
-                          >
-                            Total Value
-                          </NewLabel>
-                          <NewLabel
-                            weight="500"
-                            size={isMobile ? '10px' : '14px'}
-                            height={isMobile ? '18px' : '24px'}
-                            color="black"
-                            self="center"
-                          >
-                            {!account ? (
-                              ''
-                            ) : totalValue ? (
-                              `$${formatNumberWido(
-                                totalValue * token.data.lpTokenData.price,
-                                WIDO_BALANCES_DECIMALS,
-                              )}`
-                            ) : (
-                              <AnimatedDots />
-                            )}
-                          </NewLabel>
-                        </FlexDiv>
-                      </FarmInfo>
-                    </>
+                              ) * price,
+                              2,
+                            )}`
+                          ) : (
+                            <AnimatedDots />
+                          )}
+                        </NewLabel>
+                      </FlexDiv>
+                    </FarmInfo>
                   ) : (
                     <MyBalance
                       marginBottom={isMobile ? '0' : '23px'}
@@ -1769,131 +1566,354 @@ const AdvancedFarm = () => {
                 </FirstPartSection>
               ) : activeMainTag === 1 ? (
                 <SecondPartSection>
-                  <MyBalance marginBottom={isMobile ? '0' : '23px'}>
-                    <NewLabel
-                      size={isMobile ? '12px' : '14px'}
-                      weight="600"
-                      height={isMobile ? '18px' : '24px'}
-                      color="#344054"
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
-                      borderBottom="1px solid #EBEBEB"
-                    >
-                      Stake Balance
-                    </NewLabel>
-                    <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
+                  {useIFARM ? (
+                    <FarmInfo
+                      marginBottom={isMobile ? '0' : '23px'}
+                      marginTop={isMobile ? '0px' : '0'}
                     >
                       <NewLabel
                         display="flex"
-                        size={isMobile ? '10px' : '14px'}
-                        weight="500"
+                        justifyContent="space-between"
+                        size={isMobile ? '12px' : '14px'}
+                        weight="600"
                         height={isMobile ? '18px' : '24px'}
                         color="#344054"
+                        padding={isMobile ? '7px 11px' : '10px 15px'}
+                        borderBottom="1px solid #EBEBEB"
                       >
-                        {useIFARM ? 'iFARM' : `f${id}`}
+                        Farm (Legacy)
                       </NewLabel>
-                      <NewLabel
-                        size={isMobile ? '10px' : '14px'}
-                        height={isMobile ? '18px' : '24px'}
-                        weight={isMobile ? '500' : '700'}
-                        color={isMobile ? '#15202b' : '#00D26B'}
+                      <FlexDiv
+                        justifyContent="space-between"
+                        padding={isMobile ? '7px 11px' : '10px 15px'}
                       >
-                        {!connected ? (
-                          0
-                        ) : totalStaked ? (
-                          fromWei(
-                            totalStaked,
-                            fAssetPool.lpTokenData.decimals,
-                            POOL_BALANCES_DECIMALS,
-                            true,
-                          )
-                        ) : (
-                          <AnimatedDots />
-                        )}
-                      </NewLabel>
-                    </FlexDiv>
-                    <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
-                    >
-                      <NewLabel
-                        size={isMobile ? '10px' : '14px'}
-                        height={isMobile ? '18px' : '24px'}
-                        weight="500"
-                        color="#344054"
-                      >
-                        Est. Value
-                      </NewLabel>
-                      <NewLabel
-                        weight="500"
-                        size={isMobile ? '10px' : '14px'}
-                        height={isMobile ? '18px' : '24px'}
-                        color={isMobile ? '#15202b' : 'black'}
-                      >
-                        $
-                        {!connected ? (
-                          0
-                        ) : totalStaked ? (
-                          formatNumber(
+                        <NewLabel
+                          display="flex"
+                          size={isMobile ? '10px' : '14px'}
+                          weight="500"
+                          height={isMobile ? '18px' : '24px'}
+                          color="#344054"
+                        >
+                          Unstaked
+                          <InfoIcon
+                            className="info"
+                            width={isMobile ? 10 : 16}
+                            src={Info}
+                            alt=""
+                            data-tip
+                            data-for="tooltip-unstaked"
+                            filterColor={filterColor}
+                          />
+                          <ReactTooltip
+                            id="tooltip-unstaked"
+                            backgroundColor="black"
+                            borderColor="black"
+                            textColor="white"
+                          >
+                            <NewLabel
+                              size={isMobile ? '10px' : '12px'}
+                              height={isMobile ? '15px' : '18px'}
+                              weight="600"
+                              color="white"
+                            >
+                              The number of FARM holdings in your wallet which you can stake.
+                            </NewLabel>
+                          </ReactTooltip>
+                        </NewLabel>
+                        <NewLabel
+                          size={isMobile ? '10px' : '14px'}
+                          height={isMobile ? '18px' : '24px'}
+                          weight="700"
+                          color="#00D26B"
+                        >
+                          {!connected ? (
+                            0
+                          ) : lpTokenBalance ? (
                             fromWei(
-                              totalStaked,
+                              lpTokenBalance,
                               fAssetPool.lpTokenData.decimals,
                               POOL_BALANCES_DECIMALS,
                               true,
-                            ) * usdPrice,
-                            POOL_BALANCES_DECIMALS,
-                          )
-                        ) : (
-                          <AnimatedDots />
-                        )}
-                      </NewLabel>
-                    </FlexDiv>
-                  </MyBalance>
-                  <MyBalance marginBottom={isMobile ? '24px' : '23px'}>
-                    <NewLabel
-                      size={isMobile ? '12px' : '14px'}
-                      weight="600"
-                      height={isMobile ? '18px' : '24px'}
-                      color="#344054"
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
-                      borderBottom="1px solid #EBEBEB"
-                    >
-                      Deposit Available to Stake
-                    </NewLabel>
-                    <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
-                    >
-                      <NewLabel
-                        size={isMobile ? '10px' : '14px'}
-                        weight="500"
-                        height={isMobile ? '18px' : '24px'}
-                        color="#344054"
+                            )
+                          ) : (
+                            <AnimatedDots />
+                          )}
+                        </NewLabel>
+                      </FlexDiv>
+                      <FlexDiv
+                        justifyContent="space-between"
+                        padding={isMobile ? '7px 11px' : '10px 15px'}
                       >
-                        {useIFARM ? 'iFARM' : `f${id}`}
-                      </NewLabel>
-                      <NewLabel
-                        size={isMobile ? '10px' : '14px'}
-                        height={isMobile ? '18px' : '24px'}
-                        weight={isMobile ? '500' : '700'}
-                        color="#15202b"
+                        <NewLabel
+                          size={isMobile ? '10px' : '14px'}
+                          height={isMobile ? '18px' : '24px'}
+                          weight="500"
+                          color="#344054"
+                          self="center"
+                        >
+                          Staked
+                          <InfoIcon
+                            className="info"
+                            width={isMobile ? 10 : 16}
+                            src={Info}
+                            alt=""
+                            data-tip
+                            data-for="tooltip-staked"
+                            filterColor={filterColor}
+                          />
+                          <ReactTooltip
+                            id="tooltip-staked"
+                            backgroundColor="black"
+                            borderColor="black"
+                            textColor="white"
+                          >
+                            <NewLabel
+                              size={isMobile ? '10px' : '12px'}
+                              height={isMobile ? '15px' : '18px'}
+                              weight="600"
+                              color="white"
+                            >
+                              The number of staked FARM earning you more FARM from platform's profit
+                              sharing pool.
+                            </NewLabel>
+                          </ReactTooltip>
+                        </NewLabel>
+                        <NewLabel
+                          weight="500"
+                          size={isMobile ? '10px' : '14px'}
+                          height={isMobile ? '18px' : '24px'}
+                          color="black"
+                          self="center"
+                        >
+                          {!account ? (
+                            ''
+                          ) : totalStaked ? (
+                            fromWei(
+                              totalStaked,
+                              tokens[FARM_TOKEN_SYMBOL].decimals,
+                              WIDO_BALANCES_DECIMALS,
+                              true,
+                            )
+                          ) : (
+                            <AnimatedDots />
+                          )}
+                        </NewLabel>
+                      </FlexDiv>
+                      <FlexDiv
+                        justifyContent="space-between"
+                        padding={isMobile ? '7px 11px' : '10px 15px'}
                       >
-                        {!connected ? (
-                          0
-                        ) : lpTokenBalance ? (
-                          fromWei(
-                            lpTokenBalance,
-                            fAssetPool.lpTokenData.decimals,
-                            POOL_BALANCES_DECIMALS,
-                            true,
-                          )
-                        ) : (
-                          <AnimatedDots />
-                        )}
-                      </NewLabel>
-                    </FlexDiv>
-                  </MyBalance>
+                        <NewLabel
+                          size={isMobile ? '10px' : '14px'}
+                          height={isMobile ? '18px' : '24px'}
+                          weight="500"
+                          color="#344054"
+                          self="center"
+                        >
+                          iFARM Price
+                        </NewLabel>
+                        <NewLabel
+                          weight="500"
+                          size={isMobile ? '10px' : '14px'}
+                          height={isMobile ? '18px' : '24px'}
+                          color="black"
+                          self="center"
+                        >
+                          {!account ? (
+                            ''
+                          ) : token.data.lpTokenData ? (
+                            `$${token.data.lpTokenData.price}`
+                          ) : (
+                            <AnimatedDots />
+                          )}
+                        </NewLabel>
+                      </FlexDiv>
+                      <FlexDiv
+                        justifyContent="space-between"
+                        padding={isMobile ? '7px 11px' : '10px 15px'}
+                      >
+                        <NewLabel
+                          size={isMobile ? '10px' : '14px'}
+                          height={isMobile ? '18px' : '24px'}
+                          weight="500"
+                          color="#344054"
+                          self="center"
+                        >
+                          Total Value
+                          <InfoIcon
+                            className="info"
+                            width={isMobile ? 10 : 16}
+                            src={Info}
+                            alt=""
+                            data-tip
+                            data-for="tooltip-totalValue"
+                            filterColor={filterColor}
+                          />
+                          <ReactTooltip
+                            id="tooltip-totalValue"
+                            backgroundColor="black"
+                            borderColor="black"
+                            textColor="white"
+                          >
+                            <NewLabel
+                              size={isMobile ? '10px' : '12px'}
+                              height={isMobile ? '15px' : '18px'}
+                              weight="600"
+                              color="white"
+                            >
+                              Total Value of your Staked and Unstaked FARM
+                            </NewLabel>
+                          </ReactTooltip>
+                        </NewLabel>
+                        <NewLabel
+                          weight="500"
+                          size={isMobile ? '10px' : '14px'}
+                          height={isMobile ? '18px' : '24px'}
+                          color="black"
+                          self="center"
+                        >
+                          {!account ? (
+                            ''
+                          ) : totalValue ? (
+                            `$${formatNumberWido(
+                              totalValue * token.data.lpTokenData.price,
+                              WIDO_BALANCES_DECIMALS,
+                            )}`
+                          ) : (
+                            <AnimatedDots />
+                          )}
+                        </NewLabel>
+                      </FlexDiv>
+                    </FarmInfo>
+                  ) : (
+                    <>
+                      <MyBalance marginBottom={isMobile ? '0' : '23px'}>
+                        <NewLabel
+                          size={isMobile ? '12px' : '14px'}
+                          weight="600"
+                          height={isMobile ? '18px' : '24px'}
+                          color="#344054"
+                          padding={isMobile ? '7px 11px' : '10px 15px'}
+                          borderBottom="1px solid #EBEBEB"
+                        >
+                          Stake Balance
+                        </NewLabel>
+                        <FlexDiv
+                          justifyContent="space-between"
+                          padding={isMobile ? '7px 11px' : '10px 15px'}
+                        >
+                          <NewLabel
+                            display="flex"
+                            size={isMobile ? '10px' : '14px'}
+                            weight="500"
+                            height={isMobile ? '18px' : '24px'}
+                            color="#344054"
+                          >
+                            {useIFARM ? 'iFARM' : `f${id}`}
+                          </NewLabel>
+                          <NewLabel
+                            size={isMobile ? '10px' : '14px'}
+                            height={isMobile ? '18px' : '24px'}
+                            weight={isMobile ? '500' : '700'}
+                            color={isMobile ? '#15202b' : '#00D26B'}
+                          >
+                            {!connected ? (
+                              0
+                            ) : totalStaked ? (
+                              fromWei(
+                                totalStaked,
+                                fAssetPool.lpTokenData.decimals,
+                                POOL_BALANCES_DECIMALS,
+                                true,
+                              )
+                            ) : (
+                              <AnimatedDots />
+                            )}
+                          </NewLabel>
+                        </FlexDiv>
+                        <FlexDiv
+                          justifyContent="space-between"
+                          padding={isMobile ? '7px 11px' : '10px 15px'}
+                        >
+                          <NewLabel
+                            size={isMobile ? '10px' : '14px'}
+                            height={isMobile ? '18px' : '24px'}
+                            weight="500"
+                            color="#344054"
+                          >
+                            Est. Value
+                          </NewLabel>
+                          <NewLabel
+                            weight="500"
+                            size={isMobile ? '10px' : '14px'}
+                            height={isMobile ? '18px' : '24px'}
+                            color={isMobile ? '#15202b' : 'black'}
+                          >
+                            $
+                            {!connected ? (
+                              0
+                            ) : totalStaked ? (
+                              formatNumber(
+                                fromWei(
+                                  totalStaked,
+                                  fAssetPool.lpTokenData.decimals,
+                                  POOL_BALANCES_DECIMALS,
+                                  true,
+                                ) * usdPrice,
+                                POOL_BALANCES_DECIMALS,
+                              )
+                            ) : (
+                              <AnimatedDots />
+                            )}
+                          </NewLabel>
+                        </FlexDiv>
+                      </MyBalance>
+                      <MyBalance marginBottom={isMobile ? '24px' : '23px'}>
+                        <NewLabel
+                          size={isMobile ? '12px' : '14px'}
+                          weight="600"
+                          height={isMobile ? '18px' : '24px'}
+                          color="#344054"
+                          padding={isMobile ? '7px 11px' : '10px 15px'}
+                          borderBottom="1px solid #EBEBEB"
+                        >
+                          Deposit Available to Stake
+                        </NewLabel>
+                        <FlexDiv
+                          justifyContent="space-between"
+                          padding={isMobile ? '7px 11px' : '10px 15px'}
+                        >
+                          <NewLabel
+                            size={isMobile ? '10px' : '14px'}
+                            weight="500"
+                            height={isMobile ? '18px' : '24px'}
+                            color="#344054"
+                          >
+                            {useIFARM ? 'iFARM' : `f${id}`}
+                          </NewLabel>
+                          <NewLabel
+                            size={isMobile ? '10px' : '14px'}
+                            height={isMobile ? '18px' : '24px'}
+                            weight={isMobile ? '500' : '700'}
+                            color="#15202b"
+                          >
+                            {!connected ? (
+                              0
+                            ) : lpTokenBalance ? (
+                              fromWei(
+                                lpTokenBalance,
+                                fAssetPool.lpTokenData.decimals,
+                                POOL_BALANCES_DECIMALS,
+                                true,
+                              )
+                            ) : (
+                              <AnimatedDots />
+                            )}
+                          </NewLabel>
+                        </FlexDiv>
+                      </MyBalance>
+                    </>
+                  )}
                   {isMobile && (
                     <MyBalance marginBottom="24px">
                       <NewLabel
