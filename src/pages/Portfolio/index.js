@@ -613,7 +613,9 @@ const Portfolio = () => {
                           ? token.data.collateralAddress
                           : token.vaultAddress || token.tokenAddress
                         push(
-                          `${`${directDetailUrl}advanced`}${directDetailUrl + network}/${address}`,
+                          `${`${directDetailUrl}advanced`}${
+                            directDetailUrl + network
+                          }/${address}?from=portfolio`,
                         )
                       }}
                     >

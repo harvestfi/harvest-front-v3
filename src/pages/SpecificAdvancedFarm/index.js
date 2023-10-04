@@ -158,6 +158,11 @@ const AdvancedFarm = () => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const { push } = useHistory()
+  const history = useHistory()
+
+  const { pathname } = useLocation()
+  const location = useLocation()
+  const isFromEarningPage = location.search.includes('from=portfolio')
 
   const { vaultsData, loadingVaults } = useVaults()
   const { pools, userStats, fetchUserPoolStats } = usePools()
@@ -669,8 +674,6 @@ const AdvancedFarm = () => {
     }
   }, [account, vaultsData, underlyingValue, tokens])
 
-  const { pathname } = useLocation()
-
   const apyDaily = totalApy
     ? (((Number(totalApy) / 100 + 1) ** (1 / 365) - 1) * 100).toFixed(3)
     : null
@@ -791,7 +794,11 @@ const AdvancedFarm = () => {
           <TopButton className="back-btn">
             <BackBtnRect
               onClick={() => {
-                push(ROUTES.ADVANCED)
+                if (isFromEarningPage) {
+                  history.push(ROUTES.PORTFOLIO)
+                } else {
+                  history.push(ROUTES.ADVANCED)
+                }
               }}
             >
               <BackArrow src={Back} alt="" />
