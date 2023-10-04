@@ -96,7 +96,7 @@ const ValueContainer = styled.div`
 
   .tag {
     position: absolute;
-    left: 50px;
+    left: 53px;
     top: 31px;
   }
 
