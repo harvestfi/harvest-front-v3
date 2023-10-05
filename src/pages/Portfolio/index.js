@@ -306,7 +306,7 @@ const Portfolio = () => {
           if (token) {
             const useIFARM = symbol === FARM_TOKEN_SYMBOL
             let tokenName = '',
-              totalRewardAPR = 0
+              totalRewardAPRByPercent = 0
             for (let k = 0; k < token.tokenNames.length; k += 1) {
               tokenName += token.tokenNames[k]
               if (k !== token.tokenNames.length - 1) {
@@ -471,18 +471,22 @@ const Portfolio = () => {
               : '-'
             stats.apy = showAPY
 
-            const estimatedApy = get(tokenVault, `estimatedApy`, 0)
+            const estimatedApyByPercent = get(tokenVault, `estimatedApy`, 0)
+            const estimatedApy = estimatedApyByPercent / 100
             const vaultAPR = ((1 + estimatedApy) ** (1 / 365) - 1) * 365
             const vaultAPRDaily = vaultAPR / 365
             const vaultAPRMonthly = vaultAPR / 12
 
             for (let j = 0; j < fAssetPool.rewardAPR.length; j += 1) {
-              totalRewardAPR += Number(fAssetPool.rewardAPR[j])
+              totalRewardAPRByPercent += Number(fAssetPool.rewardAPR[j])
             }
+            const totalRewardAPR = totalRewardAPRByPercent / 100
             const poolAPRDaily = totalRewardAPR / 365
             const poolAPRMonthly = totalRewardAPR / 12
-            const swapFeeAPRDaily = fAssetPool.tradingApy / 365
-            const swapFeeAPRMonthly = fAssetPool.tradingApy / 12
+
+            const swapFeeAPRYearly = fAssetPool.tradingApy / 100
+            const swapFeeAPRDaily = swapFeeAPRYearly / 365
+            const swapFeeAPRMonthly = swapFeeAPRYearly / 12
 
             const dailyYield =
               Number(stake) * usdPrice * (vaultAPRDaily + poolAPRDaily + swapFeeAPRDaily) +
