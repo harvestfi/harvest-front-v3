@@ -167,6 +167,8 @@ const Portfolio = () => {
   // const [countList, setCountList] = useState(0)
   const [totalDeposit, setTotalDeposit] = useState(0)
   const [totalRewards, setTotalRewards] = useState(0)
+  const [totalYieldDaily, setTotalYieldDaily] = useState(0)
+  const [totalYieldMonthly, setTotalYieldMonthly] = useState(0)
 
   const [depositToken, setDepositToken] = useState([])
 
@@ -200,6 +202,8 @@ const Portfolio = () => {
     if (!connected) {
       setTotalDeposit(0)
       setTotalRewards(0)
+      setTotalYieldDaily(0)
+      setTotalYieldMonthly(0)
     }
   }, [connected])
 
@@ -263,7 +267,9 @@ const Portfolio = () => {
 
         const newStats = []
         let totalStake = 0,
-          valueRewards = 0
+          valueRewards = 0,
+          totalDailyYield = 0,
+          totalMonthlyYield = 0
         for (let i = 0; i < stakedVaults.length; i += 1) {
           const stats = {
             chain: '',
@@ -299,7 +305,8 @@ const Portfolio = () => {
           )
           if (token) {
             const useIFARM = symbol === FARM_TOKEN_SYMBOL
-            let tokenName = ''
+            let tokenName = '',
+              totalRewardAPR = 0
             for (let k = 0; k < token.tokenNames.length; k += 1) {
               tokenName += token.tokenNames[k]
               if (k !== token.tokenNames.length - 1) {
@@ -463,11 +470,39 @@ const Portfolio = () => {
                 : displayAPY(totalApy, DECIMAL_PRECISION, 10)
               : '-'
             stats.apy = showAPY
+
+            const estimatedApy = get(tokenVault, `estimatedApy`, 0)
+            const vaultAPR = ((1 + estimatedApy) ** (1 / 365) - 1) * 365
+            const vaultAPRDaily = vaultAPR / 365
+            const vaultAPRMonthly = vaultAPR / 12
+
+            for (let j = 0; j < fAssetPool.rewardAPR.length; j += 1) {
+              totalRewardAPR += Number(fAssetPool.rewardAPR[j])
+            }
+            const poolAPRDaily = totalRewardAPR / 365
+            const poolAPRMonthly = totalRewardAPR / 12
+            const swapFeeAPRDaily = fAssetPool.tradingApy / 365
+            const swapFeeAPRMonthly = fAssetPool.tradingApy / 12
+
+            const dailyYield =
+              Number(stake) * usdPrice * (vaultAPRDaily + poolAPRDaily + swapFeeAPRDaily) +
+              Number(unstake) * usdPrice * (vaultAPRDaily + swapFeeAPRDaily)
+            const monthlyYield =
+              Number(stake) * usdPrice * (vaultAPRMonthly + poolAPRMonthly + swapFeeAPRMonthly) +
+              Number(unstake) * usdPrice * (vaultAPRMonthly + swapFeeAPRMonthly)
+
+            stats.dailyYield = dailyYield
+            stats.monthlyYield = monthlyYield
+
+            totalDailyYield += dailyYield
+            totalMonthlyYield += monthlyYield
             newStats.push(stats)
           }
         }
         setTotalDeposit(formatNumber(totalStake, 2))
         setTotalRewards(formatNumber(valueRewards, 2))
+        setTotalYieldDaily(formatNumber(totalDailyYield, 2))
+        setTotalYieldMonthly(formatNumber(totalMonthlyYield, 2))
         const sortedTokenList = orderBy(newStats, ['balance'], ['desc'])
         setFarmTokenList(sortedTokenList)
         // setCountList(newStats.length)
@@ -496,8 +531,8 @@ const Portfolio = () => {
       <Inner>
         <SubPart>
           <TotalValue icon={Safe} content="Total Balance" price={totalDeposit} />
-          <TotalValue icon={Coin1} content="Est.Monthly Yield" price="0" />
-          <TotalValue icon={Coin2} content="Est.Daily Yield" price="0" />
+          <TotalValue icon={Coin1} content="Est.Monthly Yield" price={totalYieldMonthly} />
+          <TotalValue icon={Coin2} content="Est.Daily Yield" price={totalYieldDaily} />
           <TotalValue icon={Diamond} content="Rewards" price={totalRewards} />
           {/* <Div mobileView={isMobile}>{loadComplete && <ProfitSharing height="100%" />}</Div> */}
         </SubPart>
@@ -669,10 +704,22 @@ const Portfolio = () => {
                           />
                         </Content>
                         <Content width={isMobile ? '20%' : '11%'}>
-                          <ListItem weight={500} size={14} height={20} color="#101828" value="$0" />
+                          <ListItem
+                            weight={500}
+                            size={14}
+                            height={20}
+                            color="#101828"
+                            value={`$ ${formatNumber(info.monthlyYield, 2)}`}
+                          />
                         </Content>
                         <Content width={isMobile ? '20%' : '11%'}>
-                          <ListItem weight={500} size={14} height={20} color="#101828" value="$0" />
+                          <ListItem
+                            weight={500}
+                            size={14}
+                            height={20}
+                            color="#101828"
+                            value={`$ ${formatNumber(info.dailyYield, 2)}`}
+                          />
                         </Content>
                         <Content width={isMobile ? '20%' : '11%'}>
                           <ListItem
