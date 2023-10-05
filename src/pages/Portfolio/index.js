@@ -715,7 +715,7 @@ const Portfolio = () => {
                             size={14}
                             height={20}
                             value={
-                              info.apy === -1 ? 'Inactive' : `${formatNumberWido(info.apy, 6)}`
+                              info.apy === -1 ? 'Inactive' : `${formatNumberWido(info.apy, 2)}%`
                             }
                           />
                         </Content>
