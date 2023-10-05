@@ -16,16 +16,6 @@ const SelectTokenWido = styled.div`
   }
 `
 
-const ImgBtn = styled.img`
-  cursor: pointer;
-  transition: 0.25s;
-
-  @media screen and (max-width: 992px) {
-    width: 17px;
-    height: 16px;
-  }
-`
-
 const NewLabel = styled.div`
   ${props =>
     props.textAlign
@@ -161,7 +151,7 @@ const FTokenInfo = styled.div`
   border: 1px solid #6ce9a6;
   background: #f6fef9;
   padding: 16px;
-  display: ${props => (props.isShow === 'true' ? `flex` : 'none')};
+  // display: ${props => (props.isShow === 'true' ? `flex` : 'none')};
   justify-content: space-between;
   gap: 12px 0;
   margin-top: 15px;
@@ -183,4 +173,4 @@ const IconCard = styled.div`
   align-items: center;
 `
 
-export { SelectTokenWido, ImgBtn, NewLabel, Buttons, FTokenInfo, IconCard }
+export { SelectTokenWido, NewLabel, Buttons, FTokenInfo, IconCard }

@@ -3,12 +3,11 @@ import { get } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import React, { useState, useEffect } from 'react'
 import CheckIcon from '../../../../assets/images/logos/beginners/success-check.svg'
-import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import { WIDO_EXTEND_DECIMALS } from '../../../../constants'
 import { fromWei, toWei } from '../../../../services/web3'
 import { formatNumberWido } from '../../../../utils'
 import AnimatedDots from '../../../AnimatedDots'
-import { Buttons, ImgBtn, NewLabel, SelectTokenWido, FTokenInfo } from './style'
+import { Buttons, NewLabel, SelectTokenWido, FTokenInfo } from './style'
 
 const DepositResult = ({
   pickedToken,
@@ -27,7 +26,7 @@ const DepositResult = ({
 
   const pricePerFullShare = get(token, `pricePerFullShare`, 0)
 
-  const [showDesc, setShowDesc] = useState(true)
+  // const [showDesc, setShowDesc] = useState(true)
 
   const onClose = () => {
     setQuoteValue(null)
@@ -98,7 +97,7 @@ const DepositResult = ({
         </NewLabel>
       </NewLabel>
 
-      <FTokenInfo isShow={showDesc ? 'true' : 'false'}>
+      <FTokenInfo>
         <NewLabel marginRight={isMobile ? '8px' : '12px'} display="flex">
           <div>
             <img width={isMobile ? 15 : 20} src={CheckIcon} alt="" />
@@ -123,15 +122,6 @@ const DepositResult = ({
               You are now earning yield on your deposit.
             </NewLabel>
           </NewLabel>
-        </NewLabel>
-        <NewLabel>
-          <ImgBtn
-            src={CloseIcon}
-            alt=""
-            onClick={() => {
-              setShowDesc(false)
-            }}
-          />
         </NewLabel>
       </FTokenInfo>
 

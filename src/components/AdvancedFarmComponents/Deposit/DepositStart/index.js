@@ -422,8 +422,8 @@ const DepositStart = ({
                 color="#344054"
               >
                 {useIFARM
-                  ? `You will receive no less i{tokenSymbol} than the displayed amount.`
-                  : `You will receive no less f{tokenSymbol} than the displayed amount.`}
+                  ? `You will receive no less i${tokenSymbol} than the displayed amount.`
+                  : `You will receive no less f${tokenSymbol} than the displayed amount.`}
               </NewLabel>
             </ReactTooltip>
           </NewLabel>
