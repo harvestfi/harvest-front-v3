@@ -98,6 +98,20 @@ const NewLabel = styled.div`
   `
       : ''}
 
+  ${props =>
+    props.border
+      ? `
+    border: ${props.border};
+  `
+      : ''}
+
+  ${props =>
+    props.borderRadius
+      ? `
+    border-radius: ${props.borderRadius};
+  `
+      : ''}
+
   img.icon {
     margin-right: 10px;
   }
@@ -355,6 +369,32 @@ const ThemeMode = styled.div`
       `}
 `
 
+const SwitchTabTag = styled.div`
+  width: 48%;
+  transition: 0.25s;
+  color: ${props => props.color};
+  background: ${props => props.backColor};
+  box-shadow: ${props => props.boxShadow};
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+
+  ${props =>
+    props.num === 1
+      ? `
+        filter: invert(43%) sepia(5%) saturate(1510%) hue-rotate(183deg) brightness(99%) contrast(86%);
+      `
+      : ``}
+
+  p {
+    margin-bottom: 0px;
+    padding-left: 5px;
+    font-size: 14px;
+  }
+`
+
 const InsufficientSection = styled.div`
   border-radius: 12px;
   border: 1px solid #d0d5dd;
@@ -403,4 +443,5 @@ export {
   InsufficientSection,
   CloseBtn,
   DepositTokenSection,
+  SwitchTabTag,
 }

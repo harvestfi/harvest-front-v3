@@ -89,6 +89,20 @@ const NewLabel = styled.div`
   `
       : ''}
   
+  ${props =>
+    props.border
+      ? `
+    border: ${props.border};
+  `
+      : ''}
+
+  ${props =>
+    props.borderRadius
+      ? `
+    border-radius: ${props.borderRadius};
+  `
+      : ''}
+  
   img.info-icon {
     margin-right: 12px;
     width: 20px;
@@ -154,6 +168,31 @@ const TokenSelect = styled.div`
       width: 15px;
       height: 16px;
     }
+  }
+`
+
+const SwitchTabTag = styled.div`
+  width: 48%;
+  transition: 0.25s;
+  color: ${props => props.color};
+  background: ${props => props.backColor};
+  box-shadow: ${props => props.boxShadow};
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  ${props =>
+    props.num === 0
+      ? `
+        filter: invert(43%) sepia(5%) saturate(1510%) hue-rotate(183deg) brightness(99%) contrast(86%);
+      `
+      : ``}
+
+  p {
+    margin-bottom: 0px;
+    padding-left: 5px;
+    font-size: 14px;
   }
 `
 
@@ -397,4 +436,5 @@ export {
   CreditCardBox,
   ThemeMode,
   TokenSelectSection,
+  SwitchTabTag,
 }

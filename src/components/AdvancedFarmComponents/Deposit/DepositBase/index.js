@@ -7,6 +7,8 @@ import DropDownIcon from '../../../../assets/images/logos/wido/drop-down.svg'
 import WalletIcon from '../../../../assets/images/logos/beginners/wallet-in-button.svg'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
+import ArrowDown from '../../../../assets/images/logos/beginners/arrow-narrow-down.svg'
+import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.svg'
 import { POOL_BALANCES_DECIMALS } from '../../../../constants'
 import { useWallet } from '../../../../providers/Wallet'
 import { CHAIN_IDS } from '../../../../data/constants'
@@ -21,10 +23,11 @@ import {
   TokenSelect,
   NewLabel,
   AmountSection,
-  ThemeMode,
+  // ThemeMode,
   InsufficientSection,
   CloseBtn,
   DepositTokenSection,
+  SwitchTabTag,
 } from './style'
 
 const getChainName = chain => {
@@ -35,6 +38,9 @@ const getChainName = chain => {
       break
     case CHAIN_IDS.ARBITRUM_ONE:
       chainName = 'Arbitrum'
+      break
+    case CHAIN_IDS.BASE:
+      chainName = 'Base'
       break
     default:
       chainName = 'Ethereum'
@@ -55,9 +61,9 @@ const DepositBase = ({
   setInputAmount,
   token,
   supTokenList,
-  activeDepo,
   switchMethod,
   tokenSymbol,
+  useIFARM,
 }) => {
   const { connected, connectAction, account, chainId, setChainId } = useWallet()
 
@@ -76,25 +82,21 @@ const DepositBase = ({
     : ''
   const [depositName, setDepositName] = useState('Deposit')
   const [showWarning, setShowWarning] = useState(false)
+  const [showDepositIcon, setShowDepositIcon] = useState(true)
 
   useEffect(() => {
     if (account) {
       if (curChain !== '' && curChain !== tokenChain) {
         const chainName = getChainName(tokenChain)
-        setDepositName(`Switch to ${chainName}`)
+        setDepositName(`Change Network to ${chainName}`)
+        setShowDepositIcon(false)
       } else {
         setDepositName('Deposit')
       }
-    }
-  }, [account, curChain, tokenChain])
-
-  useEffect(() => {
-    if (connected) {
-      setDepositName('Deposit')
     } else {
       setDepositName('Connect Wallet to Get Started')
     }
-  }, [connected])
+  }, [account, curChain, tokenChain])
 
   const onClickDeposit = async () => {
     if (!connected) {
@@ -140,6 +142,11 @@ const DepositBase = ({
     setInputAmount(e.currentTarget.value)
   }
 
+  const mainTags = [
+    { name: 'Deposit', img: ArrowDown },
+    { name: 'Withdraw', img: ArrowUp },
+  ]
+
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   return (
@@ -150,26 +157,40 @@ const DepositBase = ({
         weight="600"
         color="#101828"
         display="flex"
-        justifyContent="space-between"
+        justifyContent="center"
         padding={isMobile ? '0' : '6px 0'}
+        marginBottom="15px"
+        border="1px solid #F8F8F8"
+        borderRadius="8px"
       >
-        Deposit
-        <ThemeMode mode={activeDepo ? 'deposit' : 'withdraw'}>
-          <div id="theme-switch">
-            <div className="switch-track">
-              <div className="switch-thumb" />
-            </div>
-
-            <input
-              type="checkbox"
-              checked={activeDepo}
-              onChange={switchMethod}
-              aria-label="Switch between dark and light mode"
-            />
-          </div>
-        </ThemeMode>
+        {mainTags.map((tag, i) => (
+          <SwitchTabTag
+            key={i}
+            num={i}
+            onClick={() => {
+              if (i === 1) {
+                switchMethod()
+              }
+            }}
+            color={i === 0 ? '#1F2937' : '#667085'}
+            borderColor={i === 0 ? '#F8F8F8' : ''}
+            backColor={i === 0 ? '#F8F8F8' : ''}
+            boxShadow={
+              i === 0
+                ? '0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10)'
+                : ''
+            }
+          >
+            <img src={tag.img} alt="logo" />
+            <p>{tag.name}</p>
+          </SwitchTabTag>
+        ))}
       </NewLabel>
-      <DepoTitle>Turn any token from your wallet into f{tokenSymbol}.</DepoTitle>
+      <DepoTitle>
+        {useIFARM
+          ? `Turn any token from your wallet into i${tokenSymbol}.`
+          : `Turn any token from your wallet into f${tokenSymbol}.`}
+      </DepoTitle>
       <TokenInfo>
         <AmountSection>
           <NewLabel
@@ -221,7 +242,7 @@ const DepositBase = ({
         <span>{formatNumberWido(balance, POOL_BALANCES_DECIMALS)}</span>
       </BalanceInfo>
       <InsufficientSection isShow={showWarning ? 'true' : 'false'}>
-        <NewLabel display="flex" widthDiv="80%" items="start">
+        <NewLabel display="flex" widthDiv="80%" items="center">
           <img className="info-icon" src={InfoIcon} alt="" />
           <NewLabel
             size={isMobile ? '10px' : '14px'}
@@ -251,7 +272,7 @@ const DepositBase = ({
           }}
         >
           {depositName}
-          <img src={WalletIcon} alt="" />
+          {showDepositIcon && <img src={WalletIcon} alt="" />}
         </Button>
       </NewLabel>
     </BaseWido>

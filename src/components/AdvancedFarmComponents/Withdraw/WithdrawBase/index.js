@@ -7,6 +7,8 @@ import ArrowRightIcon from '../../../../assets/images/logos/beginners/arrow-righ
 import DropDownIcon from '../../../../assets/images/logos/wido/drop-down.svg'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
+import ArrowDown from '../../../../assets/images/logos/beginners/arrow-narrow-down.svg'
+import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.svg'
 import { POOL_BALANCES_DECIMALS } from '../../../../constants'
 import { useWallet } from '../../../../providers/Wallet'
 import { fromWei, toWei } from '../../../../services/web3'
@@ -24,8 +26,9 @@ import {
   BalanceInfo,
   InsufficientSection,
   CloseBtn,
-  ThemeMode,
+  // ThemeMode,
   TokenSelectSection,
+  SwitchTabTag,
 } from './style'
 import { isSpecialApp } from '../../../../utils'
 
@@ -37,6 +40,9 @@ const getChainName = chain => {
       break
     case CHAIN_IDS.ARBITRUM_ONE:
       chainName = 'Arbitrum'
+      break
+    case CHAIN_IDS.BASE:
+      chainName = 'Base'
       break
     default:
       chainName = 'Ethereum'
@@ -59,8 +65,8 @@ const WithdrawBase = ({
   lpTokenBalance,
   token,
   supTokenList,
-  activeDepo,
   switchMethod,
+  useIFARM,
 }) => {
   const [unstakeInputValue, setUnstakeInputValue] = useState(0)
   const { account, connected, chainId } = useWallet()
@@ -80,25 +86,21 @@ const WithdrawBase = ({
     : ''
   const [withdrawName, setWithdrawName] = useState('Withdraw')
   const [showWarning, setShowWarning] = useState(false)
+  const [showWithdrawIcon, setShowWithdrawIcon] = useState(true)
 
   useEffect(() => {
     if (account) {
       if (curChain !== tokenChain) {
         const chainName = getChainName(tokenChain)
-        setWithdrawName(`Switch to ${chainName}`)
+        setWithdrawName(`Change Network to ${chainName}`)
+        setShowWithdrawIcon(false)
       } else {
         setWithdrawName('Withdraw')
       }
-    }
-  }, [account, curChain, tokenChain])
-
-  useEffect(() => {
-    if (connected) {
-      setWithdrawName('Withdraw')
     } else {
       setWithdrawName('Connect Wallet to Get Started')
     }
-  }, [connected])
+  }, [account, curChain, tokenChain])
 
   const onInputUnstake = e => {
     setUnstakeInputValue(e.currentTarget.value)
@@ -129,6 +131,11 @@ const WithdrawBase = ({
   }
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
+  const mainTags = [
+    { name: 'Deposit', img: ArrowDown },
+    { name: 'Withdraw', img: ArrowUp },
+  ]
+
   return (
     <BaseWido show={!withdrawStart && !selectToken && !finalStep}>
       <NewLabel
@@ -137,27 +144,40 @@ const WithdrawBase = ({
         weight="600"
         color="#101828"
         display="flex"
-        justifyContent="space-between"
-        items="center"
+        justifyContent="center"
         padding={isMobile ? '0' : '6px 0'}
+        marginBottom="15px"
+        border="1px solid #F8F8F8"
+        borderRadius="8px"
       >
-        Withdraw
-        <ThemeMode mode={activeDepo ? 'deposit' : 'withdraw'}>
-          <div id="theme-switch">
-            <div className="switch-track">
-              <div className="switch-thumb" />
-            </div>
-
-            <input
-              type="checkbox"
-              checked={activeDepo}
-              onChange={switchMethod}
-              aria-label="Switch between dark and light mode"
-            />
-          </div>
-        </ThemeMode>
+        {mainTags.map((tag, i) => (
+          <SwitchTabTag
+            key={i}
+            onClick={() => {
+              if (i === 0) {
+                switchMethod()
+              }
+            }}
+            num={i}
+            color={i === 1 ? '#1F2937' : '#667085'}
+            borderColor={i === 1 ? '#F8F8F8' : ''}
+            backColor={i === 1 ? '#F8F8F8' : ''}
+            boxShadow={
+              i === 1
+                ? '0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10)'
+                : ''
+            }
+          >
+            <img src={tag.img} alt="logo" />
+            <p>{tag.name}</p>
+          </SwitchTabTag>
+        ))}
       </NewLabel>
-      <Title>Withdraw f{tokenSymbol} into any token</Title>
+      <Title>
+        {useIFARM
+          ? `Withdraw i${tokenSymbol} into any token`
+          : `Withdraw f${tokenSymbol} into any token`}
+      </Title>
       <TokenInfo>
         <AmountSection>
           <NewLabel
@@ -218,7 +238,7 @@ const WithdrawBase = ({
       </BalanceInfo>
 
       <InsufficientSection isShow={showWarning ? 'true' : 'false'}>
-        <NewLabel display="flex" widthDiv="80%" items="start">
+        <NewLabel display="flex" widthDiv="80%" items="center">
           <img className="info-icon" src={InfoIcon} alt="" />
           <NewLabel
             size={isMobile ? '10px' : '14px'}
@@ -255,7 +275,7 @@ const WithdrawBase = ({
           }}
         >
           {withdrawName}
-          <img src={ArrowRightIcon} alt="" />
+          {showWithdrawIcon && <img src={ArrowRightIcon} alt="" />}
         </Button>
       </NewLabel>
     </BaseWido>

@@ -24,11 +24,11 @@ import BarChart from '../../assets/images/logos/beginners/bar-chart-01.svg'
 import DOT from '../../assets/images/logos/beginners/dot.svg'
 import BottomEffect from '../../assets/images/logos/beginners/Top Banner.svg'
 import AnimatedDots from '../../components/AnimatedDots'
-import DepositBase from '../../components/AdvancedFarmComponents/Deposit/SpecificDepositBase'
+import DepositBase from '../../components/AdvancedFarmComponents/Deposit/DepositBase'
 import DepositSelectToken from '../../components/AdvancedFarmComponents/Deposit/DepositSelectToken'
 import DepositStart from '../../components/AdvancedFarmComponents/Deposit/DepositStart'
 import DepositResult from '../../components/AdvancedFarmComponents/Deposit/DepositResult'
-import WithdrawBase from '../../components/AdvancedFarmComponents/Withdraw/SpecificWithdrawBase'
+import WithdrawBase from '../../components/AdvancedFarmComponents/Withdraw/WithdrawBase'
 import WithdrawSelectToken from '../../components/AdvancedFarmComponents/Withdraw/WithdrawSelectToken'
 import WithdrawStart from '../../components/AdvancedFarmComponents/Withdraw/WithdrawStart'
 import WithdrawResult from '../../components/AdvancedFarmComponents/Withdraw/WithdrawResult'
@@ -413,7 +413,7 @@ const BeginnersFarm = () => {
           setSupTokenList(supList)
 
           const supNoBalanceList = []
-          if (supList !== []) {
+          if (supList.length > 0) {
             for (let i = 0; i < supList.length; i += 1) {
               if (Number(supList[i].balance) === 0) {
                 supNoBalanceList.push(supList[i])
@@ -446,7 +446,7 @@ const BeginnersFarm = () => {
   }, [account, chain, balances]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (supTokenList !== []) {
+    if (supTokenList.length > 0) {
       for (let i = 0; i < supTokenList.length; i += 1) {
         if (supTokenList[i].symbol === 'USDC') {
           setPickedTokenDepo(supTokenList[i])
