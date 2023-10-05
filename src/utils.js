@@ -1401,7 +1401,7 @@ export const getTVLData = async (ago, address) => {
     await fetch(api)
       .then(async res => {
         res = await res.json()
-        if (res !== []) {
+        if (res.length > 0) {
           data = res.map(a => {
             return [a.calculateTime, a.lastTvl]
           })

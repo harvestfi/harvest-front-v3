@@ -24,7 +24,7 @@ import {
   IFARM_TOKEN_SYMBOL,
   POOL_BALANCES_DECIMALS,
   SPECIAL_VAULTS,
-  DECIMAL_PRECISION,
+  // DECIMAL_PRECISION,
   directDetailUrl,
 } from '../../constants'
 import { addresses } from '../../data'
@@ -39,7 +39,7 @@ import {
   formatNumber,
   formatNumberWido,
   ceil10,
-  displayAPY,
+  // displayAPY,
   getTotalApy,
   isLedgerLive,
   convertAmountToFARM,
@@ -458,18 +458,20 @@ const Portfolio = () => {
                 (token.data.dataFetched === false || totalApy !== null)
                 ? token.inactive
                   ? 'Inactive'
-                  : totalApy
-                  ? displayAPY(totalApy)
-                  : null
+                  : totalApy || null
                 : '-'
               : vaultPool.loaded && totalApy !== null && !loadingVaults
               ? token.inactive || token.testInactive || token.hideTotalApy || !token.dataFetched
                 ? token.inactive || token.testInactive
                   ? 'Inactive'
                   : null
-                : displayAPY(totalApy, DECIMAL_PRECISION, 10)
+                : totalApy
               : '-'
-            stats.apy = showAPY
+            if (showAPY === 'Inactive' || showAPY === null) {
+              stats.apy = Number(-1)
+            } else {
+              stats.apy = Number(showAPY)
+            }
 
             const estimatedApyByPercent = get(tokenVault, `estimatedApy`, 0)
             const estimatedApy = estimatedApyByPercent / 100
@@ -591,13 +593,21 @@ const Portfolio = () => {
                 </Col>
               </Column>
               <Column width={isMobile ? '20%' : '11%'}>
-                <Col>
+                <Col
+                  onClick={() => {
+                    sortCol('monthlyYield')
+                  }}
+                >
                   Monthly Yield
                   <img className="sortIcon" src={Sort} alt="sort" />
                 </Col>
               </Column>
               <Column width={isMobile ? '20%' : '11%'}>
-                <Col>
+                <Col
+                  onClick={() => {
+                    sortCol('dailyYield')
+                  }}
+                >
                   Daily Yield
                   <img className="sortIcon" src={Sort} alt="sort" />
                 </Col>
@@ -704,7 +714,9 @@ const Portfolio = () => {
                             weight={500}
                             size={14}
                             height={20}
-                            value={`${formatNumberWido(info.apy, 6)}`}
+                            value={
+                              info.apy === -1 ? 'Inactive' : `${formatNumberWido(info.apy, 6)}`
+                            }
                           />
                         </Content>
                         <Content width={isMobile ? '20%' : '11%'}>
