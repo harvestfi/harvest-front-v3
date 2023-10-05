@@ -768,7 +768,11 @@ const Portfolio = () => {
                             size={14}
                             height={20}
                             value={
-                              info.apy === -1 ? 'Inactive' : `${formatNumberWido(info.apy, 2)}%`
+                              info.apy === -1
+                                ? 'Inactive'
+                                : Number.isNaN(info.apy)
+                                ? '-'
+                                : `${formatNumberWido(info.apy, 2)}%`
                             }
                           />
                         </Content>
