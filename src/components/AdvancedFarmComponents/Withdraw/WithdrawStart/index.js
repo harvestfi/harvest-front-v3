@@ -40,6 +40,7 @@ const WithdrawStart = ({
   multipleAssets,
   useIFARM,
   setQuoteValue,
+  depositedValueUSD,
 }) => {
   const { account, web3, getWalletBalances } = useWallet()
   const { handleWithdraw } = useActions()
@@ -364,7 +365,13 @@ const WithdrawStart = ({
             </ReactTooltip>
           </NewLabel>
           <NewLabel weight="600" textAlign="right">
-            {fromInfoUsdAmount !== '' ? fromInfoUsdAmount : <AnimatedDots />}
+            {depositedValueUSD !== '' ? (
+              `$${depositedValueUSD}`
+            ) : fromInfoUsdAmount !== '' ? (
+              fromInfoUsdAmount
+            ) : (
+              <AnimatedDots />
+            )}
           </NewLabel>
         </NewLabel>
         <NewLabel

@@ -616,6 +616,7 @@ const AdvancedFarm = () => {
 
   const [totalValue, setTotalValue] = useState(0)
   const [underlyingValue, setUnderlyingValue] = useState(0)
+  const [depositedValueUSD, setDepositUsdValue] = useState(0)
   const firstUnderlyingBalance = useRef(true)
 
   const getPrice = async data => {
@@ -654,6 +655,15 @@ const AdvancedFarm = () => {
       )
     setTotalValue(total)
   }, [totalStaked, lpTokenBalance, fAssetPool])
+
+  useEffect(() => {
+    const depositUsdValue = formatNumber(
+      fromWei(lpTokenBalance, fAssetPool?.lpTokenData?.decimals, POOL_BALANCES_DECIMALS, true) *
+        usdPrice,
+      POOL_BALANCES_DECIMALS,
+    )
+    setDepositUsdValue(depositUsdValue)
+  }, [lpTokenBalance])
 
   useEffect(() => {
     const hasZeroValue = underlyingValue === 0
@@ -1405,22 +1415,7 @@ const AdvancedFarm = () => {
                           color="black"
                           self="center"
                         >
-                          $
-                          {!connected ? (
-                            0
-                          ) : lpTokenBalance ? (
-                            formatNumber(
-                              fromWei(
-                                lpTokenBalance,
-                                fAssetPool.lpTokenData.decimals,
-                                POOL_BALANCES_DECIMALS,
-                                true,
-                              ) * usdPrice,
-                              POOL_BALANCES_DECIMALS,
-                            )
-                          ) : (
-                            <AnimatedDots />
-                          )}
+                          ${!connected ? 0 : lpTokenBalance ? depositedValueUSD : <AnimatedDots />}
                         </NewLabel>
                       </FlexDiv>
                     </MyBalance>
@@ -1535,6 +1530,7 @@ const AdvancedFarm = () => {
                         multipleAssets={multipleAssets}
                         useIFARM={useIFARM}
                         setQuoteValue={setQuoteValueWith}
+                        depositedValueUSD={depositedValueUSD}
                       />
                       <WithdrawResult
                         pickedToken={pickedTokenWith}
