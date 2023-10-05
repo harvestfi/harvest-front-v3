@@ -121,7 +121,7 @@ const chainList = [
 
 const mainTags = [
   { name: 'Deposit', img: Safe },
-  { name: 'Stake', img: Diamond },
+  { name: 'Rewards', img: Diamond },
   { name: 'Details', img: BarChart },
 ]
 
@@ -892,7 +892,7 @@ const AdvancedFarm = () => {
             </MainDescText>
           ) : activeMainTag === 1 ? (
             <MainDescText>
-              Stake your deposit to earn extra token rewards, effectively maximizing your APY.
+              Receive token rewards by staking your deposit, effectively maximizing your APY.
             </MainDescText>
           ) : (
             <MainDescText>
@@ -949,7 +949,7 @@ const AdvancedFarm = () => {
                       padding={isMobile ? '9px 13px' : '10px 15px'}
                       borderBottom="1px solid #EBEBEB"
                     >
-                      My Extra Rewards
+                      My Rewards
                     </NewLabel>
                     <FlexDiv>
                       <VaultPanelActionsFooter {...viewComponentProps} />
