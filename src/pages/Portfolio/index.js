@@ -668,7 +668,7 @@ const Portfolio = () => {
                       weight="600"
                       color="white"
                     >
-                      Sum of your wallet’s staked and unstaked tokens, denominated in USD.
+                      Sum of staked and unstaked tokens of a specific farm, denominated in USD.
                     </NewLabel>
                   </ReactTooltip>
                   My Balance
