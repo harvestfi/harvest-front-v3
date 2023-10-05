@@ -725,7 +725,7 @@ const Portfolio = () => {
                             size={14}
                             height={20}
                             color="#101828"
-                            value={`$ ${formatNumber(info.monthlyYield, 2)}`}
+                            value={`$ ${formatNumber(info.monthlyYield, 4)}`}
                           />
                         </Content>
                         <Content width={isMobile ? '20%' : '11%'}>
@@ -734,7 +734,7 @@ const Portfolio = () => {
                             size={14}
                             height={20}
                             color="#101828"
-                            value={`$ ${formatNumber(info.dailyYield, 2)}`}
+                            value={`$ ${formatNumber(info.dailyYield, 4)}`}
                           />
                         </Content>
                         <Content width={isMobile ? '20%' : '11%'}>
