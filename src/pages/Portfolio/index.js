@@ -543,7 +543,7 @@ const Portfolio = () => {
           {/* <Div mobileView={isMobile}>{loadComplete && <ProfitSharing height="100%" />}</Div> */}
         </SubPart>
 
-        <DescInfo>Preview farms with your active deposits below.</DescInfo>
+        <DescInfo>Track your funds across farms and know how much yield you earn.</DescInfo>
 
         <TransactionDetails backColor={backColor}>
           {/* <FarmTitle borderColor={borderColor}>
