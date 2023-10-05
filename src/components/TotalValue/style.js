@@ -27,6 +27,13 @@ const Div = styled.div`
     font-size: 12px;
     line-height: 16px;
   }
+
+  #tt-total-balance,
+  #tt-monthly-yield,
+  #tt-daily-yield,
+  #tt-rewards {
+    max-width: 300px;
+  }
 `
 
 const Price = styled.div`
@@ -42,4 +49,138 @@ const Price = styled.div`
   }
 `
 
-export { Container, Div, Price }
+const InfoIcon = styled.img`
+  transition: 0.25s;
+  cursor: pointer;
+  margin-left: 5px;
+  margin-top: -3px;
+`
+
+const NewLabel = styled.div`
+  font-weight: ${props => props.weight || '400'};
+  font-size: ${props => props.size || '20px'};
+  line-height: ${props => props.height || '0px'};
+  ${props =>
+    props.borderBottom
+      ? `
+    border-bottom: ${props.borderBottom};
+  `
+      : ''}
+
+  ${props =>
+    props.color
+      ? `
+    color: ${props.color};
+  `
+      : ''}
+  ${props =>
+    props.position
+      ? `
+    position: ${props.position};
+  `
+      : ''}
+  ${props =>
+    props.align
+      ? `
+    text-align: ${props.align};
+  `
+      : ''}
+  ${props =>
+    props.justifyContent
+      ? `
+    justify-content: ${props.justifyContent};
+  `
+      : ''}
+  ${props =>
+    props.marginTop
+      ? `
+    margin-top: ${props.marginTop};
+  `
+      : ''}
+  ${props =>
+    props.marginLeft
+      ? `
+    margin-left: ${props.marginLeft};
+  `
+      : ''}
+  ${props =>
+    props.marginBottom
+      ? `
+    margin-bottom: ${props.marginBottom};
+  `
+      : ''}
+  ${props =>
+    props.marginRight
+      ? `
+    margin-right: ${props.marginRight};
+  `
+      : ''}
+  ${props =>
+    props.display
+      ? `
+    display: ${props.display};
+  `
+      : ''}
+  ${props =>
+    props.items
+      ? `
+    align-items: ${props.items};
+  `
+      : ''}
+  ${props =>
+    props.self
+      ? `
+    align-self: ${props.self};
+  `
+      : ''}
+  ${props =>
+    props.padding
+      ? `
+    padding: ${props.padding};
+  `
+      : ''}
+  ${props =>
+    props.width
+      ? `
+    width: ${props.width};
+  `
+      : ''}
+  ${props =>
+    props.borderRadius
+      ? `
+    border-radius: ${props.borderRadius};
+    `
+      : ``}
+  img.icon {
+    margin-right: 10px;
+  }
+
+  img.thumbs-up {
+    margin-right: 10px;
+  }
+
+  img.info-icon {
+    margin-left: 15px;
+  }
+
+  #info .tooltip-inner {
+    background: black;
+  }
+
+  @media screen and (max-width: 992px) {
+    img.icon {
+      margin-right: 5px;
+    }
+
+    img.info {
+      margin-left: 5px;
+    }
+
+    img.thumbs-up {
+      margin-right: 5px;
+      width: 11px;
+    }
+  }
+`
+
+export { Container, Div, Price, InfoIcon, NewLabel }

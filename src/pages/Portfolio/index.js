@@ -1,6 +1,7 @@
 import { BigNumber } from 'bignumber.js'
 import { useWindowWidth } from '@react-hook/window-size'
 import useEffectWithPrevious from 'use-effect-with-previous'
+import ReactTooltip from 'react-tooltip'
 import { find, get, isEmpty, orderBy, isEqual } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import React, { useRef, useEffect, useMemo, useState } from 'react'
@@ -15,6 +16,7 @@ import Coin2 from '../../assets/images/logos/dashboard/coins-stacked-04.svg'
 import Diamond from '../../assets/images/logos/dashboard/diamond-01.svg'
 import Sort from '../../assets/images/logos/dashboard/sort.svg'
 import File from '../../assets/images/logos/dashboard/file-02.svg'
+import Info from '../../assets/images/logos/earn/info.svg'
 import ListItem from '../../components/DashboardComponents/ListItem'
 import TotalValue from '../../components/TotalValue'
 import {
@@ -66,6 +68,8 @@ import {
   ContentInner,
   TableContent,
   DescInfo,
+  InfoIcon,
+  NewLabel,
 } from './style'
 
 const getChainIcon = chain => {
@@ -115,6 +119,7 @@ const Portfolio = () => {
     fontColor,
     borderColor,
     totalValueFontColor,
+    filterColor,
   } = useThemeContext()
 
   // const [switchBalance, setSwitchBalance] = useState(false)
@@ -536,10 +541,34 @@ const Portfolio = () => {
     <Container pageBackColor={pageBackColor} fontColor={fontColor}>
       <Inner>
         <SubPart>
-          <TotalValue icon={Safe} content="Total Balance" price={totalDeposit} />
-          <TotalValue icon={Coin1} content="Est.Monthly Yield" price={totalYieldMonthly} />
-          <TotalValue icon={Coin2} content="Est.Daily Yield" price={totalYieldDaily} />
-          <TotalValue icon={Diamond} content="Rewards" price={totalRewards} />
+          <TotalValue
+            icon={Safe}
+            content="Total Balance"
+            price={totalDeposit}
+            toolTipTitle="tt-total-balance"
+            toolTip="Sum of your wallet’s staked and unstaked tokens, denominated in USD."
+          />
+          <TotalValue
+            icon={Coin1}
+            content="Est.Monthly Yield"
+            price={totalYieldMonthly}
+            toolTipTitle="tt-monthly-yield"
+            toolTip="Estimated monthly earnings on all your deposits, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
+          />
+          <TotalValue
+            icon={Coin2}
+            content="Est.Daily Yield"
+            price={totalYieldDaily}
+            toolTipTitle="tt-daily-yield"
+            toolTip="Estimated daily earnings on all your deposits, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
+          />
+          <TotalValue
+            icon={Diamond}
+            content="Rewards"
+            price={totalRewards}
+            toolTipTitle="tt-rewards"
+            toolTip="Accrued rewards on all your staked deposits, denominated in USD."
+          />
           {/* <Div mobileView={isMobile}>{loadComplete && <ProfitSharing height="100%" />}</Div> */}
         </SubPart>
 
@@ -618,6 +647,30 @@ const Portfolio = () => {
                     sortCol('balance')
                   }}
                 >
+                  <InfoIcon
+                    className="info"
+                    width={isMobile ? 10 : 16}
+                    src={Info}
+                    alt=""
+                    data-tip
+                    data-for="tooltip-balance"
+                    filterColor={filterColor}
+                  />
+                  <ReactTooltip
+                    id="tooltip-balance"
+                    backgroundColor="black"
+                    borderColor="black"
+                    textColor="white"
+                  >
+                    <NewLabel
+                      size={isMobile ? '10px' : '12px'}
+                      height={isMobile ? '15px' : '18px'}
+                      weight="600"
+                      color="white"
+                    >
+                      Sum of your wallet’s staked and unstaked tokens, denominated in USD.
+                    </NewLabel>
+                  </ReactTooltip>
                   My Balance
                   <img className="sortIcon" src={Sort} alt="sort" />
                 </Col>
