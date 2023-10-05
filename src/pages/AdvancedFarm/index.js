@@ -1396,7 +1396,7 @@ const AdvancedFarm = () => {
                           color="#344054"
                           self="center"
                         >
-                          Est. Value
+                          Est. USD Value
                         </NewLabel>
                         <NewLabel
                           weight="500"
@@ -1848,7 +1848,7 @@ const AdvancedFarm = () => {
                             weight="500"
                             color="#344054"
                           >
-                            Est. Value
+                            Est. USD Value
                           </NewLabel>
                           <NewLabel
                             weight="500"

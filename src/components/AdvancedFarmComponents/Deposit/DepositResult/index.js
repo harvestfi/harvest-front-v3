@@ -26,8 +26,6 @@ const DepositResult = ({
 
   const pricePerFullShare = get(token, `pricePerFullShare`, 0)
 
-  // const [showDesc, setShowDesc] = useState(true)
-
   const onClose = () => {
     setQuoteValue(null)
     setFinalStep(false)
