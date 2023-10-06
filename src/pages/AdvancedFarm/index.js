@@ -663,7 +663,7 @@ const AdvancedFarm = () => {
       POOL_BALANCES_DECIMALS,
     )
     setDepositUsdValue(depositUsdValue)
-  }, [lpTokenBalance])
+  }, [lpTokenBalance, fAssetPool, usdPrice])
 
   useEffect(() => {
     const hasZeroValue = underlyingValue === 0
