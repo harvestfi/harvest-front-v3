@@ -432,7 +432,10 @@ html {
   }
 
   .detail-token-no-width {
-    // text-decoration: underline;
+    font-size: 14px; 
+    line-height: 24px;
+    font-weight: 500;
+    color: #344054;
 
     @media screen and (max-width: 992px) {
       font-size: 10px;

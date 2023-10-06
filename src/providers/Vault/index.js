@@ -225,7 +225,7 @@ const VaultsProvider = _ref => {
       if (loadedUserVaultsWeb3Provider.current) {
         setLoadingFarmingBalances(true)
         const curStats = updatedUserStats || userStats
-        if (curStats.length !== 0 && curStats !== {}) {
+        if (curStats.length !== 0) {
           await Promise.all(
             filterVaults(selectedVaults).map(async vaultSymbol => {
               const fetchedBalance = await calculateFarmingBalance(
