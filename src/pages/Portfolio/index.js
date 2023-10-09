@@ -531,28 +531,28 @@ const Portfolio = () => {
             content="Total Balance"
             price={totalDeposit}
             toolTipTitle="tt-total-balance"
-            toolTip="Sum of your wallet’s staked and unstaked tokens, denominated in USD."
+            toolTip="Sum of your wallet’s staked and unstaked tokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
           />
           <TotalValue
             icon={Coin1}
             content="Est. Monthly Yield"
             price={totalYieldMonthly}
             toolTipTitle="tt-monthly-yield"
-            toolTip="Estimated monthly earnings on all your deposits, denominated in USD. Note that displayed amount is subject to change due to the live pricing of underlying tokens."
+            toolTip="Estimated monthly earnings on all your deposits, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
           />
           <TotalValue
             icon={Coin2}
             content="Est. Daily Yield"
             price={totalYieldDaily}
             toolTipTitle="tt-daily-yield"
-            toolTip="Estimated daily earnings on all your deposits, denominated in USD. Note that displayed amount is subject to change due to the live pricing of underlying tokens."
+            toolTip="Estimated daily earnings on all your deposits, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
           />
           <TotalValue
             icon={Diamond}
             content="Rewards"
             price={totalRewards}
             toolTipTitle="tt-rewards"
-            toolTip="Accrued rewards on all your staked deposits, denominated in USD."
+            toolTip="Accrued rewards on all your staked deposits, denominated in USD.  Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
           />
         </SubPart>
 
@@ -627,7 +627,9 @@ const Portfolio = () => {
                       weight="600"
                       color="white"
                     >
-                      Sum of staked and unstaked tokens of a specific farm, denominated in USD.
+                      Sum of staked and unstaked tokens of a specific farm, denominated in USD. Note
+                      that displayed amounts are subject to change due to the live pricing of
+                      underlying tokens.
                     </NewLabel>
                   </ReactTooltip>
                   My Balance
