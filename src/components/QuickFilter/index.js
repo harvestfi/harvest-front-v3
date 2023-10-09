@@ -94,8 +94,8 @@ const FarmsList = [
 ]
 
 const RiskList = [
-  { id: 1, name: 'New', img: Zap, filter: 'beginners' },
-  { id: 2, name: 'Popular Now', img: Rocket, filter: 'advanced' },
+  { id: 1, name: 'New', img: Zap, filter: 'new' },
+  { id: 2, name: 'Popular Now', img: Rocket, filter: 'popular' },
 ]
 
 const AssetsList = [
@@ -230,10 +230,10 @@ const QuickFilter = ({
     let text = ''
     switch (id) {
       case 0:
-        text = 'Beginners'
+        text = 'New'
         break
       case 1:
-        text = 'Advanced'
+        text = 'PopularNow'
         break
       default:
         break

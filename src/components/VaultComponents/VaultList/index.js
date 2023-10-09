@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { debounce, find, get, isArray, isEqual, keys, orderBy, sortBy, uniq } from 'lodash'
 import move from 'lodash-move'
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useMemo, useRef, useState, useEffect } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import EmptyIcon from '../../../assets/images/logos/farm/empty.svg'
@@ -29,6 +29,7 @@ import {
   getUserVaultBalance,
   getVaultValue,
   isSpecialApp,
+  getPriceFeed,
 } from '../../../utils'
 import VaultPanel from '../VaultPanel'
 import VaultsListHeader from '../VaultsListHeader'
@@ -310,14 +311,23 @@ const formatVaults = (
   }
 
   if (selectFarmType !== '') {
-    vaultsSymbol = vaultsSymbol.filter(
-      tokenSymbol =>
-        get(groupOfVaults[tokenSymbol], 'tags') &&
-        groupOfVaults[tokenSymbol].tags
-          .join(', ')
-          .toLowerCase()
-          .includes(selectFarmType.toLowerCase().trim()),
-    )
+    if (selectFarmType === 'New') {
+      vaultsSymbol = orderBy(vaultsSymbol, v => get(groupOfVaults, `${v}.publishDate`), 'desc')
+    } else if (selectFarmType === 'PopularNow') {
+      vaultsSymbol = orderBy(
+        orderBy(vaultsSymbol, v => get(groupOfVaults, `${v}.publishDate`), 'desc').slice(0, 15),
+        v => Number(getVaultValue(groupOfVaults[v])),
+        'desc',
+      )
+    }
+    // vaultsSymbol = vaultsSymbol.filter(
+    //   tokenSymbol =>
+    //     get(groupOfVaults[tokenSymbol], 'tags') &&
+    //     groupOfVaults[tokenSymbol].tags
+    //       .join(', ')
+    //       .toLowerCase()
+    //       .includes(selectFarmType.toLowerCase().trim()),
+    // )
   }
   vaultsSymbol = [...new Set(vaultsSymbol)]
   return vaultsSymbol
@@ -409,6 +419,39 @@ const VaultList = () => {
   } else {
     groupOfVaults = { ...vaultsData, ...poolVaults }
   }
+
+  useEffect(() => {
+    const getCreatedAtData = async () => {
+      if (groupOfVaults) {
+        const vaultsKey = Object.keys(groupOfVaults)
+        vaultsKey.map(async symbol => {
+          const token = groupOfVaults[symbol]
+          const tokenChainId = token.chain || token.data.chain
+          const isSpecialVault = token.liquidityPoolVault || token.poolVault
+          const paramAddress = isSpecialVault
+            ? token.data.collateralAddress
+            : token.vaultAddress || token.tokenAddress
+          const vaultIds = vaultsKey.filter(
+            vaultId =>
+              groupOfVaults[vaultId].vaultAddress === paramAddress ||
+              groupOfVaults[vaultId].tokenAddress === paramAddress,
+          )
+          const id = vaultIds[0]
+          const tokenVault = get(vaultsData, token.hodlVaultId || id)
+
+          const vaultPool = isSpecialVault
+            ? token.data
+            : find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
+          const address =
+            token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+          const { data, flag } = await getPriceFeed(address, tokenChainId)
+          groupOfVaults[symbol].publishDate = flag ? Number(data[data.length - 1].timestamp) : null
+        })
+      }
+    }
+
+    getCreatedAtData()
+  }, [pools, vaultsData]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const vaultsSymbol = useMemo(
     () =>
