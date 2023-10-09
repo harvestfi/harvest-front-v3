@@ -352,7 +352,13 @@ const VaultList = () => {
     farmingBalances,
   } = useVaults()
   const { profitShareAPY } = useStats()
-  const { pools, fetchUserPoolStats, userStats, loadedUserPoolsWeb3Provider } = usePools()
+  const {
+    pools,
+    totalPools,
+    fetchUserPoolStats,
+    userStats,
+    loadedUserPoolsWeb3Provider,
+  } = usePools()
   const { account, chain, selChain, getWalletBalances, balances, chainId } = useWallet()
   const [openVault, setOpen] = useState(null)
   const [loaded, setLoaded] = useState(null)
@@ -371,11 +377,11 @@ const VaultList = () => {
     setLoadComplete(true)
   }, [])
 
-  const farmProfitSharingPool = pools.find(
+  const farmProfitSharingPool = totalPools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )
-  const farmWethPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_WETH_POOL_ID)
-  const farmGrainPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_GRAIN_POOL_ID)
+  const farmWethPool = totalPools.find(pool => pool.id === SPECIAL_VAULTS.FARM_WETH_POOL_ID)
+  const farmGrainPool = totalPools.find(pool => pool.id === SPECIAL_VAULTS.FARM_GRAIN_POOL_ID)
 
   const poolVaults = useMemo(
     () => ({
@@ -441,7 +447,7 @@ const VaultList = () => {
 
           const vaultPool = isSpecialVault
             ? token.data
-            : find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
+            : find(totalPools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
           const address =
             token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
           const { data, flag } = await getPriceFeed(address, tokenChainId)
