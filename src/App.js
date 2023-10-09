@@ -25,8 +25,15 @@ const NewLoginModal = () => {
   const newLogin = localStorage.getItem('newLogin')
   const [open, setOpen] = useState(false)
   localStorage.setItem('darkmode', false)
+  const [showModal, setShowModal] = useState(true)
 
   useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search)
+    if (queryParams.has('utm_source') || queryParams.has('utm_medium')) {
+      setShowModal(false) // Don't show the modal if the parameters are present
+      return
+    }
+
     if (newLogin === null || newLogin === 'true') {
       localStorage.setItem('newLogin', true)
       setOpen(true)
@@ -35,7 +42,7 @@ const NewLoginModal = () => {
 
   return (
     <>
-      {newLogin ? (
+      {showModal && newLogin ? (
         <Modal
           title="Important Notice"
           confirmationLabel="I certify that I read and agree with this warning"
