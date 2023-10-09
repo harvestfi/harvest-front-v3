@@ -120,8 +120,6 @@ const Portfolio = () => {
     filterColor,
   } = useThemeContext()
 
-  // const [switchBalance, setSwitchBalance] = useState(false)
-
   const farmProfitSharingPool = totalPools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )
@@ -163,11 +161,7 @@ const Portfolio = () => {
 
   const groupOfVaults = { ...vaultsData, ...poolVaults }
 
-  // const switchBalanceStyle = () => {
-  //   setSwitchBalance(!switchBalance)
-  // }
   const [farmTokenList, setFarmTokenList] = useState([])
-  // const [countList, setCountList] = useState(0)
   const [totalDeposit, setTotalDeposit] = useState(0)
   const [totalRewards, setTotalRewards] = useState(0)
   const [totalYieldDaily, setTotalYieldDaily] = useState(0)
@@ -514,13 +508,11 @@ const Portfolio = () => {
         setTotalYieldMonthly(formatNumber(totalMonthlyYield, 2))
         const sortedTokenList = orderBy(newStats, ['balance'], ['desc'])
         setFarmTokenList(sortedTokenList)
-        // setCountList(newStats.length)
       }
 
       getFarmTokenInfo()
     }
   }, [account, userStats, balances, farmingBalances]) // eslint-disable-line react-hooks/exhaustive-deps
-  // }, [account, userStats, balances, farmingBalances, switchBalance]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const sortCol = field => {
     const tokenList = orderBy(farmTokenList, [field], [sortOrder ? 'asc' : 'desc'])
@@ -567,31 +559,6 @@ const Portfolio = () => {
         <DescInfo>Track your funds across farms and know how much yield you earn.</DescInfo>
 
         <TransactionDetails backColor={backColor}>
-          {/* <FarmTitle borderColor={borderColor}>
-            <MyFarm fontColor={fontColor}>
-              My Farms
-              <Counter count={countList}>{countList > 0 ? countList : ''}</Counter>
-              &nbsp;
-            </MyFarm>
-            <ThemeMode
-              mode={switchBalance ? 'usd' : 'token'}
-              backColor={toggleBackColor}
-              borderColor={borderColor}
-            >
-              <div id="theme-switch">
-                <div className="switch-track">
-                  <div className="switch-thumb" />
-                </div>
-
-                <input
-                  type="checkbox"
-                  checked={switchBalance}
-                  onChange={switchBalanceStyle}
-                  aria-label="Switch between dark and light mode"
-                />
-              </div>
-            </ThemeMode>
-          </FarmTitle> */}
           <TableContent count={farmTokenList.length}>
             <Header borderColor={borderColor} backColor={backColor} width={ceilWidth}>
               <Column width={isMobile ? '23%' : '40%'} color={totalValueFontColor}>
