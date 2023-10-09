@@ -741,7 +741,11 @@ const Portfolio = () => {
                             size={14}
                             height={20}
                             color="#101828"
-                            value={`$ ${formatNumber(info.monthlyYield, 4)}`}
+                            value={`${
+                              info.monthlyYield < 0.01
+                                ? '<$0.01'
+                                : `$ ${formatNumber(info.monthlyYield, 4)}`
+                            }`}
                           />
                         </Content>
                         <Content width={isMobile ? '20%' : '11%'}>
@@ -750,7 +754,11 @@ const Portfolio = () => {
                             size={14}
                             height={20}
                             color="#101828"
-                            value={`$ ${formatNumber(info.dailyYield, 4)}`}
+                            value={`${
+                              info.dailyYield < 0.01
+                                ? '<$0.01'
+                                : `$ ${formatNumber(info.dailyYield, 4)}`
+                            }`}
                           />
                         </Content>
                         <Content width={isMobile ? '20%' : '11%'}>
@@ -759,7 +767,9 @@ const Portfolio = () => {
                             size={14}
                             height={20}
                             color="#101828"
-                            value={`$ ${formatNumber(info.balance, 2)}`}
+                            value={`${
+                              info.balance < 0.01 ? '<$0.01' : `$ ${formatNumber(info.balance, 2)}`
+                            }`}
                           />
                         </Content>
                         <Content width={isMobile ? '20%' : '11%'}>
@@ -768,7 +778,11 @@ const Portfolio = () => {
                             size={14}
                             height={20}
                             color="#101828"
-                            label={`$ ${formatNumberWido(info.totalRewardUsd, 6)}`}
+                            value={`${
+                              info.totalRewardUsd < 0.01
+                                ? '<$0.01'
+                                : `$ ${formatNumberWido(info.totalRewardUsd, 6)}`
+                            }`}
                           />
                         </Content>
                         <Content
@@ -807,7 +821,7 @@ const Portfolio = () => {
                                 weight={500}
                                 size={isMobile ? 10 : 14}
                                 height={isMobile ? 13 : 20}
-                                value={`${formatNumberWido(info.unstake, 6)}`}
+                                value={`${formatNumberWido(info.unstake, 9)}`}
                                 color="#475467"
                               />
                             </ContentInner>
@@ -824,7 +838,7 @@ const Portfolio = () => {
                                 weight={500}
                                 size={isMobile ? 10 : 14}
                                 height={isMobile ? 13 : 20}
-                                value={`${formatNumberWido(info.stake, 6)}`}
+                                value={`${formatNumberWido(info.stake, 9)}`}
                                 color="#475467"
                               />
                             </ContentInner>
@@ -865,7 +879,11 @@ const Portfolio = () => {
                                   weight={500}
                                   size={isMobile ? 10 : 14}
                                   height={isMobile ? 13 : 20}
-                                  value={`$ ${formatNumberWido(info.rewardUSD[key], 2)}`}
+                                  value={`${
+                                    info.rewardUSD[key] < 0.01
+                                      ? '<$0.01'
+                                      : `$ ${formatNumberWido(info.rewardUSD[key], 2)}`
+                                  }`}
                                   color="#101828"
                                 />
                               </div>
