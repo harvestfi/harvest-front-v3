@@ -179,7 +179,7 @@ const SelectTokenList = ({
           {soonToSupList.length > 0 && (
             <>
               <Label>Soon to be supported</Label>
-              {balanceList.map((data, i) => (
+              {soonToSupList.map((data, i) => (
                 <Container
                   key={i}
                   hoverColor={widoDepoTokenListHoverColor}
