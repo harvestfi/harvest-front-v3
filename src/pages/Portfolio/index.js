@@ -26,7 +26,6 @@ import {
   IFARM_TOKEN_SYMBOL,
   POOL_BALANCES_DECIMALS,
   SPECIAL_VAULTS,
-  // DECIMAL_PRECISION,
   directDetailUrl,
 } from '../../constants'
 import { addresses } from '../../data'
@@ -41,7 +40,6 @@ import {
   formatNumber,
   formatNumberWido,
   ceil10,
-  // displayAPY,
   getTotalApy,
   isLedgerLive,
   convertAmountToFARM,
@@ -524,11 +522,6 @@ const Portfolio = () => {
   }, [account, userStats, balances, farmingBalances]) // eslint-disable-line react-hooks/exhaustive-deps
   // }, [account, userStats, balances, farmingBalances, switchBalance]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // const [loadComplete, setLoadComplete] = useState(false)
-  // useEffect(() => {
-  //   setLoadComplete(true)
-  // }, [])
-
   const sortCol = field => {
     const tokenList = orderBy(farmTokenList, [field], [sortOrder ? 'asc' : 'desc'])
     setFarmTokenList(tokenList)
@@ -569,7 +562,6 @@ const Portfolio = () => {
             toolTipTitle="tt-rewards"
             toolTip="Accrued rewards on all your staked deposits, denominated in USD."
           />
-          {/* <Div mobileView={isMobile}>{loadComplete && <ProfitSharing height="100%" />}</Div> */}
         </SubPart>
 
         <DescInfo>Track your funds across farms and know how much yield you earn.</DescInfo>
