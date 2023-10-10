@@ -2,6 +2,7 @@ import { BigNumber } from 'bignumber.js'
 import { useWindowWidth } from '@react-hook/window-size'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import ReactTooltip from 'react-tooltip'
+import CoinGecko from 'coingecko-api'
 import { find, get, isEmpty, orderBy, isEqual } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import React, { useRef, useEffect, useMemo, useState } from 'react'
@@ -100,6 +101,31 @@ const chainList = isLedgerLive()
       { id: 3, name: 'Arbitrum', chainId: 42161 },
     ]
 
+const CoinGeckoClient = new CoinGecko()
+const getCoinListFromApi = async () => {
+  let data = []
+  try {
+    data = await CoinGeckoClient.coins.list()
+    return data
+  } catch (err) {
+    console.log('Fetch Chart Data error: ', err)
+    return []
+  }
+}
+const getTokenPriceFromApi = async tokenID => {
+  try {
+    const data = await CoinGeckoClient.simple.price({
+      ids: tokenID,
+      // eslint-disable-next-line camelcase
+      vs_currencies: 'usd',
+    })
+    return data.data[tokenID].usd
+  } catch (err) {
+    console.log('Fetch Chart Data error: ', err)
+    return null
+  }
+}
+
 const Portfolio = () => {
   const { push } = useHistory()
   const { connected, balances, account, getWalletBalances } = useWallet()
@@ -119,6 +145,17 @@ const Portfolio = () => {
     totalValueFontColor,
     filterColor,
   } = useThemeContext()
+
+  const [apiData, setApiData] = useState([])
+
+  useEffect(() => {
+    const getCoinList = async () => {
+      const data = await getCoinListFromApi()
+      setApiData(data)
+    }
+
+    getCoinList()
+  }, [])
 
   const farmProfitSharingPool = totalPools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
@@ -412,6 +449,25 @@ const Portfolio = () => {
                   (rewardToken.data &&
                     rewardToken.data.lpTokenData &&
                     rewardToken.data.lpTokenData.decimals)
+              } else {
+                const fetchData = async () => {
+                  try {
+                    for (let ids = 0; ids < apiData.data.length; ids += 1) {
+                      const tempData = apiData.data[ids]
+                      const tempSymbol = tempData.symbol
+                      if (tempSymbol.toLowerCase() === rewardSymbol.toLowerCase()) {
+                        // eslint-disable-next-line no-await-in-loop
+                        usdRewardPrice = await getTokenPriceFromApi(tempData.id)
+                        console.log(`${rewardSymbol} - USD Price: ${usdRewardPrice}`)
+                        return
+                      }
+                    }
+                  } catch (error) {
+                    console.error('Error:', error)
+                  }
+                }
+
+                fetchData()
               }
 
               // eslint-disable-next-line one-var
