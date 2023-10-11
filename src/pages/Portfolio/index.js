@@ -423,6 +423,8 @@ const Portfolio = () => {
             const totalUnsk = parseFloat((isNaN(Number(unstake)) ? 0 : unstake) * usdPrice)
             totalStake += totalStk + totalUnsk
             const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
+            const tempPricePerFullShare = get(token, `pricePerFullShare`, 0)
+            const pricePerFullShare = fromWei(tempPricePerFullShare, token.decimals)
             for (let l = 0; l < rewardTokenSymbols.length; l += 1) {
               // eslint-disable-next-line one-var
               let rewardSymbol = rewardTokenSymbols[l].toUpperCase(),
@@ -459,6 +461,35 @@ const Portfolio = () => {
                   (rewardToken.data &&
                     rewardToken.data.lpTokenData &&
                     rewardToken.data.lpTokenData.decimals)
+              } else if (rewardSymbol.substring(0, 1) === 'f') {
+                let underlyingRewardSymbol
+                if (rewardSymbol.substring(0, 2) === 'fx') {
+                  underlyingRewardSymbol = rewardSymbol.substring(2)
+                } else {
+                  underlyingRewardSymbol = rewardSymbol.substring(1)
+                }
+                const fetchData = async () => {
+                  try {
+                    for (let ids = 0; ids < apiData.length; ids += 1) {
+                      const tempData = apiData[ids]
+                      const tempSymbol = tempData.symbol
+                      if (tempSymbol.toLowerCase() === underlyingRewardSymbol.toLowerCase()) {
+                        // eslint-disable-next-line no-await-in-loop
+                        const usdUnderlyingRewardPrice = await getTokenPriceFromApi(tempData.id)
+                        usdRewardPrice =
+                          Number(usdUnderlyingRewardPrice) * Number(pricePerFullShare)
+                        console.log(
+                          `${underlyingRewardSymbol} - USD Price of reward token: ${usdRewardPrice}`,
+                        )
+                        return
+                      }
+                    }
+                  } catch (error) {
+                    console.error('Error:', error)
+                  }
+                }
+
+                fetchData()
               } else {
                 const fetchData = async () => {
                   try {
