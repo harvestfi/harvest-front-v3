@@ -2,7 +2,7 @@ import { BigNumber } from 'bignumber.js'
 import { useWindowWidth } from '@react-hook/window-size'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import ReactTooltip from 'react-tooltip'
-import CoinGecko from 'coingecko-api'
+import axios from 'axios'
 import { find, get, isEmpty, orderBy, isEqual } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import React, { useRef, useEffect, useMemo, useState } from 'react'
@@ -21,6 +21,7 @@ import Info from '../../assets/images/logos/earn/info.svg'
 import ListItem from '../../components/DashboardComponents/ListItem'
 import TotalValue from '../../components/TotalValue'
 import {
+  COINGECKO_API_KEY,
   FARM_GRAIN_TOKEN_SYMBOL,
   FARM_TOKEN_SYMBOL,
   FARM_WETH_TOKEN_SYMBOL,
@@ -101,12 +102,16 @@ const chainList = isLedgerLive()
       { id: 3, name: 'Arbitrum', chainId: 42161 },
     ]
 
-const CoinGeckoClient = new CoinGecko()
+const BASE_URL = 'https://pro-api.coingecko.com/api/v3/'
+
 const getCoinListFromApi = async () => {
-  let data = []
   try {
-    data = await CoinGeckoClient.coins.list()
-    return data
+    const response = await axios.get(`${BASE_URL}coins/list`, {
+      headers: {
+        'x-cg-pro-api-key': COINGECKO_API_KEY,
+      },
+    })
+    return response.data
   } catch (err) {
     console.log('Fetch Chart Data error: ', err)
     return []
@@ -114,12 +119,17 @@ const getCoinListFromApi = async () => {
 }
 const getTokenPriceFromApi = async tokenID => {
   try {
-    const data = await CoinGeckoClient.simple.price({
-      ids: tokenID,
-      // eslint-disable-next-line camelcase
-      vs_currencies: 'usd',
+    const response = await axios.get(`${BASE_URL}simple/price`, {
+      params: {
+        ids: tokenID,
+        // eslint-disable-next-line camelcase
+        vs_currencies: 'usd',
+      },
+      headers: {
+        'x-cg-pro-api-key': COINGECKO_API_KEY,
+      },
     })
-    return data.data[tokenID].usd
+    return response.data[tokenID].usd
   } catch (err) {
     console.log('Fetch Chart Data error: ', err)
     return null
@@ -452,8 +462,8 @@ const Portfolio = () => {
               } else {
                 const fetchData = async () => {
                   try {
-                    for (let ids = 0; ids < apiData.data.length; ids += 1) {
-                      const tempData = apiData.data[ids]
+                    for (let ids = 0; ids < apiData.length; ids += 1) {
+                      const tempData = apiData[ids]
                       const tempSymbol = tempData.symbol
                       if (tempSymbol.toLowerCase() === rewardSymbol.toLowerCase()) {
                         // eslint-disable-next-line no-await-in-loop
