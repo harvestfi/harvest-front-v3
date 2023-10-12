@@ -1,8 +1,9 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
-import FristBg from '../../assets/images/logos/home/beginner-back.svg'
-import FirstFarmCloud from '../../assets/images/logos/home/first-farming-cloud.svg'
-import AdvancedBottom from '../../assets/images/logos/home/advanced-bottom.svg'
+import FristBg from '../../assets/images/logos/home/beginner-coins.svg'
+import FirstFarmCloud from '../../assets/images/logos/home/new-farming.svg'
+import AdvancedBottom from '../../assets/images/logos/home/advanced-coins.svg'
+// import AdvancedBottom from '../../assets/images/logos/home/advanced-bottom.svg'
 import { useThemeContext } from '../../providers/useThemeContext'
 import {
   Container,
@@ -62,7 +63,7 @@ const Home = () => {
             }}
           >
             <AdvancedTitle>Advanced Farms</AdvancedTitle>
-            <AdvancedDesc>Over 100 farms on Polygon, Base, Arbitrum & L1.</AdvancedDesc>
+            <AdvancedDesc>Over 100 farms to explore.</AdvancedDesc>
             <AdvancedDirectBtn
               onClick={() => {
                 push(ROUTES.ADVANCED)
