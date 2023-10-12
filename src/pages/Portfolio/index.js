@@ -28,6 +28,7 @@ import {
   IFARM_TOKEN_SYMBOL,
   POOL_BALANCES_DECIMALS,
   SPECIAL_VAULTS,
+  ROUTES,
   directDetailUrl,
 } from '../../constants'
 import { addresses } from '../../data'
@@ -657,7 +658,7 @@ const Portfolio = () => {
 
         <TransactionDetails backColor={backColor}>
           <TableContent count={farmTokenList.length}>
-            <Header borderColor={borderColor} backColor={backColor} width={ceilWidth}>
+            <Header borderColor={borderColor} backColor={backColor}>
               <Column width={isMobile ? '23%' : '40%'} color={totalValueFontColor}>
                 <Col
                   onClick={() => {
@@ -1009,7 +1010,7 @@ const Portfolio = () => {
                     <ExploreFarm
                       borderColor={borderColor}
                       onClick={() => {
-                        push('/ADVANCED')
+                        push(ROUTES.ADVANCED)
                       }}
                     >
                       View all Farms

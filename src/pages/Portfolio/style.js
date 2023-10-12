@@ -378,7 +378,7 @@ const Header = styled.div`
   border-top-right-radius: 15px;
 
   @media screen and (max-width: 992px) {
-    width: ${props => props.width}px;
+    display: none;
   }
 `
 
