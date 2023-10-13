@@ -1,5 +1,4 @@
 import { BigNumber } from 'bignumber.js'
-import { useWindowWidth } from '@react-hook/window-size'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import ReactTooltip from 'react-tooltip'
 import axios from 'axios'
@@ -17,6 +16,7 @@ import Coin2 from '../../assets/images/logos/dashboard/coins-stacked-04.svg'
 import Diamond from '../../assets/images/logos/dashboard/diamond-01.svg'
 import Sort from '../../assets/images/logos/dashboard/sort.svg'
 import File from '../../assets/images/logos/dashboard/file-02.svg'
+import MobileFile from '../../assets/images/logos/dashboard/file-01.svg'
 import Info from '../../assets/images/logos/earn/info.svg'
 import ListItem from '../../components/DashboardComponents/ListItem'
 import TotalValue from '../../components/TotalValue'
@@ -42,7 +42,7 @@ import { fromWei } from '../../services/web3'
 import {
   formatNumber,
   formatNumberWido,
-  ceil10,
+  // ceil10,
   getTotalApy,
   isLedgerLive,
   convertAmountToFARM,
@@ -219,9 +219,6 @@ const Portfolio = () => {
 
   const [sortOrder, setSortOrder] = useState(false)
   const [showDetail, setShowDetail] = useState(Array(farmTokenList.length).fill(false))
-  // get window width
-  const onlyWidth = useWindowWidth()
-  const ceilWidth = ceil10(onlyWidth, onlyWidth.toString().length - 1)
 
   const firstWalletBalanceLoad = useRef(true)
   useEffectWithPrevious(
@@ -424,8 +421,13 @@ const Portfolio = () => {
             const totalUnsk = parseFloat((isNaN(Number(unstake)) ? 0 : unstake) * usdPrice)
             totalStake += totalStk + totalUnsk
             const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
-            const tempPricePerFullShare = get(token, `pricePerFullShare`, 0)
-            const pricePerFullShare = fromWei(tempPricePerFullShare, token.decimals)
+            const tempPricePerFullShare = useIFARM
+              ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
+              : get(token, `pricePerFullShare`, 0)
+            const pricePerFullShare = fromWei(
+              tempPricePerFullShare,
+              useIFARM ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0) : token.decimals,
+            )
             for (let l = 0; l < rewardTokenSymbols.length; l += 1) {
               // eslint-disable-next-line one-var
               let rewardSymbol = rewardTokenSymbols[l].toUpperCase(),
@@ -757,7 +759,6 @@ const Portfolio = () => {
                       lastElement={i === farmTokenList.length - 1 ? 'yes' : 'no'}
                       key={i}
                       mode={switchMode}
-                      width={ceilWidth}
                       background={showDetail[i] ? 'rgba(234, 241, 255, 0.53)' : 'unset'}
                       onClick={() => {
                         let badgeId = -1
@@ -780,14 +781,18 @@ const Portfolio = () => {
                         )
                       }}
                     >
-                      <FlexDiv padding={isMobile ? '15px' : '0'}>
+                      <FlexDiv padding={isMobile ? '10px' : '0'}>
                         <Content
-                          width={isMobile ? '23%' : '40%'}
+                          width={isMobile ? '100%' : '40%'}
                           display={isMobile ? 'block' : 'flex'}
                         >
-                          <ContentInner width="50%" display="flex">
+                          <ContentInner
+                            width={isMobile ? '100%' : '50%'}
+                            display={isMobile ? 'block' : 'flex'}
+                          >
                             <BadgeIcon
                               borderColor={info.status === 'Active' ? '#29ce84' : 'orange'}
+                              className="network-badge"
                             >
                               <img src={info.chain} width="15px" height="15px" alt="" />
                             </BadgeIcon>
@@ -796,31 +801,46 @@ const Portfolio = () => {
                                 <LogoImg
                                   key={index}
                                   className="coin"
-                                  width={isMobile ? 30 : 37}
+                                  marginLeft={index === 0 ? '' : '-7px'}
                                   src={elem}
                                   alt=""
                                 />
                               ))}
                           </ContentInner>
-                          <ContentInner width="50%" marginLeft={isMobile ? '0px' : '11px'}>
+                          <ContentInner
+                            width={isMobile ? '100%' : '50%'}
+                            marginLeft={isMobile ? '0px' : '11px'}
+                          >
                             <ListItem
                               weight={600}
-                              size={isMobile ? 12 : 14}
-                              height={isMobile ? 16 : 20}
+                              size={isMobile ? 14 : 14}
+                              height={isMobile ? 20 : 20}
                               value={info.symbol}
-                              marginBottom={isMobile ? 10 : 0}
+                              marginTop={isMobile ? 15 : 0}
                               color="#101828"
                             />
                             <ListItem
                               weight={500}
-                              size={isMobile ? 10 : 14}
-                              height={isMobile ? 13 : 20}
+                              size={isMobile ? 14 : 14}
+                              height={isMobile ? 20 : 20}
                               value={info.platform}
                               color="#475467"
                             />
                           </ContentInner>
                         </Content>
-                        <Content width={isMobile ? '12%' : '11%'}>
+                        <Content
+                          width={isMobile ? '33%' : '11%'}
+                          marginTop={isMobile ? '15px' : 'unset'}
+                        >
+                          {isMobile && (
+                            <ListItem
+                              color="#475467"
+                              weight={500}
+                              size={12}
+                              height={18}
+                              value="APY"
+                            />
+                          )}
                           <ListItem
                             color="#101828"
                             weight={500}
@@ -835,7 +855,69 @@ const Portfolio = () => {
                             }
                           />
                         </Content>
-                        <Content width={isMobile ? '20%' : '11%'}>
+                        {isMobile && (
+                          <>
+                            <Content
+                              width={isMobile ? '33%' : '11%'}
+                              marginTop={isMobile ? '15px' : 'unset'}
+                            >
+                              <ListItem
+                                color="#475467"
+                                weight={500}
+                                size={12}
+                                height={18}
+                                value="My Balance"
+                              />
+                              <ListItem
+                                weight={500}
+                                size={14}
+                                height={20}
+                                color="#101828"
+                                value={`${
+                                  info.balance < 0.01
+                                    ? '<$0.01'
+                                    : `$ ${formatNumber(info.balance, 2)}`
+                                }`}
+                              />
+                            </Content>
+                            <Content
+                              width={isMobile ? '33%' : '11%'}
+                              marginTop={isMobile ? '15px' : 'unset'}
+                            >
+                              <ListItem
+                                color="#475467"
+                                weight={500}
+                                size={12}
+                                height={18}
+                                value="Rewards"
+                              />
+                              <ListItem
+                                weight={500}
+                                size={14}
+                                height={20}
+                                color="#101828"
+                                value={`${
+                                  info.totalRewardUsd < 0.01
+                                    ? '<$0.01'
+                                    : `$ ${formatNumberWido(info.totalRewardUsd, 6)}`
+                                }`}
+                              />
+                            </Content>
+                          </>
+                        )}
+                        <Content
+                          width={isMobile ? '33%' : '11%'}
+                          marginTop={isMobile ? '15px' : 'unset'}
+                        >
+                          {isMobile && (
+                            <ListItem
+                              color="#475467"
+                              weight={500}
+                              size={12}
+                              height={18}
+                              value="Monthly Yield"
+                            />
+                          )}
                           <ListItem
                             weight={500}
                             size={14}
@@ -848,7 +930,19 @@ const Portfolio = () => {
                             }`}
                           />
                         </Content>
-                        <Content width={isMobile ? '20%' : '11%'}>
+                        <Content
+                          width={isMobile ? '33%' : '11%'}
+                          marginTop={isMobile ? '15px' : 'unset'}
+                        >
+                          {isMobile && (
+                            <ListItem
+                              color="#475467"
+                              weight={500}
+                              size={12}
+                              height={18}
+                              value="Daily Yield"
+                            />
+                          )}
                           <ListItem
                             weight={500}
                             size={14}
@@ -861,30 +955,36 @@ const Portfolio = () => {
                             }`}
                           />
                         </Content>
-                        <Content width={isMobile ? '20%' : '11%'}>
-                          <ListItem
-                            weight={500}
-                            size={14}
-                            height={20}
-                            color="#101828"
-                            value={`${
-                              info.balance < 0.01 ? '<$0.01' : `$ ${formatNumber(info.balance, 2)}`
-                            }`}
-                          />
-                        </Content>
-                        <Content width={isMobile ? '20%' : '11%'}>
-                          <ListItem
-                            weight={500}
-                            size={14}
-                            height={20}
-                            color="#101828"
-                            value={`${
-                              info.totalRewardUsd < 0.01
-                                ? '<$0.01'
-                                : `$ ${formatNumberWido(info.totalRewardUsd, 6)}`
-                            }`}
-                          />
-                        </Content>
+                        {!isMobile && (
+                          <>
+                            <Content width={isMobile ? '33%' : '11%'}>
+                              <ListItem
+                                weight={500}
+                                size={14}
+                                height={20}
+                                color="#101828"
+                                value={`${
+                                  info.balance < 0.01
+                                    ? '<$0.01'
+                                    : `$ ${formatNumber(info.balance, 2)}`
+                                }`}
+                              />
+                            </Content>
+                            <Content width={isMobile ? '33%' : '11%'}>
+                              <ListItem
+                                weight={500}
+                                size={14}
+                                height={20}
+                                color="#101828"
+                                value={`${
+                                  info.totalRewardUsd < 0.01
+                                    ? '<$0.01'
+                                    : `$ ${formatNumberWido(info.totalRewardUsd, 6)}`
+                                }`}
+                              />
+                            </Content>
+                          </>
+                        )}
                         <Content
                           onClick={event => {
                             event.stopPropagation()
@@ -892,77 +992,99 @@ const Portfolio = () => {
                             updatedShowDetail[i] = !updatedShowDetail[i]
                             setShowDetail(updatedShowDetail)
                           }}
-                          width={isMobile ? '20%' : '5%'}
+                          width={isMobile ? '5%' : '5%'}
                           cursor="pointer"
+                          className={isMobile && 'mobile-extender'}
                         >
                           {showDetail[i] ? (
-                            <img src={File} className="active-file-icon" alt="file" />
+                            <img
+                              src={isMobile ? MobileFile : File}
+                              className="active-file-icon"
+                              alt="file"
+                            />
                           ) : (
-                            <img src={File} className="file-icon" alt="file" />
+                            <img
+                              src={isMobile ? MobileFile : File}
+                              className="file-icon"
+                              alt="file"
+                            />
                           )}
                         </Content>
                       </FlexDiv>
                       {showDetail[i] && (
-                        <FlexDiv padding={isMobile ? '15px' : '16px 0'}>
+                        <FlexDiv padding={isMobile ? '0px 10px 10px' : '16px 0'}>
                           <Content
-                            width={isMobile ? '23%' : '40%'}
-                            display={isMobile ? 'block' : 'flex'}
+                            width={isMobile ? '100%' : '40%'}
+                            display={isMobile ? 'flex' : 'flex'}
                           >
-                            <ContentInner width="50%">
+                            <ContentInner width={isMobile ? '33%' : '50%'}>
                               <ListItem
                                 weight={600}
                                 size={isMobile ? 12 : 14}
-                                height={isMobile ? 16 : 20}
+                                height={isMobile ? 18 : 20}
                                 value="Unstaked"
-                                marginBottom={isMobile ? 10 : 0}
+                                marginTop={isMobile ? 10 : 0}
                                 color="#101828"
                               />
                               <ListItem
                                 weight={500}
-                                size={isMobile ? 10 : 14}
-                                height={isMobile ? 13 : 20}
+                                size={isMobile ? 14 : 14}
+                                height={isMobile ? 20 : 20}
                                 value={`${formatNumberWido(info.unstake, 9)}`}
                                 color="#475467"
                               />
                             </ContentInner>
-                            <ContentInner width="50%" marginLeft={isMobile ? '0px' : '11px'}>
+                            <ContentInner
+                              width={isMobile ? '33%' : '50%'}
+                              marginLeft={isMobile ? '0px' : '11px'}
+                            >
                               <ListItem
                                 weight={600}
                                 size={isMobile ? 12 : 14}
-                                height={isMobile ? 16 : 20}
+                                height={isMobile ? 18 : 20}
                                 value="Staked"
-                                marginBottom={isMobile ? 10 : 0}
+                                marginTop={isMobile ? 10 : 0}
                                 color="#101828"
                               />
                               <ListItem
                                 weight={500}
-                                size={isMobile ? 10 : 14}
-                                height={isMobile ? 13 : 20}
+                                size={isMobile ? 14 : 14}
+                                height={isMobile ? 20 : 20}
                                 value={`${formatNumberWido(info.stake, 9)}`}
                                 color="#475467"
                               />
                             </ContentInner>
                           </Content>
-                          <Content width={isMobile ? '12%' : '11%'}>
+                          <Content
+                            width={isMobile ? '100%' : '11%'}
+                            display={isMobile ? 'flex' : 'block'}
+                          >
                             <ListItem
                               weight={600}
                               size={isMobile ? 12 : 14}
-                              height={isMobile ? 16 : 20}
-                              value="Rewards"
-                              marginBottom={isMobile ? 10 : 0}
+                              height={isMobile ? 18 : 20}
+                              value={isMobile ? 'Rewards Breakdown' : 'Rewards'}
+                              marginTop={isMobile ? 15 : 0}
                               color="#101828"
                             />
-                            <ListItem
-                              weight={600}
-                              size={isMobile ? 12 : 14}
-                              height={isMobile ? 16 : 20}
-                              value="Breakdown"
-                              marginBottom={isMobile ? 10 : 0}
-                              color="#101828"
-                            />
+                            {!isMobile && (
+                              <ListItem
+                                weight={600}
+                                size={isMobile ? 12 : 14}
+                                height={isMobile ? 16 : 20}
+                                value="Breakdown"
+                                marginTop={isMobile ? 15 : 0}
+                                color="#101828"
+                              />
+                            )}
                           </Content>
                           {info.reward.map((rw, key) => (
-                            <Content key={key} width={isMobile ? '20%' : '11%'} display="flex">
+                            <Content
+                              key={key}
+                              width={isMobile ? '35%' : '11%'}
+                              display="flex"
+                              marginTop={isMobile ? '15px' : 'unset'}
+                            >
                               <Img
                                 src={`/icons/${info.rewardSymbol[key].toLowerCase()}.svg`}
                                 alt="jeur"
@@ -970,15 +1092,15 @@ const Portfolio = () => {
                               <div>
                                 <ListItem
                                   weight={500}
-                                  size={isMobile ? 10 : 14}
-                                  height={isMobile ? 13 : 20}
+                                  size={isMobile ? 14 : 14}
+                                  height={isMobile ? 20 : 20}
                                   value={`${formatNumberWido(info.reward[key], 5)}`}
                                   color="#475467"
                                 />
                                 <ListItem
                                   weight={500}
-                                  size={isMobile ? 10 : 14}
-                                  height={isMobile ? 13 : 20}
+                                  size={isMobile ? 14 : 14}
+                                  height={isMobile ? 20 : 20}
                                   value={`${
                                     info.rewardUSD[key] < 0.01
                                       ? '<$0.01'

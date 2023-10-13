@@ -4,7 +4,7 @@ const Container = styled.div`
   width: 24%;
   font-weight: 700;
   background: ${props => props.backColor};
-  padding: 20px;
+  padding: 24px;
 
   border: 1px solid #eaecf0;
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06);
@@ -13,6 +13,7 @@ const Container = styled.div`
   @media screen and (max-width: 992px) {
     width: 100%;
     margin-bottom: 15px;
+    display: flex;
   }
 `
 
@@ -23,9 +24,12 @@ const Div = styled.div`
   color: ${props => props.fontColor};
   margin-top: 20px;
   margin-bottom: 7px;
+
   @media screen and (max-width: 992px) {
-    font-size: 12px;
-    line-height: 16px;
+    font-size: 14px;
+    line-height: 20px;
+    margin-top: 0px;
+    margin-bottom: 0px;
   }
 
   #tt-total-balance,
@@ -43,9 +47,7 @@ const Price = styled.div`
   margin-top: 8px;
   color: #101828;
   @media screen and (max-width: 992px) {
-    font-size: 14px;
-    line-height: 18px;
-    margin-top: 10px;
+    margin-top: 8px;
   }
 `
 
@@ -54,6 +56,12 @@ const InfoIcon = styled.img`
   cursor: pointer;
   margin-left: 5px;
   margin-top: -3px;
+  width: 16px;
+  height: 16px;
+`
+
+const BoxIcon = styled.div`
+  margin: auto 24px auto 0px;
 `
 
 const NewLabel = styled.div`
@@ -183,4 +191,4 @@ const NewLabel = styled.div`
   }
 `
 
-export { Container, Div, Price, InfoIcon, NewLabel }
+export { Container, Div, Price, InfoIcon, BoxIcon, NewLabel }

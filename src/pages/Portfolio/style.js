@@ -102,13 +102,13 @@ const DetailView = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 12px 6px;
-    width: ${props => props.width}px;
+    padding: 0px;
   }
 `
 
 const FlexDiv = styled.div`
   display: flex;
+  flex-wrap: wrap;
   position: relative;
   width: ${props => (props.width ? props.width : 'auto')};
   padding: ${props => (props.padding ? props.padding : 'unset')};
@@ -241,10 +241,31 @@ const Content = styled.div`
     margin-left: ${props.marginLeft};
   `
       : ''}
+  ${props =>
+    props.marginTop
+      ? `
+    margin-top: ${props.marginTop};
+  `
+      : ''}
   font-weight: 400;
   font-size: 20px;
   line-height: 23px;
   align-self: center;
+
+  &.mobile-extender {
+    width: unset;
+    position: absolute;
+    top: 2.5%;
+    right: 3%;
+
+    img.file-icon {
+      padding: 6px;
+    }
+
+    img.active-file-icon {
+      padding: 6px;
+    }
+  }
 
   img.file-icon {
     padding: 18px;
@@ -257,6 +278,7 @@ const Content = styled.div`
     background: #eaf1ff;
     padding: 18px;
     border-radius: 8px;
+    border: 1px solid #fff;
   }
 
   img.active-file-icon:hover {
@@ -279,6 +301,12 @@ const BadgeIcon = styled.div`
   border: 2px solid ${props => props.borderColor};
   background: rgba(255, 255, 255, 0.6);
   box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.15);
+
+  &.network-badge {
+    @media screen and (max-width: 992px) {
+      margin-bottom: 15px;
+    }
+  }
 `
 
 const ThemeMode = styled.div`
@@ -437,15 +465,15 @@ const Status = styled.div`
 
 const LogoImg = styled.img`
   z-index: 10;
-  &:not(:first-child) {
-    margin-left: -7px;
-    ${props =>
-      props.zIndex
-        ? `
-      z-index: ${props.zIndex};
-    `
-        : ``};
-  }
+  width: 37px;
+  height: 37px;
+
+  ${props =>
+    props.marginLeft
+      ? `
+    margin-left: ${props.marginLeft}
+  `
+      : ``};
 `
 
 const Img = styled.img`
@@ -497,11 +525,6 @@ const ContentInner = styled.div`
   font-size: 20px;
   line-height: 23px;
   align-self: center;
-
-  @media screen and (max-width: 992px) {
-    margin-top: 10px;
-    width: 100%;
-  }
 `
 
 const TableContent = styled.div`
