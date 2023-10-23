@@ -59,18 +59,18 @@ const ButtonGroup = styled.div`
 `
 
 const ChartDiv = styled.div`
-  height: 390px;
+  height: 346px;
 
   @media screen and (max-width: 1291px) {
-    height: 353px;
+    height: 365px;
   }
 
   @media screen and (max-width: 1262px) {
-    height: 373px;
+    height: 365px;
   }
 
   @media screen and (max-width: 1035px) {
-    height: 393px;
+    height: 365px;
   }
 
   @media screen and (max-width: 992px) {
