@@ -221,7 +221,7 @@ ${props =>
         align-items: center;
         text-align: center;
         color: white;
-        padding: 10px 18px;
+        padding: 15px 18px;
         box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
         border-radius: 8px;
         img {
