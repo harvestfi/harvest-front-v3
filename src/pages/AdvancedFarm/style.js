@@ -774,7 +774,7 @@ const BoxValue = styled.div`
   color: var(--gray-900, #101828);
   font-weight: 600;
   letter-spacing: -0.6px;
-  ${props => (props.fontSize ? `font-size: ${props.fontSize};` : 'font-size: 30px;')}
+  font-size: 22px;
 `
 
 const ChainBack = styled.div`

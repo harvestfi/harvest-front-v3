@@ -1097,21 +1097,19 @@ const AdvancedFarm = () => {
               <BoxCover>
                 <ValueBox width="24%">
                   <BoxTitle>APY</BoxTitle>
-                  <BoxValue fontSize="22px">{showAPY()}</BoxValue>
+                  <BoxValue>{showAPY()}</BoxValue>
                 </ValueBox>
                 <ValueBox width="24%">
                   <BoxTitle>Daily APY</BoxTitle>
-                  <BoxValue fontSize="22px">{showApyDaily()}</BoxValue>
+                  <BoxValue>{showApyDaily()}</BoxValue>
                 </ValueBox>
                 <ValueBox width="24%">
                   <BoxTitle>TVL</BoxTitle>
-                  <BoxValue fontSize="22px">{showTVL()}</BoxValue>
+                  <BoxValue>{showTVL()}</BoxValue>
                 </ValueBox>
                 <ValueBox width="24%">
                   <BoxTitle>Last Harvest</BoxTitle>
-                  <BoxValue fontSize="22px">
-                    {lastHarvest !== '' ? `${lastHarvest} ago` : '-'}
-                  </BoxValue>
+                  <BoxValue>{lastHarvest !== '' ? `${lastHarvest} ago` : '-'}</BoxValue>
                 </ValueBox>
               </BoxCover>
             )}
