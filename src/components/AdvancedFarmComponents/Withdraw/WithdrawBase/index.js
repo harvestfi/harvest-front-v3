@@ -173,7 +173,10 @@ const WithdrawBase = ({
           </SwitchTabTag>
         ))}
       </NewLabel>
-      <Title>Revert your fToken into selected token.</Title>
+      <Title>
+        Revert your fToken into{' '}
+        {pickedToken.symbol !== 'Select' ? pickedToken.symbol : 'Output Token'}.
+      </Title>
       <TokenInfo>
         <AmountSection>
           <NewLabel
@@ -215,7 +218,7 @@ const WithdrawBase = ({
       </TokenInfo>
       <BalanceInfo
         onClick={() => {
-          if (account && pickedToken.symbol !== 'Select Token') {
+          if (account && pickedToken.symbol !== 'Select') {
             setUnstakeBalance(lpTokenBalance)
             setUnstakeInputValue(Number(fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals)))
           }
