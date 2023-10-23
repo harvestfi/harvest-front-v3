@@ -326,7 +326,7 @@ const DepositBase = ({
             </SwitchTabTag>
           ))}
         </NewLabel>
-        <DepoTitle>Convert your crypto into interest-bearing fToken.</DepoTitle>
+        <DepoTitle>Convert your crypto into interest-bearing fTokens.</DepoTitle>
         <TokenInfo>
           <AmountSection>
             <NewLabel
