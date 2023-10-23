@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js'
 import React, { useState, useEffect } from 'react'
 import { useSetChain } from '@web3-onboard/react'
 import { toast } from 'react-toastify'
+import ReactTooltip from 'react-tooltip'
 import { useMediaQuery } from 'react-responsive'
 import ArrowRightIcon from '../../../../assets/images/logos/beginners/arrow-right.svg'
 import DropDownIcon from '../../../../assets/images/logos/wido/drop-down.svg'
@@ -9,6 +10,7 @@ import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import ArrowDown from '../../../../assets/images/logos/beginners/arrow-narrow-down.svg'
 import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.svg'
+import HelpIcon from '../../../../assets/images/logos/beginners/help-circle.svg'
 import { POOL_BALANCES_DECIMALS } from '../../../../constants'
 import { useWallet } from '../../../../providers/Wallet'
 import { fromWei, toWei } from '../../../../services/web3'
@@ -17,6 +19,8 @@ import Button from '../../../Button'
 import { CHAIN_IDS } from '../../../../data/constants'
 import {
   BaseWido,
+  BaseWidoDiv,
+  InfoIconCircle,
   NewLabel,
   TokenAmount,
   TokenInfo,
@@ -138,145 +142,204 @@ const WithdrawBase = ({
 
   return (
     <BaseWido show={!withdrawStart && !selectToken && !finalStep}>
-      <NewLabel
-        size={isMobile ? '12px' : '16px'}
-        height={isMobile ? '21px' : '24px'}
-        weight="600"
-        color="#101828"
-        display="flex"
-        justifyContent="center"
-        padding={isMobile ? '0' : '6px 0'}
-        marginBottom="15px"
-        border="1px solid #F8F8F8"
-        borderRadius="8px"
-      >
-        {mainTags.map((tag, i) => (
-          <SwitchTabTag
-            key={i}
-            onClick={() => {
-              if (i === 0) {
-                switchMethod()
+      <BaseWidoDiv>
+        <NewLabel
+          size={isMobile ? '12px' : '16px'}
+          height={isMobile ? '21px' : '24px'}
+          weight="600"
+          color="#101828"
+          display="flex"
+          justifyContent="center"
+          padding={isMobile ? '0' : '4px 0'}
+          marginBottom="15px"
+          border="1px solid #F8F8F8"
+          borderRadius="8px"
+        >
+          {mainTags.map((tag, i) => (
+            <SwitchTabTag
+              key={i}
+              onClick={() => {
+                if (i === 0) {
+                  switchMethod()
+                }
+              }}
+              num={i}
+              color={i === 1 ? '#1F2937' : '#6F78AA'}
+              borderColor={i === 1 ? '#F2F5FF' : ''}
+              backColor={i === 1 ? '#F2F5FF' : ''}
+              boxShadow={
+                i === 1
+                  ? '0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10)'
+                  : ''
               }
-            }}
-            num={i}
-            color={i === 1 ? '#1F2937' : '#667085'}
-            borderColor={i === 1 ? '#F2F5FF' : ''}
-            backColor={i === 1 ? '#F2F5FF' : ''}
-            boxShadow={
-              i === 1
-                ? '0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10)'
-                : ''
-            }
-          >
-            <img src={tag.img} alt="logo" />
-            <p>{tag.name}</p>
-          </SwitchTabTag>
-        ))}
-      </NewLabel>
-      <Title>
-        Revert your fToken into{' '}
-        {pickedToken.symbol !== 'Select' ? pickedToken.symbol : 'Output Token'}.
-      </Title>
-      <TokenInfo>
-        <AmountSection>
-          <NewLabel
-            size={isMobile ? '10px' : '14px'}
-            height={isMobile ? '15px' : '20px'}
-            weight="500"
-            color="#344054"
-            marginBottom="6px"
-          >
-            Amount to Revert
-          </NewLabel>
-          <TokenAmount type="number" value={unstakeInputValue} onChange={onInputUnstake} />
-        </AmountSection>
-        <TokenSelectSection>
-          <NewLabel
-            size={isMobile ? '10px' : '14px'}
-            height={isMobile ? '15px' : '20px'}
-            weight="500"
-            color="#344054"
-            marginBottom="6px"
-          >
-            Output Token
-          </NewLabel>
-          <TokenSelect
-            type="button"
-            onClick={async () => {
-              setSelectToken(true)
-            }}
-          >
-            {pickedToken.logoURI ? (
-              <img className="logo" src={pickedToken.logoURI} width={24} height={24} alt="" />
-            ) : (
-              <></>
-            )}
-            <span>{pickedToken.symbol}</span>
-            <img className="dropdown-icon" src={DropDownIcon} alt="" />
-          </TokenSelect>
-        </TokenSelectSection>
-      </TokenInfo>
-      <BalanceInfo
-        onClick={() => {
-          if (account && pickedToken.symbol !== 'Select') {
-            setUnstakeBalance(lpTokenBalance)
-            setUnstakeInputValue(Number(fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals)))
-          }
-        }}
-      >
-        Balance Available:
-        <span>
-          {!connected ? (
-            0
-          ) : lpTokenBalance ? (
-            fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, POOL_BALANCES_DECIMALS, true)
-          ) : (
-            <AnimatedDots />
-          )}
-        </span>
-      </BalanceInfo>
-
-      <InsufficientSection isShow={showWarning ? 'true' : 'false'}>
-        <NewLabel display="flex" widthDiv="80%" items="center">
-          <img className="info-icon" src={InfoIcon} alt="" />
-          <NewLabel
-            size={isMobile ? '10px' : '14px'}
-            height={isMobile ? '15px' : '20px'}
-            weight="600"
-            color="#344054"
-          >
-            The amount of {`f${tokenSymbol}`} you entered exceeds deposited balance.
-          </NewLabel>
+            >
+              <img src={tag.img} alt="logo" />
+              <p>{tag.name}</p>
+            </SwitchTabTag>
+          ))}
         </NewLabel>
-        <div>
-          <CloseBtn
-            src={CloseIcon}
-            alt=""
-            onClick={() => {
-              setShowWarning(false)
-            }}
-          />
-        </div>
-      </InsufficientSection>
-
-      <NewLabel marginTop={isMobile ? '19px' : '25px'} padding={isMobile ? '0 7px' : '0'}>
-        <Button
-          color="wido-deposit"
-          width="100%"
-          size="md"
-          onClick={async () => {
-            if (curChain !== tokenChain) {
-              const chainHex = `0x${Number(tokenChain).toString(16)}`
-              await setChain({ chainId: chainHex })
-            } else {
-              onClickWithdraw()
+        <Title>
+          Revert your fToken into{' '}
+          {pickedToken.symbol !== 'Select' ? pickedToken.symbol : 'Output Token'}.
+        </Title>
+        <TokenInfo>
+          <AmountSection>
+            <NewLabel
+              size={isMobile ? '10px' : '14px'}
+              height={isMobile ? '15px' : '20px'}
+              weight="500"
+              color="#344054"
+              marginBottom="6px"
+            >
+              Amount to Revert
+            </NewLabel>
+            <TokenAmount type="number" value={unstakeInputValue} onChange={onInputUnstake} />
+          </AmountSection>
+          <TokenSelectSection>
+            <NewLabel
+              size={isMobile ? '10px' : '14px'}
+              height={isMobile ? '15px' : '20px'}
+              weight="500"
+              color="#344054"
+              marginBottom="6px"
+            >
+              Output Token
+            </NewLabel>
+            <TokenSelect
+              type="button"
+              onClick={async () => {
+                setSelectToken(true)
+              }}
+            >
+              {pickedToken.logoURI ? (
+                <img className="logo" src={pickedToken.logoURI} width={24} height={24} alt="" />
+              ) : (
+                <></>
+              )}
+              <span>{pickedToken.symbol}</span>
+              <img className="dropdown-icon" src={DropDownIcon} alt="" />
+            </TokenSelect>
+          </TokenSelectSection>
+        </TokenInfo>
+        <BalanceInfo
+          onClick={() => {
+            if (account && pickedToken.symbol !== 'Select') {
+              setUnstakeBalance(lpTokenBalance)
+              setUnstakeInputValue(Number(fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals)))
             }
           }}
         >
-          {withdrawName}
-          {showWithdrawIcon && <img src={ArrowRightIcon} alt="" />}
-        </Button>
-      </NewLabel>
+          Balance Available:
+          <span>
+            {!connected ? (
+              0
+            ) : lpTokenBalance ? (
+              fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, POOL_BALANCES_DECIMALS, true)
+            ) : (
+              <AnimatedDots />
+            )}
+          </span>
+        </BalanceInfo>
+        <InsufficientSection isShow={showWarning ? 'true' : 'false'}>
+          <NewLabel display="flex" widthDiv="80%" items="center">
+            <img className="info-icon" src={InfoIcon} alt="" />
+            <NewLabel
+              size={isMobile ? '10px' : '14px'}
+              height={isMobile ? '15px' : '20px'}
+              weight="600"
+              color="#344054"
+            >
+              The amount of {`f${tokenSymbol}`} you entered exceeds deposited balance.
+            </NewLabel>
+          </NewLabel>
+          <div>
+            <CloseBtn
+              src={CloseIcon}
+              alt=""
+              onClick={() => {
+                setShowWarning(false)
+              }}
+            />
+          </div>
+        </InsufficientSection>
+      </BaseWidoDiv>
+      <BaseWidoDiv>
+        <NewLabel
+          size={isMobile ? '10px' : '14px'}
+          height={isMobile ? '18px' : '24px'}
+          color="#344054"
+        >
+          <NewLabel
+            display="flex"
+            justifyContent="space-between"
+            padding={isMobile ? '5px 0' : '10px 0'}
+          >
+            <NewLabel
+              size={isMobile ? '10px' : '14px'}
+              height={isMobile ? '18px' : '24px'}
+              color="#344054"
+              weight="500"
+            >
+              Min. fTokens Received
+              <InfoIconCircle
+                className="info"
+                width={isMobile ? 10 : 16}
+                src={HelpIcon}
+                alt=""
+                data-tip
+                data-for="min-received"
+              />
+              <ReactTooltip
+                id="min-received"
+                backgroundColor="#101828"
+                borderColor="black"
+                textColor="white"
+                place="right"
+              >
+                <NewLabel
+                  size={isMobile ? '10px' : '12px'}
+                  height={isMobile ? '15px' : '18px'}
+                  weight="600"
+                  color="white"
+                >
+                  You will not receive less than the displayed number of fTokens.
+                </NewLabel>
+              </ReactTooltip>
+            </NewLabel>
+            <NewLabel
+              size={isMobile ? '10px' : '14px'}
+              height={isMobile ? '18px' : '24px'}
+              color="#344054"
+              weight="600"
+              textAlign="right"
+              display="flex"
+              items="flex-end"
+              flexFlow="column"
+            >
+              <TokenInfo>{/* <AnimatedDots /> */}-</TokenInfo>
+              <span className="token-symbol">XXX</span>
+            </NewLabel>
+          </NewLabel>
+        </NewLabel>
+        <NewLabel padding={isMobile ? '0 7px' : '0'}>
+          <Button
+            color="wido-deposit"
+            width="100%"
+            size="md"
+            onClick={async () => {
+              if (curChain !== tokenChain) {
+                const chainHex = `0x${Number(tokenChain).toString(16)}`
+                await setChain({ chainId: chainHex })
+              } else {
+                onClickWithdraw()
+              }
+            }}
+          >
+            {withdrawName}
+            {showWithdrawIcon && <img src={ArrowRightIcon} alt="" />}
+          </Button>
+        </NewLabel>
+      </BaseWidoDiv>
     </BaseWido>
   )
 }

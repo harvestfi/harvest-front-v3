@@ -3,16 +3,32 @@ import Plus from '../../../../assets/images/logos/beginners/plus.svg'
 import Minus from '../../../../assets/images/logos/beginners/minus.svg'
 
 const BaseWido = styled.div`
-  padding: 16px 15px 24px;
   ${props =>
     props.show
       ? `
   `
       : 'display: none;'}
+`
+
+const BaseWidoDiv = styled.div`
+  padding: 15px 15px 10px 15px;
+
+  &:nth-child(2) {
+    padding: 10px 15px 15px 15px;
+    border-top: 1px solid #e3e3e3;
+  }
 
   @media screen and (max-width: 992px) {
     padding: 12px 12px 18px;
   }
+`
+
+const InfoIconCircle = styled.img`
+  filter: ${props => props.filterColor};
+  transition: 0.25s;
+  cursor: pointer;
+  margin-left: 5px;
+  margin-top: -2px;
 `
 
 const NewLabel = styled.div`
@@ -77,6 +93,12 @@ const NewLabel = styled.div`
   `
       : ''}
   ${props =>
+    props.flexFlow
+      ? `
+    flex-flow: ${props.flexFlow};
+  `
+      : ''}
+  ${props =>
     props.padding
       ? `
     padding: ${props.padding};
@@ -107,6 +129,11 @@ const NewLabel = styled.div`
     margin-right: 12px;
     width: 20px;
     height: 20px;
+  }
+
+  span.token-symbol {
+    font-weight: 400;
+    font-size: 10px;
   }
 
   @media screen and (max-width: 992px) {
@@ -172,7 +199,7 @@ const TokenSelect = styled.div`
 `
 
 const SwitchTabTag = styled.div`
-  width: 48%;
+  width: 49%;
   transition: 0.25s;
   color: ${props => props.color};
   background: ${props => props.backColor};
@@ -185,7 +212,7 @@ const SwitchTabTag = styled.div`
   ${props =>
     props.num === 0
       ? `
-        filter: invert(43%) sepia(5%) saturate(1510%) hue-rotate(183deg) brightness(99%) contrast(86%);
+        filter: invert(50%) sepia(28%) saturate(591%) hue-rotate(193deg) brightness(89%) contrast(86%);
       `
       : ``}
 
@@ -424,6 +451,8 @@ const TokenSelectSection = styled.div`
 
 export {
   BaseWido,
+  BaseWidoDiv,
+  InfoIconCircle,
   NewLabel,
   TokenAmount,
   TokenInfo,

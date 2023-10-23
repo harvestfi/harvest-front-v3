@@ -298,7 +298,7 @@ const DepositBase = ({
           color="#101828"
           display="flex"
           justifyContent="center"
-          padding={isMobile ? '0' : '6px 0'}
+          padding={isMobile ? '0' : '4px 0'}
           marginBottom="15px"
           border="1px solid #F8F8F8"
           borderRadius="8px"
@@ -312,7 +312,7 @@ const DepositBase = ({
                   switchMethod()
                 }
               }}
-              color={i === 0 ? '#1F2937' : '#667085'}
+              color={i === 0 ? '#1F2937' : '#6F78AA'}
               borderColor={i === 0 ? '#F2F5FF' : ''}
               backColor={i === 0 ? '#F2F5FF' : ''}
               boxShadow={
@@ -570,7 +570,7 @@ const DepositBase = ({
             </NewLabel>
           </NewLabel>
         </NewLabel>
-        <NewLabel marginTop={isMobile ? '19px' : '25px'} padding={isMobile ? '0 7px' : '0'}>
+        <NewLabel padding={isMobile ? '0 7px' : '0'}>
           <Button
             color="wido-deposit"
             width="100%"

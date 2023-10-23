@@ -406,7 +406,7 @@ const ThemeMode = styled.div`
 `
 
 const SwitchTabTag = styled.div`
-  width: 48%;
+  width: 49%;
   transition: 0.25s;
   color: ${props => props.color};
   background: ${props => props.backColor};
@@ -420,7 +420,7 @@ const SwitchTabTag = styled.div`
   ${props =>
     props.num === 1
       ? `
-        filter: invert(43%) sepia(5%) saturate(1510%) hue-rotate(183deg) brightness(99%) contrast(86%);
+        filter: invert(50%) sepia(28%) saturate(591%) hue-rotate(193deg) brightness(89%) contrast(86%);
       `
       : ``}
 
