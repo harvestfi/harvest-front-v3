@@ -13,16 +13,16 @@ const DetailView = styled.div`
 `
 
 const Inner = styled.div`
-  padding: 61px 72px 200px 76px;
+  padding: 25px 72px 200px 76px;
   display: flex;
   justify-content: center;
 
   @media screen and (max-width: 1480px) {
-    padding: 30px 30px 40px;
+    padding: 25px 30px 40px;
   }
 
   @media screen and (max-width: 1024px) {
-    padding: 30px 20px 20px;
+    padding: 25px 20px 20px;
   }
 
   @media screen and (max-width: 992px) {
@@ -45,7 +45,7 @@ const TopInner = styled.div`
   }
 
   @media screen and (max-width: 1024px) {
-    padding: 0px 20px 20px;
+    padding: 20px 20px 0px 20px;
   }
 
   @media screen and (max-width: 992px) {
