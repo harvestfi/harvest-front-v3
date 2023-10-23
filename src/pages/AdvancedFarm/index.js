@@ -2156,7 +2156,7 @@ const AdvancedFarm = () => {
                           weight="500"
                           color="#6F78AA"
                         >
-                          Unstake
+                          Unstaked
                           <InfoIcon
                             className="info"
                             width={isMobile ? 10 : 16}
@@ -2213,7 +2213,7 @@ const AdvancedFarm = () => {
                           height={isMobile ? '18px' : '24px'}
                           color="#15B088"
                         >
-                          Stake
+                          Staked
                           <InfoIcon
                             className="info"
                             width={isMobile ? 10 : 16}
