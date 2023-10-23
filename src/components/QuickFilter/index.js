@@ -502,7 +502,7 @@ const QuickFilter = ({
                 )}
               </DivWidth>
             </DivWidth>
-            <DivWidth right="0" marginRight="15px" borderRadius="10" backColor={backColor}>
+            <DivWidth right="0" borderRadius="10" backColor={backColor}>
               <ClearFilter
                 fontColor="#344054"
                 backColor={backColor}
