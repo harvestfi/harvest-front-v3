@@ -194,6 +194,12 @@ const Monospace = styled.div`
   line-height: 24px;
   color: #000;
 
+  span {
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 24px;
+  }
+
   @media screen and (max-width: 992px) {
     font-size: 10px;
     line-height: 18px;

@@ -115,7 +115,7 @@ const VaultFooterActions = ({
                         fAssetPool.rewardTokens[0],
                       )}
                     />
-                    <>($ 0)</>
+                    <span> ($0)</span>
                   </>
                 ) : userStats.length === 0 ? (
                   <AnimatedDots />
