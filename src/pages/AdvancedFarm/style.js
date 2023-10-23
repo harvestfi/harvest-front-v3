@@ -76,7 +76,7 @@ const TopBtnInner = styled.div`
 `
 
 const TopPart = styled.div`
-  width: 80%;
+  width: 90%;
   display: flex;
   justify-content: space-between;
   position: relative;
@@ -93,7 +93,7 @@ const TopPart = styled.div`
   }
 
   @media screen and (min-width: 1921px) {
-    width: 1200px;
+    width: 1300px;
   }
 
   @media screen and (max-width: 1624px) {
@@ -527,20 +527,20 @@ const BackText = styled.p`
 `
 
 const RestContent = styled.div`
-  width: 44%;
+  width: 39%;
   height: ${props => props.height};
 
   @media screen and (min-width: 1921px) {
     width: 500px;
   }
 
-  @media screen and (max-width: 1480px) {
-    width: 49%;
-  }
+  // @media screen and (max-width: 1480px) {
+  //   width: 49%;
+  // }
 
-  @media screen and (max-width: 1281px) {
-    width: 50%;
-  }
+  // @media screen and (max-width: 1281px) {
+  //   width: 50%;
+  // }
 
   @media screen and (max-width: 992px) {
     width: 100%;
@@ -548,11 +548,11 @@ const RestContent = styled.div`
 `
 
 const BigDiv = styled(FlexDiv)`
-  width: 80%;
+  width: 90%;
   display: block;
 
   @media screen and (min-width: 1921px) {
-    width: 1200px;
+    width: 1300px;
   }
 
   @media screen and (max-width: 1624px) {
@@ -726,16 +726,16 @@ const WithdrawSection = styled.div`
 `
 
 const MainSection = styled.div`
-  width: 54%;
+  width: 59%;
   display: flex;
   flex-direction: column;
   height: fit-content;
   border-radius: 12px;
   height: ${props => props.height};
 
-  @media screen and (max-width: 1480px) {
-    width: 49%;
-  }
+  // @media screen and (max-width: 1480px) {
+  //   width: 49%;
+  // }
 
   @media screen and (max-width: 992px) {
     width: 100%;
