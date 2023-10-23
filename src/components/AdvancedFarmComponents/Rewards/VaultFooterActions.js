@@ -90,30 +90,33 @@ const VaultFooterActions = ({
                 {!connected ? (
                   formatNumber(0, 8)
                 ) : !isLoadingData && get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`) ? (
-                  <Counter
-                    pool={fAssetPool}
-                    totalTokensEarned={
-                      rewardTokenSymbols.length > 1
-                        ? fromWei(
-                            get(rewardsEarned, symbol, 0),
-                            get(tokens[symbol], 'decimals', 18),
-                            4,
-                          )
-                        : totalTokensEarned
-                    }
-                    totalStaked={get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)}
-                    ratePerDay={get(ratesPerDay, symbolIdx, ratesPerDay[0])}
-                    rewardPerToken={get(
-                      fAssetPool,
-                      `rewardPerToken[${symbolIdx}]`,
-                      fAssetPool.rewardPerToken[0],
-                    )}
-                    rewardTokenAddress={get(
-                      fAssetPool,
-                      `rewardTokens[${symbolIdx}]`,
-                      fAssetPool.rewardTokens[0],
-                    )}
-                  />
+                  <>
+                    <Counter
+                      pool={fAssetPool}
+                      totalTokensEarned={
+                        rewardTokenSymbols.length > 1
+                          ? fromWei(
+                              get(rewardsEarned, symbol, 0),
+                              get(tokens[symbol], 'decimals', 18),
+                              4,
+                            )
+                          : totalTokensEarned
+                      }
+                      totalStaked={get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)}
+                      ratePerDay={get(ratesPerDay, symbolIdx, ratesPerDay[0])}
+                      rewardPerToken={get(
+                        fAssetPool,
+                        `rewardPerToken[${symbolIdx}]`,
+                        fAssetPool.rewardPerToken[0],
+                      )}
+                      rewardTokenAddress={get(
+                        fAssetPool,
+                        `rewardTokens[${symbolIdx}]`,
+                        fAssetPool.rewardTokens[0],
+                      )}
+                    />
+                    <>($ 0)</>
+                  </>
                 ) : userStats.length === 0 ? (
                   <AnimatedDots />
                 ) : (

@@ -92,8 +92,14 @@ const DesktopPanelHeader = ({
             network === 'polygon'
           ) {
             url = `${directDetailUrl}specadvanced/${network}/${address}`
-          } else {
+          } else if (
+            token.tokenNames[0] === 'stETH' &&
+            token.tokenNames[1] === 'ETH' &&
+            network === 'arbitrum'
+          ) {
             url = `${directDetailUrl}advanced/${network}/${address}`
+          } else {
+            url = `${directDetailUrl}lastadvanced/${network}/${address}`
           }
           if (e.ctrlKey) {
             window.open(url, '_blank')

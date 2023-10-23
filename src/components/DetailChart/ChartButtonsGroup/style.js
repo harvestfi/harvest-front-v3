@@ -37,6 +37,10 @@ const ButtonStyle = styled.button`
         border-left: 1px solid ${props.borderColor};
       `}
 
+  img {
+    filter: invert(47%) sepia(41%) saturate(409%) hue-rotate(194deg) brightness(93%) contrast(86%);
+  }
+
   &.active {
     cursor: pointer !important;
     background: transparent;
@@ -44,8 +48,8 @@ const ButtonStyle = styled.button`
     font-weight: bold;
 
     img {
-      filter: invert(50%) sepia(90%) saturate(1885%) hue-rotate(116deg) brightness(103%)
-        contrast(105%);
+      filter: invert(46%) sepia(93%) saturate(1403%) hue-rotate(129deg) brightness(95%)
+        contrast(84%);
     }
   }
 

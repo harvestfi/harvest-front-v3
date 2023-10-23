@@ -539,6 +539,13 @@ html {
         line-height: 20px;
         color: #475467;
       }
+      .deposit-modal-header {
+        background: #F2F5FF;
+        padding: 24px 24px 20px;
+      }
+      .deposit-modal-body {
+        padding: unset;
+      }
       .modal-footer {
         justify-content: center;
         padding: 24px;

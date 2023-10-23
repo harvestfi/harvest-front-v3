@@ -3,7 +3,6 @@ import styled from 'styled-components'
 const DetailView = styled.div`
   width: 100%;
   margin-left: 280px;
-  background: ${props => props.pageBackColor};
   color: ${props => props.fontColor};
   transition: 0.25s;
 
@@ -14,16 +13,16 @@ const DetailView = styled.div`
 `
 
 const Inner = styled.div`
-  padding: 0px 72px 200px 76px;
+  padding: 61px 72px 200px 76px;
   display: flex;
   justify-content: center;
 
   @media screen and (max-width: 1480px) {
-    padding: 0px 30px 40px;
+    padding: 30px 30px 40px;
   }
 
   @media screen and (max-width: 1024px) {
-    padding: 0px 20px 20px;
+    padding: 30px 20px 20px;
   }
 
   @media screen and (max-width: 992px) {
@@ -34,12 +33,15 @@ const Inner = styled.div`
 `
 
 const TopInner = styled.div`
-  padding: 10px 72px 20px 76px;
+  background: #f2f5ff;
+  background-size: cover;
+  background-repeat: no-repeat;
+  padding: 50px 72px 0px 76px;
   display: flex;
   justify-content: center;
 
   @media screen and (max-width: 1480px) {
-    padding: 25px 30px 25px;
+    padding: 25px 30px 0px;
   }
 
   @media screen and (max-width: 1024px) {
@@ -75,14 +77,9 @@ const TopBtnInner = styled.div`
 
 const TopPart = styled.div`
   width: 80%;
-  padding: 60px 45px 60px 45px;
   display: flex;
   justify-content: space-between;
-  background: #eaf1ff;
-  background-size: cover;
-  background-repeat: no-repeat;
   position: relative;
-  border-radius: 10px;
   overflow: hidden;
 
   img.bottom {
@@ -109,9 +106,9 @@ const TopPart = styled.div`
 `
 
 const TopButton = styled.div`
-  width: 80%;
   display: flex;
   justify-content: start;
+  margin-bottom: 49px;
 
   @media screen and (min-width: 1921px) {
     width: 1200px;
@@ -126,6 +123,14 @@ const TopButton = styled.div`
     height: 100%;
     background: #fff;
   }
+`
+
+const RewardValue = styled.div`
+  padding: 0px 24px 24px 24px;
+  color: #101828;
+  font-size: 30px;
+  font-weight: 600;
+  line-height: 44px;
 `
 
 const NewLabel = styled.div`
@@ -358,6 +363,7 @@ const ThemeMode = styled.div`
 
 const TopDesc = styled(NewLabel)`
   color: #344054;
+  margin: auto 0px auto 35px;
 `
 
 const Button = styled.button`
@@ -414,6 +420,7 @@ const FlexDiv = styled.div`
 
 const InternalSection = styled.div`
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   height: ${props => props.height};
 
@@ -423,6 +430,7 @@ const InternalSection = styled.div`
 `
 
 const FlexTopDiv = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -454,7 +462,7 @@ const HalfContent = styled.div`
   flex-direction: column;
   height: fit-content;
   background: #fff;
-  // box-shadow: 0px 8px 8px -4px rgba(16, 24, 40, 0.03), 0px 20px 24px -4px rgba(16, 24, 40, 0.08);
+  border: 2px solid #f2f5ff;
   ${props =>
     props.borderRadius
       ? `
@@ -519,7 +527,7 @@ const BackText = styled.p`
 `
 
 const RestContent = styled.div`
-  width: 43%;
+  width: 44%;
   height: ${props => props.height};
 
   @media screen and (min-width: 1921px) {
@@ -527,7 +535,7 @@ const RestContent = styled.div`
   }
 
   @media screen and (max-width: 1480px) {
-    width: 48%;
+    width: 49%;
   }
 
   @media screen and (max-width: 1281px) {
@@ -557,8 +565,8 @@ const BigDiv = styled(FlexDiv)`
 `
 
 const LogoImg = styled.img`
-  margin-right: -5px;
-  width: 64px;
+  margin-right: -20px;
+  width: 69px;
 
   @media screen and (max-width: 992px) {
     width: 32px;
@@ -577,6 +585,13 @@ const InfoIcon = styled.img`
   transition: 0.25s;
   cursor: pointer;
   margin-left: 5px;
+  margin-top: -2px;
+`
+
+const InfoIconBlack = styled.img`
+  transition: 0.25s;
+  cursor: pointer;
+  margin-left: 5px;
 `
 
 const Monospace = styled.span`
@@ -585,9 +600,16 @@ const Monospace = styled.span`
 `
 
 const MyBalance = styled.div`
-  border-radius: 12px;
   background: #fff;
-  // box-shadow: 0px 8px 8px -4px rgba(16, 24, 40, 0.03), 0px 20px 24px -4px rgba(16, 24, 40, 0.08);
+  border-radius: 12px;
+  border: 2px solid #f2f5ff;
+
+  ${props =>
+    props.height
+      ? `
+      height: ${props.height};
+    `
+      : ``}
 
   ${props =>
     props.marginTop
@@ -626,7 +648,8 @@ const FarmInfo = styled.div`
 
 const GuideSection = styled.div`
   display: flex;
-  margin-bottom: 24px;
+  margin-bottom: 49px;
+  margin-top: 5px;
 
   @media screen and (max-width: 992px) {
     margin-top: 19px;
@@ -640,17 +663,21 @@ const GuideSection = styled.div`
 `
 
 const GuidePart = styled.div`
+  border-radius: 5px;
+  border: 1.3px solid #1f2937;
   display: flex;
-  width: fit-content;
+  padding: 2px 10px 2px 8px;
   align-items: center;
-  border-radius: 18px;
-  padding: 3px 11px 3px 9px;
-  background: #ffffff;
+  gap: 6px;
+  width: fit-content;
+  color: #1f2937;
+  text-align: center;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
   margin-right: 10px;
-  color: #344054;
-  font-size: 14.597px;
-  line-height: 22px;
-  font-weight: ${props => props.fontWeight};
 
   &:last-child {
     margin-right: 0;
@@ -699,8 +726,7 @@ const WithdrawSection = styled.div`
 `
 
 const MainSection = styled.div`
-  width: 55%;
-  margin-right: 20px;
+  width: 54%;
   display: flex;
   flex-direction: column;
   height: fit-content;
@@ -716,6 +742,39 @@ const MainSection = styled.div`
     margin-right: 0px;
     display: none;
   }
+`
+
+const BoxCover = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 25px;
+`
+
+const ValueBox = styled.div`
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  border-radius: 12px;
+  border: 2px solid #f3f6ff;
+  background: var(--base-white, #fff);
+  padding: 24px;
+  ${props => (props.width ? `width: ${props.width};` : '')}
+  ${props => (props.height ? `height: ${props.height};` : '')}
+`
+
+const BoxTitle = styled.div`
+  color: #6f78aa;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+`
+
+const BoxValue = styled.div`
+  color: var(--gray-900, #101828);
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  ${props => (props.fontSize ? `font-size: ${props.fontSize};` : 'font-size: 30px;')}
 `
 
 const ChainBack = styled.div`
@@ -742,25 +801,28 @@ const MainTag = styled.div`
   display: flex;
   justify-content: center;
   width: 33%;
-  padding: 8px 12px;
+  padding: 12px 15px;
   align-items: center;
-  border-radius: 6px;
   font-size: 14px;
   font-weight: 600;
   line-height: 20px;
   cursor: pointer;
+  color: #1f2937;
 
   ${props =>
     props.active === 'true'
       ? `
-      color: #036666;
-      background: #EDF4F4;
-      box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10);
+      background: white;
+      border-radius: 6px 6px 0px 0px;
     `
       : `
-      color: #667085;
-      background: white;
+      color: #6F78AA;
+      background: #F2F5FF;
     `}
+
+  &:nth-child(2) {
+    width: 34%;
+  }
 
   p {
     margin-bottom: 0px;
@@ -771,10 +833,9 @@ const MainTag = styled.div`
     ${props =>
       props.active === 'true'
         ? `
-        filter: invert(17%) sepia(99%) saturate(7041%) hue-rotate(176deg) brightness(86%) contrast(98%);
       `
         : `
-        filter: invert(43%) sepia(5%) saturate(1510%) hue-rotate(183deg) brightness(99%) contrast(86%);
+        filter: invert(52%) sepia(32%) saturate(524%) hue-rotate(193deg) brightness(86%) contrast(84%);
       `}
   }
 `
@@ -786,6 +847,13 @@ const MainDescText = styled.div`
 `
 
 const HalfInfo = styled.div`
+  border-radius: 10px;
+  background: #fff;
+  transition: 0.25s;
+  margin-bottom: ${props => props.marginBottom};
+  font-family: 'Inter', sans-serif;
+  border: 2px solid #f2f5ff;
+
   ${props =>
     props.padding
       ? `
@@ -804,12 +872,6 @@ const HalfInfo = styled.div`
   justify-content: ${props.justifyContent};
   `
       : ''}
-
-  border-radius: 10px;
-  background: #fff;
-  transition: 0.25s;
-  margin-bottom: ${props => props.marginBottom};
-  font-family: 'Inter', sans-serif;
 `
 
 const InfoLabel = styled.a`
@@ -902,10 +964,9 @@ const DescInfo = styled.div`
 
 const LastHarvestInfo = styled.div`
   background: #fff;
-  border-radius: 15px;
-  // box-shadow: 0px 10px 18px 0px rgba(0, 0, 0, 0.08);
-  border-radius: 10px;
+  border-radius: 12px;
   margin-bottom: 25px;
+  border: 2px solid #f2f5ff;
 `
 
 const RestInternal = styled.div`
@@ -942,10 +1003,7 @@ const UnstakeSection = styled.div`
 const MainTagPanel = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 25px;
-  width: 100%;
-  padding: 5px;
-  background: white;
+  width: 40%;
   border-radius: 8px;
 
   @media screen and (max-width: 992px) {
@@ -954,12 +1012,58 @@ const MainTagPanel = styled.div`
   }
 `
 
+const TabRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
+
+const NetDetail = styled.div`
+  display: flex;
+  margin: auto 0px;
+`
+
+const NetDetailItem = styled.div`
+  display: flex;
+  margin-left: 50px;
+`
+
+const NetDetailTitle = styled.div`
+  color: #475467;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 30px;
+`
+
+const NetDetailContent = styled.div`
+  color: #475467;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 30px;
+  padding-left: 5px;
+`
+
+const NetDetailImg = styled.div`
+  width: 21px;
+  height: 21px;
+  margin: auto 0px auto 5px;
+  background: white;
+  border-radius: 2px;
+
+  img {
+    width: 11px;
+    margin: 0px 0px 3px 5px;
+  }
+`
+
 const FirstPartSection = styled.div`
   width: 100%;
   height: 100%;
   display: flex;
   flex-flow: column;
-  justify-content: space-between;
 
   @media screen and (max-width: 992px) {
     display: flex;
@@ -1050,4 +1154,16 @@ export {
   SecondPartSection,
   APRValueShow,
   BorderBottomDiv,
+  TabRow,
+  NetDetail,
+  NetDetailItem,
+  BoxCover,
+  ValueBox,
+  BoxTitle,
+  BoxValue,
+  NetDetailTitle,
+  NetDetailContent,
+  NetDetailImg,
+  InfoIconBlack,
+  RewardValue,
 }

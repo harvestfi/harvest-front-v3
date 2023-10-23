@@ -98,6 +98,19 @@ const NewLabel = styled.div`
   `
       : ''}
 
+  ${props =>
+    props.border
+      ? `
+      border: ${props.border};
+  `
+      : ''}
+
+  ${props =>
+    props.borderRadius
+      ? `
+      border-radius: ${props.borderRadius};
+  `
+      : ''}
   img.icon {
     margin-right: 10px;
   }
@@ -430,6 +443,33 @@ const AmountInputSection = styled.div`
   }
 `
 
+const SwitchTabTag = styled.div`
+  width: 49%;
+  transition: 0.25s;
+  color: ${props => props.color};
+  background: ${props => props.backColor};
+  box-shadow: ${props => props.boxShadow};
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+
+  ${props =>
+    props.num === 1
+      ? `
+        filter: invert(52%) sepia(10%) saturate(1357%) hue-rotate(194deg) brightness(90%) contrast(95%);
+      `
+      : ``}
+
+  p {
+    margin-bottom: 0px;
+    padding-left: 5px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+`
+
 export {
   BaseSection,
   NewLabel,
@@ -445,4 +485,5 @@ export {
   FTokenWrong,
   ImgBtn,
   AmountInputSection,
+  SwitchTabTag,
 }

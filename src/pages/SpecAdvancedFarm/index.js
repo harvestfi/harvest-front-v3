@@ -31,9 +31,9 @@ import WithdrawResult from '../../components/AdvancedFarmComponents/SpecWithdraw
 import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
 import PriceShareData from '../../components/PriceShareChart/PriceShareData'
 import VaultPanelActionsFooter from '../../components/AdvancedFarmComponents/Rewards/VaultPanelActionsFooter'
-import StakeBase from '../../components/AdvancedFarmComponents/Stake/SpecificStakeBase'
+import StakeBase from '../../components/AdvancedFarmComponents/Stake/StakeBase'
 import StakeResult from '../../components/AdvancedFarmComponents/Stake/StakeResult'
-import UnstakeBase from '../../components/AdvancedFarmComponents/Unstake/SpecificUnstakeBase'
+import UnstakeBase from '../../components/AdvancedFarmComponents/Unstake/UnstakeBase'
 import UnstakeResult from '../../components/AdvancedFarmComponents/Unstake/UnstakeResult'
 import {
   DECIMAL_PRECISION,
@@ -1881,7 +1881,7 @@ const AdvancedFarm = () => {
                         weight="500"
                         color="#344054"
                       >
-                        Daily APR
+                        Daily APY
                       </NewLabel>
                       <NewLabel
                         weight="500"

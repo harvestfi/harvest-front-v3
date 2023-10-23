@@ -115,7 +115,7 @@ const Link = styled.button`
   cursor: pointer;
   padding: 8px 12px;
   border-width: 0;
-  border-radius: 5px;
+  border-radius: 6px;
   padding: 5px;
 
   .sideIcon {
@@ -140,18 +140,21 @@ const Link = styled.button`
   ${props =>
     props.active
       ? `
-    color: #036666;
-    background: rgba(3, 102, 102, 0.07);
+    color: #15b088;
+    background: rgba(187, 187, 187, 0.07);
+    .sideIcon {
+      filter: invert(46%) sepia(96%) saturate(382%) hue-rotate(114deg) brightness(99%) contrast(89%);
+    }
     ${
       props.darkMode
         ? `
       img {
-        filter: invert(32%) sepia(12%) saturate(4979%) hue-rotate(141deg) brightness(88%) contrast(98%);
+        filter: invert(46%) sepia(96%) saturate(382%) hue-rotate(114deg) brightness(99%) contrast(89%);
       }
     `
         : `
         img {
-          filter: invert(32%) sepia(12%) saturate(4979%) hue-rotate(141deg) brightness(88%) contrast(98%) !important;
+          filter: invert(46%) sepia(96%) saturate(382%) hue-rotate(114deg) brightness(99%) contrast(89%);
         }
       `
     }
@@ -198,10 +201,9 @@ const Link = styled.button`
   }
 
   &:hover {
-    color: #036666;
+    color: #15b088;
     img {
-      filter: invert(32%) sepia(12%) saturate(4979%) hue-rotate(141deg) brightness(88%)
-        contrast(98%);
+      filter: invert(46%) sepia(96%) saturate(382%) hue-rotate(114deg) brightness(99%) contrast(89%);
     }
   }
 `
@@ -721,7 +723,7 @@ const Desktop = styled.div`
 
 const NewTag = styled.div`
   border-radius: 16px;
-  background: #036666;
+  background: #15b088;
   padding: 2px 8px;
   font-size: 12px;
   line-height: 18px;

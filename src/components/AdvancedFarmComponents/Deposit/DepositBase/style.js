@@ -3,12 +3,20 @@ import Plus from '../../../../assets/images/logos/beginners/plus.svg'
 import Minus from '../../../../assets/images/logos/beginners/minus.svg'
 
 const BaseWido = styled.div`
-  padding: 16px 15px 24px;
   ${props =>
     props.show
       ? `
   `
       : 'display: none;'}
+`
+
+const BaseWidoDiv = styled.div`
+  padding: 15px 15px 10px 15px;
+
+  &:nth-child(2) {
+    padding: 10px 15px 15px 15px;
+    border-top: 1px solid #e3e3e3;
+  }
 
   @media screen and (max-width: 992px) {
     padding: 12px 12px 18px;
@@ -67,12 +75,21 @@ const NewLabel = styled.div`
     margin-right: ${props.marginRight};
   `
       : ''}
+
   ${props =>
     props.display
       ? `
     display: ${props.display};
+    `
+      : ''}
+
+  ${props =>
+    props.flexFlow
+      ? `
+    flex-flow: ${props.flexFlow};
   `
       : ''}
+
   ${props =>
     props.items
       ? `
@@ -124,6 +141,17 @@ const NewLabel = styled.div`
     margin-right: 5px;
   }
 
+  span.token-symbol {
+    font-weight: 400;
+    font-size: 10px;
+  }
+
+  #monthly-yield,
+  #daily-yield,
+  #min-received {
+    max-width: 300px;
+  }
+
   @media screen and (max-width: 992px) {
     img.icon {
       margin-right: 5px;
@@ -145,8 +173,8 @@ const TokenInfo = styled.div`
 `
 
 const TokenAmount = styled.input`
-  font-weight: 700;
-  font-size: 18px;
+  font-weight: 600;
+  font-size: 14px;
   line-height: 24px;
   width: 100%;
   text-overflow: ellipsis;
@@ -172,6 +200,14 @@ const TokenAmount = styled.input`
     line-height: 18px;
     padding: 7px 10px;
   }
+`
+
+const InfoIconCircle = styled.img`
+  filter: ${props => props.filterColor};
+  transition: 0.25s;
+  cursor: pointer;
+  margin-left: 5px;
+  margin-top: -2px;
 `
 
 const TokenSelect = styled.button`
@@ -432,6 +468,7 @@ const DepositTokenSection = styled.div`
 
 export {
   BaseWido,
+  BaseWidoDiv,
   NewLabel,
   TokenAmount,
   TokenInfo,
@@ -444,4 +481,5 @@ export {
   CloseBtn,
   DepositTokenSection,
   SwitchTabTag,
+  InfoIconCircle,
 }

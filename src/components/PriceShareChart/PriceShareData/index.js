@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import ReactTooltip from 'react-tooltip'
+import ChartButtonsGroup from '../ChartButtonsGroup'
+// import ReactTooltip from 'react-tooltip'
 // import CheckCircle from '../../../assets/images/logos/beginners/check-green-circle.svg'
 // import Close from '../../../assets/images/logos/beginners/x-close.svg'
-import Help from '../../../assets/images/logos/beginners/help-circle.svg'
+// import Help from '../../../assets/images/logos/beginners/help-circle.svg'
+import balanceImg from '../../../assets/images/logos/advancedfarm/coins.svg'
+import usdbalance from '../../../assets/images/logos/advancedfarm/money.svg'
 import { getPriceFeed } from '../../../utils'
-import { FARM_TOKEN_SYMBOL } from '../../../constants'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
 import {
@@ -18,6 +20,7 @@ import {
   TooltipInfo,
   FlexDiv,
   CurContent,
+  FilterGroup,
   // ChartInfo,
   // ChartHeaderDiv,
   // ChartDescText,
@@ -25,7 +28,7 @@ import {
   // ChartBottomAction,
   // ChartBottomHide,
   // ChartClose,
-  NewLabel,
+  // NewLabel,
 } from './style'
 
 const recommendLinks = [
@@ -34,7 +37,12 @@ const recommendLinks = [
   { name: '1Y', type: 3, state: '1Y' },
 ]
 
-const PriceShareData = ({ token, vaultPool, tokenSymbol, setLoadData }) => {
+const filterList = [
+  { id: 1, name: 'Balance in USD', img: usdbalance },
+  { id: 2, name: 'Balance', img: balanceImg },
+]
+
+const PriceShareData = ({ token, vaultPool, setLoadData }) => {
   const [selectedState, setSelectedState] = useState('1Y')
 
   const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
@@ -44,6 +52,7 @@ const PriceShareData = ({ token, vaultPool, tokenSymbol, setLoadData }) => {
   const [loadComplete, setLoadComplete] = useState(true)
   const [curDate, setCurDate] = useState('')
   const [curContent, setCurContent] = useState('')
+  const [clickedId, setClickedId] = useState(1)
   // const [chartShow, setChartShow] = useState(!localStorage.getItem('chartInfoShow'))
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
@@ -72,8 +81,8 @@ const PriceShareData = ({ token, vaultPool, tokenSymbol, setLoadData }) => {
           <FlexDiv>
             <TooltipInfo>
               <TokenSymbol className="priceshare">
-                {tokenSymbol === FARM_TOKEN_SYMBOL ? 'iFARM' : `f${tokenSymbol}`}
-                <img src={Help} alt="Help" data-tip data-for="tooltip-priceShare" />
+                My Balance
+                {/* <img src={Help} alt="Help" data-tip data-for="tooltip-priceShare" />
                 {!isMobile && (
                   <ReactTooltip id="tooltip-priceShare" backgroundColor="white">
                     <NewLabel
@@ -90,28 +99,24 @@ const PriceShareData = ({ token, vaultPool, tokenSymbol, setLoadData }) => {
                       </p>
                     </NewLabel>
                   </ReactTooltip>
-                )}
+                )} */}
               </TokenSymbol>
               <FlexDiv>
-                <CurContent color="#1b1b1b">{curDate}&nbsp;:&nbsp;</CurContent>
-                <CurContent color="#00D26B">{curContent}</CurContent>
+                <CurContent color="#1b1b1b">
+                  {curDate}&nbsp;<span>|</span>&nbsp;
+                </CurContent>
+                <CurContent color="#15B088">{curContent}</CurContent>
               </FlexDiv>
             </TooltipInfo>
           </FlexDiv>
           {!isMobile && (
-            <ButtonGroup>
-              {recommendLinks.map((item, i) => (
-                <ChartRangeSelect
-                  key={i}
-                  onClick={() => {
-                    setSelectedState(item.state)
-                  }}
-                  state={selectedState}
-                  type={item.type}
-                  text={item.name}
-                />
-              ))}
-            </ButtonGroup>
+            <FilterGroup>
+              <ChartButtonsGroup
+                buttons={filterList}
+                clickedId={clickedId}
+                setClickedId={setClickedId}
+              />
+            </FilterGroup>
           )}
         </Total>
       </Header>
@@ -139,6 +144,21 @@ const PriceShareData = ({ token, vaultPool, tokenSymbol, setLoadData }) => {
           setCurContent={setCurContent}
         />
       </ChartDiv>
+      {!isMobile && (
+        <ButtonGroup>
+          {recommendLinks.map((item, i) => (
+            <ChartRangeSelect
+              key={i}
+              onClick={() => {
+                setSelectedState(item.state)
+              }}
+              state={selectedState}
+              type={item.type}
+              text={item.name}
+            />
+          ))}
+        </ButtonGroup>
+      )}
       {/* {chartShow ? (
         <ChartInfo>
           <div>

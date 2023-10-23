@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import apyActive from '../../../assets/images/logos/earn/filter_apy.svg'
-import myBalanceActive from '../../../assets/images/logos/earn/filter_mybalance.svg'
-import tvlActive from '../../../assets/images/logos/earn/filter_tvl.svg'
+import apyActive from '../../../assets/images/logos/earn/percent-circle.svg'
+import tvlActive from '../../../assets/images/logos/earn/bank.svg'
+import myBalanceActive from '../../../assets/images/logos/earn/chart-graph.svg'
 import { addresses } from '../../../data/index'
 import { useWallet } from '../../../providers/Wallet'
 import { getDataQuery, getTotalTVLData } from '../../../utils'
@@ -82,6 +82,17 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
       <Header>
         <Total>
           <FlexDiv>
+            <TooltipInfo>
+              <LabelInfo>{tooltipLabel}</LabelInfo>
+              <CurDate>
+                {curDate}&nbsp;<span>|</span>&nbsp;
+                <p>
+                  {clickedId === 1 ? '$' : ''}
+                  {curContent}
+                  {clickedId === 0 ? '%' : ''}
+                </p>
+              </CurDate>
+            </TooltipInfo>
             <FilterGroup>
               <ChartButtonsGroup
                 buttons={filterList}
@@ -89,33 +100,7 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
                 setClickedId={setClickedId}
               />
             </FilterGroup>
-            <TooltipInfo>
-              <CurDate>{curDate}</CurDate>
-              <LabelInfo>
-                {tooltipLabel}&nbsp;
-                <p>
-                  {clickedId === 1 ? '$' : ''}
-                  {curContent}
-                  {clickedId === 0 ? '%' : ''}
-                </p>
-              </LabelInfo>
-            </TooltipInfo>
           </FlexDiv>
-          {!isMobile && (
-            <ButtonGroup>
-              {recommendLinks.map((item, i) => (
-                <ChartRangeSelect
-                  key={i}
-                  onClick={() => {
-                    setSelectedState(item.state)
-                  }}
-                  state={selectedState}
-                  type={item.type}
-                  text={item.name}
-                />
-              ))}
-            </ButtonGroup>
-          )}
         </Total>
         {isMobile && (
           <ButtonGroup>
@@ -146,6 +131,21 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
           setCurContent={setCurContent}
         />
       </ChartDiv>
+      {!isMobile && (
+        <ButtonGroup>
+          {recommendLinks.map((item, i) => (
+            <ChartRangeSelect
+              key={i}
+              onClick={() => {
+                setSelectedState(item.state)
+              }}
+              state={selectedState}
+              type={item.type}
+              text={item.name}
+            />
+          ))}
+        </ButtonGroup>
+      )}
     </Container>
   )
 }

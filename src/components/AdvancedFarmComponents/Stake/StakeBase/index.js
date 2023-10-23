@@ -8,6 +8,8 @@ import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import AlertIcon from '../../../../assets/images/logos/beginners/alert-triangle.svg'
 import AlertCloseIcon from '../../../../assets/images/logos/beginners/alert-close.svg'
+import ArrowDown from '../../../../assets/images/logos/beginners/arrow-narrow-down.svg'
+import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.svg'
 import AnimatedDots from '../../../AnimatedDots'
 import { POOL_BALANCES_DECIMALS } from '../../../../constants'
 import { useWallet } from '../../../../providers/Wallet'
@@ -25,12 +27,13 @@ import {
   TokenAmount,
   NewLabel,
   AmountSection,
-  ThemeMode,
+  // ThemeMode,
   InsufficientSection,
   CloseBtn,
   FTokenWrong,
   ImgBtn,
   AmountInputSection,
+  SwitchTabTag,
 } from './style'
 
 const getChainName = chain => {
@@ -55,7 +58,6 @@ const StakeBase = ({
   inputAmount,
   setInputAmount,
   token,
-  activeStake,
   switchMethod,
   tokenSymbol,
   lpTokenBalance,
@@ -64,6 +66,7 @@ const StakeBase = ({
   setPendingAction,
   multipleAssets,
   setLoadingDots,
+  useIFARM,
 }) => {
   const { connected, connectAction, account, chainId, setChainId, getWalletBalances } = useWallet()
 
@@ -80,7 +83,7 @@ const StakeBase = ({
     : connectedChain
     ? parseInt(connectedChain.id, 16).toString()
     : ''
-  const [btnName, setBtnName] = useState('Stake & Earn Rewards')
+  const [btnName, setBtnName] = useState('Convert')
   const [showWarning, setShowWarning] = useState(false)
   const [warningContent, setWarningContent] = useState('')
   const [stakeFailed, setStakeFailed] = useState(false)
@@ -93,20 +96,14 @@ const StakeBase = ({
     if (account) {
       if (curChain !== '' && curChain !== tokenChain) {
         const chainName = getChainName(tokenChain)
-        setBtnName(`Switch to ${chainName}`)
+        setBtnName(`Change Network to ${chainName}`)
       } else {
-        setBtnName('Stake & Earn Rewards')
+        setBtnName('Convert')
       }
-    }
-  }, [account, curChain, tokenChain])
-
-  useEffect(() => {
-    if (connected) {
-      setBtnName('Stake & Earn Rewards')
     } else {
       setBtnName('Connect Wallet to Get Started')
     }
-  }, [connected])
+  }, [account, curChain, tokenChain])
 
   const [startSpinner, setStartSpinner] = useState(false)
 
@@ -142,7 +139,7 @@ const StakeBase = ({
           await getWalletBalances([tokenSymbol], false, true)
           setLoadingDots(false, false)
 
-          setBtnName('Stake & Earn Rewards')
+          setBtnName('Convert')
           setStartSpinner(false)
           setFinalStep(true)
           bStakeSuccess = true
@@ -153,17 +150,17 @@ const StakeBase = ({
         },
         () => {
           setStartSpinner(false)
-          setBtnName('Stake & Earn Rewards')
+          setBtnName('Convert')
           setStakeFailed(true)
         },
       )
     } catch (err) {
       setStartSpinner(false)
-      setBtnName('Stake & Earn Rewards')
+      setBtnName('Convert')
       setStakeFailed(true)
     }
     setStartSpinner(false)
-    setBtnName('Stake & Earn Rewards')
+    setBtnName('Convert')
     if (bStakeSuccess) {
       setFinalStep(true)
     }
@@ -172,6 +169,11 @@ const StakeBase = ({
   const onInputBalance = e => {
     setInputAmount(Number(e.currentTarget.value))
   }
+
+  const mainTags = [
+    { name: 'Stake', img: ArrowDown },
+    { name: 'Unstake', img: ArrowUp },
+  ]
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
@@ -183,26 +185,40 @@ const StakeBase = ({
         weight="600"
         color="#101828"
         display="flex"
-        justifyContent="space-between"
-        items="center"
+        justifyContent="center"
+        padding={isMobile ? '0' : '4px 0'}
+        marginBottom="15px"
+        border="1px solid #F8F8F8"
+        borderRadius="8px"
       >
-        Stake
-        <ThemeMode mode={activeStake ? 'deposit' : 'withdraw'}>
-          <div id="theme-switch">
-            <div className="switch-track">
-              <div className="switch-thumb" />
-            </div>
-
-            <input
-              type="checkbox"
-              checked={activeStake}
-              onChange={switchMethod}
-              aria-label="Switch between dark and light mode"
-            />
-          </div>
-        </ThemeMode>
+        {mainTags.map((tag, i) => (
+          <SwitchTabTag
+            key={i}
+            num={i}
+            onClick={() => {
+              if (i === 1) {
+                switchMethod()
+              }
+            }}
+            color={i === 0 ? '#1F2937' : '#6F78AA'}
+            borderColor={i === 0 ? '#F2F5FF' : ''}
+            backColor={i === 0 ? '#F2F5FF' : ''}
+            boxShadow={
+              i === 0
+                ? '0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10)'
+                : ''
+            }
+          >
+            <img src={tag.img} alt="logo" />
+            <p>{tag.name}</p>
+          </SwitchTabTag>
+        ))}
       </NewLabel>
-      <DepoTitle>Stake your deposit to be entitled to extra rewards.</DepoTitle>
+      <DepoTitle>
+        {useIFARM
+          ? 'Stake your FARM to be entitled to platform rewards.'
+          : `Stake your f${tokenSymbol} to earn extra token rewards.`}
+      </DepoTitle>
       <AmountSection>
         <NewLabel
           size={isMobile ? '10px' : '14px'}

@@ -66,7 +66,7 @@ const WithdrawBase = ({
   token,
   supTokenList,
   switchMethod,
-  useIFARM,
+  // useIFARM,
 }) => {
   const [unstakeInputValue, setUnstakeInputValue] = useState(0)
   const { account, connected, chainId } = useWallet()
@@ -84,7 +84,7 @@ const WithdrawBase = ({
     : connectedChain
     ? parseInt(connectedChain.id, 16).toString()
     : ''
-  const [withdrawName, setWithdrawName] = useState('Withdraw')
+  const [withdrawName, setWithdrawName] = useState('Revert')
   const [showWarning, setShowWarning] = useState(false)
   const [showWithdrawIcon, setShowWithdrawIcon] = useState(true)
 
@@ -95,7 +95,7 @@ const WithdrawBase = ({
         setWithdrawName(`Change Network to ${chainName}`)
         setShowWithdrawIcon(false)
       } else {
-        setWithdrawName('Withdraw')
+        setWithdrawName('Revert')
       }
     } else {
       setWithdrawName('Connect Wallet to Get Started')
@@ -114,12 +114,12 @@ const WithdrawBase = ({
     }
     const supToken = supTokenList.find(el => el.symbol === pickedToken.symbol)
     if (!supToken) {
-      toast.error("Can't Withdraw with Unsupported token!")
+      toast.error("Can't revert with Unsupported token!")
       return
     }
 
     if (new BigNumber(unstakeBalance).isEqualTo(0)) {
-      toast.error('Please input amount to withdraw!')
+      toast.error('Please input amount to revert!')
       return
     }
 
@@ -132,8 +132,8 @@ const WithdrawBase = ({
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const mainTags = [
-    { name: 'Deposit', img: ArrowDown },
-    { name: 'Withdraw', img: ArrowUp },
+    { name: 'Convert', img: ArrowDown },
+    { name: 'Revert', img: ArrowUp },
   ]
 
   return (
@@ -160,8 +160,8 @@ const WithdrawBase = ({
             }}
             num={i}
             color={i === 1 ? '#1F2937' : '#667085'}
-            borderColor={i === 1 ? '#F8F8F8' : ''}
-            backColor={i === 1 ? '#F8F8F8' : ''}
+            borderColor={i === 1 ? '#F2F5FF' : ''}
+            backColor={i === 1 ? '#F2F5FF' : ''}
             boxShadow={
               i === 1
                 ? '0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10)'
@@ -173,11 +173,7 @@ const WithdrawBase = ({
           </SwitchTabTag>
         ))}
       </NewLabel>
-      <Title>
-        {useIFARM
-          ? `Withdraw i${tokenSymbol} into any token`
-          : `Withdraw f${tokenSymbol} into any token`}
-      </Title>
+      <Title>Revert your fToken into selected token.</Title>
       <TokenInfo>
         <AmountSection>
           <NewLabel
@@ -187,7 +183,7 @@ const WithdrawBase = ({
             color="#344054"
             marginBottom="6px"
           >
-            Amount to Withdraw
+            Amount to Revert
           </NewLabel>
           <TokenAmount type="number" value={unstakeInputValue} onChange={onInputUnstake} />
         </AmountSection>

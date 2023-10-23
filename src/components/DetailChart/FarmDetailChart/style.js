@@ -3,7 +3,7 @@ import styled from 'styled-components'
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  height: 400px;
+  height: fit-content;
   overflow: hidden;
   padding: 0px;
   transition: 0.25s;
@@ -55,6 +55,8 @@ const ButtonGroup = styled.div`
   flex-wrap: wrap;
   // margin: 0.8em 1em 0.25em auto;
   color: #fff;
+  justify-content: end;
+  padding-top: 10px;
 
   @media screen and (max-width: 992px) {
     margin-top: 15px;
@@ -101,12 +103,24 @@ const FilterName = styled.div`
 `
 
 const CurDate = styled.div`
+  color: #1b1b1b;
+  display: flex;
   font-size: 13px;
   line-height: normal;
   font-weight: 500;
 
   @media screen and (max-width: 992px) {
     font-size: 10px;
+  }
+
+  span {
+    color: #ced3e6;
+  }
+
+  p {
+    color: #15b088;
+    font-weight: 500;
+    margin-bottom: 0px;
   }
 `
 
@@ -116,7 +130,9 @@ const TooltipInfo = styled.div`
 `
 
 const FlexDiv = styled.div`
+  width: 100%;
   display: flex;
+  justify-content: space-between;
 
   @media screen and (max-width: 992px) {
     width: 100%;
@@ -124,19 +140,13 @@ const FlexDiv = styled.div`
 `
 
 const LabelInfo = styled.div`
-  display: flex;
-  color: #1b1b1b;
-  font-size: 13px;
-  font-weight: 700;
+  color: #101828;
+  font-size: 16px;
+  font-weight: 600;
   line-height: normal;
 
   @media screen and (max-width: 992px) {
     font-size: 10px;
-  }
-
-  p {
-    color: #00d26b;
-    margin-bottom: 0px;
   }
 `
 

@@ -5,10 +5,10 @@ const Container = styled.div`
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  padding: 10px 18px 25px;
+  padding: 15px 18px 25px;
   transition: 0.25s;
   border-radius: 10px;
-  // box-shadow: 0px 8px 8px -4px rgba(16, 24, 40, 0.03), 0px 20px 24px -4px rgba(16, 24, 40, 0.08);
+  border: 2px solid #f2f5ff;
   background: #fff;
   justify-content: space-between;
 
@@ -48,6 +48,7 @@ const ButtonGroup = styled.div`
   align-items: center;
   flex-wrap: wrap;
   color: #fff;
+  justify-content: end;
 
   @media screen and (max-width: 992px) {
     margin-top: 14px;
@@ -111,10 +112,10 @@ const FilterName = styled.div`
 
 const TokenSymbol = styled.div`
   font-size: 16px;
-  line-height: 24px;
+  line-height: 28px;
   font-weight: 600;
   margin-bottom: 5px;
-  color: #344054;
+  color: #101828;
 
   img {
     padding-left: 5px;
@@ -139,6 +140,10 @@ const CurContent = styled.div`
   color: ${props => props.color};
   font-size: 13px;
   font-weight: 500;
+
+  span {
+    color: #ced3e6;
+  }
 
   @media screen and (max-width: 992px) {
     font-size: 10px;

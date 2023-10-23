@@ -144,7 +144,8 @@ ${props =>
   ${props =>
     props.color === 'advanced-reward'
       ? `
-      background: #000;
+      background: #15B088;
+      border: 1px solid #15B088;
       font-weight: 600;
       font-size: 16px;
       line-height: 24px;
@@ -159,7 +160,7 @@ ${props =>
         !props.disabled
           ? `
       &:hover {
-        background: #000000A0;
+        background: #2ccda4;
         color: white;
       }
       `
@@ -167,7 +168,7 @@ ${props =>
       }
 
       &:active {
-        background: #000000D0;
+        background: #4fdfbb;
         color: white;
       }
       @media screen and (max-width: 992px) {
@@ -211,8 +212,7 @@ ${props =>
     ${props =>
       props.color === 'wido-deposit'
         ? `
-        background: #000;
-        border: 1px solid #000;
+        background: #15B088;
         font-weight: 600;
         font-size: 16px;
         line-height: 24px;
@@ -231,13 +231,13 @@ ${props =>
           !props.disabled
             ? `
         &:hover {
-          background: #000000D0;
+          background: #2ccda4;
         }`
             : ''
         }
   
         &:active {
-          background: #000000A0;
+          background: #4fdfbb;
         }
         `
         : ''}

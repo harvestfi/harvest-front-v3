@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 const Container = styled.button`
-  font-weight: 400;
+  font-weight: 700;
   font-size: 12px;
   line-height: 18px;
   padding: 3px 15px;
@@ -33,7 +33,7 @@ const Container = styled.button`
         : `
         background: none;
         border-radius: 3px;
-        color: #00D26B;
+        color: #15B088;
       `
       : props.mode === 'dark'
       ? `
