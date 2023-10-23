@@ -666,7 +666,7 @@ const GuidePart = styled.div`
   border-radius: 5px;
   border: 1.3px solid #1f2937;
   display: flex;
-  padding: 2px 10px 2px 8px;
+  padding: 2px 8px;
   align-items: center;
   gap: 6px;
   width: fit-content;
