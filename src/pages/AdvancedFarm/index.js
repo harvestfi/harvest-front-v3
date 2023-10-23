@@ -1620,7 +1620,7 @@ const AdvancedFarm = () => {
                             weight="600"
                             color="white"
                           >
-                            The interest-bearing f{id}. It entitles its holder to auto-compounded
+                            The interest-bearing fToken. It entitles its holder to auto-compounded
                             yield of this farm.
                           </NewLabel>
                         </ReactTooltip>
