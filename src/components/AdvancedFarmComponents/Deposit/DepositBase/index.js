@@ -455,7 +455,7 @@ const DepositBase = ({
               pickedToken.symbol !== 'Select Token' &&
               !new BigNumber(amount).isEqualTo(0) &&
               balanceList.length !== 0 ? (
-                convertMonthlyYieldUSD !== '' ? (
+                minReceiveAmountString !== '' ? (
                   `$ ${formatNumberWido(convertMonthlyYieldUSD, 4)}`
                 ) : (
                   <TokenInfo>
@@ -517,7 +517,7 @@ const DepositBase = ({
               pickedToken.symbol !== 'Select Token' &&
               !new BigNumber(amount).isEqualTo(0) &&
               balanceList.length !== 0 ? (
-                convertDailyYieldUSD !== '' ? (
+                minReceiveAmountString !== '' ? (
                   `$ ${formatNumberWido(convertDailyYieldUSD, 4)}`
                 ) : (
                   <TokenInfo>

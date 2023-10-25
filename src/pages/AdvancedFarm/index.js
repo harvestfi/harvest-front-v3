@@ -422,9 +422,9 @@ const AdvancedFarm = () => {
 
   useEffect(() => {
     const convertMonthlyYieldValue =
-      (Number(minReceiveAmountString) * Number(usdPrice) * Number(totalApy)) / 12
+      (Number(minReceiveAmountString) * Number(usdPrice) * (Number(totalApy) / 100)) / 12
     const convertDailyYieldYieldValue =
-      (Number(minReceiveAmountString) * Number(usdPrice) * Number(totalApy)) / 365
+      (Number(minReceiveAmountString) * Number(usdPrice) * (Number(totalApy) / 100)) / 365
     setConvertMonthlyYieldUSD(convertMonthlyYieldValue)
     setConvertDailyYieldUSD(convertDailyYieldYieldValue)
   }, [minReceiveAmountString, usdPrice, totalApy])
