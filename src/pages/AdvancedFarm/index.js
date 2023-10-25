@@ -641,53 +641,6 @@ const AdvancedFarm = () => {
   // Switch Deposit / Withdraw
   const switchDepoMethod = () => setActiveDepo(prev => !prev)
 
-  // Count of users that used token
-  // const [holderCount, setHolderCount] = useState(0)
-  // useEffect(() => {
-  //   const getTokenHolder = async () => {
-  //     const chainName =
-  //       chain === CHAIN_IDS.ETH_MAINNET
-  //         ? 'eth'
-  //         : chain === CHAIN_IDS.ARBITRUM_ONE
-  //         ? 'arbitrum'
-  //         : chain === CHAIN_IDS.POLYGON_MAINNET
-  //         ? 'polygon'
-  //         : ''
-
-  //     const options = {
-  //       method: 'POST',
-  //       url:
-  //         'https://rpc.ankr.com/multichain/79258ce7f7ee046decc3b5292a24eb4bf7c910d7e39b691384c7ce0cfb839a01/',
-  //       // eslint-disable-next-line camelcase
-  //       params: { ankr_getTokenHolders: '' },
-  //       headers: { accept: 'application/json', 'content-type': 'application/json' },
-  //       data: {
-  //         jsonrpc: '2.0',
-  //         method: 'ankr_getTokenHolders',
-  //         params: {
-  //           blockchain: chainName,
-  //           contractAddress: paramAddress,
-  //         },
-  //         id: 1,
-  //       },
-  //     }
-
-  //     axios
-  //       .request(options)
-  //       .then(response => {
-  //         if (response.data.result === undefined) {
-  //           return
-  //         }
-  //         setHolderCount(response.data.result.holdersCount)
-  //       })
-  //       .catch(error => {
-  //         console.error(error)
-  //       })
-  //   }
-
-  //   getTokenHolder()
-  // }, [paramAddress, chain, token])
-
   // Deposit / Stake / Details
   const [activeMainTag, setActiveMainTag] = useState(0)
 
@@ -1057,15 +1010,6 @@ const AdvancedFarm = () => {
                 &nbsp;TVL
               </GuidePart>
             </GuideSection>
-            {/* <NewLabel
-              weight={700}
-              size={isMobile ? '9px' : '18px'}
-              height={isMobile ? '14px' : '26px'}
-              color="white"
-            >
-              <img className="thumbs-up" src={Thumbsup} alt="" />
-              Currently used by {holderCount} users.
-            </NewLabel> */}
             <TabRow>
               <MainTagPanel>
                 {mainTags.map((tag, i) => (
