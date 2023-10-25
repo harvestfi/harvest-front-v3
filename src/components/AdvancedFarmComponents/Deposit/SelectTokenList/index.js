@@ -2,7 +2,16 @@ import React, { useEffect, useState } from 'react'
 // import { useMediaQuery } from 'react-responsive'
 import { fromWei } from '../../../../services/web3'
 import { useThemeContext } from '../../../../providers/useThemeContext'
-import { Container, Text, Vault, Content, EmptyContainer, Label } from './style'
+import {
+  Container,
+  Text,
+  Vault,
+  Content,
+  EmptyContainer,
+  Label,
+  RightText,
+  TextSpan,
+} from './style'
 import AnimatedDots from '../../../AnimatedDots'
 
 const SelectTokenList = ({
@@ -88,7 +97,7 @@ const SelectTokenList = ({
     }
   }, [filterWord, supTokenNoBalanceList, balanceList]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const { widoDepoTokenListActiveColor, widoDepoTokenListHoverColor, fontColor } = useThemeContext()
+  const { widoDepoTokenListActiveColor, fontColor } = useThemeContext()
   // const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   useEffect(() => {
@@ -114,31 +123,36 @@ const SelectTokenList = ({
               Object.keys(defaultCurToken).length === 0 && defaultCurToken.constructor === Object
             ) && (
               <>
-                <Label>Default deposit token </Label>
+                <Label padding="15px 24px 0px">Default token </Label>
                 <Container
                   onClick={() => {
                     handleDefaultToken()
                   }}
-                  hoverColor={widoDepoTokenListHoverColor}
+                  hoverColor="#F2F5FF"
                   activeColor={widoDepoTokenListActiveColor}
                 >
-                  <img src={defaultCurToken.logoURI} width={37} height={37} alt="" />
+                  <img src={defaultCurToken.logoURI} width={26} height={26} alt="" />
                   <Vault>
-                    <Text weight={500} color="#101828">
+                    <Text weight={600} color="#344054">
                       {defaultCurToken.symbol}
                     </Text>
-                    <Text weight={400} color="#475467">
-                      {defaultCurToken.balance
-                        ? `${1 * fromWei(defaultCurToken.balance, defaultCurToken.decimals)}`
-                        : '0.00'}
-                    </Text>
+                    <RightText weight={600} color="#344054">
+                      <>
+                        {defaultCurToken.balance
+                          ? `${1 * fromWei(defaultCurToken.balance, defaultCurToken.decimals)}`
+                          : '0.00'}
+                      </>
+                      <TextSpan>$0</TextSpan>
+                    </RightText>
                   </Vault>
                 </Container>
               </>
             )}
           {balanceTokenList.length > 0 && (
             <>
-              <Label>Tokens on your wallet that you can use as deposit:</Label>
+              <Label padding="0px 24px">
+                Tokens in your wallet which you can get started with:
+              </Label>
               {balanceTokenList.map((data, i) => (
                 <Container
                   key={i}
@@ -146,17 +160,18 @@ const SelectTokenList = ({
                   onClick={() => {
                     handleBalanceListClick(i)
                   }}
-                  hoverColor={widoDepoTokenListHoverColor}
+                  hoverColor="#F2F5FF"
                   activeColor={widoDepoTokenListActiveColor}
                 >
-                  <img src={data.logoURI} width={37} height={37} alt="" />
+                  <img src={data.logoURI} width={26} height={26} alt="" />
                   <Vault>
-                    <Text weight={500} color="#101828">
+                    <Text weight={600} color="#344054">
                       {data.symbol}
                     </Text>
-                    <Text weight={400} color="#475467">
-                      {data.balance ? `${1 * fromWei(data.balance, data.decimals)}` : '0.00'}
-                    </Text>
+                    <RightText weight={600} color="#344054">
+                      <>{data.balance ? `${1 * fromWei(data.balance, data.decimals)}` : '0.00'}</>
+                      <TextSpan>$0</TextSpan>
+                    </RightText>
                   </Vault>
                 </Container>
               ))}
@@ -164,7 +179,9 @@ const SelectTokenList = ({
           )}
           {supTokenList.length > 0 && (
             <>
-              <Label>Other supported deposit tokens, which you don’t have on your wallet</Label>
+              <Label padding="0px 24px">
+                Other supported deposit tokens, which you don’t have on your wallet
+              </Label>
               {supTokenList.map((data, i) => (
                 <Container
                   key={i}
@@ -172,17 +189,18 @@ const SelectTokenList = ({
                   onClick={() => {
                     handleSupTokenNoBalanceListClick(i)
                   }}
-                  hoverColor={widoDepoTokenListHoverColor}
+                  hoverColor="#F2F5FF"
                   activeColor={widoDepoTokenListActiveColor}
                 >
-                  <img src={data.logoURI} width={37} height={37} alt="" />
+                  <img src={data.logoURI} width={26} height={26} alt="" />
                   <Vault>
-                    <Text weight={500} color="#101828">
+                    <Text weight={600} color="#344054">
                       {data.symbol}
                     </Text>
-                    <Text weight={400} color="#475467">
-                      {data.balance ? `${1 * fromWei(data.balance, data.decimals)}` : '0.00'}
-                    </Text>
+                    <RightText weight={600} color="#344054">
+                      <>{data.balance ? `${1 * fromWei(data.balance, data.decimals)}` : '0.00'}</>
+                      <TextSpan>$0</TextSpan>
+                    </RightText>
                   </Vault>
                 </Container>
               ))}
@@ -190,21 +208,18 @@ const SelectTokenList = ({
           )}
           {soonToSupList.length > 0 && (
             <>
-              <Label>Soon to be supported</Label>
+              <Label padding="0px 24px">Soon to be supported</Label>
               {soonToSupList.map((data, i) => (
-                <Container
-                  key={i}
-                  hoverColor={widoDepoTokenListHoverColor}
-                  activeColor={widoDepoTokenListActiveColor}
-                >
-                  <img src={data.logoURI} width={37} height={37} alt="" />
+                <Container key={i} hoverColor="#F2F5FF" activeColor={widoDepoTokenListActiveColor}>
+                  <img src={data.logoURI} width={26} height={26} alt="" />
                   <Vault>
-                    <Text weight={500} color="#101828">
+                    <Text weight={600} color="#344054">
                       {data.symbol}
                     </Text>
-                    <Text weight={400} color="#475467">
-                      {data.balance ? `${1 * fromWei(data.balance, data.decimals)}` : '0.00'}
-                    </Text>
+                    <RightText weight={600} color="#344054">
+                      <>{data.balance ? `${1 * fromWei(data.balance, data.decimals)}` : '0.00'}</>
+                      <TextSpan>$0</TextSpan>
+                    </RightText>
                   </Vault>
                 </Container>
               ))}

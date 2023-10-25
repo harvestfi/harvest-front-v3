@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
-import { isEmpty } from 'lodash'
-import React, { useState } from 'react'
+import { isEmpty, get } from 'lodash'
+import React, { useState, useEffect } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import { useMediaQuery } from 'react-responsive'
 import { quote, getTokenAllowance, approve } from 'wido'
@@ -14,11 +14,15 @@ import AlertCloseIcon from '../../../../assets/images/logos/beginners/alert-clos
 import ProgressOne from '../../../../assets/images/logos/advancedfarm/progress-step1.png'
 import ProgressTwo from '../../../../assets/images/logos/advancedfarm/progress-step2.png'
 import ProgressThree from '../../../../assets/images/logos/advancedfarm/progress-step3.png'
+import ProgressFour from '../../../../assets/images/logos/advancedfarm/progress-step4.png'
+import ProgressFive from '../../../../assets/images/logos/advancedfarm/progress-step5.png'
 import { useWallet } from '../../../../providers/Wallet'
 import { useActions } from '../../../../providers/Actions'
 import { useContracts } from '../../../../providers/Contracts'
 import { usePools } from '../../../../providers/Pools'
-import { toWei, maxUint256, getWeb3 } from '../../../../services/web3'
+import { fromWei, toWei, maxUint256, getWeb3 } from '../../../../services/web3'
+import { formatNumberWido } from '../../../../utils'
+import { WIDO_EXTEND_DECIMALS } from '../../../../constants'
 import AnimatedDots from '../../../AnimatedDots'
 import {
   Buttons,
@@ -36,8 +40,6 @@ const DepositApprove = ({
   pickedToken,
   deposit,
   setDeposit,
-  finalStep,
-  setFinalStep,
   inputAmount,
   token,
   tokenSymbol,
@@ -47,6 +49,9 @@ const DepositApprove = ({
   fromInfoAmount,
   fromInfoUsdAmount,
   minReceiveAmountString,
+  quoteValue,
+  setQuoteValue,
+  setSelectToken,
 }) => {
   const { account, web3, approvedBalances, getWalletBalances } = useWallet()
   const { vaultsData, getFarmingBalances, farmingBalances } = useVaults()
@@ -77,6 +82,7 @@ const DepositApprove = ({
   const walletBalancesToCheck = multipleAssets || [tokenSymbol]
 
   const toToken = token.vaultAddress || token.tokenAddress
+  const pricePerFullShare = get(token, `pricePerFullShare`, 0)
 
   const [startSpinner, setStartSpinner] = useState(false) // State of Spinner for 'Finalize Deposit' button
 
@@ -84,6 +90,22 @@ const DepositApprove = ({
   const [, setPendingAction] = useState(null)
 
   const [buttonName, setButtonName] = useState('Approve Token')
+  const [receiveAmount, setReceiveAmount] = useState('')
+
+  useEffect(() => {
+    const receiveString = pickedToken.default
+      ? formatNumberWido(
+          new BigNumber(amount).dividedBy(pricePerFullShare).toFixed(),
+          WIDO_EXTEND_DECIMALS,
+        )
+      : quoteValue
+      ? formatNumberWido(
+          fromWei(quoteValue.toTokenAmount, token.decimals || token.data.lpTokenData.decimals),
+          WIDO_EXTEND_DECIMALS,
+        )
+      : ''
+    setReceiveAmount(receiveString)
+  }, [amount, pickedToken, pricePerFullShare, quoteValue, token])
 
   const onDeposit = async () => {
     if (pickedToken.default) {
@@ -174,65 +196,67 @@ const DepositApprove = ({
   }
 
   const startDeposit = async () => {
-    setStartSpinner(true)
-    setProgressStep(1)
-    setButtonName('Pending Approval in Wallet')
-    let stepFlag = false,
-      isSuccess = false
-    try {
-      let allowanceCheck
-      if (pickedToken.default) {
-        allowanceCheck = approvedBalances[tokenSymbol]
-      } else {
-        const { allowance } = await getTokenAllowance({
-          chainId,
-          fromToken: pickedToken.address,
-          toToken,
-          accountAddress: account, // User
-        })
-        allowanceCheck = allowance
-      }
-
-      if (!new BigNumber(allowanceCheck).gte(amount)) {
-        const amountToApprove = maxUint256()
-        await approveZap(amountToApprove) // Approve for Zap
-      }
-      stepFlag = true // Finish approve successfully
-    } catch (err) {
-      setStartSpinner(false)
-      setDepositFailed(true)
-      setProgressStep(0)
-      setButtonName('Approve Token')
-      return
-    }
-
-    if (stepFlag) {
+    if (progressStep === 0) {
+      setStartSpinner(true)
+      setProgressStep(1)
+      setButtonName('Pending Approval in Wallet')
       try {
+        let allowanceCheck
+        if (pickedToken.default) {
+          allowanceCheck = approvedBalances[tokenSymbol]
+        } else {
+          const { allowance } = await getTokenAllowance({
+            chainId,
+            fromToken: pickedToken.address,
+            toToken,
+            accountAddress: account, // User
+          })
+          allowanceCheck = allowance
+        }
+
+        if (!new BigNumber(allowanceCheck).gte(amount)) {
+          const amountToApprove = maxUint256()
+          await approveZap(amountToApprove) // Approve for Zap
+        }
         setProgressStep(2)
         setButtonName('Confirm Transaction')
+        setStartSpinner(false)
+      } catch (err) {
+        setStartSpinner(false)
+        setDepositFailed(true)
+        setProgressStep(0)
+        setButtonName('Approve Token')
+        // return
+      }
+    } else if (progressStep === 2) {
+      try {
+        setProgressStep(3)
+        setButtonName('Pending Confirmation in Wallet')
+        setStartSpinner(true)
         await onDeposit()
-        isSuccess = true
       } catch (err) {
         setDepositFailed(true)
         setStartSpinner(false)
-        setButtonName(' ')
+        setProgressStep(0)
+        setButtonName('Approve Token')
         return
       }
-    }
-    // End Approve and Deposit successfully
-    setStartSpinner(false)
-    setDepositFailed(false)
-    setProgressStep(3)
-    setButtonName('Success! Close the Window.')
-    if (isSuccess) {
-      setFinalStep(true)
+      // End Approve and Deposit successfully
+      setStartSpinner(false)
+      setDepositFailed(false)
+      setProgressStep(4)
+      setButtonName('Success! Close the Window.')
+    } else if (progressStep === 4) {
+      setQuoteValue(null)
+      setSelectToken(false)
+      setDeposit(false)
     }
   }
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   return (
     <Modal
-      show={deposit && !finalStep}
+      show={deposit}
       // onHide={onClose}
       dialogClassName="modal-notification"
       aria-labelledby="contained-modal-title-vcenter"
@@ -279,6 +303,7 @@ const DepositApprove = ({
               color="#667085"
               align="center"
               onClick={() => {
+                setDepositFailed(false)
                 setDeposit(false)
               }}
             >
@@ -300,7 +325,7 @@ const DepositApprove = ({
               justifyContent="space-between"
               padding={isMobile ? '5px 0' : '10px 0'}
             >
-              <NewLabel weight="500">Converting</NewLabel>
+              <NewLabel weight="500">{progressStep === 4 ? 'Converted' : 'Converting'}</NewLabel>
               <NewLabel display="flex" flexFlow="column" weight="600" textAlign="right">
                 <>
                   {fromInfoAmount !== '' ? fromInfoAmount : ''}
@@ -318,29 +343,41 @@ const DepositApprove = ({
               padding={isMobile ? '5px 0' : '10px 0'}
             >
               <NewLabel className="beginners" weight="500">
-                Min. fTokens Received
-                <img className="help-icon" src={HelpIcon} alt="" data-tip data-for="min-help" />
-                <ReactTooltip
-                  id="min-help"
-                  backgroundColor="white"
-                  borderColor="white"
-                  textColor="#344054"
-                  place="right"
-                >
-                  <NewLabel
-                    size={isMobile ? '10px' : '12px'}
-                    height={isMobile ? '15px' : '18px'}
-                    weight="600"
-                    color="#344054"
-                  >
-                    {useIFARM
-                      ? `You will receive no less i${tokenSymbol} than the displayed amount.`
-                      : `You will receive no less f${tokenSymbol} than the displayed amount.`}
-                  </NewLabel>
-                </ReactTooltip>
+                {progressStep === 4 ? 'fTokens Received' : 'Min. fTokens Received'}
+                {progressStep !== 4 && (
+                  <>
+                    <img className="help-icon" src={HelpIcon} alt="" data-tip data-for="min-help" />
+                    <ReactTooltip
+                      id="min-help"
+                      backgroundColor="white"
+                      borderColor="white"
+                      textColor="#344054"
+                      place="right"
+                    >
+                      <NewLabel
+                        size={isMobile ? '10px' : '12px'}
+                        height={isMobile ? '15px' : '18px'}
+                        weight="600"
+                        color="#344054"
+                      >
+                        {useIFARM
+                          ? `You will receive no less i${tokenSymbol} than the displayed amount.`
+                          : `You will receive no less f${tokenSymbol} than the displayed amount.`}
+                      </NewLabel>
+                    </ReactTooltip>
+                  </>
+                )}
               </NewLabel>
               <NewLabel weight="600" textAlign="right" display="flex" flexFlow="column">
-                {minReceiveAmountString !== '' ? (
+                {progressStep === 4 ? (
+                  receiveAmount !== '' ? (
+                    receiveAmount
+                  ) : (
+                    <AnimateDotDiv>
+                      <AnimatedDots />
+                    </AnimateDotDiv>
+                  )
+                ) : minReceiveAmountString !== '' ? (
                   minReceiveAmountString
                 ) : (
                   <AnimateDotDiv>
@@ -392,7 +429,15 @@ const DepositApprove = ({
             <img
               className="progressbar-img"
               src={
-                progressStep === 0 ? ProgressOne : progressStep === 1 ? ProgressTwo : ProgressThree
+                progressStep === 0
+                  ? ProgressOne
+                  : progressStep === 1
+                  ? ProgressTwo
+                  : progressStep === 2
+                  ? ProgressThree
+                  : progressStep === 3
+                  ? ProgressFour
+                  : ProgressFive
               }
               alt="progress bar"
             />
@@ -409,7 +454,7 @@ const DepositApprove = ({
                 startDeposit()
               }}
             >
-              {buttonName}&nbsp;
+              {buttonName}&nbsp;&nbsp;
               {!startSpinner ? (
                 <></>
               ) : (

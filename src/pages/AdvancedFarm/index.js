@@ -28,7 +28,7 @@ import DepositSelectToken from '../../components/AdvancedFarmComponents/Deposit/
 // import DepositStart from '../../components/AdvancedFarmComponents/Deposit/DepositStart'
 import DepositApprove from '../../components/AdvancedFarmComponents/Deposit/DepositApprove'
 // import DepositResult from '../../components/AdvancedFarmComponents/Deposit/DepositResult'
-import DepositSuccess from '../../components/AdvancedFarmComponents/Deposit/DepositSuccess'
+// import DepositSuccess from '../../components/AdvancedFarmComponents/Deposit/DepositSuccess'
 import WithdrawBase from '../../components/AdvancedFarmComponents/Withdraw/WithdrawBase'
 import WithdrawSelectToken from '../../components/AdvancedFarmComponents/Withdraw/WithdrawSelectToken'
 import WithdrawStart from '../../components/AdvancedFarmComponents/Withdraw/WithdrawStart'
@@ -376,6 +376,8 @@ const AdvancedFarm = () => {
 
   const [yieldDaily, setYieldDaily] = useState(0)
   const [yieldMonthly, setYieldMonthly] = useState(0)
+  const [convertMonthlyYieldUSD, setConvertMonthlyYieldUSD] = useState(0)
+  const [convertDailyYieldUSD, setConvertDailyYieldUSD] = useState(0)
 
   const [balanceList, setBalanceList] = useState([])
   const [supTokenList, setSupTokenList] = useState([])
@@ -419,6 +421,15 @@ const AdvancedFarm = () => {
     setYieldDaily(dailyYield)
     setYieldMonthly(monthlyYield)
   }, [fAssetPool, tokenVault, usdPrice, lpTokenBalance, totalStaked])
+
+  useEffect(() => {
+    const convertMonthlyYieldValue =
+      (Number(minReceiveAmountString) * Number(usdPrice) * Number(totalApy)) / 12
+    const convertDailyYieldYieldValue =
+      (Number(minReceiveAmountString) * Number(usdPrice) * Number(totalApy)) / 365
+    setConvertMonthlyYieldUSD(convertMonthlyYieldValue)
+    setConvertDailyYieldUSD(convertDailyYieldYieldValue)
+  }, [minReceiveAmountString, usdPrice, totalApy])
 
   useEffect(() => {
     const getTokenBalance = async () => {
@@ -1736,11 +1747,9 @@ const AdvancedFarm = () => {
                   >
                     <DepositSection isShow={activeDepo}>
                       <DepositBase
-                        selectToken={selectTokenDepo}
                         setSelectToken={setSelectTokenDepo}
                         deposit={depositStart}
                         setDeposit={setDepositStart}
-                        finalStep={depositFinalStep}
                         balance={balanceDepo}
                         pickedToken={pickedTokenDepo}
                         inputAmount={inputAmountDepo}
@@ -1754,6 +1763,8 @@ const AdvancedFarm = () => {
                         setQuoteValue={setQuoteValueDepo}
                         setFromInfoAmount={setFromInfoAmount}
                         setFromInfoUsdAmount={setFromInfoUsdAmount}
+                        convertMonthlyYieldUSD={convertMonthlyYieldUSD}
+                        convertDailyYieldUSD={convertDailyYieldUSD}
                         minReceiveAmountString={minReceiveAmountString}
                         setMinReceiveAmountString={setMinReceiveAmountString}
                       />
@@ -1762,9 +1773,9 @@ const AdvancedFarm = () => {
                         setSelectToken={setSelectTokenDepo}
                         // clickTokenId={clickTokenIdDepo}
                         // setClickedTokenId={setClickedTokenIdDepo}
+                        // supTokenList={supTokenList}
                         setPickedToken={setPickedTokenDepo}
                         setBalance={setBalanceDepo}
-                        supTokenList={supTokenList}
                         supTokenNoBalanceList={supTokenNoBalanceList}
                         balanceList={balanceList}
                         defaultToken={defaultToken}
@@ -1786,6 +1797,9 @@ const AdvancedFarm = () => {
                         fromInfoAmount={fromInfoAmount}
                         fromInfoUsdAmount={fromInfoUsdAmount}
                         minReceiveAmountString={minReceiveAmountString}
+                        quoteValue={quoteValueDepo}
+                        setQuoteValue={setQuoteValueDepo}
+                        setSelectToken={setSelectTokenDepo}
                       />
                       {/* <DepositStart
                         pickedToken={pickedTokenDepo}
@@ -1815,7 +1829,7 @@ const AdvancedFarm = () => {
                         quoteValue={quoteValueDepo}
                         setQuoteValue={setQuoteValueDepo}
                       /> */}
-                      <DepositSuccess
+                      {/* <DepositSuccess
                         pickedToken={pickedTokenDepo}
                         finalStep={depositFinalStep}
                         setFinalStep={setDepositFinalStep}
@@ -1827,7 +1841,7 @@ const AdvancedFarm = () => {
                         tokenSymbol={id}
                         quoteValue={quoteValueDepo}
                         setQuoteValue={setQuoteValueDepo}
-                      />
+                      /> */}
                     </DepositSection>
                     <WithdrawSection isShow={!activeDepo}>
                       <WithdrawBase

@@ -152,7 +152,7 @@ const Buttons = styled.button`
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
   color: white;
   border-radius: 8px;
-  padding: 12px 18px;
+  padding: 15px 18px;
   align-items: center;
   width: 100%;
 

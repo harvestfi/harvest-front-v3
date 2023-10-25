@@ -30,7 +30,6 @@ import Button from '../../../Button'
 import AnimatedDots from '../../../AnimatedDots'
 import {
   BalanceInfo,
-  BaseWido,
   BaseWidoDiv,
   DepoTitle,
   TokenAmount,
@@ -66,11 +65,9 @@ const getChainName = chain => {
 }
 
 const DepositBase = ({
-  selectToken,
   setSelectToken,
   deposit,
   setDeposit,
-  // finalStep,
   balance,
   balanceList,
   pickedToken,
@@ -84,6 +81,8 @@ const DepositBase = ({
   setQuoteValue,
   setFromInfoAmount,
   setFromInfoUsdAmount,
+  convertMonthlyYieldUSD,
+  convertDailyYieldUSD,
   minReceiveAmountString,
   setMinReceiveAmountString,
 }) => {
@@ -211,6 +210,7 @@ const DepositBase = ({
             setFromInfoUsdAmount(`$${fromInfoUsdValue}`)
           }
         } catch (e) {
+          setMinReceiveAmountString('')
           toast.error('Failed to get quote!')
         }
       }
@@ -289,7 +289,7 @@ const DepositBase = ({
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   return (
-    <BaseWido show={!selectToken}>
+    <>
       <BaseWidoDiv>
         <NewLabel
           size={isMobile ? '12px' : '16px'}
@@ -439,8 +439,8 @@ const DepositBase = ({
                   weight="600"
                   color="white"
                 >
-                  Calculation based on the live USD pricing of thisfarm&apos;s underlying tokens.
-                  The estimate assumesstaked fTokens. Subject to change.
+                  Calculation based on the live USD pricing of this farm&apos;s underlying tokens.
+                  The estimate assumes staked fTokens. Subject to change.
                 </NewLabel>
               </ReactTooltip>
             </NewLabel>
@@ -451,7 +451,20 @@ const DepositBase = ({
               weight="600"
               textAlign="right"
             >
-              -
+              {account &&
+              pickedToken.symbol !== 'Select Token' &&
+              !new BigNumber(amount).isEqualTo(0) &&
+              balanceList.length !== 0 ? (
+                convertMonthlyYieldUSD !== '' ? (
+                  `$ ${formatNumberWido(convertMonthlyYieldUSD, 4)}`
+                ) : (
+                  <TokenInfo>
+                    <AnimatedDots />
+                  </TokenInfo>
+                )
+              ) : (
+                '-'
+              )}
             </NewLabel>
           </NewLabel>
           <NewLabel
@@ -488,8 +501,8 @@ const DepositBase = ({
                   weight="600"
                   color="white"
                 >
-                  Calculation based on the live USD pricing of thisfarm&apos;s underlying tokens.
-                  The estimate assumesstaked fTokens. Subject to change.
+                  Calculation based on the live USD pricing of this farm&apos;s underlying tokens.
+                  The estimate assumes staked fTokens. Subject to change.
                 </NewLabel>
               </ReactTooltip>
             </NewLabel>
@@ -500,7 +513,20 @@ const DepositBase = ({
               weight="600"
               textAlign="right"
             >
-              -
+              {account &&
+              pickedToken.symbol !== 'Select Token' &&
+              !new BigNumber(amount).isEqualTo(0) &&
+              balanceList.length !== 0 ? (
+                convertDailyYieldUSD !== '' ? (
+                  `$ ${formatNumberWido(convertDailyYieldUSD, 4)}`
+                ) : (
+                  <TokenInfo>
+                    <AnimatedDots />
+                  </TokenInfo>
+                )
+              ) : (
+                '-'
+              )}
             </NewLabel>
           </NewLabel>
           <NewLabel
@@ -583,7 +609,7 @@ const DepositBase = ({
           </Button>
         </NewLabel>
       </BaseWidoDiv>
-    </BaseWido>
+    </>
   )
 }
 export default DepositBase

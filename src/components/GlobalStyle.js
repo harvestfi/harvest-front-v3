@@ -543,8 +543,18 @@ html {
         background: #F2F5FF;
         padding: 24px 24px 20px;
       }
+      .token-select-modal-header {
+        background: #F2F5FF;
+        padding: 24px;
+        display: flex;
+        flex-flow: column;
+      }
       .deposit-modal-body {
         padding: unset;
+      }
+      .token-select-modal-body {
+        padding: unset;
+        height: 328px;
       }
       .modal-footer {
         justify-content: center;

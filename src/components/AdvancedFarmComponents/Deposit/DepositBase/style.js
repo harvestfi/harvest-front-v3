@@ -2,14 +2,6 @@ import styled from 'styled-components'
 import Plus from '../../../../assets/images/logos/beginners/plus.svg'
 import Minus from '../../../../assets/images/logos/beginners/minus.svg'
 
-const BaseWido = styled.div`
-  ${props =>
-    props.show
-      ? `
-  `
-      : 'display: none;'}
-`
-
 const BaseWidoDiv = styled.div`
   padding: 15px 15px 10px 15px;
 
@@ -229,7 +221,7 @@ const TokenSelect = styled.button`
   align-items: center;
 
   &:hover {
-    background: rgba(203, 203, 203, 0.7);
+    background: #f2f5ff;
   }
 
   img.logo {
@@ -467,7 +459,6 @@ const DepositTokenSection = styled.div`
 `
 
 export {
-  BaseWido,
   BaseWidoDiv,
   NewLabel,
   TokenAmount,
