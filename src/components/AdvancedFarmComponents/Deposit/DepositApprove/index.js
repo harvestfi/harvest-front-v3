@@ -41,6 +41,7 @@ const DepositApprove = ({
   deposit,
   setDeposit,
   inputAmount,
+  setInputAmount,
   token,
   tokenSymbol,
   useIFARM,
@@ -52,6 +53,7 @@ const DepositApprove = ({
   quoteValue,
   setQuoteValue,
   setSelectToken,
+  setConvertSuccess,
 }) => {
   const { account, web3, approvedBalances, getWalletBalances } = useWallet()
   const { vaultsData, getFarmingBalances, farmingBalances } = useVaults()
@@ -250,6 +252,9 @@ const DepositApprove = ({
       setQuoteValue(null)
       setSelectToken(false)
       setDeposit(false)
+      setProgressStep(0)
+      setInputAmount(0)
+      setConvertSuccess(true)
     }
   }
 

@@ -355,6 +355,7 @@ const AdvancedFarm = () => {
   const [fromInfoAmount, setFromInfoAmount] = useState('')
   const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('')
   const [minReceiveAmountString, setMinReceiveAmountString] = useState('')
+  const [convertSuccess, setConvertSuccess] = useState(false)
 
   // Withdraw
   const [withdrawStart, setWithdrawStart] = useState(false)
@@ -580,7 +581,7 @@ const AdvancedFarm = () => {
     }
 
     getTokenBalance()
-  }, [account, chain, balances]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, chain, balances, convertSuccess]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (supTokenList.length > 0) {
@@ -1789,6 +1790,7 @@ const AdvancedFarm = () => {
                         finalStep={depositFinalStep}
                         setFinalStep={setDepositFinalStep}
                         inputAmount={inputAmountDepo}
+                        setInputAmount={setInputAmountDepo}
                         token={token}
                         useIFARM={useIFARM}
                         tokenSymbol={id}
@@ -1800,6 +1802,7 @@ const AdvancedFarm = () => {
                         quoteValue={quoteValueDepo}
                         setQuoteValue={setQuoteValueDepo}
                         setSelectToken={setSelectTokenDepo}
+                        setConvertSuccess={setConvertSuccess}
                       />
                       {/* <DepositStart
                         pickedToken={pickedTokenDepo}

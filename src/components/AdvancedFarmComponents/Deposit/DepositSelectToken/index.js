@@ -115,7 +115,11 @@ const DepositSelectToken = ({
       </Modal.Header>
       <Modal.Body className="token-select-modal-body">
         <SelectTokenWido>
-          <NewLabel heightDiv="100%" divScroll="scroll" padding={isMobile ? '9px 12px 0' : '0px'}>
+          <NewLabel
+            heightDiv="100%"
+            divScroll="scroll"
+            padding={isMobile ? '9px 12px 0' : connected ? '0px' : '25px'}
+          >
             {connected ? (
               <SelectTokenList
                 balanceList={balanceList}

@@ -97,7 +97,7 @@ const SelectTokenList = ({
     }
   }, [filterWord, supTokenNoBalanceList, balanceList]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const { widoDepoTokenListActiveColor, fontColor } = useThemeContext()
+  const { fontColor } = useThemeContext()
   // const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   useEffect(() => {
@@ -129,7 +129,7 @@ const SelectTokenList = ({
                     handleDefaultToken()
                   }}
                   hoverColor="#F2F5FF"
-                  activeColor={widoDepoTokenListActiveColor}
+                  activeColor="#ECFDF3"
                 >
                   <img src={defaultCurToken.logoURI} width={26} height={26} alt="" />
                   <Vault>
@@ -161,7 +161,7 @@ const SelectTokenList = ({
                     handleBalanceListClick(i)
                   }}
                   hoverColor="#F2F5FF"
-                  activeColor={widoDepoTokenListActiveColor}
+                  activeColor="#ECFDF3"
                 >
                   <img src={data.logoURI} width={26} height={26} alt="" />
                   <Vault>
@@ -190,7 +190,7 @@ const SelectTokenList = ({
                     handleSupTokenNoBalanceListClick(i)
                   }}
                   hoverColor="#F2F5FF"
-                  activeColor={widoDepoTokenListActiveColor}
+                  activeColor="#ECFDF3"
                 >
                   <img src={data.logoURI} width={26} height={26} alt="" />
                   <Vault>
@@ -210,7 +210,7 @@ const SelectTokenList = ({
             <>
               <Label padding="0px 24px">Soon to be supported</Label>
               {soonToSupList.map((data, i) => (
-                <Container key={i} hoverColor="#F2F5FF" activeColor={widoDepoTokenListActiveColor}>
+                <Container key={i} hoverColor="#F2F5FF" activeColor="#ECFDF3">
                   <img src={data.logoURI} width={26} height={26} alt="" />
                   <Vault>
                     <Text weight={600} color="#344054">

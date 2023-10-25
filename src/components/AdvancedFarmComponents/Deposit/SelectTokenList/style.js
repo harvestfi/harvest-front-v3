@@ -5,7 +5,7 @@ const Container = styled.div`
   border: none;
   cursor: pointer;
   width: auto;
-  padding: 5px 24px;
+  padding: 8px 24px;
   align-items: center;
 
   &:hover {
@@ -14,7 +14,6 @@ const Container = styled.div`
 
   &.active {
     background: ${props => props.activeColor};
-    border-radius: 7px;
   }
 `
 
