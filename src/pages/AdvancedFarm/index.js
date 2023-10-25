@@ -1715,7 +1715,6 @@ const AdvancedFarm = () => {
                         setSelectToken={setSelectTokenDepo}
                         // clickTokenId={clickTokenIdDepo}
                         // setClickedTokenId={setClickedTokenIdDepo}
-                        // supTokenList={supTokenList}
                         setPickedToken={setPickedTokenDepo}
                         setBalance={setBalanceDepo}
                         supTokenNoBalanceList={supTokenNoBalanceList}
