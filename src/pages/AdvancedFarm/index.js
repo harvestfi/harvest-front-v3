@@ -25,10 +25,7 @@ import DOT from '../../assets/images/logos/beginners/dot.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/AdvancedFarmComponents/Deposit/DepositBase'
 import DepositSelectToken from '../../components/AdvancedFarmComponents/Deposit/DepositSelectToken'
-// import DepositStart from '../../components/AdvancedFarmComponents/Deposit/DepositStart'
 import DepositApprove from '../../components/AdvancedFarmComponents/Deposit/DepositApprove'
-// import DepositResult from '../../components/AdvancedFarmComponents/Deposit/DepositResult'
-// import DepositSuccess from '../../components/AdvancedFarmComponents/Deposit/DepositSuccess'
 import WithdrawBase from '../../components/AdvancedFarmComponents/Withdraw/WithdrawBase'
 import WithdrawSelectToken from '../../components/AdvancedFarmComponents/Withdraw/WithdrawSelectToken'
 import WithdrawStart from '../../components/AdvancedFarmComponents/Withdraw/WithdrawStart'
@@ -1748,47 +1745,6 @@ const AdvancedFarm = () => {
                         setSelectToken={setSelectTokenDepo}
                         setConvertSuccess={setConvertSuccess}
                       />
-                      {/* <DepositStart
-                        pickedToken={pickedTokenDepo}
-                        deposit={depositStart}
-                        setDeposit={setDepositStart}
-                        finalStep={depositFinalStep}
-                        setFinalStep={setDepositFinalStep}
-                        inputAmount={inputAmountDepo}
-                        token={token}
-                        balanceList={balanceList}
-                        useIFARM={useIFARM}
-                        tokenSymbol={id}
-                        setQuoteValue={setQuoteValueDepo}
-                        fAssetPool={fAssetPool}
-                        multipleAssets={multipleAssets}
-                      /> */}
-                      {/* <DepositResult
-                        pickedToken={pickedTokenDepo}
-                        finalStep={depositFinalStep}
-                        setFinalStep={setDepositFinalStep}
-                        setSelectToken={setSelectTokenDepo}
-                        setDeposit={setDepositStart}
-                        inputAmount={inputAmountDepo}
-                        token={token}
-                        useIFARM={useIFARM}
-                        tokenSymbol={id}
-                        quoteValue={quoteValueDepo}
-                        setQuoteValue={setQuoteValueDepo}
-                      /> */}
-                      {/* <DepositSuccess
-                        pickedToken={pickedTokenDepo}
-                        finalStep={depositFinalStep}
-                        setFinalStep={setDepositFinalStep}
-                        setSelectToken={setSelectTokenDepo}
-                        setDeposit={setDepositStart}
-                        inputAmount={inputAmountDepo}
-                        token={token}
-                        useIFARM={useIFARM}
-                        tokenSymbol={id}
-                        quoteValue={quoteValueDepo}
-                        setQuoteValue={setQuoteValueDepo}
-                      /> */}
                     </DepositSection>
                     <WithdrawSection isShow={!activeDepo}>
                       <WithdrawBase
