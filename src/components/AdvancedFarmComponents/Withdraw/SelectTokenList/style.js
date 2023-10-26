@@ -5,27 +5,55 @@ const Container = styled.div`
   border: none;
   cursor: pointer;
   width: auto;
-  padding: 9px 3px;
+  padding: 8px 24px;
   align-items: center;
 
   &:hover {
     background: ${props => props.hoverColor};
-    border-radius: 7px;
   }
 
   &.active {
     background: ${props => props.activeColor};
-    border-radius: 7px;
   }
 `
 
 const Text = styled.div`
+  margin: auto 0px;
   font-weight: ${props => props.weight || '400'};
+  ${props =>
+    props.color
+      ? `
+        color: ${props.color}
+      `
+      : ``}
+`
+
+const RightText = styled.div`
+  display: flex;
+  flex-flow: column;
+  text-align: right;
+  font-weight: ${props => props.weight || '400'};
+  ${props =>
+    props.color
+      ? `
+        color: ${props.color}
+      `
+      : ``}
+`
+
+const TextSpan = styled.div`
+  color: #344054;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 20px;
 `
 
 const Vault = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
   margin-left: 8px;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 18px;
 `
 
@@ -64,9 +92,15 @@ const EmptyContainer = styled.div`
 
 const Label = styled.div`
   color: #475467;
-  font-size: 13.281px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 400;
   line-height: 18.972px;
+  ${props =>
+    props.padding
+      ? `
+        padding: ${props.padding}
+      `
+      : ``}
 `
 
-export { Container, Text, Vault, Content, EmptyContainer, Label }
+export { Container, Text, Vault, Content, EmptyContainer, Label, RightText, TextSpan }

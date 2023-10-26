@@ -27,6 +27,7 @@ import AnimatedDots from '../../../AnimatedDots'
 import {
   Buttons,
   FTokenInfo,
+  FTokenDiv,
   IconCard,
   ImgBtn,
   NewLabel,
@@ -36,7 +37,7 @@ import {
 } from './style'
 import { useVaults } from '../../../../providers/Vault'
 
-const DepositApprove = ({
+const DepositStart = ({
   pickedToken,
   deposit,
   setDeposit,
@@ -228,7 +229,6 @@ const DepositApprove = ({
         setDepositFailed(true)
         setProgressStep(0)
         setButtonName('Approve Token')
-        // return
       }
     } else if (progressStep === 2) {
       try {
@@ -269,7 +269,7 @@ const DepositApprove = ({
     >
       <Modal.Header className="deposit-modal-header">
         <FTokenInfo>
-          <>
+          <FTokenDiv>
             <NewLabel margin="auto 0px">
               <IconCard>
                 <BsArrowDown />
@@ -295,7 +295,7 @@ const DepositApprove = ({
                 Convert your crypto into interest-bearing fToken
               </NewLabel>
             </NewLabel>
-          </>
+          </FTokenDiv>
           <NewLabel>
             <NewLabel
               display="flex"
@@ -308,6 +308,7 @@ const DepositApprove = ({
               color="#667085"
               align="center"
               onClick={() => {
+                setProgressStep(0)
                 setDepositFailed(false)
                 setDeposit(false)
               }}
@@ -472,4 +473,4 @@ const DepositApprove = ({
     </Modal>
   )
 }
-export default DepositApprove
+export default DepositStart

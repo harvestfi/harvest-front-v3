@@ -1,24 +1,32 @@
 import BigNumber from 'bignumber.js'
 import React, { useState, useEffect } from 'react'
 import { useSetChain } from '@web3-onboard/react'
+import { quote } from 'wido'
+import { get } from 'lodash'
 import { toast } from 'react-toastify'
 import ReactTooltip from 'react-tooltip'
 import { useMediaQuery } from 'react-responsive'
-import ArrowRightIcon from '../../../../assets/images/logos/beginners/arrow-right.svg'
 import DropDownIcon from '../../../../assets/images/logos/wido/drop-down.svg'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import ArrowDown from '../../../../assets/images/logos/beginners/arrow-narrow-down.svg'
 import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.svg'
 import HelpIcon from '../../../../assets/images/logos/beginners/help-circle.svg'
-import { POOL_BALANCES_DECIMALS } from '../../../../constants'
+import {
+  WIDO_BALANCES_DECIMALS,
+  POOL_BALANCES_DECIMALS,
+  WIDO_EXTEND_DECIMALS,
+  IFARM_TOKEN_SYMBOL,
+  BEGINNERS_BALANCES_DECIMALS,
+} from '../../../../constants'
+import { useVaults } from '../../../../providers/Vault'
 import { useWallet } from '../../../../providers/Wallet'
-import { fromWei, toWei } from '../../../../services/web3'
+import { fromWei, toWei, getWeb3 } from '../../../../services/web3'
+import { addresses } from '../../../../data'
 import AnimatedDots from '../../../AnimatedDots'
 import Button from '../../../Button'
 import { CHAIN_IDS } from '../../../../data/constants'
 import {
-  BaseWido,
   BaseWidoDiv,
   InfoIconCircle,
   NewLabel,
@@ -34,7 +42,7 @@ import {
   TokenSelectSection,
   SwitchTabTag,
 } from './style'
-import { isSpecialApp } from '../../../../utils'
+import { isSpecialApp, formatNumberWido } from '../../../../utils'
 
 const getChainName = chain => {
   let chainName = 'Ethereum'
@@ -56,24 +64,43 @@ const getChainName = chain => {
 }
 
 const WithdrawBase = ({
-  selectToken,
   setSelectToken,
+  unstakeInputValue,
+  setUnstakeInputValue,
   withdrawStart,
   setWithdrawStart,
-  finalStep,
   pickedToken,
   unstakeBalance,
   setUnstakeBalance,
+  balanceList,
   tokenSymbol,
   fAssetPool,
   lpTokenBalance,
   token,
   supTokenList,
   switchMethod,
-  // useIFARM,
+  quoteValue,
+  setQuoteValue,
+  useIFARM,
+  setRevertFromInfoAmount,
+  setRevertFromInfoUsdAmount,
+  setRevertMinReceivedAmount,
+  revertMinReceivedAmount,
+  setRevertedAmount,
 }) => {
-  const [unstakeInputValue, setUnstakeInputValue] = useState(0)
-  const { account, connected, chainId } = useWallet()
+  const [withdrawName, setWithdrawName] = useState('Revert')
+  const [showWarning, setShowWarning] = useState(false)
+
+  const { account, web3, connected, chainId } = useWallet()
+  const { vaultsData } = useVaults()
+
+  const pricePerFullShare = useIFARM
+    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
+    : get(token, `pricePerFullShare`, 0)
+
+  const slippagePercentage = 0.005 // Default slippage Percent
+  // const chainId = token.chain || token.data.chain
+  const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress1
 
   const [
     {
@@ -88,16 +115,128 @@ const WithdrawBase = ({
     : connectedChain
     ? parseInt(connectedChain.id, 16).toString()
     : ''
-  const [withdrawName, setWithdrawName] = useState('Revert')
-  const [showWarning, setShowWarning] = useState(false)
-  const [showWithdrawIcon, setShowWithdrawIcon] = useState(true)
+
+  useEffect(() => {
+    if (
+      account &&
+      pickedToken.symbol !== 'Select' &&
+      !new BigNumber(unstakeBalance).isEqualTo(0) &&
+      curChain === tokenChain
+    ) {
+      const getQuoteResult = async () => {
+        setRevertFromInfoAmount('')
+        setRevertFromInfoUsdAmount('')
+        const amount = unstakeBalance
+        try {
+          let fromInfoValue = '',
+            fromInfoUsdValue = '',
+            minReceivedString = ''
+
+          if (pickedToken.default) {
+            fromInfoValue = `${formatNumberWido(
+              fromWei(amount, pickedToken.decimals),
+              WIDO_EXTEND_DECIMALS,
+            )}`
+            fromInfoUsdValue = formatNumberWido(
+              new BigNumber(fromWei(amount, pickedToken.decimals))
+                .multipliedBy(fromWei(pricePerFullShare, pickedToken.decimals))
+                .multipliedBy(pickedToken.usdPrice),
+              WIDO_BALANCES_DECIMALS,
+            )
+            minReceivedString = formatNumberWido(
+              new BigNumber(fromWei(unstakeBalance, pickedToken.decimals)).multipliedBy(
+                fromWei(pricePerFullShare, pickedToken.decimals),
+              ),
+              WIDO_EXTEND_DECIMALS,
+            )
+          } else {
+            const fromChainId = chainId
+            const toToken = pickedToken.address
+            const toChainId = chainId
+            const user = account
+            const mainWeb = await getWeb3(chainId, account, web3)
+            let curToken = balanceList.filter(el => el.symbol === pickedToken.symbol)
+
+            const quoteResult = await quote(
+              {
+                fromChainId, // Chain Id of from token
+                fromToken, // Token address of from token
+                toChainId, // Chain Id of to token
+                toToken, // Token address of to token
+                amount, // Token amount of from token
+                slippagePercentage, // Acceptable max slippage for the swap
+                user, // Address of user placing the order.
+              },
+              mainWeb.currentProvider,
+            )
+            setQuoteValue(quoteResult)
+
+            curToken = curToken[0]
+
+            fromInfoValue = formatNumberWido(
+              fromWei(quoteResult.fromTokenAmount, curToken.decimals),
+              WIDO_EXTEND_DECIMALS,
+            )
+            fromInfoUsdValue =
+              quoteResult.fromTokenAmount === null
+                ? '0'
+                : formatNumberWido(
+                    fromWei(quoteResult.fromTokenAmount, curToken.decimals) *
+                      quoteResult.fromTokenUsdPrice,
+                    BEGINNERS_BALANCES_DECIMALS,
+                  )
+            minReceivedString = formatNumberWido(
+              fromWei(quoteResult.minToTokenAmount, pickedToken.decimals),
+              WIDO_EXTEND_DECIMALS,
+            )
+          }
+          setRevertFromInfoAmount(fromInfoValue)
+          setRevertFromInfoUsdAmount(fromInfoUsdValue)
+          setRevertMinReceivedAmount(minReceivedString)
+        } catch (e) {
+          toast.error('Failed to get quote!')
+        }
+      }
+      getQuoteResult()
+    }
+  }, [
+    account,
+    pickedToken,
+    unstakeBalance,
+    withdrawStart,
+    balanceList,
+    token,
+    pricePerFullShare,
+    web3,
+    setQuoteValue,
+    chainId,
+    fromToken,
+  ])
+
+  const amountValue = fromWei(unstakeBalance, pickedToken.decimals)
+
+  useEffect(() => {
+    const receiveString = pickedToken.default
+      ? formatNumberWido(
+          new BigNumber(amountValue)
+            .multipliedBy(fromWei(pricePerFullShare, pickedToken.decimals))
+            .toFixed(),
+          WIDO_EXTEND_DECIMALS,
+        )
+      : quoteValue
+      ? formatNumberWido(
+          fromWei(quoteValue.toTokenAmount, pickedToken.decimals),
+          WIDO_EXTEND_DECIMALS,
+        )
+      : ''
+    setRevertedAmount(receiveString)
+  }, [amountValue, quoteValue, pickedToken, pricePerFullShare])
 
   useEffect(() => {
     if (account) {
       if (curChain !== tokenChain) {
         const chainName = getChainName(tokenChain)
         setWithdrawName(`Change Network to ${chainName}`)
-        setShowWithdrawIcon(false)
       } else {
         setWithdrawName('Revert')
       }
@@ -133,6 +272,7 @@ const WithdrawBase = ({
     }
     setWithdrawStart(true)
   }
+
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const mainTags = [
@@ -141,7 +281,7 @@ const WithdrawBase = ({
   ]
 
   return (
-    <BaseWido show={!withdrawStart && !selectToken && !finalStep}>
+    <>
       <BaseWidoDiv>
         <NewLabel
           size={isMobile ? '12px' : '16px'}
@@ -280,7 +420,7 @@ const WithdrawBase = ({
               color="#344054"
               weight="500"
             >
-              Min. fTokens Received
+              Min. Received
               <InfoIconCircle
                 className="info"
                 width={isMobile ? 10 : 16}
@@ -302,7 +442,7 @@ const WithdrawBase = ({
                   weight="600"
                   color="white"
                 >
-                  You will not receive less than the displayed number of fTokens.
+                  You will not receive less than the displayed number of tokens.
                 </NewLabel>
               </ReactTooltip>
             </NewLabel>
@@ -316,8 +456,25 @@ const WithdrawBase = ({
               items="flex-end"
               flexFlow="column"
             >
-              <TokenInfo>{/* <AnimatedDots /> */}-</TokenInfo>
-              <span className="token-symbol">XXX</span>
+              <TokenInfo>
+                {account &&
+                pickedToken.symbol !== 'Select' &&
+                !new BigNumber(unstakeBalance).isEqualTo(0) &&
+                curChain === tokenChain ? (
+                  revertMinReceivedAmount !== '' ? (
+                    revertMinReceivedAmount
+                  ) : (
+                    <TokenInfo>
+                      <AnimatedDots />
+                    </TokenInfo>
+                  )
+                ) : (
+                  '-'
+                )}
+              </TokenInfo>
+              <span className="token-symbol">
+                {pickedToken.symbol !== 'Select' ? pickedToken.symbol : 'Output Token'}
+              </span>
             </NewLabel>
           </NewLabel>
         </NewLabel>
@@ -336,11 +493,10 @@ const WithdrawBase = ({
             }}
           >
             {withdrawName}
-            {showWithdrawIcon && <img src={ArrowRightIcon} alt="" />}
           </Button>
         </NewLabel>
       </BaseWidoDiv>
-    </BaseWido>
+    </>
   )
 }
 export default WithdrawBase

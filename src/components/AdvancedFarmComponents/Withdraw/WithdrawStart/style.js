@@ -2,18 +2,27 @@ import styled from 'styled-components'
 
 const SelectTokenWido = styled.div`
   transition: 0.25s;
-  padding: 16px 15px 24px;
+`
 
-  ${props =>
-    props.show
-      ? `
-    display: block;
-  `
-      : 'display: none;'}
+const FTokenInfo = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`
 
-  @media screen and (max-width: 992px) {
-    padding: 12px 12px 18px;
-  }
+const FTokenDiv = styled.div`
+  display: flex;
+  gap: 16px;
+`
+
+const IconCard = styled.div`
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  padding: 8px;
+  background: #15b088;
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  justify-content: center;
 `
 
 const ImgBtn = styled.img`
@@ -25,6 +34,10 @@ const ImgBtn = styled.img`
     width: 24px;
     height: 24px;
   }
+`
+
+const AnimateDotDiv = styled.div`
+  display: block;
 `
 
 const NewLabel = styled.div`
@@ -101,9 +114,27 @@ const NewLabel = styled.div`
   `
       : ''}
   ${props =>
+    props.margin
+      ? `
+    margin: ${props.margin};
+  `
+      : ''}
+  ${props =>
     props.display
       ? `
     display: ${props.display};
+  `
+      : ''}
+  ${props =>
+    props.flexFlow
+      ? `
+    flex-flow: ${props.flexFlow};
+  `
+      : ''}
+  ${props =>
+    props.alignSelf
+      ? `
+    align-self: ${props.alignSelf};
   `
       : ''}
   ${props =>
@@ -118,23 +149,38 @@ const NewLabel = styled.div`
     color: ${props.color};
   `
       : ''}
+
+  span {
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 12px;
+  }
+
+  img.progressbar-img {
+    width: 100%;
+  }
+
   img.help-icon {
     margin-left: 5px;
   }
 `
 
 const Buttons = styled.button`
-  border: 1px solid #000;
-  background: #000;
+  background: #15b088;
+  border: none;
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
   color: white;
   border-radius: 8px;
-  padding: 10px 18px;
+  padding: 15px 18px;
   align-items: center;
   width: 100%;
 
   &:hover {
-    background: #000000d0;
+    background: #2ccda4;
+  }
+
+  &:active {
+    background: #4fdfbb;
   }
 
   @media screen and (max-width: 992px) {
@@ -153,8 +199,19 @@ const FTokenWrong = styled.div`
   padding: 16px;
   display: ${props => (props.isShow === 'true' ? `flex` : 'none')};
   gap: 12px 0;
-  margin-top: 15px;
+  margin: 0px 24px 15px;
   justify-content: space-between;
 `
 
-export { SelectTokenWido, ImgBtn, NewLabel, Buttons, IconArrowDown, FTokenWrong }
+export {
+  SelectTokenWido,
+  FTokenInfo,
+  FTokenDiv,
+  IconCard,
+  ImgBtn,
+  NewLabel,
+  Buttons,
+  IconArrowDown,
+  FTokenWrong,
+  AnimateDotDiv,
+}

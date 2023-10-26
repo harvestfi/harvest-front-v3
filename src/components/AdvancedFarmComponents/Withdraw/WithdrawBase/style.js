@@ -2,14 +2,6 @@ import styled from 'styled-components'
 import Plus from '../../../../assets/images/logos/beginners/plus.svg'
 import Minus from '../../../../assets/images/logos/beginners/minus.svg'
 
-const BaseWido = styled.div`
-  ${props =>
-    props.show
-      ? `
-  `
-      : 'display: none;'}
-`
-
 const BaseWidoDiv = styled.div`
   padding: 15px 15px 10px 15px;
 
@@ -124,7 +116,11 @@ const NewLabel = styled.div`
     border-radius: ${props.borderRadius};
   `
       : ''}
-  
+
+  #min-received {
+    max-width: 300px;
+  }
+
   img.info-icon {
     margin-right: 12px;
     width: 20px;
@@ -450,7 +446,6 @@ const TokenSelectSection = styled.div`
 `
 
 export {
-  BaseWido,
   BaseWidoDiv,
   InfoIconCircle,
   NewLabel,

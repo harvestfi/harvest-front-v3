@@ -179,6 +179,11 @@ const FTokenInfo = styled.div`
   width: 100%;
 `
 
+const FTokenDiv = styled.div`
+  display: flex;
+  gap: 16px;
+`
+
 const IconCard = styled.div`
   width: 48px;
   height: 48px;
@@ -222,6 +227,7 @@ export {
   NewLabel,
   Buttons,
   FTokenInfo,
+  FTokenDiv,
   IconCard,
   GotItBtn,
   FTokenWrong,

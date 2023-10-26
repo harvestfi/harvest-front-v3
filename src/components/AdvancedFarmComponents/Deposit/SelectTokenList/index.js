@@ -180,7 +180,7 @@ const SelectTokenList = ({
           {supTokenList.length > 0 && (
             <>
               <Label padding="0px 24px">
-                Other supported deposit tokens, which you don’t have on your wallet
+                Other supported convert tokens, which you don&apos;t have on your wallet
               </Label>
               {supTokenList.map((data, i) => (
                 <Container

@@ -71,7 +71,7 @@ const DepositSelectToken = ({
                 weight="600"
                 marginBottom="4px"
               >
-                Summary
+                Select Token
               </NewLabel>
               <NewLabel
                 color="#15202B"
@@ -80,7 +80,7 @@ const DepositSelectToken = ({
                 weight="400"
                 marginBottom="5px"
               >
-                Convert your crypto into interest-bearing fToken
+                Pick a token from your wallet to convert into fToken
               </NewLabel>
             </NewLabel>
           </>
@@ -108,7 +108,7 @@ const DepositSelectToken = ({
           <Search src={SearchIcon} />
           <FilterInput
             value={filterWord}
-            placeholder="Search for ticker or full name"
+            placeholder="Find tokens by name or address"
             onChange={onFilter}
           />
         </NewLabel>

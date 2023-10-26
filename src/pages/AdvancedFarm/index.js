@@ -25,7 +25,7 @@ import DOT from '../../assets/images/logos/beginners/dot.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/AdvancedFarmComponents/Deposit/DepositBase'
 import DepositSelectToken from '../../components/AdvancedFarmComponents/Deposit/DepositSelectToken'
-import DepositApprove from '../../components/AdvancedFarmComponents/Deposit/DepositApprove'
+import DepositStart from '../../components/AdvancedFarmComponents/Deposit/DepositStart'
 import WithdrawBase from '../../components/AdvancedFarmComponents/Withdraw/WithdrawBase'
 import WithdrawSelectToken from '../../components/AdvancedFarmComponents/Withdraw/WithdrawSelectToken'
 import WithdrawStart from '../../components/AdvancedFarmComponents/Withdraw/WithdrawStart'
@@ -363,6 +363,11 @@ const AdvancedFarm = () => {
   // const [clickTokenIdWith, setClickedTokenIdWith] = useState(-1)
   const [partHeightWith, setPartHeightWith] = useState(null)
   const [quoteValueWith, setQuoteValueWith] = useState(null)
+  const [revertFromInfoAmount, setRevertFromInfoAmount] = useState('')
+  const [revertFromInfoUsdAmount, setRevertFromInfoUsdAmount] = useState('')
+  const [revertMinReceivedAmount, setRevertMinReceivedAmount] = useState('')
+  const [revertedAmount, setRevertedAmount] = useState('')
+  const [unstakeInputValue, setUnstakeInputValue] = useState(0)
 
   // Stake
   const [inputAmountStake, setInputAmountStake] = useState(0)
@@ -1723,7 +1728,7 @@ const AdvancedFarm = () => {
                         soonToSupList={soonToSupList}
                         setPartHeight={setPartHeightDepo}
                       />
-                      <DepositApprove
+                      <DepositStart
                         pickedToken={pickedTokenDepo}
                         deposit={depositStart}
                         setDeposit={setDepositStart}
@@ -1747,21 +1752,28 @@ const AdvancedFarm = () => {
                     </DepositSection>
                     <WithdrawSection isShow={!activeDepo}>
                       <WithdrawBase
-                        selectToken={selectTokenWith}
+                        unstakeInputValue={unstakeInputValue}
+                        setUnstakeInputValue={setUnstakeInputValue}
                         setSelectToken={setSelectTokenWith}
-                        withdrawStart={withdrawStart}
                         setWithdrawStart={setWithdrawStart}
-                        finalStep={withdrawFinalStep}
                         pickedToken={pickedTokenWith}
                         unstakeBalance={unstakeBalance}
                         setUnstakeBalance={setUnstakeBalance}
+                        balanceList={balanceList}
                         tokenSymbol={id}
                         fAssetPool={fAssetPool}
                         lpTokenBalance={lpTokenBalance}
                         token={token}
                         supTokenList={supTokenList}
                         switchMethod={switchDepoMethod}
+                        quoteValue={quoteValueWith}
+                        setQuoteValue={setQuoteValueWith}
                         useIFARM={useIFARM}
+                        setRevertFromInfoAmount={setRevertFromInfoAmount}
+                        setRevertFromInfoUsdAmount={setRevertFromInfoUsdAmount}
+                        setRevertMinReceivedAmount={setRevertMinReceivedAmount}
+                        revertMinReceivedAmount={revertMinReceivedAmount}
+                        setRevertedAmount={setRevertedAmount}
                       />
                       <WithdrawSelectToken
                         selectToken={selectTokenWith}
@@ -1780,17 +1792,20 @@ const AdvancedFarm = () => {
                         withdrawStart={withdrawStart}
                         setWithdrawStart={setWithdrawStart}
                         pickedToken={pickedTokenWith}
+                        setPickedToken={setPickedTokenWith}
                         finalStep={withdrawFinalStep}
-                        setFinalStep={setWithdrawFinalStep}
                         token={token}
                         unstakeBalance={unstakeBalance}
-                        balanceList={balanceList}
                         tokenSymbol={id}
                         fAssetPool={fAssetPool}
                         multipleAssets={multipleAssets}
                         useIFARM={useIFARM}
-                        setQuoteValue={setQuoteValueWith}
                         depositedValueUSD={depositedValueUSD}
+                        revertFromInfoAmount={revertFromInfoAmount}
+                        revertFromInfoUsdAmount={revertFromInfoUsdAmount}
+                        revertMinReceivedAmount={revertMinReceivedAmount}
+                        revertedAmount={revertedAmount}
+                        setUnstakeInputValue={setUnstakeInputValue}
                       />
                       <WithdrawResult
                         pickedToken={pickedTokenWith}

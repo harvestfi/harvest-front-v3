@@ -1,15 +1,5 @@
 import styled from 'styled-components'
 
-const SelectToken = styled.div`
-  ${props =>
-    props.show
-      ? `
-    display: block;
-    height: 100%;
-  `
-      : 'display: none;'}
-`
-
 const SelectTokenWido = styled.div`
   border-radius: 12px;
   transition: 0.25s;
@@ -30,16 +20,16 @@ const CloseBtn = styled.img`
 `
 
 const FilterInput = styled.input`
+  border-radius: 8px;
+  border: 1px solid var(--gray-300, #d0d5dd);
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
   background: #ffffff;
-  height: 40px;
+  height: 44px;
   width: 100%;
-  border-radius: 8px 8px 0 0;
-  border: none;
-  border-bottom: 1px solid #eaecf0;
   padding: 15px 40px;
   outline: none;
-  font-weight: 400;
-  font-size: 15px;
+  font-weight: 300;
+  font-size: 12px;
   line-height: 23px;
   color: #667085;
 
@@ -49,10 +39,36 @@ const FilterInput = styled.input`
   }
 `
 
+const FTokenInfo = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`
+const FTokenDiv = styled.div`
+  display: flex;
+  gap: 16px;
+`
+
+const IconCard = styled.div`
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  padding: 14px;
+  background: #15b088;
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  justify-content: center;
+`
+
 const NewLabel = styled.div`
   font-weight: ${props => props.weight || '400'};
   font-size: ${props => props.size || '20px'};
   line-height: ${props => props.height || '0px'};
+  ${props =>
+    props.width
+      ? `
+      width: ${props.width};
+  `
+      : ''}
   ${props =>
     props.color
       ? `
@@ -99,6 +115,12 @@ const NewLabel = styled.div`
     props.marginRight
       ? `
     margin-right: ${props.marginRight};
+  `
+      : ''}
+  ${props =>
+    props.margin
+      ? `
+    margin: ${props.margin};
   `
       : ''}
   ${props =>
@@ -211,7 +233,6 @@ const ImgBtn = styled.img`
 `
 
 export {
-  SelectToken,
   SelectTokenWido,
   CloseBtn,
   FilterInput,
@@ -219,4 +240,7 @@ export {
   Search,
   NotConnectedWallet,
   ImgBtn,
+  FTokenInfo,
+  FTokenDiv,
+  IconCard,
 }
