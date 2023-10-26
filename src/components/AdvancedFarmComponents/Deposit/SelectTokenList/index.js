@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react'
 // import { useMediaQuery } from 'react-responsive'
 import { fromWei } from '../../../../services/web3'
+import { formatNumberWido } from '../../../../utils'
 import { useThemeContext } from '../../../../providers/useThemeContext'
+import { WIDO_EXTEND_DECIMALS, WIDO_BALANCES_DECIMALS } from '../../../../constants'
 import {
   Container,
   Text,
@@ -169,8 +171,22 @@ const SelectTokenList = ({
                       {data.symbol}
                     </Text>
                     <RightText weight={600} color="#344054">
-                      <>{data.balance ? `${1 * fromWei(data.balance, data.decimals)}` : '0.00'}</>
-                      <TextSpan>$0</TextSpan>
+                      <>
+                        {data.balance
+                          ? `${formatNumberWido(
+                              1 * fromWei(data.balance, data.decimals),
+                              WIDO_EXTEND_DECIMALS,
+                            )}`
+                          : '0.00'}
+                      </>
+                      <TextSpan>
+                        {data.usdPrice
+                          ? `$${formatNumberWido(
+                              Number(data.usdPrice) * fromWei(data.balance, data.decimals),
+                              WIDO_BALANCES_DECIMALS,
+                            )}`
+                          : '$0.00'}
+                      </TextSpan>
                     </RightText>
                   </Vault>
                 </Container>
