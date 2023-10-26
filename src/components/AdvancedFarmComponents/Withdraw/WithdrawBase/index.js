@@ -201,6 +201,7 @@ const WithdrawBase = ({
     }
   }, [
     account,
+    tokenChain,
     pickedToken,
     unstakeBalance,
     withdrawStart,
@@ -211,6 +212,10 @@ const WithdrawBase = ({
     setQuoteValue,
     chainId,
     fromToken,
+    curChain,
+    setRevertFromInfoAmount,
+    setRevertFromInfoUsdAmount,
+    setRevertMinReceivedAmount,
   ])
 
   const amountValue = fromWei(unstakeBalance, pickedToken.decimals)
@@ -230,7 +235,7 @@ const WithdrawBase = ({
         )
       : ''
     setRevertedAmount(receiveString)
-  }, [amountValue, quoteValue, pickedToken, pricePerFullShare])
+  }, [amountValue, quoteValue, pickedToken, pricePerFullShare, setRevertedAmount])
 
   useEffect(() => {
     if (account) {
