@@ -152,9 +152,7 @@ const SelectTokenList = ({
             )}
           {balanceTokenList.length > 0 && (
             <>
-              <Label padding="0px 24px">
-                Tokens in your wallet which you can get started with:
-              </Label>
+              <Label padding="0px 24px">Supported tokens in your wallet</Label>
               {balanceTokenList.map((data, i) => (
                 <Container
                   key={i}
