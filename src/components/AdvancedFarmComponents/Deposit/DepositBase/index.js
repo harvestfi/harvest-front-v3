@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useState } from 'react'
 import { useSetChain } from '@web3-onboard/react'
-import { get } from 'lodash'
+import { get, round } from 'lodash'
 import { quote } from 'wido'
 import { useMediaQuery } from 'react-responsive'
 import { toast } from 'react-toastify'
@@ -456,7 +456,7 @@ const DepositBase = ({
               !new BigNumber(amount).isEqualTo(0) &&
               balanceList.length !== 0 ? (
                 minReceiveAmountString !== '' ? (
-                  `$ ${formatNumberWido(convertMonthlyYieldUSD, 4)}`
+                  `$ ${round(convertMonthlyYieldUSD, 2)}`
                 ) : (
                   <TokenInfo>
                     <AnimatedDots />
@@ -518,7 +518,7 @@ const DepositBase = ({
               !new BigNumber(amount).isEqualTo(0) &&
               balanceList.length !== 0 ? (
                 minReceiveAmountString !== '' ? (
-                  `$ ${formatNumberWido(convertDailyYieldUSD, 4)}`
+                  `$ ${round(convertDailyYieldUSD, 2)}`
                 ) : (
                   <TokenInfo>
                     <AnimatedDots />
