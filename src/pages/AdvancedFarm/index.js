@@ -29,7 +29,6 @@ import DepositStart from '../../components/AdvancedFarmComponents/Deposit/Deposi
 import WithdrawBase from '../../components/AdvancedFarmComponents/Withdraw/WithdrawBase'
 import WithdrawSelectToken from '../../components/AdvancedFarmComponents/Withdraw/WithdrawSelectToken'
 import WithdrawStart from '../../components/AdvancedFarmComponents/Withdraw/WithdrawStart'
-import WithdrawResult from '../../components/AdvancedFarmComponents/Withdraw/WithdrawResult'
 import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
 import PriceShareData from '../../components/PriceShareChart/PriceShareData'
 import VaultPanelActionsFooter from '../../components/AdvancedFarmComponents/Rewards/VaultPanelActionsFooter'
@@ -344,7 +343,6 @@ const AdvancedFarm = () => {
   // const [clickTokenIdDepo, setClickedTokenIdDepo] = useState(-1)
   const [balanceDepo, setBalanceDepo] = useState(0)
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
-  const [depositFinalStep, setDepositFinalStep] = useState(false)
   const [quoteValueDepo, setQuoteValueDepo] = useState(null)
   const [inputAmountDepo, setInputAmountDepo] = useState(0)
   const [partHeightDepo, setPartHeightDepo] = useState(null)
@@ -358,7 +356,6 @@ const AdvancedFarm = () => {
   const [withdrawStart, setWithdrawStart] = useState(false)
   const [selectTokenWith, setSelectTokenWith] = useState(false)
   const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select' })
-  const [withdrawFinalStep, setWithdrawFinalStep] = useState(false)
   const [unstakeBalance, setUnstakeBalance] = useState('0')
   // const [clickTokenIdWith, setClickedTokenIdWith] = useState(-1)
   const [partHeightWith, setPartHeightWith] = useState(null)
@@ -1732,8 +1729,6 @@ const AdvancedFarm = () => {
                         pickedToken={pickedTokenDepo}
                         deposit={depositStart}
                         setDeposit={setDepositStart}
-                        finalStep={depositFinalStep}
-                        setFinalStep={setDepositFinalStep}
                         inputAmount={inputAmountDepo}
                         setInputAmount={setInputAmountDepo}
                         token={token}
@@ -1793,7 +1788,6 @@ const AdvancedFarm = () => {
                         setWithdrawStart={setWithdrawStart}
                         pickedToken={pickedTokenWith}
                         setPickedToken={setPickedTokenWith}
-                        finalStep={withdrawFinalStep}
                         token={token}
                         unstakeBalance={unstakeBalance}
                         tokenSymbol={id}
@@ -1806,17 +1800,6 @@ const AdvancedFarm = () => {
                         revertMinReceivedAmount={revertMinReceivedAmount}
                         revertedAmount={revertedAmount}
                         setUnstakeInputValue={setUnstakeInputValue}
-                      />
-                      <WithdrawResult
-                        pickedToken={pickedTokenWith}
-                        finalStep={withdrawFinalStep}
-                        setFinalStep={setWithdrawFinalStep}
-                        setWithdraw={setWithdrawStart}
-                        unstakeBalance={unstakeBalance}
-                        token={token}
-                        tokenSymbol={id}
-                        quoteValue={quoteValueWith}
-                        useIFARM={useIFARM}
                       />
                     </WithdrawSection>
                   </HalfContent>

@@ -40,7 +40,6 @@ const WithdrawStart = ({
   setWithdrawStart,
   pickedToken,
   setPickedToken,
-  finalStep,
   token,
   unstakeBalance,
   tokenSymbol,
@@ -207,7 +206,7 @@ const WithdrawStart = ({
   }
   return (
     <Modal
-      show={withdrawStart && !finalStep}
+      show={withdrawStart}
       // onHide={onClose}
       dialogClassName="modal-notification"
       aria-labelledby="contained-modal-title-vcenter"
