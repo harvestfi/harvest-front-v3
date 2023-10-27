@@ -90,7 +90,7 @@ const WidoDepositBase = ({
   loadingBalances,
   supTokenList,
 }) => {
-  const { handleStake } = useActions()
+  const { handleOldStake } = useActions()
   const { contracts } = useContracts()
   const { userStats, fetchUserPoolStats } = usePools()
   const { connected, connectAction, account, getWalletBalances, chainId, setChainId } = useWallet()
@@ -124,7 +124,7 @@ const WidoDepositBase = ({
     }
 
     setStakeClick(true)
-    await handleStake(
+    await handleOldStake(
       token,
       account,
       symbol,

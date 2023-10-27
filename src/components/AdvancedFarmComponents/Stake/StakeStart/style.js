@@ -2,18 +2,50 @@ import styled from 'styled-components'
 import Plus from '../../../../assets/images/logos/beginners/plus.svg'
 import Minus from '../../../../assets/images/logos/beginners/minus.svg'
 
-const BaseSection = styled.div`
-  padding: 16px 15px 24px;
+const FTokenInfo = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`
 
-  @media screen and (max-width: 992px) {
-    padding: 12px 12px 18px;
-  }
+const FTokenDiv = styled.div`
+  display: flex;
+  gap: 16px;
+`
+
+const IconCard = styled.div`
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  padding: 9px;
+  background: #15b088;
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  justify-content: center;
+`
+
+const BaseSection = styled.div`
+  transition: 0.25s;
 `
 
 const NewLabel = styled.div`
-  font-weight: ${props => props.weight || '400'};
-  font-size: ${props => props.size || '20px'};
-  line-height: ${props => props.height || '0px'};
+  ${props =>
+    props.size
+      ? `
+    font-size: ${props.size};
+  `
+      : ''}
+  ${props =>
+    props.weight
+      ? `
+    font-weight: ${props.weight};
+  `
+      : ''}
+  ${props =>
+    props.height
+      ? `
+    line-height: ${props.height};
+  `
+      : ''}
   ${props =>
     props.padding
       ? `
@@ -69,9 +101,21 @@ const NewLabel = styled.div`
   `
       : ''}
   ${props =>
+    props.margin
+      ? `
+    margin: ${props.margin};
+  `
+      : ''}
+  ${props =>
     props.display
       ? `
     display: ${props.display};
+  `
+      : ''}
+  ${props =>
+    props.flexFlow
+      ? `
+    flex-flow: ${props.flexFlow};
   `
       : ''}
   ${props =>
@@ -106,6 +150,15 @@ const NewLabel = styled.div`
       border-radius: ${props.borderRadius};
   `
       : ''}
+
+  span {
+    font-size: 10px;
+    font-weight: 400;
+    line-height: 12px;
+  }
+  img.progressbar-img {
+    width: 100%;
+  }
   img.icon {
     margin-right: 10px;
   }
@@ -398,7 +451,7 @@ const FTokenWrong = styled.div`
   padding: 16px;
   display: ${props => (props.isShow === 'true' ? `flex` : 'none')};
   gap: 12px 0;
-  margin-top: 15px;
+  margin: 10px 24px;
   justify-content: space-between;
 `
 
@@ -466,6 +519,9 @@ const SwitchTabTag = styled.div`
 `
 
 export {
+  FTokenInfo,
+  FTokenDiv,
+  IconCard,
   BaseSection,
   NewLabel,
   TokenAmount,

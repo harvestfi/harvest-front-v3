@@ -33,6 +33,7 @@ import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
 import PriceShareData from '../../components/PriceShareChart/PriceShareData'
 import VaultPanelActionsFooter from '../../components/AdvancedFarmComponents/Rewards/VaultPanelActionsFooter'
 import StakeBase from '../../components/AdvancedFarmComponents/Stake/StakeBase'
+import StakeStart from '../../components/AdvancedFarmComponents/Stake/StakeStart'
 import StakeResult from '../../components/AdvancedFarmComponents/Stake/StakeResult'
 import UnstakeBase from '../../components/AdvancedFarmComponents/Unstake/UnstakeBase'
 import UnstakeResult from '../../components/AdvancedFarmComponents/Unstake/UnstakeResult'
@@ -367,6 +368,7 @@ const AdvancedFarm = () => {
   const [unstakeInputValue, setUnstakeInputValue] = useState(0)
 
   // Stake
+  const [stakeStart, setStakeStart] = useState(false)
   const [inputAmountStake, setInputAmountStake] = useState(0)
   const [stakeFinalStep, setStakeFinalStep] = useState(false)
 
@@ -2196,8 +2198,7 @@ const AdvancedFarm = () => {
                   >
                     <StakeSection isShow={activeStake}>
                       <StakeBase
-                        finalStep={stakeFinalStep}
-                        setFinalStep={setStakeFinalStep}
+                        setStakeStart={setStakeStart}
                         inputAmount={inputAmountStake}
                         setInputAmount={setInputAmountStake}
                         token={token}
@@ -2205,11 +2206,22 @@ const AdvancedFarm = () => {
                         tokenSymbol={id}
                         lpTokenBalance={lpTokenBalance}
                         fAssetPool={fAssetPool}
+                        // useIFARM={useIFARM}
+                      />
+                      <StakeStart
+                        stakeStart={stakeStart}
+                        setStakeStart={setStakeStart}
+                        inputAmount={inputAmountStake}
+                        setInputAmount={setInputAmountStake}
+                        token={token}
+                        tokenSymbol={id}
+                        fAssetPool={fAssetPool}
+                        lpTokenBalance={lpTokenBalance}
                         lpTokenApprovedBalance={lpTokenApprovedBalance}
                         setPendingAction={setPendingAction}
                         multipleAssets={multipleAssets}
                         setLoadingDots={setLoadingDots}
-                        useIFARM={useIFARM}
+                        // useIFARM={useIFARM}
                       />
                       <StakeResult
                         finalStep={stakeFinalStep}

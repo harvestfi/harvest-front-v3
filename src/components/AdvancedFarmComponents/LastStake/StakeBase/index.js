@@ -85,7 +85,7 @@ const StakeBase = ({
   const [warningContent, setWarningContent] = useState('')
   const [stakeFailed, setStakeFailed] = useState(false)
 
-  const { handleStake } = useActions()
+  const { handleOldStake } = useActions()
   const { contracts } = useContracts()
   const { userStats, fetchUserPoolStats } = usePools()
 
@@ -126,7 +126,7 @@ const StakeBase = ({
     setBtnName('(1/2) Approve Token Spending in Wallet')
     setStartSpinner(true)
     try {
-      await handleStake(
+      await handleOldStake(
         token,
         account,
         tokenSymbol,
