@@ -36,6 +36,7 @@ import StakeBase from '../../components/AdvancedFarmComponents/Stake/StakeBase'
 import StakeStart from '../../components/AdvancedFarmComponents/Stake/StakeStart'
 import StakeResult from '../../components/AdvancedFarmComponents/Stake/StakeResult'
 import UnstakeBase from '../../components/AdvancedFarmComponents/Unstake/UnstakeBase'
+import UnstakeStart from '../../components/AdvancedFarmComponents/Unstake/UnstakeStart'
 import UnstakeResult from '../../components/AdvancedFarmComponents/Unstake/UnstakeResult'
 import {
   COINGECKO_API_KEY,
@@ -373,8 +374,10 @@ const AdvancedFarm = () => {
   const [stakeFinalStep, setStakeFinalStep] = useState(false)
 
   // Unstake
+  const [unstakeStart, setUnstakeStart] = useState(false)
   const [inputAmountUnstake, setInputAmountUnstake] = useState(0)
   const [unstakeFinalStep, setUnstakeFinalStep] = useState(false)
+  const [amountsToExecuteUnstake, setAmountsToExecuteUnstake] = useState('')
 
   const [yieldDaily, setYieldDaily] = useState(0)
   const [yieldMonthly, setYieldMonthly] = useState(0)
@@ -2232,7 +2235,22 @@ const AdvancedFarm = () => {
                     </StakeSection>
                     <UnstakeSection isShow={!activeStake}>
                       <UnstakeBase
+                        setUnstakeStart={setUnstakeStart}
                         finalStep={unstakeFinalStep}
+                        inputAmount={inputAmountUnstake}
+                        setInputAmount={setInputAmountUnstake}
+                        token={token}
+                        switchMethod={switchStakeMethod}
+                        tokenSymbol={id}
+                        totalStaked={totalStaked}
+                        fAssetPool={fAssetPool}
+                        multipleAssets={multipleAssets}
+                        amountsToExecute={amountsToExecuteUnstake}
+                        setAmountsToExecute={setAmountsToExecuteUnstake}
+                      />
+                      <UnstakeStart
+                        unstakeStart={unstakeStart}
+                        setUnstakeStart={setUnstakeStart}
                         setFinalStep={setUnstakeFinalStep}
                         inputAmount={inputAmountUnstake}
                         setInputAmount={setInputAmountUnstake}
@@ -2243,6 +2261,7 @@ const AdvancedFarm = () => {
                         fAssetPool={fAssetPool}
                         setPendingAction={setPendingAction}
                         multipleAssets={multipleAssets}
+                        amountsToExecute={amountsToExecuteUnstake}
                       />
                       <UnstakeResult
                         finalStep={unstakeFinalStep}

@@ -1,10 +1,8 @@
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useState } from 'react'
 import { useSetChain } from '@web3-onboard/react'
-import { Spinner } from 'react-bootstrap'
 import { isEmpty } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
-import WalletIcon from '../../../../assets/images/logos/beginners/wallet-in-button.svg'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import AlertIcon from '../../../../assets/images/logos/beginners/alert-triangle.svg'
@@ -14,8 +12,6 @@ import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.s
 import AnimatedDots from '../../../AnimatedDots'
 import { POOL_BALANCES_DECIMALS } from '../../../../constants'
 import { useWallet } from '../../../../providers/Wallet'
-import { usePools } from '../../../../providers/Pools'
-import { useActions } from '../../../../providers/Actions'
 import { CHAIN_IDS } from '../../../../data/constants'
 import { isSpecialApp } from '../../../../utils'
 import { fromWei, toWei } from '../../../../services/web3'
@@ -55,8 +51,8 @@ const getChainName = chain => {
 }
 
 const UnstakeBase = ({
+  setUnstakeStart,
   finalStep,
-  setFinalStep,
   inputAmount,
   setInputAmount,
   token,
@@ -64,10 +60,11 @@ const UnstakeBase = ({
   tokenSymbol,
   totalStaked,
   fAssetPool,
-  setPendingAction,
   multipleAssets,
+  amountsToExecute,
+  setAmountsToExecute,
 }) => {
-  const { connected, connectAction, account, chainId, setChainId, getWalletBalances } = useWallet()
+  const { connected, connectAction, account, chainId, setChainId } = useWallet()
 
   const [
     {
@@ -87,14 +84,9 @@ const UnstakeBase = ({
   const [warningContent, setWarningContent] = useState('')
   const [unstakeFailed, setUnstakeFailed] = useState(false)
 
-  const { handleExit } = useActions()
-  const { userStats, fetchUserPoolStats } = usePools()
-
   const isSpecialVault = token.liquidityPoolVault || token.poolVault
   const tokenDecimals = token.decimals || tokens[tokenSymbol].decimals
-  const walletBalancesToCheck = multipleAssets || [tokenSymbol]
 
-  const [amountsToExecute, setAmountsToExecute] = useState('')
   useEffect(() => {
     if (account) {
       if (curChain !== '' && curChain !== tokenChain) {
@@ -107,8 +99,6 @@ const UnstakeBase = ({
       setBtnName('Connect Wallet to Get Started')
     }
   }, [account, curChain, tokenChain])
-
-  const [startSpinner, setStartSpinner] = useState(false)
 
   const onClickUnStake = async () => {
     if (new BigNumber(totalStaked).isEqualTo(0)) {
@@ -150,33 +140,7 @@ const UnstakeBase = ({
       return
     }
 
-    setStartSpinner(true)
-    setBtnName('Confirm Unstaking in Wallet')
-    const shouldDoPartialUnstake = new BigNumber(amountsToExecuteInWei[0]).isLessThan(totalStaked)
-    let bSuccessUnstake = false
-    try {
-      await handleExit(
-        account,
-        fAssetPool,
-        shouldDoPartialUnstake,
-        amountsToExecuteInWei[0],
-        setPendingAction,
-        async () => {
-          await fetchUserPoolStats([fAssetPool], account, userStats)
-          await getWalletBalances(walletBalancesToCheck, false, true)
-          bSuccessUnstake = true
-        },
-      )
-    } catch (err) {
-      setUnstakeFailed(true)
-      setBtnName('Revert')
-      return
-    }
-    setBtnName('Revert')
-    setStartSpinner(false)
-    if (bSuccessUnstake) {
-      setFinalStep(true)
-    }
+    setUnstakeStart(true)
   }
 
   const onInputBalance = e => {
@@ -355,15 +319,6 @@ const UnstakeBase = ({
           }}
         >
           {btnName}
-          {!connected ? <img src={WalletIcon} alt="" /> : <></>}
-          {!startSpinner ? (
-            <></>
-          ) : (
-            <>
-              &nbsp;
-              <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
-            </>
-          )}
         </Button>
       </NewLabel>
     </BaseSection>
