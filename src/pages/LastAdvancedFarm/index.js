@@ -34,9 +34,9 @@ import WithdrawResult from '../../components/AdvancedFarmComponents/LastWithdraw
 import FarmDetailChart from '../../components/lastDetailChart/FarmDetailChart'
 import PriceShareData from '../../components/lastPriceShareChart/PriceShareData'
 import VaultPanelActionsFooter from '../../components/AdvancedFarmComponents/LastRewards/VaultPanelActionsFooter'
-import StakeBase from '../../components/AdvancedFarmComponents/LastStake/SpecificStakeBase'
+import StakeBase from '../../components/AdvancedFarmComponents/LastStake/StakeBase'
 import StakeResult from '../../components/AdvancedFarmComponents/LastStake/StakeResult'
-import UnstakeBase from '../../components/AdvancedFarmComponents/LastUnstake/SpecificUnstakeBase'
+import UnstakeBase from '../../components/AdvancedFarmComponents/LastUnstake/UnstakeBase'
 import UnstakeResult from '../../components/AdvancedFarmComponents/LastUnstake/UnstakeResult'
 import {
   DECIMAL_PRECISION,

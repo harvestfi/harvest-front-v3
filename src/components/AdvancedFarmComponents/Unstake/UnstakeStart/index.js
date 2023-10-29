@@ -73,11 +73,6 @@ const UnstakeStart = ({
 
   const [startSpinner, setStartSpinner] = useState(false)
 
-  const onSuccessUnstake = async () => {
-    await fetchUserPoolStats([fAssetPool], account, userStats)
-    await getWalletBalances(walletBalancesToCheck, false, true)
-  }
-
   const onClickUnStake = async () => {
     const amountsToExecuteInWei = amountsToExecute.map(amount => {
       if (isEmpty(amount)) {
@@ -95,6 +90,7 @@ const UnstakeStart = ({
       setProgressStep(1)
       setStartSpinner(true)
       setBtnName('Pending Confirmation in Wallet')
+      let bSuccessUnstake = false
       try {
         await handleExit(
           account,
@@ -102,15 +98,27 @@ const UnstakeStart = ({
           shouldDoPartialUnstake,
           amountsToExecuteInWei[0],
           setPendingAction,
-          onSuccessUnstake(),
+          async () => {
+            await fetchUserPoolStats([fAssetPool], account, userStats)
+            await getWalletBalances(walletBalancesToCheck, false, true)
+            bSuccessUnstake = true
+          },
         )
-        setStartSpinner(false)
-        setProgressStep(2)
-        setBtnName('Success! Close this Window.')
       } catch (err) {
         setUnstakeFailed(true)
         setBtnName('Confirm Transaction')
-        // return
+        return
+      }
+      if (bSuccessUnstake) {
+        setStartSpinner(false)
+        setUnstakeFailed(false)
+        setProgressStep(2)
+        setBtnName('Success! Close this Window.')
+      } else {
+        setStartSpinner(false)
+        setUnstakeFailed(true)
+        setProgressStep(0)
+        setBtnName('Confirm Transaction')
       }
     } else if (progressStep === 2) {
       setProgressStep(0)
@@ -173,7 +181,7 @@ const UnstakeStart = ({
               align="center"
               onClick={() => {
                 setUnstakeStart(false)
-                // setStakeFailed(false)
+                setUnstakeFailed(false)
                 setProgressStep(0)
                 setStartSpinner(false)
                 setBtnName('Approve Token')
