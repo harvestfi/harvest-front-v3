@@ -79,7 +79,7 @@ const UnstakeBase = ({
     : connectedChain
     ? parseInt(connectedChain.id, 16).toString()
     : ''
-  const [btnName, setBtnName] = useState('Revert')
+  const [btnName, setBtnName] = useState('Unstake')
   const [showWarning, setShowWarning] = useState(false)
   const [warningContent, setWarningContent] = useState('')
   const [unstakeFailed, setUnstakeFailed] = useState(false)
@@ -93,7 +93,7 @@ const UnstakeBase = ({
         const chainName = getChainName(tokenChain)
         setBtnName(`Change Network to ${chainName}`)
       } else {
-        setBtnName('Revert')
+        setBtnName('Unstake')
       }
     } else {
       setBtnName('Connect Wallet to Get Started')
