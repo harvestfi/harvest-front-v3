@@ -631,7 +631,7 @@ const Portfolio = () => {
             content="Total Balance"
             price={totalDeposit}
             toolTipTitle="tt-total-balance"
-            toolTip="Sum of your wallet’s staked and unstaked tokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
+            toolTip="Sum of your wallet’s staked and unstaked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
           />
           <TotalValue
             icon={Coin1}
