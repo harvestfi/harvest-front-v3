@@ -192,7 +192,7 @@ const UnstakeBase = ({
           </SwitchTabTag>
         ))}
       </NewLabel>
-      <DepoTitle>Unstake your fToken.</DepoTitle>
+      <DepoTitle>Unstake your fTokens.</DepoTitle>
       <AmountSection>
         <NewLabel
           size={isMobile ? '10px' : '14px'}

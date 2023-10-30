@@ -150,7 +150,7 @@ const StakeBase = ({
           </SwitchTabTag>
         ))}
       </NewLabel>
-      <DepoTitle>Stake your fToken to earn extra token rewards.</DepoTitle>
+      <DepoTitle>Stake your fTokens to earn extra rewards.</DepoTitle>
       <AmountSection>
         <NewLabel
           size={isMobile ? '10px' : '14px'}
