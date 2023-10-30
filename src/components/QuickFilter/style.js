@@ -1021,7 +1021,7 @@ const SpecDropDownItem = styled(Dropdown.Item)`
 `
 
 const TrendDropDown = styled(Dropdown.Toggle)`
-  background: #036666;
+  background: #15b088;
   background-size: 100% !important;
   border: 1px solid ${props => props.bordercolor} !important;
   color: white;
@@ -1042,11 +1042,15 @@ const TrendDropDown = styled(Dropdown.Toggle)`
   }
 
   &:hover {
-    background: #067a7a;
+    background: #2ccda4;
+  }
+
+  &:active {
+    background: #4fdfbb !important;
   }
 
   &.show {
-    background: #067a7a;
+    background: #2ccda4;
   }
 
   .name {
