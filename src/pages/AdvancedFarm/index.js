@@ -1037,7 +1037,7 @@ const AdvancedFarm = () => {
               <NetDetail>
                 <NetDetailItem>
                   <NetDetailTitle>Platform:</NetDetailTitle>
-                  <NetDetailContent>{token.platform[0]}</NetDetailContent>
+                  <NetDetailContent>{token.platform && token.platform[0]}</NetDetailContent>
                 </NetDetailItem>
                 <NetDetailItem>
                   <NetDetailTitle>Network</NetDetailTitle>
