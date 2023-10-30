@@ -31,6 +31,8 @@ import {
   ImgBtn,
 } from './style'
 
+let bStakeApprovalSuccess = false
+
 const StakeStart = ({
   stakeStart,
   setStakeStart,
@@ -64,25 +66,10 @@ const StakeStart = ({
   const [startSpinner, setStartSpinner] = useState(false)
   const [stakeFailed, setStakeFailed] = useState(false)
   const [progressStep, setProgressStep] = useState(0)
-  const [bStakeApprovalSuccess, setBStakeApprovalSuccess] = useState(false)
 
   const { handleStakeApproval, handleStakeTransaction } = useActions()
   const { contracts } = useContracts()
   const { userStats, fetchUserPoolStats } = usePools()
-
-  // useEffect(() => {
-  //   if (bStakeApprovalSuccess) {
-  //     setProgressStep(2)
-  //     setBtnName('Confirm Transaction')
-  //     setStartSpinner(false)
-  //   } else {
-  //     setStartSpinner(false)
-  //     setBtnName('Approve Token')
-  //     setStakeFailed(true)
-  //     setProgressStep(0)
-  //     setBStakeApprovalSuccess(false)
-  //   }
-  // }, [bStakeApprovalSuccess])
 
   const onClickStake = async () => {
     if (progressStep === 0) {
@@ -104,7 +91,7 @@ const StakeStart = ({
           multipleAssets,
           async () => {
             await fetchUserPoolStats([fAssetPool], account, userStats)
-            setBStakeApprovalSuccess(true)
+            bStakeApprovalSuccess = true
           },
           () => {
             setStartSpinner(false)
@@ -112,7 +99,9 @@ const StakeStart = ({
             setStakeFailed(true)
             setProgressStep(0)
           },
-          setBStakeApprovalSuccess,
+          val => {
+            bStakeApprovalSuccess = val
+          },
         )
       } catch (err) {
         setStartSpinner(false)
@@ -127,7 +116,7 @@ const StakeStart = ({
       } else {
         setStartSpinner(false)
         setBtnName('Approve Token')
-        // setStakeFailed(true)
+        setStakeFailed(true)
         setProgressStep(0)
       }
     } else if (progressStep === 2) {
