@@ -638,14 +638,14 @@ const Portfolio = () => {
             content="Est. Monthly Yield"
             price={totalYieldMonthly}
             toolTipTitle="tt-monthly-yield"
-            toolTip="Estimated monthly earnings on all your deposits, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
+            toolTip="Estimated monthly yield on all your deposits, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
           />
           <TotalValue
             icon={Coin2}
             content="Est. Daily Yield"
             price={totalYieldDaily}
             toolTipTitle="tt-daily-yield"
-            toolTip="Estimated daily earnings on all your deposits, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
+            toolTip="Estimated daily yield on all your deposits, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
           />
           <TotalValue
             icon={Diamond}
