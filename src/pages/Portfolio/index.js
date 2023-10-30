@@ -652,7 +652,7 @@ const Portfolio = () => {
             content="Rewards"
             price={totalRewards}
             toolTipTitle="tt-rewards"
-            toolTip="Accrued rewards on all your staked deposits, denominated in USD.  Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
+            toolTip="Accrued rewards on all your staked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
           />
         </SubPart>
 
