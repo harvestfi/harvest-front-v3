@@ -440,9 +440,7 @@ const ActionsProvider = ({ children }) => {
       multipleAssets,
       onSuccessApproval = () => {},
       onFailureStake = () => {},
-      setProgressStep,
-      setBtnName,
-      setStartSpinner,
+      setBStakeApprovalSuccess,
     ) => {
       let hasDeniedRequest = false
 
@@ -451,7 +449,6 @@ const ActionsProvider = ({ children }) => {
           const hasEnoughApprovedAmount = new BigNumber(lpTokenBalance).isLessThanOrEqualTo(
             new BigNumber(lpTokenApprovedBalance),
           )
-
           if (!hasEnoughApprovedAmount) {
             if (!hasEnoughApprovedAmount && !hasDeniedRequest) {
               setPendingAction(ACTIONS.APPROVE_STAKE)
@@ -465,10 +462,9 @@ const ActionsProvider = ({ children }) => {
                 onSuccessApproval,
               )
             }
+          } else {
+            setBStakeApprovalSuccess(true)
           }
-          setProgressStep(2)
-          setBtnName('Confirm Transaction')
-          setStartSpinner(false)
         } catch (err) {
           setPendingAction(null)
           const errorMessage = formatWeb3PluginErrorMessage(err)
@@ -491,10 +487,6 @@ const ActionsProvider = ({ children }) => {
       multipleAssets,
       onSuccessStake = () => {},
       onFailureStake = () => {},
-      setBtnName,
-      setProgressStep,
-      setStartSpinner,
-      setStakeFailed,
       action = ACTIONS.STAKE,
     ) => {
       const poolInstance = poolData.autoStakeContractLocalInstance || poolData.contractLocalInstance
@@ -511,10 +503,6 @@ const ActionsProvider = ({ children }) => {
             toast.success(`${tokenDisplayName} stake completed`)
             await onSuccessStake()
           }
-          setProgressStep(4)
-          setBtnName('Success! Close this Window.')
-          setStakeFailed(false)
-          setStartSpinner(false)
         } catch (err) {
           setPendingAction(null)
           const errorMessage = formatWeb3PluginErrorMessage(err)

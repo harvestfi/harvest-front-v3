@@ -64,39 +64,30 @@ const StakeStart = ({
   const [startSpinner, setStartSpinner] = useState(false)
   const [stakeFailed, setStakeFailed] = useState(false)
   const [progressStep, setProgressStep] = useState(0)
+  const [bStakeApprovalSuccess, setBStakeApprovalSuccess] = useState(false)
 
   const { handleStakeApproval, handleStakeTransaction } = useActions()
   const { contracts } = useContracts()
   const { userStats, fetchUserPoolStats } = usePools()
 
-  const onSuccessApproval = async () => {
-    await fetchUserPoolStats([fAssetPool], account, userStats)
-    // setProgressStep(2)
-    // setBtnName('Confirm Transaction')
-    // setStartSpinner(false)
-  }
-
-  const onSuccessStake = async () => {
-    setLoadingDots(false, true)
-    await fetchUserPoolStats([fAssetPool], account, userStats)
-    await getWalletBalances([tokenSymbol], false, true)
-    setLoadingDots(false, false)
-    // setProgressStep(4)
-    // setBtnName('Success! Close this Window.')
-    // setStakeFailed(false)
-    // setStartSpinner(false)
-  }
-
-  const onFailureStake = () => {
-    setStartSpinner(false)
-    setBtnName('Approve Token')
-    setStakeFailed(true)
-    setProgressStep(0)
-  }
+  // useEffect(() => {
+  //   if (bStakeApprovalSuccess) {
+  //     setProgressStep(2)
+  //     setBtnName('Confirm Transaction')
+  //     setStartSpinner(false)
+  //   } else {
+  //     setStartSpinner(false)
+  //     setBtnName('Approve Token')
+  //     setStakeFailed(true)
+  //     setProgressStep(0)
+  //     setBStakeApprovalSuccess(false)
+  //   }
+  // }, [bStakeApprovalSuccess])
 
   const onClickStake = async () => {
     if (progressStep === 0) {
       setStartSpinner(true)
+      setStakeFailed(false)
       setProgressStep(1)
       setBtnName('Pending Approval in Wallet')
       const stakeAmount = toWei(inputAmount, fAssetPool.lpTokenData.decimals)
@@ -111,11 +102,17 @@ const StakeStart = ({
           contracts,
           setPendingAction,
           multipleAssets,
-          onSuccessApproval,
-          onFailureStake,
-          setProgressStep,
-          setBtnName,
-          setStartSpinner,
+          async () => {
+            await fetchUserPoolStats([fAssetPool], account, userStats)
+            setBStakeApprovalSuccess(true)
+          },
+          () => {
+            setStartSpinner(false)
+            setBtnName('Approve Token')
+            setStakeFailed(true)
+            setProgressStep(0)
+          },
+          setBStakeApprovalSuccess,
         )
       } catch (err) {
         setStartSpinner(false)
@@ -123,10 +120,21 @@ const StakeStart = ({
         setStakeFailed(true)
         setProgressStep(0)
       }
+      if (bStakeApprovalSuccess) {
+        setProgressStep(2)
+        setBtnName('Confirm Transaction')
+        setStartSpinner(false)
+      } else {
+        setStartSpinner(false)
+        setBtnName('Approve Token')
+        // setStakeFailed(true)
+        setProgressStep(0)
+      }
     } else if (progressStep === 2) {
       setStartSpinner(true)
       setProgressStep(3)
       setBtnName('Pending Confirmation in Wallet')
+      let bStakeSuccess = false
       const stakeAmount = toWei(inputAmount, fAssetPool.lpTokenData.decimals)
       try {
         await handleStakeTransaction(
@@ -137,14 +145,32 @@ const StakeStart = ({
           contracts,
           setPendingAction,
           multipleAssets,
-          onSuccessStake,
-          onFailureStake,
-          setBtnName,
-          setProgressStep,
-          setStartSpinner,
-          setStakeFailed,
+          async () => {
+            setLoadingDots(false, true)
+            await fetchUserPoolStats([fAssetPool], account, userStats)
+            await getWalletBalances([tokenSymbol], false, true)
+            setLoadingDots(false, false)
+            bStakeSuccess = true
+          },
+          () => {
+            setStartSpinner(false)
+            setBtnName('Approve Token')
+            setStakeFailed(true)
+            setProgressStep(0)
+          },
         )
       } catch (err) {
+        setStartSpinner(false)
+        setBtnName('Approve Token')
+        setStakeFailed(true)
+        setProgressStep(0)
+      }
+      if (bStakeSuccess) {
+        setProgressStep(4)
+        setBtnName('Success! Close this Window.')
+        setStakeFailed(false)
+        setStartSpinner(false)
+      } else {
         setStartSpinner(false)
         setBtnName('Approve Token')
         setStakeFailed(true)
