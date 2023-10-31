@@ -18,6 +18,7 @@ import {
 import AnimatedDots from '../../AnimatedDots'
 import Button from '../../Button'
 import Counter from '../../Counter'
+import CounterUsdPrice from '../../CounterUsdPrice'
 import {
   Div,
   SelectedVault,
@@ -34,6 +35,7 @@ const VaultFooterActions = ({
   totalTokensEarned,
   token,
   rewardTokenSymbols,
+  rewardTokenPrices,
   isLoadingData,
   rewardsEarned,
   ratesPerDay,
@@ -115,7 +117,32 @@ const VaultFooterActions = ({
                         fAssetPool.rewardTokens[0],
                       )}
                     />
-                    <span> ($0)</span>
+                    <CounterUsdPrice
+                      pool={fAssetPool}
+                      totalTokensEarned={
+                        rewardTokenSymbols.length > 1
+                          ? fromWei(
+                              get(rewardsEarned, symbol, 0),
+                              get(tokens[symbol], 'decimals', 18),
+                              4,
+                            )
+                          : totalTokensEarned
+                      }
+                      totalStaked={get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)}
+                      ratePerDay={get(ratesPerDay, symbolIdx, ratesPerDay[0])}
+                      rewardPerToken={get(
+                        fAssetPool,
+                        `rewardPerToken[${symbolIdx}]`,
+                        fAssetPool.rewardPerToken[0],
+                      )}
+                      rewardTokenAddress={get(
+                        fAssetPool,
+                        `rewardTokens[${symbolIdx}]`,
+                        fAssetPool.rewardTokens[0],
+                      )}
+                      rewardTokenUsdPrice={rewardTokenPrices[symbolIdx]}
+                    />
+                    {/* <span>Hi {rewardTokenPrices[symbolIdx]}</span> */}
                   </>
                 ) : userStats.length === 0 ? (
                   <AnimatedDots />

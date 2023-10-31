@@ -685,6 +685,7 @@ const AdvancedFarm = () => {
   const [depositedValueUSD, setDepositUsdValue] = useState(0)
   const [balanceAmount, setBalanceAmount] = useState(0)
   const [totalReward, setTotalReward] = useState(0)
+  const [rewardTokenPrices, setRewardTokenPrices] = useState([])
   const firstUnderlyingBalance = useRef(true)
 
   const getPrice = async data => {
@@ -857,6 +858,8 @@ const AdvancedFarm = () => {
     useIFARM ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0) : token.decimals,
   )
   useEffect(() => {
+    let totalRewardSum = 0
+    const usdPrices = []
     for (let l = 0; l < rewardTokenSymbols.length; l += 1) {
       // eslint-disable-next-line one-var
       let rewardSymbol = rewardTokenSymbols[l].toUpperCase(),
@@ -935,13 +938,16 @@ const AdvancedFarm = () => {
           ? 0
           : fromWei(totalRewardsEarned, rewardDecimal) * usdRewardPrice,
       )
-      setTotalReward(totalRewardUsd)
+      totalRewardSum += totalRewardUsd
+      usdPrices.push(usdRewardPrice)
     }
+    setTotalReward(totalRewardSum)
+    setRewardTokenPrices(usdPrices)
   }, [
     userStats,
     fAssetPool,
     apiData,
-    groupOfVaults,
+    // groupOfVaults,  //Because of infinite loop
     pricePerFullShare,
     rewardTokenSymbols,
     totalRewardsEarned,
@@ -952,6 +958,7 @@ const AdvancedFarm = () => {
     tokenDecimals,
     fAssetPool,
     totalRewardsEarned,
+    rewardTokenPrices,
     pendingAction,
     setLoadingDots,
     setPendingAction,
@@ -1156,11 +1163,16 @@ const AdvancedFarm = () => {
                       </NewLabel>
                       <RewardValue>
                         <BoxValue>
-                          ${' '}
                           {!connected ? (
                             0
                           ) : userStats ? (
-                            formatNumber(totalReward, 2)
+                            totalReward === 0 ? (
+                              '$0.00'
+                            ) : totalReward < 0.01 ? (
+                              '<$0.01'
+                            ) : (
+                              `$${formatNumber(totalReward, 2)}`
+                            )
                           ) : (
                             <AnimatedDots />
                           )}

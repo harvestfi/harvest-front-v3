@@ -190,9 +190,13 @@ const USDValue = styled.div`
 
 const Monospace = styled.div`
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 400;
   line-height: 24px;
   color: #000;
+
+  .count-up-text {
+    font-weight: 500;
+  }
 
   span {
     font-size: 14px;
