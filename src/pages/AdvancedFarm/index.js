@@ -862,9 +862,9 @@ const AdvancedFarm = () => {
   useEffect(() => {
     let totalRewardSum = 0
     const usdPrices = []
-    for (let l = 0; l < rewardTokenSymbols.length; l += 1) {
+    const promises = rewardTokenSymbols.map(async symbol => {
       // eslint-disable-next-line one-var
-      let rewardSymbol = rewardTokenSymbols[l].toUpperCase(),
+      let rewardSymbol = symbol.toUpperCase(),
         usdRewardPrice = 0,
         rewardDecimal = 18
 
@@ -893,46 +893,28 @@ const AdvancedFarm = () => {
           underlyingRewardSymbol = rewardSymbol.substring(1)
         }
         // eslint-disable-next-line no-loop-func
-        const fetchData = async () => {
-          try {
-            for (let ids = 0; ids < apiData.length; ids += 1) {
-              const tempData = apiData[ids]
-              const tempSymbol = tempData.symbol
-              if (tempSymbol.toLowerCase() === underlyingRewardSymbol.toLowerCase()) {
-                // eslint-disable-next-line no-await-in-loop
-                const usdUnderlyingRewardPrice = await getTokenPriceFromApi(tempData.id)
-                usdRewardPrice = Number(usdUnderlyingRewardPrice) * Number(pricePerFullShare)
-                console.log(
-                  `${underlyingRewardSymbol} - USD Price of reward token: ${usdRewardPrice}`,
-                )
-                return
-              }
-            }
-          } catch (error) {
-            console.error('Error:', error)
+        for (let ids = 0; ids < apiData.length; ids += 1) {
+          const tempData = apiData[ids]
+          const tempSymbol = tempData.symbol
+          if (tempSymbol.toLowerCase() === underlyingRewardSymbol.toLowerCase()) {
+            // eslint-disable-next-line no-await-in-loop
+            const usdUnderlyingRewardPrice = await getTokenPriceFromApi(tempData.id)
+            usdRewardPrice = Number(usdUnderlyingRewardPrice) * Number(pricePerFullShare)
+            console.log(`${underlyingRewardSymbol} - USD Price of reward token: ${usdRewardPrice}`)
+            break
           }
         }
-
-        fetchData()
       } else {
-        const fetchData = async () => {
-          try {
-            for (let ids = 0; ids < apiData.length; ids += 1) {
-              const tempData = apiData[ids]
-              const tempSymbol = tempData.symbol
-              if (tempSymbol.toLowerCase() === rewardSymbol.toLowerCase()) {
-                // eslint-disable-next-line no-await-in-loop
-                usdRewardPrice = await getTokenPriceFromApi(tempData.id)
-                console.log(`${rewardSymbol} - USD Price: ${usdRewardPrice}`)
-                return
-              }
-            }
-          } catch (error) {
-            console.error('Error:', error)
+        for (let ids = 0; ids < apiData.length; ids += 1) {
+          const tempData = apiData[ids]
+          const tempSymbol = tempData.symbol
+          if (tempSymbol.toLowerCase() === rewardSymbol.toLowerCase()) {
+            // eslint-disable-next-line no-await-in-loop
+            usdRewardPrice = await getTokenPriceFromApi(tempData.id)
+            console.log(`${rewardSymbol} - USD Price: ${usdRewardPrice}`)
+            break
           }
         }
-
-        fetchData()
       }
 
       const totalRewardUsd = Number(
@@ -940,11 +922,14 @@ const AdvancedFarm = () => {
           ? 0
           : fromWei(totalRewardsEarned, rewardDecimal) * usdRewardPrice,
       )
-      totalRewardSum += totalRewardUsd
       usdPrices.push(usdRewardPrice)
-    }
-    setTotalReward(totalRewardSum)
-    setRewardTokenPrices(usdPrices)
+      return totalRewardUsd
+    })
+    Promise.all(promises).then(totalRewardUsds => {
+      totalRewardSum = totalRewardUsds.reduce((sum, value) => sum + value, 0)
+      setTotalReward(totalRewardSum)
+      setRewardTokenPrices(usdPrices)
+    })
     // eslint-disable-next-line
   }, [
     userStats,
