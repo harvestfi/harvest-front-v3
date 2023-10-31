@@ -948,7 +948,7 @@ const AdvancedFarm = () => {
     userStats,
     fAssetPool,
     apiData,
-    // groupOfVaults,  //Because of infinite loop
+    groupOfVaults,
     pricePerFullShare,
     rewardTokenSymbols,
     totalRewardsEarned,
