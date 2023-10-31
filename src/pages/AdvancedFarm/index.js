@@ -84,6 +84,7 @@ import {
   TopDesc,
   TopPart,
   MyBalance,
+  MyTotalReward,
   FarmInfo,
   GuideSection,
   GuidePart,
@@ -1062,19 +1063,19 @@ const AdvancedFarm = () => {
           <InternalSection>
             {activeMainTag === 2 && (
               <BoxCover>
-                <ValueBox width="24%">
+                <ValueBox width="24%" height="120px">
                   <BoxTitle>APY</BoxTitle>
                   <BoxValue>{showAPY()}</BoxValue>
                 </ValueBox>
-                <ValueBox width="24%">
+                <ValueBox width="24%" height="120px">
                   <BoxTitle>Daily APY</BoxTitle>
                   <BoxValue>{showApyDaily()}</BoxValue>
                 </ValueBox>
-                <ValueBox width="24%">
+                <ValueBox width="24%" height="120px">
                   <BoxTitle>TVL</BoxTitle>
                   <BoxValue>{showTVL()}</BoxValue>
                 </ValueBox>
-                <ValueBox width="24%">
+                <ValueBox width="24%" height="120px">
                   <BoxTitle>Last Harvest</BoxTitle>
                   <BoxValue>{lastHarvest !== '' ? `${lastHarvest} ago` : '-'}</BoxValue>
                 </ValueBox>
@@ -1151,13 +1152,16 @@ const AdvancedFarm = () => {
                   </HalfInfo>
                 ) : (
                   <>
-                    <MyBalance height="120px" marginBottom="23px">
+                    <MyTotalReward
+                      height="120px"
+                      marginBottom="23px"
+                      padding={isMobile ? '24px' : '24px'}
+                    >
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}
                         weight="500"
                         height={isMobile ? '18px' : '20px'}
                         color="#6F78AA"
-                        padding={isMobile ? '9px 13px' : '24px 24px 0px 24px'}
                       >
                         Rewards
                       </NewLabel>
@@ -1178,7 +1182,7 @@ const AdvancedFarm = () => {
                           )}
                         </BoxValue>
                       </RewardValue>
-                    </MyBalance>
+                    </MyTotalReward>
                     <MyBalance marginBottom="23px">
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}

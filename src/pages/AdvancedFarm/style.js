@@ -126,11 +126,8 @@ const TopButton = styled.div`
 `
 
 const RewardValue = styled.div`
-  padding: 0px 24px 24px 24px;
   color: #101828;
-  font-size: 30px;
   font-weight: 600;
-  line-height: 44px;
 `
 
 const NewLabel = styled.div`
@@ -603,6 +600,43 @@ const MyBalance = styled.div`
   background: #fff;
   border-radius: 12px;
   border: 2px solid #f2f5ff;
+
+  ${props =>
+    props.height
+      ? `
+      height: ${props.height};
+    `
+      : ``}
+
+  ${props =>
+    props.marginTop
+      ? `
+      margin-top: ${props.marginTop};
+    `
+      : ``}
+
+  ${props =>
+    props.marginBottom
+      ? `
+      margin-bottom: ${props.marginBottom};
+    `
+      : ``}
+`
+
+const MyTotalReward = styled.div`
+  background: #fff;
+  border-radius: 12px;
+  border: 2px solid #f2f5ff;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+
+  ${props =>
+    props.padding
+      ? `
+    padding: ${props.padding};
+  `
+      : ''}
 
   ${props =>
     props.height
@@ -1131,6 +1165,7 @@ export {
   InfoIcon,
   Monospace,
   MyBalance,
+  MyTotalReward,
   FarmInfo,
   ThemeMode,
   GuideSection,
