@@ -61,7 +61,7 @@ const CounterUsdPrice = ({
             ? '$0.00'
             : RewardUSDCase1 < 0.01
             ? '<$0.01'
-            : `${formatNumber(RewardUSDCase1, BEGINNERS_BALANCES_DECIMALS)}`}
+            : `$${formatNumber(RewardUSDCase1, BEGINNERS_BALANCES_DECIMALS)}`}
           )
         </>
       )
@@ -74,7 +74,7 @@ const CounterUsdPrice = ({
             ? '$0.00'
             : RewardUSDCase2 < 0.01
             ? '<$0.01'
-            : `${formatNumber(RewardUSDCase2, BEGINNERS_BALANCES_DECIMALS)}`}
+            : `$${formatNumber(RewardUSDCase2, BEGINNERS_BALANCES_DECIMALS)}`}
           )
         </>
       )
@@ -87,7 +87,7 @@ const CounterUsdPrice = ({
             ? '$0.00'
             : RewardUSDCase3 < 0.01
             ? '<$0.01'
-            : `${formatNumber(RewardUSDCase3, BEGINNERS_BALANCES_DECIMALS)}`}
+            : `$${formatNumber(RewardUSDCase3, BEGINNERS_BALANCES_DECIMALS)}`}
           )
         </>
       )

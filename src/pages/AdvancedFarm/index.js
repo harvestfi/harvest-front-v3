@@ -858,6 +858,7 @@ const AdvancedFarm = () => {
     tempPricePerFullShare,
     useIFARM ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0) : token.decimals,
   )
+
   useEffect(() => {
     let totalRewardSum = 0
     const usdPrices = []
@@ -944,11 +945,11 @@ const AdvancedFarm = () => {
     }
     setTotalReward(totalRewardSum)
     setRewardTokenPrices(usdPrices)
+    // eslint-disable-next-line
   }, [
     userStats,
     fAssetPool,
     apiData,
-    groupOfVaults, // Generating the infinit loop
     pricePerFullShare,
     rewardTokenSymbols,
     totalRewardsEarned,
