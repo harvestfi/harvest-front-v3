@@ -885,9 +885,9 @@ const AdvancedFarm = () => {
           (rewardToken.data &&
             rewardToken.data.lpTokenData &&
             rewardToken.data.lpTokenData.decimals)
-      } else if (rewardSymbol.substring(0, 1) === 'f') {
+      } else if (rewardSymbol.substring(0, 1) === 'F') {
         let underlyingRewardSymbol
-        if (rewardSymbol.substring(0, 2) === 'fx') {
+        if (rewardSymbol.substring(0, 2) === 'FX') {
           underlyingRewardSymbol = rewardSymbol.substring(2)
         } else {
           underlyingRewardSymbol = rewardSymbol.substring(1)
