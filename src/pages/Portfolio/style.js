@@ -477,10 +477,9 @@ const LogoImg = styled.img`
 `
 
 const Img = styled.img`
-  padding-right: 6px;
   width: 37px;
   height: 37px;
-  margin: auto 0px;
+  margin: auto 6px auto 0px;
 `
 
 const Col = styled.div`

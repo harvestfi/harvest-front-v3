@@ -1074,7 +1074,7 @@ const AdvancedFarm = () => {
                     <ValueBox height="120px" width="32%">
                       <BoxTitle>My Balance</BoxTitle>
                       <BoxValue>
-                        ${' '}
+                        $
                         {!connected ? (
                           0
                         ) : lpTokenBalance ? (
@@ -1087,13 +1087,13 @@ const AdvancedFarm = () => {
                     <ValueBox height="120px" width="32%">
                       <BoxTitle>Monthly Yield</BoxTitle>
                       <BoxValue>
-                        $ {!connected ? 0 : isNaN(yieldMonthly) ? 0 : formatNumber(yieldMonthly, 2)}
+                        ${!connected ? 0 : isNaN(yieldMonthly) ? 0 : formatNumber(yieldMonthly, 2)}
                       </BoxValue>
                     </ValueBox>
                     <ValueBox height="120px" width="32%">
                       <BoxTitle>Daily Yield</BoxTitle>
                       <BoxValue>
-                        $ {!connected ? 0 : isNaN(yieldDaily) ? 0 : formatNumber(yieldDaily, 2)}
+                        ${!connected ? 0 : isNaN(yieldDaily) ? 0 : formatNumber(yieldDaily, 2)}
                       </BoxValue>
                     </ValueBox>
                   </BoxCover>
@@ -1152,6 +1152,19 @@ const AdvancedFarm = () => {
                         Rewards
                       </NewLabel>
                       <RewardValue>
+                        {/* <BoxValue>
+                          {!connected ? (
+                            0
+                          ) : userStats ? (
+                            totalReward === 0 ? (
+                              '$0.00'
+                            ) : (
+                              `$${totalReward}`
+                            )
+                          ) : (
+                            <AnimatedDots />
+                          )}
+                        </BoxValue> */}
                         <BoxValue>
                           {!connected ? (
                             0
