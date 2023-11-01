@@ -849,6 +849,7 @@ const AdvancedFarm = () => {
     setLpStatsloading(loadingLp)
   }
   const totalRewardsEarned = get(userStats, `[${fAssetPool.id}]['totalRewardsEarned']`, 0)
+  const rewardsEarned = get(userStats, `[${fAssetPool.id}]['rewardsEarned']`, 0)
 
   const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
   const tempPricePerFullShare = useIFARM
@@ -865,8 +866,7 @@ const AdvancedFarm = () => {
     const promises = rewardTokenSymbols.map(async symbol => {
       // eslint-disable-next-line one-var
       let rewardSymbol = symbol.toUpperCase(),
-        usdRewardPrice = 0,
-        rewardDecimal = 18
+        usdRewardPrice = 0
 
       if (rewardTokenSymbols.includes(FARM_TOKEN_SYMBOL)) {
         rewardSymbol = FARM_TOKEN_SYMBOL
@@ -880,11 +880,11 @@ const AdvancedFarm = () => {
             ? rewardToken.data.lpTokenData && rewardToken.data.lpTokenData.price
             : rewardToken.usdPrice) || 0
 
-        rewardDecimal =
-          rewardToken.decimals ||
-          (rewardToken.data &&
-            rewardToken.data.lpTokenData &&
-            rewardToken.data.lpTokenData.decimals)
+        // rewardDecimal =
+        //   rewardToken.decimals ||
+        //   (rewardToken.data &&
+        //     rewardToken.data.lpTokenData &&
+        //     rewardToken.data.lpTokenData.decimals)
       } else if (rewardSymbol.substring(0, 1) === 'F') {
         let underlyingRewardSymbol
         if (rewardSymbol.substring(0, 2) === 'FX') {
@@ -918,9 +918,10 @@ const AdvancedFarm = () => {
       }
 
       const totalRewardUsd = Number(
-        totalRewardsEarned === undefined
+        rewardsEarned === undefined
           ? 0
-          : fromWei(totalRewardsEarned, rewardDecimal) * usdRewardPrice,
+          : fromWei(get(rewardsEarned, symbol, 0), get(tokens[symbol], 'decimals', 18), 4) *
+              usdRewardPrice,
       )
       usdPrices.push(usdRewardPrice)
       return totalRewardUsd
@@ -929,6 +930,7 @@ const AdvancedFarm = () => {
       totalRewardSum = totalRewardUsds.reduce((sum, value) => sum + value, 0)
       setTotalReward(totalRewardSum)
       setRewardTokenPrices(usdPrices)
+      // debugger
     })
     // eslint-disable-next-line
   }, [
@@ -937,7 +939,7 @@ const AdvancedFarm = () => {
     apiData,
     pricePerFullShare,
     rewardTokenSymbols,
-    totalRewardsEarned,
+    rewardsEarned,
   ])
 
   const viewComponentProps = {
