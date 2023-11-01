@@ -293,16 +293,10 @@ const Portfolio = () => {
               new BigNumber(balances[IFARM_TOKEN_SYMBOL]).gt(0)),
         )
 
-        const symbols = []
-        for (let j = 0; j < stakedVaults.length; j += 1) {
-          let symbol = ''
-          if (stakedVaults[j] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
-            symbol = FARM_TOKEN_SYMBOL
-          } else {
-            symbol = stakedVaults[j]
-          }
-          symbols.push(symbol)
-        }
+        const symbols = stakedVaults.map(poolId =>
+          poolId === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID ? FARM_TOKEN_SYMBOL : poolId,
+        )
+
         if (depositToken.length !== symbols.length) {
           setDepositToken(symbols)
         }
@@ -312,7 +306,8 @@ const Portfolio = () => {
           valueRewards = 0,
           totalDailyYield = 0,
           totalMonthlyYield = 0
-        for (let i = 0; i < stakedVaults.length; i += 1) {
+
+        const promises = stakedVaults.map(async stakedVaultId => {
           const stats = {
             chain: '',
             symbol: '',
@@ -328,10 +323,10 @@ const Portfolio = () => {
             token: {},
           }
           let symbol = ''
-          if (stakedVaults[i] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
+          if (stakedVaultId === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
             symbol = FARM_TOKEN_SYMBOL
           } else {
-            symbol = stakedVaults[i]
+            symbol = stakedVaultId
           }
           // eslint-disable-next-line one-var
           let fAssetPool =
@@ -380,7 +375,7 @@ const Portfolio = () => {
                   : token.vaultPrice) || 1
             }
             const unstake = fromWei(
-              get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),
+              get(userStats, `[${stakedVaultId}]['lpTokenBalance']`, 0),
               (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
               POOL_BALANCES_DECIMALS,
             )
@@ -389,7 +384,7 @@ const Portfolio = () => {
             if (isNaN(stats.unstake)) {
               stats.unstake = 0
             }
-            const stakeTemp = get(userStats, `[${stakedVaults[i]}]['totalStaked']`, 0)
+            const stakeTemp = get(userStats, `[${stakedVaultId}]['totalStaked']`, 0)
             // eslint-disable-next-line one-var
             let farmBalance = 0
             if (useIFARM) {
@@ -428,9 +423,11 @@ const Portfolio = () => {
               tempPricePerFullShare,
               useIFARM ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0) : token.decimals,
             )
-            for (let l = 0; l < rewardTokenSymbols.length; l += 1) {
+
+            const fetchRewardPrices = rewardTokenSymbols.map(async rewardTSymbol => {
+              // for (let l = 0; l < rewardTokenSymbols.length; l += 1) {
               // eslint-disable-next-line one-var
-              let rewardSymbol = rewardTokenSymbols[l].toUpperCase(),
+              let rewardSymbol = rewardTSymbol.toUpperCase(),
                 rewards
 
               if (rewardTokenSymbols.includes(FARM_TOKEN_SYMBOL)) {
@@ -443,15 +440,15 @@ const Portfolio = () => {
                 rewardDecimal = 18
 
               if (rewardTokenSymbols.length > 1) {
-                const rewardsEarned = userStats[stakedVaults[i]].rewardsEarned
+                const rewardsEarned = userStats[stakedVaultId].rewardsEarned
                 if (
                   rewardsEarned !== undefined &&
                   !(Object.keys(rewardsEarned).length === 0 && rewardsEarned.constructor === Object)
                 ) {
-                  rewards = rewardsEarned[rewardTokenSymbols[l]]
+                  rewards = rewardsEarned[rewardTSymbol]
                 }
               } else {
-                rewards = userStats[stakedVaults[i]].totalRewardsEarned
+                rewards = userStats[stakedVaultId].totalRewardsEarned
               }
               if (rewardToken) {
                 usdRewardPrice =
@@ -471,65 +468,58 @@ const Portfolio = () => {
                 } else {
                   underlyingRewardSymbol = rewardSymbol.substring(1)
                 }
-                const fetchData = async () => {
-                  try {
-                    for (let ids = 0; ids < apiData.length; ids += 1) {
-                      const tempData = apiData[ids]
-                      const tempSymbol = tempData.symbol
-                      if (tempSymbol.toLowerCase() === underlyingRewardSymbol.toLowerCase()) {
-                        // eslint-disable-next-line no-await-in-loop
-                        const usdUnderlyingRewardPrice = await getTokenPriceFromApi(tempData.id)
-                        usdRewardPrice =
-                          Number(usdUnderlyingRewardPrice) * Number(pricePerFullShare)
-                        console.log(
-                          `${underlyingRewardSymbol} - USD Price of reward token: ${usdRewardPrice}`,
-                        )
-                        return
-                      }
-                    }
-                  } catch (error) {
-                    console.error('Error:', error)
+                for (let ids = 0; ids < apiData.length; ids += 1) {
+                  const tempData = apiData[ids]
+                  const tempSymbol = tempData.symbol
+                  if (tempSymbol.toLowerCase() === underlyingRewardSymbol.toLowerCase()) {
+                    // eslint-disable-next-line no-await-in-loop
+                    const usdUnderlyingRewardPrice = await getTokenPriceFromApi(tempData.id)
+                    usdRewardPrice = Number(usdUnderlyingRewardPrice) * Number(pricePerFullShare)
+                    console.log(
+                      `${underlyingRewardSymbol} - USD Price of reward token: ${usdRewardPrice}`,
+                    )
+                    break
                   }
                 }
-
-                fetchData()
               } else {
-                const fetchData = async () => {
-                  try {
-                    for (let ids = 0; ids < apiData.length; ids += 1) {
-                      const tempData = apiData[ids]
-                      const tempSymbol = tempData.symbol
-                      if (tempSymbol.toLowerCase() === rewardSymbol.toLowerCase()) {
-                        // eslint-disable-next-line no-await-in-loop
-                        usdRewardPrice = await getTokenPriceFromApi(tempData.id)
-                        console.log(`${rewardSymbol} - USD Price: ${usdRewardPrice}`)
-                        return
-                      }
-                    }
-                  } catch (error) {
-                    console.error('Error:', error)
+                for (let ids = 0; ids < apiData.length; ids += 1) {
+                  const tempData = apiData[ids]
+                  const tempSymbol = tempData.symbol
+                  if (tempSymbol.toLowerCase() === rewardSymbol.toLowerCase()) {
+                    // eslint-disable-next-line no-await-in-loop
+                    usdRewardPrice = await getTokenPriceFromApi(tempData.id)
+                    console.log(`${rewardSymbol} - USD Price: ${usdRewardPrice}`)
+                    break
                   }
                 }
-
-                fetchData()
               }
 
               // eslint-disable-next-line one-var
-              const rewardValues = rewards === undefined ? 0 : fromWei(rewards, rewardDecimal)
-              stats.reward.push(Number(rewardValues).toFixed(POOL_BALANCES_DECIMALS))
+              const rewardValues =
+                rewards === undefined ? 0 : fromWei(Number(rewards), rewardDecimal)
+              stats.reward.push(Number(rewardValues))
+              console.log('check here +++++++ ', rewardSymbol, ':', usdRewardPrice)
 
               stats.totalRewardUsd += Number(
-                rewards === undefined ? 0 : fromWei(rewards, rewardDecimal) * usdRewardPrice,
+                rewards === undefined
+                  ? 0
+                  : fromWei(Number(rewards), rewardDecimal) * Number(usdRewardPrice),
               )
               valueRewards += Number(
-                rewards === undefined ? 0 : fromWei(rewards, rewardDecimal) * usdRewardPrice,
+                rewards === undefined
+                  ? 0
+                  : fromWei(Number(rewards), rewardDecimal) * Number(usdRewardPrice),
               )
               stats.rewardSymbol.push(rewardSymbol)
 
               const rewardPriceUSD =
-                rewards === undefined ? 0 : fromWei(rewards, rewardDecimal) * usdRewardPrice
+                rewards === undefined
+                  ? 0
+                  : fromWei(Number(rewards), rewardDecimal) * Number(usdRewardPrice)
               stats.rewardUSD.push(rewardPriceUSD)
-            }
+            })
+            await Promise.all(fetchRewardPrices)
+
             const vaultsKey = Object.keys(groupOfVaults)
             const paramAddress = isSpecialVault
               ? token.data.collateralAddress
@@ -583,7 +573,7 @@ const Portfolio = () => {
             const poolAPRDaily = totalRewardAPR / 365
             const poolAPRMonthly = totalRewardAPR / 12
 
-            const swapFeeAPRYearly = fAssetPool.tradingApy / 100
+            const swapFeeAPRYearly = Number(fAssetPool.tradingApy) / 100
             const swapFeeAPRDaily = swapFeeAPRYearly / 365
             const swapFeeAPRMonthly = swapFeeAPRYearly / 12
 
@@ -601,7 +591,9 @@ const Portfolio = () => {
             totalMonthlyYield += monthlyYield
             newStats.push(stats)
           }
-        }
+        })
+        await Promise.all(promises)
+
         setTotalDeposit(formatNumber(totalStake, 2))
         setTotalRewards(formatNumber(valueRewards, 2))
         setTotalYieldDaily(formatNumber(totalDailyYield, 2))
@@ -775,7 +767,7 @@ const Portfolio = () => {
                           ? token.data.collateralAddress
                           : token.vaultAddress || token.tokenAddress
                         push(
-                          `${`${directDetailUrl}lastadvanced`}${
+                          `${`${directDetailUrl}advanced`}${
                             directDetailUrl + network
                           }/${address}?from=portfolio`,
                         )
@@ -874,9 +866,11 @@ const Portfolio = () => {
                                 height={20}
                                 color="#101828"
                                 value={`${
-                                  info.balance < 0.01
+                                  info.balance === 0
+                                    ? '$0.00'
+                                    : info.balance < 0.01
                                     ? '<$0.01'
-                                    : `$ ${formatNumber(info.balance, 2)}`
+                                    : `$${formatNumber(info.balance, 2)}`
                                 }`}
                               />
                             </Content>
@@ -897,9 +891,11 @@ const Portfolio = () => {
                                 height={20}
                                 color="#101828"
                                 value={`${
-                                  info.totalRewardUsd < 0.01
+                                  info.totalRewardUsd === 0
+                                    ? '$0.00'
+                                    : info.totalRewardUsd < 0.01
                                     ? '<$0.01'
-                                    : `$ ${formatNumberWido(info.totalRewardUsd, 6)}`
+                                    : `$${formatNumberWido(info.totalRewardUsd, 2)}`
                                 }`}
                               />
                             </Content>
@@ -924,9 +920,11 @@ const Portfolio = () => {
                             height={20}
                             color="#101828"
                             value={`${
-                              info.monthlyYield < 0.01
+                              info.monthlyYield === 0
+                                ? '$0.00'
+                                : info.monthlyYield < 0.01
                                 ? '<$0.01'
-                                : `$ ${formatNumber(info.monthlyYield, 4)}`
+                                : `$${formatNumber(info.monthlyYield, 2)}`
                             }`}
                           />
                         </Content>
@@ -949,9 +947,11 @@ const Portfolio = () => {
                             height={20}
                             color="#101828"
                             value={`${
-                              info.dailyYield < 0.01
+                              info.dailyYield === 0
+                                ? '$0.00'
+                                : info.dailyYield < 0.01
                                 ? '<$0.01'
-                                : `$ ${formatNumber(info.dailyYield, 4)}`
+                                : `$${formatNumber(info.dailyYield, 2)}`
                             }`}
                           />
                         </Content>
@@ -964,9 +964,11 @@ const Portfolio = () => {
                                 height={20}
                                 color="#101828"
                                 value={`${
-                                  info.balance < 0.01
+                                  info.balance === 0
+                                    ? '$0.00'
+                                    : info.balance < 0.01
                                     ? '<$0.01'
-                                    : `$ ${formatNumber(info.balance, 2)}`
+                                    : `$${formatNumber(info.balance, 2)}`
                                 }`}
                               />
                             </Content>
@@ -976,10 +978,13 @@ const Portfolio = () => {
                                 size={14}
                                 height={20}
                                 color="#101828"
+                                // value={`$${formatNumberWido(info.totalRewardUsd, 9)}`}
                                 value={`${
-                                  info.totalRewardUsd < 0.01
+                                  info.totalRewardUsd === 0
+                                    ? '$0.00'
+                                    : info.totalRewardUsd < 0.01
                                     ? '<$0.01'
-                                    : `$ ${formatNumberWido(info.totalRewardUsd, 6)}`
+                                    : `$${formatNumberWido(info.totalRewardUsd, 2)}`
                                 }`}
                               />
                             </Content>
@@ -1030,7 +1035,11 @@ const Portfolio = () => {
                                 weight={500}
                                 size={isMobile ? 14 : 14}
                                 height={isMobile ? 20 : 20}
-                                value={`${formatNumberWido(info.unstake, 9)}`}
+                                value={
+                                  info.unstake === 0
+                                    ? '0.00'
+                                    : `${formatNumberWido(info.unstake, 6)}`
+                                }
                                 color="#475467"
                               />
                             </ContentInner>
@@ -1050,7 +1059,9 @@ const Portfolio = () => {
                                 weight={500}
                                 size={isMobile ? 14 : 14}
                                 height={isMobile ? 20 : 20}
-                                value={`${formatNumberWido(info.stake, 9)}`}
+                                value={
+                                  info.stake === 0 ? '0.00' : `${formatNumberWido(info.stake, 6)}`
+                                }
                                 color="#475467"
                               />
                             </ContentInner>
@@ -1094,7 +1105,11 @@ const Portfolio = () => {
                                   weight={500}
                                   size={isMobile ? 14 : 14}
                                   height={isMobile ? 20 : 20}
-                                  value={`${formatNumberWido(info.reward[key], 5)}`}
+                                  value={`${
+                                    info.reward[key] === 0
+                                      ? '0.00'
+                                      : `${info.reward[key].toFixed(6)}`
+                                  }`}
                                   color="#475467"
                                 />
                                 <ListItem
@@ -1102,9 +1117,11 @@ const Portfolio = () => {
                                   size={isMobile ? 14 : 14}
                                   height={isMobile ? 20 : 20}
                                   value={`${
-                                    info.rewardUSD[key] < 0.01
+                                    info.rewardUSD[key] === 0
+                                      ? '$0.00'
+                                      : info.rewardUSD[key] < 0.01
                                       ? '<$0.01'
-                                      : `$ ${formatNumberWido(info.rewardUSD[key], 2)}`
+                                      : `$${formatNumberWido(info.rewardUSD[key], 2)}`
                                   }`}
                                   color="#101828"
                                 />

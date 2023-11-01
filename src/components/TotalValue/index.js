@@ -40,7 +40,7 @@ const TotalValue = ({ icon, content, price, toolTipTitle, toolTip }) => {
             </NewLabel>
           </ReactTooltip>
         </Div>
-        <Price>$&nbsp;{price}</Price>
+        <Price>${price}</Price>
       </div>
     </Container>
   )
