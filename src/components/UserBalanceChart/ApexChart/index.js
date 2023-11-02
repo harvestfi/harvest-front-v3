@@ -303,6 +303,7 @@ const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCu
   }, [
     range,
     data,
+    token.decimals,
     isDataReady,
     loadComplete,
     filter,
