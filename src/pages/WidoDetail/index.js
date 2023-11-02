@@ -57,7 +57,7 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { CHAIN_IDS } from '../../data/constants'
-import PriceShareData from '../../components/PriceShareChart/PriceShareData'
+import PriceShareData from '../../components/lastPriceShareChart/PriceShareData'
 import {
   displayAPY,
   formatNumber,

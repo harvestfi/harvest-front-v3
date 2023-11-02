@@ -31,7 +31,7 @@ import WithdrawSelectToken from '../../components/AdvancedFarmComponents/LastWit
 import WithdrawStart from '../../components/AdvancedFarmComponents/LastWithdraw/WithdrawStart'
 import WithdrawResult from '../../components/AdvancedFarmComponents/LastWithdraw/WithdrawResult'
 import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
-import PriceShareData from '../../components/PriceShareChart/PriceShareData'
+import PriceShareData from '../../components/lastPriceShareChart/PriceShareData'
 import {
   DECIMAL_PRECISION,
   FARM_GRAIN_TOKEN_SYMBOL,

@@ -29,7 +29,7 @@ import WithdrawSelectToken from '../../components/AdvancedFarmComponents/SpecWit
 import WithdrawStart from '../../components/AdvancedFarmComponents/SpecWithdraw/WithdrawStart'
 import WithdrawResult from '../../components/AdvancedFarmComponents/SpecWithdraw/WithdrawResult'
 import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
-import PriceShareData from '../../components/PriceShareChart/PriceShareData'
+import PriceShareData from '../../components/lastPriceShareChart/PriceShareData'
 import VaultPanelActionsFooter from '../../components/AdvancedFarmComponents/Rewards/VaultPanelActionsFooter'
 import StakeBase from '../../components/AdvancedFarmComponents/Stake/StakeBase'
 import StakeResult from '../../components/AdvancedFarmComponents/Stake/StakeResult'

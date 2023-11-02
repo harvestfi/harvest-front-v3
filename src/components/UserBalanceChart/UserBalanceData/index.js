@@ -3,7 +3,8 @@ import { useMediaQuery } from 'react-responsive'
 import ChartButtonsGroup from '../ChartButtonsGroup'
 import balanceImg from '../../../assets/images/logos/advancedfarm/coins.svg'
 import usdbalance from '../../../assets/images/logos/advancedfarm/money.svg'
-import { getPriceFeed } from '../../../utils'
+import { getUserBalanceHistories } from '../../../utils'
+import { useWallet } from '../../../providers/Wallet'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
 import {
@@ -20,19 +21,22 @@ import {
 } from './style'
 
 const recommendLinks = [
+  { name: '1D', type: 0, state: '1D' },
   { name: '1W', type: 1, state: '1W' },
   { name: '1M', type: 2, state: '1M' },
   { name: '1Y', type: 3, state: '1Y' },
 ]
 
 const filterList = [
-  { id: 1, name: 'Balance in USD', img: usdbalance },
-  { id: 2, name: 'Balance', img: balanceImg },
+  { id: 1, name: `fTokens' USD Value History`, img: usdbalance },
+  { id: 2, name: 'Underlying Balance History', img: balanceImg },
 ]
 
-const PriceShareData = ({ token, vaultPool, setLoadData }) => {
-  const [selectedState, setSelectedState] = useState('1Y')
+const PriceShareData = ({ token, vaultPool }) => {
+  const [clickedId, setClickedId] = useState(0)
+  const [selectedState, setSelectedState] = useState('1M')
 
+  const { account } = useWallet()
   const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
   const chainId = token.chain || token.data.chain
 
@@ -40,15 +44,19 @@ const PriceShareData = ({ token, vaultPool, setLoadData }) => {
   const [loadComplete, setLoadComplete] = useState(true)
   const [curDate, setCurDate] = useState('')
   const [curContent, setCurContent] = useState('')
-  const [clickedId, setClickedId] = useState(1)
+  const [tooltipLabel, setTooltipLabel] = useState('')
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   useEffect(() => {
+    const label = clickedId === 0 ? `My Balance` : 'My Underlying Balance'
+    setTooltipLabel(label)
+  }, [clickedId])
+
+  useEffect(() => {
     const initData = async () => {
-      const { data, flag } = await getPriceFeed(address, chainId)
+      const { data, flag } = await getUserBalanceHistories(address, chainId, account)
       setLoadComplete(flag)
-      setLoadData(flag)
       setApiData(data)
       if (data && data.length > 0) {
         const curTimestamp = new Date().getTime() / 1000
@@ -59,7 +67,7 @@ const PriceShareData = ({ token, vaultPool, setLoadData }) => {
     }
 
     initData()
-  }, [address, chainId, setLoadData])
+  }, [address, chainId, account])
 
   return (
     <Container>
@@ -67,12 +75,15 @@ const PriceShareData = ({ token, vaultPool, setLoadData }) => {
         <Total>
           <FlexDiv>
             <TooltipInfo>
-              <TokenSymbol className="priceshare">My Balance</TokenSymbol>
+              <TokenSymbol className="priceshare">{tooltipLabel}</TokenSymbol>
               <FlexDiv>
                 <CurContent color="#1b1b1b">
                   {curDate}&nbsp;<span>|</span>&nbsp;
                 </CurContent>
-                <CurContent color="#15B088">{curContent}</CurContent>
+                <CurContent color="#15B088">
+                  {clickedId === 0 ? '$' : ''}
+                  {curContent}
+                </CurContent>
               </FlexDiv>
             </TooltipInfo>
           </FlexDiv>
@@ -104,9 +115,11 @@ const PriceShareData = ({ token, vaultPool, setLoadData }) => {
       )}
       <ChartDiv className="advanced-price">
         <ApexChart
+          token={token}
           data={apiData}
           loadComplete={loadComplete}
           range={selectedState}
+          filter={clickedId}
           setCurDate={setCurDate}
           setCurContent={setCurContent}
         />

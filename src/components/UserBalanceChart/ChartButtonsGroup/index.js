@@ -33,12 +33,12 @@ const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {
             setFocusId(i)
           }}
           data-tip={!!(i === 2 && !connected)}
-          data-for={i === 2 && !connected ? 'tooltip-balance-chart' : ''}
+          data-for={!connected ? 'tooltip-balance-chart' : ''}
           onMouseLeave={() => {
             setFocusId(tempId)
             tempId = focusId
           }}
-          className={(i === clickedId || i === focusId) && (connected || i !== 2) ? 'active' : ''}
+          className={(i === clickedId || i === focusId) && connected ? 'active' : ''}
           wallet={!!(connected && i === 2)}
           backcolor={filterChainHoverColor}
           mode={darkMode.toString()}

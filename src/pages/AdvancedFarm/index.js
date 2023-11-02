@@ -30,7 +30,7 @@ import WithdrawBase from '../../components/AdvancedFarmComponents/Withdraw/Withd
 import WithdrawSelectToken from '../../components/AdvancedFarmComponents/Withdraw/WithdrawSelectToken'
 import WithdrawStart from '../../components/AdvancedFarmComponents/Withdraw/WithdrawStart'
 import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
-import PriceShareData from '../../components/PriceShareChart/PriceShareData'
+import UserBalanceData from '../../components/UserBalanceChart/UserBalanceData'
 import VaultPanelActionsFooter from '../../components/AdvancedFarmComponents/Rewards/VaultPanelActionsFooter'
 import StakeBase from '../../components/AdvancedFarmComponents/Stake/StakeBase'
 import StakeStart from '../../components/AdvancedFarmComponents/Stake/StakeStart'
@@ -667,7 +667,6 @@ const AdvancedFarm = () => {
   const [activeStake, setActiveStake] = useState(true)
   const switchStakeMethod = () => setActiveStake(prev => !prev)
 
-  const [loadData, setLoadData] = useState(true)
   useEffect(() => {
     const getLastHarvest = async () => {
       const value = await getLastHarvestInfo(paramAddress, chain)
@@ -933,12 +932,13 @@ const AdvancedFarm = () => {
     })
     // eslint-disable-next-line
   }, [
+    account,
     userStats,
     fAssetPool,
     apiData,
     pricePerFullShare,
     rewardTokenSymbols,
-    rewardsEarned,
+    // rewardsEarned,
   ])
 
   const viewComponentProps = {
@@ -1099,23 +1099,7 @@ const AdvancedFarm = () => {
                     </ValueBox>
                   </BoxCover>
                   <div>
-                    {loadData ? (
-                      <PriceShareData
-                        token={token}
-                        vaultPool={vaultPool}
-                        tokenSymbol={id}
-                        setLoadData={setLoadData}
-                      />
-                    ) : (
-                      <HalfInfo padding="25px 18px" marginBottom="0">
-                        <FarmDetailChart
-                          token={token}
-                          vaultPool={vaultPool}
-                          lastTVL={Number(vaultValue)}
-                          lastAPY={Number(totalApy)}
-                        />
-                      </HalfInfo>
-                    )}
+                    <UserBalanceData token={token} vaultPool={vaultPool} tokenSymbol={id} />
                   </div>
                 </>
               ) : activeMainTag === 1 ? (
@@ -1202,16 +1186,14 @@ const AdvancedFarm = () => {
                 )
               ) : (
                 <>
-                  {loadData && (
-                    <HalfInfo padding="25px 18px" marginBottom="23px">
-                      <FarmDetailChart
-                        token={token}
-                        vaultPool={vaultPool}
-                        lastTVL={Number(vaultValue)}
-                        lastAPY={Number(totalApy)}
-                      />
-                    </HalfInfo>
-                  )}
+                  <HalfInfo padding="25px 18px" marginBottom="23px">
+                    <FarmDetailChart
+                      token={token}
+                      vaultPool={vaultPool}
+                      lastTVL={Number(vaultValue)}
+                      lastAPY={Number(totalApy)}
+                    />
+                  </HalfInfo>
                   <HalfInfo marginBottom="20px">
                     <NewLabel
                       weight={700}
@@ -1321,7 +1303,7 @@ const AdvancedFarm = () => {
                       </InfoLabel>
                     </FlexDiv>
                   </HalfInfo>
-                  {!isMobile && !loadData && (
+                  {!isMobile && (
                     <MyBalance marginBottom={isMobile ? '24px' : '20px'}>
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}
@@ -1825,23 +1807,7 @@ const AdvancedFarm = () => {
                     </WithdrawSection>
                   </HalfContent>
                   {isMobile ? (
-                    loadData ? (
-                      <PriceShareData
-                        token={token}
-                        vaultPool={vaultPool}
-                        tokenSymbol={id}
-                        setLoadData={setLoadData}
-                      />
-                    ) : (
-                      <HalfInfo padding="25px 18px" marginBottom="23px">
-                        <FarmDetailChart
-                          token={token}
-                          vaultPool={vaultPool}
-                          lastTVL={Number(vaultValue)}
-                          lastAPY={Number(totalApy)}
-                        />
-                      </HalfInfo>
-                    )
+                    <UserBalanceData token={token} vaultPool={vaultPool} tokenSymbol={id} />
                   ) : (
                     <></>
                   )}
@@ -2315,7 +2281,7 @@ const AdvancedFarm = () => {
                       </NewLabel>
                     </MyBalance>
                   )}
-                  {!isMobile && loadData && (
+                  {!isMobile && (
                     <MyBalance marginBottom={isMobile ? '24px' : '20px'}>
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}
@@ -2435,16 +2401,14 @@ const AdvancedFarm = () => {
                   </LastHarvestInfo>
                   {isMobile && (
                     <>
-                      {loadData && (
-                        <HalfInfo padding="25px 18px" marginBottom="23px">
-                          <FarmDetailChart
-                            token={token}
-                            vaultPool={vaultPool}
-                            lastTVL={Number(vaultValue)}
-                            lastAPY={Number(totalApy)}
-                          />
-                        </HalfInfo>
-                      )}
+                      <HalfInfo padding="25px 18px" marginBottom="23px">
+                        <FarmDetailChart
+                          token={token}
+                          vaultPool={vaultPool}
+                          lastTVL={Number(vaultValue)}
+                          lastAPY={Number(totalApy)}
+                        />
+                      </HalfInfo>
                       <HalfInfo marginBottom="24px">
                         <NewLabel
                           weight={700}

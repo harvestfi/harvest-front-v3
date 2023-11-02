@@ -1706,3 +1706,66 @@ export const getPriceFeed = async (address, chainId) => {
   }
   return { data, flag }
 }
+
+export const getUserBalanceHistories = async (address, chainId, myWallet) => {
+  let data = {},
+    flag = true
+
+  address = address.toLowerCase()
+  if (myWallet) {
+    myWallet = myWallet.toLowerCase()
+  }
+
+  const myHeaders = new Headers()
+  myHeaders.append('Content-Type', 'application/json')
+
+  const graphql = JSON.stringify({
+      query: `{
+        userBalanceHistories(
+          where: {
+            vault: "${address}",
+            userAddress: "${myWallet}"
+          },
+          orderBy: createAtBlock,
+          orderDirection: desc,
+        ) {
+          value, sharePrice, priceUnderlying, timestamp
+        }
+      }`,
+      variables: {},
+    }),
+    requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: graphql,
+      redirect: 'follow',
+    }
+
+  const url =
+    chainId === CHAIN_IDS.ETH_MAINNET
+      ? GRAPH_URL_MAINNET
+      : chainId === CHAIN_IDS.POLYGON_MAINNET
+      ? GRAPH_URL_POLYGON
+      : chainId === CHAIN_IDS.BASE
+      ? GRAPH_URL_BASE
+      : GRAPH_URL_ARBITRUM
+
+  try {
+    await fetch(url, requestOptions)
+      .then(response => response.json())
+      .then(res => {
+        data = res.data.userBalanceHistories
+        if (data.length === 0) {
+          flag = false
+        }
+      })
+      .catch(error => {
+        console.log('error', error)
+        flag = false
+      })
+  } catch (err) {
+    console.log('Fetch data about user balance histories: ', err)
+    flag = false
+  }
+  return { data, flag }
+}

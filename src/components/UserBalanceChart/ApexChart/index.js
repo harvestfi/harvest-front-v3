@@ -12,8 +12,9 @@ import {
 import { useWindowWidth } from '@react-hook/window-size'
 import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { ceil10, floor10 } from '../../../utils'
+import { ceil10, floor10, round10 } from '../../../utils'
 import { LoadingDiv, NoData } from './style'
+import { fromWei } from '../../../services/web3'
 
 function numberWithCommas(x) {
   if (x < 1000) return x
@@ -83,17 +84,32 @@ function findMin(data) {
   const min = Math.min(...ary)
   return min
 }
-
-function generateChartDataWithSlots(slots, apiData) {
+function generateChartDataWithSlots(
+  slots,
+  apiData,
+  decimals,
+  filter,
+  balance,
+  priceUnderlying,
+  sharePrice,
+) {
   const seriesData = []
   for (let i = 0; i < slots.length; i += 1) {
-    const data = apiData.reduce((prev, curr) =>
-      Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
-        ? curr
-        : prev,
-    )
-
-    seriesData.push({ x: slots[i] * 1000, y: data.sharePrice })
+    for (let j = 0; j < apiData.length; j += 1) {
+      if (slots[i] > parseInt(apiData[j].timestamp, 10)) {
+        const value1 = parseFloat(apiData[j][balance])
+        const value2 = parseFloat(apiData[j][priceUnderlying])
+        const value3 = fromWei(parseFloat(apiData[j][sharePrice]), decimals)
+        if (filter === 0) {
+          seriesData.push({ x: slots[i] * 1000, y: value1 * value2 })
+        } else if (filter === 1) {
+          seriesData.push({ x: slots[i] * 1000, y: value1 * value3 })
+        }
+        break
+      } else if (j === apiData.length - 1) {
+        seriesData.push({ x: slots[i] * 1000, y: 0 })
+      }
+    }
   }
 
   return seriesData
@@ -112,25 +128,16 @@ function formatXAxis(value, range) {
 }
 
 function getYAxisValues(min, max, roundNum) {
-  const ary = [],
-    result = []
   const bet = Number(max - min)
+  const ary = []
   for (let i = min; i <= max; i += bet / 4) {
-    ary.push(i)
+    const val = round10(i, roundNum)
+    ary.push(val)
   }
-  if (ary.length === 4) {
-    ary.push(max)
-  }
-
-  for (let j = 0; j < ary.length; j += 1) {
-    const val = ary[j].toFixed(roundNum)
-    result.push(val)
-  }
-
-  return result
+  return ary
 }
 
-const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => {
+const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCurContent }) => {
   const { fontColor } = useThemeContext()
 
   const [mainSeries, setMainSeries] = useState([])
@@ -140,13 +147,16 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
   const [loading, setLoading] = useState(false)
   const [isDataReady, setIsDataReady] = useState(true)
   const [roundedDecimal, setRoundedDecimal] = useState(2)
+  const [fixedLen, setFixedLen] = useState(0)
+
+  // const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       const currentDate = formatDateTime(payload[0].payload.x)
-      const price = numberWithCommas(Number(payload[0].payload.y).toFixed(roundedDecimal))
+      const balance = numberWithCommas(Number(payload[0].payload.y).toFixed(fixedLen))
       setCurDate(currentDate)
-      setCurContent(price)
+      setCurContent(balance)
     }
 
     return null
@@ -177,7 +187,7 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
     let path = ''
 
     if (payload.value !== '') {
-      path = `${numberWithCommas(payload.value)}`
+      path = `${filter === 0 ? '$' : ''}${numberWithCommas(payload.value)}`
     }
     return (
       <text
@@ -227,35 +237,43 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
       const slotCount = 50,
         ago = getRangeNumber(range),
         slots = getTimeSlots(ago, slotCount)
-      mainData = generateChartDataWithSlots(slots, data)
+      mainData = generateChartDataWithSlots(
+        slots,
+        data,
+        token.decimals,
+        filter,
+        'value',
+        'priceUnderlying',
+        'sharePrice',
+      )
       maxValue = findMax(mainData)
       minValue = findMin(mainData)
+      minValue /= 2
 
       const between = maxValue - minValue
       unitBtw = between / 4
       if (unitBtw >= 1) {
-        len = (1 / unitBtw).toString().length
-        // unitBtw = ceil10(unitBtw, -len)
-        maxValue = ceil10(maxValue, -len)
-        minValue = floor10(minValue, -len)
+        unitBtw = Math.ceil(unitBtw)
+        len = unitBtw.toString().length
+        unitBtw = ceil10(unitBtw, len - 1)
+        maxValue = ceil10(maxValue, len - 1)
+        minValue = floor10(minValue, len - 1)
       } else if (unitBtw === 0) {
-        len = (1 / maxValue).toString().length
-        maxValue += 1
-        minValue -= 1
+        len = Math.ceil(maxValue).toString().length
+        maxValue += 10 ** (len - 1)
+        minValue -= 10 ** (len - 1)
       } else {
-        len = (1 / unitBtw).toString().length
-        // unitBtw = ceil10(between, -len)
+        len = Math.ceil(1 / unitBtw).toString().length + 1
+        unitBtw = ceil10(unitBtw, -len)
         maxValue = ceil10(maxValue, -len)
         minValue = floor10(minValue, -len + 1)
       }
 
-      if (unitBtw === 0) {
-        unitBtw = (maxValue - minValue) / 4
+      if (unitBtw !== 0) {
+        maxValue *= 1.5
+        minValue = 0
       } else {
-        const rate = Number(unitBtw / maxValue) + 1
-        maxValue *= rate
-        maxValue = ceil10(maxValue, -len)
-        minValue /= rate
+        unitBtw = (maxValue - minValue) / 4
       }
 
       // if (unitBtw === 0) {
@@ -263,14 +281,15 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
       // } else {
       //   roundNum = len
       // }
-      setRoundedDecimal(maxValue - minValue < 0.001 ? 6 : 3)
+      setRoundedDecimal(-len)
+      setFixedLen(len)
       setMinVal(minValue)
       setMaxVal(maxValue)
 
       // Set date and price with latest value by default
       setCurDate(formatDateTime(mainData[slotCount - 1].x))
-      const price = numberWithCommas(Number(mainData[slotCount - 1].y).toFixed(roundedDecimal))
-      setCurContent(price)
+      const balance = numberWithCommas(Number(mainData[slotCount - 1].y).toFixed(fixedLen))
+      setCurContent(balance)
 
       const yAxisAry = getYAxisValues(minValue, maxValue, roundedDecimal)
       setYAxisTicks(yAxisAry)
@@ -281,7 +300,17 @@ const ApexChart = ({ data, loadComplete, range, setCurDate, setCurContent }) => 
     }
 
     init()
-  }, [range, data, isDataReady, loadComplete, roundedDecimal, setCurContent, setCurDate])
+  }, [
+    range,
+    data,
+    isDataReady,
+    loadComplete,
+    filter,
+    roundedDecimal,
+    setCurContent,
+    setCurDate,
+    fixedLen,
+  ])
 
   return (
     <>
