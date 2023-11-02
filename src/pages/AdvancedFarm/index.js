@@ -866,7 +866,8 @@ const AdvancedFarm = () => {
     const promises = rewardTokenSymbols.map(async symbol => {
       // eslint-disable-next-line one-var
       let rewardSymbol = symbol.toUpperCase(),
-        usdRewardPrice = 0
+        usdRewardPrice = 0,
+        rewardDecimal = get(tokens[symbol], 'decimals', 18)
 
       if (rewardTokenSymbols.includes(FARM_TOKEN_SYMBOL)) {
         rewardSymbol = FARM_TOKEN_SYMBOL
@@ -880,17 +881,17 @@ const AdvancedFarm = () => {
             ? rewardToken.data.lpTokenData && rewardToken.data.lpTokenData.price
             : rewardToken.usdPrice) || 0
 
-        // rewardDecimal =
-        //   rewardToken.decimals ||
-        //   (rewardToken.data &&
-        //     rewardToken.data.lpTokenData &&
-        //     rewardToken.data.lpTokenData.decimals)
-      } else if (rewardSymbol.substring(0, 1) === 'F') {
+        rewardDecimal =
+          rewardToken.decimals ||
+          (rewardToken.data &&
+            rewardToken.data.lpTokenData &&
+            rewardToken.data.lpTokenData.decimals)
+      } else if (symbol.substring(0, 1) === 'f') {
         let underlyingRewardSymbol
-        if (rewardSymbol.substring(0, 2) === 'FX') {
-          underlyingRewardSymbol = rewardSymbol.substring(2)
+        if (symbol.substring(0, 2) === 'fx') {
+          underlyingRewardSymbol = symbol.substring(2)
         } else {
-          underlyingRewardSymbol = rewardSymbol.substring(1)
+          underlyingRewardSymbol = symbol.substring(1)
         }
         // eslint-disable-next-line no-loop-func
         for (let ids = 0; ids < apiData.length; ids += 1) {
@@ -900,7 +901,6 @@ const AdvancedFarm = () => {
             // eslint-disable-next-line no-await-in-loop
             const usdUnderlyingRewardPrice = await getTokenPriceFromApi(tempData.id)
             usdRewardPrice = Number(usdUnderlyingRewardPrice) * Number(pricePerFullShare)
-            console.log(`${underlyingRewardSymbol} - USD Price of reward token: ${usdRewardPrice}`)
             break
           }
         }
@@ -911,17 +911,17 @@ const AdvancedFarm = () => {
           if (tempSymbol.toLowerCase() === rewardSymbol.toLowerCase()) {
             // eslint-disable-next-line no-await-in-loop
             usdRewardPrice = await getTokenPriceFromApi(tempData.id)
-            console.log(`${rewardSymbol} - USD Price: ${usdRewardPrice}`)
             break
           }
         }
       }
 
+      console.log('USD Price of ', rewardSymbol, ':', usdRewardPrice)
+
       const totalRewardUsd = Number(
         rewardsEarned === undefined
           ? 0
-          : fromWei(get(rewardsEarned, symbol, 0), get(tokens[symbol], 'decimals', 18), 4) *
-              usdRewardPrice,
+          : fromWei(get(rewardsEarned, symbol, 0), rewardDecimal, 4) * Number(usdRewardPrice),
       )
       usdPrices.push(usdRewardPrice)
       return totalRewardUsd
@@ -930,7 +930,6 @@ const AdvancedFarm = () => {
       totalRewardSum = totalRewardUsds.reduce((sum, value) => sum + value, 0)
       setTotalReward(totalRewardSum)
       setRewardTokenPrices(usdPrices)
-      // debugger
     })
     // eslint-disable-next-line
   }, [

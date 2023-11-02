@@ -437,7 +437,7 @@ const Portfolio = () => {
               const rewardToken = groupOfVaults[rewardSymbol]
               // eslint-disable-next-line one-var
               let usdRewardPrice = 0,
-                rewardDecimal = 18
+                rewardDecimal = get(tokens[symbol], 'decimals', 18)
 
               if (rewardTokenSymbols.length > 1) {
                 const rewardsEarned = userStats[stakedVaultId].rewardsEarned
@@ -461,12 +461,12 @@ const Portfolio = () => {
                   (rewardToken.data &&
                     rewardToken.data.lpTokenData &&
                     rewardToken.data.lpTokenData.decimals)
-              } else if (rewardSymbol.substring(0, 1) === 'F') {
+              } else if (rewardTSymbol.substring(0, 1) === 'f') {
                 let underlyingRewardSymbol
-                if (rewardSymbol.substring(0, 2) === 'FX') {
-                  underlyingRewardSymbol = rewardSymbol.substring(2)
+                if (rewardTSymbol.substring(0, 2) === 'fx') {
+                  underlyingRewardSymbol = rewardTSymbol.substring(2)
                 } else {
-                  underlyingRewardSymbol = rewardSymbol.substring(1)
+                  underlyingRewardSymbol = rewardTSymbol.substring(1)
                 }
                 for (let ids = 0; ids < apiData.length; ids += 1) {
                   const tempData = apiData[ids]
@@ -475,9 +475,6 @@ const Portfolio = () => {
                     // eslint-disable-next-line no-await-in-loop
                     const usdUnderlyingRewardPrice = await getTokenPriceFromApi(tempData.id)
                     usdRewardPrice = Number(usdUnderlyingRewardPrice) * Number(pricePerFullShare)
-                    console.log(
-                      `${underlyingRewardSymbol} - USD Price of reward token: ${usdRewardPrice}`,
-                    )
                     break
                   }
                 }
@@ -485,10 +482,9 @@ const Portfolio = () => {
                 for (let ids = 0; ids < apiData.length; ids += 1) {
                   const tempData = apiData[ids]
                   const tempSymbol = tempData.symbol
-                  if (tempSymbol.toLowerCase() === rewardSymbol.toLowerCase()) {
+                  if (tempSymbol.toLowerCase() === rewardTSymbol.toLowerCase()) {
                     // eslint-disable-next-line no-await-in-loop
                     usdRewardPrice = await getTokenPriceFromApi(tempData.id)
-                    console.log(`${rewardSymbol} - USD Price: ${usdRewardPrice}`)
                     break
                   }
                 }
@@ -498,7 +494,7 @@ const Portfolio = () => {
               const rewardValues =
                 rewards === undefined ? 0 : fromWei(Number(rewards), rewardDecimal)
               stats.reward.push(Number(rewardValues))
-              console.log('check here +++++++ ', rewardSymbol, ':', usdRewardPrice)
+              console.log('USD Price of ', rewardSymbol, ':', usdRewardPrice)
 
               stats.totalRewardUsd += Number(
                 rewards === undefined
@@ -517,6 +513,18 @@ const Portfolio = () => {
                   ? 0
                   : fromWei(Number(rewards), rewardDecimal) * Number(usdRewardPrice)
               stats.rewardUSD.push(rewardPriceUSD)
+              // console.log(
+              //   'Symbol:',
+              //   rewardSymbol,
+              //   'Decimal:',
+              //   rewardDecimal,
+              //   'Reward:',
+              //   rewards,
+              //   'UsdPrice:',
+              //   usdRewardPrice,
+              // )
+              // console.log('rewardPriceUSD --------', rewardPriceUSD)
+              // debugger
             })
             await Promise.all(fetchRewardPrices)
 
@@ -1092,7 +1100,7 @@ const Portfolio = () => {
                           {info.reward.map((rw, key) => (
                             <Content
                               key={key}
-                              width={isMobile ? '35%' : '11%'}
+                              width={isMobile ? '35%' : '12%'}
                               display="flex"
                               marginTop={isMobile ? '15px' : 'unset'}
                             >
