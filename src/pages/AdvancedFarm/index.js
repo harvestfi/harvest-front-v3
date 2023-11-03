@@ -1075,11 +1075,16 @@ const AdvancedFarm = () => {
                     <ValueBox height="120px" width="32%">
                       <BoxTitle>My Balance</BoxTitle>
                       <BoxValue>
-                        $
                         {!connected ? (
-                          0
+                          '$0.00'
                         ) : lpTokenBalance ? (
-                          formatNumber(balanceAmount, 2)
+                          balanceAmount === 0 ? (
+                            '$0.00'
+                          ) : balanceAmount < 0.01 ? (
+                            '<$0.01'
+                          ) : (
+                            `$${formatNumber(balanceAmount, 2)}`
+                          )
                         ) : (
                           <AnimatedDots />
                         )}
@@ -1088,13 +1093,25 @@ const AdvancedFarm = () => {
                     <ValueBox height="120px" width="32%">
                       <BoxTitle>Monthly Yield</BoxTitle>
                       <BoxValue>
-                        ${!connected ? 0 : isNaN(yieldMonthly) ? 0 : formatNumber(yieldMonthly, 2)}
+                        {!connected
+                          ? '$0.00'
+                          : isNaN(yieldMonthly)
+                          ? '$0.00'
+                          : yieldMonthly < 0.01
+                          ? '<$0.01'
+                          : `$${formatNumber(yieldMonthly, 2)}`}
                       </BoxValue>
                     </ValueBox>
                     <ValueBox height="120px" width="32%">
                       <BoxTitle>Daily Yield</BoxTitle>
                       <BoxValue>
-                        ${!connected ? 0 : isNaN(yieldDaily) ? 0 : formatNumber(yieldDaily, 2)}
+                        {!connected
+                          ? '$0.00'
+                          : isNaN(yieldDaily)
+                          ? '$0.00'
+                          : yieldDaily < 0.01
+                          ? '<$0.01'
+                          : `$${formatNumber(yieldDaily, 2)}`}
                       </BoxValue>
                     </ValueBox>
                   </BoxCover>
@@ -1682,7 +1699,17 @@ const AdvancedFarm = () => {
                           color="#6F78AA"
                           self="center"
                         >
-                          {!connected ? 0 : lpTokenBalance ? totalValue : <AnimatedDots />}
+                          {!connected ? (
+                            0
+                          ) : lpTokenBalance ? (
+                            totalValue === 0 ? (
+                              '0.00'
+                            ) : (
+                              totalValue.toFixed(8)
+                            )
+                          ) : (
+                            <AnimatedDots />
+                          )}
                         </NewLabel>
                       </FlexDiv>
                     </MyBalance>
