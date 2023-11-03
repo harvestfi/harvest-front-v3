@@ -48,6 +48,7 @@ import {
   ROUTES,
   SPECIAL_VAULTS,
   POOL_BALANCES_DECIMALS,
+  MAX_BALANCES_DECIMALS,
   WIDO_BALANCES_DECIMALS,
 } from '../../constants'
 import { fromWei, newContractInstance, getWeb3, getExplorerLink } from '../../services/web3'
@@ -391,15 +392,41 @@ const AdvancedFarm = () => {
   const [defaultToken, setDefaultToken] = useState({})
   const [soonToSupList, setSoonToSupList] = useState([])
 
+  const [vaultValue, setVaultValue] = useState(null)
+  const [loadingFarmingBalance, setFarmingLoading] = useState(false)
+  const [loadingLpStats, setLpStatsloading] = useState(false)
+  const [pendingAction, setPendingAction] = useState(null)
+  const loaded = true
+  const [lastHarvest, setLastHarvest] = useState('')
+  const [activeStake, setActiveStake] = useState(true)
+  const switchStakeMethod = () => setActiveStake(prev => !prev)
+
+  const [totalValue, setTotalValue] = useState(0)
+  const [underlyingValue, setUnderlyingValue] = useState(0)
+  const [depositedValueUSD, setDepositUsdValue] = useState(0)
+  const [balanceAmount, setBalanceAmount] = useState(0)
+  const [totalReward, setTotalReward] = useState(0)
+  const [rewardTokenPrices, setRewardTokenPrices] = useState([])
+  const [stakedAmount, setStakedAmount] = useState(0)
+  const [unstakedAmount, setUnstakedAmount] = useState(0)
+  const firstUnderlyingBalance = useRef(true)
+
   const toTokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
   useEffect(() => {
     const staked =
       totalStaked &&
-      fromWei(totalStaked, fAssetPool.lpTokenData.decimals, POOL_BALANCES_DECIMALS, true)
+      fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_BALANCES_DECIMALS, true)
 
-    const unstake =
+    const unstaked =
       lpTokenBalance &&
-      fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, POOL_BALANCES_DECIMALS, true)
+      fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, MAX_BALANCES_DECIMALS, true)
+    const total = Number(staked) + Number(unstaked)
+    const amountBalanceUSD = total * usdPrice
+    setStakedAmount(Number(staked))
+    setUnstakedAmount(Number(unstaked))
+    setTotalValue(total)
+    setBalanceAmount(amountBalanceUSD)
+
     const estimatedApyByPercent = get(tokenVault, `estimatedApy`, 0)
     const estimatedApy = estimatedApyByPercent / 100
     const vaultAPR = ((1 + estimatedApy) ** (1 / 365) - 1) * 365
@@ -420,10 +447,10 @@ const AdvancedFarm = () => {
 
     const dailyYield =
       Number(staked) * usdPrice * (vaultAPRDaily + poolAPRDaily + swapFeeAPRDaily) +
-      Number(unstake) * usdPrice * (vaultAPRDaily + swapFeeAPRDaily)
+      Number(unstaked) * usdPrice * (vaultAPRDaily + swapFeeAPRDaily)
     const monthlyYield =
       Number(staked) * usdPrice * (vaultAPRMonthly + poolAPRMonthly + swapFeeAPRMonthly) +
-      Number(unstake) * usdPrice * (vaultAPRMonthly + swapFeeAPRMonthly)
+      Number(unstaked) * usdPrice * (vaultAPRMonthly + swapFeeAPRMonthly)
     setYieldDaily(dailyYield)
     setYieldMonthly(monthlyYield)
   }, [fAssetPool, tokenVault, usdPrice, lpTokenBalance, totalStaked])
@@ -658,15 +685,6 @@ const AdvancedFarm = () => {
     }
   }, [curUrl])
 
-  const [vaultValue, setVaultValue] = useState(null)
-  const [loadingFarmingBalance, setFarmingLoading] = useState(false)
-  const [loadingLpStats, setLpStatsloading] = useState(false)
-  const [pendingAction, setPendingAction] = useState(null)
-  const loaded = true
-  const [lastHarvest, setLastHarvest] = useState('')
-  const [activeStake, setActiveStake] = useState(true)
-  const switchStakeMethod = () => setActiveStake(prev => !prev)
-
   useEffect(() => {
     const getLastHarvest = async () => {
       const value = await getLastHarvestInfo(paramAddress, chain)
@@ -679,14 +697,6 @@ const AdvancedFarm = () => {
   useEffect(() => {
     setVaultValue(getVaultValue(token))
   }, [token])
-
-  const [totalValue, setTotalValue] = useState(0)
-  const [underlyingValue, setUnderlyingValue] = useState(0)
-  const [depositedValueUSD, setDepositUsdValue] = useState(0)
-  const [balanceAmount, setBalanceAmount] = useState(0)
-  const [totalReward, setTotalReward] = useState(0)
-  const [rewardTokenPrices, setRewardTokenPrices] = useState([])
-  const firstUnderlyingBalance = useRef(true)
 
   const getPrice = async data => {
     try {
@@ -705,21 +715,6 @@ const AdvancedFarm = () => {
 
     getPriceValue()
   }, [vaultsData])
-
-  useEffect(() => {
-    const staked =
-      totalStaked &&
-      fromWei(totalStaked, fAssetPool.lpTokenData.decimals, POOL_BALANCES_DECIMALS, true)
-
-    const unstake =
-      lpTokenBalance &&
-      fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, POOL_BALANCES_DECIMALS, true)
-
-    const total = Number(staked) + Number(unstake)
-    const amountBalance = total * usdPrice
-    setBalanceAmount(amountBalance)
-    setTotalValue(total)
-  }, [totalStaked, lpTokenBalance, fAssetPool, usdPrice])
 
   useEffect(() => {
     const depositUsdValue = formatNumber(
@@ -1644,11 +1639,10 @@ const AdvancedFarm = () => {
                           {!connected ? (
                             0
                           ) : lpTokenBalance ? (
-                            fromWei(
-                              lpTokenBalance,
-                              fAssetPool.lpTokenData.decimals,
-                              POOL_BALANCES_DECIMALS,
-                              true,
+                            totalValue === 0 ? (
+                              '0.00'
+                            ) : (
+                              totalValue.toFixed(8)
                             )
                           ) : (
                             <AnimatedDots />
@@ -1705,7 +1699,7 @@ const AdvancedFarm = () => {
                             totalValue === 0 ? (
                               '0.00'
                             ) : (
-                              totalValue.toFixed(8)
+                              (totalValue / Number(pricePerFullShare)).toFixed(8)
                             )
                           ) : (
                             <AnimatedDots />
@@ -1904,11 +1898,10 @@ const AdvancedFarm = () => {
                           {!connected ? (
                             0
                           ) : lpTokenBalance ? (
-                            fromWei(
-                              lpTokenBalance,
-                              fAssetPool.lpTokenData.decimals,
-                              POOL_BALANCES_DECIMALS,
-                              true,
+                            unstakedAmount === 0 ? (
+                              '0.00'
+                            ) : (
+                              unstakedAmount.toFixed(8)
                             )
                           ) : (
                             <AnimatedDots />
@@ -1963,11 +1956,10 @@ const AdvancedFarm = () => {
                           {!account ? (
                             ''
                           ) : totalStaked ? (
-                            fromWei(
-                              totalStaked,
-                              tokens[FARM_TOKEN_SYMBOL].decimals,
-                              WIDO_BALANCES_DECIMALS,
-                              true,
+                            stakedAmount === 0 ? (
+                              '0.00'
+                            ) : (
+                              stakedAmount.toFixed(8)
                             )
                           ) : (
                             <AnimatedDots />
@@ -2117,11 +2109,10 @@ const AdvancedFarm = () => {
                           {!connected ? (
                             0
                           ) : lpTokenBalance ? (
-                            fromWei(
-                              lpTokenBalance,
-                              fAssetPool.lpTokenData.decimals,
-                              POOL_BALANCES_DECIMALS,
-                              true,
+                            unstakedAmount === 0 ? (
+                              '0.00'
+                            ) : (
+                              unstakedAmount.toFixed(8)
                             )
                           ) : (
                             <AnimatedDots />
@@ -2174,11 +2165,10 @@ const AdvancedFarm = () => {
                           {!connected ? (
                             0
                           ) : totalStaked ? (
-                            fromWei(
-                              totalStaked,
-                              fAssetPool.lpTokenData.decimals,
-                              POOL_BALANCES_DECIMALS,
-                              true,
+                            stakedAmount === 0 ? (
+                              '0.00'
+                            ) : (
+                              stakedAmount.toFixed(8)
                             )
                           ) : (
                             <AnimatedDots />

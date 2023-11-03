@@ -513,13 +513,11 @@ export const TVL_API_ENDPOINT = `${HARVEST_EXTERNAL_API_URL}/gmv/total?key=${pro
 export const TOTAL_TVL_API_ENDPOINT = `${HARVEST_API_URL}/tvl?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`
 export const COINGECKO_API_KEY = `${process.env.REACT_APP_COINGECKO_API_KEY}`
 
-export const POOL_BALANCES_DECIMALS = 8
-
-export const WIDO_BALANCES_DECIMALS = 5
-
-export const WIDO_EXTEND_DECIMALS = 9
-
 export const BEGINNERS_BALANCES_DECIMALS = 2
+export const WIDO_BALANCES_DECIMALS = 5
+export const POOL_BALANCES_DECIMALS = 8
+export const WIDO_EXTEND_DECIMALS = 9
+export const MAX_BALANCES_DECIMALS = 12
 
 export const MIGRATING_VAULTS = []
 
