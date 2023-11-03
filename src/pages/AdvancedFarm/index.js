@@ -1699,7 +1699,7 @@ const AdvancedFarm = () => {
                             totalValue === 0 ? (
                               '0.00'
                             ) : (
-                              (totalValue / Number(pricePerFullShare)).toFixed(8)
+                              (totalValue * Number(pricePerFullShare)).toFixed(8)
                             )
                           ) : (
                             <AnimatedDots />
