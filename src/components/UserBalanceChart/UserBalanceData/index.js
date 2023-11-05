@@ -32,7 +32,7 @@ const filterList = [
   { id: 2, name: 'Underlying Balance History', img: balanceImg },
 ]
 
-const PriceShareData = ({ token, vaultPool }) => {
+const UserBalanceData = ({ token, vaultPool }) => {
   const [clickedId, setClickedId] = useState(0)
   const [selectedState, setSelectedState] = useState('1M')
 
@@ -142,4 +142,4 @@ const PriceShareData = ({ token, vaultPool }) => {
     </Container>
   )
 }
-export default PriceShareData
+export default UserBalanceData

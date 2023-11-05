@@ -116,12 +116,11 @@ const Link = styled.button`
   padding: 8px 12px;
   border-width: 0;
   border-radius: 6px;
-  padding: 5px;
 
   .sideIcon {
     width: 24px;
     height: 24px;
-    margin-right: 13px;
+    margin-right: 12px;
     filter: invert(48%) sepia(4%) saturate(2341%) hue-rotate(183deg) brightness(87%) contrast(80%);
   }
 
