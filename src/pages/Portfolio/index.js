@@ -101,6 +101,7 @@ const chainList = isLedgerLive()
       { id: 1, name: 'Ethereum', chainId: 1 },
       { id: 2, name: 'Polygon', chainId: 137 },
       { id: 3, name: 'Arbitrum', chainId: 42161 },
+      { id: 4, name: 'Base', chainId: 8453 },
     ]
 
 const BASE_URL = 'https://pro-api.coingecko.com/api/v3/'
