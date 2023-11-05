@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { addresses } from '../../../data/index'
 import { useWallet } from '../../../providers/Wallet'
-import { getDataQuery, getTotalTVLData } from '../../../utils'
+import { getDataQueryOld, getTotalTVLData } from '../../../utils'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../../ChartRangeSelect'
 import {
@@ -42,9 +42,9 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
 
   useEffect(() => {
     const initData = async () => {
-      const data = await getDataQuery(365, address, chainId, account)
+      const data = await getDataQueryOld(365, address, chainId, account)
       if (isIFARM) {
-        const dataIFarm = await getDataQuery(365, token.tokenAddress, chainId, account)
+        const dataIFarm = await getDataQueryOld(365, token.tokenAddress, chainId, account)
         if (dataIFarm) {
           data.apyRewards = dataIFarm.apyRewards
           data.tvls = dataIFarm.tvls

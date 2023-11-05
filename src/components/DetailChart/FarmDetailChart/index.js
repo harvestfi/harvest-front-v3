@@ -25,7 +25,7 @@ import {
 const filterList = [
   { id: 1, name: 'APY', img: apyActive },
   { id: 2, name: 'TVL in USD', img: tvlActive },
-  { id: 3, name: 'My Balance', img: myBalanceActive },
+  { id: 3, name: 'Share Price', img: myBalanceActive },
 ]
 
 const recommendLinks = [
@@ -54,13 +54,26 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
   const [tooltipLabel, setTooltipLabel] = useState('')
 
   useEffect(() => {
-    const label = clickedId === 0 ? 'APY' : clickedId === 1 ? 'TVL' : 'Balance'
+    const label = clickedId === 0 ? 'APY' : clickedId === 1 ? 'TVL' : 'Share Price'
     setTooltipLabel(label)
   }, [clickedId])
 
   useEffect(() => {
     const initData = async () => {
       const data = await getDataQuery(365, address, chainId, account)
+      if (clickedId === 2) {
+        if (data && data.priceFeeds.length > 0) {
+          const curTimestamp = new Date().getTime() / 1000
+          const between =
+            curTimestamp - Number(data.priceFeeds[data.priceFeeds.length - 1].timestamp)
+          const day = between / (24 * 3600)
+          setSelectedState(day < 90 ? '1M' : '1Y')
+        }
+      } else {
+        setSelectedState('1M')
+      }
+
+      setApiData(data)
       if (isIFARM) {
         const dataIFarm = await getDataQuery(365, token.tokenAddress, chainId, account)
         if (dataIFarm) {
@@ -71,11 +84,10 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
         const iFarmTVL = await getTotalTVLData()
         setIFarmTVLData(iFarmTVL)
       }
-      setApiData(data)
     }
 
     initData()
-  }, [address, chainId, account, token, isIFARM])
+  }, [address, chainId, account, token, isIFARM, clickedId])
 
   return (
     <Container>

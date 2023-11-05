@@ -62,16 +62,28 @@ function findMin(data) {
 }
 
 // kind: "value" - TVL, "apy" - APY
-function generateChartDataWithSlots(slots, apiData, kind) {
+function generateChartDataWithSlots(slots, apiData, kind, filter) {
   const seriesData = []
-  for (let i = 0; i < slots.length; i += 1) {
-    for (let j = 0; j < apiData.length; j += 1) {
-      if (slots[i] > parseInt(apiData[j].timestamp, 10)) {
-        const value = parseFloat(apiData[j][kind])
-        seriesData.push({ x: slots[i] * 1000, y: value })
-        break
-      } else if (j === apiData.length - 1) {
-        seriesData.push({ x: slots[i] * 1000, y: 0 })
+  if (filter === 2) {
+    for (let i = 0; i < slots.length; i += 1) {
+      const data = apiData.reduce((prev, curr) =>
+        Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
+          ? curr
+          : prev,
+      )
+
+      seriesData.push({ x: slots[i] * 1000, y: data.sharePrice })
+    }
+  } else {
+    for (let i = 0; i < slots.length; i += 1) {
+      for (let j = 0; j < apiData.length; j += 1) {
+        if (slots[i] > parseInt(apiData[j].timestamp, 10)) {
+          const value = parseFloat(apiData[j][kind])
+          seriesData.push({ x: slots[i] * 1000, y: value })
+          break
+        } else if (j === apiData.length - 1) {
+          seriesData.push({ x: slots[i] * 1000, y: 0 })
+        }
       }
     }
   }
@@ -115,14 +127,30 @@ function formatXAxis(value, range) {
   return range === '1D' ? `${hour}:${mins}` : `${month} / ${day}`
 }
 
-function getYAxisValues(min, max, roundNum) {
+function getYAxisValues(min, max, roundNum, filter) {
   const duration = max - min
-  const ary = []
-  for (let i = min; i <= max; i += duration / 4) {
-    const val = round10(i, roundNum)
-    ary.push(val)
+  const result = []
+  if (filter === 2) {
+    const ary = []
+    const bet = Number(max - min)
+    for (let i = min; i <= max; i += bet / 4) {
+      ary.push(i)
+    }
+    if (ary.length === 4) {
+      ary.push(max)
+    }
+
+    for (let j = 0; j < ary.length; j += 1) {
+      const val = ary[j].toFixed(roundNum)
+      result.push(val)
+    }
+  } else {
+    for (let i = min; i <= max; i += duration / 4) {
+      const val = round10(i, roundNum)
+      result.push(val)
+    }
   }
-  return ary
+  return result
 }
 
 function generateIFARMTVLWithSlots(slots, apiData) {
@@ -161,6 +189,7 @@ const ApexChart = ({
   const [isDataReady, setIsDataReady] = useState(true)
 
   const [fixedLen, setFixedLen] = useState(0)
+  const [roundNumber, setRoundNumber] = useState(0)
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
@@ -168,7 +197,9 @@ const ApexChart = ({
     if (active && payload && payload.length) {
       setCurDate(formatDateTime(payload[0].payload.x))
       const content = numberWithCommas(
-        Number(payload[0].payload.y.toFixed(filter === 1 ? 0 : fixedLen)),
+        Number(payload[0].payload.y).toFixed(
+          filter === 1 ? 0 : filter === 0 ? fixedLen : roundNumber,
+        ),
       )
       setCurContent(content)
     }
@@ -240,13 +271,13 @@ const ApexChart = ({
       let mainData = [],
         tvlData = [],
         apyData = [],
-        userBalanceData = [],
+        userPriceFeedData = [],
         maxAPY = lastAPY,
         minAPY,
         maxTVL = lastTVL,
         minTVL,
-        maxBalance,
-        minBalance,
+        maxSharePrice,
+        minSharePrice,
         maxValue,
         minValue,
         len = 0,
@@ -284,13 +315,13 @@ const ApexChart = ({
 
         if (lastAPY && !Number.isNaN(lastAPY) && apyData.length > 0) apyData[0].apy = lastAPY
       } else {
-        if (data && data.userBalanceHistories) {
-          if (data.userBalanceHistories.length === 0) {
+        if (data && data.priceFeeds) {
+          if (data.priceFeeds.length === 0) {
             setIsDataReady(false)
             return
           }
         }
-        userBalanceData = data && data.userBalanceHistories ? data.userBalanceHistories : []
+        userPriceFeedData = data && data.priceFeeds ? data.priceFeeds : []
       }
 
       const slotCount = 50,
@@ -307,7 +338,7 @@ const ApexChart = ({
             // setIsDataReady(false)
             return
           }
-          mainData = generateChartDataWithSlots(slots, tvlData, 'value')
+          mainData = generateChartDataWithSlots(slots, tvlData, 'value', filter)
         }
         maxTVL = findMax(mainData)
         minTVL = findMin(mainData)
@@ -316,48 +347,74 @@ const ApexChart = ({
           setIsDataReady(false)
           return
         }
-        mainData = generateChartDataWithSlots(slots, apyData, 'apy')
+        mainData = generateChartDataWithSlots(slots, apyData, 'apy', filter)
         maxAPY = findMax(mainData)
         minAPY = findMin(mainData)
       } else {
-        if (userBalanceData.length === 0) {
+        if (userPriceFeedData.length === 0) {
           return
         }
-        mainData = generateChartDataWithSlots(slots, userBalanceData, 'value')
-        maxBalance = findMax(mainData)
-        minBalance = findMin(mainData)
-        minBalance /= 2
+        mainData = generateChartDataWithSlots(slots, userPriceFeedData, 'sharePrice', filter)
+        maxSharePrice = findMax(mainData)
+        minSharePrice = findMin(mainData)
       }
 
-      maxValue = filter === 0 ? maxAPY : filter === 1 ? maxTVL : maxBalance
-      minValue = filter === 0 ? minAPY : filter === 1 ? minTVL : minBalance
+      maxValue = filter === 0 ? maxAPY : filter === 1 ? maxTVL : maxSharePrice
+      minValue = filter === 0 ? minAPY : filter === 1 ? minTVL : minSharePrice
 
       const between = maxValue - minValue
       unitBtw = between / 4
-      if (unitBtw >= 1) {
-        unitBtw = Math.ceil(unitBtw)
-        len = unitBtw.toString().length
-        unitBtw = ceil10(unitBtw, len - 1)
-        maxValue = ceil10(maxValue, len - 1)
-        minValue = floor10(minValue, len - 1)
-      } else if (unitBtw === 0) {
-        len = Math.ceil(maxValue).toString().length
-        maxValue += 10 ** (len - 1)
-        minValue -= 10 ** (len - 1)
+      if (filter === 2) {
+        if (unitBtw >= 1) {
+          len = (1 / unitBtw).toString().length
+          // unitBtw = ceil10(unitBtw, -len)
+          maxValue = ceil10(maxValue, -len)
+          minValue = floor10(minValue, -len)
+        } else if (unitBtw === 0) {
+          len = (1 / maxValue).toString().length
+          maxValue += 1
+          minValue -= 1
+        } else {
+          len = (1 / unitBtw).toString().length
+          // unitBtw = ceil10(between, -len)
+          maxValue = ceil10(maxValue, -len)
+          minValue = floor10(minValue, -len + 1)
+        }
+
+        if (unitBtw === 0) {
+          unitBtw = (maxValue - minValue) / 4
+        } else {
+          const rate = Number(unitBtw / maxValue) + 1
+          maxValue *= rate
+          maxValue = ceil10(maxValue, -len)
+          minValue /= rate
+        }
       } else {
-        len = Math.ceil(1 / unitBtw).toString().length + 1
-        unitBtw = ceil10(unitBtw, -len)
-        maxValue = ceil10(maxValue, -len)
-        minValue = floor10(minValue, -len + 1)
-      }
-      /**
-       * Set min value with 0, and max value *1.5 - trello card
-       */
-      if (unitBtw !== 0) {
-        maxValue *= 1.5
-        minValue = 0
-      } else {
-        unitBtw = (maxValue - minValue) / 4
+        if (unitBtw >= 1) {
+          unitBtw = Math.ceil(unitBtw)
+          len = unitBtw.toString().length
+          unitBtw = ceil10(unitBtw, len - 1)
+          maxValue = ceil10(maxValue, len - 1)
+          minValue = floor10(minValue, len - 1)
+        } else if (unitBtw === 0) {
+          len = Math.ceil(maxValue).toString().length
+          maxValue += 10 ** (len - 1)
+          minValue -= 10 ** (len - 1)
+        } else {
+          len = Math.ceil(1 / unitBtw).toString().length + 1
+          unitBtw = ceil10(unitBtw, -len)
+          maxValue = ceil10(maxValue, -len)
+          minValue = floor10(minValue, -len + 1)
+        }
+        /**
+         * Set min value with 0, and max value *1.5 - trello card
+         */
+        if (unitBtw !== 0) {
+          maxValue *= 1.5
+          minValue = 0
+        } else {
+          unitBtw = (maxValue - minValue) / 4
+        }
       }
 
       if (filter === 1) {
@@ -366,22 +423,27 @@ const ApexChart = ({
         } else {
           roundNum = len - 2
         }
-      } else {
+      } else if (filter === 0) {
         roundNum = -len
+      } else if (filter === 2) {
+        roundNum = maxValue - minValue < 0.001 ? 6 : 3
       }
 
       setMinVal(minValue)
       setMaxVal(maxValue)
 
       setFixedLen(filter === 1 ? 0 : len)
+      setRoundNumber(roundNum)
 
       setCurDate(formatDateTime(mainData[slotCount - 1].x))
       const content = numberWithCommas(
-        Number(mainData[slotCount - 1].y.toFixed(filter === 1 ? 0 : fixedLen)),
+        Number(mainData[slotCount - 1].y).toFixed(
+          filter === 1 ? 0 : filter === 0 ? fixedLen : roundNum,
+        ),
       )
       setCurContent(content)
 
-      const yAxisAry = getYAxisValues(minValue, maxValue, roundNum)
+      const yAxisAry = getYAxisValues(minValue, maxValue, roundNum, filter)
       setYAxisTicks(yAxisAry)
 
       setMainSeries(mainData)
