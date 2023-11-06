@@ -6,7 +6,7 @@ const Container = styled.a`
   min-height: 565px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: flex-start;
   cursor: pointer;
   text-decoration: none;
   border-radius: 13px;
@@ -16,7 +16,7 @@ const Container = styled.a`
   }
   position: relative;
   overflow: hidden;
-  background: #eaf1ff;
+  background: ${props => (props.num === 1 ? '#627EEA' : '#2775ca')};
   background-size: cover;
   background-repeat: no-repeat;
 
@@ -59,6 +59,7 @@ const Percent = styled.div`
 const Section = styled.div`
   display: flex;
   justify-content: center;
+  padding-top: 80px;
 
   @media screen and (max-width: 992px) {
     img.token-icon {
@@ -80,8 +81,8 @@ const TopSection = styled.div`
 
 const Network = styled.div`
   border-radius: 25.23px;
-  border: 1.805px solid #036666;
-  color: #036666;
+  border: 1.805px solid #fff;
+  color: #fff;
   padding: 6.016px 16.845px;
   text-align: center;
   font-size: 16.845px;

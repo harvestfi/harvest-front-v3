@@ -4,7 +4,6 @@ import { Container, Percent, Section, TopSection, Network } from './style'
 import { displayAPY, getTotalApy } from '../../utils'
 import { DECIMAL_PRECISION } from '../../constants'
 import DOT from '../../assets/images/logos/beginners/dot.svg'
-import Bottom from '../../assets/images/logos/beginnershome/bottom.svg'
 import Base from '../../assets/images/logos/beginnershome/base.svg'
 
 const BeginnersAPRSection = ({ token, img, num, vaultPool, tokenVault }) => {
@@ -39,7 +38,6 @@ const BeginnersAPRSection = ({ token, img, num, vaultPool, tokenVault }) => {
       <Section>
         <img className="token-icon" width={240} height={240} src={img} alt="" />
       </Section>
-      <img className="bottom" src={Bottom} alt="" />
     </Container>
   )
 }

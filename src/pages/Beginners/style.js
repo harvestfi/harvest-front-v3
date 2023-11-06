@@ -9,10 +9,6 @@ const Container = styled.div`
   transition: 0.25s;
   position: relative;
   margin-left: 280px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  font-family: Inter;
 
   @media screen and (min-width: 1921px) {
     flex-direction: row;
@@ -27,10 +23,20 @@ const Container = styled.div`
   }
 `
 
-const Inner = styled.div`
-  padding: 0px 100px;
+const TopSection = styled.div`
   width: 100%;
-  min-height: 765px;
+  height: 345px;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  padding: 100px;
+  background: #15b088;
+`
+
+const Inner = styled.div`
+  padding: 60px 100px 60px;
+  width: 100%;
+  // min-height: 765px;
 
   @media screen and (min-width: 1921px) {
     width: 1450px;
@@ -66,21 +72,58 @@ const HeaderTitle = styled.div`
   font-size: 30px;
   font-weight: 600;
   line-height: 38px;
-  color: #101828;
+  color: #fff;
 `
 
 const HeaderDesc = styled.div`
-  color: #475467;
+  color: #fff;
   font-size: 16px;
   font-weight: 400;
   line-height: 24px;
 
   margin-top: 4px;
-  margin-bottom: 35px;
+  margin-bottom: 11px;
 
   @media screen and (max-width: 992px) {
     margin-bottom: 22px;
   }
 `
 
-export { Container, Inner, CoinSection, UnitPart, HeaderTitle, HeaderDesc }
+const HeaderBadge = styled.div`
+  width: fit-content;
+  border-radius: 11.797px;
+  padding: 3px 3px 3px 10px;
+  background: #1568b3;
+  font-size: 10.5px;
+  font-weight: 500;
+  line-height: 15px;
+  display: flex;
+  gap: 9px;
+
+  div.badge-text {
+    color: #fff;
+    margin: auto;
+  }
+
+  a.badge-btn {
+    background: #fff;
+    padding: 1.5px 7px;
+    gap: 3px;
+    display: flex;
+    border-radius: 11px;
+    color: #1568b3;
+    cursor: pointer;
+    text-decoration: none;
+    &:hover {
+      transform: scale(1.05);
+      margin-right: 2px;
+    }
+
+    svg {
+      color: #6b6b6b;
+      margin: auto;
+    }
+  }
+`
+
+export { Container, TopSection, Inner, CoinSection, UnitPart, HeaderTitle, HeaderDesc, HeaderBadge }

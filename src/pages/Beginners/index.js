@@ -1,5 +1,7 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { find, get } from 'lodash'
+import { Link } from 'react-router-dom'
+import { BiRightArrowAlt } from 'react-icons/bi'
 import BeginnersAPRSection from '../../components/BeginnersAPRSection'
 import { useVaults } from '../../providers/Vault'
 import { usePools } from '../../providers/Pools'
@@ -7,7 +9,16 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import ETH from '../../assets/images/logos/beginnershome/eth-icon.svg'
 import USDC from '../../assets/images/logos/beginnershome/usdc-icon.svg'
 
-import { Container, Inner, UnitPart, HeaderTitle, HeaderDesc, CoinSection } from './style'
+import {
+  Container,
+  TopSection,
+  Inner,
+  UnitPart,
+  HeaderTitle,
+  HeaderDesc,
+  HeaderBadge,
+  CoinSection,
+} from './style'
 
 const IconAry = [
   { name: 'USDbC_base', img: USDC },
@@ -18,20 +29,34 @@ const Home = () => {
   const { vaultsData } = useVaults()
   const { pools } = usePools()
   const { pageBackColor, fontColor } = useThemeContext()
+  const [showBadge, setShowBadge] = useState(false)
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search)
+    if (queryParams.has('utm_source') || queryParams.has('utm_medium')) {
+      setShowBadge(true) // Don't show the Badge if the parameters are present
+    }
+  }, [])
 
   return (
     <Container pageBackColor={pageBackColor} fontColor={fontColor}>
-      <Inner>
-        <HeaderTitle>
-          Welcome, Farmer
-          <span aria-label="" role="img">
-            👋
-          </span>
-        </HeaderTitle>
+      <TopSection>
+        <HeaderTitle>Welcome, Farmer</HeaderTitle>
         <HeaderDesc>
-          Deposit any token from your wallet into one of the farms below to get started earning
-          yield.
+          Receive $10 in FARM for converting $5 or more in USDC or ETH into one of the following
+          farms*.
         </HeaderDesc>
+        {showBadge && (
+          <HeaderBadge>
+            <div className="badge-text">*Only for participants of our Coinbase Quest campaign</div>
+            <Link className="badge-btn" to="/faq">
+              Read more
+              <BiRightArrowAlt />
+            </Link>
+          </HeaderBadge>
+        )}
+      </TopSection>
+      <Inner>
         <CoinSection>
           {IconAry.map((el, i) => {
             const token = vaultsData[el.name]
