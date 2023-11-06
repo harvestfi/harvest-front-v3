@@ -1,7 +1,7 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
 import FristBg from '../../assets/images/logos/home/beginner-coins.svg'
-import FirstFarmCloud from '../../assets/images/logos/home/new-farming.svg'
+import FirstFarmCloud from '../../assets/images/logos/home/new-farming.png'
 import AdvancedBottom from '../../assets/images/logos/home/advanced-coins.svg'
 // import AdvancedBottom from '../../assets/images/logos/home/advanced-bottom.svg'
 import { useThemeContext } from '../../providers/useThemeContext'

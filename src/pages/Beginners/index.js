@@ -41,10 +41,16 @@ const Home = () => {
   return (
     <Container pageBackColor={pageBackColor} fontColor={fontColor}>
       <TopSection>
-        <HeaderTitle>Welcome, Farmer</HeaderTitle>
+        <HeaderTitle>
+          Welcome, Farmer
+          <span aria-label="" role="img">
+            👋
+          </span>
+        </HeaderTitle>
         <HeaderDesc>
-          Receive $10 in FARM for converting $5 or more in USDC or ETH into one of the following
-          farms*.
+          {showBadge
+            ? 'Receive $10 in FARM for converting $5 or more in USDC or ETH into one of the following farms*.'
+            : 'Get started with crypto farming with our easy-to-use USDC and ETH farms.'}
         </HeaderDesc>
         {showBadge && (
           <HeaderBadge>

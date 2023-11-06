@@ -29,21 +29,22 @@ const Container = styled.div`
 const Inner = styled.div`
   padding: 0px 41px;
   width: 100%;
-  min-height: 765px;
+  min-height: 700px;
   display: flex;
   gap: 25px;
 
+  @media screen and (max-height: 800px) {
+    min-height: 90%;
+  }
   @media screen and (min-width: 1921px) {
     width: 1450px;
     height: 800px;
     padding: 35px 0 0;
   }
-
   @media screen and (max-width: 1480px) {
     width: 100%;
     padding: 0px 30px 0px;
   }
-
   @media screen and (max-width: 992px) {
     padding: 25px 24px 32px 17px;
     display: flex;
@@ -95,12 +96,15 @@ const FirstBack = styled.div`
 
   img {
     position: absolute;
-    width: 70%;
+    width: 60%;
     bottom: 0;
     right: 0;
     border-bottom-right-radius: 13px;
     border-bottom-left-radius: 13px;
     z-index: -1;
+    @media screen and (max-width: 1500px) {
+      width: 70%;
+    }
   }
 `
 
@@ -181,7 +185,7 @@ const FirstFarmingPart = styled.div`
   color: white;
   position: relative;
   overflow: hidden;
-  z-index: 1;
+  z-index: 0;
 
   img.cloud {
     width: 47%;
@@ -189,6 +193,13 @@ const FirstFarmingPart = styled.div`
     bottom: -40px;
     right: -8px;
     z-index: -1;
+
+    @media screen and (max-width: 1500px) {
+      width: 54%;
+    }
+    @media screen and (max-width: 1300px) {
+      width: 60%;
+    }
   }
 
   transition: 0.25s;
