@@ -663,6 +663,7 @@ const MyTotalReward = styled.div`
 const FarmInfo = styled.div`
   border-radius: 12px;
   background: #fff;
+  border: 2px solid #f2f5ff;
   // box-shadow: 0px 8px 8px -4px rgba(16, 24, 40, 0.03), 0px 20px 24px -4px rgba(16, 24, 40, 0.08);
 
   ${props =>
