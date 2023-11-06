@@ -39,7 +39,7 @@ const Home = () => {
             }}
           >
             <Title>Farms for Beginners</Title>
-            <Desc>Make your first deposits in less than 2 minutes.</Desc>
+            <Desc>Become a crypto farmer today.</Desc>
             <StartBeginners
               onClick={() => {
                 push(ROUTES.BEGINNERS)
@@ -52,7 +52,7 @@ const Home = () => {
         </FirstPart>
         <SecondPart>
           <FirstFarmingPart>
-            <FirstFarmTitle>New to Farming?</FirstFarmTitle>
+            <FirstFarmTitle>New to Crypto Farming?</FirstFarmTitle>
             <FirstFarmDesc>Learn how to earn with Harvest.</FirstFarmDesc>
             <DirectBtn>Learn</DirectBtn>
             <img className="cloud" src={FirstFarmCloud} alt="" />

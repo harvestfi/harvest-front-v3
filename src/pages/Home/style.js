@@ -67,7 +67,7 @@ const FirstPart = styled.div`
 const FirstBack = styled.div`
   width: 100%;
   height: 100%;
-  background-color: #eaf1ff;
+  background-color: #15b088;
   display: flex;
   flex-direction: column;
   padding: 34px;
@@ -109,7 +109,7 @@ const Title = styled.div`
   font-weight: 600;
   line-height: 48px;
   margin-bottom: 21px;
-  color: #1f2937;
+  color: #fff;
   padding-top: 75px;
 
   @media screen and (max-width: 992px) {
@@ -124,7 +124,7 @@ const Desc = styled.div`
   font-weight: 400;
   line-height: 32px;
   margin-bottom: 21px;
-  color: #1f2937;
+  color: #fff;
 
   @media screen and (max-width: 992px) {
     font-size: 12px;
@@ -173,7 +173,7 @@ const FirstFarmingPart = styled.div`
   height: 50%;
   width: 100%;
   border-radius: 13px;
-  background-color: #eaf1ff;
+  background-color: #fcbe4f;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -184,10 +184,10 @@ const FirstFarmingPart = styled.div`
   z-index: 1;
 
   img.cloud {
-    width: 50%;
+    width: 47%;
     position: absolute;
-    bottom: 0;
-    right: 0;
+    bottom: -40px;
+    right: -8px;
     z-index: -1;
   }
 
@@ -229,7 +229,7 @@ const DirectBtn = styled.button`
   font-size: 12px;
   font-weight: 600;
   line-height: 18px;
-  color: #1f2937;
+  color: #232323;
   &:hover {
     color: #576f91;
   }
@@ -293,7 +293,7 @@ const FirstFarmTitle = styled.div`
   font-weight: 600;
   line-height: 32px;
   margin-bottom: 15px;
-  color: #1f2937;
+  color: #fff;
 
   @media screen and (max-width: 992px) {
     font-size: 19px;
@@ -307,7 +307,7 @@ const FirstFarmDesc = styled.div`
   font-weight: 400;
   line-height: 22px;
   margin-bottom: 24px;
-  color: #1f2937;
+  color: #fff;
 
   @media screen and (max-width: 992px) {
     font-size: 10px;
@@ -355,7 +355,7 @@ const AdvancedDirectBtn = styled.button`
   font-size: 12px;
   font-weight: 600;
   line-height: 18px;
-  color: #1f2937;
+  color: #232323;
   &:hover {
     color: #576f91;
   }
