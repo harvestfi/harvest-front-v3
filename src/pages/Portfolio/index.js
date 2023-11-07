@@ -141,6 +141,7 @@ const getTokenPriceFromApi = async tokenID => {
 const Portfolio = () => {
   const { push } = useHistory()
   const { connected, balances, account, getWalletBalances } = useWallet()
+  // const account = '0x3264473150ead02a604812c7b5b70fef4a9b4503'
   const { userStats, fetchUserPoolStats, totalPools } = usePools()
   const { profitShareAPY } = useStats()
   const { vaultsData, loadingVaults, farmingBalances, getFarmingBalances } = useVaults()
@@ -308,7 +309,7 @@ const Portfolio = () => {
           totalDailyYield = 0,
           totalMonthlyYield = 0
 
-        const promises = stakedVaults.map(async stakedVaultId => {
+        for (let i = 0; i < stakedVaults.length; i += 1) {
           const stats = {
             chain: '',
             symbol: '',
@@ -324,10 +325,10 @@ const Portfolio = () => {
             token: {},
           }
           let symbol = ''
-          if (stakedVaultId === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
+          if (stakedVaults[i] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
             symbol = FARM_TOKEN_SYMBOL
           } else {
-            symbol = stakedVaultId
+            symbol = stakedVaults[i]
           }
           // eslint-disable-next-line one-var
           let fAssetPool =
@@ -376,7 +377,7 @@ const Portfolio = () => {
                   : token.vaultPrice) || 1
             }
             const unstake = fromWei(
-              get(userStats, `[${stakedVaultId}]['lpTokenBalance']`, 0),
+              get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),
               (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
               POOL_BALANCES_DECIMALS,
             )
@@ -385,7 +386,7 @@ const Portfolio = () => {
             if (isNaN(stats.unstake)) {
               stats.unstake = 0
             }
-            const stakeTemp = get(userStats, `[${stakedVaultId}]['totalStaked']`, 0)
+            const stakeTemp = get(userStats, `[${stakedVaults[i]}]['totalStaked']`, 0)
             // eslint-disable-next-line one-var
             let farmBalance = 0
             if (useIFARM) {
@@ -425,10 +426,9 @@ const Portfolio = () => {
               useIFARM ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0) : token.decimals,
             )
 
-            const fetchRewardPrices = rewardTokenSymbols.map(async rewardTSymbol => {
-              // for (let l = 0; l < rewardTokenSymbols.length; l += 1) {
+            for (let l = 0; l < rewardTokenSymbols.length; l += 1) {
               // eslint-disable-next-line one-var
-              let rewardSymbol = rewardTSymbol.toUpperCase(),
+              let rewardSymbol = rewardTokenSymbols[l].toUpperCase(),
                 rewards
 
               if (rewardTokenSymbols.includes(FARM_TOKEN_SYMBOL)) {
@@ -441,15 +441,15 @@ const Portfolio = () => {
                 rewardDecimal = get(tokens[symbol], 'decimals', 18)
 
               if (rewardTokenSymbols.length > 1) {
-                const rewardsEarned = userStats[stakedVaultId].rewardsEarned
+                const rewardsEarned = userStats[stakedVaults[i]].rewardsEarned
                 if (
                   rewardsEarned !== undefined &&
                   !(Object.keys(rewardsEarned).length === 0 && rewardsEarned.constructor === Object)
                 ) {
-                  rewards = rewardsEarned[rewardTSymbol]
+                  rewards = rewardsEarned[rewardTokenSymbols[l]]
                 }
               } else {
-                rewards = userStats[stakedVaultId].totalRewardsEarned
+                rewards = userStats[stakedVaults[i]].totalRewardsEarned
               }
               if (rewardToken) {
                 usdRewardPrice =
@@ -462,32 +462,46 @@ const Portfolio = () => {
                   (rewardToken.data &&
                     rewardToken.data.lpTokenData &&
                     rewardToken.data.lpTokenData.decimals)
-              } else if (rewardTSymbol.substring(0, 1) === 'f') {
+              } else if (rewardTokenSymbols[l].substring(0, 1) === 'f') {
                 let underlyingRewardSymbol
-                if (rewardTSymbol.substring(0, 2) === 'fx') {
-                  underlyingRewardSymbol = rewardTSymbol.substring(2)
+                if (rewardTokenSymbols[l].substring(0, 2) === 'fx') {
+                  underlyingRewardSymbol = rewardTokenSymbols[l].substring(2)
                 } else {
-                  underlyingRewardSymbol = rewardTSymbol.substring(1)
+                  underlyingRewardSymbol = rewardTokenSymbols[l].substring(1)
                 }
-                for (let ids = 0; ids < apiData.length; ids += 1) {
-                  const tempData = apiData[ids]
-                  const tempSymbol = tempData.symbol
-                  if (tempSymbol.toLowerCase() === underlyingRewardSymbol.toLowerCase()) {
-                    // eslint-disable-next-line no-await-in-loop
-                    const usdUnderlyingRewardPrice = await getTokenPriceFromApi(tempData.id)
-                    usdRewardPrice = Number(usdUnderlyingRewardPrice) * Number(pricePerFullShare)
-                    break
+                try {
+                  // const id = getTokenIdBySymbolInApiData(underlyingRewardSymbol, apiData)
+                  // await getTokenPriceFromApi(id)
+                  for (let ids = 0; ids < apiData.length; ids += 1) {
+                    const tempData = apiData[ids]
+                    const tempSymbol = tempData.symbol
+                    if (tempSymbol.toLowerCase() === underlyingRewardSymbol.toLowerCase()) {
+                      // eslint-disable-next-line no-await-in-loop
+                      const usdUnderlyingRewardPrice = await getTokenPriceFromApi(tempData.id)
+                      usdRewardPrice = Number(usdUnderlyingRewardPrice) * Number(pricePerFullShare)
+                      console.log(
+                        `${underlyingRewardSymbol} - USD Price of reward token: ${usdRewardPrice}`,
+                      )
+                      break
+                    }
                   }
+                } catch (error) {
+                  console.error('Error:', error)
                 }
               } else {
-                for (let ids = 0; ids < apiData.length; ids += 1) {
-                  const tempData = apiData[ids]
-                  const tempSymbol = tempData.symbol
-                  if (tempSymbol.toLowerCase() === rewardTSymbol.toLowerCase()) {
-                    // eslint-disable-next-line no-await-in-loop
-                    usdRewardPrice = await getTokenPriceFromApi(tempData.id)
-                    break
+                try {
+                  for (let ids = 0; ids < apiData.length; ids += 1) {
+                    const tempData = apiData[ids]
+                    const tempSymbol = tempData.symbol
+                    if (tempSymbol.toLowerCase() === rewardSymbol.toLowerCase()) {
+                      // eslint-disable-next-line no-await-in-loop
+                      usdRewardPrice = await getTokenPriceFromApi(tempData.id)
+                      console.log(`${rewardSymbol} - USD Price: ${usdRewardPrice}`)
+                      break
+                    }
                   }
+                } catch (error) {
+                  console.error('Error:', error)
                 }
               }
 
@@ -514,20 +528,7 @@ const Portfolio = () => {
                   ? 0
                   : fromWei(Number(rewards), rewardDecimal) * Number(usdRewardPrice)
               stats.rewardUSD.push(rewardPriceUSD)
-              // console.log(
-              //   'Symbol:',
-              //   rewardSymbol,
-              //   'Decimal:',
-              //   rewardDecimal,
-              //   'Reward:',
-              //   rewards,
-              //   'UsdPrice:',
-              //   usdRewardPrice,
-              // )
-              // console.log('rewardPriceUSD --------', rewardPriceUSD)
-              // debugger
-            })
-            await Promise.all(fetchRewardPrices)
+            }
 
             const vaultsKey = Object.keys(groupOfVaults)
             const paramAddress = isSpecialVault
@@ -600,8 +601,7 @@ const Portfolio = () => {
             totalMonthlyYield += monthlyYield
             newStats.push(stats)
           }
-        })
-        await Promise.all(promises)
+        }
 
         setTotalDeposit(formatNumber(totalStake, 2))
         setTotalRewards(formatNumber(valueRewards, 2))

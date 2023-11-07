@@ -1785,13 +1785,13 @@ export const getPriceFeed = async (address, chainId) => {
   return { data, flag }
 }
 
-export const getUserBalanceHistories = async (address, chainId, myWallet) => {
+export const getUserBalanceHistories = async (address, chainId, account) => {
   let data = {},
     flag = true
 
   address = address.toLowerCase()
-  if (myWallet) {
-    myWallet = myWallet.toLowerCase()
+  if (account) {
+    account = account.toLowerCase()
   }
 
   const myHeaders = new Headers()
@@ -1802,7 +1802,7 @@ export const getUserBalanceHistories = async (address, chainId, myWallet) => {
         userBalanceHistories(
           where: {
             vault: "${address}",
-            userAddress: "${myWallet}"
+            userAddress: "${account}"
           },
           orderBy: createAtBlock,
           orderDirection: desc,
@@ -1847,3 +1847,20 @@ export const getUserBalanceHistories = async (address, chainId, myWallet) => {
   }
   return { data, flag }
 }
+
+// /**
+//  * @param symbol token symbol
+//  * @param apiData coingeko data
+//  * @dev get token id from api data
+//  * ** */
+// export function getTokenIdBySymbolInApiData(symbol, apiData) {
+//   const symbol = symbol.toLowerCase();
+//   for (let ids = 0; ids < apiData.length; ids += 1) {
+//     const tempData = apiData[ids]
+//     const tempSymbol = tempData.symbol
+//     if (tempSymbol.toLowerCase() === symbol.toLowerCase()) {
+//       return tempData.id
+//     }
+//   }
+//   return null;
+// }
