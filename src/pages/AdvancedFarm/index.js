@@ -315,6 +315,7 @@ const AdvancedFarm = () => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
   }, [])
 
+  const useBeginnersFarm = false
   const useIFARM = id === FARM_TOKEN_SYMBOL
   const fAssetPool = isSpecialVault
     ? token.data
@@ -997,7 +998,7 @@ const AdvancedFarm = () => {
             <GuideSection>
               <GuidePart>
                 {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
-                &nbsp;APR
+                &nbsp;APY
               </GuidePart>
               <GuidePart>
                 {showTVL()}
@@ -1092,6 +1093,8 @@ const AdvancedFarm = () => {
                           ? '$0.00'
                           : isNaN(yieldMonthly)
                           ? '$0.00'
+                          : yieldMonthly === 0
+                          ? '$0.00'
                           : yieldMonthly < 0.01
                           ? '<$0.01'
                           : `$${formatNumber(yieldMonthly, 2)}`}
@@ -1103,6 +1106,8 @@ const AdvancedFarm = () => {
                         {!connected
                           ? '$0.00'
                           : isNaN(yieldDaily)
+                          ? '$0.00'
+                          : yieldDaily === 0
                           ? '$0.00'
                           : yieldDaily < 0.01
                           ? '<$0.01'
@@ -1727,6 +1732,7 @@ const AdvancedFarm = () => {
                         switchMethod={switchDepoMethod}
                         tokenSymbol={id}
                         useIFARM={useIFARM}
+                        useBeginnersFarm={useBeginnersFarm}
                         balanceList={balanceList}
                         setQuoteValue={setQuoteValueDepo}
                         setFromInfoAmount={setFromInfoAmount}
@@ -1787,6 +1793,7 @@ const AdvancedFarm = () => {
                         switchMethod={switchDepoMethod}
                         quoteValue={quoteValueWith}
                         setQuoteValue={setQuoteValueWith}
+                        useBeginnersFarm={useBeginnersFarm}
                         useIFARM={useIFARM}
                         setRevertFromInfoAmount={setRevertFromInfoAmount}
                         setRevertFromInfoUsdAmount={setRevertFromInfoUsdAmount}

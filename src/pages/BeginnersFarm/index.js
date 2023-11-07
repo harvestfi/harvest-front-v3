@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { find, get, isEqual, isArray } from 'lodash'
+import { find, get, isEqual, isEmpty, isArray, isNaN } from 'lodash'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import ReactHtmlParser from 'react-html-parser'
@@ -7,31 +7,27 @@ import ReactTooltip from 'react-tooltip'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { getBalances, getSupportedTokens } from 'wido'
-// import axios from 'axios'
+import { BiLeftArrowAlt } from 'react-icons/bi'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import BASE from '../../assets/images/chains/base.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
-import Back from '../../assets/images/logos/earn/back-arrow.svg'
 import Info from '../../assets/images/logos/earn/info.svg'
-import WithdrawAnytime from '../../assets/images/logos/beginners/check-circle.svg'
+import InfoBlack from '../../assets/images/logos/earn/help-circle.svg'
 import Safe from '../../assets/images/logos/beginners/safe.svg'
 import BarChart from '../../assets/images/logos/beginners/bar-chart-01.svg'
 import DOT from '../../assets/images/logos/beginners/dot.svg'
-import BottomEffect from '../../assets/images/logos/beginners/Top Banner.svg'
 import AnimatedDots from '../../components/AnimatedDots'
-import DepositBase from '../../components/AdvancedFarmComponents/LastDeposit/DepositBase'
-import DepositSelectToken from '../../components/AdvancedFarmComponents/LastDeposit/DepositSelectToken'
-import DepositStart from '../../components/AdvancedFarmComponents/LastDeposit/DepositStart'
-import DepositResult from '../../components/AdvancedFarmComponents/LastDeposit/DepositResult'
-import WithdrawBase from '../../components/AdvancedFarmComponents/LastWithdraw/WithdrawBase'
-import WithdrawSelectToken from '../../components/AdvancedFarmComponents/LastWithdraw/WithdrawSelectToken'
-import WithdrawStart from '../../components/AdvancedFarmComponents/LastWithdraw/WithdrawStart'
-import WithdrawResult from '../../components/AdvancedFarmComponents/LastWithdraw/WithdrawResult'
+import DepositBase from '../../components/AdvancedFarmComponents/Deposit/DepositBase'
+import DepositSelectToken from '../../components/AdvancedFarmComponents/Deposit/DepositSelectToken'
+import DepositStart from '../../components/AdvancedFarmComponents/Deposit/DepositStart'
+import WithdrawBase from '../../components/AdvancedFarmComponents/Withdraw/WithdrawBase'
+import WithdrawSelectToken from '../../components/AdvancedFarmComponents/Withdraw/WithdrawSelectToken'
+import WithdrawStart from '../../components/AdvancedFarmComponents/Withdraw/WithdrawStart'
 import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
-import PriceShareData from '../../components/lastPriceShareChart/PriceShareData'
+import UserBalanceData from '../../components/UserBalanceChart/UserBalanceData'
 import {
   DECIMAL_PRECISION,
   FARM_GRAIN_TOKEN_SYMBOL,
@@ -41,6 +37,8 @@ import {
   ROUTES,
   SPECIAL_VAULTS,
   POOL_BALANCES_DECIMALS,
+  MAX_BALANCES_DECIMALS,
+  WIDO_BALANCES_DECIMALS,
 } from '../../constants'
 import { fromWei, newContractInstance, getWeb3, getExplorerLink } from '../../services/web3'
 import { addresses } from '../../data'
@@ -57,7 +55,6 @@ import {
   getLastHarvestInfo,
 } from '../../utils'
 import {
-  BackArrow,
   BackBtnRect,
   BackText,
   BigDiv,
@@ -68,7 +65,6 @@ import {
   InfoIcon,
   Inner,
   TopInner,
-  TopBtnInner,
   TopButton,
   LogoImg,
   NewLabel,
@@ -83,7 +79,6 @@ import {
   MainSection,
   ChainBack,
   MainTag,
-  MainDescText,
   InternalSection,
   HalfInfo,
   InfoLabel,
@@ -93,7 +88,17 @@ import {
   MainTagPanel,
   FirstPartSection,
   APRValueShow,
-  BorderBottomDiv,
+  TabRow,
+  NetDetail,
+  NetDetailItem,
+  BoxCover,
+  ValueBox,
+  BoxTitle,
+  BoxValue,
+  NetDetailTitle,
+  NetDetailContent,
+  NetDetailImg,
+  InfoIconBlack,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 // import { array } from 'prop-types'
@@ -106,8 +111,8 @@ const chainList = [
 ]
 
 const mainTags = [
-  { name: 'Deposit', img: Safe },
-  { name: 'Details', img: BarChart },
+  { name: 'Start Farming', img: Safe },
+  { name: 'Farm Details', img: BarChart },
 ]
 
 const getVaultValue = token => {
@@ -143,6 +148,9 @@ const BeginnersFarm = () => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const { push } = useHistory()
+  const history = useHistory()
+
+  const { pathname } = useLocation()
 
   const { vaultsData, loadingVaults } = useVaults()
   const { pools, userStats, fetchUserPoolStats } = usePools()
@@ -240,6 +248,7 @@ const BeginnersFarm = () => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
   }, [])
 
+  const useBeginnersFarm = true
   const useIFARM = id === FARM_TOKEN_SYMBOL
   const fAssetPool = isSpecialVault
     ? token.data
@@ -260,6 +269,7 @@ const BeginnersFarm = () => {
 
   const tokenDecimals = token.decimals || tokens[id].decimals
   const lpTokenBalance = get(userStats, `[${fAssetPool.id}]['lpTokenBalance']`, 0)
+  const totalStaked = get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)
 
   const usdPrice =
     token.usdPrice || (token.data && token.data.lpTokenData && token.data.lpTokenData.price)
@@ -270,20 +280,32 @@ const BeginnersFarm = () => {
   // const [clickTokenIdDepo, setClickedTokenIdDepo] = useState(-1)
   const [balanceDepo, setBalanceDepo] = useState(0)
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
-  const [depositFinalStep, setDepositFinalStep] = useState(false)
   const [quoteValueDepo, setQuoteValueDepo] = useState(null)
   const [inputAmountDepo, setInputAmountDepo] = useState(0)
   const [partHeightDepo, setPartHeightDepo] = useState(null)
+  const [fromInfoAmount, setFromInfoAmount] = useState('')
+  const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('')
+  const [minReceiveAmountString, setMinReceiveAmountString] = useState('')
+  const [convertSuccess, setConvertSuccess] = useState(false)
 
   // Withdraw
   const [withdrawStart, setWithdrawStart] = useState(false)
   const [selectTokenWith, setSelectTokenWith] = useState(false)
   const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select' })
-  const [withdrawFinalStep, setWithdrawFinalStep] = useState(false)
   const [unstakeBalance, setUnstakeBalance] = useState('0')
   // const [clickTokenIdWith, setClickedTokenIdWith] = useState(-1)
   const [partHeightWith, setPartHeightWith] = useState(null)
   const [quoteValueWith, setQuoteValueWith] = useState(null)
+  const [revertFromInfoAmount, setRevertFromInfoAmount] = useState('')
+  const [revertFromInfoUsdAmount, setRevertFromInfoUsdAmount] = useState('')
+  const [revertMinReceivedAmount, setRevertMinReceivedAmount] = useState('')
+  const [revertedAmount, setRevertedAmount] = useState('')
+  const [unstakeInputValue, setUnstakeInputValue] = useState(0)
+
+  const [yieldDaily, setYieldDaily] = useState(0)
+  const [yieldMonthly, setYieldMonthly] = useState(0)
+  const [convertMonthlyYieldUSD, setConvertMonthlyYieldUSD] = useState(0)
+  const [convertDailyYieldUSD, setConvertDailyYieldUSD] = useState(0)
 
   const [balanceList, setBalanceList] = useState([])
   const [supTokenList, setSupTokenList] = useState([])
@@ -291,7 +313,66 @@ const BeginnersFarm = () => {
   const [defaultToken, setDefaultToken] = useState({})
   const [soonToSupList, setSoonToSupList] = useState([])
 
+  const [vaultValue, setVaultValue] = useState(null)
+  const [lastHarvest, setLastHarvest] = useState('')
+
+  const [totalValue, setTotalValue] = useState(0)
+  const [underlyingValue, setUnderlyingValue] = useState(0)
+  const [depositedValueUSD, setDepositUsdValue] = useState(0)
+  const [balanceAmount, setBalanceAmount] = useState(0)
+  const firstUnderlyingBalance = useRef(true)
+
   const toTokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
+  useEffect(() => {
+    const staked =
+      totalStaked &&
+      fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_BALANCES_DECIMALS, true)
+
+    const unstaked =
+      lpTokenBalance &&
+      fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, MAX_BALANCES_DECIMALS, true)
+    const total = Number(staked) + Number(unstaked)
+    const amountBalanceUSD = total * usdPrice
+    setTotalValue(total)
+    setBalanceAmount(amountBalanceUSD)
+
+    const estimatedApyByPercent = get(tokenVault, `estimatedApy`, 0)
+    const estimatedApy = estimatedApyByPercent / 100
+    const vaultAPR = ((1 + estimatedApy) ** (1 / 365) - 1) * 365
+    const vaultAPRDaily = vaultAPR / 365
+    const vaultAPRMonthly = vaultAPR / 12
+
+    let totalRewardAPRByPercent = 0
+    for (let j = 0; j < fAssetPool.rewardAPR?.length; j += 1) {
+      totalRewardAPRByPercent += Number(fAssetPool.rewardAPR[j])
+    }
+    const totalRewardAPR = totalRewardAPRByPercent / 100
+    const poolAPRDaily = totalRewardAPR / 365
+    const poolAPRMonthly = totalRewardAPR / 12
+
+    const swapFeeAPRYearly = (fAssetPool.tradingApy ? fAssetPool.tradingApy : 0) / 100
+    const swapFeeAPRDaily = swapFeeAPRYearly / 365
+    const swapFeeAPRMonthly = swapFeeAPRYearly / 12
+
+    const dailyYield =
+      Number(staked) * usdPrice * (vaultAPRDaily + poolAPRDaily + swapFeeAPRDaily) +
+      Number(unstaked) * usdPrice * (vaultAPRDaily + swapFeeAPRDaily)
+    const monthlyYield =
+      Number(staked) * usdPrice * (vaultAPRMonthly + poolAPRMonthly + swapFeeAPRMonthly) +
+      Number(unstaked) * usdPrice * (vaultAPRMonthly + swapFeeAPRMonthly)
+    setYieldDaily(dailyYield)
+    setYieldMonthly(monthlyYield)
+  }, [fAssetPool, tokenVault, usdPrice, lpTokenBalance, totalStaked])
+
+  useEffect(() => {
+    const convertMonthlyYieldValue =
+      (Number(minReceiveAmountString) * Number(usdPrice) * (Number(totalApy) / 100)) / 12
+    const convertDailyYieldYieldValue =
+      (Number(minReceiveAmountString) * Number(usdPrice) * (Number(totalApy) / 100)) / 365
+    setConvertMonthlyYieldUSD(convertMonthlyYieldValue)
+    setConvertDailyYieldUSD(convertDailyYieldYieldValue)
+  }, [minReceiveAmountString, usdPrice, totalApy])
+
   useEffect(() => {
     const getTokenBalance = async () => {
       try {
@@ -441,7 +522,7 @@ const BeginnersFarm = () => {
     }
 
     getTokenBalance()
-  }, [account, chain, balances]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, chain, balances, convertSuccess]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (supTokenList.length > 0) {
@@ -460,7 +541,7 @@ const BeginnersFarm = () => {
     }
   }, [supTokenList])
 
-  const { pageBackColor, fontColor, filterColor } = useThemeContext()
+  const { fontColor, filterColor } = useThemeContext()
 
   const firstUserPoolsLoad = useRef(true)
   const firstWalletBalanceLoad = useRef(true)
@@ -501,67 +582,16 @@ const BeginnersFarm = () => {
   // Switch Deposit / Withdraw
   const switchDepoMethod = () => setActiveDepo(prev => !prev)
 
-  // Count of users that used token
-  // const [holderCount, setHolderCount] = useState(0)
-  // useEffect(() => {
-  //   const getTokenHolder = async () => {
-  //     const chainName =
-  //       chain === CHAIN_IDS.ETH_MAINNET
-  //         ? 'eth'
-  //         : chain === CHAIN_IDS.ARBITRUM_ONE
-  //         ? 'arbitrum'
-  //         : chain === CHAIN_IDS.POLYGON_MAINNET
-  //         ? 'polygon'
-  //         : ''
-
-  //     const options = {
-  //       method: 'POST',
-  //       url:
-  //         'https://rpc.ankr.com/multichain/79258ce7f7ee046decc3b5292a24eb4bf7c910d7e39b691384c7ce0cfb839a01/',
-  //       // eslint-disable-next-line camelcase
-  //       params: { ankr_getTokenHolders: '' },
-  //       headers: { accept: 'application/json', 'content-type': 'application/json' },
-  //       data: {
-  //         jsonrpc: '2.0',
-  //         method: 'ankr_getTokenHolders',
-  //         params: {
-  //           blockchain: chainName,
-  //           contractAddress: paramAddress,
-  //         },
-  //         id: 1,
-  //       },
-  //     }
-
-  //     axios
-  //       .request(options)
-  //       .then(response => {
-  //         if (response.data.result === undefined) {
-  //           return
-  //         }
-  //         setHolderCount(response.data.result.holdersCount)
-  //       })
-  //       .catch(error => {
-  //         console.error(error)
-  //       })
-  //   }
-
-  //   getTokenHolder()
-  // }, [paramAddress, chain, token])
-
   // Deposit / Stake / Details
   const [activeMainTag, setActiveMainTag] = useState(0)
 
   const curUrl = document.location.href
   useEffect(() => {
-    if (curUrl.includes('#details')) {
+    if (curUrl.includes('#farm%20details')) {
       setActiveMainTag(1)
     }
   }, [curUrl])
 
-  const [vaultValue, setVaultValue] = useState(null)
-  const [lastHarvest, setLastHarvest] = useState('')
-
-  const [loadData, setLoadData] = useState(true)
   useEffect(() => {
     const getLastHarvest = async () => {
       const value = await getLastHarvestInfo(paramAddress, chain)
@@ -575,7 +605,33 @@ const BeginnersFarm = () => {
     setVaultValue(getVaultValue(token))
   }, [token])
 
-  const { pathname } = useLocation()
+  useEffect(() => {
+    const depositUsdValue = formatNumber(
+      fromWei(lpTokenBalance, fAssetPool?.lpTokenData?.decimals, POOL_BALANCES_DECIMALS, true) *
+        usdPrice,
+      POOL_BALANCES_DECIMALS,
+    )
+    setDepositUsdValue(depositUsdValue)
+  }, [lpTokenBalance, fAssetPool, usdPrice])
+
+  useEffect(() => {
+    const hasZeroValue = underlyingValue === 0
+    if (account && hasZeroValue && (firstUnderlyingBalance.current || !isEmpty(vaultsData))) {
+      const getUnderlyingBalance = async () => {
+        firstUnderlyingBalance.current = false
+        const val = Number(
+          fromWei(
+            get(vaultsData, `${IFARM_TOKEN_SYMBOL}.underlyingBalanceWithInvestmentForHolder`, 0),
+            tokens[IFARM_TOKEN_SYMBOL].decimals,
+            WIDO_BALANCES_DECIMALS,
+          ),
+        )
+        setUnderlyingValue(val)
+      }
+
+      getUnderlyingBalance()
+    }
+  }, [account, vaultsData, underlyingValue, tokens])
 
   const apyDaily = totalApy
     ? (((Number(totalApy) / 100 + 1) ** (1 / 365) - 1) * 100).toFixed(3)
@@ -671,25 +727,29 @@ const BeginnersFarm = () => {
   const harvestTreasury =
     chain === CHAIN_IDS.ETH_MAINNET ? '5' : chain === CHAIN_IDS.POLYGON_MAINNET ? '3' : '3'
 
+  const tempPricePerFullShare = useIFARM
+    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
+    : get(token, `pricePerFullShare`, 0)
+  const pricePerFullShare = fromWei(
+    tempPricePerFullShare,
+    useIFARM ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0) : token.decimals,
+  )
+
   return (
-    <DetailView pageBackColor={pageBackColor} fontColor={fontColor}>
-      {!isMobile && (
-        <TopBtnInner>
-          <TopButton className="back-btn">
-            <BackBtnRect
-              onClick={() => {
-                push(ROUTES.BEGINNERS)
-              }}
-            >
-              <BackArrow src={Back} alt="" />
-              <BackText>Back</BackText>
-            </BackBtnRect>
-          </TopButton>
-        </TopBtnInner>
-      )}
-      <TopInner>
+    <DetailView fontColor={fontColor}>
+      <TopInner isETHFarm={id === 'WETH_base'}>
         <TopPart>
           <FlexTopDiv>
+            <TopButton className="back-btn">
+              <BackBtnRect
+                onClick={() => {
+                  history.push(ROUTES.BEGINNERS)
+                }}
+              >
+                <BiLeftArrowAlt />
+                <BackText>Back</BackText>
+              </BackBtnRect>
+            </TopButton>
             {isMobile && (
               <FlexDiv>
                 {logoUrl.map((el, i) => (
@@ -705,98 +765,140 @@ const BeginnersFarm = () => {
                 {logoUrl.map((el, i) => (
                   <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
                 ))}
-                <ChainBack>
-                  <img src={BadgeAry[badgeId]} width={10} height={15} alt="" />
-                </ChainBack>
+                <TopDesc
+                  weight={600}
+                  size={isMobile ? '19.7px' : '25px'}
+                  height={isMobile ? '45px' : '82px'}
+                  marginBottom={isMobile ? '5px' : '10px'}
+                >
+                  {token.tokenNames.join(' • ')}
+                </TopDesc>
               </FlexDiv>
             )}
-            <TopDesc
-              weight={600}
-              size={isMobile ? '19.7px' : '25px'}
-              height={isMobile ? '45px' : '82px'}
-              marginBottom={isMobile ? '5px' : '10px'}
-            >
-              {token.tokenNames.join(' • ')}
-            </TopDesc>
             <GuideSection>
-              <GuidePart fontWeight="600">
-                <img src={DOT} alt="" />
+              <GuidePart>
                 {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
-                &nbsp;APR
+                &nbsp;APY
               </GuidePart>
-              <GuidePart fontWeight="500">
-                <img className="icon" src={WithdrawAnytime} alt="" />
-                Withdraw Anytime
-              </GuidePart>
+              <GuidePart>Withdraw anytime</GuidePart>
             </GuideSection>
+            <TabRow>
+              <MainTagPanel>
+                {mainTags.map((tag, i) => (
+                  <MainTag
+                    key={i}
+                    isETHFarm={id === 'WETH_base'}
+                    active={activeMainTag === i ? 'true' : 'false'}
+                    onClick={() => {
+                      setActiveMainTag(i)
+                      if (i !== 0) {
+                        push(`${pathname}#${tag.name.toLowerCase()}`)
+                      } else {
+                        push(pathname)
+                      }
+                    }}
+                  >
+                    <img src={tag.img} alt="logo" />
+                    <p>{tag.name}</p>
+                  </MainTag>
+                ))}
+              </MainTagPanel>
+              <NetDetail>
+                <NetDetailItem>
+                  <NetDetailTitle>Platform:</NetDetailTitle>
+                  <NetDetailContent>{token.platform && token.platform[0]}</NetDetailContent>
+                </NetDetailItem>
+                <NetDetailItem>
+                  <NetDetailTitle>Network</NetDetailTitle>
+                  <NetDetailImg>
+                    <img src={BadgeAry[badgeId]} alt="" />
+                  </NetDetailImg>
+                </NetDetailItem>
+              </NetDetail>
+            </TabRow>
           </FlexTopDiv>
-          <img className="bottom" src={BottomEffect} alt="" />
-          <BorderBottomDiv />
         </TopPart>
       </TopInner>
       <Inner>
         <BigDiv>
-          <MainTagPanel>
-            {mainTags.map((tag, i) => (
-              <MainTag
-                key={i}
-                active={activeMainTag === i ? 'true' : 'false'}
-                onClick={() => {
-                  setActiveMainTag(i)
-                  if (i !== 0) {
-                    push(`${pathname}#${tag.name.toLowerCase()}`)
-                  } else {
-                    push(pathname)
-                  }
-                }}
-              >
-                <img src={tag.img} alt="logo" />
-                <p>{tag.name}</p>
-              </MainTag>
-            ))}
-          </MainTagPanel>
-          {activeMainTag === 0 ? (
-            <MainDescText>
-              Turn any token from your wallet into auto-compounding fToken to start farming.
-            </MainDescText>
-          ) : (
-            <MainDescText>
-              Preview live data, APY breakdown and source of yield to make informed farming
-              decisions.
-            </MainDescText>
-          )}
-          <InternalSection height={activeMainTag === 0 ? '500px' : 'unset'}>
+          <InternalSection>
+            {activeMainTag === 1 && (
+              <BoxCover>
+                <ValueBox width="24%" height="120px">
+                  <BoxTitle>APY</BoxTitle>
+                  <BoxValue>{showAPY()}</BoxValue>
+                </ValueBox>
+                <ValueBox width="24%" height="120px">
+                  <BoxTitle>Daily APY</BoxTitle>
+                  <BoxValue>{showApyDaily()}</BoxValue>
+                </ValueBox>
+                <ValueBox width="24%" height="120px">
+                  <BoxTitle>TVL</BoxTitle>
+                  <BoxValue>{showTVL()}</BoxValue>
+                </ValueBox>
+                <ValueBox width="24%" height="120px">
+                  <BoxTitle>Last Harvest</BoxTitle>
+                  <BoxValue>{lastHarvest !== '' ? `${lastHarvest} ago` : '-'}</BoxValue>
+                </ValueBox>
+              </BoxCover>
+            )}
             <MainSection height={activeMainTag === 0 ? '100%' : 'fit-content'}>
               {activeMainTag === 0 ? (
-                loadData ? (
-                  <PriceShareData
-                    token={token}
-                    vaultPool={vaultPool}
-                    tokenSymbol={id}
-                    setLoadData={setLoadData}
-                  />
-                ) : (
-                  <HalfInfo padding="25px 18px" marginBottom="0">
-                    <FarmDetailChart
-                      token={token}
-                      vaultPool={vaultPool}
-                      lastTVL={Number(vaultValue)}
-                      lastAPY={Number(totalApy)}
-                    />
-                  </HalfInfo>
-                )
+                <>
+                  <BoxCover>
+                    <ValueBox height="120px" width="32%">
+                      <BoxTitle>My Balance</BoxTitle>
+                      <BoxValue>
+                        {!connected ? (
+                          '$0.00'
+                        ) : lpTokenBalance ? (
+                          balanceAmount === 0 ? (
+                            '$0.00'
+                          ) : balanceAmount < 0.01 ? (
+                            '<$0.01'
+                          ) : (
+                            `$${formatNumber(balanceAmount, 2)}`
+                          )
+                        ) : (
+                          <AnimatedDots />
+                        )}
+                      </BoxValue>
+                    </ValueBox>
+                    <ValueBox height="120px" width="32%">
+                      <BoxTitle>Monthly Yield</BoxTitle>
+                      <BoxValue>
+                        {!connected
+                          ? '$0.00'
+                          : isNaN(yieldMonthly)
+                          ? '$0.00'
+                          : yieldMonthly === 0
+                          ? '$0.00'
+                          : yieldMonthly < 0.01
+                          ? '<$0.01'
+                          : `$${formatNumber(yieldMonthly, 2)}`}
+                      </BoxValue>
+                    </ValueBox>
+                    <ValueBox height="120px" width="32%">
+                      <BoxTitle>Daily Yield</BoxTitle>
+                      <BoxValue>
+                        {!connected
+                          ? '$0.00'
+                          : isNaN(yieldDaily)
+                          ? '$0.00'
+                          : yieldDaily === 0
+                          ? '$0.00'
+                          : yieldDaily < 0.01
+                          ? '<$0.01'
+                          : `$${formatNumber(yieldDaily, 2)}`}
+                      </BoxValue>
+                    </ValueBox>
+                  </BoxCover>
+                  <div>
+                    <UserBalanceData token={token} vaultPool={vaultPool} tokenSymbol={id} />
+                  </div>
+                </>
               ) : (
                 <>
-                  {loadData && (
-                    <HalfInfo padding="25px 18px" marginBottom="23px">
-                      <FarmDetailChart
-                        token={token}
-                        vaultPool={vaultPool}
-                        lastTVL={Number(vaultValue)}
-                        lastAPY={Number(totalApy)}
-                      />
-                    </HalfInfo>
-                  )}
                   <HalfInfo marginBottom="20px">
                     <NewLabel
                       weight={700}
@@ -807,7 +909,43 @@ const BeginnersFarm = () => {
                     >
                       Source of Yield
                     </NewLabel>
-                    <DescInfo>{ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)}</DescInfo>
+                    <DescInfo>
+                      {useIFARM ? (
+                        <div>
+                          <p>
+                            When you supply{' '}
+                            <a
+                              href="https://etherscan.io/token/0xa0246c9032bC3A600820415aE600c6388619A14D"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              FARM
+                            </a>{' '}
+                            you will be rewarded with a share of the profits of the platform paid
+                            out in{' '}
+                            <a
+                              href="https://etherscan.io/token/0xa0246c9032bC3A600820415aE600c6388619A14D"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              FARM
+                            </a>{' '}
+                            rewards. When depositing into the vault you obtain the yield-bearing
+                            yield-bearing token{' '}
+                            <a
+                              href="https://etherscan.io/token/0x1571eD0bed4D987fe2b498DdBaE7DFA19519F651"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              iFARM
+                            </a>
+                            . You can swap iFARM for the underlying FARM at any time.
+                          </p>
+                        </div>
+                      ) : (
+                        ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)
+                      )}
+                    </DescInfo>
                     <FlexDiv className="address" padding="0 15px 20px">
                       {token.vaultAddress && (
                         <InfoLabel
@@ -870,23 +1008,6 @@ const BeginnersFarm = () => {
                       </InfoLabel>
                     </FlexDiv>
                   </HalfInfo>
-                  {!isMobile && !loadData && (
-                    <MyBalance marginBottom={isMobile ? '24px' : '20px'}>
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="700"
-                        height={isMobile ? '18px' : '24px'}
-                        color="#344054"
-                        padding={isMobile ? '9px 13px' : '10px 15px'}
-                        borderBottom="1px solid #EBEBEB"
-                      >
-                        APY Breakdown
-                      </NewLabel>
-                      <NewLabel padding={isMobile ? '9px 13px' : '0px 15px 10px'}>
-                        <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
-                      </NewLabel>
-                    </MyBalance>
-                  )}
                 </>
               )}
             </MainSection>
@@ -894,31 +1015,58 @@ const BeginnersFarm = () => {
               {activeMainTag === 0 ? (
                 <FirstPartSection>
                   <MyBalance
-                    marginBottom={isMobile ? '0' : '23px'}
+                    marginBottom={isMobile ? '0' : '25px'}
                     marginTop={isMobile ? '0px' : '0'}
+                    height={isMobile ? 'unset' : '120px'}
                   >
                     <NewLabel
-                      size={isMobile ? '12px' : '14px'}
+                      display="flex"
+                      justifyContent="space-between"
+                      size={isMobile ? '12px' : '12px'}
                       weight="600"
-                      height={isMobile ? '18px' : '24px'}
-                      color="#344054"
+                      height={isMobile ? '18px' : '20px'}
+                      color="#1F2937"
                       padding={isMobile ? '7px 11px' : '10px 15px'}
-                      borderBottom="1px solid #EBEBEB"
+                      borderBottom="1px solid #F2F5FF"
                     >
-                      My Balance
+                      <>{`f${id}`}</>
+                      <InfoIconBlack
+                        className="info"
+                        width={isMobile ? 10 : 16}
+                        src={InfoBlack}
+                        alt=""
+                        data-tip
+                        data-for="tooltip-token-name"
+                      />
+                      <ReactTooltip
+                        id="tooltip-token-name"
+                        backgroundColor="black"
+                        borderColor="black"
+                        textColor="white"
+                      >
+                        <NewLabel
+                          size={isMobile ? '10px' : '12px'}
+                          height={isMobile ? '15px' : '18px'}
+                          weight="600"
+                          color="white"
+                        >
+                          The interest-bearing fToken. It entitles its holder to auto-compounded
+                          yield of this farm.
+                        </NewLabel>
+                      </ReactTooltip>
                     </NewLabel>
                     <FlexDiv
                       justifyContent="space-between"
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
+                      padding={isMobile ? '7px 11px' : '5px 15px'}
                     >
                       <NewLabel
                         display="flex"
-                        size={isMobile ? '10px' : '14px'}
+                        size={isMobile ? '10px' : '12px'}
                         weight="500"
                         height={isMobile ? '18px' : '24px'}
-                        color="#344054"
+                        color="#6F78AA"
                       >
-                        {`f${id}`}
+                        Balance
                         <InfoIcon
                           className="info"
                           width={isMobile ? 10 : 16}
@@ -940,24 +1088,23 @@ const BeginnersFarm = () => {
                             weight="600"
                             color="white"
                           >
-                            This fToken represents your share in this farm.
+                            This f{id} represents your share in this farm.
                           </NewLabel>
                         </ReactTooltip>
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '10px' : '14px'}
+                        size={isMobile ? '10px' : '12px'}
                         height={isMobile ? '18px' : '24px'}
-                        weight="700"
-                        color="#00D26B"
+                        weight="500"
+                        color="#6F78AA"
                       >
                         {!connected ? (
                           0
                         ) : lpTokenBalance ? (
-                          fromWei(
-                            lpTokenBalance,
-                            fAssetPool.lpTokenData.decimals,
-                            POOL_BALANCES_DECIMALS,
-                            true,
+                          totalValue === 0 ? (
+                            '0.00'
+                          ) : (
+                            totalValue.toFixed(8)
                           )
                         ) : (
                           <AnimatedDots />
@@ -966,36 +1113,57 @@ const BeginnersFarm = () => {
                     </FlexDiv>
                     <FlexDiv
                       justifyContent="space-between"
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
+                      padding={isMobile ? '7px 11px' : '5px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '10px' : '14px'}
+                        size={isMobile ? '10px' : '12px'}
                         height={isMobile ? '18px' : '24px'}
                         weight="500"
-                        color="#344054"
+                        color="#6F78AA"
                         self="center"
                       >
-                        Est. Value
+                        Underlying Balance
+                        <InfoIcon
+                          className="info"
+                          width={isMobile ? 10 : 16}
+                          src={Info}
+                          alt=""
+                          data-tip
+                          data-for="tooltip-underlying-balance"
+                          filterColor={filterColor}
+                        />
+                        <ReactTooltip
+                          id="tooltip-underlying-balance"
+                          backgroundColor="black"
+                          borderColor="black"
+                          textColor="white"
+                        >
+                          <NewLabel
+                            size={isMobile ? '10px' : '12px'}
+                            height={isMobile ? '15px' : '18px'}
+                            weight="600"
+                            color="white"
+                          >
+                            This f{id} represents your share in this farm.
+                          </NewLabel>
+                        </ReactTooltip>
                       </NewLabel>
                       <NewLabel
                         weight="500"
-                        size={isMobile ? '10px' : '14px'}
+                        size={isMobile ? '10px' : '12px'}
                         height={isMobile ? '18px' : '24px'}
-                        color="black"
+                        color="#6F78AA"
                         self="center"
                       >
-                        $
                         {!connected ? (
                           0
                         ) : lpTokenBalance ? (
-                          formatNumber(
-                            fromWei(
-                              lpTokenBalance,
-                              fAssetPool.lpTokenData.decimals,
-                              POOL_BALANCES_DECIMALS,
-                              true,
-                            ) * usdPrice,
-                            POOL_BALANCES_DECIMALS,
+                          totalValue === 0 ? (
+                            `0.00 ${token.tokenNames.join(' • ')}`
+                          ) : (
+                            `${(totalValue * Number(pricePerFullShare)).toFixed(
+                              8,
+                            )}  ${token.tokenNames.join(' • ')}`
                           )
                         ) : (
                           <AnimatedDots />
@@ -1010,11 +1178,9 @@ const BeginnersFarm = () => {
                   >
                     <DepositSection isShow={activeDepo}>
                       <DepositBase
-                        selectToken={selectTokenDepo}
                         setSelectToken={setSelectTokenDepo}
                         deposit={depositStart}
                         setDeposit={setDepositStart}
-                        finalStep={depositFinalStep}
                         balance={balanceDepo}
                         pickedToken={pickedTokenDepo}
                         inputAmount={inputAmountDepo}
@@ -1023,13 +1189,22 @@ const BeginnersFarm = () => {
                         supTokenList={supTokenList}
                         switchMethod={switchDepoMethod}
                         tokenSymbol={id}
+                        useIFARM={useIFARM}
+                        useBeginnersFarm={useBeginnersFarm}
+                        balanceList={balanceList}
+                        setQuoteValue={setQuoteValueDepo}
+                        setFromInfoAmount={setFromInfoAmount}
+                        setFromInfoUsdAmount={setFromInfoUsdAmount}
+                        convertMonthlyYieldUSD={convertMonthlyYieldUSD}
+                        convertDailyYieldUSD={convertDailyYieldUSD}
+                        minReceiveAmountString={minReceiveAmountString}
+                        setMinReceiveAmountString={setMinReceiveAmountString}
                       />
                       <DepositSelectToken
                         selectToken={selectTokenDepo}
                         setSelectToken={setSelectTokenDepo}
                         setPickedToken={setPickedTokenDepo}
                         setBalance={setBalanceDepo}
-                        supTokenList={supTokenList}
                         supTokenNoBalanceList={supTokenNoBalanceList}
                         balanceList={balanceList}
                         defaultToken={defaultToken}
@@ -1040,50 +1215,53 @@ const BeginnersFarm = () => {
                         pickedToken={pickedTokenDepo}
                         deposit={depositStart}
                         setDeposit={setDepositStart}
-                        finalStep={depositFinalStep}
-                        setFinalStep={setDepositFinalStep}
                         inputAmount={inputAmountDepo}
+                        setInputAmount={setInputAmountDepo}
                         token={token}
-                        balanceList={balanceList}
                         useIFARM={useIFARM}
                         tokenSymbol={id}
-                        setQuoteValue={setQuoteValueDepo}
                         fAssetPool={fAssetPool}
                         multipleAssets={multipleAssets}
-                      />
-                      <DepositResult
-                        pickedToken={pickedTokenDepo}
-                        finalStep={depositFinalStep}
-                        setFinalStep={setDepositFinalStep}
-                        setSelectToken={setSelectTokenDepo}
-                        setDeposit={setDepositStart}
-                        inputAmount={inputAmountDepo}
-                        token={token}
-                        tokenSymbol={id}
+                        fromInfoAmount={fromInfoAmount}
+                        fromInfoUsdAmount={fromInfoUsdAmount}
+                        minReceiveAmountString={minReceiveAmountString}
                         quoteValue={quoteValueDepo}
                         setQuoteValue={setQuoteValueDepo}
+                        setSelectToken={setSelectTokenDepo}
+                        setConvertSuccess={setConvertSuccess}
                       />
                     </DepositSection>
                     <WithdrawSection isShow={!activeDepo}>
                       <WithdrawBase
-                        selectToken={selectTokenWith}
+                        unstakeInputValue={unstakeInputValue}
+                        setUnstakeInputValue={setUnstakeInputValue}
                         setSelectToken={setSelectTokenWith}
-                        withdrawStart={withdrawStart}
                         setWithdrawStart={setWithdrawStart}
-                        finalStep={withdrawFinalStep}
                         pickedToken={pickedTokenWith}
                         unstakeBalance={unstakeBalance}
                         setUnstakeBalance={setUnstakeBalance}
+                        balanceList={balanceList}
                         tokenSymbol={id}
                         fAssetPool={fAssetPool}
                         lpTokenBalance={lpTokenBalance}
                         token={token}
                         supTokenList={supTokenList}
                         switchMethod={switchDepoMethod}
+                        quoteValue={quoteValueWith}
+                        setQuoteValue={setQuoteValueWith}
+                        useBeginnersFarm={useBeginnersFarm}
+                        useIFARM={useIFARM}
+                        setRevertFromInfoAmount={setRevertFromInfoAmount}
+                        setRevertFromInfoUsdAmount={setRevertFromInfoUsdAmount}
+                        setRevertMinReceivedAmount={setRevertMinReceivedAmount}
+                        revertMinReceivedAmount={revertMinReceivedAmount}
+                        setRevertedAmount={setRevertedAmount}
                       />
                       <WithdrawSelectToken
                         selectToken={selectTokenWith}
                         setSelectToken={setSelectTokenWith}
+                        // clickTokenId={clickTokenIdWith}
+                        // setClickedTokenId={setClickedTokenIdWith}
                         setPickedToken={setPickedTokenWith}
                         supTokenList={supTokenList}
                         supTokenNoBalanceList={supTokenNoBalanceList}
@@ -1096,47 +1274,24 @@ const BeginnersFarm = () => {
                         withdrawStart={withdrawStart}
                         setWithdrawStart={setWithdrawStart}
                         pickedToken={pickedTokenWith}
-                        finalStep={withdrawFinalStep}
-                        setFinalStep={setWithdrawFinalStep}
+                        setPickedToken={setPickedTokenWith}
                         token={token}
                         unstakeBalance={unstakeBalance}
-                        balanceList={balanceList}
                         tokenSymbol={id}
                         fAssetPool={fAssetPool}
                         multipleAssets={multipleAssets}
                         useIFARM={useIFARM}
-                        setQuoteValue={setQuoteValueWith}
-                      />
-                      <WithdrawResult
-                        pickedToken={pickedTokenWith}
-                        finalStep={withdrawFinalStep}
-                        setFinalStep={setWithdrawFinalStep}
-                        setWithdraw={setWithdrawStart}
-                        unstakeBalance={unstakeBalance}
-                        token={token}
-                        tokenSymbol={id}
-                        quoteValue={quoteValueWith}
+                        depositedValueUSD={depositedValueUSD}
+                        revertFromInfoAmount={revertFromInfoAmount}
+                        revertFromInfoUsdAmount={revertFromInfoUsdAmount}
+                        revertMinReceivedAmount={revertMinReceivedAmount}
+                        revertedAmount={revertedAmount}
+                        setUnstakeInputValue={setUnstakeInputValue}
                       />
                     </WithdrawSection>
                   </HalfContent>
                   {isMobile ? (
-                    loadData ? (
-                      <PriceShareData
-                        token={token}
-                        vaultPool={vaultPool}
-                        tokenSymbol={id}
-                        setLoadData={setLoadData}
-                      />
-                    ) : (
-                      <HalfInfo padding="25px 18px" marginBottom="23px">
-                        <FarmDetailChart
-                          token={token}
-                          vaultPool={vaultPool}
-                          lastTVL={Number(vaultValue)}
-                          lastAPY={Number(totalApy)}
-                        />
-                      </HalfInfo>
-                    )
+                    <UserBalanceData token={token} vaultPool={vaultPool} tokenSymbol={id} />
                   ) : (
                     <></>
                   )}
@@ -1151,7 +1306,7 @@ const BeginnersFarm = () => {
                         height={isMobile ? '18px' : '24px'}
                         color="#344054"
                         padding="10px 15px"
-                        borderBottom="1px solid #EBEBEB"
+                        borderBottom="1px solid #F3F6FF"
                         display="flex"
                         justifyContent="space-between"
                       >
@@ -1167,90 +1322,15 @@ const BeginnersFarm = () => {
                       </NewLabel>
                     </MyBalance>
                   )}
-                  <MyBalance marginBottom={isMobile ? '24px' : '20px'}>
-                    <NewLabel
-                      size={isMobile ? '12px' : '14px'}
-                      weight={isMobile ? '600' : '700'}
-                      height={isMobile ? '18px' : '24px'}
-                      color={isMobile ? 'black' : '#344054'}
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
-                      borderBottom="1px solid #EBEBEB"
-                    >
-                      Overview
-                    </NewLabel>
-                    <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
-                    >
-                      <NewLabel
-                        size={isMobile ? '10px' : '14px'}
-                        weight="500"
-                        height={isMobile ? '18px' : '24px'}
-                        color="#344054"
-                      >
-                        APY
-                      </NewLabel>
-                      <NewLabel
-                        size={isMobile ? '10px' : '14px'}
-                        height={isMobile ? '18px' : '24px'}
-                        weight="500"
-                        color={isMobile ? '#15202B' : '#000'}
-                      >
-                        {showAPY()}
-                      </NewLabel>
-                    </FlexDiv>
-                    <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
-                    >
-                      <NewLabel
-                        size={isMobile ? '10px' : '14px'}
-                        height={isMobile ? '18px' : '24px'}
-                        weight="500"
-                        color="#344054"
-                      >
-                        Daily APR
-                      </NewLabel>
-                      <NewLabel
-                        weight="500"
-                        size={isMobile ? '10px' : '14px'}
-                        height={isMobile ? '18px' : '24px'}
-                        color={isMobile ? '#15202B' : '#000'}
-                      >
-                        {showApyDaily()}
-                      </NewLabel>
-                    </FlexDiv>
-                    <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
-                    >
-                      <NewLabel
-                        size={isMobile ? '10px' : '14px'}
-                        height={isMobile ? '18px' : '24px'}
-                        weight="500"
-                        color="#344054"
-                      >
-                        TVL
-                      </NewLabel>
-                      <NewLabel
-                        weight="500"
-                        size={isMobile ? '10px' : '14px'}
-                        height={isMobile ? '18px' : '24px'}
-                        color={isMobile ? '#15202B' : '#000'}
-                      >
-                        {showTVL()}
-                      </NewLabel>
-                    </FlexDiv>
-                  </MyBalance>
-                  {!isMobile && loadData && (
+                  {!isMobile && (
                     <MyBalance marginBottom={isMobile ? '24px' : '20px'}>
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}
-                        weight="700"
+                        weight="600"
                         height={isMobile ? '18px' : '24px'}
                         color="#344054"
                         padding={isMobile ? '9px 13px' : '10px 15px'}
-                        borderBottom="1px solid #EBEBEB"
+                        borderBottom="1px solid #F3F6FF"
                       >
                         APY Breakdown
                       </NewLabel>
@@ -1266,7 +1346,7 @@ const BeginnersFarm = () => {
                       height={isMobile ? '18px' : '24px'}
                       color={isMobile ? '#000' : '#344054'}
                       padding={isMobile ? '7px 11px' : '10px 15px'}
-                      borderBottom="1px solid #EBEBEB"
+                      borderBottom="1px solid #F3F6FF"
                     >
                       Fees
                     </NewLabel>
@@ -1362,16 +1442,14 @@ const BeginnersFarm = () => {
                   </LastHarvestInfo>
                   {isMobile && (
                     <>
-                      {loadData && (
-                        <HalfInfo padding="25px 18px" marginBottom="23px">
-                          <FarmDetailChart
-                            token={token}
-                            vaultPool={vaultPool}
-                            lastTVL={Number(vaultValue)}
-                            lastAPY={Number(totalApy)}
-                          />
-                        </HalfInfo>
-                      )}
+                      <HalfInfo padding="25px 18px" marginBottom="23px">
+                        <FarmDetailChart
+                          token={token}
+                          vaultPool={vaultPool}
+                          lastTVL={Number(vaultValue)}
+                          lastAPY={Number(totalApy)}
+                        />
+                      </HalfInfo>
                       <HalfInfo marginBottom="24px">
                         <NewLabel
                           weight={700}
@@ -1386,30 +1464,6 @@ const BeginnersFarm = () => {
                       </HalfInfo>
                     </>
                   )}
-                  <MyBalance>
-                    <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
-                    >
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        height={isMobile ? '18px' : '24px'}
-                        weight="600"
-                        color={isMobile ? '#000' : '#344054'}
-                      >
-                        Last Harvest
-                      </NewLabel>
-                      {isMobile ? (
-                        <NewLabel size="10px" height="18px" weight="500" color="#15202B">
-                          {lastHarvest !== '' ? `${lastHarvest} ago` : '-'}
-                        </NewLabel>
-                      ) : (
-                        <NewLabel size="14px" height="24px" weight="500" color="#000">
-                          {lastHarvest !== '' ? `${lastHarvest} ago` : '-'}
-                        </NewLabel>
-                      )}
-                    </FlexDiv>
-                  </MyBalance>
                 </RestInternal>
               )}
             </RestContent>

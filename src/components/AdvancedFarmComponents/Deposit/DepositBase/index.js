@@ -78,6 +78,7 @@ const DepositBase = ({
   switchMethod,
   tokenSymbol,
   useIFARM,
+  useBeginnersFarm,
   setQuoteValue,
   setFromInfoAmount,
   setFromInfoUsdAmount,
@@ -108,7 +109,9 @@ const DepositBase = ({
     ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
     : get(token, `pricePerFullShare`, 0)
 
-  const [depositName, setDepositName] = useState('Convert')
+  const [depositName, setDepositName] = useState(
+    useBeginnersFarm ? 'Preview & Earn Yield' : 'Convert',
+  )
   const [showWarning, setShowWarning] = useState(false)
   // const [showDepositIcon, setShowDepositIcon] = useState(true)
   const amount = toWei(inputAmount, pickedToken.decimals)
@@ -120,12 +123,12 @@ const DepositBase = ({
         setDepositName(`Change Network to ${chainName}`)
         // setShowDepositIcon(false)
       } else {
-        setDepositName('Convert')
+        setDepositName(useBeginnersFarm ? 'Preview & Earn Yield' : 'Convert')
       }
     } else {
       setDepositName('Connect Wallet to Get Started')
     }
-  }, [account, curChain, tokenChain])
+  }, [account, curChain, tokenChain, useBeginnersFarm])
 
   useEffect(() => {
     if (
@@ -326,7 +329,11 @@ const DepositBase = ({
             </SwitchTabTag>
           ))}
         </NewLabel>
-        <DepoTitle>Convert your crypto into interest-bearing fTokens.</DepoTitle>
+        <DepoTitle>
+          {useBeginnersFarm
+            ? 'Convert your crypto into interest-bearing fUSDC to earn yield'
+            : 'Convert your crypto into interest-bearing fTokens.'}
+        </DepoTitle>
         <TokenInfo>
           <AmountSection>
             <NewLabel

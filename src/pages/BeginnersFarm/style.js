@@ -3,7 +3,6 @@ import styled from 'styled-components'
 const DetailView = styled.div`
   width: 100%;
   margin-left: 280px;
-  background: ${props => props.pageBackColor};
   color: ${props => props.fontColor};
   transition: 0.25s;
 
@@ -14,16 +13,16 @@ const DetailView = styled.div`
 `
 
 const Inner = styled.div`
-  padding: 0px 72px 200px 76px;
+  padding: 25px 72px 200px 76px;
   display: flex;
   justify-content: center;
 
   @media screen and (max-width: 1480px) {
-    padding: 0px 30px 40px;
+    padding: 25px 30px 40px;
   }
 
   @media screen and (max-width: 1024px) {
-    padding: 0px 20px 20px;
+    padding: 25px 20px 20px;
   }
 
   @media screen and (max-width: 992px) {
@@ -34,16 +33,24 @@ const Inner = styled.div`
 `
 
 const TopInner = styled.div`
-  padding: 10px 72px 20px 76px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  padding: 50px 72px 0px 76px;
   display: flex;
   justify-content: center;
+  background: ${props =>
+    props.isETHFarm
+      ? `
+      #627EEA
+  `
+      : '#2775ca'};
 
   @media screen and (max-width: 1480px) {
-    padding: 25px 30px 25px;
+    padding: 25px 30px 0px;
   }
 
   @media screen and (max-width: 1024px) {
-    padding: 0px 20px 20px;
+    padding: 20px 20px 0px 20px;
   }
 
   @media screen and (max-width: 992px) {
@@ -74,15 +81,10 @@ const TopBtnInner = styled.div`
 `
 
 const TopPart = styled.div`
-  width: 80%;
-  padding: 60px 45px 60px 45px;
+  width: 90%;
   display: flex;
   justify-content: space-between;
-  background: #eaf1ff;
-  background-size: cover;
-  background-repeat: no-repeat;
   position: relative;
-  border-radius: 10px;
   overflow: hidden;
 
   img.bottom {
@@ -96,7 +98,7 @@ const TopPart = styled.div`
   }
 
   @media screen and (min-width: 1921px) {
-    width: 1200px;
+    width: 1300px;
   }
 
   @media screen and (max-width: 1624px) {
@@ -109,9 +111,9 @@ const TopPart = styled.div`
 `
 
 const TopButton = styled.div`
-  width: 80%;
   display: flex;
   justify-content: start;
+  margin-bottom: 49px;
 
   @media screen and (min-width: 1921px) {
     width: 1200px;
@@ -255,8 +257,110 @@ const NewLabel = styled.div`
   }
 `
 
+const ThemeMode = styled.div`
+  display: flex;
+  align-items: center;
+
+  #theme-switch {
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+    touch-action: pan-x;
+    user-select: none;
+
+    input {
+      cursor: pointer;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      opacity: 0;
+    }
+
+    .switch-track {
+      background: #036666;
+      height: 16px;
+      width: 32px;
+      border-radius: 30px;
+      transition: all 0.2s ease 0s;
+    }
+    .switch-thumb {
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-color: white;
+      height: 14px;
+      left: 1px;
+      position: absolute;
+      top: 1px;
+      width: 14px;
+      border-radius: 50%;
+      transition: all 0.25s ease 0s;
+    }
+
+    &:hover .switch-thumb {
+      box-shadow: 0 0 2px 3px #ff9400;
+    }
+  }
+
+  ${props =>
+    props.mode === 'Farm(Legacy)'
+      ? `
+      #theme-switch {
+        .switch-check {
+          opacity: 1;
+        }
+        .switch-x {
+          opacity: 0;
+        }
+        .switch-thumb {
+          left: 16px;
+        }
+        .switch-track {
+          background: #A9A9A9 ;
+        } 
+      }
+    `
+      : `
+      #theme-switch {
+        .switch-thumb {
+        }
+      }
+    `}
+
+  @media screen and (max-width: 992px) {
+    #theme-switch {
+      .switch-track {
+        width: 24px;
+        height: 12px;
+      }
+
+      .switch-thumb {
+        width: 10px;
+        height: 10px;
+        top: 1px;
+      }
+    }
+
+    ${props =>
+      props.mode === 'deposit'
+        ? `
+        #theme-switch {
+          .switch-thumb {
+            left: 12px;
+          }
+      `
+        : `
+        #theme-switch {
+        .switch-thumb {
+          left: 2px;
+        }
+      `}
+`
+
 const TopDesc = styled(NewLabel)`
-  color: #344054;
+  color: #fff;
+  margin: auto 0px auto 35px;
 `
 
 const Button = styled.button`
@@ -313,6 +417,7 @@ const FlexDiv = styled.div`
 
 const InternalSection = styled.div`
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   height: ${props => props.height};
 
@@ -322,6 +427,7 @@ const InternalSection = styled.div`
 `
 
 const FlexTopDiv = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: start;
@@ -353,7 +459,7 @@ const HalfContent = styled.div`
   flex-direction: column;
   height: fit-content;
   background: #fff;
-  // box-shadow: 0px 8px 8px -4px rgba(16, 24, 40, 0.03), 0px 20px 24px -4px rgba(16, 24, 40, 0.08);
+  border: 2px solid #f2f5ff;
   ${props =>
     props.borderRadius
       ? `
@@ -396,42 +502,39 @@ const BackBtnRect = styled.a`
   display: inline-flex;
   height: 35px;
   text-decoration: none;
-  border: 1px solid #475467;
+  border: 1px solid #fff;
   border-radius: 5px;
   padding: 5px 15px;
   cursor: pointer;
 
-  &:hover {
-    background: rgba(236, 236, 236, 0.7);
+  svg {
+    margin: auto;
+    color: white;
   }
 `
 
-const BackArrow = styled.img`
-  margin: auto;
-`
-
 const BackText = styled.p`
-  color: #475467;
+  color: #fff;
   margin: auto;
   padding-left: 15px;
   font-size: 14px;
 `
 
 const RestContent = styled.div`
-  width: 43%;
+  width: 39%;
   height: ${props => props.height};
 
   @media screen and (min-width: 1921px) {
     width: 500px;
   }
 
-  @media screen and (max-width: 1480px) {
-    width: 48%;
-  }
+  // @media screen and (max-width: 1480px) {
+  //   width: 49%;
+  // }
 
-  @media screen and (max-width: 1281px) {
-    width: 50%;
-  }
+  // @media screen and (max-width: 1281px) {
+  //   width: 50%;
+  // }
 
   @media screen and (max-width: 992px) {
     width: 100%;
@@ -439,11 +542,11 @@ const RestContent = styled.div`
 `
 
 const BigDiv = styled(FlexDiv)`
-  width: 80%;
+  width: 90%;
   display: block;
 
   @media screen and (min-width: 1921px) {
-    width: 1200px;
+    width: 1300px;
   }
 
   @media screen and (max-width: 1624px) {
@@ -456,8 +559,8 @@ const BigDiv = styled(FlexDiv)`
 `
 
 const LogoImg = styled.img`
-  margin-right: -5px;
-  width: 64px;
+  margin-right: -20px;
+  width: 69px;
 
   @media screen and (max-width: 992px) {
     width: 32px;
@@ -476,6 +579,13 @@ const InfoIcon = styled.img`
   transition: 0.25s;
   cursor: pointer;
   margin-left: 5px;
+  margin-top: -2px;
+`
+
+const InfoIconBlack = styled.img`
+  transition: 0.25s;
+  cursor: pointer;
+  margin-left: 5px;
 `
 
 const Monospace = styled.span`
@@ -484,9 +594,16 @@ const Monospace = styled.span`
 `
 
 const MyBalance = styled.div`
-  border-radius: 12px;
   background: #fff;
-  // box-shadow: 0px 8px 8px -4px rgba(16, 24, 40, 0.03), 0px 20px 24px -4px rgba(16, 24, 40, 0.08);
+  border-radius: 12px;
+  border: 2px solid #f2f5ff;
+
+  ${props =>
+    props.height
+      ? `
+      height: ${props.height};
+    `
+      : ``}
 
   ${props =>
     props.marginTop
@@ -505,7 +622,8 @@ const MyBalance = styled.div`
 
 const GuideSection = styled.div`
   display: flex;
-  margin-bottom: 24px;
+  margin-bottom: 49px;
+  margin-top: 5px;
 
   @media screen and (max-width: 992px) {
     margin-top: 19px;
@@ -519,17 +637,21 @@ const GuideSection = styled.div`
 `
 
 const GuidePart = styled.div`
+  border-radius: 5px;
+  border: 1.3px solid #fff;
   display: flex;
-  width: fit-content;
+  padding: 2px 8px;
   align-items: center;
-  border-radius: 18px;
-  padding: 3px 11px 3px 9px;
-  background: #ffffff;
+  gap: 6px;
+  width: fit-content;
+  color: #fff;
+  text-align: center;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
   margin-right: 10px;
-  color: #344054;
-  font-size: 14.597px;
-  line-height: 22px;
-  font-weight: ${props => props.fontWeight};
 
   &:last-child {
     margin-right: 0;
@@ -578,23 +700,55 @@ const WithdrawSection = styled.div`
 `
 
 const MainSection = styled.div`
-  width: 55%;
-  margin-right: 20px;
+  width: 59%;
   display: flex;
   flex-direction: column;
   height: fit-content;
   border-radius: 12px;
   height: ${props => props.height};
 
-  @media screen and (max-width: 1480px) {
-    width: 49%;
-  }
+  // @media screen and (max-width: 1480px) {
+  //   width: 49%;
+  // }
 
   @media screen and (max-width: 992px) {
     width: 100%;
     margin-right: 0px;
     display: none;
   }
+`
+
+const BoxCover = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  margin-bottom: 25px;
+`
+
+const ValueBox = styled.div`
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  border-radius: 12px;
+  border: 2px solid #f3f6ff;
+  background: var(--base-white, #fff);
+  padding: 24px;
+  ${props => (props.width ? `width: ${props.width};` : '')}
+  ${props => (props.height ? `height: ${props.height};` : '')}
+`
+
+const BoxTitle = styled.div`
+  color: #6f78aa;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+`
+
+const BoxValue = styled.div`
+  color: var(--gray-900, #101828);
+  font-weight: 600;
+  letter-spacing: -0.6px;
+  font-size: 22px;
 `
 
 const ChainBack = styled.div`
@@ -621,24 +775,29 @@ const MainTag = styled.div`
   display: flex;
   justify-content: center;
   width: 50%;
-  padding: 8px 12px;
+  padding: 12px 15px;
   align-items: center;
-  border-radius: 6px;
   font-size: 14px;
   font-weight: 600;
   line-height: 20px;
   cursor: pointer;
+  color: #1f2937;
 
   ${props =>
     props.active === 'true'
       ? `
-      color: #036666;
-      background: #EDF4F4;
-      box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10);
+      background: white;
+      border-radius: 6px 6px 0px 0px;
     `
       : `
-      color: #667085;
-      background: white;
+      color: #fff;
+      background: ${
+        props.isETHFarm
+          ? `
+          #627EEA
+      `
+          : '#2775ca'
+      };
     `}
 
   p {
@@ -650,10 +809,9 @@ const MainTag = styled.div`
     ${props =>
       props.active === 'true'
         ? `
-        filter: invert(17%) sepia(99%) saturate(7041%) hue-rotate(176deg) brightness(86%) contrast(98%);
       `
         : `
-        filter: invert(43%) sepia(5%) saturate(1510%) hue-rotate(183deg) brightness(99%) contrast(86%);
+        filter: invert(98%) sepia(76%) saturate(0%) hue-rotate(113deg) brightness(116%) contrast(101%);
       `}
   }
 `
@@ -665,6 +823,13 @@ const MainDescText = styled.div`
 `
 
 const HalfInfo = styled.div`
+  border-radius: 10px;
+  background: #fff;
+  transition: 0.25s;
+  margin-bottom: ${props => props.marginBottom};
+  font-family: 'Inter', sans-serif;
+  border: 2px solid #f2f5ff;
+
   ${props =>
     props.padding
       ? `
@@ -683,12 +848,6 @@ const HalfInfo = styled.div`
   justify-content: ${props.justifyContent};
   `
       : ''}
-
-  border-radius: 10px;
-  background: #fff;
-  transition: 0.25s;
-  margin-bottom: ${props => props.marginBottom};
-  font-family: 'Inter', sans-serif;
 `
 
 const InfoLabel = styled.a`
@@ -781,10 +940,9 @@ const DescInfo = styled.div`
 
 const LastHarvestInfo = styled.div`
   background: #fff;
-  border-radius: 15px;
-  // box-shadow: 0px 10px 18px 0px rgba(0, 0, 0, 0.08);
-  border-radius: 10px;
+  border-radius: 12px;
   margin-bottom: 25px;
+  border: 2px solid #f2f5ff;
 `
 
 const RestInternal = styled.div`
@@ -794,43 +952,59 @@ const RestInternal = styled.div`
   height: 100%;
 `
 
-const StakeSection = styled.div`
-  ${props =>
-    props.isShow
-      ? `
-    display: block;
-    height: 100%;
-  `
-      : `
-    display: none;
-  `}
-`
-
-const UnstakeSection = styled.div`
-  ${props =>
-    props.isShow
-      ? `
-    display: block;
-    height: 100%;
-  `
-      : `
-    display: none;
-  `}
-`
-
 const MainTagPanel = styled.div`
   display: flex;
   justify-content: space-between;
-  margin-bottom: 25px;
-  width: 100%;
-  padding: 5px;
-  background: white;
+  width: 40%;
   border-radius: 8px;
-  gap: 5px;
 
   @media screen and (max-width: 992px) {
     margin-bottom: 24px;
     justify-content: space-between;
+  }
+`
+
+const TabRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
+
+const NetDetail = styled.div`
+  display: flex;
+  margin: auto 0px;
+`
+
+const NetDetailItem = styled.div`
+  display: flex;
+  margin-left: 50px;
+`
+
+const NetDetailTitle = styled.div`
+  color: #fff;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 30px;
+`
+
+const NetDetailContent = styled.div`
+  color: #fff;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 30px;
+  padding-left: 5px;
+`
+
+const NetDetailImg = styled.div`
+  width: 21px;
+  height: 21px;
+  margin: 2px 0px 0px 5px;
+
+  img {
+    width: 100%;
   }
 `
 
@@ -839,16 +1013,6 @@ const FirstPartSection = styled.div`
   height: 100%;
   display: flex;
   flex-flow: column;
-  justify-content: space-between;
-
-  @media screen and (max-width: 992px) {
-    display: flex;
-    flex-direction: column-reverse;
-  }
-`
-
-const SecondPartSection = styled.div`
-  width: 100%;
 
   @media screen and (max-width: 992px) {
     display: flex;
@@ -894,7 +1058,6 @@ export {
   FlexDiv,
   TotalValueFarm,
   BackBtnRect,
-  BackArrow,
   BackText,
   RestContent,
   NewLabel,
@@ -907,6 +1070,7 @@ export {
   InfoIcon,
   Monospace,
   MyBalance,
+  ThemeMode,
   GuideSection,
   GuidePart,
   DepositSection,
@@ -921,11 +1085,19 @@ export {
   DescInfo,
   LastHarvestInfo,
   RestInternal,
-  StakeSection,
-  UnstakeSection,
   MainTagPanel,
   FirstPartSection,
-  SecondPartSection,
   APRValueShow,
   BorderBottomDiv,
+  TabRow,
+  NetDetail,
+  NetDetailItem,
+  BoxCover,
+  ValueBox,
+  BoxTitle,
+  BoxValue,
+  NetDetailTitle,
+  NetDetailContent,
+  NetDetailImg,
+  InfoIconBlack,
 }

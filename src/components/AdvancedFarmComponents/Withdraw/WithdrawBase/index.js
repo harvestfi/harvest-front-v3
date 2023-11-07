@@ -81,6 +81,7 @@ const WithdrawBase = ({
   switchMethod,
   quoteValue,
   setQuoteValue,
+  useBeginnersFarm,
   useIFARM,
   setRevertFromInfoAmount,
   setRevertFromInfoUsdAmount,
@@ -88,7 +89,9 @@ const WithdrawBase = ({
   revertMinReceivedAmount,
   setRevertedAmount,
 }) => {
-  const [withdrawName, setWithdrawName] = useState('Revert')
+  const [withdrawName, setWithdrawName] = useState(
+    useBeginnersFarm ? 'Preview & Stop Earning Yield' : 'Revert',
+  )
   const [showWarning, setShowWarning] = useState(false)
 
   const { account, web3, connected, chainId } = useWallet()
@@ -243,12 +246,12 @@ const WithdrawBase = ({
         const chainName = getChainName(tokenChain)
         setWithdrawName(`Change Network to ${chainName}`)
       } else {
-        setWithdrawName('Revert')
+        setWithdrawName(useBeginnersFarm ? 'Preview & Stop Earning Yield' : 'Revert')
       }
     } else {
       setWithdrawName('Connect Wallet to Get Started')
     }
-  }, [account, curChain, tokenChain])
+  }, [account, curChain, tokenChain, useBeginnersFarm])
 
   const onInputUnstake = e => {
     setUnstakeInputValue(e.currentTarget.value)
