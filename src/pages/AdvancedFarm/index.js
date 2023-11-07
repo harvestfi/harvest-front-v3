@@ -856,85 +856,94 @@ const AdvancedFarm = () => {
   )
 
   useEffect(() => {
-    let totalRewardSum = 0
-    const usdPrices = []
-    const promises = rewardTokenSymbols.map(async symbol => {
-      // eslint-disable-next-line one-var
-      let rewardSymbol = symbol.toUpperCase(),
-        usdRewardPrice = 0,
-        rewardDecimal = get(tokens[symbol], 'decimals', 18)
+    const fetchData = async () => {
+      let totalRewardSum = 0
+      const usdPrices = []
+      for (let l = 0; l < rewardTokenSymbols.length; l += 1) {
+        // eslint-disable-next-line one-var
+        let rewardSymbol = rewardTokenSymbols[l].toUpperCase(),
+          usdRewardPrice = 0,
+          rewardDecimal = get(tokens[rewardTokenSymbols[l]], 'decimals', 18)
 
-      if (rewardTokenSymbols.includes(FARM_TOKEN_SYMBOL)) {
-        rewardSymbol = FARM_TOKEN_SYMBOL
-      }
+        if (rewardTokenSymbols.includes(FARM_TOKEN_SYMBOL)) {
+          rewardSymbol = FARM_TOKEN_SYMBOL
+        }
 
-      const rewardToken = groupOfVaults[rewardSymbol]
+        const rewardToken = groupOfVaults[rewardSymbol]
 
-      if (rewardToken) {
-        usdRewardPrice =
-          (rewardSymbol === FARM_TOKEN_SYMBOL
-            ? rewardToken.data.lpTokenData && rewardToken.data.lpTokenData.price
-            : rewardToken.usdPrice) || 0
+        if (rewardToken) {
+          usdRewardPrice =
+            (rewardSymbol === FARM_TOKEN_SYMBOL
+              ? rewardToken.data.lpTokenData && rewardToken.data.lpTokenData.price
+              : rewardToken.usdPrice) || 0
 
-        rewardDecimal =
-          rewardToken.decimals ||
-          (rewardToken.data &&
-            rewardToken.data.lpTokenData &&
-            rewardToken.data.lpTokenData.decimals)
-      } else if (symbol.substring(0, 1) === 'f') {
-        let underlyingRewardSymbol
-        if (symbol.substring(0, 2) === 'fx') {
-          underlyingRewardSymbol = symbol.substring(2)
+          rewardDecimal =
+            rewardToken.decimals ||
+            (rewardToken.data &&
+              rewardToken.data.lpTokenData &&
+              rewardToken.data.lpTokenData.decimals)
+        } else if (rewardTokenSymbols[l].substring(0, 1) === 'f') {
+          let underlyingRewardSymbol
+          if (rewardTokenSymbols[l].substring(0, 2) === 'fx') {
+            underlyingRewardSymbol = rewardTokenSymbols[l].substring(2)
+          } else {
+            underlyingRewardSymbol = rewardTokenSymbols[l].substring(1)
+          }
+          // eslint-disable-next-line no-loop-func
+          try {
+            for (let ids = 0; ids < apiData.length; ids += 1) {
+              const tempData = apiData[ids]
+              const tempSymbol = tempData.symbol
+              if (tempSymbol.toLowerCase() === underlyingRewardSymbol.toLowerCase()) {
+                // eslint-disable-next-line no-await-in-loop
+                const usdUnderlyingRewardPrice = await getTokenPriceFromApi(tempData.id)
+                usdRewardPrice = Number(usdUnderlyingRewardPrice) * Number(pricePerFullShare)
+                break
+              }
+            }
+          } catch (error) {
+            console.error('Error:', error)
+          }
         } else {
-          underlyingRewardSymbol = symbol.substring(1)
-        }
-        // eslint-disable-next-line no-loop-func
-        for (let ids = 0; ids < apiData.length; ids += 1) {
-          const tempData = apiData[ids]
-          const tempSymbol = tempData.symbol
-          if (tempSymbol.toLowerCase() === underlyingRewardSymbol.toLowerCase()) {
-            // eslint-disable-next-line no-await-in-loop
-            const usdUnderlyingRewardPrice = await getTokenPriceFromApi(tempData.id)
-            usdRewardPrice = Number(usdUnderlyingRewardPrice) * Number(pricePerFullShare)
-            break
+          try {
+            for (let ids = 0; ids < apiData.length; ids += 1) {
+              const tempData = apiData[ids]
+              const tempSymbol = tempData.symbol
+              if (tempSymbol.toLowerCase() === rewardSymbol.toLowerCase()) {
+                // eslint-disable-next-line no-await-in-loop
+                usdRewardPrice = await getTokenPriceFromApi(tempData.id)
+                break
+              }
+            }
+          } catch (error) {
+            console.error('Error:', error)
           }
         }
-      } else {
-        for (let ids = 0; ids < apiData.length; ids += 1) {
-          const tempData = apiData[ids]
-          const tempSymbol = tempData.symbol
-          if (tempSymbol.toLowerCase() === rewardSymbol.toLowerCase()) {
-            // eslint-disable-next-line no-await-in-loop
-            usdRewardPrice = await getTokenPriceFromApi(tempData.id)
-            break
-          }
-        }
+
+        console.log('USD Price of ', rewardSymbol, ':', usdRewardPrice)
+
+        const totalRewardUsd = Number(
+          rewardsEarned === undefined
+            ? 0
+            : fromWei(get(rewardsEarned, rewardTokenSymbols[l], 0), rewardDecimal, 4) *
+                Number(usdRewardPrice),
+        )
+        totalRewardSum += totalRewardUsd
+        usdPrices.push(usdRewardPrice)
       }
-
-      console.log('USD Price of ', rewardSymbol, ':', usdRewardPrice)
-
-      const totalRewardUsd = Number(
-        rewardsEarned === undefined
-          ? 0
-          : fromWei(get(rewardsEarned, symbol, 0), rewardDecimal, 4) * Number(usdRewardPrice),
-      )
-      usdPrices.push(usdRewardPrice)
-      return totalRewardUsd
-    })
-    Promise.all(promises).then(totalRewardUsds => {
-      totalRewardSum = totalRewardUsds.reduce((sum, value) => sum + value, 0)
       setTotalReward(totalRewardSum)
       setRewardTokenPrices(usdPrices)
-    })
+    }
+
+    fetchData()
     // eslint-disable-next-line
-  }, [
+    }, [
     account,
     userStats,
     fAssetPool,
     apiData,
     pricePerFullShare,
     rewardTokenSymbols,
-    // rewardsEarned,
   ])
 
   const viewComponentProps = {
