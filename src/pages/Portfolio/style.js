@@ -488,7 +488,9 @@ const Col = styled.div`
   width: fit-content;
 
   img.sortIcon {
-    padding-left: 5px;
+    width: 8.8px;
+    height: 10.5px;
+    margin: auto 0px auto 5px;
   }
 
   img.info {
