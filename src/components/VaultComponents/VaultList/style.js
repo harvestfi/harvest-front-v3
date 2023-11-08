@@ -4,15 +4,17 @@ import TokensIcon from '../../../assets/images/ui/tokens.svg'
 
 const Container = styled.div`
   overflow: hidden;
-
   margin-bottom: 20px;
-  padding: 70px 76px 56px;
-
+  padding: 100px 100px 50px;
   width: 100%;
-
   position: relative;
 
+  @media screen and (min-width: 1921px) {
+    width: 1450px;
+  }
+
   @media screen and (max-width: 1480px) {
+    width: 100%;
     padding: 70px 30px 40px;
   }
 
