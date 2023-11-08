@@ -36,6 +36,7 @@ const TopSection = styled.div`
 const Inner = styled.div`
   padding: 60px 100px 60px;
   width: 100%;
+  margin: auto;
   // min-height: 765px;
 
   @media screen and (min-width: 1921px) {
