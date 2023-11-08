@@ -527,19 +527,32 @@ const BeginnersFarm = () => {
   useEffect(() => {
     if (supTokenList.length > 0) {
       for (let i = 0; i < supTokenList.length; i += 1) {
-        if (supTokenList[i].symbol === 'USDC') {
-          setPickedTokenDepo(supTokenList[i])
-          setBalanceDepo(
-            fromWei(
-              supTokenList[i].balance ? supTokenList[i].balance : 0,
-              supTokenList[i].decimals,
-            ),
-          )
-          return
+        if (id === 'USDbC_base') {
+          if (supTokenList[i].symbol === 'fUSDbC') {
+            setPickedTokenDepo(supTokenList[i])
+            setBalanceDepo(
+              fromWei(
+                supTokenList[i].balance ? supTokenList[i].balance : 0,
+                supTokenList[i].decimals,
+              ),
+            )
+            return
+          }
+        } else if (id === 'WETH_base') {
+          if (supTokenList[i].symbol === 'ETH') {
+            setPickedTokenDepo(supTokenList[i])
+            setBalanceDepo(
+              fromWei(
+                supTokenList[i].balance ? supTokenList[i].balance : 0,
+                supTokenList[i].decimals,
+              ),
+            )
+            return
+          }
         }
       }
     }
-  }, [supTokenList])
+  }, [supTokenList, id])
 
   const { fontColor, filterColor } = useThemeContext()
 
