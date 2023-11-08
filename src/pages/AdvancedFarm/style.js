@@ -664,7 +664,13 @@ const FarmInfo = styled.div`
   border-radius: 12px;
   background: #fff;
   border: 2px solid #f2f5ff;
-  // box-shadow: 0px 8px 8px -4px rgba(16, 24, 40, 0.03), 0px 20px 24px -4px rgba(16, 24, 40, 0.08);
+
+  ${props =>
+    props.height
+      ? `
+      height: ${props.height};
+    `
+      : ``}
 
   ${props =>
     props.marginTop
@@ -1115,25 +1121,6 @@ const SecondPartSection = styled.div`
   }
 `
 
-const APRValueShow = styled.div`
-  padding: 1.466px 7.331px 1.466px 5.865px;
-  border-radius: 11.729px;
-  background: #f2f4f7;
-  color: #344054;
-  text-align: center;
-  font-size: 10.73px;
-  font-weight: 500;
-  line-height: 14.662px;
-  display: flex;
-  align-items: center;
-
-  img {
-    margin-right: 4px;
-    width: 6px;
-    height: 6px;
-  }
-`
-
 const BorderBottomDiv = styled.div`
   position: absolute;
   width: 100%;
@@ -1188,7 +1175,6 @@ export {
   MainTagPanel,
   FirstPartSection,
   SecondPartSection,
-  APRValueShow,
   BorderBottomDiv,
   TabRow,
   NetDetail,

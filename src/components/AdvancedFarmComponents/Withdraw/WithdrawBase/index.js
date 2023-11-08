@@ -327,7 +327,7 @@ const WithdrawBase = ({
           ))}
         </NewLabel>
         <Title>
-          Revert your fToken into{' '}
+          {`Revert your ${useIFARM ? `i${tokenSymbol}` : 'fToken'} into`}{' '}
           {pickedToken.symbol !== 'Select' ? pickedToken.symbol : 'Output Token'}.
         </Title>
         <TokenInfo>

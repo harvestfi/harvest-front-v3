@@ -334,6 +334,8 @@ const DepositBase = ({
             ? `Convert your crypto into interest-bearing ${
                 tokenSymbol === 'WETH_base' ? 'fWETH' : 'fUSDbC'
               } to earn yield`
+            : useIFARM
+            ? `Convert your crypto into interest-bearing i${tokenSymbol}.`
             : 'Convert your crypto into interest-bearing fTokens.'}
         </DepoTitle>
         <TokenInfo>
@@ -557,7 +559,7 @@ const DepositBase = ({
               color="#344054"
               weight="500"
             >
-              Min. fTokens Received
+              {useIFARM ? 'Min. Received' : 'Min. fTokens Received'}
               <InfoIconCircle
                 className="info"
                 width={isMobile ? 10 : 16}

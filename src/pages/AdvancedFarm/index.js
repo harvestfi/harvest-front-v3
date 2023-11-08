@@ -21,7 +21,6 @@ import InfoBlack from '../../assets/images/logos/earn/help-circle.svg'
 import Safe from '../../assets/images/logos/beginners/safe.svg'
 import Treasure from '../../assets/images/logos/beginners/treasure-box.svg'
 import BarChart from '../../assets/images/logos/beginners/bar-chart-01.svg'
-import DOT from '../../assets/images/logos/beginners/dot.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/AdvancedFarmComponents/Deposit/DepositBase'
 import DepositSelectToken from '../../components/AdvancedFarmComponents/Deposit/DepositSelectToken'
@@ -105,7 +104,6 @@ import {
   MainTagPanel,
   FirstPartSection,
   SecondPartSection,
-  APRValueShow,
   TabRow,
   NetDetail,
   NetDetailItem,
@@ -351,7 +349,7 @@ const AdvancedFarm = () => {
   const [quoteValueDepo, setQuoteValueDepo] = useState(null)
   const [inputAmountDepo, setInputAmountDepo] = useState(0)
   const [partHeightDepo, setPartHeightDepo] = useState(null)
-  const [price, setPrice] = useState(0)
+  const [iFarmPrice, setIFarmPrice] = useState(0)
   const [fromInfoAmount, setFromInfoAmount] = useState('')
   const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('')
   const [minReceiveAmountString, setMinReceiveAmountString] = useState('')
@@ -699,7 +697,7 @@ const AdvancedFarm = () => {
     setVaultValue(getVaultValue(token))
   }, [token])
 
-  const getPrice = async data => {
+  const getIFarmPrice = async data => {
     try {
       const result = Number(get(data, `${IFARM_TOKEN_SYMBOL}.usdPrice`, 0)).toFixed(2)
       return result
@@ -710,8 +708,8 @@ const AdvancedFarm = () => {
 
   useEffect(() => {
     const getPriceValue = async () => {
-      const value = await getPrice(vaultsData)
-      setPrice(value)
+      const value = await getIFarmPrice(vaultsData)
+      setIFarmPrice(value)
     }
 
     getPriceValue()
@@ -1000,7 +998,7 @@ const AdvancedFarm = () => {
                   height={isMobile ? '45px' : '82px'}
                   marginBottom={isMobile ? '5px' : '10px'}
                 >
-                  {token.tokenNames.join(' • ')}
+                  {useIFARM ? `i${token.tokenNames.join(' • ')}` : token.tokenNames.join(' • ')}
                 </TopDesc>
               </FlexDiv>
             )}
@@ -1037,7 +1035,9 @@ const AdvancedFarm = () => {
               <NetDetail>
                 <NetDetailItem>
                   <NetDetailTitle>Platform:</NetDetailTitle>
-                  <NetDetailContent>{token.platform && token.platform[0]}</NetDetailContent>
+                  <NetDetailContent>
+                    {useIFARM ? 'Harvest' : token.platform && token.platform[0]}
+                  </NetDetailContent>
                 </NetDetailItem>
                 <NetDetailItem>
                   <NetDetailTitle>Network</NetDetailTitle>
@@ -1069,7 +1069,9 @@ const AdvancedFarm = () => {
                 </ValueBox>
                 <ValueBox width="24%" height="120px">
                   <BoxTitle>Last Harvest</BoxTitle>
-                  <BoxValue>{lastHarvest !== '' ? `${lastHarvest} ago` : '-'}</BoxValue>
+                  <BoxValue>
+                    {useIFARM ? '-' : lastHarvest !== '' ? `${lastHarvest} ago` : '-'}
+                  </BoxValue>
                 </ValueBox>
               </BoxCover>
             )}
@@ -1329,23 +1331,6 @@ const AdvancedFarm = () => {
                       </InfoLabel>
                     </FlexDiv>
                   </HalfInfo>
-                  {!isMobile && (
-                    <MyBalance marginBottom={isMobile ? '24px' : '20px'}>
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="700"
-                        height={isMobile ? '18px' : '24px'}
-                        color="#344054"
-                        padding={isMobile ? '9px 13px' : '10px 15px'}
-                        borderBottom="1px solid #F3F6FF"
-                      >
-                        APY Breakdown
-                      </NewLabel>
-                      <NewLabel padding={isMobile ? '9px 13px' : '0px 15px 10px'}>
-                        <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
-                      </NewLabel>
-                    </MyBalance>
-                  )}
                 </>
               )}
             </MainSection>
@@ -1354,31 +1339,56 @@ const AdvancedFarm = () => {
                 <FirstPartSection>
                   {useIFARM ? (
                     <FarmInfo
-                      marginBottom={isMobile ? '0' : '23px'}
+                      marginBottom={isMobile ? '0' : '25px'}
                       marginTop={isMobile ? '0px' : '0'}
+                      // height={isMobile ? 'unset' : '120px'}
                     >
                       <NewLabel
                         display="flex"
                         justifyContent="space-between"
-                        size={isMobile ? '12px' : '14px'}
+                        size={isMobile ? '12px' : '12px'}
                         weight="600"
-                        height={isMobile ? '18px' : '24px'}
-                        color="#344054"
+                        height={isMobile ? '18px' : '20px'}
+                        color="#1F2937"
                         padding={isMobile ? '7px 11px' : '10px 15px'}
-                        borderBottom="1px solid #F3F6FF"
+                        borderBottom="1px solid #F2F5FF"
                       >
-                        iFarm
+                        <>{`i${id}`}</>
+                        <InfoIconBlack
+                          className="info"
+                          width={isMobile ? 10 : 16}
+                          src={InfoBlack}
+                          alt=""
+                          data-tip
+                          data-for="tooltip-token-name"
+                        />
+                        <ReactTooltip
+                          id="tooltip-token-name"
+                          backgroundColor="black"
+                          borderColor="black"
+                          textColor="white"
+                        >
+                          <NewLabel
+                            size={isMobile ? '10px' : '12px'}
+                            height={isMobile ? '15px' : '18px'}
+                            weight="600"
+                            color="white"
+                          >
+                            Interest-bearing version of the FARM token. By simply holding iFARM, you
+                            are entitled to Harvest&apos;s profits.
+                          </NewLabel>
+                        </ReactTooltip>
                       </NewLabel>
                       <FlexDiv
                         justifyContent="space-between"
-                        padding={isMobile ? '7px 11px' : '10px 15px'}
+                        padding={isMobile ? '7px 11px' : '5px 15px'}
                       >
                         <NewLabel
                           display="flex"
-                          size={isMobile ? '10px' : '14px'}
+                          size={isMobile ? '10px' : '12px'}
                           weight="500"
                           height={isMobile ? '18px' : '24px'}
-                          color="#344054"
+                          color="#6F78AA"
                         >
                           Balance
                           <InfoIcon
@@ -1402,17 +1412,28 @@ const AdvancedFarm = () => {
                               weight="600"
                               color="white"
                             >
-                              The number of iFARM tokens on your wallet.
+                              The number of i{id} tokens in your wallet.
                             </NewLabel>
                           </ReactTooltip>
                         </NewLabel>
                         <NewLabel
-                          size={isMobile ? '10px' : '14px'}
+                          size={isMobile ? '10px' : '12px'}
                           height={isMobile ? '18px' : '24px'}
-                          weight="700"
-                          color="#00D26B"
+                          weight="500"
+                          color="#6F78AA"
                         >
                           {!connected ? (
+                            0
+                          ) : lpTokenBalance ? (
+                            totalValue === 0 ? (
+                              '0.00'
+                            ) : (
+                              totalValue.toFixed(8)
+                            )
+                          ) : (
+                            <AnimatedDots />
+                          )}
+                          {/* {!connected ? (
                             0
                           ) : lpTokenBalance ? (
                             formatNumberWido(
@@ -1425,18 +1446,18 @@ const AdvancedFarm = () => {
                             )
                           ) : (
                             <AnimatedDots />
-                          )}
+                          )} */}
                         </NewLabel>
                       </FlexDiv>
                       <FlexDiv
                         justifyContent="space-between"
-                        padding={isMobile ? '7px 11px' : '10px 15px'}
+                        padding={isMobile ? '7px 11px' : '5px 15px'}
                       >
                         <NewLabel
-                          size={isMobile ? '10px' : '14px'}
+                          size={isMobile ? '10px' : '12px'}
                           height={isMobile ? '18px' : '24px'}
                           weight="500"
-                          color="#344054"
+                          color="#6F78AA"
                           self="center"
                         >
                           Underlying Balance
@@ -1461,24 +1482,36 @@ const AdvancedFarm = () => {
                               weight="600"
                               color="white"
                             >
-                              Your iFARM earnings denominated in underlying FARM.
+                              Your i{id} denominated in FARM tokens. Underlying Balance increases
+                              over time.
                             </NewLabel>
                           </ReactTooltip>
                         </NewLabel>
                         <NewLabel
                           weight="500"
-                          size={isMobile ? '10px' : '14px'}
+                          size={isMobile ? '10px' : '12px'}
                           height={isMobile ? '18px' : '24px'}
-                          color="black"
+                          color="#6F78AA"
                           self="center"
                         >
                           {!connected ? (
+                            0
+                          ) : lpTokenBalance ? (
+                            totalValue === 0 ? (
+                              '0.00'
+                            ) : (
+                              (totalValue * Number(pricePerFullShare)).toFixed(8)
+                            )
+                          ) : (
+                            <AnimatedDots />
+                          )}
+                          {/* {!connected ? (
                             0
                           ) : isEmpty(vaultsData) ? (
                             <AnimatedDots />
                           ) : (
                             formatNumberWido(underlyingValue, WIDO_BALANCES_DECIMALS)
-                          )}
+                          )} */}
                         </NewLabel>
                       </FlexDiv>
                       <FlexDiv
@@ -1486,7 +1519,7 @@ const AdvancedFarm = () => {
                         padding={isMobile ? '7px 11px' : '10px 15px'}
                       >
                         <NewLabel
-                          size={isMobile ? '10px' : '14px'}
+                          size={isMobile ? '10px' : '12px'}
                           height={isMobile ? '18px' : '24px'}
                           weight="500"
                           color="#344054"
@@ -1496,20 +1529,20 @@ const AdvancedFarm = () => {
                         </NewLabel>
                         <NewLabel
                           weight="500"
-                          size={isMobile ? '10px' : '14px'}
+                          size={isMobile ? '10px' : '12px'}
                           height={isMobile ? '18px' : '24px'}
                           color="black"
                           self="center"
                         >
-                          {!account ? '' : price ? `$${price}` : <AnimatedDots />}
+                          {!account ? '' : iFarmPrice ? `$${iFarmPrice}` : <AnimatedDots />}
                         </NewLabel>
                       </FlexDiv>
                       <FlexDiv
                         justifyContent="space-between"
-                        padding={isMobile ? '7px 11px' : '10px 15px'}
+                        padding={isMobile ? '7px 11px' : '5px 15px'}
                       >
                         <NewLabel
-                          size={isMobile ? '10px' : '14px'}
+                          size={isMobile ? '10px' : '12px'}
                           height={isMobile ? '18px' : '24px'}
                           weight="500"
                           color="#344054"
@@ -1543,7 +1576,7 @@ const AdvancedFarm = () => {
                         </NewLabel>
                         <NewLabel
                           weight="500"
-                          size={isMobile ? '10px' : '14px'}
+                          size={isMobile ? '10px' : '12px'}
                           height={isMobile ? '18px' : '24px'}
                           color="black"
                           self="center"
@@ -1556,7 +1589,7 @@ const AdvancedFarm = () => {
                                 get(balances, IFARM_TOKEN_SYMBOL, 0),
                                 tokens[IFARM_TOKEN_SYMBOL].decimals,
                                 WIDO_BALANCES_DECIMALS,
-                              ) * price,
+                              ) * iFarmPrice,
                               2,
                             )}`
                           ) : (
@@ -2290,47 +2323,21 @@ const AdvancedFarm = () => {
                 </SecondPartSection>
               ) : (
                 <RestInternal>
-                  {isMobile && (
-                    <MyBalance marginBottom={isMobile ? '24px' : '0'}>
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight={isMobile ? '600' : '700'}
-                        height={isMobile ? '18px' : '24px'}
-                        color="#344054"
-                        padding="10px 15px"
-                        borderBottom="1px solid #F3F6FF"
-                        display="flex"
-                        justifyContent="space-between"
-                      >
-                        APY Breakdown
-                        <APRValueShow>
-                          <img src={DOT} alt="" />
-                          {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
-                          &nbsp;APR
-                        </APRValueShow>
-                      </NewLabel>
-                      <NewLabel padding={isMobile ? '0' : '10px 15px'}>
-                        <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
-                      </NewLabel>
-                    </MyBalance>
-                  )}
-                  {!isMobile && (
-                    <MyBalance marginBottom={isMobile ? '24px' : '20px'}>
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="600"
-                        height={isMobile ? '18px' : '24px'}
-                        color="#344054"
-                        padding={isMobile ? '9px 13px' : '10px 15px'}
-                        borderBottom="1px solid #F3F6FF"
-                      >
-                        APY Breakdown
-                      </NewLabel>
-                      <NewLabel padding={isMobile ? '9px 13px' : '0px 15px 10px'}>
-                        <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
-                      </NewLabel>
-                    </MyBalance>
-                  )}
+                  <MyBalance marginBottom={isMobile ? '24px' : '20px'}>
+                    <NewLabel
+                      size={isMobile ? '12px' : '14px'}
+                      weight="600"
+                      height={isMobile ? '18px' : '24px'}
+                      color="#344054"
+                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      borderBottom="1px solid #F3F6FF"
+                    >
+                      APY Breakdown
+                    </NewLabel>
+                    <NewLabel padding={isMobile ? '9px 13px' : '0px 15px 10px'}>
+                      <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
+                    </NewLabel>
+                  </MyBalance>
                   <LastHarvestInfo>
                     <NewLabel
                       size={isMobile ? '12px' : '14px'}
@@ -2384,53 +2391,55 @@ const AdvancedFarm = () => {
                         0%
                       </NewLabel>
                     </FlexDiv>
-                    <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
-                    >
-                      <NewLabel
-                        size={isMobile ? '8px' : '13px'}
-                        weight="300"
-                        height="normal"
-                        color="#15202b"
+                    {!useIFARM && (
+                      <FlexDiv
+                        justifyContent="space-between"
+                        padding={isMobile ? '7px 11px' : '10px 15px'}
                       >
-                        The APY shown already considers the performance fee taken only from
-                        generated yield and not deposits.
-                      </NewLabel>
-                      <NewLabel display="flex" self="center">
-                        <InfoIcon
-                          className="info"
-                          width={isMobile ? 10 : 16}
-                          src={Info}
-                          alt=""
-                          data-tip
-                          data-for="tooltip-last-harvest"
-                          filterColor={filterColor}
-                        />
-                        <ReactTooltip
-                          id="tooltip-last-harvest"
-                          backgroundColor="black"
-                          borderColor="black"
-                          textColor="white"
-                          place={isMobile ? 'left' : 'top'}
+                        <NewLabel
+                          size={isMobile ? '8px' : '13px'}
+                          weight="300"
+                          height="normal"
+                          color="#15202b"
                         >
-                          <NewLabel
-                            weight="500"
-                            size={isMobile ? '10px' : '13px'}
-                            height={isMobile ? '12px' : '16px'}
+                          The APY shown already considers the performance fee taken only from
+                          generated yield and not deposits.
+                        </NewLabel>
+                        <NewLabel display="flex" self="center">
+                          <InfoIcon
+                            className="info"
+                            width={isMobile ? 10 : 16}
+                            src={Info}
+                            alt=""
+                            data-tip
+                            data-for="tooltip-last-harvest"
+                            filterColor={filterColor}
+                          />
+                          <ReactTooltip
+                            id="tooltip-last-harvest"
+                            backgroundColor="black"
+                            borderColor="black"
+                            textColor="white"
+                            place={isMobile ? 'left' : 'top'}
                           >
-                            <FlexDiv gap="15px" justifyContent="space-between">
-                              <div>Harvest Treasury</div>
-                              <div>{harvestTreasury}%</div>
-                            </FlexDiv>
-                            <FlexDiv gap="15px" justifyContent="space-between" marginTop="12px">
-                              <div>Profit Sharing</div>
-                              <div>{profitShare}%</div>
-                            </FlexDiv>
-                          </NewLabel>
-                        </ReactTooltip>
-                      </NewLabel>
-                    </FlexDiv>
+                            <NewLabel
+                              weight="500"
+                              size={isMobile ? '10px' : '13px'}
+                              height={isMobile ? '12px' : '16px'}
+                            >
+                              <FlexDiv gap="15px" justifyContent="space-between">
+                                <div>Harvest Treasury</div>
+                                <div>{harvestTreasury}%</div>
+                              </FlexDiv>
+                              <FlexDiv gap="15px" justifyContent="space-between" marginTop="12px">
+                                <div>Profit Sharing</div>
+                                <div>{profitShare}%</div>
+                              </FlexDiv>
+                            </NewLabel>
+                          </ReactTooltip>
+                        </NewLabel>
+                      </FlexDiv>
+                    )}
                   </LastHarvestInfo>
                   {isMobile && (
                     <>
