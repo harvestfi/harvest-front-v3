@@ -331,9 +331,9 @@ const DepositBase = ({
         </NewLabel>
         <DepoTitle>
           {useBeginnersFarm
-            ? `Convert your crypto into interest-bearing f${token.tokenNames.join(
-                ' • ',
-              )} to earn yield`
+            ? `Convert your crypto into interest-bearing ${
+                tokenSymbol === 'WETH_base' ? 'fWETH' : 'fUSDbC'
+              } to earn yield`
             : 'Convert your crypto into interest-bearing fTokens.'}
         </DepoTitle>
         <TokenInfo>
