@@ -183,15 +183,20 @@ const WithdrawBase = ({
             curToken = curToken[0]
 
             fromInfoValue = formatNumberWido(
-              fromWei(quoteResult.fromTokenAmount, curToken.decimals),
+              fromWei(
+                quoteResult.fromTokenAmount,
+                useIFARM ? fAssetPool.lpTokenData.decimals : curToken.decimals,
+              ),
               WIDO_EXTEND_DECIMALS,
             )
             fromInfoUsdValue =
               quoteResult.fromTokenAmount === null
                 ? '0'
                 : formatNumberWido(
-                    fromWei(quoteResult.fromTokenAmount, curToken.decimals) *
-                      quoteResult.fromTokenUsdPrice,
+                    fromWei(
+                      quoteResult.fromTokenAmount,
+                      useIFARM ? fAssetPool.lpTokenData.decimals : curToken.decimals,
+                    ) * quoteResult.fromTokenUsdPrice,
                     BEGINNERS_BALANCES_DECIMALS,
                   )
             minReceivedString = formatNumberWido(
