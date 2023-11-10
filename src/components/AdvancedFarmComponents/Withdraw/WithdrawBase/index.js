@@ -213,6 +213,7 @@ const WithdrawBase = ({
       }
       getQuoteResult()
     }
+    // eslint-disable-next-line
   }, [
     account,
     tokenChain,
@@ -227,8 +228,6 @@ const WithdrawBase = ({
     chainId,
     fromToken,
     curChain,
-    fAssetPool?.lpTokenData?.decimals,
-    useIFARM,
     setRevertFromInfoAmount,
     setRevertFromInfoUsdAmount,
     setRevertMinReceivedAmount,
