@@ -127,12 +127,6 @@ const chainList = [
   { id: 4, name: 'Base', chainId: 8453 },
 ]
 
-const mainTags = [
-  { name: 'Manage', img: Safe },
-  { name: 'Rewards', img: Treasure },
-  { name: 'Details', img: BarChart },
-]
-
 const getVaultValue = token => {
   const poolId = get(token, 'data.id')
 
@@ -410,17 +404,61 @@ const AdvancedFarm = () => {
   const [unstakedAmount, setUnstakedAmount] = useState(0)
   const firstUnderlyingBalance = useRef(true)
 
+  // let mainTags
+  // if (useIFARM) {
+  //   mainTags = [
+  //     { name: 'Manage', img: Safe },
+  //     { name: 'Details', img: BarChart },
+  //   ]
+  // } else {
+  //   mainTags = [
+  //     { name: 'Manage', img: Safe },
+  //     { name: 'Rewards', img: Treasure },
+  //     { name: 'Details', img: BarChart },
+  //   ]
+  // }
+  const mainTags = [
+    { name: 'Manage', img: Safe },
+    { name: 'Rewards', img: Treasure },
+    { name: 'Details', img: BarChart },
+  ]
+
   const toTokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
   useEffect(() => {
-    const staked =
-      totalStaked &&
-      fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_BALANCES_DECIMALS, true)
+    let staked,
+      unstaked,
+      total,
+      amountBalanceUSD,
+      totalRewardAPRByPercent = 0
+    if (useIFARM) {
+      staked = Number(
+        fromWei(
+          get(balances, IFARM_TOKEN_SYMBOL, 0),
+          tokens[IFARM_TOKEN_SYMBOL].decimals,
+          WIDO_BALANCES_DECIMALS,
+        ),
+      )
+      unstaked = Number(
+        fromWei(
+          get(balances, FARM_TOKEN_SYMBOL, 0),
+          tokens[FARM_TOKEN_SYMBOL].decimals,
+          WIDO_BALANCES_DECIMALS,
+        ),
+      )
+      total = staked
+      amountBalanceUSD = total * iFarmPrice
+    } else {
+      staked =
+        totalStaked &&
+        fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_BALANCES_DECIMALS, true)
 
-    const unstaked =
-      lpTokenBalance &&
-      fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, MAX_BALANCES_DECIMALS, true)
-    const total = Number(staked) + Number(unstaked)
-    const amountBalanceUSD = total * usdPrice
+      unstaked =
+        lpTokenBalance &&
+        fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, MAX_BALANCES_DECIMALS, true)
+
+      total = Number(staked) + Number(unstaked)
+      amountBalanceUSD = total * usdPrice
+    }
     setStakedAmount(Number(staked))
     setUnstakedAmount(Number(unstaked))
     setTotalValue(total)
@@ -432,7 +470,6 @@ const AdvancedFarm = () => {
     const vaultAPRDaily = vaultAPR / 365
     const vaultAPRMonthly = vaultAPR / 12
 
-    let totalRewardAPRByPercent = 0
     for (let j = 0; j < fAssetPool.rewardAPR?.length; j += 1) {
       totalRewardAPRByPercent += Number(fAssetPool.rewardAPR[j])
     }
@@ -452,6 +489,7 @@ const AdvancedFarm = () => {
       Number(unstaked) * usdPrice * (vaultAPRMonthly + swapFeeAPRMonthly)
     setYieldDaily(dailyYield)
     setYieldMonthly(monthlyYield)
+    // eslint-disable-next-line
   }, [fAssetPool, tokenVault, usdPrice, lpTokenBalance, totalStaked])
 
   useEffect(() => {
@@ -1018,6 +1056,7 @@ const AdvancedFarm = () => {
                   <MainTag
                     key={i}
                     active={activeMainTag === i ? 'true' : 'false'}
+                    useIFARM={useIFARM}
                     onClick={() => {
                       setActiveMainTag(i)
                       if (i !== 0) {
@@ -1236,25 +1275,8 @@ const AdvancedFarm = () => {
                       {useIFARM ? (
                         <div>
                           <p>
-                            When you supply{' '}
-                            <a
-                              href="https://etherscan.io/token/0xa0246c9032bC3A600820415aE600c6388619A14D"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              FARM
-                            </a>{' '}
-                            you will be rewarded with a share of the profits of the platform paid
-                            out in{' '}
-                            <a
-                              href="https://etherscan.io/token/0xa0246c9032bC3A600820415aE600c6388619A14D"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              FARM
-                            </a>{' '}
-                            rewards. When depositing into the vault you obtain the yield-bearing
-                            yield-bearing token{' '}
+                            This is the profit sharing vault of Harvest. When depositing into the
+                            vault you obtain the yield-bearing token{' '}
                             <a
                               href="https://etherscan.io/token/0x1571eD0bed4D987fe2b498DdBaE7DFA19519F651"
                               target="_blank"
@@ -1262,7 +1284,23 @@ const AdvancedFarm = () => {
                             >
                               iFARM
                             </a>
-                            . You can swap iFARM for the underlying FARM at any time.
+                            . If you&apos;re holding{' '}
+                            <a
+                              href="https://etherscan.io/token/0xa0246c9032bC3A600820415aE600c6388619A14D"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              FARM
+                            </a>{' '}
+                            , it is recommended to convert it into interest-bearing{' '}
+                            <a
+                              href="https://etherscan.io/token/0x1571eD0bed4D987fe2b498DdBaE7DFA19519F651"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              iFARM
+                            </a>{' '}
+                            in order be entitled to Harvest&apos;s profit sharing.
                           </p>
                         </div>
                       ) : (
@@ -1341,7 +1379,7 @@ const AdvancedFarm = () => {
                     <FarmInfo
                       marginBottom={isMobile ? '0' : '25px'}
                       marginTop={isMobile ? '0px' : '0'}
-                      // height={isMobile ? 'unset' : '120px'}
+                      height={isMobile ? 'unset' : '120px'}
                     >
                       <NewLabel
                         display="flex"
@@ -1420,7 +1458,7 @@ const AdvancedFarm = () => {
                           size={isMobile ? '10px' : '12px'}
                           height={isMobile ? '18px' : '24px'}
                           weight="500"
-                          color="#6F78AA"
+                          color="#6f78aa"
                         >
                           {!connected ? (
                             0
@@ -1433,20 +1471,6 @@ const AdvancedFarm = () => {
                           ) : (
                             <AnimatedDots />
                           )}
-                          {/* {!connected ? (
-                            0
-                          ) : lpTokenBalance ? (
-                            formatNumberWido(
-                              fromWei(
-                                get(balances, IFARM_TOKEN_SYMBOL, 0),
-                                tokens[IFARM_TOKEN_SYMBOL].decimals,
-                                WIDO_BALANCES_DECIMALS,
-                              ),
-                              WIDO_BALANCES_DECIMALS,
-                            )
-                          ) : (
-                            <AnimatedDots />
-                          )} */}
                         </NewLabel>
                       </FlexDiv>
                       <FlexDiv
@@ -1494,7 +1518,7 @@ const AdvancedFarm = () => {
                           color="#6F78AA"
                           self="center"
                         >
-                          {!connected ? (
+                          {/* {!connected ? (
                             0
                           ) : lpTokenBalance ? (
                             totalValue === 0 ? (
@@ -1504,96 +1528,13 @@ const AdvancedFarm = () => {
                             )
                           ) : (
                             <AnimatedDots />
-                          )}
-                          {/* {!connected ? (
+                          )} */}
+                          {!connected ? (
                             0
                           ) : isEmpty(vaultsData) ? (
                             <AnimatedDots />
                           ) : (
                             formatNumberWido(underlyingValue, WIDO_BALANCES_DECIMALS)
-                          )} */}
-                        </NewLabel>
-                      </FlexDiv>
-                      <FlexDiv
-                        justifyContent="space-between"
-                        padding={isMobile ? '7px 11px' : '10px 15px'}
-                      >
-                        <NewLabel
-                          size={isMobile ? '10px' : '12px'}
-                          height={isMobile ? '18px' : '24px'}
-                          weight="500"
-                          color="#344054"
-                          self="center"
-                        >
-                          iFARM Price
-                        </NewLabel>
-                        <NewLabel
-                          weight="500"
-                          size={isMobile ? '10px' : '12px'}
-                          height={isMobile ? '18px' : '24px'}
-                          color="black"
-                          self="center"
-                        >
-                          {!account ? '' : iFarmPrice ? `$${iFarmPrice}` : <AnimatedDots />}
-                        </NewLabel>
-                      </FlexDiv>
-                      <FlexDiv
-                        justifyContent="space-between"
-                        padding={isMobile ? '7px 11px' : '5px 15px'}
-                      >
-                        <NewLabel
-                          size={isMobile ? '10px' : '12px'}
-                          height={isMobile ? '18px' : '24px'}
-                          weight="500"
-                          color="#344054"
-                          self="center"
-                        >
-                          Total Value
-                          <InfoIcon
-                            className="info"
-                            width={isMobile ? 10 : 16}
-                            src={Info}
-                            alt=""
-                            data-tip
-                            data-for="tooltip-total-value"
-                            filterColor={filterColor}
-                          />
-                          <ReactTooltip
-                            id="tooltip-total-value"
-                            backgroundColor="black"
-                            borderColor="black"
-                            textColor="white"
-                          >
-                            <NewLabel
-                              size={isMobile ? '10px' : '12px'}
-                              height={isMobile ? '15px' : '18px'}
-                              weight="600"
-                              color="white"
-                            >
-                              Total value in USD of your iFARM holdings.
-                            </NewLabel>
-                          </ReactTooltip>
-                        </NewLabel>
-                        <NewLabel
-                          weight="500"
-                          size={isMobile ? '10px' : '12px'}
-                          height={isMobile ? '18px' : '24px'}
-                          color="black"
-                          self="center"
-                        >
-                          {!account ? (
-                            ''
-                          ) : get(balances, IFARM_TOKEN_SYMBOL, 0) && token.data.lpTokenData ? (
-                            `$${formatNumberWido(
-                              fromWei(
-                                get(balances, IFARM_TOKEN_SYMBOL, 0),
-                                tokens[IFARM_TOKEN_SYMBOL].decimals,
-                                WIDO_BALANCES_DECIMALS,
-                              ) * iFarmPrice,
-                              2,
-                            )}`
-                          ) : (
-                            <AnimatedDots />
                           )}
                         </NewLabel>
                       </FlexDiv>
@@ -1830,6 +1771,7 @@ const AdvancedFarm = () => {
                         tokenSymbol={id}
                         fAssetPool={fAssetPool}
                         lpTokenBalance={lpTokenBalance}
+                        stakedAmount={stakedAmount}
                         token={token}
                         supTokenList={supTokenList}
                         switchMethod={switchDepoMethod}
@@ -2026,7 +1968,7 @@ const AdvancedFarm = () => {
                           color="#344054"
                           self="center"
                         >
-                          iFARM Price
+                          FARM Price
                         </NewLabel>
                         <NewLabel
                           weight="500"
@@ -2257,7 +2199,6 @@ const AdvancedFarm = () => {
                         tokenSymbol={id}
                         lpTokenBalance={lpTokenBalance}
                         fAssetPool={fAssetPool}
-                        // useIFARM={useIFARM}
                       />
                       <StakeStart
                         stakeStart={stakeStart}
@@ -2272,7 +2213,6 @@ const AdvancedFarm = () => {
                         setPendingAction={setPendingAction}
                         multipleAssets={multipleAssets}
                         setLoadingDots={setLoadingDots}
-                        // useIFARM={useIFARM}
                       />
                       <StakeResult
                         finalStep={stakeFinalStep}
@@ -2323,21 +2263,23 @@ const AdvancedFarm = () => {
                 </SecondPartSection>
               ) : (
                 <RestInternal>
-                  <MyBalance marginBottom={isMobile ? '24px' : '20px'}>
-                    <NewLabel
-                      size={isMobile ? '12px' : '14px'}
-                      weight="600"
-                      height={isMobile ? '18px' : '24px'}
-                      color="#344054"
-                      padding={isMobile ? '9px 13px' : '10px 15px'}
-                      borderBottom="1px solid #F3F6FF"
-                    >
-                      APY Breakdown
-                    </NewLabel>
-                    <NewLabel padding={isMobile ? '9px 13px' : '0px 15px 10px'}>
-                      <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
-                    </NewLabel>
-                  </MyBalance>
+                  {!useIFARM && (
+                    <MyBalance marginBottom={isMobile ? '24px' : '20px'}>
+                      <NewLabel
+                        size={isMobile ? '12px' : '14px'}
+                        weight="600"
+                        height={isMobile ? '18px' : '24px'}
+                        color="#344054"
+                        padding={isMobile ? '9px 13px' : '10px 15px'}
+                        borderBottom="1px solid #F3F6FF"
+                      >
+                        APY Breakdown
+                      </NewLabel>
+                      <NewLabel padding={isMobile ? '9px 13px' : '0px 15px 10px'}>
+                        <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
+                      </NewLabel>
+                    </MyBalance>
+                  )}
                   <LastHarvestInfo>
                     <NewLabel
                       size={isMobile ? '12px' : '14px'}

@@ -841,7 +841,7 @@ const ChainBack = styled.div`
 const MainTag = styled.div`
   display: flex;
   justify-content: center;
-  width: 33%;
+  width: ${props => (props.useIFARM ? '50%' : '33%')};
   padding: 12px 15px;
   align-items: center;
   font-size: 14px;
@@ -862,7 +862,8 @@ const MainTag = styled.div`
     `}
 
   &:nth-child(2) {
-    width: 34%;
+    display: ${props => (props.useIFARM ? 'none' : 'flex')};
+    width: ${props => (props.useIFARM ? '50%' : '34%')};
   }
 
   p {

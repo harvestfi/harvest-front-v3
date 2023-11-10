@@ -55,7 +55,6 @@ const StakeBase = ({
   tokenSymbol,
   lpTokenBalance,
   fAssetPool,
-  // useIFARM,
 }) => {
   const { connected, connectAction, account, chainId, setChainId } = useWallet()
 

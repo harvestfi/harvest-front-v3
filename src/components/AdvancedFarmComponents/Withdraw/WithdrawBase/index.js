@@ -76,6 +76,7 @@ const WithdrawBase = ({
   tokenSymbol,
   fAssetPool,
   lpTokenBalance,
+  stakedAmount,
   token,
   supTokenList,
   switchMethod,
@@ -104,6 +105,11 @@ const WithdrawBase = ({
   const slippagePercentage = 0.005 // Default slippage Percent
   // const chainId = token.chain || token.data.chain
   const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress1
+
+  const stakeAmountWei = toWei(
+    stakedAmount,
+    useIFARM ? fAssetPool?.lpTokenData?.decimals : token.decimals,
+  )
 
   const [
     {
@@ -255,7 +261,9 @@ const WithdrawBase = ({
 
   const onInputUnstake = e => {
     setUnstakeInputValue(e.currentTarget.value)
-    setUnstakeBalance(toWei(e.currentTarget.value, token.decimals))
+    setUnstakeBalance(
+      toWei(e.currentTarget.value, useIFARM ? fAssetPool.lpTokenData.decimals : token.decimals),
+    )
   }
 
   const onClickWithdraw = async () => {
@@ -274,7 +282,11 @@ const WithdrawBase = ({
       return
     }
 
-    if (!new BigNumber(unstakeBalance).isLessThanOrEqualTo(lpTokenBalance)) {
+    if (useIFARM) {
+      if (!new BigNumber(unstakeBalance).isLessThanOrEqualTo(stakeAmountWei)) {
+        setShowWarning(true)
+      }
+    } else if (!new BigNumber(unstakeBalance).isLessThanOrEqualTo(lpTokenBalance)) {
       setShowWarning(true)
       return
     }
@@ -372,8 +384,15 @@ const WithdrawBase = ({
         <BalanceInfo
           onClick={() => {
             if (account && pickedToken.symbol !== 'Select') {
-              setUnstakeBalance(lpTokenBalance)
-              setUnstakeInputValue(Number(fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals)))
+              setUnstakeBalance(useIFARM ? stakeAmountWei : lpTokenBalance)
+              setUnstakeInputValue(
+                Number(
+                  fromWei(
+                    useIFARM ? stakeAmountWei : lpTokenBalance,
+                    fAssetPool.lpTokenData.decimals,
+                  ),
+                ),
+              )
             }
           }}
         >
@@ -381,6 +400,8 @@ const WithdrawBase = ({
           <span>
             {!connected ? (
               0
+            ) : useIFARM ? (
+              stakedAmount || <AnimatedDots />
             ) : lpTokenBalance ? (
               fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, POOL_BALANCES_DECIMALS, true)
             ) : (
@@ -397,7 +418,8 @@ const WithdrawBase = ({
               weight="600"
               color="#344054"
             >
-              The amount of {`f${tokenSymbol}`} you entered exceeds deposited balance.
+              The amount of {useIFARM ? `i${tokenSymbol}` : `f${tokenSymbol}`} you entered exceeds
+              deposited balance.
             </NewLabel>
           </NewLabel>
           <div>

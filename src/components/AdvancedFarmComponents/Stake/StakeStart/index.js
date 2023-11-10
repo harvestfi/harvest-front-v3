@@ -45,7 +45,6 @@ const StakeStart = ({
   setPendingAction,
   multipleAssets,
   setLoadingDots,
-  // useIFARM,
 }) => {
   const { connected, connectAction, account, chainId, setChainId, getWalletBalances } = useWallet()
 
