@@ -185,7 +185,7 @@ const WithdrawBase = ({
             fromInfoValue = formatNumberWido(
               fromWei(
                 quoteResult.fromTokenAmount,
-                useIFARM ? fAssetPool.lpTokenData.decimals : curToken.decimals,
+                useIFARM ? fAssetPool?.lpTokenData?.decimals : curToken.decimals,
               ),
               WIDO_EXTEND_DECIMALS,
             )
@@ -195,7 +195,7 @@ const WithdrawBase = ({
                 : formatNumberWido(
                     fromWei(
                       quoteResult.fromTokenAmount,
-                      useIFARM ? fAssetPool.lpTokenData.decimals : curToken.decimals,
+                      useIFARM ? fAssetPool?.lpTokenData?.decimals : curToken.decimals,
                     ) * quoteResult.fromTokenUsdPrice,
                     BEGINNERS_BALANCES_DECIMALS,
                   )
@@ -227,6 +227,8 @@ const WithdrawBase = ({
     chainId,
     fromToken,
     curChain,
+    fAssetPool?.lpTokenData?.decimals,
+    useIFARM,
     setRevertFromInfoAmount,
     setRevertFromInfoUsdAmount,
     setRevertMinReceivedAmount,
