@@ -560,7 +560,6 @@ const AdvancedFarm = () => {
                 const price = baseToken
                   ? await getEnsoPrice(chain.toString(), baseToken.address)
                   : 0
-                console.log(price)
                 const item = {
                   symbol: baseToken?.symbol,
                   address: baseToken?.address,
