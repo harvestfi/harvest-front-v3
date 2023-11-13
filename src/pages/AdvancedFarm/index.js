@@ -1452,7 +1452,7 @@ const AdvancedFarm = () => {
                           >
                             {useIFARM
                               ? `The number of i${id} tokens in your wallet.`
-                              : `This f${id} represents your share in this farm.`}
+                              : 'This fToken represents your share in this farm.'}
                           </NewLabel>
                         </ReactTooltip>
                       </NewLabel>
@@ -1510,7 +1510,7 @@ const AdvancedFarm = () => {
                           >
                             {useIFARM
                               ? `Your i${id} denominated in FARM tokens. Underlying Balance increases over time.`
-                              : `This f${id} represents your share in this farm.`}
+                              : `This fToken represents your share in this farm.`}
                           </NewLabel>
                         </ReactTooltip>
                       </NewLabel>
