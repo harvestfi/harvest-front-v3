@@ -450,8 +450,9 @@ const DepositBase = ({
                   weight="600"
                   color="white"
                 >
-                  Calculation based on the live USD pricing of this farm&apos;s underlying tokens.
-                  The estimate assumes staked fTokens. Subject to change.
+                  {useBeginnersFarm
+                    ? `Calculation based on the live USD pricing of this farm's underlying tokens. The estimate assumes staked fTokens. Subject to change.`
+                    : 'Based on live USD prices of underlying and reward tokens. Considers current TVL and assumes staked fTokens. Subject to change.'}
                 </NewLabel>
               </ReactTooltip>
             </NewLabel>
@@ -518,8 +519,9 @@ const DepositBase = ({
                   weight="600"
                   color="white"
                 >
-                  Calculation based on the live USD pricing of this farm&apos;s underlying tokens.
-                  The estimate assumes staked fTokens. Subject to change.
+                  {useBeginnersFarm
+                    ? `Calculation based on the live USD pricing of this farm's underlying tokens. The estimate assumes staked fTokens. Subject to change.`
+                    : 'Based on live USD prices of underlying and reward tokens. Considers current TVL and assumes staked fTokens. Subject to change.'}
                 </NewLabel>
               </ReactTooltip>
             </NewLabel>
