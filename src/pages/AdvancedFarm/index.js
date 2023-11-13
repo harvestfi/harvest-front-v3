@@ -463,7 +463,6 @@ const AdvancedFarm = () => {
     { name: 'Details', img: BarChart },
   ]
 
-  const toTokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
   useEffect(() => {
     let staked,
       unstaked,
