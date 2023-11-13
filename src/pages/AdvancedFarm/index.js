@@ -685,6 +685,7 @@ const AdvancedFarm = () => {
           //   }
           // }
           // setSupTokenNoBalanceList(supNoBalanceList)
+          setSupTokenNoBalanceList({}) // TODO: remove supTokenNoBalanceList once confirmed
 
           // const soonSupList = []
           // for (let j = 0; j < curBalances.length; j += 1) {
@@ -700,6 +701,7 @@ const AdvancedFarm = () => {
           //   }
           // }
           // setSoonToSupList(soonSupList)
+          setSoonToSupList({}) // TODO: remove soonToSupList once confirmed
         }
       } catch (err) {
         console.log('getTokenBalance: ', err)
