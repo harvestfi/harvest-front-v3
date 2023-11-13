@@ -7,7 +7,7 @@ import ReactHtmlParser from 'react-html-parser'
 import ReactTooltip from 'react-tooltip'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import { getBalances, getSupportedTokens } from 'wido'
+import { ethers } from 'ethers'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
@@ -183,6 +183,46 @@ const getTokenPriceFromApi = async tokenID => {
   } catch (err) {
     console.log('Fetch Chart Data error: ', err)
     return null
+  }
+}
+
+const getEnsoBalances = async (address, chainId) => {
+  try {
+    const response = await axios.get('https://api.enso.finance/api/v1/wallet/balances', {
+      params: {
+        chainId,
+        eoaAddress: address,
+        useEoa: true,
+      },
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error fetching balances:', error)
+    return []
+  }
+}
+
+const getEnsoBaseTokens = async chainId => {
+  try {
+    const response = await axios.get('https://api.enso.finance/api/v1/baseTokens', {
+      params: {
+        chainId,
+      },
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error fetching base tokens:', error)
+    return []
+  }
+}
+
+const getEnsoPrice = async (chainId, address) => {
+  try {
+    const response = await axios.get(`https://api.enso.finance/api/v1/prices/${chainId}/${address}`)
+    return response.data.price
+  } catch (error) {
+    console.error('Error fetching base tokens:', error)
+    return []
   }
 }
 
@@ -505,23 +545,42 @@ const AdvancedFarm = () => {
     const getTokenBalance = async () => {
       try {
         if (chain && account && Object.keys(balances).length !== 0) {
-          const curBalances = await getBalances(account, [chain.toString()])
+          let supList = [],
+            directInSup = {},
+            directInBalance = {}
+
+          const ensoTokens = await getEnsoBaseTokens(chain.toString()) // TODO: move this to global to be fetched only once.
+          const ensoRawBalances = await getEnsoBalances(account, chain.toString())
+          const curBalances = (
+            await Promise.all(
+              ensoRawBalances.map(async balance => {
+                if (!ethers.utils.isAddress(balance.token))
+                  balance.token = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+                const baseToken = ensoTokens.find(el => el.address === balance.token)
+                const price = baseToken
+                  ? await getEnsoPrice(chain.toString(), baseToken.address)
+                  : 0
+                console.log(price)
+                const item = {
+                  symbol: baseToken?.symbol,
+                  address: baseToken?.address,
+                  balance: balance.amount,
+                  default: false,
+                  usdValue: Number(fromWei(balance.amount, balance.decimals)) * price,
+                  usdPrice: price,
+                  logoURI: baseToken?.logoURI,
+                  decimals: balance.decimals,
+                  chainId: chain,
+                }
+                return item
+              }),
+            )
+          ).filter(item => item.address)
           const curSortedBalances = curBalances.sort(function reducer(a, b) {
             return Number(fromWei(b.balance, b.decimals)) - Number(fromWei(a.balance, a.decimals))
           })
           setBalanceList(curSortedBalances)
-          let supList = [],
-            directInSup = {},
-            directInBalance = {}
-          try {
-            supList = await getSupportedTokens({
-              chainId: [chain],
-              toToken: toTokenAddress,
-              toChainId: chain,
-            })
-          } catch (err) {
-            console.log('getSupportedTokens of Wido: ', err)
-          }
+          supList = curBalances
           const tokenAddress =
             token.tokenAddress !== undefined && token.tokenAddress.length !== 2
               ? token.tokenAddress
@@ -619,30 +678,30 @@ const AdvancedFarm = () => {
           supList.shift()
           setSupTokenList(supList)
 
-          const supNoBalanceList = []
-          if (supList.length > 0) {
-            for (let i = 0; i < supList.length; i += 1) {
-              if (Number(supList[i].balance) === 0) {
-                supNoBalanceList.push(supList[i])
-              }
-            }
-          }
-          setSupTokenNoBalanceList(supNoBalanceList)
+          // const supNoBalanceList = []
+          // if (supList.length > 0) {
+          //   for (let i = 0; i < supList.length; i += 1) {
+          //     if (Number(supList[i].balance) === 0) {
+          //       supNoBalanceList.push(supList[i])
+          //     }
+          //   }
+          // }
+          // setSupTokenNoBalanceList(supNoBalanceList)
 
-          const soonSupList = []
-          for (let j = 0; j < curBalances.length; j += 1) {
-            const supToken = supList.find(el => el.address === curBalances[j].address)
-            if (!supToken) {
-              soonSupList.push(curBalances[j])
-            }
+          // const soonSupList = []
+          // for (let j = 0; j < curBalances.length; j += 1) {
+          //   const supToken = supList.find(el => el.address === curBalances[j].address)
+          //   if (!supToken) {
+          //     soonSupList.push(curBalances[j])
+          //   }
 
-            if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
-              if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
-                directInBalance = curBalances[j]
-              }
-            }
-          }
-          setSoonToSupList(soonSupList)
+          //   if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
+          //     if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
+          //       directInBalance = curBalances[j]
+          //     }
+          //   }
+          // }
+          // setSoonToSupList(soonSupList)
         }
       } catch (err) {
         console.log('getTokenBalance: ', err)
