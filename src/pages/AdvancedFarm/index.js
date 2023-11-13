@@ -1375,33 +1375,71 @@ const AdvancedFarm = () => {
             <RestContent height={activeMainTag === 0 ? '100%' : 'fit-content'}>
               {activeMainTag === 0 ? (
                 <FirstPartSection>
-                  {useIFARM ? (
-                    <FarmInfo
-                      marginBottom={isMobile ? '0' : '25px'}
-                      marginTop={isMobile ? '0px' : '0'}
-                      height={isMobile ? 'unset' : '120px'}
+                  <MyBalance
+                    marginBottom={isMobile ? '0' : '25px'}
+                    marginTop={isMobile ? '0px' : '0'}
+                    height={isMobile ? 'unset' : '120px'}
+                  >
+                    <NewLabel
+                      display="flex"
+                      justifyContent="space-between"
+                      size={isMobile ? '12px' : '12px'}
+                      weight="600"
+                      height={isMobile ? '18px' : '20px'}
+                      color="#1F2937"
+                      padding={isMobile ? '7px 11px' : '10px 15px'}
+                      borderBottom="1px solid #F2F5FF"
+                    >
+                      <>{useIFARM ? `i${id}` : `f${id}`}</>
+                      <InfoIconBlack
+                        className="info"
+                        width={isMobile ? 10 : 16}
+                        src={InfoBlack}
+                        alt=""
+                        data-tip
+                        data-for="tooltip-token-name"
+                      />
+                      <ReactTooltip
+                        id="tooltip-token-name"
+                        backgroundColor="black"
+                        borderColor="black"
+                        textColor="white"
+                      >
+                        <NewLabel
+                          size={isMobile ? '10px' : '12px'}
+                          height={isMobile ? '15px' : '18px'}
+                          weight="600"
+                          color="white"
+                        >
+                          {useIFARM
+                            ? `Interest-bearing version of the FARM token. By simply holding iFARM, you are entitled to Harvest's profits.`
+                            : 'The interest-bearing fToken. It entitles its holder to auto-compounded yield of this farm.'}
+                        </NewLabel>
+                      </ReactTooltip>
+                    </NewLabel>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '7px 11px' : '5px 15px'}
                     >
                       <NewLabel
                         display="flex"
-                        justifyContent="space-between"
-                        size={isMobile ? '12px' : '12px'}
-                        weight="600"
-                        height={isMobile ? '18px' : '20px'}
-                        color="#1F2937"
-                        padding={isMobile ? '7px 11px' : '10px 15px'}
-                        borderBottom="1px solid #F2F5FF"
+                        size={isMobile ? '10px' : '12px'}
+                        weight="500"
+                        height={isMobile ? '18px' : '24px'}
+                        color="#6F78AA"
                       >
-                        <>{`i${id}`}</>
-                        <InfoIconBlack
+                        Balance
+                        <InfoIcon
                           className="info"
                           width={isMobile ? 10 : 16}
-                          src={InfoBlack}
+                          src={Info}
                           alt=""
                           data-tip
-                          data-for="tooltip-token-name"
+                          data-for="tooltip-balance"
+                          filterColor={filterColor}
                         />
                         <ReactTooltip
-                          id="tooltip-token-name"
+                          id="tooltip-balance"
                           backgroundColor="black"
                           borderColor="black"
                           textColor="white"
@@ -1412,290 +1450,99 @@ const AdvancedFarm = () => {
                             weight="600"
                             color="white"
                           >
-                            Interest-bearing version of the FARM token. By simply holding iFARM, you
-                            are entitled to Harvest&apos;s profits.
+                            {useIFARM
+                              ? `The number of i${id} tokens in your wallet.`
+                              : `This f${id} represents your share in this farm.`}
                           </NewLabel>
                         </ReactTooltip>
                       </NewLabel>
-                      <FlexDiv
-                        justifyContent="space-between"
-                        padding={isMobile ? '7px 11px' : '5px 15px'}
+                      <NewLabel
+                        size={isMobile ? '10px' : '12px'}
+                        height={isMobile ? '18px' : '24px'}
+                        weight="500"
+                        color="#6F78AA"
                       >
-                        <NewLabel
-                          display="flex"
-                          size={isMobile ? '10px' : '12px'}
-                          weight="500"
-                          height={isMobile ? '18px' : '24px'}
-                          color="#6F78AA"
-                        >
-                          Balance
-                          <InfoIcon
-                            className="info"
-                            width={isMobile ? 10 : 16}
-                            src={Info}
-                            alt=""
-                            data-tip
-                            data-for="tooltip-balance"
-                            filterColor={filterColor}
-                          />
-                          <ReactTooltip
-                            id="tooltip-balance"
-                            backgroundColor="black"
-                            borderColor="black"
-                            textColor="white"
-                          >
-                            <NewLabel
-                              size={isMobile ? '10px' : '12px'}
-                              height={isMobile ? '15px' : '18px'}
-                              weight="600"
-                              color="white"
-                            >
-                              The number of i{id} tokens in your wallet.
-                            </NewLabel>
-                          </ReactTooltip>
-                        </NewLabel>
-                        <NewLabel
-                          size={isMobile ? '10px' : '12px'}
-                          height={isMobile ? '18px' : '24px'}
-                          weight="500"
-                          color="#6f78aa"
-                        >
-                          {!connected ? (
-                            0
-                          ) : lpTokenBalance ? (
-                            totalValue === 0 ? (
-                              '0.00'
-                            ) : (
-                              totalValue.toFixed(8)
-                            )
+                        {!connected ? (
+                          0
+                        ) : lpTokenBalance ? (
+                          totalValue === 0 ? (
+                            '0.00'
                           ) : (
-                            <AnimatedDots />
-                          )}
-                        </NewLabel>
-                      </FlexDiv>
-                      <FlexDiv
-                        justifyContent="space-between"
-                        padding={isMobile ? '7px 11px' : '5px 15px'}
+                            totalValue.toFixed(8)
+                          )
+                        ) : (
+                          <AnimatedDots />
+                        )}
+                      </NewLabel>
+                    </FlexDiv>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '7px 11px' : '5px 15px'}
+                    >
+                      <NewLabel
+                        size={isMobile ? '10px' : '12px'}
+                        height={isMobile ? '18px' : '24px'}
+                        weight="500"
+                        color="#6F78AA"
+                        self="center"
                       >
-                        <NewLabel
-                          size={isMobile ? '10px' : '12px'}
-                          height={isMobile ? '18px' : '24px'}
-                          weight="500"
-                          color="#6F78AA"
-                          self="center"
+                        Underlying Balance
+                        <InfoIcon
+                          className="info"
+                          width={isMobile ? 10 : 16}
+                          src={Info}
+                          alt=""
+                          data-tip
+                          data-for="tooltip-underlying-balance"
+                          filterColor={filterColor}
+                        />
+                        <ReactTooltip
+                          id="tooltip-underlying-balance"
+                          backgroundColor="black"
+                          borderColor="black"
+                          textColor="white"
                         >
-                          Underlying Balance
-                          <InfoIcon
-                            className="info"
-                            width={isMobile ? 10 : 16}
-                            src={Info}
-                            alt=""
-                            data-tip
-                            data-for="tooltip-underlying-balance"
-                            filterColor={filterColor}
-                          />
-                          <ReactTooltip
-                            id="tooltip-underlying-balance"
-                            backgroundColor="black"
-                            borderColor="black"
-                            textColor="white"
+                          <NewLabel
+                            size={isMobile ? '10px' : '12px'}
+                            height={isMobile ? '15px' : '18px'}
+                            weight="600"
+                            color="white"
                           >
-                            <NewLabel
-                              size={isMobile ? '10px' : '12px'}
-                              height={isMobile ? '15px' : '18px'}
-                              weight="600"
-                              color="white"
-                            >
-                              Your i{id} denominated in FARM tokens. Underlying Balance increases
-                              over time.
-                            </NewLabel>
-                          </ReactTooltip>
-                        </NewLabel>
-                        <NewLabel
-                          weight="500"
-                          size={isMobile ? '10px' : '12px'}
-                          height={isMobile ? '18px' : '24px'}
-                          color="#6F78AA"
-                          self="center"
-                        >
-                          {/* {!connected ? (
-                            0
-                          ) : lpTokenBalance ? (
-                            totalValue === 0 ? (
-                              '0.00'
-                            ) : (
-                              (totalValue * Number(pricePerFullShare)).toFixed(8)
-                            )
-                          ) : (
-                            <AnimatedDots />
-                          )} */}
-                          {!connected ? (
+                            {useIFARM
+                              ? `Your i${id} denominated in FARM tokens. Underlying Balance increases over time.`
+                              : `This f${id} represents your share in this farm.`}
+                          </NewLabel>
+                        </ReactTooltip>
+                      </NewLabel>
+                      <NewLabel
+                        weight="500"
+                        size={isMobile ? '10px' : '12px'}
+                        height={isMobile ? '18px' : '24px'}
+                        color="#6F78AA"
+                        self="center"
+                      >
+                        {useIFARM ? (
+                          !connected ? (
                             0
                           ) : isEmpty(vaultsData) ? (
                             <AnimatedDots />
                           ) : (
-                            formatNumberWido(underlyingValue, WIDO_BALANCES_DECIMALS)
-                          )}
-                        </NewLabel>
-                      </FlexDiv>
-                    </FarmInfo>
-                  ) : (
-                    <MyBalance
-                      marginBottom={isMobile ? '0' : '25px'}
-                      marginTop={isMobile ? '0px' : '0'}
-                      height={isMobile ? 'unset' : '120px'}
-                    >
-                      <NewLabel
-                        display="flex"
-                        justifyContent="space-between"
-                        size={isMobile ? '12px' : '12px'}
-                        weight="600"
-                        height={isMobile ? '18px' : '20px'}
-                        color="#1F2937"
-                        padding={isMobile ? '7px 11px' : '10px 15px'}
-                        borderBottom="1px solid #F2F5FF"
-                      >
-                        <>{`f${id}`}</>
-                        <InfoIconBlack
-                          className="info"
-                          width={isMobile ? 10 : 16}
-                          src={InfoBlack}
-                          alt=""
-                          data-tip
-                          data-for="tooltip-token-name"
-                        />
-                        <ReactTooltip
-                          id="tooltip-token-name"
-                          backgroundColor="black"
-                          borderColor="black"
-                          textColor="white"
-                        >
-                          <NewLabel
-                            size={isMobile ? '10px' : '12px'}
-                            height={isMobile ? '15px' : '18px'}
-                            weight="600"
-                            color="white"
-                          >
-                            The interest-bearing fToken. It entitles its holder to auto-compounded
-                            yield of this farm.
-                          </NewLabel>
-                        </ReactTooltip>
+                            `${formatNumberWido(underlyingValue, WIDO_BALANCES_DECIMALS)} ${id}`
+                          )
+                        ) : !connected ? (
+                          0
+                        ) : lpTokenBalance ? (
+                          totalValue === 0 ? (
+                            '0.00'
+                          ) : (
+                            (totalValue * Number(pricePerFullShare)).toFixed(8)
+                          )
+                        ) : (
+                          <AnimatedDots />
+                        )}
                       </NewLabel>
-                      <FlexDiv
-                        justifyContent="space-between"
-                        padding={isMobile ? '7px 11px' : '5px 15px'}
-                      >
-                        <NewLabel
-                          display="flex"
-                          size={isMobile ? '10px' : '12px'}
-                          weight="500"
-                          height={isMobile ? '18px' : '24px'}
-                          color="#6F78AA"
-                        >
-                          Balance
-                          <InfoIcon
-                            className="info"
-                            width={isMobile ? 10 : 16}
-                            src={Info}
-                            alt=""
-                            data-tip
-                            data-for="tooltip-balance"
-                            filterColor={filterColor}
-                          />
-                          <ReactTooltip
-                            id="tooltip-balance"
-                            backgroundColor="black"
-                            borderColor="black"
-                            textColor="white"
-                          >
-                            <NewLabel
-                              size={isMobile ? '10px' : '12px'}
-                              height={isMobile ? '15px' : '18px'}
-                              weight="600"
-                              color="white"
-                            >
-                              This f{id} represents your share in this farm.
-                            </NewLabel>
-                          </ReactTooltip>
-                        </NewLabel>
-                        <NewLabel
-                          size={isMobile ? '10px' : '12px'}
-                          height={isMobile ? '18px' : '24px'}
-                          weight="500"
-                          color="#6F78AA"
-                        >
-                          {!connected ? (
-                            0
-                          ) : lpTokenBalance ? (
-                            totalValue === 0 ? (
-                              '0.00'
-                            ) : (
-                              totalValue.toFixed(8)
-                            )
-                          ) : (
-                            <AnimatedDots />
-                          )}
-                        </NewLabel>
-                      </FlexDiv>
-                      <FlexDiv
-                        justifyContent="space-between"
-                        padding={isMobile ? '7px 11px' : '5px 15px'}
-                      >
-                        <NewLabel
-                          size={isMobile ? '10px' : '12px'}
-                          height={isMobile ? '18px' : '24px'}
-                          weight="500"
-                          color="#6F78AA"
-                          self="center"
-                        >
-                          Underlying Balance
-                          <InfoIcon
-                            className="info"
-                            width={isMobile ? 10 : 16}
-                            src={Info}
-                            alt=""
-                            data-tip
-                            data-for="tooltip-underlying-balance"
-                            filterColor={filterColor}
-                          />
-                          <ReactTooltip
-                            id="tooltip-underlying-balance"
-                            backgroundColor="black"
-                            borderColor="black"
-                            textColor="white"
-                          >
-                            <NewLabel
-                              size={isMobile ? '10px' : '12px'}
-                              height={isMobile ? '15px' : '18px'}
-                              weight="600"
-                              color="white"
-                            >
-                              This f{id} represents your share in this farm.
-                            </NewLabel>
-                          </ReactTooltip>
-                        </NewLabel>
-                        <NewLabel
-                          weight="500"
-                          size={isMobile ? '10px' : '12px'}
-                          height={isMobile ? '18px' : '24px'}
-                          color="#6F78AA"
-                          self="center"
-                        >
-                          {!connected ? (
-                            0
-                          ) : lpTokenBalance ? (
-                            totalValue === 0 ? (
-                              '0.00'
-                            ) : (
-                              (totalValue * Number(pricePerFullShare)).toFixed(8)
-                            )
-                          ) : (
-                            <AnimatedDots />
-                          )}
-                        </NewLabel>
-                      </FlexDiv>
-                    </MyBalance>
-                  )}
+                    </FlexDiv>
+                  </MyBalance>
                   <HalfContent
                     marginBottom={isMobile ? '24px' : '0px'}
                     partHeight={activeDepo ? partHeightDepo : partHeightWith}
