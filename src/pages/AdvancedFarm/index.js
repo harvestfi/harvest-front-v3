@@ -1934,7 +1934,9 @@ const AdvancedFarm = () => {
                               weight="600"
                               color="white"
                             >
-                              The number of f{id} you hold, but not entitled to extra token rewards.
+                              {useIFARM
+                                ? `The number of i${id} you hold, but not entitled to extra token rewards.`
+                                : `The number of fTokens you hold, which are not entitled to extra token rewards.`}
                             </NewLabel>
                           </ReactTooltip>
                         </NewLabel>
@@ -1990,7 +1992,9 @@ const AdvancedFarm = () => {
                               weight="600"
                               color="white"
                             >
-                              The number of staked f{id}, which are entitled to all token rewards.
+                              {useIFARM
+                                ? `The number of staked i${id}, which are entitled to all token rewards.`
+                                : `The number of staked fTokens, which entitle you to extra token rewards.`}
                             </NewLabel>
                           </ReactTooltip>
                         </NewLabel>
