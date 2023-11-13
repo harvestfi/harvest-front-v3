@@ -49,7 +49,7 @@ const UserBalanceData = ({ token, vaultPool }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   useEffect(() => {
-    const label = clickedId === 0 ? `My Balance` : 'My Underlying Balance'
+    const label = clickedId === 0 ? `USD Balance` : 'Underlying Balance'
     setTooltipLabel(label)
   }, [clickedId])
 
