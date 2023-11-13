@@ -112,8 +112,7 @@ const UserBalanceData = ({ token, vaultPool }) => {
           let i = 0,
             z = 0,
             addFlag = false
-
-          while (uniqueData2[i].timestamp > data1[0].timestamp && i < uniqueData2.length) {
+          while (i < uniqueData2.length && uniqueData2[i].timestamp > data1[0].timestamp) {
             uniqueData2[i].value = data1[0].value
             mergedData.push(uniqueData2[i])
             i += 1
