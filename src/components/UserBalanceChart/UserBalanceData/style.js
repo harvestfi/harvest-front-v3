@@ -5,7 +5,7 @@ const Container = styled.div`
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  padding: 15px 18px 25px;
+  padding: 15px 18px;
   transition: 0.25s;
   border-radius: 10px;
   border: 2px solid #f2f5ff;
@@ -49,6 +49,7 @@ const ButtonGroup = styled.div`
   flex-wrap: wrap;
   color: #fff;
   justify-content: end;
+  padding-top: 10px;
 
   @media screen and (max-width: 992px) {
     margin-top: 14px;
