@@ -3,7 +3,7 @@ import { useMediaQuery } from 'react-responsive'
 import ChartButtonsGroup from '../ChartButtonsGroup'
 import balanceImg from '../../../assets/images/logos/advancedfarm/coins.svg'
 import usdbalance from '../../../assets/images/logos/advancedfarm/money.svg'
-import { getUserBalanceHistories } from '../../../utils'
+import { getUserBalanceHistories1, getUserBalanceHistories2 } from '../../../utils'
 import { useWallet } from '../../../providers/Wallet'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
@@ -55,12 +55,109 @@ const UserBalanceData = ({ token, vaultPool }) => {
 
   useEffect(() => {
     const initData = async () => {
-      const { data, flag } = await getUserBalanceHistories(address, chainId, account)
-      setLoadComplete(flag)
-      setApiData(data)
-      if (data && data.length > 0) {
+      const { data1, flag1 } = await getUserBalanceHistories1(address, chainId, account)
+      const { data2, flag2 } = await getUserBalanceHistories2(address, chainId)
+      const uniqueData2 = []
+      const timestamps = []
+      data2.forEach(obj => {
+        if (!timestamps.includes(obj.timestamp)) {
+          timestamps.push(obj.timestamp)
+          uniqueData2.push(obj)
+        }
+      })
+      const mergedData = []
+      if (flag1 && flag2) {
+        if (data1[0].timestamp > uniqueData2[0].timestamp) {
+          let i = 0,
+            z = 0,
+            addFlag = false
+
+          while (data1[i].timestamp > uniqueData2[0].timestamp) {
+            data1[i].priceUnderlying = uniqueData2[0].priceUnderlying
+            data1[i].sharePrice = uniqueData2[0].sharePrice
+            mergedData.push(data1[i])
+            i += 1
+          }
+          while (i < data1.length) {
+            if (z < uniqueData2.length) {
+              while (uniqueData2[z].timestamp >= data1[i].timestamp) {
+                uniqueData2[z].value = data1[i].value
+                mergedData.push(uniqueData2[z])
+                z += 1
+                if (!addFlag) {
+                  addFlag = true
+                }
+              }
+            }
+            if (!addFlag) {
+              data1[i].priceUnderlying = uniqueData2[uniqueData2.length - 1].priceUnderlying
+              data1[i].sharePrice = uniqueData2[uniqueData2.length - 1].sharePrice
+              mergedData.push(data1[i])
+            }
+            addFlag = false
+            i += 1
+          }
+          while (z < uniqueData2.length) {
+            uniqueData2[z].value = 0
+            mergedData.push(uniqueData2[z])
+            z += 1
+          }
+          while (i < data1.length) {
+            data1[i].priceUnderlying = uniqueData2[uniqueData2.length - 1].priceUnderlying
+            data1[i].sharePrice = uniqueData2[uniqueData2.length - 1].sharePrice
+            mergedData.push(data1[i])
+            i += 1
+          }
+        } else {
+          let i = 0,
+            z = 0,
+            addFlag = false
+
+          while (uniqueData2[i].timestamp > data1[0].timestamp && i < uniqueData2.length) {
+            uniqueData2[i].value = data1[0].value
+            mergedData.push(uniqueData2[i])
+            i += 1
+          }
+          while (z < data1.length) {
+            if (i < uniqueData2.length) {
+              while (uniqueData2[i].timestamp >= data1[z].timestamp) {
+                uniqueData2[i].value = data1[z].value
+                mergedData.push(uniqueData2[i])
+                i += 1
+                if (i >= uniqueData2.length) {
+                  break
+                }
+                if (!addFlag) {
+                  addFlag = true
+                }
+              }
+            }
+            if (!addFlag) {
+              data1[z].priceUnderlying = uniqueData2[uniqueData2.length - 1].priceUnderlying
+              data1[z].sharePrice = uniqueData2[uniqueData2.length - 1].sharePrice
+              mergedData.push(data1[z])
+            }
+            addFlag = false
+            z += 1
+          }
+          while (i < uniqueData2.length) {
+            uniqueData2[i].value = 0
+            mergedData.push(uniqueData2[i])
+            i += 1
+          }
+          while (z < data1.length) {
+            data1[z].priceUnderlying = uniqueData2[uniqueData2.length - 1].priceUnderlying
+            data1[z].sharePrice = uniqueData2[uniqueData2.length - 1].sharePrice
+            mergedData.push(data1[z])
+            z += 1
+          }
+        }
+      }
+      setLoadComplete(flag1 && flag2)
+      setApiData(mergedData)
+      if (mergedData && mergedData.length > 0) {
         const curTimestamp = new Date().getTime() / 1000
-        const between = curTimestamp - Number(data[data.length - 1].timestamp)
+        const between = curTimestamp - Number(mergedData[mergedData.length - 1].timestamp)
         const day = between / (24 * 3600)
         setSelectedState(day < 90 ? '1M' : '1Y')
       }
