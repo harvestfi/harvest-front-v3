@@ -467,7 +467,9 @@ const DepositBase = ({
               !new BigNumber(amount).isEqualTo(0) &&
               balanceList.length !== 0 ? (
                 minReceiveAmountString !== '' ? (
-                  convertMonthlyYieldUSD < 0.01 ? (
+                  convertMonthlyYieldUSD === 0 ? (
+                    '$0.00'
+                  ) : convertMonthlyYieldUSD < 0.01 ? (
                     '<$0.01'
                   ) : (
                     `$ ${round(convertMonthlyYieldUSD, 2)}`
@@ -533,7 +535,9 @@ const DepositBase = ({
               !new BigNumber(amount).isEqualTo(0) &&
               balanceList.length !== 0 ? (
                 minReceiveAmountString !== '' ? (
-                  convertDailyYieldUSD < 0.01 ? (
+                  convertDailyYieldUSD === 0 ? (
+                    '$0.00'
+                  ) : convertDailyYieldUSD < 0.01 ? (
                     '<$0.01'
                   ) : (
                     `$ ${round(convertDailyYieldUSD, 2)}`

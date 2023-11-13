@@ -55,12 +55,6 @@ const ButtonStyle = styled.button`
 
   &:hover {
     background-color: ${props => props.backcolor};
-    ${props =>
-      props.wallet === false && props.btnNum === 2
-        ? `
-      background-color: transparent;
-          `
-        : ``}
   }
 
   ${props =>
@@ -71,39 +65,9 @@ const ButtonStyle = styled.button`
       }
     `
       : ``}
-
-  ${props =>
-    props.wallet === true
-      ? `
-    img {
-      // filter: invert(63%) sepia(58%) saturate(3702%) hue-rotate(0deg) brightness(107%) contrast(105%);
-    }
-  `
-      : props.btnNum === 2
-      ? props.mode === 'true'
-        ? `
-          img {
-            filter: invert(85%) sepia(58%) saturate(0%) hue-rotate(241deg) brightness(94%) contrast(89%);
-            opacity: 0.6;
-          }
-        `
-        : `
-          img {
-            opacity: 0.42;
-          }
-        `
-      : ``}
   @media screen and (max-width: 992px) {
     padding: 7px 12px;
   }
 `
 
-const TooltipContent = styled.div`
-  display: flex;
-  color: white !important;
-  font-weight: 500;
-  font-size: 13px;
-  line-height: 16px;
-`
-
-export { ButtonsGroup, ButtonStyle, TooltipContent }
+export { ButtonsGroup, ButtonStyle }

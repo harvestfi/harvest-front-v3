@@ -1,17 +1,12 @@
 import React from 'react'
-import ReactTooltip from 'react-tooltip'
 import { useMediaQuery } from 'react-responsive'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { useWallet } from '../../../providers/Wallet'
-import { ButtonsGroup, ButtonStyle, TooltipContent } from './style'
+import { ButtonsGroup, ButtonStyle } from './style'
 
 const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {
-  const { connected } = useWallet()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const handleClick = (event, id) => {
-    if (connected || id !== 2) {
-      setClickedId(id)
-    }
+    setClickedId(id)
     // doSomethingAfterClick(event)
   }
 
@@ -32,14 +27,11 @@ const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {
             tempId = tempId !== -1 ? i : -1
             setFocusId(i)
           }}
-          data-tip={!!(i === 2 && !connected)}
-          data-for={i === 2 && !connected ? 'tooltip-balance-chart' : ''}
           onMouseLeave={() => {
             setFocusId(tempId)
             tempId = focusId
           }}
-          className={(i === clickedId || i === focusId) && (connected || i !== 2) ? 'active' : ''}
-          wallet={!!(connected && i === 2)}
+          className={i === clickedId || i === focusId ? 'active' : ''}
           backcolor={filterChainHoverColor}
           mode={darkMode.toString()}
           borderColor={borderColor}
@@ -52,19 +44,6 @@ const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {
           />
         </ButtonStyle>
       ))}
-      {!connected && (
-        <ReactTooltip
-          id="tooltip-balance-chart"
-          backgroundColor="black"
-          borderColor="black"
-          textColor="white"
-        >
-          <TooltipContent>
-            Connect your wallet <br />
-            to see balance chart
-          </TooltipContent>
-        </ReactTooltip>
-      )}
     </ButtonsGroup>
   )
 }

@@ -32,8 +32,8 @@ const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {
             tempId = tempId !== -1 ? i : -1
             setFocusId(i)
           }}
-          data-tip={!!(i === 2 && !connected)}
-          data-for={!connected ? 'tooltip-balance-chart' : ''}
+          data-tip={!connected}
+          data-for={i === 0 ? 'tooltip-balance-chart' : 'tooltip-underlying-balance-chart'}
           onMouseLeave={() => {
             setFocusId(tempId)
             tempId = focusId
@@ -53,17 +53,30 @@ const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {
         </ButtonStyle>
       ))}
       {!connected && (
-        <ReactTooltip
-          id="tooltip-balance-chart"
-          backgroundColor="black"
-          borderColor="black"
-          textColor="white"
-        >
-          <TooltipContent>
-            Connect your wallet <br />
-            to see balance chart
-          </TooltipContent>
-        </ReactTooltip>
+        <>
+          <ReactTooltip
+            id="tooltip-balance-chart"
+            backgroundColor="black"
+            borderColor="black"
+            textColor="white"
+          >
+            <TooltipContent>
+              Connect your wallet <br />
+              to see balance chart
+            </TooltipContent>
+          </ReactTooltip>
+          <ReactTooltip
+            id="tooltip-underlying-balance-chart"
+            backgroundColor="black"
+            borderColor="black"
+            textColor="white"
+          >
+            <TooltipContent>
+              Connect your wallet <br />
+              to see underlying balance chart
+            </TooltipContent>
+          </ReactTooltip>
+        </>
       )}
     </ButtonsGroup>
   )
