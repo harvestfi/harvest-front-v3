@@ -1215,26 +1215,9 @@ const AdvancedFarm = () => {
                           src={Info}
                           alt=""
                           data-tip
-                          data-for="tooltip-daily-yield"
+                          data-for="tooltip-monthly-yield"
                           filterColor={filterColor}
                         />
-                        <ReactTooltip
-                          id="tooltip-daily-yield"
-                          backgroundColor="#101828"
-                          borderColor="black"
-                          textColor="white"
-                        >
-                          <NewLabel
-                            size={isMobile ? '10px' : '12px'}
-                            height={isMobile ? '15px' : '18px'}
-                            weight="500"
-                            color="white"
-                          >
-                            Calculated from the current USD value of underlying and reward tokens
-                            used in this farm. Note that this is subject to change with market
-                            prices and TVL fluctuations.
-                          </NewLabel>
-                        </ReactTooltip>
                       </BoxTitle>
                       <BoxValue>
                         {!connected
