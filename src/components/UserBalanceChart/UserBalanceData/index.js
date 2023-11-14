@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
+import { round } from 'lodash'
 import ChartButtonsGroup from '../ChartButtonsGroup'
 import balanceImg from '../../../assets/images/logos/advancedfarm/coins.svg'
 import usdbalance from '../../../assets/images/logos/advancedfarm/money.svg'
@@ -178,7 +179,7 @@ const UserBalanceData = ({ token, vaultPool }) => {
                 </CurContent>
                 <CurContent color="#15B088">
                   {clickedId === 0 ? '$' : ''}
-                  {curContent}
+                  {round(curContent, 8)}
                 </CurContent>
               </FlexDiv>
             </TooltipInfo>

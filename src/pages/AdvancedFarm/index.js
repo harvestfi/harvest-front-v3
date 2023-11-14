@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { find, get, isEqual, isEmpty, isArray, isNaN } from 'lodash'
+import { find, get, isEqual, isEmpty, isArray, isNaN, round } from 'lodash'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import axios from 'axios'
 import { useMediaQuery } from 'react-responsive'
@@ -1502,7 +1502,7 @@ const AdvancedFarm = () => {
                           totalValue === 0 ? (
                             '0.00'
                           ) : (
-                            totalValue.toFixed(8)
+                            round(totalValue, 8)
                           )
                         ) : (
                           <AnimatedDots />
@@ -1574,7 +1574,7 @@ const AdvancedFarm = () => {
                           totalValue === 0 ? (
                             '0.00'
                           ) : (
-                            (totalValue * Number(pricePerFullShare)).toFixed(8)
+                            round(totalValue * Number(pricePerFullShare), 8)
                           )
                         ) : (
                           <AnimatedDots />
@@ -1778,7 +1778,7 @@ const AdvancedFarm = () => {
                             unstakedAmount === 0 ? (
                               '0.00'
                             ) : (
-                              unstakedAmount.toFixed(8)
+                              round(unstakedAmount, 8)
                             )
                           ) : (
                             <AnimatedDots />
@@ -1836,7 +1836,7 @@ const AdvancedFarm = () => {
                             stakedAmount === 0 ? (
                               '0.00'
                             ) : (
-                              stakedAmount.toFixed(8)
+                              round(stakedAmount, 8)
                             )
                           ) : (
                             <AnimatedDots />
@@ -1991,7 +1991,7 @@ const AdvancedFarm = () => {
                             unstakedAmount === 0 ? (
                               '0.00'
                             ) : (
-                              unstakedAmount.toFixed(8)
+                              round(unstakedAmount, 8)
                             )
                           ) : (
                             <AnimatedDots />
@@ -2049,7 +2049,7 @@ const AdvancedFarm = () => {
                             stakedAmount === 0 ? (
                               '0.00'
                             ) : (
-                              stakedAmount.toFixed(8)
+                              round(stakedAmount, 8)
                             )
                           ) : (
                             <AnimatedDots />
