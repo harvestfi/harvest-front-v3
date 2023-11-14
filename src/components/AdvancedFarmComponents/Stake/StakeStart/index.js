@@ -251,7 +251,13 @@ const StakeStart = ({
             >
               <NewLabel weight="500">{progressStep === 4 ? 'Staked' : 'Staking'}</NewLabel>
               <NewLabel display="flex" flexFlow="column" weight="600" align="right">
-                <>{inputAmount !== '' ? inputAmount : <AnimatedDots />}</>
+                <>
+                  {inputAmount !== '' ? (
+                    inputAmount.toFixed(18).replace(/\.?0+$/, '')
+                  ) : (
+                    <AnimatedDots />
+                  )}
+                </>
                 <span>{tokenSymbol !== '' ? `f${tokenSymbol}` : <AnimatedDots />}</span>
               </NewLabel>
             </NewLabel>
