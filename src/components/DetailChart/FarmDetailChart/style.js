@@ -56,7 +56,7 @@ const ButtonGroup = styled.div`
   // margin: 0.8em 1em 0.25em auto;
   color: #fff;
   justify-content: end;
-  padding-top: 10px;
+  padding-top: 25px;
 
   @media screen and (max-width: 992px) {
     margin-top: 15px;
@@ -67,7 +67,23 @@ const ButtonGroup = styled.div`
 `
 
 const ChartDiv = styled.div`
-  height: 100%;
+  height: 346px;
+
+  @media screen and (max-width: 1291px) {
+    height: 365px;
+  }
+
+  @media screen and (max-width: 1262px) {
+    height: 365px;
+  }
+
+  @media screen and (max-width: 1035px) {
+    height: 365px;
+  }
+
+  @media screen and (max-width: 992px) {
+    height: 100%;
+  }
 `
 
 const FilterGroup = styled.div`
