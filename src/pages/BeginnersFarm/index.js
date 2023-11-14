@@ -861,7 +861,33 @@ const BeginnersFarm = () => {
                 <>
                   <BoxCover>
                     <ValueBox height="120px" width="32%">
-                      <BoxTitle>My Balance</BoxTitle>
+                      <BoxTitle>
+                        My Balance
+                        <InfoIcon
+                          className="info"
+                          width={isMobile ? 10 : 16}
+                          src={Info}
+                          alt=""
+                          data-tip
+                          data-for="tooltip-mybalance"
+                          filterColor={filterColor}
+                        />
+                        <ReactTooltip
+                          id="tooltip-mybalance"
+                          backgroundColor="#101828"
+                          borderColor="black"
+                          textColor="white"
+                        >
+                          <NewLabel
+                            size={isMobile ? '10px' : '12px'}
+                            height={isMobile ? '15px' : '18px'}
+                            weight="500"
+                            color="white"
+                          >
+                            It&apos;s the USD value of your total f{id} balance.
+                          </NewLabel>
+                        </ReactTooltip>
+                      </BoxTitle>
                       <BoxValue>
                         {!connected ? (
                           '$0.00'
@@ -879,7 +905,34 @@ const BeginnersFarm = () => {
                       </BoxValue>
                     </ValueBox>
                     <ValueBox height="120px" width="32%">
-                      <BoxTitle>Monthly Yield</BoxTitle>
+                      <BoxTitle>
+                        Monthly Yield
+                        <InfoIcon
+                          className="info"
+                          width={isMobile ? 10 : 16}
+                          src={Info}
+                          alt=""
+                          data-tip
+                          data-for="tooltip-monthly-yield"
+                          filterColor={filterColor}
+                        />
+                        <ReactTooltip
+                          id="tooltip-monthly-yield"
+                          backgroundColor="#101828"
+                          borderColor="black"
+                          textColor="white"
+                        >
+                          <NewLabel
+                            size={isMobile ? '10px' : '12px'}
+                            height={isMobile ? '15px' : '18px'}
+                            weight="500"
+                            color="white"
+                          >
+                            Calculated from the current USD value of tokens used in this farm.
+                            Please note that this is subject to change with market fluctuations.
+                          </NewLabel>
+                        </ReactTooltip>
+                      </BoxTitle>
                       <BoxValue>
                         {!connected
                           ? '$0.00'
@@ -893,7 +946,34 @@ const BeginnersFarm = () => {
                       </BoxValue>
                     </ValueBox>
                     <ValueBox height="120px" width="32%">
-                      <BoxTitle>Daily Yield</BoxTitle>
+                      <BoxTitle>
+                        Daily Yield
+                        <InfoIcon
+                          className="info"
+                          width={isMobile ? 10 : 16}
+                          src={Info}
+                          alt=""
+                          data-tip
+                          data-for="tooltip-daily-yield"
+                          filterColor={filterColor}
+                        />
+                        <ReactTooltip
+                          id="tooltip-daily-yield"
+                          backgroundColor="#101828"
+                          borderColor="black"
+                          textColor="white"
+                        >
+                          <NewLabel
+                            size={isMobile ? '10px' : '12px'}
+                            height={isMobile ? '15px' : '18px'}
+                            weight="500"
+                            color="white"
+                          >
+                            Calculated from the current USD value of tokens used in this farm.
+                            Please note that this is subject to change with market fluctuations.
+                          </NewLabel>
+                        </ReactTooltip>
+                      </BoxTitle>
                       <BoxValue>
                         {!connected
                           ? '$0.00'
@@ -1054,14 +1134,14 @@ const BeginnersFarm = () => {
                       />
                       <ReactTooltip
                         id="tooltip-token-name"
-                        backgroundColor="black"
+                        backgroundColor="#101828"
                         borderColor="black"
                         textColor="white"
                       >
                         <NewLabel
                           size={isMobile ? '10px' : '12px'}
                           height={isMobile ? '15px' : '18px'}
-                          weight="600"
+                          weight="500"
                           color="white"
                         >
                           The interest-bearing fToken. It entitles its holder to auto-compounded
@@ -1092,17 +1172,17 @@ const BeginnersFarm = () => {
                         />
                         <ReactTooltip
                           id="tooltip-balance"
-                          backgroundColor="black"
+                          backgroundColor="#101828"
                           borderColor="black"
                           textColor="white"
                         >
                           <NewLabel
                             size={isMobile ? '10px' : '12px'}
                             height={isMobile ? '15px' : '18px'}
-                            weight="600"
+                            weight="500"
                             color="white"
                           >
-                            This f{id} represents your share in this farm.
+                            Sum of your f{id}.
                           </NewLabel>
                         </ReactTooltip>
                       </NewLabel>
@@ -1148,17 +1228,18 @@ const BeginnersFarm = () => {
                         />
                         <ReactTooltip
                           id="tooltip-underlying-balance"
-                          backgroundColor="black"
+                          backgroundColor="#101828"
                           borderColor="black"
                           textColor="white"
                         >
                           <NewLabel
                             size={isMobile ? '10px' : '12px'}
                             height={isMobile ? '15px' : '18px'}
-                            weight="600"
+                            weight="500"
                             color="white"
                           >
-                            This f{id} represents your share in this farm.
+                            Current amount of underlying tokens you&apos;re entitled to for your f
+                            {id}.
                           </NewLabel>
                         </ReactTooltip>
                       </NewLabel>
@@ -1431,7 +1512,7 @@ const BeginnersFarm = () => {
                         />
                         <ReactTooltip
                           id="tooltip-last-harvest"
-                          backgroundColor="black"
+                          backgroundColor="#101828"
                           borderColor="black"
                           textColor="white"
                           place={isMobile ? 'left' : 'top'}

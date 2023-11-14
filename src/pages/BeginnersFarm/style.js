@@ -241,6 +241,12 @@ const NewLabel = styled.div`
     background: black;
   }
 
+  #tooltip-token-name,
+  #tooltip-balance,
+  #tooltip-underlying-balance {
+    max-width: 300px;
+  }
+
   @media screen and (max-width: 992px) {
     img.icon {
       margin-right: 5px;
@@ -742,6 +748,12 @@ const BoxTitle = styled.div`
   font-size: 14px;
   font-weight: 500;
   line-height: 20px;
+
+  #tooltip-mybalance,
+  #tooltip-monthly-yield,
+  #tooltip-daily-yield {
+    max-width: 300px;
+  }
 `
 
 const BoxValue = styled.div`

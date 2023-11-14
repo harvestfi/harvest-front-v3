@@ -1119,7 +1119,35 @@ const AdvancedFarm = () => {
                 <>
                   <BoxCover>
                     <ValueBox height="120px" width="32%">
-                      <BoxTitle>My Balance</BoxTitle>
+                      <BoxTitle>
+                        My Balance
+                        <InfoIcon
+                          className="info"
+                          width={isMobile ? 10 : 16}
+                          src={Info}
+                          alt=""
+                          data-tip
+                          data-for="tooltip-mybalance"
+                          filterColor={filterColor}
+                        />
+                        <ReactTooltip
+                          id="tooltip-mybalance"
+                          backgroundColor="#101828"
+                          borderColor="black"
+                          textColor="white"
+                        >
+                          <NewLabel
+                            size={isMobile ? '10px' : '12px'}
+                            height={isMobile ? '15px' : '18px'}
+                            weight="500"
+                            color="white"
+                          >
+                            {useIFARM
+                              ? `It's the USD value of all iFARM tokens in your wallet. `
+                              : `It's the USD value of your all staked and unstaked fTokens.`}
+                          </NewLabel>
+                        </ReactTooltip>
+                      </BoxTitle>
                       <BoxValue>
                         {!connected ? (
                           '$0.00'
@@ -1137,7 +1165,35 @@ const AdvancedFarm = () => {
                       </BoxValue>
                     </ValueBox>
                     <ValueBox height="120px" width="32%">
-                      <BoxTitle>Monthly Yield</BoxTitle>
+                      <BoxTitle>
+                        Monthly Yield
+                        <InfoIcon
+                          className="info"
+                          width={isMobile ? 10 : 16}
+                          src={Info}
+                          alt=""
+                          data-tip
+                          data-for="tooltip-monthly-yield"
+                          filterColor={filterColor}
+                        />
+                        <ReactTooltip
+                          id="tooltip-monthly-yield"
+                          backgroundColor="#101828"
+                          borderColor="black"
+                          textColor="white"
+                        >
+                          <NewLabel
+                            size={isMobile ? '10px' : '12px'}
+                            height={isMobile ? '15px' : '18px'}
+                            weight="500"
+                            color="white"
+                          >
+                            {useIFARM
+                              ? `Calculated from the current USD value of iFARM. Note that this is subject to change with iFARM's price fluctuations and the number of all wallets entitled to Harvest's platform rewards.`
+                              : `Calculated from the current USD value of underlying and reward tokens used in this farm. Note that this is subject to change with market prices and TVL fluctuations.`}
+                          </NewLabel>
+                        </ReactTooltip>
+                      </BoxTitle>
                       <BoxValue>
                         {!connected
                           ? '$0.00'
@@ -1151,7 +1207,35 @@ const AdvancedFarm = () => {
                       </BoxValue>
                     </ValueBox>
                     <ValueBox height="120px" width="32%">
-                      <BoxTitle>Daily Yield</BoxTitle>
+                      <BoxTitle>
+                        Daily Yield
+                        <InfoIcon
+                          className="info"
+                          width={isMobile ? 10 : 16}
+                          src={Info}
+                          alt=""
+                          data-tip
+                          data-for="tooltip-daily-yield"
+                          filterColor={filterColor}
+                        />
+                        <ReactTooltip
+                          id="tooltip-daily-yield"
+                          backgroundColor="#101828"
+                          borderColor="black"
+                          textColor="white"
+                        >
+                          <NewLabel
+                            size={isMobile ? '10px' : '12px'}
+                            height={isMobile ? '15px' : '18px'}
+                            weight="500"
+                            color="white"
+                          >
+                            Calculated from the current USD value of underlying and reward tokens
+                            used in this farm. Note that this is subject to change with market
+                            prices and TVL fluctuations.
+                          </NewLabel>
+                        </ReactTooltip>
+                      </BoxTitle>
                       <BoxValue>
                         {!connected
                           ? '$0.00'
@@ -1170,87 +1254,54 @@ const AdvancedFarm = () => {
                   </div>
                 </>
               ) : activeMainTag === 1 ? (
-                useIFARM ? (
-                  <HalfInfo marginBottom="20px">
+                <>
+                  <MyTotalReward
+                    height="120px"
+                    marginBottom="23px"
+                    padding={isMobile ? '24px' : '24px'}
+                  >
                     <NewLabel
-                      weight={700}
-                      size="14px"
-                      height="24px"
-                      padding="10px 15px"
-                      borderRadius="15px 15px 0 0"
+                      size={isMobile ? '12px' : '14px'}
+                      weight="500"
+                      height={isMobile ? '18px' : '20px'}
+                      color="#6F78AA"
                     >
-                      Staking details
+                      Rewards
                     </NewLabel>
-                    <DescInfo>
-                      In this module you can only stake FARM to be entitled to platform profits,
-                      paid out in FARM. You cannot stake iFARM as it’s an interest-bearing token,
-                      which is also entitled to platform rewards by simply holding it in your
-                      wallet.
-                    </DescInfo>
-                  </HalfInfo>
-                ) : (
-                  <>
-                    <MyTotalReward
-                      height="120px"
-                      marginBottom="23px"
-                      padding={isMobile ? '24px' : '24px'}
+                    <RewardValue>
+                      <BoxValue>
+                        {!connected ? (
+                          0
+                        ) : userStats ? (
+                          totalReward === 0 ? (
+                            '$0.00'
+                          ) : totalReward < 0.01 ? (
+                            '<$0.01'
+                          ) : (
+                            `$${formatNumber(totalReward, 2)}`
+                          )
+                        ) : (
+                          <AnimatedDots />
+                        )}
+                      </BoxValue>
+                    </RewardValue>
+                  </MyTotalReward>
+                  <MyBalance marginBottom="23px">
+                    <NewLabel
+                      size={isMobile ? '12px' : '14px'}
+                      weight="600"
+                      height={isMobile ? '18px' : '24px'}
+                      color="#344054"
+                      padding={isMobile ? '9px 13px' : '10px 15px'}
+                      borderBottom="1px solid #F3F6FF"
                     >
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="500"
-                        height={isMobile ? '18px' : '20px'}
-                        color="#6F78AA"
-                      >
-                        Rewards
-                      </NewLabel>
-                      <RewardValue>
-                        {/* <BoxValue>
-                          {!connected ? (
-                            0
-                          ) : userStats ? (
-                            totalReward === 0 ? (
-                              '$0.00'
-                            ) : (
-                              `$${totalReward}`
-                            )
-                          ) : (
-                            <AnimatedDots />
-                          )}
-                        </BoxValue> */}
-                        <BoxValue>
-                          {!connected ? (
-                            0
-                          ) : userStats ? (
-                            totalReward === 0 ? (
-                              '$0.00'
-                            ) : totalReward < 0.01 ? (
-                              '<$0.01'
-                            ) : (
-                              `$${formatNumber(totalReward, 2)}`
-                            )
-                          ) : (
-                            <AnimatedDots />
-                          )}
-                        </BoxValue>
-                      </RewardValue>
-                    </MyTotalReward>
-                    <MyBalance marginBottom="23px">
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="600"
-                        height={isMobile ? '18px' : '24px'}
-                        color="#344054"
-                        padding={isMobile ? '9px 13px' : '10px 15px'}
-                        borderBottom="1px solid #F3F6FF"
-                      >
-                        My Token Rewards
-                      </NewLabel>
-                      <FlexDiv>
-                        <VaultPanelActionsFooter {...viewComponentProps} />
-                      </FlexDiv>
-                    </MyBalance>
-                  </>
-                )
+                      My Token Rewards
+                    </NewLabel>
+                    <FlexDiv>
+                      <VaultPanelActionsFooter {...viewComponentProps} />
+                    </FlexDiv>
+                  </MyBalance>
+                </>
               ) : (
                 <>
                   <HalfInfo padding="25px 18px" marginBottom="23px">
@@ -1401,14 +1452,14 @@ const AdvancedFarm = () => {
                       />
                       <ReactTooltip
                         id="tooltip-token-name"
-                        backgroundColor="black"
+                        backgroundColor="#101828"
                         borderColor="black"
                         textColor="white"
                       >
                         <NewLabel
                           size={isMobile ? '10px' : '12px'}
                           height={isMobile ? '15px' : '18px'}
-                          weight="600"
+                          weight="500"
                           color="white"
                         >
                           {useIFARM
@@ -1440,19 +1491,19 @@ const AdvancedFarm = () => {
                         />
                         <ReactTooltip
                           id="tooltip-balance"
-                          backgroundColor="black"
+                          backgroundColor="#101828"
                           borderColor="black"
                           textColor="white"
                         >
                           <NewLabel
                             size={isMobile ? '10px' : '12px'}
                             height={isMobile ? '15px' : '18px'}
-                            weight="600"
+                            weight="500"
                             color="white"
                           >
                             {useIFARM
-                              ? `The number of i${id} tokens in your wallet.`
-                              : 'This fToken represents your share in this farm.'}
+                              ? `Sum of your staked and unstaked fTokens.`
+                              : 'Sum of your staked and unstaked fTokens.'}
                           </NewLabel>
                         </ReactTooltip>
                       </NewLabel>
@@ -1498,19 +1549,24 @@ const AdvancedFarm = () => {
                         />
                         <ReactTooltip
                           id="tooltip-underlying-balance"
-                          backgroundColor="black"
+                          backgroundColor="#101828"
                           borderColor="black"
                           textColor="white"
                         >
                           <NewLabel
                             size={isMobile ? '10px' : '12px'}
                             height={isMobile ? '15px' : '18px'}
-                            weight="600"
+                            weight="500"
                             color="white"
                           >
-                            {useIFARM
-                              ? `Your i${id} denominated in FARM tokens. Underlying Balance increases over time.`
-                              : `This fToken represents your share in this farm.`}
+                            {useIFARM ? (
+                              `Current amount of LP/Tokens represented by fToken, subject to auto-compounding mechanism at every harvest event`
+                            ) : (
+                              <>
+                                Current amount of LP/Tokens represented by <span>f{id}</span>,
+                                subject to auto-compounding mechanism at every harvest event
+                              </>
+                            )}
                           </NewLabel>
                         </ReactTooltip>
                       </NewLabel>
@@ -1713,14 +1769,14 @@ const AdvancedFarm = () => {
                           />
                           <ReactTooltip
                             id="tooltip-unstaked"
-                            backgroundColor="black"
+                            backgroundColor="#101828"
                             borderColor="black"
                             textColor="white"
                           >
                             <NewLabel
                               size={isMobile ? '10px' : '12px'}
                               height={isMobile ? '15px' : '18px'}
-                              weight="600"
+                              weight="500"
                               color="white"
                             >
                               The number of FARM holdings in your wallet which you can stake.
@@ -1769,14 +1825,14 @@ const AdvancedFarm = () => {
                           />
                           <ReactTooltip
                             id="tooltip-staked"
-                            backgroundColor="black"
+                            backgroundColor="#101828"
                             borderColor="black"
                             textColor="white"
                           >
                             <NewLabel
                               size={isMobile ? '10px' : '12px'}
                               height={isMobile ? '15px' : '18px'}
-                              weight="600"
+                              weight="500"
                               color="white"
                             >
                               The number of staked FARM earning you more FARM from platform&apos;s
@@ -1856,14 +1912,14 @@ const AdvancedFarm = () => {
                           />
                           <ReactTooltip
                             id="tooltip-totalValue"
-                            backgroundColor="black"
+                            backgroundColor="#101828"
                             borderColor="black"
                             textColor="white"
                           >
                             <NewLabel
                               size={isMobile ? '10px' : '12px'}
                               height={isMobile ? '15px' : '18px'}
-                              weight="600"
+                              weight="500"
                               color="white"
                             >
                               Total Value of your Staked and Unstaked FARM
@@ -1924,14 +1980,14 @@ const AdvancedFarm = () => {
                           />
                           <ReactTooltip
                             id="tooltip-unstaked-desc"
-                            backgroundColor="black"
+                            backgroundColor="#101828"
                             borderColor="black"
                             textColor="white"
                           >
                             <NewLabel
                               size={isMobile ? '10px' : '12px'}
                               height={isMobile ? '15px' : '18px'}
-                              weight="600"
+                              weight="500"
                               color="white"
                             >
                               {useIFARM
@@ -1982,14 +2038,14 @@ const AdvancedFarm = () => {
                           />
                           <ReactTooltip
                             id="tooltip-staked-desc"
-                            backgroundColor="black"
+                            backgroundColor="#101828"
                             borderColor="black"
                             textColor="white"
                           >
                             <NewLabel
                               size={isMobile ? '10px' : '12px'}
                               height={isMobile ? '15px' : '18px'}
-                              weight="600"
+                              weight="500"
                               color="white"
                             >
                               {useIFARM
@@ -2210,7 +2266,7 @@ const AdvancedFarm = () => {
                           />
                           <ReactTooltip
                             id="tooltip-last-harvest"
-                            backgroundColor="black"
+                            backgroundColor="#101828"
                             borderColor="black"
                             textColor="white"
                             place={isMobile ? 'left' : 'top'}
