@@ -33,7 +33,7 @@ const filterList = [
   { id: 2, name: 'Underlying Balance History', img: balanceImg },
 ]
 
-const UserBalanceData = ({ token, vaultPool }) => {
+const UserBalanceData = ({ token, vaultPool, totalValue, usdPrice }) => {
   const [clickedId, setClickedId] = useState(0)
   const [selectedState, setSelectedState] = useState('1M')
 
@@ -152,6 +152,13 @@ const UserBalanceData = ({ token, vaultPool }) => {
             z += 1
           }
         }
+        const firstObject = {
+          priceUnderlying: usdPrice,
+          sharePrice: mergedData[0].sharePrice,
+          timestamp: mergedData[0].timestamp,
+          value: totalValue,
+        }
+        mergedData.unshift(firstObject)
       }
       setLoadComplete(flag1 && flag2)
       setApiData(mergedData)
@@ -164,7 +171,7 @@ const UserBalanceData = ({ token, vaultPool }) => {
     }
 
     initData()
-  }, [address, chainId, account])
+  }, [address, chainId, account, totalValue, usdPrice])
 
   return (
     <Container>

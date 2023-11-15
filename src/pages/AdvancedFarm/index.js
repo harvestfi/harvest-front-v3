@@ -1199,7 +1199,13 @@ const AdvancedFarm = () => {
                     </ValueBox>
                   </BoxCover>
                   <div>
-                    <UserBalanceData token={token} vaultPool={vaultPool} tokenSymbol={id} />
+                    <UserBalanceData
+                      token={token}
+                      vaultPool={vaultPool}
+                      tokenSymbol={id}
+                      totalValue={totalValue}
+                      usdPrice={usdPrice}
+                    />
                   </div>
                 </>
               ) : activeMainTag === 1 ? (
