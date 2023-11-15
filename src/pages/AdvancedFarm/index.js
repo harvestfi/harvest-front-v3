@@ -404,19 +404,6 @@ const AdvancedFarm = () => {
   const [unstakedAmount, setUnstakedAmount] = useState(0)
   const firstUnderlyingBalance = useRef(true)
 
-  // let mainTags
-  // if (useIFARM) {
-  //   mainTags = [
-  //     { name: 'Manage', img: Safe },
-  //     { name: 'Details', img: BarChart },
-  //   ]
-  // } else {
-  //   mainTags = [
-  //     { name: 'Manage', img: Safe },
-  //     { name: 'Rewards', img: Treasure },
-  //     { name: 'Details', img: BarChart },
-  //   ]
-  // }
   const mainTags = [
     { name: 'Manage', img: Safe },
     { name: 'Rewards', img: Treasure },
@@ -1485,7 +1472,7 @@ const AdvancedFarm = () => {
                             color="white"
                           >
                             {useIFARM
-                              ? `Sum of your staked and unstaked fTokens.`
+                              ? `Sum of iFARM tokens in your wallet.`
                               : 'Sum of your staked and unstaked fTokens.'}
                           </NewLabel>
                         </ReactTooltip>
@@ -1543,7 +1530,7 @@ const AdvancedFarm = () => {
                             color="white"
                           >
                             {useIFARM ? (
-                              `Current amount of LP/Tokens represented by fToken, subject to auto-compounding mechanism at every harvest event`
+                              `Your iFARM denominated in FARM. Subject to change as iFARM accrues yield. `
                             ) : (
                               <>
                                 Current amount of LP/Tokens represented by <span>f{id}</span>,
