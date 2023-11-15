@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { find, get, isEqual, isEmpty, isArray, isNaN, round } from 'lodash'
+import { find, get, isEqual, isArray, isNaN, round } from 'lodash'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import axios from 'axios'
 import { useMediaQuery } from 'react-responsive'
@@ -395,14 +395,12 @@ const AdvancedFarm = () => {
   const switchStakeMethod = () => setActiveStake(prev => !prev)
 
   const [totalValue, setTotalValue] = useState(0)
-  const [underlyingValue, setUnderlyingValue] = useState(0)
   const [depositedValueUSD, setDepositUsdValue] = useState(0)
   const [balanceAmount, setBalanceAmount] = useState(0)
   const [totalReward, setTotalReward] = useState(0)
   const [rewardTokenPrices, setRewardTokenPrices] = useState([])
   const [stakedAmount, setStakedAmount] = useState(0)
   const [unstakedAmount, setUnstakedAmount] = useState(0)
-  const firstUnderlyingBalance = useRef(true)
 
   const mainTags = [
     { name: 'Manage', img: Safe },
@@ -748,25 +746,6 @@ const AdvancedFarm = () => {
     )
     setDepositUsdValue(depositUsdValue)
   }, [lpTokenBalance, fAssetPool, usdPrice])
-
-  useEffect(() => {
-    const hasZeroValue = underlyingValue === 0
-    if (account && hasZeroValue && (firstUnderlyingBalance.current || !isEmpty(vaultsData))) {
-      const getUnderlyingBalance = async () => {
-        firstUnderlyingBalance.current = false
-        const val = Number(
-          fromWei(
-            get(vaultsData, `${IFARM_TOKEN_SYMBOL}.underlyingBalanceWithInvestmentForHolder`, 0),
-            tokens[IFARM_TOKEN_SYMBOL].decimals,
-            WIDO_BALANCES_DECIMALS,
-          ),
-        )
-        setUnderlyingValue(val)
-      }
-
-      getUnderlyingBalance()
-    }
-  }, [account, vaultsData, underlyingValue, tokens])
 
   const apyDaily = totalApy
     ? (((Number(totalApy) / 100 + 1) ** (1 / 365) - 1) * 100).toFixed(3)
@@ -1547,21 +1526,15 @@ const AdvancedFarm = () => {
                         color="#6F78AA"
                         self="center"
                       >
-                        {useIFARM ? (
-                          !connected ? (
-                            0
-                          ) : isEmpty(vaultsData) ? (
-                            <AnimatedDots />
-                          ) : (
-                            `${formatNumberWido(underlyingValue, WIDO_BALANCES_DECIMALS)} ${id}`
-                          )
-                        ) : !connected ? (
+                        {!connected ? (
                           0
                         ) : lpTokenBalance ? (
                           totalValue === 0 ? (
                             '0.00'
+                          ) : useIFARM ? (
+                            `${(totalValue * Number(pricePerFullShare)).toFixed(8)} ${id}`
                           ) : (
-                            round(totalValue * Number(pricePerFullShare), 8)
+                            (totalValue * Number(pricePerFullShare)).toFixed(8)
                           )
                         ) : (
                           <AnimatedDots />
