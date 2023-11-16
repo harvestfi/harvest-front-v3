@@ -1204,6 +1204,8 @@ const AdvancedFarm = () => {
                       vaultPool={vaultPool}
                       tokenSymbol={id}
                       totalValue={totalValue}
+                      useIFARM={useIFARM}
+                      iFarmPrice={iFarmPrice}
                       usdPrice={usdPrice}
                     />
                   </div>

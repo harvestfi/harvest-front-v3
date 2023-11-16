@@ -141,7 +141,6 @@ const getTokenPriceFromApi = async tokenID => {
 const Portfolio = () => {
   const { push } = useHistory()
   const { connected, balances, account, getWalletBalances } = useWallet()
-  // const account = '0x3264473150ead02a604812c7b5b70fef4a9b4503'
   const { userStats, fetchUserPoolStats, totalPools } = usePools()
   const { profitShareAPY } = useStats()
   const { vaultsData, loadingVaults, farmingBalances, getFarmingBalances } = useVaults()

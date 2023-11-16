@@ -33,12 +33,14 @@ const filterList = [
   { id: 2, name: 'Underlying Balance History', img: balanceImg },
 ]
 
-const UserBalanceData = ({ token, vaultPool, totalValue, usdPrice }) => {
+const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, iFarmPrice, usdPrice }) => {
   const [clickedId, setClickedId] = useState(0)
   const [selectedState, setSelectedState] = useState('1M')
 
   const { account } = useWallet()
-  const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+  const address = useIFARM
+    ? '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
+    : token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
   const chainId = token.chain || token.data.chain
 
   const [apiData, setApiData] = useState({})
@@ -153,12 +155,16 @@ const UserBalanceData = ({ token, vaultPool, totalValue, usdPrice }) => {
           }
         }
         const firstObject = {
-          priceUnderlying: usdPrice,
+          priceUnderlying: useIFARM ? iFarmPrice : usdPrice,
           sharePrice: mergedData[0].sharePrice,
           timestamp: mergedData[0].timestamp,
           value: totalValue,
         }
         mergedData.unshift(firstObject)
+        // console.log('totalValue -------------', totalValue)
+        // console.log('usdPrice -------------', usdPrice)
+        // console.log('totalValue -------------', totalValue)
+        // console.log('mergedData -------------', mergedData)
       }
       setLoadComplete(flag1 && flag2)
       setApiData(mergedData)
@@ -171,7 +177,7 @@ const UserBalanceData = ({ token, vaultPool, totalValue, usdPrice }) => {
     }
 
     initData()
-  }, [address, chainId, account, totalValue, usdPrice])
+  }, [address, chainId, account, totalValue, usdPrice, iFarmPrice, useIFARM])
 
   return (
     <Container>
