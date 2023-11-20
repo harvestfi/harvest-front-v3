@@ -389,7 +389,7 @@ const WithdrawBase = ({
         </TokenInfo>
         <BalanceInfo
           onClick={() => {
-            if (account && pickedToken.symbol !== 'Select') {
+            if (account) {
               setUnstakeBalance(useIFARM ? stakeAmountWei : lpTokenBalance)
               setUnstakeInputValue(
                 Number(

@@ -451,8 +451,10 @@ const DepositBase = ({
                   color="white"
                 >
                   {useBeginnersFarm
-                    ? `Calculation based on the live USD pricing of this farm's underlying tokens. The estimate assumes staked fTokens. Subject to change.`
-                    : 'Based on live USD prices of underlying and reward tokens. Considers current TVL and assumes staked fTokens. Subject to change.'}
+                    ? `Based on live USD prices of tokens involved in this farm. Subject to change due to market fluctuations and the number of users in this farm.`
+                    : useIFARM
+                    ? 'Based on live USD price of iFARM. Considers current APY. Subject to change.'
+                    : 'Based on live USD prices of underlying and reward tokens. Considers current APY and assumes staked fTokens. Subject to change.'}
                 </NewLabel>
               </ReactTooltip>
             </NewLabel>
@@ -520,8 +522,10 @@ const DepositBase = ({
                   color="white"
                 >
                   {useBeginnersFarm
-                    ? `Calculation based on the live USD pricing of this farm's underlying tokens. The estimate assumes staked fTokens. Subject to change.`
-                    : 'Based on live USD prices of underlying and reward tokens. Considers current TVL and assumes staked fTokens. Subject to change.'}
+                    ? `Based on live USD prices of tokens involved in this farm. Subject to change due to market fluctuations and the number of users in this farm.`
+                    : useIFARM
+                    ? 'Based on live USD price of iFARM. Considers current APY. Subject to change.'
+                    : 'Based on live USD prices of underlying and reward tokens. Considers current APY and assumes staked fTokens. Subject to change.'}
                 </NewLabel>
               </ReactTooltip>
             </NewLabel>
@@ -587,7 +591,9 @@ const DepositBase = ({
                   weight="600"
                   color="white"
                 >
-                  You will not receive less than the displayed number of fTokens.
+                  {useBeginnersFarm
+                    ? `You'll receive no less than the displayed number of interest-bearing fTokens.`
+                    : `You will not receive less than the displayed number of fTokens.`}
                 </NewLabel>
               </ReactTooltip>
             </NewLabel>

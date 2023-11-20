@@ -12,7 +12,6 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  font-family: Inter;
 
   @media screen and (min-width: 1921px) {
     flex-direction: row;
@@ -22,7 +21,7 @@ const Container = styled.div`
     width: 100%;
     height: 100%;
     margin: 0;
-    padding-bottom: 150px;
+    padding-bottom: 100px;
   }
 `
 
@@ -46,10 +45,11 @@ const Inner = styled.div`
     padding: 0px 30px 0px;
   }
   @media screen and (max-width: 992px) {
-    padding: 25px 24px 32px 17px;
+    padding: 32px 15px;
     display: flex;
     flex-direction: column;
     gap: 5px;
+    z-index: 0;
   }
 `
 
@@ -62,6 +62,7 @@ const FirstPart = styled.div`
 
   @media screen and (max-width: 992px) {
     width: 100%;
+    margin-bottom: 20px;
   }
 `
 
@@ -82,16 +83,19 @@ const FirstBack = styled.div`
   }
 
   @media screen and (max-width: 992px) {
+    justify-content: center;
     height: 700px;
-    padding: 19px;
+    padding: 34px 34px 50px;
   }
 
   @media screen and (max-width: 768px) {
     height: 530px;
+    padding: 34px 34px 50px;
   }
 
   @media screen and (max-width: 512px) {
-    height: 380px;
+    height: 100%;
+    padding: 34px 34px 50px;
   }
 
   img {
@@ -105,6 +109,12 @@ const FirstBack = styled.div`
     @media screen and (max-width: 1500px) {
       width: 70%;
     }
+    @media screen and (max-width: 992px) {
+      width: 40%;
+    }
+    @media screen and (max-width: 512px) {
+      width: 30%;
+    }
   }
 `
 
@@ -115,11 +125,13 @@ const Title = styled.div`
   margin-bottom: 21px;
   color: #fff;
   padding-top: 75px;
+  letter-spacing: -0.786px;
 
   @media screen and (max-width: 992px) {
-    font-size: 22px;
-    line-height: 27px;
-    margin-bottom: 12px;
+    font-size: 32px;
+    margin-bottom: 16px;
+    padding-top: unset;
+    letter-spacing: -0.64px;
   }
 `
 
@@ -131,9 +143,8 @@ const Desc = styled.div`
   color: #fff;
 
   @media screen and (max-width: 992px) {
-    font-size: 12px;
-    line-height: 18px;
-    margin-bottom: 12px;
+    font-size: 18px;
+    margin-bottom: 21px;
   }
 `
 
@@ -155,9 +166,8 @@ const StartBeginners = styled.button`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 8px 13px;
-    font-size: 10px;
-    line-height: 16px;
+    padding: 14px 23px;
+    font-size: 19px;
   }
 `
 
@@ -200,6 +210,9 @@ const FirstFarmingPart = styled.div`
     @media screen and (max-width: 1300px) {
       width: 60%;
     }
+    @media screen and (max-width: 992px) {
+      width: 51%;
+    }
   }
 
   transition: 0.25s;
@@ -211,9 +224,10 @@ const FirstFarmingPart = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    width: 100%;
-    height: 300px;
-    padding: 22px;
+    justify-content: center;
+    height: 700px;
+    padding: 34px 34px 50px;
+    margin-bottom: 20px;
 
     img.sun {
       width: 80px;
@@ -221,11 +235,13 @@ const FirstFarmingPart = styled.div`
   }
 
   @media screen and (max-width: 768px) {
-    height: 250px;
+    height: 530px;
+    padding: 34px 34px 50px;
   }
 
   @media screen and (max-width: 512px) {
-    height: 188px;
+    height: 100%;
+    padding: 34px 34px 50px;
   }
 `
 
@@ -246,9 +262,8 @@ const DirectBtn = styled.button`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 5px 8px;
-    font-size: 7px;
-    line-height: 10px;
+    padding: 14px 23px;
+    font-size: 19px;
   }
 `
 
@@ -272,6 +287,16 @@ const AdvancedFarms = styled.div`
     right: 7%;
     height: 100%;
     z-index: -1;
+    @media screen and (max-width: 1300px) {
+      width: 27%;
+      bottom: -33%;
+      right: 5%;
+    }
+    @media screen and (max-width: 992px) {
+      width: 23%;
+      bottom: -30%;
+      right: 4%;
+    }
   }
   transition: 0.25s;
   cursor: pointer;
@@ -282,20 +307,23 @@ const AdvancedFarms = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    width: 100%;
-    padding: 22px;
-    height: 300px;
+    justify-content: center;
+    height: 700px;
+    padding: 34px 34px 50px;
+
     img.sun {
       width: 80px;
     }
   }
 
   @media screen and (max-width: 768px) {
-    height: 250px;
+    height: 530px;
+    padding: 34px 34px 50px;
   }
 
   @media screen and (max-width: 512px) {
-    height: 188px;
+    height: 100%;
+    padding: 34px 34px 50px;
   }
 `
 
@@ -305,11 +333,13 @@ const FirstFarmTitle = styled.div`
   line-height: 32px;
   margin-bottom: 15px;
   color: #fff;
+  letter-spacing: -0.673px;
 
   @media screen and (max-width: 992px) {
-    font-size: 19px;
-    line-height: 18px;
-    margin-bottom: 8px;
+    font-size: 28px;
+    line-height: 48px;
+    margin-bottom: 16px;
+    letter-spacing: -0.56px;
   }
 `
 
@@ -321,9 +351,8 @@ const FirstFarmDesc = styled.div`
   color: #fff;
 
   @media screen and (max-width: 992px) {
-    font-size: 10px;
-    line-height: 12px;
-    margin-bottom: 14px;
+    font-size: 18px;
+    margin-bottom: 21px;
   }
 `
 
@@ -333,11 +362,13 @@ const AdvancedTitle = styled.div`
   line-height: 32px;
   margin-bottom: 15px;
   color: #1f2937;
+  letter-spacing: -0.673px;
 
   @media screen and (max-width: 992px) {
-    font-size: 19px;
-    line-height: 18px;
-    margin-bottom: 8px;
+    font-size: 32px;
+    line-height: 48px;
+    margin-bottom: 16px;
+    letter-spacing: -0.64px;
   }
 `
 
@@ -349,9 +380,9 @@ const AdvancedDesc = styled.div`
   color: #1f2937;
 
   @media screen and (max-width: 992px) {
-    font-size: 10px;
-    line-height: 12px;
-    margin-bottom: 14px;
+    font-size: 18px;
+    line-height: 22px;
+    margin-bottom: 21px;
   }
 `
 
@@ -372,9 +403,9 @@ const AdvancedDirectBtn = styled.button`
   }
 
   @media screen and (max-width: 992px) {
-    font-size: 6px;
-    line-height: 10px;
-    padding: 5px 8px;
+    font-size: 18px;
+    line-height: 28px;
+    padding: 14px 23px;
   }
 `
 

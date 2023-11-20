@@ -40,12 +40,19 @@ html {
     @media screen and (max-width: 992px) {
       .offcanvas {
         display: block;
-        width: 70% !important;
+        width: 100% !important;
+        height: fit-content !important;
+        top: unset!important;
+        z-index: 1500;
 
         .offcanvas-body {
           padding: 0;
         }
       }
+    }
+
+    button {
+      font-family: 'Inter', sans-serif;
     }
   }
 

@@ -241,6 +241,16 @@ const NewLabel = styled.div`
     background: black;
   }
 
+  #tooltip-token-name,
+  #tooltip-balance,
+  #tooltip-underlying-balance {
+    max-width: 300px;
+  }
+
+  span {
+    font-weight: 700;
+  }
+
   @media screen and (max-width: 992px) {
     img.icon {
       margin-right: 5px;
@@ -713,7 +723,6 @@ const GuidePart = styled.div`
   width: fit-content;
   color: #1f2937;
   text-align: center;
-  font-family: Inter;
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
@@ -809,6 +818,12 @@ const BoxTitle = styled.div`
   font-size: 14px;
   font-weight: 500;
   line-height: 20px;
+
+  #tooltip-mybalance,
+  #tooltip-monthly-yield,
+  #tooltip-daily-yield {
+    max-width: 300px;
+  }
 `
 
 const BoxValue = styled.div`
@@ -1071,18 +1086,14 @@ const NetDetailItem = styled.div`
 
 const NetDetailTitle = styled.div`
   color: #475467;
-  font-family: Inter;
   font-size: 14px;
-  font-style: normal;
   font-weight: 400;
   line-height: 30px;
 `
 
 const NetDetailContent = styled.div`
   color: #475467;
-  font-family: Inter;
   font-size: 14px;
-  font-style: normal;
   font-weight: 500;
   line-height: 30px;
   padding-left: 5px;

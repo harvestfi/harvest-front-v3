@@ -240,7 +240,7 @@ const ApexChart = ({
       <text
         orientation="left"
         className="recharts-text recharts-cartesian-axis-tick-value"
-        x={isMobile ? x + 30 : x}
+        x={isMobile ? x + 30 : path.length > 8 ? x + 10 : x}
         y={y}
         width={60}
         height={310}

@@ -141,7 +141,7 @@ const getTokenPriceFromApi = async tokenID => {
 const Portfolio = () => {
   const { push } = useHistory()
   const { connected, balances, account, getWalletBalances } = useWallet()
-  // const account = '0x3264473150ead02a604812c7b5b70fef4a9b4503'
+  // const account = '0x0550bED1C94AFBd468aa739852632D7e9b4c2F86'
   const { userStats, fetchUserPoolStats, totalPools } = usePools()
   const { profitShareAPY } = useStats()
   const { vaultsData, loadingVaults, farmingBalances, getFarmingBalances } = useVaults()
@@ -1148,10 +1148,10 @@ const Portfolio = () => {
               <>
                 <EmptyPanel>
                   <EmptyInfo weight={600} size={16} height={24} color="#101828">
-                    Looks like you’re not farming anywhere.
+                    Looks like you&apos;re not farming anywhere.
                   </EmptyInfo>
                   <EmptyInfo weight={400} size={14} height={20} color="#475467" marginTop="4px">
-                    Let’s put your assets to work!
+                    Let&apos;s put your assets to work!
                   </EmptyInfo>
 
                   <EmptyInfo weight={500} size={16} height={21} marginTop="25px">

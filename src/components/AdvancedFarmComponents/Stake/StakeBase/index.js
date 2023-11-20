@@ -7,7 +7,7 @@ import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import ArrowDown from '../../../../assets/images/logos/beginners/arrow-narrow-down.svg'
 import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.svg'
 import AnimatedDots from '../../../AnimatedDots'
-import { POOL_BALANCES_DECIMALS } from '../../../../constants'
+import { MAX_DECIMALS } from '../../../../constants'
 import { useWallet } from '../../../../providers/Wallet'
 import { CHAIN_IDS } from '../../../../data/constants'
 import { isSpecialApp } from '../../../../utils'
@@ -164,7 +164,11 @@ const StakeBase = ({
           Amount to Stake
         </NewLabel>
         <AmountInputSection>
-          <TokenAmount type="number" value={inputAmount} onChange={onInputBalance} />
+          <TokenAmount
+            type="number"
+            value={inputAmount.toFixed(18).replace(/\.?0+$/, '')}
+            onChange={onInputBalance}
+          />
           <button
             className="max-btn"
             type="button"
@@ -190,7 +194,9 @@ const StakeBase = ({
           {!connected ? (
             0
           ) : lpTokenBalance ? (
-            fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, POOL_BALANCES_DECIMALS, true)
+            Number(fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true))
+              .toFixed(18)
+              .replace(/\.?0+$/, '')
           ) : (
             <AnimatedDots />
           )}

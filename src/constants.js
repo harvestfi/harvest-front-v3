@@ -518,6 +518,7 @@ export const WIDO_BALANCES_DECIMALS = 5
 export const POOL_BALANCES_DECIMALS = 8
 export const WIDO_EXTEND_DECIMALS = 9
 export const MAX_BALANCES_DECIMALS = 12
+export const MAX_DECIMALS = 18
 
 export const MIGRATING_VAULTS = []
 
