@@ -331,8 +331,19 @@ const AdvancedFarm = () => {
   const totalStaked = get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)
   const lpTokenApprovedBalance = get(userStats, `[${fAssetPool.id}]['lpTokenApprovedBalance']`, 0)
 
+  const tempPricePerFullShare = useIFARM
+    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
+    : get(token, `pricePerFullShare`, 0)
+  const pricePerFullShare = Number(
+    fromWei(
+      tempPricePerFullShare,
+      useIFARM ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0) : token.decimals,
+    ),
+  )
+
   const usdPrice =
-    token.usdPrice || (token.data && token.data.lpTokenData && token.data.lpTokenData.price)
+    Number(token.usdPrice) * pricePerFullShare ||
+    Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price) * pricePerFullShare
 
   // Deposit
   const [depositStart, setDepositStart] = useState(false)
@@ -849,13 +860,6 @@ const AdvancedFarm = () => {
   const rewardsEarned = get(userStats, `[${fAssetPool.id}]['rewardsEarned']`, 0)
 
   const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
-  const tempPricePerFullShare = useIFARM
-    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
-    : get(token, `pricePerFullShare`, 0)
-  const pricePerFullShare = fromWei(
-    tempPricePerFullShare,
-    useIFARM ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0) : token.decimals,
-  )
 
   useEffect(() => {
     const fetchData = async () => {

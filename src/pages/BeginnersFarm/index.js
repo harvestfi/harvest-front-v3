@@ -271,8 +271,19 @@ const BeginnersFarm = () => {
   const lpTokenBalance = get(userStats, `[${fAssetPool.id}]['lpTokenBalance']`, 0)
   const totalStaked = get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)
 
+  const tempPricePerFullShare = useIFARM
+    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
+    : get(token, `pricePerFullShare`, 0)
+  const pricePerFullShare = Number(
+    fromWei(
+      tempPricePerFullShare,
+      useIFARM ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0) : token.decimals,
+    ),
+  )
+
   const usdPrice =
-    token.usdPrice || (token.data && token.data.lpTokenData && token.data.lpTokenData.price)
+    Number(token.usdPrice) * pricePerFullShare ||
+    Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price) * pricePerFullShare
 
   // Deposit
   const [depositStart, setDepositStart] = useState(false)
@@ -739,14 +750,6 @@ const BeginnersFarm = () => {
     chain === CHAIN_IDS.ETH_MAINNET ? '10' : chain === CHAIN_IDS.POLYGON_MAINNET ? '5' : '7'
   const harvestTreasury =
     chain === CHAIN_IDS.ETH_MAINNET ? '5' : chain === CHAIN_IDS.POLYGON_MAINNET ? '3' : '3'
-
-  const tempPricePerFullShare = useIFARM
-    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
-    : get(token, `pricePerFullShare`, 0)
-  const pricePerFullShare = fromWei(
-    tempPricePerFullShare,
-    useIFARM ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0) : token.decimals,
-  )
 
   return (
     <DetailView fontColor={fontColor}>
