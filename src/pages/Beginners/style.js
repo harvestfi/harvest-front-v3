@@ -19,7 +19,7 @@ const Container = styled.div`
     height: 100%;
     margin: 0;
     justify-content: start;
-    padding-bottom: 150px;
+    padding-bottom: 100px;
   }
 `
 
@@ -31,13 +31,18 @@ const TopSection = styled.div`
   justify-content: center;
   padding: 100px;
   background: #15b088;
+
+  @media screen and (max-width: 992px) {
+    height: 325px;
+    padding: 0px 25px;
+    text-align: center;
+  }
 `
 
 const Inner = styled.div`
-  padding: 60px 100px 60px;
+  padding: 60px 100px;
   width: 100%;
   margin: auto;
-  // min-height: 765px;
 
   @media screen and (min-width: 1921px) {
     width: 1450px;
@@ -45,8 +50,16 @@ const Inner = styled.div`
     height: 800px;
   }
 
+  @media screen and (max-width: 1200px) {
+    padding: 60px 40px;
+  }
+
   @media screen and (max-width: 992px) {
     padding: 22px 37px;
+  }
+
+  @media screen and (max-width: 512px) {
+    padding: 32px 15px;
   }
 `
 
@@ -81,12 +94,12 @@ const HeaderDesc = styled.div`
   font-size: 16px;
   font-weight: 400;
   line-height: 24px;
-
   margin-top: 4px;
   margin-bottom: 11px;
 
   @media screen and (max-width: 992px) {
-    margin-bottom: 22px;
+    margin-top: 15px;
+    margin-bottom: 18px;
   }
 `
 
@@ -100,6 +113,10 @@ const HeaderBadge = styled.div`
   line-height: 15px;
   display: flex;
   gap: 9px;
+
+  @media screen and (max-width: 992px) {
+    margin: 0px auto;
+  }
 
   div.badge-text {
     color: #fff;

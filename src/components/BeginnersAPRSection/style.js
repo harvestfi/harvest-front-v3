@@ -25,16 +25,18 @@ const Container = styled.a`
   }
 
   @media screen and (max-width: 992px) {
-    min-height: 200px;
-    border-radius: 5px;
+    min-height: 350px;
+  }
+  @media screen and (max-width: 512px) {
+    min-height: 260px;
   }
 `
 
 const Percent = styled.div`
-  border-radius: 18px;
+  border-radius: 25px;
   background: white;
   font-weight: 500;
-  font-size: 16px;
+  font-size: 17px;
   line-height: 31px;
   color: #344054;
   transition: 0.25s;
@@ -48,11 +50,10 @@ const Percent = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    font-size: 9px;
-    line-height: 17px;
-    font-weight: 500;
-    display: flex;
-    padding: 1.783px 8.915px 1.783px 7.132px;
+    font-size: 14px;
+    line-height: 26px;
+    padding: 2.5px 13px;
+    border-radius: 21px;
   }
 `
 
@@ -62,9 +63,17 @@ const Section = styled.div`
   padding-top: 80px;
 
   @media screen and (max-width: 992px) {
+    padding-top: 55px;
     img.token-icon {
-      width: 100px;
-      height: 100px;
+      width: 130px;
+      height: 130px;
+    }
+  }
+  @media screen and (max-width: 512px) {
+    padding-top: 15px;
+    img.token-icon {
+      width: 130px;
+      height: 130px;
     }
   }
 `
@@ -75,7 +84,7 @@ const TopSection = styled.div`
   padding: 30px 35px;
 
   @media screen and (max-width: 992px) {
-    padding: 12px 15px;
+    padding: 15px 15px;
   }
 `
 
@@ -95,17 +104,17 @@ const Network = styled.div`
   gap: 7px;
 
   @media screen and (max-width: 992px) {
-    padding: 3.401px 9.521px;
-    border-radius: 14.261px;
-    border: 1.02px solid #fff;
-    font-size: 9.521px;
+    padding: 5px 14px;
+    border-radius: 21px;
+    border: 1.5px solid #fff;
+    font-size: 14px;
     font-weight: 500;
-    line-height: 13.602px;
-    gap: 4px;
+    line-height: 20px;
+    gap: 6px;
 
     img {
-      width: 12px;
-      height: 12px;
+      width: 17.5px;
+      height: 17.5px;
     }
   }
 `
