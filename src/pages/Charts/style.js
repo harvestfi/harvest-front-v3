@@ -11,7 +11,6 @@ const Container = styled.div`
   margin-left: 280px;
   display: flex;
   justify-content: center;
-  font-family: Inter;
 
   @media screen and (min-width: 1921px) {
     flex-direction: row;

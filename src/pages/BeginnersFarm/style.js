@@ -652,9 +652,7 @@ const GuidePart = styled.div`
   width: fit-content;
   color: #fff;
   text-align: center;
-  font-family: Inter;
   font-size: 14px;
-  font-style: normal;
   font-weight: 500;
   line-height: 20px;
   margin-right: 10px;
@@ -993,18 +991,14 @@ const NetDetailItem = styled.div`
 
 const NetDetailTitle = styled.div`
   color: #fff;
-  font-family: Inter;
   font-size: 14px;
-  font-style: normal;
   font-weight: 400;
   line-height: 30px;
 `
 
 const NetDetailContent = styled.div`
   color: #fff;
-  font-family: Inter;
   font-size: 14px;
-  font-style: normal;
   font-weight: 500;
   line-height: 30px;
   padding-left: 5px;

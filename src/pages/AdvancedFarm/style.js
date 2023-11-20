@@ -723,7 +723,6 @@ const GuidePart = styled.div`
   width: fit-content;
   color: #1f2937;
   text-align: center;
-  font-family: Inter;
   font-size: 14px;
   font-style: normal;
   font-weight: 500;
@@ -1087,18 +1086,14 @@ const NetDetailItem = styled.div`
 
 const NetDetailTitle = styled.div`
   color: #475467;
-  font-family: Inter;
   font-size: 14px;
-  font-style: normal;
   font-weight: 400;
   line-height: 30px;
 `
 
 const NetDetailContent = styled.div`
   color: #475467;
-  font-family: Inter;
   font-size: 14px;
-  font-style: normal;
   font-weight: 500;
   line-height: 30px;
   padding-left: 5px;
