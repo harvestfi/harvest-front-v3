@@ -1,5 +1,6 @@
 import React from 'react'
 import { useHistory } from 'react-router-dom'
+import { useMediaQuery } from 'react-responsive'
 import FristBg from '../../assets/images/logos/home/beginner-coins.svg'
 import FirstFarmCloud from '../../assets/images/logos/home/new-farming.png'
 import AdvancedBottom from '../../assets/images/logos/home/advanced-coins.svg'
@@ -28,6 +29,7 @@ import { ROUTES } from '../../constants'
 const Home = () => {
   const { push } = useHistory()
   const { pageBackColor, fontColor } = useThemeContext()
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   return (
     <Container pageBackColor={pageBackColor} fontColor={fontColor}>
@@ -45,7 +47,7 @@ const Home = () => {
                 push(ROUTES.BEGINNERS)
               }}
             >
-              Get Started Now
+              {isMobile ? 'Get Started' : 'Get Started Now'}
             </StartBeginners>
             <img src={FristBg} alt="bg" />
           </FirstBack>
