@@ -38,6 +38,7 @@ import { CHAIN_IDS } from '../../data/constants'
 import { usePools } from '../../providers/Pools'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
+import { fromWei } from '../../services/web3'
 import { formatAddress, isSpecialApp } from '../../utils'
 import Social from '../Social'
 import {
@@ -294,7 +295,16 @@ const getChainIcon = chainNum => {
 }
 
 const Sidebar = ({ width }) => {
-  const { account, connectAction, disconnectAction, chainId, connected, setSelChain } = useWallet()
+  const {
+    account,
+    connectAction,
+    disconnectAction,
+    chainId,
+    connected,
+    setSelChain,
+    balances,
+    getWalletBalances,
+  } = useWallet()
   const { disableWallet } = usePools()
 
   const {
@@ -329,6 +339,8 @@ const Sidebar = ({ width }) => {
   const [mobileWalletShow, setMobileWalletShow] = useState(false)
   const [mobileConnectShow, setMobileConnectShow] = useState(false)
   const [copyAddress, setCopyAddress] = useState('Copy Address')
+  const [balanceETH, setBalanceETH] = useState('')
+  const [balanceUSDC, setBalanceUSDC] = useState('')
 
   const handleMobileClose = () => setMobileShow(false)
   const handleMobileShow = () => setMobileShow(true)
@@ -345,6 +357,45 @@ const Sidebar = ({ width }) => {
       }, 1500)
     })
   }
+
+  const handleMobileWalletDetailShow = async () => {
+    const showBalanceTokens =
+      chainId === CHAIN_IDS.BASE
+        ? ['WETH_base', 'USDC_base']
+        : chainId === CHAIN_IDS.POLYGON_MAINNET
+        ? ['WETH_polygon', 'USDC_polygon']
+        : chainId === CHAIN_IDS.ARBITRUM_ONE
+        ? ['WETH_arbitrum', 'USDC_arbitrum']
+        : ['WETH', 'USDC']
+    handleMobileWalletShow()
+    await getWalletBalances(showBalanceTokens, false, true)
+  }
+
+  useEffect(() => {
+    console.log('balances ------------', balances)
+    const ethBalance = fromWei(
+      chainId === CHAIN_IDS.BASE
+        ? balances.WETH_base
+        : chainId === CHAIN_IDS.POLYGON_MAINNET
+        ? balances.WETH_polygon
+        : chainId === CHAIN_IDS.ARBITRUM_ONE
+        ? balances.WETH_arbitrum
+        : balances.WETH,
+      18,
+    )
+    const usdcBalance = fromWei(
+      chainId === CHAIN_IDS.BASE
+        ? balances.USDC_base
+        : chainId === CHAIN_IDS.POLYGON_MAINNET
+        ? balances.USDC_polygon
+        : chainId === CHAIN_IDS.ARBITRUM_ONE
+        ? balances.USDC_arbitrum
+        : balances.USDC,
+      6,
+    )
+    setBalanceETH(ethBalance)
+    setBalanceUSDC(usdcBalance)
+  }, [balances, chainId])
 
   const directAction = path => {
     if (path === ROUTES.PORTFOLIO || path === ROUTES.ANALYTIC || path === ROUTES.BEGINNERS) {
@@ -724,7 +775,9 @@ const Sidebar = ({ width }) => {
                     <img src={connectAvatarMobile} alt="" />
                   </ConnectAvatar>
                   <Address>{formatAddress(account)}</Address>
-                  <MobileAmount>0.50301 ETH | 812.12 USDC</MobileAmount>
+                  <MobileAmount>
+                    {Number(balanceETH).toFixed(5)} ETH | {Number(balanceUSDC).toFixed(2)} USDC
+                  </MobileAmount>
                   <MobileWalletBtn>
                     <MobileWalletButton onClick={handleCopyAddress}>
                       {copyAddress}
@@ -836,7 +889,7 @@ const Sidebar = ({ width }) => {
               onClick={
                 connected
                   ? () => {
-                      handleMobileWalletShow()
+                      handleMobileWalletDetailShow()
                     }
                   : () => {
                       handleMobileConnectShow()
