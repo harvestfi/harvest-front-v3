@@ -527,7 +527,6 @@ const BeginnersFarm = () => {
   useEffect(() => {
     if (supTokenList.length > 0) {
       for (let i = 0; i < supTokenList.length; i += 1) {
-        console.log(supTokenList[i].symbol)
         if (id === 'USDbC_base') {
           if (supTokenList[i].symbol === 'USDbC') {
             setPickedTokenDepo(supTokenList[i])
@@ -988,7 +987,13 @@ const BeginnersFarm = () => {
                     </ValueBox>
                   </BoxCover>
                   <div>
-                    <UserBalanceData token={token} vaultPool={vaultPool} tokenSymbol={id} />
+                    <UserBalanceData
+                      token={token}
+                      vaultPool={vaultPool}
+                      tokenSymbol={id}
+                      totalValue={totalValue}
+                      usdPrice={usdPrice}
+                    />
                   </div>
                 </>
               ) : (
