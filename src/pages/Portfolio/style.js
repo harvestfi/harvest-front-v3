@@ -21,7 +21,7 @@ const Container = styled.div`
     width: 100%;
     height: 100%;
     margin: 0;
-    padding-bottom: 150px;
+    padding-bottom: 100px;
   }
 `
 

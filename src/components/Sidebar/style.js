@@ -31,7 +31,8 @@ const Container = styled.div`
     border: none;
     bottom: 0;
     height: fit-content;
-    z-index: 1048;
+    z-index: 10;
+    background: #f2f5ff;
   }
 `
 
@@ -168,11 +169,11 @@ const Link = styled.button`
   }
 
   @media screen and (max-width: 992px) {
-    color: #000;
+    color: #15202b;
     text-align: center;
-    font-size: 16.494px;
-    font-weight: 400;
-    line-height: 21.649px; /* 131.25% */
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 24px;
     ${props =>
       props.enabled === 'false'
         ? `
@@ -188,6 +189,8 @@ const Link = styled.button`
       props.active
         ? `
         font-weight: bold;
+        background: unset;
+        color: #15b088;
     `
         : `
     `}
@@ -355,68 +358,87 @@ const MobileView = styled.div`
 `
 
 const MobileConnectBtn = styled.div`
-  width: 100%;
-  justify-content: center;
-  display: flex;
-  padding: 7px 13px;
-  border-radius: 6.15px;
-  border: 0.769px solid #000;
-  background: #000;
-  box-shadow: 0px 0.76875px 1.5375px 0px rgba(16, 24, 40, 0.05);
-  color: #fff;
-  font-size: 12.3px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 18.45px; /* 150% */
-
-  .connect-wallet {
-    margin-right: 8px;
-  }
+  padding: 2px;
 `
 
 const MobileActionsContainer = styled.div`
-  height: 100%;
-  width: 100%;
-  background-size: cover;
-  z-index: 10;
-  overflow: scroll;
-  padding: 15px 36px 15px 11px;
-  flex-direction: column;
-  animation: fadeIn;
-  animation-duration: 0.45s;
+  padding: 19px 19px 0px;
+  border-radius: 15px 15px 0px 0px;
+  background: #f2f5ff;
+  box-shadow: 0px -4px 4px 0px rgba(0, 0, 0, 0.1);
+`
 
-  @media screen and (max-width: 992px) {
-    padding: 25px;
+const MobileWalletTop = styled.div`
+  display: flex;
+  justify-content: space-between;
+`
+
+const MobileWalletTopNet = styled.div`
+  display: flex;
+  margin: auto 0px;
+
+  img.chainIcon {
+    padding: 3px 5px;
+    border-radius: 2px;
+    background: #fff;
+  }
+
+  img.chainStatus {
+    margin: auto 5px;
   }
 `
 
-const MobileLinksContainer = styled.div`
-  justify-content: space-between;
-  align-items: center;
-  margin: 0 0px auto;
-
-  a.logo {
-    display: flex;
-    align-items: inherit;
-    text-decoration: none;
-    font-weight: 700;
-    font-size: 16px;
-
-    &:after {
-      margin-left: 22px;
-      display: block;
-      content: 'Harvest';
-      color: ${props => props.color};
-    }
+const MobileWalletBody = styled.div`
+  display: flex;
+  flex-flow: column;
+  padding: 25px 25px 0px;
+  &.connect-body {
+    padding: 80px 25px;
   }
+`
+
+const MobileWalletBtn = styled.div`
+  display: flex;
+  justify-content: space-evenly;
+  padding: 25px 0px;
+`
+
+const MobileAmount = styled.div`
+  color: #6b6b6b;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 28px;
+  text-align: center;
+`
+
+const MobileWalletButton = styled.div`
+  color: #000;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 600;
+  padding: 10px 18px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  cursor: pointer;
+
+  &.connect-button {
+    padding: 10px 40px;
+  }
+`
+
+const SocialMobileWrapper = styled.div`
+  margin: auto;
+  width: 50%;
+  padding: 8px 16px;
 `
 
 const MobileLinkContainer = styled.div`
   display: flex;
   position: relative;
-  padding: 4px;
-  margin-bottom: 15px;
-  border-radius: 10px;
+  padding-bottom: 12px;
+  margin: auto;
+  width: 50%;
 
   &:last-child {
     margin-bottom: 0;
@@ -453,15 +475,6 @@ const MobileLink = styled.button`
   }
 `
 
-const MobileFollow = styled.div`
-  left: 12px;
-  display: flex;
-  justify-content: space-between;
-  width: 90%;
-  position: absolute;
-  bottom: 5px;
-`
-
 const ConnectAvatar = styled.div`
   display: flex;
   align-items: center;
@@ -473,12 +486,22 @@ const ConnectAvatar = styled.div`
   img {
     margin-right: 5px;
   }
+
+  @media screen and (max-width: 992px) {
+    justify-content: center;
+  }
 `
 
 const Address = styled.span`
   font-size: 16px;
   font-weight: 600;
   line-height: 22px;
+
+  @media screen and (max-width: 992px) {
+    text-align: center;
+    line-height: 28px;
+    margin: 4px auto;
+  }
 `
 
 const ThemeMode = styled.div`
@@ -666,13 +689,12 @@ const MobileToggle = styled.img`
 `
 
 const OffcanvasDiv = styled(Offcanvas)`
-  background-color: ${props => props.backcolor} !important;
+  background-color: #f2f5ff !important;
+  box-shadow: 0px -4px 4px 0px rgba(0, 0, 0, 0.1);
+  border-radius: 15px 15px 0px 0px;
+  border-left: unset !important;
   color: ${props => props.fontcolor};
   transition: 0.25s;
-  box-shadow: 0px 4px 4px 0px rgba(0, 0, 0, 0.25);
-  border-top: 1px solid #e9e9e9;
-  border-right: 1px solid #e9e9e9;
-  border-left: 1px solid #e9e9e9 !important;
   a.logo {
     color: ${props => props.fontcolor};
   }
@@ -700,12 +722,8 @@ const Logo = styled.div`
   line-height: 36px; /* 150% */
 
   @media screen and (max-width: 992px) {
-    border-bottom: 1px solid #f0f0f0;
-    padding-bottom: 25px;
-    margin-bottom: 9px;
-    img {
-      margin-right: 22px;
-    }
+    display: flex;
+    justify-content: end;
   }
 `
 
@@ -769,9 +787,9 @@ const LinkMobile = styled.button`
     props.active
       ? `
       font-weight: 500;
-      color: #ff9400;
+      color: #15B088;
       img {
-        filter: invert(52%) sepia(76%) saturate(706%) hue-rotate(358deg) brightness(101%) contrast(108%);
+        filter: invert(56%) sepia(65%) saturate(2880%) hue-rotate(127deg) brightness(93%) contrast(84%);
       }
   `
       : `
@@ -789,18 +807,8 @@ const MobileMenuContainer = styled.div`
 `
 
 const ConnectSection = styled.div`
+  cursor: pointer;
   display: flex;
-  justify-content: center;
-  padding: 7px 15px 20px;
-
-  ${props =>
-    props.connected
-      ? `
-       display: none;
-      `
-      : `
-        display: flex;
-      `}
 `
 
 const MoreBtn = styled.button`
@@ -833,11 +841,16 @@ export {
   MobileConnectBtn,
   MobileToggle,
   OffcanvasDiv,
+  MobileWalletTop,
+  MobileWalletTopNet,
+  MobileWalletBody,
+  MobileWalletBtn,
+  MobileAmount,
+  MobileWalletButton,
   MobileActionsContainer,
-  MobileLinksContainer,
+  SocialMobileWrapper,
   MobileLinkContainer,
   MobileLink,
-  MobileFollow,
   ConnectAvatar,
   ThemeMode,
   SideIcons,
