@@ -155,7 +155,7 @@ const StakeStart = ({
       }
       if (bStakeSuccess) {
         setProgressStep(4)
-        setBtnName('Success! Close this Window.')
+        setBtnName('Success! Close this window.')
         setStakeFailed(false)
         setStartSpinner(false)
       } else {

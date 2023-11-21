@@ -113,7 +113,7 @@ const UnstakeStart = ({
         setStartSpinner(false)
         setUnstakeFailed(false)
         setProgressStep(2)
-        setBtnName('Success! Close this Window.')
+        setBtnName('Success! Close this window.')
       } else {
         setStartSpinner(false)
         setUnstakeFailed(true)

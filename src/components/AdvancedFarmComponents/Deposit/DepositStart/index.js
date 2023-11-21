@@ -247,7 +247,7 @@ const DepositStart = ({
       setStartSpinner(false)
       setDepositFailed(false)
       setProgressStep(4)
-      setButtonName('Success! Close the Window.')
+      setButtonName('Success! Close this window.')
     } else if (progressStep === 4) {
       setQuoteValue(null)
       setSelectToken(false)
