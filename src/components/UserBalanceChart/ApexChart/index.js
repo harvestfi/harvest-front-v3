@@ -12,14 +12,9 @@ import {
 import { useWindowWidth } from '@react-hook/window-size'
 import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { ceil10, floor10, round10 } from '../../../utils'
+import { ceil10, floor10, round10, numberWithCommas } from '../../../utils'
 import { LoadingDiv, NoData } from './style'
 import { fromWei } from '../../../services/web3'
-
-function numberWithCommas(x) {
-  if (x < 1000) return x
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-}
 
 function formatDateTime(value) {
   const date = new Date(value)

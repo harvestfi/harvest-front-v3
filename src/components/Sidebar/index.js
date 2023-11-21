@@ -372,7 +372,6 @@ const Sidebar = ({ width }) => {
   }
 
   useEffect(() => {
-    console.log('balances ------------', balances)
     const ethBalance = fromWei(
       chainId === CHAIN_IDS.BASE
         ? balances.WETH_base
