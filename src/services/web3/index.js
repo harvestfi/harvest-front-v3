@@ -19,7 +19,7 @@ import {
   POLL_BALANCES_INTERVAL_MS,
 } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
-import { formatNumber, isLedgerLive, isSafeApp } from '../../utils'
+import { isLedgerLive, isSafeApp } from '../../utils'
 import contracts from './contracts'
 
 export const getChainHexadecimal = chainId => `0x${Number(chainId).toString(16)}`
@@ -58,10 +58,12 @@ export const fromWei = (wei, decimals, decimalsToDisplay = 2, format = false) =>
   let result = '0'
 
   if (typeof decimals !== 'undefined' && weiAmountInBN.isGreaterThan(0)) {
-    result = weiAmountInBN.div(new BigNumber(10).exponentiatedBy(decimals)).toFixed()
+    result = weiAmountInBN
+      .div(new BigNumber(10).exponentiatedBy(decimals))
+      .toFixed(decimalsToDisplay)
 
     if (format) {
-      result = formatNumber(result, decimalsToDisplay)
+      result = parseFloat(result).toFixed(decimalsToDisplay)
     }
   }
   return result

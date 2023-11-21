@@ -1907,6 +1907,15 @@ export const getUserBalanceHistories2 = async (address, chainId) => {
   return { data2, flag2 }
 }
 
+export const numberWithCommas = x => {
+  const parts = x.toString().split('.')
+  let integerPart = parts[0]
+  const decimalPart = parts.length > 1 ? `.${parts[1]}` : ''
+  if (parseInt(integerPart, 10) < 1000) return x
+  integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  return integerPart + decimalPart
+}
+
 // /**
 //  * @param symbol token symbol
 //  * @param apiData coingeko data
