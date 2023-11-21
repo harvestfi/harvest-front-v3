@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { round } from 'lodash'
 import ChartButtonsGroup from '../ChartButtonsGroup'
 import balanceImg from '../../../assets/images/logos/advancedfarm/coins.svg'
 import usdbalance from '../../../assets/images/logos/advancedfarm/money.svg'
@@ -163,7 +162,6 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, iFarmPrice, u
         mergedData.unshift(firstObject)
         // console.log('totalValue -------------', totalValue)
         // console.log('usdPrice -------------', usdPrice)
-        // console.log('totalValue -------------', totalValue)
         // console.log('mergedData -------------', mergedData)
       }
       setLoadComplete(flag1 && flag2)
@@ -192,7 +190,7 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, iFarmPrice, u
                 </CurContent>
                 <CurContent color="#15B088">
                   {clickedId === 0 ? '$' : ''}
-                  {round(curContent, 8)}
+                  {curContent}
                 </CurContent>
               </FlexDiv>
             </TooltipInfo>
