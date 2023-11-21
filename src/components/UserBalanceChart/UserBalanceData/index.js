@@ -33,7 +33,7 @@ const filterList = [
   { id: 2, name: 'Underlying Balance History', img: balanceImg },
 ]
 
-const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, iFarmPrice, usdPrice }) => {
+const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, usdPrice }) => {
   const [clickedId, setClickedId] = useState(0)
   const [selectedState, setSelectedState] = useState('1M')
 
@@ -70,101 +70,31 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, iFarmPrice, u
       })
       const mergedData = []
       if (flag1 && flag2) {
-        if (data1[0].timestamp > uniqueData2[0].timestamp) {
-          let i = 0,
-            z = 0,
-            addFlag = false
-
-          while (data1[i].timestamp > uniqueData2[0].timestamp) {
-            data1[i].priceUnderlying = uniqueData2[0].priceUnderlying
-            data1[i].sharePrice = uniqueData2[0].sharePrice
-            mergedData.push(data1[i])
-            i += 1
-          }
-          while (i < data1.length) {
-            if (z < uniqueData2.length) {
-              while (uniqueData2[z].timestamp >= data1[i].timestamp) {
-                uniqueData2[z].value = data1[i].value
-                mergedData.push(uniqueData2[z])
-                z += 1
-                if (!addFlag) {
-                  addFlag = true
-                }
-              }
+        for (let i = 0; i < uniqueData2.length; i++) {
+          let vaultData = uniqueData2[i]
+          let j = 0
+          while (data1[j].timestamp > vaultData.timestamp) {
+            j += 1
+            if (j >= data1.length) {
+              break
             }
-            if (!addFlag) {
-              data1[i].priceUnderlying = uniqueData2[uniqueData2.length - 1].priceUnderlying
-              data1[i].sharePrice = uniqueData2[uniqueData2.length - 1].sharePrice
-              mergedData.push(data1[i])
-            }
-            addFlag = false
-            i += 1
           }
-          while (z < uniqueData2.length) {
-            uniqueData2[z].value = 0
-            mergedData.push(uniqueData2[z])
-            z += 1
+          let value
+          if (j >= data1.length) {
+            value = 0
+          } else {
+            value =data1[j].value
           }
-          while (i < data1.length) {
-            data1[i].priceUnderlying = uniqueData2[uniqueData2.length - 1].priceUnderlying
-            data1[i].sharePrice = uniqueData2[uniqueData2.length - 1].sharePrice
-            mergedData.push(data1[i])
-            i += 1
-          }
-        } else {
-          let i = 0,
-            z = 0,
-            addFlag = false
-          while (i < uniqueData2.length && uniqueData2[i].timestamp > data1[0].timestamp) {
-            uniqueData2[i].value = data1[0].value
-            mergedData.push(uniqueData2[i])
-            i += 1
-          }
-          while (z < data1.length) {
-            if (i < uniqueData2.length) {
-              while (uniqueData2[i].timestamp >= data1[z].timestamp) {
-                uniqueData2[i].value = data1[z].value
-                mergedData.push(uniqueData2[i])
-                i += 1
-                if (i >= uniqueData2.length) {
-                  break
-                }
-                if (!addFlag) {
-                  addFlag = true
-                }
-              }
-            }
-            if (!addFlag) {
-              data1[z].priceUnderlying = uniqueData2[uniqueData2.length - 1].priceUnderlying
-              data1[z].sharePrice = uniqueData2[uniqueData2.length - 1].sharePrice
-              mergedData.push(data1[z])
-            }
-            addFlag = false
-            z += 1
-          }
-          while (i < uniqueData2.length) {
-            uniqueData2[i].value = 0
-            mergedData.push(uniqueData2[i])
-            i += 1
-          }
-          while (z < data1.length) {
-            data1[z].priceUnderlying = uniqueData2[uniqueData2.length - 1].priceUnderlying
-            data1[z].sharePrice = uniqueData2[uniqueData2.length - 1].sharePrice
-            mergedData.push(data1[z])
-            z += 1
-          }
+          vaultData.value = value
+          mergedData.push(vaultData)
         }
         const firstObject = {
-          priceUnderlying: useIFARM ? iFarmPrice : usdPrice,
+          priceUnderlying: usdPrice,
           sharePrice: mergedData[0].sharePrice,
           timestamp: mergedData[0].timestamp,
           value: totalValue,
         }
         mergedData.unshift(firstObject)
-        // console.log('totalValue -------------', totalValue)
-        // console.log('usdPrice -------------', usdPrice)
-        // console.log('totalValue -------------', totalValue)
-        // console.log('mergedData -------------', mergedData)
       }
       setLoadComplete(flag1 && flag2)
       setApiData(mergedData)
@@ -177,7 +107,7 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, iFarmPrice, u
     }
 
     initData()
-  }, [address, chainId, account, totalValue, usdPrice, iFarmPrice, useIFARM])
+  }, [address, chainId, account, totalValue, usdPrice, useIFARM])
 
   return (
     <Container>

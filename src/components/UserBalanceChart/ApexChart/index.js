@@ -99,9 +99,12 @@ function generateChartDataWithSlots(
       if (slots[i] > parseInt(apiData[j].timestamp, 10)) {
         const value1 = parseFloat(apiData[j][balance])
         const value2 = parseFloat(apiData[j][priceUnderlying])
-        const value3 = fromWei(parseFloat(apiData[j][sharePrice]), decimals)
+        const value3 = parseFloat(fromWei(parseFloat(apiData[j][sharePrice]), decimals))
+        console.log(value1, value2, value3)
+        console.log(value1 * value2)
+        console.log(value1 * value3)
         if (filter === 0) {
-          seriesData.push({ x: slots[i] * 1000, y: value1 * value2 })
+          seriesData.push({ x: slots[i] * 1000, y: value1 * value2 * value3 })
         } else if (filter === 1) {
           seriesData.push({ x: slots[i] * 1000, y: value1 * value3 })
         }
@@ -111,7 +114,6 @@ function generateChartDataWithSlots(
       }
     }
   }
-
   return seriesData
 }
 
@@ -237,10 +239,11 @@ const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCu
       const slotCount = 50,
         ago = getRangeNumber(range),
         slots = getTimeSlots(ago, slotCount)
+      const decimals = token.decimals ? token.decimals : '18'
       mainData = generateChartDataWithSlots(
         slots,
         data,
-        token.decimals,
+        decimals,
         filter,
         'value',
         'priceUnderlying',
@@ -248,7 +251,6 @@ const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCu
       )
       maxValue = findMax(mainData)
       minValue = findMin(mainData)
-      minValue /= 2
 
       const between = maxValue - minValue
       unitBtw = between / 4
@@ -269,20 +271,8 @@ const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCu
         minValue = floor10(minValue, -len + 1)
       }
 
-      if (unitBtw !== 0) {
-        maxValue *= 1.5
-        minValue = 0
-      } else {
-        unitBtw = (maxValue - minValue) / 4
-      }
-
-      // if (unitBtw === 0) {
-      //   roundNum = 0
-      // } else {
-      //   roundNum = len
-      // }
       setRoundedDecimal(-len)
-      setFixedLen(len)
+      setFixedLen(3)
       setMinVal(minValue)
       setMaxVal(maxValue)
 
