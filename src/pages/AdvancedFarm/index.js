@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { find, get, isEqual, isArray, isNaN, round } from 'lodash'
+import { find, get, isEqual, isArray, isNaN } from 'lodash'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import axios from 'axios'
 import { useMediaQuery } from 'react-responsive'
@@ -1480,7 +1480,7 @@ const AdvancedFarm = () => {
                           totalValue === 0 ? (
                             '0.00'
                           ) : (
-                            round(totalValue, 8)
+                            totalValue.toFixed(8).replace(/\.?0+$/, '')
                           )
                         ) : (
                           <AnimatedDots />
@@ -1750,7 +1750,7 @@ const AdvancedFarm = () => {
                             unstakedAmount === 0 ? (
                               '0.00'
                             ) : (
-                              round(unstakedAmount, 8)
+                              unstakedAmount.toFixed(8).replace(/\.?0+$/, '')
                             )
                           ) : (
                             <AnimatedDots />
@@ -1808,7 +1808,7 @@ const AdvancedFarm = () => {
                             stakedAmount === 0 ? (
                               '0.00'
                             ) : (
-                              round(stakedAmount, 8)
+                              stakedAmount.toFixed(8).replace(/\.?0+$/, '')
                             )
                           ) : (
                             <AnimatedDots />
@@ -1963,7 +1963,7 @@ const AdvancedFarm = () => {
                             unstakedAmount === 0 ? (
                               '0.00'
                             ) : (
-                              round(unstakedAmount, 8)
+                              unstakedAmount.toFixed(8).replace(/\.?0+$/, '')
                             )
                           ) : (
                             <AnimatedDots />
@@ -2021,7 +2021,7 @@ const AdvancedFarm = () => {
                             stakedAmount === 0 ? (
                               '0.00'
                             ) : (
-                              round(stakedAmount, 8)
+                              stakedAmount.toFixed(8).replace(/\.?0+$/, '')
                             )
                           ) : (
                             <AnimatedDots />
