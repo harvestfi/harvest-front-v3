@@ -985,8 +985,6 @@ const AdvancedFarm = () => {
           }
         }
 
-        console.log('USD Price of ', rewardSymbol, ':', usdRewardPrice)
-
         const totalRewardUsd = Number(
           rewardsEarned === undefined
             ? 0
@@ -1268,8 +1266,7 @@ const AdvancedFarm = () => {
                       tokenSymbol={id}
                       totalValue={totalValue}
                       useIFARM={useIFARM}
-                      iFarmPrice={iFarmPrice}
-                      usdPrice={usdPrice}
+                      usdPrice={usdPrice / pricePerFullShare}
                     />
                   </div>
                 </>

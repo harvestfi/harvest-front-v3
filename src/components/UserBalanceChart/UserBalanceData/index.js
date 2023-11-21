@@ -58,31 +58,44 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, usdPrice }) =
   useEffect(() => {
     const initData = async () => {
       const { data1, flag1 } = await getUserBalanceHistories1(address, chainId, account)
-      const { data2, flag2 } = await getUserBalanceHistories2(address, chainId)
+      const firstUserTime = data1[data1.length - 1].timestamp
+      let firstVaultTime = Math.floor(Date.now() / 1000),
+        data2comb = [],
+        flag2comb = true
+      while (firstVaultTime > firstUserTime) {
+        /* eslint-disable no-await-in-loop */
+        const { data2, flag2 } = await getUserBalanceHistories2(address, chainId, firstVaultTime)
+        /* eslint-enable no-await-in-loop */
+        if (flag2 === false) {
+          flag2comb = false
+        }
+        data2comb = data2comb.concat(data2)
+        firstVaultTime = data2[data2.length - 1].timestamp
+      }
       const uniqueData2 = []
       const timestamps = []
-      data2.forEach(obj => {
+      data2comb.forEach(obj => {
         if (!timestamps.includes(obj.timestamp)) {
           timestamps.push(obj.timestamp)
           uniqueData2.push(obj)
         }
       })
       const mergedData = []
-      if (flag1 && flag2) {
-        for (let i = 0; i < uniqueData2.length; i++) {
-          let vaultData = uniqueData2[i]
-          let j = 0
+      if (flag1 && flag2comb) {
+        for (let i = 0; i < uniqueData2.length; i += 1) {
+          const vaultData = uniqueData2[i]
+          let j = 0,
+            value
           while (data1[j].timestamp > vaultData.timestamp) {
             j += 1
             if (j >= data1.length) {
               break
             }
           }
-          let value
           if (j >= data1.length) {
             value = 0
           } else {
-            value =data1[j].value
+            value = data1[j].value
           }
           vaultData.value = value
           mergedData.push(vaultData)
@@ -95,7 +108,7 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, usdPrice }) =
         }
         mergedData.unshift(firstObject)
       }
-      setLoadComplete(flag1 && flag2)
+      setLoadComplete(flag1 && flag2comb)
       setApiData(mergedData)
       if (mergedData && mergedData.length > 0) {
         const curTimestamp = new Date().getTime() / 1000

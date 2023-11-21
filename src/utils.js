@@ -1848,7 +1848,7 @@ export const getUserBalanceHistories1 = async (address, chainId, account) => {
   return { data1, flag1 }
 }
 
-export const getUserBalanceHistories2 = async (address, chainId) => {
+export const getUserBalanceHistories2 = async (address, chainId, timestamp) => {
   let data2 = {},
     flag2 = true
 
@@ -1862,6 +1862,7 @@ export const getUserBalanceHistories2 = async (address, chainId) => {
         userBalanceHistories(
           where: {
             vault: "${address}",
+            timestamp_lt: ${timestamp},
           },
           orderBy: createAtBlock,
           orderDirection: desc,
