@@ -19,7 +19,7 @@ import Info from '../../assets/images/logos/earn/info.svg'
 import InfoNewColor from '../../assets/images/logos/beginners/help-circle-new-color.svg'
 import InfoBlack from '../../assets/images/logos/earn/help-circle.svg'
 import Safe from '../../assets/images/logos/beginners/safe.svg'
-import Treasure from '../../assets/images/logos/beginners/treasure-box.svg'
+import Diamond from '../../assets/images/logos/beginners/diamond.svg'
 import BarChart from '../../assets/images/logos/beginners/bar-chart-01.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/AdvancedFarmComponents/Deposit/DepositBase'
@@ -415,7 +415,7 @@ const AdvancedFarm = () => {
 
   const mainTags = [
     { name: 'Manage', img: Safe },
-    { name: 'Rewards', img: Treasure },
+    { name: 'Rewards', img: Diamond },
     { name: 'Details', img: BarChart },
   ]
 
