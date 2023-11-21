@@ -94,10 +94,10 @@ function generateChartDataWithSlots(
       if (slots[i] > parseInt(apiData[j].timestamp, 10)) {
         const value1 = parseFloat(apiData[j][balance])
         const value2 = parseFloat(apiData[j][priceUnderlying])
-        const value3 = parseFloat(fromWei(parseFloat(apiData[j][sharePrice]), decimals))
-        // console.log(value1, value2, value3)
-        // console.log(value1 * value2 * value3)
-        // console.log(value1 * value3)
+        const value3 = parseFloat(fromWei(parseFloat(apiData[j][sharePrice]), decimals, Number(decimals)))
+        console.log(value1, value2, value3)
+        console.log(value1 * value2 * value3)
+        console.log(value1 * value3)
         if (filter === 0) {
           seriesData.push({ x: slots[i] * 1000, y: value1 * value2 * value3 })
         } else if (filter === 1) {
