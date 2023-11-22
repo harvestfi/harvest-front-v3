@@ -107,7 +107,7 @@ const UnstakeBase = ({
       return
     }
 
-    if (amountsToExecute === '') {
+    if (inputAmount === '' || inputAmount === 0) {
       setWarningContent('The amount to unstake must be greater than 0.')
       setShowWarning(true)
       return
@@ -204,17 +204,15 @@ const UnstakeBase = ({
           Amount to Unstake
         </NewLabel>
         <AmountInputSection>
-          <TokenAmount
-            type="number"
-            value={inputAmount.toFixed(18).replace(/\.?0+$/, '')}
-            onChange={onInputBalance}
-          />
+          <TokenAmount type="number" value={inputAmount} onChange={onInputBalance} />
           <button
             className="max-btn"
             type="button"
             onClick={() => {
               if (account) {
-                setInputAmount(Number(fromWei(totalStaked, fAssetPool.lpTokenData.decimals)))
+                setInputAmount(
+                  Number(fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)),
+                )
                 setAmountsToExecute([fromWei(totalStaked, fAssetPool.lpTokenData.decimals)])
               }
             }}
@@ -226,7 +224,9 @@ const UnstakeBase = ({
       <BalanceInfo
         onClick={() => {
           if (account) {
-            setInputAmount(Number(fromWei(totalStaked, fAssetPool.lpTokenData.decimals)))
+            setInputAmount(
+              Number(fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)),
+            )
             setAmountsToExecute([fromWei(totalStaked, fAssetPool.lpTokenData.decimals)])
           }
         }}
@@ -237,8 +237,6 @@ const UnstakeBase = ({
             0
           ) : totalStaked ? (
             Number(fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true))
-              .toFixed(18)
-              .replace(/\.?0+$/, '')
           ) : (
             <AnimatedDots />
           )}

@@ -207,13 +207,7 @@ const UnstakeStart = ({
             >
               <NewLabel weight="500">{progressStep === 4 ? 'Unstaked' : 'Unstaking'}</NewLabel>
               <NewLabel display="flex" flexFlow="column" weight="600" align="right">
-                <>
-                  {inputAmount !== '' ? (
-                    inputAmount.toFixed(18).replace(/\.?0+$/, '')
-                  ) : (
-                    <AnimatedDots />
-                  )}
-                </>
+                <>{inputAmount !== '' ? inputAmount : <AnimatedDots />}</>
                 <span>{tokenSymbol !== '' ? `f${tokenSymbol}` : <AnimatedDots />}</span>
               </NewLabel>
             </NewLabel>
