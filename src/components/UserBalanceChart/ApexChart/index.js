@@ -389,8 +389,8 @@ const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCu
             <ClipLoader size={30} margin={2} color={fontColor} />
           ) : (
             <NoData color={fontColor}>
-              You don&apos;t have any active deposits in this farm. <br />
-              Or, if you just converted tokens, it might take up to 15mins for the chart to appear.
+              You don&apos;t have any fTokens of this farm. <br />
+              Or, if you just converted tokens, it might take up to 5mins for the chart to appear.
             </NoData>
           )}
         </LoadingDiv>
