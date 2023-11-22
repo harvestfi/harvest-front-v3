@@ -58,16 +58,20 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, usdPrice }) =
   useEffect(() => {
     const initData = async () => {
       const { data1, flag1 } = await getUserBalanceHistories1(address, chainId, account)
-      const firstUserTime = data1[data1.length - 1].timestamp
+      let firstUserTime
+      if (flag1) {
+        firstUserTime = data1[data1.length - 1].timestamp
+      }
       let firstVaultTime = Math.floor(Date.now() / 1000),
         data2comb = [],
         flag2comb = true
-      while (firstVaultTime > firstUserTime) {
+      while (firstVaultTime > firstUserTime && flag1) {
         /* eslint-disable no-await-in-loop */
         const { data2, flag2 } = await getUserBalanceHistories2(address, chainId, firstVaultTime)
         /* eslint-enable no-await-in-loop */
         if (flag2 === false) {
           flag2comb = false
+          continue
         }
         data2comb = data2comb.concat(data2)
         firstVaultTime = data2[data2.length - 1].timestamp
