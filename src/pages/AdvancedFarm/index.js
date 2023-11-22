@@ -928,12 +928,19 @@ const AdvancedFarm = () => {
 
         console.log('USD Price of ', rewardSymbol, ':', usdRewardPrice)
 
-        const totalRewardUsd = Number(
-          rewardsEarned === undefined
-            ? 0
-            : fromWei(get(rewardsEarned, rewardTokenSymbols[l], 0), rewardDecimal, 4) *
-                Number(usdRewardPrice),
-        )
+        const totalRewardUsd =
+          rewardTokenSymbols.length === 1
+            ? Number(
+                totalRewardsEarned === undefined
+                  ? 0
+                  : fromWei(totalRewardsEarned, rewardDecimal, 4) * Number(usdRewardPrice),
+              )
+            : Number(
+                rewardsEarned === undefined
+                  ? 0
+                  : fromWei(get(rewardsEarned, rewardTokenSymbols[l], 0), rewardDecimal, 4) *
+                      Number(usdRewardPrice),
+              )
         totalRewardSum += totalRewardUsd
         usdPrices.push(usdRewardPrice)
       }
@@ -955,15 +962,15 @@ const AdvancedFarm = () => {
   const viewComponentProps = {
     token,
     tokenDecimals,
+    isSpecialVault,
     fAssetPool,
-    totalRewardsEarned,
     rewardTokenPrices,
+    loadingBalances: loadingLpStats || loadingFarmingBalance,
     pendingAction,
     setLoadingDots,
     setPendingAction,
     loaded,
-    loadingBalances: loadingLpStats || loadingFarmingBalance,
-    isSpecialVault,
+    totalRewardsEarned,
   }
 
   return (
