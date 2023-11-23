@@ -30,6 +30,10 @@ import HomeMobile from '../../assets/images/logos/sidebar/home-mobile.svg'
 import PortfolioMobile from '../../assets/images/logos/sidebar/portfolio-mobile.svg'
 import BeginnersMobile from '../../assets/images/logos/sidebar/beginners-mobile.svg'
 import AdvancedMobile from '../../assets/images/logos/sidebar/advanced-mobile.svg'
+import HomeMobileSM from '../../assets/images/logos/sidebar/home-mobile_sm.svg'
+import PortfolioMobileSM from '../../assets/images/logos/sidebar/portfolio-mobile_sm.svg'
+import BeginnersMobileSM from '../../assets/images/logos/sidebar/beginners-mobile_sm.svg'
+import AdvancedMobileSM from '../../assets/images/logos/sidebar/advanced-mobile_sm.svg'
 import AnalyticsMobile from '../../assets/images/logos/sidebar/analytics-mobile.svg'
 import FAQMobile from '../../assets/images/logos/sidebar/faq-mobile.svg'
 import DocsMobile from '../../assets/images/logos/sidebar/docs-mobile.svg'
@@ -137,22 +141,22 @@ const sideLinksMobile = [
   {
     path: ROUTES.HOME,
     name: 'Home',
-    imgPath: HomeMobile,
+    imgPath: HomeMobileSM,
   },
   {
     path: ROUTES.BEGINNERS,
     name: 'Beginners',
-    imgPath: BeginnersMobile,
+    imgPath: BeginnersMobileSM,
   },
   {
     path: ROUTES.ADVANCED,
     name: 'Farm',
-    imgPath: AdvancedMobile,
+    imgPath: AdvancedMobileSM,
   },
   {
     path: ROUTES.PORTFOLIO,
     name: 'Portfolio',
-    imgPath: PortfolioMobile,
+    imgPath: PortfolioMobileSM,
   },
 ]
 
