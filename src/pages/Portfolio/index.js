@@ -28,6 +28,7 @@ import {
   IFARM_TOKEN_SYMBOL,
   POOL_BALANCES_DECIMALS,
   SPECIAL_VAULTS,
+  MAX_DECIMALS,
   ROUTES,
   directDetailUrl,
 } from '../../constants'
@@ -141,7 +142,6 @@ const getTokenPriceFromApi = async tokenID => {
 const Portfolio = () => {
   const { push } = useHistory()
   const { connected, balances, account, getWalletBalances } = useWallet()
-  // const account = '0x0550bED1C94AFBd468aa739852632D7e9b4c2F86'
   const { userStats, fetchUserPoolStats, totalPools } = usePools()
   const { profitShareAPY } = useStats()
   const { vaultsData, loadingVaults, farmingBalances, getFarmingBalances } = useVaults()
@@ -504,29 +504,16 @@ const Portfolio = () => {
                   console.error('Error:', error)
                 }
               }
-
-              // eslint-disable-next-line one-var
               const rewardValues =
-                rewards === undefined ? 0 : fromWei(Number(rewards), rewardDecimal)
+                rewards === undefined
+                  ? 0
+                  : fromWei(Number(rewards), Number(rewardDecimal), MAX_DECIMALS, true)
               stats.reward.push(Number(rewardValues))
-              console.log('USD Price of ', rewardSymbol, ':', usdRewardPrice)
-
-              stats.totalRewardUsd += Number(
-                rewards === undefined
-                  ? 0
-                  : fromWei(Number(rewards), rewardDecimal) * Number(usdRewardPrice),
-              )
-              valueRewards += Number(
-                rewards === undefined
-                  ? 0
-                  : fromWei(Number(rewards), rewardDecimal) * Number(usdRewardPrice),
-              )
+              stats.totalRewardUsd += Number(rewardValues * Number(usdRewardPrice))
+              valueRewards += Number(rewardValues * Number(usdRewardPrice))
               stats.rewardSymbol.push(rewardSymbol)
 
-              const rewardPriceUSD =
-                rewards === undefined
-                  ? 0
-                  : fromWei(Number(rewards), rewardDecimal) * Number(usdRewardPrice)
+              const rewardPriceUSD = rewardValues * Number(usdRewardPrice)
               stats.rewardUSD.push(rewardPriceUSD)
             }
 
