@@ -970,7 +970,7 @@ const Portfolio = () => {
                                 size={14}
                                 height={20}
                                 color="#101828"
-                                // value={`$${formatNumberWido(info.totalRewardUsd, 9)}`}
+                                // value={`$${formatNumber(info.totalRewardUsd, 9)}`}
                                 value={`${
                                   info.totalRewardUsd === 0
                                     ? '$0.00'
@@ -1113,7 +1113,7 @@ const Portfolio = () => {
                                       ? '$0.00'
                                       : info.rewardUSD[key] < 0.01
                                       ? '<$0.01'
-                                      : `$${formatNumberWido(info.rewardUSD[key], 2)}`
+                                      : `$${formatNumber(info.rewardUSD[key], 2)}`
                                   }`}
                                   color="#101828"
                                 />
