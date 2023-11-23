@@ -141,13 +141,12 @@ const getTokenPriceFromApi = async tokenID => {
 
 const Portfolio = () => {
   const { push } = useHistory()
-  const { connected, balances, account, getWalletBalances } = useWallet()
+  const { connected, account, balances, getWalletBalances } = useWallet()
   const { userStats, fetchUserPoolStats, totalPools } = usePools()
   const { profitShareAPY } = useStats()
   const { vaultsData, loadingVaults, farmingBalances, getFarmingBalances } = useVaults()
   /* eslint-disable global-require */
   const { tokens } = require('../../data')
-  /* eslint-enable global-require */
   const {
     // darkMode,
     switchMode,
@@ -255,7 +254,6 @@ const Portfolio = () => {
     if (account && !isEmpty(userStats) && !isEmpty(depositToken)) {
       const loadUserPoolsStats = async () => {
         const poolsToLoad = []
-        /* eslint-disable no-await-in-loop */
         for (let i = 0; i < depositToken.length; i += 1) {
           let fAssetPool =
             depositToken[i] === FARM_TOKEN_SYMBOL
@@ -278,7 +276,6 @@ const Portfolio = () => {
         }
         await fetchUserPoolStats(poolsToLoad, account, userStats)
         await getFarmingBalances(depositToken)
-        /* eslint-enable no-await-in-loop */
       }
       loadUserPoolsStats()
     }
@@ -345,7 +342,8 @@ const Portfolio = () => {
           if (token) {
             const useIFARM = symbol === FARM_TOKEN_SYMBOL
             let tokenName = '',
-              totalRewardAPRByPercent = 0
+              totalRewardAPRByPercent = 0,
+              farmBalance = 0
             for (let k = 0; k < token.tokenNames.length; k += 1) {
               tokenName += token.tokenNames[k]
               if (k !== token.tokenNames.length - 1) {
@@ -387,8 +385,6 @@ const Portfolio = () => {
               stats.unstake = 0
             }
             const stakeTemp = get(userStats, `[${stakedVaults[i]}]['totalStaked']`, 0)
-            // eslint-disable-next-line one-var
-            let farmBalance = 0
             if (useIFARM) {
               const iFARMBalance = get(balances, IFARM_TOKEN_SYMBOL, 0)
               farmBalance = convertAmountToFARM(
@@ -980,7 +976,7 @@ const Portfolio = () => {
                                     ? '$0.00'
                                     : info.totalRewardUsd < 0.01
                                     ? '<$0.01'
-                                    : `$${formatNumberWido(info.totalRewardUsd, 2)}`
+                                    : `$${formatNumber(info.totalRewardUsd, 2)}`
                                 }`}
                               />
                             </Content>

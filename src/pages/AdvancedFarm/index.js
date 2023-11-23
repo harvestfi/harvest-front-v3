@@ -925,7 +925,6 @@ const AdvancedFarm = () => {
             console.error('Error:', error)
           }
         }
-
         console.log('USD Price of ', rewardSymbol, ':', usdRewardPrice)
 
         const totalRewardUsd =
