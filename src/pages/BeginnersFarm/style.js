@@ -8,7 +8,7 @@ const DetailView = styled.div`
 
   @media screen and (max-width: 992px) {
     margin-left: 0;
-    padding-bottom: 150px;
+    padding-bottom: 100px;
   }
 `
 
@@ -26,7 +26,7 @@ const Inner = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 24px 29px 50px 31px;
+    padding: 25px 15px 0px 15px;
     height: 100%;
     background: #fff;
   }
@@ -54,29 +54,8 @@ const TopInner = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 24px 29px 50px 31px;
-    height: 100%;
-    background: #fff;
-  }
-`
-
-const TopBtnInner = styled.div`
-  padding: 100px 72px 20px 76px;
-  display: flex;
-  justify-content: center;
-
-  @media screen and (max-width: 1480px) {
-    padding: 70px 30px 0px;
-  }
-
-  @media screen and (max-width: 1024px) {
-    padding: 50px 20px 20px;
-  }
-
-  @media screen and (max-width: 992px) {
     padding: 24px 29px 0px 31px;
     height: 100%;
-    background: #fff;
   }
 `
 
@@ -106,7 +85,7 @@ const TopPart = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 41px 30px 50px 30px;
+    z-index: 0;
   }
 `
 
@@ -121,12 +100,6 @@ const TopButton = styled.div`
 
   @media screen and (max-width: 1624px) {
     width: 100%;
-  }
-
-  @media screen and (max-width: 992px) {
-    padding: 24px 29px 50px 31px;
-    height: 100%;
-    background: #fff;
   }
 `
 
@@ -367,6 +340,9 @@ const ThemeMode = styled.div`
 const TopDesc = styled(NewLabel)`
   color: #fff;
   margin: auto 0px auto 35px;
+  @media screen and (max-width: 992px) {
+    margin: 0px;
+  }
 `
 
 const Button = styled.button`
@@ -415,6 +391,9 @@ const FlexDiv = styled.div`
       : ''}
 
   @media screen and (max-width: 992px) {
+    flex-flow: column;
+    justify-content: center;
+    margin: auto;
     &.address {
       display: block;
     }
@@ -570,6 +549,7 @@ const LogoImg = styled.img`
 
   @media screen and (max-width: 992px) {
     width: 32px;
+    margin-right: 0px;
   }
 
   ${props =>
@@ -632,8 +612,10 @@ const GuideSection = styled.div`
   margin-top: 5px;
 
   @media screen and (max-width: 992px) {
-    margin-top: 19px;
-    margin-bottom: 5px;
+    margin-top: 10px;
+    margin-bottom: 50px;
+    display: flex;
+    justify-content: center;
   }
 
   @media screen and (max-width: 343px) {
@@ -718,7 +700,6 @@ const MainSection = styled.div`
   @media screen and (max-width: 992px) {
     width: 100%;
     margin-right: 0px;
-    display: none;
   }
 `
 
@@ -727,6 +708,11 @@ const BoxCover = styled.div`
   width: 100%;
   justify-content: space-between;
   margin-bottom: 25px;
+
+  @media screen and (max-width: 992px) {
+    border-radius: 12px;
+    border: 2px solid #f3f6ff;
+  }
 `
 
 const ValueBox = styled.div`
@@ -737,8 +723,24 @@ const ValueBox = styled.div`
   border: 2px solid #f3f6ff;
   background: var(--base-white, #fff);
   padding: 24px;
+  height: 120px;
   ${props => (props.width ? `width: ${props.width};` : '')}
-  ${props => (props.height ? `height: ${props.height};` : '')}
+
+  @media screen and (max-width: 992px) {
+    width: 100%;
+    height: 70px;
+    padding: 8px 13px;
+    border: unset;
+
+    &.balance-box {
+      border-right: 2px solid #f3f6ff;
+      border-radius: 14px 0px 0px 14px;
+    }
+    &.daily-yield-box {
+      border-left: 2px solid #f3f6ff;
+      border-radius: 0px 14px 14px 0px;
+    }
+  }
 `
 
 const BoxTitle = styled.div`
@@ -752,6 +754,13 @@ const BoxTitle = styled.div`
   #tooltip-daily-yield {
     max-width: 300px;
   }
+
+  @media screen and (max-width: 992px) {
+    font-size: 10px;
+    .info {
+      display: none;
+    }
+  }
 `
 
 const BoxValue = styled.div`
@@ -759,6 +768,10 @@ const BoxValue = styled.div`
   font-weight: 600;
   letter-spacing: -0.6px;
   font-size: 22px;
+
+  @media screen and (max-width: 992px) {
+    font-size: 18px;
+  }
 `
 
 const ChainBack = styled.div`
@@ -969,8 +982,7 @@ const MainTagPanel = styled.div`
   border-radius: 8px;
 
   @media screen and (max-width: 992px) {
-    margin-bottom: 24px;
-    justify-content: space-between;
+    width: 100%;
   }
 `
 
@@ -982,6 +994,9 @@ const TabRow = styled.div`
 const NetDetail = styled.div`
   display: flex;
   margin: auto 0px;
+  @media screen and (max-width: 992px) {
+    display: none;
+  }
 `
 
 const NetDetailItem = styled.div`
@@ -1021,8 +1036,8 @@ const FirstPartSection = styled.div`
   flex-flow: column;
 
   @media screen and (max-width: 992px) {
-    display: flex;
-    flex-direction: column-reverse;
+    // display: flex;
+    // flex-direction: column-reverse;
   }
 `
 
@@ -1070,7 +1085,6 @@ export {
   FlexTopDiv,
   Inner,
   TopInner,
-  TopBtnInner,
   BigDiv,
   LogoImg,
   InfoIcon,

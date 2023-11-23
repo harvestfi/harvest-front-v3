@@ -765,18 +765,26 @@ const BeginnersFarm = () => {
                 <BiLeftArrowAlt />
                 <BackText>Back</BackText>
               </BackBtnRect>
-            </TopButton>
-            {isMobile && (
-              <FlexDiv>
-                {logoUrl.map((el, i) => (
-                  <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
-                ))}
+              {isMobile && (
                 <ChainBack>
                   <img src={BadgeAry[badgeId]} width={6} height={10} alt="" />
                 </ChainBack>
-              </FlexDiv>
-            )}
-            {!isMobile && (
+              )}
+            </TopButton>
+            <FlexDiv>
+              {logoUrl.map((el, i) => (
+                <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
+              ))}
+              <TopDesc
+                weight={600}
+                size={isMobile ? '19.7px' : '25px'}
+                height={isMobile ? '45px' : '82px'}
+                marginBottom={isMobile ? '5px' : '10px'}
+              >
+                {token.tokenNames.join(' • ')}
+              </TopDesc>
+            </FlexDiv>
+            {/* {!isMobile && (
               <FlexDiv>
                 {logoUrl.map((el, i) => (
                   <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
@@ -790,7 +798,7 @@ const BeginnersFarm = () => {
                   {token.tokenNames.join(' • ')}
                 </TopDesc>
               </FlexDiv>
-            )}
+            )} */}
             <GuideSection>
               <GuidePart>
                 {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
@@ -840,19 +848,19 @@ const BeginnersFarm = () => {
           <InternalSection>
             {activeMainTag === 1 && (
               <BoxCover>
-                <ValueBox width="24%" height="120px">
+                <ValueBox width="24%">
                   <BoxTitle>APY</BoxTitle>
                   <BoxValue>{showAPY()}</BoxValue>
                 </ValueBox>
-                <ValueBox width="24%" height="120px">
+                <ValueBox width="24%">
                   <BoxTitle>Daily APY</BoxTitle>
                   <BoxValue>{showApyDaily()}</BoxValue>
                 </ValueBox>
-                <ValueBox width="24%" height="120px">
+                <ValueBox width="24%">
                   <BoxTitle>TVL</BoxTitle>
                   <BoxValue>{showTVL()}</BoxValue>
                 </ValueBox>
-                <ValueBox width="24%" height="120px">
+                <ValueBox width="24%">
                   <BoxTitle>Last Harvest</BoxTitle>
                   <BoxValue>{lastHarvest !== '' ? `${lastHarvest} ago` : '-'}</BoxValue>
                 </ValueBox>
@@ -862,7 +870,7 @@ const BeginnersFarm = () => {
               {activeMainTag === 0 ? (
                 <>
                   <BoxCover>
-                    <ValueBox height="120px" width="32%">
+                    <ValueBox width="32%" className="balance-box">
                       <BoxTitle>
                         My Balance
                         <InfoIcon
@@ -906,7 +914,7 @@ const BeginnersFarm = () => {
                         )}
                       </BoxValue>
                     </ValueBox>
-                    <ValueBox height="120px" width="32%">
+                    <ValueBox width="32%" className="monthly-yield-box">
                       <BoxTitle>
                         Monthly Yield
                         <InfoIcon
@@ -947,7 +955,7 @@ const BeginnersFarm = () => {
                           : `$${formatNumber(yieldMonthly, 2)}`}
                       </BoxValue>
                     </ValueBox>
-                    <ValueBox height="120px" width="32%">
+                    <ValueBox width="32%" className="daily-yield-box">
                       <BoxTitle>
                         Daily Yield
                         <InfoIcon
@@ -989,7 +997,7 @@ const BeginnersFarm = () => {
                       </BoxValue>
                     </ValueBox>
                   </BoxCover>
-                  <div>
+                  {!isMobile && (
                     <UserBalanceData
                       token={token}
                       vaultPool={vaultPool}
@@ -997,7 +1005,7 @@ const BeginnersFarm = () => {
                       totalValue={totalValue}
                       usdPrice={usdPrice}
                     />
-                  </div>
+                  )}
                 </>
               ) : (
                 <>
@@ -1012,40 +1020,68 @@ const BeginnersFarm = () => {
                       Source of Yield
                     </NewLabel>
                     <DescInfo>
-                      {useIFARM ? (
+                      {id === 'WETH_base' ? (
                         <div>
                           <p>
-                            When you supply{' '}
+                            This farm supplies your{' '}
                             <a
-                              href="https://etherscan.io/token/0xa0246c9032bC3A600820415aE600c6388619A14D"
+                              href="https://basescan.org/token/0x4200000000000000000000000000000000000006"
                               target="_blank"
                               rel="noopener noreferrer"
                             >
-                              FARM
+                              WETH
                             </a>{' '}
-                            you will be rewarded with a share of the profits of the platform paid
-                            out in{' '}
+                            to Compound Finance, a robust lending platform, which earns you yield
+                            from lending activities. On top of that, Harvest auto-compounds{' '}
                             <a
-                              href="https://etherscan.io/token/0xa0246c9032bC3A600820415aE600c6388619A14D"
+                              href="https://basescan.org/token/0x9e1028F5F1D5eDE59748FFceE5532509976840E0"
                               target="_blank"
                               rel="noopener noreferrer"
                             >
-                              FARM
+                              COMP
                             </a>{' '}
-                            rewards. When depositing into the vault you obtain the yield-bearing
-                            yield-bearing token{' '}
+                            rewards and converts them into more{' '}
                             <a
-                              href="https://etherscan.io/token/0x1571eD0bed4D987fe2b498DdBaE7DFA19519F651"
+                              href="https://basescan.org/token/0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA"
                               target="_blank"
                               rel="noopener noreferrer"
                             >
-                              iFARM
+                              WETH
                             </a>
-                            . You can swap iFARM for the underlying FARM at any time.
+                            .
                           </p>
                         </div>
                       ) : (
-                        ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)
+                        <div>
+                          <p>
+                            This farm supplies your{' '}
+                            <a
+                              href="https://basescan.org/token/0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              USDC
+                            </a>{' '}
+                            to Compound Finance, a robust lending platform, which earns you yield
+                            from lending activities. On top of that, Harvest auto-compounds{' '}
+                            <a
+                              href="https://basescan.org/token/0x9e1028F5F1D5eDE59748FFceE5532509976840E0"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              COMP
+                            </a>{' '}
+                            rewards and converts them into more{' '}
+                            <a
+                              href="https://basescan.org/token/0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              USDC
+                            </a>
+                            .
+                          </p>
+                        </div>
                       )}
                     </DescInfo>
                     <FlexDiv className="address" padding="0 15px 20px">
@@ -1394,7 +1430,13 @@ const BeginnersFarm = () => {
                     </WithdrawSection>
                   </HalfContent>
                   {isMobile ? (
-                    <UserBalanceData token={token} vaultPool={vaultPool} tokenSymbol={id} />
+                    <UserBalanceData
+                      token={token}
+                      vaultPool={vaultPool}
+                      tokenSymbol={id}
+                      totalValue={totalValue}
+                      usdPrice={usdPrice}
+                    />
                   ) : (
                     <></>
                   )}
