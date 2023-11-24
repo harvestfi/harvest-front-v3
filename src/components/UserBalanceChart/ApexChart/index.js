@@ -322,7 +322,7 @@ const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCu
               ? 365
               : onlyWidth > 992
               ? 365
-              : 300
+              : 365
           }
         >
           <ComposedChart

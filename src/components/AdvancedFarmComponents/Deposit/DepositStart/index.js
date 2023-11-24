@@ -278,8 +278,8 @@ const DepositStart = ({
             <NewLabel textAlign="left" marginRight="12px">
               <NewLabel
                 color="#15B088"
-                size={isMobile ? '12px' : '18px'}
-                height={isMobile ? '17px' : '28px'}
+                size={isMobile ? '18px' : '18px'}
+                height={isMobile ? '28px' : '28px'}
                 weight="600"
                 marginBottom="4px"
               >
@@ -287,8 +287,8 @@ const DepositStart = ({
               </NewLabel>
               <NewLabel
                 color="#15202B"
-                size={isMobile ? '12px' : '14px'}
-                height={isMobile ? '17px' : '20px'}
+                size={isMobile ? '14px' : '14px'}
+                height={isMobile ? '20px' : '20px'}
                 weight="400"
                 marginBottom="5px"
               >
@@ -299,12 +299,12 @@ const DepositStart = ({
           <NewLabel>
             <NewLabel
               display="flex"
-              marginBottom={isMobile ? '0px' : '16px'}
+              marginBottom={isMobile ? '16px' : '16px'}
               width="fit-content"
               cursorType="pointer"
               weight="600"
-              size={isMobile ? '12px' : '14px'}
-              height={isMobile ? '17px' : '20px'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '20px' : '20px'}
               color="#667085"
               align="center"
               onClick={() => {
@@ -321,15 +321,15 @@ const DepositStart = ({
       <Modal.Body className="deposit-modal-body">
         <SelectTokenWido>
           <NewLabel
-            size={isMobile ? '10px' : '14px'}
-            height={isMobile ? '18px' : '24px'}
+            size={isMobile ? '14px' : '14px'}
+            height={isMobile ? '24px' : '24px'}
             padding="24px"
             color="#344054"
           >
             <NewLabel
               display="flex"
               justifyContent="space-between"
-              padding={isMobile ? '5px 0' : '10px 0'}
+              padding={isMobile ? '10px 0' : '10px 0'}
             >
               <NewLabel weight="500">{progressStep === 4 ? 'Converted' : 'Converting'}</NewLabel>
               <NewLabel display="flex" flexFlow="column" weight="600" textAlign="right">
@@ -346,7 +346,7 @@ const DepositStart = ({
             <NewLabel
               display="flex"
               justifyContent="space-between"
-              padding={isMobile ? '5px 0' : '10px 0'}
+              padding={isMobile ? '10px 0' : '10px 0'}
             >
               <NewLabel className="beginners" weight="500">
                 {progressStep === 4 ? 'fTokens Received' : 'Min. fTokens Received'}
@@ -361,8 +361,8 @@ const DepositStart = ({
                       place="right"
                     >
                       <NewLabel
-                        size={isMobile ? '10px' : '12px'}
-                        height={isMobile ? '15px' : '18px'}
+                        size={isMobile ? '12px' : '12px'}
+                        height={isMobile ? '18px' : '18px'}
                         weight="600"
                         color="#344054"
                       >
@@ -403,8 +403,8 @@ const DepositStart = ({
               <NewLabel marginLeft="12px">
                 <NewLabel
                   color="#B54708"
-                  size={isMobile ? '12px' : '14px'}
-                  height={isMobile ? '17px' : '20px'}
+                  size={isMobile ? '14px' : '14px'}
+                  height={isMobile ? '20px' : '20px'}
                   weight="600"
                   marginBottom="4px"
                 >
@@ -412,8 +412,8 @@ const DepositStart = ({
                 </NewLabel>
                 <NewLabel
                   color="#B54708"
-                  size={isMobile ? '12px' : '14px'}
-                  height={isMobile ? '17px' : '20px'}
+                  size={isMobile ? '14px' : '14px'}
+                  height={isMobile ? '20px' : '20px'}
                   weight="400"
                   marginBottom="5px"
                 >
@@ -449,8 +449,8 @@ const DepositStart = ({
             />
           </NewLabel>
           <NewLabel
-            size={isMobile ? '12px' : '16px'}
-            height={isMobile ? '21px' : '24px'}
+            size={isMobile ? '16px' : '16px'}
+            height={isMobile ? '24px' : '24px'}
             weight={600}
             color="#1F2937"
             padding="24px"

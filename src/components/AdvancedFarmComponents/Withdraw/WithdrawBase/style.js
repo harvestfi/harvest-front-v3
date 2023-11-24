@@ -9,10 +9,6 @@ const BaseWidoDiv = styled.div`
     padding: 10px 15px 15px 15px;
     border-top: 1px solid #e3e3e3;
   }
-
-  @media screen and (max-width: 992px) {
-    padding: 12px 12px 18px;
-  }
 `
 
 const InfoIconCircle = styled.img`
@@ -131,14 +127,6 @@ const NewLabel = styled.div`
     font-weight: 400;
     font-size: 10px;
   }
-
-  @media screen and (max-width: 992px) {
-    img.info-icon {
-      margin-right: 5px;
-      width: 14px;
-      height: 14px;
-    }
-  }
 `
 
 const TokenInfo = styled.div`
@@ -175,23 +163,6 @@ const TokenSelect = styled.div`
     text-overflow: ellipsis;
     margin-right: 4px;
   }
-
-  @media screen and (max-width: 992px) {
-    font-size: 10px;
-    line-height: 18px;
-    padding: 7px 10px;
-
-    img.logo {
-      width: 16px;
-      height: 16px;
-      margin-right: 5px;
-    }
-
-    img.dropdown-icon {
-      width: 15px;
-      height: 16px;
-    }
-  }
 `
 
 const SwitchTabTag = styled.div`
@@ -220,8 +191,8 @@ const SwitchTabTag = styled.div`
 `
 
 const TokenAmount = styled.input`
-  font-weight: 700;
-  font-size: 18px;
+  font-weight: 600;
+  font-size: 14px;
   line-height: 24px;
   width: 100%;
   text-overflow: ellipsis;
@@ -241,12 +212,6 @@ const TokenAmount = styled.input`
     -moz-appearance: textfield;
     margin: 0;
   }
-
-  @media screen and (max-width: 992px) {
-    font-size: 10px;
-    line-height: 18px;
-    padding: 7px 10px;
-  }
 `
 
 const Title = styled.div`
@@ -255,12 +220,6 @@ const Title = styled.div`
   line-height: 20px;
   margin: 4px 0 20px;
   color: #475467;
-
-  @media screen and (max-width: 992px) {
-    font-size: 10px;
-    line-height: 15px;
-    margin: 0 0 15px;
-  }
 `
 
 const AmountSection = styled.div`
@@ -284,12 +243,6 @@ const BalanceInfo = styled.div`
     color: #475467;
     transition: 0.25s;
   }
-
-  @media screen and (max-width: 992px) {
-    font-size: 10px;
-    line-height: 15px;
-    margin-top: 3px;
-  }
 `
 
 const InsufficientSection = styled.div`
@@ -307,22 +260,12 @@ const InsufficientSection = styled.div`
     display: none;
   `}
   margin-top: 20px;
-
-  @media screen and (max-width: 992px) {
-    padding: 10px;
-    margin-top: 14px;
-  }
 `
 
 const CloseBtn = styled.img`
   cursor: pointer;
   width: 20px;
   height: 20px;
-
-  @media screen and (max-width: 992px) {
-    width: 17px;
-    height: 16px;
-  }
 `
 
 const CreditCardBox = styled.div`
@@ -331,14 +274,6 @@ const CreditCardBox = styled.div`
   background: var(--base-white, #fff);
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
   padding: 12px;
-
-  @media screen and (max-width: 992px) {
-    padding: 9px;
-
-    img {
-      width: 18px;
-    }
-  }
 `
 
 const ThemeMode = styled.div`

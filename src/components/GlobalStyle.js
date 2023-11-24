@@ -439,19 +439,11 @@ html {
     .detail-desc-auto {
       font-size: 16px; 
       font-weight: 400;
-
-      @media screen and (max-width: 992px) {
-        font-size: 13px;
-      }
     }
 
     .detail-desc-no-width {
       font-size: 16px; 
       font-weight: 400;
-
-      @media screen and (max-width: 992px) {
-        font-size: 13px;
-      }
     }
 
     .detail-token {
@@ -469,10 +461,6 @@ html {
       font-size: 16px; 
       font-weight: 400; 
       // text-decoration: underline;
-
-      @media screen and (max-width: 992px) {
-        font-size: 13px;
-      }
     }
   }
 
@@ -562,23 +550,12 @@ html {
     font-size: 12px;
     font-weight: 400;
     line-height: 16px;
-    @media screen and (max-width: 992px) {
-      font-size: 6px;
-      font-weight: 400;
-      line-height: 8px;
-    }
   }
 
   .advanced-farm .recharts-cartesian-axis-tick {
     font-size: 11px;
     font-weight: 500;
     line-height: 16px;
-
-    @media screen and (max-width: 992px) {
-      font-size: 6px;
-      font-weight: 400;
-      line-height: 8px;
-    }
   }
 
   .recharts-cartesian-axis-line {

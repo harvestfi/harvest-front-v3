@@ -252,9 +252,6 @@ const DepoTitle = styled.div`
   line-height: 20px;
   margin: 0px 0px 20px;
   color: #475467;
-
-  @media screen and (max-width: 992px) {
-  }
 `
 
 const AmountSection = styled.div`
@@ -409,11 +406,6 @@ const InsufficientSection = styled.div`
 
 const CloseBtn = styled.img`
   cursor: pointer;
-
-  @media screen and (max-width: 992px) {
-    width: 17px;
-    height: 16px;
-  }
 `
 
 const DepositTokenSection = styled.div`

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-// import { useMediaQuery } from 'react-responsive'
 import { fromWei } from '../../../../services/web3'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { formatNumberWido } from '../../../../utils'
@@ -88,7 +87,6 @@ const SelectTokenList = ({
   }, [filterWord, supTokenNoBalanceList, balanceList]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const { fontColor } = useThemeContext()
-  // const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   useEffect(() => {
     const count =

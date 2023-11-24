@@ -295,13 +295,13 @@ const DepositBase = ({
     <>
       <BaseWidoDiv>
         <NewLabel
-          size={isMobile ? '14px' : '16px'}
-          height={isMobile ? '20 px' : '24px'}
+          size={isMobile ? '16px' : '16px'}
+          height={isMobile ? '24px' : '24px'}
           weight="600"
           color="#101828"
           display="flex"
           justifyContent="center"
-          padding={isMobile ? '4px 0' : '4px 0'}
+          padding={isMobile ? '4px 0px' : '4px 0px'}
           marginBottom="13px"
           border="1px solid #F8F8F8"
           borderRadius="8px"

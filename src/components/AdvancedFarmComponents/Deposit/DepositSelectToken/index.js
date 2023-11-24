@@ -58,7 +58,7 @@ const DepositSelectToken = ({
       <Modal.Header className="token-select-modal-header">
         <FTokenInfo>
           <>
-            <NewLabel margin="auto 0px">
+            <NewLabel margin="auto 16px auto 0px">
               <IconCard>
                 <BsArrowDown />
               </IconCard>
