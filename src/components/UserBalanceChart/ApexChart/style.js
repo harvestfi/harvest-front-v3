@@ -9,6 +9,7 @@ const LoadingDiv = styled.div`
 `
 
 const NoData = styled.div`
+  font-size: 14px;
   color: ${props => props.fontColor};
 `
 

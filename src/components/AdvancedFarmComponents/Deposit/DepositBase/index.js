@@ -295,14 +295,14 @@ const DepositBase = ({
     <>
       <BaseWidoDiv>
         <NewLabel
-          size={isMobile ? '12px' : '16px'}
-          height={isMobile ? '21px' : '24px'}
+          size={isMobile ? '14px' : '16px'}
+          height={isMobile ? '20 px' : '24px'}
           weight="600"
           color="#101828"
           display="flex"
           justifyContent="center"
-          padding={isMobile ? '0' : '4px 0'}
-          marginBottom="15px"
+          padding={isMobile ? '4px 0' : '4px 0'}
+          marginBottom="13px"
           border="1px solid #F8F8F8"
           borderRadius="8px"
         >
@@ -341,8 +341,8 @@ const DepositBase = ({
         <TokenInfo>
           <AmountSection>
             <NewLabel
-              size={isMobile ? '10px' : '14px'}
-              height={isMobile ? '15px' : '20px'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '20px' : '20px'}
               weight="500"
               color="#344054"
               marginBottom="6px"
@@ -353,8 +353,8 @@ const DepositBase = ({
           </AmountSection>
           <DepositTokenSection>
             <NewLabel
-              size={isMobile ? '10px' : '14px'}
-              height={isMobile ? '15px' : '20px'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '20px' : '20px'}
               weight="500"
               color="#344054"
               marginBottom="6px"
@@ -368,7 +368,7 @@ const DepositBase = ({
               }}
             >
               {pickedToken.logoURI ? (
-                <img className="logo" src={pickedToken.logoURI} width={24} height={24} alt="" />
+                <img className="logo" src={pickedToken.logoURI} width={21} height={21} alt="" />
               ) : (
                 <></>
               )}
@@ -392,8 +392,8 @@ const DepositBase = ({
           <NewLabel display="flex" widthDiv="80%" items="center">
             <img className="info-icon" src={InfoIcon} alt="" />
             <NewLabel
-              size={isMobile ? '10px' : '14px'}
-              height={isMobile ? '15px' : '20px'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '20px' : '20px'}
               weight="600"
               color="#344054"
             >
@@ -413,25 +413,25 @@ const DepositBase = ({
       </BaseWidoDiv>
       <BaseWidoDiv>
         <NewLabel
-          size={isMobile ? '10px' : '14px'}
-          height={isMobile ? '18px' : '24px'}
+          size={isMobile ? '14px' : '14px'}
+          height={isMobile ? '24px' : '24px'}
           color="#344054"
         >
           <NewLabel
             display="flex"
             justifyContent="space-between"
-            padding={isMobile ? '5px 0' : '10px 0'}
+            padding={isMobile ? '10px 0' : '10px 0'}
           >
             <NewLabel
-              size={isMobile ? '10px' : '14px'}
-              height={isMobile ? '18px' : '24px'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '24px' : '24px'}
               color="#344054"
               weight="500"
             >
               Est. Monthly Yield
               <InfoIconCircle
                 className="info"
-                width={isMobile ? 10 : 16}
+                width={isMobile ? 16 : 16}
                 src={HelpIcon}
                 alt=""
                 data-tip
@@ -445,9 +445,9 @@ const DepositBase = ({
                 place="right"
               >
                 <NewLabel
-                  size={isMobile ? '10px' : '12px'}
-                  height={isMobile ? '15px' : '18px'}
-                  weight="600"
+                  size={isMobile ? '12px' : '12px'}
+                  height={isMobile ? '18px' : '18px'}
+                  weight="500"
                   color="white"
                 >
                   {useBeginnersFarm
@@ -459,8 +459,8 @@ const DepositBase = ({
               </ReactTooltip>
             </NewLabel>
             <NewLabel
-              size={isMobile ? '10px' : '14px'}
-              height={isMobile ? '18px' : '24px'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '24px' : '24px'}
               color="#344054"
               weight="600"
               textAlign="right"
@@ -490,18 +490,18 @@ const DepositBase = ({
           <NewLabel
             display="flex"
             justifyContent="space-between"
-            padding={isMobile ? '5px 0' : '10px 0'}
+            padding={isMobile ? '10px 0' : '10px 0'}
           >
             <NewLabel
-              size={isMobile ? '10px' : '14px'}
-              height={isMobile ? '18px' : '24px'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '24px' : '24px'}
               color="#344054"
               weight="500"
             >
               Est. Daily Yield
               <InfoIconCircle
                 className="info"
-                width={isMobile ? 10 : 16}
+                width={isMobile ? 16 : 16}
                 src={HelpIcon}
                 alt=""
                 data-tip
@@ -516,9 +516,9 @@ const DepositBase = ({
                 width="100px"
               >
                 <NewLabel
-                  size={isMobile ? '10px' : '12px'}
-                  height={isMobile ? '15px' : '18px'}
-                  weight="600"
+                  size={isMobile ? '12px' : '12px'}
+                  height={isMobile ? '18px' : '18px'}
+                  weight="500"
                   color="white"
                 >
                   {useBeginnersFarm
@@ -530,8 +530,8 @@ const DepositBase = ({
               </ReactTooltip>
             </NewLabel>
             <NewLabel
-              size={isMobile ? '10px' : '14px'}
-              height={isMobile ? '18px' : '24px'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '24px' : '24px'}
               color="#344054"
               weight="600"
               textAlign="right"
@@ -561,18 +561,18 @@ const DepositBase = ({
           <NewLabel
             display="flex"
             justifyContent="space-between"
-            padding={isMobile ? '5px 0' : '10px 0'}
+            padding={isMobile ? '10px 0' : '10px 0'}
           >
             <NewLabel
-              size={isMobile ? '10px' : '14px'}
-              height={isMobile ? '18px' : '24px'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '24px' : '24px'}
               color="#344054"
               weight="500"
             >
               {useIFARM ? 'Min. Received' : 'Min. fTokens Received'}
               <InfoIconCircle
                 className="info"
-                width={isMobile ? 10 : 16}
+                width={isMobile ? 16 : 16}
                 src={HelpIcon}
                 alt=""
                 data-tip
@@ -586,9 +586,9 @@ const DepositBase = ({
                 place="right"
               >
                 <NewLabel
-                  size={isMobile ? '10px' : '12px'}
-                  height={isMobile ? '15px' : '18px'}
-                  weight="600"
+                  size={isMobile ? '12px' : '12px'}
+                  height={isMobile ? '18px' : '18px'}
+                  weight="500"
                   color="white"
                 >
                   {useBeginnersFarm
@@ -598,8 +598,8 @@ const DepositBase = ({
               </ReactTooltip>
             </NewLabel>
             <NewLabel
-              size={isMobile ? '10px' : '14px'}
-              height={isMobile ? '18px' : '24px'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '24px' : '24px'}
               color="#344054"
               weight="600"
               textAlign="right"
@@ -627,7 +627,7 @@ const DepositBase = ({
             </NewLabel>
           </NewLabel>
         </NewLabel>
-        <NewLabel padding={isMobile ? '0 7px' : '0'}>
+        <NewLabel>
           <Button
             color="wido-deposit"
             width="100%"

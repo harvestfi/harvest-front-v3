@@ -100,7 +100,6 @@ const SelectTokenList = ({
   }, [filterWord, supTokenNoBalanceList, balanceList]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const { fontColor } = useThemeContext()
-  // const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   useEffect(() => {
     const count =

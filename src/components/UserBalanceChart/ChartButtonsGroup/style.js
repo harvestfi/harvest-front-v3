@@ -93,17 +93,14 @@ const ButtonStyle = styled.button`
           }
         `
       : ``}
-  @media screen and (max-width: 992px) {
-    padding: 7px 12px;
-  }
 `
 
 const TooltipContent = styled.div`
   display: flex;
   color: white !important;
   font-weight: 500;
-  font-size: 13px;
-  line-height: 16px;
+  font-size: 12px;
+  line-height: 18px;
 `
 
 export { ButtonsGroup, ButtonStyle, TooltipContent }

@@ -374,16 +374,6 @@ ${props =>
       border-color: #dadfe6;
     }
 
-    @media screen and (max-width: 992px) {
-      ${props =>
-        props.color === 'wido-deposit'
-          ? `
-            font-size: 12px;
-            line-height: 18px;
-            padding: 7px 13px;
-        `
-          : ``}
-    }
   }
 `
 

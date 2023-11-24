@@ -170,15 +170,11 @@ const NewLabel = styled.div`
   `
       : ''}
   img.icon {
-    margin-right: 10px;
+    margin-right: 5px;
   }
 
   img.info {
-    margin-left: 10px;
-  }
-
-  img.info-icon {
-    margin-left: 15px;
+    margin-left: 5px;
   }
 
   @media screen and (max-width: 992px) {

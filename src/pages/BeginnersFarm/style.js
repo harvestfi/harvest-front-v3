@@ -54,7 +54,7 @@ const TopInner = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 24px 29px 0px 31px;
+    padding: 40px 25px 0px 25px;
     height: 100%;
   }
 `
@@ -100,6 +100,12 @@ const TopButton = styled.div`
 
   @media screen and (max-width: 1624px) {
     width: 100%;
+  }
+
+  @media screen and (max-width: 992px) {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
   }
 `
 
@@ -341,7 +347,7 @@ const TopDesc = styled(NewLabel)`
   color: #fff;
   margin: auto 0px auto 35px;
   @media screen and (max-width: 992px) {
-    margin: 0px;
+    margin: 5px auto;
   }
 `
 
@@ -391,11 +397,8 @@ const FlexDiv = styled.div`
       : ''}
 
   @media screen and (max-width: 992px) {
-    flex-flow: column;
-    justify-content: center;
-    margin: auto;
-    &.address {
-      display: block;
+    &.farm-symbol {
+      flex-flow: column;
     }
   }
 `
@@ -548,7 +551,7 @@ const LogoImg = styled.img`
   width: 69px;
 
   @media screen and (max-width: 992px) {
-    width: 32px;
+    width: 37px;
     margin-right: 0px;
   }
 
@@ -572,6 +575,10 @@ const InfoIconBlack = styled.img`
   transition: 0.25s;
   cursor: pointer;
   margin-left: 5px;
+
+  @media screen and (max-width: 992px) {
+    display: none;
+  }
 `
 
 const Monospace = styled.span`
@@ -648,9 +655,6 @@ const GuidePart = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    font-size: 8px;
-    line-height: 12px;
-
     img {
       margin-right: 3px;
     }
@@ -712,6 +716,7 @@ const BoxCover = styled.div`
   @media screen and (max-width: 992px) {
     border-radius: 12px;
     border: 2px solid #f3f6ff;
+    margin-bottom: 20px;
   }
 `
 
@@ -739,6 +744,9 @@ const ValueBox = styled.div`
     &.daily-yield-box {
       border-left: 2px solid #f3f6ff;
       border-radius: 0px 14px 14px 0px;
+    }
+    &.daily-apy-box {
+      display: none;
     }
   }
 `
@@ -770,7 +778,15 @@ const BoxValue = styled.div`
   font-size: 22px;
 
   @media screen and (max-width: 992px) {
-    font-size: 18px;
+    font-size: 12px;
+  }
+`
+
+const MobileChain = styled.div`
+  display: flex;
+
+  @media screen and (max-width: 992px) {
+    margin: auto 0px;
   }
 `
 
@@ -784,13 +800,15 @@ const ChainBack = styled.div`
   justify-content: center;
   align-self: center;
   padding: 4px;
-
   margin-left: 15px;
 
+  img {
+    width: 100%;
+    height: 100%;
+  }
+
   @media screen and (max-width: 992px) {
-    width: 12px;
-    height: 12px;
-    margin-left: 10px;
+    margin-left: 11px;
   }
 `
 
@@ -926,11 +944,6 @@ const InfoLabel = styled.a`
       font-weight: bold;
     }
   }
-
-  @media screen and (max-width: 992px) {
-    margin-bottom: 10px;
-    margin-right: 0px;
-  }
 `
 
 const DescInfo = styled.div`
@@ -952,12 +965,6 @@ const DescInfo = styled.div`
         cursor: pointer;
       }
     }
-  }
-
-  @media screen and (max-width: 992px) {
-    font-size: 10px;
-    line-height: 20px;
-    padding: 7px 11px;
   }
 `
 
@@ -1002,6 +1009,9 @@ const NetDetail = styled.div`
 const NetDetailItem = styled.div`
   display: flex;
   margin-left: 50px;
+  @media screen and (max-width: 992px) {
+    margin-left: 0px;
+  }
 `
 
 const NetDetailTitle = styled.div`
@@ -1102,6 +1112,7 @@ export {
   InternalSection,
   HalfInfo,
   InfoLabel,
+  MobileChain,
   DescInfo,
   LastHarvestInfo,
   RestInternal,

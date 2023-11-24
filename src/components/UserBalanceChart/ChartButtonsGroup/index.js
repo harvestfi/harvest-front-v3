@@ -46,8 +46,8 @@ const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {
         >
           <img
             src={button.img}
-            width={isMobile ? '15' : '20'}
-            height={isMobile ? '15' : '20'}
+            width={isMobile ? '20' : '20'}
+            height={isMobile ? '20' : '20'}
             alt=""
           />
         </ButtonStyle>
@@ -56,9 +56,10 @@ const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {
         <>
           <ReactTooltip
             id="tooltip-balance-chart"
-            backgroundColor="black"
+            backgroundColor="#101828"
             borderColor="black"
             textColor="white"
+            place="top"
           >
             <TooltipContent>
               Connect your wallet <br />
@@ -67,9 +68,10 @@ const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {
           </ReactTooltip>
           <ReactTooltip
             id="tooltip-underlying-balance-chart"
-            backgroundColor="black"
+            backgroundColor="#101828"
             borderColor="black"
             textColor="white"
+            place="top"
           >
             <TooltipContent>
               Connect your wallet <br />

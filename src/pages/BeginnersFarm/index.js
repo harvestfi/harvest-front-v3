@@ -2,7 +2,6 @@ import BigNumber from 'bignumber.js'
 import { find, get, isEqual, isEmpty, isArray, isNaN } from 'lodash'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import ReactHtmlParser from 'react-html-parser'
 import ReactTooltip from 'react-tooltip'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
@@ -18,7 +17,6 @@ import Info from '../../assets/images/logos/earn/info.svg'
 import InfoBlack from '../../assets/images/logos/earn/help-circle.svg'
 import Safe from '../../assets/images/logos/beginners/safe.svg'
 import BarChart from '../../assets/images/logos/beginners/bar-chart-01.svg'
-import DOT from '../../assets/images/logos/beginners/dot.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/AdvancedFarmComponents/Deposit/DepositBase'
 import DepositSelectToken from '../../components/AdvancedFarmComponents/Deposit/DepositSelectToken'
@@ -26,7 +24,6 @@ import DepositStart from '../../components/AdvancedFarmComponents/Deposit/Deposi
 import WithdrawBase from '../../components/AdvancedFarmComponents/Withdraw/WithdrawBase'
 import WithdrawSelectToken from '../../components/AdvancedFarmComponents/Withdraw/WithdrawSelectToken'
 import WithdrawStart from '../../components/AdvancedFarmComponents/Withdraw/WithdrawStart'
-import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
 import UserBalanceData from '../../components/UserBalanceChart/UserBalanceData'
 import {
   DECIMAL_PRECISION,
@@ -87,7 +84,6 @@ import {
   RestInternal,
   MainTagPanel,
   FirstPartSection,
-  APRValueShow,
   TabRow,
   NetDetail,
   NetDetailItem,
@@ -99,6 +95,7 @@ import {
   NetDetailContent,
   NetDetailImg,
   InfoIconBlack,
+  MobileChain,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 // import { array } from 'prop-types'
@@ -766,12 +763,17 @@ const BeginnersFarm = () => {
                 <BackText>Back</BackText>
               </BackBtnRect>
               {isMobile && (
-                <ChainBack>
-                  <img src={BadgeAry[badgeId]} width={6} height={10} alt="" />
-                </ChainBack>
+                <MobileChain>
+                  <NetDetailItem>
+                    <NetDetailContent>{token.platform && token.platform[0]}</NetDetailContent>
+                  </NetDetailItem>
+                  <ChainBack>
+                    <img src={BadgeAry[badgeId]} alt="" />
+                  </ChainBack>
+                </MobileChain>
               )}
             </TopButton>
-            <FlexDiv>
+            <FlexDiv className="farm-symbol">
               {logoUrl.map((el, i) => (
                 <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
               ))}
@@ -848,11 +850,11 @@ const BeginnersFarm = () => {
           <InternalSection>
             {activeMainTag === 1 && (
               <BoxCover>
-                <ValueBox width="24%">
+                <ValueBox width="24%" className="balance-box">
                   <BoxTitle>APY</BoxTitle>
                   <BoxValue>{showAPY()}</BoxValue>
                 </ValueBox>
-                <ValueBox width="24%">
+                <ValueBox width="24%" className="daily-apy-box">
                   <BoxTitle>Daily APY</BoxTitle>
                   <BoxValue>{showApyDaily()}</BoxValue>
                 </ValueBox>
@@ -860,7 +862,7 @@ const BeginnersFarm = () => {
                   <BoxTitle>TVL</BoxTitle>
                   <BoxValue>{showTVL()}</BoxValue>
                 </ValueBox>
-                <ValueBox width="24%">
+                <ValueBox width="24%" className="daily-yield-box">
                   <BoxTitle>Last Harvest</BoxTitle>
                   <BoxValue>{lastHarvest !== '' ? `${lastHarvest} ago` : '-'}</BoxValue>
                 </ValueBox>
@@ -1008,7 +1010,7 @@ const BeginnersFarm = () => {
                   )}
                 </>
               ) : (
-                <>
+                !isMobile && (
                   <HalfInfo marginBottom="20px">
                     <NewLabel
                       weight={700}
@@ -1095,7 +1097,7 @@ const BeginnersFarm = () => {
                         >
                           <NewLabel
                             size="12px"
-                            weight={isMobile ? 400 : 600}
+                            weight={isMobile ? 600 : 600}
                             height="16px"
                             self="center"
                             color="#15202b"
@@ -1116,7 +1118,7 @@ const BeginnersFarm = () => {
                         >
                           <NewLabel
                             size="12px"
-                            weight={isMobile ? 400 : 600}
+                            weight={isMobile ? 600 : 600}
                             height="16px"
                             self="center"
                             color="#15202b"
@@ -1136,7 +1138,7 @@ const BeginnersFarm = () => {
                       >
                         <NewLabel
                           size="12px"
-                          weight={isMobile ? 400 : 600}
+                          weight={isMobile ? 600 : 600}
                           height="16px"
                           self="center"
                           color="#15202b"
@@ -1146,15 +1148,15 @@ const BeginnersFarm = () => {
                       </InfoLabel>
                     </FlexDiv>
                   </HalfInfo>
-                </>
+                )
               )}
             </MainSection>
             <RestContent height={activeMainTag === 0 ? '100%' : 'fit-content'}>
               {activeMainTag === 0 ? (
                 <FirstPartSection>
                   <MyBalance
-                    marginBottom={isMobile ? '0' : '25px'}
-                    marginTop={isMobile ? '0px' : '0'}
+                    marginBottom={isMobile ? '20px' : '25px'}
+                    marginTop={isMobile ? '0px' : '0px'}
                     height={isMobile ? 'unset' : '120px'}
                   >
                     <NewLabel
@@ -1162,15 +1164,15 @@ const BeginnersFarm = () => {
                       justifyContent="space-between"
                       size={isMobile ? '12px' : '12px'}
                       weight="600"
-                      height={isMobile ? '18px' : '20px'}
+                      height={isMobile ? '20px' : '20px'}
                       color="#1F2937"
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom="1px solid #F2F5FF"
                     >
                       <>{`f${id}`}</>
                       <InfoIconBlack
                         className="info"
-                        width={isMobile ? 10 : 16}
+                        width={isMobile ? 16 : 16}
                         src={InfoBlack}
                         alt=""
                         data-tip
@@ -1183,8 +1185,8 @@ const BeginnersFarm = () => {
                         textColor="white"
                       >
                         <NewLabel
-                          size={isMobile ? '10px' : '12px'}
-                          height={isMobile ? '15px' : '18px'}
+                          size={isMobile ? '12px' : '12px'}
+                          height={isMobile ? '18px' : '18px'}
                           weight="500"
                           color="white"
                         >
@@ -1195,19 +1197,19 @@ const BeginnersFarm = () => {
                     </NewLabel>
                     <FlexDiv
                       justifyContent="space-between"
-                      padding={isMobile ? '7px 11px' : '5px 15px'}
+                      padding={isMobile ? '5px 15px' : '5px 15px'}
                     >
                       <NewLabel
                         display="flex"
-                        size={isMobile ? '10px' : '12px'}
+                        size={isMobile ? '12px' : '12px'}
                         weight="500"
-                        height={isMobile ? '18px' : '24px'}
+                        height={isMobile ? '24px' : '24px'}
                         color="#6F78AA"
                       >
                         Balance
                         <InfoIcon
                           className="info"
-                          width={isMobile ? 10 : 16}
+                          width={isMobile ? 16 : 16}
                           src={Info}
                           alt=""
                           data-tip
@@ -1221,8 +1223,8 @@ const BeginnersFarm = () => {
                           textColor="white"
                         >
                           <NewLabel
-                            size={isMobile ? '10px' : '12px'}
-                            height={isMobile ? '15px' : '18px'}
+                            size={isMobile ? '12px' : '12px'}
+                            height={isMobile ? '18px' : '18px'}
                             weight="500"
                             color="white"
                           >
@@ -1231,8 +1233,8 @@ const BeginnersFarm = () => {
                         </ReactTooltip>
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '10px' : '12px'}
-                        height={isMobile ? '18px' : '24px'}
+                        size={isMobile ? '12px' : '12px'}
+                        height={isMobile ? '24px' : '24px'}
                         weight="500"
                         color="#6F78AA"
                       >
@@ -1251,11 +1253,11 @@ const BeginnersFarm = () => {
                     </FlexDiv>
                     <FlexDiv
                       justifyContent="space-between"
-                      padding={isMobile ? '7px 11px' : '5px 15px'}
+                      padding={isMobile ? '5px 15px' : '5px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '10px' : '12px'}
-                        height={isMobile ? '18px' : '24px'}
+                        size={isMobile ? '12px' : '12px'}
+                        height={isMobile ? '24px' : '24px'}
                         weight="500"
                         color="#6F78AA"
                         self="center"
@@ -1263,7 +1265,7 @@ const BeginnersFarm = () => {
                         Underlying Balance
                         <InfoIcon
                           className="info"
-                          width={isMobile ? 10 : 16}
+                          width={isMobile ? 16 : 16}
                           src={Info}
                           alt=""
                           data-tip
@@ -1289,8 +1291,8 @@ const BeginnersFarm = () => {
                       </NewLabel>
                       <NewLabel
                         weight="500"
-                        size={isMobile ? '10px' : '12px'}
-                        height={isMobile ? '18px' : '24px'}
+                        size={isMobile ? '12px' : '12px'}
+                        height={isMobile ? '24px' : '24px'}
                         color="#6F78AA"
                         self="center"
                       >
@@ -1311,9 +1313,9 @@ const BeginnersFarm = () => {
                     </FlexDiv>
                   </MyBalance>
                   <HalfContent
-                    marginBottom={isMobile ? '24px' : '0px'}
+                    marginBottom={isMobile ? '20px' : '0px'}
                     partHeight={activeDepo ? partHeightDepo : partHeightWith}
-                    borderRadius={isMobile ? '9px' : '12px'}
+                    borderRadius={isMobile ? '12px' : '12px'}
                   >
                     <DepositSection isShow={activeDepo}>
                       <DepositBase
@@ -1443,106 +1445,80 @@ const BeginnersFarm = () => {
                 </FirstPartSection>
               ) : (
                 <RestInternal>
-                  {isMobile && (
-                    <MyBalance marginBottom={isMobile ? '24px' : '0'}>
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight={isMobile ? '600' : '700'}
-                        height={isMobile ? '18px' : '24px'}
-                        color="#344054"
-                        padding="10px 15px"
-                        borderBottom="1px solid #F3F6FF"
-                        display="flex"
-                        justifyContent="space-between"
-                      >
-                        APY Breakdown
-                        <APRValueShow>
-                          <img src={DOT} alt="" />
-                          {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
-                          &nbsp;APR
-                        </APRValueShow>
-                      </NewLabel>
-                      <NewLabel padding={isMobile ? '0' : '10px 15px'}>
-                        <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
-                      </NewLabel>
-                    </MyBalance>
-                  )}
-                  {!isMobile && (
-                    <MyBalance marginBottom={isMobile ? '24px' : '20px'}>
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="600"
-                        height={isMobile ? '18px' : '24px'}
-                        color="#344054"
-                        padding={isMobile ? '9px 13px' : '10px 15px'}
-                        borderBottom="1px solid #F3F6FF"
-                      >
-                        APY Breakdown
-                      </NewLabel>
-                      <NewLabel padding={isMobile ? '9px 13px' : '0px 15px 10px'}>
-                        <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
-                      </NewLabel>
-                    </MyBalance>
-                  )}
+                  <MyBalance marginBottom={isMobile ? '24px' : '20px'}>
+                    <NewLabel
+                      size={isMobile ? '14px' : '14px'}
+                      weight="600"
+                      height={isMobile ? '24px' : '24px'}
+                      color="#344054"
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
+                      borderBottom="1px solid #F3F6FF"
+                    >
+                      APY Breakdown
+                    </NewLabel>
+                    <NewLabel padding={isMobile ? '0px 15px 10px' : '0px 15px 10px'}>
+                      <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
+                    </NewLabel>
+                  </MyBalance>
                   <LastHarvestInfo>
                     <NewLabel
-                      size={isMobile ? '12px' : '14px'}
-                      weight={isMobile ? '600' : '700'}
-                      height={isMobile ? '18px' : '24px'}
-                      color={isMobile ? '#000' : '#344054'}
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
+                      size={isMobile ? '14px' : '14px'}
+                      weight={isMobile ? '700' : '700'}
+                      height={isMobile ? '24px' : '24px'}
+                      color={isMobile ? '#344054' : '#344054'}
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom="1px solid #F3F6FF"
                     >
                       Fees
                     </NewLabel>
                     <FlexDiv
                       justifyContent="space-between"
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '10px' : '14px'}
+                        size={isMobile ? '14px' : '14px'}
                         weight="500"
-                        height={isMobile ? '18px' : '24px'}
+                        height={isMobile ? '24px' : '24px'}
                         color="#344054"
                       >
                         Deposit Fee
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '10px' : '14px'}
+                        size={isMobile ? '14px' : '14px'}
                         weight="500"
-                        height={isMobile ? '18px' : '24px'}
-                        color={isMobile ? '#15202B' : '#000'}
+                        height={isMobile ? '24px' : '24px'}
+                        color={isMobile ? '#000' : '#000'}
                       >
                         0%
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
                       justifyContent="space-between"
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '10px' : '14px'}
+                        size={isMobile ? '14px' : '14px'}
                         weight="500"
-                        height={isMobile ? '18px' : '24px'}
+                        height={isMobile ? '24px' : '24px'}
                         color="#344054"
                       >
                         Withdrawal Fee
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '10px' : '14px'}
+                        size={isMobile ? '14px' : '14px'}
                         weight="500"
-                        height={isMobile ? '18px' : '24px'}
-                        color={isMobile ? '#15202B' : '#000'}
+                        height={isMobile ? '24px' : '24px'}
+                        color={isMobile ? '#000' : '#000'}
                       >
                         0%
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
                       justifyContent="space-between"
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '8px' : '13px'}
+                        size={isMobile ? '13px' : '13px'}
                         weight="300"
                         height="normal"
                         color="#15202b"
@@ -1553,7 +1529,7 @@ const BeginnersFarm = () => {
                       <NewLabel display="flex" self="center">
                         <InfoIcon
                           className="info"
-                          width={isMobile ? 10 : 16}
+                          width={isMobile ? 16 : 16}
                           src={Info}
                           alt=""
                           data-tip
@@ -1569,8 +1545,8 @@ const BeginnersFarm = () => {
                         >
                           <NewLabel
                             weight="500"
-                            size={isMobile ? '10px' : '13px'}
-                            height={isMobile ? '12px' : '16px'}
+                            size={isMobile ? '13px' : '13px'}
+                            height={isMobile ? '16px' : '16px'}
                           >
                             <FlexDiv gap="15px" justifyContent="space-between">
                               <div>Harvest Treasury</div>
@@ -1586,28 +1562,143 @@ const BeginnersFarm = () => {
                     </FlexDiv>
                   </LastHarvestInfo>
                   {isMobile && (
-                    <>
-                      <HalfInfo padding="25px 18px" marginBottom="23px">
-                        <FarmDetailChart
-                          token={token}
-                          vaultPool={vaultPool}
-                          lastTVL={Number(vaultValue)}
-                          lastAPY={Number(totalApy)}
-                        />
-                      </HalfInfo>
-                      <HalfInfo marginBottom="24px">
-                        <NewLabel
-                          weight={700}
-                          size="12px"
-                          height="18px"
-                          padding="7px 11px"
-                          color="#000"
+                    <HalfInfo marginBottom="20px">
+                      <NewLabel
+                        weight={700}
+                        size="14px"
+                        height="24px"
+                        padding="10px 15px"
+                        borderRadius="15px 15px 0 0"
+                      >
+                        Source of Yield
+                      </NewLabel>
+                      <DescInfo>
+                        {id === 'WETH_base' ? (
+                          <div>
+                            <p>
+                              This farm supplies your{' '}
+                              <a
+                                href="https://basescan.org/token/0x4200000000000000000000000000000000000006"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                WETH
+                              </a>{' '}
+                              to Compound Finance, a robust lending platform, which earns you yield
+                              from lending activities. On top of that, Harvest auto-compounds{' '}
+                              <a
+                                href="https://basescan.org/token/0x9e1028F5F1D5eDE59748FFceE5532509976840E0"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                COMP
+                              </a>{' '}
+                              rewards and converts them into more{' '}
+                              <a
+                                href="https://basescan.org/token/0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                WETH
+                              </a>
+                              .
+                            </p>
+                          </div>
+                        ) : (
+                          <div>
+                            <p>
+                              This farm supplies your{' '}
+                              <a
+                                href="https://basescan.org/token/0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                USDC
+                              </a>{' '}
+                              to Compound Finance, a robust lending platform, which earns you yield
+                              from lending activities. On top of that, Harvest auto-compounds{' '}
+                              <a
+                                href="https://basescan.org/token/0x9e1028F5F1D5eDE59748FFceE5532509976840E0"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                COMP
+                              </a>{' '}
+                              rewards and converts them into more{' '}
+                              <a
+                                href="https://basescan.org/token/0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                USDC
+                              </a>
+                              .
+                            </p>
+                          </div>
+                        )}
+                      </DescInfo>
+                      <FlexDiv className="address" padding="0 15px 20px">
+                        {token.vaultAddress && (
+                          <InfoLabel
+                            display="flex"
+                            href={`${getExplorerLink(token.chain)}/address/${token.vaultAddress}`}
+                            target="_blank"
+                            onClick={e => e.stopPropagation()}
+                            rel="noopener noreferrer"
+                          >
+                            <NewLabel
+                              size="12px"
+                              weight={isMobile ? 600 : 600}
+                              height="16px"
+                              self="center"
+                              color="#15202b"
+                            >
+                              Vault Address
+                            </NewLabel>
+                          </InfoLabel>
+                        )}
+                        {vaultPool.autoStakePoolAddress && (
+                          <InfoLabel
+                            display="flex"
+                            href={`${getExplorerLink(token.chain)}/address/${
+                              vaultPool.contractAddress
+                            }`}
+                            target="_blank"
+                            onClick={e => e.stopPropagation()}
+                            rel="noopener noreferrer"
+                          >
+                            <NewLabel
+                              size="12px"
+                              weight={isMobile ? 600 : 600}
+                              height="16px"
+                              self="center"
+                              color="#15202b"
+                            >
+                              Strategy Address
+                            </NewLabel>
+                          </InfoLabel>
+                        )}
+                        <InfoLabel
+                          display="flex"
+                          href={`${getExplorerLink(token.chain)}/address/${
+                            vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+                          }`}
+                          onClick={e => e.stopPropagation()}
+                          rel="noopener noreferrer"
+                          target="_blank"
                         >
-                          Source of Yield
-                        </NewLabel>
-                        <DescInfo>{ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)}</DescInfo>
-                      </HalfInfo>
-                    </>
+                          <NewLabel
+                            size="12px"
+                            weight={isMobile ? 600 : 600}
+                            height="16px"
+                            self="center"
+                            color="#15202b"
+                          >
+                            Pool Address
+                          </NewLabel>
+                        </InfoLabel>
+                      </FlexDiv>
+                    </HalfInfo>
                   )}
                 </RestInternal>
               )}

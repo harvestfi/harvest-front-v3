@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { useMediaQuery } from 'react-responsive'
 import ChartButtonsGroup from '../ChartButtonsGroup'
 import balanceImg from '../../../assets/images/logos/advancedfarm/coins.svg'
 import usdbalance from '../../../assets/images/logos/advancedfarm/money.svg'
@@ -47,8 +46,6 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, iFarmPrice, u
   const [curDate, setCurDate] = useState('')
   const [curContent, setCurContent] = useState('')
   const [tooltipLabel, setTooltipLabel] = useState('')
-
-  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   useEffect(() => {
     const label = clickedId === 0 ? `USD Balance` : 'Underlying Balance'
@@ -195,32 +192,15 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, iFarmPrice, u
               </FlexDiv>
             </TooltipInfo>
           </FlexDiv>
-          {!isMobile && (
-            <FilterGroup>
-              <ChartButtonsGroup
-                buttons={filterList}
-                clickedId={clickedId}
-                setClickedId={setClickedId}
-              />
-            </FilterGroup>
-          )}
+          <FilterGroup>
+            <ChartButtonsGroup
+              buttons={filterList}
+              clickedId={clickedId}
+              setClickedId={setClickedId}
+            />
+          </FilterGroup>
         </Total>
       </Header>
-      {isMobile && (
-        <ButtonGroup>
-          {recommendLinks.map((item, i) => (
-            <ChartRangeSelect
-              key={i}
-              onClick={() => {
-                setSelectedState(item.state)
-              }}
-              state={selectedState}
-              type={item.type}
-              text={item.name}
-            />
-          ))}
-        </ButtonGroup>
-      )}
       <ChartDiv className="advanced-price">
         <ApexChart
           token={token}
@@ -232,21 +212,19 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, iFarmPrice, u
           setCurContent={setCurContent}
         />
       </ChartDiv>
-      {!isMobile && (
-        <ButtonGroup>
-          {recommendLinks.map((item, i) => (
-            <ChartRangeSelect
-              key={i}
-              onClick={() => {
-                setSelectedState(item.state)
-              }}
-              state={selectedState}
-              type={item.type}
-              text={item.name}
-            />
-          ))}
-        </ButtonGroup>
-      )}
+      <ButtonGroup>
+        {recommendLinks.map((item, i) => (
+          <ChartRangeSelect
+            key={i}
+            onClick={() => {
+              setSelectedState(item.state)
+            }}
+            state={selectedState}
+            type={item.type}
+            text={item.name}
+          />
+        ))}
+      </ButtonGroup>
     </Container>
   )
 }

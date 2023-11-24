@@ -352,11 +352,6 @@ html {
     border-radius: 12px; 
     padding-top: 15px;
     margin-bottom: 7px;
-
-    @media screen and (max-width: 992px) {
-      padding: 7px 11px;
-      margin-bottom: 0;
-    }
   }
 
   .detail-box-main {
@@ -372,11 +367,6 @@ html {
       &:last-child {
         margin: 0;
       }
-
-      @media screen and (max-width: 992px) {
-        width: 18px;
-        height: 18px;
-      }
     }
   }
 
@@ -385,12 +375,6 @@ html {
     line-height: 24px;
     font-weight: 500;
     color: #000;
-
-    @media screen and (max-width: 992px) {
-      font-size: 10px;
-      line-height: 18px;
-      color: #15202B;
-    }
   }
 
   .detail-desc {
@@ -398,11 +382,6 @@ html {
     line-height: 24px;
     font-weight: 500;
     color: #344054;
-
-    @media screen and (max-width: 992px) {
-      font-size: 10px;
-      line-height: 18px;
-    }
   }
 
   .detail-desc-auto {
@@ -410,11 +389,6 @@ html {
     line-height: 24px;
     font-weight: 500;
     color: #344054;
-
-    @media screen and (max-width: 992px) {
-      font-size: 10px;
-      line-height: 18px;
-    }
   }
 
   .detail-desc-no-width {
@@ -422,20 +396,10 @@ html {
     line-height: 24px;
     font-weight: 500;
     color: #344054;
-
-    @media screen and (max-width: 992px) {
-      font-size: 10px;
-      line-height: 18px;
-    }
   }
 
   .detail-token {
     text-decoration: underline;
-
-    @media screen and (max-width: 992px) {
-      font-size: 10px;
-      line-height: 18px;
-    }
   }
 
   .detail-token-no-width {
@@ -443,11 +407,6 @@ html {
     line-height: 24px;
     font-weight: 500;
     color: #344054;
-
-    @media screen and (max-width: 992px) {
-      font-size: 10px;
-      line-height: 18px;
-    }
   }
 
   .farm-detail-reward {
@@ -475,10 +434,6 @@ html {
       width: 36%; 
       font-size: 16px; 
       font-weight: 400;
-
-      @media screen and (max-width: 992px) {
-        font-size: 13px;
-      }
     }
 
     .detail-desc-auto {

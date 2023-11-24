@@ -44,20 +44,6 @@ const Container = styled.button`
       : `
       background: white;
       `}
-
-  @media screen and (max-width: 992px) {
-    font-size: 8px;
-    line-height: 8px;
-    padding: 0.986px 5.628px 0.995px 5.968px;
-    ${props =>
-      props.activeItem
-        ? `
-        border-radius: 1.357px;
-        border: 0.452px solid #FFF;
-        background: #E9F0F7;
-        `
-        : ``}
-  }
 `
 
 const Text = styled.div`

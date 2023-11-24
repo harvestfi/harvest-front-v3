@@ -13,7 +13,7 @@ const Container = styled.div`
   justify-content: space-between;
 
   @media screen and (max-width: 992px) {
-    margin-bottom: 24px;
+    padding: 15px 18px 25px;
   }
 `
 
@@ -50,13 +50,6 @@ const ButtonGroup = styled.div`
   color: #fff;
   justify-content: end;
   padding-top: 10px;
-
-  @media screen and (max-width: 992px) {
-    margin-top: 14px;
-    margin-bottom: 9px;
-    width: 100%;
-    justify-content: space-around;
-  }
 `
 
 const ChartDiv = styled.div`
@@ -75,7 +68,7 @@ const ChartDiv = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    height: 100%;
+    height: 365px;
   }
 `
 
@@ -115,17 +108,11 @@ const TokenSymbol = styled.div`
   font-size: 16px;
   line-height: 28px;
   font-weight: 600;
-  margin-bottom: 5px;
   color: #101828;
 
   img {
     padding-left: 5px;
     margin-top: -3px;
-  }
-
-  @media screen and (max-width: 992px) {
-    font-size: 12px;
-    line-height: 18px;
   }
 `
 
@@ -144,10 +131,6 @@ const CurContent = styled.div`
 
   span {
     color: #ced3e6;
-  }
-
-  @media screen and (max-width: 992px) {
-    font-size: 10px;
   }
 `
 
