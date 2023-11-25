@@ -19,7 +19,7 @@ export function ThemeProvider({ children }) {
   const pageBackColor = darkMode ? '#15202B' : '#fff'
   const fontColor = darkMode ? '#fff' : '#475467'
   const backColor = darkMode ? '#15202B' : '#fff'
-  const borderColor = darkMode ? 'rgba(217, 217, 217, 0.5)' : '#F2F5FF'
+  const borderColor = darkMode ? 'rgba(217, 217, 217, 0.5)' : '#F3F6FF'
   const filterColor = darkMode
     ? 'invert(100%) sepia(20%) saturate(0%) hue-rotate(40deg) brightness(104%) contrast(101%)'
     : ''

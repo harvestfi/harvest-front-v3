@@ -77,6 +77,8 @@ const DetailView = styled.div`
   padding: 16px 24px;
   cursor: pointer;
   background: ${props => props.background};
+  border: 1px solid ${props => props.borderColor};
+  border-top: 0px;
   ${props =>
     props.mode === 'dark'
       ? `
@@ -91,7 +93,7 @@ const DetailView = styled.div`
       props.lastElement === 'yes'
         ? ``
         : `
-      border-bottom: 1px solid #E9E9E9;
+      border-bottom: 1px solid ${props.borderColor};
     `
     }
   `}
@@ -268,16 +270,16 @@ const Content = styled.div`
   }
 
   img.file-icon {
-    padding: 18px;
+    padding: 4px;
     background: #f3f7ff;
-    border-radius: 8px;
+    border-radius: 4.7px;
     border: 1px solid #fff;
   }
 
   img.active-file-icon {
     background: #eaf1ff;
-    padding: 18px;
-    border-radius: 8px;
+    padding: 4px;
+    border-radius: 4.7px;
     border: 1px solid #fff;
   }
 
@@ -400,8 +402,8 @@ const Header = styled.div`
   width: 100%;
   padding: 12px 24px;
   background: ${props => props.backColor};
-  border-bottom: 1px solid ${props => props.borderColor};
   display: flex;
+  border: 1px solid ${props => props.borderColor};
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
 
@@ -560,13 +562,6 @@ const DescInfo = styled.div`
   color: #475467;
 `
 
-const InfoIcon = styled.img`
-  filter: ${props => props.filterColor};
-  transition: 0.25s;
-  cursor: pointer;
-  margin-left: 5px;
-`
-
 const NewLabel = styled.div`
   font-weight: ${props => props.weight || '400'};
   font-size: ${props => props.size || '20px'};
@@ -723,6 +718,5 @@ export {
   TableContent,
   TableContent2,
   DescInfo,
-  InfoIcon,
   NewLabel,
 }

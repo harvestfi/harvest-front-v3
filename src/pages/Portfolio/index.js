@@ -1,6 +1,5 @@
 import { BigNumber } from 'bignumber.js'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import ReactTooltip from 'react-tooltip'
 import axios from 'axios'
 import { find, get, isEmpty, orderBy, isEqual } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
@@ -17,7 +16,6 @@ import Diamond from '../../assets/images/logos/dashboard/diamond-01.svg'
 import Sort from '../../assets/images/logos/dashboard/sort.svg'
 import File from '../../assets/images/logos/dashboard/file-02.svg'
 import MobileFile from '../../assets/images/logos/dashboard/file-01.svg'
-import Info from '../../assets/images/logos/earn/info.svg'
 import ListItem from '../../components/DashboardComponents/ListItem'
 import TotalValue from '../../components/TotalValue'
 import {
@@ -69,9 +67,6 @@ import {
   Col,
   ContentInner,
   TableContent,
-  DescInfo,
-  InfoIcon,
-  NewLabel,
 } from './style'
 
 const getChainIcon = chain => {
@@ -155,7 +150,6 @@ const Portfolio = () => {
     fontColor,
     borderColor,
     totalValueFontColor,
-    filterColor,
   } = useThemeContext()
 
   const [apiData, setApiData] = useState([])
@@ -640,8 +634,6 @@ const Portfolio = () => {
           />
         </SubPart>
 
-        <DescInfo>Track your funds across farms and know how much yield you earn.</DescInfo>
-
         <TransactionDetails backColor={backColor}>
           <TableContent count={farmTokenList.length}>
             <Header borderColor={borderColor} backColor={backColor}>
@@ -661,6 +653,16 @@ const Portfolio = () => {
                   }}
                 >
                   APY
+                  <img className="sortIcon" src={Sort} alt="sort" />
+                </Col>
+              </Column>
+              <Column width={isMobile ? '20%' : '11%'} color={totalValueFontColor}>
+                <Col
+                  onClick={() => {
+                    sortCol('balance')
+                  }}
+                >
+                  My Balance
                   <img className="sortIcon" src={Sort} alt="sort" />
                 </Col>
               </Column>
@@ -687,42 +689,6 @@ const Portfolio = () => {
               <Column width={isMobile ? '20%' : '11%'} color={totalValueFontColor}>
                 <Col
                   onClick={() => {
-                    sortCol('balance')
-                  }}
-                >
-                  <InfoIcon
-                    className="info"
-                    width={isMobile ? 10 : 16}
-                    src={Info}
-                    alt=""
-                    data-tip
-                    data-for="tooltip-balance"
-                    filterColor={filterColor}
-                  />
-                  <ReactTooltip
-                    id="tooltip-balance"
-                    backgroundColor="black"
-                    borderColor="black"
-                    textColor="white"
-                  >
-                    <NewLabel
-                      size={isMobile ? '10px' : '12px'}
-                      height={isMobile ? '15px' : '18px'}
-                      weight="600"
-                      color="white"
-                    >
-                      Sum of staked and unstaked tokens of a specific farm, denominated in USD. Note
-                      that displayed amounts are subject to change due to the live pricing of
-                      underlying tokens.
-                    </NewLabel>
-                  </ReactTooltip>
-                  My Balance
-                  <img className="sortIcon" src={Sort} alt="sort" />
-                </Col>
-              </Column>
-              <Column width={isMobile ? '20%' : '11%'} color={totalValueFontColor}>
-                <Col
-                  onClick={() => {
                     sortCol('totalRewardUsd')
                   }}
                 >
@@ -741,6 +707,7 @@ const Portfolio = () => {
                   return (
                     <DetailView
                       lastElement={i === farmTokenList.length - 1 ? 'yes' : 'no'}
+                      borderColor={borderColor}
                       key={i}
                       mode={switchMode}
                       background={showDetail[i] ? 'rgba(234, 241, 255, 0.53)' : 'unset'}
@@ -893,6 +860,21 @@ const Portfolio = () => {
                             </Content>
                           </>
                         )}
+                        <Content width={isMobile ? '33%' : '11%'}>
+                          <ListItem
+                            weight={500}
+                            size={14}
+                            height={20}
+                            color="#101828"
+                            value={`${
+                              info.balance === 0
+                                ? '$0.00'
+                                : info.balance < 0.01
+                                ? '<$0.01'
+                                : `$${formatNumber(info.balance, 2)}`
+                            }`}
+                          />
+                        </Content>
                         <Content
                           width={isMobile ? '33%' : '11%'}
                           marginTop={isMobile ? '15px' : 'unset'}
@@ -920,47 +902,32 @@ const Portfolio = () => {
                             }`}
                           />
                         </Content>
-                        <Content
-                          width={isMobile ? '33%' : '11%'}
-                          marginTop={isMobile ? '15px' : 'unset'}
-                        >
-                          {isMobile && (
-                            <ListItem
-                              color="#475467"
-                              weight={500}
-                              size={12}
-                              height={18}
-                              value="Daily Yield"
-                            />
-                          )}
-                          <ListItem
-                            weight={500}
-                            size={14}
-                            height={20}
-                            color="#101828"
-                            value={`${
-                              info.dailyYield === 0
-                                ? '$0.00'
-                                : info.dailyYield < 0.01
-                                ? '<$0.01'
-                                : `$${formatNumber(info.dailyYield, 2)}`
-                            }`}
-                          />
-                        </Content>
                         {!isMobile && (
                           <>
-                            <Content width={isMobile ? '33%' : '11%'}>
+                            <Content
+                              width={isMobile ? '33%' : '11%'}
+                              marginTop={isMobile ? '15px' : 'unset'}
+                            >
+                              {isMobile && (
+                                <ListItem
+                                  color="#475467"
+                                  weight={500}
+                                  size={12}
+                                  height={18}
+                                  value="Daily Yield"
+                                />
+                              )}
                               <ListItem
                                 weight={500}
                                 size={14}
                                 height={20}
                                 color="#101828"
                                 value={`${
-                                  info.balance === 0
+                                  info.dailyYield === 0
                                     ? '$0.00'
-                                    : info.balance < 0.01
+                                    : info.dailyYield < 0.01
                                     ? '<$0.01'
-                                    : `$${formatNumber(info.balance, 2)}`
+                                    : `$${formatNumber(info.dailyYield, 2)}`
                                 }`}
                               />
                             </Content>
@@ -1058,33 +1025,10 @@ const Portfolio = () => {
                               />
                             </ContentInner>
                           </Content>
-                          <Content
-                            width={isMobile ? '100%' : '11%'}
-                            display={isMobile ? 'flex' : 'block'}
-                          >
-                            <ListItem
-                              weight={600}
-                              size={isMobile ? 12 : 14}
-                              height={isMobile ? 18 : 20}
-                              value={isMobile ? 'Rewards Breakdown' : 'Rewards'}
-                              marginTop={isMobile ? 15 : 0}
-                              color="#101828"
-                            />
-                            {!isMobile && (
-                              <ListItem
-                                weight={600}
-                                size={isMobile ? 12 : 14}
-                                height={isMobile ? 16 : 20}
-                                value="Breakdown"
-                                marginTop={isMobile ? 15 : 0}
-                                color="#101828"
-                              />
-                            )}
-                          </Content>
                           {info.reward.map((rw, key) => (
                             <Content
                               key={key}
-                              width={isMobile ? '35%' : '12%'}
+                              width={isMobile ? '35%' : '15%'}
                               display="flex"
                               marginTop={isMobile ? '15px' : 'unset'}
                             >
