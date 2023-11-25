@@ -1073,22 +1073,33 @@ const Portfolio = () => {
               </>
             ) : (
               <>
-                <EmptyPanel>
-                  <EmptyInfo weight={600} size={16} height={24} color="#101828">
-                    Looks like you&apos;re not farming anywhere.
-                  </EmptyInfo>
-                  <EmptyInfo weight={400} size={14} height={20} color="#475467" marginTop="4px">
-                    Let&apos;s put your assets to work!
+                <EmptyPanel borderColor={borderColor}>
+                  <EmptyInfo weight={500} size={14} height={20} color="#475467">
+                    You&apos;re not farming anywhere. Let’s put your assets to work!
                   </EmptyInfo>
 
-                  <EmptyInfo weight={500} size={16} height={21} marginTop="25px">
+                  <EmptyInfo weight={500} size={16} height={21} marginTop="15px">
                     <ExploreFarm
-                      borderColor={borderColor}
+                      backColor="#15b088"
+                      hoverColor="#2ccda4"
+                      activeColor="#4fdfbb"
+                      fontColor="#fff"
+                      onClick={() => {
+                        push(ROUTES.BEGINNERS)
+                      }}
+                    >
+                      Farms for Beginners
+                    </ExploreFarm>
+                    <ExploreFarm
+                      backColor="#F2F5FF"
+                      hoverColor="#e8edff"
+                      activeColor="#e0e7ff"
+                      fontColor="#000"
                       onClick={() => {
                         push(ROUTES.ADVANCED)
                       }}
                     >
-                      View all Farms
+                      Advanced Farms
                     </ExploreFarm>
                   </EmptyInfo>
                 </EmptyPanel>

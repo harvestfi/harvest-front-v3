@@ -148,13 +148,12 @@ const FarmPic = styled.img`
 `
 
 const EmptyPanel = styled.div`
-  padding-top: 5%;
-  padding-bottom: 5%;
-
+  padding-top: 15%;
+  padding-bottom: 15%;
   border-radius: 5px;
-  @media screen and (max-width: 992px) {
-    padding-top: 70px;
-  }
+  border-right: 1px solid ${props => props.borderColor};
+  border-bottom: 1px solid ${props => props.borderColor};
+  border-left: 1px solid ${props => props.borderColor};
 `
 
 const EmptyImg = styled.img`
@@ -196,14 +195,16 @@ const EmptyInfo = styled.div`
   display: flex;
   justify-content: center;
   text-align: center;
+  gap: 10px;
 `
 
 const ExploreFarm = styled.button`
-  background: #036666;
+  background: ${props => props.backColor};
   border-radius: 8px;
-  border: 1px solid #036666;
-  color: white;
-  padding: 10px 18px;
+  border: none;
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  color: ${props => props.fontColor};
+  padding: 16px 18px;
   font-weight: 600;
   font-size: 16px;
   line-height: 24px;
@@ -211,11 +212,11 @@ const ExploreFarm = styled.button`
   align-self: center;
 
   &:hover {
-    background: #037474;
+    background: ${props => props.hoverColor};
   }
 
   &:active {
-    background: #e5e5e5;
+    background: ${props => props.activeColor};
   }
 
   @media screen and (max-width: 992px) {
@@ -488,11 +489,17 @@ const Col = styled.div`
   display: flex;
   cursor: pointer;
   width: fit-content;
+  @media screen and (max-width: 1200px) {
+    flex-flow: column;
+  }
 
   img.sortIcon {
     width: 8.8px;
     height: 10.5px;
     margin: auto 0px auto 5px;
+    @media screen and (max-width: 1200px) {
+      margin: auto;
+    }
   }
 
   img.info {
