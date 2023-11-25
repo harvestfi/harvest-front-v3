@@ -16,10 +16,10 @@ export function ThemeProvider({ children }) {
 
   const switchMode = darkMode ? 'dark' : 'light'
 
-  const pageBackColor = darkMode ? '#15202B' : '#F9F9F9'
-  const fontColor = darkMode ? 'white' : '#475467'
-  const backColor = darkMode ? '#15202B' : 'white'
-  const borderColor = darkMode ? 'rgba(217, 217, 217, 0.5)' : '#EAECF0'
+  const pageBackColor = darkMode ? '#15202B' : '#fff'
+  const fontColor = darkMode ? '#fff' : '#475467'
+  const backColor = darkMode ? '#15202B' : '#fff'
+  const borderColor = darkMode ? 'rgba(217, 217, 217, 0.5)' : '#F2F5FF'
   const filterColor = darkMode
     ? 'invert(100%) sepia(20%) saturate(0%) hue-rotate(40deg) brightness(104%) contrast(101%)'
     : ''

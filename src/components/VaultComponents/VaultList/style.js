@@ -29,7 +29,7 @@ const Header = styled.div`
   align-items: center;
   padding: 27px 24px 27px 24px;
   color: ${props => props.fontColor};
-  border-bottom: 1px solid #eaecf0;
+  border-bottom: 1px solid ${props => props.borderColor};
 
   img.sort-icon {
     filter: ${props => props.filterColor};
@@ -135,6 +135,7 @@ const VaultsListBody = styled.div`
   border-top-left-radius: 15px;
   background: ${props => props.backColor};
   transition: 0.25s;
+  border: 1px solid ${props => props.borderColor};
 `
 
 const MobileListFilter = styled.div`

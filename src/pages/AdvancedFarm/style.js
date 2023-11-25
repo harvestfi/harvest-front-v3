@@ -3,12 +3,13 @@ import styled from 'styled-components'
 const DetailView = styled.div`
   width: 100%;
   margin-left: 280px;
+  background: ${props => props.pageBackColor};
   color: ${props => props.fontColor};
   transition: 0.25s;
 
   @media screen and (max-width: 992px) {
     margin-left: 0;
-    padding-bottom: 150px;
+    padding-bottom: 100px;
   }
 `
 

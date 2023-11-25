@@ -665,7 +665,7 @@ const AdvancedFarm = () => {
     }
   }, [supTokenList])
 
-  const { fontColor, filterColor } = useThemeContext()
+  const { pageBackColor, fontColor, filterColor } = useThemeContext()
 
   const firstUserPoolsLoad = useRef(true)
   const firstWalletBalanceLoad = useRef(true)
@@ -973,7 +973,7 @@ const AdvancedFarm = () => {
   }
 
   return (
-    <DetailView fontColor={fontColor}>
+    <DetailView pageBackColor={pageBackColor} fontColor={fontColor}>
       <TopInner>
         <TopPart>
           <FlexTopDiv>

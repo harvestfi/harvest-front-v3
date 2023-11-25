@@ -397,11 +397,11 @@ const Counter = styled.div`
   ${props =>
     props.count > 0
       ? `
-  background: #036666;
+  background: #15B088;
   color: white;
   `
       : `
-  background: #036666;
+  background: #15B088;
   color: #1F2937;
   `}
   width: 20px;

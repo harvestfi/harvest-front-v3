@@ -670,6 +670,7 @@ const VaultList = () => {
     fontColor,
     filterColor,
     backColor,
+    borderColor,
     mobileFilterBackColor,
     mobileFilterBorderColor,
     darkMode,
@@ -687,7 +688,7 @@ const VaultList = () => {
           onSelectActiveType={selectActiveType}
         />
       )}
-      <VaultsListBody backColor={backColor}>
+      <VaultsListBody borderColor={borderColor} backColor={backColor}>
         <MobileListFilter
           mobileBackColor={mobileFilterBackColor}
           backColor={backColor}
@@ -722,7 +723,7 @@ const VaultList = () => {
             </Dropdown.Menu>
           </Dropdown>
         </MobileListFilter>
-        <Header fontColor={fontColor} filterColor={filterColor}>
+        <Header borderColor={borderColor} fontColor={fontColor} filterColor={filterColor}>
           <HeaderCol width="45%" justifyContent="start">
             Farm
           </HeaderCol>

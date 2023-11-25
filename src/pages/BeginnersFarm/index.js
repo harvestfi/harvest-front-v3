@@ -562,7 +562,7 @@ const BeginnersFarm = () => {
     }
   }, [supTokenList, id])
 
-  const { fontColor, filterColor } = useThemeContext()
+  const { pageBackColor, fontColor, filterColor } = useThemeContext()
 
   const firstUserPoolsLoad = useRef(true)
   const firstWalletBalanceLoad = useRef(true)
@@ -749,7 +749,7 @@ const BeginnersFarm = () => {
     chain === CHAIN_IDS.ETH_MAINNET ? '5' : chain === CHAIN_IDS.POLYGON_MAINNET ? '3' : '3'
 
   return (
-    <DetailView fontColor={fontColor}>
+    <DetailView pageBackColor={pageBackColor} fontColor={fontColor}>
       <TopInner isETHFarm={id === 'WETH_base'}>
         <TopPart>
           <FlexTopDiv>
