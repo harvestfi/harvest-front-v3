@@ -959,6 +959,10 @@ const DescInfo = styled.div`
   font-style: normal;
   border-top: 1px solid #ebebeb;
 
+  #tooltip-begin-desc {
+    width: 300px;
+  }
+
   .help-message {
     margin-top: 0;
     p {
@@ -967,6 +971,13 @@ const DescInfo = styled.div`
       }
     }
   }
+`
+
+const DescTooltip = styled.div`
+  font-weight: 600;
+  display: inline;
+  color: #000;
+  cursor: pointer;
 `
 
 const LastHarvestInfo = styled.div`
@@ -1115,6 +1126,7 @@ export {
   InfoLabel,
   MobileChain,
   DescInfo,
+  DescTooltip,
   LastHarvestInfo,
   RestInternal,
   MainTagPanel,

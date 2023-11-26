@@ -80,6 +80,7 @@ import {
   HalfInfo,
   InfoLabel,
   DescInfo,
+  DescTooltip,
   LastHarvestInfo,
   RestInternal,
   MainTagPanel,
@@ -1033,8 +1034,32 @@ const BeginnersFarm = () => {
                             >
                               WETH
                             </a>{' '}
-                            to Compound Finance, a robust lending platform, which earns you yield
-                            from lending activities. On top of that, Harvest auto-compounds{' '}
+                            to{' '}
+                            <DescTooltip
+                              className="begin-desc"
+                              data-tip
+                              data-for="tooltip-begin-desc"
+                            >
+                              Compound
+                            </DescTooltip>{' '}
+                            <ReactTooltip
+                              id="tooltip-begin-desc"
+                              backgroundColor="#101828"
+                              borderColor="black"
+                              textColor="white"
+                            >
+                              <NewLabel
+                                size={isMobile ? '12px' : '12px'}
+                                height={isMobile ? '18px' : '18px'}
+                                weight="500"
+                                color="white"
+                              >
+                                The APY shown already considers the performance fee taken only from
+                                generated yield and not deposits
+                              </NewLabel>
+                            </ReactTooltip>{' '}
+                            Finance, a robust lending platform, which earns you yield from lending
+                            activities. On top of that, Harvest auto-compounds{' '}
                             <a
                               href="https://basescan.org/token/0x9e1028F5F1D5eDE59748FFceE5532509976840E0"
                               target="_blank"
@@ -1064,8 +1089,32 @@ const BeginnersFarm = () => {
                             >
                               USDC
                             </a>{' '}
-                            to Compound Finance, a robust lending platform, which earns you yield
-                            from lending activities. On top of that, Harvest auto-compounds{' '}
+                            to{' '}
+                            <DescTooltip
+                              className="begin-desc"
+                              data-tip
+                              data-for="tooltip-begin-desc"
+                            >
+                              Compound
+                            </DescTooltip>{' '}
+                            <ReactTooltip
+                              id="tooltip-begin-desc"
+                              backgroundColor="#101828"
+                              borderColor="black"
+                              textColor="white"
+                            >
+                              <NewLabel
+                                size={isMobile ? '12px' : '12px'}
+                                height={isMobile ? '18px' : '18px'}
+                                weight="500"
+                                color="white"
+                              >
+                                The APY shown already considers the performance fee taken only from
+                                generated yield and not deposits
+                              </NewLabel>
+                            </ReactTooltip>
+                            Finance, a robust lending platform, which earns you yield from lending
+                            activities. On top of that, Harvest auto-compounds{' '}
                             <a
                               href="https://basescan.org/token/0x9e1028F5F1D5eDE59748FFceE5532509976840E0"
                               target="_blank"
@@ -1584,8 +1633,32 @@ const BeginnersFarm = () => {
                               >
                                 WETH
                               </a>{' '}
-                              to Compound Finance, a robust lending platform, which earns you yield
-                              from lending activities. On top of that, Harvest auto-compounds{' '}
+                              to{' '}
+                              <DescTooltip
+                                className="begin-desc"
+                                data-tip
+                                data-for="tooltip-begin-desc"
+                              >
+                                Compound
+                              </DescTooltip>{' '}
+                              <ReactTooltip
+                                id="tooltip-begin-desc"
+                                backgroundColor="#101828"
+                                borderColor="black"
+                                textColor="white"
+                              >
+                                <NewLabel
+                                  size={isMobile ? '12px' : '12px'}
+                                  height={isMobile ? '18px' : '18px'}
+                                  weight="500"
+                                  color="white"
+                                >
+                                  The APY shown already considers the performance fee taken only
+                                  from generated yield and not deposits
+                                </NewLabel>
+                              </ReactTooltip>{' '}
+                              Finance, a robust lending platform, which earns you yield from lending
+                              activities. On top of that, Harvest auto-compounds{' '}
                               <a
                                 href="https://basescan.org/token/0x9e1028F5F1D5eDE59748FFceE5532509976840E0"
                                 target="_blank"
@@ -1615,8 +1688,32 @@ const BeginnersFarm = () => {
                               >
                                 USDC
                               </a>{' '}
-                              to Compound Finance, a robust lending platform, which earns you yield
-                              from lending activities. On top of that, Harvest auto-compounds{' '}
+                              to{' '}
+                              <DescTooltip
+                                className="begin-desc"
+                                data-tip
+                                data-for="tooltip-begin-desc"
+                              >
+                                Compound
+                              </DescTooltip>{' '}
+                              <ReactTooltip
+                                id="tooltip-begin-desc"
+                                backgroundColor="#101828"
+                                borderColor="black"
+                                textColor="white"
+                              >
+                                <NewLabel
+                                  size={isMobile ? '12px' : '12px'}
+                                  height={isMobile ? '18px' : '18px'}
+                                  weight="500"
+                                  color="white"
+                                >
+                                  The APY shown already considers the performance fee taken only
+                                  from generated yield and not deposits
+                                </NewLabel>
+                              </ReactTooltip>{' '}
+                              Finance, a robust lending platform, which earns you yield from lending
+                              activities. On top of that, Harvest auto-compounds{' '}
                               <a
                                 href="https://basescan.org/token/0x9e1028F5F1D5eDE59748FFceE5532509976840E0"
                                 target="_blank"
