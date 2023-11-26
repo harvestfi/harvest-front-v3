@@ -216,10 +216,10 @@ const TokenAmount = styled.input`
 
 const Title = styled.div`
   font-weight: 400;
-  font-size: 14px;
   line-height: 20px;
   margin: 4px 0 20px;
   color: #475467;
+  ${props => (props.useBeginnersFarm ? 'font-size: 12px;' : 'font-size: 14px;')}
 `
 
 const AmountSection = styled.div`
