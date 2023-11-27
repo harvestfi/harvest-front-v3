@@ -344,7 +344,7 @@ const WithdrawBase = ({
             </SwitchTabTag>
           ))}
         </NewLabel>
-        <Title useBeginnersFarm={useBeginnersFarm}>
+        <Title>
           {`Revert your ${useIFARM ? `i${tokenSymbol}` : 'fToken'} into`}{' '}
           {pickedToken.symbol !== 'Select' ? pickedToken.symbol : 'Output Token'}.
         </Title>

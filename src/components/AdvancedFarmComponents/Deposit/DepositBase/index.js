@@ -329,7 +329,7 @@ const DepositBase = ({
             </SwitchTabTag>
           ))}
         </NewLabel>
-        <DepoTitle useBeginnersFarm={useBeginnersFarm}>
+        <DepoTitle>
           {useBeginnersFarm
             ? `Convert your crypto into interest-bearing ${
                 tokenSymbol === 'WETH_base' ? 'fWETH' : 'fUSDbC'
