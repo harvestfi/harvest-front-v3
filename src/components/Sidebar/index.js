@@ -259,16 +259,16 @@ const MobileMenu = ({
       enabled={item.enabled === false ? 'false' : 'true'}
       isMobile={isMobile}
     >
-      <div className="item">
+      {/* <div className="item">
         <SideIcons
           className="sideIcon"
           src={item.imgPath}
           alt="Harvest"
-          width="27px"
-          height="27px"
+          width="21px"
+          height="21px"
         />
-      </div>
-      {/* {item.name} */}
+      </div> */}
+      <SideIcons className="sideIcon" src={item.imgPath} alt="Harvest" width="21px" height="21px" />
       {item.new ? <NewTag>Soon</NewTag> : <></>}
     </LinkMobile>
   )
@@ -417,6 +417,7 @@ const Sidebar = ({ width }) => {
       width={width}
       sidebarEffect={sidebarEffect}
       backColor={backColor}
+      borderColor={borderColor}
       fontColor={fontColor}
     >
       <Desktop>
@@ -567,7 +568,7 @@ const Sidebar = ({ width }) => {
         </BottomPart>
       </Desktop>
       <Mobile>
-        <MobileView>
+        <MobileView borderColor={borderColor}>
           {/* Full Menu */}
           <OffcanvasDiv
             show={mobileShow}
@@ -577,7 +578,7 @@ const Sidebar = ({ width }) => {
             filtercolor={filterColor}
           >
             <Offcanvas.Body>
-              <MobileActionsContainer>
+              <MobileActionsContainer className="full-menu-container">
                 <Logo
                   className="logo"
                   onClick={() => {
@@ -670,6 +671,7 @@ const Sidebar = ({ width }) => {
                   <MobileWalletBtn>
                     <MobileWalletButton
                       className="connect-button"
+                      borderColor={borderColor}
                       onClick={() => {
                         connectAction()
                         handleMobileConnectClose()
@@ -679,7 +681,7 @@ const Sidebar = ({ width }) => {
                     </MobileWalletButton>
                   </MobileWalletBtn>
                 </MobileWalletBody>
-                <MobileView>
+                <MobileView borderColor={borderColor} className="connect-modal">
                   {sideLinksMobile.map(item => (
                     <Fragment key={item.name}>
                       <MobileMenuContainer
@@ -713,8 +715,8 @@ const Sidebar = ({ width }) => {
                     <MobileConnectBtn color="connectwallet">
                       <MobileToggle
                         toggleColor={toggleColor}
-                        width={32}
-                        height={32}
+                        width={27}
+                        height={21}
                         src={WalletInactive}
                         alt=""
                       />
@@ -729,8 +731,8 @@ const Sidebar = ({ width }) => {
                   >
                     <MobileToggle
                       toggleColor={toggleColor}
-                      width={27}
-                      height={27}
+                      width={21}
+                      height={21}
                       src={Toggle}
                       alt=""
                     />
@@ -782,10 +784,11 @@ const Sidebar = ({ width }) => {
                     {Number(balanceETH).toFixed(5)} ETH | {Number(balanceUSDC).toFixed(2)} USDC
                   </MobileAmount>
                   <MobileWalletBtn>
-                    <MobileWalletButton onClick={handleCopyAddress}>
+                    <MobileWalletButton borderColor={borderColor} onClick={handleCopyAddress}>
                       {copyAddress}
                     </MobileWalletButton>
                     <MobileWalletButton
+                      borderColor={borderColor}
                       onClick={() => {
                         disconnectAction()
                         handleMobileWalletClose()
@@ -795,7 +798,7 @@ const Sidebar = ({ width }) => {
                     </MobileWalletButton>
                   </MobileWalletBtn>
                 </MobileWalletBody>
-                <MobileView>
+                <MobileView borderColor={borderColor} className="connect-modal">
                   {sideLinksMobile.map(item => (
                     <Fragment key={item.name}>
                       <MobileMenuContainer
@@ -829,8 +832,8 @@ const Sidebar = ({ width }) => {
                     <MobileConnectBtn color="connectwallet">
                       <MobileToggle
                         toggleColor={toggleColor}
-                        width={32}
-                        height={32}
+                        width={27}
+                        height={21}
                         src={WalletActive}
                         alt=""
                       />
@@ -845,8 +848,8 @@ const Sidebar = ({ width }) => {
                   >
                     <MobileToggle
                       toggleColor={toggleColor}
-                      width={27}
-                      height={27}
+                      width={21}
+                      height={21}
                       src={Toggle}
                       alt=""
                     />
@@ -901,15 +904,15 @@ const Sidebar = ({ width }) => {
             >
               <MobileToggle
                 toggleColor={toggleColor}
-                width={32}
-                height={32}
+                width={27}
+                height={21}
                 src={connected ? Wallet : WalletOff}
                 alt=""
               />
             </MobileConnectBtn>
           </ConnectSection>
           <MoreBtn type="button" onClick={handleMobileShow}>
-            <MobileToggle toggleColor={toggleColor} width={27} height={27} src={Toggle} alt="" />
+            <MobileToggle toggleColor={toggleColor} width={21} height={21} src={Toggle} alt="" />
           </MoreBtn>
         </MobileView>
       </Mobile>

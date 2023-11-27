@@ -1432,38 +1432,38 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
 
   const graphql = JSON.stringify({
       query: `{
-      generalApies(
-        where: {
-          vault: "${address}", 
-          timestamp_gte: "${startDate}"
-        }, 
-        orderBy: createAtBlock, 
-        orderDirection: desc
-      ) { 
-        apy, timestamp
-      }
-      tvls(
-        first: 1000,
-        where: {
-          vault: "${address}", 
-          timestamp_gte: "${startDate}"
+        generalApies(
+          where: {
+            vault: "${address}", 
+            timestamp_gte: "${startDate}"
+          }, 
+          orderBy: createAtBlock, 
+          orderDirection: desc
+        ) { 
+          apy, timestamp
+        }
+        tvls(
+          first: 1000,
+          where: {
+            vault: "${address}", 
+            timestamp_gte: "${startDate}"
+          },
+          orderBy: createAtBlock,
+          orderDirection: desc
+        ) {
+          value, timestamp
         },
-        orderBy: createAtBlock,
-        orderDirection: desc
-      ) {
-        value, timestamp
-      },
-      priceFeeds(
-        where: {
-          vault: "${address}",
-          value_gt: 0
-        },
-        orderBy: createAtBlock,
-        orderDirection: desc
-      ) {
-        value, sharePrice, timestamp
-      }
-    }`,
+        priceFeeds(
+          where: {
+            vault: "${address}",
+            value_gt: 0
+          },
+          orderBy: createAtBlock,
+          orderDirection: desc
+        ) {
+          value, sharePrice, timestamp
+        }
+      }`,
       variables: {},
     }),
     requestOptions = {
@@ -1654,17 +1654,17 @@ export const getLastHarvestInfo = async (address, chainId) => {
 
   const graphql = JSON.stringify({
       query: `{
-        sharePrices(
-        where: {
-          vault: "${address}"
-        },
-        orderBy: timestamp,
-        orderDirection: desc,
-        first: 1
-      ) {
-        timestamp
-      }
-    }`,
+          sharePrices(
+          where: {
+            vault: "${address}"
+          },
+          orderBy: timestamp,
+          orderDirection: desc,
+          first: 1
+        ) {
+          timestamp
+        }
+      }`,
       variables: {},
     }),
     requestOptions = {
