@@ -6,21 +6,12 @@ import { Dropdown } from 'react-bootstrap'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import BASE from '../../assets/images/chains/base.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
-import MobileFiltersIcon from '../../assets/images/chains/mobilefiltersicon.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
-import UsdIcon from '../../assets/images/ui/usd.svg'
-import TokensIcon from '../../assets/images/ui/tokens.svg'
 import SpecNarrowDown from '../../assets/images/logos/filter/spec-narrowdown.svg'
 import DesciBack from '../../assets/images/logos/filter/desciback.jpg'
 import LSDBack from '../../assets/images/logos/filter/lsdback.jpg'
 import Rocket from '../../assets/images/logos/filter/rocket-01.svg'
 import Zap from '../../assets/images/logos/filter/zap.svg'
-import { ReactComponent as LogoBswap } from '../../assets/images/logos/filter/logo-bswap.svg'
-// import LogoPods from '../../assets/images/logos/filter/logo-pods.svg'
-import { ReactComponent as LogoCamelot } from '../../assets/images/logos/filter/logo-camelot.svg'
-import CollabBswap from '../../assets/images/logos/filter/collab-bswap.svg'
-// import CollabPods from '../../assets/images/logos/filter/collab-pods.svg'
-import CollabCamelot from '../../assets/images/logos/filter/collab-camelot.svg'
 import { CHAIN_IDS } from '../../data/constants'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
@@ -43,14 +34,11 @@ import {
   MobileView,
   QuickFilterContainer,
   WebView,
-  SpecDropDown,
-  SpecDropDownMenu,
-  SpecDropDownItem,
   TrendDropDown,
   TrendDropDownMenu,
   TrendDropDownItem,
   ChainGroup,
-  SwitchBalanceButton,
+  // SwitchBalanceButton,
   ApplyFilterBtn,
 } from './style'
 
@@ -65,22 +53,6 @@ const ChainsList = isLedgerLive()
       { id: 2, name: 'Arbitrum', img: ARBITRUM, chainId: CHAIN_IDS.ARBITRUM_ONE },
       { id: 3, name: 'Base', img: BASE, chainId: CHAIN_IDS.BASE },
     ]
-
-const SwitchBalanceList = [
-  { id: 0, img: UsdIcon },
-  { id: 1, img: TokensIcon },
-]
-
-// const CollaborationList = [
-//   { id: 2, name: 'Camelot', backColor: '#FFAF1D', backImg: CollabCamelot },
-//   { id: 0, name: 'BaseSwap', backColor: '#0085FF', backImg: CollabBswap },
-// ]
-
-const MobileCollaborationList = [
-  { id: 0, name: 'BaseSwap', backColor: '#0085FF', backImg: CollabBswap },
-  // { id: 1, name: 'pods', backColor: '#A92A66', backImg: CollabPods, logoImg: LogoPods },
-  { id: 2, name: 'Camelot', backColor: '#FFAF1D', backImg: CollabCamelot },
-]
 
 const TrendsList = [
   { id: 0, name: 'LSD', backImg: LSDBack, status: 'LSD' },
@@ -273,8 +245,6 @@ const QuickFilter = ({
 
   const selectedClasses = []
 
-  const [collaborationName, setCollaborationName] = useState('Collaboration')
-  const [collaborationBackColor, setCollaborationBackColor] = useState(null)
   const [trendName, setTrendName] = useState('Trends')
   const [trendsBackNum, setTrendsBackNum] = useState(-1)
 
@@ -282,8 +252,6 @@ const QuickFilter = ({
   const [trendStatus, setTrendStatus] = useState('')
 
   const onClearSpecDropdowns = () => {
-    setCollaborationName('Collaboration')
-    setCollaborationBackColor(null)
     setTrendsBackNum(-1)
     setTrendName('Trends')
     setTrendStatus('')
@@ -325,8 +293,6 @@ const QuickFilter = ({
           setInputText(value)
           if (value.toLowerCase() === 'baseswap') {
             setCollabBswapStatus('BaseSwap')
-            setCollaborationName('BaseSwap')
-            setCollaborationBackColor('#0085FF')
           } else if (value.toLowerCase() === 'lsd') {
             setTrendName('LSD')
             setTrendsBackNum(0)
@@ -422,16 +388,7 @@ const QuickFilter = ({
     filterChainHoverColor,
     mobileFilterDisableColor,
     mobileFilterHoverColor,
-    setSwitchBalance,
-    hoverImgColor,
   } = useThemeContext()
-
-  const [clickBalanceId, setClickBalanceId] = useState(1)
-  const handleClickSwitch = (event, id) => {
-    setClickBalanceId(id)
-    const flagBalance = id === 0
-    setSwitchBalance(flagBalance)
-  }
 
   return (
     <div>
@@ -545,48 +502,6 @@ const QuickFilter = ({
                 inputText={inputText}
                 setInputText={setInputText}
               />
-              {/* <DivWidth marginRight="15px" height="fit-content">
-                <Dropdown>
-                  <SpecDropDown
-                    backcolor={collaborationBackColor}
-                    bordercolor={borderColor}
-                    fontcolor={fontColor}
-                    type="collab"
-                  >
-                    <div className="name">{collaborationName}</div>
-                    <img className="narrow" src={SpecNarrowDown} alt="" />
-                  </SpecDropDown>
-
-                  {isSpecialApp ? (
-                    <></>
-                  ) : (
-                    <SpecDropDownMenu>
-                      {CollaborationList.map((item, i) => (
-                        <SpecDropDownItem
-                          key={i}
-                          className={
-                            i === 0 ? 'first' : i === CollaborationList.length - 1 ? 'last' : ''
-                          }
-                          num={item.id}
-                          backimg={item.backImg}
-                          onClick={() => {
-                            setCollaborationName(item.name)
-                            setCollaborationBackColor(item.backColor)
-                            if (item.id === 0) {
-                              setInputText('BaseSwap')
-                              onClickSearch('BaseSwap')
-                            } else {
-                              push('/camelot')
-                            }
-                          }}
-                        >
-                          {i === 0 ? <LogoCamelot /> : <LogoBswap />}
-                        </SpecDropDownItem>
-                      ))}
-                    </SpecDropDownMenu>
-                  )}
-                </Dropdown>
-              </DivWidth> */}
               <DivWidth borderRadius="10" marginRight="15px" backColor={backColor}>
                 <ButtonGroup
                   buttons={RiskList}
@@ -641,58 +556,6 @@ const QuickFilter = ({
               </DivWidth>
             </DivWidth>
 
-            {/* <QuickFilterContainer sub justifyContent="space-between">
-              <DivWidth right="0" marginRight="15px" borderRadius="10" backColor={backColor}>
-                <ClearFilter
-                  fontColor={fontColor}
-                  backColor={backColor}
-                  borderColor={borderColor}
-                  onClick={() => {
-                    document.getElementById('search-input').value = ''
-                    setSearchQuery('')
-                    setInputText('')
-                    // clear collaboration and trends
-                    onClearSpecDropdowns()
-                    onSelectActiveType(['Active'])
-                    setStringSearch(false)
-                    setRiskId(-1)
-                    setAssetsId(-1)
-                    setFarmId(-1)
-                    setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2, 3])
-                    onSelectStableCoin(false)
-                    onAssetClick('')
-                    onSelectFarmType('')
-                    setSelChain([
-                      CHAIN_IDS.ETH_MAINNET,
-                      CHAIN_IDS.POLYGON_MAINNET,
-                      CHAIN_IDS.ARBITRUM_ONE,
-                      CHAIN_IDS.BASE,
-                    ])
-                    clearFilter()
-                  }}
-                >
-                  <Counter count={filterCount}>{filterCount > 0 ? filterCount : ''}</Counter>
-                  &nbsp;Clear
-                </ClearFilter>
-              </DivWidth>
-              <DivWidth borderRadius="10">
-                <ChainGroup>
-                  {SwitchBalanceList.map((item, num) => (
-                    <SwitchBalanceButton
-                      key={num}
-                      backColor={backColor}
-                      borderColor={borderColor}
-                      hoverColor={hoverImgColor}
-                      filterColor={filterColor}
-                      className={clickBalanceId === num ? 'active' : ''}
-                      onClick={event => handleClickSwitch(event, num)}
-                    >
-                      <img src={item.img} alt="" />
-                    </SwitchBalanceButton>
-                  ))}
-                </ChainGroup>
-              </DivWidth>
-            </QuickFilterContainer> */}
             <DivWidth borderRadius="10">
               <ButtonGroup
                 buttons={FarmsList}
@@ -764,8 +627,19 @@ const QuickFilter = ({
               doSomethingAfterClick={printFarm}
               clickedId={farmId}
               setClickedId={setFarmId}
+              fontColor="#344054"
             />
           </FarmButtonPart>
+
+          <MobileListHeaderSearch>
+            <SearchBar
+              placeholder="Assets, platforms..."
+              onKeyDown={updateSearchQuery}
+              onSearch={onClickSearch}
+              inputText={inputText}
+              setInputText={setInputText}
+            />
+          </MobileListHeaderSearch>
 
           <FarmFiltersPart
             backColor={backColor}
@@ -773,32 +647,15 @@ const QuickFilter = ({
             borderColor={borderColor}
             filterColor={filterColor}
           >
-            <div className="switch-balance">
-              <ChainGroup borderColor={borderColor}>
-                {SwitchBalanceList.map((item, num) => (
-                  <SwitchBalanceButton
-                    key={num}
-                    backColor={backColor}
-                    borderColor={borderColor}
-                    hoverColor={hoverImgColor}
-                    filterColor={filterColor}
-                    className={clickBalanceId === num ? 'active' : ''}
-                    onClick={event => handleClickSwitch(event, num)}
-                  >
-                    <img src={item.img} alt="" />
-                  </SwitchBalanceButton>
-                ))}
-              </ChainGroup>
-            </div>
             <div className="filter-part">
               <button
                 type="button"
                 placeholder="Filters"
+                fontColor="#1D2939"
                 onClick={() => {
                   handleFilterShow()
                 }}
               >
-                <img src={MobileFiltersIcon} alt="" />
                 Filters
               </button>
             </div>
@@ -806,12 +663,13 @@ const QuickFilter = ({
             <FilterOffCanvas
               show={filterShow}
               onHide={handleFilterClose}
-              placement="end"
+              placement="left"
               backcolor={backColor}
               filtercolor={filterColor}
+              className="farm-mobile-filter"
             >
               <FilterOffCanvasHeader closeButton>
-                <FarmFilter fontColor={fontColor}>Farm Filters</FarmFilter>
+                <FarmFilter>Filters</FarmFilter>
               </FilterOffCanvasHeader>
               <FilterOffCanvasBody
                 className="filter-show"
@@ -828,6 +686,8 @@ const QuickFilter = ({
                     doSomethingAfterClick={() => {}}
                     clickedId={riskId}
                     setClickedId={setRiskId}
+                    fontColor="#1D2939"
+                    unsetWidth
                   />
                 </DivWidth>
                 <DivWidth mobileMarginBottom="10px">
@@ -836,51 +696,8 @@ const QuickFilter = ({
                     doSomethingAfterClick={() => {}}
                     clickedId={assetsId}
                     setClickedId={setAssetsId}
+                    fontColor="#344054"
                   />
-                </DivWidth>
-                <DivWidth mobileMarginBottom="10px" height="fit-content">
-                  <Dropdown>
-                    <SpecDropDown
-                      backcolor={collaborationBackColor}
-                      bordercolor={borderColor}
-                      fontcolor={fontColor}
-                    >
-                      <div className="name">{collaborationName}</div>
-                      <img className="narrow" src={SpecNarrowDown} alt="" />
-                    </SpecDropDown>
-
-                    {isSpecialApp ? (
-                      <></>
-                    ) : (
-                      <SpecDropDownMenu>
-                        {MobileCollaborationList.map((item, i) => (
-                          <SpecDropDownItem
-                            key={i}
-                            className={
-                              i === 0
-                                ? 'first'
-                                : i === MobileCollaborationList.length - 1
-                                ? 'last'
-                                : ''
-                            }
-                            num={item.id}
-                            backimg={item.backImg}
-                            onClick={() => {
-                              setCollaborationName(item.name)
-                              setCollaborationBackColor(item.backColor)
-                              if (i === 0) {
-                                setCollabBswapStatus('BaseSwap')
-                              } else {
-                                push('/camelot')
-                              }
-                            }}
-                          >
-                            {i === 1 ? <LogoCamelot /> : <LogoBswap />}
-                          </SpecDropDownItem>
-                        ))}
-                      </SpecDropDownMenu>
-                    )}
-                  </Dropdown>
                 </DivWidth>
                 <DivWidth mobileMarginBottom="10px" height="fit-content">
                   <Dropdown>
@@ -969,25 +786,16 @@ const QuickFilter = ({
                   clearFilter()
                 }}
                 borderColor={borderColor}
-                fontColor={fontColor}
+                fontColor="#344054"
                 backColor={backColor}
               >
                 <Counter count={mobileFilterCount}>
                   {mobileFilterCount > 0 ? mobileFilterCount : ''}
                 </Counter>
-                &nbsp;Clear
+                &nbsp;Clear Filters
               </MobileClearFilter>
             </div>
           </FarmFiltersPart>
-          <MobileListHeaderSearch>
-            <SearchBar
-              placeholder="Assets, platforms..."
-              onKeyDown={updateSearchQuery}
-              onSearch={onClickSearch}
-              inputText={inputText}
-              setInputText={setInputText}
-            />
-          </MobileListHeaderSearch>
         </MobileView>
       )}
     </div>

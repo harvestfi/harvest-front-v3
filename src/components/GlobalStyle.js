@@ -49,6 +49,13 @@ html {
           padding: 0;
         }
       }
+      .farm-mobile-filter {
+        width: 65%!important;
+        height: 100%!important;
+        right: 0;
+        background: #FFF;
+        box-shadow: -3px 4px 4px 0px rgba(0, 0, 0, 0.10);
+      }
     }
 
     button {
@@ -613,7 +620,7 @@ const Monospace = styled.span`
   border-bottom: ${props => props.borderBottom || 'unset'};
   color: #101828;
   font-size: 14px !important;
-  font-weight: 500;
+  font-weight: ${props => props.fontWeight || '500'};
   line-height: 20px;
 `
 

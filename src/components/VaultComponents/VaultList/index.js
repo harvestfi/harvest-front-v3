@@ -4,11 +4,14 @@ import move from 'lodash-move'
 import React, { useMemo, useRef, useState, useEffect } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import useEffectWithPrevious from 'use-effect-with-previous'
+import { IoIosArrowDown } from 'react-icons/io'
 import EmptyIcon from '../../../assets/images/logos/farm/empty.svg'
+import SortAPY from '../../../assets/images/logos/farm/sortAPY.svg'
+import SortBank from '../../../assets/images/logos/farm/sortBank.svg'
+import SortCurrency from '../../../assets/images/logos/farm/sortCurrency.svg'
 import sortAscIcon from '../../../assets/images/ui/asc.svg'
 import sortDescIcon from '../../../assets/images/ui/desc.svg'
 import sortIcon from '../../../assets/images/ui/sort.svg'
-import SortFilterIcon from '../../../assets/images/logos/filter/sort-icon.svg'
 import MobileSortCheckedIcon from '../../../assets/images/logos/filter/mobile-sort-checked.svg'
 import {
   FARM_GRAIN_TOKEN_SYMBOL,
@@ -49,9 +52,9 @@ import {
 const { tokens } = require('../../../data')
 
 const SortsList = [
-  { id: 0, name: 'APY', type: 'apy' },
-  { id: 1, name: 'My Balance', type: 'balance' },
-  { id: 2, name: 'TVL', type: 'deposits' },
+  { id: 0, name: 'APY', type: 'apy', img: SortAPY },
+  { id: 1, name: 'TVL', type: 'deposits', img: SortBank },
+  { id: 2, name: 'My Balance', type: 'balance', img: SortCurrency },
 ]
 
 const formatVaults = (
@@ -698,9 +701,12 @@ const VaultList = () => {
         >
           <Dropdown className="filter-sort">
             <Dropdown.Toggle className="toggle">
-              <div>Sort By: {sortId === -1 ? '' : SortsList[sortId].name}</div>
+              <div>
+                Sort By: <img src={SortsList[sortId].img} className="sort-icon" alt="sort" />
+                <span>{sortId === -1 ? '' : SortsList[sortId].name}</span>
+              </div>
               <MobileFilterBtn type="button" darkmode={darkMode ? 'true' : 'false'}>
-                <img src={SortFilterIcon} alt="" />
+                <IoIosArrowDown color="#667085" fontSize={20} />
               </MobileFilterBtn>
             </Dropdown.Toggle>
 
@@ -716,7 +722,10 @@ const VaultList = () => {
                     updateSortQuery(item.type)
                   }}
                 >
-                  <div>{item.name}</div>
+                  <div>
+                    <img src={item.img} className="sort-icon" alt="sort" />
+                    {item.name}
+                  </div>
                   <img className="checked" src={MobileSortCheckedIcon} alt="" />
                 </Dropdown.Item>
               ))}
