@@ -65,17 +65,23 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, usdPrice }) =
       let firstVaultTime = Math.floor(Date.now() / 1000),
         data2comb = [],
         flag2comb = true
+      console.log(firstVaultTime, firstUserTime)
       while (firstVaultTime > firstUserTime && flag1) {
+        console.log(firstVaultTime)
         /* eslint-disable no-await-in-loop */
         const { data2, flag2 } = await getUserBalanceHistories2(address, chainId, firstVaultTime)
         /* eslint-enable no-await-in-loop */
-        if (flag2 === false) {
-          flag2comb = false
-          continue
+        if (data2.length == 0) {
+          break
         }
         data2comb = data2comb.concat(data2)
         firstVaultTime = data2[data2.length - 1].timestamp
       }
+      if (data2comb.length == 0) {
+        flag2comb = false
+      }
+      console.log(data2comb)
+      console.log(data2comb.length)
       const uniqueData2 = []
       const timestamps = []
       data2comb.forEach(obj => {

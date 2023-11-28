@@ -1851,7 +1851,7 @@ export const getUserBalanceHistories1 = async (address, chainId, account) => {
 export const getUserBalanceHistories2 = async (address, chainId, timestamp) => {
   let data2 = {},
     flag2 = true
-
+    
   address = address.toLowerCase()
 
   const myHeaders = new Headers()
@@ -1859,12 +1859,12 @@ export const getUserBalanceHistories2 = async (address, chainId, timestamp) => {
 
   const graphql = JSON.stringify({
       query: `{
-        userBalanceHistories(
+        vaultHistories(
           where: {
             vault: "${address}",
             timestamp_lt: ${timestamp},
           },
-          orderBy: createAtBlock,
+          orderBy: timestamp,
           orderDirection: desc,
         ) {
           sharePrice, priceUnderlying, timestamp
@@ -1892,7 +1892,7 @@ export const getUserBalanceHistories2 = async (address, chainId, timestamp) => {
     await fetch(url, requestOptions)
       .then(response => response.json())
       .then(res => {
-        data2 = res.data.userBalanceHistories
+        data2 = res.data.vaultHistories
         if (data2.length === 0) {
           flag2 = false
         }
