@@ -410,7 +410,23 @@ const MobileAmount = styled.div`
   font-size: 16px;
   font-weight: 400;
   line-height: 28px;
+  display: flex;
+`
+
+const MobileAmountDiv = styled.div`
+  display: inline-block;
+  width: 50%;
   text-align: center;
+  &.middle-letter {
+    width: 10%;
+    margin-top: -1px;
+  }
+  &.eth-letter {
+    text-align: end;
+  }
+  &.usdc-letter {
+    text-align: start;
+  }
 `
 
 const MobileWalletButton = styled.div`
@@ -423,6 +439,8 @@ const MobileWalletButton = styled.div`
   border-radius: 5px;
   border: 1px solid ${props => props.borderColor};
   cursor: pointer;
+  width: 45%;
+  text-align: center;
 
   &.connect-button {
     padding: 10px 40px;
@@ -491,6 +509,7 @@ const ConnectAvatar = styled.div`
 
   @media screen and (max-width: 992px) {
     justify-content: center;
+    margin-right: 0px;
   }
 `
 
@@ -688,6 +707,9 @@ const UserDropDownItem = styled(Dropdown.Item)`
 
 const MobileToggle = styled.img`
   filter: ${props => props.toggleColor};
+  &.wallet-btn {
+    margin-top: -3px;
+  }
 `
 
 const OffcanvasDiv = styled(Offcanvas)`
@@ -837,6 +859,7 @@ export {
   MobileWalletBody,
   MobileWalletBtn,
   MobileAmount,
+  MobileAmountDiv,
   MobileWalletButton,
   MobileActionsContainer,
   SocialMobileWrapper,

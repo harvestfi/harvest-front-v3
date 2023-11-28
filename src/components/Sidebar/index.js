@@ -61,6 +61,7 @@ import {
   MobileWalletTopNet,
   MobileWalletBody,
   MobileAmount,
+  MobileAmountDiv,
   MobileWalletBtn,
   MobileWalletButton,
   SocialMobileWrapper,
@@ -714,6 +715,7 @@ const Sidebar = ({ width }) => {
                   <ConnectSection>
                     <MobileConnectBtn color="connectwallet">
                       <MobileToggle
+                        className="wallet-btn"
                         toggleColor={toggleColor}
                         width={27}
                         height={21}
@@ -781,7 +783,13 @@ const Sidebar = ({ width }) => {
                   </ConnectAvatar>
                   <Address>{formatAddress(account)}</Address>
                   <MobileAmount>
-                    {Number(balanceETH).toFixed(5)} ETH | {Number(balanceUSDC).toFixed(2)} USDC
+                    <MobileAmountDiv className="eth-letter">
+                      {Number(balanceETH).toFixed(5)} ETH
+                    </MobileAmountDiv>
+                    <MobileAmountDiv className="middle-letter">|</MobileAmountDiv>
+                    <MobileAmountDiv className="usdc-letter">
+                      {Number(balanceUSDC).toFixed(2)} USDC
+                    </MobileAmountDiv>
                   </MobileAmount>
                   <MobileWalletBtn>
                     <MobileWalletButton borderColor={borderColor} onClick={handleCopyAddress}>
@@ -831,6 +839,7 @@ const Sidebar = ({ width }) => {
                   <ConnectSection>
                     <MobileConnectBtn color="connectwallet">
                       <MobileToggle
+                        className="wallet-btn"
                         toggleColor={toggleColor}
                         width={27}
                         height={21}
@@ -903,6 +912,7 @@ const Sidebar = ({ width }) => {
               }
             >
               <MobileToggle
+                className="wallet-btn"
                 toggleColor={toggleColor}
                 width={27}
                 height={21}
