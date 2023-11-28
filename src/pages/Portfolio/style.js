@@ -179,7 +179,8 @@ const EmptyPanel = styled.div`
   border-bottom: 1px solid ${props => props.borderColor};
   border-left: 1px solid ${props => props.borderColor};
   @media screen and (max-width: 992px) {
-    padding: 100px 25px;
+    padding: 0px;
+    border: none;
   }
 `
 
@@ -225,9 +226,9 @@ const EmptyInfo = styled.div`
   gap: 10px;
   @media screen and (max-width: 992px) {
     display: flex;
-    justify-content: space-between;
-    padding: 10px;
-    font-size: 14px;
+    justify-content: center;
+    font-size: 10px;
+    line-height: 18px;
   }
 `
 
@@ -253,8 +254,8 @@ const ExploreFarm = styled.button`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 10px;
-    font-size: 14px;
+    padding: 8px 13px;
+    font-size: 12px;
   }
 `
 
@@ -583,22 +584,16 @@ const TableContent = styled.div`
   `
       : ``}
   @media screen and (max-width: 992px) {
-    overflow-x: scroll;
+    // overflow-x: scroll;
     border-radius: 15px 15px 0px 0px;
     border: 1px solid #f2f5ff;
-  }
-`
-
-const TableContent2 = styled.div`
-  margin-top: 50px;
-  ${props =>
-    props.count === 0
-      ? `
-    margin-bottom: 10px;
-  `
-      : ``}
-  @media screen and (max-width: 992px) {
-    overflow-x: scroll;
+    ${props =>
+      props.count === 0
+        ? `
+        border-radius: unset;
+        border: none;
+    `
+        : ``}
   }
 `
 
@@ -610,6 +605,8 @@ const DescInfo = styled.div`
     line-height: 24px;
     font-weight: 400;
     color: #475467;
+    padding-bottom: 10px;
+    border-bottom: 2px solid ${props => props.borderColor};
   }
 `
 
@@ -769,7 +766,6 @@ export {
   Col,
   ContentInner,
   TableContent,
-  TableContent2,
   DescInfo,
   NewLabel,
 }

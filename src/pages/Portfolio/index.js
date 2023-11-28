@@ -672,7 +672,9 @@ const Portfolio = () => {
           </MobileDiv>
         </MobileSubPart>
 
-        <DescInfo>Preview farms with your active deposits below.</DescInfo>
+        <DescInfo borderColor={borderColor}>
+          Preview farms with your active deposits below.
+        </DescInfo>
 
         <TransactionDetails backColor={backColor}>
           <TableContent count={farmTokenList.length}>
@@ -1130,7 +1132,7 @@ const Portfolio = () => {
               <>
                 <EmptyPanel borderColor={borderColor}>
                   <EmptyInfo weight={500} size={14} height={20} color="#475467">
-                    You&apos;re not farming anywhere. Let’s put your assets to work!
+                    You&apos;re not farming anywhere. Let&apos;s put your assets to work!
                   </EmptyInfo>
 
                   <EmptyInfo weight={500} size={16} height={21} marginTop="15px">
