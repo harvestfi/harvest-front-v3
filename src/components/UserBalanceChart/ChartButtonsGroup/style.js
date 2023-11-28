@@ -9,6 +9,11 @@ const ButtonsGroup = styled.div`
   border-radius: 8px;
   border: 1px solid ${props => props.borderColor};
   overflow: hidden;
+
+  #tooltip-balance-chart,
+  #tooltip-underlying-balance-chart {
+    width: 200px;
+  }
 `
 
 const ButtonStyle = styled.button`
