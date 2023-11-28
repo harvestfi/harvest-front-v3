@@ -20,7 +20,7 @@ const VaultContainer = styled.div`
   }
 
   &:hover {
-    background: ${props => props.hoverColor};
+    background: #e9f0f7;
 
     ${ArrowContainer} {
       background: #f2b435;

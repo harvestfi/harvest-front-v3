@@ -122,7 +122,7 @@ const DetailView = styled.div`
   transition: 0.25s;
 
   &:hover {
-    background: #f3f7ff;
+    background: #e9f0f7;
   }
 
   @media screen and (max-width: 992px) {
