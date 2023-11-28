@@ -39,7 +39,7 @@ const Inner = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 16px 10px;
+    padding: 25px 15px;
   }
 `
 
@@ -48,7 +48,29 @@ const SubPart = styled.div`
   justify-content: space-between;
 
   @media screen and (max-width: 992px) {
-    display: block;
+    display: none;
+  }
+`
+
+const MobileSubPart = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`
+
+const MobileDiv = styled.div`
+  display: none;
+
+  @media screen and (max-width: 992px) {
+    display: flex;
+    flex-wrap: wrap;
+    border: 2px solid #f2f5ff;
+    border-radius: 6.5px;
+    width: 100%;
+    margin-bottom: 24px;
+
+    div:first-child {
+      border-right: 0.821px solid #f2f5ff;
+    }
   }
 `
 
@@ -105,6 +127,8 @@ const DetailView = styled.div`
 
   @media screen and (max-width: 992px) {
     padding: 0px;
+    border: unset;
+    border-bottom: 1px solid #f2f5ff;
   }
 `
 
@@ -154,6 +178,9 @@ const EmptyPanel = styled.div`
   border-right: 1px solid ${props => props.borderColor};
   border-bottom: 1px solid ${props => props.borderColor};
   border-left: 1px solid ${props => props.borderColor};
+  @media screen and (max-width: 992px) {
+    padding: 100px 25px;
+  }
 `
 
 const EmptyImg = styled.img`
@@ -196,6 +223,12 @@ const EmptyInfo = styled.div`
   justify-content: center;
   text-align: center;
   gap: 10px;
+  @media screen and (max-width: 992px) {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    font-size: 14px;
+  }
 `
 
 const ExploreFarm = styled.button`
@@ -220,7 +253,8 @@ const ExploreFarm = styled.button`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 15px 84px;
+    padding: 10px;
+    font-size: 14px;
   }
 `
 
@@ -483,6 +517,10 @@ const Img = styled.img`
   width: 37px;
   height: 37px;
   margin: auto 6px auto 0px;
+  @media screen and (max-width: 992px) {
+    width: 26px;
+    height: 26px;
+  }
 `
 
 const Col = styled.div`
@@ -546,6 +584,8 @@ const TableContent = styled.div`
       : ``}
   @media screen and (max-width: 992px) {
     overflow-x: scroll;
+    border-radius: 15px 15px 0px 0px;
+    border: 1px solid #f2f5ff;
   }
 `
 
@@ -563,10 +603,14 @@ const TableContent2 = styled.div`
 `
 
 const DescInfo = styled.div`
-  margin-top: 25px;
-  font-size: 16px;
-  line-height: 24px;
-  color: #475467;
+  display: none;
+  @media screen and (max-width: 992px) {
+    display: block;
+    font-size: 12px;
+    line-height: 24px;
+    font-weight: 400;
+    color: #475467;
+  }
 `
 
 const NewLabel = styled.div`
@@ -699,6 +743,8 @@ const NewLabel = styled.div`
 export {
   Container,
   SubPart,
+  MobileSubPart,
+  MobileDiv,
   TransactionDetails,
   DetailView,
   FarmTitle,

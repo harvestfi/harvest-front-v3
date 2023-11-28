@@ -60,6 +60,9 @@ import {
   Header,
   Inner,
   SubPart,
+  MobileSubPart,
+  MobileDiv,
+  DescInfo,
   // ThemeMode,
   TransactionDetails,
   LogoImg,
@@ -634,6 +637,43 @@ const Portfolio = () => {
           />
         </SubPart>
 
+        <MobileSubPart>
+          <MobileDiv>
+            <TotalValue
+              icon={Safe}
+              content="Total Balance"
+              price={totalDeposit}
+              toolTipTitle="tt-total-balance"
+              toolTip="Sum of your wallet's staked and unstaked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
+            />
+            <TotalValue
+              icon={Diamond}
+              content="Rewards"
+              price={totalRewards}
+              toolTipTitle="tt-rewards"
+              toolTip="Accrued rewards on all your staked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
+            />
+          </MobileDiv>
+          <MobileDiv>
+            <TotalValue
+              icon={Coin1}
+              content="Est. Monthly Yield"
+              price={totalYieldMonthly}
+              toolTipTitle="tt-monthly-yield"
+              toolTip="Estimated monthly yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
+            />
+            <TotalValue
+              icon={Coin2}
+              content="Est. Daily Yield"
+              price={totalYieldDaily}
+              toolTipTitle="tt-daily-yield"
+              toolTip="Estimated daily yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
+            />
+          </MobileDiv>
+        </MobileSubPart>
+
+        <DescInfo>Preview farms with your active deposits below.</DescInfo>
+
         <TransactionDetails backColor={backColor}>
           <TableContent count={farmTokenList.length}>
             <Header borderColor={borderColor} backColor={backColor}>
@@ -860,21 +900,23 @@ const Portfolio = () => {
                             </Content>
                           </>
                         )}
-                        <Content width={isMobile ? '33%' : '11%'}>
-                          <ListItem
-                            weight={500}
-                            size={14}
-                            height={20}
-                            color="#101828"
-                            value={`${
-                              info.balance === 0
-                                ? '$0.00'
-                                : info.balance < 0.01
-                                ? '<$0.01'
-                                : `$${formatNumber(info.balance, 2)}`
-                            }`}
-                          />
-                        </Content>
+                        {!isMobile && (
+                          <Content width={isMobile ? '33%' : '11%'}>
+                            <ListItem
+                              weight={500}
+                              size={14}
+                              height={20}
+                              color="#101828"
+                              value={`${
+                                info.balance === 0
+                                  ? '$0.00'
+                                  : info.balance < 0.01
+                                  ? '<$0.01'
+                                  : `$${formatNumber(info.balance, 2)}`
+                              }`}
+                            />
+                          </Content>
+                        )}
                         <Content
                           width={isMobile ? '33%' : '11%'}
                           marginTop={isMobile ? '15px' : 'unset'}
@@ -902,52 +944,50 @@ const Portfolio = () => {
                             }`}
                           />
                         </Content>
+                        <Content
+                          width={isMobile ? '33%' : '11%'}
+                          marginTop={isMobile ? '15px' : 'unset'}
+                        >
+                          {isMobile && (
+                            <ListItem
+                              color="#475467"
+                              weight={500}
+                              size={12}
+                              height={18}
+                              value="Daily Yield"
+                            />
+                          )}
+                          <ListItem
+                            weight={500}
+                            size={14}
+                            height={20}
+                            color="#101828"
+                            value={`${
+                              info.dailyYield === 0
+                                ? '$0.00'
+                                : info.dailyYield < 0.01
+                                ? '<$0.01'
+                                : `$${formatNumber(info.dailyYield, 2)}`
+                            }`}
+                          />
+                        </Content>
                         {!isMobile && (
-                          <>
-                            <Content
-                              width={isMobile ? '33%' : '11%'}
-                              marginTop={isMobile ? '15px' : 'unset'}
-                            >
-                              {isMobile && (
-                                <ListItem
-                                  color="#475467"
-                                  weight={500}
-                                  size={12}
-                                  height={18}
-                                  value="Daily Yield"
-                                />
-                              )}
-                              <ListItem
-                                weight={500}
-                                size={14}
-                                height={20}
-                                color="#101828"
-                                value={`${
-                                  info.dailyYield === 0
-                                    ? '$0.00'
-                                    : info.dailyYield < 0.01
-                                    ? '<$0.01'
-                                    : `$${formatNumber(info.dailyYield, 2)}`
-                                }`}
-                              />
-                            </Content>
-                            <Content width={isMobile ? '33%' : '11%'}>
-                              <ListItem
-                                weight={500}
-                                size={14}
-                                height={20}
-                                color="#101828"
-                                // value={`$${formatNumber(info.totalRewardUsd, 9)}`}
-                                value={`${
-                                  info.totalRewardUsd === 0
-                                    ? '$0.00'
-                                    : info.totalRewardUsd < 0.01
-                                    ? '<$0.01'
-                                    : `$${formatNumber(info.totalRewardUsd, 2)}`
-                                }`}
-                              />
-                            </Content>
-                          </>
+                          <Content width={isMobile ? '33%' : '11%'}>
+                            <ListItem
+                              weight={500}
+                              size={14}
+                              height={20}
+                              color="#101828"
+                              // value={`$${formatNumber(info.totalRewardUsd, 9)}`}
+                              value={`${
+                                info.totalRewardUsd === 0
+                                  ? '$0.00'
+                                  : info.totalRewardUsd < 0.01
+                                  ? '<$0.01'
+                                  : `$${formatNumber(info.totalRewardUsd, 2)}`
+                              }`}
+                            />
+                          </Content>
                         )}
                         <Content
                           onClick={event => {
@@ -1025,6 +1065,21 @@ const Portfolio = () => {
                               />
                             </ContentInner>
                           </Content>
+                          {isMobile && (
+                            <Content
+                              width={isMobile ? '100%' : '11%'}
+                              display={isMobile ? 'flex' : 'block'}
+                            >
+                              <ListItem
+                                weight={600}
+                                size={isMobile ? 12 : 14}
+                                height={isMobile ? 18 : 20}
+                                value={isMobile ? 'Rewards Breakdown' : 'Rewards'}
+                                marginTop={isMobile ? 15 : 0}
+                                color="#101828"
+                              />
+                            </Content>
+                          )}
                           {info.reward.map((rw, key) => (
                             <Content
                               key={key}

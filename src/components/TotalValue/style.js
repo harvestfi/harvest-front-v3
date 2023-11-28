@@ -9,9 +9,11 @@ const Container = styled.div`
   border-radius: 12px;
 
   @media screen and (max-width: 992px) {
-    width: 100%;
-    margin-bottom: 15px;
-    display: flex;
+    width: 50%;
+    border: unset;
+    border-radius: unset;
+    background: unset;
+    padding: 8px 13px;
   }
 `
 
@@ -21,6 +23,11 @@ const Div = styled.div`
   line-height: 20px;
   color: #6f78aa;
   margin-bottom: 8px;
+
+  @media screen and (max-width: 992px) {
+    font-size: 12px;
+    margin-bottom: 0px;
+  }
 
   #tt-total-balance,
   #tt-monthly-yield,
@@ -35,6 +42,10 @@ const Price = styled.div`
   font-size: 30px;
   line-height: 44px;
   color: #101828;
+  @media screen and (max-width: 992px) {
+    font-size: 17px;
+    line-height: 36px;
+  }
 `
 
 const InfoIcon = styled.img`
