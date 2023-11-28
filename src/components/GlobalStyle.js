@@ -622,6 +622,9 @@ const Monospace = styled.span`
   font-size: 14px !important;
   font-weight: ${props => props.fontWeight || '500'};
   line-height: 20px;
+  @media screen and (max-width: 992px) {
+    font-weight: 700;
+  }
 `
 
 const Box = styled.div`
