@@ -1,8 +1,9 @@
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useState } from 'react'
 import { useSetChain } from '@web3-onboard/react'
+import axios from 'axios'
 import { get, round } from 'lodash'
-import { quote } from 'wido'
+// import { quote } from 'wido'
 import { useMediaQuery } from 'react-responsive'
 import { toast } from 'react-toastify'
 import ReactTooltip from 'react-tooltip'
@@ -64,6 +65,18 @@ const getChainName = chain => {
   return chainName
 }
 
+const getEnsoQuote = async params => {
+  try {
+    const response = await axios.get('https://api.enso.finance/api/v1/shortcuts/quote', {
+      params,
+    })
+    return response.data
+  } catch (error) {
+    console.error('Error fetching balances:', error)
+    return {}
+  }
+}
+
 const DepositBase = ({
   setSelectToken,
   deposit,
@@ -97,7 +110,7 @@ const DepositBase = ({
     setChain, // function to call to initiate user to switch chains in their wallet
   ] = useSetChain()
 
-  const slippagePercentage = 0.005 // Default slippage Percent
+  // const slippagePercentage = 0.005 // Default slippage Percent
   const tokenChain = token.chain || token.data.chain
   const curChain = isSpecialApp
     ? chainId
@@ -163,26 +176,42 @@ const DepositBase = ({
               WIDO_EXTEND_DECIMALS,
             )
           } else {
-            const fromChainId = chainId
+            // const fromChainId = chainId
             const fromToken = pickedToken.address
             const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
-            const toChainId = chainId
-            const user = account
-            const mainWeb = await getWeb3(chainId, account, web3)
+            // const toChainId = chainId
+            // const user = account
+            // const mainWeb = await getWeb3(chainId, account, web3)
             let curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol)
 
-            const quoteResult = await quote(
-              {
-                fromChainId, // Chain Id of from token
-                fromToken, // Token address of from token
-                toChainId, // Chain Id of to token
-                toToken, // Token address of to token
-                amount, // Token amount of from token
-                slippagePercentage, // Acceptable max slippage for the swap
-                user, // Address of user placing the order.
-              },
-              mainWeb.currentProvider,
-            )
+            const ensoQuote = await getEnsoQuote({
+              chainId,
+              fromAddress: account,
+              tokenIn: fromToken,
+              tokenOut: toToken,
+              amountIn: amount,
+            })
+
+            if (Object.keys(ensoQuote).length === 0) throw new Error('Quote fetch failture')
+
+            const quoteResult = {
+              fromTokenAmount: amount,
+              fromTokenUsdPrice: 0, // TODO: get correct price using enso api
+              minToTokenAmount: ensoQuote.amountOut,
+            }
+
+            // const quoteResult = await quote(
+            //   {
+            //     fromChainId, // Chain Id of from token
+            //     fromToken, // Token address of from token
+            //     toChainId, // Chain Id of to token
+            //     toToken, // Token address of to token
+            //     amount, // Token amount of from token
+            //     slippagePercentage, // Acceptable max slippage for the swap
+            //     user, // Address of user placing the order.
+            //   },
+            //   mainWeb.currentProvider,
+            // )
             setQuoteValue(quoteResult)
             curToken = curToken[0]
             fromInfoValue = formatNumberWido(
