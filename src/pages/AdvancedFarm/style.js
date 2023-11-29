@@ -443,7 +443,7 @@ const FlexTopDiv = styled.div`
   flex-direction: column;
   justify-content: start;
   align-self: center;
-  z-index: 1;
+  // z-index: 1;
 
   img {
     align-self: center;
