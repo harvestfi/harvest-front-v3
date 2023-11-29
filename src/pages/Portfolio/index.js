@@ -400,7 +400,6 @@ const Portfolio = () => {
             stats.stake = stake
             const finalBalance = Number(stake) + Number(unstake)
             stats.balance = finalBalance * usdPrice
-            console.log(symbol, ': ', stake, unstake, usdPrice, '=', finalBalance * usdPrice)
             // eslint-disable-next-line no-restricted-globals
             if (isNaN(stats.stake)) {
               stats.stake = 0
