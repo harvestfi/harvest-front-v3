@@ -61,7 +61,10 @@ const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {
             textColor="white"
             place="top"
           >
-            <TooltipContent>Connect your wallet to see your balance chart</TooltipContent>
+            <TooltipContent>
+              Connect your wallet <br />
+              to see balance chart
+            </TooltipContent>
           </ReactTooltip>
           <ReactTooltip
             id="tooltip-underlying-balance-chart"
@@ -71,7 +74,8 @@ const ChartButtonsGroup = ({ buttons, clickedId, setClickedId }) => {
             place="top"
           >
             <TooltipContent>
-              Connect your wallet to see your underlying balance chart
+              Connect your wallet <br />
+              to see underlying balance chart
             </TooltipContent>
           </ReactTooltip>
         </>
