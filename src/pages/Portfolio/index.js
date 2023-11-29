@@ -24,7 +24,6 @@ import {
   FARM_TOKEN_SYMBOL,
   FARM_WETH_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
-  POOL_BALANCES_DECIMALS,
   SPECIAL_VAULTS,
   MAX_DECIMALS,
   ROUTES,
@@ -374,7 +373,7 @@ const Portfolio = () => {
             const unstake = fromWei(
               get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),
               (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
-              POOL_BALANCES_DECIMALS,
+              MAX_DECIMALS,
             )
             stats.unstake = unstake
             // eslint-disable-next-line no-restricted-globals
@@ -395,12 +394,13 @@ const Portfolio = () => {
             const stake = fromWei(
               useIFARM ? finalStake : stakeTemp,
               token.decimals || token.data.watchAsset.decimals,
-              4,
+              MAX_DECIMALS,
             )
 
             stats.stake = stake
             const finalBalance = Number(stake) + Number(unstake)
             stats.balance = finalBalance * usdPrice
+            console.log(symbol, ': ', stake, unstake, usdPrice, '=', finalBalance * usdPrice)
             // eslint-disable-next-line no-restricted-globals
             if (isNaN(stats.stake)) {
               stats.stake = 0
