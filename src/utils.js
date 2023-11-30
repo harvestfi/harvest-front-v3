@@ -1800,6 +1800,7 @@ export const getUserBalanceHistories1 = async (address, chainId, account) => {
   const graphql = JSON.stringify({
       query: `{
         userBalanceHistories(
+          first: 1000,
           where: {
             vault: "${address}",
             userAddress: "${account}"
@@ -1860,6 +1861,7 @@ export const getUserBalanceHistories2 = async (address, chainId, timestamp) => {
   const graphql = JSON.stringify({
       query: `{
         vaultHistories(
+          first: 1000,
           where: {
             vault: "${address}",
             timestamp_lt: ${timestamp},
