@@ -158,14 +158,14 @@ const UnstakeBase = ({
   return (
     <BaseSection show={!finalStep}>
       <NewLabel
-        size={isMobile ? '12px' : '16px'}
-        height={isMobile ? '21px' : '28px'}
+        size={isMobile ? '16px' : '16px'}
+        height={isMobile ? '28px' : '28px'}
         weight="600"
         color="#101828"
         display="flex"
         justifyContent="center"
-        padding={isMobile ? '0' : '4px 0'}
-        marginBottom="15px"
+        padding={isMobile ? '4px 0px' : '4px 0px'}
+        marginBottom="13px"
         border="1px solid #F8F8F8"
         borderRadius="8px"
       >
@@ -195,8 +195,8 @@ const UnstakeBase = ({
       <DepoTitle>Unstake your fTokens.</DepoTitle>
       <AmountSection>
         <NewLabel
-          size={isMobile ? '10px' : '14px'}
-          height={isMobile ? '15px' : '20px'}
+          size={isMobile ? '14px' : '14px'}
+          height={isMobile ? '20px' : '20px'}
           weight="500"
           color="#344054"
           marginBottom="6px"
@@ -246,8 +246,8 @@ const UnstakeBase = ({
         <NewLabel display="flex" widthDiv="80%" items="start">
           <img className="info-icon" src={InfoIcon} alt="" />
           <NewLabel
-            size={isMobile ? '10px' : '14px'}
-            height={isMobile ? '15px' : '20px'}
+            size={isMobile ? '14px' : '14px'}
+            height={isMobile ? '20px' : '20px'}
             weight="600"
             color="#344054"
           >
@@ -273,8 +273,8 @@ const UnstakeBase = ({
           <NewLabel marginLeft="12px">
             <NewLabel
               color="#B54708"
-              size={isMobile ? '10px' : '14px'}
-              height={isMobile ? '15px' : '20px'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '20px' : '20px'}
               weight="600"
               marginBottom="4px"
             >
@@ -282,8 +282,8 @@ const UnstakeBase = ({
             </NewLabel>
             <NewLabel
               color="#B54708"
-              size={isMobile ? '10px' : '14px'}
-              height={isMobile ? '15px' : '20px'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '20px' : '20px'}
               weight="400"
               marginBottom="5px"
             >
@@ -302,7 +302,7 @@ const UnstakeBase = ({
         </NewLabel>
       </FTokenWrong>
 
-      <NewLabel marginTop={isMobile ? '19px' : '25px'} padding={isMobile ? '0 7px' : '0'}>
+      <NewLabel marginTop={isMobile ? '10px' : '10px'}>
         <Button
           color="wido-deposit"
           width="100%"

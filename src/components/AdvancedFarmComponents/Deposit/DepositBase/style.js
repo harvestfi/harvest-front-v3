@@ -9,9 +9,6 @@ const BaseWidoDiv = styled.div`
     padding: 10px 15px 15px 15px;
     border-top: 1px solid #e3e3e3;
   }
-
-  @media screen and (max-width: 992px) {
-  }
 `
 
 const NewLabel = styled.div`
@@ -248,10 +245,10 @@ const BalanceInfo = styled.div`
 
 const DepoTitle = styled.div`
   font-weight: 400;
+  font-size: 14px;
   line-height: 20px;
   margin: 0px 0px 20px;
   color: #475467;
-  font-size: 14px;
   @media screen and (max-width: 992px) {
     font-size: 12px;
   }

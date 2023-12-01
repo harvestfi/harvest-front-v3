@@ -29,7 +29,6 @@ const Inner = styled.div`
   @media screen and (max-width: 992px) {
     padding: 25px 15px 0px 15px;
     height: 100%;
-    background: #fff;
   }
 `
 
@@ -106,7 +105,7 @@ const TopButton = styled.div`
   @media screen and (max-width: 992px) {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
   }
 `
 
@@ -421,7 +420,6 @@ const FlexTopDiv = styled.div`
   flex-direction: column;
   justify-content: start;
   align-self: center;
-  // z-index: 1;
 
   img {
     align-self: center;
@@ -491,7 +489,7 @@ const BackBtnRect = styled.a`
   display: inline-flex;
   height: 35px;
   text-decoration: none;
-  border: 1px solid #fff;
+  border: 0.5px solid #fff;
   border-radius: 5px;
   padding: 5px 15px;
   cursor: pointer;
@@ -517,13 +515,13 @@ const RestContent = styled.div`
     width: 500px;
   }
 
-  // @media screen and (max-width: 1480px) {
-  //   width: 49%;
-  // }
+  @media screen and (max-width: 1480px) {
+    width: 49%;
+  }
 
-  // @media screen and (max-width: 1281px) {
-  //   width: 50%;
-  // }
+  @media screen and (max-width: 1281px) {
+    width: 50%;
+  }
 
   @media screen and (max-width: 992px) {
     width: 100%;
@@ -617,7 +615,7 @@ const MyBalance = styled.div`
 const GuideSection = styled.div`
   display: flex;
   margin-bottom: 49px;
-  margin-top: 5px;
+  margin-top: 6px;
 
   @media screen and (max-width: 992px) {
     margin-top: 10px;
@@ -698,9 +696,9 @@ const MainSection = styled.div`
   border-radius: 12px;
   height: ${props => props.height};
 
-  // @media screen and (max-width: 1480px) {
-  //   width: 49%;
-  // }
+  @media screen and (max-width: 1480px) {
+    width: 49%;
+  }
 
   @media screen and (max-width: 992px) {
     width: 100%;
@@ -773,7 +771,7 @@ const BoxTitle = styled.div`
 `
 
 const BoxValue = styled.div`
-  color: var(--gray-900, #101828);
+  color: #101828;
   font-weight: 600;
   letter-spacing: -0.6px;
   font-size: 22px;
@@ -1000,6 +998,10 @@ const MainTagPanel = styled.div`
   width: 40%;
   border-radius: 8px;
 
+  @media screen and (max-width: 1200px) {
+    width: 55%;
+  }
+
   @media screen and (max-width: 992px) {
     width: 100%;
   }
@@ -1056,11 +1058,6 @@ const FirstPartSection = styled.div`
   height: 100%;
   display: flex;
   flex-flow: column;
-
-  @media screen and (max-width: 992px) {
-    // display: flex;
-    // flex-direction: column-reverse;
-  }
 `
 
 const APRValueShow = styled.div`

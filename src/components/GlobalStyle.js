@@ -488,6 +488,8 @@ html {
         color: #FFFFFF;
         justify-content: center;
         padding: 24px;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
       }
       .modal-body {
         padding: 24px;

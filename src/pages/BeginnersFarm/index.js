@@ -286,7 +286,6 @@ const BeginnersFarm = () => {
   // Deposit
   const [depositStart, setDepositStart] = useState(false)
   const [selectTokenDepo, setSelectTokenDepo] = useState(false)
-  // const [clickTokenIdDepo, setClickedTokenIdDepo] = useState(-1)
   const [balanceDepo, setBalanceDepo] = useState(0)
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
   const [quoteValueDepo, setQuoteValueDepo] = useState(null)
@@ -302,7 +301,6 @@ const BeginnersFarm = () => {
   const [selectTokenWith, setSelectTokenWith] = useState(false)
   const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select' })
   const [unstakeBalance, setUnstakeBalance] = useState('0')
-  // const [clickTokenIdWith, setClickedTokenIdWith] = useState(-1)
   const [partHeightWith, setPartHeightWith] = useState(null)
   const [quoteValueWith, setQuoteValueWith] = useState(null)
   const [revertFromInfoAmount, setRevertFromInfoAmount] = useState('')
@@ -787,21 +785,6 @@ const BeginnersFarm = () => {
                 {token.tokenNames.join(' • ')}
               </TopDesc>
             </FlexDiv>
-            {/* {!isMobile && (
-              <FlexDiv>
-                {logoUrl.map((el, i) => (
-                  <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
-                ))}
-                <TopDesc
-                  weight={600}
-                  size={isMobile ? '19.7px' : '25px'}
-                  height={isMobile ? '45px' : '82px'}
-                  marginBottom={isMobile ? '5px' : '10px'}
-                >
-                  {token.tokenNames.join(' • ')}
-                </TopDesc>
-              </FlexDiv>
-            )} */}
             <GuideSection>
               <GuidePart>
                 {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
@@ -1450,8 +1433,6 @@ const BeginnersFarm = () => {
                       <WithdrawSelectToken
                         selectToken={selectTokenWith}
                         setSelectToken={setSelectTokenWith}
-                        // clickTokenId={clickTokenIdWith}
-                        // setClickedTokenId={setClickedTokenIdWith}
                         setPickedToken={setPickedTokenWith}
                         supTokenList={supTokenList}
                         supTokenNoBalanceList={supTokenNoBalanceList}

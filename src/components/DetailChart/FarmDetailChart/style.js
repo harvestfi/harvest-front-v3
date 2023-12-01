@@ -9,28 +9,20 @@ const Container = styled.div`
   transition: 0.25s;
   background: #fff;
 
-  @media screen and (max-width: 992px) {
-    width: 100%;
-    height: 400px;
-  }
+  // @media screen and (max-width: 992px) {
+  //   width: 100%;
+  //   height: 400px;
+  // }
 `
 
 const Header = styled.div`
   font-size: 14px;
-
-  @media screen and (max-width: 992px) {
-    padding: 0 12px;
-  }
 `
 
 const Total = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  @media screen and (max-width: 992px) {
-    align-items: start;
-  }
 `
 
 const MoreBtn = styled.button`
@@ -57,13 +49,6 @@ const ButtonGroup = styled.div`
   color: #fff;
   justify-content: end;
   padding-top: 25px;
-
-  @media screen and (max-width: 992px) {
-    margin-top: 15px;
-    margin-bottom: 10px;
-    width: 100%;
-    justify-content: space-around;
-  }
 `
 
 const ChartDiv = styled.div`
@@ -82,7 +67,7 @@ const ChartDiv = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    height: 100%;
+    height: 365px;
   }
 `
 
@@ -103,31 +88,18 @@ const PriceShow = styled.div`
     padding: 0;
     margin: 0 10px 0 0;
   }
-
-  @media screen and (max-width: 992px) {
-    margin-bottom: 1rem;
-  }
 `
 
 const FilterName = styled.div`
   text-align: right;
   margin-top: 1rem;
-
-  @media screen and (max-width: 992px) {
-    margin-top: 0.5rem;
-  }
 `
 
 const CurDate = styled.div`
   color: #1b1b1b;
   display: flex;
   font-size: 13px;
-  line-height: normal;
   font-weight: 500;
-
-  @media screen and (max-width: 992px) {
-    font-size: 10px;
-  }
 
   span {
     color: #ced3e6;
@@ -149,10 +121,6 @@ const FlexDiv = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
-
-  @media screen and (max-width: 992px) {
-    width: 100%;
-  }
 `
 
 const LabelInfo = styled.div`
@@ -160,10 +128,6 @@ const LabelInfo = styled.div`
   font-size: 16px;
   font-weight: 600;
   line-height: normal;
-
-  @media screen and (max-width: 992px) {
-    font-size: 10px;
-  }
 `
 
 export {

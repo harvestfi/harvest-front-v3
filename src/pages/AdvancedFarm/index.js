@@ -8,13 +8,13 @@ import ReactTooltip from 'react-tooltip'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { getBalances, getSupportedTokens } from 'wido'
+import { BiLeftArrowAlt } from 'react-icons/bi'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import BASE from '../../assets/images/chains/base.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
-import Back from '../../assets/images/logos/earn/back-arrow.svg'
 import Info from '../../assets/images/logos/earn/info.svg'
 import InfoNewColor from '../../assets/images/logos/beginners/help-circle-new-color.svg'
 import InfoBlack from '../../assets/images/logos/earn/help-circle.svg'
@@ -66,7 +66,6 @@ import {
   getLastHarvestInfo,
 } from '../../utils'
 import {
-  BackArrow,
   BackBtnRect,
   BackText,
   BigDiv,
@@ -82,6 +81,7 @@ import {
   NewLabel,
   RestContent,
   TopDesc,
+  TopLogo,
   TopPart,
   MyBalance,
   MyTotalReward,
@@ -105,6 +105,7 @@ import {
   FirstPartSection,
   SecondPartSection,
   TabRow,
+  MobileChain,
   NetDetail,
   NetDetailItem,
   BoxCover,
@@ -348,7 +349,6 @@ const AdvancedFarm = () => {
   // Deposit
   const [depositStart, setDepositStart] = useState(false)
   const [selectTokenDepo, setSelectTokenDepo] = useState(false)
-  // const [clickTokenIdDepo, setClickedTokenIdDepo] = useState(-1)
   const [balanceDepo, setBalanceDepo] = useState(0)
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
   const [quoteValueDepo, setQuoteValueDepo] = useState(null)
@@ -365,7 +365,6 @@ const AdvancedFarm = () => {
   const [selectTokenWith, setSelectTokenWith] = useState(false)
   const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select' })
   const [unstakeBalance, setUnstakeBalance] = useState('0')
-  // const [clickTokenIdWith, setClickedTokenIdWith] = useState(-1)
   const [partHeightWith, setPartHeightWith] = useState(null)
   const [quoteValueWith, setQuoteValueWith] = useState(null)
   const [revertFromInfoAmount, setRevertFromInfoAmount] = useState('')
@@ -987,35 +986,35 @@ const AdvancedFarm = () => {
                   }
                 }}
               >
-                <BackArrow src={Back} alt="" />
+                <BiLeftArrowAlt />
                 <BackText>Back</BackText>
               </BackBtnRect>
+              {isMobile && (
+                <MobileChain>
+                  <NetDetailItem>
+                    <NetDetailContent>{token.platform && token.platform[0]}</NetDetailContent>
+                  </NetDetailItem>
+                  <ChainBack>
+                    <img src={BadgeAry[badgeId]} alt="" />
+                  </ChainBack>
+                </MobileChain>
+              )}
             </TopButton>
-            {isMobile && (
-              <FlexDiv>
+            <FlexDiv className="farm-symbol">
+              <TopLogo>
                 {logoUrl.map((el, i) => (
                   <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
                 ))}
-                <ChainBack>
-                  <img src={BadgeAry[badgeId]} width={6} height={10} alt="" />
-                </ChainBack>
-              </FlexDiv>
-            )}
-            {!isMobile && (
-              <FlexDiv>
-                {logoUrl.map((el, i) => (
-                  <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
-                ))}
-                <TopDesc
-                  weight={600}
-                  size={isMobile ? '19.7px' : '25px'}
-                  height={isMobile ? '45px' : '82px'}
-                  marginBottom={isMobile ? '5px' : '10px'}
-                >
-                  {useIFARM ? `i${token.tokenNames.join(' • ')}` : token.tokenNames.join(' • ')}
-                </TopDesc>
-              </FlexDiv>
-            )}
+              </TopLogo>
+              <TopDesc
+                weight={600}
+                size={isMobile ? '19.7px' : '25px'}
+                height={isMobile ? '45px' : '82px'}
+                marginBottom={isMobile ? '5px' : '10px'}
+              >
+                {useIFARM ? `i${token.tokenNames.join(' • ')}` : token.tokenNames.join(' • ')}
+              </TopDesc>
+            </FlexDiv>
             <GuideSection>
               <GuidePart>
                 {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
@@ -1070,19 +1069,19 @@ const AdvancedFarm = () => {
           <InternalSection>
             {activeMainTag === 2 && (
               <BoxCover>
-                <ValueBox width="24%" height="120px">
+                <ValueBox width="24%" className="balance-box">
                   <BoxTitle>APY</BoxTitle>
                   <BoxValue>{showAPY()}</BoxValue>
                 </ValueBox>
-                <ValueBox width="24%" height="120px">
+                <ValueBox width="24%" className="daily-apy-box">
                   <BoxTitle>Daily APY</BoxTitle>
                   <BoxValue>{showApyDaily()}</BoxValue>
                 </ValueBox>
-                <ValueBox width="24%" height="120px">
+                <ValueBox width="24%">
                   <BoxTitle>TVL</BoxTitle>
                   <BoxValue>{showTVL()}</BoxValue>
                 </ValueBox>
-                <ValueBox width="24%" height="120px">
+                <ValueBox width="24%" className="daily-yield-box">
                   <BoxTitle>Last Harvest</BoxTitle>
                   <BoxValue>
                     {useIFARM ? '-' : lastHarvest !== '' ? `${lastHarvest} ago` : '-'}
@@ -1094,7 +1093,7 @@ const AdvancedFarm = () => {
               {activeMainTag === 0 ? (
                 <>
                   <BoxCover>
-                    <ValueBox height="120px" width="32%">
+                    <ValueBox width="32%" className="balance-box">
                       <BoxTitle>
                         My Balance
                         <InfoIcon
@@ -1140,7 +1139,7 @@ const AdvancedFarm = () => {
                         )}
                       </BoxValue>
                     </ValueBox>
-                    <ValueBox height="120px" width="32%">
+                    <ValueBox width="32%" className="monthly-yield-box">
                       <BoxTitle>
                         Monthly Yield
                         <InfoIcon
@@ -1182,7 +1181,7 @@ const AdvancedFarm = () => {
                           : `$${formatNumber(yieldMonthly, 2)}`}
                       </BoxValue>
                     </ValueBox>
-                    <ValueBox height="120px" width="32%">
+                    <ValueBox width="32%" className="daily-yield-box">
                       <BoxTitle>
                         Daily Yield
                         <InfoIcon
@@ -1208,7 +1207,7 @@ const AdvancedFarm = () => {
                       </BoxValue>
                     </ValueBox>
                   </BoxCover>
-                  <div>
+                  {!isMobile && (
                     <UserBalanceData
                       token={token}
                       vaultPool={vaultPool}
@@ -1218,19 +1217,15 @@ const AdvancedFarm = () => {
                       iFarmPrice={iFarmPrice}
                       usdPrice={usdPrice}
                     />
-                  </div>
+                  )}
                 </>
               ) : activeMainTag === 1 ? (
                 <>
-                  <MyTotalReward
-                    height="120px"
-                    marginBottom="23px"
-                    padding={isMobile ? '24px' : '24px'}
-                  >
+                  <MyTotalReward marginBottom={isMobile ? '20px' : '25px'}>
                     <NewLabel
-                      size={isMobile ? '12px' : '14px'}
+                      size={isMobile ? '10px' : '14px'}
                       weight="500"
-                      height={isMobile ? '18px' : '20px'}
+                      height={isMobile ? '20px' : '20px'}
                       color="#6F78AA"
                     >
                       Rewards
@@ -1253,25 +1248,27 @@ const AdvancedFarm = () => {
                       </BoxValue>
                     </RewardValue>
                   </MyTotalReward>
-                  <MyBalance marginBottom="23px">
-                    <NewLabel
-                      size={isMobile ? '12px' : '14px'}
-                      weight="600"
-                      height={isMobile ? '18px' : '24px'}
-                      color="#344054"
-                      padding={isMobile ? '9px 13px' : '10px 15px'}
-                      borderBottom="1px solid #F3F6FF"
-                    >
-                      My Token Rewards
-                    </NewLabel>
-                    <FlexDiv>
-                      <VaultPanelActionsFooter {...viewComponentProps} />
-                    </FlexDiv>
-                  </MyBalance>
+                  {!isMobile && (
+                    <MyBalance marginBottom="25px">
+                      <NewLabel
+                        size={isMobile ? '14px' : '14px'}
+                        weight="600"
+                        height={isMobile ? '24px' : '24px'}
+                        color="#344054"
+                        padding={isMobile ? '10px 15px' : '10px 15px'}
+                        borderBottom="1px solid #F3F6FF"
+                      >
+                        My Token Rewards
+                      </NewLabel>
+                      <FlexDiv>
+                        <VaultPanelActionsFooter {...viewComponentProps} />
+                      </FlexDiv>
+                    </MyBalance>
+                  )}
                 </>
               ) : (
                 <>
-                  <HalfInfo padding="25px 18px" marginBottom="23px">
+                  <HalfInfo padding="25px 18px" marginBottom={isMobile ? '20px' : '25px'}>
                     <FarmDetailChart
                       token={token}
                       vaultPool={vaultPool}
@@ -1279,81 +1276,102 @@ const AdvancedFarm = () => {
                       lastAPY={Number(totalApy)}
                     />
                   </HalfInfo>
-                  <HalfInfo marginBottom="20px">
-                    <NewLabel
-                      weight={700}
-                      size="14px"
-                      height="24px"
-                      padding="10px 15px"
-                      borderRadius="15px 15px 0 0"
-                    >
-                      Source of Yield
-                    </NewLabel>
-                    <DescInfo>
-                      {useIFARM ? (
-                        <div>
-                          <p>
-                            This is the profit sharing vault of Harvest. When depositing into the
-                            vault you obtain the yield-bearing token{' '}
-                            <a
-                              href="https://etherscan.io/token/0x1571eD0bed4D987fe2b498DdBaE7DFA19519F651"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              iFARM
-                            </a>
-                            . If you&apos;re holding{' '}
-                            <a
-                              href="https://etherscan.io/token/0xa0246c9032bC3A600820415aE600c6388619A14D"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              FARM
-                            </a>{' '}
-                            , it is recommended to convert it into interest-bearing{' '}
-                            <a
-                              href="https://etherscan.io/token/0x1571eD0bed4D987fe2b498DdBaE7DFA19519F651"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              iFARM
-                            </a>{' '}
-                            in order be entitled to Harvest&apos;s profit sharing.
-                          </p>
-                        </div>
-                      ) : (
-                        ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)
-                      )}
-                    </DescInfo>
-                    <FlexDiv className="address" padding="0 15px 20px">
-                      {token.vaultAddress && (
-                        <InfoLabel
-                          display="flex"
-                          href={`${getExplorerLink(token.chain)}/address/${token.vaultAddress}`}
-                          target="_blank"
-                          onClick={e => e.stopPropagation()}
-                          rel="noopener noreferrer"
-                        >
-                          <NewLabel
-                            size="12px"
-                            weight={isMobile ? 400 : 600}
-                            height="16px"
-                            self="center"
-                            color="#15202b"
+                  {!isMobile && (
+                    <HalfInfo marginBottom="20px">
+                      <NewLabel
+                        weight={700}
+                        size="14px"
+                        height="24px"
+                        padding="10px 15px"
+                        borderRadius="15px 15px 0 0"
+                      >
+                        Source of Yield
+                      </NewLabel>
+                      <DescInfo>
+                        {useIFARM ? (
+                          <div>
+                            <p>
+                              This is the profit sharing vault of Harvest. When depositing into the
+                              vault you obtain the yield-bearing token{' '}
+                              <a
+                                href="https://etherscan.io/token/0x1571eD0bed4D987fe2b498DdBaE7DFA19519F651"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                iFARM
+                              </a>
+                              . If you&apos;re holding{' '}
+                              <a
+                                href="https://etherscan.io/token/0xa0246c9032bC3A600820415aE600c6388619A14D"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                FARM
+                              </a>{' '}
+                              , it is recommended to convert it into interest-bearing{' '}
+                              <a
+                                href="https://etherscan.io/token/0x1571eD0bed4D987fe2b498DdBaE7DFA19519F651"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                iFARM
+                              </a>{' '}
+                              in order be entitled to Harvest&apos;s profit sharing.
+                            </p>
+                          </div>
+                        ) : (
+                          ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)
+                        )}
+                      </DescInfo>
+                      <FlexDiv className="address" padding="0 15px 20px">
+                        {token.vaultAddress && (
+                          <InfoLabel
+                            display="flex"
+                            href={`${getExplorerLink(token.chain)}/address/${token.vaultAddress}`}
+                            target="_blank"
+                            onClick={e => e.stopPropagation()}
+                            rel="noopener noreferrer"
                           >
-                            Vault Address
-                          </NewLabel>
-                        </InfoLabel>
-                      )}
-                      {vaultPool.autoStakePoolAddress && (
+                            <NewLabel
+                              size="12px"
+                              weight={isMobile ? 600 : 600}
+                              height="16px"
+                              self="center"
+                              color="#15202b"
+                            >
+                              Vault Address
+                            </NewLabel>
+                          </InfoLabel>
+                        )}
+                        {vaultPool.autoStakePoolAddress && (
+                          <InfoLabel
+                            display="flex"
+                            href={`${getExplorerLink(token.chain)}/address/${
+                              vaultPool.contractAddress
+                            }`}
+                            target="_blank"
+                            onClick={e => e.stopPropagation()}
+                            rel="noopener noreferrer"
+                          >
+                            <NewLabel
+                              size="12px"
+                              weight={isMobile ? 600 : 600}
+                              height="16px"
+                              self="center"
+                              color="#15202b"
+                            >
+                              Strategy Address
+                            </NewLabel>
+                          </InfoLabel>
+                        )}
                         <InfoLabel
                           display="flex"
                           href={`${getExplorerLink(token.chain)}/address/${
-                            vaultPool.contractAddress
+                            vaultPool.autoStakePoolAddress || vaultPool.contractAddress
                           }`}
-                          target="_blank"
                           onClick={e => e.stopPropagation()}
                           rel="noopener noreferrer"
+                          target="_blank"
                         >
                           <NewLabel
                             size="12px"
@@ -1362,31 +1380,12 @@ const AdvancedFarm = () => {
                             self="center"
                             color="#15202b"
                           >
-                            Strategy Address
+                            Pool Address
                           </NewLabel>
                         </InfoLabel>
-                      )}
-                      <InfoLabel
-                        display="flex"
-                        href={`${getExplorerLink(token.chain)}/address/${
-                          vaultPool.autoStakePoolAddress || vaultPool.contractAddress
-                        }`}
-                        onClick={e => e.stopPropagation()}
-                        rel="noopener noreferrer"
-                        target="_blank"
-                      >
-                        <NewLabel
-                          size="12px"
-                          weight={isMobile ? 400 : 600}
-                          height="16px"
-                          self="center"
-                          color="#15202b"
-                        >
-                          Pool Address
-                        </NewLabel>
-                      </InfoLabel>
-                    </FlexDiv>
-                  </HalfInfo>
+                      </FlexDiv>
+                    </HalfInfo>
+                  )}
                 </>
               )}
             </MainSection>
@@ -1394,7 +1393,7 @@ const AdvancedFarm = () => {
               {activeMainTag === 0 ? (
                 <FirstPartSection>
                   <MyBalance
-                    marginBottom={isMobile ? '0' : '25px'}
+                    marginBottom={isMobile ? '20px' : '25px'}
                     marginTop={isMobile ? '0px' : '0'}
                     height={isMobile ? 'unset' : '120px'}
                   >
@@ -1403,15 +1402,15 @@ const AdvancedFarm = () => {
                       justifyContent="space-between"
                       size={isMobile ? '12px' : '12px'}
                       weight="600"
-                      height={isMobile ? '18px' : '20px'}
+                      height={isMobile ? '20px' : '20px'}
                       color="#1F2937"
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom="1px solid #F2F5FF"
                     >
                       <>{useIFARM ? `i${id}` : `f${id}`}</>
                       <InfoIconBlack
                         className="info"
-                        width={isMobile ? 10 : 16}
+                        width={isMobile ? 16 : 16}
                         src={InfoBlack}
                         alt=""
                         data-tip
@@ -1424,8 +1423,8 @@ const AdvancedFarm = () => {
                         textColor="white"
                       >
                         <NewLabel
-                          size={isMobile ? '10px' : '12px'}
-                          height={isMobile ? '15px' : '18px'}
+                          size={isMobile ? '12px' : '12px'}
+                          height={isMobile ? '18px' : '18px'}
                           weight="500"
                           color="white"
                         >
@@ -1437,19 +1436,19 @@ const AdvancedFarm = () => {
                     </NewLabel>
                     <FlexDiv
                       justifyContent="space-between"
-                      padding={isMobile ? '7px 11px' : '5px 15px'}
+                      padding={isMobile ? '5px 15px' : '5px 15px'}
                     >
                       <NewLabel
                         display="flex"
-                        size={isMobile ? '10px' : '12px'}
+                        size={isMobile ? '12px' : '12px'}
                         weight="500"
-                        height={isMobile ? '18px' : '24px'}
+                        height={isMobile ? '24px' : '24px'}
                         color="#6F78AA"
                       >
                         Balance
                         <InfoIcon
                           className="info"
-                          width={isMobile ? 10 : 16}
+                          width={isMobile ? 16 : 16}
                           src={Info}
                           alt=""
                           data-tip
@@ -1463,8 +1462,8 @@ const AdvancedFarm = () => {
                           textColor="white"
                         >
                           <NewLabel
-                            size={isMobile ? '10px' : '12px'}
-                            height={isMobile ? '15px' : '18px'}
+                            size={isMobile ? '12px' : '12px'}
+                            height={isMobile ? '18px' : '18px'}
                             weight="500"
                             color="white"
                           >
@@ -1475,8 +1474,8 @@ const AdvancedFarm = () => {
                         </ReactTooltip>
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '10px' : '12px'}
-                        height={isMobile ? '18px' : '24px'}
+                        size={isMobile ? '12px' : '12px'}
+                        height={isMobile ? '24px' : '24px'}
                         weight="500"
                         color="#6F78AA"
                       >
@@ -1495,11 +1494,11 @@ const AdvancedFarm = () => {
                     </FlexDiv>
                     <FlexDiv
                       justifyContent="space-between"
-                      padding={isMobile ? '7px 11px' : '5px 15px'}
+                      padding={isMobile ? '5px 15px' : '5px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '10px' : '12px'}
-                        height={isMobile ? '18px' : '24px'}
+                        size={isMobile ? '12px' : '12px'}
+                        height={isMobile ? '24px' : '24px'}
                         weight="500"
                         color="#6F78AA"
                         self="center"
@@ -1507,7 +1506,7 @@ const AdvancedFarm = () => {
                         Underlying Balance
                         <InfoIcon
                           className="info"
-                          width={isMobile ? 10 : 16}
+                          width={isMobile ? 16 : 16}
                           src={Info}
                           alt=""
                           data-tip
@@ -1521,8 +1520,8 @@ const AdvancedFarm = () => {
                           textColor="white"
                         >
                           <NewLabel
-                            size={isMobile ? '10px' : '12px'}
-                            height={isMobile ? '15px' : '18px'}
+                            size={isMobile ? '12px' : '12px'}
+                            height={isMobile ? '18px' : '18px'}
                             weight="500"
                             color="white"
                           >
@@ -1539,8 +1538,8 @@ const AdvancedFarm = () => {
                       </NewLabel>
                       <NewLabel
                         weight="500"
-                        size={isMobile ? '10px' : '12px'}
-                        height={isMobile ? '18px' : '24px'}
+                        size={isMobile ? '12px' : '12px'}
+                        height={isMobile ? '24px' : '24px'}
                         color="#6F78AA"
                         self="center"
                       >
@@ -1561,9 +1560,9 @@ const AdvancedFarm = () => {
                     </FlexDiv>
                   </MyBalance>
                   <HalfContent
-                    marginBottom={isMobile ? '24px' : '0px'}
+                    marginBottom={isMobile ? '20px' : '0px'}
                     partHeight={activeDepo ? partHeightDepo : partHeightWith}
-                    borderRadius={isMobile ? '9px' : '12px'}
+                    borderRadius={isMobile ? '12px' : '12px'}
                   >
                     <DepositSection isShow={activeDepo}>
                       <DepositBase
@@ -1592,8 +1591,6 @@ const AdvancedFarm = () => {
                       <DepositSelectToken
                         selectToken={selectTokenDepo}
                         setSelectToken={setSelectTokenDepo}
-                        // clickTokenId={clickTokenIdDepo}
-                        // setClickedTokenId={setClickedTokenIdDepo}
                         setPickedToken={setPickedTokenDepo}
                         setBalance={setBalanceDepo}
                         supTokenNoBalanceList={supTokenNoBalanceList}
@@ -1652,8 +1649,6 @@ const AdvancedFarm = () => {
                       <WithdrawSelectToken
                         selectToken={selectTokenWith}
                         setSelectToken={setSelectTokenWith}
-                        // clickTokenId={clickTokenIdWith}
-                        // setClickedTokenId={setClickedTokenIdWith}
                         setPickedToken={setPickedTokenWith}
                         supTokenList={supTokenList}
                         supTokenNoBalanceList={supTokenNoBalanceList}
@@ -1683,7 +1678,15 @@ const AdvancedFarm = () => {
                     </WithdrawSection>
                   </HalfContent>
                   {isMobile ? (
-                    <UserBalanceData token={token} vaultPool={vaultPool} tokenSymbol={id} />
+                    <UserBalanceData
+                      token={token}
+                      vaultPool={vaultPool}
+                      tokenSymbol={id}
+                      totalValue={totalValue}
+                      useIFARM={useIFARM}
+                      iFarmPrice={iFarmPrice}
+                      usdPrice={usdPrice}
+                    />
                   ) : (
                     <></>
                   )}
@@ -1908,31 +1911,34 @@ const AdvancedFarm = () => {
                       </FlexDiv>
                     </FarmInfo>
                   ) : (
-                    <MyBalance height="120px" marginBottom={isMobile ? '0' : '23px'}>
+                    <MyBalance
+                      height={isMobile ? 'unset' : '120px'}
+                      marginBottom={isMobile ? '20px' : '25px'}
+                    >
                       <NewLabel
                         size={isMobile ? '12px' : '12px'}
                         weight="600"
-                        height={isMobile ? '18px' : '20px'}
+                        height={isMobile ? '20px' : '20px'}
                         color="#1F2937"
-                        padding={isMobile ? '7px 11px' : '10px 15px'}
+                        padding={isMobile ? '10px 15px' : '10px 15px'}
                         borderBottom="1px solid #F2F5FF "
                       >
                         {useIFARM ? 'iFARM' : `f${id}`}
                       </NewLabel>
                       <FlexDiv
                         justifyContent="space-between"
-                        padding={isMobile ? '7px 11px' : '5px 15px'}
+                        padding={isMobile ? '5px 15px' : '5px 15px'}
                       >
                         <NewLabel
-                          size={isMobile ? '10px' : '12px'}
-                          height={isMobile ? '18px' : '24px'}
+                          size={isMobile ? '12px' : '12px'}
+                          height={isMobile ? '24px' : '24px'}
                           weight="500"
                           color="#6F78AA"
                         >
                           Unstaked
                           <InfoIcon
                             className="info"
-                            width={isMobile ? 10 : 16}
+                            width={isMobile ? 16 : 16}
                             src={InfoNewColor}
                             alt=""
                             data-tip
@@ -1946,8 +1952,8 @@ const AdvancedFarm = () => {
                             textColor="white"
                           >
                             <NewLabel
-                              size={isMobile ? '10px' : '12px'}
-                              height={isMobile ? '15px' : '18px'}
+                              size={isMobile ? '12px' : '12px'}
+                              height={isMobile ? '18px' : '18px'}
                               weight="500"
                               color="white"
                             >
@@ -1959,9 +1965,9 @@ const AdvancedFarm = () => {
                         </NewLabel>
                         <NewLabel
                           weight="500"
-                          size={isMobile ? '10px' : '12px'}
-                          height={isMobile ? '18px' : '24px'}
-                          color={isMobile ? '#15202b' : '#6F78AA'}
+                          size={isMobile ? '12px' : '12px'}
+                          height={isMobile ? '24px' : '24px'}
+                          color={isMobile ? '#6F78AA' : '#6F78AA'}
                         >
                           {!connected ? (
                             0
@@ -1978,19 +1984,19 @@ const AdvancedFarm = () => {
                       </FlexDiv>
                       <FlexDiv
                         justifyContent="space-between"
-                        padding={isMobile ? '7px 11px' : '5px 15px'}
+                        padding={isMobile ? '5px 15px' : '5px 15px'}
                       >
                         <NewLabel
                           display="flex"
-                          size={isMobile ? '10px' : '12px'}
+                          size={isMobile ? '12px' : '12px'}
                           weight="500"
-                          height={isMobile ? '18px' : '24px'}
+                          height={isMobile ? '24px' : '24px'}
                           color="#15B088"
                         >
                           Staked
                           <InfoIcon
                             className="info"
-                            width={isMobile ? 10 : 16}
+                            width={isMobile ? 16 : 16}
                             src={InfoNewColor}
                             alt=""
                             data-tip
@@ -2004,8 +2010,8 @@ const AdvancedFarm = () => {
                             textColor="white"
                           >
                             <NewLabel
-                              size={isMobile ? '10px' : '12px'}
-                              height={isMobile ? '15px' : '18px'}
+                              size={isMobile ? '12px' : '12px'}
+                              height={isMobile ? '18px' : '18px'}
                               weight="500"
                               color="white"
                             >
@@ -2016,10 +2022,10 @@ const AdvancedFarm = () => {
                           </ReactTooltip>
                         </NewLabel>
                         <NewLabel
-                          size={isMobile ? '10px' : '12px'}
-                          height={isMobile ? '18px' : '24px'}
+                          size={isMobile ? '12px' : '12px'}
+                          height={isMobile ? '24px' : '24px'}
                           weight={isMobile ? '500' : '500'}
-                          color={isMobile ? '#15202b' : '#15B088'}
+                          color={isMobile ? '#15B088' : '#15B088'}
                         >
                           {!connected ? (
                             0
@@ -2037,16 +2043,16 @@ const AdvancedFarm = () => {
                     </MyBalance>
                   )}
                   {isMobile && (
-                    <MyBalance marginBottom="24px">
+                    <MyBalance marginBottom="20px">
                       <NewLabel
-                        size={isMobile ? '12px' : '14px'}
+                        size={isMobile ? '14px' : '14px'}
                         weight="600"
-                        height={isMobile ? '18px' : '24px'}
+                        height={isMobile ? '24px' : '24px'}
                         color="#000"
-                        padding={isMobile ? '7px 11px' : '10px 15px'}
+                        padding={isMobile ? '10px 15px' : '10px 15px'}
                         borderBottom="1px solid #F3F6FF"
                       >
-                        My Extra Rewards
+                        My Token Rewards
                       </NewLabel>
                       <FlexDiv>
                         <VaultPanelActionsFooter {...viewComponentProps} />
@@ -2054,8 +2060,8 @@ const AdvancedFarm = () => {
                     </MyBalance>
                   )}
                   <HalfContent
-                    marginBottom={isMobile ? '24px' : '0px'}
-                    borderRadius={isMobile ? '9px' : '12px'}
+                    marginBottom={isMobile ? '20px' : '0px'}
+                    borderRadius={isMobile ? '12px' : '12px'}
                   >
                     <StakeSection isShow={activeStake}>
                       <StakeBase
@@ -2134,48 +2140,48 @@ const AdvancedFarm = () => {
                   {!useIFARM && (
                     <MyBalance marginBottom={isMobile ? '24px' : '20px'}>
                       <NewLabel
-                        size={isMobile ? '12px' : '14px'}
+                        size={isMobile ? '14px' : '14px'}
                         weight="600"
-                        height={isMobile ? '18px' : '24px'}
+                        height={isMobile ? '24px' : '24px'}
                         color="#344054"
-                        padding={isMobile ? '9px 13px' : '10px 15px'}
+                        padding={isMobile ? '10px 15px' : '10px 15px'}
                         borderBottom="1px solid #F3F6FF"
                       >
                         APY Breakdown
                       </NewLabel>
-                      <NewLabel padding={isMobile ? '9px 13px' : '0px 15px 10px'}>
+                      <NewLabel padding={isMobile ? '0px 15px 10px' : '0px 15px 10px'}>
                         <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
                       </NewLabel>
                     </MyBalance>
                   )}
                   <LastHarvestInfo>
                     <NewLabel
-                      size={isMobile ? '12px' : '14px'}
-                      weight={isMobile ? '600' : '700'}
-                      height={isMobile ? '18px' : '24px'}
-                      color={isMobile ? '#000' : '#344054'}
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
+                      size={isMobile ? '14px' : '14px'}
+                      weight={isMobile ? '700' : '700'}
+                      height={isMobile ? '24px' : '24px'}
+                      color={isMobile ? '#344054' : '#344054'}
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom="1px solid #F3F6FF"
                     >
                       Fees
                     </NewLabel>
                     <FlexDiv
                       justifyContent="space-between"
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '10px' : '14px'}
+                        size={isMobile ? '14px' : '14px'}
                         weight="500"
-                        height={isMobile ? '18px' : '24px'}
+                        height={isMobile ? '24px' : '24px'}
                         color="#344054"
                       >
                         Deposit Fee
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '10px' : '14px'}
+                        size={isMobile ? '14px' : '14px'}
                         weight="500"
-                        height={isMobile ? '18px' : '24px'}
-                        color={isMobile ? '#15202B' : '#000'}
+                        height={isMobile ? '24px' : '24px'}
+                        color={isMobile ? '#000' : '#000'}
                       >
                         0%
                       </NewLabel>
@@ -2185,18 +2191,18 @@ const AdvancedFarm = () => {
                       padding={isMobile ? '7px 11px' : '10px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '10px' : '14px'}
+                        size={isMobile ? '14px' : '14px'}
                         weight="500"
-                        height={isMobile ? '18px' : '24px'}
+                        height={isMobile ? '24px' : '24px'}
                         color="#344054"
                       >
                         Withdrawal Fee
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '10px' : '14px'}
+                        size={isMobile ? '14px' : '14px'}
                         weight="500"
-                        height={isMobile ? '18px' : '24px'}
-                        color={isMobile ? '#15202B' : '#000'}
+                        height={isMobile ? '24px' : '24px'}
+                        color={isMobile ? '#000' : '#000'}
                       >
                         0%
                       </NewLabel>
@@ -2204,10 +2210,10 @@ const AdvancedFarm = () => {
                     {!useIFARM && (
                       <FlexDiv
                         justifyContent="space-between"
-                        padding={isMobile ? '7px 11px' : '10px 15px'}
+                        padding={isMobile ? '10px 15px' : '10px 15px'}
                       >
                         <NewLabel
-                          size={isMobile ? '8px' : '13px'}
+                          size={isMobile ? '13px' : '13px'}
                           weight="300"
                           height="normal"
                           color="#15202b"
@@ -2218,7 +2224,7 @@ const AdvancedFarm = () => {
                         <NewLabel display="flex" self="center">
                           <InfoIcon
                             className="info"
-                            width={isMobile ? 10 : 16}
+                            width={isMobile ? 16 : 16}
                             src={Info}
                             alt=""
                             data-tip
@@ -2234,8 +2240,8 @@ const AdvancedFarm = () => {
                           >
                             <NewLabel
                               weight="500"
-                              size={isMobile ? '10px' : '13px'}
-                              height={isMobile ? '12px' : '16px'}
+                              size={isMobile ? '13px' : '13px'}
+                              height={isMobile ? '16px' : '16px'}
                             >
                               <FlexDiv gap="15px" justifyContent="space-between">
                                 <div>Harvest Treasury</div>
@@ -2252,28 +2258,79 @@ const AdvancedFarm = () => {
                     )}
                   </LastHarvestInfo>
                   {isMobile && (
-                    <>
-                      <HalfInfo padding="25px 18px" marginBottom="23px">
-                        <FarmDetailChart
-                          token={token}
-                          vaultPool={vaultPool}
-                          lastTVL={Number(vaultValue)}
-                          lastAPY={Number(totalApy)}
-                        />
-                      </HalfInfo>
-                      <HalfInfo marginBottom="24px">
-                        <NewLabel
-                          weight={700}
-                          size="12px"
-                          height="18px"
-                          padding="7px 11px"
-                          color="#000"
+                    <HalfInfo marginBottom="20px">
+                      <NewLabel
+                        weight={700}
+                        size="14px"
+                        height="24px"
+                        padding="10px 15px"
+                        borderRadius="15px 15px 0 0"
+                      >
+                        Source of Yield
+                      </NewLabel>
+                      <DescInfo>{ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)}</DescInfo>
+                      <FlexDiv className="address" padding="0 15px 20px">
+                        {token.vaultAddress && (
+                          <InfoLabel
+                            display="flex"
+                            href={`${getExplorerLink(token.chain)}/address/${token.vaultAddress}`}
+                            target="_blank"
+                            onClick={e => e.stopPropagation()}
+                            rel="noopener noreferrer"
+                          >
+                            <NewLabel
+                              size="12px"
+                              weight={isMobile ? 600 : 600}
+                              height="16px"
+                              self="center"
+                              color="#15202b"
+                            >
+                              Vault Address
+                            </NewLabel>
+                          </InfoLabel>
+                        )}
+                        {vaultPool.autoStakePoolAddress && (
+                          <InfoLabel
+                            display="flex"
+                            href={`${getExplorerLink(token.chain)}/address/${
+                              vaultPool.contractAddress
+                            }`}
+                            target="_blank"
+                            onClick={e => e.stopPropagation()}
+                            rel="noopener noreferrer"
+                          >
+                            <NewLabel
+                              size="12px"
+                              weight={isMobile ? 600 : 600}
+                              height="16px"
+                              self="center"
+                              color="#15202b"
+                            >
+                              Strategy Address
+                            </NewLabel>
+                          </InfoLabel>
+                        )}
+                        <InfoLabel
+                          display="flex"
+                          href={`${getExplorerLink(token.chain)}/address/${
+                            vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+                          }`}
+                          onClick={e => e.stopPropagation()}
+                          rel="noopener noreferrer"
+                          target="_blank"
                         >
-                          Source of Yield
-                        </NewLabel>
-                        <DescInfo>{ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)}</DescInfo>
-                      </HalfInfo>
-                    </>
+                          <NewLabel
+                            size="12px"
+                            weight={isMobile ? 600 : 600}
+                            height="16px"
+                            self="center"
+                            color="#15202b"
+                          >
+                            Pool Address
+                          </NewLabel>
+                        </InfoLabel>
+                      </FlexDiv>
+                    </HalfInfo>
                   )}
                 </RestInternal>
               )}

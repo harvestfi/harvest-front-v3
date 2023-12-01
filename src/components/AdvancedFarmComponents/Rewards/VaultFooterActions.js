@@ -142,7 +142,6 @@ const VaultFooterActions = ({
                       )}
                       rewardTokenUsdPrice={rewardTokenPrices[symbolIdx]}
                     />
-                    {/* <span>Hi {rewardTokenPrices[symbolIdx]}</span> */}
                   </>
                 ) : userStats.length === 0 ? (
                   <AnimatedDots />

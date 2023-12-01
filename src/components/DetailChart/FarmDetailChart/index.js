@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { useMediaQuery } from 'react-responsive'
 import apyActive from '../../../assets/images/logos/earn/percent-circle.svg'
 import tvlActive from '../../../assets/images/logos/earn/bank.svg'
 import myBalanceActive from '../../../assets/images/logos/earn/chart-graph.svg'
@@ -48,7 +47,6 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
   const [curDate, setCurDate] = useState('')
   const [curContent, setCurContent] = useState('')
 
-  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const isIFARM = token.tokenAddress === addresses.FARM
 
   const [tooltipLabel, setTooltipLabel] = useState('')
@@ -114,21 +112,6 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
             </FilterGroup>
           </FlexDiv>
         </Total>
-        {isMobile && (
-          <ButtonGroup>
-            {recommendLinks.map((item, i) => (
-              <ChartRangeSelect
-                key={i}
-                onClick={() => {
-                  setSelectedState(item.state)
-                }}
-                state={selectedState}
-                type={item.type}
-                text={item.name}
-              />
-            ))}
-          </ButtonGroup>
-        )}
       </Header>
       <ChartDiv className="advanced-farm">
         <ApexChart
@@ -143,21 +126,19 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
           setCurContent={setCurContent}
         />
       </ChartDiv>
-      {!isMobile && (
-        <ButtonGroup>
-          {recommendLinks.map((item, i) => (
-            <ChartRangeSelect
-              key={i}
-              onClick={() => {
-                setSelectedState(item.state)
-              }}
-              state={selectedState}
-              type={item.type}
-              text={item.name}
-            />
-          ))}
-        </ButtonGroup>
-      )}
+      <ButtonGroup>
+        {recommendLinks.map((item, i) => (
+          <ChartRangeSelect
+            key={i}
+            onClick={() => {
+              setSelectedState(item.state)
+            }}
+            state={selectedState}
+            type={item.type}
+            text={item.name}
+          />
+        ))}
+      </ButtonGroup>
     </Container>
   )
 }

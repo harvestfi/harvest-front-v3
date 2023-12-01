@@ -78,10 +78,6 @@ const SelectedVault = styled.div`
       align-items: center;
     }
   }
-
-  @media screen and (max-width: 992px) {
-    padding: 7px 11px;
-  }
 `
 const SelectedVaultLabel = styled.span`
   display: flex;
@@ -95,9 +91,8 @@ const SelectedVaultLabel = styled.span`
   text-decoration: ${props => (props.link ? 'underline' : 'unset')};
   cursor ${props => (props.link ? 'pointer' : 'unset')};
 
-  @media screen and (max-width: 992px) {
-    font-size: 10px;
-    margin-bottom: 8px;
+  @media screen and (max-width: 1320px) {
+    margin-bottom: 15px;
   }
 `
 
@@ -162,16 +157,6 @@ const Div = styled.div`
     width: 24px;
     height: 24px;
   }
-
-  @media screen and (max-width: 992px) {
-    font-size: 10px;
-    line-height: 18px;
-    img {
-      margin-right: 4px;
-      width: 18px;
-      height: 18px;
-    }
-  }
 `
 
 const InfoIcon = styled.img`
@@ -203,26 +188,15 @@ const Monospace = styled.div`
     font-weight: 400;
     line-height: 24px;
   }
-
-  @media screen and (max-width: 992px) {
-    font-size: 10px;
-    line-height: 18px;
-  }
 `
 
 const BottomPart = styled.div`
-  padding: 25px 24px 24px;
+  padding: 15px;
   display: flex;
   justify-content: space-between;
 
   @media screen and (max-width: 1320px) {
     flex-direction: column;
-  }
-
-  @media screen and (max-width: 992px) {
-    padding: 7px 11px;
-    flex-direction: column;
-    justify-content: start;
   }
 `
 

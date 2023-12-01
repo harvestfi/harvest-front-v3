@@ -194,8 +194,8 @@ const StakeStart = ({
             <NewLabel align="left" marginRight="12px">
               <NewLabel
                 color="#15B088"
-                size={isMobile ? '12px' : '18px'}
-                height={isMobile ? '17px' : '28px'}
+                size={isMobile ? '18px' : '18px'}
+                height={isMobile ? '28px' : '28px'}
                 weight="600"
                 marginBottom="4px"
               >
@@ -215,12 +215,12 @@ const StakeStart = ({
           <NewLabel>
             <NewLabel
               display="flex"
-              marginBottom={isMobile ? '0px' : '16px'}
+              marginBottom={isMobile ? '16px' : '16px'}
               width="fit-content"
               cursorType="pointer"
               weight="600"
-              size={isMobile ? '12px' : '14px'}
-              height={isMobile ? '17px' : '20px'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '20px' : '20px'}
               color="#667085"
               align="center"
               onClick={() => {
@@ -239,15 +239,15 @@ const StakeStart = ({
       <Modal.Body className="deposit-modal-body">
         <BaseSection>
           <NewLabel
-            size={isMobile ? '10px' : '14px'}
-            height={isMobile ? '18px' : '24px'}
+            size={isMobile ? '14px' : '14px'}
+            height={isMobile ? '24px' : '24px'}
             padding="15px 24px 10px"
             color="#344054"
           >
             <NewLabel
               display="flex"
               justifyContent="space-between"
-              padding={isMobile ? '5px 0' : '10px 0'}
+              padding={isMobile ? '10px 0' : '10px 0'}
             >
               <NewLabel weight="500">{progressStep === 4 ? 'Staked' : 'Staking'}</NewLabel>
               <NewLabel display="flex" flexFlow="column" weight="600" align="right">
@@ -265,8 +265,8 @@ const StakeStart = ({
               <NewLabel marginLeft="12px">
                 <NewLabel
                   color="#B54708"
-                  size={isMobile ? '10px' : '14px'}
-                  height={isMobile ? '15px' : '20px'}
+                  size={isMobile ? '14px' : '14px'}
+                  height={isMobile ? '20px' : '20px'}
                   weight="600"
                   marginBottom="4px"
                 >
@@ -312,7 +312,7 @@ const StakeStart = ({
             />
           </NewLabel>
 
-          <NewLabel padding={isMobile ? '0 7px' : '24px'}>
+          <NewLabel padding={isMobile ? '24px' : '24px'}>
             <Button
               color="wido-deposit"
               width="100%"
