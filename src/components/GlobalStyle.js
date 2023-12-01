@@ -476,9 +476,21 @@ html {
   }
 
   .modal-notification {
+    @media screen and (max-width: 576px) {
+      margin: unset;
+      height: 100%;
+    }
     .modal-content {
       border: none;
       border-radius: 12px;
+
+      @media screen and (max-width: 576px) {
+        position: absolute;
+        bottom: 0;
+        border-bottom-right-radius: 0px;
+        border-bottom-left-radius: 0px;
+      }
+
       .modal-header {
         background: #FFB54F;
         font-weight: 600;
