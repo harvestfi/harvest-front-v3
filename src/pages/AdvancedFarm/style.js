@@ -1058,6 +1058,10 @@ const LastHarvestInfo = styled.div`
   border-radius: 12px;
   margin-bottom: 25px;
   border: 2px solid #f2f5ff;
+
+  @media screen and (max-width: 992px) {
+    margin-bottom: 20px;
+  }
 `
 
 const RestInternal = styled.div`

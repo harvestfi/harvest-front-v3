@@ -2138,7 +2138,7 @@ const AdvancedFarm = () => {
               ) : (
                 <RestInternal>
                   {!useIFARM && (
-                    <MyBalance marginBottom={isMobile ? '24px' : '20px'}>
+                    <MyBalance marginBottom={isMobile ? '20px' : '25px'}>
                       <NewLabel
                         size={isMobile ? '14px' : '14px'}
                         weight="600"
@@ -2188,7 +2188,7 @@ const AdvancedFarm = () => {
                     </FlexDiv>
                     <FlexDiv
                       justifyContent="space-between"
-                      padding={isMobile ? '7px 11px' : '10px 15px'}
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
                     >
                       <NewLabel
                         size={isMobile ? '14px' : '14px'}
