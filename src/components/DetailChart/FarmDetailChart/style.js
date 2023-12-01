@@ -115,6 +115,9 @@ const CurDate = styled.div`
 const TooltipInfo = styled.div`
   margin-left: 10px;
   align-self: center;
+  @media screen and (max-width: 992px) {
+    margin-left: 0px;
+  }
 `
 
 const FlexDiv = styled.div`
