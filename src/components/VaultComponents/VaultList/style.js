@@ -199,8 +199,9 @@ const MobileListFilter = styled.div`
         }
 
         .sort-icon {
-          width: 14px;
-          height: 14px;
+          width: 15px;
+          height: 15px;
+          margin-top: -2px;
         }
       }
 
@@ -224,6 +225,7 @@ const MobileListFilter = styled.div`
               width: 14px;
               height: 14px;
               margin-right: 4px;
+              margin-top: -2px;
             }
           }
 
