@@ -235,7 +235,7 @@ const ApexChart = ({
       <text
         orientation="left"
         className="recharts-text recharts-cartesian-axis-tick-value"
-        x={isMobile ? x + 30 : path.length > 8 ? x + 10 : x}
+        x={isMobile ? (path.length > 8 ? x + 10 : x) : path.length > 8 ? x + 10 : x}
         y={y}
         width={60}
         height={310}
@@ -507,16 +507,14 @@ const ApexChart = ({
               tick={renderCustomXAxisTick}
               padding={{ right: 10 }}
             />
-            {!isMobile && (
-              <YAxis
-                dataKey="y"
-                tickLine={false}
-                tickCount={5}
-                tick={renderCustomYAxisTick}
-                ticks={yAxisTicks}
-                domain={[minVal, maxVal]}
-              />
-            )}
+            <YAxis
+              dataKey="y"
+              tickLine={false}
+              tickCount={5}
+              tick={renderCustomYAxisTick}
+              ticks={yAxisTicks}
+              domain={[minVal, maxVal]}
+            />
             <Line
               dataKey="y"
               type="monotone"
