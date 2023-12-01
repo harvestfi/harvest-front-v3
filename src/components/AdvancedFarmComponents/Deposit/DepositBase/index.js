@@ -186,7 +186,7 @@ const DepositBase = ({
             setQuoteValue(quoteResult)
             curToken = curToken[0]
             fromInfoValue = formatNumberWido(
-              fromWei(quoteResult.fromTokenAmount, curToken.decimals),
+              fromWei(quoteResult.fromTokenAmount, curToken.decimals, WIDO_EXTEND_DECIMALS, true),
               WIDO_EXTEND_DECIMALS,
             )
             fromInfoUsdValue =

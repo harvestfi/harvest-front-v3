@@ -186,6 +186,8 @@ const WithdrawBase = ({
               fromWei(
                 quoteResult.fromTokenAmount,
                 useIFARM ? fAssetPool?.lpTokenData?.decimals : curToken.decimals,
+                WIDO_EXTEND_DECIMALS,
+                true,
               ),
               WIDO_EXTEND_DECIMALS,
             )
@@ -396,6 +398,8 @@ const WithdrawBase = ({
                   fromWei(
                     useIFARM ? stakeAmountWei : lpTokenBalance,
                     fAssetPool.lpTokenData.decimals,
+                    POOL_BALANCES_DECIMALS,
+                    true,
                   ),
                 ),
               )
