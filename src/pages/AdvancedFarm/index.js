@@ -85,7 +85,6 @@ import {
   TopPart,
   MyBalance,
   MyTotalReward,
-  FarmInfo,
   GuideSection,
   GuidePart,
   DepositSection,
@@ -1693,355 +1692,225 @@ const AdvancedFarm = () => {
                 </FirstPartSection>
               ) : activeMainTag === 1 ? (
                 <SecondPartSection>
-                  {useIFARM ? (
-                    <FarmInfo
-                      marginBottom={isMobile ? '0' : '23px'}
-                      marginTop={isMobile ? '0px' : '0'}
+                  <MyBalance
+                    height={isMobile ? 'unset' : useIFARM ? 'unset' : '120px'}
+                    marginBottom={isMobile ? '20px' : '25px'}
+                  >
+                    <NewLabel
+                      size={isMobile ? '12px' : '12px'}
+                      weight="600"
+                      height={isMobile ? '20px' : '20px'}
+                      color="#1F2937"
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
+                      borderBottom="1px solid #F2F5FF "
                     >
-                      <NewLabel
-                        display="flex"
-                        justifyContent="space-between"
-                        size={isMobile ? '12px' : '14px'}
-                        weight="600"
-                        height={isMobile ? '18px' : '24px'}
-                        color="#344054"
-                        padding={isMobile ? '7px 11px' : '10px 15px'}
-                        borderBottom="1px solid #F3F6FF"
-                      >
-                        Farm (Legacy)
-                      </NewLabel>
-                      <FlexDiv
-                        justifyContent="space-between"
-                        padding={isMobile ? '7px 11px' : '10px 15px'}
-                      >
-                        <NewLabel
-                          display="flex"
-                          size={isMobile ? '10px' : '14px'}
-                          weight="500"
-                          height={isMobile ? '18px' : '24px'}
-                          color="#344054"
-                        >
-                          Unstaked
-                          <InfoIcon
-                            className="info"
-                            width={isMobile ? 10 : 16}
-                            src={Info}
-                            alt=""
-                            data-tip
-                            data-for="tooltip-unstaked"
-                            filterColor={filterColor}
-                          />
-                          <ReactTooltip
-                            id="tooltip-unstaked"
-                            backgroundColor="#101828"
-                            borderColor="black"
-                            textColor="white"
-                          >
-                            <NewLabel
-                              size={isMobile ? '10px' : '12px'}
-                              height={isMobile ? '15px' : '18px'}
-                              weight="500"
-                              color="white"
-                            >
-                              The number of FARM holdings in your wallet which you can stake.
-                            </NewLabel>
-                          </ReactTooltip>
-                        </NewLabel>
-                        <NewLabel
-                          size={isMobile ? '10px' : '14px'}
-                          height={isMobile ? '18px' : '24px'}
-                          weight="700"
-                          color="#00D26B"
-                        >
-                          {!connected ? (
-                            0
-                          ) : lpTokenBalance ? (
-                            unstakedAmount === 0 ? (
-                              '0.00'
-                            ) : (
-                              unstakedAmount.toFixed(8).replace(/\.?0+$/, '')
-                            )
-                          ) : (
-                            <AnimatedDots />
-                          )}
-                        </NewLabel>
-                      </FlexDiv>
-                      <FlexDiv
-                        justifyContent="space-between"
-                        padding={isMobile ? '7px 11px' : '10px 15px'}
-                      >
-                        <NewLabel
-                          size={isMobile ? '10px' : '14px'}
-                          height={isMobile ? '18px' : '24px'}
-                          weight="500"
-                          color="#344054"
-                          self="center"
-                        >
-                          Staked
-                          <InfoIcon
-                            className="info"
-                            width={isMobile ? 10 : 16}
-                            src={Info}
-                            alt=""
-                            data-tip
-                            data-for="tooltip-staked"
-                            filterColor={filterColor}
-                          />
-                          <ReactTooltip
-                            id="tooltip-staked"
-                            backgroundColor="#101828"
-                            borderColor="black"
-                            textColor="white"
-                          >
-                            <NewLabel
-                              size={isMobile ? '10px' : '12px'}
-                              height={isMobile ? '15px' : '18px'}
-                              weight="500"
-                              color="white"
-                            >
-                              The number of staked FARM earning you more FARM from platform&apos;s
-                              profit sharing pool.
-                            </NewLabel>
-                          </ReactTooltip>
-                        </NewLabel>
-                        <NewLabel
-                          weight="500"
-                          size={isMobile ? '10px' : '14px'}
-                          height={isMobile ? '18px' : '24px'}
-                          color="black"
-                          self="center"
-                        >
-                          {!account ? (
-                            ''
-                          ) : totalStaked ? (
-                            stakedAmount === 0 ? (
-                              '0.00'
-                            ) : (
-                              stakedAmount.toFixed(8).replace(/\.?0+$/, '')
-                            )
-                          ) : (
-                            <AnimatedDots />
-                          )}
-                        </NewLabel>
-                      </FlexDiv>
-                      <FlexDiv
-                        justifyContent="space-between"
-                        padding={isMobile ? '7px 11px' : '10px 15px'}
-                      >
-                        <NewLabel
-                          size={isMobile ? '10px' : '14px'}
-                          height={isMobile ? '18px' : '24px'}
-                          weight="500"
-                          color="#344054"
-                          self="center"
-                        >
-                          FARM Price
-                        </NewLabel>
-                        <NewLabel
-                          weight="500"
-                          size={isMobile ? '10px' : '14px'}
-                          height={isMobile ? '18px' : '24px'}
-                          color="black"
-                          self="center"
-                        >
-                          {!account ? (
-                            ''
-                          ) : token.data.lpTokenData ? (
-                            `$${token.data.lpTokenData.price}`
-                          ) : (
-                            <AnimatedDots />
-                          )}
-                        </NewLabel>
-                      </FlexDiv>
-                      <FlexDiv
-                        justifyContent="space-between"
-                        padding={isMobile ? '7px 11px' : '10px 15px'}
-                      >
-                        <NewLabel
-                          size={isMobile ? '10px' : '14px'}
-                          height={isMobile ? '18px' : '24px'}
-                          weight="500"
-                          color="#344054"
-                          self="center"
-                        >
-                          Total Value
-                          <InfoIcon
-                            className="info"
-                            width={isMobile ? 10 : 16}
-                            src={Info}
-                            alt=""
-                            data-tip
-                            data-for="tooltip-totalValue"
-                            filterColor={filterColor}
-                          />
-                          <ReactTooltip
-                            id="tooltip-totalValue"
-                            backgroundColor="#101828"
-                            borderColor="black"
-                            textColor="white"
-                          >
-                            <NewLabel
-                              size={isMobile ? '10px' : '12px'}
-                              height={isMobile ? '15px' : '18px'}
-                              weight="500"
-                              color="white"
-                            >
-                              Total Value of your Staked and Unstaked FARM
-                            </NewLabel>
-                          </ReactTooltip>
-                        </NewLabel>
-                        <NewLabel
-                          weight="500"
-                          size={isMobile ? '10px' : '14px'}
-                          height={isMobile ? '18px' : '24px'}
-                          color="black"
-                          self="center"
-                        >
-                          {!account ? (
-                            ''
-                          ) : totalValue ? (
-                            `$${formatNumberWido(
-                              totalValue * token.data.lpTokenData.price,
-                              WIDO_BALANCES_DECIMALS,
-                            )}`
-                          ) : (
-                            <AnimatedDots />
-                          )}
-                        </NewLabel>
-                      </FlexDiv>
-                    </FarmInfo>
-                  ) : (
-                    <MyBalance
-                      height={isMobile ? 'unset' : '120px'}
-                      marginBottom={isMobile ? '20px' : '25px'}
+                      {useIFARM ? 'Farm (Legacy)' : `f${id}`}
+                    </NewLabel>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '5px 15px' : '5px 15px'}
                     >
                       <NewLabel
                         size={isMobile ? '12px' : '12px'}
-                        weight="600"
-                        height={isMobile ? '20px' : '20px'}
-                        color="#1F2937"
-                        padding={isMobile ? '10px 15px' : '10px 15px'}
-                        borderBottom="1px solid #F2F5FF "
+                        height={isMobile ? '24px' : '24px'}
+                        weight="500"
+                        color="#6F78AA"
                       >
-                        {useIFARM ? 'iFARM' : `f${id}`}
+                        Unstaked
+                        <InfoIcon
+                          className="info"
+                          width={isMobile ? 16 : 16}
+                          src={InfoNewColor}
+                          alt=""
+                          data-tip
+                          data-for="tooltip-unstaked-desc"
+                          filterColor={filterColor}
+                        />
+                        <ReactTooltip
+                          id="tooltip-unstaked-desc"
+                          backgroundColor="#101828"
+                          borderColor="black"
+                          textColor="white"
+                        >
+                          <NewLabel
+                            size={isMobile ? '12px' : '12px'}
+                            height={isMobile ? '18px' : '18px'}
+                            weight="500"
+                            color="white"
+                          >
+                            {useIFARM
+                              ? `The number of i${id} you hold, but not entitled to extra token rewards.`
+                              : `The number of fTokens you hold, which are not entitled to extra token rewards.`}
+                          </NewLabel>
+                        </ReactTooltip>
                       </NewLabel>
-                      <FlexDiv
-                        justifyContent="space-between"
-                        padding={isMobile ? '5px 15px' : '5px 15px'}
+                      <NewLabel
+                        weight="600"
+                        size={isMobile ? '12px' : '12px'}
+                        height={isMobile ? '24px' : '24px'}
+                        color={isMobile ? '#101828' : '#101828'}
                       >
-                        <NewLabel
-                          size={isMobile ? '12px' : '12px'}
-                          height={isMobile ? '24px' : '24px'}
-                          weight="500"
-                          color="#6F78AA"
-                        >
-                          Unstaked
-                          <InfoIcon
-                            className="info"
-                            width={isMobile ? 16 : 16}
-                            src={InfoNewColor}
-                            alt=""
-                            data-tip
-                            data-for="tooltip-unstaked-desc"
-                            filterColor={filterColor}
-                          />
-                          <ReactTooltip
-                            id="tooltip-unstaked-desc"
-                            backgroundColor="#101828"
-                            borderColor="black"
-                            textColor="white"
-                          >
-                            <NewLabel
-                              size={isMobile ? '12px' : '12px'}
-                              height={isMobile ? '18px' : '18px'}
-                              weight="500"
-                              color="white"
-                            >
-                              {useIFARM
-                                ? `The number of i${id} you hold, but not entitled to extra token rewards.`
-                                : `The number of fTokens you hold, which are not entitled to extra token rewards.`}
-                            </NewLabel>
-                          </ReactTooltip>
-                        </NewLabel>
-                        <NewLabel
-                          weight="600"
-                          size={isMobile ? '12px' : '12px'}
-                          height={isMobile ? '24px' : '24px'}
-                          color={isMobile ? '#101828' : '#101828'}
-                        >
-                          {!connected ? (
-                            0
-                          ) : lpTokenBalance ? (
-                            unstakedAmount === 0 ? (
-                              '0.00'
-                            ) : (
-                              unstakedAmount.toFixed(8).replace(/\.?0+$/, '')
-                            )
+                        {!connected ? (
+                          0
+                        ) : lpTokenBalance ? (
+                          unstakedAmount === 0 ? (
+                            '0.00'
                           ) : (
-                            <AnimatedDots />
-                          )}
-                        </NewLabel>
-                      </FlexDiv>
-                      <FlexDiv
-                        justifyContent="space-between"
-                        padding={isMobile ? '5px 15px' : '5px 15px'}
+                            unstakedAmount.toFixed(8).replace(/\.?0+$/, '')
+                          )
+                        ) : (
+                          <AnimatedDots />
+                        )}
+                      </NewLabel>
+                    </FlexDiv>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                    >
+                      <NewLabel
+                        display="flex"
+                        size={isMobile ? '12px' : '12px'}
+                        weight="500"
+                        height={isMobile ? '24px' : '24px'}
+                        color="#15B088"
                       >
-                        <NewLabel
-                          display="flex"
-                          size={isMobile ? '12px' : '12px'}
-                          weight="500"
-                          height={isMobile ? '24px' : '24px'}
-                          color="#15B088"
+                        Staked
+                        <InfoIcon
+                          className="info"
+                          width={isMobile ? 16 : 16}
+                          src={InfoNewColor}
+                          alt=""
+                          data-tip
+                          data-for="tooltip-staked-desc"
+                          filterColor={filterColor}
+                        />
+                        <ReactTooltip
+                          id="tooltip-staked-desc"
+                          backgroundColor="#101828"
+                          borderColor="black"
+                          textColor="white"
                         >
-                          Staked
-                          <InfoIcon
-                            className="info"
-                            width={isMobile ? 16 : 16}
-                            src={InfoNewColor}
-                            alt=""
-                            data-tip
-                            data-for="tooltip-staked-desc"
-                            filterColor={filterColor}
-                          />
-                          <ReactTooltip
-                            id="tooltip-staked-desc"
-                            backgroundColor="#101828"
-                            borderColor="black"
-                            textColor="white"
+                          <NewLabel
+                            size={isMobile ? '12px' : '12px'}
+                            height={isMobile ? '18px' : '18px'}
+                            weight="500"
+                            color="white"
                           >
-                            <NewLabel
-                              size={isMobile ? '12px' : '12px'}
-                              height={isMobile ? '18px' : '18px'}
-                              weight="500"
-                              color="white"
-                            >
-                              {useIFARM
-                                ? `The number of staked i${id}, which are entitled to all token rewards.`
-                                : `The number of staked fTokens, which entitle you to extra token rewards.`}
-                            </NewLabel>
-                          </ReactTooltip>
-                        </NewLabel>
-                        <NewLabel
-                          size={isMobile ? '12px' : '12px'}
-                          height={isMobile ? '24px' : '24px'}
-                          weight={isMobile ? '600' : '600'}
-                          color={isMobile ? '#15B088' : '#15B088'}
-                        >
-                          {!connected ? (
-                            0
-                          ) : totalStaked ? (
-                            stakedAmount === 0 ? (
-                              '0.00'
-                            ) : (
-                              stakedAmount.toFixed(8).replace(/\.?0+$/, '')
-                            )
+                            {useIFARM
+                              ? `The number of staked i${id}, which are entitled to all token rewards.`
+                              : `The number of staked fTokens, which entitle you to extra token rewards.`}
+                          </NewLabel>
+                        </ReactTooltip>
+                      </NewLabel>
+                      <NewLabel
+                        size={isMobile ? '12px' : '12px'}
+                        height={isMobile ? '24px' : '24px'}
+                        weight={isMobile ? '600' : '600'}
+                        color={isMobile ? '#15B088' : '#15B088'}
+                      >
+                        {!connected ? (
+                          0
+                        ) : totalStaked ? (
+                          stakedAmount === 0 ? (
+                            '0.00'
                           ) : (
-                            <AnimatedDots />
-                          )}
-                        </NewLabel>
-                      </FlexDiv>
-                    </MyBalance>
-                  )}
+                            stakedAmount.toFixed(8).replace(/\.?0+$/, '')
+                          )
+                        ) : (
+                          <AnimatedDots />
+                        )}
+                      </NewLabel>
+                    </FlexDiv>
+                    {useIFARM && (
+                      <>
+                        <FlexDiv
+                          justifyContent="space-between"
+                          padding={isMobile ? '7px 11px' : '10px 15px'}
+                        >
+                          <NewLabel
+                            size={isMobile ? '10px' : '14px'}
+                            height={isMobile ? '18px' : '24px'}
+                            weight="500"
+                            color="#344054"
+                            self="center"
+                          >
+                            FARM Price
+                          </NewLabel>
+                          <NewLabel
+                            weight="500"
+                            size={isMobile ? '10px' : '14px'}
+                            height={isMobile ? '18px' : '24px'}
+                            color="black"
+                            self="center"
+                          >
+                            {!account ? (
+                              ''
+                            ) : token.data.lpTokenData ? (
+                              `$${token.data.lpTokenData.price}`
+                            ) : (
+                              <AnimatedDots />
+                            )}
+                          </NewLabel>
+                        </FlexDiv>
+                        <FlexDiv
+                          justifyContent="space-between"
+                          padding={isMobile ? '7px 11px' : '10px 15px'}
+                        >
+                          <NewLabel
+                            size={isMobile ? '10px' : '14px'}
+                            height={isMobile ? '18px' : '24px'}
+                            weight="500"
+                            color="#344054"
+                            self="center"
+                          >
+                            Total Value
+                            <InfoIcon
+                              className="info"
+                              width={isMobile ? 10 : 16}
+                              src={Info}
+                              alt=""
+                              data-tip
+                              data-for="tooltip-totalValue"
+                              filterColor={filterColor}
+                            />
+                            <ReactTooltip
+                              id="tooltip-totalValue"
+                              backgroundColor="#101828"
+                              borderColor="black"
+                              textColor="white"
+                            >
+                              <NewLabel
+                                size={isMobile ? '10px' : '12px'}
+                                height={isMobile ? '15px' : '18px'}
+                                weight="500"
+                                color="white"
+                              >
+                                Total Value of your Staked and Unstaked FARM
+                              </NewLabel>
+                            </ReactTooltip>
+                          </NewLabel>
+                          <NewLabel
+                            weight="500"
+                            size={isMobile ? '10px' : '14px'}
+                            height={isMobile ? '18px' : '24px'}
+                            color="black"
+                            self="center"
+                          >
+                            {!account ? (
+                              ''
+                            ) : totalValue ? (
+                              `$${formatNumberWido(
+                                totalValue * token.data.lpTokenData.price,
+                                WIDO_BALANCES_DECIMALS,
+                              )}`
+                            ) : (
+                              <AnimatedDots />
+                            )}
+                          </NewLabel>
+                        </FlexDiv>
+                      </>
+                    )}
+                  </MyBalance>
                   {isMobile && (
                     <MyBalance marginBottom="20px">
                       <NewLabel

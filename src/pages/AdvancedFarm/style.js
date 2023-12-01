@@ -683,33 +683,6 @@ const MyTotalReward = styled.div`
   }
 `
 
-const FarmInfo = styled.div`
-  border-radius: 12px;
-  background: #fff;
-  border: 2px solid #f2f5ff;
-
-  ${props =>
-    props.height
-      ? `
-      height: ${props.height};
-    `
-      : ``}
-
-  ${props =>
-    props.marginTop
-      ? `
-      margin-top: ${props.marginTop};
-    `
-      : ``}
-
-  ${props =>
-    props.marginBottom
-      ? `
-      margin-bottom: ${props.marginBottom};
-    `
-      : ``}
-`
-
 const GuideSection = styled.div`
   display: flex;
   margin-bottom: 49px;
@@ -1216,7 +1189,6 @@ export {
   Monospace,
   MyBalance,
   MyTotalReward,
-  FarmInfo,
   ThemeMode,
   GuideSection,
   GuidePart,
