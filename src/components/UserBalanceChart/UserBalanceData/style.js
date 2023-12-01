@@ -108,7 +108,12 @@ const TokenSymbol = styled.div`
   font-size: 16px;
   line-height: 28px;
   font-weight: 600;
-  color: #101828;
+  color: #1f2937;
+
+  @media screen and (max-width: 992px) {
+    font-size: 12px;
+    line-height: 20px;
+  }
 
   img {
     padding-left: 5px;
@@ -128,6 +133,11 @@ const CurContent = styled.div`
   color: ${props => props.color};
   font-size: 13px;
   font-weight: 500;
+
+  @media screen and (max-width: 992px) {
+    font-size: 10px;
+    font-weight: 400;
+  }
 
   span {
     color: #ced3e6;

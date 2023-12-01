@@ -182,7 +182,7 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, iFarmPrice, u
             <TooltipInfo>
               <TokenSymbol className="priceshare">{tooltipLabel}</TokenSymbol>
               <FlexDiv>
-                <CurContent color="#1b1b1b">
+                <CurContent color="#6F78AA">
                   {curDate}&nbsp;<span>|</span>&nbsp;
                 </CurContent>
                 <CurContent color="#15B088">

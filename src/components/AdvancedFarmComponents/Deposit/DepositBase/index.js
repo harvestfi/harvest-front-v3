@@ -12,7 +12,7 @@ import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import ArrowDown from '../../../../assets/images/logos/beginners/arrow-narrow-down.svg'
 import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.svg'
-import HelpIcon from '../../../../assets/images/logos/beginners/help-circle.svg'
+import HelpIcon from '../../../../assets/images/logos/earn/info.svg'
 import {
   IFARM_TOKEN_SYMBOL,
   POOL_BALANCES_DECIMALS,
@@ -20,6 +20,7 @@ import {
   WIDO_BALANCES_DECIMALS,
   BEGINNERS_BALANCES_DECIMALS,
 } from '../../../../constants'
+import { useThemeContext } from '../../../../providers/useThemeContext'
 import { useWallet } from '../../../../providers/Wallet'
 import { CHAIN_IDS } from '../../../../data/constants'
 import { fromWei, toWei, getWeb3 } from '../../../../services/web3'
@@ -89,6 +90,7 @@ const DepositBase = ({
 }) => {
   const { connected, connectAction, account, chainId, setChainId, web3 } = useWallet()
   const { vaultsData } = useVaults()
+  const { filterColor } = useThemeContext()
 
   const [
     {
@@ -423,9 +425,9 @@ const DepositBase = ({
             padding={isMobile ? '10px 0' : '10px 0'}
           >
             <NewLabel
-              size={isMobile ? '14px' : '14px'}
+              size={isMobile ? '12px' : '14px'}
               height={isMobile ? '24px' : '24px'}
-              color="#344054"
+              color="#6F78AA"
               weight="500"
             >
               Est. Monthly Yield
@@ -433,6 +435,7 @@ const DepositBase = ({
                 className="info"
                 width={isMobile ? 16 : 16}
                 src={HelpIcon}
+                filterColor={filterColor}
                 alt=""
                 data-tip
                 data-for="monthly-yield"
@@ -459,9 +462,9 @@ const DepositBase = ({
               </ReactTooltip>
             </NewLabel>
             <NewLabel
-              size={isMobile ? '14px' : '14px'}
+              size={isMobile ? '12px' : '14px'}
               height={isMobile ? '24px' : '24px'}
-              color="#344054"
+              color="#1F2937"
               weight="600"
               textAlign="right"
             >
@@ -493,9 +496,9 @@ const DepositBase = ({
             padding={isMobile ? '10px 0' : '10px 0'}
           >
             <NewLabel
-              size={isMobile ? '14px' : '14px'}
+              size={isMobile ? '12px' : '14px'}
               height={isMobile ? '24px' : '24px'}
-              color="#344054"
+              color="#6F78AA"
               weight="500"
             >
               Est. Daily Yield
@@ -503,6 +506,7 @@ const DepositBase = ({
                 className="info"
                 width={isMobile ? 16 : 16}
                 src={HelpIcon}
+                filterColor={filterColor}
                 alt=""
                 data-tip
                 data-for="daily-yield"
@@ -530,9 +534,9 @@ const DepositBase = ({
               </ReactTooltip>
             </NewLabel>
             <NewLabel
-              size={isMobile ? '14px' : '14px'}
+              size={isMobile ? '12px' : '14px'}
               height={isMobile ? '24px' : '24px'}
-              color="#344054"
+              color="#1F2937"
               weight="600"
               textAlign="right"
             >
@@ -564,15 +568,16 @@ const DepositBase = ({
             padding={isMobile ? '10px 0' : '10px 0'}
           >
             <NewLabel
-              size={isMobile ? '14px' : '14px'}
+              size={isMobile ? '12px' : '14px'}
               height={isMobile ? '24px' : '24px'}
-              color="#344054"
+              color="#6F78AA"
               weight="500"
             >
               {useIFARM ? 'Min. Received' : 'Min. fTokens Received'}
               <InfoIconCircle
                 className="info"
                 width={isMobile ? 16 : 16}
+                filterColor={filterColor}
                 src={HelpIcon}
                 alt=""
                 data-tip
@@ -598,9 +603,9 @@ const DepositBase = ({
               </ReactTooltip>
             </NewLabel>
             <NewLabel
-              size={isMobile ? '14px' : '14px'}
+              size={isMobile ? '12px' : '14px'}
               height={isMobile ? '24px' : '24px'}
-              color="#344054"
+              color="#1F2937"
               weight="600"
               textAlign="right"
               display="flex"

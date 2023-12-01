@@ -545,6 +545,7 @@ const BackText = styled.p`
   margin: auto;
   padding-left: 15px;
   font-size: 14px;
+  line-height: 20px;
 `
 
 const RestContent = styled.div`
@@ -858,7 +859,7 @@ const BoxTitle = styled.div`
     max-width: 300px;
   }
   @media screen and (max-width: 992px) {
-    font-size: 10px;
+    font-size: 12px;
     .info {
       display: none;
     }
@@ -870,6 +871,7 @@ const BoxValue = styled.div`
   font-weight: 600;
   letter-spacing: -0.6px;
   font-size: 22px;
+  line-height: 32px;
 
   @media screen and (max-width: 992px) {
     font-size: 12px;
@@ -928,7 +930,7 @@ const MainTag = styled.div`
 
   p {
     margin-bottom: 0px;
-    padding-left: 10px;
+    padding-left: 8px;
   }
 
   img {
@@ -1032,16 +1034,17 @@ const InfoLabel = styled.a`
 `
 
 const DescInfo = styled.div`
-  font-family: 'Inter', sans-serif;
-  color: #475467;
-  font-weight: 500;
+  color: #6f78aa;
+  font-weight: 400;
   font-size: 14px;
   line-height: 24px;
   padding: 10px 15px;
   display: flex;
   align-items: center;
-  font-style: normal;
-  border-top: 1px solid #ebebeb;
+
+  @media screen and (max-width: 992px) {
+    font-size: 12px;
+  }
 
   .help-message {
     margin-top: 0;

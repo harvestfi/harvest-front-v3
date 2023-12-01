@@ -380,29 +380,45 @@ html {
   .detail-apy {
     font-size: 14px; 
     line-height: 24px;
-    font-weight: 500;
-    color: #000;
+    font-weight: 600;
+    color: #101828;
+
+    @media screen and (max-width: 992px) {
+      font-size: 12px;
+    }
   }
 
   .detail-desc {
     font-size: 14px; 
     line-height: 24px;
     font-weight: 500;
-    color: #344054;
+    color: #6F78AA;
+
+    @media screen and (max-width: 992px) {
+      font-size: 12px;
+    }
   }
 
   .detail-desc-auto {
     font-size: 14px; 
     line-height: 24px;
     font-weight: 500;
-    color: #344054;
+    color: #6F78AA;
+
+    @media screen and (max-width: 992px) {
+      font-size: 12px;
+    }
   }
 
   .detail-desc-no-width {
     font-size: 14px; 
     line-height: 24px;
     font-weight: 500;
-    color: #344054;
+    color: #6F78AA;
+
+    @media screen and (max-width: 992px) {
+      font-size: 12px;
+    }
   }
 
   .detail-token {

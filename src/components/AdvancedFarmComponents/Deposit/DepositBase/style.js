@@ -234,8 +234,11 @@ const BalanceInfo = styled.div`
   color: #475467;
   margin-top: 5px;
   cursor: pointer;
-
   width: fit-content;
+
+  @media screen and (max-width: 992px) {
+    font-size: 12px;
+  }
 
   span {
     margin-left: 6px;

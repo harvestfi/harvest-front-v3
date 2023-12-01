@@ -986,7 +986,7 @@ const AdvancedFarm = () => {
                   }
                 }}
               >
-                <BiLeftArrowAlt />
+                <BiLeftArrowAlt fontSize={16} />
                 <BackText>Back</BackText>
               </BackBtnRect>
               {isMobile && (
@@ -1095,7 +1095,7 @@ const AdvancedFarm = () => {
                   <BoxCover>
                     <ValueBox width="32%" className="balance-box">
                       <BoxTitle>
-                        My Balance
+                        {isMobile ? 'Balance' : 'My Balance'}
                         <InfoIcon
                           className="info"
                           width={isMobile ? 10 : 16}
@@ -1223,7 +1223,7 @@ const AdvancedFarm = () => {
                 <>
                   <MyTotalReward marginBottom={isMobile ? '20px' : '25px'}>
                     <NewLabel
-                      size={isMobile ? '10px' : '14px'}
+                      size={isMobile ? '12px' : '14px'}
                       weight="500"
                       height={isMobile ? '20px' : '20px'}
                       color="#6F78AA"
@@ -1251,10 +1251,10 @@ const AdvancedFarm = () => {
                   {!isMobile && (
                     <MyBalance marginBottom="25px">
                       <NewLabel
-                        size={isMobile ? '14px' : '14px'}
+                        size={isMobile ? '12px' : '14px'}
                         weight="600"
-                        height={isMobile ? '24px' : '24px'}
-                        color="#344054"
+                        height={isMobile ? '20px' : '24px'}
+                        color="#1F2937"
                         padding={isMobile ? '10px 15px' : '10px 15px'}
                         borderBottom="1px solid #F3F6FF"
                       >
@@ -1476,8 +1476,8 @@ const AdvancedFarm = () => {
                       <NewLabel
                         size={isMobile ? '12px' : '12px'}
                         height={isMobile ? '24px' : '24px'}
-                        weight="500"
-                        color="#6F78AA"
+                        weight="600"
+                        color="#101828"
                       >
                         {!connected ? (
                           0
@@ -1537,10 +1537,10 @@ const AdvancedFarm = () => {
                         </ReactTooltip>
                       </NewLabel>
                       <NewLabel
-                        weight="500"
+                        weight="600"
                         size={isMobile ? '12px' : '12px'}
                         height={isMobile ? '24px' : '24px'}
-                        color="#6F78AA"
+                        color="#101828"
                         self="center"
                       >
                         {!connected ? (
@@ -1964,10 +1964,10 @@ const AdvancedFarm = () => {
                           </ReactTooltip>
                         </NewLabel>
                         <NewLabel
-                          weight="500"
+                          weight="600"
                           size={isMobile ? '12px' : '12px'}
                           height={isMobile ? '24px' : '24px'}
-                          color={isMobile ? '#6F78AA' : '#6F78AA'}
+                          color={isMobile ? '#101828' : '#101828'}
                         >
                           {!connected ? (
                             0
@@ -2024,7 +2024,7 @@ const AdvancedFarm = () => {
                         <NewLabel
                           size={isMobile ? '12px' : '12px'}
                           height={isMobile ? '24px' : '24px'}
-                          weight={isMobile ? '500' : '500'}
+                          weight={isMobile ? '600' : '600'}
                           color={isMobile ? '#15B088' : '#15B088'}
                         >
                           {!connected ? (
@@ -2048,7 +2048,7 @@ const AdvancedFarm = () => {
                         size={isMobile ? '14px' : '14px'}
                         weight="600"
                         height={isMobile ? '24px' : '24px'}
-                        color="#000"
+                        color="#344054"
                         padding={isMobile ? '10px 15px' : '10px 15px'}
                         borderBottom="1px solid #F3F6FF"
                       >
@@ -2140,10 +2140,10 @@ const AdvancedFarm = () => {
                   {!useIFARM && (
                     <MyBalance marginBottom={isMobile ? '20px' : '25px'}>
                       <NewLabel
-                        size={isMobile ? '14px' : '14px'}
+                        size={isMobile ? '12px' : '14px'}
                         weight="600"
-                        height={isMobile ? '24px' : '24px'}
-                        color="#344054"
+                        height={isMobile ? '20px' : '24px'}
+                        color="#1F2937"
                         padding={isMobile ? '10px 15px' : '10px 15px'}
                         borderBottom="1px solid #F3F6FF"
                       >
@@ -2156,10 +2156,10 @@ const AdvancedFarm = () => {
                   )}
                   <LastHarvestInfo>
                     <NewLabel
-                      size={isMobile ? '14px' : '14px'}
-                      weight={isMobile ? '700' : '700'}
-                      height={isMobile ? '24px' : '24px'}
-                      color={isMobile ? '#344054' : '#344054'}
+                      size={isMobile ? '12px' : '14px'}
+                      weight={isMobile ? '600' : '600'}
+                      height={isMobile ? '20px' : '24px'}
+                      color={isMobile ? '#1F2937' : '#1F2937'}
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom="1px solid #F3F6FF"
                     >
@@ -2170,18 +2170,18 @@ const AdvancedFarm = () => {
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '14px' : '14px'}
+                        size={isMobile ? '12px' : '14px'}
                         weight="500"
                         height={isMobile ? '24px' : '24px'}
-                        color="#344054"
+                        color="#6F78AA"
                       >
                         Deposit Fee
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '14px' : '14px'}
-                        weight="500"
+                        size={isMobile ? '12px' : '14px'}
+                        weight="600"
                         height={isMobile ? '24px' : '24px'}
-                        color={isMobile ? '#000' : '#000'}
+                        color={isMobile ? '#101828' : '#101828'}
                       >
                         0%
                       </NewLabel>
@@ -2191,18 +2191,18 @@ const AdvancedFarm = () => {
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '14px' : '14px'}
+                        size={isMobile ? '12px' : '14px'}
                         weight="500"
                         height={isMobile ? '24px' : '24px'}
-                        color="#344054"
+                        color="#6F78AA"
                       >
                         Withdrawal Fee
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '14px' : '14px'}
-                        weight="500"
+                        size={isMobile ? '12px' : '14px'}
+                        weight="600"
                         height={isMobile ? '24px' : '24px'}
-                        color={isMobile ? '#000' : '#000'}
+                        color={isMobile ? '#101828' : '#101828'}
                       >
                         0%
                       </NewLabel>
@@ -2216,7 +2216,7 @@ const AdvancedFarm = () => {
                           size={isMobile ? '13px' : '13px'}
                           weight="300"
                           height="normal"
-                          color="#15202b"
+                          color="#6F78AA"
                         >
                           The APY shown already considers the performance fee taken only from
                           generated yield and not deposits.
@@ -2260,11 +2260,12 @@ const AdvancedFarm = () => {
                   {isMobile && (
                     <HalfInfo marginBottom="20px">
                       <NewLabel
-                        weight={700}
-                        size="14px"
-                        height="24px"
-                        padding="10px 15px"
-                        borderRadius="15px 15px 0 0"
+                        size={isMobile ? '12px' : '14px'}
+                        weight="600"
+                        height={isMobile ? '20px' : '24px'}
+                        color="#1F2937"
+                        padding={isMobile ? '10px 15px' : '10px 15px'}
+                        borderBottom="1px solid #F3F6FF"
                       >
                         Source of Yield
                       </NewLabel>

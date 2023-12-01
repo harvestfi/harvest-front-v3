@@ -96,10 +96,16 @@ const FilterName = styled.div`
 `
 
 const CurDate = styled.div`
-  color: #1b1b1b;
+  color: #6f78aa;
   display: flex;
   font-size: 13px;
   font-weight: 500;
+
+  @media screen and (max-width: 992px) {
+    display: flex;
+    font-size: 10px;
+    font-weight: 400;
+  }
 
   span {
     color: #ced3e6;
@@ -127,10 +133,15 @@ const FlexDiv = styled.div`
 `
 
 const LabelInfo = styled.div`
-  color: #101828;
+  color: #1f2937;
   font-size: 16px;
   font-weight: 600;
-  line-height: normal;
+  line-height: 28px;
+
+  @media screen and (max-width: 992px) {
+    font-size: 12px;
+    line-height: 20px;
+  }
 `
 
 export {
