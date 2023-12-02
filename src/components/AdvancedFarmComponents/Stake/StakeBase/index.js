@@ -147,7 +147,7 @@ const StakeBase = ({
                 : ''
             }
           >
-            <img src={tag.img} alt="logo" />
+            <img src={tag.img} className="logo" alt="logo" />
             <p>{tag.name}</p>
           </SwitchTabTag>
         ))}

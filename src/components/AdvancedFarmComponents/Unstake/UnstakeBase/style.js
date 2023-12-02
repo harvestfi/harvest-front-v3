@@ -416,6 +416,7 @@ const SwitchTabTag = styled.div`
     margin-bottom: 0px;
     padding-left: 5px;
     font-size: 14px;
+    line-height: 20px;
   }
 `
 
