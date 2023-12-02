@@ -758,7 +758,7 @@ const BeginnersFarm = () => {
                   history.push(ROUTES.BEGINNERS)
                 }}
               >
-                <BiLeftArrowAlt />
+                <BiLeftArrowAlt fontSize={16} />
                 <BackText>Back</BackText>
               </BackBtnRect>
               {isMobile && (
@@ -858,7 +858,7 @@ const BeginnersFarm = () => {
                   <BoxCover>
                     <ValueBox width="32%" className="balance-box">
                       <BoxTitle>
-                        My Balance
+                        {isMobile ? 'Balance' : 'My Balance'}
                         <InfoIcon
                           className="info"
                           width={isMobile ? 10 : 16}
@@ -1267,8 +1267,8 @@ const BeginnersFarm = () => {
                       <NewLabel
                         size={isMobile ? '12px' : '12px'}
                         height={isMobile ? '24px' : '24px'}
-                        weight="500"
-                        color="#6F78AA"
+                        weight="600"
+                        color="#101828"
                       >
                         {!connected ? (
                           0
@@ -1322,10 +1322,10 @@ const BeginnersFarm = () => {
                         </ReactTooltip>
                       </NewLabel>
                       <NewLabel
-                        weight="500"
+                        weight="600"
                         size={isMobile ? '12px' : '12px'}
                         height={isMobile ? '24px' : '24px'}
-                        color="#6F78AA"
+                        color="#101828"
                         self="center"
                       >
                         {!connected ? (
@@ -1475,12 +1475,12 @@ const BeginnersFarm = () => {
                 </FirstPartSection>
               ) : (
                 <RestInternal>
-                  <MyBalance marginBottom={isMobile ? '24px' : '20px'}>
+                  <MyBalance marginBottom={isMobile ? '20px' : '25px'}>
                     <NewLabel
-                      size={isMobile ? '14px' : '14px'}
+                      size={isMobile ? '12px' : '14px'}
                       weight="600"
-                      height={isMobile ? '24px' : '24px'}
-                      color="#344054"
+                      height={isMobile ? '20px' : '24px'}
+                      color="#1F2937"
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom="1px solid #F3F6FF"
                     >
@@ -1492,10 +1492,10 @@ const BeginnersFarm = () => {
                   </MyBalance>
                   <LastHarvestInfo>
                     <NewLabel
-                      size={isMobile ? '14px' : '14px'}
-                      weight={isMobile ? '700' : '700'}
-                      height={isMobile ? '24px' : '24px'}
-                      color={isMobile ? '#344054' : '#344054'}
+                      size={isMobile ? '12px' : '14px'}
+                      weight="600"
+                      height={isMobile ? '20px' : '24px'}
+                      color="#1F2937"
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom="1px solid #F3F6FF"
                     >
@@ -1506,18 +1506,18 @@ const BeginnersFarm = () => {
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '14px' : '14px'}
+                        size={isMobile ? '12px' : '14px'}
                         weight="500"
-                        height={isMobile ? '24px' : '24px'}
-                        color="#344054"
+                        height={isMobile ? '20px' : '24px'}
+                        color="#6F78AA"
                       >
                         Deposit Fee
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '14px' : '14px'}
-                        weight="500"
-                        height={isMobile ? '24px' : '24px'}
-                        color={isMobile ? '#000' : '#000'}
+                        size={isMobile ? '12px' : '14px'}
+                        weight="600"
+                        height={isMobile ? '20px' : '24px'}
+                        color="#101828"
                       >
                         0%
                       </NewLabel>
@@ -1527,18 +1527,18 @@ const BeginnersFarm = () => {
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '14px' : '14px'}
+                        size={isMobile ? '12px' : '14px'}
                         weight="500"
-                        height={isMobile ? '24px' : '24px'}
-                        color="#344054"
+                        height={isMobile ? '20px' : '24px'}
+                        color="#6F78AA"
                       >
                         Withdrawal Fee
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '14px' : '14px'}
-                        weight="500"
-                        height={isMobile ? '24px' : '24px'}
-                        color={isMobile ? '#000' : '#000'}
+                        size={isMobile ? '12px' : '14px'}
+                        weight="600"
+                        height={isMobile ? '20px' : '24px'}
+                        color="#101828"
                       >
                         0%
                       </NewLabel>
@@ -1551,7 +1551,7 @@ const BeginnersFarm = () => {
                         size={isMobile ? '13px' : '13px'}
                         weight="300"
                         height="normal"
-                        color="#15202b"
+                        color="#6F78AA"
                       >
                         The APY shown already considers the performance fee taken only from
                         generated yield and not deposits.
@@ -1594,11 +1594,12 @@ const BeginnersFarm = () => {
                   {isMobile && (
                     <HalfInfo marginBottom="20px">
                       <NewLabel
-                        weight={700}
-                        size="14px"
-                        height="24px"
+                        weight={600}
+                        size={isMobile ? '12px' : '14px'}
+                        height={isMobile ? '20px' : '24px'}
                         padding="10px 15px"
-                        borderRadius="15px 15px 0 0"
+                        color="#1F2937"
+                        borderBottom="1px solid #F3F6FF"
                       >
                         Source of Yield
                       </NewLabel>

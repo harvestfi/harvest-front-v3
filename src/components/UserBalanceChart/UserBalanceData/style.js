@@ -7,7 +7,7 @@ const Container = styled.div`
   overflow: hidden;
   padding: 15px 18px;
   transition: 0.25s;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 2px solid #f2f5ff;
   background: #fff;
   justify-content: space-between;
@@ -49,7 +49,7 @@ const ButtonGroup = styled.div`
   flex-wrap: wrap;
   color: #fff;
   justify-content: end;
-  padding-top: 10px;
+  padding-top: 13px;
 `
 
 const ChartDiv = styled.div`
