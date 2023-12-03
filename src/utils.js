@@ -2,7 +2,7 @@ import axios from 'axios'
 import axiosRetry from 'axios-retry'
 import BigNumber from 'bignumber.js'
 import mobile from 'is-mobile'
-import { get, isArray, isEmpty, size as arraySize, sum, sumBy } from 'lodash'
+import { get, isArray, isNaN, isEmpty, size as arraySize, sum, sumBy } from 'lodash'
 import React from 'react'
 import ReactHtmlParser from 'react-html-parser'
 import {
@@ -118,7 +118,34 @@ export const truncateNumberString = (
 
   return truncatedNumberAsBN.isNaN() ? '0' : truncatedNumberAsBN.toFixed(2)
 }
+export const parseValue = value => {
+  if (value === null || value === undefined) {
+    return NaN
+  }
 
+  let newValue = value.toString().replace(/,/g, ''),
+    multiplier = 1
+  const suffix = newValue.slice(-1).toUpperCase()
+
+  if (isNaN(newValue.slice(0, -1))) {
+    return NaN
+  }
+
+  if (suffix === 'K') {
+    multiplier = 1000
+  } else if (suffix === 'M') {
+    multiplier = 1000000
+  } else if (suffix === 'B') {
+    multiplier = 1000000000
+  } else if (suffix === 'T') {
+    multiplier = 1000000000000
+  } else if (suffix === 'Q') {
+    multiplier = 1000000000000000
+  }
+
+  newValue = parseFloat(newValue) * multiplier
+  return newValue
+}
 export const formatNumber = (number, decimals = DECIMAL_PRECISION) => {
   let result = number
 

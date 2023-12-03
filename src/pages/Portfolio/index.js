@@ -1,7 +1,7 @@
 import { BigNumber } from 'bignumber.js'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import axios from 'axios'
-import { find, get, isEmpty, orderBy, isEqual } from 'lodash'
+import { find, get, isEmpty, orderBy, isEqual, isNaN } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import React, { useRef, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -38,6 +38,7 @@ import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { fromWei } from '../../services/web3'
 import {
+  parseValue,
   formatNumber,
   formatNumberWido,
   // ceil10,
@@ -405,9 +406,11 @@ const Portfolio = () => {
               stats.stake = 0
             }
             // eslint-disable-next-line no-restricted-globals
-            const totalStk = parseFloat((isNaN(Number(stake)) ? 0 : stake) * usdPrice)
+            const totalStk = parseFloat((isNaN(Number(stake)) ? 0 : parseValue(stake)) * usdPrice)
             // eslint-disable-next-line no-restricted-globals
-            const totalUnsk = parseFloat((isNaN(Number(unstake)) ? 0 : unstake) * usdPrice)
+            const totalUnsk = parseFloat(
+              (isNaN(Number(unstake)) ? 0 : parseValue(unstake)) * usdPrice,
+            )
             totalStake += totalStk + totalUnsk
             const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
             const tempPricePerFullShare = useIFARM
