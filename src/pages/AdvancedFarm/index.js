@@ -2044,7 +2044,7 @@ const AdvancedFarm = () => {
                         height={isMobile ? '24px' : '24px'}
                         color="#6F78AA"
                       >
-                        Deposit Fee
+                        Convert Fee
                       </NewLabel>
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}
@@ -2065,7 +2065,7 @@ const AdvancedFarm = () => {
                         height={isMobile ? '24px' : '24px'}
                         color="#6F78AA"
                       >
-                        Withdrawal Fee
+                        Revert Fee
                       </NewLabel>
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}

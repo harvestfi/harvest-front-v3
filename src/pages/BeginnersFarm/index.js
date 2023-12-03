@@ -790,7 +790,7 @@ const BeginnersFarm = () => {
                 {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
                 &nbsp;APY
               </GuidePart>
-              <GuidePart>Withdraw anytime</GuidePart>
+              <GuidePart>Revert anytime</GuidePart>
             </GuideSection>
             <TabRow>
               <MainTagPanel>
@@ -1511,7 +1511,7 @@ const BeginnersFarm = () => {
                         height={isMobile ? '20px' : '24px'}
                         color="#6F78AA"
                       >
-                        Deposit Fee
+                        Convert Fee
                       </NewLabel>
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}
@@ -1532,7 +1532,7 @@ const BeginnersFarm = () => {
                         height={isMobile ? '20px' : '24px'}
                         color="#6F78AA"
                       >
-                        Withdrawal Fee
+                        Revert Fee
                       </NewLabel>
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}
