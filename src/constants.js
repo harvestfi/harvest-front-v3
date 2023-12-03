@@ -29,7 +29,6 @@ export const ROUTES = {
   WIDODETAIL: '/:network/:paramAddress',
   ADVANCEDFARM: '/advanced/:network/:paramAddress',
   LASTADVANCEDFARM: '/lastadvanced/:network/:paramAddress',
-  SPECADVANCEDFARM: '/specadvanced/:network/:paramAddress',
   BEGINNERSFARM: '/beginner/:paramAddress',
   CHARTS: '/charts',
   WORK: '/work',
