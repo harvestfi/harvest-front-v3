@@ -924,7 +924,7 @@ const MainDescText = styled.div`
 `
 
 const HalfInfo = styled.div`
-  border-radius: 10px;
+  border-radius: 12px;
   background: #fff;
   transition: 0.25s;
   margin-bottom: ${props => props.marginBottom};
