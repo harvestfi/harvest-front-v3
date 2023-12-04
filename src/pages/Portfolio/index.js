@@ -612,28 +612,28 @@ const Portfolio = () => {
           <TotalValue
             icon={Safe}
             content="Total Balance"
-            price={Number(totalDeposit)}
+            price={totalDeposit}
             toolTipTitle="tt-total-balance"
             toolTip="Sum of your wallet's staked and unstaked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
           />
           <TotalValue
             icon={Coin1}
             content="Est. Monthly Yield"
-            price={Number(totalYieldMonthly)}
+            price={totalYieldMonthly}
             toolTipTitle="tt-monthly-yield"
             toolTip="Estimated monthly yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
           />
           <TotalValue
             icon={Coin2}
             content="Est. Daily Yield"
-            price={Number(totalYieldDaily)}
+            price={totalYieldDaily}
             toolTipTitle="tt-daily-yield"
             toolTip="Estimated daily yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
           />
           <TotalValue
             icon={Diamond}
             content="Rewards"
-            price={Number(totalRewards)}
+            price={totalRewards}
             toolTipTitle="tt-rewards"
             toolTip="Accrued rewards on all your staked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
           />
