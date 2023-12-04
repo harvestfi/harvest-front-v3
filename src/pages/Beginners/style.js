@@ -25,15 +25,27 @@ const Container = styled.div`
 
 const TopSection = styled.div`
   width: 100%;
+  background: #15b088;
+
+  @media screen and (max-width: 992px) {
+    height: 325px;
+  }
+`
+
+const TopContainer = styled.div`
   height: 345px;
   display: flex;
   flex-flow: column;
   justify-content: center;
   padding: 100px;
-  background: #15b088;
+
+  @media screen and (min-width: 1921px) {
+    width: 1450px;
+    margin: auto;
+    padding: 100px 0px;
+  }
 
   @media screen and (max-width: 992px) {
-    height: 325px;
     padding: 0px 25px;
     text-align: center;
   }
@@ -46,7 +58,7 @@ const Inner = styled.div`
 
   @media screen and (min-width: 1921px) {
     width: 1450px;
-    padding: 35px 0 0;
+    padding: 60px 40px;
     height: 800px;
   }
 
@@ -144,4 +156,14 @@ const HeaderBadge = styled.div`
   }
 `
 
-export { Container, TopSection, Inner, CoinSection, UnitPart, HeaderTitle, HeaderDesc, HeaderBadge }
+export {
+  Container,
+  TopSection,
+  TopContainer,
+  Inner,
+  CoinSection,
+  UnitPart,
+  HeaderTitle,
+  HeaderDesc,
+  HeaderBadge,
+}
