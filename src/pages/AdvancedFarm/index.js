@@ -1278,11 +1278,12 @@ const AdvancedFarm = () => {
                   {!isMobile && (
                     <HalfInfo marginBottom="20px">
                       <NewLabel
-                        weight={700}
-                        size="14px"
-                        height="24px"
-                        padding="10px 15px"
-                        borderRadius="15px 15px 0 0"
+                        size={isMobile ? '12px' : '14px'}
+                        weight={isMobile ? '600' : '600'}
+                        height={isMobile ? '20px' : '24px'}
+                        color={isMobile ? '#1F2937' : '#1F2937'}
+                        padding={isMobile ? '10px 15px' : '10px 15px'}
+                        borderBottom="1px solid #F3F6FF"
                       >
                         Source of Yield
                       </NewLabel>
