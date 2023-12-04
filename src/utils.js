@@ -1031,7 +1031,7 @@ export const getAdvancedRewardText = (
           </div>
         </div>
         <div class="detail-apy">
-          <b>${displayAPY(boostedRewardAPY)}</b>
+          ${displayAPY(boostedRewardAPY)}
         </div>
       </div>`)
     }
@@ -1059,7 +1059,7 @@ export const getAdvancedRewardText = (
               </div>
             </div>
             <div class="detail-apy">
-              <b>${displayAPY(get(vaultPool, `rewardAPY[${symbolIdx}]`, 0))}</b>
+              ${displayAPY(get(vaultPool, `rewardAPY[${symbolIdx}]`, 0))}
             </div>
           </div>`)
 
@@ -1100,7 +1100,7 @@ export const getAdvancedRewardText = (
           <div class="detail-token-no-width">Liquidity Provision</div>
         </div>
         <div class="detail-apy">
-          <b>${new BigNumber(tradingApy).gt(0) ? `${displayAPY(tradingApy)}` : `0.00%`}</b>
+          ${new BigNumber(tradingApy).gt(0) ? `${displayAPY(tradingApy)}` : `0.00%`}
         </div>
       </div>`)
       // components.push(`
@@ -1114,7 +1114,7 @@ export const getAdvancedRewardText = (
           <div class="detail-desc-no-width">Liquidity Provision</div>
         </div>
         <div class="detail-apy">
-          <b>${displayAPY(tradingApy)}</b>
+          ${displayAPY(tradingApy)}
         </div>
       </div>`)
     }

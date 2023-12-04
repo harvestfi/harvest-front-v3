@@ -429,7 +429,11 @@ html {
     font-size: 14px; 
     line-height: 24px;
     font-weight: 500;
-    color: #344054;
+    color: #6F78AA;
+
+    @media screen and (max-width: 992px) {
+      font-size: 12px;
+    }
   }
 
   .farm-detail-reward {
