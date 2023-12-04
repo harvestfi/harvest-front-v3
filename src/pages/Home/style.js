@@ -56,7 +56,6 @@ const Inner = styled.div`
 const FirstPart = styled.div`
   width: 50%;
   display: flex;
-  box-shadow: 0px 4px 4px -2px rgba(16, 24, 40, 0.03), 0px 10px 12px -2px rgba(16, 24, 40, 0.08);
   position: relative;
   border-radius: 13px;
 
@@ -95,7 +94,7 @@ const FirstBack = styled.div`
 
   @media screen and (max-width: 512px) {
     height: 100%;
-    padding: 34px 34px 50px;
+    padding: 34px;
   }
 
   img {
@@ -133,6 +132,12 @@ const Title = styled.div`
     padding-top: unset;
     letter-spacing: -0.64px;
   }
+
+  @media screen and (max-width: 512px) {
+    font-size: 24px;
+    letter-spacing: -0.48px;
+    margin-bottom: 0px;
+  }
 `
 
 const Desc = styled.div`
@@ -145,6 +150,11 @@ const Desc = styled.div`
   @media screen and (max-width: 992px) {
     font-size: 18px;
     margin-bottom: 21px;
+  }
+
+  @media screen and (max-width: 512px) {
+    font-size: 14px;
+    margin-bottom: 60px;
   }
 `
 
@@ -168,6 +178,14 @@ const StartBeginners = styled.button`
   @media screen and (max-width: 992px) {
     padding: 14px 23px;
     font-size: 19px;
+  }
+
+  @media screen and (max-width: 512px) {
+    font-size: 14px;
+    padding: 10px;
+    width: 100px;
+    display: flex;
+    justify-content: center;
   }
 `
 
@@ -196,6 +214,12 @@ const FirstFarmingPart = styled.div`
   position: relative;
   overflow: hidden;
   z-index: 0;
+  transition: 0.25s;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 0px 4px 4px -2px rgba(16, 24, 40, 0.23), 0px 10px 12px -2px rgba(16, 24, 40, 0.28);
+  }
 
   img.cloud {
     width: 47%;
@@ -213,14 +237,6 @@ const FirstFarmingPart = styled.div`
     @media screen and (max-width: 992px) {
       width: 51%;
     }
-  }
-
-  transition: 0.25s;
-  cursor: pointer;
-  box-shadow: 0px 4px 4px -2px rgba(16, 24, 40, 0.03), 0px 10px 12px -2px rgba(16, 24, 40, 0.08);
-
-  &:hover {
-    box-shadow: 0px 4px 4px -2px rgba(16, 24, 40, 0.23), 0px 10px 12px -2px rgba(16, 24, 40, 0.28);
   }
 
   @media screen and (max-width: 992px) {
@@ -241,7 +257,7 @@ const FirstFarmingPart = styled.div`
 
   @media screen and (max-width: 512px) {
     height: 100%;
-    padding: 34px 34px 50px;
+    padding: 34px;
   }
 `
 
@@ -265,6 +281,15 @@ const DirectBtn = styled.button`
     padding: 14px 23px;
     font-size: 19px;
   }
+
+  @media screen and (max-width: 512px) {
+    font-size: 14px;
+    padding: 10px;
+    line-height: 28px;
+    width: 100px;
+    display: flex;
+    justify-content: center;
+  }
 `
 
 const AdvancedFarms = styled.div`
@@ -279,6 +304,12 @@ const AdvancedFarms = styled.div`
   position: relative;
   overflow: hidden;
   z-index: 1;
+  transition: 0.25s;
+  cursor: pointer;
+
+  &:hover {
+    box-shadow: 0px 4px 4px -2px rgba(16, 24, 40, 0.23), 0px 10px 12px -2px rgba(16, 24, 40, 0.28);
+  }
 
   img.bottom {
     width: 30%;
@@ -297,13 +328,6 @@ const AdvancedFarms = styled.div`
       bottom: -30%;
       right: 4%;
     }
-  }
-  transition: 0.25s;
-  cursor: pointer;
-  box-shadow: 0px 4px 4px -2px rgba(16, 24, 40, 0.03), 0px 10px 12px -2px rgba(16, 24, 40, 0.08);
-
-  &:hover {
-    box-shadow: 0px 4px 4px -2px rgba(16, 24, 40, 0.23), 0px 10px 12px -2px rgba(16, 24, 40, 0.28);
   }
 
   @media screen and (max-width: 992px) {
@@ -341,6 +365,12 @@ const FirstFarmTitle = styled.div`
     margin-bottom: 16px;
     letter-spacing: -0.56px;
   }
+
+  @media screen and (max-width: 512px) {
+    font-size: 24px;
+    letter-spacing: -0.48px;
+    margin-bottom: 0px;
+  }
 `
 
 const FirstFarmDesc = styled.div`
@@ -353,6 +383,11 @@ const FirstFarmDesc = styled.div`
   @media screen and (max-width: 992px) {
     font-size: 18px;
     margin-bottom: 21px;
+  }
+
+  @media screen and (max-width: 512px) {
+    font-size: 14px;
+    margin-bottom: 60px;
   }
 `
 
@@ -370,6 +405,12 @@ const AdvancedTitle = styled.div`
     margin-bottom: 16px;
     letter-spacing: -0.64px;
   }
+
+  @media screen and (max-width: 512px) {
+    font-size: 24px;
+    letter-spacing: -0.48px;
+    margin-bottom: 0px;
+  }
 `
 
 const AdvancedDesc = styled.div`
@@ -383,6 +424,11 @@ const AdvancedDesc = styled.div`
     font-size: 18px;
     line-height: 22px;
     margin-bottom: 21px;
+  }
+
+  @media screen and (max-width: 512px) {
+    font-size: 14px;
+    margin-bottom: 60px;
   }
 `
 
@@ -406,6 +452,15 @@ const AdvancedDirectBtn = styled.button`
     font-size: 18px;
     line-height: 28px;
     padding: 14px 23px;
+  }
+
+  @media screen and (max-width: 512px) {
+    font-size: 14px;
+    padding: 10px;
+    line-height: 28px;
+    width: 100px;
+    display: flex;
+    justify-content: center;
   }
 `
 
