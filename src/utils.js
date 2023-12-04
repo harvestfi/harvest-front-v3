@@ -150,11 +150,10 @@ export const formatNumber = (number, decimals = DECIMAL_PRECISION) => {
   let result = number
 
   if (countDecimals(result) > decimals) {
-    // Round the number to the specified decimal places
-    result = Number(result.toFixed(decimals))
+    result = result.substring(0, result.indexOf('.') + decimals + 1)
   }
 
-  return abbreaviteNumber(result, decimals)
+  return abbreaviteNumber(Number(result), decimals)
 }
 
 export const formatNumberWido = (number, decimals = DECIMAL_PRECISION) => {
