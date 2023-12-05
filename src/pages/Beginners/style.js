@@ -42,7 +42,15 @@ const TopContainer = styled.div`
   @media screen and (min-width: 1921px) {
     width: 1450px;
     margin: auto;
-    padding: 100px 0px;
+    padding: 100px 40px;
+  }
+
+  @media screen and (max-width: 1921px) {
+    padding: 100px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    padding: 100px 40px;
   }
 
   @media screen and (max-width: 992px) {
