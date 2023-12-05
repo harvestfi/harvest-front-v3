@@ -1485,7 +1485,7 @@ const AdvancedFarm = () => {
                           totalValue === 0 ? (
                             '0.00'
                           ) : (
-                            totalValue.toFixed(8).replace(/\.?0+$/, '')
+                            totalValue
                           )
                         ) : (
                           <AnimatedDots />
@@ -1549,9 +1549,9 @@ const AdvancedFarm = () => {
                           totalValue === 0 ? (
                             '0.00'
                           ) : useIFARM ? (
-                            `${(totalValue * Number(pricePerFullShare)).toFixed(8)} ${id}`
+                            `${totalValue * Number(pricePerFullShare)} ${id}`
                           ) : (
-                            (totalValue * Number(pricePerFullShare)).toFixed(8)
+                            totalValue * Number(pricePerFullShare)
                           )
                         ) : (
                           <AnimatedDots />
