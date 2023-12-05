@@ -7,6 +7,7 @@ import { useHistory, useParams } from 'react-router-dom'
 import ReactTooltip from 'react-tooltip'
 import Chart from 'react-apexcharts'
 import useEffectWithPrevious from 'use-effect-with-previous'
+import { getSupportedTokens } from 'wido'
 import { ethers } from 'ethers'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
@@ -435,7 +436,7 @@ const WidoDetail = () => {
   const [soonToSupList, setSoonToSupList] = useState([])
 
   const rewardSymbol = isSpecialVault ? id : token.apyTokenSymbols[0]
-  // const toTokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
+  const toTokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
   useEffect(() => {
     const getTokenBalance = async () => {
       try {
@@ -445,8 +446,17 @@ const WidoDetail = () => {
               ? token.tokenAddress
               : token.vaultAddress
           let supList = [],
+            directInSup = {},
             directInBalance = {}
-
+          try {
+            supList = await getSupportedTokens({
+              chainId: [chain],
+              toToken: toTokenAddress,
+              toChainId: chain,
+            })
+          } catch (err) {
+            console.log('getSupportedTokens of Wido: ', err)
+          }
           const ensoTokens = ensoBaseTokens[chain.toString()] || []
           const ensoRawBalances = await getEnsoBalances(account, chain.toString())
           const curBalances = (
@@ -473,13 +483,41 @@ const WidoDetail = () => {
               }),
             )
           ).filter(item => item.address)
-          supList = curBalances
-          const curSortedBalances = curBalances.sort(function reducer(a, b) {
+          setBalanceList(curBalances)
+
+          const soonSupList = []
+          supList = supList.map(sup => {
+            const supToken = curBalances.find(
+              el => el.address.toLowerCase() === sup.address.toLowerCase(),
+            )
+            if (supToken) {
+              sup.balance = supToken.balance
+              sup.usdValue = supToken.balanceUsdValue
+              sup.usdPrice = supToken.usdPrice
+            } else {
+              sup.balance = '0'
+              sup.usdValue = '0'
+            }
+            sup.default = false
+
+            if (Object.keys(directInSup).length === 0 && tokenAddress.length !== 2) {
+              if (sup.address.toLowerCase() === tokenAddress.toLowerCase()) {
+                directInSup = sup
+              }
+            }
+            return sup
+          })
+
+          supList = supList.sort(function reducer(a, b) {
             return Number(fromWei(b.balance, b.decimals)) - Number(fromWei(a.balance, a.decimals))
           })
-          setBalanceList(curSortedBalances)
 
           for (let j = 0; j < curBalances.length; j += 1) {
+            const supToken = supList.find(el => el.address === curBalances[j].address)
+            if (!supToken) {
+              soonSupList.push(curBalances[j])
+            }
+
             if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
               if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
                 directInBalance = curBalances[j]
@@ -500,7 +538,15 @@ const WidoDetail = () => {
                   .toFixed(4)
               : '0'
 
-          if (
+          if (!(Object.keys(directInSup).length === 0 && directInSup.constructor === Object)) {
+            directInSup.balance = directBalance
+            directInSup.usdPrice = directInSup.usdPrice > 0 ? directInSup.usdPrice : directUsdPrice
+            directInSup.usdValue = directInSup.usdValue > 0 ? directInSup.usdValue : directUsdValue
+            supList = supList.sort(function result(x, y) {
+              return x === directInSup ? -1 : y === directInSup ? 1 : 0
+            })
+            supList[0].default = true
+          } else if (
             !(Object.keys(directInBalance).length === 0 && directInBalance.constructor === Object)
           ) {
             directInBalance.balance = directBalance || '0'
@@ -533,8 +579,7 @@ const WidoDetail = () => {
             }
             supList.unshift(direct)
           }
-
-          setSoonToSupList({})
+          setSoonToSupList(soonSupList)
           setSupTokenList(supList)
         }
       } catch (err) {
