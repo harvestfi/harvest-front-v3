@@ -1,11 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { get } from 'lodash'
-import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, SPECIAL_VAULTS } from '../../../../constants'
+import {
+  FARM_TOKEN_SYMBOL,
+  IFARM_TOKEN_SYMBOL,
+  SPECIAL_VAULTS,
+  MAX_DECIMALS,
+} from '../../../../constants'
 import { useVaults } from '../../../../providers/Vault'
 import { tokens } from '../../../../data'
 import { fromWei } from '../../../../services/web3'
-import { convertAmountToFARM, formatNumber, getUserVaultBalance } from '../../../../utils'
+import {
+  convertAmountToFARM,
+  formatNumber,
+  getUserVaultBalance,
+  parseValue,
+} from '../../../../utils'
 import AnimatedDots from '../../../AnimatedDots'
 import { useWallet } from '../../../../providers/Wallet'
 import { Monospace } from '../../../GlobalStyle'
@@ -69,7 +79,7 @@ const VaultUserBalance = ({
           $
           {multipleAssets
             ? `${formatNumber(
-                new BigNumber(fromWei(userVaultBalance, token.decimals, 3))
+                new BigNumber(fromWei(parseValue(userVaultBalance), token.decimals, MAX_DECIMALS))
                   .multipliedBy(token.usdPrice || 1)
                   .toString(),
                 2,
@@ -77,9 +87,9 @@ const VaultUserBalance = ({
             : formatNumber(
                 new BigNumber(
                   fromWei(
-                    userVaultBalance,
+                    parseValue(userVaultBalance),
                     isSpecialVault ? get(token, 'data.watchAsset.decimals', 18) : token.decimals,
-                    5,
+                    MAX_DECIMALS,
                   ),
                 )
                   .multipliedBy(
