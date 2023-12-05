@@ -1484,6 +1484,7 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
           where: {
             vault: "${address}",
           },
+          orderBy: timestamp,
           orderDirection: desc
         ) {
           sharePrice, timestamp
