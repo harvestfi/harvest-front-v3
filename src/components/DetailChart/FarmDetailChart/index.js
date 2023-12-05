@@ -60,10 +60,10 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
     const initData = async () => {
       const data = await getDataQuery(365, address, chainId, account)
       if (clickedId === 2) {
-        if (data && data.priceFeeds.length > 0) {
+        if (data && data.vaultHistories.length > 0) {
           const curTimestamp = new Date().getTime() / 1000
           const between =
-            curTimestamp - Number(data.priceFeeds[data.priceFeeds.length - 1].timestamp)
+            curTimestamp - Number(data.vaultHistories[data.vaultHistories.length - 1].timestamp)
           const day = between / (24 * 3600)
           setSelectedState(day < 90 ? '1M' : '1Y')
         }
@@ -115,6 +115,7 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
       </Header>
       <ChartDiv className="advanced-farm">
         <ApexChart
+          token={token}
           data={apiData}
           iFarmTVL={iFarmTVLData}
           isIFARM={isIFARM}

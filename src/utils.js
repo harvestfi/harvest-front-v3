@@ -1480,15 +1480,13 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
         ) {
           value, timestamp
         },
-        priceFeeds(
+        vaultHistories(
           where: {
             vault: "${address}",
-            value_gt: 0
           },
-          orderBy: createAtBlock,
           orderDirection: desc
         ) {
-          value, sharePrice, timestamp
+          sharePrice, timestamp
         }
       }`,
       variables: {},

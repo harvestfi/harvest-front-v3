@@ -15,6 +15,7 @@ import { useWindowWidth } from '@react-hook/window-size'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { ceil10, floor10, round10, numberWithCommas } from '../../../utils'
 import { LoadingDiv, NoData } from './style'
+import { fromWei } from '../../../services/web3'
 
 function getRangeNumber(strRange) {
   let ago = 30
@@ -57,7 +58,7 @@ function findMin(data) {
 }
 
 // kind: "value" - TVL, "apy" - APY
-function generateChartDataWithSlots(slots, apiData, kind, filter) {
+function generateChartDataWithSlots(slots, apiData, kind, filter, decimals) {
   const seriesData = []
   if (filter === 2) {
     for (let i = 0; i < slots.length; i += 1) {
@@ -67,7 +68,7 @@ function generateChartDataWithSlots(slots, apiData, kind, filter) {
           : prev,
       )
 
-      seriesData.push({ x: slots[i] * 1000, y: data.sharePrice })
+      seriesData.push({ x: slots[i] * 1000, y: fromWei(parseFloat(data.sharePrice), decimals) })
     }
   } else {
     for (let i = 0; i < slots.length; i += 1) {
@@ -164,6 +165,7 @@ function generateIFARMTVLWithSlots(slots, apiData) {
 }
 
 const ApexChart = ({
+  token,
   data,
   iFarmTVL,
   isIFARM,
@@ -310,13 +312,13 @@ const ApexChart = ({
 
         if (lastAPY && !Number.isNaN(lastAPY) && apyData.length > 0) apyData[0].apy = lastAPY
       } else {
-        if (data && data.priceFeeds) {
-          if (data.priceFeeds.length === 0) {
+        if (data && data.vaultHistories) {
+          if (data.vaultHistories.length === 0) {
             setIsDataReady(false)
             return
           }
         }
-        userPriceFeedData = data && data.priceFeeds ? data.priceFeeds : []
+        userPriceFeedData = data && data.vaultHistories ? data.vaultHistories : []
       }
 
       const slotCount = 50,
@@ -333,7 +335,7 @@ const ApexChart = ({
             // setIsDataReady(false)
             return
           }
-          mainData = generateChartDataWithSlots(slots, tvlData, 'value', filter)
+          mainData = generateChartDataWithSlots(slots, tvlData, 'value', filter, token.decimals)
         }
         maxTVL = findMax(mainData)
         minTVL = findMin(mainData)
@@ -342,14 +344,20 @@ const ApexChart = ({
           setIsDataReady(false)
           return
         }
-        mainData = generateChartDataWithSlots(slots, apyData, 'apy', filter)
+        mainData = generateChartDataWithSlots(slots, apyData, 'apy', filter, token.decimals)
         maxAPY = findMax(mainData)
         minAPY = findMin(mainData)
       } else {
         if (userPriceFeedData.length === 0) {
           return
         }
-        mainData = generateChartDataWithSlots(slots, userPriceFeedData, 'sharePrice', filter)
+        mainData = generateChartDataWithSlots(
+          slots,
+          userPriceFeedData,
+          'sharePrice',
+          filter,
+          token.decimals,
+        )
         maxSharePrice = findMax(mainData)
         minSharePrice = findMin(mainData)
       }
@@ -458,6 +466,7 @@ const ApexChart = ({
     fixedLen,
     setCurContent,
     setCurDate,
+    token.decimals,
   ])
 
   return (
