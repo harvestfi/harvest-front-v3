@@ -7,7 +7,7 @@ import { useHistory, useParams } from 'react-router-dom'
 import ReactTooltip from 'react-tooltip'
 import Chart from 'react-apexcharts'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import { getBalances, getSupportedTokens } from 'wido'
+import { ethers } from 'ethers'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
@@ -101,6 +101,7 @@ import {
   LPTokenBalance,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
+import { useEnso } from '../../providers/Enso'
 
 const chainList = [
   { id: 1, name: 'Ethereum', chainId: 1 },
@@ -152,6 +153,7 @@ const WidoDetail = () => {
   const { loadingVaults, vaultsData } = useVaults()
   const { pools, userStats, fetchUserPoolStats } = usePools()
   const { account, balances, getWalletBalances } = useWallet()
+  const { ensoBaseTokens, getEnsoBalances, getEnsoPrice } = useEnso()
   const { profitShareAPY } = useStats()
   /* eslint-disable global-require */
   const { tokens } = require('../../data')
@@ -433,61 +435,51 @@ const WidoDetail = () => {
   const [soonToSupList, setSoonToSupList] = useState([])
 
   const rewardSymbol = isSpecialVault ? id : token.apyTokenSymbols[0]
-  const toTokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
+  // const toTokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
   useEffect(() => {
     const getTokenBalance = async () => {
       try {
         if (chain && account && Object.keys(balances).length !== 0) {
-          const curBalances = await getBalances(account, [chain.toString()])
-          setBalanceList(curBalances)
-          let supList = [],
-            directInSup = {},
-            directInBalance = {}
-          try {
-            supList = await getSupportedTokens({
-              chainId: [chain],
-              toToken: toTokenAddress,
-              toChainId: chain,
-            })
-          } catch (err) {
-            console.log('getSupportedTokens of Wido: ', err)
-          }
           const tokenAddress =
             token.tokenAddress !== undefined && token.tokenAddress.length !== 2
               ? token.tokenAddress
               : token.vaultAddress
+          let supList = [],
+            directInBalance = {}
 
-          const soonSupList = []
-          supList = supList.map(sup => {
-            const supToken = curBalances.find(el => el.address === sup.address)
-            if (supToken) {
-              sup.balance = supToken.balance
-              sup.usdValue = supToken.balanceUsdValue
-              sup.usdPrice = supToken.usdPrice
-            } else {
-              sup.balance = '0'
-              sup.usdValue = '0'
-            }
-            sup.default = false
-
-            if (Object.keys(directInSup).length === 0 && tokenAddress.length !== 2) {
-              if (sup.address.toLowerCase() === tokenAddress.toLowerCase()) {
-                directInSup = sup
-              }
-            }
-            return sup
-          })
-
-          supList = supList.sort(function reducer(a, b) {
+          const ensoTokens = ensoBaseTokens[chain.toString()] || []
+          const ensoRawBalances = await getEnsoBalances(account, chain.toString())
+          const curBalances = (
+            await Promise.all(
+              ensoRawBalances.map(async balance => {
+                if (!ethers.utils.isAddress(balance.token))
+                  balance.token = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+                const baseToken = ensoTokens.find(el => el.address === balance.token)
+                const price = baseToken
+                  ? await getEnsoPrice(chain.toString(), baseToken.address)
+                  : 0
+                const item = {
+                  symbol: baseToken?.symbol,
+                  address: baseToken?.address,
+                  balance: balance.amount,
+                  default: false,
+                  usdValue: Number(fromWei(balance.amount, balance.decimals)) * price,
+                  usdPrice: price,
+                  logoURI: baseToken?.logoURI,
+                  decimals: balance.decimals,
+                  chainId: chain,
+                }
+                return item
+              }),
+            )
+          ).filter(item => item.address)
+          supList = curBalances
+          const curSortedBalances = curBalances.sort(function reducer(a, b) {
             return Number(fromWei(b.balance, b.decimals)) - Number(fromWei(a.balance, a.decimals))
           })
+          setBalanceList(curSortedBalances)
 
           for (let j = 0; j < curBalances.length; j += 1) {
-            const supToken = supList.find(el => el.address === curBalances[j].address)
-            if (!supToken) {
-              soonSupList.push(curBalances[j])
-            }
-
             if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
               if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
                 directInBalance = curBalances[j]
@@ -508,15 +500,7 @@ const WidoDetail = () => {
                   .toFixed(4)
               : '0'
 
-          if (!(Object.keys(directInSup).length === 0 && directInSup.constructor === Object)) {
-            directInSup.balance = directBalance
-            directInSup.usdPrice = directInSup.usdPrice > 0 ? directInSup.usdPrice : directUsdPrice
-            directInSup.usdValue = directInSup.usdValue > 0 ? directInSup.usdValue : directUsdValue
-            supList = supList.sort(function result(x, y) {
-              return x === directInSup ? -1 : y === directInSup ? 1 : 0
-            })
-            supList[0].default = true
-          } else if (
+          if (
             !(Object.keys(directInBalance).length === 0 && directInBalance.constructor === Object)
           ) {
             directInBalance.balance = directBalance || '0'
@@ -549,7 +533,8 @@ const WidoDetail = () => {
             }
             supList.unshift(direct)
           }
-          setSoonToSupList(soonSupList)
+
+          setSoonToSupList({})
           setSupTokenList(supList)
         }
       } catch (err) {
@@ -558,7 +543,7 @@ const WidoDetail = () => {
     }
 
     getTokenBalance()
-  }, [account, chain, balances]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, chain, balances, ensoBaseTokens]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const {
     backColor,
