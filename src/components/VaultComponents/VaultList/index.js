@@ -32,7 +32,7 @@ import {
   getUserVaultBalance,
   getVaultValue,
   isSpecialApp,
-  getPriceFeed,
+  getPublishDate,
 } from '../../../utils'
 import VaultPanel from '../VaultPanel'
 import VaultsListHeader from '../VaultsListHeader'
@@ -453,7 +453,7 @@ const VaultList = () => {
             : find(totalPools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
           const address =
             token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
-          const { data, flag } = await getPriceFeed(address, tokenChainId)
+          const { data, flag } = await getPublishDate(address, tokenChainId)
           groupOfVaults[symbol].publishDate = flag ? Number(data[data.length - 1].timestamp) : null
         })
       }

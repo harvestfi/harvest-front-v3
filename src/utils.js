@@ -1811,6 +1811,69 @@ export const getPriceFeed = async (address, chainId) => {
   return { data, flag }
 }
 
+export const getPublishDate = async (address, chainId) => {
+  // eslint-disable-next-line no-unused-vars
+  let nowDate = new Date(),
+    data = {},
+    flag = true
+
+  nowDate = Math.floor(nowDate.setDate(nowDate.getDate()) / 1000)
+
+  const myHeaders = new Headers()
+  myHeaders.append('Content-Type', 'application/json')
+
+  address = address.toLowerCase()
+
+  const graphql = JSON.stringify({
+      query: `{
+        vaultHistories(
+            where: {
+              vault: "${address}"
+            },
+            orderBy: timestamp,
+            orderDirection: desc,
+          ) {
+            sharePrice, timestamp
+          }
+        }`,
+      variables: {},
+    }),
+    requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: graphql,
+      redirect: 'follow',
+    }
+
+  const url =
+    chainId === CHAIN_IDS.ETH_MAINNET
+      ? GRAPH_URL_MAINNET
+      : chainId === CHAIN_IDS.POLYGON_MAINNET
+      ? GRAPH_URL_POLYGON
+      : chainId === CHAIN_IDS.BASE
+      ? GRAPH_URL_BASE
+      : GRAPH_URL_ARBITRUM
+
+  try {
+    await fetch(url, requestOptions)
+      .then(response => response.json())
+      .then(res => {
+        data = res.data.vaultHistories
+        if (data.length === 0) {
+          flag = false
+        }
+      })
+      .catch(error => {
+        console.log('error', error)
+        flag = false
+      })
+  } catch (err) {
+    console.log('Fetch data about price feed: ', err)
+    flag = false
+  }
+  return { data, flag }
+}
+
 export const getUserBalanceHistories1 = async (address, chainId, account) => {
   let data1 = {},
     flag1 = true
