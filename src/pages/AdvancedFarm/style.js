@@ -556,14 +556,6 @@ const RestContent = styled.div`
     width: 500px;
   }
 
-  @media screen and (max-width: 1480px) {
-    width: 49%;
-  }
-
-  @media screen and (max-width: 1281px) {
-    width: 50%;
-  }
-
   @media screen and (max-width: 992px) {
     width: 100%;
   }
@@ -766,10 +758,6 @@ const MainSection = styled.div`
   height: fit-content;
   border-radius: 12px;
   height: ${props => props.height};
-
-  @media screen and (max-width: 1480px) {
-    width: 49%;
-  }
 
   @media screen and (max-width: 992px) {
     width: 100%;
