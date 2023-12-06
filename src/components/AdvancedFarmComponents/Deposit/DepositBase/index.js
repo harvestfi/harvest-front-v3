@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useState } from 'react'
 import { useSetChain } from '@web3-onboard/react'
-import axios from 'axios'
 import { get, round } from 'lodash'
 // import { quote } from 'wido'
 import { useMediaQuery } from 'react-responsive'
@@ -23,7 +22,7 @@ import {
 } from '../../../../constants'
 import { useWallet } from '../../../../providers/Wallet'
 import { CHAIN_IDS } from '../../../../data/constants'
-import { fromWei, toWei, getWeb3 } from '../../../../services/web3'
+import { fromWei, toWei } from '../../../../services/web3'
 import { useVaults } from '../../../../providers/Vault'
 import { addresses } from '../../../../data'
 import { formatNumberWido, isSpecialApp } from '../../../../utils'
@@ -45,6 +44,7 @@ import {
   SwitchTabTag,
   InfoIconCircle,
 } from './style'
+import { useEnso } from '../../../../providers/Enso'
 
 const getChainName = chain => {
   let chainName = 'Ethereum'
@@ -63,18 +63,6 @@ const getChainName = chain => {
       break
   }
   return chainName
-}
-
-const getEnsoQuote = async params => {
-  try {
-    const response = await axios.get('https://api.enso.finance/api/v1/shortcuts/quote', {
-      params,
-    })
-    return response.data
-  } catch (error) {
-    console.error('Error fetching balances:', error)
-    return {}
-  }
 }
 
 const DepositBase = ({
@@ -102,6 +90,7 @@ const DepositBase = ({
 }) => {
   const { connected, connectAction, account, chainId, setChainId, web3 } = useWallet()
   const { vaultsData } = useVaults()
+  const { getEnsoQuote } = useEnso()
 
   const [
     {
@@ -267,6 +256,7 @@ const DepositBase = ({
     setFromInfoAmount,
     setFromInfoUsdAmount,
     setMinReceiveAmountString,
+    getEnsoQuote,
   ])
 
   const onClickDeposit = async () => {
