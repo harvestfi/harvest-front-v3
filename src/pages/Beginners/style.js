@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import AdvancedImg from '../../assets/images/logos/home/advanced-farming.jpg'
 
 const Container = styled.div`
   width: 100%;
@@ -25,7 +26,8 @@ const Container = styled.div`
 
 const TopSection = styled.div`
   width: 100%;
-  background: #15b088;
+  background: linear-gradient(0deg, rgba(47, 39, 39, 0.78) 0%, rgba(47, 39, 39, 0.78) 100%),
+    url(${AdvancedImg}) lightgray 50% / cover no-repeat;
 
   @media screen and (max-width: 992px) {
     height: 325px;
@@ -103,9 +105,9 @@ const UnitPart = styled.div`
 `
 
 const HeaderTitle = styled.div`
-  font-size: 30px;
+  font-size: 35px;
   font-weight: 600;
-  line-height: 38px;
+  line-height: 44px;
   color: #fff;
 `
 
@@ -114,8 +116,8 @@ const HeaderDesc = styled.div`
   font-size: 16px;
   font-weight: 400;
   line-height: 24px;
-  margin-top: 4px;
-  margin-bottom: 11px;
+  margin-top: 4.6px;
+  margin-bottom: 12.8px;
 
   @media screen and (max-width: 992px) {
     margin-top: 15px;
@@ -125,12 +127,12 @@ const HeaderDesc = styled.div`
 
 const HeaderBadge = styled.div`
   width: fit-content;
-  border-radius: 11.797px;
+  border-radius: 12px;
   padding: 3px 3px 3px 10px;
-  background: #1568b3;
+  background: #344054;
   font-size: 10.5px;
   font-weight: 500;
-  line-height: 15px;
+  line-height: 17px;
   display: flex;
   gap: 9px;
 

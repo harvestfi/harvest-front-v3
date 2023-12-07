@@ -1,4 +1,6 @@
 import styled from 'styled-components'
+import NewFarmImg from '../../assets/images/logos/home/new-farming.jpg'
+import AdvancedImg from '../../assets/images/logos/home/advanced-farming.jpg'
 
 const Container = styled.a`
   transition: 0.25s;
@@ -9,16 +11,22 @@ const Container = styled.a`
   justify-content: flex-start;
   cursor: pointer;
   text-decoration: none;
-  border-radius: 13px;
+  border-radius: 15px;
   box-shadow: 0px 4px 4px -2px rgba(16, 24, 40, 0.03), 0px 10px 12px -2px rgba(16, 24, 40, 0.08);
   &:hover {
     box-shadow: 0px 4px 4px -2px rgba(16, 24, 40, 0.23), 0px 10px 12px -2px rgba(16, 24, 40, 0.28);
   }
   position: relative;
   overflow: hidden;
-  background: ${props => (props.num === 1 ? '#627EEA' : '#2775ca')};
-  background-size: cover;
-  background-repeat: no-repeat;
+  background: linear-gradient(0deg, rgba(47, 39, 39, 0.78) 0%, rgba(47, 39, 39, 0.78) 100%),
+    url(${props => (props.num === 1 ? AdvancedImg : NewFarmImg)}) lightgray 50% / cover no-repeat;
+
+  &:hover {
+    background: linear-gradient(0deg, rgba(47, 39, 39, 0.6) 0%, rgba(47, 39, 39, 0.6) 100%),
+      url(${props => (props.num === 1 ? AdvancedImg : NewFarmImg)}) lightgray 50% / cover no-repeat;
+    box-shadow: 0px 5.329px 5.329px -2.664px rgba(16, 24, 40, 0.03),
+      0px 13.322px 15.987px -2.664px rgba(16, 24, 40, 0.08);
+  }
 
   img.bottom {
     width: 100%;
@@ -36,11 +44,11 @@ const Percent = styled.div`
   border-radius: 25px;
   background: white;
   font-weight: 500;
-  font-size: 17px;
-  line-height: 31px;
+  font-size: 19px;
+  line-height: 36.8px;
   color: #344054;
   transition: 0.25s;
-  padding: 3px 15px 3px 12px;
+  padding: 3.682px 18.409px 1.682px 14.727px;
   display: flex;
   justify-content: center;
   width: fit-content;
@@ -60,7 +68,11 @@ const Percent = styled.div`
 const Section = styled.div`
   display: flex;
   justify-content: center;
-  padding-top: 80px;
+  padding-top: 60px;
+
+  img.token-icon {
+    width: 225px;
+  }
 
   @media screen and (max-width: 992px) {
     padding-top: 55px;
@@ -92,12 +104,12 @@ const Network = styled.div`
   border-radius: 25.23px;
   border: 1.805px solid #fff;
   color: #fff;
-  padding: 6.016px 16.845px;
+  padding: 7.022px 19.662px;
   text-align: center;
-  font-size: 16.845px;
+  font-size: 19px;
   font-style: normal;
   font-weight: 500;
-  line-height: 24.064px;
+  line-height: 28px;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
