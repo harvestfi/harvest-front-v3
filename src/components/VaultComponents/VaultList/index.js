@@ -423,8 +423,17 @@ const VaultList = () => {
 
   let groupOfVaults = []
   if (isSpecialApp) {
-    if (chainId === CHAIN_IDS.ETH_MAINNET) groupOfVaults = { ...vaultsData, ...poolVaults }
-    else groupOfVaults = { ...vaultsData }
+    if (chainId === CHAIN_IDS.ETH_MAINNET) {
+      if (selectFarmType !== '') {
+        groupOfVaults = { ...vaultsData }
+      } else {
+        groupOfVaults = { ...vaultsData, ...poolVaults }
+      }
+    } else {
+      groupOfVaults = { ...vaultsData }
+    }
+  } else if (selectFarmType !== '') {
+    groupOfVaults = { ...vaultsData }
   } else {
     groupOfVaults = { ...vaultsData, ...poolVaults }
   }
