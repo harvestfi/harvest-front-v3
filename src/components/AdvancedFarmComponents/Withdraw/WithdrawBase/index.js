@@ -14,7 +14,7 @@ import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.s
 import HelpIcon from '../../../../assets/images/logos/beginners/help-circle.svg'
 import {
   WIDO_BALANCES_DECIMALS,
-  POOL_BALANCES_DECIMALS,
+  MAX_DECIMALS,
   WIDO_EXTEND_DECIMALS,
   IFARM_TOKEN_SYMBOL,
   BEGINNERS_BALANCES_DECIMALS,
@@ -398,7 +398,7 @@ const WithdrawBase = ({
                   fromWei(
                     useIFARM ? stakeAmountWei : lpTokenBalance,
                     fAssetPool.lpTokenData.decimals,
-                    POOL_BALANCES_DECIMALS,
+                    MAX_DECIMALS,
                     true,
                   ),
                 ),
@@ -413,7 +413,7 @@ const WithdrawBase = ({
             ) : useIFARM ? (
               stakedAmount || <AnimatedDots />
             ) : lpTokenBalance ? (
-              fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, POOL_BALANCES_DECIMALS, true)
+              fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)
             ) : (
               <AnimatedDots />
             )}
