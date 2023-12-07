@@ -1,6 +1,7 @@
 import styled from 'styled-components'
 import NewFarmImg from '../../assets/images/logos/home/new-farming.jpg'
 import AdvancedImg from '../../assets/images/logos/home/advanced-farming.jpg'
+import AdvancedFarmImg from '../../assets/images/logos/home/advanced-farm.jpg'
 
 const Container = styled.div`
   width: 100%;
@@ -198,7 +199,7 @@ const FirstFarmingPart = styled.div`
 const AdvancedFarms = styled.div`
   height: 50%;
   background: linear-gradient(0deg, rgba(47, 39, 39, 0.78) 0%, rgba(47, 39, 39, 0.78) 100%),
-    url(${AdvancedImg}) lightgray 50% / cover no-repeat;
+    url(${AdvancedFarmImg}) lightgray 50% / cover no-repeat;
   border-radius: 16px;
   display: flex;
   flex-direction: column;
@@ -208,13 +209,14 @@ const AdvancedFarms = styled.div`
   position: relative;
   overflow: hidden;
   z-index: 1;
-  transition: 0.25s;
+  transition: 3s;
   cursor: pointer;
+  transition-duration: 3s;
 
   &:hover {
     box-shadow: 0px 4px 4px -2px rgba(16, 24, 40, 0.23), 0px 10px 12px -2px rgba(16, 24, 40, 0.28);
     background: linear-gradient(0deg, rgba(47, 39, 39, 0.6) 0%, rgba(47, 39, 39, 0.6) 100%),
-      url(${AdvancedImg}) lightgray 50% / cover no-repeat;
+      url(${AdvancedFarmImg}) lightgray 50% / cover no-repeat;
     box-shadow: 0px 5.329px 5.329px -2.664px rgba(16, 24, 40, 0.03),
       0px 13.322px 15.987px -2.664px rgba(16, 24, 40, 0.08);
   }

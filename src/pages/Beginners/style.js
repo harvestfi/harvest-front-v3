@@ -26,16 +26,17 @@ const Container = styled.div`
 
 const TopSection = styled.div`
   width: 100%;
+  border-radius: 0px 0px 15px 15px;
   background: linear-gradient(0deg, rgba(47, 39, 39, 0.78) 0%, rgba(47, 39, 39, 0.78) 100%),
     url(${AdvancedImg}) lightgray 50% / cover no-repeat;
 
   @media screen and (max-width: 992px) {
-    height: 325px;
+    height: 250px;
   }
 `
 
 const TopContainer = styled.div`
-  height: 345px;
+  height: 250px;
   display: flex;
   flex-flow: column;
   justify-content: center;

@@ -19,11 +19,11 @@ const Container = styled.a`
   position: relative;
   overflow: hidden;
   background: linear-gradient(0deg, rgba(47, 39, 39, 0.78) 0%, rgba(47, 39, 39, 0.78) 100%),
-    url(${props => (props.num === 1 ? AdvancedImg : NewFarmImg)}) lightgray 50% / cover no-repeat;
+    url(${props => (props.num === 1 ? NewFarmImg : AdvancedImg)}) lightgray 50% / cover no-repeat;
 
   &:hover {
     background: linear-gradient(0deg, rgba(47, 39, 39, 0.6) 0%, rgba(47, 39, 39, 0.6) 100%),
-      url(${props => (props.num === 1 ? AdvancedImg : NewFarmImg)}) lightgray 50% / cover no-repeat;
+      url(${props => (props.num === 1 ? NewFarmImg : AdvancedImg)}) lightgray 50% / cover no-repeat;
     box-shadow: 0px 5.329px 5.329px -2.664px rgba(16, 24, 40, 0.03),
       0px 13.322px 15.987px -2.664px rgba(16, 24, 40, 0.08);
   }
