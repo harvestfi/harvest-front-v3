@@ -1,5 +1,4 @@
 import BigNumber from 'bignumber.js'
-import axios from 'axios'
 import { isEmpty, get } from 'lodash'
 import React, { useState, useEffect } from 'react'
 import Modal from 'react-bootstrap/Modal'
@@ -37,51 +36,7 @@ import {
   AnimateDotDiv,
 } from './style'
 import { useVaults } from '../../../../providers/Vault'
-
-const getEnsoApprovals = async (chainId, fromAddress) => {
-  try {
-    const response = await axios.get('https://api.enso.finance/api/v1/wallet/approvals', {
-      params: { chainId, fromAddress },
-    })
-    return response.data
-  } catch (error) {
-    console.error('Error fetching approvals:', error)
-    return {}
-  }
-}
-
-const ensoApprove = async (chainId, fromAddress, tokenAddress, amount) => {
-  try {
-    const response = await axios.get('https://api.enso.finance/api/v1/wallet/approve', {
-      params: { chainId, fromAddress, tokenAddress, amount },
-    })
-    return response.data
-  } catch (error) {
-    console.error('Error fetching approve data:', error)
-    return {}
-  }
-}
-
-const getEnsoRoute = async ({ chainId, fromAddress, amountIn, slippage, tokenIn, tokenOut }) => {
-  try {
-    const response = await axios.get('https://api.enso.finance/api/v1/shortcuts/route', {
-      params: {
-        chainId,
-        fromAddress,
-        receiver: fromAddress,
-        spender: fromAddress,
-        amountIn,
-        slippage,
-        tokenIn,
-        tokenOut,
-      },
-    })
-    return response.data
-  } catch (error) {
-    console.error('Error fetching routes:', error)
-    return {}
-  }
-}
+import { useEnso } from '../../../../providers/Enso'
 
 const DepositStart = ({
   pickedToken,
@@ -107,6 +62,7 @@ const DepositStart = ({
   const { handleDeposit, handleApproval } = useActions()
   const { contracts } = useContracts()
   const { fetchUserPoolStats, userStats } = usePools()
+  const { getEnsoRoute, ensoApprove, getEnsoApprovals } = useEnso()
 
   const slippagePercentage = 0.005 // Default slippage Percent
   const chainId = token.chain || token.data.chain

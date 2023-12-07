@@ -119,6 +119,7 @@ import {
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 // import { array } from 'prop-types'
+import { useEnso } from '../../providers/Enso'
 
 const chainList = [
   { id: 1, name: 'Ethereum', chainId: 1 },
@@ -186,50 +187,11 @@ const getTokenPriceFromApi = async tokenID => {
   }
 }
 
-const getEnsoBalances = async (address, chainId) => {
-  try {
-    const response = await axios.get('https://api.enso.finance/api/v1/wallet/balances', {
-      params: {
-        chainId,
-        eoaAddress: address,
-        useEoa: true,
-      },
-    })
-    return response.data
-  } catch (error) {
-    console.error('Error fetching balances:', error)
-    return []
-  }
-}
-
-const getEnsoBaseTokens = async chainId => {
-  try {
-    const response = await axios.get('https://api.enso.finance/api/v1/baseTokens', {
-      params: {
-        chainId,
-      },
-    })
-    return response.data
-  } catch (error) {
-    console.error('Error fetching base tokens:', error)
-    return []
-  }
-}
-
-const getEnsoPrice = async (chainId, address) => {
-  try {
-    const response = await axios.get(`https://api.enso.finance/api/v1/prices/${chainId}/${address}`)
-    return response.data.price
-  } catch (error) {
-    console.error('Error fetching base tokens:', error)
-    return []
-  }
-}
-
 const AdvancedFarm = () => {
   const { paramAddress } = useParams()
   // Switch Tag (Deposit/Withdraw)
   const [activeDepo, setActiveDepo] = useState(true)
+  const { ensoBaseTokens, getEnsoBalances, getEnsoPrice } = useEnso()
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
@@ -539,19 +501,23 @@ const AdvancedFarm = () => {
   useEffect(() => {
     const getTokenBalance = async () => {
       try {
-        if (chain && account && Object.keys(balances).length !== 0) {
+        if (
+          chain &&
+          account &&
+          Object.keys(balances).length !== 0 &&
+          Object.keys(ensoBaseTokens).length !== 0
+        ) {
           let supList = [],
             directInSup = {},
             directInBalance = {}
 
-          const ensoTokens = await getEnsoBaseTokens(chain.toString()) // TODO: move this to global to be fetched only once.
           const ensoRawBalances = await getEnsoBalances(account, chain.toString())
           const curBalances = (
             await Promise.all(
               ensoRawBalances.map(async balance => {
                 if (!ethers.utils.isAddress(balance.token))
                   balance.token = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
-                const baseToken = ensoTokens.find(el => el.address === balance.token)
+                const baseToken = ensoBaseTokens[chain].find(el => el.address === balance.token)
                 const price = baseToken
                   ? await getEnsoPrice(chain.toString(), baseToken.address)
                   : 0
@@ -705,7 +671,7 @@ const AdvancedFarm = () => {
     }
 
     getTokenBalance()
-  }, [account, chain, balances, convertSuccess]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, chain, balances, convertSuccess, ensoBaseTokens, getEnsoBalances]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (supTokenList.length > 0) {
