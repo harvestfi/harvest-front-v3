@@ -100,7 +100,7 @@ const FirstBack = styled.div`
   }
 
   @media screen and (max-width: 512px) {
-    height: 100%;
+    height: 170px;
     padding: 34px;
   }
 `
@@ -114,7 +114,8 @@ const Title = styled.div`
   letter-spacing: -0.983px;
 
   @media screen and (max-width: 992px) {
-    font-size: 32px;
+    font-size: 38px;
+    line-height: 50px;
     margin-bottom: 16px;
     padding-top: unset;
     letter-spacing: -0.64px;
@@ -122,6 +123,7 @@ const Title = styled.div`
 
   @media screen and (max-width: 512px) {
     font-size: 24px;
+    line-height: 48px;
     letter-spacing: -0.48px;
     margin-bottom: 0px;
   }
@@ -134,7 +136,8 @@ const Desc = styled.div`
   color: #fff;
 
   @media screen and (max-width: 992px) {
-    font-size: 18px;
+    font-size: 22px;
+    line-height: 27px;
   }
 
   @media screen and (max-width: 512px) {
@@ -191,7 +194,7 @@ const FirstFarmingPart = styled.div`
   }
 
   @media screen and (max-width: 512px) {
-    height: 100%;
+    height: 170px;
     padding: 34px;
   }
 `
@@ -209,12 +212,11 @@ const AdvancedFarms = styled.div`
   position: relative;
   overflow: hidden;
   z-index: 1;
-  transition: 3s;
+  transition: 0.25s;
   cursor: pointer;
   transition-duration: 3s;
 
   &:hover {
-    box-shadow: 0px 4px 4px -2px rgba(16, 24, 40, 0.23), 0px 10px 12px -2px rgba(16, 24, 40, 0.28);
     background: linear-gradient(0deg, rgba(47, 39, 39, 0.6) 0%, rgba(47, 39, 39, 0.6) 100%),
       url(${AdvancedFarmImg}) lightgray 50% / cover no-repeat;
     box-shadow: 0px 5.329px 5.329px -2.664px rgba(16, 24, 40, 0.03),
@@ -233,7 +235,7 @@ const AdvancedFarms = styled.div`
   }
 
   @media screen and (max-width: 512px) {
-    height: 100%;
+    height: 170px;
     padding: 34px 34px 50px;
   }
 `
