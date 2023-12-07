@@ -25,7 +25,7 @@ import {
   GRAPH_URL_BASE,
 } from './constants'
 import { CHAIN_IDS } from './data/constants'
-import { addresses } from './data/index'
+import { addresses, tokens } from './data/index'
 
 axiosRetry(axios, {
   retries: 1,
@@ -1422,7 +1422,8 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
     data = {}
   nowDate = Math.floor(nowDate.setDate(nowDate.getDate() - 1) / 1000)
   const startDate = nowDate - 3600 * 24 * ago
-
+  const farm = "0xa0246c9032bc3a600820415ae600c6388619a14d"
+  const ifarm = "0x1571ed0bed4d987fe2b498ddbae7dfa19519f651"
   address = address.toLowerCase()
   if (myWallet) {
     myWallet = myWallet.toLowerCase()
@@ -1433,6 +1434,7 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
   const graphql = JSON.stringify({
       query: `{
       generalApies(
+        first: 1000,
         where: {
           vault: "${address}", 
           timestamp_gte: "${startDate}"
@@ -1445,7 +1447,7 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
       tvls(
         first: 1000,
         where: {
-          vault: "${address}", 
+          vault: "${address == farm ? ifarm : address}", 
           timestamp_gte: "${startDate}"
         },
         orderBy: createAtBlock,
@@ -1453,15 +1455,15 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
       ) {
         value, timestamp
       },
-      priceFeeds(
+      vaultHistories(
+        first: 1000,
         where: {
-          vault: "${address}",
-          value_gt: 0
+          vault: "${address == farm ? ifarm : address}"
         },
-        orderBy: createAtBlock,
+        orderBy: timestamp,
         orderDirection: desc
       ) {
-        value, sharePrice, timestamp
+        priceUnderlying, sharePrice, timestamp
       }
     }`,
       variables: {},
@@ -1736,15 +1738,15 @@ export const getPriceFeed = async (address, chainId) => {
 
   const graphql = JSON.stringify({
       query: `{
-        priceFeeds(
+        vaultHistories(
         where: {
-          value_gt: 0,
           vault: "${address}"
         },
-        orderBy: createAtBlock,
+        orderBy: timestamp,
         orderDirection: desc,
+        first: 1000,
       ) {
-        value, sharePrice, timestamp
+        priceUnderlying, sharePrice, timestamp
       }
     }`,
       variables: {},
@@ -1769,7 +1771,7 @@ export const getPriceFeed = async (address, chainId) => {
     await fetch(url, requestOptions)
       .then(response => response.json())
       .then(res => {
-        data = res.data.priceFeeds
+        data = res.data.vaultHistories
         if (data.length === 0) {
           flag = false
         }

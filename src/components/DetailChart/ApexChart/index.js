@@ -15,6 +15,7 @@ import { useWindowWidth } from '@react-hook/window-size'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { ceil10, floor10, round10, numberWithCommas } from '../../../utils'
 import { LoadingDiv, NoData } from './style'
+import { fromWei } from '../../../services/web3'
 
 function getRangeNumber(strRange) {
   let ago = 30
@@ -66,8 +67,7 @@ function generateChartDataWithSlots(slots, apiData, kind, filter) {
           ? curr
           : prev,
       )
-
-      seriesData.push({ x: slots[i] * 1000, y: data.sharePrice })
+      seriesData.push({ x: slots[i] * 1000, y: fromWei(data.sharePrice, 18, 6) })
     }
   } else {
     for (let i = 0; i < slots.length; i += 1) {
@@ -310,13 +310,13 @@ const ApexChart = ({
 
         if (lastAPY && !Number.isNaN(lastAPY) && apyData.length > 0) apyData[0].apy = lastAPY
       } else {
-        if (data && data.priceFeeds) {
-          if (data.priceFeeds.length === 0) {
+        if (data && data.vaultHistories) {
+          if (data.vaultHistories.length === 0) {
             setIsDataReady(false)
             return
           }
         }
-        userPriceFeedData = data && data.priceFeeds ? data.priceFeeds : []
+        userPriceFeedData = data && data.vaultHistories ? data.vaultHistories : []
       }
 
       const slotCount = 50,

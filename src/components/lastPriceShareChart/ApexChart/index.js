@@ -14,6 +14,7 @@ import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { ceil10, floor10, numberWithCommas } from '../../../utils'
 import { LoadingDiv, NoData } from './style'
+import { fromWei } from '../../../services/web3'
 
 function formatDateTime(value) {
   const date = new Date(value)
@@ -88,7 +89,7 @@ function generateChartDataWithSlots(slots, apiData) {
         : prev,
     )
 
-    seriesData.push({ x: slots[i] * 1000, y: data.sharePrice })
+    seriesData.push({ x: slots[i] * 1000, y: fromWei(data.sharePrice, 18, 6) })
   }
 
   return seriesData
