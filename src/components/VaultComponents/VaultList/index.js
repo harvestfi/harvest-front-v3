@@ -316,12 +316,14 @@ const formatVaults = (
   if (selectFarmType !== '') {
     if (selectFarmType === 'New') {
       vaultsSymbol = orderBy(vaultsSymbol, v => get(groupOfVaults, `${v}.publishDate`), 'desc')
+      // console.log('New Filter: ', groupOfVaults)
     } else if (selectFarmType === 'PopularNow') {
       vaultsSymbol = orderBy(
-        orderBy(vaultsSymbol, v => get(groupOfVaults, `${v}.publishDate`), 'desc').slice(0, 15),
+        orderBy(vaultsSymbol, v => get(groupOfVaults, `${v}.publishDate`), 'desc').slice(0, 20),
         v => Number(getVaultValue(groupOfVaults[v])),
         'desc',
       )
+      // console.log('Popular Now Filter: ', groupOfVaults)
     }
     // vaultsSymbol = vaultsSymbol.filter(
     //   tokenSymbol =>
