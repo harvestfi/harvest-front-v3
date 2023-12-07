@@ -91,12 +91,12 @@ const FirstBack = styled.div`
 
   @media screen and (max-width: 992px) {
     height: 700px;
-    padding: 34px 34px 50px;
+    padding: 34px 34px;
   }
 
   @media screen and (max-width: 768px) {
     height: 530px;
-    padding: 34px 34px 50px;
+    padding: 34px 34px;
   }
 
   @media screen and (max-width: 512px) {
@@ -142,6 +142,7 @@ const Desc = styled.div`
 
   @media screen and (max-width: 512px) {
     font-size: 14px;
+    line-height: 22px;
   }
 `
 
@@ -184,13 +185,13 @@ const FirstFarmingPart = styled.div`
   @media screen and (max-width: 992px) {
     justify-content: center;
     height: 700px;
-    padding: 34px 34px 50px;
+    padding: 34px;
     margin-bottom: 20px;
   }
 
   @media screen and (max-width: 768px) {
     height: 530px;
-    padding: 34px 34px 50px;
+    padding: 34px;
   }
 
   @media screen and (max-width: 512px) {
@@ -214,7 +215,6 @@ const AdvancedFarms = styled.div`
   z-index: 1;
   transition: 0.25s;
   cursor: pointer;
-  transition-duration: 3s;
 
   &:hover {
     background: linear-gradient(0deg, rgba(47, 39, 39, 0.6) 0%, rgba(47, 39, 39, 0.6) 100%),
@@ -226,17 +226,17 @@ const AdvancedFarms = styled.div`
   @media screen and (max-width: 992px) {
     justify-content: center;
     height: 700px;
-    padding: 34px 34px 50px;
+    padding: 34px;
   }
 
   @media screen and (max-width: 768px) {
     height: 530px;
-    padding: 34px 34px 50px;
+    padding: 34px;
   }
 
   @media screen and (max-width: 512px) {
     height: 170px;
-    padding: 34px 34px 50px;
+    padding: 34px;
   }
 `
 
@@ -270,6 +270,7 @@ const FirstFarmDesc = styled.div`
 
   @media screen and (max-width: 992px) {
     font-size: 18px;
+    line-height: 22px;
   }
 
   @media screen and (max-width: 512px) {
