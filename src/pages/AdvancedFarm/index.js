@@ -47,7 +47,7 @@ import {
   ROUTES,
   SPECIAL_VAULTS,
   POOL_BALANCES_DECIMALS,
-  MAX_BALANCES_DECIMALS,
+  MAX_DECIMALS,
   WIDO_BALANCES_DECIMALS,
 } from '../../constants'
 import { fromWei, newContractInstance, getWeb3, getExplorerLink } from '../../services/web3'
@@ -429,26 +429,27 @@ const AdvancedFarm = () => {
         fromWei(
           get(balances, IFARM_TOKEN_SYMBOL, 0),
           tokens[IFARM_TOKEN_SYMBOL].decimals,
-          WIDO_BALANCES_DECIMALS,
+          MAX_DECIMALS,
+          true,
         ),
       )
       unstaked = Number(
         fromWei(
           get(balances, FARM_TOKEN_SYMBOL, 0),
           tokens[FARM_TOKEN_SYMBOL].decimals,
-          WIDO_BALANCES_DECIMALS,
+          MAX_DECIMALS,
+          true,
         ),
       )
       total = staked
       amountBalanceUSD = total * iFarmPrice
     } else {
       staked =
-        totalStaked &&
-        fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_BALANCES_DECIMALS, true)
+        totalStaked && fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)
 
       unstaked =
         lpTokenBalance &&
-        fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, MAX_BALANCES_DECIMALS, true)
+        fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)
 
       total = Number(staked) + Number(unstaked)
       amountBalanceUSD = total * usdPrice
@@ -1757,7 +1758,7 @@ const AdvancedFarm = () => {
                           unstakedAmount === 0 ? (
                             '0.00'
                           ) : (
-                            unstakedAmount.toFixed(8).replace(/\.?0+$/, '')
+                            unstakedAmount
                           )
                         ) : (
                           <AnimatedDots />
@@ -1815,7 +1816,7 @@ const AdvancedFarm = () => {
                           stakedAmount === 0 ? (
                             '0.00'
                           ) : (
-                            stakedAmount.toFixed(8).replace(/\.?0+$/, '')
+                            stakedAmount
                           )
                         ) : (
                           <AnimatedDots />
