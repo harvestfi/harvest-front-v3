@@ -65,7 +65,12 @@ const WalletProvider = _ref => {
     fetchData()
 
     if (!connecting) {
-      if (window && window.ethereum && window.ethereum.isCoinbaseWallet && window.ethereum.isCoinbaseBrowser)
+      if (
+        window &&
+        window.ethereum &&
+        window.ethereum.isCoinbaseWallet &&
+        window.ethereum.isCoinbaseBrowser
+      )
         connect({ autoSelect: { label: 'Coinbase Wallet', disableModals: true } })
     }
   }, [])
