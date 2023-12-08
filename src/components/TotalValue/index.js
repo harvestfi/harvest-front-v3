@@ -36,7 +36,9 @@ const TotalValue = ({ content, price, toolTipTitle, toolTip }) => {
           </NewLabel>
         </ReactTooltip>
       </Div>
-      <Price>{price === 0 ? '$0.00' : price < 0.01 ? '<$0.01' : `$${price}`}</Price>
+      <Price>
+        {parseFloat(price) === 0 ? '$0.00' : parseFloat(price) < 0.01 ? '<$0.01' : `$${price}`}
+      </Price>
     </Container>
   )
 }
