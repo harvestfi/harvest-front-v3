@@ -7,7 +7,8 @@ import { useHistory, useParams } from 'react-router-dom'
 import ReactTooltip from 'react-tooltip'
 import Chart from 'react-apexcharts'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import { getBalances, getSupportedTokens } from 'wido'
+import { getSupportedTokens } from 'wido'
+import { ethers } from 'ethers'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
@@ -153,6 +154,7 @@ const WidoDetail = () => {
   const { loadingVaults, vaultsData } = useVaults()
   const { pools, userStats, fetchUserPoolStats } = usePools()
   const { account, balances, getWalletBalances } = useWallet()
+  const { ensoBaseTokens, getEnsoBalances, getEnsoPrice } = useEnso()
   const { profitShareAPY } = useStats()
   /* eslint-disable global-require */
   const { tokens } = require('../../data')
@@ -433,8 +435,10 @@ const WidoDetail = () => {
     const getTokenBalance = async () => {
       try {
         if (chain && account && Object.keys(balances).length !== 0) {
-          const curBalances = await getBalances(account, [chain.toString()])
-          setBalanceList(curBalances)
+          const tokenAddress =
+            token.tokenAddress !== undefined && token.tokenAddress.length !== 2
+              ? token.tokenAddress
+              : token.vaultAddress
           let supList = [],
             directInSup = {},
             directInBalance = {}
@@ -447,14 +451,39 @@ const WidoDetail = () => {
           } catch (err) {
             console.log('getSupportedTokens of Wido: ', err)
           }
-          const tokenAddress =
-            token.tokenAddress !== undefined && token.tokenAddress.length !== 2
-              ? token.tokenAddress
-              : token.vaultAddress
+          const ensoTokens = ensoBaseTokens[chain.toString()] || []
+          const ensoRawBalances = await getEnsoBalances(account, chain.toString())
+          const curBalances = (
+            await Promise.all(
+              ensoRawBalances.map(async balance => {
+                if (!ethers.utils.isAddress(balance.token))
+                  balance.token = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+                const baseToken = ensoTokens.find(el => el.address === balance.token)
+                const price = baseToken
+                  ? await getEnsoPrice(chain.toString(), baseToken.address)
+                  : 0
+                const item = {
+                  symbol: baseToken?.symbol,
+                  address: baseToken?.address,
+                  balance: balance.amount,
+                  default: false,
+                  usdValue: Number(fromWei(balance.amount, balance.decimals)) * price,
+                  usdPrice: price,
+                  logoURI: baseToken?.logoURI,
+                  decimals: balance.decimals,
+                  chainId: chain,
+                }
+                return item
+              }),
+            )
+          ).filter(item => item.address)
+          setBalanceList(curBalances)
 
           const soonSupList = []
           supList = supList.map(sup => {
-            const supToken = curBalances.find(el => el.address === sup.address)
+            const supToken = curBalances.find(
+              el => el.address.toLowerCase() === sup.address.toLowerCase(),
+            )
             if (supToken) {
               sup.balance = supToken.balance
               sup.usdValue = supToken.balanceUsdValue
@@ -553,7 +582,7 @@ const WidoDetail = () => {
     }
 
     getTokenBalance()
-  }, [account, chain, balances]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, chain, balances, ensoBaseTokens]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const {
     backColor,
