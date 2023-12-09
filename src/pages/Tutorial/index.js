@@ -1,14 +1,14 @@
 import React from 'react'
 import { useThemeContext } from '../../providers/useThemeContext'
-import FirstFarming1 from '../../assets/images/logos/tutorial/first-farming1.jpg'
-import FirstFarming2 from '../../assets/images/logos/tutorial/first-farming2.jpg'
-import FirstFarming3 from '../../assets/images/logos/tutorial/first-farming3.jpg'
+import FirstFarming1 from '../../assets/images/logos/tutorial/first-farming1.png'
+import FirstFarming2 from '../../assets/images/logos/tutorial/first-farming2.png'
+import FirstFarming3 from '../../assets/images/logos/tutorial/first-farming3.png'
 import Convert1 from '../../assets/images/logos/tutorial/convert1.jpg'
 import Convert2 from '../../assets/images/logos/tutorial/convert2.jpg'
 import Convert3 from '../../assets/images/logos/tutorial/convert3.jpg'
 import Convert4 from '../../assets/images/logos/tutorial/convert4.jpg'
 import Convert5 from '../../assets/images/logos/tutorial/convert5.jpg'
-import Convert6 from '../../assets/images/logos/tutorial/convert6.jpg'
+import Convert6 from '../../assets/images/logos/tutorial/convert6.png'
 
 import {
   Container,

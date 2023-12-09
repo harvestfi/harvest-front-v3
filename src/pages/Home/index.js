@@ -36,7 +36,11 @@ const Home = () => {
           </FirstBack>
         </FirstPart>
         <SecondPart>
-          <FirstFarmingPart>
+          <FirstFarmingPart
+            onClick={() => {
+              push(ROUTES.TUTORIAL)
+            }}
+          >
             <FirstFarmTitle>New to Crypto Farming?</FirstFarmTitle>
             <FirstFarmDesc>Get started with crypto farming at ease.</FirstFarmDesc>
           </FirstFarmingPart>
