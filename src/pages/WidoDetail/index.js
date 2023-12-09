@@ -103,6 +103,8 @@ import {
   LastHarvestInfo,
   LPTokenBalance,
 } from './style'
+import { CHAIN_IDS } from '../../data/constants'
+import { useEnso } from '../../providers/Enso'
 
 const chainList = [
   { id: 1, name: 'Ethereum', chainId: 1 },
