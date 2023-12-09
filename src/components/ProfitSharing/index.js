@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { getDataQueryOld } from '../../utils'
+import { getDataQuery } from '../../utils'
 import { directDetailUrl } from '../../constants'
 import { useStats } from '../../providers/Stats'
 import { useWallet } from '../../providers/Wallet'
@@ -18,7 +18,7 @@ const ProfitSharingContainer = ({ height }) => {
   const [apiData, setApiData] = useState({})
   useEffect(() => {
     const initData = async () => {
-      const data = await getDataQueryOld(365, addresses.iFARM, chainId.toString(), null)
+      const data = await getDataQuery(365, addresses.iFARM, chainId.toString(), null)
       setApiData(data)
     }
     initData()

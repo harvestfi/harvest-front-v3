@@ -23,6 +23,7 @@ import LSD from '../../assets/images/logos/lsd.svg'
 import DESCI from '../../assets/images/logos/DeSci.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
+import UserBalanceData from '../../components/UserBalanceChart/UserBalanceData'
 import VaultPanelActionsFooter from '../../components/VaultComponents/VaultPanelActions/VaultPanelActionsFooter'
 import DepositBase from '../../components/WidoComponents/Deposit/DepositBase'
 import DepositFinalStep from '../../components/WidoComponents/Deposit/DepositFinalStep'
@@ -57,7 +58,6 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { CHAIN_IDS } from '../../data/constants'
-import PriceShareData from '../../components/lastPriceShareChart/PriceShareData'
 import {
   displayAPY,
   formatNumber,
@@ -144,6 +144,7 @@ const WidoDetail = () => {
   // Switch Tag (Farm/Details in mobile)
   const [farmView, setFarmView] = useState(true)
   const [detailsView, setDetailsView] = useState(false)
+  const [iFarmPrice, setIFarmPrice] = useState(0)
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
@@ -273,6 +274,24 @@ const WidoDetail = () => {
     getBadge()
   }, [chain])
 
+  const getIFarmPrice = async data => {
+    try {
+      const result = Number(get(data, `${IFARM_TOKEN_SYMBOL}.usdPrice`, 0)).toFixed(2)
+      return result
+    } catch (e) {
+      return 0
+    }
+  }
+
+  useEffect(() => {
+    const getPriceValue = async () => {
+      const value = await getIFarmPrice(vaultsData)
+      setIFarmPrice(value)
+    }
+
+    getPriceValue()
+  }, [vaultsData])
+
   const rewardTxt = getDetailText(
     token,
     vaultPool,
@@ -394,6 +413,20 @@ const WidoDetail = () => {
   const totalAmountToExecute = useMemo(() => sumBy(amountsToExecute, amount => Number(amount)), [
     amountsToExecute,
   ])
+
+  const tempPricePerFullShare = useIFARM
+    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
+    : get(token, `pricePerFullShare`, 0)
+  const pricePerFullShare = Number(
+    fromWei(
+      tempPricePerFullShare,
+      useIFARM ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0) : token.decimals,
+    ),
+  )
+
+  const usdPrice =
+    Number(token.usdPrice) * pricePerFullShare ||
+    Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price) * pricePerFullShare
 
   // Show/Hide Select Token Component
   const [selectTokenDepo, setSelectTokenDepo] = useState(false)
@@ -945,11 +978,14 @@ const WidoDetail = () => {
               )}
             </HalfInfo>
             <HalfInfo padding="0px" borderColor="none">
-              <PriceShareData
+              <UserBalanceData
                 token={token}
                 vaultPool={vaultPool}
                 tokenSymbol={id}
                 setLoadData={setLoadData}
+                useIFARM={useIFARM}
+                iFarmPrice={iFarmPrice}
+                usdPrice={usdPrice}
               />
             </HalfInfo>
             <HalfInfo
