@@ -15,6 +15,7 @@ import {
   TopSection,
   TopContainer,
   Inner,
+  Bullet,
   WrapperDiv,
   Title,
   DescText,
@@ -178,6 +179,37 @@ const Home = () => {
               <br />
             </DescText>
             <DescImg src={FirstFarming3} alt="tutor" />
+            <DescText>
+              Before we continue with the converting process, let us quickly guide you through the
+              modules of this page.
+              <br />
+              <br />
+              <Bullet className="bullet" bgColor="#ffff00" />
+              Section: This is where all your fETH gets denominated in USD and displayed in the My
+              Balance box. The other two provide estimated monthly and daily yield on your fETH.
+              Remember, they are subject to change as ETH price constantly fluctuates.
+              <br />
+              <br />
+              <Bullet className="bullet" bgColor="#ff0000" />
+              Section: The &apos;Balance&apos; shows the number of fETH on your connected wallet.
+              The &apos;Underlying Balance&apos; label lets you know the actual state of your
+              auto-compounded ETH.
+              <br />
+              <br />
+              <Bullet className="bullet" bgColor="#00ff40" />
+              Section: You will need fETH in your wallet to see the balance chart. Give it a few
+              days to see a nice chart. In the top-right of this box, you can switch between the USD
+              and Underlying Balance history. This will give a good overview of how your ETH works
+              for you at Harvest over time.
+              <br />
+              <br />
+              <Bullet className="bullet" bgColor="#00ffff" />
+              Section: This is where you will be converting ETH into fETH. In this module, you also
+              see the estimated monthly and daily yield before you make the actual conversion.
+              Enter, for example, 1 ETH and see how much you will earn daily in USD terms.
+              <br />
+              <br />
+            </DescText>
           </WrapperDiv>
           <WrapperDiv>
             <Title>Using the Convert module</Title>

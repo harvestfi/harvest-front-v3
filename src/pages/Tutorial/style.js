@@ -128,6 +128,14 @@ const DescText = styled.div`
   }
 `
 
+const Bullet = styled.div`
+  background: ${props => props.bgColor || 'yellow'};
+  border-radius: 3px;
+  display: inline-block;
+  margin: 0px 5px 0px 0px;
+  padding: 6px;
+`
+
 const DescImg = styled.img`
   width: 100%;
   padding: 40px 0px;
@@ -168,6 +176,7 @@ export {
   TopSection,
   TopContainer,
   Inner,
+  Bullet,
   CoinSection,
   Title,
   WrapperDiv,
