@@ -36,9 +36,7 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, iFarmPrice, u
   const [selectedState, setSelectedState] = useState('1M')
 
   const { account } = useWallet()
-  const address = useIFARM
-    ? '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
-    : token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+  const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
   const chainId = token.chain || token.data.chain
 
   const [apiData, setApiData] = useState({})

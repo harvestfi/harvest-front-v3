@@ -1451,6 +1451,10 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
   const startDate = nowDate - 3600 * 24 * ago
 
   address = address.toLowerCase()
+  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
+  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
+
+  address = address.toLowerCase()
   if (myWallet) {
     myWallet = myWallet.toLowerCase()
   }
@@ -1460,8 +1464,9 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
   const graphql = JSON.stringify({
       query: `{
         generalApies(
+          first: 1000,
           where: {
-            vault: "${address}", 
+            vault: "${address === farm ? ifarm : address}",
             timestamp_gte: "${startDate}"
           }, 
           orderBy: createAtBlock, 
@@ -1472,7 +1477,7 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
         tvls(
           first: 1000,
           where: {
-            vault: "${address}", 
+            vault: "${address === farm ? ifarm : address}", 
             timestamp_gte: "${startDate}"
           },
           orderBy: createAtBlock,
@@ -1481,13 +1486,14 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
           value, timestamp
         },
         vaultHistories(
+          first: 1000,
           where: {
-            vault: "${address}",
+            vault: "${address === farm ? ifarm : address}",
           },
           orderBy: timestamp,
           orderDirection: desc
         ) {
-          sharePrice, timestamp
+          priceUnderlying, sharePrice, timestamp
         }
       }`,
       variables: {},
@@ -1669,70 +1675,6 @@ export const getLastHarvestInfo = async (address, chainId) => {
   return result
 }
 
-export const getPriceFeed = async (address, chainId) => {
-  // eslint-disable-next-line no-unused-vars
-  let nowDate = new Date(),
-    data = {},
-    flag = true
-
-  nowDate = Math.floor(nowDate.setDate(nowDate.getDate()) / 1000)
-
-  const myHeaders = new Headers()
-  myHeaders.append('Content-Type', 'application/json')
-
-  address = address.toLowerCase()
-
-  const graphql = JSON.stringify({
-      query: `{
-        priceFeeds(
-        where: {
-          value_gt: 0,
-          vault: "${address}"
-        },
-        orderBy: createAtBlock,
-        orderDirection: desc,
-      ) {
-        value, sharePrice, timestamp
-      }
-    }`,
-      variables: {},
-    }),
-    requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: graphql,
-      redirect: 'follow',
-    }
-
-  const url =
-    chainId === CHAIN_IDS.ETH_MAINNET
-      ? GRAPH_URL_MAINNET
-      : chainId === CHAIN_IDS.POLYGON_MAINNET
-      ? GRAPH_URL_POLYGON
-      : chainId === CHAIN_IDS.BASE
-      ? GRAPH_URL_BASE
-      : GRAPH_URL_ARBITRUM
-
-  try {
-    await fetch(url, requestOptions)
-      .then(response => response.json())
-      .then(res => {
-        data = res.data.priceFeeds
-        if (data.length === 0) {
-          flag = false
-        }
-      })
-      .catch(error => {
-        console.log('error', error)
-        flag = false
-      })
-  } catch (err) {
-    console.log('Fetch data about price feed: ', err)
-    flag = false
-  }
-  return { data, flag }
-}
-
 export const getPublishDate = async (address, chainId) => {
   // eslint-disable-next-line no-unused-vars
   let nowDate = new Date(),
@@ -1801,6 +1743,8 @@ export const getUserBalanceHistories1 = async (address, chainId, account) => {
     flag1 = true
 
   address = address.toLowerCase()
+  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
+  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
   if (account) {
     account = account.toLowerCase()
   }
@@ -1812,7 +1756,7 @@ export const getUserBalanceHistories1 = async (address, chainId, account) => {
       query: `{
         userBalanceHistories(
           where: {
-            vault: "${address}",
+            vault: "${address === farm ? ifarm : address}",
             userAddress: "${account}"
           },
           orderBy: createAtBlock,
@@ -1864,6 +1808,8 @@ export const getUserBalanceHistories2 = async (address, chainId) => {
     flag2 = true
 
   address = address.toLowerCase()
+  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
+  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
 
   const myHeaders = new Headers()
   myHeaders.append('Content-Type', 'application/json')
@@ -1872,7 +1818,7 @@ export const getUserBalanceHistories2 = async (address, chainId) => {
       query: `{
         userBalanceHistories(
           where: {
-            vault: "${address}",
+            vault: "${address === farm ? ifarm : address}",
           },
           orderBy: createAtBlock,
           orderDirection: desc,
