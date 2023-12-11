@@ -32,10 +32,22 @@ const Home = () => {
   const { pageBackColor, fontColor } = useThemeContext()
   const [showBadge, setShowBadge] = useState(false)
 
+  const handleNetworkChange = () => {
+    window.location.reload() // Reload the page when the network changes
+  }
+
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search)
     if (queryParams.has('utm_source') || queryParams.has('utm_medium')) {
       setShowBadge(true) // Don't show the Badge if the parameters are present
+    }
+
+    // Listen for network changes
+    window.ethereum.on('chainChanged', handleNetworkChange)
+
+    return () => {
+      // Cleanup: Remove the event listener when the component unmounts
+      window.ethereum.removeListener('chainChanged', handleNetworkChange)
     }
   }, [])
 
@@ -71,7 +83,7 @@ const Home = () => {
         <CoinSection>
           {IconAry.map((el, i) => {
             const token = vaultsData[el.name]
-            if (!token) return <></>
+            if (!token) return <React.Fragment key={i} />
 
             const tokenVault = get(vaultsData, token.hodlVaultId || el.name)
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
