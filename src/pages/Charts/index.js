@@ -9,8 +9,8 @@ import { usePools } from '../../providers/Pools'
 import { useStats } from '../../providers/Stats'
 import { useWallet } from '../../providers/Wallet'
 import { useThemeContext } from '../../providers/useThemeContext'
-import PriceShareData from '../../components/PriceShareChart/PriceShareData'
-import FarmDetailChart from '../../components/ChartsComponents/FarmDetailChart'
+import UserBalanceChart from '../../components/UserBalanceChart/UserBalanceData'
+import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
 import { Container, Inner, Title, ChartSection, PriceChartArea } from './style'
 import { addresses } from '../../data'
 
@@ -137,19 +137,21 @@ const Charts = () => {
           return (
             <ChartSection key={i}>
               <PriceChartArea>
-                <PriceShareData
+                <UserBalanceChart
                   token={token}
                   vaultPool={vaultPool}
                   tokenSymbol={symbol}
                   setLoadData={setLoadData}
                 />
               </PriceChartArea>
-              <FarmDetailChart
-                token={token}
-                vaultPool={vaultPool}
-                lastTVL={Number(vaultValue)}
-                lastAPY={Number(totalApy)}
-              />
+              <PriceChartArea>
+                <FarmDetailChart
+                  token={token}
+                  vaultPool={vaultPool}
+                  lastTVL={Number(vaultValue)}
+                  lastAPY={Number(totalApy)}
+                />
+              </PriceChartArea>
             </ChartSection>
           )
         })}
@@ -178,19 +180,21 @@ const Charts = () => {
           return (
             <ChartSection key={i}>
               <PriceChartArea>
-                <PriceShareData
+                <UserBalanceChart
                   token={token}
                   vaultPool={vaultPool}
                   tokenSymbol={symbol}
                   setLoadData={setLoadData}
                 />
               </PriceChartArea>
-              <FarmDetailChart
-                token={token}
-                vaultPool={vaultPool}
-                lastTVL={Number(vaultValue)}
-                lastAPY={Number(totalApy)}
-              />
+              <PriceChartArea>
+                <FarmDetailChart
+                  token={token}
+                  vaultPool={vaultPool}
+                  lastTVL={Number(vaultValue)}
+                  lastAPY={Number(totalApy)}
+                />
+              </PriceChartArea>
             </ChartSection>
           )
         })}
@@ -219,19 +223,21 @@ const Charts = () => {
           return (
             <ChartSection key={i}>
               <PriceChartArea>
-                <PriceShareData
+                <UserBalanceChart
                   token={token}
                   vaultPool={vaultPool}
                   tokenSymbol={symbol}
                   setLoadData={setLoadData}
                 />
               </PriceChartArea>
-              <FarmDetailChart
-                token={token}
-                vaultPool={vaultPool}
-                lastTVL={Number(vaultValue)}
-                lastAPY={Number(totalApy)}
-              />
+              <PriceChartArea>
+                <FarmDetailChart
+                  token={token}
+                  vaultPool={vaultPool}
+                  lastTVL={Number(vaultValue)}
+                  lastAPY={Number(totalApy)}
+                />
+              </PriceChartArea>
             </ChartSection>
           )
         })}
