@@ -1605,20 +1605,22 @@ export const getLastHarvestInfo = async (address, chainId) => {
   myHeaders.append('Content-Type', 'application/json')
 
   address = address.toLowerCase()
+  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
+  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
 
   const graphql = JSON.stringify({
       query: `{
-          sharePrices(
-          where: {
-            vault: "${address}"
-          },
-          orderBy: timestamp,
-          orderDirection: desc,
-          first: 1
-        ) {
-          timestamp
-        }
-      }`,
+        vaultHistories(
+            where: {
+              vault: "${address === farm ? ifarm : address}",
+            },
+            orderBy: timestamp,
+            orderDirection: desc,
+            first: 1
+          ) {
+            timestamp
+          }
+        }`,
       variables: {},
     }),
     requestOptions = {
@@ -1641,7 +1643,7 @@ export const getLastHarvestInfo = async (address, chainId) => {
     await fetch(url, requestOptions)
       .then(response => response.json())
       .then(res => {
-        data = res.data.sharePrices
+        data = res.data.vaultHistories
         if (data.length !== 0) {
           const timeStamp = data[0].timestamp
           let duration = Number(nowDate) - Number(timeStamp),
