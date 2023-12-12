@@ -159,6 +159,20 @@ const WidoDetail = () => {
   const { tokens } = require('../../data')
   /* eslint-enable global-require */
 
+  const handleNetworkChange = () => {
+    window.location.reload() // Reload the page when the network changes
+  }
+
+  useEffect(() => {
+    // Listen for network changes
+    window.ethereum.on('chainChanged', handleNetworkChange)
+
+    return () => {
+      // Cleanup: Remove the event listener when the component unmounts
+      window.ethereum.removeListener('chainChanged', handleNetworkChange)
+    }
+  }, [])
+
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )

@@ -36,7 +36,6 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, iFarmPrice, u
   const [selectedState, setSelectedState] = useState('1M')
 
   const totalValueRef = useRef(totalValue)
-
   useEffect(() => {
     totalValueRef.current = totalValue
   }, [totalValue])

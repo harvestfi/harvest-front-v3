@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { find, get, keys, orderBy, sortBy } from 'lodash'
 import move from 'lodash-move'
 import { CHAIN_IDS } from '../../data/constants'
@@ -68,6 +68,20 @@ const Charts = () => {
   const { profitShareAPY } = useStats()
   const { pools } = usePools()
   const { chainId } = useWallet()
+
+  const handleNetworkChange = () => {
+    window.location.reload() // Reload the page when the network changes
+  }
+
+  useEffect(() => {
+    // Listen for network changes
+    window.ethereum.on('chainChanged', handleNetworkChange)
+
+    return () => {
+      // Cleanup: Remove the event listener when the component unmounts
+      window.ethereum.removeListener('chainChanged', handleNetworkChange)
+    }
+  }, [])
 
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,

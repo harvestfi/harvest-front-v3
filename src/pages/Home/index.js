@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useThemeContext } from '../../providers/useThemeContext'
 import {
@@ -21,6 +21,20 @@ import { ROUTES } from '../../constants'
 const Home = () => {
   const { push } = useHistory()
   const { pageBackColor, fontColor } = useThemeContext()
+
+  const handleNetworkChange = () => {
+    window.location.reload() // Reload the page when the network changes
+  }
+
+  useEffect(() => {
+    // Listen for network changes
+    window.ethereum.on('chainChanged', handleNetworkChange)
+
+    return () => {
+      // Cleanup: Remove the event listener when the component unmounts
+      window.ethereum.removeListener('chainChanged', handleNetworkChange)
+    }
+  }, [])
 
   return (
     <Container pageBackColor={pageBackColor} fontColor={fontColor}>

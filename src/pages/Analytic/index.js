@@ -114,6 +114,20 @@ const Analytic = () => {
 
   const [loadComplete, setLoadComplete] = useState(false)
 
+  const handleNetworkChange = () => {
+    window.location.reload() // Reload the page when the network changes
+  }
+
+  useEffect(() => {
+    // Listen for network changes
+    window.ethereum.on('chainChanged', handleNetworkChange)
+
+    return () => {
+      // Cleanup: Remove the event listener when the component unmounts
+      window.ethereum.removeListener('chainChanged', handleNetworkChange)
+    }
+  }, [])
+
   useEffect(() => {
     setLoadComplete(true)
     const interval = setInterval(() => {}, MINUTE_MS)

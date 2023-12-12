@@ -155,6 +155,20 @@ const Portfolio = () => {
     totalValueFontColor,
   } = useThemeContext()
 
+  const handleNetworkChange = () => {
+    window.location.reload() // Reload the page when the network changes
+  }
+
+  useEffect(() => {
+    // Listen for network changes
+    window.ethereum.on('chainChanged', handleNetworkChange)
+
+    return () => {
+      // Cleanup: Remove the event listener when the component unmounts
+      window.ethereum.removeListener('chainChanged', handleNetworkChange)
+    }
+  }, [])
+
   const [apiData, setApiData] = useState([])
 
   useEffect(() => {
