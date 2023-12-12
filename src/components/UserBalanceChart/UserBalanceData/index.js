@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import ChartButtonsGroup from '../ChartButtonsGroup'
 import balanceImg from '../../../assets/images/logos/advancedfarm/coins.svg'
 import usdbalance from '../../../assets/images/logos/advancedfarm/money.svg'
@@ -34,6 +34,12 @@ const filterList = [
 const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, iFarmPrice, usdPrice }) => {
   const [clickedId, setClickedId] = useState(0)
   const [selectedState, setSelectedState] = useState('1M')
+
+  const totalValueRef = useRef(totalValue)
+
+  useEffect(() => {
+    totalValueRef.current = totalValue
+  }, [totalValue])
 
   const { account } = useWallet()
   const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
@@ -152,7 +158,7 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, iFarmPrice, u
           priceUnderlying: useIFARM ? iFarmPrice : usdPrice,
           sharePrice: mergedData[0].sharePrice,
           timestamp: mergedData[0].timestamp,
-          value: totalValue,
+          value: totalValueRef.current,
         }
         mergedData.unshift(firstObject)
         // console.log('totalValue -------------', totalValue)
