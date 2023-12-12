@@ -162,6 +162,7 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, iFarmPrice, u
         mergedData.unshift(firstObject)
         // console.log('totalValue -------------', totalValue)
         // console.log('usdPrice -------------', usdPrice)
+        // console.log('iFarmPrice -------------', iFarmPrice)
         // console.log('mergedData -------------', mergedData)
       }
       setLoadComplete(flag1 && flag2)

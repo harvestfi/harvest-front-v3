@@ -235,7 +235,7 @@ const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCu
       mainData = generateChartDataWithSlots(
         slots,
         data,
-        token.decimals,
+        token.decimals || token.data.watchAsset.decimals,
         filter,
         'value',
         'priceUnderlying',
@@ -295,6 +295,7 @@ const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCu
     }
 
     init()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     range,
     data,

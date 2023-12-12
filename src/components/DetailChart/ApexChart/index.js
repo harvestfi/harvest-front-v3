@@ -335,7 +335,13 @@ const ApexChart = ({
             // setIsDataReady(false)
             return
           }
-          mainData = generateChartDataWithSlots(slots, tvlData, 'value', filter, token.decimals)
+          mainData = generateChartDataWithSlots(
+            slots,
+            tvlData,
+            'value',
+            filter,
+            token.decimals || token.data.watchAsset.decimals,
+          )
         }
         maxTVL = findMax(mainData)
         minTVL = findMin(mainData)
@@ -344,7 +350,13 @@ const ApexChart = ({
           setIsDataReady(false)
           return
         }
-        mainData = generateChartDataWithSlots(slots, apyData, 'apy', filter, token.decimals)
+        mainData = generateChartDataWithSlots(
+          slots,
+          apyData,
+          'apy',
+          filter,
+          token.decimals || token.data.watchAsset.decimals,
+        )
         maxAPY = findMax(mainData)
         minAPY = findMin(mainData)
       } else {
@@ -356,7 +368,7 @@ const ApexChart = ({
           userPriceFeedData,
           'sharePrice',
           filter,
-          token.decimals,
+          token.decimals || token.data.watchAsset.decimals,
         )
         maxSharePrice = findMax(mainData)
         minSharePrice = findMin(mainData)
@@ -455,6 +467,7 @@ const ApexChart = ({
     }
 
     init()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     range,
     filter,
