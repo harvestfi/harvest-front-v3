@@ -441,7 +441,7 @@ const ApexChart = ({
       } else if (filter === 0) {
         roundNum = -len
       } else if (filter === 2) {
-        roundNum = maxValue - minValue < 0.001 ? 6 : 3
+        roundNum = maxValue - minValue < 0.001 ? 6 : 5
       }
 
       setMinVal(minValue)
