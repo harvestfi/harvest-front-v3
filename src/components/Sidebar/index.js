@@ -8,7 +8,7 @@ import ConnectFailureIcon from '../../assets/images/logos/sidebar/connect-failur
 import connectAvatar from '../../assets/images/logos/sidebar/connectavatar.svg'
 import connectAvatarMobile from '../../assets/images/logos/sidebar/connectavatarmobile.svg'
 import Portfolio from '../../assets/images/logos/sidebar/portfolio.svg'
-import Docs from '../../assets/images/logos/sidebar/docs.svg'
+// import Docs from '../../assets/images/logos/sidebar/docs.svg'
 import FAQ from '../../assets/images/logos/sidebar/faq.svg'
 import Home from '../../assets/images/logos/sidebar/home-line.svg'
 import Beginners from '../../assets/images/logos/sidebar/beginners.svg'
@@ -129,13 +129,13 @@ const sideLinks1 = [
     imgPath: FAQ,
     external: false,
   },
-  {
-    path: 'https://docs.harvest.finance',
-    name: 'Docs',
-    imgPath: Docs,
-    external: false,
-    newTab: true,
-  },
+  // {
+  //   path: 'https://docs.harvest.finance',
+  //   name: 'Docs',
+  //   imgPath: Docs,
+  //   external: false,
+  //   newTab: true,
+  // },
 ]
 
 const sideLinksMobile = [
