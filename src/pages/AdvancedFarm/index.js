@@ -499,7 +499,7 @@ const AdvancedFarm = () => {
     setYieldDaily(dailyYield)
     setYieldMonthly(monthlyYield)
     // eslint-disable-next-line
-  }, [fAssetPool, tokenVault, usdPrice, lpTokenBalance, totalStaked])
+  }, [fAssetPool, tokenVault, usdPrice, iFarmPrice, lpTokenBalance, totalStaked])
 
   useEffect(() => {
     const convertMonthlyYieldValue =
