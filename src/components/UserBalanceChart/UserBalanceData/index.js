@@ -36,9 +36,13 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, iFarmPrice, u
   const [selectedState, setSelectedState] = useState('1M')
 
   const totalValueRef = useRef(totalValue)
+  const iFarmPriceRef = useRef(iFarmPrice)
+  const usdPriceRef = useRef(usdPrice)
   useEffect(() => {
     totalValueRef.current = totalValue
-  }, [totalValue])
+    iFarmPriceRef.current = iFarmPrice
+    usdPriceRef.current = usdPrice
+  }, [totalValue, iFarmPrice, usdPrice])
 
   const { account } = useWallet()
   const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
@@ -154,7 +158,7 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, iFarmPrice, u
           }
         }
         const firstObject = {
-          priceUnderlying: useIFARM ? iFarmPrice : usdPrice,
+          priceUnderlying: useIFARM ? iFarmPriceRef.current : usdPriceRef.current,
           sharePrice: mergedData[0].sharePrice,
           timestamp: mergedData[0].timestamp,
           value: totalValueRef.current,
