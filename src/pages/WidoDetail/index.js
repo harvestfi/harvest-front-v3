@@ -164,13 +164,16 @@ const WidoDetail = () => {
   }
 
   useEffect(() => {
-    // Listen for network changes
-    window.ethereum.on('chainChanged', handleNetworkChange)
+    if (window.ethereum) {
+      // Listen for network changes
+      window.ethereum.on('chainChanged', handleNetworkChange)
 
-    return () => {
-      // Cleanup: Remove the event listener when the component unmounts
-      window.ethereum.removeListener('chainChanged', handleNetworkChange)
+      return () => {
+        // Cleanup: Remove the event listener when the component unmounts
+        window.ethereum.removeListener('chainChanged', handleNetworkChange)
+      }
     }
+    return () => {}
   }, [])
 
   const farmProfitSharingPool = pools.find(

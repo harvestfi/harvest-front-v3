@@ -42,13 +42,16 @@ const Home = () => {
       setShowBadge(true) // Don't show the Badge if the parameters are present
     }
 
-    // Listen for network changes
-    window.ethereum.on('chainChanged', handleNetworkChange)
+    if (window.ethereum) {
+      // Listen for network changes
+      window.ethereum.on('chainChanged', handleNetworkChange)
 
-    return () => {
-      // Cleanup: Remove the event listener when the component unmounts
-      window.ethereum.removeListener('chainChanged', handleNetworkChange)
+      return () => {
+        // Cleanup: Remove the event listener when the component unmounts
+        window.ethereum.removeListener('chainChanged', handleNetworkChange)
+      }
     }
+    return () => {}
   }, [])
 
   return (
