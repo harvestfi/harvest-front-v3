@@ -44,8 +44,6 @@ import {
   // ceil10,
   getTotalApy,
   isLedgerLive,
-  convertAmountToFARM,
-  getUserVaultBalance,
 } from '../../utils'
 import {
   BadgeIcon,
@@ -357,7 +355,7 @@ const Portfolio = () => {
             const useIFARM = symbol === FARM_TOKEN_SYMBOL
             let tokenName = '',
               totalRewardAPRByPercent = 0,
-              farmBalance = 0
+              iFARMBalance = 0
             for (let k = 0; k < token.tokenNames.length; k += 1) {
               tokenName += token.tokenNames[k]
               if (k !== token.tokenNames.length - 1) {
@@ -382,10 +380,17 @@ const Portfolio = () => {
             }
             // eslint-disable-next-line one-var
             let usdPrice = 1
+            const tempPricePerFullShare = useIFARM
+              ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
+              : get(token, `pricePerFullShare`, 0)
+            const pricePerFullShare = fromWei(
+              tempPricePerFullShare,
+              useIFARM ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0) : token.decimals,
+            )
             if (token) {
               usdPrice =
                 (symbol === FARM_TOKEN_SYMBOL
-                  ? token.data.lpTokenData && token.data.lpTokenData.price
+                  ? (token.data.lpTokenData && token.data.lpTokenData.price) * pricePerFullShare
                   : token.vaultPrice) || 1
             }
             const unstake = fromWei(
@@ -394,64 +399,45 @@ const Portfolio = () => {
               MAX_DECIMALS,
             )
             stats.unstake = unstake
-            // eslint-disable-next-line no-restricted-globals
             if (isNaN(stats.unstake)) {
               stats.unstake = 0
             }
             const stakeTemp = get(userStats, `[${stakedVaults[i]}]['totalStaked']`, 0)
-            if (useIFARM) {
-              const iFARMBalance = get(balances, IFARM_TOKEN_SYMBOL, 0)
-              farmBalance = convertAmountToFARM(
-                IFARM_TOKEN_SYMBOL,
-                iFARMBalance,
-                tokens[FARM_TOKEN_SYMBOL].decimals,
-                vaultsData,
-              )
-            }
-            const finalStake = getUserVaultBalance(symbol, farmingBalances, stakeTemp, farmBalance)
+            iFARMBalance = get(balances, IFARM_TOKEN_SYMBOL, 0)
             const stake = fromWei(
-              useIFARM ? finalStake : stakeTemp,
+              useIFARM ? iFARMBalance : stakeTemp,
               token.decimals || token.data.watchAsset.decimals,
               MAX_DECIMALS,
             )
 
             stats.stake = stake
             const finalBalance = Number(stake) + Number(unstake)
-            stats.balance = finalBalance * usdPrice
-            // eslint-disable-next-line no-restricted-globals
+            if (useIFARM) {
+              stats.balance = Number(stake) * usdPrice
+            } else {
+              stats.balance = finalBalance * usdPrice
+            }
             if (isNaN(stats.stake)) {
               stats.stake = 0
             }
-            // eslint-disable-next-line no-restricted-globals
             const totalStk = parseFloat((isNaN(Number(stake)) ? 0 : parseValue(stake)) * usdPrice)
-            // eslint-disable-next-line no-restricted-globals
             const totalUnsk = parseFloat(
               (isNaN(Number(unstake)) ? 0 : parseValue(unstake)) * usdPrice,
             )
             totalBalanceUSD += totalStk + totalUnsk
             const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
-            const tempPricePerFullShare = useIFARM
-              ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
-              : get(token, `pricePerFullShare`, 0)
-            const pricePerFullShare = fromWei(
-              tempPricePerFullShare,
-              useIFARM ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0) : token.decimals,
-            )
 
             for (let l = 0; l < rewardTokenSymbols.length; l += 1) {
-              // eslint-disable-next-line one-var
               let rewardSymbol = rewardTokenSymbols[l].toUpperCase(),
-                rewards
+                rewards,
+                usdRewardPrice = 0,
+                rewardDecimal = get(tokens[symbol], 'decimals', 18)
 
               if (rewardTokenSymbols.includes(FARM_TOKEN_SYMBOL)) {
                 rewardSymbol = FARM_TOKEN_SYMBOL
               }
 
               const rewardToken = groupOfVaults[rewardSymbol]
-              // eslint-disable-next-line one-var
-              let usdRewardPrice = 0,
-                rewardDecimal = get(tokens[symbol], 'decimals', 18)
-
               if (rewardTokenSymbols.length > 1) {
                 const rewardsEarned = userStats[stakedVaults[i]].rewardsEarned
                 if (
