@@ -64,8 +64,6 @@ import {
   formatNumberWido,
   getAdvancedRewardText,
   getLastHarvestInfo,
-  convertAmountToFARM,
-  getUserVaultBalance,
 } from '../../utils'
 import {
   BackBtnRect,
@@ -202,7 +200,7 @@ const AdvancedFarm = () => {
   const location = useLocation()
   const isFromEarningPage = location.search.includes('from=portfolio')
 
-  const { vaultsData, loadingVaults, farmingBalances } = useVaults()
+  const { vaultsData, loadingVaults } = useVaults()
   const { pools, userStats, fetchUserPoolStats } = usePools()
   const { connected, account, balances, getWalletBalances } = useWallet()
   const { profitShareAPY } = useStats()
@@ -363,9 +361,6 @@ const AdvancedFarm = () => {
   const usdPrice =
     Number(token.usdPrice) * pricePerFullShare ||
     Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price) * pricePerFullShare
-  const farmPrice =
-    Number(token.usdPrice) ||
-    Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price)
 
   // Deposit
   const [depositStart, setDepositStart] = useState(false)
@@ -375,6 +370,7 @@ const AdvancedFarm = () => {
   const [quoteValueDepo, setQuoteValueDepo] = useState(null)
   const [inputAmountDepo, setInputAmountDepo] = useState(0)
   const [partHeightDepo, setPartHeightDepo] = useState(null)
+  const [iFarmPrice, setIFarmPrice] = useState(0)
   const [fromInfoAmount, setFromInfoAmount] = useState('')
   const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('')
   const [minReceiveAmountString, setMinReceiveAmountString] = useState('')
@@ -446,20 +442,14 @@ const AdvancedFarm = () => {
       amountBalanceUSD,
       totalRewardAPRByPercent = 0
     if (useIFARM) {
-      const iFARMBalance = get(balances, IFARM_TOKEN_SYMBOL, 0)
-      const farmBalance = convertAmountToFARM(
-        IFARM_TOKEN_SYMBOL,
-        iFARMBalance,
-        tokens[FARM_TOKEN_SYMBOL].decimals,
-        vaultsData,
+      staked = Number(
+        fromWei(
+          get(balances, IFARM_TOKEN_SYMBOL, 0),
+          tokens[IFARM_TOKEN_SYMBOL].decimals,
+          MAX_DECIMALS,
+          true,
+        ),
       )
-      const finalStake = getUserVaultBalance(
-        FARM_TOKEN_SYMBOL,
-        farmingBalances,
-        totalStaked,
-        farmBalance,
-      )
-      staked = fromWei(finalStake, token.decimals || token.data.watchAsset.decimals, MAX_DECIMALS)
       unstaked = Number(
         fromWei(
           get(balances, FARM_TOKEN_SYMBOL, 0),
@@ -469,7 +459,7 @@ const AdvancedFarm = () => {
         ),
       )
       total = staked
-      amountBalanceUSD = total * farmPrice
+      amountBalanceUSD = total * iFarmPrice
     } else {
       staked =
         totalStaked && fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)
@@ -512,7 +502,7 @@ const AdvancedFarm = () => {
     setYieldDaily(dailyYield)
     setYieldMonthly(monthlyYield)
     // eslint-disable-next-line
-  }, [fAssetPool, tokenVault, usdPrice, farmPrice, lpTokenBalance, totalStaked])
+  }, [fAssetPool, tokenVault, usdPrice, iFarmPrice, lpTokenBalance, totalStaked])
 
   useEffect(() => {
     const convertMonthlyYieldValue =
@@ -756,6 +746,24 @@ const AdvancedFarm = () => {
   useEffect(() => {
     setVaultValue(getVaultValue(token))
   }, [token])
+
+  const getIFarmPrice = async data => {
+    try {
+      const result = Number(get(data, `${IFARM_TOKEN_SYMBOL}.usdPrice`, 0)).toFixed(2)
+      return result
+    } catch (e) {
+      return 0
+    }
+  }
+
+  useEffect(() => {
+    const getPriceValue = async () => {
+      const value = await getIFarmPrice(vaultsData)
+      setIFarmPrice(value)
+    }
+
+    getPriceValue()
+  }, [vaultsData])
 
   useEffect(() => {
     const depositUsdValue = formatNumber(
@@ -1223,7 +1231,7 @@ const AdvancedFarm = () => {
                       tokenSymbol={id}
                       totalValue={totalValue}
                       useIFARM={useIFARM}
-                      farmPrice={farmPrice}
+                      iFarmPrice={iFarmPrice}
                       usdPrice={usdPrice}
                     />
                   )}
@@ -1694,7 +1702,7 @@ const AdvancedFarm = () => {
                       tokenSymbol={id}
                       totalValue={totalValue}
                       useIFARM={useIFARM}
-                      farmPrice={farmPrice}
+                      iFarmPrice={iFarmPrice}
                       usdPrice={usdPrice}
                     />
                   ) : (
