@@ -372,7 +372,6 @@ const AdvancedFarm = () => {
   const [quoteValueDepo, setQuoteValueDepo] = useState(null)
   const [inputAmountDepo, setInputAmountDepo] = useState(0)
   const [partHeightDepo, setPartHeightDepo] = useState(null)
-  // const [iFarmPrice, setIFarmPrice] = useState(0)
   const [fromInfoAmount, setFromInfoAmount] = useState('')
   const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('')
   const [minReceiveAmountString, setMinReceiveAmountString] = useState('')
@@ -754,24 +753,6 @@ const AdvancedFarm = () => {
   useEffect(() => {
     setVaultValue(getVaultValue(token))
   }, [token])
-
-  // const getIFarmPrice = async data => {
-  //   try {
-  //     const result = Number(get(data, `${IFARM_TOKEN_SYMBOL}.usdPrice`, 0)).toFixed(2)
-  //     return result
-  //   } catch (e) {
-  //     return 0
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   const getPriceValue = async () => {
-  //     const value = await getIFarmPrice(vaultsData)
-  //     setIFarmPrice(value)
-  //   }
-
-  //   getPriceValue()
-  // }, [vaultsData])
 
   useEffect(() => {
     const depositUsdValue = formatNumber(
