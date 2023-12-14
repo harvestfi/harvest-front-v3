@@ -312,7 +312,7 @@ const Portfolio = () => {
         }
 
         const newStats = []
-        let totalStake = 0,
+        let totalBalanceUSD = 0,
           valueRewards = 0,
           totalDailyYield = 0,
           totalMonthlyYield = 0
@@ -425,7 +425,7 @@ const Portfolio = () => {
             const totalUnsk = parseFloat(
               (isNaN(Number(unstake)) ? 0 : parseValue(unstake)) * usdPrice,
             )
-            totalStake += totalStk + totalUnsk
+            totalBalanceUSD += totalStk + totalUnsk
             const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
             const tempPricePerFullShare = useIFARM
               ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
@@ -599,7 +599,7 @@ const Portfolio = () => {
           }
         }
 
-        setTotalDeposit(formatNumber(totalStake, 2))
+        setTotalDeposit(formatNumber(totalBalanceUSD, 2))
         setTotalRewards(formatNumber(valueRewards, 2))
         setTotalYieldDaily(formatNumber(totalDailyYield, 2))
         setTotalYieldMonthly(formatNumber(totalMonthlyYield, 2))
