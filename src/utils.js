@@ -25,7 +25,7 @@ import {
   GRAPH_URL_BASE,
 } from './constants'
 import { CHAIN_IDS } from './data/constants'
-import { addresses, tokens } from './data/index'
+import { addresses } from './data/index'
 
 axiosRetry(axios, {
   retries: 1,
@@ -262,7 +262,6 @@ export const displayAPY = (apy, ...args) =>
 
 export const getRewardsText = (
   token,
-  tokens,
   vaultPool,
   tradingApy,
   farmAPY,
@@ -1422,8 +1421,8 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
     data = {}
   nowDate = Math.floor(nowDate.setDate(nowDate.getDate() - 1) / 1000)
   const startDate = nowDate - 3600 * 24 * ago
-  const farm = "0xa0246c9032bc3a600820415ae600c6388619a14d"
-  const ifarm = "0x1571ed0bed4d987fe2b498ddbae7dfa19519f651"
+  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
+  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
   address = address.toLowerCase()
   if (myWallet) {
     myWallet = myWallet.toLowerCase()
@@ -1447,7 +1446,7 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
       tvls(
         first: 1000,
         where: {
-          vault: "${address == farm ? ifarm : address}", 
+          vault: "${address === farm ? ifarm : address}", 
           timestamp_gte: "${startDate}"
         },
         orderBy: createAtBlock,
@@ -1458,7 +1457,7 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
       vaultHistories(
         first: 1000,
         where: {
-          vault: "${address == farm ? ifarm : address}"
+          vault: "${address === farm ? ifarm : address}"
         },
         orderBy: timestamp,
         orderDirection: desc
@@ -1854,7 +1853,7 @@ export const getUserBalanceHistories1 = async (address, chainId, account) => {
 export const getUserBalanceHistories2 = async (address, chainId, timestamp) => {
   let data2 = {},
     flag2 = true
-    
+
   address = address.toLowerCase()
 
   const myHeaders = new Headers()
