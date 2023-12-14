@@ -9,7 +9,7 @@ import { usePools } from '../../providers/Pools'
 import { useStats } from '../../providers/Stats'
 import { useWallet } from '../../providers/Wallet'
 import { useThemeContext } from '../../providers/useThemeContext'
-import UserBalanceChart from '../../components/UserBalanceChart/UserBalanceData'
+import UserBalanceData from '../../components/UserBalanceChart/UserBalanceData'
 import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
 import { Container, Inner, Title, ChartSection, PriceChartArea } from './style'
 import { addresses } from '../../data'
@@ -154,7 +154,7 @@ const Charts = () => {
           return (
             <ChartSection key={i}>
               <PriceChartArea>
-                <UserBalanceChart
+                <UserBalanceData
                   token={token}
                   vaultPool={vaultPool}
                   tokenSymbol={symbol}
@@ -197,7 +197,7 @@ const Charts = () => {
           return (
             <ChartSection key={i}>
               <PriceChartArea>
-                <UserBalanceChart
+                <UserBalanceData
                   token={token}
                   vaultPool={vaultPool}
                   tokenSymbol={symbol}
@@ -240,7 +240,7 @@ const Charts = () => {
           return (
             <ChartSection key={i}>
               <PriceChartArea>
-                <UserBalanceChart
+                <UserBalanceData
                   token={token}
                   vaultPool={vaultPool}
                   tokenSymbol={symbol}

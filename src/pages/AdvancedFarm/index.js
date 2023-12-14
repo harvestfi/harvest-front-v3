@@ -359,7 +359,7 @@ const AdvancedFarm = () => {
   )
 
   const usdPrice =
-    Number(token.usdPrice) * pricePerFullShare ||
+    Number(token.vaultPrice) ||
     Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price) * pricePerFullShare
 
   // Deposit
@@ -370,7 +370,6 @@ const AdvancedFarm = () => {
   const [quoteValueDepo, setQuoteValueDepo] = useState(null)
   const [inputAmountDepo, setInputAmountDepo] = useState(0)
   const [partHeightDepo, setPartHeightDepo] = useState(null)
-  const [iFarmPrice, setIFarmPrice] = useState(0)
   const [fromInfoAmount, setFromInfoAmount] = useState('')
   const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('')
   const [minReceiveAmountString, setMinReceiveAmountString] = useState('')
@@ -459,7 +458,7 @@ const AdvancedFarm = () => {
         ),
       )
       total = staked
-      amountBalanceUSD = total * iFarmPrice
+      amountBalanceUSD = total * usdPrice
     } else {
       staked =
         totalStaked && fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)
@@ -502,7 +501,7 @@ const AdvancedFarm = () => {
     setYieldDaily(dailyYield)
     setYieldMonthly(monthlyYield)
     // eslint-disable-next-line
-  }, [fAssetPool, tokenVault, usdPrice, iFarmPrice, lpTokenBalance, totalStaked])
+  }, [fAssetPool, tokenVault, usdPrice, lpTokenBalance, totalStaked])
 
   useEffect(() => {
     const convertMonthlyYieldValue =
@@ -746,24 +745,6 @@ const AdvancedFarm = () => {
   useEffect(() => {
     setVaultValue(getVaultValue(token))
   }, [token])
-
-  const getIFarmPrice = async data => {
-    try {
-      const result = Number(get(data, `${IFARM_TOKEN_SYMBOL}.usdPrice`, 0)).toFixed(2)
-      return result
-    } catch (e) {
-      return 0
-    }
-  }
-
-  useEffect(() => {
-    const getPriceValue = async () => {
-      const value = await getIFarmPrice(vaultsData)
-      setIFarmPrice(value)
-    }
-
-    getPriceValue()
-  }, [vaultsData])
 
   useEffect(() => {
     const depositUsdValue = formatNumber(
@@ -1230,8 +1211,6 @@ const AdvancedFarm = () => {
                       vaultPool={vaultPool}
                       tokenSymbol={id}
                       totalValue={totalValue}
-                      useIFARM={useIFARM}
-                      iFarmPrice={iFarmPrice}
                       usdPrice={usdPrice}
                     />
                   )}
@@ -1701,8 +1680,6 @@ const AdvancedFarm = () => {
                       vaultPool={vaultPool}
                       tokenSymbol={id}
                       totalValue={totalValue}
-                      useIFARM={useIFARM}
-                      iFarmPrice={iFarmPrice}
                       usdPrice={usdPrice}
                     />
                   ) : (
