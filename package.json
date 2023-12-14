@@ -76,7 +76,6 @@
     "use-deep-compare-effect": "1.6.1",
     "use-effect-with-previous": "1.0.7",
     "web3": "1.3.3",
-    "web3modal": "file:./submodules/web3modal",
     "wido": "^0.2.8"
   },
   "scripts": {
