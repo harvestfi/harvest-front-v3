@@ -31,18 +31,18 @@ const filterList = [
   { id: 2, name: 'Underlying Balance History', img: balanceImg },
 ]
 
-const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, iFarmPrice, usdPrice }) => {
+const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, farmPrice, usdPrice }) => {
   const [clickedId, setClickedId] = useState(0)
   const [selectedState, setSelectedState] = useState('1M')
 
   const totalValueRef = useRef(totalValue)
-  const iFarmPriceRef = useRef(iFarmPrice)
+  const FarmPriceRef = useRef(farmPrice)
   const usdPriceRef = useRef(usdPrice)
   useEffect(() => {
     totalValueRef.current = totalValue
-    iFarmPriceRef.current = iFarmPrice
+    FarmPriceRef.current = farmPrice
     usdPriceRef.current = usdPrice
-  }, [totalValue, iFarmPrice, usdPrice])
+  }, [totalValue, farmPrice, usdPrice])
 
   const { account } = useWallet()
   const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
@@ -158,7 +158,7 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, iFarmPrice, u
           }
         }
         const firstObject = {
-          priceUnderlying: useIFARM ? iFarmPriceRef.current : usdPriceRef.current,
+          priceUnderlying: useIFARM ? FarmPriceRef.current : usdPriceRef.current,
           sharePrice: mergedData[0].sharePrice,
           timestamp: mergedData[0].timestamp,
           value: totalValueRef.current,
@@ -166,7 +166,7 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, iFarmPrice, u
         mergedData.unshift(firstObject)
         // console.log('totalValue -------------', totalValue)
         // console.log('usdPrice -------------', usdPrice)
-        // console.log('iFarmPrice -------------', iFarmPrice)
+        // console.log('farmPrice -------------', farmPrice)
         // console.log('mergedData -------------', mergedData)
       }
       setLoadComplete(flag1 && flag2)
@@ -180,7 +180,7 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, iFarmPrice, u
     }
 
     initData()
-  }, [address, chainId, account, totalValue, usdPrice, iFarmPrice, useIFARM])
+  }, [address, chainId, account, totalValue, usdPrice, farmPrice, useIFARM])
 
   return (
     <Container>
