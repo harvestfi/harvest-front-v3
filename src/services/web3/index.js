@@ -1,4 +1,3 @@
-import { IFrameEthereumProvider } from '@ledgerhq/iframe-provider'
 import { SafeAppProvider } from '@safe-global/safe-apps-provider'
 import SafeAppsSDK from '@safe-global/safe-apps-sdk'
 import BigNumber from 'bignumber.js'
@@ -19,7 +18,7 @@ import {
   POLL_BALANCES_INTERVAL_MS,
 } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
-import { formatNumber, isLedgerLive, isSafeApp } from '../../utils'
+import { formatNumber, isSafeApp } from '../../utils'
 import contracts from './contracts'
 
 export const getChainHexadecimal = chainId => `0x${Number(chainId).toString(16)}`
@@ -29,8 +28,6 @@ export const infuraWeb3 = new Web3(INFURA_URL)
 export const maticWeb3 = new Web3(MATIC_URL)
 export const arbitrumWeb3 = new Web3(ARBITRUM_URL)
 export const baseWeb3 = new Web3(BASE_URL)
-export const ledgerProvider = new ethers.providers.Web3Provider(new IFrameEthereumProvider())
-export const ledgerWeb3 = new Web3(new IFrameEthereumProvider())
 export const safeProvider = async () => {
   const safe = await SDK.safe.getInfo()
   return new ethers.providers.Web3Provider(new SafeAppProvider(safe, SDK))
@@ -154,9 +151,6 @@ export const getWeb3 = async (chainId, account, web3 = null) => {
     if (isSafeApp()) {
       const safeWeb = await safeWeb3()
       return safeWeb
-    }
-    if (isLedgerLive()) {
-      return ledgerWeb3
     }
     return web3 || mainWeb3
   }
