@@ -18,7 +18,7 @@ import { toast } from 'react-toastify'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { POLL_POOL_DATA_INTERVAL_MS, POOLS_API_ENDPOINT, SPECIAL_VAULTS } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
-import { getWeb3, ledgerWeb3, newContractInstance, safeProvider } from '../../services/web3'
+import { getWeb3, newContractInstance, safeProvider } from '../../services/web3'
 import poolContractData from '../../services/web3/contracts/pool/contract.json'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import tokenMethods from '../../services/web3/contracts/token/methods'
@@ -73,10 +73,6 @@ const PoolsProvider = _ref => {
         selectedAccount = account,
         formattedPools
       try {
-        if (isLedgerLive()) {
-          const selectedChain = await ledgerWeb3.eth.net.getId()
-          curChain = selectedChain.toString()
-        }
         if (isSafeApp()) {
           const safeAppProvider = await safeProvider()
           const selectedChain = await safeAppProvider.getNetwork()

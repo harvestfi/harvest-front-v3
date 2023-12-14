@@ -18,7 +18,6 @@ app.use(
           "'self'",
           "'unsafe-inline'",
           'https://static.cloudflareinsights.com',
-          'https://cdn.jsdelivr.net/npm/@ledgerhq/connect-kit@1',
         ],
         connectSrc: ["'self'", '*'],
         imgSrc: ["'self'", 'https: data:'],
