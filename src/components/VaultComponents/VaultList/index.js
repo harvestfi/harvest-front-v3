@@ -19,6 +19,7 @@ import {
   FARM_WETH_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
+  MAX_DECIMALS,
 } from '../../../constants'
 import { fromWei } from '../../../services/web3'
 import { CHAIN_IDS } from '../../../data/constants'
@@ -28,6 +29,8 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
 import {
+  formatNumber,
+  parseValue,
   getTotalApy,
   getUserVaultBalance,
   getVaultValue,
@@ -234,9 +237,19 @@ const formatVaults = (
             } else {
               usdPrice = groupOfVaults[v].usdPrice
             }
-            return (
-              Number(getUserVaultBalance(v, farmingBalances, totalStakedInPool, iFARMBalance)) *
-              Number(usdPrice)
+            return formatNumber(
+              new BigNumber(
+                fromWei(
+                  parseValue(
+                    getUserVaultBalance(v, farmingBalances, totalStakedInPool, iFARMBalance),
+                  ),
+                  isSpecialVault ? get(token, 'data.watchAsset.decimals', 18) : token.decimals,
+                  MAX_DECIMALS,
+                ),
+              )
+                .multipliedBy(Number(usdPrice))
+                .toString(),
+              4,
             )
           },
           sortOrder,
