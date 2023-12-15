@@ -96,7 +96,7 @@ function generateChartDataWithSlots(
         const value2 = parseFloat(apiData[j][priceUnderlying])
         const value3 = fromWei(parseFloat(apiData[j][sharePrice]), decimals)
         if (filter === 0) {
-          seriesData.push({ x: slots[i] * 1000, y: value1 * value2 })
+          seriesData.push({ x: slots[i] * 1000, y: value1 * value2 * value3 })
         } else if (filter === 1) {
           seriesData.push({ x: slots[i] * 1000, y: value1 * value3 })
         }

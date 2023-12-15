@@ -361,6 +361,7 @@ const AdvancedFarm = () => {
   const usdPrice =
     Number(token.vaultPrice) ||
     Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price) * pricePerFullShare
+  const farmPrice = Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price)
 
   // Deposit
   const [depositStart, setDepositStart] = useState(false)
@@ -1212,6 +1213,8 @@ const AdvancedFarm = () => {
                       tokenSymbol={id}
                       totalValue={totalValue}
                       usdPrice={usdPrice}
+                      useIFARM={useIFARM}
+                      farmPrice={farmPrice}
                     />
                   )}
                 </>
