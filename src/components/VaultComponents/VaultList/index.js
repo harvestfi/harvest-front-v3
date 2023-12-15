@@ -198,20 +198,21 @@ const formatVaults = (
           v => {
             let iFARMBalance, vaultPool, usdPrice
 
-            const useIFARM = v === FARM_TOKEN_SYMBOL
+            const isSpecialVault = groupOfVaults[v].liquidityPoolVault || groupOfVaults[v].poolVault
             const token = groupOfVaults[v]
-            const tempPricePerFullShare = useIFARM
+            const tempPricePerFullShare = isSpecialVault
               ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
               : get(token, `pricePerFullShare`, 0)
             const pricePerFullShare = fromWei(
               tempPricePerFullShare,
-              useIFARM ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0) : token.decimals,
+              isSpecialVault
+                ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0)
+                : token.decimals,
             )
 
             if (v === FARM_TOKEN_SYMBOL) {
               iFARMBalance = get(balances, IFARM_TOKEN_SYMBOL, 0)
             }
-            const isSpecialVault = groupOfVaults[v].liquidityPoolVault || groupOfVaults[v].poolVault
 
             const tokenVault = get(groupOfVaults, groupOfVaults[v].hodlVaultId || v)
 
