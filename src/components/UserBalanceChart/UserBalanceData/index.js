@@ -35,9 +35,9 @@ const UserBalanceData = ({
   token,
   vaultPool,
   totalValue,
-  underlyingPrice,
   useIFARM,
   farmPrice,
+  underlyingPrice,
 }) => {
   const [clickedId, setClickedId] = useState(0)
   const [selectedState, setSelectedState] = useState('1M')

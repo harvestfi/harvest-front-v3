@@ -297,8 +297,12 @@ const BeginnersFarm = () => {
   )
 
   const usdPrice =
-    Number(token.usdPrice) * pricePerFullShare ||
+    Number(token.vaultPrice) ||
     Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price) * pricePerFullShare
+  const farmPrice = Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price)
+  const underlyingPrice =
+    Number(token.usdPrice) ||
+    Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price)
 
   // Deposit
   const [depositStart, setDepositStart] = useState(false)
@@ -1006,7 +1010,9 @@ const BeginnersFarm = () => {
                       vaultPool={vaultPool}
                       tokenSymbol={id}
                       totalValue={totalValue}
-                      usdPrice={usdPrice}
+                      useIFARM={useIFARM}
+                      farmPrice={farmPrice}
+                      underlyingPrice={underlyingPrice}
                     />
                   )}
                 </>
@@ -1484,7 +1490,9 @@ const BeginnersFarm = () => {
                       vaultPool={vaultPool}
                       tokenSymbol={id}
                       totalValue={totalValue}
-                      usdPrice={usdPrice}
+                      useIFARM={useIFARM}
+                      farmPrice={farmPrice}
+                      underlyingPrice={underlyingPrice}
                     />
                   ) : (
                     <></>

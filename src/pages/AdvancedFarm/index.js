@@ -1215,9 +1215,9 @@ const AdvancedFarm = () => {
                       vaultPool={vaultPool}
                       tokenSymbol={id}
                       totalValue={totalValue}
-                      underlyingPrice={underlyingPrice}
                       useIFARM={useIFARM}
                       farmPrice={farmPrice}
+                      underlyingPrice={underlyingPrice}
                     />
                   )}
                 </>
@@ -1686,9 +1686,9 @@ const AdvancedFarm = () => {
                       vaultPool={vaultPool}
                       tokenSymbol={id}
                       totalValue={totalValue}
-                      underlyingPrice={underlyingPrice}
                       useIFARM={useIFARM}
                       farmPrice={farmPrice}
+                      underlyingPrice={underlyingPrice}
                     />
                   ) : (
                     <></>
