@@ -31,18 +31,25 @@ const filterList = [
   { id: 2, name: 'Underlying Balance History', img: balanceImg },
 ]
 
-const UserBalanceData = ({ token, vaultPool, totalValue, usdPrice, useIFARM, farmPrice }) => {
+const UserBalanceData = ({
+  token,
+  vaultPool,
+  totalValue,
+  underlyingPrice,
+  useIFARM,
+  farmPrice,
+}) => {
   const [clickedId, setClickedId] = useState(0)
   const [selectedState, setSelectedState] = useState('1M')
 
   const totalValueRef = useRef(totalValue)
   const farmPriceRef = useRef(farmPrice)
-  const usdPriceRef = useRef(usdPrice)
+  const usdPriceRef = useRef(underlyingPrice)
   useEffect(() => {
     totalValueRef.current = totalValue
     farmPriceRef.current = farmPrice
-    usdPriceRef.current = usdPrice
-  }, [totalValue, usdPrice, farmPrice])
+    usdPriceRef.current = underlyingPrice
+  }, [totalValue, underlyingPrice, farmPrice])
 
   const { account } = useWallet()
   const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
@@ -165,7 +172,7 @@ const UserBalanceData = ({ token, vaultPool, totalValue, usdPrice, useIFARM, far
         }
         mergedData.unshift(firstObject)
         // console.log('totalValue -------------', totalValue)
-        // console.log('usdPrice -------------', usdPrice)
+        // console.log('underlyingPrice -------------', underlyingPrice)
         // console.log('mergedData -------------', mergedData)
       }
       setLoadComplete(flag1 && flag2)
@@ -179,7 +186,7 @@ const UserBalanceData = ({ token, vaultPool, totalValue, usdPrice, useIFARM, far
     }
 
     initData()
-  }, [address, chainId, account, totalValue, usdPrice, useIFARM, farmPrice])
+  }, [address, chainId, account, totalValue, underlyingPrice, useIFARM, farmPrice])
 
   return (
     <Container>
