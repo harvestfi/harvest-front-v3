@@ -403,7 +403,9 @@ const Portfolio = () => {
               stats.unstake = 0
             }
             const stakeTemp = get(userStats, `[${stakedVaults[i]}]['totalStaked']`, 0)
-            iFARMBalance = get(balances, IFARM_TOKEN_SYMBOL, 0)
+            if (useIFARM) {
+              iFARMBalance = get(balances, IFARM_TOKEN_SYMBOL, 0)
+            }
             const stake = fromWei(
               useIFARM ? iFARMBalance : stakeTemp,
               token.decimals || token.data.watchAsset.decimals,

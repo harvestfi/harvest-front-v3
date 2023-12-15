@@ -134,6 +134,7 @@ const MobilePanelHeader = ({
               loadingFarmingBalance={loadingFarmingBalance}
               vaultPool={vaultPool}
               loadedVault={loadedVault}
+              useIFARM={useIFARM}
             />
             <div className="title">
               <img src={DailyIcon} alt="" />

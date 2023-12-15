@@ -214,11 +214,12 @@ export const getUserVaultBalance = (
   tokenSymbol,
   farmingBalances,
   totalStakedInPool,
-  iFARMinFARM,
+  iFARMBalance,
 ) => {
   switch (tokenSymbol) {
     case FARM_TOKEN_SYMBOL:
-      return new BigNumber(totalStakedInPool).plus(iFARMinFARM).toString()
+      // return new BigNumber(totalStakedInPool).plus(iFARMBalance).toString()
+      return iFARMBalance.toString()
     case FARM_WETH_TOKEN_SYMBOL:
     case FARM_GRAIN_TOKEN_SYMBOL:
       return totalStakedInPool

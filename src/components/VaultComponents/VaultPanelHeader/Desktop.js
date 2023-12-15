@@ -143,6 +143,7 @@ const DesktopPanelHeader = ({
             loadingFarmingBalance={loadingFarmingBalance}
             vaultPool={vaultPool}
             loadedVault={loadedVault}
+            useIFARM={useIFARM}
           />
         </ValueContainer>
       </PanelContainer>

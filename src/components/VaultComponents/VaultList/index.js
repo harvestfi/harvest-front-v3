@@ -20,6 +20,7 @@ import {
   IFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
 } from '../../../constants'
+import { fromWei } from '../../../services/web3'
 import { CHAIN_IDS } from '../../../data/constants'
 import { usePools } from '../../../providers/Pools'
 import { useStats } from '../../../providers/Stats'
@@ -27,7 +28,6 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
 import {
-  convertAmountToFARM,
   getTotalApy,
   getUserVaultBalance,
   getVaultValue,
@@ -73,6 +73,7 @@ const formatVaults = (
   selectStableCoin,
   selectFarmType,
   selectedActiveType,
+  vaultsData,
 ) => {
   let vaultsSymbol = sortBy(keys(groupOfVaults), [
     // eslint-disable-next-line consistent-return
@@ -195,16 +196,20 @@ const formatVaults = (
         vaultsSymbol = orderBy(
           vaultsSymbol,
           v => {
-            let iFARMinFARM, vaultPool
+            let iFARMBalance, vaultPool, usdPrice
+
+            const useIFARM = v === FARM_TOKEN_SYMBOL
+            const token = groupOfVaults[v]
+            const tempPricePerFullShare = useIFARM
+              ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
+              : get(token, `pricePerFullShare`, 0)
+            const pricePerFullShare = fromWei(
+              tempPricePerFullShare,
+              useIFARM ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0) : token.decimals,
+            )
 
             if (v === FARM_TOKEN_SYMBOL) {
-              const iFARMBalance = get(balances, IFARM_TOKEN_SYMBOL, 0)
-              iFARMinFARM = convertAmountToFARM(
-                IFARM_TOKEN_SYMBOL,
-                iFARMBalance,
-                tokens[FARM_TOKEN_SYMBOL].decimals,
-                groupOfVaults,
-              )
+              iFARMBalance = get(balances, IFARM_TOKEN_SYMBOL, 0)
             }
             const isSpecialVault = groupOfVaults[v].liquidityPoolVault || groupOfVaults[v].poolVault
 
@@ -221,15 +226,15 @@ const formatVaults = (
             const poolId = get(vaultPool, 'id')
             const totalStakedInPool = get(userStats, `[${poolId}]['totalStaked']`, 0)
 
-            // eslint-disable-next-line one-var
-            let usdPrice
             if (isSpecialVault) {
-              usdPrice = groupOfVaults[v].data && groupOfVaults[v].data.lpTokenData?.price
+              usdPrice =
+                (groupOfVaults[v].data && groupOfVaults[v].data.lpTokenData?.price) *
+                pricePerFullShare
             } else {
               usdPrice = groupOfVaults[v].usdPrice
             }
             return (
-              Number(getUserVaultBalance(v, farmingBalances, totalStakedInPool, iFARMinFARM)) *
+              Number(getUserVaultBalance(v, farmingBalances, totalStakedInPool, iFARMBalance)) *
               Number(usdPrice)
             )
           },
@@ -491,6 +496,7 @@ const VaultList = () => {
         selectStableCoin,
         selectFarmType,
         selectedActiveType,
+        vaultsData,
       ),
     [
       groupOfVaults,
@@ -508,6 +514,7 @@ const VaultList = () => {
       selectStableCoin,
       selectFarmType,
       selectedActiveType,
+      vaultsData,
     ],
   )
 

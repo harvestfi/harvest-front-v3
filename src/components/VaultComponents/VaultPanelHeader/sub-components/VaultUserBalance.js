@@ -8,14 +8,8 @@ import {
   MAX_DECIMALS,
 } from '../../../../constants'
 import { useVaults } from '../../../../providers/Vault'
-import { tokens } from '../../../../data'
 import { fromWei } from '../../../../services/web3'
-import {
-  convertAmountToFARM,
-  formatNumber,
-  getUserVaultBalance,
-  parseValue,
-} from '../../../../utils'
+import { formatNumber, getUserVaultBalance, parseValue } from '../../../../utils'
 import AnimatedDots from '../../../AnimatedDots'
 import { useWallet } from '../../../../providers/Wallet'
 import { Monospace } from '../../../GlobalStyle'
@@ -29,29 +23,32 @@ const VaultUserBalance = ({
   loadingFarmingBalance,
   vaultPool,
   loadedVault,
+  useIFARM,
 }) => {
   const { vaultsData, farmingBalances } = useVaults()
   const { connected, balances } = useWallet()
   const { userStats } = usePools()
-  const [iFARMinFARM, setIFARMinFARM] = useState(null)
   const [userVaultBalance, setUserVaultBalance] = useState(null)
 
+  const tempPricePerFullShare = useIFARM
+    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
+    : get(token, `pricePerFullShare`, 0)
+  const pricePerFullShare = fromWei(
+    tempPricePerFullShare,
+    useIFARM ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0) : token.decimals,
+  )
+
   useEffect(() => {
+    let iFARMBalance
     if (tokenSymbol === FARM_TOKEN_SYMBOL) {
-      const iFARMBalance = get(balances, IFARM_TOKEN_SYMBOL, 0)
-      setIFARMinFARM(
-        convertAmountToFARM(
-          IFARM_TOKEN_SYMBOL,
-          iFARMBalance,
-          tokens[FARM_TOKEN_SYMBOL].decimals,
-          vaultsData,
-        ),
-      )
+      iFARMBalance = get(balances, IFARM_TOKEN_SYMBOL, 0)
     }
 
     const totalStaked = get(userStats, `[${get(vaultPool, 'id')}]['totalStaked']`, 0)
-    setUserVaultBalance(getUserVaultBalance(tokenSymbol, farmingBalances, totalStaked, iFARMinFARM))
-  }, [vaultsData, tokenSymbol, vaultPool, userStats, farmingBalances, balances, iFARMinFARM])
+    setUserVaultBalance(
+      getUserVaultBalance(tokenSymbol, farmingBalances, totalStaked, iFARMBalance),
+    )
+  }, [vaultsData, tokenSymbol, vaultPool, userStats, farmingBalances, balances])
 
   const isLoadingUserBalance =
     loadedVault === false ||
@@ -94,7 +91,7 @@ const VaultUserBalance = ({
                 )
                   .multipliedBy(
                     (tokenSymbol === FARM_TOKEN_SYMBOL
-                      ? token.data.lpTokenData.price
+                      ? token.data.lpTokenData.price * pricePerFullShare
                       : token.usdPrice) || 1,
                   )
                   .toString(),
