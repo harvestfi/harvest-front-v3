@@ -38,6 +38,7 @@ const UserBalanceData = ({
   useIFARM,
   farmPrice,
   underlyingPrice,
+  pricePerFullShare,
 }) => {
   const [clickedId, setClickedId] = useState(0)
   const [selectedState, setSelectedState] = useState('1M')
@@ -45,11 +46,13 @@ const UserBalanceData = ({
   const totalValueRef = useRef(totalValue)
   const farmPriceRef = useRef(farmPrice)
   const usdPriceRef = useRef(underlyingPrice)
+  const pricePerFullShareRef = useRef(pricePerFullShare)
   useEffect(() => {
     totalValueRef.current = totalValue
     farmPriceRef.current = farmPrice
     usdPriceRef.current = underlyingPrice
-  }, [totalValue, underlyingPrice, farmPrice])
+    pricePerFullShareRef.current = pricePerFullShare
+  }, [totalValue, underlyingPrice, farmPrice, pricePerFullShare])
 
   const { account } = useWallet()
   const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
@@ -166,7 +169,7 @@ const UserBalanceData = ({
         }
         const firstObject = {
           priceUnderlying: useIFARM ? farmPriceRef.current : usdPriceRef.current,
-          sharePrice: mergedData[0].sharePrice,
+          sharePrice: pricePerFullShareRef.current,
           timestamp: mergedData[0].timestamp,
           value: totalValueRef.current,
         }
@@ -186,7 +189,16 @@ const UserBalanceData = ({
     }
 
     initData()
-  }, [address, chainId, account, totalValue, underlyingPrice, useIFARM, farmPrice])
+  }, [
+    address,
+    chainId,
+    account,
+    totalValue,
+    underlyingPrice,
+    useIFARM,
+    farmPrice,
+    pricePerFullShare,
+  ])
 
   return (
     <Container>

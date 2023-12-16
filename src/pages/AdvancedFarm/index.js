@@ -1218,6 +1218,7 @@ const AdvancedFarm = () => {
                       useIFARM={useIFARM}
                       farmPrice={farmPrice}
                       underlyingPrice={underlyingPrice}
+                      pricePerFullShare={tempPricePerFullShare}
                     />
                   )}
                 </>
@@ -1689,6 +1690,7 @@ const AdvancedFarm = () => {
                       useIFARM={useIFARM}
                       farmPrice={farmPrice}
                       underlyingPrice={underlyingPrice}
+                      pricePerFullShare={tempPricePerFullShare}
                     />
                   ) : (
                     <></>
