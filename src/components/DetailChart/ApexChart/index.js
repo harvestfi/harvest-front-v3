@@ -14,6 +14,7 @@ import { ClipLoader } from 'react-spinners'
 import { useWindowWidth } from '@react-hook/window-size'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { ceil10, floor10, round10, numberWithCommas } from '../../../utils'
+import { MAX_DECIMALS } from '../../../constants'
 import { LoadingDiv, NoData } from './style'
 import { fromWei } from '../../../services/web3'
 
@@ -68,7 +69,10 @@ function generateChartDataWithSlots(slots, apiData, kind, filter, decimals) {
           : prev,
       )
 
-      seriesData.push({ x: slots[i] * 1000, y: fromWei(parseFloat(data.sharePrice), decimals) })
+      seriesData.push({
+        x: slots[i] * 1000,
+        y: fromWei(parseFloat(data.sharePrice), decimals, MAX_DECIMALS, true),
+      })
     }
   } else {
     for (let i = 0; i < slots.length; i += 1) {
