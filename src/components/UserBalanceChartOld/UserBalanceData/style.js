@@ -108,7 +108,7 @@ const TokenSymbol = styled.div`
   font-size: 16px;
   line-height: 28px;
   font-weight: 600;
-  color: ${props => (props.color ? props.color : '#1f2937')};
+  color: #1f2937;
 
   @media screen and (max-width: 992px) {
     font-size: 12px;

@@ -1,12 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react'
-// import ChartButtonsGroup from '../ChartButtonsGroup'
-// import balanceImg from '../../../assets/images/logos/advancedfarm/coins.svg'
-// import usdbalance from '../../../assets/images/logos/advancedfarm/money.svg'
-import {
-  getUserBalanceHistories1,
-  getUserBalanceHistories2,
-  numberWithCommas,
-} from '../../../utils'
+import ChartButtonsGroup from '../ChartButtonsGroup'
+import balanceImg from '../../../assets/images/logos/advancedfarm/coins.svg'
+import usdbalance from '../../../assets/images/logos/advancedfarm/money.svg'
+import { getUserBalanceHistories1, getUserBalanceHistories2 } from '../../../utils'
 import { useWallet } from '../../../providers/Wallet'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
@@ -20,7 +16,7 @@ import {
   TooltipInfo,
   FlexDiv,
   CurContent,
-  // FilterGroup,
+  FilterGroup,
 } from './style'
 
 const recommendLinks = [
@@ -30,34 +26,10 @@ const recommendLinks = [
   { name: '1Y', type: 3, state: '1Y' },
 ]
 
-// const filterList = [
-//   { id: 1, name: `fTokens' USD Value History`, img: usdbalance },
-//   { id: 2, name: 'Underlying Balance History', img: balanceImg },
-// ]
-
-function formatDateTime(value) {
-  const date = new Date(value)
-  const year = date.getFullYear()
-  const monthNames = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ]
-  const monthNum = date.getMonth()
-  const month = monthNames[monthNum]
-  const day = date.getDate()
-
-  return `${day} ${month} ${year}`
-}
+const filterList = [
+  { id: 1, name: `fTokens' USD Value History`, img: usdbalance },
+  { id: 2, name: 'Underlying Balance History', img: balanceImg },
+]
 
 const UserBalanceData = ({
   token,
@@ -68,7 +40,7 @@ const UserBalanceData = ({
   underlyingPrice,
   pricePerFullShare,
 }) => {
-  // const [clickedId, setClickedId] = useState(0)
+  const [clickedId, setClickedId] = useState(0)
   const [selectedState, setSelectedState] = useState('1M')
 
   const totalValueRef = useRef(totalValue)
@@ -90,26 +62,12 @@ const UserBalanceData = ({
   const [loadComplete, setLoadComplete] = useState(true)
   const [curDate, setCurDate] = useState('')
   const [curContent, setCurContent] = useState('')
-  const [curContentUnderlying, setCurContentUnderlying] = useState('')
-  const [fixedLen, setFixedLen] = useState(0)
-  // const [tooltipLabel, setTooltipLabel] = useState('')
+  const [tooltipLabel, setTooltipLabel] = useState('')
 
-  // useEffect(() => {
-  //   const label = clickedId === 0 ? `USD Balance` : 'Underlying Balance'
-  //   setTooltipLabel(label)
-  // }, [clickedId])
-
-  const handleTooltipContent = payload => {
-    if (payload && payload.length) {
-      const currentDate = formatDateTime(payload[0].payload.x)
-      const balance = numberWithCommas(Number(payload[0].payload.y).toFixed(fixedLen))
-      const balanceUnderlying = numberWithCommas(Number(payload[0].payload.z))
-
-      setCurDate(currentDate)
-      setCurContent(balance)
-      setCurContentUnderlying(balanceUnderlying)
-    }
-  }
+  useEffect(() => {
+    const label = clickedId === 0 ? `USD Balance` : 'Underlying Balance'
+    setTooltipLabel(label)
+  }, [clickedId])
 
   useEffect(() => {
     const initData = async () => {
@@ -248,37 +206,25 @@ const UserBalanceData = ({
         <Total>
           <FlexDiv>
             <TooltipInfo>
-              <TokenSymbol className="priceshare" color="#15B088">
-                USD Balance
-              </TokenSymbol>
+              <TokenSymbol className="priceshare">{tooltipLabel}</TokenSymbol>
               <FlexDiv>
                 <CurContent color="#6F78AA">
                   {curDate}&nbsp;<span>|</span>&nbsp;
                 </CurContent>
-                <CurContent color="#15B088">${curContent}</CurContent>
-              </FlexDiv>
-            </TooltipInfo>
-          </FlexDiv>
-          <FlexDiv>
-            <TooltipInfo>
-              <TokenSymbol className="priceshare" color="#8884d8">
-                Underlying Balance
-              </TokenSymbol>
-              <FlexDiv>
-                <CurContent color="#6F78AA">
-                  {curDate}&nbsp;<span>|</span>&nbsp;
+                <CurContent color="#15B088">
+                  {clickedId === 0 ? '$' : ''}
+                  {curContent}
                 </CurContent>
-                <CurContent color="#8884d8">{curContentUnderlying}</CurContent>
               </FlexDiv>
             </TooltipInfo>
           </FlexDiv>
-          {/* <FilterGroup>
+          <FilterGroup>
             <ChartButtonsGroup
               buttons={filterList}
               clickedId={clickedId}
               setClickedId={setClickedId}
             />
-          </FilterGroup> */}
+          </FilterGroup>
         </Total>
       </Header>
       <ChartDiv className="advanced-price">
@@ -287,13 +233,9 @@ const UserBalanceData = ({
           data={apiData}
           loadComplete={loadComplete}
           range={selectedState}
-          // filter={clickedId}
+          filter={clickedId}
           setCurDate={setCurDate}
           setCurContent={setCurContent}
-          setCurContentUnderlying={setCurContentUnderlying}
-          handleTooltipContent={handleTooltipContent}
-          setFixedLen={setFixedLen}
-          fixedLen={fixedLen}
         />
       </ChartDiv>
       <ButtonGroup>

@@ -12,8 +12,7 @@ import {
 import { useWindowWidth } from '@react-hook/window-size'
 import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
-// import { ceil10, floor10, round10, numberWithCommas } from '../../../utils'
-import { ceil10, floor10, numberWithCommas } from '../../../utils'
+import { ceil10, floor10, round10, numberWithCommas } from '../../../utils'
 import { LoadingDiv, NoData } from './style'
 import { fromWei } from '../../../services/web3'
 
@@ -84,7 +83,7 @@ function generateChartDataWithSlots(
   slots,
   apiData,
   decimals,
-  // filter,
+  filter,
   balance,
   priceUnderlying,
   sharePrice,
@@ -96,15 +95,14 @@ function generateChartDataWithSlots(
         const value1 = parseFloat(apiData[j][balance])
         const value2 = parseFloat(apiData[j][priceUnderlying])
         const value3 = fromWei(parseFloat(apiData[j][sharePrice]), decimals)
-        seriesData.push({ x: slots[i] * 1000, y: value1 * value2 * value3, z: value1 * value3 })
-        // if (filter === 0) {
-        //   seriesData.push({ x: slots[i] * 1000, y: value1 * value2 * value3, z: value1 * value3 })
-        // } else if (filter === 1) {
-        //   seriesData.push({ x: slots[i] * 1000, y: value1 * value3 })
-        // }
+        if (filter === 0) {
+          seriesData.push({ x: slots[i] * 1000, y: value1 * value2 * value3 })
+        } else if (filter === 1) {
+          seriesData.push({ x: slots[i] * 1000, y: value1 * value3 })
+        }
         break
       } else if (j === apiData.length - 1) {
-        seriesData.push({ x: slots[i] * 1000, y: 0, z: 0 })
+        seriesData.push({ x: slots[i] * 1000, y: 0 })
       }
     }
   }
@@ -124,29 +122,17 @@ function formatXAxis(value, range) {
   return range === '1D' ? `${hour}:${mins}` : `${month} / ${day}`
 }
 
-// function getYAxisValues(min, max, roundNum) {
-//   const bet = Number(max - min)
-//   const ary = []
-//   for (let i = min; i <= max; i += bet / 4) {
-//     const val = round10(i, roundNum)
-//     ary.push(val)
-//   }
-//   return ary
-// }
+function getYAxisValues(min, max, roundNum) {
+  const bet = Number(max - min)
+  const ary = []
+  for (let i = min; i <= max; i += bet / 4) {
+    const val = round10(i, roundNum)
+    ary.push(val)
+  }
+  return ary
+}
 
-// const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCurContent }) => {
-const ApexChart = ({
-  token,
-  data,
-  loadComplete,
-  range,
-  setCurDate,
-  setCurContent,
-  setCurContentUnderlying,
-  handleTooltipContent,
-  setFixedLen,
-  fixedLen,
-}) => {
+const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCurContent }) => {
   const { fontColor } = useThemeContext()
 
   const [mainSeries, setMainSeries] = useState([])
@@ -156,16 +142,17 @@ const ApexChart = ({
   const [loading, setLoading] = useState(false)
   const [isDataReady, setIsDataReady] = useState(true)
   const [roundedDecimal, setRoundedDecimal] = useState(2)
+  const [fixedLen, setFixedLen] = useState(0)
 
-  const formatYAxisTick = value => `$${value}`
   // const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
-  const CustomTooltip = ({ active, payload, onTooltipContentChange }) => {
-    useEffect(() => {
-      if (active && payload && payload.length) {
-        onTooltipContentChange(payload)
-      }
-    }, [active, payload, onTooltipContentChange])
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const currentDate = formatDateTime(payload[0].payload.x)
+      const balance = numberWithCommas(Number(payload[0].payload.y).toFixed(fixedLen))
+      setCurDate(currentDate)
+      setCurContent(balance)
+    }
 
     return null
   }
@@ -191,34 +178,34 @@ const ApexChart = ({
     )
   }
 
-  // const renderCustomYAxisTick = ({ x, y, payload }) => {
-  //   let path = ''
+  const renderCustomYAxisTick = ({ x, y, payload }) => {
+    let path = ''
 
-  //   if (payload.value !== '') {
-  //     path = `${filter === 0 ? '$' : ''}${numberWithCommas(payload.value)}`
-  //   }
-  //   return (
-  //     <text
-  //       orientation="left"
-  //       className="recharts-text recharts-cartesian-axis-tick-value"
-  //       x={x}
-  //       y={y}
-  //       width={60}
-  //       height={310}
-  //       stroke="none"
-  //       fill="#00D26B"
-  //       textAnchor="end"
-  //     >
-  //       <tspan dx={0} dy="0.355em">
-  //         {path}
-  //       </tspan>
-  //     </text>
-  //   )
-  // }
+    if (payload.value !== '') {
+      path = `${filter === 0 ? '$' : ''}${numberWithCommas(payload.value)}`
+    }
+    return (
+      <text
+        orientation="left"
+        className="recharts-text recharts-cartesian-axis-tick-value"
+        x={x}
+        y={y}
+        width={60}
+        height={310}
+        stroke="none"
+        fill="#000"
+        textAnchor="end"
+      >
+        <tspan dx={0} dy="0.355em">
+          {path}
+        </tspan>
+      </text>
+    )
+  }
 
-  // const [minVal, setMinVal] = useState(0)
-  // const [maxVal, setMaxVal] = useState(0)
-  // const [yAxisTicks, setYAxisTicks] = useState([])
+  const [minVal, setMinVal] = useState(0)
+  const [maxVal, setMaxVal] = useState(0)
+  const [yAxisTicks, setYAxisTicks] = useState([])
 
   useEffect(() => {
     const init = async () => {
@@ -249,7 +236,7 @@ const ApexChart = ({
         slots,
         data,
         token.decimals || token.data.watchAsset.decimals,
-        // filter,
+        filter,
         'value',
         'priceUnderlying',
         'sharePrice',
@@ -291,18 +278,16 @@ const ApexChart = ({
       // }
       setRoundedDecimal(-len)
       setFixedLen(len)
-      // setMinVal(minValue)
-      // setMaxVal(maxValue)
+      setMinVal(minValue)
+      setMaxVal(maxValue)
 
       // Set date and price with latest value by default
       setCurDate(formatDateTime(mainData[slotCount - 1].x))
       const balance = numberWithCommas(Number(mainData[slotCount - 1].y).toFixed(fixedLen))
-      const balanceUnderlying = numberWithCommas(Number(mainData[slotCount - 1].z))
       setCurContent(balance)
-      setCurContentUnderlying(balanceUnderlying)
 
-      // const yAxisAry = getYAxisValues(minValue, maxValue, roundedDecimal)
-      // setYAxisTicks(yAxisAry)
+      const yAxisAry = getYAxisValues(minValue, maxValue, roundedDecimal)
+      setYAxisTicks(yAxisAry)
 
       setMainSeries(mainData)
 
@@ -317,10 +302,9 @@ const ApexChart = ({
     token.decimals,
     isDataReady,
     loadComplete,
-    // filter,
+    filter,
     roundedDecimal,
     setCurContent,
-    setCurContentUnderlying,
     setCurDate,
     fixedLen,
   ])
@@ -364,68 +348,34 @@ const ApexChart = ({
               vertical={false}
             />
             <XAxis dataKey="x" tickLine={false} tickCount={5} tick={renderCustomXAxisTick} />
-            {/* <YAxis
+            <YAxis
               dataKey="y"
+              tickLine={false}
               tickCount={5}
               tick={renderCustomYAxisTick}
               ticks={yAxisTicks}
               domain={[minVal, maxVal]}
-              stroke="#00D26B"
-              yAxisId="left"
-              orientation="left"
-              mirror
-            /> */}
-            <YAxis
-              dataKey="y"
-              tickCount={5}
-              tickFormatter={formatYAxisTick}
-              stroke="#00D26B"
-              yAxisId="left"
-              orientation="left"
-              mirror
             />
-            <YAxis
-              dataKey="z"
-              tickCount={5}
-              yAxisId="right"
-              orientation="right"
-              stroke="#8884d8"
-              mirror
-            />
-            {/* <Line
-              dataKey="y"
-              type="monotone"
-              unit="$"
-              strokeLinecap="round"
-              strokeWidth={2}
-              stroke="#00D26B"
-              dot={false}
-              legendType="none"
-              yAxisId="left"
-            /> */}
             <Line
-              dataKey="z"
+              dataKey="y"
               type="monotone"
+              unit="M"
               strokeLinecap="round"
               strokeWidth={2}
-              stroke="#8884d8"
+              stroke="#00D26B"
               dot={false}
               legendType="none"
-              yAxisId="right"
             />
             <Area
               type="monotone"
               dataKey="y"
-              unit="$"
               stroke="#00D26B"
               strokeWidth={2}
               fillOpacity={1}
               fill="url(#colorUvPrice)"
-              yAxisId="left"
             />
-            {/* <Tooltip /> */}
             <Tooltip
-              content={<CustomTooltip onTooltipContentChange={handleTooltipContent} />}
+              content={CustomTooltip}
               cursor={{
                 stroke: '#00D26B',
                 strokeDasharray: 3,
