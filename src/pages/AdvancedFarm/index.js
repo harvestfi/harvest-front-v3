@@ -1323,8 +1323,7 @@ const AdvancedFarm = () => {
                         {useIFARM ? (
                           <div>
                             <p>
-                              This is the profit sharing vault of Harvest. When depositing into the
-                              vault you obtain the yield-bearing token{' '}
+                              This vault enables users to convert their assets into{' '}
                               <a
                                 href="https://etherscan.io/token/0x1571eD0bed4D987fe2b498DdBaE7DFA19519F651"
                                 target="_blank"
@@ -1332,23 +1331,8 @@ const AdvancedFarm = () => {
                               >
                                 iFARM
                               </a>
-                              . If you&apos;re holding{' '}
-                              <a
-                                href="https://etherscan.io/token/0xa0246c9032bC3A600820415aE600c6388619A14D"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                FARM
-                              </a>{' '}
-                              , it is recommended to convert it into interest-bearing{' '}
-                              <a
-                                href="https://etherscan.io/token/0x1571eD0bed4D987fe2b498DdBaE7DFA19519F651"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                iFARM
-                              </a>{' '}
-                              in order be entitled to Harvest&apos;s profit sharing.
+                              . In doing so, they benefit from a portion of the fees collected by
+                              Harvest.
                             </p>
                           </div>
                         ) : (
