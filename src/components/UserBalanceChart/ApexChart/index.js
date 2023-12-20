@@ -4,7 +4,7 @@ import {
   XAxis,
   YAxis,
   Line,
-  Area,
+  // Area,
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
@@ -12,8 +12,8 @@ import {
 import { useWindowWidth } from '@react-hook/window-size'
 import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
-// import { ceil10, floor10, round10, numberWithCommas } from '../../../utils'
-import { ceil10, floor10, numberWithCommas } from '../../../utils'
+import { ceil10, floor10, round10, numberWithCommas } from '../../../utils'
+// import { ceil10, floor10, numberWithCommas } from '../../../utils'
 import { LoadingDiv, NoData } from './style'
 import { fromWei } from '../../../services/web3'
 
@@ -124,15 +124,15 @@ function formatXAxis(value, range) {
   return range === '1D' ? `${hour}:${mins}` : `${month} / ${day}`
 }
 
-// function getYAxisValues(min, max, roundNum) {
-//   const bet = Number(max - min)
-//   const ary = []
-//   for (let i = min; i <= max; i += bet / 4) {
-//     const val = round10(i, roundNum)
-//     ary.push(val)
-//   }
-//   return ary
-// }
+function getYAxisValues(min, max, roundNum) {
+  const bet = Number(max - min)
+  const ary = []
+  for (let i = min; i <= max; i += bet / 4) {
+    const val = round10(i, roundNum)
+    ary.push(val)
+  }
+  return ary
+}
 
 // const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCurContent }) => {
 const ApexChart = ({
@@ -157,7 +157,7 @@ const ApexChart = ({
   const [isDataReady, setIsDataReady] = useState(true)
   const [roundedDecimal, setRoundedDecimal] = useState(2)
 
-  const formatYAxisTick = value => `$${value}`
+  // const formatYAxisTick = value => `$${value}`
   // const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const CustomTooltip = ({ active, payload, onTooltipContentChange }) => {
@@ -191,34 +191,34 @@ const ApexChart = ({
     )
   }
 
-  // const renderCustomYAxisTick = ({ x, y, payload }) => {
-  //   let path = ''
+  const renderCustomYAxisTick = ({ x, y, payload }) => {
+    let path = ''
 
-  //   if (payload.value !== '') {
-  //     path = `${filter === 0 ? '$' : ''}${numberWithCommas(payload.value)}`
-  //   }
-  //   return (
-  //     <text
-  //       orientation="left"
-  //       className="recharts-text recharts-cartesian-axis-tick-value"
-  //       x={x}
-  //       y={y}
-  //       width={60}
-  //       height={310}
-  //       stroke="none"
-  //       fill="#00D26B"
-  //       textAnchor="end"
-  //     >
-  //       <tspan dx={0} dy="0.355em">
-  //         {path}
-  //       </tspan>
-  //     </text>
-  //   )
-  // }
+    if (payload.value !== '') {
+      path = `$${numberWithCommas(payload.value)}`
+    }
+    return (
+      <text
+        orientation="left"
+        className="recharts-text recharts-cartesian-axis-tick-value"
+        x={x}
+        y={y}
+        width={60}
+        height={310}
+        stroke="none"
+        fill="#00D26B"
+        textAnchor="start"
+      >
+        <tspan dx={0} dy="0.355em">
+          {path}
+        </tspan>
+      </text>
+    )
+  }
 
-  // const [minVal, setMinVal] = useState(0)
-  // const [maxVal, setMaxVal] = useState(0)
-  // const [yAxisTicks, setYAxisTicks] = useState([])
+  const [minVal, setMinVal] = useState(0)
+  const [maxVal, setMaxVal] = useState(0)
+  const [yAxisTicks, setYAxisTicks] = useState([])
 
   useEffect(() => {
     const init = async () => {
@@ -291,8 +291,8 @@ const ApexChart = ({
       // }
       setRoundedDecimal(-len)
       setFixedLen(len)
-      // setMinVal(minValue)
-      // setMaxVal(maxValue)
+      setMinVal(minValue)
+      setMaxVal(maxValue)
 
       // Set date and price with latest value by default
       setCurDate(formatDateTime(mainData[slotCount - 1].x))
@@ -301,8 +301,8 @@ const ApexChart = ({
       setCurContent(balance)
       setCurContentUnderlying(balanceUnderlying)
 
-      // const yAxisAry = getYAxisValues(minValue, maxValue, roundedDecimal)
-      // setYAxisTicks(yAxisAry)
+      const yAxisAry = getYAxisValues(minValue, maxValue, roundedDecimal)
+      setYAxisTicks(yAxisAry)
 
       setMainSeries(mainData)
 
@@ -364,18 +364,19 @@ const ApexChart = ({
               vertical={false}
             />
             <XAxis dataKey="x" tickLine={false} tickCount={5} tick={renderCustomXAxisTick} />
-            {/* <YAxis
+            <YAxis
               dataKey="y"
               tickCount={5}
               tick={renderCustomYAxisTick}
               ticks={yAxisTicks}
+              // tickFormatter={formatYAxisTick}
               domain={[minVal, maxVal]}
               stroke="#00D26B"
               yAxisId="left"
               orientation="left"
               mirror
-            /> */}
-            <YAxis
+            />
+            {/* <YAxis
               dataKey="y"
               tickCount={5}
               tickFormatter={formatYAxisTick}
@@ -383,7 +384,7 @@ const ApexChart = ({
               yAxisId="left"
               orientation="left"
               mirror
-            />
+            /> */}
             <YAxis
               dataKey="z"
               tickCount={5}
@@ -392,7 +393,7 @@ const ApexChart = ({
               stroke="#8884d8"
               mirror
             />
-            {/* <Line
+            <Line
               dataKey="y"
               type="monotone"
               unit="$"
@@ -402,7 +403,7 @@ const ApexChart = ({
               dot={false}
               legendType="none"
               yAxisId="left"
-            /> */}
+            />
             <Line
               dataKey="z"
               type="monotone"
@@ -413,7 +414,7 @@ const ApexChart = ({
               legendType="none"
               yAxisId="right"
             />
-            <Area
+            {/* <Area
               type="monotone"
               dataKey="y"
               unit="$"
@@ -422,7 +423,7 @@ const ApexChart = ({
               fillOpacity={1}
               fill="url(#colorUvPrice)"
               yAxisId="left"
-            />
+            /> */}
             {/* <Tooltip /> */}
             <Tooltip
               content={<CustomTooltip onTooltipContentChange={handleTooltipContent} />}
