@@ -279,7 +279,7 @@ const ApexChart = ({
 
       if (unitBtw !== 0) {
         maxValue *= 1.5
-        minValue = 0
+        // minValue = 0
       } else {
         unitBtw = (maxValue - minValue) / 4
       }
