@@ -74,12 +74,23 @@ function findMax(data) {
   const max = Math.max(...ary)
   return max
 }
-
 function findMin(data) {
   const ary = data.map(el => el.y)
   const min = Math.min(...ary)
   return min
 }
+
+function findMaxUnderlying(data) {
+  const ary = data.map(el => el.z)
+  const max = Math.max(...ary)
+  return max
+}
+function findMinUnderlying(data) {
+  const ary = data.map(el => el.z)
+  const min = Math.min(...ary)
+  return min
+}
+
 function generateChartDataWithSlots(
   slots,
   apiData,
@@ -156,6 +167,7 @@ const ApexChart = ({
   const [loading, setLoading] = useState(false)
   const [isDataReady, setIsDataReady] = useState(true)
   const [roundedDecimal, setRoundedDecimal] = useState(2)
+  const [roundedDecimalUnderlying, setRoundedDecimalUnderlying] = useState(2)
 
   // const formatYAxisTick = value => `$${value}`
   // const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
@@ -216,9 +228,38 @@ const ApexChart = ({
     )
   }
 
+  const renderCustomZAxisTick = ({ x, y, payload }) => {
+    let path = ''
+
+    if (payload.value !== '') {
+      path = `${numberWithCommas(payload.value)}`
+    }
+
+    return (
+      <text
+        orientation="right"
+        className="recharts-text recharts-cartesian-axis-tick-value"
+        x={x}
+        y={y}
+        width={60}
+        height={310}
+        stroke="none"
+        fill="#8884d8"
+        textAnchor="end"
+      >
+        <tspan dx={0} dy="0.355em">
+          {path}
+        </tspan>
+      </text>
+    )
+  }
+
   const [minVal, setMinVal] = useState(0)
   const [maxVal, setMaxVal] = useState(0)
+  const [minValUnderlying, setMinValUnderlying] = useState(0)
+  const [maxValUnderlying, setMaxValUnderlying] = useState(0)
   const [yAxisTicks, setYAxisTicks] = useState([])
+  const [zAxisTicks, setZAxisTicks] = useState([])
 
   useEffect(() => {
     const init = async () => {
@@ -231,8 +272,12 @@ const ApexChart = ({
       let mainData = [],
         maxValue,
         minValue,
+        maxValueUnderlying,
+        minValueUnderlying,
         len = 0,
-        unitBtw
+        lenUnderlying = 0,
+        unitBtw,
+        unitBtwUnderlying
 
       if ((data && data.length === 0) || !loadComplete) {
         setIsDataReady(false)
@@ -256,10 +301,16 @@ const ApexChart = ({
       )
       maxValue = findMax(mainData)
       minValue = findMin(mainData)
-      minValue /= 1.02
+      minValue /= 1.01
+
+      maxValueUnderlying = findMaxUnderlying(mainData)
+      minValueUnderlying = findMinUnderlying(mainData)
+      minValueUnderlying /= 1.01
 
       const between = maxValue - minValue
+      const betweenUnderlying = maxValueUnderlying - minValueUnderlying
       unitBtw = between / 4
+      unitBtwUnderlying = betweenUnderlying / 4
       if (unitBtw >= 1) {
         unitBtw = Math.ceil(unitBtw)
         len = unitBtw.toString().length
@@ -277,11 +328,35 @@ const ApexChart = ({
         minValue = floor10(minValue, -len + 1)
       }
 
+      if (unitBtwUnderlying >= 1) {
+        unitBtwUnderlying = Math.ceil(unitBtwUnderlying)
+        lenUnderlying = unitBtwUnderlying.toString().length
+        unitBtwUnderlying = ceil10(unitBtwUnderlying, len - 1)
+        maxValueUnderlying = ceil10(maxValueUnderlying, len - 1)
+        minValueUnderlying = floor10(minValueUnderlying, len - 1)
+      } else if (unitBtwUnderlying === 0) {
+        lenUnderlying = Math.ceil(maxValueUnderlying).toString().length
+        maxValueUnderlying += 10 ** (len - 1)
+        minValueUnderlying -= 10 ** (len - 1)
+      } else {
+        lenUnderlying = Math.ceil(1 / unitBtwUnderlying).toString().length + 1
+        unitBtwUnderlying = ceil10(unitBtwUnderlying, -lenUnderlying)
+        maxValueUnderlying = ceil10(maxValueUnderlying, -lenUnderlying)
+        minValueUnderlying = floor10(minValueUnderlying, -lenUnderlying + 1)
+      }
+
       if (unitBtw !== 0) {
-        maxValue *= 1.02
+        maxValue *= 1.01
         // minValue = 0
       } else {
         unitBtw = (maxValue - minValue) / 4
+      }
+
+      if (unitBtwUnderlying !== 0) {
+        maxValueUnderlying *= 1.05
+        // minValueUnderlying = 0
+      } else {
+        unitBtwUnderlying = (maxValueUnderlying - minValueUnderlying) / 4
       }
 
       // if (unitBtw === 0) {
@@ -291,8 +366,11 @@ const ApexChart = ({
       // }
       setRoundedDecimal(-len)
       setFixedLen(len)
+      setRoundedDecimalUnderlying(-lenUnderlying)
       setMinVal(minValue)
       setMaxVal(maxValue)
+      setMaxValUnderlying(maxValueUnderlying)
+      setMinValUnderlying(minValueUnderlying)
 
       // Set date and price with latest value by default
       setCurDate(formatDateTime(mainData[slotCount - 1].x))
@@ -303,6 +381,13 @@ const ApexChart = ({
 
       const yAxisAry = getYAxisValues(minValue, maxValue, roundedDecimal)
       setYAxisTicks(yAxisAry)
+
+      const zAxisAry = getYAxisValues(
+        minValueUnderlying,
+        maxValueUnderlying,
+        roundedDecimalUnderlying,
+      )
+      setZAxisTicks(zAxisAry)
 
       setMainSeries(mainData)
 
@@ -376,6 +461,18 @@ const ApexChart = ({
               orientation="left"
               mirror
             />
+            <YAxis
+              dataKey="z"
+              tickCount={5}
+              tick={renderCustomZAxisTick}
+              ticks={zAxisTicks}
+              // tickFormatter={formatYAxisTick}
+              domain={[minValUnderlying, maxValUnderlying]}
+              stroke="#8884d8"
+              yAxisId="right"
+              orientation="right"
+              mirror
+            />
             {/* <YAxis
               dataKey="y"
               tickCount={5}
@@ -385,14 +482,14 @@ const ApexChart = ({
               orientation="left"
               mirror
             /> */}
-            <YAxis
+            {/* <YAxis
               dataKey="z"
               tickCount={5}
               yAxisId="right"
               orientation="right"
               stroke="#8884d8"
               mirror
-            />
+            /> */}
             <Line
               dataKey="y"
               type="monotone"
