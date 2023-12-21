@@ -222,6 +222,7 @@ const ApexChart = ({
 
   useEffect(() => {
     const init = async () => {
+      debugger
       setLoading(true)
       if (data === undefined) {
         setIsDataReady(false)
@@ -256,7 +257,7 @@ const ApexChart = ({
       )
       maxValue = findMax(mainData)
       minValue = findMin(mainData)
-      minValue /= 2
+      minValue /= 1.02
 
       const between = maxValue - minValue
       unitBtw = between / 4
@@ -278,7 +279,7 @@ const ApexChart = ({
       }
 
       if (unitBtw !== 0) {
-        maxValue *= 1.5
+        maxValue *= 1.02
         // minValue = 0
       } else {
         unitBtw = (maxValue - minValue) / 4
