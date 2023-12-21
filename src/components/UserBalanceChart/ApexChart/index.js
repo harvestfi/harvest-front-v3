@@ -222,7 +222,6 @@ const ApexChart = ({
 
   useEffect(() => {
     const init = async () => {
-      debugger
       setLoading(true)
       if (data === undefined) {
         setIsDataReady(false)
