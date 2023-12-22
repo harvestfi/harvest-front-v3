@@ -1,7 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react'
-// import ChartButtonsGroup from '../ChartButtonsGroup'
-// import balanceImg from '../../../assets/images/logos/advancedfarm/coins.svg'
-// import usdbalance from '../../../assets/images/logos/advancedfarm/money.svg'
 import {
   getUserBalanceHistories1,
   getUserBalanceHistories2,
@@ -20,7 +17,6 @@ import {
   TooltipInfo,
   FlexDiv,
   CurContent,
-  // FilterGroup,
 } from './style'
 
 const recommendLinks = [
@@ -28,11 +24,6 @@ const recommendLinks = [
   { name: '1M', type: 2, state: '1M' },
   { name: 'ALL', type: 3, state: 'ALL' },
 ]
-
-// const filterList = [
-//   { id: 1, name: `fTokens' USD Value History`, img: usdbalance },
-//   { id: 2, name: 'Underlying Balance History', img: balanceImg },
-// ]
 
 function formatDateTime(value) {
   const date = new Date(value)
@@ -67,7 +58,6 @@ const UserBalanceData = ({
   underlyingPrice,
   pricePerFullShare,
 }) => {
-  // const [clickedId, setClickedId] = useState(0)
   const [selectedState, setSelectedState] = useState('ALL')
 
   const totalValueRef = useRef(totalValue)
@@ -91,12 +81,6 @@ const UserBalanceData = ({
   const [curContent, setCurContent] = useState('')
   const [curContentUnderlying, setCurContentUnderlying] = useState('')
   const [fixedLen, setFixedLen] = useState(0)
-  // const [tooltipLabel, setTooltipLabel] = useState('')
-
-  // useEffect(() => {
-  //   const label = clickedId === 0 ? `USD Balance` : 'Underlying Balance'
-  //   setTooltipLabel(label)
-  // }, [clickedId])
 
   const handleTooltipContent = payload => {
     if (payload && payload.length) {
@@ -265,13 +249,6 @@ const UserBalanceData = ({
               </FlexDiv>
             </TooltipInfo>
           </FlexDiv>
-          {/* <FilterGroup>
-            <ChartButtonsGroup
-              buttons={filterList}
-              clickedId={clickedId}
-              setClickedId={setClickedId}
-            />
-          </FilterGroup> */}
         </Total>
       </Header>
       <ChartDiv className="advanced-price">
@@ -280,7 +257,6 @@ const UserBalanceData = ({
           data={apiData}
           loadComplete={loadComplete}
           range={selectedState}
-          // filter={clickedId}
           setCurDate={setCurDate}
           setCurContent={setCurContent}
           setCurContentUnderlying={setCurContentUnderlying}

@@ -95,7 +95,6 @@ function generateChartDataWithSlots(
   slots,
   apiData,
   decimals,
-  // filter,
   balance,
   priceUnderlying,
   sharePrice,
@@ -108,11 +107,6 @@ function generateChartDataWithSlots(
         const value2 = parseFloat(apiData[j][priceUnderlying])
         const value3 = fromWei(parseFloat(apiData[j][sharePrice]), decimals)
         seriesData.push({ x: slots[i] * 1000, y: value1 * value2 * value3, z: value1 * value3 })
-        // if (filter === 0) {
-        //   seriesData.push({ x: slots[i] * 1000, y: value1 * value2 * value3, z: value1 * value3 })
-        // } else if (filter === 1) {
-        //   seriesData.push({ x: slots[i] * 1000, y: value1 * value3 })
-        // }
         break
       } else if (j === apiData.length - 1) {
         seriesData.push({ x: slots[i] * 1000, y: 0, z: 0 })
@@ -145,7 +139,6 @@ function getYAxisValues(min, max, roundNum) {
   return ary
 }
 
-// const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCurContent }) => {
 const ApexChart = ({
   token,
   data,
@@ -315,7 +308,6 @@ const ApexChart = ({
         slots,
         data,
         token.decimals || token.data.watchAsset.decimals,
-        // filter,
         'value',
         'priceUnderlying',
         'sharePrice',
@@ -423,7 +415,6 @@ const ApexChart = ({
     token.decimals,
     isDataReady,
     loadComplete,
-    // filter,
     roundedDecimal,
     setCurContent,
     setCurContentUnderlying,

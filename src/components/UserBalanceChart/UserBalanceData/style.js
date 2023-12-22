@@ -72,13 +72,6 @@ const ChartDiv = styled.div`
   }
 `
 
-const FilterGroup = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-`
-
 const PriceShow = styled.div`
   display: flex;
 
@@ -349,7 +342,6 @@ export {
   MoreBtn,
   ButtonGroup,
   ChartDiv,
-  FilterGroup,
   PriceShow,
   FilterName,
   TokenSymbol,
