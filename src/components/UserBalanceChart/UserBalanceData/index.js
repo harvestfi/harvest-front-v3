@@ -69,7 +69,7 @@ const UserBalanceData = ({
   pricePerFullShare,
 }) => {
   // const [clickedId, setClickedId] = useState(0)
-  const [selectedState, setSelectedState] = useState('1M')
+  const [selectedState, setSelectedState] = useState('ALL')
 
   const totalValueRef = useRef(totalValue)
   const farmPriceRef = useRef(farmPrice)
@@ -222,12 +222,6 @@ const UserBalanceData = ({
       }
       setLoadComplete(flag1 && flag2)
       setApiData(mergedData)
-      if (mergedData && mergedData.length > 0) {
-        const curTimestamp = new Date().getTime() / 1000
-        const between = curTimestamp - Number(mergedData[mergedData.length - 1].timestamp)
-        const day = between / (24 * 3600)
-        setSelectedState(day < 90 ? '1M' : 'ALL')
-      }
     }
 
     initData()
