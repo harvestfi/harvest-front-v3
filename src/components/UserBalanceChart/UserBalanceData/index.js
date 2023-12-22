@@ -27,7 +27,7 @@ const recommendLinks = [
   { name: '1D', type: 0, state: '1D' },
   { name: '1W', type: 1, state: '1W' },
   { name: '1M', type: 2, state: '1M' },
-  { name: '1Y', type: 3, state: '1Y' },
+  { name: 'ALL', type: 3, state: 'ALL' },
 ]
 
 // const filterList = [
@@ -226,7 +226,7 @@ const UserBalanceData = ({
         const curTimestamp = new Date().getTime() / 1000
         const between = curTimestamp - Number(mergedData[mergedData.length - 1].timestamp)
         const day = between / (24 * 3600)
-        setSelectedState(day < 90 ? '1M' : '1Y')
+        setSelectedState(day < 90 ? '1M' : 'ALL')
       }
     }
 

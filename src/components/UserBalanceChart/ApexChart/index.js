@@ -49,7 +49,7 @@ function getRangeNumber(strRange) {
     ago = 7
   } else if (strRange === '1M') {
     ago = 30
-  } else if (strRange === '1Y') {
+  } else if (strRange === 'ALL') {
     ago = 365
   }
 
@@ -277,7 +277,9 @@ const ApexChart = ({
         len = 0,
         lenUnderlying = 0,
         unitBtw,
-        unitBtwUnderlying
+        unitBtwUnderlying,
+        firstDate,
+        ago
 
       if ((data && data.length === 0) || !loadComplete) {
         setIsDataReady(false)
@@ -287,8 +289,27 @@ const ApexChart = ({
       if ((Object.keys(data).length === 0 && data.constructor === Object) || data.length === 0) {
         return
       }
+
+      if (range === 'ALL') {
+        for (let i = 1; i < data.length; i += 1) {
+          if (data[i].value === 0) {
+            firstDate = data[i].timestamp
+            break
+          }
+        }
+        if (firstDate === undefined) {
+          firstDate = data[data.length - 1].timestamp
+        }
+        const nowDate = new Date(),
+          toDate = Math.floor(nowDate.getTime() / 1000),
+          periodDate = (toDate - Number(firstDate)) / (24 * 60 * 60)
+
+        ago = Math.ceil(periodDate) + 10
+      } else {
+        ago = getRangeNumber(range)
+      }
+
       const slotCount = 50,
-        ago = getRangeNumber(range),
         slots = getTimeSlots(ago, slotCount)
       mainData = generateChartDataWithSlots(
         slots,
@@ -373,9 +394,9 @@ const ApexChart = ({
       setMinValUnderlying(minValueUnderlying)
 
       // Set date and price with latest value by default
-      setCurDate(formatDateTime(mainData[slotCount - 1].x))
-      const balance = numberWithCommas(Number(mainData[slotCount - 1].y).toFixed(fixedLen))
-      const balanceUnderlying = numberWithCommas(Number(mainData[slotCount - 1].z))
+      setCurDate(formatDateTime(mainData[mainData.length - 1].x))
+      const balance = numberWithCommas(Number(mainData[mainData.length - 1].y).toFixed(fixedLen))
+      const balanceUnderlying = numberWithCommas(Number(mainData[mainData.length - 1].z))
       setCurContent(balance)
       setCurContentUnderlying(balanceUnderlying)
 
