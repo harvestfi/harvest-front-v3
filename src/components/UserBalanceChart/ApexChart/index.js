@@ -13,7 +13,6 @@ import { useWindowWidth } from '@react-hook/window-size'
 import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { ceil10, floor10, round10, numberWithCommas } from '../../../utils'
-// import { ceil10, floor10, numberWithCommas } from '../../../utils'
 import { LoadingDiv, NoData } from './style'
 import { fromWei } from '../../../services/web3'
 
@@ -161,9 +160,6 @@ const ApexChart = ({
   const [isDataReady, setIsDataReady] = useState(true)
   const [roundedDecimal, setRoundedDecimal] = useState(2)
   const [roundedDecimalUnderlying, setRoundedDecimalUnderlying] = useState(2)
-
-  // const formatYAxisTick = value => `$${value}`
-  // const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const CustomTooltip = ({ active, payload, onTooltipContentChange }) => {
     useEffect(() => {
@@ -466,7 +462,6 @@ const ApexChart = ({
               tickCount={5}
               tick={renderCustomYAxisTick}
               ticks={yAxisTicks}
-              // tickFormatter={formatYAxisTick}
               domain={[minVal, maxVal]}
               stroke="#00D26B"
               yAxisId="left"
@@ -478,7 +473,6 @@ const ApexChart = ({
               tickCount={5}
               tick={renderCustomZAxisTick}
               ticks={zAxisTicks}
-              // tickFormatter={formatYAxisTick}
               domain={[minValUnderlying, maxValUnderlying]}
               stroke="#8884d8"
               yAxisId="right"
@@ -523,17 +517,6 @@ const ApexChart = ({
               legendType="none"
               yAxisId="right"
             />
-            {/* <Area
-              type="monotone"
-              dataKey="y"
-              unit="$"
-              stroke="#00D26B"
-              strokeWidth={2}
-              fillOpacity={1}
-              fill="url(#colorUvPrice)"
-              yAxisId="left"
-            /> */}
-            {/* <Tooltip /> */}
             <Tooltip
               content={<CustomTooltip onTooltipContentChange={handleTooltipContent} />}
               cursor={{
