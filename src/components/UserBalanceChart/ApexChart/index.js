@@ -456,6 +456,27 @@ const ApexChart = ({
               stroke="rgba(228, 228, 228, 0.2)"
               vertical={false}
             />
+            <Line
+              dataKey="y"
+              type="monotone"
+              unit="$"
+              strokeLinecap="round"
+              strokeWidth={2}
+              stroke="#00D26B"
+              dot={false}
+              legendType="none"
+              yAxisId="left"
+            />
+            <Line
+              dataKey="z"
+              type="monotone"
+              strokeLinecap="round"
+              strokeWidth={2}
+              stroke="#8884d8"
+              dot={false}
+              legendType="none"
+              yAxisId="right"
+            />
             <XAxis dataKey="x" tickLine={false} tickCount={5} tick={renderCustomXAxisTick} />
             <YAxis
               dataKey="y"
@@ -496,27 +517,6 @@ const ApexChart = ({
               stroke="#8884d8"
               mirror
             /> */}
-            <Line
-              dataKey="y"
-              type="monotone"
-              unit="$"
-              strokeLinecap="round"
-              strokeWidth={2}
-              stroke="#00D26B"
-              dot={false}
-              legendType="none"
-              yAxisId="left"
-            />
-            <Line
-              dataKey="z"
-              type="monotone"
-              strokeLinecap="round"
-              strokeWidth={2}
-              stroke="#8884d8"
-              dot={false}
-              legendType="none"
-              yAxisId="right"
-            />
             <Tooltip
               content={<CustomTooltip onTooltipContentChange={handleTooltipContent} />}
               cursor={{
