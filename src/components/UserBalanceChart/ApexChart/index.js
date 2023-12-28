@@ -310,11 +310,11 @@ const ApexChart = ({
       )
       maxValue = findMax(mainData)
       minValue = findMin(mainData)
-      minValue /= 1.05
+      minValue /= 1.01
 
       maxValueUnderlying = findMaxUnderlying(mainData)
       minValueUnderlying = findMinUnderlying(mainData)
-      minValueUnderlying /= 1.05
+      minValueUnderlying /= 1.01
 
       const between = maxValue - minValue
       const betweenUnderlying = maxValueUnderlying - minValueUnderlying
@@ -355,14 +355,22 @@ const ApexChart = ({
       }
 
       if (unitBtw !== 0) {
-        maxValue *= 1.05
+        if (minValue === 0) {
+          maxValue *= 1.2
+        } else {
+          maxValue *= 1.01
+        }
         // minValue = 0
       } else {
         unitBtw = (maxValue - minValue) / 4
       }
 
       if (unitBtwUnderlying !== 0) {
-        maxValueUnderlying *= 1.2
+        if (minValueUnderlying === 0) {
+          maxValueUnderlying *= 1.4
+        } else {
+          maxValueUnderlying *= 1.05
+        }
         // minValueUnderlying = 0
       } else {
         unitBtwUnderlying = (maxValueUnderlying - minValueUnderlying) / 4
