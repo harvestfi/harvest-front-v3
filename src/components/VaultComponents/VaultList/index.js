@@ -29,7 +29,6 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
 import {
-  formatNumber,
   parseValue,
   getTotalApy,
   getUserVaultBalance,
@@ -237,7 +236,7 @@ const formatVaults = (
             } else {
               usdPrice = groupOfVaults[v].usdPrice
             }
-            return formatNumber(
+            const usdBalance = Number(
               new BigNumber(
                 fromWei(
                   parseValue(
@@ -249,8 +248,8 @@ const formatVaults = (
               )
                 .multipliedBy(Number(usdPrice))
                 .toString(),
-              4,
             )
+            return usdBalance
           },
           sortOrder,
         )
