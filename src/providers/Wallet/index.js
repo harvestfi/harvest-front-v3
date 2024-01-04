@@ -64,7 +64,7 @@ const WalletProvider = _ref => {
     }
     fetchData()
 
-    if (!connecting) {
+    if (!connect) {
       if (
         window &&
         window.ethereum &&
@@ -73,7 +73,7 @@ const WalletProvider = _ref => {
       )
         connect({ autoSelect: { label: 'Coinbase Wallet', disableModals: true } })
     }
-  }, [])
+  }, [connect])
 
   const disconnectAction = useCallback(async () => {
     if (!isLedgerLive()) {
