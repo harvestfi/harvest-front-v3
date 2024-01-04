@@ -237,15 +237,14 @@ const UserBalanceData = ({
             </TooltipInfo>
           </FlexDiv>
           <FlexDiv>
-            <TooltipInfo>
+            <TooltipInfo className="tooltip-underlying">
               <TokenSymbol className="priceshare" color="#8884d8">
                 Underlying Balance
               </TokenSymbol>
               <FlexDiv>
-                <CurContent color="#6F78AA">
-                  {curDate}&nbsp;<span>|</span>&nbsp;
+                <CurContent color="#8884d8" className="tt-content-underlying">
+                  {curContentUnderlying}
                 </CurContent>
-                <CurContent color="#8884d8">{curContentUnderlying}</CurContent>
               </FlexDiv>
             </TooltipInfo>
           </FlexDiv>

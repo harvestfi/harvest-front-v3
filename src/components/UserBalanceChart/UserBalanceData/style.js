@@ -116,6 +116,10 @@ const TokenSymbol = styled.div`
 
 const TooltipInfo = styled.div`
   align-self: center;
+
+  &.tooltip-underlying {
+    text-align: right;
+  }
 `
 
 const FlexDiv = styled.div`
@@ -126,6 +130,10 @@ const CurContent = styled.div`
   color: ${props => props.color};
   font-size: 13px;
   font-weight: 500;
+
+  &.tt-content-underlying {
+    width: 100%;
+  }
 
   @media screen and (max-width: 992px) {
     font-size: 10px;
