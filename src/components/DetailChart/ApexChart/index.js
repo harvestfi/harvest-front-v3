@@ -20,9 +20,7 @@ import { fromWei } from '../../../services/web3'
 
 function getRangeNumber(strRange) {
   let ago = 30
-  if (strRange === '1D') {
-    ago = 1
-  } else if (strRange === '1W') {
+  if (strRange === '1W') {
     ago = 7
   } else if (strRange === '1M') {
     ago = 30
