@@ -197,7 +197,7 @@ const ApexChart = ({
       setCurDate(formatDateTime(payload[0].payload.x))
       const content = numberWithCommas(
         Number(payload[0].payload.y).toFixed(
-          filter === 1 ? 0 : filter === 0 ? fixedLen : roundNumber,
+          filter === 1 ? 2 : filter === 0 ? fixedLen : roundNumber,
         ),
       )
       setCurContent(content)
@@ -480,7 +480,7 @@ const ApexChart = ({
       setCurDate(formatDateTime(mainData[slotCount - 1].x))
       const content = numberWithCommas(
         Number(mainData[slotCount - 1].y).toFixed(
-          filter === 1 ? 0 : filter === 0 ? fixedLen : roundNum,
+          filter === 1 ? 2 : filter === 0 ? fixedLen : roundNum,
         ),
       )
       setCurContent(content)
