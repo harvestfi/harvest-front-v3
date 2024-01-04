@@ -18,7 +18,7 @@ import {
   POLL_BALANCES_INTERVAL_MS,
 } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
-import { formatNumber, isLedgerLive, isSafeApp } from '../../utils'
+import { isSafeApp } from '../../utils'
 import contracts from './contracts'
 
 export const getChainHexadecimal = chainId => `0x${Number(chainId).toString(16)}`
