@@ -26,7 +26,7 @@ function getRangeNumber(strRange) {
     ago = 7
   } else if (strRange === '1M') {
     ago = 30
-  } else if (strRange === '1Y') {
+  } else if (strRange === 'ALL') {
     ago = 365
   }
 
@@ -267,7 +267,6 @@ const ApexChart = ({
         setIsDataReady(false)
         return
       }
-      const ago = getRangeNumber(range)
 
       let mainData = [],
         tvlData = [],
@@ -283,7 +282,27 @@ const ApexChart = ({
         minValue,
         len = 0,
         unitBtw,
-        roundNum
+        roundNum,
+        firstDate,
+        ago
+
+      if (range === 'ALL') {
+        if (filter === 0) {
+          firstDate = data.generalApies[data.generalApies.length - 1].timestamp
+        } else if (filter === 1) {
+          firstDate = data.tvls[data.tvls.length - 1].timestamp
+        } else {
+          firstDate = data.vaultHistories[data.vaultHistories.length - 1].timestamp
+        }
+
+        const nowDate = new Date(),
+          toDate = Math.floor(nowDate.getTime() / 1000),
+          periodDate = (toDate - Number(firstDate)) / (24 * 60 * 60)
+
+        ago = Math.ceil(periodDate)
+      } else {
+        ago = getRangeNumber(range)
+      }
 
       if (filter === 1) {
         if (isIFARM) {

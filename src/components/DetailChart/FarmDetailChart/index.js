@@ -31,7 +31,7 @@ const recommendLinks = [
   { name: '1D', type: 0, state: '1D' },
   { name: '1W', type: 1, state: '1W' },
   { name: '1M', type: 2, state: '1M' },
-  { name: '1Y', type: 3, state: '1Y' },
+  { name: 'ALL', type: 3, state: 'ALL' },
 ]
 
 const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
@@ -65,7 +65,7 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
           const between =
             curTimestamp - Number(data.vaultHistories[data.vaultHistories.length - 1].timestamp)
           const day = between / (24 * 3600)
-          setSelectedState(day < 90 ? '1M' : '1Y')
+          setSelectedState(day < 90 ? '1M' : 'ALL')
         }
       } else {
         setSelectedState('1M')
