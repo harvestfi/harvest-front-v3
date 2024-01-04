@@ -78,8 +78,8 @@ const UserBalanceData = ({
   const [apiData, setApiData] = useState({})
   const [loadComplete, setLoadComplete] = useState(true)
   const [curDate, setCurDate] = useState('')
-  const [curContent, setCurContent] = useState('')
-  const [curContentUnderlying, setCurContentUnderlying] = useState('')
+  const [curContent, setCurContent] = useState('0')
+  const [curContentUnderlying, setCurContentUnderlying] = useState('0')
   const [fixedLen, setFixedLen] = useState(0)
 
   const handleTooltipContent = payload => {
@@ -230,7 +230,7 @@ const UserBalanceData = ({
               </TokenSymbol>
               <FlexDiv>
                 <CurContent color="#6F78AA">
-                  {curDate}&nbsp;<span>|</span>&nbsp;
+                  {curDate}&nbsp;<span>{curContent === '0' ? '' : '|'}</span>&nbsp;
                 </CurContent>
                 <CurContent color="#15B088">${curContent}</CurContent>
               </FlexDiv>
