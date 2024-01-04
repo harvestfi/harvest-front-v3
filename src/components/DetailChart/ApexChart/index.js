@@ -10,6 +10,7 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from 'recharts'
+import { round } from 'lodash'
 import { ClipLoader } from 'react-spinners'
 import { useWindowWidth } from '@react-hook/window-size'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -140,6 +141,11 @@ function getYAxisValues(min, max, roundNum, filter) {
 
     for (let j = 0; j < ary.length; j += 1) {
       const val = ary[j].toFixed(roundNum)
+      result.push(val)
+    }
+  } else if (filter === 1) {
+    for (let i = min; i <= max; i += duration / 4) {
+      const val = round(i, 2)
       result.push(val)
     }
   } else {
