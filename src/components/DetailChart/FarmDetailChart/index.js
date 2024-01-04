@@ -36,7 +36,7 @@ const recommendLinks = [
 
 const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
   const [clickedId, setClickedId] = useState(1)
-  const [selectedState, setSelectedState] = useState('1M')
+  const [selectedState, setSelectedState] = useState('ALL')
 
   const { account } = useWallet()
   const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
@@ -59,18 +59,6 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
   useEffect(() => {
     const initData = async () => {
       const data = await getDataQuery(365, address, chainId, account)
-      if (clickedId === 2) {
-        if (data && data.vaultHistories.length > 0) {
-          const curTimestamp = new Date().getTime() / 1000
-          const between =
-            curTimestamp - Number(data.vaultHistories[data.vaultHistories.length - 1].timestamp)
-          const day = between / (24 * 3600)
-          setSelectedState(day < 90 ? '1M' : 'ALL')
-        }
-      } else {
-        setSelectedState('1M')
-      }
-
       setApiData(data)
       if (isIFARM) {
         const dataIFarm = await getDataQuery(365, token.tokenAddress, chainId, account)
