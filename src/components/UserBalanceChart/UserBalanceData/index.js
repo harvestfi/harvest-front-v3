@@ -229,9 +229,6 @@ const UserBalanceData = ({
                 USD Balance
               </TokenSymbol>
               <FlexDiv>
-                {/* <CurContent color="#6F78AA">
-                  {curDate}&nbsp;<span>{curContent === '0' ? '' : '|'}</span>&nbsp;
-                </CurContent> */}
                 <CurContent color="#6F78AA">
                   {curContent === '0' ? (
                     ''
