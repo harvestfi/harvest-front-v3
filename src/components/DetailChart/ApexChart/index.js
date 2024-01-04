@@ -288,11 +288,17 @@ const ApexChart = ({
 
       if (range === 'ALL') {
         if (filter === 0) {
-          firstDate = data.generalApies[data.generalApies.length - 1].timestamp
+          firstDate =
+            data?.tvls?.length > 0
+              ? data.generalApies[data.generalApies.length - 1].timestamp
+              : null
         } else if (filter === 1) {
-          firstDate = data.tvls[data.tvls.length - 1].timestamp
+          firstDate = data?.tvls?.length > 0 ? data.tvls[data.tvls.length - 1].timestamp : null
         } else {
-          firstDate = data.vaultHistories[data.vaultHistories.length - 1].timestamp
+          firstDate =
+            data?.tvls?.length > 0
+              ? data.vaultHistories[data.vaultHistories.length - 1].timestamp
+              : null
         }
 
         const nowDate = new Date(),
