@@ -3,7 +3,7 @@ import { isEmpty, get } from 'lodash'
 import React, { useState, useEffect } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import { useMediaQuery } from 'react-responsive'
-import { quote, getTokenAllowance, approve } from 'wido'
+// import { quote, getTokenAllowance, approve } from 'wido'
 import ReactTooltip from 'react-tooltip'
 import { Spinner } from 'react-bootstrap'
 import { BsArrowDown } from 'react-icons/bs'
@@ -36,6 +36,7 @@ import {
   AnimateDotDiv,
 } from './style'
 import { useVaults } from '../../../../providers/Vault'
+import { useEnso } from '../../../../providers/Enso'
 
 const DepositStart = ({
   pickedToken,
@@ -61,6 +62,7 @@ const DepositStart = ({
   const { handleDeposit, handleApproval } = useActions()
   const { contracts } = useContracts()
   const { fetchUserPoolStats, userStats } = usePools()
+  const { getEnsoRoute, ensoApprove, getEnsoApprovals } = useEnso()
 
   const slippagePercentage = 0.005 // Default slippage Percent
   const chainId = token.chain || token.data.chain
@@ -138,29 +140,34 @@ const DepositStart = ({
         async () => {},
       )
     } else {
-      const user = account
-      const fromChainId = chainId
-      const fromToken = pickedToken.address
-      const toChainId = chainId
       const mainWeb = await getWeb3(chainId, account, web3)
-      const quoteResult = await quote(
-        {
-          fromChainId, // Chain Id of from token
-          fromToken, // Token address of from token
-          toChainId, // Chain Id of to token
-          toToken, // Token address of to token
-          amount, // Token amount of from token
-          slippagePercentage, // Acceptable max slippage for the swap
-          user, // Address of user placing the order.
-        },
-        mainWeb.currentProvider,
-      )
+
+      const route = await getEnsoRoute({
+        chainId,
+        amountIn: amount,
+        fromAddress: account,
+        slippage: slippagePercentage * 10000,
+        tokenIn: pickedToken.address,
+        tokenOut: toToken,
+      })
+      // const quoteResult = await quote(
+      //   {
+      //     fromChainId, // Chain Id of from token
+      //     fromToken, // Token address of from token
+      //     toChainId, // Chain Id of to token
+      //     toToken, // Token address of to token
+      //     amount, // Token amount of from token
+      //     slippagePercentage, // Acceptable max slippage for the swap
+      //     user, // Address of user placing the order.
+      //   },
+      //   mainWeb.currentProvider,
+      // )
 
       await mainWeb.eth.sendTransaction({
-        from: quoteResult.from,
-        data: quoteResult.data,
-        to: quoteResult.to,
-        value: quoteResult.value,
+        from: route.tx.from,
+        data: route.tx.data,
+        to: route.tx.to,
+        value: route.tx.value,
       })
 
       await fetchUserPoolStats([fAssetPool], account, userStats)
@@ -183,17 +190,18 @@ const DepositStart = ({
         async () => {},
       )
     } else {
-      const { data, to } = await approve({
-        chainId,
-        fromToken: pickedToken.address,
-        toToken,
-        amount: amnt,
-      })
+      const { tx } = await ensoApprove(chainId, account, pickedToken.address, amnt.toString())
+      // const { data, to } = await approve({
+      //   chainId,
+      //   fromToken: pickedToken.address,
+      //   toToken,
+      //   amount: amnt,
+      // })
       const mainWeb = await getWeb3(chainId, account, web3)
       await mainWeb.eth.sendTransaction({
         from: account,
-        data,
-        to,
+        data: tx.data,
+        to: tx.to,
       })
     }
   }
@@ -208,13 +216,18 @@ const DepositStart = ({
         if (pickedToken.default) {
           allowanceCheck = approvedBalances[tokenSymbol]
         } else {
-          const { allowance } = await getTokenAllowance({
-            chainId,
-            fromToken: pickedToken.address,
-            toToken,
-            accountAddress: account, // User
-          })
-          allowanceCheck = allowance
+          const approvals = await getEnsoApprovals(chainId, account)
+          const approval = approvals.find(
+            item => item.token.toLowerCase() === pickedToken.address.toLowerCase(),
+          )
+          allowanceCheck = approval ? approval.allowance : 0
+          // const { allowance } = await getTokenAllowance({
+          //   chainId,
+          //   fromToken: pickedToken.address,
+          //   toToken,
+          //   accountAddress: account, // User
+          // })
+          // allowanceCheck = allowance
         }
 
         if (!new BigNumber(allowanceCheck).gte(amount)) {

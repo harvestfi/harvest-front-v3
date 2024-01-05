@@ -7,7 +7,7 @@ import ReactHtmlParser from 'react-html-parser'
 import ReactTooltip from 'react-tooltip'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import { getBalances, getSupportedTokens } from 'wido'
+import { ethers } from 'ethers'
 import { BiLeftArrowAlt } from 'react-icons/bi'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
@@ -120,6 +120,7 @@ import {
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 // import { array } from 'prop-types'
+import { useEnso } from '../../providers/Enso'
 
 const chainList = [
   { id: 1, name: 'Ethereum', chainId: 1 },
@@ -191,6 +192,7 @@ const AdvancedFarm = () => {
   const { paramAddress } = useParams()
   // Switch Tag (Deposit/Withdraw)
   const [activeDepo, setActiveDepo] = useState(true)
+  const { ensoBaseTokens, getEnsoBalances, getEnsoPrice } = useEnso()
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
@@ -438,7 +440,6 @@ const AdvancedFarm = () => {
     { name: 'Details', img: BarChart },
   ]
 
-  const toTokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
   useEffect(() => {
     let staked,
       unstaked,
@@ -520,24 +521,46 @@ const AdvancedFarm = () => {
   useEffect(() => {
     const getTokenBalance = async () => {
       try {
-        if (chain && account && Object.keys(balances).length !== 0) {
-          const curBalances = await getBalances(account, [chain.toString()])
+        if (
+          chain &&
+          account &&
+          Object.keys(balances).length !== 0 &&
+          Object.keys(ensoBaseTokens).length !== 0
+        ) {
+          let supList = [],
+            directInSup = {},
+            directInBalance = {}
+
+          const ensoRawBalances = await getEnsoBalances(account, chain.toString())
+          const curBalances = (
+            await Promise.all(
+              ensoRawBalances.map(async balance => {
+                if (!ethers.utils.isAddress(balance.token))
+                  balance.token = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+                const baseToken = ensoBaseTokens[chain].find(el => el.address === balance.token)
+                const price = baseToken
+                  ? await getEnsoPrice(chain.toString(), baseToken.address)
+                  : 0
+                const item = {
+                  symbol: baseToken?.symbol,
+                  address: baseToken?.address,
+                  balance: balance.amount,
+                  default: false,
+                  usdValue: Number(fromWei(balance.amount, balance.decimals)) * price,
+                  usdPrice: price,
+                  logoURI: baseToken?.logoURI,
+                  decimals: balance.decimals,
+                  chainId: chain,
+                }
+                return item
+              }),
+            )
+          ).filter(item => item.address)
           const curSortedBalances = curBalances.sort(function reducer(a, b) {
             return Number(fromWei(b.balance, b.decimals)) - Number(fromWei(a.balance, a.decimals))
           })
           setBalanceList(curSortedBalances)
-          let supList = [],
-            directInSup = {},
-            directInBalance = {}
-          try {
-            supList = await getSupportedTokens({
-              chainId: [chain],
-              toToken: toTokenAddress,
-              toChainId: chain,
-            })
-          } catch (err) {
-            console.log('getSupportedTokens of Wido: ', err)
-          }
+          supList = curBalances
           const tokenAddress =
             token.tokenAddress !== undefined && token.tokenAddress.length !== 2
               ? token.tokenAddress
@@ -635,30 +658,32 @@ const AdvancedFarm = () => {
           supList.shift()
           setSupTokenList(supList)
 
-          const supNoBalanceList = []
-          if (supList.length > 0) {
-            for (let i = 0; i < supList.length; i += 1) {
-              if (Number(supList[i].balance) === 0) {
-                supNoBalanceList.push(supList[i])
-              }
-            }
-          }
-          setSupTokenNoBalanceList(supNoBalanceList)
+          // const supNoBalanceList = []
+          // if (supList.length > 0) {
+          //   for (let i = 0; i < supList.length; i += 1) {
+          //     if (Number(supList[i].balance) === 0) {
+          //       supNoBalanceList.push(supList[i])
+          //     }
+          //   }
+          // }
+          // setSupTokenNoBalanceList(supNoBalanceList)
+          setSupTokenNoBalanceList({}) // TODO: remove supTokenNoBalanceList once confirmed
 
-          const soonSupList = []
-          for (let j = 0; j < curBalances.length; j += 1) {
-            const supToken = supList.find(el => el.address === curBalances[j].address)
-            if (!supToken) {
-              soonSupList.push(curBalances[j])
-            }
+          // const soonSupList = []
+          // for (let j = 0; j < curBalances.length; j += 1) {
+          //   const supToken = supList.find(el => el.address === curBalances[j].address)
+          //   if (!supToken) {
+          //     soonSupList.push(curBalances[j])
+          //   }
 
-            if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
-              if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
-                directInBalance = curBalances[j]
-              }
-            }
-          }
-          setSoonToSupList(soonSupList)
+          //   if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
+          //     if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
+          //       directInBalance = curBalances[j]
+          //     }
+          //   }
+          // }
+          // setSoonToSupList(soonSupList)
+          setSoonToSupList({}) // TODO: remove soonToSupList once confirmed
         }
       } catch (err) {
         console.log('getTokenBalance: ', err)
@@ -666,7 +691,7 @@ const AdvancedFarm = () => {
     }
 
     getTokenBalance()
-  }, [account, chain, balances, convertSuccess]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, chain, balances, convertSuccess, ensoBaseTokens, getEnsoBalances]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (supTokenList.length > 0) {
