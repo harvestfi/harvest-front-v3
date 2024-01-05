@@ -49,6 +49,13 @@ html {
           padding: 0;
         }
       }
+      .farm-mobile-filter {
+        width: 65%!important;
+        height: 100%!important;
+        right: 0;
+        background: #FFF;
+        box-shadow: -3px 4px 4px 0px rgba(0, 0, 0, 0.10);
+      }
     }
 
     button {
@@ -352,11 +359,6 @@ html {
     border-radius: 12px; 
     padding-top: 15px;
     margin-bottom: 7px;
-
-    @media screen and (max-width: 992px) {
-      padding: 7px 11px;
-      margin-bottom: 0;
-    }
   }
 
   .detail-box-main {
@@ -372,24 +374,17 @@ html {
       &:last-child {
         margin: 0;
       }
-
-      @media screen and (max-width: 992px) {
-        width: 18px;
-        height: 18px;
-      }
     }
   }
 
   .detail-apy {
     font-size: 14px; 
     line-height: 24px;
-    font-weight: 500;
-    color: #000;
+    font-weight: 600;
+    color: #101828;
 
     @media screen and (max-width: 992px) {
-      font-size: 10px;
-      line-height: 18px;
-      color: #15202B;
+      font-size: 12px;
     }
   }
 
@@ -397,11 +392,10 @@ html {
     font-size: 14px; 
     line-height: 24px;
     font-weight: 500;
-    color: #344054;
+    color: #6F78AA;
 
     @media screen and (max-width: 992px) {
-      font-size: 10px;
-      line-height: 18px;
+      font-size: 12px;
     }
   }
 
@@ -409,11 +403,10 @@ html {
     font-size: 14px; 
     line-height: 24px;
     font-weight: 500;
-    color: #344054;
+    color: #6F78AA;
 
     @media screen and (max-width: 992px) {
-      font-size: 10px;
-      line-height: 18px;
+      font-size: 12px;
     }
   }
 
@@ -421,32 +414,25 @@ html {
     font-size: 14px; 
     line-height: 24px;
     font-weight: 500;
-    color: #344054;
+    color: #6F78AA;
 
     @media screen and (max-width: 992px) {
-      font-size: 10px;
-      line-height: 18px;
+      font-size: 12px;
     }
   }
 
   .detail-token {
     text-decoration: underline;
-
-    @media screen and (max-width: 992px) {
-      font-size: 10px;
-      line-height: 18px;
-    }
   }
 
   .detail-token-no-width {
     font-size: 14px; 
     line-height: 24px;
     font-weight: 500;
-    color: #344054;
+    color: #6F78AA;
 
     @media screen and (max-width: 992px) {
-      font-size: 10px;
-      line-height: 18px;
+      font-size: 12px;
     }
   }
 
@@ -475,28 +461,16 @@ html {
       width: 36%; 
       font-size: 16px; 
       font-weight: 400;
-
-      @media screen and (max-width: 992px) {
-        font-size: 13px;
-      }
     }
 
     .detail-desc-auto {
       font-size: 16px; 
       font-weight: 400;
-
-      @media screen and (max-width: 992px) {
-        font-size: 13px;
-      }
     }
 
     .detail-desc-no-width {
       font-size: 16px; 
       font-weight: 400;
-
-      @media screen and (max-width: 992px) {
-        font-size: 13px;
-      }
     }
 
     .detail-token {
@@ -514,10 +488,6 @@ html {
       font-size: 16px; 
       font-weight: 400; 
       // text-decoration: underline;
-
-      @media screen and (max-width: 992px) {
-        font-size: 13px;
-      }
     }
   }
 
@@ -526,9 +496,21 @@ html {
   }
 
   .modal-notification {
+    @media screen and (max-width: 576px) {
+      margin: unset;
+      height: 100%;
+    }
     .modal-content {
       border: none;
       border-radius: 12px;
+
+      @media screen and (max-width: 576px) {
+        position: absolute;
+        bottom: 0;
+        border-bottom-right-radius: 0px;
+        border-bottom-left-radius: 0px;
+      }
+
       .modal-header {
         background: #FFB54F;
         font-weight: 600;
@@ -538,6 +520,8 @@ html {
         color: #FFFFFF;
         justify-content: center;
         padding: 24px;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
       }
       .modal-body {
         padding: 24px;
@@ -607,23 +591,12 @@ html {
     font-size: 12px;
     font-weight: 400;
     line-height: 16px;
-    @media screen and (max-width: 992px) {
-      font-size: 6px;
-      font-weight: 400;
-      line-height: 8px;
-    }
   }
 
   .advanced-farm .recharts-cartesian-axis-tick {
     font-size: 11px;
     font-weight: 500;
     line-height: 16px;
-
-    @media screen and (max-width: 992px) {
-      font-size: 6px;
-      font-weight: 400;
-      line-height: 8px;
-    }
   }
 
   .recharts-cartesian-axis-line {
@@ -681,8 +654,11 @@ const Monospace = styled.span`
   border-bottom: ${props => props.borderBottom || 'unset'};
   color: #101828;
   font-size: 14px !important;
-  font-weight: 500;
+  font-weight: ${props => props.fontWeight || '500'};
   line-height: 20px;
+  @media screen and (max-width: 992px) {
+    font-weight: 700;
+  }
 `
 
 const Box = styled.div`

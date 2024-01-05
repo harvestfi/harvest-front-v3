@@ -85,16 +85,7 @@ const DesktopPanelHeader = ({
             ? token.data.collateralAddress
             : token.vaultAddress || token.tokenAddress
           setPrevPage(window.location.href)
-          let url
-          if (
-            token.tokenNames[0] === 'GNOME' &&
-            token.tokenNames[1] === 'ETH' &&
-            network === 'polygon'
-          ) {
-            url = `${directDetailUrl}specadvanced/${network}/${address}`
-          } else {
-            url = `${directDetailUrl}advanced/${network}/${address}`
-          }
+          const url = `${directDetailUrl}advanced/${network}/${address}`
           if (e.ctrlKey) {
             window.open(url, '_blank')
           } else {
@@ -152,6 +143,7 @@ const DesktopPanelHeader = ({
             loadingFarmingBalance={loadingFarmingBalance}
             vaultPool={vaultPool}
             loadedVault={loadedVault}
+            useIFARM={useIFARM}
           />
         </ValueContainer>
       </PanelContainer>

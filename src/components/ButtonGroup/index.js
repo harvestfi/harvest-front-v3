@@ -2,7 +2,14 @@ import React from 'react'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { ButtonsGroup, ButtonStyle } from './style'
 
-const ButtonGroup = ({ buttons, doSomethingAfterClick, clickedId, setClickedId, fontColor }) => {
+const ButtonGroup = ({
+  buttons,
+  doSomethingAfterClick,
+  clickedId,
+  setClickedId,
+  fontColor,
+  unsetWidth,
+}) => {
   const { backColor, borderColor, filterColor, filterChainHoverColor } = useThemeContext()
 
   const handleClick = (event, id) => {
@@ -35,6 +42,7 @@ const ButtonGroup = ({ buttons, doSomethingAfterClick, clickedId, setClickedId, 
           filterColor={filterColor}
           borderColor={borderColor}
           hoverColor={filterChainHoverColor}
+          unsetWidth={unsetWidth}
         >
           {button.img && <img src={button.img} width="18" height="18" alt="" />}
           <div>{button.name}</div>

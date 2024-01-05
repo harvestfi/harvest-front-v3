@@ -4,7 +4,7 @@ import {
   XAxis,
   YAxis,
   Line,
-  Area,
+  // Area,
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
@@ -42,13 +42,11 @@ function formatDateTime(value) {
 
 function getRangeNumber(strRange) {
   let ago = 30
-  if (strRange === '1D') {
-    ago = 1
-  } else if (strRange === '1W') {
+  if (strRange === '1W') {
     ago = 7
   } else if (strRange === '1M') {
     ago = 30
-  } else if (strRange === '1Y') {
+  } else if (strRange === 'ALL') {
     ago = 365
   }
 
@@ -73,17 +71,27 @@ function findMax(data) {
   const max = Math.max(...ary)
   return max
 }
-
 function findMin(data) {
   const ary = data.map(el => el.y)
   const min = Math.min(...ary)
   return min
 }
+
+function findMaxUnderlying(data) {
+  const ary = data.map(el => el.z)
+  const max = Math.max(...ary)
+  return max
+}
+function findMinUnderlying(data) {
+  const ary = data.map(el => el.z)
+  const min = Math.min(...ary)
+  return min
+}
+
 function generateChartDataWithSlots(
   slots,
   apiData,
   decimals,
-  filter,
   balance,
   priceUnderlying,
   sharePrice,
@@ -94,23 +102,15 @@ function generateChartDataWithSlots(
       if (slots[i] > parseInt(apiData[j].timestamp, 10)) {
         const value1 = parseFloat(apiData[j][balance])
         const value2 = parseFloat(apiData[j][priceUnderlying])
-        const value3 = parseFloat(
-          fromWei(parseFloat(apiData[j][sharePrice]), decimals, Number(decimals)),
-        )
-        console.log(value1, value2, value3)
-        console.log(value1 * value2 * value3)
-        console.log(value1 * value3)
-        if (filter === 0) {
-          seriesData.push({ x: slots[i] * 1000, y: value1 * value2 * value3 })
-        } else if (filter === 1) {
-          seriesData.push({ x: slots[i] * 1000, y: value1 * value3 })
-        }
+        const value3 = fromWei(parseFloat(apiData[j][sharePrice]), decimals)
+        seriesData.push({ x: slots[i] * 1000, y: value1 * value2 * value3, z: value1 * value3 })
         break
       } else if (j === apiData.length - 1) {
-        seriesData.push({ x: slots[i] * 1000, y: 0 })
+        seriesData.push({ x: slots[i] * 1000, y: 0, z: 0 })
       }
     }
   }
+
   return seriesData
 }
 
@@ -136,7 +136,18 @@ function getYAxisValues(min, max, roundNum) {
   return ary
 }
 
-const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCurContent }) => {
+const ApexChart = ({
+  token,
+  data,
+  loadComplete,
+  range,
+  setCurDate,
+  setCurContent,
+  setCurContentUnderlying,
+  handleTooltipContent,
+  setFixedLen,
+  fixedLen,
+}) => {
   const { fontColor } = useThemeContext()
 
   const [mainSeries, setMainSeries] = useState([])
@@ -146,17 +157,14 @@ const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCu
   const [loading, setLoading] = useState(false)
   const [isDataReady, setIsDataReady] = useState(true)
   const [roundedDecimal, setRoundedDecimal] = useState(2)
-  const [fixedLen, setFixedLen] = useState(0)
+  const [roundedDecimalUnderlying, setRoundedDecimalUnderlying] = useState(2)
 
-  // const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      const currentDate = formatDateTime(payload[0].payload.x)
-      const balance = numberWithCommas(Number(payload[0].payload.y).toFixed(fixedLen))
-      setCurDate(currentDate)
-      setCurContent(balance)
-    }
+  const CustomTooltip = ({ active, payload, onTooltipContentChange }) => {
+    useEffect(() => {
+      if (active && payload && payload.length) {
+        onTooltipContentChange(payload)
+      }
+    }, [active, payload, onTooltipContentChange])
 
     return null
   }
@@ -186,7 +194,7 @@ const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCu
     let path = ''
 
     if (payload.value !== '') {
-      path = `${filter === 0 ? '$' : ''}${numberWithCommas(payload.value)}`
+      path = `$${numberWithCommas(payload.value)}`
     }
     return (
       <text
@@ -197,7 +205,33 @@ const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCu
         width={60}
         height={310}
         stroke="none"
-        fill="#000"
+        fill="#00D26B"
+        textAnchor="start"
+      >
+        <tspan dx={0} dy="0.355em">
+          {path}
+        </tspan>
+      </text>
+    )
+  }
+
+  const renderCustomZAxisTick = ({ x, y, payload }) => {
+    let path = ''
+
+    if (payload.value !== '') {
+      path = `${numberWithCommas(payload.value)}`
+    }
+
+    return (
+      <text
+        orientation="right"
+        className="recharts-text recharts-cartesian-axis-tick-value"
+        x={x}
+        y={y}
+        width={60}
+        height={310}
+        stroke="none"
+        fill="#8884d8"
         textAnchor="end"
       >
         <tspan dx={0} dy="0.355em">
@@ -209,7 +243,10 @@ const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCu
 
   const [minVal, setMinVal] = useState(0)
   const [maxVal, setMaxVal] = useState(0)
+  const [minValUnderlying, setMinValUnderlying] = useState(0)
+  const [maxValUnderlying, setMaxValUnderlying] = useState(0)
   const [yAxisTicks, setYAxisTicks] = useState([])
+  const [zAxisTicks, setZAxisTicks] = useState([])
 
   useEffect(() => {
     const init = async () => {
@@ -222,8 +259,14 @@ const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCu
       let mainData = [],
         maxValue,
         minValue,
+        maxValueUnderlying,
+        minValueUnderlying,
         len = 0,
-        unitBtw
+        lenUnderlying = 0,
+        unitBtw,
+        unitBtwUnderlying,
+        firstDate,
+        ago
 
       if ((data && data.length === 0) || !loadComplete) {
         setIsDataReady(false)
@@ -233,24 +276,48 @@ const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCu
       if ((Object.keys(data).length === 0 && data.constructor === Object) || data.length === 0) {
         return
       }
+
+      if (range === 'ALL') {
+        for (let i = 1; i < data.length; i += 1) {
+          if (data[i].value === 0) {
+            firstDate = data[i].timestamp
+            break
+          }
+        }
+        if (firstDate === undefined) {
+          firstDate = data[data.length - 1].timestamp
+        }
+        const nowDate = new Date(),
+          toDate = Math.floor(nowDate.getTime() / 1000),
+          periodDate = (toDate - Number(firstDate)) / (24 * 60 * 60)
+
+        ago = Math.ceil(periodDate) + 10
+      } else {
+        ago = getRangeNumber(range)
+      }
+
       const slotCount = 50,
-        ago = getRangeNumber(range),
         slots = getTimeSlots(ago, slotCount)
-      const decimals = token.decimals ? token.decimals : '18'
       mainData = generateChartDataWithSlots(
         slots,
         data,
-        decimals,
-        filter,
+        token.decimals || token.data.watchAsset.decimals,
         'value',
         'priceUnderlying',
         'sharePrice',
       )
       maxValue = findMax(mainData)
       minValue = findMin(mainData)
+      minValue /= 1.01
+
+      maxValueUnderlying = findMaxUnderlying(mainData)
+      minValueUnderlying = findMinUnderlying(mainData)
+      minValueUnderlying /= 1.01
 
       const between = maxValue - minValue
+      const betweenUnderlying = maxValueUnderlying - minValueUnderlying
       unitBtw = between / 4
+      unitBtwUnderlying = betweenUnderlying / 4
       if (unitBtw >= 1) {
         unitBtw = Math.ceil(unitBtw)
         len = unitBtw.toString().length
@@ -268,18 +335,74 @@ const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCu
         minValue = floor10(minValue, -len + 1)
       }
 
+      if (unitBtwUnderlying >= 1) {
+        unitBtwUnderlying = Math.ceil(unitBtwUnderlying)
+        lenUnderlying = unitBtwUnderlying.toString().length
+        unitBtwUnderlying = ceil10(unitBtwUnderlying, len - 1)
+        maxValueUnderlying = ceil10(maxValueUnderlying, len - 1)
+        minValueUnderlying = floor10(minValueUnderlying, len - 1)
+      } else if (unitBtwUnderlying === 0) {
+        lenUnderlying = Math.ceil(maxValueUnderlying).toString().length
+        maxValueUnderlying += 10 ** (len - 1)
+        minValueUnderlying -= 10 ** (len - 1)
+      } else {
+        lenUnderlying = Math.ceil(1 / unitBtwUnderlying).toString().length + 1
+        unitBtwUnderlying = ceil10(unitBtwUnderlying, -lenUnderlying)
+        maxValueUnderlying = ceil10(maxValueUnderlying, -lenUnderlying)
+        minValueUnderlying = floor10(minValueUnderlying, -lenUnderlying + 1)
+      }
+
+      if (unitBtw !== 0) {
+        if (minValue === 0) {
+          maxValue *= 1.2
+        } else {
+          maxValue *= 1.01
+        }
+        // minValue = 0
+      } else {
+        unitBtw = (maxValue - minValue) / 4
+      }
+
+      if (unitBtwUnderlying !== 0) {
+        if (minValueUnderlying === 0) {
+          maxValueUnderlying *= 1.4
+        } else {
+          maxValueUnderlying *= 1.05
+        }
+        // minValueUnderlying = 0
+      } else {
+        unitBtwUnderlying = (maxValueUnderlying - minValueUnderlying) / 4
+      }
+
+      // if (unitBtw === 0) {
+      //   roundNum = 0
+      // } else {
+      //   roundNum = len
+      // }
       setRoundedDecimal(-len)
-      setFixedLen(3)
+      setFixedLen(len)
+      setRoundedDecimalUnderlying(-lenUnderlying)
       setMinVal(minValue)
       setMaxVal(maxValue)
+      setMaxValUnderlying(maxValueUnderlying)
+      setMinValUnderlying(minValueUnderlying)
 
       // Set date and price with latest value by default
-      setCurDate(formatDateTime(mainData[slotCount - 1].x))
-      const balance = numberWithCommas(Number(mainData[slotCount - 1].y).toFixed(fixedLen))
+      setCurDate(formatDateTime(mainData[mainData.length - 1].x))
+      const balance = numberWithCommas(Number(mainData[mainData.length - 1].y).toFixed(fixedLen))
+      const balanceUnderlying = numberWithCommas(Number(mainData[mainData.length - 1].z))
       setCurContent(balance)
+      setCurContentUnderlying(balanceUnderlying)
 
       const yAxisAry = getYAxisValues(minValue, maxValue, roundedDecimal)
       setYAxisTicks(yAxisAry)
+
+      const zAxisAry = getYAxisValues(
+        minValueUnderlying,
+        maxValueUnderlying,
+        roundedDecimalUnderlying,
+      )
+      setZAxisTicks(zAxisAry)
 
       setMainSeries(mainData)
 
@@ -287,15 +410,16 @@ const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCu
     }
 
     init()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     range,
     data,
     token.decimals,
     isDataReady,
     loadComplete,
-    filter,
     roundedDecimal,
     setCurContent,
+    setCurContentUnderlying,
     setCurDate,
     fixedLen,
   ])
@@ -314,7 +438,7 @@ const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCu
               ? 365
               : onlyWidth > 992
               ? 365
-              : 300
+              : 365
           }
         >
           <ComposedChart
@@ -338,35 +462,69 @@ const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCu
               stroke="rgba(228, 228, 228, 0.2)"
               vertical={false}
             />
-            <XAxis dataKey="x" tickLine={false} tickCount={5} tick={renderCustomXAxisTick} />
-            <YAxis
-              dataKey="y"
-              tickLine={false}
-              tickCount={5}
-              tick={renderCustomYAxisTick}
-              ticks={yAxisTicks}
-              domain={[minVal, maxVal]}
-            />
             <Line
               dataKey="y"
               type="monotone"
-              unit="M"
+              unit="$"
               strokeLinecap="round"
               strokeWidth={2}
               stroke="#00D26B"
               dot={false}
               legendType="none"
+              yAxisId="left"
             />
-            <Area
+            <Line
+              dataKey="z"
               type="monotone"
-              dataKey="y"
-              stroke="#00D26B"
+              strokeLinecap="round"
               strokeWidth={2}
-              fillOpacity={1}
-              fill="url(#colorUvPrice)"
+              stroke="#8884d8"
+              dot={false}
+              legendType="none"
+              yAxisId="right"
             />
+            <XAxis dataKey="x" tickLine={false} tickCount={5} tick={renderCustomXAxisTick} />
+            <YAxis
+              dataKey="y"
+              tickCount={5}
+              tick={renderCustomYAxisTick}
+              ticks={yAxisTicks}
+              domain={[minVal, maxVal]}
+              stroke="#00D26B"
+              yAxisId="left"
+              orientation="left"
+              mirror
+            />
+            <YAxis
+              dataKey="z"
+              tickCount={5}
+              tick={renderCustomZAxisTick}
+              ticks={zAxisTicks}
+              domain={[minValUnderlying, maxValUnderlying]}
+              stroke="#8884d8"
+              yAxisId="right"
+              orientation="right"
+              mirror
+            />
+            {/* <YAxis
+              dataKey="y"
+              tickCount={5}
+              tickFormatter={formatYAxisTick}
+              stroke="#00D26B"
+              yAxisId="left"
+              orientation="left"
+              mirror
+            /> */}
+            {/* <YAxis
+              dataKey="z"
+              tickCount={5}
+              yAxisId="right"
+              orientation="right"
+              stroke="#8884d8"
+              mirror
+            /> */}
             <Tooltip
-              content={CustomTooltip}
+              content={<CustomTooltip onTooltipContentChange={handleTooltipContent} />}
               cursor={{
                 stroke: '#00D26B',
                 strokeDasharray: 3,
@@ -380,7 +538,10 @@ const ApexChart = ({ token, data, loadComplete, range, filter, setCurDate, setCu
           {isDataReady ? (
             <ClipLoader size={30} margin={2} color={fontColor} />
           ) : (
-            <NoData color={fontColor}>You don&apos;t have any active deposits in this farm.</NoData>
+            <NoData color={fontColor}>
+              You don&apos;t have any fTokens of this farm. <br />
+              Or, if you just converted tokens, it might take up to 5mins for the chart to appear.
+            </NoData>
           )}
         </LoadingDiv>
       )}

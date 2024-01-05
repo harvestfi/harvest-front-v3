@@ -5,30 +5,27 @@ const Container = styled.div`
   font-weight: 700;
   background: ${props => props.backColor};
   padding: 24px;
-
-  border: 1px solid #eaecf0;
-  box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06);
-  border-radius: 10px;
+  border: 2px solid ${props => props.borderColor};
+  border-radius: 12px;
 
   @media screen and (max-width: 992px) {
-    width: 100%;
-    margin-bottom: 15px;
-    display: flex;
+    width: 50%;
+    border: unset;
+    border-radius: unset;
+    background: unset;
+    padding: 8px 13px;
   }
 `
 
 const Div = styled.div`
   font-weight: 500;
   font-size: 14px;
-  line-height: 16px;
-  color: ${props => props.fontColor};
-  margin-top: 20px;
-  margin-bottom: 7px;
+  line-height: 20px;
+  color: #6f78aa;
+  margin-bottom: 8px;
 
   @media screen and (max-width: 992px) {
-    font-size: 14px;
-    line-height: 20px;
-    margin-top: 0px;
+    font-size: 12px;
     margin-bottom: 0px;
   }
 
@@ -42,19 +39,19 @@ const Div = styled.div`
 
 const Price = styled.div`
   font-weight: 600;
-  font-size: 36px;
+  font-size: 30px;
   line-height: 44px;
-  margin-top: 8px;
   color: #101828;
   @media screen and (max-width: 992px) {
-    margin-top: 8px;
+    font-size: 17px;
+    line-height: 36px;
   }
 `
 
 const InfoIcon = styled.img`
   transition: 0.25s;
   cursor: pointer;
-  margin-left: 5px;
+  margin-left: 8px;
   margin-top: -3px;
   width: 16px;
   height: 16px;

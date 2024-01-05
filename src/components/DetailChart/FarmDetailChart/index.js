@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { useMediaQuery } from 'react-responsive'
 import apyActive from '../../../assets/images/logos/earn/percent-circle.svg'
 import tvlActive from '../../../assets/images/logos/earn/bank.svg'
 import myBalanceActive from '../../../assets/images/logos/earn/chart-graph.svg'
@@ -29,15 +28,14 @@ const filterList = [
 ]
 
 const recommendLinks = [
-  { name: '1D', type: 0, state: '1D' },
   { name: '1W', type: 1, state: '1W' },
   { name: '1M', type: 2, state: '1M' },
-  { name: '1Y', type: 3, state: '1Y' },
+  { name: 'ALL', type: 3, state: 'ALL' },
 ]
 
 const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
   const [clickedId, setClickedId] = useState(1)
-  const [selectedState, setSelectedState] = useState('1M')
+  const [selectedState, setSelectedState] = useState('ALL')
 
   const { account } = useWallet()
   const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
@@ -48,7 +46,6 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
   const [curDate, setCurDate] = useState('')
   const [curContent, setCurContent] = useState('')
 
-  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const isIFARM = token.tokenAddress === addresses.FARM
 
   const [tooltipLabel, setTooltipLabel] = useState('')
@@ -61,18 +58,6 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
   useEffect(() => {
     const initData = async () => {
       const data = await getDataQuery(365, address, chainId, account)
-      if (clickedId === 2) {
-        if (data && data.vaultHistories.length > 0) {
-          const curTimestamp = new Date().getTime() / 1000
-          const between =
-            curTimestamp - Number(data.vaultHistories[data.vaultHistories.length - 1].timestamp)
-          const day = between / (24 * 3600)
-          setSelectedState(day < 90 ? '1M' : '1Y')
-        }
-      } else {
-        setSelectedState('1M')
-      }
-
       setApiData(data)
       if (isIFARM) {
         const dataIFarm = await getDataQuery(365, token.tokenAddress, chainId, account)
@@ -114,24 +99,10 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
             </FilterGroup>
           </FlexDiv>
         </Total>
-        {isMobile && (
-          <ButtonGroup>
-            {recommendLinks.map((item, i) => (
-              <ChartRangeSelect
-                key={i}
-                onClick={() => {
-                  setSelectedState(item.state)
-                }}
-                state={selectedState}
-                type={item.type}
-                text={item.name}
-              />
-            ))}
-          </ButtonGroup>
-        )}
       </Header>
       <ChartDiv className="advanced-farm">
         <ApexChart
+          token={token}
           data={apiData}
           iFarmTVL={iFarmTVLData}
           isIFARM={isIFARM}
@@ -143,21 +114,19 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
           setCurContent={setCurContent}
         />
       </ChartDiv>
-      {!isMobile && (
-        <ButtonGroup>
-          {recommendLinks.map((item, i) => (
-            <ChartRangeSelect
-              key={i}
-              onClick={() => {
-                setSelectedState(item.state)
-              }}
-              state={selectedState}
-              type={item.type}
-              text={item.name}
-            />
-          ))}
-        </ButtonGroup>
-      )}
+      <ButtonGroup>
+        {recommendLinks.map((item, i) => (
+          <ChartRangeSelect
+            key={i}
+            onClick={() => {
+              setSelectedState(item.state)
+            }}
+            state={selectedState}
+            type={item.type}
+            text={item.name}
+          />
+        ))}
+      </ButtonGroup>
     </Container>
   )
 }

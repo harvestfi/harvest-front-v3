@@ -1,8 +1,7 @@
 import { BigNumber } from 'bignumber.js'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import ReactTooltip from 'react-tooltip'
 import axios from 'axios'
-import { find, get, isEmpty, orderBy, isEqual } from 'lodash'
+import { find, get, isEmpty, orderBy, isEqual, isNaN } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import React, { useRef, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
@@ -17,7 +16,6 @@ import Diamond from '../../assets/images/logos/dashboard/diamond-01.svg'
 import Sort from '../../assets/images/logos/dashboard/sort.svg'
 import File from '../../assets/images/logos/dashboard/file-02.svg'
 import MobileFile from '../../assets/images/logos/dashboard/file-01.svg'
-import Info from '../../assets/images/logos/earn/info.svg'
 import ListItem from '../../components/DashboardComponents/ListItem'
 import TotalValue from '../../components/TotalValue'
 import {
@@ -26,8 +24,8 @@ import {
   FARM_TOKEN_SYMBOL,
   FARM_WETH_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
-  POOL_BALANCES_DECIMALS,
   SPECIAL_VAULTS,
+  MAX_DECIMALS,
   ROUTES,
   directDetailUrl,
 } from '../../constants'
@@ -40,13 +38,12 @@ import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { fromWei } from '../../services/web3'
 import {
+  parseValue,
   formatNumber,
   formatNumberWido,
   // ceil10,
   getTotalApy,
   isLedgerLive,
-  convertAmountToFARM,
-  getUserVaultBalance,
 } from '../../utils'
 import {
   BadgeIcon,
@@ -61,6 +58,9 @@ import {
   Header,
   Inner,
   SubPart,
+  MobileSubPart,
+  MobileDiv,
+  DescInfo,
   // ThemeMode,
   TransactionDetails,
   LogoImg,
@@ -68,9 +68,6 @@ import {
   Col,
   ContentInner,
   TableContent,
-  DescInfo,
-  InfoIcon,
-  NewLabel,
 } from './style'
 
 const getChainIcon = chain => {
@@ -140,14 +137,12 @@ const getTokenPriceFromApi = async tokenID => {
 
 const Portfolio = () => {
   const { push } = useHistory()
-  const { connected, balances, account, getWalletBalances } = useWallet()
-  // const account = '0x0550bED1C94AFBd468aa739852632D7e9b4c2F86'
+  const { connected, account, balances, getWalletBalances } = useWallet()
   const { userStats, fetchUserPoolStats, totalPools } = usePools()
   const { profitShareAPY } = useStats()
   const { vaultsData, loadingVaults, farmingBalances, getFarmingBalances } = useVaults()
   /* eslint-disable global-require */
   const { tokens } = require('../../data')
-  /* eslint-enable global-require */
   const {
     // darkMode,
     switchMode,
@@ -156,8 +151,24 @@ const Portfolio = () => {
     fontColor,
     borderColor,
     totalValueFontColor,
-    filterColor,
   } = useThemeContext()
+
+  const handleNetworkChange = () => {
+    window.location.reload() // Reload the page when the network changes
+  }
+
+  useEffect(() => {
+    if (window.ethereum) {
+      // Listen for network changes
+      window.ethereum.on('chainChanged', handleNetworkChange)
+
+      return () => {
+        // Cleanup: Remove the event listener when the component unmounts
+        window.ethereum.removeListener('chainChanged', handleNetworkChange)
+      }
+    }
+    return () => {}
+  }, [])
 
   const [apiData, setApiData] = useState([])
 
@@ -255,7 +266,6 @@ const Portfolio = () => {
     if (account && !isEmpty(userStats) && !isEmpty(depositToken)) {
       const loadUserPoolsStats = async () => {
         const poolsToLoad = []
-        /* eslint-disable no-await-in-loop */
         for (let i = 0; i < depositToken.length; i += 1) {
           let fAssetPool =
             depositToken[i] === FARM_TOKEN_SYMBOL
@@ -278,7 +288,6 @@ const Portfolio = () => {
         }
         await fetchUserPoolStats(poolsToLoad, account, userStats)
         await getFarmingBalances(depositToken)
-        /* eslint-enable no-await-in-loop */
       }
       loadUserPoolsStats()
     }
@@ -304,7 +313,7 @@ const Portfolio = () => {
         }
 
         const newStats = []
-        let totalStake = 0,
+        let totalBalanceUSD = 0,
           valueRewards = 0,
           totalDailyYield = 0,
           totalMonthlyYield = 0
@@ -345,7 +354,8 @@ const Portfolio = () => {
           if (token) {
             const useIFARM = symbol === FARM_TOKEN_SYMBOL
             let tokenName = '',
-              totalRewardAPRByPercent = 0
+              totalRewardAPRByPercent = 0,
+              iFARMBalance = 0
             for (let k = 0; k < token.tokenNames.length; k += 1) {
               tokenName += token.tokenNames[k]
               if (k !== token.tokenNames.length - 1) {
@@ -370,54 +380,6 @@ const Portfolio = () => {
             }
             // eslint-disable-next-line one-var
             let usdPrice = 1
-            if (token) {
-              usdPrice =
-                (symbol === FARM_TOKEN_SYMBOL
-                  ? token.data.lpTokenData && token.data.lpTokenData.price
-                  : token.vaultPrice) || 1
-            }
-            const unstake = fromWei(
-              get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),
-              (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
-              POOL_BALANCES_DECIMALS,
-            )
-            stats.unstake = unstake
-            // eslint-disable-next-line no-restricted-globals
-            if (isNaN(stats.unstake)) {
-              stats.unstake = 0
-            }
-            const stakeTemp = get(userStats, `[${stakedVaults[i]}]['totalStaked']`, 0)
-            // eslint-disable-next-line one-var
-            let farmBalance = 0
-            if (useIFARM) {
-              const iFARMBalance = get(balances, IFARM_TOKEN_SYMBOL, 0)
-              farmBalance = convertAmountToFARM(
-                IFARM_TOKEN_SYMBOL,
-                iFARMBalance,
-                tokens[FARM_TOKEN_SYMBOL].decimals,
-                vaultsData,
-              )
-            }
-            const finalStake = getUserVaultBalance(symbol, farmingBalances, stakeTemp, farmBalance)
-            const stake = fromWei(
-              useIFARM ? finalStake : stakeTemp,
-              token.decimals || token.data.watchAsset.decimals,
-              4,
-            )
-
-            stats.stake = stake
-            const finalBalance = Number(stake) + Number(unstake)
-            stats.balance = finalBalance * usdPrice
-            // eslint-disable-next-line no-restricted-globals
-            if (isNaN(stats.stake)) {
-              stats.stake = 0
-            }
-            // eslint-disable-next-line no-restricted-globals
-            const totalStk = parseFloat((isNaN(Number(stake)) ? 0 : stake) * usdPrice)
-            // eslint-disable-next-line no-restricted-globals
-            const totalUnsk = parseFloat((isNaN(Number(unstake)) ? 0 : unstake) * usdPrice)
-            totalStake += totalStk + totalUnsk
-            const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
             const tempPricePerFullShare = useIFARM
               ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
               : get(token, `pricePerFullShare`, 0)
@@ -425,21 +387,59 @@ const Portfolio = () => {
               tempPricePerFullShare,
               useIFARM ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0) : token.decimals,
             )
+            if (token) {
+              usdPrice =
+                (symbol === FARM_TOKEN_SYMBOL
+                  ? (token.data.lpTokenData && token.data.lpTokenData.price) * pricePerFullShare
+                  : token.vaultPrice) || 1
+            }
+            const unstake = fromWei(
+              get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),
+              (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
+              MAX_DECIMALS,
+            )
+            stats.unstake = unstake
+            if (isNaN(stats.unstake)) {
+              stats.unstake = 0
+            }
+            const stakeTemp = get(userStats, `[${stakedVaults[i]}]['totalStaked']`, 0)
+            if (useIFARM) {
+              iFARMBalance = get(balances, IFARM_TOKEN_SYMBOL, 0)
+            }
+            const stake = fromWei(
+              useIFARM ? iFARMBalance : stakeTemp,
+              token.decimals || token.data.watchAsset.decimals,
+              MAX_DECIMALS,
+            )
+
+            stats.stake = stake
+            const finalBalance = Number(stake) + Number(unstake)
+            if (useIFARM) {
+              stats.balance = Number(stake) * usdPrice
+            } else {
+              stats.balance = finalBalance * usdPrice
+            }
+            if (isNaN(stats.stake)) {
+              stats.stake = 0
+            }
+            const totalStk = parseFloat((isNaN(Number(stake)) ? 0 : parseValue(stake)) * usdPrice)
+            const totalUnsk = parseFloat(
+              (isNaN(Number(unstake)) ? 0 : parseValue(unstake)) * usdPrice,
+            )
+            totalBalanceUSD += totalStk + totalUnsk
+            const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
 
             for (let l = 0; l < rewardTokenSymbols.length; l += 1) {
-              // eslint-disable-next-line one-var
               let rewardSymbol = rewardTokenSymbols[l].toUpperCase(),
-                rewards
+                rewards,
+                usdRewardPrice = 0,
+                rewardDecimal = get(tokens[symbol], 'decimals', 18)
 
               if (rewardTokenSymbols.includes(FARM_TOKEN_SYMBOL)) {
                 rewardSymbol = FARM_TOKEN_SYMBOL
               }
 
               const rewardToken = groupOfVaults[rewardSymbol]
-              // eslint-disable-next-line one-var
-              let usdRewardPrice = 0,
-                rewardDecimal = get(tokens[symbol], 'decimals', 18)
-
               if (rewardTokenSymbols.length > 1) {
                 const rewardsEarned = userStats[stakedVaults[i]].rewardsEarned
                 if (
@@ -504,29 +504,16 @@ const Portfolio = () => {
                   console.error('Error:', error)
                 }
               }
-
-              // eslint-disable-next-line one-var
               const rewardValues =
-                rewards === undefined ? 0 : fromWei(Number(rewards), rewardDecimal)
+                rewards === undefined
+                  ? 0
+                  : fromWei(Number(rewards), Number(rewardDecimal), MAX_DECIMALS, true)
               stats.reward.push(Number(rewardValues))
-              console.log('USD Price of ', rewardSymbol, ':', usdRewardPrice)
-
-              stats.totalRewardUsd += Number(
-                rewards === undefined
-                  ? 0
-                  : fromWei(Number(rewards), rewardDecimal) * Number(usdRewardPrice),
-              )
-              valueRewards += Number(
-                rewards === undefined
-                  ? 0
-                  : fromWei(Number(rewards), rewardDecimal) * Number(usdRewardPrice),
-              )
+              stats.totalRewardUsd += Number(rewardValues * Number(usdRewardPrice))
+              valueRewards += Number(rewardValues * Number(usdRewardPrice))
               stats.rewardSymbol.push(rewardSymbol)
 
-              const rewardPriceUSD =
-                rewards === undefined
-                  ? 0
-                  : fromWei(Number(rewards), rewardDecimal) * Number(usdRewardPrice)
+              const rewardPriceUSD = rewardValues * Number(usdRewardPrice)
               stats.rewardUSD.push(rewardPriceUSD)
             }
 
@@ -603,7 +590,7 @@ const Portfolio = () => {
           }
         }
 
-        setTotalDeposit(formatNumber(totalStake, 2))
+        setTotalDeposit(formatNumber(totalBalanceUSD, 2))
         setTotalRewards(formatNumber(valueRewards, 2))
         setTotalYieldDaily(formatNumber(totalDailyYield, 2))
         setTotalYieldMonthly(formatNumber(totalMonthlyYield, 2))
@@ -657,7 +644,44 @@ const Portfolio = () => {
           />
         </SubPart>
 
-        <DescInfo>Track your funds across farms and know how much yield you earn.</DescInfo>
+        <MobileSubPart>
+          <MobileDiv>
+            <TotalValue
+              icon={Safe}
+              content="Total Balance"
+              price={totalDeposit}
+              toolTipTitle="tt-total-balance"
+              toolTip="Sum of your wallet's staked and unstaked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
+            />
+            <TotalValue
+              icon={Diamond}
+              content="Rewards"
+              price={totalRewards}
+              toolTipTitle="tt-rewards"
+              toolTip="Accrued rewards on all your staked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
+            />
+          </MobileDiv>
+          <MobileDiv>
+            <TotalValue
+              icon={Coin1}
+              content="Est. Monthly Yield"
+              price={totalYieldMonthly}
+              toolTipTitle="tt-monthly-yield"
+              toolTip="Estimated monthly yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
+            />
+            <TotalValue
+              icon={Coin2}
+              content="Est. Daily Yield"
+              price={totalYieldDaily}
+              toolTipTitle="tt-daily-yield"
+              toolTip="Estimated daily yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
+            />
+          </MobileDiv>
+        </MobileSubPart>
+
+        <DescInfo borderColor={borderColor}>
+          Preview farms with your active deposits below.
+        </DescInfo>
 
         <TransactionDetails backColor={backColor}>
           <TableContent count={farmTokenList.length}>
@@ -678,6 +702,16 @@ const Portfolio = () => {
                   }}
                 >
                   APY
+                  <img className="sortIcon" src={Sort} alt="sort" />
+                </Col>
+              </Column>
+              <Column width={isMobile ? '20%' : '11%'} color={totalValueFontColor}>
+                <Col
+                  onClick={() => {
+                    sortCol('balance')
+                  }}
+                >
+                  My Balance
                   <img className="sortIcon" src={Sort} alt="sort" />
                 </Col>
               </Column>
@@ -704,42 +738,6 @@ const Portfolio = () => {
               <Column width={isMobile ? '20%' : '11%'} color={totalValueFontColor}>
                 <Col
                   onClick={() => {
-                    sortCol('balance')
-                  }}
-                >
-                  <InfoIcon
-                    className="info"
-                    width={isMobile ? 10 : 16}
-                    src={Info}
-                    alt=""
-                    data-tip
-                    data-for="tooltip-balance"
-                    filterColor={filterColor}
-                  />
-                  <ReactTooltip
-                    id="tooltip-balance"
-                    backgroundColor="black"
-                    borderColor="black"
-                    textColor="white"
-                  >
-                    <NewLabel
-                      size={isMobile ? '10px' : '12px'}
-                      height={isMobile ? '15px' : '18px'}
-                      weight="600"
-                      color="white"
-                    >
-                      Sum of staked and unstaked tokens of a specific farm, denominated in USD. Note
-                      that displayed amounts are subject to change due to the live pricing of
-                      underlying tokens.
-                    </NewLabel>
-                  </ReactTooltip>
-                  My Balance
-                  <img className="sortIcon" src={Sort} alt="sort" />
-                </Col>
-              </Column>
-              <Column width={isMobile ? '20%' : '11%'} color={totalValueFontColor}>
-                <Col
-                  onClick={() => {
                     sortCol('totalRewardUsd')
                   }}
                 >
@@ -758,6 +756,7 @@ const Portfolio = () => {
                   return (
                     <DetailView
                       lastElement={i === farmTokenList.length - 1 ? 'yes' : 'no'}
+                      borderColor={borderColor}
                       key={i}
                       mode={switchMode}
                       background={showDetail[i] ? 'rgba(234, 241, 255, 0.53)' : 'unset'}
@@ -910,6 +909,23 @@ const Portfolio = () => {
                             </Content>
                           </>
                         )}
+                        {!isMobile && (
+                          <Content width={isMobile ? '33%' : '11%'}>
+                            <ListItem
+                              weight={500}
+                              size={14}
+                              height={20}
+                              color="#101828"
+                              value={`${
+                                info.balance === 0
+                                  ? '$0.00'
+                                  : info.balance < 0.01
+                                  ? '<$0.01'
+                                  : `$${formatNumber(info.balance, 2)}`
+                              }`}
+                            />
+                          </Content>
+                        )}
                         <Content
                           width={isMobile ? '33%' : '11%'}
                           marginTop={isMobile ? '15px' : 'unset'}
@@ -965,39 +981,22 @@ const Portfolio = () => {
                           />
                         </Content>
                         {!isMobile && (
-                          <>
-                            <Content width={isMobile ? '33%' : '11%'}>
-                              <ListItem
-                                weight={500}
-                                size={14}
-                                height={20}
-                                color="#101828"
-                                value={`${
-                                  info.balance === 0
-                                    ? '$0.00'
-                                    : info.balance < 0.01
-                                    ? '<$0.01'
-                                    : `$${formatNumber(info.balance, 2)}`
-                                }`}
-                              />
-                            </Content>
-                            <Content width={isMobile ? '33%' : '11%'}>
-                              <ListItem
-                                weight={500}
-                                size={14}
-                                height={20}
-                                color="#101828"
-                                // value={`$${formatNumberWido(info.totalRewardUsd, 9)}`}
-                                value={`${
-                                  info.totalRewardUsd === 0
-                                    ? '$0.00'
-                                    : info.totalRewardUsd < 0.01
-                                    ? '<$0.01'
-                                    : `$${formatNumberWido(info.totalRewardUsd, 2)}`
-                                }`}
-                              />
-                            </Content>
-                          </>
+                          <Content width={isMobile ? '33%' : '11%'}>
+                            <ListItem
+                              weight={500}
+                              size={14}
+                              height={20}
+                              color="#101828"
+                              // value={`$${formatNumber(info.totalRewardUsd, 9)}`}
+                              value={`${
+                                info.totalRewardUsd === 0
+                                  ? '$0.00'
+                                  : info.totalRewardUsd < 0.01
+                                  ? '<$0.01'
+                                  : `$${formatNumber(info.totalRewardUsd, 2)}`
+                              }`}
+                            />
+                          </Content>
                         )}
                         <Content
                           onClick={event => {
@@ -1075,33 +1074,25 @@ const Portfolio = () => {
                               />
                             </ContentInner>
                           </Content>
-                          <Content
-                            width={isMobile ? '100%' : '11%'}
-                            display={isMobile ? 'flex' : 'block'}
-                          >
-                            <ListItem
-                              weight={600}
-                              size={isMobile ? 12 : 14}
-                              height={isMobile ? 18 : 20}
-                              value={isMobile ? 'Rewards Breakdown' : 'Rewards'}
-                              marginTop={isMobile ? 15 : 0}
-                              color="#101828"
-                            />
-                            {!isMobile && (
+                          {isMobile && (
+                            <Content
+                              width={isMobile ? '100%' : '11%'}
+                              display={isMobile ? 'flex' : 'block'}
+                            >
                               <ListItem
                                 weight={600}
                                 size={isMobile ? 12 : 14}
-                                height={isMobile ? 16 : 20}
-                                value="Breakdown"
+                                height={isMobile ? 18 : 20}
+                                value={isMobile ? 'Rewards Breakdown' : 'Rewards'}
                                 marginTop={isMobile ? 15 : 0}
                                 color="#101828"
                               />
-                            )}
-                          </Content>
+                            </Content>
+                          )}
                           {info.reward.map((rw, key) => (
                             <Content
                               key={key}
-                              width={isMobile ? '35%' : '12%'}
+                              width={isMobile ? '35%' : '15%'}
                               display="flex"
                               marginTop={isMobile ? '15px' : 'unset'}
                             >
@@ -1130,7 +1121,7 @@ const Portfolio = () => {
                                       ? '$0.00'
                                       : info.rewardUSD[key] < 0.01
                                       ? '<$0.01'
-                                      : `$${formatNumberWido(info.rewardUSD[key], 2)}`
+                                      : `$${formatNumber(info.rewardUSD[key], 2)}`
                                   }`}
                                   color="#101828"
                                 />
@@ -1146,22 +1137,33 @@ const Portfolio = () => {
               </>
             ) : (
               <>
-                <EmptyPanel>
-                  <EmptyInfo weight={600} size={16} height={24} color="#101828">
-                    Looks like you&apos;re not farming anywhere.
-                  </EmptyInfo>
-                  <EmptyInfo weight={400} size={14} height={20} color="#475467" marginTop="4px">
-                    Let&apos;s put your assets to work!
+                <EmptyPanel borderColor={borderColor}>
+                  <EmptyInfo weight={500} size={14} height={20} color="#475467">
+                    You&apos;re not farming anywhere. Let&apos;s put your assets to work!
                   </EmptyInfo>
 
-                  <EmptyInfo weight={500} size={16} height={21} marginTop="25px">
+                  <EmptyInfo weight={500} size={16} height={21} marginTop="15px">
                     <ExploreFarm
-                      borderColor={borderColor}
+                      backColor="#15b088"
+                      hoverColor="#2ccda4"
+                      activeColor="#4fdfbb"
+                      fontColor="#fff"
+                      onClick={() => {
+                        push(ROUTES.BEGINNERS)
+                      }}
+                    >
+                      Farms for Beginners
+                    </ExploreFarm>
+                    <ExploreFarm
+                      backColor="#F2F5FF"
+                      hoverColor="#e8edff"
+                      activeColor="#e0e7ff"
+                      fontColor="#000"
                       onClick={() => {
                         push(ROUTES.ADVANCED)
                       }}
                     >
-                      View all Farms
+                      Advanced Farms
                     </ExploreFarm>
                   </EmptyInfo>
                 </EmptyPanel>

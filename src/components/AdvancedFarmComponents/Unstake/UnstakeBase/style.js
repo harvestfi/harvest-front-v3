@@ -3,16 +3,7 @@ import Plus from '../../../../assets/images/logos/beginners/plus.svg'
 import Minus from '../../../../assets/images/logos/beginners/minus.svg'
 
 const BaseSection = styled.div`
-  padding: 16px 15px 24px;
-  ${props =>
-    props.show
-      ? `
-  `
-      : 'display: none;'}
-
-  @media screen and (max-width: 992px) {
-    padding: 12px 12px 18px;
-  }
+  padding: 15px;
 `
 
 const NewLabel = styled.div`
@@ -130,10 +121,6 @@ const NewLabel = styled.div`
     img.info {
       margin-left: 5px;
     }
-
-    img.info-icon {
-      width: 16px;
-    }
   }
 `
 
@@ -163,12 +150,6 @@ const TokenAmount = styled.input`
     -webkit-appearance: none;
     -moz-appearance: textfield;
     margin: 0;
-  }
-
-  @media screen and (max-width: 992px) {
-    font-size: 10px;
-    line-height: 18px;
-    padding: 7px 10px;
   }
 `
 
@@ -230,18 +211,15 @@ const BalanceInfo = styled.div`
   color: #475467;
   margin-top: 5px;
   cursor: pointer;
-
   width: fit-content;
+
+  @media screen and (max-width: 992px) {
+    font-size: 12px;
+  }
 
   span {
     margin-left: 6px;
     transition: 0.25s;
-  }
-
-  @media screen and (max-width: 992px) {
-    font-size: 10px;
-    line-height: 15px;
-    margin-top: 3px;
   }
 `
 
@@ -253,9 +231,7 @@ const DepoTitle = styled.div`
   color: #475467;
 
   @media screen and (max-width: 992px) {
-    font-size: 10px;
-    line-height: 15px;
-    margin: 0 0 15px;
+    font-size: 12px;
   }
 `
 
@@ -379,20 +355,10 @@ const InsufficientSection = styled.div`
     display: none;
   `}
   margin-top: 20px;
-
-  @media screen and (max-width: 992px) {
-    padding: 10px;
-    margin-top: 14px;
-  }
 `
 
 const CloseBtn = styled.img`
   cursor: pointer;
-
-  @media screen and (max-width: 992px) {
-    width: 17px;
-    height: 16px;
-  }
 `
 
 const FTokenWrong = styled.div`
@@ -410,11 +376,6 @@ const ImgBtn = styled.img`
   cursor: pointer;
   transition: 0.25s;
   margin-right: 8px;
-
-  @media screen and (max-width: 992px) {
-    width: 17px;
-    height: 16px;
-  }
 `
 
 const AmountInputSection = styled.div`
@@ -430,15 +391,6 @@ const AmountInputSection = styled.div`
     font-weight: 300;
     line-height: 20px;
     color: #000;
-  }
-
-  @media screen and (max-width: 992px) {
-    button.max-btn {
-      right: 5px;
-      top: 9px;
-      font-size: 10px;
-      line-height: 15px;
-    }
   }
 `
 
@@ -464,6 +416,7 @@ const SwitchTabTag = styled.div`
     margin-bottom: 0px;
     padding-left: 5px;
     font-size: 14px;
+    line-height: 20px;
   }
 `
 

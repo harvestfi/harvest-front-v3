@@ -54,7 +54,6 @@ const CounterUsdPrice = ({
     case pool.type === POOL_TYPES.INCENTIVE:
     case pool.type === POOL_TYPES.INCENTIVE_BUYBACK:
       return (
-        // <> (${RewardUSDCase1})</>
         <>
           {' '}
           (

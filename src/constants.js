@@ -17,6 +17,7 @@ export const SOCIAL_LINKS = {
 
 export const ROUTES = {
   HOME: '/',
+  TUTORIAL: '/get-started',
   BEGINNERS: '/beginners',
   COLLABORATIONS: '/collaborations',
   ADVANCED: '/farm',
@@ -28,8 +29,6 @@ export const ROUTES = {
   CAMELOT: '/camelot',
   WIDODETAIL: '/:network/:paramAddress',
   ADVANCEDFARM: '/advanced/:network/:paramAddress',
-  LASTADVANCEDFARM: '/lastadvanced/:network/:paramAddress',
-  SPECADVANCEDFARM: '/specadvanced/:network/:paramAddress',
   BEGINNERSFARM: '/beginner/:paramAddress',
   CHARTS: '/charts',
   WORK: '/work',

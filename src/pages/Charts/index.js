@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { find, get, keys, orderBy, sortBy } from 'lodash'
 import move from 'lodash-move'
 import { CHAIN_IDS } from '../../data/constants'
@@ -9,8 +9,8 @@ import { usePools } from '../../providers/Pools'
 import { useStats } from '../../providers/Stats'
 import { useWallet } from '../../providers/Wallet'
 import { useThemeContext } from '../../providers/useThemeContext'
-import PriceShareData from '../../components/lastPriceShareChart/PriceShareData'
-import FarmDetailChart from '../../components/ChartsComponents/FarmDetailChart'
+import UserBalanceData from '../../components/UserBalanceChart/UserBalanceData'
+import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
 import { Container, Inner, Title, ChartSection, PriceChartArea } from './style'
 import { addresses } from '../../data'
 
@@ -68,6 +68,23 @@ const Charts = () => {
   const { profitShareAPY } = useStats()
   const { pools } = usePools()
   const { chainId } = useWallet()
+
+  const handleNetworkChange = () => {
+    window.location.reload() // Reload the page when the network changes
+  }
+
+  useEffect(() => {
+    if (window.ethereum) {
+      // Listen for network changes
+      window.ethereum.on('chainChanged', handleNetworkChange)
+
+      return () => {
+        // Cleanup: Remove the event listener when the component unmounts
+        window.ethereum.removeListener('chainChanged', handleNetworkChange)
+      }
+    }
+    return () => {}
+  }, [])
 
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
@@ -137,19 +154,21 @@ const Charts = () => {
           return (
             <ChartSection key={i}>
               <PriceChartArea>
-                <PriceShareData
+                <UserBalanceData
                   token={token}
                   vaultPool={vaultPool}
                   tokenSymbol={symbol}
                   setLoadData={setLoadData}
                 />
               </PriceChartArea>
-              <FarmDetailChart
-                token={token}
-                vaultPool={vaultPool}
-                lastTVL={Number(vaultValue)}
-                lastAPY={Number(totalApy)}
-              />
+              <PriceChartArea>
+                <FarmDetailChart
+                  token={token}
+                  vaultPool={vaultPool}
+                  lastTVL={Number(vaultValue)}
+                  lastAPY={Number(totalApy)}
+                />
+              </PriceChartArea>
             </ChartSection>
           )
         })}
@@ -178,19 +197,21 @@ const Charts = () => {
           return (
             <ChartSection key={i}>
               <PriceChartArea>
-                <PriceShareData
+                <UserBalanceData
                   token={token}
                   vaultPool={vaultPool}
                   tokenSymbol={symbol}
                   setLoadData={setLoadData}
                 />
               </PriceChartArea>
-              <FarmDetailChart
-                token={token}
-                vaultPool={vaultPool}
-                lastTVL={Number(vaultValue)}
-                lastAPY={Number(totalApy)}
-              />
+              <PriceChartArea>
+                <FarmDetailChart
+                  token={token}
+                  vaultPool={vaultPool}
+                  lastTVL={Number(vaultValue)}
+                  lastAPY={Number(totalApy)}
+                />
+              </PriceChartArea>
             </ChartSection>
           )
         })}
@@ -219,19 +240,21 @@ const Charts = () => {
           return (
             <ChartSection key={i}>
               <PriceChartArea>
-                <PriceShareData
+                <UserBalanceData
                   token={token}
                   vaultPool={vaultPool}
                   tokenSymbol={symbol}
                   setLoadData={setLoadData}
                 />
               </PriceChartArea>
-              <FarmDetailChart
-                token={token}
-                vaultPool={vaultPool}
-                lastTVL={Number(vaultValue)}
-                lastAPY={Number(totalApy)}
-              />
+              <PriceChartArea>
+                <FarmDetailChart
+                  token={token}
+                  vaultPool={vaultPool}
+                  lastTVL={Number(vaultValue)}
+                  lastAPY={Number(totalApy)}
+                />
+              </PriceChartArea>
             </ChartSection>
           )
         })}

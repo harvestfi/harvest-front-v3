@@ -29,11 +29,6 @@ const ImgBtn = styled.img`
   cursor: pointer;
   transition: 0.25s;
   margin-right: 8px;
-
-  @media screen and (max-width: 992px) {
-    width: 24px;
-    height: 24px;
-  }
 `
 
 const AnimateDotDiv = styled.div`
@@ -181,10 +176,6 @@ const Buttons = styled.button`
 
   &:active {
     background: #4fdfbb;
-  }
-
-  @media screen and (max-width: 992px) {
-    padding: 9px 13px;
   }
 `
 

@@ -16,21 +16,21 @@ const StakeResult = ({ finalStep, setFinalStep, inputAmount, tokenSymbol }) => {
     <Section show={finalStep}>
       <NewLabel
         color="#101828"
-        size={isMobile ? '14px' : '16px'}
+        size={isMobile ? '16px' : '16px'}
         weight="600"
-        height={isMobile ? '21px' : '28px'}
+        height={isMobile ? '28px' : '28px'}
       >
         Summary
       </NewLabel>
       <NewLabel
-        size={isMobile ? '10px' : '14px'}
-        height={isMobile ? '18px' : '24px'}
+        size={isMobile ? '14px' : '14px'}
+        height={isMobile ? '24px' : '24px'}
         color="#344054"
       >
         <NewLabel
           display="flex"
           justifyContent="space-between"
-          padding={isMobile ? '5px 0' : '10px 0'}
+          padding={isMobile ? '10px 0' : '10px 0'}
         >
           <NewLabel weight="500">Staked</NewLabel>
           <NewLabel weight="600">
@@ -40,15 +40,15 @@ const StakeResult = ({ finalStep, setFinalStep, inputAmount, tokenSymbol }) => {
       </NewLabel>
 
       <FTokenInfo isShow={showDesc ? 'true' : 'false'}>
-        <NewLabel marginRight={isMobile ? '8px' : '12px'} display="flex">
+        <NewLabel marginRight={isMobile ? '12px' : '12px'} display="flex">
           <div>
             <img width={isMobile ? 15 : 20} src={CheckIcon} alt="" />
           </div>
-          <NewLabel marginLeft={isMobile ? '8px' : '12px'}>
+          <NewLabel marginLeft={isMobile ? '12px' : '12px'}>
             <NewLabel
               color="#027A48"
-              size={isMobile ? '10px' : '14px'}
-              height={isMobile ? '15px' : '20px'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '20px' : '20px'}
               weight="600"
               marginBottom="4px"
             >
@@ -56,8 +56,8 @@ const StakeResult = ({ finalStep, setFinalStep, inputAmount, tokenSymbol }) => {
             </NewLabel>
             <NewLabel
               color="#027A48"
-              size={isMobile ? '10px' : '14px'}
-              height={isMobile ? '15px' : '20px'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '20px' : '20px'}
               weight="400"
               marginBottom="5px"
             >
@@ -77,11 +77,11 @@ const StakeResult = ({ finalStep, setFinalStep, inputAmount, tokenSymbol }) => {
       </FTokenInfo>
 
       <NewLabel
-        size={isMobile ? '12px' : '16px'}
-        height={isMobile ? '17px' : '21px'}
+        size={isMobile ? '16px' : '16px'}
+        height={isMobile ? '21px' : '21px'}
         weight={600}
         color="#1F2937"
-        marginTop={isMobile ? '18px' : '25px'}
+        marginTop={isMobile ? '25px' : '25px'}
       >
         <Buttons
           onClick={() => {

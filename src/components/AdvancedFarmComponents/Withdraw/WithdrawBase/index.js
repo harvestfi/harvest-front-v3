@@ -14,7 +14,7 @@ import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.s
 import HelpIcon from '../../../../assets/images/logos/beginners/help-circle.svg'
 import {
   WIDO_BALANCES_DECIMALS,
-  POOL_BALANCES_DECIMALS,
+  MAX_DECIMALS,
   WIDO_EXTEND_DECIMALS,
   IFARM_TOKEN_SYMBOL,
   BEGINNERS_BALANCES_DECIMALS,
@@ -186,6 +186,8 @@ const WithdrawBase = ({
               fromWei(
                 quoteResult.fromTokenAmount,
                 useIFARM ? fAssetPool?.lpTokenData?.decimals : curToken.decimals,
+                WIDO_EXTEND_DECIMALS,
+                true,
               ),
               WIDO_EXTEND_DECIMALS,
             )
@@ -310,14 +312,14 @@ const WithdrawBase = ({
     <>
       <BaseWidoDiv>
         <NewLabel
-          size={isMobile ? '12px' : '16px'}
-          height={isMobile ? '21px' : '24px'}
+          size={isMobile ? '16px' : '16px'}
+          height={isMobile ? '24px' : '24px'}
           weight="600"
           color="#101828"
           display="flex"
           justifyContent="center"
-          padding={isMobile ? '0' : '4px 0'}
-          marginBottom="15px"
+          padding={isMobile ? '4px 0px' : '4px 0px'}
+          marginBottom="13px"
           border="1px solid #F8F8F8"
           borderRadius="8px"
         >
@@ -351,8 +353,8 @@ const WithdrawBase = ({
         <TokenInfo>
           <AmountSection>
             <NewLabel
-              size={isMobile ? '10px' : '14px'}
-              height={isMobile ? '15px' : '20px'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '20px' : '20px'}
               weight="500"
               color="#344054"
               marginBottom="6px"
@@ -363,8 +365,8 @@ const WithdrawBase = ({
           </AmountSection>
           <TokenSelectSection>
             <NewLabel
-              size={isMobile ? '10px' : '14px'}
-              height={isMobile ? '15px' : '20px'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '20px' : '20px'}
               weight="500"
               color="#344054"
               marginBottom="6px"
@@ -396,6 +398,8 @@ const WithdrawBase = ({
                   fromWei(
                     useIFARM ? stakeAmountWei : lpTokenBalance,
                     fAssetPool.lpTokenData.decimals,
+                    MAX_DECIMALS,
+                    true,
                   ),
                 ),
               )
@@ -409,7 +413,7 @@ const WithdrawBase = ({
             ) : useIFARM ? (
               stakedAmount || <AnimatedDots />
             ) : lpTokenBalance ? (
-              fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, POOL_BALANCES_DECIMALS, true)
+              fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)
             ) : (
               <AnimatedDots />
             )}
@@ -419,8 +423,8 @@ const WithdrawBase = ({
           <NewLabel display="flex" widthDiv="80%" items="center">
             <img className="info-icon" src={InfoIcon} alt="" />
             <NewLabel
-              size={isMobile ? '10px' : '14px'}
-              height={isMobile ? '15px' : '20px'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '20px' : '20px'}
               weight="600"
               color="#344054"
             >
@@ -441,25 +445,25 @@ const WithdrawBase = ({
       </BaseWidoDiv>
       <BaseWidoDiv>
         <NewLabel
-          size={isMobile ? '10px' : '14px'}
-          height={isMobile ? '18px' : '24px'}
+          size={isMobile ? '14px' : '14px'}
+          height={isMobile ? '24px' : '24px'}
           color="#344054"
         >
           <NewLabel
             display="flex"
             justifyContent="space-between"
-            padding={isMobile ? '5px 0' : '10px 0'}
+            padding={isMobile ? '10px 0' : '10px 0'}
           >
             <NewLabel
-              size={isMobile ? '10px' : '14px'}
-              height={isMobile ? '18px' : '24px'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '24px' : '24px'}
               color="#344054"
               weight="500"
             >
               Min. Received
               <InfoIconCircle
                 className="info"
-                width={isMobile ? 10 : 16}
+                width={isMobile ? 16 : 16}
                 src={HelpIcon}
                 alt=""
                 data-tip
@@ -473,8 +477,8 @@ const WithdrawBase = ({
                 place="right"
               >
                 <NewLabel
-                  size={isMobile ? '10px' : '12px'}
-                  height={isMobile ? '15px' : '18px'}
+                  size={isMobile ? '12px' : '12px'}
+                  height={isMobile ? '18px' : '18px'}
                   weight="600"
                   color="white"
                 >
@@ -483,8 +487,8 @@ const WithdrawBase = ({
               </ReactTooltip>
             </NewLabel>
             <NewLabel
-              size={isMobile ? '10px' : '14px'}
-              height={isMobile ? '18px' : '24px'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '24px' : '24px'}
               color="#344054"
               weight="600"
               textAlign="right"
@@ -514,7 +518,7 @@ const WithdrawBase = ({
             </NewLabel>
           </NewLabel>
         </NewLabel>
-        <NewLabel padding={isMobile ? '0 7px' : '0'}>
+        <NewLabel>
           <Button
             color="wido-deposit"
             width="100%"

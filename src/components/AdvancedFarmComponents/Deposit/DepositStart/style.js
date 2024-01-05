@@ -7,11 +7,6 @@ const SelectTokenWido = styled.div`
 const ImgBtn = styled.img`
   cursor: pointer;
   transition: 0.25s;
-
-  @media screen and (max-width: 992px) {
-    width: 17px;
-    height: 16px;
-  }
 `
 
 const NewLabel = styled.div`
@@ -137,13 +132,6 @@ const NewLabel = styled.div`
     font-weight: 400;
     line-height: 12px;
   }
-
-  @media screen and (max-width: 992px) {
-    img.help-icon {
-      width: 12px;
-      height: 12px;
-    }
-  }
 `
 
 const Buttons = styled.button`
@@ -162,10 +150,6 @@ const Buttons = styled.button`
 
   &:active {
     background: #4fdfbb;
-  }
-
-  @media screen and (max-width: 992px) {
-    padding: 9px 13px;
   }
 `
 
@@ -203,11 +187,6 @@ const GotItBtn = styled.button`
   border: none;
   background: none;
   padding: 0;
-
-  @media screen and (max-width: 992px) {
-    font-size: 12px;
-    line-height: 17px;
-  }
 `
 
 const FTokenWrong = styled.div`

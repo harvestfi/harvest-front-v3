@@ -14,7 +14,7 @@ const PanelContainer = styled.div`
     flex-direction: row;
     align-items: baseline;
     position: relative;
-    padding: 10px 18px;
+    padding: 10px;
   }
 `
 
@@ -38,8 +38,11 @@ const TokenNameContainer = styled.div`
   @media screen and (max-width: 1480px) {
     font-size: 12px;
     line-height: 16px;
-    font-weight: 700;
     margin-bottom: 10px;
+  }
+  @media screen and (max-width: 992px) {
+    font-size: 11px;
+    margin-bottom: 8px;
   }
 `
 
@@ -56,6 +59,9 @@ const TokenDescriptionContainer = styled.div`
     font-weight: 400;
     font-size: 10px;
     line-height: 13px;
+  }
+  @media screen and (max-width: 992px) {
+    font-size: 11px;
   }
 `
 
@@ -142,11 +148,17 @@ const BadgeIcon = styled.div`
   align-items: center;
 
   @media screen and (max-width: 992px) {
-    left: 5px;
-    top: 5px;
-    border-radius: 2px;
-    width: 12px;
-    height: 15px;
+    position: inherit;
+    border-radius: 2.278px;
+    border: 1.139px solid #29ce84;
+    background: rgba(255, 255, 255, 0.6);
+    box-shadow: 0px 0px 1.13876px 0px rgba(0, 0, 0, 0.15);
+    width: 13.096px;
+    height: 13.096px;
+    margin: auto 0px;
+    img {
+      padding: 1.708px 1.706px 1.709px 1.71px;
+    }
   }
 `
 
@@ -161,7 +173,7 @@ const TokenLogoContainer = styled.div`
   position: relative;
 
   @media screen and (max-width: 992px) {
-    margin-top: 10px;
+    margin-top: 8px;
   }
 `
 
@@ -204,10 +216,13 @@ const ArrowContainer = styled.div`
 `
 
 const MobileVaultInfoContainer = styled.div`
-  gap: 10px;
+  display: flex;
+  flex-flow: column;
+  justify-content: space-between;
   flex-wrap: wrap;
   width: 100%;
-  align-items: center;
+  align-items: end;
+  gap: 4px;
 `
 
 const MobileVaultValueContainer = styled.div`
@@ -215,10 +230,10 @@ const MobileVaultValueContainer = styled.div`
   justify-content: end;
   align-items: baseline;
   line-height: 2;
-  font-size: 12px;
+  font-size: 11px;
 
   * {
-    font-size: 12px !important;
+    font-size: 11px !important;
   }
 
   div {
@@ -233,6 +248,7 @@ const MobileVaultValueContainer = styled.div`
   .title {
     img {
       margin-left: 7px;
+      margin-top: -4px;
     }
   }
 `
@@ -264,8 +280,22 @@ const FlexDiv = styled.div`
 
   .tag {
     position: absolute;
-    left: 20px;
-    top: 5px;
+    left: 6px;
+  }
+  &.token-icons {
+    display: flex;
+    margin: auto;
+    img {
+      position: relative;
+    }
+  }
+  &.token-symbols {
+    img {
+      margin-left: -4px;
+    }
+    img:first-child {
+      margin-left: 0px;
+    }
   }
 `
 

@@ -7,13 +7,13 @@ const Container = styled.div`
   overflow: hidden;
   padding: 15px 18px;
   transition: 0.25s;
-  border-radius: 10px;
+  border-radius: 12px;
   border: 2px solid #f2f5ff;
   background: #fff;
   justify-content: space-between;
 
   @media screen and (max-width: 992px) {
-    margin-bottom: 24px;
+    padding: 15px 18px 25px;
   }
 `
 
@@ -49,14 +49,7 @@ const ButtonGroup = styled.div`
   flex-wrap: wrap;
   color: #fff;
   justify-content: end;
-  padding-top: 10px;
-
-  @media screen and (max-width: 992px) {
-    margin-top: 14px;
-    margin-bottom: 9px;
-    width: 100%;
-    justify-content: space-around;
-  }
+  padding-top: 13px;
 `
 
 const ChartDiv = styled.div`
@@ -75,15 +68,8 @@ const ChartDiv = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    height: 100%;
+    height: 365px;
   }
-`
-
-const FilterGroup = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
 `
 
 const PriceShow = styled.div`
@@ -115,22 +101,25 @@ const TokenSymbol = styled.div`
   font-size: 16px;
   line-height: 28px;
   font-weight: 600;
-  margin-bottom: 5px;
-  color: #101828;
+  color: ${props => (props.color ? props.color : '#1f2937')};
+
+  @media screen and (max-width: 992px) {
+    font-size: 12px;
+    line-height: 20px;
+  }
 
   img {
     padding-left: 5px;
     margin-top: -3px;
   }
-
-  @media screen and (max-width: 992px) {
-    font-size: 12px;
-    line-height: 18px;
-  }
 `
 
 const TooltipInfo = styled.div`
   align-self: center;
+
+  &.tooltip-underlying {
+    text-align: right;
+  }
 `
 
 const FlexDiv = styled.div`
@@ -142,12 +131,17 @@ const CurContent = styled.div`
   font-size: 13px;
   font-weight: 500;
 
-  span {
-    color: #ced3e6;
+  &.tt-content-underlying {
+    width: 100%;
   }
 
   @media screen and (max-width: 992px) {
     font-size: 10px;
+    font-weight: 400;
+  }
+
+  span {
+    color: #ced3e6;
   }
 `
 
@@ -356,7 +350,6 @@ export {
   MoreBtn,
   ButtonGroup,
   ChartDiv,
-  FilterGroup,
   PriceShow,
   FilterName,
   TokenSymbol,

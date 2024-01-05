@@ -39,7 +39,7 @@ const Inner = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 16px 10px;
+    padding: 25px 15px;
   }
 `
 
@@ -48,7 +48,29 @@ const SubPart = styled.div`
   justify-content: space-between;
 
   @media screen and (max-width: 992px) {
-    display: block;
+    display: none;
+  }
+`
+
+const MobileSubPart = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`
+
+const MobileDiv = styled.div`
+  display: none;
+
+  @media screen and (max-width: 992px) {
+    display: flex;
+    flex-wrap: wrap;
+    border: 2px solid #f2f5ff;
+    border-radius: 6.5px;
+    width: 100%;
+    margin-bottom: 24px;
+
+    div:first-child {
+      border-right: 0.821px solid #f2f5ff;
+    }
   }
 `
 
@@ -77,6 +99,8 @@ const DetailView = styled.div`
   padding: 16px 24px;
   cursor: pointer;
   background: ${props => props.background};
+  border: 1px solid ${props => props.borderColor};
+  border-top: 0px;
   ${props =>
     props.mode === 'dark'
       ? `
@@ -91,18 +115,20 @@ const DetailView = styled.div`
       props.lastElement === 'yes'
         ? ``
         : `
-      border-bottom: 1px solid #E9E9E9;
+      border-bottom: 1px solid ${props.borderColor};
     `
     }
   `}
   transition: 0.25s;
 
   &:hover {
-    background: #f3f7ff;
+    background: #e9f0f7;
   }
 
   @media screen and (max-width: 992px) {
     padding: 0px;
+    border: unset;
+    border-bottom: 1px solid #f2f5ff;
   }
 `
 
@@ -146,12 +172,15 @@ const FarmPic = styled.img`
 `
 
 const EmptyPanel = styled.div`
-  padding-top: 5%;
-  padding-bottom: 5%;
-
+  padding-top: 15%;
+  padding-bottom: 15%;
   border-radius: 5px;
+  border-right: 1px solid ${props => props.borderColor};
+  border-bottom: 1px solid ${props => props.borderColor};
+  border-left: 1px solid ${props => props.borderColor};
   @media screen and (max-width: 992px) {
-    padding-top: 70px;
+    padding: 0px;
+    border: none;
   }
 `
 
@@ -194,14 +223,22 @@ const EmptyInfo = styled.div`
   display: flex;
   justify-content: center;
   text-align: center;
+  gap: 10px;
+  @media screen and (max-width: 992px) {
+    display: flex;
+    justify-content: center;
+    font-size: 10px;
+    line-height: 18px;
+  }
 `
 
 const ExploreFarm = styled.button`
-  background: #036666;
+  background: ${props => props.backColor};
   border-radius: 8px;
-  border: 1px solid #036666;
-  color: white;
-  padding: 10px 18px;
+  border: none;
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  color: ${props => props.fontColor};
+  padding: 16px 18px;
   font-weight: 600;
   font-size: 16px;
   line-height: 24px;
@@ -209,15 +246,16 @@ const ExploreFarm = styled.button`
   align-self: center;
 
   &:hover {
-    background: #037474;
+    background: ${props => props.hoverColor};
   }
 
   &:active {
-    background: #e5e5e5;
+    background: ${props => props.activeColor};
   }
 
   @media screen and (max-width: 992px) {
-    padding: 15px 84px;
+    padding: 8px 13px;
+    font-size: 12px;
   }
 `
 
@@ -268,16 +306,16 @@ const Content = styled.div`
   }
 
   img.file-icon {
-    padding: 18px;
+    padding: 4px;
     background: #f3f7ff;
-    border-radius: 8px;
+    border-radius: 4.7px;
     border: 1px solid #fff;
   }
 
   img.active-file-icon {
     background: #eaf1ff;
-    padding: 18px;
-    border-radius: 8px;
+    padding: 4px;
+    border-radius: 4.7px;
     border: 1px solid #fff;
   }
 
@@ -400,8 +438,8 @@ const Header = styled.div`
   width: 100%;
   padding: 12px 24px;
   background: ${props => props.backColor};
-  border-bottom: 1px solid ${props => props.borderColor};
   display: flex;
+  border: 1px solid ${props => props.borderColor};
   border-top-left-radius: 15px;
   border-top-right-radius: 15px;
 
@@ -480,17 +518,27 @@ const Img = styled.img`
   width: 37px;
   height: 37px;
   margin: auto 6px auto 0px;
+  @media screen and (max-width: 992px) {
+    width: 26px;
+    height: 26px;
+  }
 `
 
 const Col = styled.div`
   display: flex;
   cursor: pointer;
   width: fit-content;
+  @media screen and (max-width: 1200px) {
+    flex-flow: column;
+  }
 
   img.sortIcon {
     width: 8.8px;
     height: 10.5px;
     margin: auto 0px auto 5px;
+    @media screen and (max-width: 1200px) {
+      margin: auto;
+    }
   }
 
   img.info {
@@ -536,35 +584,30 @@ const TableContent = styled.div`
   `
       : ``}
   @media screen and (max-width: 992px) {
-    overflow-x: scroll;
-  }
-`
-
-const TableContent2 = styled.div`
-  margin-top: 50px;
-  ${props =>
-    props.count === 0
-      ? `
-    margin-bottom: 10px;
-  `
-      : ``}
-  @media screen and (max-width: 992px) {
-    overflow-x: scroll;
+    // overflow-x: scroll;
+    border-radius: 15px 15px 0px 0px;
+    border: 1px solid #f2f5ff;
+    ${props =>
+      props.count === 0
+        ? `
+        border-radius: unset;
+        border: none;
+    `
+        : ``}
   }
 `
 
 const DescInfo = styled.div`
-  margin-top: 25px;
-  font-size: 16px;
-  line-height: 24px;
-  color: #475467;
-`
-
-const InfoIcon = styled.img`
-  filter: ${props => props.filterColor};
-  transition: 0.25s;
-  cursor: pointer;
-  margin-left: 5px;
+  display: none;
+  @media screen and (max-width: 992px) {
+    display: block;
+    font-size: 12px;
+    line-height: 24px;
+    font-weight: 400;
+    color: #475467;
+    padding-bottom: 10px;
+    border-bottom: 2px solid ${props => props.borderColor};
+  }
 `
 
 const NewLabel = styled.div`
@@ -697,6 +740,8 @@ const NewLabel = styled.div`
 export {
   Container,
   SubPart,
+  MobileSubPart,
+  MobileDiv,
   TransactionDetails,
   DetailView,
   FarmTitle,
@@ -721,8 +766,6 @@ export {
   Col,
   ContentInner,
   TableContent,
-  TableContent2,
   DescInfo,
-  InfoIcon,
   NewLabel,
 }

@@ -32,11 +32,6 @@ const FilterInput = styled.input`
   font-size: 12px;
   line-height: 23px;
   color: #667085;
-
-  @media screen and (max-width: 992px) {
-    font-size: 12px;
-    line-height: 18px;
-  }
 `
 
 const FTokenInfo = styled.div`
@@ -170,15 +165,11 @@ const NewLabel = styled.div`
   `
       : ''}
   img.icon {
-    margin-right: 10px;
+    margin-right: 5px;
   }
 
   img.info {
-    margin-left: 10px;
-  }
-
-  img.info-icon {
-    margin-left: 15px;
+    margin-left: 5px;
   }
 
   @media screen and (max-width: 992px) {
@@ -196,12 +187,6 @@ const Search = styled.img`
   position: absolute;
   left: 14px;
   top: 12px;
-
-  @media screen and (max-width: 992px) {
-    width: 15px;
-    height: 15px;
-    top: 12px;
-  }
 `
 
 const NotConnectedWallet = styled.div`
@@ -220,11 +205,6 @@ const NotConnectedWallet = styled.div`
 
 const ImgBtn = styled.img`
   cursor: pointer;
-
-  @media screen and (max-width: 992px) {
-    width: 17px;
-    height: 16px;
-  }
 `
 
 export {

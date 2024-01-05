@@ -9,10 +9,6 @@ const BaseWidoDiv = styled.div`
     padding: 10px 15px 15px 15px;
     border-top: 1px solid #e3e3e3;
   }
-
-  @media screen and (max-width: 992px) {
-    padding: 12px 12px 18px;
-  }
 `
 
 const NewLabel = styled.div`
@@ -126,7 +122,7 @@ const NewLabel = styled.div`
   }
 
   img.info {
-    margin-left: 10px;
+    margin-left: 5px;
   }
 
   img.info-icon {
@@ -186,12 +182,6 @@ const TokenAmount = styled.input`
     -moz-appearance: textfield;
     margin: 0;
   }
-
-  @media screen and (max-width: 992px) {
-    font-size: 10px;
-    line-height: 18px;
-    padding: 7px 10px;
-  }
 `
 
 const InfoIconCircle = styled.img`
@@ -225,7 +215,7 @@ const TokenSelect = styled.button`
   }
 
   img.logo {
-    margin-right: 8px;
+    margin-right: 7.5px;
   }
 
   span {
@@ -234,23 +224,6 @@ const TokenSelect = styled.button`
     overflow: hidden;
     text-overflow: ellipsis;
     margin-right: 4px;
-  }
-
-  @media screen and (max-width: 992px) {
-    font-size: 10px;
-    line-height: 18px;
-    padding: 7px 10px;
-
-    img.logo {
-      width: 16px;
-      height: 16px;
-      margin-right: 5px;
-    }
-
-    img.dropdown-icon {
-      width: 15px;
-      height: 16px;
-    }
   }
 `
 
@@ -261,18 +234,15 @@ const BalanceInfo = styled.div`
   color: #475467;
   margin-top: 5px;
   cursor: pointer;
-
   width: fit-content;
+
+  @media screen and (max-width: 992px) {
+    font-size: 12px;
+  }
 
   span {
     margin-left: 6px;
     transition: 0.25s;
-  }
-
-  @media screen and (max-width: 992px) {
-    font-size: 10px;
-    line-height: 15px;
-    margin-top: 3px;
   }
 `
 
@@ -280,13 +250,10 @@ const DepoTitle = styled.div`
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
-  margin: 4px 0 20px;
+  margin: 0px 0px 20px;
   color: #475467;
-
   @media screen and (max-width: 992px) {
-    font-size: 10px;
-    line-height: 15px;
-    margin: 0 0 15px;
+    font-size: 12px;
   }
 `
 
@@ -420,6 +387,7 @@ const SwitchTabTag = styled.div`
     margin-bottom: 0px;
     padding-left: 5px;
     font-size: 14px;
+    line-height: 20px;
   }
 `
 
@@ -438,20 +406,10 @@ const InsufficientSection = styled.div`
     display: none;
   `}
   margin-top: 20px;
-
-  @media screen and (max-width: 992px) {
-    padding: 10px;
-    margin-top: 14px;
-  }
 `
 
 const CloseBtn = styled.img`
   cursor: pointer;
-
-  @media screen and (max-width: 992px) {
-    width: 17px;
-    height: 16px;
-  }
 `
 
 const DepositTokenSection = styled.div`

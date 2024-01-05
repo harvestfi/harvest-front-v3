@@ -3,12 +3,13 @@ import styled from 'styled-components'
 const DetailView = styled.div`
   width: 100%;
   margin-left: 280px;
+  background: ${props => props.pageBackColor};
   color: ${props => props.fontColor};
   transition: 0.25s;
 
   @media screen and (max-width: 992px) {
     margin-left: 0;
-    padding-bottom: 150px;
+    padding-bottom: 100px;
   }
 `
 
@@ -26,9 +27,8 @@ const Inner = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 24px 29px 50px 31px;
+    padding: 25px 15px 0px 15px;
     height: 100%;
-    background: #fff;
   }
 `
 
@@ -49,9 +49,8 @@ const TopInner = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 24px 29px 50px 31px;
+    padding: 40px 25px 0px 25px;
     height: 100%;
-    background: #fff;
   }
 `
 
@@ -101,7 +100,7 @@ const TopPart = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 41px 30px 50px 30px;
+    z-index: 0;
   }
 `
 
@@ -119,15 +118,20 @@ const TopButton = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 24px 29px 50px 31px;
-    height: 100%;
-    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 30px;
   }
 `
 
 const RewardValue = styled.div`
   color: #101828;
   font-weight: 600;
+  font-size: 22px;
+
+  @media screen and (max-width: 992px) {
+    font-size: 12px;
+  }
 `
 
 const NewLabel = styled.div`
@@ -371,6 +375,16 @@ const ThemeMode = styled.div`
 const TopDesc = styled(NewLabel)`
   color: #344054;
   margin: auto 0px auto 35px;
+  @media screen and (max-width: 992px) {
+    margin: 5px auto;
+  }
+`
+
+const TopLogo = styled.div`
+  display: flex;
+  @media screen and (max-width: 992px) {
+    margin: auto;
+  }
 `
 
 const Button = styled.button`
@@ -419,8 +433,8 @@ const FlexDiv = styled.div`
       : ''}
 
   @media screen and (max-width: 992px) {
-    &.address {
-      display: block;
+    &.farm-symbol {
+      flex-flow: column;
     }
   }
 `
@@ -442,7 +456,6 @@ const FlexTopDiv = styled.div`
   flex-direction: column;
   justify-content: start;
   align-self: center;
-  z-index: 1;
 
   img {
     align-self: center;
@@ -512,7 +525,7 @@ const BackBtnRect = styled.a`
   display: inline-flex;
   height: 35px;
   text-decoration: none;
-  border: 1px solid #475467;
+  border: 0.5px solid #475467;
   border-radius: 5px;
   padding: 5px 15px;
   cursor: pointer;
@@ -520,10 +533,11 @@ const BackBtnRect = styled.a`
   &:hover {
     background: rgba(236, 236, 236, 0.7);
   }
-`
 
-const BackArrow = styled.img`
-  margin: auto;
+  svg {
+    margin: auto;
+    color: #475467;
+  }
 `
 
 const BackText = styled.p`
@@ -531,6 +545,7 @@ const BackText = styled.p`
   margin: auto;
   padding-left: 15px;
   font-size: 14px;
+  line-height: 20px;
 `
 
 const RestContent = styled.div`
@@ -540,14 +555,6 @@ const RestContent = styled.div`
   @media screen and (min-width: 1921px) {
     width: 500px;
   }
-
-  // @media screen and (max-width: 1480px) {
-  //   width: 49%;
-  // }
-
-  // @media screen and (max-width: 1281px) {
-  //   width: 50%;
-  // }
 
   @media screen and (max-width: 992px) {
     width: 100%;
@@ -576,7 +583,8 @@ const LogoImg = styled.img`
   width: 69px;
 
   @media screen and (max-width: 992px) {
-    width: 32px;
+    width: 37px;
+    margin-right: -5px;
   }
 
   ${props =>
@@ -599,6 +607,10 @@ const InfoIconBlack = styled.img`
   transition: 0.25s;
   cursor: pointer;
   margin-left: 5px;
+
+  @media screen and (max-width: 992px) {
+    display: none;
+  }
 `
 
 const Monospace = styled.span`
@@ -640,20 +652,8 @@ const MyTotalReward = styled.div`
   display: flex;
   flex-flow: column;
   justify-content: center;
-
-  ${props =>
-    props.padding
-      ? `
-    padding: ${props.padding};
-  `
-      : ''}
-
-  ${props =>
-    props.height
-      ? `
-      height: ${props.height};
-    `
-      : ``}
+  height: 120px;
+  padding: 24px;
 
   ${props =>
     props.marginTop
@@ -668,43 +668,23 @@ const MyTotalReward = styled.div`
       margin-bottom: ${props.marginBottom};
     `
       : ``}
-`
-
-const FarmInfo = styled.div`
-  border-radius: 12px;
-  background: #fff;
-  border: 2px solid #f2f5ff;
-
-  ${props =>
-    props.height
-      ? `
-      height: ${props.height};
-    `
-      : ``}
-
-  ${props =>
-    props.marginTop
-      ? `
-      margin-top: ${props.marginTop};
-    `
-      : ``}
-
-  ${props =>
-    props.marginBottom
-      ? `
-      margin-bottom: ${props.marginBottom};
-    `
-      : ``}
+  
+  @media screen and (max-width: 992px) {
+    height: 70px;
+    padding: 8px 13px;
+  }
 `
 
 const GuideSection = styled.div`
   display: flex;
   margin-bottom: 49px;
-  margin-top: 5px;
+  margin-top: 6px;
 
   @media screen and (max-width: 992px) {
-    margin-top: 19px;
-    margin-bottom: 5px;
+    margin-top: 10px;
+    margin-bottom: 50px;
+    display: flex;
+    justify-content: center;
   }
 
   @media screen and (max-width: 343px) {
@@ -724,7 +704,6 @@ const GuidePart = styled.div`
   color: #1f2937;
   text-align: center;
   font-size: 14px;
-  font-style: normal;
   font-weight: 500;
   line-height: 20px;
   margin-right: 10px;
@@ -738,9 +717,6 @@ const GuidePart = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    font-size: 8px;
-    line-height: 12px;
-
     img {
       margin-right: 3px;
     }
@@ -783,14 +759,9 @@ const MainSection = styled.div`
   border-radius: 12px;
   height: ${props => props.height};
 
-  // @media screen and (max-width: 1480px) {
-  //   width: 49%;
-  // }
-
   @media screen and (max-width: 992px) {
     width: 100%;
     margin-right: 0px;
-    display: none;
   }
 `
 
@@ -799,6 +770,12 @@ const BoxCover = styled.div`
   width: 100%;
   justify-content: space-between;
   margin-bottom: 25px;
+
+  @media screen and (max-width: 992px) {
+    border-radius: 12px;
+    border: 2px solid #f3f6ff;
+    margin-bottom: 20px;
+  }
 `
 
 const ValueBox = styled.div`
@@ -809,8 +786,26 @@ const ValueBox = styled.div`
   border: 2px solid #f3f6ff;
   background: var(--base-white, #fff);
   padding: 24px;
+  height: 120px;
   ${props => (props.width ? `width: ${props.width};` : '')}
-  ${props => (props.height ? `height: ${props.height};` : '')}
+  @media screen and (max-width: 992px) {
+    width: 100%;
+    height: 70px;
+    padding: 8px 13px;
+    border: unset;
+
+    &.balance-box {
+      border-right: 2px solid #f3f6ff;
+      border-radius: 14px 0px 0px 14px;
+    }
+    &.daily-yield-box {
+      border-left: 2px solid #f3f6ff;
+      border-radius: 0px 14px 14px 0px;
+    }
+    &.daily-apy-box {
+      display: none;
+    }
+  }
 `
 
 const BoxTitle = styled.div`
@@ -824,13 +819,24 @@ const BoxTitle = styled.div`
   #tooltip-daily-yield {
     max-width: 300px;
   }
+  @media screen and (max-width: 992px) {
+    font-size: 12px;
+    .info {
+      display: none;
+    }
+  }
 `
 
 const BoxValue = styled.div`
-  color: var(--gray-900, #101828);
+  color: #101828;
   font-weight: 600;
   letter-spacing: -0.6px;
   font-size: 22px;
+  line-height: 32px;
+
+  @media screen and (max-width: 992px) {
+    font-size: 12px;
+  }
 `
 
 const ChainBack = styled.div`
@@ -843,13 +849,15 @@ const ChainBack = styled.div`
   justify-content: center;
   align-self: center;
   padding: 4px;
-
   margin-left: 15px;
 
+  img {
+    width: 100%;
+    height: 100%;
+  }
+
   @media screen and (max-width: 992px) {
-    width: 12px;
-    height: 12px;
-    margin-left: 10px;
+    margin-left: 11px;
   }
 `
 
@@ -883,7 +891,7 @@ const MainTag = styled.div`
 
   p {
     margin-bottom: 0px;
-    padding-left: 10px;
+    padding-left: 8px;
   }
 
   img {
@@ -904,7 +912,7 @@ const MainDescText = styled.div`
 `
 
 const HalfInfo = styled.div`
-  border-radius: 10px;
+  border-radius: 12px;
   background: #fff;
   transition: 0.25s;
   margin-bottom: ${props => props.marginBottom};
@@ -984,24 +992,20 @@ const InfoLabel = styled.a`
       font-weight: bold;
     }
   }
-
-  @media screen and (max-width: 992px) {
-    margin-bottom: 10px;
-    margin-right: 0px;
-  }
 `
 
 const DescInfo = styled.div`
-  font-family: 'Inter', sans-serif;
-  color: #475467;
-  font-weight: 500;
+  color: #6f78aa;
+  font-weight: 400;
   font-size: 14px;
   line-height: 24px;
   padding: 10px 15px;
   display: flex;
   align-items: center;
-  font-style: normal;
-  border-top: 1px solid #ebebeb;
+
+  @media screen and (max-width: 992px) {
+    font-size: 12px;
+  }
 
   .help-message {
     margin-top: 0;
@@ -1011,12 +1015,6 @@ const DescInfo = styled.div`
       }
     }
   }
-
-  @media screen and (max-width: 992px) {
-    font-size: 10px;
-    line-height: 20px;
-    padding: 7px 11px;
-  }
 `
 
 const LastHarvestInfo = styled.div`
@@ -1024,6 +1022,10 @@ const LastHarvestInfo = styled.div`
   border-radius: 12px;
   margin-bottom: 25px;
   border: 2px solid #f2f5ff;
+
+  @media screen and (max-width: 992px) {
+    margin-bottom: 20px;
+  }
 `
 
 const RestInternal = styled.div`
@@ -1063,8 +1065,12 @@ const MainTagPanel = styled.div`
   width: 40%;
   border-radius: 8px;
 
+  @media screen and (max-width: 1200px) {
+    width: 55%;
+  }
+
   @media screen and (max-width: 992px) {
-    margin-bottom: 24px;
+    width: 100%;
     justify-content: space-between;
   }
 `
@@ -1077,11 +1083,25 @@ const TabRow = styled.div`
 const NetDetail = styled.div`
   display: flex;
   margin: auto 0px;
+  @media screen and (max-width: 992px) {
+    display: none;
+  }
+`
+
+const MobileChain = styled.div`
+  display: flex;
+
+  @media screen and (max-width: 992px) {
+    margin: auto 0px;
+  }
 `
 
 const NetDetailItem = styled.div`
   display: flex;
   margin-left: 50px;
+  @media screen and (max-width: 992px) {
+    margin-left: 0px;
+  }
 `
 
 const NetDetailTitle = styled.div`
@@ -1117,20 +1137,10 @@ const FirstPartSection = styled.div`
   height: 100%;
   display: flex;
   flex-flow: column;
-
-  @media screen and (max-width: 992px) {
-    display: flex;
-    flex-direction: column-reverse;
-  }
 `
 
 const SecondPartSection = styled.div`
   width: 100%;
-
-  @media screen and (max-width: 992px) {
-    display: flex;
-    flex-direction: column-reverse;
-  }
 `
 
 const BorderBottomDiv = styled.div`
@@ -1147,12 +1157,13 @@ export {
   TopPart,
   TopButton,
   TopDesc,
+  TopLogo,
   Button,
   HalfContent,
   FlexDiv,
   TotalValueFarm,
   BackBtnRect,
-  BackArrow,
+  MobileChain,
   BackText,
   RestContent,
   NewLabel,
@@ -1166,7 +1177,6 @@ export {
   Monospace,
   MyBalance,
   MyTotalReward,
-  FarmInfo,
   ThemeMode,
   GuideSection,
   GuidePart,

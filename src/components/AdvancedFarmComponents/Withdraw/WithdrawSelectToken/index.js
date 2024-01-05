@@ -65,8 +65,8 @@ const WithdrawSelectToken = ({
             <NewLabel align="left" marginRight="12px">
               <NewLabel
                 color="#15B088"
-                size={isMobile ? '12px' : '18px'}
-                height={isMobile ? '17px' : '28px'}
+                size={isMobile ? '18px' : '18px'}
+                height={isMobile ? '28px' : '28px'}
                 weight="600"
                 marginBottom="4px"
               >
@@ -74,8 +74,8 @@ const WithdrawSelectToken = ({
               </NewLabel>
               <NewLabel
                 color="#15202B"
-                size={isMobile ? '12px' : '14px'}
-                height={isMobile ? '17px' : '20px'}
+                size={isMobile ? '14px' : '14px'}
+                height={isMobile ? '20px' : '20px'}
                 weight="400"
                 marginBottom="5px"
               >
@@ -86,12 +86,12 @@ const WithdrawSelectToken = ({
           <NewLabel>
             <NewLabel
               display="flex"
-              marginBottom={isMobile ? '0px' : '16px'}
+              marginBottom={isMobile ? '16px' : '16px'}
               width="fit-content"
               cursorType="pointer"
               weight="600"
-              size={isMobile ? '12px' : '14px'}
-              height={isMobile ? '17px' : '20px'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '20px' : '20px'}
               color="#667085"
               align="center"
               onClick={() => {
@@ -114,11 +114,7 @@ const WithdrawSelectToken = ({
       </Modal.Header>
       <Modal.Body className="token-select-modal-body">
         <SelectTokenWido>
-          <NewLabel
-            heightDiv="100%"
-            divScroll="scroll"
-            padding={isMobile ? '9px 12px 0' : connected ? '0px' : '25px'}
-          >
+          <NewLabel heightDiv="100%" divScroll="scroll" padding={connected ? '0px' : '25px'}>
             {connected ? (
               <SelectTokenList
                 balanceList={balanceList}
@@ -134,13 +130,13 @@ const WithdrawSelectToken = ({
               <NotConnectedWallet isShow={showDesc ? 'true' : 'false'}>
                 <NewLabel marginRight="12px" display="flex">
                   <div>
-                    <img width={isMobile ? '15px' : '21px'} src={InfoIcon} alt="" />
+                    <img width={isMobile ? '21px' : '21px'} src={InfoIcon} alt="" />
                   </div>
-                  <NewLabel marginLeft={isMobile ? '9px' : '12px'}>
+                  <NewLabel marginLeft={isMobile ? '12px' : '12px'}>
                     <NewLabel
                       color="#344054"
-                      size={isMobile ? '10px' : '14px'}
-                      height={isMobile ? '15px' : '20px'}
+                      size={isMobile ? '14px' : '14px'}
+                      height={isMobile ? '20px' : '20px'}
                       weight="600"
                       marginBottom="4px"
                     >
@@ -148,8 +144,8 @@ const WithdrawSelectToken = ({
                     </NewLabel>
                     <NewLabel
                       color="#475467"
-                      size={isMobile ? '10px' : '14px'}
-                      height={isMobile ? '15px' : '20px'}
+                      size={isMobile ? '14px' : '14px'}
+                      height={isMobile ? '20px' : '20px'}
                       weight="400"
                     >
                       Please connect wallet to see the list of available tokens to deposit.

@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react'
-import { useMediaQuery } from 'react-responsive'
-import ChartButtonsGroup from '../ChartButtonsGroup'
-import balanceImg from '../../../assets/images/logos/advancedfarm/coins.svg'
-import usdbalance from '../../../assets/images/logos/advancedfarm/money.svg'
-import { getUserBalanceHistories1, getUserBalanceHistories2 } from '../../../utils'
+import React, { useEffect, useState, useRef } from 'react'
+import {
+  getUserBalanceHistories1,
+  getUserBalanceHistories2,
+  numberWithCommas,
+} from '../../../utils'
 import { useWallet } from '../../../providers/Wallet'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
@@ -17,43 +17,82 @@ import {
   TooltipInfo,
   FlexDiv,
   CurContent,
-  FilterGroup,
 } from './style'
 
 const recommendLinks = [
-  { name: '1D', type: 0, state: '1D' },
   { name: '1W', type: 1, state: '1W' },
   { name: '1M', type: 2, state: '1M' },
-  { name: '1Y', type: 3, state: '1Y' },
+  { name: 'ALL', type: 3, state: 'ALL' },
 ]
 
-const filterList = [
-  { id: 1, name: `fTokens' USD Value History`, img: usdbalance },
-  { id: 2, name: 'Underlying Balance History', img: balanceImg },
-]
+function formatDateTime(value) {
+  const date = new Date(value)
+  const year = date.getFullYear()
+  const monthNames = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
+  const monthNum = date.getMonth()
+  const month = monthNames[monthNum]
+  const day = date.getDate()
 
-const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, usdPrice }) => {
-  const [clickedId, setClickedId] = useState(0)
-  const [selectedState, setSelectedState] = useState('1M')
+  return `${day} ${month} ${year}`
+}
+
+const UserBalanceData = ({
+  token,
+  vaultPool,
+  totalValue,
+  useIFARM,
+  farmPrice,
+  underlyingPrice,
+  pricePerFullShare,
+}) => {
+  const [selectedState, setSelectedState] = useState('ALL')
+
+  const totalValueRef = useRef(totalValue)
+  const farmPriceRef = useRef(farmPrice)
+  const usdPriceRef = useRef(underlyingPrice)
+  const pricePerFullShareRef = useRef(pricePerFullShare)
+  useEffect(() => {
+    totalValueRef.current = totalValue
+    farmPriceRef.current = farmPrice
+    usdPriceRef.current = underlyingPrice
+    pricePerFullShareRef.current = pricePerFullShare
+  }, [totalValue, underlyingPrice, farmPrice, pricePerFullShare])
 
   const { account } = useWallet()
-  const address = useIFARM
-    ? '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
-    : token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+  const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
   const chainId = token.chain || token.data.chain
 
   const [apiData, setApiData] = useState({})
   const [loadComplete, setLoadComplete] = useState(true)
   const [curDate, setCurDate] = useState('')
-  const [curContent, setCurContent] = useState('')
-  const [tooltipLabel, setTooltipLabel] = useState('')
+  const [curContent, setCurContent] = useState('0')
+  const [curContentUnderlying, setCurContentUnderlying] = useState('0')
+  const [fixedLen, setFixedLen] = useState(0)
 
-  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+  const handleTooltipContent = payload => {
+    if (payload && payload.length) {
+      const currentDate = formatDateTime(payload[0].payload.x)
+      const balance = numberWithCommas(Number(payload[0].payload.y).toFixed(fixedLen))
+      const balanceUnderlying = numberWithCommas(Number(payload[0].payload.z))
 
-  useEffect(() => {
-    const label = clickedId === 0 ? `USD Balance` : 'Underlying Balance'
-    setTooltipLabel(label)
-  }, [clickedId])
+      setCurDate(currentDate)
+      setCurContent(balance)
+      setCurContentUnderlying(balanceUnderlying)
+    }
+  }
 
   useEffect(() => {
     const initData = async () => {
@@ -111,25 +150,31 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, usdPrice }) =
           mergedData.push(vaultData)
         }
         const firstObject = {
-          priceUnderlying: usdPrice,
-          sharePrice: mergedData[0].sharePrice,
+          priceUnderlying: useIFARM ? farmPriceRef.current : usdPriceRef.current,
+          sharePrice: pricePerFullShareRef.current,
           timestamp: mergedData[0].timestamp,
-          value: totalValue,
+          value: totalValueRef.current,
         }
         mergedData.unshift(firstObject)
+        // console.log('totalValue -------------', totalValue)
+        // console.log('underlyingPrice -------------', underlyingPrice)
+        // console.log('mergedData -------------', mergedData)
       }
       setLoadComplete(flag1 && flag2comb)
       setApiData(mergedData)
-      if (mergedData && mergedData.length > 0) {
-        const curTimestamp = new Date().getTime() / 1000
-        const between = curTimestamp - Number(mergedData[mergedData.length - 1].timestamp)
-        const day = between / (24 * 3600)
-        setSelectedState(day < 90 ? '1M' : '1Y')
-      }
     }
 
     initData()
-  }, [address, chainId, account, totalValue, usdPrice, useIFARM])
+  }, [
+    address,
+    chainId,
+    account,
+    totalValue,
+    underlyingPrice,
+    useIFARM,
+    farmPrice,
+    pricePerFullShare,
+  ])
 
   return (
     <Container>
@@ -137,70 +182,64 @@ const UserBalanceData = ({ token, vaultPool, totalValue, useIFARM, usdPrice }) =
         <Total>
           <FlexDiv>
             <TooltipInfo>
-              <TokenSymbol className="priceshare">{tooltipLabel}</TokenSymbol>
+              <TokenSymbol className="priceshare" color="#15B088">
+                USD Balance
+              </TokenSymbol>
               <FlexDiv>
-                <CurContent color="#1b1b1b">
-                  {curDate}&nbsp;<span>|</span>&nbsp;
+                <CurContent color="#6F78AA">
+                  {curContent === '0' ? (
+                    ''
+                  ) : (
+                    <div
+                      dangerouslySetInnerHTML={{ __html: `${curDate}&nbsp;<span>|</span>&nbsp;` }}
+                    />
+                  )}
                 </CurContent>
-                <CurContent color="#15B088">
-                  {clickedId === 0 ? '$' : ''}
-                  {curContent}
+                <CurContent color="#15B088">${curContent}</CurContent>
+              </FlexDiv>
+            </TooltipInfo>
+          </FlexDiv>
+          <FlexDiv>
+            <TooltipInfo className="tooltip-underlying">
+              <TokenSymbol className="priceshare" color="#8884d8">
+                Underlying Balance
+              </TokenSymbol>
+              <FlexDiv>
+                <CurContent color="#8884d8" className="tt-content-underlying">
+                  {curContentUnderlying}
                 </CurContent>
               </FlexDiv>
             </TooltipInfo>
           </FlexDiv>
-          {!isMobile && (
-            <FilterGroup>
-              <ChartButtonsGroup
-                buttons={filterList}
-                clickedId={clickedId}
-                setClickedId={setClickedId}
-              />
-            </FilterGroup>
-          )}
         </Total>
       </Header>
-      {isMobile && (
-        <ButtonGroup>
-          {recommendLinks.map((item, i) => (
-            <ChartRangeSelect
-              key={i}
-              onClick={() => {
-                setSelectedState(item.state)
-              }}
-              state={selectedState}
-              type={item.type}
-              text={item.name}
-            />
-          ))}
-        </ButtonGroup>
-      )}
       <ChartDiv className="advanced-price">
         <ApexChart
           token={token}
           data={apiData}
           loadComplete={loadComplete}
           range={selectedState}
-          filter={clickedId}
           setCurDate={setCurDate}
           setCurContent={setCurContent}
+          setCurContentUnderlying={setCurContentUnderlying}
+          handleTooltipContent={handleTooltipContent}
+          setFixedLen={setFixedLen}
+          fixedLen={fixedLen}
         />
       </ChartDiv>
-      {!isMobile && (
-        <ButtonGroup>
-          {recommendLinks.map((item, i) => (
-            <ChartRangeSelect
-              key={i}
-              onClick={() => {
-                setSelectedState(item.state)
-              }}
-              state={selectedState}
-              type={item.type}
-              text={item.name}
-            />
-          ))}
-        </ButtonGroup>
-      )}
+      <ButtonGroup>
+        {recommendLinks.map((item, i) => (
+          <ChartRangeSelect
+            key={i}
+            onClick={() => {
+              setSelectedState(item.state)
+            }}
+            state={selectedState}
+            type={item.type}
+            text={item.name}
+          />
+        ))}
+      </ButtonGroup>
     </Container>
   )
 }

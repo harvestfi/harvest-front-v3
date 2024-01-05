@@ -459,11 +459,6 @@ const ImgBtn = styled.img`
   cursor: pointer;
   transition: 0.25s;
   margin-right: 8px;
-
-  @media screen and (max-width: 992px) {
-    width: 17px;
-    height: 16px;
-  }
 `
 
 const AmountInputSection = styled.div`

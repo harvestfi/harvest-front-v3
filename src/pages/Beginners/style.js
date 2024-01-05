@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import AdvancedImg from '../../assets/images/logos/home/advanced-farming.jpg'
 
 const Container = styled.div`
   width: 100%;
@@ -25,15 +26,37 @@ const Container = styled.div`
 
 const TopSection = styled.div`
   width: 100%;
-  height: 345px;
+  border-radius: 0px 0px 15px 15px;
+  background: linear-gradient(0deg, rgba(47, 39, 39, 0.78) 0%, rgba(47, 39, 39, 0.78) 100%),
+    url(${AdvancedImg}) lightgray 50% / cover no-repeat;
+
+  @media screen and (max-width: 992px) {
+    height: 250px;
+  }
+`
+
+const TopContainer = styled.div`
+  height: 250px;
   display: flex;
   flex-flow: column;
   justify-content: center;
   padding: 100px;
-  background: #15b088;
+
+  @media screen and (min-width: 1921px) {
+    width: 1450px;
+    margin: auto;
+    padding: 100px 40px;
+  }
+
+  @media screen and (max-width: 1921px) {
+    padding: 100px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    padding: 100px 40px;
+  }
 
   @media screen and (max-width: 992px) {
-    height: 325px;
     padding: 0px 25px;
     text-align: center;
   }
@@ -46,7 +69,7 @@ const Inner = styled.div`
 
   @media screen and (min-width: 1921px) {
     width: 1450px;
-    padding: 35px 0 0;
+    padding: 60px 40px;
     height: 800px;
   }
 
@@ -83,9 +106,9 @@ const UnitPart = styled.div`
 `
 
 const HeaderTitle = styled.div`
-  font-size: 30px;
+  font-size: 35px;
   font-weight: 600;
-  line-height: 38px;
+  line-height: 44px;
   color: #fff;
 `
 
@@ -94,8 +117,8 @@ const HeaderDesc = styled.div`
   font-size: 16px;
   font-weight: 400;
   line-height: 24px;
-  margin-top: 4px;
-  margin-bottom: 11px;
+  margin-top: 4.6px;
+  margin-bottom: 12.8px;
 
   @media screen and (max-width: 992px) {
     margin-top: 15px;
@@ -105,12 +128,12 @@ const HeaderDesc = styled.div`
 
 const HeaderBadge = styled.div`
   width: fit-content;
-  border-radius: 11.797px;
+  border-radius: 12px;
   padding: 3px 3px 3px 10px;
-  background: #1568b3;
+  background: #344054;
   font-size: 10.5px;
   font-weight: 500;
-  line-height: 15px;
+  line-height: 17px;
   display: flex;
   gap: 9px;
 
@@ -144,4 +167,14 @@ const HeaderBadge = styled.div`
   }
 `
 
-export { Container, TopSection, Inner, CoinSection, UnitPart, HeaderTitle, HeaderDesc, HeaderBadge }
+export {
+  Container,
+  TopSection,
+  TopContainer,
+  Inner,
+  CoinSection,
+  UnitPart,
+  HeaderTitle,
+  HeaderDesc,
+  HeaderBadge,
+}

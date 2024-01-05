@@ -65,9 +65,6 @@ const ButtonStyle = styled.button`
       }
     `
       : ``}
-  @media screen and (max-width: 992px) {
-    padding: 7px 12px;
-  }
 `
 
 export { ButtonsGroup, ButtonStyle }

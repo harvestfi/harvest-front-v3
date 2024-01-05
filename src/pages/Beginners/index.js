@@ -12,6 +12,7 @@ import USDC from '../../assets/images/logos/beginnershome/usdc-icon.svg'
 import {
   Container,
   TopSection,
+  TopContainer,
   Inner,
   UnitPart,
   HeaderTitle,
@@ -31,42 +32,61 @@ const Home = () => {
   const { pageBackColor, fontColor } = useThemeContext()
   const [showBadge, setShowBadge] = useState(false)
 
+  const handleNetworkChange = () => {
+    window.location.reload() // Reload the page when the network changes
+  }
+
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search)
     if (queryParams.has('utm_source') || queryParams.has('utm_medium')) {
       setShowBadge(true) // Don't show the Badge if the parameters are present
     }
+
+    if (window.ethereum) {
+      // Listen for network changes
+      window.ethereum.on('chainChanged', handleNetworkChange)
+
+      return () => {
+        // Cleanup: Remove the event listener when the component unmounts
+        window.ethereum.removeListener('chainChanged', handleNetworkChange)
+      }
+    }
+    return () => {}
   }, [])
 
   return (
     <Container pageBackColor={pageBackColor} fontColor={fontColor}>
       <TopSection>
-        <HeaderTitle>
-          Welcome, Farmer
-          <span aria-label="" role="img">
-            👋
-          </span>
-        </HeaderTitle>
-        <HeaderDesc>
-          {showBadge
-            ? 'Receive $10 in FARM for converting $5 or more in USDC or ETH into one of the following farms*.'
-            : 'Get started with crypto farming with our easy-to-use USDC and ETH farms.'}
-        </HeaderDesc>
-        {showBadge && (
-          <HeaderBadge>
-            <div className="badge-text">*Only for participants of our Coinbase Quest campaign</div>
-            <Link className="badge-btn" to="/faq">
-              Read more
-              <BiRightArrowAlt />
-            </Link>
-          </HeaderBadge>
-        )}
+        <TopContainer>
+          <HeaderTitle>
+            Welcome, Farmer
+            <span aria-label="" role="img">
+              👋
+            </span>
+          </HeaderTitle>
+          <HeaderDesc>
+            {showBadge
+              ? 'Receive $10 in FARM for converting $5 or more in USDC or ETH into one of the following farms*.'
+              : 'Get started with crypto farming with our easy-to-use USDC and ETH farms.'}
+          </HeaderDesc>
+          {showBadge && (
+            <HeaderBadge>
+              <div className="badge-text">
+                *Only for participants of our Coinbase Quest campaign
+              </div>
+              <Link className="badge-btn" to="/faq">
+                Read more
+                <BiRightArrowAlt />
+              </Link>
+            </HeaderBadge>
+          )}
+        </TopContainer>
       </TopSection>
       <Inner>
         <CoinSection>
           {IconAry.map((el, i) => {
             const token = vaultsData[el.name]
-            if (!token) return <></>
+            if (!token) return <React.Fragment key={i} />
 
             const tokenVault = get(vaultsData, token.hodlVaultId || el.name)
             const isSpecialVault = token.liquidityPoolVault || token.poolVault

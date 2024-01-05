@@ -20,7 +20,7 @@ const VaultContainer = styled.div`
   }
 
   &:hover {
-    background: ${props => props.hoverColor};
+    background: #e9f0f7;
 
     ${ArrowContainer} {
       background: #f2b435;
@@ -36,7 +36,7 @@ const VaultContainer = styled.div`
     position: relative;
 
     span {
-      font-size: 12px !important;
+      font-size: 11px !important;
     }
   }
 `

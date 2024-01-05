@@ -8,7 +8,7 @@ import ConnectFailureIcon from '../../assets/images/logos/sidebar/connect-failur
 import connectAvatar from '../../assets/images/logos/sidebar/connectavatar.svg'
 import connectAvatarMobile from '../../assets/images/logos/sidebar/connectavatarmobile.svg'
 import Portfolio from '../../assets/images/logos/sidebar/portfolio.svg'
-import Docs from '../../assets/images/logos/sidebar/docs.svg'
+// import Docs from '../../assets/images/logos/sidebar/docs.svg'
 import FAQ from '../../assets/images/logos/sidebar/faq.svg'
 import Home from '../../assets/images/logos/sidebar/home-line.svg'
 import Beginners from '../../assets/images/logos/sidebar/beginners.svg'
@@ -30,6 +30,10 @@ import HomeMobile from '../../assets/images/logos/sidebar/home-mobile.svg'
 import PortfolioMobile from '../../assets/images/logos/sidebar/portfolio-mobile.svg'
 import BeginnersMobile from '../../assets/images/logos/sidebar/beginners-mobile.svg'
 import AdvancedMobile from '../../assets/images/logos/sidebar/advanced-mobile.svg'
+import HomeMobileSM from '../../assets/images/logos/sidebar/home-mobile_sm.svg'
+import PortfolioMobileSM from '../../assets/images/logos/sidebar/portfolio-mobile_sm.svg'
+import BeginnersMobileSM from '../../assets/images/logos/sidebar/beginners-mobile_sm.svg'
+import AdvancedMobileSM from '../../assets/images/logos/sidebar/advanced-mobile_sm.svg'
 import AnalyticsMobile from '../../assets/images/logos/sidebar/analytics-mobile.svg'
 import FAQMobile from '../../assets/images/logos/sidebar/faq-mobile.svg'
 import DocsMobile from '../../assets/images/logos/sidebar/docs-mobile.svg'
@@ -57,6 +61,7 @@ import {
   MobileWalletTopNet,
   MobileWalletBody,
   MobileAmount,
+  MobileAmountDiv,
   MobileWalletBtn,
   MobileWalletButton,
   SocialMobileWrapper,
@@ -124,35 +129,35 @@ const sideLinks1 = [
     imgPath: FAQ,
     external: false,
   },
-  {
-    path: 'https://docs.harvest.finance',
-    name: 'Docs',
-    imgPath: Docs,
-    external: false,
-    newTab: true,
-  },
+  // {
+  //   path: 'https://docs.harvest.finance',
+  //   name: 'Docs',
+  //   imgPath: Docs,
+  //   external: false,
+  //   newTab: true,
+  // },
 ]
 
 const sideLinksMobile = [
   {
     path: ROUTES.HOME,
     name: 'Home',
-    imgPath: HomeMobile,
+    imgPath: HomeMobileSM,
   },
   {
     path: ROUTES.BEGINNERS,
     name: 'Beginners',
-    imgPath: BeginnersMobile,
+    imgPath: BeginnersMobileSM,
   },
   {
     path: ROUTES.ADVANCED,
     name: 'Farm',
-    imgPath: AdvancedMobile,
+    imgPath: AdvancedMobileSM,
   },
   {
     path: ROUTES.PORTFOLIO,
     name: 'Portfolio',
-    imgPath: PortfolioMobile,
+    imgPath: PortfolioMobileSM,
   },
 ]
 
@@ -255,16 +260,16 @@ const MobileMenu = ({
       enabled={item.enabled === false ? 'false' : 'true'}
       isMobile={isMobile}
     >
-      <div className="item">
+      {/* <div className="item">
         <SideIcons
           className="sideIcon"
           src={item.imgPath}
           alt="Harvest"
-          width="27px"
-          height="27px"
+          width="21px"
+          height="21px"
         />
-      </div>
-      {/* {item.name} */}
+      </div> */}
+      <SideIcons className="sideIcon" src={item.imgPath} alt="Harvest" width="21px" height="21px" />
       {item.new ? <NewTag>Soon</NewTag> : <></>}
     </LinkMobile>
   )
@@ -413,6 +418,7 @@ const Sidebar = ({ width }) => {
       width={width}
       sidebarEffect={sidebarEffect}
       backColor={backColor}
+      borderColor={borderColor}
       fontColor={fontColor}
     >
       <Desktop>
@@ -563,7 +569,7 @@ const Sidebar = ({ width }) => {
         </BottomPart>
       </Desktop>
       <Mobile>
-        <MobileView>
+        <MobileView borderColor={borderColor}>
           {/* Full Menu */}
           <OffcanvasDiv
             show={mobileShow}
@@ -573,7 +579,7 @@ const Sidebar = ({ width }) => {
             filtercolor={filterColor}
           >
             <Offcanvas.Body>
-              <MobileActionsContainer>
+              <MobileActionsContainer className="full-menu-container">
                 <Logo
                   className="logo"
                   onClick={() => {
@@ -666,6 +672,7 @@ const Sidebar = ({ width }) => {
                   <MobileWalletBtn>
                     <MobileWalletButton
                       className="connect-button"
+                      borderColor={borderColor}
                       onClick={() => {
                         connectAction()
                         handleMobileConnectClose()
@@ -675,7 +682,7 @@ const Sidebar = ({ width }) => {
                     </MobileWalletButton>
                   </MobileWalletBtn>
                 </MobileWalletBody>
-                <MobileView>
+                <MobileView borderColor={borderColor} className="connect-modal">
                   {sideLinksMobile.map(item => (
                     <Fragment key={item.name}>
                       <MobileMenuContainer
@@ -708,9 +715,10 @@ const Sidebar = ({ width }) => {
                   <ConnectSection>
                     <MobileConnectBtn color="connectwallet">
                       <MobileToggle
+                        className="wallet-btn"
                         toggleColor={toggleColor}
-                        width={32}
-                        height={32}
+                        width={27}
+                        height={21}
                         src={WalletInactive}
                         alt=""
                       />
@@ -725,8 +733,8 @@ const Sidebar = ({ width }) => {
                   >
                     <MobileToggle
                       toggleColor={toggleColor}
-                      width={27}
-                      height={27}
+                      width={21}
+                      height={21}
                       src={Toggle}
                       alt=""
                     />
@@ -775,13 +783,20 @@ const Sidebar = ({ width }) => {
                   </ConnectAvatar>
                   <Address>{formatAddress(account)}</Address>
                   <MobileAmount>
-                    {Number(balanceETH).toFixed(5)} ETH | {Number(balanceUSDC).toFixed(2)} USDC
+                    <MobileAmountDiv className="eth-letter">
+                      {Number(balanceETH).toFixed(5)} ETH
+                    </MobileAmountDiv>
+                    <MobileAmountDiv className="middle-letter">|</MobileAmountDiv>
+                    <MobileAmountDiv className="usdc-letter">
+                      {Number(balanceUSDC).toFixed(2)} USDC
+                    </MobileAmountDiv>
                   </MobileAmount>
                   <MobileWalletBtn>
-                    <MobileWalletButton onClick={handleCopyAddress}>
+                    <MobileWalletButton borderColor={borderColor} onClick={handleCopyAddress}>
                       {copyAddress}
                     </MobileWalletButton>
                     <MobileWalletButton
+                      borderColor={borderColor}
                       onClick={() => {
                         disconnectAction()
                         handleMobileWalletClose()
@@ -791,7 +806,7 @@ const Sidebar = ({ width }) => {
                     </MobileWalletButton>
                   </MobileWalletBtn>
                 </MobileWalletBody>
-                <MobileView>
+                <MobileView borderColor={borderColor} className="connect-modal">
                   {sideLinksMobile.map(item => (
                     <Fragment key={item.name}>
                       <MobileMenuContainer
@@ -824,9 +839,10 @@ const Sidebar = ({ width }) => {
                   <ConnectSection>
                     <MobileConnectBtn color="connectwallet">
                       <MobileToggle
+                        className="wallet-btn"
                         toggleColor={toggleColor}
-                        width={32}
-                        height={32}
+                        width={27}
+                        height={21}
                         src={WalletActive}
                         alt=""
                       />
@@ -841,8 +857,8 @@ const Sidebar = ({ width }) => {
                   >
                     <MobileToggle
                       toggleColor={toggleColor}
-                      width={27}
-                      height={27}
+                      width={21}
+                      height={21}
                       src={Toggle}
                       alt=""
                     />
@@ -896,16 +912,17 @@ const Sidebar = ({ width }) => {
               }
             >
               <MobileToggle
+                className="wallet-btn"
                 toggleColor={toggleColor}
-                width={32}
-                height={32}
+                width={27}
+                height={21}
                 src={connected ? Wallet : WalletOff}
                 alt=""
               />
             </MobileConnectBtn>
           </ConnectSection>
           <MoreBtn type="button" onClick={handleMobileShow}>
-            <MobileToggle toggleColor={toggleColor} width={27} height={27} src={Toggle} alt="" />
+            <MobileToggle toggleColor={toggleColor} width={21} height={21} src={Toggle} alt="" />
           </MoreBtn>
         </MobileView>
       </Mobile>

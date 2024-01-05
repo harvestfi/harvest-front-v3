@@ -25,14 +25,12 @@ const Container = styled.div`
     flex-direction: column;
     align-items: baseline;
     width: 100%;
-    padding: 11px 35px 0 35px;
     min-height: auto;
-    box-shadow: 0px -5px 5px 0px rgba(215, 215, 215, 0.28);
     border: none;
     bottom: 0;
     height: fit-content;
-    z-index: 10;
-    background: #f2f5ff;
+    border-top: 1px solid ${props => props.borderColor};
+    padding: 0px 25px;
   }
 `
 
@@ -340,37 +338,41 @@ const Mobile = styled.div`
 `
 
 const MobileView = styled.div`
-  display: none;
+  display: flex;
+  justify-content: space-between;
   position: relative;
   width: 100%;
+  padding: 10px 0px;
+
+  &.connect-modal {
+    padding: 10px 25px;
+    border-top: 1px solid ${props => props.borderColor};
+  }
 
   button {
     background: none;
     border: 0px;
   }
-
-  @media screen and (max-width: 992px) {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    margin-top: 10px;
-  }
 `
 
-const MobileConnectBtn = styled.div`
-  padding: 2px;
-`
+const MobileConnectBtn = styled.div``
 
 const MobileActionsContainer = styled.div`
-  padding: 19px 19px 0px;
+  bottom: 0;
+  position: absolute;
+  width: 100%;
   border-radius: 15px 15px 0px 0px;
-  background: #f2f5ff;
+  background: #fff;
   box-shadow: 0px -4px 4px 0px rgba(0, 0, 0, 0.1);
+  &.full-menu-container {
+    padding: 19px 19px 0px;
+  }
 `
 
 const MobileWalletTop = styled.div`
   display: flex;
   justify-content: space-between;
+  padding: 19px 19px 0px;
 `
 
 const MobileWalletTopNet = styled.div`
@@ -408,7 +410,23 @@ const MobileAmount = styled.div`
   font-size: 16px;
   font-weight: 400;
   line-height: 28px;
+  display: flex;
+`
+
+const MobileAmountDiv = styled.div`
+  display: inline-block;
+  width: 50%;
   text-align: center;
+  &.middle-letter {
+    width: 10%;
+    margin-top: -1px;
+  }
+  &.eth-letter {
+    text-align: end;
+  }
+  &.usdc-letter {
+    text-align: start;
+  }
 `
 
 const MobileWalletButton = styled.div`
@@ -417,10 +435,12 @@ const MobileWalletButton = styled.div`
   line-height: 24px;
   font-weight: 600;
   padding: 10px 18px;
-  border-radius: 8px;
   background: #fff;
-  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  border-radius: 5px;
+  border: 1px solid ${props => props.borderColor};
   cursor: pointer;
+  width: 45%;
+  text-align: center;
 
   &.connect-button {
     padding: 10px 40px;
@@ -489,6 +509,7 @@ const ConnectAvatar = styled.div`
 
   @media screen and (max-width: 992px) {
     justify-content: center;
+    margin-right: 0px;
   }
 `
 
@@ -686,6 +707,9 @@ const UserDropDownItem = styled(Dropdown.Item)`
 
 const MobileToggle = styled.img`
   filter: ${props => props.toggleColor};
+  &.wallet-btn {
+    margin-top: -3px;
+  }
 `
 
 const OffcanvasDiv = styled(Offcanvas)`
@@ -719,7 +743,7 @@ const Logo = styled.div`
   color: #1f2937;
   font-size: 24px;
   font-weight: 700;
-  line-height: 36px; /* 150% */
+  line-height: 36px;
 
   @media screen and (max-width: 992px) {
     display: flex;
@@ -758,13 +782,9 @@ const LinkMobile = styled.button`
   align-items: center;
   justify-content: start;
   width: 100%;
-  background-color: transparent;
   cursor: pointer;
   padding-left: 0;
   padding-right: 0;
-  border-width: 0;
-  border-radius: 5px;
-  padding: 5px;
   flex-direction: column;
   ${props =>
     props.enabled === 'false'
@@ -777,11 +797,6 @@ const LinkMobile = styled.button`
       }
     `
       : ``}
-
-  .sideIcon {
-    margin-right: 0;
-    margin-bottom: 5px;
-  }
 
   ${props =>
     props.active
@@ -819,11 +834,9 @@ const MoreBtn = styled.button`
   font-size: 10.229px;
   font-style: normal;
   font-weight: 400;
-  line-height: 13.639px; /* 133.333% */
-
-  img {
-    margin-bottom: 5px;
-  }
+  width: 21px;
+  height: 21px;
+  padding: 0px;
 `
 
 export {
@@ -846,6 +859,7 @@ export {
   MobileWalletBody,
   MobileWalletBtn,
   MobileAmount,
+  MobileAmountDiv,
   MobileWalletButton,
   MobileActionsContainer,
   SocialMobileWrapper,

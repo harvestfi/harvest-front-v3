@@ -7,8 +7,7 @@ import { useHistory, useParams } from 'react-router-dom'
 import ReactTooltip from 'react-tooltip'
 import Chart from 'react-apexcharts'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import { getSupportedTokens } from 'wido'
-import { ethers } from 'ethers'
+import { getBalances, getSupportedTokens } from 'wido'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
@@ -24,6 +23,7 @@ import LSD from '../../assets/images/logos/lsd.svg'
 import DESCI from '../../assets/images/logos/DeSci.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
+import UserBalanceData from '../../components/UserBalanceChart/UserBalanceData'
 import VaultPanelActionsFooter from '../../components/VaultComponents/VaultPanelActions/VaultPanelActionsFooter'
 import DepositBase from '../../components/WidoComponents/Deposit/DepositBase'
 import DepositFinalStep from '../../components/WidoComponents/Deposit/DepositFinalStep'
@@ -57,8 +57,6 @@ import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
-import { CHAIN_IDS } from '../../data/constants'
-import PriceShareData from '../../components/lastPriceShareChart/PriceShareData'
 import {
   displayAPY,
   formatNumber,
@@ -146,6 +144,7 @@ const WidoDetail = () => {
   // Switch Tag (Farm/Details in mobile)
   const [farmView, setFarmView] = useState(true)
   const [detailsView, setDetailsView] = useState(false)
+  const [iFarmPrice, setIFarmPrice] = useState(0)
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
@@ -155,11 +154,27 @@ const WidoDetail = () => {
   const { loadingVaults, vaultsData } = useVaults()
   const { pools, userStats, fetchUserPoolStats } = usePools()
   const { account, balances, getWalletBalances } = useWallet()
-  const { ensoBaseTokens, getEnsoBalances, getEnsoPrice } = useEnso()
   const { profitShareAPY } = useStats()
   /* eslint-disable global-require */
   const { tokens } = require('../../data')
   /* eslint-enable global-require */
+
+  const handleNetworkChange = () => {
+    window.location.reload() // Reload the page when the network changes
+  }
+
+  useEffect(() => {
+    if (window.ethereum) {
+      // Listen for network changes
+      window.ethereum.on('chainChanged', handleNetworkChange)
+
+      return () => {
+        // Cleanup: Remove the event listener when the component unmounts
+        window.ethereum.removeListener('chainChanged', handleNetworkChange)
+      }
+    }
+    return () => {}
+  }, [])
 
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
@@ -275,6 +290,24 @@ const WidoDetail = () => {
     }
     getBadge()
   }, [chain])
+
+  const getIFarmPrice = async data => {
+    try {
+      const result = Number(get(data, `${IFARM_TOKEN_SYMBOL}.usdPrice`, 0)).toFixed(2)
+      return result
+    } catch (e) {
+      return 0
+    }
+  }
+
+  useEffect(() => {
+    const getPriceValue = async () => {
+      const value = await getIFarmPrice(vaultsData)
+      setIFarmPrice(value)
+    }
+
+    getPriceValue()
+  }, [vaultsData])
 
   const rewardTxt = getDetailText(
     token,
@@ -398,6 +431,20 @@ const WidoDetail = () => {
     amountsToExecute,
   ])
 
+  const tempPricePerFullShare = useIFARM
+    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
+    : get(token, `pricePerFullShare`, 0)
+  const pricePerFullShare = Number(
+    fromWei(
+      tempPricePerFullShare,
+      useIFARM ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0) : token.decimals,
+    ),
+  )
+
+  const usdPrice =
+    Number(token.usdPrice) * pricePerFullShare ||
+    Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price) * pricePerFullShare
+
   // Show/Hide Select Token Component
   const [selectTokenDepo, setSelectTokenDepo] = useState(false)
 
@@ -436,10 +483,8 @@ const WidoDetail = () => {
     const getTokenBalance = async () => {
       try {
         if (chain && account && Object.keys(balances).length !== 0) {
-          const tokenAddress =
-            token.tokenAddress !== undefined && token.tokenAddress.length !== 2
-              ? token.tokenAddress
-              : token.vaultAddress
+          const curBalances = await getBalances(account, [chain.toString()])
+          setBalanceList(curBalances)
           let supList = [],
             directInSup = {},
             directInBalance = {}
@@ -452,39 +497,14 @@ const WidoDetail = () => {
           } catch (err) {
             console.log('getSupportedTokens of Wido: ', err)
           }
-          const ensoTokens = ensoBaseTokens[chain.toString()] || []
-          const ensoRawBalances = await getEnsoBalances(account, chain.toString())
-          const curBalances = (
-            await Promise.all(
-              ensoRawBalances.map(async balance => {
-                if (!ethers.utils.isAddress(balance.token))
-                  balance.token = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
-                const baseToken = ensoTokens.find(el => el.address === balance.token)
-                const price = baseToken
-                  ? await getEnsoPrice(chain.toString(), baseToken.address)
-                  : 0
-                const item = {
-                  symbol: baseToken?.symbol,
-                  address: baseToken?.address,
-                  balance: balance.amount,
-                  default: false,
-                  usdValue: Number(fromWei(balance.amount, balance.decimals)) * price,
-                  usdPrice: price,
-                  logoURI: baseToken?.logoURI,
-                  decimals: balance.decimals,
-                  chainId: chain,
-                }
-                return item
-              }),
-            )
-          ).filter(item => item.address)
-          setBalanceList(curBalances)
+          const tokenAddress =
+            token.tokenAddress !== undefined && token.tokenAddress.length !== 2
+              ? token.tokenAddress
+              : token.vaultAddress
 
           const soonSupList = []
           supList = supList.map(sup => {
-            const supToken = curBalances.find(
-              el => el.address.toLowerCase() === sup.address.toLowerCase(),
-            )
+            const supToken = curBalances.find(el => el.address === sup.address)
             if (supToken) {
               sup.balance = supToken.balance
               sup.usdValue = supToken.balanceUsdValue
@@ -583,7 +603,7 @@ const WidoDetail = () => {
     }
 
     getTokenBalance()
-  }, [account, chain, balances, ensoBaseTokens]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, chain, balances]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const {
     backColor,
@@ -975,11 +995,14 @@ const WidoDetail = () => {
               )}
             </HalfInfo>
             <HalfInfo padding="0px" borderColor="none">
-              <PriceShareData
+              <UserBalanceData
                 token={token}
                 vaultPool={vaultPool}
                 tokenSymbol={id}
                 setLoadData={setLoadData}
+                useIFARM={useIFARM}
+                iFarmPrice={iFarmPrice}
+                usdPrice={usdPrice}
               />
             </HalfInfo>
             <HalfInfo

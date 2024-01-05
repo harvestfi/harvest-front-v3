@@ -17,7 +17,7 @@ const IconCard = styled.div`
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  padding: 9px;
+  padding: 8px;
   background: #15b088;
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
   justify-content: center;
@@ -178,10 +178,6 @@ const NewLabel = styled.div`
 
     img.info {
       margin-left: 5px;
-    }
-
-    img.info-icon {
-      width: 16px;
     }
   }
 `
@@ -459,11 +455,6 @@ const ImgBtn = styled.img`
   cursor: pointer;
   transition: 0.25s;
   margin-right: 8px;
-
-  @media screen and (max-width: 992px) {
-    width: 17px;
-    height: 16px;
-  }
 `
 
 const AmountInputSection = styled.div`

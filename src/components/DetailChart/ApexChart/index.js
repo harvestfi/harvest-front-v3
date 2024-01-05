@@ -10,22 +10,22 @@ import {
   CartesianGrid,
   ResponsiveContainer,
 } from 'recharts'
+import { round } from 'lodash'
 import { ClipLoader } from 'react-spinners'
 import { useWindowWidth } from '@react-hook/window-size'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { ceil10, floor10, round10, numberWithCommas } from '../../../utils'
+import { MAX_DECIMALS } from '../../../constants'
 import { LoadingDiv, NoData } from './style'
 import { fromWei } from '../../../services/web3'
 
 function getRangeNumber(strRange) {
   let ago = 30
-  if (strRange === '1D') {
-    ago = 1
-  } else if (strRange === '1W') {
+  if (strRange === '1W') {
     ago = 7
   } else if (strRange === '1M') {
     ago = 30
-  } else if (strRange === '1Y') {
+  } else if (strRange === 'ALL') {
     ago = 365
   }
 
@@ -58,7 +58,7 @@ function findMin(data) {
 }
 
 // kind: "value" - TVL, "apy" - APY
-function generateChartDataWithSlots(slots, apiData, kind, filter) {
+function generateChartDataWithSlots(slots, apiData, kind, filter, decimals) {
   const seriesData = []
   if (filter === 2) {
     for (let i = 0; i < slots.length; i += 1) {
@@ -67,7 +67,11 @@ function generateChartDataWithSlots(slots, apiData, kind, filter) {
           ? curr
           : prev,
       )
-      seriesData.push({ x: slots[i] * 1000, y: fromWei(data.sharePrice, 18, 6) })
+
+      seriesData.push({
+        x: slots[i] * 1000,
+        y: fromWei(parseFloat(data.sharePrice), decimals, MAX_DECIMALS, true),
+      })
     }
   } else {
     for (let i = 0; i < slots.length; i += 1) {
@@ -139,6 +143,11 @@ function getYAxisValues(min, max, roundNum, filter) {
       const val = ary[j].toFixed(roundNum)
       result.push(val)
     }
+  } else if (filter === 1) {
+    for (let i = min; i <= max; i += duration / 4) {
+      const val = round(i, 2)
+      result.push(val)
+    }
   } else {
     for (let i = min; i <= max; i += duration / 4) {
       const val = round10(i, roundNum)
@@ -164,6 +173,7 @@ function generateIFARMTVLWithSlots(slots, apiData) {
 }
 
 const ApexChart = ({
+  token,
   data,
   iFarmTVL,
   isIFARM,
@@ -193,7 +203,7 @@ const ApexChart = ({
       setCurDate(formatDateTime(payload[0].payload.x))
       const content = numberWithCommas(
         Number(payload[0].payload.y).toFixed(
-          filter === 1 ? 0 : filter === 0 ? fixedLen : roundNumber,
+          filter === 1 ? 2 : filter === 0 ? fixedLen : roundNumber,
         ),
       )
       setCurContent(content)
@@ -235,7 +245,7 @@ const ApexChart = ({
       <text
         orientation="left"
         className="recharts-text recharts-cartesian-axis-tick-value"
-        x={isMobile ? x + 30 : path.length > 8 ? x + 10 : x}
+        x={isMobile ? (path.length > 8 ? x + 10 : x) : path.length > 8 ? x + 10 : x}
         y={y}
         width={60}
         height={310}
@@ -261,7 +271,6 @@ const ApexChart = ({
         setIsDataReady(false)
         return
       }
-      const ago = getRangeNumber(range)
 
       let mainData = [],
         tvlData = [],
@@ -277,7 +286,33 @@ const ApexChart = ({
         minValue,
         len = 0,
         unitBtw,
-        roundNum
+        roundNum,
+        firstDate,
+        ago
+
+      if (range === 'ALL') {
+        if (filter === 0) {
+          firstDate =
+            data?.tvls?.length > 0
+              ? data.generalApies[data.generalApies.length - 1].timestamp
+              : null
+        } else if (filter === 1) {
+          firstDate = data?.tvls?.length > 0 ? data.tvls[data.tvls.length - 1].timestamp : null
+        } else {
+          firstDate =
+            data?.tvls?.length > 0
+              ? data.vaultHistories[data.vaultHistories.length - 1].timestamp
+              : null
+        }
+
+        const nowDate = new Date(),
+          toDate = Math.floor(nowDate.getTime() / 1000),
+          periodDate = (toDate - Number(firstDate)) / (24 * 60 * 60)
+
+        ago = Math.ceil(periodDate)
+      } else {
+        ago = getRangeNumber(range)
+      }
 
       if (filter === 1) {
         if (isIFARM) {
@@ -333,7 +368,13 @@ const ApexChart = ({
             // setIsDataReady(false)
             return
           }
-          mainData = generateChartDataWithSlots(slots, tvlData, 'value', filter)
+          mainData = generateChartDataWithSlots(
+            slots,
+            tvlData,
+            'value',
+            filter,
+            token.decimals || token.data.watchAsset.decimals,
+          )
         }
         maxTVL = findMax(mainData)
         minTVL = findMin(mainData)
@@ -342,14 +383,26 @@ const ApexChart = ({
           setIsDataReady(false)
           return
         }
-        mainData = generateChartDataWithSlots(slots, apyData, 'apy', filter)
+        mainData = generateChartDataWithSlots(
+          slots,
+          apyData,
+          'apy',
+          filter,
+          token.decimals || token.data.watchAsset.decimals,
+        )
         maxAPY = findMax(mainData)
         minAPY = findMin(mainData)
       } else {
         if (userPriceFeedData.length === 0) {
           return
         }
-        mainData = generateChartDataWithSlots(slots, userPriceFeedData, 'sharePrice', filter)
+        mainData = generateChartDataWithSlots(
+          slots,
+          userPriceFeedData,
+          'sharePrice',
+          filter,
+          token.decimals || token.data.watchAsset.decimals,
+        )
         maxSharePrice = findMax(mainData)
         minSharePrice = findMin(mainData)
       }
@@ -421,7 +474,7 @@ const ApexChart = ({
       } else if (filter === 0) {
         roundNum = -len
       } else if (filter === 2) {
-        roundNum = maxValue - minValue < 0.001 ? 6 : 3
+        roundNum = maxValue - minValue < 0.001 ? 6 : 5
       }
 
       setMinVal(minValue)
@@ -433,7 +486,7 @@ const ApexChart = ({
       setCurDate(formatDateTime(mainData[slotCount - 1].x))
       const content = numberWithCommas(
         Number(mainData[slotCount - 1].y).toFixed(
-          filter === 1 ? 0 : filter === 0 ? fixedLen : roundNum,
+          filter === 1 ? 2 : filter === 0 ? fixedLen : roundNum,
         ),
       )
       setCurContent(content)
@@ -447,6 +500,7 @@ const ApexChart = ({
     }
 
     init()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     range,
     filter,
@@ -458,6 +512,7 @@ const ApexChart = ({
     fixedLen,
     setCurContent,
     setCurDate,
+    token.decimals,
   ])
 
   return (
@@ -465,7 +520,18 @@ const ApexChart = ({
       {!loading ? (
         <ResponsiveContainer
           width="100%"
-          height={onlyWidth > 1250 ? 350 : onlyWidth > 1050 ? 330 : 330}
+          // height={onlyWidth > 1250 ? 350 : onlyWidth > 1050 ? 330 : 330}
+          height={
+            onlyWidth > 1291
+              ? 346
+              : onlyWidth > 1262
+              ? 365
+              : onlyWidth > 1035
+              ? 365
+              : onlyWidth > 992
+              ? 365
+              : 365
+          }
         >
           <ComposedChart
             data={mainSeries}
@@ -496,16 +562,14 @@ const ApexChart = ({
               tick={renderCustomXAxisTick}
               padding={{ right: 10 }}
             />
-            {!isMobile && (
-              <YAxis
-                dataKey="y"
-                tickLine={false}
-                tickCount={5}
-                tick={renderCustomYAxisTick}
-                ticks={yAxisTicks}
-                domain={[minVal, maxVal]}
-              />
-            )}
+            <YAxis
+              dataKey="y"
+              tickLine={false}
+              tickCount={5}
+              tick={renderCustomYAxisTick}
+              ticks={yAxisTicks}
+              domain={[minVal, maxVal]}
+            />
             <Line
               dataKey="y"
               type="monotone"

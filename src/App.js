@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import Home from './pages/Home'
+import Tutorial from './pages/Tutorial'
 import Beginners from './pages/Beginners'
 import BeginnersFarm from './pages/BeginnersFarm'
 import Portfolio from './pages/Portfolio'
@@ -11,8 +12,6 @@ import Analytic from './pages/Analytic'
 import FAQ from './pages/FAQ'
 import Sidebar from './components/Sidebar'
 import AdvancedFarm from './pages/AdvancedFarm'
-import LastAdvancedFarm from './pages/LastAdvancedFarm'
-import SpecAdvancedFarm from './pages/SpecAdvancedFarm'
 import WidoDetail from './pages/WidoDetail'
 import Charts from './pages/Charts'
 import { ROUTES } from './constants'
@@ -78,14 +77,13 @@ const App = () => (
         <Sidebar width="280px" />
         <Switch>
           <Route exact path={ROUTES.HOME} component={Home} />
+          <Route exact path={ROUTES.TUTORIAL} component={Tutorial} />
           <Route exact path={ROUTES.BEGINNERS} component={Beginners} />
           <Route exact path={ROUTES.BEGINNERSFARM} component={BeginnersFarm} />
           <Route exact path={ROUTES.ADVANCED} component={Farm} />
           <Route exact path={ROUTES.PORTFOLIO} component={Portfolio} />
           <Route exact path={ROUTES.ANALYTIC} component={Analytic} />
           <Route path={ROUTES.ADVANCEDFARM} component={AdvancedFarm} />
-          <Route path={ROUTES.LASTADVANCEDFARM} component={LastAdvancedFarm} />
-          <Route path={ROUTES.SPECADVANCEDFARM} component={SpecAdvancedFarm} />
           <Route path={ROUTES.WIDODETAIL} component={WidoDetail} />
           <Route path={ROUTES.FAQ} component={FAQ} />
           <Route exact path={ROUTES.CAMELOT} component={Camelot} />

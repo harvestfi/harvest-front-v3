@@ -118,14 +118,14 @@ const StakeBase = ({
   return (
     <BaseSection>
       <NewLabel
-        size={isMobile ? '12px' : '16px'}
-        height={isMobile ? '21px' : '28px'}
+        size={isMobile ? '16px' : '16px'}
+        height={isMobile ? '24px' : '24px'}
         weight="600"
         color="#101828"
         display="flex"
         justifyContent="center"
-        padding={isMobile ? '0' : '4px 0'}
-        marginBottom="15px"
+        padding={isMobile ? '4px 0px' : '4px 0px'}
+        marginBottom="13px"
         border="1px solid #F8F8F8"
         borderRadius="8px"
       >
@@ -147,7 +147,7 @@ const StakeBase = ({
                 : ''
             }
           >
-            <img src={tag.img} alt="logo" />
+            <img src={tag.img} className="logo" alt="logo" />
             <p>{tag.name}</p>
           </SwitchTabTag>
         ))}
@@ -155,8 +155,8 @@ const StakeBase = ({
       <DepoTitle>Stake your fTokens to earn extra rewards.</DepoTitle>
       <AmountSection>
         <NewLabel
-          size={isMobile ? '10px' : '14px'}
-          height={isMobile ? '15px' : '20px'}
+          size={isMobile ? '14px' : '14px'}
+          height={isMobile ? '20px' : '20px'}
           weight="500"
           color="#344054"
           marginBottom="6px"
@@ -164,17 +164,17 @@ const StakeBase = ({
           Amount to Stake
         </NewLabel>
         <AmountInputSection>
-          <TokenAmount
-            type="number"
-            value={inputAmount.toFixed(18).replace(/\.?0+$/, '')}
-            onChange={onInputBalance}
-          />
+          <TokenAmount type="number" value={inputAmount} onChange={onInputBalance} />
           <button
             className="max-btn"
             type="button"
             onClick={() => {
               if (account) {
-                setInputAmount(Number(fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals)))
+                setInputAmount(
+                  Number(
+                    fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true),
+                  ),
+                )
               }
             }}
           >
@@ -185,7 +185,9 @@ const StakeBase = ({
       <BalanceInfo
         onClick={() => {
           if (account) {
-            setInputAmount(Number(fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals)))
+            setInputAmount(
+              Number(fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)),
+            )
           }
         }}
       >
@@ -195,8 +197,6 @@ const StakeBase = ({
             0
           ) : lpTokenBalance ? (
             Number(fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true))
-              .toFixed(18)
-              .replace(/\.?0+$/, '')
           ) : (
             <AnimatedDots />
           )}
@@ -206,8 +206,8 @@ const StakeBase = ({
         <NewLabel display="flex" widthDiv="80%" items="start">
           <img className="info-icon" src={InfoIcon} alt="" />
           <NewLabel
-            size={isMobile ? '10px' : '14px'}
-            height={isMobile ? '15px' : '20px'}
+            size={isMobile ? '14px' : '14px'}
+            height={isMobile ? '20px' : '20px'}
             weight="600"
             color="#344054"
           >
@@ -225,7 +225,7 @@ const StakeBase = ({
         </div>
       </InsufficientSection>
 
-      <NewLabel marginTop={isMobile ? '19px' : '25px'} padding={isMobile ? '0 7px' : '0'}>
+      <NewLabel marginTop={isMobile ? '10px' : '10px'}>
         <Button
           color="wido-deposit"
           width="100%"
