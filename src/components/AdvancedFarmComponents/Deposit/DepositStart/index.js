@@ -20,7 +20,7 @@ import { useWallet } from '../../../../providers/Wallet'
 import { useActions } from '../../../../providers/Actions'
 import { useContracts } from '../../../../providers/Contracts'
 import { usePools } from '../../../../providers/Pools'
-import { fromWei, toWei, maxUint256, getWeb3 } from '../../../../services/web3'
+import { fromWei, toWei, getWeb3 } from '../../../../services/web3'
 import { formatNumberWido } from '../../../../utils'
 import { WIDO_EXTEND_DECIMALS } from '../../../../constants'
 import AnimatedDots from '../../../AnimatedDots'
@@ -218,7 +218,7 @@ const DepositStart = ({
         }
 
         if (!new BigNumber(allowanceCheck).gte(amount)) {
-          const amountToApprove = maxUint256()
+          const amountToApprove = amount
           await approveZap(amountToApprove) // Approve for Zap
         }
         setProgressStep(2)
