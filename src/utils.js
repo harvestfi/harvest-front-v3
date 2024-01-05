@@ -290,6 +290,7 @@ export const displayAPY = (apy, ...args) =>
 
 export const getRewardsText = (
   token,
+  tokens,
   vaultPool,
   tradingApy,
   farmAPY,
@@ -1449,8 +1450,7 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
     data = {}
   nowDate = Math.floor(nowDate.setDate(nowDate.getDate() - 1) / 1000)
   const startDate = nowDate - 3600 * 24 * ago
-  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
-  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
+
   address = address.toLowerCase()
   const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
   const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
@@ -1807,7 +1807,7 @@ export const getUserBalanceHistories1 = async (address, chainId, account) => {
   return { data1, flag1 }
 }
 
-export const getUserBalanceHistories2 = async (address, chainId, timestamp) => {
+export const getUserBalanceHistories2 = async (address, chainId) => {
   let data2 = {},
     flag2 = true
 
@@ -1825,7 +1825,7 @@ export const getUserBalanceHistories2 = async (address, chainId, timestamp) => {
           where: {
             vault: "${address === farm ? ifarm : address}",
           },
-          orderBy: timestamp,
+          orderBy: createAtBlock,
           orderDirection: desc,
         ) {
           sharePrice, priceUnderlying, timestamp
@@ -1853,7 +1853,7 @@ export const getUserBalanceHistories2 = async (address, chainId, timestamp) => {
     await fetch(url, requestOptions)
       .then(response => response.json())
       .then(res => {
-        data2 = res.data.vaultHistories
+        data2 = res.data.userBalanceHistories
         if (data2.length === 0) {
           flag2 = false
         }
