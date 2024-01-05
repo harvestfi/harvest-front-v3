@@ -427,7 +427,94 @@ const ActionsProvider = ({ children }) => {
     [handleApproval],
   )
 
-  const handleStake = useCallback(
+  const handleStakeApproval = useCallback(
+    async (
+      token,
+      account,
+      tokenSymbol,
+      lpTokenBalance,
+      lpTokenApprovedBalance,
+      poolData,
+      contracts,
+      setPendingAction,
+      multipleAssets,
+      onSuccessApproval = () => {},
+      onFailureStake = () => {},
+      setBStakeApprovalSuccess,
+    ) => {
+      let hasDeniedRequest = false
+
+      if (poolData && lpTokenBalance > 0) {
+        try {
+          const hasEnoughApprovedAmount = new BigNumber(lpTokenBalance).isLessThanOrEqualTo(
+            new BigNumber(lpTokenApprovedBalance),
+          )
+          if (!hasEnoughApprovedAmount) {
+            if (!hasEnoughApprovedAmount && !hasDeniedRequest) {
+              setPendingAction(ACTIONS.APPROVE_STAKE)
+              hasDeniedRequest = await handleApproval(
+                account,
+                contracts,
+                tokenSymbol,
+                multipleAssets ? token.vaultAddress : null,
+                poolData,
+                setPendingAction,
+                onSuccessApproval,
+              )
+            }
+          } else {
+            setBStakeApprovalSuccess(true)
+          }
+        } catch (err) {
+          setPendingAction(null)
+          const errorMessage = formatWeb3PluginErrorMessage(err)
+          toast.error(errorMessage)
+          onFailureStake()
+        }
+      }
+    },
+    [handleApproval],
+  )
+
+  const handleStakeTransaction = useCallback(
+    async (
+      account,
+      tokenSymbol,
+      lpTokenBalance,
+      poolData,
+      contracts,
+      setPendingAction,
+      multipleAssets,
+      onSuccessStake = () => {},
+      onFailureStake = () => {},
+      action = ACTIONS.STAKE,
+    ) => {
+      const poolInstance = poolData.autoStakeContractLocalInstance || poolData.contractLocalInstance
+      const tokenDisplayName = get(tokens, `[${tokenSymbol}].tokenNames`, tokenSymbol).join(', ')
+
+      const hasDeniedRequest = false
+
+      if (poolData && lpTokenBalance > 0) {
+        try {
+          if (!hasDeniedRequest) {
+            setPendingAction(action)
+            await poolMethods.stake(lpTokenBalance, account, poolInstance)
+            setPendingAction(null)
+            toast.success(`${tokenDisplayName} stake completed`)
+            await onSuccessStake()
+          }
+        } catch (err) {
+          setPendingAction(null)
+          const errorMessage = formatWeb3PluginErrorMessage(err)
+          toast.error(errorMessage)
+          onFailureStake()
+        }
+      }
+    },
+    [],
+  )
+
+  const handleOldStake = useCallback(
     async (
       token,
       account,
@@ -841,7 +928,9 @@ const ActionsProvider = ({ children }) => {
       value={{
         handleApproval,
         handleDeposit,
-        handleStake,
+        handleStakeApproval,
+        handleStakeTransaction,
+        handleOldStake,
         handleBoostStake,
         handleBoostUnstake,
         handleBoostReedem,

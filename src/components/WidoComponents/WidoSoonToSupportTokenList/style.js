@@ -26,7 +26,6 @@ const Vault = styled.div`
 
 const Content = styled.div`
   height: auto;
-  // overflow-y: auto;
 
   &::-webkit-scrollbar {
     width: 5px;

@@ -7,8 +7,7 @@ import { useHistory, useParams } from 'react-router-dom'
 import ReactTooltip from 'react-tooltip'
 import Chart from 'react-apexcharts'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import { getSupportedTokens } from 'wido'
-import { ethers } from 'ethers'
+import { getBalances, getSupportedTokens } from 'wido'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
@@ -23,29 +22,31 @@ import TVL from '../../assets/images/logos/earn/tvl.svg'
 import LSD from '../../assets/images/logos/lsd.svg'
 import DESCI from '../../assets/images/logos/DeSci.svg'
 import AnimatedDots from '../../components/AnimatedDots'
-import FarmDetailChart from '../../components/FarmDetailChart'
+import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
+import UserBalanceData from '../../components/UserBalanceChart/UserBalanceData'
 import VaultPanelActionsFooter from '../../components/VaultComponents/VaultPanelActions/VaultPanelActionsFooter'
-import WidoDepositBase from '../../components/WidoComponents/WidoDepositBase'
-import WidoDepositFinalStep from '../../components/WidoComponents/WidoDepositFinalStep'
-import WidoDepositSelectToken from '../../components/WidoComponents/WidoDepositSelectToken'
-import WidoDepositStart from '../../components/WidoComponents/WidoDepositStart'
-import WidoDepositStartRoutes from '../../components/WidoComponents/WidoDepositStartRoutes'
-import WidoDepositStartSlippage from '../../components/WidoComponents/WidoDepositStartSlippage'
-import WidoPoolDepositBase from '../../components/WidoComponents/WidoPoolDepositBase'
-import WidoPoolDepositFinalStep from '../../components/WidoComponents/WidoPoolDepositFinalStep'
-import WidoPoolWithdrawBase from '../../components/WidoComponents/WidoPoolWithdrawBase'
-import WidoWithdrawBase from '../../components/WidoComponents/WidoWithdrawBase'
-import WidoWithdrawFinalStep from '../../components/WidoComponents/WidoWithdrawFinalStep'
-import WidoWithdrawSelectToken from '../../components/WidoComponents/WidoWithdrawSelectToken'
-import WidoWithdrawStart from '../../components/WidoComponents/WidoWithdrawStart'
-import WidoWithdrawStartRoutes from '../../components/WidoComponents/WidoWithdrawStartRoutes'
-import WidoWithdrawStartSlippage from '../../components/WidoComponents/WidoWithdrawStartSlippage'
+import DepositBase from '../../components/WidoComponents/Deposit/DepositBase'
+import DepositFinalStep from '../../components/WidoComponents/Deposit/DepositFinalStep'
+import DepositSelectToken from '../../components/WidoComponents/Deposit/DepositSelectToken'
+import DepositStart from '../../components/WidoComponents/Deposit/DepositStart'
+import DepositStartRoutes from '../../components/WidoComponents/Deposit/DepositStartRoutes'
+import DepositStartSlippage from '../../components/WidoComponents/Deposit/DepositStartSlippage'
+import PoolDepositBase from '../../components/WidoComponents/Deposit/PoolDepositBase'
+import PoolDepositFinalStep from '../../components/WidoComponents/Deposit/PoolDepositFinalStep'
+import PoolWithdrawBase from '../../components/WidoComponents/Withdraw/PoolWithdrawBase'
+import WithdrawBase from '../../components/WidoComponents/Withdraw/WithdrawBase'
+import WithdrawFinalStep from '../../components/WidoComponents/Withdraw/WithdrawFinalStep'
+import WithdrawSelectToken from '../../components/WidoComponents/Withdraw/WithdrawSelectToken'
+import WithdrawStart from '../../components/WidoComponents/Withdraw/WithdrawStart'
+import WithdrawStartRoutes from '../../components/WidoComponents/Withdraw/WithdrawStartRoutes'
+import WithdrawStartSlippage from '../../components/WidoComponents/Withdraw/WithdrawStartSlippage'
 import {
   DECIMAL_PRECISION,
   FARM_GRAIN_TOKEN_SYMBOL,
   FARM_TOKEN_SYMBOL,
   FARM_WETH_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
+  ROUTES,
   SPECIAL_VAULTS,
 } from '../../constants'
 import { Divider } from '../../components/GlobalStyle'
@@ -56,7 +57,6 @@ import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
-
 import {
   displayAPY,
   formatNumber,
@@ -102,7 +102,6 @@ import {
   LPTokenBalance,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
-import { useEnso } from '../../providers/Enso'
 
 const chainList = [
   { id: 1, name: 'Ethereum', chainId: 1 },
@@ -145,6 +144,7 @@ const WidoDetail = () => {
   // Switch Tag (Farm/Details in mobile)
   const [farmView, setFarmView] = useState(true)
   const [detailsView, setDetailsView] = useState(false)
+  const [iFarmPrice, setIFarmPrice] = useState(0)
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
@@ -154,11 +154,27 @@ const WidoDetail = () => {
   const { loadingVaults, vaultsData } = useVaults()
   const { pools, userStats, fetchUserPoolStats } = usePools()
   const { account, balances, getWalletBalances } = useWallet()
-  const { ensoBaseTokens, getEnsoBalances, getEnsoPrice } = useEnso()
   const { profitShareAPY } = useStats()
   /* eslint-disable global-require */
   const { tokens } = require('../../data')
   /* eslint-enable global-require */
+
+  const handleNetworkChange = () => {
+    window.location.reload() // Reload the page when the network changes
+  }
+
+  useEffect(() => {
+    if (window.ethereum) {
+      // Listen for network changes
+      window.ethereum.on('chainChanged', handleNetworkChange)
+
+      return () => {
+        // Cleanup: Remove the event listener when the component unmounts
+        window.ethereum.removeListener('chainChanged', handleNetworkChange)
+      }
+    }
+    return () => {}
+  }, [])
 
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
@@ -176,8 +192,6 @@ const WidoDetail = () => {
         tokenAddress: addresses.FARM,
         vaultAddress: addresses.iFARM,
         rewardSymbol: 'iFarm',
-        isNew: tokens[IFARM_TOKEN_SYMBOL].isNew,
-        newDetails: tokens[IFARM_TOKEN_SYMBOL].newDetails,
         tokenNames: ['FARM'],
       },
       [FARM_WETH_TOKEN_SYMBOL]: {
@@ -188,8 +202,6 @@ const WidoDetail = () => {
         vaultAddress: addresses.FARM_WETH_LP,
         logoUrl: ['./icons/farm.svg', './icons/eth.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
-        isNew: tokens[FARM_WETH_TOKEN_SYMBOL].isNew,
-        balance: 'FARM_WETH_LP',
       },
       [FARM_GRAIN_TOKEN_SYMBOL]: {
         liquidityPoolVault: true,
@@ -199,11 +211,9 @@ const WidoDetail = () => {
         vaultAddress: addresses.FARM_GRAIN_LP,
         logoUrl: ['./icons/farm.svg', './icons/grain.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
-        isNew: tokens[FARM_GRAIN_TOKEN_SYMBOL].isNew,
-        balance: 'FARM_GRAIN_LP',
       },
     }),
-    [tokens, farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
+    [farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
   )
 
   const groupOfVaults = { ...vaultsData, ...poolVaults }
@@ -280,6 +290,24 @@ const WidoDetail = () => {
     }
     getBadge()
   }, [chain])
+
+  const getIFarmPrice = async data => {
+    try {
+      const result = Number(get(data, `${IFARM_TOKEN_SYMBOL}.usdPrice`, 0)).toFixed(2)
+      return result
+    } catch (e) {
+      return 0
+    }
+  }
+
+  useEffect(() => {
+    const getPriceValue = async () => {
+      const value = await getIFarmPrice(vaultsData)
+      setIFarmPrice(value)
+    }
+
+    getPriceValue()
+  }, [vaultsData])
 
   const rewardTxt = getDetailText(
     token,
@@ -403,6 +431,20 @@ const WidoDetail = () => {
     amountsToExecute,
   ])
 
+  const tempPricePerFullShare = useIFARM
+    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
+    : get(token, `pricePerFullShare`, 0)
+  const pricePerFullShare = Number(
+    fromWei(
+      tempPricePerFullShare,
+      useIFARM ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0) : token.decimals,
+    ),
+  )
+
+  const usdPrice =
+    Number(token.usdPrice) * pricePerFullShare ||
+    Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price) * pricePerFullShare
+
   // Show/Hide Select Token Component
   const [selectTokenDepo, setSelectTokenDepo] = useState(false)
 
@@ -441,10 +483,8 @@ const WidoDetail = () => {
     const getTokenBalance = async () => {
       try {
         if (chain && account && Object.keys(balances).length !== 0) {
-          const tokenAddress =
-            token.tokenAddress !== undefined && token.tokenAddress.length !== 2
-              ? token.tokenAddress
-              : token.vaultAddress
+          const curBalances = await getBalances(account, [chain.toString()])
+          setBalanceList(curBalances)
           let supList = [],
             directInSup = {},
             directInBalance = {}
@@ -457,39 +497,14 @@ const WidoDetail = () => {
           } catch (err) {
             console.log('getSupportedTokens of Wido: ', err)
           }
-          const ensoTokens = ensoBaseTokens[chain.toString()] || []
-          const ensoRawBalances = await getEnsoBalances(account, chain.toString())
-          const curBalances = (
-            await Promise.all(
-              ensoRawBalances.map(async balance => {
-                if (!ethers.utils.isAddress(balance.token))
-                  balance.token = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
-                const baseToken = ensoTokens.find(el => el.address === balance.token)
-                const price = baseToken
-                  ? await getEnsoPrice(chain.toString(), baseToken.address)
-                  : 0
-                const item = {
-                  symbol: baseToken?.symbol,
-                  address: baseToken?.address,
-                  balance: balance.amount,
-                  default: false,
-                  usdValue: Number(fromWei(balance.amount, balance.decimals)) * price,
-                  usdPrice: price,
-                  logoURI: baseToken?.logoURI,
-                  decimals: balance.decimals,
-                  chainId: chain,
-                }
-                return item
-              }),
-            )
-          ).filter(item => item.address)
-          setBalanceList(curBalances)
+          const tokenAddress =
+            token.tokenAddress !== undefined && token.tokenAddress.length !== 2
+              ? token.tokenAddress
+              : token.vaultAddress
 
           const soonSupList = []
           supList = supList.map(sup => {
-            const supToken = curBalances.find(
-              el => el.address.toLowerCase() === sup.address.toLowerCase(),
-            )
+            const supToken = curBalances.find(el => el.address === sup.address)
             if (supToken) {
               sup.balance = supToken.balance
               sup.usdValue = supToken.balanceUsdValue
@@ -588,7 +603,7 @@ const WidoDetail = () => {
     }
 
     getTokenBalance()
-  }, [account, chain, balances, ensoBaseTokens]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, chain, balances]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const {
     backColor,
@@ -701,6 +716,8 @@ const WidoDetail = () => {
   const [symbolWith, setSymbolWith] = useState('iFARM')
   const [legacyStaking, setLegacyStaking] = useState(false)
 
+  const [, setLoadData] = useState(true)
+
   const series = [44, 55]
   const options = {
     chart: {
@@ -749,7 +766,7 @@ const WidoDetail = () => {
                   setPrevPage('')
                   history.goBack()
                 } else {
-                  push('/')
+                  push(ROUTES.ADVANCED)
                 }
               }}
               backcolor={widoBackBtnBackColor}
@@ -780,7 +797,7 @@ const WidoDetail = () => {
                   if (prevUrl.includes(filterUrl)) {
                     history.goBack()
                   } else {
-                    push('/')
+                    push(ROUTES.ADVANCED)
                   }
                 }}
                 backcolor={widoBackBtnBackColor}
@@ -977,6 +994,17 @@ const WidoDetail = () => {
                 />
               )}
             </HalfInfo>
+            <HalfInfo padding="0px" borderColor="none">
+              <UserBalanceData
+                token={token}
+                vaultPool={vaultPool}
+                tokenSymbol={id}
+                setLoadData={setLoadData}
+                useIFARM={useIFARM}
+                iFarmPrice={iFarmPrice}
+                usdPrice={usdPrice}
+              />
+            </HalfInfo>
             <HalfInfo
               padding={!isMobile ? '20px' : '15px'}
               backColor={backColor}
@@ -985,7 +1013,7 @@ const WidoDetail = () => {
               <NewLabel weight={700} size="16px" height="21px">
                 APY Breakdown
               </NewLabel>
-              <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
+              <div className="farm-detail-reward" dangerouslySetInnerHTML={{ __html: rewardTxt }} />
             </HalfInfo>
             <HalfInfo
               padding={!isMobile ? '24px 22px 44px 22px' : '15px'}
@@ -1010,11 +1038,9 @@ const WidoDetail = () => {
                     size="12px"
                     height="16px"
                   >
-                    {/* <img className="icon" src={VaultIcon} alt="" /> */}
                     <NewLabel size="12px" weight={isMobile ? 400 : 600} height="16px" self="center">
                       Vault Address
                     </NewLabel>
-                    {/* <img className="external-link" src={ExternalLink} alt="" /> */}
                   </InfoLabel>
                 )}
                 {vaultPool.autoStakePoolAddress && (
@@ -1028,11 +1054,9 @@ const WidoDetail = () => {
                     size="12px"
                     height="16px"
                   >
-                    {/* <img className="icon" src={StrategyIcon} alt="" /> */}
                     <NewLabel size="12px" weight={isMobile ? 400 : 600} height="16px" self="center">
                       Strategy Address
                     </NewLabel>
-                    {/* <img className="external-link" src={ExternalLink} alt="" /> */}
                   </InfoLabel>
                 )}
                 <InfoLabel
@@ -1047,11 +1071,9 @@ const WidoDetail = () => {
                   size="12px"
                   height="16px"
                 >
-                  {/* <img className="icon" src={VaultIcon} alt="" /> */}
                   <NewLabel size="12px" weight={isMobile ? 400 : 600} height="16px" self="center">
                     Pool Address
                   </NewLabel>
-                  {/* <img className="external-link" src={ExternalLink} alt="" /> */}
                 </InfoLabel>
               </FlexDiv>
             </HalfInfo>
@@ -1133,7 +1155,7 @@ const WidoDetail = () => {
               {/* Components for Deposit */}
               <DepositComponets show={activeDepo}>
                 {useIFARM ? (
-                  <WidoPoolDepositBase // for IFarm
+                  <PoolDepositBase // for IFarm
                     selectTokenWido={selectTokenDepo}
                     setSelectTokenWido={setSelectTokenDepo}
                     startSlippage={startSlippageDepo}
@@ -1161,7 +1183,7 @@ const WidoDetail = () => {
                   />
                 ) : (
                   loadComplete && (
-                    <WidoDepositBase
+                    <DepositBase
                       selectTokenWido={selectTokenDepo}
                       setSelectTokenWido={setSelectTokenDepo}
                       startSlippage={startSlippageDepo}
@@ -1192,7 +1214,7 @@ const WidoDetail = () => {
                   )
                 )}
 
-                <WidoDepositSelectToken
+                <DepositSelectToken
                   selectTokenWido={selectTokenDepo}
                   setSelectTokenWido={setSelectTokenDepo}
                   clickTokenId={clickTokenIdDepo}
@@ -1204,7 +1226,7 @@ const WidoDetail = () => {
                   setWidoPartHeight={setWidoPartHeightDepo}
                 />
 
-                <WidoDepositStart
+                <DepositStart
                   pickedToken={pickedTokenDepo}
                   depositWido={depositWido}
                   setDepositWido={setDepositWido}
@@ -1225,12 +1247,12 @@ const WidoDetail = () => {
                   setQuoteValue={setQuoteValueDepo}
                 />
 
-                <WidoDepositStartRoutes
+                <DepositStartRoutes
                   startRoutes={startRoutesDepo}
                   setStartRoutes={setStartRoutesDepo}
                 />
 
-                <WidoDepositStartSlippage
+                <DepositStartSlippage
                   startSlippage={startSlippageDepo}
                   setStartSlippage={setStartSlippageDepo}
                   setSlippagePercent={setSlippagePercentDepo}
@@ -1238,7 +1260,7 @@ const WidoDetail = () => {
                 />
 
                 {useIFARM ? (
-                  <WidoPoolDepositFinalStep
+                  <PoolDepositFinalStep
                     finalStep={depositFinalStep}
                     setFinalStep={setDepositFinalStep}
                     setDepositWido={setDepositWido}
@@ -1263,7 +1285,7 @@ const WidoDetail = () => {
                     multipleAssets={multipleAssets}
                   />
                 ) : (
-                  <WidoDepositFinalStep
+                  <DepositFinalStep
                     finalStep={depositFinalStep}
                     setFinalStep={setDepositFinalStep}
                     setDepositWido={setDepositWido}
@@ -1291,7 +1313,7 @@ const WidoDetail = () => {
               {/* Components for Withdraw */}
               <WithdrawComponents show={!activeDepo}>
                 {useIFARM ? (
-                  <WidoPoolWithdrawBase
+                  <PoolWithdrawBase
                     selectTokenWido={selectTokenWith}
                     setSelectTokenWido={setSelectTokenWith}
                     withdrawWido={withdrawWido}
@@ -1310,7 +1332,7 @@ const WidoDetail = () => {
                     token={token}
                   />
                 ) : (
-                  <WidoWithdrawBase
+                  <WithdrawBase
                     selectTokenWido={selectTokenWith}
                     setSelectTokenWido={setSelectTokenWith}
                     withdrawWido={withdrawWido}
@@ -1330,7 +1352,7 @@ const WidoDetail = () => {
                   />
                 )}
 
-                <WidoWithdrawSelectToken
+                <WithdrawSelectToken
                   selectTokenWido={selectTokenWith}
                   setSelectTokenWido={setSelectTokenWith}
                   clickTokenId={clickTokenIdWith}
@@ -1342,7 +1364,7 @@ const WidoDetail = () => {
                   setWidoPartHeight={setWidoPartHeightWith}
                 />
 
-                <WidoWithdrawStart
+                <WithdrawStart
                   withdrawWido={withdrawWido}
                   setWithdrawWido={setWithdrawWido}
                   pickedToken={pickedTokenWith}
@@ -1363,12 +1385,12 @@ const WidoDetail = () => {
                   setQuoteValue={setQuoteValueWith}
                 />
 
-                <WidoWithdrawStartRoutes
+                <WithdrawStartRoutes
                   startRoutes={startRoutesWith}
                   setStartRoutes={setStartRoutesWith}
                 />
 
-                <WidoWithdrawStartSlippage
+                <WithdrawStartSlippage
                   startSlippage={startSlippageWith}
                   setStartSlippage={setStartSlippageWith}
                   slippagePercent={slippagePercentWith}
@@ -1376,7 +1398,7 @@ const WidoDetail = () => {
                   setWithdrawWido={setWithdrawWido}
                 />
 
-                <WidoWithdrawFinalStep
+                <WithdrawFinalStep
                   finalStep={withdrawFinalStep}
                   setFinalStep={setWithdrawFinalStep}
                   setWithdrawWido={setWithdrawWido}

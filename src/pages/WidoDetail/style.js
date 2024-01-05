@@ -13,6 +13,7 @@ const DetailView = styled.div`
 
   @media screen and (max-width: 992px) {
     margin-left: 0;
+    padding-bottom: 150px;
   }
 `
 

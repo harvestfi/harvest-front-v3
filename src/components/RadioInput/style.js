@@ -14,7 +14,6 @@ const Container = styled.div`
     margin: 0;
     padding: 0px 0px 0px 10px;
     outline: 0;
-    // font-family: Montserrat;
     font-family: 'Inter', sans-serif;
     background-color: white;
 

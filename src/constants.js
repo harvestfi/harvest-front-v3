@@ -17,6 +17,10 @@ export const SOCIAL_LINKS = {
 
 export const ROUTES = {
   HOME: '/',
+  TUTORIAL: '/get-started',
+  BEGINNERS: '/beginners',
+  COLLABORATIONS: '/collaborations',
+  ADVANCED: '/farm',
   PORTFOLIO: '/portfolio',
   ANALYTIC: '/analytics',
   DOC: '/doc',
@@ -24,6 +28,9 @@ export const ROUTES = {
   GRAIN: '/grain',
   CAMELOT: '/camelot',
   WIDODETAIL: '/:network/:paramAddress',
+  ADVANCEDFARM: '/advanced/:network/:paramAddress',
+  BEGINNERSFARM: '/beginner/:paramAddress',
+  CHARTS: '/charts',
   WORK: '/work',
   POOL: '/pool',
   ZAPPER: '/zapper',
@@ -503,12 +510,14 @@ export const REVENUE_MONTHLY_API_ENDPOINT = `${HARVEST_EXTERNAL_API_URL}/revenue
 export const CMC_API_ENDPOINT = `${HARVEST_EXTERNAL_API_URL}/cmc?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`
 export const TVL_API_ENDPOINT = `${HARVEST_EXTERNAL_API_URL}/gmv/total?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`
 export const TOTAL_TVL_API_ENDPOINT = `${HARVEST_API_URL}/tvl?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`
+export const COINGECKO_API_KEY = `${process.env.REACT_APP_COINGECKO_API_KEY}`
 
-export const POOL_BALANCES_DECIMALS = 8
-
+export const BEGINNERS_BALANCES_DECIMALS = 2
 export const WIDO_BALANCES_DECIMALS = 5
-
+export const POOL_BALANCES_DECIMALS = 8
 export const WIDO_EXTEND_DECIMALS = 9
+export const MAX_BALANCES_DECIMALS = 12
+export const MAX_DECIMALS = 18
 
 export const MIGRATING_VAULTS = []
 

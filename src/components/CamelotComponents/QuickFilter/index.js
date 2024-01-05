@@ -4,6 +4,7 @@ import { debounce } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
+import BASE from '../../../assets/images/chains/base.svg'
 import ETHEREUM from '../../../assets/images/chains/ethereum.svg'
 import MobileFiltersIcon from '../../../assets/images/chains/mobilefiltersicon.svg'
 import POLYGON from '../../../assets/images/chains/polygon.svg'
@@ -19,6 +20,7 @@ import CollabBswap from '../../../assets/images/logos/filter/collab-bswap.svg'
 // import CollabPods from '../../assets/images/logos/filter/collab-pods.svg'
 import CollabCamelot from '../../../assets/images/logos/filter/collab-camelot.svg'
 import { CHAIN_IDS } from '../../../data/constants'
+import { ROUTES } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { isLedgerLive, isSpecialApp } from '../../../utils'
@@ -60,6 +62,7 @@ const ChainsList = isLedgerLive()
       { id: 0, name: 'Ethereum', img: ETHEREUM, chainId: CHAIN_IDS.ETH_MAINNET },
       { id: 1, name: 'Polygon', img: POLYGON, chainId: CHAIN_IDS.POLYGON_MAINNET },
       { id: 2, name: 'Arbitrum', img: ARBITRUM, chainId: CHAIN_IDS.ARBITRUM_ONE },
+      { id: 3, name: 'Base', img: BASE, chainId: CHAIN_IDS.BASE },
     ]
 
 const SwitchBalanceList = [
@@ -262,6 +265,9 @@ const QuickFilter = ({
   if (selChain.includes(CHAIN_IDS.ARBITRUM_ONE)) {
     curChain.push(2)
   }
+  if (selChain.includes(CHAIN_IDS.BASE)) {
+    curChain.push(3)
+  }
 
   const [selectedClass, setSelectedClass] = useState(curChain)
 
@@ -375,7 +381,7 @@ const QuickFilter = ({
         paramObj.search.toLowerCase() === 'lsd' ||
         paramObj.search.toLowerCase() === 'desci'
       ) {
-        push(`/?${params.toString()}`)
+        push(`${ROUTES.ADVANCED}?${params.toString()}`)
       } else {
         push(`${pathname}?${params.toString()}`)
       }
@@ -640,6 +646,7 @@ const QuickFilter = ({
                       CHAIN_IDS.ETH_MAINNET,
                       CHAIN_IDS.POLYGON_MAINNET,
                       CHAIN_IDS.ARBITRUM_ONE,
+                      CHAIN_IDS.BASE,
                     ])
                     clearFilter()
                   }}
@@ -920,6 +927,7 @@ const QuickFilter = ({
                     CHAIN_IDS.ETH_MAINNET,
                     CHAIN_IDS.POLYGON_MAINNET,
                     CHAIN_IDS.ARBITRUM_ONE,
+                    CHAIN_IDS.BASE,
                   ])
                   clearFilter()
                 }}
