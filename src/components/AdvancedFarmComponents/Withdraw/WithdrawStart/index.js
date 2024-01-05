@@ -20,7 +20,7 @@ import { useWallet } from '../../../../providers/Wallet'
 import { useActions } from '../../../../providers/Actions'
 import { usePools } from '../../../../providers/Pools'
 import { useVaults } from '../../../../providers/Vault'
-import { maxUint256, getWeb3 } from '../../../../services/web3'
+import { getWeb3 } from '../../../../services/web3'
 import AnimatedDots from '../../../AnimatedDots'
 import { addresses } from '../../../../data'
 import {
@@ -114,7 +114,7 @@ const WithdrawStart = ({
         console.debug('Allowance Spender: ', spender)
 
         if (!new BigNumber(allowance).gte(unstakeBalance)) {
-          const amountToApprove = maxUint256()
+          const amountToApprove = unstakeBalance
           await approveZap(amountToApprove) // Approve for Zap
         }
         setProgressStep(2)
