@@ -715,6 +715,108 @@ const AdvancedFarm = () => {
   const firstUserPoolsLoad = useRef(true)
   const firstWalletBalanceLoad = useRef(true)
 
+  const totalRewardsEarned = get(userStats, `[${fAssetPool.id}]['totalRewardsEarned']`, 0)
+  const rewardsEarned = get(userStats, `[${fAssetPool.id}]['rewardsEarned']`, 0)
+
+  const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      let totalRewardSum = 0
+      const usdPrices = []
+      for (let l = 0; l < rewardTokenSymbols.length; l += 1) {
+        // eslint-disable-next-line one-var
+        let rewardSymbol = rewardTokenSymbols[l].toUpperCase(),
+          usdRewardPrice = 0,
+          rewardDecimal = get(tokens[rewardTokenSymbols[l]], 'decimals', 18)
+
+        if (rewardTokenSymbols.includes(FARM_TOKEN_SYMBOL)) {
+          rewardSymbol = FARM_TOKEN_SYMBOL
+        }
+
+        const rewardToken = groupOfVaults[rewardSymbol]
+
+        if (rewardToken) {
+          usdRewardPrice =
+            (rewardSymbol === FARM_TOKEN_SYMBOL
+              ? rewardToken.data.lpTokenData && rewardToken.data.lpTokenData.price
+              : rewardToken.usdPrice) || 0
+
+          rewardDecimal =
+            rewardToken.decimals ||
+            (rewardToken.data &&
+              rewardToken.data.lpTokenData &&
+              rewardToken.data.lpTokenData.decimals)
+        } else if (rewardTokenSymbols[l].substring(0, 1) === 'f') {
+          let underlyingRewardSymbol
+          if (rewardTokenSymbols[l].substring(0, 2) === 'fx') {
+            underlyingRewardSymbol = rewardTokenSymbols[l].substring(2)
+          } else {
+            underlyingRewardSymbol = rewardTokenSymbols[l].substring(1)
+          }
+          // eslint-disable-next-line no-loop-func
+          try {
+            for (let ids = 0; ids < apiData.length; ids += 1) {
+              const tempData = apiData[ids]
+              const tempSymbol = tempData.symbol
+              if (tempSymbol.toLowerCase() === underlyingRewardSymbol.toLowerCase()) {
+                // eslint-disable-next-line no-await-in-loop
+                const usdUnderlyingRewardPrice = await getTokenPriceFromApi(tempData.id)
+                usdRewardPrice = Number(usdUnderlyingRewardPrice) * Number(pricePerFullShare)
+                break
+              }
+            }
+          } catch (error) {
+            console.error('Error:', error)
+          }
+        } else {
+          try {
+            for (let ids = 0; ids < apiData.length; ids += 1) {
+              const tempData = apiData[ids]
+              const tempSymbol = tempData.symbol
+              if (tempSymbol.toLowerCase() === rewardSymbol.toLowerCase()) {
+                // eslint-disable-next-line no-await-in-loop
+                usdRewardPrice = await getTokenPriceFromApi(tempData.id)
+                break
+              }
+            }
+          } catch (error) {
+            console.error('Error:', error)
+          }
+        }
+        console.log('USD Price of ', rewardSymbol, ':', usdRewardPrice)
+
+        const totalRewardUsd =
+          rewardTokenSymbols.length === 1
+            ? Number(
+                totalRewardsEarned === undefined
+                  ? 0
+                  : fromWei(totalRewardsEarned, rewardDecimal, 4) * Number(usdRewardPrice),
+              )
+            : Number(
+                rewardsEarned === undefined
+                  ? 0
+                  : fromWei(get(rewardsEarned, rewardTokenSymbols[l], 0), rewardDecimal, 4) *
+                      Number(usdRewardPrice),
+              )
+        totalRewardSum += totalRewardUsd
+        usdPrices.push(usdRewardPrice)
+      }
+      setTotalReward(totalRewardSum)
+      setRewardTokenPrices(usdPrices)
+    }
+
+    fetchData()
+    // eslint-disable-next-line
+    }, [
+    account,
+    userStats,
+    fAssetPool,
+    apiData,
+    pricePerFullShare,
+    rewardTokenSymbols,
+  ])
+
   useEffectWithPrevious(
     ([prevAccount, prevUserStats, prevBalances]) => {
       const hasSwitchedAccount = account !== prevAccount && account
@@ -883,107 +985,6 @@ const AdvancedFarm = () => {
     setFarmingLoading(loadingFarm)
     setLpStatsloading(loadingLp)
   }
-  const totalRewardsEarned = get(userStats, `[${fAssetPool.id}]['totalRewardsEarned']`, 0)
-  const rewardsEarned = get(userStats, `[${fAssetPool.id}]['rewardsEarned']`, 0)
-
-  const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
-
-  useEffect(() => {
-    const fetchData = async () => {
-      let totalRewardSum = 0
-      const usdPrices = []
-      for (let l = 0; l < rewardTokenSymbols.length; l += 1) {
-        // eslint-disable-next-line one-var
-        let rewardSymbol = rewardTokenSymbols[l].toUpperCase(),
-          usdRewardPrice = 0,
-          rewardDecimal = get(tokens[rewardTokenSymbols[l]], 'decimals', 18)
-
-        if (rewardTokenSymbols.includes(FARM_TOKEN_SYMBOL)) {
-          rewardSymbol = FARM_TOKEN_SYMBOL
-        }
-
-        const rewardToken = groupOfVaults[rewardSymbol]
-
-        if (rewardToken) {
-          usdRewardPrice =
-            (rewardSymbol === FARM_TOKEN_SYMBOL
-              ? rewardToken.data.lpTokenData && rewardToken.data.lpTokenData.price
-              : rewardToken.usdPrice) || 0
-
-          rewardDecimal =
-            rewardToken.decimals ||
-            (rewardToken.data &&
-              rewardToken.data.lpTokenData &&
-              rewardToken.data.lpTokenData.decimals)
-        } else if (rewardTokenSymbols[l].substring(0, 1) === 'f') {
-          let underlyingRewardSymbol
-          if (rewardTokenSymbols[l].substring(0, 2) === 'fx') {
-            underlyingRewardSymbol = rewardTokenSymbols[l].substring(2)
-          } else {
-            underlyingRewardSymbol = rewardTokenSymbols[l].substring(1)
-          }
-          // eslint-disable-next-line no-loop-func
-          try {
-            for (let ids = 0; ids < apiData.length; ids += 1) {
-              const tempData = apiData[ids]
-              const tempSymbol = tempData.symbol
-              if (tempSymbol.toLowerCase() === underlyingRewardSymbol.toLowerCase()) {
-                // eslint-disable-next-line no-await-in-loop
-                const usdUnderlyingRewardPrice = await getTokenPriceFromApi(tempData.id)
-                usdRewardPrice = Number(usdUnderlyingRewardPrice) * Number(pricePerFullShare)
-                break
-              }
-            }
-          } catch (error) {
-            console.error('Error:', error)
-          }
-        } else {
-          try {
-            for (let ids = 0; ids < apiData.length; ids += 1) {
-              const tempData = apiData[ids]
-              const tempSymbol = tempData.symbol
-              if (tempSymbol.toLowerCase() === rewardSymbol.toLowerCase()) {
-                // eslint-disable-next-line no-await-in-loop
-                usdRewardPrice = await getTokenPriceFromApi(tempData.id)
-                break
-              }
-            }
-          } catch (error) {
-            console.error('Error:', error)
-          }
-        }
-        console.log('USD Price of ', rewardSymbol, ':', usdRewardPrice)
-
-        const totalRewardUsd =
-          rewardTokenSymbols.length === 1
-            ? Number(
-                totalRewardsEarned === undefined
-                  ? 0
-                  : fromWei(totalRewardsEarned, rewardDecimal, 4) * Number(usdRewardPrice),
-              )
-            : Number(
-                rewardsEarned === undefined
-                  ? 0
-                  : fromWei(get(rewardsEarned, rewardTokenSymbols[l], 0), rewardDecimal, 4) *
-                      Number(usdRewardPrice),
-              )
-        totalRewardSum += totalRewardUsd
-        usdPrices.push(usdRewardPrice)
-      }
-      setTotalReward(totalRewardSum)
-      setRewardTokenPrices(usdPrices)
-    }
-
-    fetchData()
-    // eslint-disable-next-line
-    }, [
-    account,
-    userStats,
-    fAssetPool,
-    apiData,
-    pricePerFullShare,
-    rewardTokenSymbols,
-  ])
 
   const viewComponentProps = {
     token,
