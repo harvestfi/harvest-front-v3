@@ -192,7 +192,8 @@ const AdvancedFarm = () => {
   const { paramAddress } = useParams()
   // Switch Tag (Deposit/Withdraw)
   const [activeDepo, setActiveDepo] = useState(true)
-  const { ensoBaseTokens, getEnsoBalances, getEnsoPrice } = useEnso()
+  const ensoData = useEnso()
+  const { ensoBaseTokens, getEnsoBalances, getEnsoPrice } = ensoData || {}
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 

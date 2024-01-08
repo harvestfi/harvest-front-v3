@@ -91,7 +91,8 @@ const DepositBase = ({
 }) => {
   const { connected, connectAction, account, chainId, setChainId, web3 } = useWallet()
   const { vaultsData } = useVaults()
-  const { getEnsoQuote } = useEnso()
+  const ensoData = useEnso()
+  const { getEnsoQuote } = ensoData || {}
   const { filterColor } = useThemeContext()
 
   const [
