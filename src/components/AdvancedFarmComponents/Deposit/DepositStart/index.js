@@ -62,7 +62,8 @@ const DepositStart = ({
   const { handleDeposit, handleApproval } = useActions()
   const { contracts } = useContracts()
   const { fetchUserPoolStats, userStats } = usePools()
-  const { getEnsoRoute, ensoApprove, getEnsoApprovals } = useEnso()
+  const ensoData = useEnso()
+  const { getEnsoRoute, ensoApprove, getEnsoApprovals } = ensoData || {}
 
   const slippagePercentage = 0.005 // Default slippage Percent
   const chainId = token.chain || token.data.chain
