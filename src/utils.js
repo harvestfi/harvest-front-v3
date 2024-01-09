@@ -4,7 +4,6 @@ import BigNumber from 'bignumber.js'
 import mobile from 'is-mobile'
 import { get, isArray, isNaN, isEmpty, size as arraySize, sum, sumBy } from 'lodash'
 import React from 'react'
-import ReactHtmlParser from 'react-html-parser'
 import {
   DECIMAL_PRECISION,
   DISABLED_DEPOSITS,
@@ -288,332 +287,6 @@ export const displayAPY = (apy, ...args) =>
     ? '0.00%'
     : `${truncateNumberString(apy, ...args)}%`
 
-export const getRewardsText = (
-  token,
-  tokens,
-  vaultPool,
-  tradingApy,
-  farmAPY,
-  specialVaultApy,
-  isSpecialVault,
-  boostedEstimatedAPY,
-  boostedRewardAPY,
-) => {
-  const components = []
-
-  const isUniv3Vault = !!(vaultPool && new RegExp(UNIV3_POOL_ID_REGEX).test(vaultPool.id))
-
-  const isHodlVault = token.hodlVaultId
-
-  if (vaultPool && (isUniv3Vault || vaultPool.rewardTokenSymbols.length > 1)) {
-    const rewardSymbols = !isUniv3Vault
-      ? token.apyTokenSymbols
-      : token.apyTokenSymbols.filter(symbol => symbol !== 'UNI')
-
-    if (rewardSymbols && rewardSymbols.length) {
-      rewardSymbols.forEach((symbol, i) => {
-        if (get(token, `estimatedApyBreakdown[${i}]`)) {
-          components.push(`<div style="display: flex; margin-bottom: 14px; font-size: 16px; line-height: 21px;">
-          <div style="min-width: 75px;">
-          ${token.apyIconUrls.map(
-            (item, index) => `<img src='${item.toLowerCase()}' key=${index} width=24 alt="" />`,
-          )}</div>
-            <div style="min-width: 60px; color: #1F2937; font-weight: 700;">${
-              new BigNumber(token.estimatedApyBreakdown[i]).gt(0)
-                ? `${displayAPY(token.estimatedApyBreakdown[i])}`
-                : `...`
-            }</div>
-            <div style="min-width: 150px; font-weight: 400; color: #888E8F;">${get(
-              token,
-              `apyDescriptionOverride[${i}]`,
-              `Auto harvested&nbsp;<span style="color: #1F2937; font-weight: 700;">${
-                rewardSymbols.length > 1 && token.estimatedApyBreakdown.length === 1
-                  ? rewardSymbols.join(', ')
-                  : symbol
-              }</span>`,
-            )}</div></div>`)
-        }
-      })
-    }
-
-    const hasBoostedApy = new BigNumber(boostedRewardAPY).isGreaterThan(0)
-
-    if (hasBoostedApy) {
-      components.push(
-        `<div style="display: flex; color: #1F2937; font-weight: 700; font-size: 16px; line-height: 21px; margin-bottom: 14px;">
-        <div style="min-width: 75px;"><img src='./icons/ifarm.png' width=25 alt="" /></div>
-        <div style="min-width: 60px;">${displayAPY(boostedRewardAPY)}</div>
-        <div style="min-width: 150px; font-weight: 400; color: #888E8F;">
-        <span style="color: #1F2937; font-weight: 700;">iFARM</span>
-        &nbsp;auto-compounding rewards</div></div>`,
-      )
-    }
-
-    if (Number(farmAPY) > 0) {
-      vaultPool.rewardTokenSymbols.forEach((symbol, symbolIdx) => {
-        const farmSymbols = [FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL]
-
-        if (token.hideFarmApy && farmSymbols.includes(symbol)) {
-          return
-        }
-
-        if (
-          (!hasBoostedApy || !!symbolIdx) &&
-          new BigNumber(get(vaultPool, `rewardAPY[${symbolIdx}]`, 0)).isGreaterThan(0)
-        ) {
-          components.push(`
-          <div style='display: flex; margin-bottom: 14px; font-size: 16px; line-height: 21px;'>
-            <div style='min-width: 75px'><img src='./icons/${symbol}.png' width=24 alt="" /></div>
-            <div style="min-width: 60px; color: #1F2937; font-weight: 700;">
-              ${displayAPY(get(vaultPool, `rewardAPY[${symbolIdx}]`, 0))}
-            </div>&nbsp;
-            <div style="min-width: 150px; font-weight: 400; color: #888E8F;">
-              <span style="color: #1F2937; font-weight: 700;">${symbol}</span>
-              &nbsp;rewards
-            </div>`)
-
-          if (Object.keys(get(vaultPool, 'vestingDescriptionOverride', [])).includes(symbol)) {
-            components.push(vaultPool.vestingDescriptionOverride[symbol])
-          }
-        }
-      })
-    }
-
-    if (isUniv3Vault) {
-      components.push(`
-      <div style='display: flex; margin-bottom: 14px; font-size: 16px; line-height: 21px;'>
-        <div style='min-width: 75px;'>
-
-        ${
-          token.apyIconUrls
-            ? token.apyIconUrls.map(url => `<img key=${url} width=24 src='${url}' />`)
-            : null
-        }
-          ${
-            !token.inactive && !isHodlVault && vaultPool.rewardTokenSymbols.length >= 2
-              ? vaultPool.rewardTokenSymbols.map((symbol, symbolIdx) =>
-                  symbolIdx !== 0 && symbolIdx < vaultPool.rewardTokens.length
-                    ? `<img
-                key=${symbol} width=24 style='margin-right: 10px;'
-                src='./icons/${symbol.toLowerCase()}.png'
-              />`
-                    : null,
-                )
-              : ''
-          }
-          </div>
-          <div style="min-width: 60px; color: #1F2937; font-weight: 700;">0.00%</div>
-          <div style="min-width: 150px; font-weight: 400; color: #888E8F;">Earn Uniswap v3 trading fees ${
-            new BigNumber(tradingApy).gt(0)
-              ? `estimated at&nbsp; <b>${displayAPY(tradingApy)}</b>`
-              : ``
-          }</div>`)
-      // components.push(`
-    } else if (Number(tradingApy) > 0) {
-      components.push(`
-      <div style="display: flex; margin-bottom: 14px; font-size: 16px; line-height: 21px;">
-        <div style="min-width: 75px;"><img src='./icons/swapfee.svg' width=24 alt="" /></div>
-        <div style="min-width: 60px; color: #1F2937; font-weight: 700;">${displayAPY(
-          tradingApy,
-        )}</div>
-        <div style="min-width: 150px; color: #888E8F; font-weight: 500;">Liquidity Provider APY</div>
-      </div>`)
-    }
-
-    const tooltipText = `<ul style="list-style-type: none; margin: 5px; padding-left: 0px; text-align: left;">${components
-      .filter(c => !isEmpty(c))
-      .map(c => `<li align="left" style="margin: -5px;">${c}</li>`)
-      .join('<br />')}</ul>`
-
-    return ReactHtmlParser(tooltipText)
-  }
-
-  if (vaultPool.id === 'fweth-farm') {
-    components.push(`<b>${displayAPY(farmAPY)}:</b> <b>FARM</b> rewards`)
-    if (Object.keys(get(vaultPool, 'vestingDescriptionOverride', [])).includes(FARM_TOKEN_SYMBOL)) {
-      components.push(vaultPool.vestingDescriptionOverride[FARM_TOKEN_SYMBOL])
-    }
-    components.push(
-      `<b>${displayAPY(token.estimatedApy)}</b>: Auto harvested <b>${token.apyTokenSymbols.join(
-        ', ',
-      )}</b>`,
-    )
-
-    const tooltipText = `<ul style="margin: 5px; padding-left: 0px; text-align: left;">${components
-      .filter(c => !isEmpty(c))
-      .map(c => `<li align="left" style="margin: -5px;">${c}</li>`)
-      .join('<br />')}</ul>`
-
-    return ReactHtmlParser(tooltipText)
-  }
-
-  const isIFARM = vaultPool.rewardTokens[0] === addresses.iFARM
-
-  if (isSpecialVault && vaultPool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
-    components.push(
-      `<div style="display: flex; margin-bottom: 14px; font-size: 16px; line-height: 21px;">
-      <div style="width: 75px;"><img src='./icons/${token.rewardSymbol}.png' width=24 alt=${
-        token.rewardSymbol
-      } /></div>
-      <div style="min-width: 60px; color: #1F2937; font-weight: 700;"> ${
-        specialVaultApy > 0 ? `${displayAPY(specialVaultApy)}` : 'N/A'
-      }</div>
-      <div style="min-width: 150px; color: #888E8F; font-weight: 500;">
-      <span style="color: #1F2937; font-weight: 700;">${
-        token.rewardSymbol
-      }</span>&nbsp;rewards</div></div>`,
-    )
-  } else {
-    if (!token.hideTokenApy) {
-      if (Number(tradingApy) > 0) {
-        components.push(`<div style="display: flex; margin-bottom: 14px; font-size: 16px; line-height: 21px;">
-          <div style="min-width: 75px;"><img src='./icons/swapfee.svg' width=24 alt="" /></div>
-          <div style="min-width: 60px; color: #1F2937; font-weight: 700;">${displayAPY(
-            tradingApy,
-          )}</div> 
-          <div style="min-width: 150px; color: #888E8F; font-weight: 500;">Liquidity Provider APY</div>
-        </div>`)
-      }
-
-      if (arraySize(token.apyTokenSymbols)) {
-        if (token.apyOverride) {
-          components.push(`<b>${token.apyOverride}</b>`)
-        } else if (Number(token.estimatedApy) > 0) {
-          let apyString = ''
-
-          if (token.apyDescriptionOverride && token.apyDescriptionOverride.length) {
-            token.apyTokenSymbols.forEach((symbol, symbolIdx) => {
-              const extraDescription = token.apyDescriptionOverride[symbolIdx]
-
-              apyString += `<b>${
-                token.estimatedApyBreakdown
-                  ? displayAPY(token.estimatedApyBreakdown[symbolIdx])
-                  : '...'
-              }</b>: Auto harvested <b>${symbol}</b>`
-
-              if (extraDescription) {
-                apyString += ` ${extraDescription}<br/>`
-              } else {
-                apyString += `<br/>`
-              }
-            })
-          } else {
-            apyString = `<div style="display: flex; margin-bottom: 14px; font-size: 16px; line-height: 21px;"><div style="min-width: 75px;">`
-            apyString += `${
-              token.apyIconUrls ? (
-                token.apyIconUrls.map(
-                  (url, i) =>
-                    `<img key='${i}' width=24 style={{margin:"0px 5px 0px 0px"}} src='${url}' />`,
-                )
-              ) : (
-                <>
-                  $
-                  {vaultPool.rewardTokenSymbols.map((symbol, idx) => {
-                    return `<img key=${idx} src='./icons/${symbol.toLowerCase()}.png' width=24 alt='${symbol}' />`
-                  })}
-                </>
-              )
-            }`
-            apyString += '</div>'
-            apyString += `<div style="min-width: 60px; color: #1F2937; font-weight: 700;">${
-              isIFARM && token.fullBuyback
-                ? displayAPY(boostedEstimatedAPY)
-                : displayAPY(token.estimatedApy)
-            }</div> <div style="min-width: 150px; color: #888E8F;">Auto ${
-              isHodlVault ? 'hodling <b>SUSHI<b> in' : 'harvested'
-            }&nbsp; <span style="color: #1F2937; font-weight: 700;">${token.apyTokenSymbols.join(
-              ', ',
-            )}${
-              isIFARM && token.fullBuyback
-                ? ` <span style="color: #1F2937; font-weight: 700;">(${displayAPY(
-                    token.estimatedApy,
-                  )})</span>`
-                : ``
-            }</span>${
-              token.fullBuyback ||
-              (token.tokenAddress !== addresses.V2.SUSHI.Underlying && isHodlVault)
-                ? ``
-                : `<br/>`
-            }`
-          }
-          apyString += `</div></div>`
-          if (token.fullBuyback) {
-            if (isIFARM) {
-              apyString += ` claimable as auto-compounded <b>${getRewardSymbol(
-                token,
-                true,
-              )}</b> boosting APY to <b>${displayAPY(boostedEstimatedAPY)}</b><br/>`
-            } else {
-              apyString += ` (claimable as <b>${getRewardSymbol(
-                token,
-              )}</b> using <b>Claim Rewards</b>)<br/>`
-            }
-          }
-
-          if (token.tokenAddress !== addresses.V2.SUSHI.Underlying && isHodlVault) {
-            if (
-              token.migrated &&
-              (token.vaultAddress === addresses.V2.oneInch_ETH_DAI.NewVault ||
-                token.vaultAddress === addresses.V2.oneInch_ETH_USDC.NewVault ||
-                token.vaultAddress === addresses.V2.oneInch_ETH_USDT.NewVault ||
-                token.vaultAddress === addresses.V2.oneInch_ETH_WBTC.NewVault)
-            ) {
-              apyString += ` (sent as <b>fSUSHI</b> alongside with <b>${getRewardSymbol(
-                token,
-                isIFARM,
-              )}</b> <u>upon withdrawal</u>)<br/>`
-            } else {
-              apyString += ` (claimable as <b>fSUSHI</b> using <b>Claim Rewards</b>)<br/>`
-            }
-          }
-
-          components.push(apyString)
-        }
-      }
-    }
-
-    if (!token.hideFarmApy && Number(farmAPY) > 0) {
-      let apyString = `<div style="display: flex; margin-bottom: 14px; font-size: 16px; line-height: 21px;">
-        <div style="min-width: 75px;"><img src='./icons/${getRewardSymbol(
-          token,
-          isIFARM,
-          vaultPool,
-        )}.png' width=24 alt='' /></div>`
-
-      apyString += `<div style="min-width: 60px; color: #1F2937; font-weight: 700;">${
-        isIFARM || Number(boostedRewardAPY) > 0 ? displayAPY(boostedRewardAPY) : displayAPY(farmAPY)
-      }</div><div style="min-width: 150px; font-weight: 400; color: #888E8F;" ><span style="color: #1F2937; font-weight: 700;">${getRewardSymbol(
-        token,
-        isIFARM,
-        vaultPool,
-      )}</span>&nbsp; rewards${isIFARM ? `` : ``}${
-        isIFARM || Number(boostedRewardAPY) > 0
-          ? ` (<span style="color: #1F2937; font-weight: 700;">${displayAPY(farmAPY)}</span>)`
-          : ''
-      }&nbsp;`
-
-      if (Number(boostedRewardAPY) > 0) {
-        if (isIFARM) {
-          apyString += ` boosted to &nbsp;<span style="color: #1F2937; font-weight: 700;">${displayAPY(
-            boostedRewardAPY,
-          )}</span>&nbsp; by <span style="display: contents;">${getRewardSymbol(
-            token,
-            true,
-          )}</span> auto-compounding</div>`
-        }
-
-        apyString += '</div>'
-      }
-
-      components.push(apyString)
-    }
-  }
-
-  const tooltipText = `<div align="left">${components.join('')}</div>`
-
-  return ReactHtmlParser(tooltipText)
-}
-
 export const getDetailText = (
   token,
   vaultPool,
@@ -641,14 +314,20 @@ export const getDetailText = (
           components.push(`
           <div class="detail-box">
             <div class="detail-icon">
-              ${token.apyIconUrls.map(
-                (item, index) =>
-                  `<img src='${item
-                    .slice(1, item.length)
-                    .toLowerCase()}' key=${index} width=24 height=24 alt="" style='margin-left: ${
-                    index !== 0 ? '-15px;' : ''
-                  }' />`,
-              )}
+              ${
+                rewardSymbols.length > 1 && token.estimatedApyBreakdown.length === 1
+                  ? token.apyIconUrls.map(
+                      (item, index) =>
+                        `<img src='${item
+                          .slice(1, item.length)
+                          .toLowerCase()}' key=${index} width=24 height=24 alt="" style='margin-left: ${
+                          index !== 0 ? '-15px;' : ''
+                        }' />`,
+                    )
+                  : `<img src='${token.apyIconUrls[i]
+                      .slice(1, token.apyIconUrls[i].length)
+                      .toLowerCase()}' key=${i} width=24 height=24 alt=""/>`
+              }
             </div>
             <div class="detail-apy">
               ${
@@ -658,10 +337,16 @@ export const getDetailText = (
               }
             </div>
             <div class="detail-desc-auto">
-              Auto harvested&nbsp;
+              ${
+                token.apyDescriptionOverride
+                  ? `${token.apyDescriptionOverride[i]}`
+                  : `Auto harvested`
+              }
               <span class="detail-token">
               ${
-                rewardSymbols.length > 1 && token.estimatedApyBreakdown.length === 1
+                token.apyDescriptionOverride
+                  ? ''
+                  : rewardSymbols.length > 1 && token.estimatedApyBreakdown.length === 1
                   ? rewardSymbols.join(' ')
                   : symbol
               }</span>
