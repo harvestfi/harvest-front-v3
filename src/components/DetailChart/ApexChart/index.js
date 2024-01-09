@@ -354,7 +354,7 @@ const ApexChart = ({
         userPriceFeedData = data && data.vaultHistories ? data.vaultHistories : []
       }
 
-      const slotCount = 50,
+      const slotCount = 100,
         slots = getTimeSlots(ago, slotCount)
 
       if (filter === 1) {

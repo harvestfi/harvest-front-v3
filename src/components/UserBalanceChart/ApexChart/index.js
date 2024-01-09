@@ -296,7 +296,7 @@ const ApexChart = ({
         ago = getRangeNumber(range)
       }
 
-      const slotCount = 50,
+      const slotCount = 100,
         slots = getTimeSlots(ago, slotCount)
       mainData = generateChartDataWithSlots(
         slots,
