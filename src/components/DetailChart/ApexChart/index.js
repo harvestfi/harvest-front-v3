@@ -557,7 +557,7 @@ const ApexChart = ({
             <XAxis
               dataKey="x"
               tickLine={false}
-              interval={10}
+              // interval={20}
               tickCount={isMobile ? 7 : 5}
               tick={renderCustomXAxisTick}
               padding={{ right: 10 }}
