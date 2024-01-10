@@ -148,7 +148,7 @@ const NewLabel = styled.div`
   ${props =>
     props.divScroll
       ? `
-    overflow: ${props.divScroll};
+    // overflow: ${props.divScroll};
     &::-webkit-scrollbar {
       width: 5px;
     }
