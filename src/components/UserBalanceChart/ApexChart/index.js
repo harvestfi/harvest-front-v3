@@ -310,7 +310,8 @@ const ApexChart = ({
           toDate = Math.floor(nowDate.getTime() / 1000),
           periodDate = (toDate - Number(firstDate)) / (24 * 60 * 60)
 
-        ago = Math.ceil(periodDate) + 10
+        // ago = Math.ceil(periodDate) + 10
+        ago = Math.ceil(periodDate)
       } else {
         ago = getRangeNumber(range)
       }
