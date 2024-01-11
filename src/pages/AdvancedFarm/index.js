@@ -30,7 +30,6 @@ import WithdrawSelectToken from '../../components/AdvancedFarmComponents/Withdra
 import WithdrawStart from '../../components/AdvancedFarmComponents/Withdraw/WithdrawStart'
 import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
 import UserBalanceData from '../../components/UserBalanceChart/UserBalanceData'
-import UserBalanceDataOld from '../../components/UserBalanceChartOld/UserBalanceData'
 import VaultPanelActionsFooter from '../../components/AdvancedFarmComponents/Rewards/VaultPanelActionsFooter'
 import StakeBase from '../../components/AdvancedFarmComponents/Stake/StakeBase'
 import StakeStart from '../../components/AdvancedFarmComponents/Stake/StakeStart'
@@ -1248,29 +1247,16 @@ const AdvancedFarm = () => {
                     />
                   )} */}
                   {!isMobile ? (
-                    id !== 'FARM' ? (
-                      <UserBalanceData
-                        token={token}
-                        vaultPool={vaultPool}
-                        tokenSymbol={id}
-                        totalValue={totalValue}
-                        useIFARM={useIFARM}
-                        farmPrice={farmPrice}
-                        underlyingPrice={underlyingPrice}
-                        pricePerFullShare={tempPricePerFullShare}
-                      />
-                    ) : (
-                      <UserBalanceDataOld
-                        token={token}
-                        vaultPool={vaultPool}
-                        tokenSymbol={id}
-                        totalValue={totalValue}
-                        useIFARM={useIFARM}
-                        farmPrice={farmPrice}
-                        underlyingPrice={underlyingPrice}
-                        pricePerFullShare={tempPricePerFullShare}
-                      />
-                    )
+                    <UserBalanceData
+                      token={token}
+                      vaultPool={vaultPool}
+                      tokenSymbol={id}
+                      totalValue={totalValue}
+                      useIFARM={useIFARM}
+                      farmPrice={farmPrice}
+                      underlyingPrice={underlyingPrice}
+                      pricePerFullShare={tempPricePerFullShare}
+                    />
                   ) : (
                     <></>
                   )}
