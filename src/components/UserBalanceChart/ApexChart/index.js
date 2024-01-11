@@ -15,6 +15,7 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { ceil10, floor10, round10, numberWithCommas } from '../../../utils'
 import { LoadingDiv, NoData, FakeChartWrapper } from './style'
 import { fromWei } from '../../../services/web3'
+import { useWallet } from '../../../providers/Wallet'
 
 function formatDateTime(value) {
   const date = new Date(value)
@@ -149,6 +150,7 @@ const ApexChart = ({
   fixedLen,
 }) => {
   const { fontColor } = useThemeContext()
+  const { connected } = useWallet()
 
   const [mainSeries, setMainSeries] = useState([])
 
@@ -559,10 +561,15 @@ const ApexChart = ({
             <ClipLoader size={30} margin={2} color={fontColor} />
           ) : (
             <>
-              <NoData color={fontColor}>
-                You don&apos;t have any fTokens of this farm. <br />
-                Or, if you just converted tokens, it might take up to 5mins for the chart to appear.
-              </NoData>
+              {connected ? (
+                <NoData color={fontColor}>
+                  You don&apos;t have any fTokens of this farm. <br />
+                  Or, if you just converted tokens, it might take up to 5mins for the chart to
+                  appear.
+                </NoData>
+              ) : (
+                <NoData color={fontColor}>Connect wallet to see your balance chart</NoData>
+              )}
               <FakeChartWrapper>
                 <ResponsiveContainer
                   width="100%"
