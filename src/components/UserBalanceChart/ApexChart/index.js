@@ -376,7 +376,7 @@ const ApexChart = ({
 
       if (unitBtw !== 0) {
         if (minValue === 0) {
-          maxValue *= 1.2
+          maxValue *= 1.1
         } else {
           maxValue *= 1.01
         }
@@ -387,7 +387,7 @@ const ApexChart = ({
 
       if (unitBtwUnderlying !== 0) {
         if (minValueUnderlying === 0) {
-          maxValueUnderlying *= 1.4
+          maxValueUnderlying *= 2
         } else {
           maxValueUnderlying *= 1.05
         }
