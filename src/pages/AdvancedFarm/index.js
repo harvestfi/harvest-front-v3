@@ -30,7 +30,6 @@ import WithdrawSelectToken from '../../components/AdvancedFarmComponents/Withdra
 import WithdrawStart from '../../components/AdvancedFarmComponents/Withdraw/WithdrawStart'
 import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
 import UserBalanceData from '../../components/UserBalanceChart/UserBalanceData'
-import UserBalanceDataOld from '../../components/UserBalanceChartOld/UserBalanceData'
 import VaultPanelActionsFooter from '../../components/AdvancedFarmComponents/Rewards/VaultPanelActionsFooter'
 import StakeBase from '../../components/AdvancedFarmComponents/Stake/StakeBase'
 import StakeStart from '../../components/AdvancedFarmComponents/Stake/StakeStart'
@@ -377,7 +376,6 @@ const AdvancedFarm = () => {
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
   const [quoteValueDepo, setQuoteValueDepo] = useState(null)
   const [inputAmountDepo, setInputAmountDepo] = useState(0)
-  const [partHeightDepo, setPartHeightDepo] = useState(null)
   const [fromInfoAmount, setFromInfoAmount] = useState('')
   const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('')
   const [minReceiveAmountString, setMinReceiveAmountString] = useState('')
@@ -388,7 +386,6 @@ const AdvancedFarm = () => {
   const [selectTokenWith, setSelectTokenWith] = useState(false)
   const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select' })
   const [unstakeBalance, setUnstakeBalance] = useState('0')
-  const [partHeightWith, setPartHeightWith] = useState(null)
   const [quoteValueWith, setQuoteValueWith] = useState(null)
   const [revertFromInfoAmount, setRevertFromInfoAmount] = useState('')
   const [revertFromInfoUsdAmount, setRevertFromInfoUsdAmount] = useState('')
@@ -1250,29 +1247,16 @@ const AdvancedFarm = () => {
                     />
                   )} */}
                   {!isMobile ? (
-                    id !== 'FARM' ? (
-                      <UserBalanceData
-                        token={token}
-                        vaultPool={vaultPool}
-                        tokenSymbol={id}
-                        totalValue={totalValue}
-                        useIFARM={useIFARM}
-                        farmPrice={farmPrice}
-                        underlyingPrice={underlyingPrice}
-                        pricePerFullShare={tempPricePerFullShare}
-                      />
-                    ) : (
-                      <UserBalanceDataOld
-                        token={token}
-                        vaultPool={vaultPool}
-                        tokenSymbol={id}
-                        totalValue={totalValue}
-                        useIFARM={useIFARM}
-                        farmPrice={farmPrice}
-                        underlyingPrice={underlyingPrice}
-                        pricePerFullShare={tempPricePerFullShare}
-                      />
-                    )
+                    <UserBalanceData
+                      token={token}
+                      vaultPool={vaultPool}
+                      tokenSymbol={id}
+                      totalValue={totalValue}
+                      useIFARM={useIFARM}
+                      farmPrice={farmPrice}
+                      underlyingPrice={underlyingPrice}
+                      pricePerFullShare={tempPricePerFullShare}
+                    />
                   ) : (
                     <></>
                   )}
@@ -1604,7 +1588,6 @@ const AdvancedFarm = () => {
                   </MyBalance>
                   <HalfContent
                     marginBottom={isMobile ? '20px' : '0px'}
-                    partHeight={activeDepo ? partHeightDepo : partHeightWith}
                     borderRadius={isMobile ? '12px' : '12px'}
                   >
                     <DepositSection isShow={activeDepo}>
@@ -1640,7 +1623,6 @@ const AdvancedFarm = () => {
                         balanceList={balanceList}
                         defaultToken={defaultToken}
                         soonToSupList={soonToSupList}
-                        setPartHeight={setPartHeightDepo}
                       />
                       <DepositStart
                         pickedToken={pickedTokenDepo}
@@ -1698,7 +1680,6 @@ const AdvancedFarm = () => {
                         balanceList={balanceList}
                         defaultToken={defaultToken}
                         soonToSupList={soonToSupList}
-                        setPartHeight={setPartHeightWith}
                       />
                       <WithdrawStart
                         withdrawStart={withdrawStart}

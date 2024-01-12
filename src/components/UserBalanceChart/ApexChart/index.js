@@ -13,8 +13,9 @@ import { useWindowWidth } from '@react-hook/window-size'
 import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { ceil10, floor10, round10, numberWithCommas } from '../../../utils'
-import { LoadingDiv, NoData } from './style'
+import { LoadingDiv, NoData, FakeChartWrapper } from './style'
 import { fromWei } from '../../../services/web3'
+import { useWallet } from '../../../providers/Wallet'
 
 function formatDateTime(value) {
   const date = new Date(value)
@@ -149,8 +150,28 @@ const ApexChart = ({
   fixedLen,
 }) => {
   const { fontColor } = useThemeContext()
+  const { connected } = useWallet()
 
   const [mainSeries, setMainSeries] = useState([])
+
+  const fakeChartData = [
+    { x: 1691637444000, y: 5, z: 1.5 },
+    { x: 1691780004000, y: 6, z: 2 },
+    { x: 1691922564000, y: 7, z: 2.5 },
+    { x: 1692065124000, y: 7, z: 2.5 },
+    { x: 1692207684000, y: 7.5, z: 3 },
+    { x: 1692350244000, y: 8, z: 3 },
+    { x: 1692492804000, y: 8.5, z: 3 },
+    { x: 1692635364000, y: 9, z: 3.5 },
+    { x: 1692777924000, y: 10, z: 3.5 },
+    { x: 1692920484000, y: 11, z: 3.7 },
+    { x: 1693063044000, y: 11, z: 3.7 },
+    { x: 1693205604000, y: 11.5, z: 4 },
+    { x: 1693348164000, y: 11.5, z: 4.2 },
+    { x: 1693490724000, y: 12, z: 4.3 },
+    { x: 1693633284000, y: 14, z: 4.5 },
+    { x: 1693775844000, y: 15, z: 4.5 },
+  ]
 
   const onlyWidth = useWindowWidth()
 
@@ -291,7 +312,8 @@ const ApexChart = ({
           toDate = Math.floor(nowDate.getTime() / 1000),
           periodDate = (toDate - Number(firstDate)) / (24 * 60 * 60)
 
-        ago = Math.ceil(periodDate) + 10
+        // ago = Math.ceil(periodDate) + 10
+        ago = Math.ceil(periodDate)
       } else {
         ago = getRangeNumber(range)
       }
@@ -538,10 +560,99 @@ const ApexChart = ({
           {isDataReady ? (
             <ClipLoader size={30} margin={2} color={fontColor} />
           ) : (
-            <NoData color={fontColor}>
-              You don&apos;t have any fTokens of this farm. <br />
-              Or, if you just converted tokens, it might take up to 5mins for the chart to appear.
-            </NoData>
+            <>
+              {connected ? (
+                <NoData color={fontColor}>
+                  You don&apos;t have any fTokens of this farm. <br />
+                  Or, if you just converted tokens, it might take up to 5mins for the chart to
+                  appear.
+                </NoData>
+              ) : (
+                <NoData color={fontColor}>Connect wallet to see your balance chart</NoData>
+              )}
+              <FakeChartWrapper>
+                <ResponsiveContainer
+                  width="100%"
+                  height={
+                    onlyWidth > 1291
+                      ? 346
+                      : onlyWidth > 1262
+                      ? 365
+                      : onlyWidth > 1035
+                      ? 365
+                      : onlyWidth > 992
+                      ? 365
+                      : 365
+                  }
+                >
+                  <ComposedChart
+                    data={fakeChartData}
+                    margin={{
+                      top: 20,
+                      right: 0,
+                      bottom: 0,
+                      left: 0,
+                    }}
+                  >
+                    <defs>
+                      <linearGradient id="colorUvPrice" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#00D26B" stopOpacity={0.1} />
+                        <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid
+                      strokeDasharray="0"
+                      strokeLinecap="butt"
+                      stroke="rgba(228, 228, 228, 0.2)"
+                      vertical={false}
+                    />
+                    <Line
+                      dataKey="y"
+                      type="monotone"
+                      unit="$"
+                      strokeLinecap="round"
+                      strokeWidth={2}
+                      stroke="#00D26B"
+                      dot={false}
+                      legendType="none"
+                      yAxisId="left"
+                    />
+                    <Line
+                      dataKey="z"
+                      type="monotone"
+                      strokeLinecap="round"
+                      strokeWidth={2}
+                      stroke="#8884d8"
+                      dot={false}
+                      legendType="none"
+                      yAxisId="right"
+                    />
+                    <XAxis
+                      dataKey="x"
+                      tickLine={false}
+                      tickCount={5}
+                      tick={renderCustomXAxisTick}
+                    />
+                    <YAxis
+                      dataKey="y"
+                      tickCount={5}
+                      stroke="#00D26B"
+                      yAxisId="left"
+                      orientation="left"
+                      mirror
+                    />
+                    <YAxis
+                      dataKey="z"
+                      tickCount={5}
+                      yAxisId="right"
+                      orientation="right"
+                      stroke="#8884d8"
+                      mirror
+                    />
+                  </ComposedChart>
+                </ResponsiveContainer>
+              </FakeChartWrapper>
+            </>
           )}
         </LoadingDiv>
       )}

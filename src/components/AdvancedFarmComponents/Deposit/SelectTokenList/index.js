@@ -24,7 +24,6 @@ const SelectTokenList = ({
   setPickedToken,
   setBalance,
   setSelectToken,
-  setPartHeight,
   filterWord,
 }) => {
   const [showList, setShowList] = useState(false)
@@ -39,7 +38,6 @@ const SelectTokenList = ({
       fromWei(supTokenList[id].balance ? supTokenList[id].balance : 0, supTokenList[id].decimals),
     )
     setSelectToken(false)
-    setPartHeight(null)
   }
 
   // Supported token with balance in my wallet
@@ -55,7 +53,6 @@ const SelectTokenList = ({
       ),
     )
     setSelectToken(false)
-    setPartHeight(null)
   }
 
   // Default Token
@@ -65,7 +62,6 @@ const SelectTokenList = ({
     setPickedToken(defaultToken)
     setBalance(fromWei(defaultToken.balance ? defaultToken.balance : 0, defaultToken.decimals))
     setSelectToken(false)
-    setPartHeight(null)
   }
 
   const [defaultCurToken, setDefaultCurToken] = useState(defaultToken)

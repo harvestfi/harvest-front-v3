@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import Modal from 'react-bootstrap/Modal'
 import { BsArrowDown } from 'react-icons/bs'
@@ -29,7 +29,6 @@ const DepositSelectToken = ({
   supTokenNoBalanceList,
   balanceList,
   defaultToken,
-  setPartHeight,
 }) => {
   const { connected } = useWallet()
   const [filterWord, setFilterWord] = useState('')
@@ -38,12 +37,6 @@ const DepositSelectToken = ({
   const onFilter = async e => {
     setFilterWord(e.target.value)
   }
-
-  useEffect(() => {
-    if (selectToken) {
-      setPartHeight(350) // Set fixed height for select token part
-    }
-  }, [selectToken, setPartHeight])
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
@@ -97,7 +90,6 @@ const DepositSelectToken = ({
               align="center"
               onClick={() => {
                 setSelectToken(false)
-                setPartHeight(null)
               }}
             >
               <ImgBtn src={CloseIcon} alt="" />
@@ -125,7 +117,6 @@ const DepositSelectToken = ({
                 setPickedToken={setPickedToken}
                 setBalance={setBalance}
                 setSelectToken={setSelectToken}
-                setPartHeight={setPartHeight}
                 filterWord={filterWord}
               />
             ) : (

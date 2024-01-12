@@ -22,7 +22,6 @@ const SelectTokenList = ({
   soonToSupList,
   setPickedToken,
   setSelectToken,
-  setPartHeight,
   filterWord,
 }) => {
   const [showList, setShowList] = useState(false)
@@ -33,7 +32,6 @@ const SelectTokenList = ({
     setClickSupTokenNoBalanceListId(id)
     setPickedToken(supTokenList[id])
     setSelectToken(false)
-    setPartHeight(null)
   }
 
   // Supported token with balance in my wallet
@@ -43,7 +41,6 @@ const SelectTokenList = ({
     setClickBalanceListId(id)
     setPickedToken(balanceTokenList[id])
     setSelectToken(false)
-    setPartHeight(null)
   }
 
   // Default Token
@@ -52,7 +49,6 @@ const SelectTokenList = ({
     setClickSupTokenNoBalanceListId(-1)
     setPickedToken(defaultToken)
     setSelectToken(false)
-    setPartHeight(null)
   }
   const [defaultCurToken, setDefaultCurToken] = useState(defaultToken)
 

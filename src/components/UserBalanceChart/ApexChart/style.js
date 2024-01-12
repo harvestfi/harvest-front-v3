@@ -9,8 +9,15 @@ const LoadingDiv = styled.div`
 `
 
 const NoData = styled.div`
+  position: absolute;
   font-size: 14px;
   color: ${props => props.fontColor};
 `
 
-export { LoadingDiv, NoData }
+const FakeChartWrapper = styled.div`
+  width: 100%;
+  position: relative;
+  filter: blur(4px);
+`
+
+export { LoadingDiv, NoData, FakeChartWrapper }
