@@ -203,9 +203,9 @@ const UserBalanceData = ({
         mergedData.unshift(firstObject)
         // console.log('totalValue -------------', totalValue)
         // console.log('underlyingPrice -------------', underlyingPrice)
-        console.log('data1 -------------', data1)
-        console.log('data2 -------------', data2)
-        console.log('mergedData -------------', mergedData)
+        // console.log('data1 -------------', data1)
+        // console.log('data2 -------------', data2)
+        // console.log('mergedData -------------', mergedData)
       }
       setLoadComplete(flag1 && flag2)
       setApiData(mergedData)
