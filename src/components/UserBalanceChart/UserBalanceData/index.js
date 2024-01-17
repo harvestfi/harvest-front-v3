@@ -98,7 +98,6 @@ const UserBalanceData = ({
     const initData = async () => {
       const { data1, flag1 } = await getUserBalanceHistories1(address, chainId, account)
       const { data2, flag2 } = await getUserBalanceHistories2(address, chainId)
-      debugger
       const uniqueData2 = []
       const timestamps = []
       data2.forEach(obj => {
