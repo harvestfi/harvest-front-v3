@@ -14,7 +14,6 @@ import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { ceil10, floor10, round10, numberWithCommas } from '../../../utils'
 import { LoadingDiv, NoData, FakeChartWrapper } from './style'
-import { fromWei } from '../../../services/web3'
 import { useWallet } from '../../../providers/Wallet'
 
 function formatDateTime(value) {
@@ -89,21 +88,14 @@ function findMinUnderlying(data) {
   return min
 }
 
-function generateChartDataWithSlots(
-  slots,
-  apiData,
-  decimals,
-  balance,
-  priceUnderlying,
-  sharePrice,
-) {
+function generateChartDataWithSlots(slots, apiData, balance, priceUnderlying, sharePrice) {
   const seriesData = []
   for (let i = 0; i < slots.length; i += 1) {
     for (let j = 0; j < apiData.length; j += 1) {
       if (slots[i] > parseInt(apiData[j].timestamp, 10)) {
         const value1 = parseFloat(apiData[j][balance])
         const value2 = parseFloat(apiData[j][priceUnderlying])
-        const value3 = fromWei(parseFloat(apiData[j][sharePrice]), decimals, Number(decimals) - 1)
+        const value3 = parseFloat(apiData[j][sharePrice])
         seriesData.push({ x: slots[i] * 1000, y: value1 * value2 * value3, z: value1 * value3 })
         break
       } else if (j === apiData.length - 1) {
@@ -138,7 +130,6 @@ function getYAxisValues(min, max, roundNum) {
 }
 
 const ApexChart = ({
-  token,
   data,
   loadComplete,
   range,
@@ -320,14 +311,7 @@ const ApexChart = ({
 
       const slotCount = 100,
         slots = getTimeSlots(ago, slotCount)
-      mainData = generateChartDataWithSlots(
-        slots,
-        data,
-        token.decimals || token.data.watchAsset.decimals,
-        'value',
-        'priceUnderlying',
-        'sharePrice',
-      )
+      mainData = generateChartDataWithSlots(slots, data, 'value', 'priceUnderlying', 'sharePrice')
       maxValue = findMax(mainData)
       minValue = findMin(mainData)
       minValue /= 1.01
@@ -376,7 +360,7 @@ const ApexChart = ({
 
       if (unitBtw !== 0) {
         if (minValue === 0) {
-          maxValue *= 1.2
+          maxValue *= 1.1
         } else {
           maxValue *= 1.01
         }
@@ -387,7 +371,7 @@ const ApexChart = ({
 
       if (unitBtwUnderlying !== 0) {
         if (minValueUnderlying === 0) {
-          maxValueUnderlying *= 1.4
+          maxValueUnderlying *= 2
         } else {
           maxValueUnderlying *= 1.05
         }
@@ -436,7 +420,6 @@ const ApexChart = ({
   }, [
     range,
     data,
-    token.decimals,
     isDataReady,
     loadComplete,
     roundedDecimal,

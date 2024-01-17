@@ -1497,23 +1497,21 @@ export const getUserBalanceHistories2 = async (address, chainId) => {
     flag2 = true
 
   address = address.toLowerCase()
-  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
-  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
 
   const myHeaders = new Headers()
   myHeaders.append('Content-Type', 'application/json')
 
   const graphql = JSON.stringify({
       query: `{
-        userBalanceHistories(
+        priceFeeds(
           first: 1000,
           where: {
-            vault: "${address === farm ? ifarm : address}",
+            vault: "${address}",
           },
           orderBy: createAtBlock,
           orderDirection: desc,
         ) {
-          sharePrice, priceUnderlying, timestamp
+          sharePrice, value, timestamp
         }
       }`,
       variables: {},
@@ -1538,7 +1536,7 @@ export const getUserBalanceHistories2 = async (address, chainId) => {
     await fetch(url, requestOptions)
       .then(response => response.json())
       .then(res => {
-        data2 = res.data.userBalanceHistories
+        data2 = res.data.priceFeeds
         if (data2.length === 0) {
           flag2 = false
         }
