@@ -1505,7 +1505,7 @@ export const getUserBalanceHistories2 = async (address, chainId) => {
 
   const graphql = JSON.stringify({
       query: `{
-        userBalanceHistories(
+        priceFeeds(
           first: 1000,
           where: {
             vault: "${address === farm ? ifarm : address}",
@@ -1513,7 +1513,7 @@ export const getUserBalanceHistories2 = async (address, chainId) => {
           orderBy: createAtBlock,
           orderDirection: desc,
         ) {
-          sharePrice, priceUnderlying, timestamp
+          sharePrice, value, timestamp
         }
       }`,
       variables: {},
@@ -1538,7 +1538,7 @@ export const getUserBalanceHistories2 = async (address, chainId) => {
     await fetch(url, requestOptions)
       .then(response => response.json())
       .then(res => {
-        data2 = res.data.userBalanceHistories
+        data2 = res.data.priceFeeds
         if (data2.length === 0) {
           flag2 = false
         }

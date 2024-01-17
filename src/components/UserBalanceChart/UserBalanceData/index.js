@@ -98,12 +98,15 @@ const UserBalanceData = ({
     const initData = async () => {
       const { data1, flag1 } = await getUserBalanceHistories1(address, chainId, account)
       const { data2, flag2 } = await getUserBalanceHistories2(address, chainId)
+      debugger
       const uniqueData2 = []
       const timestamps = []
       data2.forEach(obj => {
         if (!timestamps.includes(obj.timestamp)) {
           timestamps.push(obj.timestamp)
-          uniqueData2.push(obj)
+          const modifiedObj = { ...obj, priceUnderlying: obj.value } // Rename the 'value' property to 'priceUnderlying'
+          delete modifiedObj.value // Remove the 'value' property from modifiedObj
+          uniqueData2.push(modifiedObj)
         }
       })
       const mergedData = []
@@ -201,7 +204,9 @@ const UserBalanceData = ({
         mergedData.unshift(firstObject)
         // console.log('totalValue -------------', totalValue)
         // console.log('underlyingPrice -------------', underlyingPrice)
-        // console.log('mergedData -------------', mergedData)
+        console.log('data1 -------------', data1)
+        console.log('data2 -------------', data2)
+        console.log('mergedData -------------', mergedData)
       }
       setLoadComplete(flag1 && flag2)
       setApiData(mergedData)
@@ -258,7 +263,6 @@ const UserBalanceData = ({
       </Header>
       <ChartDiv className="advanced-price">
         <ApexChart
-          token={token}
           data={apiData}
           loadComplete={loadComplete}
           range={selectedState}
