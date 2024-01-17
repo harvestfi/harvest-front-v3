@@ -1497,8 +1497,6 @@ export const getUserBalanceHistories2 = async (address, chainId) => {
     flag2 = true
 
   address = address.toLowerCase()
-  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
-  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
 
   const myHeaders = new Headers()
   myHeaders.append('Content-Type', 'application/json')
@@ -1508,7 +1506,7 @@ export const getUserBalanceHistories2 = async (address, chainId) => {
         priceFeeds(
           first: 1000,
           where: {
-            vault: "${address === farm ? ifarm : address}",
+            vault: "${address}",
           },
           orderBy: createAtBlock,
           orderDirection: desc,
