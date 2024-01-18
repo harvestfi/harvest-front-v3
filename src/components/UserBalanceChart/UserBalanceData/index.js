@@ -103,8 +103,8 @@ const UserBalanceData = ({
       data2.forEach(obj => {
         if (!timestamps.includes(obj.timestamp)) {
           timestamps.push(obj.timestamp)
-          const modifiedObj = { ...obj, priceUnderlying: obj.value } // Rename the 'value' property to 'priceUnderlying'
-          delete modifiedObj.value // Remove the 'value' property from modifiedObj
+          const modifiedObj = { ...obj, priceUnderlying: obj.price } // Rename the 'price' property to 'priceUnderlying'
+          delete modifiedObj.price // Remove the 'value' property from modifiedObj
           uniqueData2.push(modifiedObj)
         }
       })

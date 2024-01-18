@@ -1511,7 +1511,7 @@ export const getUserBalanceHistories2 = async (address, chainId) => {
           orderBy: createAtBlock,
           orderDirection: desc,
         ) {
-          sharePrice, value, timestamp
+          sharePrice, price, timestamp
         }
       }`,
       variables: {},
