@@ -279,7 +279,8 @@ const ApexChart = ({
         unitBtw,
         unitBtwUnderlying,
         firstDate,
-        ago
+        ago,
+        slotCount
 
       if ((data && data.length === 0) || !loadComplete) {
         setIsDataReady(false)
@@ -309,8 +310,12 @@ const ApexChart = ({
       } else {
         ago = getRangeNumber(range)
       }
-      const slotCount = 500,
-        slots = getTimeSlots(ago, slotCount)
+      if (range === 'ALL') {
+        slotCount = 500
+      } else {
+        slotCount = 50
+      }
+      const slots = getTimeSlots(ago, slotCount)
 
       const firstSlotTimestamp = slots[0]
       const filteredData = data.filter(
