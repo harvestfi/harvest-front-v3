@@ -98,9 +98,10 @@ function generateChartDataWithSlots(slots, apiData, balance, priceUnderlying, sh
         const value3 = parseFloat(apiData[j][sharePrice])
         seriesData.push({ x: slots[i] * 1000, y: value1 * value2 * value3, z: value1 * value3 })
         break
-      } else if (j === apiData.length - 1) {
-        seriesData.push({ x: slots[i] * 1000, y: 0, z: 0 })
       }
+      // else if (j === apiData.length - 1) {
+      //   seriesData.push({ x: slots[i] * 1000, y: 0, z: 0 })
+      // }
     }
   }
 
@@ -308,10 +309,29 @@ const ApexChart = ({
       } else {
         ago = getRangeNumber(range)
       }
-
-      const slotCount = 100,
+      const slotCount = 500,
         slots = getTimeSlots(ago, slotCount)
-      mainData = generateChartDataWithSlots(slots, data, 'value', 'priceUnderlying', 'sharePrice')
+
+      const firstSlotTimestamp = slots[0]
+      const filteredData = data.filter(
+        obj => parseInt(obj.timestamp, 10) >= firstSlotTimestamp + 72000,
+      )
+      const lastObjectInFilteredData = filteredData[filteredData.length - 1]
+      const newObject = {
+        priceUnderlying: lastObjectInFilteredData.priceUnderlying,
+        sharePrice: lastObjectInFilteredData.sharePrice,
+        timestamp: firstSlotTimestamp.toString(),
+        value: lastObjectInFilteredData.value,
+      }
+      filteredData.push(newObject)
+
+      mainData = generateChartDataWithSlots(
+        slots,
+        filteredData,
+        'value',
+        'priceUnderlying',
+        'sharePrice',
+      )
       maxValue = findMax(mainData)
       minValue = findMin(mainData)
       minValue /= 1.01
