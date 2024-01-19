@@ -72,6 +72,8 @@ export const BASESCAN_URL = 'https://basescan.org'
 
 export const ARBISCAN_URL = 'https://arbiscan.io'
 
+export const PORTALS_FI_API_URL = 'https://api.portals.fi'
+
 export const DECIMAL_PRECISION = 2
 
 export const FAQ_ITEMS_FIRST = [

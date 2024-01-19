@@ -2,7 +2,6 @@ import BigNumber from 'bignumber.js'
 import React, { useState } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import { isEmpty } from 'lodash'
-import { getTokenAllowance, approve, quote } from 'wido'
 import { useMediaQuery } from 'react-responsive'
 import { BsArrowUp } from 'react-icons/bs'
 import ReactTooltip from 'react-tooltip'
@@ -20,6 +19,7 @@ import { useWallet } from '../../../../providers/Wallet'
 import { useActions } from '../../../../providers/Actions'
 import { usePools } from '../../../../providers/Pools'
 import { useVaults } from '../../../../providers/Vault'
+import { usePortals } from '../../../../providers/Portals'
 import { getWeb3 } from '../../../../services/web3'
 import AnimatedDots from '../../../AnimatedDots'
 import { addresses } from '../../../../data'
@@ -53,7 +53,7 @@ const WithdrawStart = ({
   revertedAmount,
   setUnstakeInputValue,
 }) => {
-  const { account, web3, getWalletBalances } = useWallet()
+  const { account, web3, approvedBalances, getWalletBalances } = useWallet()
   const { handleWithdraw } = useActions()
   const { fetchUserPoolStats, userStats } = usePools()
   const { vaultsData, getFarmingBalances, farmingBalances } = useVaults()
@@ -64,8 +64,9 @@ const WithdrawStart = ({
   const [buttonName, setButtonName] = useState('Approve Token')
   const [withdrawFailed, setWithdrawFailed] = useState(false)
   const [startSpinner, setStartSpinner] = useState(false) // State of Spinner for 'Finalize Deposit' button
+  const { getPortalsApproval, portalsApprove, getPortals } = usePortals()
 
-  const slippagePercentage = 0.005 // Default slippage Percent
+  const slippagePercentage = 2.5 // Default slippage Percent
   const chainId = token.chain || token.data.chain
   const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
 
@@ -83,18 +84,13 @@ const WithdrawStart = ({
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const approveZap = async amnt => {
-    const { data, to } = await approve({
-      chainId,
-      fromToken,
-      toToken: pickedToken.address,
-      amount: amnt,
-    })
+    const { approve } = await portalsApprove(chainId, account, fromToken, amnt.toString())
     const mainWeb = await getWeb3(chainId, account, web3)
 
     await mainWeb.eth.sendTransaction({
       from: account,
-      data,
-      to,
+      data: approve.data,
+      to: approve.to,
     })
   }
 
@@ -104,16 +100,20 @@ const WithdrawStart = ({
       setProgressStep(1)
       setButtonName('Pending Approval in Wallet')
       try {
-        const { spender, allowance } = await getTokenAllowance({
-          chainId,
-          fromToken,
-          toToken: pickedToken.address,
-          accountAddress: account, // User
-        })
+        let allowanceCheck, approval
+        if (pickedToken.default) {
+          allowanceCheck = approvedBalances[tokenSymbol]
+        } else if (pickedToken.address === '0x0000000000000000000000000000000000000000') {
+          // native token
+          allowanceCheck = unstakeBalance
+        } else {
+          approval = await getPortalsApproval(chainId, account, fromToken)
+          console.debug('Allowance Spender: ', approval.spender)
 
-        console.debug('Allowance Spender: ', spender)
+          allowanceCheck = approval ? approval.allowance : 0
+        }
 
-        if (!new BigNumber(allowance).gte(unstakeBalance)) {
+        if (!new BigNumber(allowanceCheck).gte(unstakeBalance)) {
           const amountToApprove = unstakeBalance
           await approveZap(amountToApprove) // Approve for Zap
         }
@@ -157,28 +157,22 @@ const WithdrawStart = ({
           )
         } else {
           const amount = unstakeBalance
-          const fromChainId = chainId
-          const toChainId = chainId
           const toToken = pickedToken.address
           const mainWeb = await getWeb3(chainId, account, web3)
-          const quoteResult = await quote(
-            {
-              fromChainId, // Chain Id of from token
-              fromToken, // Token address of from token
-              toChainId, // Chain Id of to token
-              toToken, // Token address of to token
-              amount, // Token amount of from token
-              slippagePercentage, // Acceptable max slippage for the swap
-              user: account, // Address of user placing the order.
-            },
-            mainWeb.currentProvider,
-          )
+          const portalData = await getPortals({
+            chainId,
+            sender: account,
+            tokenIn: fromToken,
+            inputAmount: amount,
+            tokenOut: toToken,
+            slippage: slippagePercentage,
+          })
 
           await mainWeb.eth.sendTransaction({
-            from: quoteResult.from,
-            data: quoteResult.data,
-            to: quoteResult.to,
-            value: quoteResult.value,
+            from: portalData.tx.from,
+            data: portalData.tx.data,
+            to: portalData.tx.to,
+            value: portalData.tx.value,
           })
           await fetchUserPoolStats([fAssetPool], account, userStats)
         }

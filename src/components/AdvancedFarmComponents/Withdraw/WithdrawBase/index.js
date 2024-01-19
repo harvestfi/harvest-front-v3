@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js'
 import React, { useState, useEffect } from 'react'
 import { useSetChain } from '@web3-onboard/react'
-import { quote } from 'wido'
 import { get } from 'lodash'
 import { toast } from 'react-toastify'
 import ReactTooltip from 'react-tooltip'
@@ -21,7 +20,7 @@ import {
 } from '../../../../constants'
 import { useVaults } from '../../../../providers/Vault'
 import { useWallet } from '../../../../providers/Wallet'
-import { fromWei, toWei, getWeb3 } from '../../../../services/web3'
+import { fromWei, toWei } from '../../../../services/web3'
 import { addresses } from '../../../../data'
 import AnimatedDots from '../../../AnimatedDots'
 import Button from '../../../Button'
@@ -43,6 +42,7 @@ import {
   SwitchTabTag,
 } from './style'
 import { isSpecialApp, formatNumberWido } from '../../../../utils'
+import { usePortals } from '../../../../providers/Portals'
 
 const getChainName = chain => {
   let chainName = 'Ethereum'
@@ -96,14 +96,15 @@ const WithdrawBase = ({
   const [showWarning, setShowWarning] = useState(false)
 
   const { account, web3, connected, chainId } = useWallet()
+  const { getPortalsEstimate, getPortalsPrice } = usePortals()
   const { vaultsData } = useVaults()
 
   const pricePerFullShare = useIFARM
     ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
     : get(token, `pricePerFullShare`, 0)
 
-  const slippagePercentage = 0.005 // Default slippage Percent
-  // const chainId = token.chain || token.data.chain
+  const slippage = 0.5 // Default slippage Percent
+
   const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress1
 
   const stakeAmountWei = toWei(
@@ -146,12 +147,7 @@ const WithdrawBase = ({
               fromWei(amount, pickedToken.decimals),
               WIDO_EXTEND_DECIMALS,
             )}`
-            fromInfoUsdValue = formatNumberWido(
-              new BigNumber(fromWei(amount, pickedToken.decimals))
-                .multipliedBy(fromWei(pricePerFullShare, pickedToken.decimals))
-                .multipliedBy(pickedToken.usdPrice),
-              WIDO_BALANCES_DECIMALS,
-            )
+            fromInfoUsdValue = formatNumberWido(pickedToken.usdValue, WIDO_BALANCES_DECIMALS)
             minReceivedString = formatNumberWido(
               new BigNumber(fromWei(unstakeBalance, pickedToken.decimals)).multipliedBy(
                 fromWei(pricePerFullShare, pickedToken.decimals),
@@ -159,29 +155,25 @@ const WithdrawBase = ({
               WIDO_EXTEND_DECIMALS,
             )
           } else {
-            const fromChainId = chainId
             const toToken = pickedToken.address
-            const toChainId = chainId
-            const user = account
-            const mainWeb = await getWeb3(chainId, account, web3)
-            let curToken = balanceList.filter(el => el.symbol === pickedToken.symbol)
+            let curToken = supTokenList.filter(el => el.symbol === pickedToken.symbol)
 
-            const quoteResult = await quote(
-              {
-                fromChainId, // Chain Id of from token
-                fromToken, // Token address of from token
-                toChainId, // Chain Id of to token
-                toToken, // Token address of to token
-                amount, // Token amount of from token
-                slippagePercentage, // Acceptable max slippage for the swap
-                user, // Address of user placing the order.
-              },
-              mainWeb.currentProvider,
-            )
+            const portalsEstimate = await getPortalsEstimate({
+              chainId,
+              tokenIn: fromToken,
+              inputAmount: amount,
+              tokenOut: toToken,
+              slippage,
+            })
+            const fromTokenUsdPrice = await getPortalsPrice(chainId, fromToken)
+            const quoteResult = {
+              fromTokenAmount: amount,
+              fromTokenUsdPrice,
+              minToTokenAmount: portalsEstimate.minOutputAmount,
+            }
             setQuoteValue(quoteResult)
 
             curToken = curToken[0]
-
             fromInfoValue = formatNumberWido(
               fromWei(
                 quoteResult.fromTokenAmount,
@@ -198,11 +190,12 @@ const WithdrawBase = ({
                     fromWei(
                       quoteResult.fromTokenAmount,
                       useIFARM ? fAssetPool?.lpTokenData?.decimals : curToken.decimals,
+                      WIDO_EXTEND_DECIMALS,
                     ) * quoteResult.fromTokenUsdPrice,
                     BEGINNERS_BALANCES_DECIMALS,
                   )
             minReceivedString = formatNumberWido(
-              fromWei(quoteResult.minToTokenAmount, pickedToken.decimals),
+              fromWei(quoteResult.minToTokenAmount, pickedToken.decimals, WIDO_EXTEND_DECIMALS),
               WIDO_EXTEND_DECIMALS,
             )
           }
@@ -233,6 +226,8 @@ const WithdrawBase = ({
     setRevertFromInfoAmount,
     setRevertFromInfoUsdAmount,
     setRevertMinReceivedAmount,
+    getPortalsEstimate,
+    getPortalsPrice,
   ])
 
   const amountValue = fromWei(unstakeBalance, pickedToken.decimals)
