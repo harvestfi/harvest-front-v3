@@ -45,7 +45,7 @@ import {
   SwitchTabTag,
   InfoIconCircle,
 } from './style'
-import { useEnso } from '../../../../providers/Enso'
+import { usePortals } from '../../../../providers/Portals'
 
 const getChainName = chain => {
   let chainName = 'Ethereum'
@@ -91,8 +91,7 @@ const DepositBase = ({
 }) => {
   const { connected, connectAction, account, chainId, setChainId, web3 } = useWallet()
   const { vaultsData } = useVaults()
-  const ensoData = useEnso()
-  const { getEnsoQuote } = ensoData || {}
+  const { getPortalsEstimate, getPortalsPrice } = usePortals()
   const { filterColor } = useThemeContext()
 
   const [
@@ -102,7 +101,7 @@ const DepositBase = ({
     setChain, // function to call to initiate user to switch chains in their wallet
   ] = useSetChain()
 
-  // const slippagePercentage = 0.005 // Default slippage Percent
+  const slippage = 0.5 // Default slippage Percent
   const tokenChain = token.chain || token.data.chain
   const curChain = isSpecialApp
     ? chainId
@@ -168,42 +167,28 @@ const DepositBase = ({
               WIDO_EXTEND_DECIMALS,
             )
           } else {
-            // const fromChainId = chainId
             const fromToken = pickedToken.address
             const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
-            // const toChainId = chainId
-            // const user = account
-            // const mainWeb = await getWeb3(chainId, account, web3)
             let curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol)
 
-            const ensoQuote = await getEnsoQuote({
+            const portalsEstimate = await getPortalsEstimate({
               chainId,
-              fromAddress: account,
               tokenIn: fromToken,
+              inputAmount: amount,
               tokenOut: toToken,
-              amountIn: amount,
+              slippage,
             })
 
-            if (Object.keys(ensoQuote).length === 0) throw new Error('Quote fetch failture')
+            if (Object.keys(portalsEstimate).length === 0)
+              throw new Error('Portals estimate fetch failture')
 
+            const fromTokenUsdPrice = await getPortalsPrice(chainId, fromToken)
             const quoteResult = {
               fromTokenAmount: amount,
-              fromTokenUsdPrice: 0, // TODO: get correct price using enso api
-              minToTokenAmount: ensoQuote.amountOut,
+              fromTokenUsdPrice,
+              minToTokenAmount: portalsEstimate.minOutputAmount,
             }
 
-            // const quoteResult = await quote(
-            //   {
-            //     fromChainId, // Chain Id of from token
-            //     fromToken, // Token address of from token
-            //     toChainId, // Chain Id of to token
-            //     toToken, // Token address of to token
-            //     amount, // Token amount of from token
-            //     slippagePercentage, // Acceptable max slippage for the swap
-            //     user, // Address of user placing the order.
-            //   },
-            //   mainWeb.currentProvider,
-            // )
             setQuoteValue(quoteResult)
             curToken = curToken[0]
             fromInfoValue = formatNumberWido(
@@ -259,7 +244,8 @@ const DepositBase = ({
     setFromInfoAmount,
     setFromInfoUsdAmount,
     setMinReceiveAmountString,
-    getEnsoQuote,
+    getPortalsEstimate,
+    getPortalsPrice,
   ])
 
   const onClickDeposit = async () => {

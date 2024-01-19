@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from 'react'
-// import { useMediaQuery } from 'react-responsive'
 import { fromWei } from '../../../../services/web3'
-import { formatNumberWido } from '../../../../utils'
 import { useThemeContext } from '../../../../providers/useThemeContext'
-import { WIDO_EXTEND_DECIMALS, WIDO_BALANCES_DECIMALS } from '../../../../constants'
 import {
   Container,
   Text,
@@ -34,9 +31,7 @@ const SelectTokenList = ({
   const handleSupTokenNoBalanceListClick = id => {
     setClickSupTokenNoBalanceListId(id)
     setPickedToken(supTokenList[id])
-    setBalance(
-      fromWei(supTokenList[id].balance ? supTokenList[id].balance : 0, supTokenList[id].decimals),
-    )
+    setBalance(supTokenList[id].balance ? supTokenList[id].balance : 0)
     setSelectToken(false)
   }
 
@@ -46,12 +41,7 @@ const SelectTokenList = ({
   const handleBalanceListClick = id => {
     setClickBalanceListId(id)
     setPickedToken(balanceTokenList[id])
-    setBalance(
-      fromWei(
-        balanceTokenList[id].balance ? balanceTokenList[id].balance : 0,
-        balanceTokenList[id].decimals,
-      ),
-    )
+    setBalance(balanceTokenList[id].balance ? balanceTokenList[id].balance : 0)
     setSelectToken(false)
   }
 
@@ -60,7 +50,7 @@ const SelectTokenList = ({
     setClickBalanceListId(-1)
     setClickSupTokenNoBalanceListId(-1)
     setPickedToken(defaultToken)
-    setBalance(fromWei(defaultToken.balance ? defaultToken.balance : 0, defaultToken.decimals))
+    setBalance(defaultToken.balance ? defaultToken.balance : 0)
     setSelectToken(false)
   }
 
@@ -134,11 +124,7 @@ const SelectTokenList = ({
                       {defaultCurToken.symbol}
                     </Text>
                     <RightText weight={600} color="#344054">
-                      <>
-                        {defaultCurToken.balance
-                          ? `${1 * fromWei(defaultCurToken.balance, defaultCurToken.decimals)}`
-                          : '0.00'}
-                      </>
+                      <>{defaultCurToken.balance ? defaultCurToken.balance : '0.00'}</>
                       <TextSpan>$0</TextSpan>
                     </RightText>
                   </Vault>
@@ -164,22 +150,8 @@ const SelectTokenList = ({
                       {data.symbol}
                     </Text>
                     <RightText weight={600} color="#344054">
-                      <>
-                        {data.balance
-                          ? `${formatNumberWido(
-                              1 * fromWei(data.balance, data.decimals),
-                              WIDO_EXTEND_DECIMALS,
-                            )}`
-                          : '0.00'}
-                      </>
-                      <TextSpan>
-                        {data.usdPrice
-                          ? `$${formatNumberWido(
-                              Number(data.usdPrice) * fromWei(data.balance, data.decimals),
-                              WIDO_BALANCES_DECIMALS,
-                            )}`
-                          : '$0.00'}
-                      </TextSpan>
+                      <>{data.balance ? data.balance : '0.00'}</>
+                      <TextSpan>{data.usdPrice ? `$${data.usdValue}` : '$0.00'}</TextSpan>
                     </RightText>
                   </Vault>
                 </Container>
@@ -207,7 +179,7 @@ const SelectTokenList = ({
                       {data.symbol}
                     </Text>
                     <RightText weight={600} color="#344054">
-                      <>{data.balance ? `${1 * fromWei(data.balance, data.decimals)}` : '0.00'}</>
+                      <>{data.balance ? data.balance : '0.00'}</>
                       <TextSpan>$0</TextSpan>
                     </RightText>
                   </Vault>

@@ -36,7 +36,7 @@ import {
   AnimateDotDiv,
 } from './style'
 import { useVaults } from '../../../../providers/Vault'
-import { useEnso } from '../../../../providers/Enso'
+import { usePortals } from '../../../../providers/Portals'
 
 const DepositStart = ({
   pickedToken,
@@ -62,10 +62,9 @@ const DepositStart = ({
   const { handleDeposit, handleApproval } = useActions()
   const { contracts } = useContracts()
   const { fetchUserPoolStats, userStats } = usePools()
-  const ensoData = useEnso()
-  const { getEnsoRoute, ensoApprove, getEnsoApprovals } = ensoData || {}
+  const { getPortalsApproval, portalsApprove, getPortals } = usePortals()
 
-  const slippagePercentage = 0.005 // Default slippage Percent
+  const slippagePercentage = 2.5 // Default slippage Percent
   const chainId = token.chain || token.data.chain
 
   const amount = toWei(inputAmount, pickedToken.decimals)
@@ -143,32 +142,20 @@ const DepositStart = ({
     } else {
       const mainWeb = await getWeb3(chainId, account, web3)
 
-      const route = await getEnsoRoute({
+      const portalData = await getPortals({
         chainId,
-        amountIn: amount,
-        fromAddress: account,
-        slippage: slippagePercentage * 10000,
+        sender: account,
         tokenIn: pickedToken.address,
+        inputAmount: amount,
         tokenOut: toToken,
+        slippage: slippagePercentage,
       })
-      // const quoteResult = await quote(
-      //   {
-      //     fromChainId, // Chain Id of from token
-      //     fromToken, // Token address of from token
-      //     toChainId, // Chain Id of to token
-      //     toToken, // Token address of to token
-      //     amount, // Token amount of from token
-      //     slippagePercentage, // Acceptable max slippage for the swap
-      //     user, // Address of user placing the order.
-      //   },
-      //   mainWeb.currentProvider,
-      // )
 
       await mainWeb.eth.sendTransaction({
-        from: route.tx.from,
-        data: route.tx.data,
-        to: route.tx.to,
-        value: route.tx.value,
+        from: portalData.tx.from,
+        data: portalData.tx.data,
+        to: portalData.tx.to,
+        value: portalData.tx.value,
       })
 
       await fetchUserPoolStats([fAssetPool], account, userStats)
@@ -191,18 +178,17 @@ const DepositStart = ({
         async () => {},
       )
     } else {
-      const { tx } = await ensoApprove(chainId, account, pickedToken.address, amnt.toString())
-      // const { data, to } = await approve({
-      //   chainId,
-      //   fromToken: pickedToken.address,
-      //   toToken,
-      //   amount: amnt,
-      // })
+      const { approve } = await portalsApprove(
+        chainId,
+        account,
+        pickedToken.address,
+        amnt.toString(),
+      )
       const mainWeb = await getWeb3(chainId, account, web3)
       await mainWeb.eth.sendTransaction({
         from: account,
-        data: tx.data,
-        to: tx.to,
+        data: approve.data,
+        to: approve.to,
       })
     }
   }
@@ -216,19 +202,13 @@ const DepositStart = ({
         let allowanceCheck
         if (pickedToken.default) {
           allowanceCheck = approvedBalances[tokenSymbol]
+        } else if (pickedToken.address === '0x0000000000000000000000000000000000000000') {
+          // native token
+          allowanceCheck = amountsToExecute
         } else {
-          const approvals = await getEnsoApprovals(chainId, account)
-          const approval = approvals.find(
-            item => item.token.toLowerCase() === pickedToken.address.toLowerCase(),
-          )
+          const approval = await getPortalsApproval(chainId, account, pickedToken.address)
+
           allowanceCheck = approval ? approval.allowance : 0
-          // const { allowance } = await getTokenAllowance({
-          //   chainId,
-          //   fromToken: pickedToken.address,
-          //   toToken,
-          //   accountAddress: account, // User
-          // })
-          // allowanceCheck = allowance
         }
 
         if (!new BigNumber(allowanceCheck).gte(amount)) {

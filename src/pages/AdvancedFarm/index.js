@@ -119,7 +119,7 @@ import {
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 // import { array } from 'prop-types'
-import { useEnso } from '../../providers/Enso'
+import { usePortals } from '../../providers/Portals'
 
 const chainList = [
   { id: 1, name: 'Ethereum', chainId: 1 },
@@ -191,9 +191,7 @@ const AdvancedFarm = () => {
   const { paramAddress } = useParams()
   // Switch Tag (Deposit/Withdraw)
   const [activeDepo, setActiveDepo] = useState(true)
-  const ensoData = useEnso()
-  const { ensoBaseTokens, getEnsoBalances, getEnsoPrice } = ensoData || {}
-
+  const { getPortalsBaseTokens, getPortalsBalances } = usePortals()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const { push } = useHistory()
@@ -519,56 +517,84 @@ const AdvancedFarm = () => {
   useEffect(() => {
     const getTokenBalance = async () => {
       try {
-        if (
-          chain &&
-          account &&
-          Object.keys(balances).length !== 0 &&
-          Object.keys(ensoBaseTokens).length !== 0
-        ) {
+        if (chain && account && Object.keys(balances).length !== 0) {
           let supList = [],
             directInSup = {},
             directInBalance = {}
 
-          const ensoRawBalances = await getEnsoBalances(account, chain.toString())
-          const curBalances = (
-            await Promise.all(
-              ensoRawBalances.map(async balance => {
-                if (!ethers.utils.isAddress(balance.token))
-                  balance.token = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
-                const baseToken = ensoBaseTokens[chain].find(el => el.address === balance.token)
-                const price = baseToken
-                  ? await getEnsoPrice(chain.toString(), baseToken.address)
-                  : 0
+          const portalsRawBalances = await getPortalsBalances(account, chain.toString())
+          const portalsBaseTokens = await getPortalsBaseTokens(chain.toString())
+          const curNoBalances = portalsBaseTokens
+            .map(baseToken => {
+              const balToken = portalsRawBalances.find(
+                el => el.address.toLowerCase() === baseToken.address.toLowerCase(),
+              )
+              if (balToken === undefined) {
                 const item = {
-                  symbol: baseToken?.symbol,
-                  address: baseToken?.address,
-                  balance: balance.amount,
+                  symbol: baseToken.symbol,
+                  address: baseToken.address,
+                  balance: 0,
                   default: false,
-                  usdValue: Number(fromWei(balance.amount, balance.decimals)) * price,
-                  usdPrice: price,
-                  logoURI: baseToken?.logoURI,
-                  decimals: balance.decimals,
+                  usdValue: 0,
+                  usdPrice: baseToken.price,
+                  logoURI: baseToken.image
+                    ? baseToken.image
+                    : baseToken.images
+                    ? baseToken.images[0]
+                    : 'https://etherscan.io/images/main/empty-token.png',
+                  decimals: baseToken.decimals,
                   chainId: chain,
                 }
                 return item
-              }),
-            )
-          ).filter(item => item.address)
-          const curSortedBalances = curBalances.sort(function reducer(a, b) {
-            return Number(fromWei(b.balance, b.decimals)) - Number(fromWei(a.balance, a.decimals))
-          })
-          setBalanceList(curSortedBalances)
-          supList = curBalances
+              }
+
+              return null
+            })
+            .filter(item => item !== null)
+          const curBalances = portalsRawBalances
+            .map(balance => {
+              if (!ethers.utils.isAddress(balance.address))
+                balance.address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+              const item = {
+                symbol: balance.symbol,
+                address: balance.address,
+                balance: balance.balance,
+                default: false,
+                usdValue: balance.balanceUSD,
+                usdPrice: balance.price,
+                logoURI: balance.image
+                  ? balance.image
+                  : balance.images
+                  ? balance.images[0]
+                  : 'https://etherscan.io/images/main/empty-token.png',
+                decimals: balance.decimals,
+                chainId: chain,
+              }
+              return item
+            })
+            .filter(item => item.address)
+
           const tokenAddress =
             token.tokenAddress !== undefined && token.tokenAddress.length !== 2
               ? token.tokenAddress
               : token.vaultAddress
 
+          const fTokenAddr = token.vaultAddress ? token.vaultAddress : token.tokenAddress
+          const curSortedBalances = curBalances
+            .sort(function reducer(a, b) {
+              return b.usdValue - a.usdValue
+            })
+            .filter(item => item.address.toLowerCase() !== fTokenAddr.toLowerCase())
+
+          setBalanceList(curSortedBalances)
+
+          supList = [...curBalances, ...curNoBalances]
+
           supList = supList.map(sup => {
             const supToken = curBalances.find(el => el.address === sup.address)
             if (supToken) {
               sup.balance = supToken.balance
-              sup.usdValue = supToken.balanceUsdValue
+              sup.usdValue = supToken.usdValue
               sup.usdPrice = supToken.usdPrice
             } else {
               sup.balance = '0'
@@ -585,9 +611,8 @@ const AdvancedFarm = () => {
           })
 
           supList = supList.sort(function reducer(a, b) {
-            return Number(fromWei(b.balance, b.decimals)) - Number(fromWei(a.balance, a.decimals))
+            return b.usdValue - a.usdValue
           })
-
           for (let j = 0; j < curBalances.length; j += 1) {
             if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
               if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
@@ -656,16 +681,15 @@ const AdvancedFarm = () => {
           supList.shift()
           setSupTokenList(supList)
 
-          // const supNoBalanceList = []
-          // if (supList.length > 0) {
-          //   for (let i = 0; i < supList.length; i += 1) {
-          //     if (Number(supList[i].balance) === 0) {
-          //       supNoBalanceList.push(supList[i])
-          //     }
-          //   }
-          // }
-          // setSupTokenNoBalanceList(supNoBalanceList)
-          setSupTokenNoBalanceList({}) // TODO: remove supTokenNoBalanceList once confirmed
+          const supNoBalanceList = []
+          if (supList.length > 0) {
+            for (let i = 0; i < supList.length; i += 1) {
+              if (Number(supList[i].balance) === 0) {
+                supNoBalanceList.push(supList[i])
+              }
+            }
+          }
+          setSupTokenNoBalanceList(supNoBalanceList)
 
           // const soonSupList = []
           // for (let j = 0; j < curBalances.length; j += 1) {
@@ -689,7 +713,7 @@ const AdvancedFarm = () => {
     }
 
     getTokenBalance()
-  }, [account, chain, balances, convertSuccess, ensoBaseTokens, getEnsoBalances]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, chain, balances, convertSuccess, getPortalsBalances, getPortalsBaseTokens]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (supTokenList.length > 0) {

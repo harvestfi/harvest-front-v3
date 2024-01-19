@@ -121,11 +121,7 @@ const SelectTokenList = ({
                       {defaultCurToken.symbol}
                     </Text>
                     <RightText weight={600} color="#344054">
-                      <>
-                        {defaultCurToken.balance
-                          ? `${1 * fromWei(defaultCurToken.balance, defaultCurToken.decimals)}`
-                          : '0.00'}
-                      </>
+                      <>{defaultCurToken.balance ? defaultCurToken.balance : '0.00'}</>
                       <TextSpan>$0</TextSpan>
                     </RightText>
                   </Vault>
@@ -155,18 +151,12 @@ const SelectTokenList = ({
                     <RightText weight={600} color="#344054">
                       <>
                         {data.balance
-                          ? `${formatNumberWido(
-                              1 * fromWei(data.balance, data.decimals),
-                              WIDO_EXTEND_DECIMALS,
-                            )}`
+                          ? `${formatNumberWido(data.balance, WIDO_EXTEND_DECIMALS)}`
                           : '0.00'}
                       </>
                       <TextSpan>
                         {data.usdPrice
-                          ? `$${formatNumberWido(
-                              Number(data.usdPrice) * fromWei(data.balance, data.decimals),
-                              WIDO_BALANCES_DECIMALS,
-                            )}`
+                          ? `$${formatNumberWido(data.usdValue, WIDO_BALANCES_DECIMALS)}`
                           : '$0.00'}
                       </TextSpan>
                     </RightText>
