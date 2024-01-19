@@ -380,12 +380,16 @@ const Portfolio = () => {
             }
             // eslint-disable-next-line one-var
             let usdPrice = 1
+            const tokenDecimals = useIFARM
+              ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0)
+              : token.decimals
             const tempPricePerFullShare = useIFARM
               ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
               : get(token, `pricePerFullShare`, 0)
             const pricePerFullShare = fromWei(
               tempPricePerFullShare,
-              useIFARM ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0) : token.decimals,
+              tokenDecimals,
+              Number(tokenDecimals) - 1,
             )
             if (token) {
               usdPrice =
@@ -479,9 +483,9 @@ const Portfolio = () => {
                       // eslint-disable-next-line no-await-in-loop
                       const usdUnderlyingRewardPrice = await getTokenPriceFromApi(tempData.id)
                       usdRewardPrice = Number(usdUnderlyingRewardPrice) * Number(pricePerFullShare)
-                      console.log(
-                        `${underlyingRewardSymbol} - USD Price of reward token: ${usdRewardPrice}`,
-                      )
+                      // console.log(
+                      //   `${underlyingRewardSymbol} - USD Price of reward token: ${usdRewardPrice}`,
+                      // )
                       break
                     }
                   }
@@ -496,7 +500,7 @@ const Portfolio = () => {
                     if (tempSymbol.toLowerCase() === rewardSymbol.toLowerCase()) {
                       // eslint-disable-next-line no-await-in-loop
                       usdRewardPrice = await getTokenPriceFromApi(tempData.id)
-                      console.log(`${rewardSymbol} - USD Price: ${usdRewardPrice}`)
+                      // console.log(`${rewardSymbol} - USD Price: ${usdRewardPrice}`)
                       break
                     }
                   }
@@ -987,7 +991,7 @@ const Portfolio = () => {
                               size={14}
                               height={20}
                               color="#101828"
-                              // value={`$${formatNumber(info.totalRewardUsd, 9)}`}
+                              // value={`$${info.totalRewardUsd}`}
                               value={`${
                                 info.totalRewardUsd === 0
                                   ? '$0.00'
