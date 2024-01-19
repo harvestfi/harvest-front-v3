@@ -1561,6 +1561,25 @@ export const numberWithCommas = x => {
   return integerPart + decimalPart
 }
 
+export const getChainNamePortals = chain => {
+  let chainName = 'ethereum'
+  switch (chain) {
+    case CHAIN_IDS.POLYGON_MAINNET:
+      chainName = 'polygon'
+      break
+    case CHAIN_IDS.ARBITRUM_ONE:
+      chainName = 'arbitrum'
+      break
+    case CHAIN_IDS.BASE:
+      chainName = 'base'
+      break
+    default:
+      chainName = 'ethereum'
+      break
+  }
+  return chainName
+}
+
 // /**
 //  * @param symbol token symbol
 //  * @param apiData coingeko data

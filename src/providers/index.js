@@ -10,6 +10,7 @@ import { StatsProvider } from './Stats'
 import { ThemeProvider } from './useThemeContext'
 import { VaultsProvider } from './Vault'
 import { WalletProvider } from './Wallet'
+import { PortalsProvider } from './Portals'
 
 const injected = injectedModule()
 const gnosis = gnosisModule()
@@ -88,17 +89,19 @@ const web3Onboard = init({
 const Providers = ({ children }) => (
   <ContractsProvider>
     <Web3OnboardProvider web3Onboard={web3Onboard}>
-      <WalletProvider>
-        <PoolsProvider>
-          <VaultsProvider>
-            <ActionsProvider>
-              <StatsProvider>
-                <ThemeProvider>{children}</ThemeProvider>
-              </StatsProvider>
-            </ActionsProvider>
-          </VaultsProvider>
-        </PoolsProvider>
-      </WalletProvider>
+      <PortalsProvider>
+        <WalletProvider>
+          <PoolsProvider>
+            <VaultsProvider>
+              <ActionsProvider>
+                <StatsProvider>
+                  <ThemeProvider>{children}</ThemeProvider>
+                </StatsProvider>
+              </ActionsProvider>
+            </VaultsProvider>
+          </PoolsProvider>
+        </WalletProvider>
+      </PortalsProvider>
     </Web3OnboardProvider>
   </ContractsProvider>
 )
