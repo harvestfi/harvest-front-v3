@@ -516,6 +516,17 @@ const Portfolio = () => {
               stats.totalRewardUsd += Number(rewardValues * Number(usdRewardPrice))
               valueRewards += Number(rewardValues * Number(usdRewardPrice))
               stats.rewardSymbol.push(rewardSymbol)
+              // console.log(
+              //   tokenName,
+              //   ': ',
+              //   rewardSymbol,
+              //   ' ###### ',
+              //   rewardValues,
+              //   ' * ',
+              //   usdRewardPrice,
+              //   ' = ',
+              //   Number(rewardValues * Number(usdRewardPrice)),
+              // )
 
               const rewardPriceUSD = rewardValues * Number(usdRewardPrice)
               stats.rewardUSD.push(rewardPriceUSD)
