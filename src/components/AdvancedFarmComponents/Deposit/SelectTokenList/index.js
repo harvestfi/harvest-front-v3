@@ -125,7 +125,9 @@ const SelectTokenList = ({
                     </Text>
                     <RightText weight={600} color="#344054">
                       <>{defaultCurToken.balance ? defaultCurToken.balance : '0.00'}</>
-                      <TextSpan>$0</TextSpan>
+                      <TextSpan>
+                        {defaultCurToken.usdValue ? `$${defaultCurToken.usdValue}` : '$0.00'}
+                      </TextSpan>
                     </RightText>
                   </Vault>
                 </Container>
@@ -151,7 +153,7 @@ const SelectTokenList = ({
                     </Text>
                     <RightText weight={600} color="#344054">
                       <>{data.balance ? data.balance : '0.00'}</>
-                      <TextSpan>{data.usdPrice ? `$${data.usdValue}` : '$0.00'}</TextSpan>
+                      <TextSpan>{data.usdValue ? `$${data.usdValue}` : '$0.00'}</TextSpan>
                     </RightText>
                   </Vault>
                 </Container>
