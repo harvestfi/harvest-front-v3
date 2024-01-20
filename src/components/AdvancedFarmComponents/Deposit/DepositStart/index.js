@@ -204,7 +204,7 @@ const DepositStart = ({
           allowanceCheck = approvedBalances[tokenSymbol]
         } else if (pickedToken.address === '0x0000000000000000000000000000000000000000') {
           // native token
-          allowanceCheck = amountsToExecute
+          allowanceCheck = amount
         } else {
           const approval = await getPortalsApproval(chainId, account, pickedToken.address)
 

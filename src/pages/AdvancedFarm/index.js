@@ -583,7 +583,11 @@ const AdvancedFarm = () => {
             })
             .filter(item => item.address.toLowerCase() !== fTokenAddr.toLowerCase())
 
-          setBalanceList(curSortedBalances)
+          setBalanceList(
+            curSortedBalances.filter(
+              item => item.address.toLowerCase() !== tokenAddress.toLowerCase(),
+            ),
+          )
 
           supList = [...curBalances, ...curNoBalances]
 
@@ -618,18 +622,12 @@ const AdvancedFarm = () => {
             }
           }
 
-          const vaultId = Object.keys(groupOfVaults).find(
-            key => groupOfVaults[key].tokenAddress === tokenAddress,
+          const directData = curBalances.find(
+            el => el.address.toLowerCase() === tokenAddress.toLowerCase(),
           )
-          const directBalance = balances[vaultId]
+          const directBalance = directData.balance
           const directUsdPrice = token.usdPrice
-          const directUsdValue =
-            directUsdPrice && directBalance
-              ? new BigNumber(directBalance)
-                  .div(10 ** tokenDecimals)
-                  .times(directUsdPrice)
-                  .toFixed(4)
-              : '0'
+          const directUsdValue = directData.usdValue ? directData.usdValue : '0'
 
           if (!(Object.keys(directInSup).length === 0 && directInSup.constructor === Object)) {
             directInSup.balance = directBalance
@@ -675,7 +673,7 @@ const AdvancedFarm = () => {
           if (supList[0].default) {
             setDefaultToken(supList[0])
           }
-          supList.shift()
+          // supList.shift()
           setSupTokenList(supList)
 
           const supNoBalanceList = []
@@ -686,6 +684,7 @@ const AdvancedFarm = () => {
               }
             }
           }
+          supNoBalanceList.shift()
           setSupTokenNoBalanceList(supNoBalanceList)
 
           // const soonSupList = []

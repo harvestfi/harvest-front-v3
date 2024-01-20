@@ -122,7 +122,9 @@ const SelectTokenList = ({
                     </Text>
                     <RightText weight={600} color="#344054">
                       <>{defaultCurToken.balance ? defaultCurToken.balance : '0.00'}</>
-                      <TextSpan>$0</TextSpan>
+                      <TextSpan>
+                        {defaultCurToken.usdValue ? `$${defaultCurToken.usdValue}` : '$0.00'}
+                      </TextSpan>
                     </RightText>
                   </Vault>
                 </Container>
@@ -155,7 +157,7 @@ const SelectTokenList = ({
                           : '0.00'}
                       </>
                       <TextSpan>
-                        {data.usdPrice
+                        {data.usdValue
                           ? `$${formatNumberWido(data.usdValue, WIDO_BALANCES_DECIMALS)}`
                           : '$0.00'}
                       </TextSpan>
