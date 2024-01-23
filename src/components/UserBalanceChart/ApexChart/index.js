@@ -328,7 +328,7 @@ const ApexChart = ({
       const slots = getTimeSlots(ago, slotCount)
       const firstSlotTimestamp = slots[0]
       const filteredData = data.filter(
-        obj => parseInt(obj.timestamp, 10) >= firstSlotTimestamp + 72000,
+        obj => parseInt(obj.timestamp, 10) >= firstSlotTimestamp + 36000,
       )
       const lastObjectInFilteredData = filteredData[filteredData.length - 1]
       const newObject = {
