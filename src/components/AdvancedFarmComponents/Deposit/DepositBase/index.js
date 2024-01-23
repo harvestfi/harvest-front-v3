@@ -191,6 +191,7 @@ const DepositBase = ({
             fromWei(
               quoteResult.minToTokenAmount,
               quoteResult.outputTokenDecimals || token.data.lpTokenData.decimals,
+              WIDO_EXTEND_DECIMALS,
             ),
             WIDO_EXTEND_DECIMALS,
           )
