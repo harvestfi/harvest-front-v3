@@ -265,7 +265,7 @@ const DepositStart = ({
               padding={isMobile ? '10px 0' : '10px 0'}
             >
               <NewLabel className="beginners" weight="500">
-                {progressStep === 4 ? 'fTokens Received' : 'Min. fTokens Received'}
+                {progressStep === 4 ? 'fTokens Received' : 'Est. fTokens Received'}
                 {progressStep !== 4 && (
                   <>
                     <img className="help-icon" src={HelpIcon} alt="" data-tip data-for="min-help" />
@@ -283,8 +283,8 @@ const DepositStart = ({
                         color="#344054"
                       >
                         {useIFARM
-                          ? `You will receive no less i${tokenSymbol} than the displayed amount.`
-                          : `You will receive no less f${tokenSymbol} than the displayed amount.`}
+                          ? `The estimated number of i${tokenSymbol} you will receive in your wallet. The default slippage is set at 0.5%.`
+                          : `The estimated number of f${tokenSymbol} you will receive in your wallet. The default slippage is set at 0.5%.`}
                       </NewLabel>
                     </ReactTooltip>
                   </>
