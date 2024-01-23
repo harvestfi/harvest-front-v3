@@ -98,9 +98,10 @@ function generateChartDataWithSlots(slots, apiData, balance, priceUnderlying, sh
         const value3 = parseFloat(apiData[j][sharePrice])
         seriesData.push({ x: slots[i] * 1000, y: value1 * value2 * value3, z: value1 * value3 })
         break
-      } else if (j === apiData.length - 1) {
-        seriesData.push({ x: slots[i] * 1000, y: 0, z: 0 })
       }
+      // else if (j === apiData.length - 1) {
+      //   seriesData.push({ x: slots[i] * 1000, y: 0, z: 0 })
+      // }
     }
   }
 
@@ -306,50 +307,45 @@ const ApexChart = ({
         ago = Math.ceil(periodDate)
         slotCount = 50
         if (ago > 700) {
-          ago += 60
           slotCount = 500
         } else if (ago > 365) {
-          ago += 45
           slotCount = 400
         } else if (ago > 180) {
-          ago += 30
           slotCount = 300
         } else if (ago > 90) {
-          ago += 15
           slotCount = 150
         } else if (ago > 60) {
-          ago += 10
           slotCount = 100
         } else if (ago > 30) {
-          ago += 7
           slotCount = 100
-        } else if (ago > 15) {
-          ago += 5
-        } else if (ago > 7) {
-          ago += 3
         } else {
-          ago += 1
+          slotCount = 50
         }
       } else {
         ago = getRangeNumber(range)
         slotCount = 50
       }
       const slots = getTimeSlots(ago, slotCount)
+      const firstSlotTimestamp = slots[0]
+      const filteredData = data.filter(
+        obj => parseInt(obj.timestamp, 10) >= firstSlotTimestamp + 72000,
+      )
+      const lastObjectInFilteredData = filteredData[filteredData.length - 1]
+      const newObject = {
+        priceUnderlying: lastObjectInFilteredData.priceUnderlying,
+        sharePrice: lastObjectInFilteredData.sharePrice,
+        timestamp: firstSlotTimestamp.toString(),
+        value: lastObjectInFilteredData.value,
+      }
+      filteredData.push(newObject)
 
-      // const firstSlotTimestamp = slots[0]
-      // const filteredData = data.filter(
-      //   obj => parseInt(obj.timestamp, 10) >= firstSlotTimestamp + 72000,
-      // )
-      // const lastObjectInFilteredData = filteredData[filteredData.length - 1]
-      // const newObject = {
-      //   priceUnderlying: lastObjectInFilteredData.priceUnderlying,
-      //   sharePrice: lastObjectInFilteredData.sharePrice,
-      //   timestamp: firstSlotTimestamp.toString(),
-      //   value: lastObjectInFilteredData.value,
-      // }
-      // filteredData.push(newObject)
-
-      mainData = generateChartDataWithSlots(slots, data, 'value', 'priceUnderlying', 'sharePrice')
+      mainData = generateChartDataWithSlots(
+        slots,
+        filteredData,
+        'value',
+        'priceUnderlying',
+        'sharePrice',
+      )
       maxValue = findMax(mainData)
       minValue = findMin(mainData)
       minValue /= 1.01
