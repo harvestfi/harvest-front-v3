@@ -183,7 +183,7 @@ const DepositBase = ({
             quoteResult.fromTokenAmount === null
               ? '0'
               : formatNumberWido(
-                  fromWei(quoteResult.fromTokenAmount, curToken.decimals) *
+                  fromWei(quoteResult.fromTokenAmount, curToken.decimals, WIDO_EXTEND_DECIMALS) *
                     quoteResult.fromTokenUsdPrice,
                   BEGINNERS_BALANCES_DECIMALS,
                 )
@@ -191,6 +191,7 @@ const DepositBase = ({
             fromWei(
               quoteResult.minToTokenAmount,
               quoteResult.outputTokenDecimals || token.data.lpTokenData.decimals,
+              WIDO_EXTEND_DECIMALS,
             ),
             WIDO_EXTEND_DECIMALS,
           )
