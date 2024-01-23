@@ -2,7 +2,6 @@ import BigNumber from 'bignumber.js'
 import React, { useEffect, useState } from 'react'
 import { useSetChain } from '@web3-onboard/react'
 import { get, round } from 'lodash'
-// import { quote } from 'wido'
 import { useMediaQuery } from 'react-responsive'
 import { toast } from 'react-toastify'
 import ReactTooltip from 'react-tooltip'
@@ -17,7 +16,6 @@ import {
   IFARM_TOKEN_SYMBOL,
   POOL_BALANCES_DECIMALS,
   WIDO_EXTEND_DECIMALS,
-  WIDO_BALANCES_DECIMALS,
   BEGINNERS_BALANCES_DECIMALS,
 } from '../../../../constants'
 import { useThemeContext } from '../../../../providers/useThemeContext'
@@ -149,68 +147,53 @@ const DepositBase = ({
         try {
           let fromInfoValue = '',
             fromInfoUsdValue = '',
-            minReceiveAmount = ''
-          if (pickedToken.default) {
-            fromInfoValue = `${formatNumberWido(inputAmount, WIDO_EXTEND_DECIMALS)}`
-            fromInfoUsdValue =
-              pickedToken.usdPrice !== '0.0'
-                ? formatNumberWido(
-                    new BigNumber(amount)
-                      .multipliedBy(pickedToken.usdPrice)
-                      .dividedBy(new BigNumber(10).exponentiatedBy(pickedToken.decimals)),
-                    WIDO_BALANCES_DECIMALS,
-                  )
-                : '0'
+            minReceiveAmount = '',
+            curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol)
+          const fromToken = pickedToken.address
+          const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
+          const portalsEstimate = await getPortalsEstimate({
+            chainId,
+            tokenIn: fromToken,
+            inputAmount: amount,
+            tokenOut: toToken,
+            slippage,
+          })
 
-            minReceiveAmount = formatNumberWido(
-              new BigNumber(amount).dividedBy(pricePerFullShare).toFixed(),
-              WIDO_EXTEND_DECIMALS,
-            )
-          } else {
-            const fromToken = pickedToken.address
-            const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
-            let curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol)
+          if (Object.keys(portalsEstimate).length === 0)
+            throw new Error('Portals estimate fetch failture')
 
-            const portalsEstimate = await getPortalsEstimate({
-              chainId,
-              tokenIn: fromToken,
-              inputAmount: amount,
-              tokenOut: toToken,
-              slippage,
-            })
+          const fromTokenUsdPrice = await getPortalsPrice(chainId, fromToken)
 
-            if (Object.keys(portalsEstimate).length === 0)
-              throw new Error('Portals estimate fetch failture')
-
-            const fromTokenUsdPrice = await getPortalsPrice(chainId, fromToken)
-            const quoteResult = {
-              fromTokenAmount: amount,
-              fromTokenUsdPrice,
-              minToTokenAmount: portalsEstimate.minOutputAmount,
-            }
-
-            setQuoteValue(quoteResult)
-            curToken = curToken[0]
-            fromInfoValue = formatNumberWido(
-              fromWei(quoteResult.fromTokenAmount, curToken.decimals, WIDO_EXTEND_DECIMALS, true),
-              WIDO_EXTEND_DECIMALS,
-            )
-            fromInfoUsdValue =
-              quoteResult.fromTokenAmount === null
-                ? '0'
-                : formatNumberWido(
-                    fromWei(quoteResult.fromTokenAmount, curToken.decimals) *
-                      quoteResult.fromTokenUsdPrice,
-                    BEGINNERS_BALANCES_DECIMALS,
-                  )
-            minReceiveAmount = formatNumberWido(
-              fromWei(
-                quoteResult.minToTokenAmount,
-                token.decimals || token.data.lpTokenData.decimals,
-              ),
-              WIDO_EXTEND_DECIMALS,
-            )
+          const quoteResult = {
+            fromTokenAmount: amount,
+            fromTokenUsdPrice,
+            minToTokenAmount: portalsEstimate.minOutputAmount,
+            outputTokenDecimals: portalsEstimate.outputTokenDecimals,
           }
+
+          setQuoteValue(quoteResult)
+
+          curToken = curToken[0]
+          fromInfoValue = formatNumberWido(
+            fromWei(quoteResult.fromTokenAmount, curToken.decimals, WIDO_EXTEND_DECIMALS, true),
+            WIDO_EXTEND_DECIMALS,
+          )
+
+          fromInfoUsdValue =
+            quoteResult.fromTokenAmount === null
+              ? '0'
+              : formatNumberWido(
+                  fromWei(quoteResult.fromTokenAmount, curToken.decimals) *
+                    quoteResult.fromTokenUsdPrice,
+                  BEGINNERS_BALANCES_DECIMALS,
+                )
+          minReceiveAmount = formatNumberWido(
+            fromWei(
+              quoteResult.minToTokenAmount,
+              quoteResult.outputTokenDecimals || token.data.lpTokenData.decimals,
+            ),
+            WIDO_EXTEND_DECIMALS,
+          )
           setMinReceiveAmountString(minReceiveAmount)
           setFromInfoAmount(fromInfoValue)
           if (Number(fromInfoUsdValue) < 0.01) {

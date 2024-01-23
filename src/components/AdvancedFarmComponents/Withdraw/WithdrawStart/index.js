@@ -57,7 +57,7 @@ const WithdrawStart = ({
   const [startSpinner, setStartSpinner] = useState(false) // State of Spinner for 'Finalize Deposit' button
   const { getPortalsApproval, portalsApprove, getPortals } = usePortals()
 
-  const slippagePercentage = 2.5 // Default slippage Percent
+  const slippagePercentage = 0.5 // Default slippage Percent
   const chainId = token.chain || token.data.chain
   const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
 
