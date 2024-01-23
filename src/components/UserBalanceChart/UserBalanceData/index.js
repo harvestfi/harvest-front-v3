@@ -133,8 +133,9 @@ const UserBalanceData = ({
               }
             }
             if (!addFlag) {
-              data1[i].priceUnderlying = uniqueData2[uniqueData2.length - 1].priceUnderlying
-              data1[i].sharePrice = uniqueData2[uniqueData2.length - 1].sharePrice
+              data1[i].priceUnderlying =
+                uniqueData2[z === uniqueData2.length ? z - 1 : z].priceUnderlying
+              data1[i].sharePrice = uniqueData2[z === uniqueData2.length ? z - 1 : z].sharePrice
               mergedData.push(data1[i])
             }
             addFlag = false
@@ -175,8 +176,9 @@ const UserBalanceData = ({
               }
             }
             if (!addFlag) {
-              data1[z].priceUnderlying = uniqueData2[uniqueData2.length - 1].priceUnderlying
-              data1[z].sharePrice = uniqueData2[uniqueData2.length - 1].sharePrice
+              data1[z].priceUnderlying =
+                uniqueData2[i === uniqueData2.length ? i - 1 : i].priceUnderlying
+              data1[z].sharePrice = uniqueData2[i === uniqueData2.length ? i - 1 : i].sharePrice
               mergedData.push(data1[z])
             }
             addFlag = false
