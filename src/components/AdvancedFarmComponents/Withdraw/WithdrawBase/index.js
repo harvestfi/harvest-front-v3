@@ -12,7 +12,6 @@ import ArrowDown from '../../../../assets/images/logos/beginners/arrow-narrow-do
 import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.svg'
 import HelpIcon from '../../../../assets/images/logos/beginners/help-circle.svg'
 import {
-  WIDO_BALANCES_DECIMALS,
   MAX_DECIMALS,
   WIDO_EXTEND_DECIMALS,
   IFARM_TOKEN_SYMBOL,
@@ -140,65 +139,50 @@ const WithdrawBase = ({
         try {
           let fromInfoValue = '',
             fromInfoUsdValue = '',
-            minReceivedString = ''
+            minReceivedString = '',
+            curToken = supTokenList.filter(el => el.symbol === pickedToken.symbol)
+          const toToken = pickedToken.address
 
-          if (pickedToken.default) {
-            fromInfoValue = `${formatNumberWido(
-              fromWei(amount, pickedToken.decimals),
-              WIDO_EXTEND_DECIMALS,
-            )}`
-            fromInfoUsdValue = formatNumberWido(pickedToken.usdValue, WIDO_BALANCES_DECIMALS)
-            minReceivedString = formatNumberWido(
-              new BigNumber(fromWei(unstakeBalance, pickedToken.decimals)).multipliedBy(
-                fromWei(pricePerFullShare, pickedToken.decimals),
-              ),
-              WIDO_EXTEND_DECIMALS,
-            )
-          } else {
-            const toToken = pickedToken.address
-            let curToken = supTokenList.filter(el => el.symbol === pickedToken.symbol)
-
-            const portalsEstimate = await getPortalsEstimate({
-              chainId,
-              tokenIn: fromToken,
-              inputAmount: amount,
-              tokenOut: toToken,
-              slippage,
-            })
-            const fromTokenUsdPrice = await getPortalsPrice(chainId, fromToken)
-            const quoteResult = {
-              fromTokenAmount: amount,
-              fromTokenUsdPrice,
-              minToTokenAmount: portalsEstimate.minOutputAmount,
-            }
-            setQuoteValue(quoteResult)
-
-            curToken = curToken[0]
-            fromInfoValue = formatNumberWido(
-              fromWei(
-                quoteResult.fromTokenAmount,
-                useIFARM ? fAssetPool?.lpTokenData?.decimals : curToken.decimals,
-                WIDO_EXTEND_DECIMALS,
-                true,
-              ),
-              WIDO_EXTEND_DECIMALS,
-            )
-            fromInfoUsdValue =
-              quoteResult.fromTokenAmount === null
-                ? '0'
-                : formatNumberWido(
-                    fromWei(
-                      quoteResult.fromTokenAmount,
-                      useIFARM ? fAssetPool?.lpTokenData?.decimals : curToken.decimals,
-                      WIDO_EXTEND_DECIMALS,
-                    ) * quoteResult.fromTokenUsdPrice,
-                    BEGINNERS_BALANCES_DECIMALS,
-                  )
-            minReceivedString = formatNumberWido(
-              fromWei(quoteResult.minToTokenAmount, pickedToken.decimals, WIDO_EXTEND_DECIMALS),
-              WIDO_EXTEND_DECIMALS,
-            )
+          const portalsEstimate = await getPortalsEstimate({
+            chainId,
+            tokenIn: fromToken,
+            inputAmount: amount,
+            tokenOut: toToken,
+            slippage,
+          })
+          const fromTokenUsdPrice = await getPortalsPrice(chainId, fromToken)
+          const quoteResult = {
+            fromTokenAmount: amount,
+            fromTokenUsdPrice,
+            minToTokenAmount: portalsEstimate.minOutputAmount,
           }
+          setQuoteValue(quoteResult)
+
+          curToken = curToken[0]
+          fromInfoValue = formatNumberWido(
+            fromWei(
+              quoteResult.fromTokenAmount,
+              useIFARM ? fAssetPool?.lpTokenData?.decimals : curToken.decimals,
+              WIDO_EXTEND_DECIMALS,
+              true,
+            ),
+            WIDO_EXTEND_DECIMALS,
+          )
+          fromInfoUsdValue =
+            quoteResult.fromTokenAmount === null
+              ? '0'
+              : formatNumberWido(
+                  fromWei(
+                    quoteResult.fromTokenAmount,
+                    useIFARM ? fAssetPool?.lpTokenData?.decimals : curToken.decimals,
+                    WIDO_EXTEND_DECIMALS,
+                  ) * quoteResult.fromTokenUsdPrice,
+                  BEGINNERS_BALANCES_DECIMALS,
+                )
+          minReceivedString = formatNumberWido(
+            fromWei(quoteResult.minToTokenAmount, pickedToken.decimals, WIDO_EXTEND_DECIMALS),
+            WIDO_EXTEND_DECIMALS,
+          )
           setRevertFromInfoAmount(fromInfoValue)
           setRevertFromInfoUsdAmount(fromInfoUsdValue)
           setRevertMinReceivedAmount(minReceivedString)
@@ -233,14 +217,7 @@ const WithdrawBase = ({
   const amountValue = fromWei(unstakeBalance, pickedToken.decimals)
 
   useEffect(() => {
-    const receiveString = pickedToken.default
-      ? formatNumberWido(
-          new BigNumber(amountValue)
-            .multipliedBy(fromWei(pricePerFullShare, pickedToken.decimals))
-            .toFixed(),
-          WIDO_EXTEND_DECIMALS,
-        )
-      : quoteValue
+    const receiveString = quoteValue
       ? formatNumberWido(
           fromWei(quoteValue.toTokenAmount, pickedToken.decimals),
           WIDO_EXTEND_DECIMALS,

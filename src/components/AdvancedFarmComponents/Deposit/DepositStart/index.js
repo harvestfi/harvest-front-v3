@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { isEmpty, get } from 'lodash'
+import { get } from 'lodash'
 import React, { useState, useEffect } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import { useMediaQuery } from 'react-responsive'
@@ -17,8 +17,6 @@ import ProgressThree from '../../../../assets/images/logos/advancedfarm/progress
 import ProgressFour from '../../../../assets/images/logos/advancedfarm/progress-step4.png'
 import ProgressFive from '../../../../assets/images/logos/advancedfarm/progress-step5.png'
 import { useWallet } from '../../../../providers/Wallet'
-import { useActions } from '../../../../providers/Actions'
-import { useContracts } from '../../../../providers/Contracts'
 import { usePools } from '../../../../providers/Pools'
 import { fromWei, toWei, getWeb3 } from '../../../../services/web3'
 import { formatNumberWido } from '../../../../utils'
@@ -35,7 +33,6 @@ import {
   FTokenWrong,
   AnimateDotDiv,
 } from './style'
-import { useVaults } from '../../../../providers/Vault'
 import { usePortals } from '../../../../providers/Portals'
 
 const DepositStart = ({
@@ -48,7 +45,6 @@ const DepositStart = ({
   tokenSymbol,
   useIFARM,
   fAssetPool,
-  multipleAssets,
   fromInfoAmount,
   fromInfoUsdAmount,
   minReceiveAmountString,
@@ -57,34 +53,17 @@ const DepositStart = ({
   setSelectToken,
   setConvertSuccess,
 }) => {
-  const { account, web3, approvedBalances, getWalletBalances } = useWallet()
-  const { vaultsData, getFarmingBalances, farmingBalances } = useVaults()
-  const { handleDeposit, handleApproval } = useActions()
-  const { contracts } = useContracts()
+  const { account, web3 } = useWallet()
+
   const { fetchUserPoolStats, userStats } = usePools()
   const { getPortalsApproval, portalsApprove, getPortals } = usePortals()
 
-  const slippagePercentage = 2.5 // Default slippage Percent
+  const slippagePercentage = 0.5 // Default slippage Percent
   const chainId = token.chain || token.data.chain
 
   const amount = toWei(inputAmount, pickedToken.decimals)
 
-  const [amountsToExecute, setAmountsToExecute] = useState([])
   const [progressStep, setProgressStep] = useState(0)
-
-  const amountsToExecuteInWei = amountsToExecute.map(amt => {
-    if (isEmpty(amt)) {
-      return null
-    }
-
-    if (multipleAssets) {
-      return toWei(amt, token.decimals, 0)
-    }
-    return toWei(amt, token.decimals)
-  })
-
-  const zap = !token.disableAutoSwap
-  const walletBalancesToCheck = multipleAssets || [tokenSymbol]
 
   const toToken = token.vaultAddress || token.tokenAddress
   const pricePerFullShare = get(token, `pricePerFullShare`, 0)
@@ -92,18 +71,12 @@ const DepositStart = ({
   const [startSpinner, setStartSpinner] = useState(false) // State of Spinner for 'Finalize Deposit' button
 
   const [depositFailed, setDepositFailed] = useState(false)
-  const [, setPendingAction] = useState(null)
 
   const [buttonName, setButtonName] = useState('Approve Token')
   const [receiveAmount, setReceiveAmount] = useState('')
 
   useEffect(() => {
-    const receiveString = pickedToken.default
-      ? formatNumberWido(
-          new BigNumber(amount).dividedBy(pricePerFullShare).toFixed(),
-          WIDO_EXTEND_DECIMALS,
-        )
-      : quoteValue
+    const receiveString = quoteValue
       ? formatNumberWido(
           fromWei(quoteValue.toTokenAmount, token.decimals || token.data.lpTokenData.decimals),
           WIDO_EXTEND_DECIMALS,
@@ -113,84 +86,35 @@ const DepositStart = ({
   }, [amount, pickedToken, pricePerFullShare, quoteValue, token])
 
   const onDeposit = async () => {
-    if (pickedToken.default) {
-      await handleDeposit(
-        token,
-        account,
-        tokenSymbol,
-        amountsToExecuteInWei,
-        approvedBalances[tokenSymbol],
-        contracts,
-        vaultsData[tokenSymbol],
-        setPendingAction,
-        false,
-        fAssetPool,
-        multipleAssets,
-        zap,
-        async () => {
-          await getWalletBalances(walletBalancesToCheck)
-          const updatedStats = await fetchUserPoolStats([fAssetPool], account, userStats)
-          await getFarmingBalances([tokenSymbol], farmingBalances, updatedStats)
-          setAmountsToExecute(['', ''])
-          await fetchUserPoolStats([fAssetPool], account, userStats)
-        },
-        async () => {
-          await getWalletBalances(walletBalancesToCheck, false, true)
-        },
-        async () => {},
-      )
-    } else {
-      const mainWeb = await getWeb3(chainId, account, web3)
+    const mainWeb = await getWeb3(chainId, account, web3)
 
-      const portalData = await getPortals({
-        chainId,
-        sender: account,
-        tokenIn: pickedToken.address,
-        inputAmount: amount,
-        tokenOut: toToken,
-        slippage: slippagePercentage,
-      })
+    const portalData = await getPortals({
+      chainId,
+      sender: account,
+      tokenIn: pickedToken.address,
+      inputAmount: amount,
+      tokenOut: toToken,
+      slippage: slippagePercentage,
+    })
 
-      await mainWeb.eth.sendTransaction({
-        from: portalData.tx.from,
-        data: portalData.tx.data,
-        to: portalData.tx.to,
-        value: portalData.tx.value,
-      })
+    await mainWeb.eth.sendTransaction({
+      from: portalData.tx.from,
+      data: portalData.tx.data,
+      to: portalData.tx.to,
+      value: portalData.tx.value,
+    })
 
-      await fetchUserPoolStats([fAssetPool], account, userStats)
-    }
+    await fetchUserPoolStats([fAssetPool], account, userStats)
   }
 
   const approveZap = async amnt => {
-    if (pickedToken.default) {
-      await handleApproval(
-        account,
-        contracts,
-        tokenSymbol,
-        null,
-        null,
-        setPendingAction,
-        async () => {
-          await fetchUserPoolStats([fAssetPool], account, userStats)
-          await getWalletBalances([tokenSymbol], false, true)
-        },
-        async () => {},
-      )
-    } else {
-      const { approve } = await portalsApprove(
-        chainId,
-        account,
-        pickedToken.address,
-        amnt.toString(),
-      )
-      const mainWeb = await getWeb3(chainId, account, web3)
-      await mainWeb.eth.sendTransaction({
-        from: account,
-        data: approve.data,
-        to: approve.to,
-      })
-    }
+    const { approve } = await portalsApprove(chainId, account, pickedToken.address, amnt.toString())
+    const mainWeb = await getWeb3(chainId, account, web3)
+    await mainWeb.eth.sendTransaction({
+      from: account,
+      data: approve.data,
+      to: approve.to,
+    })
   }
 
   const startDeposit = async () => {
@@ -200,9 +124,7 @@ const DepositStart = ({
       setButtonName('Pending Approval in Wallet')
       try {
         let allowanceCheck
-        if (pickedToken.default) {
-          allowanceCheck = approvedBalances[tokenSymbol]
-        } else if (pickedToken.address === '0x0000000000000000000000000000000000000000') {
+        if (pickedToken.address === '0x0000000000000000000000000000000000000000') {
           // native token
           allowanceCheck = amount
         } else {

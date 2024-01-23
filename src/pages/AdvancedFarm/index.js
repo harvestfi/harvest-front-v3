@@ -586,11 +586,12 @@ const AdvancedFarm = () => {
             })
             .filter(item => item.address.toLowerCase() !== fTokenAddr.toLowerCase())
 
-          setBalanceList(
-            curSortedBalances.filter(
-              item => item.address.toLowerCase() !== tokenAddress.toLowerCase(),
-            ),
-          )
+          // setBalanceList(
+          //   curSortedBalances.filter(
+          //     item => item.address.toLowerCase() !== tokenAddress.toLowerCase(),
+          //   ),
+          // )
+          setBalanceList(curSortedBalances)
 
           supList = [...curBalances, ...curNoBalances]
 
@@ -628,9 +629,9 @@ const AdvancedFarm = () => {
           const directData = curBalances.find(
             el => el.address.toLowerCase() === tokenAddress.toLowerCase(),
           )
-          const directBalance = directData.balance
+          const directBalance = directData ? directData.balance : '0'
           const directUsdPrice = token.usdPrice
-          const directUsdValue = directData.usdValue ? directData.usdValue : '0'
+          const directUsdValue = directData?.usdValue ?? '0'
 
           if (!(Object.keys(directInSup).length === 0 && directInSup.constructor === Object)) {
             directInSup.balance = directBalance
