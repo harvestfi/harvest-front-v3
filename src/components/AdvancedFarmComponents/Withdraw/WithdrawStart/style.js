@@ -155,6 +155,10 @@ const NewLabel = styled.div`
     width: 100%;
   }
 
+  #min-help {
+    max-width: 300px;
+  }
+
   img.help-icon {
     margin-left: 5px;
   }

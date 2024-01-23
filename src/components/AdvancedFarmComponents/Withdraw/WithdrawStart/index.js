@@ -242,7 +242,7 @@ const WithdrawStart = ({
                 display="flex"
                 alignSelf="flex-start"
               >
-                {progressStep === 4 ? 'Received' : 'Min. Received'}
+                {progressStep === 4 ? 'Received' : 'Est. Received'}
                 {progressStep !== 4 && (
                   <>
                     <img className="help-icon" src={HelpIcon} alt="" data-tip data-for="min-help" />
@@ -259,7 +259,8 @@ const WithdrawStart = ({
                         weight="600"
                         color="#344054"
                       >
-                        You will receive no less than displayed amount into your wallet.
+                        The estimated number of tokens you will receive in your wallet. The default
+                        slippage is set at 0.5%.
                       </NewLabel>
                     </ReactTooltip>
                   </>

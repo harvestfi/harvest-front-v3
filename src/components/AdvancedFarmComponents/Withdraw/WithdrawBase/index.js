@@ -154,7 +154,7 @@ const WithdrawBase = ({
           const quoteResult = {
             fromTokenAmount: amount,
             fromTokenUsdPrice,
-            minToTokenAmount: portalsEstimate.minOutputAmount,
+            minToTokenAmount: portalsEstimate.outputAmount,
           }
           setQuoteValue(quoteResult)
 
@@ -432,7 +432,7 @@ const WithdrawBase = ({
               color="#344054"
               weight="500"
             >
-              Min. Received
+              Est. Received
               <InfoIconCircle
                 className="info"
                 width={isMobile ? 16 : 16}
@@ -454,7 +454,8 @@ const WithdrawBase = ({
                   weight="600"
                   color="white"
                 >
-                  You will not receive less than the displayed number of tokens.
+                  The estimated number of tokens you will receive in your wallet. The default
+                  slippage is set at 0.5%.
                 </NewLabel>
               </ReactTooltip>
             </NewLabel>

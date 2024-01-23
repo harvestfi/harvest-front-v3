@@ -127,6 +127,10 @@ const NewLabel = styled.div`
     width: 100%;
   }
 
+  #min-help {
+    max-width: 300px;
+  }
+
   span {
     font-size: 10px;
     font-weight: 400;

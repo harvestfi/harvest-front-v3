@@ -167,7 +167,7 @@ const DepositBase = ({
           const quoteResult = {
             fromTokenAmount: amount,
             fromTokenUsdPrice,
-            minToTokenAmount: portalsEstimate.minOutputAmount,
+            minToTokenAmount: portalsEstimate.outputAmount,
             outputTokenDecimals: portalsEstimate.outputTokenDecimals,
           }
 
@@ -563,7 +563,7 @@ const DepositBase = ({
               color="#6F78AA"
               weight="500"
             >
-              {useIFARM ? 'Min. Received' : 'Min. fTokens Received'}
+              {useIFARM ? 'Est. Received' : 'Est. fTokens Received'}
               <InfoIconCircle
                 className="info"
                 width={isMobile ? 16 : 16}
@@ -588,7 +588,7 @@ const DepositBase = ({
                 >
                   {useBeginnersFarm
                     ? `You'll receive no less than the displayed number of interest-bearing fTokens.`
-                    : `You will not receive less than the displayed number of fTokens.`}
+                    : `The estimated number of fTokens you will receive in your wallet. The default slippage is set at 0.5%.`}
                 </NewLabel>
               </ReactTooltip>
             </NewLabel>
