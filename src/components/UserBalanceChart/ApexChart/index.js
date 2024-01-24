@@ -383,13 +383,13 @@ const ApexChart = ({
       if (unitBtwUnderlying >= 1) {
         unitBtwUnderlying = Math.ceil(unitBtwUnderlying)
         lenUnderlying = unitBtwUnderlying.toString().length
-        unitBtwUnderlying = ceil10(unitBtwUnderlying, len - 1)
-        maxValueUnderlying = ceil10(maxValueUnderlying, len - 1)
-        minValueUnderlying = floor10(minValueUnderlying, len - 1)
+        unitBtwUnderlying = ceil10(unitBtwUnderlying, lenUnderlying - 1)
+        maxValueUnderlying = ceil10(maxValueUnderlying, lenUnderlying - 1)
+        minValueUnderlying = floor10(minValueUnderlying, lenUnderlying - 1)
       } else if (unitBtwUnderlying === 0) {
         lenUnderlying = Math.ceil(maxValueUnderlying).toString().length
-        maxValueUnderlying += 10 ** (len - 1)
-        minValueUnderlying -= 10 ** (len - 1)
+        maxValueUnderlying += 10 ** (lenUnderlying - 1)
+        minValueUnderlying -= 10 ** (lenUnderlying - 1)
       } else {
         lenUnderlying = Math.ceil(1 / unitBtwUnderlying).toString().length + 1
         unitBtwUnderlying = ceil10(unitBtwUnderlying, -lenUnderlying)
