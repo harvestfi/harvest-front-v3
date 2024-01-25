@@ -361,7 +361,7 @@ const DepositStart = ({
               />
             </NewLabel>
           </FTokenWrong>
-          <FTokenWrong isShow={!slippageFailed ? 'true' : 'false'}>
+          <FTokenWrong isShow={slippageFailed ? 'true' : 'false'}>
             <NewLabel marginRight="12px" display="flex">
               <div>
                 <img src={AlertIcon} alt="" />
