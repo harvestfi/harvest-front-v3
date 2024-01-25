@@ -3,10 +3,11 @@ import { get } from 'lodash'
 import React, { useState, useEffect } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import { useMediaQuery } from 'react-responsive'
-// import { quote, getTokenAllowance, approve } from 'wido'
 import ReactTooltip from 'react-tooltip'
 import { Spinner } from 'react-bootstrap'
 import { BsArrowDown } from 'react-icons/bs'
+import { CiSettings } from 'react-icons/ci'
+import { IoIosArrowUp } from 'react-icons/io'
 import HelpIcon from '../../../../assets/images/logos/beginners/help-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import AlertIcon from '../../../../assets/images/logos/beginners/alert-triangle.svg'
@@ -32,6 +33,12 @@ import {
   SelectTokenWido,
   FTokenWrong,
   AnimateDotDiv,
+  SlippageBox,
+  MiddleLine,
+  SlipValue,
+  SlippageRow,
+  SlippageInput,
+  SlippageBtn,
 } from './style'
 import { usePortals } from '../../../../providers/Portals'
 
@@ -58,22 +65,29 @@ const DepositStart = ({
   const { fetchUserPoolStats, userStats } = usePools()
   const { getPortalsApproval, portalsApprove, getPortals } = usePortals()
 
-  const slippagePercentage = 0.5 // Default slippage Percent
   const chainId = token.chain || token.data.chain
 
   const amount = toWei(inputAmount, pickedToken.decimals)
 
-  const [progressStep, setProgressStep] = useState(0)
-
   const toToken = token.vaultAddress || token.tokenAddress
   const pricePerFullShare = get(token, `pricePerFullShare`, 0)
 
+  const [slippagePercentage, setSlippagePercentage] = useState(0.5)
+  const [slippageSetting, setSlippageSetting] = useState(false)
+  const [progressStep, setProgressStep] = useState(0)
   const [startSpinner, setStartSpinner] = useState(false) // State of Spinner for 'Finalize Deposit' button
 
   const [depositFailed, setDepositFailed] = useState(false)
+  const [slippageFailed, setSlippageFailed] = useState(false)
 
   const [buttonName, setButtonName] = useState('Approve Token')
   const [receiveAmount, setReceiveAmount] = useState('')
+
+  const SlippageValues = [null, 0.1, 0.5, 1, 5]
+
+  const onInputSlippage = e => {
+    setSlippagePercentage(Number(e.currentTarget.value))
+  }
 
   useEffect(() => {
     const receiveString = quoteValue
@@ -347,6 +361,43 @@ const DepositStart = ({
               />
             </NewLabel>
           </FTokenWrong>
+          <FTokenWrong isShow={slippageFailed ? 'true' : 'false'}>
+            <NewLabel marginRight="12px" display="flex">
+              <div>
+                <img src={AlertIcon} alt="" />
+              </div>
+              <NewLabel marginLeft="12px">
+                <NewLabel
+                  color="#B54708"
+                  size={isMobile ? '14px' : '14px'}
+                  height={isMobile ? '20px' : '20px'}
+                  weight="600"
+                  marginBottom="4px"
+                >
+                  Whoops, slippage set too low
+                </NewLabel>
+                <NewLabel
+                  color="#B54708"
+                  size={isMobile ? '14px' : '14px'}
+                  height={isMobile ? '20px' : '20px'}
+                  weight="400"
+                  marginBottom="5px"
+                >
+                  Slippage for this conversion is set too low. Expected slippage is &gt;[number%].
+                  If you wish to proceed, set it manually via the gear button below.
+                </NewLabel>
+              </NewLabel>
+            </NewLabel>
+            <NewLabel>
+              <ImgBtn
+                src={AlertCloseIcon}
+                alt=""
+                onClick={() => {
+                  setSlippageFailed(false)
+                }}
+              />
+            </NewLabel>
+          </FTokenWrong>
           <NewLabel>
             <img
               className="progressbar-img"
@@ -369,8 +420,16 @@ const DepositStart = ({
             height={isMobile ? '24px' : '24px'}
             weight={600}
             color="#1F2937"
-            padding="24px"
+            padding={slippageSetting ? '25px 24px 10px' : '25px 24px 24px'}
+            display="flex"
           >
+            <SlippageBox onClick={() => setSlippageSetting(!slippageSetting)}>
+              {slippageSetting ? (
+                <IoIosArrowUp color="#6F78AA" fontSize={20} />
+              ) : (
+                <CiSettings color="#6F78AA" fontSize={20} />
+              )}
+            </SlippageBox>
             <Buttons
               onClick={() => {
                 startDeposit()
@@ -383,6 +442,66 @@ const DepositStart = ({
                 <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
               )}
             </Buttons>
+          </NewLabel>
+          <NewLabel
+            size={isMobile ? '12px' : '12px'}
+            height={isMobile ? '24px' : '24px'}
+            color="#6F78AA"
+            padding="10px 24px"
+            display={slippageSetting ? 'flex' : 'none'}
+            flexFlow="column"
+          >
+            <NewLabel display="flex" justifyContent="space-between">
+              <NewLabel>Slippage Settings</NewLabel>
+              <MiddleLine />
+            </NewLabel>
+            <NewLabel padding="10px 0px">
+              Current slippage: <span className="auto-slippage">Auto (0 - 2.5%)</span>
+            </NewLabel>
+            <SlippageRow>
+              {SlippageValues.map((percentage, index) => (
+                <SlipValue
+                  key={index}
+                  onClick={() => setSlippagePercentage(percentage)}
+                  color={slippagePercentage === percentage ? '#fff' : '#344054'}
+                  bgColor={slippagePercentage === percentage ? '#15b088' : ''}
+                  isLastChild={index === SlippageValues.length - 1}
+                  isFirstChild={index === 0}
+                >
+                  {percentage === null ? 'Auto' : `${percentage}%`}
+                </SlipValue>
+              ))}
+            </SlippageRow>
+            <NewLabel
+              display="flex"
+              justifyContent="space-between"
+              padding="15px 0px 5px"
+              gap="10px"
+            >
+              <NewLabel color="#344054" weight="600" margin="auto">
+                or
+              </NewLabel>
+              <SlippageInput
+                borderColor={
+                  slippagePercentage === null || slippagePercentage === 0 ? '#d0d5dd' : '#15b088'
+                }
+              >
+                <input
+                  type="number"
+                  value={slippagePercentage === null ? '' : slippagePercentage}
+                  onChange={onInputSlippage}
+                  placeholder="Custom"
+                />
+                <div className="percentage">%</div>
+              </SlippageInput>
+              <SlippageBtn
+                bgColor={
+                  slippagePercentage === null || slippagePercentage === 0 ? '#ced3e6' : '#15b088'
+                }
+              >
+                Save
+              </SlippageBtn>
+            </NewLabel>
           </NewLabel>
         </SelectTokenWido>
       </Modal.Body>

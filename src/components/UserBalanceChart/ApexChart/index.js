@@ -278,7 +278,8 @@ const ApexChart = ({
         unitBtw,
         unitBtwUnderlying,
         firstDate,
-        ago
+        ago,
+        slotCount
 
       if ((data && data.length === 0) || !loadComplete) {
         setIsDataReady(false)
@@ -302,15 +303,53 @@ const ApexChart = ({
         const nowDate = new Date(),
           toDate = Math.floor(nowDate.getTime() / 1000),
           periodDate = (toDate - Number(firstDate)) / (24 * 60 * 60)
-
-        // ago = Math.ceil(periodDate) + 10
         ago = Math.ceil(periodDate)
+        slotCount = 50
+        if (ago > 700) {
+          ago += 60
+          slotCount = 500
+        } else if (ago > 365) {
+          ago += 45
+          slotCount = 400
+        } else if (ago > 180) {
+          ago += 30
+          slotCount = 300
+        } else if (ago > 90) {
+          ago += 15
+          slotCount = 150
+        } else if (ago > 60) {
+          ago += 10
+          slotCount = 100
+        } else if (ago > 30) {
+          ago += 7
+          slotCount = 100
+        } else if (ago > 15) {
+          ago += 5
+        } else if (ago > 7) {
+          ago += 3
+        } else {
+          ago += 1
+          slotCount = 50
+        }
       } else {
         ago = getRangeNumber(range)
+        slotCount = 50
       }
+      const slots = getTimeSlots(ago, slotCount)
 
-      const slotCount = 100,
-        slots = getTimeSlots(ago, slotCount)
+      // const firstSlotTimestamp = slots[0]
+      // const filteredData = data.filter(
+      //   obj => parseInt(obj.timestamp, 10) >= firstSlotTimestamp + 36000,
+      // )
+      // const lastObjectInFilteredData = filteredData[filteredData.length - 1]
+      // const newObject = {
+      //   priceUnderlying: lastObjectInFilteredData.priceUnderlying,
+      //   sharePrice: lastObjectInFilteredData.sharePrice,
+      //   timestamp: firstSlotTimestamp.toString(),
+      //   value: lastObjectInFilteredData.value,
+      // }
+      // filteredData.push(newObject)
+
       mainData = generateChartDataWithSlots(slots, data, 'value', 'priceUnderlying', 'sharePrice')
       maxValue = findMax(mainData)
       minValue = findMin(mainData)
@@ -344,13 +383,13 @@ const ApexChart = ({
       if (unitBtwUnderlying >= 1) {
         unitBtwUnderlying = Math.ceil(unitBtwUnderlying)
         lenUnderlying = unitBtwUnderlying.toString().length
-        unitBtwUnderlying = ceil10(unitBtwUnderlying, len - 1)
-        maxValueUnderlying = ceil10(maxValueUnderlying, len - 1)
-        minValueUnderlying = floor10(minValueUnderlying, len - 1)
+        unitBtwUnderlying = ceil10(unitBtwUnderlying, lenUnderlying - 1)
+        maxValueUnderlying = ceil10(maxValueUnderlying, lenUnderlying - 1)
+        minValueUnderlying = floor10(minValueUnderlying, lenUnderlying - 1)
       } else if (unitBtwUnderlying === 0) {
         lenUnderlying = Math.ceil(maxValueUnderlying).toString().length
-        maxValueUnderlying += 10 ** (len - 1)
-        minValueUnderlying -= 10 ** (len - 1)
+        maxValueUnderlying += 10 ** (lenUnderlying - 1)
+        minValueUnderlying -= 10 ** (lenUnderlying - 1)
       } else {
         lenUnderlying = Math.ceil(1 / unitBtwUnderlying).toString().length + 1
         unitBtwUnderlying = ceil10(unitBtwUnderlying, -lenUnderlying)
@@ -371,7 +410,7 @@ const ApexChart = ({
 
       if (unitBtwUnderlying !== 0) {
         if (minValueUnderlying === 0) {
-          maxValueUnderlying *= 2
+          maxValueUnderlying *= 2.5
         } else {
           maxValueUnderlying *= 1.05
         }

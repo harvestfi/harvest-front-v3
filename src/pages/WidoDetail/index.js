@@ -435,10 +435,7 @@ const WidoDetail = () => {
     ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
     : get(token, `pricePerFullShare`, 0)
   const pricePerFullShare = Number(
-    fromWei(
-      tempPricePerFullShare,
-      useIFARM ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0) : token.decimals,
-    ),
+    fromWei(tempPricePerFullShare, tokenDecimals, Number(tokenDecimals) - 1),
   )
 
   const usdPrice =

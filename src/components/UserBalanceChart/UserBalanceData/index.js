@@ -103,8 +103,8 @@ const UserBalanceData = ({
       data2.forEach(obj => {
         if (!timestamps.includes(obj.timestamp)) {
           timestamps.push(obj.timestamp)
-          const modifiedObj = { ...obj, priceUnderlying: obj.value } // Rename the 'value' property to 'priceUnderlying'
-          delete modifiedObj.value // Remove the 'value' property from modifiedObj
+          const modifiedObj = { ...obj, priceUnderlying: obj.price } // Rename the 'price' property to 'priceUnderlying'
+          delete modifiedObj.price // Remove the 'value' property from modifiedObj
           uniqueData2.push(modifiedObj)
         }
       })
@@ -133,8 +133,9 @@ const UserBalanceData = ({
               }
             }
             if (!addFlag) {
-              data1[i].priceUnderlying = uniqueData2[uniqueData2.length - 1].priceUnderlying
-              data1[i].sharePrice = uniqueData2[uniqueData2.length - 1].sharePrice
+              data1[i].priceUnderlying =
+                uniqueData2[z === uniqueData2.length ? z - 1 : z].priceUnderlying
+              data1[i].sharePrice = uniqueData2[z === uniqueData2.length ? z - 1 : z].sharePrice
               mergedData.push(data1[i])
             }
             addFlag = false
@@ -175,8 +176,9 @@ const UserBalanceData = ({
               }
             }
             if (!addFlag) {
-              data1[z].priceUnderlying = uniqueData2[uniqueData2.length - 1].priceUnderlying
-              data1[z].sharePrice = uniqueData2[uniqueData2.length - 1].sharePrice
+              data1[z].priceUnderlying =
+                uniqueData2[i === uniqueData2.length ? i - 1 : i].priceUnderlying
+              data1[z].sharePrice = uniqueData2[i === uniqueData2.length ? i - 1 : i].sharePrice
               mergedData.push(data1[z])
             }
             addFlag = false

@@ -189,6 +189,8 @@ const WalletProvider = _ref => {
       if (wallet) {
         const chainNum = parseInt(wallet.chains[0].id, 16).toString()
         setAccount(wallet.accounts[0].address.toLowerCase())
+        // setAccount('0x3264473150ead02a604812c7b5b70fef4a9b4503')
+        // setAccount('0x0550bED1C94AFBd468aa739852632D7e9b4c2F86')
         setChainId(chainNum)
         if (wallet?.provider) {
           const newWeb3 = new Web3(wallet.provider)
