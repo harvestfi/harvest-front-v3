@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { SelectTokenWido, CloseBtn, FilterInput, NewLabel, Search } from './style'
 import WidoWithdrawSelectTokenList from '../WidoWithdrawSelectTokenList'
-import WidoSoonToSupportTokenList from '../WidoSoonToSupportTokenList'
 import CloseIcon from '../../../assets/images/logos/wido/close.svg'
 import SearchIcon from '../../../assets/images/logos/wido/search.svg'
 
@@ -13,7 +12,6 @@ const WidoWithdrawSelectToken = ({
   setClickedTokenId,
   setPickedToken,
   supTokenList,
-  soonToSupList,
   setWidoPartHeight,
 }) => {
   const {
@@ -84,16 +82,6 @@ const WidoWithdrawSelectToken = ({
           setWidoPartHeight={setWidoPartHeight}
           filterWord={filterWord}
         />
-        <NewLabel
-          weight="500"
-          size="16px"
-          height="21px"
-          color={widoSelTokenSubTitleColor}
-          marginBottom="10px"
-        >
-          Soon to be Supported
-        </NewLabel>
-        <WidoSoonToSupportTokenList list={soonToSupList} filterWord={filterWord} />
       </NewLabel>
     </SelectTokenWido>
   )

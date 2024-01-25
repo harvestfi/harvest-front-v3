@@ -10,7 +10,6 @@ import {
   DepoTitle,
 } from './style'
 import WidoSelectTokenList from '../WidoSelectTokenList'
-import WidoSoonToSupportTokenList from '../WidoSoonToSupportTokenList'
 import CloseIcon from '../../../assets/images/logos/wido/close.svg'
 import SearchIcon from '../../../assets/images/logos/wido/search.svg'
 
@@ -22,7 +21,6 @@ const WidoDepositSelectToken = ({
   setPickedToken,
   setBalance,
   supTokenList,
-  soonToSupList,
   setWidoPartHeight,
 }) => {
   const [filterWord, setFilterWord] = useState('')
@@ -96,16 +94,6 @@ const WidoDepositSelectToken = ({
             setWidoPartHeight={setWidoPartHeight}
             filterWord={filterWord}
           />
-          <NewLabel
-            weight="500"
-            size="16px"
-            height="21px"
-            color={widoSelTokenSubTitleColor}
-            marginBottom="10px"
-          >
-            Soon to be Supported
-          </NewLabel>
-          <WidoSoonToSupportTokenList list={soonToSupList} filterWord={filterWord} />
         </NewLabel>
       </SelectTokenWido>
     </SelectToken>

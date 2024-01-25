@@ -7,8 +7,6 @@ import { useHistory, useParams } from 'react-router-dom'
 import ReactTooltip from 'react-tooltip'
 import Chart from 'react-apexcharts'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import { getSupportedTokens } from 'wido'
-import { ethers } from 'ethers'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
@@ -49,7 +47,7 @@ import {
   SPECIAL_VAULTS,
 } from '../../constants'
 import { Divider } from '../../components/GlobalStyle'
-import { fromWei, getExplorerLink, newContractInstance, getWeb3 } from '../../services/web3'
+import { getExplorerLink, newContractInstance, getWeb3 } from '../../services/web3'
 import { addresses } from '../../data'
 import { usePools } from '../../providers/Pools'
 import { useStats } from '../../providers/Stats'
@@ -102,7 +100,6 @@ import {
   LPTokenBalance,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
-import { useEnso } from '../../providers/Enso'
 
 const chainList = [
   { id: 1, name: 'Ethereum', chainId: 1 },
@@ -154,7 +151,6 @@ const WidoDetail = () => {
   const { loadingVaults, vaultsData } = useVaults()
   const { pools, userStats, fetchUserPoolStats } = usePools()
   const { account, balances, getWalletBalances } = useWallet()
-  const { ensoBaseTokens, getEnsoBalances, getEnsoPrice } = useEnso()
   const { profitShareAPY } = useStats()
   /* eslint-disable global-require */
   const { tokens } = require('../../data')
@@ -431,12 +427,11 @@ const WidoDetail = () => {
   const [slippagePercentWith, setSlippagePercentWith] = useState(0.005)
   const [quoteValueWith, setQuoteValueWith] = useState(null)
 
-  const [balanceList, setBalanceList] = useState([])
+  const [balanceList] = useState([])
   const [supTokenList, setSupTokenList] = useState([])
-  const [soonToSupList, setSoonToSupList] = useState([])
+  const [soonToSupList] = useState([])
 
   const rewardSymbol = isSpecialVault ? id : token.apyTokenSymbols[0]
-  const toTokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
   useEffect(() => {
     const getTokenBalance = async () => {
       try {
@@ -445,88 +440,10 @@ const WidoDetail = () => {
             token.tokenAddress !== undefined && token.tokenAddress.length !== 2
               ? token.tokenAddress
               : token.vaultAddress
-          let supList = [],
-            directInSup = {},
-            directInBalance = {}
-          try {
-            supList = await getSupportedTokens({
-              chainId: [chain],
-              toToken: toTokenAddress,
-              toChainId: chain,
-            })
-          } catch (err) {
-            console.log('getSupportedTokens of Wido: ', err)
-          }
-          const ensoTokens = ensoBaseTokens[chain.toString()] || []
-          const ensoRawBalances = await getEnsoBalances(account, chain.toString())
-          const curBalances = (
-            await Promise.all(
-              ensoRawBalances.map(async balance => {
-                if (!ethers.utils.isAddress(balance.token))
-                  balance.token = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
-                const baseToken = ensoTokens.find(el => el.address === balance.token)
-                const price = baseToken
-                  ? await getEnsoPrice(chain.toString(), baseToken.address)
-                  : 0
-                const item = {
-                  symbol: baseToken?.symbol,
-                  address: baseToken?.address,
-                  balance: balance.amount,
-                  default: false,
-                  usdValue: Number(fromWei(balance.amount, balance.decimals)) * price,
-                  usdPrice: price,
-                  logoURI: baseToken?.logoURI,
-                  decimals: balance.decimals,
-                  chainId: chain,
-                }
-                return item
-              }),
-            )
-          ).filter(item => item.address)
-          setBalanceList(curBalances)
-
-          const soonSupList = []
-          supList = supList.map(sup => {
-            const supToken = curBalances.find(
-              el => el.address.toLowerCase() === sup.address.toLowerCase(),
-            )
-            if (supToken) {
-              sup.balance = supToken.balance
-              sup.usdValue = supToken.balanceUsdValue
-              sup.usdPrice = supToken.usdPrice
-            } else {
-              sup.balance = '0'
-              sup.usdValue = '0'
-            }
-            sup.default = false
-
-            if (Object.keys(directInSup).length === 0 && tokenAddress.length !== 2) {
-              if (sup.address.toLowerCase() === tokenAddress.toLowerCase()) {
-                directInSup = sup
-              }
-            }
-            return sup
-          })
-
-          supList = supList.sort(function reducer(a, b) {
-            return Number(fromWei(b.balance, b.decimals)) - Number(fromWei(a.balance, a.decimals))
-          })
-
-          for (let j = 0; j < curBalances.length; j += 1) {
-            const supToken = supList.find(el => el.address === curBalances[j].address)
-            if (!supToken) {
-              soonSupList.push(curBalances[j])
-            }
-
-            if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
-              if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
-                directInBalance = curBalances[j]
-              }
-            }
-          }
+          const supList = []
 
           const vaultId = Object.keys(groupOfVaults).find(
-            key => groupOfVaults[key].tokenAddress === tokenAddress,
+            key => groupOfVaults[key].vaultAddress === token.vaultAddress,
           )
           const directBalance = balances[vaultId]
           const directUsdPrice = token.usdPrice
@@ -538,48 +455,27 @@ const WidoDetail = () => {
                   .toFixed(4)
               : '0'
 
-          if (!(Object.keys(directInSup).length === 0 && directInSup.constructor === Object)) {
-            directInSup.balance = directBalance
-            directInSup.usdPrice = directInSup.usdPrice > 0 ? directInSup.usdPrice : directUsdPrice
-            directInSup.usdValue = directInSup.usdValue > 0 ? directInSup.usdValue : directUsdValue
-            supList = supList.sort(function result(x, y) {
-              return x === directInSup ? -1 : y === directInSup ? 1 : 0
-            })
-            supList[0].default = true
-          } else if (
-            !(Object.keys(directInBalance).length === 0 && directInBalance.constructor === Object)
-          ) {
-            directInBalance.balance = directBalance || '0'
-            directInBalance.usdPrice =
-              directInBalance.usdPrice > 0 ? directInBalance.usdPrice : directUsdPrice
-            directInBalance.usdValue =
-              directInBalance.usdValue > 0 ? directInBalance.usdValue : directUsdValue
-            supList.unshift(directInBalance)
-            supList[0].default = true
-          } else {
-            const web3Client = await getWeb3(chain, null)
-            const { getSymbol } = tokenMethods
-            const lpInstance = await newContractInstance(
-              id,
-              tokenAddress,
-              tokenContract.abi,
-              web3Client,
-            )
-            const lpSymbol = await getSymbol(lpInstance)
-            const direct = {
-              symbol: lpSymbol,
-              address: tokenAddress,
-              balance: directBalance || '0',
-              default: true,
-              usdPrice: directUsdPrice || '0',
-              usdValue: directUsdValue || '0',
-              logoURI: 'https://etherscan.io/images/main/empty-token.png',
-              decimals: tokenDecimals,
-              chainId: parseInt(chain, 0),
-            }
-            supList.unshift(direct)
+          const web3Client = await getWeb3(chain, null)
+          const { getSymbol } = tokenMethods
+          const lpInstance = await newContractInstance(
+            id,
+            tokenAddress,
+            tokenContract.abi,
+            web3Client,
+          )
+          const lpSymbol = await getSymbol(lpInstance)
+          const direct = {
+            symbol: lpSymbol,
+            address: tokenAddress,
+            balance: directBalance || '0',
+            default: true,
+            usdPrice: directUsdPrice || '0',
+            usdValue: directUsdValue || '0',
+            logoURI: 'https://etherscan.io/images/main/empty-token.png',
+            decimals: tokenDecimals,
+            chainId: parseInt(chain, 0),
           }
-          setSoonToSupList(soonSupList)
+          supList.unshift(direct)
           setSupTokenList(supList)
         }
       } catch (err) {
@@ -588,7 +484,7 @@ const WidoDetail = () => {
     }
 
     getTokenBalance()
-  }, [account, chain, balances, ensoBaseTokens]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, chain, balances]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const {
     backColor,
