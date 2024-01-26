@@ -252,7 +252,7 @@ const SlippageBox = styled.div`
 `
 
 const MiddleLine = styled.hr`
-  width: 75%;
+  width: ${props => props.width};
   height: 0.5px;
   margin: auto 0px;
 `
