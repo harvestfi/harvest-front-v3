@@ -48,6 +48,7 @@ const WithdrawStart = ({
   revertMinReceivedAmount,
   revertedAmount,
   setUnstakeInputValue,
+  setRevertSuccess,
 }) => {
   const { account, web3 } = useWallet()
   const { fetchUserPoolStats, userStats } = usePools()
@@ -57,7 +58,7 @@ const WithdrawStart = ({
   const [startSpinner, setStartSpinner] = useState(false) // State of Spinner for 'Finalize Deposit' button
   const { getPortalsApproval, portalsApprove, getPortals } = usePortals()
 
-  const slippagePercentage = 0.5 // Default slippage Percent
+  const slippagePercentage = null // Default slippage Percent
   const chainId = token.chain || token.data.chain
   const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
 
@@ -134,6 +135,7 @@ const WithdrawStart = ({
       setWithdrawFailed(false)
       setProgressStep(4)
       setButtonName('Success! Close this window.')
+      setRevertSuccess(true)
     } else if (progressStep === 4) {
       // setQuoteValue(null)
       // setSelectToken(false)
@@ -260,7 +262,7 @@ const WithdrawStart = ({
                         color="#344054"
                       >
                         The estimated number of tokens you will receive in your wallet. The default
-                        slippage is set at 0.5%.
+                        slippage is set as &lsquo;Auto&lsquo;.
                       </NewLabel>
                     </ReactTooltip>
                   </>

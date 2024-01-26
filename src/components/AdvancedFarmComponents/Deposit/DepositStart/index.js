@@ -72,7 +72,7 @@ const DepositStart = ({
   const toToken = token.vaultAddress || token.tokenAddress
   const pricePerFullShare = get(token, `pricePerFullShare`, 0)
 
-  const [slippagePercentage, setSlippagePercentage] = useState(0.5)
+  const [slippagePercentage, setSlippagePercentage] = useState(null)
   const [slippageSetting, setSlippageSetting] = useState(false)
   const [progressStep, setProgressStep] = useState(0)
   const [startSpinner, setStartSpinner] = useState(false) // State of Spinner for 'Finalize Deposit' button
@@ -178,13 +178,13 @@ const DepositStart = ({
       setDepositFailed(false)
       setProgressStep(4)
       setButtonName('Success! Close this window.')
+      setConvertSuccess(true)
     } else if (progressStep === 4) {
       setQuoteValue(null)
       setSelectToken(false)
       setDeposit(false)
       setProgressStep(0)
       setInputAmount(0)
-      setConvertSuccess(true)
     }
   }
 
@@ -297,8 +297,8 @@ const DepositStart = ({
                         color="#344054"
                       >
                         {useIFARM
-                          ? `The estimated number of i${tokenSymbol} you will receive in your wallet. The default slippage is set at 0.5%.`
-                          : `The estimated number of f${tokenSymbol} you will receive in your wallet. The default slippage is set at 0.5%.`}
+                          ? `The estimated number of i${tokenSymbol} you will receive in your wallet. The default slippage is set as 'Auto'.`
+                          : `The estimated number of f${tokenSymbol} you will receive in your wallet. The default slippage is set as 'Auto'.`}
                       </NewLabel>
                     </ReactTooltip>
                   </>
