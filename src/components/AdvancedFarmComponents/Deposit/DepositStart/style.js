@@ -176,7 +176,7 @@ const SlippageBtn = styled.button`
     background: ${props => props.bgColor};
     border: none;
     border-radius: 8px;
-    padding: 11px 59px 11px 60px;
+    padding: 11px;
     align-items: center;
     color: #fff;
     font-size: 14px;
