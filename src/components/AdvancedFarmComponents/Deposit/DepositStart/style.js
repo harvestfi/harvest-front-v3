@@ -146,7 +146,9 @@ const NewLabel = styled.div`
   }
 
   span.auto-slippage {
+    font-size: 12px;
     font-weight: 700;
+    line-height: 24px;
   }
 `
 
@@ -170,15 +172,26 @@ const Buttons = styled.button`
 `
 
 const SlippageBtn = styled.button`
-  background: ${props => props.bgColor};
-  border: none;
-  border-radius: 8px;
-  padding: 11px 59px 11px 60px;
-  align-items: center;
-  color: #fff;
-  font-size: 14px;
-  line-height: 20px;
-  width: 60%;
+  &&& {
+    background: ${props => props.bgColor};
+    border: none;
+    border-radius: 8px;
+    padding: 11px 59px 11px 60px;
+    align-items: center;
+    color: #fff;
+    font-size: 14px;
+    line-height: 20px;
+    width: 60%;
+    cursor: ${props => props.cursor};
+
+    &:hover {
+      background: ${props => props.hoverColor};
+    }
+
+    &:active {
+      background: ${props => props.activeColor};
+    }
+  }
 `
 
 const AnimateDotDiv = styled.div`

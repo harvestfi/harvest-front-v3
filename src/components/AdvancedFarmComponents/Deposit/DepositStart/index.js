@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { get } from 'lodash'
+import { get, isNaN } from 'lodash'
 import React, { useState, useEffect } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import { useMediaQuery } from 'react-responsive'
@@ -73,7 +73,9 @@ const DepositStart = ({
   const pricePerFullShare = get(token, `pricePerFullShare`, 0)
 
   const [slippagePercentage, setSlippagePercentage] = useState(null)
+  const [customSlippage, setCustomSlippage] = useState(null)
   const [slippageSetting, setSlippageSetting] = useState(false)
+  const [slippageBtnLabel, setSlippageBtnLabel] = useState('Save')
   const [progressStep, setProgressStep] = useState(0)
   const [startSpinner, setStartSpinner] = useState(false) // State of Spinner for 'Finalize Deposit' button
 
@@ -86,7 +88,22 @@ const DepositStart = ({
   const SlippageValues = [null, 0.1, 0.5, 1, 5]
 
   const onInputSlippage = e => {
-    setSlippagePercentage(Number(e.currentTarget.value))
+    let inputValue = e.target.value
+    if (!isNaN(inputValue)) {
+      inputValue = Math.max(0, Math.min(10, inputValue))
+      setCustomSlippage(inputValue)
+    }
+  }
+
+  const onSlippageSave = () => {
+    if (!(customSlippage === null || customSlippage === 0)) {
+      setSlippagePercentage(customSlippage)
+
+      setSlippageBtnLabel('Saved')
+      setTimeout(() => {
+        setSlippageBtnLabel('Save')
+      }, 2000)
+    }
   }
 
   useEffect(() => {
@@ -456,13 +473,19 @@ const DepositStart = ({
               <MiddleLine />
             </NewLabel>
             <NewLabel padding="10px 0px">
-              Current slippage: <span className="auto-slippage">Auto (0 - 2.5%)</span>
+              Current slippage:{' '}
+              <span className="auto-slippage">
+                {slippagePercentage === null ? 'Auto (0 - 2.5%)' : `${slippagePercentage}%`}
+              </span>
             </NewLabel>
             <SlippageRow>
               {SlippageValues.map((percentage, index) => (
                 <SlipValue
                   key={index}
-                  onClick={() => setSlippagePercentage(percentage)}
+                  onClick={() => {
+                    setSlippagePercentage(percentage)
+                    setCustomSlippage(null)
+                  }}
                   color={slippagePercentage === percentage ? '#fff' : '#344054'}
                   bgColor={slippagePercentage === percentage ? '#15b088' : ''}
                   isLastChild={index === SlippageValues.length - 1}
@@ -483,23 +506,27 @@ const DepositStart = ({
               </NewLabel>
               <SlippageInput
                 borderColor={
-                  slippagePercentage === null || slippagePercentage === 0 ? '#d0d5dd' : '#15b088'
+                  customSlippage === null || customSlippage === 0 ? '#d0d5dd' : '#15b088'
                 }
               >
                 <input
                   type="number"
-                  value={slippagePercentage === null ? '' : slippagePercentage}
+                  value={customSlippage === null ? '' : customSlippage}
                   onChange={onInputSlippage}
                   placeholder="Custom"
                 />
                 <div className="percentage">%</div>
               </SlippageInput>
               <SlippageBtn
-                bgColor={
-                  slippagePercentage === null || slippagePercentage === 0 ? '#ced3e6' : '#15b088'
+                onClick={onSlippageSave}
+                bgColor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#15b088'}
+                cursor={customSlippage === null || customSlippage === 0 ? 'not-allowed' : 'pointer'}
+                hoverColor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#2ccda4'}
+                activeColor={
+                  customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#4fdfbb'
                 }
               >
-                Save
+                {slippageBtnLabel}
               </SlippageBtn>
             </NewLabel>
           </NewLabel>
