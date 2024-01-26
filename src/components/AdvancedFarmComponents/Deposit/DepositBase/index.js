@@ -89,7 +89,7 @@ const DepositBase = ({
 }) => {
   const { connected, connectAction, account, chainId, setChainId, web3 } = useWallet()
   const { vaultsData } = useVaults()
-  const { getPortalsEstimate, getPortalsPrice } = usePortals()
+  const { getPortalsEstimate, getPortalsToken } = usePortals()
   const { filterColor } = useThemeContext()
 
   const [
@@ -162,7 +162,8 @@ const DepositBase = ({
           if (Object.keys(portalsEstimate).length === 0)
             throw new Error('Portals estimate fetch failture')
 
-          const fromTokenUsdPrice = await getPortalsPrice(chainId, fromToken)
+          const fromTokenDetail = await getPortalsToken(chainId, fromToken)
+          const fromTokenUsdPrice = fromTokenDetail?.price
 
           const quoteResult = {
             fromTokenAmount: amount,
@@ -229,7 +230,7 @@ const DepositBase = ({
     setFromInfoUsdAmount,
     setMinReceiveAmountString,
     getPortalsEstimate,
-    getPortalsPrice,
+    getPortalsToken,
   ])
 
   const onClickDeposit = async () => {
@@ -587,8 +588,8 @@ const DepositBase = ({
                   color="white"
                 >
                   {useBeginnersFarm
-                    ? `You'll receive no less than the displayed number of interest-bearing fTokens.`
-                    : `The estimated number of fTokens you will receive in your wallet. The default slippage is set at 0.5%.`}
+                    ? `The estimated number of interest-bearing fTokens you will receive in your wallet. The default slippage is set as 'Auto'.`
+                    : `The estimated number of fTokens you will receive in your wallet. The default slippage is set as 'Auto'.`}
                 </NewLabel>
               </ReactTooltip>
             </NewLabel>

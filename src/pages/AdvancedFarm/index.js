@@ -387,6 +387,7 @@ const AdvancedFarm = () => {
   const [revertMinReceivedAmount, setRevertMinReceivedAmount] = useState('')
   const [revertedAmount, setRevertedAmount] = useState('')
   const [unstakeInputValue, setUnstakeInputValue] = useState(0)
+  const [revertSuccess, setRevertSuccess] = useState(false)
 
   // Stake
   const [stakeStart, setStakeStart] = useState(false)
@@ -710,7 +711,18 @@ const AdvancedFarm = () => {
     }
 
     getTokenBalance()
-  }, [account, chain, balances, convertSuccess, getPortalsBalances, getPortalsBaseTokens]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [
+    account,
+    chain,
+    balances,
+    convertSuccess,
+    revertSuccess,
+    getPortalsBalances,
+    getPortalsBaseTokens,
+    id,
+    token,
+    tokenDecimals,
+  ])
 
   useEffect(() => {
     if (supTokenList.length > 0) {
@@ -1719,6 +1731,7 @@ const AdvancedFarm = () => {
                         revertMinReceivedAmount={revertMinReceivedAmount}
                         revertedAmount={revertedAmount}
                         setUnstakeInputValue={setUnstakeInputValue}
+                        setRevertSuccess={setRevertSuccess}
                       />
                     </WithdrawSection>
                   </HalfContent>

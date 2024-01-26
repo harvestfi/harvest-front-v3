@@ -118,7 +118,7 @@ const PortalsProvider = _ref => {
     }
   }
 
-  const getPortalsPrice = async (chainId, tokenAddress) => {
+  const getPortalsToken = async (chainId, tokenAddress) => {
     try {
       const addresses = `${getChainNamePortals(chainId)}:${tokenAddress}`
       const response = await axios.get(`${PORTALS_FI_API_URL}/v2/tokens`, {
@@ -129,9 +129,9 @@ const PortalsProvider = _ref => {
           Authorization: `Bearer ${authToken}`,
         },
       })
-      return response.data?.tokens[0]?.price
+      return response.data?.tokens[0]
     } catch (error) {
-      console.error('Error fetching base tokens:', error)
+      console.error('Error fetching token:', error)
       return []
     }
   }
@@ -166,6 +166,7 @@ const PortalsProvider = _ref => {
     try {
       const inputToken = `${getChainNamePortals(chainId)}:${tokenIn}`
       const outputToken = `${getChainNamePortals(chainId)}:${tokenOut}`
+      const validate = slippage === null
       const response = await axios.get(`${PORTALS_FI_API_URL}/v2/portal`, {
         params: {
           sender,
@@ -173,7 +174,7 @@ const PortalsProvider = _ref => {
           inputAmount,
           outputToken,
           slippageTolerancePercentage: slippage,
-          validate: false,
+          validate,
         },
       })
       return response.data
@@ -197,7 +198,7 @@ const PortalsProvider = _ref => {
       })
       return response.data
     } catch (error) {
-      console.error('Error fetching balances:', error)
+      console.error('Error fetching estimates:', error)
       return {}
     }
   }
@@ -209,7 +210,7 @@ const PortalsProvider = _ref => {
         // portalsBaseTokens,
         getPortalsBaseTokens,
         getPortalsBalances,
-        getPortalsPrice,
+        getPortalsToken,
         getPortalsApproval,
         portalsApprove,
         getPortals,

@@ -95,7 +95,7 @@ const WithdrawBase = ({
   const [showWarning, setShowWarning] = useState(false)
 
   const { account, web3, connected, chainId } = useWallet()
-  const { getPortalsEstimate, getPortalsPrice } = usePortals()
+  const { getPortalsEstimate, getPortalsToken } = usePortals()
   const { vaultsData } = useVaults()
 
   const pricePerFullShare = useIFARM
@@ -139,8 +139,7 @@ const WithdrawBase = ({
         try {
           let fromInfoValue = '',
             fromInfoUsdValue = '',
-            minReceivedString = '',
-            curToken = supTokenList.filter(el => el.symbol === pickedToken.symbol)
+            minReceivedString = ''
           const toToken = pickedToken.address
 
           const portalsEstimate = await getPortalsEstimate({
@@ -150,7 +149,8 @@ const WithdrawBase = ({
             tokenOut: toToken,
             slippage,
           })
-          const fromTokenUsdPrice = await getPortalsPrice(chainId, fromToken)
+          const fromTokenDetail = await getPortalsToken(chainId, fromToken)
+          const fromTokenUsdPrice = fromTokenDetail?.price
           const quoteResult = {
             fromTokenAmount: amount,
             fromTokenUsdPrice,
@@ -158,11 +158,10 @@ const WithdrawBase = ({
           }
           setQuoteValue(quoteResult)
 
-          curToken = curToken[0]
           fromInfoValue = formatNumberWido(
             fromWei(
               quoteResult.fromTokenAmount,
-              useIFARM ? fAssetPool?.lpTokenData?.decimals : curToken.decimals,
+              useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
               WIDO_EXTEND_DECIMALS,
               true,
             ),
@@ -174,7 +173,7 @@ const WithdrawBase = ({
               : formatNumberWido(
                   fromWei(
                     quoteResult.fromTokenAmount,
-                    useIFARM ? fAssetPool?.lpTokenData?.decimals : curToken.decimals,
+                    useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
                     WIDO_EXTEND_DECIMALS,
                   ) * quoteResult.fromTokenUsdPrice,
                   BEGINNERS_BALANCES_DECIMALS,
@@ -211,7 +210,7 @@ const WithdrawBase = ({
     setRevertFromInfoUsdAmount,
     setRevertMinReceivedAmount,
     getPortalsEstimate,
-    getPortalsPrice,
+    getPortalsToken,
   ])
 
   const amountValue = fromWei(unstakeBalance, pickedToken.decimals)
@@ -455,7 +454,7 @@ const WithdrawBase = ({
                   color="white"
                 >
                   The estimated number of tokens you will receive in your wallet. The default
-                  slippage is set at 0.5%.
+                  slippage is set as &lsquo;Auto&lsquo;.
                 </NewLabel>
               </ReactTooltip>
             </NewLabel>
