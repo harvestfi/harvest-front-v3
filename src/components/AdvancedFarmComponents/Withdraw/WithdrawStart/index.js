@@ -163,7 +163,7 @@ const WithdrawStart = ({
         setButtonName('Approve Token')
         return
       }
-      // End Approve and Deposit successfully
+      // End Approve and Withdraw successfully
       setStartSpinner(false)
       setWithdrawFailed(false)
       setProgressStep(4)
@@ -231,6 +231,7 @@ const WithdrawStart = ({
                 setProgressStep(0)
                 setWithdrawStart(false)
                 setWithdrawFailed(false)
+                setButtonName('Approve Token')
               }}
             >
               <ImgBtn src={CloseIcon} alt="" />
