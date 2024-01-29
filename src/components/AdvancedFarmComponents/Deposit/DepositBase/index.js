@@ -116,7 +116,7 @@ const DepositBase = ({
   )
   const [showWarning, setShowWarning] = useState(false)
   // const [showDepositIcon, setShowDepositIcon] = useState(true)
-  const amount = toWei(inputAmount, pickedToken.decimals)
+  const amount = toWei(inputAmount, pickedToken.decimals, 0)
 
   useEffect(() => {
     if (account) {

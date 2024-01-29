@@ -41,7 +41,15 @@ const SelectTokenList = ({
   const handleBalanceListClick = id => {
     setClickBalanceListId(id)
     setPickedToken(balanceTokenList[id])
-    setBalance(balanceTokenList[id].balance ? balanceTokenList[id].balance : 0)
+    setBalance(
+      balanceTokenList[id].balance
+        ? fromWei(
+            balanceTokenList[id].rawBalance,
+            balanceTokenList[id].decimals,
+            balanceTokenList[id].decimals,
+          )
+        : 0,
+    )
     setSelectToken(false)
   }
 

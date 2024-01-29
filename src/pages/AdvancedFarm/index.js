@@ -557,6 +557,7 @@ const AdvancedFarm = () => {
                 symbol: balance.symbol,
                 address: balance.address,
                 balance: balance.balance,
+                rawBalance: balance.rawBalance,
                 default: false,
                 usdValue: balance.balanceUSD,
                 usdPrice: balance.price,
@@ -726,21 +727,22 @@ const AdvancedFarm = () => {
   ])
 
   useEffect(() => {
-    if (supTokenList.length > 0) {
-      for (let i = 0; i < supTokenList.length; i += 1) {
-        if (supTokenList[i].symbol === 'USDC') {
-          setPickedTokenDepo(supTokenList[i])
+    if (balanceList.length > 0) {
+      for (let i = 0; i < balanceList.length; i += 1) {
+        if (balanceList[i].symbol === 'USDC') {
+          setPickedTokenDepo(balanceList[i])
           setBalanceDepo(
             fromWei(
-              supTokenList[i].balance ? supTokenList[i].balance : 0,
-              supTokenList[i].decimals,
+              balanceList[i].rawBalance ? balanceList[i].rawBalance : 0,
+              balanceList[i].decimals,
+              balanceList[i].decimals,
             ),
           )
           return
         }
       }
     }
-  }, [supTokenList])
+  }, [balanceList])
 
   const { pageBackColor, fontColor, filterColor } = useThemeContext()
 
