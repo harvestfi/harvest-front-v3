@@ -175,27 +175,29 @@ const DepositBase = ({
           setQuoteValue(quoteResult)
 
           curToken = curToken[0]
-          fromInfoValue = formatNumberWido(
-            fromWei(quoteResult.fromTokenAmount, curToken.decimals, WIDO_EXTEND_DECIMALS, true),
-            WIDO_EXTEND_DECIMALS,
-          )
-
-          fromInfoUsdValue =
-            quoteResult.fromTokenAmount === null
-              ? '0'
-              : formatNumberWido(
-                  fromWei(quoteResult.fromTokenAmount, curToken.decimals, WIDO_EXTEND_DECIMALS) *
-                    quoteResult.fromTokenUsdPrice,
-                  BEGINNERS_BALANCES_DECIMALS,
-                )
-          minReceiveAmount = formatNumberWido(
-            fromWei(
-              quoteResult.minToTokenAmount,
-              quoteResult.outputTokenDecimals || token.data.lpTokenData.decimals,
+          if (curToken) {
+            fromInfoValue = formatNumberWido(
+              fromWei(quoteResult.fromTokenAmount, curToken.decimals, WIDO_EXTEND_DECIMALS, true),
               WIDO_EXTEND_DECIMALS,
-            ),
-            WIDO_EXTEND_DECIMALS,
-          )
+            )
+
+            fromInfoUsdValue =
+              quoteResult.fromTokenAmount === null
+                ? '0'
+                : formatNumberWido(
+                    fromWei(quoteResult.fromTokenAmount, curToken.decimals, WIDO_EXTEND_DECIMALS) *
+                      quoteResult.fromTokenUsdPrice,
+                    BEGINNERS_BALANCES_DECIMALS,
+                  )
+            minReceiveAmount = formatNumberWido(
+              fromWei(
+                quoteResult.minToTokenAmount,
+                quoteResult.outputTokenDecimals || token.data.lpTokenData.decimals,
+                WIDO_EXTEND_DECIMALS,
+              ),
+              WIDO_EXTEND_DECIMALS,
+            )
+          }
           setMinReceiveAmountString(minReceiveAmount)
           setFromInfoAmount(fromInfoValue)
           if (Number(fromInfoUsdValue) < 0.01) {

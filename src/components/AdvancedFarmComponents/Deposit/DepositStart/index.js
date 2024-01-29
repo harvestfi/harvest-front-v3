@@ -258,6 +258,7 @@ const DepositStart = ({
                 setProgressStep(0)
                 setDepositFailed(false)
                 setDeposit(false)
+                setButtonName('Approve Token')
               }}
             >
               <ImgBtn src={CloseIcon} alt="" />
