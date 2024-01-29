@@ -1010,6 +1010,7 @@ const BeginnersFarm = () => {
                       useIFARM={useIFARM}
                       farmPrice={farmPrice}
                       underlyingPrice={underlyingPrice}
+                      pricePerFullShare={pricePerFullShare}
                     />
                   )}
                 </>
@@ -1490,6 +1491,7 @@ const BeginnersFarm = () => {
                       useIFARM={useIFARM}
                       farmPrice={farmPrice}
                       underlyingPrice={underlyingPrice}
+                      pricePerFullShare={pricePerFullShare}
                     />
                   ) : (
                     <></>
