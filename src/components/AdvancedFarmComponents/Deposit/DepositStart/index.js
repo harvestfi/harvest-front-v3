@@ -202,6 +202,7 @@ const DepositStart = ({
       setDeposit(false)
       setProgressStep(0)
       setInputAmount(0)
+      setButtonName('Approve Token')
     }
   }
 
