@@ -470,7 +470,7 @@ const WithdrawStart = ({
           >
             <NewLabel display="flex" justifyContent="space-between">
               <NewLabel>Slippage Settings</NewLabel>
-              <MiddleLine />
+              <MiddleLine width={isMobile ? '65%' : '75%'} />
             </NewLabel>
             <NewLabel padding="10px 0px">
               Current slippage:{' '}

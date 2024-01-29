@@ -201,7 +201,7 @@ const SlippageBtn = styled.button`
     background: ${props => props.bgColor};
     border: none;
     border-radius: 8px;
-    padding: 11px 59px 11px 60px;
+    padding: 11px;
     align-items: center;
     color: #fff;
     font-size: 14px;
@@ -245,7 +245,7 @@ const SlippageBox = styled.div`
 `
 
 const MiddleLine = styled.hr`
-  width: 75%;
+  width: ${props => props.width};
   height: 0.5px;
   margin: auto 0px;
 `
