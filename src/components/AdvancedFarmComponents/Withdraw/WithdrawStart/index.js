@@ -177,6 +177,7 @@ const WithdrawStart = ({
       setProgressStep(0)
       setWithdrawStart(false)
       setWithdrawFailed(false)
+      setButtonName('Approve Token')
     }
   }
   return (
