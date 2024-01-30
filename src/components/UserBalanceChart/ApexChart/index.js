@@ -338,21 +338,20 @@ const ApexChart = ({
       }
       const slots = getTimeSlots(ago, slotCount)
 
-      const firstSlotTimestamp = slots[0]
-      const filteredData = data.filter(
-        obj => parseInt(obj.timestamp, 10) >= firstSlotTimestamp + 72000,
-      )
-      const lastObjectInFilteredData = filteredData[filteredData.length - 1]
-      const newObject = {
-        priceUnderlying: lastObjectInFilteredData.priceUnderlying,
-        sharePrice: lastObjectInFilteredData.sharePrice,
-        timestamp: firstSlotTimestamp.toString(),
-        value: lastObjectInFilteredData.value,
-      }
-      filteredData.push(newObject)
+      const filteredData = data.filter(obj => parseInt(obj.timestamp, 10) > firstDate)
+      const filteredSlot = slots.filter(obj => parseInt(obj, 10) > firstDate)
+      // const firstSlotTimestamp = slots[0]
+      // const lastObjectInFilteredData = filteredData[filteredData.length - 1]
+      // const newObject = {
+      //   priceUnderlying: lastObjectInFilteredData.priceUnderlying,
+      //   sharePrice: lastObjectInFilteredData.sharePrice,
+      //   timestamp: firstDate.toString(),
+      //   value: lastObjectInFilteredData.value,
+      // }
+      // filteredData.push(newObject)
 
       mainData = generateChartDataWithSlots(
-        slots,
+        filteredSlot,
         filteredData,
         'value',
         'priceUnderlying',
