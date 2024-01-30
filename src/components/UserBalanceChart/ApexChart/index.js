@@ -407,7 +407,7 @@ const ApexChart = ({
         if (minValue === 0) {
           maxValue *= 1.1
         } else {
-          maxValue *= 1.1
+          maxValue *= 1.01
         }
         // minValue = 0
       } else {
@@ -418,7 +418,7 @@ const ApexChart = ({
         if (minValueUnderlying === 0) {
           maxValueUnderlying *= 2.5
         } else {
-          maxValueUnderlying *= 2.5
+          maxValueUnderlying *= 1.05
         }
         // minValueUnderlying = 0
       } else {
