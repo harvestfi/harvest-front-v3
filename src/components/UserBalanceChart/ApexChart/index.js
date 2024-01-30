@@ -351,19 +351,19 @@ const ApexChart = ({
       // filteredData.push(newObject)
 
       mainData = generateChartDataWithSlots(
-        filteredSlot,
-        filteredData,
+        range === 'ALL' ? filteredSlot : slots,
+        range === 'ALL' ? filteredData : data,
         'value',
         'priceUnderlying',
         'sharePrice',
       )
       maxValue = findMax(mainData)
       minValue = findMin(mainData)
-      minValue /= 1.01
+      // minValue /= 1.01
 
       maxValueUnderlying = findMaxUnderlying(mainData)
       minValueUnderlying = findMinUnderlying(mainData)
-      minValueUnderlying /= 1.01
+      // minValueUnderlying /= 1.01
 
       const between = maxValue - minValue
       const betweenUnderlying = maxValueUnderlying - minValueUnderlying
