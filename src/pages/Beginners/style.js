@@ -42,6 +42,11 @@ const TopContainer = styled.div`
   justify-content: center;
   padding: 100px;
 
+  a.badge-body {
+    cursor: pointer;
+    text-decoration: none;
+  }
+
   @media screen and (min-width: 1921px) {
     width: 1450px;
     margin: auto;
@@ -130,12 +135,17 @@ const HeaderBadge = styled.div`
   width: fit-content;
   border-radius: 12px;
   padding: 3px 3px 3px 10px;
-  background: #344054;
+  background: #1568b3;
   font-size: 10.5px;
   font-weight: 500;
   line-height: 17px;
   display: flex;
   gap: 9px;
+
+  &:hover {
+    transform: scale(1.01);
+    margin-right: 2px;
+  }
 
   @media screen and (max-width: 992px) {
     margin: 0px auto;
@@ -146,19 +156,13 @@ const HeaderBadge = styled.div`
     margin: auto;
   }
 
-  a.badge-btn {
+  div.badge-btn {
     background: #fff;
-    padding: 1.5px 7px;
+    padding: 0px 7px;
     gap: 3px;
     display: flex;
     border-radius: 11px;
     color: #1568b3;
-    cursor: pointer;
-    text-decoration: none;
-    &:hover {
-      transform: scale(1.05);
-      margin-right: 2px;
-    }
 
     svg {
       color: #6b6b6b;

@@ -42,7 +42,9 @@ function formatDateTime(value) {
 
 function getRangeNumber(strRange) {
   let ago = 30
-  if (strRange === '1W') {
+  if (strRange === '1D') {
+    ago = 1
+  } else if (strRange === '1W') {
     ago = 7
   } else if (strRange === '1M') {
     ago = 30
@@ -98,9 +100,10 @@ function generateChartDataWithSlots(slots, apiData, balance, priceUnderlying, sh
         const value3 = parseFloat(apiData[j][sharePrice])
         seriesData.push({ x: slots[i] * 1000, y: value1 * value2 * value3, z: value1 * value3 })
         break
-      } else if (j === apiData.length - 1) {
-        seriesData.push({ x: slots[i] * 1000, y: 0, z: 0 })
       }
+      // else if (j === apiData.length - 1) {
+      //   seriesData.push({ x: slots[i] * 1000, y: 0, z: 0 })
+      // }
     }
   }
 
@@ -306,29 +309,29 @@ const ApexChart = ({
         ago = Math.ceil(periodDate)
         slotCount = 50
         if (ago > 700) {
-          ago += 60
+          // ago += 60
           slotCount = 500
         } else if (ago > 365) {
-          ago += 45
+          // ago += 45
           slotCount = 400
         } else if (ago > 180) {
-          ago += 30
+          // ago += 30
           slotCount = 300
         } else if (ago > 90) {
-          ago += 15
+          // ago += 15
           slotCount = 150
         } else if (ago > 60) {
-          ago += 10
+          // ago += 10
           slotCount = 100
         } else if (ago > 30) {
-          ago += 7
+          // ago += 7
           slotCount = 100
         } else if (ago > 15) {
-          ago += 5
+          // ago += 5
         } else if (ago > 7) {
-          ago += 3
+          // ago += 3
         } else {
-          ago += 1
+          // ago += 1
           slotCount = 50
         }
       } else {
@@ -337,27 +340,32 @@ const ApexChart = ({
       }
       const slots = getTimeSlots(ago, slotCount)
 
+      const filteredData = data.filter(obj => parseInt(obj.timestamp, 10) > firstDate)
+      const filteredSlot = slots.filter(obj => parseInt(obj, 10) > firstDate)
       // const firstSlotTimestamp = slots[0]
-      // const filteredData = data.filter(
-      //   obj => parseInt(obj.timestamp, 10) >= firstSlotTimestamp + 36000,
-      // )
       // const lastObjectInFilteredData = filteredData[filteredData.length - 1]
       // const newObject = {
       //   priceUnderlying: lastObjectInFilteredData.priceUnderlying,
       //   sharePrice: lastObjectInFilteredData.sharePrice,
-      //   timestamp: firstSlotTimestamp.toString(),
+      //   timestamp: firstDate.toString(),
       //   value: lastObjectInFilteredData.value,
       // }
       // filteredData.push(newObject)
 
-      mainData = generateChartDataWithSlots(slots, data, 'value', 'priceUnderlying', 'sharePrice')
+      mainData = generateChartDataWithSlots(
+        range === 'ALL' ? filteredSlot : slots,
+        range === 'ALL' ? filteredData : data,
+        'value',
+        'priceUnderlying',
+        'sharePrice',
+      )
       maxValue = findMax(mainData)
       minValue = findMin(mainData)
       minValue /= 1.01
 
       maxValueUnderlying = findMaxUnderlying(mainData)
       minValueUnderlying = findMinUnderlying(mainData)
-      minValueUnderlying /= 1.01
+      // minValueUnderlying /= 1.01
 
       const between = maxValue - minValue
       const betweenUnderlying = maxValueUnderlying - minValueUnderlying
@@ -368,8 +376,8 @@ const ApexChart = ({
         len = 2
         // len = unitBtw.toString().length
         unitBtw = ceil10(unitBtw, len - 1)
-        maxValue = ceil10(maxValue, len - 1)
-        minValue = floor10(minValue, len - 1)
+        // maxValue = ceil10(maxValue, len - 1)
+        // minValue = floor10(minValue, len - 1)
       } else if (unitBtw === 0) {
         len = Math.ceil(maxValue).toString().length
         maxValue += 10 ** (len - 1)
@@ -397,7 +405,6 @@ const ApexChart = ({
         maxValueUnderlying = ceil10(maxValueUnderlying, -lenUnderlying)
         minValueUnderlying = floor10(minValueUnderlying, -lenUnderlying + 1)
       }
-
       if (unitBtw !== 0) {
         if (minValue === 0) {
           maxValue *= 1.1
@@ -411,9 +418,9 @@ const ApexChart = ({
 
       if (unitBtwUnderlying !== 0) {
         if (minValueUnderlying === 0) {
-          maxValueUnderlying *= 2.5
+          maxValueUnderlying *= 1.5
         } else {
-          maxValueUnderlying *= 1.05
+          maxValueUnderlying += betweenUnderlying * 2
         }
         // minValueUnderlying = 0
       } else {
