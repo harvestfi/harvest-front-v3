@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
-import { get, isNaN } from 'lodash'
-import React, { useState, useEffect } from 'react'
+import { isNaN } from 'lodash'
+import React, { useState } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import { useMediaQuery } from 'react-responsive'
 import ReactTooltip from 'react-tooltip'
@@ -55,8 +55,7 @@ const DepositStart = ({
   fromInfoAmount,
   fromInfoUsdAmount,
   minReceiveAmountString,
-  quoteValue,
-  setQuoteValue,
+  minReceiveUsdAmount,
   setSelectToken,
   setConvertSuccess,
 }) => {
@@ -70,7 +69,6 @@ const DepositStart = ({
   const amount = toWei(inputAmount, pickedToken.decimals)
 
   const toToken = token.vaultAddress || token.tokenAddress
-  const pricePerFullShare = get(token, `pricePerFullShare`, 0)
 
   const [slippagePercentage, setSlippagePercentage] = useState(null)
   const [customSlippage, setCustomSlippage] = useState(null)
@@ -84,6 +82,7 @@ const DepositStart = ({
 
   const [buttonName, setButtonName] = useState('Approve Token')
   const [receiveAmount, setReceiveAmount] = useState('')
+  const [receiveUsd, setReceiveUsd] = useState('')
 
   const SlippageValues = [null, 0.1, 0.5, 1, 5]
 
@@ -106,16 +105,6 @@ const DepositStart = ({
     }
   }
 
-  useEffect(() => {
-    const receiveString = quoteValue
-      ? formatNumberWido(
-          fromWei(quoteValue.toTokenAmount, token.decimals || token.data.lpTokenData.decimals),
-          WIDO_EXTEND_DECIMALS,
-        )
-      : ''
-    setReceiveAmount(receiveString)
-  }, [amount, pickedToken, pricePerFullShare, quoteValue, token])
-
   const onDeposit = async () => {
     const mainWeb = await getWeb3(chainId, account, web3)
 
@@ -134,6 +123,20 @@ const DepositStart = ({
       to: portalData.tx.to,
       value: portalData.tx.value,
     })
+
+    const receiveString = portalData
+      ? formatNumberWido(
+          fromWei(
+            portalData.context?.outputAmount,
+            token.decimals || token.data.lpTokenData.decimals,
+            WIDO_EXTEND_DECIMALS,
+          ),
+          WIDO_EXTEND_DECIMALS,
+        )
+      : ''
+    const receiveUsdString = portalData ? portalData.context?.outputAmountUsd : ''
+    setReceiveAmount(receiveString)
+    setReceiveUsd(formatNumberWido(receiveUsdString))
 
     await fetchUserPoolStats([fAssetPool], account, userStats)
   }
@@ -197,7 +200,6 @@ const DepositStart = ({
       setButtonName('Success! Close this window.')
       setConvertSuccess(true)
     } else if (progressStep === 4) {
-      setQuoteValue(null)
       setSelectToken(false)
       setDeposit(false)
       setProgressStep(0)
@@ -339,7 +341,22 @@ const DepositStart = ({
                     <AnimatedDots />
                   </AnimateDotDiv>
                 )}
-                <span>{useIFARM ? `i${tokenSymbol}` : `f${tokenSymbol}`}</span>
+                <NewLabel display="flex" flexFlow="column" weight="600" textAlign="right">
+                  <span>{useIFARM ? `i${tokenSymbol}` : `f${tokenSymbol}`}</span>
+                  <span>
+                    {progressStep === 4 ? (
+                      receiveUsd !== '' ? (
+                        <>≈ ${receiveUsd}</>
+                      ) : (
+                        <>≈ $0</>
+                      )
+                    ) : minReceiveUsdAmount !== '' ? (
+                      <>≈ ${minReceiveUsdAmount}</>
+                    ) : (
+                      <>≈ $0</>
+                    )}
+                  </span>
+                </NewLabel>
               </NewLabel>
             </NewLabel>
           </NewLabel>

@@ -79,13 +79,13 @@ const DepositBase = ({
   tokenSymbol,
   useIFARM,
   useBeginnersFarm,
-  setQuoteValue,
   setFromInfoAmount,
   setFromInfoUsdAmount,
   convertMonthlyYieldUSD,
   convertDailyYieldUSD,
   minReceiveAmountString,
   setMinReceiveAmountString,
+  setMinReceiveUsdAmount,
 }) => {
   const { connected, connectAction, account, chainId, setChainId, web3 } = useWallet()
   const { vaultsData } = useVaults()
@@ -143,11 +143,11 @@ const DepositBase = ({
       const getQuoteResult = async () => {
         setFromInfoAmount('')
         setFromInfoUsdAmount('')
-        setQuoteValue(null)
         try {
           let fromInfoValue = '',
             fromInfoUsdValue = '',
             minReceiveAmount = '',
+            minReceiveUsd = '',
             curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol)
           const fromToken = pickedToken.address
           const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
@@ -163,6 +163,7 @@ const DepositBase = ({
             throw new Error('Portals estimate fetch failture')
 
           const fromTokenDetail = await getPortalsToken(chainId, fromToken)
+          const toTokenDetail = await getPortalsToken(chainId, toToken)
           const fromTokenUsdPrice = fromTokenDetail?.price
 
           const quoteResult = {
@@ -171,8 +172,6 @@ const DepositBase = ({
             minToTokenAmount: portalsEstimate.outputAmount,
             outputTokenDecimals: portalsEstimate.outputTokenDecimals,
           }
-
-          setQuoteValue(quoteResult)
 
           curToken = curToken[0]
           if (curToken) {
@@ -197,8 +196,13 @@ const DepositBase = ({
               ),
               WIDO_EXTEND_DECIMALS,
             )
+            minReceiveUsd = formatNumberWido(
+              minReceiveAmount * toTokenDetail?.price,
+              BEGINNERS_BALANCES_DECIMALS,
+            )
           }
           setMinReceiveAmountString(minReceiveAmount)
+          setMinReceiveUsdAmount(minReceiveUsd)
           setFromInfoAmount(fromInfoValue)
           if (Number(fromInfoUsdValue) < 0.01) {
             setFromInfoUsdAmount('<$0.01')
@@ -207,6 +211,7 @@ const DepositBase = ({
           }
         } catch (e) {
           setMinReceiveAmountString('')
+          setMinReceiveUsdAmount('')
           toast.error('Failed to get quote!')
         }
       }
@@ -223,7 +228,6 @@ const DepositBase = ({
     token,
     deposit,
     balanceList,
-    setQuoteValue,
     useIFARM,
     web3,
     inputAmount,
@@ -231,6 +235,7 @@ const DepositBase = ({
     setFromInfoAmount,
     setFromInfoUsdAmount,
     setMinReceiveAmountString,
+    setMinReceiveUsdAmount,
     getPortalsEstimate,
     getPortalsToken,
   ])
