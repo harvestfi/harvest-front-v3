@@ -20,6 +20,7 @@ import {
 } from './style'
 
 const recommendLinks = [
+  { name: '1D', type: 0, state: '1D' },
   { name: '1W', type: 1, state: '1W' },
   { name: '1M', type: 2, state: '1M' },
   { name: 'ALL', type: 3, state: 'ALL' },

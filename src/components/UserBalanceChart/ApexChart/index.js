@@ -42,7 +42,9 @@ function formatDateTime(value) {
 
 function getRangeNumber(strRange) {
   let ago = 30
-  if (strRange === '1W') {
+  if (strRange === '1D') {
+    ago = 1
+  } else if (strRange === '1W') {
     ago = 7
   } else if (strRange === '1M') {
     ago = 30
@@ -363,7 +365,7 @@ const ApexChart = ({
 
       maxValueUnderlying = findMaxUnderlying(mainData)
       minValueUnderlying = findMinUnderlying(mainData)
-      minValueUnderlying /= 1.01
+      // minValueUnderlying /= 1.01
 
       const between = maxValue - minValue
       const betweenUnderlying = maxValueUnderlying - minValueUnderlying
@@ -416,11 +418,9 @@ const ApexChart = ({
 
       if (unitBtwUnderlying !== 0) {
         if (minValueUnderlying === 0) {
-          maxValueUnderlying *= 2
-        } else if (unitBtwUnderlying > 0.0001) {
           maxValueUnderlying *= 1.5
         } else {
-          maxValueUnderlying *= 1.05
+          maxValueUnderlying += betweenUnderlying * 2
         }
         // minValueUnderlying = 0
       } else {
