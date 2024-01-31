@@ -369,11 +369,11 @@ const AdvancedFarm = () => {
   const [selectTokenDepo, setSelectTokenDepo] = useState(false)
   const [balanceDepo, setBalanceDepo] = useState(0)
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
-  const [quoteValueDepo, setQuoteValueDepo] = useState(null)
   const [inputAmountDepo, setInputAmountDepo] = useState(0)
   const [fromInfoAmount, setFromInfoAmount] = useState('')
   const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('')
   const [minReceiveAmountString, setMinReceiveAmountString] = useState('')
+  const [minReceiveUsdAmount, setMinReceiveUsdAmount] = useState('')
   const [convertSuccess, setConvertSuccess] = useState(false)
 
   // Withdraw
@@ -1642,13 +1642,14 @@ const AdvancedFarm = () => {
                         useIFARM={useIFARM}
                         useBeginnersFarm={useBeginnersFarm}
                         balanceList={balanceList}
-                        setQuoteValue={setQuoteValueDepo}
                         setFromInfoAmount={setFromInfoAmount}
                         setFromInfoUsdAmount={setFromInfoUsdAmount}
                         convertMonthlyYieldUSD={convertMonthlyYieldUSD}
                         convertDailyYieldUSD={convertDailyYieldUSD}
                         minReceiveAmountString={minReceiveAmountString}
+                        minReceiveUsdAmount={minReceiveUsdAmount}
                         setMinReceiveAmountString={setMinReceiveAmountString}
+                        setMinReceiveUsdAmount={setMinReceiveUsdAmount}
                       />
                       <DepositSelectToken
                         selectToken={selectTokenDepo}
@@ -1674,8 +1675,7 @@ const AdvancedFarm = () => {
                         fromInfoAmount={fromInfoAmount}
                         fromInfoUsdAmount={fromInfoUsdAmount}
                         minReceiveAmountString={minReceiveAmountString}
-                        quoteValue={quoteValueDepo}
-                        setQuoteValue={setQuoteValueDepo}
+                        minReceiveUsdAmount={minReceiveUsdAmount}
                         setSelectToken={setSelectTokenDepo}
                         setConvertSuccess={setConvertSuccess}
                       />
