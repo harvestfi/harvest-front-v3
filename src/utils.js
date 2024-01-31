@@ -677,7 +677,7 @@ export const getAdvancedRewardText = (
                     `<img src='${item
                       .slice(1, item.length)
                       .toLowerCase()}' key=${index} width=24 height=24 alt="" style='margin-left: ${
-                      index !== 0 ? '-15px;' : ''
+                      index !== 0 ? 0 : ''
                     }' />`,
                 )}
               </div>
