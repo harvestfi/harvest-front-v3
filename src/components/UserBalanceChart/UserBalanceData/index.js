@@ -20,6 +20,7 @@ import {
 } from './style'
 
 const recommendLinks = [
+  { name: '1D', type: 0, state: '1D' },
   { name: '1W', type: 1, state: '1W' },
   { name: '1M', type: 2, state: '1M' },
   { name: 'ALL', type: 3, state: 'ALL' },
@@ -78,7 +79,7 @@ const UserBalanceData = ({
   const [apiData, setApiData] = useState({})
   const [loadComplete, setLoadComplete] = useState(true)
   const [curDate, setCurDate] = useState('')
-  const [curContent, setCurContent] = useState('0')
+  const [curContent, setCurContent] = useState('$0')
   const [curContentUnderlying, setCurContentUnderlying] = useState('0')
   const [fixedLen, setFixedLen] = useState(0)
 
@@ -86,10 +87,16 @@ const UserBalanceData = ({
     if (payload && payload.length) {
       const currentDate = formatDateTime(payload[0].payload.x)
       const balance = numberWithCommas(Number(payload[0].payload.y).toFixed(fixedLen))
+      if (Number(payload[0].payload.y === 0)) {
+        setCurContent('$0')
+      } else if (Number(payload[0].payload.y < 0.01)) {
+        setCurContent('<$0.01')
+      } else {
+        setCurContent(`$${balance}`)
+      }
       const balanceUnderlying = numberWithCommas(Number(payload[0].payload.z))
 
       setCurDate(currentDate)
-      setCurContent(balance)
       setCurContentUnderlying(balanceUnderlying)
     }
   }
@@ -244,7 +251,7 @@ const UserBalanceData = ({
                     />
                   )}
                 </CurContent>
-                <CurContent color="#15B088">${curContent}</CurContent>
+                <CurContent color="#15B088">{curContent}</CurContent>
               </FlexDiv>
             </TooltipInfo>
           </FlexDiv>

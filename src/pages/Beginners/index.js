@@ -70,15 +70,16 @@ const Home = () => {
               : 'Get started with crypto farming with our easy-to-use USDC and ETH farms.'}
           </HeaderDesc>
           {showBadge && (
-            <HeaderBadge>
-              <div className="badge-text">
-                *Only for participants of our Coinbase Quest campaign
-              </div>
-              <Link className="badge-btn" to="/faq">
-                Read more
-                <BiRightArrowAlt />
-              </Link>
-            </HeaderBadge>
+            // eslint-disable-next-line jsx-a11y/anchor-is-valid
+            <Link className="badge-body" to="#">
+              <HeaderBadge>
+                <div className="badge-text">*Only for participants of our Base Quest campaign</div>
+                <div className="badge-btn">
+                  Read more
+                  <BiRightArrowAlt />
+                </div>
+              </HeaderBadge>
+            </Link>
           )}
         </TopContainer>
       </TopSection>
