@@ -239,7 +239,8 @@ const WithdrawBase = ({
   }, [account, curChain, tokenChain, useBeginnersFarm])
 
   const onInputUnstake = e => {
-    setUnstakeInputValue(e.currentTarget.value)
+    const inputValue = e.currentTarget.value.replace(/,/g, '.')
+    setUnstakeInputValue(inputValue)
     setUnstakeBalance(
       toWei(e.currentTarget.value, useIFARM ? fAssetPool.lpTokenData.decimals : token.decimals),
     )

@@ -281,7 +281,8 @@ const DepositBase = ({
   }, [balance, setInputAmount, pickedToken])
 
   const onInputBalance = e => {
-    setInputAmount(e.currentTarget.value)
+    const inputValue = e.currentTarget.value.replace(/,/g, '.')
+    setInputAmount(inputValue)
   }
 
   const mainTags = [
