@@ -5,7 +5,7 @@ import { useMediaQuery } from 'react-responsive'
 import ReactTooltip from 'react-tooltip'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import { getBalances, getSupportedTokens } from 'wido'
+import { ethers } from 'ethers'
 import { BiLeftArrowAlt } from 'react-icons/bi'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
@@ -100,6 +100,7 @@ import {
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 // import { array } from 'prop-types'
+import { usePortals } from '../../providers/Portals'
 
 const chainList = [
   { id: 1, name: 'Ethereum', chainId: 1 },
@@ -142,6 +143,8 @@ const BeginnersFarm = () => {
   const { paramAddress } = useParams()
   // Switch Tag (Deposit/Withdraw)
   const [activeDepo, setActiveDepo] = useState(true)
+
+  const { getPortalsBaseTokens, getPortalsBalances } = usePortals()
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
@@ -306,7 +309,7 @@ const BeginnersFarm = () => {
   const [selectTokenDepo, setSelectTokenDepo] = useState(false)
   const [balanceDepo, setBalanceDepo] = useState(0)
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
-  const [quoteValueDepo, setQuoteValueDepo] = useState(null)
+  const [minReceiveUsdAmount, setMinReceiveUsdAmount] = useState('')
   const [inputAmountDepo, setInputAmountDepo] = useState(0)
   const [partHeightDepo, setPartHeightDepo] = useState(null)
   const [fromInfoAmount, setFromInfoAmount] = useState('')
@@ -347,7 +350,6 @@ const BeginnersFarm = () => {
   const [balanceAmount, setBalanceAmount] = useState(0)
   const firstUnderlyingBalance = useRef(true)
 
-  const toTokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
   useEffect(() => {
     const staked =
       totalStaked &&
@@ -402,23 +404,80 @@ const BeginnersFarm = () => {
     const getTokenBalance = async () => {
       try {
         if (chain && account && Object.keys(balances).length !== 0) {
-          const curBalances = await getBalances(account, [chain.toString()])
-          const curSortedBalances = curBalances.sort(function reducer(a, b) {
-            return Number(fromWei(b.balance, b.decimals)) - Number(fromWei(a.balance, a.decimals))
-          })
+          const portalsRawBalances = await getPortalsBalances(account, chain.toString())
+          const portalsBaseTokens = await getPortalsBaseTokens(chain.toString())
+          const curNoBalances = portalsBaseTokens
+            .map(baseToken => {
+              const balToken = portalsRawBalances.find(
+                el => el.address.toLowerCase() === baseToken.address.toLowerCase(),
+              )
+              if (balToken === undefined) {
+                const item = {
+                  symbol: baseToken.symbol,
+                  address: baseToken.address,
+                  balance: 0,
+                  default: false,
+                  usdValue: 0,
+                  usdPrice: baseToken.price,
+                  logoURI: baseToken.image
+                    ? baseToken.image
+                    : baseToken.images
+                    ? baseToken.images[0]
+                    : 'https://etherscan.io/images/main/empty-token.png',
+                  decimals: baseToken.decimals,
+                  chainId: chain,
+                }
+                return item
+              }
+
+              return null
+            })
+            .filter(item => item !== null)
+
+          const curBalances = portalsRawBalances
+            .map(balance => {
+              if (!ethers.utils.isAddress(balance.address))
+                balance.address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+              const item = {
+                symbol: balance.symbol,
+                address: balance.address,
+                balance: balance.balance,
+                rawBalance: balance.rawBalance,
+                default: false,
+                usdValue: balance.balanceUSD,
+                usdPrice: balance.price,
+                logoURI: balance.image
+                  ? balance.image
+                  : balance.images
+                  ? balance.images[0]
+                  : 'https://etherscan.io/images/main/empty-token.png',
+                decimals: balance.decimals,
+                chainId: chain,
+              }
+              return item
+            })
+            .filter(item => item.address)
+
+          const fTokenAddr = useIFARM
+            ? addresses.iFARM
+            : token.vaultAddress
+            ? token.vaultAddress
+            : token.tokenAddress
+
+          const curSortedBalances = curBalances
+            .sort(function reducer(a, b) {
+              return b.usdValue - a.usdValue
+            })
+            .filter(item => item.address.toLowerCase() !== fTokenAddr.toLowerCase())
+
           setBalanceList(curSortedBalances)
+
           let supList = [],
             directInSup = {},
             directInBalance = {}
-          try {
-            supList = await getSupportedTokens({
-              chainId: [chain],
-              toToken: toTokenAddress,
-              toChainId: chain,
-            })
-          } catch (err) {
-            console.log('getSupportedTokens of Wido: ', err)
-          }
+
+          supList = [...curBalances, ...curNoBalances]
+
           const tokenAddress =
             token.tokenAddress !== undefined && token.tokenAddress.length !== 2
               ? token.tokenAddress
@@ -445,7 +504,7 @@ const BeginnersFarm = () => {
           })
 
           supList = supList.sort(function reducer(a, b) {
-            return Number(fromWei(b.balance, b.decimals)) - Number(fromWei(a.balance, a.decimals))
+            return b.usdValue - a.usdValue
           })
 
           for (let j = 0; j < curBalances.length; j += 1) {
@@ -456,18 +515,12 @@ const BeginnersFarm = () => {
             }
           }
 
-          const vaultId = Object.keys(groupOfVaults).find(
-            key => groupOfVaults[key].tokenAddress === tokenAddress,
+          const directData = curBalances.find(
+            el => el.address.toLowerCase() === tokenAddress.toLowerCase(),
           )
-          const directBalance = balances[vaultId]
+          const directBalance = directData ? directData.balance : '0'
           const directUsdPrice = token.usdPrice
-          const directUsdValue =
-            directUsdPrice && directBalance
-              ? new BigNumber(directBalance)
-                  .div(10 ** tokenDecimals)
-                  .times(directUsdPrice)
-                  .toFixed(4)
-              : '0'
+          const directUsdValue = directData?.usdValue ?? '0'
 
           if (!(Object.keys(directInSup).length === 0 && directInSup.constructor === Object)) {
             directInSup.balance = directBalance
@@ -524,22 +577,24 @@ const BeginnersFarm = () => {
               }
             }
           }
+          supNoBalanceList.shift()
           setSupTokenNoBalanceList(supNoBalanceList)
 
-          const soonSupList = []
-          for (let j = 0; j < curBalances.length; j += 1) {
-            const supToken = supList.find(el => el.address === curBalances[j].address)
-            if (!supToken) {
-              soonSupList.push(curBalances[j])
-            }
+          // const soonSupList = []
+          // for (let j = 0; j < curBalances.length; j += 1) {
+          //   const supToken = supList.find(el => el.address === curBalances[j].address)
+          //   if (!supToken) {
+          //     soonSupList.push(curBalances[j])
+          //   }
 
-            if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
-              if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
-                directInBalance = curBalances[j]
-              }
-            }
-          }
-          setSoonToSupList(soonSupList)
+          //   if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
+          //     if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
+          //       directInBalance = curBalances[j]
+          //     }
+          //   }
+          // }
+          // setSoonToSupList(soonSupList)
+          setSoonToSupList({}) // TODO: remove soonToSupList once confirmed
         }
       } catch (err) {
         console.log('getTokenBalance: ', err)
@@ -547,7 +602,7 @@ const BeginnersFarm = () => {
     }
 
     getTokenBalance()
-  }, [account, chain, balances, convertSuccess]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, chain, balances, convertSuccess, useIFARM]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (supTokenList.length > 0) {
@@ -1386,13 +1441,14 @@ const BeginnersFarm = () => {
                         useIFARM={useIFARM}
                         useBeginnersFarm={useBeginnersFarm}
                         balanceList={balanceList}
-                        setQuoteValue={setQuoteValueDepo}
                         setFromInfoAmount={setFromInfoAmount}
                         setFromInfoUsdAmount={setFromInfoUsdAmount}
                         convertMonthlyYieldUSD={convertMonthlyYieldUSD}
                         convertDailyYieldUSD={convertDailyYieldUSD}
                         minReceiveAmountString={minReceiveAmountString}
+                        minReceiveUsdAmount={minReceiveUsdAmount}
                         setMinReceiveAmountString={setMinReceiveAmountString}
+                        setMinReceiveUsdAmount={setMinReceiveUsdAmount}
                       />
                       <DepositSelectToken
                         selectToken={selectTokenDepo}
@@ -1419,8 +1475,7 @@ const BeginnersFarm = () => {
                         fromInfoAmount={fromInfoAmount}
                         fromInfoUsdAmount={fromInfoUsdAmount}
                         minReceiveAmountString={minReceiveAmountString}
-                        quoteValue={quoteValueDepo}
-                        setQuoteValue={setQuoteValueDepo}
+                        minReceiveUsdAmount={minReceiveUsdAmount}
                         setSelectToken={setSelectTokenDepo}
                         setConvertSuccess={setConvertSuccess}
                       />
