@@ -578,7 +578,11 @@ const AdvancedFarm = () => {
               ? token.tokenAddress
               : token.vaultAddress
 
-          const fTokenAddr = token.vaultAddress ? token.vaultAddress : token.tokenAddress
+          const fTokenAddr = useIFARM
+            ? addresses.iFARM
+            : token.vaultAddress
+            ? token.vaultAddress
+            : token.tokenAddress
           const curSortedBalances = curBalances
             .sort(function reducer(a, b) {
               return b.usdValue - a.usdValue
@@ -724,6 +728,7 @@ const AdvancedFarm = () => {
     id,
     token,
     tokenDecimals,
+    useIFARM,
   ])
 
   useEffect(() => {
