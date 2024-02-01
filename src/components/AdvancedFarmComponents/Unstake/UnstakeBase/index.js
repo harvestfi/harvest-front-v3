@@ -144,8 +144,9 @@ const UnstakeBase = ({
   }
 
   const onInputBalance = e => {
-    setInputAmount(Number(e.currentTarget.value))
-    setAmountsToExecute([e.currentTarget.value])
+    const inputValue = e.currentTarget.value.replace(/,/g, '.')
+    setInputAmount(inputValue)
+    setAmountsToExecute([inputValue])
   }
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })

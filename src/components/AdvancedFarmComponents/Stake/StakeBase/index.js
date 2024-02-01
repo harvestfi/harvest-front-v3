@@ -105,7 +105,8 @@ const StakeBase = ({
   }
 
   const onInputBalance = e => {
-    setInputAmount(Number(e.currentTarget.value))
+    const inputValue = e.currentTarget.value.replace(/,/g, '.')
+    setInputAmount(inputValue)
   }
 
   const mainTags = [
