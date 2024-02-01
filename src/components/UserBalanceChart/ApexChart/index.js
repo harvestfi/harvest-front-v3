@@ -353,8 +353,8 @@ const ApexChart = ({
       // filteredData.push(newObject)
 
       mainData = generateChartDataWithSlots(
-        range === 'ALL' ? filteredSlot : slots,
-        range === 'ALL' ? filteredData : data,
+        range === 'ALL' && ago > 6 ? filteredSlot : slots,
+        range === 'ALL' && ago > 6 ? filteredData : data,
         'value',
         'priceUnderlying',
         'sharePrice',
