@@ -281,7 +281,7 @@ const DepositBase = ({
   }, [balance, setInputAmount, pickedToken])
 
   const onInputBalance = e => {
-    const inputValue = e.currentTarget.value.replace(/,/g, '.')
+    const inputValue = e.currentTarget.value
     setInputAmount(inputValue)
   }
 
@@ -350,7 +350,7 @@ const DepositBase = ({
             >
               Amount to convert
             </NewLabel>
-            <TokenAmount type="number" value={inputAmount} onChange={onInputBalance} />
+            <TokenAmount type="number" value={inputAmount} onChange={onInputBalance} lang="en" />
           </AmountSection>
           <DepositTokenSection>
             <NewLabel

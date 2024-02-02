@@ -239,7 +239,7 @@ const WithdrawBase = ({
   }, [account, curChain, tokenChain, useBeginnersFarm])
 
   const onInputUnstake = e => {
-    const inputValue = e.currentTarget.value.replace(/,/g, '.')
+    const inputValue = e.currentTarget.value
     setUnstakeInputValue(inputValue)
     setUnstakeBalance(
       toWei(e.currentTarget.value, useIFARM ? fAssetPool.lpTokenData.decimals : token.decimals),
@@ -333,7 +333,12 @@ const WithdrawBase = ({
             >
               Amount to Revert
             </NewLabel>
-            <TokenAmount type="number" value={unstakeInputValue} onChange={onInputUnstake} />
+            <TokenAmount
+              type="number"
+              value={unstakeInputValue}
+              onChange={onInputUnstake}
+              lang="en"
+            />
           </AmountSection>
           <TokenSelectSection>
             <NewLabel
