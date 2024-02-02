@@ -1,6 +1,7 @@
 import React from 'react'
 import { useMediaQuery } from 'react-responsive'
 import ReactTooltip from 'react-tooltip'
+import { formatNumber } from '../../utils'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { Container, Div, Price, InfoIcon, NewLabel } from './style'
 import Info from '../../assets/images/logos/earn/info.svg'
@@ -37,7 +38,11 @@ const TotalValue = ({ content, price, toolTipTitle, toolTip }) => {
         </ReactTooltip>
       </Div>
       <Price>
-        {parseFloat(price) === 0 ? '$0.00' : parseFloat(price) < 0.01 ? '<$0.01' : `$${price}`}
+        {parseFloat(price) === 0
+          ? '$0.00'
+          : parseFloat(price) < 0.01
+          ? '<$0.01'
+          : `$${formatNumber(price, 2)}`}
       </Price>
     </Container>
   )

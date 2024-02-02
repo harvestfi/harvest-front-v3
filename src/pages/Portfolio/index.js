@@ -606,10 +606,10 @@ const Portfolio = () => {
           }
         }
 
-        setTotalDeposit(formatNumber(totalBalanceUSD, 2))
-        setTotalRewards(formatNumber(valueRewards, 2))
-        setTotalYieldDaily(formatNumber(totalDailyYield, 2))
-        setTotalYieldMonthly(formatNumber(totalMonthlyYield, 2))
+        setTotalDeposit(totalBalanceUSD)
+        setTotalRewards(valueRewards)
+        setTotalYieldDaily(totalDailyYield)
+        setTotalYieldMonthly(totalMonthlyYield)
         const sortedTokenList = orderBy(newStats, ['balance'], ['desc'])
         setFarmTokenList(sortedTokenList)
       }
