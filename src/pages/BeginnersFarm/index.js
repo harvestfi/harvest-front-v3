@@ -975,7 +975,7 @@ const BeginnersFarm = () => {
                     </ValueBox>
                     <ValueBox width="32%" className="monthly-yield-box">
                       <BoxTitle>
-                        Monthly Yield
+                        Est. Monthly Yield
                         <InfoIcon
                           className="info"
                           width={isMobile ? 10 : 16}
@@ -1016,7 +1016,7 @@ const BeginnersFarm = () => {
                     </ValueBox>
                     <ValueBox width="32%" className="daily-yield-box">
                       <BoxTitle>
-                        Daily Yield
+                        Est. Daily Yield
                         <InfoIcon
                           className="info"
                           width={isMobile ? 10 : 16}
