@@ -65,6 +65,10 @@ const web3Onboard = init({
       { name: 'MetaMask', url: 'https://metamask.io' },
       { name: 'Coinbase', url: 'https://wallet.coinbase.com/' },
     ],
+    agreement: {
+      version: '3.0.1',
+      privacyUrl: 'https://docs.harvest.finance',
+    },
   },
   notify: {
     enabled: false,
