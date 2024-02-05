@@ -1305,14 +1305,7 @@ const AdvancedFarm = () => {
               ) : activeMainTag === 1 ? (
                 <>
                   <MyTotalReward marginBottom={isMobile ? '20px' : '25px'}>
-                    <NewLabel
-                      size={isMobile ? '12px' : '14px'}
-                      weight="500"
-                      height={isMobile ? '20px' : '20px'}
-                      color="#6F78AA"
-                    >
-                      Rewards
-                    </NewLabel>
+                    <BoxTitle>Rewards</BoxTitle>
                     <RewardValue>
                       <BoxValue>
                         {!connected ? (

@@ -731,6 +731,10 @@ const ValueBox = styled.div`
   height: 120px;
   ${props => (props.width ? `width: ${props.width};` : '')}
 
+  @media screen and (max-width: 1320px) {
+    padding: 10px;
+  }
+
   @media screen and (max-width: 992px) {
     width: 100%;
     height: 70px;
@@ -761,6 +765,10 @@ const BoxTitle = styled.div`
   #tooltip-monthly-yield,
   #tooltip-daily-yield {
     max-width: 300px;
+  }
+
+  @media screen and (max-width: 1170px) {
+    font-size: 12px;
   }
 
   @media screen and (max-width: 992px) {
