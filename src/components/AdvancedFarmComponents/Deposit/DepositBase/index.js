@@ -281,8 +281,20 @@ const DepositBase = ({
   }, [balance, setInputAmount, pickedToken])
 
   const onInputBalance = e => {
-    const inputValue = e.currentTarget.value
+    const inputValue = e.currentTarget.value.replace(/,/g, '.')
     setInputAmount(inputValue)
+    // const rawValue = e.currentTarget.value
+    // if (/^\d+$/.test(rawValue) && !rawValue.includes('.')) {
+    //   setInputAmount(`${rawValue}.`)
+    // } else {
+    //   const numericValue = parseFloat(rawValue.replace(',', '.'))
+    //   if (!isNaN(numericValue)) {
+    //     const formattedValue = numericValue.toLocaleString('en', { useGrouping: false })
+    //     setInputAmount(formattedValue)
+    //   } else {
+    //     setInputAmount(0)
+    //   }
+    // }
   }
 
   const mainTags = [
@@ -350,7 +362,7 @@ const DepositBase = ({
             >
               Amount to convert
             </NewLabel>
-            <TokenAmount type="number" value={inputAmount} onChange={onInputBalance} lang="en" />
+            <TokenAmount type="text" value={inputAmount} onChange={onInputBalance} />
           </AmountSection>
           <DepositTokenSection>
             <NewLabel

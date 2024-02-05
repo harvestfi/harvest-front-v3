@@ -144,7 +144,7 @@ const UnstakeBase = ({
   }
 
   const onInputBalance = e => {
-    const inputValue = e.currentTarget.value
+    const inputValue = e.currentTarget.value.replace(/,/g, '.')
     setInputAmount(inputValue)
     setAmountsToExecute([inputValue])
   }
@@ -205,7 +205,7 @@ const UnstakeBase = ({
           Amount to Unstake
         </NewLabel>
         <AmountInputSection>
-          <TokenAmount type="number" value={inputAmount} onChange={onInputBalance} lang="en" />
+          <TokenAmount type="text" value={inputAmount} onChange={onInputBalance} />
           <button
             className="max-btn"
             type="button"

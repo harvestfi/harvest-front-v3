@@ -515,7 +515,6 @@ const WithdrawStart = ({
                   value={customSlippage === null ? '' : customSlippage}
                   onChange={onInputSlippage}
                   placeholder="Custom"
-                  lang="en"
                 />
                 <div className="percentage">%</div>
               </SlippageInput>
