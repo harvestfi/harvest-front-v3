@@ -207,7 +207,6 @@ const AdvancedFarm = () => {
   const { profitShareAPY } = useStats()
   /* eslint-disable global-require */
   const { tokens } = require('../../data')
-  /* eslint-enable global-require */
 
   const [apiData, setApiData] = useState([])
 
@@ -733,6 +732,7 @@ const AdvancedFarm = () => {
 
   useEffect(() => {
     if (balanceList.length > 0) {
+      let highestBalanceToken = balanceList[0]
       for (let i = 0; i < balanceList.length; i += 1) {
         if (balanceList[i].symbol === 'USDC') {
           setPickedTokenDepo(balanceList[i])
@@ -745,9 +745,28 @@ const AdvancedFarm = () => {
           )
           return
         }
+        if (balanceList[i].balance > highestBalanceToken.balance) {
+          highestBalanceToken = balanceList[i]
+        }
+      }
+      setPickedTokenDepo(highestBalanceToken)
+      setBalanceDepo(
+        fromWei(
+          highestBalanceToken.rawBalance ? highestBalanceToken.rawBalance : 0,
+          highestBalanceToken.decimals,
+          highestBalanceToken.decimals,
+        ),
+      )
+    } else {
+      for (let i = 0; i < supTokenList.length; i += 1) {
+        if (supTokenList[i].symbol === 'USDC') {
+          setPickedTokenDepo(supTokenList[i])
+          setBalanceDepo(0)
+          return
+        }
       }
     }
-  }, [balanceList])
+  }, [balanceList, supTokenList])
 
   const { pageBackColor, fontColor, filterColor } = useThemeContext()
 
