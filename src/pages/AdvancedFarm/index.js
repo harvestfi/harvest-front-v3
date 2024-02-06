@@ -734,7 +734,7 @@ const AdvancedFarm = () => {
     if (balanceList.length > 0) {
       let highestBalanceToken = balanceList[0]
       for (let i = 0; i < balanceList.length; i += 1) {
-        if (balanceList[i].symbol === 'USDC') {
+        if (balanceList[i].symbol === defaultToken.symbol) {
           setPickedTokenDepo(balanceList[i])
           setBalanceDepo(
             fromWei(
@@ -745,7 +745,7 @@ const AdvancedFarm = () => {
           )
           return
         }
-        if (balanceList[i].balance > highestBalanceToken.balance) {
+        if (balanceList[i].usdValue > highestBalanceToken.usdValue) {
           highestBalanceToken = balanceList[i]
         }
       }
@@ -757,16 +757,8 @@ const AdvancedFarm = () => {
           highestBalanceToken.decimals,
         ),
       )
-    } else {
-      for (let i = 0; i < supTokenList.length; i += 1) {
-        if (supTokenList[i].symbol === 'USDC') {
-          setPickedTokenDepo(supTokenList[i])
-          setBalanceDepo(0)
-          return
-        }
-      }
     }
-  }, [balanceList, supTokenList])
+  }, [balanceList, supTokenList, defaultToken])
 
   const { pageBackColor, fontColor, filterColor } = useThemeContext()
 
