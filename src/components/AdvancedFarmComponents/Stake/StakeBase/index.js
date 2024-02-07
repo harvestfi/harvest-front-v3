@@ -7,7 +7,6 @@ import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import ArrowDown from '../../../../assets/images/logos/beginners/arrow-narrow-down.svg'
 import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.svg'
 import AnimatedDots from '../../../AnimatedDots'
-import { MAX_DECIMALS } from '../../../../constants'
 import { useWallet } from '../../../../providers/Wallet'
 import { CHAIN_IDS } from '../../../../data/constants'
 import { isSpecialApp } from '../../../../utils'
@@ -89,7 +88,7 @@ const StakeBase = ({
   }, [account, curChain, tokenChain])
 
   const onClickStake = async () => {
-    if (inputAmount === '' || inputAmount === 0) {
+    if (inputAmount === '' || inputAmount === 0 || inputAmount === '0') {
       setWarningContent('The amount to stake must be greater than 0.')
       setShowWarning(true)
       return
@@ -172,8 +171,11 @@ const StakeBase = ({
             onClick={() => {
               if (account) {
                 setInputAmount(
-                  Number(
-                    fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true),
+                  fromWei(
+                    lpTokenBalance,
+                    fAssetPool.lpTokenData.decimals,
+                    Number(fAssetPool.lpTokenData.decimals),
+                    false,
                   ),
                 )
               }
@@ -187,7 +189,12 @@ const StakeBase = ({
         onClick={() => {
           if (account) {
             setInputAmount(
-              Number(fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)),
+              fromWei(
+                lpTokenBalance,
+                fAssetPool.lpTokenData.decimals,
+                Number(fAssetPool.lpTokenData.decimals),
+                false,
+              ),
             )
           }
         }}
@@ -197,7 +204,12 @@ const StakeBase = ({
           {!connected ? (
             0
           ) : lpTokenBalance ? (
-            Number(fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true))
+            fromWei(
+              lpTokenBalance,
+              fAssetPool.lpTokenData.decimals,
+              Number(fAssetPool.lpTokenData.decimals),
+              false,
+            )
           ) : (
             <AnimatedDots />
           )}
