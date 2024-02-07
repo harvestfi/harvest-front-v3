@@ -191,7 +191,7 @@ const AdvancedFarm = () => {
   const { paramAddress } = useParams()
   // Switch Tag (Deposit/Withdraw)
   const [activeDepo, setActiveDepo] = useState(true)
-  const { getPortalsBaseTokens, getPortalsBalances } = usePortals()
+  const { getPortalsBaseTokens, getPortalsBalances, SUPPORTED_TOKEN_LIST } = usePortals()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const { push } = useHistory()
@@ -732,33 +732,56 @@ const AdvancedFarm = () => {
 
   useEffect(() => {
     if (balanceList.length > 0) {
-      let highestBalanceToken = balanceList[0]
-      for (let i = 0; i < balanceList.length; i += 1) {
-        if (balanceList[i].symbol === defaultToken.symbol) {
-          setPickedTokenDepo(balanceList[i])
-          setBalanceDepo(
-            fromWei(
-              balanceList[i].rawBalance ? balanceList[i].rawBalance : 0,
-              balanceList[i].decimals,
-              balanceList[i].decimals,
-            ),
-          )
-          return
-        }
-        if (balanceList[i].usdValue > highestBalanceToken.usdValue) {
-          highestBalanceToken = balanceList[i]
-        }
-      }
-      setPickedTokenDepo(highestBalanceToken)
-      setBalanceDepo(
-        fromWei(
-          highestBalanceToken.rawBalance ? highestBalanceToken.rawBalance : 0,
-          highestBalanceToken.decimals,
-          highestBalanceToken.decimals,
-        ),
+      let tokenToSet = null
+
+      // Check if defaultToken is present in the balanceList
+      const defaultTokenIndex = balanceList.findIndex(
+        balancedToken => balancedToken.symbol === defaultToken.symbol,
       )
+      if (defaultTokenIndex !== -1) {
+        setPickedTokenDepo(balanceList[defaultTokenIndex])
+        setBalanceDepo(
+          fromWei(
+            balanceList[defaultTokenIndex].rawBalance
+              ? balanceList[defaultTokenIndex].rawBalance
+              : 0,
+            balanceList[defaultTokenIndex].decimals,
+            balanceList[defaultTokenIndex].decimals,
+          ),
+        )
+        return
+      }
+
+      // If defaultToken is not found, find the token with the highest USD value among those in the SUPPORTED_TOKEN_LIST and balanceList
+      const supportedTokens = balanceList.filter(
+        balancedToken => SUPPORTED_TOKEN_LIST[chain][balancedToken.symbol],
+      )
+      if (supportedTokens.length > 0) {
+        tokenToSet = supportedTokens.reduce((prevToken, currentToken) =>
+          prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
+        )
+      }
+
+      // If no token is found in SUPPORTED_TOKEN_LIST, set the token with the highest USD value in balanceList
+      if (!tokenToSet) {
+        tokenToSet = balanceList.reduce((prevToken, currentToken) =>
+          prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
+        )
+      }
+
+      // Set the pickedTokenDepo and balanceDepo based on the determined tokenToSet
+      if (tokenToSet) {
+        setPickedTokenDepo(tokenToSet)
+        setBalanceDepo(
+          fromWei(
+            tokenToSet.rawBalance ? tokenToSet.rawBalance : 0,
+            tokenToSet.decimals,
+            tokenToSet.decimals,
+          ),
+        )
+      }
     }
-  }, [balanceList, supTokenList, defaultToken])
+  }, [balanceList, supTokenList, defaultToken, chain])
 
   const { pageBackColor, fontColor, filterColor } = useThemeContext()
 

@@ -20,6 +20,7 @@ const SUPPORTED_TOKEN_LIST = {
     wstETH: '0x7f39c581f595b53c5cb19bd0b3f8da6c935e2ca0',
     WBTC: '0x2260fac5e5542a773aa44fbcfedf7c193bc2c599',
     FARM: '0xa0246c9032bc3a600820415ae600c6388619a14d',
+    iFARM: '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651',
     MATIC: '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0',
     UNI: '0x1f9840a85d5af5bf1d1762f925bdaddc4201f984',
     LINK: '0x514910771af9ca656af840dff83e8264ecf986ca',
@@ -207,6 +208,7 @@ const PortalsProvider = _ref => {
     PortalsContext.Provider,
     {
       value: {
+        SUPPORTED_TOKEN_LIST,
         // portalsBaseTokens,
         getPortalsBaseTokens,
         getPortalsBalances,
