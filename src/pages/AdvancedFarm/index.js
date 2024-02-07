@@ -781,7 +781,7 @@ const AdvancedFarm = () => {
         )
       }
     }
-  }, [balanceList, supTokenList, defaultToken, chain])
+  }, [balanceList, supTokenList, defaultToken, chain, SUPPORTED_TOKEN_LIST])
 
   const { pageBackColor, fontColor, filterColor } = useThemeContext()
 
