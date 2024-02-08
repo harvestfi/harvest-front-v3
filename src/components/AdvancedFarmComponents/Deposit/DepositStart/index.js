@@ -21,7 +21,6 @@ import { useWallet } from '../../../../providers/Wallet'
 import { usePools } from '../../../../providers/Pools'
 import { fromWei, toWei, getWeb3 } from '../../../../services/web3'
 import { formatNumberWido } from '../../../../utils'
-import { WIDO_EXTEND_DECIMALS } from '../../../../constants'
 import AnimatedDots from '../../../AnimatedDots'
 import {
   Buttons,
@@ -125,13 +124,10 @@ const DepositStart = ({
     })
 
     const receiveString = portalData
-      ? formatNumberWido(
-          fromWei(
-            portalData.context?.outputAmount,
-            token.decimals || token.data.lpTokenData.decimals,
-            WIDO_EXTEND_DECIMALS,
-          ),
-          WIDO_EXTEND_DECIMALS,
+      ? fromWei(
+          portalData.context?.outputAmount,
+          token.decimals || token.data.lpTokenData.decimals,
+          Number(token.decimals || token.data.lpTokenData.decimals) - 1,
         )
       : ''
     const receiveUsdString = portalData ? portalData.context?.outputAmountUsd : ''
@@ -203,7 +199,7 @@ const DepositStart = ({
       setSelectToken(false)
       setDeposit(false)
       setProgressStep(0)
-      setInputAmount(0)
+      setInputAmount('0')
       setButtonName('Approve Token')
     }
   }

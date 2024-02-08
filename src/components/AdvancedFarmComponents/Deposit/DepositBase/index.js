@@ -14,7 +14,6 @@ import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.s
 import HelpIcon from '../../../../assets/images/logos/earn/info.svg'
 import {
   IFARM_TOKEN_SYMBOL,
-  POOL_BALANCES_DECIMALS,
   WIDO_EXTEND_DECIMALS,
   BEGINNERS_BALANCES_DECIMALS,
 } from '../../../../constants'
@@ -283,18 +282,6 @@ const DepositBase = ({
   const onInputBalance = e => {
     const inputValue = e.currentTarget.value.replace(/,/g, '.')
     setInputAmount(inputValue)
-    // const rawValue = e.currentTarget.value
-    // if (/^\d+$/.test(rawValue) && !rawValue.includes('.')) {
-    //   setInputAmount(`${rawValue}.`)
-    // } else {
-    //   const numericValue = parseFloat(rawValue.replace(',', '.'))
-    //   if (!isNaN(numericValue)) {
-    //     const formattedValue = numericValue.toLocaleString('en', { useGrouping: false })
-    //     setInputAmount(formattedValue)
-    //   } else {
-    //     setInputAmount(0)
-    //   }
-    // }
   }
 
   const mainTags = [
@@ -399,7 +386,7 @@ const DepositBase = ({
         >
           {isMobile && (pickedToken.symbol === 'Select Token' ? '' : `${pickedToken.symbol} `)}
           Balance Available:
-          <span>{formatNumberWido(balance, POOL_BALANCES_DECIMALS)}</span>
+          <span>{balance}</span>
         </BalanceInfo>
         <InsufficientSection isShow={showWarning ? 'true' : 'false'}>
           <NewLabel display="flex" widthDiv="80%" items="center">

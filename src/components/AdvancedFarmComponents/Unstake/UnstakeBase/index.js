@@ -10,7 +10,6 @@ import AlertCloseIcon from '../../../../assets/images/logos/beginners/alert-clos
 import ArrowDown from '../../../../assets/images/logos/beginners/arrow-narrow-down.svg'
 import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.svg'
 import AnimatedDots from '../../../AnimatedDots'
-import { MAX_DECIMALS } from '../../../../constants'
 import { useWallet } from '../../../../providers/Wallet'
 import { CHAIN_IDS } from '../../../../data/constants'
 import { isSpecialApp } from '../../../../utils'
@@ -212,9 +211,21 @@ const UnstakeBase = ({
             onClick={() => {
               if (account) {
                 setInputAmount(
-                  fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, false),
+                  fromWei(
+                    totalStaked,
+                    fAssetPool.lpTokenData.decimals,
+                    Number(fAssetPool.lpTokenData.decimals) - 1,
+                    false,
+                  ),
                 )
-                setAmountsToExecute([fromWei(totalStaked, fAssetPool.lpTokenData.decimals)])
+                setAmountsToExecute([
+                  fromWei(
+                    totalStaked,
+                    fAssetPool.lpTokenData.decimals,
+                    Number(fAssetPool.lpTokenData.decimals) - 1,
+                    false,
+                  ),
+                ])
               }
             }}
           >
@@ -226,9 +237,21 @@ const UnstakeBase = ({
         onClick={() => {
           if (account) {
             setInputAmount(
-              fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, false),
+              fromWei(
+                totalStaked,
+                fAssetPool.lpTokenData.decimals,
+                Number(fAssetPool.lpTokenData.decimals) - 1,
+                false,
+              ),
             )
-            setAmountsToExecute([fromWei(totalStaked, fAssetPool.lpTokenData.decimals)])
+            setAmountsToExecute([
+              fromWei(
+                totalStaked,
+                fAssetPool.lpTokenData.decimals,
+                Number(fAssetPool.lpTokenData.decimals) - 1,
+                false,
+              ),
+            ])
           }
         }}
       >
@@ -237,7 +260,12 @@ const UnstakeBase = ({
           {!connected ? (
             0
           ) : totalStaked ? (
-            fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, false)
+            fromWei(
+              totalStaked,
+              fAssetPool.lpTokenData.decimals,
+              Number(fAssetPool.lpTokenData.decimals) - 1,
+              false,
+            )
           ) : (
             <AnimatedDots />
           )}

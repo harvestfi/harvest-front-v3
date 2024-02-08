@@ -169,7 +169,7 @@ const StakeStart = ({
       setBtnName('Approve Token')
       setStakeFailed(false)
       setStakeStart(false)
-      setInputAmount(0)
+      setInputAmount('0')
     }
   }
 

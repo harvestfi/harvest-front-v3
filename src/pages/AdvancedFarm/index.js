@@ -368,7 +368,7 @@ const AdvancedFarm = () => {
   const [selectTokenDepo, setSelectTokenDepo] = useState(false)
   const [balanceDepo, setBalanceDepo] = useState(0)
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
-  const [inputAmountDepo, setInputAmountDepo] = useState(0)
+  const [inputAmountDepo, setInputAmountDepo] = useState('0')
   const [fromInfoAmount, setFromInfoAmount] = useState('')
   const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('')
   const [minReceiveAmountString, setMinReceiveAmountString] = useState('')
@@ -385,7 +385,7 @@ const AdvancedFarm = () => {
   const [revertFromInfoUsdAmount, setRevertFromInfoUsdAmount] = useState('')
   const [revertMinReceivedAmount, setRevertMinReceivedAmount] = useState('')
   const [revertedAmount, setRevertedAmount] = useState('')
-  const [unstakeInputValue, setUnstakeInputValue] = useState(0)
+  const [unstakeInputValue, setUnstakeInputValue] = useState('0')
   const [revertSuccess, setRevertSuccess] = useState(false)
 
   // Stake
