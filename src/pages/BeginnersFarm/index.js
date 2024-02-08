@@ -487,7 +487,7 @@ const BeginnersFarm = () => {
             const supToken = curBalances.find(el => el.address === sup.address)
             if (supToken) {
               sup.balance = supToken.balance
-              sup.usdValue = supToken.balanceUsdValue
+              sup.usdValue = supToken.usdValue
               sup.usdPrice = supToken.usdPrice
             } else {
               sup.balance = '0'
