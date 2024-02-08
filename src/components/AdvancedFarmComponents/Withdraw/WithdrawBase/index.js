@@ -12,7 +12,6 @@ import ArrowDown from '../../../../assets/images/logos/beginners/arrow-narrow-do
 import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.svg'
 import HelpIcon from '../../../../assets/images/logos/beginners/help-circle.svg'
 import {
-  MAX_DECIMALS,
   WIDO_EXTEND_DECIMALS,
   IFARM_TOKEN_SYMBOL,
   BEGINNERS_BALANCES_DECIMALS,
@@ -239,7 +238,8 @@ const WithdrawBase = ({
   }, [account, curChain, tokenChain, useBeginnersFarm])
 
   const onInputUnstake = e => {
-    setUnstakeInputValue(e.currentTarget.value)
+    const inputValue = e.currentTarget.value.replace(/,/g, '.')
+    setUnstakeInputValue(inputValue)
     setUnstakeBalance(
       toWei(e.currentTarget.value, useIFARM ? fAssetPool.lpTokenData.decimals : token.decimals),
     )
@@ -332,7 +332,7 @@ const WithdrawBase = ({
             >
               Amount to Revert
             </NewLabel>
-            <TokenAmount type="number" value={unstakeInputValue} onChange={onInputUnstake} />
+            <TokenAmount type="text" value={unstakeInputValue} onChange={onInputUnstake} />
           </AmountSection>
           <TokenSelectSection>
             <NewLabel
@@ -365,13 +365,11 @@ const WithdrawBase = ({
             if (account) {
               setUnstakeBalance(useIFARM ? stakeAmountWei : lpTokenBalance)
               setUnstakeInputValue(
-                Number(
-                  fromWei(
-                    useIFARM ? stakeAmountWei : lpTokenBalance,
-                    fAssetPool.lpTokenData.decimals,
-                    MAX_DECIMALS,
-                    true,
-                  ),
+                fromWei(
+                  useIFARM ? stakeAmountWei : lpTokenBalance,
+                  fAssetPool.lpTokenData.decimals,
+                  Number(fAssetPool.lpTokenData.decimals) - 1,
+                  false,
                 ),
               )
             }
@@ -384,7 +382,12 @@ const WithdrawBase = ({
             ) : useIFARM ? (
               stakedAmount || <AnimatedDots />
             ) : lpTokenBalance ? (
-              fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)
+              fromWei(
+                lpTokenBalance,
+                fAssetPool.lpTokenData.decimals,
+                Number(fAssetPool.lpTokenData.decimals) - 1,
+                false,
+              )
             ) : (
               <AnimatedDots />
             )}

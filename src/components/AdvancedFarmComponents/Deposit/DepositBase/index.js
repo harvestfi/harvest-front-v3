@@ -14,7 +14,6 @@ import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.s
 import HelpIcon from '../../../../assets/images/logos/earn/info.svg'
 import {
   IFARM_TOKEN_SYMBOL,
-  POOL_BALANCES_DECIMALS,
   WIDO_EXTEND_DECIMALS,
   BEGINNERS_BALANCES_DECIMALS,
 } from '../../../../constants'
@@ -281,7 +280,8 @@ const DepositBase = ({
   }, [balance, setInputAmount, pickedToken])
 
   const onInputBalance = e => {
-    setInputAmount(e.currentTarget.value)
+    const inputValue = e.currentTarget.value.replace(/,/g, '.')
+    setInputAmount(inputValue)
   }
 
   const mainTags = [
@@ -349,7 +349,7 @@ const DepositBase = ({
             >
               Amount to convert
             </NewLabel>
-            <TokenAmount type="number" value={inputAmount} onChange={onInputBalance} />
+            <TokenAmount type="text" value={inputAmount} onChange={onInputBalance} />
           </AmountSection>
           <DepositTokenSection>
             <NewLabel
@@ -386,7 +386,7 @@ const DepositBase = ({
         >
           {isMobile && (pickedToken.symbol === 'Select Token' ? '' : `${pickedToken.symbol} `)}
           Balance Available:
-          <span>{formatNumberWido(balance, POOL_BALANCES_DECIMALS)}</span>
+          <span>{balance}</span>
         </BalanceInfo>
         <InsufficientSection isShow={showWarning ? 'true' : 'false'}>
           <NewLabel display="flex" widthDiv="80%" items="center">
@@ -476,7 +476,7 @@ const DepositBase = ({
                   ) : convertMonthlyYieldUSD < 0.01 ? (
                     '<$0.01'
                   ) : (
-                    `$ ${round(convertMonthlyYieldUSD, 2)}`
+                    `$${round(convertMonthlyYieldUSD, 2)}`
                   )
                 ) : (
                   <TokenInfo>
@@ -548,7 +548,7 @@ const DepositBase = ({
                   ) : convertDailyYieldUSD < 0.01 ? (
                     '<$0.01'
                   ) : (
-                    `$ ${round(convertDailyYieldUSD, 2)}`
+                    `$${round(convertDailyYieldUSD, 2)}`
                   )
                 ) : (
                   <TokenInfo>

@@ -516,14 +516,6 @@ const RestContent = styled.div`
     width: 500px;
   }
 
-  @media screen and (max-width: 1480px) {
-    width: 49%;
-  }
-
-  @media screen and (max-width: 1281px) {
-    width: 50%;
-  }
-
   @media screen and (max-width: 992px) {
     width: 100%;
   }
@@ -697,10 +689,6 @@ const MainSection = styled.div`
   border-radius: 12px;
   height: ${props => props.height};
 
-  @media screen and (max-width: 1480px) {
-    width: 49%;
-  }
-
   @media screen and (max-width: 992px) {
     width: 100%;
     margin-right: 0px;
@@ -730,6 +718,10 @@ const ValueBox = styled.div`
   padding: 24px;
   height: 120px;
   ${props => (props.width ? `width: ${props.width};` : '')}
+
+  @media screen and (max-width: 1320px) {
+    padding: 10px;
+  }
 
   @media screen and (max-width: 992px) {
     width: 100%;
@@ -761,6 +753,10 @@ const BoxTitle = styled.div`
   #tooltip-monthly-yield,
   #tooltip-daily-yield {
     max-width: 300px;
+  }
+
+  @media screen and (max-width: 1170px) {
+    font-size: 12px;
   }
 
   @media screen and (max-width: 992px) {

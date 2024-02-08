@@ -33,6 +33,10 @@ const TopSection = styled.div`
   @media screen and (max-width: 992px) {
     height: 250px;
   }
+
+  @media screen and (max-width: 520px) {
+    height: 300px;
+  }
 `
 
 const TopContainer = styled.div`
@@ -64,6 +68,10 @@ const TopContainer = styled.div`
   @media screen and (max-width: 992px) {
     padding: 0px 25px;
     text-align: center;
+  }
+
+  @media screen and (max-width: 520px) {
+    height: 100%;
   }
 `
 
@@ -149,6 +157,10 @@ const HeaderBadge = styled.div`
 
   @media screen and (max-width: 992px) {
     margin: 0px auto;
+  }
+
+  @media screen and (max-width: 400px) {
+    font-size: 9px;
   }
 
   div.badge-text {

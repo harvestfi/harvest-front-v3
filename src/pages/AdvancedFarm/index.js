@@ -191,7 +191,7 @@ const AdvancedFarm = () => {
   const { paramAddress } = useParams()
   // Switch Tag (Deposit/Withdraw)
   const [activeDepo, setActiveDepo] = useState(true)
-  const { getPortalsBaseTokens, getPortalsBalances } = usePortals()
+  const { getPortalsBaseTokens, getPortalsBalances, SUPPORTED_TOKEN_LIST } = usePortals()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const { push } = useHistory()
@@ -207,7 +207,6 @@ const AdvancedFarm = () => {
   const { profitShareAPY } = useStats()
   /* eslint-disable global-require */
   const { tokens } = require('../../data')
-  /* eslint-enable global-require */
 
   const [apiData, setApiData] = useState([])
 
@@ -369,7 +368,7 @@ const AdvancedFarm = () => {
   const [selectTokenDepo, setSelectTokenDepo] = useState(false)
   const [balanceDepo, setBalanceDepo] = useState(0)
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
-  const [inputAmountDepo, setInputAmountDepo] = useState(0)
+  const [inputAmountDepo, setInputAmountDepo] = useState('0')
   const [fromInfoAmount, setFromInfoAmount] = useState('')
   const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('')
   const [minReceiveAmountString, setMinReceiveAmountString] = useState('')
@@ -386,17 +385,17 @@ const AdvancedFarm = () => {
   const [revertFromInfoUsdAmount, setRevertFromInfoUsdAmount] = useState('')
   const [revertMinReceivedAmount, setRevertMinReceivedAmount] = useState('')
   const [revertedAmount, setRevertedAmount] = useState('')
-  const [unstakeInputValue, setUnstakeInputValue] = useState(0)
+  const [unstakeInputValue, setUnstakeInputValue] = useState('0')
   const [revertSuccess, setRevertSuccess] = useState(false)
 
   // Stake
   const [stakeStart, setStakeStart] = useState(false)
-  const [inputAmountStake, setInputAmountStake] = useState(0)
+  const [inputAmountStake, setInputAmountStake] = useState('0')
   const [stakeFinalStep, setStakeFinalStep] = useState(false)
 
   // Unstake
   const [unstakeStart, setUnstakeStart] = useState(false)
-  const [inputAmountUnstake, setInputAmountUnstake] = useState(0)
+  const [inputAmountUnstake, setInputAmountUnstake] = useState('0')
   const [unstakeFinalStep, setUnstakeFinalStep] = useState(false)
   const [amountsToExecuteUnstake, setAmountsToExecuteUnstake] = useState('')
 
@@ -733,21 +732,56 @@ const AdvancedFarm = () => {
 
   useEffect(() => {
     if (balanceList.length > 0) {
-      for (let i = 0; i < balanceList.length; i += 1) {
-        if (balanceList[i].symbol === 'USDC') {
-          setPickedTokenDepo(balanceList[i])
-          setBalanceDepo(
-            fromWei(
-              balanceList[i].rawBalance ? balanceList[i].rawBalance : 0,
-              balanceList[i].decimals,
-              balanceList[i].decimals,
-            ),
-          )
-          return
-        }
+      let tokenToSet = null
+
+      // Check if defaultToken is present in the balanceList
+      const defaultTokenIndex = balanceList.findIndex(
+        balancedToken => balancedToken.symbol === defaultToken.symbol,
+      )
+      if (defaultTokenIndex !== -1) {
+        setPickedTokenDepo(balanceList[defaultTokenIndex])
+        setBalanceDepo(
+          fromWei(
+            balanceList[defaultTokenIndex].rawBalance
+              ? balanceList[defaultTokenIndex].rawBalance
+              : 0,
+            balanceList[defaultTokenIndex].decimals,
+            balanceList[defaultTokenIndex].decimals,
+          ),
+        )
+        return
+      }
+
+      // If defaultToken is not found, find the token with the highest USD value among those in the SUPPORTED_TOKEN_LIST and balanceList
+      const supportedTokens = balanceList.filter(
+        balancedToken => SUPPORTED_TOKEN_LIST[chain][balancedToken.symbol],
+      )
+      if (supportedTokens.length > 0) {
+        tokenToSet = supportedTokens.reduce((prevToken, currentToken) =>
+          prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
+        )
+      }
+
+      // If no token is found in SUPPORTED_TOKEN_LIST, set the token with the highest USD value in balanceList
+      if (!tokenToSet) {
+        tokenToSet = balanceList.reduce((prevToken, currentToken) =>
+          prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
+        )
+      }
+
+      // Set the pickedTokenDepo and balanceDepo based on the determined tokenToSet
+      if (tokenToSet) {
+        setPickedTokenDepo(tokenToSet)
+        setBalanceDepo(
+          fromWei(
+            tokenToSet.rawBalance ? tokenToSet.rawBalance : 0,
+            tokenToSet.decimals,
+            tokenToSet.decimals,
+          ),
+        )
       }
     }
-  }, [balanceList])
+  }, [balanceList, supTokenList, defaultToken, chain, SUPPORTED_TOKEN_LIST])
 
   const { pageBackColor, fontColor, filterColor } = useThemeContext()
 
@@ -1209,7 +1243,7 @@ const AdvancedFarm = () => {
                     </ValueBox>
                     <ValueBox width="32%" className="monthly-yield-box">
                       <BoxTitle>
-                        Monthly Yield
+                        Est. Monthly Yield
                         <InfoIcon
                           className="info"
                           width={isMobile ? 10 : 16}
@@ -1251,7 +1285,7 @@ const AdvancedFarm = () => {
                     </ValueBox>
                     <ValueBox width="32%" className="daily-yield-box">
                       <BoxTitle>
-                        Daily Yield
+                        Est. Daily Yield
                         <InfoIcon
                           className="info"
                           width={isMobile ? 10 : 16}
@@ -1305,14 +1339,7 @@ const AdvancedFarm = () => {
               ) : activeMainTag === 1 ? (
                 <>
                   <MyTotalReward marginBottom={isMobile ? '20px' : '25px'}>
-                    <NewLabel
-                      size={isMobile ? '12px' : '14px'}
-                      weight="500"
-                      height={isMobile ? '20px' : '20px'}
-                      color="#6F78AA"
-                    >
-                      Rewards
-                    </NewLabel>
+                    <BoxTitle>Rewards</BoxTitle>
                     <RewardValue>
                       <BoxValue>
                         {!connected ? (
