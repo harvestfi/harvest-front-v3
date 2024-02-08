@@ -185,7 +185,14 @@ const PortalsProvider = _ref => {
     }
   }
 
-  const getPortalsEstimate = async ({ chainId, tokenIn, inputAmount, tokenOut, slippage, sender }) => {
+  const getPortalsEstimate = async ({
+    chainId,
+    tokenIn,
+    inputAmount,
+    tokenOut,
+    slippage,
+    sender,
+  }) => {
     const inputToken = `${getChainNamePortals(chainId)}:${tokenIn}`
     const outputToken = `${getChainNamePortals(chainId)}:${tokenOut}`
     try {
