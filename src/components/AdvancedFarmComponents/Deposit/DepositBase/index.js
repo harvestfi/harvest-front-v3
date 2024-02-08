@@ -476,7 +476,7 @@ const DepositBase = ({
                   ) : convertMonthlyYieldUSD < 0.01 ? (
                     '<$0.01'
                   ) : (
-                    `$ ${round(convertMonthlyYieldUSD, 2)}`
+                    `$${round(convertMonthlyYieldUSD, 2)}`
                   )
                 ) : (
                   <TokenInfo>
@@ -548,7 +548,7 @@ const DepositBase = ({
                   ) : convertDailyYieldUSD < 0.01 ? (
                     '<$0.01'
                   ) : (
-                    `$ ${round(convertDailyYieldUSD, 2)}`
+                    `$${round(convertDailyYieldUSD, 2)}`
                   )
                 ) : (
                   <TokenInfo>
