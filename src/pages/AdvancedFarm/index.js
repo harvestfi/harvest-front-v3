@@ -390,12 +390,12 @@ const AdvancedFarm = () => {
 
   // Stake
   const [stakeStart, setStakeStart] = useState(false)
-  const [inputAmountStake, setInputAmountStake] = useState(0)
+  const [inputAmountStake, setInputAmountStake] = useState('0')
   const [stakeFinalStep, setStakeFinalStep] = useState(false)
 
   // Unstake
   const [unstakeStart, setUnstakeStart] = useState(false)
-  const [inputAmountUnstake, setInputAmountUnstake] = useState(0)
+  const [inputAmountUnstake, setInputAmountUnstake] = useState('0')
   const [unstakeFinalStep, setUnstakeFinalStep] = useState(false)
   const [amountsToExecuteUnstake, setAmountsToExecuteUnstake] = useState('')
 

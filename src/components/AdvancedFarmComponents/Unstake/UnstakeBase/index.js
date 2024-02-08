@@ -107,7 +107,7 @@ const UnstakeBase = ({
       return
     }
 
-    if (inputAmount === '' || inputAmount === 0) {
+    if (inputAmount === '' || inputAmount === 0 || inputAmount === '0') {
       setWarningContent('The amount to unstake must be greater than 0.')
       setShowWarning(true)
       return
@@ -212,7 +212,7 @@ const UnstakeBase = ({
             onClick={() => {
               if (account) {
                 setInputAmount(
-                  Number(fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)),
+                  fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, false),
                 )
                 setAmountsToExecute([fromWei(totalStaked, fAssetPool.lpTokenData.decimals)])
               }
@@ -226,7 +226,7 @@ const UnstakeBase = ({
         onClick={() => {
           if (account) {
             setInputAmount(
-              Number(fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)),
+              fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, false),
             )
             setAmountsToExecute([fromWei(totalStaked, fAssetPool.lpTokenData.decimals)])
           }
@@ -237,7 +237,7 @@ const UnstakeBase = ({
           {!connected ? (
             0
           ) : totalStaked ? (
-            Number(fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true))
+            fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, false)
           ) : (
             <AnimatedDots />
           )}

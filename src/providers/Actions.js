@@ -493,7 +493,7 @@ const ActionsProvider = ({ children }) => {
     ) => {
       let hasDeniedRequest = false
 
-      if (poolData && lpTokenBalance > 0) {
+      if (poolData && Number(lpTokenBalance) > 0) {
         try {
           const hasEnoughApprovedAmount = new BigNumber(lpTokenBalance).isLessThanOrEqualTo(
             new BigNumber(lpTokenApprovedBalance),
@@ -546,7 +546,7 @@ const ActionsProvider = ({ children }) => {
 
       const hasDeniedRequest = false
 
-      if (poolData && lpTokenBalance > 0) {
+      if (poolData && Number(lpTokenBalance) > 0) {
         try {
           if (!hasDeniedRequest) {
             setPendingAction(action)
