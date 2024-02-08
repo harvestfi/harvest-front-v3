@@ -43,6 +43,55 @@ const ActionsProvider = ({ children }) => {
       account,
       contracts,
       tokenSymbol,
+      amountToApprove,
+      vaultAddress,
+      poolData,
+      setPendingAction,
+      onSuccessApproval = () => {},
+      onFailureApproval = () => {},
+    ) => {
+      const address = vaultAddress || tokens[tokenSymbol].vaultAddress
+      try {
+        if (poolData) {
+          await tokenMethods.approve(
+            poolData.autoStakePoolAddress || poolData.contractAddress,
+            account,
+            amountToApprove,
+            poolData.lpTokenData.localInstance,
+          )
+        } else {
+          const contract =
+            contracts[tokenSymbol === IFARM_TOKEN_SYMBOL ? FARM_TOKEN_SYMBOL : tokenSymbol]
+          const web3Instance = await getWeb3(false, account, web3)
+          contract.instance.setProvider(web3Instance)
+          await contract.methods.approve(address, account, amountToApprove, contract.instance)
+        }
+
+        await onSuccessApproval()
+
+        toast.success(
+          `${get(tokens, `[${tokenSymbol}].tokenNames`, tokenSymbol).join(
+            ', ',
+          )} approval completed`,
+        )
+
+        return false
+      } catch (err) {
+        setPendingAction(null)
+        const errorMessage = formatWeb3PluginErrorMessage(err)
+        toast.error(errorMessage)
+        onFailureApproval()
+        return true
+      }
+    },
+    [web3],
+  )
+
+  const handleOldApproval = useCallback(
+    async (
+      account,
+      contracts,
+      tokenSymbol,
       vaultAddress,
       poolData,
       setPendingAction,
@@ -316,7 +365,7 @@ const ActionsProvider = ({ children }) => {
         if (amount !== null && !hasEnoughApprovedAmount && !hasDeniedRequest) {
           setPendingAction(ACTIONS.APPROVE_DEPOSIT)
 
-          hasDeniedRequest = await handleApproval(
+          hasDeniedRequest = await handleOldApproval(
             account,
             contracts,
             multipleAssets ? multipleAssets[amountIdx] : tokenSymbol,
@@ -424,7 +473,7 @@ const ActionsProvider = ({ children }) => {
         }
       }
     },
-    [handleApproval],
+    [handleOldApproval],
   )
 
   const handleStakeApproval = useCallback(
@@ -444,18 +493,21 @@ const ActionsProvider = ({ children }) => {
     ) => {
       let hasDeniedRequest = false
 
-      if (poolData && lpTokenBalance > 0) {
+      if (poolData && Number(lpTokenBalance) > 0) {
         try {
           const hasEnoughApprovedAmount = new BigNumber(lpTokenBalance).isLessThanOrEqualTo(
             new BigNumber(lpTokenApprovedBalance),
           )
           if (!hasEnoughApprovedAmount) {
+            const amountToApprove =
+              new BigNumber(lpTokenBalance) - new BigNumber(lpTokenApprovedBalance)
             if (!hasEnoughApprovedAmount && !hasDeniedRequest) {
               setPendingAction(ACTIONS.APPROVE_STAKE)
               hasDeniedRequest = await handleApproval(
                 account,
                 contracts,
                 tokenSymbol,
+                amountToApprove,
                 multipleAssets ? token.vaultAddress : null,
                 poolData,
                 setPendingAction,
@@ -494,7 +546,7 @@ const ActionsProvider = ({ children }) => {
 
       const hasDeniedRequest = false
 
-      if (poolData && lpTokenBalance > 0) {
+      if (poolData && Number(lpTokenBalance) > 0) {
         try {
           if (!hasDeniedRequest) {
             setPendingAction(action)
@@ -544,7 +596,7 @@ const ActionsProvider = ({ children }) => {
           if (!hasEnoughApprovedAmount) {
             if (!hasEnoughApprovedAmount && !hasDeniedRequest) {
               setPendingAction(ACTIONS.APPROVE_STAKE)
-              hasDeniedRequest = await handleApproval(
+              hasDeniedRequest = await handleOldApproval(
                 account,
                 contracts,
                 tokenSymbol,
@@ -571,7 +623,7 @@ const ActionsProvider = ({ children }) => {
         }
       }
     },
-    [handleApproval],
+    [handleOldApproval],
   )
 
   const handleClaim = useCallback(
@@ -752,7 +804,7 @@ const ActionsProvider = ({ children }) => {
         if (!hasEnoughApprovedAmount) {
           if (!hasEnoughApprovedAmount && !hasDeniedRequest) {
             setPendingAction(ACTIONS.APPROVE_STAKE)
-            hasDeniedRequest = await handleApproval(
+            hasDeniedRequest = await handleOldApproval(
               account,
               {
                 [token.symbol]: {
@@ -782,7 +834,7 @@ const ActionsProvider = ({ children }) => {
         toast.error(errorMessage)
       }
     },
-    [handleApproval],
+    [handleOldApproval],
   )
 
   const handleBoostUnstake = useCallback(
@@ -927,6 +979,7 @@ const ActionsProvider = ({ children }) => {
     <ActionsContext.Provider
       value={{
         handleApproval,
+        handleOldApproval,
         handleDeposit,
         handleStakeApproval,
         handleStakeTransaction,

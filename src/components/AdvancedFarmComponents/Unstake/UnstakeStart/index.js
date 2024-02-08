@@ -125,7 +125,7 @@ const UnstakeStart = ({
       setBtnName('Confirm Transaction')
       setUnstakeFailed(false)
       setUnstakeStart(false)
-      setInputAmount(0)
+      setInputAmount('0')
     }
   }
 

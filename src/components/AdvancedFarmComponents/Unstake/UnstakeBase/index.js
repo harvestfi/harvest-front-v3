@@ -10,7 +10,6 @@ import AlertCloseIcon from '../../../../assets/images/logos/beginners/alert-clos
 import ArrowDown from '../../../../assets/images/logos/beginners/arrow-narrow-down.svg'
 import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.svg'
 import AnimatedDots from '../../../AnimatedDots'
-import { MAX_DECIMALS } from '../../../../constants'
 import { useWallet } from '../../../../providers/Wallet'
 import { CHAIN_IDS } from '../../../../data/constants'
 import { isSpecialApp } from '../../../../utils'
@@ -107,7 +106,7 @@ const UnstakeBase = ({
       return
     }
 
-    if (inputAmount === '' || inputAmount === 0) {
+    if (inputAmount === '' || inputAmount === 0 || inputAmount === '0') {
       setWarningContent('The amount to unstake must be greater than 0.')
       setShowWarning(true)
       return
@@ -144,8 +143,9 @@ const UnstakeBase = ({
   }
 
   const onInputBalance = e => {
-    setInputAmount(Number(e.currentTarget.value))
-    setAmountsToExecute([e.currentTarget.value])
+    const inputValue = e.currentTarget.value.replace(/,/g, '.')
+    setInputAmount(inputValue)
+    setAmountsToExecute([inputValue])
   }
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
@@ -204,16 +204,28 @@ const UnstakeBase = ({
           Amount to Unstake
         </NewLabel>
         <AmountInputSection>
-          <TokenAmount type="number" value={inputAmount} onChange={onInputBalance} />
+          <TokenAmount type="text" value={inputAmount} onChange={onInputBalance} />
           <button
             className="max-btn"
             type="button"
             onClick={() => {
               if (account) {
                 setInputAmount(
-                  Number(fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)),
+                  fromWei(
+                    totalStaked,
+                    fAssetPool.lpTokenData.decimals,
+                    Number(fAssetPool.lpTokenData.decimals) - 1,
+                    false,
+                  ),
                 )
-                setAmountsToExecute([fromWei(totalStaked, fAssetPool.lpTokenData.decimals)])
+                setAmountsToExecute([
+                  fromWei(
+                    totalStaked,
+                    fAssetPool.lpTokenData.decimals,
+                    Number(fAssetPool.lpTokenData.decimals) - 1,
+                    false,
+                  ),
+                ])
               }
             }}
           >
@@ -225,9 +237,21 @@ const UnstakeBase = ({
         onClick={() => {
           if (account) {
             setInputAmount(
-              Number(fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)),
+              fromWei(
+                totalStaked,
+                fAssetPool.lpTokenData.decimals,
+                Number(fAssetPool.lpTokenData.decimals) - 1,
+                false,
+              ),
             )
-            setAmountsToExecute([fromWei(totalStaked, fAssetPool.lpTokenData.decimals)])
+            setAmountsToExecute([
+              fromWei(
+                totalStaked,
+                fAssetPool.lpTokenData.decimals,
+                Number(fAssetPool.lpTokenData.decimals) - 1,
+                false,
+              ),
+            ])
           }
         }}
       >
@@ -236,7 +260,12 @@ const UnstakeBase = ({
           {!connected ? (
             0
           ) : totalStaked ? (
-            Number(fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true))
+            fromWei(
+              totalStaked,
+              fAssetPool.lpTokenData.decimals,
+              Number(fAssetPool.lpTokenData.decimals) - 1,
+              false,
+            )
           ) : (
             <AnimatedDots />
           )}
