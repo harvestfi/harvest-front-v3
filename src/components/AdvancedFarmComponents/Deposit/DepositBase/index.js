@@ -12,11 +12,7 @@ import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import ArrowDown from '../../../../assets/images/logos/beginners/arrow-narrow-down.svg'
 import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.svg'
 import HelpIcon from '../../../../assets/images/logos/earn/info.svg'
-import {
-  IFARM_TOKEN_SYMBOL,
-  WIDO_EXTEND_DECIMALS,
-  BEGINNERS_BALANCES_DECIMALS,
-} from '../../../../constants'
+import { IFARM_TOKEN_SYMBOL, BEGINNERS_BALANCES_DECIMALS } from '../../../../constants'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { useWallet } from '../../../../providers/Wallet'
 import { CHAIN_IDS } from '../../../../data/constants'
@@ -173,29 +169,33 @@ const DepositBase = ({
 
           curToken = curToken[0]
           if (curToken) {
-            fromInfoValue = formatNumberWido(
-              fromWei(quoteResult.fromTokenAmount, curToken.decimals, WIDO_EXTEND_DECIMALS, true),
-              WIDO_EXTEND_DECIMALS,
-            )
+            fromInfoValue = fromWei(
+              quoteResult.fromTokenAmount,
+              curToken.decimals,
+              curToken.decimals,
+              true,
+            ).toString()
 
             fromInfoUsdValue =
               quoteResult.fromTokenAmount === null
                 ? '0'
                 : formatNumberWido(
-                    fromWei(quoteResult.fromTokenAmount, curToken.decimals, WIDO_EXTEND_DECIMALS) *
-                      quoteResult.fromTokenUsdPrice,
+                    fromWei(
+                      quoteResult.fromTokenAmount,
+                      curToken.decimals,
+                      curToken.decimals,
+                      true,
+                    ) * quoteResult.fromTokenUsdPrice,
                     BEGINNERS_BALANCES_DECIMALS,
                   )
-            minReceiveAmount = formatNumberWido(
-              fromWei(
-                quoteResult.minToTokenAmount,
-                quoteResult.outputTokenDecimals || token.data.lpTokenData.decimals,
-                WIDO_EXTEND_DECIMALS,
-              ),
-              WIDO_EXTEND_DECIMALS,
+            minReceiveAmount = fromWei(
+              quoteResult.minToTokenAmount,
+              quoteResult.outputTokenDecimals || token.data.lpTokenData.decimals,
+              quoteResult.outputTokenDecimals || token.data.lpTokenData.decimals,
+              false,
             )
             minReceiveUsd = formatNumberWido(
-              minReceiveAmount * toTokenDetail?.price,
+              parseFloat(minReceiveAmount) * toTokenDetail?.price,
               BEGINNERS_BALANCES_DECIMALS,
             )
           }

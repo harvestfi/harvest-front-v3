@@ -1679,7 +1679,6 @@ const AdvancedFarm = () => {
                         convertMonthlyYieldUSD={convertMonthlyYieldUSD}
                         convertDailyYieldUSD={convertDailyYieldUSD}
                         minReceiveAmountString={minReceiveAmountString}
-                        minReceiveUsdAmount={minReceiveUsdAmount}
                         setMinReceiveAmountString={setMinReceiveAmountString}
                         setMinReceiveUsdAmount={setMinReceiveUsdAmount}
                       />
