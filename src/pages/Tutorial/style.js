@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import AdvancedImg from '../../assets/images/logos/home/advanced-farming.jpg'
+import AdvancedImg from '../../assets/images/logos/dashboard/box-bg-2.png'
 
 const Container = styled.div`
   width: 100%;
@@ -26,8 +26,9 @@ const Container = styled.div`
 
 const TopSection = styled.div`
   width: 100%;
-  background: linear-gradient(0deg, rgba(47, 39, 39, 0.78) 0%, rgba(47, 39, 39, 0.78) 100%),
-    url(${AdvancedImg}) lightgray 50% / cover no-repeat;
+  background: url(${AdvancedImg}), lightgray -163.801px -183.553px / 113.693% 204.76% no-repeat;
+  background-repeat: no-repeat;
+  background-size: cover;
 
   @media screen and (max-width: 992px) {
     height: 250px;
