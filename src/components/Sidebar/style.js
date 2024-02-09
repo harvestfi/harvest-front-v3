@@ -123,6 +123,10 @@ const Link = styled.button`
     filter: invert(48%) sepia(4%) saturate(2341%) hue-rotate(183deg) brightness(87%) contrast(80%);
   }
 
+  .item-name {
+    padding-top: 3px;
+  }
+
   ${props =>
     props.enabled === 'false'
       ? `

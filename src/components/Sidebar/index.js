@@ -7,12 +7,12 @@ import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-succes
 import ConnectFailureIcon from '../../assets/images/logos/sidebar/connect-failure.svg'
 import connectAvatar from '../../assets/images/logos/sidebar/connectavatar.svg'
 import connectAvatarMobile from '../../assets/images/logos/sidebar/connectavatarmobile.svg'
-import Portfolio from '../../assets/images/logos/sidebar/portfolio.svg'
-// import Docs from '../../assets/images/logos/sidebar/docs.svg'
+// import Portfolio from '../../assets/images/logos/sidebar/portfolio.svg'
+import Docs from '../../assets/images/logos/sidebar/docs.svg'
 import FAQ from '../../assets/images/logos/sidebar/faq.svg'
 import Home from '../../assets/images/logos/sidebar/home-line.svg'
 import Beginners from '../../assets/images/logos/sidebar/beginners.svg'
-import Collaborations from '../../assets/images/logos/sidebar/collaborations.svg'
+// import Collaborations from '../../assets/images/logos/sidebar/collaborations.svg'
 import Advanced from '../../assets/images/logos/sidebar/advanced.svg'
 import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
 import xCircle from '../../assets/images/logos/sidebar/x-circle.svg'
@@ -88,8 +88,8 @@ import {
 
 const sideLinks = [
   {
-    path: ROUTES.HOME,
-    name: 'Home',
+    path: ROUTES.PORTFOLIO,
+    name: 'Dashboard',
     imgPath: Home,
   },
   {
@@ -99,21 +99,21 @@ const sideLinks = [
   },
   {
     path: ROUTES.ADVANCED,
-    name: 'Advanced',
+    name: 'All Farms',
     imgPath: Advanced,
   },
-  {
-    path: ROUTES.COLLABORATIONS,
-    name: 'Collaborations',
-    imgPath: Collaborations,
-    new: true,
-    enabled: false,
-  },
-  {
-    path: ROUTES.PORTFOLIO,
-    name: 'My Earnings',
-    imgPath: Portfolio,
-  },
+  // {
+  //   path: ROUTES.COLLABORATIONS,
+  //   name: 'Collaborations',
+  //   imgPath: Collaborations,
+  //   new: true,
+  //   enabled: false,
+  // },
+  // {
+  //   path: ROUTES.PORTFOLIO,
+  //   name: 'My Earnings',
+  //   imgPath: Portfolio,
+  // },
 ]
 
 const sideLinks1 = [
@@ -124,18 +124,18 @@ const sideLinks1 = [
     external: false,
   },
   {
-    path: ROUTES.FAQ,
-    name: 'FAQ',
+    path: ROUTES.TUTORIAL,
+    name: 'Tutorial',
     imgPath: FAQ,
     external: false,
   },
-  // {
-  //   path: 'https://docs.harvest.finance',
-  //   name: 'Docs',
-  //   imgPath: Docs,
-  //   external: false,
-  //   newTab: true,
-  // },
+  {
+    path: 'https://docs.harvest.finance',
+    name: 'Docs',
+    imgPath: Docs,
+    external: false,
+    newTab: true,
+  },
 ]
 
 const sideLinksMobile = [
@@ -208,7 +208,7 @@ const SideLink = ({ item, subItem, isDropdownLink, fontColor, activeIconColor, d
       : pathname === ROUTES.ADVANCED
       ? 'advanced'
       : pathname === ROUTES.PORTFOLIO
-      ? 'my earnings'
+      ? 'dashboard'
       : pathname
   return (
     /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
@@ -230,7 +230,7 @@ const SideLink = ({ item, subItem, isDropdownLink, fontColor, activeIconColor, d
           height="27px"
         />
       </div>
-      {item.name}
+      <div className="item-name">{item.name}</div>
       {item.new ? <NewTag>Soon</NewTag> : <></>}
     </Link>
   )
