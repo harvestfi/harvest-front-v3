@@ -70,7 +70,7 @@ const StakeBase = ({
     : connectedChain
     ? parseInt(connectedChain.id, 16).toString()
     : ''
-  const [btnName, setBtnName] = useState('Stake')
+  const [btnName, setBtnName] = useState('Preview & Stake')
   const [showWarning, setShowWarning] = useState(false)
   const [warningContent, setWarningContent] = useState('')
 
@@ -80,7 +80,7 @@ const StakeBase = ({
         const chainName = getChainName(tokenChain)
         setBtnName(`Change Network to ${chainName}`)
       } else {
-        setBtnName('Stake')
+        setBtnName('Preview & Stake')
       }
     } else {
       setBtnName('Connect Wallet to Get Started')

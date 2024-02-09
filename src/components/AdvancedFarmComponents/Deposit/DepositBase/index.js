@@ -110,9 +110,7 @@ const DepositBase = ({
     ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
     : get(token, `pricePerFullShare`, 0)
 
-  const [depositName, setDepositName] = useState(
-    useBeginnersFarm ? 'Preview & Earn Yield' : 'Convert',
-  )
+  const [depositName, setDepositName] = useState('Preview & Convert')
   const [showWarning, setShowWarning] = useState(false)
   // const [showDepositIcon, setShowDepositIcon] = useState(true)
   const amount = toWei(inputAmount, pickedToken.decimals, 0)
@@ -124,12 +122,12 @@ const DepositBase = ({
         setDepositName(`Change Network to ${chainName}`)
         // setShowDepositIcon(false)
       } else {
-        setDepositName(useBeginnersFarm ? 'Preview & Earn Yield' : 'Convert')
+        setDepositName('Preview & Convert')
       }
     } else {
       setDepositName('Connect Wallet to Get Started')
     }
-  }, [account, curChain, tokenChain, useBeginnersFarm])
+  }, [account, curChain, tokenChain])
 
   useEffect(() => {
     if (

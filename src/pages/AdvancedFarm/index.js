@@ -1731,7 +1731,6 @@ const AdvancedFarm = () => {
                         switchMethod={switchDepoMethod}
                         quoteValue={quoteValueWith}
                         setQuoteValue={setQuoteValueWith}
-                        useBeginnersFarm={useBeginnersFarm}
                         useIFARM={useIFARM}
                         setRevertFromInfoAmount={setRevertFromInfoAmount}
                         setRevertFromInfoUsdAmount={setRevertFromInfoUsdAmount}
