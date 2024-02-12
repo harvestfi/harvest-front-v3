@@ -102,7 +102,7 @@ const TopButton = styled.div`
 
   @media screen and (max-width: 992px) {
     display: flex;
-    justify-content: space-between;
+    justify-content: end;
     margin-bottom: 30px;
   }
 `
@@ -589,30 +589,6 @@ const TotalValueFarm = styled.div`
   line-height: 35px;
   color: #000000;
   margin-right: 15px;
-`
-
-const BackBtnRect = styled.a`
-  position: relative;
-  display: inline-flex;
-  height: 35px;
-  text-decoration: none;
-  border: 0.5px solid #fff;
-  border-radius: 5px;
-  padding: 5px 15px;
-  cursor: pointer;
-
-  svg {
-    margin: auto;
-    color: white;
-  }
-`
-
-const BackText = styled.p`
-  color: #fff;
-  margin: auto;
-  padding-left: 15px;
-  font-size: 14px;
-  line-height: 20px;
 `
 
 const RestContent = styled.div`
@@ -1205,8 +1181,6 @@ export {
   HalfContent,
   FlexDiv,
   TotalValueFarm,
-  BackBtnRect,
-  BackText,
   RestContent,
   NewLabel,
   FlexTopDiv,

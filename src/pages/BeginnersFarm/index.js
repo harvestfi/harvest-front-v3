@@ -6,7 +6,7 @@ import ReactTooltip from 'react-tooltip'
 import { useHistory, useLocation } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { ethers } from 'ethers'
-import { BiLeftArrowAlt, BiRightArrowAlt } from 'react-icons/bi'
+import { BiRightArrowAlt } from 'react-icons/bi'
 import { RxCross2 } from 'react-icons/rx'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
@@ -33,7 +33,6 @@ import {
   FARM_TOKEN_SYMBOL,
   FARM_WETH_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
-  ROUTES,
   SPECIAL_VAULTS,
   POOL_BALANCES_DECIMALS,
   MAX_BALANCES_DECIMALS,
@@ -54,8 +53,6 @@ import {
   getLastHarvestInfo,
 } from '../../utils'
 import {
-  BackBtnRect,
-  BackText,
   BigDiv,
   DetailView,
   FlexDiv,
@@ -157,7 +154,6 @@ const BeginnersFarm = () => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const { push } = useHistory()
-  const history = useHistory()
 
   const { pathname } = useLocation()
 
@@ -832,14 +828,6 @@ const BeginnersFarm = () => {
         <TopPart>
           <FlexTopDiv>
             <TopButton className="back-btn">
-              <BackBtnRect
-                onClick={() => {
-                  history.push(ROUTES.BEGINNERS)
-                }}
-              >
-                <BiLeftArrowAlt fontSize={16} />
-                <BackText>Back</BackText>
-              </BackBtnRect>
               {isMobile && (
                 <MobileChain>
                   <NetDetailItem>
