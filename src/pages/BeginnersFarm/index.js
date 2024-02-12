@@ -975,11 +975,12 @@ const BeginnersFarm = () => {
                       </WelcomeText>
                     ) : (
                       <WelcomeText showBadge={showBadge}>
-                        Get started with yield farming in under 2 minutes by converting any token in
-                        your wallet to interest-bearing fETH. Get started by connecting wallet and
-                        selecting the input token. Next, click Preview & Convert where you will
-                        finalize the action. Ensure you&apos;re connected to the Base Network to
-                        farm here. If you need any help, head over to our{' '}
+                        Begin yield farming in under two minutes by simply converting any token in
+                        your wallet into interest-bearing fWETH_base. Start by connecting your
+                        wallet, selecting the token you wish to convert, and then clicking on
+                        &apos;Preview & Convert&apos; to finalize the action. Ensure that you are
+                        connected to the Base Network to proceed with farming. If you need any help,
+                        head over to our{' '}
                         <a
                           href="https://discord.gg/gzWAG3Wx7Y"
                           target="_blank"
@@ -1044,11 +1045,12 @@ const BeginnersFarm = () => {
                       </WelcomeText>
                     ) : (
                       <WelcomeText showBadge={showBadge}>
-                        Get started with yield farming in under 2 minutes by converting any token in
-                        your wallet to interest-bearing fETH. Get started by connecting wallet and
-                        selecting the input token. Next, click Preview & Convert where you will
-                        finalize the action. Ensure you&apos;re connected to the Base Network to
-                        farm here. If you need any help, head over to our{' '}
+                        Begin yield farming in under two minutes by simply converting any token in
+                        your wallet into interest-bearing fWETH_base. Start by connecting your
+                        wallet, selecting the token you wish to convert, and then clicking on
+                        &apos;Preview & Convert&apos; to finalize the action. Ensure that you are
+                        connected to the Base Network to proceed with farming. If you need any help,
+                        head over to our{' '}
                         <a
                           href="https://discord.gg/gzWAG3Wx7Y"
                           target="_blank"
