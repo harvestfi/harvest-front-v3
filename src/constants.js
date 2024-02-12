@@ -16,11 +16,10 @@ export const SOCIAL_LINKS = {
 }
 
 export const ROUTES = {
-  HOME: '/',
+  PORTFOLIO: '/',
   TUTORIAL: '/get-started',
   COLLABORATIONS: '/collaborations',
   ADVANCED: '/farm',
-  PORTFOLIO: '/portfolio',
   ANALYTIC: '/analytics',
   DOC: '/doc',
   FAQ: '/faq',

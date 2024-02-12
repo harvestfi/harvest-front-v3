@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
-import Home from './pages/Home'
 import Tutorial from './pages/Tutorial'
 import BeginnersFarm from './pages/BeginnersFarm'
 import Portfolio from './pages/Portfolio'
@@ -75,11 +74,10 @@ const App = () => (
       <Body id="page-content">
         <Sidebar width="280px" />
         <Switch>
-          <Route exact path={ROUTES.HOME} component={Home} />
+          <Route exact path={ROUTES.PORTFOLIO} component={Portfolio} />
           <Route exact path={ROUTES.TUTORIAL} component={Tutorial} />
           <Route exact path={ROUTES.BEGINNERSFARM} component={BeginnersFarm} />
           <Route exact path={ROUTES.ADVANCED} component={Farm} />
-          <Route exact path={ROUTES.PORTFOLIO} component={Portfolio} />
           <Route exact path={ROUTES.ANALYTIC} component={Analytic} />
           <Route path={ROUTES.ADVANCEDFARM} component={AdvancedFarm} />
           <Route path={ROUTES.WIDODETAIL} component={WidoDetail} />

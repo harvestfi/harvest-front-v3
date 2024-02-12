@@ -27,11 +27,9 @@ import Base from '../../assets/images/chains/base.svg'
 import Ethereum from '../../assets/images/chains/ethereum.svg'
 import Polygon from '../../assets/images/chains/polygon.svg'
 import HomeMobile from '../../assets/images/logos/sidebar/home-mobile.svg'
-import PortfolioMobile from '../../assets/images/logos/sidebar/portfolio-mobile.svg'
 import BeginnersMobile from '../../assets/images/logos/sidebar/beginners-mobile.svg'
 import AdvancedMobile from '../../assets/images/logos/sidebar/advanced-mobile.svg'
 import HomeMobileSM from '../../assets/images/logos/sidebar/home-mobile_sm.svg'
-import PortfolioMobileSM from '../../assets/images/logos/sidebar/portfolio-mobile_sm.svg'
 import BeginnersMobileSM from '../../assets/images/logos/sidebar/beginners-mobile_sm.svg'
 import AdvancedMobileSM from '../../assets/images/logos/sidebar/advanced-mobile_sm.svg'
 import AnalyticsMobile from '../../assets/images/logos/sidebar/analytics-mobile.svg'
@@ -140,8 +138,8 @@ const sideLinks1 = [
 
 const sideLinksMobile = [
   {
-    path: ROUTES.HOME,
-    name: 'Home',
+    path: ROUTES.PORTFOLIO,
+    name: 'Dashboard',
     imgPath: HomeMobileSM,
   },
   {
@@ -154,17 +152,12 @@ const sideLinksMobile = [
     name: 'Farm',
     imgPath: AdvancedMobileSM,
   },
-  {
-    path: ROUTES.PORTFOLIO,
-    name: 'Portfolio',
-    imgPath: PortfolioMobileSM,
-  },
 ]
 
 const sideLinksMobile1 = [
   {
-    path: ROUTES.HOME,
-    name: 'Home',
+    path: ROUTES.PORTFOLIO,
+    name: 'Dashboard',
     imgPath: HomeMobile,
   },
   {
@@ -178,18 +171,13 @@ const sideLinksMobile1 = [
     imgPath: AdvancedMobile,
   },
   {
-    path: ROUTES.PORTFOLIO,
-    name: 'My Earnings',
-    imgPath: PortfolioMobile,
-  },
-  {
     path: ROUTES.ANALYTIC,
     name: 'Analytics',
     imgPath: AnalyticsMobile,
   },
   {
-    path: ROUTES.FAQ,
-    name: 'FAQ',
+    path: ROUTES.TUTORIAL,
+    name: 'Tutorial',
     imgPath: FAQMobile,
   },
   {
