@@ -330,9 +330,7 @@ const DepositBase = ({
         </NewLabel>
         <DepoTitle>
           {useBeginnersFarm
-            ? `Convert your crypto into interest-bearing ${
-                tokenSymbol === 'WETH_base' ? 'fWETH' : 'fUSDbC'
-              } to earn yield`
+            ? `Convert your crypto into interest-bearing f${tokenSymbol} to earn yield`
             : useIFARM
             ? `Convert your crypto into interest-bearing i${tokenSymbol}.`
             : 'Convert your crypto into interest-bearing fTokens.'}
