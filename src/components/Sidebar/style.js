@@ -508,6 +508,8 @@ const ConnectAvatar = styled.div`
   line-height: 14px;
   transition: 0.25s;
   img {
+    width: 39px;
+    height: 39px;
     margin-right: 5px;
   }
 
