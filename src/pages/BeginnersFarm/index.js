@@ -149,7 +149,7 @@ const getVaultValue = token => {
 const BeginnersFarm = () => {
   const paramAddress = '0xc7548d8D7560f6679e369d0556C44Fe1EDdea3E9'
 
-  const { getPortalsBaseTokens, getPortalsBalances } = usePortals()
+  const { getPortalsBaseTokens, getPortalsBalances, SUPPORTED_TOKEN_LIST } = usePortals()
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
@@ -618,23 +618,57 @@ const BeginnersFarm = () => {
   }, [account, chain, balances, convertSuccess, useIFARM]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (supTokenList.length > 0) {
-      for (let i = 0; i < supTokenList.length; i += 1) {
-        if (id === 'WETH_base') {
-          if (supTokenList[i].symbol === 'ETH') {
-            setPickedTokenDepo(supTokenList[i])
-            setBalanceDepo(
-              fromWei(
-                supTokenList[i].balance ? supTokenList[i].balance : 0,
-                supTokenList[i].decimals,
-              ),
-            )
-            return
-          }
-        }
+    if (balanceList.length > 0) {
+      let tokenToSet = null
+
+      // Check if defaultToken is present in the balanceList
+      const defaultTokenIndex = balanceList.findIndex(
+        balancedToken => balancedToken.symbol === defaultToken.symbol,
+      )
+      if (defaultTokenIndex !== -1) {
+        setPickedTokenDepo(balanceList[defaultTokenIndex])
+        setBalanceDepo(
+          fromWei(
+            balanceList[defaultTokenIndex].rawBalance
+              ? balanceList[defaultTokenIndex].rawBalance
+              : 0,
+            balanceList[defaultTokenIndex].decimals,
+            balanceList[defaultTokenIndex].decimals,
+          ),
+        )
+        return
+      }
+
+      // If defaultToken is not found, find the token with the highest USD value among those in the SUPPORTED_TOKEN_LIST and balanceList
+      const supportedTokens = balanceList.filter(
+        balancedToken => SUPPORTED_TOKEN_LIST[chain][balancedToken.symbol],
+      )
+      if (supportedTokens.length > 0) {
+        tokenToSet = supportedTokens.reduce((prevToken, currentToken) =>
+          prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
+        )
+      }
+
+      // If no token is found in SUPPORTED_TOKEN_LIST, set the token with the highest USD value in balanceList
+      if (!tokenToSet) {
+        tokenToSet = balanceList.reduce((prevToken, currentToken) =>
+          prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
+        )
+      }
+
+      // Set the pickedTokenDepo and balanceDepo based on the determined tokenToSet
+      if (tokenToSet) {
+        setPickedTokenDepo(tokenToSet)
+        setBalanceDepo(
+          fromWei(
+            tokenToSet.rawBalance ? tokenToSet.rawBalance : 0,
+            tokenToSet.decimals,
+            tokenToSet.decimals,
+          ),
+        )
       }
     }
-  }, [supTokenList, id])
+  }, [balanceList, supTokenList, defaultToken, chain, SUPPORTED_TOKEN_LIST])
 
   const { pageBackColor, fontColor, filterColor } = useThemeContext()
 
@@ -1539,7 +1573,6 @@ const BeginnersFarm = () => {
                         convertMonthlyYieldUSD={convertMonthlyYieldUSD}
                         convertDailyYieldUSD={convertDailyYieldUSD}
                         minReceiveAmountString={minReceiveAmountString}
-                        minReceiveUsdAmount={minReceiveUsdAmount}
                         setMinReceiveAmountString={setMinReceiveAmountString}
                         setMinReceiveUsdAmount={setMinReceiveUsdAmount}
                       />

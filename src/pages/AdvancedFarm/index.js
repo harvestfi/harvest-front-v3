@@ -189,7 +189,7 @@ const getTokenPriceFromApi = async tokenID => {
 
 const AdvancedFarm = () => {
   const { paramAddress } = useParams()
-  // Switch Tag (Deposit/Withdraw)
+  // Switch Tag (Convert/Revert)
   const [activeDepo, setActiveDepo] = useState(true)
   const { getPortalsBaseTokens, getPortalsBalances, SUPPORTED_TOKEN_LIST } = usePortals()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
