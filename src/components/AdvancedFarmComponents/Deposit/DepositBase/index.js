@@ -26,7 +26,9 @@ import {
   BalanceInfo,
   BaseWidoDiv,
   DepoTitle,
+  TokenInput,
   TokenAmount,
+  // TokenUSDAmount,
   TokenInfo,
   TokenSelect,
   NewLabel,
@@ -76,6 +78,7 @@ const DepositBase = ({
   useBeginnersFarm,
   setFromInfoAmount,
   setFromInfoUsdAmount,
+  // fromInfoUsdAmount,
   convertMonthlyYieldUSD,
   convertDailyYieldUSD,
   minReceiveAmountString,
@@ -130,6 +133,7 @@ const DepositBase = ({
       account &&
       pickedToken.symbol !== 'Select Token' &&
       !new BigNumber(amount).isEqualTo(0) &&
+      new BigNumber(amount).isLessThan(new BigNumber(pickedToken.rawBalance)) &&
       curChain === tokenChain &&
       balanceList.length !== 0
     ) {
@@ -346,7 +350,10 @@ const DepositBase = ({
             >
               Amount to convert
             </NewLabel>
-            <TokenAmount type="text" value={inputAmount} onChange={onInputBalance} />
+            <TokenInput>
+              <TokenAmount type="text" value={inputAmount} onChange={onInputBalance} />
+              {/* <TokenUSDAmount>≈$5555.55</TokenUSDAmount> */}
+            </TokenInput>
           </AmountSection>
           <DepositTokenSection>
             <NewLabel
