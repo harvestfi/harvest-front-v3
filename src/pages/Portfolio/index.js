@@ -16,6 +16,7 @@ import Diamond from '../../assets/images/logos/dashboard/diamond-01.svg'
 import Sort from '../../assets/images/logos/dashboard/sort.svg'
 import File from '../../assets/images/logos/dashboard/file-02.svg'
 import MobileFile from '../../assets/images/logos/dashboard/file-01.svg'
+import ConnectDisableIcon from '../../assets/images/logos/sidebar/connect-disable.svg'
 import ListItem from '../../components/DashboardComponents/ListItem'
 import TotalValue from '../../components/TotalValue'
 import {
@@ -70,6 +71,7 @@ import {
   Col,
   ContentInner,
   TableContent,
+  ConnectButtonStyle,
 } from './style'
 
 const getChainIcon = chain => {
@@ -139,8 +141,8 @@ const getTokenPriceFromApi = async tokenID => {
 
 const Portfolio = () => {
   const { push } = useHistory()
-  const { connected, account, balances, getWalletBalances } = useWallet()
-  const { userStats, fetchUserPoolStats, totalPools } = usePools()
+  const { connected, connectAction, account, balances, getWalletBalances } = useWallet()
+  const { userStats, fetchUserPoolStats, totalPools, disableWallet } = usePools()
   const { profitShareAPY } = useStats()
   const { vaultsData, loadingVaults, farmingBalances, getFarmingBalances } = useVaults()
   /* eslint-disable global-require */
@@ -1155,9 +1157,29 @@ const Portfolio = () => {
               </>
             ) : (
               <EmptyPanel borderColor={borderColor}>
-                <EmptyInfo weight={500} size={14} height={20} color="#475467">
-                  You&apos;re not farming anywhere. Let&apos;s put your assets to work!
-                </EmptyInfo>
+                {connected ? (
+                  <EmptyInfo weight={500} size={14} height={20} color="#475467">
+                    You&apos;re not farming anywhere. Let&apos;s put your assets to work!
+                  </EmptyInfo>
+                ) : (
+                  <>
+                    <EmptyInfo weight={500} size={14} height={20} color="#475467">
+                      Connect wallet to see your positions.
+                    </EmptyInfo>
+                    <ConnectButtonStyle
+                      color="connectwallet"
+                      onClick={() => {
+                        connectAction()
+                      }}
+                      minWidth="190px"
+                      bordercolor={fontColor}
+                      disabled={disableWallet}
+                    >
+                      <img src={ConnectDisableIcon} className="connect-wallet" alt="" />
+                      Connect Wallet
+                    </ConnectButtonStyle>
+                  </>
+                )}
               </EmptyPanel>
             )}
           </TableContent>
@@ -1165,7 +1187,7 @@ const Portfolio = () => {
         {connected && farmTokenList.length > 0 ? (
           <></>
         ) : (
-          <EmptyInfo weight={500} size={16} height={21} marginTop="15px">
+          <EmptyInfo weight={500} size={16} height={21} marginTop="25px">
             <ExploreFarm
               bgImage="first"
               onClick={() => {
