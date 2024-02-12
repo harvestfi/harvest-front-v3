@@ -329,7 +329,7 @@ const BeginnersFarm = () => {
   const [balanceList, setBalanceList] = useState([])
   const [supTokenList, setSupTokenList] = useState([])
   const [supTokenNoBalanceList, setSupTokenNoBalanceList] = useState([])
-  const [defaultToken, setDefaultToken] = useState({})
+  const [defaultToken, setDefaultToken] = useState(null)
   const [soonToSupList, setSoonToSupList] = useState([])
 
   const [vaultValue, setVaultValue] = useState(null)
@@ -578,6 +578,8 @@ const BeginnersFarm = () => {
           }
           if (supList[0].default) {
             setDefaultToken(supList[0])
+          } else {
+            setDefaultToken({})
           }
           supList.shift()
           setSupTokenList(supList)
@@ -618,7 +620,7 @@ const BeginnersFarm = () => {
   }, [account, chain, balances, convertSuccess, useIFARM]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (balanceList.length > 0) {
+    if (balanceList.length > 0 && defaultToken !== null) {
       let tokenToSet = null
 
       // Check if defaultToken is present in the balanceList
