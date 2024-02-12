@@ -966,8 +966,8 @@ const BeginnersFarm = () => {
                           FARM
                         </a>{' '}
                         into your wallet for converting at least $5 worth of ETH or USDC into
-                        interest-bearing fETH. Get started by connecting wallet and selecting the
-                        input token. Next, click Preview & Convert where you will finalize the
+                        interest-bearing fWETH_base. Get started by connecting wallet and selecting
+                        the input token. Next, click Preview & Convert where you will finalize the
                         action. If you need any help, head over to our{' '}
                         <a
                           href="https://discord.gg/gzWAG3Wx7Y"
@@ -1036,8 +1036,8 @@ const BeginnersFarm = () => {
                           FARM
                         </a>{' '}
                         into your wallet for converting at least $5 worth of ETH or USDC into
-                        interest-bearing fETH. Get started by connecting wallet and selecting the
-                        input token. Next, click Preview & Convert where you will finalize the
+                        interest-bearing fWETH_base. Get started by connecting wallet and selecting
+                        the input token. Next, click Preview & Convert where you will finalize the
                         action. If you need any help, head over to our{' '}
                         <a
                           href="https://discord.gg/gzWAG3Wx7Y"
