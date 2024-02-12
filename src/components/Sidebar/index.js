@@ -93,7 +93,7 @@ const sideLinks = [
     imgPath: Home,
   },
   {
-    path: ROUTES.BEGINNERS,
+    path: ROUTES.BEGINNERSFARM,
     name: 'Beginners',
     imgPath: Beginners,
   },
@@ -145,7 +145,7 @@ const sideLinksMobile = [
     imgPath: HomeMobileSM,
   },
   {
-    path: ROUTES.BEGINNERS,
+    path: ROUTES.BEGINNERSFARM,
     name: 'Beginners',
     imgPath: BeginnersMobileSM,
   },
@@ -168,7 +168,7 @@ const sideLinksMobile1 = [
     imgPath: HomeMobile,
   },
   {
-    path: ROUTES.BEGINNERS,
+    path: ROUTES.BEGINNERSFARM,
     name: 'Beginners',
     imgPath: BeginnersMobile,
   },

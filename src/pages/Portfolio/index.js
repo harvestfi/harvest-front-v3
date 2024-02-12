@@ -1169,7 +1169,7 @@ const Portfolio = () => {
             <ExploreFarm
               bgImage="first"
               onClick={() => {
-                push(ROUTES.BEGINNERS)
+                push(ROUTES.BEGINNERSFARM)
               }}
             >
               <ExploreContent>

@@ -3,7 +3,7 @@ import { find, get, isEqual, isEmpty, isArray, isNaN } from 'lodash'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import ReactTooltip from 'react-tooltip'
-import { useHistory, useLocation, useParams } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { ethers } from 'ethers'
 import { BiLeftArrowAlt, BiRightArrowAlt } from 'react-icons/bi'
@@ -150,7 +150,7 @@ const getVaultValue = token => {
 }
 
 const BeginnersFarm = () => {
-  const { paramAddress } = useParams()
+  const paramAddress = '0xc7548d8D7560f6679e369d0556C44Fe1EDdea3E9'
 
   const { getPortalsBaseTokens, getPortalsBalances } = usePortals()
 
