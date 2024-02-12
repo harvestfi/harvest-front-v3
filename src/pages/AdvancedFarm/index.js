@@ -189,7 +189,7 @@ const getTokenPriceFromApi = async tokenID => {
 
 const AdvancedFarm = () => {
   const { paramAddress } = useParams()
-  // Switch Tag (Deposit/Withdraw)
+  // Switch Tag (Convert/Revert)
   const [activeDepo, setActiveDepo] = useState(true)
   const { getPortalsBaseTokens, getPortalsBalances, SUPPORTED_TOKEN_LIST } = usePortals()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
@@ -1681,7 +1681,6 @@ const AdvancedFarm = () => {
                         convertMonthlyYieldUSD={convertMonthlyYieldUSD}
                         convertDailyYieldUSD={convertDailyYieldUSD}
                         minReceiveAmountString={minReceiveAmountString}
-                        minReceiveUsdAmount={minReceiveUsdAmount}
                         setMinReceiveAmountString={setMinReceiveAmountString}
                         setMinReceiveUsdAmount={setMinReceiveUsdAmount}
                       />
@@ -1733,7 +1732,6 @@ const AdvancedFarm = () => {
                         switchMethod={switchDepoMethod}
                         quoteValue={quoteValueWith}
                         setQuoteValue={setQuoteValueWith}
-                        useBeginnersFarm={useBeginnersFarm}
                         useIFARM={useIFARM}
                         setRevertFromInfoAmount={setRevertFromInfoAmount}
                         setRevertFromInfoUsdAmount={setRevertFromInfoUsdAmount}

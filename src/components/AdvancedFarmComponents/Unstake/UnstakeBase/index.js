@@ -78,7 +78,7 @@ const UnstakeBase = ({
     : connectedChain
     ? parseInt(connectedChain.id, 16).toString()
     : ''
-  const [btnName, setBtnName] = useState('Unstake')
+  const [btnName, setBtnName] = useState('Preview & Unstake')
   const [showWarning, setShowWarning] = useState(false)
   const [warningContent, setWarningContent] = useState('')
   const [unstakeFailed, setUnstakeFailed] = useState(false)
@@ -92,7 +92,7 @@ const UnstakeBase = ({
         const chainName = getChainName(tokenChain)
         setBtnName(`Change Network to ${chainName}`)
       } else {
-        setBtnName('Unstake')
+        setBtnName('Preview & Unstake')
       }
     } else {
       setBtnName('Connect Wallet to Get Started')

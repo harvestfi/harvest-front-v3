@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import BgImage from '../../assets/images/logos/beginners/bg-image.jpg'
 
 const DetailView = styled.div`
   width: 100%;
@@ -38,12 +39,9 @@ const TopInner = styled.div`
   padding: 50px 72px 0px 76px;
   display: flex;
   justify-content: center;
-  background: ${props =>
-    props.isETHFarm
-      ? `
-      #627EEA
-  `
-      : '#2775ca'};
+  background-image: url(${BgImage});
+  background-repeat: no-repeat;
+  background-size: cover;
 
   @media screen and (max-width: 1480px) {
     padding: 25px 30px 0px;
@@ -104,7 +102,7 @@ const TopButton = styled.div`
 
   @media screen and (max-width: 992px) {
     display: flex;
-    justify-content: space-between;
+    justify-content: end;
     margin-bottom: 30px;
   }
 `
@@ -413,6 +411,115 @@ const InternalSection = styled.div`
     display: block;
   }
 `
+const WelcomeBox = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--Gray-100, #f2f4f7);
+  background: var(--bggrad, #fff);
+  box-shadow: 0px 4px 6px -2px rgba(16, 24, 40, 0.03), 0px 12px 16px -4px rgba(16, 24, 40, 0.08);
+  padding: 16px;
+  margin-bottom: 25px;
+
+  @media screen and (max-width: 992px) {
+    flex-flow: column;
+  }
+`
+
+const WelcomeTop = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+`
+
+const FarmerImage = styled.img`
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  border: 1.719px solid #f2f5ff;
+`
+
+const WelcomeContent = styled.div`
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  color: #475467;
+`
+
+const WelcomeTitle = styled.div`
+  font-weight: 600;
+  color: #101828;
+  padding-bottom: 5px;
+  @media screen and (max-width: 992px) {
+    width: 100%;
+    margin: auto;
+    padding-bottom: 0px;
+  }
+`
+
+const WelcomeText = styled.div`
+  a {
+    font-weight: 700;
+    color: ${props => (props.showBadge === true ? '#FF9400' : '#475467')};
+  }
+  a.badge-body {
+    text-decoration: none;
+  }
+`
+
+const WelcomeClose = styled.div`
+  font-size: 20px;
+  text-align: start;
+  svg {
+    cursor: pointer;
+  }
+  @media screen and (max-width: 992px) {
+    margin: auto;
+  }
+`
+
+const HeaderBadge = styled.div`
+  width: fit-content;
+  border-radius: 12px;
+  padding: 3px 3px 3px 10px;
+  background: #1568b3;
+  font-size: 10.5px;
+  font-weight: 500;
+  line-height: 17px;
+  display: flex;
+  gap: 9px;
+  margin-top: 12px;
+
+  &:hover {
+    transform: scale(1.01);
+    margin-right: 2px;
+  }
+
+  @media screen and (max-width: 400px) {
+    font-size: 9px;
+  }
+
+  div.badge-text {
+    color: #fff;
+    margin: auto;
+  }
+
+  div.badge-btn {
+    background: #fff;
+    padding: 0px 7px;
+    gap: 3px;
+    display: flex;
+    border-radius: 11px;
+    color: #1568b3;
+
+    svg {
+      color: #6b6b6b;
+      margin: auto;
+    }
+  }
+`
 
 const FlexTopDiv = styled.div`
   width: 100%;
@@ -482,30 +589,6 @@ const TotalValueFarm = styled.div`
   line-height: 35px;
   color: #000000;
   margin-right: 15px;
-`
-
-const BackBtnRect = styled.a`
-  position: relative;
-  display: inline-flex;
-  height: 35px;
-  text-decoration: none;
-  border: 0.5px solid #fff;
-  border-radius: 5px;
-  padding: 5px 15px;
-  cursor: pointer;
-
-  svg {
-    margin: auto;
-    color: white;
-  }
-`
-
-const BackText = styled.p`
-  color: #fff;
-  margin: auto;
-  padding-left: 15px;
-  font-size: 14px;
-  line-height: 20px;
 `
 
 const RestContent = styled.div`
@@ -647,6 +730,7 @@ const GuidePart = styled.div`
   }
 
   @media screen and (max-width: 992px) {
+    font-size: 12px;
     img {
       margin-right: 3px;
     }
@@ -741,6 +825,10 @@ const ValueBox = styled.div`
       display: none;
     }
   }
+
+  @media screen and (max-width: 400px) {
+    padding: 5px;
+  }
 `
 
 const BoxTitle = styled.div`
@@ -829,13 +917,7 @@ const MainTag = styled.div`
     `
       : `
       color: #fff;
-      background: ${
-        props.isETHFarm
-          ? `
-          #627EEA
-      `
-          : '#2775ca'
-      };
+      background: transparent;
     `}
 
   p {
@@ -1099,8 +1181,6 @@ export {
   HalfContent,
   FlexDiv,
   TotalValueFarm,
-  BackBtnRect,
-  BackText,
   RestContent,
   NewLabel,
   FlexTopDiv,
@@ -1121,6 +1201,14 @@ export {
   MainTag,
   MainDescText,
   InternalSection,
+  WelcomeBox,
+  WelcomeTop,
+  FarmerImage,
+  WelcomeContent,
+  WelcomeTitle,
+  WelcomeText,
+  WelcomeClose,
+  HeaderBadge,
   HalfInfo,
   InfoLabel,
   MobileChain,

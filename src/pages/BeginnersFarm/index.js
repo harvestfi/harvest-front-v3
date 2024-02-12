@@ -3,10 +3,11 @@ import { find, get, isEqual, isEmpty, isArray, isNaN } from 'lodash'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import ReactTooltip from 'react-tooltip'
-import { useHistory, useLocation, useParams } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { ethers } from 'ethers'
-import { BiLeftArrowAlt } from 'react-icons/bi'
+import { BiRightArrowAlt } from 'react-icons/bi'
+import { RxCross2 } from 'react-icons/rx'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
@@ -17,6 +18,7 @@ import Info from '../../assets/images/logos/earn/info.svg'
 import InfoBlack from '../../assets/images/logos/earn/help-circle.svg'
 import Safe from '../../assets/images/logos/beginners/safe.svg'
 import BarChart from '../../assets/images/logos/beginners/bar-chart-01.svg'
+import FarmerAvatar from '../../assets/images/logos/sidebar/connectavatar.png'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/AdvancedFarmComponents/Deposit/DepositBase'
 import DepositSelectToken from '../../components/AdvancedFarmComponents/Deposit/DepositSelectToken'
@@ -31,7 +33,6 @@ import {
   FARM_TOKEN_SYMBOL,
   FARM_WETH_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
-  ROUTES,
   SPECIAL_VAULTS,
   POOL_BALANCES_DECIMALS,
   MAX_BALANCES_DECIMALS,
@@ -52,8 +53,6 @@ import {
   getLastHarvestInfo,
 } from '../../utils'
 import {
-  BackBtnRect,
-  BackText,
   BigDiv,
   DetailView,
   FlexDiv,
@@ -77,6 +76,14 @@ import {
   ChainBack,
   MainTag,
   InternalSection,
+  WelcomeBox,
+  WelcomeTop,
+  FarmerImage,
+  WelcomeContent,
+  WelcomeTitle,
+  WelcomeText,
+  WelcomeClose,
+  HeaderBadge,
   HalfInfo,
   InfoLabel,
   DescInfo,
@@ -140,16 +147,13 @@ const getVaultValue = token => {
 }
 
 const BeginnersFarm = () => {
-  const { paramAddress } = useParams()
-  // Switch Tag (Deposit/Withdraw)
-  const [activeDepo, setActiveDepo] = useState(true)
+  const paramAddress = '0xc7548d8D7560f6679e369d0556C44Fe1EDdea3E9'
 
-  const { getPortalsBaseTokens, getPortalsBalances } = usePortals()
+  const { getPortalsBaseTokens, getPortalsBalances, SUPPORTED_TOKEN_LIST } = usePortals()
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const { push } = useHistory()
-  const history = useHistory()
 
   const { pathname } = useLocation()
 
@@ -159,24 +163,6 @@ const BeginnersFarm = () => {
   const { profitShareAPY } = useStats()
   /* eslint-disable global-require */
   const { tokens } = require('../../data')
-  /* eslint-enable global-require */
-
-  const handleNetworkChange = () => {
-    window.location.reload() // Reload the page when the network changes
-  }
-
-  useEffect(() => {
-    if (window.ethereum) {
-      // Listen for network changes
-      window.ethereum.on('chainChanged', handleNetworkChange)
-
-      return () => {
-        // Cleanup: Remove the event listener when the component unmounts
-        window.ethereum.removeListener('chainChanged', handleNetworkChange)
-      }
-    }
-    return () => {}
-  }, [])
 
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
@@ -304,6 +290,11 @@ const BeginnersFarm = () => {
     Number(token.usdPrice) ||
     Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price)
 
+  // Switch Tag (Deposit/Withdraw)
+  const [activeDepo, setActiveDepo] = useState(true)
+  const [welcomeMessage, setWelcomeMessage] = useState(true)
+  const [showBadge, setShowBadge] = useState(false)
+
   // Deposit
   const [depositStart, setDepositStart] = useState(false)
   const [selectTokenDepo, setSelectTokenDepo] = useState(false)
@@ -349,6 +340,28 @@ const BeginnersFarm = () => {
   const [depositedValueUSD, setDepositUsdValue] = useState(0)
   const [balanceAmount, setBalanceAmount] = useState(0)
   const firstUnderlyingBalance = useRef(true)
+
+  const handleNetworkChange = () => {
+    window.location.reload() // Reload the page when the network changes
+  }
+
+  useEffect(() => {
+    const queryParams = new URLSearchParams(window.location.search)
+    if (queryParams.has('utm_source') || queryParams.has('utm_medium')) {
+      setShowBadge(true) // Don't show the Badge if the parameters are present
+    }
+
+    if (window.ethereum) {
+      // Listen for network changes
+      window.ethereum.on('chainChanged', handleNetworkChange)
+
+      return () => {
+        // Cleanup: Remove the event listener when the component unmounts
+        window.ethereum.removeListener('chainChanged', handleNetworkChange)
+      }
+    }
+    return () => {}
+  }, [])
 
   useEffect(() => {
     const staked =
@@ -605,34 +618,57 @@ const BeginnersFarm = () => {
   }, [account, chain, balances, convertSuccess, useIFARM]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (supTokenList.length > 0) {
-      for (let i = 0; i < supTokenList.length; i += 1) {
-        if (id === 'USDbC_base') {
-          if (supTokenList[i].symbol === 'USDbC') {
-            setPickedTokenDepo(supTokenList[i])
-            setBalanceDepo(
-              fromWei(
-                supTokenList[i].balance ? supTokenList[i].balance : 0,
-                supTokenList[i].decimals,
-              ),
-            )
-            return
-          }
-        } else if (id === 'WETH_base') {
-          if (supTokenList[i].symbol === 'ETH') {
-            setPickedTokenDepo(supTokenList[i])
-            setBalanceDepo(
-              fromWei(
-                supTokenList[i].balance ? supTokenList[i].balance : 0,
-                supTokenList[i].decimals,
-              ),
-            )
-            return
-          }
-        }
+    if (balanceList.length > 0) {
+      let tokenToSet = null
+
+      // Check if defaultToken is present in the balanceList
+      const defaultTokenIndex = balanceList.findIndex(
+        balancedToken => balancedToken.symbol === defaultToken.symbol,
+      )
+      if (defaultTokenIndex !== -1) {
+        setPickedTokenDepo(balanceList[defaultTokenIndex])
+        setBalanceDepo(
+          fromWei(
+            balanceList[defaultTokenIndex].rawBalance
+              ? balanceList[defaultTokenIndex].rawBalance
+              : 0,
+            balanceList[defaultTokenIndex].decimals,
+            balanceList[defaultTokenIndex].decimals,
+          ),
+        )
+        return
+      }
+
+      // If defaultToken is not found, find the token with the highest USD value among those in the SUPPORTED_TOKEN_LIST and balanceList
+      const supportedTokens = balanceList.filter(
+        balancedToken => SUPPORTED_TOKEN_LIST[chain][balancedToken.symbol],
+      )
+      if (supportedTokens.length > 0) {
+        tokenToSet = supportedTokens.reduce((prevToken, currentToken) =>
+          prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
+        )
+      }
+
+      // If no token is found in SUPPORTED_TOKEN_LIST, set the token with the highest USD value in balanceList
+      if (!tokenToSet) {
+        tokenToSet = balanceList.reduce((prevToken, currentToken) =>
+          prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
+        )
+      }
+
+      // Set the pickedTokenDepo and balanceDepo based on the determined tokenToSet
+      if (tokenToSet) {
+        setPickedTokenDepo(tokenToSet)
+        setBalanceDepo(
+          fromWei(
+            tokenToSet.rawBalance ? tokenToSet.rawBalance : 0,
+            tokenToSet.decimals,
+            tokenToSet.decimals,
+          ),
+        )
       }
     }
-  }, [supTokenList, id])
+  }, [balanceList, supTokenList, defaultToken, chain, SUPPORTED_TOKEN_LIST])
 
   const { pageBackColor, fontColor, filterColor } = useThemeContext()
 
@@ -822,18 +858,10 @@ const BeginnersFarm = () => {
 
   return (
     <DetailView pageBackColor={pageBackColor} fontColor={fontColor}>
-      <TopInner isETHFarm={id === 'WETH_base'}>
+      <TopInner>
         <TopPart>
           <FlexTopDiv>
             <TopButton className="back-btn">
-              <BackBtnRect
-                onClick={() => {
-                  history.push(ROUTES.BEGINNERS)
-                }}
-              >
-                <BiLeftArrowAlt fontSize={16} />
-                <BackText>Back</BackText>
-              </BackBtnRect>
               {isMobile && (
                 <MobileChain>
                   <NetDetailItem>
@@ -860,6 +888,12 @@ const BeginnersFarm = () => {
             </FlexDiv>
             <GuideSection>
               <GuidePart>
+                <span role="img" aria-label="thumb" aria-labelledby="thumb">
+                  👍
+                </span>{' '}
+                For Beginners
+              </GuidePart>
+              <GuidePart>
                 {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
                 &nbsp;APY
               </GuidePart>
@@ -870,7 +904,6 @@ const BeginnersFarm = () => {
                 {mainTags.map((tag, i) => (
                   <MainTag
                     key={i}
-                    isETHFarm={id === 'WETH_base'}
                     active={activeMainTag === i ? 'true' : 'false'}
                     onClick={() => {
                       setActiveMainTag(i)
@@ -905,7 +938,158 @@ const BeginnersFarm = () => {
       <Inner>
         <BigDiv>
           <InternalSection>
-            {activeMainTag === 1 && (
+            {activeMainTag === 0 ? (
+              welcomeMessage &&
+              (isMobile ? (
+                <WelcomeBox>
+                  <WelcomeTop>
+                    <FarmerImage src={FarmerAvatar} alt="avatar" />
+                    <WelcomeTitle>
+                      Welcome, Farmer{' '}
+                      <span role="img" aria-label="hand" aria-labelledby="hand">
+                        👋
+                      </span>
+                    </WelcomeTitle>
+                    <WelcomeClose>
+                      <RxCross2 onClick={() => setWelcomeMessage(false)} />
+                    </WelcomeClose>
+                  </WelcomeTop>
+                  <WelcomeContent>
+                    {showBadge ? (
+                      <WelcomeText showBadge={showBadge}>
+                        Earn $10 in{' '}
+                        <a
+                          href="https://harvest-front-v3.netlify.app/advanced/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          FARM
+                        </a>{' '}
+                        into your wallet for converting at least $5 worth of ETH or USDC into
+                        interest-bearing fWETH_base. Get started by connecting wallet and selecting
+                        the input token. Next, click Preview & Convert where you will finalize the
+                        action. If you need any help, head over to our{' '}
+                        <a
+                          href="https://discord.gg/gzWAG3Wx7Y"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Discord channel
+                        </a>
+                        .
+                        <br />
+                        <a
+                          className="badge-body"
+                          href="/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <HeaderBadge>
+                            <div className="badge-text">
+                              *Only for participants of our Base Quest campaign
+                            </div>
+                            <div className="badge-btn">
+                              Read more
+                              <BiRightArrowAlt />
+                            </div>
+                          </HeaderBadge>
+                        </a>
+                      </WelcomeText>
+                    ) : (
+                      <WelcomeText showBadge={showBadge}>
+                        Begin yield farming in under two minutes by simply converting any token in
+                        your wallet into interest-bearing fWETH_base. Start by connecting your
+                        wallet, selecting the token you wish to convert, and then clicking on
+                        &apos;Preview & Convert&apos; to finalize the action. Ensure that you are
+                        connected to the Base Network to proceed with farming. If you need any help,
+                        head over to our{' '}
+                        <a
+                          href="https://discord.gg/gzWAG3Wx7Y"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Discord channel
+                        </a>
+                        .
+                      </WelcomeText>
+                    )}
+                  </WelcomeContent>
+                </WelcomeBox>
+              ) : (
+                <WelcomeBox>
+                  <FarmerImage src={FarmerAvatar} alt="avatar" />
+                  <WelcomeContent>
+                    <WelcomeTitle>
+                      Welcome, Farmer{' '}
+                      <span role="img" aria-label="hand" aria-labelledby="hand">
+                        👋
+                      </span>
+                    </WelcomeTitle>
+                    {showBadge ? (
+                      <WelcomeText showBadge={showBadge}>
+                        Earn $10 in{' '}
+                        <a
+                          href="https://harvest-front-v3.netlify.app/advanced/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          FARM
+                        </a>{' '}
+                        into your wallet for converting at least $5 worth of ETH or USDC into
+                        interest-bearing fWETH_base. Get started by connecting wallet and selecting
+                        the input token. Next, click Preview & Convert where you will finalize the
+                        action. If you need any help, head over to our{' '}
+                        <a
+                          href="https://discord.gg/gzWAG3Wx7Y"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Discord channel
+                        </a>
+                        .
+                        <br />
+                        <a
+                          className="badge-body"
+                          href="/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          <HeaderBadge>
+                            <div className="badge-text">
+                              *Only for participants of our Base Quest campaign
+                            </div>
+                            <div className="badge-btn">
+                              Read more
+                              <BiRightArrowAlt />
+                            </div>
+                          </HeaderBadge>
+                        </a>
+                      </WelcomeText>
+                    ) : (
+                      <WelcomeText showBadge={showBadge}>
+                        Begin yield farming in under two minutes by simply converting any token in
+                        your wallet into interest-bearing fWETH_base. Start by connecting your
+                        wallet, selecting the token you wish to convert, and then clicking on
+                        &apos;Preview & Convert&apos; to finalize the action. Ensure that you are
+                        connected to the Base Network to proceed with farming. If you need any help,
+                        head over to our{' '}
+                        <a
+                          href="https://discord.gg/gzWAG3Wx7Y"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Discord channel
+                        </a>
+                        .
+                      </WelcomeText>
+                    )}
+                  </WelcomeContent>
+                  <WelcomeClose>
+                    <RxCross2 onClick={() => setWelcomeMessage(false)} />
+                  </WelcomeClose>
+                </WelcomeBox>
+              ))
+            ) : (
               <BoxCover>
                 <ValueBox width="24%" className="balance-box">
                   <BoxTitle>APY</BoxTitle>
@@ -1082,117 +1266,60 @@ const BeginnersFarm = () => {
                       Source of Yield
                     </NewLabel>
                     <DescInfo>
-                      {id === 'WETH_base' ? (
-                        <div>
-                          <p>
-                            This farm supplies your{' '}
-                            <a
-                              href="https://basescan.org/token/0x4200000000000000000000000000000000000006"
-                              target="_blank"
-                              rel="noopener noreferrer"
+                      <div>
+                        <p>
+                          This farm supplies your{' '}
+                          <a
+                            href="https://basescan.org/token/0x4200000000000000000000000000000000000006"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            WETH
+                          </a>{' '}
+                          to{' '}
+                          <DescTooltip
+                            className="begin-desc"
+                            data-tip
+                            data-for="tooltip-begin-desc"
+                          >
+                            Compound
+                          </DescTooltip>{' '}
+                          <ReactTooltip
+                            id="tooltip-begin-desc"
+                            backgroundColor="#101828"
+                            borderColor="black"
+                            textColor="white"
+                          >
+                            <NewLabel
+                              size={isMobile ? '12px' : '12px'}
+                              height={isMobile ? '18px' : '18px'}
+                              weight="500"
+                              color="white"
                             >
-                              WETH
-                            </a>{' '}
-                            to{' '}
-                            <DescTooltip
-                              className="begin-desc"
-                              data-tip
-                              data-for="tooltip-begin-desc"
-                            >
-                              Compound
-                            </DescTooltip>{' '}
-                            <ReactTooltip
-                              id="tooltip-begin-desc"
-                              backgroundColor="#101828"
-                              borderColor="black"
-                              textColor="white"
-                            >
-                              <NewLabel
-                                size={isMobile ? '12px' : '12px'}
-                                height={isMobile ? '18px' : '18px'}
-                                weight="500"
-                                color="white"
-                              >
-                                The APY shown already considers the performance fee taken only from
-                                generated yield and not deposits
-                              </NewLabel>
-                            </ReactTooltip>{' '}
-                            Finance, a robust lending platform, which earns you yield from lending
-                            activities. On top of that, Harvest auto-compounds{' '}
-                            <a
-                              href="https://basescan.org/token/0x9e1028F5F1D5eDE59748FFceE5532509976840E0"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              COMP
-                            </a>{' '}
-                            rewards and converts them into more{' '}
-                            <a
-                              href="https://basescan.org/token/0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              WETH
-                            </a>
-                            .
-                          </p>
-                        </div>
-                      ) : (
-                        <div>
-                          <p>
-                            This farm supplies your{' '}
-                            <a
-                              href="https://basescan.org/token/0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              USDC
-                            </a>{' '}
-                            to{' '}
-                            <DescTooltip
-                              className="begin-desc"
-                              data-tip
-                              data-for="tooltip-begin-desc"
-                            >
-                              Compound
-                            </DescTooltip>{' '}
-                            <ReactTooltip
-                              id="tooltip-begin-desc"
-                              backgroundColor="#101828"
-                              borderColor="black"
-                              textColor="white"
-                            >
-                              <NewLabel
-                                size={isMobile ? '12px' : '12px'}
-                                height={isMobile ? '18px' : '18px'}
-                                weight="500"
-                                color="white"
-                              >
-                                The APY shown already considers the performance fee taken only from
-                                generated yield and not deposits
-                              </NewLabel>
-                            </ReactTooltip>
-                            Finance, a robust lending platform, which earns you yield from lending
-                            activities. On top of that, Harvest auto-compounds{' '}
-                            <a
-                              href="https://basescan.org/token/0x9e1028F5F1D5eDE59748FFceE5532509976840E0"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              COMP
-                            </a>{' '}
-                            rewards and converts them into more{' '}
-                            <a
-                              href="https://basescan.org/token/0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              USDC
-                            </a>
-                            .
-                          </p>
-                        </div>
-                      )}
+                              The APY shown already considers the performance fee taken only from
+                              generated yield and not deposits
+                            </NewLabel>
+                          </ReactTooltip>{' '}
+                          Finance, a robust lending platform, which earns you yield from lending
+                          activities. On top of that, Harvest auto-compounds{' '}
+                          <a
+                            href="https://basescan.org/token/0x9e1028F5F1D5eDE59748FFceE5532509976840E0"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            COMP
+                          </a>{' '}
+                          rewards and converts them into more{' '}
+                          <a
+                            href="https://basescan.org/token/0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            WETH
+                          </a>
+                          .
+                        </p>
+                      </div>
                     </DescInfo>
                     <FlexDiv className="address" padding="0 15px 20px">
                       {token.vaultAddress && (
@@ -1446,7 +1573,6 @@ const BeginnersFarm = () => {
                         convertMonthlyYieldUSD={convertMonthlyYieldUSD}
                         convertDailyYieldUSD={convertDailyYieldUSD}
                         minReceiveAmountString={minReceiveAmountString}
-                        minReceiveUsdAmount={minReceiveUsdAmount}
                         setMinReceiveAmountString={setMinReceiveAmountString}
                         setMinReceiveUsdAmount={setMinReceiveUsdAmount}
                       />
@@ -1498,7 +1624,6 @@ const BeginnersFarm = () => {
                         switchMethod={switchDepoMethod}
                         quoteValue={quoteValueWith}
                         setQuoteValue={setQuoteValueWith}
-                        useBeginnersFarm={useBeginnersFarm}
                         useIFARM={useIFARM}
                         setRevertFromInfoAmount={setRevertFromInfoAmount}
                         setRevertFromInfoUsdAmount={setRevertFromInfoUsdAmount}
@@ -1683,117 +1808,60 @@ const BeginnersFarm = () => {
                         Source of Yield
                       </NewLabel>
                       <DescInfo>
-                        {id === 'WETH_base' ? (
-                          <div>
-                            <p>
-                              This farm supplies your{' '}
-                              <a
-                                href="https://basescan.org/token/0x4200000000000000000000000000000000000006"
-                                target="_blank"
-                                rel="noopener noreferrer"
+                        <div>
+                          <p>
+                            This farm supplies your{' '}
+                            <a
+                              href="https://basescan.org/token/0x4200000000000000000000000000000000000006"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              WETH
+                            </a>{' '}
+                            to{' '}
+                            <DescTooltip
+                              className="begin-desc"
+                              data-tip
+                              data-for="tooltip-begin-desc"
+                            >
+                              Compound
+                            </DescTooltip>{' '}
+                            <ReactTooltip
+                              id="tooltip-begin-desc"
+                              backgroundColor="#101828"
+                              borderColor="black"
+                              textColor="white"
+                            >
+                              <NewLabel
+                                size={isMobile ? '12px' : '12px'}
+                                height={isMobile ? '18px' : '18px'}
+                                weight="500"
+                                color="white"
                               >
-                                WETH
-                              </a>{' '}
-                              to{' '}
-                              <DescTooltip
-                                className="begin-desc"
-                                data-tip
-                                data-for="tooltip-begin-desc"
-                              >
-                                Compound
-                              </DescTooltip>{' '}
-                              <ReactTooltip
-                                id="tooltip-begin-desc"
-                                backgroundColor="#101828"
-                                borderColor="black"
-                                textColor="white"
-                              >
-                                <NewLabel
-                                  size={isMobile ? '12px' : '12px'}
-                                  height={isMobile ? '18px' : '18px'}
-                                  weight="500"
-                                  color="white"
-                                >
-                                  The APY shown already considers the performance fee taken only
-                                  from generated yield and not deposits
-                                </NewLabel>
-                              </ReactTooltip>{' '}
-                              Finance, a robust lending platform, which earns you yield from lending
-                              activities. On top of that, Harvest auto-compounds{' '}
-                              <a
-                                href="https://basescan.org/token/0x9e1028F5F1D5eDE59748FFceE5532509976840E0"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                COMP
-                              </a>{' '}
-                              rewards and converts them into more{' '}
-                              <a
-                                href="https://basescan.org/token/0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                WETH
-                              </a>
-                              .
-                            </p>
-                          </div>
-                        ) : (
-                          <div>
-                            <p>
-                              This farm supplies your{' '}
-                              <a
-                                href="https://basescan.org/token/0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                USDC
-                              </a>{' '}
-                              to{' '}
-                              <DescTooltip
-                                className="begin-desc"
-                                data-tip
-                                data-for="tooltip-begin-desc"
-                              >
-                                Compound
-                              </DescTooltip>{' '}
-                              <ReactTooltip
-                                id="tooltip-begin-desc"
-                                backgroundColor="#101828"
-                                borderColor="black"
-                                textColor="white"
-                              >
-                                <NewLabel
-                                  size={isMobile ? '12px' : '12px'}
-                                  height={isMobile ? '18px' : '18px'}
-                                  weight="500"
-                                  color="white"
-                                >
-                                  The APY shown already considers the performance fee taken only
-                                  from generated yield and not deposits
-                                </NewLabel>
-                              </ReactTooltip>{' '}
-                              Finance, a robust lending platform, which earns you yield from lending
-                              activities. On top of that, Harvest auto-compounds{' '}
-                              <a
-                                href="https://basescan.org/token/0x9e1028F5F1D5eDE59748FFceE5532509976840E0"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                COMP
-                              </a>{' '}
-                              rewards and converts them into more{' '}
-                              <a
-                                href="https://basescan.org/token/0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                USDC
-                              </a>
-                              .
-                            </p>
-                          </div>
-                        )}
+                                The APY shown already considers the performance fee taken only from
+                                generated yield and not deposits
+                              </NewLabel>
+                            </ReactTooltip>{' '}
+                            Finance, a robust lending platform, which earns you yield from lending
+                            activities. On top of that, Harvest auto-compounds{' '}
+                            <a
+                              href="https://basescan.org/token/0x9e1028F5F1D5eDE59748FFceE5532509976840E0"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              COMP
+                            </a>{' '}
+                            rewards and converts them into more{' '}
+                            <a
+                              href="https://basescan.org/token/0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              WETH
+                            </a>
+                            .
+                          </p>
+                        </div>
                       </DescInfo>
                       <FlexDiv className="address" padding="0 15px 20px">
                         {token.vaultAddress && (

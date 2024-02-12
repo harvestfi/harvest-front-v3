@@ -16,6 +16,7 @@ import Diamond from '../../assets/images/logos/dashboard/diamond-01.svg'
 import Sort from '../../assets/images/logos/dashboard/sort.svg'
 import File from '../../assets/images/logos/dashboard/file-02.svg'
 import MobileFile from '../../assets/images/logos/dashboard/file-01.svg'
+import ConnectDisableIcon from '../../assets/images/logos/sidebar/connect-disable.svg'
 import ListItem from '../../components/DashboardComponents/ListItem'
 import TotalValue from '../../components/TotalValue'
 import {
@@ -54,6 +55,8 @@ import {
   EmptyInfo,
   EmptyPanel,
   ExploreFarm,
+  ExploreContent,
+  ExploreTitle,
   FlexDiv,
   Header,
   Inner,
@@ -68,6 +71,7 @@ import {
   Col,
   ContentInner,
   TableContent,
+  ConnectButtonStyle,
 } from './style'
 
 const getChainIcon = chain => {
@@ -137,8 +141,8 @@ const getTokenPriceFromApi = async tokenID => {
 
 const Portfolio = () => {
   const { push } = useHistory()
-  const { connected, account, balances, getWalletBalances } = useWallet()
-  const { userStats, fetchUserPoolStats, totalPools } = usePools()
+  const { connected, connectAction, account, balances, getWalletBalances } = useWallet()
+  const { userStats, fetchUserPoolStats, totalPools, disableWallet } = usePools()
   const { profitShareAPY } = useStats()
   const { vaultsData, loadingVaults, farmingBalances, getFarmingBalances } = useVaults()
   /* eslint-disable global-require */
@@ -765,7 +769,7 @@ const Portfolio = () => {
                 <Col />
               </Column>
             </Header>
-            {connected || farmTokenList.length > 0 ? (
+            {connected && farmTokenList.length > 0 ? (
               <>
                 {farmTokenList.map((el, i) => {
                   const info = farmTokenList[i]
@@ -1152,41 +1156,73 @@ const Portfolio = () => {
                 })}
               </>
             ) : (
-              <>
-                <EmptyPanel borderColor={borderColor}>
+              <EmptyPanel borderColor={borderColor}>
+                {connected ? (
                   <EmptyInfo weight={500} size={14} height={20} color="#475467">
                     You&apos;re not farming anywhere. Let&apos;s put your assets to work!
                   </EmptyInfo>
-
-                  <EmptyInfo weight={500} size={16} height={21} marginTop="15px">
-                    <ExploreFarm
-                      backColor="#15b088"
-                      hoverColor="#2ccda4"
-                      activeColor="#4fdfbb"
-                      fontColor="#fff"
+                ) : (
+                  <>
+                    <EmptyInfo weight={500} size={14} height={20} color="#475467">
+                      Connect wallet to see your positions.
+                    </EmptyInfo>
+                    <ConnectButtonStyle
+                      color="connectwallet"
                       onClick={() => {
-                        push(ROUTES.BEGINNERS)
+                        connectAction()
                       }}
+                      minWidth="190px"
+                      bordercolor={fontColor}
+                      disabled={disableWallet}
                     >
-                      Farms for Beginners
-                    </ExploreFarm>
-                    <ExploreFarm
-                      backColor="#F2F5FF"
-                      hoverColor="#e8edff"
-                      activeColor="#e0e7ff"
-                      fontColor="#000"
-                      onClick={() => {
-                        push(ROUTES.ADVANCED)
-                      }}
-                    >
-                      Advanced Farms
-                    </ExploreFarm>
-                  </EmptyInfo>
-                </EmptyPanel>
-              </>
+                      <img src={ConnectDisableIcon} className="connect-wallet" alt="" />
+                      Connect Wallet
+                    </ConnectButtonStyle>
+                  </>
+                )}
+              </EmptyPanel>
             )}
           </TableContent>
         </TransactionDetails>
+        {connected && farmTokenList.length > 0 ? (
+          <></>
+        ) : (
+          <EmptyInfo weight={500} size={16} height={21} marginTop="25px">
+            <ExploreFarm
+              bgImage="first"
+              onClick={() => {
+                push(ROUTES.BEGINNERSFARM)
+              }}
+            >
+              <ExploreContent>
+                <ExploreTitle>Farms for Beginners</ExploreTitle>
+                <div>Get started with a simple ETH farm on Base.</div>
+              </ExploreContent>
+            </ExploreFarm>
+            <ExploreFarm
+              bgImage="second"
+              onClick={() => {
+                push(ROUTES.TUTORIAL)
+              }}
+            >
+              <ExploreContent>
+                <ExploreTitle>New to Crypto Farming?</ExploreTitle>
+                <div>Learn how to earn yield.</div>
+              </ExploreContent>
+            </ExploreFarm>
+            <ExploreFarm
+              bgImage="third"
+              onClick={() => {
+                push(ROUTES.ADVANCED)
+              }}
+            >
+              <ExploreContent>
+                <ExploreTitle>Advanced Farms</ExploreTitle>
+                <div>Over 100 farms to explore.</div>
+              </ExploreContent>
+            </ExploreFarm>
+          </EmptyInfo>
+        )}
       </Inner>
     </Container>
   )

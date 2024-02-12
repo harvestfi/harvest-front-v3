@@ -1,6 +1,9 @@
 import styled from 'styled-components'
 import UsdIcon from '../../assets/images/ui/usd-port.svg'
 import TokensIcon from '../../assets/images/ui/tokens-port.svg'
+import BoxBgOne from '../../assets/images/logos/dashboard/box-bg-1.png'
+import BoxBgTwo from '../../assets/images/logos/dashboard/box-bg-2.png'
+import BoxBgThree from '../../assets/images/logos/dashboard/box-bg-3.svg'
 
 const Container = styled.div`
   width: 100%;
@@ -172,8 +175,8 @@ const FarmPic = styled.img`
 `
 
 const EmptyPanel = styled.div`
-  padding-top: 15%;
-  padding-bottom: 15%;
+  padding-top: 12%;
+  padding-bottom: 12%;
   border-radius: 5px;
   border-right: 1px solid ${props => props.borderColor};
   border-bottom: 1px solid ${props => props.borderColor};
@@ -223,40 +226,120 @@ const EmptyInfo = styled.div`
   display: flex;
   justify-content: center;
   text-align: center;
-  gap: 10px;
+  gap: 23px;
   @media screen and (max-width: 992px) {
     display: flex;
     justify-content: center;
+    flex-flow: column;
     font-size: 10px;
     line-height: 18px;
   }
 `
 
-const ExploreFarm = styled.button`
-  background: ${props => props.backColor};
-  border-radius: 8px;
-  border: none;
-  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-  color: ${props => props.fontColor};
-  padding: 16px 18px;
-  font-weight: 600;
+const ConnectButtonStyle = styled.button`
   font-size: 16px;
-  line-height: 24px;
+  line-height: 20px;
+  font-weight: 600;
   display: flex;
-  align-self: center;
+  justify-content: center;
+  margin: 25px auto;
+  width: 250px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #d0d5dd;
+  color: #344054;
+  box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
+  cursor: pointer;
+
+  ${props =>
+    props.connected
+      ? `
+      padding: 7px 45px 7px 11px;
+      filter: drop-shadow(0px 4px 52px rgba(0, 0, 0, 0.25));
+
+      &:hover {
+        background: #E6F8EB;
+      }
+    `
+      : `
+      padding: 15px 0px 15px 0px;
+    `}
 
   &:hover {
-    background: ${props => props.hoverColor};
+    box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05), 0px 0px 0px 4px #f2f4f7;
+    img.connect-wallet {
+      filter: brightness(0) saturate(100%) invert(69%) sepia(55%) saturate(4720%) hue-rotate(110deg)
+        brightness(91%) contrast(86%);
+    }
   }
 
-  &:active {
-    background: ${props => props.activeColor};
+  img.connect-wallet {
+    margin: auto 25px auto 0px;
   }
+
+  @media screen and (max-width: 992px) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    ${props =>
+      props.connected
+        ? `
+      background: none;
+      color: ${props.fontcolor};
+      font-size: 11px;
+      padding: 2px 16px 2px 7px;
+      border: 1px solid ${props.bordercolor};
+      `
+        : `
+      padding: 10px 11px;
+      font-size: 13px;
+      `}
+
+    img.connect-wallet {
+      margin-right: 15px;
+      width: 14px;
+      height: 14px;
+    }
+  }
+`
+
+const ExploreFarm = styled.div`
+  background-image: url(${props =>
+    props.bgImage === 'first' ? BoxBgOne : props.bgImage === 'second' ? BoxBgTwo : BoxBgThree});
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100%;
+  height: 175px;
+  border-radius: 12.18px;
+  border: none;
+  box-shadow: 0px 4.06px 4.06px -2.03px rgba(16, 24, 40, 0.03),
+    0px 10.15px 12.18px -2.03px rgba(16, 24, 40, 0.08);
+  color: #fff;
+  padding: 0px 25px;
+  font-weight: 400;
+  font-size: 15px;
+  line-height: 14px;
+  display: flex;
+  align-self: center;
+  cursor: pointer;
 
   @media screen and (max-width: 992px) {
     padding: 8px 13px;
     font-size: 12px;
   }
+`
+
+const ExploreContent = styled.div`
+  margin: auto 0px;
+  text-align: left;
+`
+
+const ExploreTitle = styled.div`
+  font-weight: 600;
+  font-size: 21px;
+  line-height: 20px;
+  padding-bottom: 10px;
 `
 
 const Content = styled.div`
@@ -754,6 +837,8 @@ export {
   EmptyInfo,
   EmptyImg,
   ExploreFarm,
+  ExploreContent,
+  ExploreTitle,
   Content,
   ThemeMode,
   Div,
@@ -768,4 +853,5 @@ export {
   TableContent,
   DescInfo,
   NewLabel,
+  ConnectButtonStyle,
 }

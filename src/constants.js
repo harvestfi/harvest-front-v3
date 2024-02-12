@@ -16,12 +16,10 @@ export const SOCIAL_LINKS = {
 }
 
 export const ROUTES = {
-  HOME: '/',
+  PORTFOLIO: '/',
   TUTORIAL: '/get-started',
-  BEGINNERS: '/beginners',
   COLLABORATIONS: '/collaborations',
   ADVANCED: '/farm',
-  PORTFOLIO: '/portfolio',
   ANALYTIC: '/analytics',
   DOC: '/doc',
   FAQ: '/faq',
@@ -29,7 +27,7 @@ export const ROUTES = {
   CAMELOT: '/camelot',
   WIDODETAIL: '/:network/:paramAddress',
   ADVANCEDFARM: '/advanced/:network/:paramAddress',
-  BEGINNERSFARM: '/beginner/:paramAddress',
+  BEGINNERSFARM: '/beginners',
   CHARTS: '/charts',
   WORK: '/work',
   POOL: '/pool',

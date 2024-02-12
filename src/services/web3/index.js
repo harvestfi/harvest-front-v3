@@ -63,7 +63,7 @@ export const fromWei = (wei, decimals, decimalsToDisplay = 2, format = false) =>
       .toFixed(decimalsToDisplay)
 
     if (format) {
-      result = parseFloat(result).toFixed(decimalsToDisplay)
+      result = parseFloat(result)
     }
   }
   return result
