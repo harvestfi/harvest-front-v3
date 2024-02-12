@@ -136,7 +136,6 @@ const DepositBase = ({
       account &&
       pickedToken.symbol !== 'Select Token' &&
       !new BigNumber(amount).isEqualTo(0) &&
-      new BigNumber(amount).isLessThan(new BigNumber(pickedToken.rawBalance)) &&
       curChain === tokenChain &&
       balanceList.length !== 0
     ) {
