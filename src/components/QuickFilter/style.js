@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
-import HoverBack from '../../assets/images/logos/camelot/hover_filter.svg'
+import HoverBack from '../../assets/images/logos/farm/hover_filter.svg'
 
 const QuickFilterContainer = styled.div`
   display: flex;

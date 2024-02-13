@@ -5,7 +5,6 @@ import Tutorial from './pages/Tutorial'
 import BeginnersFarm from './pages/BeginnersFarm'
 import Portfolio from './pages/Portfolio'
 import Farm from './pages/Farm'
-import Camelot from './pages/Camelot'
 import Analytic from './pages/Analytic'
 import FAQ from './pages/FAQ'
 import Sidebar from './components/Sidebar'
@@ -82,7 +81,6 @@ const App = () => (
           <Route path={ROUTES.ADVANCEDFARM} component={AdvancedFarm} />
           <Route path={ROUTES.WIDODETAIL} component={WidoDetail} />
           <Route path={ROUTES.FAQ} component={FAQ} />
-          <Route exact path={ROUTES.CAMELOT} component={Camelot} />
           <Route exact path={ROUTES.CHARTS} component={Charts} />
         </Switch>
       </Body>

@@ -18,13 +18,10 @@ export const SOCIAL_LINKS = {
 export const ROUTES = {
   PORTFOLIO: '/',
   TUTORIAL: '/get-started',
-  COLLABORATIONS: '/collaborations',
   ADVANCED: '/farm',
   ANALYTIC: '/analytics',
   DOC: '/doc',
   FAQ: '/faq',
-  GRAIN: '/grain',
-  CAMELOT: '/camelot',
   WIDODETAIL: '/:network/:paramAddress',
   ADVANCEDFARM: '/advanced/:network/:paramAddress',
   BEGINNERSFARM: '/beginners',
