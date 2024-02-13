@@ -5,7 +5,7 @@ import { get, round } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import { toast } from 'react-toastify'
 import ReactTooltip from 'react-tooltip'
-import DropDownIcon from '../../../../assets/images/logos/wido/drop-down.svg'
+import DropDownIcon from '../../../../assets/images/logos/advancedfarm/drop-down.svg'
 // import WalletIcon from '../../../../assets/images/logos/beginners/wallet-in-button.svg'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
@@ -26,7 +26,9 @@ import {
   BalanceInfo,
   BaseWidoDiv,
   DepoTitle,
+  TokenInput,
   TokenAmount,
+  // TokenUSDAmount,
   TokenInfo,
   TokenSelect,
   NewLabel,
@@ -76,6 +78,7 @@ const DepositBase = ({
   useBeginnersFarm,
   setFromInfoAmount,
   setFromInfoUsdAmount,
+  // fromInfoUsdAmount,
   convertMonthlyYieldUSD,
   convertDailyYieldUSD,
   minReceiveAmountString,
@@ -346,7 +349,10 @@ const DepositBase = ({
             >
               Amount to convert
             </NewLabel>
-            <TokenAmount type="text" value={inputAmount} onChange={onInputBalance} />
+            <TokenInput>
+              <TokenAmount type="text" value={inputAmount} onChange={onInputBalance} />
+              {/* <TokenUSDAmount>≈$5555.55</TokenUSDAmount> */}
+            </TokenInput>
           </AmountSection>
           <DepositTokenSection>
             <NewLabel

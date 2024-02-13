@@ -160,6 +160,10 @@ const TokenInfo = styled.div`
   justify-content: space-between;
 `
 
+const TokenInput = styled.div`
+  position: relative;
+`
+
 const TokenAmount = styled.input`
   font-weight: 600;
   font-size: 14px;
@@ -181,6 +185,25 @@ const TokenAmount = styled.input`
     -webkit-appearance: none;
     -moz-appearance: textfield;
     margin: 0;
+  }
+`
+
+const TokenUSDAmount = styled.div`
+  position: absolute;
+  right: 13px;
+  bottom: 15px;
+  font-size: 10px;
+
+  @media screen and (max-width: 1600px) {
+    bottom: 0px;
+  }
+
+  @media screen and (max-width: 992px) {
+    bottom: 15px;
+  }
+
+  @media screen and (max-width: 500px) {
+    bottom: 0px;
   }
 `
 
@@ -419,7 +442,9 @@ const DepositTokenSection = styled.div`
 export {
   BaseWidoDiv,
   NewLabel,
+  TokenInput,
   TokenAmount,
+  TokenUSDAmount,
   TokenInfo,
   TokenSelect,
   BalanceInfo,
