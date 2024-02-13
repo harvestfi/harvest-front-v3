@@ -22,7 +22,6 @@ export const ROUTES = {
   ANALYTIC: '/analytics',
   DOC: '/doc',
   FAQ: '/faq',
-  WIDODETAIL: '/:network/:paramAddress',
   ADVANCEDFARM: '/advanced/:network/:paramAddress',
   BEGINNERSFARM: '/beginners',
   CHARTS: '/charts',
