@@ -410,7 +410,7 @@ const DepositBase = ({
               weight="600"
               color="#344054"
             >
-              Insufficient {pickedToken.symbol} balance on your wallet
+              Insufficient {pickedToken.symbol} balance in your wallet
             </NewLabel>
           </NewLabel>
           <div>
