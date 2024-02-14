@@ -78,6 +78,7 @@ const DepositBase = ({
   useBeginnersFarm,
   setFromInfoAmount,
   setFromInfoUsdAmount,
+  fromInfoUsdAmount,
   convertMonthlyYieldUSD,
   convertDailyYieldUSD,
   minReceiveAmountString,
@@ -111,7 +112,6 @@ const DepositBase = ({
   const [depositName, setDepositName] = useState('Preview & Convert')
   const [showWarning, setShowWarning] = useState(false)
   // const [showDepositIcon, setShowDepositIcon] = useState(true)
-  const [inputUsdAmount, setInputUsdAmount] = useState(0)
   const amount = toWei(inputAmount, pickedToken.decimals, 0)
 
   useEffect(() => {
@@ -286,13 +286,6 @@ const DepositBase = ({
     setInputAmount(inputValue)
   }
 
-  useEffect(() => {
-    if (pickedToken.usdPrice) {
-      const inputedAmountUSD = pickedToken.usdPrice * new BigNumber(inputAmount)
-      setInputUsdAmount(inputedAmountUSD)
-    }
-  }, [pickedToken, inputAmount])
-
   const mainTags = [
     { name: 'Convert', img: ArrowDown },
     { name: 'Revert', img: ArrowUp },
@@ -361,12 +354,12 @@ const DepositBase = ({
               <TokenUSDAmount>
                 {inputAmount === '0' || inputAmount === '' ? (
                   '$0'
-                ) : inputUsdAmount === 0 ? (
+                ) : fromInfoUsdAmount === '' ? (
                   <TokenInfo>
                     <AnimatedDots />
                   </TokenInfo>
                 ) : (
-                  `≈${inputUsdAmount}`
+                  `≈${fromInfoUsdAmount}`
                 )}
               </TokenUSDAmount>
             </TokenInput>
