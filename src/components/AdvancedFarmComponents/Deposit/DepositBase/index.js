@@ -145,15 +145,19 @@ const DepositBase = ({
             minReceiveAmount = '',
             minReceiveUsd = '',
             curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol)
+          curToken = curToken[0]
           const fromToken = pickedToken.address
           const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
+          const overBalance = new BigNumber(amount).isGreaterThan(
+            new BigNumber(curToken.rawBalance),
+          )
           const portalsEstimate = await getPortalsEstimate({
             chainId,
             tokenIn: fromToken,
             inputAmount: amount,
             tokenOut: toToken,
             slippage,
-            sender: account,
+            sender: overBalance ? null : account,
           })
 
           if (Object.keys(portalsEstimate).length === 0)
@@ -170,7 +174,6 @@ const DepositBase = ({
             outputTokenDecimals: portalsEstimate.outputTokenDecimals,
           }
 
-          curToken = curToken[0]
           if (curToken) {
             fromInfoValue = fromWei(
               quoteResult.fromTokenAmount,
