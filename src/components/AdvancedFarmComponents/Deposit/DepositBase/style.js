@@ -6,7 +6,7 @@ const BaseWidoDiv = styled.div`
   padding: 15px 15px 10px 15px;
 
   &:nth-child(2) {
-    padding: 10px 15px 15px 15px;
+    padding: 10px 15px 18px 15px;
     border-top: 1px solid #e3e3e3;
   }
 `
@@ -175,7 +175,7 @@ const TokenAmount = styled.input`
   background: #fff;
   border: 1px solid #d0d5dd;
   outline: 0;
-  padding: 10px 14px;
+  padding: 7px 14px 13px 14px;
   border-radius: 8px;
   color: #344054;
   transition: 0.25s;
@@ -190,21 +190,11 @@ const TokenAmount = styled.input`
 
 const TokenUSDAmount = styled.div`
   position: absolute;
-  right: 13px;
-  bottom: 15px;
+  left: 15px;
+  bottom: 3px;
   font-size: 10px;
-
-  @media screen and (max-width: 1600px) {
-    bottom: 0px;
-  }
-
-  @media screen and (max-width: 992px) {
-    bottom: 15px;
-  }
-
-  @media screen and (max-width: 500px) {
-    bottom: 0px;
-  }
+  color: #a19d98;
+  font-weight: 400;
 `
 
 const InfoIconCircle = styled.img`
@@ -252,7 +242,7 @@ const TokenSelect = styled.button`
 
 const BalanceInfo = styled.div`
   font-weight: 400;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 20px;
   color: #475467;
   margin-top: 5px;

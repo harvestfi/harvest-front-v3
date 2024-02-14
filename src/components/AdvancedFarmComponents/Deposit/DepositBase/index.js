@@ -28,7 +28,7 @@ import {
   DepoTitle,
   TokenInput,
   TokenAmount,
-  // TokenUSDAmount,
+  TokenUSDAmount,
   TokenInfo,
   TokenSelect,
   NewLabel,
@@ -78,7 +78,7 @@ const DepositBase = ({
   useBeginnersFarm,
   setFromInfoAmount,
   setFromInfoUsdAmount,
-  // fromInfoUsdAmount,
+  fromInfoUsdAmount,
   convertMonthlyYieldUSD,
   convertDailyYieldUSD,
   minReceiveAmountString,
@@ -351,7 +351,17 @@ const DepositBase = ({
             </NewLabel>
             <TokenInput>
               <TokenAmount type="text" value={inputAmount} onChange={onInputBalance} />
-              {/* <TokenUSDAmount>≈$5555.55</TokenUSDAmount> */}
+              <TokenUSDAmount>
+                {inputAmount === '0' || inputAmount === '' ? (
+                  '$0'
+                ) : fromInfoUsdAmount === '' ? (
+                  <TokenInfo>
+                    <AnimatedDots />
+                  </TokenInfo>
+                ) : (
+                  `≈${fromInfoUsdAmount}`
+                )}
+              </TokenUSDAmount>
             </TokenInput>
           </AmountSection>
           <DepositTokenSection>

@@ -206,7 +206,7 @@ const TokenSelect = styled.button`
 
 const BalanceInfo = styled.div`
   font-weight: 400;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 20px;
   color: #475467;
   margin-top: 5px;
