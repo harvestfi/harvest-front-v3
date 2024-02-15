@@ -784,6 +784,7 @@ const AdvancedFarm = () => {
       }
     } else if (supTokenList.length !== 0) {
       setPickedTokenDepo(supTokenList.find(coin => coin.symbol === 'USDC'))
+      setBalanceDepo('0')
     }
   }, [balanceList, supTokenList, defaultToken, chain, SUPPORTED_TOKEN_LIST])
 

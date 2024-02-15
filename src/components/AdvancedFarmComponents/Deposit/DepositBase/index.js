@@ -265,7 +265,7 @@ const DepositBase = ({
         toast.error("Can't Deposit with Unsupported token!")
         return
       }
-      if (new BigNumber(inputAmount).isGreaterThan(balance)) {
+      if (new BigNumber(inputAmount).isGreaterThan(new BigNumber(balance))) {
         setShowWarning(true)
         return
       }

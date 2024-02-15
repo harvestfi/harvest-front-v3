@@ -147,7 +147,7 @@ const getVaultValue = token => {
 }
 
 const BeginnersFarm = () => {
-  const paramAddress = '0xc7548d8D7560f6679e369d0556C44Fe1EDdea3E9'
+  const paramAddress = '0x0B0193fAD49DE45F5E2B0A9f5D6Bc3BB7D281688'
 
   const { getPortalsBaseTokens, getPortalsBalances, SUPPORTED_TOKEN_LIST } = usePortals()
 
@@ -298,7 +298,7 @@ const BeginnersFarm = () => {
   // Deposit
   const [depositStart, setDepositStart] = useState(false)
   const [selectTokenDepo, setSelectTokenDepo] = useState(false)
-  const [balanceDepo, setBalanceDepo] = useState(0)
+  const [balanceDepo, setBalanceDepo] = useState('0')
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
   const [minReceiveUsdAmount, setMinReceiveUsdAmount] = useState('')
   const [inputAmountDepo, setInputAmountDepo] = useState(0)
@@ -671,6 +671,7 @@ const BeginnersFarm = () => {
       }
     } else if (supTokenList.length !== 0) {
       setPickedTokenDepo(supTokenList.find(coin => coin.symbol === 'USDC'))
+      setBalanceDepo('0')
     }
   }, [balanceList, supTokenList, defaultToken, chain, SUPPORTED_TOKEN_LIST])
 
@@ -970,9 +971,9 @@ const BeginnersFarm = () => {
                           FARM
                         </a>{' '}
                         into your wallet for converting at least $5 worth of ETH or USDC into
-                        interest-bearing fWETH_base. Get started by connecting wallet and selecting
-                        the input token. Next, click Preview & Convert where you will finalize the
-                        action. If you need any help, head over to our{' '}
+                        interest-bearing fmoonwell_WETH. Get started by connecting wallet and
+                        selecting the input token. Next, click Preview & Convert where you will
+                        finalize the action. If you need any help, head over to our{' '}
                         <a
                           href="https://discord.gg/gzWAG3Wx7Y"
                           target="_blank"
@@ -1002,7 +1003,7 @@ const BeginnersFarm = () => {
                     ) : (
                       <WelcomeText showBadge={showBadge}>
                         Begin yield farming in under two minutes by simply converting any token in
-                        your wallet into interest-bearing fWETH_base. Start by connecting your
+                        your wallet into interest-bearing fmoonwell_WETH. Start by connecting your
                         wallet, selecting the token you wish to convert, and then clicking on
                         &apos;Preview & Convert&apos; to finalize the action. Ensure that you are
                         connected to the Base Network to proceed with farming. If you need any help,
@@ -1040,9 +1041,9 @@ const BeginnersFarm = () => {
                           FARM
                         </a>{' '}
                         into your wallet for converting at least $5 worth of ETH or USDC into
-                        interest-bearing fWETH_base. Get started by connecting wallet and selecting
-                        the input token. Next, click Preview & Convert where you will finalize the
-                        action. If you need any help, head over to our{' '}
+                        interest-bearing fmoonwell_WETH. Get started by connecting wallet and
+                        selecting the input token. Next, click Preview & Convert where you will
+                        finalize the action. If you need any help, head over to our{' '}
                         <a
                           href="https://discord.gg/gzWAG3Wx7Y"
                           target="_blank"
@@ -1072,7 +1073,7 @@ const BeginnersFarm = () => {
                     ) : (
                       <WelcomeText showBadge={showBadge}>
                         Begin yield farming in under two minutes by simply converting any token in
-                        your wallet into interest-bearing fWETH_base. Start by connecting your
+                        your wallet into interest-bearing fmoonwell_WETH. Start by connecting your
                         wallet, selecting the token you wish to convert, and then clicking on
                         &apos;Preview & Convert&apos; to finalize the action. Ensure that you are
                         connected to the Base Network to proceed with farming. If you need any help,
