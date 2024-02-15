@@ -1205,7 +1205,7 @@ const Portfolio = () => {
               }}
             >
               <ExploreContent>
-                <ExploreTitle>Farms for Beginners</ExploreTitle>
+                <ExploreTitle>Farm for Beginners</ExploreTitle>
                 <div>Get started with a simple ETH farm on Base.</div>
               </ExploreContent>
             </ExploreFarm>
