@@ -366,7 +366,7 @@ const WithdrawBase = ({
                 fromWei(
                   useIFARM ? stakeAmountWei : lpTokenBalance,
                   fAssetPool.lpTokenData.decimals,
-                  Number(fAssetPool.lpTokenData.decimals) - 1,
+                  fAssetPool.lpTokenData.decimals,
                   false,
                 ),
               )
@@ -383,7 +383,7 @@ const WithdrawBase = ({
               fromWei(
                 lpTokenBalance,
                 fAssetPool.lpTokenData.decimals,
-                Number(fAssetPool.lpTokenData.decimals) - 1,
+                fAssetPool.lpTokenData.decimals,
                 false,
               )
             ) : (

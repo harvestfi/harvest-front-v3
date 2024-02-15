@@ -174,7 +174,7 @@ const StakeBase = ({
                   fromWei(
                     lpTokenBalance,
                     fAssetPool.lpTokenData.decimals,
-                    Number(fAssetPool.lpTokenData.decimals) - 1,
+                    fAssetPool.lpTokenData.decimals,
                     false,
                   ),
                 )
@@ -192,7 +192,7 @@ const StakeBase = ({
               fromWei(
                 lpTokenBalance,
                 fAssetPool.lpTokenData.decimals,
-                Number(fAssetPool.lpTokenData.decimals) - 1,
+                fAssetPool.lpTokenData.decimals,
                 false,
               ),
             )
@@ -207,7 +207,7 @@ const StakeBase = ({
             fromWei(
               lpTokenBalance,
               fAssetPool.lpTokenData.decimals,
-              Number(fAssetPool.lpTokenData.decimals) - 1,
+              fAssetPool.lpTokenData.decimals,
               false,
             )
           ) : (

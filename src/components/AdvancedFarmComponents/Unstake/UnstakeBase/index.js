@@ -214,7 +214,7 @@ const UnstakeBase = ({
                   fromWei(
                     totalStaked,
                     fAssetPool.lpTokenData.decimals,
-                    Number(fAssetPool.lpTokenData.decimals) - 1,
+                    fAssetPool.lpTokenData.decimals,
                     false,
                   ),
                 )
@@ -222,7 +222,7 @@ const UnstakeBase = ({
                   fromWei(
                     totalStaked,
                     fAssetPool.lpTokenData.decimals,
-                    Number(fAssetPool.lpTokenData.decimals) - 1,
+                    fAssetPool.lpTokenData.decimals,
                     false,
                   ),
                 ])
@@ -240,7 +240,7 @@ const UnstakeBase = ({
               fromWei(
                 totalStaked,
                 fAssetPool.lpTokenData.decimals,
-                Number(fAssetPool.lpTokenData.decimals) - 1,
+                fAssetPool.lpTokenData.decimals,
                 false,
               ),
             )
@@ -248,7 +248,7 @@ const UnstakeBase = ({
               fromWei(
                 totalStaked,
                 fAssetPool.lpTokenData.decimals,
-                Number(fAssetPool.lpTokenData.decimals) - 1,
+                fAssetPool.lpTokenData.decimals,
                 false,
               ),
             ])
@@ -263,7 +263,7 @@ const UnstakeBase = ({
             fromWei(
               totalStaked,
               fAssetPool.lpTokenData.decimals,
-              Number(fAssetPool.lpTokenData.decimals) - 1,
+              fAssetPool.lpTokenData.decimals,
               false,
             )
           ) : (

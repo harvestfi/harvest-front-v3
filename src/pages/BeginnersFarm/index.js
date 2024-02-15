@@ -278,9 +278,7 @@ const BeginnersFarm = () => {
   const tempPricePerFullShare = useIFARM
     ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
     : get(token, `pricePerFullShare`, 0)
-  const pricePerFullShare = Number(
-    fromWei(tempPricePerFullShare, tokenDecimals, Number(tokenDecimals) - 1),
-  )
+  const pricePerFullShare = Number(fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals))
 
   const usdPrice =
     Number(token.vaultPrice) ||
