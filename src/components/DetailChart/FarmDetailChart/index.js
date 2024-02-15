@@ -34,7 +34,7 @@ const recommendLinks = [
 ]
 
 const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
-  const [clickedId, setClickedId] = useState(1)
+  const [clickedId, setClickedId] = useState(2)
   const [selectedState, setSelectedState] = useState('ALL')
 
   const { account } = useWallet()
