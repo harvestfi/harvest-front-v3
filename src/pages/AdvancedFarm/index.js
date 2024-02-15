@@ -366,7 +366,7 @@ const AdvancedFarm = () => {
   // Deposit
   const [depositStart, setDepositStart] = useState(false)
   const [selectTokenDepo, setSelectTokenDepo] = useState(false)
-  const [balanceDepo, setBalanceDepo] = useState(0)
+  const [balanceDepo, setBalanceDepo] = useState('0')
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
   const [inputAmountDepo, setInputAmountDepo] = useState('0')
   const [fromInfoAmount, setFromInfoAmount] = useState('')
@@ -782,6 +782,8 @@ const AdvancedFarm = () => {
           ),
         )
       }
+    } else if (supTokenList.length !== 0) {
+      setPickedTokenDepo(supTokenList.find(coin => coin.symbol === 'USDC'))
     }
   }, [balanceList, supTokenList, defaultToken, chain, SUPPORTED_TOKEN_LIST])
 
