@@ -299,7 +299,7 @@ const BeginnersFarm = () => {
   const [balanceDepo, setBalanceDepo] = useState('0')
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
   const [minReceiveUsdAmount, setMinReceiveUsdAmount] = useState('')
-  const [inputAmountDepo, setInputAmountDepo] = useState(0)
+  const [inputAmountDepo, setInputAmountDepo] = useState('0')
   const [partHeightDepo, setPartHeightDepo] = useState(null)
   const [fromInfoAmount, setFromInfoAmount] = useState('')
   const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('')
@@ -317,7 +317,7 @@ const BeginnersFarm = () => {
   const [revertFromInfoUsdAmount, setRevertFromInfoUsdAmount] = useState('')
   const [revertMinReceivedAmount, setRevertMinReceivedAmount] = useState('')
   const [revertedAmount, setRevertedAmount] = useState('')
-  const [unstakeInputValue, setUnstakeInputValue] = useState(0)
+  const [unstakeInputValue, setUnstakeInputValue] = useState('0')
 
   const [yieldDaily, setYieldDaily] = useState(0)
   const [yieldMonthly, setYieldMonthly] = useState(0)
@@ -579,7 +579,7 @@ const BeginnersFarm = () => {
           } else {
             setDefaultToken({})
           }
-          supList.shift()
+          // supList.shift()
           setSupTokenList(supList)
 
           const supNoBalanceList = []
