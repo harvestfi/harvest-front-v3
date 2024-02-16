@@ -499,8 +499,9 @@ const ActionsProvider = ({ children }) => {
             new BigNumber(lpTokenApprovedBalance),
           )
           if (!hasEnoughApprovedAmount) {
-            const amountToApprove =
-              new BigNumber(lpTokenBalance) - new BigNumber(lpTokenApprovedBalance)
+            const amountToApprove = new BigNumber(lpTokenBalance).minus(
+              new BigNumber(lpTokenApprovedBalance),
+            )
             if (!hasEnoughApprovedAmount && !hasDeniedRequest) {
               setPendingAction(ACTIONS.APPROVE_STAKE)
               hasDeniedRequest = await handleApproval(

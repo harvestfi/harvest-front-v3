@@ -164,7 +164,7 @@ const DepositStart = ({
         }
 
         if (!new BigNumber(allowanceCheck).gte(new BigNumber(amount))) {
-          const amountToApprove = new BigNumber(amount) - new BigNumber(allowanceCheck)
+          const amountToApprove = new BigNumber(amount).minus(new BigNumber(allowanceCheck))
           await approveZap(amountToApprove) // Approve for Zap
         }
         setProgressStep(2)
