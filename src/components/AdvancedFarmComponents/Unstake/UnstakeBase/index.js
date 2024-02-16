@@ -211,20 +211,24 @@ const UnstakeBase = ({
             onClick={() => {
               if (account) {
                 setInputAmount(
-                  fromWei(
-                    totalStaked,
-                    fAssetPool.lpTokenData.decimals,
-                    fAssetPool.lpTokenData.decimals,
-                    false,
-                  ),
+                  new BigNumber(
+                    fromWei(
+                      totalStaked,
+                      fAssetPool.lpTokenData.decimals,
+                      fAssetPool.lpTokenData.decimals,
+                      false,
+                    ),
+                  ).toString(),
                 )
                 setAmountsToExecute([
-                  fromWei(
-                    totalStaked,
-                    fAssetPool.lpTokenData.decimals,
-                    fAssetPool.lpTokenData.decimals,
-                    false,
-                  ),
+                  new BigNumber(
+                    fromWei(
+                      totalStaked,
+                      fAssetPool.lpTokenData.decimals,
+                      fAssetPool.lpTokenData.decimals,
+                      false,
+                    ),
+                  ).toString(),
                 ])
               }
             }}
@@ -237,20 +241,24 @@ const UnstakeBase = ({
         onClick={() => {
           if (account) {
             setInputAmount(
-              fromWei(
-                totalStaked,
-                fAssetPool.lpTokenData.decimals,
-                fAssetPool.lpTokenData.decimals,
-                false,
-              ),
+              new BigNumber(
+                fromWei(
+                  totalStaked,
+                  fAssetPool.lpTokenData.decimals,
+                  fAssetPool.lpTokenData.decimals,
+                  false,
+                ),
+              ).toString(),
             )
             setAmountsToExecute([
-              fromWei(
-                totalStaked,
-                fAssetPool.lpTokenData.decimals,
-                fAssetPool.lpTokenData.decimals,
-                false,
-              ),
+              new BigNumber(
+                fromWei(
+                  totalStaked,
+                  fAssetPool.lpTokenData.decimals,
+                  fAssetPool.lpTokenData.decimals,
+                  false,
+                ),
+              ).toString(),
             ])
           }
         }}
@@ -260,12 +268,14 @@ const UnstakeBase = ({
           {!connected ? (
             0
           ) : totalStaked ? (
-            fromWei(
-              totalStaked,
-              fAssetPool.lpTokenData.decimals,
-              fAssetPool.lpTokenData.decimals,
-              false,
-            )
+            new BigNumber(
+              fromWei(
+                totalStaked,
+                fAssetPool.lpTokenData.decimals,
+                fAssetPool.lpTokenData.decimals,
+                false,
+              ),
+            ).toString()
           ) : (
             <AnimatedDots />
           )}

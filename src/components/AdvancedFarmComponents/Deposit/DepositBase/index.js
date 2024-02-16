@@ -179,8 +179,8 @@ const DepositBase = ({
               quoteResult.fromTokenAmount,
               curToken.decimals,
               curToken.decimals,
-              true,
-            ).toString()
+              false,
+            )
 
             fromInfoUsdValue =
               quoteResult.fromTokenAmount === null
