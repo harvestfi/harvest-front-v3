@@ -175,12 +175,9 @@ const DepositBase = ({
           }
 
           if (curToken) {
-            fromInfoValue = fromWei(
-              quoteResult.fromTokenAmount,
-              curToken.decimals,
-              curToken.decimals,
-              false,
-            )
+            fromInfoValue = new BigNumber(
+              fromWei(quoteResult.fromTokenAmount, curToken.decimals, curToken.decimals, false),
+            ).toString()
 
             fromInfoUsdValue =
               quoteResult.fromTokenAmount === null
@@ -194,12 +191,14 @@ const DepositBase = ({
                     ) * quoteResult.fromTokenUsdPrice,
                     BEGINNERS_BALANCES_DECIMALS,
                   )
-            minReceiveAmount = fromWei(
-              quoteResult.minToTokenAmount,
-              quoteResult.outputTokenDecimals || token.data.lpTokenData.decimals,
-              quoteResult.outputTokenDecimals || token.data.lpTokenData.decimals,
-              false,
-            )
+            minReceiveAmount = new BigNumber(
+              fromWei(
+                quoteResult.minToTokenAmount,
+                quoteResult.outputTokenDecimals || token.data.lpTokenData.decimals,
+                quoteResult.outputTokenDecimals || token.data.lpTokenData.decimals,
+                false,
+              ),
+            ).toString()
             minReceiveUsd = formatNumberWido(
               parseFloat(minReceiveAmount) * toTokenDetail?.price,
               BEGINNERS_BALANCES_DECIMALS,

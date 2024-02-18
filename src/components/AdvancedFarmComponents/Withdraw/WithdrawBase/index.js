@@ -151,11 +151,13 @@ const WithdrawBase = ({
           }
           setQuoteValue(quoteResult)
 
-          fromInfoValue = fromWei(
-            quoteResult.fromTokenAmount,
-            useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
-            useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
-          )
+          fromInfoValue = new BigNumber(
+            fromWei(
+              quoteResult.fromTokenAmount,
+              useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
+              useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
+            ),
+          ).toString()
           fromInfoUsdValue =
             quoteResult.fromTokenAmount === null
               ? '0'
@@ -164,11 +166,9 @@ const WithdrawBase = ({
                   useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
                   useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
                 ) * quoteResult.fromTokenUsdPrice
-          minReceivedString = fromWei(
-            quoteResult.minToTokenAmount,
-            pickedToken.decimals,
-            pickedToken.decimals,
-          )
+          minReceivedString = new BigNumber(
+            fromWei(quoteResult.minToTokenAmount, pickedToken.decimals, pickedToken.decimals),
+          ).toString()
           setRevertFromInfoAmount(fromInfoValue)
           setRevertFromInfoUsdAmount(fromInfoUsdValue)
           setRevertMinReceivedAmount(minReceivedString)
