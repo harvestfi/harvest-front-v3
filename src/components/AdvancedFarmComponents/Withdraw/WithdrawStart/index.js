@@ -120,7 +120,7 @@ const WithdrawStart = ({
         const allowanceCheck = approval ? approval.allowance : 0
 
         if (!new BigNumber(allowanceCheck).gte(new BigNumber(unstakeBalance))) {
-          const amountToApprove = new BigNumber(unstakeBalance).minus(new BigNumber(allowanceCheck))
+          const amountToApprove = new BigNumber(unstakeBalance) - new BigNumber(allowanceCheck)
           await approveZap(amountToApprove) // Approve for Zap
         }
         setProgressStep(2)
