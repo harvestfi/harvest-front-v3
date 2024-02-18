@@ -491,6 +491,7 @@ const ActionsProvider = ({ children }) => {
       onFailureStake = () => {},
       setBStakeApprovalSuccess,
     ) => {
+      debugger
       let hasDeniedRequest = false
 
       if (poolData && Number(lpTokenBalance) > 0) {
