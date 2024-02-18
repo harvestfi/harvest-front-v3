@@ -491,7 +491,6 @@ const ActionsProvider = ({ children }) => {
       onFailureStake = () => {},
       setBStakeApprovalSuccess,
     ) => {
-      debugger
       let hasDeniedRequest = false
 
       if (poolData && Number(lpTokenBalance) > 0) {
@@ -499,10 +498,12 @@ const ActionsProvider = ({ children }) => {
           const hasEnoughApprovedAmount = new BigNumber(lpTokenBalance).isLessThanOrEqualTo(
             new BigNumber(lpTokenApprovedBalance),
           )
+          console.log('$$$$$$$$$$', hasEnoughApprovedAmount)
           if (!hasEnoughApprovedAmount) {
             const amountToApprove = new BigNumber(lpTokenBalance).minus(
               new BigNumber(lpTokenApprovedBalance),
             )
+            console.log('##############', amountToApprove)
             if (!hasEnoughApprovedAmount && !hasDeniedRequest) {
               setPendingAction(ACTIONS.APPROVE_STAKE)
               hasDeniedRequest = await handleApproval(
