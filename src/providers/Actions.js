@@ -50,7 +50,6 @@ const ActionsProvider = ({ children }) => {
       onSuccessApproval = () => {},
       onFailureApproval = () => {},
     ) => {
-      console.log('&&&&&&&&&&&&&', amountToApprove)
       const address = vaultAddress || tokens[tokenSymbol].vaultAddress
       try {
         if (poolData) {
@@ -499,16 +498,10 @@ const ActionsProvider = ({ children }) => {
           const hasEnoughApprovedAmount = new BigNumber(lpTokenBalance).isLessThanOrEqualTo(
             new BigNumber(lpTokenApprovedBalance),
           )
-          console.log('$$$$$$$$$$', hasEnoughApprovedAmount)
           if (!hasEnoughApprovedAmount) {
-            const amountToApprove = new BigNumber(lpTokenBalance).minus(
-              new BigNumber(lpTokenApprovedBalance),
-            )
-            console.log('##############', amountToApprove)
+            const amountToApprove = new BigNumber(lpTokenBalance).minus(lpTokenApprovedBalance)
             if (!hasEnoughApprovedAmount && !hasDeniedRequest) {
-            console.log('!!!!!!!!!!!!', hasEnoughApprovedAmount)
-            setPendingAction(ACTIONS.APPROVE_STAKE)
-            console.log('@@@@@@@@@@@@', hasDeniedRequest)
+              setPendingAction(ACTIONS.APPROVE_STAKE)
               hasDeniedRequest = await handleApproval(
                 account,
                 contracts,
