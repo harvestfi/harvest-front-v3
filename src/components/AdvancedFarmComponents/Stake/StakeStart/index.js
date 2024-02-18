@@ -71,6 +71,7 @@ const StakeStart = ({
   const { userStats, fetchUserPoolStats } = usePools()
 
   const onClickStake = async () => {
+    debugger
     if (progressStep === 0) {
       setStartSpinner(true)
       setStakeFailed(false)
