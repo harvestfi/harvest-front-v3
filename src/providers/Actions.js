@@ -50,6 +50,7 @@ const ActionsProvider = ({ children }) => {
       onSuccessApproval = () => {},
       onFailureApproval = () => {},
     ) => {
+      console.log('&&&&&&&&&&&&&', amountToApprove)
       const address = vaultAddress || tokens[tokenSymbol].vaultAddress
       try {
         if (poolData) {
@@ -505,7 +506,9 @@ const ActionsProvider = ({ children }) => {
             )
             console.log('##############', amountToApprove)
             if (!hasEnoughApprovedAmount && !hasDeniedRequest) {
-              setPendingAction(ACTIONS.APPROVE_STAKE)
+            console.log('!!!!!!!!!!!!', hasEnoughApprovedAmount)
+            setPendingAction(ACTIONS.APPROVE_STAKE)
+            console.log('@@@@@@@@@@@@', hasDeniedRequest)
               hasDeniedRequest = await handleApproval(
                 account,
                 contracts,
@@ -517,6 +520,7 @@ const ActionsProvider = ({ children }) => {
                 onSuccessApproval,
               )
             }
+            console.log('%%%%%%%%%%%%%', 'Success')
           } else {
             setBStakeApprovalSuccess(true)
           }
