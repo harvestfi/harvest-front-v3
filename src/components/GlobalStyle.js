@@ -496,37 +496,37 @@ html {
   }
 
   .modal-notification {
+    max-width: 605px;
     @media screen and (max-width: 576px) {
-      margin: unset;
       height: 100%;
+      margin: auto 24px;
     }
     .modal-content {
       border: none;
       border-radius: 12px;
 
-      @media screen and (max-width: 576px) {
-        position: absolute;
-        bottom: 0;
-        border-bottom-right-radius: 0px;
-        border-bottom-left-radius: 0px;
-      }
-
       .modal-header {
-        background: #FFB54F;
-        font-weight: 600;
-        font-size: 18px;
-        line-height: 28px;
-        text-align: center;
-        color: #FFFFFF;
-        justify-content: center;
-        padding: 24px;
+        padding: 24px 24px 4px 24px;
         border-top-left-radius: 12px;
         border-top-right-radius: 12px;
+        border-bottom: none;
+
+        div {
+          font-size: 18px;
+          color: #101828;
+          font-weight: 600;
+          line-height: 28px;
+        }
+
+        button {
+          font-size: 12px;
+          color: #667085;
+        }
       }
       .modal-body {
-        padding: 24px;
+        padding: 0px 24px 32px 24px;
         font-weight: 400;
-        font-size: 13px;
+        font-size: 14px;
         line-height: 20px;
         color: #475467;
       }
@@ -549,10 +549,11 @@ html {
       }
       .modal-footer {
         justify-content: center;
-        padding: 24px;
+        padding: 0px 24px 24px 24px;
+        border-top: none;
   
         .confirm {
-          background: #FFAE3E;
+          background: #15B088;
           box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
           border: none;
           color: white;

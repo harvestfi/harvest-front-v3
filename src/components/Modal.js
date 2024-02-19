@@ -9,7 +9,7 @@ const MainModal = ({ title, open, onClose, children, confirmationLabel }) => (
     aria-labelledby="contained-modal-title-vcenter"
     centered
   >
-    <Modal.Header>
+    <Modal.Header closeButton>
       <Modal.Title id="example-custom-modal-styling-title">{title}</Modal.Title>
     </Modal.Header>
     <Modal.Body>{children}</Modal.Body>
