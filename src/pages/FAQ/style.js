@@ -20,6 +20,7 @@ const FAQContainer = styled.div`
 
   @media screen and (max-width: 992px) {
     margin: auto;
+    padding-bottom: 150px;
   }
 `
 

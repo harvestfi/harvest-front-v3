@@ -20,11 +20,11 @@ const Counter = ({
   rewardTokenAddress,
 }) => {
   if (!!pool.autoStakePoolAddress && Number(totalStaked) <= 0) {
-    return 'Auto-Compounding'
+    return <span className="count-up-text">Auto-Compounding</span>
   }
 
   if (!pool.autoStakePoolAddress && Number(totalTokensEarned) <= 0) {
-    return '0.00000000'
+    return <span className="count-up-text">0.00000000</span>
   }
 
   const rewardToken = toArray(tokens).find(token => token.tokenAddress === rewardTokenAddress)
@@ -54,6 +54,7 @@ const Counter = ({
           delay={0}
           decimals={POOL_BALANCES_DECIMALS}
           duration={86400}
+          className="count-up-text"
         />
       )
     case pool.type === POOL_TYPES.PROFIT_SHARING && !!pool.autoStakePoolAddress:
@@ -67,6 +68,7 @@ const Counter = ({
           delay={0}
           decimals={POOL_BALANCES_DECIMALS}
           duration={86400}
+          className="count-up-text"
         />
       )
     case pool.finishTime > nowInSeconds && pool.type === POOL_TYPES.PROFIT_SHARING:
@@ -80,6 +82,7 @@ const Counter = ({
           delay={0}
           decimals={POOL_BALANCES_DECIMALS}
           duration={pool.finishTime - nowInSeconds}
+          className="count-up-text"
         />
       )
     default:
