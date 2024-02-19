@@ -1279,31 +1279,7 @@ const BeginnersFarm = () => {
                           >
                             WETH
                           </a>{' '}
-                          to{' '}
-                          <DescTooltip
-                            className="begin-desc"
-                            data-tip
-                            data-for="tooltip-begin-desc"
-                          >
-                            Moonwell
-                          </DescTooltip>{' '}
-                          <ReactTooltip
-                            id="tooltip-begin-desc"
-                            backgroundColor="#101828"
-                            borderColor="black"
-                            textColor="white"
-                          >
-                            <NewLabel
-                              size={isMobile ? '12px' : '12px'}
-                              height={isMobile ? '18px' : '18px'}
-                              weight="500"
-                              color="white"
-                            >
-                              The APY shown already considers the performance fee taken only from
-                              generated yield and not deposits
-                            </NewLabel>
-                          </ReactTooltip>{' '}
-                          , a robust lending platform, earning{' '}
+                          to Moonwell, a robust lending platform, earning{' '}
                           <a
                             href="https://basescan.org/token/0xFF8adeC2221f9f4D8dfbAFa6B9a297d17603493D"
                             target="_blank"
