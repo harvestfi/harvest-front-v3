@@ -409,7 +409,7 @@ const ApexChart = ({
         if (minValue === 0) {
           maxValue *= 1.1
         } else {
-          maxValue *= 1.01
+          maxValue += between / 5
         }
         // minValue = 0
       } else {

@@ -139,7 +139,7 @@ const WithdrawSelectToken = ({
                       height={isMobile ? '20px' : '20px'}
                       weight="400"
                     >
-                      Please connect wallet to see the list of available tokens to deposit.
+                      Please connect wallet to see the list of available tokens to convert.
                     </NewLabel>
                   </NewLabel>
                 </NewLabel>

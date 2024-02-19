@@ -227,6 +227,7 @@ const Portfolio = () => {
   const groupOfVaults = { ...vaultsData, ...poolVaults }
 
   const [farmTokenList, setFarmTokenList] = useState([])
+  const [noFarm, setNoFarm] = useState(false)
   const [totalDeposit, setTotalDeposit] = useState(0)
   const [totalRewards, setTotalRewards] = useState(0)
   const [totalYieldDaily, setTotalYieldDaily] = useState(0)
@@ -390,11 +391,7 @@ const Portfolio = () => {
             const tempPricePerFullShare = useIFARM
               ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
               : get(token, `pricePerFullShare`, 0)
-            const pricePerFullShare = fromWei(
-              tempPricePerFullShare,
-              tokenDecimals,
-              Number(tokenDecimals) - 1,
-            )
+            const pricePerFullShare = fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals)
             if (token) {
               usdPrice =
                 (symbol === FARM_TOKEN_SYMBOL
@@ -616,6 +613,9 @@ const Portfolio = () => {
         setTotalYieldMonthly(totalMonthlyYield)
         const sortedTokenList = orderBy(newStats, ['balance'], ['desc'])
         setFarmTokenList(sortedTokenList)
+        if (sortedTokenList.length === 0) {
+          setNoFarm(true)
+        }
       }
 
       getFarmTokenInfo()
@@ -1158,9 +1158,15 @@ const Portfolio = () => {
             ) : (
               <EmptyPanel borderColor={borderColor}>
                 {connected ? (
-                  <EmptyInfo weight={500} size={14} height={20} color="#475467">
-                    You&apos;re not farming anywhere. Let&apos;s put your assets to work!
-                  </EmptyInfo>
+                  !noFarm ? (
+                    <EmptyInfo weight={500} size={14} height={20} color="#475467">
+                      Syncing positions...
+                    </EmptyInfo>
+                  ) : (
+                    <EmptyInfo weight={500} size={14} height={20} color="#475467">
+                      You&apos;re not farming anywhere. Let&apos;s put your assets to work!
+                    </EmptyInfo>
+                  )
                 ) : (
                   <>
                     <EmptyInfo weight={500} size={14} height={20} color="#475467">
@@ -1195,7 +1201,7 @@ const Portfolio = () => {
               }}
             >
               <ExploreContent>
-                <ExploreTitle>Farms for Beginners</ExploreTitle>
+                <ExploreTitle>Farm for Beginners</ExploreTitle>
                 <div>Get started with a simple ETH farm on Base.</div>
               </ExploreContent>
             </ExploreFarm>

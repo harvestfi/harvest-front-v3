@@ -171,12 +171,14 @@ const StakeBase = ({
             onClick={() => {
               if (account) {
                 setInputAmount(
-                  fromWei(
-                    lpTokenBalance,
-                    fAssetPool.lpTokenData.decimals,
-                    Number(fAssetPool.lpTokenData.decimals) - 1,
-                    false,
-                  ),
+                  new BigNumber(
+                    fromWei(
+                      lpTokenBalance,
+                      fAssetPool.lpTokenData.decimals,
+                      fAssetPool.lpTokenData.decimals,
+                      false,
+                    ),
+                  ).toString(),
                 )
               }
             }}
@@ -189,12 +191,14 @@ const StakeBase = ({
         onClick={() => {
           if (account) {
             setInputAmount(
-              fromWei(
-                lpTokenBalance,
-                fAssetPool.lpTokenData.decimals,
-                Number(fAssetPool.lpTokenData.decimals) - 1,
-                false,
-              ),
+              new BigNumber(
+                fromWei(
+                  lpTokenBalance,
+                  fAssetPool.lpTokenData.decimals,
+                  fAssetPool.lpTokenData.decimals,
+                  false,
+                ),
+              ).toString(),
             )
           }
         }}
@@ -204,12 +208,14 @@ const StakeBase = ({
           {!connected ? (
             0
           ) : lpTokenBalance ? (
-            fromWei(
-              lpTokenBalance,
-              fAssetPool.lpTokenData.decimals,
-              Number(fAssetPool.lpTokenData.decimals) - 1,
-              false,
-            )
+            new BigNumber(
+              fromWei(
+                lpTokenBalance,
+                fAssetPool.lpTokenData.decimals,
+                fAssetPool.lpTokenData.decimals,
+                false,
+              ),
+            ).toString()
           ) : (
             <AnimatedDots />
           )}

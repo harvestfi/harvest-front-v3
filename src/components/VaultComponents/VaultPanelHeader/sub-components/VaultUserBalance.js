@@ -36,7 +36,7 @@ const VaultUserBalance = ({
   const tempPricePerFullShare = useIFARM
     ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
     : get(token, `pricePerFullShare`, 0)
-  const pricePerFullShare = fromWei(tempPricePerFullShare, tokenDecimals, Number(tokenDecimals) - 1)
+  const pricePerFullShare = fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals)
 
   useEffect(() => {
     let iFARMBalance

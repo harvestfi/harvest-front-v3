@@ -11,11 +11,7 @@ import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import ArrowDown from '../../../../assets/images/logos/beginners/arrow-narrow-down.svg'
 import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.svg'
 import HelpIcon from '../../../../assets/images/logos/beginners/help-circle.svg'
-import {
-  WIDO_EXTEND_DECIMALS,
-  IFARM_TOKEN_SYMBOL,
-  BEGINNERS_BALANCES_DECIMALS,
-} from '../../../../constants'
+import { IFARM_TOKEN_SYMBOL } from '../../../../constants'
 import { useVaults } from '../../../../providers/Vault'
 import { useWallet } from '../../../../providers/Wallet'
 import { fromWei, toWei } from '../../../../services/web3'
@@ -39,7 +35,7 @@ import {
   TokenSelectSection,
   SwitchTabTag,
 } from './style'
-import { isSpecialApp, formatNumberWido } from '../../../../utils'
+import { isSpecialApp } from '../../../../utils'
 import { usePortals } from '../../../../providers/Portals'
 
 const getChainName = chain => {
@@ -155,30 +151,24 @@ const WithdrawBase = ({
           }
           setQuoteValue(quoteResult)
 
-          fromInfoValue = formatNumberWido(
+          fromInfoValue = new BigNumber(
             fromWei(
               quoteResult.fromTokenAmount,
               useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
-              WIDO_EXTEND_DECIMALS,
-              true,
+              useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
             ),
-            WIDO_EXTEND_DECIMALS,
-          )
+          ).toString()
           fromInfoUsdValue =
             quoteResult.fromTokenAmount === null
               ? '0'
-              : formatNumberWido(
-                  fromWei(
-                    quoteResult.fromTokenAmount,
-                    useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
-                    WIDO_EXTEND_DECIMALS,
-                  ) * quoteResult.fromTokenUsdPrice,
-                  BEGINNERS_BALANCES_DECIMALS,
-                )
-          minReceivedString = formatNumberWido(
-            fromWei(quoteResult.minToTokenAmount, pickedToken.decimals, WIDO_EXTEND_DECIMALS),
-            WIDO_EXTEND_DECIMALS,
-          )
+              : fromWei(
+                  quoteResult.fromTokenAmount,
+                  useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
+                  useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
+                ) * quoteResult.fromTokenUsdPrice
+          minReceivedString = new BigNumber(
+            fromWei(quoteResult.minToTokenAmount, pickedToken.decimals, pickedToken.decimals),
+          ).toString()
           setRevertFromInfoAmount(fromInfoValue)
           setRevertFromInfoUsdAmount(fromInfoUsdValue)
           setRevertMinReceivedAmount(minReceivedString)
@@ -214,10 +204,7 @@ const WithdrawBase = ({
 
   useEffect(() => {
     const receiveString = quoteValue
-      ? formatNumberWido(
-          fromWei(quoteValue.toTokenAmount, pickedToken.decimals),
-          WIDO_EXTEND_DECIMALS,
-        )
+      ? fromWei(quoteValue.toTokenAmount, pickedToken.decimals, pickedToken.decimals)
       : ''
     setRevertedAmount(receiveString)
   }, [amountValue, quoteValue, pickedToken, pricePerFullShare, setRevertedAmount])
@@ -239,7 +226,7 @@ const WithdrawBase = ({
     const inputValue = e.currentTarget.value.replace(/,/g, '.')
     setUnstakeInputValue(inputValue)
     setUnstakeBalance(
-      toWei(e.currentTarget.value, useIFARM ? fAssetPool.lpTokenData.decimals : token.decimals),
+      toWei(inputValue, useIFARM ? fAssetPool.lpTokenData.decimals : token.decimals),
     )
   }
 
@@ -363,12 +350,14 @@ const WithdrawBase = ({
             if (account) {
               setUnstakeBalance(useIFARM ? stakeAmountWei : lpTokenBalance)
               setUnstakeInputValue(
-                fromWei(
-                  useIFARM ? stakeAmountWei : lpTokenBalance,
-                  fAssetPool.lpTokenData.decimals,
-                  Number(fAssetPool.lpTokenData.decimals) - 1,
-                  false,
-                ),
+                new BigNumber(
+                  fromWei(
+                    lpTokenBalance,
+                    fAssetPool.lpTokenData.decimals,
+                    fAssetPool.lpTokenData.decimals,
+                    false,
+                  ),
+                ).toString(),
               )
             }
           }}
@@ -380,12 +369,14 @@ const WithdrawBase = ({
             ) : useIFARM ? (
               stakedAmount || <AnimatedDots />
             ) : lpTokenBalance ? (
-              fromWei(
-                lpTokenBalance,
-                fAssetPool.lpTokenData.decimals,
-                Number(fAssetPool.lpTokenData.decimals) - 1,
-                false,
-              )
+              new BigNumber(
+                fromWei(
+                  lpTokenBalance,
+                  fAssetPool.lpTokenData.decimals,
+                  fAssetPool.lpTokenData.decimals,
+                  false,
+                ),
+              ).toString()
             ) : (
               <AnimatedDots />
             )}

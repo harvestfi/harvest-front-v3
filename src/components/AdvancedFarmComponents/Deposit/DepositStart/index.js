@@ -127,7 +127,7 @@ const DepositStart = ({
       ? fromWei(
           portalData.context?.outputAmount,
           token.decimals || token.data.lpTokenData.decimals,
-          Number(token.decimals || token.data.lpTokenData.decimals) - 1,
+          token.decimals || token.data.lpTokenData.decimals,
         )
       : ''
     const receiveUsdString = portalData ? portalData.context?.outputAmountUsd : ''

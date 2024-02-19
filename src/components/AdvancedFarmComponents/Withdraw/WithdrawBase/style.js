@@ -234,7 +234,7 @@ const AmountSection = styled.div`
 
 const BalanceInfo = styled.div`
   font-weight: 400;
-  font-size: 14px;
+  font-size: 12px;
   line-height: 20px;
   margin-top: 5px;
   cursor: pointer;

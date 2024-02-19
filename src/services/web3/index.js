@@ -4,7 +4,7 @@ import SafeAppsSDK from '@safe-global/safe-apps-sdk'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
 import mobile from 'is-mobile'
-import { get } from 'lodash'
+import { get, isNaN } from 'lodash'
 import Web3 from 'web3'
 import {
   ARBISCAN_URL,
@@ -51,21 +51,32 @@ export const getContract = contractName => {
 }
 
 export const fromWei = (wei, decimals, decimalsToDisplay = 2, format = false) => {
-  if (wei != null) {
-    wei = wei.toString()
-  }
-  const weiAmountInBN = new BigNumber(wei)
   let result = '0'
 
-  if (typeof decimals !== 'undefined' && weiAmountInBN.isGreaterThan(0)) {
-    result = weiAmountInBN
-      .div(new BigNumber(10).exponentiatedBy(decimals))
-      .toFixed(decimalsToDisplay)
+  try {
+    if (wei != null) {
+      const weiAmountInBN = new BigNumber(wei)
 
-    if (format) {
-      result = parseFloat(result)
+      if (!weiAmountInBN.isNaN() && weiAmountInBN.isGreaterThan(0)) {
+        // Ensure decimalsToDisplay is a valid number
+        const displayDecimals = parseInt(decimalsToDisplay, 10)
+        if (!isNaN(displayDecimals)) {
+          result = weiAmountInBN
+            .div(new BigNumber(10).exponentiatedBy(decimals))
+            .toFixed(displayDecimals)
+
+          if (format) {
+            result = parseFloat(result)
+          }
+        } else {
+          console.error('Invalid value for decimalsToDisplay:', decimalsToDisplay)
+        }
+      }
     }
+  } catch (error) {
+    console.error('Error converting wei to decimal:', error)
   }
+
   return result
 }
 

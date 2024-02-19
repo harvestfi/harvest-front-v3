@@ -514,6 +514,7 @@ const ActionsProvider = ({ children }) => {
                 onSuccessApproval,
               )
             }
+            console.log('%%%%%%%%%%%%%', 'Success')
           } else {
             setBStakeApprovalSuccess(true)
           }

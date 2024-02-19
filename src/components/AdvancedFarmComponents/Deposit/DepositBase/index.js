@@ -28,7 +28,7 @@ import {
   DepoTitle,
   TokenInput,
   TokenAmount,
-  // TokenUSDAmount,
+  TokenUSDAmount,
   TokenInfo,
   TokenSelect,
   NewLabel,
@@ -78,7 +78,7 @@ const DepositBase = ({
   useBeginnersFarm,
   setFromInfoAmount,
   setFromInfoUsdAmount,
-  // fromInfoUsdAmount,
+  fromInfoUsdAmount,
   convertMonthlyYieldUSD,
   convertDailyYieldUSD,
   minReceiveAmountString,
@@ -145,15 +145,19 @@ const DepositBase = ({
             minReceiveAmount = '',
             minReceiveUsd = '',
             curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol)
+          curToken = curToken[0]
           const fromToken = pickedToken.address
           const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
+          const overBalance = new BigNumber(amount).isGreaterThan(
+            new BigNumber(curToken.rawBalance),
+          )
           const portalsEstimate = await getPortalsEstimate({
             chainId,
             tokenIn: fromToken,
             inputAmount: amount,
             tokenOut: toToken,
             slippage,
-            sender: account,
+            sender: overBalance ? null : account,
           })
 
           if (Object.keys(portalsEstimate).length === 0)
@@ -170,13 +174,9 @@ const DepositBase = ({
             outputTokenDecimals: portalsEstimate.outputTokenDecimals,
           }
 
-          curToken = curToken[0]
           if (curToken) {
-            fromInfoValue = fromWei(
-              quoteResult.fromTokenAmount,
-              curToken.decimals,
-              curToken.decimals,
-              true,
+            fromInfoValue = new BigNumber(
+              fromWei(quoteResult.fromTokenAmount, curToken.decimals, curToken.decimals, false),
             ).toString()
 
             fromInfoUsdValue =
@@ -191,12 +191,14 @@ const DepositBase = ({
                     ) * quoteResult.fromTokenUsdPrice,
                     BEGINNERS_BALANCES_DECIMALS,
                   )
-            minReceiveAmount = fromWei(
-              quoteResult.minToTokenAmount,
-              quoteResult.outputTokenDecimals || token.data.lpTokenData.decimals,
-              quoteResult.outputTokenDecimals || token.data.lpTokenData.decimals,
-              false,
-            )
+            minReceiveAmount = new BigNumber(
+              fromWei(
+                quoteResult.minToTokenAmount,
+                quoteResult.outputTokenDecimals || token.data.lpTokenData.decimals,
+                quoteResult.outputTokenDecimals || token.data.lpTokenData.decimals,
+                false,
+              ),
+            ).toString()
             minReceiveUsd = formatNumberWido(
               parseFloat(minReceiveAmount) * toTokenDetail?.price,
               BEGINNERS_BALANCES_DECIMALS,
@@ -262,7 +264,7 @@ const DepositBase = ({
         toast.error("Can't Deposit with Unsupported token!")
         return
       }
-      if (new BigNumber(inputAmount).isGreaterThan(balance)) {
+      if (new BigNumber(inputAmount).isGreaterThan(new BigNumber(balance))) {
         setShowWarning(true)
         return
       }
@@ -351,7 +353,17 @@ const DepositBase = ({
             </NewLabel>
             <TokenInput>
               <TokenAmount type="text" value={inputAmount} onChange={onInputBalance} />
-              {/* <TokenUSDAmount>≈$5555.55</TokenUSDAmount> */}
+              <TokenUSDAmount>
+                {inputAmount === '0' || inputAmount === '' ? (
+                  '$0'
+                ) : fromInfoUsdAmount === '' ? (
+                  <TokenInfo>
+                    <AnimatedDots />
+                  </TokenInfo>
+                ) : (
+                  `≈${fromInfoUsdAmount}`
+                )}
+              </TokenUSDAmount>
             </TokenInput>
           </AmountSection>
           <DepositTokenSection>
@@ -400,7 +412,7 @@ const DepositBase = ({
               weight="600"
               color="#344054"
             >
-              Insufficient {pickedToken.symbol} balance on your wallet
+              Insufficient {pickedToken.symbol} balance in your wallet
             </NewLabel>
           </NewLabel>
           <div>

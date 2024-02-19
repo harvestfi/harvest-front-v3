@@ -332,7 +332,7 @@ const WithdrawStart = ({
                     <AnimatedDots />
                   )} */}
                   {revertFromInfoUsdAmount !== '' ? (
-                    `≈ $${revertFromInfoUsdAmount}`
+                    `≈$${revertFromInfoUsdAmount}`
                   ) : (
                     <AnimatedDots />
                   )}

@@ -68,7 +68,8 @@ const web3Onboard = init({
     ],
     agreement: {
       version: '3.0.1',
-      privacyUrl: 'https://docs.harvest.finance',
+      termsUrl: 'https://docs.harvest.finance/legal/terms-and-conditions',
+      privacyUrl: 'https://docs.harvest.finance/legal/privacy-policy',
     },
   },
   notify: {
