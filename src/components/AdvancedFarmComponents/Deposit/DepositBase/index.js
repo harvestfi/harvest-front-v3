@@ -313,7 +313,7 @@ const DepositBase = ({
 
   useEffect(() => {
     if (pickedToken.usdPrice) {
-      setInputAmount(balance)
+      setInputAmount(new BigNumber(balance).toString())
     }
   }, [balance, setInputAmount, pickedToken])
 
@@ -431,13 +431,13 @@ const DepositBase = ({
         <BalanceInfo
           onClick={() => {
             if (account && pickedToken.symbol !== 'Select Token') {
-              setInputAmount(balance)
+              setInputAmount(new BigNumber(balance).toString())
             }
           }}
         >
           {isMobile && (pickedToken.symbol === 'Select Token' ? '' : `${pickedToken.symbol} `)}
           Balance Available:
-          <span>{balance}</span>
+          <span>{new BigNumber(balance).toString()}</span>
         </BalanceInfo>
         <InsufficientSection isShow={showWarning ? 'true' : 'false'}>
           <NewLabel display="flex" widthDiv="80%" items="center">
