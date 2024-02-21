@@ -5,7 +5,7 @@ const MainModal = ({ title, open, onClose, children, confirmationLabel }) => (
   <Modal
     show={open}
     onHide={onClose}
-    dialogClassName="modal-notification"
+    dialogClassName="modal-notification welcome-modal-dialog"
     aria-labelledby="contained-modal-title-vcenter"
     centered
   >
