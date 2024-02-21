@@ -438,14 +438,6 @@ const HasErrorSection = styled.div`
   margin-top: 20px;
 `
 
-const ErrorMessage = styled.div`
-  text-transform: capitalize;
-  font-size: 12px;
-  line-height: 20px;
-  color: #344054;
-  padding: 5px 10px 0px 25px;
-`
-
 const FlexDiv = styled.div`
   display: flex;
 `
@@ -473,7 +465,6 @@ export {
   ThemeMode,
   InsufficientSection,
   HasErrorSection,
-  ErrorMessage,
   CloseBtn,
   DepositTokenSection,
   SwitchTabTag,

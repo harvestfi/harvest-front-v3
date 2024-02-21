@@ -36,7 +36,6 @@ import {
   // ThemeMode,
   InsufficientSection,
   HasErrorSection,
-  ErrorMessage,
   FlexDiv,
   CloseBtn,
   DepositTokenSection,
@@ -116,7 +115,7 @@ const DepositBase = ({
 
   const [depositName, setDepositName] = useState('Preview & Convert')
   const [showWarning, setShowWarning] = useState(false)
-  const [hasErrorOccurred, setHasErrorOccurred] = useState('')
+  const [hasErrorOccurred, setHasErrorOccurred] = useState(false)
   const [failureCount, setFailureCount] = useState(0)
   // const [showDepositIcon, setShowDepositIcon] = useState(true)
   const amount = toWei(inputAmount, pickedToken.decimals, 0)
@@ -219,7 +218,7 @@ const DepositBase = ({
             setMinReceiveAmountString(minReceiveAmount)
             setMinReceiveUsdAmount(minReceiveUsd)
             setFromInfoAmount(fromInfoValue)
-            setHasErrorOccurred('')
+            setHasErrorOccurred(false)
             setFailureCount(0)
             if (Number(fromInfoUsdValue) < 0.01) {
               setFromInfoUsdAmount('<$0.01')
@@ -227,18 +226,18 @@ const DepositBase = ({
               setFromInfoUsdAmount(`$${fromInfoUsdValue}`)
             }
           } else {
-            setHasErrorOccurred(portalsEstimate.res.message)
-            setConvertMonthlyYieldUSD('-')
-            setConvertDailyYieldUSD('-')
-            setMinReceiveAmountString('-')
-            setMinReceiveUsdAmount('-')
-            setFromInfoUsdAmount('-')
             setFailureCount(prevCount => prevCount + 1)
             console.log('failureCount: ', failureCount)
+
             if (failureCount === 4) {
-              toast.error(
-                'Opss, we are having small issues with getting quotes. Please try again in 2 minutes',
-              )
+              setConvertMonthlyYieldUSD('-')
+              setConvertDailyYieldUSD('-')
+              setMinReceiveAmountString('-')
+              setMinReceiveUsdAmount('-')
+              setFromInfoUsdAmount('-')
+              if (portalsEstimate.res.message !== 'outputToken not found') {
+                setHasErrorOccurred(true)
+              }
             }
           }
         } catch (e) {
@@ -458,7 +457,7 @@ const DepositBase = ({
             />
           </div>
         </InsufficientSection>
-        <HasErrorSection isShow={hasErrorOccurred !== '' ? 'true' : 'false'}>
+        <HasErrorSection isShow={hasErrorOccurred ? 'true' : 'false'}>
           <NewLabel display="flex" flexFlow="column" widthDiv="100%">
             <FlexDiv>
               <img className="info-icon" src={InfoIcon} alt="" />
@@ -468,10 +467,9 @@ const DepositBase = ({
                 weight="600"
                 color="#344054"
               >
-                Failed to get quote!
+                Opss, we are having small issues with getting quotes. Please try again in 2 minutes.
               </NewLabel>
             </FlexDiv>
-            <ErrorMessage>(Error Message: {hasErrorOccurred})</ErrorMessage>
           </NewLabel>
           <div>
             <CloseBtn
@@ -548,6 +546,8 @@ const DepositBase = ({
                     '$0.00'
                   ) : convertMonthlyYieldUSD === '-' ? (
                     '-'
+                  ) : convertMonthlyYieldUSD === 'NaN' ? (
+                    '-'
                   ) : Number(convertMonthlyYieldUSD) < 0.01 ? (
                     '<$0.01'
                   ) : (
@@ -618,9 +618,11 @@ const DepositBase = ({
               !new BigNumber(amount).isEqualTo(0) &&
               balanceList.length !== 0 ? (
                 minReceiveAmountString !== '' ? (
-                  convertDailyYieldUSD === 0 ? (
+                  convertDailyYieldUSD === '0' ? (
                     '$0.00'
                   ) : convertDailyYieldUSD === '-' ? (
+                    '-'
+                  ) : convertDailyYieldUSD === 'NaN' ? (
                     '-'
                   ) : Number(convertDailyYieldUSD) < 0.01 ? (
                     '<$0.01'
