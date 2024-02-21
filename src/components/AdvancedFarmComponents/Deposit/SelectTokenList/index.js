@@ -22,6 +22,7 @@ const SelectTokenList = ({
   setBalance,
   setSelectToken,
   filterWord,
+  hasErrorOccurred,
 }) => {
   const [showList, setShowList] = useState(false)
 
@@ -143,7 +144,11 @@ const SelectTokenList = ({
             )}
           {balanceTokenList.length > 0 && (
             <>
-              <Label padding="0px 24px">Supported tokens in your wallet</Label>
+              <Label padding="0px 24px">
+                {hasErrorOccurred === 2
+                  ? 'Balanced tokens in your wallet'
+                  : 'Supported tokens in your wallet'}
+              </Label>
               {balanceTokenList.map((data, i) => (
                 <Container
                   key={i}

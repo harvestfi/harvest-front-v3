@@ -374,6 +374,7 @@ const AdvancedFarm = () => {
   const [minReceiveAmountString, setMinReceiveAmountString] = useState('')
   const [minReceiveUsdAmount, setMinReceiveUsdAmount] = useState('')
   const [convertSuccess, setConvertSuccess] = useState(false)
+  const [hasErrorOccurredConvert, setHasErrorOccurredConvert] = useState(0)
 
   // Withdraw
   const [withdrawStart, setWithdrawStart] = useState(false)
@@ -733,7 +734,11 @@ const AdvancedFarm = () => {
   ])
 
   useEffect(() => {
-    if (balanceList.length > 0 && defaultToken !== null) {
+    // Check if a farm is supported by portalsfi API
+    if (hasErrorOccurredConvert === 2) {
+      setPickedTokenDepo(defaultToken)
+      setBalanceDepo('0')
+    } else if (balanceList.length > 0 && defaultToken !== null) {
       let tokenToSet = null
 
       // Check if defaultToken is present in the balanceList
@@ -786,7 +791,14 @@ const AdvancedFarm = () => {
       setPickedTokenDepo(supTokenList.find(coin => coin.symbol === 'USDC'))
       setBalanceDepo('0')
     }
-  }, [balanceList, supTokenList, defaultToken, chain, SUPPORTED_TOKEN_LIST])
+  }, [
+    balanceList,
+    supTokenList,
+    defaultToken,
+    chain,
+    SUPPORTED_TOKEN_LIST,
+    hasErrorOccurredConvert,
+  ])
 
   const { pageBackColor, fontColor, filterColor } = useThemeContext()
 
@@ -1689,6 +1701,8 @@ const AdvancedFarm = () => {
                         setMinReceiveUsdAmount={setMinReceiveUsdAmount}
                         setConvertMonthlyYieldUSD={setConvertMonthlyYieldUSD}
                         setConvertDailyYieldUSD={setConvertDailyYieldUSD}
+                        hasErrorOccurred={hasErrorOccurredConvert}
+                        setHasErrorOccurred={setHasErrorOccurredConvert}
                       />
                       <DepositSelectToken
                         selectToken={selectTokenDepo}
@@ -1699,6 +1713,7 @@ const AdvancedFarm = () => {
                         balanceList={balanceList}
                         defaultToken={defaultToken}
                         soonToSupList={soonToSupList}
+                        hasErrorOccurred={hasErrorOccurredConvert}
                       />
                       <DepositStart
                         pickedToken={pickedTokenDepo}

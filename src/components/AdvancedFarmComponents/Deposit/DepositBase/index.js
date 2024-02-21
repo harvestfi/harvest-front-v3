@@ -88,6 +88,8 @@ const DepositBase = ({
   setMinReceiveUsdAmount,
   setConvertMonthlyYieldUSD,
   setConvertDailyYieldUSD,
+  hasErrorOccurred,
+  setHasErrorOccurred,
 }) => {
   const { connected, connectAction, account, chainId, setChainId, web3 } = useWallet()
   const { vaultsData } = useVaults()
@@ -115,7 +117,6 @@ const DepositBase = ({
 
   const [depositName, setDepositName] = useState('Preview & Convert')
   const [showWarning, setShowWarning] = useState(false)
-  const [hasErrorOccurred, setHasErrorOccurred] = useState(false)
   const [failureCount, setFailureCount] = useState(0)
   // const [showDepositIcon, setShowDepositIcon] = useState(true)
   const amount = toWei(inputAmount, pickedToken.decimals, 0)
@@ -218,7 +219,7 @@ const DepositBase = ({
             setMinReceiveAmountString(minReceiveAmount)
             setMinReceiveUsdAmount(minReceiveUsd)
             setFromInfoAmount(fromInfoValue)
-            setHasErrorOccurred(false)
+            setHasErrorOccurred(0)
             setFailureCount(0)
             if (Number(fromInfoUsdValue) < 0.01) {
               setFromInfoUsdAmount('<$0.01')
@@ -235,8 +236,10 @@ const DepositBase = ({
               setMinReceiveAmountString('-')
               setMinReceiveUsdAmount('-')
               setFromInfoUsdAmount('-')
-              if (portalsEstimate.res.message !== 'outputToken not found') {
-                setHasErrorOccurred(true)
+              if (portalsEstimate.res.message === 'outputToken not found') {
+                setHasErrorOccurred(2)
+              } else {
+                setHasErrorOccurred(1)
               }
             }
           }
@@ -271,6 +274,7 @@ const DepositBase = ({
     getPortalsEstimate,
     getPortalsToken,
     failureCount,
+    setHasErrorOccurred,
   ])
 
   const onClickDeposit = async () => {
@@ -457,7 +461,7 @@ const DepositBase = ({
             />
           </div>
         </InsufficientSection>
-        <HasErrorSection isShow={hasErrorOccurred ? 'true' : 'false'}>
+        <HasErrorSection isShow={hasErrorOccurred === 1 ? 'true' : 'false'}>
           <NewLabel display="flex" flexFlow="column" widthDiv="100%">
             <FlexDiv>
               <img className="info-icon" src={InfoIcon} alt="" />
@@ -476,7 +480,7 @@ const DepositBase = ({
               src={CloseIcon}
               alt=""
               onClick={() => {
-                setHasErrorOccurred('')
+                setHasErrorOccurred(0)
               }}
             />
           </div>
