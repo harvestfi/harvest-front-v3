@@ -50,64 +50,6 @@ const EnsoProvider = _ref => {
     }
   }
 
-  const getEnsoApprovals = async (chainId, fromAddress) => {
-    try {
-      const response = await axios.get('https://api.enso.finance/api/v1/wallet/approvals', {
-        params: { chainId, fromAddress, routingStrategy: 'router' },
-      })
-      return response.data
-    } catch (error) {
-      console.error('Error fetching approvals:', error)
-      return {}
-    }
-  }
-
-  const ensoApprove = async (chainId, fromAddress, tokenAddress, amount) => {
-    try {
-      const response = await axios.get('https://api.enso.finance/api/v1/wallet/approve', {
-        params: { chainId, fromAddress, tokenAddress, amount, routingStrategy: 'router' },
-      })
-      return response.data
-    } catch (error) {
-      console.error('Error fetching approve data:', error)
-      return {}
-    }
-  }
-
-  const getEnsoRoute = async ({ chainId, fromAddress, amountIn, slippage, tokenIn, tokenOut }) => {
-    try {
-      const response = await axios.get('https://api.enso.finance/api/v1/shortcuts/route', {
-        params: {
-          chainId,
-          fromAddress,
-          receiver: fromAddress,
-          spender: fromAddress,
-          amountIn,
-          slippage,
-          tokenIn,
-          tokenOut,
-          routingStrategy: 'router',
-        },
-      })
-      return response.data
-    } catch (error) {
-      console.error('Error fetching routes:', error)
-      return {}
-    }
-  }
-
-  const getEnsoQuote = async params => {
-    try {
-      const response = await axios.get('https://api.enso.finance/api/v1/shortcuts/quote', {
-        params: { ...params, routingStrategy: 'router' },
-      })
-      return response.data
-    } catch (error) {
-      console.error('Error fetching balances:', error)
-      return {}
-    }
-  }
-
   useEffect(() => {
     const fetchData = async () => {
       const chainIds = ['1', '137', '42161']
@@ -130,10 +72,6 @@ const EnsoProvider = _ref => {
         ensoBaseTokens,
         getEnsoBalances,
         getEnsoPrice,
-        getEnsoApprovals,
-        ensoApprove,
-        getEnsoRoute,
-        getEnsoQuote,
       },
     },
     children,

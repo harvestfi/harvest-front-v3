@@ -5,8 +5,8 @@ const PanelContainer = styled.div`
   display: flex;
   justify-content: start;
   align-items: center;
-  padding: 16px 24px;
-  border-bottom: 1px solid ${props => props.borderColor};
+  padding: 20px 40px 20px 18px;
+  border-top: 1px solid ${props => props.borderColor};
   cursor: pointer;
   color: ${props => props.fontColor};
 
@@ -14,7 +14,7 @@ const PanelContainer = styled.div`
     flex-direction: row;
     align-items: baseline;
     position: relative;
-    padding: 10px;
+    padding: 10px 18px;
   }
 `
 
@@ -31,28 +31,23 @@ const TokenNameContainer = styled.div`
   display: flex;
   align-items: center;
   font-weight: 600;
-  font-size: 14px;
-  line-height: 20px;
-  color: #101828;
+  font-size: 16px;
 
   @media screen and (max-width: 1480px) {
     font-size: 12px;
     line-height: 16px;
+    font-weight: 700;
     margin-bottom: 10px;
-  }
-  @media screen and (max-width: 992px) {
-    font-size: 11px;
-    margin-bottom: 8px;
   }
 `
 
 const TokenDescriptionContainer = styled.div`
   display: flex;
   flex-direction: column;
-  font-size: 14px;
+  font-size: 12px;
 
   small {
-    font-size: 14px;
+    font-size: 10px;
   }
 
   @media screen and (max-width: 1480px) {
@@ -60,19 +55,13 @@ const TokenDescriptionContainer = styled.div`
     font-size: 10px;
     line-height: 13px;
   }
-  @media screen and (max-width: 992px) {
-    font-size: 11px;
-  }
 `
 
 const RewardsContainer = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  color: #101828;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 20px;
+  font-weight: 600;
 
   span {
     font-size: 20px;
@@ -90,20 +79,20 @@ const RewardsContainer = styled.div`
 `
 
 const ValueContainer = styled.div`
-  font-weight: 500;
+  font-weight: 400;
   width: ${props => props.width || 'auto'};
   min-width: ${props => props.minWidth || 'auto'};
   text-align: ${props => props.textAlign || 'center'};
   display: flex;
-  justify-content: start;
+  justify-content: end;
   ${props => (props.textAlign === 'left' ? `justify-content: start;` : '')}
   padding-right: ${props => props.paddingRight || '0px'};
   padding-left: ${props => props.paddingLeft || '0px'};
 
   .tag {
     position: absolute;
-    left: 53px;
-    top: 31px;
+    left: 37px;
+    top: 12px;
   }
 
   ${props =>
@@ -136,10 +125,10 @@ const LogoImg = styled.img`
 
 const BadgeIcon = styled.div`
   position: absolute;
-  top: 26px;
-  left: 24px;
+  top: 8px;
+  left: 8px;
   background: ${props => props.badgeBack};
-  border: 2px solid ${props => props.borderColor};
+  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.15);
   border-radius: 8px;
   width: 23px;
   height: 23px;
@@ -148,17 +137,11 @@ const BadgeIcon = styled.div`
   align-items: center;
 
   @media screen and (max-width: 992px) {
-    position: inherit;
-    border-radius: 2.278px;
-    border: 1.139px solid #29ce84;
-    background: rgba(255, 255, 255, 0.6);
-    box-shadow: 0px 0px 1.13876px 0px rgba(0, 0, 0, 0.15);
-    width: 13.096px;
-    height: 13.096px;
-    margin: auto 0px;
-    img {
-      padding: 1.708px 1.706px 1.709px 1.71px;
-    }
+    left: 5px;
+    top: 5px;
+    border-radius: 2px;
+    width: 12px;
+    height: 15px;
   }
 `
 
@@ -173,7 +156,7 @@ const TokenLogoContainer = styled.div`
   position: relative;
 
   @media screen and (max-width: 992px) {
-    margin-top: 8px;
+    margin-top: 10px;
   }
 `
 
@@ -216,13 +199,10 @@ const ArrowContainer = styled.div`
 `
 
 const MobileVaultInfoContainer = styled.div`
-  display: flex;
-  flex-flow: column;
-  justify-content: space-between;
+  gap: 10px;
   flex-wrap: wrap;
   width: 100%;
-  align-items: end;
-  gap: 4px;
+  align-items: center;
 `
 
 const MobileVaultValueContainer = styled.div`
@@ -230,10 +210,10 @@ const MobileVaultValueContainer = styled.div`
   justify-content: end;
   align-items: baseline;
   line-height: 2;
-  font-size: 11px;
+  font-size: 12px;
 
   * {
-    font-size: 11px !important;
+    font-size: 12px !important;
   }
 
   div {
@@ -248,7 +228,6 @@ const MobileVaultValueContainer = styled.div`
   .title {
     img {
       margin-left: 7px;
-      margin-top: -4px;
     }
   }
 `
@@ -280,22 +259,8 @@ const FlexDiv = styled.div`
 
   .tag {
     position: absolute;
-    left: 6px;
-  }
-  &.token-icons {
-    display: flex;
-    margin: auto;
-    img {
-      position: relative;
-    }
-  }
-  &.token-symbols {
-    img {
-      margin-left: -4px;
-    }
-    img:first-child {
-      margin-left: 0px;
-    }
+    left: 20px;
+    top: 5px;
   }
 `
 
@@ -322,10 +287,7 @@ const DetailModal = styled(Modal)`
   }
 `
 const Value = styled.div`
-  color: #101828;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 20px;
+  font-weight: 600;
 `
 
 export {

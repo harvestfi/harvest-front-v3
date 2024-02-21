@@ -20,7 +20,7 @@ import AutoHarvest from '../../assets/images/logos/analytics/AutoHarvest.svg'
 import TotalDeposit from '../../assets/images/logos/analytics/TotalDeposit.svg'
 import MonthlyProfit from '../../assets/images/logos/analytics/MonthlyProfit.svg'
 import ExternalLink from '../../assets/images/logos/analytics/ExternalLink.svg'
-import AnalyticChart from '../../components/AnalyticComponents/AnalyticChart'
+import AnalyticChart from '../../components/AnalyticChart'
 import AnimatedDots from '../../components/AnimatedDots'
 import CountdownLabel from '../../components/CountdownLabel'
 import { Divider, Monospace, TextContainer } from '../../components/GlobalStyle'
@@ -113,23 +113,6 @@ const Analytic = () => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const [loadComplete, setLoadComplete] = useState(false)
-
-  const handleNetworkChange = () => {
-    window.location.reload() // Reload the page when the network changes
-  }
-
-  useEffect(() => {
-    if (window.ethereum) {
-      // Listen for network changes
-      window.ethereum.on('chainChanged', handleNetworkChange)
-
-      return () => {
-        // Cleanup: Remove the event listener when the component unmounts
-        window.ethereum.removeListener('chainChanged', handleNetworkChange)
-      }
-    }
-    return () => {}
-  }, [])
 
   useEffect(() => {
     setLoadComplete(true)
@@ -465,7 +448,9 @@ const Analytic = () => {
                 iFARM Exchanges
               </BigStatsExchange>
               <ImgList>
+                {/* <a href="#" target="_blank" rel="noopener noreferrer"> */}
                 <img src={ExternalCamelot} alt="" />
+                {/* </a> */}
               </ImgList>
             </StatsContainer>
           </StatsExchange>

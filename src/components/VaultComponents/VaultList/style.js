@@ -4,17 +4,15 @@ import TokensIcon from '../../../assets/images/ui/tokens.svg'
 
 const Container = styled.div`
   overflow: hidden;
+
   margin-bottom: 20px;
-  padding: 100px 100px 50px;
+  padding: 70px 76px 56px;
+
   width: 100%;
+
   position: relative;
 
-  @media screen and (min-width: 1921px) {
-    width: 1450px;
-  }
-
   @media screen and (max-width: 1480px) {
-    width: 100%;
     padding: 70px 30px 40px;
   }
 
@@ -27,9 +25,8 @@ const Header = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 27px 24px 27px 24px;
+  padding: 27px 40px 27px 20px;
   color: ${props => props.fontColor};
-  border-bottom: 1px solid ${props => props.borderColor};
 
   img.sort-icon {
     filter: ${props => props.filterColor};
@@ -38,11 +35,11 @@ const Header = styled.div`
   transition: 0.25s;
 
   @media screen and (max-width: 1480px) {
-    padding: 17px 24px 17px 24px;
+    padding: 17px 30px 17px 10px;
   }
 
   @media screen and (max-width: 1280px) {
-    padding: 12px 24px 12px 24px;
+    padding: 12px 25px 12px 5px;
   }
 
   @media screen and (max-width: 992px) {
@@ -57,9 +54,9 @@ const HeaderCol = styled.div`
   width: ${props => props.width || 'auto'};
   text-align: ${props => props.textAlign || 'center'};
   margin: ${props => props.margin || 'unset'};
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 18px;
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 24px;
 
   img.sort-icon {
     margin-left: 10px;
@@ -131,12 +128,10 @@ const EmptyInfo = styled.div`
 `
 
 const VaultsListBody = styled.div`
-  border-top-right-radius: 15px;
-  border-top-left-radius: 15px;
+  border: 1px solid ${props => props.borderColor};
   background: ${props => props.backColor};
   transition: 0.25s;
-  border: 1px solid ${props => props.borderColor};
-  border-radius: 5px;
+  border-radius: 10px;
 `
 
 const MobileListFilter = styled.div`
@@ -148,8 +143,7 @@ const MobileListFilter = styled.div`
     display: flex;
     justify-content: space-between;
     flex-direction: column;
-    padding: 20px 10px;
-    border-bottom: 1px solid #f5f5f5;
+    margin: 15px 12px;
     .filter-sort {
       position: relative;
       width: 100%;
@@ -158,24 +152,51 @@ const MobileListFilter = styled.div`
       border: 1px solid rgba(217, 217, 217, 0.5);
       border-radius: 8px;
       position: relative;
+      color: #667085;
 
+      .menu {
+        width: 100%;
+        background: ${props => props.backColor} !important;
+
+        .item {
+          div {
+            color: ${props => props.fontColor} !important;
+          }
+
+          img.checked {
+            display: none;
+          }
+        }
+
+        .item.active-item {
+          display: flex;
+          justify-content: space-between;
+          background: transparent;
+          img.checked {
+            display: block;
+          }
+        }
+      }
+
+      &.show {
+        .toggle {
+          background: ${props => props.mobileBackColor};
+          color: #888e8f;
+          border: none;
+        }
+      }
       .toggle {
         background: ${props => props.mobileBackColor};
+        color: #667085;
         display: flex;
         justify-content: space-between;
         border: none;
         width: 100%;
-        color: #1f2937;
-        font-size: 14px;
-        line-height: 24px;
         font-weight: 400;
+        font-size: 14px;
+        line-height: 22px;
         padding: 0px 0px 0px 10px;
         align-items: center;
-
-        span {
-          font-weight: 600;
-          padding-left: 4px;
-        }
 
         &:after {
           display: none;
@@ -196,51 +217,6 @@ const MobileListFilter = styled.div`
           position: absolute;
           right: 10px;
           top: 12px;
-        }
-
-        .sort-icon {
-          width: 15px;
-          height: 15px;
-          margin-top: -2px;
-        }
-      }
-
-      .menu {
-        width: 100%;
-        padding: 4px 6px;
-
-        .item {
-          padding: 10px 8px;
-          border-radius: 6px;
-          &.hover {
-            backgroun: #f9fafb;
-          }
-          div {
-            color: #101828;
-            font-size: 14px;
-            font-style: normal;
-            font-weight: 500;
-            line-height: 24px;
-            .sort-icon {
-              width: 14px;
-              height: 14px;
-              margin-right: 4px;
-              margin-top: -2px;
-            }
-          }
-
-          img.checked {
-            display: none;
-          }
-        }
-
-        .item.active-item {
-          display: flex;
-          justify-content: space-between;
-          background: transparent;
-          img.checked {
-            display: block;
-          }
         }
       }
     }
@@ -330,6 +306,7 @@ const ThemeMode = styled.div`
 `
 
 const MobileFilterBtn = styled.div`
+  background: #15202b;
   border-radius: 0px 8px 8px 0px;
   padding: 10px 18px;
   font-weight: 600;
@@ -344,6 +321,10 @@ const MobileFilterBtn = styled.div`
   `
       : `
   `}
+
+  &:hover {
+    background: #37495b;
+  }
 
   @media screen and (max-width: 992px) {
     padding: 10px 18px;

@@ -16,15 +16,14 @@ export const SOCIAL_LINKS = {
 }
 
 export const ROUTES = {
-  PORTFOLIO: '/',
-  TUTORIAL: '/get-started',
-  ADVANCED: '/farm',
+  HOME: '/',
+  PORTFOLIO: '/portfolio',
   ANALYTIC: '/analytics',
   DOC: '/doc',
   FAQ: '/faq',
-  ADVANCEDFARM: '/advanced/:network/:paramAddress',
-  BEGINNERSFARM: '/beginners',
-  CHARTS: '/charts',
+  GRAIN: '/grain',
+  CAMELOT: '/camelot',
+  WIDODETAIL: '/:network/:paramAddress',
   WORK: '/work',
   POOL: '/pool',
   ZAPPER: '/zapper',
@@ -65,8 +64,6 @@ export const MATICSCAN_URL = 'https://polygonscan.com'
 export const BASESCAN_URL = 'https://basescan.org'
 
 export const ARBISCAN_URL = 'https://arbiscan.io'
-
-export const PORTALS_FI_API_URL = 'https://api.portals.fi'
 
 export const DECIMAL_PRECISION = 2
 
@@ -506,14 +503,12 @@ export const REVENUE_MONTHLY_API_ENDPOINT = `${HARVEST_EXTERNAL_API_URL}/revenue
 export const CMC_API_ENDPOINT = `${HARVEST_EXTERNAL_API_URL}/cmc?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`
 export const TVL_API_ENDPOINT = `${HARVEST_EXTERNAL_API_URL}/gmv/total?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`
 export const TOTAL_TVL_API_ENDPOINT = `${HARVEST_API_URL}/tvl?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`
-export const COINGECKO_API_KEY = `${process.env.REACT_APP_COINGECKO_API_KEY}`
 
-export const BEGINNERS_BALANCES_DECIMALS = 2
-export const WIDO_BALANCES_DECIMALS = 5
 export const POOL_BALANCES_DECIMALS = 8
+
+export const WIDO_BALANCES_DECIMALS = 5
+
 export const WIDO_EXTEND_DECIMALS = 9
-export const MAX_BALANCES_DECIMALS = 12
-export const MAX_DECIMALS = 18
 
 export const MIGRATING_VAULTS = []
 

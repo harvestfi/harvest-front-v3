@@ -11,20 +11,13 @@ const Container = styled.div`
 
   @media screen and (max-width: 992px) {
     margin: 0;
-    padding-bottom: 150px;
   }
 `
 
 const Content = styled.div`
-  padding: 100px;
-  margin: auto;
-
-  @media screen and (min-width: 1921px) {
-    width: 1450px;
-  }
+  padding: 70px 76px 50px 76px;
 
   @media screen and (max-width: 1480px) {
-    width: 100%;
     padding: 70px 30px 40px;
   }
 
@@ -130,6 +123,11 @@ const StatsBox = styled.div`
   @media screen and (max-width: 992px) {
     order: ${props => props.mobileOrder || 'unset'};
   }
+
+  // @media screen and (min-width: 1921px) {
+  //   min-width: 440px;
+  //   width: 440px;
+  // }
 `
 
 const StatsContainerRow = styled.div`

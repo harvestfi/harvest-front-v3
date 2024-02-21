@@ -4,9 +4,9 @@ import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
 import BASE from '../../../assets/images/chains/base.svg'
 import ETHEREUM from '../../../assets/images/chains/ethereum.svg'
 import POLYGON from '../../../assets/images/chains/polygon.svg'
-import APYIcon from '../../../assets/images/logos/farm/sortAPY.svg'
-import TVLIcon from '../../../assets/images/logos/farm/sortBank.svg'
-import DailyIcon from '../../../assets/images/logos/farm/sortCurrency.svg'
+import APYIcon from '../../../assets/images/logos/farm/MobileAPYIcon.svg'
+import DailyIcon from '../../../assets/images/logos/farm/MobileDailyIcon.svg'
+import TVLIcon from '../../../assets/images/logos/farm/MobileTVLIcon.svg'
 import LSD from '../../../assets/images/logos/lsd.svg'
 import DESCI from '../../../assets/images/logos/DeSci.svg'
 import { directDetailUrl } from '../../../constants'
@@ -80,11 +80,10 @@ const MobilePanelHeader = ({
           ? token.data.collateralAddress
           : token.vaultAddress || token.tokenAddress
         setPrevPage(window.location.href)
-        const url = `${directDetailUrl}advanced/${network}/${address}`
-        push(url)
+        push(`${directDetailUrl + network}/${address}`)
       }}
     >
-      <FlexDiv className="token-icons" width="20%">
+      <FlexDiv width="15%">
         <BadgeIcon badgeBack={badgeIconBackColor}>
           {BadgeAry[badgeId] ? (
             <img src={BadgeAry[badgeId]} width="10" height="10" alt="" />
@@ -95,15 +94,17 @@ const MobilePanelHeader = ({
         {lsdToken ? <img className="tag" src={LSD} alt="" /> : null}
         {desciToken ? <img className="tag" src={DESCI} alt="" /> : null}
       </FlexDiv>
-      <FlexDiv className="token-symbols" width="60%" alignSelf="center" marginRight="18px">
+      <FlexDiv width="65%" alignSelf="center" marginRight="18px">
         <div>
           {logoUrl.map((el, i) => (
             <img key={i} src={el} width={19} alt={tokenSymbol} />
           ))}
         </div>
-        <TokenLogoContainer>
-          <VaultName token={token} tokenSymbol={tokenSymbol} useIFARM={useIFARM} />
-        </TokenLogoContainer>
+        <div>
+          <TokenLogoContainer>
+            <VaultName token={token} tokenSymbol={tokenSymbol} useIFARM={useIFARM} />
+          </TokenLogoContainer>
+        </div>
       </FlexDiv>
       <FlexDiv width="20%">
         <MobileVaultInfoContainer>
@@ -134,7 +135,6 @@ const MobilePanelHeader = ({
               loadingFarmingBalance={loadingFarmingBalance}
               vaultPool={vaultPool}
               loadedVault={loadedVault}
-              useIFARM={useIFARM}
             />
             <div className="title">
               <img src={DailyIcon} alt="" />

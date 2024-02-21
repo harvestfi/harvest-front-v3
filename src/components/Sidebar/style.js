@@ -1,5 +1,6 @@
 import styled from 'styled-components'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
+import Pattern from '../../assets/images/logos/pattern.png'
 
 const Container = styled.div`
   ${props => props.sidebarEffect};
@@ -11,13 +12,13 @@ const Container = styled.div`
   background: ${props => props.backColor};
   color: ${props => props.fontColor};
 
-  min-height: 652px;
+  min-height: 560px;
   height: 100%;
   min-width: ${props => props.width};
   max-width: 100%;
   position: fixed;
   z-index: 10;
-  padding: 25px 25px;
+  padding: 45px 25px 0px;
 
   @media screen and (max-width: 992px) {
     display: flex;
@@ -25,18 +26,18 @@ const Container = styled.div`
     flex-direction: column;
     align-items: baseline;
     width: 100%;
+    padding: 11px 24px 0 24px;
+    position: unset;
     min-height: auto;
-    border: none;
-    bottom: 0;
-    height: fit-content;
-    border-top: 1px solid ${props => props.borderColor};
-    padding: 0px 25px;
   }
 `
 
 const Layout = styled.div`
   align-items: center;
   max-width: 1790px;
+  margin: auto;
+
+  margin-bottom: 50px;
 
   @media screen and (max-width: 992px) {
     display: none;
@@ -67,12 +68,12 @@ const LinksContainer = styled.div`
     text-decoration: none;
     font-weight: 700;
     font-size: 24px;
+    padding-left: 1rem;
 
     &:after {
       margin-left: 22px;
       display: block;
       content: 'Harvest';
-      color: #475467;
     }
   }
 
@@ -87,7 +88,9 @@ const LinksContainer = styled.div`
 
 const LinkContainer = styled.div`
   position: relative;
-  margin-bottom: 10px;
+  margin-left: 20px;
+  margin-bottom: 24px;
+  border-radius: 10px;
   cursor: pointer;
 
   &:last-child {
@@ -100,11 +103,11 @@ const LinkContainer = styled.div`
 `
 
 const Link = styled.button`
-  color: #344054;
+  color: ${props => props.fontColor};
   transition: 0.25s;
   font-size: 16px;
-  font-weight: 600;
-  line-height: 24px;
+  font-weight: 500;
+  line-height: 21px;
   transition: 0.25s;
   display: flex;
   align-items: center;
@@ -112,57 +115,34 @@ const Link = styled.button`
   width: 100%;
   background-color: transparent;
   cursor: pointer;
-  padding: 8px 12px;
+  padding-left: 0;
+  padding-right: 0;
   border-width: 0;
-  border-radius: 6px;
-
-  .sideIcon {
-    width: 24px;
-    height: 24px;
-    margin-right: 12px;
-    filter: invert(48%) sepia(4%) saturate(2341%) hue-rotate(183deg) brightness(87%) contrast(80%);
-  }
-
-  .item-name {
-    padding-top: 3px;
-  }
-
-  ${props =>
-    props.enabled === 'false'
-      ? `
-      pointer-events: none;
-      color: #a4a4a4;
-
-      img.sideIcon {
-        filter: invert(81%) sepia(0%) saturate(1%) hue-rotate(315deg) brightness(82%) contrast(85%);
-      }
-    `
-      : ``}
 
   ${props =>
     props.active
       ? `
-    color: #15b088;
-    background: rgba(187, 187, 187, 0.07);
-    .sideIcon {
-      filter: invert(46%) sepia(96%) saturate(382%) hue-rotate(114deg) brightness(99%) contrast(89%);
-    }
+    color: ${props.activeColor};
+    font-weight: bold;
     ${
       props.darkMode
         ? `
       img {
-        filter: invert(46%) sepia(96%) saturate(382%) hue-rotate(114deg) brightness(99%) contrast(89%);
+        filter: invert(97%) sepia(0%) saturate(7489%) hue-rotate(281deg) brightness(106%) contrast(103%);
       }
     `
-        : `
-        img {
-          filter: invert(46%) sepia(96%) saturate(382%) hue-rotate(114deg) brightness(99%) contrast(89%);
-        }
-      `
+        : ``
     }
   `
       : `
+    img {
+      filter: ${props.activeIconColor};
+    }
       `}
+
+  .sideIcon {
+    margin-right: 17px;
+  }
 
   .external-link {
     margin-left: 5px;
@@ -171,30 +151,13 @@ const Link = styled.button`
   }
 
   @media screen and (max-width: 992px) {
-    color: #15202b;
-    text-align: center;
-    font-size: 16px;
-    font-weight: 600;
-    line-height: 24px;
-    ${props =>
-      props.enabled === 'false'
-        ? `
-        pointer-events: none;
-        color: #a4a4a4;
-  
-        img.sideIcon {
-          filter: invert(81%) sepia(0%) saturate(1%) hue-rotate(315deg) brightness(82%) contrast(85%);
-        }
-      `
-        : ``}
     ${props =>
       props.active
         ? `
         font-weight: bold;
-        background: unset;
-        color: #15b088;
     `
         : `
+        font-weight: 500;
     `}
     display: ${props => (props.isDropdownLink ? 'none' : 'flex')};
 
@@ -205,9 +168,17 @@ const Link = styled.button`
   }
 
   &:hover {
-    color: #15b088;
+    color: ${props => props.activeColor};
+    font-weight: bold;
     img {
-      filter: invert(46%) sepia(96%) saturate(382%) hue-rotate(114deg) brightness(99%) contrast(89%);
+      ${props =>
+        props.darkMode
+          ? `
+          filter: invert(97%) sepia(0%) saturate(7489%) hue-rotate(281deg) brightness(106%) contrast(103%);
+      `
+          : `
+          filter: invert(0%) sepia(8%) saturate(7500%) hue-rotate(300deg) brightness(90%) contrast(110%);
+          `}
     }
   }
 `
@@ -242,11 +213,21 @@ const FlexDiv = styled.div`
   }
 `
 
+const Follow = styled.div`
+  padding-top: 16px;
+  display: flex;
+  justify-content: space-between;
+
+  @media screen and (max-width: 992px) {
+    display: none;
+  }
+`
+
 const ConnectButtonStyle = styled.button`
   font-size: 16px;
-  line-height: 20px;
-  font-weight: 600;
-  margin: 25px 0px;
+  line-height: 21px;
+  font-weight: 700;
+  margin: 20px 5px;
   width: 100%;
   background: white;
   border-radius: 8px;
@@ -287,6 +268,7 @@ const ConnectButtonStyle = styled.button`
     align-items: center;
     margin: 0 0 20px 13px;
 
+    // width: 85%;
     ${props =>
       props.connected
         ? `
@@ -326,7 +308,7 @@ const AboutHarvest = styled.div`
   }
 `
 
-const Mobile = styled.div`
+const MobileView = styled.div`
   display: none;
   position: relative;
   width: 100%;
@@ -337,132 +319,84 @@ const Mobile = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    display: block;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    margin-top: 6px;
   }
 `
 
-const MobileView = styled.div`
+const MobileConnectBtn = styled.div`
+  margin-top: 6px;
+  margin-bottom: 6px;
   display: flex;
-  justify-content: space-between;
-  position: relative;
-  width: 100%;
-  padding: 10px 0px;
+  padding: 7px 12px;
+  background: white;
 
-  &.connect-modal {
-    padding: 10px 25px;
-    border-top: 1px solid ${props => props.borderColor};
-  }
+  border: 0.5px solid #d0d5dd;
+  box-shadow: 0px 0.5px 1px rgba(16, 24, 40, 0.05);
+  border-radius: 4.5px;
 
-  button {
-    background: none;
-    border: 0px;
+  ${props =>
+    props.connected
+      ? `
+      box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05), 0px 0px 0px 4px #f2f4f7;
+      img.connect-wallet {
+        filter: brightness(0) saturate(100%) invert(69%) sepia(55%) saturate(4720%) hue-rotate(110deg)
+          brightness(91%) contrast(86%);
+      }
+      `
+      : `
+      `}
+
+  .connect-wallet {
+    margin-right: 8px;
   }
 `
-
-const MobileConnectBtn = styled.div``
 
 const MobileActionsContainer = styled.div`
-  bottom: 0;
-  position: absolute;
+  height: 100%;
   width: 100%;
-  border-radius: 15px 15px 0px 0px;
-  background: #fff;
-  box-shadow: 0px -4px 4px 0px rgba(0, 0, 0, 0.1);
-  &.full-menu-container {
-    padding: 19px 19px 0px;
+  background-size: cover;
+  z-index: 10;
+  overflow: scroll;
+  padding: 15px 36px 15px 11px;
+  flex-direction: column;
+  animation: fadeIn;
+  animation-duration: 0.45s;
+
+  @media screen and (max-width: 992px) {
+    padding: 0 36px 15px 11px;
   }
 `
 
-const MobileWalletTop = styled.div`
-  display: flex;
+const MobileLinksContainer = styled.div`
   justify-content: space-between;
-  padding: 19px 19px 0px;
-`
+  align-items: center;
+  margin: 0 0px auto;
 
-const MobileWalletTopNet = styled.div`
-  display: flex;
-  margin: auto 0px;
+  a.logo {
+    display: flex;
+    align-items: inherit;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 16px;
 
-  img.chainIcon {
-    padding: 3px 5px;
-    border-radius: 2px;
-    background: #fff;
+    &:after {
+      margin-left: 22px;
+      display: block;
+      content: 'Harvest';
+      color: ${props => props.color};
+    }
   }
-
-  img.chainStatus {
-    margin: auto 5px;
-  }
-`
-
-const MobileWalletBody = styled.div`
-  display: flex;
-  flex-flow: column;
-  padding: 25px 25px 0px;
-  &.connect-body {
-    padding: 80px 25px;
-  }
-`
-
-const MobileWalletBtn = styled.div`
-  display: flex;
-  justify-content: space-evenly;
-  padding: 25px 0px;
-`
-
-const MobileAmount = styled.div`
-  color: #6b6b6b;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 28px;
-  display: flex;
-`
-
-const MobileAmountDiv = styled.div`
-  display: inline-block;
-  width: 50%;
-  text-align: center;
-  &.middle-letter {
-    width: 10%;
-    margin-top: -1px;
-  }
-  &.eth-letter {
-    text-align: end;
-  }
-  &.usdc-letter {
-    text-align: start;
-  }
-`
-
-const MobileWalletButton = styled.div`
-  color: #000;
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 600;
-  padding: 10px 18px;
-  background: #fff;
-  border-radius: 5px;
-  border: 1px solid ${props => props.borderColor};
-  cursor: pointer;
-  width: 45%;
-  text-align: center;
-
-  &.connect-button {
-    padding: 10px 40px;
-  }
-`
-
-const SocialMobileWrapper = styled.div`
-  margin: auto;
-  width: 50%;
-  padding: 8px 16px;
 `
 
 const MobileLinkContainer = styled.div`
   display: flex;
   position: relative;
-  padding-bottom: 12px;
-  margin: auto;
-  width: 50%;
+  padding-left: 30px;
+  margin-bottom: 24px;
+  border-radius: 10px;
 
   &:last-child {
     margin-bottom: 0;
@@ -499,6 +433,15 @@ const MobileLink = styled.button`
   }
 `
 
+const MobileFollow = styled.div`
+  left: 12px;
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+  position: absolute;
+  bottom: 5px;
+`
+
 const ConnectAvatar = styled.div`
   display: flex;
   align-items: center;
@@ -508,14 +451,7 @@ const ConnectAvatar = styled.div`
   line-height: 14px;
   transition: 0.25s;
   img {
-    width: 39px;
-    height: 39px;
     margin-right: 5px;
-  }
-
-  @media screen and (max-width: 992px) {
-    justify-content: center;
-    margin-right: 0px;
   }
 `
 
@@ -523,12 +459,6 @@ const Address = styled.span`
   font-size: 16px;
   font-weight: 600;
   line-height: 22px;
-
-  @media screen and (max-width: 992px) {
-    text-align: center;
-    line-height: 28px;
-    margin: 4px auto;
-  }
 `
 
 const ThemeMode = styled.div`
@@ -597,6 +527,10 @@ const ThemeMode = styled.div`
 `
 
 const SideIcons = styled.img`
+  filter: ${props => props.filterColor};
+  &:hover {
+    filter: ${props => props.hoverImgColor};
+  }
   transition: 0.25s;
 `
 
@@ -606,13 +540,13 @@ const UserDropDown = styled(Dropdown.Toggle)`
   border-radius: 10px !important;
   color: #15202b !important;
   align-items: center;
-  padding: 8px 18px 8px 0px !important;
+  padding: 8px 18px 8px 9px !important;
   width: 100%;
   display: flex !important;
   justify-content: space-between;
   text-align: left;
   position: relative;
-  margin: 20px 0px;
+  margin: 20px 5px;
 
   &:after {
     display: none !important;
@@ -713,16 +647,10 @@ const UserDropDownItem = styled(Dropdown.Item)`
 
 const MobileToggle = styled.img`
   filter: ${props => props.toggleColor};
-  &.wallet-btn {
-    margin-top: -3px;
-  }
 `
 
 const OffcanvasDiv = styled(Offcanvas)`
-  background-color: #f2f5ff !important;
-  box-shadow: 0px -4px 4px 0px rgba(0, 0, 0, 0.1);
-  border-radius: 15px 15px 0px 0px;
-  border-left: unset !important;
+  background-color: ${props => props.backcolor} !important;
   color: ${props => props.fontcolor};
   transition: 0.25s;
   a.logo {
@@ -738,111 +666,110 @@ const OffcanvasDiv = styled(Offcanvas)`
   }
 `
 
-const ProfitBack = styled.img`
-  border-radius: 13px;
-`
-
-const BottomPart = styled.div``
-
-const Logo = styled.div`
+const ProfitSharing = styled.div`
+  background: url(${Pattern});
+  background-position: center;
+  background-repeat: no-repeat;
   cursor: pointer;
-  color: #1f2937;
-  font-size: 24px;
-  font-weight: 700;
-  line-height: 36px;
+  position: relative;
+  padding: 15px 18px;
+  border-radius: 13px;
+  margin-top: 50px;
 
   @media screen and (max-width: 992px) {
-    display: flex;
-    justify-content: end;
+    display: none;
+  }
+
+  @media screen and (max-height: 900px) {
+    display: none;
   }
 `
 
-const Desktop = styled.div`
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+const Divider = styled.div`
+  height: ${props => (props.height ? props.height : '20px')};
+  background: ${props => (props.backColor ? props.backColor : 'unset')};
+  margin-top: ${props => (props.marginTop ? props.marginTop : 'unset')};
 
   @media screen and (max-width: 992px) {
     display: none;
   }
 `
 
-const NewTag = styled.div`
-  border-radius: 16px;
-  background: #15b088;
-  padding: 2px 8px;
-  font-size: 12px;
-  line-height: 18px;
-  font-weight: 500;
-  color: white !important;
-  margin-left: 10px;
+const ProfitBack = styled.img`
+  border-radius: 13px;
 `
 
-const LinkMobile = styled.button`
-  font-size: 10px;
-  line-height: 13px;
-  color: #484c52;
-  transition: 0.25s;
-  display: flex;
-  align-items: center;
-  justify-content: start;
+const TopDiv = styled.div`
   width: 100%;
-  cursor: pointer;
-  padding-left: 0;
-  padding-right: 0;
-  flex-direction: column;
-  ${props =>
-    props.enabled === 'false'
-      ? `
-      pointer-events: none;
-      color: #a4a4a4;
-
-      img.sideIcon {
-        filter: invert(81%) sepia(0%) saturate(1%) hue-rotate(315deg) brightness(82%) contrast(85%);
-      }
-    `
-      : ``}
-
-  ${props =>
-    props.active
-      ? `
-      font-weight: 500;
-      color: #15B088;
-      img {
-        filter: invert(56%) sepia(65%) saturate(2880%) hue-rotate(127deg) brightness(93%) contrast(84%);
-      }
-  `
-      : `
-      font-weight: 400;
-  `}
-  display: ${props => (props.isDropdownLink ? 'none' : 'flex')};
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 23px;
 `
 
-const MobileMenuContainer = styled.div`
-  display: flex;
+const BottomDiv = styled.div`
+  font-size: 25px;
+  color: white;
+  line-height: 42px;
+  font-weight: 600;
+`
 
-  &:last-child {
-    margin-bottom: 0;
+const TopTitle = styled.div`
+  display: flex;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  color: #ffffff;
+  align-items: center;
+  padding: 4px 12px;
+  border: 2px solid #eaecf0;
+  border-radius: 14px;
+  img {
+    margin-right: 7px;
+    filter: brightness(0) saturate(100%) invert(100%) sepia(17%) saturate(0%) hue-rotate(338deg)
+      brightness(101%) contrast(101%);
   }
 `
 
-const ConnectSection = styled.div`
-  cursor: pointer;
-  display: flex;
+const ChartDiv = styled.div`
+  position: absolute;
+  bottom: -15px;
+  right: 0;
 `
 
-const MoreBtn = styled.button`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  color: #484c52;
-  font-size: 10.229px;
-  font-style: normal;
-  font-weight: 400;
-  width: 21px;
-  height: 21px;
-  padding: 0px;
+const BottomPart = styled.div`
+  position: absolute;
+  bottom: 20px;
+  width: 240px;
+`
+
+const MobileProfitSharing = styled.div`
+  background: url(${Pattern});
+  background-position: center;
+  background-repeat: no-repeat;
+  cursor: pointer;
+  position: relative;
+  padding: 15px 18px;
+  border-radius: 13px;
+  margin: 50px 15px 0;
+
+  @media screen and (min-width: 992px) {
+    display: none;
+  }
+`
+
+const ProfitPart = styled.div`
+  position: absolute;
+  bottom: 60px;
+  width: 100%;
+
+  @media screen and (max-height: 670px) {
+    display: none;
+  }
+`
+
+const Logo = styled.div`
+  cursor: pointer;
 `
 
 export {
@@ -855,36 +782,32 @@ export {
   FlexDiv,
   Address,
   ConnectButtonStyle,
+  Follow,
   AboutHarvest,
   MobileView,
   MobileConnectBtn,
   MobileToggle,
   OffcanvasDiv,
-  MobileWalletTop,
-  MobileWalletTopNet,
-  MobileWalletBody,
-  MobileWalletBtn,
-  MobileAmount,
-  MobileAmountDiv,
-  MobileWalletButton,
   MobileActionsContainer,
-  SocialMobileWrapper,
+  MobileLinksContainer,
   MobileLinkContainer,
   MobileLink,
+  MobileFollow,
   ConnectAvatar,
   ThemeMode,
   SideIcons,
   UserDropDown,
   UserDropDownItem,
   UserDropDownMenu,
+  ProfitSharing,
   ProfitBack,
+  TopDiv,
+  BottomDiv,
+  TopTitle,
+  ChartDiv,
   BottomPart,
+  MobileProfitSharing,
+  ProfitPart,
+  Divider,
   Logo,
-  Desktop,
-  NewTag,
-  LinkMobile,
-  MobileMenuContainer,
-  Mobile,
-  ConnectSection,
-  MoreBtn,
 }

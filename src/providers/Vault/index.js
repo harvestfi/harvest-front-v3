@@ -20,7 +20,6 @@ import {
   hasValidUpdatedBalance,
   newContractInstance,
   pollUpdatedBalance,
-  ledgerWeb3,
 } from '../../services/web3'
 import univ3ContractData from '../../services/web3/contracts/uniswap-v3/contract.json'
 import vaultContractData from '../../services/web3/contracts/vault/contract.json'
@@ -69,15 +68,7 @@ const VaultsProvider = _ref => {
   const setFormattedVaults = useCallback(
     async (apiData, apiFailed) => {
       const formattedVaults = {}
-      let curChainId = chainId
-      try {
-        if (isLedgerLive()) {
-          const selectedChain = await ledgerWeb3.eth.net.getId()
-          curChainId = selectedChain.toString()
-        }
-      } catch (e) {
-        console.log(e)
-      }
+      const curChainId = chainId
 
       await forEach(Object.keys(importedVaults), async vaultSymbol => {
         const vaultChain = get(importedVaults, `[${vaultSymbol}].chain`)
@@ -225,7 +216,7 @@ const VaultsProvider = _ref => {
       if (loadedUserVaultsWeb3Provider.current) {
         setLoadingFarmingBalances(true)
         const curStats = updatedUserStats || userStats
-        if (curStats.length !== 0) {
+        if (curStats.length !== 0 && curStats !== {}) {
           await Promise.all(
             filterVaults(selectedVaults).map(async vaultSymbol => {
               const fetchedBalance = await calculateFarmingBalance(

@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
-import HoverBack from '../../assets/images/logos/farm/hover_filter.svg'
+import HoverBack from '../../assets/images/logos/camelot/hover_filter.svg'
 
 const QuickFilterContainer = styled.div`
   display: flex;
@@ -14,7 +14,7 @@ const QuickFilterContainer = styled.div`
     props.sub
       ? `
   `
-      : `padding: 25px 0 0;`}
+      : `padding: 15px 0 0;`}
   
   &:first-child {
     padding: 0;
@@ -250,21 +250,10 @@ const DivWidth = styled.div`
 `
 
 const ChainButton = styled.button`
-  width: 50px;
   align-items: center;
-  padding: 9px 16px;
-  display: flex;
-  justify-content: center;
-  transition: 0.25s;
   border: 1px solid ${props => props.borderColor};
-  background: ${props => props.backColor};
-
   &:first-child {
     border-radius: 10px 0 0 10px;
-    border-right: none;
-  }
-
-  &:nth-child(2) {
     border-right: none;
   }
 
@@ -272,6 +261,14 @@ const ChainButton = styled.button`
     border-radius: 0 10px 10px 0;
     border-left: none;
   }
+
+  background: ${props => props.backColor};
+
+  padding: 9px 14px;
+  display: flex;
+  justify-content: center;
+
+  transition: 0.25s;
 
   &:hover {
     background: ${props => props.hoverColor} !important;
@@ -292,6 +289,7 @@ const ChainButton = styled.button`
   }
 
   @media screen and (max-width: 1480px) {
+    padding: 7px 12px;
     img {
       width: 20px;
       height: 20px;
@@ -299,6 +297,7 @@ const ChainButton = styled.button`
   }
 
   @media screen and (max-width: 1280px) {
+    padding: 5px 10px;
     img {
       width: 14px;
       height: 14px;
@@ -306,7 +305,7 @@ const ChainButton = styled.button`
   }
 
   @media screen and (max-width: 992px) {
-    width: 25%;
+    padding: 9px 12px;
     img {
       width: 22px;
       height: 22px;
@@ -356,7 +355,6 @@ const ChainATag = styled.a`
 `
 
 const ClearFilter = styled.div`
-  width: max-content;
   background: ${props => props.backColor};
   color: ${props => props.fontColor};
   border: 1px solid ${props => props.borderColor};
@@ -373,7 +371,7 @@ const ClearFilter = styled.div`
   align-items: center;
 
   &:hover {
-    color: #036666;
+    color: #ff9400;
   }
 
   @media screen and (max-width: 1480px) {
@@ -393,20 +391,19 @@ const Counter = styled.div`
   ${props =>
     props.count > 0
       ? `
-  background: #15B088;
+  background: #FF7E00;
   color: white;
   `
       : `
-  background: #15B088;
+  background: #FF9400;
   color: #1F2937;
   `}
   width: 20px;
   height: 20px;
-  border-radius: 4px;
+  border-radius: 5px;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-right: 8px;
 
   @media screen and (max-width: 1480px) {
     width: 15px;
@@ -485,15 +482,13 @@ const Filtersinput = styled.input`
 const FarmFiltersPart = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 100%;
-  gap: 25px;
 
   .switch-balance {
     width: 32%;
   }
 
   .filter-part {
-    width: 100%;
+    width: 32%;
 
     button {
       background: ${props => props.backColor};
@@ -518,13 +513,13 @@ const FarmFiltersPart = styled.div`
   }
 
   .clear-filter {
-    width: 100%;
+    width: 32%;
   }
 `
 
 const MobileListHeaderSearch = styled.div`
   width: 100%;
-  margin-bottom: 15px;
+  margin-top: 15px;
 
   .filter-sort {
     margin-top: 10px;
@@ -569,11 +564,11 @@ const FilterOffCanvas = styled(Offcanvas)`
 `
 
 const FilterOffCanvasHeader = styled(Offcanvas.Header)`
-  padding: 15px 15px 19px 15px !important;
+  padding: 19px 20px 19px 23px !important;
 `
 
 const FilterOffCanvasBody = styled(Offcanvas.Body)`
-  padding: 0px 15px 15px 15px !important;
+  padding: 19px 14px 19px 22px !important;
 
   &.filter-show {
     height: 100% !important;
@@ -651,7 +646,7 @@ const FilterOffCanvasBody = styled(Offcanvas.Body)`
 `
 
 const FarmFilter = styled.div`
-  color: #344054;
+  color: ${props => props.fontColor};
   font-weight: 700;
   font-size: 16px;
   line-height: 21px;
@@ -736,9 +731,6 @@ const SpecButtons = styled.button`
 const ChainGroup = styled.div`
   display: flex;
   border-radius: 10px;
-  @media screen and (max-width: 992px) {
-    width: 100%;
-  }
 `
 
 const SwitchBalanceButton = styled.button`
@@ -1022,7 +1014,34 @@ const SpecDropDownItem = styled(Dropdown.Item)`
 `
 
 const TrendDropDown = styled(Dropdown.Toggle)`
-  background: #15b088;
+  ${props =>
+    props.num === -1
+      ? `
+    background: #4e54c8;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #8f94fb, #4e54c8);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #8f94fb, #4e54c8); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+    `
+      : props.num === 0
+      ? `
+      background: #12c2e9;  /* fallback for old browsers */
+      background: -webkit-linear-gradient(to right, #f64f59, #c471ed, #12c2e9);  /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(to right, #f64f59, #c471ed, #12c2e9); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    `
+      : `
+      background: #134E5E;  /* fallback for old browsers */
+      background: -webkit-linear-gradient(to right, #71B280, #134E5E);  /* Chrome 10-25, Safari 5.1-6 */
+      background: linear-gradient(to right, #71B280, #134E5E); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    `}
+
+  ${props =>
+    props.backcolor
+      ? `
+    background: ${props.backcolor} !important;
+    `
+      : `
+  `}
+
   background-size: 100% !important;
   border: 1px solid ${props => props.bordercolor} !important;
   color: white;
@@ -1043,15 +1062,7 @@ const TrendDropDown = styled(Dropdown.Toggle)`
   }
 
   &:hover {
-    background: #2ccda4;
-  }
-
-  &:active {
-    background: #4fdfbb !important;
-  }
-
-  &.show {
-    background: #2ccda4;
+    filter: brightness(120%);
   }
 
   .name {
@@ -1086,7 +1097,7 @@ const TrendDropDown = styled(Dropdown.Toggle)`
   }
 
   @media screen and (max-width: 992px) {
-    justify-content: center;
+    justify-content: space-between;
     padding: 10px 16px;
     width: 100%;
     .name {
@@ -1166,7 +1177,7 @@ const ApplyFilterBtn = styled.button`
   display: flex;
   justify-content: center;
   padding: 10px 16px;
-  background: #000;
+  background: #ff7e00;
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
   border-radius: 8px;
   width: 100%;

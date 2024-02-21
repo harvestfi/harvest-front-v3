@@ -6,6 +6,7 @@ const ProfitSharing = styled.div`
   text-decoration: none;
   background-position: center;
   background-repeat: no-repeat;
+  // background-size: cover;
   cursor: pointer;
   position: relative;
   padding: 15px 18px;

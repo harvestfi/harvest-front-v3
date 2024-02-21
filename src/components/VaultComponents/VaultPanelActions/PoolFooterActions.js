@@ -94,6 +94,8 @@ const PoolFooterActions = ({
         logoUrl: ['./icons/ifarm.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
         tokenNames: ['FARM'],
+        isNew: tokens[FARM_TOKEN_SYMBOL].isNew,
+        newDetails: tokens[FARM_TOKEN_SYMBOL].newDetails,
       },
       [FARM_WETH_TOKEN_SYMBOL]: {
         liquidityPoolVault: true,
@@ -102,6 +104,7 @@ const PoolFooterActions = ({
         data: farmWethPool,
         logoUrl: ['./icons/farm.svg', './icons/eth.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
+        isNew: tokens[FARM_WETH_TOKEN_SYMBOL].isNew,
       },
       [FARM_GRAIN_TOKEN_SYMBOL]: {
         liquidityPoolVault: true,
@@ -110,6 +113,7 @@ const PoolFooterActions = ({
         data: farmGrainPool,
         logoUrl: ['./icons/farm.svg', './icons/grain.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
+        isNew: tokens[FARM_GRAIN_TOKEN_SYMBOL].isNew,
       },
     }),
     [farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
