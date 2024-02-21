@@ -401,8 +401,8 @@ const AdvancedFarm = () => {
 
   const [yieldDaily, setYieldDaily] = useState(0)
   const [yieldMonthly, setYieldMonthly] = useState(0)
-  const [convertMonthlyYieldUSD, setConvertMonthlyYieldUSD] = useState(0)
-  const [convertDailyYieldUSD, setConvertDailyYieldUSD] = useState(0)
+  const [convertMonthlyYieldUSD, setConvertMonthlyYieldUSD] = useState('0')
+  const [convertDailyYieldUSD, setConvertDailyYieldUSD] = useState('0')
 
   const [balanceList, setBalanceList] = useState([])
   const [supTokenList, setSupTokenList] = useState([])
@@ -507,8 +507,8 @@ const AdvancedFarm = () => {
       (Number(minReceiveAmountString) * Number(usdPrice) * (Number(totalApy) / 100)) / 12
     const convertDailyYieldYieldValue =
       (Number(minReceiveAmountString) * Number(usdPrice) * (Number(totalApy) / 100)) / 365
-    setConvertMonthlyYieldUSD(convertMonthlyYieldValue)
-    setConvertDailyYieldUSD(convertDailyYieldYieldValue)
+    setConvertMonthlyYieldUSD(convertMonthlyYieldValue.toString())
+    setConvertDailyYieldUSD(convertDailyYieldYieldValue.toString())
   }, [minReceiveAmountString, usdPrice, totalApy])
 
   useEffect(() => {
@@ -1687,6 +1687,8 @@ const AdvancedFarm = () => {
                         minReceiveAmountString={minReceiveAmountString}
                         setMinReceiveAmountString={setMinReceiveAmountString}
                         setMinReceiveUsdAmount={setMinReceiveUsdAmount}
+                        setConvertMonthlyYieldUSD={setConvertMonthlyYieldUSD}
+                        setConvertDailyYieldUSD={setConvertDailyYieldUSD}
                       />
                       <DepositSelectToken
                         selectToken={selectTokenDepo}
@@ -1754,6 +1756,7 @@ const AdvancedFarm = () => {
                         soonToSupList={soonToSupList}
                       />
                       <WithdrawStart
+                        unstakeInputValue={unstakeInputValue}
                         withdrawStart={withdrawStart}
                         setWithdrawStart={setWithdrawStart}
                         pickedToken={pickedTokenWith}

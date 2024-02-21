@@ -3,7 +3,7 @@ import UsdIcon from '../../assets/images/ui/usd-port.svg'
 import TokensIcon from '../../assets/images/ui/tokens-port.svg'
 import BoxBgOne from '../../assets/images/logos/dashboard/box-bg-1.png'
 import BoxBgTwo from '../../assets/images/logos/dashboard/box-bg-2.png'
-import BoxBgThree from '../../assets/images/logos/dashboard/box-bg-3.svg'
+import BoxBgThree from '../../assets/images/logos/dashboard/box-bg-3.png'
 
 const Container = styled.div`
   width: 100%;

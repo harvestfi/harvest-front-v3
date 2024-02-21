@@ -195,8 +195,9 @@ const PortalsProvider = _ref => {
   }) => {
     const inputToken = `${getChainNamePortals(chainId)}:${tokenIn}`
     const outputToken = `${getChainNamePortals(chainId)}:${tokenOut}`
+    let response
     try {
-      const response = await axios.get(`${PORTALS_FI_API_URL}/v2/portal/estimate`, {
+      response = await axios.get(`${PORTALS_FI_API_URL}/v2/portal/estimate`, {
         params: {
           inputToken,
           inputAmount,
@@ -205,10 +206,11 @@ const PortalsProvider = _ref => {
           sender,
         },
       })
-      return response.data
+      return { res: response.data, succeed: true }
     } catch (error) {
-      console.error('Error fetching estimates:', error)
-      return {}
+      // console.error('Error fetching estimates:', error)
+      console.error('Error fetching estimates:', error.response.data.message)
+      return { res: error.response.data, succeed: false }
     }
   }
 

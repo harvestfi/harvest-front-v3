@@ -42,6 +42,7 @@ import {
 } from './style'
 
 const WithdrawStart = ({
+  unstakeInputValue,
   withdrawStart,
   setWithdrawStart,
   pickedToken,
@@ -256,7 +257,9 @@ const WithdrawStart = ({
               <NewLabel weight="500">{progressStep === 4 ? 'Reverted' : 'Reverting'}</NewLabel>
               <NewLabel display="flex" flexFlow="column" weight="600" textAlign="right">
                 <>
-                  {revertFromInfoAmount !== '' ? (
+                  {revertFromInfoAmount === '' || revertFromInfoAmount === 'NaN' ? (
+                    unstakeInputValue
+                  ) : revertFromInfoAmount !== '' ? (
                     revertFromInfoAmount
                   ) : (
                     <AnimateDotDiv>
@@ -331,7 +334,9 @@ const WithdrawStart = ({
                   ) : (
                     <AnimatedDots />
                   )} */}
-                  {revertFromInfoUsdAmount !== '' ? (
+                  {revertFromInfoUsdAmount === 'NaN' ? (
+                    '-'
+                  ) : revertFromInfoUsdAmount !== '' ? (
                     `≈$${revertFromInfoUsdAmount}`
                   ) : (
                     <AnimatedDots />

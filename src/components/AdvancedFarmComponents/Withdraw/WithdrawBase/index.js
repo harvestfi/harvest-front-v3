@@ -142,36 +142,43 @@ const WithdrawBase = ({
             slippage,
             sender: account,
           })
-          const fromTokenDetail = await getPortalsToken(chainId, fromToken)
-          const fromTokenUsdPrice = fromTokenDetail?.price
-          const quoteResult = {
-            fromTokenAmount: amount,
-            fromTokenUsdPrice,
-            minToTokenAmount: portalsEstimate.outputAmount,
-          }
-          setQuoteValue(quoteResult)
 
-          fromInfoValue = new BigNumber(
-            fromWei(
-              quoteResult.fromTokenAmount,
-              useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
-              useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
-            ),
-          ).toString()
-          fromInfoUsdValue =
-            quoteResult.fromTokenAmount === null
-              ? '0'
-              : fromWei(
-                  quoteResult.fromTokenAmount,
-                  useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
-                  useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
-                ) * quoteResult.fromTokenUsdPrice
-          minReceivedString = new BigNumber(
-            fromWei(quoteResult.minToTokenAmount, pickedToken.decimals, pickedToken.decimals),
-          ).toString()
-          setRevertFromInfoAmount(fromInfoValue)
-          setRevertFromInfoUsdAmount(fromInfoUsdValue)
-          setRevertMinReceivedAmount(minReceivedString)
+          if (portalsEstimate.succeed) {
+            const fromTokenDetail = await getPortalsToken(chainId, fromToken)
+            const fromTokenUsdPrice = fromTokenDetail?.price
+            const quoteResult = {
+              fromTokenAmount: amount,
+              fromTokenUsdPrice,
+              minToTokenAmount: portalsEstimate.res.outputAmount,
+            }
+            setQuoteValue(quoteResult)
+
+            fromInfoValue = new BigNumber(
+              fromWei(
+                quoteResult.fromTokenAmount,
+                useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
+                useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
+              ),
+            ).toString()
+            fromInfoUsdValue =
+              quoteResult.fromTokenAmount === null
+                ? '0'
+                : new BigNumber(
+                    fromWei(
+                      quoteResult.fromTokenAmount,
+                      useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
+                      useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
+                    ) * quoteResult.fromTokenUsdPrice,
+                  ).toString()
+            minReceivedString = new BigNumber(
+              fromWei(quoteResult.minToTokenAmount, pickedToken.decimals, pickedToken.decimals),
+            ).toString()
+            setRevertFromInfoAmount(fromInfoValue)
+            setRevertFromInfoUsdAmount(fromInfoUsdValue)
+            setRevertMinReceivedAmount(minReceivedString)
+          } else {
+            toast.error('Failed to get quote!')
+          }
         } catch (e) {
           toast.error('Failed to get quote!')
         }
