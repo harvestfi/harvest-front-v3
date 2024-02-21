@@ -177,8 +177,8 @@ const SelectTokenList = ({
             <>
               <Label padding="0px 24px">
                 {hasErrorOccurred === 2
-                  ? 'Other, currently unsupported tokens, which you don&apos;t have in your wallet'
-                  : 'Other supported convert tokens, which you don&apos;t have on your wallet'}
+                  ? `Other, currently unsupported tokens, which you don't have in your wallet`
+                  : `Other supported convert tokens, which you don't have on your wallet`}
               </Label>
               {supTokenList.map((data, i) => (
                 <Container
