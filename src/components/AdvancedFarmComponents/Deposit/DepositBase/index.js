@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useState } from 'react'
 import { useSetChain } from '@web3-onboard/react'
-import { get, round } from 'lodash'
+import { round } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import { toast } from 'react-toastify'
 import ReactTooltip from 'react-tooltip'
@@ -12,12 +12,11 @@ import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import ArrowDown from '../../../../assets/images/logos/beginners/arrow-narrow-down.svg'
 import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.svg'
 import HelpIcon from '../../../../assets/images/logos/earn/info.svg'
-import { IFARM_TOKEN_SYMBOL, BEGINNERS_BALANCES_DECIMALS } from '../../../../constants'
+import { BEGINNERS_BALANCES_DECIMALS } from '../../../../constants'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { useWallet } from '../../../../providers/Wallet'
 import { CHAIN_IDS } from '../../../../data/constants'
 import { fromWei, toWei } from '../../../../services/web3'
-import { useVaults } from '../../../../providers/Vault'
 import { addresses } from '../../../../data'
 import { formatNumberWido, isSpecialApp } from '../../../../utils'
 import Button from '../../../Button'
@@ -35,6 +34,8 @@ import {
   AmountSection,
   // ThemeMode,
   InsufficientSection,
+  HasErrorSection,
+  FlexDiv,
   CloseBtn,
   DepositTokenSection,
   SwitchTabTag,
@@ -68,7 +69,9 @@ const DepositBase = ({
   balance,
   balanceList,
   pickedToken,
+  defaultToken,
   inputAmount,
+  pricePerFullShare,
   setInputAmount,
   token,
   supTokenList,
@@ -84,9 +87,12 @@ const DepositBase = ({
   minReceiveAmountString,
   setMinReceiveAmountString,
   setMinReceiveUsdAmount,
+  setConvertMonthlyYieldUSD,
+  setConvertDailyYieldUSD,
+  hasErrorOccurred,
+  setHasErrorOccurred,
 }) => {
   const { connected, connectAction, account, chainId, setChainId, web3 } = useWallet()
-  const { vaultsData } = useVaults()
   const { getPortalsEstimate, getPortalsToken } = usePortals()
   const { filterColor } = useThemeContext()
 
@@ -105,12 +111,9 @@ const DepositBase = ({
     ? parseInt(connectedChain.id, 16).toString()
     : ''
 
-  const pricePerFullShare = useIFARM
-    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
-    : get(token, `pricePerFullShare`, 0)
-
   const [depositName, setDepositName] = useState('Preview & Convert')
   const [showWarning, setShowWarning] = useState(false)
+  const [failureCount, setFailureCount] = useState(0)
   // const [showDepositIcon, setShowDepositIcon] = useState(true)
   const amount = toWei(inputAmount, pickedToken.decimals, 0)
 
@@ -134,88 +137,127 @@ const DepositBase = ({
       pickedToken.symbol !== 'Select Token' &&
       !new BigNumber(amount).isEqualTo(0) &&
       curChain === tokenChain &&
-      balanceList.length !== 0
+      balanceList.length !== 0 &&
+      failureCount < 5
     ) {
       const getQuoteResult = async () => {
         setFromInfoAmount('')
         setFromInfoUsdAmount('')
+        let portalsEstimate
         try {
           let fromInfoValue = '',
             fromInfoUsdValue = '',
             minReceiveAmount = '',
             minReceiveUsd = '',
+            outputAmountDefault = '',
             curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol)
+
           curToken = curToken[0]
           const fromToken = pickedToken.address
           const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
           const overBalance = new BigNumber(amount).isGreaterThan(
             new BigNumber(curToken.rawBalance),
           )
-          const portalsEstimate = await getPortalsEstimate({
-            chainId,
-            tokenIn: fromToken,
-            inputAmount: amount,
-            tokenOut: toToken,
-            slippage,
-            sender: overBalance ? null : account,
-          })
 
-          if (Object.keys(portalsEstimate).length === 0)
-            throw new Error('Portals estimate fetch failture')
+          const pickedDefaultToken = pickedToken.symbol === defaultToken.symbol
 
-          const fromTokenDetail = await getPortalsToken(chainId, fromToken)
-          const toTokenDetail = await getPortalsToken(chainId, toToken)
-          const fromTokenUsdPrice = fromTokenDetail?.price
-
-          const quoteResult = {
-            fromTokenAmount: amount,
-            fromTokenUsdPrice,
-            minToTokenAmount: portalsEstimate.outputAmount,
-            outputTokenDecimals: portalsEstimate.outputTokenDecimals,
-          }
-
-          if (curToken) {
-            fromInfoValue = new BigNumber(
-              fromWei(quoteResult.fromTokenAmount, curToken.decimals, curToken.decimals, false),
-            ).toString()
-
-            fromInfoUsdValue =
-              quoteResult.fromTokenAmount === null
-                ? '0'
-                : formatNumberWido(
-                    fromWei(
-                      quoteResult.fromTokenAmount,
-                      curToken.decimals,
-                      curToken.decimals,
-                      true,
-                    ) * quoteResult.fromTokenUsdPrice,
-                    BEGINNERS_BALANCES_DECIMALS,
-                  )
-            minReceiveAmount = new BigNumber(
-              fromWei(
-                quoteResult.minToTokenAmount,
-                quoteResult.outputTokenDecimals || token.data.lpTokenData.decimals,
-                quoteResult.outputTokenDecimals || token.data.lpTokenData.decimals,
-                false,
-              ),
-            ).toString()
-            minReceiveUsd = formatNumberWido(
-              parseFloat(minReceiveAmount) * toTokenDetail?.price,
-              BEGINNERS_BALANCES_DECIMALS,
-            )
-          }
-          setMinReceiveAmountString(minReceiveAmount)
-          setMinReceiveUsdAmount(minReceiveUsd)
-          setFromInfoAmount(fromInfoValue)
-          if (Number(fromInfoUsdValue) < 0.01) {
-            setFromInfoUsdAmount('<$0.01')
+          if (pickedDefaultToken) {
+            const outputAmountDefaultDecimals = new BigNumber(inputAmount)
+              .dividedBy(pricePerFullShare)
+              .toString()
+            outputAmountDefault = toWei(outputAmountDefaultDecimals, pickedToken.decimals, 0)
           } else {
-            setFromInfoUsdAmount(`$${fromInfoUsdValue}`)
+            portalsEstimate = await getPortalsEstimate({
+              chainId,
+              tokenIn: fromToken,
+              inputAmount: amount,
+              tokenOut: toToken,
+              slippage,
+              sender: overBalance ? null : account,
+            })
+          }
+
+          if (pickedDefaultToken || portalsEstimate.succeed) {
+            // if (Object.keys(portalsEstimate).length === 0) {
+            //   throw new Error('Portals estimate fetch failture')
+            // }
+
+            const fromTokenDetail = await getPortalsToken(chainId, fromToken)
+            const toTokenDetail = await getPortalsToken(chainId, toToken)
+            const fromTokenUsdPrice = fromTokenDetail?.price
+
+            const quoteResult = {
+              fromTokenAmount: amount,
+              fromTokenUsdPrice,
+              minToTokenAmount: pickedDefaultToken
+                ? outputAmountDefault
+                : portalsEstimate.res.outputAmount,
+              outputTokenDecimals: pickedDefaultToken
+                ? pickedToken.decimals
+                : portalsEstimate.res.outputTokenDecimals,
+            }
+
+            if (curToken) {
+              fromInfoValue = new BigNumber(
+                fromWei(quoteResult.fromTokenAmount, curToken.decimals, curToken.decimals, false),
+              ).toString()
+
+              fromInfoUsdValue =
+                quoteResult.fromTokenAmount === null
+                  ? '0'
+                  : formatNumberWido(
+                      fromWei(
+                        quoteResult.fromTokenAmount,
+                        curToken.decimals,
+                        curToken.decimals,
+                        true,
+                      ) * quoteResult.fromTokenUsdPrice,
+                      BEGINNERS_BALANCES_DECIMALS,
+                    )
+              minReceiveAmount = new BigNumber(
+                fromWei(
+                  quoteResult.minToTokenAmount,
+                  quoteResult.outputTokenDecimals || token.data.lpTokenData.decimals,
+                  quoteResult.outputTokenDecimals || token.data.lpTokenData.decimals,
+                  false,
+                ),
+              ).toString()
+              minReceiveUsd = formatNumberWido(
+                parseFloat(minReceiveAmount) * toTokenDetail?.price,
+                BEGINNERS_BALANCES_DECIMALS,
+              )
+            }
+            setMinReceiveAmountString(minReceiveAmount)
+            setMinReceiveUsdAmount(minReceiveUsd)
+            setFromInfoAmount(fromInfoValue)
+            setHasErrorOccurred(0)
+            setFailureCount(0)
+            if (Number(fromInfoUsdValue) < 0.01) {
+              setFromInfoUsdAmount('<$0.01')
+            } else {
+              setFromInfoUsdAmount(`$${fromInfoUsdValue}`)
+            }
+          } else {
+            setFailureCount(prevCount => prevCount + 1)
+
+            if (failureCount === 4) {
+              setConvertMonthlyYieldUSD('-')
+              setConvertDailyYieldUSD('-')
+              setMinReceiveAmountString('-')
+              setMinReceiveUsdAmount('-')
+              setFromInfoUsdAmount('-')
+              if (
+                portalsEstimate.res.message === 'outputToken not found' ||
+                portalsEstimate.res.message === 'Unexpected error'
+              ) {
+                setHasErrorOccurred(2)
+              } else {
+                setHasErrorOccurred(1)
+              }
+            }
           }
         } catch (e) {
-          setMinReceiveAmountString('')
-          setMinReceiveUsdAmount('')
-          toast.error('Failed to get quote!')
+          console.error('Error content: ', e)
         }
       }
 
@@ -228,6 +270,7 @@ const DepositBase = ({
     curChain,
     tokenChain,
     pickedToken,
+    defaultToken,
     token,
     deposit,
     balanceList,
@@ -239,8 +282,12 @@ const DepositBase = ({
     setFromInfoUsdAmount,
     setMinReceiveAmountString,
     setMinReceiveUsdAmount,
+    setConvertMonthlyYieldUSD,
+    setConvertDailyYieldUSD,
     getPortalsEstimate,
     getPortalsToken,
+    failureCount,
+    setHasErrorOccurred,
   ])
 
   const onClickDeposit = async () => {
@@ -279,7 +326,7 @@ const DepositBase = ({
 
   useEffect(() => {
     if (pickedToken.usdPrice) {
-      setInputAmount(balance)
+      setInputAmount(new BigNumber(balance).toString())
     }
   }, [balance, setInputAmount, pickedToken])
 
@@ -360,6 +407,8 @@ const DepositBase = ({
                   <TokenInfo>
                     <AnimatedDots />
                   </TokenInfo>
+                ) : fromInfoUsdAmount === '-' ? (
+                  '-'
                 ) : (
                   `≈${fromInfoUsdAmount}`
                 )}
@@ -395,13 +444,13 @@ const DepositBase = ({
         <BalanceInfo
           onClick={() => {
             if (account && pickedToken.symbol !== 'Select Token') {
-              setInputAmount(balance)
+              setInputAmount(new BigNumber(balance).toString())
             }
           }}
         >
           {isMobile && (pickedToken.symbol === 'Select Token' ? '' : `${pickedToken.symbol} `)}
           Balance Available:
-          <span>{balance}</span>
+          <span>{new BigNumber(balance).toString()}</span>
         </BalanceInfo>
         <InsufficientSection isShow={showWarning ? 'true' : 'false'}>
           <NewLabel display="flex" widthDiv="80%" items="center">
@@ -425,6 +474,30 @@ const DepositBase = ({
             />
           </div>
         </InsufficientSection>
+        <HasErrorSection isShow={hasErrorOccurred === 1 ? 'true' : 'false'}>
+          <NewLabel display="flex" flexFlow="column" widthDiv="100%">
+            <FlexDiv>
+              <img className="info-icon" src={InfoIcon} alt="" />
+              <NewLabel
+                size={isMobile ? '14px' : '14px'}
+                height={isMobile ? '20px' : '20px'}
+                weight="600"
+                color="#344054"
+              >
+                Opss, we are having small issues with getting quotes. Please try again in 2 minutes.
+              </NewLabel>
+            </FlexDiv>
+          </NewLabel>
+          <div>
+            <CloseBtn
+              src={CloseIcon}
+              alt=""
+              onClick={() => {
+                setHasErrorOccurred(0)
+              }}
+            />
+          </div>
+        </HasErrorSection>
       </BaseWidoDiv>
       <BaseWidoDiv>
         <NewLabel
@@ -486,9 +559,13 @@ const DepositBase = ({
               !new BigNumber(amount).isEqualTo(0) &&
               balanceList.length !== 0 ? (
                 minReceiveAmountString !== '' ? (
-                  convertMonthlyYieldUSD === 0 ? (
+                  convertMonthlyYieldUSD === '0' ? (
                     '$0.00'
-                  ) : convertMonthlyYieldUSD < 0.01 ? (
+                  ) : convertMonthlyYieldUSD === '-' ? (
+                    '-'
+                  ) : convertMonthlyYieldUSD === 'NaN' ? (
+                    '-'
+                  ) : Number(convertMonthlyYieldUSD) < 0.01 ? (
                     '<$0.01'
                   ) : (
                     `$${round(convertMonthlyYieldUSD, 2)}`
@@ -558,9 +635,13 @@ const DepositBase = ({
               !new BigNumber(amount).isEqualTo(0) &&
               balanceList.length !== 0 ? (
                 minReceiveAmountString !== '' ? (
-                  convertDailyYieldUSD === 0 ? (
+                  convertDailyYieldUSD === '0' ? (
                     '$0.00'
-                  ) : convertDailyYieldUSD < 0.01 ? (
+                  ) : convertDailyYieldUSD === '-' ? (
+                    '-'
+                  ) : convertDailyYieldUSD === 'NaN' ? (
+                    '-'
+                  ) : Number(convertDailyYieldUSD) < 0.01 ? (
                     '<$0.01'
                   ) : (
                     `$${round(convertDailyYieldUSD, 2)}`

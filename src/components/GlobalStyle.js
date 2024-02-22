@@ -567,6 +567,55 @@ html {
         }
       }
     }
+
+    &.welcome-modal-dialog {
+      max-width: 605px;
+
+      @media screen and (max-width: 576px) {
+        margin: auto 24px;
+      }
+
+      .modal-content {
+        @media screen and (max-width: 576px) {
+          position: unset;
+          bottom: unset;
+          border-bottom-right-radius: unset;
+          border-bottom-left-radius: unset;
+        }
+
+        .modal-header {
+          background: unset;
+          padding: 24px 24px 4px 24px;
+          border-bottom: none;
+
+          div {
+            font-size: 18px;
+            color: #101828;
+            font-weight: 600;
+            line-height: 28px;
+          }
+  
+          button {
+            font-size: 12px;
+            color: #667085;
+          }
+        }
+
+        .modal-body {
+          padding: 0px 24px 32px 24px;
+          font-size: 14px;
+        }
+
+        .modal-footer {
+          padding: 0px 24px 24px 24px;
+          border-top: none;
+
+          .confirm {
+            background: #15B088;
+          }
+        }
+      }
+    }
   }
 
   .apexcharts-tooltip {
