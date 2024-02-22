@@ -5,6 +5,7 @@ import { find, get, isEmpty, orderBy, isEqual, isNaN } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import React, { useRef, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
+import { FaRegSquare, FaRegSquareCheck } from 'react-icons/fa6'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import BASE from '../../assets/images/chains/base.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
@@ -14,10 +15,8 @@ import Coin1 from '../../assets/images/logos/dashboard/coins-stacked-02.svg'
 import Coin2 from '../../assets/images/logos/dashboard/coins-stacked-04.svg'
 import Diamond from '../../assets/images/logos/dashboard/diamond-01.svg'
 import Sort from '../../assets/images/logos/dashboard/sort.svg'
-import File from '../../assets/images/logos/dashboard/file-02.svg'
-import MobileFile from '../../assets/images/logos/dashboard/file-01.svg'
 import ConnectDisableIcon from '../../assets/images/logos/sidebar/connect-disable.svg'
-import ListItem from '../../components/DashboardComponents/ListItem'
+import VaultRow from '../../components/DashboardComponents/VaultRow'
 import TotalValue from '../../components/TotalValue'
 import {
   COINGECKO_API_KEY,
@@ -28,7 +27,6 @@ import {
   SPECIAL_VAULTS,
   MAX_DECIMALS,
   ROUTES,
-  directDetailUrl,
 } from '../../constants'
 import { addresses } from '../../data'
 import { CHAIN_IDS } from '../../data/constants'
@@ -38,26 +36,15 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { fromWei } from '../../services/web3'
+import { parseValue, getTotalApy } from '../../utils'
 import {
-  parseValue,
-  formatNumber,
-  formatNumberWido,
-  // ceil10,
-  getTotalApy,
-  isLedgerLive,
-} from '../../utils'
-import {
-  BadgeIcon,
   Column,
   Container,
-  Content,
-  DetailView,
   EmptyInfo,
   EmptyPanel,
   ExploreFarm,
   ExploreContent,
   ExploreTitle,
-  FlexDiv,
   Header,
   Inner,
   SubPart,
@@ -66,12 +53,10 @@ import {
   DescInfo,
   // ThemeMode,
   TransactionDetails,
-  LogoImg,
-  Img,
   Col,
-  ContentInner,
   TableContent,
   ConnectButtonStyle,
+  CheckBoxDiv,
 } from './style'
 
 const getChainIcon = chain => {
@@ -92,18 +77,6 @@ const getChainIcon = chain => {
   }
   return chainLogo
 }
-
-const chainList = isLedgerLive()
-  ? [
-      { id: 1, name: 'Ethereum', chainId: 1 },
-      { id: 2, name: 'Polygon', chainId: 137 },
-    ]
-  : [
-      { id: 1, name: 'Ethereum', chainId: 1 },
-      { id: 2, name: 'Polygon', chainId: 137 },
-      { id: 3, name: 'Arbitrum', chainId: 42161 },
-      { id: 4, name: 'Base', chainId: 8453 },
-    ]
 
 const BASE_URL = 'https://pro-api.coingecko.com/api/v3/'
 
@@ -149,7 +122,6 @@ const Portfolio = () => {
   const { tokens } = require('../../data')
   const {
     // darkMode,
-    switchMode,
     pageBackColor,
     backColor,
     fontColor,
@@ -227,6 +199,7 @@ const Portfolio = () => {
   const groupOfVaults = { ...vaultsData, ...poolVaults }
 
   const [farmTokenList, setFarmTokenList] = useState([])
+  const [filteredFarmList, setFilteredFarmList] = useState([])
   const [noFarm, setNoFarm] = useState(false)
   const [totalDeposit, setTotalDeposit] = useState(0)
   const [totalRewards, setTotalRewards] = useState(0)
@@ -237,6 +210,7 @@ const Portfolio = () => {
 
   const [sortOrder, setSortOrder] = useState(false)
   const [showDetail, setShowDetail] = useState(Array(farmTokenList.length).fill(false))
+  const [showInactiveFarms, setShowInactiveFarms] = useState(true)
 
   const firstWalletBalanceLoad = useRef(true)
   useEffectWithPrevious(
@@ -301,13 +275,35 @@ const Portfolio = () => {
   useEffect(() => {
     if (!isEmpty(userStats) && account) {
       const getFarmTokenInfo = async () => {
-        const stakedVaults = Object.keys(userStats).filter(
-          poolId =>
-            new BigNumber(userStats[poolId].totalStaked).gt(0) ||
-            new BigNumber(userStats[poolId].lpTokenBalance).gt(0) ||
-            (poolId === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID &&
-              new BigNumber(balances[IFARM_TOKEN_SYMBOL]).gt(0)),
-        )
+        let stakedVaults = [],
+          totalBalanceUSD = 0,
+          valueRewards = 0,
+          totalDailyYield = 0,
+          totalMonthlyYield = 0
+
+        if (showInactiveFarms) {
+          stakedVaults = Object.keys(userStats).filter(
+            poolId =>
+              new BigNumber(userStats[poolId].totalStaked).gt(0) ||
+              new BigNumber(userStats[poolId].lpTokenBalance).gt(0) ||
+              (poolId === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID &&
+                new BigNumber(balances[IFARM_TOKEN_SYMBOL]).gt(0)),
+          )
+        } else {
+          const stakedVaultsTemp = Object.keys(userStats).filter(
+            poolId =>
+              new BigNumber(userStats[poolId].totalStaked).gt(0) ||
+              new BigNumber(userStats[poolId].lpTokenBalance).gt(0) ||
+              (poolId === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID &&
+                new BigNumber(balances[IFARM_TOKEN_SYMBOL]).gt(0)),
+          )
+
+          stakedVaults = stakedVaultsTemp.filter(
+            poolId =>
+              groupOfVaults[poolId] && // Check if the key exists in groupOfVaults
+              groupOfVaults[poolId].inactive !== true,
+          )
+        }
 
         const symbols = stakedVaults.map(poolId =>
           poolId === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID ? FARM_TOKEN_SYMBOL : poolId,
@@ -318,10 +314,6 @@ const Portfolio = () => {
         }
 
         const newStats = []
-        let totalBalanceUSD = 0,
-          valueRewards = 0,
-          totalDailyYield = 0,
-          totalMonthlyYield = 0
 
         for (let i = 0; i < stakedVaults.length; i += 1) {
           const stats = {
@@ -360,7 +352,8 @@ const Portfolio = () => {
             const useIFARM = symbol === FARM_TOKEN_SYMBOL
             let tokenName = '',
               totalRewardAPRByPercent = 0,
-              iFARMBalance = 0
+              iFARMBalance = 0,
+              usdPrice = 1
             for (let k = 0; k < token.tokenNames.length; k += 1) {
               tokenName += token.tokenNames[k]
               if (k !== token.tokenNames.length - 1) {
@@ -383,8 +376,6 @@ const Portfolio = () => {
             if (isSpecialVault) {
               fAssetPool = token.data
             }
-            // eslint-disable-next-line one-var
-            let usdPrice = 1
             const tokenDecimals = useIFARM
               ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0)
               : token.decimals
@@ -620,13 +611,20 @@ const Portfolio = () => {
 
       getFarmTokenInfo()
     }
-  }, [account, userStats, balances, farmingBalances]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, userStats, balances, farmingBalances, showInactiveFarms]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const sortCol = field => {
     const tokenList = orderBy(farmTokenList, [field], [sortOrder ? 'asc' : 'desc'])
     setFarmTokenList(tokenList)
     setSortOrder(!sortOrder)
   }
+
+  useEffect(() => {
+    const filteredVaultList = showInactiveFarms
+      ? farmTokenList
+      : farmTokenList.filter(farm => farm.status === 'Active')
+    setFilteredFarmList(filteredVaultList)
+  }, [showInactiveFarms, farmTokenList])
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
@@ -771,389 +769,33 @@ const Portfolio = () => {
             </Header>
             {connected && farmTokenList.length > 0 ? (
               <>
-                {farmTokenList.map((el, i) => {
-                  const info = farmTokenList[i]
-                  return (
-                    <DetailView
-                      lastElement={i === farmTokenList.length - 1 ? 'yes' : 'no'}
-                      borderColor={borderColor}
-                      key={i}
-                      mode={switchMode}
-                      background={showDetail[i] ? 'rgba(234, 241, 255, 0.53)' : 'unset'}
-                      onClick={() => {
-                        let badgeId = -1
-                        const token = info.token
-                        const chain = token.chain || token.data.chain
-                        chainList.forEach((obj, j) => {
-                          if (obj.chainId === Number(chain)) {
-                            badgeId = j
-                          }
-                        })
-                        const isSpecialVault = token.liquidityPoolVault || token.poolVault
-                        const network = chainList[badgeId].name.toLowerCase()
-                        const address = isSpecialVault
-                          ? token.data.collateralAddress
-                          : token.vaultAddress || token.tokenAddress
-                        push(
-                          `${`${directDetailUrl}advanced`}${
-                            directDetailUrl + network
-                          }/${address}?from=portfolio`,
-                        )
-                      }}
-                    >
-                      <FlexDiv padding={isMobile ? '10px' : '0'}>
-                        <Content
-                          width={isMobile ? '100%' : '40%'}
-                          display={isMobile ? 'block' : 'flex'}
-                        >
-                          <ContentInner
-                            width={isMobile ? '100%' : '50%'}
-                            display={isMobile ? 'block' : 'flex'}
-                          >
-                            <BadgeIcon
-                              borderColor={info.status === 'Active' ? '#29ce84' : 'orange'}
-                              className="network-badge"
-                            >
-                              <img src={info.chain} width="15px" height="15px" alt="" />
-                            </BadgeIcon>
-                            {info.logos.length > 0 &&
-                              info.logos.map((elem, index) => (
-                                <LogoImg
-                                  key={index}
-                                  className="coin"
-                                  marginLeft={index === 0 ? '' : '-7px'}
-                                  src={elem}
-                                  alt=""
-                                />
-                              ))}
-                          </ContentInner>
-                          <ContentInner
-                            width={isMobile ? '100%' : '50%'}
-                            marginLeft={isMobile ? '0px' : '11px'}
-                          >
-                            <ListItem
-                              weight={600}
-                              size={isMobile ? 14 : 14}
-                              height={isMobile ? 20 : 20}
-                              value={info.symbol}
-                              marginTop={isMobile ? 15 : 0}
-                              color="#101828"
-                            />
-                            <ListItem
-                              weight={500}
-                              size={isMobile ? 14 : 14}
-                              height={isMobile ? 20 : 20}
-                              value={info.platform}
-                              color="#475467"
-                            />
-                          </ContentInner>
-                        </Content>
-                        <Content
-                          width={isMobile ? '33%' : '11%'}
-                          marginTop={isMobile ? '15px' : 'unset'}
-                        >
-                          {isMobile && (
-                            <ListItem
-                              color="#475467"
-                              weight={500}
-                              size={12}
-                              height={18}
-                              value="APY"
-                            />
-                          )}
-                          <ListItem
-                            color="#101828"
-                            weight={500}
-                            size={14}
-                            height={20}
-                            value={
-                              info.apy === -1
-                                ? 'Inactive'
-                                : Number.isNaN(info.apy)
-                                ? '-'
-                                : `${formatNumberWido(info.apy, 2)}%`
-                            }
-                          />
-                        </Content>
-                        {isMobile && (
-                          <>
-                            <Content
-                              width={isMobile ? '33%' : '11%'}
-                              marginTop={isMobile ? '15px' : 'unset'}
-                            >
-                              <ListItem
-                                color="#475467"
-                                weight={500}
-                                size={12}
-                                height={18}
-                                value="My Balance"
-                              />
-                              <ListItem
-                                weight={500}
-                                size={14}
-                                height={20}
-                                color="#101828"
-                                value={`${
-                                  info.balance === 0
-                                    ? '$0.00'
-                                    : info.balance < 0.01
-                                    ? '<$0.01'
-                                    : `$${formatNumber(info.balance, 2)}`
-                                }`}
-                              />
-                            </Content>
-                            <Content
-                              width={isMobile ? '33%' : '11%'}
-                              marginTop={isMobile ? '15px' : 'unset'}
-                            >
-                              <ListItem
-                                color="#475467"
-                                weight={500}
-                                size={12}
-                                height={18}
-                                value="Rewards"
-                              />
-                              <ListItem
-                                weight={500}
-                                size={14}
-                                height={20}
-                                color="#101828"
-                                value={`${
-                                  info.totalRewardUsd === 0
-                                    ? '$0.00'
-                                    : info.totalRewardUsd < 0.01
-                                    ? '<$0.01'
-                                    : `$${formatNumberWido(info.totalRewardUsd, 2)}`
-                                }`}
-                              />
-                            </Content>
-                          </>
-                        )}
-                        {!isMobile && (
-                          <Content width={isMobile ? '33%' : '11%'}>
-                            <ListItem
-                              weight={500}
-                              size={14}
-                              height={20}
-                              color="#101828"
-                              value={`${
-                                info.balance === 0
-                                  ? '$0.00'
-                                  : info.balance < 0.01
-                                  ? '<$0.01'
-                                  : `$${formatNumber(info.balance, 2)}`
-                              }`}
-                            />
-                          </Content>
-                        )}
-                        <Content
-                          width={isMobile ? '33%' : '11%'}
-                          marginTop={isMobile ? '15px' : 'unset'}
-                        >
-                          {isMobile && (
-                            <ListItem
-                              color="#475467"
-                              weight={500}
-                              size={12}
-                              height={18}
-                              value="Monthly Yield"
-                            />
-                          )}
-                          <ListItem
-                            weight={500}
-                            size={14}
-                            height={20}
-                            color="#101828"
-                            value={`${
-                              info.monthlyYield === 0
-                                ? '$0.00'
-                                : info.monthlyYield < 0.01
-                                ? '<$0.01'
-                                : `$${formatNumber(info.monthlyYield, 2)}`
-                            }`}
-                          />
-                        </Content>
-                        <Content
-                          width={isMobile ? '33%' : '11%'}
-                          marginTop={isMobile ? '15px' : 'unset'}
-                        >
-                          {isMobile && (
-                            <ListItem
-                              color="#475467"
-                              weight={500}
-                              size={12}
-                              height={18}
-                              value="Daily Yield"
-                            />
-                          )}
-                          <ListItem
-                            weight={500}
-                            size={14}
-                            height={20}
-                            color="#101828"
-                            value={`${
-                              info.dailyYield === 0
-                                ? '$0.00'
-                                : info.dailyYield < 0.01
-                                ? '<$0.01'
-                                : `$${formatNumber(info.dailyYield, 2)}`
-                            }`}
-                          />
-                        </Content>
-                        {!isMobile && (
-                          <Content width={isMobile ? '33%' : '11%'}>
-                            <ListItem
-                              weight={500}
-                              size={14}
-                              height={20}
-                              color="#101828"
-                              // value={`$${info.totalRewardUsd}`}
-                              value={`${
-                                info.totalRewardUsd === 0
-                                  ? '$0.00'
-                                  : info.totalRewardUsd < 0.01
-                                  ? '<$0.01'
-                                  : `$${formatNumber(info.totalRewardUsd, 2)}`
-                              }`}
-                            />
-                          </Content>
-                        )}
-                        <Content
-                          onClick={event => {
-                            event.stopPropagation()
-                            const updatedShowDetail = [...showDetail]
-                            updatedShowDetail[i] = !updatedShowDetail[i]
-                            setShowDetail(updatedShowDetail)
-                          }}
-                          width={isMobile ? '5%' : '5%'}
-                          cursor="pointer"
-                          className={isMobile && 'mobile-extender'}
-                        >
-                          {showDetail[i] ? (
-                            <img
-                              src={isMobile ? MobileFile : File}
-                              className="active-file-icon"
-                              alt="file"
-                            />
-                          ) : (
-                            <img
-                              src={isMobile ? MobileFile : File}
-                              className="file-icon"
-                              alt="file"
-                            />
-                          )}
-                        </Content>
-                      </FlexDiv>
-                      {showDetail[i] && (
-                        <FlexDiv padding={isMobile ? '0px 10px 10px' : '16px 0'}>
-                          <Content
-                            width={isMobile ? '100%' : '40%'}
-                            display={isMobile ? 'flex' : 'flex'}
-                          >
-                            <ContentInner width={isMobile ? '33%' : '50%'}>
-                              <ListItem
-                                weight={600}
-                                size={isMobile ? 12 : 14}
-                                height={isMobile ? 18 : 20}
-                                value="Unstaked"
-                                marginTop={isMobile ? 10 : 0}
-                                color="#101828"
-                              />
-                              <ListItem
-                                weight={500}
-                                size={isMobile ? 14 : 14}
-                                height={isMobile ? 20 : 20}
-                                value={
-                                  info.unstake === 0
-                                    ? '0.00'
-                                    : `${formatNumberWido(info.unstake, 6)}`
-                                }
-                                color="#475467"
-                              />
-                            </ContentInner>
-                            <ContentInner
-                              width={isMobile ? '33%' : '50%'}
-                              marginLeft={isMobile ? '0px' : '11px'}
-                            >
-                              <ListItem
-                                weight={600}
-                                size={isMobile ? 12 : 14}
-                                height={isMobile ? 18 : 20}
-                                value="Staked"
-                                marginTop={isMobile ? 10 : 0}
-                                color="#101828"
-                              />
-                              <ListItem
-                                weight={500}
-                                size={isMobile ? 14 : 14}
-                                height={isMobile ? 20 : 20}
-                                value={
-                                  info.stake === 0 ? '0.00' : `${formatNumberWido(info.stake, 6)}`
-                                }
-                                color="#475467"
-                              />
-                            </ContentInner>
-                          </Content>
-                          {isMobile && (
-                            <Content
-                              width={isMobile ? '100%' : '11%'}
-                              display={isMobile ? 'flex' : 'block'}
-                            >
-                              <ListItem
-                                weight={600}
-                                size={isMobile ? 12 : 14}
-                                height={isMobile ? 18 : 20}
-                                value={isMobile ? 'Rewards Breakdown' : 'Rewards'}
-                                marginTop={isMobile ? 15 : 0}
-                                color="#101828"
-                              />
-                            </Content>
-                          )}
-                          {info.reward.map((rw, key) => (
-                            <Content
-                              key={key}
-                              width={isMobile ? '35%' : '15%'}
-                              display="flex"
-                              marginTop={isMobile ? '15px' : 'unset'}
-                            >
-                              <Img
-                                src={`/icons/${info.rewardSymbol[key].toLowerCase()}.svg`}
-                                alt="jeur"
-                              />
-                              <div>
-                                <ListItem
-                                  weight={500}
-                                  size={isMobile ? 14 : 14}
-                                  height={isMobile ? 20 : 20}
-                                  value={`${
-                                    info.reward[key] === 0
-                                      ? '0.00'
-                                      : `${info.reward[key].toFixed(6)}`
-                                  }`}
-                                  color="#475467"
-                                />
-                                <ListItem
-                                  weight={500}
-                                  size={isMobile ? 14 : 14}
-                                  height={isMobile ? 20 : 20}
-                                  value={`${
-                                    info.rewardUSD[key] === 0
-                                      ? '$0.00'
-                                      : info.rewardUSD[key] < 0.01
-                                      ? '<$0.01'
-                                      : `$${formatNumber(info.rewardUSD[key], 2)}`
-                                  }`}
-                                  color="#101828"
-                                />
-                              </div>
-                            </Content>
-                          ))}
-                          <Content width={isMobile ? '20%' : '5%'} />
-                        </FlexDiv>
-                      )}
-                    </DetailView>
-                  )
-                })}
+                {showInactiveFarms
+                  ? farmTokenList.map((el, i) => {
+                      const info = farmTokenList[i]
+                      return (
+                        <VaultRow
+                          key={i}
+                          info={info}
+                          lastElement={i === farmTokenList.length - 1 ? 'yes' : 'no'}
+                          showDetail={showDetail}
+                          setShowDetail={setShowDetail}
+                          cKey={i}
+                        />
+                      )
+                    })
+                  : filteredFarmList.map((el, i) => {
+                      const info = filteredFarmList[i]
+                      return (
+                        <VaultRow
+                          key={i}
+                          info={info}
+                          lastElement={i === filteredFarmList.length - 1 ? 'yes' : 'no'}
+                          showDetail={showDetail}
+                          setShowDetail={setShowDetail}
+                          cKey={i}
+                        />
+                      )
+                    })}
               </>
             ) : (
               <EmptyPanel borderColor={borderColor}>
@@ -1189,6 +831,16 @@ const Portfolio = () => {
               </EmptyPanel>
             )}
           </TableContent>
+          {connected && farmTokenList.length > 0 && (
+            <CheckBoxDiv>
+              {showInactiveFarms ? (
+                <FaRegSquareCheck onClick={() => setShowInactiveFarms(false)} color="#15B088" />
+              ) : (
+                <FaRegSquare onClick={() => setShowInactiveFarms(true)} color="#15B088" />
+              )}
+              <div>Show inactive positions</div>
+            </CheckBoxDiv>
+          )}
         </TransactionDetails>
         {connected && farmTokenList.length > 0 ? (
           <></>

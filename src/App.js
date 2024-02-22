@@ -50,7 +50,7 @@ const NewLoginModal = () => {
           }}
         >
           Due to regulatory uncertainty, Harvest Finance is not available to people or companies,
-          who are residents in the <b>United States</b> or other restricted territory, or who are
+          who are residents in the <b>United States or other restricted territory</b>, or who are
           subject to other restrictions. <br /> <br /> By interacting with the Harvest Finance
           website and/or smart contracts, the user acknowledges the experimental nature of yield
           farming with Harvest Finance, its dependency on 3rd party protocols, and the potential for

@@ -5,11 +5,11 @@ const MainModal = ({ title, open, onClose, children, confirmationLabel }) => (
   <Modal
     show={open}
     onHide={onClose}
-    dialogClassName="modal-notification"
+    dialogClassName="modal-notification welcome-modal-dialog"
     aria-labelledby="contained-modal-title-vcenter"
     centered
   >
-    <Modal.Header>
+    <Modal.Header closeButton>
       <Modal.Title id="example-custom-modal-styling-title">{title}</Modal.Title>
     </Modal.Header>
     <Modal.Body>{children}</Modal.Body>

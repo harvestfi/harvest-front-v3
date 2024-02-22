@@ -351,9 +351,7 @@ const AdvancedFarm = () => {
   const tempPricePerFullShare = useIFARM
     ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
     : get(token, `pricePerFullShare`, 0)
-  const pricePerFullShare = Number(
-    fromWei(tempPricePerFullShare, tokenDecimals, Number(tokenDecimals) - 1),
-  )
+  const pricePerFullShare = Number(fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals))
 
   const usdPrice =
     Number(token.vaultPrice) ||
@@ -374,6 +372,7 @@ const AdvancedFarm = () => {
   const [minReceiveAmountString, setMinReceiveAmountString] = useState('')
   const [minReceiveUsdAmount, setMinReceiveUsdAmount] = useState('')
   const [convertSuccess, setConvertSuccess] = useState(false)
+  const [hasErrorOccurredConvert, setHasErrorOccurredConvert] = useState(0)
 
   // Withdraw
   const [withdrawStart, setWithdrawStart] = useState(false)
@@ -387,6 +386,7 @@ const AdvancedFarm = () => {
   const [revertedAmount, setRevertedAmount] = useState('')
   const [unstakeInputValue, setUnstakeInputValue] = useState('0')
   const [revertSuccess, setRevertSuccess] = useState(false)
+  const [hasErrorOccurredRevert, setHasErrorOccurredRevert] = useState(0)
 
   // Stake
   const [stakeStart, setStakeStart] = useState(false)
@@ -401,8 +401,8 @@ const AdvancedFarm = () => {
 
   const [yieldDaily, setYieldDaily] = useState(0)
   const [yieldMonthly, setYieldMonthly] = useState(0)
-  const [convertMonthlyYieldUSD, setConvertMonthlyYieldUSD] = useState(0)
-  const [convertDailyYieldUSD, setConvertDailyYieldUSD] = useState(0)
+  const [convertMonthlyYieldUSD, setConvertMonthlyYieldUSD] = useState('0')
+  const [convertDailyYieldUSD, setConvertDailyYieldUSD] = useState('0')
 
   const [balanceList, setBalanceList] = useState([])
   const [supTokenList, setSupTokenList] = useState([])
@@ -507,8 +507,8 @@ const AdvancedFarm = () => {
       (Number(minReceiveAmountString) * Number(usdPrice) * (Number(totalApy) / 100)) / 12
     const convertDailyYieldYieldValue =
       (Number(minReceiveAmountString) * Number(usdPrice) * (Number(totalApy) / 100)) / 365
-    setConvertMonthlyYieldUSD(convertMonthlyYieldValue)
-    setConvertDailyYieldUSD(convertDailyYieldYieldValue)
+    setConvertMonthlyYieldUSD(convertMonthlyYieldValue.toString())
+    setConvertDailyYieldUSD(convertDailyYieldYieldValue.toString())
   }, [minReceiveAmountString, usdPrice, totalApy])
 
   useEffect(() => {
@@ -733,7 +733,11 @@ const AdvancedFarm = () => {
   ])
 
   useEffect(() => {
-    if (balanceList.length > 0 && defaultToken !== null) {
+    // Check if a farm is supported by portalsfi API
+    if (hasErrorOccurredConvert === 2) {
+      setPickedTokenDepo(defaultToken)
+      setBalanceDepo('0')
+    } else if (balanceList.length > 0 && defaultToken !== null) {
       let tokenToSet = null
 
       // Check if defaultToken is present in the balanceList
@@ -786,7 +790,14 @@ const AdvancedFarm = () => {
       setPickedTokenDepo(supTokenList.find(coin => coin.symbol === 'USDC'))
       setBalanceDepo('0')
     }
-  }, [balanceList, supTokenList, defaultToken, chain, SUPPORTED_TOKEN_LIST])
+  }, [
+    balanceList,
+    supTokenList,
+    defaultToken,
+    chain,
+    SUPPORTED_TOKEN_LIST,
+    hasErrorOccurredConvert,
+  ])
 
   const { pageBackColor, fontColor, filterColor } = useThemeContext()
 
@@ -832,7 +843,6 @@ const AdvancedFarm = () => {
           } else {
             underlyingRewardSymbol = rewardTokenSymbols[l].substring(1)
           }
-          // eslint-disable-next-line no-loop-func
           try {
             for (let ids = 0; ids < apiData.length; ids += 1) {
               const tempData = apiData[ids]
@@ -840,7 +850,7 @@ const AdvancedFarm = () => {
               if (tempSymbol.toLowerCase() === underlyingRewardSymbol.toLowerCase()) {
                 // eslint-disable-next-line no-await-in-loop
                 const usdUnderlyingRewardPrice = await getTokenPriceFromApi(tempData.id)
-                usdRewardPrice = Number(usdUnderlyingRewardPrice) * Number(pricePerFullShare)
+                usdRewardPrice = Number(usdUnderlyingRewardPrice) * pricePerFullShare
                 break
               }
             }
@@ -1649,9 +1659,9 @@ const AdvancedFarm = () => {
                           totalValue === 0 ? (
                             '0.00'
                           ) : useIFARM ? (
-                            `${totalValue * Number(pricePerFullShare)} ${id}`
+                            `${totalValue * pricePerFullShare} ${id}`
                           ) : (
-                            totalValue * Number(pricePerFullShare)
+                            totalValue * pricePerFullShare
                           )
                         ) : (
                           <AnimatedDots />
@@ -1670,7 +1680,9 @@ const AdvancedFarm = () => {
                         setDeposit={setDepositStart}
                         balance={balanceDepo}
                         pickedToken={pickedTokenDepo}
+                        defaultToken={defaultToken}
                         inputAmount={inputAmountDepo}
+                        pricePerFullShare={pricePerFullShare}
                         setInputAmount={setInputAmountDepo}
                         token={token}
                         supTokenList={supTokenList}
@@ -1687,6 +1699,10 @@ const AdvancedFarm = () => {
                         minReceiveAmountString={minReceiveAmountString}
                         setMinReceiveAmountString={setMinReceiveAmountString}
                         setMinReceiveUsdAmount={setMinReceiveUsdAmount}
+                        setConvertMonthlyYieldUSD={setConvertMonthlyYieldUSD}
+                        setConvertDailyYieldUSD={setConvertDailyYieldUSD}
+                        hasErrorOccurred={hasErrorOccurredConvert}
+                        setHasErrorOccurred={setHasErrorOccurredConvert}
                       />
                       <DepositSelectToken
                         selectToken={selectTokenDepo}
@@ -1697,6 +1713,7 @@ const AdvancedFarm = () => {
                         balanceList={balanceList}
                         defaultToken={defaultToken}
                         soonToSupList={soonToSupList}
+                        hasErrorOccurred={hasErrorOccurredConvert}
                       />
                       <DepositStart
                         pickedToken={pickedTokenDepo}
@@ -1723,6 +1740,8 @@ const AdvancedFarm = () => {
                         setUnstakeInputValue={setUnstakeInputValue}
                         setSelectToken={setSelectTokenWith}
                         setWithdrawStart={setWithdrawStart}
+                        defaultToken={defaultToken}
+                        pricePerFullShare={pricePerFullShare}
                         pickedToken={pickedTokenWith}
                         unstakeBalance={unstakeBalance}
                         setUnstakeBalance={setUnstakeBalance}
@@ -1742,6 +1761,8 @@ const AdvancedFarm = () => {
                         setRevertMinReceivedAmount={setRevertMinReceivedAmount}
                         revertMinReceivedAmount={revertMinReceivedAmount}
                         setRevertedAmount={setRevertedAmount}
+                        hasErrorOccurred={hasErrorOccurredRevert}
+                        setHasErrorOccurred={setHasErrorOccurredRevert}
                       />
                       <WithdrawSelectToken
                         selectToken={selectTokenWith}
@@ -1754,6 +1775,7 @@ const AdvancedFarm = () => {
                         soonToSupList={soonToSupList}
                       />
                       <WithdrawStart
+                        unstakeInputValue={unstakeInputValue}
                         withdrawStart={withdrawStart}
                         setWithdrawStart={setWithdrawStart}
                         pickedToken={pickedTokenWith}

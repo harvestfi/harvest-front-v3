@@ -22,6 +22,7 @@ const SelectTokenList = ({
   setBalance,
   setSelectToken,
   filterWord,
+  hasErrorOccurred,
 }) => {
   const [showList, setShowList] = useState(false)
 
@@ -118,7 +119,7 @@ const SelectTokenList = ({
               Object.keys(defaultCurToken).length === 0 && defaultCurToken.constructor === Object
             ) && (
               <>
-                <Label padding="15px 24px 0px">Default token </Label>
+                <Label padding="15px 24px 0px">Default token</Label>
                 <Container
                   onClick={() => {
                     handleDefaultToken()
@@ -143,7 +144,11 @@ const SelectTokenList = ({
             )}
           {balanceTokenList.length > 0 && (
             <>
-              <Label padding="0px 24px">Supported tokens in your wallet</Label>
+              <Label padding="0px 24px">
+                {hasErrorOccurred === 2
+                  ? 'Other, currently unsupported tokens in your wallet'
+                  : 'Supported tokens in your wallet'}
+              </Label>
               {balanceTokenList.map((data, i) => (
                 <Container
                   key={i}
@@ -171,7 +176,9 @@ const SelectTokenList = ({
           {supTokenList.length > 0 && (
             <>
               <Label padding="0px 24px">
-                Other supported convert tokens, which you don&apos;t have on your wallet
+                {hasErrorOccurred === 2
+                  ? `Other, currently unsupported tokens, which you don't have in your wallet`
+                  : `Other supported convert tokens, which you don't have on your wallet`}
               </Label>
               {supTokenList.map((data, i) => (
                 <Container

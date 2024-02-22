@@ -421,6 +421,27 @@ const InsufficientSection = styled.div`
   margin-top: 20px;
 `
 
+const HasErrorSection = styled.div`
+  border-radius: 12px;
+  border: 1px solid #ffaf1d;
+  background: #fcfcfd;
+  padding: 16px;
+  ${props =>
+    props.isShow === 'true'
+      ? `
+    display: flex;
+    justify-content: space-between;
+  `
+      : `
+    display: none;
+  `}
+  margin-top: 20px;
+`
+
+const FlexDiv = styled.div`
+  display: flex;
+`
+
 const CloseBtn = styled.img`
   cursor: pointer;
 `
@@ -430,6 +451,7 @@ const DepositTokenSection = styled.div`
 `
 
 export {
+  FlexDiv,
   BaseWidoDiv,
   NewLabel,
   TokenInput,
@@ -442,6 +464,7 @@ export {
   AmountSection,
   ThemeMode,
   InsufficientSection,
+  HasErrorSection,
   CloseBtn,
   DepositTokenSection,
   SwitchTabTag,

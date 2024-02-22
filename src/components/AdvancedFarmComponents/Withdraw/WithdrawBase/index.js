@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js'
 import React, { useState, useEffect } from 'react'
 import { useSetChain } from '@web3-onboard/react'
-import { get } from 'lodash'
 import { toast } from 'react-toastify'
 import ReactTooltip from 'react-tooltip'
 import { useMediaQuery } from 'react-responsive'
@@ -11,8 +10,6 @@ import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import ArrowDown from '../../../../assets/images/logos/beginners/arrow-narrow-down.svg'
 import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.svg'
 import HelpIcon from '../../../../assets/images/logos/beginners/help-circle.svg'
-import { IFARM_TOKEN_SYMBOL } from '../../../../constants'
-import { useVaults } from '../../../../providers/Vault'
 import { useWallet } from '../../../../providers/Wallet'
 import { fromWei, toWei } from '../../../../services/web3'
 import { addresses } from '../../../../data'
@@ -34,6 +31,8 @@ import {
   // ThemeMode,
   TokenSelectSection,
   SwitchTabTag,
+  HasErrorSection,
+  FlexDiv,
 } from './style'
 import { isSpecialApp } from '../../../../utils'
 import { usePortals } from '../../../../providers/Portals'
@@ -63,6 +62,8 @@ const WithdrawBase = ({
   setUnstakeInputValue,
   withdrawStart,
   setWithdrawStart,
+  defaultToken,
+  pricePerFullShare,
   pickedToken,
   unstakeBalance,
   setUnstakeBalance,
@@ -82,17 +83,14 @@ const WithdrawBase = ({
   setRevertMinReceivedAmount,
   revertMinReceivedAmount,
   setRevertedAmount,
+  hasErrorOccurred,
+  setHasErrorOccurred,
 }) => {
   const [withdrawName, setWithdrawName] = useState('Preview & Revert')
   const [showWarning, setShowWarning] = useState(false)
 
   const { account, web3, connected, chainId } = useWallet()
   const { getPortalsEstimate, getPortalsToken } = usePortals()
-  const { vaultsData } = useVaults()
-
-  const pricePerFullShare = useIFARM
-    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
-    : get(token, `pricePerFullShare`, 0)
 
   const slippage = 0.5 // Default slippage Percent
 
@@ -128,52 +126,88 @@ const WithdrawBase = ({
         setRevertFromInfoAmount('')
         setRevertFromInfoUsdAmount('')
         const amount = unstakeBalance
+        let portalsEstimate
         try {
           let fromInfoValue = '',
             fromInfoUsdValue = '',
-            minReceivedString = ''
+            minReceivedString = '',
+            outputAmountDefault = ''
           const toToken = pickedToken.address
 
-          const portalsEstimate = await getPortalsEstimate({
-            chainId,
-            tokenIn: fromToken,
-            inputAmount: amount,
-            tokenOut: toToken,
-            slippage,
-            sender: account,
-          })
-          const fromTokenDetail = await getPortalsToken(chainId, fromToken)
-          const fromTokenUsdPrice = fromTokenDetail?.price
-          const quoteResult = {
-            fromTokenAmount: amount,
-            fromTokenUsdPrice,
-            minToTokenAmount: portalsEstimate.outputAmount,
-          }
-          setQuoteValue(quoteResult)
+          const pickedDefaultToken = pickedToken.symbol === defaultToken.symbol
 
-          fromInfoValue = new BigNumber(
-            fromWei(
-              quoteResult.fromTokenAmount,
-              useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
-              useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
-            ),
-          ).toString()
-          fromInfoUsdValue =
-            quoteResult.fromTokenAmount === null
-              ? '0'
-              : fromWei(
-                  quoteResult.fromTokenAmount,
-                  useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
-                  useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
-                ) * quoteResult.fromTokenUsdPrice
-          minReceivedString = new BigNumber(
-            fromWei(quoteResult.minToTokenAmount, pickedToken.decimals, pickedToken.decimals),
-          ).toString()
-          setRevertFromInfoAmount(fromInfoValue)
-          setRevertFromInfoUsdAmount(fromInfoUsdValue)
-          setRevertMinReceivedAmount(minReceivedString)
+          if (pickedDefaultToken) {
+            const unstakeBalanceDecimals = fromWei(
+              unstakeBalance,
+              pickedToken.decimals,
+              pickedToken.decimals,
+            )
+            const outputAmountDefaultDecimals = new BigNumber(unstakeBalanceDecimals)
+              .dividedBy(pricePerFullShare)
+              .toString()
+            outputAmountDefault = toWei(outputAmountDefaultDecimals, pickedToken.decimals, 0)
+          } else {
+            portalsEstimate = await getPortalsEstimate({
+              chainId,
+              tokenIn: fromToken,
+              inputAmount: amount,
+              tokenOut: toToken,
+              slippage,
+              sender: account,
+            })
+          }
+
+          if (pickedDefaultToken || portalsEstimate.succeed) {
+            const fromTokenDetail = await getPortalsToken(chainId, fromToken)
+            const fromTokenUsdPrice = fromTokenDetail?.price
+            const quoteResult = {
+              fromTokenAmount: amount,
+              fromTokenUsdPrice,
+              minToTokenAmount: pickedDefaultToken
+                ? outputAmountDefault
+                : portalsEstimate.res.outputAmount,
+            }
+            setQuoteValue(quoteResult)
+
+            fromInfoValue = new BigNumber(
+              fromWei(
+                quoteResult.fromTokenAmount,
+                useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
+                useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
+              ),
+            ).toString()
+            fromInfoUsdValue =
+              quoteResult.fromTokenAmount === null
+                ? '0'
+                : new BigNumber(
+                    fromWei(
+                      quoteResult.fromTokenAmount,
+                      useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
+                      useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
+                    ) * quoteResult.fromTokenUsdPrice,
+                  ).toString()
+            minReceivedString = new BigNumber(
+              fromWei(quoteResult.minToTokenAmount, pickedToken.decimals, pickedToken.decimals),
+            ).toString()
+            setRevertFromInfoAmount(fromInfoValue)
+            setRevertFromInfoUsdAmount(fromInfoUsdValue)
+            setRevertMinReceivedAmount(minReceivedString)
+            setHasErrorOccurred(0)
+          } else {
+            setRevertFromInfoAmount('-')
+            setRevertFromInfoUsdAmount('-')
+            setRevertMinReceivedAmount('-')
+            if (
+              portalsEstimate.res.message === 'inputToken not found' ||
+              portalsEstimate.res.message === 'Unexpected error'
+            ) {
+              setHasErrorOccurred(2)
+            } else {
+              setHasErrorOccurred(1)
+            }
+          }
         } catch (e) {
-          toast.error('Failed to get quote!')
+          console.error('Error content: ', e)
         }
       }
       getQuoteResult()
@@ -187,7 +221,6 @@ const WithdrawBase = ({
     withdrawStart,
     balanceList,
     token,
-    pricePerFullShare,
     web3,
     setQuoteValue,
     chainId,
@@ -207,7 +240,7 @@ const WithdrawBase = ({
       ? fromWei(quoteValue.toTokenAmount, pickedToken.decimals, pickedToken.decimals)
       : ''
     setRevertedAmount(receiveString)
-  }, [amountValue, quoteValue, pickedToken, pricePerFullShare, setRevertedAmount])
+  }, [amountValue, quoteValue, pickedToken, setRevertedAmount])
 
   useEffect(() => {
     if (account) {
@@ -405,6 +438,30 @@ const WithdrawBase = ({
             />
           </div>
         </InsufficientSection>
+        <HasErrorSection isShow={hasErrorOccurred === 1 ? 'true' : 'false'}>
+          <NewLabel display="flex" flexFlow="column" widthDiv="100%">
+            <FlexDiv>
+              <img className="info-icon" src={InfoIcon} alt="" />
+              <NewLabel
+                size={isMobile ? '14px' : '14px'}
+                height={isMobile ? '20px' : '20px'}
+                weight="600"
+                color="#344054"
+              >
+                Opss, we are having small issues with getting quotes. Please try again in 2 minutes.
+              </NewLabel>
+            </FlexDiv>
+          </NewLabel>
+          <div>
+            <CloseBtn
+              src={CloseIcon}
+              alt=""
+              onClick={() => {
+                setHasErrorOccurred(0)
+              }}
+            />
+          </div>
+        </HasErrorSection>
       </BaseWidoDiv>
       <BaseWidoDiv>
         <NewLabel
