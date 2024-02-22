@@ -257,7 +257,7 @@ const WithdrawStart = ({
               <NewLabel weight="500">{progressStep === 4 ? 'Reverted' : 'Reverting'}</NewLabel>
               <NewLabel display="flex" flexFlow="column" weight="600" textAlign="right">
                 <>
-                  {revertFromInfoAmount === '' || revertFromInfoAmount === 'NaN' ? (
+                  {revertFromInfoAmount === '-' || revertFromInfoAmount === 'NaN' ? (
                     unstakeInputValue
                   ) : revertFromInfoAmount !== '' ? (
                     revertFromInfoAmount
@@ -334,7 +334,7 @@ const WithdrawStart = ({
                   ) : (
                     <AnimatedDots />
                   )} */}
-                  {revertFromInfoUsdAmount === 'NaN' ? (
+                  {revertFromInfoUsdAmount === 'NaN' || revertFromInfoUsdAmount === '-' ? (
                     '-'
                   ) : revertFromInfoUsdAmount !== '' ? (
                     `≈$${revertFromInfoUsdAmount}`

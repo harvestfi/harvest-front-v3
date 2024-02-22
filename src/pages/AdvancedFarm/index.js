@@ -386,6 +386,7 @@ const AdvancedFarm = () => {
   const [revertedAmount, setRevertedAmount] = useState('')
   const [unstakeInputValue, setUnstakeInputValue] = useState('0')
   const [revertSuccess, setRevertSuccess] = useState(false)
+  const [hasErrorOccurredRevert, setHasErrorOccurredRevert] = useState(0)
 
   // Stake
   const [stakeStart, setStakeStart] = useState(false)
@@ -1739,6 +1740,8 @@ const AdvancedFarm = () => {
                         setUnstakeInputValue={setUnstakeInputValue}
                         setSelectToken={setSelectTokenWith}
                         setWithdrawStart={setWithdrawStart}
+                        defaultToken={defaultToken}
+                        pricePerFullShare={pricePerFullShare}
                         pickedToken={pickedTokenWith}
                         unstakeBalance={unstakeBalance}
                         setUnstakeBalance={setUnstakeBalance}
@@ -1758,6 +1761,8 @@ const AdvancedFarm = () => {
                         setRevertMinReceivedAmount={setRevertMinReceivedAmount}
                         revertMinReceivedAmount={revertMinReceivedAmount}
                         setRevertedAmount={setRevertedAmount}
+                        hasErrorOccurred={hasErrorOccurredRevert}
+                        setHasErrorOccurred={setHasErrorOccurredRevert}
                       />
                       <WithdrawSelectToken
                         selectToken={selectTokenWith}

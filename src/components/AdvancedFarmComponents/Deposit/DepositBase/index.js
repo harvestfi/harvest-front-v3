@@ -149,8 +149,9 @@ const DepositBase = ({
             fromInfoUsdValue = '',
             minReceiveAmount = '',
             minReceiveUsd = '',
-            outputAmountDefault,
+            outputAmountDefault = '',
             curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol)
+
           curToken = curToken[0]
           const fromToken = pickedToken.address
           const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
@@ -238,7 +239,6 @@ const DepositBase = ({
             }
           } else {
             setFailureCount(prevCount => prevCount + 1)
-            console.log('failureCount: ', failureCount)
 
             if (failureCount === 4) {
               setConvertMonthlyYieldUSD('-')
@@ -246,7 +246,10 @@ const DepositBase = ({
               setMinReceiveAmountString('-')
               setMinReceiveUsdAmount('-')
               setFromInfoUsdAmount('-')
-              if (portalsEstimate.res.message === 'outputToken not found') {
+              if (
+                portalsEstimate.res.message === 'outputToken not found' ||
+                portalsEstimate.res.message === 'Unexpected error'
+              ) {
                 setHasErrorOccurred(2)
               } else {
                 setHasErrorOccurred(1)
