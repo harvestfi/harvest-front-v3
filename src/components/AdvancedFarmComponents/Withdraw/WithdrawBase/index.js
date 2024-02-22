@@ -207,7 +207,7 @@ const WithdrawBase = ({
             }
           }
         } catch (e) {
-          toast.error('Failed to get quote!')
+          console.error('Error content: ', e)
         }
       }
       getQuoteResult()

@@ -258,7 +258,6 @@ const DepositBase = ({
           }
         } catch (e) {
           console.error('Error content: ', e)
-          toast.error('Failed to get quote!')
         }
       }
 
