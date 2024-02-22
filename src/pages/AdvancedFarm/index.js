@@ -351,9 +351,7 @@ const AdvancedFarm = () => {
   const tempPricePerFullShare = useIFARM
     ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
     : get(token, `pricePerFullShare`, 0)
-  const pricePerFullShare = Number(
-    fromWei(tempPricePerFullShare, tokenDecimals, Number(tokenDecimals) - 1),
-  )
+  const pricePerFullShare = Number(fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals))
 
   const usdPrice =
     Number(token.vaultPrice) ||
@@ -844,7 +842,6 @@ const AdvancedFarm = () => {
           } else {
             underlyingRewardSymbol = rewardTokenSymbols[l].substring(1)
           }
-          // eslint-disable-next-line no-loop-func
           try {
             for (let ids = 0; ids < apiData.length; ids += 1) {
               const tempData = apiData[ids]
@@ -852,7 +849,7 @@ const AdvancedFarm = () => {
               if (tempSymbol.toLowerCase() === underlyingRewardSymbol.toLowerCase()) {
                 // eslint-disable-next-line no-await-in-loop
                 const usdUnderlyingRewardPrice = await getTokenPriceFromApi(tempData.id)
-                usdRewardPrice = Number(usdUnderlyingRewardPrice) * Number(pricePerFullShare)
+                usdRewardPrice = Number(usdUnderlyingRewardPrice) * pricePerFullShare
                 break
               }
             }
@@ -1661,9 +1658,9 @@ const AdvancedFarm = () => {
                           totalValue === 0 ? (
                             '0.00'
                           ) : useIFARM ? (
-                            `${totalValue * Number(pricePerFullShare)} ${id}`
+                            `${totalValue * pricePerFullShare} ${id}`
                           ) : (
-                            totalValue * Number(pricePerFullShare)
+                            totalValue * pricePerFullShare
                           )
                         ) : (
                           <AnimatedDots />
@@ -1682,7 +1679,9 @@ const AdvancedFarm = () => {
                         setDeposit={setDepositStart}
                         balance={balanceDepo}
                         pickedToken={pickedTokenDepo}
+                        defaultToken={defaultToken}
                         inputAmount={inputAmountDepo}
+                        pricePerFullShare={pricePerFullShare}
                         setInputAmount={setInputAmountDepo}
                         token={token}
                         supTokenList={supTokenList}

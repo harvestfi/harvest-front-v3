@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useState } from 'react'
 import { useSetChain } from '@web3-onboard/react'
-import { get, round } from 'lodash'
+import { round } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import { toast } from 'react-toastify'
 import ReactTooltip from 'react-tooltip'
@@ -12,12 +12,11 @@ import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import ArrowDown from '../../../../assets/images/logos/beginners/arrow-narrow-down.svg'
 import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.svg'
 import HelpIcon from '../../../../assets/images/logos/earn/info.svg'
-import { IFARM_TOKEN_SYMBOL, BEGINNERS_BALANCES_DECIMALS } from '../../../../constants'
+import { BEGINNERS_BALANCES_DECIMALS } from '../../../../constants'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { useWallet } from '../../../../providers/Wallet'
 import { CHAIN_IDS } from '../../../../data/constants'
 import { fromWei, toWei } from '../../../../services/web3'
-import { useVaults } from '../../../../providers/Vault'
 import { addresses } from '../../../../data'
 import { formatNumberWido, isSpecialApp } from '../../../../utils'
 import Button from '../../../Button'
@@ -70,7 +69,9 @@ const DepositBase = ({
   balance,
   balanceList,
   pickedToken,
+  defaultToken,
   inputAmount,
+  pricePerFullShare,
   setInputAmount,
   token,
   supTokenList,
@@ -92,7 +93,6 @@ const DepositBase = ({
   setHasErrorOccurred,
 }) => {
   const { connected, connectAction, account, chainId, setChainId, web3 } = useWallet()
-  const { vaultsData } = useVaults()
   const { getPortalsEstimate, getPortalsToken } = usePortals()
   const { filterColor } = useThemeContext()
 
@@ -110,10 +110,6 @@ const DepositBase = ({
     : connectedChain
     ? parseInt(connectedChain.id, 16).toString()
     : ''
-
-  const pricePerFullShare = useIFARM
-    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
-    : get(token, `pricePerFullShare`, 0)
 
   const [depositName, setDepositName] = useState('Preview & Convert')
   const [showWarning, setShowWarning] = useState(false)
@@ -153,6 +149,7 @@ const DepositBase = ({
             fromInfoUsdValue = '',
             minReceiveAmount = '',
             minReceiveUsd = '',
+            outputAmountDefault,
             curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol)
           curToken = curToken[0]
           const fromToken = pickedToken.address
@@ -161,16 +158,25 @@ const DepositBase = ({
             new BigNumber(curToken.rawBalance),
           )
 
-          portalsEstimate = await getPortalsEstimate({
-            chainId,
-            tokenIn: fromToken,
-            inputAmount: amount,
-            tokenOut: toToken,
-            slippage,
-            sender: overBalance ? null : account,
-          })
+          const pickedDefaultToken = pickedToken.symbol === defaultToken.symbol
 
-          if (portalsEstimate.succeed) {
+          if (pickedDefaultToken) {
+            const outputAmountDefaultDecimals = new BigNumber(inputAmount)
+              .dividedBy(pricePerFullShare)
+              .toString()
+            outputAmountDefault = toWei(outputAmountDefaultDecimals, pickedToken.decimals, 0)
+          } else {
+            portalsEstimate = await getPortalsEstimate({
+              chainId,
+              tokenIn: fromToken,
+              inputAmount: amount,
+              tokenOut: toToken,
+              slippage,
+              sender: overBalance ? null : account,
+            })
+          }
+
+          if (pickedDefaultToken || portalsEstimate.succeed) {
             // if (Object.keys(portalsEstimate).length === 0) {
             //   throw new Error('Portals estimate fetch failture')
             // }
@@ -182,8 +188,12 @@ const DepositBase = ({
             const quoteResult = {
               fromTokenAmount: amount,
               fromTokenUsdPrice,
-              minToTokenAmount: portalsEstimate.res.outputAmount,
-              outputTokenDecimals: portalsEstimate.res.outputTokenDecimals,
+              minToTokenAmount: pickedDefaultToken
+                ? outputAmountDefault
+                : portalsEstimate.res.outputAmount,
+              outputTokenDecimals: pickedDefaultToken
+                ? pickedToken.decimals
+                : portalsEstimate.res.outputTokenDecimals,
             }
 
             if (curToken) {
@@ -258,6 +268,7 @@ const DepositBase = ({
     curChain,
     tokenChain,
     pickedToken,
+    defaultToken,
     token,
     deposit,
     balanceList,
