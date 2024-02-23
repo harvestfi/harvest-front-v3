@@ -96,10 +96,13 @@ const WithdrawBase = ({
 
   const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress1
 
-  const stakeAmountWei = toWei(
-    stakedAmount,
-    useIFARM ? fAssetPool?.lpTokenData?.decimals : token.decimals,
-  )
+  let stakeAmountWei
+  if (useIFARM) {
+    stakeAmountWei = toWei(
+      stakedAmount,
+      useIFARM ? fAssetPool?.lpTokenData?.decimals : token.decimals,
+    )
+  }
 
   const [
     {

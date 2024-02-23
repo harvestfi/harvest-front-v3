@@ -300,24 +300,25 @@ const BeginnersFarm = () => {
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
   const [minReceiveUsdAmount, setMinReceiveUsdAmount] = useState('')
   const [inputAmountDepo, setInputAmountDepo] = useState('0')
-  const [partHeightDepo, setPartHeightDepo] = useState(null)
   const [fromInfoAmount, setFromInfoAmount] = useState('')
   const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('')
   const [minReceiveAmountString, setMinReceiveAmountString] = useState('')
   const [convertSuccess, setConvertSuccess] = useState(false)
+  const [hasErrorOccurredConvert, setHasErrorOccurredConvert] = useState(0)
 
   // Withdraw
   const [withdrawStart, setWithdrawStart] = useState(false)
   const [selectTokenWith, setSelectTokenWith] = useState(false)
   const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select' })
   const [unstakeBalance, setUnstakeBalance] = useState('0')
-  const [partHeightWith, setPartHeightWith] = useState(null)
   const [quoteValueWith, setQuoteValueWith] = useState(null)
   const [revertFromInfoAmount, setRevertFromInfoAmount] = useState('')
   const [revertFromInfoUsdAmount, setRevertFromInfoUsdAmount] = useState('')
   const [revertMinReceivedAmount, setRevertMinReceivedAmount] = useState('')
   const [revertedAmount, setRevertedAmount] = useState('')
   const [unstakeInputValue, setUnstakeInputValue] = useState('0')
+  const [revertSuccess, setRevertSuccess] = useState(false)
+  const [hasErrorOccurredRevert, setHasErrorOccurredRevert] = useState(0)
 
   const [yieldDaily, setYieldDaily] = useState(0)
   const [yieldMonthly, setYieldMonthly] = useState(0)
@@ -613,9 +614,10 @@ const BeginnersFarm = () => {
         console.log('getTokenBalance: ', err)
       }
     }
-
+    console.log('convert status', convertSuccess)
+    console.log('revert status', revertSuccess)
     getTokenBalance()
-  }, [account, chain, balances, convertSuccess, useIFARM]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, chain, balances, convertSuccess, revertSuccess, useIFARM]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (balanceList.length > 0 && defaultToken !== null) {
@@ -1524,9 +1526,7 @@ const BeginnersFarm = () => {
                           totalValue === 0 ? (
                             `0.00 ${token.tokenNames.join(' • ')}`
                           ) : (
-                            `${(totalValue * Number(pricePerFullShare)).toFixed(
-                              8,
-                            )}  ${token.tokenNames.join(' • ')}`
+                            `${totalValue * pricePerFullShare} ${token.tokenNames.join(' • ')}`
                           )
                         ) : (
                           <AnimatedDots />
@@ -1536,7 +1536,6 @@ const BeginnersFarm = () => {
                   </MyBalance>
                   <HalfContent
                     marginBottom={isMobile ? '20px' : '0px'}
-                    partHeight={activeDepo ? partHeightDepo : partHeightWith}
                     borderRadius={isMobile ? '12px' : '12px'}
                   >
                     <DepositSection isShow={activeDepo}>
@@ -1546,7 +1545,9 @@ const BeginnersFarm = () => {
                         setDeposit={setDepositStart}
                         balance={balanceDepo}
                         pickedToken={pickedTokenDepo}
+                        defaultToken={defaultToken}
                         inputAmount={inputAmountDepo}
+                        pricePerFullShare={pricePerFullShare}
                         setInputAmount={setInputAmountDepo}
                         token={token}
                         supTokenList={supTokenList}
@@ -1563,6 +1564,10 @@ const BeginnersFarm = () => {
                         minReceiveAmountString={minReceiveAmountString}
                         setMinReceiveAmountString={setMinReceiveAmountString}
                         setMinReceiveUsdAmount={setMinReceiveUsdAmount}
+                        setConvertMonthlyYieldUSD={setConvertMonthlyYieldUSD}
+                        setConvertDailyYieldUSD={setConvertDailyYieldUSD}
+                        hasErrorOccurred={hasErrorOccurredConvert}
+                        setHasErrorOccurred={setHasErrorOccurredConvert}
                       />
                       <DepositSelectToken
                         selectToken={selectTokenDepo}
@@ -1573,7 +1578,7 @@ const BeginnersFarm = () => {
                         balanceList={balanceList}
                         defaultToken={defaultToken}
                         soonToSupList={soonToSupList}
-                        setPartHeight={setPartHeightDepo}
+                        hasErrorOccurred={hasErrorOccurredConvert}
                       />
                       <DepositStart
                         pickedToken={pickedTokenDepo}
@@ -1618,6 +1623,8 @@ const BeginnersFarm = () => {
                         setRevertMinReceivedAmount={setRevertMinReceivedAmount}
                         revertMinReceivedAmount={revertMinReceivedAmount}
                         setRevertedAmount={setRevertedAmount}
+                        hasErrorOccurred={hasErrorOccurredRevert}
+                        setHasErrorOccurred={setHasErrorOccurredRevert}
                       />
                       <WithdrawSelectToken
                         selectToken={selectTokenWith}
@@ -1628,9 +1635,9 @@ const BeginnersFarm = () => {
                         balanceList={balanceList}
                         defaultToken={defaultToken}
                         soonToSupList={soonToSupList}
-                        setPartHeight={setPartHeightWith}
                       />
                       <WithdrawStart
+                        unstakeInputValue={unstakeInputValue}
                         withdrawStart={withdrawStart}
                         setWithdrawStart={setWithdrawStart}
                         pickedToken={pickedTokenWith}
@@ -1647,6 +1654,7 @@ const BeginnersFarm = () => {
                         revertMinReceivedAmount={revertMinReceivedAmount}
                         revertedAmount={revertedAmount}
                         setUnstakeInputValue={setUnstakeInputValue}
+                        setRevertSuccess={setRevertSuccess}
                       />
                     </WithdrawSection>
                   </HalfContent>

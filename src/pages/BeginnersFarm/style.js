@@ -573,14 +573,6 @@ const HalfContent = styled.div`
     margin-bottom: ${props.marginBottom};
   `
       : ''}
-
-  height: ${props =>
-    props.partHeight
-      ? `
-    ${props.partHeight}px`
-      : `
-      fit-content
-    `};
 `
 
 const TotalValueFarm = styled.div`
