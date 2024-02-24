@@ -298,11 +298,11 @@ const BeginnersFarm = () => {
   const [selectTokenDepo, setSelectTokenDepo] = useState(false)
   const [balanceDepo, setBalanceDepo] = useState('0')
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
-  const [minReceiveUsdAmount, setMinReceiveUsdAmount] = useState('')
   const [inputAmountDepo, setInputAmountDepo] = useState('0')
   const [fromInfoAmount, setFromInfoAmount] = useState('')
   const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('')
   const [minReceiveAmountString, setMinReceiveAmountString] = useState('')
+  const [minReceiveUsdAmount, setMinReceiveUsdAmount] = useState('')
   const [convertSuccess, setConvertSuccess] = useState(false)
   const [hasErrorOccurredConvert, setHasErrorOccurredConvert] = useState(0)
 
@@ -311,19 +311,17 @@ const BeginnersFarm = () => {
   const [selectTokenWith, setSelectTokenWith] = useState(false)
   const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select' })
   const [unstakeBalance, setUnstakeBalance] = useState('0')
-  const [quoteValueWith, setQuoteValueWith] = useState(null)
   const [revertFromInfoAmount, setRevertFromInfoAmount] = useState('')
   const [revertFromInfoUsdAmount, setRevertFromInfoUsdAmount] = useState('')
   const [revertMinReceivedAmount, setRevertMinReceivedAmount] = useState('')
-  const [revertedAmount, setRevertedAmount] = useState('')
   const [unstakeInputValue, setUnstakeInputValue] = useState('0')
   const [revertSuccess, setRevertSuccess] = useState(false)
   const [hasErrorOccurredRevert, setHasErrorOccurredRevert] = useState(0)
 
   const [yieldDaily, setYieldDaily] = useState(0)
   const [yieldMonthly, setYieldMonthly] = useState(0)
-  const [convertMonthlyYieldUSD, setConvertMonthlyYieldUSD] = useState(0)
-  const [convertDailyYieldUSD, setConvertDailyYieldUSD] = useState(0)
+  const [convertMonthlyYieldUSD, setConvertMonthlyYieldUSD] = useState('0')
+  const [convertDailyYieldUSD, setConvertDailyYieldUSD] = useState('0')
 
   const [balanceList, setBalanceList] = useState([])
   const [supTokenList, setSupTokenList] = useState([])
@@ -408,8 +406,8 @@ const BeginnersFarm = () => {
       (Number(minReceiveAmountString) * Number(usdPrice) * (Number(totalApy) / 100)) / 12
     const convertDailyYieldYieldValue =
       (Number(minReceiveAmountString) * Number(usdPrice) * (Number(totalApy) / 100)) / 365
-    setConvertMonthlyYieldUSD(convertMonthlyYieldValue)
-    setConvertDailyYieldUSD(convertDailyYieldYieldValue)
+    setConvertMonthlyYieldUSD(convertMonthlyYieldValue.toString())
+    setConvertDailyYieldUSD(convertDailyYieldYieldValue.toString())
   }, [minReceiveAmountString, usdPrice, totalApy])
 
   useEffect(() => {
@@ -1605,6 +1603,8 @@ const BeginnersFarm = () => {
                         setUnstakeInputValue={setUnstakeInputValue}
                         setSelectToken={setSelectTokenWith}
                         setWithdrawStart={setWithdrawStart}
+                        defaultToken={defaultToken}
+                        pricePerFullShare={pricePerFullShare}
                         pickedToken={pickedTokenWith}
                         unstakeBalance={unstakeBalance}
                         setUnstakeBalance={setUnstakeBalance}
@@ -1615,14 +1615,11 @@ const BeginnersFarm = () => {
                         token={token}
                         supTokenList={supTokenList}
                         switchMethod={switchDepoMethod}
-                        quoteValue={quoteValueWith}
-                        setQuoteValue={setQuoteValueWith}
                         useIFARM={useIFARM}
                         setRevertFromInfoAmount={setRevertFromInfoAmount}
                         setRevertFromInfoUsdAmount={setRevertFromInfoUsdAmount}
                         setRevertMinReceivedAmount={setRevertMinReceivedAmount}
                         revertMinReceivedAmount={revertMinReceivedAmount}
-                        setRevertedAmount={setRevertedAmount}
                         hasErrorOccurred={hasErrorOccurredRevert}
                         setHasErrorOccurred={setHasErrorOccurredRevert}
                       />
@@ -1652,7 +1649,6 @@ const BeginnersFarm = () => {
                         revertFromInfoAmount={revertFromInfoAmount}
                         revertFromInfoUsdAmount={revertFromInfoUsdAmount}
                         revertMinReceivedAmount={revertMinReceivedAmount}
-                        revertedAmount={revertedAmount}
                         setUnstakeInputValue={setUnstakeInputValue}
                         setRevertSuccess={setRevertSuccess}
                       />

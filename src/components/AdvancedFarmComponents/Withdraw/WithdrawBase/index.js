@@ -75,14 +75,11 @@ const WithdrawBase = ({
   token,
   supTokenList,
   switchMethod,
-  quoteValue,
-  setQuoteValue,
   useIFARM,
   setRevertFromInfoAmount,
   setRevertFromInfoUsdAmount,
   setRevertMinReceivedAmount,
   revertMinReceivedAmount,
-  setRevertedAmount,
   hasErrorOccurred,
   setHasErrorOccurred,
 }) => {
@@ -170,7 +167,6 @@ const WithdrawBase = ({
                 ? outputAmountDefault
                 : portalsEstimate.res.outputAmount,
             }
-            setQuoteValue(quoteResult)
 
             fromInfoValue = new BigNumber(
               fromWei(
@@ -225,7 +221,6 @@ const WithdrawBase = ({
     balanceList,
     token,
     web3,
-    setQuoteValue,
     chainId,
     fromToken,
     curChain,
@@ -235,15 +230,6 @@ const WithdrawBase = ({
     getPortalsEstimate,
     getPortalsToken,
   ])
-
-  const amountValue = fromWei(unstakeBalance, pickedToken.decimals)
-
-  useEffect(() => {
-    const receiveString = quoteValue
-      ? fromWei(quoteValue.toTokenAmount, pickedToken.decimals, pickedToken.decimals)
-      : ''
-    setRevertedAmount(receiveString)
-  }, [amountValue, quoteValue, pickedToken, setRevertedAmount])
 
   useEffect(() => {
     if (account) {
