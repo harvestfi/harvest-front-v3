@@ -8,23 +8,6 @@ const Farm = () => {
   const { pageBackColor } = useThemeContext()
   const [baseswapBG, setBaseswapBG] = useState(false)
 
-  const handleNetworkChange = () => {
-    window.location.reload() // Reload the page when the network changes
-  }
-
-  useEffect(() => {
-    if (window.ethereum) {
-      // Listen for network changes
-      window.ethereum.on('chainChanged', handleNetworkChange)
-
-      return () => {
-        // Cleanup: Remove the event listener when the component unmounts
-        window.ethereum.removeListener('chainChanged', handleNetworkChange)
-      }
-    }
-    return () => {}
-  }, [])
-
   useEffect(() => {
     const setUrlData = () => {
       const params = new URLSearchParams(window.location.search)
