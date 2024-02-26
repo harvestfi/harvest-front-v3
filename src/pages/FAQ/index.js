@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import Collapsible from 'react-collapsible'
 import { useMediaQuery } from 'react-responsive'
 import uuid from 'react-uuid'
@@ -24,23 +24,6 @@ import { useThemeContext } from '../../providers/useThemeContext'
 const FAQ = () => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const { pageBackColor, backColor, fontColor, borderColor, faqQueHoverColor } = useThemeContext()
-
-  const handleNetworkChange = () => {
-    window.location.reload() // Reload the page when the network changes
-  }
-
-  useEffect(() => {
-    if (window.ethereum) {
-      // Listen for network changes
-      window.ethereum.on('chainChanged', handleNetworkChange)
-
-      return () => {
-        // Cleanup: Remove the event listener when the component unmounts
-        window.ethereum.removeListener('chainChanged', handleNetworkChange)
-      }
-    }
-    return () => {}
-  }, [])
 
   return (
     <FAQContainer pageBackColor={pageBackColor} fontColor={fontColor}>

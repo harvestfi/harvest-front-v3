@@ -210,23 +210,6 @@ const AdvancedFarm = () => {
 
   const [apiData, setApiData] = useState([])
 
-  const handleNetworkChange = () => {
-    window.location.reload() // Reload the page when the network changes
-  }
-
-  useEffect(() => {
-    if (window.ethereum) {
-      // Listen for network changes
-      window.ethereum.on('chainChanged', handleNetworkChange)
-
-      return () => {
-        // Cleanup: Remove the event listener when the component unmounts
-        window.ethereum.removeListener('chainChanged', handleNetworkChange)
-      }
-    }
-    return () => {}
-  }, [])
-
   useEffect(() => {
     const getCoinList = async () => {
       const data = await getCoinListFromApi()

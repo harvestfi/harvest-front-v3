@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { useThemeContext } from '../../providers/useThemeContext'
 import FirstFarming1 from '../../assets/images/logos/tutorial/first-farming1.png'
 import FirstFarming2 from '../../assets/images/logos/tutorial/first-farming2.png'
@@ -27,23 +27,6 @@ import {
 
 const Home = () => {
   const { pageBackColor, fontColor } = useThemeContext()
-
-  const handleNetworkChange = () => {
-    window.location.reload() // Reload the page when the network changes
-  }
-
-  useEffect(() => {
-    if (window.ethereum) {
-      // Listen for network changes
-      window.ethereum.on('chainChanged', handleNetworkChange)
-
-      return () => {
-        // Cleanup: Remove the event listener when the component unmounts
-        window.ethereum.removeListener('chainChanged', handleNetworkChange)
-      }
-    }
-    return () => {}
-  }, [])
 
   return (
     <Container pageBackColor={pageBackColor} fontColor={fontColor}>
