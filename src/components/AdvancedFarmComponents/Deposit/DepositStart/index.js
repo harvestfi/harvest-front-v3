@@ -194,13 +194,24 @@ const DepositStart = ({
       setDepositFailed(false)
       setProgressStep(4)
       setButtonName('Success! Close this window.')
-      setConvertSuccess(true)
     } else if (progressStep === 4) {
+      setConvertSuccess(true)
       setSelectToken(false)
       setDeposit(false)
       setProgressStep(0)
       setInputAmount('0')
       setButtonName('Approve Token')
+    }
+  }
+
+  const closeDeposit = async () => {
+    setStartSpinner(false)
+    setProgressStep(0)
+    setDepositFailed(false)
+    setDeposit(false)
+    setButtonName('Approve Token')
+    if (progressStep === 4) {
+      setConvertSuccess(true)
     }
   }
 
@@ -254,10 +265,7 @@ const DepositStart = ({
               color="#667085"
               align="center"
               onClick={() => {
-                setProgressStep(0)
-                setDepositFailed(false)
-                setDeposit(false)
-                setButtonName('Approve Token')
+                closeDeposit()
               }}
             >
               <ImgBtn src={CloseIcon} alt="" />

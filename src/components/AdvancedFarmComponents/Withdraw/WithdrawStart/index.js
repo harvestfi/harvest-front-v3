@@ -20,7 +20,8 @@ import ProgressFive from '../../../../assets/images/logos/advancedfarm/progress-
 import { useWallet } from '../../../../providers/Wallet'
 import { usePools } from '../../../../providers/Pools'
 import { usePortals } from '../../../../providers/Portals'
-import { getWeb3 } from '../../../../services/web3'
+import { getWeb3, fromWei } from '../../../../services/web3'
+import { formatNumberWido } from '../../../../utils'
 import AnimatedDots from '../../../AnimatedDots'
 import { addresses } from '../../../../data'
 import {
@@ -56,7 +57,6 @@ const WithdrawStart = ({
   revertFromInfoAmount,
   revertFromInfoUsdAmount,
   revertMinReceivedAmount,
-  revertedAmount,
   setUnstakeInputValue,
   setRevertSuccess,
 }) => {
@@ -71,6 +71,9 @@ const WithdrawStart = ({
   const [withdrawFailed, setWithdrawFailed] = useState(false)
   const [slippageFailed, setSlippageFailed] = useState(false)
   const [startSpinner, setStartSpinner] = useState(false) // State of Spinner for 'Finalize Deposit' button
+  const [revertedAmount, setRevertedAmount] = useState('')
+  const [revertedAmountUsd, setRevertedAmountUsd] = useState('')
+
   const { getPortalsApproval, portalsApprove, getPortals } = usePortals()
 
   const SlippageValues = [null, 0.1, 0.5, 1, 5]
@@ -114,6 +117,7 @@ const WithdrawStart = ({
       setStartSpinner(true)
       setProgressStep(1)
       setButtonName('Pending Approval in Wallet')
+      setWithdrawFailed(false)
       try {
         const approval = await getPortalsApproval(chainId, account, fromToken)
         console.debug('Allowance Spender: ', approval.spender)
@@ -121,8 +125,8 @@ const WithdrawStart = ({
         const allowanceCheck = approval ? approval.allowance : 0
 
         if (!new BigNumber(allowanceCheck).gte(new BigNumber(unstakeBalance))) {
-          const amountToApprove = new BigNumber(unstakeBalance) - new BigNumber(allowanceCheck)
-          await approveZap(amountToApprove) // Approve for Zap
+          // const amountToApprove = new BigNumber(unstakeBalance) - new BigNumber(allowanceCheck)
+          await approveZap(unstakeBalance) // Approve for Zap
         }
         setProgressStep(2)
         setButtonName('Confirm Transaction')
@@ -156,6 +160,18 @@ const WithdrawStart = ({
           to: portalData.tx.to,
           value: portalData.tx.value,
         })
+
+        const receiveString = portalData
+          ? fromWei(
+              portalData.context?.outputAmount,
+              token.decimals || token.data.lpTokenData.decimals,
+              token.decimals || token.data.lpTokenData.decimals,
+            )
+          : ''
+        const receiveUsdString = portalData ? portalData.context?.outputAmountUsd : ''
+        setRevertedAmount(receiveString)
+        setRevertedAmountUsd(formatNumberWido(receiveUsdString))
+
         await fetchUserPoolStats([fAssetPool], account, userStats)
       } catch (err) {
         setWithdrawFailed(true)
@@ -169,10 +185,8 @@ const WithdrawStart = ({
       setWithdrawFailed(false)
       setProgressStep(4)
       setButtonName('Success! Close this window.')
-      setRevertSuccess(true)
     } else if (progressStep === 4) {
-      // setQuoteValue(null)
-      // setSelectToken(false)
+      setRevertSuccess(true)
       setUnstakeInputValue(0)
       setPickedToken({ symbol: 'Select' })
       setProgressStep(0)
@@ -181,6 +195,20 @@ const WithdrawStart = ({
       setButtonName('Approve Token')
     }
   }
+
+  const closeWithdraw = async () => {
+    setProgressStep(0)
+    setWithdrawStart(false)
+    setWithdrawFailed(false)
+    setButtonName('Approve Token')
+    setStartSpinner(false)
+    if (progressStep === 4) {
+      setRevertSuccess(true)
+      setUnstakeInputValue(0)
+      setPickedToken({ symbol: 'Select' })
+    }
+  }
+
   return (
     <Modal
       show={withdrawStart}
@@ -230,10 +258,7 @@ const WithdrawStart = ({
               color="#667085"
               align="center"
               onClick={() => {
-                setProgressStep(0)
-                setWithdrawStart(false)
-                setWithdrawFailed(false)
-                setButtonName('Approve Token')
+                closeWithdraw()
               }}
             >
               <ImgBtn src={CloseIcon} alt="" />
@@ -334,7 +359,15 @@ const WithdrawStart = ({
                   ) : (
                     <AnimatedDots />
                   )} */}
-                  {revertFromInfoUsdAmount === 'NaN' || revertFromInfoUsdAmount === '-' ? (
+                  {progressStep === 4 ? (
+                    revertedAmountUsd === 'NaN' || revertedAmountUsd === '' ? (
+                      '-'
+                    ) : revertedAmountUsd !== '' ? (
+                      `≈$${revertedAmountUsd}`
+                    ) : (
+                      <AnimatedDots />
+                    )
+                  ) : revertFromInfoUsdAmount === 'NaN' || revertFromInfoUsdAmount === '-' ? (
                     '-'
                   ) : revertFromInfoUsdAmount !== '' ? (
                     `≈$${revertFromInfoUsdAmount}`

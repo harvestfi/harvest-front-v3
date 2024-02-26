@@ -88,12 +88,14 @@ const WalletProvider = _ref => {
           newChain,
           chainId,
           async () => {
+            window.location.reload()
             setConnected(true)
             const chainNew = parseInt(newChain, 16).toString()
             setChainId(chainNew)
             setSelChain([chainNew])
           },
           () => {
+            window.location.reload()
             setConnected(true)
             const chainNew = parseInt(newChain, 16).toString()
             setChainId(chainNew)
@@ -114,6 +116,7 @@ const WalletProvider = _ref => {
           newChain,
           chainId,
           async () => {
+            window.location.reload()
             setConnected(true)
             const chainNew = parseInt(newChain, 16).toString()
             setChainId(chainNew)

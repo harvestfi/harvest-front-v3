@@ -210,23 +210,6 @@ const AdvancedFarm = () => {
 
   const [apiData, setApiData] = useState([])
 
-  const handleNetworkChange = () => {
-    window.location.reload() // Reload the page when the network changes
-  }
-
-  useEffect(() => {
-    if (window.ethereum) {
-      // Listen for network changes
-      window.ethereum.on('chainChanged', handleNetworkChange)
-
-      return () => {
-        // Cleanup: Remove the event listener when the component unmounts
-        window.ethereum.removeListener('chainChanged', handleNetworkChange)
-      }
-    }
-    return () => {}
-  }, [])
-
   useEffect(() => {
     const getCoinList = async () => {
       const data = await getCoinListFromApi()
@@ -379,11 +362,9 @@ const AdvancedFarm = () => {
   const [selectTokenWith, setSelectTokenWith] = useState(false)
   const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select' })
   const [unstakeBalance, setUnstakeBalance] = useState('0')
-  const [quoteValueWith, setQuoteValueWith] = useState(null)
   const [revertFromInfoAmount, setRevertFromInfoAmount] = useState('')
   const [revertFromInfoUsdAmount, setRevertFromInfoUsdAmount] = useState('')
   const [revertMinReceivedAmount, setRevertMinReceivedAmount] = useState('')
-  const [revertedAmount, setRevertedAmount] = useState('')
   const [unstakeInputValue, setUnstakeInputValue] = useState('0')
   const [revertSuccess, setRevertSuccess] = useState(false)
   const [hasErrorOccurredRevert, setHasErrorOccurredRevert] = useState(0)
@@ -1753,14 +1734,11 @@ const AdvancedFarm = () => {
                         token={token}
                         supTokenList={supTokenList}
                         switchMethod={switchDepoMethod}
-                        quoteValue={quoteValueWith}
-                        setQuoteValue={setQuoteValueWith}
                         useIFARM={useIFARM}
                         setRevertFromInfoAmount={setRevertFromInfoAmount}
                         setRevertFromInfoUsdAmount={setRevertFromInfoUsdAmount}
                         setRevertMinReceivedAmount={setRevertMinReceivedAmount}
                         revertMinReceivedAmount={revertMinReceivedAmount}
-                        setRevertedAmount={setRevertedAmount}
                         hasErrorOccurred={hasErrorOccurredRevert}
                         setHasErrorOccurred={setHasErrorOccurredRevert}
                       />
@@ -1790,7 +1768,6 @@ const AdvancedFarm = () => {
                         revertFromInfoAmount={revertFromInfoAmount}
                         revertFromInfoUsdAmount={revertFromInfoUsdAmount}
                         revertMinReceivedAmount={revertMinReceivedAmount}
-                        revertedAmount={revertedAmount}
                         setUnstakeInputValue={setUnstakeInputValue}
                         setRevertSuccess={setRevertSuccess}
                       />
