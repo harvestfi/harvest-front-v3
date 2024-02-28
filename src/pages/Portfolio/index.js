@@ -19,6 +19,7 @@ import ConnectDisableIcon from '../../assets/images/logos/sidebar/connect-disabl
 import VaultRow from '../../components/DashboardComponents/VaultRow'
 import TotalValue from '../../components/TotalValue'
 import {
+  GECKO_URL,
   COINGECKO_API_KEY,
   FARM_GRAIN_TOKEN_SYMBOL,
   FARM_TOKEN_SYMBOL,
@@ -78,11 +79,9 @@ const getChainIcon = chain => {
   return chainLogo
 }
 
-const BASE_URL = 'https://pro-api.coingecko.com/api/v3/'
-
 const getCoinListFromApi = async () => {
   try {
-    const response = await axios.get(`${BASE_URL}coins/list`, {
+    const response = await axios.get(`${GECKO_URL}coins/list`, {
       headers: {
         'x-cg-pro-api-key': COINGECKO_API_KEY,
       },
@@ -95,7 +94,7 @@ const getCoinListFromApi = async () => {
 }
 const getTokenPriceFromApi = async tokenID => {
   try {
-    const response = await axios.get(`${BASE_URL}simple/price`, {
+    const response = await axios.get(`${GECKO_URL}simple/price`, {
       params: {
         ids: tokenID,
         // eslint-disable-next-line camelcase
@@ -411,15 +410,28 @@ const Portfolio = () => {
             for (let l = 0; l < rewardTokenSymbols.length; l += 1) {
               let rewardSymbol = rewardTokenSymbols[l].toUpperCase(),
                 rewards,
+                rewardToken,
                 usdRewardPrice = 0,
-                rewardDecimal = 18
-              // rewardDecimal = get(tokens[symbol], 'decimals', 18)
+                // rewardDecimal = 18
+                rewardDecimal = get(tokens[symbol], 'decimals', 18)
 
               if (rewardTokenSymbols.includes(FARM_TOKEN_SYMBOL)) {
                 rewardSymbol = FARM_TOKEN_SYMBOL
               }
 
-              const rewardToken = groupOfVaults[rewardSymbol]
+              if (rewardTokenSymbols[l].substring(0, 1) === 'f') {
+                if (rewardTokenSymbols[l] === 'fLODE') {
+                  rewardToken = groupOfVaults.flodestar_LODE
+                } else if (rewardTokenSymbols[l] === 'fSUSHI') {
+                  rewardToken = groupOfVaults.fSUSHI_HODL
+                } else {
+                  const underlyingRewardSymbol = rewardTokenSymbols[l].substring(1)
+                  rewardToken = groupOfVaults[underlyingRewardSymbol]
+                }
+              } else {
+                rewardToken = groupOfVaults[rewardSymbol]
+              }
+
               if (rewardTokenSymbols.length > 1) {
                 const rewardsEarned = userStats[stakedVaults[i]].rewardsEarned
                 if (
@@ -431,43 +443,26 @@ const Portfolio = () => {
               } else {
                 rewards = userStats[stakedVaults[i]].totalRewardsEarned
               }
+
               if (rewardToken) {
-                usdRewardPrice =
+                const usdUnderlyingRewardPrice =
                   (rewardSymbol === FARM_TOKEN_SYMBOL
                     ? rewardToken.data.lpTokenData && rewardToken.data.lpTokenData.price
                     : rewardToken.usdPrice) || 0
+                const pricePerFullShareInVault = rewardToken.pricePerFullShare
+                const decimalsInVault = rewardToken.decimals || 18
+
+                usdRewardPrice =
+                  rewardSymbol === FARM_TOKEN_SYMBOL || rewardSymbol === IFARM_TOKEN_SYMBOL
+                    ? usdUnderlyingRewardPrice
+                    : Number(usdUnderlyingRewardPrice) *
+                      fromWei(pricePerFullShareInVault, decimalsInVault, decimalsInVault, true)
 
                 rewardDecimal =
                   rewardToken.decimals ||
                   (rewardToken.data &&
                     rewardToken.data.lpTokenData &&
                     rewardToken.data.lpTokenData.decimals)
-              } else if (rewardTokenSymbols[l].substring(0, 1) === 'f') {
-                let underlyingRewardSymbol
-                if (rewardTokenSymbols[l].substring(0, 2) === 'fx') {
-                  underlyingRewardSymbol = rewardTokenSymbols[l].substring(2)
-                } else {
-                  underlyingRewardSymbol = rewardTokenSymbols[l].substring(1)
-                }
-                try {
-                  // const id = getTokenIdBySymbolInApiData(underlyingRewardSymbol, apiData)
-                  // await getTokenPriceFromApi(id)
-                  for (let ids = 0; ids < apiData.length; ids += 1) {
-                    const tempData = apiData[ids]
-                    const tempSymbol = tempData.symbol
-                    if (tempSymbol.toLowerCase() === underlyingRewardSymbol.toLowerCase()) {
-                      // eslint-disable-next-line no-await-in-loop
-                      const usdUnderlyingRewardPrice = await getTokenPriceFromApi(tempData.id)
-                      usdRewardPrice = Number(usdUnderlyingRewardPrice) * Number(pricePerFullShare)
-                      // console.log(
-                      //   `${underlyingRewardSymbol} - USD Price of reward token: ${usdRewardPrice}`,
-                      // )
-                      break
-                    }
-                  }
-                } catch (error) {
-                  console.error('Error:', error)
-                }
               } else {
                 try {
                   for (let ids = 0; ids < apiData.length; ids += 1) {
@@ -485,9 +480,7 @@ const Portfolio = () => {
                 }
               }
               const rewardValues =
-                rewards === undefined
-                  ? 0
-                  : fromWei(Number(rewards), Number(rewardDecimal), MAX_DECIMALS, true)
+                rewards === undefined ? 0 : fromWei(rewards, rewardDecimal, rewardDecimal, true)
               stats.reward.push(Number(rewardValues))
               stats.totalRewardUsd += Number(rewardValues * Number(usdRewardPrice))
               valueRewards += Number(rewardValues * Number(usdRewardPrice))
