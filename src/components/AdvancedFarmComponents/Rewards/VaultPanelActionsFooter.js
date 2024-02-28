@@ -68,7 +68,7 @@ const VaultPanelActionsFooter = ({
     totalTokensEarned = fromWei(
       get(userStats, `[${fAssetPool.id}]['totalRewardsEarned']`, 0),
       selectedToken.decimals,
-      4,
+      selectedToken.decimals,
     )
   }
 

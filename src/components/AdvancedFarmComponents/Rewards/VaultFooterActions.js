@@ -10,7 +10,6 @@ import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
 import { fromWei } from '../../../services/web3'
 import {
-  formatNumber,
   hasAmountGreaterThanZero,
   hasRequirementsForInteraction,
   isSpecialApp,
@@ -90,7 +89,7 @@ const VaultFooterActions = ({
               </Div>
               <Monospace>
                 {!connected ? (
-                  formatNumber(0, 8)
+                  '0.00'
                 ) : !isLoadingData && get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`) ? (
                   <>
                     <Counter
@@ -100,7 +99,7 @@ const VaultFooterActions = ({
                           ? fromWei(
                               get(rewardsEarned, symbol, 0),
                               get(tokens[symbol], 'decimals', 18),
-                              4,
+                              get(tokens[symbol], 'decimals', 18),
                             )
                           : totalTokensEarned
                       }
@@ -124,7 +123,7 @@ const VaultFooterActions = ({
                           ? fromWei(
                               get(rewardsEarned, symbol, 0),
                               get(tokens[symbol], 'decimals', 18),
-                              4,
+                              get(tokens[symbol], 'decimals', 18),
                             )
                           : totalTokensEarned
                       }
@@ -146,7 +145,7 @@ const VaultFooterActions = ({
                 ) : userStats.length === 0 ? (
                   <AnimatedDots />
                 ) : (
-                  formatNumber(0, 8)
+                  '0.00'
                 )}
               </Monospace>
             </SelectedVault>

@@ -8,7 +8,6 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
 import {
-  formatNumber,
   hasAmountGreaterThanZero,
   hasRequirementsForInteraction,
   isSpecialApp,
@@ -82,7 +81,7 @@ const PoolFooterActions = ({
                 </Div>
                 <Monospace>
                   {!connected ? (
-                    formatNumber(0, 8)
+                    '0.00'
                   ) : !isLoadingData &&
                     get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`) ? (
                     <Counter
@@ -92,7 +91,7 @@ const PoolFooterActions = ({
                           ? fromWei(
                               get(rewardsEarned, symbol, 0),
                               get(tokens[symbol], 'decimals', 18),
-                              4,
+                              get(tokens[symbol], 'decimals', 18),
                             )
                           : totalTokensEarned
                       }
@@ -112,7 +111,7 @@ const PoolFooterActions = ({
                   ) : userStats.length === 0 ? (
                     <AnimatedDots />
                   ) : (
-                    formatNumber(0, 8)
+                    '0.00'
                   )}
                 </Monospace>
               </SelectedVault>

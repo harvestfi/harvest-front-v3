@@ -45,6 +45,8 @@ export const POLL_POOL_DATA_INTERVAL_MS = window.ethereum ? 900000 : 36000000
 export const POLL_POOL_USER_DATA_INTERVAL_MS = 2000
 export const POLL_BOOST_USER_DATA_INTERVAL_MS = 5000
 
+export const GECKO_URL = 'https://pro-api.coingecko.com/api/v3/'
+
 export const INFURA_URL = `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 export const MATIC_URL = `https://polygon-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 export const BASE_URL = `https://base-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
