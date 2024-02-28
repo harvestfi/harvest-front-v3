@@ -424,6 +424,26 @@ const Portfolio = () => {
                   rewardToken = groupOfVaults.flodestar_LODE
                 } else if (rewardTokenSymbols[l] === 'fSUSHI') {
                   rewardToken = groupOfVaults.fSUSHI_HODL
+                } else if (rewardTokenSymbols[l] === 'fDEN_4EUR') {
+                  rewardToken = groupOfVaults.jarvis_DEN_4EUR
+                } else if (rewardTokenSymbols[l] === 'fDEN2_4EUR') {
+                  rewardToken = groupOfVaults.jarvis_DEN2_4EUR
+                } else if (rewardTokenSymbols[l] === 'fDENMAY22_4EUR') {
+                  rewardToken = groupOfVaults.jarvis_DENMAY22_4EUR
+                } else if (rewardTokenSymbols[l] === 'fDENJUL22_4EUR') {
+                  rewardToken = groupOfVaults.jarvis_DENJUL22_4EUR
+                } else if (rewardTokenSymbols[l] === 'fAURFEB22_USDC') {
+                  rewardToken = groupOfVaults.jarvis_AUR_USDC_V2
+                } else if (
+                  rewardTokenSymbols[l] === 'fQUI_2CAD' ||
+                  rewardTokenSymbols[l] === 'fSES_2JPY' ||
+                  rewardTokenSymbols[l] === 'fJRTMAY22_USDC' ||
+                  rewardTokenSymbols[l] === 'fJRTJUL22_USDC' ||
+                  rewardTokenSymbols[l] === 'fJRTSEP22_USDC' ||
+                  rewardTokenSymbols[l] === 'fJRTNOV22_USDC' ||
+                  rewardTokenSymbols[l] === 'fAURAPR22_USDC'
+                ) {
+                  rewardToken = groupOfVaults.jarvis_AUR_USDC_V2
                 } else {
                   const underlyingRewardSymbol = rewardTokenSymbols[l].substring(1)
                   rewardToken = groupOfVaults[underlyingRewardSymbol]
@@ -468,7 +488,11 @@ const Portfolio = () => {
                   for (let ids = 0; ids < apiData.length; ids += 1) {
                     const tempData = apiData[ids]
                     const tempSymbol = tempData.symbol
-                    if (tempSymbol.toLowerCase() === rewardSymbol.toLowerCase()) {
+                    if (
+                      rewardSymbol === 'ECOCNG'
+                        ? tempSymbol.toLowerCase() === 'cng'
+                        : rewardSymbol.toLowerCase() === tempSymbol.toLowerCase()
+                    ) {
                       // eslint-disable-next-line no-await-in-loop
                       usdRewardPrice = await getTokenPriceFromApi(tempData.id)
                       // console.log(`${rewardSymbol} - USD Price: ${usdRewardPrice}`)
