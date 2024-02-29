@@ -950,7 +950,7 @@ const BeginnersFarm = () => {
                       <WelcomeText showBadge={showBadge}>
                         Earn $10 in{' '}
                         <a
-                          href="https://harvest-front-v3.netlify.app/advanced/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
+                          href="https://harvest-front-v3.netlify.app/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
                           target="_blank"
                           rel="noopener noreferrer"
                         >
@@ -1029,7 +1029,7 @@ const BeginnersFarm = () => {
                       <WelcomeText showBadge={showBadge}>
                         Earn $10 in{' '}
                         <a
-                          href="https://harvest-front-v3.netlify.app/advanced/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
+                          href="https://harvest-front-v3.netlify.app/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
                           target="_blank"
                           rel="noopener noreferrer"
                         >
