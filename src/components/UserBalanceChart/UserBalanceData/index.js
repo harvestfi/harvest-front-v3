@@ -24,6 +24,7 @@ const recommendLinks = [
   { name: '1W', type: 1, state: '1W' },
   { name: '1M', type: 2, state: '1M' },
   { name: 'ALL', type: 3, state: 'ALL' },
+  { name: 'LAST', type: 4, state: 'LAST' },
 ]
 
 function formatDateTime(value) {
@@ -59,7 +60,7 @@ const UserBalanceData = ({
   underlyingPrice,
   pricePerFullShare,
 }) => {
-  const [selectedState, setSelectedState] = useState('ALL')
+  const [selectedState, setSelectedState] = useState('LAST')
 
   const totalValueRef = useRef(totalValue)
   const farmPriceRef = useRef(farmPrice)
@@ -82,6 +83,7 @@ const UserBalanceData = ({
   const [curContent, setCurContent] = useState('$0')
   const [curContentUnderlying, setCurContentUnderlying] = useState('0')
   const [fixedLen, setFixedLen] = useState(0)
+  const [lastFarmingTimeStamp, setLastFarmingTimeStamp] = useState('-')
 
   const handleTooltipContent = payload => {
     if (payload && payload.length) {
@@ -101,12 +103,34 @@ const UserBalanceData = ({
     }
   }
 
+  const findLastMatchingTimestamp = data => {
+    if (data && data.length > 0) {
+      const firstValue = data[0].value
+
+      for (let i = data.length - 1; i >= 0; i -= 1) {
+        if (data[i].value === firstValue) {
+          return data[i].timestamp
+        }
+      }
+
+      return data[0].timestamp
+    }
+
+    return '-'
+  }
+
   useEffect(() => {
     const initData = async () => {
       const { data1, flag1 } = await getUserBalanceHistories1(address, chainId, account)
       const { data2, flag2 } = await getUserBalanceHistories2(address, chainId)
       const uniqueData2 = []
       const timestamps = []
+
+      if (data1) {
+        const lastMatchingTimestamp = findLastMatchingTimestamp(data1)
+        setLastFarmingTimeStamp(lastMatchingTimestamp)
+      }
+
       data2.forEach(obj => {
         if (!timestamps.includes(obj.timestamp)) {
           timestamps.push(obj.timestamp)
@@ -280,6 +304,7 @@ const UserBalanceData = ({
           handleTooltipContent={handleTooltipContent}
           setFixedLen={setFixedLen}
           fixedLen={fixedLen}
+          lastFarmingTimeStamp={lastFarmingTimeStamp}
         />
       </ChartDiv>
       <ButtonGroup>

@@ -21,7 +21,7 @@ import { useWallet } from '../../../../providers/Wallet'
 import { usePools } from '../../../../providers/Pools'
 import { usePortals } from '../../../../providers/Portals'
 import { getWeb3, fromWei } from '../../../../services/web3'
-import { formatNumberWido } from '../../../../utils'
+import { formatNumber, formatNumberWido } from '../../../../utils'
 import AnimatedDots from '../../../AnimatedDots'
 import { addresses } from '../../../../data'
 import {
@@ -164,8 +164,8 @@ const WithdrawStart = ({
         const receiveString = portalData
           ? fromWei(
               portalData.context?.outputAmount,
-              token.decimals || token.data.lpTokenData.decimals,
-              token.decimals || token.data.lpTokenData.decimals,
+              pickedToken.decimals || 18,
+              pickedToken.decimals || 18,
             )
           : ''
         const receiveUsdString = portalData ? portalData.context?.outputAmountUsd : ''
@@ -370,7 +370,7 @@ const WithdrawStart = ({
                   ) : revertFromInfoUsdAmount === 'NaN' || revertFromInfoUsdAmount === '-' ? (
                     '-'
                   ) : revertFromInfoUsdAmount !== '' ? (
-                    `≈$${revertFromInfoUsdAmount}`
+                    `≈$${formatNumber(revertFromInfoUsdAmount, 2)}`
                   ) : (
                     <AnimatedDots />
                   )}

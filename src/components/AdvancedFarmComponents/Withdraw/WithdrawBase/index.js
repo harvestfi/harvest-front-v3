@@ -183,6 +183,7 @@ const WithdrawBase = ({
                       quoteResult.fromTokenAmount,
                       useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
                       useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
+                      true,
                     ) * quoteResult.fromTokenUsdPrice,
                   ).toString()
             minReceivedString = new BigNumber(
