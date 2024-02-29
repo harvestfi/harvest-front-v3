@@ -142,6 +142,7 @@ const ApexChart = ({
   handleTooltipContent,
   setFixedLen,
   fixedLen,
+  lastFarmingTimeStamp,
 }) => {
   const { fontColor } = useThemeContext()
   const { connected } = useWallet()
@@ -293,7 +294,39 @@ const ApexChart = ({
         return
       }
 
-      if (range === 'ALL') {
+      if (range === 'LAST') {
+        const nowDate = new Date(),
+          toDate = Math.floor(nowDate.getTime() / 1000),
+          periodDate = (toDate - Number(lastFarmingTimeStamp)) / (24 * 60 * 60)
+        ago = Math.ceil(periodDate)
+        slotCount = 50
+        if (ago > 700) {
+          // ago += 60
+          slotCount = 500
+        } else if (ago > 365) {
+          // ago += 45
+          slotCount = 400
+        } else if (ago > 180) {
+          // ago += 30
+          slotCount = 300
+        } else if (ago > 90) {
+          // ago += 15
+          slotCount = 150
+        } else if (ago > 60) {
+          // ago += 10
+          slotCount = 100
+        } else if (ago > 30) {
+          // ago += 7
+          slotCount = 100
+        } else if (ago > 15) {
+          // ago += 5
+        } else if (ago > 7) {
+          // ago += 3
+        } else {
+          // ago += 1
+          slotCount = 50
+        }
+      } else if (range === 'ALL') {
         for (let i = 1; i < data.length; i += 1) {
           if (data[i].value === 0) {
             firstDate = data[i].timestamp
@@ -340,8 +373,13 @@ const ApexChart = ({
       }
       const slots = getTimeSlots(ago, slotCount)
 
-      const filteredData = data.filter(obj => parseInt(obj.timestamp, 10) > firstDate)
-      const filteredSlot = slots.filter(obj => parseInt(obj, 10) > firstDate)
+      const recentFarmingData = data.filter(
+        obj => parseInt(obj.timestamp, 10) >= lastFarmingTimeStamp,
+      )
+      const recentFarmingSlot = slots.filter(obj => parseInt(obj, 10) >= lastFarmingTimeStamp)
+
+      const filteredData = data.filter(obj => parseInt(obj.timestamp, 10) >= firstDate)
+      const filteredSlot = slots.filter(obj => parseInt(obj, 10) >= firstDate)
       // const firstSlotTimestamp = slots[0]
       // const lastObjectInFilteredData = filteredData[filteredData.length - 1]
       // const newObject = {
@@ -353,8 +391,8 @@ const ApexChart = ({
       // filteredData.push(newObject)
 
       mainData = generateChartDataWithSlots(
-        range === 'ALL' && ago > 2 ? filteredSlot : slots,
-        range === 'ALL' && ago > 2 ? filteredData : data,
+        range === 'LAST' ? recentFarmingSlot : range === 'ALL' && ago > 2 ? filteredSlot : slots,
+        range === 'LAST' ? recentFarmingData : range === 'ALL' && ago > 2 ? filteredData : data,
         'value',
         'priceUnderlying',
         'sharePrice',
