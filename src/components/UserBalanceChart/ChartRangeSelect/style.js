@@ -46,7 +46,111 @@ const Container = styled.button`
       `}
 `
 
+const NewLabel = styled.div`
+  font-weight: ${props => props.weight || '400'};
+  font-size: ${props => props.size || '20px'};
+  line-height: ${props => props.height || '0px'};
+  ${props =>
+    props.borderBottom
+      ? `
+    border-bottom: ${props.borderBottom};
+  `
+      : ''}
+
+  ${props =>
+    props.color
+      ? `
+    color: ${props.color};
+  `
+      : ''}
+  ${props =>
+    props.position
+      ? `
+    position: ${props.position};
+  `
+      : ''}
+  ${props =>
+    props.align
+      ? `
+    text-align: ${props.align};
+  `
+      : ''}
+  ${props =>
+    props.justifyContent
+      ? `
+    justify-content: ${props.justifyContent};
+  `
+      : ''}
+  ${props =>
+    props.marginTop
+      ? `
+    margin-top: ${props.marginTop};
+  `
+      : ''}
+  ${props =>
+    props.marginLeft
+      ? `
+    margin-left: ${props.marginLeft};
+  `
+      : ''}
+  ${props =>
+    props.marginBottom
+      ? `
+    margin-bottom: ${props.marginBottom};
+  `
+      : ''}
+  ${props =>
+    props.marginRight
+      ? `
+    margin-right: ${props.marginRight};
+  `
+      : ''}
+  ${props =>
+    props.display
+      ? `
+    display: ${props.display};
+  `
+      : ''}
+  ${props =>
+    props.items
+      ? `
+    align-items: ${props.items};
+  `
+      : ''}
+  ${props =>
+    props.self
+      ? `
+    align-self: ${props.self};
+  `
+      : ''}
+  ${props =>
+    props.padding
+      ? `
+    padding: ${props.padding};
+  `
+      : ''}
+  ${props =>
+    props.width
+      ? `
+    width: ${props.width};
+  `
+      : ''}
+  ${props =>
+    props.borderRadius
+      ? `
+    border-radius: ${props.borderRadius};
+    `
+      : ``}
+`
+
 const Text = styled.div`
+  svg.info {
+    margin-left: 3px;
+  }
+
+  #tooltip-last-timeframe {
+    max-width: 300px;
+  }
   @media screen and (max-width: 992px) {
     ${props =>
       props.activeItem
@@ -61,4 +165,4 @@ const Text = styled.div`
   }
 `
 
-export { Container, Text }
+export { Container, Text, NewLabel }
