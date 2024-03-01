@@ -800,9 +800,9 @@ const AdvancedFarm = () => {
 
         if (rewardTokenSymbols[l].substring(0, 1) === 'f') {
           if (rewardTokenSymbols[l] === 'fLODE') {
-            rewardToken = groupOfVaults.flodestar_LODE
+            rewardToken = groupOfVaults.lodestar_LODE
           } else if (rewardTokenSymbols[l] === 'fSUSHI') {
-            rewardToken = groupOfVaults.fSUSHI_HODL
+            rewardToken = groupOfVaults.SUSHI_HODL
           } else if (rewardTokenSymbols[l] === 'fDEN_4EUR') {
             rewardToken = groupOfVaults.jarvis_DEN_4EUR
           } else if (rewardTokenSymbols[l] === 'fDEN2_4EUR') {
