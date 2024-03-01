@@ -110,7 +110,7 @@ function generateChartDataWithSlots(slots, apiData, balance, priceUnderlying, sh
   return seriesData
 }
 
-function formatXAxis(value, range) {
+function formatXAxis(value, hourUnit) {
   const date = new Date(value)
 
   const month = date.getMonth() + 1
@@ -119,7 +119,7 @@ function formatXAxis(value, range) {
   const hour = date.getHours()
   const mins = date.getMinutes()
 
-  return range === '1D' ? `${hour}:${mins}` : `${month} / ${day}`
+  return hourUnit ? `${hour}:${mins}` : `${month} / ${day}`
 }
 
 function getYAxisValues(min, max, roundNum) {
@@ -174,6 +174,7 @@ const ApexChart = ({
   const [isDataReady, setIsDataReady] = useState(true)
   const [roundedDecimal, setRoundedDecimal] = useState(2)
   const [roundedDecimalUnderlying, setRoundedDecimalUnderlying] = useState(2)
+  const [hourUnit, setHourUnit] = useState(false)
 
   const CustomTooltip = ({ active, payload, onTooltipContentChange }) => {
     useEffect(() => {
@@ -189,7 +190,7 @@ const ApexChart = ({
     let path = ''
 
     if (payload.value !== '') {
-      path = formatXAxis(payload.value, range)
+      path = formatXAxis(payload.value, hourUnit)
     }
     return (
       <text
@@ -299,32 +300,24 @@ const ApexChart = ({
           toDate = Math.floor(nowDate.getTime() / 1000),
           periodDate = (toDate - Number(lastFarmingTimeStamp)) / (24 * 60 * 60)
         ago = Math.ceil(periodDate)
+        if (ago === 1) {
+          setHourUnit(true)
+        } else {
+          setHourUnit(false)
+        }
         slotCount = 50
         if (ago > 700) {
-          // ago += 60
           slotCount = 500
         } else if (ago > 365) {
-          // ago += 45
           slotCount = 400
         } else if (ago > 180) {
-          // ago += 30
           slotCount = 300
         } else if (ago > 90) {
-          // ago += 15
           slotCount = 150
         } else if (ago > 60) {
-          // ago += 10
           slotCount = 100
         } else if (ago > 30) {
-          // ago += 7
           slotCount = 100
-        } else if (ago > 15) {
-          // ago += 5
-        } else if (ago > 7) {
-          // ago += 3
-        } else {
-          // ago += 1
-          slotCount = 50
         }
       } else if (range === 'ALL') {
         for (let i = 1; i < data.length; i += 1) {
@@ -340,6 +333,11 @@ const ApexChart = ({
           toDate = Math.floor(nowDate.getTime() / 1000),
           periodDate = (toDate - Number(firstDate)) / (24 * 60 * 60)
         ago = Math.ceil(periodDate)
+        if (ago === 1) {
+          setHourUnit(true)
+        } else {
+          setHourUnit(false)
+        }
         slotCount = 50
         if (ago > 700) {
           // ago += 60
@@ -370,6 +368,11 @@ const ApexChart = ({
       } else {
         ago = getRangeNumber(range)
         slotCount = 50
+        if (range === '1D') {
+          setHourUnit(true)
+        } else {
+          setHourUnit(false)
+        }
       }
       const slots = getTimeSlots(ago, slotCount)
 
@@ -397,6 +400,17 @@ const ApexChart = ({
         'priceUnderlying',
         'sharePrice',
       )
+      if (mainData.length === 1) {
+        const nowDate = new Date()
+        const currentTimeStamp = Math.floor(nowDate.getTime() / 1000)
+
+        const firstObject = {
+          x: currentTimeStamp,
+          y: mainData[0].y,
+          z: mainData[0].z,
+        }
+        mainData.unshift(firstObject)
+      }
       maxValue = findMax(mainData)
       minValue = findMin(mainData)
       minValue /= 1.01
