@@ -141,6 +141,9 @@ const UserBalanceData = ({
       })
       const mergedData = []
       if (flag1 && flag2) {
+        const nowDate = new Date()
+        const currentTimeStamp = Math.floor(nowDate.getTime() / 1000)
+
         if (data1[0].timestamp > uniqueData2[0].timestamp) {
           let i = 0,
             z = 0,
@@ -230,7 +233,7 @@ const UserBalanceData = ({
         const firstObject = {
           priceUnderlying: useIFARM ? farmPriceRef.current : usdPriceRef.current,
           sharePrice: pricePerFullShareRef.current,
-          timestamp: mergedData[0].timestamp,
+          timestamp: currentTimeStamp,
           value: totalValueRef.current,
         }
         mergedData.unshift(firstObject)
