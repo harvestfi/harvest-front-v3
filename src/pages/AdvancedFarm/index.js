@@ -656,7 +656,18 @@ const AdvancedFarm = () => {
             }
             supList.unshift(direct)
           }
+
           if (supList[0].default) {
+            if (supList[0].balance === '0' && balances[supList[0].symbol]) {
+              const defaultBalance = fromWei(
+                balances[supList[0].symbol],
+                supList[0].decimals,
+                supList[0].decimals,
+              )
+              const defaultUsdBalance = Number(supList[0].usdPrice) * Number(defaultBalance)
+              supList[0].balance = defaultBalance
+              supList[0].usdValue = defaultUsdBalance
+            }
             setDefaultToken(supList[0])
           } else {
             setDefaultToken({})
@@ -721,20 +732,9 @@ const AdvancedFarm = () => {
       let tokenToSet = null
 
       // Check if defaultToken is present in the balanceList
-      const defaultTokenIndex = balanceList.findIndex(
-        balancedToken => balancedToken.symbol === defaultToken.symbol,
-      )
-      if (defaultTokenIndex !== -1) {
-        setPickedTokenDepo(balanceList[defaultTokenIndex])
-        setBalanceDepo(
-          fromWei(
-            balanceList[defaultTokenIndex].rawBalance
-              ? balanceList[defaultTokenIndex].rawBalance
-              : 0,
-            balanceList[defaultTokenIndex].decimals,
-            balanceList[defaultTokenIndex].decimals,
-          ),
-        )
+      if (defaultToken.balance !== '0') {
+        setPickedTokenDepo(defaultToken)
+        setBalanceDepo(defaultToken.balance)
         return
       }
 
