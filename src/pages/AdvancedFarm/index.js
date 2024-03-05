@@ -664,7 +664,10 @@ const AdvancedFarm = () => {
                 supList[0].decimals,
                 supList[0].decimals,
               )
-              const defaultUsdBalance = Number(supList[0].usdPrice) * Number(defaultBalance)
+              const defaultUsdBalance = formatNumber(
+                Number(supList[0].usdPrice) * Number(defaultBalance),
+                2,
+              )
               supList[0].balance = defaultBalance
               supList[0].usdValue = defaultUsdBalance
             }
