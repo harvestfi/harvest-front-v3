@@ -87,7 +87,6 @@ import {
   HalfInfo,
   InfoLabel,
   DescInfo,
-  DescTooltip,
   LastHarvestInfo,
   RestInternal,
   MainTagPanel,
@@ -1777,19 +1776,18 @@ const BeginnersFarm = () => {
                   {isMobile && (
                     <HalfInfo marginBottom="20px">
                       <NewLabel
-                        weight={600}
-                        size={isMobile ? '12px' : '14px'}
-                        height={isMobile ? '20px' : '24px'}
+                        weight={700}
+                        size="14px"
+                        height="24px"
                         padding="10px 15px"
-                        color="#1F2937"
-                        borderBottom="1px solid #F3F6FF"
+                        borderRadius="15px 15px 0 0"
                       >
                         Source of Yield
                       </NewLabel>
                       <DescInfo>
                         <div>
                           <p>
-                            This farm supplies your{' '}
+                            This farm supplies{' '}
                             <a
                               href="https://basescan.org/token/0x4200000000000000000000000000000000000006"
                               target="_blank"
@@ -1797,42 +1795,26 @@ const BeginnersFarm = () => {
                             >
                               WETH
                             </a>{' '}
-                            to{' '}
-                            <DescTooltip
-                              className="begin-desc"
-                              data-tip
-                              data-for="tooltip-begin-desc"
-                            >
-                              Compound
-                            </DescTooltip>{' '}
-                            <ReactTooltip
-                              id="tooltip-begin-desc"
-                              backgroundColor="#101828"
-                              borderColor="black"
-                              textColor="white"
-                            >
-                              <NewLabel
-                                size={isMobile ? '12px' : '12px'}
-                                height={isMobile ? '18px' : '18px'}
-                                weight="500"
-                                color="white"
-                              >
-                                The APY shown already considers the performance fee taken only from
-                                generated yield and not deposits
-                              </NewLabel>
-                            </ReactTooltip>{' '}
-                            Finance, a robust lending platform, which earns you yield from lending
-                            activities. On top of that, Harvest auto-compounds{' '}
+                            to Moonwell, a robust lending platform, earning{' '}
                             <a
-                              href="https://basescan.org/token/0x9e1028F5F1D5eDE59748FFceE5532509976840E0"
+                              href="https://basescan.org/token/0xFF8adeC2221f9f4D8dfbAFa6B9a297d17603493D"
                               target="_blank"
                               rel="noopener noreferrer"
                             >
-                              COMP
+                              WELL
                             </a>{' '}
-                            rewards and converts them into more{' '}
+                            and{' '}
                             <a
                               href="https://basescan.org/token/0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              USDC
+                            </a>{' '}
+                            from lending activities. At every harvest, the earned rewards are
+                            converted into more{' '}
+                            <a
+                              href="https://basescan.org/token/0x4200000000000000000000000000000000000006"
                               target="_blank"
                               rel="noopener noreferrer"
                             >

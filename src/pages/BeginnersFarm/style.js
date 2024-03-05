@@ -1044,13 +1044,6 @@ const DescInfo = styled.div`
   }
 `
 
-const DescTooltip = styled.div`
-  font-weight: 600;
-  display: inline;
-  color: #000;
-  cursor: pointer;
-`
-
 const LastHarvestInfo = styled.div`
   background: #fff;
   border-radius: 12px;
@@ -1205,7 +1198,6 @@ export {
   InfoLabel,
   MobileChain,
   DescInfo,
-  DescTooltip,
   LastHarvestInfo,
   RestInternal,
   MainTagPanel,
