@@ -284,7 +284,11 @@ const ApexChart = ({
         unitBtwUnderlying,
         firstDate,
         ago,
-        slotCount
+        slotCount,
+        recentFarmingData,
+        recentFarmingSlot,
+        filteredData,
+        filteredSlot
 
       if ((data && data.length === 0) || !loadComplete) {
         setIsDataReady(false)
@@ -376,13 +380,14 @@ const ApexChart = ({
       }
       const slots = getTimeSlots(ago, slotCount)
 
-      const recentFarmingData = data.filter(
-        obj => parseInt(obj.timestamp, 10) >= lastFarmingTimeStamp,
-      )
-      const recentFarmingSlot = slots.filter(obj => parseInt(obj, 10) >= lastFarmingTimeStamp)
+      if (range === 'LAST') {
+        recentFarmingData = data.filter(obj => parseInt(obj.timestamp, 10) >= lastFarmingTimeStamp)
+        recentFarmingSlot = slots.filter(obj => parseInt(obj, 10) >= lastFarmingTimeStamp)
+      } else if (range === 'ALL') {
+        filteredData = data.filter(obj => parseInt(obj.timestamp, 10) >= firstDate)
+        filteredSlot = slots.filter(obj => parseInt(obj, 10) >= firstDate)
+      }
 
-      const filteredData = data.filter(obj => parseInt(obj.timestamp, 10) >= firstDate)
-      const filteredSlot = slots.filter(obj => parseInt(obj, 10) >= firstDate)
       // const firstSlotTimestamp = slots[0]
       // const lastObjectInFilteredData = filteredData[filteredData.length - 1]
       // const newObject = {
