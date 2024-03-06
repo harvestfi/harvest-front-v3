@@ -73,7 +73,7 @@ const WalletProvider = _ref => {
       )
         connect({ autoSelect: { label: 'Coinbase Wallet', disableModals: true } })
     }
-  }, [connect])
+  }, [])
 
   const disconnectAction = useCallback(async () => {
     if (!isLedgerLive()) {
