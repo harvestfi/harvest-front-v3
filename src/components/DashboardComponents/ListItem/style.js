@@ -3,6 +3,7 @@ import styled from 'styled-components'
 const Container = styled.div`
   display: flex;
   margin-bottom: ${props => props.marginBottom}px;
+  margin-top: ${props => props.marginTop}px;
   color: ${props => props.fontColor};
 `
 

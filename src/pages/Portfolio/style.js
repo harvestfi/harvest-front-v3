@@ -1,6 +1,9 @@
 import styled from 'styled-components'
 import UsdIcon from '../../assets/images/ui/usd-port.svg'
 import TokensIcon from '../../assets/images/ui/tokens-port.svg'
+import BoxBgOne from '../../assets/images/logos/dashboard/box-bg-1.png'
+import BoxBgTwo from '../../assets/images/logos/dashboard/box-bg-2.png'
+import BoxBgThree from '../../assets/images/logos/dashboard/box-bg-3.png'
 
 const Container = styled.div`
   width: 100%;
@@ -21,11 +24,12 @@ const Container = styled.div`
     width: 100%;
     height: 100%;
     margin: 0;
+    padding-bottom: 100px;
   }
 `
 
 const Inner = styled.div`
-  padding: 70px 76px 57px 76px;
+  padding: 100px;
   width: 100%;
 
   @media screen and (min-width: 1921px) {
@@ -38,7 +42,7 @@ const Inner = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 16px 10px;
+    padding: 25px 15px;
   }
 `
 
@@ -47,7 +51,29 @@ const SubPart = styled.div`
   justify-content: space-between;
 
   @media screen and (max-width: 992px) {
-    display: block;
+    display: none;
+  }
+`
+
+const MobileSubPart = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`
+
+const MobileDiv = styled.div`
+  display: none;
+
+  @media screen and (max-width: 992px) {
+    display: flex;
+    flex-wrap: wrap;
+    border: 2px solid #f2f5ff;
+    border-radius: 6.5px;
+    width: 100%;
+    margin-bottom: 24px;
+
+    div:first-child {
+      border-right: 0.821px solid #f2f5ff;
+    }
   }
 `
 
@@ -65,59 +91,10 @@ const FarmTitle = styled.span`
 
 const TransactionDetails = styled.div`
   width: 100%;
-  border-radius: 10px;
-  border: 1px solid ${props => props.borderColor};
+  border-radius: 15px;
   background: ${props => props.backColor};
   transition: 0.25s;
-  margin-top: 30px;
-`
-
-const DetailView = styled.div`
-  width: 100%;
-  padding: 30px 6px;
-  ${props =>
-    props.mode === 'dark'
-      ? `
-    ${
-      props.lastElement === 'yes'
-        ? 'border-radius: 0 0 10px 10px;'
-        : 'border-bottom: 1px solid rgba(255, 255, 255, 0.5);'
-    }
-  `
-      : `
-    ${
-      props.lastElement === 'yes'
-        ? ``
-        : `
-      border-bottom: 1px solid #E9E9E9;
-    `
-    }
-  `}
-  transition: 0.25s;
-  cursor: pointer;
-  &:hover {
-    background: ${props => props.hoverColor};
-  }
-
-  @media screen and (max-width: 992px) {
-    padding: 12px 6px;
-    width: ${props => props.width}px;
-  }
-`
-
-const FlexDiv = styled.div`
-  display: flex;
-  position: relative;
-  width: ${props => (props.width ? props.width : 'auto')};
-
-  @media screen and (max-width: 992px) {
-    ${props =>
-      props.display
-        ? `
-      display: ${props.display};
-    `
-        : ``};
-  }
+  margin-top: 25px;
 `
 
 const MyFarm = styled.div`
@@ -143,12 +120,15 @@ const FarmPic = styled.img`
 `
 
 const EmptyPanel = styled.div`
-  padding-top: 5%;
-  padding-bottom: 5%;
-
+  padding-top: 12%;
+  padding-bottom: 12%;
   border-radius: 5px;
+  border-right: 1px solid ${props => props.borderColor};
+  border-bottom: 1px solid ${props => props.borderColor};
+  border-left: 1px solid ${props => props.borderColor};
   @media screen and (max-width: 992px) {
-    padding-top: 70px;
+    padding: 0px;
+    border: none;
   }
 `
 
@@ -191,66 +171,120 @@ const EmptyInfo = styled.div`
   display: flex;
   justify-content: center;
   text-align: center;
+  gap: 23px;
+  @media screen and (max-width: 992px) {
+    display: flex;
+    justify-content: center;
+    flex-flow: column;
+    font-size: 10px;
+    line-height: 18px;
+  }
 `
 
-const ExploreFarm = styled.button`
-  background: white;
-  border-radius: 12px;
-  color: #1e1f20;
-  padding: 15px 130px;
-  border: 2px solid #1e1f20;
-  font-weight: 500;
+const ConnectButtonStyle = styled.button`
   font-size: 16px;
-  line-height: 21px;
+  line-height: 20px;
+  font-weight: 600;
   display: flex;
-  align-self: center;
+  justify-content: center;
+  margin: 25px auto;
+  width: 250px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #d0d5dd;
+  color: #344054;
+  box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
+  cursor: pointer;
+
+  ${props =>
+    props.connected
+      ? `
+      padding: 7px 45px 7px 11px;
+      filter: drop-shadow(0px 4px 52px rgba(0, 0, 0, 0.25));
+
+      &:hover {
+        background: #E6F8EB;
+      }
+    `
+      : `
+      padding: 15px 0px 15px 0px;
+    `}
 
   &:hover {
-    background: #f0f0f0;
+    box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05), 0px 0px 0px 4px #f2f4f7;
+    img.connect-wallet {
+      filter: brightness(0) saturate(100%) invert(69%) sepia(55%) saturate(4720%) hue-rotate(110deg)
+        brightness(91%) contrast(86%);
+    }
   }
 
-  &:active {
-    background: #e5e5e5;
-  }
-
-  img {
-    margin-right: 20px;
+  img.connect-wallet {
+    margin: auto 25px auto 0px;
   }
 
   @media screen and (max-width: 992px) {
-    padding: 15px 84px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    ${props =>
+      props.connected
+        ? `
+      background: none;
+      color: ${props.fontcolor};
+      font-size: 11px;
+      padding: 2px 16px 2px 7px;
+      border: 1px solid ${props.bordercolor};
+      `
+        : `
+      padding: 10px 11px;
+      font-size: 13px;
+      `}
+
+    img.connect-wallet {
+      margin-right: 15px;
+      width: 14px;
+      height: 14px;
+    }
   }
 `
 
-const Content = styled.div`
-  width: ${props => props.width};
-  ${props =>
-    props.display
-      ? `
-    display: ${props.display};
-  `
-      : ''}
-  ${props =>
-    props.marginLeft
-      ? `
-    margin-left: ${props.marginLeft};
-  `
-      : ''}
+const ExploreFarm = styled.div`
+  background-image: url(${props =>
+    props.bgImage === 'first' ? BoxBgOne : props.bgImage === 'second' ? BoxBgTwo : BoxBgThree});
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100%;
+  height: 175px;
+  border-radius: 12.18px;
+  border: none;
+  box-shadow: 0px 4.06px 4.06px -2.03px rgba(16, 24, 40, 0.03),
+    0px 10.15px 12.18px -2.03px rgba(16, 24, 40, 0.08);
+  color: #fff;
+  padding: 0px 25px;
   font-weight: 400;
-  font-size: 20px;
-  line-height: 23px;
+  font-size: 15px;
+  line-height: 14px;
+  display: flex;
   align-self: center;
+  cursor: pointer;
+
+  @media screen and (max-width: 992px) {
+    padding: 8px 13px;
+    font-size: 12px;
+  }
 `
 
-const BadgeIcon = styled.div`
-  width: 21px;
-  height: 22px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: ${props => props.badgeBack};
-  box-shadow: 0px 0px 2px rgba(0, 0, 0, 0.15);
-  border-radius: 2px;
+const ExploreContent = styled.div`
+  margin: auto 0px;
+  text-align: left;
+`
+
+const ExploreTitle = styled.div`
+  font-weight: 600;
+  font-size: 21px;
+  line-height: 20px;
+  padding-bottom: 10px;
 `
 
 const ThemeMode = styled.div`
@@ -342,13 +376,15 @@ const Counter = styled.div`
 
 const Header = styled.div`
   width: 100%;
-  padding: 10px 6px;
+  padding: 12px 24px;
   background: ${props => props.backColor};
-  border-bottom: 1px solid ${props => props.borderColor};
   display: flex;
+  border: 1px solid ${props => props.borderColor};
+  border-top-left-radius: 15px;
+  border-top-right-radius: 15px;
 
   @media screen and (max-width: 992px) {
-    width: ${props => props.width}px;
+    display: none;
   }
 `
 
@@ -356,7 +392,7 @@ const Column = styled.div`
   width: ${props => props.width};
   font-weight: 500;
   font-size: 12px;
-  line-height: 15px;
+  line-height: 18px;
   display: flex;
   justify-content: start;
   ${props =>
@@ -405,52 +441,30 @@ const Status = styled.div`
   }
 `
 
-const LogoImg = styled.img`
-  z-index: 10;
-  &:not(:first-child) {
-    margin-left: -7px;
-    ${props =>
-      props.zIndex
-        ? `
-      z-index: ${props.zIndex};
-    `
-        : ``};
-  }
-`
-
 const Col = styled.div`
   display: flex;
   cursor: pointer;
   width: fit-content;
-`
+  @media screen and (max-width: 1200px) {
+    flex-flow: column;
+  }
 
-const ContentInner = styled.div`
-  ${props =>
-    props.width
-      ? `
-    width: ${props.width}
-  `
-      : ``};
-  ${props =>
-    props.display
-      ? `
-    display: ${props.display};
-  `
-      : ''}
-  ${props =>
-    props.marginLeft
-      ? `
-    margin-left: ${props.marginLeft};
-  `
-      : ''}
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 23px;
-  align-self: center;
+  img.sortIcon {
+    width: 8.8px;
+    height: 10.5px;
+    margin: auto 0px auto 5px;
+    @media screen and (max-width: 1200px) {
+      margin: auto;
+    }
+  }
 
-  @media screen and (max-width: 992px) {
-    margin-top: 10px;
-    width: 100%;
+  img.info {
+    margin-right: 3px;
+    margin-left: 0px;
+  }
+
+  #tooltip-balance {
+    max-width: 300px;
   }
 `
 
@@ -462,34 +476,201 @@ const TableContent = styled.div`
   `
       : ``}
   @media screen and (max-width: 992px) {
-    overflow-x: scroll;
+    // overflow-x: scroll;
+    border-radius: 15px 15px 0px 0px;
+    border: 1px solid #f2f5ff;
+    ${props =>
+      props.count === 0
+        ? `
+        border-radius: unset;
+        border: none;
+    `
+        : ``}
+  }
+`
+
+const DescInfo = styled.div`
+  display: none;
+  @media screen and (max-width: 992px) {
+    display: block;
+    font-size: 12px;
+    line-height: 24px;
+    font-weight: 400;
+    color: #475467;
+    padding-bottom: 10px;
+    border-bottom: 2px solid ${props => props.borderColor};
+  }
+`
+
+const NewLabel = styled.div`
+  font-weight: ${props => props.weight || '400'};
+  font-size: ${props => props.size || '20px'};
+  line-height: ${props => props.height || '0px'};
+  ${props =>
+    props.borderBottom
+      ? `
+    border-bottom: ${props.borderBottom};
+  `
+      : ''}
+
+  ${props =>
+    props.color
+      ? `
+    color: ${props.color};
+  `
+      : ''}
+  ${props =>
+    props.position
+      ? `
+    position: ${props.position};
+  `
+      : ''}
+  ${props =>
+    props.align
+      ? `
+    text-align: ${props.align};
+  `
+      : ''}
+  ${props =>
+    props.justifyContent
+      ? `
+    justify-content: ${props.justifyContent};
+  `
+      : ''}
+  ${props =>
+    props.marginTop
+      ? `
+    margin-top: ${props.marginTop};
+  `
+      : ''}
+  ${props =>
+    props.marginLeft
+      ? `
+    margin-left: ${props.marginLeft};
+  `
+      : ''}
+  ${props =>
+    props.marginBottom
+      ? `
+    margin-bottom: ${props.marginBottom};
+  `
+      : ''}
+  ${props =>
+    props.marginRight
+      ? `
+    margin-right: ${props.marginRight};
+  `
+      : ''}
+  ${props =>
+    props.display
+      ? `
+    display: ${props.display};
+  `
+      : ''}
+  ${props =>
+    props.items
+      ? `
+    align-items: ${props.items};
+  `
+      : ''}
+  ${props =>
+    props.self
+      ? `
+    align-self: ${props.self};
+  `
+      : ''}
+  ${props =>
+    props.padding
+      ? `
+    padding: ${props.padding};
+  `
+      : ''}
+  ${props =>
+    props.width
+      ? `
+    width: ${props.width};
+  `
+      : ''}
+  ${props =>
+    props.borderRadius
+      ? `
+    border-radius: ${props.borderRadius};
+    `
+      : ``}
+  img.icon {
+    margin-right: 10px;
+  }
+
+  img.thumbs-up {
+    margin-right: 10px;
+  }
+
+  img.info-icon {
+    margin-left: 15px;
+  }
+
+  #info .tooltip-inner {
+    background: black;
+  }
+
+  @media screen and (max-width: 992px) {
+    img.icon {
+      margin-right: 5px;
+    }
+
+    img.info {
+      margin-left: 5px;
+    }
+
+    img.thumbs-up {
+      margin-right: 5px;
+      width: 11px;
+    }
+  }
+`
+
+const CheckBoxDiv = styled.div`
+  cursor: pointer;
+  margin-top: 25px;
+  display: inline-block;
+  position: relative;
+
+  svg {
+    position: absolute;
+    top: 4px;
+  }
+
+  div {
+    padding-left: 23px;
   }
 `
 
 export {
   Container,
   SubPart,
+  MobileSubPart,
+  MobileDiv,
   TransactionDetails,
-  DetailView,
   FarmTitle,
-  FlexDiv,
   MyFarm,
   FarmPic,
-  BadgeIcon,
   Inner,
   EmptyPanel,
   EmptyInfo,
   EmptyImg,
   ExploreFarm,
-  Content,
+  ExploreContent,
+  ExploreTitle,
   ThemeMode,
   Div,
   Counter,
   Header,
   Column,
   Status,
-  LogoImg,
   Col,
-  ContentInner,
   TableContent,
+  DescInfo,
+  NewLabel,
+  ConnectButtonStyle,
+  CheckBoxDiv,
 }

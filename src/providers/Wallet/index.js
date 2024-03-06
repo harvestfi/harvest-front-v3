@@ -8,6 +8,7 @@ import { CHAIN_IDS } from '../../data/constants'
 import {
   getChainName,
   hasValidUpdatedBalance,
+  ledgerProvider,
   mainWeb3,
   pollUpdatedBalance,
   safeProvider,
@@ -45,6 +46,13 @@ const WalletProvider = _ref => {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (isLedgerLive()) {
+        const selectedChain = await ledgerProvider.getNetwork()
+        setChainId(selectedChain.chainId.toString())
+        const selectedAccount = await ledgerProvider.getSigner().getAddress()
+        setAccount(selectedAccount && selectedAccount.toLowerCase())
+        setConnected(true)
+      }
       if (isSafeApp()) {
         const safeAppProvider = await safeProvider()
         const selectedChain = await safeAppProvider.getNetwork()
@@ -65,7 +73,7 @@ const WalletProvider = _ref => {
       )
         connect({ autoSelect: { label: 'Coinbase Wallet', disableModals: true } })
     }
-  }, [])
+  }, [connect, connecting])
 
   const disconnectAction = useCallback(async () => {
     if (!isLedgerLive()) {
@@ -75,37 +83,80 @@ const WalletProvider = _ref => {
 
   const onNetworkChange = useCallback(
     newChain => {
-      validateChain(
-        newChain,
-        chainId,
-        async () => {
-          setConnected(true)
-          const chainNew = parseInt(newChain, 16).toString()
-          setChainId(chainNew)
-          setSelChain([chainNew])
-        },
-        () => {
-          setConnected(true)
-          const chainNew = parseInt(newChain, 16).toString()
-          setChainId(chainNew)
-        },
-        () => {
-          toast.error(
-            `App network (${getChainName(
-              chainId,
-            )}) doesn't match to network selected in your wallet (${getChainName(
-              newChain,
-            )}).\nSwitch to the correct chain in your wallet`,
-          )
-          setConnected(false)
-        },
-      )
+      if (!isLedgerLive()) {
+        validateChain(
+          newChain,
+          chainId,
+          async () => {
+            window.location.reload()
+            setConnected(true)
+            const chainNew = parseInt(newChain, 16).toString()
+            setChainId(chainNew)
+            setSelChain([chainNew])
+          },
+          () => {
+            window.location.reload()
+            setConnected(true)
+            const chainNew = parseInt(newChain, 16).toString()
+            setChainId(chainNew)
+          },
+          () => {
+            toast.error(
+              `App network (${getChainName(
+                chainId,
+              )}) doesn't match to network selected in your wallet (${getChainName(
+                newChain,
+              )}).\nSwitch to the correct chain in your wallet`,
+            )
+            setConnected(false)
+          },
+        )
+      } else {
+        validateChain(
+          newChain,
+          chainId,
+          async () => {
+            window.location.reload()
+            setConnected(true)
+            const chainNew = parseInt(newChain, 16).toString()
+            setChainId(chainNew)
+            const selectedAccount = await ledgerProvider.getSigner().getAddress()
+            setAccount(selectedAccount && selectedAccount.toLowerCase())
+            setConnected(true)
+          },
+          () => {
+            toast.error(
+              `App network (${getChainName(
+                chainId,
+              )}) doesn't match to network selected in your wallet (${getChainName(
+                newChain,
+              )}).\nSwitch to the correct chain in your wallet`,
+            )
+            setConnected(false)
+          },
+        )
+      }
     },
     [chainId],
   )
   useEffect(() => {
     let accountEmitter, networkEmitter
     const fetchData = async () => {
+      if (isLedgerLive()) {
+        if (ledgerProvider && ledgerProvider.provider.on) {
+          networkEmitter = ledgerProvider.provider.on('chainChanged', onNetworkChange)
+          accountEmitter = ledgerProvider.provider.on('accountsChanged', accountAddress => {
+            setAccount(accountAddress[0].toLowerCase())
+            setConnected(true)
+          })
+        }
+        return () => {
+          if (accountEmitter && networkEmitter) {
+            accountEmitter.removeAllListeners('accountsChanged')
+            networkEmitter.removeListener('chainChanged', onNetworkChange)
+          }
+        }
+      }
       if (isSafeApp()) {
         const safeweb3Provider = await safeProvider()
         if (safeweb3Provider && safeweb3Provider.provider.on) {
@@ -141,6 +192,9 @@ const WalletProvider = _ref => {
       if (wallet) {
         const chainNum = parseInt(wallet.chains[0].id, 16).toString()
         setAccount(wallet.accounts[0].address.toLowerCase())
+        // setAccount('0x3264473150ead02a604812c7b5b70fef4a9b4503')
+        // setAccount('0x620D65F8a642a056bB444D5b1816784bbA5fB27e')
+        // setAccount('0x0550bED1C94AFBd468aa739852632D7e9b4c2F86')
         setChainId(chainNum)
         if (wallet?.provider) {
           const newWeb3 = new Web3(wallet.provider)

@@ -1,14 +1,17 @@
 import BigNumber from 'bignumber.js'
 import { debounce, find, get, isArray, isEqual, keys, orderBy, sortBy, uniq } from 'lodash'
 import move from 'lodash-move'
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useMemo, useRef, useState, useEffect } from 'react'
 import { Dropdown } from 'react-bootstrap'
 import useEffectWithPrevious from 'use-effect-with-previous'
+import { IoIosArrowDown } from 'react-icons/io'
 import EmptyIcon from '../../../assets/images/logos/farm/empty.svg'
+import SortAPY from '../../../assets/images/logos/farm/sortAPY.svg'
+import SortBank from '../../../assets/images/logos/farm/sortBank.svg'
+import SortCurrency from '../../../assets/images/logos/farm/sortCurrency.svg'
 import sortAscIcon from '../../../assets/images/ui/asc.svg'
 import sortDescIcon from '../../../assets/images/ui/desc.svg'
 import sortIcon from '../../../assets/images/ui/sort.svg'
-import SortFilterIcon from '../../../assets/images/logos/filter/sort-icon.svg'
 import MobileSortCheckedIcon from '../../../assets/images/logos/filter/mobile-sort-checked.svg'
 import {
   FARM_GRAIN_TOKEN_SYMBOL,
@@ -16,7 +19,9 @@ import {
   FARM_WETH_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
+  MAX_DECIMALS,
 } from '../../../constants'
+import { fromWei } from '../../../services/web3'
 import { CHAIN_IDS } from '../../../data/constants'
 import { usePools } from '../../../providers/Pools'
 import { useStats } from '../../../providers/Stats'
@@ -24,11 +29,12 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
 import {
-  convertAmountToFARM,
+  parseValue,
   getTotalApy,
   getUserVaultBalance,
   getVaultValue,
   isSpecialApp,
+  getPublishDate,
 } from '../../../utils'
 import VaultPanel from '../VaultPanel'
 import VaultsListHeader from '../VaultsListHeader'
@@ -48,9 +54,9 @@ import {
 const { tokens } = require('../../../data')
 
 const SortsList = [
-  { id: 0, name: 'APY', type: 'apy' },
-  { id: 1, name: 'My Balance', type: 'balance' },
-  { id: 2, name: 'TVL', type: 'deposits' },
+  { id: 0, name: 'APY', type: 'apy', img: SortAPY },
+  { id: 1, name: 'TVL', type: 'deposits', img: SortBank },
+  { id: 2, name: 'My Balance', type: 'balance', img: SortCurrency },
 ]
 
 const formatVaults = (
@@ -69,6 +75,7 @@ const formatVaults = (
   selectStableCoin,
   selectFarmType,
   selectedActiveType,
+  vaultsData,
 ) => {
   let vaultsSymbol = sortBy(keys(groupOfVaults), [
     // eslint-disable-next-line consistent-return
@@ -191,18 +198,23 @@ const formatVaults = (
         vaultsSymbol = orderBy(
           vaultsSymbol,
           v => {
-            let iFARMinFARM, vaultPool
+            let iFARMBalance, vaultPool, usdPrice
+
+            const isSpecialVault = groupOfVaults[v].liquidityPoolVault || groupOfVaults[v].poolVault
+            const token = groupOfVaults[v]
+            const tempPricePerFullShare = isSpecialVault
+              ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
+              : get(token, `pricePerFullShare`, 0)
+            const pricePerFullShare = fromWei(
+              tempPricePerFullShare,
+              isSpecialVault
+                ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0)
+                : token.decimals,
+            )
 
             if (v === FARM_TOKEN_SYMBOL) {
-              const iFARMBalance = get(balances, IFARM_TOKEN_SYMBOL, 0)
-              iFARMinFARM = convertAmountToFARM(
-                IFARM_TOKEN_SYMBOL,
-                iFARMBalance,
-                tokens[FARM_TOKEN_SYMBOL].decimals,
-                groupOfVaults,
-              )
+              iFARMBalance = get(balances, IFARM_TOKEN_SYMBOL, 0)
             }
-            const isSpecialVault = groupOfVaults[v].liquidityPoolVault || groupOfVaults[v].poolVault
 
             const tokenVault = get(groupOfVaults, groupOfVaults[v].hodlVaultId || v)
 
@@ -216,7 +228,28 @@ const formatVaults = (
             }
             const poolId = get(vaultPool, 'id')
             const totalStakedInPool = get(userStats, `[${poolId}]['totalStaked']`, 0)
-            return Number(getUserVaultBalance(v, farmingBalances, totalStakedInPool, iFARMinFARM))
+
+            if (isSpecialVault) {
+              usdPrice =
+                (groupOfVaults[v].data && groupOfVaults[v].data.lpTokenData?.price) *
+                pricePerFullShare
+            } else {
+              usdPrice = groupOfVaults[v].usdPrice
+            }
+            const usdBalance = Number(
+              new BigNumber(
+                fromWei(
+                  parseValue(
+                    getUserVaultBalance(v, farmingBalances, totalStakedInPool, iFARMBalance),
+                  ),
+                  isSpecialVault ? get(token, 'data.watchAsset.decimals', 18) : token.decimals,
+                  MAX_DECIMALS,
+                ),
+              )
+                .multipliedBy(Number(usdPrice))
+                .toString(),
+            )
+            return usdBalance
           },
           sortOrder,
         )
@@ -299,14 +332,25 @@ const formatVaults = (
   }
 
   if (selectFarmType !== '') {
-    vaultsSymbol = vaultsSymbol.filter(
-      tokenSymbol =>
-        get(groupOfVaults[tokenSymbol], 'tags') &&
-        groupOfVaults[tokenSymbol].tags
-          .join(', ')
-          .toLowerCase()
-          .includes(selectFarmType.toLowerCase().trim()),
-    )
+    if (selectFarmType === 'New') {
+      vaultsSymbol = orderBy(vaultsSymbol, v => get(groupOfVaults, `${v}.publishDate`), 'desc')
+      // console.log('New Filter: ', groupOfVaults)
+    } else if (selectFarmType === 'PopularNow') {
+      vaultsSymbol = orderBy(
+        orderBy(vaultsSymbol, v => get(groupOfVaults, `${v}.publishDate`), 'desc').slice(0, 20),
+        v => Number(getVaultValue(groupOfVaults[v])),
+        'desc',
+      )
+      // console.log('Popular Now Filter: ', groupOfVaults)
+    }
+    // vaultsSymbol = vaultsSymbol.filter(
+    //   tokenSymbol =>
+    //     get(groupOfVaults[tokenSymbol], 'tags') &&
+    //     groupOfVaults[tokenSymbol].tags
+    //       .join(', ')
+    //       .toLowerCase()
+    //       .includes(selectFarmType.toLowerCase().trim()),
+    // )
   }
   vaultsSymbol = [...new Set(vaultsSymbol)]
   return vaultsSymbol
@@ -331,7 +375,13 @@ const VaultList = () => {
     farmingBalances,
   } = useVaults()
   const { profitShareAPY } = useStats()
-  const { pools, fetchUserPoolStats, userStats, loadedUserPoolsWeb3Provider } = usePools()
+  const {
+    pools,
+    totalPools,
+    fetchUserPoolStats,
+    userStats,
+    loadedUserPoolsWeb3Provider,
+  } = usePools()
   const { account, chain, selChain, getWalletBalances, balances, chainId } = useWallet()
   const [openVault, setOpen] = useState(null)
   const [loaded, setLoaded] = useState(null)
@@ -350,11 +400,11 @@ const VaultList = () => {
     setLoadComplete(true)
   }, [])
 
-  const farmProfitSharingPool = pools.find(
+  const farmProfitSharingPool = totalPools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )
-  const farmWethPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_WETH_POOL_ID)
-  const farmGrainPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_GRAIN_POOL_ID)
+  const farmWethPool = totalPools.find(pool => pool.id === SPECIAL_VAULTS.FARM_WETH_POOL_ID)
+  const farmGrainPool = totalPools.find(pool => pool.id === SPECIAL_VAULTS.FARM_GRAIN_POOL_ID)
 
   const poolVaults = useMemo(
     () => ({
@@ -364,8 +414,6 @@ const VaultList = () => {
         data: farmProfitSharingPool,
         logoUrl: ['./icons/ifarm.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
-        isNew: tokens[FARM_TOKEN_SYMBOL].isNew,
-        newDetails: tokens[FARM_TOKEN_SYMBOL].newDetails,
         tokenNames: ['FARM'],
         platform: ['Uniswap'],
         tags: ['Beginners'],
@@ -376,7 +424,6 @@ const VaultList = () => {
         data: farmWethPool,
         logoUrl: ['./icons/farm.svg', './icons/eth.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
-        isNew: tokens[FARM_WETH_TOKEN_SYMBOL].isNew,
         tokenNames: ['FARM', 'ETH'],
         assetType: 'LP Token',
         tags: ['Advanced'],
@@ -388,7 +435,6 @@ const VaultList = () => {
         data: farmGrainPool,
         logoUrl: ['./icons/farm.svg', './icons/grain.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
-        isNew: tokens[FARM_GRAIN_TOKEN_SYMBOL].isNew,
         tags: ['Advanced'],
       },
     }),
@@ -397,11 +443,53 @@ const VaultList = () => {
 
   let groupOfVaults = []
   if (isSpecialApp) {
-    if (chainId === CHAIN_IDS.ETH_MAINNET) groupOfVaults = { ...vaultsData, ...poolVaults }
-    else groupOfVaults = { ...vaultsData }
+    if (chainId === CHAIN_IDS.ETH_MAINNET) {
+      if (selectFarmType !== '') {
+        groupOfVaults = { ...vaultsData }
+      } else {
+        groupOfVaults = { ...vaultsData, ...poolVaults }
+      }
+    } else {
+      groupOfVaults = { ...vaultsData }
+    }
+  } else if (selectFarmType !== '') {
+    groupOfVaults = { ...vaultsData }
   } else {
     groupOfVaults = { ...vaultsData, ...poolVaults }
   }
+
+  useEffect(() => {
+    const getCreatedAtData = async () => {
+      if (groupOfVaults) {
+        const vaultsKey = Object.keys(groupOfVaults)
+        vaultsKey.map(async symbol => {
+          const token = groupOfVaults[symbol]
+          const tokenChainId = token.chain || token.data.chain
+          const isSpecialVault = token.liquidityPoolVault || token.poolVault
+          const paramAddress = isSpecialVault
+            ? token.data.collateralAddress
+            : token.vaultAddress || token.tokenAddress
+          const vaultIds = vaultsKey.filter(
+            vaultId =>
+              groupOfVaults[vaultId].vaultAddress === paramAddress ||
+              groupOfVaults[vaultId].tokenAddress === paramAddress,
+          )
+          const id = vaultIds[0]
+          const tokenVault = get(vaultsData, token.hodlVaultId || id)
+
+          const vaultPool = isSpecialVault
+            ? token.data
+            : find(totalPools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
+          const address =
+            token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+          const { data, flag } = await getPublishDate(address, tokenChainId)
+          groupOfVaults[symbol].publishDate = flag ? Number(data[data.length - 1].timestamp) : null
+        })
+      }
+    }
+
+    getCreatedAtData()
+  }, [pools, vaultsData]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const vaultsSymbol = useMemo(
     () =>
@@ -421,6 +509,7 @@ const VaultList = () => {
         selectStableCoin,
         selectFarmType,
         selectedActiveType,
+        vaultsData,
       ),
     [
       groupOfVaults,
@@ -438,6 +527,7 @@ const VaultList = () => {
       selectStableCoin,
       selectFarmType,
       selectedActiveType,
+      vaultsData,
     ],
   )
 
@@ -613,8 +703,8 @@ const VaultList = () => {
   const {
     fontColor,
     filterColor,
-    borderColor,
     backColor,
+    borderColor,
     mobileFilterBackColor,
     mobileFilterBorderColor,
     darkMode,
@@ -642,9 +732,12 @@ const VaultList = () => {
         >
           <Dropdown className="filter-sort">
             <Dropdown.Toggle className="toggle">
-              <div>Sort By: {sortId === -1 ? '' : SortsList[sortId].name}</div>
+              <div>
+                Sort By: <img src={SortsList[sortId].img} className="sort-icon" alt="sort" />
+                <span>{sortId === -1 ? '' : SortsList[sortId].name}</span>
+              </div>
               <MobileFilterBtn type="button" darkmode={darkMode ? 'true' : 'false'}>
-                <img src={SortFilterIcon} alt="" />
+                <IoIosArrowDown color="#667085" fontSize={20} />
               </MobileFilterBtn>
             </Dropdown.Toggle>
 
@@ -660,19 +753,41 @@ const VaultList = () => {
                     updateSortQuery(item.type)
                   }}
                 >
-                  <div>{item.name}</div>
+                  <div>
+                    <img src={item.img} className="sort-icon" alt="sort" />
+                    {item.name}
+                  </div>
                   <img className="checked" src={MobileSortCheckedIcon} alt="" />
                 </Dropdown.Item>
               ))}
             </Dropdown.Menu>
           </Dropdown>
         </MobileListFilter>
-        <Header fontColor={fontColor} filterColor={filterColor}>
+        <Header borderColor={borderColor} fontColor={fontColor} filterColor={filterColor}>
           <HeaderCol width="45%" justifyContent="start">
             Farm
           </HeaderCol>
-          <HeaderCol width="15%" textAlign="left" onClick={() => setSortingParams('apy')}>
+          <HeaderCol
+            width="15%"
+            justifyContent="start"
+            textAlign="left"
+            onClick={() => setSortingParams('apy')}
+          >
             <div className="hoverable">APY</div>
+            <SortingIcon
+              className="sort-icon"
+              sortType={sortOrder}
+              sortField={sortParam}
+              selectedField="apy"
+            />
+          </HeaderCol>
+          <HeaderCol
+            width="15%"
+            justifyContent="start"
+            textAlign="left"
+            onClick={() => setSortingParams('apy')}
+          >
+            <div className="hoverable">Daily APY</div>
             <SortingIcon
               className="sort-icon"
               sortType={sortOrder}
@@ -683,7 +798,8 @@ const VaultList = () => {
           <HeaderCol
             data-tip
             data-for="total-deposits-column-header"
-            width="20%"
+            width="15%"
+            justifyContent="start"
             textAlign="left"
             onClick={() => setSortingParams('deposits')}
           >
@@ -695,7 +811,12 @@ const VaultList = () => {
               selectedField="deposits"
             />
           </HeaderCol>
-          <HeaderCol onClick={() => setSortingParams('balance')} width="20%" textAlign="left">
+          <HeaderCol
+            onClick={() => setSortingParams('balance')}
+            justifyContent="start"
+            width="10%"
+            textAlign="left"
+          >
             <div className="hoverable">My Balance </div>
             <SortingIcon
               className="sort-icon"

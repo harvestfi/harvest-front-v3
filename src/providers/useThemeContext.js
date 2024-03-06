@@ -16,10 +16,10 @@ export function ThemeProvider({ children }) {
 
   const switchMode = darkMode ? 'dark' : 'light'
 
-  const pageBackColor = darkMode ? '#15202B' : '#FAFAFA'
-  const fontColor = darkMode ? 'white' : '#475467'
-  const backColor = darkMode ? '#15202B' : 'white'
-  const borderColor = darkMode ? 'rgba(217, 217, 217, 0.5)' : '#EAECF0'
+  const pageBackColor = darkMode ? '#15202B' : '#fff'
+  const fontColor = darkMode ? '#fff' : '#475467'
+  const backColor = darkMode ? '#15202B' : '#fff'
+  const borderColor = darkMode ? 'rgba(217, 217, 217, 0.5)' : '#f2f5ff'
   const filterColor = darkMode
     ? 'invert(100%) sepia(20%) saturate(0%) hue-rotate(40deg) brightness(104%) contrast(101%)'
     : ''
@@ -113,7 +113,7 @@ export function ThemeProvider({ children }) {
   const toggleInactiveBackColor = darkMode ? '' : '#F2F4F7'
   const toggleActiveBackColor = darkMode ? '' : '#7F56D9'
 
-  const sidebarFontColor = darkMode ? '#D0D5DD' : '#344054'
+  const sidebarFontColor = darkMode ? '#D0D5DD' : '#000'
   const sidebarActiveFontColor = darkMode ? 'white' : '#101828'
   const sidebarActiveIconColor = darkMode
     ? 'invert(95%) sepia(4%) saturate(441%) hue-rotate(183deg) brightness(89%) contrast(94%)'

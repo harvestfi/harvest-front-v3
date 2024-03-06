@@ -71,7 +71,7 @@ const VaultBodyActions = ({
   const { fetchUserPoolStats, userStats } = usePools()
   const { account, getWalletBalances, connected, balancesToLoad } = useWallet()
   const { vaultsData } = useVaults()
-  const { handleStake } = useActions()
+  const { handleOldStake } = useActions()
 
   const hodlVaultId = get(vaultsData, `[${tokenSymbol}].hodlVaultId`)
 
@@ -233,7 +233,7 @@ const VaultBodyActions = ({
           height="38px"
           size="md"
           onClick={() =>
-            handleStake(
+            handleOldStake(
               token,
               account,
               tokenSymbol,

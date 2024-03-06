@@ -16,8 +16,8 @@ const VaultName = ({ token, tokenSymbol, useIFARM }) => {
           ? `${tokens[IFARM_TOKEN_SYMBOL].platform[0]} - ${tokens[IFARM_TOKEN_SYMBOL].subLabel}`
           : tokens[IFARM_TOKEN_SYMBOL].platform[0]
         : token.subLabel
-        ? token.platform[0] && <small>{`${token.platform[0]} - ${token.subLabel}`}</small>
-        : token.platform[0] && <small>{token.platform[0]}</small>}
+        ? token.platform[0] && `${token.platform[0]} - ${token.subLabel}`
+        : token.platform[0] && token.platform[0]}
     </TokenDescriptionContainer>
   )
 }

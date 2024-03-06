@@ -4,18 +4,21 @@ const SocialsContainer = styled.div`
   display: flex;
   flex-direction: row;
   transition: 0.25s;
+  margin-top: 15px;
+  margin-left: 15px;
   a {
-    background: ${props => props.backColor};
-    img {
-      filter: ${props => props.iconColor};
-    }
+    background: #344054;
   }
 
-  // @media screen and (max-width: 1200px) {
-  //   flex-direction: row;
-  //   position: unset;
-  //   margin-bottom: 40px;
-  // }
+  @media screen and (max-width: 1200px) {
+    flex-direction: row;
+    position: unset;
+    margin-bottom: 40px;
+  }
+
+  @media screen and (max-width: 992px) {
+    margin: 0px 0px 15px 0px;
+  }
 
   z-index: 99999;
 `

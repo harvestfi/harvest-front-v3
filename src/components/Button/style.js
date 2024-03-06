@@ -96,7 +96,6 @@ ${props =>
       props.color === 'max'
         ? `
         background: #FF9940;
-        // border: 2px solid #F2B435;
         color: #FFFFFF;
         border-radius: 6px;
       
@@ -104,7 +103,6 @@ ${props =>
           !props.disabled
             ? `
         &:hover {
-          // border: 2px solid #FFD69D;
           background: #FF9400D0;
         }`
             : ''
@@ -143,6 +141,39 @@ ${props =>
       `
       : ''}
     
+  ${props =>
+    props.color === 'advanced-reward'
+      ? `
+      background: #15B088;
+      border: 1px solid #15B088;
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 24px;
+      display: flex;
+      align-items: center;
+      text-align: center;
+      color: #fff;
+      padding: 10px 56px;
+      border-radius: 8px;
+
+      ${
+        !props.disabled
+          ? `
+      &:hover {
+        background: #2ccda4;
+        color: white;
+      }
+      `
+          : ''
+      }
+
+      &:active {
+        background: #4fdfbb;
+        color: white;
+      }
+      `
+      : ''}
+
     ${props =>
       props.color === 'earn'
         ? `
@@ -174,29 +205,32 @@ ${props =>
     ${props =>
       props.color === 'wido-deposit'
         ? `
-        background: #FFAA34;
+        background: #15B088;
         font-weight: 600;
         font-size: 16px;
-        line-height: 28px;
+        line-height: 24px;
         display: flex;
-        justify-content: space-between;
+        justify-content: center;
         align-items: center;
         text-align: center;
         color: white;
-        padding: 16px 28px;
-        box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
+        padding: 15px 18px;
+        box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
         border-radius: 8px;
+        img {
+          margin-left: 8px;
+        }
         ${
           !props.disabled
             ? `
         &:hover {
-          background: #FFAA34D0;
+          background: #2ccda4;
         }`
             : ''
         }
   
         &:active {
-          background: #FFAA34A0;
+          background: #4fdfbb;
         }
         `
         : ''}
@@ -333,9 +367,6 @@ ${props =>
       border-color: #dadfe6;
     }
 
-    @media screen and (max-width: 992px) {
-      font-size: 14px;
-    }
   }
 `
 

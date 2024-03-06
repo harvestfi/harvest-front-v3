@@ -20,7 +20,7 @@ import AutoHarvest from '../../assets/images/logos/analytics/AutoHarvest.svg'
 import TotalDeposit from '../../assets/images/logos/analytics/TotalDeposit.svg'
 import MonthlyProfit from '../../assets/images/logos/analytics/MonthlyProfit.svg'
 import ExternalLink from '../../assets/images/logos/analytics/ExternalLink.svg'
-import AnalyticChart from '../../components/AnalyticChart'
+import AnalyticChart from '../../components/AnalyticComponents/AnalyticChart'
 import AnimatedDots from '../../components/AnimatedDots'
 import CountdownLabel from '../../components/CountdownLabel'
 import { Divider, Monospace, TextContainer } from '../../components/GlobalStyle'
@@ -448,9 +448,7 @@ const Analytic = () => {
                 iFARM Exchanges
               </BigStatsExchange>
               <ImgList>
-                {/* <a href="#" target="_blank" rel="noopener noreferrer"> */}
                 <img src={ExternalCamelot} alt="" />
-                {/* </a> */}
               </ImgList>
             </StatsContainer>
           </StatsExchange>

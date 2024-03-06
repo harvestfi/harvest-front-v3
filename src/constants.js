@@ -16,14 +16,15 @@ export const SOCIAL_LINKS = {
 }
 
 export const ROUTES = {
-  HOME: '/',
-  PORTFOLIO: '/portfolio',
+  PORTFOLIO: '/',
+  TUTORIAL: '/get-started',
+  ADVANCED: '/farm',
   ANALYTIC: '/analytics',
   DOC: '/doc',
   FAQ: '/faq',
-  GRAIN: '/grain',
-  CAMELOT: '/camelot',
-  WIDODETAIL: '/:network/:paramAddress',
+  ADVANCEDFARM: '/advanced/:network/:paramAddress',
+  BEGINNERSFARM: '/beginners',
+  CHARTS: '/charts',
   WORK: '/work',
   POOL: '/pool',
   ZAPPER: '/zapper',
@@ -43,6 +44,8 @@ export const POLL_BALANCES_INTERVAL_MS = 2000
 export const POLL_POOL_DATA_INTERVAL_MS = window.ethereum ? 900000 : 36000000
 export const POLL_POOL_USER_DATA_INTERVAL_MS = 2000
 export const POLL_BOOST_USER_DATA_INTERVAL_MS = 5000
+
+export const GECKO_URL = 'https://pro-api.coingecko.com/api/v3/'
 
 export const INFURA_URL = `https://eth-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 export const MATIC_URL = `https://polygon-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
@@ -64,6 +67,8 @@ export const MATICSCAN_URL = 'https://polygonscan.com'
 export const BASESCAN_URL = 'https://basescan.org'
 
 export const ARBISCAN_URL = 'https://arbiscan.io'
+
+export const PORTALS_FI_API_URL = 'https://api.portals.fi'
 
 export const DECIMAL_PRECISION = 2
 
@@ -503,12 +508,14 @@ export const REVENUE_MONTHLY_API_ENDPOINT = `${HARVEST_EXTERNAL_API_URL}/revenue
 export const CMC_API_ENDPOINT = `${HARVEST_EXTERNAL_API_URL}/cmc?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`
 export const TVL_API_ENDPOINT = `${HARVEST_EXTERNAL_API_URL}/gmv/total?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`
 export const TOTAL_TVL_API_ENDPOINT = `${HARVEST_API_URL}/tvl?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`
+export const COINGECKO_API_KEY = `${process.env.REACT_APP_COINGECKO_API_KEY}`
 
-export const POOL_BALANCES_DECIMALS = 8
-
+export const BEGINNERS_BALANCES_DECIMALS = 2
 export const WIDO_BALANCES_DECIMALS = 5
-
+export const POOL_BALANCES_DECIMALS = 8
 export const WIDO_EXTEND_DECIMALS = 9
+export const MAX_BALANCES_DECIMALS = 12
+export const MAX_DECIMALS = 18
 
 export const MIGRATING_VAULTS = []
 
