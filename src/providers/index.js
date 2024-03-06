@@ -83,7 +83,7 @@ const web3Onboard = init({
     },
     mobile: {
       position: 'topRight',
-      enabled: true,
+      enabled: false,
       minimal: true,
     },
   },
