@@ -42,7 +42,7 @@ const WalletProvider = _ref => {
   const [balancesToLoad, setBalancesToLoad] = useState([])
   const [approvedBalances, setApprovedBalances] = useState({})
   const { contracts } = useContracts()
-  const [{ wallet }, connect, disconnect] = useConnectWallet()
+  const [{ wallet, connecting }, connect, disconnect] = useConnectWallet()
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,7 +64,7 @@ const WalletProvider = _ref => {
     }
     fetchData()
 
-    if (!connect) {
+    if (!connecting) {
       if (
         window &&
         window.ethereum &&
@@ -73,7 +73,7 @@ const WalletProvider = _ref => {
       )
         connect({ autoSelect: { label: 'Coinbase Wallet', disableModals: true } })
     }
-  }, [connect])
+  }, [])
 
   const disconnectAction = useCallback(async () => {
     if (!isLedgerLive()) {
