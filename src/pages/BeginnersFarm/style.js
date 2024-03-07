@@ -107,6 +107,54 @@ const TopButton = styled.div`
   }
 `
 
+const LinksContainer = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  ${props =>
+    props.showBadge === 'flex'
+      ? `
+      justify-content: space-between;
+  `
+      : 'justify-content: end;'}
+  align-items: center;
+  margin: 0 0px auto;
+  transition: 0.25s;
+
+  div.logo {
+    ${props =>
+      props.showBadge
+        ? `
+      display: ${props.showBadge};
+    `
+        : ''}
+    align-items: inherit;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 24px;
+
+    &:after {
+      margin-left: 15px;
+      display: block;
+      content: 'Harvest';
+      color: #fff;
+    }
+  }
+`
+
+const Logo = styled.div`
+  cursor: pointer;
+  color: #1f2937;
+  font-size: 24px;
+  font-weight: 700;
+  line-height: 36px;
+
+  @media screen and (max-width: 992px) {
+    display: flex;
+    justify-content: end;
+  }
+`
+
 const NewLabel = styled.div`
   font-weight: ${props => props.weight || '400'};
   font-size: ${props => props.size || '20px'};
@@ -1212,4 +1260,6 @@ export {
   NetDetailContent,
   NetDetailImg,
   InfoIconBlack,
+  LinksContainer,
+  Logo,
 }
