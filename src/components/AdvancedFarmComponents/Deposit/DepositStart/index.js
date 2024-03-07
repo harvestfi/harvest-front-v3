@@ -17,6 +17,9 @@ import ProgressTwo from '../../../../assets/images/logos/advancedfarm/progress-s
 import ProgressThree from '../../../../assets/images/logos/advancedfarm/progress-step3.png'
 import ProgressFour from '../../../../assets/images/logos/advancedfarm/progress-step4.png'
 import ProgressFive from '../../../../assets/images/logos/advancedfarm/progress-step5.png'
+import { useActions } from '../../../../providers/Actions'
+import { useContracts } from '../../../../providers/Contracts'
+import { useVaults } from '../../../../providers/Vault'
 import { useWallet } from '../../../../providers/Wallet'
 import { usePools } from '../../../../providers/Pools'
 import { fromWei, toWei, getWeb3 } from '../../../../services/web3'
@@ -45,6 +48,7 @@ const DepositStart = ({
   pickedToken,
   deposit,
   setDeposit,
+  defaultToken,
   inputAmount,
   setInputAmount,
   token,
@@ -58,7 +62,7 @@ const DepositStart = ({
   setSelectToken,
   setConvertSuccess,
 }) => {
-  const { account, web3 } = useWallet()
+  const { account, web3, approvedBalances, getWalletBalances } = useWallet()
 
   const { fetchUserPoolStats, userStats } = usePools()
   const { getPortalsApproval, portalsApprove, getPortals } = usePortals()
@@ -82,6 +86,9 @@ const DepositStart = ({
   const [buttonName, setButtonName] = useState('Approve Token')
   const [receiveAmount, setReceiveAmount] = useState('')
   const [receiveUsd, setReceiveUsd] = useState('')
+  const { handleApproval, handleDeposit } = useActions()
+  const { contracts } = useContracts()
+  const { vaultsData } = useVaults()
 
   const SlippageValues = [null, 0.1, 0.5, 1, 5]
 
@@ -148,46 +155,111 @@ const DepositStart = ({
   }
 
   const startDeposit = async () => {
+    const pickedDefaultToken =
+      token.tokenAddress.toLowerCase() === defaultToken.address.toLowerCase()
     if (progressStep === 0) {
       setStartSpinner(true)
       setProgressStep(1)
       setButtonName('Pending Approval in Wallet')
-      try {
-        let allowanceCheck
-        if (pickedToken.address === '0x0000000000000000000000000000000000000000') {
-          // native token
-          allowanceCheck = amount
+      if (pickedDefaultToken) {
+        const allowanceCheck = approvedBalances[tokenSymbol]
+        if (allowanceCheck < amount) {
+          await handleApproval(
+            account,
+            contracts,
+            tokenSymbol,
+            amount,
+            toToken,
+            null,
+            async () => {
+              setProgressStep(2)
+              setButtonName('Confirm Transaction')
+              setStartSpinner(false)
+              setReceiveAmount(minReceiveAmountString)
+              setReceiveUsd(minReceiveUsdAmount)
+              await fetchUserPoolStats([fAssetPool], account, userStats)
+              await getWalletBalances([tokenSymbol], false, true)
+            },
+            async () => {
+              setStartSpinner(false)
+              setDepositFailed(true)
+              setProgressStep(0)
+              setButtonName('Approve Token')
+            },
+          )
         } else {
-          const approval = await getPortalsApproval(chainId, account, pickedToken.address)
-
-          allowanceCheck = approval ? approval.allowance : 0
+          setProgressStep(2)
+          setButtonName('Confirm Transaction')
+          setStartSpinner(false)
         }
+      } else {
+        try {
+          let allowanceCheck
+          if (pickedToken.address === '0x0000000000000000000000000000000000000000') {
+            // native token
+            allowanceCheck = amount
+          } else {
+            const approval = await getPortalsApproval(chainId, account, pickedToken.address)
 
-        if (!new BigNumber(allowanceCheck).gte(new BigNumber(amount))) {
-          const amountToApprove = new BigNumber(amount) - new BigNumber(allowanceCheck)
-          await approveZap(amountToApprove) // Approve for Zap
+            allowanceCheck = approval ? approval.allowance : 0
+          }
+
+          if (!new BigNumber(allowanceCheck).gte(new BigNumber(amount))) {
+            const amountToApprove = new BigNumber(amount) - new BigNumber(allowanceCheck)
+            await approveZap(amountToApprove) // Approve for Zap
+          }
+          setProgressStep(2)
+          setButtonName('Confirm Transaction')
+          setStartSpinner(false)
+        } catch (err) {
+          setStartSpinner(false)
+          setDepositFailed(true)
+          setProgressStep(0)
+          setButtonName('Approve Token')
         }
-        setProgressStep(2)
-        setButtonName('Confirm Transaction')
-        setStartSpinner(false)
-      } catch (err) {
-        setStartSpinner(false)
-        setDepositFailed(true)
-        setProgressStep(0)
-        setButtonName('Approve Token')
       }
     } else if (progressStep === 2) {
-      try {
+      if (pickedDefaultToken) {
         setProgressStep(3)
         setButtonName('Pending Confirmation in Wallet')
         setStartSpinner(true)
-        await onDeposit()
-      } catch (err) {
-        setDepositFailed(true)
-        setStartSpinner(false)
-        setProgressStep(0)
-        setButtonName('Approve Token')
-        return
+        console.log(amount)
+        await handleDeposit(
+          token,
+          account,
+          tokenSymbol,
+          [amount],
+          approvedBalances[tokenSymbol],
+          contracts,
+          vaultsData[tokenSymbol],
+          false,
+          fAssetPool,
+          false,
+          false,
+          async () => {
+            await getWalletBalances([tokenSymbol])
+            await fetchUserPoolStats([fAssetPool], account, userStats)
+          },
+          async () => {
+            setDepositFailed(true)
+            setStartSpinner(false)
+            setProgressStep(0)
+            setButtonName('Approve Token')
+          },
+        )
+      } else {
+        try {
+          setProgressStep(3)
+          setButtonName('Pending Confirmation in Wallet')
+          setStartSpinner(true)
+          await onDeposit()
+        } catch (err) {
+          setDepositFailed(true)
+          setStartSpinner(false)
+          setProgressStep(0)
+          setButtonName('Approve Token')
+          return
+        }
       }
       // End Approve and Deposit successfully
       setStartSpinner(false)

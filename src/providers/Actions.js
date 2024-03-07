@@ -1,7 +1,7 @@
 import axios from 'axios'
 import BigNumber from 'bignumber.js'
 import { find, get, isUndefined } from 'lodash'
-import { forEach } from 'promised-loops'
+// import { forEach } from 'promised-loops'
 import React, { createContext, useCallback, useContext } from 'react'
 import { toast } from 'react-toastify'
 import {
@@ -31,7 +31,7 @@ import vaultMethods from '../services/web3/contracts/vault/methods'
 import { CustomException } from '../utils'
 import { useWallet } from './Wallet'
 
-const { addresses, tokens, pools } = require('../data')
+const { tokens, pools } = require('../data')
 
 const ActionsContext = createContext()
 const useActions = () => useContext(ActionsContext)
@@ -46,7 +46,6 @@ const ActionsProvider = ({ children }) => {
       amountToApprove,
       vaultAddress,
       poolData,
-      setPendingAction,
       onSuccessApproval = () => {},
       onFailureApproval = () => {},
     ) => {
@@ -69,15 +68,14 @@ const ActionsProvider = ({ children }) => {
 
         await onSuccessApproval()
 
-        toast.success(
-          `${get(tokens, `[${tokenSymbol}].tokenNames`, tokenSymbol).join(
-            ', ',
-          )} approval completed`,
-        )
+        // toast.success(
+        //   `${get(tokens, `[${tokenSymbol}].tokenNames`, tokenSymbol).join(
+        //     ', ',
+        //   )} approval completed`,
+        // )
 
         return false
       } catch (err) {
-        setPendingAction(null)
         const errorMessage = formatWeb3PluginErrorMessage(err)
         toast.error(errorMessage)
         onFailureApproval()
@@ -322,63 +320,60 @@ const ActionsProvider = ({ children }) => {
       approvedBalance,
       contracts,
       vaultData,
-      setPendingAction,
       autoStake,
       fAssetPool,
       multipleAssets,
       zap,
       onSuccessDeposit = () => {},
-      onSuccessApproval = () => {},
       onFailureDeposit = () => {},
     ) => {
-      let hasDeniedRequest = false,
-        updatedLpTokenBalance,
-        updatedLpTokenApprovedBalance
+      const hasDeniedRequest = false
+      let updatedLpTokenBalance, updatedLpTokenApprovedBalance
 
-      await forEach(amountsToExecute, async (amount, amountIdx) => {
-        let hasEnoughApprovedAmount
+      // await forEach(amountsToExecute, async (amount, amountIdx) => {
+      //   let hasEnoughApprovedAmount
 
-        if (multipleAssets) {
-          if (amount !== null) {
-            const tokenInstance = await newContractInstance(
-              null,
-              addresses[multipleAssets[amountIdx]],
-              tokenContractData.abi,
-            )
+      //   if (multipleAssets) {
+      //     if (amount !== null) {
+      //       const tokenInstance = await newContractInstance(
+      //         null,
+      //         addresses[multipleAssets[amountIdx]],
+      //         tokenContractData.abi,
+      //       )
 
-            const currApprovedBalance = await tokenMethods.getApprovedAmount(
-              account,
-              token.vaultAddress,
-              tokenInstance,
-            )
+      //       const currApprovedBalance = await tokenMethods.getApprovedAmount(
+      //         account,
+      //         token.vaultAddress,
+      //         tokenInstance,
+      //       )
 
-            hasEnoughApprovedAmount = new BigNumber(amount).isLessThanOrEqualTo(
-              new BigNumber(currApprovedBalance),
-            )
-          }
-        } else {
-          hasEnoughApprovedAmount = new BigNumber(amount).isLessThanOrEqualTo(
-            new BigNumber(approvedBalance),
-          )
-        }
+      //       hasEnoughApprovedAmount = new BigNumber(amount).isLessThanOrEqualTo(
+      //         new BigNumber(currApprovedBalance),
+      //       )
+      //     }
+      //   } else {
+      //     hasEnoughApprovedAmount = new BigNumber(amount).isLessThanOrEqualTo(
+      //       new BigNumber(approvedBalance),
+      //     )
+      //   }
 
-        if (amount !== null && !hasEnoughApprovedAmount && !hasDeniedRequest) {
-          setPendingAction(ACTIONS.APPROVE_DEPOSIT)
+      //   if (amount !== null && !hasEnoughApprovedAmount && !hasDeniedRequest) {
+      //     setPendingAction(ACTIONS.APPROVE_DEPOSIT)
 
-          hasDeniedRequest = await handleOldApproval(
-            account,
-            contracts,
-            multipleAssets ? multipleAssets[amountIdx] : tokenSymbol,
-            vaultData.vaultAddress,
-            null,
-            setPendingAction,
-            onSuccessApproval,
-          )
-        }
-      })
+      //     hasDeniedRequest = await handleOldApproval(
+      //       account,
+      //       contracts,
+      //       multipleAssets ? multipleAssets[amountIdx] : tokenSymbol,
+      //       vaultData.vaultAddress,
+      //       null,
+      //       setPendingAction,
+      //       onSuccessApproval,
+      //     )
+      //   }
+      // })
 
       if (!hasDeniedRequest) {
-        setPendingAction(ACTIONS.DEPOSIT)
+        // setPendingAction(ACTIONS.DEPOSIT)
 
         try {
           if (multipleAssets) {
@@ -449,23 +444,23 @@ const ActionsProvider = ({ children }) => {
             await vaultMethods.deposit(amountsToExecute[0], account, vaultData.instance)
           }
 
-          toast.success('Deposit completed')
+          // toast.success('Deposit completed')
 
-          if (autoStake) {
-            const { instance: lpTokenInstance } = fAssetPool.lpTokenData
-            updatedLpTokenBalance = await tokenMethods.getBalance(account, lpTokenInstance)
-            updatedLpTokenApprovedBalance = await tokenMethods.getApprovedAmount(
-              account,
-              fAssetPool.contractAddress,
-              lpTokenInstance,
-            )
-          } else {
-            setPendingAction(null)
-          }
+          // if (autoStake) {
+          //   const { instance: lpTokenInstance } = fAssetPool.lpTokenData
+          //   updatedLpTokenBalance = await tokenMethods.getBalance(account, lpTokenInstance)
+          //   updatedLpTokenApprovedBalance = await tokenMethods.getApprovedAmount(
+          //     account,
+          //     fAssetPool.contractAddress,
+          //     lpTokenInstance,
+          //   )
+          // } else {
+          //   setPendingAction(null)
+          // }
 
           await onSuccessDeposit(updatedLpTokenBalance, updatedLpTokenApprovedBalance)
         } catch (err) {
-          setPendingAction(null)
+          // setPendingAction(null)
 
           const errorMessage = formatWeb3PluginErrorMessage(err, get(err, 'message'))
           toast.error(errorMessage)
@@ -700,9 +695,8 @@ const ActionsProvider = ({ children }) => {
       selectedAsset,
       onSuccess = () => {},
       onFailure = () => {},
-      action = ACTIONS.WITHDRAW,
     ) => {
-      setPendingAction(action)
+      // setPendingAction(action)
 
       try {
         if (multipleAssets) {
@@ -766,11 +760,11 @@ const ActionsProvider = ({ children }) => {
           await vaultMethods.withdraw(depositedAmount, account, vaultsData[tokenSymbol].instance)
         }
 
-        setPendingAction(null)
-        toast.success('Withdraw completed')
+        // setPendingAction(null)
+        // toast.success('Withdraw completed')
         await onSuccess()
       } catch (err) {
-        setPendingAction(null)
+        // setPendingAction(null)
         const errorMessage = formatWeb3PluginErrorMessage(err)
         toast.error(errorMessage)
         onFailure()

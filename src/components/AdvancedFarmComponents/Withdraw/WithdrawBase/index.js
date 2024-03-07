@@ -134,7 +134,8 @@ const WithdrawBase = ({
             outputAmountDefault = ''
           const toToken = pickedToken.address
 
-          const pickedDefaultToken = pickedToken.symbol === defaultToken.symbol
+          const pickedDefaultToken =
+            pickedToken.address.toLowerCase() === defaultToken.address.toLowerCase()
 
           if (pickedDefaultToken) {
             const unstakeBalanceDecimals = fromWei(
@@ -143,7 +144,7 @@ const WithdrawBase = ({
               pickedToken.decimals,
             )
             const outputAmountDefaultDecimals = new BigNumber(unstakeBalanceDecimals)
-              .dividedBy(pricePerFullShare)
+              .times(pricePerFullShare)
               .toString()
             outputAmountDefault = toWei(outputAmountDefaultDecimals, pickedToken.decimals, 0)
           } else {
