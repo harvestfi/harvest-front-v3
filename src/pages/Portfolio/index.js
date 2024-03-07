@@ -192,7 +192,7 @@ const Portfolio = () => {
 
   const [sortOrder, setSortOrder] = useState(false)
   const [showDetail, setShowDetail] = useState(Array(farmTokenList.length).fill(false))
-  const [showInactiveFarms, setShowInactiveFarms] = useState(true)
+  const [showInactiveFarms, setShowInactiveFarms] = useState(false)
 
   const firstWalletBalanceLoad = useRef(true)
   useEffectWithPrevious(

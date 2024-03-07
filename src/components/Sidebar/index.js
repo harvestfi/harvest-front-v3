@@ -9,7 +9,7 @@ import connectAvatar from '../../assets/images/logos/sidebar/connectavatar.png'
 import connectAvatarMobile from '../../assets/images/logos/sidebar/connectavatarmobile.svg'
 // import Portfolio from '../../assets/images/logos/sidebar/portfolio.svg'
 import Docs from '../../assets/images/logos/sidebar/docs.svg'
-import FAQ from '../../assets/images/logos/sidebar/faq.svg'
+// import FAQ from '../../assets/images/logos/sidebar/faq.svg'
 import Home from '../../assets/images/logos/sidebar/home-line.svg'
 import Beginners from '../../assets/images/logos/sidebar/beginners.svg'
 // import Collaborations from '../../assets/images/logos/sidebar/collaborations.svg'
@@ -33,7 +33,7 @@ import HomeMobileSM from '../../assets/images/logos/sidebar/home-mobile_sm.svg'
 import BeginnersMobileSM from '../../assets/images/logos/sidebar/beginners-mobile_sm.svg'
 import AdvancedMobileSM from '../../assets/images/logos/sidebar/advanced-mobile_sm.svg'
 import AnalyticsMobile from '../../assets/images/logos/sidebar/analytics-mobile.svg'
-import FAQMobile from '../../assets/images/logos/sidebar/faq-mobile.svg'
+// import FAQMobile from '../../assets/images/logos/sidebar/faq-mobile.svg'
 import DocsMobile from '../../assets/images/logos/sidebar/docs-mobile.svg'
 import { ROUTES } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
@@ -121,12 +121,12 @@ const sideLinks1 = [
     imgPath: Analytics,
     external: false,
   },
-  {
-    path: ROUTES.TUTORIAL,
-    name: 'Tutorial',
-    imgPath: FAQ,
-    external: false,
-  },
+  // {
+  //   path: ROUTES.TUTORIAL,
+  //   name: 'Tutorial',
+  //   imgPath: FAQ,
+  //   external: false,
+  // },
   {
     path: 'https://docs.harvest.finance',
     name: 'Docs',
@@ -175,11 +175,11 @@ const sideLinksMobile1 = [
     name: 'Analytics',
     imgPath: AnalyticsMobile,
   },
-  {
-    path: ROUTES.TUTORIAL,
-    name: 'Tutorial',
-    imgPath: FAQMobile,
-  },
+  // {
+  //   path: ROUTES.TUTORIAL,
+  //   name: 'Tutorial',
+  //   imgPath: FAQMobile,
+  // },
   {
     path: 'https://docs.harvest.finance',
     name: 'Docs',

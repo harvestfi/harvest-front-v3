@@ -853,9 +853,11 @@ const BeginnersFarm = () => {
             <TopButton className="back-btn">
               {isMobile && (
                 <MobileChain>
-                  <NetDetailItem>
-                    <NetDetailContent>{token.platform && token.platform[0]}</NetDetailContent>
-                  </NetDetailItem>
+                  {!showBadge && (
+                    <NetDetailItem>
+                      <NetDetailContent>{token.platform && token.platform[0]}</NetDetailContent>
+                    </NetDetailItem>
+                  )}
                   <ChainBack>
                     <img src={BadgeAry[badgeId]} alt="" />
                   </ChainBack>
@@ -948,16 +950,25 @@ const BeginnersFarm = () => {
                       <WelcomeText showBadge={showBadge}>
                         Earn $10 in{' '}
                         <a
-                          href="https://harvest-front-v3.netlify.app/advanced/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
+                          href="https://harvest-front-v3.netlify.app/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
                           target="_blank"
                           rel="noopener noreferrer"
                         >
                           FARM
                         </a>{' '}
                         into your wallet for converting at least $5 worth of ETH or USDC into
-                        interest-bearing fmoonwell_WETH. Get started by connecting wallet and
-                        selecting the input token. Next, click Preview & Convert where you will
-                        finalize the action. If you need any help, head over to our{' '}
+                        interest-bearing token. Get started via the Convert box below.
+                        <br />
+                        <br />
+                        If you need any help, see our{' '}
+                        <a
+                          href="https://harvest-front-v3.netlify.app/get-started"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          tutorial
+                        </a>{' '}
+                        or visit{' '}
                         <a
                           href="https://discord.gg/gzWAG3Wx7Y"
                           target="_blank"
@@ -975,7 +986,7 @@ const BeginnersFarm = () => {
                         >
                           <HeaderBadge>
                             <div className="badge-text">
-                              *Only for participants of our Base Quest campaign
+                              Only for participants of our Base Quest campaign
                             </div>
                             <div className="badge-btn">
                               Read more
@@ -1018,7 +1029,7 @@ const BeginnersFarm = () => {
                       <WelcomeText showBadge={showBadge}>
                         Earn $10 in{' '}
                         <a
-                          href="https://harvest-front-v3.netlify.app/advanced/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
+                          href="https://harvest-front-v3.netlify.app/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
                           target="_blank"
                           rel="noopener noreferrer"
                         >

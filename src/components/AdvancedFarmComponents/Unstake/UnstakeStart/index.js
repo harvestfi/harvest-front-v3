@@ -60,7 +60,7 @@ const UnstakeStart = ({
     : connectedChain
     ? parseInt(connectedChain.id, 16).toString()
     : ''
-  const [btnName, setBtnName] = useState('Approve Token')
+  const [btnName, setBtnName] = useState('Confirm Transaction')
   const [unstakeFailed, setUnstakeFailed] = useState(false)
   const [progressStep, setProgressStep] = useState(0)
 

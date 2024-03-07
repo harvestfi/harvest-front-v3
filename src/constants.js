@@ -18,11 +18,11 @@ export const SOCIAL_LINKS = {
 export const ROUTES = {
   PORTFOLIO: '/',
   TUTORIAL: '/get-started',
-  ADVANCED: '/farm',
+  ADVANCED: '/farms',
   ANALYTIC: '/analytics',
   DOC: '/doc',
   FAQ: '/faq',
-  ADVANCEDFARM: '/advanced/:network/:paramAddress',
+  ADVANCEDFARM: '/:network/:paramAddress',
   BEGINNERSFARM: '/beginners',
   CHARTS: '/charts',
   WORK: '/work',

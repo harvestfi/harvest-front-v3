@@ -1727,6 +1727,7 @@ const AdvancedFarm = () => {
                         pickedToken={pickedTokenDepo}
                         deposit={depositStart}
                         setDeposit={setDepositStart}
+                        defaultToken={defaultToken}
                         inputAmount={inputAmountDepo}
                         setInputAmount={setInputAmountDepo}
                         token={token}
@@ -1783,6 +1784,7 @@ const AdvancedFarm = () => {
                         unstakeInputValue={unstakeInputValue}
                         withdrawStart={withdrawStart}
                         setWithdrawStart={setWithdrawStart}
+                        defaultToken={defaultToken}
                         pickedToken={pickedTokenWith}
                         setPickedToken={setPickedTokenWith}
                         token={token}
