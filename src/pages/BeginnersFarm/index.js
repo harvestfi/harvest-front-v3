@@ -10,6 +10,7 @@ import { BiRightArrowAlt } from 'react-icons/bi'
 import { RxCross2 } from 'react-icons/rx'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
+import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import BASE from '../../assets/images/chains/base.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
@@ -103,6 +104,8 @@ import {
   NetDetailImg,
   InfoIconBlack,
   MobileChain,
+  LinksContainer,
+  Logo,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 // import { array } from 'prop-types'
@@ -852,14 +855,26 @@ const BeginnersFarm = () => {
           <FlexTopDiv>
             <TopButton className="back-btn">
               {isMobile && (
-                <MobileChain>
-                  <NetDetailItem>
-                    <NetDetailContent>{token.platform && token.platform[0]}</NetDetailContent>
-                  </NetDetailItem>
-                  <ChainBack>
-                    <img src={BadgeAry[badgeId]} alt="" />
-                  </ChainBack>
-                </MobileChain>
+                <LinksContainer showBadge={showBadge ? 'flex' : 'none'}>
+                  <Logo
+                    className="logo"
+                    onClick={() => {
+                      push('/')
+                    }}
+                  >
+                    <img src={logoNew} width={52} height={52} alt="Harvest" />
+                  </Logo>
+                  <MobileChain>
+                    {!showBadge && (
+                      <NetDetailItem>
+                        <NetDetailContent>{token.platform && token.platform[0]}</NetDetailContent>
+                      </NetDetailItem>
+                    )}
+                    <ChainBack>
+                      <img src={BadgeAry[badgeId]} alt="" />
+                    </ChainBack>
+                  </MobileChain>
+                </LinksContainer>
               )}
             </TopButton>
             <FlexDiv className="farm-symbol">
@@ -948,16 +963,25 @@ const BeginnersFarm = () => {
                       <WelcomeText showBadge={showBadge}>
                         Earn $10 in{' '}
                         <a
-                          href="https://harvest-front-v3.netlify.app/advanced/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
+                          href="https://harvest-front-v3.netlify.app/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
                           target="_blank"
                           rel="noopener noreferrer"
                         >
                           FARM
                         </a>{' '}
                         into your wallet for converting at least $5 worth of ETH or USDC into
-                        interest-bearing fmoonwell_WETH. Get started by connecting wallet and
-                        selecting the input token. Next, click Preview & Convert where you will
-                        finalize the action. If you need any help, head over to our{' '}
+                        interest-bearing token. Get started via the Convert box below.
+                        <br />
+                        <br />
+                        If you need any help, see our{' '}
+                        <a
+                          href="https://harvest-front-v3.netlify.app/get-started"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          tutorial
+                        </a>{' '}
+                        or visit{' '}
                         <a
                           href="https://discord.gg/gzWAG3Wx7Y"
                           target="_blank"
@@ -975,7 +999,7 @@ const BeginnersFarm = () => {
                         >
                           <HeaderBadge>
                             <div className="badge-text">
-                              *Only for participants of our Base Quest campaign
+                              Only for participants of our Base Quest campaign
                             </div>
                             <div className="badge-btn">
                               Read more
@@ -1018,16 +1042,25 @@ const BeginnersFarm = () => {
                       <WelcomeText showBadge={showBadge}>
                         Earn $10 in{' '}
                         <a
-                          href="https://harvest-front-v3.netlify.app/advanced/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
+                          href="https://harvest-front-v3.netlify.app/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
                           target="_blank"
                           rel="noopener noreferrer"
                         >
                           FARM
                         </a>{' '}
                         into your wallet for converting at least $5 worth of ETH or USDC into
-                        interest-bearing fmoonwell_WETH. Get started by connecting wallet and
-                        selecting the input token. Next, click Preview & Convert where you will
-                        finalize the action. If you need any help, head over to our{' '}
+                        interest-bearing token. Get started via the Convert box below.
+                        <br />
+                        <br />
+                        If you need any help, see our{' '}
+                        <a
+                          href="https://harvest-front-v3.netlify.app/get-started"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          tutorial
+                        </a>{' '}
+                        or visit{' '}
                         <a
                           href="https://discord.gg/gzWAG3Wx7Y"
                           target="_blank"
@@ -1045,7 +1078,7 @@ const BeginnersFarm = () => {
                         >
                           <HeaderBadge>
                             <div className="badge-text">
-                              *Only for participants of our Base Quest campaign
+                              Only for participants of our Base Quest campaign
                             </div>
                             <div className="badge-btn">
                               Read more

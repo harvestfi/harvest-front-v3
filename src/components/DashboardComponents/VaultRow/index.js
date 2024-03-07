@@ -47,9 +47,7 @@ const VaultRow = ({ info, lastElement, showDetail, setShowDetail, cKey }) => {
         const address = isSpecialVault
           ? token.data.collateralAddress
           : token.vaultAddress || token.tokenAddress
-        push(
-          `${`${directDetailUrl}advanced`}${directDetailUrl + network}/${address}?from=portfolio`,
-        )
+        push(`${directDetailUrl + network}/${address}?from=portfolio`)
       }}
     >
       <FlexDiv padding={isMobile ? '10px' : '0'}>

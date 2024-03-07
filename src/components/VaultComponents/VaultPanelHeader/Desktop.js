@@ -58,7 +58,7 @@ const DesktopPanelHeader = ({
         ? token.data.collateralAddress
         : token.vaultAddress || token.tokenAddress
       setPrevPage(window.location.href)
-      const url = `${directDetailUrl}advanced/${network}/${address}`
+      const url = `${directDetailUrl}${network}/${address}`
       window.open(url, '_blank')
     }
   }
@@ -85,7 +85,7 @@ const DesktopPanelHeader = ({
             ? token.data.collateralAddress
             : token.vaultAddress || token.tokenAddress
           setPrevPage(window.location.href)
-          const url = `${directDetailUrl}advanced/${network}/${address}`
+          const url = `${directDetailUrl}${network}/${address}`
           if (e.ctrlKey) {
             window.open(url, '_blank')
           } else {

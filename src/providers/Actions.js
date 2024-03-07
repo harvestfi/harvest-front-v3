@@ -468,7 +468,7 @@ const ActionsProvider = ({ children }) => {
         }
       }
     },
-    [handleOldApproval],
+    [],
   )
 
   const handleStakeApproval = useCallback(
