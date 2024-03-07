@@ -868,15 +868,12 @@ const MobileChain = styled.div`
 `
 
 const ChainBack = styled.div`
-  background: #fff;
-  box-shadow: 0px 0px 4px rgba(0, 0, 0, 0.25);
   border-radius: 2px;
   width: 21px;
   height: 21px;
   display: flex;
   justify-content: center;
   align-self: center;
-  padding: 4px;
   margin-left: 15px;
 
   img {
