@@ -1731,8 +1731,8 @@ const AdvancedFarm = () => {
                         inputAmount={inputAmountDepo}
                         setInputAmount={setInputAmountDepo}
                         token={token}
-                        useIFARM={useIFARM}
                         tokenSymbol={id}
+                        useIFARM={useIFARM}
                         fAssetPool={fAssetPool}
                         multipleAssets={multipleAssets}
                         fromInfoAmount={fromInfoAmount}

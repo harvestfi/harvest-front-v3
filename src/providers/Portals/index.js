@@ -176,7 +176,7 @@ const PortalsProvider = _ref => {
           outputToken,
           slippageTolerancePercentage: slippage,
           feePercentage: 0,
-          partner: '0xf3D1A027E858976634F81B7c41B09A05A46EdA21',
+          partner: '0xF066789028fE31D4f53B69B81b328B8218Cc0641',
           validate,
         },
       })

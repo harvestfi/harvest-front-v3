@@ -156,7 +156,7 @@ const DepositStart = ({
 
   const startDeposit = async () => {
     const pickedDefaultToken =
-      token.tokenAddress.toLowerCase() === defaultToken.address.toLowerCase()
+      pickedToken.address.toLowerCase() === defaultToken.address.toLowerCase()
     if (progressStep === 0) {
       setStartSpinner(true)
       setProgressStep(1)
