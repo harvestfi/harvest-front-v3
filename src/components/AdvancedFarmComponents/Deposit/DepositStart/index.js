@@ -223,7 +223,7 @@ const DepositStart = ({
         setProgressStep(3)
         setButtonName('Pending Confirmation in Wallet')
         setStartSpinner(true)
-        console.log(amount)
+        // console.log(amount)
         await handleDeposit(
           token,
           account,

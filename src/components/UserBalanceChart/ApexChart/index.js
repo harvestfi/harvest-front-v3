@@ -498,11 +498,15 @@ const ApexChart = ({
       setMinValUnderlying(minValueUnderlying)
 
       // Set date and price with latest value by default
-      setCurDate(formatDateTime(mainData[mainData.length - 1].x))
-      const balance = numberWithCommas(Number(mainData[mainData.length - 1].y).toFixed(fixedLen))
-      const balanceUnderlying = numberWithCommas(Number(mainData[mainData.length - 1].z))
-      setCurContent(balance)
-      setCurContentUnderlying(balanceUnderlying)
+      if (mainData.length > 0) {
+        setCurDate(formatDateTime(mainData[mainData.length - 1].x))
+        const balance = numberWithCommas(Number(mainData[mainData.length - 1].y).toFixed(fixedLen))
+        const balanceUnderlying = numberWithCommas(Number(mainData[mainData.length - 1].z))
+        setCurContent(balance)
+        setCurContentUnderlying(balanceUnderlying)
+      } else {
+        console.error('The chart data is either undefined or empty')
+      }
 
       const yAxisAry = getYAxisValues(minValue, maxValue, roundedDecimal)
       setYAxisTicks(yAxisAry)
