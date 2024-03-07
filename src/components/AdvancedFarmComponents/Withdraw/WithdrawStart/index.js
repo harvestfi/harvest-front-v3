@@ -17,6 +17,9 @@ import ProgressTwo from '../../../../assets/images/logos/advancedfarm/progress-s
 import ProgressThree from '../../../../assets/images/logos/advancedfarm/progress-step3.png'
 import ProgressFour from '../../../../assets/images/logos/advancedfarm/progress-step4.png'
 import ProgressFive from '../../../../assets/images/logos/advancedfarm/progress-step5.png'
+import { IFARM_TOKEN_SYMBOL } from '../../../../constants'
+import { useActions } from '../../../../providers/Actions'
+import { useVaults } from '../../../../providers/Vault'
 import { useWallet } from '../../../../providers/Wallet'
 import { usePools } from '../../../../providers/Pools'
 import { usePortals } from '../../../../providers/Portals'
@@ -46,6 +49,7 @@ const WithdrawStart = ({
   unstakeInputValue,
   withdrawStart,
   setWithdrawStart,
+  defaultToken,
   pickedToken,
   setPickedToken,
   token,
@@ -53,7 +57,6 @@ const WithdrawStart = ({
   tokenSymbol,
   fAssetPool,
   useIFARM,
-  // depositedValueUSD,
   revertFromInfoAmount,
   revertFromInfoUsdAmount,
   revertMinReceivedAmount,
@@ -73,6 +76,8 @@ const WithdrawStart = ({
   const [startSpinner, setStartSpinner] = useState(false) // State of Spinner for 'Finalize Deposit' button
   const [revertedAmount, setRevertedAmount] = useState('')
   const [revertedAmountUsd, setRevertedAmountUsd] = useState('')
+  const { handleWithdraw } = useActions()
+  const { vaultsData } = useVaults()
 
   const { getPortalsApproval, portalsApprove, getPortals } = usePortals()
 
@@ -113,72 +118,104 @@ const WithdrawStart = ({
   }
 
   const startWithdraw = async () => {
+    const pickedDefaultToken =
+      pickedToken.address.toLowerCase() === defaultToken.address.toLowerCase()
     if (progressStep === 0) {
       setStartSpinner(true)
       setProgressStep(1)
       setButtonName('Pending Approval in Wallet')
       setWithdrawFailed(false)
-      try {
-        const approval = await getPortalsApproval(chainId, account, fromToken)
-        console.debug('Allowance Spender: ', approval.spender)
-
-        const allowanceCheck = approval ? approval.allowance : 0
-
-        if (!new BigNumber(allowanceCheck).gte(new BigNumber(unstakeBalance))) {
-          // const amountToApprove = new BigNumber(unstakeBalance) - new BigNumber(allowanceCheck)
-          await approveZap(unstakeBalance) // Approve for Zap
-        }
+      if (pickedDefaultToken) {
         setProgressStep(2)
         setButtonName('Confirm Transaction')
         setStartSpinner(false)
-      } catch (err) {
-        setStartSpinner(false)
-        setWithdrawFailed(true)
-        setProgressStep(0)
-        setButtonName('Approve Token')
+      } else {
+        try {
+          const approval = await getPortalsApproval(chainId, account, fromToken)
+          console.debug('Allowance Spender: ', approval.spender)
+
+          const allowanceCheck = approval ? approval.allowance : 0
+
+          if (!new BigNumber(allowanceCheck).gte(new BigNumber(unstakeBalance))) {
+            // const amountToApprove = new BigNumber(unstakeBalance) - new BigNumber(allowanceCheck)
+            await approveZap(unstakeBalance) // Approve for Zap
+          }
+          setProgressStep(2)
+          setButtonName('Confirm Transaction')
+          setStartSpinner(false)
+        } catch (err) {
+          setStartSpinner(false)
+          setWithdrawFailed(true)
+          setProgressStep(0)
+          setButtonName('Approve Token')
+        }
       }
     } else if (progressStep === 2) {
-      try {
+      if (pickedDefaultToken) {
         setProgressStep(3)
         setButtonName('Pending Confirmation in Wallet')
         setStartSpinner(true)
-        const amount = unstakeBalance
-        const toToken = pickedToken.address
-        const mainWeb = await getWeb3(chainId, account, web3)
-        const portalData = await getPortals({
-          chainId,
-          sender: account,
-          tokenIn: fromToken,
-          inputAmount: amount,
-          tokenOut: toToken,
-          slippage: slippagePercentage,
-        })
+        await handleWithdraw(
+          account,
+          useIFARM ? IFARM_TOKEN_SYMBOL : tokenSymbol,
+          unstakeBalance,
+          vaultsData,
+          null,
+          false,
+          null,
+          async () => {
+            await fetchUserPoolStats([fAssetPool], account, userStats)
+          },
+          async () => {
+            setWithdrawFailed(true)
+            setStartSpinner(false)
+            setProgressStep(0)
+            setButtonName('Approve Token')
+          },
+        )
+      } else {
+        try {
+          setProgressStep(3)
+          setButtonName('Pending Confirmation in Wallet')
+          setStartSpinner(true)
+          const amount = unstakeBalance
+          const toToken = pickedToken.address
+          const mainWeb = await getWeb3(chainId, account, web3)
+          const portalData = await getPortals({
+            chainId,
+            sender: account,
+            tokenIn: fromToken,
+            inputAmount: amount,
+            tokenOut: toToken,
+            slippage: slippagePercentage,
+          })
 
-        await mainWeb.eth.sendTransaction({
-          from: portalData.tx.from,
-          data: portalData.tx.data,
-          to: portalData.tx.to,
-          value: portalData.tx.value,
-        })
+          await mainWeb.eth.sendTransaction({
+            from: portalData.tx.from,
+            data: portalData.tx.data,
+            to: portalData.tx.to,
+            value: portalData.tx.value,
+          })
 
-        const receiveString = portalData
-          ? fromWei(
-              portalData.context?.outputAmount,
-              pickedToken.decimals || 18,
-              pickedToken.decimals || 18,
-            )
-          : ''
-        const receiveUsdString = portalData ? portalData.context?.outputAmountUsd : ''
-        setRevertedAmount(receiveString)
-        setRevertedAmountUsd(formatNumberWido(receiveUsdString))
+          const receiveString = portalData
+            ? fromWei(
+                portalData.context?.outputAmount,
+                pickedToken.decimals || 18,
+                pickedToken.decimals || 18,
+              )
+            : ''
+          const receiveUsdString = portalData ? portalData.context?.outputAmountUsd : ''
+          setRevertedAmount(receiveString)
+          setRevertedAmountUsd(formatNumberWido(receiveUsdString))
 
-        await fetchUserPoolStats([fAssetPool], account, userStats)
-      } catch (err) {
-        setWithdrawFailed(true)
-        setStartSpinner(false)
-        setProgressStep(0)
-        setButtonName('Approve Token')
-        return
+          await fetchUserPoolStats([fAssetPool], account, userStats)
+        } catch (err) {
+          setWithdrawFailed(true)
+          setStartSpinner(false)
+          setProgressStep(0)
+          setButtonName('Approve Token')
+          return
+        }
       }
       // End Approve and Withdraw successfully
       setStartSpinner(false)

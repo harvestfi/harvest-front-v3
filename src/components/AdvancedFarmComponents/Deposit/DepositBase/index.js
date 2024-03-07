@@ -159,7 +159,8 @@ const DepositBase = ({
             new BigNumber(curToken.rawBalance),
           )
 
-          const pickedDefaultToken = pickedToken.symbol === defaultToken.symbol
+          const pickedDefaultToken =
+            pickedToken.address.toLowerCase() === defaultToken.address.toLowerCase()
 
           if (pickedDefaultToken) {
             const outputAmountDefaultDecimals = new BigNumber(inputAmount)

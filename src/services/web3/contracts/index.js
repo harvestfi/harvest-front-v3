@@ -1,6 +1,6 @@
 import { isArray } from 'lodash'
-import TokenContract from './token/contract.json'
-import TokenMethods from './token/methods'
+import TokenContract from './token-copy/contract.json'
+import TokenMethods from './token-copy/methods'
 
 import DepositHelperContract from './deposit-helper/contract.json'
 import DepositHelperMethods from './deposit-helper/methods'
@@ -29,7 +29,6 @@ const { tokens } = require('../../../data')
 
 const getTokensContracts = () => {
   const tokenContracts = {}
-
   Object.keys(tokens).forEach(token => {
     if (!isArray(tokens[token].tokenAddress)) {
       tokenContracts[token] = {
