@@ -494,8 +494,7 @@ const ActionsProvider = ({ children }) => {
             new BigNumber(lpTokenApprovedBalance),
           )
           if (!hasEnoughApprovedAmount) {
-            const amountToApprove =
-              new BigNumber(lpTokenBalance) - new BigNumber(lpTokenApprovedBalance)
+            const amountToApprove = new BigNumber(lpTokenBalance)
             if (!hasEnoughApprovedAmount && !hasDeniedRequest) {
               setPendingAction(ACTIONS.APPROVE_STAKE)
               hasDeniedRequest = await handleApproval(
@@ -505,11 +504,9 @@ const ActionsProvider = ({ children }) => {
                 amountToApprove,
                 multipleAssets ? token.vaultAddress : null,
                 poolData,
-                setPendingAction,
                 onSuccessApproval,
               )
             }
-            console.log('%%%%%%%%%%%%%', 'Success')
           } else {
             setBStakeApprovalSuccess(true)
           }
