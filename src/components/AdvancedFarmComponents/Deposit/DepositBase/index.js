@@ -137,7 +137,7 @@ const DepositBase = ({
       pickedToken.symbol !== 'Select Token' &&
       !new BigNumber(amount).isEqualTo(0) &&
       curChain === tokenChain &&
-      balanceList.length !== 0 &&
+      (balanceList.length !== 0 || pickedToken.balance !== '0') &&
       failureCount < 5
     ) {
       const getQuoteResult = async () => {
@@ -149,14 +149,14 @@ const DepositBase = ({
             fromInfoUsdValue = '',
             minReceiveAmount = '',
             minReceiveUsd = '',
-            outputAmountDefault = '',
-            curToken = balanceList.filter(itoken => itoken.symbol === pickedToken.symbol)
+            outputAmountDefault = ''
 
-          curToken = curToken[0]
           const fromToken = pickedToken.address
           const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
+          const pickedTokenRawBalance = toWei(pickedToken.balance, pickedToken.decimals, 0)
+
           const overBalance = new BigNumber(amount).isGreaterThan(
-            new BigNumber(curToken.rawBalance),
+            new BigNumber(pickedTokenRawBalance),
           )
 
           const pickedDefaultToken =
@@ -182,10 +182,16 @@ const DepositBase = ({
             // if (Object.keys(portalsEstimate).length === 0) {
             //   throw new Error('Portals estimate fetch failture')
             // }
-
-            const fromTokenDetail = await getPortalsToken(chainId, fromToken)
-            const toTokenDetail = await getPortalsToken(chainId, toToken)
-            const fromTokenUsdPrice = fromTokenDetail?.price
+            let fromTokenUsdPrice, toTokenUsdPrice
+            if (pickedDefaultToken) {
+              fromTokenUsdPrice = pickedToken.usdPrice
+              toTokenUsdPrice = Number(pickedToken.usdPrice) * pricePerFullShare
+            } else {
+              const fromTokenDetail = await getPortalsToken(chainId, fromToken)
+              const toTokenDetail = await getPortalsToken(chainId, toToken)
+              fromTokenUsdPrice = fromTokenDetail?.price
+              toTokenUsdPrice = toTokenDetail?.price
+            }
 
             const quoteResult = {
               fromTokenAmount: amount,
@@ -198,9 +204,14 @@ const DepositBase = ({
                 : portalsEstimate.res.outputTokenDecimals,
             }
 
-            if (curToken) {
+            if (pickedToken) {
               fromInfoValue = new BigNumber(
-                fromWei(quoteResult.fromTokenAmount, curToken.decimals, curToken.decimals, false),
+                fromWei(
+                  quoteResult.fromTokenAmount,
+                  pickedToken.decimals,
+                  pickedToken.decimals,
+                  false,
+                ),
               ).toString()
 
               fromInfoUsdValue =
@@ -209,8 +220,8 @@ const DepositBase = ({
                   : formatNumberWido(
                       fromWei(
                         quoteResult.fromTokenAmount,
-                        curToken.decimals,
-                        curToken.decimals,
+                        pickedToken.decimals,
+                        pickedToken.decimals,
                         true,
                       ) * quoteResult.fromTokenUsdPrice,
                       BEGINNERS_BALANCES_DECIMALS,
@@ -224,7 +235,7 @@ const DepositBase = ({
                 ),
               ).toString()
               minReceiveUsd = formatNumberWido(
-                parseFloat(minReceiveAmount) * toTokenDetail?.price,
+                parseFloat(minReceiveAmount) * toTokenUsdPrice,
                 BEGINNERS_BALANCES_DECIMALS,
               )
             }
