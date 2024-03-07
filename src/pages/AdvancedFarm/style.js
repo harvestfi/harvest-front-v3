@@ -450,6 +450,68 @@ const InternalSection = styled.div`
   }
 `
 
+const WelcomeBox = styled.div`
+  width: 100%;
+  color: #6941c6;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  border-radius: 12px;
+  border: 1px solid var(--Gray-100, #f2f4f7);
+  background: var(--bggrad, #fff);
+  box-shadow: 0px 4px 6px -2px rgba(16, 24, 40, 0.03), 0px 12px 16px -4px rgba(16, 24, 40, 0.08);
+  padding: 16px;
+  margin-bottom: 25px;
+
+  @media screen and (max-width: 992px) {
+    flex-flow: column;
+  }
+`
+
+const WelcomeTop = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+`
+
+const WelcomeContent = styled.div`
+  width: 100%;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+`
+
+const WelcomeTitle = styled.div`
+  font-weight: 600;
+  padding-bottom: 5px;
+  @media screen and (max-width: 992px) {
+    width: 100%;
+    margin: auto;
+    padding-bottom: 0px;
+  }
+`
+
+const WelcomeText = styled.div`
+  a {
+    font-weight: 700;
+    color: #ff9400;
+  }
+  a.badge-body {
+    text-decoration: none;
+  }
+`
+
+const WelcomeClose = styled.div`
+  font-size: 20px;
+  text-align: start;
+  svg {
+    cursor: pointer;
+  }
+  @media screen and (max-width: 992px) {
+    margin: auto;
+  }
+`
+
 const FlexTopDiv = styled.div`
   width: 100%;
   display: flex;
@@ -1189,6 +1251,12 @@ export {
   MainTag,
   MainDescText,
   InternalSection,
+  WelcomeBox,
+  WelcomeTop,
+  WelcomeContent,
+  WelcomeTitle,
+  WelcomeText,
+  WelcomeClose,
   HalfInfo,
   InfoLabel,
   DescInfo,
