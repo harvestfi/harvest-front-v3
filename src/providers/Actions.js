@@ -504,7 +504,6 @@ const ActionsProvider = ({ children }) => {
                 amountToApprove,
                 multipleAssets ? token.vaultAddress : null,
                 poolData,
-                setPendingAction,
                 onSuccessApproval,
               )
             }
