@@ -5,10 +5,11 @@ import axios from 'axios'
 import { useMediaQuery } from 'react-responsive'
 import ReactHtmlParser from 'react-html-parser'
 import ReactTooltip from 'react-tooltip'
+import { RxCross2 } from 'react-icons/rx'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { ethers } from 'ethers'
-import { BiLeftArrowAlt } from 'react-icons/bi'
+import { BiLeftArrowAlt, BiInfoCircle } from 'react-icons/bi'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
@@ -94,6 +95,14 @@ import {
   ChainBack,
   MainTag,
   InternalSection,
+  WelcomeBox,
+  WelcomeContent,
+  WelcomeTitle,
+  WelcomeText,
+  WelcomeBottom,
+  WelcomeKnow,
+  WelcomeTicket,
+  WelcomeClose,
   HalfInfo,
   InfoLabel,
   DescInfo,
@@ -188,8 +197,6 @@ const getTokenPriceFromApi = async tokenID => {
 
 const AdvancedFarm = () => {
   const { paramAddress } = useParams()
-  // Switch Tag (Convert/Revert)
-  const [activeDepo, setActiveDepo] = useState(true)
   const { getPortalsBaseTokens, getPortalsBalances, SUPPORTED_TOKEN_LIST } = usePortals()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
@@ -343,6 +350,11 @@ const AdvancedFarm = () => {
     Number(token.usdPrice) ||
     Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price)
 
+  // Switch Tag (Convert/Revert)
+  const [activeDepo, setActiveDepo] = useState(true)
+  const [vaultInfoMessage, setVaultInfoMessage] = useState(false)
+  const [firstViewInfo, setFirstViewInfo] = useState(false)
+
   // Deposit
   const [depositStart, setDepositStart] = useState(false)
   const [selectTokenDepo, setSelectTokenDepo] = useState(false)
@@ -412,6 +424,26 @@ const AdvancedFarm = () => {
     { name: 'Rewards', img: Diamond },
     { name: 'Details', img: BarChart },
   ]
+
+  // Show vault info badge when platform is 'Lodestar' and firstly view
+  const firstView = localStorage.getItem('firstView')
+  useEffect(() => {
+    const platform = token.platform[0].toLowerCase()
+    if (platform.includes('lodestar')) {
+      setVaultInfoMessage(true)
+    }
+
+    if (firstView === null || firstView === 'true') {
+      localStorage.setItem('firstView', true)
+      setFirstViewInfo(true)
+    }
+  }, [token.platform, firstView])
+
+  const closeBadge = () => {
+    setVaultInfoMessage(false)
+    setFirstViewInfo(false)
+    localStorage.setItem('firstView', 'false')
+  }
 
   useEffect(() => {
     let staked,
@@ -1192,7 +1224,38 @@ const AdvancedFarm = () => {
       <Inner>
         <BigDiv>
           <InternalSection>
-            {activeMainTag === 2 && (
+            {activeMainTag === 0 ? (
+              vaultInfoMessage &&
+              firstViewInfo && (
+                <WelcomeBox>
+                  <BiInfoCircle className="info-circle" fontSize={20} />
+                  <WelcomeContent>
+                    <WelcomeTitle>Vault Note</WelcomeTitle>
+                    <WelcomeText>
+                      The Lodestar team replenishes their markets with ARB incentives weekly, at
+                      random intervals, until March 31, 2024. Consequently, a noticeable increase in
+                      the underlying balance is to be expected once per week. Minor fluctuations in
+                      the underlying balance are to be anticipated in all Lodestar vaults. For a
+                      comprehensive understanding of this vault&apos;s performance, it is
+                      recommended to preview the SharePrice chart under the Details tab.
+                      <WelcomeBottom>
+                        <WelcomeKnow onClick={closeBadge}>Got it!</WelcomeKnow>
+                        <WelcomeTicket
+                          href="https://discord.com/invite/gzWAG3Wx7Y"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Still having questions? Open Discord ticket.
+                        </WelcomeTicket>
+                      </WelcomeBottom>
+                    </WelcomeText>
+                  </WelcomeContent>
+                  <WelcomeClose>
+                    <RxCross2 onClick={closeBadge} />
+                  </WelcomeClose>
+                </WelcomeBox>
+              )
+            ) : activeMainTag === 2 ? (
               <BoxCover>
                 <ValueBox width="24%" className="balance-box">
                   <BoxTitle>APY</BoxTitle>
@@ -1213,6 +1276,8 @@ const AdvancedFarm = () => {
                   </BoxValue>
                 </ValueBox>
               </BoxCover>
+            ) : (
+              <></>
             )}
             <MainSection height={activeMainTag === 0 ? '100%' : 'fit-content'}>
               {activeMainTag === 0 ? (

@@ -27,7 +27,7 @@ const NewLoginModal = () => {
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search)
     if (queryParams.has('utm_source') || queryParams.has('utm_medium')) {
-      setShowModal(false) // Don't show the modal if the parameters are present
+      setShowModal(false)
       return
     }
 
