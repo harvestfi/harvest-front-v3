@@ -376,7 +376,7 @@ const WithdrawBase = ({
               setUnstakeInputValue(
                 new BigNumber(
                   fromWei(
-                    lpTokenBalance,
+                    useIFARM ? stakeAmountWei : lpTokenBalance,
                     fAssetPool.lpTokenData.decimals,
                     fAssetPool.lpTokenData.decimals,
                     false,
