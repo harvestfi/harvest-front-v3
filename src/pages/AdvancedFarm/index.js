@@ -709,8 +709,8 @@ const AdvancedFarm = () => {
         console.log('getTokenBalance: ', err)
       }
     }
-    console.log('convert status', convertSuccess)
-    console.log('revert status', revertSuccess)
+    console.debug('convert status', convertSuccess)
+    console.debug('revert status', revertSuccess)
     getTokenBalance()
   }, [
     account,
