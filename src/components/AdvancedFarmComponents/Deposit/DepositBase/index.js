@@ -91,6 +91,8 @@ const DepositBase = ({
   setConvertDailyYieldUSD,
   hasErrorOccurred,
   setHasErrorOccurred,
+  failureCount,
+  setFailureCount,
 }) => {
   const { connected, connectAction, account, chainId, setChainId, web3 } = useWallet()
   const { getPortalsEstimate, getPortalsToken } = usePortals()
@@ -113,7 +115,6 @@ const DepositBase = ({
 
   const [depositName, setDepositName] = useState('Preview & Convert')
   const [showWarning, setShowWarning] = useState(false)
-  const [failureCount, setFailureCount] = useState(0)
   // const [showDepositIcon, setShowDepositIcon] = useState(true)
   const amount = toWei(inputAmount, pickedToken.decimals, 0)
 
@@ -299,6 +300,7 @@ const DepositBase = ({
     getPortalsEstimate,
     getPortalsToken,
     failureCount,
+    setFailureCount,
     setHasErrorOccurred,
   ])
 
