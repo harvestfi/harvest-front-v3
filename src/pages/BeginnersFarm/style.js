@@ -490,6 +490,7 @@ const FarmerImage = styled.img`
 `
 
 const WelcomeContent = styled.div`
+  width: 100%;
   font-size: 14px;
   line-height: 20px;
   font-weight: 400;
