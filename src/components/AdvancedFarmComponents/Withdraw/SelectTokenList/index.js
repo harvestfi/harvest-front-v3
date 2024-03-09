@@ -132,7 +132,7 @@ const SelectTokenList = ({
             )}
           {balanceTokenList.length > 0 && (
             <>
-              <Label padding="0px 24px">
+              <Label padding="15px 24px 0px">
                 Tokens in your wallet which you can revert fTokens into
               </Label>
               {balanceTokenList.map((data, i) => (
@@ -169,7 +169,9 @@ const SelectTokenList = ({
           )}
           {supTokenList.length > 0 && (
             <>
-              <Label padding="0px 24px">Other supported tokens, which you can revert to </Label>
+              <Label padding="15px 24px 0px">
+                Other supported tokens, which you can revert to{' '}
+              </Label>
               {supTokenList.map((data, i) => (
                 <Container
                   key={i}
@@ -196,7 +198,7 @@ const SelectTokenList = ({
           )}
           {soonToSupList.length > 0 && (
             <>
-              <Label padding="0px 24px">Soon to be supported</Label>
+              <Label padding="15px 24px 0px">Soon to be supported</Label>
               {soonToSupList.map((data, i) => (
                 <Container key={i} hoverColor="#F2F5FF" activeColor="#ECFDF3">
                   <img src={data.logoURI} width={26} height={26} alt="" />

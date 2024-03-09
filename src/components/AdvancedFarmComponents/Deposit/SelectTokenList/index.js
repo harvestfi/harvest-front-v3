@@ -144,7 +144,7 @@ const SelectTokenList = ({
             )}
           {balanceTokenList.length > 0 && (
             <>
-              <Label padding="0px 24px">
+              <Label padding="15px 24px 0px">
                 {hasErrorOccurred === 2
                   ? 'Other, currently unsupported tokens in your wallet'
                   : 'Supported tokens in your wallet'}
@@ -175,7 +175,7 @@ const SelectTokenList = ({
           )}
           {supTokenList.length > 0 && (
             <>
-              <Label padding="0px 24px">
+              <Label padding="15px 24px 0px">
                 {hasErrorOccurred === 2
                   ? `Other, currently unsupported tokens, which you don't have in your wallet`
                   : `Other supported convert tokens, which you don't have on your wallet`}
