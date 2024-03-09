@@ -180,9 +180,6 @@ const DepositBase = ({
           }
 
           if (pickedDefaultToken || portalsEstimate.succeed) {
-            // if (Object.keys(portalsEstimate).length === 0) {
-            //   throw new Error('Portals estimate fetch failture')
-            // }
             let fromTokenUsdPrice, toTokenUsdPrice
             if (pickedDefaultToken) {
               fromTokenUsdPrice = pickedToken.usdPrice
