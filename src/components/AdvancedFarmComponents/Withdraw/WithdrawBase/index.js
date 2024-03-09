@@ -119,7 +119,7 @@ const WithdrawBase = ({
     if (
       account &&
       pickedToken.symbol !== 'Select' &&
-      !new BigNumber(unstakeBalance).isEqualTo(0) &&
+      !new BigNumber(unstakeBalance.toString()).isEqualTo(0) &&
       curChain === tokenChain
     ) {
       const getQuoteResult = async () => {
@@ -143,7 +143,7 @@ const WithdrawBase = ({
               pickedToken.decimals,
               pickedToken.decimals,
             )
-            const outputAmountDefaultDecimals = new BigNumber(unstakeBalanceDecimals)
+            const outputAmountDefaultDecimals = new BigNumber(unstakeBalanceDecimals.toString())
               .times(pricePerFullShare)
               .toString()
             outputAmountDefault = toWei(outputAmountDefaultDecimals, pickedToken.decimals, 0)
@@ -265,16 +265,20 @@ const WithdrawBase = ({
       return
     }
 
-    if (new BigNumber(unstakeBalance).isEqualTo(0)) {
+    if (new BigNumber(unstakeBalance.toString()).isEqualTo(0)) {
       toast.error('Please input amount to revert!')
       return
     }
 
     if (useIFARM) {
-      if (!new BigNumber(unstakeBalance).isLessThanOrEqualTo(stakeAmountWei)) {
+      if (
+        !new BigNumber(unstakeBalance.toString()).isLessThanOrEqualTo(stakeAmountWei.toString())
+      ) {
         setShowWarning(true)
       }
-    } else if (!new BigNumber(unstakeBalance).isLessThanOrEqualTo(lpTokenBalance)) {
+    } else if (
+      !new BigNumber(unstakeBalance.toString()).isLessThanOrEqualTo(lpTokenBalance.toString())
+    ) {
       setShowWarning(true)
       return
     }
@@ -511,7 +515,7 @@ const WithdrawBase = ({
               <TokenInfo>
                 {account &&
                 pickedToken.symbol !== 'Select' &&
-                !new BigNumber(unstakeBalance).isEqualTo(0) &&
+                !new BigNumber(unstakeBalance.toString()).isEqualTo(0) &&
                 curChain === tokenChain ? (
                   revertMinReceivedAmount !== '' ? (
                     revertMinReceivedAmount

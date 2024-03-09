@@ -94,7 +94,7 @@ const StakeBase = ({
       return
     }
     const stakeAmount = toWei(inputAmount, fAssetPool.lpTokenData.decimals)
-    if (new BigNumber(stakeAmount).isGreaterThan(lpTokenBalance)) {
+    if (new BigNumber(stakeAmount.toString()).isGreaterThan(lpTokenBalance.toString())) {
       setWarningContent(`Insufficient f${tokenSymbol} balance`)
       setShowWarning(true)
       return

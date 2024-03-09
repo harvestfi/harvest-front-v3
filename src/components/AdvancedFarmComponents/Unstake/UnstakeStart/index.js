@@ -84,7 +84,9 @@ const UnstakeStart = ({
       }
       return toWei(amount, isSpecialVault ? tokenDecimals : token.decimals)
     })
-    const shouldDoPartialUnstake = new BigNumber(amountsToExecuteInWei[0]).isLessThan(totalStaked)
+    const shouldDoPartialUnstake = new BigNumber(amountsToExecuteInWei[0].toString()).isLessThan(
+      totalStaked.toString(),
+    )
 
     if (progressStep === 0) {
       setProgressStep(1)

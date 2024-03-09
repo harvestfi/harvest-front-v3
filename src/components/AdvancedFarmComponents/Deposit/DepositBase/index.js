@@ -136,7 +136,7 @@ const DepositBase = ({
     if (
       account &&
       pickedToken.symbol !== 'Select Token' &&
-      !new BigNumber(amount).isEqualTo(0) &&
+      !new BigNumber(amount.toString()).isEqualTo(0) &&
       curChain === tokenChain &&
       (balanceList.length !== 0 || pickedToken.balance !== '0') &&
       failureCount < 5
@@ -156,15 +156,15 @@ const DepositBase = ({
           const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
           const pickedTokenRawBalance = toWei(pickedToken.balance, pickedToken.decimals, 0)
 
-          const overBalance = new BigNumber(amount).isGreaterThan(
-            new BigNumber(pickedTokenRawBalance),
+          const overBalance = new BigNumber(amount.toString()).isGreaterThan(
+            new BigNumber(pickedTokenRawBalance.toString()),
           )
 
           const pickedDefaultToken =
             pickedToken.address.toLowerCase() === defaultToken.address.toLowerCase()
 
           if (pickedDefaultToken) {
-            const outputAmountDefaultDecimals = new BigNumber(inputAmount)
+            const outputAmountDefaultDecimals = new BigNumber(inputAmount.toString())
               .dividedBy(pricePerFullShare)
               .toString()
             outputAmountDefault = toWei(outputAmountDefaultDecimals, pickedToken.decimals, 0)
