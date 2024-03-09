@@ -307,6 +307,7 @@ const BeginnersFarm = () => {
   const [minReceiveUsdAmount, setMinReceiveUsdAmount] = useState('')
   const [convertSuccess, setConvertSuccess] = useState(false)
   const [hasErrorOccurredConvert, setHasErrorOccurredConvert] = useState(0)
+  const [failureCountConvert, setFailureCountConvert] = useState(0)
 
   // Withdraw
   const [withdrawStart, setWithdrawStart] = useState(false)
@@ -1585,6 +1586,8 @@ const BeginnersFarm = () => {
                         setConvertDailyYieldUSD={setConvertDailyYieldUSD}
                         hasErrorOccurred={hasErrorOccurredConvert}
                         setHasErrorOccurred={setHasErrorOccurredConvert}
+                        failureCount={failureCountConvert}
+                        setFailureCount={setFailureCountConvert}
                       />
                       <DepositSelectToken
                         selectToken={selectTokenDepo}
@@ -1601,11 +1604,12 @@ const BeginnersFarm = () => {
                         pickedToken={pickedTokenDepo}
                         deposit={depositStart}
                         setDeposit={setDepositStart}
+                        defaultToken={defaultToken}
                         inputAmount={inputAmountDepo}
                         setInputAmount={setInputAmountDepo}
                         token={token}
-                        useIFARM={useIFARM}
                         tokenSymbol={id}
+                        useIFARM={useIFARM}
                         fAssetPool={fAssetPool}
                         multipleAssets={multipleAssets}
                         fromInfoAmount={fromInfoAmount}
@@ -1656,6 +1660,7 @@ const BeginnersFarm = () => {
                         unstakeInputValue={unstakeInputValue}
                         withdrawStart={withdrawStart}
                         setWithdrawStart={setWithdrawStart}
+                        defaultToken={defaultToken}
                         pickedToken={pickedTokenWith}
                         setPickedToken={setPickedTokenWith}
                         token={token}
