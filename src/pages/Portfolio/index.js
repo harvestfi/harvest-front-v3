@@ -844,26 +844,25 @@ const Portfolio = () => {
             </CheckBoxDiv>
           )}
         </TransactionDetails>
-        {connected && farmTokenList.length > 0? (
+        {connected && farmTokenList.length > 0 ? (
           <></>
         ) : (
           <EmptyInfo weight={500} size={16} height={21} marginTop="25px">
-            {
-              (!isLedgerLive() || (isLedgerLive() && chainId === CHAIN_IDS.BASE)) ? 
-                <ExploreFarm
-                  bgImage="first"
-                  onClick={() => {
-                    push(ROUTES.BEGINNERSFARM)
-                  }}
-                >
-                  <ExploreContent>
-                    <ExploreTitle>Farm for Beginners</ExploreTitle>
-                    <div>Get started with a simple ETH farm on Base.</div>
-                  </ExploreContent>
-                </ExploreFarm>
-                :
-                <></>
-            }
+            {!isLedgerLive() || (isLedgerLive() && chainId === CHAIN_IDS.BASE) ? (
+              <ExploreFarm
+                bgImage="first"
+                onClick={() => {
+                  push(ROUTES.BEGINNERSFARM)
+                }}
+              >
+                <ExploreContent>
+                  <ExploreTitle>Farm for Beginners</ExploreTitle>
+                  <div>Get started with a simple ETH farm on Base.</div>
+                </ExploreContent>
+              </ExploreFarm>
+            ) : (
+              <></>
+            )}
             <ExploreFarm
               bgImage="second"
               onClick={() => {

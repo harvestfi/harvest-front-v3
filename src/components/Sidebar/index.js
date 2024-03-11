@@ -498,8 +498,11 @@ const Sidebar = ({ width }) => {
                 )
               })()}
 
-              {sideLinks.map(item => (
-                !isLedgerLive() || (isLedgerLive() && (chainId === CHAIN_IDS.BASE || (chainId !== CHAIN_IDS.BASE && item.name !== 'Beginners'))) ?
+              {sideLinks.map(item =>
+                !isLedgerLive() ||
+                (isLedgerLive() &&
+                  (chainId === CHAIN_IDS.BASE ||
+                    (chainId !== CHAIN_IDS.BASE && item.name !== 'Beginners'))) ? (
                   <Fragment key={item.name}>
                     <LinkContainer
                       active={pathname.includes(item.path)}
@@ -522,9 +525,10 @@ const Sidebar = ({ width }) => {
                       />
                     </LinkContainer>
                   </Fragment>
-                  :
+                ) : (
                   <></>
-              ))}
+                ),
+              )}
             </LinksContainer>
           </MiddleActionsContainer>
         </Layout>
