@@ -100,7 +100,7 @@ const UnstakeBase = ({
   }, [account, curChain, tokenChain])
 
   const onClickUnStake = async () => {
-    if (new BigNumber(totalStaked).isEqualTo(0)) {
+    if (new BigNumber(totalStaked.toString()).isEqualTo(0)) {
       setWarningContent('The amount to unstake must be greater than 0.')
       setShowWarning(true)
       return
@@ -123,15 +123,15 @@ const UnstakeBase = ({
       return toWei(amount, isSpecialVault ? tokenDecimals : token.decimals)
     })
 
-    if (new BigNumber(amountsToExecuteInWei[0]) === 0) {
+    if (new BigNumber(amountsToExecuteInWei[0].toString()) === 0) {
       setWarningContent('The amount to unstake must be greater than 0.')
       setShowWarning(true)
       return
     }
 
-    const isAvailableUnstake = new BigNumber(amountsToExecuteInWei[0]).isLessThanOrEqualTo(
-      totalStaked,
-    )
+    const isAvailableUnstake = new BigNumber(
+      amountsToExecuteInWei[0].toString(),
+    ).isLessThanOrEqualTo(totalStaked.toString())
 
     if (!isAvailableUnstake) {
       setWarningContent(`Insufficient f${tokenSymbol} balance`)

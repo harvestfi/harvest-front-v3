@@ -204,9 +204,8 @@ const DepositStart = ({
             allowanceCheck = approval ? approval.allowance : 0
           }
 
-          if (!new BigNumber(allowanceCheck).gte(new BigNumber(amount))) {
-            const amountToApprove = new BigNumber(amount) - new BigNumber(allowanceCheck)
-            await approveZap(amountToApprove) // Approve for Zap
+          if (!new BigNumber(allowanceCheck.toString()).gte(new BigNumber(amount.toString()))) {
+            await approveZap(amount) // Approve for Zap
           }
           setProgressStep(2)
           setButtonName('Confirm Transaction')
