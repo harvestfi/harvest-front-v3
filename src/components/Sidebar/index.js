@@ -41,7 +41,7 @@ import { usePools } from '../../providers/Pools'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { fromWei } from '../../services/web3'
-import { formatAddress, isSpecialApp } from '../../utils'
+import { formatAddress, isLedgerLive, isSpecialApp } from '../../utils'
 import Social from '../Social'
 import {
   Address,
@@ -499,28 +499,31 @@ const Sidebar = ({ width }) => {
               })()}
 
               {sideLinks.map(item => (
-                <Fragment key={item.name}>
-                  <LinkContainer
-                    active={pathname.includes(item.path)}
-                    activeColor={item.activeColor}
-                    hoverImgColor={hoverImgColor}
-                    onClick={() => {
-                      if (item.newTab) {
-                        window.open(item.path, '_blank')
-                      } else if (item.enabled !== false) {
-                        directAction(item.path)
-                      }
-                    }}
-                  >
-                    <SideLink
-                      item={item}
-                      isDropdownLink={item.path === '#'}
-                      fontColor={sidebarFontColor}
-                      activeIconColor={sidebarActiveIconColor}
-                      darkMode={darkMode}
-                    />
-                  </LinkContainer>
-                </Fragment>
+                !isLedgerLive() || (isLedgerLive() && (chainId === CHAIN_IDS.BASE || (chainId !== CHAIN_IDS.BASE && item.name !== 'Beginners'))) ?
+                  <Fragment key={item.name}>
+                    <LinkContainer
+                      active={pathname.includes(item.path)}
+                      activeColor={item.activeColor}
+                      hoverImgColor={hoverImgColor}
+                      onClick={() => {
+                        if (item.newTab) {
+                          window.open(item.path, '_blank')
+                        } else if (item.enabled !== false) {
+                          directAction(item.path)
+                        }
+                      }}
+                    >
+                      <SideLink
+                        item={item}
+                        isDropdownLink={item.path === '#'}
+                        fontColor={sidebarFontColor}
+                        activeIconColor={sidebarActiveIconColor}
+                        darkMode={darkMode}
+                      />
+                    </LinkContainer>
+                  </Fragment>
+                  :
+                  <></>
               ))}
             </LinksContainer>
           </MiddleActionsContainer>

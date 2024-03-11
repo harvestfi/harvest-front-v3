@@ -82,123 +82,117 @@ const VaultsProvider = _ref => {
       await forEach(Object.keys(importedVaults), async vaultSymbol => {
         const vaultChain = get(importedVaults, `[${vaultSymbol}].chain`)
         try {
-          if (
-            !isLedgerLive() ||
-            (isLedgerLive() &&
-              vaultChain !== CHAIN_IDS.ARBITRUM_ONE &&
-              vaultChain !== CHAIN_IDS.BASE)
-          ) {
-            let web3Client = await getWeb3(vaultChain, account),
-              estimatedApy = null,
-              estimatedApyBreakdown = [],
-              usdPrice = null,
-              vaultPrice = null,
-              underlyingBalanceWithInvestment = '0',
-              underlyingBalanceWithInvestmentForHolder = '0',
-              pricePerFullShare = '0',
-              totalSupply = '0',
-              boostedEstimatedAPY = null,
-              uniswapV3PositionId = null,
-              uniswapV3UnderlyingTokenPrices = [],
-              { subLabel } = importedVaults[vaultSymbol],
-              uniswapV3ManagedData = null,
-              dataFetched = false
-            if (!isSpecialApp) {
-              web3Client = web3
-            }
-            if (vaultChain !== chainId) {
-              web3Client = await getWeb3(vaultChain, false)
-            }
-            const tokenPool = pools.find(
-              pool => pool.collateralAddress === importedVaults[vaultSymbol].vaultAddress,
+          let web3Client = await getWeb3(vaultChain, account),
+          estimatedApy = null,
+          estimatedApyBreakdown = [],
+          usdPrice = null,
+          vaultPrice = null,
+          underlyingBalanceWithInvestment = '0',
+          underlyingBalanceWithInvestmentForHolder = '0',
+          pricePerFullShare = '0',
+          totalSupply = '0',
+          boostedEstimatedAPY = null,
+          uniswapV3PositionId = null,
+          uniswapV3UnderlyingTokenPrices = [],
+          { subLabel } = importedVaults[vaultSymbol],
+          uniswapV3ManagedData = null,
+          dataFetched = false
+        if (!isSpecialApp) {
+          web3Client = web3
+        }
+        if (vaultChain !== chainId) {
+          web3Client = await getWeb3(vaultChain, false)
+        }
+        const tokenPool = pools.find(
+          pool => pool.collateralAddress === importedVaults[vaultSymbol].vaultAddress,
+        )
+        const isIFARM = vaultSymbol === IFARM_TOKEN_SYMBOL
+        const hasMultipleAssets = isArray(importedVaults[vaultSymbol].tokenAddress)
+        const instance = await newContractInstance(
+          null,
+          isIFARM
+            ? importedVaults[vaultSymbol].tokenAddress
+            : importedVaults[vaultSymbol].vaultAddress,
+          hasMultipleAssets ? univ3ContractData.abi : vaultContractData.abi,
+          web3Client,
+        )
+
+        if (apiData && apiData[vaultSymbol]) {
+          estimatedApy = apiData[vaultSymbol].estimatedApy
+          estimatedApyBreakdown = apiData[vaultSymbol].estimatedApyBreakdown
+          boostedEstimatedAPY = apiData[vaultSymbol].boostedEstimatedAPY
+          usdPrice = apiData[vaultSymbol].usdPrice
+          underlyingBalanceWithInvestment = apiData[vaultSymbol].underlyingBalanceWithInvestment
+          totalSupply = apiData[vaultSymbol].totalSupply
+          pricePerFullShare = importedVaults[vaultSymbol].pricePerFullShareOverride
+            ? importedVaults[vaultSymbol].pricePerFullShareOverride
+            : apiData[vaultSymbol].pricePerFullShare
+          vaultPrice = new BigNumber(usdPrice)
+            .times(pricePerFullShare)
+            .div(10 ** apiData[vaultSymbol].decimals)
+          uniswapV3PositionId = apiData[vaultSymbol].uniswapV3PositionId
+          uniswapV3UnderlyingTokenPrices = apiData[vaultSymbol].uniswapV3UnderlyingTokenPrices
+          if (apiData[vaultSymbol].uniswapV3ManagedData) {
+            const { capLimit, currentCap, ranges } = apiData[vaultSymbol].uniswapV3ManagedData
+            const upper = abbreaviteNumber(Math.floor(ranges[0].upperBound / 100) * 100, 1)
+            const lower = abbreaviteNumber(
+              Math.floor(ranges[ranges.length - 1].lowerBound / 100) * 100,
+              1,
             )
-            const isIFARM = vaultSymbol === IFARM_TOKEN_SYMBOL
-            const hasMultipleAssets = isArray(importedVaults[vaultSymbol].tokenAddress)
-            const instance = await newContractInstance(
-              null,
-              isIFARM
-                ? importedVaults[vaultSymbol].tokenAddress
-                : importedVaults[vaultSymbol].vaultAddress,
-              hasMultipleAssets ? univ3ContractData.abi : vaultContractData.abi,
-              web3Client,
-            )
-
-            if (apiData && apiData[vaultSymbol]) {
-              estimatedApy = apiData[vaultSymbol].estimatedApy
-              estimatedApyBreakdown = apiData[vaultSymbol].estimatedApyBreakdown
-              boostedEstimatedAPY = apiData[vaultSymbol].boostedEstimatedAPY
-              usdPrice = apiData[vaultSymbol].usdPrice
-              underlyingBalanceWithInvestment = apiData[vaultSymbol].underlyingBalanceWithInvestment
-              totalSupply = apiData[vaultSymbol].totalSupply
-              pricePerFullShare = importedVaults[vaultSymbol].pricePerFullShareOverride
-                ? importedVaults[vaultSymbol].pricePerFullShareOverride
-                : apiData[vaultSymbol].pricePerFullShare
-              vaultPrice = new BigNumber(usdPrice)
-                .times(pricePerFullShare)
-                .div(10 ** apiData[vaultSymbol].decimals)
-              uniswapV3PositionId = apiData[vaultSymbol].uniswapV3PositionId
-              uniswapV3UnderlyingTokenPrices = apiData[vaultSymbol].uniswapV3UnderlyingTokenPrices
-              if (apiData[vaultSymbol].uniswapV3ManagedData) {
-                const { capLimit, currentCap, ranges } = apiData[vaultSymbol].uniswapV3ManagedData
-                const upper = abbreaviteNumber(Math.floor(ranges[0].upperBound / 100) * 100, 1)
-                const lower = abbreaviteNumber(
-                  Math.floor(ranges[ranges.length - 1].lowerBound / 100) * 100,
-                  1,
-                )
-                subLabel = `${lower.toString()}⟷${upper.toString()}`
-                uniswapV3ManagedData = {
-                  ...apiData[vaultSymbol].uniswapV3ManagedData,
-                  capLimit,
-                  currentCap,
-                  maxToDeposit: new BigNumber(capLimit).minus(new BigNumber(currentCap)),
-                  ranges,
-                }
-              }
-              dataFetched = !apiFailed
-            } else if (isIFARM) {
-              totalSupply = await getTotalSupply(instance, web3Client)
-              underlyingBalanceWithInvestment = await getUnderlyingBalanceWithInvestment(
-                instance,
-                web3Client,
-              )
-              pricePerFullShare = importedVaults[vaultSymbol].pricePerFullShareOverride
-                ? importedVaults[vaultSymbol].pricePerFullShareOverride
-                : await getPricePerFullShare(instance, web3Client)
-            }
-
-            if (isIFARM && account && curChainId === CHAIN_IDS.ETH_MAINNET) {
-              underlyingBalanceWithInvestmentForHolder = await getUnderlyingBalanceWithInvestmentForHolder(
-                account,
-                instance,
-                web3Client,
-              )
-            }
-
-            formattedVaults[vaultSymbol] = {
-              ...importedVaults[vaultSymbol],
-              vaultAddress: isIFARM
-                ? importedVaults[vaultSymbol].tokenAddress
-                : importedVaults[vaultSymbol].vaultAddress,
-              estimatedApy,
-              estimatedApyBreakdown,
-              boostedEstimatedAPY,
-              apyIconUrls: importedVaults[vaultSymbol].apyIconUrls,
-              apyTokenSymbols: importedVaults[vaultSymbol].apyTokenSymbols,
-              usdPrice,
-              vaultPrice,
-              underlyingBalanceWithInvestment,
-              underlyingBalanceWithInvestmentForHolder,
-              pricePerFullShare,
-              totalSupply,
-              instance,
-              uniswapV3PositionId,
-              dataFetched,
-              uniswapV3UnderlyingTokenPrices,
-              pool: tokenPool,
-              subLabel,
-              uniswapV3ManagedData,
+            subLabel = `${lower.toString()}⟷${upper.toString()}`
+            uniswapV3ManagedData = {
+              ...apiData[vaultSymbol].uniswapV3ManagedData,
+              capLimit,
+              currentCap,
+              maxToDeposit: new BigNumber(capLimit).minus(new BigNumber(currentCap)),
+              ranges,
             }
           }
+          dataFetched = !apiFailed
+        } else if (isIFARM) {
+          totalSupply = await getTotalSupply(instance, web3Client)
+          underlyingBalanceWithInvestment = await getUnderlyingBalanceWithInvestment(
+            instance,
+            web3Client,
+          )
+          pricePerFullShare = importedVaults[vaultSymbol].pricePerFullShareOverride
+            ? importedVaults[vaultSymbol].pricePerFullShareOverride
+            : await getPricePerFullShare(instance, web3Client)
+        }
+
+        if (isIFARM && account && curChainId === CHAIN_IDS.ETH_MAINNET) {
+          underlyingBalanceWithInvestmentForHolder = await getUnderlyingBalanceWithInvestmentForHolder(
+            account,
+            instance,
+            web3Client,
+          )
+        }
+
+        formattedVaults[vaultSymbol] = {
+          ...importedVaults[vaultSymbol],
+          vaultAddress: isIFARM
+            ? importedVaults[vaultSymbol].tokenAddress
+            : importedVaults[vaultSymbol].vaultAddress,
+          estimatedApy,
+          estimatedApyBreakdown,
+          boostedEstimatedAPY,
+          apyIconUrls: importedVaults[vaultSymbol].apyIconUrls,
+          apyTokenSymbols: importedVaults[vaultSymbol].apyTokenSymbols,
+          usdPrice,
+          vaultPrice,
+          underlyingBalanceWithInvestment,
+          underlyingBalanceWithInvestmentForHolder,
+          pricePerFullShare,
+          totalSupply,
+          instance,
+          uniswapV3PositionId,
+          dataFetched,
+          uniswapV3UnderlyingTokenPrices,
+          pool: tokenPool,
+          subLabel,
+          uniswapV3ManagedData,
+        }
+
         } catch (e) {
           console.log(e)
         }

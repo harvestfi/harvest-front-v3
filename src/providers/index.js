@@ -2,6 +2,7 @@ import injectedModule from '@web3-onboard/injected-wallets'
 import gnosisModule from '@web3-onboard/gnosis'
 import { init, Web3OnboardProvider } from '@web3-onboard/react'
 import walletConnectModule from '@web3-onboard/walletconnect'
+import ledgerModule from '@web3-onboard/ledger'
 import React from 'react'
 import { ActionsProvider } from './Actions'
 import { ContractsProvider } from './Contracts'
@@ -15,6 +16,7 @@ import HavestLogo from '../assets/images/logos/Harvest_Standard.svg'
 
 const injected = injectedModule()
 const gnosis = gnosisModule()
+const ledger = ledgerModule()
 const walletConnect = walletConnectModule({
   version: 2,
   projectId: '6931eace1272646ed84e46c55fac0311',
@@ -28,7 +30,7 @@ const walletConnect = walletConnectModule({
 const web3Onboard = init({
   // head to https://explorer.blocknative.com/account to sign up for free
   apiKey: process.env.REACT_APP_BLOCKNATIVE_KEY,
-  wallets: [injected, walletConnect, gnosis],
+  wallets: [injected, walletConnect, gnosis, ledger],
   chains: [
     {
       id: '0x1',
