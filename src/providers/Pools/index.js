@@ -89,139 +89,131 @@ const PoolsProvider = _ref => {
       }
       formattedPools = await Promise.all(
         defaultPools.map(async pool => {
+          let web3Client = await getWeb3(pool.chain, selectedAccount, web3),
+            web3ClientLocal = await getWeb3(pool.chain, true, web3),
+            rewardAPY = ['0'],
+            rewardAPR = ['0'],
+            autoStakeContractInstance = null,
+            autoStakeContractLocalInstance = null,
+            lpTokenData,
+            rewardPerToken = ['0'],
+            totalSupply = '0',
+            finishTime = '0',
+            totalValueLocked = '0',
+            tradingApy = '0',
+            boostedRewardAPY = '0',
+            lpTokenInstance = null,
+            lpTokenLocalInstance = null,
+            amountToStakeForBoost = null,
+            dataFetched = null
+          if (isSafeApp()) {
+            web3Client = await getWeb3(pool.chain, selectedAccount)
+            web3ClientLocal = await getWeb3(pool.chain, selectedAccount)
+          }
           if (
-            !isLedgerLive() ||
-            (isLedgerLive() &&
-              pool.chain !== CHAIN_IDS.ARBITRUM_ONE &&
-              pool.chain !== CHAIN_IDS.BASE)
+            (Object.values(SPECIAL_VAULTS).includes(pool.id) &&
+              curChain !== CHAIN_IDS.ETH_MAINNET) ||
+            pool.chain !== curChain
           ) {
-            let web3Client = await getWeb3(pool.chain, selectedAccount, web3),
-              web3ClientLocal = await getWeb3(pool.chain, true, web3),
-              rewardAPY = ['0'],
-              rewardAPR = ['0'],
-              autoStakeContractInstance = null,
-              autoStakeContractLocalInstance = null,
-              lpTokenData,
-              rewardPerToken = ['0'],
-              totalSupply = '0',
-              finishTime = '0',
-              totalValueLocked = '0',
-              tradingApy = '0',
-              boostedRewardAPY = '0',
-              lpTokenInstance = null,
-              lpTokenLocalInstance = null,
-              amountToStakeForBoost = null,
-              dataFetched = null
-            if (isSafeApp()) {
-              web3Client = await getWeb3(pool.chain, selectedAccount)
-              web3ClientLocal = await getWeb3(pool.chain, selectedAccount)
-            }
-            if (
-              (Object.values(SPECIAL_VAULTS).includes(pool.id) &&
-                curChain !== CHAIN_IDS.ETH_MAINNET) ||
-              pool.chain !== curChain
-            ) {
-              web3Client = await getWeb3(pool.chain, false)
-            }
+            web3Client = await getWeb3(pool.chain, false)
+          }
 
-            const contractInstance = await newContractInstance(
+          const contractInstance = await newContractInstance(
+            null,
+            pool.contractAddress,
+            poolContractData.abi,
+            web3Client,
+          )
+          const contractLocalInstance = await newContractInstance(
+            null,
+            pool.contractAddress,
+            poolContractData.abi,
+            web3ClientLocal,
+          )
+          const apiPool =
+            apiData && apiData.find(fetchedPool => fetchedPool && fetchedPool.id === pool.id)
+
+          if (apiPool) {
+            // eslint-disable-next-line prefer-destructuring
+            rewardAPY = map(apiPool.rewardAPY, apy => truncateNumberString(apy))
+            rewardAPR = map(apiPool.rewardAPR, apr => truncateNumberString(apr))
+            tradingApy = truncateNumberString(apiPool.tradingApy)
+            lpTokenData = apiPool.lpTokenData
+            rewardPerToken = apiPool.rewardPerToken
+            totalSupply = apiPool.totalSupply
+            finishTime = apiPool.finishTime
+            totalValueLocked = apiPool.totalValueLocked
+            boostedRewardAPY = apiPool.boostedRewardAPY
+            amountToStakeForBoost = apiPool.amountToStakeForBoost
+            lpTokenInstance = await newContractInstance(
               null,
-              pool.contractAddress,
+              apiPool.lpTokenData.address,
+              tokenContract.abi,
+              web3Client,
+            )
+            lpTokenLocalInstance = await newContractInstance(
+              null,
+              apiPool.lpTokenData.address,
+              tokenContract.abi,
+              web3ClientLocal,
+            )
+            dataFetched = true
+          } else if (!pool.breadPage && !pool.fake) {
+            lpTokenData = await getLpTokenData(contractInstance, web3Client)
+            lpTokenInstance = await newContractInstance(
+              null,
+              lpTokenData.address,
+              tokenContract.abi,
+              web3Client,
+            )
+            lpTokenLocalInstance = await newContractInstance(
+              null,
+              lpTokenData.address,
+              tokenContract.abi,
+              web3ClientLocal,
+            )
+            dataFetched = false
+          }
+
+          if (pool.autoStakePoolAddress) {
+            autoStakeContractInstance = await newContractInstance(
+              null,
+              pool.autoStakePoolAddress,
               poolContractData.abi,
               web3Client,
             )
-            const contractLocalInstance = await newContractInstance(
+            autoStakeContractLocalInstance = await newContractInstance(
               null,
-              pool.contractAddress,
+              pool.autoStakePoolAddress,
               poolContractData.abi,
               web3ClientLocal,
             )
-            const apiPool =
-              apiData && apiData.find(fetchedPool => fetchedPool && fetchedPool.id === pool.id)
-
-            if (apiPool) {
-              // eslint-disable-next-line prefer-destructuring
-              rewardAPY = map(apiPool.rewardAPY, apy => truncateNumberString(apy))
-              rewardAPR = map(apiPool.rewardAPR, apr => truncateNumberString(apr))
-              tradingApy = truncateNumberString(apiPool.tradingApy)
-              lpTokenData = apiPool.lpTokenData
-              rewardPerToken = apiPool.rewardPerToken
-              totalSupply = apiPool.totalSupply
-              finishTime = apiPool.finishTime
-              totalValueLocked = apiPool.totalValueLocked
-              boostedRewardAPY = apiPool.boostedRewardAPY
-              amountToStakeForBoost = apiPool.amountToStakeForBoost
-              lpTokenInstance = await newContractInstance(
-                null,
-                apiPool.lpTokenData.address,
-                tokenContract.abi,
-                web3Client,
-              )
-              lpTokenLocalInstance = await newContractInstance(
-                null,
-                apiPool.lpTokenData.address,
-                tokenContract.abi,
-                web3ClientLocal,
-              )
-              dataFetched = true
-            } else if (!pool.breadPage && !pool.fake) {
-              lpTokenData = await getLpTokenData(contractInstance, web3Client)
-              lpTokenInstance = await newContractInstance(
-                null,
-                lpTokenData.address,
-                tokenContract.abi,
-                web3Client,
-              )
-              lpTokenLocalInstance = await newContractInstance(
-                null,
-                lpTokenData.address,
-                tokenContract.abi,
-                web3ClientLocal,
-              )
-              dataFetched = false
-            }
-
-            if (pool.autoStakePoolAddress) {
-              autoStakeContractInstance = await newContractInstance(
-                null,
-                pool.autoStakePoolAddress,
-                poolContractData.abi,
-                web3Client,
-              )
-              autoStakeContractLocalInstance = await newContractInstance(
-                null,
-                pool.autoStakePoolAddress,
-                poolContractData.abi,
-                web3ClientLocal,
-              )
-            }
-
-            return {
-              ...pool,
-              rewardAPY,
-              amountToStakeForBoost,
-              totalRewardAPY: sumBy(rewardAPY, apy => Number(apy)),
-              rewardAPR,
-              tradingApy,
-              contractInstance,
-              contractLocalInstance,
-              autoStakeContractInstance,
-              autoStakeContractLocalInstance,
-              lpTokenData: {
-                ...lpTokenData,
-                instance: lpTokenInstance,
-                localInstance: lpTokenLocalInstance,
-              },
-              rewardPerToken,
-              totalSupply,
-              finishTime,
-              totalValueLocked,
-              loaded: true,
-              boostedRewardAPY,
-              dataFetched,
-            }
           }
-          return null
+
+          return {
+            ...pool,
+            rewardAPY,
+            amountToStakeForBoost,
+            totalRewardAPY: sumBy(rewardAPY, apy => Number(apy)),
+            rewardAPR,
+            tradingApy,
+            contractInstance,
+            contractLocalInstance,
+            autoStakeContractInstance,
+            autoStakeContractLocalInstance,
+            lpTokenData: {
+              ...lpTokenData,
+              instance: lpTokenInstance,
+              localInstance: lpTokenLocalInstance,
+            },
+            rewardPerToken,
+            totalSupply,
+            finishTime,
+            totalValueLocked,
+            loaded: true,
+            boostedRewardAPY,
+            dataFetched,
+          }
         }),
       )
       formattedPools = formattedPools.filter(pool => pool !== null)
@@ -237,16 +229,12 @@ const PoolsProvider = _ref => {
     try {
       const apiResponse = await axios.get(POOLS_API_ENDPOINT)
       const apiData = get(apiResponse, 'data')
-      if (isLedgerLive()) {
-        newPools = await formatPoolsData([...apiData.eth, ...apiData.matic])
-      } else {
-        newPools = await formatPoolsData([
-          ...apiData.eth,
-          ...apiData.matic,
-          ...apiData.arbitrum,
-          ...apiData.base,
-        ])
-      }
+      newPools = await formatPoolsData([
+        ...apiData.eth,
+        ...apiData.matic,
+        ...apiData.arbitrum,
+        ...apiData.base,
+      ])
       setDisableWallet(false)
     } catch (err) {
       console.error(err)

@@ -8,7 +8,6 @@ import {
   baseWeb3,
   infuraWeb3,
 } from '../services/web3'
-import { isLedgerLive } from '../utils'
 import { CHAIN_IDS } from '../data/constants'
 
 const ContractsContext = createContext()
@@ -37,25 +36,18 @@ const ContractsProvider = _ref => {
     const initializeContracts = async () => {
       const temporaryGroupOfContracts = {}
       Object.keys(importedContracts).forEach(contract => {
-        if (
-          !isLedgerLive() ||
-          (isLedgerLive() &&
-            contract.chain !== CHAIN_IDS.ARBITRUM_ONE &&
-            contract.chain !== CHAIN_IDS.BASE)
-        ) {
-          Object.assign(temporaryGroupOfContracts, {
-            [contract]: {
-              instance: newContractInstance(
-                contract,
-                null,
-                null,
-                getWeb3(importedContracts[contract].chain),
-              ),
-              methods: importedContracts[contract].methods,
-              address: importedContracts[contract].contract.address,
-            },
-          })
-        }
+        Object.assign(temporaryGroupOfContracts, {
+          [contract]: {
+            instance: newContractInstance(
+              contract,
+              null,
+              null,
+              getWeb3(importedContracts[contract].chain),
+            ),
+            methods: importedContracts[contract].methods,
+            address: importedContracts[contract].contract.address,
+          },
+        })
       })
       const initializedContracts = await promiseObject(temporaryGroupOfContracts)
       setContracts(initializedContracts)
