@@ -433,18 +433,18 @@ const AdvancedFarm = () => {
   ]
 
   // Show vault info badge when platform is 'Lodestar' and firstly view
-  const firstView = localStorage.getItem('firstView')
   useEffect(() => {
     const platform = useIFARM ? 'Harvest' : token.platform[0].toLowerCase()
     if (platform.includes('lodestar')) {
       setVaultInfoMessage(true)
     }
 
+    const firstView = localStorage.getItem('firstView')
     if (firstView === null || firstView === 'true') {
       localStorage.setItem('firstView', true)
       setFirstViewInfo(true)
     }
-  }, [token.platform, firstView, useIFARM])
+  }, [token.platform, useIFARM])
 
   const closeBadge = () => {
     setVaultInfoMessage(false)
