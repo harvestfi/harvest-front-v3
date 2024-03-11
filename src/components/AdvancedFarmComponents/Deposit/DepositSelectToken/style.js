@@ -146,6 +146,13 @@ const NewLabel = styled.div`
       : ''}
 
   ${props =>
+    props.cursorType
+      ? `
+    cursor: ${props.cursorType};
+  `
+      : ''}
+
+  ${props =>
     props.divScroll
       ? `
     // overflow: ${props.divScroll};

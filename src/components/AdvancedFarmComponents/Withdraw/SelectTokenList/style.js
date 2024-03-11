@@ -3,7 +3,12 @@ import styled from 'styled-components'
 const Container = styled.div`
   display: flex;
   border: none;
-  cursor: pointer;
+  ${props =>
+    props.cursor
+      ? `
+      cursor: ${props.cursor};
+      `
+      : `cursor: pointer;`}
   width: auto;
   padding: 8px 24px;
   align-items: center;
@@ -91,9 +96,15 @@ const Label = styled.div`
   font-weight: 400;
   line-height: 18.972px;
   ${props =>
+    props.showLabel
+      ? `
+        display: ${props.showLabel};
+      `
+      : ``}
+  ${props =>
     props.padding
       ? `
-        padding: ${props.padding}
+        padding: ${props.padding};
       `
       : ``}
 `

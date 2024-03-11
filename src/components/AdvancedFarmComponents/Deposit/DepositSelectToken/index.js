@@ -29,7 +29,7 @@ const DepositSelectToken = ({
   supTokenNoBalanceList,
   balanceList,
   defaultToken,
-  hasErrorOccurred,
+  supportedVault,
 }) => {
   const { connected } = useWallet()
   const [filterWord, setFilterWord] = useState('')
@@ -119,7 +119,7 @@ const DepositSelectToken = ({
                 setBalance={setBalance}
                 setSelectToken={setSelectToken}
                 filterWord={filterWord}
-                hasErrorOccurred={hasErrorOccurred}
+                supportedVault={supportedVault}
               />
             ) : (
               <NotConnectedWallet isShow={showDesc ? 'true' : 'false'}>

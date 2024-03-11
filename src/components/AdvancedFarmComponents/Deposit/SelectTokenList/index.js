@@ -22,7 +22,7 @@ const SelectTokenList = ({
   setBalance,
   setSelectToken,
   filterWord,
-  hasErrorOccurred,
+  supportedVault,
 }) => {
   const [showList, setShowList] = useState(false)
 
@@ -145,17 +145,16 @@ const SelectTokenList = ({
           {balanceTokenList.length > 0 && (
             <>
               <Label padding="15px 24px 0px">
-                {hasErrorOccurred === 2
-                  ? 'Other, currently unsupported tokens in your wallet'
-                  : 'Supported tokens in your wallet'}
+                {supportedVault ? 'Supported tokens in your wallet' : 'Soon to be supported'}
               </Label>
               {balanceTokenList.map((data, i) => (
                 <Container
                   key={i}
                   className={i === clickBalanceListId ? 'active' : ''}
                   onClick={() => {
-                    handleBalanceListClick(i)
+                    if (supportedVault) handleBalanceListClick(i)
                   }}
+                  cursor={supportedVault ? 'pointer' : 'not-allowed'}
                   hoverColor="#F2F5FF"
                   activeColor="#ECFDF3"
                 >
@@ -175,18 +174,19 @@ const SelectTokenList = ({
           )}
           {supTokenList.length > 0 && (
             <>
-              <Label padding="15px 24px 0px">
-                {hasErrorOccurred === 2
-                  ? `Other, currently unsupported tokens, which you don't have in your wallet`
-                  : `Other supported convert tokens, which you don't have on your wallet`}
+              <Label padding="15px 24px 0px" showLabel={supportedVault ? 'block' : 'none'}>
+                {supportedVault
+                  ? `Other supported convert tokens, which you don't have on your wallet`
+                  : `Other, currently unsupported tokens, which you don't have in your wallet`}
               </Label>
               {supTokenList.map((data, i) => (
                 <Container
                   key={i}
                   className={i === clicksupTokenNoBalanceListId ? 'active' : ''}
                   onClick={() => {
-                    handleSupTokenNoBalanceListClick(i)
+                    if (supportedVault) handleSupTokenNoBalanceListClick(i)
                   }}
+                  cursor={supportedVault ? 'pointer' : 'not-allowed'}
                   hoverColor="#F2F5FF"
                   activeColor="#ECFDF3"
                 >

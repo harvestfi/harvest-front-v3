@@ -23,11 +23,11 @@ const WithdrawSelectToken = ({
   selectToken,
   setSelectToken,
   setPickedToken,
-  // supTokenList,
-  soonToSupList,
   supTokenNoBalanceList,
   balanceList,
   defaultToken,
+  soonToSupList,
+  supportedVault,
 }) => {
   const { connected } = useWallet()
   const [filterWord, setFilterWord] = useState('')
@@ -116,6 +116,7 @@ const WithdrawSelectToken = ({
                 setPickedToken={setPickedToken}
                 setSelectToken={setSelectToken}
                 filterWord={filterWord}
+                supportedVault={supportedVault}
               />
             ) : (
               <NotConnectedWallet isShow={showDesc ? 'true' : 'false'}>
