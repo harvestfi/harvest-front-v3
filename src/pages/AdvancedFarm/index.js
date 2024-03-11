@@ -197,7 +197,12 @@ const getTokenPriceFromApi = async tokenID => {
 
 const AdvancedFarm = () => {
   const { paramAddress } = useParams()
-  const { getPortalsBaseTokens, getPortalsBalances, SUPPORTED_TOKEN_LIST } = usePortals()
+  const {
+    getPortalsBaseTokens,
+    getPortalsBalances,
+    getPortalsEstimate,
+    SUPPORTED_TOKEN_LIST,
+  } = usePortals()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const { push } = useHistory()
@@ -354,6 +359,7 @@ const AdvancedFarm = () => {
   const [activeDepo, setActiveDepo] = useState(true)
   const [vaultInfoMessage, setVaultInfoMessage] = useState(false)
   const [firstViewInfo, setFirstViewInfo] = useState(false)
+  const [supportedVault, setSupportedVault] = useState(true)
 
   // Deposit
   const [depositStart, setDepositStart] = useState(false)
@@ -445,6 +451,35 @@ const AdvancedFarm = () => {
     setFirstViewInfo(false)
     localStorage.setItem('firstView', 'false')
   }
+
+  useEffect(() => {
+    async function fetchData() {
+      if (supTokenList.length > 0) {
+        const fromToken = supTokenList[1].address
+        const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
+        const amount = '1000000'
+        const slippage = 0.5 // Default slippage Percent
+
+        const portalsEstimate = await getPortalsEstimate({
+          chainId: token.chain,
+          tokenIn: fromToken,
+          inputAmount: amount,
+          tokenOut: toToken,
+          slippage,
+          sender: null,
+        })
+
+        if (portalsEstimate.res.message === 'outputToken not found') {
+          setSupportedVault(false)
+        } else {
+          setSupportedVault(true)
+        }
+      }
+    }
+
+    fetchData()
+    // eslint-disable-next-line
+  }, [supTokenList])
 
   useEffect(() => {
     let staked,
@@ -1785,7 +1820,7 @@ const AdvancedFarm = () => {
                         balanceList={balanceList}
                         defaultToken={defaultToken}
                         soonToSupList={soonToSupList}
-                        hasErrorOccurred={hasErrorOccurredConvert}
+                        supportedVault={supportedVault}
                       />
                       <DepositStart
                         pickedToken={pickedTokenDepo}
@@ -1838,11 +1873,11 @@ const AdvancedFarm = () => {
                         selectToken={selectTokenWith}
                         setSelectToken={setSelectTokenWith}
                         setPickedToken={setPickedTokenWith}
-                        supTokenList={supTokenList}
                         supTokenNoBalanceList={supTokenNoBalanceList}
                         balanceList={balanceList}
                         defaultToken={defaultToken}
                         soonToSupList={soonToSupList}
+                        supportedVault={supportedVault}
                       />
                       <WithdrawStart
                         unstakeInputValue={unstakeInputValue}

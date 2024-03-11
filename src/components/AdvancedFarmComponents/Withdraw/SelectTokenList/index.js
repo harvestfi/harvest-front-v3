@@ -23,6 +23,7 @@ const SelectTokenList = ({
   setPickedToken,
   setSelectToken,
   filterWord,
+  supportedVault,
 }) => {
   const [showList, setShowList] = useState(false)
 
@@ -133,15 +134,18 @@ const SelectTokenList = ({
           {balanceTokenList.length > 0 && (
             <>
               <Label padding="15px 24px 0px">
-                Tokens in your wallet which you can revert fTokens into
+                {supportedVault
+                  ? 'Tokens in your wallet which you can revert fTokens into'
+                  : 'Other, currently unsupported tokens in your wallet'}
               </Label>
               {balanceTokenList.map((data, i) => (
                 <Container
                   key={i}
                   className={i === clickBalanceListId ? 'active' : ''}
                   onClick={() => {
-                    handleBalanceListClick(i)
+                    if (supportedVault) handleBalanceListClick(i)
                   }}
+                  cursor={supportedVault ? 'pointer' : 'not-allowed'}
                   hoverColor="#F2F5FF"
                   activeColor="#ECFDF3"
                 >
@@ -177,8 +181,9 @@ const SelectTokenList = ({
                   key={i}
                   className={i === clicksupTokenNoBalanceListId ? 'active' : ''}
                   onClick={() => {
-                    handleSupTokenNoBalanceListClick(i)
+                    if (supportedVault) handleSupTokenNoBalanceListClick(i)
                   }}
+                  cursor={supportedVault ? 'pointer' : 'not-allowed'}
                   hoverColor="#F2F5FF"
                   activeColor="#ECFDF3"
                 >

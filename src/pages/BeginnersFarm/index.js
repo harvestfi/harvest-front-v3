@@ -151,7 +151,12 @@ const getVaultValue = token => {
 const BeginnersFarm = () => {
   const paramAddress = '0x0B0193fAD49DE45F5E2B0A9f5D6Bc3BB7D281688'
 
-  const { getPortalsBaseTokens, getPortalsBalances, SUPPORTED_TOKEN_LIST } = usePortals()
+  const {
+    getPortalsBaseTokens,
+    getPortalsEstimate,
+    getPortalsBalances,
+    SUPPORTED_TOKEN_LIST,
+  } = usePortals()
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
@@ -294,6 +299,7 @@ const BeginnersFarm = () => {
   const [activeDepo, setActiveDepo] = useState(true)
   const [welcomeMessage, setWelcomeMessage] = useState(true)
   const [showBadge, setShowBadge] = useState(false)
+  const [supportedVault, setSupportedVault] = useState(true)
 
   // Deposit
   const [depositStart, setDepositStart] = useState(false)
@@ -616,6 +622,35 @@ const BeginnersFarm = () => {
     console.debug('revert status', revertSuccess)
     getTokenBalance()
   }, [account, chain, balances, convertSuccess, revertSuccess, useIFARM]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    async function fetchData() {
+      if (supTokenList.length > 0) {
+        const fromToken = supTokenList[1].address
+        const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
+        const amount = '1000000'
+        const slippage = 0.5 // Default slippage Percent
+
+        const portalsEstimate = await getPortalsEstimate({
+          chainId: token.chain,
+          tokenIn: fromToken,
+          inputAmount: amount,
+          tokenOut: toToken,
+          slippage,
+          sender: null,
+        })
+
+        if (portalsEstimate.res.message === 'outputToken not found') {
+          setSupportedVault(false)
+        } else {
+          setSupportedVault(true)
+        }
+      }
+    }
+
+    fetchData()
+    // eslint-disable-next-line
+  }, [supTokenList])
 
   useEffect(() => {
     if (balanceList.length > 0 && defaultToken !== null) {
@@ -1595,7 +1630,7 @@ const BeginnersFarm = () => {
                         balanceList={balanceList}
                         defaultToken={defaultToken}
                         soonToSupList={soonToSupList}
-                        hasErrorOccurred={hasErrorOccurredConvert}
+                        supportedVault={supportedVault}
                       />
                       <DepositStart
                         pickedToken={pickedTokenDepo}
@@ -1651,6 +1686,7 @@ const BeginnersFarm = () => {
                         balanceList={balanceList}
                         defaultToken={defaultToken}
                         soonToSupList={soonToSupList}
+                        supportedVault={supportedVault}
                       />
                       <WithdrawStart
                         unstakeInputValue={unstakeInputValue}
