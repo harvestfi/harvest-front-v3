@@ -435,7 +435,7 @@ const AdvancedFarm = () => {
   // Show vault info badge when platform is 'Lodestar' and firstly view
   const firstView = localStorage.getItem('firstView')
   useEffect(() => {
-    const platform = token.platform[0].toLowerCase()
+    const platform = useIFARM ? 'Harvest' : token.platform[0].toLowerCase()
     if (platform.includes('lodestar')) {
       setVaultInfoMessage(true)
     }
@@ -444,7 +444,7 @@ const AdvancedFarm = () => {
       localStorage.setItem('firstView', true)
       setFirstViewInfo(true)
     }
-  }, [token.platform, firstView])
+  }, [token.platform, firstView, useIFARM])
 
   const closeBadge = () => {
     setVaultInfoMessage(false)
@@ -1181,7 +1181,9 @@ const AdvancedFarm = () => {
               {isMobile && (
                 <MobileChain>
                   <NetDetailItem>
-                    <NetDetailContent>{token.platform && token.platform[0]}</NetDetailContent>
+                    <NetDetailContent>
+                      {useIFARM ? 'Harvest' : token.platform && token.platform[0]}
+                    </NetDetailContent>
                   </NetDetailItem>
                   <ChainBack>
                     <img src={BadgeAry[badgeId]} alt="" />
