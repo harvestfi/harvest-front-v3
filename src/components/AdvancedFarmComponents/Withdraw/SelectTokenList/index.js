@@ -136,7 +136,7 @@ const SelectTokenList = ({
               <Label padding="15px 24px 0px">
                 {supportedVault
                   ? 'Tokens in your wallet which you can revert fTokens into'
-                  : 'Other, currently unsupported tokens in your wallet'}
+                  : 'Soon to be supported'}
               </Label>
               {balanceTokenList.map((data, i) => (
                 <Container
@@ -173,7 +173,7 @@ const SelectTokenList = ({
           )}
           {supTokenList.length > 0 && (
             <>
-              <Label padding="15px 24px 0px">
+              <Label padding="15px 24px 0px" showLabel={supportedVault ? 'block' : 'none'}>
                 Other supported tokens, which you can revert to{' '}
               </Label>
               {supTokenList.map((data, i) => (

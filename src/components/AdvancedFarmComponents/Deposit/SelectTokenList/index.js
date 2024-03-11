@@ -145,9 +145,7 @@ const SelectTokenList = ({
           {balanceTokenList.length > 0 && (
             <>
               <Label padding="15px 24px 0px">
-                {supportedVault
-                  ? 'Supported tokens in your wallet'
-                  : 'Other, currently unsupported tokens in your wallet'}
+                {supportedVault ? 'Supported tokens in your wallet' : 'Soon to be supported'}
               </Label>
               {balanceTokenList.map((data, i) => (
                 <Container
@@ -176,7 +174,7 @@ const SelectTokenList = ({
           )}
           {supTokenList.length > 0 && (
             <>
-              <Label padding="15px 24px 0px">
+              <Label padding="15px 24px 0px" showLabel={supportedVault ? 'block' : 'none'}>
                 {supportedVault
                   ? `Other supported convert tokens, which you don't have on your wallet`
                   : `Other, currently unsupported tokens, which you don't have in your wallet`}
