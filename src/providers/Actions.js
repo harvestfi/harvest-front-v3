@@ -459,12 +459,14 @@ const ActionsProvider = ({ children }) => {
           // }
 
           await onSuccessDeposit(updatedLpTokenBalance, updatedLpTokenApprovedBalance)
+          return true
         } catch (err) {
           // setPendingAction(null)
 
           const errorMessage = formatWeb3PluginErrorMessage(err, get(err, 'message'))
           toast.error(errorMessage)
-          onFailureDeposit()
+          await onFailureDeposit()
+          return false
         }
       }
     },
@@ -760,11 +762,13 @@ const ActionsProvider = ({ children }) => {
         // setPendingAction(null)
         // toast.success('Withdraw completed')
         await onSuccess()
+        return true
       } catch (err) {
         // setPendingAction(null)
         const errorMessage = formatWeb3PluginErrorMessage(err)
         toast.error(errorMessage)
-        onFailure()
+        await onFailure()
+        return false
       }
     },
     [],

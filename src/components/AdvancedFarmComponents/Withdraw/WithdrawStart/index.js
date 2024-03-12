@@ -154,11 +154,12 @@ const WithdrawStart = ({
         }
       }
     } else if (progressStep === 2) {
+      let isSuccess = true
       if (pickedDefaultToken) {
         setProgressStep(3)
         setButtonName('Pending Confirmation in Wallet')
         setStartSpinner(true)
-        await handleWithdraw(
+        isSuccess = await handleWithdraw(
           account,
           useIFARM ? IFARM_TOKEN_SYMBOL : tokenSymbol,
           unstakeBalance,
@@ -217,14 +218,17 @@ const WithdrawStart = ({
           setStartSpinner(false)
           setProgressStep(0)
           setButtonName('Approve Token')
+          isSuccess = false
           return
         }
       }
       // End Approve and Withdraw successfully
-      setStartSpinner(false)
-      setWithdrawFailed(false)
-      setProgressStep(4)
-      setButtonName('Success! Close this window.')
+      if (isSuccess) {
+        setStartSpinner(false)
+        setWithdrawFailed(false)
+        setProgressStep(4)
+        setButtonName('Success! Close this window.')
+      }
     } else if (progressStep === 4) {
       setRevertSuccess(true)
       setUnstakeInputValue(0)
