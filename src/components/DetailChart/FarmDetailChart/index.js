@@ -58,7 +58,11 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
   useEffect(() => {
     const initData = async () => {
       const data = await getDataQuery(365, address, chainId, account)
-      setApiData(data)
+      const updatedData = { ...data }
+      updatedData.vaultHistories = updatedData.vaultHistories.filter(
+        history => history.sharePrice !== '0',
+      )
+      setApiData(updatedData)
       if (isIFARM) {
         const dataIFarm = await getDataQuery(365, token.tokenAddress, chainId, account)
         if (dataIFarm) {
