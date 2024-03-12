@@ -2,24 +2,19 @@ import React from 'react'
 import { useHistory } from 'react-router-dom'
 import { useMediaQuery } from 'react-responsive'
 import ListItem from '../ListItem'
-import { isLedgerLive, formatNumber, formatNumberWido } from '../../../utils'
+import { formatNumber, formatNumberWido } from '../../../utils'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { directDetailUrl } from '../../../constants'
 import File from '../../../assets/images/logos/dashboard/file-02.svg'
 import MobileFile from '../../../assets/images/logos/dashboard/file-01.svg'
 import { BadgeIcon, Content, DetailView, FlexDiv, LogoImg, Img, ContentInner } from './style'
 
-const chainList = isLedgerLive()
-  ? [
-      { id: 1, name: 'Ethereum', chainId: 1 },
-      { id: 2, name: 'Polygon', chainId: 137 },
-    ]
-  : [
-      { id: 1, name: 'Ethereum', chainId: 1 },
-      { id: 2, name: 'Polygon', chainId: 137 },
-      { id: 3, name: 'Arbitrum', chainId: 42161 },
-      { id: 4, name: 'Base', chainId: 8453 },
-    ]
+const chainList = [
+  { id: 1, name: 'Ethereum', chainId: 1 },
+  { id: 2, name: 'Polygon', chainId: 137 },
+  { id: 3, name: 'Arbitrum', chainId: 42161 },
+  { id: 4, name: 'Base', chainId: 8453 },
+]
 
 const VaultRow = ({ info, lastElement, showDetail, setShowDetail, cKey }) => {
   const { push } = useHistory()

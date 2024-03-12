@@ -37,7 +37,7 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { fromWei } from '../../services/web3'
-import { parseValue, getTotalApy } from '../../utils'
+import { parseValue, getTotalApy, isLedgerLive } from '../../utils'
 import {
   Column,
   Container,
@@ -113,7 +113,7 @@ const getTokenPriceFromApi = async tokenID => {
 
 const Portfolio = () => {
   const { push } = useHistory()
-  const { connected, connectAction, account, balances, getWalletBalances } = useWallet()
+  const { connected, connectAction, account, balances, getWalletBalances, chainId } = useWallet()
   const { userStats, fetchUserPoolStats, totalPools, disableWallet } = usePools()
   const { profitShareAPY } = useStats()
   const { vaultsData, loadingVaults, farmingBalances, getFarmingBalances } = useVaults()
@@ -848,17 +848,21 @@ const Portfolio = () => {
           <></>
         ) : (
           <EmptyInfo weight={500} size={16} height={21} marginTop="25px">
-            <ExploreFarm
-              bgImage="first"
-              onClick={() => {
-                push(ROUTES.BEGINNERSFARM)
-              }}
-            >
-              <ExploreContent>
-                <ExploreTitle>Farm for Beginners</ExploreTitle>
-                <div>Get started with a simple ETH farm on Base.</div>
-              </ExploreContent>
-            </ExploreFarm>
+            {!isLedgerLive() || (isLedgerLive() && chainId === CHAIN_IDS.BASE) ? (
+              <ExploreFarm
+                bgImage="first"
+                onClick={() => {
+                  push(ROUTES.BEGINNERSFARM)
+                }}
+              >
+                <ExploreContent>
+                  <ExploreTitle>Farm for Beginners</ExploreTitle>
+                  <div>Get started with a simple ETH farm on Base.</div>
+                </ExploreContent>
+              </ExploreFarm>
+            ) : (
+              <></>
+            )}
             <ExploreFarm
               bgImage="second"
               onClick={() => {

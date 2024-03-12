@@ -15,7 +15,7 @@ import Zap from '../../assets/images/logos/filter/zap.svg'
 import { CHAIN_IDS } from '../../data/constants'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
-import { isLedgerLive, isSpecialApp } from '../../utils'
+import { isSpecialApp } from '../../utils'
 import ButtonGroup from '../ButtonGroup'
 import SearchBar from '../SearchBar'
 import {
@@ -42,17 +42,12 @@ import {
   ApplyFilterBtn,
 } from './style'
 
-const ChainsList = isLedgerLive()
-  ? [
-      { id: 0, name: 'Ethereum', img: ETHEREUM, chainId: CHAIN_IDS.ETH_MAINNET },
-      { id: 1, name: 'Polygon', img: POLYGON, chainId: CHAIN_IDS.POLYGON_MAINNET },
-    ]
-  : [
-      { id: 0, name: 'Ethereum', img: ETHEREUM, chainId: CHAIN_IDS.ETH_MAINNET },
-      { id: 1, name: 'Polygon', img: POLYGON, chainId: CHAIN_IDS.POLYGON_MAINNET },
-      { id: 2, name: 'Arbitrum', img: ARBITRUM, chainId: CHAIN_IDS.ARBITRUM_ONE },
-      { id: 3, name: 'Base', img: BASE, chainId: CHAIN_IDS.BASE },
-    ]
+const ChainsList = [
+  { id: 0, name: 'Ethereum', img: ETHEREUM, chainId: CHAIN_IDS.ETH_MAINNET },
+  { id: 1, name: 'Polygon', img: POLYGON, chainId: CHAIN_IDS.POLYGON_MAINNET },
+  { id: 2, name: 'Arbitrum', img: ARBITRUM, chainId: CHAIN_IDS.ARBITRUM_ONE },
+  { id: 3, name: 'Base', img: BASE, chainId: CHAIN_IDS.BASE },
+]
 
 const TrendsList = [
   { id: 0, name: 'LSD', backImg: LSDBack, status: 'LSD' },
@@ -434,7 +429,7 @@ const QuickFilter = ({
                           }
 
                           if (tempIds.length === 0 || tempIds.length === ChainsList.length) {
-                            tempIds = isLedgerLive() ? [0, 1] : [0, 1, 2, 3]
+                            tempIds = [0, 1, 2, 3]
                             setSelectedClass(tempIds)
                           } else {
                             setSelectedClass(tempIds)
@@ -475,7 +470,7 @@ const QuickFilter = ({
                   setRiskId(-1)
                   setAssetsId(-1)
                   setFarmId(-1)
-                  setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2, 3])
+                  setSelectedClass([0, 1, 2, 3])
                   onSelectStableCoin(false)
                   onAssetClick('')
                   onSelectFarmType('')
@@ -597,7 +592,7 @@ const QuickFilter = ({
                     }
 
                     if (tempIds.length === 0 || tempIds.length === ChainsList.length) {
-                      tempIds = isLedgerLive() ? [0, 1] : [0, 1, 2, 3]
+                      tempIds = [0, 1, 2, 3]
                       setSelectedClass(tempIds)
                     } else {
                       setSelectedClass(tempIds)
@@ -776,7 +771,7 @@ const QuickFilter = ({
                   setRiskId(-1)
                   setFarmId(-1)
                   setMobileFilterCount(0)
-                  setSelectedClass(isLedgerLive() ? [0, 1] : [0, 1, 2, 3])
+                  setSelectedClass([0, 1, 2, 3])
                   setSelChain([
                     CHAIN_IDS.ETH_MAINNET,
                     CHAIN_IDS.POLYGON_MAINNET,

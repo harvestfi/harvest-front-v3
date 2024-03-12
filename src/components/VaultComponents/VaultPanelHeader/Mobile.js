@@ -11,7 +11,6 @@ import LSD from '../../../assets/images/logos/lsd.svg'
 import DESCI from '../../../assets/images/logos/DeSci.svg'
 import { directDetailUrl } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { isLedgerLive } from '../../../utils'
 import {
   BadgeIcon,
   FlexDiv,
@@ -25,17 +24,12 @@ import VaultName from './sub-components/VaultName'
 import VaultUserBalance from './sub-components/VaultUserBalance'
 import VaultValue from './sub-components/VaultValue'
 
-const chainList = isLedgerLive()
-  ? [
-      { id: 1, name: 'Ethereum', chainId: 1 },
-      { id: 2, name: 'Polygon', chainId: 137 },
-    ]
-  : [
-      { id: 1, name: 'Ethereum', chainId: 1 },
-      { id: 2, name: 'Polygon', chainId: 137 },
-      { id: 3, name: 'Arbitrum', chainId: 42161 },
-      { id: 4, name: 'Base', chainId: 8453 },
-    ]
+const chainList = [
+  { id: 1, name: 'Ethereum', chainId: 1 },
+  { id: 2, name: 'Polygon', chainId: 137 },
+  { id: 3, name: 'Arbitrum', chainId: 42161 },
+  { id: 4, name: 'Base', chainId: 8453 },
+]
 
 const MobilePanelHeader = ({
   token,
@@ -49,7 +43,7 @@ const MobilePanelHeader = ({
   lsdToken,
   desciToken,
 }) => {
-  const BadgeAry = isLedgerLive() ? [ETHEREUM, POLYGON] : [ETHEREUM, POLYGON, ARBITRUM, BASE]
+  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE]
 
   const chainId = token.chain || token.data.chain
   const [badgeId, setBadgeId] = useState(-1)
