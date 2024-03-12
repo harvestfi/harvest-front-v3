@@ -67,10 +67,13 @@ const DepositStart = ({
   const { fetchUserPoolStats, userStats } = usePools()
   const { getPortalsApproval, portalsApprove, getPortals } = usePortals()
 
+  let pickedDefaultToken
+  if (pickedToken.symbol !== 'Select Token' && defaultToken) {
+    pickedDefaultToken = pickedToken.address.toLowerCase() === defaultToken.address.toLowerCase()
+  }
+
   const chainId = token.chain || token.data.chain
-
   const amount = toWei(inputAmount, pickedToken.decimals)
-
   const toToken = token.vaultAddress || token.tokenAddress
 
   const [slippagePercentage, setSlippagePercentage] = useState(null)
@@ -155,8 +158,6 @@ const DepositStart = ({
   }
 
   const startDeposit = async () => {
-    const pickedDefaultToken =
-      pickedToken.address.toLowerCase() === defaultToken.address.toLowerCase()
     if (progressStep === 0) {
       setStartSpinner(true)
       setProgressStep(1)
@@ -401,7 +402,7 @@ const DepositStart = ({
                 )}
               </NewLabel>
               <NewLabel weight="600" textAlign="right" display="flex" flexFlow="column">
-                {progressStep === 4 ? (
+                {!pickedDefaultToken && progressStep === 4 ? (
                   receiveAmount !== '' ? (
                     receiveAmount
                   ) : (
@@ -419,16 +420,16 @@ const DepositStart = ({
                 <NewLabel display="flex" flexFlow="column" weight="600" textAlign="right">
                   <span>{useIFARM ? `i${tokenSymbol}` : `f${tokenSymbol}`}</span>
                   <span>
-                    {progressStep === 4 ? (
+                    {!pickedDefaultToken && progressStep === 4 ? (
                       receiveUsd !== '' ? (
-                        <>≈ ${receiveUsd}</>
+                        <>≈${receiveUsd}</>
                       ) : (
-                        <>≈ $0</>
+                        <>≈$0</>
                       )
                     ) : minReceiveUsdAmount !== '' ? (
-                      <>≈ ${minReceiveUsdAmount}</>
+                      <>≈${minReceiveUsdAmount}</>
                     ) : (
-                      <>≈ $0</>
+                      <>≈$0</>
                     )}
                   </span>
                 </NewLabel>
