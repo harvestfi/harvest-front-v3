@@ -27,6 +27,7 @@ import DepositStart from '../../components/AdvancedFarmComponents/Deposit/Deposi
 import WithdrawBase from '../../components/AdvancedFarmComponents/Withdraw/WithdrawBase'
 import WithdrawSelectToken from '../../components/AdvancedFarmComponents/Withdraw/WithdrawSelectToken'
 import WithdrawStart from '../../components/AdvancedFarmComponents/Withdraw/WithdrawStart'
+import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
 import UserBalanceData from '../../components/UserBalanceChart/UserBalanceData'
 import {
   DECIMAL_PRECISION,
@@ -1312,86 +1313,115 @@ const BeginnersFarm = () => {
                   )}
                 </>
               ) : (
-                !isMobile && (
-                  <HalfInfo marginBottom="20px">
-                    <NewLabel
-                      weight={700}
-                      size="14px"
-                      height="24px"
-                      padding="10px 15px"
-                      borderRadius="15px 15px 0 0"
-                    >
-                      Source of Yield
-                    </NewLabel>
-                    <DescInfo>
-                      <div>
-                        <p>
-                          This farm supplies{' '}
-                          <a
-                            href="https://basescan.org/token/0x4200000000000000000000000000000000000006"
+                <>
+                  <HalfInfo padding="25px 18px" marginBottom={isMobile ? '20px' : '25px'}>
+                    <FarmDetailChart
+                      token={token}
+                      vaultPool={vaultPool}
+                      lastTVL={Number(vaultValue)}
+                      lastAPY={Number(totalApy)}
+                    />
+                  </HalfInfo>
+                  {!isMobile && (
+                    <HalfInfo marginBottom="20px">
+                      <NewLabel
+                        weight={700}
+                        size="14px"
+                        height="24px"
+                        padding="10px 15px"
+                        borderRadius="15px 15px 0 0"
+                      >
+                        Source of Yield
+                      </NewLabel>
+                      <DescInfo>
+                        <div>
+                          <p>
+                            This farm supplies{' '}
+                            <a
+                              href="https://basescan.org/token/0x4200000000000000000000000000000000000006"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              WETH
+                            </a>{' '}
+                            to Moonwell, a robust lending platform, earning{' '}
+                            <a
+                              href="https://basescan.org/token/0xFF8adeC2221f9f4D8dfbAFa6B9a297d17603493D"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              WELL
+                            </a>{' '}
+                            and{' '}
+                            <a
+                              href="https://basescan.org/token/0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              USDC
+                            </a>{' '}
+                            from lending activities. At every harvest, the earned rewards are
+                            converted into more{' '}
+                            <a
+                              href="https://basescan.org/token/0x4200000000000000000000000000000000000006"
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              WETH
+                            </a>
+                            .
+                          </p>
+                        </div>
+                      </DescInfo>
+                      <FlexDiv className="address" padding="0 15px 20px">
+                        {token.vaultAddress && (
+                          <InfoLabel
+                            display="flex"
+                            href={`${getExplorerLink(token.chain)}/address/${token.vaultAddress}`}
                             target="_blank"
+                            onClick={e => e.stopPropagation()}
                             rel="noopener noreferrer"
                           >
-                            WETH
-                          </a>{' '}
-                          to Moonwell, a robust lending platform, earning{' '}
-                          <a
-                            href="https://basescan.org/token/0xFF8adeC2221f9f4D8dfbAFa6B9a297d17603493D"
+                            <NewLabel
+                              size="12px"
+                              weight={isMobile ? 600 : 600}
+                              height="16px"
+                              self="center"
+                              color="#15202b"
+                            >
+                              Vault Address
+                            </NewLabel>
+                          </InfoLabel>
+                        )}
+                        {vaultPool.autoStakePoolAddress && (
+                          <InfoLabel
+                            display="flex"
+                            href={`${getExplorerLink(token.chain)}/address/${
+                              vaultPool.contractAddress
+                            }`}
                             target="_blank"
+                            onClick={e => e.stopPropagation()}
                             rel="noopener noreferrer"
                           >
-                            WELL
-                          </a>{' '}
-                          and{' '}
-                          <a
-                            href="https://basescan.org/token/0xd9aAEc86B65D86f6A7B5B1b0c42FFA531710b6CA"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            USDC
-                          </a>{' '}
-                          from lending activities. At every harvest, the earned rewards are
-                          converted into more{' '}
-                          <a
-                            href="https://basescan.org/token/0x4200000000000000000000000000000000000006"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            WETH
-                          </a>
-                          .
-                        </p>
-                      </div>
-                    </DescInfo>
-                    <FlexDiv className="address" padding="0 15px 20px">
-                      {token.vaultAddress && (
-                        <InfoLabel
-                          display="flex"
-                          href={`${getExplorerLink(token.chain)}/address/${token.vaultAddress}`}
-                          target="_blank"
-                          onClick={e => e.stopPropagation()}
-                          rel="noopener noreferrer"
-                        >
-                          <NewLabel
-                            size="12px"
-                            weight={isMobile ? 600 : 600}
-                            height="16px"
-                            self="center"
-                            color="#15202b"
-                          >
-                            Vault Address
-                          </NewLabel>
-                        </InfoLabel>
-                      )}
-                      {vaultPool.autoStakePoolAddress && (
+                            <NewLabel
+                              size="12px"
+                              weight={isMobile ? 600 : 600}
+                              height="16px"
+                              self="center"
+                              color="#15202b"
+                            >
+                              Strategy Address
+                            </NewLabel>
+                          </InfoLabel>
+                        )}
                         <InfoLabel
                           display="flex"
                           href={`${getExplorerLink(token.chain)}/address/${
-                            vaultPool.contractAddress
+                            vaultPool.autoStakePoolAddress || vaultPool.contractAddress
                           }`}
-                          target="_blank"
                           onClick={e => e.stopPropagation()}
                           rel="noopener noreferrer"
+                          target="_blank"
                         >
                           <NewLabel
                             size="12px"
@@ -1400,32 +1430,13 @@ const BeginnersFarm = () => {
                             self="center"
                             color="#15202b"
                           >
-                            Strategy Address
+                            Pool Address
                           </NewLabel>
                         </InfoLabel>
-                      )}
-                      <InfoLabel
-                        display="flex"
-                        href={`${getExplorerLink(token.chain)}/address/${
-                          vaultPool.autoStakePoolAddress || vaultPool.contractAddress
-                        }`}
-                        onClick={e => e.stopPropagation()}
-                        rel="noopener noreferrer"
-                        target="_blank"
-                      >
-                        <NewLabel
-                          size="12px"
-                          weight={isMobile ? 600 : 600}
-                          height="16px"
-                          self="center"
-                          color="#15202b"
-                        >
-                          Pool Address
-                        </NewLabel>
-                      </InfoLabel>
-                    </FlexDiv>
-                  </HalfInfo>
-                )
+                      </FlexDiv>
+                    </HalfInfo>
+                  )}
+                </>
               )}
             </MainSection>
             <RestContent height={activeMainTag === 0 ? '100%' : 'fit-content'}>
