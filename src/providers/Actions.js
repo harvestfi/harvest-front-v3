@@ -469,6 +469,8 @@ const ActionsProvider = ({ children }) => {
           return false
         }
       }
+
+      return false
     },
     [],
   )
