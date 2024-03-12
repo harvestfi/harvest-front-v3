@@ -81,6 +81,10 @@ const WithdrawStart = ({
 
   const { getPortalsApproval, portalsApprove, getPortals } = usePortals()
 
+  let pickedDefaultToken
+  if (pickedToken.symbol !== 'Select' && defaultToken) {
+    pickedDefaultToken = pickedToken.address.toLowerCase() === defaultToken.address.toLowerCase()
+  }
   const SlippageValues = [null, 0.1, 0.5, 1, 5]
   const onInputSlippage = e => {
     let inputValue = e.target.value
@@ -118,8 +122,6 @@ const WithdrawStart = ({
   }
 
   const startWithdraw = async () => {
-    const pickedDefaultToken =
-      pickedToken.address.toLowerCase() === defaultToken.address.toLowerCase()
     if (progressStep === 0) {
       setStartSpinner(true)
       setProgressStep(1)
@@ -371,7 +373,7 @@ const WithdrawStart = ({
               </NewLabel>
               <NewLabel display="flex" flexFlow="column" weight="600" textAlign="right">
                 <>
-                  {progressStep === 4 ? (
+                  {!pickedDefaultToken && progressStep === 4 ? (
                     revertedAmount !== '' ? (
                       revertedAmount
                     ) : (
@@ -397,7 +399,7 @@ const WithdrawStart = ({
                   ) : (
                     <AnimatedDots />
                   )} */}
-                  {progressStep === 4 ? (
+                  {!pickedDefaultToken && progressStep === 4 ? (
                     revertedAmountUsd === 'NaN' || revertedAmountUsd === '' ? (
                       '-'
                     ) : revertedAmountUsd !== '' ? (
