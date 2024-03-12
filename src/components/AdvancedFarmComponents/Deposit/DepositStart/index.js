@@ -219,12 +219,13 @@ const DepositStart = ({
         }
       }
     } else if (progressStep === 2) {
+      let isSuccess = true
       if (pickedDefaultToken) {
         setProgressStep(3)
         setButtonName('Pending Confirmation in Wallet')
         setStartSpinner(true)
         // console.log(amount)
-        await handleDeposit(
+        isSuccess = await handleDeposit(
           token,
           account,
           tokenSymbol,
@@ -258,14 +259,17 @@ const DepositStart = ({
           setStartSpinner(false)
           setProgressStep(0)
           setButtonName('Approve Token')
+          isSuccess = false
           return
         }
       }
       // End Approve and Deposit successfully
-      setStartSpinner(false)
-      setDepositFailed(false)
-      setProgressStep(4)
-      setButtonName('Success! Close this window.')
+      if (isSuccess) {
+        setStartSpinner(false)
+        setDepositFailed(false)
+        setProgressStep(4)
+        setButtonName('Success! Close this window.')
+      }
     } else if (progressStep === 4) {
       setConvertSuccess(true)
       setSelectToken(false)
