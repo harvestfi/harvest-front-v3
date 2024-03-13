@@ -1174,7 +1174,7 @@ const AdvancedFarm = () => {
                   if (isFromEarningPage) {
                     history.push(ROUTES.PORTFOLIO)
                   } else {
-                    history.push(ROUTES.ADVANCED)
+                    history.push(`${ROUTES.ADVANCED}${location.search}`)
                   }
                 }}
               >
