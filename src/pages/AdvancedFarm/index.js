@@ -1229,9 +1229,9 @@ const AdvancedFarm = () => {
                     onClick={() => {
                       setActiveMainTag(i)
                       if (i !== 0) {
-                        push(`${pathname}#${tag.name.toLowerCase()}`)
+                        push(`${pathname}${location.search}#${tag.name.toLowerCase()}`)
                       } else {
-                        push(pathname)
+                        push(`${pathname}${location.search}`)
                       }
                     }}
                   >
