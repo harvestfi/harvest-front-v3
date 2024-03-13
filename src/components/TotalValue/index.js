@@ -26,6 +26,7 @@ const TotalValue = ({ content, price, toolTipTitle, toolTip }) => {
           backgroundColor="black"
           borderColor="black"
           textColor="white"
+          place="bottom"
         >
           <NewLabel
             size={isMobile ? '10px' : '12px'}

@@ -34,6 +34,11 @@ const Div = styled.div`
   #tt-daily-yield,
   #tt-rewards {
     max-width: 300px;
+
+    @media screen and (max-width: 992px) {
+      max-width: unset;
+      left: 0px !important;
+    }
   }
 `
 
