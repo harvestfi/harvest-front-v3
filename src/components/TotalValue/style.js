@@ -35,7 +35,7 @@ const Div = styled.div`
   #tt-rewards {
     max-width: 300px;
 
-    @media screen and (max-width: 992px) {
+    @media screen and (max-width: 668px) {
       max-width: unset;
       left: 0px !important;
     }
