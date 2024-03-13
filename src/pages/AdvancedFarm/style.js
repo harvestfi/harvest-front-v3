@@ -515,6 +515,10 @@ const WelcomeTicket = styled.a`
   font-weight: 400;
   color: #6941c6;
   text-decoration: underline;
+
+  &.useIFARM {
+    font-weight: 600;
+  }
 `
 
 const WelcomeClose = styled.div`

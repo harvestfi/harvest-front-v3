@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
 import BASE from '../../../assets/images/chains/base.svg'
 import ETHEREUM from '../../../assets/images/chains/ethereum.svg'
@@ -43,6 +43,7 @@ const MobilePanelHeader = ({
   lsdToken,
   desciToken,
 }) => {
+  const location = useLocation()
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE]
 
   const chainId = token.chain || token.data.chain
@@ -74,7 +75,7 @@ const MobilePanelHeader = ({
           ? token.data.collateralAddress
           : token.vaultAddress || token.tokenAddress
         setPrevPage(window.location.href)
-        const url = `${directDetailUrl}${network}/${address}`
+        const url = `${directDetailUrl}${network}/${address}${location.search}`
         push(url)
       }}
     >

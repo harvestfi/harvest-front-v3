@@ -357,8 +357,8 @@ const AdvancedFarm = () => {
 
   // Switch Tag (Convert/Revert)
   const [activeDepo, setActiveDepo] = useState(true)
-  const [vaultInfoMessage, setVaultInfoMessage] = useState(false)
-  const [firstViewInfo, setFirstViewInfo] = useState(false)
+  const [showVaultInfo, setShowVaultInfo] = useState(false)
+  const [showIFARMInfo, setShowIFARMInfo] = useState(false)
   const [supportedVault, setSupportedVault] = useState(true)
 
   // Deposit
@@ -432,23 +432,26 @@ const AdvancedFarm = () => {
     { name: 'Details', img: BarChart },
   ]
 
-  // Show vault info badge when platform is 'Lodestar' and firstly view
+  // Show vault info badge when platform is 'Lodestar' or 'Harvest' and first visit
   useEffect(() => {
-    const platform = useIFARM ? 'Harvest' : token.platform[0].toLowerCase()
-    if (platform.includes('lodestar')) {
-      setVaultInfoMessage(true)
-    }
-
+    const platform = useIFARM ? 'Harvest' : token.platform?.[0]?.toLowerCase() ?? ''
+    const firstViewIFarm = localStorage.getItem('firstViewIFarm')
     const firstView = localStorage.getItem('firstView')
-    if (firstView === null || firstView === 'true') {
+    if (platform === 'Harvest' && (firstViewIFarm === null || firstViewIFarm === 'true')) {
+      localStorage.setItem('firstViewIFarm', true)
+      setShowIFARMInfo(true)
+    } else if (platform.includes('lodestar') && (firstView === null || firstView === 'true')) {
       localStorage.setItem('firstView', true)
-      setFirstViewInfo(true)
+      setShowVaultInfo(true)
     }
   }, [token.platform, useIFARM])
 
+  const closeIFARMBadge = () => {
+    setShowIFARMInfo(false)
+    localStorage.setItem('firstViewIFarm', 'false')
+  }
   const closeBadge = () => {
-    setVaultInfoMessage(false)
-    setFirstViewInfo(false)
+    setShowVaultInfo(false)
     localStorage.setItem('firstView', 'false')
   }
 
@@ -1171,7 +1174,7 @@ const AdvancedFarm = () => {
                   if (isFromEarningPage) {
                     history.push(ROUTES.PORTFOLIO)
                   } else {
-                    history.push(ROUTES.ADVANCED)
+                    history.push(`${ROUTES.ADVANCED}${location.search}`)
                   }
                 }}
               >
@@ -1226,9 +1229,9 @@ const AdvancedFarm = () => {
                     onClick={() => {
                       setActiveMainTag(i)
                       if (i !== 0) {
-                        push(`${pathname}#${tag.name.toLowerCase()}`)
+                        push(`${pathname}${location.search}#${tag.name.toLowerCase()}`)
                       } else {
-                        push(pathname)
+                        push(`${pathname}${location.search}`)
                       }
                     }}
                   >
@@ -1259,8 +1262,7 @@ const AdvancedFarm = () => {
         <BigDiv>
           <InternalSection>
             {activeMainTag === 0 ? (
-              vaultInfoMessage &&
-              firstViewInfo && (
+              showVaultInfo ? (
                 <WelcomeBox>
                   <BiInfoCircle className="info-circle" fontSize={20} />
                   <WelcomeContent>
@@ -1288,6 +1290,33 @@ const AdvancedFarm = () => {
                     <RxCross2 onClick={closeBadge} />
                   </WelcomeClose>
                 </WelcomeBox>
+              ) : showIFARMInfo ? (
+                <WelcomeBox>
+                  <BiInfoCircle className="info-circle" fontSize={20} />
+                  <WelcomeContent>
+                    <WelcomeTitle>Vault Note</WelcomeTitle>
+                    <WelcomeText>
+                      Legacy FARM staking is currently available in the previous app version{' '}
+                      <WelcomeTicket
+                        className="useIFARM"
+                        href="https://v3.harvest.finance/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        under this link
+                      </WelcomeTicket>
+                      .
+                      <WelcomeBottom>
+                        <WelcomeKnow onClick={closeIFARMBadge}>Alright, got it!</WelcomeKnow>
+                      </WelcomeBottom>
+                    </WelcomeText>
+                  </WelcomeContent>
+                  <WelcomeClose>
+                    <RxCross2 onClick={closeIFARMBadge} />
+                  </WelcomeClose>
+                </WelcomeBox>
+              ) : (
+                <></>
               )
             ) : activeMainTag === 2 ? (
               <BoxCover>

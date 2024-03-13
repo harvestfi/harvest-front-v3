@@ -261,7 +261,8 @@ const Portfolio = () => {
           totalBalanceUSD = 0,
           valueRewards = 0,
           totalDailyYield = 0,
-          totalMonthlyYield = 0
+          totalMonthlyYield = 0,
+          sortedTokenList
 
         if (showInactiveFarms) {
           stakedVaults = Object.keys(userStats).filter(
@@ -604,7 +605,13 @@ const Portfolio = () => {
         setTotalRewards(valueRewards)
         setTotalYieldDaily(totalDailyYield)
         setTotalYieldMonthly(totalMonthlyYield)
-        const sortedTokenList = orderBy(newStats, ['balance'], ['desc'])
+
+        const storedSortingDashboard = localStorage.getItem('sortingDashboard')
+        if (storedSortingDashboard) {
+          sortedTokenList = orderBy(newStats, [JSON.parse(storedSortingDashboard)], ['desc'])
+        } else {
+          sortedTokenList = orderBy(newStats, ['balance'], ['desc'])
+        }
         setFarmTokenList(sortedTokenList)
         if (sortedTokenList.length === 0) {
           setNoFarm(true)
@@ -619,6 +626,7 @@ const Portfolio = () => {
     const tokenList = orderBy(farmTokenList, [field], [sortOrder ? 'asc' : 'desc'])
     setFarmTokenList(tokenList)
     setSortOrder(!sortOrder)
+    localStorage.setItem('sortingDashboard', JSON.stringify(field))
   }
 
   useEffect(() => {

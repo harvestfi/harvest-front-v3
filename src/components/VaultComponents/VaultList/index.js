@@ -653,6 +653,7 @@ const VaultList = () => {
     } else {
       setSortOrder('desc')
       setSortParam(param)
+      localStorage.setItem('sortingStatus', JSON.stringify(param))
     }
   }
 
@@ -677,7 +678,10 @@ const VaultList = () => {
         loadUserFarmingBalances()
       }
 
-      if (hasSwitchedAccount) {
+      const storedSortingStatus = localStorage.getItem('sortingStatus')
+      if (storedSortingStatus) {
+        setSortParam(JSON.parse(storedSortingStatus))
+      } else if (hasSwitchedAccount) {
         setSortingParams('deposits')
       }
     },
