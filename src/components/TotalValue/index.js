@@ -23,7 +23,7 @@ const TotalValue = ({ content, price, toolTipTitle, toolTip }) => {
         />
         <ReactTooltip
           id={toolTipTitle}
-          backgroundColor="black"
+          backgroundColor="#101828"
           borderColor="black"
           textColor="white"
           place="bottom"
