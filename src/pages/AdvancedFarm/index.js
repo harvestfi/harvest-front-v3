@@ -359,7 +359,7 @@ const AdvancedFarm = () => {
   const [activeDepo, setActiveDepo] = useState(true)
   const [showVaultInfo, setShowVaultInfo] = useState(false)
   const [showIFARMInfo, setShowIFARMInfo] = useState(false)
-  const [supportedVault, setSupportedVault] = useState(true)
+  const [supportedVault, setSupportedVault] = useState(false)
 
   // Deposit
   const [depositStart, setDepositStart] = useState(false)
@@ -682,9 +682,15 @@ const AdvancedFarm = () => {
           const directData = curBalances.find(
             el => el.address.toLowerCase() === tokenAddress.toLowerCase(),
           )
-          const directBalance = directData ? directData.balance : '0'
+          const directBalance = directData
+            ? directData.balance
+            : balances[id]
+            ? new BigNumber(balances[id]).div(10 ** token.decimals).toFixed()
+            : '0'
           const directUsdPrice = token.usdPrice
-          const directUsdValue = directData?.usdValue ?? '0'
+          const directUsdValue = directData
+            ? directData.usdValue
+            : new BigNumber(directBalance).times(directUsdPrice).toFixed()
 
           if (!(Object.keys(directInSup).length === 0 && directInSup.constructor === Object)) {
             directInSup.balance = directBalance
@@ -807,7 +813,7 @@ const AdvancedFarm = () => {
       let tokenToSet = null
 
       // Check if defaultToken is present in the balanceList
-      if (defaultToken.balance !== '0') {
+      if (defaultToken.balance !== '0' || !supportedVault) {
         setPickedTokenDepo(defaultToken)
         setBalanceDepo(defaultToken.balance)
         return
@@ -845,7 +851,7 @@ const AdvancedFarm = () => {
       setPickedTokenDepo(supTokenList.find(coin => coin.symbol === 'USDC'))
       setBalanceDepo('0')
     }
-  }, [balanceList, supTokenList, defaultToken, chain, SUPPORTED_TOKEN_LIST])
+  }, [balanceList, supTokenList, defaultToken, chain, SUPPORTED_TOKEN_LIST, supportedVault])
 
   const { pageBackColor, fontColor, filterColor } = useThemeContext()
 
@@ -1841,6 +1847,8 @@ const AdvancedFarm = () => {
                         setHasErrorOccurred={setHasErrorOccurredConvert}
                         failureCount={failureCountConvert}
                         setFailureCount={setFailureCountConvert}
+                        supportedVault={supportedVault}
+                        setSupportedVault={setSupportedVault}
                       />
                       <DepositSelectToken
                         selectToken={selectTokenDepo}
