@@ -93,6 +93,8 @@ const DepositBase = ({
   setHasErrorOccurred,
   failureCount,
   setFailureCount,
+  supportedVault,
+  setSupportedVault,
 }) => {
   const { connected, connectAction, account, chainId, setChainId, web3 } = useWallet()
   const { getPortalsEstimate, getPortalsToken } = usePortals()
@@ -168,7 +170,7 @@ const DepositBase = ({
               .dividedBy(pricePerFullShare)
               .toString()
             outputAmountDefault = toWei(outputAmountDefaultDecimals, pickedToken.decimals, 0)
-          } else {
+          } else if (supportedVault) {
             portalsEstimate = await getPortalsEstimate({
               chainId,
               tokenIn: fromToken,
@@ -177,6 +179,12 @@ const DepositBase = ({
               slippage,
               sender: overBalance ? null : account,
             })
+
+            if (portalsEstimate.res.message === 'outputToken not found') {
+              setSupportedVault(false)
+            } else {
+              setSupportedVault(true)
+            }
           }
 
           if (pickedDefaultToken || portalsEstimate.succeed) {
@@ -299,6 +307,8 @@ const DepositBase = ({
     failureCount,
     setFailureCount,
     setHasErrorOccurred,
+    supportedVault,
+    setSupportedVault,
   ])
 
   const onClickDeposit = async () => {
