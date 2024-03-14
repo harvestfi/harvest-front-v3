@@ -349,8 +349,8 @@ const Home = () => {
             <DescImg src={Extra2} alt="tutor" />
             <DescText>
               It is important to note that this box provides a live valuation on our Underlying
-              Deposit, which is constantly exposed to market volatility (except for stablecoins).
-              The beginner farm, which auto-compounds ETH, can see its USD valuation go up and down.
+              Deposit, which is constantly exposed to market volatility (even in stablecoin farms,
+              My Balance and the green line on the chart can fluctuate by a small margin).
               <br />
               <br />
               At the end of the day, Harvest auto-compounds ETH into more ETH units for farmers
