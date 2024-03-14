@@ -113,6 +113,25 @@ const DescText = styled.div`
   font-weight: 400;
   line-height: 28px;
 
+  div.italic {
+    color: #000;
+    font-style: italic;
+    font-family: initial;
+  }
+
+  div.note {
+    color: #000;
+    font-style: italic;
+    font-weight: 600;
+    font-family: initial;
+  }
+
+  div.label {
+    display: inline;
+    background: #f2f2f2;
+    padding: 0px 5px;
+  }
+
   span {
     font-weight: 600;
   }
@@ -122,6 +141,10 @@ const DescText = styled.div`
     font-weight: 400;
   }
 
+  a.classic {
+    font-weight: 600;
+  }
+
   ul.top-list {
     border-bottom: 1px solid #eaecf0;
     padding-bottom: 32px;
@@ -129,17 +152,16 @@ const DescText = styled.div`
   }
 `
 
-const Bullet = styled.div`
-  background: ${props => props.bgColor || 'yellow'};
-  border-radius: 3px;
-  display: inline-block;
-  margin: 0px 5px 0px 0px;
-  padding: 6px;
-`
-
 const DescImg = styled.img`
   width: 100%;
   padding: 40px 0px;
+`
+
+const DescImgText = styled.div`
+  font-size: 14px;
+  color: #475467;
+  text-align: center;
+  margin: -35px 0px 35px;
 `
 
 const CoinSection = styled.div`
@@ -177,12 +199,12 @@ export {
   TopSection,
   TopContainer,
   Inner,
-  Bullet,
   CoinSection,
   Title,
   WrapperDiv,
   DescText,
   DescImg,
+  DescImgText,
   HeaderTitle,
   HeaderDesc,
 }
