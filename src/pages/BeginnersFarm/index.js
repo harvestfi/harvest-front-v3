@@ -446,7 +446,7 @@ const BeginnersFarm = () => {
               const item = {
                 symbol: balance.symbol,
                 address: balance.address,
-                balance: balance.balance,
+                balance: new BigNumber(balance.rawBalance).div(10 ** balance.decimals).toFixed(),
                 rawBalance: balance.rawBalance,
                 default: false,
                 usdValue: balance.balanceUSD,
