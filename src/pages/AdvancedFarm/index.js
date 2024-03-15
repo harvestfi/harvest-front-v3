@@ -378,13 +378,13 @@ const AdvancedFarm = () => {
   // Withdraw
   const [withdrawStart, setWithdrawStart] = useState(false)
   const [selectTokenWith, setSelectTokenWith] = useState(false)
-  const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select' })
   const [unstakeBalance, setUnstakeBalance] = useState('0')
+  const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select' })
+  const [unstakeInputValue, setUnstakeInputValue] = useState('0')
   const [revertFromInfoAmount, setRevertFromInfoAmount] = useState('')
   const [revertFromInfoUsdAmount, setRevertFromInfoUsdAmount] = useState('')
   const [revertMinReceivedAmount, setRevertMinReceivedAmount] = useState('')
   const [revertMinReceivedUsdAmount, setRevertMinReceivedUsdAmount] = useState('')
-  const [unstakeInputValue, setUnstakeInputValue] = useState('0')
   const [revertSuccess, setRevertSuccess] = useState(false)
   const [hasErrorOccurredRevert, setHasErrorOccurredRevert] = useState(0)
 

@@ -319,13 +319,13 @@ const BeginnersFarm = () => {
   // Withdraw
   const [withdrawStart, setWithdrawStart] = useState(false)
   const [selectTokenWith, setSelectTokenWith] = useState(false)
-  const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select' })
   const [unstakeBalance, setUnstakeBalance] = useState('0')
+  const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select' })
+  const [unstakeInputValue, setUnstakeInputValue] = useState('0')
   const [revertFromInfoAmount, setRevertFromInfoAmount] = useState('')
   const [revertFromInfoUsdAmount, setRevertFromInfoUsdAmount] = useState('')
   const [revertMinReceivedAmount, setRevertMinReceivedAmount] = useState('')
   const [revertMinReceivedUsdAmount, setRevertMinReceivedUsdAmount] = useState('')
-  const [unstakeInputValue, setUnstakeInputValue] = useState('0')
   const [revertSuccess, setRevertSuccess] = useState(false)
   const [hasErrorOccurredRevert, setHasErrorOccurredRevert] = useState(0)
 
@@ -659,6 +659,17 @@ const BeginnersFarm = () => {
 
     fetchData()
     // eslint-disable-next-line
+  }, [supTokenList])
+
+  useEffect(() => {
+    if (supTokenList.length > 0) {
+      for (let i = 0; i < supTokenList.length; i += 1) {
+        if (supTokenList[i].symbol === 'ETH') {
+          setPickedTokenWith(supTokenList[i])
+          return
+        }
+      }
+    }
   }, [supTokenList])
 
   useEffect(() => {
