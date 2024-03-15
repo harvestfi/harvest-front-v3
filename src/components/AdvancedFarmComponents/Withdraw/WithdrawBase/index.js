@@ -10,9 +10,11 @@ import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import ArrowDown from '../../../../assets/images/logos/beginners/arrow-narrow-down.svg'
 import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.svg'
 import HelpIcon from '../../../../assets/images/logos/beginners/help-circle.svg'
+import { BEGINNERS_BALANCES_DECIMALS } from '../../../../constants'
 import { useWallet } from '../../../../providers/Wallet'
 import { fromWei, toWei } from '../../../../services/web3'
 import { addresses } from '../../../../data'
+import { formatNumberWido, isSpecialApp } from '../../../../utils'
 import AnimatedDots from '../../../AnimatedDots'
 import Button from '../../../Button'
 import { CHAIN_IDS } from '../../../../data/constants'
@@ -20,7 +22,9 @@ import {
   BaseWidoDiv,
   InfoIconCircle,
   NewLabel,
+  TokenInput,
   TokenAmount,
+  TokenUSDAmount,
   TokenInfo,
   TokenSelect,
   Title,
@@ -34,7 +38,6 @@ import {
   HasErrorSection,
   FlexDiv,
 } from './style'
-import { isSpecialApp } from '../../../../utils'
 import { usePortals } from '../../../../providers/Portals'
 
 const getChainName = chain => {
@@ -77,9 +80,11 @@ const WithdrawBase = ({
   switchMethod,
   useIFARM,
   setRevertFromInfoAmount,
+  revertFromInfoUsdAmount,
   setRevertFromInfoUsdAmount,
   setRevertMinReceivedAmount,
   revertMinReceivedAmount,
+  setRevertMinReceivedUsdAmount,
   hasErrorOccurred,
   setHasErrorOccurred,
 }) => {
@@ -131,6 +136,7 @@ const WithdrawBase = ({
           let fromInfoValue = '',
             fromInfoUsdValue = '',
             minReceivedString = '',
+            minReceivedUsdString,
             outputAmountDefault = ''
           const toToken = pickedToken.address
 
@@ -159,8 +165,17 @@ const WithdrawBase = ({
           }
 
           if (pickedDefaultToken || portalsEstimate.succeed) {
-            const fromTokenDetail = await getPortalsToken(chainId, fromToken)
-            const fromTokenUsdPrice = fromTokenDetail?.price
+            let fromTokenUsdPrice, toTokenUsdPrice, fromTokenDetail, toTokenDetail
+            if (pickedDefaultToken) {
+              fromTokenUsdPrice = Number(pickedToken.usdPrice) * pricePerFullShare
+              toTokenUsdPrice = pickedToken.usdPrice
+            } else {
+              fromTokenDetail = await getPortalsToken(chainId, fromToken)
+              toTokenDetail = await getPortalsToken(chainId, toToken)
+              fromTokenUsdPrice = fromTokenDetail?.price
+              toTokenUsdPrice = toTokenDetail?.price
+            }
+
             const quoteResult = {
               fromTokenAmount: amount,
               fromTokenUsdPrice,
@@ -172,32 +187,64 @@ const WithdrawBase = ({
             fromInfoValue = new BigNumber(
               fromWei(
                 quoteResult.fromTokenAmount,
-                useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
-                useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
+                useIFARM
+                  ? fAssetPool?.lpTokenData?.decimals
+                  : pickedDefaultToken
+                  ? token?.decimals
+                  : fromTokenDetail?.decimals,
+                useIFARM
+                  ? fAssetPool?.lpTokenData?.decimals
+                  : pickedDefaultToken
+                  ? token?.decimals
+                  : fromTokenDetail?.decimals,
               ),
             ).toString()
             fromInfoUsdValue =
               quoteResult.fromTokenAmount === null
                 ? '0'
-                : new BigNumber(
+                : formatNumberWido(
                     fromWei(
                       quoteResult.fromTokenAmount,
-                      useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
-                      useIFARM ? fAssetPool?.lpTokenData?.decimals : fromTokenDetail?.decimals,
+                      useIFARM
+                        ? fAssetPool?.lpTokenData?.decimals
+                        : pickedDefaultToken
+                        ? token?.decimals
+                        : fromTokenDetail?.decimals,
+                      useIFARM
+                        ? fAssetPool?.lpTokenData?.decimals
+                        : pickedDefaultToken
+                        ? token?.decimals
+                        : fromTokenDetail?.decimals,
                       true,
                     ) * quoteResult.fromTokenUsdPrice,
-                  ).toString()
+                    BEGINNERS_BALANCES_DECIMALS,
+                  )
             minReceivedString = new BigNumber(
               fromWei(quoteResult.minToTokenAmount, pickedToken.decimals, pickedToken.decimals),
             ).toString()
+            minReceivedUsdString = formatNumberWido(
+              parseFloat(minReceivedString) * toTokenUsdPrice,
+              BEGINNERS_BALANCES_DECIMALS,
+            )
+
+            if (Number(fromInfoUsdValue) < 0.01) {
+              setRevertFromInfoUsdAmount('<$0.01')
+            } else {
+              setRevertFromInfoUsdAmount(`$${fromInfoUsdValue}`)
+            }
+            if (Number(minReceivedUsdString) < 0.01) {
+              setRevertMinReceivedUsdAmount('<$0.01')
+            } else {
+              setRevertMinReceivedUsdAmount(`$${minReceivedUsdString}`)
+            }
             setRevertFromInfoAmount(fromInfoValue)
-            setRevertFromInfoUsdAmount(fromInfoUsdValue)
             setRevertMinReceivedAmount(minReceivedString)
             setHasErrorOccurred(0)
           } else {
             setRevertFromInfoAmount('-')
             setRevertFromInfoUsdAmount('-')
             setRevertMinReceivedAmount('-')
+            setRevertMinReceivedUsdAmount('-')
             if (
               portalsEstimate.res.message === 'inputToken not found' ||
               portalsEstimate.res.message === 'Unexpected error'
@@ -345,7 +392,22 @@ const WithdrawBase = ({
             >
               Amount to Revert
             </NewLabel>
-            <TokenAmount type="text" value={unstakeInputValue} onChange={onInputUnstake} />
+            <TokenInput>
+              <TokenAmount type="text" value={unstakeInputValue} onChange={onInputUnstake} />
+              <TokenUSDAmount>
+                {unstakeInputValue === '0' || unstakeInputValue === '' ? (
+                  '$0'
+                ) : revertFromInfoUsdAmount === '' ? (
+                  <TokenInfo>
+                    <AnimatedDots />
+                  </TokenInfo>
+                ) : revertFromInfoUsdAmount === '-' ? (
+                  '-'
+                ) : (
+                  `≈${revertFromInfoUsdAmount}`
+                )}
+              </TokenUSDAmount>
+            </TokenInput>
           </AmountSection>
           <TokenSelectSection>
             <NewLabel

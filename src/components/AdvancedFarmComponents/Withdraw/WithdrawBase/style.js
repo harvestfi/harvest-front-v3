@@ -191,6 +191,19 @@ const SwitchTabTag = styled.div`
   }
 `
 
+const TokenInput = styled.div`
+  position: relative;
+`
+
+const TokenUSDAmount = styled.div`
+  position: absolute;
+  left: 15px;
+  bottom: 3px;
+  font-size: 10px;
+  color: #a19d98;
+  font-weight: 400;
+`
+
 const TokenAmount = styled.input`
   font-weight: 600;
   font-size: 14px;
@@ -202,7 +215,7 @@ const TokenAmount = styled.input`
   background: #fff;
   border: 1px solid #d0d5dd;
   outline: 0;
-  padding: 10px 14px;
+  padding: 7px 14px 13px 14px;
   border-radius: 8px;
   color: #344054;
   transition: 0.25s;
@@ -413,6 +426,8 @@ export {
   NewLabel,
   TokenAmount,
   TokenInfo,
+  TokenInput,
+  TokenUSDAmount,
   TokenSelect,
   Title,
   AmountSection,

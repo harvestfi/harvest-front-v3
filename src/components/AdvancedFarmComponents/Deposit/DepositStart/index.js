@@ -370,7 +370,7 @@ const DepositStart = ({
                   {pickedToken.symbol}
                 </>
                 <span>
-                  {fromInfoUsdAmount !== '' ? <>≈ {fromInfoUsdAmount}</> : <AnimatedDots />}
+                  {fromInfoUsdAmount !== '' ? <>≈{fromInfoUsdAmount}</> : <AnimatedDots />}
                 </span>
               </NewLabel>
             </NewLabel>
