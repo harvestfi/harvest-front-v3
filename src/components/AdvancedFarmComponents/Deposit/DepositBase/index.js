@@ -246,7 +246,6 @@ const DepositBase = ({
               )
             }
             setMinReceiveAmountString(minReceiveAmount)
-            setMinReceiveUsdAmount(minReceiveUsd)
             setFromInfoAmount(fromInfoValue)
             setHasErrorOccurred(0)
             setFailureCount(0)
@@ -254,6 +253,11 @@ const DepositBase = ({
               setFromInfoUsdAmount('<$0.01')
             } else {
               setFromInfoUsdAmount(`$${fromInfoUsdValue}`)
+            }
+            if (Number(minReceiveUsd) < 0.01) {
+              setMinReceiveUsdAmount('<$0.01')
+            } else {
+              setMinReceiveUsdAmount(`$${minReceiveUsd}`)
             }
           } else {
             setFailureCount(prevCount => prevCount + 1)
