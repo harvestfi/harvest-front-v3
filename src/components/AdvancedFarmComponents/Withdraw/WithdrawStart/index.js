@@ -24,7 +24,7 @@ import { useWallet } from '../../../../providers/Wallet'
 import { usePools } from '../../../../providers/Pools'
 import { usePortals } from '../../../../providers/Portals'
 import { getWeb3, fromWei } from '../../../../services/web3'
-import { formatNumber, formatNumberWido } from '../../../../utils'
+import { formatNumberWido } from '../../../../utils'
 import AnimatedDots from '../../../AnimatedDots'
 import { addresses } from '../../../../data'
 import {
@@ -60,6 +60,7 @@ const WithdrawStart = ({
   revertFromInfoAmount,
   revertFromInfoUsdAmount,
   revertMinReceivedAmount,
+  revertMinReceivedUsdAmount,
   setUnstakeInputValue,
   setRevertSuccess,
 }) => {
@@ -336,7 +337,16 @@ const WithdrawStart = ({
                     </AnimateDotDiv>
                   )}
                 </>
-                <span>{useIFARM ? `i${tokenSymbol}` : `f${tokenSymbol}`}</span>
+                <NewLabel display="flex" flexFlow="column" weight="600" textAlign="right">
+                  <span>{useIFARM ? `i${tokenSymbol}` : `f${tokenSymbol}`}</span>
+                  <span>
+                    {revertFromInfoUsdAmount !== '' ? (
+                      <>≈{revertFromInfoUsdAmount}</>
+                    ) : (
+                      <AnimatedDots />
+                    )}
+                  </span>
+                </NewLabel>
               </NewLabel>
             </NewLabel>
             <NewLabel
@@ -396,13 +406,6 @@ const WithdrawStart = ({
                   {pickedToken.symbol}
                 </>
                 <span>
-                  {/* {depositedValueUSD !== '' ? (
-                    `≈ $${depositedValueUSD}`
-                  ) : revertFromInfoUsdAmount !== '' ? (
-                    revertFromInfoUsdAmount
-                  ) : (
-                    <AnimatedDots />
-                  )} */}
                   {!pickedDefaultToken && progressStep === 4 ? (
                     revertedAmountUsd === 'NaN' || revertedAmountUsd === '' ? (
                       '-'
@@ -411,10 +414,10 @@ const WithdrawStart = ({
                     ) : (
                       <AnimatedDots />
                     )
-                  ) : revertFromInfoUsdAmount === 'NaN' || revertFromInfoUsdAmount === '-' ? (
+                  ) : revertMinReceivedUsdAmount === 'NaN' || revertMinReceivedUsdAmount === '-' ? (
                     '-'
-                  ) : revertFromInfoUsdAmount !== '' ? (
-                    `≈$${formatNumber(revertFromInfoUsdAmount, 2)}`
+                  ) : revertMinReceivedUsdAmount !== '' ? (
+                    `≈${revertMinReceivedUsdAmount}`
                   ) : (
                     <AnimatedDots />
                   )}

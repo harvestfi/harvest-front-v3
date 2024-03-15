@@ -283,8 +283,8 @@ const Portfolio = () => {
 
           stakedVaults = stakedVaultsTemp.filter(
             poolId =>
-              groupOfVaults[poolId] && // Check if the key exists in groupOfVaults
-              groupOfVaults[poolId].inactive !== true,
+              groupOfVaults[poolId === 'profit-sharing-farm' ? 'IFARM' : poolId] &&
+              groupOfVaults[poolId === 'profit-sharing-farm' ? 'IFARM' : poolId].inactive !== true,
           )
         }
 

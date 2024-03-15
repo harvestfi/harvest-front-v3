@@ -91,15 +91,15 @@ const Home = () => {
               <br />
               <br />
               1. A non-custodial wallet such as{' '}
-              <a href="/#" target="_blank" rel="noopener noreferrer">
+              <a href="https://metamask.io/" target="_blank" rel="noopener noreferrer">
                 MetaMask
               </a>
               {', '}
-              <a href="/#" target="_blank" rel="noopener noreferrer">
+              <a href="https://rabby.io/" target="_blank" rel="noopener noreferrer">
                 Rabby
               </a>{' '}
               or{' '}
-              <a href="/#" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.coinbase.com/wallet" target="_blank" rel="noopener noreferrer">
                 Coinbase Wallet
               </a>{' '}
               - either a desktop browser extension or a mobile app.

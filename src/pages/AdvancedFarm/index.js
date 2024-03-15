@@ -357,7 +357,8 @@ const AdvancedFarm = () => {
 
   // Switch Tag (Convert/Revert)
   const [activeDepo, setActiveDepo] = useState(true)
-  const [showVaultInfo, setShowVaultInfo] = useState(false)
+  const [showLodestarVaultInfo, setShowLodestarVaultInfo] = useState(false)
+  const [showSeamlessVaultInfo, setShowSeamlessVaultInfo] = useState(false)
   const [showIFARMInfo, setShowIFARMInfo] = useState(false)
   const [supportedVault, setSupportedVault] = useState(false)
 
@@ -378,12 +379,13 @@ const AdvancedFarm = () => {
   // Withdraw
   const [withdrawStart, setWithdrawStart] = useState(false)
   const [selectTokenWith, setSelectTokenWith] = useState(false)
-  const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select' })
   const [unstakeBalance, setUnstakeBalance] = useState('0')
+  const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select' })
+  const [unstakeInputValue, setUnstakeInputValue] = useState('0')
   const [revertFromInfoAmount, setRevertFromInfoAmount] = useState('')
   const [revertFromInfoUsdAmount, setRevertFromInfoUsdAmount] = useState('')
   const [revertMinReceivedAmount, setRevertMinReceivedAmount] = useState('')
-  const [unstakeInputValue, setUnstakeInputValue] = useState('0')
+  const [revertMinReceivedUsdAmount, setRevertMinReceivedUsdAmount] = useState('')
   const [revertSuccess, setRevertSuccess] = useState(false)
   const [hasErrorOccurredRevert, setHasErrorOccurredRevert] = useState(0)
 
@@ -436,13 +438,23 @@ const AdvancedFarm = () => {
   useEffect(() => {
     const platform = useIFARM ? 'Harvest' : token.platform?.[0]?.toLowerCase() ?? ''
     const firstViewIFarm = localStorage.getItem('firstViewIFarm')
-    const firstView = localStorage.getItem('firstView')
+    const firstViewLodestar = localStorage.getItem('firstViewLodestar')
+    const firstViewSeamless = localStorage.getItem('firstViewSeamless')
     if (platform === 'Harvest' && (firstViewIFarm === null || firstViewIFarm === 'true')) {
       localStorage.setItem('firstViewIFarm', true)
       setShowIFARMInfo(true)
-    } else if (platform.includes('lodestar') && (firstView === null || firstView === 'true')) {
-      localStorage.setItem('firstView', true)
-      setShowVaultInfo(true)
+    } else if (
+      platform.includes('lodestar') &&
+      (firstViewLodestar === null || firstViewLodestar === 'true')
+    ) {
+      localStorage.setItem('firstViewLodestar', true)
+      setShowLodestarVaultInfo(true)
+    } else if (
+      platform.includes('seamless') &&
+      (firstViewSeamless === null || firstViewSeamless === 'true')
+    ) {
+      localStorage.setItem('firstViewSeamless', true)
+      setShowSeamlessVaultInfo(true)
     }
   }, [token.platform, useIFARM])
 
@@ -450,9 +462,14 @@ const AdvancedFarm = () => {
     setShowIFARMInfo(false)
     localStorage.setItem('firstViewIFarm', 'false')
   }
-  const closeBadge = () => {
-    setShowVaultInfo(false)
-    localStorage.setItem('firstView', 'false')
+  const closeBadgeLodestar = () => {
+    setShowLodestarVaultInfo(false)
+    localStorage.setItem('firstViewLodestar', 'false')
+  }
+
+  const closeBadgeSeamless = () => {
+    setShowSeamlessVaultInfo(false)
+    localStorage.setItem('firstViewSeamless', 'false')
   }
 
   useEffect(() => {
@@ -1268,20 +1285,20 @@ const AdvancedFarm = () => {
         <BigDiv>
           <InternalSection>
             {activeMainTag === 0 ? (
-              showVaultInfo ? (
+              showLodestarVaultInfo ? (
                 <WelcomeBox>
                   <BiInfoCircle className="info-circle" fontSize={20} />
                   <WelcomeContent>
                     <WelcomeTitle>Vault Note</WelcomeTitle>
                     <WelcomeText>
-                      The Lodestar team replenishes their markets with ARB incentives weekly, at
-                      random intervals, until March 31, 2024. Consequently, a noticeable increase in
-                      the underlying balance is to be expected once per week. Minor fluctuations in
-                      the underlying balance are to be anticipated in all Lodestar vaults. For a
-                      comprehensive understanding of this vault&apos;s performance, it is
-                      recommended to preview the SharePrice chart under the Details tab.
+                      The Lodestar team replenishes their markets with ARB incentives weekly, using
+                      random snapshots, until March 31, 2024. We have recently updated the ARB
+                      reward distribution for Lodestar strategies, transitioning to a linear
+                      liquidation of rewards throughout the week. This shift prevents
+                      disproportional gain through short-term deposits and ensures a fair, steady
+                      distribution of rewards for all farmers.
                       <WelcomeBottom>
-                        <WelcomeKnow onClick={closeBadge}>Got it!</WelcomeKnow>
+                        <WelcomeKnow onClick={closeBadgeLodestar}>Got it!</WelcomeKnow>
                         <WelcomeTicket
                           href="https://discord.com/invite/gzWAG3Wx7Y"
                           target="_blank"
@@ -1293,7 +1310,47 @@ const AdvancedFarm = () => {
                     </WelcomeText>
                   </WelcomeContent>
                   <WelcomeClose>
-                    <RxCross2 onClick={closeBadge} />
+                    <RxCross2 onClick={closeBadgeLodestar} />
+                  </WelcomeClose>
+                </WelcomeBox>
+              ) : showSeamlessVaultInfo ? (
+                <WelcomeBox>
+                  <BiInfoCircle className="info-circle" fontSize={20} />
+                  <WelcomeContent>
+                    <WelcomeTitle>Vault Note</WelcomeTitle>
+                    <WelcomeText>
+                      <p>
+                        Due to new tokenomics introduced by the Seamless project after the launch of
+                        this farm, Harvest is not able to maintain it. We have deactivated the vault
+                        and Harvest has covered the value of the locked esSEAM tokens for all users
+                        of this vault. Farmers can revert funds at any time. More info can be found
+                        in our Discord&apos;s #vault-updates.
+                      </p>
+                      <p>
+                        Looking for alternatives? Check out these single-asset{' '}
+                        <WelcomeTicket
+                          href="https://app.harvest.finance/farms?search=moonwell"
+                          target="_self"
+                          rel="noopener noreferrer"
+                        >
+                          Moonwell farms
+                        </WelcomeTicket>
+                        , which are on Base and have similar reward rates.
+                      </p>
+                      <WelcomeBottom>
+                        <WelcomeKnow onClick={closeBadgeSeamless}>Got it!</WelcomeKnow>
+                        <WelcomeTicket
+                          href="https://discord.com/invite/gzWAG3Wx7Y"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                        >
+                          Still having questions? Open Discord ticket.
+                        </WelcomeTicket>
+                      </WelcomeBottom>
+                    </WelcomeText>
+                  </WelcomeContent>
+                  <WelcomeClose>
+                    <RxCross2 onClick={closeBadgeSeamless} />
                   </WelcomeClose>
                 </WelcomeBox>
               ) : showIFARMInfo ? (
@@ -1902,9 +1959,11 @@ const AdvancedFarm = () => {
                         switchMethod={switchDepoMethod}
                         useIFARM={useIFARM}
                         setRevertFromInfoAmount={setRevertFromInfoAmount}
+                        revertFromInfoUsdAmount={revertFromInfoUsdAmount}
                         setRevertFromInfoUsdAmount={setRevertFromInfoUsdAmount}
                         setRevertMinReceivedAmount={setRevertMinReceivedAmount}
                         revertMinReceivedAmount={revertMinReceivedAmount}
+                        setRevertMinReceivedUsdAmount={setRevertMinReceivedUsdAmount}
                         hasErrorOccurred={hasErrorOccurredRevert}
                         setHasErrorOccurred={setHasErrorOccurredRevert}
                       />
@@ -1935,6 +1994,7 @@ const AdvancedFarm = () => {
                         revertFromInfoAmount={revertFromInfoAmount}
                         revertFromInfoUsdAmount={revertFromInfoUsdAmount}
                         revertMinReceivedAmount={revertMinReceivedAmount}
+                        revertMinReceivedUsdAmount={revertMinReceivedUsdAmount}
                         setUnstakeInputValue={setUnstakeInputValue}
                         setRevertSuccess={setRevertSuccess}
                       />
