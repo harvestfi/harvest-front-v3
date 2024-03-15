@@ -1290,12 +1290,12 @@ const AdvancedFarm = () => {
                   <WelcomeContent>
                     <WelcomeTitle>Vault Note</WelcomeTitle>
                     <WelcomeText>
-                      The Lodestar team replenishes their markets with ARB incentives weekly, at
-                      random intervals, until March 31, 2024. Consequently, a noticeable increase in
-                      the underlying balance is to be expected once per week. Minor fluctuations in
-                      the underlying balance are to be anticipated in all Lodestar vaults. For a
-                      comprehensive understanding of this vault&apos;s performance, it is
-                      recommended to preview the SharePrice chart under the Details tab.
+                      The Lodestar team replenishes their markets with ARB incentives weekly, using
+                      random snapshots, until March 31, 2024. We have recently updated the ARB
+                      reward distribution for Lodestar strategies, transitioning to a linear
+                      liquidation of rewards throughout the week. This shift prevents
+                      disproportional gain through short-term deposits and ensures a fair, steady
+                      distribution of rewards for all farmers.
                       <WelcomeBottom>
                         <WelcomeKnow onClick={closeBadgeLodestar}>Got it!</WelcomeKnow>
                         <WelcomeTicket
