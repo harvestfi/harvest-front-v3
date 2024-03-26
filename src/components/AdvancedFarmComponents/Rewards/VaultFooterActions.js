@@ -50,7 +50,7 @@ const VaultFooterActions = ({
   const { account, getWalletBalances, connected, chainId } = useWallet()
   const { vaultsData } = useVaults()
   const { handleClaim } = useActions()
-  const { borderColor } = useThemeContext()
+  const { borderColor, fontColor, fontColor2, fontColor5 } = useThemeContext()
 
   const [
     {
@@ -78,7 +78,7 @@ const VaultFooterActions = ({
         rewardTokenSymbols.map((symbol, symbolIdx) => {
           return (
             <SelectedVault key={`${symbol}-rewards-earned`}>
-              <Div>
+              <Div fontColor2={fontColor2}>
                 <img
                   src={`/icons/${
                     symbol.toLowerCase() === 'mifarm' ? 'ifarm' : symbol.toLowerCase()
@@ -87,7 +87,7 @@ const VaultFooterActions = ({
                 />
                 {symbol.toLowerCase() === 'mifarm' ? 'iFARM' : symbol}
               </Div>
-              <Monospace>
+              <Monospace fontColor5={fontColor5}>
                 {!connected ? (
                   '0.00'
                 ) : !isLoadingData && get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`) ? (
@@ -172,7 +172,7 @@ const VaultFooterActions = ({
         }
       />
       <BottomPart>
-        <SelectedVaultLabel fontWeight="400" lineHeight="20px" color="#475467">
+        <SelectedVaultLabel fontWeight="400" lineHeight="20px" color={fontColor}>
           You can only claim your rewards all at once.
         </SelectedVaultLabel>
         <Button

@@ -1,26 +1,19 @@
 import React from 'react'
 import { useMediaQuery } from 'react-responsive'
 import ReactTooltip from 'react-tooltip'
+import { PiQuestion } from 'react-icons/pi'
 import { formatNumber } from '../../utils'
 import { useThemeContext } from '../../providers/useThemeContext'
-import { Container, Div, Price, InfoIcon, NewLabel } from './style'
-import Info from '../../assets/images/logos/earn/info.svg'
+import { Container, Div, Price, NewLabel } from './style'
 
 const TotalValue = ({ content, price, toolTipTitle, toolTip }) => {
-  const { borderColor, backColor, totalValueFontColor } = useThemeContext()
+  const { borderColor, backColor, fontColor1, fontColor3 } = useThemeContext()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   return (
     <Container borderColor={borderColor} backColor={backColor}>
-      <Div fontColor={totalValueFontColor}>
+      <Div fontColor3={fontColor3}>
         {content}
-        <InfoIcon
-          className="info"
-          width={isMobile ? 10 : 16}
-          src={Info}
-          alt=""
-          data-tip
-          data-for={toolTipTitle}
-        />
+        <PiQuestion className="question" data-tip data-for={toolTipTitle} />
         <ReactTooltip
           id={toolTipTitle}
           backgroundColor="#101828"
@@ -38,7 +31,7 @@ const TotalValue = ({ content, price, toolTipTitle, toolTip }) => {
           </NewLabel>
         </ReactTooltip>
       </Div>
-      <Price>
+      <Price fontColor1={fontColor1}>
         {parseFloat(price) === 0
           ? '$0.00'
           : parseFloat(price) < 0.01

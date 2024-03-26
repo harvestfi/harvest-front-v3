@@ -17,9 +17,34 @@ export function ThemeProvider({ children }) {
   const switchMode = darkMode ? 'dark' : 'light'
 
   const pageBackColor = darkMode ? '#15202B' : '#fff'
+  const backColor = darkMode ? '#0C111D' : '#fff'
+  const bgColorModal = darkMode ? '#0C111D' : '#F2F5FF'
+  const bgColor = darkMode ? '#161B26' : '#fff'
+  const bgColorTooltip = darkMode ? '#59607A' : '#fff'
+  const bgColorFarm = darkMode ? '#213662' : '#f2f5ff'
+  const bgColorMessage = darkMode ? '#242c3c' : '#fcfcfd'
+  const bgColorButton = darkMode ? '#242c3c' : '#eaf1ff'
+  const bgColorSlippage = darkMode ? '#1F242F' : '#15b088'
+
   const fontColor = darkMode ? '#fff' : '#475467'
-  const backColor = darkMode ? '#15202B' : '#fff'
-  const borderColor = darkMode ? 'rgba(217, 217, 217, 0.5)' : '#f2f5ff'
+  const fontColor1 = darkMode ? '#fff' : '#101828'
+  const fontColor2 = darkMode ? '#fff' : '#344054'
+  const fontColor3 = darkMode ? '#D9D9D9' : '#6F78AA'
+  const fontColor4 = darkMode ? '#fff' : '#1F2937'
+  const fontColor5 = darkMode ? '#fff' : '#000'
+  const fontColor6 = darkMode ? '#15b088' : '#000'
+  const fontColorTooltip = darkMode ? '#fff' : '#6941c6'
+  const inputFontColor = darkMode ? '#fff' : '#667085'
+  const linkColor = darkMode ? '#FF9400' : '#6941c6'
+
+  const borderColor = darkMode ? '#1F242F' : '#F3F6FF'
+  const inputBorderColor = darkMode ? '#1F242F' : '#d0d5dd'
+  const hoverColorButton = darkMode ? '#1F242F' : '#f2f4f7'
+  const hoverColor = darkMode ? '#1F242F' : '#e9f0f7'
+  const activeColor = darkMode ? '#242C3C' : '#F3F6FF'
+  const activeColorModal = darkMode ? '#242C3C' : '#ECFDF3'
+  const modalInputColor = darkMode ? '#242C3C' : '#ffffff'
+
   const filterColor = darkMode
     ? 'invert(100%) sepia(20%) saturate(0%) hue-rotate(40deg) brightness(104%) contrast(101%)'
     : ''
@@ -37,10 +62,6 @@ export function ThemeProvider({ children }) {
   const switchDarkBorder = darkMode ? '#FFFFFF' : '#15202B'
   const switchDarkBack = darkMode ? '#FFFFFF' : '#15202B'
   const switchLightBack = darkMode ? '#15202B' : '#FFFFFF'
-
-  const sidebarEffect = darkMode
-    ? 'box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5)'
-    : 'border: 1px solid #E9E9E9'
 
   const dashboardListItemPercentBack = darkMode ? 'rgba(39, 174, 96, 0.1)' : '#E6F8EB'
   const dashboardListItemPercentColor = darkMode ? '#27AE60' : '#1ABC9C'
@@ -64,11 +85,11 @@ export function ThemeProvider({ children }) {
 
   const mobileFilterDisableColor = darkMode ? '#94949f' : 'rgba(21, 32, 43, 0.5)'
 
-  const toggleBackColor = darkMode ? '' : '#EAECF0'
+  const toggleBackColor = darkMode ? '#24272C' : '#E9EAF0'
+  const toggleCircleBgColor = darkMode ? '#E9EAF0' : '#24272C'
 
   const [switchBalance, setSwitchBalance] = useState(false) // true : USD, false: Token
 
-  const connectWalletBtnBackColor = darkMode ? '#E5E5E5' : 'rgba(21, 32, 43, 0.05)'
   const connectWalletBtnHoverBackColor = darkMode ? '#E5E5E5' : 'rgba(255, 148, 0, 0.2)'
 
   const chartBtnGroupBackColor = darkMode ? '#FFFFFF' : '#FCDC67'
@@ -119,8 +140,6 @@ export function ThemeProvider({ children }) {
     ? 'invert(95%) sepia(4%) saturate(441%) hue-rotate(183deg) brightness(89%) contrast(94%)'
     : 'invert(46%) sepia(10%) saturate(767%) hue-rotate(183deg) brightness(92%) contrast(90%)'
 
-  const totalValueFontColor = darkMode ? '#c7c3c3' : '#475467'
-
   const faqQueHoverColor = darkMode ? '#293744' : '#e9e9e9'
 
   const analyticTitleColor = darkMode ? 'white' : '#475467'
@@ -140,9 +159,31 @@ export function ThemeProvider({ children }) {
         setDarkMode,
         switchMode,
         pageBackColor,
+        bgColorModal,
         fontColor,
+        fontColor1,
+        fontColor2,
+        fontColor3,
+        fontColor4,
+        fontColor5,
+        fontColor6,
+        inputFontColor,
+        linkColor,
+        fontColorTooltip,
         backColor,
+        bgColor,
+        bgColorTooltip,
         borderColor,
+        inputBorderColor,
+        hoverColor,
+        hoverColorButton,
+        activeColor,
+        activeColorModal,
+        modalInputColor,
+        bgColorFarm,
+        bgColorMessage,
+        bgColorButton,
+        bgColorSlippage,
         filterColor,
         boxShadowColor,
         hoverImgColor,
@@ -152,7 +193,6 @@ export function ThemeProvider({ children }) {
         switchDarkBorder,
         switchDarkBack,
         switchLightBack,
-        sidebarEffect,
         dashboardListItemPercentBack,
         dashboardListItemPercentColor,
         filterChainHoverColor,
@@ -163,9 +203,9 @@ export function ThemeProvider({ children }) {
         mobileFilterBorderColor,
         mobileFilterDisableColor,
         toggleBackColor,
+        toggleCircleBgColor,
         switchBalance,
         setSwitchBalance,
-        connectWalletBtnBackColor,
         connectWalletBtnHoverBackColor,
         chartBtnGroupBackColor,
         widoDetailDividerColor,
@@ -194,7 +234,6 @@ export function ThemeProvider({ children }) {
         sidebarFontColor,
         sidebarActiveFontColor,
         sidebarActiveIconColor,
-        totalValueFontColor,
         faqQueHoverColor,
         analyticTitleColor,
         openNotify,

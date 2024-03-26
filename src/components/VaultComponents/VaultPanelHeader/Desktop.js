@@ -44,7 +44,7 @@ const DesktopPanelHeader = ({
 
   const { push } = useHistory()
 
-  const { fontColor, borderColor, badgeIconBackColor, setPrevPage } = useThemeContext()
+  const { fontColor, fontColor1, borderColor, setPrevPage } = useThemeContext()
 
   const mouseDownHandler = event => {
     if (event.button === 1) {
@@ -94,12 +94,9 @@ const DesktopPanelHeader = ({
           {logoUrl.map((el, i) => (
             <LogoImg key={i} className="logo-img" zIndex={10 - i} src={el} alt={tokenSymbol} />
           ))}
-          <BadgeIcon
-            badgeBack={badgeIconBackColor}
-            borderColor={token.inactive ? 'orange' : '#29ce84'}
-          >
+          <BadgeIcon borderColor={token.inactive ? 'orange' : '#29ce84'}>
             {BadgeAry[badgeId] ? (
-              <img src={BadgeAry[badgeId]} width="17px" height="17px" alt="" />
+              <img src={BadgeAry[badgeId]} width="12px" height="12px" alt="" />
             ) : (
               <></>
             )}
@@ -108,7 +105,12 @@ const DesktopPanelHeader = ({
           {desciToken ? <img className="tag" src={DESCI} alt="" /> : null}
         </ValueContainer>
         <ValueContainer width="20%" textAlign="left" paddingLeft="0%">
-          <VaultName token={token} tokenSymbol={tokenSymbol} useIFARM={useIFARM} />
+          <VaultName
+            token={token}
+            tokenSymbol={tokenSymbol}
+            useIFARM={useIFARM}
+            fontColor1={fontColor1}
+          />
         </ValueContainer>
         <ValueContainer width="15%">
           <VaultApy
@@ -116,6 +118,7 @@ const DesktopPanelHeader = ({
             tokenSymbol={tokenSymbol}
             vaultPool={vaultPool}
             isSpecialVault={isSpecialVault}
+            fontColor1={fontColor1}
           />
         </ValueContainer>
         <ValueContainer width="15%">
@@ -124,10 +127,11 @@ const DesktopPanelHeader = ({
             tokenSymbol={tokenSymbol}
             vaultPool={vaultPool}
             isSpecialVault={isSpecialVault}
+            fontColor1={fontColor1}
           />
         </ValueContainer>
         <ValueContainer width="15%">
-          <VaultValue token={token} />
+          <VaultValue token={token} fontColor1={fontColor1} />
         </ValueContainer>
         <ValueContainer width="10%">
           <VaultUserBalance
@@ -139,6 +143,7 @@ const DesktopPanelHeader = ({
             vaultPool={vaultPool}
             loadedVault={loadedVault}
             useIFARM={useIFARM}
+            fontColor1={fontColor1}
           />
         </ValueContainer>
       </PanelContainer>

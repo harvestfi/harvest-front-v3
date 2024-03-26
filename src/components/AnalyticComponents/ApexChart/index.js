@@ -131,7 +131,7 @@ function getYAxisValues(min, max, roundNum) {
 }
 
 const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
-  const { fontColor } = useThemeContext()
+  const { fontColor, inputFontColor } = useThemeContext()
 
   const [mainSeries, setMainSeries] = useState([])
 
@@ -144,7 +144,7 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
     if (active && payload && payload.length) {
       setCurDate(formatDateTime(payload[0].payload.x))
       const content = `<div style="font-size: 13px; line-height: 16px; display: flex;"><div style="font-weight: 700;">TVL
-      </div><div style="color: #ff9400; font-weight: 500;">&nbsp;$
+      </div><div style="color: #15B088; font-weight: 500;">&nbsp;$
       ${numberWithCommas(Number(payload[0].payload.y.toFixed(0)))}</div></div>`
       setCurContent(content)
     }
@@ -166,7 +166,7 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
         width={24}
         height={24}
         viewBox="0 0 1024 1024"
-        fill="#666"
+        fill={inputFontColor}
       >
         <tspan dy="0.71em">{path}</tspan>
       </text>
@@ -188,7 +188,7 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
         width={60}
         height={310}
         stroke="none"
-        fill="#666"
+        fill={inputFontColor}
         textAnchor="end"
       >
         <tspan dx={0} dy="0.355em">
@@ -299,7 +299,7 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
           >
             <defs>
               <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#F4BE37" stopOpacity={0.1} />
+                <stop offset="5%" stopColor="#00D26B" stopOpacity={0.1} />
                 <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1} />
               </linearGradient>
             </defs>
@@ -324,14 +324,14 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
               unit="M"
               strokeLinecap="round"
               strokeWidth={2}
-              stroke="#FF9400"
+              stroke="#00D26B"
               dot={false}
               legendType="none"
             />
             <Area
               type="monotone"
               dataKey="y"
-              stroke="#ff9400"
+              stroke="#00D26B"
               strokeWidth={2}
               fillOpacity={1}
               fill="url(#colorUv)"

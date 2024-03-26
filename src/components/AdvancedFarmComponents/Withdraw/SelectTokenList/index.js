@@ -25,6 +25,7 @@ const SelectTokenList = ({
   filterWord,
   supportedVault,
 }) => {
+  const { fontColor, fontColor2, hoverColor, activeColorModal } = useThemeContext()
   const [showList, setShowList] = useState(false)
 
   const [supTokenList, setSupTokenList] = useState(supTokenNoBalanceList)
@@ -83,8 +84,6 @@ const SelectTokenList = ({
     }
   }, [filterWord, supTokenNoBalanceList, balanceList]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const { fontColor } = useThemeContext()
-
   useEffect(() => {
     const count =
       defaultToken &&
@@ -108,22 +107,24 @@ const SelectTokenList = ({
               Object.keys(defaultCurToken).length === 0 && defaultCurToken.constructor === Object
             ) && (
               <>
-                <Label padding="15px 24px 0px">Default token to revert to </Label>
+                <Label fontColor={fontColor} padding="15px 24px 0px">
+                  Default token to revert to{' '}
+                </Label>
                 <Container
                   onClick={() => {
                     handleDefaultToken()
                   }}
-                  hoverColor="#F2F5FF"
-                  activeColor="#ECFDF3"
+                  hoverColor={hoverColor}
+                  activeColor={activeColorModal}
                 >
                   <img src={defaultCurToken.logoURI} width={26} height={26} alt="" />
                   <Vault>
-                    <Text weight={600} color="#344054">
+                    <Text weight={600} color={fontColor2}>
                       {defaultCurToken.symbol}
                     </Text>
-                    <RightText weight={600} color="#344054">
+                    <RightText weight={600} color={fontColor2}>
                       <>{defaultCurToken.balance ? defaultCurToken.balance : '0.00'}</>
-                      <TextSpan>
+                      <TextSpan fontColor2={fontColor2}>
                         {defaultCurToken.usdValue ? `$${defaultCurToken.usdValue}` : '$0.00'}
                       </TextSpan>
                     </RightText>
@@ -133,7 +134,7 @@ const SelectTokenList = ({
             )}
           {balanceTokenList.length > 0 && (
             <>
-              <Label padding="15px 24px 0px">
+              <Label fontColor={fontColor} padding="15px 24px 0px">
                 {supportedVault
                   ? 'Tokens in your wallet which you can revert fTokens into'
                   : 'Soon to be supported'}
@@ -146,21 +147,21 @@ const SelectTokenList = ({
                     if (supportedVault) handleBalanceListClick(i)
                   }}
                   cursor={supportedVault ? 'pointer' : 'not-allowed'}
-                  hoverColor="#F2F5FF"
-                  activeColor="#ECFDF3"
+                  hoverColor={hoverColor}
+                  activeColor={activeColorModal}
                 >
                   <img src={data.logoURI} width={26} height={26} alt="" />
                   <Vault>
-                    <Text weight={600} color="#344054">
+                    <Text weight={600} color={fontColor2}>
                       {data.symbol}
                     </Text>
-                    <RightText weight={600} color="#344054">
+                    <RightText weight={600} color={fontColor2}>
                       <>
                         {data.balance
                           ? `${formatNumberWido(data.balance, WIDO_EXTEND_DECIMALS)}`
                           : '0.00'}
                       </>
-                      <TextSpan>
+                      <TextSpan fontColor2={fontColor2}>
                         {data.usdValue
                           ? `$${formatNumberWido(data.usdValue, WIDO_BALANCES_DECIMALS)}`
                           : '$0.00'}
@@ -173,7 +174,11 @@ const SelectTokenList = ({
           )}
           {supTokenList.length > 0 && (
             <>
-              <Label padding="15px 24px 0px" showLabel={supportedVault ? 'block' : 'none'}>
+              <Label
+                fontColor={fontColor}
+                padding="15px 24px 0px"
+                showLabel={supportedVault ? 'block' : 'none'}
+              >
                 Other supported tokens, which you can revert to{' '}
               </Label>
               {supTokenList.map((data, i) => (
@@ -184,17 +189,17 @@ const SelectTokenList = ({
                     if (supportedVault) handleSupTokenNoBalanceListClick(i)
                   }}
                   cursor={supportedVault ? 'pointer' : 'not-allowed'}
-                  hoverColor="#F2F5FF"
-                  activeColor="#ECFDF3"
+                  hoverColor={hoverColor}
+                  activeColor={activeColorModal}
                 >
                   <img src={data.logoURI} width={26} height={26} alt="" />
                   <Vault>
-                    <Text weight={600} color="#344054">
+                    <Text weight={600} color={fontColor2}>
                       {data.symbol}
                     </Text>
-                    <RightText weight={600} color="#344054">
+                    <RightText weight={600} color={fontColor2}>
                       <>{data.balance ? `${1 * fromWei(data.balance, data.decimals)}` : '0.00'}</>
-                      <TextSpan>$0</TextSpan>
+                      <TextSpan fontColor2={fontColor2}>$0</TextSpan>
                     </RightText>
                   </Vault>
                 </Container>
@@ -203,17 +208,19 @@ const SelectTokenList = ({
           )}
           {soonToSupList.length > 0 && (
             <>
-              <Label padding="15px 24px 0px">Soon to be supported</Label>
+              <Label fontColor={fontColor} padding="15px 24px 0px">
+                Soon to be supported
+              </Label>
               {soonToSupList.map((data, i) => (
-                <Container key={i} hoverColor="#F2F5FF" activeColor="#ECFDF3">
+                <Container key={i} hoverColor={hoverColor} activeColor={activeColorModal}>
                   <img src={data.logoURI} width={26} height={26} alt="" />
                   <Vault>
-                    <Text weight={600} color="#344054">
+                    <Text weight={600} color={fontColor2}>
                       {data.symbol}
                     </Text>
-                    <RightText weight={600} color="#344054">
+                    <RightText weight={600} color={fontColor2}>
                       <>{data.balance ? `${1 * fromWei(data.balance, data.decimals)}` : '0.00'}</>
-                      <TextSpan>$0</TextSpan>
+                      <TextSpan fontColor2={fontColor2}>$0</TextSpan>
                     </RightText>
                   </Vault>
                 </Container>

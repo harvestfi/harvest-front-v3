@@ -381,7 +381,7 @@ html {
     font-size: 14px; 
     line-height: 24px;
     font-weight: 600;
-    color: #101828;
+    color: ${props => props.fontColor1};
 
     @media screen and (max-width: 992px) {
       font-size: 12px;
@@ -392,7 +392,7 @@ html {
     font-size: 14px; 
     line-height: 24px;
     font-weight: 500;
-    color: #6F78AA;
+    color: ${props => props.fontColor3};
 
     @media screen and (max-width: 992px) {
       font-size: 12px;
@@ -403,7 +403,7 @@ html {
     font-size: 14px; 
     line-height: 24px;
     font-weight: 500;
-    color: #6F78AA;
+    color: ${props => props.fontColor3};
 
     @media screen and (max-width: 992px) {
       font-size: 12px;
@@ -414,7 +414,7 @@ html {
     font-size: 14px; 
     line-height: 24px;
     font-weight: 500;
-    color: #6F78AA;
+    color: ${props => props.fontColor3};
 
     @media screen and (max-width: 992px) {
       font-size: 12px;
@@ -429,7 +429,7 @@ html {
     font-size: 14px; 
     line-height: 24px;
     font-weight: 500;
-    color: #6F78AA;
+    color: ${props => props.fontColor3};
 
     @media screen and (max-width: 992px) {
       font-size: 12px;
@@ -531,19 +531,23 @@ html {
         color: #475467;
       }
       .deposit-modal-header {
-        background: #F2F5FF;
+        background: ${props => props.bgColorModal};
+        border-bottom: 1px solid ${props => props.inputBorderColor};
         padding: 24px 24px 20px;
       }
       .token-select-modal-header {
-        background: #F2F5FF;
+        background: ${props => props.bgColorModal};
+        border-bottom: 1px solid ${props => props.inputBorderColor};
         padding: 24px;
         display: flex;
         flex-flow: column;
       }
       .deposit-modal-body {
+        background: ${props => props.backColor};
         padding: unset;
       }
       .token-select-modal-body {
+        background: ${props => props.backColor};
         padding: unset;
         height: 328px;
       }
@@ -701,7 +705,7 @@ const Monospace = styled.span`
   // font-family: Work Sans;
   font-family: 'Inter', sans-serif;
   border-bottom: ${props => props.borderBottom || 'unset'};
-  color: #101828;
+  color: ${props => props.fontColor1};
   font-size: 14px !important;
   font-weight: ${props => props.fontWeight || '500'};
   line-height: 20px;

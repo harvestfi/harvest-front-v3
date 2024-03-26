@@ -289,8 +289,14 @@ const BigStatsExchange = styled(BigStatsSubheader)`
   line-height: 20px;
   align-items: center;
   margin-bottom: 17px !important;
-
   color: ${props => props.fontColor};
+
+  img {
+    ${props =>
+      props.darkMode
+        ? 'filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(283deg) brightness(106%) contrast(106%);'
+        : ''}
+  }
 `
 
 const ValueComponent = styled.div`
@@ -322,6 +328,10 @@ const CompHeader = styled.div`
 
   img {
     margin-right: 10px;
+    ${props =>
+      props.darkMode
+        ? 'filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(283deg) brightness(106%) contrast(106%);'
+        : ''}
   }
 `
 

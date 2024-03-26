@@ -21,9 +21,9 @@ const CloseBtn = styled.img`
 
 const FilterInput = styled.input`
   border-radius: 8px;
-  border: 1px solid var(--gray-300, #d0d5dd);
+  border: 1px solid ${props => props.inputBorderColor};
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-  background: #ffffff;
+  background: ${props => props.modalInputColor};
   height: 44px;
   width: 100%;
   padding: 15px 40px;
@@ -31,7 +31,7 @@ const FilterInput = styled.input`
   font-weight: 300;
   font-size: 12px;
   line-height: 23px;
-  color: #667085;
+  color: ${props => props.inputFontColor};
 `
 
 const FTokenInfo = styled.div`
@@ -179,6 +179,13 @@ const NewLabel = styled.div`
     margin-left: 5px;
   }
 
+  img {
+    ${props =>
+      props.darkMode
+        ? 'filter: invert(100%) sepia(75%) saturate(45%) hue-rotate(145deg) brightness(119%) contrast(100%);'
+        : ''}
+  }
+
   @media screen and (max-width: 992px) {
     img.icon {
       margin-right: 5px;
@@ -198,8 +205,8 @@ const Search = styled.img`
 
 const NotConnectedWallet = styled.div`
   border-radius: 12px;
-  border: 1px solid #d0d5dd;
-  background: #fcfcfd;
+  border: 1px solid ${props => props.borderColor};
+  background: ${props => props.bgColor};
   padding: 16px;
   ${props =>
     props.isShow === 'true'

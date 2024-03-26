@@ -28,7 +28,10 @@ import {
   NewLabel,
   FTokenWrong,
   ImgBtn,
+  ProgressLabel,
+  ProgressText,
 } from './style'
+import { useThemeContext } from '../../../../providers/useThemeContext'
 
 const { tokens } = require('../../../../data')
 
@@ -45,6 +48,7 @@ const UnstakeStart = ({
   multipleAssets,
   amountsToExecute,
 }) => {
+  const { fontColor1, fontColor2 } = useThemeContext()
   const { connected, connectAction, account, chainId, setChainId, getWalletBalances } = useWallet()
 
   const [
@@ -160,7 +164,7 @@ const UnstakeStart = ({
                 Summary
               </NewLabel>
               <NewLabel
-                color="#15202B"
+                color={fontColor1}
                 size={isMobile ? '14px' : '14px'}
                 height={isMobile ? '20px' : '20px'}
                 weight="400"
@@ -200,7 +204,7 @@ const UnstakeStart = ({
             size={isMobile ? '14px' : '14px'}
             height={isMobile ? '24px' : '24px'}
             padding="15px 24px 10px"
-            color="#344054"
+            color={fontColor2}
           >
             <NewLabel
               display="flex"
@@ -250,7 +254,6 @@ const UnstakeStart = ({
               />
             </NewLabel>
           </FTokenWrong>
-
           <NewLabel>
             <img
               className="progressbar-img"
@@ -260,7 +263,18 @@ const UnstakeStart = ({
               alt="progress bar"
             />
           </NewLabel>
-
+          <ProgressLabel fontColor2={fontColor2}>
+            <ProgressText width="50%" padding="0px 0px 0px 80px">
+              Confirm
+              <br />
+              Transaction
+            </ProgressText>
+            <ProgressText width="50%" padding="0px 80px 0px 0px">
+              Transaction
+              <br />
+              Successful
+            </ProgressText>
+          </ProgressLabel>
           <NewLabel padding={isMobile ? '24px' : '24px'}>
             <Button
               color="wido-deposit"

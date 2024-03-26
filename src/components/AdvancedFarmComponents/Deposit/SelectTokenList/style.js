@@ -47,7 +47,7 @@ const RightText = styled.div`
 `
 
 const TextSpan = styled.div`
-  color: #344054;
+  color: ${props => props.fontColor2};
   font-size: 10px;
   font-weight: 400;
   line-height: 20px;
@@ -90,7 +90,7 @@ const EmptyContainer = styled.div`
 `
 
 const Label = styled.div`
-  color: #475467;
+  color: ${props => props.fontColor};
   font-size: 14px;
   font-weight: 400;
   line-height: 18.972px;

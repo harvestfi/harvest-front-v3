@@ -127,6 +127,13 @@ const NewLabel = styled.div`
   `
       : ''}
 
+  svg.question {
+    font-size: 16px;
+    color: ${props => props.color};
+    cursor: pointer;
+    margin: auto 0px auto 5px;
+  }
+
   img.help-icon {
     margin-left: 5px;
     cursor: pointer;
@@ -178,7 +185,7 @@ const SlippageBtn = styled.button`
     border-radius: 8px;
     padding: 11px;
     align-items: center;
-    color: #fff;
+    color: ${props => props.color};
     font-size: 14px;
     line-height: 20px;
     width: 60%;
@@ -265,7 +272,7 @@ const SlipValue = styled.div`
   text-align: center;
   color: ${props => props.color};
   background: ${props => props.bgColor};
-  border-right: ${props => (props.isLastChild ? 'none' : '1px solid var(--Gray-300, #d0d5dd)')};
+  border-right: ${props => (props.isLastChild ? 'none' : `1px solid ${props.borderColor}`)};
   border-radius: ${props =>
     props.isFirstChild ? '8px 0 0 8px' : props.isLastChild ? '0 8px 8px 0' : '0'};
 `
@@ -274,7 +281,7 @@ const SlippageRow = styled.div`
   display: flex;
   justify-content: space-between;
   border-radius: 8px;
-  border: 1px solid var(--Gray-300, #d0d5dd);
+  border: 1px solid ${props => props.borderColor};
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
 `
 
@@ -284,11 +291,11 @@ const SlippageInput = styled.div`
   input {
     border-radius: 8px;
     border: 1px solid ${props => props.borderColor};
-    background: #fff;
+    background: ${props => props.backColor};
     box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
     outline: 0;
     padding: 8px 30px 8px 12px;
-    color: #344054;
+    color: ${props => props.fontColor2};
     font-weight: 600;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -319,6 +326,17 @@ const SlippageInput = styled.div`
   }
 `
 
+const ProgressLabel = styled.div`
+  display: flex;
+  color: ${props => props.fontColor2};
+`
+
+const ProgressText = styled.div`
+  width: ${props => props.width};
+  padding: ${props => props.padding};
+  text-align: center;
+`
+
 export {
   SelectTokenWido,
   ImgBtn,
@@ -336,4 +354,6 @@ export {
   SlipValue,
   SlippageRow,
   SlippageInput,
+  ProgressLabel,
+  ProgressText,
 }

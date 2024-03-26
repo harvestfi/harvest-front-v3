@@ -17,11 +17,12 @@ import Providers from './providers'
 import '@fontsource/work-sans'
 import '@fontsource/dm-sans'
 import 'bootstrap/dist/css/bootstrap.min.css'
+import { useThemeContext } from './providers/useThemeContext'
 
 const NewLoginModal = () => {
   const newLogin = localStorage.getItem('newLogin')
   const [open, setOpen] = useState(false)
-  localStorage.setItem('darkmode', false)
+  // localStorage.setItem('darkmode', false)
   const [showModal, setShowModal] = useState(true)
 
   useEffect(() => {
@@ -65,10 +66,10 @@ const NewLoginModal = () => {
 
 const App = () => (
   <Router>
-    <GlobalStyle />
-    <ToastContainer />
-    <NewLoginModal />
     <Providers>
+      <GlobalStyleWrapper />
+      <ToastContainer />
+      <NewLoginModal />
       <Body id="page-content">
         <Sidebar width="280px" />
         <Switch>
@@ -85,5 +86,19 @@ const App = () => (
     </Providers>
   </Router>
 )
+
+const GlobalStyleWrapper = () => {
+  const { bgColorModal, fontColor3, fontColor1, backColor, inputBorderColor } = useThemeContext()
+
+  return (
+    <GlobalStyle
+      bgColorModal={bgColorModal}
+      fontColor3={fontColor3}
+      fontColor1={fontColor1}
+      backColor={backColor}
+      inputBorderColor={inputBorderColor}
+    />
+  )
+}
 
 export default App

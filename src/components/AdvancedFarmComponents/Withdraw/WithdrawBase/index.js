@@ -4,23 +4,22 @@ import { useSetChain } from '@web3-onboard/react'
 import { toast } from 'react-toastify'
 import ReactTooltip from 'react-tooltip'
 import { useMediaQuery } from 'react-responsive'
+import { PiQuestion } from 'react-icons/pi'
+import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
 import DropDownIcon from '../../../../assets/images/logos/advancedfarm/drop-down.svg'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
-import ArrowDown from '../../../../assets/images/logos/beginners/arrow-narrow-down.svg'
-import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.svg'
-import HelpIcon from '../../../../assets/images/logos/beginners/help-circle.svg'
 import { BEGINNERS_BALANCES_DECIMALS } from '../../../../constants'
 import { useWallet } from '../../../../providers/Wallet'
 import { fromWei, toWei } from '../../../../services/web3'
 import { addresses } from '../../../../data'
 import { formatNumberWido, isSpecialApp } from '../../../../utils'
+import { useThemeContext } from '../../../../providers/useThemeContext'
 import AnimatedDots from '../../../AnimatedDots'
 import Button from '../../../Button'
 import { CHAIN_IDS } from '../../../../data/constants'
 import {
   BaseWidoDiv,
-  InfoIconCircle,
   NewLabel,
   TokenInput,
   TokenAmount,
@@ -88,6 +87,17 @@ const WithdrawBase = ({
   hasErrorOccurred,
   setHasErrorOccurred,
 }) => {
+  const {
+    bgColor,
+    activeColor,
+    fontColor,
+    fontColor1,
+    fontColor2,
+    fontColor3,
+    fontColor4,
+    bgColorMessage,
+  } = useThemeContext()
+
   const [withdrawName, setWithdrawName] = useState('Preview & Revert')
   const [showWarning, setShowWarning] = useState(false)
 
@@ -335,8 +345,8 @@ const WithdrawBase = ({
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const mainTags = [
-    { name: 'Convert', img: ArrowDown },
-    { name: 'Revert', img: ArrowUp },
+    { name: 'Convert', img: BsArrowDown },
+    { name: 'Revert', img: BsArrowUp },
   ]
 
   return (
@@ -346,7 +356,7 @@ const WithdrawBase = ({
           size={isMobile ? '16px' : '16px'}
           height={isMobile ? '24px' : '24px'}
           weight="600"
-          color="#101828"
+          color={fontColor1}
           display="flex"
           justifyContent="center"
           padding={isMobile ? '4px 0px' : '4px 0px'}
@@ -363,21 +373,21 @@ const WithdrawBase = ({
                 }
               }}
               num={i}
-              color={i === 1 ? '#1F2937' : '#6F78AA'}
-              borderColor={i === 1 ? '#F2F5FF' : ''}
-              backColor={i === 1 ? '#F2F5FF' : ''}
+              color={i === 1 ? fontColor4 : fontColor3}
+              borderColor={i === 1 ? activeColor : ''}
+              backColor={i === 1 ? activeColor : ''}
               boxShadow={
                 i === 1
                   ? '0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10)'
                   : ''
               }
             >
-              <img src={tag.img} alt="logo" />
+              <tag.img />
               <p>{tag.name}</p>
             </SwitchTabTag>
           ))}
         </NewLabel>
-        <Title>
+        <Title fontColor={fontColor}>
           {`Revert your ${useIFARM ? `i${tokenSymbol}` : 'fToken'} into`}{' '}
           {pickedToken.symbol !== 'Select' ? pickedToken.symbol : 'Output Token'}.
         </Title>
@@ -387,14 +397,20 @@ const WithdrawBase = ({
               size={isMobile ? '14px' : '14px'}
               height={isMobile ? '20px' : '20px'}
               weight="500"
-              color="#344054"
+              color={fontColor2}
               marginBottom="6px"
             >
               Amount to Revert
             </NewLabel>
             <TokenInput>
-              <TokenAmount type="text" value={unstakeInputValue} onChange={onInputUnstake} />
-              <TokenUSDAmount>
+              <TokenAmount
+                type="text"
+                value={unstakeInputValue}
+                onChange={onInputUnstake}
+                bgColor={bgColor}
+                fontColor2={fontColor2}
+              />
+              <TokenUSDAmount fontColor3={fontColor3}>
                 {unstakeInputValue === '0' || unstakeInputValue === '' ? (
                   '$0'
                 ) : revertFromInfoUsdAmount === '' ? (
@@ -414,7 +430,7 @@ const WithdrawBase = ({
               size={isMobile ? '14px' : '14px'}
               height={isMobile ? '20px' : '20px'}
               weight="500"
-              color="#344054"
+              color={fontColor2}
               marginBottom="6px"
             >
               Output Token
@@ -436,6 +452,7 @@ const WithdrawBase = ({
           </TokenSelectSection>
         </TokenInfo>
         <BalanceInfo
+          fontColor={fontColor}
           onClick={() => {
             if (account) {
               setUnstakeBalance(useIFARM ? stakeAmountWei : lpTokenBalance)
@@ -472,14 +489,18 @@ const WithdrawBase = ({
             )}
           </span>
         </BalanceInfo>
-        <InsufficientSection isShow={showWarning ? 'true' : 'false'}>
+        <InsufficientSection
+          isShow={showWarning ? 'true' : 'false'}
+          activeColor={activeColor}
+          bgColorMessage={bgColorMessage}
+        >
           <NewLabel display="flex" widthDiv="80%" items="center">
             <img className="info-icon" src={InfoIcon} alt="" />
             <NewLabel
               size={isMobile ? '14px' : '14px'}
               height={isMobile ? '20px' : '20px'}
               weight="600"
-              color="#344054"
+              color={fontColor2}
             >
               The amount of {useIFARM ? `i${tokenSymbol}` : `f${tokenSymbol}`} you entered exceeds
               deposited balance.
@@ -495,7 +516,11 @@ const WithdrawBase = ({
             />
           </div>
         </InsufficientSection>
-        <HasErrorSection isShow={hasErrorOccurred === 1 ? 'true' : 'false'}>
+        <HasErrorSection
+          isShow={hasErrorOccurred === 1 ? 'true' : 'false'}
+          activeColor={activeColor}
+          bgColorMessage={bgColorMessage}
+        >
           <NewLabel display="flex" flexFlow="column" widthDiv="100%">
             <FlexDiv>
               <img className="info-icon" src={InfoIcon} alt="" />
@@ -503,7 +528,7 @@ const WithdrawBase = ({
                 size={isMobile ? '14px' : '14px'}
                 height={isMobile ? '20px' : '20px'}
                 weight="600"
-                color="#344054"
+                color={fontColor2}
               >
                 Opss, we are having small issues with getting quotes. Please try again in 2 minutes.
               </NewLabel>
@@ -524,7 +549,7 @@ const WithdrawBase = ({
         <NewLabel
           size={isMobile ? '14px' : '14px'}
           height={isMobile ? '24px' : '24px'}
-          color="#344054"
+          color={fontColor3}
         >
           <NewLabel
             display="flex"
@@ -534,18 +559,11 @@ const WithdrawBase = ({
             <NewLabel
               size={isMobile ? '14px' : '14px'}
               height={isMobile ? '24px' : '24px'}
-              color="#344054"
+              color={fontColor3}
               weight="500"
             >
               Est. Received
-              <InfoIconCircle
-                className="info"
-                width={isMobile ? 16 : 16}
-                src={HelpIcon}
-                alt=""
-                data-tip
-                data-for="min-received"
-              />
+              <PiQuestion className="question" data-tip data-for="min-received" />
               <ReactTooltip
                 id="min-received"
                 backgroundColor="#101828"
@@ -567,7 +585,7 @@ const WithdrawBase = ({
             <NewLabel
               size={isMobile ? '14px' : '14px'}
               height={isMobile ? '24px' : '24px'}
-              color="#344054"
+              color={fontColor4}
               weight="600"
               textAlign="right"
               display="flex"

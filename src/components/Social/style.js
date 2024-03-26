@@ -4,7 +4,6 @@ const SocialsContainer = styled.div`
   display: flex;
   flex-direction: row;
   transition: 0.25s;
-  margin-top: 15px;
   margin-left: 15px;
   a {
     background: #344054;
@@ -17,7 +16,8 @@ const SocialsContainer = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    margin: 0px 0px 15px 0px;
+    margin: 0px;
+    padding-left: 12px;
   }
 
   z-index: 99999;
