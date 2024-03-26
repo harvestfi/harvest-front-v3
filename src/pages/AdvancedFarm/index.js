@@ -1701,11 +1701,11 @@ const AdvancedFarm = () => {
                             </NewLabel>
                           </InfoLabel>
                         )}
-                        {vaultPool.autoStakePoolAddress && (
+                        {token.strategyAddress && (
                           <InfoLabel
                             display="flex"
                             href={`${getExplorerLink(token.chain)}/address/${
-                              vaultPool.contractAddress
+                              token.strategyAddress
                             }`}
                             target="_blank"
                             onClick={e => e.stopPropagation()}
@@ -1747,6 +1747,25 @@ const AdvancedFarm = () => {
                             Pool Address
                           </NewLabel>
                         </InfoLabel>
+                        {vaultPool.liquidityUrl && (
+                          <InfoLabel
+                            display="flex"
+                            href={`${vaultPool.liquidityUrl}`}
+                            target="_blank"
+                            onClick={e => e.stopPropagation()}
+                            rel="noopener noreferrer"
+                          >
+                            <NewLabel
+                              size="12px"
+                              weight={isMobile ? 600 : 600}
+                              height="16px"
+                              self="center"
+                              color="#15202b"
+                            >
+                              Add Liquidity
+                            </NewLabel>
+                          </InfoLabel>
+                        )}
                       </FlexDiv>
                     </HalfInfo>
                   )}
