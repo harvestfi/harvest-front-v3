@@ -205,7 +205,7 @@ const AdvancedFarm = () => {
     fontColor3,
     fontColor4,
     fontColor6,
-    linkColor,
+    linkColorTooltip,
     hoverColor,
     bgColorFarm,
   } = useThemeContext()
@@ -1326,7 +1326,7 @@ const AdvancedFarm = () => {
                           href="https://discord.com/invite/gzWAG3Wx7Y"
                           target="_blank"
                           rel="noopener noreferrer"
-                          linkColor={linkColor}
+                          linkColor={linkColorTooltip}
                         >
                           Still having questions? Open Discord ticket.
                         </WelcomeTicket>
@@ -1360,7 +1360,7 @@ const AdvancedFarm = () => {
                           href="https://app.harvest.finance/farms?search=moonwell"
                           target="_self"
                           rel="noopener noreferrer"
-                          linkColor={linkColor}
+                          linkColor={linkColorTooltip}
                         >
                           Moonwell farms
                         </WelcomeTicket>
@@ -1372,7 +1372,7 @@ const AdvancedFarm = () => {
                           href="https://discord.com/invite/gzWAG3Wx7Y"
                           target="_blank"
                           rel="noopener noreferrer"
-                          linkColor={linkColor}
+                          linkColor={linkColorTooltip}
                         >
                           Still having questions? Open Discord ticket.
                         </WelcomeTicket>
@@ -1399,7 +1399,7 @@ const AdvancedFarm = () => {
                         href="https://v3.harvest.finance/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
                         target="_blank"
                         rel="noopener noreferrer"
-                        linkColor={linkColor}
+                        linkColor={linkColorTooltip}
                       >
                         under this link
                       </WelcomeTicket>

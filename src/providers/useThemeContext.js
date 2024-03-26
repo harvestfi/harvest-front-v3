@@ -36,6 +36,7 @@ export function ThemeProvider({ children }) {
   const fontColorTooltip = darkMode ? '#fff' : '#6941c6'
   const inputFontColor = darkMode ? '#fff' : '#667085'
   const linkColor = darkMode ? '#FF9400' : '#6941c6'
+  const linkColorTooltip = darkMode ? '#15b088' : '#6941c6'
 
   const borderColor = darkMode ? '#1F242F' : '#F3F6FF'
   const inputBorderColor = darkMode ? '#1F242F' : '#d0d5dd'
@@ -169,6 +170,7 @@ export function ThemeProvider({ children }) {
         fontColor6,
         inputFontColor,
         linkColor,
+        linkColorTooltip,
         fontColorTooltip,
         backColor,
         bgColor,
