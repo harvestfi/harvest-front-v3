@@ -10,31 +10,22 @@ const DetailView = styled.div`
   ${props =>
     props.mode === 'dark'
       ? `
-    ${
-      props.lastElement === 'yes'
-        ? 'border-radius: 0 0 10px 10px;'
-        : 'border-bottom: 1px solid rgba(255, 255, 255, 0.5);'
-    }
-  `
+        ${props.lastElement === 'yes' ? '' : ''}
+      `
       : `
-    ${
-      props.lastElement === 'yes'
-        ? ``
-        : `
-      border-bottom: 1px solid ${props.borderColor};
-    `
-    }
+        ${props.lastElement === 'yes' ? `` : ``}
   `}
   transition: 0.25s;
 
   &:hover {
-    background: #e9f0f7;
+    background: ${props => props.hoverColor};
   }
 
   @media screen and (max-width: 992px) {
     padding: 0px;
     border: unset;
-    border-bottom: 1px solid #f2f5ff;
+    border-bottom: 1px solid ${props => props.borderColor};
+    ${props => (props.firstElement === 'yes' ? `border-radius: 16px 16px 0px 0px;` : ``)}
   }
 `
 
@@ -102,24 +93,24 @@ const Content = styled.div`
 
   img.file-icon {
     padding: 4px;
-    background: #f3f7ff;
+    background: ${props => props.backColor};
     border-radius: 4.7px;
-    border: 1px solid #fff;
+    border: 1px solid ${props => props.borderColor};
   }
 
   img.active-file-icon {
-    background: #eaf1ff;
+    background: ${props => props.bgColorButton};
     padding: 4px;
     border-radius: 4.7px;
-    border: 1px solid #fff;
+    border: 1px solid ${props => props.borderColor};
   }
 
   img.active-file-icon:hover {
-    background: #eaf1ff;
+    background: ${props => props.bgColorButton};
   }
 
   img.file-icon:hover {
-    background: #eaf1ff;
+    background: ${props => props.bgColorButton};
   }
 `
 
@@ -131,8 +122,7 @@ const BadgeIcon = styled.div`
   justify-content: center;
   align-items: center;
   border-radius: 8px;
-  border: 2px solid ${props => props.borderColor};
-  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid ${props => props.borderColor};
   box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.15);
 
   &.network-badge {

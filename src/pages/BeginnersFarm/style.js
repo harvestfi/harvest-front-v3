@@ -4,7 +4,7 @@ import BgImage from '../../assets/images/logos/beginners/bg-image.jpg'
 const DetailView = styled.div`
   width: 100%;
   margin-left: 280px;
-  background: ${props => props.pageBackColor};
+  background: ${props => props.bgColor};
   color: ${props => props.fontColor};
   transition: 0.25s;
 
@@ -250,6 +250,14 @@ const NewLabel = styled.div`
     border-radius: ${props.borderRadius};
     `
       : ``}
+
+  svg.question {
+    font-size: 16px;
+    color: ${props => props.color};
+    cursor: pointer;
+    margin: auto 0px auto 5px;
+  }
+
   img.icon {
     margin-right: 10px;
   }
@@ -387,6 +395,7 @@ const ThemeMode = styled.div`
           left: 2px;
         }
       `}
+  }
 `
 
 const TopDesc = styled(NewLabel)`
@@ -465,8 +474,8 @@ const WelcomeBox = styled.div`
   justify-content: space-between;
   gap: 16px;
   border-radius: 12px;
-  border: 1px solid var(--Gray-100, #f2f4f7);
-  background: var(--bggrad, #fff);
+  border: 1px solid ${props => props.borderColor};
+  background: ${props => props.bgColorTooltip};
   box-shadow: 0px 4px 6px -2px rgba(16, 24, 40, 0.03), 0px 12px 16px -4px rgba(16, 24, 40, 0.08);
   padding: 16px;
   margin-bottom: 25px;
@@ -494,12 +503,12 @@ const WelcomeContent = styled.div`
   font-size: 14px;
   line-height: 20px;
   font-weight: 400;
-  color: #475467;
+  color: ${props => props.fontColor};
 `
 
 const WelcomeTitle = styled.div`
   font-weight: 600;
-  color: #101828;
+  color: ${props => props.fontColor1};
   padding-bottom: 5px;
   @media screen and (max-width: 992px) {
     width: 100%;
@@ -511,7 +520,7 @@ const WelcomeTitle = styled.div`
 const WelcomeText = styled.div`
   a {
     font-weight: 700;
-    color: ${props => (props.showBadge === true ? '#FF9400' : '#475467')};
+    color: #ff9400;
   }
   a.badge-body {
     text-decoration: none;
@@ -601,8 +610,8 @@ const HalfContent = styled.div`
   display: flex;
   flex-direction: column;
   height: fit-content;
-  background: #fff;
-  border: 2px solid #f2f5ff;
+  background: ${props => props.backColor};
+  border: 2px solid ${props => props.borderColor};
   ${props =>
     props.borderRadius
       ? `
@@ -679,33 +688,15 @@ const LogoImg = styled.img`
       : ``}
 `
 
-const InfoIcon = styled.img`
-  filter: ${props => props.filterColor};
-  transition: 0.25s;
-  cursor: pointer;
-  margin-left: 5px;
-  margin-top: -2px;
-`
-
-const InfoIconBlack = styled.img`
-  transition: 0.25s;
-  cursor: pointer;
-  margin-left: 5px;
-
-  @media screen and (max-width: 992px) {
-    display: none;
-  }
-`
-
 const Monospace = styled.span`
   font-family: 'Inter', sans-serif;
   border-bottom: ${props => props.borderBottom || 'unset'};
 `
 
 const MyBalance = styled.div`
-  background: #fff;
+  background: ${props => props.backColor};
   border-radius: 12px;
-  border: 2px solid #f2f5ff;
+  border: 2px solid ${props => props.borderColor};
 
   ${props =>
     props.height
@@ -828,7 +819,7 @@ const BoxCover = styled.div`
 
   @media screen and (max-width: 992px) {
     border-radius: 12px;
-    border: 2px solid #f3f6ff;
+    border: 2px solid ${props => props.borderColor};
     margin-bottom: 20px;
   }
 `
@@ -838,8 +829,8 @@ const ValueBox = styled.div`
   flex-flow: column;
   justify-content: center;
   border-radius: 12px;
-  border: 2px solid #f3f6ff;
-  background: var(--base-white, #fff);
+  border: 2px solid ${props => props.borderColor};
+  background: ${props => props.backColor};
   padding: 24px;
   height: 120px;
   ${props => (props.width ? `width: ${props.width};` : '')}
@@ -852,14 +843,15 @@ const ValueBox = styled.div`
     width: 100%;
     height: 70px;
     padding: 8px 13px;
+    border-radius: 0px;
     border: unset;
 
     &.balance-box {
-      border-right: 2px solid #f3f6ff;
+      border-right: 2px solid ${props => props.borderColor};
       border-radius: 14px 0px 0px 14px;
     }
     &.daily-yield-box {
-      border-left: 2px solid #f3f6ff;
+      border-left: 2px solid ${props => props.borderColor};
       border-radius: 0px 14px 14px 0px;
     }
     &.daily-apy-box {
@@ -873,10 +865,17 @@ const ValueBox = styled.div`
 `
 
 const BoxTitle = styled.div`
-  color: #6f78aa;
+  color: ${props => props.fontColor3};
   font-size: 14px;
   font-weight: 500;
   line-height: 20px;
+
+  svg.question {
+    font-size: 16px;
+    color: ${props => props.fontColor3};
+    cursor: pointer;
+    margin: auto 0px auto 5px;
+  }
 
   #tooltip-mybalance,
   #tooltip-monthly-yield,
@@ -890,14 +889,14 @@ const BoxTitle = styled.div`
 
   @media screen and (max-width: 992px) {
     font-size: 12px;
-    .info {
+    svg.question {
       display: none;
     }
   }
 `
 
 const BoxValue = styled.div`
-  color: #101828;
+  color: ${props => props.fontColor1};
   font-weight: 600;
   letter-spacing: -0.6px;
   font-size: 22px;
@@ -945,12 +944,12 @@ const MainTag = styled.div`
   font-weight: 600;
   line-height: 20px;
   cursor: pointer;
-  color: #1f2937;
+  color: ${props => props.fontColor4};
 
   ${props =>
     props.active === 'true'
       ? `
-      background: white;
+      background: ${props.bgColor};
       border-radius: 6px 6px 0px 0px;
     `
       : `
@@ -965,12 +964,14 @@ const MainTag = styled.div`
 
   img {
     ${props =>
-      props.active === 'true'
+      props.mode === 'dark'
+        ? 'filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%);'
+        : props.active === 'true'
         ? `
-      `
+        `
         : `
-        filter: invert(98%) sepia(76%) saturate(0%) hue-rotate(113deg) brightness(116%) contrast(101%);
-      `}
+          filter: invert(98%) sepia(76%) saturate(0%) hue-rotate(113deg) brightness(116%) contrast(101%);
+        `}
   }
 `
 
@@ -982,11 +983,11 @@ const MainDescText = styled.div`
 
 const HalfInfo = styled.div`
   border-radius: 12px;
-  background: #fff;
+  background: ${props => props.backColor};
   transition: 0.25s;
   margin-bottom: ${props => props.marginBottom};
   font-family: 'Inter', sans-serif;
-  border: 2px solid #f2f5ff;
+  border: 2px solid ${props => props.borderColor};
 
   ${props =>
     props.padding
@@ -1035,9 +1036,9 @@ const InfoLabel = styled.a`
       : ''}
   margin-right: 15px;
   justify-content: center;
-  background: #fff;
+  background: ${props => props.bgColor};
   border-radius: 8px;
-  border: 1px solid #eee;
+  border: 1px solid ${props => props.borderColor};
   text-decoration: none;
   padding: 9px 17px;
   align-self: center;
@@ -1056,7 +1057,7 @@ const InfoLabel = styled.a`
 
   &:hover {
     color: #1f2937;
-    background: #ced3e6c0;
+    background: ${props => props.hoverColor};
     .address {
       font-weight: bold;
     }
@@ -1064,7 +1065,7 @@ const InfoLabel = styled.a`
 `
 
 const DescInfo = styled.div`
-  color: #6f78aa;
+  color: ${props => props.fontColor3};
   font-weight: 400;
   font-size: 14px;
   line-height: 24px;
@@ -1076,12 +1077,10 @@ const DescInfo = styled.div`
     width: 300px;
   }
 
-  .help-message {
-    margin-top: 0;
-    p {
-      a {
-        cursor: pointer;
-      }
+  p {
+    a {
+      cursor: pointer;
+      color: ${props => props.fontColor6};
     }
   }
 
@@ -1091,10 +1090,11 @@ const DescInfo = styled.div`
 `
 
 const LastHarvestInfo = styled.div`
-  background: #fff;
+  background: ${props => props.backColor};
   border-radius: 12px;
   margin-bottom: 25px;
-  border: 2px solid #f2f5ff;
+  border: 2px solid ${props => props.borderColor};
+
   @media screen and (max-width: 992px) {
     margin-bottom: 20px;
   }
@@ -1219,7 +1219,6 @@ export {
   TopInner,
   BigDiv,
   LogoImg,
-  InfoIcon,
   Monospace,
   MyBalance,
   ThemeMode,
@@ -1260,7 +1259,6 @@ export {
   NetDetailTitle,
   NetDetailContent,
   NetDetailImg,
-  InfoIconBlack,
   LinksContainer,
   Logo,
 }

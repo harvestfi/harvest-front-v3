@@ -3,6 +3,7 @@ import { useMediaQuery } from 'react-responsive'
 import Modal from 'react-bootstrap/Modal'
 import { BsArrowDown } from 'react-icons/bs'
 import { useWallet } from '../../../../providers/Wallet'
+import { useThemeContext } from '../../../../providers/useThemeContext'
 import {
   SelectTokenWido,
   // CloseBtn,
@@ -31,6 +32,18 @@ const DepositSelectToken = ({
   defaultToken,
   supportedVault,
 }) => {
+  const {
+    darkMode,
+    bgColor,
+    fontColor,
+    fontColor1,
+    fontColor2,
+    modalInputColor,
+    inputBorderColor,
+    inputFontColor,
+    borderColor,
+  } = useThemeContext()
+
   const { connected } = useWallet()
   const [filterWord, setFilterWord] = useState('')
   const [showDesc, setShowDesc] = useState(true)
@@ -68,7 +81,7 @@ const DepositSelectToken = ({
                 Select Token
               </NewLabel>
               <NewLabel
-                color="#15202B"
+                color={fontColor1}
                 size={isMobile ? '14px' : '14px'}
                 height={isMobile ? '20px' : '20px'}
                 weight="400"
@@ -87,7 +100,8 @@ const DepositSelectToken = ({
               weight="600"
               size={isMobile ? '14px' : '14px'}
               height={isMobile ? '20px ' : '20px'}
-              color="#667085"
+              darkMode={darkMode}
+              color={inputFontColor}
               align="center"
               onClick={() => {
                 setSelectToken(false)
@@ -97,12 +111,15 @@ const DepositSelectToken = ({
             </NewLabel>
           </NewLabel>
         </FTokenInfo>
-        <NewLabel width="100%" marginTop="18px" position="relative">
+        <NewLabel darkMode={darkMode} width="100%" marginTop="18px" position="relative">
           <Search src={SearchIcon} />
           <FilterInput
             value={filterWord}
             placeholder="Find tokens by name or address"
             onChange={onFilter}
+            inputBorderColor={inputBorderColor}
+            modalInputColor={modalInputColor}
+            inputFontColor={inputFontColor}
           />
         </NewLabel>
       </Modal.Header>
@@ -122,14 +139,18 @@ const DepositSelectToken = ({
                 supportedVault={supportedVault}
               />
             ) : (
-              <NotConnectedWallet isShow={showDesc ? 'true' : 'false'}>
-                <NewLabel marginRight="12px" display="flex">
+              <NotConnectedWallet
+                isShow={showDesc ? 'true' : 'false'}
+                bgColor={bgColor}
+                borderColor={borderColor}
+              >
+                <NewLabel darkMode={darkMode} marginRight="12px" display="flex">
                   <div>
                     <img width={isMobile ? '21px' : '21px'} src={InfoIcon} alt="" />
                   </div>
                   <NewLabel marginLeft={isMobile ? '12px' : '12px'}>
                     <NewLabel
-                      color="#344054"
+                      color={fontColor2}
                       size={isMobile ? '14px' : '14px'}
                       height={isMobile ? '20px' : '20px'}
                       weight="600"
@@ -138,7 +159,7 @@ const DepositSelectToken = ({
                       Wallet not connected.
                     </NewLabel>
                     <NewLabel
-                      color="#475467"
+                      color={fontColor}
                       size={isMobile ? '14px' : '14px'}
                       height={isMobile ? '20px' : '20px'}
                       weight="400"
@@ -147,7 +168,7 @@ const DepositSelectToken = ({
                     </NewLabel>
                   </NewLabel>
                 </NewLabel>
-                <div>
+                <NewLabel darkMode={darkMode}>
                   <ImgBtn
                     src={CloseIcon}
                     alt=""
@@ -155,7 +176,7 @@ const DepositSelectToken = ({
                       setShowDesc(false)
                     }}
                   />
-                </div>
+                </NewLabel>
               </NotConnectedWallet>
             )}
           </NewLabel>

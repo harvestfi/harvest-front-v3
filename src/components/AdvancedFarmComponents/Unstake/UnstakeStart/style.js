@@ -411,6 +411,7 @@ const ThemeMode = styled.div`
           left: 2px;
         }
       `}
+  }
 `
 
 const InsufficientSection = styled.div`
@@ -511,6 +512,17 @@ const SwitchTabTag = styled.div`
   }
 `
 
+const ProgressLabel = styled.div`
+  display: flex;
+  color: ${props => props.fontColor2};
+`
+
+const ProgressText = styled.div`
+  width: ${props => props.width};
+  padding: ${props => props.padding};
+  text-align: center;
+`
+
 export {
   FTokenInfo,
   FTokenDiv,
@@ -530,4 +542,6 @@ export {
   ImgBtn,
   AmountInputSection,
   SwitchTabTag,
+  ProgressLabel,
+  ProgressText,
 }

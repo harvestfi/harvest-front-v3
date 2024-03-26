@@ -184,7 +184,7 @@ const ApexChart = ({
   setCurDate,
   setCurContent,
 }) => {
-  const { fontColor } = useThemeContext()
+  const { fontColor, fontColor5 } = useThemeContext()
 
   const [mainSeries, setMainSeries] = useState([])
 
@@ -226,7 +226,7 @@ const ApexChart = ({
         width={24}
         height={24}
         viewBox="0 0 1024 1024"
-        fill="#000"
+        fill={fontColor5}
       >
         <tspan dy="0.71em">{path}</tspan>
       </text>
@@ -250,7 +250,7 @@ const ApexChart = ({
         width={60}
         height={310}
         stroke="none"
-        fill="#000"
+        fill={fontColor5}
         textAnchor="end"
       >
         <tspan dx={0} dy="0.355em">

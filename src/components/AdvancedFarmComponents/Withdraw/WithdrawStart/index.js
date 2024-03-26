@@ -5,10 +5,10 @@ import { useMediaQuery } from 'react-responsive'
 import { isNaN } from 'lodash'
 import { BsArrowUp } from 'react-icons/bs'
 import { CiSettings } from 'react-icons/ci'
+import { PiQuestion } from 'react-icons/pi'
 import { IoIosArrowUp } from 'react-icons/io'
 import ReactTooltip from 'react-tooltip'
 import { Spinner } from 'react-bootstrap'
-import HelpIcon from '../../../../assets/images/logos/beginners/help-circle.svg'
 import AlertIcon from '../../../../assets/images/logos/beginners/alert-triangle.svg'
 import AlertCloseIcon from '../../../../assets/images/logos/beginners/alert-close.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
@@ -23,6 +23,7 @@ import { useVaults } from '../../../../providers/Vault'
 import { useWallet } from '../../../../providers/Wallet'
 import { usePools } from '../../../../providers/Pools'
 import { usePortals } from '../../../../providers/Portals'
+import { useThemeContext } from '../../../../providers/useThemeContext'
 import { getWeb3, fromWei } from '../../../../services/web3'
 import { formatNumberWido } from '../../../../utils'
 import AnimatedDots from '../../../AnimatedDots'
@@ -43,6 +44,8 @@ import {
   SlippageRow,
   SlippageInput,
   SlippageBtn,
+  ProgressLabel,
+  ProgressText,
 } from './style'
 
 const WithdrawStart = ({
@@ -64,6 +67,15 @@ const WithdrawStart = ({
   setUnstakeInputValue,
   setRevertSuccess,
 }) => {
+  const {
+    darkMode,
+    backColor,
+    fontColor1,
+    fontColor2,
+    fontColor3,
+    bgColorSlippage,
+    borderColor,
+  } = useThemeContext()
   const { account, web3 } = useWallet()
   const { fetchUserPoolStats, userStats } = usePools()
   const [slippagePercentage, setSlippagePercentage] = useState(null)
@@ -281,7 +293,7 @@ const WithdrawStart = ({
                 Summary
               </NewLabel>
               <NewLabel
-                color="#15202B"
+                color={fontColor1}
                 size={isMobile ? '14px' : '14px'}
                 height={isMobile ? '20px' : '20px'}
                 weight="400"
@@ -317,7 +329,7 @@ const WithdrawStart = ({
             size={isMobile ? '14px' : '14px'}
             height={isMobile ? '24px' : '24px'}
             padding="15px 24px"
-            color="#344054"
+            color={fontColor2}
           >
             <NewLabel
               display="flex"
@@ -364,19 +376,19 @@ const WithdrawStart = ({
                 {progressStep === 4 ? 'Received' : 'Est. Received'}
                 {progressStep !== 4 && (
                   <>
-                    <img className="help-icon" src={HelpIcon} alt="" data-tip data-for="min-help" />
+                    <PiQuestion className="question" data-tip data-for="min-help" />
                     <ReactTooltip
                       id="min-help"
-                      backgroundColor="white"
-                      borderColor="white"
-                      textColor="#344054"
+                      backgroundColor="#101828"
+                      borderColor="black"
+                      textColor="white"
                       place="right"
                     >
                       <NewLabel
                         size={isMobile ? '12px' : '12px'}
                         height={isMobile ? '18px' : '18px'}
                         weight="600"
-                        color="#344054"
+                        color={fontColor2}
                       >
                         The estimated number of tokens you will receive in your wallet. The default
                         slippage is set as &lsquo;Auto&lsquo;.
@@ -517,7 +529,23 @@ const WithdrawStart = ({
               alt="progress bar"
             />
           </NewLabel>
-
+          <ProgressLabel fontColor2={fontColor2}>
+            <ProgressText width="50%" padding="0px 0px 0px 30px">
+              Approve
+              <br />
+              Token
+            </ProgressText>
+            <ProgressText width="unset" padding="0px 0px 0px 7px">
+              Confirm
+              <br />
+              Transaction
+            </ProgressText>
+            <ProgressText width="50%" padding="0px 10px 0px 0px">
+              Transaction
+              <br />
+              Successful
+            </ProgressText>
+          </ProgressLabel>
           <NewLabel
             size={isMobile ? '16px' : '16px'}
             height={isMobile ? '24px' : '24px'}
@@ -549,7 +577,7 @@ const WithdrawStart = ({
           <NewLabel
             size={isMobile ? '12px' : '12px'}
             height={isMobile ? '24px' : '24px'}
-            color="#6F78AA"
+            color={fontColor3}
             padding="10px 24px"
             display={slippageSetting ? 'flex' : 'none'}
             flexFlow="column"
@@ -564,7 +592,7 @@ const WithdrawStart = ({
                 {slippagePercentage === null ? 'Auto (0 - 2.5%)' : `${slippagePercentage}%`}
               </span>
             </NewLabel>
-            <SlippageRow>
+            <SlippageRow borderColor={borderColor}>
               {SlippageValues.map((percentage, index) => (
                 <SlipValue
                   key={index}
@@ -572,8 +600,9 @@ const WithdrawStart = ({
                     setSlippagePercentage(percentage)
                     setCustomSlippage(null)
                   }}
-                  color={slippagePercentage === percentage ? '#fff' : '#344054'}
-                  bgColor={slippagePercentage === percentage ? '#15b088' : ''}
+                  color={slippagePercentage === percentage ? '#fff' : fontColor2}
+                  bgColor={slippagePercentage === percentage ? bgColorSlippage : ''}
+                  borderColor={borderColor}
                   isLastChild={index === SlippageValues.length - 1}
                   isFirstChild={index === 0}
                 >
@@ -587,12 +616,14 @@ const WithdrawStart = ({
               padding="15px 0px 5px"
               gap="10px"
             >
-              <NewLabel color="#344054" weight="600" margin="auto">
+              <NewLabel color={fontColor2} weight="600" margin="auto">
                 or
               </NewLabel>
               <SlippageInput
+                fontColor2={fontColor2}
+                backColor={backColor}
                 borderColor={
-                  customSlippage === null || customSlippage === 0 ? '#d0d5dd' : '#15b088'
+                  customSlippage === null || customSlippage === 0 ? borderColor : '#15b088'
                 }
               >
                 <input
@@ -605,6 +636,13 @@ const WithdrawStart = ({
               </SlippageInput>
               <SlippageBtn
                 onClick={onSlippageSave}
+                color={
+                  !darkMode
+                    ? '#fff'
+                    : customSlippage === null || customSlippage === 0
+                    ? '#0C111D'
+                    : '#fff'
+                }
                 bgColor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#15b088'}
                 cursor={customSlippage === null || customSlippage === 0 ? 'not-allowed' : 'pointer'}
                 hoverColor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#2ccda4'}

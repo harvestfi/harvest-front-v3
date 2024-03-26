@@ -2,10 +2,9 @@ import BigNumber from 'bignumber.js'
 import React, { useEffect, useState } from 'react'
 import { useSetChain } from '@web3-onboard/react'
 import { useMediaQuery } from 'react-responsive'
+import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
-import ArrowDown from '../../../../assets/images/logos/beginners/arrow-narrow-down.svg'
-import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.svg'
 import AnimatedDots from '../../../AnimatedDots'
 import { useWallet } from '../../../../providers/Wallet'
 import { CHAIN_IDS } from '../../../../data/constants'
@@ -25,6 +24,7 @@ import {
   AmountInputSection,
   SwitchTabTag,
 } from './style'
+import { useThemeContext } from '../../../../providers/useThemeContext'
 
 const getChainName = chain => {
   let chainName = 'Ethereum'
@@ -55,6 +55,17 @@ const StakeBase = ({
   lpTokenBalance,
   fAssetPool,
 }) => {
+  const {
+    bgColor,
+    fontColor,
+    fontColor1,
+    fontColor2,
+    fontColor3,
+    fontColor4,
+    fontColor5,
+    activeColor,
+    bgColorMessage,
+  } = useThemeContext()
   const { connected, connectAction, account, chainId, setChainId } = useWallet()
 
   const [
@@ -109,8 +120,8 @@ const StakeBase = ({
   }
 
   const mainTags = [
-    { name: 'Stake', img: ArrowDown },
-    { name: 'Unstake', img: ArrowUp },
+    { name: 'Stake', img: BsArrowDown },
+    { name: 'Unstake', img: BsArrowUp },
   ]
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
@@ -121,7 +132,7 @@ const StakeBase = ({
         size={isMobile ? '16px' : '16px'}
         height={isMobile ? '24px' : '24px'}
         weight="600"
-        color="#101828"
+        color={fontColor1}
         display="flex"
         justifyContent="center"
         padding={isMobile ? '4px 0px' : '4px 0px'}
@@ -138,33 +149,39 @@ const StakeBase = ({
                 switchMethod()
               }
             }}
-            color={i === 0 ? '#1F2937' : '#6F78AA'}
-            borderColor={i === 0 ? '#F2F5FF' : ''}
-            backColor={i === 0 ? '#F2F5FF' : ''}
+            color={i === 0 ? fontColor4 : fontColor3}
+            borderColor={i === 0 ? activeColor : ''}
+            backColor={i === 0 ? activeColor : ''}
             boxShadow={
               i === 0
                 ? '0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10)'
                 : ''
             }
           >
-            <img src={tag.img} className="logo" alt="logo" />
+            <tag.img />
             <p>{tag.name}</p>
           </SwitchTabTag>
         ))}
       </NewLabel>
-      <DepoTitle>Stake your fTokens to earn extra rewards.</DepoTitle>
+      <DepoTitle fontColor={fontColor}>Stake your fTokens to earn extra rewards.</DepoTitle>
       <AmountSection>
         <NewLabel
           size={isMobile ? '14px' : '14px'}
           height={isMobile ? '20px' : '20px'}
           weight="500"
-          color="#344054"
+          color={fontColor2}
           marginBottom="6px"
         >
           Amount to Stake
         </NewLabel>
-        <AmountInputSection>
-          <TokenAmount type="text" value={inputAmount} onChange={onInputBalance} />
+        <AmountInputSection fontColor5={fontColor5}>
+          <TokenAmount
+            type="text"
+            value={inputAmount}
+            onChange={onInputBalance}
+            bgColor={bgColor}
+            fontColor2={fontColor2}
+          />
           <button
             className="max-btn"
             type="button"
@@ -188,6 +205,7 @@ const StakeBase = ({
         </AmountInputSection>
       </AmountSection>
       <BalanceInfo
+        fontColor={fontColor}
         onClick={() => {
           if (account) {
             setInputAmount(
@@ -221,14 +239,18 @@ const StakeBase = ({
           )}
         </span>
       </BalanceInfo>
-      <InsufficientSection isShow={showWarning ? 'true' : 'false'}>
+      <InsufficientSection
+        isShow={showWarning ? 'true' : 'false'}
+        activeColor={activeColor}
+        bgColorMessage={bgColorMessage}
+      >
         <NewLabel display="flex" widthDiv="80%" items="start">
           <img className="info-icon" src={InfoIcon} alt="" />
           <NewLabel
             size={isMobile ? '14px' : '14px'}
             height={isMobile ? '20px' : '20px'}
             weight="600"
-            color="#344054"
+            color={fontColor2}
           >
             {warningContent}
           </NewLabel>

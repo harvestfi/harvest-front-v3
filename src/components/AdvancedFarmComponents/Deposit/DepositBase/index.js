@@ -5,13 +5,12 @@ import { round } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import { toast } from 'react-toastify'
 import ReactTooltip from 'react-tooltip'
+import { PiQuestion } from 'react-icons/pi'
+import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
 import DropDownIcon from '../../../../assets/images/logos/advancedfarm/drop-down.svg'
 // import WalletIcon from '../../../../assets/images/logos/beginners/wallet-in-button.svg'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
-import ArrowDown from '../../../../assets/images/logos/beginners/arrow-narrow-down.svg'
-import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.svg'
-import HelpIcon from '../../../../assets/images/logos/earn/info.svg'
 import { BEGINNERS_BALANCES_DECIMALS } from '../../../../constants'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { useWallet } from '../../../../providers/Wallet'
@@ -39,7 +38,6 @@ import {
   CloseBtn,
   DepositTokenSection,
   SwitchTabTag,
-  InfoIconCircle,
 } from './style'
 import { usePortals } from '../../../../providers/Portals'
 
@@ -96,9 +94,19 @@ const DepositBase = ({
   supportedVault,
   setSupportedVault,
 }) => {
+  const {
+    bgColor,
+    fontColor,
+    fontColor1,
+    fontColor2,
+    fontColor3,
+    fontColor4,
+    activeColor,
+    bgColorMessage,
+  } = useThemeContext()
+
   const { connected, connectAction, account, chainId, setChainId, web3 } = useWallet()
   const { getPortalsEstimate, getPortalsToken } = usePortals()
-  const { filterColor } = useThemeContext()
 
   const [
     {
@@ -361,8 +369,8 @@ const DepositBase = ({
   }
 
   const mainTags = [
-    { name: 'Convert', img: ArrowDown },
-    { name: 'Revert', img: ArrowUp },
+    { name: 'Convert', img: BsArrowDown },
+    { name: 'Revert', img: BsArrowUp },
   ]
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
@@ -374,7 +382,7 @@ const DepositBase = ({
           size={isMobile ? '16px' : '16px'}
           height={isMobile ? '24px' : '24px'}
           weight="600"
-          color="#101828"
+          color={fontColor1}
           display="flex"
           justifyContent="center"
           padding={isMobile ? '4px 0px' : '4px 0px'}
@@ -391,21 +399,21 @@ const DepositBase = ({
                   switchMethod()
                 }
               }}
-              color={i === 0 ? '#1F2937' : '#6F78AA'}
-              borderColor={i === 0 ? '#F2F5FF' : ''}
-              backColor={i === 0 ? '#F2F5FF' : ''}
+              color={i === 0 ? fontColor4 : fontColor3}
+              borderColor={i === 0 ? activeColor : ''}
+              backColor={i === 0 ? activeColor : ''}
               boxShadow={
                 i === 0
                   ? '0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10)'
                   : ''
               }
             >
-              <img src={tag.img} alt="logo" />
+              <tag.img />
               <p>{tag.name}</p>
             </SwitchTabTag>
           ))}
         </NewLabel>
-        <DepoTitle>
+        <DepoTitle fontColor={fontColor}>
           {useBeginnersFarm
             ? `Convert your crypto into interest-bearing f${tokenSymbol} to earn yield`
             : useIFARM
@@ -418,14 +426,20 @@ const DepositBase = ({
               size={isMobile ? '14px' : '14px'}
               height={isMobile ? '20px' : '20px'}
               weight="500"
-              color="#344054"
+              color={fontColor2}
               marginBottom="6px"
             >
               Amount to convert
             </NewLabel>
             <TokenInput>
-              <TokenAmount type="text" value={inputAmount} onChange={onInputBalance} />
-              <TokenUSDAmount>
+              <TokenAmount
+                type="text"
+                value={inputAmount}
+                onChange={onInputBalance}
+                bgColor={bgColor}
+                fontColor2={fontColor2}
+              />
+              <TokenUSDAmount fontColor3={fontColor3}>
                 {inputAmount === '0' || inputAmount === '' ? (
                   '$0'
                 ) : fromInfoUsdAmount === '' ? (
@@ -445,7 +459,7 @@ const DepositBase = ({
               size={isMobile ? '14px' : '14px'}
               height={isMobile ? '20px' : '20px'}
               weight="500"
-              color="#344054"
+              color={fontColor2}
               marginBottom="6px"
             >
               Input Token
@@ -467,6 +481,7 @@ const DepositBase = ({
           </DepositTokenSection>
         </TokenInfo>
         <BalanceInfo
+          fontColor={fontColor}
           onClick={() => {
             if (account && pickedToken.symbol !== 'Select Token') {
               setInputAmount(new BigNumber(balance).toString())
@@ -477,14 +492,18 @@ const DepositBase = ({
           Balance Available:
           <span>{new BigNumber(balance).toString()}</span>
         </BalanceInfo>
-        <InsufficientSection isShow={showWarning ? 'true' : 'false'}>
+        <InsufficientSection
+          isShow={showWarning ? 'true' : 'false'}
+          activeColor={activeColor}
+          bgColorMessage={bgColorMessage}
+        >
           <NewLabel display="flex" widthDiv="80%" items="center">
             <img className="info-icon" src={InfoIcon} alt="" />
             <NewLabel
               size={isMobile ? '14px' : '14px'}
               height={isMobile ? '20px' : '20px'}
               weight="600"
-              color="#344054"
+              color={fontColor2}
             >
               Insufficient {pickedToken.symbol} balance in your wallet
             </NewLabel>
@@ -499,7 +518,10 @@ const DepositBase = ({
             />
           </div>
         </InsufficientSection>
-        <HasErrorSection isShow={hasErrorOccurred === 1 ? 'true' : 'false'}>
+        <HasErrorSection
+          isShow={hasErrorOccurred === 1 ? 'true' : 'false'}
+          activeColor={activeColor}
+        >
           <NewLabel display="flex" flexFlow="column" widthDiv="100%">
             <FlexDiv>
               <img className="info-icon" src={InfoIcon} alt="" />
@@ -507,7 +529,7 @@ const DepositBase = ({
                 size={isMobile ? '14px' : '14px'}
                 height={isMobile ? '20px' : '20px'}
                 weight="600"
-                color="#344054"
+                color={fontColor2}
               >
                 Opss, we are having small issues with getting quotes. Please try again in 2 minutes.
               </NewLabel>
@@ -538,19 +560,11 @@ const DepositBase = ({
             <NewLabel
               size={isMobile ? '12px' : '14px'}
               height={isMobile ? '24px' : '24px'}
-              color="#6F78AA"
+              color={fontColor3}
               weight="500"
             >
               Est. Monthly Yield
-              <InfoIconCircle
-                className="info"
-                width={isMobile ? 16 : 16}
-                src={HelpIcon}
-                filterColor={filterColor}
-                alt=""
-                data-tip
-                data-for="monthly-yield"
-              />
+              <PiQuestion className="question" data-tip data-for="monthly-yield" />
               <ReactTooltip
                 id="monthly-yield"
                 backgroundColor="#101828"
@@ -575,7 +589,7 @@ const DepositBase = ({
             <NewLabel
               size={isMobile ? '12px' : '14px'}
               height={isMobile ? '24px' : '24px'}
-              color="#1F2937"
+              color={fontColor4}
               weight="600"
               textAlign="right"
             >
@@ -613,19 +627,11 @@ const DepositBase = ({
             <NewLabel
               size={isMobile ? '12px' : '14px'}
               height={isMobile ? '24px' : '24px'}
-              color="#6F78AA"
+              color={fontColor3}
               weight="500"
             >
               Est. Daily Yield
-              <InfoIconCircle
-                className="info"
-                width={isMobile ? 16 : 16}
-                src={HelpIcon}
-                filterColor={filterColor}
-                alt=""
-                data-tip
-                data-for="daily-yield"
-              />
+              <PiQuestion className="question" data-tip data-for="daily-yield" />
               <ReactTooltip
                 id="daily-yield"
                 backgroundColor="#101828"
@@ -651,7 +657,7 @@ const DepositBase = ({
             <NewLabel
               size={isMobile ? '12px' : '14px'}
               height={isMobile ? '24px' : '24px'}
-              color="#1F2937"
+              color={fontColor4}
               weight="600"
               textAlign="right"
             >
@@ -689,19 +695,11 @@ const DepositBase = ({
             <NewLabel
               size={isMobile ? '12px' : '14px'}
               height={isMobile ? '24px' : '24px'}
-              color="#6F78AA"
+              color={fontColor3}
               weight="500"
             >
               {useIFARM ? 'Est. Received' : 'Est. fTokens Received'}
-              <InfoIconCircle
-                className="info"
-                width={isMobile ? 16 : 16}
-                filterColor={filterColor}
-                src={HelpIcon}
-                alt=""
-                data-tip
-                data-for="min-received"
-              />
+              <PiQuestion className="question" data-tip data-for="min-received" />
               <ReactTooltip
                 id="min-received"
                 backgroundColor="#101828"
@@ -724,7 +722,7 @@ const DepositBase = ({
             <NewLabel
               size={isMobile ? '12px' : '14px'}
               height={isMobile ? '24px' : '24px'}
-              color="#1F2937"
+              color={fontColor4}
               weight="600"
               textAlign="right"
               display="flex"

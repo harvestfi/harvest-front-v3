@@ -1,6 +1,9 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
+import { TbSun } from 'react-icons/tb'
+import { LuMoon } from 'react-icons/lu'
+import { IoCloseCircleOutline } from 'react-icons/io5'
 import Analytics from '../../assets/images/logos/sidebar/analytics.svg'
 import ConnectDisableIcon from '../../assets/images/logos/sidebar/connect-disable.svg'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
@@ -15,7 +18,7 @@ import Beginners from '../../assets/images/logos/sidebar/beginners.svg'
 // import Collaborations from '../../assets/images/logos/sidebar/collaborations.svg'
 import Advanced from '../../assets/images/logos/sidebar/advanced.svg'
 import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
-import xCircle from '../../assets/images/logos/sidebar/x-circle.svg'
+import logoNewDark from '../../assets/images/logos/sidebar/ifarm_dark.svg'
 import LogoutIcon from '../../assets/images/logos/sidebar/logout.svg'
 import Wallet from '../../assets/images/logos/sidebar/wallet.svg'
 import WalletOff from '../../assets/images/logos/sidebar/wallet_off.svg'
@@ -53,6 +56,7 @@ import {
   Link,
   LinkContainer,
   LinksContainer,
+  MobileFollow,
   MiddleActionsContainer,
   MobileActionsContainer,
   MobileWalletTop,
@@ -62,14 +66,13 @@ import {
   MobileAmountDiv,
   MobileWalletBtn,
   MobileWalletButton,
-  SocialMobileWrapper,
   MobileConnectBtn,
   MobileLinkContainer,
   MobileToggle,
   MobileView,
   OffcanvasDiv,
   SideIcons,
-  // ThemeMode,
+  ThemeMode,
   UserDropDown,
   UserDropDownItem,
   UserDropDownMenu,
@@ -84,7 +87,7 @@ import {
   MoreBtn,
 } from './style'
 
-const sideLinks = [
+const sideLinksTop = [
   {
     path: ROUTES.PORTFOLIO,
     name: 'Dashboard',
@@ -114,7 +117,7 @@ const sideLinks = [
   // },
 ]
 
-const sideLinks1 = [
+const sideLinksBottom = [
   {
     path: ROUTES.ANALYTIC,
     name: 'Analytics',
@@ -154,7 +157,7 @@ const sideLinksMobile = [
   },
 ]
 
-const sideLinksMobile1 = [
+const sideLinksMobileBottom = [
   {
     path: ROUTES.PORTFOLIO,
     name: 'Dashboard',
@@ -188,7 +191,7 @@ const sideLinksMobile1 = [
   },
 ]
 
-const SideLink = ({ item, subItem, isDropdownLink, fontColor, activeIconColor, darkMode }) => {
+const SideLink = ({ item, subItem, isDropdownLink, fontColor2, activeIconColor, darkMode }) => {
   const { pathname } = useLocation()
   const pageName =
     pathname === '/'
@@ -201,7 +204,7 @@ const SideLink = ({ item, subItem, isDropdownLink, fontColor, activeIconColor, d
   return (
     /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
     <Link
-      fontColor={fontColor}
+      fontColor2={fontColor2}
       active={pageName.includes(item.name.toLowerCase().trim())}
       subItem={subItem}
       isDropdownLink={isDropdownLink}
@@ -237,7 +240,6 @@ const MobileMenu = ({
   const { pathname } = useLocation()
   const pageName = pathname === '/' ? 'home' : pathname
   return (
-    /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
     <LinkMobile
       fontColor={fontColor}
       active={!isWallet && pageName.includes(item.name.toLowerCase())}
@@ -248,15 +250,6 @@ const MobileMenu = ({
       enabled={item.enabled === false ? 'false' : 'true'}
       isMobile={isMobile}
     >
-      {/* <div className="item">
-        <SideIcons
-          className="sideIcon"
-          src={item.imgPath}
-          alt="Harvest"
-          width="21px"
-          height="21px"
-        />
-      </div> */}
       <SideIcons className="sideIcon" src={item.imgPath} alt="Harvest" width="21px" height="21px" />
       {item.new ? <NewTag>Soon</NewTag> : <></>}
     </LinkMobile>
@@ -289,6 +282,28 @@ const getChainIcon = chainNum => {
 
 const Sidebar = ({ width }) => {
   const {
+    darkMode,
+    setDarkMode,
+    backColor,
+    bgColor,
+    fontColor,
+    fontColor2,
+    filterColor,
+    fontColor5,
+    inputBorderColor,
+    hoverImgColor,
+    toggleColor,
+    borderColor,
+    hoverColor,
+    hoverColorButton,
+    toggleBackColor,
+    toggleCircleBgColor,
+    sidebarFontColor,
+    sidebarActiveFontColor,
+    sidebarActiveIconColor,
+  } = useThemeContext()
+
+  const {
     account,
     connectAction,
     disconnectAction,
@@ -298,24 +313,10 @@ const Sidebar = ({ width }) => {
     balances,
     getWalletBalances,
   } = useWallet()
+
   const { disableWallet } = usePools()
 
-  const {
-    darkMode,
-    backColor,
-    fontColor,
-    filterColor,
-    hoverImgColor,
-    sidebarEffect,
-    toggleColor,
-    borderColor,
-    connectWalletBtnBackColor,
-    sidebarFontColor,
-    sidebarActiveFontColor,
-    sidebarActiveIconColor,
-  } = useThemeContext()
-
-  // const switchTheme = () => setDarkMode(prev => !prev)
+  const switchTheme = () => setDarkMode(prev => !prev)
   useEffect(() => {
     if (darkMode) {
       document.documentElement.setAttribute('darkMode', '')
@@ -404,7 +405,7 @@ const Sidebar = ({ width }) => {
   return (
     <Container
       width={width}
-      sidebarEffect={sidebarEffect}
+      darkMode={darkMode}
       backColor={backColor}
       borderColor={borderColor}
       fontColor={fontColor}
@@ -412,14 +413,14 @@ const Sidebar = ({ width }) => {
       <Desktop>
         <Layout>
           <MiddleActionsContainer>
-            <LinksContainer totalItems={sideLinks.length + 2}>
+            <LinksContainer fontColor={fontColor} totalItems={sideLinksTop.length + 2}>
               <Logo
                 className="logo"
                 onClick={() => {
                   push('/')
                 }}
               >
-                <img src={logoNew} width={52} height={52} alt="Harvest" />
+                <img src={darkMode ? logoNewDark : logoNew} width={52} height={52} alt="Harvest" />
               </Logo>
 
               {(() => {
@@ -431,8 +432,12 @@ const Sidebar = ({ width }) => {
                         connectAction()
                       }}
                       minWidth="190px"
+                      inputBorderColor={inputBorderColor}
+                      fontColor2={fontColor2}
+                      backColor={backColor}
                       bordercolor={fontColor}
                       disabled={disableWallet}
+                      hoverColorButton={hoverColorButton}
                     >
                       <img src={ConnectDisableIcon} className="connect-wallet" alt="" />
                       Connect Wallet
@@ -452,8 +457,9 @@ const Sidebar = ({ width }) => {
                   <Dropdown>
                     <UserDropDown
                       id="dropdown-basic"
-                      fontcolor={fontColor}
-                      hoverbackcolor={connectWalletBtnBackColor}
+                      bgcolor={bgColor}
+                      fontcolor2={fontColor2}
+                      hovercolor={hoverColor}
                     >
                       <FlexDiv>
                         <ConnectAvatar avatar>
@@ -498,7 +504,7 @@ const Sidebar = ({ width }) => {
                 )
               })()}
 
-              {sideLinks.map(item =>
+              {sideLinksTop.map(item =>
                 !isLedgerLive() ||
                 (isLedgerLive() &&
                   (chainId === CHAIN_IDS.BASE ||
@@ -519,7 +525,7 @@ const Sidebar = ({ width }) => {
                       <SideLink
                         item={item}
                         isDropdownLink={item.path === '#'}
-                        fontColor={sidebarFontColor}
+                        fontColor2={fontColor2}
                         activeIconColor={sidebarActiveIconColor}
                         darkMode={darkMode}
                       />
@@ -534,8 +540,8 @@ const Sidebar = ({ width }) => {
         </Layout>
 
         <BottomPart>
-          <LinksContainer totalItems={sideLinks1.length + 2}>
-            {sideLinks1.map(item => (
+          <LinksContainer totalItems={sideLinksBottom.length + 2}>
+            {sideLinksBottom.map(item => (
               <Fragment key={item.name}>
                 <LinkContainer
                   active={pathname.includes(item.path)}
@@ -551,7 +557,7 @@ const Sidebar = ({ width }) => {
                   <SideLink
                     item={item}
                     isDropdownLink={item.path === '#'}
-                    fontColor={sidebarFontColor}
+                    fontColor2={fontColor2}
                     activeFontColor={sidebarActiveFontColor}
                     activeIconColor={sidebarActiveIconColor}
                     darkMode={darkMode}
@@ -560,7 +566,28 @@ const Sidebar = ({ width }) => {
               </Fragment>
             ))}
           </LinksContainer>
-          <Social />
+          <MobileFollow>
+            <Social />
+            <ThemeMode
+              mode={darkMode ? 'dark' : 'light'}
+              backColor={toggleBackColor}
+              circleBgColor={toggleCircleBgColor}
+              borderColor={borderColor}
+            >
+              <div id="theme-switch">
+                <div className="switch-track">
+                  <div className="switch-thumb">{darkMode ? <LuMoon /> : <TbSun />}</div>
+                </div>
+
+                <input
+                  type="checkbox"
+                  checked={darkMode}
+                  onChange={switchTheme}
+                  aria-label="Switch between dark and light mode"
+                />
+              </div>
+            </ThemeMode>
+          </MobileFollow>
         </BottomPart>
       </Desktop>
       <Mobile>
@@ -574,16 +601,21 @@ const Sidebar = ({ width }) => {
             filtercolor={filterColor}
           >
             <Offcanvas.Body>
-              <MobileActionsContainer className="full-menu-container">
+              <MobileActionsContainer
+                className="full-menu-container"
+                bgColor={bgColor}
+                borderColor={borderColor}
+              >
                 <Logo
+                  color={fontColor5}
                   className="logo"
                   onClick={() => {
                     handleMobileClose()
                   }}
                 >
-                  <img src={xCircle} width={24} height={24} alt="Harvest" />
+                  <IoCloseCircleOutline className="close" />
                 </Logo>
-                {sideLinksMobile1.map(item => (
+                {sideLinksMobileBottom.map(item => (
                   <Fragment key={item.name}>
                     <MobileLinkContainer
                       active={pathname.includes(item.path)}
@@ -601,7 +633,7 @@ const Sidebar = ({ width }) => {
                       <SideLink
                         item={item}
                         isDropdownLink={item.path === '#'}
-                        fontColor={sidebarFontColor}
+                        fontColor2={fontColor2}
                         activeFontColor={sidebarActiveFontColor}
                         activeIconColor={sidebarActiveIconColor}
                         darkMode={darkMode}
@@ -613,7 +645,7 @@ const Sidebar = ({ width }) => {
                           <SideLink
                             key={subItem.name}
                             item={subItem}
-                            fontColor={fontColor}
+                            fontColor2={fontColor2}
                             activeFontColor={sidebarActiveFontColor}
                             activeIconColor={sidebarActiveIconColor}
                             darkMode={darkMode}
@@ -623,9 +655,28 @@ const Sidebar = ({ width }) => {
                     ) : null}
                   </Fragment>
                 ))}
-                <SocialMobileWrapper>
+                <MobileFollow>
                   <Social />
-                </SocialMobileWrapper>
+                  <ThemeMode
+                    mode={darkMode ? 'dark' : 'light'}
+                    backColor={toggleBackColor}
+                    circleBgColor={toggleCircleBgColor}
+                    borderColor={borderColor}
+                  >
+                    <div id="theme-switch">
+                      <div className="switch-track">
+                        <div className="switch-thumb">{darkMode ? <LuMoon /> : <TbSun />}</div>
+                      </div>
+
+                      <input
+                        type="checkbox"
+                        checked={darkMode}
+                        onChange={switchTheme}
+                        aria-label="Switch between dark and light mode"
+                      />
+                    </div>
+                  </ThemeMode>
+                </MobileFollow>
               </MobileActionsContainer>
             </Offcanvas.Body>
           </OffcanvasDiv>
@@ -638,7 +689,7 @@ const Sidebar = ({ width }) => {
             filtercolor={filterColor}
           >
             <Offcanvas.Body>
-              <MobileActionsContainer>
+              <MobileActionsContainer bgColor={bgColor} borderColor={borderColor}>
                 <MobileWalletTop>
                   <MobileWalletTopNet>
                     <img
@@ -655,12 +706,13 @@ const Sidebar = ({ width }) => {
                     />
                   </MobileWalletTopNet>
                   <Logo
+                    color={fontColor5}
                     className="logo"
                     onClick={() => {
                       handleMobileConnectClose()
                     }}
                   >
-                    <img src={xCircle} width={24} height={24} alt="Harvest" />
+                    <IoCloseCircleOutline className="close" />
                   </Logo>
                 </MobileWalletTop>
                 <MobileWalletBody className="connect-body">
@@ -747,7 +799,7 @@ const Sidebar = ({ width }) => {
             filtercolor={filterColor}
           >
             <Offcanvas.Body>
-              <MobileActionsContainer>
+              <MobileActionsContainer bgColor={bgColor} borderColor={borderColor}>
                 <MobileWalletTop>
                   <MobileWalletTopNet>
                     <img
@@ -764,12 +816,13 @@ const Sidebar = ({ width }) => {
                     />
                   </MobileWalletTopNet>
                   <Logo
+                    color={fontColor5}
                     className="logo"
                     onClick={() => {
                       handleMobileWalletClose()
                     }}
                   >
-                    <img src={xCircle} width={24} height={24} alt="Harvest" />
+                    <IoCloseCircleOutline className="close" />
                   </Logo>
                 </MobileWalletTop>
                 <MobileWalletBody>
@@ -777,7 +830,7 @@ const Sidebar = ({ width }) => {
                     <img src={connectAvatarMobile} alt="" />
                   </ConnectAvatar>
                   <Address>{formatAddress(account)}</Address>
-                  <MobileAmount>
+                  <MobileAmount fontColor2={fontColor2}>
                     <MobileAmountDiv className="eth-letter">
                       {Number(balanceETH).toFixed(5)} ETH
                     </MobileAmountDiv>
@@ -787,10 +840,17 @@ const Sidebar = ({ width }) => {
                     </MobileAmountDiv>
                   </MobileAmount>
                   <MobileWalletBtn>
-                    <MobileWalletButton borderColor={borderColor} onClick={handleCopyAddress}>
+                    <MobileWalletButton
+                      fontColor5={fontColor5}
+                      backColor={backColor}
+                      borderColor={borderColor}
+                      onClick={handleCopyAddress}
+                    >
                       {copyAddress}
                     </MobileWalletButton>
                     <MobileWalletButton
+                      fontColor5={fontColor5}
+                      backColor={backColor}
                       borderColor={borderColor}
                       onClick={() => {
                         disconnectAction()
@@ -834,7 +894,7 @@ const Sidebar = ({ width }) => {
                   <ConnectSection>
                     <MobileConnectBtn color="connectwallet">
                       <MobileToggle
-                        className="wallet-btn"
+                        className={`wallet-btn ${connected && 'connected-wallet-btn'}`}
                         toggleColor={toggleColor}
                         width={27}
                         height={21}
@@ -907,7 +967,7 @@ const Sidebar = ({ width }) => {
               }
             >
               <MobileToggle
-                className="wallet-btn"
+                className={`wallet-btn ${connected && 'connected-wallet-btn'}`}
                 toggleColor={toggleColor}
                 width={27}
                 height={21}

@@ -149,13 +149,13 @@ const MobileListFilter = styled.div`
     justify-content: space-between;
     flex-direction: column;
     padding: 20px 10px;
-    border-bottom: 1px solid #f5f5f5;
+    border-bottom: 1px solid ${props => props.borderColor};
     .filter-sort {
       position: relative;
       width: 100%;
       display: block;
       background: ${props => props.mobileBackColor} !important;
-      border: 1px solid rgba(217, 217, 217, 0.5);
+      border: 1px solid ${props => props.borderColor};
       border-radius: 8px;
       position: relative;
 
@@ -165,7 +165,7 @@ const MobileListFilter = styled.div`
         justify-content: space-between;
         border: none;
         width: 100%;
-        color: #1f2937;
+        color: ${props => props.fontColor4};
         font-size: 14px;
         line-height: 24px;
         font-weight: 400;
@@ -187,7 +187,9 @@ const MobileListFilter = styled.div`
           border: 0px;
         }
 
-        img.sort {
+        img.sort-icon {
+          width: 15px;
+          height: 15px;
           margin-right: 6px;
           filter: ${props => props.filterColor};
         }
@@ -197,26 +199,22 @@ const MobileListFilter = styled.div`
           right: 10px;
           top: 12px;
         }
-
-        .sort-icon {
-          width: 15px;
-          height: 15px;
-          margin-top: -2px;
-        }
       }
 
       .menu {
         width: 100%;
         padding: 4px 6px;
+        background: ${props => props.bgColor};
 
         .item {
           padding: 10px 8px;
           border-radius: 6px;
-          &.hover {
-            backgroun: #f9fafb;
+          &:hover,
+          &:active {
+            background: ${props => props.hoverColor};
           }
           div {
-            color: #101828;
+            color: ${props => props.fontColor1};
             font-size: 14px;
             font-style: normal;
             font-weight: 500;
@@ -226,6 +224,7 @@ const MobileListFilter = styled.div`
               height: 14px;
               margin-right: 4px;
               margin-top: -2px;
+              filter: ${props => props.filterColor};
             }
           }
 
@@ -340,7 +339,7 @@ const MobileFilterBtn = styled.div`
   ${props =>
     props.darkmode === 'true'
       ? `
-    border-left: 1px solid #d0d5dd;
+    border-left: 1px solid ${props.inputBorderColor};
   `
       : `
   `}

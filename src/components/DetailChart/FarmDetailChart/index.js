@@ -5,6 +5,7 @@ import myBalanceActive from '../../../assets/images/logos/earn/chart-graph.svg'
 import { addresses } from '../../../data/index'
 import { useWallet } from '../../../providers/Wallet'
 import { getDataQuery, getTotalTVLData } from '../../../utils'
+import { useThemeContext } from '../../../providers/useThemeContext'
 import ApexChart from '../ApexChart'
 import ChartButtonsGroup from '../ChartButtonsGroup'
 import ChartRangeSelect from '../../ChartRangeSelect'
@@ -34,6 +35,7 @@ const recommendLinks = [
 ]
 
 const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
+  const { fontColor3, fontColor4 } = useThemeContext()
   const [clickedId, setClickedId] = useState(2)
   const [selectedState, setSelectedState] = useState('ALL')
 
@@ -84,8 +86,8 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
         <Total>
           <FlexDiv>
             <TooltipInfo>
-              <LabelInfo>{tooltipLabel}</LabelInfo>
-              <CurDate>
+              <LabelInfo fontColor4={fontColor4}>{tooltipLabel}</LabelInfo>
+              <CurDate fontColor3={fontColor3}>
                 {curDate}&nbsp;<span>|</span>&nbsp;
                 <p>
                   {clickedId === 1 ? '$' : ''}

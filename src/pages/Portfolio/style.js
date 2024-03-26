@@ -10,7 +10,7 @@ const Container = styled.div`
   min-height: 100vh;
   color: ${props => props.fontColor};
 
-  background: ${props => props.pageBackColor};
+  background: ${props => props.bgColor};
   transition: 0.25s;
   position: relative;
   margin-left: 280px;
@@ -66,14 +66,10 @@ const MobileDiv = styled.div`
   @media screen and (max-width: 992px) {
     display: flex;
     flex-wrap: wrap;
-    border: 2px solid #f2f5ff;
+    border: 2px solid ${props => props.borderColor};
     border-radius: 6.5px;
     width: 100%;
     margin-bottom: 24px;
-
-    div:first-child {
-      border-right: 0.821px solid #f2f5ff;
-    }
   }
 `
 
@@ -92,7 +88,6 @@ const FarmTitle = styled.span`
 const TransactionDetails = styled.div`
   width: 100%;
   border-radius: 15px;
-  background: ${props => props.backColor};
   transition: 0.25s;
   margin-top: 25px;
 `
@@ -189,10 +184,10 @@ const ConnectButtonStyle = styled.button`
   justify-content: center;
   margin: 25px auto;
   width: 250px;
-  background: white;
+  background: ${props => props.backColor};
   border-radius: 8px;
-  border: 1px solid #d0d5dd;
-  color: #344054;
+  border: 1px solid ${props => props.inputBorderColor};
+  color: ${props => props.fontColor2};
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
   cursor: pointer;
 
@@ -211,7 +206,8 @@ const ConnectButtonStyle = styled.button`
     `}
 
   &:hover {
-    box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05), 0px 0px 0px 4px #f2f4f7;
+    box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05),
+      0px 0px 0px 4px ${props => props.hoverColorButton};
     img.connect-wallet {
       filter: brightness(0) saturate(100%) invert(69%) sepia(55%) saturate(4720%) hue-rotate(110deg)
         brightness(91%) contrast(86%);
@@ -250,8 +246,12 @@ const ConnectButtonStyle = styled.button`
 `
 
 const ExploreFarm = styled.div`
-  background-image: url(${props =>
-    props.bgImage === 'first' ? BoxBgOne : props.bgImage === 'second' ? BoxBgTwo : BoxBgThree});
+  /* background-image: url(${props =>
+    props.bgImage === 'first' ? BoxBgOne : props.bgImage === 'second' ? BoxBgTwo : BoxBgThree}); */
+  background-image: ${props =>
+    `url('${
+      props.bgImage === 'first' ? BoxBgOne : props.bgImage === 'second' ? BoxBgTwo : BoxBgThree
+    }')`};
   background-repeat: no-repeat;
   background-size: cover;
   width: 100%;
@@ -395,14 +395,7 @@ const Column = styled.div`
   line-height: 18px;
   display: flex;
   justify-content: start;
-  ${props =>
-    props.color
-      ? `
-    color: ${props.color};
-  `
-      : `
-    color: #475467;
-  `}
+  color: ${props => props.color};
 `
 
 const Status = styled.div`
@@ -478,7 +471,7 @@ const TableContent = styled.div`
   @media screen and (max-width: 992px) {
     // overflow-x: scroll;
     border-radius: 15px 15px 0px 0px;
-    border: 1px solid #f2f5ff;
+    border: 1px solid ${props => props.borderColor};
     ${props =>
       props.count === 0
         ? `
@@ -496,7 +489,7 @@ const DescInfo = styled.div`
     font-size: 12px;
     line-height: 24px;
     font-weight: 400;
-    color: #475467;
+    color: ${props => props.fontColor};
     padding-bottom: 10px;
     border-bottom: 2px solid ${props => props.borderColor};
   }

@@ -4,7 +4,7 @@ const FarmContainer = styled.div`
   text-align: left;
   width: 100%;
   margin-left: 280px;
-  background: ${props => props.pageBackColor};
+  background: ${props => props.bgColor};
   transition: 0.25s;
   display: flex;
   justify-content: center;

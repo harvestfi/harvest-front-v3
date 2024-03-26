@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
 
 const Container = styled.div`
-  ${props => props.sidebarEffect};
+  border: ${props => (props.darkMode ? '' : '1px solid #E9E9E9')};
 
   a.logo {
     color: ${props => props.fontColor};
@@ -72,7 +72,7 @@ const LinksContainer = styled.div`
       margin-left: 22px;
       display: block;
       content: 'Harvest';
-      color: #475467;
+      color: ${props => props.fontColor};
     }
   }
 
@@ -100,7 +100,7 @@ const LinkContainer = styled.div`
 `
 
 const Link = styled.button`
-  color: #344054;
+  color: ${props => props.fontColor2};
   transition: 0.25s;
   font-size: 16px;
   font-weight: 600;
@@ -120,7 +120,10 @@ const Link = styled.button`
     width: 24px;
     height: 24px;
     margin-right: 12px;
-    filter: invert(48%) sepia(4%) saturate(2341%) hue-rotate(183deg) brightness(87%) contrast(80%);
+    filter: ${props =>
+      props.darkMode
+        ? 'invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%)'
+        : 'invert(48%) sepia(4%) saturate(2341%) hue-rotate(183deg) brightness(87%) contrast(80%)'};
   }
 
   .item-name {
@@ -171,7 +174,6 @@ const Link = styled.button`
   }
 
   @media screen and (max-width: 992px) {
-    color: #15202b;
     text-align: center;
     font-size: 16px;
     font-weight: 600;
@@ -248,10 +250,10 @@ const ConnectButtonStyle = styled.button`
   font-weight: 600;
   margin: 25px 0px;
   width: 100%;
-  background: white;
+  background: ${props => props.backColor};
   border-radius: 8px;
-  border: 1px solid #d0d5dd;
-  color: #344054;
+  border: 1px solid ${props => props.inputBorderColor};
+  color: ${props => props.fontColor2};
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
   cursor: pointer;
 
@@ -270,7 +272,8 @@ const ConnectButtonStyle = styled.button`
     `}
 
   &:hover {
-    box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05), 0px 0px 0px 4px #f2f4f7;
+    box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05),
+      0px 0px 0px 4px ${props => props.hoverColorButton};
     img.connect-wallet {
       filter: brightness(0) saturate(100%) invert(69%) sepia(55%) saturate(4720%) hue-rotate(110deg)
         brightness(91%) contrast(86%);
@@ -366,8 +369,8 @@ const MobileActionsContainer = styled.div`
   position: absolute;
   width: 100%;
   border-radius: 15px 15px 0px 0px;
-  background: #fff;
-  box-shadow: 0px -4px 4px 0px rgba(0, 0, 0, 0.1);
+  background: ${props => props.bgColor};
+  box-shadow: 0px -4px 4px 0px ${props => props.borderColor};
   &.full-menu-container {
     padding: 19px 19px 0px;
   }
@@ -410,7 +413,7 @@ const MobileWalletBtn = styled.div`
 `
 
 const MobileAmount = styled.div`
-  color: #6b6b6b;
+  color: ${props => props.fontColor2};
   font-size: 16px;
   font-weight: 400;
   line-height: 28px;
@@ -434,12 +437,12 @@ const MobileAmountDiv = styled.div`
 `
 
 const MobileWalletButton = styled.div`
-  color: #000;
+  color: ${props => props.fontColor5};
   font-size: 16px;
   line-height: 24px;
   font-weight: 600;
   padding: 10px 18px;
-  background: #fff;
+  background: ${props => props.backColor};
   border-radius: 5px;
   border: 1px solid ${props => props.borderColor};
   cursor: pointer;
@@ -451,18 +454,12 @@ const MobileWalletButton = styled.div`
   }
 `
 
-const SocialMobileWrapper = styled.div`
-  margin: auto;
-  width: 50%;
-  padding: 8px 16px;
-`
-
 const MobileLinkContainer = styled.div`
   display: flex;
   position: relative;
   padding-bottom: 12px;
   margin: auto;
-  width: 50%;
+  width: 95%;
 
   &:last-child {
     margin-bottom: 0;
@@ -496,6 +493,19 @@ const MobileLink = styled.button`
 
   &:hover {
     opacity: 1;
+  }
+`
+
+const MobileFollow = styled.div`
+  left: 12px;
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+  margin-top: 15px;
+
+  @media screen and (max-width: 992px) {
+    width: 95%;
+    margin: 0px auto 35px auto;
   }
 `
 
@@ -534,6 +544,10 @@ const Address = styled.span`
 const ThemeMode = styled.div`
   display: flex;
 
+  @media screen and (max-width: 992px) {
+    margin: 3px 0px 0px 0px;
+  }
+
   #theme-switch {
     position: relative;
     width: fit-content;
@@ -554,21 +568,27 @@ const ThemeMode = styled.div`
     .switch-track {
       background: ${props => props.backColor};
       border: 1px solid ${props => props.borderColor};
-      height: 24px;
-      width: 50px;
+      height: 28px;
+      width: 58px;
       border-radius: 30px;
       transition: all 0.2s ease 0s;
     }
+
     .switch-thumb {
-      background: white;
+      color: ${props => props.backColor};
+      background: ${props => props.circleBgColor};
       background-size: cover;
       height: 20px;
-      left: 2px;
+      left: 5px;
       position: absolute;
-      top: 2px;
+      top: 4px;
       width: 20px;
       border-radius: 50%;
       transition: all 0.25s ease 0s;
+
+      svg {
+        margin: -7px 0px 0px 2px;
+      }
     }
 
     &:hover .switch-thumb {
@@ -587,7 +607,7 @@ const ThemeMode = styled.div`
           opacity: 0;
         }
         .switch-thumb {
-          left: 27px;
+          left: 33px;
         }
       }
     `
@@ -601,12 +621,12 @@ const SideIcons = styled.img`
 `
 
 const UserDropDown = styled(Dropdown.Toggle)`
-  background: white !important;
+  background: ${props => props.bgcolor} !important;
   border: none !important;
   border-radius: 10px !important;
-  color: #15202b !important;
+  color: ${props => props.fontcolor2} !important;
   align-items: center;
-  padding: 8px 18px 8px 0px !important;
+  padding: 8px 18px 8px 5px !important;
   width: 100%;
   display: flex !important;
   justify-content: space-between;
@@ -619,7 +639,7 @@ const UserDropDown = styled(Dropdown.Toggle)`
   }
 
   &:hover {
-    background: ${props => props.hoverbackcolor} !important;
+    background: ${props => props.hovercolor} !important;
     color: black;
     font-weight: 500;
   }
@@ -716,6 +736,9 @@ const MobileToggle = styled.img`
   &.wallet-btn {
     margin-top: -3px;
   }
+  &.connected-wallet-btn {
+    filter: invert(39%) sepia(83%) saturate(1585%) hue-rotate(137deg) brightness(103%) contrast(84%);
+  }
 `
 
 const OffcanvasDiv = styled(Offcanvas)`
@@ -750,6 +773,12 @@ const Logo = styled.div`
   font-size: 24px;
   font-weight: 700;
   line-height: 36px;
+
+  svg.close {
+    font-size: 24px;
+    color: ${props => props.color};
+    cursor: pointer;
+  }
 
   @media screen and (max-width: 992px) {
     display: flex;
@@ -792,6 +821,17 @@ const LinkMobile = styled.button`
   padding-left: 0;
   padding-right: 0;
   flex-direction: column;
+  display: ${props => (props.isDropdownLink ? 'none' : 'flex')};
+
+  ${props =>
+    props.darkMode
+      ? `
+          img.sideIcon {
+            filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%);
+          }
+      `
+      : ``}
+
   ${props =>
     props.enabled === 'false'
       ? `
@@ -807,16 +847,13 @@ const LinkMobile = styled.button`
   ${props =>
     props.active
       ? `
-      font-weight: 500;
-      color: #15B088;
-      img {
-        filter: invert(56%) sepia(65%) saturate(2880%) hue-rotate(127deg) brightness(93%) contrast(84%);
-      }
-  `
-      : `
-      font-weight: 400;
-  `}
-  display: ${props => (props.isDropdownLink ? 'none' : 'flex')};
+          font-weight: 500;
+          color: #15B088;
+          img {
+            filter: invert(56%) sepia(65%) saturate(2880%) hue-rotate(127deg) brightness(93%) contrast(84%);
+          }
+      `
+      : `font-weight: 400;`}
 `
 
 const MobileMenuContainer = styled.div`
@@ -868,9 +905,9 @@ export {
   MobileAmountDiv,
   MobileWalletButton,
   MobileActionsContainer,
-  SocialMobileWrapper,
   MobileLinkContainer,
   MobileLink,
+  MobileFollow,
   ConnectAvatar,
   ThemeMode,
   SideIcons,

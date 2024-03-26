@@ -121,11 +121,13 @@ const Portfolio = () => {
   const { tokens } = require('../../data')
   const {
     // darkMode,
-    pageBackColor,
+    bgColor,
     backColor,
     fontColor,
+    fontColor2,
     borderColor,
-    totalValueFontColor,
+    inputBorderColor,
+    hoverColorButton,
   } = useThemeContext()
 
   const [apiData, setApiData] = useState([])
@@ -639,7 +641,7 @@ const Portfolio = () => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   return (
-    <Container pageBackColor={pageBackColor} fontColor={fontColor}>
+    <Container bgColor={bgColor} fontColor={fontColor}>
       <Inner>
         <SubPart>
           <TotalValue
@@ -673,7 +675,7 @@ const Portfolio = () => {
         </SubPart>
 
         <MobileSubPart>
-          <MobileDiv>
+          <MobileDiv borderColor={borderColor}>
             <TotalValue
               icon={Safe}
               content="Total Balance"
@@ -689,7 +691,7 @@ const Portfolio = () => {
               toolTip="Accrued rewards on all your staked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
             />
           </MobileDiv>
-          <MobileDiv>
+          <MobileDiv borderColor={borderColor}>
             <TotalValue
               icon={Coin1}
               content="Est. Monthly Yield"
@@ -707,14 +709,14 @@ const Portfolio = () => {
           </MobileDiv>
         </MobileSubPart>
 
-        <DescInfo borderColor={borderColor}>
+        <DescInfo fontColor={fontColor} borderColor={borderColor}>
           Preview farms with your active deposits below.
         </DescInfo>
 
-        <TransactionDetails backColor={backColor}>
-          <TableContent count={farmTokenList.length}>
+        <TransactionDetails>
+          <TableContent borderColor={borderColor} count={farmTokenList.length}>
             <Header borderColor={borderColor} backColor={backColor}>
-              <Column width={isMobile ? '23%' : '40%'} color={totalValueFontColor}>
+              <Column width={isMobile ? '23%' : '40%'} color={fontColor}>
                 <Col
                   onClick={() => {
                     sortCol('symbol')
@@ -723,7 +725,7 @@ const Portfolio = () => {
                   Farm
                 </Col>
               </Column>
-              <Column width={isMobile ? '12%' : '11%'} color={totalValueFontColor}>
+              <Column width={isMobile ? '12%' : '11%'} color={fontColor}>
                 <Col
                   onClick={() => {
                     sortCol('apy')
@@ -733,7 +735,7 @@ const Portfolio = () => {
                   <img className="sortIcon" src={Sort} alt="sort" />
                 </Col>
               </Column>
-              <Column width={isMobile ? '20%' : '11%'} color={totalValueFontColor}>
+              <Column width={isMobile ? '20%' : '11%'} color={fontColor}>
                 <Col
                   onClick={() => {
                     sortCol('balance')
@@ -743,7 +745,7 @@ const Portfolio = () => {
                   <img className="sortIcon" src={Sort} alt="sort" />
                 </Col>
               </Column>
-              <Column width={isMobile ? '20%' : '11%'}>
+              <Column width={isMobile ? '20%' : '11%'} color={fontColor}>
                 <Col
                   onClick={() => {
                     sortCol('monthlyYield')
@@ -753,7 +755,7 @@ const Portfolio = () => {
                   <img className="sortIcon" src={Sort} alt="sort" />
                 </Col>
               </Column>
-              <Column width={isMobile ? '20%' : '11%'}>
+              <Column width={isMobile ? '20%' : '11%'} color={fontColor}>
                 <Col
                   onClick={() => {
                     sortCol('dailyYield')
@@ -763,7 +765,7 @@ const Portfolio = () => {
                   <img className="sortIcon" src={Sort} alt="sort" />
                 </Col>
               </Column>
-              <Column width={isMobile ? '20%' : '11%'} color={totalValueFontColor}>
+              <Column width={isMobile ? '20%' : '11%'} color={fontColor}>
                 <Col
                   onClick={() => {
                     sortCol('totalRewardUsd')
@@ -773,7 +775,7 @@ const Portfolio = () => {
                   <img className="sortIcon" src={Sort} alt="sort" />
                 </Col>
               </Column>
-              <Column width={isMobile ? '20%' : '5%'} color={totalValueFontColor}>
+              <Column width={isMobile ? '20%' : '5%'} color={fontColor}>
                 <Col />
               </Column>
             </Header>
@@ -786,6 +788,7 @@ const Portfolio = () => {
                         <VaultRow
                           key={i}
                           info={info}
+                          firstElement={i === 0 ? 'yes' : 'no'}
                           lastElement={i === farmTokenList.length - 1 ? 'yes' : 'no'}
                           showDetail={showDetail}
                           setShowDetail={setShowDetail}
@@ -799,6 +802,7 @@ const Portfolio = () => {
                         <VaultRow
                           key={i}
                           info={info}
+                          firstElement={i === 0 ? 'yes' : 'no'}
                           lastElement={i === filteredFarmList.length - 1 ? 'yes' : 'no'}
                           showDetail={showDetail}
                           setShowDetail={setShowDetail}
@@ -811,17 +815,17 @@ const Portfolio = () => {
               <EmptyPanel borderColor={borderColor}>
                 {connected ? (
                   !noFarm ? (
-                    <EmptyInfo weight={500} size={14} height={20} color="#475467">
+                    <EmptyInfo weight={500} size={14} height={20} color={fontColor}>
                       Syncing positions...
                     </EmptyInfo>
                   ) : (
-                    <EmptyInfo weight={500} size={14} height={20} color="#475467">
+                    <EmptyInfo weight={500} size={14} height={20} color={fontColor}>
                       You&apos;re not farming anywhere. Let&apos;s put your assets to work!
                     </EmptyInfo>
                   )
                 ) : (
                   <>
-                    <EmptyInfo weight={500} size={14} height={20} color="#475467">
+                    <EmptyInfo weight={500} size={14} height={20} color={fontColor}>
                       Connect wallet to see your positions.
                     </EmptyInfo>
                     <ConnectButtonStyle
@@ -830,8 +834,12 @@ const Portfolio = () => {
                         connectAction()
                       }}
                       minWidth="190px"
+                      inputBorderColor={inputBorderColor}
+                      fontColor2={fontColor2}
+                      backColor={backColor}
                       bordercolor={fontColor}
                       disabled={disableWallet}
+                      hoverColorButton={hoverColorButton}
                     >
                       <img src={ConnectDisableIcon} className="connect-wallet" alt="" />
                       Connect Wallet

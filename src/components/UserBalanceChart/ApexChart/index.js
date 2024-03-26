@@ -144,7 +144,7 @@ const ApexChart = ({
   fixedLen,
   lastFarmingTimeStamp,
 }) => {
-  const { fontColor } = useThemeContext()
+  const { fontColor, fontColor5 } = useThemeContext()
   const { connected } = useWallet()
 
   const [mainSeries, setMainSeries] = useState([])
@@ -200,7 +200,7 @@ const ApexChart = ({
         width={24}
         height={24}
         viewBox="0 0 1024 1024"
-        fill="#000"
+        fill={fontColor5}
       >
         <tspan dy="0.71em">{path}</tspan>
       </text>

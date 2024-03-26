@@ -8,8 +8,8 @@ const Container = styled.div`
   padding: 15px 18px;
   transition: 0.25s;
   border-radius: 12px;
-  border: 2px solid #f2f5ff;
-  background: #fff;
+  border: 2px solid ${props => props.borderColor};
+  background: ${props => props.backColor};
   justify-content: space-between;
 
   @media screen and (max-width: 992px) {

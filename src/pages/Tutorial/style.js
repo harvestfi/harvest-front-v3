@@ -6,7 +6,7 @@ const Container = styled.div`
   min-height: 100vh;
   color: ${props => props.fontColor};
 
-  background: ${props => props.pageBackColor};
+  background: ${props => props.bgColor};
   transition: 0.25s;
   position: relative;
   margin-left: 280px;
@@ -100,7 +100,7 @@ const WrapperDiv = styled.div`
 `
 
 const Title = styled.div`
-  color: #101828;
+  color: ${props => props.fontColor1};
   font-size: 30px;
   font-weight: 600;
   line-height: 38px;
@@ -108,19 +108,19 @@ const Title = styled.div`
 `
 
 const DescText = styled.div`
-  color: #475467;
+  color: ${props => props.fontColor};
   font-size: 18px;
   font-weight: 400;
   line-height: 28px;
 
   div.italic {
-    color: #000;
+    color: ${props => props.fontColor5};
     font-style: italic;
     font-family: initial;
   }
 
   div.note {
-    color: #000;
+    color: ${props => props.fontColor5};
     font-style: italic;
     font-weight: 600;
     font-family: initial;
@@ -128,7 +128,7 @@ const DescText = styled.div`
 
   div.label {
     display: inline;
-    background: #f2f2f2;
+    background: ${props => props.bgColorFarm};
     padding: 0px 5px;
   }
 
@@ -137,7 +137,7 @@ const DescText = styled.div`
   }
 
   a {
-    color: #475467;
+    color: ${props => props.linkColor};
     font-weight: 400;
   }
 

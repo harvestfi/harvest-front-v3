@@ -89,7 +89,7 @@ const SelectedVaultLabel = styled.span`
   line-height: ${props => props.lineHeight || '24px'};
   color: ${props => props.color};
   text-decoration: ${props => (props.link ? 'underline' : 'unset')};
-  cursor ${props => (props.link ? 'pointer' : 'unset')};
+  cursor: ${props => (props.link ? 'pointer' : 'unset')};
 
   @media screen and (max-width: 1320px) {
     margin-bottom: 15px;
@@ -151,7 +151,7 @@ const Div = styled.div`
   font-size: 14px;
   line-height: 24px;
   font-weight: 500;
-  color: #344054;
+  color: ${props => props.fontColor2};
   img {
     margin-right: 5px;
     width: 24px;
@@ -177,7 +177,7 @@ const Monospace = styled.div`
   font-size: 14px;
   font-weight: 400;
   line-height: 24px;
-  color: #000;
+  color: ${props => props.fontColor5};
 
   .count-up-text {
     font-weight: 500;
