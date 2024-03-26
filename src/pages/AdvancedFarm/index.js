@@ -206,6 +206,7 @@ const AdvancedFarm = () => {
     fontColor4,
     fontColor6,
     linkColorTooltip,
+    linkColorOnHover,
     hoverColor,
     bgColorFarm,
   } = useThemeContext()
@@ -1327,6 +1328,7 @@ const AdvancedFarm = () => {
                           target="_blank"
                           rel="noopener noreferrer"
                           linkColor={linkColorTooltip}
+                          linkColorOnHover={linkColorOnHover}
                         >
                           Still having questions? Open Discord ticket.
                         </WelcomeTicket>
@@ -1361,6 +1363,7 @@ const AdvancedFarm = () => {
                           target="_self"
                           rel="noopener noreferrer"
                           linkColor={linkColorTooltip}
+                          linkColorOnHover={linkColorOnHover}
                         >
                           Moonwell farms
                         </WelcomeTicket>
@@ -1373,6 +1376,7 @@ const AdvancedFarm = () => {
                           target="_blank"
                           rel="noopener noreferrer"
                           linkColor={linkColorTooltip}
+                          linkColorOnHover={linkColorOnHover}
                         >
                           Still having questions? Open Discord ticket.
                         </WelcomeTicket>
@@ -1400,6 +1404,7 @@ const AdvancedFarm = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         linkColor={linkColorTooltip}
+                        linkColorOnHover={linkColorOnHover}
                       >
                         under this link
                       </WelcomeTicket>
