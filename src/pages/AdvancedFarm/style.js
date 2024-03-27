@@ -525,6 +525,10 @@ const WelcomeTicket = styled.a`
   color: ${props => props.linkColor};
   text-decoration: underline;
 
+  &:hover {
+    color: ${props => props.linkColorOnHover};
+  }
+
   &.useIFARM {
     font-weight: 600;
   }

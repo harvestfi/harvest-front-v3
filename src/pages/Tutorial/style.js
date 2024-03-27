@@ -70,7 +70,6 @@ const Inner = styled.div`
   @media screen and (min-width: 1921px) {
     width: 1450px;
     padding: 60px 40px;
-    height: 800px;
   }
 
   @media screen and (max-width: 1200px) {
