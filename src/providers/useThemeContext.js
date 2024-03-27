@@ -41,8 +41,9 @@ export function ThemeProvider({ children }) {
 
   const borderColor = darkMode ? '#1F242F' : '#F3F6FF'
   const inputBorderColor = darkMode ? '#1F242F' : '#d0d5dd'
-  const hoverColorButton = darkMode ? '#1F242F' : '#f2f4f7'
   const hoverColor = darkMode ? '#1F242F' : '#e9f0f7'
+  const hoverColorButton = darkMode ? '#1F242F' : '#f2f4f7'
+  const hoverColorAVR = darkMode ? '#1F242F' : '#fbe7ef'
   const activeColor = darkMode ? '#242C3C' : '#F3F6FF'
   const activeColorModal = darkMode ? '#242C3C' : '#ECFDF3'
   const modalInputColor = darkMode ? '#242C3C' : '#ffffff'
@@ -181,6 +182,7 @@ export function ThemeProvider({ children }) {
         inputBorderColor,
         hoverColor,
         hoverColorButton,
+        hoverColorAVR,
         activeColor,
         activeColorModal,
         modalInputColor,

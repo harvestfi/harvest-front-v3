@@ -37,6 +37,7 @@ import UnstakeBase from '../../components/AdvancedFarmComponents/Unstake/Unstake
 import UnstakeStart from '../../components/AdvancedFarmComponents/Unstake/UnstakeStart'
 import UnstakeResult from '../../components/AdvancedFarmComponents/Unstake/UnstakeResult'
 import {
+  AVRList,
   GECKO_URL,
   COINGECKO_API_KEY,
   DECIMAL_PRECISION,
@@ -235,6 +236,7 @@ const AdvancedFarm = () => {
   const { tokens } = require('../../data')
 
   const [apiData, setApiData] = useState([])
+  const [altVaultData, setAltVaultData] = useState({})
 
   useEffect(() => {
     const getCoinList = async () => {
@@ -332,6 +334,20 @@ const AdvancedFarm = () => {
     // 👇️ scroll to top on page load
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
   }, [])
+
+  useEffect(() => {
+    const AVRVaultAddress = AVRList[paramAddress]
+
+    if (AVRVaultAddress) {
+      const matchingVault = Object.values(groupOfVaults).find(
+        vault => vault.vaultAddress.toLowerCase() === AVRVaultAddress.toLowerCase(),
+      )
+
+      if (matchingVault) {
+        setAltVaultData(matchingVault)
+      }
+    }
+  }, [groupOfVaults, paramAddress])
 
   const useBeginnersFarm = false
   const useIFARM = id === FARM_TOKEN_SYMBOL
@@ -2061,6 +2077,7 @@ const AdvancedFarm = () => {
                         revertMinReceivedUsdAmount={revertMinReceivedUsdAmount}
                         setUnstakeInputValue={setUnstakeInputValue}
                         setRevertSuccess={setRevertSuccess}
+                        altVaultData={altVaultData}
                       />
                     </WithdrawSection>
                   </HalfContent>
