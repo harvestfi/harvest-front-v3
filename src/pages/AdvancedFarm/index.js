@@ -1445,7 +1445,7 @@ const AdvancedFarm = () => {
                   backColor={backColor}
                   borderColor={borderColor}
                 >
-                  <BoxTitle fontColor3={fontColor3}>APY</BoxTitle>
+                  <BoxTitle fontColor3={fontColor3}>Live APY</BoxTitle>
                   <BoxValue fontColor1={fontColor1}>{showAPY()}</BoxValue>
                 </ValueBox>
                 <ValueBox
