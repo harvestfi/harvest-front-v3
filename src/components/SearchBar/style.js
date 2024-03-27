@@ -69,13 +69,6 @@ const SearchBtn = styled.button`
   padding: 8px 18px;
   color: white;
   border: none;
-  ${props =>
-    props.darkMode
-      ? `
-    border-left: 1px solid #d0d5dd;
-  `
-      : `
-  `}
 
   &:hover {
     background: #2ccda4;

@@ -26,7 +26,7 @@ const Container = styled.button`
         ? `
         background: none;
         border-radius: 3px;
-        color: #ff9400;
+        color: #15B088;
         font-weight: 700;
     `
         : `
@@ -150,18 +150,6 @@ const Text = styled.div`
 
   #tooltip-last-timeframe {
     max-width: 300px;
-  }
-  @media screen and (max-width: 992px) {
-    ${props =>
-      props.activeItem
-        ? `
-          color: #00D26B;
-          font-weight: 700;
-        `
-        : `
-          color: #282F3D;
-          font-weight: 400;
-        `}
   }
 `
 

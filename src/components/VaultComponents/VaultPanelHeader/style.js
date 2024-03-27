@@ -33,7 +33,7 @@ const TokenNameContainer = styled.div`
   font-weight: 600;
   font-size: 14px;
   line-height: 20px;
-  color: #101828;
+  color: ${props => props.fontColor1};
 
   @media screen and (max-width: 1480px) {
     font-size: 12px;
@@ -69,7 +69,7 @@ const RewardsContainer = styled.div`
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  color: #101828;
+  color: ${props => props.fontColor1};
   font-size: 14px;
   font-weight: 500;
   line-height: 20px;
@@ -138,7 +138,6 @@ const BadgeIcon = styled.div`
   position: absolute;
   top: 26px;
   left: 24px;
-  background: ${props => props.badgeBack};
   border: 2px solid ${props => props.borderColor};
   border-radius: 8px;
   width: 23px;
@@ -249,9 +248,11 @@ const MobileVaultValueContainer = styled.div`
     img {
       margin-left: 7px;
       margin-top: -4px;
+      filter: ${props => props.filterColor};
     }
   }
 `
+
 const ApyInfo = styled.img`
   margin-top: 4px;
   width: 15px;
@@ -322,7 +323,7 @@ const DetailModal = styled(Modal)`
   }
 `
 const Value = styled.div`
-  color: #101828;
+  color: ${props => props.fontColor1};
   font-size: 14px;
   font-weight: 500;
   line-height: 20px;

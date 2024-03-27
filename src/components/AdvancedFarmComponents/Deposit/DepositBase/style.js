@@ -117,6 +117,13 @@ const NewLabel = styled.div`
   `
       : ''}
 
+  svg.question {
+    font-size: 16px;
+    color: ${props => props.color};
+    cursor: pointer;
+    margin: auto 0px auto 5px;
+  }
+
   img.icon {
     margin-right: 10px;
   }
@@ -172,12 +179,12 @@ const TokenAmount = styled.input`
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  background: #fff;
+  background: ${props => props.bgColor};
   border: 1px solid #d0d5dd;
   outline: 0;
   padding: 7px 14px 13px 14px;
   border-radius: 8px;
-  color: #344054;
+  color: ${props => props.fontColor2};
   transition: 0.25s;
 
   &::-webkit-outer-spin-button,
@@ -193,16 +200,8 @@ const TokenUSDAmount = styled.div`
   left: 15px;
   bottom: 3px;
   font-size: 10px;
-  color: #a19d98;
+  color: ${props => props.fontColor3};
   font-weight: 400;
-`
-
-const InfoIconCircle = styled.img`
-  filter: ${props => props.filterColor};
-  transition: 0.25s;
-  cursor: pointer;
-  margin-left: 5px;
-  margin-top: -2px;
 `
 
 const TokenSelect = styled.button`
@@ -244,7 +243,7 @@ const BalanceInfo = styled.div`
   font-weight: 400;
   font-size: 12px;
   line-height: 20px;
-  color: #475467;
+  color: ${props => props.fontColor};
   margin-top: 5px;
   cursor: pointer;
   width: fit-content;
@@ -264,7 +263,7 @@ const DepoTitle = styled.div`
   font-size: 14px;
   line-height: 20px;
   margin: 0px 0px 20px;
-  color: #475467;
+  color: ${props => props.fontColor};
   @media screen and (max-width: 992px) {
     font-size: 12px;
   }
@@ -375,6 +374,7 @@ const ThemeMode = styled.div`
           left: 2px;
         }
       `}
+  }
 `
 
 const SwitchTabTag = styled.div`
@@ -389,12 +389,10 @@ const SwitchTabTag = styled.div`
   justify-content: center;
   cursor: pointer;
 
-  ${props =>
-    props.num === 1
-      ? `
-        filter: invert(50%) sepia(28%) saturate(591%) hue-rotate(193deg) brightness(89%) contrast(86%);
-      `
-      : ``}
+  svg {
+    font-size: 16px;
+    margin: auto 0px;
+  }
 
   p {
     margin-bottom: 0px;
@@ -406,8 +404,8 @@ const SwitchTabTag = styled.div`
 
 const InsufficientSection = styled.div`
   border-radius: 12px;
-  border: 1px solid #d0d5dd;
-  background: #fcfcfd;
+  border: 1px solid ${props => props.activeColor};
+  background: ${props => props.bgColorMessage};
   padding: 16px;
   ${props =>
     props.isShow === 'true'
@@ -424,7 +422,7 @@ const InsufficientSection = styled.div`
 const HasErrorSection = styled.div`
   border-radius: 12px;
   border: 1px solid #ffaf1d;
-  background: #fcfcfd;
+  background: ${props => props.activeColor};
   padding: 16px;
   ${props =>
     props.isShow === 'true'
@@ -468,5 +466,4 @@ export {
   CloseBtn,
   DepositTokenSection,
   SwitchTabTag,
-  InfoIconCircle,
 }

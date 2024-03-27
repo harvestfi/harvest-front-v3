@@ -98,9 +98,8 @@ const Analytic = () => {
     profitShareAPY,
     profitShareAPYFallback,
   } = useStats()
-
-  const ratePerDay = Number(CURVE_APY) / 365 / 100
   const {
+    darkMode,
     pageBackColor,
     fontColor,
     borderColor,
@@ -108,6 +107,8 @@ const Analytic = () => {
     boxShadowColor,
     analyticTitleColor,
   } = useThemeContext()
+
+  const ratePerDay = Number(CURVE_APY) / 365 / 100
   const MINUTE_MS = 60000
   const onlyWidth = useWindowWidth()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
@@ -131,7 +132,7 @@ const Analytic = () => {
             fontColor={fontColor}
             width={onlyWidth <= 1310 ? '48%' : '25%'}
           >
-            <CompHeader fontColor={analyticTitleColor}>
+            <CompHeader darkMode={darkMode} fontColor={analyticTitleColor}>
               <img src={TotalDeposit} alt="total deposit" />
               Total Deposits
             </CompHeader>
@@ -161,7 +162,7 @@ const Analytic = () => {
             fontColor={fontColor}
             width={onlyWidth <= 1310 ? '48%' : '25%'}
           >
-            <CompHeader fontColor={analyticTitleColor}>
+            <CompHeader darkMode={darkMode} fontColor={analyticTitleColor}>
               <img src={MonthlyProfit} alt="monthly profit" />
               Monthly Profits to Farmers
             </CompHeader>
@@ -317,7 +318,7 @@ const Analytic = () => {
                 width="49%"
                 className="child first-comp"
               >
-                <CompHeader fontColor={analyticTitleColor}>
+                <CompHeader darkMode={darkMode} fontColor={analyticTitleColor}>
                   <img src={GasSavedImage} alt="" />
                   Gas fees saved
                 </CompHeader>
@@ -354,7 +355,7 @@ const Analytic = () => {
                 width="49%"
                 className="child"
               >
-                <CompHeader fontColor={analyticTitleColor}>
+                <CompHeader darkMode={darkMode} fontColor={analyticTitleColor}>
                   <img src={AutoHarvest} alt="" />
                   Auto Harvesting Yields
                 </CompHeader>
@@ -397,7 +398,7 @@ const Analytic = () => {
             >
               <StatsContainerRow margin="27px 29px">
                 <DataSourceInner>
-                  <BigStatsExchange>
+                  <BigStatsExchange darkMode={darkMode}>
                     <img src={ExternalLink} alt="" />
                     External Data Sources
                   </BigStatsExchange>

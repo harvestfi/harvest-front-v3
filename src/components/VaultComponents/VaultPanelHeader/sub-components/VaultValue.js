@@ -31,7 +31,7 @@ const getVaultValue = token => {
   }
 }
 
-const VaultValue = ({ token }) => {
+const VaultValue = ({ token, fontColor1 }) => {
   const [vaultValue, setVaultValue] = useState(null)
 
   useEffect(() => {
@@ -39,7 +39,7 @@ const VaultValue = ({ token }) => {
   }, [token])
 
   return (
-    <Value>
+    <Value fontColor1={fontColor1}>
       {token.excludeVaultStats ? (
         'N/A'
       ) : vaultValue ? (

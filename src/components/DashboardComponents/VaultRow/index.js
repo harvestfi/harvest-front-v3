@@ -16,18 +16,29 @@ const chainList = [
   { id: 4, name: 'Base', chainId: 8453 },
 ]
 
-const VaultRow = ({ info, lastElement, showDetail, setShowDetail, cKey }) => {
+const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, cKey }) => {
   const { push } = useHistory()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const { switchMode, borderColor } = useThemeContext()
+  const {
+    switchMode,
+    backColor,
+    bgColorButton,
+    borderColor,
+    hoverColor,
+    activeColor,
+    fontColor1,
+    fontColor,
+  } = useThemeContext()
 
   return (
     <DetailView
+      firstElement={firstElement}
       lastElement={lastElement}
       borderColor={borderColor}
+      hoverColor={hoverColor}
       key={cKey}
       mode={switchMode}
-      background={showDetail[cKey] ? 'rgba(234, 241, 255, 0.53)' : 'unset'}
+      background={showDetail[cKey] ? activeColor : backColor}
       onClick={() => {
         let badgeId = -1
         const token = info.token
@@ -67,26 +78,28 @@ const VaultRow = ({ info, lastElement, showDetail, setShowDetail, cKey }) => {
           </ContentInner>
           <ContentInner width={isMobile ? '100%' : '50%'} marginLeft={isMobile ? '0px' : '11px'}>
             <ListItem
-              weight={600}
+              weight={500}
               size={isMobile ? 14 : 14}
               height={isMobile ? 20 : 20}
               value={info.symbol}
               marginTop={isMobile ? 15 : 0}
-              color="#101828"
+              color={fontColor1}
             />
             <ListItem
-              weight={500}
+              weight={400}
               size={isMobile ? 14 : 14}
               height={isMobile ? 20 : 20}
               value={info.platform}
-              color="#475467"
+              color={fontColor}
             />
           </ContentInner>
         </Content>
         <Content width={isMobile ? '33%' : '11%'} marginTop={isMobile ? '15px' : 'unset'}>
-          {isMobile && <ListItem color="#475467" weight={500} size={12} height={18} value="APY" />}
+          {isMobile && (
+            <ListItem color={fontColor} weight={500} size={12} height={18} value="APY" />
+          )}
           <ListItem
-            color="#101828"
+            color={isMobile ? fontColor1 : fontColor}
             weight={500}
             size={14}
             height={20}
@@ -102,12 +115,12 @@ const VaultRow = ({ info, lastElement, showDetail, setShowDetail, cKey }) => {
         {isMobile && (
           <>
             <Content width={isMobile ? '33%' : '11%'} marginTop={isMobile ? '15px' : 'unset'}>
-              <ListItem color="#475467" weight={500} size={12} height={18} value="My Balance" />
+              <ListItem color={fontColor} weight={500} size={12} height={18} value="My Balance" />
               <ListItem
                 weight={500}
                 size={14}
                 height={20}
-                color="#101828"
+                color={fontColor1}
                 value={`${
                   info.balance === 0
                     ? '$0.00'
@@ -118,12 +131,12 @@ const VaultRow = ({ info, lastElement, showDetail, setShowDetail, cKey }) => {
               />
             </Content>
             <Content width={isMobile ? '33%' : '11%'} marginTop={isMobile ? '15px' : 'unset'}>
-              <ListItem color="#475467" weight={500} size={12} height={18} value="Rewards" />
+              <ListItem color={fontColor} weight={500} size={12} height={18} value="Rewards" />
               <ListItem
                 weight={500}
                 size={14}
                 height={20}
-                color="#101828"
+                color={fontColor1}
                 value={`${
                   info.totalRewardUsd === 0
                     ? '$0.00'
@@ -141,7 +154,7 @@ const VaultRow = ({ info, lastElement, showDetail, setShowDetail, cKey }) => {
               weight={500}
               size={14}
               height={20}
-              color="#101828"
+              color={fontColor}
               value={`${
                 info.balance === 0
                   ? '$0.00'
@@ -154,13 +167,13 @@ const VaultRow = ({ info, lastElement, showDetail, setShowDetail, cKey }) => {
         )}
         <Content width={isMobile ? '33%' : '11%'} marginTop={isMobile ? '15px' : 'unset'}>
           {isMobile && (
-            <ListItem color="#475467" weight={500} size={12} height={18} value="Monthly Yield" />
+            <ListItem color={fontColor} weight={500} size={12} height={18} value="Monthly Yield" />
           )}
           <ListItem
             weight={500}
             size={14}
             height={20}
-            color="#101828"
+            color={isMobile ? fontColor1 : fontColor}
             value={`${
               info.monthlyYield === 0
                 ? '$0.00'
@@ -172,13 +185,13 @@ const VaultRow = ({ info, lastElement, showDetail, setShowDetail, cKey }) => {
         </Content>
         <Content width={isMobile ? '33%' : '11%'} marginTop={isMobile ? '15px' : 'unset'}>
           {isMobile && (
-            <ListItem color="#475467" weight={500} size={12} height={18} value="Daily Yield" />
+            <ListItem color={fontColor} weight={500} size={12} height={18} value="Daily Yield" />
           )}
           <ListItem
             weight={500}
             size={14}
             height={20}
-            color="#101828"
+            color={isMobile ? fontColor1 : fontColor}
             value={`${
               info.dailyYield === 0
                 ? '$0.00'
@@ -194,8 +207,7 @@ const VaultRow = ({ info, lastElement, showDetail, setShowDetail, cKey }) => {
               weight={500}
               size={14}
               height={20}
-              color="#101828"
-              // value={`$${info.totalRewardUsd}`}
+              color={fontColor}
               value={`${
                 info.totalRewardUsd === 0
                   ? '$0.00'
@@ -216,6 +228,9 @@ const VaultRow = ({ info, lastElement, showDetail, setShowDetail, cKey }) => {
           width={isMobile ? '5%' : '5%'}
           cursor="pointer"
           className={isMobile && 'mobile-extender'}
+          backColor={backColor}
+          bgColorButton={bgColorButton}
+          borderColor={borderColor}
         >
           {showDetail[cKey] ? (
             <img src={isMobile ? MobileFile : File} className="active-file-icon" alt="file" />
@@ -234,14 +249,14 @@ const VaultRow = ({ info, lastElement, showDetail, setShowDetail, cKey }) => {
                 height={isMobile ? 18 : 20}
                 value="Unstaked"
                 marginTop={isMobile ? 10 : 0}
-                color="#101828"
+                color={fontColor1}
               />
               <ListItem
                 weight={500}
                 size={isMobile ? 14 : 14}
                 height={isMobile ? 20 : 20}
                 value={info.unstake === 0 ? '0.00' : `${formatNumberWido(info.unstake, 6)}`}
-                color="#475467"
+                color={fontColor}
               />
             </ContentInner>
             <ContentInner width={isMobile ? '33%' : '50%'} marginLeft={isMobile ? '0px' : '11px'}>
@@ -251,14 +266,14 @@ const VaultRow = ({ info, lastElement, showDetail, setShowDetail, cKey }) => {
                 height={isMobile ? 18 : 20}
                 value="Staked"
                 marginTop={isMobile ? 10 : 0}
-                color="#101828"
+                color={fontColor1}
               />
               <ListItem
                 weight={500}
                 size={isMobile ? 14 : 14}
                 height={isMobile ? 20 : 20}
                 value={info.stake === 0 ? '0.00' : `${formatNumberWido(info.stake, 6)}`}
-                color="#475467"
+                color={fontColor}
               />
             </ContentInner>
           </Content>
@@ -270,7 +285,7 @@ const VaultRow = ({ info, lastElement, showDetail, setShowDetail, cKey }) => {
                 height={isMobile ? 18 : 20}
                 value={isMobile ? 'Rewards Breakdown' : 'Rewards'}
                 marginTop={isMobile ? 15 : 0}
-                color="#101828"
+                color={fontColor1}
               />
             </Content>
           )}
@@ -284,14 +299,14 @@ const VaultRow = ({ info, lastElement, showDetail, setShowDetail, cKey }) => {
               <Img src={`/icons/${info.rewardSymbol[key].toLowerCase()}.svg`} alt="jeur" />
               <div>
                 <ListItem
-                  weight={500}
+                  weight={isMobile ? 400 : 500}
                   size={isMobile ? 14 : 14}
                   height={isMobile ? 20 : 20}
                   value={`${info.reward[key] === 0 ? '0.00' : `${info.reward[key].toFixed(6)}`}`}
-                  color="#475467"
+                  color={isMobile ? fontColor : fontColor1}
                 />
                 <ListItem
-                  weight={500}
+                  weight={400}
                   size={isMobile ? 14 : 14}
                   height={isMobile ? 20 : 20}
                   value={`${
@@ -301,7 +316,7 @@ const VaultRow = ({ info, lastElement, showDetail, setShowDetail, cKey }) => {
                       ? '<$0.01'
                       : `$${formatNumber(info.rewardUSD[key], 2)}`
                   }`}
-                  color="#101828"
+                  color={isMobile ? fontColor1 : fontColor}
                 />
               </div>
             </Content>

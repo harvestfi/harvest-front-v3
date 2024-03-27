@@ -11,9 +11,13 @@ const Container = styled.div`
   @media screen and (max-width: 992px) {
     width: 50%;
     border: unset;
-    border-radius: unset;
-    background: unset;
+    border-radius: 0px 6.5px 6.5px 0px;
     padding: 8px 13px;
+
+    &:first-child {
+      border-right: 0.821px solid ${props => props.borderColor};
+      border-radius: 6.5px 0px 0px 6.5px;
+    }
   }
 `
 
@@ -21,8 +25,15 @@ const Div = styled.div`
   font-weight: 500;
   font-size: 14px;
   line-height: 20px;
-  color: #6f78aa;
+  color: ${props => props.fontColor3};
   margin-bottom: 8px;
+
+  svg.question {
+    font-size: 16px;
+    color: ${props => props.fontColor3};
+    cursor: pointer;
+    margin: auto 0px auto 5px;
+  }
 
   @media screen and (max-width: 992px) {
     font-size: 12px;
@@ -46,20 +57,11 @@ const Price = styled.div`
   font-weight: 600;
   font-size: 30px;
   line-height: 44px;
-  color: #101828;
+  color: ${props => props.fontColor1};
   @media screen and (max-width: 992px) {
     font-size: 17px;
     line-height: 36px;
   }
-`
-
-const InfoIcon = styled.img`
-  transition: 0.25s;
-  cursor: pointer;
-  margin-left: 8px;
-  margin-top: -3px;
-  width: 16px;
-  height: 16px;
 `
 
 const BoxIcon = styled.div`
@@ -193,4 +195,4 @@ const NewLabel = styled.div`
   }
 `
 
-export { Container, Div, Price, InfoIcon, BoxIcon, NewLabel }
+export { Container, Div, Price, BoxIcon, NewLabel }

@@ -138,12 +138,12 @@ const TokenAmount = styled.input`
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  background: #fff;
+  background: ${props => props.bgColor};
   border: 1px solid #d0d5dd;
   outline: 0;
   padding: 10px 55px 10px 14px;
   border-radius: 8px;
-  color: #344054;
+  color: ${props => props.fontColor2};
   transition: 0.25s;
 
   &::-webkit-outer-spin-button,
@@ -209,7 +209,7 @@ const BalanceInfo = styled.div`
   font-weight: 400;
   font-size: 12px;
   line-height: 20px;
-  color: #475467;
+  color: ${props => props.fontColor};
   margin-top: 5px;
   cursor: pointer;
   width: fit-content;
@@ -229,7 +229,7 @@ const DepoTitle = styled.div`
   font-size: 14px;
   line-height: 20px;
   margin: 0px 0px 20px;
-  color: #475467;
+  color: ${props => props.fontColor};
 
   @media screen and (max-width: 992px) {
     font-size: 12px;
@@ -339,12 +339,13 @@ const ThemeMode = styled.div`
           left: 2px;
         }
       `}
+  }
 `
 
 const InsufficientSection = styled.div`
   border-radius: 12px;
-  border: 1px solid #d0d5dd;
-  background: #fcfcfd;
+  border: 1px solid ${props => props.activeColor};
+  background: ${props => props.bgColorMessage};
   padding: 16px;
   ${props =>
     props.isShow === 'true'
@@ -385,7 +386,7 @@ const AmountInputSection = styled.div`
     font-size: 14px;
     font-weight: 300;
     line-height: 20px;
-    color: #000;
+    color: ${props => props.fontColor5};
   }
 `
 
@@ -401,12 +402,10 @@ const SwitchTabTag = styled.div`
   justify-content: center;
   cursor: pointer;
 
-  ${props =>
-    props.num === 1
-      ? `
-        filter: invert(52%) sepia(10%) saturate(1357%) hue-rotate(194deg) brightness(90%) contrast(95%);
-      `
-      : ``}
+  svg {
+    font-size: 16px;
+    margin: auto 0px;
+  }
 
   p {
     margin-bottom: 0px;

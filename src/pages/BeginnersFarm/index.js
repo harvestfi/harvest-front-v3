@@ -8,6 +8,7 @@ import useEffectWithPrevious from 'use-effect-with-previous'
 import { ethers } from 'ethers'
 import { BiRightArrowAlt } from 'react-icons/bi'
 import { RxCross2 } from 'react-icons/rx'
+import { PiQuestion } from 'react-icons/pi'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
@@ -15,8 +16,6 @@ import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import BASE from '../../assets/images/chains/base.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
-import Info from '../../assets/images/logos/earn/info.svg'
-import InfoBlack from '../../assets/images/logos/earn/help-circle.svg'
 import Safe from '../../assets/images/logos/beginners/safe.svg'
 import BarChart from '../../assets/images/logos/beginners/bar-chart-01.svg'
 import FarmerAvatar from '../../assets/images/logos/sidebar/connectavatar.png'
@@ -60,7 +59,6 @@ import {
   FlexDiv,
   FlexTopDiv,
   HalfContent,
-  InfoIcon,
   Inner,
   TopInner,
   TopButton,
@@ -103,7 +101,6 @@ import {
   NetDetailTitle,
   NetDetailContent,
   NetDetailImg,
-  InfoIconBlack,
   MobileChain,
   LinksContainer,
   Logo,
@@ -150,6 +147,20 @@ const getVaultValue = token => {
 }
 
 const BeginnersFarm = () => {
+  const {
+    darkMode,
+    bgColor,
+    hoverColor,
+    fontColor,
+    fontColor1,
+    fontColor3,
+    fontColor4,
+    fontColor6,
+    borderColor,
+    bgColorTooltip,
+    backColor,
+  } = useThemeContext()
+
   const paramAddress = '0x0B0193fAD49DE45F5E2B0A9f5D6Bc3BB7D281688'
 
   const {
@@ -717,8 +728,6 @@ const BeginnersFarm = () => {
     }
   }, [balanceList, supTokenList, defaultToken, chain, SUPPORTED_TOKEN_LIST, supportedVault])
 
-  const { pageBackColor, fontColor, filterColor } = useThemeContext()
-
   const firstUserPoolsLoad = useRef(true)
   const firstWalletBalanceLoad = useRef(true)
 
@@ -904,7 +913,7 @@ const BeginnersFarm = () => {
     chain === CHAIN_IDS.ETH_MAINNET ? '5' : chain === CHAIN_IDS.POLYGON_MAINNET ? '3' : '3'
 
   return (
-    <DetailView pageBackColor={pageBackColor} fontColor={fontColor}>
+    <DetailView bgColor={bgColor} fontColor={fontColor}>
       <TopInner>
         <TopPart>
           <FlexTopDiv>
@@ -962,8 +971,11 @@ const BeginnersFarm = () => {
               <MainTagPanel>
                 {mainTags.map((tag, i) => (
                   <MainTag
+                    fontColor4={fontColor4}
+                    bgColor={bgColor}
                     key={i}
                     active={activeMainTag === i ? 'true' : 'false'}
+                    mode={darkMode ? 'dark' : 'light'}
                     onClick={() => {
                       setActiveMainTag(i)
                       if (i !== 0) {
@@ -1000,7 +1012,7 @@ const BeginnersFarm = () => {
             {activeMainTag === 0 ? (
               welcomeMessage &&
               (isMobile ? (
-                <WelcomeBox>
+                <WelcomeBox bgColorTooltip={bgColorTooltip} borderColor={borderColor}>
                   <WelcomeTop>
                     <FarmerImage src={FarmerAvatar} alt="avatar" />
                     <WelcomeTitle>
@@ -1013,9 +1025,9 @@ const BeginnersFarm = () => {
                       <RxCross2 onClick={() => setWelcomeMessage(false)} />
                     </WelcomeClose>
                   </WelcomeTop>
-                  <WelcomeContent>
+                  <WelcomeContent fontColor={fontColor}>
                     {showBadge ? (
-                      <WelcomeText showBadge={showBadge}>
+                      <WelcomeText>
                         Earn $10 in{' '}
                         <a
                           href="https://harvest-front-v3.netlify.app/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
@@ -1064,7 +1076,7 @@ const BeginnersFarm = () => {
                         </a>
                       </WelcomeText>
                     ) : (
-                      <WelcomeText showBadge={showBadge}>
+                      <WelcomeText>
                         Begin yield farming in under two minutes by simply converting any token in
                         your wallet into interest-bearing fmoonwell_WETH. Start by connecting your
                         wallet, selecting the token you wish to convert, and then clicking on
@@ -1084,17 +1096,17 @@ const BeginnersFarm = () => {
                   </WelcomeContent>
                 </WelcomeBox>
               ) : (
-                <WelcomeBox>
+                <WelcomeBox bgColorTooltip={bgColorTooltip} borderColor={borderColor}>
                   <FarmerImage src={FarmerAvatar} alt="avatar" />
                   <WelcomeContent>
-                    <WelcomeTitle>
+                    <WelcomeTitle fontColor1={fontColor1}>
                       Welcome, Farmer{' '}
                       <span role="img" aria-label="hand" aria-labelledby="hand">
                         👋
                       </span>
                     </WelcomeTitle>
                     {showBadge ? (
-                      <WelcomeText showBadge={showBadge}>
+                      <WelcomeText showBadge={showBadge} fontColor={fontColor}>
                         Earn $10 in{' '}
                         <a
                           href="https://harvest-front-v3.netlify.app/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
@@ -1143,7 +1155,7 @@ const BeginnersFarm = () => {
                         </a>
                       </WelcomeText>
                     ) : (
-                      <WelcomeText showBadge={showBadge}>
+                      <WelcomeText showBadge={showBadge} fontColor={fontColor}>
                         Begin yield farming in under two minutes by simply converting any token in
                         your wallet into interest-bearing fmoonwell_WETH. Start by connecting your
                         wallet, selecting the token you wish to convert, and then clicking on
@@ -1167,20 +1179,35 @@ const BeginnersFarm = () => {
                 </WelcomeBox>
               ))
             ) : (
-              <BoxCover>
-                <ValueBox width="24%" className="balance-box">
+              <BoxCover borderColor={borderColor}>
+                <ValueBox
+                  width="24%"
+                  className="balance-box"
+                  backColor={backColor}
+                  borderColor={borderColor}
+                >
                   <BoxTitle>APY</BoxTitle>
                   <BoxValue>{showAPY()}</BoxValue>
                 </ValueBox>
-                <ValueBox width="24%" className="daily-apy-box">
+                <ValueBox
+                  width="24%"
+                  className="daily-apy-box"
+                  backColor={backColor}
+                  borderColor={borderColor}
+                >
                   <BoxTitle>Daily APY</BoxTitle>
                   <BoxValue>{showApyDaily()}</BoxValue>
                 </ValueBox>
-                <ValueBox width="24%">
+                <ValueBox width="24%" backColor={backColor} borderColor={borderColor}>
                   <BoxTitle>TVL</BoxTitle>
                   <BoxValue>{showTVL()}</BoxValue>
                 </ValueBox>
-                <ValueBox width="24%" className="daily-yield-box">
+                <ValueBox
+                  width="24%"
+                  className="daily-yield-box"
+                  backColor={backColor}
+                  borderColor={borderColor}
+                >
                   <BoxTitle>Last Harvest</BoxTitle>
                   <BoxValue>{lastHarvest !== '' ? `${lastHarvest} ago` : '-'}</BoxValue>
                 </ValueBox>
@@ -1189,19 +1216,16 @@ const BeginnersFarm = () => {
             <MainSection height={activeMainTag === 0 ? '100%' : 'fit-content'}>
               {activeMainTag === 0 ? (
                 <>
-                  <BoxCover>
-                    <ValueBox width="32%" className="balance-box">
-                      <BoxTitle>
+                  <BoxCover borderColor={borderColor}>
+                    <ValueBox
+                      width="32%"
+                      className="balance-box"
+                      backColor={backColor}
+                      borderColor={borderColor}
+                    >
+                      <BoxTitle fontColor3={fontColor3}>
                         {isMobile ? 'Balance' : 'My Balance'}
-                        <InfoIcon
-                          className="info"
-                          width={isMobile ? 10 : 16}
-                          src={Info}
-                          alt=""
-                          data-tip
-                          data-for="tooltip-mybalance"
-                          filterColor={filterColor}
-                        />
+                        <PiQuestion className="question" data-tip data-for="tooltip-mybalance" />
                         <ReactTooltip
                           id="tooltip-mybalance"
                           backgroundColor="#101828"
@@ -1218,7 +1242,7 @@ const BeginnersFarm = () => {
                           </NewLabel>
                         </ReactTooltip>
                       </BoxTitle>
-                      <BoxValue>
+                      <BoxValue fontColor1={fontColor1}>
                         {!connected ? (
                           '$0.00'
                         ) : lpTokenBalance ? (
@@ -1234,17 +1258,18 @@ const BeginnersFarm = () => {
                         )}
                       </BoxValue>
                     </ValueBox>
-                    <ValueBox width="32%" className="monthly-yield-box">
+                    <ValueBox
+                      width="32%"
+                      className="monthly-yield-box"
+                      backColor={backColor}
+                      borderColor={borderColor}
+                    >
                       <BoxTitle>
                         Est. Monthly Yield
-                        <InfoIcon
-                          className="info"
-                          width={isMobile ? 10 : 16}
-                          src={Info}
-                          alt=""
+                        <PiQuestion
+                          className="question"
                           data-tip
                           data-for="tooltip-monthly-yield"
-                          filterColor={filterColor}
                         />
                         <ReactTooltip
                           id="tooltip-monthly-yield"
@@ -1275,18 +1300,15 @@ const BeginnersFarm = () => {
                           : `$${formatNumber(yieldMonthly, 2)}`}
                       </BoxValue>
                     </ValueBox>
-                    <ValueBox width="32%" className="daily-yield-box">
+                    <ValueBox
+                      width="32%"
+                      className="daily-yield-box"
+                      backColor={backColor}
+                      borderColor={borderColor}
+                    >
                       <BoxTitle>
                         Est. Daily Yield
-                        <InfoIcon
-                          className="info"
-                          width={isMobile ? 10 : 16}
-                          src={Info}
-                          alt=""
-                          data-tip
-                          data-for="tooltip-daily-yield"
-                          filterColor={filterColor}
-                        />
+                        <PiQuestion className="question" data-tip data-for="tooltip-daily-yield" />
                         <ReactTooltip
                           id="tooltip-daily-yield"
                           backgroundColor="#101828"
@@ -1304,7 +1326,7 @@ const BeginnersFarm = () => {
                           </NewLabel>
                         </ReactTooltip>
                       </BoxTitle>
-                      <BoxValue>
+                      <BoxValue fontColor1={fontColor1}>
                         {!connected
                           ? '$0.00'
                           : isNaN(yieldDaily)
@@ -1332,7 +1354,12 @@ const BeginnersFarm = () => {
                 </>
               ) : (
                 <>
-                  <HalfInfo padding="25px 18px" marginBottom={isMobile ? '20px' : '25px'}>
+                  <HalfInfo
+                    padding="25px 18px"
+                    marginBottom={isMobile ? '20px' : '25px'}
+                    backColor={backColor}
+                    borderColor={borderColor}
+                  >
                     <FarmDetailChart
                       token={token}
                       vaultPool={vaultPool}
@@ -1341,17 +1368,18 @@ const BeginnersFarm = () => {
                     />
                   </HalfInfo>
                   {!isMobile && (
-                    <HalfInfo marginBottom="20px">
+                    <HalfInfo marginBottom="20px" backColor={backColor} borderColor={borderColor}>
                       <NewLabel
                         weight={700}
                         size="14px"
                         height="24px"
+                        color={fontColor4}
                         padding="10px 15px"
-                        borderRadius="15px 15px 0 0"
+                        borderBottom="1px solid #F3F6FF"
                       >
                         Source of Yield
                       </NewLabel>
-                      <DescInfo>
+                      <DescInfo fontColor6={fontColor6} fontColor3={fontColor3}>
                         <div>
                           <p>
                             This farm supplies{' '}
@@ -1399,13 +1427,16 @@ const BeginnersFarm = () => {
                             target="_blank"
                             onClick={e => e.stopPropagation()}
                             rel="noopener noreferrer"
+                            bgColor={bgColor}
+                            hoverColor={hoverColor}
+                            borderColor={borderColor}
                           >
                             <NewLabel
                               size="12px"
                               weight={isMobile ? 600 : 600}
                               height="16px"
                               self="center"
-                              color="#15202b"
+                              color={fontColor1}
                             >
                               Vault Address
                             </NewLabel>
@@ -1420,13 +1451,17 @@ const BeginnersFarm = () => {
                             target="_blank"
                             onClick={e => e.stopPropagation()}
                             rel="noopener noreferrer"
+                            bgColor={bgColor}
+                            hoverColor={hoverColor}
+                            borderColor={borderColor}
                           >
                             <NewLabel
                               size="12px"
                               weight={isMobile ? 600 : 600}
                               height="16px"
                               self="center"
-                              color="#15202b"
+                              color={fontColor1}
+                              hoverColor={hoverColor}
                             >
                               Strategy Address
                             </NewLabel>
@@ -1440,13 +1475,16 @@ const BeginnersFarm = () => {
                           onClick={e => e.stopPropagation()}
                           rel="noopener noreferrer"
                           target="_blank"
+                          bgColor={bgColor}
+                          hoverColor={hoverColor}
+                          borderColor={borderColor}
                         >
                           <NewLabel
                             size="12px"
                             weight={isMobile ? 600 : 600}
                             height="16px"
                             self="center"
-                            color="#15202b"
+                            color={fontColor1}
                           >
                             Pool Address
                           </NewLabel>
@@ -1461,6 +1499,8 @@ const BeginnersFarm = () => {
               {activeMainTag === 0 ? (
                 <FirstPartSection>
                   <MyBalance
+                    backColor={backColor}
+                    borderColor={borderColor}
                     marginBottom={isMobile ? '20px' : '25px'}
                     marginTop={isMobile ? '0px' : '0px'}
                     height={isMobile ? 'unset' : '120px'}
@@ -1471,19 +1511,12 @@ const BeginnersFarm = () => {
                       size={isMobile ? '12px' : '12px'}
                       weight="600"
                       height={isMobile ? '20px' : '20px'}
-                      color="#1F2937"
+                      color={fontColor4}
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom="1px solid #F2F5FF"
                     >
                       <>{`f${id}`}</>
-                      <InfoIconBlack
-                        className="info"
-                        width={isMobile ? 16 : 16}
-                        src={InfoBlack}
-                        alt=""
-                        data-tip
-                        data-for="tooltip-token-name"
-                      />
+                      <PiQuestion className="question" data-tip data-for="tooltip-token-name" />
                       <ReactTooltip
                         id="tooltip-token-name"
                         backgroundColor="#101828"
@@ -1510,18 +1543,10 @@ const BeginnersFarm = () => {
                         size={isMobile ? '12px' : '12px'}
                         weight="500"
                         height={isMobile ? '24px' : '24px'}
-                        color="#6F78AA"
+                        color={fontColor3}
                       >
                         Balance
-                        <InfoIcon
-                          className="info"
-                          width={isMobile ? 16 : 16}
-                          src={Info}
-                          alt=""
-                          data-tip
-                          data-for="tooltip-balance"
-                          filterColor={filterColor}
-                        />
+                        <PiQuestion className="question" data-tip data-for="tooltip-balance" />
                         <ReactTooltip
                           id="tooltip-balance"
                           backgroundColor="#101828"
@@ -1542,7 +1567,7 @@ const BeginnersFarm = () => {
                         size={isMobile ? '12px' : '12px'}
                         height={isMobile ? '24px' : '24px'}
                         weight="600"
-                        color="#101828"
+                        color={fontColor1}
                       >
                         {!connected ? (
                           0
@@ -1565,18 +1590,14 @@ const BeginnersFarm = () => {
                         size={isMobile ? '12px' : '12px'}
                         height={isMobile ? '24px' : '24px'}
                         weight="500"
-                        color="#6F78AA"
+                        color={fontColor3}
                         self="center"
                       >
                         Underlying Balance
-                        <InfoIcon
-                          className="info"
-                          width={isMobile ? 16 : 16}
-                          src={Info}
-                          alt=""
+                        <PiQuestion
+                          className="question"
                           data-tip
                           data-for="tooltip-underlying-balance"
-                          filterColor={filterColor}
                         />
                         <ReactTooltip
                           id="tooltip-underlying-balance"
@@ -1599,7 +1620,7 @@ const BeginnersFarm = () => {
                         weight="600"
                         size={isMobile ? '12px' : '12px'}
                         height={isMobile ? '24px' : '24px'}
-                        color="#101828"
+                        color={fontColor1}
                         self="center"
                       >
                         {!connected ? (
@@ -1617,6 +1638,8 @@ const BeginnersFarm = () => {
                     </FlexDiv>
                   </MyBalance>
                   <HalfContent
+                    backColor={backColor}
+                    borderColor={borderColor}
                     marginBottom={isMobile ? '20px' : '0px'}
                     borderRadius={isMobile ? '12px' : '12px'}
                   >
@@ -1765,12 +1788,16 @@ const BeginnersFarm = () => {
                 </FirstPartSection>
               ) : (
                 <RestInternal>
-                  <MyBalance marginBottom={isMobile ? '20px' : '25px'}>
+                  <MyBalance
+                    marginBottom={isMobile ? '20px' : '25px'}
+                    backColor={backColor}
+                    borderColor={borderColor}
+                  >
                     <NewLabel
                       size={isMobile ? '12px' : '14px'}
                       weight="600"
                       height={isMobile ? '20px' : '24px'}
-                      color="#1F2937"
+                      color={fontColor4}
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom="1px solid #F3F6FF"
                     >
@@ -1780,12 +1807,12 @@ const BeginnersFarm = () => {
                       <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
                     </NewLabel>
                   </MyBalance>
-                  <LastHarvestInfo>
+                  <LastHarvestInfo backColor={backColor} borderColor={borderColor}>
                     <NewLabel
                       size={isMobile ? '12px' : '14px'}
                       weight="600"
                       height={isMobile ? '20px' : '24px'}
-                      color="#1F2937"
+                      color={fontColor4}
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom="1px solid #F3F6FF"
                     >
@@ -1799,7 +1826,7 @@ const BeginnersFarm = () => {
                         size={isMobile ? '12px' : '14px'}
                         weight="500"
                         height={isMobile ? '20px' : '24px'}
-                        color="#6F78AA"
+                        color={fontColor3}
                       >
                         Convert Fee
                       </NewLabel>
@@ -1807,7 +1834,7 @@ const BeginnersFarm = () => {
                         size={isMobile ? '12px' : '14px'}
                         weight="600"
                         height={isMobile ? '20px' : '24px'}
-                        color="#101828"
+                        color={fontColor1}
                       >
                         0%
                       </NewLabel>
@@ -1820,7 +1847,7 @@ const BeginnersFarm = () => {
                         size={isMobile ? '12px' : '14px'}
                         weight="500"
                         height={isMobile ? '20px' : '24px'}
-                        color="#6F78AA"
+                        color={fontColor3}
                       >
                         Revert Fee
                       </NewLabel>
@@ -1828,7 +1855,7 @@ const BeginnersFarm = () => {
                         size={isMobile ? '12px' : '14px'}
                         weight="600"
                         height={isMobile ? '20px' : '24px'}
-                        color="#101828"
+                        color={fontColor1}
                       >
                         0%
                       </NewLabel>
@@ -1841,21 +1868,13 @@ const BeginnersFarm = () => {
                         size={isMobile ? '13px' : '13px'}
                         weight="300"
                         height="normal"
-                        color="#6F78AA"
+                        color={fontColor3}
                       >
                         The APY shown already considers the performance fee taken only from
                         generated yield and not deposits.
                       </NewLabel>
                       <NewLabel display="flex" self="center">
-                        <InfoIcon
-                          className="info"
-                          width={isMobile ? 16 : 16}
-                          src={Info}
-                          alt=""
-                          data-tip
-                          data-for="tooltip-last-harvest"
-                          filterColor={filterColor}
-                        />
+                        <PiQuestion className="question" data-tip data-for="tooltip-last-harvest" />
                         <ReactTooltip
                           id="tooltip-last-harvest"
                           backgroundColor="#101828"
@@ -1882,17 +1901,17 @@ const BeginnersFarm = () => {
                     </FlexDiv>
                   </LastHarvestInfo>
                   {isMobile && (
-                    <HalfInfo marginBottom="20px">
+                    <HalfInfo marginBottom="20px" backColor={backColor} borderColor={borderColor}>
                       <NewLabel
                         weight={700}
                         size="14px"
                         height="24px"
                         padding="10px 15px"
-                        borderRadius="15px 15px 0 0"
+                        borderBottom="1px solid #F3F6FF"
                       >
                         Source of Yield
                       </NewLabel>
-                      <DescInfo>
+                      <DescInfo fontColor6={fontColor6} fontColor3={fontColor3}>
                         <div>
                           <p>
                             This farm supplies{' '}
@@ -1940,13 +1959,16 @@ const BeginnersFarm = () => {
                             target="_blank"
                             onClick={e => e.stopPropagation()}
                             rel="noopener noreferrer"
+                            bgColor={bgColor}
+                            hoverColor={hoverColor}
+                            borderColor={borderColor}
                           >
                             <NewLabel
                               size="12px"
                               weight={isMobile ? 600 : 600}
                               height="16px"
                               self="center"
-                              color="#15202b"
+                              color={fontColor1}
                             >
                               Vault Address
                             </NewLabel>
@@ -1961,13 +1983,16 @@ const BeginnersFarm = () => {
                             target="_blank"
                             onClick={e => e.stopPropagation()}
                             rel="noopener noreferrer"
+                            bgColor={bgColor}
+                            hoverColor={hoverColor}
+                            borderColor={borderColor}
                           >
                             <NewLabel
                               size="12px"
                               weight={isMobile ? 600 : 600}
                               height="16px"
                               self="center"
-                              color="#15202b"
+                              color={fontColor1}
                             >
                               Strategy Address
                             </NewLabel>
@@ -1981,13 +2006,16 @@ const BeginnersFarm = () => {
                           onClick={e => e.stopPropagation()}
                           rel="noopener noreferrer"
                           target="_blank"
+                          bgColor={bgColor}
+                          hoverColor={hoverColor}
+                          borderColor={borderColor}
                         >
                           <NewLabel
                             size="12px"
                             weight={isMobile ? 600 : 600}
                             height="16px"
                             self="center"
-                            color="#15202b"
+                            color={fontColor1}
                           >
                             Pool Address
                           </NewLabel>

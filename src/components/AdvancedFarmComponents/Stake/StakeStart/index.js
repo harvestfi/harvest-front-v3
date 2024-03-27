@@ -29,7 +29,10 @@ import {
   NewLabel,
   FTokenWrong,
   ImgBtn,
+  ProgressLabel,
+  ProgressText,
 } from './style'
+import { useThemeContext } from '../../../../providers/useThemeContext'
 
 let bStakeApprovalSuccess = false
 
@@ -46,6 +49,7 @@ const StakeStart = ({
   multipleAssets,
   setLoadingDots,
 }) => {
+  const { fontColor1, fontColor2 } = useThemeContext()
   const { connected, connectAction, account, chainId, setChainId, getWalletBalances } = useWallet()
 
   const [
@@ -202,7 +206,7 @@ const StakeStart = ({
                 Summary
               </NewLabel>
               <NewLabel
-                color="#15202B"
+                color={fontColor1}
                 size={isMobile ? '12px' : '14px'}
                 height={isMobile ? '17px' : '20px'}
                 weight="400"
@@ -242,7 +246,7 @@ const StakeStart = ({
             size={isMobile ? '14px' : '14px'}
             height={isMobile ? '24px' : '24px'}
             padding="15px 24px 10px"
-            color="#344054"
+            color={fontColor2}
           >
             <NewLabel
               display="flex"
@@ -311,7 +315,23 @@ const StakeStart = ({
               alt="progress bar"
             />
           </NewLabel>
-
+          <ProgressLabel fontColor2={fontColor2}>
+            <ProgressText width="50%" padding="0px 0px 0px 30px">
+              Approve
+              <br />
+              Token
+            </ProgressText>
+            <ProgressText width="unset" padding="0px 0px 0px 7px">
+              Confirm
+              <br />
+              Transaction
+            </ProgressText>
+            <ProgressText width="50%" padding="0px 10px 0px 0px">
+              Transaction
+              <br />
+              Successful
+            </ProgressText>
+          </ProgressLabel>
           <NewLabel padding={isMobile ? '24px' : '24px'}>
             <Button
               color="wido-deposit"

@@ -10,15 +10,13 @@ import { useHistory, useLocation, useParams } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { ethers } from 'ethers'
 import { BiLeftArrowAlt, BiInfoCircle } from 'react-icons/bi'
+import { PiQuestion } from 'react-icons/pi'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import BASE from '../../assets/images/chains/base.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
-import Info from '../../assets/images/logos/earn/info.svg'
-import InfoNewColor from '../../assets/images/logos/beginners/help-circle-new-color.svg'
-import InfoBlack from '../../assets/images/logos/earn/help-circle.svg'
 import Safe from '../../assets/images/logos/beginners/safe.svg'
 import Diamond from '../../assets/images/logos/beginners/diamond.svg'
 import BarChart from '../../assets/images/logos/beginners/bar-chart-01.svg'
@@ -75,7 +73,6 @@ import {
   FlexDiv,
   FlexTopDiv,
   HalfContent,
-  InfoIcon,
   Inner,
   TopInner,
   TopButton,
@@ -124,7 +121,6 @@ import {
   NetDetailTitle,
   NetDetailContent,
   NetDetailImg,
-  InfoIconBlack,
   RewardValue,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
@@ -196,6 +192,24 @@ const getTokenPriceFromApi = async tokenID => {
 }
 
 const AdvancedFarm = () => {
+  const {
+    darkMode,
+    backColor,
+    bgColor,
+    borderColor,
+    bgColorTooltip,
+    fontColorTooltip,
+    fontColor,
+    fontColor1,
+    fontColor2,
+    fontColor3,
+    fontColor4,
+    fontColor6,
+    linkColor,
+    hoverColor,
+    bgColorFarm,
+  } = useThemeContext()
+
   const { paramAddress } = useParams()
   const {
     getPortalsBaseTokens,
@@ -870,8 +884,6 @@ const AdvancedFarm = () => {
     }
   }, [balanceList, supTokenList, defaultToken, chain, SUPPORTED_TOKEN_LIST, supportedVault])
 
-  const { pageBackColor, fontColor, filterColor } = useThemeContext()
-
   const firstUserPoolsLoad = useRef(true)
   const firstWalletBalanceLoad = useRef(true)
 
@@ -1187,12 +1199,13 @@ const AdvancedFarm = () => {
   }
 
   return (
-    <DetailView pageBackColor={pageBackColor} fontColor={fontColor}>
-      <TopInner>
+    <DetailView bgColor={bgColor} fontColor={fontColor}>
+      <TopInner bgColorFarm={bgColorFarm}>
         <TopPart>
           <FlexTopDiv>
             <TopButton className="back-btn">
               <BackBtnRect
+                fontColor={fontColor}
                 onClick={() => {
                   if (isFromEarningPage) {
                     history.push(ROUTES.PORTFOLIO)
@@ -1202,12 +1215,12 @@ const AdvancedFarm = () => {
                 }}
               >
                 <BiLeftArrowAlt fontSize={16} />
-                <BackText>Back</BackText>
+                <BackText fontColor={fontColor}>Back</BackText>
               </BackBtnRect>
               {isMobile && (
                 <MobileChain>
                   <NetDetailItem>
-                    <NetDetailContent>
+                    <NetDetailContent fontColor={fontColor}>
                       {useIFARM ? 'Harvest' : token.platform && token.platform[0]}
                     </NetDetailContent>
                   </NetDetailItem>
@@ -1225,6 +1238,7 @@ const AdvancedFarm = () => {
               </TopLogo>
               <TopDesc
                 weight={600}
+                fontColor2={fontColor2}
                 size={isMobile ? '19.7px' : '25px'}
                 height={isMobile ? '45px' : '82px'}
                 marginBottom={isMobile ? '5px' : '10px'}
@@ -1233,11 +1247,11 @@ const AdvancedFarm = () => {
               </TopDesc>
             </FlexDiv>
             <GuideSection>
-              <GuidePart>
+              <GuidePart fontColor4={fontColor4}>
                 {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
                 &nbsp;APY
               </GuidePart>
-              <GuidePart>
+              <GuidePart fontColor4={fontColor4}>
                 {showTVL()}
                 &nbsp;TVL
               </GuidePart>
@@ -1247,7 +1261,12 @@ const AdvancedFarm = () => {
                 {mainTags.map((tag, i) => (
                   <MainTag
                     key={i}
+                    fontColor3={fontColor3}
+                    fontColor4={fontColor4}
+                    bgColor={bgColor}
+                    bgColorFarm={bgColorFarm}
                     active={activeMainTag === i ? 'true' : 'false'}
+                    mode={darkMode ? 'dark' : 'light'}
                     useIFARM={useIFARM}
                     onClick={() => {
                       setActiveMainTag(i)
@@ -1265,14 +1284,14 @@ const AdvancedFarm = () => {
               </MainTagPanel>
               <NetDetail>
                 <NetDetailItem>
-                  <NetDetailTitle>Platform:</NetDetailTitle>
-                  <NetDetailContent>
+                  <NetDetailTitle fontColor={fontColor}>Platform:</NetDetailTitle>
+                  <NetDetailContent fontColor={fontColor}>
                     {useIFARM ? 'Harvest' : token.platform && token.platform[0]}
                   </NetDetailContent>
                 </NetDetailItem>
                 <NetDetailItem>
-                  <NetDetailTitle>Network</NetDetailTitle>
-                  <NetDetailImg>
+                  <NetDetailTitle fontColor={fontColor}>Network</NetDetailTitle>
+                  <NetDetailImg fontColor={fontColor}>
                     <img src={BadgeAry[badgeId]} alt="" />
                   </NetDetailImg>
                 </NetDetailItem>
@@ -1286,7 +1305,11 @@ const AdvancedFarm = () => {
           <InternalSection>
             {activeMainTag === 0 ? (
               showLodestarVaultInfo ? (
-                <WelcomeBox>
+                <WelcomeBox
+                  bgColorTooltip={bgColorTooltip}
+                  fontColorTooltip={fontColorTooltip}
+                  borderColor={borderColor}
+                >
                   <BiInfoCircle className="info-circle" fontSize={20} />
                   <WelcomeContent>
                     <WelcomeTitle>Vault Note</WelcomeTitle>
@@ -1303,6 +1326,7 @@ const AdvancedFarm = () => {
                           href="https://discord.com/invite/gzWAG3Wx7Y"
                           target="_blank"
                           rel="noopener noreferrer"
+                          linkColor={linkColor}
                         >
                           Still having questions? Open Discord ticket.
                         </WelcomeTicket>
@@ -1314,7 +1338,11 @@ const AdvancedFarm = () => {
                   </WelcomeClose>
                 </WelcomeBox>
               ) : showSeamlessVaultInfo ? (
-                <WelcomeBox>
+                <WelcomeBox
+                  bgColorTooltip={bgColorTooltip}
+                  fontColorTooltip={fontColorTooltip}
+                  borderColor={borderColor}
+                >
                   <BiInfoCircle className="info-circle" fontSize={20} />
                   <WelcomeContent>
                     <WelcomeTitle>Vault Note</WelcomeTitle>
@@ -1332,6 +1360,7 @@ const AdvancedFarm = () => {
                           href="https://app.harvest.finance/farms?search=moonwell"
                           target="_self"
                           rel="noopener noreferrer"
+                          linkColor={linkColor}
                         >
                           Moonwell farms
                         </WelcomeTicket>
@@ -1343,6 +1372,7 @@ const AdvancedFarm = () => {
                           href="https://discord.com/invite/gzWAG3Wx7Y"
                           target="_blank"
                           rel="noopener noreferrer"
+                          linkColor={linkColor}
                         >
                           Still having questions? Open Discord ticket.
                         </WelcomeTicket>
@@ -1354,7 +1384,11 @@ const AdvancedFarm = () => {
                   </WelcomeClose>
                 </WelcomeBox>
               ) : showIFARMInfo ? (
-                <WelcomeBox>
+                <WelcomeBox
+                  bgColorTooltip={bgColorTooltip}
+                  fontColorTooltip={fontColorTooltip}
+                  borderColor={borderColor}
+                >
                   <BiInfoCircle className="info-circle" fontSize={20} />
                   <WelcomeContent>
                     <WelcomeTitle>Vault Note</WelcomeTitle>
@@ -1365,6 +1399,7 @@ const AdvancedFarm = () => {
                         href="https://v3.harvest.finance/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
                         target="_blank"
                         rel="noopener noreferrer"
+                        linkColor={linkColor}
                       >
                         under this link
                       </WelcomeTicket>
@@ -1382,22 +1417,37 @@ const AdvancedFarm = () => {
                 <></>
               )
             ) : activeMainTag === 2 ? (
-              <BoxCover>
-                <ValueBox width="24%" className="balance-box">
-                  <BoxTitle>APY</BoxTitle>
-                  <BoxValue>{showAPY()}</BoxValue>
+              <BoxCover borderColor={borderColor}>
+                <ValueBox
+                  width="24%"
+                  className="balance-box"
+                  backColor={backColor}
+                  borderColor={borderColor}
+                >
+                  <BoxTitle fontColor3={fontColor3}>APY</BoxTitle>
+                  <BoxValue fontColor1={fontColor1}>{showAPY()}</BoxValue>
                 </ValueBox>
-                <ValueBox width="24%" className="daily-apy-box">
-                  <BoxTitle>Daily APY</BoxTitle>
-                  <BoxValue>{showApyDaily()}</BoxValue>
+                <ValueBox
+                  width="24%"
+                  className="daily-apy-box"
+                  backColor={backColor}
+                  borderColor={borderColor}
+                >
+                  <BoxTitle fontColor3={fontColor3}>Daily APY</BoxTitle>
+                  <BoxValue fontColor1={fontColor1}>{showApyDaily()}</BoxValue>
                 </ValueBox>
-                <ValueBox width="24%">
-                  <BoxTitle>TVL</BoxTitle>
-                  <BoxValue>{showTVL()}</BoxValue>
+                <ValueBox width="24%" backColor={backColor} borderColor={borderColor}>
+                  <BoxTitle fontColor3={fontColor3}>TVL</BoxTitle>
+                  <BoxValue fontColor1={fontColor1}>{showTVL()}</BoxValue>
                 </ValueBox>
-                <ValueBox width="24%" className="daily-yield-box">
-                  <BoxTitle>Last Harvest</BoxTitle>
-                  <BoxValue>
+                <ValueBox
+                  width="24%"
+                  className="daily-yield-box"
+                  backColor={backColor}
+                  borderColor={borderColor}
+                >
+                  <BoxTitle fontColor3={fontColor3}>Last Harvest</BoxTitle>
+                  <BoxValue fontColor1={fontColor1}>
                     {useIFARM ? '-' : lastHarvest !== '' ? `${lastHarvest} ago` : '-'}
                   </BoxValue>
                 </ValueBox>
@@ -1408,19 +1458,16 @@ const AdvancedFarm = () => {
             <MainSection height={activeMainTag === 0 ? '100%' : 'fit-content'}>
               {activeMainTag === 0 ? (
                 <>
-                  <BoxCover>
-                    <ValueBox width="32%" className="balance-box">
-                      <BoxTitle>
+                  <BoxCover borderColor={borderColor}>
+                    <ValueBox
+                      width="32%"
+                      className="balance-box"
+                      backColor={backColor}
+                      borderColor={borderColor}
+                    >
+                      <BoxTitle fontColor3={fontColor3}>
                         {isMobile ? 'Balance' : 'My Balance'}
-                        <InfoIcon
-                          className="info"
-                          width={isMobile ? 10 : 16}
-                          src={Info}
-                          alt=""
-                          data-tip
-                          data-for="tooltip-mybalance"
-                          filterColor={filterColor}
-                        />
+                        <PiQuestion className="question" data-tip data-for="tooltip-mybalance" />
                         <ReactTooltip
                           id="tooltip-mybalance"
                           backgroundColor="#101828"
@@ -1439,7 +1486,7 @@ const AdvancedFarm = () => {
                           </NewLabel>
                         </ReactTooltip>
                       </BoxTitle>
-                      <BoxValue>
+                      <BoxValue fontColor1={fontColor1}>
                         {!connected ? (
                           '$0.00'
                         ) : lpTokenBalance ? (
@@ -1455,17 +1502,18 @@ const AdvancedFarm = () => {
                         )}
                       </BoxValue>
                     </ValueBox>
-                    <ValueBox width="32%" className="monthly-yield-box">
-                      <BoxTitle>
+                    <ValueBox
+                      width="32%"
+                      className="monthly-yield-box"
+                      backColor={backColor}
+                      borderColor={borderColor}
+                    >
+                      <BoxTitle fontColor3={fontColor3}>
                         Est. Monthly Yield
-                        <InfoIcon
-                          className="info"
-                          width={isMobile ? 10 : 16}
-                          src={Info}
-                          alt=""
+                        <PiQuestion
+                          className="question"
                           data-tip
                           data-for="tooltip-monthly-yield"
-                          filterColor={filterColor}
                         />
                         <ReactTooltip
                           id="tooltip-monthly-yield"
@@ -1485,7 +1533,7 @@ const AdvancedFarm = () => {
                           </NewLabel>
                         </ReactTooltip>
                       </BoxTitle>
-                      <BoxValue>
+                      <BoxValue fontColor1={fontColor1}>
                         {!connected
                           ? '$0.00'
                           : isNaN(yieldMonthly)
@@ -1497,20 +1545,21 @@ const AdvancedFarm = () => {
                           : `$${formatNumber(yieldMonthly, 2)}`}
                       </BoxValue>
                     </ValueBox>
-                    <ValueBox width="32%" className="daily-yield-box">
-                      <BoxTitle>
+                    <ValueBox
+                      width="32%"
+                      className="daily-yield-box"
+                      backColor={backColor}
+                      borderColor={borderColor}
+                    >
+                      <BoxTitle fontColor3={fontColor3}>
                         Est. Daily Yield
-                        <InfoIcon
-                          className="info"
-                          width={isMobile ? 10 : 16}
-                          src={Info}
-                          alt=""
+                        <PiQuestion
+                          className="question"
                           data-tip
                           data-for="tooltip-monthly-yield"
-                          filterColor={filterColor}
                         />
                       </BoxTitle>
-                      <BoxValue>
+                      <BoxValue fontColor1={fontColor1}>
                         {!connected
                           ? '$0.00'
                           : isNaN(yieldDaily)
@@ -1523,18 +1572,6 @@ const AdvancedFarm = () => {
                       </BoxValue>
                     </ValueBox>
                   </BoxCover>
-                  {/* {!isMobile && (
-                    <UserBalanceData
-                      token={token}
-                      vaultPool={vaultPool}
-                      tokenSymbol={id}
-                      totalValue={totalValue}
-                      useIFARM={useIFARM}
-                      farmPrice={farmPrice}
-                      underlyingPrice={underlyingPrice}
-                      pricePerFullShare={tempPricePerFullShare}
-                    />
-                  )} */}
                   {!isMobile ? (
                     <UserBalanceData
                       token={token}
@@ -1552,10 +1589,14 @@ const AdvancedFarm = () => {
                 </>
               ) : activeMainTag === 1 ? (
                 <>
-                  <MyTotalReward marginBottom={isMobile ? '20px' : '25px'}>
-                    <BoxTitle>Rewards</BoxTitle>
+                  <MyTotalReward
+                    marginBottom={isMobile ? '20px' : '25px'}
+                    backColor={backColor}
+                    borderColor={borderColor}
+                  >
+                    <BoxTitle fontColor3={fontColor3}>Rewards</BoxTitle>
                     <RewardValue>
-                      <BoxValue>
+                      <BoxValue fontColor1={fontColor1}>
                         {!connected ? (
                           0
                         ) : userStats ? (
@@ -1573,12 +1614,12 @@ const AdvancedFarm = () => {
                     </RewardValue>
                   </MyTotalReward>
                   {!isMobile && (
-                    <MyBalance marginBottom="25px">
+                    <MyBalance marginBottom="25px" backColor={backColor} borderColor={borderColor}>
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}
                         weight="600"
                         height={isMobile ? '20px' : '24px'}
-                        color="#1F2937"
+                        color={fontColor4}
                         padding={isMobile ? '10px 15px' : '10px 15px'}
                         borderBottom="1px solid #F3F6FF"
                       >
@@ -1592,7 +1633,12 @@ const AdvancedFarm = () => {
                 </>
               ) : (
                 <>
-                  <HalfInfo padding="25px 18px" marginBottom={isMobile ? '20px' : '25px'}>
+                  <HalfInfo
+                    padding="25px 18px"
+                    marginBottom={isMobile ? '20px' : '25px'}
+                    backColor={backColor}
+                    borderColor={borderColor}
+                  >
                     <FarmDetailChart
                       token={token}
                       vaultPool={vaultPool}
@@ -1601,18 +1647,18 @@ const AdvancedFarm = () => {
                     />
                   </HalfInfo>
                   {!isMobile && (
-                    <HalfInfo marginBottom="20px">
+                    <HalfInfo marginBottom="20px" backColor={backColor} borderColor={borderColor}>
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}
                         weight={isMobile ? '600' : '600'}
                         height={isMobile ? '20px' : '24px'}
-                        color={isMobile ? '#1F2937' : '#1F2937'}
+                        color={fontColor4}
                         padding={isMobile ? '10px 15px' : '10px 15px'}
                         borderBottom="1px solid #F3F6FF"
                       >
                         Source of Yield
                       </NewLabel>
-                      <DescInfo>
+                      <DescInfo fontColor6={fontColor6} fontColor3={fontColor3}>
                         {useIFARM ? (
                           <div>
                             <p>
@@ -1640,13 +1686,16 @@ const AdvancedFarm = () => {
                             target="_blank"
                             onClick={e => e.stopPropagation()}
                             rel="noopener noreferrer"
+                            bgColor={bgColor}
+                            hoverColor={hoverColor}
+                            borderColor={borderColor}
                           >
                             <NewLabel
                               size="12px"
                               weight={isMobile ? 600 : 600}
                               height="16px"
                               self="center"
-                              color="#15202b"
+                              color={fontColor1}
                             >
                               Vault Address
                             </NewLabel>
@@ -1661,13 +1710,16 @@ const AdvancedFarm = () => {
                             target="_blank"
                             onClick={e => e.stopPropagation()}
                             rel="noopener noreferrer"
+                            bgColor={bgColor}
+                            hoverColor={hoverColor}
+                            borderColor={borderColor}
                           >
                             <NewLabel
                               size="12px"
                               weight={isMobile ? 600 : 600}
                               height="16px"
                               self="center"
-                              color="#15202b"
+                              color={fontColor1}
                             >
                               Strategy Address
                             </NewLabel>
@@ -1681,13 +1733,16 @@ const AdvancedFarm = () => {
                           onClick={e => e.stopPropagation()}
                           rel="noopener noreferrer"
                           target="_blank"
+                          bgColor={bgColor}
+                          hoverColor={hoverColor}
+                          borderColor={borderColor}
                         >
                           <NewLabel
                             size="12px"
                             weight={isMobile ? 400 : 600}
                             height="16px"
                             self="center"
-                            color="#15202b"
+                            color={fontColor1}
                           >
                             Pool Address
                           </NewLabel>
@@ -1721,6 +1776,8 @@ const AdvancedFarm = () => {
               {activeMainTag === 0 ? (
                 <FirstPartSection>
                   <MyBalance
+                    backColor={backColor}
+                    borderColor={borderColor}
                     marginBottom={isMobile ? '20px' : '25px'}
                     marginTop={isMobile ? '0px' : '0'}
                     height={isMobile ? 'unset' : '120px'}
@@ -1731,19 +1788,12 @@ const AdvancedFarm = () => {
                       size={isMobile ? '12px' : '12px'}
                       weight="600"
                       height={isMobile ? '20px' : '20px'}
-                      color="#1F2937"
+                      color={fontColor4}
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom="1px solid #F2F5FF"
                     >
                       <>{useIFARM ? `i${id}` : `f${id}`}</>
-                      <InfoIconBlack
-                        className="info"
-                        width={isMobile ? 16 : 16}
-                        src={InfoBlack}
-                        alt=""
-                        data-tip
-                        data-for="tooltip-token-name"
-                      />
+                      <PiQuestion className="question" data-tip data-for="tooltip-token-name" />
                       <ReactTooltip
                         id="tooltip-token-name"
                         backgroundColor="#101828"
@@ -1771,18 +1821,10 @@ const AdvancedFarm = () => {
                         size={isMobile ? '12px' : '12px'}
                         weight="500"
                         height={isMobile ? '24px' : '24px'}
-                        color="#6F78AA"
+                        color={fontColor3}
                       >
                         Balance
-                        <InfoIcon
-                          className="info"
-                          width={isMobile ? 16 : 16}
-                          src={Info}
-                          alt=""
-                          data-tip
-                          data-for="tooltip-balance"
-                          filterColor={filterColor}
-                        />
+                        <PiQuestion className="question" data-tip data-for="tooltip-balance" />
                         <ReactTooltip
                           id="tooltip-balance"
                           backgroundColor="#101828"
@@ -1805,7 +1847,7 @@ const AdvancedFarm = () => {
                         size={isMobile ? '12px' : '12px'}
                         height={isMobile ? '24px' : '24px'}
                         weight="600"
-                        color="#101828"
+                        color={fontColor1}
                       >
                         {!connected ? (
                           0
@@ -1828,18 +1870,14 @@ const AdvancedFarm = () => {
                         size={isMobile ? '12px' : '12px'}
                         height={isMobile ? '24px' : '24px'}
                         weight="500"
-                        color="#6F78AA"
+                        color={fontColor3}
                         self="center"
                       >
                         Underlying Balance
-                        <InfoIcon
-                          className="info"
-                          width={isMobile ? 16 : 16}
-                          src={Info}
-                          alt=""
+                        <PiQuestion
+                          className="question"
                           data-tip
                           data-for="tooltip-underlying-balance"
-                          filterColor={filterColor}
                         />
                         <ReactTooltip
                           id="tooltip-underlying-balance"
@@ -1868,7 +1906,7 @@ const AdvancedFarm = () => {
                         weight="600"
                         size={isMobile ? '12px' : '12px'}
                         height={isMobile ? '24px' : '24px'}
-                        color="#101828"
+                        color={fontColor1}
                         self="center"
                       >
                         {!connected ? (
@@ -1888,6 +1926,8 @@ const AdvancedFarm = () => {
                     </FlexDiv>
                   </MyBalance>
                   <HalfContent
+                    backColor={backColor}
+                    borderColor={borderColor}
                     marginBottom={isMobile ? '20px' : '0px'}
                     borderRadius={isMobile ? '12px' : '12px'}
                   >
@@ -2037,6 +2077,8 @@ const AdvancedFarm = () => {
               ) : activeMainTag === 1 ? (
                 <SecondPartSection>
                   <MyBalance
+                    backColor={backColor}
+                    borderColor={borderColor}
                     height={isMobile ? 'unset' : useIFARM ? 'unset' : '120px'}
                     marginBottom={isMobile ? '20px' : '25px'}
                   >
@@ -2044,7 +2086,7 @@ const AdvancedFarm = () => {
                       size={isMobile ? '12px' : '12px'}
                       weight="600"
                       height={isMobile ? '20px' : '20px'}
-                      color="#1F2937"
+                      color={fontColor4}
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom="1px solid #F2F5FF "
                     >
@@ -2058,17 +2100,13 @@ const AdvancedFarm = () => {
                         size={isMobile ? '12px' : '12px'}
                         height={isMobile ? '24px' : '24px'}
                         weight="500"
-                        color="#6F78AA"
+                        color={fontColor3}
                       >
                         Unstaked
-                        <InfoIcon
-                          className="info"
-                          width={isMobile ? 16 : 16}
-                          src={InfoNewColor}
-                          alt=""
+                        <PiQuestion
+                          className="question"
                           data-tip
                           data-for="tooltip-unstaked-desc"
-                          filterColor={filterColor}
                         />
                         <ReactTooltip
                           id="tooltip-unstaked-desc"
@@ -2092,7 +2130,7 @@ const AdvancedFarm = () => {
                         weight="600"
                         size={isMobile ? '12px' : '12px'}
                         height={isMobile ? '24px' : '24px'}
-                        color={isMobile ? '#101828' : '#101828'}
+                        color={fontColor1}
                       >
                         {!connected ? (
                           0
@@ -2119,14 +2157,10 @@ const AdvancedFarm = () => {
                         color="#15B088"
                       >
                         Staked
-                        <InfoIcon
-                          className="info"
-                          width={isMobile ? 16 : 16}
-                          src={InfoNewColor}
-                          alt=""
+                        <PiQuestion
+                          className="question"
                           data-tip
-                          data-for="tooltip-staked-desc"
-                          filterColor={filterColor}
+                          data-for="tooltip-unstaked-desc"
                         />
                         <ReactTooltip
                           id="tooltip-staked-desc"
@@ -2208,14 +2242,10 @@ const AdvancedFarm = () => {
                             self="center"
                           >
                             Total Value
-                            <InfoIcon
-                              className="info"
-                              width={isMobile ? 10 : 16}
-                              src={Info}
-                              alt=""
+                            <PiQuestion
+                              className="question"
                               data-tip
                               data-for="tooltip-totalValue"
-                              filterColor={filterColor}
                             />
                             <ReactTooltip
                               id="tooltip-totalValue"
@@ -2256,12 +2286,12 @@ const AdvancedFarm = () => {
                     )}
                   </MyBalance>
                   {isMobile && (
-                    <MyBalance marginBottom="20px">
+                    <MyBalance marginBottom="20px" backColor={backColor} borderColor={borderColor}>
                       <NewLabel
                         size={isMobile ? '14px' : '14px'}
                         weight="600"
                         height={isMobile ? '24px' : '24px'}
-                        color="#344054"
+                        color={fontColor4}
                         padding={isMobile ? '10px 15px' : '10px 15px'}
                         borderBottom="1px solid #F3F6FF"
                       >
@@ -2273,6 +2303,8 @@ const AdvancedFarm = () => {
                     </MyBalance>
                   )}
                   <HalfContent
+                    backColor={backColor}
+                    borderColor={borderColor}
                     marginBottom={isMobile ? '20px' : '0px'}
                     borderRadius={isMobile ? '12px' : '12px'}
                   >
@@ -2351,12 +2383,16 @@ const AdvancedFarm = () => {
               ) : (
                 <RestInternal>
                   {!useIFARM && (
-                    <MyBalance marginBottom={isMobile ? '20px' : '25px'}>
+                    <MyBalance
+                      marginBottom={isMobile ? '20px' : '25px'}
+                      backColor={backColor}
+                      borderColor={borderColor}
+                    >
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}
                         weight="600"
                         height={isMobile ? '20px' : '24px'}
-                        color="#1F2937"
+                        color={fontColor4}
                         padding={isMobile ? '10px 15px' : '10px 15px'}
                         borderBottom="1px solid #F3F6FF"
                       >
@@ -2367,12 +2403,12 @@ const AdvancedFarm = () => {
                       </NewLabel>
                     </MyBalance>
                   )}
-                  <LastHarvestInfo>
+                  <LastHarvestInfo backColor={backColor} borderColor={borderColor}>
                     <NewLabel
                       size={isMobile ? '12px' : '14px'}
                       weight={isMobile ? '600' : '600'}
                       height={isMobile ? '20px' : '24px'}
-                      color={isMobile ? '#1F2937' : '#1F2937'}
+                      color={fontColor4}
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom="1px solid #F3F6FF"
                     >
@@ -2386,7 +2422,7 @@ const AdvancedFarm = () => {
                         size={isMobile ? '12px' : '14px'}
                         weight="500"
                         height={isMobile ? '24px' : '24px'}
-                        color="#6F78AA"
+                        color={fontColor3}
                       >
                         Convert Fee
                       </NewLabel>
@@ -2394,7 +2430,7 @@ const AdvancedFarm = () => {
                         size={isMobile ? '12px' : '14px'}
                         weight="600"
                         height={isMobile ? '24px' : '24px'}
-                        color={isMobile ? '#101828' : '#101828'}
+                        color={fontColor1}
                       >
                         0%
                       </NewLabel>
@@ -2407,7 +2443,7 @@ const AdvancedFarm = () => {
                         size={isMobile ? '12px' : '14px'}
                         weight="500"
                         height={isMobile ? '24px' : '24px'}
-                        color="#6F78AA"
+                        color={fontColor3}
                       >
                         Revert Fee
                       </NewLabel>
@@ -2415,7 +2451,7 @@ const AdvancedFarm = () => {
                         size={isMobile ? '12px' : '14px'}
                         weight="600"
                         height={isMobile ? '24px' : '24px'}
-                        color={isMobile ? '#101828' : '#101828'}
+                        color={fontColor1}
                       >
                         0%
                       </NewLabel>
@@ -2429,20 +2465,16 @@ const AdvancedFarm = () => {
                           size={isMobile ? '13px' : '13px'}
                           weight="300"
                           height="normal"
-                          color="#6F78AA"
+                          color={fontColor3}
                         >
                           The APY shown already considers the performance fee taken only from
                           generated yield and not deposits.
                         </NewLabel>
                         <NewLabel display="flex" self="center">
-                          <InfoIcon
-                            className="info"
-                            width={isMobile ? 16 : 16}
-                            src={Info}
-                            alt=""
+                          <PiQuestion
+                            className="question"
                             data-tip
                             data-for="tooltip-last-harvest"
-                            filterColor={filterColor}
                           />
                           <ReactTooltip
                             id="tooltip-last-harvest"
@@ -2471,7 +2503,7 @@ const AdvancedFarm = () => {
                     )}
                   </LastHarvestInfo>
                   {isMobile && (
-                    <HalfInfo marginBottom="20px">
+                    <HalfInfo marginBottom="20px" backColor={backColor} borderColor={borderColor}>
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}
                         weight="600"
@@ -2482,7 +2514,9 @@ const AdvancedFarm = () => {
                       >
                         Source of Yield
                       </NewLabel>
-                      <DescInfo>{ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)}</DescInfo>
+                      <DescInfo fontColor6={fontColor6} fontColor3={fontColor3}>
+                        {ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)}
+                      </DescInfo>
                       <FlexDiv className="address" padding="0 15px 20px">
                         {token.vaultAddress && (
                           <InfoLabel
@@ -2491,13 +2525,16 @@ const AdvancedFarm = () => {
                             target="_blank"
                             onClick={e => e.stopPropagation()}
                             rel="noopener noreferrer"
+                            bgColor={bgColor}
+                            hoverColor={hoverColor}
+                            borderColor={borderColor}
                           >
                             <NewLabel
                               size="12px"
                               weight={isMobile ? 600 : 600}
                               height="16px"
                               self="center"
-                              color="#15202b"
+                              color={fontColor1}
                             >
                               Vault Address
                             </NewLabel>
@@ -2512,13 +2549,16 @@ const AdvancedFarm = () => {
                             target="_blank"
                             onClick={e => e.stopPropagation()}
                             rel="noopener noreferrer"
+                            bgColor={bgColor}
+                            hoverColor={hoverColor}
+                            borderColor={borderColor}
                           >
                             <NewLabel
                               size="12px"
                               weight={isMobile ? 600 : 600}
                               height="16px"
                               self="center"
-                              color="#15202b"
+                              color={fontColor1}
                             >
                               Strategy Address
                             </NewLabel>
@@ -2532,13 +2572,16 @@ const AdvancedFarm = () => {
                           onClick={e => e.stopPropagation()}
                           rel="noopener noreferrer"
                           target="_blank"
+                          bgColor={bgColor}
+                          hoverColor={hoverColor}
+                          borderColor={borderColor}
                         >
                           <NewLabel
                             size="12px"
                             weight={isMobile ? 600 : 600}
                             height="16px"
                             self="center"
-                            color="#15202b"
+                            color={fontColor1}
                           >
                             Pool Address
                           </NewLabel>

@@ -24,6 +24,7 @@ const VaultUserBalance = ({
   vaultPool,
   loadedVault,
   useIFARM,
+  fontColor1,
 }) => {
   const { vaultsData, farmingBalances } = useVaults()
   const { connected, balances } = useWallet()
@@ -66,6 +67,7 @@ const VaultUserBalance = ({
       // borderBottom={connected && !isLoadingUserBalance && multipleAssets && '1px dotted black'}
       fontWeight="500"
       className="farm-balance-span"
+      fontColor1={fontColor1}
     >
       {!connected ? (
         ''

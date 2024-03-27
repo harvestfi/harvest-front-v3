@@ -3,12 +3,11 @@ import React, { useEffect, useState } from 'react'
 import { useSetChain } from '@web3-onboard/react'
 import { isEmpty } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
+import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import AlertIcon from '../../../../assets/images/logos/beginners/alert-triangle.svg'
 import AlertCloseIcon from '../../../../assets/images/logos/beginners/alert-close.svg'
-import ArrowDown from '../../../../assets/images/logos/beginners/arrow-narrow-down.svg'
-import ArrowUp from '../../../../assets/images/logos/beginners/arrow-narrow-up.svg'
 import AnimatedDots from '../../../AnimatedDots'
 import { useWallet } from '../../../../providers/Wallet'
 import { CHAIN_IDS } from '../../../../data/constants'
@@ -30,6 +29,7 @@ import {
   AmountInputSection,
   SwitchTabTag,
 } from './style'
+import { useThemeContext } from '../../../../providers/useThemeContext'
 
 const { tokens } = require('../../../../data')
 
@@ -63,6 +63,17 @@ const UnstakeBase = ({
   amountsToExecute,
   setAmountsToExecute,
 }) => {
+  const {
+    bgColor,
+    fontColor,
+    fontColor1,
+    fontColor2,
+    fontColor3,
+    fontColor4,
+    fontColor5,
+    activeColor,
+    bgColorMessage,
+  } = useThemeContext()
   const { connected, connectAction, account, chainId, setChainId } = useWallet()
 
   const [
@@ -151,8 +162,8 @@ const UnstakeBase = ({
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const mainTags = [
-    { name: 'Stake', img: ArrowDown },
-    { name: 'Unstake', img: ArrowUp },
+    { name: 'Stake', img: BsArrowDown },
+    { name: 'Unstake', img: BsArrowUp },
   ]
 
   return (
@@ -161,7 +172,7 @@ const UnstakeBase = ({
         size={isMobile ? '16px' : '16px'}
         height={isMobile ? '28px' : '28px'}
         weight="600"
-        color="#101828"
+        color={fontColor1}
         display="flex"
         justifyContent="center"
         padding={isMobile ? '4px 0px' : '4px 0px'}
@@ -178,33 +189,39 @@ const UnstakeBase = ({
               }
             }}
             num={i}
-            color={i === 1 ? '#1F2937' : '#6F78AA'}
-            borderColor={i === 1 ? '#F2F5FF' : ''}
-            backColor={i === 1 ? '#F2F5FF' : ''}
+            color={i === 1 ? fontColor4 : fontColor3}
+            borderColor={i === 1 ? activeColor : ''}
+            backColor={i === 1 ? activeColor : ''}
             boxShadow={
               i === 1
                 ? '0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10)'
                 : ''
             }
           >
-            <img src={tag.img} className="logo" alt="logo" />
+            <tag.img />
             <p>{tag.name}</p>
           </SwitchTabTag>
         ))}
       </NewLabel>
-      <DepoTitle>Unstake your fTokens.</DepoTitle>
+      <DepoTitle fontColor={fontColor}>Unstake your fTokens.</DepoTitle>
       <AmountSection>
         <NewLabel
           size={isMobile ? '14px' : '14px'}
           height={isMobile ? '20px' : '20px'}
           weight="500"
-          color="#344054"
+          color={fontColor2}
           marginBottom="6px"
         >
           Amount to Unstake
         </NewLabel>
-        <AmountInputSection>
-          <TokenAmount type="text" value={inputAmount} onChange={onInputBalance} />
+        <AmountInputSection fontColor5={fontColor5}>
+          <TokenAmount
+            type="text"
+            value={inputAmount}
+            onChange={onInputBalance}
+            bgColor={bgColor}
+            fontColor2={fontColor2}
+          />
           <button
             className="max-btn"
             type="button"
@@ -238,6 +255,7 @@ const UnstakeBase = ({
         </AmountInputSection>
       </AmountSection>
       <BalanceInfo
+        fontColor={fontColor}
         onClick={() => {
           if (account) {
             setInputAmount(
@@ -281,14 +299,18 @@ const UnstakeBase = ({
           )}
         </span>
       </BalanceInfo>
-      <InsufficientSection isShow={showWarning ? 'true' : 'false'}>
+      <InsufficientSection
+        isShow={showWarning ? 'true' : 'false'}
+        activeColor={activeColor}
+        bgColorMessage={bgColorMessage}
+      >
         <NewLabel display="flex" widthDiv="80%" items="start">
           <img className="info-icon" src={InfoIcon} alt="" />
           <NewLabel
             size={isMobile ? '14px' : '14px'}
             height={isMobile ? '20px' : '20px'}
             weight="600"
-            color="#344054"
+            color={fontColor2}
           >
             {warningContent}
           </NewLabel>

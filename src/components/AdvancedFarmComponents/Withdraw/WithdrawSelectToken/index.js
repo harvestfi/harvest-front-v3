@@ -18,6 +18,7 @@ import SelectTokenList from '../SelectTokenList'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import SearchIcon from '../../../../assets/images/logos/beginners/search.svg'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
+import { useThemeContext } from '../../../../providers/useThemeContext'
 
 const WithdrawSelectToken = ({
   selectToken,
@@ -29,6 +30,17 @@ const WithdrawSelectToken = ({
   soonToSupList,
   supportedVault,
 }) => {
+  const {
+    darkMode,
+    bgColor,
+    borderColor,
+    fontColor,
+    fontColor1,
+    fontColor2,
+    modalInputColor,
+    inputBorderColor,
+    inputFontColor,
+  } = useThemeContext()
   const { connected } = useWallet()
   const [filterWord, setFilterWord] = useState('')
   const [showDesc, setShowDesc] = useState(true)
@@ -66,7 +78,7 @@ const WithdrawSelectToken = ({
                 Select Output Token
               </NewLabel>
               <NewLabel
-                color="#15202B"
+                color={fontColor1}
                 size={isMobile ? '14px' : '14px'}
                 height={isMobile ? '20px' : '20px'}
                 weight="400"
@@ -85,6 +97,7 @@ const WithdrawSelectToken = ({
               weight="600"
               size={isMobile ? '14px' : '14px'}
               height={isMobile ? '20px' : '20px'}
+              darkMode={darkMode}
               color="#667085"
               align="center"
               onClick={() => {
@@ -95,12 +108,15 @@ const WithdrawSelectToken = ({
             </NewLabel>
           </NewLabel>
         </FTokenInfo>
-        <NewLabel width="100%" marginTop="18px" position="relative">
+        <NewLabel darkMode={darkMode} width="100%" marginTop="18px" position="relative">
           <Search src={SearchIcon} />
           <FilterInput
             value={filterWord}
             placeholder="Find tokens by name or address"
             onChange={onFilter}
+            inputBorderColor={inputBorderColor}
+            modalInputColor={modalInputColor}
+            inputFontColor={inputFontColor}
           />
         </NewLabel>
       </Modal.Header>
@@ -119,14 +135,18 @@ const WithdrawSelectToken = ({
                 supportedVault={supportedVault}
               />
             ) : (
-              <NotConnectedWallet isShow={showDesc ? 'true' : 'false'}>
-                <NewLabel marginRight="12px" display="flex">
+              <NotConnectedWallet
+                isShow={showDesc ? 'true' : 'false'}
+                bgColor={bgColor}
+                borderColor={borderColor}
+              >
+                <NewLabel darkMode={darkMode} marginRight="12px" display="flex">
                   <div>
                     <img width={isMobile ? '21px' : '21px'} src={InfoIcon} alt="" />
                   </div>
                   <NewLabel marginLeft={isMobile ? '12px' : '12px'}>
                     <NewLabel
-                      color="#344054"
+                      color={fontColor2}
                       size={isMobile ? '14px' : '14px'}
                       height={isMobile ? '20px' : '20px'}
                       weight="600"
@@ -135,7 +155,7 @@ const WithdrawSelectToken = ({
                       Wallet not connected.
                     </NewLabel>
                     <NewLabel
-                      color="#475467"
+                      color={fontColor}
                       size={isMobile ? '14px' : '14px'}
                       height={isMobile ? '20px' : '20px'}
                       weight="400"
@@ -144,7 +164,7 @@ const WithdrawSelectToken = ({
                     </NewLabel>
                   </NewLabel>
                 </NewLabel>
-                <div>
+                <NewLabel darkMode={darkMode}>
                   <ImgBtn
                     src={CloseIcon}
                     alt=""
@@ -152,7 +172,7 @@ const WithdrawSelectToken = ({
                       setShowDesc(false)
                     }}
                   />
-                </div>
+                </NewLabel>
               </NotConnectedWallet>
             )}
           </NewLabel>

@@ -7,7 +7,6 @@ const Container = styled.div`
   overflow: hidden;
   padding: 0px;
   transition: 0.25s;
-  background: #fff;
 
   // @media screen and (max-width: 992px) {
   //   width: 100%;
@@ -96,7 +95,7 @@ const FilterName = styled.div`
 `
 
 const CurDate = styled.div`
-  color: #6f78aa;
+  color: ${props => props.fontColor3};
   display: flex;
   font-size: 13px;
   font-weight: 500;
@@ -133,7 +132,7 @@ const FlexDiv = styled.div`
 `
 
 const LabelInfo = styled.div`
-  color: #1f2937;
+  color: ${props => props.fontColor4};
   font-size: 16px;
   font-weight: 600;
   line-height: 28px;

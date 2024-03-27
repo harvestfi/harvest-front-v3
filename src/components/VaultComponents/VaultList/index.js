@@ -369,11 +369,27 @@ const SortingIcon = ({ sortType, sortField, selectedField }) => {
 
 const VaultList = () => {
   const {
+    fontColor,
+    fontColor1,
+    fontColor4,
+    filterColor,
+    bgColor,
+    backColor,
+    borderColor,
+    hoverColor,
+    mobileFilterBackColor,
+    darkMode,
+    inputFontColor,
+    inputBorderColor,
+  } = useThemeContext()
+
+  const {
     vaultsData,
     getFarmingBalances,
     loadedUserVaultsWeb3Provider,
     farmingBalances,
   } = useVaults()
+
   const { profitShareAPY } = useStats()
   const {
     pools,
@@ -382,6 +398,7 @@ const VaultList = () => {
     userStats,
     loadedUserPoolsWeb3Provider,
   } = usePools()
+
   const { account, chain, selChain, getWalletBalances, balances, chainId } = useWallet()
   const [openVault, setOpen] = useState(null)
   const [loaded, setLoaded] = useState(null)
@@ -704,16 +721,6 @@ const VaultList = () => {
     debouncedFn()
   }
 
-  const {
-    fontColor,
-    filterColor,
-    backColor,
-    borderColor,
-    mobileFilterBackColor,
-    mobileFilterBorderColor,
-    darkMode,
-  } = useThemeContext()
-
   return (
     <Container id="vault-list">
       {loadComplete && (
@@ -730,9 +737,13 @@ const VaultList = () => {
         <MobileListFilter
           mobileBackColor={mobileFilterBackColor}
           backColor={backColor}
-          borderColor={mobileFilterBorderColor}
+          bgColor={bgColor}
+          borderColor={borderColor}
           fontColor={fontColor}
+          fontColor1={fontColor1}
+          fontColor4={fontColor4}
           filterColor={filterColor}
+          hoverColor={hoverColor}
         >
           <Dropdown className="filter-sort">
             <Dropdown.Toggle className="toggle">
@@ -740,8 +751,12 @@ const VaultList = () => {
                 Sort By: <img src={SortsList[sortId].img} className="sort-icon" alt="sort" />
                 <span>{sortId === -1 ? '' : SortsList[sortId].name}</span>
               </div>
-              <MobileFilterBtn type="button" darkmode={darkMode ? 'true' : 'false'}>
-                <IoIosArrowDown color="#667085" fontSize={20} />
+              <MobileFilterBtn
+                inputBorderColor={inputBorderColor}
+                type="button"
+                darkmode={darkMode ? 'true' : 'false'}
+              >
+                <IoIosArrowDown color={inputFontColor} fontSize={20} />
               </MobileFilterBtn>
             </Dropdown.Toggle>
 

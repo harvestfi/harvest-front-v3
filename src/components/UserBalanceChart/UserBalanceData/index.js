@@ -4,6 +4,7 @@ import {
   getUserBalanceHistories2,
   numberWithCommas,
 } from '../../../utils'
+import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
@@ -60,6 +61,8 @@ const UserBalanceData = ({
   underlyingPrice,
   pricePerFullShare,
 }) => {
+  const { backColor, borderColor, fontColor3 } = useThemeContext()
+
   const [selectedState, setSelectedState] = useState('LAST')
 
   const totalValueRef = useRef(totalValue)
@@ -260,7 +263,7 @@ const UserBalanceData = ({
   ])
 
   return (
-    <Container>
+    <Container backColor={backColor} borderColor={borderColor}>
       <Header>
         <Total>
           <FlexDiv>
@@ -269,7 +272,7 @@ const UserBalanceData = ({
                 USD Balance
               </TokenSymbol>
               <FlexDiv>
-                <CurContent color="#6F78AA">
+                <CurContent color={fontColor3}>
                   {curContent === '0' ? (
                     ''
                   ) : (

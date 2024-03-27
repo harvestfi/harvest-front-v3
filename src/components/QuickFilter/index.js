@@ -379,6 +379,7 @@ const QuickFilter = ({
     backColor,
     borderColor,
     fontColor,
+    fontColor2,
     filterColor,
     filterChainHoverColor,
     mobileFilterDisableColor,
@@ -456,7 +457,7 @@ const QuickFilter = ({
             </DivWidth>
             <DivWidth right="0" borderRadius="10" backColor={backColor}>
               <ClearFilter
-                fontColor="#344054"
+                fontColor={fontColor2}
                 backColor={backColor}
                 borderColor={borderColor}
                 onClick={() => {
@@ -503,7 +504,7 @@ const QuickFilter = ({
                   doSomethingAfterClick={printRisk}
                   clickedId={riskId}
                   setClickedId={setRiskId}
-                  fontColor="#1D2939"
+                  fontColor={fontColor2}
                 />
               </DivWidth>
               <DivWidth marginRight="15px" height="fit-content">
@@ -546,7 +547,7 @@ const QuickFilter = ({
                   doSomethingAfterClick={printAsset}
                   clickedId={assetsId}
                   setClickedId={setAssetsId}
-                  fontColor="#344054"
+                  fontColor={fontColor2}
                 />
               </DivWidth>
             </DivWidth>
@@ -557,7 +558,7 @@ const QuickFilter = ({
                 doSomethingAfterClick={printFarm}
                 clickedId={farmId}
                 setClickedId={setFarmId}
-                fontColor="#344054"
+                fontColor={fontColor2}
               />
             </DivWidth>
           </QuickFilterContainer>
@@ -622,7 +623,7 @@ const QuickFilter = ({
               doSomethingAfterClick={printFarm}
               clickedId={farmId}
               setClickedId={setFarmId}
-              fontColor="#344054"
+              fontColor={fontColor2}
             />
           </FarmButtonPart>
 
@@ -646,7 +647,7 @@ const QuickFilter = ({
               <button
                 type="button"
                 placeholder="Filters"
-                fontColor="#1D2939"
+                color={fontColor2}
                 onClick={() => {
                   handleFilterShow()
                 }}
@@ -681,7 +682,7 @@ const QuickFilter = ({
                     doSomethingAfterClick={() => {}}
                     clickedId={riskId}
                     setClickedId={setRiskId}
-                    fontColor="#1D2939"
+                    fontColor={fontColor2}
                     unsetWidth
                   />
                 </DivWidth>
@@ -691,7 +692,7 @@ const QuickFilter = ({
                     doSomethingAfterClick={() => {}}
                     clickedId={assetsId}
                     setClickedId={setAssetsId}
-                    fontColor="#344054"
+                    fontColor={fontColor2}
                   />
                 </DivWidth>
                 <DivWidth mobileMarginBottom="10px" height="fit-content">
@@ -781,7 +782,7 @@ const QuickFilter = ({
                   clearFilter()
                 }}
                 borderColor={borderColor}
-                fontColor="#344054"
+                fontColor={fontColor2}
                 backColor={backColor}
               >
                 <Counter count={mobileFilterCount}>

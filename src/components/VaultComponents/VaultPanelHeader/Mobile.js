@@ -64,7 +64,7 @@ const MobilePanelHeader = ({
 
   const { logoUrl } = token
 
-  const { badgeIconBackColor, fontColor, borderColor, setPrevPage } = useThemeContext()
+  const { badgeIconBackColor, fontColor, borderColor, setPrevPage, filterColor } = useThemeContext()
   return (
     <PanelContainer
       fontColor={fontColor}
@@ -102,7 +102,7 @@ const MobilePanelHeader = ({
       </FlexDiv>
       <FlexDiv width="20%">
         <MobileVaultInfoContainer>
-          <MobileVaultValueContainer>
+          <MobileVaultValueContainer filterColor={filterColor}>
             <VaultApy
               token={token}
               tokenSymbol={tokenSymbol}
@@ -114,13 +114,13 @@ const MobilePanelHeader = ({
               <img src={APYIcon} alt="" />
             </div>
           </MobileVaultValueContainer>
-          <MobileVaultValueContainer>
+          <MobileVaultValueContainer filterColor={filterColor}>
             <VaultValue token={token} tokenSymbol={tokenSymbol} />
             <div className="title">
               <img src={TVLIcon} alt="" />
             </div>
           </MobileVaultValueContainer>
-          <MobileVaultValueContainer>
+          <MobileVaultValueContainer filterColor={filterColor}>
             <VaultUserBalance
               token={token}
               tokenSymbol={tokenSymbol}
