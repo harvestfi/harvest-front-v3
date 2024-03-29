@@ -73,6 +73,7 @@ const WithdrawStart = ({
   tokenSymbol,
   fAssetPool,
   useIFARM,
+  setRevertFromInfoAmount,
   revertFromInfoAmount,
   revertFromInfoUsdAmount,
   revertMinReceivedAmount,
@@ -270,7 +271,8 @@ const WithdrawStart = ({
       }
     } else if (progressStep === 4) {
       setRevertSuccess(true)
-      setUnstakeInputValue(0)
+      setUnstakeInputValue('0')
+      setRevertFromInfoAmount('0')
       setPickedToken({ symbol: 'Select' })
       setProgressStep(0)
       setWithdrawStart(false)
@@ -287,7 +289,8 @@ const WithdrawStart = ({
     setStartSpinner(false)
     if (progressStep === 4) {
       setRevertSuccess(true)
-      setUnstakeInputValue(0)
+      setUnstakeInputValue('0')
+      setRevertFromInfoAmount('0')
       setPickedToken({ symbol: 'Select' })
     }
   }
