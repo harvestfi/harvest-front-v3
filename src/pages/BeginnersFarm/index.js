@@ -1186,7 +1186,7 @@ const BeginnersFarm = () => {
                   backColor={backColor}
                   borderColor={borderColor}
                 >
-                  <BoxTitle>APY</BoxTitle>
+                  <BoxTitle>Live APY</BoxTitle>
                   <BoxValue>{showAPY()}</BoxValue>
                 </ValueBox>
                 <ValueBox

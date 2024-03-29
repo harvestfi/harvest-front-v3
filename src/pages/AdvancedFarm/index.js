@@ -37,6 +37,7 @@ import UnstakeBase from '../../components/AdvancedFarmComponents/Unstake/Unstake
 import UnstakeStart from '../../components/AdvancedFarmComponents/Unstake/UnstakeStart'
 import UnstakeResult from '../../components/AdvancedFarmComponents/Unstake/UnstakeResult'
 import {
+  AVRList,
   GECKO_URL,
   COINGECKO_API_KEY,
   DECIMAL_PRECISION,
@@ -205,7 +206,8 @@ const AdvancedFarm = () => {
     fontColor3,
     fontColor4,
     fontColor6,
-    linkColor,
+    linkColorTooltip,
+    linkColorOnHover,
     hoverColor,
     bgColorFarm,
   } = useThemeContext()
@@ -234,6 +236,7 @@ const AdvancedFarm = () => {
   const { tokens } = require('../../data')
 
   const [apiData, setApiData] = useState([])
+  const [altVaultData, setAltVaultData] = useState({})
 
   useEffect(() => {
     const getCoinList = async () => {
@@ -331,6 +334,20 @@ const AdvancedFarm = () => {
     // 👇️ scroll to top on page load
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
   }, [])
+
+  useEffect(() => {
+    const AVRVaultAddress = AVRList[paramAddress]
+
+    if (AVRVaultAddress) {
+      const matchingVault = Object.values(groupOfVaults).find(
+        vault => vault.vaultAddress.toLowerCase() === AVRVaultAddress.toLowerCase(),
+      )
+
+      if (matchingVault) {
+        setAltVaultData(matchingVault)
+      }
+    }
+  }, [groupOfVaults, paramAddress])
 
   const useBeginnersFarm = false
   const useIFARM = id === FARM_TOKEN_SYMBOL
@@ -1326,7 +1343,8 @@ const AdvancedFarm = () => {
                           href="https://discord.com/invite/gzWAG3Wx7Y"
                           target="_blank"
                           rel="noopener noreferrer"
-                          linkColor={linkColor}
+                          linkColor={linkColorTooltip}
+                          linkColorOnHover={linkColorOnHover}
                         >
                           Still having questions? Open Discord ticket.
                         </WelcomeTicket>
@@ -1360,7 +1378,8 @@ const AdvancedFarm = () => {
                           href="https://app.harvest.finance/farms?search=moonwell"
                           target="_self"
                           rel="noopener noreferrer"
-                          linkColor={linkColor}
+                          linkColor={linkColorTooltip}
+                          linkColorOnHover={linkColorOnHover}
                         >
                           Moonwell farms
                         </WelcomeTicket>
@@ -1372,7 +1391,8 @@ const AdvancedFarm = () => {
                           href="https://discord.com/invite/gzWAG3Wx7Y"
                           target="_blank"
                           rel="noopener noreferrer"
-                          linkColor={linkColor}
+                          linkColor={linkColorTooltip}
+                          linkColorOnHover={linkColorOnHover}
                         >
                           Still having questions? Open Discord ticket.
                         </WelcomeTicket>
@@ -1399,7 +1419,8 @@ const AdvancedFarm = () => {
                         href="https://v3.harvest.finance/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
                         target="_blank"
                         rel="noopener noreferrer"
-                        linkColor={linkColor}
+                        linkColor={linkColorTooltip}
+                        linkColorOnHover={linkColorOnHover}
                       >
                         under this link
                       </WelcomeTicket>
@@ -1424,7 +1445,7 @@ const AdvancedFarm = () => {
                   backColor={backColor}
                   borderColor={borderColor}
                 >
-                  <BoxTitle fontColor3={fontColor3}>APY</BoxTitle>
+                  <BoxTitle fontColor3={fontColor3}>Live APY</BoxTitle>
                   <BoxValue fontColor1={fontColor1}>{showAPY()}</BoxValue>
                 </ValueBox>
                 <ValueBox
@@ -2050,12 +2071,14 @@ const AdvancedFarm = () => {
                         multipleAssets={multipleAssets}
                         useIFARM={useIFARM}
                         depositedValueUSD={depositedValueUSD}
+                        setRevertFromInfoAmount={setRevertFromInfoAmount}
                         revertFromInfoAmount={revertFromInfoAmount}
                         revertFromInfoUsdAmount={revertFromInfoUsdAmount}
                         revertMinReceivedAmount={revertMinReceivedAmount}
                         revertMinReceivedUsdAmount={revertMinReceivedUsdAmount}
                         setUnstakeInputValue={setUnstakeInputValue}
                         setRevertSuccess={setRevertSuccess}
+                        altVaultData={altVaultData}
                       />
                     </WithdrawSection>
                   </HalfContent>

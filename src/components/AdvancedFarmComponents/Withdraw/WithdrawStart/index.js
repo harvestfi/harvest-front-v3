@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js'
 import React, { useState } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import { useMediaQuery } from 'react-responsive'
-import { isNaN } from 'lodash'
+import { isEmpty, isNaN } from 'lodash'
 import { BsArrowUp } from 'react-icons/bs'
 import { CiSettings } from 'react-icons/ci'
 import { PiQuestion } from 'react-icons/pi'
@@ -17,7 +17,7 @@ import ProgressTwo from '../../../../assets/images/logos/advancedfarm/progress-s
 import ProgressThree from '../../../../assets/images/logos/advancedfarm/progress-step3.png'
 import ProgressFour from '../../../../assets/images/logos/advancedfarm/progress-step4.png'
 import ProgressFive from '../../../../assets/images/logos/advancedfarm/progress-step5.png'
-import { IFARM_TOKEN_SYMBOL } from '../../../../constants'
+import { directDetailUrl, IFARM_TOKEN_SYMBOL } from '../../../../constants'
 import { useActions } from '../../../../providers/Actions'
 import { useVaults } from '../../../../providers/Vault'
 import { useWallet } from '../../../../providers/Wallet'
@@ -46,7 +46,20 @@ import {
   SlippageBtn,
   ProgressLabel,
   ProgressText,
+  AVRWrapper,
+  AVRContainer,
+  AVRBadge,
+  ApyValue,
+  TopLogo,
+  LogoImg,
 } from './style'
+
+const chainList = [
+  { id: 1, name: 'Ethereum', chainId: 1 },
+  { id: 2, name: 'Polygon', chainId: 137 },
+  { id: 3, name: 'Arbitrum', chainId: 42161 },
+  { id: 4, name: 'Base', chainId: 8453 },
+]
 
 const WithdrawStart = ({
   unstakeInputValue,
@@ -60,12 +73,14 @@ const WithdrawStart = ({
   tokenSymbol,
   fAssetPool,
   useIFARM,
+  setRevertFromInfoAmount,
   revertFromInfoAmount,
   revertFromInfoUsdAmount,
   revertMinReceivedAmount,
   revertMinReceivedUsdAmount,
   setUnstakeInputValue,
   setRevertSuccess,
+  altVaultData,
 }) => {
   const {
     darkMode,
@@ -73,8 +88,11 @@ const WithdrawStart = ({
     fontColor1,
     fontColor2,
     fontColor3,
+    fontColor5,
     bgColorSlippage,
     borderColor,
+    bgColorMessage,
+    hoverColorAVR,
   } = useThemeContext()
   const { account, web3 } = useWallet()
   const { fetchUserPoolStats, userStats } = usePools()
@@ -94,7 +112,8 @@ const WithdrawStart = ({
 
   const { getPortalsApproval, portalsApprove, getPortals } = usePortals()
 
-  let pickedDefaultToken
+  let pickedDefaultToken,
+    totalApy = 0
   if (pickedToken.symbol !== 'Select' && defaultToken) {
     pickedDefaultToken = pickedToken.address.toLowerCase() === defaultToken.address.toLowerCase()
   }
@@ -116,6 +135,14 @@ const WithdrawStart = ({
         setSlippageBtnLabel('Save')
       }, 2000)
     }
+  }
+
+  if (!isEmpty(altVaultData)) {
+    totalApy =
+      Number(altVaultData?.estimatedApy) +
+      Number(altVaultData?.pool?.tradingApy) +
+      Number(altVaultData?.pool?.totalRewardAPY)
+    totalApy = isNaN(totalApy) ? 0 : totalApy.toFixed(2)
   }
 
   const chainId = token.chain || token.data.chain
@@ -244,7 +271,8 @@ const WithdrawStart = ({
       }
     } else if (progressStep === 4) {
       setRevertSuccess(true)
-      setUnstakeInputValue(0)
+      setUnstakeInputValue('0')
+      setRevertFromInfoAmount('0')
       setPickedToken({ symbol: 'Select' })
       setProgressStep(0)
       setWithdrawStart(false)
@@ -261,7 +289,8 @@ const WithdrawStart = ({
     setStartSpinner(false)
     if (progressStep === 4) {
       setRevertSuccess(true)
-      setUnstakeInputValue(0)
+      setUnstakeInputValue('0')
+      setRevertFromInfoAmount('0')
       setPickedToken({ symbol: 'Select' })
     }
   }
@@ -546,6 +575,77 @@ const WithdrawStart = ({
               Successful
             </ProgressText>
           </ProgressLabel>
+          {!isEmpty(altVaultData) && progressStep === 4 && (
+            <>
+              <NewLabel
+                size="14px"
+                height="28px"
+                weight={600}
+                color={fontColor2}
+                margin="25px 24px 0px 24px"
+              >
+                Looking for alternatives?
+              </NewLabel>
+              <AVRWrapper bgColor={bgColorMessage}>
+                <AVRContainer
+                  hoverColorAVR={hoverColorAVR}
+                  onClick={() => {
+                    let badgeId = -1
+                    const chain = token.chain || token.data.chain
+                    chainList.forEach((obj, j) => {
+                      if (obj.chainId === Number(chain)) {
+                        badgeId = j
+                      }
+                    })
+                    const isSpecialVault = altVaultData.liquidityPoolVault || altVaultData.poolVault
+                    const network = chainList[badgeId].name.toLowerCase()
+                    const address = isSpecialVault
+                      ? altVaultData.data.collateralAddress
+                      : altVaultData.vaultAddress || altVaultData.tokenAddress
+                    const url = `${directDetailUrl + network}/${address}`
+                    window.open(url, '_blank')
+                  }}
+                >
+                  <NewLabel marginRight="12px" display="flex">
+                    <TopLogo>
+                      {altVaultData.logoUrl.map((el, i) => (
+                        <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
+                      ))}
+                    </TopLogo>
+                    <NewLabel marginLeft="20px">
+                      <NewLabel
+                        color={fontColor1}
+                        size="14px"
+                        height="20px"
+                        weight="600"
+                        marginBottom="4px"
+                      >
+                        {altVaultData.tokenNames.join(' • ')}
+                      </NewLabel>
+                      <NewLabel
+                        color={fontColor1}
+                        size="12px"
+                        height="20px"
+                        weight="400"
+                        marginBottom="5px"
+                      >
+                        {altVaultData.platform[0]}
+                      </NewLabel>
+                      <ApyValue bgColor={bgColorMessage} color={fontColor5}>
+                        {totalApy}% APY
+                      </ApyValue>
+                    </NewLabel>
+                  </NewLabel>
+                  <AVRBadge>
+                    Popular{' '}
+                    <span role="img" aria-label="thumb" aria-labelledby="thumb">
+                      🔥
+                    </span>
+                  </AVRBadge>
+                </AVRContainer>
+              </AVRWrapper>
+            </>
+          )}
           <NewLabel
             size={isMobile ? '16px' : '16px'}
             height={isMobile ? '24px' : '24px'}

@@ -302,7 +302,6 @@ const DepositBase = ({
     pickedToken,
     defaultToken,
     token,
-    deposit,
     balanceList,
     useIFARM,
     web3,
@@ -358,10 +357,10 @@ const DepositBase = ({
   }
 
   useEffect(() => {
-    if (pickedToken.usdPrice) {
+    if (!deposit && pickedToken.usdPrice) {
       setInputAmount(new BigNumber(balance).toString())
     }
-  }, [balance, setInputAmount, pickedToken])
+  }, [balance, setInputAmount, pickedToken, deposit])
 
   const onInputBalance = e => {
     const inputValue = e.currentTarget.value.replace(/,/g, '.')
