@@ -23,6 +23,7 @@ app.use(
         ],
         connectSrc: ["'self'", '*'],
         imgSrc: ["'self'", 'https: data:'],
+        frameSrc: ["'self'", 'https://verify.walletconnect.com/'],
       },
     },
     frameguard: false,
