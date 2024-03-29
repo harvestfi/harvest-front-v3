@@ -837,10 +837,10 @@ const AdvancedFarm = () => {
     console.debug('convert status', convertSuccess)
     console.debug('revert status', revertSuccess)
     getTokenBalance()
+    // eslint-disable-next-line
   }, [
     account,
     chain,
-    balances,
     convertSuccess,
     revertSuccess,
     getPortalsBalances,
