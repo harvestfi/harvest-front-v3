@@ -1775,14 +1775,17 @@ const AdvancedFarm = () => {
                             target="_blank"
                             onClick={e => e.stopPropagation()}
                             rel="noopener noreferrer"
+                            bgColor={bgColor}
+                            hoverColor={hoverColor}
+                            borderColor={borderColor}  
                           >
                             <NewLabel
                               size="12px"
                               weight={isMobile ? 600 : 600}
                               height="16px"
                               self="center"
-                              color="#15202b"
-                            >
+                              color={fontColor1}
+                              >
                               Add Liquidity
                             </NewLabel>
                           </InfoLabel>
