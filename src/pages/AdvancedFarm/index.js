@@ -2531,7 +2531,7 @@ const AdvancedFarm = () => {
                         size={isMobile ? '12px' : '14px'}
                         weight="600"
                         height={isMobile ? '20px' : '24px'}
-                        color="#1F2937"
+                        color={fontColor4}
                         padding={isMobile ? '10px 15px' : '10px 15px'}
                         borderBottom="1px solid #F3F6FF"
                       >
