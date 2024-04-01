@@ -1762,6 +1762,7 @@ const BeginnersFarm = () => {
                         multipleAssets={multipleAssets}
                         useIFARM={useIFARM}
                         depositedValueUSD={depositedValueUSD}
+                        setRevertFromInfoAmount={setRevertFromInfoAmount}
                         revertFromInfoAmount={revertFromInfoAmount}
                         revertFromInfoUsdAmount={revertFromInfoUsdAmount}
                         revertMinReceivedAmount={revertMinReceivedAmount}
