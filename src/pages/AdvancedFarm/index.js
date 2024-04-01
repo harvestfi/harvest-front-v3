@@ -1777,7 +1777,7 @@ const AdvancedFarm = () => {
                             rel="noopener noreferrer"
                             bgColor={bgColor}
                             hoverColor={hoverColor}
-                            borderColor={borderColor}  
+                            borderColor={borderColor}
                           >
                             <NewLabel
                               size="12px"
@@ -1785,7 +1785,7 @@ const AdvancedFarm = () => {
                               height="16px"
                               self="center"
                               color={fontColor1}
-                              >
+                            >
                               Add Liquidity
                             </NewLabel>
                           </InfoLabel>
