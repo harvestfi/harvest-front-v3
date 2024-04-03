@@ -47,6 +47,7 @@ import {
   IFARM_TOKEN_SYMBOL,
   ROUTES,
   SPECIAL_VAULTS,
+  BEGINNERS_BALANCES_DECIMALS,
   POOL_BALANCES_DECIMALS,
   MAX_DECIMALS,
   WIDO_BALANCES_DECIMALS,
@@ -216,7 +217,7 @@ const AdvancedFarm = () => {
   const {
     getPortalsBaseTokens,
     getPortalsBalances,
-    getPortalsEstimate,
+    getPortalsSupport,
     SUPPORTED_TOKEN_LIST,
   } = usePortals()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
@@ -392,6 +393,7 @@ const AdvancedFarm = () => {
   const [showSeamlessVaultInfo, setShowSeamlessVaultInfo] = useState(false)
   const [showIFARMInfo, setShowIFARMInfo] = useState(false)
   const [supportedVault, setSupportedVault] = useState(false)
+  const [hasPortalsError, setHasPortalsError] = useState(true)
 
   // Deposit
   const [depositStart, setDepositStart] = useState(false)
@@ -505,22 +507,16 @@ const AdvancedFarm = () => {
 
   useEffect(() => {
     async function fetchData() {
-      if (supTokenList.length > 0) {
-        const fromToken = supTokenList[1].address
-        const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
-        const amount = '1000000'
-        const slippage = 0.5 // Default slippage Percent
+      const tokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
+      const chainId = token.chain
 
-        const portalsEstimate = await getPortalsEstimate({
-          chainId: token.chain,
-          tokenIn: fromToken,
-          inputAmount: amount,
-          tokenOut: toToken,
-          slippage,
-          sender: null,
-        })
+      const portalsToken = await getPortalsSupport(chainId, tokenAddress)
 
-        if (portalsEstimate.res.message === 'outputToken not found') {
+      if (portalsToken === undefined || portalsToken.status !== 200) {
+        setHasPortalsError(true)
+      } else if (portalsToken.status === 200) {
+        setHasPortalsError(false)
+        if (portalsToken.data.totalItems === 0) {
           setSupportedVault(false)
         } else {
           setSupportedVault(true)
@@ -530,7 +526,7 @@ const AdvancedFarm = () => {
 
     fetchData()
     // eslint-disable-next-line
-  }, [supTokenList])
+  }, [token])
 
   useEffect(() => {
     let staked,
@@ -614,221 +610,265 @@ const AdvancedFarm = () => {
     const getTokenBalance = async () => {
       try {
         if (chain && account && Object.keys(balances).length !== 0) {
-          let supList = [],
-            directInSup = {},
-            directInBalance = {}
+          if (!hasPortalsError) {
+            let supList = [],
+              directInSup = {},
+              directInBalance = {}
 
-          const portalsRawBalances = await getPortalsBalances(account, chain.toString())
-          const portalsBaseTokens = await getPortalsBaseTokens(chain.toString())
-          const curNoBalances = portalsBaseTokens
-            .map(baseToken => {
-              const balToken = portalsRawBalances.find(
-                el => el.address.toLowerCase() === baseToken.address.toLowerCase(),
-              )
-              if (balToken === undefined) {
+            const portalsRawBalances = await getPortalsBalances(account, chain.toString())
+            const portalsBaseTokens = await getPortalsBaseTokens(chain.toString())
+            const curNoBalances = portalsBaseTokens
+              .map(baseToken => {
+                const balToken = portalsRawBalances.find(
+                  el => el.address.toLowerCase() === baseToken.address.toLowerCase(),
+                )
+                if (balToken === undefined) {
+                  const item = {
+                    symbol: baseToken.symbol,
+                    address: baseToken.address,
+                    balance: 0,
+                    default: false,
+                    usdValue: 0,
+                    usdPrice: baseToken.price,
+                    logoURI: baseToken.image
+                      ? baseToken.image
+                      : baseToken.images
+                      ? baseToken.images[0]
+                      : 'https://etherscan.io/images/main/empty-token.png',
+                    decimals: baseToken.decimals,
+                    chainId: chain,
+                  }
+                  return item
+                }
+
+                return null
+              })
+              .filter(item => item !== null)
+
+            const curBalances = portalsRawBalances
+              .map(balance => {
+                if (!ethers.utils.isAddress(balance.address))
+                  balance.address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
                 const item = {
-                  symbol: baseToken.symbol,
-                  address: baseToken.address,
-                  balance: 0,
+                  symbol: balance.symbol,
+                  address: balance.address,
+                  balance: new BigNumber(balance.rawBalance).div(10 ** balance.decimals).toFixed(),
+                  rawBalance: balance.rawBalance,
                   default: false,
-                  usdValue: 0,
-                  usdPrice: baseToken.price,
-                  logoURI: baseToken.image
-                    ? baseToken.image
-                    : baseToken.images
-                    ? baseToken.images[0]
+                  usdValue: balance.balanceUSD,
+                  usdPrice: balance.price,
+                  logoURI: balance.image
+                    ? balance.image
+                    : balance.images
+                    ? balance.images[0]
                     : 'https://etherscan.io/images/main/empty-token.png',
-                  decimals: baseToken.decimals,
+                  decimals: balance.decimals,
                   chainId: chain,
                 }
                 return item
-              }
+              })
+              .filter(item => item.address)
 
-              return null
-            })
-            .filter(item => item !== null)
-          const curBalances = portalsRawBalances
-            .map(balance => {
-              if (!ethers.utils.isAddress(balance.address))
-                balance.address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
-              const item = {
-                symbol: balance.symbol,
-                address: balance.address,
-                balance: new BigNumber(balance.rawBalance).div(10 ** balance.decimals).toFixed(),
-                rawBalance: balance.rawBalance,
-                default: false,
-                usdValue: balance.balanceUSD,
-                usdPrice: balance.price,
-                logoURI: balance.image
-                  ? balance.image
-                  : balance.images
-                  ? balance.images[0]
-                  : 'https://etherscan.io/images/main/empty-token.png',
-                decimals: balance.decimals,
-                chainId: chain,
-              }
-              return item
-            })
-            .filter(item => item.address)
+            const tokenAddress =
+              token.tokenAddress !== undefined && token.tokenAddress.length !== 2
+                ? token.tokenAddress
+                : token.vaultAddress
 
-          const tokenAddress =
-            token.tokenAddress !== undefined && token.tokenAddress.length !== 2
-              ? token.tokenAddress
+            const fTokenAddr = useIFARM
+              ? addresses.iFARM
               : token.vaultAddress
+              ? token.vaultAddress
+              : token.tokenAddress
+            const curSortedBalances = curBalances
+              .sort(function reducer(a, b) {
+                return b.usdValue - a.usdValue
+              })
+              .filter(item => item.address.toLowerCase() !== fTokenAddr.toLowerCase())
 
-          const fTokenAddr = useIFARM
-            ? addresses.iFARM
-            : token.vaultAddress
-            ? token.vaultAddress
-            : token.tokenAddress
-          const curSortedBalances = curBalances
-            .sort(function reducer(a, b) {
+            // setBalanceList(
+            //   curSortedBalances.filter(
+            //     item => item.address.toLowerCase() !== tokenAddress.toLowerCase(),
+            //   ),
+            // )
+            setBalanceList(curSortedBalances)
+
+            supList = [...curBalances, ...curNoBalances]
+
+            supList = supList.map(sup => {
+              const supToken = curBalances.find(el => el.address === sup.address)
+              if (supToken) {
+                sup.balance = supToken.balance
+                sup.usdValue = supToken.usdValue
+                sup.usdPrice = supToken.usdPrice
+              } else {
+                sup.balance = '0'
+                sup.usdValue = '0'
+              }
+              sup.default = false
+
+              if (Object.keys(directInSup).length === 0 && tokenAddress.length !== 2) {
+                if (sup.address.toLowerCase() === tokenAddress.toLowerCase()) {
+                  directInSup = sup
+                }
+              }
+              return sup
+            })
+
+            supList = supList.sort(function reducer(a, b) {
               return b.usdValue - a.usdValue
             })
-            .filter(item => item.address.toLowerCase() !== fTokenAddr.toLowerCase())
-
-          // setBalanceList(
-          //   curSortedBalances.filter(
-          //     item => item.address.toLowerCase() !== tokenAddress.toLowerCase(),
-          //   ),
-          // )
-          setBalanceList(curSortedBalances)
-
-          supList = [...curBalances, ...curNoBalances]
-
-          supList = supList.map(sup => {
-            const supToken = curBalances.find(el => el.address === sup.address)
-            if (supToken) {
-              sup.balance = supToken.balance
-              sup.usdValue = supToken.usdValue
-              sup.usdPrice = supToken.usdPrice
-            } else {
-              sup.balance = '0'
-              sup.usdValue = '0'
-            }
-            sup.default = false
-
-            if (Object.keys(directInSup).length === 0 && tokenAddress.length !== 2) {
-              if (sup.address.toLowerCase() === tokenAddress.toLowerCase()) {
-                directInSup = sup
+            for (let j = 0; j < curBalances.length; j += 1) {
+              if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
+                if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
+                  directInBalance = curBalances[j]
+                }
               }
             }
-            return sup
-          })
 
-          supList = supList.sort(function reducer(a, b) {
-            return b.usdValue - a.usdValue
-          })
-          for (let j = 0; j < curBalances.length; j += 1) {
-            if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
-              if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
-                directInBalance = curBalances[j]
-              }
-            }
-          }
-
-          const directData = curBalances.find(
-            el => el.address.toLowerCase() === tokenAddress.toLowerCase(),
-          )
-          const directBalance = directData
-            ? directData.balance
-            : balances[id]
-            ? new BigNumber(balances[id]).div(10 ** token.decimals).toFixed()
-            : '0'
-          const directUsdPrice = token.usdPrice
-          const directUsdValue = directData
-            ? directData.usdValue
-            : new BigNumber(directBalance).times(directUsdPrice).toFixed()
-
-          if (!(Object.keys(directInSup).length === 0 && directInSup.constructor === Object)) {
-            directInSup.balance = directBalance
-            directInSup.usdPrice = directInSup.usdPrice > 0 ? directInSup.usdPrice : directUsdPrice
-            directInSup.usdValue = directInSup.usdValue > 0 ? directInSup.usdValue : directUsdValue
-            supList = supList.sort(function result(x, y) {
-              return x === directInSup ? -1 : y === directInSup ? 1 : 0
-            })
-            supList[0].default = true
-          } else if (
-            !(Object.keys(directInBalance).length === 0 && directInBalance.constructor === Object)
-          ) {
-            directInBalance.balance = directBalance || '0'
-            directInBalance.usdPrice =
-              directInBalance.usdPrice > 0 ? directInBalance.usdPrice : directUsdPrice
-            directInBalance.usdValue =
-              directInBalance.usdValue > 0 ? directInBalance.usdValue : directUsdValue
-            supList.unshift(directInBalance)
-            supList[0].default = true
-          } else {
-            const web3Client = await getWeb3(chain, null)
-            const { getSymbol } = tokenMethods
-            const lpInstance = await newContractInstance(
-              id,
-              tokenAddress,
-              tokenContract.abi,
-              web3Client,
+            const directData = curBalances.find(
+              el => el.address.toLowerCase() === tokenAddress.toLowerCase(),
             )
-            const lpSymbol = await getSymbol(lpInstance)
-            const direct = {
-              symbol: lpSymbol,
-              address: tokenAddress,
-              balance: directBalance || '0',
-              default: true,
-              usdPrice: directUsdPrice || '0',
-              usdValue: directUsdValue || '0',
-              logoURI: 'https://etherscan.io/images/main/empty-token.png',
-              decimals: tokenDecimals,
-              chainId: parseInt(chain, 0),
-            }
-            supList.unshift(direct)
-          }
+            const directBalance = directData
+              ? directData.balance
+              : balances[id]
+              ? new BigNumber(balances[id]).div(10 ** token.decimals).toFixed()
+              : '0'
+            const directUsdPrice = token.usdPrice
+            const directUsdValue = directData
+              ? directData.usdValue
+              : new BigNumber(directBalance).times(directUsdPrice).toFixed()
 
-          if (supList[0].default) {
-            if (supList[0].balance === '0' && balances[supList[0].symbol]) {
-              const defaultBalance = fromWei(
-                balances[supList[0].symbol],
-                supList[0].decimals,
-                supList[0].decimals,
+            if (!(Object.keys(directInSup).length === 0 && directInSup.constructor === Object)) {
+              directInSup.balance = directBalance
+              directInSup.usdPrice =
+                directInSup.usdPrice > 0 ? directInSup.usdPrice : directUsdPrice
+              directInSup.usdValue =
+                directInSup.usdValue > 0 ? directInSup.usdValue : directUsdValue
+              supList = supList.sort(function result(x, y) {
+                return x === directInSup ? -1 : y === directInSup ? 1 : 0
+              })
+              supList[0].default = true
+            } else if (
+              !(Object.keys(directInBalance).length === 0 && directInBalance.constructor === Object)
+            ) {
+              directInBalance.balance = directBalance || '0'
+              directInBalance.usdPrice =
+                directInBalance.usdPrice > 0 ? directInBalance.usdPrice : directUsdPrice
+              directInBalance.usdValue =
+                directInBalance.usdValue > 0 ? directInBalance.usdValue : directUsdValue
+              supList.unshift(directInBalance)
+              supList[0].default = true
+            } else {
+              const web3Client = await getWeb3(chain, null)
+              const { getSymbol } = tokenMethods
+              const lpInstance = await newContractInstance(
+                id,
+                tokenAddress,
+                tokenContract.abi,
+                web3Client,
               )
-              const defaultUsdBalance = formatNumber(
-                Number(supList[0].usdPrice) * Number(defaultBalance),
-                2,
-              )
-              supList[0].balance = defaultBalance
-              supList[0].usdValue = defaultUsdBalance
+              const lpSymbol = await getSymbol(lpInstance)
+              const direct = {
+                symbol: lpSymbol,
+                address: tokenAddress,
+                balance: directBalance || '0',
+                default: true,
+                usdPrice: directUsdPrice || '0',
+                usdValue: directUsdValue || '0',
+                logoURI: 'https://etherscan.io/images/main/empty-token.png',
+                decimals: tokenDecimals,
+                chainId: parseInt(chain, 0),
+              }
+              supList.unshift(direct)
             }
-            setDefaultToken(supList[0])
-          } else {
-            setDefaultToken({})
-          }
-          // supList.shift()
-          setSupTokenList(supList)
 
-          const supNoBalanceList = []
-          if (supList.length > 0) {
-            for (let i = 0; i < supList.length; i += 1) {
-              if (Number(supList[i].balance) === 0) {
-                supNoBalanceList.push(supList[i])
+            if (supList[0].default) {
+              if (supList[0].balance === '0' && balances[supList[0].symbol]) {
+                const defaultBalance = fromWei(
+                  balances[supList[0].symbol],
+                  supList[0].decimals,
+                  supList[0].decimals,
+                )
+                const defaultUsdBalance = formatNumber(
+                  Number(supList[0].usdPrice) * Number(defaultBalance),
+                  2,
+                )
+                supList[0].balance = defaultBalance
+                supList[0].usdValue = defaultUsdBalance
+              }
+              setDefaultToken(supList[0])
+            } else {
+              setDefaultToken({})
+            }
+            // supList.shift()
+            setSupTokenList(supList)
+
+            const supNoBalanceList = []
+            if (supList.length > 0) {
+              for (let i = 0; i < supList.length; i += 1) {
+                if (Number(supList[i].balance) === 0) {
+                  supNoBalanceList.push(supList[i])
+                }
               }
             }
+            supNoBalanceList.shift()
+            setSupTokenNoBalanceList(supNoBalanceList)
+
+            // const soonSupList = []
+            // for (let j = 0; j < curBalances.length; j += 1) {
+            //   const supToken = supList.find(el => el.address === curBalances[j].address)
+            //   if (!supToken) {
+            //     soonSupList.push(curBalances[j])
+            //   }
+
+            //   if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
+            //     if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
+            //       directInBalance = curBalances[j]
+            //     }
+            //   }
+            // }
+            // setSoonToSupList(soonSupList)
+            setSoonToSupList({}) // TODO: remove soonToSupList once confirmed
+          } else {
+            let tokenSymbol,
+              decimals = 18
+
+            decimals = useIFARM ? token.data?.watchAsset?.decimals : token.decimals
+            tokenSymbol = useIFARM ? token.tokenNames[0] : token?.pool?.lpTokenData?.symbol
+            if (tokenSymbol && tokenSymbol.substring(0, 1) === 'f') {
+              tokenSymbol = tokenSymbol.substring(1)
+            }
+            // const tokenAddress = useIFARM ? addresses.iFARM : token.tokenAddress
+            const tokenAddress = token.tokenAddress
+            const tokenId = token?.pool?.id
+            const tokenBalance = fromWei(
+              balances[useIFARM ? tokenSymbol : tokenId],
+              decimals,
+              decimals,
+            )
+            const tokenPrice = useIFARM ? token?.data?.lpTokenData?.price : token.usdPrice
+            const usdValue = formatNumberWido(
+              Number(tokenBalance) * Number(tokenPrice),
+              BEGINNERS_BALANCES_DECIMALS,
+            )
+            const logoURI =
+              token.logoUrl.length === 1
+                ? token.logoUrl[0].substring(1)
+                : 'https://etherscan.io/images/main/empty-token.png'
+
+            const defaultTokenData = {
+              symbol: tokenSymbol,
+              address: tokenAddress,
+              balance: tokenBalance,
+              default: true,
+              usdValue,
+              usdPrice: tokenPrice,
+              logoURI,
+              decimals,
+              chainId: useIFARM ? token.data.chain : token.chain,
+            }
+            setDefaultToken(defaultTokenData)
           }
-          supNoBalanceList.shift()
-          setSupTokenNoBalanceList(supNoBalanceList)
-
-          // const soonSupList = []
-          // for (let j = 0; j < curBalances.length; j += 1) {
-          //   const supToken = supList.find(el => el.address === curBalances[j].address)
-          //   if (!supToken) {
-          //     soonSupList.push(curBalances[j])
-          //   }
-
-          //   if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
-          //     if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
-          //       directInBalance = curBalances[j]
-          //     }
-          //   }
-          // }
-          // setSoonToSupList(soonSupList)
-          setSoonToSupList({}) // TODO: remove soonToSupList once confirmed
         }
       } catch (err) {
         console.log('getTokenBalance: ', err)
@@ -841,6 +881,7 @@ const AdvancedFarm = () => {
     account,
     chain,
     balances,
+    hasPortalsError,
     convertSuccess,
     revertSuccess,
     getPortalsBalances,
@@ -857,11 +898,11 @@ const AdvancedFarm = () => {
   }, [pickedTokenDepo])
 
   useEffect(() => {
-    if (balanceList.length > 0 && defaultToken !== null) {
+    if (defaultToken !== null) {
       let tokenToSet = null
 
       // Check if defaultToken is present in the balanceList
-      if (defaultToken.balance !== '0' || !supportedVault) {
+      if (defaultToken.balance !== '0' || !supportedVault || hasPortalsError) {
         setPickedTokenDepo(defaultToken)
         setBalanceDepo(defaultToken.balance)
         return
@@ -899,7 +940,15 @@ const AdvancedFarm = () => {
       setPickedTokenDepo(supTokenList.find(coin => coin.symbol === 'USDC'))
       setBalanceDepo('0')
     }
-  }, [balanceList, supTokenList, defaultToken, chain, SUPPORTED_TOKEN_LIST, supportedVault])
+  }, [
+    balanceList,
+    supTokenList,
+    defaultToken,
+    chain,
+    SUPPORTED_TOKEN_LIST,
+    supportedVault,
+    hasPortalsError,
+  ])
 
   const firstUserPoolsLoad = useRef(true)
   const firstWalletBalanceLoad = useRef(true)
@@ -1989,6 +2038,7 @@ const AdvancedFarm = () => {
                         setFailureCount={setFailureCountConvert}
                         supportedVault={supportedVault}
                         setSupportedVault={setSupportedVault}
+                        hasPortalsError={hasPortalsError}
                       />
                       <DepositSelectToken
                         selectToken={selectTokenDepo}
@@ -2000,6 +2050,7 @@ const AdvancedFarm = () => {
                         defaultToken={defaultToken}
                         soonToSupList={soonToSupList}
                         supportedVault={supportedVault}
+                        hasPortalsError={hasPortalsError}
                       />
                       <DepositStart
                         pickedToken={pickedTokenDepo}
@@ -2049,6 +2100,7 @@ const AdvancedFarm = () => {
                         setRevertMinReceivedUsdAmount={setRevertMinReceivedUsdAmount}
                         hasErrorOccurred={hasErrorOccurredRevert}
                         setHasErrorOccurred={setHasErrorOccurredRevert}
+                        hasPortalsError={hasPortalsError}
                       />
                       <WithdrawSelectToken
                         selectToken={selectTokenWith}
@@ -2059,6 +2111,7 @@ const AdvancedFarm = () => {
                         defaultToken={defaultToken}
                         soonToSupList={soonToSupList}
                         supportedVault={supportedVault}
+                        hasPortalsError={hasPortalsError}
                       />
                       <WithdrawStart
                         unstakeInputValue={unstakeInputValue}

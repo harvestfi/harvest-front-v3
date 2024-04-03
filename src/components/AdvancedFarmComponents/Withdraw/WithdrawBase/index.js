@@ -86,6 +86,7 @@ const WithdrawBase = ({
   setRevertMinReceivedUsdAmount,
   hasErrorOccurred,
   setHasErrorOccurred,
+  hasPortalsError,
 }) => {
   const {
     bgColor,
@@ -317,7 +318,7 @@ const WithdrawBase = ({
       return
     }
     const supToken = supTokenList.find(el => el.symbol === pickedToken.symbol)
-    if (!supToken) {
+    if (!hasPortalsError && !supToken) {
       toast.error("Can't revert with Unsupported token!")
       return
     }
