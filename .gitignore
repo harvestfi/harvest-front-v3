@@ -119,3 +119,6 @@ public/icons
 workers-site
 wrangler.toml
 prod/
+
+# Reference Data
+reference
