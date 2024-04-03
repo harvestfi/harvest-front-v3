@@ -93,6 +93,7 @@ const DepositBase = ({
   setFailureCount,
   supportedVault,
   setSupportedVault,
+  hasPortalsError,
 }) => {
   const {
     bgColor,
@@ -339,7 +340,7 @@ const DepositBase = ({
         return
       }
       const supToken = supTokenList.find(el => el.symbol === pickedToken.symbol)
-      if (!supToken) {
+      if (!hasPortalsError && !supToken) {
         toast.error("Can't Deposit with Unsupported token!")
         return
       }

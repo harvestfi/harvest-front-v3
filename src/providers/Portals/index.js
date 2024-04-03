@@ -119,6 +119,24 @@ const PortalsProvider = _ref => {
     }
   }
 
+  const getPortalsSupport = async (chainId, tokenAddress) => {
+    try {
+      const addresses = `${getChainNamePortals(chainId)}:${tokenAddress}`
+      const response = await axios.get(`${PORTALS_FI_API_URL}/v2/tokens`, {
+        params: {
+          addresses,
+        },
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      })
+      return response
+    } catch (error) {
+      console.error('Error fetching token:', error)
+      return error.response
+    }
+  }
+
   const getPortalsToken = async (chainId, tokenAddress) => {
     try {
       const addresses = `${getChainNamePortals(chainId)}:${tokenAddress}`
@@ -224,6 +242,7 @@ const PortalsProvider = _ref => {
         // portalsBaseTokens,
         getPortalsBaseTokens,
         getPortalsBalances,
+        getPortalsSupport,
         getPortalsToken,
         getPortalsApproval,
         portalsApprove,
