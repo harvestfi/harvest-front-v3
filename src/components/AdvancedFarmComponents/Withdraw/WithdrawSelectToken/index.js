@@ -29,6 +29,7 @@ const WithdrawSelectToken = ({
   defaultToken,
   soonToSupList,
   supportedVault,
+  hasPortalsError,
 }) => {
   const {
     darkMode,
@@ -133,6 +134,7 @@ const WithdrawSelectToken = ({
                 setSelectToken={setSelectToken}
                 filterWord={filterWord}
                 supportedVault={supportedVault}
+                hasPortalsError={hasPortalsError}
               />
             ) : (
               <NotConnectedWallet
