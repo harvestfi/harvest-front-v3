@@ -745,9 +745,11 @@ const BeginnersFarm = () => {
       }
 
       // If no token is found in SUPPORTED_TOKEN_LIST, set the token with the highest USD value in balanceList
-      if (!tokenToSet) {
-        tokenToSet = balanceList.reduce((prevToken, currentToken) =>
-          prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
+      if (!tokenToSet && balanceList.length > 0) {
+        tokenToSet = balanceList.reduce(
+          (prevToken, currentToken) =>
+            prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
+          balanceList[0], // Providing the first element as the initial value
         )
       }
 
