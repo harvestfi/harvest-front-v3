@@ -178,7 +178,7 @@ const HistoryData = ({ token, tokenSymbol, vaultPool, setUnderlyingEarnings, set
             const nextBalance = Number(nextItem.value) * Number(nextItem.sharePrice)
             netChange = balance - nextBalance
           } else {
-            event = ''
+            event = 'Convert'
             balance = Number(item.value) * Number(item.sharePrice)
             netChange = 0
           }
