@@ -1391,9 +1391,8 @@ const BeginnersFarm = () => {
                     <UserBalanceData
                       token={token}
                       vaultPool={vaultPool}
-                      tokenSymbol={id}
-                      totalValue={totalValue}
                       useIFARM={useIFARM}
+                      totalValue={totalValue}
                       farmPrice={farmPrice}
                       underlyingPrice={underlyingPrice}
                       pricePerFullShare={pricePerFullShare}

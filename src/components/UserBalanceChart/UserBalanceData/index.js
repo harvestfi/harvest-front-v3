@@ -55,15 +55,26 @@ function formatDateTime(value) {
 const UserBalanceData = ({
   token,
   vaultPool,
-  totalValue,
   useIFARM,
+  totalValue,
   farmPrice,
   underlyingPrice,
   pricePerFullShare,
 }) => {
   const { backColor, borderColor, fontColor3 } = useThemeContext()
+  const { account } = useWallet()
 
   const [selectedState, setSelectedState] = useState('LAST')
+  const [apiData, setApiData] = useState([])
+  const [loadComplete, setLoadComplete] = useState(true)
+  const [curDate, setCurDate] = useState('')
+  const [curContent, setCurContent] = useState('$0')
+  const [curContentUnderlying, setCurContentUnderlying] = useState('0')
+  const [fixedLen, setFixedLen] = useState(0)
+  const [lastFarmingTimeStamp, setLastFarmingTimeStamp] = useState('-')
+
+  const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+  const chainId = token.chain || token.data.chain
 
   const totalValueRef = useRef(totalValue)
   const farmPriceRef = useRef(farmPrice)
@@ -75,18 +86,6 @@ const UserBalanceData = ({
     usdPriceRef.current = underlyingPrice
     pricePerFullShareRef.current = pricePerFullShare
   }, [totalValue, underlyingPrice, farmPrice, pricePerFullShare])
-
-  const { account } = useWallet()
-  const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
-  const chainId = token.chain || token.data.chain
-
-  const [apiData, setApiData] = useState({})
-  const [loadComplete, setLoadComplete] = useState(true)
-  const [curDate, setCurDate] = useState('')
-  const [curContent, setCurContent] = useState('$0')
-  const [curContentUnderlying, setCurContentUnderlying] = useState('0')
-  const [fixedLen, setFixedLen] = useState(0)
-  const [lastFarmingTimeStamp, setLastFarmingTimeStamp] = useState('-')
 
   const handleTooltipContent = payload => {
     if (payload && payload.length) {
@@ -244,7 +243,7 @@ const UserBalanceData = ({
         // console.log('underlyingPrice -------------', underlyingPrice)
         // console.log('data1 -------------', data1)
         // console.log('data2 -------------', data2)
-        // console.log('mergedData -------------', mergedData)
+        console.log('mergedData -------------', mergedData)
       }
       setLoadComplete(flag1 && flag2)
       setApiData(mergedData)
