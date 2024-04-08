@@ -191,7 +191,12 @@ const HistoryData = ({ token, tokenSymbol, vaultPool, setUnderlyingEarnings, set
           }
         })
 
-        const sumNetChange = enrichedData.reduce((sum, item) => sum + item.netChange, 0)
+        const sumNetChange = enrichedData.reduce((sum, item) => {
+          if (item.event === 'Harvest') {
+            return sum + item.netChange
+          }
+          return sum
+        }, 0)
         const sumNetChangeUsd = (
           Number(sumNetChange) * Number(enrichedData[0].priceUnderlying)
         ).toFixed(2)
