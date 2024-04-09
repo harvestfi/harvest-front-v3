@@ -258,6 +258,14 @@ const NewLabel = styled.div`
     margin: auto 0px auto 5px;
   }
 
+  span.symbol {
+    position: absolute;
+    color: ${props => props.fontColor2};
+    font-size: 8px;
+    right: 0;
+    top: 13px;
+  }
+
   img.icon {
     margin-right: 10px;
   }
@@ -276,7 +284,10 @@ const NewLabel = styled.div`
 
   #tooltip-token-name,
   #tooltip-balance,
-  #tooltip-underlying-balance {
+  #tooltip-underlying-balance,
+  #tooltip-lifetime-earning,
+  #tooltip-total-balance,
+  #tooltip-yield-estimate {
     max-width: 300px;
   }
 
@@ -697,6 +708,7 @@ const MyBalance = styled.div`
   background: ${props => props.backColor};
   border-radius: 12px;
   border: 2px solid ${props => props.borderColor};
+  width: 100%;
 
   ${props =>
     props.height
@@ -824,6 +836,18 @@ const BoxCover = styled.div`
   }
 `
 
+const ManageBoxWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  gap: 25px;
+
+  @media screen and (max-width: 992px) {
+    flex-flow: column;
+    gap: 0px;
+  }
+`
+
 const ValueBox = styled.div`
   display: flex;
   flex-flow: column;
@@ -937,7 +961,7 @@ const ChainBack = styled.div`
 const MainTag = styled.div`
   display: flex;
   justify-content: center;
-  width: 50%;
+  width: 33%;
   padding: 12px 15px;
   align-items: center;
   font-size: 14px;
@@ -945,6 +969,10 @@ const MainTag = styled.div`
   line-height: 20px;
   cursor: pointer;
   color: ${props => props.fontColor4};
+
+  &:nth-child(1) {
+    width: 34%;
+  }
 
   ${props =>
     props.active === 'true'
@@ -956,6 +984,13 @@ const MainTag = styled.div`
       color: #fff;
       background: transparent;
     `}
+
+  @media screen and (max-width: 992px) {
+    width: 50%;
+    &:nth-child(3) {
+      display: none;
+    }
+  }
 
   p {
     margin-bottom: 0px;
@@ -1110,7 +1145,7 @@ const RestInternal = styled.div`
 const MainTagPanel = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 40%;
+  width: 50%;
   border-radius: 8px;
 
   @media screen and (max-width: 1200px) {
@@ -1253,6 +1288,7 @@ export {
   NetDetail,
   NetDetailItem,
   BoxCover,
+  ManageBoxWrapper,
   ValueBox,
   BoxTitle,
   BoxValue,
