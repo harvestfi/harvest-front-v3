@@ -27,7 +27,7 @@ const HistoryPagination = styled.div`
 
   ul.paginate-wrapper {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-evenly;
     list-style: none;
     padding: 12px 24px 16px 24px;
     margin-bottom: 0px;
