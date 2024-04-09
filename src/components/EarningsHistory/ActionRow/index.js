@@ -61,8 +61,12 @@ const ActionRow = ({ info, tokenSymbol }) => {
       <FlexDiv padding={isMobile ? '10px' : '0'}>
         <Content width={isMobile ? '25%' : '20%'} marginTop={isMobile ? '15px' : 'unset'}>
           <Badge
-            bgColor={info.event === 'Revert' ? '#FEF3F2' : '#ecfdf3'}
-            color={info.event === 'Revert' ? '#B42318' : '#027a48'}
+            bgColor={
+              info.event === 'Revert' ? '#FEF3F2' : info.event === 'Convert' ? '#fdeccf' : '#ecfdf3'
+            }
+            color={
+              info.event === 'Revert' ? '#B42318' : info.event === 'Convert' ? '#FF9400' : '#027a48'
+            }
           >
             {info.event}
           </Badge>
