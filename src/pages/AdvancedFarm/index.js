@@ -465,8 +465,8 @@ const AdvancedFarm = () => {
   const [rewardTokenPrices, setRewardTokenPrices] = useState([])
   const [stakedAmount, setStakedAmount] = useState(0)
   const [unstakedAmount, setUnstakedAmount] = useState(0)
-  const [underlyingEarnings, setUnderlyingEarnings] = useState('0')
-  const [usdEarnings, setUsdEarnings] = useState('0.00')
+  const [underlyingEarnings, setUnderlyingEarnings] = useState(0)
+  const [usdEarnings, setUsdEarnings] = useState(0)
 
   // Chart & Table API data
   const [historyData, setHistoryData] = useState([])
@@ -1450,9 +1450,7 @@ const AdvancedFarm = () => {
           }
           return sum
         }, 0)
-        const sumNetChangeUsd = (
-          Number(sumNetChange) * Number(enrichedData[0].priceUnderlying)
-        ).toFixed(2)
+        const sumNetChangeUsd = Number(sumNetChange) * Number(enrichedData[0].priceUnderlying)
         setUnderlyingEarnings(sumNetChange)
         setUsdEarnings(sumNetChangeUsd)
 
@@ -1465,6 +1463,16 @@ const AdvancedFarm = () => {
 
     initData()
   }, [account, token, vaultPool, setUnderlyingEarnings, setUsdEarnings])
+
+  const showUsdEarnings = () => {
+    if (usdEarnings === 0) {
+      return '$0'
+    }
+    if (usdEarnings < 0.01) {
+      return '<$0.01'
+    }
+    return `$${usdEarnings.toFixed(2)}`
+  }
 
   return (
     <DetailView bgColor={bgColor} fontColor={fontColor}>
@@ -1753,7 +1761,7 @@ const AdvancedFarm = () => {
                         weight="600"
                         color={fontColor1}
                       >
-                        ${usdEarnings}
+                        {showUsdEarnings()}
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
