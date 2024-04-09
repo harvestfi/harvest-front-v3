@@ -23,6 +23,7 @@ const SelectTokenList = ({
   setSelectToken,
   filterWord,
   supportedVault,
+  hasPortalsError,
 }) => {
   const { fontColor, fontColor2, hoverColor, activeColorModal } = useThemeContext()
   const [showList, setShowList] = useState(false)
@@ -143,7 +144,7 @@ const SelectTokenList = ({
                 </Container>
               </>
             )}
-          {balanceTokenList.length > 0 && (
+          {!hasPortalsError && balanceTokenList.length > 0 && (
             <>
               <Label fontColor={fontColor} padding="15px 24px 0px">
                 {supportedVault ? 'Supported tokens in your wallet' : 'Soon to be supported'}
@@ -175,7 +176,7 @@ const SelectTokenList = ({
               ))}
             </>
           )}
-          {supTokenList.length > 0 && (
+          {!hasPortalsError && supTokenList.length > 0 && (
             <>
               <Label
                 fontColor={fontColor}
@@ -211,7 +212,7 @@ const SelectTokenList = ({
               ))}
             </>
           )}
-          {soonToSupList.length > 0 && (
+          {!hasPortalsError && soonToSupList.length > 0 && (
             <>
               <Label fontColor={fontColor} padding="0px 24px">
                 Soon to be supported
