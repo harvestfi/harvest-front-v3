@@ -1580,6 +1580,195 @@ export const getChainNamePortals = chain => {
   return chainName
 }
 
+export const initBalanceAndDetailData = async (address, chainId, account) => {
+  const timestamps = []
+  const uniqueData2 = []
+  const mergedData = []
+  let enrichedData = [],
+    sumNetChange = 0,
+    sumNetChangeUsd = 0,
+    sumLatestNetChange = 0,
+    sumLatestNetChangeUsd = 0
+  const { data1, flag1 } = await getUserBalanceHistories1(address, chainId, account)
+  const { data2, flag2 } = await getUserBalanceHistories2(address, chainId)
+
+  if (flag2) {
+    data2.forEach(obj => {
+      if (!timestamps.includes(obj.timestamp)) {
+        timestamps.push(obj.timestamp)
+        const modifiedObj = { ...obj, priceUnderlying: obj.price } // Rename the 'price' property to 'priceUnderlying'
+        delete modifiedObj.price // Remove the 'value' property from modifiedObj
+        uniqueData2.push(modifiedObj)
+      }
+    })
+  }
+
+  if (flag1 && flag2) {
+    let uniqueData = [],
+      lastUserEvent = false
+    if (data1[0].timestamp > uniqueData2[0].timestamp) {
+      let i = 0,
+        z = 0,
+        addFlag = false
+
+      while (data1[i].timestamp > uniqueData2[0].timestamp) {
+        data1[i].priceUnderlying = uniqueData2[0].priceUnderlying
+        data1[i].sharePrice = uniqueData2[0].sharePrice
+        mergedData.push(data1[i])
+        i += 1
+      }
+      while (i < data1.length) {
+        if (z < uniqueData2.length) {
+          while (uniqueData2[z].timestamp >= data1[i].timestamp) {
+            uniqueData2[z].value = data1[i].value
+            mergedData.push(uniqueData2[z])
+            z += 1
+            if (!addFlag) {
+              addFlag = true
+            }
+          }
+        }
+        if (!addFlag) {
+          data1[i].priceUnderlying =
+            uniqueData2[z === uniqueData2.length ? z - 1 : z].priceUnderlying
+          data1[i].sharePrice = uniqueData2[z === uniqueData2.length ? z - 1 : z].sharePrice
+          mergedData.push(data1[i])
+        }
+        addFlag = false
+        i += 1
+      }
+      while (z < uniqueData2.length) {
+        uniqueData2[z].value = 0
+        mergedData.push(uniqueData2[z])
+        z += 1
+      }
+      while (i < data1.length) {
+        data1[i].priceUnderlying = uniqueData2[uniqueData2.length - 1].priceUnderlying
+        data1[i].sharePrice = uniqueData2[uniqueData2.length - 1].sharePrice
+        mergedData.push(data1[i])
+        i += 1
+      }
+    } else {
+      let i = 0,
+        z = 0,
+        addFlag = false
+      while (i < uniqueData2.length && uniqueData2[i].timestamp > data1[0].timestamp) {
+        uniqueData2[i].value = data1[0].value
+        mergedData.push(uniqueData2[i])
+        i += 1
+      }
+      while (z < data1.length) {
+        if (i < uniqueData2.length) {
+          while (uniqueData2[i].timestamp >= data1[z].timestamp) {
+            uniqueData2[i].value = data1[z].value
+            mergedData.push(uniqueData2[i])
+            i += 1
+            if (i >= uniqueData2.length) {
+              break
+            }
+            if (!addFlag) {
+              addFlag = true
+            }
+          }
+        }
+        if (!addFlag) {
+          data1[z].priceUnderlying =
+            uniqueData2[i === uniqueData2.length ? i - 1 : i].priceUnderlying
+          data1[z].sharePrice = uniqueData2[i === uniqueData2.length ? i - 1 : i].sharePrice
+          mergedData.push(data1[z])
+        }
+        addFlag = false
+        z += 1
+      }
+      while (i < uniqueData2.length) {
+        uniqueData2[i].value = 0
+        mergedData.push(uniqueData2[i])
+        i += 1
+      }
+      while (z < data1.length) {
+        data1[z].priceUnderlying = uniqueData2[uniqueData2.length - 1].priceUnderlying
+        data1[z].sharePrice = uniqueData2[uniqueData2.length - 1].sharePrice
+        mergedData.push(data1[z])
+        z += 1
+      }
+    }
+
+    const filteredData = mergedData.filter(item => item.value !== '0' && item.value !== 0)
+
+    // Create a map to keep track of unique combinations of 'value' and 'sharePrice'
+    const map = new Map()
+    filteredData.forEach(item => {
+      const key = `${item.value}_${item.sharePrice}`
+      map.set(key, item)
+    })
+
+    // Convert the map back to an array
+    uniqueData = Array.from(map.values())
+    uniqueData.sort((a, b) => b.timestamp - a.timestamp)
+
+    enrichedData = uniqueData.map((item, index, array) => {
+      const nextItem = array[index + 1]
+      let event, balance, netChange
+
+      if (nextItem) {
+        if (Number(item.value) === Number(nextItem.value)) {
+          event = 'Harvest'
+        } else if (Number(item.value) > Number(nextItem.value)) {
+          event = 'Convert'
+        } else {
+          event = 'Revert'
+        }
+
+        balance = Number(item.value) * Number(item.sharePrice)
+        const nextBalance = Number(nextItem.value) * Number(nextItem.sharePrice)
+        netChange = balance - nextBalance
+      } else {
+        event = 'Convert'
+        balance = Number(item.value) * Number(item.sharePrice)
+        netChange = Number(item.value) * Number(item.sharePrice)
+      }
+
+      return {
+        ...item,
+        event,
+        balance,
+        netChange,
+      }
+    })
+
+    sumNetChange = enrichedData.reduce((sumValue, item) => {
+      if (item.event === 'Harvest') {
+        return sumValue + item.netChange
+      }
+      return sumValue
+    }, 0)
+    sumNetChangeUsd = Number(sumNetChange) * Number(enrichedData[0].priceUnderlying)
+
+    enrichedData.forEach(item => {
+      if (!lastUserEvent) {
+        if (item.event === 'Harvest') {
+          sumLatestNetChange += item.netChange
+        } else if (item.event === 'Convert' || item.event === 'Revert') {
+          lastUserEvent = true
+        }
+      }
+    })
+    sumLatestNetChangeUsd = Number(sumLatestNetChange) * Number(enrichedData[0].priceUnderlying)
+  }
+
+  return {
+    flag1,
+    flag2,
+    data1,
+    mergedData,
+    sumNetChange,
+    sumNetChangeUsd,
+    sumLatestNetChange,
+    sumLatestNetChangeUsd,
+    enrichedData,
+  }
+}
+
 // /**
 //  * @param symbol token symbol
 //  * @param apiData coingeko data

@@ -1,11 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
-import {
-  getUserBalanceHistories1,
-  getUserBalanceHistories2,
-  numberWithCommas,
-} from '../../../utils'
+import { numberWithCommas } from '../../../utils'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { useWallet } from '../../../providers/Wallet'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
 import {
@@ -53,16 +48,17 @@ function formatDateTime(value) {
 }
 
 const UserBalanceData = ({
-  token,
-  vaultPool,
-  useIFARM,
   totalValue,
+  useIFARM,
   farmPrice,
   underlyingPrice,
   pricePerFullShare,
+  balanceFlag,
+  detailFlag,
+  allData,
+  balanceData,
 }) => {
   const { backColor, borderColor, fontColor3 } = useThemeContext()
-  const { account } = useWallet()
 
   const [selectedState, setSelectedState] = useState('LAST')
   const [apiData, setApiData] = useState([])
@@ -72,9 +68,6 @@ const UserBalanceData = ({
   const [curContentUnderlying, setCurContentUnderlying] = useState('0')
   const [fixedLen, setFixedLen] = useState(0)
   const [lastFarmingTimeStamp, setLastFarmingTimeStamp] = useState('-')
-
-  const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
-  const chainId = token.chain || token.data.chain
 
   const totalValueRef = useRef(totalValue)
   const farmPriceRef = useRef(farmPrice)
@@ -123,132 +116,33 @@ const UserBalanceData = ({
 
   useEffect(() => {
     const initData = async () => {
-      const { data1, flag1 } = await getUserBalanceHistories1(address, chainId, account)
-      const { data2, flag2 } = await getUserBalanceHistories2(address, chainId)
-      const uniqueData2 = []
-      const timestamps = []
-      const mergedData = []
-
-      if (flag1) {
-        const lastMatchingTimestamp = findLastMatchingTimestamp(data1)
+      if (balanceFlag) {
+        const lastMatchingTimestamp = findLastMatchingTimestamp(balanceData)
         setLastFarmingTimeStamp(lastMatchingTimestamp)
       }
 
-      data2.forEach(obj => {
-        if (!timestamps.includes(obj.timestamp)) {
-          timestamps.push(obj.timestamp)
-          const modifiedObj = { ...obj, priceUnderlying: obj.price } // Rename the 'price' property to 'priceUnderlying'
-          delete modifiedObj.price // Remove the 'value' property from modifiedObj
-          uniqueData2.push(modifiedObj)
-        }
-      })
-      if (flag1 && flag2) {
+      if (balanceFlag && detailFlag) {
         const nowDate = new Date()
         const currentTimeStamp = Math.floor(nowDate.getTime() / 1000)
 
-        if (data1[0].timestamp > uniqueData2[0].timestamp) {
-          let i = 0,
-            z = 0,
-            addFlag = false
-
-          while (data1[i].timestamp > uniqueData2[0].timestamp) {
-            data1[i].priceUnderlying = uniqueData2[0].priceUnderlying
-            data1[i].sharePrice = uniqueData2[0].sharePrice
-            mergedData.push(data1[i])
-            i += 1
-          }
-          while (i < data1.length) {
-            if (z < uniqueData2.length) {
-              while (uniqueData2[z].timestamp >= data1[i].timestamp) {
-                uniqueData2[z].value = data1[i].value
-                mergedData.push(uniqueData2[z])
-                z += 1
-                if (!addFlag) {
-                  addFlag = true
-                }
-              }
-            }
-            if (!addFlag) {
-              data1[i].priceUnderlying =
-                uniqueData2[z === uniqueData2.length ? z - 1 : z].priceUnderlying
-              data1[i].sharePrice = uniqueData2[z === uniqueData2.length ? z - 1 : z].sharePrice
-              mergedData.push(data1[i])
-            }
-            addFlag = false
-            i += 1
-          }
-          while (z < uniqueData2.length) {
-            uniqueData2[z].value = 0
-            mergedData.push(uniqueData2[z])
-            z += 1
-          }
-          while (i < data1.length) {
-            data1[i].priceUnderlying = uniqueData2[uniqueData2.length - 1].priceUnderlying
-            data1[i].sharePrice = uniqueData2[uniqueData2.length - 1].sharePrice
-            mergedData.push(data1[i])
-            i += 1
-          }
-        } else {
-          let i = 0,
-            z = 0,
-            addFlag = false
-          while (i < uniqueData2.length && uniqueData2[i].timestamp > data1[0].timestamp) {
-            uniqueData2[i].value = data1[0].value
-            mergedData.push(uniqueData2[i])
-            i += 1
-          }
-          while (z < data1.length) {
-            if (i < uniqueData2.length) {
-              while (uniqueData2[i].timestamp >= data1[z].timestamp) {
-                uniqueData2[i].value = data1[z].value
-                mergedData.push(uniqueData2[i])
-                i += 1
-                if (i >= uniqueData2.length) {
-                  break
-                }
-                if (!addFlag) {
-                  addFlag = true
-                }
-              }
-            }
-            if (!addFlag) {
-              data1[z].priceUnderlying =
-                uniqueData2[i === uniqueData2.length ? i - 1 : i].priceUnderlying
-              data1[z].sharePrice = uniqueData2[i === uniqueData2.length ? i - 1 : i].sharePrice
-              mergedData.push(data1[z])
-            }
-            addFlag = false
-            z += 1
-          }
-          while (i < uniqueData2.length) {
-            uniqueData2[i].value = 0
-            mergedData.push(uniqueData2[i])
-            i += 1
-          }
-          while (z < data1.length) {
-            data1[z].priceUnderlying = uniqueData2[uniqueData2.length - 1].priceUnderlying
-            data1[z].sharePrice = uniqueData2[uniqueData2.length - 1].sharePrice
-            mergedData.push(data1[z])
-            z += 1
-          }
-        }
         const firstObject = {
           priceUnderlying: useIFARM ? farmPriceRef.current : usdPriceRef.current,
           sharePrice: pricePerFullShareRef.current,
           timestamp: currentTimeStamp,
           value: totalValueRef.current,
         }
-        mergedData.unshift(firstObject)
+        const apiAllData = [firstObject, ...allData]
+        setApiData(apiAllData)
       }
-      setLoadComplete(flag1 && flag2)
-      setApiData(mergedData)
+      setLoadComplete(balanceFlag && detailFlag)
     }
 
     initData()
   }, [
-    address,
-    chainId,
-    account,
+    allData,
+    balanceData,
+    balanceFlag,
+    detailFlag,
     totalValue,
     underlyingPrice,
     useIFARM,
