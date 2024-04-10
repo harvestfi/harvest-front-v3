@@ -38,7 +38,6 @@ const HistoryData = ({ tokenSymbol, historyData }) => {
 
   const { currentItems, pageCount } = useMemo(() => {
     const endOffset = itemOffset + itemsPerPage
-    console.log(`Loading items from ${itemOffset} to ${endOffset}`)
     const currentItems1 = historyData?.slice(itemOffset, endOffset)
     const pageCount1 = Math.ceil(historyData?.length / itemsPerPage)
 
@@ -48,7 +47,6 @@ const HistoryData = ({ tokenSymbol, historyData }) => {
   const handlePageClick = useCallback(
     event => {
       const newOffset = (event.selected * itemsPerPage) % historyData.length
-      console.log(`User requested page number ${event.selected}, which is offset ${newOffset}`)
       setItemOffset(newOffset)
     },
     [historyData],
