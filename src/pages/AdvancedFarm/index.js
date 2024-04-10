@@ -1165,130 +1165,6 @@ const AdvancedFarm = () => {
     setDepositUsdValue(depositUsdValue)
   }, [lpTokenBalance, fAssetPool, usdPrice])
 
-  const apyDaily = totalApy
-    ? (((Number(totalApy) / 100 + 1) ** (1 / 365) - 1) * 100).toFixed(3)
-    : null
-
-  const showAPY = () => {
-    return (
-      <>
-        {isSpecialVault ? (
-          token.data &&
-          token.data.loaded &&
-          (token.data.dataFetched === false || totalApy !== null) ? (
-            <div>{token.inactive ? 'Inactive' : <>{totalApy ? displayAPY(totalApy) : null}</>}</div>
-          ) : (
-            <div>
-              <AnimatedDots />
-            </div>
-          )
-        ) : vaultPool.loaded && totalApy !== null && !loadingVaults ? (
-          <div>
-            {token.inactive || token.testInactive || token.hideTotalApy || !token.dataFetched ? (
-              token.inactive || token.testInactive ? (
-                'Inactive'
-              ) : null
-            ) : (
-              <>{displayAPY(totalApy, DECIMAL_PRECISION, 10)}</>
-            )}
-          </div>
-        ) : (
-          <div>
-            <AnimatedDots />
-          </div>
-        )}
-      </>
-    )
-  }
-
-  const showTVL = () => {
-    return (
-      <>
-        {token.excludeVaultStats ? (
-          'N/A'
-        ) : vaultValue ? (
-          <>${formatNumber(vaultValue, 2)}</>
-        ) : (
-          <AnimatedDots />
-        )}
-      </>
-    )
-  }
-
-  const showApyDaily = () => {
-    return (
-      <>
-        {isSpecialVault ? (
-          token.data &&
-          token.data.loaded &&
-          (token.data.dataFetched === false || totalApy !== null) ? (
-            <div>{token.inactive ? 'Inactive' : <>{totalApy ? `${apyDaily}%` : null}</>}</div>
-          ) : (
-            <AnimatedDots />
-          )
-        ) : vaultPool.loaded && totalApy !== null && !loadingVaults ? (
-          <div>
-            {token.inactive || token.testInactive || token.hideTotalApy || !token.dataFetched ? (
-              token.inactive || token.testInactive ? (
-                'Inactive'
-              ) : null
-            ) : (
-              <>{apyDaily}%</>
-            )}
-          </div>
-        ) : (
-          <AnimatedDots />
-        )}
-      </>
-    )
-  }
-
-  const detailBoxes = [
-    { title: 'Live APY', showValue: showAPY, className: 'balance-box' },
-    { title: 'Daily APY', showValue: showApyDaily, className: 'daily-apy-box' },
-    { title: 'TVL', showValue: showTVL },
-    {
-      title: 'Last Harvest',
-      showValue: () => (useIFARM ? '-' : lastHarvest !== '' ? `${lastHarvest} ago` : '-'),
-      className: 'daily-yield-box',
-    },
-  ]
-
-  const rewardTxt = getAdvancedRewardText(
-    token,
-    vaultPool,
-    tradingApy,
-    farmAPY,
-    totalApy,
-    true,
-    boostedEstimatedAPY,
-    boostedRewardAPY,
-  )
-
-  const profitShare =
-    chain === CHAIN_IDS.ETH_MAINNET ? '10' : chain === CHAIN_IDS.POLYGON_MAINNET ? '5' : '7'
-  const harvestTreasury =
-    chain === CHAIN_IDS.ETH_MAINNET ? '5' : chain === CHAIN_IDS.POLYGON_MAINNET ? '3' : '3'
-
-  const setLoadingDots = (loadingFarm, loadingLp) => {
-    setFarmingLoading(loadingFarm)
-    setLpStatsloading(loadingLp)
-  }
-
-  const viewComponentProps = {
-    token,
-    tokenDecimals,
-    isSpecialVault,
-    fAssetPool,
-    rewardTokenPrices,
-    loadingBalances: loadingLpStats || loadingFarmingBalance,
-    pendingAction,
-    setLoadingDots,
-    setPendingAction,
-    loaded,
-    totalRewardsEarned,
-  }
-
   useEffect(() => {
     const initData = async () => {
       const address =
@@ -1478,6 +1354,130 @@ const AdvancedFarm = () => {
     initData()
   }, [account, token, vaultPool, setUnderlyingEarnings, setUsdEarnings])
 
+  const apyDaily = totalApy
+    ? (((Number(totalApy) / 100 + 1) ** (1 / 365) - 1) * 100).toFixed(3)
+    : null
+
+  const showAPY = () => {
+    return (
+      <>
+        {isSpecialVault ? (
+          token.data &&
+          token.data.loaded &&
+          (token.data.dataFetched === false || totalApy !== null) ? (
+            <div>{token.inactive ? 'Inactive' : <>{totalApy ? displayAPY(totalApy) : null}</>}</div>
+          ) : (
+            <div>
+              <AnimatedDots />
+            </div>
+          )
+        ) : vaultPool.loaded && totalApy !== null && !loadingVaults ? (
+          <div>
+            {token.inactive || token.testInactive || token.hideTotalApy || !token.dataFetched ? (
+              token.inactive || token.testInactive ? (
+                'Inactive'
+              ) : null
+            ) : (
+              <>{displayAPY(totalApy, DECIMAL_PRECISION, 10)}</>
+            )}
+          </div>
+        ) : (
+          <div>
+            <AnimatedDots />
+          </div>
+        )}
+      </>
+    )
+  }
+
+  const showTVL = () => {
+    return (
+      <>
+        {token.excludeVaultStats ? (
+          'N/A'
+        ) : vaultValue ? (
+          <>${formatNumber(vaultValue, 2)}</>
+        ) : (
+          <AnimatedDots />
+        )}
+      </>
+    )
+  }
+
+  const showApyDaily = () => {
+    return (
+      <>
+        {isSpecialVault ? (
+          token.data &&
+          token.data.loaded &&
+          (token.data.dataFetched === false || totalApy !== null) ? (
+            <div>{token.inactive ? 'Inactive' : <>{totalApy ? `${apyDaily}%` : null}</>}</div>
+          ) : (
+            <AnimatedDots />
+          )
+        ) : vaultPool.loaded && totalApy !== null && !loadingVaults ? (
+          <div>
+            {token.inactive || token.testInactive || token.hideTotalApy || !token.dataFetched ? (
+              token.inactive || token.testInactive ? (
+                'Inactive'
+              ) : null
+            ) : (
+              <>{apyDaily}%</>
+            )}
+          </div>
+        ) : (
+          <AnimatedDots />
+        )}
+      </>
+    )
+  }
+
+  const detailBoxes = [
+    { title: 'Live APY', showValue: showAPY, className: 'balance-box' },
+    { title: 'Daily APY', showValue: showApyDaily, className: 'daily-apy-box' },
+    { title: 'TVL', showValue: showTVL },
+    {
+      title: 'Last Harvest',
+      showValue: () => (useIFARM ? '-' : lastHarvest !== '' ? `${lastHarvest} ago` : '-'),
+      className: 'daily-yield-box',
+    },
+  ]
+
+  const rewardTxt = getAdvancedRewardText(
+    token,
+    vaultPool,
+    tradingApy,
+    farmAPY,
+    totalApy,
+    true,
+    boostedEstimatedAPY,
+    boostedRewardAPY,
+  )
+
+  const profitShare =
+    chain === CHAIN_IDS.ETH_MAINNET ? '10' : chain === CHAIN_IDS.POLYGON_MAINNET ? '5' : '7'
+  const harvestTreasury =
+    chain === CHAIN_IDS.ETH_MAINNET ? '5' : chain === CHAIN_IDS.POLYGON_MAINNET ? '3' : '3'
+
+  const setLoadingDots = (loadingFarm, loadingLp) => {
+    setFarmingLoading(loadingFarm)
+    setLpStatsloading(loadingLp)
+  }
+
+  const viewComponentProps = {
+    token,
+    tokenDecimals,
+    isSpecialVault,
+    fAssetPool,
+    rewardTokenPrices,
+    loadingBalances: loadingLpStats || loadingFarmingBalance,
+    pendingAction,
+    setLoadingDots,
+    setPendingAction,
+    loaded,
+    totalRewardsEarned,
+  }
+
   const showUsdValue = value => {
     if (value === 0) {
       return '$0'
@@ -1485,7 +1485,7 @@ const AdvancedFarm = () => {
     if (value < 0.01) {
       return '<$0.01'
     }
-    return `$${formatNumber(value, 2)}`
+    return `$${value.toFixed(2)}`
   }
 
   return (
@@ -1910,13 +1910,7 @@ const AdvancedFarm = () => {
                         {!connected ? (
                           '$0.00'
                         ) : lpTokenBalance ? (
-                          balanceAmount === 0 ? (
-                            '$0.00'
-                          ) : balanceAmount < 0.01 ? (
-                            '<$0.01'
-                          ) : (
-                            `$${formatNumber(balanceAmount, 2)}`
-                          )
+                          showUsdValue(balanceAmount)
                         ) : (
                           <AnimatedDots />
                         )}
@@ -2019,15 +2013,7 @@ const AdvancedFarm = () => {
                         weight="600"
                         color={fontColor1}
                       >
-                        {!connected
-                          ? '$0.00'
-                          : isNaN(yieldDaily)
-                          ? '$0.00'
-                          : yieldDaily === 0
-                          ? '$0.00'
-                          : yieldDaily < 0.01
-                          ? '<$0.01'
-                          : `$${formatNumber(yieldDaily, 2)}`}
+                        {!connected ? '$0' : isNaN(yieldDaily) ? '$0' : showUsdValue(yieldDaily)}
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
@@ -2054,11 +2040,7 @@ const AdvancedFarm = () => {
                           ? '$0.00'
                           : isNaN(yieldMonthly)
                           ? '$0.00'
-                          : yieldMonthly === 0
-                          ? '$0.00'
-                          : yieldMonthly < 0.01
-                          ? '<$0.01'
-                          : `$${formatNumber(yieldMonthly, 2)}`}
+                          : showUsdValue(yieldMonthly)}
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
@@ -2108,15 +2090,9 @@ const AdvancedFarm = () => {
                     <RewardValue>
                       <BoxValue fontColor1={fontColor1}>
                         {!connected ? (
-                          0
+                          '$0'
                         ) : userStats ? (
-                          totalReward === 0 ? (
-                            '$0.00'
-                          ) : totalReward < 0.01 ? (
-                            '<$0.01'
-                          ) : (
-                            `$${formatNumber(totalReward, 2)}`
-                          )
+                          showUsdValue(totalReward)
                         ) : (
                           <AnimatedDots />
                         )}
