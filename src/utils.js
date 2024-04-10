@@ -1155,7 +1155,7 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
             vault: "${address === farm ? ifarm : address}",
             timestamp_gte: "${startDate}"
           }, 
-          orderBy: createAtBlock, 
+          orderBy: timestamp, 
           orderDirection: desc
         ) { 
           apy, timestamp
@@ -1166,7 +1166,7 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
             vault: "${address === farm ? ifarm : address}", 
             timestamp_gte: "${startDate}"
           },
-          orderBy: createAtBlock,
+          orderBy: timestamp,
           orderDirection: desc
         ) {
           value, timestamp
@@ -1448,7 +1448,7 @@ export const getUserBalanceHistories1 = async (address, chainId, account) => {
             vault: "${address === farm ? ifarm : address}",
             userAddress: "${account}"
           },
-          orderBy: createAtBlock,
+          orderBy: timestamp,
           orderDirection: desc,
         ) {
           value, timestamp
@@ -1508,7 +1508,7 @@ export const getUserBalanceHistories2 = async (address, chainId) => {
           where: {
             vault: "${address}",
           },
-          orderBy: createAtBlock,
+          orderBy: timestamp,
           orderDirection: desc,
         ) {
           sharePrice, price, timestamp

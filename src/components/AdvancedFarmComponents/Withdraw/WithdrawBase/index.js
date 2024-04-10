@@ -161,7 +161,7 @@ const WithdrawBase = ({
               pickedToken.decimals,
             )
             const outputAmountDefaultDecimals = new BigNumber(unstakeBalanceDecimals.toString())
-              .times(pricePerFullShare)
+              .times(new BigNumber(pricePerFullShare))
               .toString()
             outputAmountDefault = toWei(outputAmountDefaultDecimals, pickedToken.decimals, 0)
           } else {
@@ -178,7 +178,7 @@ const WithdrawBase = ({
           if (pickedDefaultToken || portalsEstimate.succeed) {
             let fromTokenUsdPrice, toTokenUsdPrice, fromTokenDetail, toTokenDetail
             if (pickedDefaultToken) {
-              fromTokenUsdPrice = Number(pickedToken.usdPrice) * pricePerFullShare
+              fromTokenUsdPrice = Number(pickedToken.usdPrice) * Number(pricePerFullShare)
               toTokenUsdPrice = pickedToken.usdPrice
             } else {
               fromTokenDetail = await getPortalsToken(chainId, fromToken)
