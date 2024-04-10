@@ -488,17 +488,10 @@ const AdvancedFarm = () => {
   useEffect(() => {
     const platform = useIFARM ? 'Harvest' : token.platform?.[0]?.toLowerCase() ?? ''
     const firstViewIFarm = localStorage.getItem('firstViewIFarm')
-    const firstViewLodestar = localStorage.getItem('firstViewLodestar')
     const firstViewSeamless = localStorage.getItem('firstViewSeamless')
     if (platform === 'Harvest' && (firstViewIFarm === null || firstViewIFarm === 'true')) {
       localStorage.setItem('firstViewIFarm', true)
       setShowIFARMInfo(true)
-    } else if (
-      platform.includes('lodestar') &&
-      (firstViewLodestar === null || firstViewLodestar === 'true')
-    ) {
-      localStorage.setItem('firstViewLodestar', true)
-      setShowLodestarVaultInfo(true)
     } else if (
       platform.includes('seamless') &&
       (firstViewSeamless === null || firstViewSeamless === 'true')
