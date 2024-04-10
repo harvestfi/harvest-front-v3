@@ -1611,7 +1611,7 @@ export const initBalanceAndDetailData = async (address, chainId, account) => {
         z = 0,
         addFlag = false
 
-      while (data1[i].timestamp > uniqueData2[0].timestamp) {
+      while (data1[i]?.timestamp > uniqueData2[0].timestamp) {
         data1[i].priceUnderlying = uniqueData2[0].priceUnderlying
         data1[i].sharePrice = uniqueData2[0].sharePrice
         mergedData.push(data1[i])
