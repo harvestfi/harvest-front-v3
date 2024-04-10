@@ -265,6 +265,7 @@ const NewLabel = styled.div`
   #tooltip-balance,
   #tooltip-underlying-balance,
   #tooltip-lifetime-earning,
+  #tooltip-latest-earning,
   #tooltip-total-balance,
   #tooltip-yield-estimate {
     max-width: 300px;
@@ -337,7 +338,7 @@ const ThemeMode = styled.div`
   }
 
   ${props =>
-    props.mode === 'Farm(Legacy)'
+    props.mode === 'latest'
       ? `
       #theme-switch {
         .switch-check {
@@ -347,11 +348,11 @@ const ThemeMode = styled.div`
           opacity: 0;
         }
         .switch-thumb {
-          left: 16px;
+          left: 17px;
         }
         .switch-track {
-          background: #A9A9A9 ;
-        } 
+          background: #6B8AFF;
+        }
       }
     `
       : `
@@ -376,7 +377,7 @@ const ThemeMode = styled.div`
     }
 
     ${props =>
-      props.mode === 'deposit'
+      props.mode === 'latest'
         ? `
         #theme-switch {
           .switch-thumb {

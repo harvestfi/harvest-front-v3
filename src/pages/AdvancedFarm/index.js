@@ -129,6 +129,7 @@ import {
   NetDetailContent,
   NetDetailImg,
   RewardValue,
+  ThemeMode,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 // import { array } from 'prop-types'
@@ -394,6 +395,7 @@ const AdvancedFarm = () => {
 
   // Switch Tag (Convert/Revert)
   const [activeDepo, setActiveDepo] = useState(true)
+  const [showLatestEarnings, setShowLatestEarnings] = useState(false)
   const [showLodestarVaultInfo, setShowLodestarVaultInfo] = useState(false)
   const [showSeamlessVaultInfo, setShowSeamlessVaultInfo] = useState(false)
   const [showIFARMInfo, setShowIFARMInfo] = useState(false)
@@ -466,10 +468,14 @@ const AdvancedFarm = () => {
   const [stakedAmount, setStakedAmount] = useState(0)
   const [unstakedAmount, setUnstakedAmount] = useState(0)
   const [underlyingEarnings, setUnderlyingEarnings] = useState(0)
+  const [underlyingEarningsLatest, setUnderlyingEarningsLatest] = useState(0)
   const [usdEarnings, setUsdEarnings] = useState(0)
+  const [usdEarningsLatest, setUsdEarningsLatest] = useState(0)
 
   // Chart & Table API data
   const [historyData, setHistoryData] = useState([])
+
+  const switchEarnings = () => setShowLatestEarnings(prev => !prev)
 
   const mainTags = [
     { name: 'Manage', img: Safe },
@@ -1300,17 +1306,19 @@ const AdvancedFarm = () => {
       const { data2, flag2 } = await getUserBalanceHistories2(address, chainId)
       const uniqueData2 = []
       const timestamps = []
-
-      data2.forEach(obj => {
-        if (!timestamps.includes(obj.timestamp)) {
-          timestamps.push(obj.timestamp)
-          const modifiedObj = { ...obj, priceUnderlying: obj.price } // Rename the 'price' property to 'priceUnderlying'
-          delete modifiedObj.price // Remove the 'value' property from modifiedObj
-          uniqueData2.push(modifiedObj)
-        }
-      })
       const mergedData = []
       let enrichedData, uniqueData
+
+      if (flag2) {
+        data2.forEach(obj => {
+          if (!timestamps.includes(obj.timestamp)) {
+            timestamps.push(obj.timestamp)
+            const modifiedObj = { ...obj, priceUnderlying: obj.price } // Rename the 'price' property to 'priceUnderlying'
+            delete modifiedObj.price // Remove the 'value' property from modifiedObj
+            uniqueData2.push(modifiedObj)
+          }
+        })
+      }
 
       if (flag1 && flag2) {
         if (data1[0].timestamp > uniqueData2[0].timestamp) {
@@ -1451,12 +1459,25 @@ const AdvancedFarm = () => {
           return sum
         }, 0)
         const sumNetChangeUsd = Number(sumNetChange) * Number(enrichedData[0].priceUnderlying)
+
+        let sumLatestNetChange = 0,
+          lastUserEvent = false
+        enrichedData.forEach(item => {
+          if (!lastUserEvent) {
+            if (item.event === 'Harvest') {
+              sumLatestNetChange += item.netChange
+            } else if (item.event === 'Convert' || item.event === 'Revert') {
+              lastUserEvent = true
+            }
+          }
+        })
+        const sumLatestNetChangeUsd =
+          Number(sumLatestNetChange) * Number(enrichedData[0].priceUnderlying)
+
         setUnderlyingEarnings(sumNetChange)
         setUsdEarnings(sumNetChangeUsd)
-
-        // console.log('historyData1 -------------', mergedData)
-        // console.log('historyData2 -------------', uniqueData)
-        // console.log('historyData3 -------------', enrichedData)
+        setUnderlyingEarningsLatest(sumLatestNetChange)
+        setUsdEarningsLatest(sumLatestNetChangeUsd)
       }
       setHistoryData(enrichedData)
     }
@@ -1464,14 +1485,14 @@ const AdvancedFarm = () => {
     initData()
   }, [account, token, vaultPool, setUnderlyingEarnings, setUsdEarnings])
 
-  const showUsdEarnings = () => {
-    if (usdEarnings === 0) {
+  const showUsdValue = value => {
+    if (value === 0) {
       return '$0'
     }
-    if (usdEarnings < 0.01) {
+    if (value < 0.01) {
       return '<$0.01'
     }
-    return `$${usdEarnings.toFixed(2)}`
+    return `$${formatNumber(value, 2)}`
   }
 
   return (
@@ -1715,32 +1736,72 @@ const AdvancedFarm = () => {
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom="1px solid #F2F5FF"
                     >
-                      Lifetime Earnings
-                      <PiQuestion
-                        className="question"
-                        data-tip
-                        data-for="tooltip-lifetime-earning"
-                      />
-                      <ReactTooltip
-                        id="tooltip-lifetime-earning"
-                        backgroundColor="#101828"
-                        borderColor="black"
-                        textColor="white"
-                      >
-                        <NewLabel
-                          size={isMobile ? '12px' : '12px'}
-                          height={isMobile ? '18px' : '18px'}
-                          weight="500"
-                          color="white"
+                      <div>
+                        {showLatestEarnings ? 'Latest Earnings' : 'Lifetime Earnings'}
+                        <PiQuestion
+                          className="question"
+                          data-tip
+                          data-for={
+                            showLatestEarnings
+                              ? 'tooltip-latest-earning'
+                              : 'tooltip-lifetime-earning'
+                          }
+                        />
+                        <ReactTooltip
+                          id={
+                            showLatestEarnings
+                              ? 'tooltip-latest-earning'
+                              : 'tooltip-lifetime-earning'
+                          }
+                          backgroundColor="#101828"
+                          borderColor="black"
+                          textColor="white"
                         >
-                          Your lifetime earnings in this farm expressed in USD and Underlying token.
-                          USD value is subject to market fluctuations. Claimable rewards are not
-                          part of this estimation.
-                          <br />
-                          <br />
-                          Underlying is subject to auto-compounding events.
-                        </NewLabel>
-                      </ReactTooltip>
+                          <NewLabel
+                            size={isMobile ? '12px' : '12px'}
+                            height={isMobile ? '18px' : '18px'}
+                            weight="500"
+                            color="white"
+                          >
+                            {showLatestEarnings ? (
+                              <>
+                                Your latest earnings in this farm since the last interaction (revert
+                                or convert).
+                                <br />
+                                <br />
+                                USD value is subject to market fluctuations. Claimable rewards are
+                                not part of this estimation.
+                                <br />
+                                <br />
+                                Underlying is subject to auto-compounding events.
+                              </>
+                            ) : (
+                              <>
+                                Your lifetime earnings in this farm expressed in USD and Underlying
+                                token. USD value is subject to market fluctuations. Claimable
+                                rewards are not part of this estimation.
+                                <br />
+                                <br />
+                                Underlying is subject to auto-compounding events.
+                              </>
+                            )}
+                          </NewLabel>
+                        </ReactTooltip>
+                      </div>
+                      <ThemeMode mode={showLatestEarnings ? 'latest' : 'lifetime'}>
+                        <div id="theme-switch">
+                          <div className="switch-track">
+                            <div className="switch-thumb" />
+                          </div>
+
+                          <input
+                            type="checkbox"
+                            checked={showLatestEarnings}
+                            onChange={switchEarnings}
+                            aria-label="Switch between lifetime and latest earnings"
+                          />
+                        </div>
+                      </ThemeMode>
                     </NewLabel>
                     <FlexDiv
                       justifyContent="space-between"
@@ -1761,7 +1822,7 @@ const AdvancedFarm = () => {
                         weight="600"
                         color={fontColor1}
                       >
-                        {showUsdEarnings()}
+                        {showUsdValue(showLatestEarnings ? usdEarningsLatest : usdEarnings)}
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
@@ -1788,7 +1849,7 @@ const AdvancedFarm = () => {
                         align="right"
                         marginBottom={isMobile ? '12px' : '0px'}
                       >
-                        {underlyingEarnings}
+                        {showLatestEarnings ? underlyingEarningsLatest : underlyingEarnings}
                         <br />
                         <span className="symbol">{id}</span>
                       </NewLabel>
