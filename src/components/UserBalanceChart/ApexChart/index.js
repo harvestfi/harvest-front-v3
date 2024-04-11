@@ -94,7 +94,7 @@ function generateChartDataWithSlots(slots, apiData, balance, priceUnderlying, sh
   const seriesData = []
   for (let i = 0; i < slots.length; i += 1) {
     for (let j = 0; j < apiData.length; j += 1) {
-      if (slots[i] > parseInt(apiData[j].timestamp, 10)) {
+      if (slots[i] >= parseInt(apiData[j].timestamp, 10)) {
         const value1 = parseFloat(apiData[j][balance])
         const value2 = parseFloat(apiData[j][priceUnderlying])
         const value3 = parseFloat(apiData[j][sharePrice])
