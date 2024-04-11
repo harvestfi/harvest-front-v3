@@ -20,7 +20,7 @@ import {
   formatNumber,
   hasAmountGreaterThanZero,
   hasRequirementsForInteraction,
-} from '../../../utils'
+} from '../../../utilities/formats'
 import AnimatedDots from '../../AnimatedDots'
 import Button from '../../Button'
 import Counter from '../../Counter'

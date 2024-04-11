@@ -18,7 +18,7 @@ import poolMethods from '../../../services/web3/contracts/pool/methods'
 import tokenContract from '../../../services/web3/contracts/token/contract.json'
 import tokenMethods from '../../../services/web3/contracts/token/methods'
 import vaultMethods from '../../../services/web3/contracts/vault/methods'
-import { convertAmountToFARM } from '../../../utils'
+import { convertAmountToFARM } from '../../../utilities/formats'
 import PoolFooterActions from './PoolFooterActions'
 import VaultFooterActions from './VaultFooterActions'
 
