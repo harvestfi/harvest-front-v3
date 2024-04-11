@@ -133,7 +133,6 @@ const UserBalanceData = ({
         }
         const apiAllData = [firstObject, ...allData]
         setApiData(apiAllData)
-        console.log('apiAllData -------------', apiAllData)
       }
       setLoadComplete(balanceFlag && detailFlag)
     }
