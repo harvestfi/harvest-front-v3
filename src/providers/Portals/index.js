@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from 'react'
 import axios from 'axios'
-import { getChainNamePortals } from '../../utils'
+import { getChainNamePortals } from '../../utilities/parsers'
 import { PORTALS_FI_API_URL } from '../../constants'
 
 const PortalsContext = createContext()

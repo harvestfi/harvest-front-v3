@@ -11,7 +11,7 @@ import {
   hasAmountGreaterThanZero,
   hasRequirementsForInteraction,
   isSpecialApp,
-} from '../../../utils'
+} from '../../../utilities/formats'
 import Button from '../../Button'
 import {
   SelectedVault,

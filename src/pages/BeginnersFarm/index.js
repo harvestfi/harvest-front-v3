@@ -49,15 +49,10 @@ import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
-import {
-  displayAPY,
-  getTotalApy,
-  formatNumber,
-  getAdvancedRewardText,
-  getLastHarvestInfo,
-  formatNumberWido,
-  initBalanceAndDetailData,
-} from '../../utils'
+import { displayAPY, formatNumber, formatNumberWido } from '../../utilities/formats'
+import { getTotalApy } from '../../utilities/parsers'
+import { getAdvancedRewardText } from '../../utilities/html'
+import { getLastHarvestInfo, initBalanceAndDetailData } from '../../utilities/apiCalls'
 import {
   BigDiv,
   DetailView,

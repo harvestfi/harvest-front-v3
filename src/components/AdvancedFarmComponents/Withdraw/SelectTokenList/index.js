@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { fromWei } from '../../../../services/web3'
 import { useThemeContext } from '../../../../providers/useThemeContext'
-import { formatNumberWido } from '../../../../utils'
+import { formatNumberWido } from '../../../../utilities/formats'
 import { WIDO_EXTEND_DECIMALS, WIDO_BALANCES_DECIMALS } from '../../../../constants'
 import {
   Container,

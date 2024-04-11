@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { numberWithCommas } from '../../../utils'
+import { numberWithCommas } from '../../../utilities/formats'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
@@ -133,6 +133,7 @@ const UserBalanceData = ({
         }
         const apiAllData = [firstObject, ...allData]
         setApiData(apiAllData)
+        console.log('apiAllData -------------', apiAllData)
       }
       setLoadComplete(balanceFlag && detailFlag)
     }

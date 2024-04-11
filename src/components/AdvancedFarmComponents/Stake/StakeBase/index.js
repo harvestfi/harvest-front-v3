@@ -8,7 +8,7 @@ import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import AnimatedDots from '../../../AnimatedDots'
 import { useWallet } from '../../../../providers/Wallet'
 import { CHAIN_IDS } from '../../../../data/constants'
-import { isSpecialApp } from '../../../../utils'
+import { isSpecialApp } from '../../../../utilities/formats'
 import { fromWei, toWei } from '../../../../services/web3'
 import Button from '../../../Button'
 import {
