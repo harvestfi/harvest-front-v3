@@ -115,9 +115,7 @@ const HistoryData = ({ tokenSymbol, historyData }) => {
           <EmptyPanel borderColor={borderColor}>
             {connected ? (
               <EmptyInfo weight={500} size={14} height={20} color={fontColor}>
-                {historyData?.length === 0
-                  ? 'Loading ...'
-                  : 'No interaction history found for this wallet.'}
+                No interaction history found for this wallet.
               </EmptyInfo>
             ) : (
               <>

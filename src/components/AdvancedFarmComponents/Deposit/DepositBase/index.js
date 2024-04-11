@@ -17,7 +17,7 @@ import { useWallet } from '../../../../providers/Wallet'
 import { CHAIN_IDS } from '../../../../data/constants'
 import { fromWei, toWei } from '../../../../services/web3'
 import { addresses } from '../../../../data'
-import { formatNumberWido, isSpecialApp } from '../../../../utils'
+import { formatNumberWido, isSpecialApp } from '../../../../utilities/formats'
 import Button from '../../../Button'
 import AnimatedDots from '../../../AnimatedDots'
 import {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useWindowWidth } from '@react-hook/window-size'
 import Chart from 'react-apexcharts'
 import { useThemeContext } from '../../providers/useThemeContext'
-import { ceil10, floor10 } from '../../utils'
+import { ceil10, floor10 } from '../../utilities/formats'
 
 function getTimeSlots(ago, slotCount) {
   const slots = [],

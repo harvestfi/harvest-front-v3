@@ -28,14 +28,9 @@ import { useStats } from '../../../providers/Stats'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
-import {
-  parseValue,
-  getTotalApy,
-  getUserVaultBalance,
-  getVaultValue,
-  isSpecialApp,
-  getPublishDate,
-} from '../../../utils'
+import { parseValue, isSpecialApp } from '../../../utilities/formats'
+import { getTotalApy, getUserVaultBalance, getVaultValue } from '../../../utilities/parsers'
+import { getPublishDate } from '../../../utilities/apiCalls'
 import VaultPanel from '../VaultPanel'
 import VaultsListHeader from '../VaultsListHeader'
 import {

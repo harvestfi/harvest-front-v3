@@ -23,7 +23,7 @@ import {
   hasAmountLessThanOrEqualTo,
   hasRequirementsForInteraction,
   hasValidAmountForWithdraw,
-} from '../../../utils'
+} from '../../../utilities/formats'
 import Button from '../../Button'
 import Checkbox from '../../Checkbox'
 import { PrimaryActionsContainer } from './style'

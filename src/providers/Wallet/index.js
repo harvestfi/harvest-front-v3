@@ -14,7 +14,7 @@ import {
   safeProvider,
 } from '../../services/web3'
 import tokenMethods from '../../services/web3/contracts/token/methods'
-import { isLedgerLive, isSafeApp } from '../../utils'
+import { isLedgerLive, isSafeApp } from '../../utilities/formats'
 import { useContracts } from '../Contracts'
 import { validateChain } from './utils'
 

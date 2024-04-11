@@ -4,7 +4,7 @@ import React from 'react'
 // import CountUp from 'react-countup'
 import { BEGINNERS_BALANCES_DECIMALS } from '../constants'
 import { fromWei } from '../services/web3'
-import { formatNumber } from '../utils'
+import { formatNumber } from '../utilities/formats'
 
 const { tokens } = require('../data')
 const { POOL_TYPES } = require('../data/constants')

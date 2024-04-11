@@ -61,15 +61,10 @@ import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
-import {
-  displayAPY,
-  getTotalApy,
-  formatNumber,
-  formatNumberWido,
-  getAdvancedRewardText,
-  getLastHarvestInfo,
-  initBalanceAndDetailData,
-} from '../../utils'
+import { displayAPY, formatNumber, formatNumberWido } from '../../utilities/formats'
+import { getTotalApy } from '../../utilities/parsers'
+import { getAdvancedRewardText } from '../../utilities/html'
+import { getLastHarvestInfo, initBalanceAndDetailData } from '../../utilities/apiCalls'
 import {
   BackBtnRect,
   BackText,
@@ -389,8 +384,7 @@ const AdvancedFarm = () => {
     Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price) *
       Number(pricePerFullShare)
   const farmPrice = token.data && token.data.lpTokenData && token.data.lpTokenData.price
-  const underlyingPrice =
-    token.usdPrice || (token.data && token.data.lpTokenData && token.data.lpTokenData.price)
+  const underlyingPrice = get(token, 'usdPrice', get(token, 'data.lpTokenData.price', 0))
 
   // Switch Tag (Convert/Revert)
   const [activeDepo, setActiveDepo] = useState(true)

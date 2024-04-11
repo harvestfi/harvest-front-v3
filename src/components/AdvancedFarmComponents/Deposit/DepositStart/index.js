@@ -24,7 +24,7 @@ import { useWallet } from '../../../../providers/Wallet'
 import { usePools } from '../../../../providers/Pools'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { fromWei, toWei, getWeb3 } from '../../../../services/web3'
-import { formatNumberWido } from '../../../../utils'
+import { formatNumberWido } from '../../../../utilities/formats'
 import AnimatedDots from '../../../AnimatedDots'
 import {
   Buttons,

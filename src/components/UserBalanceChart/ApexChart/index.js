@@ -12,7 +12,7 @@ import {
 import { useWindowWidth } from '@react-hook/window-size'
 import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { ceil10, floor10, round10, numberWithCommas } from '../../../utils'
+import { ceil10, floor10, round10, numberWithCommas } from '../../../utilities/formats'
 import { LoadingDiv, NoData, FakeChartWrapper } from './style'
 import { useWallet } from '../../../providers/Wallet'
 
@@ -94,7 +94,7 @@ function generateChartDataWithSlots(slots, apiData, balance, priceUnderlying, sh
   const seriesData = []
   for (let i = 0; i < slots.length; i += 1) {
     for (let j = 0; j < apiData.length; j += 1) {
-      if (slots[i] > parseInt(apiData[j].timestamp, 10)) {
+      if (slots[i] >= parseInt(apiData[j].timestamp, 10)) {
         const value1 = parseFloat(apiData[j][balance])
         const value2 = parseFloat(apiData[j][priceUnderlying])
         const value3 = parseFloat(apiData[j][sharePrice])
@@ -502,7 +502,7 @@ const ApexChart = ({
         setCurDate(formatDateTime(mainData[mainData.length - 1].x))
         const balance = numberWithCommas(Number(mainData[mainData.length - 1].y).toFixed(fixedLen))
         const balanceUnderlying = numberWithCommas(Number(mainData[mainData.length - 1].z))
-        setCurContent(balance)
+        setCurContent(`$${balance}`)
         setCurContentUnderlying(balanceUnderlying)
       } else {
         console.error('The chart data is either undefined or empty')

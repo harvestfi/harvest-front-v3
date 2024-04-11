@@ -22,7 +22,12 @@ import { getWeb3, ledgerWeb3, newContractInstance, safeProvider } from '../../se
 import poolContractData from '../../services/web3/contracts/pool/contract.json'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import tokenMethods from '../../services/web3/contracts/token/methods'
-import { isLedgerLive, isSafeApp, isSpecialApp, truncateNumberString } from '../../utils'
+import {
+  isLedgerLive,
+  isSafeApp,
+  isSpecialApp,
+  truncateNumberString,
+} from '../../utilities/formats'
 import { useContracts } from '../Contracts'
 import { useWallet } from '../Wallet'
 import { getLpTokenData, getUserStats, pollUpdatedUserStats } from './utils'

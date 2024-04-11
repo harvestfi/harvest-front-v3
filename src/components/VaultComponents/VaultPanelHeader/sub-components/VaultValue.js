@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { get } from 'lodash'
 import { SPECIAL_VAULTS } from '../../../../constants'
-import { formatNumber } from '../../../../utils'
+import { formatNumber } from '../../../../utilities/formats'
 import AnimatedDots from '../../../AnimatedDots'
 import { Value } from '../style'
 

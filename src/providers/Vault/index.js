@@ -25,7 +25,7 @@ import {
 import univ3ContractData from '../../services/web3/contracts/uniswap-v3/contract.json'
 import vaultContractData from '../../services/web3/contracts/vault/contract.json'
 import vaultMethods from '../../services/web3/contracts/vault/methods'
-import { abbreaviteNumber, isSpecialApp, isLedgerLive } from '../../utils'
+import { abbreaviteNumber, isSpecialApp, isLedgerLive } from '../../utilities/formats'
 import { usePools } from '../Pools'
 import { useWallet } from '../Wallet'
 import { calculateFarmingBalance, filterVaults } from './utils'

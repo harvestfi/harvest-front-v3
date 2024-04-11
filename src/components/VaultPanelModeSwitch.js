@@ -5,7 +5,7 @@ import { DISABLED_WITHDRAWS, FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../co
 import { usePools } from '../providers/Pools'
 import { useVaults } from '../providers/Vault'
 import { useWallet } from '../providers/Wallet'
-import { hasAmountGreaterThanZero, hasRequirementsForInteraction } from '../utils'
+import { hasAmountGreaterThanZero, hasRequirementsForInteraction } from '../utilities/formats'
 import ButtonSwitch from './ButtonSwitch'
 
 const VaultPanelModeSwitch = ({

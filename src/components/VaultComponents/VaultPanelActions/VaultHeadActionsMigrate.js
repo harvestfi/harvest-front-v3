@@ -14,7 +14,7 @@ import {
   hasAmountGreaterThanZero,
   hasAmountLessThanOrEqualTo,
   hasRequirementsForInteraction,
-} from '../../../utils'
+} from '../../../utilities/formats'
 
 const VaultHeadActionsMigrate = ({
   token,

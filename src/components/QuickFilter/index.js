@@ -15,7 +15,7 @@ import Zap from '../../assets/images/logos/filter/zap.svg'
 import { CHAIN_IDS } from '../../data/constants'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
-import { isSpecialApp } from '../../utils'
+import { isSpecialApp } from '../../utilities/formats'
 import ButtonGroup from '../ButtonGroup'
 import SearchBar from '../SearchBar'
 import {
