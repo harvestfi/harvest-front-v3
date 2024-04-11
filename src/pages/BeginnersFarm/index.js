@@ -313,8 +313,7 @@ const BeginnersFarm = () => {
     Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price) *
       Number(pricePerFullShare)
   const farmPrice = token.data && token.data.lpTokenData && token.data.lpTokenData.price
-  const underlyingPrice =
-    token.usdPrice || (token.data && token.data.lpTokenData && token.data.lpTokenData.price)
+  const underlyingPrice = get(token, 'usdPrice', get(token, 'data.lpTokenData.price', 0))
 
   // Switch Tag (Deposit/Withdraw)
   const [activeDepo, setActiveDepo] = useState(true)
