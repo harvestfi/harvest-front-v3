@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
 import BASE from '../../../assets/images/chains/base.svg'
 import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
@@ -10,22 +10,17 @@ import { directDetailUrl } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { BadgeIcon, LogoImg, PanelContainer, ValueContainer } from './style'
 import VaultApy from './sub-components/VaultApy'
+import VaultDailyApy from './sub-components/VaultDailyApy'
 import VaultName from './sub-components/VaultName'
 import VaultUserBalance from './sub-components/VaultUserBalance'
 import VaultValue from './sub-components/VaultValue'
-import { isLedgerLive } from '../../../utils'
 
-const chainList = isLedgerLive()
-  ? [
-      { id: 1, name: 'Ethereum', chainId: 1 },
-      { id: 2, name: 'Polygon', chainId: 137 },
-    ]
-  : [
-      { id: 1, name: 'Ethereum', chainId: 1 },
-      { id: 2, name: 'Polygon', chainId: 137 },
-      { id: 3, name: 'Arbitrum', chainId: 42161 },
-      { id: 4, name: 'Base', chainId: 8453 },
-    ]
+const chainList = [
+  { id: 1, name: 'Ethereum', chainId: 1 },
+  { id: 2, name: 'Polygon', chainId: 137 },
+  { id: 3, name: 'Arbitrum', chainId: 42161 },
+  { id: 4, name: 'Base', chainId: 8453 },
+]
 
 const DesktopPanelHeader = ({
   token,
@@ -39,7 +34,8 @@ const DesktopPanelHeader = ({
   lsdToken,
   desciToken,
 }) => {
-  const BadgeAry = isLedgerLive() ? [ETHEREUM, POLYGON] : [ETHEREUM, POLYGON, ARBITRUM, BASE]
+  const location = useLocation()
+  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE]
 
   const chainId = token.chain || token.data.chain
   const [badgeId, setBadgeId] = useState(-1)
@@ -48,7 +44,19 @@ const DesktopPanelHeader = ({
 
   const { push } = useHistory()
 
-  const { fontColor, borderColor, badgeIconBackColor, setPrevPage } = useThemeContext()
+  const { fontColor, fontColor1, borderColor, setPrevPage } = useThemeContext()
+
+  const mouseDownHandler = event => {
+    if (event.button === 1) {
+      const network = chainList[badgeId].name.toLowerCase()
+      const address = isSpecialVault
+        ? token.data.collateralAddress
+        : token.vaultAddress || token.tokenAddress
+      setPrevPage(window.location.href)
+      const url = `${directDetailUrl}${network}/${address}${location.search}`
+      window.open(url, '_blank')
+    }
+  }
 
   useEffect(() => {
     const getBadge = () => {
@@ -66,23 +74,29 @@ const DesktopPanelHeader = ({
       <PanelContainer
         fontColor={fontColor}
         borderColor={borderColor}
-        onClick={() => {
+        onClick={e => {
           const network = chainList[badgeId].name.toLowerCase()
           const address = isSpecialVault
             ? token.data.collateralAddress
             : token.vaultAddress || token.tokenAddress
           setPrevPage(window.location.href)
-          push(`${directDetailUrl + network}/${address}`)
+          const url = `${directDetailUrl}${network}/${address}${location.search}`
+          if (e.ctrlKey) {
+            window.open(url, '_blank')
+          } else {
+            push(url)
+          }
         }}
+        onMouseDown={mouseDownHandler}
       >
         <ValueContainer width="5%" />
-        <ValueContainer width="20%" textAlign="left">
+        <ValueContainer width="20%" textAlign="left" paddingLeft="25px">
           {logoUrl.map((el, i) => (
             <LogoImg key={i} className="logo-img" zIndex={10 - i} src={el} alt={tokenSymbol} />
           ))}
-          <BadgeIcon badgeBack={badgeIconBackColor}>
+          <BadgeIcon borderColor={token.inactive ? 'orange' : '#29ce84'}>
             {BadgeAry[badgeId] ? (
-              <img src={BadgeAry[badgeId]} width="17px" height="17px" alt="" />
+              <img src={BadgeAry[badgeId]} width="12px" height="12px" alt="" />
             ) : (
               <></>
             )}
@@ -90,21 +104,36 @@ const DesktopPanelHeader = ({
           {lsdToken ? <img className="tag" src={LSD} alt="" /> : null}
           {desciToken ? <img className="tag" src={DESCI} alt="" /> : null}
         </ValueContainer>
-        <ValueContainer width="25%" textAlign="left" paddingLeft="0%">
-          <VaultName token={token} tokenSymbol={tokenSymbol} useIFARM={useIFARM} />
+        <ValueContainer width="20%" textAlign="left" paddingLeft="0%">
+          <VaultName
+            token={token}
+            tokenSymbol={tokenSymbol}
+            useIFARM={useIFARM}
+            fontColor1={fontColor1}
+          />
         </ValueContainer>
-        <ValueContainer width="10%">
+        <ValueContainer width="15%">
           <VaultApy
             token={token}
             tokenSymbol={tokenSymbol}
             vaultPool={vaultPool}
             isSpecialVault={isSpecialVault}
+            fontColor1={fontColor1}
           />
         </ValueContainer>
-        <ValueContainer width="20%">
-          <VaultValue token={token} />
+        <ValueContainer width="15%">
+          <VaultDailyApy
+            token={token}
+            tokenSymbol={tokenSymbol}
+            vaultPool={vaultPool}
+            isSpecialVault={isSpecialVault}
+            fontColor1={fontColor1}
+          />
         </ValueContainer>
-        <ValueContainer width="20%">
+        <ValueContainer width="15%">
+          <VaultValue token={token} fontColor1={fontColor1} />
+        </ValueContainer>
+        <ValueContainer width="10%">
           <VaultUserBalance
             token={token}
             tokenSymbol={tokenSymbol}
@@ -113,6 +142,8 @@ const DesktopPanelHeader = ({
             loadingFarmingBalance={loadingFarmingBalance}
             vaultPool={vaultPool}
             loadedVault={loadedVault}
+            useIFARM={useIFARM}
+            fontColor1={fontColor1}
           />
         </ValueContainer>
       </PanelContainer>

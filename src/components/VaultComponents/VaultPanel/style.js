@@ -36,7 +36,7 @@ const VaultContainer = styled.div`
     position: relative;
 
     span {
-      font-size: 12px !important;
+      font-size: 11px !important;
     }
   }
 `

@@ -2,6 +2,7 @@ import injectedModule from '@web3-onboard/injected-wallets'
 import gnosisModule from '@web3-onboard/gnosis'
 import { init, Web3OnboardProvider } from '@web3-onboard/react'
 import walletConnectModule from '@web3-onboard/walletconnect'
+import ledgerModule from '@web3-onboard/ledger'
 import React from 'react'
 import { ActionsProvider } from './Actions'
 import { ContractsProvider } from './Contracts'
@@ -10,15 +11,18 @@ import { StatsProvider } from './Stats'
 import { ThemeProvider } from './useThemeContext'
 import { VaultsProvider } from './Vault'
 import { WalletProvider } from './Wallet'
-import { EnsoProvider } from './Enso'
+import { PortalsProvider } from './Portals'
+import HavestLogo from '../assets/images/logos/Harvest_Standard.svg'
 
 const injected = injectedModule()
 const gnosis = gnosisModule()
+const ledger = ledgerModule({
+  projectId: '6931eace1272646ed84e46c55fac0311',
+})
 const walletConnect = walletConnectModule({
   version: 2,
   projectId: '6931eace1272646ed84e46c55fac0311',
   bridge: 'https://bridge.walletconnect.org',
-  requiredChains: [1, 137, 42161],
   qrcodeModalOptions: {
     mobileLinks: ['rainbow', 'metamask', 'argent', 'trust', 'imtoken', 'pillar'],
   },
@@ -27,7 +31,7 @@ const walletConnect = walletConnectModule({
 const web3Onboard = init({
   // head to https://explorer.blocknative.com/account to sign up for free
   apiKey: process.env.REACT_APP_BLOCKNATIVE_KEY,
-  wallets: [injected, walletConnect, gnosis],
+  wallets: [injected, walletConnect, gnosis, ledger],
   chains: [
     {
       id: '0x1',
@@ -56,8 +60,8 @@ const web3Onboard = init({
   ],
   appMetadata: {
     name: 'Harvest',
-    icon: 'https://harvest-finance-v3.netlify.app/static/media/ifarm.ffb37908.svg',
-    // logo: myLogo, // svg string logo
+    icon: 'https://harvest-front-v3.netlify.app/static/media/ifarm.ffb37908.svg',
+    logo: HavestLogo, // svg string logo
     description: 'Home to Yield Farming',
     gettingStartedGuide: 'https://docs.harvest.finance',
     explore: 'https://docs.harvest.finance/how-it-works/contract-addresses-1',
@@ -65,6 +69,11 @@ const web3Onboard = init({
       { name: 'MetaMask', url: 'https://metamask.io' },
       { name: 'Coinbase', url: 'https://wallet.coinbase.com/' },
     ],
+    agreement: {
+      version: '3.0.1',
+      termsUrl: 'https://docs.harvest.finance/legal/terms-and-conditions',
+      privacyUrl: 'https://docs.harvest.finance/legal/privacy-policy',
+    },
   },
   notify: {
     enabled: false,
@@ -76,8 +85,8 @@ const web3Onboard = init({
       minimal: true,
     },
     mobile: {
-      position: 'topLeft',
-      enabled: true,
+      position: 'topRight',
+      enabled: false,
       minimal: true,
     },
   },
@@ -89,19 +98,19 @@ const web3Onboard = init({
 const Providers = ({ children }) => (
   <ContractsProvider>
     <Web3OnboardProvider web3Onboard={web3Onboard}>
-      <WalletProvider>
-        <PoolsProvider>
-          <VaultsProvider>
-            <ActionsProvider>
-              <StatsProvider>
-                <EnsoProvider>
+      <PortalsProvider>
+        <WalletProvider>
+          <PoolsProvider>
+            <VaultsProvider>
+              <ActionsProvider>
+                <StatsProvider>
                   <ThemeProvider>{children}</ThemeProvider>
-                </EnsoProvider>
-              </StatsProvider>
-            </ActionsProvider>
-          </VaultsProvider>
-        </PoolsProvider>
-      </WalletProvider>
+                </StatsProvider>
+              </ActionsProvider>
+            </VaultsProvider>
+          </PoolsProvider>
+        </WalletProvider>
+      </PortalsProvider>
     </Web3OnboardProvider>
   </ContractsProvider>
 )

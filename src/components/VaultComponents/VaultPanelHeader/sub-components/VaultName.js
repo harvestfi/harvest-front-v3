@@ -3,10 +3,10 @@ import { IFARM_TOKEN_SYMBOL } from '../../../../constants'
 import { tokens } from '../../../../data'
 import { TokenDescriptionContainer, TokenNameContainer } from '../style'
 
-const VaultName = ({ token, tokenSymbol, useIFARM }) => {
+const VaultName = ({ token, tokenSymbol, useIFARM, fontColor1 }) => {
   return (
     <TokenDescriptionContainer>
-      <TokenNameContainer>
+      <TokenNameContainer fontColor1={fontColor1}>
         {useIFARM
           ? tokens[IFARM_TOKEN_SYMBOL].tokenNames.join(', ')
           : token.tokenNames.join(', ') || tokenSymbol}
@@ -16,8 +16,8 @@ const VaultName = ({ token, tokenSymbol, useIFARM }) => {
           ? `${tokens[IFARM_TOKEN_SYMBOL].platform[0]} - ${tokens[IFARM_TOKEN_SYMBOL].subLabel}`
           : tokens[IFARM_TOKEN_SYMBOL].platform[0]
         : token.subLabel
-        ? token.platform[0] && <small>{`${token.platform[0]} - ${token.subLabel}`}</small>
-        : token.platform[0] && <small>{token.platform[0]}</small>}
+        ? token.platform[0] && `${token.platform[0]} - ${token.subLabel}`
+        : token.platform[0] && token.platform[0]}
     </TokenDescriptionContainer>
   )
 }

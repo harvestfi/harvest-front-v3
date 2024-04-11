@@ -11,13 +11,20 @@ const Container = styled.div`
 
   @media screen and (max-width: 992px) {
     margin: 0;
+    padding-bottom: 150px;
   }
 `
 
 const Content = styled.div`
-  padding: 70px 76px 50px 76px;
+  padding: 100px;
+  margin: auto;
+
+  @media screen and (min-width: 1921px) {
+    width: 1450px;
+  }
 
   @media screen and (max-width: 1480px) {
+    width: 100%;
     padding: 70px 30px 40px;
   }
 
@@ -123,11 +130,6 @@ const StatsBox = styled.div`
   @media screen and (max-width: 992px) {
     order: ${props => props.mobileOrder || 'unset'};
   }
-
-  // @media screen and (min-width: 1921px) {
-  //   min-width: 440px;
-  //   width: 440px;
-  // }
 `
 
 const StatsContainerRow = styled.div`
@@ -287,8 +289,14 @@ const BigStatsExchange = styled(BigStatsSubheader)`
   line-height: 20px;
   align-items: center;
   margin-bottom: 17px !important;
-
   color: ${props => props.fontColor};
+
+  img {
+    ${props =>
+      props.darkMode
+        ? 'filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(283deg) brightness(106%) contrast(106%);'
+        : ''}
+  }
 `
 
 const ValueComponent = styled.div`
@@ -320,6 +328,10 @@ const CompHeader = styled.div`
 
   img {
     margin-right: 10px;
+    ${props =>
+      props.darkMode
+        ? 'filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(283deg) brightness(106%) contrast(106%);'
+        : ''}
   }
 `
 

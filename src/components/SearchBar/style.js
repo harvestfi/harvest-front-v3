@@ -64,21 +64,14 @@ const Container = styled.div`
 `
 
 const SearchBtn = styled.button`
-  background: #15202b;
+  background: #15b088;
   border-radius: 0px 8px 8px 0px;
   padding: 8px 18px;
   color: white;
   border: none;
-  ${props =>
-    props.darkMode
-      ? `
-    border-left: 1px solid #d0d5dd;
-  `
-      : `
-  `}
 
   &:hover {
-    background: #37495b;
+    background: #2ccda4;
   }
 
   img {

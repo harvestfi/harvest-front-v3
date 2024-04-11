@@ -17,7 +17,7 @@ const ButtonStyle = styled.button`
   display: flex;
   justify-content: center;
   background: transparent;
-  color: ${props => props.fontColor};
+  ${props => (props.fontColor ? `color: ${props.fontColor}` : '')};
   font-size: 14px;
   line-height: 20px;
   font-weight: 600;
@@ -45,6 +45,8 @@ const ButtonStyle = styled.button`
 
   img {
     filter: ${props => props.filterColor};
+    padding-right: 8px;
+    width: 24px;
   }
 
   div {
@@ -68,8 +70,8 @@ const ButtonStyle = styled.button`
   @media screen and (max-width: 992px) {
     font-size: 14px;
     line-height: 20px;
-    padding: 10px 26px;
-    width: ${props => props.percent}%;
+    padding: 10px 16px;
+    ${props => (props.unsetWidth ? `width: unset` : `width: ${props.percent}%`)};
   }
 `
 

@@ -1,7 +1,7 @@
 import axios from 'axios'
 import BigNumber from 'bignumber.js'
 import { find, get, isUndefined } from 'lodash'
-import { forEach } from 'promised-loops'
+// import { forEach } from 'promised-loops'
 import React, { createContext, useCallback, useContext } from 'react'
 import { toast } from 'react-toastify'
 import {
@@ -31,7 +31,7 @@ import vaultMethods from '../services/web3/contracts/vault/methods'
 import { CustomException } from '../utils'
 import { useWallet } from './Wallet'
 
-const { addresses, tokens, pools } = require('../data')
+const { tokens, pools } = require('../data')
 
 const ActionsContext = createContext()
 const useActions = () => useContext(ActionsContext)
@@ -39,6 +39,53 @@ const useActions = () => useContext(ActionsContext)
 const ActionsProvider = ({ children }) => {
   const { web3 } = useWallet
   const handleApproval = useCallback(
+    async (
+      account,
+      contracts,
+      tokenSymbol,
+      amountToApprove,
+      vaultAddress,
+      poolData,
+      onSuccessApproval = () => {},
+      onFailureApproval = () => {},
+    ) => {
+      const address = vaultAddress || tokens[tokenSymbol].vaultAddress
+      try {
+        if (poolData) {
+          await tokenMethods.approve(
+            poolData.autoStakePoolAddress || poolData.contractAddress,
+            account,
+            amountToApprove,
+            poolData.lpTokenData.localInstance,
+          )
+        } else {
+          const contract =
+            contracts[tokenSymbol === IFARM_TOKEN_SYMBOL ? FARM_TOKEN_SYMBOL : tokenSymbol]
+          const web3Instance = await getWeb3(false, account, web3)
+          contract.instance.setProvider(web3Instance)
+          await contract.methods.approve(address, account, amountToApprove, contract.instance)
+        }
+
+        await onSuccessApproval()
+
+        // toast.success(
+        //   `${get(tokens, `[${tokenSymbol}].tokenNames`, tokenSymbol).join(
+        //     ', ',
+        //   )} approval completed`,
+        // )
+
+        return false
+      } catch (err) {
+        const errorMessage = formatWeb3PluginErrorMessage(err)
+        toast.error(errorMessage)
+        onFailureApproval()
+        return true
+      }
+    },
+    [web3],
+  )
+
+  const handleOldApproval = useCallback(
     async (
       account,
       contracts,
@@ -273,63 +320,60 @@ const ActionsProvider = ({ children }) => {
       approvedBalance,
       contracts,
       vaultData,
-      setPendingAction,
       autoStake,
       fAssetPool,
       multipleAssets,
       zap,
       onSuccessDeposit = () => {},
-      onSuccessApproval = () => {},
       onFailureDeposit = () => {},
     ) => {
-      let hasDeniedRequest = false,
-        updatedLpTokenBalance,
-        updatedLpTokenApprovedBalance
+      const hasDeniedRequest = false
+      let updatedLpTokenBalance, updatedLpTokenApprovedBalance
 
-      await forEach(amountsToExecute, async (amount, amountIdx) => {
-        let hasEnoughApprovedAmount
+      // await forEach(amountsToExecute, async (amount, amountIdx) => {
+      //   let hasEnoughApprovedAmount
 
-        if (multipleAssets) {
-          if (amount !== null) {
-            const tokenInstance = await newContractInstance(
-              null,
-              addresses[multipleAssets[amountIdx]],
-              tokenContractData.abi,
-            )
+      //   if (multipleAssets) {
+      //     if (amount !== null) {
+      //       const tokenInstance = await newContractInstance(
+      //         null,
+      //         addresses[multipleAssets[amountIdx]],
+      //         tokenContractData.abi,
+      //       )
 
-            const currApprovedBalance = await tokenMethods.getApprovedAmount(
-              account,
-              token.vaultAddress,
-              tokenInstance,
-            )
+      //       const currApprovedBalance = await tokenMethods.getApprovedAmount(
+      //         account,
+      //         token.vaultAddress,
+      //         tokenInstance,
+      //       )
 
-            hasEnoughApprovedAmount = new BigNumber(amount).isLessThanOrEqualTo(
-              new BigNumber(currApprovedBalance),
-            )
-          }
-        } else {
-          hasEnoughApprovedAmount = new BigNumber(amount).isLessThanOrEqualTo(
-            new BigNumber(approvedBalance),
-          )
-        }
+      //       hasEnoughApprovedAmount = new BigNumber(amount).isLessThanOrEqualTo(
+      //         new BigNumber(currApprovedBalance),
+      //       )
+      //     }
+      //   } else {
+      //     hasEnoughApprovedAmount = new BigNumber(amount).isLessThanOrEqualTo(
+      //       new BigNumber(approvedBalance),
+      //     )
+      //   }
 
-        if (amount !== null && !hasEnoughApprovedAmount && !hasDeniedRequest) {
-          setPendingAction(ACTIONS.APPROVE_DEPOSIT)
+      //   if (amount !== null && !hasEnoughApprovedAmount && !hasDeniedRequest) {
+      //     setPendingAction(ACTIONS.APPROVE_DEPOSIT)
 
-          hasDeniedRequest = await handleApproval(
-            account,
-            contracts,
-            multipleAssets ? multipleAssets[amountIdx] : tokenSymbol,
-            vaultData.vaultAddress,
-            null,
-            setPendingAction,
-            onSuccessApproval,
-          )
-        }
-      })
+      //     hasDeniedRequest = await handleOldApproval(
+      //       account,
+      //       contracts,
+      //       multipleAssets ? multipleAssets[amountIdx] : tokenSymbol,
+      //       vaultData.vaultAddress,
+      //       null,
+      //       setPendingAction,
+      //       onSuccessApproval,
+      //     )
+      //   }
+      // })
 
       if (!hasDeniedRequest) {
-        setPendingAction(ACTIONS.DEPOSIT)
+        // setPendingAction(ACTIONS.DEPOSIT)
 
         try {
           if (multipleAssets) {
@@ -400,34 +444,126 @@ const ActionsProvider = ({ children }) => {
             await vaultMethods.deposit(amountsToExecute[0], account, vaultData.instance)
           }
 
-          toast.success('Deposit completed')
+          // toast.success('Deposit completed')
 
-          if (autoStake) {
-            const { instance: lpTokenInstance } = fAssetPool.lpTokenData
-            updatedLpTokenBalance = await tokenMethods.getBalance(account, lpTokenInstance)
-            updatedLpTokenApprovedBalance = await tokenMethods.getApprovedAmount(
-              account,
-              fAssetPool.contractAddress,
-              lpTokenInstance,
-            )
-          } else {
-            setPendingAction(null)
-          }
+          // if (autoStake) {
+          //   const { instance: lpTokenInstance } = fAssetPool.lpTokenData
+          //   updatedLpTokenBalance = await tokenMethods.getBalance(account, lpTokenInstance)
+          //   updatedLpTokenApprovedBalance = await tokenMethods.getApprovedAmount(
+          //     account,
+          //     fAssetPool.contractAddress,
+          //     lpTokenInstance,
+          //   )
+          // } else {
+          //   setPendingAction(null)
+          // }
 
           await onSuccessDeposit(updatedLpTokenBalance, updatedLpTokenApprovedBalance)
+          return true
         } catch (err) {
-          setPendingAction(null)
+          // setPendingAction(null)
 
           const errorMessage = formatWeb3PluginErrorMessage(err, get(err, 'message'))
           toast.error(errorMessage)
-          onFailureDeposit()
+          await onFailureDeposit()
+          return false
+        }
+      }
+
+      return false
+    },
+    [],
+  )
+
+  const handleStakeApproval = useCallback(
+    async (
+      token,
+      account,
+      tokenSymbol,
+      lpTokenBalance,
+      lpTokenApprovedBalance,
+      poolData,
+      contracts,
+      setPendingAction,
+      multipleAssets,
+      onSuccessApproval = () => {},
+      onFailureStake = () => {},
+      setBStakeApprovalSuccess,
+    ) => {
+      let hasDeniedRequest = false
+
+      if (poolData && Number(lpTokenBalance) > 0) {
+        try {
+          const hasEnoughApprovedAmount = new BigNumber(lpTokenBalance).isLessThanOrEqualTo(
+            new BigNumber(lpTokenApprovedBalance),
+          )
+          if (!hasEnoughApprovedAmount) {
+            const amountToApprove = lpTokenBalance
+            if (!hasEnoughApprovedAmount && !hasDeniedRequest) {
+              setPendingAction(ACTIONS.APPROVE_STAKE)
+              hasDeniedRequest = await handleApproval(
+                account,
+                contracts,
+                tokenSymbol,
+                amountToApprove,
+                multipleAssets ? token.vaultAddress : null,
+                poolData,
+                onSuccessApproval,
+              )
+            }
+          } else {
+            setBStakeApprovalSuccess(true)
+          }
+        } catch (err) {
+          setPendingAction(null)
+          const errorMessage = formatWeb3PluginErrorMessage(err)
+          toast.error(errorMessage)
+          onFailureStake()
         }
       }
     },
     [handleApproval],
   )
 
-  const handleStake = useCallback(
+  const handleStakeTransaction = useCallback(
+    async (
+      account,
+      tokenSymbol,
+      lpTokenBalance,
+      poolData,
+      contracts,
+      setPendingAction,
+      multipleAssets,
+      onSuccessStake = () => {},
+      onFailureStake = () => {},
+      action = ACTIONS.STAKE,
+    ) => {
+      const poolInstance = poolData.autoStakeContractLocalInstance || poolData.contractLocalInstance
+      const tokenDisplayName = get(tokens, `[${tokenSymbol}].tokenNames`, tokenSymbol).join(', ')
+
+      const hasDeniedRequest = false
+
+      if (poolData && Number(lpTokenBalance) > 0) {
+        try {
+          if (!hasDeniedRequest) {
+            setPendingAction(action)
+            await poolMethods.stake(lpTokenBalance, account, poolInstance)
+            setPendingAction(null)
+            toast.success(`${tokenDisplayName} stake completed`)
+            await onSuccessStake()
+          }
+        } catch (err) {
+          setPendingAction(null)
+          const errorMessage = formatWeb3PluginErrorMessage(err)
+          toast.error(errorMessage)
+          onFailureStake()
+        }
+      }
+    },
+    [],
+  )
+
+  const handleOldStake = useCallback(
     async (
       token,
       account,
@@ -457,7 +593,7 @@ const ActionsProvider = ({ children }) => {
           if (!hasEnoughApprovedAmount) {
             if (!hasEnoughApprovedAmount && !hasDeniedRequest) {
               setPendingAction(ACTIONS.APPROVE_STAKE)
-              hasDeniedRequest = await handleApproval(
+              hasDeniedRequest = await handleOldApproval(
                 account,
                 contracts,
                 tokenSymbol,
@@ -484,7 +620,7 @@ const ActionsProvider = ({ children }) => {
         }
       }
     },
-    [handleApproval],
+    [handleOldApproval],
   )
 
   const handleClaim = useCallback(
@@ -560,9 +696,8 @@ const ActionsProvider = ({ children }) => {
       selectedAsset,
       onSuccess = () => {},
       onFailure = () => {},
-      action = ACTIONS.WITHDRAW,
     ) => {
-      setPendingAction(action)
+      // setPendingAction(action)
 
       try {
         if (multipleAssets) {
@@ -626,14 +761,16 @@ const ActionsProvider = ({ children }) => {
           await vaultMethods.withdraw(depositedAmount, account, vaultsData[tokenSymbol].instance)
         }
 
-        setPendingAction(null)
-        toast.success('Withdraw completed')
+        // setPendingAction(null)
+        // toast.success('Withdraw completed')
         await onSuccess()
+        return true
       } catch (err) {
-        setPendingAction(null)
+        // setPendingAction(null)
         const errorMessage = formatWeb3PluginErrorMessage(err)
         toast.error(errorMessage)
-        onFailure()
+        await onFailure()
+        return false
       }
     },
     [],
@@ -665,7 +802,7 @@ const ActionsProvider = ({ children }) => {
         if (!hasEnoughApprovedAmount) {
           if (!hasEnoughApprovedAmount && !hasDeniedRequest) {
             setPendingAction(ACTIONS.APPROVE_STAKE)
-            hasDeniedRequest = await handleApproval(
+            hasDeniedRequest = await handleOldApproval(
               account,
               {
                 [token.symbol]: {
@@ -695,7 +832,7 @@ const ActionsProvider = ({ children }) => {
         toast.error(errorMessage)
       }
     },
-    [handleApproval],
+    [handleOldApproval],
   )
 
   const handleBoostUnstake = useCallback(
@@ -840,8 +977,11 @@ const ActionsProvider = ({ children }) => {
     <ActionsContext.Provider
       value={{
         handleApproval,
+        handleOldApproval,
         handleDeposit,
-        handleStake,
+        handleStakeApproval,
+        handleStakeTransaction,
+        handleOldStake,
         handleBoostStake,
         handleBoostUnstake,
         handleBoostReedem,

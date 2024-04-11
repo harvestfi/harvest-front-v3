@@ -2,9 +2,8 @@ import BigNumber from 'bignumber.js'
 import { get, toArray } from 'lodash'
 import React from 'react'
 import CountUp from 'react-countup'
-import { POOL_BALANCES_DECIMALS } from '../constants'
+import { MAX_DECIMALS } from '../constants'
 import { fromWei } from '../services/web3'
-import { formatNumber } from '../utils'
 
 const { tokens } = require('../data')
 const { POOL_TYPES } = require('../data/constants')
@@ -20,11 +19,11 @@ const Counter = ({
   rewardTokenAddress,
 }) => {
   if (!!pool.autoStakePoolAddress && Number(totalStaked) <= 0) {
-    return 'Auto-Compounding'
+    return <span className="count-up-text">Auto-Compounding</span>
   }
 
   if (!pool.autoStakePoolAddress && Number(totalTokensEarned) <= 0) {
-    return '0.00000000'
+    return <span className="count-up-text">0.00</span>
   }
 
   const rewardToken = toArray(tokens).find(token => token.tokenAddress === rewardTokenAddress)
@@ -50,10 +49,11 @@ const Counter = ({
           end={Number(totalTokensEarned) + Number(totalTokensEarned) * Number(ratePerDay)}
           useEasing={false}
           separator=","
-          formattingFn={number => formatNumber(number, POOL_BALANCES_DECIMALS)}
+          formattingFn={number => number}
           delay={0}
-          decimals={POOL_BALANCES_DECIMALS}
+          decimals={MAX_DECIMALS}
           duration={86400}
+          className="count-up-text"
         />
       )
     case pool.type === POOL_TYPES.PROFIT_SHARING && !!pool.autoStakePoolAddress:
@@ -63,10 +63,11 @@ const Counter = ({
           end={Number(totalStakedInEther) + Number(totalStakedInEther) * Number(ratePerDay)}
           useEasing={false}
           separator=","
-          formattingFn={number => formatNumber(number, POOL_BALANCES_DECIMALS)}
+          formattingFn={number => number}
           delay={0}
-          decimals={POOL_BALANCES_DECIMALS}
+          decimals={MAX_DECIMALS}
           duration={86400}
+          className="count-up-text"
         />
       )
     case pool.finishTime > nowInSeconds && pool.type === POOL_TYPES.PROFIT_SHARING:
@@ -76,14 +77,15 @@ const Counter = ({
           end={sharingPoolEndTarget}
           useEasing={false}
           separator=","
-          formattingFn={number => formatNumber(number, POOL_BALANCES_DECIMALS)}
+          formattingFn={number => number}
           delay={0}
-          decimals={POOL_BALANCES_DECIMALS}
+          decimals={MAX_DECIMALS}
           duration={pool.finishTime - nowInSeconds}
+          className="count-up-text"
         />
       )
     default:
-      return '0.000000000'
+      return '0.00'
   }
 }
 

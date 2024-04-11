@@ -1,9 +1,10 @@
+import { IFrameEthereumProvider } from '@ledgerhq/iframe-provider'
 import { SafeAppProvider } from '@safe-global/safe-apps-provider'
 import SafeAppsSDK from '@safe-global/safe-apps-sdk'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
 import mobile from 'is-mobile'
-import { get } from 'lodash'
+import { get, isNaN } from 'lodash'
 import Web3 from 'web3'
 import {
   ARBISCAN_URL,
@@ -18,7 +19,7 @@ import {
   POLL_BALANCES_INTERVAL_MS,
 } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
-import { formatNumber, isSafeApp } from '../../utils'
+import { isLedgerLive, isSafeApp } from '../../utils'
 import contracts from './contracts'
 
 export const getChainHexadecimal = chainId => `0x${Number(chainId).toString(16)}`
@@ -28,6 +29,8 @@ export const infuraWeb3 = new Web3(INFURA_URL)
 export const maticWeb3 = new Web3(MATIC_URL)
 export const arbitrumWeb3 = new Web3(ARBITRUM_URL)
 export const baseWeb3 = new Web3(BASE_URL)
+export const ledgerProvider = new ethers.providers.Web3Provider(new IFrameEthereumProvider())
+export const ledgerWeb3 = new Web3(new IFrameEthereumProvider())
 export const safeProvider = async () => {
   const safe = await SDK.safe.getInfo()
   return new ethers.providers.Web3Provider(new SafeAppProvider(safe, SDK))
@@ -48,19 +51,32 @@ export const getContract = contractName => {
 }
 
 export const fromWei = (wei, decimals, decimalsToDisplay = 2, format = false) => {
-  if (wei != null) {
-    wei = wei.toString()
-  }
-  const weiAmountInBN = new BigNumber(wei)
   let result = '0'
 
-  if (typeof decimals !== 'undefined' && weiAmountInBN.isGreaterThan(0)) {
-    result = weiAmountInBN.div(new BigNumber(10).exponentiatedBy(decimals)).toFixed()
+  try {
+    if (wei != null) {
+      const weiAmountInBN = new BigNumber(wei)
 
-    if (format) {
-      result = formatNumber(result, decimalsToDisplay)
+      if (!weiAmountInBN.isNaN() && weiAmountInBN.isGreaterThan(0)) {
+        // Ensure decimalsToDisplay is a valid number
+        const displayDecimals = parseInt(decimalsToDisplay, 10)
+        if (!isNaN(displayDecimals)) {
+          result = weiAmountInBN
+            .div(new BigNumber(10).exponentiatedBy(decimals))
+            .toFixed(displayDecimals)
+
+          if (format) {
+            result = parseFloat(result)
+          }
+        } else {
+          console.error('Invalid value for decimalsToDisplay:', decimalsToDisplay)
+        }
+      }
     }
+  } catch (error) {
+    console.error('Error converting wei to decimal:', error)
   }
+
   return result
 }
 
@@ -151,6 +167,9 @@ export const getWeb3 = async (chainId, account, web3 = null) => {
     if (isSafeApp()) {
       const safeWeb = await safeWeb3()
       return safeWeb
+    }
+    if (isLedgerLive()) {
+      return ledgerWeb3
     }
     return web3 || mainWeb3
   }

@@ -11,7 +11,7 @@ import VaultContainer from './style'
 const { tokens } = require('../../../data')
 
 const VaultPanel = ({ token, loaded, tokenSymbol, tokenNum, vaultsCount, ...props }) => {
-  const { vaultPanelHoverColor } = useThemeContext()
+  const { hoverColor } = useThemeContext()
   const { pools, fetchUserPoolStats, userStats, vaultLoading, setVaultLoading } = usePools()
   const { account, logout, chainId } = useWallet()
   const { vaultsData } = useVaults()
@@ -72,7 +72,7 @@ const VaultPanel = ({ token, loaded, tokenSymbol, tokenNum, vaultsCount, ...prop
 
   return (
     <>
-      <VaultContainer hoverColor={vaultPanelHoverColor} lastElement={vaultsCount === tokenNum}>
+      <VaultContainer hoverColor={hoverColor} lastElement={vaultsCount === tokenNum}>
         <VaultPanelHeader
           isSpecialVault={isSpecialVault}
           token={token}

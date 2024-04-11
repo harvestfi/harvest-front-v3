@@ -33,15 +33,33 @@ html {
       -moz-appearance: textfield;
     }
 
+    .offcanvas-backdrop {
+      background: none;
+    }
+
     @media screen and (max-width: 992px) {
       .offcanvas {
         display: block;
-        width: 75%;
+        width: 100% !important;
+        height: fit-content !important;
+        top: unset!important;
+        z-index: 1500;
 
         .offcanvas-body {
           padding: 0;
         }
       }
+      .farm-mobile-filter {
+        width: 65%!important;
+        height: 100%!important;
+        right: 0;
+        background: #FFF;
+        box-shadow: -3px 4px 4px 0px rgba(0, 0, 0, 0.10);
+      }
+    }
+
+    button {
+      font-family: 'Inter', sans-serif;
     }
   }
 
@@ -235,6 +253,20 @@ html {
     }
   }
 
+  .priceshare .__react_component_tooltip {
+    opacity: 1 !important;
+    width: 500px;
+    padding: 12px;
+    
+    box-shadow: 0px 4px 6px -2px rgba(16, 24, 40, 0.03), 0px 12px 16px -4px rgba(16, 24, 40, 0.08);
+  }
+
+  .beginners .__react_component_tooltip {
+    border-radius: 8px !important;
+    box-shadow: 0px 4px 6px -2px rgba(16, 24, 40, 0.03), 0px 12px 16px -4px rgba(16, 24, 40, 0.08);
+    opacity: 1 !important;
+  }
+
   .web3modal-modal-lightbox {
     z-index: 20;
   }
@@ -321,6 +353,7 @@ html {
 
   .detail-box {
     display: flex; 
+    justify-content: space-between;
     align-items: center; 
     width: 100%;
     border-radius: 12px; 
@@ -328,62 +361,133 @@ html {
     margin-bottom: 7px;
   }
 
+  .detail-box-main {
+    display: flex;
+  }
+
   .detail-icon {
-    width: 60px;
+    margin-right: 5px;
+
+    img {
+      margin: 0 -15px 0 0;
+
+      &:last-child {
+        margin: 0;
+      }
+    }
   }
 
   .detail-apy {
-    width: 80px; 
-    font-size: 16px; 
-    font-weight: 500;
+    font-size: 14px; 
+    line-height: 24px;
+    font-weight: 600;
+    color: ${props => props.fontColor1};
+
+    @media screen and (max-width: 992px) {
+      font-size: 12px;
+    }
   }
 
   .detail-desc {
-    width: 36%; 
-    font-size: 16px; 
-    font-weight: 400;
+    font-size: 14px; 
+    line-height: 24px;
+    font-weight: 500;
+    color: ${props => props.fontColor3};
 
     @media screen and (max-width: 992px) {
-      font-size: 13px;
+      font-size: 12px;
     }
   }
 
   .detail-desc-auto {
-    font-size: 16px; 
-    font-weight: 400;
+    font-size: 14px; 
+    line-height: 24px;
+    font-weight: 500;
+    color: ${props => props.fontColor3};
 
     @media screen and (max-width: 992px) {
-      font-size: 13px;
+      font-size: 12px;
     }
   }
 
   .detail-desc-no-width {
-    font-size: 16px; 
-    font-weight: 400;
+    font-size: 14px; 
+    line-height: 24px;
+    font-weight: 500;
+    color: ${props => props.fontColor3};
 
     @media screen and (max-width: 992px) {
-      font-size: 13px;
+      font-size: 12px;
     }
   }
 
   .detail-token {
-    width: 34%; 
-    font-size: 16px; 
-    font-weight: 500; 
     text-decoration: underline;
-
-    @media screen and (max-width: 992px) {
-      font-size: 13px;
-    }
   }
 
   .detail-token-no-width {
-    font-size: 16px; 
-    font-weight: 400; 
-    // text-decoration: underline;
+    font-size: 14px; 
+    line-height: 24px;
+    font-weight: 500;
+    color: ${props => props.fontColor3};
 
     @media screen and (max-width: 992px) {
-      font-size: 13px;
+      font-size: 12px;
+    }
+  }
+
+  .farm-detail-reward {
+    .detail-box {
+      display: flex; 
+      justify-content: start;
+      align-items: center; 
+      width: 100%;
+      border-radius: 12px; 
+      padding-top: 15px;
+      margin-bottom: 7px;
+    }
+
+    .detail-icon {
+      width: 60px;
+    }
+
+    .detail-apy {
+      width: 80px; 
+      font-size: 16px; 
+      font-weight: 500;
+    }
+
+    .detail-desc {
+      width: 36%; 
+      font-size: 16px; 
+      font-weight: 400;
+    }
+
+    .detail-desc-auto {
+      font-size: 16px; 
+      font-weight: 400;
+    }
+
+    .detail-desc-no-width {
+      font-size: 16px; 
+      font-weight: 400;
+    }
+
+    .detail-token {
+      width: 34%; 
+      font-size: 16px; 
+      font-weight: 500; 
+      text-decoration: underline;
+
+      @media screen and (max-width: 992px) {
+        font-size: 13px;
+      }
+    }
+
+    .detail-token-no-width {
+      font-size: 16px; 
+      font-weight: 400; 
+      // text-decoration: underline;
     }
   }
 
@@ -392,9 +496,21 @@ html {
   }
 
   .modal-notification {
+    @media screen and (max-width: 576px) {
+      margin: unset;
+      height: 100%;
+    }
     .modal-content {
       border: none;
       border-radius: 12px;
+
+      @media screen and (max-width: 576px) {
+        position: absolute;
+        bottom: 0;
+        border-bottom-right-radius: 0px;
+        border-bottom-left-radius: 0px;
+      }
+
       .modal-header {
         background: #FFB54F;
         font-weight: 600;
@@ -404,6 +520,8 @@ html {
         color: #FFFFFF;
         justify-content: center;
         padding: 24px;
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
       }
       .modal-body {
         padding: 24px;
@@ -411,6 +529,27 @@ html {
         font-size: 13px;
         line-height: 20px;
         color: #475467;
+      }
+      .deposit-modal-header {
+        background: ${props => props.bgColorModal};
+        border-bottom: 1px solid ${props => props.inputBorderColor};
+        padding: 24px 24px 20px;
+      }
+      .token-select-modal-header {
+        background: ${props => props.bgColorModal};
+        border-bottom: 1px solid ${props => props.inputBorderColor};
+        padding: 24px;
+        display: flex;
+        flex-flow: column;
+      }
+      .deposit-modal-body {
+        background: ${props => props.backColor};
+        padding: unset;
+      }
+      .token-select-modal-body {
+        background: ${props => props.backColor};
+        padding: unset;
+        height: 328px;
       }
       .modal-footer {
         justify-content: center;
@@ -432,6 +571,55 @@ html {
         }
       }
     }
+
+    &.welcome-modal-dialog {
+      max-width: 605px;
+
+      @media screen and (max-width: 576px) {
+        margin: auto 24px;
+      }
+
+      .modal-content {
+        @media screen and (max-width: 576px) {
+          position: unset;
+          bottom: unset;
+          border-bottom-right-radius: unset;
+          border-bottom-left-radius: unset;
+        }
+
+        .modal-header {
+          background: unset;
+          padding: 24px 24px 4px 24px;
+          border-bottom: none;
+
+          div {
+            font-size: 18px;
+            color: #101828;
+            font-weight: 600;
+            line-height: 28px;
+          }
+  
+          button {
+            font-size: 12px;
+            color: #667085;
+          }
+        }
+
+        .modal-body {
+          padding: 0px 24px 32px 24px;
+          font-size: 14px;
+        }
+
+        .modal-footer {
+          padding: 0px 24px 24px 24px;
+          border-top: none;
+
+          .confirm {
+            background: #15B088;
+          }
+        }
+      }
+    }
   }
 
   .apexcharts-tooltip {
@@ -450,6 +638,18 @@ html {
     font-family: 'Roboto', sans-serif;
     font-size: 12px;
     font-weight: 400;
+  }
+
+  .advanced-price .recharts-cartesian-axis-tick {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 16px;
+  }
+
+  .advanced-farm .recharts-cartesian-axis-tick {
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 16px;
   }
 
   .recharts-cartesian-axis-line {
@@ -505,6 +705,13 @@ const Monospace = styled.span`
   // font-family: Work Sans;
   font-family: 'Inter', sans-serif;
   border-bottom: ${props => props.borderBottom || 'unset'};
+  color: ${props => props.fontColor1};
+  font-size: 14px !important;
+  font-weight: ${props => props.fontWeight || '500'};
+  line-height: 20px;
+  @media screen and (max-width: 992px) {
+    font-weight: 700;
+  }
 `
 
 const Box = styled.div`
@@ -549,11 +756,8 @@ const Body = styled.div`
   min-height: 100vh;
 
   @media screen and (max-width: 992px) {
-    display: block;
-  }
-
-  @media screen and (max-width: 860px) {
-    margin-bottom: 160px;
+    flex-direction: column-reverse;
+    justify-content: space-between;
   }
 `
 
