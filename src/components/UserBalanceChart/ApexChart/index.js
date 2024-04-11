@@ -502,7 +502,7 @@ const ApexChart = ({
         setCurDate(formatDateTime(mainData[mainData.length - 1].x))
         const balance = numberWithCommas(Number(mainData[mainData.length - 1].y).toFixed(fixedLen))
         const balanceUnderlying = numberWithCommas(Number(mainData[mainData.length - 1].z))
-        setCurContent(balance)
+        setCurContent(`$${balance}`)
         setCurContentUnderlying(balanceUnderlying)
       } else {
         console.error('The chart data is either undefined or empty')
