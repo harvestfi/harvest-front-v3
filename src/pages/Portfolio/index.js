@@ -158,6 +158,7 @@ const Portfolio = () => {
         rewardSymbol: 'iFarm',
         tokenNames: ['FARM'],
         platform: ['Harvest'],
+        decimals: 18,
       },
       [FARM_WETH_TOKEN_SYMBOL]: {
         liquidityPoolVault: true,
@@ -167,6 +168,7 @@ const Portfolio = () => {
         vaultAddress: addresses.FARM_WETH_LP,
         logoUrl: ['./icons/farm.svg', './icons/eth.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
+        decimals: 18,
       },
       [FARM_GRAIN_TOKEN_SYMBOL]: {
         liquidityPoolVault: true,
@@ -176,6 +178,7 @@ const Portfolio = () => {
         vaultAddress: addresses.FARM_GRAIN_LP,
         logoUrl: ['./icons/farm.svg', './icons/grain.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
+        decimals: 18,
       },
     }),
     [farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
