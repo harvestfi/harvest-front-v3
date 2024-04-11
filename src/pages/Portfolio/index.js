@@ -406,7 +406,7 @@ const Portfolio = () => {
             }
             const totalStk = parseFloat((isNaN(Number(stake)) ? 0 : parseValue(stake)) * usdPrice)
             const totalUnsk = parseFloat(
-              (isNaN(Number(unstake)) ? 0 : parseValue(unstake)) * usdPrice,
+              (isNaN(Number(unstake)) || useIFARM ? 0 : parseValue(unstake)) * usdPrice,
             )
             totalBalanceUSD += totalStk + totalUnsk
             const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
