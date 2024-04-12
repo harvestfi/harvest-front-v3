@@ -204,6 +204,7 @@ const BeginnersFarm = () => {
         vaultAddress: addresses.FARM,
         rewardSymbol: 'iFarm',
         tokenNames: ['FARM'],
+        decimals: 18,
       },
       [FARM_WETH_TOKEN_SYMBOL]: {
         liquidityPoolVault: true,
@@ -213,6 +214,7 @@ const BeginnersFarm = () => {
         vaultAddress: addresses.FARM_WETH_LP,
         logoUrl: ['./icons/farm.svg', './icons/eth.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
+        decimals: 18,
       },
       [FARM_GRAIN_TOKEN_SYMBOL]: {
         liquidityPoolVault: true,
@@ -222,6 +224,7 @@ const BeginnersFarm = () => {
         vaultAddress: addresses.FARM_GRAIN_LP,
         logoUrl: ['./icons/farm.svg', './icons/grain.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
+        decimals: 18,
       },
     }),
     [farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
@@ -756,12 +759,14 @@ const BeginnersFarm = () => {
       }
 
       // If no token is found in SUPPORTED_TOKEN_LIST, set the token with the highest USD value in balanceList
-      if (!tokenToSet && balanceList.length > 0) {
-        tokenToSet = balanceList.reduce(
-          (prevToken, currentToken) =>
+      if (!tokenToSet) {
+        if (balanceList.length > 0) {
+          tokenToSet = balanceList.reduce((prevToken, currentToken) =>
             prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
-          balanceList[0], // Providing the first element as the initial value
-        )
+          )
+        } else {
+          tokenToSet = defaultToken
+        }
       }
 
       // Set the pickedTokenDepo and balanceDepo based on the determined tokenToSet

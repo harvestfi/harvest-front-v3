@@ -264,6 +264,7 @@ const AdvancedFarm = () => {
         tokenAddress: addresses.FARM,
         vaultAddress: addresses.FARM,
         rewardSymbol: 'iFarm',
+        decimals: 18,
         tokenNames: ['FARM'],
       },
       [FARM_WETH_TOKEN_SYMBOL]: {
@@ -274,6 +275,7 @@ const AdvancedFarm = () => {
         vaultAddress: addresses.FARM_WETH_LP,
         logoUrl: ['./icons/farm.svg', './icons/eth.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
+        decimals: 18,
       },
       [FARM_GRAIN_TOKEN_SYMBOL]: {
         liquidityPoolVault: true,
@@ -283,6 +285,7 @@ const AdvancedFarm = () => {
         vaultAddress: addresses.FARM_GRAIN_LP,
         logoUrl: ['./icons/farm.svg', './icons/grain.svg'],
         rewardSymbol: FARM_TOKEN_SYMBOL,
+        decimals: 18,
       },
     }),
     [farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
@@ -736,7 +739,7 @@ const AdvancedFarm = () => {
               : balances[id]
               ? new BigNumber(balances[id]).div(10 ** token.decimals).toFixed()
               : '0'
-            const directUsdPrice = token.usdPrice
+            const directUsdPrice = id === 'FARM_GRAIN_LP' ? 0 : token.usdPrice
             const directUsdValue = directData
               ? directData.usdValue
               : new BigNumber(directBalance).times(directUsdPrice).toFixed()
