@@ -391,7 +391,7 @@ const AdvancedFarm = () => {
 
   // Switch Tag (Convert/Revert)
   const [activeDepo, setActiveDepo] = useState(true)
-  const [showLatestEarnings, setShowLatestEarnings] = useState(false)
+  const [showLatestEarnings, setShowLatestEarnings] = useState(true)
   const [showLodestarVaultInfo, setShowLodestarVaultInfo] = useState(false)
   const [showSeamlessVaultInfo, setShowSeamlessVaultInfo] = useState(false)
   const [showIFARMInfo, setShowIFARMInfo] = useState(false)

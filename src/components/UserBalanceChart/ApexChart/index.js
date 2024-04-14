@@ -505,7 +505,7 @@ const ApexChart = ({
         setCurContent(`$${balance}`)
         setCurContentUnderlying(balanceUnderlying)
       } else {
-        console.error('The chart data is either undefined or empty')
+        console.log('The chart data is either undefined or empty.')
       }
 
       const yAxisAry = getYAxisValues(minValue, maxValue, roundedDecimal)
