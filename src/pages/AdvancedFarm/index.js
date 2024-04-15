@@ -1489,7 +1489,7 @@ const AdvancedFarm = () => {
                         .
                       </p>
                       <p>
-                        At this time USD values and APYs might be inacturate. Zap reverts might not
+                        At this time USD values and APYs might be inaccurate. Zap reverts might not
                         be available, but reverts into vAMM-GB/WETH LP-tokens will work. The
                         LP-tokens can then be withdrawn from{' '}
                         <WelcomeTicket
