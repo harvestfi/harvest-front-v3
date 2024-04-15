@@ -315,7 +315,7 @@ const BeginnersFarm = () => {
 
   // Switch Tag (Deposit/Withdraw)
   const [activeDepo, setActiveDepo] = useState(true)
-  const [showLatestEarnings, setShowLatestEarnings] = useState(false)
+  const [showLatestEarnings, setShowLatestEarnings] = useState(true)
   const [welcomeMessage, setWelcomeMessage] = useState(true)
   const [showBadge, setShowBadge] = useState(false)
   const [supportedVault, setSupportedVault] = useState(true)
