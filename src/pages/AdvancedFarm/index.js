@@ -116,6 +116,7 @@ import {
   NetDetailItem,
   BoxCover,
   ManageBoxWrapper,
+  EarningsBadge,
   ValueBox,
   BoxTitle,
   BoxValue,
@@ -1575,8 +1576,9 @@ const AdvancedFarm = () => {
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom="1px solid #F2F5FF"
                     >
-                      <div>
+                      <FlexDiv>
                         {showLatestEarnings ? 'Latest Earnings' : 'Lifetime Earnings'}
+                        <EarningsBadge>Beta</EarningsBadge>
                         <PiQuestion
                           className="question"
                           data-tip
@@ -1626,7 +1628,7 @@ const AdvancedFarm = () => {
                             )}
                           </NewLabel>
                         </ReactTooltip>
-                      </div>
+                      </FlexDiv>
                       <ThemeMode mode={showLatestEarnings ? 'latest' : 'lifetime'}>
                         <div id="theme-switch">
                           <div className="switch-track">
