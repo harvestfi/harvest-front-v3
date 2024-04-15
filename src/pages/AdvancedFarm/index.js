@@ -394,6 +394,7 @@ const AdvancedFarm = () => {
   const [activeDepo, setActiveDepo] = useState(true)
   const [showLodestarVaultInfo, setShowLodestarVaultInfo] = useState(false)
   const [showSeamlessVaultInfo, setShowSeamlessVaultInfo] = useState(false)
+  const [showGBVaultInfo, setShowGBVaultInfo] = useState(false)
   const [showIFARMInfo, setShowIFARMInfo] = useState(false)
   const [supportedVault, setSupportedVault] = useState(false)
   const [hasPortalsError, setHasPortalsError] = useState(true)
@@ -473,8 +474,10 @@ const AdvancedFarm = () => {
   // Show vault info badge when platform is 'Lodestar' or 'Harvest' and first visit
   useEffect(() => {
     const platform = useIFARM ? 'Harvest' : token.platform?.[0]?.toLowerCase() ?? ''
+    const firstToken = token.tokenNames?.[0]?.toLowerCase() ?? ''
     const firstViewIFarm = localStorage.getItem('firstViewIFarm')
     const firstViewSeamless = localStorage.getItem('firstViewSeamless')
+    const firstViewGB = localStorage.getItem('firstViewGB')
     if (platform === 'Harvest' && (firstViewIFarm === null || firstViewIFarm === 'true')) {
       localStorage.setItem('firstViewIFarm', true)
       setShowIFARMInfo(true)
@@ -484,6 +487,9 @@ const AdvancedFarm = () => {
     ) {
       localStorage.setItem('firstViewSeamless', true)
       setShowSeamlessVaultInfo(true)
+    } else if (firstToken.includes('gb') && (firstViewGB === null || firstViewGB === 'true')) {
+      localStorage.setItem('firstViewGB', true)
+      setShowGBVaultInfo(true)
     }
   }, [token.platform, useIFARM])
 
@@ -499,6 +505,11 @@ const AdvancedFarm = () => {
   const closeBadgeSeamless = () => {
     setShowSeamlessVaultInfo(false)
     localStorage.setItem('firstViewSeamless', 'false')
+  }
+
+  const closeBadgeGB = () => {
+    setShowGBVaultInfo(false)
+    localStorage.setItem('firstViewGB', 'false')
   }
 
   useEffect(() => {
@@ -1450,6 +1461,64 @@ const AdvancedFarm = () => {
                   </WelcomeContent>
                   <WelcomeClose>
                     <RxCross2 onClick={closeBadgeSeamless} />
+                  </WelcomeClose>
+                </WelcomeBox>
+              ) : showGBVaultInfo ? (
+                <WelcomeBox
+                  bgColorTooltip={bgColorTooltip}
+                  fontColorTooltip={fontColorTooltip}
+                  borderColor={borderColor}
+                >
+                  <BiInfoCircle className="info-circle" fontSize={20} />
+                  <WelcomeContent>
+                    <WelcomeTitle>Vault Note</WelcomeTitle>
+                    <WelcomeText>
+                      <p>
+                        We are following an ongoing situation with the GB token. Before proceeding
+                        with this vault, consider following-up with the latest developments with one
+                        of its token constituents on{' '}
+                        <WelcomeTicket
+                          href="https://twitter.com/search?q=%24GB"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          linkColor={linkColorTooltip}
+                          linkColorOnHover={linkColorOnHover}
+                        >
+                          Twitter/X
+                        </WelcomeTicket>
+                        .
+                      </p>
+                      <p>
+                        At this time USD values and APYs might be inacturate. Zap reverts might not
+                        be available, but reverts into vAMM-GB/WETH LP-tokens will work. The
+                        LP-tokens can then be withdrawn from{' '}
+                        <WelcomeTicket
+                          href="https://aerodrome.finance/withdraw?pair=0x284ddaDA0B71F2D0D4e395B69b1013dBf6f3e6C1"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          linkColor={linkColorTooltip}
+                          linkColorOnHover={linkColorOnHover}
+                        >
+                          Aerodrome
+                        </WelcomeTicket>
+                        .
+                      </p>
+                      <WelcomeBottom>
+                        <WelcomeKnow onClick={closeBadgeGB}>Got it!</WelcomeKnow>
+                        <WelcomeTicket
+                          href="https://discord.com/invite/gzWAG3Wx7Y"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          linkColor={linkColorTooltip}
+                          linkColorOnHover={linkColorOnHover}
+                        >
+                          Still having questions? Open Discord ticket.
+                        </WelcomeTicket>
+                      </WelcomeBottom>
+                    </WelcomeText>
+                  </WelcomeContent>
+                  <WelcomeClose>
+                    <RxCross2 onClick={closeBadgeGB} />
                   </WelcomeClose>
                 </WelcomeBox>
               ) : showIFARMInfo ? (
