@@ -96,6 +96,7 @@ import {
   NetDetailItem,
   BoxCover,
   ManageBoxWrapper,
+  EarningsBadge,
   ValueBox,
   BoxTitle,
   BoxValue,
@@ -315,7 +316,7 @@ const BeginnersFarm = () => {
 
   // Switch Tag (Deposit/Withdraw)
   const [activeDepo, setActiveDepo] = useState(true)
-  const [showLatestEarnings, setShowLatestEarnings] = useState(false)
+  const [showLatestEarnings, setShowLatestEarnings] = useState(true)
   const [welcomeMessage, setWelcomeMessage] = useState(true)
   const [showBadge, setShowBadge] = useState(false)
   const [supportedVault, setSupportedVault] = useState(true)
@@ -1325,8 +1326,9 @@ const BeginnersFarm = () => {
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom="1px solid #F2F5FF"
                     >
-                      <div>
+                      <FlexDiv>
                         {showLatestEarnings ? 'Latest Earnings' : 'Lifetime Earnings'}
+                        <EarningsBadge>Beta</EarningsBadge>
                         <PiQuestion
                           className="question"
                           data-tip
@@ -1376,7 +1378,7 @@ const BeginnersFarm = () => {
                             )}
                           </NewLabel>
                         </ReactTooltip>
-                      </div>
+                      </FlexDiv>
                       <ThemeMode mode={showLatestEarnings ? 'latest' : 'lifetime'}>
                         <div id="theme-switch">
                           <div className="switch-track">

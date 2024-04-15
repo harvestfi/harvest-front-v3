@@ -724,6 +724,17 @@ const MyBalance = styled.div`
       : ``}
 `
 
+const EarningsBadge = styled.div`
+  color: #027a48;
+  font-size: 8px;
+  font-weight: 500;
+  line-height: 12px;
+  padding: 1.364px 5.455px 1.364px 4.091px;
+  margin: auto 0px auto 5px;
+  border-radius: 10.909px;
+  background: #ecfdf3;
+`
+
 const MyTotalReward = styled.div`
   background: ${props => props.backColor};
   border-radius: 12px;
@@ -1297,6 +1308,7 @@ export {
   LogoImg,
   Monospace,
   MyBalance,
+  EarningsBadge,
   MyTotalReward,
   ThemeMode,
   GuideSection,
