@@ -3,7 +3,7 @@ import BigNumber from 'bignumber.js'
 import axios from 'axios'
 import { find, get } from 'lodash'
 import { useContracts } from './Contracts'
-import { getTotalFARMSupply } from '../utils'
+import { getTotalFARMSupply } from '../utilities/parsers'
 import { getFarmPriceFromUniswap } from '../data/utils'
 import {
   REVENUE_MONTHLY_API_ENDPOINT,

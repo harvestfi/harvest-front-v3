@@ -2,7 +2,7 @@ import React from 'react'
 import { useMediaQuery } from 'react-responsive'
 import ReactTooltip from 'react-tooltip'
 import { PiQuestion } from 'react-icons/pi'
-import { formatNumber } from '../../utils'
+import { formatNumber } from '../../utilities/formats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { Container, Div, Price, NewLabel } from './style'
 

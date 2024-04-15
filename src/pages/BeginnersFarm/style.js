@@ -258,6 +258,14 @@ const NewLabel = styled.div`
     margin: auto 0px auto 5px;
   }
 
+  span.symbol {
+    position: absolute;
+    color: ${props => props.fontColor2};
+    font-size: 8px;
+    right: 0;
+    top: 13px;
+  }
+
   img.icon {
     margin-right: 10px;
   }
@@ -276,7 +284,11 @@ const NewLabel = styled.div`
 
   #tooltip-token-name,
   #tooltip-balance,
-  #tooltip-underlying-balance {
+  #tooltip-underlying-balance,
+  #tooltip-lifetime-earning,
+  #tooltip-latest-earning,
+  #tooltip-total-balance,
+  #tooltip-yield-estimate {
     max-width: 300px;
   }
 
@@ -343,7 +355,7 @@ const ThemeMode = styled.div`
   }
 
   ${props =>
-    props.mode === 'Farm(Legacy)'
+    props.mode === 'latest'
       ? `
       #theme-switch {
         .switch-check {
@@ -353,10 +365,10 @@ const ThemeMode = styled.div`
           opacity: 0;
         }
         .switch-thumb {
-          left: 16px;
+          left: 17px;
         }
         .switch-track {
-          background: #A9A9A9 ;
+          background: #6B8AFF;
         } 
       }
     `
@@ -382,7 +394,7 @@ const ThemeMode = styled.div`
     }
 
     ${props =>
-      props.mode === 'deposit'
+      props.mode === 'latest'
         ? `
         #theme-switch {
           .switch-thumb {
@@ -697,6 +709,7 @@ const MyBalance = styled.div`
   background: ${props => props.backColor};
   border-radius: 12px;
   border: 2px solid ${props => props.borderColor};
+  width: 100%;
 
   ${props =>
     props.height
@@ -718,6 +731,17 @@ const MyBalance = styled.div`
       margin-bottom: ${props.marginBottom};
     `
       : ``}
+`
+
+const EarningsBadge = styled.div`
+  color: #027a48;
+  font-size: 8px;
+  font-weight: 500;
+  line-height: 12px;
+  padding: 1.364px 5.455px 1.364px 4.091px;
+  margin: auto 0px auto 5px;
+  border-radius: 10.909px;
+  background: #ecfdf3;
 `
 
 const GuideSection = styled.div`
@@ -821,6 +845,18 @@ const BoxCover = styled.div`
     border-radius: 12px;
     border: 2px solid ${props => props.borderColor};
     margin-bottom: 20px;
+  }
+`
+
+const ManageBoxWrapper = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  gap: 25px;
+
+  @media screen and (max-width: 992px) {
+    flex-flow: column;
+    gap: 0px;
   }
 `
 
@@ -937,7 +973,7 @@ const ChainBack = styled.div`
 const MainTag = styled.div`
   display: flex;
   justify-content: center;
-  width: 50%;
+  width: 33%;
   padding: 12px 15px;
   align-items: center;
   font-size: 14px;
@@ -945,6 +981,10 @@ const MainTag = styled.div`
   line-height: 20px;
   cursor: pointer;
   color: ${props => props.fontColor4};
+
+  &:nth-child(1) {
+    width: 34%;
+  }
 
   ${props =>
     props.active === 'true'
@@ -956,6 +996,13 @@ const MainTag = styled.div`
       color: #fff;
       background: transparent;
     `}
+
+  @media screen and (max-width: 992px) {
+    width: 50%;
+    &:nth-child(3) {
+      display: none;
+    }
+  }
 
   p {
     margin-bottom: 0px;
@@ -1110,7 +1157,7 @@ const RestInternal = styled.div`
 const MainTagPanel = styled.div`
   display: flex;
   justify-content: space-between;
-  width: 40%;
+  width: 50%;
   border-radius: 8px;
 
   @media screen and (max-width: 1200px) {
@@ -1221,6 +1268,7 @@ export {
   LogoImg,
   Monospace,
   MyBalance,
+  EarningsBadge,
   ThemeMode,
   GuideSection,
   GuidePart,
@@ -1253,6 +1301,7 @@ export {
   NetDetail,
   NetDetailItem,
   BoxCover,
+  ManageBoxWrapper,
   ValueBox,
   BoxTitle,
   BoxValue,

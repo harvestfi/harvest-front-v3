@@ -14,7 +14,7 @@ import {
   safeProvider,
 } from '../../services/web3'
 import tokenMethods from '../../services/web3/contracts/token/methods'
-import { isLedgerLive, isSafeApp } from '../../utils'
+import { isLedgerLive, isSafeApp } from '../../utilities/formats'
 import { useContracts } from '../Contracts'
 import { validateChain } from './utils'
 
@@ -192,9 +192,6 @@ const WalletProvider = _ref => {
       if (wallet) {
         const chainNum = parseInt(wallet.chains[0].id, 16).toString()
         setAccount(wallet.accounts[0].address.toLowerCase())
-        // setAccount('0x3264473150ead02a604812c7b5b70fef4a9b4503')
-        // setAccount('0x620D65F8a642a056bB444D5b1816784bbA5fB27e')
-        // setAccount('0x0550bED1C94AFBd468aa739852632D7e9b4c2F86')
         setChainId(chainNum)
         if (wallet?.provider) {
           const newWeb3 = new Web3(wallet.provider)

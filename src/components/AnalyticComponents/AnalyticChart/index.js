@@ -3,7 +3,7 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { usePools } from '../../../providers/Pools'
 import { Container, Header, ButtonGroup, ChartDiv, TooltipContent, CurDate } from './style'
 import { SPECIAL_VAULTS } from '../../../constants'
-import { getTotalTVLData } from '../../../utils'
+import { getTotalTVLData } from '../../../utilities/apiCalls'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../../ChartRangeSelect'
 

@@ -28,7 +28,7 @@ import uniStatusViewerContractData from '../services/web3/contracts/unistatus-vi
 import uniStatusViewerContractMethods from '../services/web3/contracts/unistatus-viewer/methods'
 import univ3Methods from '../services/web3/contracts/uniswap-v3/methods'
 import vaultMethods from '../services/web3/contracts/vault/methods'
-import { CustomException } from '../utils'
+import { CustomException } from '../utilities/formats'
 import { useWallet } from './Wallet'
 
 const { tokens, pools } = require('../data')

@@ -2,7 +2,7 @@ import React from 'react'
 import ReactHtmlParser from 'react-html-parser'
 import { isUndefined } from 'lodash'
 import { Container, LabelContainer, Label, InputContainer, CoinInfo } from './style'
-import { preventNonNumericInput, preventNonNumericPaste } from '../../utils'
+import { preventNonNumericInput, preventNonNumericPaste } from '../../utilities/formats'
 import Button from '../Button'
 import { useThemeContext } from '../../providers/useThemeContext'
 

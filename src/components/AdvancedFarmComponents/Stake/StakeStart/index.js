@@ -18,7 +18,7 @@ import { useWallet } from '../../../../providers/Wallet'
 import { usePools } from '../../../../providers/Pools'
 import { useActions } from '../../../../providers/Actions'
 import { useContracts } from '../../../../providers/Contracts'
-import { isSpecialApp } from '../../../../utils'
+import { isSpecialApp } from '../../../../utilities/formats'
 import { toWei } from '../../../../services/web3'
 import Button from '../../../Button'
 import {

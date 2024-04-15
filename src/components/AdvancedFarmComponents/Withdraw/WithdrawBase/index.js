@@ -13,7 +13,7 @@ import { BEGINNERS_BALANCES_DECIMALS } from '../../../../constants'
 import { useWallet } from '../../../../providers/Wallet'
 import { fromWei, toWei } from '../../../../services/web3'
 import { addresses } from '../../../../data'
-import { formatNumberWido, isSpecialApp } from '../../../../utils'
+import { formatNumberWido, isSpecialApp } from '../../../../utilities/formats'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import AnimatedDots from '../../../AnimatedDots'
 import Button from '../../../Button'
@@ -161,7 +161,7 @@ const WithdrawBase = ({
               pickedToken.decimals,
             )
             const outputAmountDefaultDecimals = new BigNumber(unstakeBalanceDecimals.toString())
-              .times(pricePerFullShare)
+              .times(new BigNumber(pricePerFullShare))
               .toString()
             outputAmountDefault = toWei(outputAmountDefaultDecimals, pickedToken.decimals, 0)
           } else {
@@ -178,7 +178,7 @@ const WithdrawBase = ({
           if (pickedDefaultToken || portalsEstimate.succeed) {
             let fromTokenUsdPrice, toTokenUsdPrice, fromTokenDetail, toTokenDetail
             if (pickedDefaultToken) {
-              fromTokenUsdPrice = Number(pickedToken.usdPrice) * pricePerFullShare
+              fromTokenUsdPrice = Number(pickedToken.usdPrice) * Number(pricePerFullShare)
               toTokenUsdPrice = pickedToken.usdPrice
             } else {
               fromTokenDetail = await getPortalsToken(chainId, fromToken)

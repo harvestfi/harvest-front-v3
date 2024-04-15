@@ -17,7 +17,7 @@ import {
   hasAmountLessThanOrEqualTo,
   hasRequirementsForInteraction,
   hasValidAmountForWithdraw,
-} from '../../../utils'
+} from '../../../utilities/formats'
 import Checkbox from '../../Checkbox'
 import RadioInput from '../../RadioInput'
 import { Divider } from '../../GlobalStyle'

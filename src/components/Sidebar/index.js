@@ -44,7 +44,7 @@ import { usePools } from '../../providers/Pools'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { fromWei } from '../../services/web3'
-import { formatAddress, isLedgerLive, isSpecialApp } from '../../utils'
+import { formatAddress, isLedgerLive, isSpecialApp } from '../../utilities/formats'
 import Social from '../Social'
 import {
   Address,

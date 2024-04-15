@@ -25,7 +25,7 @@ import { usePools } from '../../../../providers/Pools'
 import { usePortals } from '../../../../providers/Portals'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { getWeb3, fromWei } from '../../../../services/web3'
-import { formatNumberWido } from '../../../../utils'
+import { formatNumberWido } from '../../../../utilities/formats'
 import AnimatedDots from '../../../AnimatedDots'
 import { addresses } from '../../../../data'
 import {

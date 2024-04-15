@@ -1,7 +1,7 @@
 import { get } from 'lodash'
 import React from 'react'
 import { useVaults } from '../../../../providers/Vault'
-import { getTotalApy } from '../../../../utils'
+import { getTotalApy } from '../../../../utilities/parsers'
 import AnimatedDots from '../../../AnimatedDots'
 import { RewardsContainer } from '../style'
 

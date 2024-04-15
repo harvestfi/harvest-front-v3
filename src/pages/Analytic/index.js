@@ -27,7 +27,8 @@ import { Divider, Monospace, TextContainer } from '../../components/GlobalStyle'
 import { CURVE_APY } from '../../constants'
 import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
-import { getNextEmissionsCutDate, truncateNumberString } from '../../utils'
+import { truncateNumberString } from '../../utilities/formats'
+import { getNextEmissionsCutDate } from '../../utilities/parsers'
 import {
   BigStatsExchange,
   Container,

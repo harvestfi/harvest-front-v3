@@ -20,6 +20,7 @@ import POLYGON from '../../assets/images/chains/polygon.svg'
 import Safe from '../../assets/images/logos/beginners/safe.svg'
 import Diamond from '../../assets/images/logos/beginners/diamond.svg'
 import BarChart from '../../assets/images/logos/beginners/bar-chart-01.svg'
+import History from '../../assets/images/logos/beginners/history.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/AdvancedFarmComponents/Deposit/DepositBase'
 import DepositSelectToken from '../../components/AdvancedFarmComponents/Deposit/DepositSelectToken'
@@ -36,6 +37,7 @@ import StakeResult from '../../components/AdvancedFarmComponents/Stake/StakeResu
 import UnstakeBase from '../../components/AdvancedFarmComponents/Unstake/UnstakeBase'
 import UnstakeStart from '../../components/AdvancedFarmComponents/Unstake/UnstakeStart'
 import UnstakeResult from '../../components/AdvancedFarmComponents/Unstake/UnstakeResult'
+import EarningsHistory from '../../components/EarningsHistory/HistoryData'
 import {
   AVRList,
   GECKO_URL,
@@ -59,14 +61,10 @@ import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
-import {
-  displayAPY,
-  getTotalApy,
-  formatNumber,
-  formatNumberWido,
-  getAdvancedRewardText,
-  getLastHarvestInfo,
-} from '../../utils'
+import { displayAPY, formatNumber, formatNumberWido } from '../../utilities/formats'
+import { getTotalApy } from '../../utilities/parsers'
+import { getAdvancedRewardText } from '../../utilities/html'
+import { getLastHarvestInfo, initBalanceAndDetailData } from '../../utilities/apiCalls'
 import {
   BackBtnRect,
   BackText,
@@ -117,6 +115,8 @@ import {
   NetDetail,
   NetDetailItem,
   BoxCover,
+  ManageBoxWrapper,
+  EarningsBadge,
   ValueBox,
   BoxTitle,
   BoxValue,
@@ -124,6 +124,7 @@ import {
   NetDetailContent,
   NetDetailImg,
   RewardValue,
+  ThemeMode,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 // import { array } from 'prop-types'
@@ -380,19 +381,19 @@ const AdvancedFarm = () => {
   const tempPricePerFullShare = useIFARM
     ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
     : get(token, `pricePerFullShare`, 0)
-  const pricePerFullShare = Number(fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals))
+  const pricePerFullShare = fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals)
 
   const usdPrice =
     Number(token.vaultPrice) ||
-    Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price) * pricePerFullShare
-  const farmPrice = Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price)
-  const underlyingPrice =
-    Number(token.usdPrice) ||
-    Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price)
+    Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price) *
+      Number(pricePerFullShare)
+  const farmPrice = token.data && token.data.lpTokenData && token.data.lpTokenData.price
+  const underlyingPrice = get(token, 'usdPrice', get(token, 'data.lpTokenData.price', 0))
 
   // Switch Tag (Convert/Revert)
   const [activeDepo, setActiveDepo] = useState(true)
-  const [showLodestarVaultInfo, setShowLodestarVaultInfo] = useState(false)
+  const [showLatestEarnings, setShowLatestEarnings] = useState(true)
+  const [showGenomesVaultInfo, setShowGenomesVaultInfo] = useState(false)
   const [showSeamlessVaultInfo, setShowSeamlessVaultInfo] = useState(false)
   const [showGBVaultInfo, setShowGBVaultInfo] = useState(false)
   const [showIFARMInfo, setShowIFARMInfo] = useState(false)
@@ -464,19 +465,30 @@ const AdvancedFarm = () => {
   const [rewardTokenPrices, setRewardTokenPrices] = useState([])
   const [stakedAmount, setStakedAmount] = useState(0)
   const [unstakedAmount, setUnstakedAmount] = useState(0)
+  const [underlyingEarnings, setUnderlyingEarnings] = useState(0)
+  const [underlyingEarningsLatest, setUnderlyingEarningsLatest] = useState(0)
+  const [usdEarnings, setUsdEarnings] = useState(0)
+  const [usdEarningsLatest, setUsdEarningsLatest] = useState(0)
+
+  // Chart & Table API data
+  const [historyData, setHistoryData] = useState([])
+
+  const switchEarnings = () => setShowLatestEarnings(prev => !prev)
 
   const mainTags = [
     { name: 'Manage', img: Safe },
     { name: 'Rewards', img: Diamond },
     { name: 'Details', img: BarChart },
+    { name: 'History', img: History },
   ]
 
-  // Show vault info badge when platform is 'Lodestar' or 'Harvest' and first visit
+  // Show vault info badge when platform is 'Seamless' or 'Harvest' and first visit
   useEffect(() => {
     const platform = useIFARM ? 'Harvest' : token.platform?.[0]?.toLowerCase() ?? ''
     const firstToken = token.tokenNames?.[0]?.toLowerCase() ?? ''
     const firstViewIFarm = localStorage.getItem('firstViewIFarm')
     const firstViewSeamless = localStorage.getItem('firstViewSeamless')
+    const firstViewGenomes = localStorage.getItem('firstViewGenomes')
     const firstViewGB = localStorage.getItem('firstViewGB')
     if (platform === 'Harvest' && (firstViewIFarm === null || firstViewIFarm === 'true')) {
       localStorage.setItem('firstViewIFarm', true)
@@ -487,19 +499,25 @@ const AdvancedFarm = () => {
     ) {
       localStorage.setItem('firstViewSeamless', true)
       setShowSeamlessVaultInfo(true)
+    } else if (
+      (firstToken.includes('gene') || firstToken.includes('gnome')) &&
+      (firstViewGenomes === null || firstViewGenomes === 'true')
+    ) {
+      localStorage.setItem('firstViewGenomes', true)
+      setShowGenomesVaultInfo(true)
     } else if (firstToken.includes('gb') && (firstViewGB === null || firstViewGB === 'true')) {
       localStorage.setItem('firstViewGB', true)
       setShowGBVaultInfo(true)
     }
-  }, [token.platform, useIFARM])
+  }, [token.platform, token.tokenNames, useIFARM])
 
   const closeIFARMBadge = () => {
     setShowIFARMInfo(false)
     localStorage.setItem('firstViewIFarm', 'false')
   }
-  const closeBadgeLodestar = () => {
-    setShowLodestarVaultInfo(false)
-    localStorage.setItem('firstViewLodestar', 'false')
+  const closeBadgeGenomes = () => {
+    setShowGenomesVaultInfo(false)
+    localStorage.setItem('firstViewGenomes', 'false')
   }
 
   const closeBadgeSeamless = () => {
@@ -515,7 +533,7 @@ const AdvancedFarm = () => {
   useEffect(() => {
     async function fetchData() {
       const tokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
-      const chainId = token.chain
+      const chainId = token.chain || token.data.chain
 
       const portalsToken = await getPortalsSupport(chainId, tokenAddress)
 
@@ -926,14 +944,12 @@ const AdvancedFarm = () => {
       }
 
       // If no token is found in SUPPORTED_TOKEN_LIST, set the token with the highest USD value in balanceList
-      if (!tokenToSet) {
-        if (balanceList.length > 0) {
-          tokenToSet = balanceList.reduce((prevToken, currentToken) =>
+      if (!tokenToSet && balanceList.length > 0) {
+        tokenToSet = balanceList.reduce(
+          (prevToken, currentToken) =>
             prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
-          )
-        } else {
-          tokenToSet = defaultToken
-        }
+          balanceList[0], // Providing the first element as the initial value
+        )
       }
 
       // Set the pickedTokenDepo and balanceDepo based on the determined tokenToSet
@@ -1036,6 +1052,8 @@ const AdvancedFarm = () => {
                   ? tempSymbol.toLowerCase() === 'cng'
                   : rewardSymbol === 'GENE'
                   ? tempSymbol.toLowerCase() === '$gene'
+                  : rewardSymbol === 'GENOME'
+                  ? tempSymbol.toLowerCase() === 'genomesdao-genome'
                   : rewardSymbol.toLowerCase() === tempSymbol.toLowerCase()
               ) {
                 // eslint-disable-next-line no-await-in-loop
@@ -1137,6 +1155,8 @@ const AdvancedFarm = () => {
       setActiveMainTag(1)
     } else if (curUrl.includes('#details')) {
       setActiveMainTag(2)
+    } else if (curUrl.includes('#history')) {
+      setActiveMainTag(3)
     }
   }, [curUrl])
 
@@ -1161,6 +1181,45 @@ const AdvancedFarm = () => {
     )
     setDepositUsdValue(depositUsdValue)
   }, [lpTokenBalance, fAssetPool, usdPrice])
+
+  const [balanceFlag, setBalanceFlag] = useState(false)
+  const [detailFlag, setDetailFlag] = useState(false)
+  const [allData, setAllData] = useState([])
+  const [balanceData, setBalanceData] = useState([])
+
+  useEffect(() => {
+    const initData = async () => {
+      const address =
+        token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+      const chainId = token.chain || token.data.chain
+      const {
+        flag1,
+        flag2,
+        data1,
+        mergedData,
+        sumNetChange,
+        sumNetChangeUsd,
+        sumLatestNetChange,
+        sumLatestNetChangeUsd,
+        enrichedData,
+      } = await initBalanceAndDetailData(address, chainId, account)
+
+      setBalanceFlag(flag1)
+      setDetailFlag(flag2)
+      setBalanceData(data1)
+
+      if (flag1 && flag2) {
+        setAllData(mergedData)
+        setUnderlyingEarnings(sumNetChange)
+        setUsdEarnings(sumNetChangeUsd)
+        setUnderlyingEarningsLatest(sumLatestNetChange)
+        setUsdEarningsLatest(sumLatestNetChangeUsd)
+        setHistoryData(enrichedData)
+      }
+    }
+
+    initData()
+  }, [account, token, vaultPool, setUnderlyingEarnings, setUsdEarnings])
 
   const apyDaily = totalApy
     ? (((Number(totalApy) / 100 + 1) ** (1 / 365) - 1) * 100).toFixed(3)
@@ -1240,6 +1299,17 @@ const AdvancedFarm = () => {
     )
   }
 
+  const detailBoxes = [
+    { title: 'Live APY', showValue: showAPY, className: 'balance-box' },
+    { title: 'Daily APY', showValue: showApyDaily, className: 'daily-apy-box' },
+    { title: 'TVL', showValue: showTVL },
+    {
+      title: 'Last Harvest',
+      showValue: () => (useIFARM ? '-' : lastHarvest !== '' ? `${lastHarvest} ago` : '-'),
+      className: 'daily-yield-box',
+    },
+  ]
+
   const rewardTxt = getAdvancedRewardText(
     token,
     vaultPool,
@@ -1273,6 +1343,16 @@ const AdvancedFarm = () => {
     setPendingAction,
     loaded,
     totalRewardsEarned,
+  }
+
+  const showUsdValue = value => {
+    if (value === 0) {
+      return '$0'
+    }
+    if (value < 0.01) {
+      return '<$0.01'
+    }
+    return `$${value.toFixed(2)}`
   }
 
   return (
@@ -1381,24 +1461,29 @@ const AdvancedFarm = () => {
         <BigDiv>
           <InternalSection>
             {activeMainTag === 0 ? (
-              showLodestarVaultInfo ? (
-                <WelcomeBox
-                  bgColorTooltip={bgColorTooltip}
-                  fontColorTooltip={fontColorTooltip}
-                  borderColor={borderColor}
-                >
-                  <BiInfoCircle className="info-circle" fontSize={20} />
-                  <WelcomeContent>
-                    <WelcomeTitle>Vault Note</WelcomeTitle>
-                    <WelcomeText>
-                      The Lodestar team replenishes their markets with ARB incentives weekly, using
-                      random snapshots, until March 31, 2024. We have recently updated the ARB
-                      reward distribution for Lodestar strategies, transitioning to a linear
-                      liquidation of rewards throughout the week. This shift prevents
-                      disproportional gain through short-term deposits and ensures a fair, steady
-                      distribution of rewards for all farmers.
-                      <WelcomeBottom>
-                        <WelcomeKnow onClick={closeBadgeLodestar}>Got it!</WelcomeKnow>
+              <>
+                {showGenomesVaultInfo ? (
+                  <WelcomeBox
+                    bgColorTooltip={bgColorTooltip}
+                    fontColorTooltip={fontColorTooltip}
+                    borderColor={borderColor}
+                  >
+                    <BiInfoCircle className="info-circle" fontSize={20} />
+                    <WelcomeContent>
+                      <WelcomeTitle>Vault Note</WelcomeTitle>
+                      <WelcomeText>
+                        Genomes vaults for GENE and GNOME will be deactivated on the 16th April
+                        2024. A new vault for the GENOME-ETH pool on Base Network can be found{' '}
+                        <WelcomeTicket
+                          href="https://app.harvest.finance/base/0x284c60490212DB0dc0b8F93503d35744f8053381"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          linkColor={linkColorTooltip}
+                          linkColorOnHover={linkColorOnHover}
+                        >
+                          here
+                        </WelcomeTicket>
+                        . For more information, check out the #vault-updates channel on{' '}
                         <WelcomeTicket
                           href="https://discord.com/invite/gzWAG3Wx7Y"
                           target="_blank"
@@ -1406,326 +1491,537 @@ const AdvancedFarm = () => {
                           linkColor={linkColorTooltip}
                           linkColorOnHover={linkColorOnHover}
                         >
-                          Still having questions? Open Discord ticket.
+                          our Discord.
                         </WelcomeTicket>
-                      </WelcomeBottom>
-                    </WelcomeText>
-                  </WelcomeContent>
-                  <WelcomeClose>
-                    <RxCross2 onClick={closeBadgeLodestar} />
-                  </WelcomeClose>
-                </WelcomeBox>
-              ) : showSeamlessVaultInfo ? (
-                <WelcomeBox
-                  bgColorTooltip={bgColorTooltip}
-                  fontColorTooltip={fontColorTooltip}
-                  borderColor={borderColor}
-                >
-                  <BiInfoCircle className="info-circle" fontSize={20} />
-                  <WelcomeContent>
-                    <WelcomeTitle>Vault Note</WelcomeTitle>
-                    <WelcomeText>
-                      <p>
-                        Due to new tokenomics introduced by the Seamless project after the launch of
-                        this farm, Harvest is not able to maintain it. We have deactivated the vault
-                        and Harvest has covered the value of the locked esSEAM tokens for all users
-                        of this vault. Farmers can revert funds at any time. More info can be found
-                        in our Discord&apos;s #vault-updates.
-                      </p>
-                      <p>
-                        Looking for alternatives? Check out these single-asset{' '}
+                        <WelcomeBottom>
+                          <WelcomeKnow onClick={closeBadgeGenomes}>Got it!</WelcomeKnow>
+                          <WelcomeTicket
+                            href="https://discord.com/invite/gzWAG3Wx7Y"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            linkColor={linkColorTooltip}
+                            linkColorOnHover={linkColorOnHover}
+                          >
+                            Still having questions? Open Discord ticket.
+                          </WelcomeTicket>
+                        </WelcomeBottom>
+                      </WelcomeText>
+                    </WelcomeContent>
+                    <WelcomeClose>
+                      <RxCross2 onClick={closeBadgeGenomes} />
+                    </WelcomeClose>
+                  </WelcomeBox>
+                ) : showSeamlessVaultInfo ? (
+                  <WelcomeBox
+                    bgColorTooltip={bgColorTooltip}
+                    fontColorTooltip={fontColorTooltip}
+                    borderColor={borderColor}
+                  >
+                    <BiInfoCircle className="info-circle" fontSize={20} />
+                    <WelcomeContent>
+                      <WelcomeTitle>Vault Note</WelcomeTitle>
+                      <WelcomeText>
+                        <p>
+                          Due to new tokenomics introduced by the Seamless project after the launch
+                          of this farm, Harvest is not able to maintain it. We have deactivated the
+                          vault and Harvest has covered the value of the locked esSEAM tokens for
+                          all users of this vault. Farmers can revert funds at any time. More info
+                          can be found in our Discord&apos;s #vault-updates.
+                        </p>
+                        <p>
+                          Looking for alternatives? Check out these single-asset{' '}
+                          <WelcomeTicket
+                            href="https://app.harvest.finance/farms?search=moonwell"
+                            target="_self"
+                            rel="noopener noreferrer"
+                            linkColor={linkColorTooltip}
+                            linkColorOnHover={linkColorOnHover}
+                          >
+                            Moonwell farms
+                          </WelcomeTicket>
+                          , which are on Base and have similar reward rates.
+                        </p>
+                        <WelcomeBottom>
+                          <WelcomeKnow onClick={closeBadgeSeamless}>Got it!</WelcomeKnow>
+                          <WelcomeTicket
+                            href="https://discord.com/invite/gzWAG3Wx7Y"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            linkColor={linkColorTooltip}
+                            linkColorOnHover={linkColorOnHover}
+                          >
+                            Still having questions? Open Discord ticket.
+                          </WelcomeTicket>
+                        </WelcomeBottom>
+                      </WelcomeText>
+                    </WelcomeContent>
+                    <WelcomeClose>
+                      <RxCross2 onClick={closeBadgeSeamless} />
+                    </WelcomeClose>
+                  </WelcomeBox>
+                ) : showGBVaultInfo ? (
+                  <WelcomeBox
+                    bgColorTooltip={bgColorTooltip}
+                    fontColorTooltip={fontColorTooltip}
+                    borderColor={borderColor}
+                  >
+                    <BiInfoCircle className="info-circle" fontSize={20} />
+                    <WelcomeContent>
+                      <WelcomeTitle>Vault Note</WelcomeTitle>
+                      <WelcomeText>
+                        <p>
+                          We are following an ongoing situation with the GB token. Before proceeding
+                          with this vault, consider following-up with the latest developments with
+                          one of its token constituents on{' '}
+                          <WelcomeTicket
+                            href="https://twitter.com/search?q=%24GB"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            linkColor={linkColorTooltip}
+                            linkColorOnHover={linkColorOnHover}
+                          >
+                            Twitter/X
+                          </WelcomeTicket>
+                          .
+                        </p>
+                        <p>
+                          At this time USD values and APYs might be inaccurate. Zap reverts might
+                          not be available, but reverts into vAMM-GB/WETH LP-tokens will work. The
+                          LP-tokens can then be withdrawn from{' '}
+                          <WelcomeTicket
+                            href="https://aerodrome.finance/withdraw?pair=0x284ddaDA0B71F2D0D4e395B69b1013dBf6f3e6C1"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            linkColor={linkColorTooltip}
+                            linkColorOnHover={linkColorOnHover}
+                          >
+                            Aerodrome
+                          </WelcomeTicket>
+                          .
+                        </p>
+                        <WelcomeBottom>
+                          <WelcomeKnow onClick={closeBadgeGB}>Got it!</WelcomeKnow>
+                          <WelcomeTicket
+                            href="https://discord.com/invite/gzWAG3Wx7Y"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            linkColor={linkColorTooltip}
+                            linkColorOnHover={linkColorOnHover}
+                          >
+                            Still having questions? Open Discord ticket.
+                          </WelcomeTicket>
+                        </WelcomeBottom>
+                      </WelcomeText>
+                    </WelcomeContent>
+                    <WelcomeClose>
+                      <RxCross2 onClick={closeBadgeGB} />
+                    </WelcomeClose>
+                  </WelcomeBox>
+                ) : showIFARMInfo ? (
+                  <WelcomeBox
+                    bgColorTooltip={bgColorTooltip}
+                    fontColorTooltip={fontColorTooltip}
+                    borderColor={borderColor}
+                  >
+                    <BiInfoCircle className="info-circle" fontSize={20} />
+                    <WelcomeContent>
+                      <WelcomeTitle>Vault Note</WelcomeTitle>
+                      <WelcomeText>
+                        Legacy FARM staking is currently available in the previous app version{' '}
                         <WelcomeTicket
-                          href="https://app.harvest.finance/farms?search=moonwell"
-                          target="_self"
-                          rel="noopener noreferrer"
-                          linkColor={linkColorTooltip}
-                          linkColorOnHover={linkColorOnHover}
-                        >
-                          Moonwell farms
-                        </WelcomeTicket>
-                        , which are on Base and have similar reward rates.
-                      </p>
-                      <WelcomeBottom>
-                        <WelcomeKnow onClick={closeBadgeSeamless}>Got it!</WelcomeKnow>
-                        <WelcomeTicket
-                          href="https://discord.com/invite/gzWAG3Wx7Y"
+                          className="useIFARM"
+                          href="https://v3.harvest.finance/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
                           target="_blank"
                           rel="noopener noreferrer"
                           linkColor={linkColorTooltip}
                           linkColorOnHover={linkColorOnHover}
                         >
-                          Still having questions? Open Discord ticket.
-                        </WelcomeTicket>
-                      </WelcomeBottom>
-                    </WelcomeText>
-                  </WelcomeContent>
-                  <WelcomeClose>
-                    <RxCross2 onClick={closeBadgeSeamless} />
-                  </WelcomeClose>
-                </WelcomeBox>
-              ) : showGBVaultInfo ? (
-                <WelcomeBox
-                  bgColorTooltip={bgColorTooltip}
-                  fontColorTooltip={fontColorTooltip}
-                  borderColor={borderColor}
-                >
-                  <BiInfoCircle className="info-circle" fontSize={20} />
-                  <WelcomeContent>
-                    <WelcomeTitle>Vault Note</WelcomeTitle>
-                    <WelcomeText>
-                      <p>
-                        We are following an ongoing situation with the GB token. Before proceeding
-                        with this vault, consider following-up with the latest developments with one
-                        of its token constituents on{' '}
-                        <WelcomeTicket
-                          href="https://twitter.com/search?q=%24GB"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          linkColor={linkColorTooltip}
-                          linkColorOnHover={linkColorOnHover}
-                        >
-                          Twitter/X
+                          under this link
                         </WelcomeTicket>
                         .
-                      </p>
-                      <p>
-                        At this time USD values and APYs might be inaccurate. Zap reverts might not
-                        be available, but reverts into vAMM-GB/WETH LP-tokens will work. The
-                        LP-tokens can then be withdrawn from{' '}
-                        <WelcomeTicket
-                          href="https://aerodrome.finance/withdraw?pair=0x284ddaDA0B71F2D0D4e395B69b1013dBf6f3e6C1"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          linkColor={linkColorTooltip}
-                          linkColorOnHover={linkColorOnHover}
+                        <WelcomeBottom>
+                          <WelcomeKnow onClick={closeIFARMBadge}>Alright, got it!</WelcomeKnow>
+                        </WelcomeBottom>
+                      </WelcomeText>
+                    </WelcomeContent>
+                    <WelcomeClose>
+                      <RxCross2 onClick={closeIFARMBadge} />
+                    </WelcomeClose>
+                  </WelcomeBox>
+                ) : (
+                  <></>
+                )}
+                <ManageBoxWrapper>
+                  <MyBalance
+                    backColor={backColor}
+                    borderColor={borderColor}
+                    marginBottom={isMobile ? '20px' : '25px'}
+                    marginTop={isMobile ? '0px' : '0'}
+                    height={isMobile ? 'unset' : '120px'}
+                  >
+                    <NewLabel
+                      display="flex"
+                      justifyContent="space-between"
+                      size={isMobile ? '12px' : '12px'}
+                      weight="600"
+                      height={isMobile ? '20px' : '20px'}
+                      color={fontColor4}
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
+                      borderBottom="1px solid #F2F5FF"
+                    >
+                      <FlexDiv>
+                        {showLatestEarnings ? 'Latest Earnings' : 'Lifetime Earnings'}
+                        <EarningsBadge>Beta</EarningsBadge>
+                        <PiQuestion
+                          className="question"
+                          data-tip
+                          data-for={
+                            showLatestEarnings
+                              ? 'tooltip-latest-earning'
+                              : 'tooltip-lifetime-earning'
+                          }
+                        />
+                        <ReactTooltip
+                          id={
+                            showLatestEarnings
+                              ? 'tooltip-latest-earning'
+                              : 'tooltip-lifetime-earning'
+                          }
+                          backgroundColor="#101828"
+                          borderColor="black"
+                          textColor="white"
                         >
-                          Aerodrome
-                        </WelcomeTicket>
-                        .
-                      </p>
-                      <WelcomeBottom>
-                        <WelcomeKnow onClick={closeBadgeGB}>Got it!</WelcomeKnow>
-                        <WelcomeTicket
-                          href="https://discord.com/invite/gzWAG3Wx7Y"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          linkColor={linkColorTooltip}
-                          linkColorOnHover={linkColorOnHover}
-                        >
-                          Still having questions? Open Discord ticket.
-                        </WelcomeTicket>
-                      </WelcomeBottom>
-                    </WelcomeText>
-                  </WelcomeContent>
-                  <WelcomeClose>
-                    <RxCross2 onClick={closeBadgeGB} />
-                  </WelcomeClose>
-                </WelcomeBox>
-              ) : showIFARMInfo ? (
-                <WelcomeBox
-                  bgColorTooltip={bgColorTooltip}
-                  fontColorTooltip={fontColorTooltip}
-                  borderColor={borderColor}
-                >
-                  <BiInfoCircle className="info-circle" fontSize={20} />
-                  <WelcomeContent>
-                    <WelcomeTitle>Vault Note</WelcomeTitle>
-                    <WelcomeText>
-                      Legacy FARM staking is currently available in the previous app version{' '}
-                      <WelcomeTicket
-                        className="useIFARM"
-                        href="https://v3.harvest.finance/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        linkColor={linkColorTooltip}
-                        linkColorOnHover={linkColorOnHover}
+                          <NewLabel
+                            size={isMobile ? '12px' : '12px'}
+                            height={isMobile ? '18px' : '18px'}
+                            weight="500"
+                            color="white"
+                          >
+                            {showLatestEarnings ? (
+                              <>
+                                Your latest earnings in this farm since the last interaction (revert
+                                or convert).
+                                <br />
+                                <br />
+                                USD value is subject to market fluctuations. Claimable rewards are
+                                not part of this estimation.
+                                <br />
+                                <br />
+                                Underlying is subject to auto-compounding events.
+                              </>
+                            ) : (
+                              <>
+                                Your lifetime earnings in this farm expressed in USD and Underlying
+                                token. USD value is subject to market fluctuations. Claimable
+                                rewards are not part of this estimation.
+                                <br />
+                                <br />
+                                Underlying is subject to auto-compounding events.
+                              </>
+                            )}
+                          </NewLabel>
+                        </ReactTooltip>
+                      </FlexDiv>
+                      <ThemeMode mode={showLatestEarnings ? 'latest' : 'lifetime'}>
+                        <div id="theme-switch">
+                          <div className="switch-track">
+                            <div className="switch-thumb" />
+                          </div>
+
+                          <input
+                            type="checkbox"
+                            checked={showLatestEarnings}
+                            onChange={switchEarnings}
+                            aria-label="Switch between lifetime and latest earnings"
+                          />
+                        </div>
+                      </ThemeMode>
+                    </NewLabel>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                    >
+                      <NewLabel
+                        display="flex"
+                        size={isMobile ? '12px' : '12px'}
+                        weight="500"
+                        height={isMobile ? '24px' : '24px'}
+                        color={fontColor3}
                       >
-                        under this link
-                      </WelcomeTicket>
-                      .
-                      <WelcomeBottom>
-                        <WelcomeKnow onClick={closeIFARMBadge}>Alright, got it!</WelcomeKnow>
-                      </WelcomeBottom>
-                    </WelcomeText>
-                  </WelcomeContent>
-                  <WelcomeClose>
-                    <RxCross2 onClick={closeIFARMBadge} />
-                  </WelcomeClose>
-                </WelcomeBox>
-              ) : (
-                <></>
-              )
+                        in USD
+                      </NewLabel>
+                      <NewLabel
+                        size={isMobile ? '12px' : '12px'}
+                        height={isMobile ? '24px' : '24px'}
+                        weight="600"
+                        color={fontColor1}
+                      >
+                        {showUsdValue(showLatestEarnings ? usdEarningsLatest : usdEarnings)}
+                      </NewLabel>
+                    </FlexDiv>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                    >
+                      <NewLabel
+                        size={isMobile ? '12px' : '12px'}
+                        height={isMobile ? '24px' : '24px'}
+                        weight="500"
+                        color={fontColor3}
+                        self="center"
+                      >
+                        Underlying
+                      </NewLabel>
+                      <NewLabel
+                        weight="600"
+                        size={isMobile ? '12px' : '12px'}
+                        height={isMobile ? '24px' : '24px'}
+                        color={fontColor1}
+                        self="center"
+                        fontColor2={fontColor2}
+                        position="relative"
+                        align="right"
+                        marginBottom={isMobile ? '12px' : '0px'}
+                      >
+                        {showLatestEarnings ? underlyingEarningsLatest : underlyingEarnings}
+                        <br />
+                        <span className="symbol">{id}</span>
+                      </NewLabel>
+                    </FlexDiv>
+                  </MyBalance>
+                  <MyBalance
+                    backColor={backColor}
+                    borderColor={borderColor}
+                    marginBottom={isMobile ? '20px' : '25px'}
+                    marginTop={isMobile ? '0px' : '0'}
+                    height={isMobile ? 'unset' : '120px'}
+                  >
+                    <NewLabel
+                      display="flex"
+                      justifyContent="space-between"
+                      size={isMobile ? '12px' : '12px'}
+                      weight="600"
+                      height={isMobile ? '20px' : '20px'}
+                      color={fontColor4}
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
+                      borderBottom="1px solid #F2F5FF"
+                    >
+                      Total Balance
+                      <PiQuestion className="question" data-tip data-for="tooltip-total-balance" />
+                      <ReactTooltip
+                        id="tooltip-total-balance"
+                        backgroundColor="#101828"
+                        borderColor="black"
+                        textColor="white"
+                      >
+                        <NewLabel
+                          size={isMobile ? '12px' : '12px'}
+                          height={isMobile ? '18px' : '18px'}
+                          weight="500"
+                          color="white"
+                        >
+                          Total Balance reflects the fTokens in connected wallet, alongside their
+                          USD value, which can change with the market.
+                          <br />
+                          <br />
+                          The fToken count stays the same unless you revert or convert more crypto
+                          in the farm.
+                        </NewLabel>
+                      </ReactTooltip>
+                    </NewLabel>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                    >
+                      <NewLabel
+                        display="flex"
+                        size={isMobile ? '12px' : '12px'}
+                        weight="500"
+                        height={isMobile ? '24px' : '24px'}
+                        color={fontColor3}
+                      >
+                        in USD
+                      </NewLabel>
+                      <NewLabel
+                        size={isMobile ? '12px' : '12px'}
+                        height={isMobile ? '24px' : '24px'}
+                        weight="600"
+                        color={fontColor1}
+                      >
+                        {!connected ? (
+                          '$0.00'
+                        ) : lpTokenBalance ? (
+                          showUsdValue(balanceAmount)
+                        ) : (
+                          <AnimatedDots />
+                        )}
+                      </NewLabel>
+                    </FlexDiv>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                    >
+                      <NewLabel
+                        size={isMobile ? '12px' : '12px'}
+                        height={isMobile ? '24px' : '24px'}
+                        weight="500"
+                        color={fontColor3}
+                        self="center"
+                      >
+                        fToken
+                      </NewLabel>
+                      <NewLabel
+                        size={isMobile ? '12px' : '12px'}
+                        height={isMobile ? '24px' : '24px'}
+                        weight="600"
+                        color={fontColor1}
+                        fontColor2={fontColor2}
+                        position="relative"
+                        align="right"
+                        marginBottom={isMobile ? '12px' : '0px'}
+                      >
+                        {!connected ? (
+                          0
+                        ) : lpTokenBalance ? (
+                          totalValue === 0 ? (
+                            '0.00'
+                          ) : (
+                            totalValue
+                          )
+                        ) : (
+                          <AnimatedDots />
+                        )}
+                        <br />
+                        <span className="symbol">{useIFARM ? `i${id}` : `f${id}`}</span>
+                      </NewLabel>
+                    </FlexDiv>
+                  </MyBalance>
+                  <MyBalance
+                    backColor={backColor}
+                    borderColor={borderColor}
+                    marginBottom={isMobile ? '20px' : '25px'}
+                    marginTop={isMobile ? '0px' : '0'}
+                    height={isMobile ? 'unset' : '120px'}
+                  >
+                    <NewLabel
+                      display="flex"
+                      justifyContent="space-between"
+                      size={isMobile ? '12px' : '12px'}
+                      weight="600"
+                      height={isMobile ? '20px' : '20px'}
+                      color={fontColor4}
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
+                      borderBottom="1px solid #F2F5FF"
+                    >
+                      Yield Estimates
+                      <PiQuestion className="question" data-tip data-for="tooltip-yield-estimate" />
+                      <ReactTooltip
+                        id="tooltip-yield-estimate"
+                        backgroundColor="#101828"
+                        borderColor="black"
+                        textColor="white"
+                      >
+                        <NewLabel
+                          size={isMobile ? '12px' : '12px'}
+                          height={isMobile ? '18px' : '18px'}
+                          weight="500"
+                          color="white"
+                        >
+                          Estimated yield on your fTokens of this farm, denominated in USD. Subject
+                          to market fluctuations.
+                          <br />
+                          Note: frequency of auto-compounding events vary, so take these numbers as
+                          rough guides, not exact figures.
+                        </NewLabel>
+                      </ReactTooltip>
+                    </NewLabel>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                    >
+                      <NewLabel
+                        display="flex"
+                        size={isMobile ? '12px' : '12px'}
+                        weight="500"
+                        height={isMobile ? '24px' : '24px'}
+                        color={fontColor3}
+                      >
+                        Daily
+                      </NewLabel>
+                      <NewLabel
+                        size={isMobile ? '12px' : '12px'}
+                        height={isMobile ? '24px' : '24px'}
+                        weight="600"
+                        color={fontColor1}
+                      >
+                        {!connected ? '$0' : isNaN(yieldDaily) ? '$0' : showUsdValue(yieldDaily)}
+                      </NewLabel>
+                    </FlexDiv>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                    >
+                      <NewLabel
+                        size={isMobile ? '12px' : '12px'}
+                        height={isMobile ? '24px' : '24px'}
+                        weight="500"
+                        color={fontColor3}
+                        self="center"
+                      >
+                        Monthly
+                      </NewLabel>
+                      <NewLabel
+                        weight="600"
+                        size={isMobile ? '12px' : '12px'}
+                        height={isMobile ? '24px' : '24px'}
+                        color={fontColor1}
+                        self="center"
+                      >
+                        {!connected
+                          ? '$0.00'
+                          : isNaN(yieldMonthly)
+                          ? '$0.00'
+                          : showUsdValue(yieldMonthly)}
+                      </NewLabel>
+                    </FlexDiv>
+                  </MyBalance>
+                </ManageBoxWrapper>
+              </>
             ) : activeMainTag === 2 ? (
               <BoxCover borderColor={borderColor}>
-                <ValueBox
-                  width="24%"
-                  className="balance-box"
-                  backColor={backColor}
-                  borderColor={borderColor}
-                >
-                  <BoxTitle fontColor3={fontColor3}>Live APY</BoxTitle>
-                  <BoxValue fontColor1={fontColor1}>{showAPY()}</BoxValue>
-                </ValueBox>
-                <ValueBox
-                  width="24%"
-                  className="daily-apy-box"
-                  backColor={backColor}
-                  borderColor={borderColor}
-                >
-                  <BoxTitle fontColor3={fontColor3}>Daily APY</BoxTitle>
-                  <BoxValue fontColor1={fontColor1}>{showApyDaily()}</BoxValue>
-                </ValueBox>
-                <ValueBox width="24%" backColor={backColor} borderColor={borderColor}>
-                  <BoxTitle fontColor3={fontColor3}>TVL</BoxTitle>
-                  <BoxValue fontColor1={fontColor1}>{showTVL()}</BoxValue>
-                </ValueBox>
-                <ValueBox
-                  width="24%"
-                  className="daily-yield-box"
-                  backColor={backColor}
-                  borderColor={borderColor}
-                >
-                  <BoxTitle fontColor3={fontColor3}>Last Harvest</BoxTitle>
-                  <BoxValue fontColor1={fontColor1}>
-                    {useIFARM ? '-' : lastHarvest !== '' ? `${lastHarvest} ago` : '-'}
-                  </BoxValue>
-                </ValueBox>
+                {detailBoxes.map(({ title, showValue, className }, index) => (
+                  <ValueBox
+                    key={index}
+                    width="24%"
+                    className={className}
+                    backColor={backColor}
+                    borderColor={borderColor}
+                  >
+                    <BoxTitle fontColor3={fontColor3}>{title}</BoxTitle>
+                    <BoxValue fontColor1={fontColor1}>{showValue()}</BoxValue>
+                  </ValueBox>
+                ))}
               </BoxCover>
+            ) : activeMainTag === 3 ? (
+              <EarningsHistory tokenSymbol={id} historyData={historyData} />
             ) : (
               <></>
             )}
             <MainSection height={activeMainTag === 0 ? '100%' : 'fit-content'}>
               {activeMainTag === 0 ? (
-                <>
-                  <BoxCover borderColor={borderColor}>
-                    <ValueBox
-                      width="32%"
-                      className="balance-box"
-                      backColor={backColor}
-                      borderColor={borderColor}
-                    >
-                      <BoxTitle fontColor3={fontColor3}>
-                        {isMobile ? 'Balance' : 'My Balance'}
-                        <PiQuestion className="question" data-tip data-for="tooltip-mybalance" />
-                        <ReactTooltip
-                          id="tooltip-mybalance"
-                          backgroundColor="#101828"
-                          borderColor="black"
-                          textColor="white"
-                        >
-                          <NewLabel
-                            size={isMobile ? '10px' : '12px'}
-                            height={isMobile ? '15px' : '18px'}
-                            weight="500"
-                            color="white"
-                          >
-                            {useIFARM
-                              ? `It's the USD value of all iFARM tokens in your wallet. `
-                              : `It's the USD value of your all staked and unstaked fTokens.`}
-                          </NewLabel>
-                        </ReactTooltip>
-                      </BoxTitle>
-                      <BoxValue fontColor1={fontColor1}>
-                        {!connected ? (
-                          '$0.00'
-                        ) : lpTokenBalance ? (
-                          balanceAmount === 0 ? (
-                            '$0.00'
-                          ) : balanceAmount < 0.01 ? (
-                            '<$0.01'
-                          ) : (
-                            `$${formatNumber(balanceAmount, 2)}`
-                          )
-                        ) : (
-                          <AnimatedDots />
-                        )}
-                      </BoxValue>
-                    </ValueBox>
-                    <ValueBox
-                      width="32%"
-                      className="monthly-yield-box"
-                      backColor={backColor}
-                      borderColor={borderColor}
-                    >
-                      <BoxTitle fontColor3={fontColor3}>
-                        Est. Monthly Yield
-                        <PiQuestion
-                          className="question"
-                          data-tip
-                          data-for="tooltip-monthly-yield"
-                        />
-                        <ReactTooltip
-                          id="tooltip-monthly-yield"
-                          backgroundColor="#101828"
-                          borderColor="black"
-                          textColor="white"
-                        >
-                          <NewLabel
-                            size={isMobile ? '10px' : '12px'}
-                            height={isMobile ? '15px' : '18px'}
-                            weight="500"
-                            color="white"
-                          >
-                            {useIFARM
-                              ? `Calculated from the current USD value of iFARM. Note that this is subject to change with iFARM's price fluctuations and the number of all wallets entitled to Harvest's platform rewards.`
-                              : `Calculated from the current USD value of underlying and reward tokens used in this farm. Note that this is subject to change with market prices and TVL fluctuations.`}
-                          </NewLabel>
-                        </ReactTooltip>
-                      </BoxTitle>
-                      <BoxValue fontColor1={fontColor1}>
-                        {!connected
-                          ? '$0.00'
-                          : isNaN(yieldMonthly)
-                          ? '$0.00'
-                          : yieldMonthly === 0
-                          ? '$0.00'
-                          : yieldMonthly < 0.01
-                          ? '<$0.01'
-                          : `$${formatNumber(yieldMonthly, 2)}`}
-                      </BoxValue>
-                    </ValueBox>
-                    <ValueBox
-                      width="32%"
-                      className="daily-yield-box"
-                      backColor={backColor}
-                      borderColor={borderColor}
-                    >
-                      <BoxTitle fontColor3={fontColor3}>
-                        Est. Daily Yield
-                        <PiQuestion
-                          className="question"
-                          data-tip
-                          data-for="tooltip-monthly-yield"
-                        />
-                      </BoxTitle>
-                      <BoxValue fontColor1={fontColor1}>
-                        {!connected
-                          ? '$0.00'
-                          : isNaN(yieldDaily)
-                          ? '$0.00'
-                          : yieldDaily === 0
-                          ? '$0.00'
-                          : yieldDaily < 0.01
-                          ? '<$0.01'
-                          : `$${formatNumber(yieldDaily, 2)}`}
-                      </BoxValue>
-                    </ValueBox>
-                  </BoxCover>
-                  {!isMobile ? (
-                    <UserBalanceData
-                      token={token}
-                      vaultPool={vaultPool}
-                      tokenSymbol={id}
-                      totalValue={totalValue}
-                      useIFARM={useIFARM}
-                      farmPrice={farmPrice}
-                      underlyingPrice={underlyingPrice}
-                      pricePerFullShare={pricePerFullShare}
-                    />
-                  ) : (
-                    <></>
-                  )}
-                </>
+                !isMobile && (
+                  <UserBalanceData
+                    totalValue={totalValue}
+                    useIFARM={useIFARM}
+                    farmPrice={farmPrice}
+                    underlyingPrice={underlyingPrice}
+                    pricePerFullShare={pricePerFullShare}
+                    balanceFlag={balanceFlag}
+                    detailFlag={detailFlag}
+                    allData={allData}
+                    balanceData={balanceData}
+                  />
+                )
               ) : activeMainTag === 1 ? (
                 <>
                   <MyTotalReward
@@ -1737,15 +2033,9 @@ const AdvancedFarm = () => {
                     <RewardValue>
                       <BoxValue fontColor1={fontColor1}>
                         {!connected ? (
-                          0
+                          '$0'
                         ) : userStats ? (
-                          totalReward === 0 ? (
-                            '$0.00'
-                          ) : totalReward < 0.01 ? (
-                            '<$0.01'
-                          ) : (
-                            `$${formatNumber(totalReward, 2)}`
-                          )
+                          showUsdValue(totalReward)
                         ) : (
                           <AnimatedDots />
                         )}
@@ -1770,7 +2060,7 @@ const AdvancedFarm = () => {
                     </MyBalance>
                   )}
                 </>
-              ) : (
+              ) : activeMainTag === 2 ? (
                 <>
                   <HalfInfo
                     padding="25px 18px"
@@ -1912,161 +2202,13 @@ const AdvancedFarm = () => {
                     </HalfInfo>
                   )}
                 </>
+              ) : (
+                <></>
               )}
             </MainSection>
             <RestContent height={activeMainTag === 0 ? '100%' : 'fit-content'}>
               {activeMainTag === 0 ? (
                 <FirstPartSection>
-                  <MyBalance
-                    backColor={backColor}
-                    borderColor={borderColor}
-                    marginBottom={isMobile ? '20px' : '25px'}
-                    marginTop={isMobile ? '0px' : '0'}
-                    height={isMobile ? 'unset' : '120px'}
-                  >
-                    <NewLabel
-                      display="flex"
-                      justifyContent="space-between"
-                      size={isMobile ? '12px' : '12px'}
-                      weight="600"
-                      height={isMobile ? '20px' : '20px'}
-                      color={fontColor4}
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom="1px solid #F2F5FF"
-                    >
-                      <>{useIFARM ? `i${id}` : `f${id}`}</>
-                      <PiQuestion className="question" data-tip data-for="tooltip-token-name" />
-                      <ReactTooltip
-                        id="tooltip-token-name"
-                        backgroundColor="#101828"
-                        borderColor="black"
-                        textColor="white"
-                      >
-                        <NewLabel
-                          size={isMobile ? '12px' : '12px'}
-                          height={isMobile ? '18px' : '18px'}
-                          weight="500"
-                          color="white"
-                        >
-                          {useIFARM
-                            ? `Interest-bearing version of the FARM token. By simply holding iFARM, you are entitled to Harvest's profits.`
-                            : 'The interest-bearing fToken. It entitles its holder to auto-compounded yield of this farm.'}
-                        </NewLabel>
-                      </ReactTooltip>
-                    </NewLabel>
-                    <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '5px 15px' : '5px 15px'}
-                    >
-                      <NewLabel
-                        display="flex"
-                        size={isMobile ? '12px' : '12px'}
-                        weight="500"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor3}
-                      >
-                        Balance
-                        <PiQuestion className="question" data-tip data-for="tooltip-balance" />
-                        <ReactTooltip
-                          id="tooltip-balance"
-                          backgroundColor="#101828"
-                          borderColor="black"
-                          textColor="white"
-                        >
-                          <NewLabel
-                            size={isMobile ? '12px' : '12px'}
-                            height={isMobile ? '18px' : '18px'}
-                            weight="500"
-                            color="white"
-                          >
-                            {useIFARM
-                              ? `Sum of iFARM tokens in your wallet.`
-                              : 'Sum of your staked and unstaked fTokens.'}
-                          </NewLabel>
-                        </ReactTooltip>
-                      </NewLabel>
-                      <NewLabel
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        weight="600"
-                        color={fontColor1}
-                      >
-                        {!connected ? (
-                          0
-                        ) : lpTokenBalance ? (
-                          totalValue === 0 ? (
-                            '0.00'
-                          ) : (
-                            totalValue
-                          )
-                        ) : (
-                          <AnimatedDots />
-                        )}
-                      </NewLabel>
-                    </FlexDiv>
-                    <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '5px 15px' : '5px 15px'}
-                    >
-                      <NewLabel
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        weight="500"
-                        color={fontColor3}
-                        self="center"
-                      >
-                        Underlying Balance
-                        <PiQuestion
-                          className="question"
-                          data-tip
-                          data-for="tooltip-underlying-balance"
-                        />
-                        <ReactTooltip
-                          id="tooltip-underlying-balance"
-                          backgroundColor="#101828"
-                          borderColor="black"
-                          textColor="white"
-                        >
-                          <NewLabel
-                            size={isMobile ? '12px' : '12px'}
-                            height={isMobile ? '18px' : '18px'}
-                            weight="500"
-                            color="white"
-                          >
-                            {useIFARM ? (
-                              `Your iFARM denominated in FARM. Subject to change as iFARM accrues yield. `
-                            ) : (
-                              <>
-                                Current amount of LP/Tokens represented by <span>f{id}</span>,
-                                subject to auto-compounding mechanism at every harvest event
-                              </>
-                            )}
-                          </NewLabel>
-                        </ReactTooltip>
-                      </NewLabel>
-                      <NewLabel
-                        weight="600"
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor1}
-                        self="center"
-                      >
-                        {!connected ? (
-                          0
-                        ) : lpTokenBalance ? (
-                          totalValue === 0 ? (
-                            '0.00'
-                          ) : useIFARM ? (
-                            `${totalValue * pricePerFullShare} ${id}`
-                          ) : (
-                            totalValue * pricePerFullShare
-                          )
-                        ) : (
-                          <AnimatedDots />
-                        )}
-                      </NewLabel>
-                    </FlexDiv>
-                  </MyBalance>
                   <HalfContent
                     backColor={backColor}
                     borderColor={borderColor}
@@ -2209,14 +2351,15 @@ const AdvancedFarm = () => {
                   </HalfContent>
                   {isMobile ? (
                     <UserBalanceData
-                      token={token}
-                      vaultPool={vaultPool}
-                      tokenSymbol={id}
                       totalValue={totalValue}
                       useIFARM={useIFARM}
                       farmPrice={farmPrice}
                       underlyingPrice={underlyingPrice}
                       pricePerFullShare={pricePerFullShare}
+                      balanceFlag={balanceFlag}
+                      detailFlag={detailFlag}
+                      allData={allData}
+                      balanceData={balanceData}
                     />
                   ) : (
                     <></>
@@ -2528,7 +2671,7 @@ const AdvancedFarm = () => {
                     </UnstakeSection>
                   </HalfContent>
                 </SecondPartSection>
-              ) : (
+              ) : activeMainTag === 2 ? (
                 <RestInternal>
                   {!useIFARM && (
                     <MyBalance
@@ -2738,6 +2881,8 @@ const AdvancedFarm = () => {
                     </HalfInfo>
                   )}
                 </RestInternal>
+              ) : (
+                <></>
               )}
             </RestContent>
           </InternalSection>

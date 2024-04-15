@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
-import { getDataQuery } from '../../utils'
+import { getDataQuery } from '../../utilities/apiCalls'
 import { directDetailUrl } from '../../constants'
 import { useStats } from '../../providers/Stats'
 import { useWallet } from '../../providers/Wallet'

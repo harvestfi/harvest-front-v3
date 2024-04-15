@@ -37,7 +37,8 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { fromWei } from '../../services/web3'
-import { parseValue, getTotalApy, isLedgerLive } from '../../utils'
+import { parseValue, isLedgerLive } from '../../utilities/formats'
+import { getTotalApy } from '../../utilities/parsers'
 import {
   Column,
   Container,
@@ -503,7 +504,6 @@ const Portfolio = () => {
                     ) {
                       // eslint-disable-next-line no-await-in-loop
                       usdRewardPrice = await getTokenPriceFromApi(tempData.id)
-                      // console.log(`${rewardSymbol} - USD Price: ${usdRewardPrice}`)
                       break
                     }
                   }
@@ -517,17 +517,6 @@ const Portfolio = () => {
               stats.totalRewardUsd += Number(rewardValues * Number(usdRewardPrice))
               valueRewards += Number(rewardValues * Number(usdRewardPrice))
               stats.rewardSymbol.push(rewardSymbol)
-              // console.log(
-              //   tokenName,
-              //   ': ',
-              //   rewardSymbol,
-              //   ' ###### ',
-              //   rewardValues,
-              //   ' * ',
-              //   usdRewardPrice,
-              //   ' = ',
-              //   Number(rewardValues * Number(usdRewardPrice)),
-              // )
 
               const rewardPriceUSD = rewardValues * Number(usdRewardPrice)
               stats.rewardUSD.push(rewardPriceUSD)
@@ -643,38 +632,63 @@ const Portfolio = () => {
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
+  const TopBoxData = [
+    // {
+    //   icon: Safe,
+    //   content: 'Total Net Profit',
+    //   price: totalDeposit,
+    //   toolTipTitle: 'tt-total-balance',
+    //   toolTip:
+    //     "Total yield earnings in USD from all farms, excluding claimable rewards. Subject to change with market fluctuations. For detailed information on your yield earnings, see the 'Underlying' value in the Lifetime Earnings box on each farm's page.",
+    // },
+    {
+      icon: Safe,
+      content: 'Total Balance',
+      price: totalDeposit,
+      toolTipTitle: 'tt-total-balance',
+      toolTip:
+        "Sum of your wallet's staked and unstaked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.",
+    },
+    {
+      icon: Coin1,
+      content: 'Est. Monthly Yield',
+      price: totalYieldMonthly,
+      toolTipTitle: 'tt-monthly-yield',
+      toolTip:
+        'Estimated monthly yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.',
+    },
+    {
+      icon: Coin2,
+      content: 'Est. Daily Yield',
+      price: totalYieldDaily,
+      toolTipTitle: 'tt-daily-yield',
+      toolTip:
+        'Estimated daily yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.',
+    },
+    {
+      icon: Diamond,
+      content: 'Rewards',
+      price: totalRewards,
+      toolTipTitle: 'tt-rewards',
+      toolTip:
+        'Accrued rewards on all your staked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.',
+    },
+  ]
+
   return (
     <Container bgColor={bgColor} fontColor={fontColor}>
       <Inner>
         <SubPart>
-          <TotalValue
-            icon={Safe}
-            content="Total Balance"
-            price={totalDeposit}
-            toolTipTitle="tt-total-balance"
-            toolTip="Sum of your wallet's staked and unstaked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
-          />
-          <TotalValue
-            icon={Coin1}
-            content="Est. Monthly Yield"
-            price={totalYieldMonthly}
-            toolTipTitle="tt-monthly-yield"
-            toolTip="Estimated monthly yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
-          />
-          <TotalValue
-            icon={Coin2}
-            content="Est. Daily Yield"
-            price={totalYieldDaily}
-            toolTipTitle="tt-daily-yield"
-            toolTip="Estimated daily yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
-          />
-          <TotalValue
-            icon={Diamond}
-            content="Rewards"
-            price={totalRewards}
-            toolTipTitle="tt-rewards"
-            toolTip="Accrued rewards on all your staked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
-          />
+          {TopBoxData.map((data, index) => (
+            <TotalValue
+              key={index}
+              icon={data.icon}
+              content={data.content}
+              price={data.price}
+              toolTipTitle={data.toolTipTitle}
+              toolTip={data.toolTip}
+            />
+          ))}
         </SubPart>
 
         <MobileSubPart>

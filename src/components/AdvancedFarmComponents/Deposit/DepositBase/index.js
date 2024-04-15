@@ -17,7 +17,7 @@ import { useWallet } from '../../../../providers/Wallet'
 import { CHAIN_IDS } from '../../../../data/constants'
 import { fromWei, toWei } from '../../../../services/web3'
 import { addresses } from '../../../../data'
-import { formatNumberWido, isSpecialApp } from '../../../../utils'
+import { formatNumberWido, isSpecialApp } from '../../../../utilities/formats'
 import Button from '../../../Button'
 import AnimatedDots from '../../../AnimatedDots'
 import {
@@ -176,7 +176,7 @@ const DepositBase = ({
 
           if (pickedDefaultToken) {
             const outputAmountDefaultDecimals = new BigNumber(inputAmount.toString())
-              .dividedBy(pricePerFullShare)
+              .dividedBy(new BigNumber(pricePerFullShare))
               .toString()
             outputAmountDefault = toWei(outputAmountDefaultDecimals, pickedToken.decimals, 0)
           } else if (supportedVault) {
@@ -200,7 +200,7 @@ const DepositBase = ({
             let fromTokenUsdPrice, toTokenUsdPrice
             if (pickedDefaultToken) {
               fromTokenUsdPrice = pickedToken.usdPrice
-              toTokenUsdPrice = Number(pickedToken.usdPrice) * pricePerFullShare
+              toTokenUsdPrice = Number(pickedToken.usdPrice) * Number(pricePerFullShare)
             } else {
               const fromTokenDetail = await getPortalsToken(chainId, fromToken)
               const toTokenDetail = await getPortalsToken(chainId, toToken)
