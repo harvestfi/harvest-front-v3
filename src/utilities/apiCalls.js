@@ -365,6 +365,20 @@ export const getUserBalanceHistories2 = async (address, chainId) => {
   return { data2, flag2 }
 }
 
+const removeZeroValueObjects = data => {
+  let nonZeroValueEncountered = false
+  for (let i = data.length - 1; i >= 0; i -= 1) {
+    if (parseFloat(data[i].value) === 0 || data[i].value === '0') {
+      if (!nonZeroValueEncountered) {
+        data.splice(i, 1)
+      }
+    } else {
+      nonZeroValueEncountered = true
+    }
+  }
+  return data
+}
+
 export const initBalanceAndDetailData = async (address, chainId, account) => {
   const timestamps = []
   const uniqueData2 = []
@@ -408,7 +422,7 @@ export const initBalanceAndDetailData = async (address, chainId, account) => {
             uniqueData2[z].value = data1[i].value
             mergedData.push(uniqueData2[z])
             z += 1
-            if (!addFlag) {
+            if (!addFlag && uniqueData2[z].timestamp === data1[i].timestamp) {
               addFlag = true
             }
           }
@@ -451,7 +465,7 @@ export const initBalanceAndDetailData = async (address, chainId, account) => {
             if (i >= uniqueData2.length) {
               break
             }
-            if (!addFlag) {
+            if (!addFlag && uniqueData2[i].timestamp === data1[z].timestamp) {
               addFlag = true
             }
           }
@@ -478,7 +492,7 @@ export const initBalanceAndDetailData = async (address, chainId, account) => {
       }
     }
 
-    const filteredData = mergedData.filter(item => item.value !== '0' && item.value !== 0)
+    const filteredData = removeZeroValueObjects(mergedData)
 
     // Create a map to keep track of unique combinations of 'value' and 'sharePrice'
     const map = new Map()
@@ -491,35 +505,44 @@ export const initBalanceAndDetailData = async (address, chainId, account) => {
     uniqueData = Array.from(map.values())
     uniqueData.sort((a, b) => b.timestamp - a.timestamp)
 
-    enrichedData = uniqueData.map((item, index, array) => {
-      const nextItem = array[index + 1]
-      let event, balance, netChange
+    enrichedData = uniqueData
+      .map((item, index, array) => {
+        const nextItem = array[index + 1]
+        let event, balance, netChange
 
-      if (nextItem) {
-        if (Number(item.value) === Number(nextItem.value)) {
-          event = 'Harvest'
-        } else if (Number(item.value) > Number(nextItem.value)) {
-          event = 'Convert'
+        if (Number(item.value) === 0) {
+          if (nextItem && Number(nextItem.value) === 0) {
+            return false
+          }
+          balance = '0'
         } else {
-          event = 'Revert'
+          balance = Number(item.value) * Number(item.sharePrice)
         }
 
-        balance = Number(item.value) * Number(item.sharePrice)
-        const nextBalance = Number(nextItem.value) * Number(nextItem.sharePrice)
-        netChange = balance - nextBalance
-      } else {
-        event = 'Convert'
-        balance = Number(item.value) * Number(item.sharePrice)
-        netChange = Number(item.value) * Number(item.sharePrice)
-      }
+        if (nextItem) {
+          if (Number(item.value) === Number(nextItem.value)) {
+            event = 'Harvest'
+          } else if (Number(item.value) > Number(nextItem.value)) {
+            event = 'Convert'
+          } else {
+            event = 'Revert'
+          }
 
-      return {
-        ...item,
-        event,
-        balance,
-        netChange,
-      }
-    })
+          const nextBalance = Number(nextItem.value) * Number(nextItem.sharePrice)
+          netChange = balance - nextBalance
+        } else {
+          event = 'Convert'
+          netChange = balance
+        }
+
+        return {
+          ...item,
+          event,
+          balance,
+          netChange,
+        }
+      })
+      .filter(Boolean)
 
     sumNetChange = enrichedData.reduce((sumValue, item) => {
       if (item.event === 'Harvest') {
