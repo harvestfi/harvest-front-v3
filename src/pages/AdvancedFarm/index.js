@@ -392,7 +392,7 @@ const AdvancedFarm = () => {
   // Switch Tag (Convert/Revert)
   const [activeDepo, setActiveDepo] = useState(true)
   const [showLatestEarnings, setShowLatestEarnings] = useState(true)
-  const [showLodestarVaultInfo, setShowLodestarVaultInfo] = useState(false)
+  const [showGenomesVaultInfo, setShowGenomesVaultInfo] = useState(false)
   const [showSeamlessVaultInfo, setShowSeamlessVaultInfo] = useState(false)
   const [showIFARMInfo, setShowIFARMInfo] = useState(false)
   const [supportedVault, setSupportedVault] = useState(false)
@@ -480,11 +480,13 @@ const AdvancedFarm = () => {
     { name: 'History', img: History },
   ]
 
-  // Show vault info badge when platform is 'Lodestar' or 'Harvest' and first visit
+  // Show vault info badge when platform is 'Seamless' or 'Harvest' and first visit
   useEffect(() => {
     const platform = useIFARM ? 'Harvest' : token.platform?.[0]?.toLowerCase() ?? ''
+    const firstToken = token.tokenNames?.[0]?.toLowerCase() ?? ''
     const firstViewIFarm = localStorage.getItem('firstViewIFarm')
     const firstViewSeamless = localStorage.getItem('firstViewSeamless')
+    const firstViewGenomes = localStorage.getItem('firstViewGenomes')
     if (platform === 'Harvest' && (firstViewIFarm === null || firstViewIFarm === 'true')) {
       localStorage.setItem('firstViewIFarm', true)
       setShowIFARMInfo(true)
@@ -494,16 +496,22 @@ const AdvancedFarm = () => {
     ) {
       localStorage.setItem('firstViewSeamless', true)
       setShowSeamlessVaultInfo(true)
+    } else if (
+      (firstToken.includes('gene') || firstToken.includes('gnome')) &&
+      (firstViewGenomes === null || firstViewGenomes === 'true')
+    ) {
+      localStorage.setItem('firstViewGenomes', true)
+      setShowGenomesVaultInfo(true)
     }
-  }, [token.platform, useIFARM])
+  }, [token.platform, token.tokenNames, useIFARM])
 
   const closeIFARMBadge = () => {
     setShowIFARMInfo(false)
     localStorage.setItem('firstViewIFarm', 'false')
   }
-  const closeBadgeLodestar = () => {
-    setShowLodestarVaultInfo(false)
-    localStorage.setItem('firstViewLodestar', 'false')
+  const closeBadgeGenomes = () => {
+    setShowGenomesVaultInfo(false)
+    localStorage.setItem('firstViewGenomes', 'false')
   }
 
   const closeBadgeSeamless = () => {
@@ -1441,7 +1449,7 @@ const AdvancedFarm = () => {
           <InternalSection>
             {activeMainTag === 0 ? (
               <>
-                {showLodestarVaultInfo ? (
+                {showGenomesVaultInfo ? (
                   <WelcomeBox
                     bgColorTooltip={bgColorTooltip}
                     fontColorTooltip={fontColorTooltip}
@@ -1451,14 +1459,29 @@ const AdvancedFarm = () => {
                     <WelcomeContent>
                       <WelcomeTitle>Vault Note</WelcomeTitle>
                       <WelcomeText>
-                        The Lodestar team replenishes their markets with ARB incentives weekly,
-                        using random snapshots, until March 31, 2024. We have recently updated the
-                        ARB reward distribution for Lodestar strategies, transitioning to a linear
-                        liquidation of rewards throughout the week. This shift prevents
-                        disproportional gain through short-term deposits and ensures a fair, steady
-                        distribution of rewards for all farmers.
+                        Genomes vaults for GENE and GNOME will be deactivated on the 16th April
+                        2024. A new vault for the GENOME-ETH pool on Base Network can be found{' '}
+                        <WelcomeTicket
+                          href="https://app.harvest.finance/base/0x284c60490212DB0dc0b8F93503d35744f8053381"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          linkColor={linkColorTooltip}
+                          linkColorOnHover={linkColorOnHover}
+                        >
+                          here
+                        </WelcomeTicket>
+                        . For more information, check out the #vault-updates channel on{' '}
+                        <WelcomeTicket
+                          href="https://discord.com/invite/gzWAG3Wx7Y"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          linkColor={linkColorTooltip}
+                          linkColorOnHover={linkColorOnHover}
+                        >
+                          our Discord.
+                        </WelcomeTicket>
                         <WelcomeBottom>
-                          <WelcomeKnow onClick={closeBadgeLodestar}>Got it!</WelcomeKnow>
+                          <WelcomeKnow onClick={closeBadgeGenomes}>Got it!</WelcomeKnow>
                           <WelcomeTicket
                             href="https://discord.com/invite/gzWAG3Wx7Y"
                             target="_blank"
@@ -1472,7 +1495,7 @@ const AdvancedFarm = () => {
                       </WelcomeText>
                     </WelcomeContent>
                     <WelcomeClose>
-                      <RxCross2 onClick={closeBadgeLodestar} />
+                      <RxCross2 onClick={closeBadgeGenomes} />
                     </WelcomeClose>
                   </WelcomeBox>
                 ) : showSeamlessVaultInfo ? (
