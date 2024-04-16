@@ -294,14 +294,14 @@ const ApexChart = ({
         if (filter === 0) {
           firstDate =
             data?.tvls?.length > 0
-              ? data.generalApies[data.generalApies.length - 1].timestamp
+              ? data.generalApies[data.generalApies.length - 1]?.timestamp
               : null
         } else if (filter === 1) {
-          firstDate = data?.tvls?.length > 0 ? data.tvls[data.tvls.length - 1].timestamp : null
+          firstDate = data?.tvls?.length > 0 ? data.tvls[data.tvls.length - 1]?.timestamp : null
         } else {
           firstDate =
             data?.tvls?.length > 0
-              ? data.vaultHistories[data.vaultHistories.length - 1].timestamp
+              ? data.vaultHistories[data.vaultHistories.length - 1]?.timestamp
               : null
         }
 
