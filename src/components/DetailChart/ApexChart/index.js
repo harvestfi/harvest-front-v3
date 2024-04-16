@@ -605,7 +605,7 @@ const ApexChart = ({
           {isDataReady ? (
             <ClipLoader size={30} margin={2} color={fontColor} />
           ) : (
-            <NoData color={fontColor}>You don&apos;t have any active deposits in this farm.</NoData>
+            <NoData color={fontColor}>Vault data soon to be available.</NoData>
           )}
         </LoadingDiv>
       )}
