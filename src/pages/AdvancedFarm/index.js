@@ -1182,34 +1182,22 @@ const AdvancedFarm = () => {
     setDepositUsdValue(depositUsdValue)
   }, [lpTokenBalance, fAssetPool, usdPrice])
 
-  const [balanceFlag, setBalanceFlag] = useState(false)
-  const [detailFlag, setDetailFlag] = useState(false)
-  const [allData, setAllData] = useState([])
-  const [balanceData, setBalanceData] = useState([])
-
   useEffect(() => {
     const initData = async () => {
       const address =
         token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
       const chainId = token.chain || token.data.chain
       const {
-        flag1,
-        flag2,
-        data1,
-        mergedData,
+        balanceFlag,
+        vaultHFlag,
         sumNetChange,
         sumNetChangeUsd,
         sumLatestNetChange,
         sumLatestNetChangeUsd,
         enrichedData,
-      } = await initBalanceAndDetailData(address, chainId, account)
+      } = await initBalanceAndDetailData(address, chainId, account, tokenDecimals)
 
-      setBalanceFlag(flag1)
-      setDetailFlag(flag2)
-      setBalanceData(data1)
-
-      if (flag1 && flag2) {
-        setAllData(mergedData)
+      if (balanceFlag && vaultHFlag) {
         setUnderlyingEarnings(sumNetChange)
         setUsdEarnings(sumNetChangeUsd)
         setUnderlyingEarningsLatest(sumLatestNetChange)
@@ -1219,7 +1207,7 @@ const AdvancedFarm = () => {
     }
 
     initData()
-  }, [account, token, vaultPool, setUnderlyingEarnings, setUsdEarnings])
+  }, [account, token, vaultPool, tokenDecimals, setUnderlyingEarnings, setUsdEarnings])
 
   const apyDaily = totalApy
     ? (((Number(totalApy) / 100 + 1) ** (1 / 365) - 1) * 100).toFixed(3)
@@ -2011,15 +1999,13 @@ const AdvancedFarm = () => {
               {activeMainTag === 0 ? (
                 !isMobile && (
                   <UserBalanceData
+                    token={token}
+                    vaultPool={vaultPool}
                     totalValue={totalValue}
                     useIFARM={useIFARM}
                     farmPrice={farmPrice}
                     underlyingPrice={underlyingPrice}
                     pricePerFullShare={pricePerFullShare}
-                    balanceFlag={balanceFlag}
-                    detailFlag={detailFlag}
-                    allData={allData}
-                    balanceData={balanceData}
                   />
                 )
               ) : activeMainTag === 1 ? (
@@ -2351,15 +2337,13 @@ const AdvancedFarm = () => {
                   </HalfContent>
                   {isMobile ? (
                     <UserBalanceData
+                      token={token}
+                      vaultPool={vaultPool}
                       totalValue={totalValue}
                       useIFARM={useIFARM}
                       farmPrice={farmPrice}
                       underlyingPrice={underlyingPrice}
                       pricePerFullShare={pricePerFullShare}
-                      balanceFlag={balanceFlag}
-                      detailFlag={detailFlag}
-                      allData={allData}
-                      balanceData={balanceData}
                     />
                   ) : (
                     <></>
