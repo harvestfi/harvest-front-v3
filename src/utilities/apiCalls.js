@@ -305,11 +305,11 @@ export const getUserBalanceHistories = async (address, chainId, account) => {
   return { balanceData, balanceFlag }
 }
 
-export const getPriceFeeds = async (address, chainId) => {
-  let priceFeedData = {},
-    priceFeedFlag = true
+export const getPriceFeeds = async (address, chainId, timestamp, asQuery, priceFeedData = []) => {
+  let priceFeedFlag = true
 
   address = address.toLowerCase()
+  const timestampQuery = timestamp && asQuery ? `timestamp_lt: "${timestamp}"` : ''
 
   const myHeaders = new Headers()
   myHeaders.append('Content-Type', 'application/json')
@@ -320,6 +320,7 @@ export const getPriceFeeds = async (address, chainId) => {
           first: 1000,
           where: {
             vault: "${address}",
+            ${timestampQuery}
           },
           orderBy: timestamp,
           orderDirection: desc,
@@ -346,18 +347,26 @@ export const getPriceFeeds = async (address, chainId) => {
       : GRAPH_URL_ARBITRUM
 
   try {
-    await fetch(url, requestOptions)
-      .then(response => response.json())
-      .then(res => {
-        priceFeedData = res.data.priceFeeds
-        if (priceFeedData.length === 0) {
-          priceFeedFlag = false
-        }
-      })
-      .catch(error => {
-        console.log('error', error)
-        priceFeedFlag = false
-      })
+    const response = await fetch(url, requestOptions)
+    const responseJson = await response.json()
+
+    if (
+      responseJson.data &&
+      responseJson.data.priceFeeds &&
+      Array.isArray(responseJson.data.priceFeeds)
+    ) {
+      priceFeedData.push(...responseJson.data.priceFeeds)
+      const dataTimestamp = priceFeedData[priceFeedData.length - 1].timestamp
+      if (dataTimestamp > timestamp) {
+        await getPriceFeeds(address, chainId, dataTimestamp, true, priceFeedData)
+      }
+    } else {
+      console.error('Error: Unable to retrieve vault histories from the response.')
+    }
+
+    if (priceFeedData.length === 0) {
+      priceFeedFlag = false
+    }
   } catch (err) {
     console.log('Fetch data about user balance histories: ', err)
     priceFeedFlag = false
@@ -388,6 +397,7 @@ export const initBalanceAndDetailData = async (address, chainId, account, tokenD
     sumNetChangeUsd = 0,
     sumLatestNetChange = 0,
     sumLatestNetChangeUsd = 0
+
   const { balanceData, balanceFlag } = await getUserBalanceHistories(address, chainId, account)
   const { vaultHData, vaultHFlag } = await getVaultHistories(address, chainId)
 

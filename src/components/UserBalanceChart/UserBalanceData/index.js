@@ -120,11 +120,19 @@ const UserBalanceData = ({
 
   useEffect(() => {
     const initData = async () => {
-      const { balanceData, balanceFlag } = await getUserBalanceHistories(address, chainId, account)
-      const { priceFeedData, priceFeedFlag } = await getPriceFeeds(address, chainId)
       const uniqueData2 = []
       const timestamps = []
       const mergedData = []
+      let priceFeedData, priceFeedFlag
+
+      const { balanceData, balanceFlag } = await getUserBalanceHistories(address, chainId, account)
+      if (balanceFlag) {
+        const firstTimeStamp = balanceData[balanceData.length - 1].timestamp
+        const result = await getPriceFeeds(address, chainId, firstTimeStamp, false)
+        priceFeedData = result.priceFeedData
+        priceFeedFlag = result.priceFeedFlag
+      }
+      // const { priceFeedData, priceFeedFlag } = await getPriceFeeds(address, chainId)
 
       if (priceFeedFlag) {
         priceFeedData.forEach(obj => {
