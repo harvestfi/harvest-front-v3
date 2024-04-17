@@ -132,7 +132,6 @@ const UserBalanceData = ({
         priceFeedData = result.priceFeedData
         priceFeedFlag = result.priceFeedFlag
       }
-      // const { priceFeedData, priceFeedFlag } = await getPriceFeeds(address, chainId)
 
       if (priceFeedFlag) {
         priceFeedData.forEach(obj => {
