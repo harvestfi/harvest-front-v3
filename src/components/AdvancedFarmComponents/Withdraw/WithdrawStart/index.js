@@ -59,6 +59,7 @@ const chainList = [
   { id: 2, name: 'Polygon', chainId: 137 },
   { id: 3, name: 'Arbitrum', chainId: 42161 },
   { id: 4, name: 'Base', chainId: 8453 },
+  { id: 5, name: 'Zksync', chainId: 324 },
 ]
 
 const WithdrawStart = ({

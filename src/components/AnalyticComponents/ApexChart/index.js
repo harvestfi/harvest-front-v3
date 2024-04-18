@@ -101,7 +101,24 @@ function generateChartDataWithSlots(slots, apiData) {
         : prev,
     )
 
-    const value = Number(ethData.value) + Number(polygonData.value) + Number(arbData.value)
+    const baseData = apiData.BASE.reduce((prev, curr) =>
+      Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
+        ? curr
+        : prev,
+    )
+
+    const zksyncData = apiData.ZKSYNC.reduce((prev, curr) =>
+      Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
+        ? curr
+        : prev,
+    )
+
+    const value =
+      Number(ethData.value) +
+      Number(polygonData.value) +
+      Number(arbData.value) +
+      Number(baseData.value) +
+      Number(zksyncData.value)
     seriesData.push({ x: slots[i] * 1000, y: value })
   }
 
@@ -218,8 +235,14 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
         unitBtw,
         roundNum
 
-      if (data && data.ETH && data.MATIC && data.ARBITRUM) {
-        if (data.ETH.length === 0 && data.MATIC.length === 0 && data.ARBITRUM.length === 0) {
+      if (data && data.ETH && data.MATIC && data.ARBITRUM && data.BASE && data.ZKSYNC) {
+        if (
+          data.ETH.length === 0 &&
+          data.MATIC.length === 0 &&
+          data.ARBITRUM.length === 0 &&
+          data.BASE.length === 0 &&
+          data.ZKSYNC.length === 0
+        ) {
           setIsDataReady(false)
           return
         }

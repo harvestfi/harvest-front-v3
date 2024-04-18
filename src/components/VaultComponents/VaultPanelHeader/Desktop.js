@@ -4,6 +4,7 @@ import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
 import BASE from '../../../assets/images/chains/base.svg'
 import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
 import POLYGON from '../../../assets/images/logos/badge/polygon.svg'
+import ZKSYNC from '../../../assets/images/logos/badge/zksync.svg'
 import LSD from '../../../assets/images/logos/lsd.svg'
 import DESCI from '../../../assets/images/logos/DeSci.svg'
 import { directDetailUrl } from '../../../constants'
@@ -20,6 +21,7 @@ const chainList = [
   { id: 2, name: 'Polygon', chainId: 137 },
   { id: 3, name: 'Arbitrum', chainId: 42161 },
   { id: 4, name: 'Base', chainId: 8453 },
+  { id: 5, name: 'Zksync', chainId: 324 },
 ]
 
 const DesktopPanelHeader = ({
@@ -35,7 +37,7 @@ const DesktopPanelHeader = ({
   desciToken,
 }) => {
   const location = useLocation()
-  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE]
+  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
 
   const chainId = token.chain || token.data.chain
   const [badgeId, setBadgeId] = useState(-1)

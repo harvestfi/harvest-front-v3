@@ -7,6 +7,7 @@ import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import BASE from '../../assets/images/chains/base.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
+import ZKSYNC from '../../assets/images/chains/zksync.svg'
 import SpecNarrowDown from '../../assets/images/logos/filter/spec-narrowdown.svg'
 import DesciBack from '../../assets/images/logos/filter/desciback.jpg'
 import LSDBack from '../../assets/images/logos/filter/lsdback.jpg'
@@ -47,6 +48,7 @@ const ChainsList = [
   { id: 1, name: 'Polygon', img: POLYGON, chainId: CHAIN_IDS.POLYGON_MAINNET },
   { id: 2, name: 'Arbitrum', img: ARBITRUM, chainId: CHAIN_IDS.ARBITRUM_ONE },
   { id: 3, name: 'Base', img: BASE, chainId: CHAIN_IDS.BASE },
+  { id: 4, name: 'Zksync', img: ZKSYNC, chainId: CHAIN_IDS.ZKSYNC },
 ]
 
 const TrendsList = [
@@ -234,6 +236,9 @@ const QuickFilter = ({
   }
   if (selChain.includes(CHAIN_IDS.BASE)) {
     curChain.push(3)
+  }
+  if (selChain.includes(CHAIN_IDS.ZKSYNC)) {
+    curChain.push(4)
   }
 
   const [selectedClass, setSelectedClass] = useState(curChain)
@@ -430,7 +435,7 @@ const QuickFilter = ({
                           }
 
                           if (tempIds.length === 0 || tempIds.length === ChainsList.length) {
-                            tempIds = [0, 1, 2, 3]
+                            tempIds = [0, 1, 2, 3, 4]
                             setSelectedClass(tempIds)
                           } else {
                             setSelectedClass(tempIds)
@@ -480,6 +485,7 @@ const QuickFilter = ({
                     CHAIN_IDS.POLYGON_MAINNET,
                     CHAIN_IDS.ARBITRUM_ONE,
                     CHAIN_IDS.BASE,
+                    CHAIN_IDS.ZKSYNC,
                   ])
                   clearFilter()
                 }}
@@ -778,6 +784,7 @@ const QuickFilter = ({
                     CHAIN_IDS.POLYGON_MAINNET,
                     CHAIN_IDS.ARBITRUM_ONE,
                     CHAIN_IDS.BASE,
+                    CHAIN_IDS.ZKSYNC,
                   ])
                   clearFilter()
                 }}

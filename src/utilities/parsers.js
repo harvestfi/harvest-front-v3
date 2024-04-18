@@ -169,6 +169,9 @@ export const getChainNamePortals = chain => {
     case CHAIN_IDS.BASE:
       chainName = 'base'
       break
+    case CHAIN_IDS.ZKSYNC:
+      chainName = 'zksync'
+      break
     default:
       chainName = 'ethereum'
       break

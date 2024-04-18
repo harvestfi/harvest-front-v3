@@ -6,6 +6,7 @@ import {
   maticWeb3,
   arbitrumWeb3,
   baseWeb3,
+  zksyncWeb3,
   infuraWeb3,
 } from '../services/web3'
 import { CHAIN_IDS } from '../data/constants'
@@ -24,6 +25,10 @@ const getWeb3 = chainId => {
 
   if (chainId === CHAIN_IDS.BASE) {
     return baseWeb3
+  }
+
+  if (chainId === CHAIN_IDS.ZKSYNC) {
+    return zksyncWeb3
   }
 
   return infuraWeb3

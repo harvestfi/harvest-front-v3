@@ -79,6 +79,7 @@ export const INFURA_URL = `https://eth-mainnet.g.alchemy.com/v2/${process.env.RE
 export const MATIC_URL = `https://polygon-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 export const BASE_URL = `https://base-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 export const ARBITRUM_URL = `https://arb-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
+export const ZKSYNC_URL = 'https://zksync.drpc.org'
 
 export const GRAPH_URL_MAINNET = 'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance'
 export const GRAPH_URL_POLYGON =
@@ -87,6 +88,8 @@ export const GRAPH_URL_ARBITRUM =
   'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance-arbitrum'
 export const GRAPH_URL_BASE =
   'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance-base'
+export const GRAPH_URL_ZKSYNC =
+  'https://api.studio.thegraph.com/query/48757/l2-zksync-era/version/latest'
 
 export const ETHERSCAN_URL = 'https://etherscan.io'
 
@@ -95,6 +98,8 @@ export const MATICSCAN_URL = 'https://polygonscan.com'
 export const BASESCAN_URL = 'https://basescan.org'
 
 export const ARBISCAN_URL = 'https://arbiscan.io'
+
+export const ZKSYNCSCAN_URL = 'https://explorer.zksync.io/'
 
 export const PORTALS_FI_API_URL = 'https://api.portals.fi'
 

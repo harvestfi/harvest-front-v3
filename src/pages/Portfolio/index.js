@@ -10,6 +10,7 @@ import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import BASE from '../../assets/images/chains/base.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
+import ZKSYNC from '../../assets/images/chains/zksync.svg'
 import Safe from '../../assets/images/logos/dashboard/safe.svg'
 import Coin1 from '../../assets/images/logos/dashboard/coins-stacked-02.svg'
 import Coin2 from '../../assets/images/logos/dashboard/coins-stacked-04.svg'
@@ -72,6 +73,9 @@ const getChainIcon = chain => {
       break
     case CHAIN_IDS.BASE:
       chainLogo = BASE
+      break
+    case CHAIN_IDS.ZKSYNC:
+      chainLogo = ZKSYNC
       break
     default:
       chainLogo = ETHEREUM

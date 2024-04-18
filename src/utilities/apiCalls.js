@@ -6,6 +6,7 @@ import {
   GRAPH_URL_POLYGON,
   GRAPH_URL_ARBITRUM,
   GRAPH_URL_BASE,
+  GRAPH_URL_ZKSYNC,
   TOTAL_TVL_API_ENDPOINT,
 } from '../constants'
 
@@ -53,6 +54,8 @@ export const getLastHarvestInfo = async (address, chainId) => {
       ? GRAPH_URL_POLYGON
       : chainId === CHAIN_IDS.BASE
       ? GRAPH_URL_BASE
+      : chainId === CHAIN_IDS.ZKSYNC
+      ? GRAPH_URL_ZKSYNC
       : GRAPH_URL_ARBITRUM
 
   try {
@@ -134,6 +137,8 @@ export const getPublishDate = async (address, chainId) => {
       ? GRAPH_URL_POLYGON
       : chainId === CHAIN_IDS.BASE
       ? GRAPH_URL_BASE
+      : chainId === CHAIN_IDS.ZKSYNC
+      ? GRAPH_URL_ZKSYNC
       : GRAPH_URL_ARBITRUM
 
   try {
@@ -223,6 +228,8 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
       ? GRAPH_URL_POLYGON
       : chainId === CHAIN_IDS.BASE
       ? GRAPH_URL_BASE
+      : chainId === CHAIN_IDS.ZKSYNC
+      ? GRAPH_URL_ZKSYNC
       : GRAPH_URL_ARBITRUM
 
   try {
@@ -283,6 +290,8 @@ export const getUserBalanceHistories1 = async (address, chainId, account) => {
       ? GRAPH_URL_POLYGON
       : chainId === CHAIN_IDS.BASE
       ? GRAPH_URL_BASE
+      : chainId === CHAIN_IDS.ZKSYNC
+      ? GRAPH_URL_ZKSYNC
       : GRAPH_URL_ARBITRUM
 
   try {
@@ -343,6 +352,8 @@ export const getUserBalanceHistories2 = async (address, chainId) => {
       ? GRAPH_URL_POLYGON
       : chainId === CHAIN_IDS.BASE
       ? GRAPH_URL_BASE
+      : chainId === CHAIN_IDS.ZKSYNC
+      ? GRAPH_URL_ZKSYNC
       : GRAPH_URL_ARBITRUM
 
   try {

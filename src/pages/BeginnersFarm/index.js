@@ -16,6 +16,7 @@ import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import BASE from '../../assets/images/chains/base.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
+import ZKSYNC from '../../assets/images/chains/zksync.svg'
 import Safe from '../../assets/images/logos/beginners/safe.svg'
 import BarChart from '../../assets/images/logos/beginners/bar-chart-01.svg'
 import History from '../../assets/images/logos/beginners/history.svg'
@@ -117,6 +118,7 @@ const chainList = [
   { id: 2, name: 'Polygon', chainId: 137 },
   { id: 3, name: 'Arbitrum', chainId: 42161 },
   { id: 4, name: 'Base', chainId: 8453 },
+  { id: 5, name: 'Zksync', chainId: 324 },
 ]
 
 const mainTags = [
@@ -260,7 +262,7 @@ const BeginnersFarm = () => {
 
   const chain = token.chain || token.data.chain
 
-  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE]
+  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
 
   const [badgeId, setBadgeId] = useState(-1)
   useEffect(() => {
