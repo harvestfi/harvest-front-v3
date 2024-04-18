@@ -30,7 +30,7 @@ import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
 import { parseValue, isSpecialApp } from '../../../utilities/formats'
 import { getTotalApy, getUserVaultBalance, getVaultValue } from '../../../utilities/parsers'
-import { getPublishDate } from '../../../utilities/apiCalls'
+import { getVaultHistories } from '../../../utilities/apiCalls'
 import VaultPanel from '../VaultPanel'
 import VaultsListHeader from '../VaultsListHeader'
 import {
@@ -497,8 +497,10 @@ const VaultList = () => {
             : find(totalPools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
           const address =
             token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
-          const { data, flag } = await getPublishDate(address, tokenChainId)
-          groupOfVaults[symbol].publishDate = flag ? Number(data[data.length - 1].timestamp) : null
+          const { vaultHData, vaultHFlag } = await getVaultHistories(address, tokenChainId)
+          groupOfVaults[symbol].publishDate = vaultHFlag
+            ? Number(vaultHData[vaultHData.length - 1].timestamp)
+            : null
         })
       }
     }
