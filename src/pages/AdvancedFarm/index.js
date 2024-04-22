@@ -619,17 +619,19 @@ const AdvancedFarm = () => {
       Number(unstaked) * usdPrice * (vaultAPRMonthly + swapFeeAPRMonthly)
     setYieldDaily(dailyYield)
     setYieldMonthly(monthlyYield)
-    // eslint-disable-next-line
-  }, [fAssetPool, tokenVault, usdPrice, lpTokenBalance, totalStaked])
 
-  useEffect(() => {
     const convertMonthlyYieldValue =
-      (Number(minReceiveAmountString) * Number(usdPrice) * (Number(totalApy) / 100)) / 12
+      Number(minReceiveAmountString) *
+      Number(usdPrice) *
+      (vaultAPRMonthly + poolAPRMonthly + swapFeeAPRMonthly)
     const convertDailyYieldYieldValue =
-      (Number(minReceiveAmountString) * Number(usdPrice) * (Number(totalApy) / 100)) / 365
+      Number(minReceiveAmountString) *
+      Number(usdPrice) *
+      (vaultAPRDaily + poolAPRDaily + swapFeeAPRDaily)
     setConvertMonthlyYieldUSD(convertMonthlyYieldValue.toString())
     setConvertDailyYieldUSD(convertDailyYieldYieldValue.toString())
-  }, [minReceiveAmountString, usdPrice, totalApy])
+    // eslint-disable-next-line
+  }, [fAssetPool, tokenVault, usdPrice, lpTokenBalance, totalStaked, minReceiveAmountString])
 
   useEffect(() => {
     const getTokenBalance = async () => {
