@@ -8,6 +8,14 @@ const Container = styled.div`
   border: 2px solid ${props => props.borderColor};
   border-radius: 12px;
 
+  @media screen and (max-width: 1350px) {
+    padding: 15px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    padding: 10px;
+  }
+
   @media screen and (max-width: 992px) {
     width: 50%;
     ${props => (props.isNetProfit === 'true' ? 'width: 100%;' : 'width: 50%;')}
@@ -36,6 +44,15 @@ const Div = styled.div`
     margin: auto 0px auto 5px;
   }
 
+  @media screen and (max-width: 1350px) {
+    font-size: 12px;
+  }
+
+  @media screen and (max-width: 1200px) {
+    display: flex;
+    flex-flow: column;
+  }
+
   @media screen and (max-width: 992px) {
     font-size: 12px;
     margin-bottom: 0px;
@@ -60,6 +77,11 @@ const Price = styled.div`
   font-size: 30px;
   line-height: 44px;
   color: ${props => props.fontColor1};
+
+  @media screen and (max-width: 1350px) {
+    font-size: 24px;
+  }
+
   @media screen and (max-width: 992px) {
     font-size: 17px;
     line-height: 36px;
