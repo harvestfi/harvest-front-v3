@@ -41,6 +41,7 @@ import {
   POOL_BALANCES_DECIMALS,
   MAX_BALANCES_DECIMALS,
   WIDO_BALANCES_DECIMALS,
+  SOCIAL_LINKS,
 } from '../../constants'
 import { fromWei, newContractInstance, getWeb3, getExplorerLink } from '../../services/web3'
 import { addresses } from '../../data'
@@ -1168,7 +1169,7 @@ const BeginnersFarm = () => {
                             </a>{' '}
                             or visit{' '}
                             <a
-                              href="https://discord.gg/gzWAG3Wx7Y"
+                              href={SOCIAL_LINKS.DISCORD}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
@@ -1202,7 +1203,7 @@ const BeginnersFarm = () => {
                             are connected to the Base Network to proceed with farming. If you need
                             any help, head over to our{' '}
                             <a
-                              href="https://discord.gg/gzWAG3Wx7Y"
+                              href={SOCIAL_LINKS.DISCORD}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
@@ -1240,7 +1241,7 @@ const BeginnersFarm = () => {
                             </a>{' '}
                             or visit{' '}
                             <a
-                              href="https://discord.gg/gzWAG3Wx7Y"
+                              href={SOCIAL_LINKS.DISCORD}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
@@ -1274,7 +1275,7 @@ const BeginnersFarm = () => {
                             are connected to the Base Network to proceed with farming. If you need
                             any help, head over to our{' '}
                             <a
-                              href="https://discord.gg/gzWAG3Wx7Y"
+                              href={SOCIAL_LINKS.DISCORD}
                               target="_blank"
                               rel="noopener noreferrer"
                             >

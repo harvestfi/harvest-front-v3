@@ -1,5 +1,4 @@
 import React from 'react'
-import { useThemeContext } from '../../providers/useThemeContext'
 import FirstFarming1 from '../../assets/images/logos/tutorial/first-farming1.webp'
 import FirstFarming2 from '../../assets/images/logos/tutorial/first-farming2.webp'
 import FirstFarming3 from '../../assets/images/logos/tutorial/first-farming3.webp'
@@ -18,6 +17,8 @@ import Extra1 from '../../assets/images/logos/tutorial/extra1.webp'
 import Extra2 from '../../assets/images/logos/tutorial/extra2.webp'
 import Extra3 from '../../assets/images/logos/tutorial/extra3.webp'
 
+import { useThemeContext } from '../../providers/useThemeContext'
+import { SOCIAL_LINKS } from '../../constants'
 import {
   Container,
   TopSection,
@@ -113,7 +114,7 @@ const Home = () => {
                 If you have funds on a crypto exchange like Coinbase, Binance, or Kraken and
                 don&apos;t know how to transfer them to a non-custodial wallet other than Coinbase
                 Wallet, please look for help on the support page of your wallet provider or join our{' '}
-                <a href="https://discord.gg/gzWAG3Wx7Y" target="_blank" rel="noopener noreferrer">
+                <a href={SOCIAL_LINKS.DISCORD} target="_blank" rel="noopener noreferrer">
                   Discord channel
                 </a>
                 , where our mods will be happy to help.
@@ -382,7 +383,7 @@ const Home = () => {
                 Needs help? Join{' '}
                 <a
                   className="classic"
-                  href="https://discord.gg/gzWAG3Wx7Y"
+                  href={SOCIAL_LINKS.DISCORD}
                   target="_blank"
                   rel="noopener noreferrer"
                 >
