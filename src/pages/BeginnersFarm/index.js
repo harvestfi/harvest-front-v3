@@ -1147,16 +1147,9 @@ const BeginnersFarm = () => {
                       <WelcomeContent fontColor={fontColor}>
                         {showBadge ? (
                           <WelcomeText>
-                            Earn $10 in{' '}
-                            <a
-                              href="https://harvest-front-v3.netlify.app/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                            >
-                              FARM
-                            </a>{' '}
-                            into your wallet for converting at least $5 worth of ETH or USDC into
-                            interest-bearing token. Get started via the Convert box below.
+                            Earn $10 in FARM by converting at least $5 worth of ETH or USDC into the
+                            interest-bearing fToken of this farm. Quest participants also need to
+                            hold that fToken for at least 72 hours to be eligible for the reward.
                             <br />
                             <br />
                             If you need any help, see our{' '}
