@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 
 const Container = styled.div`
-  width: 24%;
+  width: 20%;
   font-weight: 700;
   background: ${props => props.backColor};
   padding: 24px;
@@ -10,6 +10,7 @@ const Container = styled.div`
 
   @media screen and (max-width: 992px) {
     width: 50%;
+    ${props => (props.isNetProfit === 'true' ? 'width: 100%;' : 'width: 50%;')}
     border: unset;
     border-radius: 0px 6.5px 6.5px 0px;
     padding: 8px 13px;
@@ -40,6 +41,7 @@ const Div = styled.div`
     margin-bottom: 0px;
   }
 
+  #tt-total-profit,
   #tt-total-balance,
   #tt-monthly-yield,
   #tt-daily-yield,

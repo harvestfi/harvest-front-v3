@@ -49,6 +49,7 @@ const Inner = styled.div`
 const SubPart = styled.div`
   display: flex;
   justify-content: space-between;
+  gap: 10px;
 
   @media screen and (max-width: 992px) {
     display: none;
