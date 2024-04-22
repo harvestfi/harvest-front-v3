@@ -661,6 +661,9 @@ const Portfolio = () => {
           <br />
           For detailed information on your yield earnings, see the &apos;Underlying&apos; value in
           the Lifetime Earnings box on each farm&apos;s page.
+          <br />
+          <br />
+          By default, it does not consider inactive farms.
         </>
       ),
     },
@@ -728,12 +731,15 @@ const Portfolio = () => {
               toolTipTitle="tt-total-profit"
               toolTip={
                 <>
-                  Total yield earnings in USD from all farms, excluding claimable rewards. Subject
-                  to change with market fluctuations.
+                  Total yield earnings in USD from all farms listed below, excluding claimable
+                  rewards. Subject to change with market fluctuations.
                   <br />
                   <br />
                   For detailed information on your yield earnings, see the &apos;Underlying&apos;
                   value in the Lifetime Earnings box on each farm&apos;s page.
+                  <br />
+                  <br />
+                  By default, it does not consider inactive farms.
                 </>
               }
             />
