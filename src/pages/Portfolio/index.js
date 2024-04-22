@@ -661,6 +661,9 @@ const Portfolio = () => {
           <br />
           For detailed information on your yield earnings, see the &apos;Underlying&apos; value in
           the Lifetime Earnings box on each farm&apos;s page.
+          <br />
+          <br />
+          By default, it does not consider inactive farms.
         </>
       ),
     },
@@ -734,6 +737,9 @@ const Portfolio = () => {
                   <br />
                   For detailed information on your yield earnings, see the &apos;Underlying&apos;
                   value in the Lifetime Earnings box on each farm&apos;s page.
+                  <br />
+                  <br />
+                  By default, it does not consider inactive farms.
                 </>
               }
             />

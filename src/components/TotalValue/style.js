@@ -54,6 +54,7 @@ const Div = styled.div`
   }
 
   @media screen and (max-width: 992px) {
+    flex-flow: row;
     font-size: 12px;
     margin-bottom: 0px;
   }
