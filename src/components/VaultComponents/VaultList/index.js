@@ -30,7 +30,7 @@ import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
 import { parseValue, isSpecialApp } from '../../../utilities/formats'
 import { getTotalApy, getUserVaultBalance, getVaultValue } from '../../../utilities/parsers'
-import { getVaultHistories } from '../../../utilities/apiCalls'
+import { getPublishDate } from '../../../utilities/apiCalls'
 import VaultPanel from '../VaultPanel'
 import VaultsListHeader from '../VaultsListHeader'
 import {
@@ -497,10 +497,8 @@ const VaultList = () => {
             : find(totalPools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
           const address =
             token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
-          const { vaultHData, vaultHFlag } = await getVaultHistories(address, tokenChainId)
-          groupOfVaults[symbol].publishDate = vaultHFlag
-            ? Number(vaultHData[vaultHData.length - 1].timestamp)
-            : null
+          const { data, flag } = await getPublishDate(address, tokenChainId)
+          groupOfVaults[symbol].publishDate = flag ? Number(data[data.length - 1].timestamp) : null
         })
       }
     }
@@ -815,8 +813,6 @@ const VaultList = () => {
             />
           </HeaderCol>
           <HeaderCol
-            data-tip
-            data-for="total-deposits-column-header"
             width="15%"
             justifyContent="start"
             textAlign="left"

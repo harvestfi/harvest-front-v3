@@ -49,6 +49,7 @@ const Inner = styled.div`
 const SubPart = styled.div`
   display: flex;
   justify-content: space-between;
+  gap: 10px;
 
   @media screen and (max-width: 992px) {
     display: none;
@@ -625,6 +626,7 @@ const NewLabel = styled.div`
 const CheckBoxDiv = styled.div`
   cursor: pointer;
   margin-top: 25px;
+  margin-right: 25px;
   display: inline-block;
   position: relative;
 

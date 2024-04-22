@@ -6,11 +6,15 @@ import { formatNumber } from '../../utilities/formats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { Container, Div, Price, NewLabel } from './style'
 
-const TotalValue = ({ content, price, toolTipTitle, toolTip }) => {
+const TotalValue = ({ content, price, isNetProfit, toolTipTitle, toolTip }) => {
   const { borderColor, backColor, fontColor1, fontColor3 } = useThemeContext()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   return (
-    <Container borderColor={borderColor} backColor={backColor}>
+    <Container
+      borderColor={borderColor}
+      backColor={backColor}
+      isNetProfit={isNetProfit ? 'true' : 'false'}
+    >
       <Div fontColor3={fontColor3}>
         {content}
         <PiQuestion className="question" data-tip data-for={toolTipTitle} />
@@ -31,7 +35,7 @@ const TotalValue = ({ content, price, toolTipTitle, toolTip }) => {
           </NewLabel>
         </ReactTooltip>
       </Div>
-      <Price fontColor1={fontColor1}>
+      <Price fontColor1={isNetProfit ? '#00D26B' : fontColor1}>
         {parseFloat(price) === 0
           ? '$0.00'
           : parseFloat(price) < 0.01
