@@ -655,8 +655,8 @@ const Portfolio = () => {
       toolTipTitle: 'tt-total-profit',
       toolTip: (
         <>
-          Total yield earnings in USD from all farms, excluding claimable rewards. Subject to change
-          with market fluctuations.
+          Total yield earnings in USD from all farms listed below, excluding claimable rewards.
+          Subject to change with market fluctuations.
           <br />
           <br />
           For detailed information on your yield earnings, see the &apos;Underlying&apos; value in
