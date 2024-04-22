@@ -626,6 +626,7 @@ const NewLabel = styled.div`
 const CheckBoxDiv = styled.div`
   cursor: pointer;
   margin-top: 25px;
+  margin-right: 25px;
   display: inline-block;
   position: relative;
 

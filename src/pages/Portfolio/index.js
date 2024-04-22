@@ -201,6 +201,7 @@ const Portfolio = () => {
   const [sortOrder, setSortOrder] = useState(false)
   const [showDetail, setShowDetail] = useState(Array(farmTokenList.length).fill(false))
   const [showInactiveFarms, setShowInactiveFarms] = useState(false)
+  const [expandAll, setExpandAll] = useState(false)
 
   const firstWalletBalanceLoad = useRef(true)
   useEffectWithPrevious(
@@ -916,14 +917,36 @@ const Portfolio = () => {
             )}
           </TableContent>
           {connected && farmTokenList.length > 0 && (
-            <CheckBoxDiv>
-              {showInactiveFarms ? (
-                <FaRegSquareCheck onClick={() => setShowInactiveFarms(false)} color="#15B088" />
-              ) : (
-                <FaRegSquare onClick={() => setShowInactiveFarms(true)} color="#15B088" />
-              )}
-              <div>Show inactive positions</div>
-            </CheckBoxDiv>
+            <>
+              <CheckBoxDiv>
+                {showInactiveFarms ? (
+                  <FaRegSquareCheck onClick={() => setShowInactiveFarms(false)} color="#15B088" />
+                ) : (
+                  <FaRegSquare onClick={() => setShowInactiveFarms(true)} color="#15B088" />
+                )}
+                <div>Show inactive positions</div>
+              </CheckBoxDiv>
+              <CheckBoxDiv>
+                {expandAll ? (
+                  <FaRegSquareCheck
+                    onClick={() => {
+                      setExpandAll(false)
+                      setShowDetail(Array(farmTokenList.length).fill(false))
+                    }}
+                    color="#15B088"
+                  />
+                ) : (
+                  <FaRegSquare
+                    onClick={() => {
+                      setExpandAll(true)
+                      setShowDetail(Array(farmTokenList.length).fill(true))
+                    }}
+                    color="#15B088"
+                  />
+                )}
+                <div>Expand All</div>
+              </CheckBoxDiv>
+            </>
           )}
         </TransactionDetails>
         {connected && farmTokenList.length > 0 ? (
