@@ -1154,7 +1154,7 @@ const BeginnersFarm = () => {
                             <br />
                             If you need any help, see our{' '}
                             <a
-                              href="https://harvest-front-v3.netlify.app/get-started"
+                              href="https://app.harvest.finance/get-started"
                               target="_blank"
                               rel="noopener noreferrer"
                             >
@@ -1226,7 +1226,7 @@ const BeginnersFarm = () => {
                             <br />
                             If you need any help, see our{' '}
                             <a
-                              href="https://harvest-front-v3.netlify.app/get-started"
+                              href="https://app.harvest.finance/get-started"
                               target="_blank"
                               rel="noopener noreferrer"
                             >

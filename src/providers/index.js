@@ -60,7 +60,7 @@ const web3Onboard = init({
   ],
   appMetadata: {
     name: 'Harvest',
-    icon: 'https://harvest-front-v3.netlify.app/static/media/ifarm.ffb37908.svg',
+    icon: 'https://app.harvest.finance/static/media/ifarm.ffb37908.svg',
     logo: HavestLogo, // svg string logo
     description: 'Home to Yield Farming',
     gettingStartedGuide: 'https://docs.harvest.finance',
