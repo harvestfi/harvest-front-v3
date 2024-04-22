@@ -53,6 +53,7 @@ import {
   POOL_BALANCES_DECIMALS,
   MAX_DECIMALS,
   WIDO_BALANCES_DECIMALS,
+  SOCIAL_LINKS,
 } from '../../constants'
 import { fromWei, newContractInstance, getWeb3, getExplorerLink } from '../../services/web3'
 import { addresses } from '../../data'
@@ -1475,7 +1476,7 @@ const AdvancedFarm = () => {
                         </WelcomeTicket>
                         . For more information, check out the #vault-updates channel on{' '}
                         <WelcomeTicket
-                          href="https://discord.com/invite/gzWAG3Wx7Y"
+                          href={SOCIAL_LINKS.DISCORD}
                           target="_blank"
                           rel="noopener noreferrer"
                           linkColor={linkColorTooltip}
@@ -1486,7 +1487,7 @@ const AdvancedFarm = () => {
                         <WelcomeBottom>
                           <WelcomeKnow onClick={closeBadgeGenomes}>Got it!</WelcomeKnow>
                           <WelcomeTicket
-                            href="https://discord.com/invite/gzWAG3Wx7Y"
+                            href={SOCIAL_LINKS.DISCORD}
                             target="_blank"
                             rel="noopener noreferrer"
                             linkColor={linkColorTooltip}
@@ -1534,7 +1535,7 @@ const AdvancedFarm = () => {
                         <WelcomeBottom>
                           <WelcomeKnow onClick={closeBadgeSeamless}>Got it!</WelcomeKnow>
                           <WelcomeTicket
-                            href="https://discord.com/invite/gzWAG3Wx7Y"
+                            href={SOCIAL_LINKS.DISCORD}
                             target="_blank"
                             rel="noopener noreferrer"
                             linkColor={linkColorTooltip}
@@ -1592,7 +1593,7 @@ const AdvancedFarm = () => {
                         <WelcomeBottom>
                           <WelcomeKnow onClick={closeBadgeGB}>Got it!</WelcomeKnow>
                           <WelcomeTicket
-                            href="https://discord.com/invite/gzWAG3Wx7Y"
+                            href={SOCIAL_LINKS.DISCORD}
                             target="_blank"
                             rel="noopener noreferrer"
                             linkColor={linkColorTooltip}

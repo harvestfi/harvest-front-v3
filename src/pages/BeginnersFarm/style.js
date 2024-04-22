@@ -999,6 +999,9 @@ const MainTag = styled.div`
 
   @media screen and (max-width: 992px) {
     width: 50%;
+    &:nth-child(1) {
+      width: 50%;
+    }
     &:nth-child(3) {
       display: none;
     }

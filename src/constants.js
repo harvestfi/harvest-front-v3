@@ -6,7 +6,7 @@ export const SOCIAL_LINKS = {
   TELEGRAM: 'https://t.me/Breadforthepeople',
   TWITTER: 'https://twitter.com/harvest_finance',
   MEDIUM: 'https://medium.com/harvest-finance',
-  DISCORD: 'https://discord.gg/gzWAG3Wx7Y',
+  DISCORD: 'https://discord.gg/4JREDK9m',
   REDDIT: 'https://www.reddit.com/r/HarvestFinance/',
   GITHUB: 'https://github.com/harvest-finance',
   WIKI: 'https://docs.harvest.finance',
