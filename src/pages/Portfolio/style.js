@@ -70,7 +70,7 @@ const MobileDiv = styled.div`
     border: 2px solid ${props => props.borderColor};
     border-radius: 6.5px;
     width: 100%;
-    margin-bottom: 24px;
+    margin-bottom: 10px;
   }
 `
 
