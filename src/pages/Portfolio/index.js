@@ -369,6 +369,7 @@ const Portfolio = () => {
             if (isSpecialVault) {
               fAssetPool = token.data
             }
+
             const tokenDecimals = useIFARM
               ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0)
               : token.decimals
@@ -376,12 +377,13 @@ const Portfolio = () => {
               ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
               : get(token, `pricePerFullShare`, 0)
             const pricePerFullShare = fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals)
-            if (token) {
-              usdPrice =
-                (symbol === FARM_TOKEN_SYMBOL
-                  ? (token.data.lpTokenData && token.data.lpTokenData.price) * pricePerFullShare
-                  : token.vaultPrice) || 1
-            }
+            usdPrice =
+              (symbol === FARM_TOKEN_SYMBOL
+                ? (token.data.lpTokenData && token.data.lpTokenData.price) *
+                  Number(pricePerFullShare)
+                : token.vaultPrice) || 1
+            const underlyingPrice = get(token, 'usdPrice', get(token, 'data.lpTokenData.price', 0))
+
             const unstake = fromWei(
               get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),
               (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
@@ -603,6 +605,7 @@ const Portfolio = () => {
               useIFARM ? token.data.chain : token.chain,
               account,
               token.decimals,
+              underlyingPrice,
             )
             totalNetProfitUSD += sumNetChangeUsd
           }

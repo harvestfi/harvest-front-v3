@@ -449,7 +449,13 @@ const removeZeroValueObjects = data => {
   return data
 }
 
-export const initBalanceAndDetailData = async (address, chainId, account, tokenDecimals) => {
+export const initBalanceAndDetailData = async (
+  address,
+  chainId,
+  account,
+  tokenDecimals,
+  underlyingPrice,
+) => {
   const timestamps = []
   const uniqueVaultHData = []
   const mergedData = []
@@ -628,7 +634,7 @@ export const initBalanceAndDetailData = async (address, chainId, account, tokenD
       }
       return sumValue
     }, 0)
-    sumNetChangeUsd = Number(sumNetChange) * Number(enrichedData[0].priceUnderlying)
+    sumNetChangeUsd = Number(sumNetChange) * underlyingPrice
 
     enrichedData.forEach(item => {
       if (!lastUserEvent) {
@@ -639,7 +645,7 @@ export const initBalanceAndDetailData = async (address, chainId, account, tokenD
         }
       }
     })
-    sumLatestNetChangeUsd = Number(sumLatestNetChange) * Number(enrichedData[0].priceUnderlying)
+    sumLatestNetChangeUsd = Number(sumLatestNetChange) * underlyingPrice
   }
 
   return {

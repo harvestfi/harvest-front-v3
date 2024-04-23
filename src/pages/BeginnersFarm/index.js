@@ -901,7 +901,7 @@ const BeginnersFarm = () => {
         sumLatestNetChange,
         sumLatestNetChangeUsd,
         enrichedData,
-      } = await initBalanceAndDetailData(address, chainId, account, tokenDecimals)
+      } = await initBalanceAndDetailData(address, chainId, account, tokenDecimals, underlyingPrice)
 
       if (balanceFlag && vaultHFlag) {
         setUnderlyingEarnings(sumNetChange)
@@ -913,7 +913,15 @@ const BeginnersFarm = () => {
     }
 
     initData()
-  }, [account, token, vaultPool, tokenDecimals, setUnderlyingEarnings, setUsdEarnings])
+  }, [
+    account,
+    token,
+    vaultPool,
+    tokenDecimals,
+    underlyingPrice,
+    setUnderlyingEarnings,
+    setUsdEarnings,
+  ])
 
   const apyDaily = totalApy
     ? (((Number(totalApy) / 100 + 1) ** (1 / 365) - 1) * 100).toFixed(3)
