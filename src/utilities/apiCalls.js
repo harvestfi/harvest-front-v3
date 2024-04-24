@@ -94,65 +94,95 @@ export const getLastHarvestInfo = async (address, chainId) => {
   return result
 }
 
-export const getPublishDate = async (address, chainId) => {
-  let data = {},
-    flag = true
+export const getPublishDate = async () => {
+  const allData = [],
+    allFlags = []
 
   const myHeaders = new Headers()
   myHeaders.append('Content-Type', 'application/json')
 
-  address = address.toLowerCase()
-  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
-  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
-
-  const graphql = JSON.stringify({
+  const graphqlQueries = [
+    {
+      url: GRAPH_URL_MAINNET,
       query: `{
-        vaultHistories(
-          where: {
-            vault: "${address === farm ? ifarm : address}",
-          },
-          orderBy: timestamp,
+        vaults(
+          first: 1000,
+          orderBy: createAtBlock,
           orderDirection: desc
         ) {
-          sharePrice, timestamp
+          id, timestamp
         }
       }`,
-      variables: {},
-    }),
-    requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: graphql,
-      redirect: 'follow',
-    }
-
-  const url =
-    chainId === CHAIN_IDS.ETH_MAINNET
-      ? GRAPH_URL_MAINNET
-      : chainId === CHAIN_IDS.POLYGON_MAINNET
-      ? GRAPH_URL_POLYGON
-      : chainId === CHAIN_IDS.BASE
-      ? GRAPH_URL_BASE
-      : GRAPH_URL_ARBITRUM
+    },
+    {
+      url: GRAPH_URL_POLYGON,
+      query: `{
+        vaults(
+          first: 1000,
+          orderBy: createAtBlock,
+          orderDirection: desc
+        ) {
+          id, timestamp
+        }
+      }`,
+    },
+    {
+      url: GRAPH_URL_BASE,
+      query: `{
+        vaults(
+          first: 1000,
+          orderBy: createAtBlock,
+          orderDirection: desc
+        ) {
+          id, timestamp
+        }
+      }`,
+    },
+    {
+      url: GRAPH_URL_ARBITRUM,
+      query: `{
+        vaults(
+          first: 1000,
+          orderBy: createAtBlock,
+          orderDirection: desc
+        ) {
+          id, timestamp
+        }
+      }`,
+    },
+  ]
 
   try {
-    await fetch(url, requestOptions)
-      .then(response => response.json())
-      .then(res => {
-        data = res.data.vaultHistories
-        if (data.length === 0) {
-          flag = false
-        }
-      })
-      .catch(error => {
-        console.log('error', error)
-        flag = false
-      })
+    const requests = graphqlQueries.map(({ url, query }) => {
+      const requestOptions = {
+        method: 'POST',
+        headers: myHeaders,
+        body: JSON.stringify({ query }),
+        redirect: 'follow',
+      }
+      return fetch(url, requestOptions)
+        .then(response => response.json())
+        .then(res => {
+          const data = res.data.vaults || []
+          const flag = data.length > 0
+          allData.push(data)
+          allFlags.push(flag)
+        })
+        .catch(error => {
+          console.log('Error fetching data from URL:', url, error)
+          allFlags.push(false)
+        })
+    })
+
+    await Promise.all(requests)
   } catch (err) {
-    console.log('Fetch data about price feed: ', err)
-    flag = false
+    console.log('Error fetching data:', err)
+    return { data: [], flags: [] }
   }
-  return { data, flag }
+
+  const combinedData = allData.reduce((acc, curr) => acc.concat(curr), [])
+  const combinedFlags = allFlags.every(flag => flag)
+  return { data: combinedData, flag: combinedFlags }
 }
 
 export const getVaultHistories = async (address, chainId) => {
