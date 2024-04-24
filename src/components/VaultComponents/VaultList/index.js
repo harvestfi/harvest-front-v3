@@ -476,35 +476,40 @@ const VaultList = () => {
   useEffect(() => {
     const getCreatedAtData = async () => {
       if (groupOfVaults) {
-        const vaultsKey = Object.keys(groupOfVaults)
-        vaultsKey.map(async symbol => {
-          const token = groupOfVaults[symbol]
-          const tokenChainId = token.chain || token.data.chain
-          const isSpecialVault = token.liquidityPoolVault || token.poolVault
-          const paramAddress = isSpecialVault
-            ? token.data.collateralAddress
-            : token.vaultAddress || token.tokenAddress
-          const vaultIds = vaultsKey.filter(
-            vaultId =>
-              groupOfVaults[vaultId].vaultAddress === paramAddress ||
-              groupOfVaults[vaultId].tokenAddress === paramAddress,
-          )
-          const id = vaultIds[0]
-          const tokenVault = get(vaultsData, token.hodlVaultId || id)
-
-          const vaultPool = isSpecialVault
-            ? token.data
-            : find(totalPools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
-          const address =
-            token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
-          const { data, flag } = await getPublishDate(address, tokenChainId)
-          groupOfVaults[symbol].publishDate = flag ? Number(data[data.length - 1].timestamp) : null
-        })
+        const { data, flag } = await getPublishDate()
+        if (flag) {
+          const vaultsKey = Object.keys(groupOfVaults)
+          vaultsKey.map(async symbol => {
+            const token = groupOfVaults[symbol]
+            const isSpecialVault = token.liquidityPoolVault || token.poolVault
+            const paramAddress = isSpecialVault
+              ? token.data.collateralAddress
+              : token.vaultAddress || token.tokenAddress
+            const vaultIds = vaultsKey.filter(
+              vaultId =>
+                groupOfVaults[vaultId].vaultAddress === paramAddress ||
+                groupOfVaults[vaultId].tokenAddress === paramAddress,
+            )
+            const id = vaultIds[0]
+            const tokenVault = get(vaultsData, token.hodlVaultId || id)
+            const vaultPool = isSpecialVault
+              ? token.data
+              : find(totalPools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
+            const address =
+              token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+            for (let i = 0; i < data.length; i += 1) {
+              if (address.toLowerCase() === data[i].id) {
+                groupOfVaults[symbol].publishDate = data[i].timestamp
+                return
+              }
+            }
+          })
+        }
       }
     }
 
     getCreatedAtData()
-  }, [pools, vaultsData]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   const vaultsSymbol = useMemo(
     () =>
