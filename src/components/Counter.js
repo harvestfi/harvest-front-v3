@@ -50,7 +50,7 @@ const Counter = ({
           separator=","
           formattingFn={number => number}
           delay={0}
-          decimals={rewardToken.decimals}
+          decimals={rewardToken?.decimals}
           // duration={86400}
           duration={0.01}
           className="count-up-text"
@@ -65,7 +65,7 @@ const Counter = ({
           separator=","
           formattingFn={number => number}
           delay={0}
-          decimals={rewardToken.decimals}
+          decimals={rewardToken?.decimals}
           // duration={86400}
           duration={0.01}
           className="count-up-text"
@@ -80,7 +80,7 @@ const Counter = ({
           separator=","
           formattingFn={number => number}
           delay={0}
-          decimals={rewardToken.decimals}
+          decimals={rewardToken?.decimals}
           // duration={pool.finishTime - nowInSeconds}
           duration={0.01}
           className="count-up-text"
