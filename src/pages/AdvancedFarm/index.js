@@ -1071,7 +1071,7 @@ const AdvancedFarm = () => {
                   : rewardSymbol === 'GENE'
                   ? tempSymbol.toLowerCase() === '$gene'
                   : rewardSymbol === 'GENOME'
-                  ? tempSymbol.toLowerCase() === 'genomesdao-genome'
+                  ? tempSymbol.toLowerCase() === 'genome'
                   : rewardSymbol.toLowerCase() === tempSymbol.toLowerCase()
               ) {
                 // eslint-disable-next-line no-await-in-loop
