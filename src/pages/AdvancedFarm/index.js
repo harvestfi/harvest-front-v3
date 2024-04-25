@@ -295,11 +295,26 @@ const AdvancedFarm = () => {
 
   const groupOfVaults = { ...vaultsData, ...poolVaults }
   const vaultsKey = Object.keys(groupOfVaults)
-  const vaultIds = vaultsKey.filter(
-    vaultId =>
-      groupOfVaults[vaultId].vaultAddress === paramAddress ||
-      groupOfVaults[vaultId].tokenAddress === paramAddress,
-  )
+  const vaultIds = vaultsKey.filter(vaultId => {
+    const tokenAddress = groupOfVaults[vaultId].tokenAddress
+
+    if (typeof tokenAddress === 'string') {
+      return (
+        groupOfVaults[vaultId].vaultAddress.toLowerCase() === paramAddress.toLowerCase() ||
+        tokenAddress.toLowerCase() === paramAddress.toLowerCase()
+      )
+    }
+
+    if (typeof tokenAddress === 'object' && tokenAddress !== null) {
+      const tokenAddresses = Object.values(tokenAddress)
+      return (
+        groupOfVaults[vaultId].vaultAddress.toLowerCase() === paramAddress.toLowerCase() ||
+        tokenAddresses.some(address => address.toLowerCase() === paramAddress.toLowerCase())
+      )
+    }
+
+    return false
+  })
   const id = vaultIds[0]
   const token = groupOfVaults[id]
 
