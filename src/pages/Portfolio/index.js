@@ -62,6 +62,8 @@ import {
   CheckBoxDiv,
 } from './style'
 
+const totalNetProfitKey = 'TOTAL_NET_PROFIT'
+
 const getChainIcon = chain => {
   let chainLogo = ETHEREUM
   switch (chain) {
@@ -118,7 +120,7 @@ const Portfolio = () => {
   const { connected, connectAction, account, balances, getWalletBalances, chainId } = useWallet()
   const { userStats, fetchUserPoolStats, totalPools, disableWallet } = usePools()
   const { profitShareAPY } = useStats()
-  const { vaultsData, loadingVaults, farmingBalances, getFarmingBalances } = useVaults()
+  const { vaultsData, loadingVaults, getFarmingBalances } = useVaults()
   /* eslint-disable global-require */
   const { tokens } = require('../../data')
   const {
@@ -133,6 +135,21 @@ const Portfolio = () => {
   } = useThemeContext()
 
   const [apiData, setApiData] = useState([])
+  const [farmTokenList, setFarmTokenList] = useState([])
+  const [filteredFarmList, setFilteredFarmList] = useState([])
+  const [noFarm, setNoFarm] = useState(false)
+  const [totalNetProfit, setTotalNetProfit] = useState(0)
+  const [totalDeposit, setTotalDeposit] = useState(0)
+  const [totalRewards, setTotalRewards] = useState(0)
+  const [totalYieldDaily, setTotalYieldDaily] = useState(0)
+  const [totalYieldMonthly, setTotalYieldMonthly] = useState(0)
+
+  const [depositToken, setDepositToken] = useState([])
+
+  const [sortOrder, setSortOrder] = useState(false)
+  const [showDetail, setShowDetail] = useState(Array(farmTokenList.length).fill(false))
+  const [showInactiveFarms, setShowInactiveFarms] = useState(false)
+  const [expandAll, setExpandAll] = useState(false)
 
   useEffect(() => {
     const getCoinList = async () => {
@@ -141,6 +158,9 @@ const Portfolio = () => {
     }
 
     getCoinList()
+
+    const prevTotalProfit = Number(localStorage.getItem(totalNetProfitKey) || '0')
+    setTotalNetProfit(prevTotalProfit)
   }, [])
 
   const farmProfitSharingPool = totalPools.find(
@@ -186,22 +206,6 @@ const Portfolio = () => {
   )
 
   const groupOfVaults = { ...vaultsData, ...poolVaults }
-
-  const [farmTokenList, setFarmTokenList] = useState([])
-  const [filteredFarmList, setFilteredFarmList] = useState([])
-  const [noFarm, setNoFarm] = useState(false)
-  const [totalNetProfit, setTotalNetProfit] = useState(0)
-  const [totalDeposit, setTotalDeposit] = useState(0)
-  const [totalRewards, setTotalRewards] = useState(0)
-  const [totalYieldDaily, setTotalYieldDaily] = useState(0)
-  const [totalYieldMonthly, setTotalYieldMonthly] = useState(0)
-
-  const [depositToken, setDepositToken] = useState([])
-
-  const [sortOrder, setSortOrder] = useState(false)
-  const [showDetail, setShowDetail] = useState(Array(farmTokenList.length).fill(false))
-  const [showInactiveFarms, setShowInactiveFarms] = useState(false)
-  const [expandAll, setExpandAll] = useState(false)
 
   const firstWalletBalanceLoad = useRef(true)
   useEffectWithPrevious(
@@ -267,7 +271,6 @@ const Portfolio = () => {
     if (!isEmpty(userStats) && account) {
       const getFarmTokenInfo = async () => {
         let stakedVaults = [],
-          totalNetProfitUSD = 0,
           totalBalanceUSD = 0,
           valueRewards = 0,
           totalDailyYield = 0,
@@ -323,14 +326,16 @@ const Portfolio = () => {
             totalRewardUsd: 0,
             token: {},
           }
-          let symbol = ''
+          let symbol = '',
+            fAssetPool = {}
+
           if (stakedVaults[i] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
             symbol = FARM_TOKEN_SYMBOL
           } else {
             symbol = stakedVaults[i]
           }
-          // eslint-disable-next-line one-var
-          let fAssetPool =
+
+          fAssetPool =
             symbol === FARM_TOKEN_SYMBOL
               ? groupOfVaults[symbol].data
               : find(totalPools, pool => pool.id === symbol)
@@ -341,12 +346,14 @@ const Portfolio = () => {
               vault.vaultAddress === fAssetPool.collateralAddress ||
               (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress),
           )
+
           if (token) {
             const useIFARM = symbol === FARM_TOKEN_SYMBOL
             let tokenName = '',
               totalRewardAPRByPercent = 0,
               iFARMBalance = 0,
               usdPrice = 1
+
             for (let k = 0; k < token.tokenNames.length; k += 1) {
               tokenName += token.tokenNames[k]
               if (k !== token.tokenNames.length - 1) {
@@ -382,7 +389,6 @@ const Portfolio = () => {
                 ? (token.data.lpTokenData && token.data.lpTokenData.price) *
                   Number(pricePerFullShare)
                 : token.vaultPrice) || 1
-            const underlyingPrice = get(token, 'usdPrice', get(token, 'data.lpTokenData.price', 0))
 
             const unstake = fromWei(
               get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),
@@ -598,20 +604,9 @@ const Portfolio = () => {
             totalDailyYield += dailyYield
             totalMonthlyYield += monthlyYield
             newStats.push(stats)
-
-            // eslint-disable-next-line no-await-in-loop
-            const { sumNetChangeUsd } = await initBalanceAndDetailData(
-              paramAddress,
-              useIFARM ? token.data.chain : token.chain,
-              account,
-              token.decimals,
-              underlyingPrice,
-            )
-            totalNetProfitUSD += sumNetChangeUsd
           }
         }
 
-        setTotalNetProfit(totalNetProfitUSD)
         setTotalDeposit(totalBalanceUSD)
         setTotalRewards(valueRewards)
         setTotalYieldDaily(totalDailyYield)
@@ -631,7 +626,92 @@ const Portfolio = () => {
 
       getFarmTokenInfo()
     }
-  }, [account, userStats, balances, farmingBalances, showInactiveFarms]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, userStats, balances, showInactiveFarms]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!isEmpty(userStats) && account) {
+      const getNetProfitValue = async () => {
+        let stakedVaults = [],
+          totalNetProfitUSD = 0
+
+        if (showInactiveFarms) {
+          stakedVaults = Object.keys(userStats).filter(
+            poolId =>
+              new BigNumber(userStats[poolId].totalStaked).gt(0) ||
+              new BigNumber(userStats[poolId].lpTokenBalance).gt(0) ||
+              (poolId === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID &&
+                new BigNumber(balances[IFARM_TOKEN_SYMBOL]).gt(0)),
+          )
+        } else {
+          const stakedVaultsTemp = Object.keys(userStats).filter(
+            poolId =>
+              new BigNumber(userStats[poolId].totalStaked).gt(0) ||
+              new BigNumber(userStats[poolId].lpTokenBalance).gt(0) ||
+              (poolId === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID &&
+                new BigNumber(balances[IFARM_TOKEN_SYMBOL]).gt(0)),
+          )
+
+          stakedVaults = stakedVaultsTemp.filter(
+            poolId =>
+              groupOfVaults[poolId === 'profit-sharing-farm' ? 'IFARM' : poolId] &&
+              groupOfVaults[poolId === 'profit-sharing-farm' ? 'IFARM' : poolId].inactive !== true,
+          )
+        }
+
+        for (let i = 0; i < stakedVaults.length; i += 1) {
+          let symbol = '',
+            fAssetPool = {}
+
+          if (stakedVaults[i] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
+            symbol = FARM_TOKEN_SYMBOL
+          } else {
+            symbol = stakedVaults[i]
+          }
+
+          fAssetPool =
+            symbol === FARM_TOKEN_SYMBOL
+              ? groupOfVaults[symbol].data
+              : find(totalPools, pool => pool.id === symbol)
+          const token = find(
+            groupOfVaults,
+            vault =>
+              vault.vaultAddress === fAssetPool.collateralAddress ||
+              (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress),
+          )
+          if (token) {
+            const useIFARM = symbol === FARM_TOKEN_SYMBOL
+            const isSpecialVault = token.liquidityPoolVault || token.poolVault
+            if (isSpecialVault) {
+              fAssetPool = token.data
+            }
+
+            const underlyingPrice = get(token, 'usdPrice', get(token, 'data.lpTokenData.price', 0))
+            const paramAddress = isSpecialVault
+              ? token.data.collateralAddress
+              : token.vaultAddress || token.tokenAddress
+
+            // eslint-disable-next-line no-await-in-loop
+            const { sumNetChangeUsd } = await initBalanceAndDetailData(
+              paramAddress,
+              useIFARM ? token.data.chain : token.chain,
+              account,
+              token.decimals,
+              underlyingPrice,
+            )
+            totalNetProfitUSD += sumNetChangeUsd
+          }
+        }
+
+        setTotalNetProfit(totalNetProfitUSD)
+        localStorage.setItem(totalNetProfitKey, totalNetProfitUSD.toString())
+      }
+
+      getNetProfitValue()
+    } else {
+      setTotalNetProfit(0)
+      localStorage.setItem(totalNetProfitKey, '0')
+    }
+  }, [account, userStats, balances, showInactiveFarms]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const sortCol = field => {
     const tokenList = orderBy(farmTokenList, [field], [sortOrder ? 'asc' : 'desc'])
