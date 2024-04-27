@@ -12,6 +12,8 @@ import {
   TextSpan,
 } from './style'
 import AnimatedDots from '../../../AnimatedDots'
+import { useWallet } from '../../../../providers/Wallet'
+import { usePortals } from '../../../../providers/Portals'
 
 const SelectTokenList = ({
   balanceList,
@@ -27,6 +29,8 @@ const SelectTokenList = ({
 }) => {
   const { fontColor, fontColor2, hoverColor, activeColorModal } = useThemeContext()
   const [showList, setShowList] = useState(false)
+  const { chainId } = useWallet()
+  const { getPortalsToken } = usePortals()
 
   // Supported Token with no balance
   const [supTokenList, setSupTokenList] = useState(supTokenNoBalanceList)
@@ -68,33 +72,87 @@ const SelectTokenList = ({
   const [defaultCurToken, setDefaultCurToken] = useState(defaultToken)
 
   useEffect(() => {
-    if (supTokenNoBalanceList && balanceList && filterWord !== undefined && filterWord !== '') {
-      if (supTokenNoBalanceList.length !== 0) {
-        const newList = supTokenNoBalanceList.filter(el =>
-          el.symbol.toLowerCase().includes(filterWord.toLowerCase().trim()),
-        )
-        setSupTokenList(newList)
-      }
-      if (!(Object.keys(defaultToken).length === 0 && defaultToken.constructor === Object)) {
-        if (defaultToken.symbol.includes(filterWord.toLowerCase().trim())) {
-          setDefaultCurToken(defaultToken)
+    const fetch = async () => {
+      if (supTokenNoBalanceList && balanceList && filterWord !== undefined && filterWord !== '') {
+        const ethereumAddressRegex = /^(0x)?[0-9a-fA-F]{40}$/
+        if (ethereumAddressRegex.test(filterWord)) {
+          let TokenDetail = {}
+          try {
+            TokenDetail = (await getPortalsToken(chainId, filterWord)) || {}
+          } catch (e) {
+            TokenDetail = {}
+          }
+          if (Object.keys(TokenDetail).length !== 0) {
+            TokenDetail = {
+              ...TokenDetail,
+              logoURI: TokenDetail.image,
+              balance: 0,
+              default: false,
+              usdValue: 0,
+              usdPrice: TokenDetail.price,
+              chainId,
+            }
+          }
+          if (Object.keys(TokenDetail).length !== 0) {
+            if (!(Object.keys(defaultToken).length === 0 && defaultToken.constructor === Object)) {
+              if (defaultToken.symbol.includes(TokenDetail.symbol.toLowerCase().trim())) {
+                setDefaultCurToken(defaultToken)
+              } else {
+                setDefaultCurToken(null)
+              }
+            }
+            if (balanceList.length !== 0) {
+              const newList = balanceList.filter(el =>
+                el.symbol.toLowerCase().includes(TokenDetail.symbol.toLowerCase().trim()),
+              )
+              setBalanceTokenList(newList)
+            }
+            if (defaultCurToken === null) {
+              const newList = balanceList.filter(el =>
+                el.symbol.toLowerCase().includes(TokenDetail.symbol.toLowerCase().trim()),
+              )
+              if (newList.length === 0) setSupTokenList([TokenDetail])
+              else setSupTokenList([])
+            } else {
+              setSupTokenList([])
+            }
+          } else {
+            setSupTokenList([])
+            if (!(Object.keys(defaultToken).length === 0 && defaultToken.constructor === Object)) {
+              setDefaultCurToken(null)
+            }
+            setBalanceTokenList([])
+          }
         } else {
-          setDefaultCurToken(null)
+          if (supTokenNoBalanceList.length !== 0) {
+            const newList = supTokenNoBalanceList.filter(el =>
+              el.symbol.toLowerCase().includes(filterWord.toLowerCase().trim()),
+            )
+            setSupTokenList(newList)
+          }
+          if (!(Object.keys(defaultToken).length === 0 && defaultToken.constructor === Object)) {
+            if (defaultToken.symbol.includes(filterWord.toLowerCase().trim())) {
+              setDefaultCurToken(defaultToken)
+            } else {
+              setDefaultCurToken(null)
+            }
+          }
+          if (balanceList.length !== 0) {
+            const newList = balanceList.filter(el =>
+              el.symbol.toLowerCase().includes(filterWord.toLowerCase().trim()),
+            )
+            setBalanceTokenList(newList)
+          }
         }
       }
-      if (balanceList.length !== 0) {
-        const newList = balanceList.filter(el =>
-          el.symbol.toLowerCase().includes(filterWord.toLowerCase().trim()),
-        )
-        setBalanceTokenList(newList)
+      if (filterWord === '') {
+        setSupTokenList(supTokenNoBalanceList)
+        setBalanceTokenList(balanceList)
+        setDefaultCurToken(defaultToken)
       }
     }
-    if (filterWord === '') {
-      setSupTokenList(supTokenNoBalanceList)
-      setBalanceTokenList(balanceList)
-      setDefaultCurToken(defaultToken)
-    }
-  }, [filterWord, supTokenNoBalanceList, balanceList]) // eslint-disable-line react-hooks/exhaustive-deps
+    fetch()
+  }, [filterWord, supTokenNoBalanceList, balanceList, chainId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const count =
@@ -233,6 +291,15 @@ const SelectTokenList = ({
               ))}
             </>
           )}
+          {defaultCurToken === null &&
+            supTokenList.length === 0 &&
+            balanceTokenList.length === 0 &&
+            Object.keys(soonToSupList).length === 0 &&
+            filterWord !== '' && (
+              <EmptyContainer fontColor={fontColor} cursor="not-allowed">
+                Not Found
+              </EmptyContainer>
+            )}
         </Content>
       ) : (
         <EmptyContainer fontColor={fontColor}>
