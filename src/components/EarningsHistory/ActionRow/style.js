@@ -36,6 +36,13 @@ const FlexDiv = styled.div`
         : ``};
   }
 `
+
+const IconWrapper = styled.div`
+  display: flex;
+  padding-left: 6px;
+  margin: auto 0px;
+`
+
 const Content = styled.div`
   width: ${props => props.width};
   ${props =>
@@ -66,6 +73,10 @@ const Content = styled.div`
   font-size: 20px;
   line-height: 23px;
   align-self: center;
+
+  #harvest-event-minus {
+    max-width: 300px;
+  }
 
   &.mobile-extender {
     width: unset;
@@ -127,4 +138,151 @@ const Badge = styled.div`
   padding: 2px 8px 2px 6px;
 `
 
-export { DetailView, FlexDiv, Content, Badge, NetImg }
+const NewLabel = styled.div`
+  font-weight: ${props => props.weight || '400'};
+  font-size: ${props => props.size || '20px'};
+  line-height: ${props => props.height || '0px'};
+  ${props =>
+    props.borderBottom
+      ? `
+    border-bottom: ${props.borderBottom};
+  `
+      : ''}
+
+  ${props =>
+    props.color
+      ? `
+    color: ${props.color};
+  `
+      : ''}
+  ${props =>
+    props.position
+      ? `
+    position: ${props.position};
+  `
+      : ''}
+  ${props =>
+    props.align
+      ? `
+    text-align: ${props.align};
+  `
+      : ''}
+  ${props =>
+    props.justifyContent
+      ? `
+    justify-content: ${props.justifyContent};
+  `
+      : ''}
+  ${props =>
+    props.marginTop
+      ? `
+    margin-top: ${props.marginTop};
+  `
+      : ''}
+  ${props =>
+    props.marginLeft
+      ? `
+    margin-left: ${props.marginLeft};
+  `
+      : ''}
+  ${props =>
+    props.marginBottom
+      ? `
+    margin-bottom: ${props.marginBottom};
+  `
+      : ''}
+  ${props =>
+    props.marginRight
+      ? `
+    margin-right: ${props.marginRight};
+  `
+      : ''}
+  ${props =>
+    props.display
+      ? `
+    display: ${props.display};
+  `
+      : ''}
+  ${props =>
+    props.items
+      ? `
+    align-items: ${props.items};
+  `
+      : ''}
+  ${props =>
+    props.self
+      ? `
+    align-self: ${props.self};
+  `
+      : ''}
+  ${props =>
+    props.padding
+      ? `
+    padding: ${props.padding};
+  `
+      : ''}
+  ${props =>
+    props.width
+      ? `
+    width: ${props.width};
+  `
+      : ''}
+  ${props =>
+    props.borderRadius
+      ? `
+    border-radius: ${props.borderRadius};
+    `
+      : ``}
+
+  svg.question {
+    font-size: 16px;
+    color: ${props => props.color};
+    cursor: pointer;
+    margin: auto 0px auto 5px;
+  }
+
+  span.symbol {
+    position: absolute;
+    color: ${props => props.fontColor2};
+    font-size: 8px;
+    right: 0;
+    top: 13px;
+  }
+
+  img.icon {
+    margin-right: 10px;
+  }
+
+  img.thumbs-up {
+    margin-right: 10px;
+  }
+
+  img.info-icon {
+    margin-left: 15px;
+  }
+
+  #info .tooltip-inner {
+    background: black;
+  }
+
+  span {
+    font-weight: 700;
+  }
+
+  @media screen and (max-width: 992px) {
+    img.icon {
+      margin-right: 5px;
+    }
+
+    img.info {
+      margin-left: 5px;
+    }
+
+    img.thumbs-up {
+      margin-right: 5px;
+      width: 11px;
+    }
+  }
+`
+
+export { DetailView, FlexDiv, IconWrapper, Content, Badge, NetImg, NewLabel }
