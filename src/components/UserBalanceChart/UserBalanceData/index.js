@@ -63,7 +63,7 @@ const UserBalanceData = ({
 
   const [selectedState, setSelectedState] = useState('LAST')
   const [apiData, setApiData] = useState([])
-  const [loadComplete, setLoadComplete] = useState(true)
+  const [loadComplete, setLoadComplete] = useState(false)
   const [curDate, setCurDate] = useState('')
   const [curContent, setCurContent] = useState('$0')
   const [curContentUnderlying, setCurContentUnderlying] = useState('0')
