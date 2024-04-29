@@ -1202,38 +1202,38 @@ const AdvancedFarm = () => {
 
   useEffect(() => {
     const initData = async () => {
-      const address =
-        token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
-      const chainId = token.chain || token.data.chain
-      const {
-        balanceFlag,
-        vaultHFlag,
-        sumNetChange,
-        sumNetChangeUsd,
-        sumLatestNetChange,
-        sumLatestNetChangeUsd,
-        enrichedData,
-      } = await initBalanceAndDetailData(address, chainId, account, tokenDecimals, underlyingPrice)
+      if (account && token && vaultPool) {
+        const address =
+          token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+        const chainId = token.chain || token.data.chain
+        const {
+          balanceFlag,
+          vaultHFlag,
+          sumNetChange,
+          sumNetChangeUsd,
+          sumLatestNetChange,
+          sumLatestNetChangeUsd,
+          enrichedData,
+        } = await initBalanceAndDetailData(
+          address,
+          chainId,
+          account,
+          tokenDecimals,
+          underlyingPrice,
+        )
 
-      if (balanceFlag && vaultHFlag) {
-        setUnderlyingEarnings(sumNetChange)
-        setUsdEarnings(sumNetChangeUsd)
-        setUnderlyingEarningsLatest(sumLatestNetChange)
-        setUsdEarningsLatest(sumLatestNetChangeUsd)
-        setHistoryData(enrichedData)
+        if (balanceFlag && vaultHFlag) {
+          setUnderlyingEarnings(sumNetChange)
+          setUsdEarnings(sumNetChangeUsd)
+          setUnderlyingEarningsLatest(sumLatestNetChange)
+          setUsdEarningsLatest(sumLatestNetChangeUsd)
+          setHistoryData(enrichedData)
+        }
       }
     }
 
     initData()
-  }, [
-    account,
-    token,
-    vaultPool,
-    tokenDecimals,
-    underlyingPrice,
-    setUnderlyingEarnings,
-    setUsdEarnings,
-  ])
+  }, [account, vaultPool, tokenDecimals, underlyingPrice, setUnderlyingEarnings, setUsdEarnings]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const apyDaily = totalApy
     ? (((Number(totalApy) / 100 + 1) ** (1 / 365) - 1) * 100).toFixed(3)

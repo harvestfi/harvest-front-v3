@@ -1,10 +1,12 @@
 import React from 'react'
 import { useMediaQuery } from 'react-responsive'
+import { PiQuestion } from 'react-icons/pi'
+import ReactTooltip from 'react-tooltip'
 import ListItem from '../ListItem'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import TrendUp from '../../../assets/images/logos/advancedfarm/trend-up.svg'
 import TrendDown from '../../../assets/images/logos/advancedfarm/trend-down.svg'
-import { Content, DetailView, FlexDiv, Badge, NetImg } from './style'
+import { Content, DetailView, FlexDiv, IconWrapper, Badge, NetImg, NewLabel } from './style'
 
 function formatDateTime(value) {
   const date = new Date(value * 1000) // Multiply by 1000 to convert seconds to milliseconds
@@ -59,17 +61,57 @@ const ActionRow = ({ info, tokenSymbol }) => {
       background={backColor}
     >
       <FlexDiv padding={isMobile ? '10px' : '0'}>
-        <Content width={isMobile ? '25%' : '20%'} marginTop={isMobile ? '15px' : 'unset'}>
+        <Content
+          display="flex"
+          width={isMobile ? '25%' : '20%'}
+          marginTop={isMobile ? '15px' : 'unset'}
+        >
           <Badge
             bgColor={
-              info.event === 'Revert' ? '#FEF3F2' : info.event === 'Convert' ? '#fdeccf' : '#ecfdf3'
+              info.event === 'Revert'
+                ? '#FEF3F2'
+                : info.event === 'Convert'
+                ? '#fdeccf'
+                : info.netChange > 0
+                ? '#ecfdf3'
+                : '#FEF3F2'
             }
             color={
-              info.event === 'Revert' ? '#B42318' : info.event === 'Convert' ? '#FF9400' : '#027a48'
+              info.event === 'Revert'
+                ? '#B42318'
+                : info.event === 'Convert'
+                ? '#FF9400'
+                : info.netChange > 0
+                ? '#027a48'
+                : '#B42318'
             }
           >
             {info.event}
           </Badge>
+          {info.event === 'Harvest' && info.netChange < 0 && (
+            <IconWrapper>
+              <PiQuestion className="question" data-tip data-for="harvest-event-minus" />
+              <ReactTooltip
+                id="harvest-event-minus"
+                backgroundColor="#101828"
+                borderColor="black"
+                textColor="white"
+              >
+                <NewLabel
+                  size={isMobile ? '12px' : '12px'}
+                  height={isMobile ? '18px' : '18px'}
+                  weight="500"
+                  color="white"
+                >
+                  In certain strategies, a negative yield event might occur, resulting in a minor
+                  reduction of the underlying.
+                  <br />
+                  <br />
+                  If you have any questions, open a ticket in our Discord.
+                </NewLabel>
+              </ReactTooltip>
+            </IconWrapper>
+          )}
         </Content>
         <Content width={isMobile ? '25%' : '20%'} color={fontColor}>
           <div className="timestamp" dangerouslySetInnerHTML={formatDateTime(info.timestamp)} />
@@ -84,7 +126,7 @@ const ActionRow = ({ info, tokenSymbol }) => {
           marginTop={isMobile ? '15px' : 'unset'}
         >
           <NetImg>
-            <img src={info.event === 'Revert' ? TrendDown : TrendUp} alt="trend" />
+            <img src={info.netChange > 0 ? TrendUp : TrendDown} alt="trend" />
           </NetImg>
           <div>
             <ListItem
