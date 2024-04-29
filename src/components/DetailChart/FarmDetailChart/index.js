@@ -73,25 +73,36 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
   }, [clickedId])
 
   useEffect(() => {
+    let isMounted = true
     const initData = async () => {
       if (address && chainId && account) {
-        const data = await getDataQuery(365, address, chainId, account)
-        const updatedData = { ...data }
-        updatedData.vaultHistories = updatedData.vaultHistories.filter(
-          history => history.sharePrice !== '0',
-        )
-        setApiData(updatedData)
-        if (isIFARM && updatedData) {
-          data.apyRewards = updatedData.apyRewards
-          data.tvls = updatedData.tvls
+        try {
+          const data = await getDataQuery(365, address, chainId, account)
+          const updatedData = { ...data }
+          updatedData.vaultHistories = updatedData.vaultHistories.filter(
+            history => history.sharePrice !== '0',
+          )
+          if (isMounted) {
+            setApiData(updatedData)
+            if (isIFARM && updatedData) {
+              data.apyRewards = updatedData.apyRewards
+              data.tvls = updatedData.tvls
 
-          const iFarmTVL = await getTotalTVLData()
-          setIFarmTVLData(iFarmTVL)
+              const iFarmTVL = await getTotalTVLData()
+              setIFarmTVLData(iFarmTVL)
+            }
+          }
+        } catch (error) {
+          console.log('An error ocurred', error)
         }
       }
     }
 
     initData()
+
+    return () => {
+      isMounted = false
+    }
   }, [address, chainId, account, isIFARM])
 
   return (
