@@ -313,3 +313,27 @@ export const numberWithCommas = x => {
   integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
   return integerPart + decimalPart
 }
+
+export const formatDate = value => {
+  const date = new Date(value)
+  const year = date.getFullYear()
+  const monthNames = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
+  const monthNum = date.getMonth()
+  const month = monthNames[monthNum]
+  const day = date.getDate()
+
+  return `${month} ${day} ${year}`
+}

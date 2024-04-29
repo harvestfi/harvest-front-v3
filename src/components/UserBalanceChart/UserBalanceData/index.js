@@ -3,7 +3,7 @@ import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
-import { numberWithCommas } from '../../../utilities/formats'
+import { formatDate, numberWithCommas } from '../../../utilities/formats'
 import { getPriceFeeds, getUserBalanceHistories } from '../../../utilities/apiCalls'
 import {
   ButtonGroup,
@@ -24,30 +24,6 @@ const recommendLinks = [
   { name: 'ALL', type: 3, state: 'ALL' },
   { name: 'LAST', type: 4, state: 'LAST' },
 ]
-
-function formatDateTime(value) {
-  const date = new Date(value)
-  const year = date.getFullYear()
-  const monthNames = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ]
-  const monthNum = date.getMonth()
-  const month = monthNames[monthNum]
-  const day = date.getDate()
-
-  return `${day} ${month} ${year}`
-}
 
 const UserBalanceData = ({
   token,
@@ -87,7 +63,7 @@ const UserBalanceData = ({
 
   const handleTooltipContent = payload => {
     if (payload && payload.length) {
-      const currentDate = formatDateTime(payload[0].payload.x)
+      const currentDate = formatDate(payload[0].payload.x)
       const balance = numberWithCommas(Number(payload[0].payload.y).toFixed(fixedLen))
       if (Number(payload[0].payload.y === 0)) {
         setCurContent('$0')

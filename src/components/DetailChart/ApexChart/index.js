@@ -14,7 +14,7 @@ import { round } from 'lodash'
 import { ClipLoader } from 'react-spinners'
 import { useWindowWidth } from '@react-hook/window-size'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { ceil10, floor10, round10, numberWithCommas } from '../../../utilities/formats'
+import { ceil10, floor10, round10, numberWithCommas, formatDate } from '../../../utilities/formats'
 import { MAX_DECIMALS } from '../../../constants'
 import { LoadingDiv, NoData } from './style'
 import { fromWei } from '../../../services/web3'
@@ -88,30 +88,6 @@ function generateChartDataWithSlots(slots, apiData, kind, filter, decimals) {
   }
 
   return seriesData
-}
-
-function formatDateTime(value) {
-  const date = new Date(value)
-  const year = date.getFullYear()
-  const monthNames = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ]
-  const monthNum = date.getMonth()
-  const month = monthNames[monthNum]
-  const day = date.getDate()
-
-  return `${month} ${day} ${year}`
 }
 
 function formatXAxis(value, range) {
@@ -480,7 +456,7 @@ const ApexChart = ({
       setFixedLen(filter === 1 ? 0 : len)
       setRoundNumber(roundNum)
 
-      setCurDate(formatDateTime(mainData[slotCount - 1].x))
+      setCurDate(formatDate(mainData[slotCount - 1].x))
       const content = numberWithCommas(
         Number(mainData[slotCount - 1].y).toFixed(
           filter === 1 ? 2 : filter === 0 ? fixedLen : roundNum,

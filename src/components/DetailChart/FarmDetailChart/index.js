@@ -5,7 +5,7 @@ import myBalanceActive from '../../../assets/images/logos/earn/chart-graph.svg'
 import { addresses } from '../../../data/index'
 import { useWallet } from '../../../providers/Wallet'
 import { getDataQuery, getTotalTVLData } from '../../../utilities/apiCalls'
-import { numberWithCommas } from '../../../utilities/formats'
+import { formatDate, numberWithCommas } from '../../../utilities/formats'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import ApexChart from '../ApexChart'
 import ChartButtonsGroup from '../ChartButtonsGroup'
@@ -22,30 +22,6 @@ import {
   FlexDiv,
   LabelInfo,
 } from './style'
-
-function formatDateTime(value) {
-  const date = new Date(value)
-  const year = date.getFullYear()
-  const monthNames = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ]
-  const monthNum = date.getMonth()
-  const month = monthNames[monthNum]
-  const day = date.getDate()
-
-  return `${month} ${day} ${year}`
-}
 
 const filterList = [
   { id: 1, name: 'APY', img: apyActive },
@@ -81,7 +57,7 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
 
   const handleTooltipContent = payload => {
     if (payload && payload.length) {
-      setCurDate(formatDateTime(payload[0].payload.x))
+      setCurDate(formatDate(payload[0].payload.x))
       const content = numberWithCommas(
         Number(payload[0].payload.y).toFixed(
           clickedId === 1 ? 2 : clickedId === 0 ? fixedLen : roundNumber,
