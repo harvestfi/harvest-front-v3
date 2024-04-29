@@ -36,21 +36,21 @@ const recommendLinks = [
 
 const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
   const { fontColor3, fontColor4 } = useThemeContext()
+  const { account } = useWallet()
+
   const [clickedId, setClickedId] = useState(2)
   const [selectedState, setSelectedState] = useState('ALL')
-
-  const { account } = useWallet()
-  const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
-  const chainId = token.chain || token.data.chain
-
   const [apiData, setApiData] = useState({})
   const [iFarmTVLData, setIFarmTVLData] = useState({})
   const [curDate, setCurDate] = useState('')
   const [curContent, setCurContent] = useState('')
+  const [tooltipLabel, setTooltipLabel] = useState('')
 
   const isIFARM = token.tokenAddress === addresses.FARM
-
-  const [tooltipLabel, setTooltipLabel] = useState('')
+  const address = isIFARM
+    ? token.tokenAddress
+    : token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+  const chainId = token.chain || token.data.chain
 
   useEffect(() => {
     const label = clickedId === 0 ? 'APY' : clickedId === 1 ? 'TVL' : 'Share Price'
@@ -59,26 +59,25 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
 
   useEffect(() => {
     const initData = async () => {
-      const data = await getDataQuery(365, address, chainId, account)
-      const updatedData = { ...data }
-      updatedData.vaultHistories = updatedData.vaultHistories.filter(
-        history => history.sharePrice !== '0',
-      )
-      setApiData(updatedData)
-      if (isIFARM) {
-        const dataIFarm = await getDataQuery(365, token.tokenAddress, chainId, account)
-        if (dataIFarm) {
-          data.apyRewards = dataIFarm.apyRewards
-          data.tvls = dataIFarm.tvls
-        }
+      if (address && chainId && account) {
+        const data = await getDataQuery(365, address, chainId, account)
+        const updatedData = { ...data }
+        updatedData.vaultHistories = updatedData.vaultHistories.filter(
+          history => history.sharePrice !== '0',
+        )
+        setApiData(updatedData)
+        if (isIFARM && updatedData) {
+          data.apyRewards = updatedData.apyRewards
+          data.tvls = updatedData.tvls
 
-        const iFarmTVL = await getTotalTVLData()
-        setIFarmTVLData(iFarmTVL)
+          const iFarmTVL = await getTotalTVLData()
+          setIFarmTVLData(iFarmTVL)
+        }
       }
     }
 
     initData()
-  }, [address, chainId, account, token, isIFARM, clickedId])
+  }, [address, chainId, account, isIFARM])
 
   return (
     <Container>
