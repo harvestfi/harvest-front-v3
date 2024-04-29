@@ -14,7 +14,7 @@ import { round } from 'lodash'
 import { ClipLoader } from 'react-spinners'
 import { useWindowWidth } from '@react-hook/window-size'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { ceil10, floor10, round10, numberWithCommas } from '../../../utilities/formats'
+import { ceil10, floor10, round10, numberWithCommas, formatDate } from '../../../utilities/formats'
 import { MAX_DECIMALS } from '../../../constants'
 import { LoadingDiv, NoData } from './style'
 import { fromWei } from '../../../services/web3'
@@ -90,30 +90,6 @@ function generateChartDataWithSlots(slots, apiData, kind, filter, decimals) {
   return seriesData
 }
 
-function formatDateTime(value) {
-  const date = new Date(value)
-  const year = date.getFullYear()
-  const monthNames = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ]
-  const monthNum = date.getMonth()
-  const month = monthNames[monthNum]
-  const day = date.getDate()
-
-  return `${month} ${day} ${year}`
-}
-
 function formatXAxis(value, range) {
   const date = new Date(value)
 
@@ -183,6 +159,10 @@ const ApexChart = ({
   lastAPY,
   setCurDate,
   setCurContent,
+  setRoundNumber,
+  handleTooltipContent,
+  setFixedLen,
+  fixedLen,
 }) => {
   const { fontColor, fontColor5 } = useThemeContext()
 
@@ -193,21 +173,14 @@ const ApexChart = ({
   const [loading, setLoading] = useState(false)
   const [isDataReady, setIsDataReady] = useState(true)
 
-  const [fixedLen, setFixedLen] = useState(0)
-  const [roundNumber, setRoundNumber] = useState(0)
-
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      setCurDate(formatDateTime(payload[0].payload.x))
-      const content = numberWithCommas(
-        Number(payload[0].payload.y).toFixed(
-          filter === 1 ? 2 : filter === 0 ? fixedLen : roundNumber,
-        ),
-      )
-      setCurContent(content)
-    }
+  const CustomTooltip = ({ active, payload, onTooltipContentChange }) => {
+    useEffect(() => {
+      if (active && payload && payload.length) {
+        onTooltipContentChange(payload)
+      }
+    }, [active, payload, onTooltipContentChange])
 
     return null
   }
@@ -483,7 +456,7 @@ const ApexChart = ({
       setFixedLen(filter === 1 ? 0 : len)
       setRoundNumber(roundNum)
 
-      setCurDate(formatDateTime(mainData[slotCount - 1].x))
+      setCurDate(formatDate(mainData[slotCount - 1].x))
       const content = numberWithCommas(
         Number(mainData[slotCount - 1].y).toFixed(
           filter === 1 ? 2 : filter === 0 ? fixedLen : roundNum,
@@ -589,7 +562,7 @@ const ApexChart = ({
               fill="url(#colorUv)"
             />
             <Tooltip
-              content={CustomTooltip}
+              content={<CustomTooltip onTooltipContentChange={handleTooltipContent} />}
               legendType="none"
               dot={false}
               cursor={{

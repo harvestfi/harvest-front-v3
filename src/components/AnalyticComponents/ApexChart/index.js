@@ -12,32 +12,8 @@ import {
 import { useWindowWidth } from '@react-hook/window-size'
 import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { ceil10, floor10, round10, numberWithCommas } from '../../../utilities/formats'
+import { ceil10, floor10, round10, numberWithCommas, formatDate } from '../../../utilities/formats'
 import { LoadingDiv, NoData } from './style'
-
-function formatDateTime(value) {
-  const date = new Date(value)
-  const year = date.getFullYear()
-  const monthNames = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ]
-  const monthNum = date.getMonth()
-  const month = monthNames[monthNum]
-  const day = date.getDate()
-
-  return `${month} ${day} ${year}`
-}
 
 function getRangeNumber(strRange) {
   let ago = 30
@@ -142,7 +118,7 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
-      setCurDate(formatDateTime(payload[0].payload.x))
+      setCurDate(formatDate(payload[0].payload.x))
       const content = `<div style="font-size: 13px; line-height: 16px; display: flex;"><div style="font-weight: 700;">TVL
       </div><div style="color: #15B088; font-weight: 500;">&nbsp;$
       ${numberWithCommas(Number(payload[0].payload.y.toFixed(0)))}</div></div>`

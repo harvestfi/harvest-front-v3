@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { get, toArray } from 'lodash'
 import React from 'react'
-// import CountUp from 'react-countup'
 import { BEGINNERS_BALANCES_DECIMALS } from '../constants'
 import { fromWei } from '../services/web3'
 import { formatNumber } from '../utilities/formats'

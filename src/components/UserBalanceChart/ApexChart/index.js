@@ -12,33 +12,9 @@ import {
 import { useWindowWidth } from '@react-hook/window-size'
 import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { ceil10, floor10, round10, numberWithCommas } from '../../../utilities/formats'
+import { ceil10, floor10, round10, numberWithCommas, formatDate } from '../../../utilities/formats'
 import { LoadingDiv, NoData, FakeChartWrapper } from './style'
 import { useWallet } from '../../../providers/Wallet'
-
-function formatDateTime(value) {
-  const date = new Date(value)
-  const year = date.getFullYear()
-  const monthNames = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ]
-  const monthNum = date.getMonth()
-  const month = monthNames[monthNum]
-  const day = date.getDate()
-
-  return `${day} ${month} ${year}`
-}
 
 function getRangeNumber(strRange) {
   let ago = 30
@@ -499,7 +475,7 @@ const ApexChart = ({
 
       // Set date and price with latest value by default
       if (mainData.length > 0) {
-        setCurDate(formatDateTime(mainData[mainData.length - 1].x))
+        setCurDate(formatDate(mainData[mainData.length - 1].x))
         const balance = numberWithCommas(Number(mainData[mainData.length - 1].y).toFixed(fixedLen))
         const balanceUnderlying = numberWithCommas(Number(mainData[mainData.length - 1].z))
         setCurContent(`$${balance}`)
