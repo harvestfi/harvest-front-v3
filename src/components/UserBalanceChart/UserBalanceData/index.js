@@ -136,12 +136,12 @@ const UserBalanceData = ({
           if (balanceFlag && priceFeedFlag) {
             const nowDate = new Date()
             const currentTimeStamp = Math.floor(nowDate.getTime() / 1000)
-  
+
             if (balanceData[0].timestamp > uniqueData2[0].timestamp) {
               let i = 0,
                 z = 0,
                 addFlag = false
-  
+
               while (balanceData[i]?.timestamp > uniqueData2[0].timestamp) {
                 balanceData[i].priceUnderlying = uniqueData2[0].priceUnderlying
                 balanceData[i].sharePrice = uniqueData2[0].sharePrice
@@ -184,7 +184,10 @@ const UserBalanceData = ({
               let i = 0,
                 z = 0,
                 addFlag = false
-              while (i < uniqueData2.length && uniqueData2[i].timestamp > balanceData[0].timestamp) {
+              while (
+                i < uniqueData2.length &&
+                uniqueData2[i].timestamp > balanceData[0].timestamp
+              ) {
                 uniqueData2[i].value = balanceData[0].value
                 mergedData.push(uniqueData2[i])
                 i += 1
@@ -225,7 +228,7 @@ const UserBalanceData = ({
                 z += 1
               }
             }
-  
+
             const firstObject = {
               priceUnderlying: useIFARM ? farmPriceRef.current : usdPriceRef.current,
               sharePrice: pricePerFullShareRef.current,
