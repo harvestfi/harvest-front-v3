@@ -77,6 +77,7 @@ const UserBalanceData = ({
   const farmPriceRef = useRef(farmPrice)
   const usdPriceRef = useRef(underlyingPrice)
   const pricePerFullShareRef = useRef(pricePerFullShare)
+
   useEffect(() => {
     totalValueRef.current = totalValue
     farmPriceRef.current = farmPrice

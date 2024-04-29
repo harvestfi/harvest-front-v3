@@ -5,6 +5,7 @@ import myBalanceActive from '../../../assets/images/logos/earn/chart-graph.svg'
 import { addresses } from '../../../data/index'
 import { useWallet } from '../../../providers/Wallet'
 import { getDataQuery, getTotalTVLData } from '../../../utilities/apiCalls'
+import { numberWithCommas } from '../../../utilities/formats'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import ApexChart from '../ApexChart'
 import ChartButtonsGroup from '../ChartButtonsGroup'
@@ -21,6 +22,30 @@ import {
   FlexDiv,
   LabelInfo,
 } from './style'
+
+function formatDateTime(value) {
+  const date = new Date(value)
+  const year = date.getFullYear()
+  const monthNames = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
+  const monthNum = date.getMonth()
+  const month = monthNames[monthNum]
+  const day = date.getDate()
+
+  return `${month} ${day} ${year}`
+}
 
 const filterList = [
   { id: 1, name: 'APY', img: apyActive },
@@ -45,12 +70,26 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
   const [curDate, setCurDate] = useState('')
   const [curContent, setCurContent] = useState('')
   const [tooltipLabel, setTooltipLabel] = useState('')
+  const [roundNumber, setRoundNumber] = useState(0)
+  const [fixedLen, setFixedLen] = useState(0)
 
   const isIFARM = token.tokenAddress === addresses.FARM
   const address = isIFARM
     ? token.tokenAddress
     : token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
   const chainId = token.chain || token.data.chain
+
+  const handleTooltipContent = payload => {
+    if (payload && payload.length) {
+      setCurDate(formatDateTime(payload[0].payload.x))
+      const content = numberWithCommas(
+        Number(payload[0].payload.y).toFixed(
+          clickedId === 1 ? 2 : clickedId === 0 ? fixedLen : roundNumber,
+        ),
+      )
+      setCurContent(content)
+    }
+  }
 
   useEffect(() => {
     const label = clickedId === 0 ? 'APY' : clickedId === 1 ? 'TVL' : 'Share Price'
@@ -117,6 +156,10 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
           lastAPY={lastAPY}
           setCurDate={setCurDate}
           setCurContent={setCurContent}
+          handleTooltipContent={handleTooltipContent}
+          setRoundNumber={setRoundNumber}
+          setFixedLen={setFixedLen}
+          fixedLen={fixedLen}
         />
       </ChartDiv>
       <ButtonGroup>

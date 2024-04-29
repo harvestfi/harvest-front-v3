@@ -183,6 +183,10 @@ const ApexChart = ({
   lastAPY,
   setCurDate,
   setCurContent,
+  setRoundNumber,
+  handleTooltipContent,
+  setFixedLen,
+  fixedLen,
 }) => {
   const { fontColor, fontColor5 } = useThemeContext()
 
@@ -193,21 +197,14 @@ const ApexChart = ({
   const [loading, setLoading] = useState(false)
   const [isDataReady, setIsDataReady] = useState(true)
 
-  const [fixedLen, setFixedLen] = useState(0)
-  const [roundNumber, setRoundNumber] = useState(0)
-
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      setCurDate(formatDateTime(payload[0].payload.x))
-      const content = numberWithCommas(
-        Number(payload[0].payload.y).toFixed(
-          filter === 1 ? 2 : filter === 0 ? fixedLen : roundNumber,
-        ),
-      )
-      setCurContent(content)
-    }
+  const CustomTooltip = ({ active, payload, onTooltipContentChange }) => {
+    useEffect(() => {
+      if (active && payload && payload.length) {
+        onTooltipContentChange(payload)
+      }
+    }, [active, payload, onTooltipContentChange])
 
     return null
   }
@@ -589,7 +586,7 @@ const ApexChart = ({
               fill="url(#colorUv)"
             />
             <Tooltip
-              content={CustomTooltip}
+              content={<CustomTooltip onTooltipContentChange={handleTooltipContent} />}
               legendType="none"
               dot={false}
               cursor={{
