@@ -103,7 +103,11 @@ const ActionRow = ({ info, tokenSymbol }) => {
                   weight="500"
                   color="white"
                 >
-                  Harvest Event
+                  In certain strategies, a negative yield event might occur, resulting in a minor
+                  reduction of the underlying.
+                  <br />
+                  <br />
+                  If you have any questions, open a ticket in our Discord.
                 </NewLabel>
               </ReactTooltip>
             </IconWrapper>
