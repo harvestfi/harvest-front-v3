@@ -61,6 +61,7 @@ import {
   ConnectButtonStyle,
   CheckBoxDiv,
 } from './style'
+import AnimatedDots from '../../components/AnimatedDots'
 
 const totalNetProfitKey = 'TOTAL_NET_PROFIT'
 
@@ -800,6 +801,8 @@ const Portfolio = () => {
               isNetProfit={data.isNetProfit}
               toolTipTitle={data.toolTipTitle}
               toolTip={data.toolTip}
+              connected={connected}
+              farmTokenListLength={farmTokenList.length}
             />
           ))}
         </SubPart>
@@ -825,6 +828,8 @@ const Portfolio = () => {
                   By default, it does not consider inactive farms.
                 </>
               }
+              connected={connected}
+              farmTokenListLength={farmTokenList.length}
             />
           </MobileDiv>
           <MobileDiv borderColor={borderColor}>
@@ -835,6 +840,8 @@ const Portfolio = () => {
               isNetProfit={false}
               toolTipTitle="tt-total-balance"
               toolTip="Sum of your wallet's staked and unstaked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
+              connected={connected}
+              farmTokenListLength={farmTokenList.length}
             />
             <TotalValue
               icon={Diamond}
@@ -843,6 +850,8 @@ const Portfolio = () => {
               isNetProfit={false}
               toolTipTitle="tt-rewards"
               toolTip="Accrued rewards on all your staked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
+              connected={connected}
+              farmTokenListLength={farmTokenList.length}
             />
           </MobileDiv>
           <MobileDiv borderColor={borderColor}>
@@ -853,6 +862,8 @@ const Portfolio = () => {
               isNetProfit={false}
               toolTipTitle="tt-monthly-yield"
               toolTip="Estimated monthly yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
+              connected={connected}
+              farmTokenListLength={farmTokenList.length}
             />
             <TotalValue
               icon={Coin2}
@@ -861,6 +872,8 @@ const Portfolio = () => {
               isNetProfit={false}
               toolTipTitle="tt-daily-yield"
               toolTip="Estimated daily yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
+              connected={connected}
+              farmTokenListLength={farmTokenList.length}
             />
           </MobileDiv>
         </MobileSubPart>
@@ -971,8 +984,9 @@ const Portfolio = () => {
               <EmptyPanel borderColor={borderColor}>
                 {connected ? (
                   !noFarm ? (
-                    <EmptyInfo weight={500} size={14} height={20} color={fontColor}>
-                      Syncing positions...
+                    <EmptyInfo weight={500} size={14} height={20} color={fontColor} gap="2px">
+                      <div>Syncing positions</div>
+                      <AnimatedDots />
                     </EmptyInfo>
                   ) : (
                     <EmptyInfo weight={500} size={14} height={20} color={fontColor}>
