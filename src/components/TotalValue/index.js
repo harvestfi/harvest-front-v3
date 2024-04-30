@@ -4,9 +4,18 @@ import ReactTooltip from 'react-tooltip'
 import { PiQuestion } from 'react-icons/pi'
 import { formatNumber } from '../../utilities/formats'
 import { useThemeContext } from '../../providers/useThemeContext'
+import AnimatedDots from '../AnimatedDots'
 import { Container, Div, Price, NewLabel } from './style'
 
-const TotalValue = ({ content, price, isNetProfit, toolTipTitle, toolTip }) => {
+const TotalValue = ({
+  content,
+  price,
+  isNetProfit,
+  toolTipTitle,
+  toolTip,
+  connected,
+  farmTokenListLength,
+}) => {
   const { borderColor, backColor, fontColor1, fontColor3 } = useThemeContext()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   return (
@@ -36,11 +45,21 @@ const TotalValue = ({ content, price, isNetProfit, toolTipTitle, toolTip }) => {
         </ReactTooltip>
       </Div>
       <Price fontColor1={isNetProfit ? '#00D26B' : fontColor1}>
-        {parseFloat(price) === 0
-          ? '$0.00'
-          : parseFloat(price) < 0.01
-          ? '<$0.01'
-          : `$${formatNumber(price, 2)}`}
+        {!connected ? (
+          '$0.00'
+        ) : farmTokenListLength === 0 ? (
+          '$0.00'
+        ) : parseFloat(price) === 0 ? (
+          content === 'Rewards' ? (
+            '$0.00'
+          ) : (
+            <AnimatedDots />
+          )
+        ) : parseFloat(price) < 0.01 ? (
+          '<$0.01'
+        ) : (
+          `$${formatNumber(price, 2)}`
+        )}
       </Price>
     </Container>
   )
