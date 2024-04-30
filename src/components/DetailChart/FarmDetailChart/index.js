@@ -5,6 +5,7 @@ import myBalanceActive from '../../../assets/images/logos/earn/chart-graph.svg'
 import { addresses } from '../../../data/index'
 import { useWallet } from '../../../providers/Wallet'
 import { getDataQuery, getTotalTVLData } from '../../../utilities/apiCalls'
+import { formatDate, numberWithCommas } from '../../../utilities/formats'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import ApexChart from '../ApexChart'
 import ChartButtonsGroup from '../ChartButtonsGroup'
@@ -36,21 +37,35 @@ const recommendLinks = [
 
 const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
   const { fontColor3, fontColor4 } = useThemeContext()
+  const { account } = useWallet()
+
   const [clickedId, setClickedId] = useState(2)
   const [selectedState, setSelectedState] = useState('ALL')
-
-  const { account } = useWallet()
-  const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
-  const chainId = token.chain || token.data.chain
-
   const [apiData, setApiData] = useState({})
   const [iFarmTVLData, setIFarmTVLData] = useState({})
   const [curDate, setCurDate] = useState('')
   const [curContent, setCurContent] = useState('')
+  const [tooltipLabel, setTooltipLabel] = useState('')
+  const [roundNumber, setRoundNumber] = useState(0)
+  const [fixedLen, setFixedLen] = useState(0)
 
   const isIFARM = token.tokenAddress === addresses.FARM
+  const address = isIFARM
+    ? token.tokenAddress
+    : token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+  const chainId = token.chain || token.data.chain
 
-  const [tooltipLabel, setTooltipLabel] = useState('')
+  const handleTooltipContent = payload => {
+    if (payload && payload.length) {
+      setCurDate(formatDate(payload[0].payload.x))
+      const content = numberWithCommas(
+        Number(payload[0].payload.y).toFixed(
+          clickedId === 1 ? 2 : clickedId === 0 ? fixedLen : roundNumber,
+        ),
+      )
+      setCurContent(content)
+    }
+  }
 
   useEffect(() => {
     const label = clickedId === 0 ? 'APY' : clickedId === 1 ? 'TVL' : 'Share Price'
@@ -58,27 +73,37 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
   }, [clickedId])
 
   useEffect(() => {
+    let isMounted = true
     const initData = async () => {
-      const data = await getDataQuery(365, address, chainId, account)
-      const updatedData = { ...data }
-      updatedData.vaultHistories = updatedData.vaultHistories.filter(
-        history => history.sharePrice !== '0',
-      )
-      setApiData(updatedData)
-      if (isIFARM) {
-        const dataIFarm = await getDataQuery(365, token.tokenAddress, chainId, account)
-        if (dataIFarm) {
-          data.apyRewards = dataIFarm.apyRewards
-          data.tvls = dataIFarm.tvls
-        }
+      if (address && chainId && account) {
+        try {
+          const data = await getDataQuery(365, address, chainId, account)
+          const updatedData = { ...data }
+          updatedData.vaultHistories = updatedData.vaultHistories.filter(
+            history => history.sharePrice !== '0',
+          )
+          if (isMounted) {
+            setApiData(updatedData)
+            if (isIFARM && updatedData) {
+              data.apyRewards = updatedData.apyRewards
+              data.tvls = updatedData.tvls
 
-        const iFarmTVL = await getTotalTVLData()
-        setIFarmTVLData(iFarmTVL)
+              const iFarmTVL = await getTotalTVLData()
+              setIFarmTVLData(iFarmTVL)
+            }
+          }
+        } catch (error) {
+          console.log('An error ocurred', error)
+        }
       }
     }
 
     initData()
-  }, [address, chainId, account, token, isIFARM, clickedId])
+
+    return () => {
+      isMounted = false
+    }
+  }, [address, chainId, account, isIFARM])
 
   return (
     <Container>
@@ -118,6 +143,10 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
           lastAPY={lastAPY}
           setCurDate={setCurDate}
           setCurContent={setCurContent}
+          handleTooltipContent={handleTooltipContent}
+          setRoundNumber={setRoundNumber}
+          setFixedLen={setFixedLen}
+          fixedLen={fixedLen}
         />
       </ChartDiv>
       <ButtonGroup>
