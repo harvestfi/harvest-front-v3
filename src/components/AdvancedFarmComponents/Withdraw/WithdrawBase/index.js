@@ -531,7 +531,7 @@ const WithdrawBase = ({
                 weight="600"
                 color={fontColor2}
               >
-                Opss, we are having small issues with getting quotes. Please try again in 2 minutes.
+                Oops, we are having small issues with getting quotes. Please try again in 2 minutes.
               </NewLabel>
             </FlexDiv>
           </NewLabel>
