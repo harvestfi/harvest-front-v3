@@ -160,7 +160,7 @@ const sideLinksMobile = [
   },
   {
     path: ROUTES.ADVANCED,
-    name: 'Farm',
+    name: 'All Farms',
     imgPath: AdvancedMobileSM,
   },
 ]
@@ -178,7 +178,7 @@ const sideLinksMobileBottom = [
   },
   {
     path: ROUTES.ADVANCED,
-    name: 'Advanced',
+    name: 'All Farms',
     imgPath: AdvancedMobile,
   },
   {
