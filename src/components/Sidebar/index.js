@@ -4,7 +4,6 @@ import { useHistory, useLocation } from 'react-router-dom'
 import { TbSun } from 'react-icons/tb'
 import { LuMoon } from 'react-icons/lu'
 import { IoCloseCircleOutline } from 'react-icons/io5'
-import Analytics from '../../assets/images/logos/sidebar/analytics.svg'
 import ConnectDisableIcon from '../../assets/images/logos/sidebar/connect-disable.svg'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 import ConnectFailureIcon from '../../assets/images/logos/sidebar/connect-failure.svg'
@@ -15,6 +14,8 @@ import Docs from '../../assets/images/logos/sidebar/docs.svg'
 import FAQ from '../../assets/images/logos/sidebar/faq.svg'
 import Home from '../../assets/images/logos/sidebar/home-line.svg'
 import Beginners from '../../assets/images/logos/sidebar/beginners.svg'
+import LiveSupport from '../../assets/images/logos/sidebar/message-chat.svg'
+import Analytics from '../../assets/images/logos/sidebar/analytics.svg'
 // import Collaborations from '../../assets/images/logos/sidebar/collaborations.svg'
 import Advanced from '../../assets/images/logos/sidebar/advanced.svg'
 import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
@@ -119,6 +120,13 @@ const sideLinksTop = [
 
 const sideLinksBottom = [
   {
+    path: ROUTES.LiveSupport,
+    name: 'AI Support',
+    imgPath: LiveSupport,
+    external: false,
+    new: true,
+  },
+  {
     path: ROUTES.ANALYTIC,
     name: 'Analytics',
     imgPath: Analytics,
@@ -152,7 +160,7 @@ const sideLinksMobile = [
   },
   {
     path: ROUTES.ADVANCED,
-    name: 'Farm',
+    name: 'All Farms',
     imgPath: AdvancedMobileSM,
   },
 ]
@@ -170,7 +178,7 @@ const sideLinksMobileBottom = [
   },
   {
     path: ROUTES.ADVANCED,
-    name: 'Advanced',
+    name: 'All Farms',
     imgPath: AdvancedMobile,
   },
   {
@@ -222,7 +230,7 @@ const SideLink = ({ item, subItem, isDropdownLink, fontColor2, activeIconColor, 
         />
       </div>
       <div className="item-name">{item.name}</div>
-      {item.new ? <NewTag>Soon</NewTag> : <></>}
+      {item.new ? <NewTag>New</NewTag> : <></>}
     </Link>
   )
 }
@@ -251,7 +259,7 @@ const MobileMenu = ({
       isMobile={isMobile}
     >
       <SideIcons className="sideIcon" src={item.imgPath} alt="Harvest" width="21px" height="21px" />
-      {item.new ? <NewTag>Soon</NewTag> : <></>}
+      {item.new ? <NewTag>New</NewTag> : <></>}
     </LinkMobile>
   )
 }

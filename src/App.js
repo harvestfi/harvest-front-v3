@@ -5,6 +5,7 @@ import Tutorial from './pages/Tutorial'
 import BeginnersFarm from './pages/BeginnersFarm'
 import Portfolio from './pages/Portfolio'
 import Farm from './pages/Farm'
+import LiveSupport from './pages/LiveSupport'
 import Analytic from './pages/Analytic'
 import FAQ from './pages/FAQ'
 import Sidebar from './components/Sidebar'
@@ -77,6 +78,7 @@ const App = () => (
           <Route exact path={ROUTES.TUTORIAL} component={Tutorial} />
           <Route exact path={ROUTES.BEGINNERSFARM} component={BeginnersFarm} />
           <Route exact path={ROUTES.ADVANCED} component={Farm} />
+          <Route exact path={ROUTES.LiveSupport} component={LiveSupport} />
           <Route exact path={ROUTES.ANALYTIC} component={Analytic} />
           <Route path={ROUTES.ADVANCEDFARM} component={AdvancedFarm} />
           <Route path={ROUTES.FAQ} component={FAQ} />

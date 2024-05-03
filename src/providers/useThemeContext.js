@@ -22,6 +22,7 @@ export function ThemeProvider({ children }) {
   const bgColor = darkMode ? '#161B26' : '#fff'
   const bgColorTooltip = darkMode ? '#59607A' : '#fff'
   const bgColorFarm = darkMode ? '#213662' : '#f2f5ff'
+  const bgColorSup = darkMode ? '#213662' : '#7289da'
   const bgColorMessage = darkMode ? '#242c3c' : '#fcfcfd'
   const bgColorButton = darkMode ? '#242c3c' : '#eaf1ff'
   const bgColorSlippage = darkMode ? '#1F242F' : '#15b088'
@@ -187,6 +188,7 @@ export function ThemeProvider({ children }) {
         activeColorModal,
         modalInputColor,
         bgColorFarm,
+        bgColorSup,
         bgColorMessage,
         bgColorButton,
         bgColorSlippage,

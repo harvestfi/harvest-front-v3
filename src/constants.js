@@ -47,6 +47,7 @@ export const ROUTES = {
   PORTFOLIO: '/',
   TUTORIAL: '/get-started',
   ADVANCED: '/farms',
+  LiveSupport: '/live-support',
   ANALYTIC: '/analytics',
   DOC: '/doc',
   FAQ: '/faq',
