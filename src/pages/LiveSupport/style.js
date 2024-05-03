@@ -86,7 +86,15 @@ const CoinSection = styled.div`
   width: 100%;
   display: flex;
   justify-content: space-between;
-  gap: 15px;
+  gap: 50px;
+
+  @media screen and (max-width: 1660px) {
+    gap: 25px;
+  }
+
+  @media screen and (max-width: 1350px) {
+    gap: 15px;
+  }
 
   @media screen and (max-width: 992px) {
     flex-flow: column;
@@ -95,7 +103,7 @@ const CoinSection = styled.div`
 `
 
 const LiveChat = styled.div`
-  width: 670px;
+  width: 60%;
   height: 580px;
   margin-left: -12px;
 
@@ -111,7 +119,7 @@ const LiveChat = styled.div`
 `
 
 const ContactWrap = styled.div`
-  width: 470px;
+  width: 40%;
 
   @media screen and (max-width: 1660px) {
     width: 40%;
