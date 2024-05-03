@@ -1941,8 +1941,8 @@ const AdvancedFarm = () => {
                           weight="500"
                           color="white"
                         >
-                          Estimated yield on your fTokens of this farm, denominated in USD. Subject
-                          to market fluctuations.
+                          Estimated yield on your fTokens of this farm based on live APY,
+                          denominated in USD. Subject to market fluctuations.
                           <br />
                           Note: frequency of auto-compounding events vary, so take these numbers as
                           rough guides, not exact figures.

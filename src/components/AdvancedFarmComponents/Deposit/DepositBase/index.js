@@ -581,8 +581,8 @@ const DepositBase = ({
                   {useBeginnersFarm
                     ? `Based on live USD prices of tokens involved in this farm. Subject to change due to market fluctuations and the number of users in this farm.`
                     : useIFARM
-                    ? 'Based on live USD price of iFARM. Considers current APY. Subject to change.'
-                    : 'Based on live USD prices of underlying and reward tokens. Considers current APY and assumes staked fTokens. Subject to change.'}
+                    ? 'Based on live USD price of iFARM. Considers live APY. Subject to change.'
+                    : 'Based on live USD prices of underlying and reward tokens. Considers live APY and assumes staked fTokens. Subject to change.'}
                 </NewLabel>
               </ReactTooltip>
             </NewLabel>
@@ -649,8 +649,8 @@ const DepositBase = ({
                   {useBeginnersFarm
                     ? `Based on live USD prices of tokens involved in this farm. Subject to change due to market fluctuations and the number of users in this farm.`
                     : useIFARM
-                    ? 'Based on live USD price of iFARM. Considers current APY. Subject to change.'
-                    : 'Based on live USD prices of underlying and reward tokens. Considers current APY and assumes staked fTokens. Subject to change.'}
+                    ? 'Based on live USD price of iFARM. Considers live APY. Subject to change.'
+                    : 'Based on live USD prices of underlying and reward tokens. Considers live APY and assumes staked fTokens. Subject to change.'}
                 </NewLabel>
               </ReactTooltip>
             </NewLabel>
