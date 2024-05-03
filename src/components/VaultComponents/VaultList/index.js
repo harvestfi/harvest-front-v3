@@ -49,7 +49,7 @@ import {
 const { tokens } = require('../../../data')
 
 const SortsList = [
-  { id: 0, name: 'APY', type: 'apy', img: SortAPY },
+  { id: 0, name: 'Live APY', type: 'apy', img: SortAPY },
   { id: 1, name: 'TVL', type: 'deposits', img: SortBank },
   { id: 2, name: 'My Balance', type: 'balance', img: SortCurrency },
 ]
@@ -795,7 +795,7 @@ const VaultList = () => {
             textAlign="left"
             onClick={() => setSortingParams('apy')}
           >
-            <div className="hoverable">APY</div>
+            <div className="hoverable">Live APY</div>
             <SortingIcon
               className="sort-icon"
               sortType={sortOrder}

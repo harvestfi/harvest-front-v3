@@ -900,7 +900,7 @@ const Portfolio = () => {
                     sortCol('apy')
                   }}
                 >
-                  APY
+                  Live APY
                   <img className="sortIcon" src={Sort} alt="sort" />
                 </Col>
               </Column>
