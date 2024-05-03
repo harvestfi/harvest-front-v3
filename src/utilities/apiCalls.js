@@ -107,7 +107,7 @@ export const getPublishDate = async () => {
       query: `{
         vaults(
           first: 1000,
-          orderBy: createAtBlock,
+          orderBy: timestamp,
           orderDirection: desc
         ) {
           id, timestamp
@@ -119,7 +119,7 @@ export const getPublishDate = async () => {
       query: `{
         vaults(
           first: 1000,
-          orderBy: createAtBlock,
+          orderBy: timestamp,
           orderDirection: desc
         ) {
           id, timestamp
@@ -131,7 +131,7 @@ export const getPublishDate = async () => {
       query: `{
         vaults(
           first: 1000,
-          orderBy: createAtBlock,
+          orderBy: timestamp,
           orderDirection: desc
         ) {
           id, timestamp
@@ -143,7 +143,7 @@ export const getPublishDate = async () => {
       query: `{
         vaults(
           first: 1000,
-          orderBy: createAtBlock,
+          orderBy: timestamp,
           orderDirection: desc
         ) {
           id, timestamp
