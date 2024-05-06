@@ -35,7 +35,16 @@ const recommendLinks = [
   { name: 'ALL', type: 3, state: 'ALL' },
 ]
 
-const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
+const FarmDetailChart = ({
+  token,
+  vaultPool,
+  lastTVL,
+  lastAPY,
+  set7DApy,
+  set30DApy,
+  set180DApy,
+  set360DApy,
+}) => {
   const { fontColor3, fontColor4 } = useThemeContext()
   const { account } = useWallet()
 
@@ -82,6 +91,76 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
           updatedData.vaultHistories = updatedData.vaultHistories.filter(
             history => history.sharePrice !== '0',
           )
+
+          // Detailed APY Breakdown
+          const totalPeriod =
+            (Number(updatedData.generalApies[0].timestamp) -
+              Number(updatedData.generalApies[updatedData.generalApies.length - 1].timestamp)) /
+            (24 * 3600)
+
+          let [sevenDaysApy, thirtyDaysApy, oneEightyDaysApy, threeSixtyFiveDaysApy] = Array(
+            4,
+          ).fill('-')
+
+          if (totalPeriod >= 7) {
+            const lastSevenDaysData = updatedData.generalApies.filter(
+              entry =>
+                Number(entry.timestamp) >=
+                Number(updatedData.generalApies[0].timestamp) - 7 * 24 * 3600,
+            )
+            const sumApy = lastSevenDaysData.reduce(
+              (accumulator, currentValue) => accumulator + parseFloat(currentValue.apy),
+              0,
+            )
+            sevenDaysApy = `${(sumApy / lastSevenDaysData.length).toFixed(2)}%`
+          }
+
+          if (totalPeriod >= 30) {
+            const lastThirtyDaysData = updatedData.generalApies.filter(
+              entry =>
+                Number(entry.timestamp) >=
+                Number(updatedData.generalApies[0].timestamp) - 30 * 24 * 3600,
+            )
+            const sumApy = lastThirtyDaysData.reduce(
+              (accumulator, currentValue) => accumulator + parseFloat(currentValue.apy),
+              0,
+            )
+            thirtyDaysApy = `${(sumApy / lastThirtyDaysData.length).toFixed(2)}%`
+          }
+
+          if (totalPeriod >= 180) {
+            const lastOneEightyDaysData = updatedData.generalApies.filter(
+              entry =>
+                Number(entry.timestamp) >=
+                Number(updatedData.generalApies[0].timestamp) - 180 * 24 * 3600,
+            )
+            const sumApy = lastOneEightyDaysData.reduce(
+              (accumulator, currentValue) => accumulator + parseFloat(currentValue.apy),
+              0,
+            )
+            oneEightyDaysApy = `${(sumApy / lastOneEightyDaysData.length).toFixed(2)}%`
+          }
+
+          if (totalPeriod >= 360) {
+            const lastThreeSixtyFiveDaysData = updatedData.generalApies.filter(
+              entry =>
+                Number(entry.timestamp) >=
+                Number(updatedData.generalApies[0].timestamp) - 360 * 24 * 3600,
+            )
+            const sumApy = lastThreeSixtyFiveDaysData.reduce(
+              (accumulator, currentValue) => accumulator + parseFloat(currentValue.apy),
+              0,
+            )
+            threeSixtyFiveDaysApy = `${(sumApy / lastThreeSixtyFiveDaysData.length).toFixed(2)}%`
+          }
+
+          // Similar logic for 180 days and 365 days APYs
+
+          set7DApy(sevenDaysApy)
+          set30DApy(thirtyDaysApy)
+          set180DApy(oneEightyDaysApy)
+          set360DApy(threeSixtyFiveDaysApy)
+
           if (isMounted) {
             setApiData(updatedData)
             if (isIFARM && updatedData) {
@@ -103,7 +182,7 @@ const FarmDetailChart = ({ token, vaultPool, lastTVL, lastAPY }) => {
     return () => {
       isMounted = false
     }
-  }, [address, chainId, account, isIFARM])
+  }, [address, chainId, account, isIFARM]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Container>

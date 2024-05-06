@@ -54,6 +54,7 @@ import {
   MAX_DECIMALS,
   WIDO_BALANCES_DECIMALS,
   SOCIAL_LINKS,
+  feeList,
 } from '../../constants'
 import { fromWei, newContractInstance, getWeb3, getExplorerLink } from '../../services/web3'
 import { addresses } from '../../data'
@@ -241,6 +242,94 @@ const AdvancedFarm = () => {
   const [apiData, setApiData] = useState([])
   const [altVaultData, setAltVaultData] = useState({})
 
+  // Switch Tag (Convert/Revert)
+  const [activeDepo, setActiveDepo] = useState(true)
+  const [showLatestEarnings, setShowLatestEarnings] = useState(true)
+  const [showGenomesVaultInfo, setShowGenomesVaultInfo] = useState(false)
+  const [showSeamlessVaultInfo, setShowSeamlessVaultInfo] = useState(false)
+  const [showGBVaultInfo, setShowGBVaultInfo] = useState(false)
+  const [showIFARMInfo, setShowIFARMInfo] = useState(false)
+  const [supportedVault, setSupportedVault] = useState(false)
+  const [hasPortalsError, setHasPortalsError] = useState(true)
+  const [badgeId, setBadgeId] = useState(-1)
+
+  // Deposit
+  const [depositStart, setDepositStart] = useState(false)
+  const [selectTokenDepo, setSelectTokenDepo] = useState(false)
+  const [balanceDepo, setBalanceDepo] = useState('0')
+  const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
+  const [inputAmountDepo, setInputAmountDepo] = useState('0')
+  const [fromInfoAmount, setFromInfoAmount] = useState('')
+  const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('')
+  const [minReceiveAmountString, setMinReceiveAmountString] = useState('')
+  const [minReceiveUsdAmount, setMinReceiveUsdAmount] = useState('')
+  const [convertSuccess, setConvertSuccess] = useState(false)
+  const [hasErrorOccurredConvert, setHasErrorOccurredConvert] = useState(0)
+  const [failureCountConvert, setFailureCountConvert] = useState(0)
+
+  // Withdraw
+  const [withdrawStart, setWithdrawStart] = useState(false)
+  const [selectTokenWith, setSelectTokenWith] = useState(false)
+  const [unstakeBalance, setUnstakeBalance] = useState('0')
+  const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select' })
+  const [unstakeInputValue, setUnstakeInputValue] = useState('0')
+  const [revertFromInfoAmount, setRevertFromInfoAmount] = useState('')
+  const [revertFromInfoUsdAmount, setRevertFromInfoUsdAmount] = useState('')
+  const [revertMinReceivedAmount, setRevertMinReceivedAmount] = useState('')
+  const [revertMinReceivedUsdAmount, setRevertMinReceivedUsdAmount] = useState('')
+  const [revertSuccess, setRevertSuccess] = useState(false)
+  const [hasErrorOccurredRevert, setHasErrorOccurredRevert] = useState(0)
+
+  // Stake
+  const [stakeStart, setStakeStart] = useState(false)
+  const [inputAmountStake, setInputAmountStake] = useState('0')
+  const [stakeFinalStep, setStakeFinalStep] = useState(false)
+
+  // Unstake
+  const [unstakeStart, setUnstakeStart] = useState(false)
+  const [inputAmountUnstake, setInputAmountUnstake] = useState('0')
+  const [unstakeFinalStep, setUnstakeFinalStep] = useState(false)
+  const [amountsToExecuteUnstake, setAmountsToExecuteUnstake] = useState('')
+
+  const [yieldDaily, setYieldDaily] = useState(0)
+  const [yieldMonthly, setYieldMonthly] = useState(0)
+  const [convertMonthlyYieldUSD, setConvertMonthlyYieldUSD] = useState('0')
+  const [convertDailyYieldUSD, setConvertDailyYieldUSD] = useState('0')
+
+  const [balanceList, setBalanceList] = useState([])
+  const [supTokenList, setSupTokenList] = useState([])
+  const [supTokenNoBalanceList, setSupTokenNoBalanceList] = useState([])
+  const [defaultToken, setDefaultToken] = useState(null)
+  const [soonToSupList, setSoonToSupList] = useState([])
+
+  const [vaultValue, setVaultValue] = useState(null)
+  const [loadingFarmingBalance, setFarmingLoading] = useState(false)
+  const [loadingLpStats, setLpStatsloading] = useState(false)
+  const [pendingAction, setPendingAction] = useState(null)
+  const loaded = true
+  const [lastHarvest, setLastHarvest] = useState('')
+  const [activeStake, setActiveStake] = useState(true)
+  const switchStakeMethod = () => setActiveStake(prev => !prev)
+
+  const [totalValue, setTotalValue] = useState(0)
+  const [depositedValueUSD, setDepositUsdValue] = useState(0)
+  const [balanceAmount, setBalanceAmount] = useState(0)
+  const [totalReward, setTotalReward] = useState(0)
+  const [rewardTokenPrices, setRewardTokenPrices] = useState([])
+  const [stakedAmount, setStakedAmount] = useState(0)
+  const [unstakedAmount, setUnstakedAmount] = useState(0)
+  const [underlyingEarnings, setUnderlyingEarnings] = useState(0)
+  const [underlyingEarningsLatest, setUnderlyingEarningsLatest] = useState(0)
+  const [usdEarnings, setUsdEarnings] = useState(0)
+  const [usdEarningsLatest, setUsdEarningsLatest] = useState(0)
+
+  // Chart & Table API data
+  const [historyData, setHistoryData] = useState([])
+  const [sevenDApy, setSevenDApy] = useState('')
+  const [thirtyDApy, setThirtyDApy] = useState('')
+  const [oneEightyDApy, setOneEightyDApy] = useState('')
+  const [threeSixtyDApy, setThreeSixtyDApy] = useState('')
+
   useEffect(() => {
     const getCoinList = async () => {
       const data = await getCoinListFromApi()
@@ -339,7 +428,6 @@ const AdvancedFarm = () => {
 
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE]
 
-  const [badgeId, setBadgeId] = useState(-1)
   useEffect(() => {
     const getBadge = () => {
       chainList.forEach((el, i) => {
@@ -405,89 +493,6 @@ const AdvancedFarm = () => {
       Number(pricePerFullShare)
   const farmPrice = token.data && token.data.lpTokenData && token.data.lpTokenData.price
   const underlyingPrice = get(token, 'usdPrice', get(token, 'data.lpTokenData.price', 0))
-
-  // Switch Tag (Convert/Revert)
-  const [activeDepo, setActiveDepo] = useState(true)
-  const [showLatestEarnings, setShowLatestEarnings] = useState(true)
-  const [showGenomesVaultInfo, setShowGenomesVaultInfo] = useState(false)
-  const [showSeamlessVaultInfo, setShowSeamlessVaultInfo] = useState(false)
-  const [showGBVaultInfo, setShowGBVaultInfo] = useState(false)
-  const [showIFARMInfo, setShowIFARMInfo] = useState(false)
-  const [supportedVault, setSupportedVault] = useState(false)
-  const [hasPortalsError, setHasPortalsError] = useState(true)
-
-  // Deposit
-  const [depositStart, setDepositStart] = useState(false)
-  const [selectTokenDepo, setSelectTokenDepo] = useState(false)
-  const [balanceDepo, setBalanceDepo] = useState('0')
-  const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
-  const [inputAmountDepo, setInputAmountDepo] = useState('0')
-  const [fromInfoAmount, setFromInfoAmount] = useState('')
-  const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('')
-  const [minReceiveAmountString, setMinReceiveAmountString] = useState('')
-  const [minReceiveUsdAmount, setMinReceiveUsdAmount] = useState('')
-  const [convertSuccess, setConvertSuccess] = useState(false)
-  const [hasErrorOccurredConvert, setHasErrorOccurredConvert] = useState(0)
-  const [failureCountConvert, setFailureCountConvert] = useState(0)
-
-  // Withdraw
-  const [withdrawStart, setWithdrawStart] = useState(false)
-  const [selectTokenWith, setSelectTokenWith] = useState(false)
-  const [unstakeBalance, setUnstakeBalance] = useState('0')
-  const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select' })
-  const [unstakeInputValue, setUnstakeInputValue] = useState('0')
-  const [revertFromInfoAmount, setRevertFromInfoAmount] = useState('')
-  const [revertFromInfoUsdAmount, setRevertFromInfoUsdAmount] = useState('')
-  const [revertMinReceivedAmount, setRevertMinReceivedAmount] = useState('')
-  const [revertMinReceivedUsdAmount, setRevertMinReceivedUsdAmount] = useState('')
-  const [revertSuccess, setRevertSuccess] = useState(false)
-  const [hasErrorOccurredRevert, setHasErrorOccurredRevert] = useState(0)
-
-  // Stake
-  const [stakeStart, setStakeStart] = useState(false)
-  const [inputAmountStake, setInputAmountStake] = useState('0')
-  const [stakeFinalStep, setStakeFinalStep] = useState(false)
-
-  // Unstake
-  const [unstakeStart, setUnstakeStart] = useState(false)
-  const [inputAmountUnstake, setInputAmountUnstake] = useState('0')
-  const [unstakeFinalStep, setUnstakeFinalStep] = useState(false)
-  const [amountsToExecuteUnstake, setAmountsToExecuteUnstake] = useState('')
-
-  const [yieldDaily, setYieldDaily] = useState(0)
-  const [yieldMonthly, setYieldMonthly] = useState(0)
-  const [convertMonthlyYieldUSD, setConvertMonthlyYieldUSD] = useState('0')
-  const [convertDailyYieldUSD, setConvertDailyYieldUSD] = useState('0')
-
-  const [balanceList, setBalanceList] = useState([])
-  const [supTokenList, setSupTokenList] = useState([])
-  const [supTokenNoBalanceList, setSupTokenNoBalanceList] = useState([])
-  const [defaultToken, setDefaultToken] = useState(null)
-  const [soonToSupList, setSoonToSupList] = useState([])
-
-  const [vaultValue, setVaultValue] = useState(null)
-  const [loadingFarmingBalance, setFarmingLoading] = useState(false)
-  const [loadingLpStats, setLpStatsloading] = useState(false)
-  const [pendingAction, setPendingAction] = useState(null)
-  const loaded = true
-  const [lastHarvest, setLastHarvest] = useState('')
-  const [activeStake, setActiveStake] = useState(true)
-  const switchStakeMethod = () => setActiveStake(prev => !prev)
-
-  const [totalValue, setTotalValue] = useState(0)
-  const [depositedValueUSD, setDepositUsdValue] = useState(0)
-  const [balanceAmount, setBalanceAmount] = useState(0)
-  const [totalReward, setTotalReward] = useState(0)
-  const [rewardTokenPrices, setRewardTokenPrices] = useState([])
-  const [stakedAmount, setStakedAmount] = useState(0)
-  const [unstakedAmount, setUnstakedAmount] = useState(0)
-  const [underlyingEarnings, setUnderlyingEarnings] = useState(0)
-  const [underlyingEarningsLatest, setUnderlyingEarningsLatest] = useState(0)
-  const [usdEarnings, setUsdEarnings] = useState(0)
-  const [usdEarningsLatest, setUsdEarningsLatest] = useState(0)
-
-  // Chart & Table API data
-  const [historyData, setHistoryData] = useState([])
 
   const switchEarnings = () => setShowLatestEarnings(prev => !prev)
 
@@ -1324,6 +1329,14 @@ const AdvancedFarm = () => {
     },
   ]
 
+  const apyPeriods = [
+    { label: 'Live APY', value: showAPY() },
+    { label: '7d APY', value: sevenDApy },
+    { label: '30d APY', value: thirtyDApy },
+    { label: '180d APY', value: oneEightyDApy },
+    { label: '365d APY', value: threeSixtyDApy },
+  ]
+
   const rewardTxt = getAdvancedRewardText(
     token,
     vaultPool,
@@ -2085,6 +2098,10 @@ const AdvancedFarm = () => {
                       vaultPool={vaultPool}
                       lastTVL={Number(vaultValue)}
                       lastAPY={Number(totalApy)}
+                      set7DApy={setSevenDApy}
+                      set30DApy={setThirtyDApy}
+                      set180DApy={setOneEightyDApy}
+                      set360DApy={setThreeSixtyDApy}
                     />
                   </HalfInfo>
                   {!isMobile && (
@@ -2713,50 +2730,68 @@ const AdvancedFarm = () => {
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom="1px solid #F3F6FF"
                     >
+                      Live & Historical Average APY
+                    </NewLabel>
+                    {apyPeriods.map((period, index) => (
+                      <FlexDiv
+                        key={index}
+                        justifyContent="space-between"
+                        padding={isMobile ? '10px 15px' : '10px 15px'}
+                      >
+                        <NewLabel
+                          size={isMobile ? '12px' : '14px'}
+                          weight="500"
+                          height={isMobile ? '24px' : '24px'}
+                          color={fontColor3}
+                        >
+                          {period.label}
+                        </NewLabel>
+                        <NewLabel
+                          size={isMobile ? '12px' : '14px'}
+                          weight="600"
+                          height={isMobile ? '24px' : '24px'}
+                          color={fontColor1}
+                        >
+                          {period.value === '' ? <AnimatedDots /> : period.value}
+                        </NewLabel>
+                      </FlexDiv>
+                    ))}
+                  </LastHarvestInfo>
+                  <LastHarvestInfo backColor={backColor} borderColor={borderColor}>
+                    <NewLabel
+                      size={isMobile ? '12px' : '14px'}
+                      weight={isMobile ? '600' : '600'}
+                      height={isMobile ? '20px' : '24px'}
+                      color={fontColor4}
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
+                      borderBottom="1px solid #F3F6FF"
+                    >
                       Fees
                     </NewLabel>
-                    <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                    >
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="500"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor3}
+                    {feeList.map((feeItem, index) => (
+                      <FlexDiv
+                        key={index}
+                        justifyContent="space-between"
+                        padding={isMobile ? '10px 15px' : '10px 15px'}
                       >
-                        Convert Fee
-                      </NewLabel>
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="600"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor1}
-                      >
-                        0%
-                      </NewLabel>
-                    </FlexDiv>
-                    <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                    >
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="500"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor3}
-                      >
-                        Revert Fee
-                      </NewLabel>
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="600"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor1}
-                      >
-                        0%
-                      </NewLabel>
-                    </FlexDiv>
+                        <NewLabel
+                          size={isMobile ? '12px' : '14px'}
+                          weight="500"
+                          height={isMobile ? '24px' : '24px'}
+                          color={fontColor3}
+                        >
+                          {feeItem.label}
+                        </NewLabel>
+                        <NewLabel
+                          size={isMobile ? '12px' : '14px'}
+                          weight="600"
+                          height={isMobile ? '24px' : '24px'}
+                          color={fontColor1}
+                        >
+                          {feeItem.value}
+                        </NewLabel>
+                      </FlexDiv>
+                    ))}
                     {!useIFARM && (
                       <FlexDiv
                         justifyContent="space-between"
