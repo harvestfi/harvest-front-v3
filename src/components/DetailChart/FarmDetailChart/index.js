@@ -96,7 +96,7 @@ const FarmDetailChart = ({
             history => history.sharePrice !== '0',
           )
 
-          // Detailed APY Breakdown
+          // Calculate Detailed APY Breakdown values
           const totalPeriod =
             (Number(updatedData.generalApies[0].timestamp) -
               Number(updatedData.generalApies[updatedData.generalApies.length - 1].timestamp)) /
@@ -157,8 +157,6 @@ const FarmDetailChart = ({
             )
             threeSixtyFiveDaysApy = `${(sumApy / lastThreeSixtyFiveDaysData.length).toFixed(2)}%`
           }
-
-          // Similar logic for 180 days and 365 days APYs
 
           set7DApy(sevenDaysApy)
           set30DApy(thirtyDaysApy)
