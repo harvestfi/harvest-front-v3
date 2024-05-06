@@ -141,11 +141,11 @@ const FarmDetailChart = ({
             oneEightyDaysApy = `${(sumApy / lastOneEightyDaysData.length).toFixed(2)}%`
           }
 
-          if (totalPeriod >= 360) {
+          if (totalPeriod >= 365) {
             const lastThreeSixtyFiveDaysData = updatedData.generalApies.filter(
               entry =>
                 Number(entry.timestamp) >=
-                Number(updatedData.generalApies[0].timestamp) - 360 * 24 * 3600,
+                Number(updatedData.generalApies[0].timestamp) - 365 * 24 * 3600,
             )
             const sumApy = lastThreeSixtyFiveDaysData.reduce(
               (accumulator, currentValue) => accumulator + parseFloat(currentValue.apy),
