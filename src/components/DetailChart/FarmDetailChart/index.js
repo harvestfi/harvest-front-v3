@@ -89,7 +89,7 @@ const FarmDetailChart = ({
           const data = await getDataQuery(365, address, chainId, account)
           const filteredData = {
             ...data,
-            generalApies: data.generalApies.filter(entry => parseFloat(entry.apy) <= 100000)
+            generalApies: data.generalApies.filter(entry => parseFloat(entry.apy) <= 100000),
           }
           const updatedData = { ...filteredData }
           updatedData.vaultHistories = updatedData.vaultHistories.filter(
