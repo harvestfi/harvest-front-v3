@@ -2446,8 +2446,8 @@ const AdvancedFarm = () => {
                             color="white"
                           >
                             {useIFARM
-                              ? `The number of i${id} you hold, but not entitled to extra token rewards.`
-                              : `The number of fTokens you hold, which are not entitled to extra token rewards.`}
+                              ? `The number of i${id} you hold, but entitled to extra token rewards.`
+                              : `The number of fTokens you hold, which are entitled to extra token rewards.`}
                           </NewLabel>
                         </ReactTooltip>
                       </NewLabel>
