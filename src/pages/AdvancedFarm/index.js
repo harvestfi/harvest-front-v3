@@ -329,6 +329,9 @@ const AdvancedFarm = () => {
   const [thirtyDApy, setThirtyDApy] = useState('')
   const [oneEightyDApy, setOneEightyDApy] = useState('')
   const [threeSixtyDApy, setThreeSixtyDApy] = useState('')
+  const [lifetimeApy, setLifetimeApy] = useState('')
+  const [vaultBirthday, setVaultBirthday] = useState('')
+  const [vaultTotalPeriod, setVaultTotalPeriod] = useState('')
 
   useEffect(() => {
     const getCoinList = async () => {
@@ -1330,11 +1333,12 @@ const AdvancedFarm = () => {
   ]
 
   const apyPeriods = [
-    { label: 'Live APY', value: showAPY() },
-    { label: '7d APY', value: sevenDApy },
-    { label: '30d APY', value: thirtyDApy },
-    { label: '180d APY', value: oneEightyDApy },
-    { label: '365d APY', value: threeSixtyDApy },
+    { label: 'Live', value: showAPY() },
+    { label: '7d', value: sevenDApy },
+    { label: '30d', value: thirtyDApy },
+    { label: '180d', value: oneEightyDApy },
+    { label: '365d', value: threeSixtyDApy },
+    { label: 'Lifetime', value: lifetimeApy },
   ]
 
   const rewardTxt = getAdvancedRewardText(
@@ -2102,6 +2106,9 @@ const AdvancedFarm = () => {
                       set30DApy={setThirtyDApy}
                       set180DApy={setOneEightyDApy}
                       set360DApy={setThreeSixtyDApy}
+                      setLifetimeApy={setLifetimeApy}
+                      setVaultBirthday={setVaultBirthday}
+                      setVaultTotalPeriod={setVaultTotalPeriod}
                     />
                   </HalfInfo>
                   {!isMobile && (
@@ -2700,27 +2707,6 @@ const AdvancedFarm = () => {
                 </SecondPartSection>
               ) : activeMainTag === 2 ? (
                 <RestInternal>
-                  {!useIFARM && (
-                    <MyBalance
-                      marginBottom={isMobile ? '20px' : '25px'}
-                      backColor={backColor}
-                      borderColor={borderColor}
-                    >
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="600"
-                        height={isMobile ? '20px' : '24px'}
-                        color={fontColor4}
-                        padding={isMobile ? '10px 15px' : '10px 15px'}
-                        borderBottom="1px solid #F3F6FF"
-                      >
-                        APY Breakdown
-                      </NewLabel>
-                      <NewLabel padding={isMobile ? '0px 15px 10px' : '0px 15px 10px'}>
-                        <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
-                      </NewLabel>
-                    </MyBalance>
-                  )}
                   <LastHarvestInfo backColor={backColor} borderColor={borderColor}>
                     <NewLabel
                       size={isMobile ? '12px' : '14px'}
@@ -2730,7 +2716,40 @@ const AdvancedFarm = () => {
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom="1px solid #F3F6FF"
                     >
-                      Live & Historical Average APY
+                      Info
+                    </NewLabel>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
+                      borderBottom="1px solid #F3F6FF"
+                    >
+                      <NewLabel
+                        size={isMobile ? '12px' : '14px'}
+                        weight="500"
+                        height={isMobile ? '24px' : '24px'}
+                        color={fontColor3}
+                      >
+                        Operating since
+                      </NewLabel>
+                      <NewLabel
+                        size={isMobile ? '12px' : '14px'}
+                        weight="600"
+                        height={isMobile ? '24px' : '24px'}
+                        color={fontColor1}
+                      >
+                        {vaultBirthday}{' '}
+                        <span className="total-days">({vaultTotalPeriod} days)</span>
+                      </NewLabel>
+                    </FlexDiv>
+                    <NewLabel
+                      size={isMobile ? '12px' : '14px'}
+                      weight={isMobile ? '600' : '600'}
+                      height={isMobile ? '20px' : '24px'}
+                      color={fontColor4}
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
+                      borderBottom="1px solid #F3F6FF"
+                    >
+                      APY - Live & Historical Average
                     </NewLabel>
                     {apyPeriods.map((period, index) => (
                       <FlexDiv
@@ -2757,6 +2776,27 @@ const AdvancedFarm = () => {
                       </FlexDiv>
                     ))}
                   </LastHarvestInfo>
+                  {!useIFARM && (
+                    <MyBalance
+                      marginBottom={isMobile ? '20px' : '25px'}
+                      backColor={backColor}
+                      borderColor={borderColor}
+                    >
+                      <NewLabel
+                        size={isMobile ? '12px' : '14px'}
+                        weight="600"
+                        height={isMobile ? '20px' : '24px'}
+                        color={fontColor4}
+                        padding={isMobile ? '10px 15px' : '10px 15px'}
+                        borderBottom="1px solid #F3F6FF"
+                      >
+                        APY Breakdown
+                      </NewLabel>
+                      <NewLabel padding={isMobile ? '0px 15px 10px' : '0px 15px 10px'}>
+                        <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
+                      </NewLabel>
+                    </MyBalance>
+                  )}
                   <LastHarvestInfo backColor={backColor} borderColor={borderColor}>
                     <NewLabel
                       size={isMobile ? '12px' : '14px'}

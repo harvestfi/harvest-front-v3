@@ -270,7 +270,6 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
           first: 1000,
           where: {
             vault: "${address === farm ? ifarm : address}",
-            timestamp_gte: "${startDate}"
           }, 
           orderBy: timestamp, 
           orderDirection: desc

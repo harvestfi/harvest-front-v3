@@ -44,6 +44,9 @@ const FarmDetailChart = ({
   set30DApy,
   set180DApy,
   set360DApy,
+  setLifetimeApy,
+  setVaultBirthday,
+  setVaultTotalPeriod,
 }) => {
   const { fontColor3, fontColor4 } = useThemeContext()
   const { account } = useWallet()
@@ -86,7 +89,7 @@ const FarmDetailChart = ({
     const initData = async () => {
       if (address && chainId && account) {
         try {
-          const data = await getDataQuery(380, address, chainId, account)
+          const data = await getDataQuery(365, address, chainId, account)
           const filteredData = {
             ...data,
             generalApies: data.generalApies.filter(entry => parseFloat(entry.apy) <= 100000),
@@ -97,14 +100,24 @@ const FarmDetailChart = ({
           )
 
           // Calculate Detailed APY Breakdown values
+          const vaultInitialDate = formatDate(
+            Number(updatedData.generalApies[updatedData.generalApies.length - 1].timestamp) * 1000,
+          )
           const totalPeriod =
             (Number(updatedData.generalApies[0].timestamp) -
               Number(updatedData.generalApies[updatedData.generalApies.length - 1].timestamp)) /
             (24 * 3600)
 
           let [sevenDaysApy, thirtyDaysApy, oneEightyDaysApy, threeSixtyFiveDaysApy] = Array(
-            4,
-          ).fill('-')
+              4,
+            ).fill('-'),
+            lifetimeApyValue = 0
+
+          updatedData.generalApies.forEach(item => {
+            lifetimeApyValue += Number(item.apy)
+          })
+          lifetimeApyValue /= updatedData.generalApies.length
+          lifetimeApyValue = `${lifetimeApyValue.toFixed(2)}%`
 
           if (totalPeriod >= 7) {
             const lastSevenDaysData = updatedData.generalApies.filter(
@@ -162,6 +175,9 @@ const FarmDetailChart = ({
           set30DApy(thirtyDaysApy)
           set180DApy(oneEightyDaysApy)
           set360DApy(threeSixtyFiveDaysApy)
+          setLifetimeApy(lifetimeApyValue)
+          setVaultBirthday(vaultInitialDate)
+          setVaultTotalPeriod(totalPeriod.toFixed())
 
           if (isMounted) {
             setApiData(updatedData)
