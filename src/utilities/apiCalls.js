@@ -247,11 +247,8 @@ export const getVaultHistories = async (address, chainId) => {
   return { vaultHData, vaultHFlag }
 }
 
-export const getDataQuery = async (ago, address, chainId, myWallet) => {
-  let nowDate = new Date(),
-    data = {}
-  nowDate = Math.floor(nowDate.setDate(nowDate.getDate() - 1) / 1000)
-  const startDate = nowDate - 3600 * 24 * ago
+export const getDataQuery = async (address, chainId, myWallet) => {
+  let data = {}
 
   address = address.toLowerCase()
   const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
@@ -280,7 +277,6 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
           first: 1000,
           where: {
             vault: "${address === farm ? ifarm : address}", 
-            timestamp_gte: "${startDate}"
           },
           orderBy: timestamp,
           orderDirection: desc

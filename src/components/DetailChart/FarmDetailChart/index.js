@@ -89,7 +89,7 @@ const FarmDetailChart = ({
     const initData = async () => {
       if (address && chainId && account) {
         try {
-          const data = await getDataQuery(365, address, chainId, account)
+          const data = await getDataQuery(address, chainId, account)
           const filteredData = {
             ...data,
             generalApies: data.generalApies.filter(entry => parseFloat(entry.apy) <= 100000),
