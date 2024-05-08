@@ -25,6 +25,8 @@ function getRangeNumber(strRange) {
     ago = 7
   } else if (strRange === '1M') {
     ago = 30
+  } else if (strRange === '1Y') {
+    ago = 365
   } else if (strRange === 'ALL') {
     ago = 365
   }

@@ -32,7 +32,8 @@ const filterList = [
 const recommendLinks = [
   { name: '1W', type: 1, state: '1W' },
   { name: '1M', type: 2, state: '1M' },
-  { name: 'ALL', type: 3, state: 'ALL' },
+  { name: '1Y', type: 3, state: '1Y' },
+  { name: 'ALL', type: 4, state: 'ALL' },
 ]
 
 const FarmDetailChart = ({
