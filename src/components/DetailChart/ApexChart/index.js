@@ -265,7 +265,7 @@ const ApexChart = ({
         firstDate,
         ago
 
-      if (range === 'ALL') {
+      if (range === 'ALL' || range === '1Y') {
         if (filter === 0) {
           firstDate =
             data?.tvls?.length > 0
@@ -284,7 +284,11 @@ const ApexChart = ({
           toDate = Math.floor(nowDate.getTime() / 1000),
           periodDate = (toDate - Number(firstDate)) / (24 * 60 * 60)
 
-        ago = Math.ceil(periodDate)
+        if (range === '1Y' && periodDate > 365) {
+          ago = getRangeNumber(range)
+        } else {
+          ago = Math.ceil(periodDate)
+        }
       } else {
         ago = getRangeNumber(range)
       }
