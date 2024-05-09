@@ -75,7 +75,6 @@ const WithdrawBase = ({
   lpTokenBalance,
   stakedAmount,
   token,
-  supTokenList,
   switchMethod,
   useIFARM,
   setRevertFromInfoAmount,
@@ -317,9 +316,8 @@ const WithdrawBase = ({
       toast.error('Please choose your Output Token.')
       return
     }
-    const supToken = supTokenList.find(el => el.symbol === pickedToken.symbol)
-    if (!hasPortalsError && !supToken) {
-      toast.error("Can't revert with Unsupported token!")
+    if (!hasPortalsError) {
+      toast.error('There was an error on Portals Service!')
       return
     }
 

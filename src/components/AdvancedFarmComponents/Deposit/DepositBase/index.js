@@ -15,7 +15,7 @@ import { BEGINNERS_BALANCES_DECIMALS } from '../../../../constants'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { useWallet } from '../../../../providers/Wallet'
 import { CHAIN_IDS } from '../../../../data/constants'
-import { fromWei, toWei } from '../../../../services/web3'
+import { fromWei, toWei, checkNativeToken } from '../../../../services/web3'
 import { addresses } from '../../../../data'
 import { formatNumberWido, isSpecialApp } from '../../../../utilities/formats'
 import Button from '../../../Button'
@@ -72,7 +72,6 @@ const DepositBase = ({
   pricePerFullShare,
   setInputAmount,
   token,
-  supTokenList,
   switchMethod,
   tokenSymbol,
   useIFARM,
@@ -339,12 +338,17 @@ const DepositBase = ({
         toast.error('Please choose your Output Token.')
         return
       }
-      const supToken = supTokenList.find(el => el.symbol === pickedToken.symbol)
-      if (!hasPortalsError && !supToken) {
-        toast.error("Can't Deposit with Unsupported token!")
+      if (!hasPortalsError) {
+        toast.error('There was an error on Portals Service!')
         return
       }
-      if (new BigNumber(inputAmount).isGreaterThan(new BigNumber(balance))) {
+      if (
+        new BigNumber(inputAmount).isGreaterThan(
+          checkNativeToken(pickedToken)
+            ? new BigNumber(balance).times(0.95)
+            : new BigNumber(balance),
+        )
+      ) {
         setShowWarning(true)
         return
       }
@@ -359,7 +363,11 @@ const DepositBase = ({
 
   useEffect(() => {
     if (!deposit && pickedToken.usdPrice) {
-      setInputAmount(new BigNumber(balance).toString())
+      if (checkNativeToken(pickedToken)) {
+        setInputAmount(new BigNumber((Number(balance) * 0.95).toFixed(5)).toString())
+      } else {
+        setInputAmount(new BigNumber(balance).toString())
+      }
     }
   }, [balance, setInputAmount, pickedToken, deposit])
 
@@ -484,7 +492,11 @@ const DepositBase = ({
           fontColor={fontColor}
           onClick={() => {
             if (account && pickedToken.symbol !== 'Select Token') {
-              setInputAmount(new BigNumber(balance).toString())
+              if (checkNativeToken(pickedToken)) {
+                setInputAmount(new BigNumber((Number(balance) * 0.95).toFixed(5)).toString())
+              } else {
+                setInputAmount(new BigNumber(balance).toString())
+              }
             }
           }}
         >

@@ -230,3 +230,13 @@ Params: ${params}
   const contractMethod = instance.methods[methodName]
   return contractMethod(...params).call()
 }
+
+export const checkNativeToken = pickedToken => {
+  if (
+    pickedToken.symbol &&
+    ((pickedToken.symbol === 'ETH' && pickedToken.chainId !== '137') ||
+      (pickedToken.symbol === 'MATIC' && pickedToken.chainId === '137'))
+  )
+    return true
+  return false
+}
