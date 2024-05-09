@@ -53,7 +53,7 @@ const FarmDetailChart = ({
   const { account } = useWallet()
 
   const [clickedId, setClickedId] = useState(2)
-  const [selectedState, setSelectedState] = useState('ALL')
+  const [selectedState, setSelectedState] = useState('1Y')
   const [apiData, setApiData] = useState({})
   const [iFarmTVLData, setIFarmTVLData] = useState({})
   const [curDate, setCurDate] = useState('')
