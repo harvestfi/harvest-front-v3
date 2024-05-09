@@ -72,7 +72,6 @@ const DepositBase = ({
   pricePerFullShare,
   setInputAmount,
   token,
-  supTokenList,
   switchMethod,
   tokenSymbol,
   useIFARM,
@@ -339,9 +338,8 @@ const DepositBase = ({
         toast.error('Please choose your Output Token.')
         return
       }
-      const supToken = supTokenList.find(el => el.symbol === pickedToken.symbol)
-      if (!hasPortalsError && !supToken) {
-        toast.error("Can't Deposit with Unsupported token!")
+      if (!hasPortalsError) {
+        toast.error('There was an error on Portals Service!')
         return
       }
       if (new BigNumber(inputAmount).isGreaterThan(new BigNumber(balance))) {
