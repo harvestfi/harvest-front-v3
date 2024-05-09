@@ -441,8 +441,8 @@ const DepositBase = ({
             </NewLabel>
             <TokenInput>
               <TokenAmount
-                type="text"
-                value={inputAmount}
+                type="number"
+                value={Number(inputAmount)}
                 onChange={onInputBalance}
                 bgColor={bgColor}
                 fontColor2={fontColor2}
