@@ -85,7 +85,6 @@ const WithdrawBase = ({
   setRevertMinReceivedUsdAmount,
   hasErrorOccurred,
   setHasErrorOccurred,
-  hasPortalsError,
 }) => {
   const {
     bgColor,
@@ -314,10 +313,6 @@ const WithdrawBase = ({
   const onClickWithdraw = async () => {
     if (pickedToken.symbol === 'Select') {
       toast.error('Please choose your Output Token.')
-      return
-    }
-    if (!hasPortalsError) {
-      toast.error('There was an error on Portals Service!')
       return
     }
 
