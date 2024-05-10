@@ -92,7 +92,6 @@ const DepositBase = ({
   setFailureCount,
   supportedVault,
   setSupportedVault,
-  hasPortalsError,
 }) => {
   const {
     bgColor,
@@ -336,10 +335,6 @@ const DepositBase = ({
     } else {
       if (pickedToken.symbol === 'Select Token') {
         toast.error('Please choose your Output Token.')
-        return
-      }
-      if (!hasPortalsError) {
-        toast.error('There was an error on Portals Service!')
         return
       }
       if (
