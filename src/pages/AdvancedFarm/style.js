@@ -138,13 +138,13 @@ const NewLabel = styled.div`
   font-weight: ${props => props.weight || '400'};
   font-size: ${props => props.size || '20px'};
   line-height: ${props => props.height || '0px'};
+
   ${props =>
     props.borderBottom
       ? `
     border-bottom: ${props.borderBottom};
   `
       : ''}
-
   ${props =>
     props.color
       ? `
@@ -273,6 +273,10 @@ const NewLabel = styled.div`
 
   span {
     font-weight: 700;
+  }
+
+  span.total-days {
+    font-weight: 400;
   }
 
   @media screen and (max-width: 992px) {
@@ -450,6 +454,13 @@ const FlexDiv = styled.div`
     props.justifyContent
       ? `
     justify-content: ${props.justifyContent};
+  `
+      : ''}
+
+  ${props =>
+    props.borderBottom
+      ? `
+    border-bottom: ${props.borderBottom};
   `
       : ''}
 

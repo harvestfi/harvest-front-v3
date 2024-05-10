@@ -14,7 +14,7 @@ import Docs from '../../assets/images/logos/sidebar/docs.svg'
 import FAQ from '../../assets/images/logos/sidebar/faq.svg'
 import Home from '../../assets/images/logos/sidebar/home-line.svg'
 import Beginners from '../../assets/images/logos/sidebar/beginners.svg'
-import LiveSupport from '../../assets/images/logos/sidebar/message-chat.svg'
+// import LiveSupport from '../../assets/images/logos/sidebar/message-chat.svg'
 import Analytics from '../../assets/images/logos/sidebar/analytics.svg'
 // import Collaborations from '../../assets/images/logos/sidebar/collaborations.svg'
 import Advanced from '../../assets/images/logos/sidebar/advanced.svg'
@@ -119,13 +119,13 @@ const sideLinksTop = [
 ]
 
 const sideLinksBottom = [
-  {
-    path: ROUTES.LiveSupport,
-    name: 'AI Support',
-    imgPath: LiveSupport,
-    external: false,
-    new: true,
-  },
+  // {
+  //   path: ROUTES.LiveSupport,
+  //   name: 'AI Support',
+  //   imgPath: LiveSupport,
+  //   external: false,
+  //   new: true,
+  // },
   {
     path: ROUTES.ANALYTIC,
     name: 'Analytics',

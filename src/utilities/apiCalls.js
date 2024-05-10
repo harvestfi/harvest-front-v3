@@ -247,12 +247,15 @@ export const getVaultHistories = async (address, chainId) => {
   return { vaultHData, vaultHFlag }
 }
 
-export const getDataQuery = async (ago, address, chainId, myWallet) => {
-  let nowDate = new Date(),
-    data = {}
-  nowDate = Math.floor(nowDate.setDate(nowDate.getDate() - 1) / 1000)
-  const startDate = nowDate - 3600 * 24 * ago
-
+export const getDataQuery = async (
+  address,
+  chainId,
+  myWallet,
+  asQuery,
+  timestamp,
+  chartData = {},
+) => {
+  const timestampQuery = asQuery ? `timestamp_lt: "${timestamp}"` : ''
   address = address.toLowerCase()
   const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
   const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
@@ -270,7 +273,6 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
           first: 1000,
           where: {
             vault: "${address === farm ? ifarm : address}",
-            timestamp_gte: "${startDate}"
           }, 
           orderBy: timestamp, 
           orderDirection: desc
@@ -281,7 +283,7 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
           first: 1000,
           where: {
             vault: "${address === farm ? ifarm : address}", 
-            timestamp_gte: "${startDate}"
+            ${timestampQuery}
           },
           orderBy: timestamp,
           orderDirection: desc
@@ -307,6 +309,7 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
       body: graphql,
       redirect: 'follow',
     }
+
   const url =
     chainId === CHAIN_IDS.ETH_MAINNET
       ? GRAPH_URL_MAINNET
@@ -317,17 +320,34 @@ export const getDataQuery = async (ago, address, chainId, myWallet) => {
       : GRAPH_URL_ARBITRUM
 
   try {
-    await fetch(url, requestOptions)
-      .then(response => response.json())
-      .then(result => {
-        data = result.data
-      })
-      .catch(error => console.log('error', error))
+    const response = await fetch(url, requestOptions)
+    const responseJson = await response.json()
+
+    // To merge the response data into the chartData object
+    Object.keys(responseJson.data).forEach(key => {
+      if (!Object.prototype.hasOwnProperty.call(chartData, key)) {
+        chartData[key] = responseJson.data[key]
+      } else if (Array.isArray(chartData[key]) && Array.isArray(responseJson.data[key])) {
+        chartData[key].push(...responseJson.data[key])
+      } else if (typeof chartData[key] === 'object' && typeof responseJson.data[key] === 'object') {
+        Object.assign(chartData[key], responseJson.data[key])
+      } else {
+        chartData[key] = responseJson.data[key]
+      }
+    })
+
+    const dataTimestamp = Number(chartData.tvls[chartData.tvls.length - 1].timestamp)
+    const initTimestamp = Number(
+      chartData.generalApies[chartData.generalApies.length - 1].timestamp,
+    )
+    if (responseJson.data.tvls.length === 1000 && dataTimestamp > initTimestamp) {
+      await getDataQuery(address, chainId, myWallet, true, dataTimestamp, chartData)
+    }
   } catch (err) {
     console.log('Fetch data about subgraph: ', err)
   }
 
-  return data
+  return chartData
 }
 
 export const getUserBalanceHistories = async (address, chainId, account) => {
