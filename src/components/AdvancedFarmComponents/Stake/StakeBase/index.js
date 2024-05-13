@@ -176,8 +176,8 @@ const StakeBase = ({
         </NewLabel>
         <AmountInputSection fontColor5={fontColor5}>
           <TokenAmount
-            type="text"
-            value={inputAmount}
+            type="number"
+            value={Number(inputAmount)}
             onChange={onInputBalance}
             bgColor={bgColor}
             fontColor2={fontColor2}

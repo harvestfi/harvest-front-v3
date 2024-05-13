@@ -15,7 +15,7 @@ import { BEGINNERS_BALANCES_DECIMALS } from '../../../../constants'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { useWallet } from '../../../../providers/Wallet'
 import { CHAIN_IDS } from '../../../../data/constants'
-import { fromWei, toWei } from '../../../../services/web3'
+import { fromWei, toWei, checkNativeToken } from '../../../../services/web3'
 import { addresses } from '../../../../data'
 import { formatNumberWido, isSpecialApp } from '../../../../utilities/formats'
 import Button from '../../../Button'
@@ -72,7 +72,6 @@ const DepositBase = ({
   pricePerFullShare,
   setInputAmount,
   token,
-  supTokenList,
   switchMethod,
   tokenSymbol,
   useIFARM,
@@ -93,7 +92,6 @@ const DepositBase = ({
   setFailureCount,
   supportedVault,
   setSupportedVault,
-  hasPortalsError,
 }) => {
   const {
     bgColor,
@@ -339,12 +337,13 @@ const DepositBase = ({
         toast.error('Please choose your Output Token.')
         return
       }
-      const supToken = supTokenList.find(el => el.symbol === pickedToken.symbol)
-      if (!hasPortalsError && !supToken) {
-        toast.error("Can't Deposit with Unsupported token!")
-        return
-      }
-      if (new BigNumber(inputAmount).isGreaterThan(new BigNumber(balance))) {
+      if (
+        new BigNumber(inputAmount).isGreaterThan(
+          checkNativeToken(pickedToken)
+            ? new BigNumber(balance).times(0.95)
+            : new BigNumber(balance),
+        )
+      ) {
         setShowWarning(true)
         return
       }
@@ -359,7 +358,11 @@ const DepositBase = ({
 
   useEffect(() => {
     if (!deposit && pickedToken.usdPrice) {
-      setInputAmount(new BigNumber(balance).toString())
+      if (checkNativeToken(pickedToken)) {
+        setInputAmount(new BigNumber((Number(balance) * 0.95).toFixed(5)).toString())
+      } else {
+        setInputAmount(new BigNumber(balance).toString())
+      }
     }
   }, [balance, setInputAmount, pickedToken, deposit])
 
@@ -433,8 +436,8 @@ const DepositBase = ({
             </NewLabel>
             <TokenInput>
               <TokenAmount
-                type="text"
-                value={inputAmount}
+                type="number"
+                value={Number(inputAmount)}
                 onChange={onInputBalance}
                 bgColor={bgColor}
                 fontColor2={fontColor2}
@@ -484,7 +487,11 @@ const DepositBase = ({
           fontColor={fontColor}
           onClick={() => {
             if (account && pickedToken.symbol !== 'Select Token') {
-              setInputAmount(new BigNumber(balance).toString())
+              if (checkNativeToken(pickedToken)) {
+                setInputAmount(new BigNumber((Number(balance) * 0.95).toFixed(5)).toString())
+              } else {
+                setInputAmount(new BigNumber(balance).toString())
+              }
             }
           }}
         >
@@ -581,8 +588,8 @@ const DepositBase = ({
                   {useBeginnersFarm
                     ? `Based on live USD prices of tokens involved in this farm. Subject to change due to market fluctuations and the number of users in this farm.`
                     : useIFARM
-                    ? 'Based on live USD price of iFARM. Considers current APY. Subject to change.'
-                    : 'Based on live USD prices of underlying and reward tokens. Considers current APY and assumes staked fTokens. Subject to change.'}
+                    ? 'Based on live USD price of iFARM. Considers live APY. Subject to change.'
+                    : 'Based on live USD prices of underlying and reward tokens. Considers live APY and assumes staked fTokens. Subject to change.'}
                 </NewLabel>
               </ReactTooltip>
             </NewLabel>
@@ -649,8 +656,8 @@ const DepositBase = ({
                   {useBeginnersFarm
                     ? `Based on live USD prices of tokens involved in this farm. Subject to change due to market fluctuations and the number of users in this farm.`
                     : useIFARM
-                    ? 'Based on live USD price of iFARM. Considers current APY. Subject to change.'
-                    : 'Based on live USD prices of underlying and reward tokens. Considers current APY and assumes staked fTokens. Subject to change.'}
+                    ? 'Based on live USD price of iFARM. Considers live APY. Subject to change.'
+                    : 'Based on live USD prices of underlying and reward tokens. Considers live APY and assumes staked fTokens. Subject to change.'}
                 </NewLabel>
               </ReactTooltip>
             </NewLabel>

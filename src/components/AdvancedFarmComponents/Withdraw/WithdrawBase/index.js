@@ -75,7 +75,6 @@ const WithdrawBase = ({
   lpTokenBalance,
   stakedAmount,
   token,
-  supTokenList,
   switchMethod,
   useIFARM,
   setRevertFromInfoAmount,
@@ -86,7 +85,6 @@ const WithdrawBase = ({
   setRevertMinReceivedUsdAmount,
   hasErrorOccurred,
   setHasErrorOccurred,
-  hasPortalsError,
 }) => {
   const {
     bgColor,
@@ -317,11 +315,6 @@ const WithdrawBase = ({
       toast.error('Please choose your Output Token.')
       return
     }
-    const supToken = supTokenList.find(el => el.symbol === pickedToken.symbol)
-    if (!hasPortalsError && !supToken) {
-      toast.error("Can't revert with Unsupported token!")
-      return
-    }
 
     if (new BigNumber(unstakeBalance.toString()).isEqualTo(0)) {
       toast.error('Please input amount to revert!')
@@ -405,8 +398,8 @@ const WithdrawBase = ({
             </NewLabel>
             <TokenInput>
               <TokenAmount
-                type="text"
-                value={unstakeInputValue}
+                type="number"
+                value={Number(unstakeInputValue)}
                 onChange={onInputUnstake}
                 bgColor={bgColor}
                 fontColor2={fontColor2}

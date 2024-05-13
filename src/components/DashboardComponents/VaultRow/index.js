@@ -96,7 +96,7 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
         </Content>
         <Content width={isMobile ? '33%' : '11%'} marginTop={isMobile ? '15px' : 'unset'}>
           {isMobile && (
-            <ListItem color={fontColor} weight={500} size={12} height={18} value="APY" />
+            <ListItem color={fontColor} weight={500} size={12} height={18} value="Live APY" />
           )}
           <ListItem
             color={isMobile ? fontColor1 : fontColor}
