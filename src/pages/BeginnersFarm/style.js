@@ -159,13 +159,13 @@ const NewLabel = styled.div`
   font-weight: ${props => props.weight || '400'};
   font-size: ${props => props.size || '20px'};
   line-height: ${props => props.height || '0px'};
+
   ${props =>
     props.borderBottom
       ? `
     border-bottom: ${props.borderBottom};
   `
       : ''}
-
   ${props =>
     props.color
       ? `
@@ -264,6 +264,10 @@ const NewLabel = styled.div`
     font-size: 8px;
     right: 0;
     top: 13px;
+  }
+
+  span.total-days {
+    font-weight: 400;
   }
 
   img.icon {
@@ -460,6 +464,13 @@ const FlexDiv = styled.div`
     props.justifyContent
       ? `
     justify-content: ${props.justifyContent};
+  `
+      : ''}
+
+  ${props =>
+    props.borderBottom
+      ? `
+    border-bottom: ${props.borderBottom};
   `
       : ''}
 
@@ -999,6 +1010,9 @@ const MainTag = styled.div`
 
   @media screen and (max-width: 992px) {
     width: 50%;
+    &:nth-child(1) {
+      width: 50%;
+    }
     &:nth-child(3) {
       display: none;
     }

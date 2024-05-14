@@ -49,6 +49,7 @@ const Inner = styled.div`
 const SubPart = styled.div`
   display: flex;
   justify-content: space-between;
+  gap: 10px;
 
   @media screen and (max-width: 992px) {
     display: none;
@@ -69,7 +70,7 @@ const MobileDiv = styled.div`
     border: 2px solid ${props => props.borderColor};
     border-radius: 6.5px;
     width: 100%;
-    margin-bottom: 24px;
+    margin-bottom: 10px;
   }
 `
 
@@ -163,10 +164,16 @@ const EmptyInfo = styled.div`
   `
       : ''}
 
+  ${props =>
+    props.gap
+      ? `
+    gap: ${props.gap};
+  `
+      : 'gap: 23px;'}
+
   display: flex;
   justify-content: center;
   text-align: center;
-  gap: 23px;
   @media screen and (max-width: 992px) {
     display: flex;
     justify-content: center;
@@ -625,6 +632,7 @@ const NewLabel = styled.div`
 const CheckBoxDiv = styled.div`
   cursor: pointer;
   margin-top: 25px;
+  margin-right: 25px;
   display: inline-block;
   position: relative;
 

@@ -88,6 +88,12 @@ const EmptyContainer = styled.div`
   font-size: 14px;
   line-height: 18px;
   color: ${props => props.fontColor};
+  ${props =>
+    props.cursor
+      ? `
+      cursor: ${props.cursor};
+      `
+      : `cursor: pointer;`}
 `
 
 const Label = styled.div`

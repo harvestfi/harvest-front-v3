@@ -39,6 +39,7 @@ import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { fromWei } from '../../services/web3'
 import { parseValue, isLedgerLive } from '../../utilities/formats'
+import { initBalanceAndDetailData } from '../../utilities/apiCalls'
 import { getTotalApy } from '../../utilities/parsers'
 import {
   Column,
@@ -61,6 +62,9 @@ import {
   ConnectButtonStyle,
   CheckBoxDiv,
 } from './style'
+import AnimatedDots from '../../components/AnimatedDots'
+
+const totalNetProfitKey = 'TOTAL_NET_PROFIT'
 
 const getChainIcon = chain => {
   let chainLogo = ETHEREUM
@@ -121,7 +125,7 @@ const Portfolio = () => {
   const { connected, connectAction, account, balances, getWalletBalances, chainId } = useWallet()
   const { userStats, fetchUserPoolStats, totalPools, disableWallet } = usePools()
   const { profitShareAPY } = useStats()
-  const { vaultsData, loadingVaults, farmingBalances, getFarmingBalances } = useVaults()
+  const { vaultsData, loadingVaults, getFarmingBalances } = useVaults()
   /* eslint-disable global-require */
   const { tokens } = require('../../data')
   const {
@@ -136,6 +140,21 @@ const Portfolio = () => {
   } = useThemeContext()
 
   const [apiData, setApiData] = useState([])
+  const [farmTokenList, setFarmTokenList] = useState([])
+  const [filteredFarmList, setFilteredFarmList] = useState([])
+  const [noFarm, setNoFarm] = useState(false)
+  const [totalNetProfit, setTotalNetProfit] = useState(0)
+  const [totalDeposit, setTotalDeposit] = useState(0)
+  const [totalRewards, setTotalRewards] = useState(0)
+  const [totalYieldDaily, setTotalYieldDaily] = useState(0)
+  const [totalYieldMonthly, setTotalYieldMonthly] = useState(0)
+
+  const [depositToken, setDepositToken] = useState([])
+
+  const [sortOrder, setSortOrder] = useState(false)
+  const [showDetail, setShowDetail] = useState(Array(farmTokenList.length).fill(false))
+  const [showInactiveFarms, setShowInactiveFarms] = useState(false)
+  const [expandAll, setExpandAll] = useState(false)
 
   useEffect(() => {
     const getCoinList = async () => {
@@ -144,6 +163,9 @@ const Portfolio = () => {
     }
 
     getCoinList()
+
+    const prevTotalProfit = Number(localStorage.getItem(totalNetProfitKey) || '0')
+    setTotalNetProfit(prevTotalProfit)
   }, [])
 
   const farmProfitSharingPool = totalPools.find(
@@ -189,20 +211,6 @@ const Portfolio = () => {
   )
 
   const groupOfVaults = { ...vaultsData, ...poolVaults }
-
-  const [farmTokenList, setFarmTokenList] = useState([])
-  const [filteredFarmList, setFilteredFarmList] = useState([])
-  const [noFarm, setNoFarm] = useState(false)
-  const [totalDeposit, setTotalDeposit] = useState(0)
-  const [totalRewards, setTotalRewards] = useState(0)
-  const [totalYieldDaily, setTotalYieldDaily] = useState(0)
-  const [totalYieldMonthly, setTotalYieldMonthly] = useState(0)
-
-  const [depositToken, setDepositToken] = useState([])
-
-  const [sortOrder, setSortOrder] = useState(false)
-  const [showDetail, setShowDetail] = useState(Array(farmTokenList.length).fill(false))
-  const [showInactiveFarms, setShowInactiveFarms] = useState(false)
 
   const firstWalletBalanceLoad = useRef(true)
   useEffectWithPrevious(
@@ -323,14 +331,16 @@ const Portfolio = () => {
             totalRewardUsd: 0,
             token: {},
           }
-          let symbol = ''
+          let symbol = '',
+            fAssetPool = {}
+
           if (stakedVaults[i] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
             symbol = FARM_TOKEN_SYMBOL
           } else {
             symbol = stakedVaults[i]
           }
-          // eslint-disable-next-line one-var
-          let fAssetPool =
+
+          fAssetPool =
             symbol === FARM_TOKEN_SYMBOL
               ? groupOfVaults[symbol].data
               : find(totalPools, pool => pool.id === symbol)
@@ -341,12 +351,14 @@ const Portfolio = () => {
               vault.vaultAddress === fAssetPool.collateralAddress ||
               (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress),
           )
+
           if (token) {
             const useIFARM = symbol === FARM_TOKEN_SYMBOL
             let tokenName = '',
               totalRewardAPRByPercent = 0,
               iFARMBalance = 0,
               usdPrice = 1
+
             for (let k = 0; k < token.tokenNames.length; k += 1) {
               tokenName += token.tokenNames[k]
               if (k !== token.tokenNames.length - 1) {
@@ -369,6 +381,7 @@ const Portfolio = () => {
             if (isSpecialVault) {
               fAssetPool = token.data
             }
+
             const tokenDecimals = useIFARM
               ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0)
               : token.decimals
@@ -376,12 +389,12 @@ const Portfolio = () => {
               ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
               : get(token, `pricePerFullShare`, 0)
             const pricePerFullShare = fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals)
-            if (token) {
-              usdPrice =
-                (symbol === FARM_TOKEN_SYMBOL
-                  ? (token.data.lpTokenData && token.data.lpTokenData.price) * pricePerFullShare
-                  : token.vaultPrice) || 1
-            }
+            usdPrice =
+              (symbol === FARM_TOKEN_SYMBOL
+                ? (token.data.lpTokenData && token.data.lpTokenData.price) *
+                  Number(pricePerFullShare)
+                : token.vaultPrice) || 1
+
             const unstake = fromWei(
               get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),
               (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
@@ -618,7 +631,93 @@ const Portfolio = () => {
 
       getFarmTokenInfo()
     }
-  }, [account, userStats, balances, farmingBalances, showInactiveFarms]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, userStats, balances, showInactiveFarms]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!isEmpty(userStats) && account) {
+      const getNetProfitValue = async () => {
+        let stakedVaults = [],
+          totalNetProfitUSD = 0
+
+        if (showInactiveFarms) {
+          stakedVaults = Object.keys(userStats).filter(
+            poolId =>
+              new BigNumber(userStats[poolId].totalStaked).gt(0) ||
+              new BigNumber(userStats[poolId].lpTokenBalance).gt(0) ||
+              (poolId === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID &&
+                new BigNumber(balances[IFARM_TOKEN_SYMBOL]).gt(0)),
+          )
+        } else {
+          const stakedVaultsTemp = Object.keys(userStats).filter(
+            poolId =>
+              new BigNumber(userStats[poolId].totalStaked).gt(0) ||
+              new BigNumber(userStats[poolId].lpTokenBalance).gt(0) ||
+              (poolId === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID &&
+                new BigNumber(balances[IFARM_TOKEN_SYMBOL]).gt(0)),
+          )
+
+          stakedVaults = stakedVaultsTemp.filter(
+            poolId =>
+              groupOfVaults[poolId === 'profit-sharing-farm' ? 'IFARM' : poolId] &&
+              groupOfVaults[poolId === 'profit-sharing-farm' ? 'IFARM' : poolId].inactive !== true,
+          )
+        }
+
+        for (let i = 0; i < stakedVaults.length; i += 1) {
+          let symbol = '',
+            fAssetPool = {}
+
+          if (stakedVaults[i] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
+            symbol = FARM_TOKEN_SYMBOL
+          } else {
+            symbol = stakedVaults[i]
+          }
+
+          fAssetPool =
+            symbol === FARM_TOKEN_SYMBOL
+              ? groupOfVaults[symbol].data
+              : find(totalPools, pool => pool.id === symbol)
+          const token = find(
+            groupOfVaults,
+            vault =>
+              vault.vaultAddress === fAssetPool.collateralAddress ||
+              (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress),
+          )
+          if (token) {
+            const useIFARM = symbol === FARM_TOKEN_SYMBOL
+            const isSpecialVault = token.liquidityPoolVault || token.poolVault
+            if (isSpecialVault) {
+              fAssetPool = token.data
+            }
+
+            const underlyingPrice = get(token, 'usdPrice', get(token, 'data.lpTokenData.price', 0))
+            const paramAddress = isSpecialVault
+              ? token.data.collateralAddress
+              : token.vaultAddress || token.tokenAddress
+
+            // eslint-disable-next-line no-await-in-loop
+            const { sumNetChangeUsd } = await initBalanceAndDetailData(
+              paramAddress,
+              useIFARM ? token.data.chain : token.chain,
+              account,
+              token.decimals,
+              underlyingPrice,
+            )
+            totalNetProfitUSD += sumNetChangeUsd
+          }
+        }
+
+        totalNetProfitUSD = totalNetProfitUSD === 0 ? -1 : totalNetProfitUSD
+        setTotalNetProfit(totalNetProfitUSD)
+        localStorage.setItem(totalNetProfitKey, totalNetProfitUSD.toString())
+      }
+
+      getNetProfitValue()
+    } else {
+      setTotalNetProfit(0)
+      localStorage.setItem(totalNetProfitKey, '0')
+    }
+  }, [account, userStats, balances, showInactiveFarms]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const sortCol = field => {
     const tokenList = orderBy(farmTokenList, [field], [sortOrder ? 'asc' : 'desc'])
@@ -637,17 +736,28 @@ const Portfolio = () => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const TopBoxData = [
-    // {
-    //   icon: Safe,
-    //   content: 'Total Net Profit',
-    //   price: totalDeposit,
-    //   toolTipTitle: 'tt-total-balance',
-    //   toolTip:
-    //     "Total yield earnings in USD from all farms, excluding claimable rewards. Subject to change with market fluctuations. For detailed information on your yield earnings, see the 'Underlying' value in the Lifetime Earnings box on each farm's page.",
-    // },
     {
       icon: Safe,
-      content: 'Total Balance',
+      content: 'Total Net Profit',
+      price: totalNetProfit,
+      toolTipTitle: 'tt-total-profit',
+      toolTip: (
+        <>
+          Total yield earnings in USD from all farms listed below, excluding claimable rewards.
+          Subject to change with market fluctuations.
+          <br />
+          <br />
+          For detailed information on your yield earnings, see the &apos;Underlying&apos; value in
+          the Lifetime Earnings box on each farm&apos;s page.
+          <br />
+          <br />
+          By default, it does not consider inactive farms.
+        </>
+      ),
+    },
+    {
+      icon: Safe,
+      content: 'Portfolio Balance',
       price: totalDeposit,
       toolTipTitle: 'tt-total-balance',
       toolTip:
@@ -691,6 +801,8 @@ const Portfolio = () => {
               price={data.price}
               toolTipTitle={data.toolTipTitle}
               toolTip={data.toolTip}
+              connected={connected}
+              farmTokenListLength={farmTokenList.length}
             />
           ))}
         </SubPart>
@@ -699,10 +811,35 @@ const Portfolio = () => {
           <MobileDiv borderColor={borderColor}>
             <TotalValue
               icon={Safe}
-              content="Total Balance"
+              content="Total Net Profit"
+              price={totalNetProfit}
+              toolTipTitle="tt-total-profit"
+              toolTip={
+                <>
+                  Total yield earnings in USD from all farms listed below, excluding claimable
+                  rewards. Subject to change with market fluctuations.
+                  <br />
+                  <br />
+                  For detailed information on your yield earnings, see the &apos;Underlying&apos;
+                  value in the Lifetime Earnings box on each farm&apos;s page.
+                  <br />
+                  <br />
+                  By default, it does not consider inactive farms.
+                </>
+              }
+              connected={connected}
+              farmTokenListLength={farmTokenList.length}
+            />
+          </MobileDiv>
+          <MobileDiv borderColor={borderColor}>
+            <TotalValue
+              icon={Safe}
+              content="Portfolio Balance"
               price={totalDeposit}
               toolTipTitle="tt-total-balance"
               toolTip="Sum of your wallet's staked and unstaked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
+              connected={connected}
+              farmTokenListLength={farmTokenList.length}
             />
             <TotalValue
               icon={Diamond}
@@ -710,6 +847,8 @@ const Portfolio = () => {
               price={totalRewards}
               toolTipTitle="tt-rewards"
               toolTip="Accrued rewards on all your staked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
+              connected={connected}
+              farmTokenListLength={farmTokenList.length}
             />
           </MobileDiv>
           <MobileDiv borderColor={borderColor}>
@@ -719,6 +858,8 @@ const Portfolio = () => {
               price={totalYieldMonthly}
               toolTipTitle="tt-monthly-yield"
               toolTip="Estimated monthly yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
+              connected={connected}
+              farmTokenListLength={farmTokenList.length}
             />
             <TotalValue
               icon={Coin2}
@@ -726,6 +867,8 @@ const Portfolio = () => {
               price={totalYieldDaily}
               toolTipTitle="tt-daily-yield"
               toolTip="Estimated daily yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
+              connected={connected}
+              farmTokenListLength={farmTokenList.length}
             />
           </MobileDiv>
         </MobileSubPart>
@@ -752,7 +895,7 @@ const Portfolio = () => {
                     sortCol('apy')
                   }}
                 >
-                  APY
+                  Live APY
                   <img className="sortIcon" src={Sort} alt="sort" />
                 </Col>
               </Column>
@@ -836,8 +979,9 @@ const Portfolio = () => {
               <EmptyPanel borderColor={borderColor}>
                 {connected ? (
                   !noFarm ? (
-                    <EmptyInfo weight={500} size={14} height={20} color={fontColor}>
-                      Syncing positions...
+                    <EmptyInfo weight={500} size={14} height={20} color={fontColor} gap="2px">
+                      <div>Syncing positions</div>
+                      <AnimatedDots />
                     </EmptyInfo>
                   ) : (
                     <EmptyInfo weight={500} size={14} height={20} color={fontColor}>
@@ -871,14 +1015,36 @@ const Portfolio = () => {
             )}
           </TableContent>
           {connected && farmTokenList.length > 0 && (
-            <CheckBoxDiv>
-              {showInactiveFarms ? (
-                <FaRegSquareCheck onClick={() => setShowInactiveFarms(false)} color="#15B088" />
-              ) : (
-                <FaRegSquare onClick={() => setShowInactiveFarms(true)} color="#15B088" />
-              )}
-              <div>Show inactive positions</div>
-            </CheckBoxDiv>
+            <>
+              <CheckBoxDiv>
+                {showInactiveFarms ? (
+                  <FaRegSquareCheck onClick={() => setShowInactiveFarms(false)} color="#15B088" />
+                ) : (
+                  <FaRegSquare onClick={() => setShowInactiveFarms(true)} color="#15B088" />
+                )}
+                <div>Show inactive positions</div>
+              </CheckBoxDiv>
+              <CheckBoxDiv>
+                {expandAll ? (
+                  <FaRegSquareCheck
+                    onClick={() => {
+                      setExpandAll(false)
+                      setShowDetail(Array(farmTokenList.length).fill(false))
+                    }}
+                    color="#15B088"
+                  />
+                ) : (
+                  <FaRegSquare
+                    onClick={() => {
+                      setExpandAll(true)
+                      setShowDetail(Array(farmTokenList.length).fill(true))
+                    }}
+                    color="#15B088"
+                  />
+                )}
+                <div>Expand All</div>
+              </CheckBoxDiv>
+            </>
           )}
         </TransactionDetails>
         {connected && farmTokenList.length > 0 ? (

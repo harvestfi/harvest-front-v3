@@ -14,7 +14,7 @@ import { round } from 'lodash'
 import { ClipLoader } from 'react-spinners'
 import { useWindowWidth } from '@react-hook/window-size'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { ceil10, floor10, round10, numberWithCommas } from '../../../utilities/formats'
+import { ceil10, floor10, round10, numberWithCommas, formatDate } from '../../../utilities/formats'
 import { MAX_DECIMALS } from '../../../constants'
 import { LoadingDiv, NoData } from './style'
 import { fromWei } from '../../../services/web3'
@@ -25,6 +25,8 @@ function getRangeNumber(strRange) {
     ago = 7
   } else if (strRange === '1M') {
     ago = 30
+  } else if (strRange === '1Y') {
+    ago = 365
   } else if (strRange === 'ALL') {
     ago = 365
   }
@@ -88,30 +90,6 @@ function generateChartDataWithSlots(slots, apiData, kind, filter, decimals) {
   }
 
   return seriesData
-}
-
-function formatDateTime(value) {
-  const date = new Date(value)
-  const year = date.getFullYear()
-  const monthNames = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ]
-  const monthNum = date.getMonth()
-  const month = monthNames[monthNum]
-  const day = date.getDate()
-
-  return `${month} ${day} ${year}`
 }
 
 function formatXAxis(value, range) {
@@ -183,6 +161,10 @@ const ApexChart = ({
   lastAPY,
   setCurDate,
   setCurContent,
+  setRoundNumber,
+  handleTooltipContent,
+  setFixedLen,
+  fixedLen,
 }) => {
   const { fontColor, fontColor5 } = useThemeContext()
 
@@ -193,21 +175,14 @@ const ApexChart = ({
   const [loading, setLoading] = useState(false)
   const [isDataReady, setIsDataReady] = useState(true)
 
-  const [fixedLen, setFixedLen] = useState(0)
-  const [roundNumber, setRoundNumber] = useState(0)
-
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      setCurDate(formatDateTime(payload[0].payload.x))
-      const content = numberWithCommas(
-        Number(payload[0].payload.y).toFixed(
-          filter === 1 ? 2 : filter === 0 ? fixedLen : roundNumber,
-        ),
-      )
-      setCurContent(content)
-    }
+  const CustomTooltip = ({ active, payload, onTooltipContentChange }) => {
+    useEffect(() => {
+      if (active && payload && payload.length) {
+        onTooltipContentChange(payload)
+      }
+    }, [active, payload, onTooltipContentChange])
 
     return null
   }
@@ -290,18 +265,18 @@ const ApexChart = ({
         firstDate,
         ago
 
-      if (range === 'ALL') {
+      if (range === 'ALL' || range === '1Y') {
         if (filter === 0) {
           firstDate =
             data?.tvls?.length > 0
-              ? data.generalApies[data.generalApies.length - 1].timestamp
+              ? data.generalApies[data.generalApies.length - 1]?.timestamp
               : null
         } else if (filter === 1) {
-          firstDate = data?.tvls?.length > 0 ? data.tvls[data.tvls.length - 1].timestamp : null
+          firstDate = data?.tvls?.length > 0 ? data.tvls[data.tvls.length - 1]?.timestamp : null
         } else {
           firstDate =
             data?.tvls?.length > 0
-              ? data.vaultHistories[data.vaultHistories.length - 1].timestamp
+              ? data.vaultHistories[data.vaultHistories.length - 1]?.timestamp
               : null
         }
 
@@ -309,7 +284,11 @@ const ApexChart = ({
           toDate = Math.floor(nowDate.getTime() / 1000),
           periodDate = (toDate - Number(firstDate)) / (24 * 60 * 60)
 
-        ago = Math.ceil(periodDate)
+        if (range === '1Y' && periodDate > 365) {
+          ago = getRangeNumber(range)
+        } else {
+          ago = Math.ceil(periodDate)
+        }
       } else {
         ago = getRangeNumber(range)
       }
@@ -483,7 +462,7 @@ const ApexChart = ({
       setFixedLen(filter === 1 ? 0 : len)
       setRoundNumber(roundNum)
 
-      setCurDate(formatDateTime(mainData[slotCount - 1].x))
+      setCurDate(formatDate(mainData[slotCount - 1].x))
       const content = numberWithCommas(
         Number(mainData[slotCount - 1].y).toFixed(
           filter === 1 ? 2 : filter === 0 ? fixedLen : roundNum,
@@ -589,7 +568,7 @@ const ApexChart = ({
               fill="url(#colorUv)"
             />
             <Tooltip
-              content={CustomTooltip}
+              content={<CustomTooltip onTooltipContentChange={handleTooltipContent} />}
               legendType="none"
               dot={false}
               cursor={{
@@ -605,7 +584,7 @@ const ApexChart = ({
           {isDataReady ? (
             <ClipLoader size={30} margin={2} color={fontColor} />
           ) : (
-            <NoData color={fontColor}>You don&apos;t have any active deposits in this farm.</NoData>
+            <NoData color={fontColor}>Vault data soon to be available.</NoData>
           )}
         </LoadingDiv>
       )}

@@ -1,8 +1,10 @@
 import React, { useEffect, useState, useRef } from 'react'
-import { numberWithCommas } from '../../../utilities/formats'
-import { useThemeContext } from '../../../providers/useThemeContext'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
+import { useThemeContext } from '../../../providers/useThemeContext'
+import { useWallet } from '../../../providers/Wallet'
+import { formatDate, numberWithCommas } from '../../../utilities/formats'
+import { getPriceFeeds, getUserBalanceHistories } from '../../../utilities/apiCalls'
 import {
   ButtonGroup,
   ChartDiv,
@@ -23,56 +25,35 @@ const recommendLinks = [
   { name: 'LAST', type: 4, state: 'LAST' },
 ]
 
-function formatDateTime(value) {
-  const date = new Date(value)
-  const year = date.getFullYear()
-  const monthNames = [
-    'Jan',
-    'Feb',
-    'Mar',
-    'Apr',
-    'May',
-    'Jun',
-    'Jul',
-    'Aug',
-    'Sep',
-    'Oct',
-    'Nov',
-    'Dec',
-  ]
-  const monthNum = date.getMonth()
-  const month = monthNames[monthNum]
-  const day = date.getDate()
-
-  return `${day} ${month} ${year}`
-}
-
 const UserBalanceData = ({
+  token,
+  vaultPool,
   totalValue,
   useIFARM,
   farmPrice,
   underlyingPrice,
   pricePerFullShare,
-  balanceFlag,
-  detailFlag,
-  allData,
-  balanceData,
 }) => {
   const { backColor, borderColor, fontColor3 } = useThemeContext()
+  const { account } = useWallet()
 
   const [selectedState, setSelectedState] = useState('LAST')
   const [apiData, setApiData] = useState([])
-  const [loadComplete, setLoadComplete] = useState(true)
+  const [loadComplete, setLoadComplete] = useState(false)
   const [curDate, setCurDate] = useState('')
   const [curContent, setCurContent] = useState('$0')
   const [curContentUnderlying, setCurContentUnderlying] = useState('0')
   const [fixedLen, setFixedLen] = useState(0)
   const [lastFarmingTimeStamp, setLastFarmingTimeStamp] = useState('-')
 
+  const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+  const chainId = token.chain || token.data.chain
+
   const totalValueRef = useRef(totalValue)
   const farmPriceRef = useRef(farmPrice)
   const usdPriceRef = useRef(underlyingPrice)
   const pricePerFullShareRef = useRef(pricePerFullShare)
+
   useEffect(() => {
     totalValueRef.current = totalValue
     farmPriceRef.current = farmPrice
@@ -82,7 +63,7 @@ const UserBalanceData = ({
 
   const handleTooltipContent = payload => {
     if (payload && payload.length) {
-      const currentDate = formatDateTime(payload[0].payload.x)
+      const currentDate = formatDate(payload[0].payload.x)
       const balance = numberWithCommas(Number(payload[0].payload.y).toFixed(fixedLen))
       if (Number(payload[0].payload.y === 0)) {
         setCurContent('$0')
@@ -115,34 +96,166 @@ const UserBalanceData = ({
   }
 
   useEffect(() => {
+    let isMounted = true
     const initData = async () => {
-      if (balanceFlag) {
-        const lastMatchingTimestamp = findLastMatchingTimestamp(balanceData)
-        setLastFarmingTimeStamp(lastMatchingTimestamp)
-      }
+      if (account && address && chainId && pricePerFullShare && totalValue) {
+        try {
+          const uniqueData2 = []
+          const timestamps = []
+          const mergedData = []
+          let priceFeedData, priceFeedFlag
 
-      if (balanceFlag && detailFlag) {
-        const nowDate = new Date()
-        const currentTimeStamp = Math.floor(nowDate.getTime() / 1000)
+          const { balanceData, balanceFlag } = await getUserBalanceHistories(
+            address,
+            chainId,
+            account,
+          )
+          if (balanceFlag) {
+            const firstTimeStamp = balanceData[balanceData.length - 1].timestamp
+            const result = await getPriceFeeds(address, chainId, firstTimeStamp, false)
+            priceFeedData = result.priceFeedData
+            priceFeedFlag = result.priceFeedFlag
+          }
 
-        const firstObject = {
-          priceUnderlying: useIFARM ? farmPriceRef.current : usdPriceRef.current,
-          sharePrice: pricePerFullShareRef.current,
-          timestamp: currentTimeStamp,
-          value: totalValueRef.current,
+          if (priceFeedFlag) {
+            priceFeedData.forEach(obj => {
+              if (!timestamps.includes(obj.timestamp)) {
+                timestamps.push(obj.timestamp)
+                const modifiedObj = { ...obj, priceUnderlying: obj.price } // Rename the 'price' property to 'priceUnderlying'
+                delete modifiedObj.price // Remove the 'value' property from modifiedObj
+                uniqueData2.push(modifiedObj)
+              }
+            })
+          }
+
+          if (balanceFlag) {
+            const lastMatchingTimestamp = findLastMatchingTimestamp(balanceData)
+            setLastFarmingTimeStamp(lastMatchingTimestamp)
+          }
+
+          if (balanceFlag && priceFeedFlag) {
+            const nowDate = new Date()
+            const currentTimeStamp = Math.floor(nowDate.getTime() / 1000)
+
+            if (balanceData[0].timestamp > uniqueData2[0].timestamp) {
+              let i = 0,
+                z = 0,
+                addFlag = false
+
+              while (balanceData[i]?.timestamp > uniqueData2[0].timestamp) {
+                balanceData[i].priceUnderlying = uniqueData2[0].priceUnderlying
+                balanceData[i].sharePrice = uniqueData2[0].sharePrice
+                mergedData.push(balanceData[i])
+                i += 1
+              }
+              while (i < balanceData.length) {
+                if (z < uniqueData2.length) {
+                  while (uniqueData2[z].timestamp >= balanceData[i].timestamp) {
+                    uniqueData2[z].value = balanceData[i].value
+                    mergedData.push(uniqueData2[z])
+                    z += 1
+                    if (!addFlag && uniqueData2[z].timestamp === balanceData[i].timestamp) {
+                      addFlag = true
+                    }
+                  }
+                }
+                if (!addFlag) {
+                  balanceData[i].priceUnderlying =
+                    uniqueData2[z === uniqueData2.length ? z - 1 : z].priceUnderlying
+                  balanceData[i].sharePrice =
+                    uniqueData2[z === uniqueData2.length ? z - 1 : z].sharePrice
+                  mergedData.push(balanceData[i])
+                }
+                addFlag = false
+                i += 1
+              }
+              while (z < uniqueData2.length) {
+                uniqueData2[z].value = 0
+                mergedData.push(uniqueData2[z])
+                z += 1
+              }
+              while (i < balanceData.length) {
+                balanceData[i].priceUnderlying = uniqueData2[uniqueData2.length - 1].priceUnderlying
+                balanceData[i].sharePrice = uniqueData2[uniqueData2.length - 1].sharePrice
+                mergedData.push(balanceData[i])
+                i += 1
+              }
+            } else {
+              let i = 0,
+                z = 0,
+                addFlag = false
+              while (
+                i < uniqueData2.length &&
+                uniqueData2[i].timestamp > balanceData[0].timestamp
+              ) {
+                uniqueData2[i].value = balanceData[0].value
+                mergedData.push(uniqueData2[i])
+                i += 1
+              }
+              while (z < balanceData.length) {
+                if (i < uniqueData2.length) {
+                  while (uniqueData2[i].timestamp >= balanceData[z].timestamp) {
+                    uniqueData2[i].value = balanceData[z].value
+                    mergedData.push(uniqueData2[i])
+                    i += 1
+                    if (i >= uniqueData2.length) {
+                      break
+                    }
+                    if (!addFlag && uniqueData2[i].timestamp === balanceData[z].timestamp) {
+                      addFlag = true
+                    }
+                  }
+                }
+                if (!addFlag) {
+                  balanceData[z].priceUnderlying =
+                    uniqueData2[i === uniqueData2.length ? i - 1 : i].priceUnderlying
+                  balanceData[z].sharePrice =
+                    uniqueData2[i === uniqueData2.length ? i - 1 : i].sharePrice
+                  mergedData.push(balanceData[z])
+                }
+                addFlag = false
+                z += 1
+              }
+              while (i < uniqueData2.length) {
+                uniqueData2[i].value = 0
+                mergedData.push(uniqueData2[i])
+                i += 1
+              }
+              while (z < balanceData.length) {
+                balanceData[z].priceUnderlying = uniqueData2[uniqueData2.length - 1].priceUnderlying
+                balanceData[z].sharePrice = uniqueData2[uniqueData2.length - 1].sharePrice
+                mergedData.push(balanceData[z])
+                z += 1
+              }
+            }
+
+            const firstObject = {
+              priceUnderlying: useIFARM ? farmPriceRef.current : usdPriceRef.current,
+              sharePrice: pricePerFullShareRef.current,
+              timestamp: currentTimeStamp,
+              value: totalValueRef.current,
+            }
+            const apiAllData = [firstObject, ...mergedData]
+            setApiData(apiAllData)
+          }
+          if (isMounted) {
+            setLoadComplete(balanceFlag && priceFeedFlag)
+          }
+        } catch (error) {
+          console.log('An error ocurred', error)
         }
-        const apiAllData = [firstObject, ...allData]
-        setApiData(apiAllData)
       }
-      setLoadComplete(balanceFlag && detailFlag)
     }
 
     initData()
+
+    return () => {
+      isMounted = false
+    }
   }, [
-    allData,
-    balanceData,
-    balanceFlag,
-    detailFlag,
+    address,
+    chainId,
+    account,
     totalValue,
     underlyingPrice,
     useIFARM,

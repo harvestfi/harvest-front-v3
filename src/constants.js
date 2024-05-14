@@ -6,7 +6,7 @@ export const SOCIAL_LINKS = {
   TELEGRAM: 'https://t.me/Breadforthepeople',
   TWITTER: 'https://twitter.com/harvest_finance',
   MEDIUM: 'https://medium.com/harvest-finance',
-  DISCORD: 'https://discord.gg/gzWAG3Wx7Y',
+  DISCORD: 'https://discord.gg/ePZKmST7yn',
   REDDIT: 'https://www.reddit.com/r/HarvestFinance/',
   GITHUB: 'https://github.com/harvest-finance',
   WIKI: 'https://docs.harvest.finance',
@@ -47,6 +47,7 @@ export const ROUTES = {
   PORTFOLIO: '/',
   TUTORIAL: '/get-started',
   ADVANCED: '/farms',
+  LiveSupport: '/live-support',
   ANALYTIC: '/analytics',
   DOC: '/doc',
   FAQ: '/faq',
@@ -81,12 +82,17 @@ export const BASE_URL = `https://base-mainnet.g.alchemy.com/v2/${process.env.REA
 export const ARBITRUM_URL = `https://arb-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 export const ZKSYNC_URL = 'https://zksync.drpc.org'
 
-export const GRAPH_URL_MAINNET = 'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance'
+export const GRAPH_URL_MAINNET =
+  process.env.REACT_APP_GRAPH_URL_MAINNET ||
+  'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance'
 export const GRAPH_URL_POLYGON =
+  process.env.REACT_APP_GRAPH_URL_POLYGON ||
   'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance-polygon'
 export const GRAPH_URL_ARBITRUM =
+  process.env.REACT_APP_GRAPH_URL_ARBITRUM ||
   'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance-arbitrum'
 export const GRAPH_URL_BASE =
+  process.env.REACT_APP_GRAPH_URL_BASE ||
   'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance-base'
 export const GRAPH_URL_ZKSYNC =
   'https://api.studio.thegraph.com/query/48757/l2-zksync-era/version/latest'
@@ -776,3 +782,8 @@ export const MIGRATION_STEPS = {
 }
 
 export const directDetailUrl = '/'
+
+export const feeList = [
+  { label: 'Convert Fee', value: '0%' },
+  { label: 'Revert Fee', value: '0%' },
+]

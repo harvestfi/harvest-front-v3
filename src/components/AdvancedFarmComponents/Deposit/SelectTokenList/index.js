@@ -12,6 +12,8 @@ import {
   TextSpan,
 } from './style'
 import AnimatedDots from '../../../AnimatedDots'
+import { useWallet } from '../../../../providers/Wallet'
+import { usePortals } from '../../../../providers/Portals'
 
 const SelectTokenList = ({
   balanceList,
@@ -27,6 +29,9 @@ const SelectTokenList = ({
 }) => {
   const { fontColor, fontColor2, hoverColor, activeColorModal } = useThemeContext()
   const [showList, setShowList] = useState(false)
+  const [curSupportedVault, setCurSupportedVault] = useState(supportedVault)
+  const { chainId } = useWallet()
+  const { getPortalsToken } = usePortals()
 
   // Supported Token with no balance
   const [supTokenList, setSupTokenList] = useState(supTokenNoBalanceList)
@@ -68,33 +73,104 @@ const SelectTokenList = ({
   const [defaultCurToken, setDefaultCurToken] = useState(defaultToken)
 
   useEffect(() => {
-    if (supTokenNoBalanceList && balanceList && filterWord !== undefined && filterWord !== '') {
-      if (supTokenNoBalanceList.length !== 0) {
-        const newList = supTokenNoBalanceList.filter(el =>
-          el.symbol.toLowerCase().includes(filterWord.toLowerCase().trim()),
-        )
-        setSupTokenList(newList)
-      }
-      if (!(Object.keys(defaultToken).length === 0 && defaultToken.constructor === Object)) {
-        if (defaultToken.symbol.includes(filterWord.toLowerCase().trim())) {
-          setDefaultCurToken(defaultToken)
+    const fetch = async () => {
+      if (supTokenNoBalanceList && balanceList && filterWord !== undefined && filterWord !== '') {
+        const ethereumAddressRegex = /^(0x)?[0-9a-fA-F]{40}$/
+        if (ethereumAddressRegex.test(filterWord)) {
+          let TokenDetail = {},
+            defaultTokenInvolve = false,
+            balanceListInvolve = false
+          try {
+            TokenDetail = (await getPortalsToken(chainId, filterWord)) || {}
+          } catch (e) {
+            TokenDetail = {}
+          }
+          if (Object.keys(TokenDetail).length !== 0) {
+            TokenDetail = {
+              ...TokenDetail,
+              logoURI: TokenDetail.image,
+              balance: 0,
+              default: false,
+              usdValue: 0,
+              usdPrice: TokenDetail.price,
+              chainId,
+            }
+          }
+          if (Object.keys(TokenDetail).length !== 0) {
+            setCurSupportedVault(true)
+            if (!(Object.keys(defaultToken).length === 0 && defaultToken.constructor === Object)) {
+              if (defaultToken.symbol.includes(TokenDetail.symbol.toLowerCase().trim())) {
+                defaultTokenInvolve = true
+                setDefaultCurToken(defaultToken)
+              } else {
+                setDefaultCurToken(null)
+              }
+            }
+            if (balanceList.length !== 0) {
+              const newList = balanceList.filter(el =>
+                el.symbol.toLowerCase().includes(TokenDetail.symbol.toLowerCase().trim()),
+              )
+              if (newList.length > 0) {
+                balanceListInvolve = true
+              }
+              setBalanceTokenList(newList)
+            }
+            if (defaultCurToken === null) {
+              const newList = balanceList.filter(el =>
+                el.symbol.toLowerCase().includes(TokenDetail.symbol.toLowerCase().trim()),
+              )
+              if (newList.length === 0) setSupTokenList([TokenDetail])
+              else setSupTokenList([])
+            } else {
+              setSupTokenList([])
+            }
+            if (supTokenNoBalanceList.length !== 0 && !defaultTokenInvolve && !balanceListInvolve) {
+              const newList = supTokenNoBalanceList.filter(el =>
+                el.symbol.toLowerCase().includes(TokenDetail.symbol.toLowerCase().trim()),
+              )
+              if (newList.length > 0) {
+                setSupTokenList(newList)
+              } else {
+                setSupTokenList([TokenDetail])
+              }
+            }
+          } else {
+            setSupTokenList([])
+            if (!(Object.keys(defaultToken).length === 0 && defaultToken.constructor === Object)) {
+              setDefaultCurToken(null)
+            }
+            setBalanceTokenList([])
+          }
         } else {
-          setDefaultCurToken(null)
+          if (supTokenNoBalanceList.length !== 0) {
+            const newList = supTokenNoBalanceList.filter(el =>
+              el.symbol.toLowerCase().includes(filterWord.toLowerCase().trim()),
+            )
+            setSupTokenList(newList)
+          }
+          if (!(Object.keys(defaultToken).length === 0 && defaultToken.constructor === Object)) {
+            if (defaultToken.symbol.includes(filterWord.toLowerCase().trim())) {
+              setDefaultCurToken(defaultToken)
+            } else {
+              setDefaultCurToken(null)
+            }
+          }
+          if (balanceList.length !== 0) {
+            const newList = balanceList.filter(el =>
+              el.symbol.toLowerCase().includes(filterWord.toLowerCase().trim()),
+            )
+            setBalanceTokenList(newList)
+          }
         }
       }
-      if (balanceList.length !== 0) {
-        const newList = balanceList.filter(el =>
-          el.symbol.toLowerCase().includes(filterWord.toLowerCase().trim()),
-        )
-        setBalanceTokenList(newList)
+      if (filterWord === '') {
+        setSupTokenList(supTokenNoBalanceList)
+        setBalanceTokenList(balanceList)
+        setDefaultCurToken(defaultToken)
       }
     }
-    if (filterWord === '') {
-      setSupTokenList(supTokenNoBalanceList)
-      setBalanceTokenList(balanceList)
-      setDefaultCurToken(defaultToken)
-    }
-  }, [filterWord, supTokenNoBalanceList, balanceList]) // eslint-disable-line react-hooks/exhaustive-deps
+    fetch()
+  }, [filterWord, supTokenNoBalanceList, balanceList, chainId, setCurSupportedVault]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const count =
@@ -147,16 +223,16 @@ const SelectTokenList = ({
           {!hasPortalsError && balanceTokenList.length > 0 && (
             <>
               <Label fontColor={fontColor} padding="15px 24px 0px">
-                {supportedVault ? 'Supported tokens in your wallet' : 'Soon to be supported'}
+                {curSupportedVault ? 'Supported tokens in your wallet' : 'Soon to be supported'}
               </Label>
               {balanceTokenList.map((data, i) => (
                 <Container
                   key={i}
                   className={i === clickBalanceListId ? 'active' : ''}
                   onClick={() => {
-                    if (supportedVault) handleBalanceListClick(i)
+                    if (curSupportedVault) handleBalanceListClick(i)
                   }}
-                  cursor={supportedVault ? 'pointer' : 'not-allowed'}
+                  cursor={curSupportedVault ? 'pointer' : 'not-allowed'}
                   hoverColor={hoverColor}
                   activeColor={activeColorModal}
                 >
@@ -181,9 +257,9 @@ const SelectTokenList = ({
               <Label
                 fontColor={fontColor}
                 padding="15px 24px 0px"
-                showLabel={supportedVault ? 'block' : 'none'}
+                showLabel={curSupportedVault ? 'block' : 'none'}
               >
-                {supportedVault
+                {curSupportedVault
                   ? `Other supported convert tokens, which you don't have on your wallet`
                   : `Other, currently unsupported tokens, which you don't have in your wallet`}
               </Label>
@@ -192,9 +268,9 @@ const SelectTokenList = ({
                   key={i}
                   className={i === clicksupTokenNoBalanceListId ? 'active' : ''}
                   onClick={() => {
-                    if (supportedVault) handleSupTokenNoBalanceListClick(i)
+                    if (curSupportedVault) handleSupTokenNoBalanceListClick(i)
                   }}
-                  cursor={supportedVault ? 'pointer' : 'not-allowed'}
+                  cursor={curSupportedVault ? 'pointer' : 'not-allowed'}
                   hoverColor={hoverColor}
                   activeColor={activeColorModal}
                 >
@@ -233,6 +309,15 @@ const SelectTokenList = ({
               ))}
             </>
           )}
+          {defaultCurToken === null &&
+            supTokenList.length === 0 &&
+            balanceTokenList.length === 0 &&
+            Object.keys(soonToSupList).length === 0 &&
+            filterWord !== '' && (
+              <EmptyContainer fontColor={fontColor} cursor="not-allowed">
+                Not Found
+              </EmptyContainer>
+            )}
         </Content>
       ) : (
         <EmptyContainer fontColor={fontColor}>

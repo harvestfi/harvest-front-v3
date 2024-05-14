@@ -2,7 +2,6 @@ import BigNumber from 'bignumber.js'
 import { get, toArray } from 'lodash'
 import React from 'react'
 import CountUp from 'react-countup'
-import { MAX_DECIMALS } from '../constants'
 import { fromWei } from '../services/web3'
 
 const { tokens } = require('../data')
@@ -51,8 +50,9 @@ const Counter = ({
           separator=","
           formattingFn={number => number}
           delay={0}
-          decimals={MAX_DECIMALS}
-          duration={86400}
+          decimals={Number(rewardToken?.decimals)}
+          // duration={86400}
+          duration={0.01}
           className="count-up-text"
         />
       )
@@ -65,8 +65,9 @@ const Counter = ({
           separator=","
           formattingFn={number => number}
           delay={0}
-          decimals={MAX_DECIMALS}
-          duration={86400}
+          decimals={Number(rewardToken?.decimals)}
+          // duration={86400}
+          duration={0.01}
           className="count-up-text"
         />
       )
@@ -79,8 +80,9 @@ const Counter = ({
           separator=","
           formattingFn={number => number}
           delay={0}
-          decimals={MAX_DECIMALS}
-          duration={pool.finishTime - nowInSeconds}
+          decimals={Number(rewardToken?.decimals)}
+          // duration={pool.finishTime - nowInSeconds}
+          duration={0.01}
           className="count-up-text"
         />
       )

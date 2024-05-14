@@ -54,6 +54,8 @@ import {
   POOL_BALANCES_DECIMALS,
   MAX_DECIMALS,
   WIDO_BALANCES_DECIMALS,
+  SOCIAL_LINKS,
+  feeList,
 } from '../../constants'
 import { fromWei, newContractInstance, getWeb3, getExplorerLink } from '../../services/web3'
 import { addresses } from '../../data'
@@ -242,156 +244,6 @@ const AdvancedFarm = () => {
   const [apiData, setApiData] = useState([])
   const [altVaultData, setAltVaultData] = useState({})
 
-  useEffect(() => {
-    const getCoinList = async () => {
-      const data = await getCoinListFromApi()
-      setApiData(data)
-    }
-
-    getCoinList()
-  }, [])
-
-  const farmProfitSharingPool = pools.find(
-    pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
-  )
-  const farmWethPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_WETH_POOL_ID)
-  const farmGrainPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_GRAIN_POOL_ID)
-
-  const poolVaults = useMemo(
-    () => ({
-      [FARM_TOKEN_SYMBOL]: {
-        poolVault: true,
-        profitShareAPY,
-        data: farmProfitSharingPool,
-        logoUrl: ['./icons/ifarm.svg'],
-        tokenAddress: addresses.FARM,
-        vaultAddress: addresses.FARM,
-        rewardSymbol: 'iFarm',
-        decimals: 18,
-        tokenNames: ['FARM'],
-      },
-      [FARM_WETH_TOKEN_SYMBOL]: {
-        liquidityPoolVault: true,
-        tokenNames: ['FARM, ETH'], // 'FARM/ETH',
-        platform: ['Uniswap'],
-        data: farmWethPool,
-        vaultAddress: addresses.FARM_WETH_LP,
-        logoUrl: ['./icons/farm.svg', './icons/eth.svg'],
-        rewardSymbol: FARM_TOKEN_SYMBOL,
-        decimals: 18,
-      },
-      [FARM_GRAIN_TOKEN_SYMBOL]: {
-        liquidityPoolVault: true,
-        tokenNames: ['FARM, GRAIN'], // 'FARM/GRAIN',
-        platform: ['Uniswap'],
-        data: farmGrainPool,
-        vaultAddress: addresses.FARM_GRAIN_LP,
-        logoUrl: ['./icons/farm.svg', './icons/grain.svg'],
-        rewardSymbol: FARM_TOKEN_SYMBOL,
-        decimals: 18,
-      },
-    }),
-    [farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
-  )
-
-  const groupOfVaults = { ...vaultsData, ...poolVaults }
-  const vaultsKey = Object.keys(groupOfVaults)
-  const vaultIds = vaultsKey.filter(
-    vaultId =>
-      groupOfVaults[vaultId].vaultAddress === paramAddress ||
-      groupOfVaults[vaultId].tokenAddress === paramAddress,
-  )
-  const id = vaultIds[0]
-  const token = groupOfVaults[id]
-
-  const { logoUrl } = token
-
-  const isSpecialVault = token.liquidityPoolVault || token.poolVault
-  const tokenVault = get(vaultsData, token.hodlVaultId || id)
-
-  const vaultPool = isSpecialVault
-    ? token.data
-    : find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
-
-  const farmAPY = get(vaultPool, 'totalRewardAPY', 0)
-  const tradingApy = get(vaultPool, 'tradingApy', 0)
-  const boostedEstimatedAPY = get(tokenVault, 'boostedEstimatedAPY', 0)
-  const boostedRewardAPY = get(vaultPool, 'boostedRewardAPY', 0)
-  const totalApy = isSpecialVault
-    ? getTotalApy(null, token, true)
-    : getTotalApy(vaultPool, tokenVault)
-
-  const chain = token.chain || token.data.chain
-
-  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
-
-  const [badgeId, setBadgeId] = useState(-1)
-  useEffect(() => {
-    const getBadge = () => {
-      chainList.forEach((el, i) => {
-        if (el.chainId === Number(chain)) {
-          setBadgeId(i)
-        }
-      })
-    }
-    getBadge()
-  }, [chain])
-
-  useEffect(() => {
-    // 👇️ scroll to top on page load
-    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
-  }, [])
-
-  useEffect(() => {
-    const AVRVaultAddress = AVRList[paramAddress]
-
-    if (AVRVaultAddress) {
-      const matchingVault = Object.values(groupOfVaults).find(
-        vault => vault.vaultAddress.toLowerCase() === AVRVaultAddress.toLowerCase(),
-      )
-
-      if (matchingVault) {
-        setAltVaultData(matchingVault)
-      }
-    }
-  }, [groupOfVaults, paramAddress])
-
-  const useBeginnersFarm = false
-  const useIFARM = id === FARM_TOKEN_SYMBOL
-  const fAssetPool = isSpecialVault
-    ? token.data
-    : find(pools, pool => pool.collateralAddress === tokens[id].vaultAddress)
-  const multipleAssets = useMemo(
-    () =>
-      isArray(tokens[id].tokenAddress) &&
-      tokens[id].tokenAddress.map(address => {
-        const selectedSymbol = Object.keys(tokens).find(
-          symbol =>
-            !isArray(tokens[symbol].tokenAddress) &&
-            tokens[symbol].tokenAddress.toLowerCase() === address.toLowerCase(),
-        )
-        return selectedSymbol
-      }),
-    [id, tokens],
-  )
-
-  const tokenDecimals = token.decimals || tokens[id].decimals
-  const lpTokenBalance = get(userStats, `[${fAssetPool.id}]['lpTokenBalance']`, 0)
-  const totalStaked = get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)
-  const lpTokenApprovedBalance = get(userStats, `[${fAssetPool.id}]['lpTokenApprovedBalance']`, 0)
-
-  const tempPricePerFullShare = useIFARM
-    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
-    : get(token, `pricePerFullShare`, 0)
-  const pricePerFullShare = fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals)
-
-  const usdPrice =
-    Number(token.vaultPrice) ||
-    Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price) *
-      Number(pricePerFullShare)
-  const farmPrice = token.data && token.data.lpTokenData && token.data.lpTokenData.price
-  const underlyingPrice = get(token, 'usdPrice', get(token, 'data.lpTokenData.price', 0))
-
   // Switch Tag (Convert/Revert)
   const [activeDepo, setActiveDepo] = useState(true)
   const [showLatestEarnings, setShowLatestEarnings] = useState(true)
@@ -401,6 +253,7 @@ const AdvancedFarm = () => {
   const [showIFARMInfo, setShowIFARMInfo] = useState(false)
   const [supportedVault, setSupportedVault] = useState(false)
   const [hasPortalsError, setHasPortalsError] = useState(true)
+  const [badgeId, setBadgeId] = useState(-1)
 
   // Deposit
   const [depositStart, setDepositStart] = useState(false)
@@ -474,6 +327,177 @@ const AdvancedFarm = () => {
 
   // Chart & Table API data
   const [historyData, setHistoryData] = useState([])
+  const [sevenDApy, setSevenDApy] = useState('')
+  const [thirtyDApy, setThirtyDApy] = useState('')
+  const [oneEightyDApy, setOneEightyDApy] = useState('')
+  const [threeSixtyDApy, setThreeSixtyDApy] = useState('')
+  const [lifetimeApy, setLifetimeApy] = useState('')
+  const [vaultBirthday, setVaultBirthday] = useState('')
+  const [vaultTotalPeriod, setVaultTotalPeriod] = useState('')
+
+  useEffect(() => {
+    const getCoinList = async () => {
+      const data = await getCoinListFromApi()
+      setApiData(data)
+    }
+
+    getCoinList()
+  }, [])
+
+  const farmProfitSharingPool = pools.find(
+    pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
+  )
+  const farmWethPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_WETH_POOL_ID)
+  const farmGrainPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_GRAIN_POOL_ID)
+
+  const poolVaults = useMemo(
+    () => ({
+      [FARM_TOKEN_SYMBOL]: {
+        poolVault: true,
+        profitShareAPY,
+        data: farmProfitSharingPool,
+        logoUrl: ['./icons/ifarm.svg'],
+        tokenAddress: addresses.FARM,
+        vaultAddress: addresses.FARM,
+        rewardSymbol: 'iFarm',
+        decimals: 18,
+        tokenNames: ['FARM'],
+      },
+      [FARM_WETH_TOKEN_SYMBOL]: {
+        liquidityPoolVault: true,
+        tokenNames: ['FARM, ETH'], // 'FARM/ETH',
+        platform: ['Uniswap'],
+        data: farmWethPool,
+        vaultAddress: addresses.FARM_WETH_LP,
+        logoUrl: ['./icons/farm.svg', './icons/eth.svg'],
+        rewardSymbol: FARM_TOKEN_SYMBOL,
+        decimals: 18,
+      },
+      [FARM_GRAIN_TOKEN_SYMBOL]: {
+        liquidityPoolVault: true,
+        tokenNames: ['FARM, GRAIN'], // 'FARM/GRAIN',
+        platform: ['Uniswap'],
+        data: farmGrainPool,
+        vaultAddress: addresses.FARM_GRAIN_LP,
+        logoUrl: ['./icons/farm.svg', './icons/grain.svg'],
+        rewardSymbol: FARM_TOKEN_SYMBOL,
+        decimals: 18,
+      },
+    }),
+    [farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
+  )
+
+  const groupOfVaults = { ...vaultsData, ...poolVaults }
+  const vaultsKey = Object.keys(groupOfVaults)
+  const vaultIds = vaultsKey.filter(vaultId => {
+    const tokenAddress = groupOfVaults[vaultId].tokenAddress
+
+    if (typeof tokenAddress === 'string') {
+      return (
+        groupOfVaults[vaultId].vaultAddress.toLowerCase() === paramAddress.toLowerCase() ||
+        tokenAddress.toLowerCase() === paramAddress.toLowerCase()
+      )
+    }
+
+    if (typeof tokenAddress === 'object' && tokenAddress !== null) {
+      const tokenAddresses = Object.values(tokenAddress)
+      return (
+        groupOfVaults[vaultId].vaultAddress.toLowerCase() === paramAddress.toLowerCase() ||
+        tokenAddresses.some(address => address.toLowerCase() === paramAddress.toLowerCase())
+      )
+    }
+
+    return false
+  })
+  const id = vaultIds[0]
+  const token = groupOfVaults[id]
+
+  const { logoUrl } = token
+
+  const isSpecialVault = token.liquidityPoolVault || token.poolVault
+  const tokenVault = get(vaultsData, token.hodlVaultId || id)
+
+  const vaultPool = isSpecialVault
+    ? token.data
+    : find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
+
+  const farmAPY = get(vaultPool, 'totalRewardAPY', 0)
+  const tradingApy = get(vaultPool, 'tradingApy', 0)
+  const boostedEstimatedAPY = get(tokenVault, 'boostedEstimatedAPY', 0)
+  const boostedRewardAPY = get(vaultPool, 'boostedRewardAPY', 0)
+  const totalApy = isSpecialVault
+    ? getTotalApy(null, token, true)
+    : getTotalApy(vaultPool, tokenVault)
+
+  const chain = token.chain || token.data.chain
+
+  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
+
+  useEffect(() => {
+    const getBadge = () => {
+      chainList.forEach((el, i) => {
+        if (el.chainId === Number(chain)) {
+          setBadgeId(i)
+        }
+      })
+    }
+    getBadge()
+  }, [chain])
+
+  useEffect(() => {
+    // 👇️ scroll to top on page load
+    window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
+  }, [])
+
+  useEffect(() => {
+    const AVRVaultAddress = AVRList[paramAddress]
+
+    if (AVRVaultAddress) {
+      const matchingVault = Object.values(groupOfVaults).find(
+        vault => vault.vaultAddress.toLowerCase() === AVRVaultAddress.toLowerCase(),
+      )
+
+      if (matchingVault) {
+        setAltVaultData(matchingVault)
+      }
+    }
+  }, [groupOfVaults, paramAddress])
+
+  const useBeginnersFarm = false
+  const useIFARM = id === FARM_TOKEN_SYMBOL
+  const fAssetPool = isSpecialVault
+    ? token.data
+    : find(pools, pool => pool.collateralAddress === tokens[id].vaultAddress)
+  const multipleAssets = useMemo(
+    () =>
+      isArray(tokens[id].tokenAddress) &&
+      tokens[id].tokenAddress.map(address => {
+        const selectedSymbol = Object.keys(tokens).find(
+          symbol =>
+            !isArray(tokens[symbol].tokenAddress) &&
+            tokens[symbol].tokenAddress.toLowerCase() === address.toLowerCase(),
+        )
+        return selectedSymbol
+      }),
+    [id, tokens],
+  )
+
+  const tokenDecimals = token.decimals || tokens[id].decimals
+  const lpTokenBalance = get(userStats, `[${fAssetPool.id}]['lpTokenBalance']`, 0)
+  const totalStaked = get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)
+  const lpTokenApprovedBalance = get(userStats, `[${fAssetPool.id}]['lpTokenApprovedBalance']`, 0)
+
+  const tempPricePerFullShare = useIFARM
+    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
+    : get(token, `pricePerFullShare`, 0)
+  const pricePerFullShare = fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals)
+
+  const usdPrice =
+    Number(token.vaultPrice) ||
+    Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price) *
+      Number(pricePerFullShare)
+  const farmPrice = token.data && token.data.lpTokenData && token.data.lpTokenData.price
+  const underlyingPrice = get(token, 'usdPrice', get(token, 'data.lpTokenData.price', 0))
 
   const switchEarnings = () => setShowLatestEarnings(prev => !prev)
 
@@ -621,17 +645,19 @@ const AdvancedFarm = () => {
       Number(unstaked) * usdPrice * (vaultAPRMonthly + swapFeeAPRMonthly)
     setYieldDaily(dailyYield)
     setYieldMonthly(monthlyYield)
-    // eslint-disable-next-line
-  }, [fAssetPool, tokenVault, usdPrice, lpTokenBalance, totalStaked])
 
-  useEffect(() => {
     const convertMonthlyYieldValue =
-      (Number(minReceiveAmountString) * Number(usdPrice) * (Number(totalApy) / 100)) / 12
+      Number(minReceiveAmountString) *
+      Number(usdPrice) *
+      (vaultAPRMonthly + poolAPRMonthly + swapFeeAPRMonthly)
     const convertDailyYieldYieldValue =
-      (Number(minReceiveAmountString) * Number(usdPrice) * (Number(totalApy) / 100)) / 365
+      Number(minReceiveAmountString) *
+      Number(usdPrice) *
+      (vaultAPRDaily + poolAPRDaily + swapFeeAPRDaily)
     setConvertMonthlyYieldUSD(convertMonthlyYieldValue.toString())
     setConvertDailyYieldUSD(convertDailyYieldYieldValue.toString())
-  }, [minReceiveAmountString, usdPrice, totalApy])
+    // eslint-disable-next-line
+  }, [fAssetPool, tokenVault, usdPrice, lpTokenBalance, totalStaked, minReceiveAmountString])
 
   useEffect(() => {
     const getTokenBalance = async () => {
@@ -1055,7 +1081,7 @@ const AdvancedFarm = () => {
                   : rewardSymbol === 'GENE'
                   ? tempSymbol.toLowerCase() === '$gene'
                   : rewardSymbol === 'GENOME'
-                  ? tempSymbol.toLowerCase() === 'genomesdao-genome'
+                  ? tempSymbol.toLowerCase() === 'genome'
                   : rewardSymbol.toLowerCase() === tempSymbol.toLowerCase()
               ) {
                 // eslint-disable-next-line no-await-in-loop
@@ -1184,44 +1210,40 @@ const AdvancedFarm = () => {
     setDepositUsdValue(depositUsdValue)
   }, [lpTokenBalance, fAssetPool, usdPrice])
 
-  const [balanceFlag, setBalanceFlag] = useState(false)
-  const [detailFlag, setDetailFlag] = useState(false)
-  const [allData, setAllData] = useState([])
-  const [balanceData, setBalanceData] = useState([])
-
   useEffect(() => {
     const initData = async () => {
-      const address =
-        token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
-      const chainId = token.chain || token.data.chain
-      const {
-        flag1,
-        flag2,
-        data1,
-        mergedData,
-        sumNetChange,
-        sumNetChangeUsd,
-        sumLatestNetChange,
-        sumLatestNetChangeUsd,
-        enrichedData,
-      } = await initBalanceAndDetailData(address, chainId, account)
+      if (account && token && vaultPool) {
+        const address =
+          token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+        const chainId = token.chain || token.data.chain
+        const {
+          balanceFlag,
+          vaultHFlag,
+          sumNetChange,
+          sumNetChangeUsd,
+          sumLatestNetChange,
+          sumLatestNetChangeUsd,
+          enrichedData,
+        } = await initBalanceAndDetailData(
+          address,
+          chainId,
+          account,
+          tokenDecimals,
+          underlyingPrice,
+        )
 
-      setBalanceFlag(flag1)
-      setDetailFlag(flag2)
-      setBalanceData(data1)
-
-      if (flag1 && flag2) {
-        setAllData(mergedData)
-        setUnderlyingEarnings(sumNetChange)
-        setUsdEarnings(sumNetChangeUsd)
-        setUnderlyingEarningsLatest(sumLatestNetChange)
-        setUsdEarningsLatest(sumLatestNetChangeUsd)
-        setHistoryData(enrichedData)
+        if (balanceFlag && vaultHFlag) {
+          setUnderlyingEarnings(sumNetChange)
+          setUsdEarnings(sumNetChangeUsd)
+          setUnderlyingEarningsLatest(sumLatestNetChange)
+          setUsdEarningsLatest(sumLatestNetChangeUsd)
+          setHistoryData(enrichedData)
+        }
       }
     }
 
     initData()
-  }, [account, token, vaultPool, setUnderlyingEarnings, setUsdEarnings])
+  }, [account, vaultPool, tokenDecimals, underlyingPrice, setUnderlyingEarnings, setUsdEarnings]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const apyDaily = totalApy
     ? (((Number(totalApy) / 100 + 1) ** (1 / 365) - 1) * 100).toFixed(3)
@@ -1310,6 +1332,15 @@ const AdvancedFarm = () => {
       showValue: () => (useIFARM ? '-' : lastHarvest !== '' ? `${lastHarvest} ago` : '-'),
       className: 'daily-yield-box',
     },
+  ]
+
+  const apyPeriods = [
+    { label: 'Live', value: showAPY() },
+    { label: '7d', value: sevenDApy },
+    { label: '30d', value: thirtyDApy },
+    { label: '180d', value: oneEightyDApy },
+    { label: '365d', value: threeSixtyDApy },
+    { label: 'Lifetime', value: lifetimeApy },
   ]
 
   const rewardTxt = getAdvancedRewardText(
@@ -1487,7 +1518,7 @@ const AdvancedFarm = () => {
                         </WelcomeTicket>
                         . For more information, check out the #vault-updates channel on{' '}
                         <WelcomeTicket
-                          href="https://discord.com/invite/gzWAG3Wx7Y"
+                          href={SOCIAL_LINKS.DISCORD}
                           target="_blank"
                           rel="noopener noreferrer"
                           linkColor={linkColorTooltip}
@@ -1498,7 +1529,7 @@ const AdvancedFarm = () => {
                         <WelcomeBottom>
                           <WelcomeKnow onClick={closeBadgeGenomes}>Got it!</WelcomeKnow>
                           <WelcomeTicket
-                            href="https://discord.com/invite/gzWAG3Wx7Y"
+                            href={SOCIAL_LINKS.DISCORD}
                             target="_blank"
                             rel="noopener noreferrer"
                             linkColor={linkColorTooltip}
@@ -1546,7 +1577,7 @@ const AdvancedFarm = () => {
                         <WelcomeBottom>
                           <WelcomeKnow onClick={closeBadgeSeamless}>Got it!</WelcomeKnow>
                           <WelcomeTicket
-                            href="https://discord.com/invite/gzWAG3Wx7Y"
+                            href={SOCIAL_LINKS.DISCORD}
                             target="_blank"
                             rel="noopener noreferrer"
                             linkColor={linkColorTooltip}
@@ -1604,7 +1635,7 @@ const AdvancedFarm = () => {
                         <WelcomeBottom>
                           <WelcomeKnow onClick={closeBadgeGB}>Got it!</WelcomeKnow>
                           <WelcomeTicket
-                            href="https://discord.com/invite/gzWAG3Wx7Y"
+                            href={SOCIAL_LINKS.DISCORD}
                             target="_blank"
                             rel="noopener noreferrer"
                             linkColor={linkColorTooltip}
@@ -1929,8 +1960,8 @@ const AdvancedFarm = () => {
                           weight="500"
                           color="white"
                         >
-                          Estimated yield on your fTokens of this farm, denominated in USD. Subject
-                          to market fluctuations.
+                          Estimated yield on your fTokens of this farm based on live APY,
+                          denominated in USD. Subject to market fluctuations.
                           <br />
                           Note: frequency of auto-compounding events vary, so take these numbers as
                           rough guides, not exact figures.
@@ -2013,15 +2044,13 @@ const AdvancedFarm = () => {
               {activeMainTag === 0 ? (
                 !isMobile && (
                   <UserBalanceData
+                    token={token}
+                    vaultPool={vaultPool}
                     totalValue={totalValue}
                     useIFARM={useIFARM}
                     farmPrice={farmPrice}
                     underlyingPrice={underlyingPrice}
                     pricePerFullShare={pricePerFullShare}
-                    balanceFlag={balanceFlag}
-                    detailFlag={detailFlag}
-                    allData={allData}
-                    balanceData={balanceData}
                   />
                 )
               ) : activeMainTag === 1 ? (
@@ -2075,6 +2104,13 @@ const AdvancedFarm = () => {
                       vaultPool={vaultPool}
                       lastTVL={Number(vaultValue)}
                       lastAPY={Number(totalApy)}
+                      set7DApy={setSevenDApy}
+                      set30DApy={setThirtyDApy}
+                      set180DApy={setOneEightyDApy}
+                      set360DApy={setThreeSixtyDApy}
+                      setLifetimeApy={setLifetimeApy}
+                      setVaultBirthday={setVaultBirthday}
+                      setVaultTotalPeriod={setVaultTotalPeriod}
                     />
                   </HalfInfo>
                   {!isMobile && (
@@ -2353,15 +2389,13 @@ const AdvancedFarm = () => {
                   </HalfContent>
                   {isMobile ? (
                     <UserBalanceData
+                      token={token}
+                      vaultPool={vaultPool}
                       totalValue={totalValue}
                       useIFARM={useIFARM}
                       farmPrice={farmPrice}
                       underlyingPrice={underlyingPrice}
                       pricePerFullShare={pricePerFullShare}
-                      balanceFlag={balanceFlag}
-                      detailFlag={detailFlag}
-                      allData={allData}
-                      balanceData={balanceData}
                     />
                   ) : (
                     <></>
@@ -2414,8 +2448,8 @@ const AdvancedFarm = () => {
                             color="white"
                           >
                             {useIFARM
-                              ? `The number of i${id} you hold, but not entitled to extra token rewards.`
-                              : `The number of fTokens you hold, which are not entitled to extra token rewards.`}
+                              ? `The number of i${id} you hold, but entitled to extra token rewards.`
+                              : `The number of fTokens you hold, which are entitled to extra token rewards.`}
                           </NewLabel>
                         </ReactTooltip>
                       </NewLabel>
@@ -2675,6 +2709,75 @@ const AdvancedFarm = () => {
                 </SecondPartSection>
               ) : activeMainTag === 2 ? (
                 <RestInternal>
+                  <LastHarvestInfo backColor={backColor} borderColor={borderColor}>
+                    <NewLabel
+                      size={isMobile ? '12px' : '14px'}
+                      weight={isMobile ? '600' : '600'}
+                      height={isMobile ? '20px' : '24px'}
+                      color={fontColor4}
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
+                      borderBottom="1px solid #F3F6FF"
+                    >
+                      Info
+                    </NewLabel>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
+                      borderBottom="1px solid #F3F6FF"
+                    >
+                      <NewLabel
+                        size={isMobile ? '12px' : '14px'}
+                        weight="500"
+                        height={isMobile ? '24px' : '24px'}
+                        color={fontColor3}
+                      >
+                        Operating since
+                      </NewLabel>
+                      <NewLabel
+                        size={isMobile ? '12px' : '14px'}
+                        weight="600"
+                        height={isMobile ? '24px' : '24px'}
+                        color={fontColor1}
+                      >
+                        {vaultBirthday}{' '}
+                        <span className="total-days">({vaultTotalPeriod} days)</span>
+                      </NewLabel>
+                    </FlexDiv>
+                    <NewLabel
+                      size={isMobile ? '12px' : '14px'}
+                      weight={isMobile ? '600' : '600'}
+                      height={isMobile ? '20px' : '24px'}
+                      color={fontColor4}
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
+                      borderBottom="1px solid #F3F6FF"
+                    >
+                      APY - Live & Historical Average
+                    </NewLabel>
+                    {apyPeriods.map((period, index) => (
+                      <FlexDiv
+                        key={index}
+                        justifyContent="space-between"
+                        padding={isMobile ? '10px 15px' : '10px 15px'}
+                      >
+                        <NewLabel
+                          size={isMobile ? '12px' : '14px'}
+                          weight="500"
+                          height={isMobile ? '24px' : '24px'}
+                          color={fontColor3}
+                        >
+                          {period.label}
+                        </NewLabel>
+                        <NewLabel
+                          size={isMobile ? '12px' : '14px'}
+                          weight="600"
+                          height={isMobile ? '24px' : '24px'}
+                          color={fontColor1}
+                        >
+                          {period.value === '' ? <AnimatedDots /> : period.value}
+                        </NewLabel>
+                      </FlexDiv>
+                    ))}
+                  </LastHarvestInfo>
                   {!useIFARM && (
                     <MyBalance
                       marginBottom={isMobile ? '20px' : '25px'}
@@ -2707,48 +2810,30 @@ const AdvancedFarm = () => {
                     >
                       Fees
                     </NewLabel>
-                    <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                    >
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="500"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor3}
+                    {feeList.map((feeItem, index) => (
+                      <FlexDiv
+                        key={index}
+                        justifyContent="space-between"
+                        padding={isMobile ? '10px 15px' : '10px 15px'}
                       >
-                        Convert Fee
-                      </NewLabel>
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="600"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor1}
-                      >
-                        0%
-                      </NewLabel>
-                    </FlexDiv>
-                    <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                    >
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="500"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor3}
-                      >
-                        Revert Fee
-                      </NewLabel>
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="600"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor1}
-                      >
-                        0%
-                      </NewLabel>
-                    </FlexDiv>
+                        <NewLabel
+                          size={isMobile ? '12px' : '14px'}
+                          weight="500"
+                          height={isMobile ? '24px' : '24px'}
+                          color={fontColor3}
+                        >
+                          {feeItem.label}
+                        </NewLabel>
+                        <NewLabel
+                          size={isMobile ? '12px' : '14px'}
+                          weight="600"
+                          height={isMobile ? '24px' : '24px'}
+                          color={fontColor1}
+                        >
+                          {feeItem.value}
+                        </NewLabel>
+                      </FlexDiv>
+                    ))}
                     {!useIFARM && (
                       <FlexDiv
                         justifyContent="space-between"
