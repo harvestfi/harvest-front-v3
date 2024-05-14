@@ -3,19 +3,7 @@ import { useWindowWidth } from '@react-hook/window-size'
 import Chart from 'react-apexcharts'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { ceil10, floor10 } from '../../utilities/formats'
-
-function getTimeSlots(ago, slotCount) {
-  const slots = [],
-    nowDate = new Date(),
-    toDate = Math.floor(nowDate.getTime() / 1000),
-    fromDate = Math.floor(nowDate.setDate(nowDate.getDate() - ago) / 1000),
-    between = (toDate - fromDate) / slotCount
-  for (let i = fromDate + between; i <= toDate; i += between) {
-    slots.push(i)
-  }
-
-  return slots
-}
+import { getTimeSlots } from '../../utilities/parsers'
 
 function findMax(data) {
   const ary = data.map(el => el[1])
