@@ -80,7 +80,7 @@ export const INFURA_URL = `https://eth-mainnet.g.alchemy.com/v2/${process.env.RE
 export const MATIC_URL = `https://polygon-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 export const BASE_URL = `https://base-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 export const ARBITRUM_URL = `https://arb-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
-export const ZKSYNC_URL = 'https://zksync.drpc.org'
+export const ZKSYNC_URL = `https://zksync-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 
 export const GRAPH_URL_MAINNET =
   process.env.REACT_APP_GRAPH_URL_MAINNET ||
