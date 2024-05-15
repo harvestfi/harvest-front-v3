@@ -60,10 +60,11 @@ function generateChartDataWithSlots(slots, apiData) {
               : prev,
           )
         } else {
-          data[key] = 0
+          data[key] = { value: 0 }
         }
       }
     }
+    console.log(data)
     let value = 0
     for (let k = 0; k < Object.keys(data).length; k += 1) {
       const key = Object.keys(data)[k]
