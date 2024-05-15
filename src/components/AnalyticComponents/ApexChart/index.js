@@ -12,7 +12,9 @@ import {
 import { useWindowWidth } from '@react-hook/window-size'
 import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
+import { CHAIN_IDS } from '../../../data/constants'
 import { ceil10, floor10, round10, numberWithCommas, formatDate } from '../../../utilities/formats'
+import { getTimeSlots } from '../../../utilities/parsers'
 import { LoadingDiv, NoData } from './style'
 
 function getRangeNumber(strRange) {
@@ -28,19 +30,6 @@ function getRangeNumber(strRange) {
   }
 
   return ago
-}
-
-function getTimeSlots(ago, slotCount) {
-  const slots = [],
-    nowDate = new Date(),
-    toDate = Math.floor(nowDate.getTime() / 1000),
-    fromDate = Math.floor(nowDate.setDate(nowDate.getDate() - ago) / 1000),
-    between = (toDate - fromDate) / slotCount
-  for (let i = fromDate + between; i <= toDate; i += between) {
-    slots.push(i)
-  }
-
-  return slots
 }
 
 function findMax(data) {
@@ -59,25 +48,27 @@ function findMin(data) {
 function generateChartDataWithSlots(slots, apiData) {
   const seriesData = []
   for (let i = 0; i < slots.length; i += 1) {
-    const ethData = apiData.ETH.reduce((prev, curr) =>
-      Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
-        ? curr
-        : prev,
-    )
-
-    const polygonData = apiData.MATIC.reduce((prev, curr) =>
-      Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
-        ? curr
-        : prev,
-    )
-
-    const arbData = apiData.ARBITRUM.reduce((prev, curr) =>
-      Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
-        ? curr
-        : prev,
-    )
-
-    const value = Number(ethData.value) + Number(polygonData.value) + Number(arbData.value)
+    const data = {}
+    for (let j = 0; j < Object.keys(apiData).length; j += 1) {
+      const key = Object.keys(apiData)[j]
+      if (Object.values(CHAIN_IDS).includes(key)) {
+        if (apiData[key].length > 0) {
+          data[key] = apiData[key].reduce((prev, curr) =>
+            Math.abs(Number(curr.timestamp) - slots[i]) <
+            Math.abs(Number(prev.timestamp) - slots[i])
+              ? curr
+              : prev,
+          )
+        } else {
+          data[key] = 0
+        }
+      }
+    }
+    let value = 0
+    for (let k = 0; k < Object.keys(data).length; k += 1) {
+      const key = Object.keys(data)[k]
+      value += Number(data[key].value)
+    }
     seriesData.push({ x: slots[i] * 1000, y: value })
   }
 

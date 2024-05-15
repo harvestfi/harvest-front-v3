@@ -427,7 +427,11 @@ const DepositStart = ({
                     </AnimateDotDiv>
                   )
                 ) : minReceiveAmountString !== '' ? (
-                  minReceiveAmountString
+                  isMobile && minReceiveAmountString.length > 18 ? (
+                    `${minReceiveAmountString.slice(0, 12)}...`
+                  ) : (
+                    minReceiveAmountString
+                  )
                 ) : (
                   <AnimateDotDiv>
                     <AnimatedDots />

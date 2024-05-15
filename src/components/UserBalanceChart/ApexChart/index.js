@@ -4,7 +4,6 @@ import {
   XAxis,
   YAxis,
   Line,
-  // Area,
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
@@ -13,6 +12,7 @@ import { useWindowWidth } from '@react-hook/window-size'
 import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { ceil10, floor10, round10, numberWithCommas, formatDate } from '../../../utilities/formats'
+import { getTimeSlots } from '../../../utilities/parsers'
 import { LoadingDiv, NoData, FakeChartWrapper } from './style'
 import { useWallet } from '../../../providers/Wallet'
 
@@ -29,19 +29,6 @@ function getRangeNumber(strRange) {
   }
 
   return ago
-}
-
-function getTimeSlots(ago, slotCount) {
-  const slots = [],
-    nowDate = new Date(),
-    toDate = Math.floor(nowDate.getTime() / 1000),
-    fromDate = Math.floor(nowDate.setDate(nowDate.getDate() - ago) / 1000),
-    between = (toDate - fromDate) / slotCount
-  for (let i = fromDate + between; i <= toDate; i += between) {
-    slots.push(i)
-  }
-
-  return slots
 }
 
 function findMax(data) {
@@ -320,29 +307,18 @@ const ApexChart = ({
         }
         slotCount = 50
         if (ago > 700) {
-          // ago += 60
           slotCount = 500
         } else if (ago > 365) {
-          // ago += 45
           slotCount = 400
         } else if (ago > 180) {
-          // ago += 30
           slotCount = 300
         } else if (ago > 90) {
-          // ago += 15
           slotCount = 150
         } else if (ago > 60) {
-          // ago += 10
           slotCount = 100
         } else if (ago > 30) {
-          // ago += 7
           slotCount = 100
-        } else if (ago > 15) {
-          // ago += 5
-        } else if (ago > 7) {
-          // ago += 3
         } else {
-          // ago += 1
           slotCount = 50
         }
       } else {
@@ -363,16 +339,6 @@ const ApexChart = ({
         filteredData = data.filter(obj => parseInt(obj.timestamp, 10) >= firstDate)
         filteredSlot = slots.filter(obj => parseInt(obj, 10) >= firstDate)
       }
-
-      // const firstSlotTimestamp = slots[0]
-      // const lastObjectInFilteredData = filteredData[filteredData.length - 1]
-      // const newObject = {
-      //   priceUnderlying: lastObjectInFilteredData.priceUnderlying,
-      //   sharePrice: lastObjectInFilteredData.sharePrice,
-      //   timestamp: firstDate.toString(),
-      //   value: lastObjectInFilteredData.value,
-      // }
-      // filteredData.push(newObject)
 
       mainData = generateChartDataWithSlots(
         range === 'LAST' ? recentFarmingSlot : range === 'ALL' && ago > 2 ? filteredSlot : slots,
@@ -398,7 +364,6 @@ const ApexChart = ({
 
       maxValueUnderlying = findMaxUnderlying(mainData)
       minValueUnderlying = findMinUnderlying(mainData)
-      // minValueUnderlying /= 1.01
 
       const between = maxValue - minValue
       const betweenUnderlying = maxValueUnderlying - minValueUnderlying
@@ -444,7 +409,6 @@ const ApexChart = ({
         } else {
           maxValue += between / 5
         }
-        // minValue = 0
       } else {
         unitBtw = (maxValue - minValue) / 4
       }
@@ -460,11 +424,6 @@ const ApexChart = ({
         unitBtwUnderlying = (maxValueUnderlying - minValueUnderlying) / 4
       }
 
-      // if (unitBtw === 0) {
-      //   roundNum = 0
-      // } else {
-      //   roundNum = len
-      // }
       setRoundedDecimal(-len)
       setFixedLen(len)
       setRoundedDecimalUnderlying(-lenUnderlying)
@@ -595,23 +554,6 @@ const ApexChart = ({
               orientation="right"
               mirror
             />
-            {/* <YAxis
-              dataKey="y"
-              tickCount={5}
-              tickFormatter={formatYAxisTick}
-              stroke="#00D26B"
-              yAxisId="left"
-              orientation="left"
-              mirror
-            /> */}
-            {/* <YAxis
-              dataKey="z"
-              tickCount={5}
-              yAxisId="right"
-              orientation="right"
-              stroke="#8884d8"
-              mirror
-            /> */}
             <Tooltip
               content={<CustomTooltip onTooltipContentChange={handleTooltipContent} />}
               cursor={{
