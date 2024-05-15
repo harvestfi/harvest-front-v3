@@ -178,3 +178,17 @@ export const getChainNamePortals = chain => {
   }
   return chainName
 }
+
+export const getTimeSlots = (ago, slotCount) => {
+  const slots = [],
+    nowDate = new Date(),
+    toDate = Math.floor(nowDate.getTime() / 1000),
+    fromDate = Math.floor(nowDate.setDate(nowDate.getDate() - ago) / 1000),
+    between = (toDate - fromDate) / slotCount
+
+  for (let i = fromDate + between; i <= toDate && slots.length < slotCount; i += between) {
+    slots.push(i)
+  }
+
+  return slots
+}

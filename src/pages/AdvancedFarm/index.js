@@ -2449,7 +2449,7 @@ const AdvancedFarm = () => {
                           >
                             {useIFARM
                               ? `The number of i${id} you hold, but entitled to extra token rewards.`
-                              : `The number of fTokens you hold, which are entitled to extra token rewards.`}
+                              : `The number of fTokens you hold, which are not entitled to extra token rewards.`}
                           </NewLabel>
                         </ReactTooltip>
                       </NewLabel>
@@ -2484,11 +2484,7 @@ const AdvancedFarm = () => {
                         color="#15B088"
                       >
                         Staked
-                        <PiQuestion
-                          className="question"
-                          data-tip
-                          data-for="tooltip-unstaked-desc"
-                        />
+                        <PiQuestion className="question" data-tip data-for="tooltip-staked-desc" />
                         <ReactTooltip
                           id="tooltip-staked-desc"
                           backgroundColor="#101828"
@@ -2502,8 +2498,8 @@ const AdvancedFarm = () => {
                             color="white"
                           >
                             {useIFARM
-                              ? `The number of staked i${id}, which are entitled to all token rewards.`
-                              : `The number of staked fTokens, which entitle you to extra token rewards.`}
+                              ? `The number of i${id} you hold, but entitled to extra token rewards.`
+                              : `The number of fTokens you hold, which are entitled to extra token rewards.`}
                           </NewLabel>
                         </ReactTooltip>
                       </NewLabel>
