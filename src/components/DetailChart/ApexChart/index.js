@@ -15,6 +15,7 @@ import { ClipLoader } from 'react-spinners'
 import { useWindowWidth } from '@react-hook/window-size'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { ceil10, floor10, round10, numberWithCommas, formatDate } from '../../../utilities/formats'
+import { getTimeSlots } from '../../../utilities/parsers'
 import { MAX_DECIMALS } from '../../../constants'
 import { LoadingDiv, NoData } from './style'
 import { fromWei } from '../../../services/web3'
@@ -32,19 +33,6 @@ function getRangeNumber(strRange) {
   }
 
   return ago
-}
-
-function getTimeSlots(ago, slotCount) {
-  const slots = [],
-    nowDate = new Date(),
-    toDate = Math.floor(nowDate.getTime() / 1000),
-    fromDate = Math.floor(nowDate.setDate(nowDate.getDate() - ago) / 1000),
-    between = (toDate - fromDate) / slotCount
-  for (let i = fromDate + between; i <= toDate; i += between) {
-    slots.push(i)
-  }
-
-  return slots
 }
 
 function findMax(data) {
