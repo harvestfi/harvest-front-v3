@@ -9,6 +9,7 @@ import {
   TOTAL_TVL_API_ENDPOINT,
 } from '../constants'
 import { fromWei } from '../services/web3'
+import { showUsdValue } from './formats'
 
 export const getLastHarvestInfo = async (address, chainId) => {
   // eslint-disable-next-line no-unused-vars
@@ -642,15 +643,17 @@ export const initBalanceAndDetailData = async (
     enrichedData = uniqueData
       .map((item, index, array) => {
         const nextItem = array[index + 1]
-        let event, balance, netChange
+        let event, balance, balanceUsd, netChange, netChangeUsd
 
         if (Number(item.value) === 0) {
           if (nextItem && Number(nextItem.value) === 0) {
             return false
           }
           balance = '0'
+          balanceUsd = '$0'
         } else {
           balance = Number(item.value) * Number(item.sharePrice)
+          balanceUsd = showUsdValue(balance * Number(item.priceUnderlying))
         }
 
         if (nextItem) {
@@ -664,16 +667,20 @@ export const initBalanceAndDetailData = async (
 
           const nextBalance = Number(nextItem.value) * Number(nextItem.sharePrice)
           netChange = balance - nextBalance
+          netChangeUsd = showUsdValue(netChange * Number(item.priceUnderlying))
         } else {
           event = 'Convert'
           netChange = balance
+          netChangeUsd = showUsdValue(netChange * Number(item.priceUnderlying))
         }
 
         return {
           ...item,
           event,
           balance,
+          balanceUsd,
           netChange,
+          netChangeUsd,
         }
       })
       .filter(Boolean)
