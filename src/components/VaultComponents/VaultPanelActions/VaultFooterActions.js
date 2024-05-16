@@ -1,5 +1,5 @@
 import { get } from 'lodash'
-import React, { useMemo } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { useSetChain } from '@web3-onboard/react'
 import ReactTooltip from 'react-tooltip'
@@ -18,6 +18,7 @@ import { useStats } from '../../../providers/Stats'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
+import { useRate } from '../../../providers/Rate'
 import { fromWei } from '../../../services/web3'
 import {
   formatNumber,
@@ -64,6 +65,17 @@ const VaultFooterActions = ({
   const { profitShareAPY } = useStats()
   const { handleClaim } = useActions()
   const { fontColor, borderColor, filterColor } = useThemeContext()
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
+
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
@@ -199,12 +211,13 @@ const VaultFooterActions = ({
                   {usdPrice === 1 && tokenName !== IFARM_TOKEN_SYMBOL ? null : (
                     <USDValue>
                       <Monospace>
-                        $
+                        {currencySym}
                         {!connected ? (
                           formatNumber(0, 8)
                         ) : !isLoadingData &&
                           get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`) ? (
                           <Counter
+                            rate={currencyRate}
                             pool={fAssetPool}
                             totalTokensEarned={
                               (rewardTokenSymbols.length > 1

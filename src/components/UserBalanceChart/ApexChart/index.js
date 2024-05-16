@@ -15,6 +15,7 @@ import { ceil10, floor10, round10, numberWithCommas, formatDate } from '../../..
 import { getTimeSlots } from '../../../utilities/parsers'
 import { LoadingDiv, NoData, FakeChartWrapper } from './style'
 import { useWallet } from '../../../providers/Wallet'
+import { useRate } from '../../../providers/Rate'
 
 function getRangeNumber(strRange) {
   let ago = 30
@@ -111,6 +112,16 @@ const ApexChart = ({
   const { connected } = useWallet()
 
   const [mainSeries, setMainSeries] = useState([])
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
 
   const fakeChartData = [
     { x: 1691637444000, y: 5, z: 1.5 },
@@ -174,7 +185,7 @@ const ApexChart = ({
     let path = ''
 
     if (payload.value !== '') {
-      path = `$${numberWithCommas(payload.value)}`
+      path = `${currencySym}${numberWithCommas(Number(payload.value) * Number(currencyRate))}`
     }
     return (
       <text
@@ -437,7 +448,7 @@ const ApexChart = ({
         setCurDate(formatDate(mainData[mainData.length - 1].x))
         const balance = numberWithCommas(Number(mainData[mainData.length - 1].y).toFixed(fixedLen))
         const balanceUnderlying = numberWithCommas(Number(mainData[mainData.length - 1].z))
-        setCurContent(`$${balance}`)
+        setCurContent(`${currencySym}${Number(balance) * Number(currencyRate)}`)
         setCurContentUnderlying(balanceUnderlying)
       } else {
         console.log('The chart data is either undefined or empty.')

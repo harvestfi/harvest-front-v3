@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { isNaN } from 'lodash'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import { useMediaQuery } from 'react-responsive'
 import ReactTooltip from 'react-tooltip'
@@ -22,6 +22,7 @@ import { useContracts } from '../../../../providers/Contracts'
 import { useVaults } from '../../../../providers/Vault'
 import { useWallet } from '../../../../providers/Wallet'
 import { usePools } from '../../../../providers/Pools'
+import { useRate } from '../../../../providers/Rate'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { fromWei, toWei, getWeb3 } from '../../../../services/web3'
 import { formatNumberWido } from '../../../../utilities/formats'
@@ -104,6 +105,17 @@ const DepositStart = ({
   const { handleApproval, handleDeposit } = useActions()
   const { contracts } = useContracts()
   const { vaultsData } = useVaults()
+
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
 
   const SlippageValues = [null, 0.1, 0.5, 1, 5]
 
@@ -444,12 +456,12 @@ const DepositStart = ({
                       receiveUsd !== '' ? (
                         <>≈${receiveUsd}</>
                       ) : (
-                        <>≈$0</>
+                        <>{`≈${currencySym}0`}</>
                       )
                     ) : minReceiveUsdAmount === 'NaN' || minReceiveUsdAmount === '-' ? (
                       '-'
                     ) : minReceiveUsdAmount !== '' ? (
-                      `≈${minReceiveUsdAmount}`
+                      `≈${currencySym}${minReceiveUsdAmount * Number(currencyRate)}`
                     ) : (
                       <AnimatedDots />
                     )}

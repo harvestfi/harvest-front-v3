@@ -722,6 +722,11 @@ const UserDropDownItem = styled(Dropdown.Item)`
     line-height: 18px;
   }
 
+  img.check-icon {
+    width: 15px;
+    height: 16px;
+  }
+
   img.change-icon {
     transform: scale(1.5);
   }
@@ -878,6 +883,193 @@ const MoreBtn = styled.button`
   padding: 0px;
 `
 
+const CurrencyDropDown = styled(Dropdown.Toggle)`
+  left: 12px;
+  background: ${props => props.bgcolor} !important;
+  border: none !important;
+  border-radius: 10px !important;
+  color: ${props => props.fontcolor2} !important;
+  align-items: center;
+  width: 100%;
+  display: flex !important;
+  justify-content: space-between;
+  text-align: left;
+  position: relative;
+  margin: 0px 0px;
+  &:after {
+    display: none !important;
+  }
+
+  &:hover {
+    background: ${props => props.hovercolor} !important;
+    color: black;
+    font-weight: 500;
+  }
+
+  &:active {
+    background: green;
+    color: black;
+  }
+
+  .chain-name {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    margin-left: 5px;
+  }
+
+  img.narrow {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+  }
+
+  @media screen and (max-width: 992px) {
+    margin-left: 13px;
+  }
+`
+
+const CurrencySelect = styled.div`
+  width: 100%;
+  background: ${props => props.bgcolor} !important;
+  border: 1px solid #d0d5dd;
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  transition: 0.25s;
+
+  border-radius: 8px;
+  padding: 5px 7px;
+  font-weight: 600;
+  font-size: 13px;
+  line-height: 24px;
+  text-align: right;
+  color: ${props => props.fontcolor2} !important;
+
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    background: background: ${props => props.hovercolor} !important;
+  }
+
+  img.logo {
+    margin-right: 7.5px;
+  }
+
+  img.logo-dark {
+    margin-right: 7.5px;
+    filter: invert(100%);
+  }
+
+  span {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 4px;
+  }
+`
+
+const CurrencyDiv = styled.div`
+  left: 12px;
+  display: flex;
+  justify-content: space-between;
+  width: 90%;
+  align-items: center;
+  margin-top: 15px;
+
+  @media screen and (max-width: 992px) {
+    width: 95%;
+    margin: 0px auto 35px auto;
+  }
+`
+
+const CurrencyDropDownMenu = styled(Dropdown.Menu)`
+  background-color: ${props => props.backcolor} !important;
+  border: 1px solid ${props => props.bordercolor} !important;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 12px !important;
+  padding: 0;
+  min-width: 6rem;
+  width: 100% !important;
+  z-index: 120;
+
+  &:focus {
+    box-shadow: none;
+  }
+`
+
+const CurrencyDropDownItem = styled(Dropdown.Item)`
+  text-align: left;
+  display: flex !important;
+  justify-content: start;
+  align-items: center;
+  font-size: 12px;
+  padding: 5px 0px;
+  ${props =>
+    props.bordercolor
+      ? `
+    border-bottom: 0.5px solid ${props.bordercolor} !important;
+  `
+      : `
+  `}
+  width: auto !important;
+  color: ${props => props.fontcolor} !important;
+
+  img {
+    filter: ${props => props.filtercolor};
+  }
+
+  &:hover {
+    background: none !important;
+
+    img {
+      filter: invert(63%) sepia(58%) saturate(3702%) hue-rotate(0deg) brightness(107%)
+        contrast(105%);
+    }
+
+    img.logo-dark {
+      filter: invert(63%) sepia(58%) saturate(3702%) hue-rotate(0deg) brightness(107%)
+        contrast(105%);
+    }
+
+    span {
+      filter: invert(37%) sepia(58%) saturate(3702%) hue-rotate(0deg) brightness(107%)
+        contrast(105%);
+    }
+
+    div {
+      color: #ff9400;
+    }
+  }
+
+  img {
+    margin-right: 15px;
+    margin-left: 10px;
+  }
+
+  img.logo {
+    margin-right: 7.5px;
+  }
+
+  img.logo-dark {
+    margin-right: 7.5px;
+    filter: invert(100%);
+  }
+
+  div {
+    align-self: center;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 18px;
+  }
+
+  img.check-icon {
+    width: 8px;
+    height: 6px;
+    margin-right: 2px;
+  }
+`
+
 export {
   Container,
   Layout,
@@ -920,4 +1112,9 @@ export {
   Mobile,
   ConnectSection,
   MoreBtn,
+  CurrencyDropDown,
+  CurrencySelect,
+  CurrencyDiv,
+  CurrencyDropDownMenu,
+  CurrencyDropDownItem,
 }

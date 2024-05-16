@@ -26,6 +26,7 @@ import CountdownLabel from '../../components/CountdownLabel'
 import { Divider, Monospace, TextContainer } from '../../components/GlobalStyle'
 import { CURVE_APY } from '../../constants'
 import { useStats } from '../../providers/Stats'
+import { useRate } from '../../providers/Rate'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { truncateNumberString } from '../../utilities/formats'
 import { getNextEmissionsCutDate } from '../../utilities/parsers'
@@ -115,7 +116,16 @@ const Analytic = () => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const [loadComplete, setLoadComplete] = useState(false)
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
 
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
   useEffect(() => {
     setLoadComplete(true)
     const interval = setInterval(() => {}, MINUTE_MS)
@@ -142,10 +152,13 @@ const Analytic = () => {
                 <AnimatedDots />
               ) : (
                 <>
-                  $&nbsp;
+                  {`${currencySym}`}&nbsp;
                   <MemoizedCounter
-                    start={Number(totalValueLocked)}
-                    end={Number(totalValueLocked) + Number(totalValueLocked) * Number(ratePerDay)}
+                    start={Number(totalValueLocked) * Number(currencyRate)}
+                    end={
+                      (Number(totalValueLocked) + Number(totalValueLocked) * Number(ratePerDay)) *
+                      Number(currencyRate)
+                    }
                     separator=","
                     useEasing={false}
                     delay={0}
@@ -177,7 +190,12 @@ const Analytic = () => {
               {!monthlyProfit ? (
                 <AnimatedDots />
               ) : (
-                <>$&nbsp;{Number(truncateNumberString(monthlyProfit)).toLocaleString('en-US')}</>
+                <>
+                  {`${currencySym}`}&nbsp;
+                  {Number(
+                    truncateNumberString(Number(monthlyProfit) * Number(currencyRate)),
+                  ).toLocaleString('en-US')}
+                </>
               )}
             </FarmSubTitle>
             <ReactTooltip
@@ -333,10 +351,13 @@ const Analytic = () => {
                       <AnimatedDots />
                     ) : (
                       <>
-                        $
+                        {`${currencySym}`}
                         <MemoizedCounter
-                          start={Number(totalGasSaved)}
-                          end={Number(totalGasSaved) + Number(totalGasSaved) * Number(ratePerDay)}
+                          start={Number(totalGasSaved) * Number(currencyRate)}
+                          end={
+                            (Number(totalGasSaved) + Number(totalGasSaved) * Number(ratePerDay)) *
+                            Number(currencyRate)
+                          }
                           separator=","
                           useEasing={false}
                           delay={0}
@@ -370,11 +391,13 @@ const Analytic = () => {
                       <AnimatedDots />
                     ) : (
                       <>
-                        $
+                        {`${currencySym}`}
                         <MemoizedCounter
-                          start={Number(totalValueLocked)}
+                          start={Number(totalValueLocked) * Number(currencyRate)}
                           end={
-                            Number(totalValueLocked) + Number(totalValueLocked) * Number(ratePerDay)
+                            (Number(totalValueLocked) +
+                              Number(totalValueLocked) * Number(ratePerDay)) *
+                            Number(currencyRate)
                           }
                           separator=","
                           useEasing={false}

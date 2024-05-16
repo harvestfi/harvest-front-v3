@@ -39,14 +39,20 @@ import AdvancedMobileSM from '../../assets/images/logos/sidebar/advanced-mobile_
 import AnalyticsMobile from '../../assets/images/logos/sidebar/analytics-mobile.svg'
 import FAQMobile from '../../assets/images/logos/sidebar/faq-mobile.svg'
 import DocsMobile from '../../assets/images/logos/sidebar/docs-mobile.svg'
-import { ROUTES } from '../../constants'
+import Dollar from '../../assets/images/logos/sidebar/dollar.svg'
+import Pound from '../../assets/images/logos/sidebar/pound.svg'
+import Euro from '../../assets/images/logos/sidebar/euro.svg'
+import Check from '../../assets/images/logos/sidebar/check.svg'
+import { ROUTES, SUPPORTED_CURRENCY } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
 import { usePools } from '../../providers/Pools'
+import { useRate } from '../../providers/Rate'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { fromWei } from '../../services/web3'
 import { formatAddress, isLedgerLive, isSpecialApp } from '../../utilities/formats'
 import Social from '../Social'
+import DropDownIcon from '../../assets/images/logos/advancedfarm/drop-down.svg'
 import {
   Address,
   ConnectAvatar,
@@ -86,6 +92,11 @@ import {
   Mobile,
   ConnectSection,
   MoreBtn,
+  CurrencySelect,
+  CurrencyDropDown,
+  CurrencyDiv,
+  CurrencyDropDownMenu,
+  CurrencyDropDownItem,
 } from './style'
 
 const sideLinksTop = [
@@ -144,6 +155,27 @@ const sideLinksBottom = [
     imgPath: Docs,
     external: false,
     newTab: true,
+  },
+]
+
+const supportedCurrencies = [
+  {
+    id: SUPPORTED_CURRENCY.USD,
+    symbol: 'USD',
+    icon: '$',
+    imgPath: Dollar,
+  },
+  {
+    id: SUPPORTED_CURRENCY.GBP,
+    symbol: 'GBP',
+    icon: '£',
+    imgPath: Pound,
+  },
+  {
+    id: SUPPORTED_CURRENCY.EUR,
+    symbol: 'EUR',
+    icon: '€',
+    imgPath: Euro,
   },
 ]
 
@@ -323,6 +355,9 @@ const Sidebar = ({ width }) => {
   } = useWallet()
 
   const { disableWallet } = usePools()
+  const { rates, updateCurrency } = useRate()
+
+  const [curCurrency, setCurCurrency] = useState(supportedCurrencies[0])
 
   const switchTheme = () => setDarkMode(prev => !prev)
   useEffect(() => {
@@ -332,6 +367,10 @@ const Sidebar = ({ width }) => {
       document.documentElement.removeAttribute('darkMode', '')
     }
   }, [darkMode])
+
+  useEffect(() => {
+    setCurCurrency(supportedCurrencies[rates.currency.id])
+  }, [rates])
 
   const { pathname } = useLocation()
   const { push } = useHistory()
@@ -576,6 +615,69 @@ const Sidebar = ({ width }) => {
           </LinksContainer>
           <MobileFollow>
             <Social />
+          </MobileFollow>
+          <CurrencyDiv>
+            <Dropdown>
+              <CurrencyDropDown
+                id="dropdown-basic"
+                bgcolor={backColor}
+                fontcolor2={fontColor2}
+                hovercolor={hoverColor}
+                style={{ padding: 0 }}
+              >
+                {curCurrency ? (
+                  <CurrencySelect
+                    bgcolor={backColor}
+                    fontcolor2={fontColor2}
+                    hovercolor={hoverColor}
+                  >
+                    <img
+                      className={darkMode ? 'logo-dark' : 'logo'}
+                      src={curCurrency.imgPath}
+                      width={16}
+                      height={16}
+                      alt=""
+                    />
+                    <span>{curCurrency.symbol}</span>
+                    <img className="dropdown-icon" src={DropDownIcon} alt="" />
+                  </CurrencySelect>
+                ) : (
+                  <></>
+                )}
+              </CurrencyDropDown>
+              {!isSpecialApp ? (
+                <CurrencyDropDownMenu backcolor={backColor} bordercolor={borderColor}>
+                  {supportedCurrencies.map(elem => {
+                    return (
+                      <CurrencyDropDownItem
+                        onClick={() => {
+                          updateCurrency(elem.id)
+                        }}
+                        fontcolor={fontColor}
+                        filtercolor={filterColor}
+                        key={elem.id}
+                      >
+                        <img
+                          className={darkMode ? 'logo-dark' : 'logo'}
+                          src={elem.imgPath}
+                          width={14}
+                          height={14}
+                          alt=""
+                        />
+                        <span>{elem.symbol}</span>
+                        {curCurrency.id === elem.id ? (
+                          <img className="check-icon" src={Check} alt="" />
+                        ) : (
+                          <></>
+                        )}
+                      </CurrencyDropDownItem>
+                    )
+                  })}
+                </CurrencyDropDownMenu>
+              ) : (
+                <></>
+              )}
+            </Dropdown>
             <ThemeMode
               mode={darkMode ? 'dark' : 'light'}
               backColor={toggleBackColor}
@@ -595,7 +697,7 @@ const Sidebar = ({ width }) => {
                 />
               </div>
             </ThemeMode>
-          </MobileFollow>
+          </CurrencyDiv>
         </BottomPart>
       </Desktop>
       <Mobile>

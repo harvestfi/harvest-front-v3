@@ -20,7 +20,7 @@ const SocialsContainer = styled.div`
     padding-left: 12px;
   }
 
-  z-index: 99999;
+  z-index: 110;
 `
 
 const Social = styled.a`

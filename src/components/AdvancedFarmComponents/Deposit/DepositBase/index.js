@@ -14,6 +14,7 @@ import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import { BEGINNERS_BALANCES_DECIMALS } from '../../../../constants'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { useWallet } from '../../../../providers/Wallet'
+import { useRate } from '../../../../providers/Rate'
 import { CHAIN_IDS } from '../../../../data/constants'
 import { fromWei, toWei, checkNativeToken } from '../../../../services/web3'
 import { addresses } from '../../../../data'
@@ -122,10 +123,20 @@ const DepositBase = ({
     ? parseInt(connectedChain.id, 16).toString()
     : ''
 
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
   const [depositName, setDepositName] = useState('Preview & Convert')
   const [showWarning, setShowWarning] = useState(false)
   // const [showDepositIcon, setShowDepositIcon] = useState(true)
   const amount = toWei(inputAmount, pickedToken.decimals, 0)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
 
   useEffect(() => {
     if (account) {
@@ -257,14 +268,16 @@ const DepositBase = ({
             setHasErrorOccurred(0)
             setFailureCount(0)
             if (Number(fromInfoUsdValue) < 0.01) {
-              setFromInfoUsdAmount('<$0.01')
+              setFromInfoUsdAmount(`<${currencySym}0.01`)
             } else {
-              setFromInfoUsdAmount(`$${fromInfoUsdValue}`)
+              setFromInfoUsdAmount(
+                `${currencySym}${Number(fromInfoUsdValue) * Number(currencyRate)}`,
+              )
             }
             if (Number(minReceiveUsd) < 0.01) {
-              setMinReceiveUsdAmount('<$0.01')
+              setMinReceiveUsdAmount(`<${currencySym}0.01`)
             } else {
-              setMinReceiveUsdAmount(`$${minReceiveUsd}`)
+              setMinReceiveUsdAmount(`${currencySym}${minReceiveUsd * Number(currencyRate)}`)
             }
           } else {
             setFailureCount(prevCount => prevCount + 1)
@@ -319,6 +332,8 @@ const DepositBase = ({
     setHasErrorOccurred,
     supportedVault,
     setSupportedVault,
+    currencyRate,
+    currencySym,
   ])
 
   const onClickDeposit = async () => {
@@ -446,7 +461,7 @@ const DepositBase = ({
               />
               <TokenUSDAmount fontColor3={fontColor3}>
                 {inputAmount === '0' || inputAmount === '' ? (
-                  '$0'
+                  `${currencySym}0`
                 ) : fromInfoUsdAmount === '' ? (
                   <TokenInfo>
                     <AnimatedDots />
@@ -608,15 +623,15 @@ const DepositBase = ({
               balanceList.length !== 0 ? (
                 minReceiveAmountString !== '' ? (
                   convertMonthlyYieldUSD === '0' ? (
-                    '$0.00'
+                    `${currencySym}0.00`
                   ) : convertMonthlyYieldUSD === '-' ? (
                     '-'
                   ) : convertMonthlyYieldUSD === 'NaN' ? (
                     '-'
                   ) : Number(convertMonthlyYieldUSD) < 0.01 ? (
-                    '<$0.01'
+                    `<${currencySym}0.01`
                   ) : (
-                    `$${round(convertMonthlyYieldUSD, 2)}`
+                    `${currencySym}${round(convertMonthlyYieldUSD * Number(currencyRate), 2)}`
                   )
                 ) : (
                   <TokenInfo>
@@ -676,15 +691,15 @@ const DepositBase = ({
               balanceList.length !== 0 ? (
                 minReceiveAmountString !== '' ? (
                   convertDailyYieldUSD === '0' ? (
-                    '$0.00'
+                    `${currencySym}0.00`
                   ) : convertDailyYieldUSD === '-' ? (
                     '-'
                   ) : convertDailyYieldUSD === 'NaN' ? (
                     '-'
                   ) : Number(convertDailyYieldUSD) < 0.01 ? (
-                    '<$0.01'
+                    `<${currencySym}0.01`
                   ) : (
-                    `$${round(convertDailyYieldUSD, 2)}`
+                    `${currencySym}${round(convertDailyYieldUSD * Number(currencyRate), 2)}`
                   )
                 ) : (
                   <TokenInfo>

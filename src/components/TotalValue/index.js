@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import ReactTooltip from 'react-tooltip'
 import { PiQuestion } from 'react-icons/pi'
@@ -6,10 +6,21 @@ import { formatNumber } from '../../utilities/formats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import AnimatedDots from '../AnimatedDots'
 import { Container, Div, Price, NewLabel } from './style'
+import { useRate } from '../../providers/Rate'
 
 const TotalValue = ({ content, price, toolTipTitle, toolTip, connected, farmTokenListLength }) => {
   const { borderColor, backColor, fontColor1, fontColor3 } = useThemeContext()
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
   return (
     <Container
       borderColor={borderColor}
@@ -38,21 +49,21 @@ const TotalValue = ({ content, price, toolTipTitle, toolTip, connected, farmToke
       </Div>
       <Price fontColor1={content === 'Total Net Profit' ? '#00D26B' : fontColor1}>
         {!connected ? (
-          '$0.00'
+          `${currencySym}0.00`
         ) : farmTokenListLength === 0 ? (
-          '$0.00'
+          `${currencySym}0.00`
         ) : parseFloat(price) === 0 ? (
           content === 'Rewards' ? (
-            '$0.00'
+            `${currencySym}0.00`
           ) : (
             <AnimatedDots />
           )
         ) : content === 'Total Net Profit' && parseFloat(price) === -1 ? (
-          '$0.00'
+          `${currencySym}0.00`
         ) : parseFloat(price) < 0.01 ? (
-          '<$0.01'
+          `<${currencySym}0.01`
         ) : (
-          `$${formatNumber(price, 2)}`
+          `${currencySym}${formatNumber(price * Number(currencyRate), 2)}`
         )}
       </Price>
     </Container>

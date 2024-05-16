@@ -1,9 +1,10 @@
 import BigNumber from 'bignumber.js'
 import { get, toArray } from 'lodash'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { BEGINNERS_BALANCES_DECIMALS } from '../constants'
 import { fromWei } from '../services/web3'
 import { formatNumber } from '../utilities/formats'
+import { useRate } from '../providers/Rate'
 
 const { tokens } = require('../data')
 const { POOL_TYPES } = require('../data/constants')
@@ -19,12 +20,23 @@ const CounterUsdPrice = ({
   rewardTokenAddress,
   rewardTokenUsdPrice,
 }) => {
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
+
   if (!!pool.autoStakePoolAddress && Number(totalStaked) <= 0) {
     return ''
   }
 
   if (!pool.autoStakePoolAddress && Number(totalTokensEarned) <= 0) {
-    return ' ($0.00)'
+    return ` (${currencySym}0.00)`
   }
 
   const rewardToken = toArray(tokens).find(token => token.tokenAddress === rewardTokenAddress)
@@ -57,10 +69,13 @@ const CounterUsdPrice = ({
           {' '}
           (
           {RewardUSDCase1 === 0
-            ? '$0.00'
+            ? `${currencySym}0.00`
             : RewardUSDCase1 < 0.01
-            ? '<$0.01'
-            : `$${formatNumber(RewardUSDCase1, BEGINNERS_BALANCES_DECIMALS)}`}
+            ? `<${currencySym}0.01`
+            : `${currencySym}${formatNumber(
+                RewardUSDCase1 * Number(currencyRate),
+                BEGINNERS_BALANCES_DECIMALS,
+              )}`}
           )
         </>
       )
@@ -70,10 +85,13 @@ const CounterUsdPrice = ({
           {' '}
           (
           {RewardUSDCase2 === 0
-            ? '$0.00'
+            ? `${currencySym}0.00`
             : RewardUSDCase2 < 0.01
-            ? '<$0.01'
-            : `$${formatNumber(RewardUSDCase2, BEGINNERS_BALANCES_DECIMALS)}`}
+            ? `<${currencySym}0.01`
+            : `${currencySym}${formatNumber(
+                RewardUSDCase2 * Number(currencyRate),
+                BEGINNERS_BALANCES_DECIMALS,
+              )}`}
           )
         </>
       )
@@ -83,10 +101,13 @@ const CounterUsdPrice = ({
           {' '}
           (
           {RewardUSDCase3 === 0
-            ? '$0.00'
+            ? `${currencySym}0.00`
             : RewardUSDCase3 < 0.01
-            ? '<$0.01'
-            : `$${formatNumber(RewardUSDCase3, BEGINNERS_BALANCES_DECIMALS)}`}
+            ? `<${currencySym}0.01`
+            : `${currencySym}${formatNumber(
+                RewardUSDCase3 * Number(currencyRate),
+                BEGINNERS_BALANCES_DECIMALS,
+              )}`}
           )
         </>
       )
