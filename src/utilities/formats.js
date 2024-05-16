@@ -153,6 +153,16 @@ export const formatNumberWido = (number, decimals = DECIMAL_PRECISION) => {
   return result
 }
 
+export const showUsdValue = value => {
+  if (value === 0) {
+    return '$0'
+  }
+  if (value < 0.01) {
+    return '<$0.01'
+  }
+  return `$${value.toFixed(2)}`
+}
+
 export const formatAddress = address => {
   if (address) {
     return `${address.substring(0, mobile() ? 4 : 6)}...${address.substring(

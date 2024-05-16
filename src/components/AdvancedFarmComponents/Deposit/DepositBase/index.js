@@ -374,7 +374,9 @@ const DepositBase = ({
   useEffect(() => {
     if (!deposit && pickedToken.usdPrice) {
       if (checkNativeToken(pickedToken)) {
-        setInputAmount(new BigNumber((Number(balance) * 0.95).toFixed(5)).toString())
+        setInputAmount(
+          new BigNumber(Math.floor(Number(balance) * 0.95 * 100000) / 100000).toString(),
+        )
       } else {
         setInputAmount(new BigNumber(balance).toString())
       }

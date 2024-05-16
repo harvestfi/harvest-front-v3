@@ -9,6 +9,7 @@ import {
   TOTAL_TVL_API_ENDPOINT,
 } from '../constants'
 import { fromWei } from '../services/web3'
+import { showUsdValue } from './formats'
 
 export const getLastHarvestInfo = async (address, chainId) => {
   // eslint-disable-next-line no-unused-vars
@@ -416,7 +417,14 @@ export const getUserBalanceHistories = async (address, chainId, account) => {
   return { balanceData, balanceFlag }
 }
 
-export const getPriceFeeds = async (address, chainId, timestamp, asQuery, priceFeedData = []) => {
+export const getPriceFeeds = async (
+  address,
+  chainId,
+  firstTimeStamp,
+  timestamp,
+  asQuery,
+  priceFeedData = [],
+) => {
   let priceFeedFlag = true
 
   address = address.toLowerCase()
@@ -468,8 +476,8 @@ export const getPriceFeeds = async (address, chainId, timestamp, asQuery, priceF
     ) {
       priceFeedData.push(...responseJson.data.priceFeeds)
       const dataTimestamp = priceFeedData[priceFeedData.length - 1].timestamp
-      if (dataTimestamp > timestamp) {
-        await getPriceFeeds(address, chainId, dataTimestamp, true, priceFeedData)
+      if (Number(dataTimestamp) > Number(firstTimeStamp)) {
+        await getPriceFeeds(address, chainId, firstTimeStamp, dataTimestamp, true, priceFeedData)
       }
     } else {
       console.error('Error: Unable to retrieve vault histories from the response.')
@@ -642,15 +650,17 @@ export const initBalanceAndDetailData = async (
     enrichedData = uniqueData
       .map((item, index, array) => {
         const nextItem = array[index + 1]
-        let event, balance, netChange
+        let event, balance, balanceUsd, netChange, netChangeUsd
 
         if (Number(item.value) === 0) {
           if (nextItem && Number(nextItem.value) === 0) {
             return false
           }
           balance = '0'
+          balanceUsd = '$0'
         } else {
           balance = Number(item.value) * Number(item.sharePrice)
+          balanceUsd = showUsdValue(balance * Number(item.priceUnderlying))
         }
 
         if (nextItem) {
@@ -664,16 +674,20 @@ export const initBalanceAndDetailData = async (
 
           const nextBalance = Number(nextItem.value) * Number(nextItem.sharePrice)
           netChange = balance - nextBalance
+          netChangeUsd = showUsdValue(Math.abs(netChange) * Number(item.priceUnderlying))
         } else {
           event = 'Convert'
           netChange = balance
+          netChangeUsd = showUsdValue(netChange * Number(item.priceUnderlying))
         }
 
         return {
           ...item,
           event,
           balance,
+          balanceUsd,
           netChange,
+          netChangeUsd,
         }
       })
       .filter(Boolean)
