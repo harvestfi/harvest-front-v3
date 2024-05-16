@@ -417,7 +417,14 @@ export const getUserBalanceHistories = async (address, chainId, account) => {
   return { balanceData, balanceFlag }
 }
 
-export const getPriceFeeds = async (address, chainId, timestamp, asQuery, priceFeedData = []) => {
+export const getPriceFeeds = async (
+  address,
+  chainId,
+  firstTimeStamp,
+  timestamp,
+  asQuery,
+  priceFeedData = [],
+) => {
   let priceFeedFlag = true
 
   address = address.toLowerCase()
@@ -469,8 +476,8 @@ export const getPriceFeeds = async (address, chainId, timestamp, asQuery, priceF
     ) {
       priceFeedData.push(...responseJson.data.priceFeeds)
       const dataTimestamp = priceFeedData[priceFeedData.length - 1].timestamp
-      if (dataTimestamp > timestamp) {
-        await getPriceFeeds(address, chainId, dataTimestamp, true, priceFeedData)
+      if (Number(dataTimestamp) > Number(firstTimeStamp)) {
+        await getPriceFeeds(address, chainId, firstTimeStamp, dataTimestamp, true, priceFeedData)
       }
     } else {
       console.error('Error: Unable to retrieve vault histories from the response.')
