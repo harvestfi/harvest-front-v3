@@ -4,9 +4,10 @@ import { get } from 'lodash'
 import { SPECIAL_VAULTS } from '../../../../constants'
 import { formatNumber } from '../../../../utilities/formats'
 import AnimatedDots from '../../../AnimatedDots'
+import { useRate } from '../../../../providers/Rate'
 import { Value } from '../style'
 
-const getVaultValue = token => {
+const getVaultValue = (token, rate) => {
   const poolId = get(token, 'data.id')
 
   switch (poolId) {
@@ -26,6 +27,7 @@ const getVaultValue = token => {
       return token.usdPrice
         ? new BigNumber(token.underlyingBalanceWithInvestment)
             .times(token.usdPrice)
+            .times(rate)
             .dividedBy(new BigNumber(10).pow(token.decimals))
         : null
   }
@@ -33,10 +35,18 @@ const getVaultValue = token => {
 
 const VaultValue = ({ token, fontColor1 }) => {
   const [vaultValue, setVaultValue] = useState(null)
+  const { rates } = useRate()
+  const [currencyRate, setCurrencyRate] = useState(1)
 
   useEffect(() => {
-    setVaultValue(getVaultValue(token))
-  }, [token])
+    if (rates.rateData) {
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
+
+  useEffect(() => {
+    setVaultValue(getVaultValue(token, currencyRate))
+  }, [token, currencyRate])
 
   return (
     <Value fontColor1={fontColor1}>

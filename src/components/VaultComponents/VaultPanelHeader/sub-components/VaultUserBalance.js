@@ -15,6 +15,7 @@ import AnimatedDots from '../../../AnimatedDots'
 import { useWallet } from '../../../../providers/Wallet'
 import { Monospace } from '../../../GlobalStyle'
 import { usePools } from '../../../../providers/Pools'
+import { useRate } from '../../../../providers/Rate'
 
 const VaultUserBalance = ({
   token,
@@ -31,6 +32,16 @@ const VaultUserBalance = ({
   const { connected, balances } = useWallet()
   const { userStats } = usePools()
   const [userVaultBalance, setUserVaultBalance] = useState(null)
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
 
   const tokenDecimals = useIFARM
     ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0)
@@ -76,11 +87,12 @@ const VaultUserBalance = ({
         <AnimatedDots />
       ) : (
         <>
-          $
+          {currencySym}
           {multipleAssets
             ? `${formatNumber(
                 new BigNumber(fromWei(parseValue(userVaultBalance), token.decimals, MAX_DECIMALS))
                   .multipliedBy(token.usdPrice || 1)
+                  .multipliedBy(new BigNumber(currencyRate))
                   .toString(),
                 2,
               )}`
@@ -97,6 +109,7 @@ const VaultUserBalance = ({
                       ? token.data.lpTokenData.price * pricePerFullShare
                       : token.usdPrice) || 1,
                   )
+                  .multipliedBy(new BigNumber(currencyRate))
                   .toString(),
                 2,
               )}

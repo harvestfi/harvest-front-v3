@@ -3,6 +3,7 @@ import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
+import { useRate } from '../../../providers/Rate'
 import { formatDate, numberWithCommas } from '../../../utilities/formats'
 import { getPriceFeeds, getUserBalanceHistories } from '../../../utilities/apiCalls'
 import {
@@ -37,11 +38,22 @@ const UserBalanceData = ({
   const { backColor, borderColor, fontColor3 } = useThemeContext()
   const { account } = useWallet()
 
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
+
   const [selectedState, setSelectedState] = useState('LAST')
   const [apiData, setApiData] = useState([])
   const [loadComplete, setLoadComplete] = useState(false)
   const [curDate, setCurDate] = useState('')
-  const [curContent, setCurContent] = useState('$0')
+  const [curContent, setCurContent] = useState(`${currencySym}0`)
   const [curContentUnderlying, setCurContentUnderlying] = useState('0')
   const [fixedLen, setFixedLen] = useState(0)
   const [lastFarmingTimeStamp, setLastFarmingTimeStamp] = useState('-')
@@ -66,11 +78,11 @@ const UserBalanceData = ({
       const currentDate = formatDate(payload[0].payload.x)
       const balance = numberWithCommas(Number(payload[0].payload.y).toFixed(fixedLen))
       if (Number(payload[0].payload.y === 0)) {
-        setCurContent('$0')
+        setCurContent(`${currencySym}0`)
       } else if (Number(payload[0].payload.y < 0.01)) {
-        setCurContent('<$0.01')
+        setCurContent(`<${currencySym}0.01`)
       } else {
-        setCurContent(`$${balance}`)
+        setCurContent(`${currencySym}${Number(balance) * Number(currencyRate)}`)
       }
       const balanceUnderlying = numberWithCommas(Number(payload[0].payload.z))
 
