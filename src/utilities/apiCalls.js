@@ -674,7 +674,7 @@ export const initBalanceAndDetailData = async (
 
           const nextBalance = Number(nextItem.value) * Number(nextItem.sharePrice)
           netChange = balance - nextBalance
-          netChangeUsd = showUsdValue(netChange * Number(item.priceUnderlying))
+          netChangeUsd = showUsdValue(Math.abs(netChange) * Number(item.priceUnderlying))
         } else {
           event = 'Convert'
           netChange = balance
