@@ -112,7 +112,7 @@ const UserBalanceData = ({
           )
           if (balanceFlag) {
             const firstTimeStamp = balanceData[balanceData.length - 1].timestamp
-            const result = await getPriceFeeds(address, chainId, firstTimeStamp, false)
+            const result = await getPriceFeeds(address, chainId, firstTimeStamp, null, false)
             priceFeedData = result.priceFeedData
             priceFeedFlag = result.priceFeedFlag
           }

@@ -349,6 +349,19 @@ const MobileFilterBtn = styled.div`
   }
 `
 
+const DisplayCount = styled.div`
+  display: none;
+  font-size: 12px;
+  line-height: 20px;
+  font-weight: 300;
+  color: ${props => props.color};
+  margin-bottom: 15px;
+
+  span {
+    font-weight: 500;
+  }
+`
+
 export {
   Container,
   Header,
@@ -362,4 +375,5 @@ export {
   Filtersinput,
   ThemeMode,
   MobileFilterBtn,
+  DisplayCount,
 }

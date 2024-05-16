@@ -18,7 +18,7 @@ import {
   ConnectButtonStyle,
 } from './style'
 
-const itemsPerPage = 7
+const itemsPerPage = 5
 
 const HistoryData = ({ tokenSymbol, historyData }) => {
   const {
@@ -88,7 +88,7 @@ const HistoryData = ({ tokenSymbol, historyData }) => {
                 const info = currentItems[i]
                 return <ActionRow key={i} info={info} tokenSymbol={tokenSymbol} />
               })
-              .slice(0, 7)}
+              .slice(0, 5)}
             <HistoryPagination
               bgColor={bgColorFarm}
               fontColor={fontColor}
