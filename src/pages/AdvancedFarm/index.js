@@ -63,7 +63,7 @@ import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
-import { displayAPY, formatNumber, formatNumberWido } from '../../utilities/formats'
+import { displayAPY, formatNumber, formatNumberWido, showUsdValue } from '../../utilities/formats'
 import { getTotalApy } from '../../utilities/parsers'
 import { getAdvancedRewardText } from '../../utilities/html'
 import { getLastHarvestInfo, initBalanceAndDetailData } from '../../utilities/apiCalls'
@@ -1374,16 +1374,6 @@ const AdvancedFarm = () => {
     setPendingAction,
     loaded,
     totalRewardsEarned,
-  }
-
-  const showUsdValue = value => {
-    if (value === 0) {
-      return '$0'
-    }
-    if (value < 0.01) {
-      return '<$0.01'
-    }
-    return `$${value.toFixed(2)}`
   }
 
   return (
