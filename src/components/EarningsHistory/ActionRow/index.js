@@ -21,7 +21,7 @@ const ActionRow = ({ info, tokenSymbol, showTotalBalance }) => {
       background={backColor}
     >
       <FlexDiv padding={isMobile ? '10px' : '0'}>
-        <Content display="flex" width={isMobile ? '20%' : '20%'}>
+        <Content display="flex" width={isMobile ? '23%' : '20%'}>
           <Badge
             bgColor={
               info.event === 'Revert'
@@ -70,7 +70,7 @@ const ActionRow = ({ info, tokenSymbol, showTotalBalance }) => {
           )}
         </Content>
         <Content
-          width={isMobile ? '25%' : '20%'}
+          width={isMobile ? '20%' : '20%'}
           color={fontColor}
           paddingRight={isMobile ? '8px' : '0px'}
         >
@@ -85,7 +85,7 @@ const ActionRow = ({ info, tokenSymbol, showTotalBalance }) => {
         </Content>
         {!isMobile ? (
           <>
-            <Content width={isMobile ? '55%' : '30%'}>
+            <Content width="30%">
               <ListItem weight={500} size={14} height={20} color="#8884D8" value={info.balance} />
               <ListItem
                 weight={500}
@@ -96,7 +96,7 @@ const ActionRow = ({ info, tokenSymbol, showTotalBalance }) => {
               />
               <ListItem weight={400} size={14} height={20} color={fontColor} value={tokenSymbol} />
             </Content>
-            <Content display={isMobile ? 'none' : 'flex'} width={isMobile ? '0%' : '30%'}>
+            <Content display={isMobile ? 'none' : 'flex'} width="30%">
               <NetImg>
                 <img src={info.netChange > 0 ? TrendUp : TrendDown} alt="trend" />
               </NetImg>
@@ -126,7 +126,7 @@ const ActionRow = ({ info, tokenSymbol, showTotalBalance }) => {
             </Content>
           </>
         ) : showTotalBalance ? (
-          <Content width={isMobile ? '55%' : '30%'}>
+          <Content width="57%">
             <ListItem weight={500} size={12} height={20} color="#8884D8" value={info.balance} />
             <ListItem
               weight={500}
@@ -138,7 +138,7 @@ const ActionRow = ({ info, tokenSymbol, showTotalBalance }) => {
             <ListItem weight={400} size={12} height={20} color={fontColor} value={tokenSymbol} />
           </Content>
         ) : (
-          <Content display="flex" width={isMobile ? '55%' : '30%'}>
+          <Content display="flex" width="57%">
             <NetImg>
               <img src={info.netChange > 0 ? TrendUp : TrendDown} alt="trend" />
             </NetImg>

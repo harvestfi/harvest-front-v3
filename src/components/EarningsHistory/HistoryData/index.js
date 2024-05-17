@@ -61,13 +61,13 @@ const HistoryData = ({ tokenSymbol, historyData }) => {
 
   const CustomPreviousComponent = () => (
     <span>
-      <IoArrowBackSharp /> {isMobile ? "" : "Previous"}
+      <IoArrowBackSharp /> {isMobile ? '' : 'Previous'}
     </span>
   )
 
   const CustomNextComponent = () => (
     <span>
-      {isMobile ? "" : "Next"} <IoArrowForwardSharp />
+      {isMobile ? '' : 'Next'} <IoArrowForwardSharp />
     </span>
   )
 
@@ -75,16 +75,16 @@ const HistoryData = ({ tokenSymbol, historyData }) => {
     <TransactionDetails>
       <TableContent borderColor={borderColor}>
         <Header borderColor={borderColor} backColor={backColor}>
-          <Column width={isMobile ? '20%' : '20%'} color={fontColor}>
+          <Column width={isMobile ? '22%' : '20%'} color={fontColor}>
             <Col>Event</Col>
           </Column>
-          <Column width={isMobile ? '25%' : '20%'} color={fontColor}>
+          <Column width={isMobile ? '20%' : '20%'} color={fontColor}>
             <Col>Date</Col>
           </Column>
           <Column
             display="flex"
             justifyContent="space-between"
-            width={isMobile ? '55%' : '30%'}
+            width={isMobile ? '57%' : '30%'}
             color={fontColor}
           >
             <Col>{showTotalBalance ? 'Total Balance' : 'Net change'}</Col>
@@ -118,7 +118,14 @@ const HistoryData = ({ tokenSymbol, historyData }) => {
             {currentItems
               .map((el, i) => {
                 const info = currentItems[i]
-                return <ActionRow key={i} info={info} tokenSymbol={tokenSymbol} showTotalBalance={showTotalBalance} />
+                return (
+                  <ActionRow
+                    key={i}
+                    info={info}
+                    tokenSymbol={tokenSymbol}
+                    showTotalBalance={showTotalBalance}
+                  />
+                )
               })
               .slice(0, 5)}
             <HistoryPagination
