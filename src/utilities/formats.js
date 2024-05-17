@@ -153,6 +153,15 @@ export const formatNumberWido = (number, decimals = DECIMAL_PRECISION) => {
   return result
 }
 
+export const formatNumber2 = (number, decimals = DECIMAL_PRECISION) => {
+  let result = number.toString()
+  if (countDecimals(result) > decimals) {
+    result = result.substring(0, result.indexOf('.') + decimals + 1)
+  }
+
+  return parseFloat(result)
+}
+
 export const showUsdValue = value => {
   if (value === 0) {
     return '$0'
