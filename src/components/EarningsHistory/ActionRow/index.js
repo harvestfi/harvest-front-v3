@@ -120,15 +120,15 @@ const ActionRow = ({ info, tokenSymbol, showTotalBalance }) => {
           </>
         ) : showTotalBalance ? (
           <Content width={isMobile ? '55%' : '30%'}>
-            <ListItem weight={500} size={14} height={20} color="#8884D8" value={info.balance} />
+            <ListItem weight={500} size={12} height={20} color="#8884D8" value={info.balance} />
             <ListItem
               weight={500}
-              size={14}
+              size={12}
               height={20}
               color="#5FCF76"
               value={`≈${info.balanceUsd}`}
             />
-            <ListItem weight={400} size={14} height={20} color={fontColor} value={tokenSymbol} />
+            <ListItem weight={400} size={12} height={20} color={fontColor} value={tokenSymbol} />
           </Content>
         ) : (
           <Content display="flex" width={isMobile ? '55%' : '30%'}>
@@ -136,15 +136,15 @@ const ActionRow = ({ info, tokenSymbol, showTotalBalance }) => {
               <img src={info.netChange > 0 ? TrendUp : TrendDown} alt="trend" />
             </NetImg>
             <div>
-              <ListItem weight={500} size={14} height={20} color="#8884D8" value={info.netChange} />
+              <ListItem weight={500} size={12} height={20} color="#8884D8" value={info.netChange} />
               <ListItem
                 weight={500}
-                size={14}
+                size={12}
                 height={20}
                 color="#5FCF76"
                 value={`${info.netChangeUsd === '<$0.01' ? '' : '≈'}${info.netChangeUsd}`}
               />
-              <ListItem weight={400} size={14} height={20} color={fontColor} value={tokenSymbol} />
+              <ListItem weight={400} size={12} height={20} color={fontColor} value={tokenSymbol} />
             </div>
           </Content>
         )}

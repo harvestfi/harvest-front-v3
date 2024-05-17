@@ -104,6 +104,10 @@ const Content = styled.div`
     font-weight: 500;
     line-height: 20px;
     color: ${props => props.color};
+
+    @media screen and (max-width: 992px) {
+      font-size: 12px;
+    }
   }
 
   img.file-icon {
