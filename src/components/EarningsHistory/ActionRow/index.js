@@ -6,7 +6,7 @@ import ListItem from '../ListItem'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import TrendUp from '../../../assets/images/logos/advancedfarm/trend-up.svg'
 import TrendDown from '../../../assets/images/logos/advancedfarm/trend-down.svg'
-import { formatDateTime } from '../../../utilities/formats'
+import { formatDateTime, formatDateTimeMobile } from '../../../utilities/formats'
 import { Content, DetailView, FlexDiv, IconWrapper, Badge, NetImg, NewLabel } from './style'
 
 const ActionRow = ({ info, tokenSymbol, showTotalBalance }) => {
@@ -74,7 +74,14 @@ const ActionRow = ({ info, tokenSymbol, showTotalBalance }) => {
           color={fontColor}
           paddingRight={isMobile ? '8px' : '0px'}
         >
-          <div className="timestamp" dangerouslySetInnerHTML={formatDateTime(info.timestamp)} />
+          {isMobile ? (
+            <div
+              className="timestamp"
+              dangerouslySetInnerHTML={formatDateTimeMobile(info.timestamp)}
+            />
+          ) : (
+            <div className="timestamp" dangerouslySetInnerHTML={formatDateTime(info.timestamp)} />
+          )}
         </Content>
         {!isMobile ? (
           <>
