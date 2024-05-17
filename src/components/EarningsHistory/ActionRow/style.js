@@ -64,6 +64,12 @@ const Content = styled.div`
   `
       : ''}
   ${props =>
+    props.paddingRight
+      ? `
+    padding-right: ${props.paddingRight};
+  `
+      : ''}
+  ${props =>
     props.marginTop
       ? `
     margin-top: ${props.marginTop};

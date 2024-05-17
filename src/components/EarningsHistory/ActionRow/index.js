@@ -9,7 +9,7 @@ import TrendDown from '../../../assets/images/logos/advancedfarm/trend-down.svg'
 import { formatDateTime } from '../../../utilities/formats'
 import { Content, DetailView, FlexDiv, IconWrapper, Badge, NetImg, NewLabel } from './style'
 
-const ActionRow = ({ info, tokenSymbol }) => {
+const ActionRow = ({ info, tokenSymbol, showTotalBalance }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const { switchMode, backColor, borderColor, hoverColor, fontColor } = useThemeContext()
 
@@ -21,11 +21,7 @@ const ActionRow = ({ info, tokenSymbol }) => {
       background={backColor}
     >
       <FlexDiv padding={isMobile ? '10px' : '0'}>
-        <Content
-          display="flex"
-          width={isMobile ? '25%' : '20%'}
-          marginTop={isMobile ? '15px' : 'unset'}
-        >
+        <Content display="flex" width={isMobile ? '20%' : '20%'}>
           <Badge
             bgColor={
               info.event === 'Revert'
@@ -73,40 +69,85 @@ const ActionRow = ({ info, tokenSymbol }) => {
             </IconWrapper>
           )}
         </Content>
-        <Content width={isMobile ? '25%' : '20%'} color={fontColor}>
+        <Content
+          width={isMobile ? '25%' : '20%'}
+          color={fontColor}
+          paddingRight={isMobile ? '8px' : '0px'}
+        >
           <div className="timestamp" dangerouslySetInnerHTML={formatDateTime(info.timestamp)} />
         </Content>
-        <Content width={isMobile ? '25%' : '30%'} marginTop={isMobile ? '15px' : 'unset'}>
-          <ListItem weight={500} size={14} height={20} color="#8884D8" value={info.balance} />
-          <ListItem
-            weight={500}
-            size={14}
-            height={20}
-            color="#5FCF76"
-            value={`≈${info.balanceUsd}`}
-          />
-          <ListItem weight={400} size={14} height={20} color={fontColor} value={tokenSymbol} />
-        </Content>
-        <Content
-          display="flex"
-          width={isMobile ? '25%' : '30%'}
-          marginTop={isMobile ? '15px' : 'unset'}
-        >
-          <NetImg>
-            <img src={info.netChange > 0 ? TrendUp : TrendDown} alt="trend" />
-          </NetImg>
-          <div>
-            <ListItem weight={500} size={14} height={20} color="#8884D8" value={info.netChange} />
+        {!isMobile ? (
+          <>
+            <Content width={isMobile ? '55%' : '30%'}>
+              <ListItem weight={500} size={14} height={20} color="#8884D8" value={info.balance} />
+              <ListItem
+                weight={500}
+                size={14}
+                height={20}
+                color="#5FCF76"
+                value={`≈${info.balanceUsd}`}
+              />
+              <ListItem weight={400} size={14} height={20} color={fontColor} value={tokenSymbol} />
+            </Content>
+            <Content display={isMobile ? 'none' : 'flex'} width={isMobile ? '0%' : '30%'}>
+              <NetImg>
+                <img src={info.netChange > 0 ? TrendUp : TrendDown} alt="trend" />
+              </NetImg>
+              <div>
+                <ListItem
+                  weight={500}
+                  size={14}
+                  height={20}
+                  color="#8884D8"
+                  value={info.netChange}
+                />
+                <ListItem
+                  weight={500}
+                  size={14}
+                  height={20}
+                  color="#5FCF76"
+                  value={`${info.netChangeUsd === '<$0.01' ? '' : '≈'}${info.netChangeUsd}`}
+                />
+                <ListItem
+                  weight={400}
+                  size={14}
+                  height={20}
+                  color={fontColor}
+                  value={tokenSymbol}
+                />
+              </div>
+            </Content>
+          </>
+        ) : showTotalBalance ? (
+          <Content width={isMobile ? '55%' : '30%'}>
+            <ListItem weight={500} size={14} height={20} color="#8884D8" value={info.balance} />
             <ListItem
               weight={500}
               size={14}
               height={20}
               color="#5FCF76"
-              value={`≈${info.netChangeUsd}`}
+              value={`≈${info.balanceUsd}`}
             />
             <ListItem weight={400} size={14} height={20} color={fontColor} value={tokenSymbol} />
-          </div>
-        </Content>
+          </Content>
+        ) : (
+          <Content display="flex" width={isMobile ? '55%' : '30%'}>
+            <NetImg>
+              <img src={info.netChange > 0 ? TrendUp : TrendDown} alt="trend" />
+            </NetImg>
+            <div>
+              <ListItem weight={500} size={14} height={20} color="#8884D8" value={info.netChange} />
+              <ListItem
+                weight={500}
+                size={14}
+                height={20}
+                color="#5FCF76"
+                value={`${info.netChangeUsd === '<$0.01' ? '' : '≈'}${info.netChangeUsd}`}
+              />
+              <ListItem weight={400} size={14} height={20} color={fontColor} value={tokenSymbol} />
+            </div>
+          </Content>
+        )}
       </FlexDiv>
     </DetailView>
   )

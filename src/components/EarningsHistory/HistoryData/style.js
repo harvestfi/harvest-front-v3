@@ -4,7 +4,10 @@ const TransactionDetails = styled.div`
   width: 100%;
   border-radius: 15px;
   transition: 0.25s;
-  margin-top: 25px;
+
+  @media screen and (max-width: 992px) {
+    height: 60vh;
+  }
 `
 
 const TableContent = styled.div`
@@ -27,10 +30,12 @@ const HistoryPagination = styled.div`
 
   ul.paginate-wrapper {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-evenly;
     list-style: none;
     padding: 12px 24px 16px 24px;
     margin-bottom: 0px;
+    gap: 5px;
   }
 
   li.previous,
@@ -102,18 +107,20 @@ const Header = styled.div`
   border-top-right-radius: 15px;
 
   @media screen and (max-width: 992px) {
-    display: none;
+    padding: 10px;
   }
 `
 
 const Column = styled.div`
   width: ${props => props.width};
+  color: ${props => props.color};
   font-weight: 500;
   font-size: 12px;
   line-height: 18px;
   display: flex;
   justify-content: start;
-  color: ${props => props.color};
+  ${props => (props.display ? `display: ${props.display}` : '')};
+  ${props => (props.justifyContent ? `justify-content: ${props.justifyContent}` : '')};
 `
 
 const Col = styled.div`
@@ -153,6 +160,7 @@ const EmptyPanel = styled.div`
   @media screen and (max-width: 992px) {
     padding: 0px;
     border: none;
+    min-height: 100px;
   }
 `
 
@@ -198,6 +206,7 @@ const EmptyInfo = styled.div`
     flex-flow: column;
     font-size: 10px;
     line-height: 18px;
+    padding-top: 35px;
   }
 `
 
@@ -270,6 +279,108 @@ const ConnectButtonStyle = styled.button`
   }
 `
 
+const ThemeMode = styled.div`
+  display: flex;
+  align-items: center;
+
+  #theme-switch {
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+    touch-action: pan-x;
+    user-select: none;
+
+    input {
+      cursor: pointer;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      opacity: 0;
+    }
+
+    .switch-track {
+      background: #036666;
+      height: 16px;
+      width: 32px;
+      border-radius: 30px;
+      transition: all 0.2s ease 0s;
+    }
+    .switch-thumb {
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-color: white;
+      height: 14px;
+      left: 1px;
+      position: absolute;
+      top: 1px;
+      width: 14px;
+      border-radius: 50%;
+      transition: all 0.25s ease 0s;
+    }
+
+    &:hover .switch-thumb {
+      box-shadow: 0 0 2px 3px #ff9400;
+    }
+  }
+
+  ${props =>
+    props.mode === 'balance'
+      ? `
+      #theme-switch {
+        .switch-check {
+          opacity: 1;
+        }
+        .switch-x {
+          opacity: 0;
+        }
+        .switch-thumb {
+          left: 17px;
+        }
+        .switch-track {
+          background: #6B8AFF;
+        }
+      }
+    `
+      : `
+      #theme-switch {
+        .switch-thumb {
+        }
+      }
+    `}
+
+  @media screen and (max-width: 992px) {
+    #theme-switch {
+      .switch-track {
+        width: 30px;
+        height: 17px;
+      }
+
+      .switch-thumb {
+        width: 13px;
+        height: 13px;
+        top: 2px;
+      }
+    }
+
+    ${props =>
+      props.mode === 'balance'
+        ? `
+        #theme-switch {
+          .switch-thumb {
+            left: 15px;
+          }
+      `
+        : `
+        #theme-switch {
+        .switch-thumb {
+          left: 2px;
+        }
+      `}
+  }
+`
+
 export {
   TransactionDetails,
   HistoryPagination,
@@ -280,4 +391,5 @@ export {
   EmptyPanel,
   EmptyInfo,
   ConnectButtonStyle,
+  ThemeMode,
 }
