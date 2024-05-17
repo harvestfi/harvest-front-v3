@@ -263,11 +263,13 @@ const BeginnersFarm = () => {
 
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
+  const [currencyName, setCurrencyName] = useState('USD')
   const [currencyRate, setCurrencyRate] = useState(1)
 
   useEffect(() => {
     if (rates.rateData) {
       setCurrencySym(rates.currency.icon)
+      setCurrencyName(rates.currency.symbol)
       setCurrencyRate(rates.rateData[rates.currency.symbol])
     }
   }, [rates])
@@ -1432,7 +1434,7 @@ const BeginnersFarm = () => {
                         height={isMobile ? '24px' : '24px'}
                         color={fontColor3}
                       >
-                        in USD
+                        in {`${currencyName}`}
                       </NewLabel>
                       <NewLabel
                         size={isMobile ? '12px' : '12px'}
@@ -1524,7 +1526,7 @@ const BeginnersFarm = () => {
                         height={isMobile ? '24px' : '24px'}
                         color={fontColor3}
                       >
-                        in USD
+                        in {`${currencyName}`}
                       </NewLabel>
                       <NewLabel
                         size={isMobile ? '12px' : '12px'}
