@@ -11,14 +11,7 @@ import { Content, DetailView, FlexDiv, IconWrapper, Badge, NetImg, NewLabel } fr
 
 const ActionRow = ({ info, tokenSymbol }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const {
-    switchMode,
-    backColor,
-    borderColor,
-    hoverColor,
-    fontColor1,
-    fontColor,
-  } = useThemeContext()
+  const { switchMode, backColor, borderColor, hoverColor, fontColor } = useThemeContext()
 
   return (
     <DetailView
@@ -84,7 +77,14 @@ const ActionRow = ({ info, tokenSymbol }) => {
           <div className="timestamp" dangerouslySetInnerHTML={formatDateTime(info.timestamp)} />
         </Content>
         <Content width={isMobile ? '25%' : '30%'} marginTop={isMobile ? '15px' : 'unset'}>
-          <ListItem weight={500} size={14} height={20} color={fontColor1} value={info.balance} />
+          <ListItem weight={500} size={14} height={20} color="#8884D8" value={info.balance} />
+          <ListItem
+            weight={500}
+            size={14}
+            height={20}
+            color="#5FCF76"
+            value={`≈${info.balanceUsd}`}
+          />
           <ListItem weight={400} size={14} height={20} color={fontColor} value={tokenSymbol} />
         </Content>
         <Content
@@ -96,12 +96,13 @@ const ActionRow = ({ info, tokenSymbol }) => {
             <img src={info.netChange > 0 ? TrendUp : TrendDown} alt="trend" />
           </NetImg>
           <div>
+            <ListItem weight={500} size={14} height={20} color="#8884D8" value={info.netChange} />
             <ListItem
               weight={500}
               size={14}
               height={20}
-              color={fontColor1}
-              value={info.netChange}
+              color="#5FCF76"
+              value={`≈${info.netChangeUsd}`}
             />
             <ListItem weight={400} size={14} height={20} color={fontColor} value={tokenSymbol} />
           </div>

@@ -52,6 +52,7 @@ import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
+import { useRate } from '../../providers/Rate'
 import { displayAPY, formatNumber, formatNumberWido } from '../../utilities/formats'
 import { getTotalApy } from '../../utilities/parsers'
 import { getAdvancedRewardText } from '../../utilities/html'
@@ -261,6 +262,19 @@ const BeginnersFarm = () => {
   const [lifetimeApy, setLifetimeApy] = useState('')
   const [vaultBirthday, setVaultBirthday] = useState('')
   const [vaultTotalPeriod, setVaultTotalPeriod] = useState('')
+
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyName, setCurrencyName] = useState('USD')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyName(rates.currency.symbol)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
 
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
@@ -990,7 +1004,7 @@ const BeginnersFarm = () => {
         {token.excludeVaultStats ? (
           'N/A'
         ) : vaultValue ? (
-          <>${formatNumber(vaultValue, 2)}</>
+          <>{`${currencySym}${formatNumber(Number(vaultValue) * Number(currencyRate), 2)}`}</>
         ) : (
           <AnimatedDots />
         )}
@@ -1064,12 +1078,12 @@ const BeginnersFarm = () => {
 
   const showUsdValue = value => {
     if (value === 0) {
-      return '$0'
+      return `${currencySym}0`
     }
     if (value < 0.01) {
-      return '<$0.01'
+      return `<${currencySym}0.01`
     }
-    return `$${value.toFixed(2)}`
+    return `${currencySym}${(value * Number(currencyRate)).toFixed(2)}`
   }
 
   return (
@@ -1422,7 +1436,7 @@ const BeginnersFarm = () => {
                         height={isMobile ? '24px' : '24px'}
                         color={fontColor3}
                       >
-                        in USD
+                        in {`${currencyName}`}
                       </NewLabel>
                       <NewLabel
                         size={isMobile ? '12px' : '12px'}
@@ -1514,7 +1528,7 @@ const BeginnersFarm = () => {
                         height={isMobile ? '24px' : '24px'}
                         color={fontColor3}
                       >
-                        in USD
+                        in {`${currencyName}`}
                       </NewLabel>
                       <NewLabel
                         size={isMobile ? '12px' : '12px'}
@@ -1523,7 +1537,7 @@ const BeginnersFarm = () => {
                         color={fontColor1}
                       >
                         {!connected ? (
-                          '$0.00'
+                          `${currencySym}0.00`
                         ) : lpTokenBalance ? (
                           showUsdValue(balanceAmount)
                         ) : (
@@ -1628,7 +1642,11 @@ const BeginnersFarm = () => {
                         weight="600"
                         color={fontColor1}
                       >
-                        {!connected ? '$0' : isNaN(yieldDaily) ? '$0' : showUsdValue(yieldDaily)}
+                        {!connected
+                          ? `${currencySym}0`
+                          : isNaN(yieldDaily)
+                          ? `${currencySym}0`
+                          : showUsdValue(yieldDaily)}
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
@@ -1652,9 +1670,9 @@ const BeginnersFarm = () => {
                         self="center"
                       >
                         {!connected
-                          ? '$0.00'
+                          ? `${currencySym}0.00`
                           : isNaN(yieldMonthly)
-                          ? '$0.00'
+                          ? `${currencySym}0.00`
                           : showUsdValue(yieldMonthly)}
                       </NewLabel>
                     </FlexDiv>

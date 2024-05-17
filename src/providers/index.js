@@ -8,6 +8,7 @@ import { ActionsProvider } from './Actions'
 import { ContractsProvider } from './Contracts'
 import { PoolsProvider } from './Pools'
 import { StatsProvider } from './Stats'
+import { RateProvider } from './Rate'
 import { ThemeProvider } from './useThemeContext'
 import { VaultsProvider } from './Vault'
 import { WalletProvider } from './Wallet'
@@ -110,7 +111,9 @@ const Providers = ({ children }) => (
             <VaultsProvider>
               <ActionsProvider>
                 <StatsProvider>
-                  <ThemeProvider>{children}</ThemeProvider>
+                  <RateProvider>
+                    <ThemeProvider>{children}</ThemeProvider>
+                  </RateProvider>
                 </StatsProvider>
               </ActionsProvider>
             </VaultsProvider>

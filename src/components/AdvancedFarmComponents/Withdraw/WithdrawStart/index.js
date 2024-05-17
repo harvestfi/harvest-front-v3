@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import { useMediaQuery } from 'react-responsive'
 import { isEmpty, isNaN } from 'lodash'
@@ -23,6 +23,7 @@ import { useVaults } from '../../../../providers/Vault'
 import { useWallet } from '../../../../providers/Wallet'
 import { usePools } from '../../../../providers/Pools'
 import { usePortals } from '../../../../providers/Portals'
+import { useRate } from '../../../../providers/Rate'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { getWeb3, fromWei } from '../../../../services/web3'
 import { formatNumberWido } from '../../../../utilities/formats'
@@ -110,6 +111,16 @@ const WithdrawStart = ({
   const [revertedAmountUsd, setRevertedAmountUsd] = useState('')
   const { handleWithdraw } = useActions()
   const { vaultsData } = useVaults()
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
 
   const { getPortalsApproval, portalsApprove, getPortals } = usePortals()
 
@@ -452,7 +463,7 @@ const WithdrawStart = ({
                     revertedAmountUsd === 'NaN' || revertedAmountUsd === '' ? (
                       '-'
                     ) : revertedAmountUsd !== '' ? (
-                      `≈$${revertedAmountUsd}`
+                      `≈${currencySym}${Number(revertedAmountUsd) * Number(currencyRate)}`
                     ) : (
                       <AnimatedDots />
                     )
