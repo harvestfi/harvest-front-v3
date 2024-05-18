@@ -139,7 +139,8 @@ const HistoryData = ({ tokenSymbol, historyData }) => {
                 breakLabel="..."
                 nextLabel={<CustomNextComponent />}
                 onPageChange={handlePageClick}
-                pageRangeDisplayed={5}
+                pageRangeDisplayed={isMobile ? 3 : 5}
+                marginPagesDisplayed={0}
                 pageCount={pageCount}
                 previousLabel={<CustomPreviousComponent />}
                 renderOnZeroPageCount={null}
