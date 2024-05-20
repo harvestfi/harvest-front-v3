@@ -135,6 +135,10 @@ const Content = styled.div`
 
 const NetImg = styled.div`
   margin: auto 12px auto 0px;
+
+  @media screen and (max-width: 992px) {
+    margin: auto 5px auto 0px;
+  }
 `
 
 const Badge = styled.div`
