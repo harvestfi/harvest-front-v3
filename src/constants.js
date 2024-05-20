@@ -790,3 +790,10 @@ export const SUPPORTED_CURRENCY = {
   GBP: 1,
   EUR: 2,
 }
+
+export const chainList = [
+  { id: 1, name: 'Ethereum', chainId: 1 },
+  { id: 2, name: 'Polygon', chainId: 137 },
+  { id: 3, name: 'Arbitrum', chainId: 42161 },
+  { id: 4, name: 'Base', chainId: 8453 },
+]

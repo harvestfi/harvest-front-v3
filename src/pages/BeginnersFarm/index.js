@@ -43,6 +43,7 @@ import {
   WIDO_BALANCES_DECIMALS,
   SOCIAL_LINKS,
   feeList,
+  chainList,
 } from '../../constants'
 import { fromWei, newContractInstance, getWeb3, getExplorerLink } from '../../services/web3'
 import { addresses } from '../../data'
@@ -114,13 +115,6 @@ import {
 import { CHAIN_IDS } from '../../data/constants'
 // import { array } from 'prop-types'
 import { usePortals } from '../../providers/Portals'
-
-const chainList = [
-  { id: 1, name: 'Ethereum', chainId: 1 },
-  { id: 2, name: 'Polygon', chainId: 137 },
-  { id: 3, name: 'Arbitrum', chainId: 42161 },
-  { id: 4, name: 'Base', chainId: 8453 },
-]
 
 const mainTags = [
   { name: 'Start Farming', img: Safe },

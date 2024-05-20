@@ -4,18 +4,11 @@ import { useMediaQuery } from 'react-responsive'
 import ListItem from '../ListItem'
 import { formatNumber, formatNumberWido } from '../../../utilities/formats'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { directDetailUrl } from '../../../constants'
+import { chainList, directDetailUrl } from '../../../constants'
 import { useRate } from '../../../providers/Rate'
 import File from '../../../assets/images/logos/dashboard/file-02.svg'
 import MobileFile from '../../../assets/images/logos/dashboard/file-01.svg'
 import { BadgeIcon, Content, DetailView, FlexDiv, LogoImg, Img, ContentInner } from './style'
-
-const chainList = [
-  { id: 1, name: 'Ethereum', chainId: 1 },
-  { id: 2, name: 'Polygon', chainId: 137 },
-  { id: 3, name: 'Arbitrum', chainId: 42161 },
-  { id: 4, name: 'Base', chainId: 8453 },
-]
 
 const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, cKey }) => {
   const { push } = useHistory()
