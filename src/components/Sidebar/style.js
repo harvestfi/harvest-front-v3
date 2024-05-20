@@ -948,7 +948,7 @@ const CurrencySelect = styled.div`
   align-items: center;
 
   &:hover {
-    background: background: ${props => props.hovercolor} !important;
+    background: ${props => props.hovercolor} !important;
   }
 
   img.logo {
