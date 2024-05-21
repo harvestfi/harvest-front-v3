@@ -127,6 +127,34 @@ const formatVaults = (
     )
   }
 
+  if (depositedOnly) {
+    const vaultsWithStakedBalances = Object.keys(userStats)
+      .filter(
+        poolId =>
+          new BigNumber(userStats[poolId].totalStaked).gt(0) ||
+          new BigNumber(userStats[poolId].lpTokenBalance).gt(0) ||
+          (poolId === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID &&
+            new BigNumber(balances[IFARM_TOKEN_SYMBOL]).gt(0)),
+      )
+      .map(poolId => {
+        const selectedPool = find(pools, pool => pool.id === poolId)
+        const collateralAddress = get(selectedPool, 'collateralAddress', poolId)
+
+        const vaultSymbol = vaultsSymbol.find(
+          tokenKey =>
+            groupOfVaults[tokenKey].vaultAddress === collateralAddress ||
+            (groupOfVaults[tokenKey].data &&
+              groupOfVaults[tokenKey].data.collateralAddress === collateralAddress),
+        )
+
+        return vaultSymbol
+      })
+
+    vaultsSymbol = vaultsSymbol.filter(tokenSymbol =>
+      vaultsWithStakedBalances.includes(tokenSymbol),
+    )
+  }
+
   const totalVaultsCount = vaultsSymbol.length
 
   if (searchQuery) {
@@ -275,34 +303,6 @@ const formatVaults = (
       default:
         break
     }
-  }
-
-  if (depositedOnly) {
-    const vaultsWithStakedBalances = Object.keys(userStats)
-      .filter(
-        poolId =>
-          new BigNumber(userStats[poolId].totalStaked).gt(0) ||
-          new BigNumber(userStats[poolId].lpTokenBalance).gt(0) ||
-          (poolId === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID &&
-            new BigNumber(balances[IFARM_TOKEN_SYMBOL]).gt(0)),
-      )
-      .map(poolId => {
-        const selectedPool = find(pools, pool => pool.id === poolId)
-        const collateralAddress = get(selectedPool, 'collateralAddress', poolId)
-
-        const vaultSymbol = vaultsSymbol.find(
-          tokenKey =>
-            groupOfVaults[tokenKey].vaultAddress === collateralAddress ||
-            (groupOfVaults[tokenKey].data &&
-              groupOfVaults[tokenKey].data.collateralAddress === collateralAddress),
-        )
-
-        return vaultSymbol
-      })
-
-    vaultsSymbol = vaultsSymbol.filter(tokenSymbol =>
-      vaultsWithStakedBalances.includes(tokenSymbol),
-    )
   }
 
   if (selectAsset !== '') {

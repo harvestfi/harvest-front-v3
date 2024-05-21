@@ -277,7 +277,9 @@ const DepositBase = ({
             if (Number(minReceiveUsd) < 0.01) {
               setMinReceiveUsdAmount(`<${currencySym}0.01`)
             } else {
-              setMinReceiveUsdAmount(`${currencySym}${minReceiveUsd * Number(currencyRate)}`)
+              setMinReceiveUsdAmount(
+                `${currencySym}${Number(minReceiveUsd) * Number(currencyRate)}`,
+              )
             }
           } else {
             setFailureCount(prevCount => prevCount + 1)

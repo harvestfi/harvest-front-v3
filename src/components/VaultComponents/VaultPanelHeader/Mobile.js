@@ -9,7 +9,7 @@ import TVLIcon from '../../../assets/images/logos/farm/sortBank.svg'
 import DailyIcon from '../../../assets/images/logos/farm/sortCurrency.svg'
 import LSD from '../../../assets/images/logos/lsd.svg'
 import DESCI from '../../../assets/images/logos/DeSci.svg'
-import { directDetailUrl } from '../../../constants'
+import { chainList, directDetailUrl } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import {
   BadgeIcon,
@@ -23,13 +23,6 @@ import VaultApy from './sub-components/VaultApy'
 import VaultName from './sub-components/VaultName'
 import VaultUserBalance from './sub-components/VaultUserBalance'
 import VaultValue from './sub-components/VaultValue'
-
-const chainList = [
-  { id: 1, name: 'Ethereum', chainId: 1 },
-  { id: 2, name: 'Polygon', chainId: 137 },
-  { id: 3, name: 'Arbitrum', chainId: 42161 },
-  { id: 4, name: 'Base', chainId: 8453 },
-]
 
 const MobilePanelHeader = ({
   token,
