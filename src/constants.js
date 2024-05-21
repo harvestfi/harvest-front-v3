@@ -6,6 +6,8 @@ export const SOCIAL_LINKS = {
   TELEGRAM: 'https://t.me/Breadforthepeople',
   TWITTER: 'https://twitter.com/harvest_finance',
   MEDIUM: 'https://medium.com/harvest-finance',
+  MediumTutorial:
+    'https://medium.com/harvest-finance/harvest-4-is-live-earn-farm-with-coinbase-wallet-quest-campaign-300-000-reward-pool-57dfe05760c4',
   DISCORD: 'https://discord.gg/ePZKmST7yn',
   REDDIT: 'https://www.reddit.com/r/HarvestFinance/',
   GITHUB: 'https://github.com/harvest-finance',
