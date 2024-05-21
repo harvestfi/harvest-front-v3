@@ -884,6 +884,7 @@ const MoreBtn = styled.button`
 `
 
 const CurrencyDropDown = styled(Dropdown.Toggle)`
+  visibility: hidden;
   left: 12px;
   background: ${props => props.bgcolor} !important;
   border: none !important;
