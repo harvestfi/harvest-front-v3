@@ -350,7 +350,6 @@ const MobileFilterBtn = styled.div`
 `
 
 const DisplayCount = styled.div`
-  display: none;
   font-size: 12px;
   line-height: 20px;
   font-weight: 300;
