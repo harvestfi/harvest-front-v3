@@ -4,12 +4,7 @@ import { useMediaQuery } from 'react-responsive'
 import { useSetChain } from '@web3-onboard/react'
 import ReactTooltip from 'react-tooltip'
 import Info from '../../../assets/images/logos/earn/info.svg'
-import {
-  ACTIONS,
-  FARM_TOKEN_SYMBOL,
-  IFARM_TOKEN_SYMBOL,
-  SPECIAL_VAULTS,
-} from '../../../constants'
+import { ACTIONS, FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, SPECIAL_VAULTS } from '../../../constants'
 import { useActions } from '../../../providers/Actions'
 import { usePools } from '../../../providers/Pools'
 import { useStats } from '../../../providers/Stats'

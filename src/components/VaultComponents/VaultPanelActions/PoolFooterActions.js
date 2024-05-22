@@ -2,11 +2,7 @@ import { get } from 'lodash'
 import React, { useMemo } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { useSetChain } from '@web3-onboard/react'
-import {
-  ACTIONS,
-  FARM_TOKEN_SYMBOL,
-  SPECIAL_VAULTS,
-} from '../../../constants'
+import { ACTIONS, FARM_TOKEN_SYMBOL, SPECIAL_VAULTS } from '../../../constants'
 import { useActions } from '../../../providers/Actions'
 import { usePools } from '../../../providers/Pools'
 import { useStats } from '../../../providers/Stats'
@@ -64,7 +60,7 @@ const PoolFooterActions = ({
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )
-  
+
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const [

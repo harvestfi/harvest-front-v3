@@ -557,11 +557,7 @@ const VaultList = () => {
       ) {
         const fetchUserTotalStakedInFarmAndFarmUsdc = async () => {
           firstPoolsBalancesLoad.current = false
-          await fetchUserPoolStats(
-            [farmProfitSharingPool],
-            account,
-            userStats,
-          )
+          await fetchUserPoolStats([farmProfitSharingPool], account, userStats)
         }
 
         fetchUserTotalStakedInFarmAndFarmUsdc()
@@ -583,10 +579,7 @@ const VaultList = () => {
             selChain.includes(CHAIN_IDS.ETH_MAINNET)
           ) {
             // firstVaultsBalancesLoad.current = false
-            balancesToLoad = [
-              FARM_TOKEN_SYMBOL,
-              IFARM_TOKEN_SYMBOL,
-            ]
+            balancesToLoad = [FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL]
           } else if (selectedVault) {
             if (isArray(tokens[selectedVault].tokenAddress)) {
               const multipleAssets = tokens[selectedVault].tokenAddress.map(address => {
@@ -601,11 +594,7 @@ const VaultList = () => {
             }
 
             if (chain === CHAIN_IDS.ETH_MAINNET) {
-              balancesToLoad = [
-                ...balancesToLoad,
-                FARM_TOKEN_SYMBOL,
-                IFARM_TOKEN_SYMBOL,
-              ]
+              balancesToLoad = [...balancesToLoad, FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL]
             }
           }
 
