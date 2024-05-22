@@ -798,7 +798,7 @@ export const SUPPORTED_CURRENCY = {
   EUR: 2,
 }
 
-const chainList = [
+export const chainList = [
   { id: 1, name: 'Ethereum', chainId: 1 },
   { id: 2, name: 'Polygon', chainId: 137 },
   { id: 3, name: 'Arbitrum', chainId: 42161 },
