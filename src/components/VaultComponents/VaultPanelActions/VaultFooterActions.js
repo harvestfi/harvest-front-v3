@@ -6,9 +6,7 @@ import ReactTooltip from 'react-tooltip'
 import Info from '../../../assets/images/logos/earn/info.svg'
 import {
   ACTIONS,
-  FARM_GRAIN_TOKEN_SYMBOL,
   FARM_TOKEN_SYMBOL,
-  FARM_WETH_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
 } from '../../../constants'
@@ -80,8 +78,6 @@ const VaultFooterActions = ({
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )
-  const farmWethPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_WETH_POOL_ID)
-  const farmGrainPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_GRAIN_POOL_ID)
 
   const [
     {
@@ -107,24 +103,8 @@ const VaultFooterActions = ({
         rewardSymbol: FARM_TOKEN_SYMBOL,
         tokenNames: ['FARM'],
       },
-      [FARM_WETH_TOKEN_SYMBOL]: {
-        liquidityPoolVault: true,
-        tokenNames: ['FARM, ETH'], // 'FARM/ETH',
-        platform: ['Uniswap'],
-        data: farmWethPool,
-        logoUrl: ['./icons/farm.svg', './icons/eth.svg'],
-        rewardSymbol: FARM_TOKEN_SYMBOL,
-      },
-      [FARM_GRAIN_TOKEN_SYMBOL]: {
-        liquidityPoolVault: true,
-        tokenNames: ['FARM, GRAIN'], // 'FARM/GRAIN',
-        platform: ['Uniswap'],
-        data: farmGrainPool,
-        logoUrl: ['./icons/farm.svg', './icons/grain.svg'],
-        rewardSymbol: FARM_TOKEN_SYMBOL,
-      },
     }),
-    [farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
+    [farmProfitSharingPool, profitShareAPY],
   )
   const groupOfVaults = { ...vaultsData, ...poolVaults }
 

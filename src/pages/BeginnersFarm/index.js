@@ -33,9 +33,7 @@ import UserBalanceData from '../../components/UserBalanceChart/UserBalanceData'
 import EarningsHistory from '../../components/EarningsHistory/HistoryData'
 import {
   DECIMAL_PRECISION,
-  FARM_GRAIN_TOKEN_SYMBOL,
   FARM_TOKEN_SYMBOL,
-  FARM_WETH_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
   BEGINNERS_BALANCES_DECIMALS,
@@ -272,9 +270,6 @@ const BeginnersFarm = () => {
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )
-  const farmWethPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_WETH_POOL_ID)
-  const farmGrainPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_GRAIN_POOL_ID)
-
   const poolVaults = useMemo(
     () => ({
       [FARM_TOKEN_SYMBOL]: {
@@ -288,28 +283,8 @@ const BeginnersFarm = () => {
         tokenNames: ['FARM'],
         decimals: 18,
       },
-      [FARM_WETH_TOKEN_SYMBOL]: {
-        liquidityPoolVault: true,
-        tokenNames: ['FARM, ETH'], // 'FARM/ETH',
-        platform: ['Uniswap'],
-        data: farmWethPool,
-        vaultAddress: addresses.FARM_WETH_LP,
-        logoUrl: ['./icons/farm.svg', './icons/eth.svg'],
-        rewardSymbol: FARM_TOKEN_SYMBOL,
-        decimals: 18,
-      },
-      [FARM_GRAIN_TOKEN_SYMBOL]: {
-        liquidityPoolVault: true,
-        tokenNames: ['FARM, GRAIN'], // 'FARM/GRAIN',
-        platform: ['Uniswap'],
-        data: farmGrainPool,
-        vaultAddress: addresses.FARM_GRAIN_LP,
-        logoUrl: ['./icons/farm.svg', './icons/grain.svg'],
-        rewardSymbol: FARM_TOKEN_SYMBOL,
-        decimals: 18,
-      },
     }),
-    [farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
+    [farmProfitSharingPool, profitShareAPY],
   )
 
   const groupOfVaults = { ...vaultsData, ...poolVaults }
@@ -339,7 +314,7 @@ const BeginnersFarm = () => {
 
   const { logoUrl } = token
 
-  const isSpecialVault = token.liquidityPoolVault || token.poolVault
+  const isSpecialVault = token.poolVault
   const tokenVault = get(vaultsData, token.hodlVaultId || id)
 
   const vaultPool = isSpecialVault
