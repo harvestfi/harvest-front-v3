@@ -1202,7 +1202,7 @@ const BeginnersFarm = () => {
                             <br />
                             If you need any help, see our{' '}
                             <a
-                              href={SOCIAL_LINKS.MediumTutorial}
+                              href={SOCIAL_LINKS.Tutorial}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
@@ -1220,7 +1220,7 @@ const BeginnersFarm = () => {
                             <br />
                             <a
                               className="badge-body"
-                              href={SOCIAL_LINKS.MediumTutorial}
+                              href={SOCIAL_LINKS.Tutorial}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
@@ -1274,7 +1274,7 @@ const BeginnersFarm = () => {
                             <br />
                             If you need any help, see our{' '}
                             <a
-                              href={SOCIAL_LINKS.MediumTutorial}
+                              href={SOCIAL_LINKS.Tutorial}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
@@ -1292,7 +1292,7 @@ const BeginnersFarm = () => {
                             <br />
                             <a
                               className="badge-body"
-                              href={SOCIAL_LINKS.MediumTutorial}
+                              href={SOCIAL_LINKS.Tutorial}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
