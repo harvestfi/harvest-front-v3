@@ -884,6 +884,7 @@ const MoreBtn = styled.button`
 `
 
 const CurrencyDropDown = styled(Dropdown.Toggle)`
+  visibility: hidden;
   left: 12px;
   background: ${props => props.bgcolor} !important;
   border: none !important;
@@ -948,7 +949,7 @@ const CurrencySelect = styled.div`
   align-items: center;
 
   &:hover {
-    background: background: ${props => props.hovercolor} !important;
+    background: ${props => props.hovercolor} !important;
   }
 
   img.logo {

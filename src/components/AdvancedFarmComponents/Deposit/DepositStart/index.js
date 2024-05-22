@@ -108,12 +108,10 @@ const DepositStart = ({
 
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
-  const [currencyRate, setCurrencyRate] = useState(1)
 
   useEffect(() => {
     if (rates.rateData) {
       setCurrencySym(rates.currency.icon)
-      setCurrencyRate(rates.rateData[rates.currency.symbol])
     }
   }, [rates])
 
@@ -461,7 +459,7 @@ const DepositStart = ({
                     ) : minReceiveUsdAmount === 'NaN' || minReceiveUsdAmount === '-' ? (
                       '-'
                     ) : minReceiveUsdAmount !== '' ? (
-                      `≈${currencySym}${minReceiveUsdAmount * Number(currencyRate)}`
+                      `≈${minReceiveUsdAmount}`
                     ) : (
                       <AnimatedDots />
                     )}

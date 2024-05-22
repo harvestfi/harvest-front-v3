@@ -381,3 +381,37 @@ export const formatDateTime = value => {
 
   return { __html: `${time}<br /> ${month} ${day}, ${year}` }
 }
+
+export const formatDateTimeMobile = value => {
+  const date = new Date(value * 1000) // Multiply by 1000 to convert seconds to milliseconds
+  const year = date.getFullYear()
+  const monthNames = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
+  const monthNum = date.getMonth()
+  const month = monthNames[monthNum]
+  const day = date.getDate()
+
+  // Get hours and minutes
+  let hours = date.getHours()
+  const minutes = date.getMinutes()
+  const ampm = hours >= 12 ? 'PM' : 'AM'
+  hours %= 12
+  hours = hours || 12 // Convert 0 hours to 12
+
+  // Format the time
+  const time = `${hours}:${minutes < 10 ? `0${minutes}` : minutes} ${ampm}`
+
+  return { __html: `${time}<br /> ${month} ${day}<br /> ${year}` }
+}

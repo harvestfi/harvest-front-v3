@@ -243,7 +243,7 @@ const UserBalanceData = ({
 
             const firstObject = {
               priceUnderlying: useIFARM ? farmPriceRef.current : usdPriceRef.current,
-              sharePrice: pricePerFullShareRef.current,
+              sharePrice: mergedData[0].sharePrice,
               timestamp: currentTimeStamp,
               value: totalValueRef.current,
             }

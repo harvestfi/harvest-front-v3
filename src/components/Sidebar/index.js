@@ -236,11 +236,11 @@ const SideLink = ({ item, subItem, isDropdownLink, fontColor2, activeIconColor, 
   const { pathname } = useLocation()
   const pageName =
     pathname === '/'
-      ? 'home'
-      : pathname === ROUTES.ADVANCED
-      ? 'advanced'
-      : pathname === ROUTES.PORTFOLIO
       ? 'dashboard'
+      : pathname === ROUTES.ADVANCED
+      ? 'all farms'
+      : pathname === ROUTES.TUTORIAL
+      ? 'tutorial'
       : pathname
   return (
     /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
@@ -279,7 +279,8 @@ const MobileMenu = ({
   isMobile,
 }) => {
   const { pathname } = useLocation()
-  const pageName = pathname === '/' ? 'home' : pathname
+  const pageName =
+    pathname === '/' ? 'dashboard' : pathname === ROUTES.ADVANCED ? 'all farms' : pathname
   return (
     <LinkMobile
       fontColor={fontColor}
@@ -1088,7 +1089,7 @@ const Sidebar = ({ width }) => {
               }
             >
               <MobileToggle
-                className={`wallet-btn ${connected && 'connected-wallet-btn'}`}
+                className="wallet-btn"
                 toggleColor={toggleColor}
                 width={27}
                 height={21}
