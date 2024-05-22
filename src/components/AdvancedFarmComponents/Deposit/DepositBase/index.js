@@ -241,15 +241,13 @@ const DepositBase = ({
               fromInfoUsdValue =
                 quoteResult.fromTokenAmount === null
                   ? '0'
-                  : formatNumberWido(
-                      fromWei(
-                        quoteResult.fromTokenAmount,
-                        pickedToken.decimals,
-                        pickedToken.decimals,
-                        true,
-                      ) * quoteResult.fromTokenUsdPrice,
-                      BEGINNERS_BALANCES_DECIMALS,
-                    )
+                  : fromWei(
+                      quoteResult.fromTokenAmount,
+                      pickedToken.decimals,
+                      pickedToken.decimals,
+                      true,
+                    ) * quoteResult.fromTokenUsdPrice
+
               minReceiveAmount = new BigNumber(
                 fromWei(
                   quoteResult.minToTokenAmount,
@@ -271,7 +269,7 @@ const DepositBase = ({
               setFromInfoUsdAmount(`<${currencySym}0.01`)
             } else {
               setFromInfoUsdAmount(
-                `${currencySym}${Number(fromInfoUsdValue) * Number(currencyRate)}`,
+                `${currencySym}${Number(fromInfoUsdValue).toFixed(2) * Number(currencyRate)}`,
               )
             }
             if (Number(minReceiveUsd) < 0.01) {
