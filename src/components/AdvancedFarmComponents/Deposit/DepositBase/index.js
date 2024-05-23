@@ -271,7 +271,7 @@ const DepositBase = ({
               setFromInfoUsdAmount(`<${currencySym}0.01`)
             } else {
               setFromInfoUsdAmount(
-                `${currencySym}${Number(fromInfoUsdValue) * Number(currencyRate)}`,
+                `${currencySym}${(Number(fromInfoUsdValue) * Number(currencyRate)).toFixed(2)}`,
               )
             }
             if (Number(minReceiveUsd) < 0.01) {
