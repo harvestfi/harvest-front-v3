@@ -105,7 +105,7 @@ const DepositBase = ({
     bgColorMessage,
   } = useThemeContext()
 
-  const { connected, connectAction, account, chainId, setChainId, web3 } = useWallet()
+  const { connected, connectAction, account, chainId, setChainId } = useWallet()
   const { getPortalsEstimate, getPortalsToken } = usePortals()
 
   const [
@@ -305,35 +305,20 @@ const DepositBase = ({
 
       getQuoteResult()
     }
+    // eslint-disable-next-line
   }, [
-    account,
     amount,
+    inputAmount,
+    account,
     chainId,
     curChain,
-    tokenChain,
-    pickedToken,
-    defaultToken,
-    token,
-    balanceList,
-    useIFARM,
-    web3,
-    inputAmount,
-    pricePerFullShare,
-    setFromInfoAmount,
-    setFromInfoUsdAmount,
-    setMinReceiveAmountString,
-    setMinReceiveUsdAmount,
-    setConvertMonthlyYieldUSD,
-    setConvertDailyYieldUSD,
-    getPortalsEstimate,
-    getPortalsToken,
-    failureCount,
-    setFailureCount,
-    setHasErrorOccurred,
-    supportedVault,
-    setSupportedVault,
     currencyRate,
     currencySym,
+    balanceList.length,
+    defaultToken,
+    token,
+    tokenChain,
+    useIFARM,
   ])
 
   const onClickDeposit = async () => {
