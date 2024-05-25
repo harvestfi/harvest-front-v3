@@ -82,7 +82,7 @@ const UserBalanceData = ({
       } else if (Number(payload[0].payload.y < 0.01)) {
         setCurContent(`<${currencySym}0.01`)
       } else {
-        setCurContent(`${currencySym}${Number(balance) * Number(currencyRate)}`)
+        setCurContent(`${currencySym}${(Number(balance) * Number(currencyRate)).toFixed(4)}`)
       }
       const balanceUnderlying = numberWithCommas(Number(payload[0].payload.z))
 
@@ -282,7 +282,7 @@ const UserBalanceData = ({
           <FlexDiv>
             <TooltipInfo>
               <TokenSymbol className="priceshare" color="#15B088">
-                USD Balance
+                {`${rates?.currency?.symbol ?? 'USD'}`} Balance
               </TokenSymbol>
               <FlexDiv>
                 <CurContent color={fontColor3}>

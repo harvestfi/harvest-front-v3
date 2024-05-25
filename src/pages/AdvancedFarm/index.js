@@ -1236,6 +1236,8 @@ const AdvancedFarm = () => {
           account,
           tokenDecimals,
           underlyingPrice,
+          currencySym,
+          currencyRate,
         )
 
         if (balanceFlag && vaultHFlag) {
@@ -1249,7 +1251,16 @@ const AdvancedFarm = () => {
     }
 
     initData()
-  }, [account, vaultPool, tokenDecimals, underlyingPrice, setUnderlyingEarnings, setUsdEarnings]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [
+    account,
+    vaultPool,
+    tokenDecimals,
+    underlyingPrice,
+    currencySym,
+    currencyRate,
+    setUnderlyingEarnings,
+    setUsdEarnings,
+  ]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const apyDaily = totalApy
     ? (((Number(totalApy) / 100 + 1) ** (1 / 365) - 1) * 100).toFixed(3)
