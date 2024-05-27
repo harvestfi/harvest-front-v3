@@ -459,7 +459,7 @@ const DepositStart = ({
                     ) : minReceiveUsdAmount === 'NaN' || minReceiveUsdAmount === '-' ? (
                       '-'
                     ) : minReceiveUsdAmount !== '' ? (
-                      `≈${minReceiveUsdAmount}`
+                      `${minReceiveUsdAmount}`
                     ) : (
                       <AnimatedDots />
                     )}

@@ -961,14 +961,14 @@ const AdvancedFarm = () => {
       if (defaultToken !== null) {
         // debugger
         let tokenToSet = null
-  
+
         // Check if defaultToken is present in the balanceList
         if (defaultToken.balance !== '0' || !supportedVault || hasPortalsError) {
           setPickedTokenDepo(defaultToken)
           setBalanceDepo(defaultToken.balance)
           return
         }
-  
+
         // If defaultToken is not found, find the token with the highest USD value among those in the SUPPORTED_TOKEN_LIST and balanceList
         const supportedTokens = balanceList.filter(
           balancedToken => SUPPORTED_TOKEN_LIST[chain][balancedToken.symbol],
@@ -978,7 +978,7 @@ const AdvancedFarm = () => {
             prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
           )
         }
-  
+
         // If no token is found in SUPPORTED_TOKEN_LIST, set the token with the highest USD value in balanceList
         if (!tokenToSet && balanceList.length > 0) {
           tokenToSet = balanceList.reduce(
@@ -987,7 +987,7 @@ const AdvancedFarm = () => {
             balanceList[0], // Providing the first element as the initial value
           )
         }
-  
+
         // Set the pickedTokenDepo and balanceDepo based on the determined tokenToSet
         if (tokenToSet) {
           setPickedTokenDepo(tokenToSet)

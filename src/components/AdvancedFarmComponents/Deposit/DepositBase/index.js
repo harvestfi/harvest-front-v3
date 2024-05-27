@@ -11,14 +11,13 @@ import DropDownIcon from '../../../../assets/images/logos/advancedfarm/drop-down
 // import WalletIcon from '../../../../assets/images/logos/beginners/wallet-in-button.svg'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
-import { BEGINNERS_BALANCES_DECIMALS } from '../../../../constants'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { useWallet } from '../../../../providers/Wallet'
 import { useRate } from '../../../../providers/Rate'
 import { CHAIN_IDS } from '../../../../data/constants'
 import { fromWei, toWei, checkNativeToken } from '../../../../services/web3'
 import { addresses } from '../../../../data'
-import { formatNumberWido, isSpecialApp } from '../../../../utilities/formats'
+import { isSpecialApp } from '../../../../utilities/formats'
 import Button from '../../../Button'
 import AnimatedDots from '../../../AnimatedDots'
 import {
@@ -257,10 +256,7 @@ const DepositBase = ({
                 ),
               ).toString()
 
-              minReceiveUsd = formatNumberWido(
-                parseFloat(minReceiveAmount) * toTokenUsdPrice,
-                BEGINNERS_BALANCES_DECIMALS,
-              )
+              minReceiveUsd = parseFloat(minReceiveAmount) * toTokenUsdPrice
             }
             setMinReceiveAmountString(minReceiveAmount)
             setFromInfoAmount(fromInfoValue)
@@ -277,7 +273,7 @@ const DepositBase = ({
               setMinReceiveUsdAmount(`<${currencySym}0.01`)
             } else {
               setMinReceiveUsdAmount(
-                `${currencySym}${Number(minReceiveUsd) * Number(currencyRate)}`,
+                `≈${currencySym}${Number(minReceiveUsd).toFixed(2) * Number(currencyRate)}`,
               )
             }
           } else {
