@@ -153,15 +153,15 @@ const DepositBase = ({
   }, [account, curChain, tokenChain])
 
   useEffect(() => {
-    if (
-      account &&
-      pickedToken.symbol !== 'Select Token' &&
-      !new BigNumber(amount.toString()).isEqualTo(0) &&
-      curChain === tokenChain &&
-      (balanceList.length !== 0 || pickedToken.balance !== '0') &&
-      failureCount < 5
-    ) {
-      const getQuoteResult = async () => {
+    const getQuoteResult = async () => {
+      if (
+        account &&
+        pickedToken.symbol !== 'Select Token' &&
+        !new BigNumber(amount.toString()).isEqualTo(0) &&
+        curChain === tokenChain &&
+        (balanceList.length !== 0 || pickedToken.balance !== '0') &&
+        failureCount < 5
+      ) {
         setFromInfoAmount('')
         setFromInfoUsdAmount('')
         let portalsEstimate
@@ -256,6 +256,7 @@ const DepositBase = ({
                   false,
                 ),
               ).toString()
+
               minReceiveUsd = formatNumberWido(
                 parseFloat(minReceiveAmount) * toTokenUsdPrice,
                 BEGINNERS_BALANCES_DECIMALS,
@@ -302,10 +303,10 @@ const DepositBase = ({
           console.error('Error content: ', e)
         }
       }
-
-      getQuoteResult()
     }
-    // eslint-disable-next-line
+
+    getQuoteResult()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     amount,
     inputAmount,
