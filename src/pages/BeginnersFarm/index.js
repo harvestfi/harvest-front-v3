@@ -932,7 +932,15 @@ const BeginnersFarm = () => {
         sumLatestNetChange,
         sumLatestNetChangeUsd,
         enrichedData,
-      } = await initBalanceAndDetailData(address, chainId, account, tokenDecimals, underlyingPrice)
+      } = await initBalanceAndDetailData(
+        address,
+        chainId,
+        account,
+        tokenDecimals,
+        underlyingPrice,
+        currencySym,
+        currencyRate,
+      )
 
       if (balanceFlag && vaultHFlag) {
         setUnderlyingEarnings(sumNetChange)
@@ -950,6 +958,8 @@ const BeginnersFarm = () => {
     vaultPool,
     tokenDecimals,
     underlyingPrice,
+    currencySym,
+    currencyRate,
     setUnderlyingEarnings,
     setUsdEarnings,
   ])
