@@ -76,13 +76,16 @@ const UserBalanceData = ({
   const handleTooltipContent = payload => {
     if (payload && payload.length) {
       const currentDate = formatDate(payload[0].payload.x)
-      const balance = numberWithCommas(Number(payload[0].payload.y).toFixed(fixedLen))
       if (Number(payload[0].payload.y === 0)) {
         setCurContent(`${currencySym}0`)
       } else if (Number(payload[0].payload.y < 0.01)) {
         setCurContent(`<${currencySym}0.01`)
       } else {
-        setCurContent(`${currencySym}${(Number(balance) * Number(currencyRate)).toFixed(4)}`)
+        setCurContent(
+          `${currencySym}${numberWithCommas(
+            (Number(payload[0].payload.y) * Number(currencyRate)).toFixed(fixedLen),
+          )}`,
+        )
       }
       const balanceUnderlying = numberWithCommas(Number(payload[0].payload.z))
 

@@ -186,7 +186,7 @@ const ApexChart = ({
 
     if (payload.value !== '') {
       path = `${currencySym}${numberWithCommas(
-        (Number(payload.value) * Number(currencyRate)).toFixed(4),
+        (Number(payload.value) * Number(currencyRate)).toFixed(fixedLen),
       )}`
     }
     return (
@@ -448,9 +448,12 @@ const ApexChart = ({
       // Set date and price with latest value by default
       if (mainData.length > 0) {
         setCurDate(formatDate(mainData[mainData.length - 1].x))
-        const balance = numberWithCommas(Number(mainData[mainData.length - 1].y).toFixed(fixedLen))
         const balanceUnderlying = numberWithCommas(Number(mainData[mainData.length - 1].z))
-        setCurContent(`${currencySym}${(Number(balance) * Number(currencyRate)).toFixed(4)}`)
+        setCurContent(
+          `${currencySym}${numberWithCommas(
+            (Number(mainData[mainData.length - 1].y) * Number(currencyRate)).toFixed(fixedLen),
+          )}`,
+        )
         setCurContentUnderlying(balanceUnderlying)
       } else {
         console.log('The chart data is either undefined or empty.')
