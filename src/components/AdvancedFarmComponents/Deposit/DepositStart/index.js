@@ -25,7 +25,6 @@ import { usePools } from '../../../../providers/Pools'
 import { useRate } from '../../../../providers/Rate'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { fromWei, toWei, getWeb3 } from '../../../../services/web3'
-import { formatNumberWido } from '../../../../utilities/formats'
 import AnimatedDots from '../../../AnimatedDots'
 import {
   Buttons,
@@ -108,6 +107,14 @@ const DepositStart = ({
 
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
 
   useEffect(() => {
     if (rates.rateData) {
@@ -163,8 +170,14 @@ const DepositStart = ({
         )
       : ''
     const receiveUsdString = portalData ? portalData.context?.outputAmountUsd : ''
+    if (Number(receiveUsdString) === 0) {
+      setReceiveUsd(`${currencySym}0`)
+    } else if (Number(receiveUsdString) < 0.01) {
+      setReceiveUsd(`<${currencySym}0.01`)
+    } else {
+      setReceiveUsd(`≈${currencySym}${receiveUsdString.toFixed(2) * Number(currencyRate)}`)
+    }
     setReceiveAmount(receiveString)
-    setReceiveUsd(formatNumberWido(receiveUsdString))
 
     await fetchUserPoolStats([fAssetPool], account, userStats)
   }
@@ -452,7 +465,7 @@ const DepositStart = ({
                   <span>
                     {!pickedDefaultToken && progressStep === 4 ? (
                       receiveUsd !== '' ? (
-                        <>≈${receiveUsd}</>
+                        `{receiveUsd}`
                       ) : (
                         <>{`≈${currencySym}0`}</>
                       )
