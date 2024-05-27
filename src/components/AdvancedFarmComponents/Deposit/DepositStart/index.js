@@ -465,7 +465,7 @@ const DepositStart = ({
                   <span>
                     {!pickedDefaultToken && progressStep === 4 ? (
                       receiveUsd !== '' ? (
-                        `{receiveUsd}`
+                        `${receiveUsd}`
                       ) : (
                         <>{`≈${currencySym}0`}</>
                       )

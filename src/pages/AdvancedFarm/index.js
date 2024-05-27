@@ -959,7 +959,6 @@ const AdvancedFarm = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       if (defaultToken !== null) {
-        // debugger
         let tokenToSet = null
 
         // Check if defaultToken is present in the balanceList
