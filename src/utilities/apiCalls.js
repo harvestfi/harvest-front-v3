@@ -8,9 +8,10 @@ import {
   GRAPH_URL_BASE,
   GRAPH_URL_ZKSYNC,
   TOTAL_TVL_API_ENDPOINT,
+  HISTORICAL_RATES_API_ENDPOINT,
 } from '../constants'
 import { fromWei } from '../services/web3'
-import { showUsdValue } from './formats'
+import { showUsdValue, getCurrencyRate } from './formats'
 
 export const getLastHarvestInfo = async (address, chainId) => {
   // eslint-disable-next-line no-unused-vars
@@ -251,6 +252,12 @@ export const getVaultHistories = async (address, chainId) => {
     vaultHFlag = false
   }
   return { vaultHData, vaultHFlag }
+}
+
+export const getCurrencyRateHistories = async () => {
+  const apiResponse = await axios.get(HISTORICAL_RATES_API_ENDPOINT)
+  const apiData = get(apiResponse, 'data')
+  return apiData
 }
 
 export const getDataQuery = async (
@@ -524,6 +531,7 @@ export const initBalanceAndDetailData = async (
   account,
   tokenDecimals,
   underlyingPrice,
+  currencySym = '$',
 ) => {
   const timestamps = []
   const uniqueVaultHData = []
@@ -536,6 +544,7 @@ export const initBalanceAndDetailData = async (
 
   const { balanceData, balanceFlag } = await getUserBalanceHistories(address, chainId, account)
   const { vaultHData, vaultHFlag } = await getVaultHistories(address, chainId)
+  const hisRateData = await getCurrencyRateHistories()
 
   if (vaultHFlag) {
     vaultHData.forEach(obj => {
@@ -663,15 +672,20 @@ export const initBalanceAndDetailData = async (
         const nextItem = array[index + 1]
         let event, balance, balanceUsd, netChange, netChangeUsd
 
+        const curRate = getCurrencyRate(currencySym, item, hisRateData)
+
         if (Number(item.value) === 0) {
           if (nextItem && Number(nextItem.value) === 0) {
             return false
           }
           balance = '0'
-          balanceUsd = '$0'
+          balanceUsd = `${currencySym}0`
         } else {
           balance = Number(item.value) * Number(item.sharePrice)
-          balanceUsd = showUsdValue(balance * Number(item.priceUnderlying))
+          balanceUsd = showUsdValue(
+            balance * Number(item.priceUnderlying) * Number(curRate),
+            currencySym,
+          )
         }
 
         if (nextItem) {
@@ -685,11 +699,17 @@ export const initBalanceAndDetailData = async (
 
           const nextBalance = Number(nextItem.value) * Number(nextItem.sharePrice)
           netChange = balance - nextBalance
-          netChangeUsd = showUsdValue(Math.abs(netChange) * Number(item.priceUnderlying))
+          netChangeUsd = showUsdValue(
+            Math.abs(netChange) * Number(item.priceUnderlying) * Number(curRate),
+            currencySym,
+          )
         } else {
           event = 'Convert'
           netChange = balance
-          netChangeUsd = showUsdValue(netChange * Number(item.priceUnderlying))
+          netChangeUsd = showUsdValue(
+            netChange * Number(item.priceUnderlying) * Number(curRate),
+            currencySym,
+          )
         }
 
         return {

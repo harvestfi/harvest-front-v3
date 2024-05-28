@@ -157,7 +157,9 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
     let path = ''
 
     if (payload.value !== '') {
-      path = `${currencySym}${numberWithCommas(Number(payload.value) * Number(currencyRate))}`
+      path = `${currencySym}${numberWithCommas(
+        (Number(payload.value) * Number(currencyRate)).toFixed(0),
+      )}`
     }
     return (
       <text

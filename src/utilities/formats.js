@@ -153,14 +153,34 @@ export const formatNumberWido = (number, decimals = DECIMAL_PRECISION) => {
   return result
 }
 
-export const showUsdValue = value => {
+export const showUsdValue = (value, currencySym) => {
   if (value === 0) {
-    return '$0'
+    return `${currencySym}0`
   }
   if (value < 0.01) {
-    return '<$0.01'
+    return `<${currencySym}0.01`
   }
-  return `$${value.toFixed(2)}`
+  return `${currencySym}${value.toFixed(2)}`
+}
+
+export const getCurrencyRate = (sym, item, rateData) => {
+  const date = new Date(Number(item.timestamp ?? 0))
+
+  date.setUTCHours(0, 0, 0, 0) // Set hours, minutes, seconds, and milliseconds to 0
+  const curTimeStamp = date.getTime() * 1000
+  if (sym === '£') {
+    const result = rateData.GBP.filter(
+      dataItem => dataItem.timestamp.toString() === curTimeStamp.toString(),
+    )
+    return result[0]?.price ?? 1
+  }
+  if (sym === '€') {
+    const result = rateData.EUR.filter(
+      dataItem => dataItem.timestamp.toString() === curTimeStamp.toString(),
+    )
+    return result[0]?.price ?? 1
+  }
+  return 1
 }
 
 export const formatAddress = address => {
