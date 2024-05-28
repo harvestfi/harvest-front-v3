@@ -64,6 +64,12 @@ const Content = styled.div`
   `
       : ''}
   ${props =>
+    props.paddingRight
+      ? `
+    padding-right: ${props.paddingRight};
+  `
+      : ''}
+  ${props =>
     props.marginTop
       ? `
     margin-top: ${props.marginTop};
@@ -98,6 +104,10 @@ const Content = styled.div`
     font-weight: 500;
     line-height: 20px;
     color: ${props => props.color};
+
+    @media screen and (max-width: 992px) {
+      font-size: 12px;
+    }
   }
 
   img.file-icon {
@@ -125,6 +135,10 @@ const Content = styled.div`
 
 const NetImg = styled.div`
   margin: auto 12px auto 0px;
+
+  @media screen and (max-width: 992px) {
+    margin: auto 5px auto 0px;
+  }
 `
 
 const Badge = styled.div`

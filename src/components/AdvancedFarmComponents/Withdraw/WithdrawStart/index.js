@@ -17,7 +17,7 @@ import ProgressTwo from '../../../../assets/images/logos/advancedfarm/progress-s
 import ProgressThree from '../../../../assets/images/logos/advancedfarm/progress-step3.png'
 import ProgressFour from '../../../../assets/images/logos/advancedfarm/progress-step4.png'
 import ProgressFive from '../../../../assets/images/logos/advancedfarm/progress-step5.png'
-import { directDetailUrl, IFARM_TOKEN_SYMBOL } from '../../../../constants'
+import { chainList, directDetailUrl, IFARM_TOKEN_SYMBOL } from '../../../../constants'
 import { useActions } from '../../../../providers/Actions'
 import { useVaults } from '../../../../providers/Vault'
 import { useWallet } from '../../../../providers/Wallet'
@@ -53,13 +53,6 @@ import {
   TopLogo,
   LogoImg,
 } from './style'
-
-const chainList = [
-  { id: 1, name: 'Ethereum', chainId: 1 },
-  { id: 2, name: 'Polygon', chainId: 137 },
-  { id: 3, name: 'Arbitrum', chainId: 42161 },
-  { id: 4, name: 'Base', chainId: 8453 },
-]
 
 const WithdrawStart = ({
   unstakeInputValue,

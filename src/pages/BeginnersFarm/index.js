@@ -43,6 +43,7 @@ import {
   WIDO_BALANCES_DECIMALS,
   SOCIAL_LINKS,
   feeList,
+  chainList,
 } from '../../constants'
 import { fromWei, newContractInstance, getWeb3, getExplorerLink } from '../../services/web3'
 import { addresses } from '../../data'
@@ -51,7 +52,7 @@ import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
-import { displayAPY, formatNumber, formatNumberWido } from '../../utilities/formats'
+import { displayAPY, formatNumber, formatNumberWido, showUsdValue } from '../../utilities/formats'
 import { getTotalApy } from '../../utilities/parsers'
 import { getAdvancedRewardText } from '../../utilities/html'
 import { getLastHarvestInfo, initBalanceAndDetailData } from '../../utilities/apiCalls'
@@ -113,13 +114,6 @@ import {
 import { CHAIN_IDS } from '../../data/constants'
 // import { array } from 'prop-types'
 import { usePortals } from '../../providers/Portals'
-
-const chainList = [
-  { id: 1, name: 'Ethereum', chainId: 1 },
-  { id: 2, name: 'Polygon', chainId: 137 },
-  { id: 3, name: 'Arbitrum', chainId: 42161 },
-  { id: 4, name: 'Base', chainId: 8453 },
-]
 
 const mainTags = [
   { name: 'Start Farming', img: Safe },
@@ -1064,16 +1058,6 @@ const BeginnersFarm = () => {
   const harvestTreasury =
     chain === CHAIN_IDS.ETH_MAINNET ? '5' : chain === CHAIN_IDS.POLYGON_MAINNET ? '3' : '3'
 
-  const showUsdValue = value => {
-    if (value === 0) {
-      return '$0'
-    }
-    if (value < 0.01) {
-      return '<$0.01'
-    }
-    return `$${value.toFixed(2)}`
-  }
-
   return (
     <DetailView bgColor={bgColor} fontColor={fontColor}>
       <TopInner>
@@ -1198,7 +1182,7 @@ const BeginnersFarm = () => {
                             <br />
                             If you need any help, see our{' '}
                             <a
-                              href="https://app.harvest.finance/get-started"
+                              href={SOCIAL_LINKS.Tutorial}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
@@ -1216,7 +1200,7 @@ const BeginnersFarm = () => {
                             <br />
                             <a
                               className="badge-body"
-                              href="/"
+                              href={SOCIAL_LINKS.Tutorial}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
@@ -1270,7 +1254,7 @@ const BeginnersFarm = () => {
                             <br />
                             If you need any help, see our{' '}
                             <a
-                              href="https://app.harvest.finance/get-started"
+                              href={SOCIAL_LINKS.Tutorial}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
@@ -1288,7 +1272,7 @@ const BeginnersFarm = () => {
                             <br />
                             <a
                               className="badge-body"
-                              href="/"
+                              href={SOCIAL_LINKS.Tutorial}
                               target="_blank"
                               rel="noopener noreferrer"
                             >

@@ -1021,18 +1021,19 @@ const MainTag = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    width: ${props => (props.useIFARM ? '50%' : '33%')};
+    width: ${props => (props.useIFARM ? '33%' : props.active === 'true' ? '40%' : '20%')};
     &:nth-child(2) {
-      width: ${props => (props.useIFARM ? '33%' : '34%')};
-    }
-    &:nth-child(4) {
-      display: none;
+      width: ${props => (props.useIFARM ? '34%' : props.active === 'true' ? '40%' : '20%')};
     }
   }
 
   p {
     margin-bottom: 0px;
     padding-left: 8px;
+
+    @media screen and (max-width: 992px) {
+      display: ${props => (props.useIFARM ? 'block' : props.active === 'true' ? 'block' : 'none')};
+    }
   }
 
   img {

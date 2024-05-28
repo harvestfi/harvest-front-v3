@@ -6,6 +6,7 @@ export const SOCIAL_LINKS = {
   TELEGRAM: 'https://t.me/Breadforthepeople',
   TWITTER: 'https://twitter.com/harvest_finance',
   MEDIUM: 'https://medium.com/harvest-finance',
+  Tutorial: 'https://docs.harvest.finance/other/coinbase-wallet-quest-tutorial',
   DISCORD: 'https://discord.gg/ePZKmST7yn',
   REDDIT: 'https://www.reddit.com/r/HarvestFinance/',
   GITHUB: 'https://github.com/harvest-finance',
@@ -781,4 +782,11 @@ export const directDetailUrl = '/'
 export const feeList = [
   { label: 'Convert Fee', value: '0%' },
   { label: 'Revert Fee', value: '0%' },
+]
+
+export const chainList = [
+  { id: 1, name: 'Ethereum', chainId: 1 },
+  { id: 2, name: 'Polygon', chainId: 137 },
+  { id: 3, name: 'Arbitrum', chainId: 42161 },
+  { id: 4, name: 'Base', chainId: 8453 },
 ]

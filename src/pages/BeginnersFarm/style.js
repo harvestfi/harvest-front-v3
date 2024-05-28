@@ -1009,18 +1009,16 @@ const MainTag = styled.div`
     `}
 
   @media screen and (max-width: 992px) {
-    width: 50%;
-    &:nth-child(1) {
-      width: 50%;
-    }
-    &:nth-child(3) {
-      display: none;
-    }
+    width: ${props => (props.active === 'true' ? '50% !important' : '25% !important')};
   }
 
   p {
     margin-bottom: 0px;
     padding-left: 8px;
+
+    @media screen and (max-width: 992px) {
+      display: ${props => (props.active === 'true' ? 'block' : 'none')};
+    }
   }
 
   img {

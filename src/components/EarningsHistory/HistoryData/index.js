@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react'
 import ReactPaginate from 'react-paginate'
+import { useMediaQuery } from 'react-responsive'
 import { IoArrowBackSharp, IoArrowForwardSharp } from 'react-icons/io5'
 import ConnectDisableIcon from '../../../assets/images/logos/sidebar/connect-disable.svg'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -16,11 +17,14 @@ import {
   EmptyPanel,
   EmptyInfo,
   ConnectButtonStyle,
+  ThemeMode,
 } from './style'
 
-const itemsPerPage = 7
+const itemsPerPage = 5
 
 const HistoryData = ({ tokenSymbol, historyData }) => {
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+
   const {
     borderColor,
     backColor,
@@ -35,6 +39,9 @@ const HistoryData = ({ tokenSymbol, historyData }) => {
   const { disableWallet } = usePools()
   const { connected, connectAction } = useWallet()
   const [itemOffset, setItemOffset] = useState(0)
+  const [showTotalBalance, setShowTotalBalance] = useState(true)
+
+  const switchEarnings = () => setShowTotalBalance(prev => !prev)
 
   const { currentItems, pageCount } = useMemo(() => {
     const endOffset = itemOffset + itemsPerPage
@@ -54,13 +61,13 @@ const HistoryData = ({ tokenSymbol, historyData }) => {
 
   const CustomPreviousComponent = () => (
     <span>
-      <IoArrowBackSharp /> Previous
+      <IoArrowBackSharp /> {isMobile ? '' : 'Previous'}
     </span>
   )
 
   const CustomNextComponent = () => (
     <span>
-      Next <IoArrowForwardSharp />
+      {isMobile ? '' : 'Next'} <IoArrowForwardSharp />
     </span>
   )
 
@@ -68,16 +75,41 @@ const HistoryData = ({ tokenSymbol, historyData }) => {
     <TransactionDetails>
       <TableContent borderColor={borderColor}>
         <Header borderColor={borderColor} backColor={backColor}>
-          <Column width="20%" color={fontColor}>
+          <Column width={isMobile ? '22%' : '20%'} color={fontColor}>
             <Col>Event</Col>
           </Column>
-          <Column width="20%" color={fontColor}>
+          <Column width={isMobile ? '20%' : '20%'} color={fontColor}>
             <Col>Date</Col>
           </Column>
-          <Column width="30%" color={fontColor}>
-            <Col>Total Balance</Col>
+          <Column
+            display="flex"
+            justifyContent="space-between"
+            width={isMobile ? '57%' : '30%'}
+            color={fontColor}
+          >
+            <Col>{showTotalBalance ? 'Total Balance' : 'Net change'}</Col>
+            {isMobile && (
+              <ThemeMode mode={showTotalBalance ? 'balance' : 'netChange'}>
+                <div id="theme-switch">
+                  <div className="switch-track">
+                    <div className="switch-thumb" />
+                  </div>
+
+                  <input
+                    type="checkbox"
+                    checked={showTotalBalance}
+                    onChange={switchEarnings}
+                    aria-label="Switch between balance and netChange earnings"
+                  />
+                </div>
+              </ThemeMode>
+            )}
           </Column>
-          <Column width="30%" color={fontColor}>
+          <Column
+            width={isMobile ? '0%' : '30%'}
+            color={fontColor}
+            display={isMobile ? 'none' : 'flex'}
+          >
             <Col>Net change</Col>
           </Column>
         </Header>
@@ -86,9 +118,16 @@ const HistoryData = ({ tokenSymbol, historyData }) => {
             {currentItems
               .map((el, i) => {
                 const info = currentItems[i]
-                return <ActionRow key={i} info={info} tokenSymbol={tokenSymbol} />
+                return (
+                  <ActionRow
+                    key={i}
+                    info={info}
+                    tokenSymbol={tokenSymbol}
+                    showTotalBalance={showTotalBalance}
+                  />
+                )
               })
-              .slice(0, 7)}
+              .slice(0, 5)}
             <HistoryPagination
               bgColor={bgColorFarm}
               fontColor={fontColor}
@@ -100,7 +139,8 @@ const HistoryData = ({ tokenSymbol, historyData }) => {
                 breakLabel="..."
                 nextLabel={<CustomNextComponent />}
                 onPageChange={handlePageClick}
-                pageRangeDisplayed={5}
+                pageRangeDisplayed={isMobile ? 2 : 5}
+                marginPagesDisplayed={isMobile ? 0 : 3}
                 pageCount={pageCount}
                 previousLabel={<CustomPreviousComponent />}
                 renderOnZeroPageCount={null}
