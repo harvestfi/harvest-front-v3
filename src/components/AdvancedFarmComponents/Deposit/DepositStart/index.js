@@ -25,7 +25,6 @@ import { usePools } from '../../../../providers/Pools'
 import { useRate } from '../../../../providers/Rate'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { fromWei, toWei, getWeb3 } from '../../../../services/web3'
-import { formatNumberWido } from '../../../../utilities/formats'
 import AnimatedDots from '../../../AnimatedDots'
 import {
   Buttons,
@@ -163,8 +162,14 @@ const DepositStart = ({
         )
       : ''
     const receiveUsdString = portalData ? portalData.context?.outputAmountUsd : ''
+    if (Number(receiveUsdString) === 0) {
+      setReceiveUsd('$0')
+    } else if (Number(receiveUsdString) < 0.01) {
+      setReceiveUsd('<$0.01')
+    } else {
+      setReceiveUsd(`≈$${Number(receiveUsdString).toFixed(2)}`)
+    }
     setReceiveAmount(receiveString)
-    setReceiveUsd(formatNumberWido(receiveUsdString))
 
     await fetchUserPoolStats([fAssetPool], account, userStats)
   }
@@ -392,7 +397,7 @@ const DepositStart = ({
                   {pickedToken.symbol}
                 </>
                 <span>
-                  {fromInfoUsdAmount !== '' ? <>≈{fromInfoUsdAmount}</> : <AnimatedDots />}
+                  {fromInfoUsdAmount !== '' ? <>{fromInfoUsdAmount}</> : <AnimatedDots />}
                 </span>
               </NewLabel>
             </NewLabel>
@@ -452,14 +457,14 @@ const DepositStart = ({
                   <span>
                     {!pickedDefaultToken && progressStep === 4 ? (
                       receiveUsd !== '' ? (
-                        <>≈${receiveUsd}</>
+                        `${receiveUsd}`
                       ) : (
                         <>{`≈${currencySym}0`}</>
                       )
                     ) : minReceiveUsdAmount === 'NaN' || minReceiveUsdAmount === '-' ? (
                       '-'
                     ) : minReceiveUsdAmount !== '' ? (
-                      `≈${minReceiveUsdAmount}`
+                      `${minReceiveUsdAmount}`
                     ) : (
                       <AnimatedDots />
                     )}

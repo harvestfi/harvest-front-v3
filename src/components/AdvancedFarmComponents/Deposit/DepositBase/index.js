@@ -11,14 +11,13 @@ import DropDownIcon from '../../../../assets/images/logos/advancedfarm/drop-down
 // import WalletIcon from '../../../../assets/images/logos/beginners/wallet-in-button.svg'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
-import { BEGINNERS_BALANCES_DECIMALS } from '../../../../constants'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { useWallet } from '../../../../providers/Wallet'
 import { useRate } from '../../../../providers/Rate'
 import { CHAIN_IDS } from '../../../../data/constants'
 import { fromWei, toWei, checkNativeToken } from '../../../../services/web3'
 import { addresses } from '../../../../data'
-import { formatNumberWido, isSpecialApp } from '../../../../utilities/formats'
+import { isSpecialApp } from '../../../../utilities/formats'
 import Button from '../../../Button'
 import AnimatedDots from '../../../AnimatedDots'
 import {
@@ -105,7 +104,7 @@ const DepositBase = ({
     bgColorMessage,
   } = useThemeContext()
 
-  const { connected, connectAction, account, chainId, setChainId, web3 } = useWallet()
+  const { connected, connectAction, account, chainId, setChainId } = useWallet()
   const { getPortalsEstimate, getPortalsToken } = usePortals()
 
   const [
@@ -153,15 +152,15 @@ const DepositBase = ({
   }, [account, curChain, tokenChain])
 
   useEffect(() => {
-    if (
-      account &&
-      pickedToken.symbol !== 'Select Token' &&
-      !new BigNumber(amount.toString()).isEqualTo(0) &&
-      curChain === tokenChain &&
-      (balanceList.length !== 0 || pickedToken.balance !== '0') &&
-      failureCount < 5
-    ) {
-      const getQuoteResult = async () => {
+    const getQuoteResult = async () => {
+      if (
+        account &&
+        pickedToken.symbol !== 'Select Token' &&
+        !new BigNumber(amount.toString()).isEqualTo(0) &&
+        curChain === tokenChain &&
+        (balanceList.length !== 0 || pickedToken.balance !== '0') &&
+        failureCount < 5
+      ) {
         setFromInfoAmount('')
         setFromInfoUsdAmount('')
         let portalsEstimate
@@ -241,15 +240,13 @@ const DepositBase = ({
               fromInfoUsdValue =
                 quoteResult.fromTokenAmount === null
                   ? '0'
-                  : formatNumberWido(
-                      fromWei(
-                        quoteResult.fromTokenAmount,
-                        pickedToken.decimals,
-                        pickedToken.decimals,
-                        true,
-                      ) * quoteResult.fromTokenUsdPrice,
-                      BEGINNERS_BALANCES_DECIMALS,
-                    )
+                  : fromWei(
+                      quoteResult.fromTokenAmount,
+                      pickedToken.decimals,
+                      pickedToken.decimals,
+                      true,
+                    ) * quoteResult.fromTokenUsdPrice
+
               minReceiveAmount = new BigNumber(
                 fromWei(
                   quoteResult.minToTokenAmount,
@@ -258,10 +255,8 @@ const DepositBase = ({
                   false,
                 ),
               ).toString()
-              minReceiveUsd = formatNumberWido(
-                parseFloat(minReceiveAmount) * toTokenUsdPrice,
-                BEGINNERS_BALANCES_DECIMALS,
-              )
+
+              minReceiveUsd = parseFloat(minReceiveAmount) * toTokenUsdPrice
             }
             setMinReceiveAmountString(minReceiveAmount)
             setFromInfoAmount(fromInfoValue)
@@ -304,36 +299,21 @@ const DepositBase = ({
           console.error('Error content: ', e)
         }
       }
-
-      getQuoteResult()
     }
+
+    getQuoteResult()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    account,
     amount,
+    inputAmount,
+    account,
     chainId,
     curChain,
-    tokenChain,
-    pickedToken,
+    balanceList.length,
     defaultToken,
     token,
-    balanceList,
+    tokenChain,
     useIFARM,
-    web3,
-    inputAmount,
-    pricePerFullShare,
-    setFromInfoAmount,
-    setFromInfoUsdAmount,
-    setMinReceiveAmountString,
-    setMinReceiveUsdAmount,
-    setConvertMonthlyYieldUSD,
-    setConvertDailyYieldUSD,
-    getPortalsEstimate,
-    getPortalsToken,
-    failureCount,
-    setFailureCount,
-    setHasErrorOccurred,
-    supportedVault,
-    setSupportedVault,
     currencyRate,
     currencySym,
   ])
@@ -471,7 +451,7 @@ const DepositBase = ({
                 ) : fromInfoUsdAmount === '-' ? (
                   '-'
                 ) : (
-                  `≈${fromInfoUsdAmount}`
+                  `${fromInfoUsdAmount}`
                 )}
               </TokenUSDAmount>
             </TokenInput>

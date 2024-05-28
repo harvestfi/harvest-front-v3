@@ -65,7 +65,7 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { useRate } from '../../providers/Rate'
-import { displayAPY, formatNumber, formatNumberWido } from '../../utilities/formats'
+import { displayAPY, formatNumber, formatNumberWido, showUsdValue } from '../../utilities/formats'
 import { getTotalApy } from '../../utilities/parsers'
 import { getAdvancedRewardText } from '../../utilities/html'
 import { getLastHarvestInfo, initBalanceAndDetailData } from '../../utilities/apiCalls'
@@ -957,50 +957,54 @@ const AdvancedFarm = () => {
   }, [pickedTokenDepo])
 
   useEffect(() => {
-    if (defaultToken !== null) {
-      let tokenToSet = null
+    const timer = setTimeout(() => {
+      if (defaultToken !== null) {
+        let tokenToSet = null
 
-      // Check if defaultToken is present in the balanceList
-      if (defaultToken.balance !== '0' || !supportedVault || hasPortalsError) {
-        setPickedTokenDepo(defaultToken)
-        setBalanceDepo(defaultToken.balance)
-        return
-      }
+        // Check if defaultToken is present in the balanceList
+        if (defaultToken.balance !== '0' || !supportedVault || hasPortalsError) {
+          setPickedTokenDepo(defaultToken)
+          setBalanceDepo(defaultToken.balance)
+          return
+        }
 
-      // If defaultToken is not found, find the token with the highest USD value among those in the SUPPORTED_TOKEN_LIST and balanceList
-      const supportedTokens = balanceList.filter(
-        balancedToken => SUPPORTED_TOKEN_LIST[chain][balancedToken.symbol],
-      )
-      if (supportedTokens.length > 0) {
-        tokenToSet = supportedTokens.reduce((prevToken, currentToken) =>
-          prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
+        // If defaultToken is not found, find the token with the highest USD value among those in the SUPPORTED_TOKEN_LIST and balanceList
+        const supportedTokens = balanceList.filter(
+          balancedToken => SUPPORTED_TOKEN_LIST[chain][balancedToken.symbol],
         )
-      }
-
-      // If no token is found in SUPPORTED_TOKEN_LIST, set the token with the highest USD value in balanceList
-      if (!tokenToSet && balanceList.length > 0) {
-        tokenToSet = balanceList.reduce(
-          (prevToken, currentToken) =>
+        if (supportedTokens.length > 0) {
+          tokenToSet = supportedTokens.reduce((prevToken, currentToken) =>
             prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
-          balanceList[0], // Providing the first element as the initial value
-        )
-      }
+          )
+        }
 
-      // Set the pickedTokenDepo and balanceDepo based on the determined tokenToSet
-      if (tokenToSet) {
-        setPickedTokenDepo(tokenToSet)
-        setBalanceDepo(
-          fromWei(
-            tokenToSet.rawBalance ? tokenToSet.rawBalance : 0,
-            tokenToSet.decimals,
-            tokenToSet.decimals,
-          ),
-        )
+        // If no token is found in SUPPORTED_TOKEN_LIST, set the token with the highest USD value in balanceList
+        if (!tokenToSet && balanceList.length > 0) {
+          tokenToSet = balanceList.reduce(
+            (prevToken, currentToken) =>
+              prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
+            balanceList[0], // Providing the first element as the initial value
+          )
+        }
+
+        // Set the pickedTokenDepo and balanceDepo based on the determined tokenToSet
+        if (tokenToSet) {
+          setPickedTokenDepo(tokenToSet)
+          setBalanceDepo(
+            fromWei(
+              tokenToSet.rawBalance ? tokenToSet.rawBalance : 0,
+              tokenToSet.decimals,
+              tokenToSet.decimals,
+            ),
+          )
+        }
+      } else if (supTokenList.length !== 0) {
+        setPickedTokenDepo(supTokenList.find(coin => coin.symbol === 'USDC'))
+        setBalanceDepo('0')
       }
-    } else if (supTokenList.length !== 0) {
-      setPickedTokenDepo(supTokenList.find(coin => coin.symbol === 'USDC'))
-      setBalanceDepo('0')
-    }
+    }, 3000)
+
+    return () => clearTimeout(timer)
   }, [
     balanceList,
     supTokenList,
@@ -1395,15 +1399,6 @@ const AdvancedFarm = () => {
     totalRewardsEarned,
   }
 
-  const showUsdValue = value => {
-    if (value === 0) {
-      return `${currencySym}0`
-    }
-    if (value < 0.01) {
-      return `<${currencySym}0.01`
-    }
-    return `${currencySym}${(value * Number(currencyRate)).toFixed(2)}`
-  }
   return (
     <DetailView bgColor={bgColor} fontColor={fontColor}>
       <TopInner bgColorFarm={bgColorFarm}>
