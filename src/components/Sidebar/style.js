@@ -409,11 +409,12 @@ const MobileWalletBtn = styled.div`
 `
 
 const MobileAmount = styled.div`
+  display: none;
+  /* display: flex; */
   color: ${props => props.fontColor2};
   font-size: 16px;
   font-weight: 400;
   line-height: 28px;
-  display: flex;
 `
 
 const MobileAmountDiv = styled.div`
