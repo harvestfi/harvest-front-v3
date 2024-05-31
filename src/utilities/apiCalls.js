@@ -187,6 +187,72 @@ export const getPublishDate = async () => {
   return { data: combinedData, flag: combinedFlags }
 }
 
+export const getTVLSequenceId = async (address, chainId) => {
+  let vaultTVLCount,
+    vaultsFlag = true
+
+  const myHeaders = new Headers()
+  myHeaders.append('Content-Type', 'application/json')
+
+  address = address.toLowerCase()
+  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
+  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
+  const vaultAddress = address === farm ? ifarm : address
+
+  const graphql = JSON.stringify({
+      query: `{
+        vaults(
+          first: 1000,
+          orderBy: timestamp,
+          orderDirection: desc
+        ) {
+          id, tvlSequenceId
+        }
+      }`,
+      variables: {},
+    }),
+    requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: graphql,
+      redirect: 'follow',
+    }
+
+  const url =
+    chainId === CHAIN_IDS.ETH_MAINNET
+      ? GRAPH_URL_MAINNET
+      : chainId === CHAIN_IDS.POLYGON_MAINNET
+      ? GRAPH_URL_POLYGON
+      : chainId === CHAIN_IDS.BASE
+      ? GRAPH_URL_BASE
+      : GRAPH_URL_ARBITRUM
+
+  try {
+    await fetch(url, requestOptions)
+      .then(response => response.json())
+      .then(res => {
+        const vaultsData = res.data.vaults
+        for (let i = 0; i < vaultsData.length; i += 1) {
+          if (vaultAddress === vaultsData[i].id) {
+            vaultTVLCount = vaultsData[i].tvlSequenceId
+            return
+          }
+        }
+        if (vaultsData.length === 0) {
+          vaultsFlag = false
+        }
+      })
+      .catch(error => {
+        console.log('error', error)
+        vaultsFlag = false
+      })
+  } catch (err) {
+    console.log('Fetch data about price feed: ', err)
+    vaultsFlag = false
+  }
+  return { vaultTVLCount, vaultsFlag }
+}
+
 export const getVaultHistories = async (address, chainId) => {
   let vaultHData = {},
     vaultHFlag = true
@@ -259,16 +325,32 @@ export const getDataQuery = async (
   address,
   chainId,
   myWallet,
+  vaultTVLCount,
   asQuery,
   timestamp,
   chartData = {},
 ) => {
+  let sequenceIdsArray = []
+  if (vaultTVLCount > 10000) {
+    const step = Math.ceil(vaultTVLCount / 2000)
+    for (let i = 1; i <= vaultTVLCount; i += step) {
+      sequenceIdsArray.push(i)
+    }
+  } else if (vaultTVLCount > 1000) {
+    const step = Math.ceil(vaultTVLCount / 1000)
+    for (let i = 1; i <= vaultTVLCount; i += step) {
+      sequenceIdsArray.push(i)
+    }
+  } else {
+    sequenceIdsArray = []
+  }
+  const tvlSequenceId = vaultTVLCount > 1000 ? `tvlSequenceId_in: [${sequenceIdsArray}]` : ''
+
   const timestampQuery = asQuery ? `timestamp_lt: "${timestamp}"` : ''
   address = address.toLowerCase()
   const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
   const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
 
-  address = address.toLowerCase()
   if (myWallet) {
     myWallet = myWallet.toLowerCase()
   }
@@ -291,7 +373,8 @@ export const getDataQuery = async (
           first: 1000,
           where: {
             vault: "${address === farm ? ifarm : address}", 
-            ${timestampQuery}
+            ${timestampQuery},
+            ${tvlSequenceId}
           },
           orderBy: timestamp,
           orderDirection: desc
@@ -349,7 +432,7 @@ export const getDataQuery = async (
       chartData.generalApies[chartData.generalApies.length - 1].timestamp,
     )
     if (responseJson.data.tvls.length === 1000 && dataTimestamp > initTimestamp) {
-      await getDataQuery(address, chainId, myWallet, true, dataTimestamp, chartData)
+      await getDataQuery(address, chainId, myWallet, vaultTVLCount, true, dataTimestamp, chartData)
     }
   } catch (err) {
     console.log('Fetch data about subgraph: ', err)
