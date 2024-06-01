@@ -72,7 +72,7 @@ const HistoryData = ({ tokenSymbol, historyData }) => {
   )
 
   return (
-    <TransactionDetails>
+    <TransactionDetails hasData={connected && historyData?.length > 0 ? 'unset' : '80vh'}>
       <TableContent borderColor={borderColor}>
         <Header borderColor={borderColor} backColor={backColor}>
           <Column width={isMobile ? '22%' : '20%'} color={fontColor}>
