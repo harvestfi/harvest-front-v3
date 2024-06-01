@@ -4,7 +4,7 @@ import tvlActive from '../../../assets/images/logos/earn/bank.svg'
 import myBalanceActive from '../../../assets/images/logos/earn/chart-graph.svg'
 import { addresses } from '../../../data/index'
 import { useWallet } from '../../../providers/Wallet'
-import { getDataQuery, getTVLSequenceId, getTotalTVLData } from '../../../utilities/apiCalls'
+import { getDataQuery, getSequenceId, getTotalTVLData } from '../../../utilities/apiCalls'
 import { formatDate, numberWithCommas } from '../../../utilities/formats'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import ApexChart from '../ApexChart'
@@ -90,7 +90,7 @@ const FarmDetailChart = ({
     const initData = async () => {
       if (address && chainId && account) {
         try {
-          const { vaultTVLCount } = await getTVLSequenceId(address, chainId)
+          const { vaultTVLCount } = await getSequenceId(address, chainId)
           const data = await getDataQuery(address, chainId, account, vaultTVLCount, false)
           const filteredData = {
             ...data,

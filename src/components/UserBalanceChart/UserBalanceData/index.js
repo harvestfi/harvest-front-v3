@@ -5,7 +5,7 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { useRate } from '../../../providers/Rate'
 import { formatDate, numberWithCommas } from '../../../utilities/formats'
-import { getPriceFeeds, getUserBalanceHistories } from '../../../utilities/apiCalls'
+import { getPriceFeeds, getSequenceId, getUserBalanceHistories } from '../../../utilities/apiCalls'
 import {
   ButtonGroup,
   ChartDiv,
@@ -127,7 +127,15 @@ const UserBalanceData = ({
           )
           if (balanceFlag) {
             const firstTimeStamp = balanceData[balanceData.length - 1].timestamp
-            const result = await getPriceFeeds(address, chainId, firstTimeStamp, null, false)
+            const { vaultPriceFeedCount } = await getSequenceId(address, chainId)
+            const result = await getPriceFeeds(
+              address,
+              chainId,
+              vaultPriceFeedCount,
+              firstTimeStamp,
+              null,
+              false,
+            )
             priceFeedData = result.priceFeedData
             priceFeedFlag = result.priceFeedFlag
           }

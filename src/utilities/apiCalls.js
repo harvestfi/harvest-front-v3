@@ -187,8 +187,9 @@ export const getPublishDate = async () => {
   return { data: combinedData, flag: combinedFlags }
 }
 
-export const getTVLSequenceId = async (address, chainId) => {
+export const getSequenceId = async (address, chainId) => {
   let vaultTVLCount,
+    vaultPriceFeedCount,
     vaultsFlag = true
 
   const myHeaders = new Headers()
@@ -206,7 +207,7 @@ export const getTVLSequenceId = async (address, chainId) => {
           orderBy: timestamp,
           orderDirection: desc
         ) {
-          id, tvlSequenceId
+          id, tvlSequenceId, priceFeedSequenceId
         }
       }`,
       variables: {},
@@ -235,6 +236,7 @@ export const getTVLSequenceId = async (address, chainId) => {
         for (let i = 0; i < vaultsData.length; i += 1) {
           if (vaultAddress === vaultsData[i].id) {
             vaultTVLCount = vaultsData[i].tvlSequenceId
+            vaultPriceFeedCount = vaultsData[i].priceFeedSequenceId
             return
           }
         }
@@ -250,7 +252,7 @@ export const getTVLSequenceId = async (address, chainId) => {
     console.log('Fetch data about price feed: ', err)
     vaultsFlag = false
   }
-  return { vaultTVLCount, vaultsFlag }
+  return { vaultTVLCount, vaultPriceFeedCount, vaultsFlag }
 }
 
 export const getVaultHistories = async (address, chainId) => {
@@ -510,12 +512,30 @@ export const getUserBalanceHistories = async (address, chainId, account) => {
 export const getPriceFeeds = async (
   address,
   chainId,
+  vaultPriceFeedCount,
   firstTimeStamp,
   timestamp,
   asQuery,
   priceFeedData = [],
 ) => {
-  let priceFeedFlag = true
+  let priceFeedFlag = true,
+    sequenceIdsArray = []
+
+  if (vaultPriceFeedCount > 10000) {
+    const step = Math.ceil(vaultPriceFeedCount / 2000)
+    for (let i = 1; i <= vaultPriceFeedCount; i += step) {
+      sequenceIdsArray.push(i)
+    }
+  } else if (vaultPriceFeedCount > 1000) {
+    const step = Math.ceil(vaultPriceFeedCount / 1000)
+    for (let i = 1; i <= vaultPriceFeedCount; i += step) {
+      sequenceIdsArray.push(i)
+    }
+  } else {
+    sequenceIdsArray = []
+  }
+  const priceFeedSequenceId =
+    vaultPriceFeedCount > 1000 ? `priceFeedSequenceId_in: [${sequenceIdsArray}]` : ''
 
   address = address.toLowerCase()
   const timestampQuery = timestamp && asQuery ? `timestamp_lt: "${timestamp}"` : ''
@@ -529,7 +549,8 @@ export const getPriceFeeds = async (
           first: 1000,
           where: {
             vault: "${address}",
-            ${timestampQuery}
+            ${timestampQuery},
+            ${priceFeedSequenceId}
           },
           orderBy: timestamp,
           orderDirection: desc,
@@ -567,7 +588,15 @@ export const getPriceFeeds = async (
       priceFeedData.push(...responseJson.data.priceFeeds)
       const dataTimestamp = priceFeedData[priceFeedData.length - 1].timestamp
       if (Number(dataTimestamp) > Number(firstTimeStamp)) {
-        await getPriceFeeds(address, chainId, firstTimeStamp, dataTimestamp, true, priceFeedData)
+        await getPriceFeeds(
+          address,
+          chainId,
+          vaultPriceFeedCount,
+          firstTimeStamp,
+          dataTimestamp,
+          true,
+          priceFeedData,
+        )
       }
     } else {
       console.error('Error: Unable to retrieve vault histories from the response.')
