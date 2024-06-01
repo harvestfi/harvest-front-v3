@@ -54,7 +54,7 @@ import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { useRate } from '../../providers/Rate'
 import { displayAPY, formatNumber, formatNumberWido } from '../../utilities/formats'
-import { getTotalApy } from '../../utilities/parsers'
+import { getTotalApy, getVaultValue } from '../../utilities/parsers'
 import { getAdvancedRewardText } from '../../utilities/html'
 import { getLastHarvestInfo, initBalanceAndDetailData } from '../../utilities/apiCalls'
 import {
@@ -121,31 +121,6 @@ const mainTags = [
   { name: 'Farm Details', img: BarChart },
   { name: 'History', img: History },
 ]
-
-const getVaultValue = token => {
-  const poolId = get(token, 'data.id')
-
-  switch (poolId) {
-    case SPECIAL_VAULTS.FARM_WETH_POOL_ID:
-      return get(token, 'data.lpTokenData.liquidity')
-    case SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID: {
-      if (!get(token, 'data.lpTokenData.price')) {
-        return null
-      }
-
-      return new BigNumber(get(token, 'data.totalValueLocked', 0))
-    }
-    case SPECIAL_VAULTS.FARM_GRAIN_POOL_ID:
-    case SPECIAL_VAULTS.FARM_USDC_POOL_ID:
-      return get(token, 'data.totalValueLocked')
-    default:
-      return token.usdPrice
-        ? new BigNumber(token.underlyingBalanceWithInvestment.toString())
-            .times(token.usdPrice)
-            .dividedBy(new BigNumber(10).pow(token.decimals))
-        : null
-  }
-}
 
 const BeginnersFarm = () => {
   const {
