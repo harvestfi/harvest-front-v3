@@ -1689,6 +1689,7 @@ const BeginnersFarm = () => {
                     farmPrice={farmPrice}
                     underlyingPrice={underlyingPrice}
                     pricePerFullShare={pricePerFullShare}
+                    lpTokenBalance={lpTokenBalance}
                   />
                 )
               ) : activeMainTag === 1 ? (
@@ -1994,6 +1995,7 @@ const BeginnersFarm = () => {
                       farmPrice={farmPrice}
                       underlyingPrice={underlyingPrice}
                       pricePerFullShare={pricePerFullShare}
+                      lpTokenBalance={lpTokenBalance}
                     />
                   ) : (
                     <></>
