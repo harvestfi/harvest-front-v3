@@ -65,7 +65,7 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { useRate } from '../../providers/Rate'
-import { displayAPY, formatNumber, formatNumberWido } from '../../utilities/formats'
+import { displayAPY, formatNumber, formatNumberWido, showUsdValue } from '../../utilities/formats'
 import { getTotalApy, getVaultValue } from '../../utilities/parsers'
 import { getAdvancedRewardText } from '../../utilities/html'
 import { getLastHarvestInfo, initBalanceAndDetailData } from '../../utilities/apiCalls'
@@ -339,7 +339,7 @@ const AdvancedFarm = () => {
         data: farmProfitSharingPool,
         logoUrl: ['./icons/ifarm.svg'],
         tokenAddress: addresses.FARM,
-        vaultAddress: addresses.FARM,
+        vaultAddress: addresses.iFARM,
         rewardSymbol: 'iFarm',
         decimals: 18,
         tokenNames: ['FARM'],
@@ -1375,15 +1375,6 @@ const AdvancedFarm = () => {
     totalRewardsEarned,
   }
 
-  const showUsdValue = value => {
-    if (value === 0) {
-      return `${currencySym}0`
-    }
-    if (value < 0.01) {
-      return `<${currencySym}0.01`
-    }
-    return `${currencySym}${(value * Number(currencyRate)).toFixed(2)}`
-  }
   return (
     <DetailView bgColor={bgColor} fontColor={fontColor}>
       <TopInner bgColorFarm={bgColorFarm}>

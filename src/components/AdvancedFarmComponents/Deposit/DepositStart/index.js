@@ -198,8 +198,8 @@ const DepositStart = ({
       setProgressStep(1)
       setButtonName('Pending Approval in Wallet')
       if (pickedDefaultToken) {
-        const allowanceCheck = approvedBalances[tokenSymbol]
-        if (allowanceCheck < amount) {
+        const allowanceCheck = useIFARM ? approvedBalances.IFARM : approvedBalances[tokenSymbol]
+        if (!new BigNumber(allowanceCheck.toString()).gte(new BigNumber(amount.toString()))) {
           await handleApproval(
             account,
             contracts,
@@ -259,7 +259,9 @@ const DepositStart = ({
         setProgressStep(3)
         setButtonName('Pending Confirmation in Wallet')
         setStartSpinner(true)
-        // console.log(amount)
+        if (useIFARM) {
+          tokenSymbol = 'IFARM'
+        }
         isSuccess = await handleDeposit(
           token,
           account,
