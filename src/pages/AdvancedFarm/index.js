@@ -1776,7 +1776,10 @@ const AdvancedFarm = () => {
                         weight="600"
                         color={fontColor1}
                       >
-                        {showUsdValue(showLatestEarnings ? usdEarningsLatest : usdEarnings)}
+                        {showUsdValue(
+                          showLatestEarnings ? usdEarningsLatest : usdEarnings,
+                          currencySym,
+                        )}
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
@@ -1871,7 +1874,7 @@ const AdvancedFarm = () => {
                         {!connected ? (
                           `${currencySym}0.00`
                         ) : lpTokenBalance ? (
-                          showUsdValue(balanceAmount)
+                          showUsdValue(balanceAmount, currencySym)
                         ) : (
                           <AnimatedDots />
                         )}
@@ -1978,7 +1981,7 @@ const AdvancedFarm = () => {
                           ? `${currencySym}0`
                           : isNaN(yieldDaily)
                           ? `${currencySym}0`
-                          : showUsdValue(yieldDaily)}
+                          : showUsdValue(yieldDaily, currencySym)}
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
@@ -2005,7 +2008,7 @@ const AdvancedFarm = () => {
                           ? `${currencySym}0.00`
                           : isNaN(yieldMonthly)
                           ? `${currencySym}0.00`
-                          : showUsdValue(yieldMonthly)}
+                          : showUsdValue(yieldMonthly, currencySym)}
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
@@ -2058,7 +2061,7 @@ const AdvancedFarm = () => {
                         {!connected ? (
                           `${currencySym}0`
                         ) : userStats ? (
-                          showUsdValue(totalReward)
+                          showUsdValue(totalReward, currencySym)
                         ) : (
                           <AnimatedDots />
                         )}

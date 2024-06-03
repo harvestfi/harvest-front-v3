@@ -306,8 +306,6 @@ const DepositBase = ({
   }, [
     amount,
     inputAmount,
-    amount,
-    inputAmount,
     account,
     chainId,
     curChain,
@@ -316,7 +314,6 @@ const DepositBase = ({
     balanceList.length,
     defaultToken,
     token,
-    tokenChain,
     tokenChain,
     useIFARM,
   ])
