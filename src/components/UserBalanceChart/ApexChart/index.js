@@ -107,6 +107,7 @@ const ApexChart = ({
   setFixedLen,
   fixedLen,
   lastFarmingTimeStamp,
+  lpTokenBalance,
 }) => {
   const { fontColor, fontColor5 } = useThemeContext()
   const { connected } = useWallet()
@@ -144,11 +145,17 @@ const ApexChart = ({
 
   const onlyWidth = useWindowWidth()
 
-  const [loading, setLoading] = useState(false)
-  const [isDataReady, setIsDataReady] = useState(true)
+  const [isDataReady, setIsDataReady] = useState('false')
   const [roundedDecimal, setRoundedDecimal] = useState(2)
   const [roundedDecimalUnderlying, setRoundedDecimalUnderlying] = useState(2)
   const [hourUnit, setHourUnit] = useState(false)
+
+  const [minVal, setMinVal] = useState(0)
+  const [maxVal, setMaxVal] = useState(0)
+  const [minValUnderlying, setMinValUnderlying] = useState(0)
+  const [maxValUnderlying, setMaxValUnderlying] = useState(0)
+  const [yAxisTicks, setYAxisTicks] = useState([])
+  const [zAxisTicks, setZAxisTicks] = useState([])
 
   const CustomTooltip = ({ active, payload, onTooltipContentChange }) => {
     useEffect(() => {
@@ -234,21 +241,8 @@ const ApexChart = ({
     )
   }
 
-  const [minVal, setMinVal] = useState(0)
-  const [maxVal, setMaxVal] = useState(0)
-  const [minValUnderlying, setMinValUnderlying] = useState(0)
-  const [maxValUnderlying, setMaxValUnderlying] = useState(0)
-  const [yAxisTicks, setYAxisTicks] = useState([])
-  const [zAxisTicks, setZAxisTicks] = useState([])
-
   useEffect(() => {
     const init = async () => {
-      setLoading(true)
-      if (data === undefined) {
-        setIsDataReady(false)
-        return
-      }
-
       let mainData = [],
         maxValue,
         minValue,
@@ -266,9 +260,12 @@ const ApexChart = ({
         filteredData,
         filteredSlot
 
-      if ((data && data.length === 0) || !loadComplete) {
-        setIsDataReady(false)
-        return
+      if (lpTokenBalance === 0) {
+        setIsDataReady('loading')
+      } else if (lpTokenBalance === '0') {
+        setIsDataReady('false')
+      } else if (lpTokenBalance !== '0' && data.length !== 0) {
+        setIsDataReady('true')
       }
 
       if ((Object.keys(data).length === 0 && data.constructor === Object) || data.length === 0) {
@@ -470,8 +467,6 @@ const ApexChart = ({
       setZAxisTicks(zAxisAry)
 
       setMainSeries(mainData)
-
-      setLoading(false)
     }
 
     init()
@@ -480,6 +475,7 @@ const ApexChart = ({
     range,
     data,
     isDataReady,
+    lpTokenBalance,
     loadComplete,
     roundedDecimal,
     setCurContent,
@@ -490,7 +486,7 @@ const ApexChart = ({
 
   return (
     <>
-      {!loading ? (
+      {isDataReady === 'true' ? (
         <ResponsiveContainer
           width="100%"
           height={
@@ -582,15 +578,13 @@ const ApexChart = ({
         </ResponsiveContainer>
       ) : (
         <LoadingDiv>
-          {isDataReady ? (
+          {isDataReady === 'loading' ? (
             <ClipLoader size={30} margin={2} color={fontColor} />
           ) : (
             <>
               {connected ? (
                 <NoData color={fontColor}>
-                  You don&apos;t have any fTokens of this farm. <br />
-                  Or, if you just converted tokens, it might take up to 5mins for the chart to
-                  appear.
+                  No activity found for this wallet. Convert any token to start farming!
                 </NoData>
               ) : (
                 <NoData color={fontColor}>Connect wallet to see your balance chart</NoData>

@@ -2051,6 +2051,7 @@ const AdvancedFarm = () => {
                     farmPrice={farmPrice}
                     underlyingPrice={underlyingPrice}
                     pricePerFullShare={pricePerFullShare}
+                    lpTokenBalance={lpTokenBalance}
                   />
                 )
               ) : activeMainTag === 1 ? (

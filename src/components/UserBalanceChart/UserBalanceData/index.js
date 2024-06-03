@@ -34,6 +34,7 @@ const UserBalanceData = ({
   farmPrice,
   underlyingPrice,
   pricePerFullShare,
+  lpTokenBalance,
 }) => {
   const { backColor, borderColor, fontColor3 } = useThemeContext()
   const { account } = useWallet()
@@ -335,6 +336,7 @@ const UserBalanceData = ({
           setFixedLen={setFixedLen}
           fixedLen={fixedLen}
           lastFarmingTimeStamp={lastFarmingTimeStamp}
+          lpTokenBalance={lpTokenBalance}
         />
       </ChartDiv>
       <ButtonGroup>
