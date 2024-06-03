@@ -300,7 +300,7 @@ const BeginnersFarm = () => {
   const groupOfVaults = { ...vaultsData, ...poolVaults }
   const vaultsKey = Object.keys(groupOfVaults)
   const vaultIds = vaultsKey.filter(vaultId => {
-    const tokenAddress = groupOfVaults[vaultId].tokenAddress
+    const tokenAddress = groupOfVaults[vaultId].tokenAddress || groupOfVaults[vaultId].vaultAddress
 
     if (typeof tokenAddress === 'string') {
       return (
