@@ -264,6 +264,8 @@ const ApexChart = ({
         setIsDataReady('loading')
       } else if (lpTokenBalance === '0') {
         setIsDataReady('false')
+      } else if (lpTokenBalance !== '0' && data.length === 0) {
+        setIsDataReady('loading')
       } else if (lpTokenBalance !== '0' && data.length !== 0) {
         setIsDataReady('true')
       }
