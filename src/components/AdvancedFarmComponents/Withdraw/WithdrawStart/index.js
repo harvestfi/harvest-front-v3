@@ -455,7 +455,9 @@ const WithdrawStart = ({
                     revertedAmountUsd === 'NaN' || revertedAmountUsd === '' ? (
                       '-'
                     ) : revertedAmountUsd !== '' ? (
-                      `≈${currencySym}${Number(revertedAmountUsd) * Number(currencyRate)}`
+                      `≈${currencySym}${(Number(revertedAmountUsd) * Number(currencyRate)).toFixed(
+                        2,
+                      )}`
                     ) : (
                       <AnimatedDots />
                     )

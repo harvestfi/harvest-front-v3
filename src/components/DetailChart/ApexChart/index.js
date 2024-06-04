@@ -19,6 +19,7 @@ import { getTimeSlots } from '../../../utilities/parsers'
 import { MAX_DECIMALS } from '../../../constants'
 import { LoadingDiv, NoData } from './style'
 import { fromWei } from '../../../services/web3'
+import { useRate } from '../../../providers/Rate'
 
 function getRangeNumber(strRange) {
   let ago = 30
@@ -163,6 +164,17 @@ const ApexChart = ({
   const [loading, setLoading] = useState(false)
   const [isDataReady, setIsDataReady] = useState(true)
 
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
+
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const CustomTooltip = ({ active, payload, onTooltipContentChange }) => {
@@ -200,9 +212,11 @@ const ApexChart = ({
     let path = ''
 
     if (payload.value !== '') {
-      path = `${filter === 1 ? '$' : ''}${numberWithCommas(payload.value)} ${
-        filter === 0 ? '%' : ''
-      }`
+      path = `${filter === 1 ? currencySym : ''}${
+        filter === 1
+          ? numberWithCommas((Number(payload.value) * Number(currencyRate)).toFixed(0))
+          : payload.value
+      } ${filter === 0 ? '%' : ''}`
     }
     return (
       <text
@@ -452,7 +466,7 @@ const ApexChart = ({
 
       setCurDate(formatDate(mainData[slotCount - 1].x))
       const content = numberWithCommas(
-        Number(mainData[slotCount - 1].y).toFixed(
+        (Number(mainData[slotCount - 1].y) * (filter === 1 ? Number(currencyRate) : 1)).toFixed(
           filter === 1 ? 2 : filter === 0 ? fixedLen : roundNum,
         ),
       )
