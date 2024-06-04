@@ -248,23 +248,13 @@ export const getVaultHistories = async (address, chainId) => {
   return { vaultHData, vaultHFlag }
 }
 
-export const getDataQuery = async (
-  address,
-  chainId,
-  myWallet,
-  asQuery,
-  timestamp,
-  chartData = {},
-) => {
+export const getDataQuery = async (address, chainId, asQuery, timestamp, chartData = {}) => {
   const timestampQuery = asQuery ? `timestamp_lt: "${timestamp}"` : ''
   address = address.toLowerCase()
   const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
   const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
 
   address = address.toLowerCase()
-  if (myWallet) {
-    myWallet = myWallet.toLowerCase()
-  }
   const myHeaders = new Headers()
   myHeaders.append('Content-Type', 'application/json')
 
@@ -342,7 +332,7 @@ export const getDataQuery = async (
       chartData.generalApies[chartData.generalApies.length - 1].timestamp,
     )
     if (responseJson.data.tvls.length === 1000 && dataTimestamp > initTimestamp) {
-      await getDataQuery(address, chainId, myWallet, true, dataTimestamp, chartData)
+      await getDataQuery(address, chainId, true, dataTimestamp, chartData)
     }
   } catch (err) {
     console.log('Fetch data about subgraph: ', err)
