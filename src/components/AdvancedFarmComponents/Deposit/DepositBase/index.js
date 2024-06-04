@@ -269,14 +269,14 @@ const DepositBase = ({
               setFromInfoUsdAmount(`<${currencySym}0.01`)
             } else {
               setFromInfoUsdAmount(
-                `${currencySym}${(Number(fromInfoUsdValue) * Number(currencyRate)).toFixed(2)}`,
+                `≈${currencySym}${(Number(fromInfoUsdValue) * Number(currencyRate)).toFixed(2)}`,
               )
             }
             if (Number(minReceiveUsd) < 0.01) {
               setMinReceiveUsdAmount(`<${currencySym}0.01`)
             } else {
               setMinReceiveUsdAmount(
-                `${currencySym}${Number(minReceiveUsd) * Number(currencyRate)}`,
+                `≈${currencySym}${(Number(minReceiveUsd) * Number(currencyRate)).toFixed(2)}`,
               )
             }
           } else {
@@ -312,13 +312,13 @@ const DepositBase = ({
     account,
     chainId,
     curChain,
+    currencyRate,
+    currencySym,
     balanceList.length,
     defaultToken,
     token,
     tokenChain,
     useIFARM,
-    currencyRate,
-    currencySym,
   ])
 
   const onClickDeposit = async () => {

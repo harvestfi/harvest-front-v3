@@ -255,14 +255,14 @@ const WithdrawBase = ({
               setRevertFromInfoUsdAmount(`<${currencySym}0.01`)
             } else {
               setRevertFromInfoUsdAmount(
-                `${currencySym}${Number(fromInfoUsdValue) * Number(currencyRate)}`,
+                `${currencySym}${(Number(fromInfoUsdValue) * Number(currencyRate)).toFixed(2)}`,
               )
             }
             if (Number(minReceivedUsdString) < 0.01) {
               setRevertMinReceivedUsdAmount(`<${currencySym}0.01`)
             } else {
               setRevertMinReceivedUsdAmount(
-                `${currencySym}${Number(minReceivedUsdString) * Number(currencyRate)}`,
+                `${currencySym}${(Number(minReceivedUsdString) * Number(currencyRate)).toFixed(2)}`,
               )
             }
             setRevertFromInfoAmount(fromInfoValue)
