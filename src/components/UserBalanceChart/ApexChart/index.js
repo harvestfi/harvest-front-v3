@@ -260,7 +260,10 @@ const ApexChart = ({
         filteredData,
         filteredSlot
 
-      if (lpTokenBalance === 0) {
+      console.log({ lpTokenBalance, data })
+      if (!connected) {
+        setIsDataReady('false')
+      } else if (lpTokenBalance === 0) {
         setIsDataReady('loading')
       } else if (lpTokenBalance === '0') {
         setIsDataReady('false')
