@@ -3,7 +3,6 @@ import apyActive from '../../../assets/images/logos/earn/percent-circle.svg'
 import tvlActive from '../../../assets/images/logos/earn/bank.svg'
 import myBalanceActive from '../../../assets/images/logos/earn/chart-graph.svg'
 import { addresses } from '../../../data/index'
-import { useWallet } from '../../../providers/Wallet'
 import { getDataQuery, getSequenceId, getTotalTVLData } from '../../../utilities/apiCalls'
 import { formatDate, numberWithCommas } from '../../../utilities/formats'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -50,7 +49,6 @@ const FarmDetailChart = ({
   setVaultTotalPeriod,
 }) => {
   const { fontColor3, fontColor4 } = useThemeContext()
-  const { account } = useWallet()
 
   const [clickedId, setClickedId] = useState(2)
   const [selectedState, setSelectedState] = useState('1Y')
@@ -88,10 +86,10 @@ const FarmDetailChart = ({
   useEffect(() => {
     let isMounted = true
     const initData = async () => {
-      if (address && chainId && account) {
+      if (address && chainId) {
         try {
           const { vaultTVLCount } = await getSequenceId(address, chainId)
-          const data = await getDataQuery(address, chainId, account, vaultTVLCount, false)
+          const data = await getDataQuery(address, chainId, vaultTVLCount, false)
           const filteredData = {
             ...data,
             generalApies: data.generalApies.filter(entry => parseFloat(entry.apy) <= 100000),
@@ -202,7 +200,7 @@ const FarmDetailChart = ({
     return () => {
       isMounted = false
     }
-  }, [address, chainId, account, isIFARM]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [address, chainId, isIFARM]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Container>
