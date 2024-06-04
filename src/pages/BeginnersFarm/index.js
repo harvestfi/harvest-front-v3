@@ -53,8 +53,8 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { useRate } from '../../providers/Rate'
-import { displayAPY, formatNumber, formatNumberWido } from '../../utilities/formats'
-import { getTotalApy } from '../../utilities/parsers'
+import { displayAPY, formatNumber, formatNumberWido, showUsdValue } from '../../utilities/formats'
+import { getTotalApy, getVaultValue } from '../../utilities/parsers'
 import { getAdvancedRewardText } from '../../utilities/html'
 import { getLastHarvestInfo, initBalanceAndDetailData } from '../../utilities/apiCalls'
 import {
@@ -121,31 +121,6 @@ const mainTags = [
   { name: 'Farm Details', img: BarChart },
   { name: 'History', img: History },
 ]
-
-const getVaultValue = token => {
-  const poolId = get(token, 'data.id')
-
-  switch (poolId) {
-    case SPECIAL_VAULTS.FARM_WETH_POOL_ID:
-      return get(token, 'data.lpTokenData.liquidity')
-    case SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID: {
-      if (!get(token, 'data.lpTokenData.price')) {
-        return null
-      }
-
-      return new BigNumber(get(token, 'data.totalValueLocked', 0))
-    }
-    case SPECIAL_VAULTS.FARM_GRAIN_POOL_ID:
-    case SPECIAL_VAULTS.FARM_USDC_POOL_ID:
-      return get(token, 'data.totalValueLocked')
-    default:
-      return token.usdPrice
-        ? new BigNumber(token.underlyingBalanceWithInvestment.toString())
-            .times(token.usdPrice)
-            .dividedBy(new BigNumber(10).pow(token.decimals))
-        : null
-  }
-}
 
 const BeginnersFarm = () => {
   const {
@@ -314,7 +289,7 @@ const BeginnersFarm = () => {
   const groupOfVaults = { ...vaultsData, ...poolVaults }
   const vaultsKey = Object.keys(groupOfVaults)
   const vaultIds = vaultsKey.filter(vaultId => {
-    const tokenAddress = groupOfVaults[vaultId].tokenAddress
+    const tokenAddress = groupOfVaults[vaultId].tokenAddress || groupOfVaults[vaultId].vaultAddress
 
     if (typeof tokenAddress === 'string') {
       return (
@@ -771,52 +746,56 @@ const BeginnersFarm = () => {
   }, [supTokenList])
 
   useEffect(() => {
-    if (defaultToken !== null) {
-      let tokenToSet = null
+    const timer = setTimeout(() => {
+      if (defaultToken !== null) {
+        let tokenToSet = null
 
-      // Check if defaultToken is present in the balanceList
-      if (defaultToken.balance !== '0' || !supportedVault || hasPortalsError) {
-        setPickedTokenDepo(defaultToken)
-        setBalanceDepo(defaultToken.balance)
-        return
-      }
+        // Check if defaultToken is present in the balanceList
+        if (defaultToken.balance !== '0' || !supportedVault || hasPortalsError) {
+          setPickedTokenDepo(defaultToken)
+          setBalanceDepo(defaultToken.balance)
+          return
+        }
 
-      // If defaultToken is not found, find the token with the highest USD value among those in the SUPPORTED_TOKEN_LIST and balanceList
-      const supportedTokens = balanceList.filter(
-        balancedToken => SUPPORTED_TOKEN_LIST[chain][balancedToken.symbol],
-      )
-      if (supportedTokens.length > 0) {
-        tokenToSet = supportedTokens.reduce((prevToken, currentToken) =>
-          prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
+        // If defaultToken is not found, find the token with the highest USD value among those in the SUPPORTED_TOKEN_LIST and balanceList
+        const supportedTokens = balanceList.filter(
+          balancedToken => SUPPORTED_TOKEN_LIST[chain][balancedToken.symbol],
         )
-      }
-
-      // If no token is found in SUPPORTED_TOKEN_LIST, set the token with the highest USD value in balanceList
-      if (!tokenToSet) {
-        if (balanceList.length > 0) {
-          tokenToSet = balanceList.reduce((prevToken, currentToken) =>
+        if (supportedTokens.length > 0) {
+          tokenToSet = supportedTokens.reduce((prevToken, currentToken) =>
             prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
           )
-        } else {
-          tokenToSet = defaultToken
         }
-      }
 
-      // Set the pickedTokenDepo and balanceDepo based on the determined tokenToSet
-      if (tokenToSet) {
-        setPickedTokenDepo(tokenToSet)
-        setBalanceDepo(
-          fromWei(
-            tokenToSet.rawBalance ? tokenToSet.rawBalance : 0,
-            tokenToSet.decimals,
-            tokenToSet.decimals,
-          ),
-        )
+        // If no token is found in SUPPORTED_TOKEN_LIST, set the token with the highest USD value in balanceList
+        if (!tokenToSet) {
+          if (balanceList.length > 0) {
+            tokenToSet = balanceList.reduce((prevToken, currentToken) =>
+              prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
+            )
+          } else {
+            tokenToSet = defaultToken
+          }
+        }
+
+        // Set the pickedTokenDepo and balanceDepo based on the determined tokenToSet
+        if (tokenToSet) {
+          setPickedTokenDepo(tokenToSet)
+          setBalanceDepo(
+            fromWei(
+              tokenToSet.rawBalance ? tokenToSet.rawBalance : 0,
+              tokenToSet.decimals,
+              tokenToSet.decimals,
+            ),
+          )
+        }
+      } else if (supTokenList.length !== 0) {
+        setPickedTokenDepo(supTokenList.find(coin => coin.symbol === 'USDC'))
+        setBalanceDepo('0')
       }
-    } else if (supTokenList.length !== 0) {
-      setPickedTokenDepo(supTokenList.find(coin => coin.symbol === 'USDC'))
-      setBalanceDepo('0')
-    }
+    }, 3000)
+
+    return () => clearTimeout(timer)
   }, [
     balanceList,
     supTokenList,
@@ -1078,16 +1057,6 @@ const BeginnersFarm = () => {
   const harvestTreasury =
     chain === CHAIN_IDS.ETH_MAINNET ? '5' : chain === CHAIN_IDS.POLYGON_MAINNET ? '3' : '3'
 
-  const showUsdValue = value => {
-    if (value === 0) {
-      return `${currencySym}0`
-    }
-    if (value < 0.01) {
-      return `<${currencySym}0.01`
-    }
-    return `${currencySym}${(value * Number(currencyRate)).toFixed(2)}`
-  }
-
   return (
     <DetailView bgColor={bgColor} fontColor={fontColor}>
       <TopInner>
@@ -1212,7 +1181,7 @@ const BeginnersFarm = () => {
                             <br />
                             If you need any help, see our{' '}
                             <a
-                              href={SOCIAL_LINKS.MediumTutorial}
+                              href={SOCIAL_LINKS.Tutorial}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
@@ -1230,7 +1199,7 @@ const BeginnersFarm = () => {
                             <br />
                             <a
                               className="badge-body"
-                              href={SOCIAL_LINKS.MediumTutorial}
+                              href={SOCIAL_LINKS.Tutorial}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
@@ -1284,7 +1253,7 @@ const BeginnersFarm = () => {
                             <br />
                             If you need any help, see our{' '}
                             <a
-                              href={SOCIAL_LINKS.MediumTutorial}
+                              href={SOCIAL_LINKS.Tutorial}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
@@ -1302,7 +1271,7 @@ const BeginnersFarm = () => {
                             <br />
                             <a
                               className="badge-body"
-                              href={SOCIAL_LINKS.MediumTutorial}
+                              href={SOCIAL_LINKS.Tutorial}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
@@ -1446,7 +1415,10 @@ const BeginnersFarm = () => {
                         weight="600"
                         color={fontColor1}
                       >
-                        {showUsdValue(showLatestEarnings ? usdEarningsLatest : usdEarnings)}
+                        {showUsdValue(
+                          showLatestEarnings ? usdEarningsLatest : usdEarnings,
+                          currencySym,
+                        )}
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
@@ -1541,7 +1513,7 @@ const BeginnersFarm = () => {
                         {!connected ? (
                           `${currencySym}0.00`
                         ) : lpTokenBalance ? (
-                          showUsdValue(balanceAmount)
+                          showUsdValue(balanceAmount, currencySym)
                         ) : (
                           <AnimatedDots />
                         )}
@@ -1648,7 +1620,7 @@ const BeginnersFarm = () => {
                           ? `${currencySym}0`
                           : isNaN(yieldDaily)
                           ? `${currencySym}0`
-                          : showUsdValue(yieldDaily)}
+                          : showUsdValue(yieldDaily, currencySym)}
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
@@ -1675,7 +1647,7 @@ const BeginnersFarm = () => {
                           ? `${currencySym}0.00`
                           : isNaN(yieldMonthly)
                           ? `${currencySym}0.00`
-                          : showUsdValue(yieldMonthly)}
+                          : showUsdValue(yieldMonthly, currencySym)}
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
@@ -1710,6 +1682,7 @@ const BeginnersFarm = () => {
                     farmPrice={farmPrice}
                     underlyingPrice={underlyingPrice}
                     pricePerFullShare={pricePerFullShare}
+                    lpTokenBalance={lpTokenBalance}
                   />
                 )
               ) : activeMainTag === 1 ? (
@@ -2015,6 +1988,7 @@ const BeginnersFarm = () => {
                       farmPrice={farmPrice}
                       underlyingPrice={underlyingPrice}
                       pricePerFullShare={pricePerFullShare}
+                      lpTokenBalance={lpTokenBalance}
                     />
                   ) : (
                     <></>
