@@ -113,7 +113,7 @@ const ActionRow = ({ info, tokenSymbol, showTotalBalance }) => {
                   size={14}
                   height={20}
                   color="#5FCF76"
-                  value={`${info.netChangeUsd === '<$0.01' ? '' : '≈'}${info.netChangeUsd}`}
+                  value={`${info.netChangeUsd}`}
                 />
                 <ListItem
                   weight={400}
