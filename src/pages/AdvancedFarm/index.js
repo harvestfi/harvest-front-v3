@@ -1252,6 +1252,7 @@ const AdvancedFarm = () => {
 
     initData()
   }, [
+    token,
     account,
     vaultPool,
     tokenDecimals,
