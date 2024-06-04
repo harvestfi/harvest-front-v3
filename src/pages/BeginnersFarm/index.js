@@ -1174,7 +1174,7 @@ const BeginnersFarm = () => {
                       <WelcomeContent fontColor={fontColor}>
                         {showBadge ? (
                           <WelcomeText>
-                            Earn $10 in FARM by converting at least $5 worth of ETH or USDC into the
+                            Earn $10 in FARM by converting at least $5 worth of USDC into the
                             interest-bearing fToken of this farm. Quest participants also need to
                             hold that fToken for at least 72 hours to be eligible for the reward.
                             <br />
@@ -1246,7 +1246,7 @@ const BeginnersFarm = () => {
                         </WelcomeTitle>
                         {showBadge ? (
                           <WelcomeText showBadge={showBadge} fontColor={fontColor}>
-                            Earn $10 in FARM by converting at least $5 worth of ETH or USDC into the
+                            Earn $10 in FARM by converting at least $5 worth of USDC into the
                             interest-bearing fToken of this farm. Quest participants also need to
                             hold that fToken for at least 72 hours to be eligible for the reward.
                             <br />
