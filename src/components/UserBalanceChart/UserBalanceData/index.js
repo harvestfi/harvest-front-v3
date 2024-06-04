@@ -5,7 +5,7 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { useRate } from '../../../providers/Rate'
 import { formatDate, numberWithCommas } from '../../../utilities/formats'
-import { getPriceFeeds, getUserBalanceHistories } from '../../../utilities/apiCalls'
+import { getPriceFeeds, getSequenceId, getUserBalanceHistories } from '../../../utilities/apiCalls'
 import {
   ButtonGroup,
   ChartDiv,
@@ -34,6 +34,7 @@ const UserBalanceData = ({
   farmPrice,
   underlyingPrice,
   pricePerFullShare,
+  lpTokenBalance,
 }) => {
   const { backColor, borderColor, fontColor3 } = useThemeContext()
   const { account } = useWallet()
@@ -76,13 +77,16 @@ const UserBalanceData = ({
   const handleTooltipContent = payload => {
     if (payload && payload.length) {
       const currentDate = formatDate(payload[0].payload.x)
-      const balance = numberWithCommas(Number(payload[0].payload.y).toFixed(fixedLen))
       if (Number(payload[0].payload.y === 0)) {
         setCurContent(`${currencySym}0`)
       } else if (Number(payload[0].payload.y < 0.01)) {
         setCurContent(`<${currencySym}0.01`)
       } else {
-        setCurContent(`${currencySym}${(Number(balance) * Number(currencyRate)).toFixed(4)}`)
+        setCurContent(
+          `${currencySym}${numberWithCommas(
+            (Number(payload[0].payload.y) * Number(currencyRate)).toFixed(fixedLen),
+          )}`,
+        )
       }
       const balanceUnderlying = numberWithCommas(Number(payload[0].payload.z))
 
@@ -124,7 +128,15 @@ const UserBalanceData = ({
           )
           if (balanceFlag) {
             const firstTimeStamp = balanceData[balanceData.length - 1].timestamp
-            const result = await getPriceFeeds(address, chainId, firstTimeStamp, null, false)
+            const { vaultPriceFeedCount } = await getSequenceId(address, chainId)
+            const result = await getPriceFeeds(
+              address,
+              chainId,
+              vaultPriceFeedCount,
+              firstTimeStamp,
+              null,
+              false,
+            )
             priceFeedData = result.priceFeedData
             priceFeedFlag = result.priceFeedFlag
           }
@@ -324,6 +336,7 @@ const UserBalanceData = ({
           setFixedLen={setFixedLen}
           fixedLen={fixedLen}
           lastFarmingTimeStamp={lastFarmingTimeStamp}
+          lpTokenBalance={lpTokenBalance}
         />
       </ChartDiv>
       <ButtonGroup>

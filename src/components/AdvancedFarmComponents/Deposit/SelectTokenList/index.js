@@ -225,7 +225,9 @@ const SelectTokenList = ({
                       <>{defaultCurToken.balance ? Number(defaultCurToken.balance) : '0.00'}</>
                       <TextSpan fontColor2={fontColor2}>
                         {defaultCurToken.usdValue
-                          ? `${currencySym}${defaultCurToken.usdValue * Number(currencyRate)}`
+                          ? `${currencySym}${
+                              Number(defaultCurToken.usdValue) * Number(currencyRate)
+                            }`
                           : `${currencySym}0.00`}
                       </TextSpan>
                     </RightText>
@@ -258,7 +260,7 @@ const SelectTokenList = ({
                       <>{data.balance ? Number(data.balance) : '0.00'}</>
                       <TextSpan fontColor2={fontColor2}>
                         {data.usdValue
-                          ? `${currencySym}${data.usdValue * Number(currencyRate)}`
+                          ? `${currencySym}${Number(data.usdValue) * Number(currencyRate)}`
                           : `${currencySym}0.00`}
                       </TextSpan>
                     </RightText>

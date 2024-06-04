@@ -54,7 +54,7 @@ import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { useRate } from '../../providers/Rate'
 import { displayAPY, formatNumber, formatNumberWido, showUsdValue } from '../../utilities/formats'
-import { getTotalApy } from '../../utilities/parsers'
+import { getTotalApy, getVaultValue } from '../../utilities/parsers'
 import { getAdvancedRewardText } from '../../utilities/html'
 import { getLastHarvestInfo, initBalanceAndDetailData } from '../../utilities/apiCalls'
 import {
@@ -121,31 +121,6 @@ const mainTags = [
   { name: 'Farm Details', img: BarChart },
   { name: 'History', img: History },
 ]
-
-const getVaultValue = token => {
-  const poolId = get(token, 'data.id')
-
-  switch (poolId) {
-    case SPECIAL_VAULTS.FARM_WETH_POOL_ID:
-      return get(token, 'data.lpTokenData.liquidity')
-    case SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID: {
-      if (!get(token, 'data.lpTokenData.price')) {
-        return null
-      }
-
-      return new BigNumber(get(token, 'data.totalValueLocked', 0))
-    }
-    case SPECIAL_VAULTS.FARM_GRAIN_POOL_ID:
-    case SPECIAL_VAULTS.FARM_USDC_POOL_ID:
-      return get(token, 'data.totalValueLocked')
-    default:
-      return token.usdPrice
-        ? new BigNumber(token.underlyingBalanceWithInvestment.toString())
-            .times(token.usdPrice)
-            .dividedBy(new BigNumber(10).pow(token.decimals))
-        : null
-  }
-}
 
 const BeginnersFarm = () => {
   const {
@@ -1440,7 +1415,10 @@ const BeginnersFarm = () => {
                         weight="600"
                         color={fontColor1}
                       >
-                        {showUsdValue(showLatestEarnings ? usdEarningsLatest : usdEarnings)}
+                        {showUsdValue(
+                          showLatestEarnings ? usdEarningsLatest : usdEarnings,
+                          currencySym,
+                        )}
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
@@ -1535,7 +1513,7 @@ const BeginnersFarm = () => {
                         {!connected ? (
                           `${currencySym}0.00`
                         ) : lpTokenBalance ? (
-                          showUsdValue(balanceAmount)
+                          showUsdValue(balanceAmount, currencySym)
                         ) : (
                           <AnimatedDots />
                         )}
@@ -1642,7 +1620,7 @@ const BeginnersFarm = () => {
                           ? `${currencySym}0`
                           : isNaN(yieldDaily)
                           ? `${currencySym}0`
-                          : showUsdValue(yieldDaily)}
+                          : showUsdValue(yieldDaily, currencySym)}
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
@@ -1669,7 +1647,7 @@ const BeginnersFarm = () => {
                           ? `${currencySym}0.00`
                           : isNaN(yieldMonthly)
                           ? `${currencySym}0.00`
-                          : showUsdValue(yieldMonthly)}
+                          : showUsdValue(yieldMonthly, currencySym)}
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
@@ -1704,6 +1682,7 @@ const BeginnersFarm = () => {
                     farmPrice={farmPrice}
                     underlyingPrice={underlyingPrice}
                     pricePerFullShare={pricePerFullShare}
+                    lpTokenBalance={lpTokenBalance}
                   />
                 )
               ) : activeMainTag === 1 ? (
@@ -2009,6 +1988,7 @@ const BeginnersFarm = () => {
                       farmPrice={farmPrice}
                       underlyingPrice={underlyingPrice}
                       pricePerFullShare={pricePerFullShare}
+                      lpTokenBalance={lpTokenBalance}
                     />
                   ) : (
                     <></>

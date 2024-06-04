@@ -6,7 +6,7 @@ const TransactionDetails = styled.div`
   transition: 0.25s;
 
   @media screen and (max-width: 992px) {
-    height: 80vh;
+    height: ${props => props.hasData};
   }
 `
 

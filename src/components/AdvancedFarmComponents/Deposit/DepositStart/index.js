@@ -107,6 +107,14 @@ const DepositStart = ({
 
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
 
   useEffect(() => {
     if (rates.rateData) {
@@ -163,11 +171,11 @@ const DepositStart = ({
       : ''
     const receiveUsdString = portalData ? portalData.context?.outputAmountUsd : ''
     if (Number(receiveUsdString) === 0) {
-      setReceiveUsd('$0')
+      setReceiveUsd(`${currencySym}0`)
     } else if (Number(receiveUsdString) < 0.01) {
-      setReceiveUsd('<$0.01')
+      setReceiveUsd(`<${currencySym}0.01`)
     } else {
-      setReceiveUsd(`≈$${Number(receiveUsdString).toFixed(2)}`)
+      setReceiveUsd(`≈${currencySym}${receiveUsdString.toFixed(2) * Number(currencyRate)}`)
     }
     setReceiveAmount(receiveString)
 
