@@ -629,6 +629,7 @@ export const initBalanceAndDetailData = async (
   tokenDecimals,
   underlyingPrice,
   currencySym = '$',
+  currencyRate = 1,
 ) => {
   const timestamps = []
   const uniqueVaultHData = []
@@ -826,7 +827,7 @@ export const initBalanceAndDetailData = async (
       }
       return sumValue
     }, 0)
-    sumNetChangeUsd = Number(sumNetChange) * underlyingPrice
+    sumNetChangeUsd = Number(sumNetChange) * underlyingPrice * Number(currencyRate)
 
     enrichedData.forEach(item => {
       if (!lastUserEvent) {
@@ -837,7 +838,7 @@ export const initBalanceAndDetailData = async (
         }
       }
     })
-    sumLatestNetChangeUsd = Number(sumLatestNetChange) * underlyingPrice
+    sumLatestNetChangeUsd = Number(sumLatestNetChange) * underlyingPrice * Number(currencyRate)
   }
 
   return {
