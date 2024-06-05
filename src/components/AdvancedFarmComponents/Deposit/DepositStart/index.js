@@ -175,7 +175,9 @@ const DepositStart = ({
     } else if (Number(receiveUsdString) < 0.01) {
       setReceiveUsd(`<${currencySym}0.01`)
     } else {
-      setReceiveUsd(`≈${currencySym}${receiveUsdString.toFixed(2) * Number(currencyRate)}`)
+      setReceiveUsd(
+        `≈${currencySym}${(Number(receiveUsdString) * Number(currencyRate)).toFixed(2)}`,
+      )
     }
     setReceiveAmount(receiveString)
 

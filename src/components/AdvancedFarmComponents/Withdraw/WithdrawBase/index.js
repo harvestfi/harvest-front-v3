@@ -303,6 +303,8 @@ const WithdrawBase = ({
     setRevertMinReceivedAmount,
     getPortalsEstimate,
     getPortalsToken,
+    currencySym,
+    currencyRate,
   ])
 
   useEffect(() => {
