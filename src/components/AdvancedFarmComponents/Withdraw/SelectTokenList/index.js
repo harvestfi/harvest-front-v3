@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { fromWei } from '../../../../services/web3'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { formatNumberWido } from '../../../../utilities/formats'
-import { WIDO_EXTEND_DECIMALS, WIDO_BALANCES_DECIMALS } from '../../../../constants'
+import { WIDO_EXTEND_DECIMALS } from '../../../../constants'
 import {
   Container,
   Text,
@@ -216,7 +216,9 @@ const SelectTokenList = ({
                       <>{defaultCurToken.balance ? defaultCurToken.balance : '0.00'}</>
                       <TextSpan fontColor2={fontColor2}>
                         {defaultCurToken.usdValue
-                          ? `${currencySym}${defaultCurToken.usdValue * Number(currencyRate)}`
+                          ? `${currencySym}${(
+                              defaultCurToken.usdValue * Number(currencyRate)
+                            ).toFixed(2)}`
                           : `${currencySym}0.00`}
                       </TextSpan>
                     </RightText>
@@ -257,7 +259,7 @@ const SelectTokenList = ({
                         {data.usdValue
                           ? `${currencySym}${formatNumberWido(
                               data.usdValue * Number(currencyRate),
-                              WIDO_BALANCES_DECIMALS,
+                              2,
                             )}`
                           : `${currencySym}0.00`}
                       </TextSpan>

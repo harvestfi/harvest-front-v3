@@ -400,7 +400,7 @@ const BeginnersFarm = () => {
       lpTokenBalance &&
       fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, MAX_BALANCES_DECIMALS, true)
     const total = Number(staked) + Number(unstaked)
-    const amountBalanceUSD = total * usdPrice
+    const amountBalanceUSD = total * usdPrice * Number(currencyRate)
     setTotalValue(total)
     setBalanceAmount(amountBalanceUSD)
 
@@ -423,23 +423,33 @@ const BeginnersFarm = () => {
     const swapFeeAPRMonthly = swapFeeAPRYearly / 12
 
     const dailyYield =
-      Number(staked) * usdPrice * (vaultAPRDaily + poolAPRDaily + swapFeeAPRDaily) +
-      Number(unstaked) * usdPrice * (vaultAPRDaily + swapFeeAPRDaily)
+      (Number(staked) * usdPrice * (vaultAPRDaily + poolAPRDaily + swapFeeAPRDaily) +
+        Number(unstaked) * usdPrice * (vaultAPRDaily + swapFeeAPRDaily)) *
+      Number(currencyRate)
     const monthlyYield =
-      Number(staked) * usdPrice * (vaultAPRMonthly + poolAPRMonthly + swapFeeAPRMonthly) +
-      Number(unstaked) * usdPrice * (vaultAPRMonthly + swapFeeAPRMonthly)
+      (Number(staked) * usdPrice * (vaultAPRMonthly + poolAPRMonthly + swapFeeAPRMonthly) +
+        Number(unstaked) * usdPrice * (vaultAPRMonthly + swapFeeAPRMonthly)) *
+      Number(currencyRate)
     setYieldDaily(dailyYield)
     setYieldMonthly(monthlyYield)
-  }, [fAssetPool, tokenVault, usdPrice, lpTokenBalance, totalStaked])
+  }, [fAssetPool, tokenVault, usdPrice, lpTokenBalance, totalStaked, currencyRate])
 
   useEffect(() => {
     const convertMonthlyYieldValue =
-      (Number(minReceiveAmountString) * Number(usdPrice) * (Number(totalApy) / 100)) / 12
+      (Number(minReceiveAmountString) *
+        Number(usdPrice) *
+        Number(currencyRate) *
+        (Number(totalApy) / 100)) /
+      12
     const convertDailyYieldYieldValue =
-      (Number(minReceiveAmountString) * Number(usdPrice) * (Number(totalApy) / 100)) / 365
+      (Number(minReceiveAmountString) *
+        Number(usdPrice) *
+        Number(currencyRate) *
+        (Number(totalApy) / 100)) /
+      365
     setConvertMonthlyYieldUSD(convertMonthlyYieldValue.toString())
     setConvertDailyYieldUSD(convertDailyYieldYieldValue.toString())
-  }, [minReceiveAmountString, usdPrice, totalApy])
+  }, [minReceiveAmountString, usdPrice, totalApy, currencyRate])
 
   useEffect(() => {
     const getTokenBalance = async () => {

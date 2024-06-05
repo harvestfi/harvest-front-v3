@@ -494,6 +494,7 @@ const ApexChart = ({
     setCurContent,
     setCurDate,
     token.decimals,
+    currencyRate,
   ])
 
   return (
