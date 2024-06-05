@@ -229,6 +229,7 @@ const BeginnersFarm = () => {
   const [lifetimeApy, setLifetimeApy] = useState('')
   const [vaultBirthday, setVaultBirthday] = useState('')
   const [vaultTotalPeriod, setVaultTotalPeriod] = useState('')
+  const [latestSharePrice, setLatestSharePrice] = useState('')
 
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
@@ -1705,6 +1706,7 @@ const BeginnersFarm = () => {
                       setLifetimeApy={setLifetimeApy}
                       setVaultBirthday={setVaultBirthday}
                       setVaultTotalPeriod={setVaultTotalPeriod}
+                      setLatestSharePrice={setLatestSharePrice}
                     />
                   </HalfInfo>
                   {!isMobile && (
@@ -2010,7 +2012,6 @@ const BeginnersFarm = () => {
                     <FlexDiv
                       justifyContent="space-between"
                       padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom="1px solid #F3F6FF"
                     >
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}
@@ -2028,6 +2029,28 @@ const BeginnersFarm = () => {
                       >
                         {vaultBirthday}{' '}
                         <span className="total-days">({vaultTotalPeriod} days)</span>
+                      </NewLabel>
+                    </FlexDiv>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
+                      borderBottom="1px solid #F3F6FF"
+                    >
+                      <NewLabel
+                        size={isMobile ? '12px' : '14px'}
+                        weight="500"
+                        height={isMobile ? '24px' : '24px'}
+                        color={fontColor3}
+                      >
+                        SharePrice
+                      </NewLabel>
+                      <NewLabel
+                        size={isMobile ? '12px' : '14px'}
+                        weight="600"
+                        height={isMobile ? '24px' : '24px'}
+                        color={fontColor1}
+                      >
+                        {latestSharePrice === '' ? <AnimatedDots /> : latestSharePrice}
                       </NewLabel>
                     </FlexDiv>
                     <NewLabel
