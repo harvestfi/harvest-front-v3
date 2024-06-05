@@ -584,7 +584,7 @@ const AdvancedFarm = () => {
         ),
       )
       total = staked
-      amountBalanceUSD = total * usdPrice
+      amountBalanceUSD = total * usdPrice * Number(currencyRate)
     } else {
       staked =
         totalStaked && fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)
@@ -594,7 +594,7 @@ const AdvancedFarm = () => {
         fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)
 
       total = Number(staked) + Number(unstaked)
-      amountBalanceUSD = total * usdPrice
+      amountBalanceUSD = total * usdPrice * Number(currencyRate)
     }
     setStakedAmount(Number(staked))
     setUnstakedAmount(Number(unstaked))
@@ -619,26 +619,30 @@ const AdvancedFarm = () => {
     const swapFeeAPRMonthly = swapFeeAPRYearly / 12
 
     const dailyYield =
-      Number(staked) * usdPrice * (vaultAPRDaily + poolAPRDaily + swapFeeAPRDaily) +
-      Number(unstaked) * usdPrice * (vaultAPRDaily + swapFeeAPRDaily)
+      (Number(staked) * usdPrice * (vaultAPRDaily + poolAPRDaily + swapFeeAPRDaily) +
+        Number(unstaked) * usdPrice * (vaultAPRDaily + swapFeeAPRDaily)) *
+      Number(currencyRate)
     const monthlyYield =
-      Number(staked) * usdPrice * (vaultAPRMonthly + poolAPRMonthly + swapFeeAPRMonthly) +
-      Number(unstaked) * usdPrice * (vaultAPRMonthly + swapFeeAPRMonthly)
+      (Number(staked) * usdPrice * (vaultAPRMonthly + poolAPRMonthly + swapFeeAPRMonthly) +
+        Number(unstaked) * usdPrice * (vaultAPRMonthly + swapFeeAPRMonthly)) *
+      Number(currencyRate)
     setYieldDaily(dailyYield)
     setYieldMonthly(monthlyYield)
 
     const convertMonthlyYieldValue =
       Number(minReceiveAmountString) *
       Number(usdPrice) *
+      Number(currencyRate) *
       (vaultAPRMonthly + poolAPRMonthly + swapFeeAPRMonthly)
     const convertDailyYieldYieldValue =
       Number(minReceiveAmountString) *
       Number(usdPrice) *
+      Number(currencyRate) *
       (vaultAPRDaily + poolAPRDaily + swapFeeAPRDaily)
     setConvertMonthlyYieldUSD(convertMonthlyYieldValue.toString())
     setConvertDailyYieldUSD(convertDailyYieldYieldValue.toString())
     // eslint-disable-next-line
-  }, [fAssetPool, tokenVault, usdPrice, lpTokenBalance, totalStaked, minReceiveAmountString])
+  }, [fAssetPool, tokenVault, usdPrice, lpTokenBalance, totalStaked, minReceiveAmountString, currencyRate])
 
   useEffect(() => {
     const getTokenBalance = async () => {
