@@ -557,7 +557,7 @@ const AdvancedFarm = () => {
     }
 
     fetchData()
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token])
 
   useEffect(() => {
@@ -641,8 +641,16 @@ const AdvancedFarm = () => {
       (vaultAPRDaily + poolAPRDaily + swapFeeAPRDaily)
     setConvertMonthlyYieldUSD(convertMonthlyYieldValue.toString())
     setConvertDailyYieldUSD(convertDailyYieldYieldValue.toString())
-    // eslint-disable-next-line
-  }, [fAssetPool, tokenVault, usdPrice, lpTokenBalance, totalStaked, minReceiveAmountString, currencyRate])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    fAssetPool,
+    tokenVault,
+    usdPrice,
+    lpTokenBalance,
+    totalStaked,
+    minReceiveAmountString,
+    currencyRate,
+  ])
 
   useEffect(() => {
     const getTokenBalance = async () => {
@@ -1090,7 +1098,7 @@ const AdvancedFarm = () => {
     }
 
     fetchTokenPrices()
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiData, pricePerFullShare, rewardTokenSymbols])
 
   useEffect(() => {
@@ -1120,12 +1128,20 @@ const AdvancedFarm = () => {
 
         totalRewardSum += totalRewardUsd
       }
-      setTotalReward(totalRewardSum)
+      setTotalReward(totalRewardSum * currencyRate)
     }
 
     calculateTotalReward()
-    // eslint-disable-next-line
-  }, [account, userStats, fAssetPool, rewardsEarned, totalRewardsEarned, rewardTokenSymbols])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    account,
+    userStats,
+    fAssetPool,
+    rewardsEarned,
+    totalRewardsEarned,
+    rewardTokenSymbols,
+    currencyRate,
+  ])
 
   useEffectWithPrevious(
     ([prevAccount, prevUserStats, prevBalances]) => {
