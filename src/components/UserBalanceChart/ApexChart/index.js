@@ -108,6 +108,7 @@ const ApexChart = ({
   fixedLen,
   lastFarmingTimeStamp,
   lpTokenBalance,
+  totalValue,
 }) => {
   const { fontColor, fontColor5 } = useThemeContext()
   const { connected } = useWallet()
@@ -264,11 +265,13 @@ const ApexChart = ({
         setIsDataReady('false')
       } else if (lpTokenBalance === 0) {
         setIsDataReady('loading')
-      } else if (lpTokenBalance === '0') {
-        setIsDataReady('false')
-      } else if (lpTokenBalance !== '0' && data.length === 0) {
+      } else if (lpTokenBalance === '0' && totalValue !== 0 && data.length === 0) {
         setIsDataReady('loading')
-      } else if (lpTokenBalance !== '0' && data.length !== 0) {
+      } else if (lpTokenBalance === '0' && totalValue === 0) {
+        setIsDataReady('false')
+      } else if (totalValue !== '0' && data.length === 0) {
+        setIsDataReady('loading')
+      } else if (totalValue !== '0' && data.length !== 0) {
         setIsDataReady('true')
       }
 
@@ -476,10 +479,12 @@ const ApexChart = ({
     init()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    connected,
     range,
     data,
     isDataReady,
     lpTokenBalance,
+    totalValue,
     loadComplete,
     roundedDecimal,
     setCurContent,
