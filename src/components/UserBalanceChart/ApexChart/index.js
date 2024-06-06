@@ -15,6 +15,7 @@ import { ceil10, floor10, round10, numberWithCommas, formatDate } from '../../..
 import { getTimeSlots } from '../../../utilities/parsers'
 import { LoadingDiv, NoData, FakeChartWrapper } from './style'
 import { useWallet } from '../../../providers/Wallet'
+import { useRate } from '../../../providers/Rate'
 
 function getRangeNumber(strRange) {
   let ago = 30
@@ -106,11 +107,23 @@ const ApexChart = ({
   setFixedLen,
   fixedLen,
   lastFarmingTimeStamp,
+  lpTokenBalance,
+  totalValue,
 }) => {
   const { fontColor, fontColor5 } = useThemeContext()
   const { connected } = useWallet()
 
   const [mainSeries, setMainSeries] = useState([])
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
 
   const fakeChartData = [
     { x: 1691637444000, y: 5, z: 1.5 },
@@ -133,11 +146,17 @@ const ApexChart = ({
 
   const onlyWidth = useWindowWidth()
 
-  const [loading, setLoading] = useState(false)
-  const [isDataReady, setIsDataReady] = useState(true)
+  const [isDataReady, setIsDataReady] = useState('false')
   const [roundedDecimal, setRoundedDecimal] = useState(2)
   const [roundedDecimalUnderlying, setRoundedDecimalUnderlying] = useState(2)
   const [hourUnit, setHourUnit] = useState(false)
+
+  const [minVal, setMinVal] = useState(0)
+  const [maxVal, setMaxVal] = useState(0)
+  const [minValUnderlying, setMinValUnderlying] = useState(0)
+  const [maxValUnderlying, setMaxValUnderlying] = useState(0)
+  const [yAxisTicks, setYAxisTicks] = useState([])
+  const [zAxisTicks, setZAxisTicks] = useState([])
 
   const CustomTooltip = ({ active, payload, onTooltipContentChange }) => {
     useEffect(() => {
@@ -174,7 +193,9 @@ const ApexChart = ({
     let path = ''
 
     if (payload.value !== '') {
-      path = `$${numberWithCommas(payload.value)}`
+      path = `${currencySym}${numberWithCommas(
+        (Number(payload.value) * Number(currencyRate)).toFixed(fixedLen),
+      )}`
     }
     return (
       <text
@@ -221,21 +242,8 @@ const ApexChart = ({
     )
   }
 
-  const [minVal, setMinVal] = useState(0)
-  const [maxVal, setMaxVal] = useState(0)
-  const [minValUnderlying, setMinValUnderlying] = useState(0)
-  const [maxValUnderlying, setMaxValUnderlying] = useState(0)
-  const [yAxisTicks, setYAxisTicks] = useState([])
-  const [zAxisTicks, setZAxisTicks] = useState([])
-
   useEffect(() => {
     const init = async () => {
-      setLoading(true)
-      if (data === undefined) {
-        setIsDataReady(false)
-        return
-      }
-
       let mainData = [],
         maxValue,
         minValue,
@@ -253,9 +261,18 @@ const ApexChart = ({
         filteredData,
         filteredSlot
 
-      if ((data && data.length === 0) || !loadComplete) {
-        setIsDataReady(false)
-        return
+      if (!connected) {
+        setIsDataReady('false')
+      } else if (lpTokenBalance === 0) {
+        setIsDataReady('loading')
+      } else if (lpTokenBalance === '0' && totalValue !== 0 && data.length === 0) {
+        setIsDataReady('loading')
+      } else if (lpTokenBalance === '0' && totalValue === 0) {
+        setIsDataReady('false')
+      } else if (totalValue !== '0' && data.length === 0) {
+        setIsDataReady('loading')
+      } else if (totalValue !== '0' && data.length !== 0) {
+        setIsDataReady('true')
       }
 
       if ((Object.keys(data).length === 0 && data.constructor === Object) || data.length === 0) {
@@ -435,9 +452,12 @@ const ApexChart = ({
       // Set date and price with latest value by default
       if (mainData.length > 0) {
         setCurDate(formatDate(mainData[mainData.length - 1].x))
-        const balance = numberWithCommas(Number(mainData[mainData.length - 1].y).toFixed(fixedLen))
         const balanceUnderlying = numberWithCommas(Number(mainData[mainData.length - 1].z))
-        setCurContent(`$${balance}`)
+        setCurContent(
+          `${currencySym}${numberWithCommas(
+            (Number(mainData[mainData.length - 1].y) * Number(currencyRate)).toFixed(fixedLen),
+          )}`,
+        )
         setCurContentUnderlying(balanceUnderlying)
       } else {
         console.log('The chart data is either undefined or empty.')
@@ -454,16 +474,17 @@ const ApexChart = ({
       setZAxisTicks(zAxisAry)
 
       setMainSeries(mainData)
-
-      setLoading(false)
     }
 
     init()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    connected,
     range,
     data,
     isDataReady,
+    lpTokenBalance,
+    totalValue,
     loadComplete,
     roundedDecimal,
     setCurContent,
@@ -474,7 +495,7 @@ const ApexChart = ({
 
   return (
     <>
-      {!loading ? (
+      {isDataReady === 'true' ? (
         <ResponsiveContainer
           width="100%"
           height={
@@ -566,15 +587,13 @@ const ApexChart = ({
         </ResponsiveContainer>
       ) : (
         <LoadingDiv>
-          {isDataReady ? (
+          {isDataReady === 'loading' ? (
             <ClipLoader size={30} margin={2} color={fontColor} />
           ) : (
             <>
               {connected ? (
                 <NoData color={fontColor}>
-                  You don&apos;t have any fTokens of this farm. <br />
-                  Or, if you just converted tokens, it might take up to 5mins for the chart to
-                  appear.
+                  No activity found for this wallet. Convert any token to start farming!
                 </NoData>
               ) : (
                 <NoData color={fontColor}>Connect wallet to see your balance chart</NoData>

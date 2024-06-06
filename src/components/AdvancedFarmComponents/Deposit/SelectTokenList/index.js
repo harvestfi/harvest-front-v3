@@ -14,6 +14,7 @@ import {
 import AnimatedDots from '../../../AnimatedDots'
 import { useWallet } from '../../../../providers/Wallet'
 import { usePortals } from '../../../../providers/Portals'
+import { useRate } from '../../../../providers/Rate'
 
 const SelectTokenList = ({
   balanceList,
@@ -32,6 +33,16 @@ const SelectTokenList = ({
   const [curSupportedVault, setCurSupportedVault] = useState(supportedVault)
   const { chainId } = useWallet()
   const { getPortalsToken } = usePortals()
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
 
   // Supported Token with no balance
   const [supTokenList, setSupTokenList] = useState(supTokenNoBalanceList)
@@ -214,8 +225,10 @@ const SelectTokenList = ({
                       <>{defaultCurToken.balance ? Number(defaultCurToken.balance) : '0.00'}</>
                       <TextSpan fontColor2={fontColor2}>
                         {defaultCurToken.usdValue
-                          ? `$${Number(defaultCurToken.usdValue)}`
-                          : '$0.00'}
+                          ? `${currencySym}${(
+                              defaultCurToken.usdValue * Number(currencyRate)
+                            ).toFixed(2)}`
+                          : `${currencySym}0.00`}
                       </TextSpan>
                     </RightText>
                   </Vault>
@@ -246,7 +259,9 @@ const SelectTokenList = ({
                     <RightText weight={600} color={fontColor2}>
                       <>{data.balance ? Number(data.balance) : '0.00'}</>
                       <TextSpan fontColor2={fontColor2}>
-                        {data.usdValue ? `$${Number(data.usdValue)}` : '$0.00'}
+                        {data.usdValue
+                          ? `${currencySym}${(data.usdValue * Number(currencyRate)).toFixed(2)}`
+                          : `${currencySym}0.00`}
                       </TextSpan>
                     </RightText>
                   </Vault>
@@ -283,7 +298,7 @@ const SelectTokenList = ({
                     </Text>
                     <RightText weight={600} color={fontColor2}>
                       <>{data.balance ? data.balance : '0.00'}</>
-                      <TextSpan fontColor2={fontColor2}>$0</TextSpan>
+                      <TextSpan fontColor2={fontColor2}>{`${currencySym}0`}</TextSpan>
                     </RightText>
                   </Vault>
                 </Container>
@@ -304,7 +319,7 @@ const SelectTokenList = ({
                     </Text>
                     <RightText weight={600} color={fontColor2}>
                       <>{data.balance ? `${1 * fromWei(data.balance, data.decimals)}` : '0.00'}</>
-                      <TextSpan fontColor2={fontColor2}>$0</TextSpan>
+                      <TextSpan fontColor2={fontColor2}>{`${currencySym}0`}</TextSpan>
                     </RightText>
                   </Vault>
                 </Container>

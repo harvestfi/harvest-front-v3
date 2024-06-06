@@ -52,8 +52,9 @@ import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
+import { useRate } from '../../providers/Rate'
 import { displayAPY, formatNumber, formatNumberWido, showUsdValue } from '../../utilities/formats'
-import { getTotalApy } from '../../utilities/parsers'
+import { getTotalApy, getVaultValue } from '../../utilities/parsers'
 import { getAdvancedRewardText } from '../../utilities/html'
 import { getLastHarvestInfo, initBalanceAndDetailData } from '../../utilities/apiCalls'
 import {
@@ -120,31 +121,6 @@ const mainTags = [
   { name: 'Farm Details', img: BarChart },
   { name: 'History', img: History },
 ]
-
-const getVaultValue = token => {
-  const poolId = get(token, 'data.id')
-
-  switch (poolId) {
-    case SPECIAL_VAULTS.FARM_WETH_POOL_ID:
-      return get(token, 'data.lpTokenData.liquidity')
-    case SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID: {
-      if (!get(token, 'data.lpTokenData.price')) {
-        return null
-      }
-
-      return new BigNumber(get(token, 'data.totalValueLocked', 0))
-    }
-    case SPECIAL_VAULTS.FARM_GRAIN_POOL_ID:
-    case SPECIAL_VAULTS.FARM_USDC_POOL_ID:
-      return get(token, 'data.totalValueLocked')
-    default:
-      return token.usdPrice
-        ? new BigNumber(token.underlyingBalanceWithInvestment.toString())
-            .times(token.usdPrice)
-            .dividedBy(new BigNumber(10).pow(token.decimals))
-        : null
-  }
-}
 
 const BeginnersFarm = () => {
   const {
@@ -253,6 +229,19 @@ const BeginnersFarm = () => {
   const [lifetimeApy, setLifetimeApy] = useState('')
   const [vaultBirthday, setVaultBirthday] = useState('')
   const [vaultTotalPeriod, setVaultTotalPeriod] = useState('')
+
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyName, setCurrencyName] = useState('USD')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyName(rates.currency.symbol)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
 
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
@@ -435,7 +424,7 @@ const BeginnersFarm = () => {
       lpTokenBalance &&
       fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, MAX_BALANCES_DECIMALS, true)
     const total = Number(staked) + Number(unstaked)
-    const amountBalanceUSD = total * usdPrice
+    const amountBalanceUSD = total * usdPrice * Number(currencyRate)
     setTotalValue(total)
     setBalanceAmount(amountBalanceUSD)
 
@@ -458,23 +447,33 @@ const BeginnersFarm = () => {
     const swapFeeAPRMonthly = swapFeeAPRYearly / 12
 
     const dailyYield =
-      Number(staked) * usdPrice * (vaultAPRDaily + poolAPRDaily + swapFeeAPRDaily) +
-      Number(unstaked) * usdPrice * (vaultAPRDaily + swapFeeAPRDaily)
+      (Number(staked) * usdPrice * (vaultAPRDaily + poolAPRDaily + swapFeeAPRDaily) +
+        Number(unstaked) * usdPrice * (vaultAPRDaily + swapFeeAPRDaily)) *
+      Number(currencyRate)
     const monthlyYield =
-      Number(staked) * usdPrice * (vaultAPRMonthly + poolAPRMonthly + swapFeeAPRMonthly) +
-      Number(unstaked) * usdPrice * (vaultAPRMonthly + swapFeeAPRMonthly)
+      (Number(staked) * usdPrice * (vaultAPRMonthly + poolAPRMonthly + swapFeeAPRMonthly) +
+        Number(unstaked) * usdPrice * (vaultAPRMonthly + swapFeeAPRMonthly)) *
+      Number(currencyRate)
     setYieldDaily(dailyYield)
     setYieldMonthly(monthlyYield)
-  }, [fAssetPool, tokenVault, usdPrice, lpTokenBalance, totalStaked])
+  }, [fAssetPool, tokenVault, usdPrice, lpTokenBalance, totalStaked, currencyRate])
 
   useEffect(() => {
     const convertMonthlyYieldValue =
-      (Number(minReceiveAmountString) * Number(usdPrice) * (Number(totalApy) / 100)) / 12
+      (Number(minReceiveAmountString) *
+        Number(usdPrice) *
+        Number(currencyRate) *
+        (Number(totalApy) / 100)) /
+      12
     const convertDailyYieldYieldValue =
-      (Number(minReceiveAmountString) * Number(usdPrice) * (Number(totalApy) / 100)) / 365
+      (Number(minReceiveAmountString) *
+        Number(usdPrice) *
+        Number(currencyRate) *
+        (Number(totalApy) / 100)) /
+      365
     setConvertMonthlyYieldUSD(convertMonthlyYieldValue.toString())
     setConvertDailyYieldUSD(convertDailyYieldYieldValue.toString())
-  }, [minReceiveAmountString, usdPrice, totalApy])
+  }, [minReceiveAmountString, usdPrice, totalApy, currencyRate])
 
   useEffect(() => {
     const getTokenBalance = async () => {
@@ -922,7 +921,15 @@ const BeginnersFarm = () => {
         sumLatestNetChange,
         sumLatestNetChangeUsd,
         enrichedData,
-      } = await initBalanceAndDetailData(address, chainId, account, tokenDecimals, underlyingPrice)
+      } = await initBalanceAndDetailData(
+        address,
+        chainId,
+        account,
+        tokenDecimals,
+        underlyingPrice,
+        currencySym,
+        currencyRate,
+      )
 
       if (balanceFlag && vaultHFlag) {
         setUnderlyingEarnings(sumNetChange)
@@ -940,6 +947,8 @@ const BeginnersFarm = () => {
     vaultPool,
     tokenDecimals,
     underlyingPrice,
+    currencySym,
+    currencyRate,
     setUnderlyingEarnings,
     setUsdEarnings,
   ])
@@ -986,7 +995,7 @@ const BeginnersFarm = () => {
         {token.excludeVaultStats ? (
           'N/A'
         ) : vaultValue ? (
-          <>${formatNumber(vaultValue, 2)}</>
+          <>{`${currencySym}${formatNumber(Number(vaultValue) * Number(currencyRate), 2)}`}</>
         ) : (
           <AnimatedDots />
         )}
@@ -1408,7 +1417,7 @@ const BeginnersFarm = () => {
                         height={isMobile ? '24px' : '24px'}
                         color={fontColor3}
                       >
-                        in USD
+                        in {`${currencyName}`}
                       </NewLabel>
                       <NewLabel
                         size={isMobile ? '12px' : '12px'}
@@ -1416,7 +1425,10 @@ const BeginnersFarm = () => {
                         weight="600"
                         color={fontColor1}
                       >
-                        {showUsdValue(showLatestEarnings ? usdEarningsLatest : usdEarnings)}
+                        {showUsdValue(
+                          showLatestEarnings ? usdEarningsLatest : usdEarnings,
+                          currencySym,
+                        )}
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
@@ -1500,7 +1512,7 @@ const BeginnersFarm = () => {
                         height={isMobile ? '24px' : '24px'}
                         color={fontColor3}
                       >
-                        in USD
+                        in {`${currencyName}`}
                       </NewLabel>
                       <NewLabel
                         size={isMobile ? '12px' : '12px'}
@@ -1509,9 +1521,9 @@ const BeginnersFarm = () => {
                         color={fontColor1}
                       >
                         {!connected ? (
-                          '$0.00'
+                          `${currencySym}0.00`
                         ) : lpTokenBalance ? (
-                          showUsdValue(balanceAmount)
+                          showUsdValue(balanceAmount, currencySym)
                         ) : (
                           <AnimatedDots />
                         )}
@@ -1614,7 +1626,11 @@ const BeginnersFarm = () => {
                         weight="600"
                         color={fontColor1}
                       >
-                        {!connected ? '$0' : isNaN(yieldDaily) ? '$0' : showUsdValue(yieldDaily)}
+                        {!connected
+                          ? `${currencySym}0`
+                          : isNaN(yieldDaily)
+                          ? `${currencySym}0`
+                          : showUsdValue(yieldDaily, currencySym)}
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
@@ -1638,10 +1654,10 @@ const BeginnersFarm = () => {
                         self="center"
                       >
                         {!connected
-                          ? '$0.00'
+                          ? `${currencySym}0.00`
                           : isNaN(yieldMonthly)
-                          ? '$0.00'
-                          : showUsdValue(yieldMonthly)}
+                          ? `${currencySym}0.00`
+                          : showUsdValue(yieldMonthly, currencySym)}
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
@@ -1676,6 +1692,7 @@ const BeginnersFarm = () => {
                     farmPrice={farmPrice}
                     underlyingPrice={underlyingPrice}
                     pricePerFullShare={pricePerFullShare}
+                    lpTokenBalance={lpTokenBalance}
                   />
                 )
               ) : activeMainTag === 1 ? (
@@ -1981,6 +1998,7 @@ const BeginnersFarm = () => {
                       farmPrice={farmPrice}
                       underlyingPrice={underlyingPrice}
                       pricePerFullShare={pricePerFullShare}
+                      lpTokenBalance={lpTokenBalance}
                     />
                   ) : (
                     <></>

@@ -44,6 +44,7 @@ import {
   MobileListFilter,
   VaultsListBody,
   MobileFilterBtn,
+  DisplayCount,
 } from './style'
 
 const { tokens } = require('../../../data')
@@ -105,6 +106,56 @@ const formatVaults = (
         (groupOfVaults[tokenSymbol]?.data &&
           selChain.includes(groupOfVaults[tokenSymbol]?.data.chain))),
   )
+
+  if (selectedActiveType.length !== 0) {
+    let result = []
+    selectedActiveType.map(item => {
+      const temp = vaultsSymbol.filter(tokenSymbol => {
+        if (item === 'Active') {
+          return !(groupOfVaults[tokenSymbol].inactive || groupOfVaults[tokenSymbol].testInactive)
+        }
+        return groupOfVaults[tokenSymbol].inactive || groupOfVaults[tokenSymbol].testInactive
+      })
+      result = result.concat(temp)
+      return result
+    })
+    vaultsSymbol = [...result]
+  } else if (!depositedOnly) {
+    vaultsSymbol = vaultsSymbol.filter(
+      tokenSymbol =>
+        !groupOfVaults[tokenSymbol].inactive && !groupOfVaults[tokenSymbol].testInactive,
+    )
+  }
+
+  if (depositedOnly) {
+    const vaultsWithStakedBalances = Object.keys(userStats)
+      .filter(
+        poolId =>
+          new BigNumber(userStats[poolId].totalStaked).gt(0) ||
+          new BigNumber(userStats[poolId].lpTokenBalance).gt(0) ||
+          (poolId === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID &&
+            new BigNumber(balances[IFARM_TOKEN_SYMBOL]).gt(0)),
+      )
+      .map(poolId => {
+        const selectedPool = find(pools, pool => pool.id === poolId)
+        const collateralAddress = get(selectedPool, 'collateralAddress', poolId)
+
+        const vaultSymbol = vaultsSymbol.find(
+          tokenKey =>
+            groupOfVaults[tokenKey].vaultAddress === collateralAddress ||
+            (groupOfVaults[tokenKey].data &&
+              groupOfVaults[tokenKey].data.collateralAddress === collateralAddress),
+        )
+
+        return vaultSymbol
+      })
+
+    vaultsSymbol = vaultsSymbol.filter(tokenSymbol =>
+      vaultsWithStakedBalances.includes(tokenSymbol),
+    )
+  }
+
+  const totalVaultsCount = vaultsSymbol.length
 
   if (searchQuery) {
     if (searchQuery.toLowerCase() === 'lsd' || searchQuery.toLowerCase() === 'desci') {
@@ -254,54 +305,6 @@ const formatVaults = (
     }
   }
 
-  if (selectedActiveType.length !== 0) {
-    let result = []
-    selectedActiveType.map(item => {
-      const temp = vaultsSymbol.filter(tokenSymbol => {
-        if (item === 'Active') {
-          return !(groupOfVaults[tokenSymbol].inactive || groupOfVaults[tokenSymbol].testInactive)
-        }
-        return groupOfVaults[tokenSymbol].inactive || groupOfVaults[tokenSymbol].testInactive
-      })
-      result = result.concat(temp)
-      return result
-    })
-    vaultsSymbol = [...result]
-  } else if (!depositedOnly) {
-    vaultsSymbol = vaultsSymbol.filter(
-      tokenSymbol =>
-        !groupOfVaults[tokenSymbol].inactive && !groupOfVaults[tokenSymbol].testInactive,
-    )
-  }
-
-  if (depositedOnly) {
-    const vaultsWithStakedBalances = Object.keys(userStats)
-      .filter(
-        poolId =>
-          new BigNumber(userStats[poolId].totalStaked).gt(0) ||
-          new BigNumber(userStats[poolId].lpTokenBalance).gt(0) ||
-          (poolId === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID &&
-            new BigNumber(balances[IFARM_TOKEN_SYMBOL]).gt(0)),
-      )
-      .map(poolId => {
-        const selectedPool = find(pools, pool => pool.id === poolId)
-        const collateralAddress = get(selectedPool, 'collateralAddress', poolId)
-
-        const vaultSymbol = vaultsSymbol.find(
-          tokenKey =>
-            groupOfVaults[tokenKey].vaultAddress === collateralAddress ||
-            (groupOfVaults[tokenKey].data &&
-              groupOfVaults[tokenKey].data.collateralAddress === collateralAddress),
-        )
-
-        return vaultSymbol
-      })
-
-    vaultsSymbol = vaultsSymbol.filter(tokenSymbol =>
-      vaultsWithStakedBalances.includes(tokenSymbol),
-    )
-  }
-
   if (selectAsset !== '') {
     vaultsSymbol = vaultsSymbol.filter(tokenSymbol => {
       const assetLength = groupOfVaults[tokenSymbol].tokenNames.length
@@ -348,7 +351,8 @@ const formatVaults = (
     // )
   }
   vaultsSymbol = [...new Set(vaultsSymbol)]
-  return vaultsSymbol
+
+  return { vaultsSymbol, totalVaultsCount }
 }
 
 const SortingIcon = ({ sortType, sortField, selectedField }) => {
@@ -511,7 +515,7 @@ const VaultList = () => {
     getCreatedAtData()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const vaultsSymbol = useMemo(
+  const { vaultsSymbol, totalVaultsCount } = useMemo(
     () =>
       formatVaults(
         groupOfVaults,
@@ -736,6 +740,15 @@ const VaultList = () => {
           onSelectActiveType={selectActiveType}
         />
       )}
+      <DisplayCount color={fontColor}>
+        Displaying <span>{vaultsSymbol.length}</span> of <span>{totalVaultsCount}</span>{' '}
+        {selectedActiveType.length === 0
+          ? 'my'
+          : selectedActiveType[0] === 'Active'
+          ? 'active'
+          : 'inactive'}{' '}
+        farms
+      </DisplayCount>
       <VaultsListBody borderColor={borderColor} backColor={backColor}>
         <MobileListFilter
           mobileBackColor={mobileFilterBackColor}

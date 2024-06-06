@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { isNaN } from 'lodash'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import { useMediaQuery } from 'react-responsive'
 import ReactTooltip from 'react-tooltip'
@@ -22,6 +22,7 @@ import { useContracts } from '../../../../providers/Contracts'
 import { useVaults } from '../../../../providers/Vault'
 import { useWallet } from '../../../../providers/Wallet'
 import { usePools } from '../../../../providers/Pools'
+import { useRate } from '../../../../providers/Rate'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { fromWei, toWei, getWeb3 } from '../../../../services/web3'
 import AnimatedDots from '../../../AnimatedDots'
@@ -104,6 +105,23 @@ const DepositStart = ({
   const { contracts } = useContracts()
   const { vaultsData } = useVaults()
 
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+    }
+  }, [rates])
+
   const SlippageValues = [null, 0.1, 0.5, 1, 5]
 
   const onInputSlippage = e => {
@@ -153,11 +171,13 @@ const DepositStart = ({
       : ''
     const receiveUsdString = portalData ? portalData.context?.outputAmountUsd : ''
     if (Number(receiveUsdString) === 0) {
-      setReceiveUsd('$0')
+      setReceiveUsd(`${currencySym}0`)
     } else if (Number(receiveUsdString) < 0.01) {
-      setReceiveUsd('<$0.01')
+      setReceiveUsd(`<${currencySym}0.01`)
     } else {
-      setReceiveUsd(`≈$${Number(receiveUsdString).toFixed(2)}`)
+      setReceiveUsd(
+        `≈${currencySym}${(Number(receiveUsdString) * Number(currencyRate)).toFixed(2)}`,
+      )
     }
     setReceiveAmount(receiveString)
 
@@ -451,7 +471,7 @@ const DepositStart = ({
                       receiveUsd !== '' ? (
                         `${receiveUsd}`
                       ) : (
-                        <>≈$0</>
+                        <>{`≈${currencySym}0`}</>
                       )
                     ) : minReceiveUsdAmount === 'NaN' || minReceiveUsdAmount === '-' ? (
                       '-'

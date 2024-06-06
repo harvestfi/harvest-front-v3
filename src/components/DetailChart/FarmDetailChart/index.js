@@ -3,12 +3,13 @@ import apyActive from '../../../assets/images/logos/earn/percent-circle.svg'
 import tvlActive from '../../../assets/images/logos/earn/bank.svg'
 import myBalanceActive from '../../../assets/images/logos/earn/chart-graph.svg'
 import { addresses } from '../../../data/index'
-import { getDataQuery, getTotalTVLData } from '../../../utilities/apiCalls'
+import { getDataQuery, getSequenceId, getTotalTVLData } from '../../../utilities/apiCalls'
 import { formatDate, numberWithCommas } from '../../../utilities/formats'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import ApexChart from '../ApexChart'
 import ChartButtonsGroup from '../ChartButtonsGroup'
 import ChartRangeSelect from '../../ChartRangeSelect'
+import { useRate } from '../../../providers/Rate'
 import {
   ButtonGroup,
   ChartDiv,
@@ -60,6 +61,16 @@ const FarmDetailChart = ({
   const [roundNumber, setRoundNumber] = useState(0)
   const [fixedLen, setFixedLen] = useState(0)
 
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
   const isIFARM = token.tokenAddress === addresses.FARM
   const address = isIFARM
     ? token.tokenAddress
@@ -70,7 +81,7 @@ const FarmDetailChart = ({
     if (payload && payload.length) {
       setCurDate(formatDate(payload[0].payload.x))
       const content = numberWithCommas(
-        Number(payload[0].payload.y).toFixed(
+        (Number(payload[0].payload.y) * (clickedId === 1 ? Number(currencyRate) : 1)).toFixed(
           clickedId === 1 ? 2 : clickedId === 0 ? fixedLen : roundNumber,
         ),
       )
@@ -88,7 +99,8 @@ const FarmDetailChart = ({
     const initData = async () => {
       if (address && chainId) {
         try {
-          const data = await getDataQuery(address, chainId, false)
+          const { vaultTVLCount } = await getSequenceId(address, chainId)
+          const data = await getDataQuery(address, chainId, vaultTVLCount, false)
           const filteredData = {
             ...data,
             generalApies: data.generalApies.filter(entry => parseFloat(entry.apy) <= 100000),
@@ -211,7 +223,7 @@ const FarmDetailChart = ({
               <CurDate fontColor3={fontColor3}>
                 {curDate}&nbsp;<span>|</span>&nbsp;
                 <p>
-                  {clickedId === 1 ? '$' : ''}
+                  {clickedId === 1 ? currencySym : ''}
                   {curContent}
                   {clickedId === 0 ? '%' : ''}
                 </p>

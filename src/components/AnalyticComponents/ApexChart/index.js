@@ -13,6 +13,7 @@ import { useWindowWidth } from '@react-hook/window-size'
 import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { CHAIN_IDS } from '../../../data/constants'
+import { useRate } from '../../../providers/Rate'
 import { ceil10, floor10, round10, numberWithCommas, formatDate } from '../../../utilities/formats'
 import { getTimeSlots } from '../../../utilities/parsers'
 import { LoadingDiv, NoData } from './style'
@@ -106,13 +107,25 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
 
   const [loading, setLoading] = useState(false)
   const [isDataReady, setIsDataReady] = useState(true)
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
       setCurDate(formatDate(payload[0].payload.x))
       const content = `<div style="font-size: 13px; line-height: 16px; display: flex;"><div style="font-weight: 700;">TVL
-      </div><div style="color: #15B088; font-weight: 500;">&nbsp;$
-      ${numberWithCommas(Number(payload[0].payload.y.toFixed(0)))}</div></div>`
+      </div><div style="color: #15B088; font-weight: 500;">&nbsp;${currencySym}
+      ${numberWithCommas(
+        (Number(payload[0].payload.y) * Number(currencyRate)).toFixed(0),
+      )}</div></div>`
       setCurContent(content)
     }
 
@@ -144,7 +157,9 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
     let path = ''
 
     if (payload.value !== '') {
-      path = `$${numberWithCommas(payload.value)}`
+      path = `${currencySym}${numberWithCommas(
+        (Number(payload.value) * Number(currencyRate)).toFixed(0),
+      )}`
     }
     return (
       <text

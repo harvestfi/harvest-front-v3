@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { fromWei } from '../../../../services/web3'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { formatNumberWido } from '../../../../utilities/formats'
-import { WIDO_EXTEND_DECIMALS, WIDO_BALANCES_DECIMALS } from '../../../../constants'
+import { WIDO_EXTEND_DECIMALS } from '../../../../constants'
 import {
   Container,
   Text,
@@ -16,6 +16,7 @@ import {
 import AnimatedDots from '../../../AnimatedDots'
 import { useWallet } from '../../../../providers/Wallet'
 import { usePortals } from '../../../../providers/Portals'
+import { useRate } from '../../../../providers/Rate'
 
 const SelectTokenList = ({
   balanceList,
@@ -33,6 +34,16 @@ const SelectTokenList = ({
   const [curSupportedVault, setCurSupportedVault] = useState(supportedVault)
   const { chainId } = useWallet()
   const { getPortalsToken } = usePortals()
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
 
   const [supTokenList, setSupTokenList] = useState(supTokenNoBalanceList)
   const [clicksupTokenNoBalanceListId, setClickSupTokenNoBalanceListId] = useState(-1)
@@ -204,7 +215,11 @@ const SelectTokenList = ({
                     <RightText weight={600} color={fontColor2}>
                       <>{defaultCurToken.balance ? defaultCurToken.balance : '0.00'}</>
                       <TextSpan fontColor2={fontColor2}>
-                        {defaultCurToken.usdValue ? `$${defaultCurToken.usdValue}` : '$0.00'}
+                        {defaultCurToken.usdValue
+                          ? `${currencySym}${(
+                              defaultCurToken.usdValue * Number(currencyRate)
+                            ).toFixed(2)}`
+                          : `${currencySym}0.00`}
                       </TextSpan>
                     </RightText>
                   </Vault>
@@ -242,8 +257,11 @@ const SelectTokenList = ({
                       </>
                       <TextSpan fontColor2={fontColor2}>
                         {data.usdValue
-                          ? `$${formatNumberWido(data.usdValue, WIDO_BALANCES_DECIMALS)}`
-                          : '$0.00'}
+                          ? `${currencySym}${formatNumberWido(
+                              data.usdValue * Number(currencyRate),
+                              2,
+                            )}`
+                          : `${currencySym}0.00`}
                       </TextSpan>
                     </RightText>
                   </Vault>
@@ -278,7 +296,7 @@ const SelectTokenList = ({
                     </Text>
                     <RightText weight={600} color={fontColor2}>
                       <>{data.balance ? `${1 * fromWei(data.balance, data.decimals)}` : '0.00'}</>
-                      <TextSpan fontColor2={fontColor2}>$0</TextSpan>
+                      <TextSpan fontColor2={fontColor2}>{`${currencySym}0`}</TextSpan>
                     </RightText>
                   </Vault>
                 </Container>
@@ -299,7 +317,7 @@ const SelectTokenList = ({
                     </Text>
                     <RightText weight={600} color={fontColor2}>
                       <>{data.balance ? `${1 * fromWei(data.balance, data.decimals)}` : '0.00'}</>
-                      <TextSpan fontColor2={fontColor2}>$0</TextSpan>
+                      <TextSpan fontColor2={fontColor2}>{`${currencySym}0`}</TextSpan>
                     </RightText>
                   </Vault>
                 </Container>

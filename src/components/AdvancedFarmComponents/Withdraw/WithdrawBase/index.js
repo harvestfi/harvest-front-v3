@@ -11,6 +11,7 @@ import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import { BEGINNERS_BALANCES_DECIMALS } from '../../../../constants'
 import { useWallet } from '../../../../providers/Wallet'
+import { useRate } from '../../../../providers/Rate'
 import { fromWei, toWei } from '../../../../services/web3'
 import { addresses } from '../../../../data'
 import { formatNumberWido, isSpecialApp } from '../../../../utilities/formats'
@@ -102,6 +103,17 @@ const WithdrawBase = ({
 
   const { account, web3, connected, chainId } = useWallet()
   const { getPortalsEstimate, getPortalsToken } = usePortals()
+
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
 
   const slippage = 0.5 // Default slippage Percent
 
@@ -237,14 +249,18 @@ const WithdrawBase = ({
             )
 
             if (Number(fromInfoUsdValue) < 0.01) {
-              setRevertFromInfoUsdAmount('<$0.01')
+              setRevertFromInfoUsdAmount(`<${currencySym}0.01`)
             } else {
-              setRevertFromInfoUsdAmount(`$${fromInfoUsdValue}`)
+              setRevertFromInfoUsdAmount(
+                `${currencySym}${(Number(fromInfoUsdValue) * Number(currencyRate)).toFixed(2)}`,
+              )
             }
             if (Number(minReceivedUsdString) < 0.01) {
-              setRevertMinReceivedUsdAmount('<$0.01')
+              setRevertMinReceivedUsdAmount(`<${currencySym}0.01`)
             } else {
-              setRevertMinReceivedUsdAmount(`$${minReceivedUsdString}`)
+              setRevertMinReceivedUsdAmount(
+                `${currencySym}${(Number(minReceivedUsdString) * Number(currencyRate)).toFixed(2)}`,
+              )
             }
             setRevertFromInfoAmount(fromInfoValue)
             setRevertMinReceivedAmount(minReceivedString)
@@ -287,6 +303,8 @@ const WithdrawBase = ({
     setRevertMinReceivedAmount,
     getPortalsEstimate,
     getPortalsToken,
+    currencySym,
+    currencyRate,
   ])
 
   useEffect(() => {
@@ -406,7 +424,7 @@ const WithdrawBase = ({
               />
               <TokenUSDAmount fontColor3={fontColor3}>
                 {unstakeInputValue === '0' || unstakeInputValue === '' ? (
-                  '$0'
+                  `${currencySym}0`
                 ) : revertFromInfoUsdAmount === '' ? (
                   <TokenInfo>
                     <AnimatedDots />

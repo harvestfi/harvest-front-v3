@@ -3,8 +3,9 @@ import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
+import { useRate } from '../../../providers/Rate'
 import { formatDate, numberWithCommas } from '../../../utilities/formats'
-import { getPriceFeeds, getUserBalanceHistories } from '../../../utilities/apiCalls'
+import { getPriceFeeds, getSequenceId, getUserBalanceHistories } from '../../../utilities/apiCalls'
 import {
   ButtonGroup,
   ChartDiv,
@@ -33,15 +34,27 @@ const UserBalanceData = ({
   farmPrice,
   underlyingPrice,
   pricePerFullShare,
+  lpTokenBalance,
 }) => {
   const { backColor, borderColor, fontColor3 } = useThemeContext()
   const { account } = useWallet()
+
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
 
   const [selectedState, setSelectedState] = useState('LAST')
   const [apiData, setApiData] = useState([])
   const [loadComplete, setLoadComplete] = useState(false)
   const [curDate, setCurDate] = useState('')
-  const [curContent, setCurContent] = useState('$0')
+  const [curContent, setCurContent] = useState(`${currencySym}0`)
   const [curContentUnderlying, setCurContentUnderlying] = useState('0')
   const [fixedLen, setFixedLen] = useState(0)
   const [lastFarmingTimeStamp, setLastFarmingTimeStamp] = useState('-')
@@ -64,13 +77,16 @@ const UserBalanceData = ({
   const handleTooltipContent = payload => {
     if (payload && payload.length) {
       const currentDate = formatDate(payload[0].payload.x)
-      const balance = numberWithCommas(Number(payload[0].payload.y).toFixed(fixedLen))
       if (Number(payload[0].payload.y === 0)) {
-        setCurContent('$0')
+        setCurContent(`${currencySym}0`)
       } else if (Number(payload[0].payload.y < 0.01)) {
-        setCurContent('<$0.01')
+        setCurContent(`<${currencySym}0.01`)
       } else {
-        setCurContent(`$${balance}`)
+        setCurContent(
+          `${currencySym}${numberWithCommas(
+            (Number(payload[0].payload.y) * Number(currencyRate)).toFixed(fixedLen),
+          )}`,
+        )
       }
       const balanceUnderlying = numberWithCommas(Number(payload[0].payload.z))
 
@@ -112,7 +128,15 @@ const UserBalanceData = ({
           )
           if (balanceFlag) {
             const firstTimeStamp = balanceData[balanceData.length - 1].timestamp
-            const result = await getPriceFeeds(address, chainId, firstTimeStamp, null, false)
+            const { vaultPriceFeedCount } = await getSequenceId(address, chainId)
+            const result = await getPriceFeeds(
+              address,
+              chainId,
+              vaultPriceFeedCount,
+              firstTimeStamp,
+              null,
+              false,
+            )
             priceFeedData = result.priceFeedData
             priceFeedFlag = result.priceFeedFlag
           }
@@ -270,7 +294,7 @@ const UserBalanceData = ({
           <FlexDiv>
             <TooltipInfo>
               <TokenSymbol className="priceshare" color="#15B088">
-                USD Balance
+                {`${rates?.currency?.symbol ?? 'USD'}`} Balance
               </TokenSymbol>
               <FlexDiv>
                 <CurContent color={fontColor3}>
@@ -312,6 +336,8 @@ const UserBalanceData = ({
           setFixedLen={setFixedLen}
           fixedLen={fixedLen}
           lastFarmingTimeStamp={lastFarmingTimeStamp}
+          lpTokenBalance={lpTokenBalance}
+          totalValue={totalValue}
         />
       </ChartDiv>
       <ButtonGroup>

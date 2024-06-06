@@ -7,9 +7,10 @@ import {
   GRAPH_URL_ARBITRUM,
   GRAPH_URL_BASE,
   TOTAL_TVL_API_ENDPOINT,
+  HISTORICAL_RATES_API_ENDPOINT,
 } from '../constants'
 import { fromWei } from '../services/web3'
-import { showUsdValue } from './formats'
+import { showUsdValue, getCurrencyRate } from './formats'
 
 export const getLastHarvestInfo = async (address, chainId) => {
   // eslint-disable-next-line no-unused-vars
@@ -186,6 +187,74 @@ export const getPublishDate = async () => {
   return { data: combinedData, flag: combinedFlags }
 }
 
+export const getSequenceId = async (address, chainId) => {
+  let vaultTVLCount,
+    vaultPriceFeedCount,
+    vaultsFlag = true
+
+  const myHeaders = new Headers()
+  myHeaders.append('Content-Type', 'application/json')
+
+  address = address.toLowerCase()
+  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
+  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
+  const vaultAddress = address === farm ? ifarm : address
+
+  const graphql = JSON.stringify({
+      query: `{
+        vaults(
+          first: 1000,
+          orderBy: timestamp,
+          orderDirection: desc
+        ) {
+          id, tvlSequenceId, priceFeedSequenceId
+        }
+      }`,
+      variables: {},
+    }),
+    requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: graphql,
+      redirect: 'follow',
+    }
+
+  const url =
+    chainId === CHAIN_IDS.ETH_MAINNET
+      ? GRAPH_URL_MAINNET
+      : chainId === CHAIN_IDS.POLYGON_MAINNET
+      ? GRAPH_URL_POLYGON
+      : chainId === CHAIN_IDS.BASE
+      ? GRAPH_URL_BASE
+      : GRAPH_URL_ARBITRUM
+
+  try {
+    await fetch(url, requestOptions)
+      .then(response => response.json())
+      .then(res => {
+        const vaultsData = res.data.vaults
+        for (let i = 0; i < vaultsData.length; i += 1) {
+          if (vaultAddress === vaultsData[i].id) {
+            vaultTVLCount = vaultsData[i].tvlSequenceId
+            vaultPriceFeedCount = vaultsData[i].priceFeedSequenceId
+            return
+          }
+        }
+        if (vaultsData.length === 0) {
+          vaultsFlag = false
+        }
+      })
+      .catch(error => {
+        console.log('error', error)
+        vaultsFlag = false
+      })
+  } catch (err) {
+    console.log('Fetch data about price feed: ', err)
+    vaultsFlag = false
+  }
+  return { vaultTVLCount, vaultPriceFeedCount, vaultsFlag }
+}
+
 export const getVaultHistories = async (address, chainId) => {
   let vaultHData = {},
     vaultHFlag = true
@@ -248,13 +317,41 @@ export const getVaultHistories = async (address, chainId) => {
   return { vaultHData, vaultHFlag }
 }
 
-export const getDataQuery = async (address, chainId, asQuery, timestamp, chartData = {}) => {
+export const getCurrencyRateHistories = async () => {
+  const apiResponse = await axios.get(HISTORICAL_RATES_API_ENDPOINT)
+  const apiData = get(apiResponse, 'data')
+  return apiData
+}
+
+export const getDataQuery = async (
+  address,
+  chainId,
+  vaultTVLCount,
+  asQuery,
+  timestamp,
+  chartData = {},
+) => {
+  let sequenceIdsArray = []
+  if (vaultTVLCount > 10000) {
+    const step = Math.ceil(vaultTVLCount / 2000)
+    for (let i = 1; i <= vaultTVLCount; i += step) {
+      sequenceIdsArray.push(i)
+    }
+  } else if (vaultTVLCount > 1000) {
+    const step = Math.ceil(vaultTVLCount / 1000)
+    for (let i = 1; i <= vaultTVLCount; i += step) {
+      sequenceIdsArray.push(i)
+    }
+  } else {
+    sequenceIdsArray = []
+  }
+  const tvlSequenceId = vaultTVLCount > 1000 ? `tvlSequenceId_in: [${sequenceIdsArray}]` : ''
+
   const timestampQuery = asQuery ? `timestamp_lt: "${timestamp}"` : ''
   address = address.toLowerCase()
   const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
   const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
 
-  address = address.toLowerCase()
   const myHeaders = new Headers()
   myHeaders.append('Content-Type', 'application/json')
 
@@ -274,7 +371,8 @@ export const getDataQuery = async (address, chainId, asQuery, timestamp, chartDa
           first: 1000,
           where: {
             vault: "${address === farm ? ifarm : address}", 
-            ${timestampQuery}
+            ${timestampQuery},
+            ${tvlSequenceId}
           },
           orderBy: timestamp,
           orderDirection: desc
@@ -332,7 +430,7 @@ export const getDataQuery = async (address, chainId, asQuery, timestamp, chartDa
       chartData.generalApies[chartData.generalApies.length - 1].timestamp,
     )
     if (responseJson.data.tvls.length === 1000 && dataTimestamp > initTimestamp) {
-      await getDataQuery(address, chainId, true, dataTimestamp, chartData)
+      await getDataQuery(address, chainId, vaultTVLCount, true, dataTimestamp, chartData)
     }
   } catch (err) {
     console.log('Fetch data about subgraph: ', err)
@@ -410,12 +508,30 @@ export const getUserBalanceHistories = async (address, chainId, account) => {
 export const getPriceFeeds = async (
   address,
   chainId,
+  vaultPriceFeedCount,
   firstTimeStamp,
   timestamp,
   asQuery,
   priceFeedData = [],
 ) => {
-  let priceFeedFlag = true
+  let priceFeedFlag = true,
+    sequenceIdsArray = []
+
+  if (vaultPriceFeedCount > 10000) {
+    const step = Math.ceil(vaultPriceFeedCount / 2000)
+    for (let i = 1; i <= vaultPriceFeedCount; i += step) {
+      sequenceIdsArray.push(i)
+    }
+  } else if (vaultPriceFeedCount > 1000) {
+    const step = Math.ceil(vaultPriceFeedCount / 1000)
+    for (let i = 1; i <= vaultPriceFeedCount; i += step) {
+      sequenceIdsArray.push(i)
+    }
+  } else {
+    sequenceIdsArray = []
+  }
+  const priceFeedSequenceId =
+    vaultPriceFeedCount > 1000 ? `priceFeedSequenceId_in: [${sequenceIdsArray}]` : ''
 
   address = address.toLowerCase()
   const timestampQuery = timestamp && asQuery ? `timestamp_lt: "${timestamp}"` : ''
@@ -429,7 +545,8 @@ export const getPriceFeeds = async (
           first: 1000,
           where: {
             vault: "${address}",
-            ${timestampQuery}
+            ${timestampQuery},
+            ${priceFeedSequenceId}
           },
           orderBy: timestamp,
           orderDirection: desc,
@@ -467,7 +584,15 @@ export const getPriceFeeds = async (
       priceFeedData.push(...responseJson.data.priceFeeds)
       const dataTimestamp = priceFeedData[priceFeedData.length - 1].timestamp
       if (Number(dataTimestamp) > Number(firstTimeStamp)) {
-        await getPriceFeeds(address, chainId, firstTimeStamp, dataTimestamp, true, priceFeedData)
+        await getPriceFeeds(
+          address,
+          chainId,
+          vaultPriceFeedCount,
+          firstTimeStamp,
+          dataTimestamp,
+          true,
+          priceFeedData,
+        )
       }
     } else {
       console.error('Error: Unable to retrieve vault histories from the response.')
@@ -503,6 +628,8 @@ export const initBalanceAndDetailData = async (
   account,
   tokenDecimals,
   underlyingPrice,
+  currencySym = '$',
+  currencyRate = 1,
 ) => {
   const timestamps = []
   const uniqueVaultHData = []
@@ -515,6 +642,7 @@ export const initBalanceAndDetailData = async (
 
   const { balanceData, balanceFlag } = await getUserBalanceHistories(address, chainId, account)
   const { vaultHData, vaultHFlag } = await getVaultHistories(address, chainId)
+  const hisRateData = await getCurrencyRateHistories()
 
   if (vaultHFlag) {
     vaultHData.forEach(obj => {
@@ -642,15 +770,20 @@ export const initBalanceAndDetailData = async (
         const nextItem = array[index + 1]
         let event, balance, balanceUsd, netChange, netChangeUsd
 
+        const curRate = getCurrencyRate(currencySym, item, hisRateData)
+
         if (Number(item.value) === 0) {
           if (nextItem && Number(nextItem.value) === 0) {
             return false
           }
           balance = '0'
-          balanceUsd = '$0'
+          balanceUsd = `${currencySym}0`
         } else {
           balance = Number(item.value) * Number(item.sharePrice)
-          balanceUsd = showUsdValue(balance * Number(item.priceUnderlying))
+          balanceUsd = showUsdValue(
+            balance * Number(item.priceUnderlying) * Number(curRate),
+            currencySym,
+          )
         }
 
         if (nextItem) {
@@ -664,11 +797,17 @@ export const initBalanceAndDetailData = async (
 
           const nextBalance = Number(nextItem.value) * Number(nextItem.sharePrice)
           netChange = balance - nextBalance
-          netChangeUsd = showUsdValue(Math.abs(netChange) * Number(item.priceUnderlying))
+          netChangeUsd = showUsdValue(
+            Math.abs(netChange) * Number(item.priceUnderlying) * Number(curRate),
+            currencySym,
+          )
         } else {
           event = 'Convert'
           netChange = balance
-          netChangeUsd = showUsdValue(netChange * Number(item.priceUnderlying))
+          netChangeUsd = showUsdValue(
+            netChange * Number(item.priceUnderlying) * Number(curRate),
+            currencySym,
+          )
         }
 
         return {
@@ -688,7 +827,7 @@ export const initBalanceAndDetailData = async (
       }
       return sumValue
     }, 0)
-    sumNetChangeUsd = Number(sumNetChange) * underlyingPrice
+    sumNetChangeUsd = Number(sumNetChange) * underlyingPrice * Number(currencyRate)
 
     enrichedData.forEach(item => {
       if (!lastUserEvent) {
@@ -699,7 +838,7 @@ export const initBalanceAndDetailData = async (
         }
       }
     })
-    sumLatestNetChangeUsd = Number(sumLatestNetChange) * underlyingPrice
+    sumLatestNetChangeUsd = Number(sumLatestNetChange) * underlyingPrice * Number(currencyRate)
   }
 
   return {

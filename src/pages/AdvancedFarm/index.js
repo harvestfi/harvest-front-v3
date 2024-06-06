@@ -64,8 +64,9 @@ import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
+import { useRate } from '../../providers/Rate'
 import { displayAPY, formatNumber, formatNumberWido, showUsdValue } from '../../utilities/formats'
-import { getTotalApy } from '../../utilities/parsers'
+import { getTotalApy, getVaultValue } from '../../utilities/parsers'
 import { getAdvancedRewardText } from '../../utilities/html'
 import { getLastHarvestInfo, initBalanceAndDetailData } from '../../utilities/apiCalls'
 import {
@@ -132,31 +133,6 @@ import {
 import { CHAIN_IDS } from '../../data/constants'
 // import { array } from 'prop-types'
 import { usePortals } from '../../providers/Portals'
-
-const getVaultValue = token => {
-  const poolId = get(token, 'data.id')
-
-  switch (poolId) {
-    case SPECIAL_VAULTS.FARM_WETH_POOL_ID:
-      return get(token, 'data.lpTokenData.liquidity')
-    case SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID: {
-      if (!get(token, 'data.lpTokenData.price')) {
-        return null
-      }
-
-      return new BigNumber(get(token, 'data.totalValueLocked', 0))
-    }
-    case SPECIAL_VAULTS.FARM_GRAIN_POOL_ID:
-    case SPECIAL_VAULTS.FARM_USDC_POOL_ID:
-      return get(token, 'data.totalValueLocked')
-    default:
-      return token.usdPrice
-        ? new BigNumber(token.underlyingBalanceWithInvestment.toString())
-            .times(token.usdPrice)
-            .dividedBy(new BigNumber(10).pow(token.decimals))
-        : null
-  }
-}
 
 const getCoinListFromApi = async () => {
   try {
@@ -326,6 +302,19 @@ const AdvancedFarm = () => {
   const [lifetimeApy, setLifetimeApy] = useState('')
   const [vaultBirthday, setVaultBirthday] = useState('')
   const [vaultTotalPeriod, setVaultTotalPeriod] = useState('')
+
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyName, setCurrencyName] = useState('USD')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyName(rates.currency.symbol)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
 
   useEffect(() => {
     const getCoinList = async () => {
@@ -568,7 +557,7 @@ const AdvancedFarm = () => {
     }
 
     fetchData()
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token])
 
   useEffect(() => {
@@ -595,7 +584,7 @@ const AdvancedFarm = () => {
         ),
       )
       total = staked
-      amountBalanceUSD = total * usdPrice
+      amountBalanceUSD = total * usdPrice * Number(currencyRate)
     } else {
       staked =
         totalStaked && fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)
@@ -605,7 +594,7 @@ const AdvancedFarm = () => {
         fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)
 
       total = Number(staked) + Number(unstaked)
-      amountBalanceUSD = total * usdPrice
+      amountBalanceUSD = total * usdPrice * Number(currencyRate)
     }
     setStakedAmount(Number(staked))
     setUnstakedAmount(Number(unstaked))
@@ -630,26 +619,38 @@ const AdvancedFarm = () => {
     const swapFeeAPRMonthly = swapFeeAPRYearly / 12
 
     const dailyYield =
-      Number(staked) * usdPrice * (vaultAPRDaily + poolAPRDaily + swapFeeAPRDaily) +
-      Number(unstaked) * usdPrice * (vaultAPRDaily + swapFeeAPRDaily)
+      (Number(staked) * usdPrice * (vaultAPRDaily + poolAPRDaily + swapFeeAPRDaily) +
+        Number(unstaked) * usdPrice * (vaultAPRDaily + swapFeeAPRDaily)) *
+      Number(currencyRate)
     const monthlyYield =
-      Number(staked) * usdPrice * (vaultAPRMonthly + poolAPRMonthly + swapFeeAPRMonthly) +
-      Number(unstaked) * usdPrice * (vaultAPRMonthly + swapFeeAPRMonthly)
+      (Number(staked) * usdPrice * (vaultAPRMonthly + poolAPRMonthly + swapFeeAPRMonthly) +
+        Number(unstaked) * usdPrice * (vaultAPRMonthly + swapFeeAPRMonthly)) *
+      Number(currencyRate)
     setYieldDaily(dailyYield)
     setYieldMonthly(monthlyYield)
 
     const convertMonthlyYieldValue =
       Number(minReceiveAmountString) *
       Number(usdPrice) *
+      Number(currencyRate) *
       (vaultAPRMonthly + poolAPRMonthly + swapFeeAPRMonthly)
     const convertDailyYieldYieldValue =
       Number(minReceiveAmountString) *
       Number(usdPrice) *
+      Number(currencyRate) *
       (vaultAPRDaily + poolAPRDaily + swapFeeAPRDaily)
     setConvertMonthlyYieldUSD(convertMonthlyYieldValue.toString())
     setConvertDailyYieldUSD(convertDailyYieldYieldValue.toString())
-    // eslint-disable-next-line
-  }, [fAssetPool, tokenVault, usdPrice, lpTokenBalance, totalStaked, minReceiveAmountString])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    fAssetPool,
+    tokenVault,
+    usdPrice,
+    lpTokenBalance,
+    totalStaked,
+    minReceiveAmountString,
+    currencyRate,
+  ])
 
   useEffect(() => {
     const getTokenBalance = async () => {
@@ -1097,7 +1098,7 @@ const AdvancedFarm = () => {
     }
 
     fetchTokenPrices()
-    // eslint-disable-next-line
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiData, pricePerFullShare, rewardTokenSymbols])
 
   useEffect(() => {
@@ -1127,12 +1128,20 @@ const AdvancedFarm = () => {
 
         totalRewardSum += totalRewardUsd
       }
-      setTotalReward(totalRewardSum)
+      setTotalReward(totalRewardSum * currencyRate)
     }
 
     calculateTotalReward()
-    // eslint-disable-next-line
-  }, [account, userStats, fAssetPool, rewardsEarned, totalRewardsEarned, rewardTokenSymbols])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    account,
+    userStats,
+    fAssetPool,
+    rewardsEarned,
+    totalRewardsEarned,
+    rewardTokenSymbols,
+    currencyRate,
+  ])
 
   useEffectWithPrevious(
     ([prevAccount, prevUserStats, prevBalances]) => {
@@ -1226,6 +1235,8 @@ const AdvancedFarm = () => {
           account,
           tokenDecimals,
           underlyingPrice,
+          currencySym,
+          currencyRate,
         )
 
         if (balanceFlag && vaultHFlag) {
@@ -1239,7 +1250,17 @@ const AdvancedFarm = () => {
     }
 
     initData()
-  }, [account, vaultPool, tokenDecimals, underlyingPrice, setUnderlyingEarnings, setUsdEarnings]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [
+    token,
+    account,
+    vaultPool,
+    tokenDecimals,
+    underlyingPrice,
+    currencySym,
+    currencyRate,
+    setUnderlyingEarnings,
+    setUsdEarnings,
+  ])
 
   const apyDaily = totalApy
     ? (((Number(totalApy) / 100 + 1) ** (1 / 365) - 1) * 100).toFixed(3)
@@ -1283,7 +1304,7 @@ const AdvancedFarm = () => {
         {token.excludeVaultStats ? (
           'N/A'
         ) : vaultValue ? (
-          <>${formatNumber(vaultValue, 2)}</>
+          <>{`${currencySym}${formatNumber(Number(vaultValue) * Number(currencyRate), 2)}`}</>
         ) : (
           <AnimatedDots />
         )}
@@ -1767,7 +1788,7 @@ const AdvancedFarm = () => {
                         height={isMobile ? '24px' : '24px'}
                         color={fontColor3}
                       >
-                        in USD
+                        in {`${currencyName}`}
                       </NewLabel>
                       <NewLabel
                         size={isMobile ? '12px' : '12px'}
@@ -1775,7 +1796,10 @@ const AdvancedFarm = () => {
                         weight="600"
                         color={fontColor1}
                       >
-                        {showUsdValue(showLatestEarnings ? usdEarningsLatest : usdEarnings)}
+                        {showUsdValue(
+                          showLatestEarnings ? usdEarningsLatest : usdEarnings,
+                          currencySym,
+                        )}
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
@@ -1859,7 +1883,7 @@ const AdvancedFarm = () => {
                         height={isMobile ? '24px' : '24px'}
                         color={fontColor3}
                       >
-                        in USD
+                        in {`${currencyName}`}
                       </NewLabel>
                       <NewLabel
                         size={isMobile ? '12px' : '12px'}
@@ -1868,9 +1892,9 @@ const AdvancedFarm = () => {
                         color={fontColor1}
                       >
                         {!connected ? (
-                          '$0.00'
+                          `${currencySym}0.00`
                         ) : lpTokenBalance ? (
-                          showUsdValue(balanceAmount)
+                          showUsdValue(balanceAmount, currencySym)
                         ) : (
                           <AnimatedDots />
                         )}
@@ -1973,7 +1997,11 @@ const AdvancedFarm = () => {
                         weight="600"
                         color={fontColor1}
                       >
-                        {!connected ? '$0' : isNaN(yieldDaily) ? '$0' : showUsdValue(yieldDaily)}
+                        {!connected
+                          ? `${currencySym}0`
+                          : isNaN(yieldDaily)
+                          ? `${currencySym}0`
+                          : showUsdValue(yieldDaily, currencySym)}
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
@@ -1997,10 +2025,10 @@ const AdvancedFarm = () => {
                         self="center"
                       >
                         {!connected
-                          ? '$0.00'
+                          ? `${currencySym}0.00`
                           : isNaN(yieldMonthly)
-                          ? '$0.00'
-                          : showUsdValue(yieldMonthly)}
+                          ? `${currencySym}0.00`
+                          : showUsdValue(yieldMonthly, currencySym)}
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
@@ -2037,6 +2065,7 @@ const AdvancedFarm = () => {
                     farmPrice={farmPrice}
                     underlyingPrice={underlyingPrice}
                     pricePerFullShare={pricePerFullShare}
+                    lpTokenBalance={lpTokenBalance}
                   />
                 )
               ) : activeMainTag === 1 ? (
@@ -2050,9 +2079,9 @@ const AdvancedFarm = () => {
                     <RewardValue>
                       <BoxValue fontColor1={fontColor1}>
                         {!connected ? (
-                          '$0'
+                          `${currencySym}0`
                         ) : userStats ? (
-                          showUsdValue(totalReward)
+                          showUsdValue(totalReward, currencySym)
                         ) : (
                           <AnimatedDots />
                         )}
@@ -2382,6 +2411,7 @@ const AdvancedFarm = () => {
                       farmPrice={farmPrice}
                       underlyingPrice={underlyingPrice}
                       pricePerFullShare={pricePerFullShare}
+                      lpTokenBalance={lpTokenBalance}
                     />
                   ) : (
                     <></>
@@ -2533,7 +2563,9 @@ const AdvancedFarm = () => {
                             {!account ? (
                               ''
                             ) : token.data.lpTokenData ? (
-                              `$${token.data.lpTokenData.price}`
+                              `${currencySym}${
+                                Number(token.data.lpTokenData.price) * Number(currencyRate)
+                              }`
                             ) : (
                               <AnimatedDots />
                             )}
@@ -2582,8 +2614,8 @@ const AdvancedFarm = () => {
                             {!account ? (
                               ''
                             ) : totalValue ? (
-                              `$${formatNumberWido(
-                                totalValue * token.data.lpTokenData.price,
+                              `${currencySym}${formatNumberWido(
+                                totalValue * token.data.lpTokenData.price * Number(currencyRate),
                                 WIDO_BALANCES_DECIMALS,
                               )}`
                             ) : (

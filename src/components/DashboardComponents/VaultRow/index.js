@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useMediaQuery } from 'react-responsive'
 import ListItem from '../ListItem'
 import { formatNumber, formatNumberWido } from '../../../utilities/formats'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { chainList, directDetailUrl } from '../../../constants'
+import { useRate } from '../../../providers/Rate'
 import File from '../../../assets/images/logos/dashboard/file-02.svg'
 import MobileFile from '../../../assets/images/logos/dashboard/file-01.svg'
 import { BadgeIcon, Content, DetailView, FlexDiv, LogoImg, Img, ContentInner } from './style'
@@ -22,6 +23,17 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
     fontColor1,
     fontColor,
   } = useThemeContext()
+
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
 
   return (
     <DetailView
@@ -116,10 +128,10 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
                 color={fontColor1}
                 value={`${
                   info.balance === 0
-                    ? '$0.00'
+                    ? `${currencySym}0.00`
                     : info.balance < 0.01
-                    ? '<$0.01'
-                    : `$${formatNumber(info.balance, 2)}`
+                    ? `<${currencySym}0.01`
+                    : `${currencySym}${formatNumber(info.balance * Number(currencyRate), 2)}`
                 }`}
               />
             </Content>
@@ -132,10 +144,13 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
                 color={fontColor1}
                 value={`${
                   info.totalRewardUsd === 0
-                    ? '$0.00'
+                    ? `${currencySym}0.00`
                     : info.totalRewardUsd < 0.01
-                    ? '<$0.01'
-                    : `$${formatNumberWido(info.totalRewardUsd, 2)}`
+                    ? `<${currencySym}0.01`
+                    : `${currencySym}${formatNumberWido(
+                        info.totalRewardUsd * Number(currencyRate),
+                        2,
+                      )}`
                 }`}
               />
             </Content>
@@ -150,10 +165,10 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
               color={fontColor}
               value={`${
                 info.balance === 0
-                  ? '$0.00'
+                  ? `${currencySym}0.00`
                   : info.balance < 0.01
-                  ? '<$0.01'
-                  : `$${formatNumber(info.balance, 2)}`
+                  ? `<${currencySym}0.01`
+                  : `${currencySym}${formatNumber(info.balance * Number(currencyRate), 2)}`
               }`}
             />
           </Content>
@@ -169,10 +184,10 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
             color={isMobile ? fontColor1 : fontColor}
             value={`${
               info.monthlyYield === 0
-                ? '$0.00'
+                ? `${currencySym}0.00`
                 : info.monthlyYield < 0.01
-                ? '<$0.01'
-                : `$${formatNumber(info.monthlyYield, 2)}`
+                ? `<${currencySym}0.01`
+                : `${currencySym}${formatNumber(info.monthlyYield * Number(currencyRate), 2)}`
             }`}
           />
         </Content>
@@ -187,10 +202,10 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
             color={isMobile ? fontColor1 : fontColor}
             value={`${
               info.dailyYield === 0
-                ? '$0.00'
+                ? `${currencySym}0.00`
                 : info.dailyYield < 0.01
-                ? '<$0.01'
-                : `$${formatNumber(info.dailyYield, 2)}`
+                ? `<${currencySym}0.01`
+                : `${currencySym}${formatNumber(info.dailyYield * Number(currencyRate), 2)}`
             }`}
           />
         </Content>
@@ -203,10 +218,10 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
               color={fontColor}
               value={`${
                 info.totalRewardUsd === 0
-                  ? '$0.00'
+                  ? `${currencySym}0.00`
                   : info.totalRewardUsd < 0.01
-                  ? '<$0.01'
-                  : `$${formatNumber(info.totalRewardUsd, 2)}`
+                  ? `<${currencySym}0.01`
+                  : `${currencySym}${formatNumber(info.totalRewardUsd * Number(currencyRate), 2)}`
               }`}
             />
           </Content>
@@ -304,10 +319,13 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
                   height={isMobile ? 20 : 20}
                   value={`${
                     info.rewardUSD[key] === 0
-                      ? '$0.00'
+                      ? `${currencySym}0.00`
                       : info.rewardUSD[key] < 0.01
-                      ? '<$0.01'
-                      : `$${formatNumber(info.rewardUSD[key], 2)}`
+                      ? `<${currencySym}0.01`
+                      : `${currencySym}${formatNumber(
+                          info.rewardUSD[key] * Number(currencyRate),
+                          2,
+                        )}`
                   }`}
                   color={isMobile ? fontColor1 : fontColor}
                 />
