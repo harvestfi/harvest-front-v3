@@ -534,6 +534,8 @@ export const getPriceFeeds = async (
     vaultPriceFeedCount > 1000 ? `priceFeedSequenceId_in: [${sequenceIdsArray}]` : ''
 
   address = address.toLowerCase()
+  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
+  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
   const timestampQuery = timestamp && asQuery ? `timestamp_lt: "${timestamp}"` : ''
 
   const myHeaders = new Headers()
@@ -544,7 +546,7 @@ export const getPriceFeeds = async (
         priceFeeds(
           first: 1000,
           where: {
-            vault: "${address}",
+            vault: "${address === ifarm ? farm : address}",
             ${timestampQuery},
             ${priceFeedSequenceId}
           },
