@@ -17,7 +17,7 @@ import { useRate } from '../../../../providers/Rate'
 import { CHAIN_IDS } from '../../../../data/constants'
 import { fromWei, toWei, checkNativeToken } from '../../../../services/web3'
 import { addresses } from '../../../../data'
-import { isSpecialApp } from '../../../../utilities/formats'
+import { isSpecialApp, showTokenBalance } from '../../../../utilities/formats'
 import Button from '../../../Button'
 import AnimatedDots from '../../../AnimatedDots'
 import {
@@ -496,7 +496,7 @@ const DepositBase = ({
         >
           {isMobile && (pickedToken.symbol === 'Select Token' ? '' : `${pickedToken.symbol} `)}
           Balance Available:
-          <span>{new BigNumber(balance).toString()}</span>
+          <span>{showTokenBalance(balance)}</span>
         </BalanceInfo>
         <InsufficientSection
           isShow={showWarning ? 'true' : 'false'}
@@ -735,20 +735,40 @@ const DepositBase = ({
               items="flex-end"
               flexFlow="column"
             >
-              {account &&
-              pickedToken.symbol !== 'Select Token' &&
-              !new BigNumber(amount).isEqualTo(0) &&
-              balanceList.length !== 0 ? (
-                minReceiveAmountString !== '' ? (
-                  minReceiveAmountString
-                ) : (
-                  <TokenInfo>
-                    <AnimatedDots />
-                  </TokenInfo>
-                )
-              ) : (
-                '-'
-              )}
+              <>
+                <div data-tip data-for="est-fToken-receive">
+                  {account &&
+                  pickedToken.symbol !== 'Select Token' &&
+                  !new BigNumber(amount).isEqualTo(0) &&
+                  balanceList.length !== 0 ? (
+                    minReceiveAmountString !== '' ? (
+                      showTokenBalance(minReceiveAmountString)
+                    ) : (
+                      <TokenInfo>
+                        <AnimatedDots />
+                      </TokenInfo>
+                    )
+                  ) : (
+                    '-'
+                  )}
+                </div>
+                <ReactTooltip
+                  id="est-fToken-receive"
+                  backgroundColor="#101828"
+                  borderColor="black"
+                  textColor="white"
+                  place="top"
+                >
+                  <NewLabel
+                    size={isMobile ? '12px' : '12px'}
+                    height={isMobile ? '18px' : '18px'}
+                    weight="500"
+                    color="white"
+                  >
+                    {minReceiveAmountString}
+                  </NewLabel>
+                </ReactTooltip>
+              </>
               <span className="token-symbol">
                 {useIFARM ? `i${tokenSymbol}` : `f${tokenSymbol}`}
               </span>

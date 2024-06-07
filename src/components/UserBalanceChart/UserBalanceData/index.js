@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react'
+import ReactTooltip from 'react-tooltip'
+import { useMediaQuery } from 'react-responsive'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { useRate } from '../../../providers/Rate'
-import { formatDate, numberWithCommas } from '../../../utilities/formats'
+import { formatDate, numberWithCommas, showTokenBalance } from '../../../utilities/formats'
 import { getPriceFeeds, getSequenceId, getUserBalanceHistories } from '../../../utilities/apiCalls'
 import {
   ButtonGroup,
@@ -16,6 +18,7 @@ import {
   TooltipInfo,
   FlexDiv,
   CurContent,
+  NewLabel,
 } from './style'
 
 const recommendLinks = [
@@ -36,6 +39,7 @@ const UserBalanceData = ({
   pricePerFullShare,
   lpTokenBalance,
 }) => {
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const { backColor, borderColor, fontColor3 } = useThemeContext()
   const { account } = useWallet()
 
@@ -317,7 +321,25 @@ const UserBalanceData = ({
               </TokenSymbol>
               <FlexDiv>
                 <CurContent color="#8884d8" className="tt-content-underlying">
-                  {curContentUnderlying}
+                  <div className="question" data-tip data-for="chart-underlying-balance">
+                    {showTokenBalance(curContentUnderlying)}
+                  </div>
+                  <ReactTooltip
+                    id="chart-underlying-balance"
+                    backgroundColor="#101828"
+                    borderColor="black"
+                    textColor="white"
+                    place="top"
+                  >
+                    <NewLabel
+                      size={isMobile ? '12px' : '12px'}
+                      height={isMobile ? '18px' : '18px'}
+                      weight="500"
+                      color="white"
+                    >
+                      {curContentUnderlying}
+                    </NewLabel>
+                  </ReactTooltip>
                 </CurContent>
               </FlexDiv>
             </TooltipInfo>

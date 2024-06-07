@@ -65,7 +65,13 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { useRate } from '../../providers/Rate'
-import { displayAPY, formatNumber, formatNumberWido, showUsdValue } from '../../utilities/formats'
+import {
+  displayAPY,
+  formatNumber,
+  formatNumberWido,
+  showTokenBalance,
+  showUsdValue,
+} from '../../utilities/formats'
 import { getTotalApy, getVaultValue } from '../../utilities/parsers'
 import { getAdvancedRewardText } from '../../utilities/html'
 import { getLastHarvestInfo, initBalanceAndDetailData } from '../../utilities/apiCalls'
@@ -1827,7 +1833,27 @@ const AdvancedFarm = () => {
                         align="right"
                         marginBottom={isMobile ? '12px' : '0px'}
                       >
-                        {showLatestEarnings ? underlyingEarningsLatest : underlyingEarnings}
+                        <div data-tip data-for="earnings-underlying">
+                          {showLatestEarnings
+                            ? showTokenBalance(underlyingEarningsLatest)
+                            : showTokenBalance(underlyingEarnings)}
+                        </div>
+                        <ReactTooltip
+                          id="earnings-underlying"
+                          backgroundColor="#101828"
+                          borderColor="black"
+                          textColor="white"
+                          place="top"
+                        >
+                          <NewLabel
+                            size={isMobile ? '12px' : '12px'}
+                            height={isMobile ? '18px' : '18px'}
+                            weight="500"
+                            color="white"
+                          >
+                            {showLatestEarnings ? underlyingEarningsLatest : underlyingEarnings}
+                          </NewLabel>
+                        </ReactTooltip>
                         <br />
                         <span className="symbol">{id}</span>
                       </NewLabel>
@@ -1924,17 +1950,31 @@ const AdvancedFarm = () => {
                         align="right"
                         marginBottom={isMobile ? '12px' : '0px'}
                       >
-                        {!connected ? (
-                          0
-                        ) : lpTokenBalance ? (
-                          totalValue === 0 ? (
-                            '0.00'
+                        <div className="question" data-tip data-for="fToken-total-balance">
+                          {!connected ? (
+                            0
+                          ) : lpTokenBalance ? (
+                            showTokenBalance(totalValue)
                           ) : (
-                            totalValue
-                          )
-                        ) : (
-                          <AnimatedDots />
-                        )}
+                            <AnimatedDots />
+                          )}
+                        </div>
+                        <ReactTooltip
+                          id="fToken-total-balance"
+                          backgroundColor="#101828"
+                          borderColor="black"
+                          textColor="white"
+                          place="top"
+                        >
+                          <NewLabel
+                            size={isMobile ? '12px' : '12px'}
+                            height={isMobile ? '18px' : '18px'}
+                            weight="500"
+                            color="white"
+                          >
+                            {totalValue}
+                          </NewLabel>
+                        </ReactTooltip>
                         <br />
                         <span className="symbol">{useIFARM ? `i${id}` : `f${id}`}</span>
                       </NewLabel>
@@ -2777,7 +2817,29 @@ const AdvancedFarm = () => {
                         height={isMobile ? '24px' : '24px'}
                         color={fontColor1}
                       >
-                        {latestSharePrice === '' ? <AnimatedDots /> : latestSharePrice}
+                        <div className="question" data-tip data-for="tooltip-sharePrice">
+                          {latestSharePrice === '' ? (
+                            <AnimatedDots />
+                          ) : (
+                            Number(latestSharePrice).toFixed(5)
+                          )}
+                        </div>
+                        <ReactTooltip
+                          id="tooltip-sharePrice"
+                          backgroundColor="#101828"
+                          borderColor="black"
+                          textColor="white"
+                          place="top"
+                        >
+                          <NewLabel
+                            size={isMobile ? '12px' : '12px'}
+                            height={isMobile ? '18px' : '18px'}
+                            weight="500"
+                            color="white"
+                          >
+                            {latestSharePrice}
+                          </NewLabel>
+                        </ReactTooltip>
                       </NewLabel>
                     </FlexDiv>
                     <NewLabel
