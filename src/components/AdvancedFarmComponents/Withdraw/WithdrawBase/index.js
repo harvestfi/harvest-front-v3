@@ -14,7 +14,7 @@ import { useWallet } from '../../../../providers/Wallet'
 import { useRate } from '../../../../providers/Rate'
 import { fromWei, toWei } from '../../../../services/web3'
 import { addresses } from '../../../../data'
-import { formatNumberWido, isSpecialApp } from '../../../../utilities/formats'
+import { formatNumberWido, isSpecialApp, showTokenBalance } from '../../../../utilities/formats'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import AnimatedDots from '../../../AnimatedDots'
 import Button from '../../../Button'
@@ -605,20 +605,38 @@ const WithdrawBase = ({
               flexFlow="column"
             >
               <TokenInfo>
-                {account &&
-                pickedToken.symbol !== 'Select' &&
-                !new BigNumber(unstakeBalance.toString()).isEqualTo(0) &&
-                curChain === tokenChain ? (
-                  revertMinReceivedAmount !== '' ? (
-                    revertMinReceivedAmount
+                <div data-tip data-for="est-fToken-receive-revert">
+                  {account &&
+                  pickedToken.symbol !== 'Select Token' &&
+                  !new BigNumber(unstakeBalance.toString()).isEqualTo(0) &&
+                  curChain === tokenChain ? (
+                    revertMinReceivedAmount !== '' ? (
+                      showTokenBalance(revertMinReceivedAmount)
+                    ) : (
+                      <TokenInfo>
+                        <AnimatedDots />
+                      </TokenInfo>
+                    )
                   ) : (
-                    <TokenInfo>
-                      <AnimatedDots />
-                    </TokenInfo>
-                  )
-                ) : (
-                  '-'
-                )}
+                    '-'
+                  )}
+                </div>
+                <ReactTooltip
+                  id="est-fToken-receive-revert"
+                  backgroundColor="#101828"
+                  borderColor="black"
+                  textColor="white"
+                  place="top"
+                >
+                  <NewLabel
+                    size={isMobile ? '12px' : '12px'}
+                    height={isMobile ? '18px' : '18px'}
+                    weight="500"
+                    color="white"
+                  >
+                    {revertMinReceivedAmount}
+                  </NewLabel>
+                </ReactTooltip>
               </TokenInfo>
               <span className="token-symbol">
                 {pickedToken.symbol !== 'Select' ? pickedToken.symbol : 'Output Token'}
