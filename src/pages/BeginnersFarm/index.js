@@ -1363,15 +1363,14 @@ const BeginnersFarm = () => {
                               ? 'tooltip-latest-earning'
                               : 'tooltip-lifetime-earning'
                           }
-                          backgroundColor="#101828"
-                          borderColor="black"
-                          textColor="white"
+                          backgroundColor={darkMode ? 'white' : '#101828'}
+                          borderColor={darkMode ? 'white' : 'black'}
+                          textColor={darkMode ? 'black' : 'white'}
                         >
                           <NewLabel
                             size={isMobile ? '12px' : '12px'}
                             height={isMobile ? '18px' : '18px'}
                             weight="500"
-                            color="white"
                           >
                             {showLatestEarnings ? (
                               <>
@@ -1469,16 +1468,15 @@ const BeginnersFarm = () => {
                         </div>
                         <ReactTooltip
                           id="earnings-underlying"
-                          backgroundColor="#101828"
-                          borderColor="black"
-                          textColor="white"
+                          backgroundColor={darkMode ? 'white' : '#101828'}
+                          borderColor={darkMode ? 'white' : 'black'}
+                          textColor={darkMode ? 'black' : 'white'}
                           place="top"
                         >
                           <NewLabel
                             size={isMobile ? '12px' : '12px'}
                             height={isMobile ? '18px' : '18px'}
                             weight="500"
-                            color="white"
                           >
                             {showLatestEarnings ? underlyingEarningsLatest : underlyingEarnings}
                           </NewLabel>
@@ -1508,15 +1506,14 @@ const BeginnersFarm = () => {
                       <PiQuestion className="question" data-tip data-for="tooltip-total-balance" />
                       <ReactTooltip
                         id="tooltip-total-balance"
-                        backgroundColor="#101828"
-                        borderColor="black"
-                        textColor="white"
+                        backgroundColor={darkMode ? 'white' : '#101828'}
+                        borderColor={darkMode ? 'white' : 'black'}
+                        textColor={darkMode ? 'black' : 'white'}
                       >
                         <NewLabel
                           size={isMobile ? '12px' : '12px'}
                           height={isMobile ? '18px' : '18px'}
                           weight="500"
-                          color="white"
                         >
                           Total Balance reflects the fTokens in connected wallet, alongside their
                           USD value, which can change with the market.
@@ -1589,16 +1586,15 @@ const BeginnersFarm = () => {
                         </div>
                         <ReactTooltip
                           id="fToken-total-balance"
-                          backgroundColor="#101828"
-                          borderColor="black"
-                          textColor="white"
+                          backgroundColor={darkMode ? 'white' : '#101828'}
+                          borderColor={darkMode ? 'white' : 'black'}
+                          textColor={darkMode ? 'black' : 'white'}
                           place="top"
                         >
                           <NewLabel
                             size={isMobile ? '12px' : '12px'}
                             height={isMobile ? '18px' : '18px'}
                             weight="500"
-                            color="white"
                           >
                             {totalValue}
                           </NewLabel>
@@ -1628,15 +1624,14 @@ const BeginnersFarm = () => {
                       <PiQuestion className="question" data-tip data-for="tooltip-yield-estimate" />
                       <ReactTooltip
                         id="tooltip-yield-estimate"
-                        backgroundColor="#101828"
-                        borderColor="black"
-                        textColor="white"
+                        backgroundColor={darkMode ? 'white' : '#101828'}
+                        borderColor={darkMode ? 'white' : 'black'}
+                        textColor={darkMode ? 'black' : 'white'}
                       >
                         <NewLabel
                           size={isMobile ? '12px' : '12px'}
                           height={isMobile ? '18px' : '18px'}
                           weight="500"
-                          color="white"
                         >
                           Estimated yield on your fTokens of this farm based on live APY,
                           denominated in USD. Subject to market fluctuations.
@@ -2107,16 +2102,15 @@ const BeginnersFarm = () => {
                         </div>
                         <ReactTooltip
                           id="tooltip-sharePrice"
-                          backgroundColor="#101828"
-                          borderColor="black"
-                          textColor="white"
+                          backgroundColor={darkMode ? 'white' : '#101828'}
+                          borderColor={darkMode ? 'white' : 'black'}
+                          textColor={darkMode ? 'black' : 'white'}
                           place="top"
                         >
                           <NewLabel
                             size={isMobile ? '12px' : '12px'}
                             height={isMobile ? '18px' : '18px'}
                             weight="500"
-                            color="white"
                           >
                             {latestSharePrice}
                           </NewLabel>
@@ -2229,9 +2223,9 @@ const BeginnersFarm = () => {
                         <PiQuestion className="question" data-tip data-for="tooltip-last-harvest" />
                         <ReactTooltip
                           id="tooltip-last-harvest"
-                          backgroundColor="#101828"
-                          borderColor="black"
-                          textColor="white"
+                          backgroundColor={darkMode ? 'white' : '#101828'}
+                          borderColor={darkMode ? 'white' : 'black'}
+                          textColor={darkMode ? 'black' : 'white'}
                           place={isMobile ? 'left' : 'top'}
                         >
                           <NewLabel

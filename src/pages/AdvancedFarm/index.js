@@ -1734,15 +1734,14 @@ const AdvancedFarm = () => {
                               ? 'tooltip-latest-earning'
                               : 'tooltip-lifetime-earning'
                           }
-                          backgroundColor="#101828"
-                          borderColor="black"
-                          textColor="white"
+                          backgroundColor={darkMode ? 'white' : '#101828'}
+                          borderColor={darkMode ? 'white' : 'black'}
+                          textColor={darkMode ? 'black' : 'white'}
                         >
                           <NewLabel
                             size={isMobile ? '12px' : '12px'}
                             height={isMobile ? '18px' : '18px'}
                             weight="500"
-                            color="white"
                           >
                             {showLatestEarnings ? (
                               <>
@@ -1840,16 +1839,15 @@ const AdvancedFarm = () => {
                         </div>
                         <ReactTooltip
                           id="earnings-underlying"
-                          backgroundColor="#101828"
-                          borderColor="black"
-                          textColor="white"
+                          backgroundColor={darkMode ? 'white' : '#101828'}
+                          borderColor={darkMode ? 'white' : 'black'}
+                          textColor={darkMode ? 'black' : 'white'}
                           place="top"
                         >
                           <NewLabel
                             size={isMobile ? '12px' : '12px'}
                             height={isMobile ? '18px' : '18px'}
                             weight="500"
-                            color="white"
                           >
                             {showLatestEarnings ? underlyingEarningsLatest : underlyingEarnings}
                           </NewLabel>
@@ -1879,15 +1877,14 @@ const AdvancedFarm = () => {
                       <PiQuestion className="question" data-tip data-for="tooltip-total-balance" />
                       <ReactTooltip
                         id="tooltip-total-balance"
-                        backgroundColor="#101828"
-                        borderColor="black"
-                        textColor="white"
+                        backgroundColor={darkMode ? 'white' : '#101828'}
+                        borderColor={darkMode ? 'white' : 'black'}
+                        textColor={darkMode ? 'black' : 'white'}
                       >
                         <NewLabel
                           size={isMobile ? '12px' : '12px'}
                           height={isMobile ? '18px' : '18px'}
                           weight="500"
-                          color="white"
                         >
                           Total Balance reflects the fTokens in connected wallet, alongside their
                           USD value, which can change with the market.
@@ -1960,16 +1957,15 @@ const AdvancedFarm = () => {
                         </div>
                         <ReactTooltip
                           id="fToken-total-balance"
-                          backgroundColor="#101828"
-                          borderColor="black"
-                          textColor="white"
+                          backgroundColor={darkMode ? 'white' : '#101828'}
+                          borderColor={darkMode ? 'white' : 'black'}
+                          textColor={darkMode ? 'black' : 'white'}
                           place="top"
                         >
                           <NewLabel
                             size={isMobile ? '12px' : '12px'}
                             height={isMobile ? '18px' : '18px'}
                             weight="500"
-                            color="white"
                           >
                             {totalValue}
                           </NewLabel>
@@ -1999,15 +1995,14 @@ const AdvancedFarm = () => {
                       <PiQuestion className="question" data-tip data-for="tooltip-yield-estimate" />
                       <ReactTooltip
                         id="tooltip-yield-estimate"
-                        backgroundColor="#101828"
-                        borderColor="black"
-                        textColor="white"
+                        backgroundColor={darkMode ? 'white' : '#101828'}
+                        borderColor={darkMode ? 'white' : 'black'}
+                        textColor={darkMode ? 'black' : 'white'}
                       >
                         <NewLabel
                           size={isMobile ? '12px' : '12px'}
                           height={isMobile ? '18px' : '18px'}
                           weight="500"
-                          color="white"
                         >
                           Estimated yield on your fTokens of this farm based on live APY,
                           denominated in USD. Subject to market fluctuations.
@@ -2493,15 +2488,14 @@ const AdvancedFarm = () => {
                         />
                         <ReactTooltip
                           id="tooltip-unstaked-desc"
-                          backgroundColor="#101828"
-                          borderColor="black"
-                          textColor="white"
+                          backgroundColor={darkMode ? 'white' : '#101828'}
+                          borderColor={darkMode ? 'white' : 'black'}
+                          textColor={darkMode ? 'black' : 'white'}
                         >
                           <NewLabel
                             size={isMobile ? '12px' : '12px'}
                             height={isMobile ? '18px' : '18px'}
                             weight="500"
-                            color="white"
                           >
                             {useIFARM
                               ? `The number of i${id} you hold, but entitled to extra token rewards.`
@@ -2543,15 +2537,14 @@ const AdvancedFarm = () => {
                         <PiQuestion className="question" data-tip data-for="tooltip-staked-desc" />
                         <ReactTooltip
                           id="tooltip-staked-desc"
-                          backgroundColor="#101828"
-                          borderColor="black"
-                          textColor="white"
+                          backgroundColor={darkMode ? 'white' : '#101828'}
+                          borderColor={darkMode ? 'white' : 'black'}
+                          textColor={darkMode ? 'black' : 'white'}
                         >
                           <NewLabel
                             size={isMobile ? '12px' : '12px'}
                             height={isMobile ? '18px' : '18px'}
                             weight="500"
-                            color="white"
                           >
                             {useIFARM
                               ? `The number of i${id} you hold, but entitled to extra token rewards.`
@@ -2630,15 +2623,14 @@ const AdvancedFarm = () => {
                             />
                             <ReactTooltip
                               id="tooltip-totalValue"
-                              backgroundColor="#101828"
-                              borderColor="black"
-                              textColor="white"
+                              backgroundColor={darkMode ? 'white' : '#101828'}
+                              borderColor={darkMode ? 'white' : 'black'}
+                              textColor={darkMode ? 'black' : 'white'}
                             >
                               <NewLabel
                                 size={isMobile ? '10px' : '12px'}
                                 height={isMobile ? '15px' : '18px'}
                                 weight="500"
-                                color="white"
                               >
                                 Total Value of your Staked and Unstaked FARM
                               </NewLabel>
@@ -2824,16 +2816,15 @@ const AdvancedFarm = () => {
                         </div>
                         <ReactTooltip
                           id="tooltip-sharePrice"
-                          backgroundColor="#101828"
-                          borderColor="black"
-                          textColor="white"
+                          backgroundColor={darkMode ? 'white' : '#101828'}
+                          borderColor={darkMode ? 'white' : 'black'}
+                          textColor={darkMode ? 'black' : 'white'}
                           place="top"
                         >
                           <NewLabel
                             size={isMobile ? '12px' : '12px'}
                             height={isMobile ? '18px' : '18px'}
                             weight="500"
-                            color="white"
                           >
                             {latestSharePrice}
                           </NewLabel>
@@ -2953,9 +2944,9 @@ const AdvancedFarm = () => {
                           />
                           <ReactTooltip
                             id="tooltip-last-harvest"
-                            backgroundColor="#101828"
-                            borderColor="black"
-                            textColor="white"
+                            backgroundColor={darkMode ? 'white' : '#101828'}
+                            borderColor={darkMode ? 'white' : 'black'}
+                            textColor={darkMode ? 'black' : 'white'}
                             place={isMobile ? 'left' : 'top'}
                           >
                             <NewLabel

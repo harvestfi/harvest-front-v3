@@ -94,6 +94,7 @@ const DepositBase = ({
   setSupportedVault,
 }) => {
   const {
+    darkMode,
     bgColor,
     fontColor,
     fontColor1,
@@ -573,16 +574,15 @@ const DepositBase = ({
               <PiQuestion className="question" data-tip data-for="monthly-yield" />
               <ReactTooltip
                 id="monthly-yield"
-                backgroundColor="#101828"
-                borderColor="black"
-                textColor="white"
+                backgroundColor={darkMode ? 'white' : '#101828'}
+                borderColor={darkMode ? 'white' : 'black'}
+                textColor={darkMode ? 'black' : 'white'}
                 place="right"
               >
                 <NewLabel
                   size={isMobile ? '12px' : '12px'}
                   height={isMobile ? '18px' : '18px'}
                   weight="500"
-                  color="white"
                 >
                   {useBeginnersFarm
                     ? `Based on live USD prices of tokens involved in this farm. Subject to change due to market fluctuations and the number of users in this farm.`
@@ -640,9 +640,9 @@ const DepositBase = ({
               <PiQuestion className="question" data-tip data-for="daily-yield" />
               <ReactTooltip
                 id="daily-yield"
-                backgroundColor="#101828"
-                borderColor="black"
-                textColor="white"
+                backgroundColor={darkMode ? 'white' : '#101828'}
+                borderColor={darkMode ? 'white' : 'black'}
+                textColor={darkMode ? 'black' : 'white'}
                 place="right"
                 width="100px"
               >
@@ -650,7 +650,6 @@ const DepositBase = ({
                   size={isMobile ? '12px' : '12px'}
                   height={isMobile ? '18px' : '18px'}
                   weight="500"
-                  color="white"
                 >
                   {useBeginnersFarm
                     ? `Based on live USD prices of tokens involved in this farm. Subject to change due to market fluctuations and the number of users in this farm.`
@@ -708,16 +707,15 @@ const DepositBase = ({
               <PiQuestion className="question" data-tip data-for="min-received" />
               <ReactTooltip
                 id="min-received"
-                backgroundColor="#101828"
-                borderColor="black"
-                textColor="white"
+                backgroundColor={darkMode ? 'white' : '#101828'}
+                borderColor={darkMode ? 'white' : 'black'}
+                textColor={darkMode ? 'black' : 'white'}
                 place="right"
               >
                 <NewLabel
                   size={isMobile ? '12px' : '12px'}
                   height={isMobile ? '18px' : '18px'}
                   weight="500"
-                  color="white"
                 >
                   {useBeginnersFarm
                     ? `The estimated number of interest-bearing fTokens you will receive in your wallet. The default slippage is set as 'Auto'.`
@@ -754,16 +752,15 @@ const DepositBase = ({
                 </div>
                 <ReactTooltip
                   id="est-fToken-receive"
-                  backgroundColor="#101828"
-                  borderColor="black"
-                  textColor="white"
+                  backgroundColor={darkMode ? 'white' : '#101828'}
+                  borderColor={darkMode ? 'white' : 'black'}
+                  textColor={darkMode ? 'black' : 'white'}
                   place="top"
                 >
                   <NewLabel
                     size={isMobile ? '12px' : '12px'}
                     height={isMobile ? '18px' : '18px'}
                     weight="500"
-                    color="white"
                   >
                     {minReceiveAmountString}
                   </NewLabel>

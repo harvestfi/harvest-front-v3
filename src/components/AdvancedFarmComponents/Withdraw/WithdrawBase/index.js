@@ -88,6 +88,7 @@ const WithdrawBase = ({
   setHasErrorOccurred,
 }) => {
   const {
+    darkMode,
     bgColor,
     activeColor,
     fontColor,
@@ -578,16 +579,15 @@ const WithdrawBase = ({
               <PiQuestion className="question" data-tip data-for="min-received" />
               <ReactTooltip
                 id="min-received"
-                backgroundColor="#101828"
-                borderColor="black"
-                textColor="white"
+                backgroundColor={darkMode ? 'white' : '#101828'}
+                borderColor={darkMode ? 'white' : 'black'}
+                textColor={darkMode ? 'black' : 'white'}
                 place="right"
               >
                 <NewLabel
                   size={isMobile ? '12px' : '12px'}
                   height={isMobile ? '18px' : '18px'}
                   weight="600"
-                  color="white"
                 >
                   The estimated number of tokens you will receive in your wallet. The default
                   slippage is set as &lsquo;Auto&lsquo;.
@@ -623,16 +623,15 @@ const WithdrawBase = ({
                 </div>
                 <ReactTooltip
                   id="est-fToken-receive-revert"
-                  backgroundColor="#101828"
-                  borderColor="black"
-                  textColor="white"
+                  backgroundColor={darkMode ? 'white' : '#101828'}
+                  borderColor={darkMode ? 'white' : 'black'}
+                  textColor={darkMode ? 'black' : 'white'}
                   place="top"
                 >
                   <NewLabel
                     size={isMobile ? '12px' : '12px'}
                     height={isMobile ? '18px' : '18px'}
                     weight="500"
-                    color="white"
                   >
                     {revertMinReceivedAmount}
                   </NewLabel>

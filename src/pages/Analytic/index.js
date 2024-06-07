@@ -200,9 +200,9 @@ const Analytic = () => {
             </FarmSubTitle>
             <ReactTooltip
               id="profits-to-farmers"
-              backgroundColor="black"
-              borderColor="black"
-              textColor="white"
+              backgroundColor={darkMode ? 'white' : '#101828'}
+              borderColor={darkMode ? 'white' : 'black'}
+              textColor={darkMode ? 'black' : 'white'}
               effect="float"
               getContent={() => (
                 <TextContainer textAlign="left" margin="0px">
@@ -246,9 +246,9 @@ const Analytic = () => {
             </FarmSubTitle>
             <ReactTooltip
               id="details-box"
-              backgroundColor="black"
-              borderColor="black"
-              textColor="white"
+              backgroundColor={darkMode ? 'white' : '#101828'}
+              borderColor={darkMode ? 'white' : 'black'}
+              textColor={darkMode ? 'black' : 'white'}
               effect="float"
               getContent={() => (
                 <StatsTooltip>

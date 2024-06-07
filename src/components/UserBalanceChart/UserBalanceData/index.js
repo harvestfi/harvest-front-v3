@@ -40,7 +40,7 @@ const UserBalanceData = ({
   lpTokenBalance,
 }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const { backColor, borderColor, fontColor3 } = useThemeContext()
+  const { darkMode, backColor, borderColor, fontColor3 } = useThemeContext()
   const { account } = useWallet()
 
   const { rates } = useRate()
@@ -326,16 +326,15 @@ const UserBalanceData = ({
                   </div>
                   <ReactTooltip
                     id="chart-underlying-balance"
-                    backgroundColor="#101828"
-                    borderColor="black"
-                    textColor="white"
+                    backgroundColor={darkMode ? 'white' : '#101828'}
+                    borderColor={darkMode ? 'white' : 'black'}
+                    textColor={darkMode ? 'black' : 'white'}
                     place="top"
                   >
                     <NewLabel
                       size={isMobile ? '12px' : '12px'}
                       height={isMobile ? '18px' : '18px'}
                       weight="500"
-                      color="white"
                     >
                       {curContentUnderlying}
                     </NewLabel>
