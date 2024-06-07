@@ -359,6 +359,7 @@ const UserBalanceData = ({
           fixedLen={fixedLen}
           lastFarmingTimeStamp={lastFarmingTimeStamp}
           lpTokenBalance={lpTokenBalance}
+          totalValue={totalValue}
         />
       </ChartDiv>
       <ButtonGroup>
