@@ -1483,7 +1483,6 @@ const BeginnersFarm = () => {
                             {showLatestEarnings ? underlyingEarningsLatest : underlyingEarnings}
                           </NewLabel>
                         </ReactTooltip>
-                        <br />
                         <span className="symbol">{id}</span>
                       </NewLabel>
                     </FlexDiv>
@@ -1604,7 +1603,6 @@ const BeginnersFarm = () => {
                             {totalValue}
                           </NewLabel>
                         </ReactTooltip>
-                        <br />
                         <span className="symbol">{useIFARM ? `i${id}` : `f${id}`}</span>
                       </NewLabel>
                     </FlexDiv>
