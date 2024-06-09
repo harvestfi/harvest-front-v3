@@ -118,7 +118,7 @@ const UserBalanceData = ({
   useEffect(() => {
     let isMounted = true
     const initData = async () => {
-      if (account && address && chainId && pricePerFullShare && totalValue) {
+      if (account && address && chainId && pricePerFullShare) {
         try {
           const uniqueData2 = []
           const timestamps = []
@@ -280,16 +280,7 @@ const UserBalanceData = ({
     return () => {
       isMounted = false
     }
-  }, [
-    address,
-    chainId,
-    account,
-    totalValue,
-    underlyingPrice,
-    useIFARM,
-    farmPrice,
-    pricePerFullShare,
-  ])
+  }, [address, chainId, account, underlyingPrice, useIFARM, farmPrice, pricePerFullShare])
 
   return (
     <Container backColor={backColor} borderColor={borderColor}>
