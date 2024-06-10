@@ -432,8 +432,8 @@ const DepositStart = ({
                       place="right"
                     >
                       <NewLabel
-                        size={isMobile ? '12px' : '10px'}
-                        height={isMobile ? '18px' : '14px'}
+                        size={isMobile ? '10px' : '10px'}
+                        height={isMobile ? '14px' : '14px'}
                         weight="600"
                       >
                         {useIFARM

@@ -1474,8 +1474,8 @@ const BeginnersFarm = () => {
                           place="top"
                         >
                           <NewLabel
-                            size={isMobile ? '12px' : '10px'}
-                            height={isMobile ? '18px' : '14px'}
+                            size={isMobile ? '10px' : '10px'}
+                            height={isMobile ? '14px' : '14px'}
                             weight="500"
                           >
                             {showLatestEarnings ? underlyingEarningsLatest : underlyingEarnings}
@@ -1592,8 +1592,8 @@ const BeginnersFarm = () => {
                           place="top"
                         >
                           <NewLabel
-                            size={isMobile ? '12px' : '10px'}
-                            height={isMobile ? '18px' : '14px'}
+                            size={isMobile ? '10px' : '10px'}
+                            height={isMobile ? '14px' : '14px'}
                             weight="500"
                           >
                             {totalValue}
