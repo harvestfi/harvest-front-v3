@@ -280,7 +280,16 @@ const UserBalanceData = ({
     return () => {
       isMounted = false
     }
-  }, [address, chainId, account, underlyingPrice, useIFARM, farmPrice, pricePerFullShare])
+  }, [
+    address,
+    chainId,
+    account,
+    totalValue,
+    underlyingPrice,
+    useIFARM,
+    farmPrice,
+    pricePerFullShare,
+  ])
 
   return (
     <Container backColor={backColor} borderColor={borderColor}>
