@@ -1832,26 +1832,30 @@ const AdvancedFarm = () => {
                         align="right"
                         marginBottom={isMobile ? '12px' : '0px'}
                       >
-                        <div data-tip data-for="earnings-underlying">
-                          {showLatestEarnings
-                            ? showTokenBalance(underlyingEarningsLatest)
-                            : showTokenBalance(underlyingEarnings)}
-                        </div>
-                        <ReactTooltip
-                          id="earnings-underlying"
-                          backgroundColor={darkMode ? 'white' : '#101828'}
-                          borderColor={darkMode ? 'white' : 'black'}
-                          textColor={darkMode ? 'black' : 'white'}
-                          place="top"
-                        >
-                          <NewLabel
-                            size={isMobile ? '10px' : '10px'}
-                            height={isMobile ? '14px' : '14px'}
-                            weight="500"
+                        <div>
+                          <div data-tip data-for="earnings-underlying">
+                            {showLatestEarnings
+                              ? showTokenBalance(underlyingEarningsLatest)
+                              : showTokenBalance(underlyingEarnings)}
+                          </div>
+                          <ReactTooltip
+                            id="earnings-underlying"
+                            backgroundColor={darkMode ? 'white' : '#101828'}
+                            borderColor={darkMode ? 'white' : 'black'}
+                            textColor={darkMode ? 'black' : 'white'}
+                            place="top"
+                            effect="solid"
+                            offset={{ right: 0 }}
                           >
-                            {showLatestEarnings ? underlyingEarningsLatest : underlyingEarnings}
-                          </NewLabel>
-                        </ReactTooltip>
+                            <NewLabel
+                              size={isMobile ? '10px' : '10px'}
+                              height={isMobile ? '14px' : '14px'}
+                              weight="500"
+                            >
+                              {showLatestEarnings ? underlyingEarningsLatest : underlyingEarnings}
+                            </NewLabel>
+                          </ReactTooltip>
+                        </div>
                         <span className="symbol">{id}</span>
                       </NewLabel>
                     </FlexDiv>
@@ -1880,6 +1884,8 @@ const AdvancedFarm = () => {
                         backgroundColor={darkMode ? 'white' : '#101828'}
                         borderColor={darkMode ? 'white' : 'black'}
                         textColor={darkMode ? 'black' : 'white'}
+                        place="top"
+                        effect="solid"
                       >
                         <NewLabel
                           size={isMobile ? '12px' : '12px'}
@@ -1961,6 +1967,7 @@ const AdvancedFarm = () => {
                           borderColor={darkMode ? 'white' : 'black'}
                           textColor={darkMode ? 'black' : 'white'}
                           place="top"
+                          effect="solid"
                         >
                           <NewLabel
                             size={isMobile ? '10px' : '10px'}

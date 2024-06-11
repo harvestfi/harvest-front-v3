@@ -756,6 +756,7 @@ const DepositBase = ({
                   borderColor={darkMode ? 'white' : 'black'}
                   textColor={darkMode ? 'black' : 'white'}
                   place="top"
+                  effect="solid"
                 >
                   <NewLabel
                     size={isMobile ? '12px' : '12px'}
