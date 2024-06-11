@@ -1472,6 +1472,7 @@ const BeginnersFarm = () => {
                           borderColor={darkMode ? 'white' : 'black'}
                           textColor={darkMode ? 'black' : 'white'}
                           place="top"
+                          effect="solid"
                         >
                           <NewLabel
                             size={isMobile ? '10px' : '10px'}
@@ -1590,6 +1591,7 @@ const BeginnersFarm = () => {
                           borderColor={darkMode ? 'white' : 'black'}
                           textColor={darkMode ? 'black' : 'white'}
                           place="top"
+                          effect="solid"
                         >
                           <NewLabel
                             size={isMobile ? '10px' : '10px'}
