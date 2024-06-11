@@ -241,7 +241,7 @@ html {
     padding-right: 12px !important;
 
     @media screen and (max-width: 450px) {
-      left: 0 !important;
+      /* left: 0 !important; */
 
       ul, div {
         font-size: 13px !important;
