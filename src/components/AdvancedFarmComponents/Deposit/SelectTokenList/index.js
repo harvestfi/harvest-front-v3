@@ -15,6 +15,7 @@ import AnimatedDots from '../../../AnimatedDots'
 import { useWallet } from '../../../../providers/Wallet'
 import { usePortals } from '../../../../providers/Portals'
 import { useRate } from '../../../../providers/Rate'
+import { showTokenBalance } from '../../../../utilities/formats'
 
 const SelectTokenList = ({
   balanceList,
@@ -222,7 +223,9 @@ const SelectTokenList = ({
                       {defaultCurToken.symbol}
                     </Text>
                     <RightText weight={600} color={fontColor2}>
-                      <>{defaultCurToken.balance ? Number(defaultCurToken.balance) : '0.00'}</>
+                      <>
+                        {defaultCurToken.balance ? showTokenBalance(defaultCurToken.balance) : '0'}
+                      </>
                       <TextSpan fontColor2={fontColor2}>
                         {defaultCurToken.usdValue
                           ? `${currencySym}${(
@@ -257,11 +260,11 @@ const SelectTokenList = ({
                       {data.symbol}
                     </Text>
                     <RightText weight={600} color={fontColor2}>
-                      <>{data.balance ? Number(data.balance) : '0.00'}</>
+                      <>{data.balance ? showTokenBalance(data.balance) : '0'}</>
                       <TextSpan fontColor2={fontColor2}>
                         {data.usdValue
                           ? `${currencySym}${(data.usdValue * Number(currencyRate)).toFixed(2)}`
-                          : `${currencySym}0.00`}
+                          : `${currencySym}0`}
                       </TextSpan>
                     </RightText>
                   </Vault>
@@ -297,7 +300,7 @@ const SelectTokenList = ({
                       {data.symbol}
                     </Text>
                     <RightText weight={600} color={fontColor2}>
-                      <>{data.balance ? data.balance : '0.00'}</>
+                      <>{data.balance ? data.balance : '0'}</>
                       <TextSpan fontColor2={fontColor2}>{`${currencySym}0`}</TextSpan>
                     </RightText>
                   </Vault>

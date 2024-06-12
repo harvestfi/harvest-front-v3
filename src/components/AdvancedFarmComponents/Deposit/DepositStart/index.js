@@ -46,6 +46,7 @@ import {
   ProgressText,
 } from './style'
 import { usePortals } from '../../../../providers/Portals'
+import { showTokenBalance } from '../../../../utilities/formats'
 
 const DepositStart = ({
   pickedToken,
@@ -425,16 +426,15 @@ const DepositStart = ({
                     <PiQuestion className="question" data-tip data-for="min-help" />
                     <ReactTooltip
                       id="min-help"
-                      backgroundColor="#101828"
-                      borderColor="black"
-                      textColor="white"
+                      backgroundColor={darkMode ? 'white' : '#101828'}
+                      borderColor={darkMode ? 'white' : 'black'}
+                      textColor={darkMode ? 'black' : 'white'}
                       place="right"
                     >
                       <NewLabel
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '18px' : '18px'}
+                        size={isMobile ? '10px' : '10px'}
+                        height={isMobile ? '14px' : '14px'}
                         weight="600"
-                        color={fontColor2}
                       >
                         {useIFARM
                           ? `The estimated number of i${tokenSymbol} you will receive in your wallet. The default slippage is set as 'Auto'.`
@@ -445,25 +445,54 @@ const DepositStart = ({
                 )}
               </NewLabel>
               <NewLabel weight="600" textAlign="right" display="flex" flexFlow="column">
-                {!pickedDefaultToken && progressStep === 4 ? (
-                  receiveAmount !== '' ? (
-                    receiveAmount
-                  ) : (
-                    <AnimateDotDiv>
-                      <AnimatedDots />
-                    </AnimateDotDiv>
-                  )
-                ) : minReceiveAmountString !== '' ? (
-                  isMobile && minReceiveAmountString.length > 18 ? (
-                    `${minReceiveAmountString.slice(0, 12)}...`
-                  ) : (
-                    minReceiveAmountString
-                  )
-                ) : (
-                  <AnimateDotDiv>
-                    <AnimatedDots />
-                  </AnimateDotDiv>
-                )}
+                <>
+                  <div data-tip data-for="modal-fToken-receive-convert">
+                    {!pickedDefaultToken && progressStep === 4 ? (
+                      receiveAmount !== '' ? (
+                        showTokenBalance(receiveAmount)
+                      ) : (
+                        <AnimateDotDiv>
+                          <AnimatedDots />
+                        </AnimateDotDiv>
+                      )
+                    ) : minReceiveAmountString !== '' ? (
+                      showTokenBalance(minReceiveAmountString)
+                    ) : (
+                      <AnimateDotDiv>
+                        <AnimatedDots />
+                      </AnimateDotDiv>
+                    )}
+                  </div>
+                  <ReactTooltip
+                    id="modal-fToken-receive-convert"
+                    backgroundColor={darkMode ? 'white' : '#101828'}
+                    borderColor={darkMode ? 'white' : 'black'}
+                    textColor={darkMode ? 'black' : 'white'}
+                    place="top"
+                  >
+                    <NewLabel
+                      size={isMobile ? '12px' : '12px'}
+                      height={isMobile ? '18px' : '18px'}
+                      weight="500"
+                    >
+                      {!pickedDefaultToken && progressStep === 4 ? (
+                        receiveAmount !== '' ? (
+                          minReceiveAmountString
+                        ) : (
+                          <AnimateDotDiv>
+                            <AnimatedDots />
+                          </AnimateDotDiv>
+                        )
+                      ) : minReceiveAmountString !== '' ? (
+                        minReceiveAmountString
+                      ) : (
+                        <AnimateDotDiv>
+                          <AnimatedDots />
+                        </AnimateDotDiv>
+                      )}
+                    </NewLabel>
+                  </ReactTooltip>
+                </>
                 <NewLabel display="flex" flexFlow="column" weight="600" textAlign="right">
                   <span>{useIFARM ? `i${tokenSymbol}` : `f${tokenSymbol}`}</span>
                   <span>

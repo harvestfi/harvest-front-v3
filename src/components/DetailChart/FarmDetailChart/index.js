@@ -10,6 +10,7 @@ import ApexChart from '../ApexChart'
 import ChartButtonsGroup from '../ChartButtonsGroup'
 import ChartRangeSelect from '../../ChartRangeSelect'
 import { useRate } from '../../../providers/Rate'
+import { fromWei } from '../../../services/web3'
 import {
   ButtonGroup,
   ChartDiv,
@@ -48,6 +49,7 @@ const FarmDetailChart = ({
   setLifetimeApy,
   setVaultBirthday,
   setVaultTotalPeriod,
+  setLatestSharePrice,
 }) => {
   const { fontColor3, fontColor4 } = useThemeContext()
 
@@ -108,6 +110,13 @@ const FarmDetailChart = ({
           const updatedData = { ...filteredData }
           updatedData.vaultHistories = updatedData.vaultHistories.filter(
             history => history.sharePrice !== '0',
+          )
+
+          const latestSharePriceValue = fromWei(
+            updatedData.vaultHistories[0].sharePrice,
+            token.decimals || token.data.watchAsset.decimals,
+            token.decimals || token.data.watchAsset.decimals,
+            false,
           )
 
           // Calculate Detailed APY Breakdown values
@@ -189,6 +198,7 @@ const FarmDetailChart = ({
           setLifetimeApy(lifetimeApyValue)
           setVaultBirthday(vaultInitialDate)
           setVaultTotalPeriod(totalPeriod.toFixed())
+          setLatestSharePrice(latestSharePriceValue)
 
           if (isMounted) {
             setApiData(updatedData)
