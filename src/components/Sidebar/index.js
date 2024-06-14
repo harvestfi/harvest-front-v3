@@ -223,6 +223,7 @@ const sideLinksMobileBottom = [
     path: ROUTES.TUTORIAL,
     name: 'Tutorial',
     imgPath: FAQMobile,
+    newTab: true,
   },
   {
     path: ROUTES.DOC,
