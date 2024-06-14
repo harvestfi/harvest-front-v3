@@ -43,7 +43,7 @@ import Dollar from '../../assets/images/logos/sidebar/dollar.svg'
 import Pound from '../../assets/images/logos/sidebar/pound.svg'
 import Euro from '../../assets/images/logos/sidebar/euro.svg'
 import Check from '../../assets/images/logos/sidebar/check.svg'
-import { ROUTES, SUPPORTED_CURRENCY } from '../../constants'
+import { ROUTES, SOCIAL_LINKS, SUPPORTED_CURRENCY } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
 import { usePools } from '../../providers/Pools'
 import { useRate } from '../../providers/Rate'
@@ -150,7 +150,7 @@ const sideLinksBottom = [
     external: false,
   },
   {
-    path: 'https://docs.harvest.finance',
+    path: SOCIAL_LINKS.Tutorial,
     name: 'Docs',
     imgPath: Docs,
     external: false,
@@ -224,7 +224,7 @@ const sideLinksMobileBottom = [
     imgPath: FAQMobile,
   },
   {
-    path: 'https://docs.harvest.finance',
+    path: SOCIAL_LINKS.Tutorial,
     name: 'Docs',
     imgPath: DocsMobile,
     newTab: true,
