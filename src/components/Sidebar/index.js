@@ -148,6 +148,7 @@ const sideLinksBottom = [
     name: 'Tutorial',
     imgPath: FAQ,
     external: false,
+    newTab: true,
   },
   {
     path: ROUTES.DOC,
