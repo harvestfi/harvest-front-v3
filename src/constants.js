@@ -47,11 +47,11 @@ export const AVRList = {
 
 export const ROUTES = {
   PORTFOLIO: '/',
-  TUTORIAL: '/get-started',
+  TUTORIAL: 'https://docs.harvest.finance/get-started-farming',
   ADVANCED: '/farms',
   LiveSupport: '/live-support',
   ANALYTIC: '/analytics',
-  DOC: '/doc',
+  DOC: 'https://docs.harvest.finance',
   FAQ: '/faq',
   ADVANCEDFARM: '/:network/:paramAddress',
   BEGINNERSFARM: '/beginners',
