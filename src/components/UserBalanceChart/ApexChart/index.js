@@ -267,11 +267,11 @@ const ApexChart = ({
         setIsDataReady('loading')
       } else if (lpTokenBalance === '0' && totalValue !== 0 && data.length === 0) {
         setIsDataReady('loading')
-      } else if (lpTokenBalance === '0' && totalValue === 0) {
+      } else if (lpTokenBalance === '0' && totalValue === 0 && data.length === 0) {
         setIsDataReady('false')
       } else if (totalValue !== '0' && data.length === 0) {
         setIsDataReady('loading')
-      } else if (totalValue !== '0' && data.length !== 0) {
+      } else if (data.length !== 0) {
         setIsDataReady('true')
       }
 

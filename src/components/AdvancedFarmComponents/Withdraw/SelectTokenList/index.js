@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { fromWei } from '../../../../services/web3'
 import { useThemeContext } from '../../../../providers/useThemeContext'
-import { formatNumberWido } from '../../../../utilities/formats'
-import { WIDO_EXTEND_DECIMALS } from '../../../../constants'
+import { formatNumberWido, showTokenBalance } from '../../../../utilities/formats'
 import {
   Container,
   Text,
@@ -213,13 +212,15 @@ const SelectTokenList = ({
                       {defaultCurToken.symbol}
                     </Text>
                     <RightText weight={600} color={fontColor2}>
-                      <>{defaultCurToken.balance ? defaultCurToken.balance : '0.00'}</>
+                      <>
+                        {defaultCurToken.balance ? showTokenBalance(defaultCurToken.balance) : '0'}
+                      </>
                       <TextSpan fontColor2={fontColor2}>
                         {defaultCurToken.usdValue
                           ? `${currencySym}${(
                               defaultCurToken.usdValue * Number(currencyRate)
                             ).toFixed(2)}`
-                          : `${currencySym}0.00`}
+                          : `${currencySym}0`}
                       </TextSpan>
                     </RightText>
                   </Vault>
@@ -250,18 +251,14 @@ const SelectTokenList = ({
                       {data.symbol}
                     </Text>
                     <RightText weight={600} color={fontColor2}>
-                      <>
-                        {data.balance
-                          ? `${formatNumberWido(data.balance, WIDO_EXTEND_DECIMALS)}`
-                          : '0.00'}
-                      </>
+                      <>{data.balance ? showTokenBalance(data.balance) : '0'}</>
                       <TextSpan fontColor2={fontColor2}>
                         {data.usdValue
                           ? `${currencySym}${formatNumberWido(
                               data.usdValue * Number(currencyRate),
                               2,
                             )}`
-                          : `${currencySym}0.00`}
+                          : `${currencySym}0`}
                       </TextSpan>
                     </RightText>
                   </Vault>

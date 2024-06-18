@@ -163,6 +163,18 @@ export const showUsdValue = (value, currencySym) => {
   return `${currencySym}${value.toFixed(2)}`
 }
 
+export const showTokenBalance = balance => {
+  let value = parseFloat(balance)
+  if (value === 0) {
+    return '0'
+  }
+  if (value < 0.000001) {
+    return '<0.000001'
+  }
+  value = value.toFixed(6).replace(/\.?0+$/, '')
+  return value
+}
+
 export const getCurrencyRate = (sym, item, rateData) => {
   const date = new Date(Number(item.timestamp ?? 0))
 

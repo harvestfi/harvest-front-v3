@@ -17,7 +17,7 @@ import { useRate } from '../../../../providers/Rate'
 import { CHAIN_IDS } from '../../../../data/constants'
 import { fromWei, toWei, checkNativeToken } from '../../../../services/web3'
 import { addresses } from '../../../../data'
-import { isSpecialApp } from '../../../../utilities/formats'
+import { isSpecialApp, showTokenBalance } from '../../../../utilities/formats'
 import Button from '../../../Button'
 import AnimatedDots from '../../../AnimatedDots'
 import {
@@ -94,6 +94,7 @@ const DepositBase = ({
   setSupportedVault,
 }) => {
   const {
+    darkMode,
     bgColor,
     fontColor,
     fontColor1,
@@ -496,7 +497,7 @@ const DepositBase = ({
         >
           {isMobile && (pickedToken.symbol === 'Select Token' ? '' : `${pickedToken.symbol} `)}
           Balance Available:
-          <span>{new BigNumber(balance).toString()}</span>
+          <span>{showTokenBalance(balance)}</span>
         </BalanceInfo>
         <InsufficientSection
           isShow={showWarning ? 'true' : 'false'}
@@ -573,16 +574,15 @@ const DepositBase = ({
               <PiQuestion className="question" data-tip data-for="monthly-yield" />
               <ReactTooltip
                 id="monthly-yield"
-                backgroundColor="#101828"
-                borderColor="black"
-                textColor="white"
+                backgroundColor={darkMode ? 'white' : '#101828'}
+                borderColor={darkMode ? 'white' : 'black'}
+                textColor={darkMode ? 'black' : 'white'}
                 place="right"
               >
                 <NewLabel
                   size={isMobile ? '12px' : '12px'}
                   height={isMobile ? '18px' : '18px'}
                   weight="500"
-                  color="white"
                 >
                   {useBeginnersFarm
                     ? `Based on live USD prices of tokens involved in this farm. Subject to change due to market fluctuations and the number of users in this farm.`
@@ -640,9 +640,9 @@ const DepositBase = ({
               <PiQuestion className="question" data-tip data-for="daily-yield" />
               <ReactTooltip
                 id="daily-yield"
-                backgroundColor="#101828"
-                borderColor="black"
-                textColor="white"
+                backgroundColor={darkMode ? 'white' : '#101828'}
+                borderColor={darkMode ? 'white' : 'black'}
+                textColor={darkMode ? 'black' : 'white'}
                 place="right"
                 width="100px"
               >
@@ -650,7 +650,6 @@ const DepositBase = ({
                   size={isMobile ? '12px' : '12px'}
                   height={isMobile ? '18px' : '18px'}
                   weight="500"
-                  color="white"
                 >
                   {useBeginnersFarm
                     ? `Based on live USD prices of tokens involved in this farm. Subject to change due to market fluctuations and the number of users in this farm.`
@@ -708,16 +707,15 @@ const DepositBase = ({
               <PiQuestion className="question" data-tip data-for="min-received" />
               <ReactTooltip
                 id="min-received"
-                backgroundColor="#101828"
-                borderColor="black"
-                textColor="white"
+                backgroundColor={darkMode ? 'white' : '#101828'}
+                borderColor={darkMode ? 'white' : 'black'}
+                textColor={darkMode ? 'black' : 'white'}
                 place="right"
               >
                 <NewLabel
-                  size={isMobile ? '12px' : '12px'}
-                  height={isMobile ? '18px' : '18px'}
+                  size={isMobile ? '10px' : '10px'}
+                  height={isMobile ? '14px' : '14px'}
                   weight="500"
-                  color="white"
                 >
                   {useBeginnersFarm
                     ? `The estimated number of interest-bearing fTokens you will receive in your wallet. The default slippage is set as 'Auto'.`
@@ -735,20 +733,40 @@ const DepositBase = ({
               items="flex-end"
               flexFlow="column"
             >
-              {account &&
-              pickedToken.symbol !== 'Select Token' &&
-              !new BigNumber(amount).isEqualTo(0) &&
-              balanceList.length !== 0 ? (
-                minReceiveAmountString !== '' ? (
-                  minReceiveAmountString
-                ) : (
-                  <TokenInfo>
-                    <AnimatedDots />
-                  </TokenInfo>
-                )
-              ) : (
-                '-'
-              )}
+              <>
+                <div data-tip data-for="est-fToken-receive">
+                  {account &&
+                  pickedToken.symbol !== 'Select Token' &&
+                  !new BigNumber(amount).isEqualTo(0) &&
+                  balanceList.length !== 0 ? (
+                    minReceiveAmountString !== '' ? (
+                      showTokenBalance(minReceiveAmountString)
+                    ) : (
+                      <TokenInfo>
+                        <AnimatedDots />
+                      </TokenInfo>
+                    )
+                  ) : (
+                    '-'
+                  )}
+                </div>
+                <ReactTooltip
+                  id="est-fToken-receive"
+                  backgroundColor={darkMode ? 'white' : '#101828'}
+                  borderColor={darkMode ? 'white' : 'black'}
+                  textColor={darkMode ? 'black' : 'white'}
+                  place="top"
+                  effect="solid"
+                >
+                  <NewLabel
+                    size={isMobile ? '12px' : '12px'}
+                    height={isMobile ? '18px' : '18px'}
+                    weight="500"
+                  >
+                    {minReceiveAmountString}
+                  </NewLabel>
+                </ReactTooltip>
+              </>
               <span className="token-symbol">
                 {useIFARM ? `i${tokenSymbol}` : `f${tokenSymbol}`}
               </span>
