@@ -646,6 +646,65 @@ const CheckBoxDiv = styled.div`
   }
 `
 
+const SwitchView = styled.div`
+  display: flex;
+  justify-content: end;
+  padding: 8px 14px;
+  gap: 8px;
+  width: fit-content;
+  align-items: center;
+  margin: 25px 0px 25px auto;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  position: relative;
+
+  /* border-radius: 8px;
+  border: 1px solid transparent;
+  border-image: linear-gradient(to right, #fc5c7d, #6a82fb) 1; */
+  background: linear-gradient(to right, #fc5c7d, #6a82fb);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  /* background-image: linear-gradient(black, black), linear-gradient(to right, #fc5c7d, #6a82fb);
+  background-origin: border-box;
+  background-clip: content-box, border-box; */
+
+  ::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    padding: 2px;
+    background: linear-gradient(to right, #fc5c7d, #6a82fb);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+  }
+
+  :hover::before {
+    opacity: 0.7;
+  }
+
+  :hover {
+    cursor: pointer;
+  }
+
+  img {
+    width: 24px;
+    height: 24px;
+    filter: ${props =>
+      props.darkMode
+        ? 'invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%)'
+        : 'invert(48%) sepia(4%) saturate(2341%) hue-rotate(183deg) brightness(87%) contrast(80%)'};
+  }
+
+  @media screen and (max-width: 992px) {
+    display: none;
+  }
+`
+
 export {
   Container,
   SubPart,
@@ -674,4 +733,5 @@ export {
   NewLabel,
   ConnectButtonStyle,
   CheckBoxDiv,
+  SwitchView,
 }

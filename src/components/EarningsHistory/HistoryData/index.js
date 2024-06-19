@@ -7,6 +7,7 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { usePools } from '../../../providers/Pools'
 import { useWallet } from '../../../providers/Wallet'
 import ActionRow from '../ActionRow'
+import AnimatedDots from '../../AnimatedDots'
 import {
   TransactionDetails,
   HistoryPagination,
@@ -20,9 +21,8 @@ import {
   ThemeMode,
 } from './style'
 
-const itemsPerPage = 5
-
-const HistoryData = ({ tokenSymbol, historyData }) => {
+const HistoryData = ({ historyData, isDashboard, noData }) => {
+  const itemsPerPage = isDashboard === 'true' ? 10 : 5
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const {
@@ -49,14 +49,14 @@ const HistoryData = ({ tokenSymbol, historyData }) => {
     const pageCount1 = Math.ceil(historyData?.length / itemsPerPage)
 
     return { currentItems: currentItems1, pageCount: pageCount1 }
-  }, [historyData, itemOffset])
+  }, [historyData, itemOffset, itemsPerPage])
 
   const handlePageClick = useCallback(
     event => {
       const newOffset = (event.selected * itemsPerPage) % historyData.length
       setItemOffset(newOffset)
     },
-    [historyData],
+    [historyData, itemsPerPage],
   )
 
   const CustomPreviousComponent = () => (
@@ -72,7 +72,10 @@ const HistoryData = ({ tokenSymbol, historyData }) => {
   )
 
   return (
-    <TransactionDetails hasData={connected && historyData?.length > 0 ? 'unset' : '80vh'}>
+    <TransactionDetails
+      show={isDashboard === 'true' ? 'none' : 'block'}
+      hasData={(connected && historyData?.length > 0) || isDashboard === 'true' ? 'unset' : '80vh'}
+    >
       <TableContent borderColor={borderColor}>
         <Header borderColor={borderColor} backColor={backColor}>
           <Column width={isMobile ? '22%' : '20%'} color={fontColor}>
@@ -118,16 +121,9 @@ const HistoryData = ({ tokenSymbol, historyData }) => {
             {currentItems
               .map((el, i) => {
                 const info = currentItems[i]
-                return (
-                  <ActionRow
-                    key={i}
-                    info={info}
-                    tokenSymbol={tokenSymbol}
-                    showTotalBalance={showTotalBalance}
-                  />
-                )
+                return <ActionRow key={i} info={info} showTotalBalance={showTotalBalance} />
               })
-              .slice(0, 5)}
+              .slice(0, 10)}
             <HistoryPagination
               bgColor={bgColorFarm}
               fontColor={fontColor}
@@ -154,9 +150,16 @@ const HistoryData = ({ tokenSymbol, historyData }) => {
         ) : (
           <EmptyPanel borderColor={borderColor}>
             {connected ? (
-              <EmptyInfo weight={500} size={14} height={20} color={fontColor}>
-                No interaction history found for this wallet.
-              </EmptyInfo>
+              !noData ? (
+                <EmptyInfo weight={500} size={14} height={20} color={fontColor} gap="2px">
+                  <div>Loading data</div>
+                  <AnimatedDots />
+                </EmptyInfo>
+              ) : (
+                <EmptyInfo weight={500} size={14} height={20} color={fontColor}>
+                  No interaction history found for this wallet.
+                </EmptyInfo>
+              )
             ) : (
               <>
                 <EmptyInfo weight={500} size={14} height={20} color={fontColor}>

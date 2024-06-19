@@ -1224,7 +1224,7 @@ const AdvancedFarm = () => {
 
   useEffect(() => {
     const initData = async () => {
-      if (account && token && vaultPool) {
+      if (account && token && vaultPool && id) {
         const address =
           token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
         const chainId = token.chain || token.data.chain
@@ -1251,13 +1251,18 @@ const AdvancedFarm = () => {
           setUsdEarnings(sumNetChangeUsd)
           setUnderlyingEarningsLatest(sumLatestNetChange)
           setUsdEarningsLatest(sumLatestNetChangeUsd)
-          setHistoryData(enrichedData)
+          const enrichedDataWithSymbol = enrichedData.map(data => ({
+            ...data,
+            tokenSymbol: id,
+          }))
+          setHistoryData(enrichedDataWithSymbol)
         }
       }
     }
 
     initData()
   }, [
+    id,
     token,
     account,
     vaultPool,
@@ -2086,7 +2091,7 @@ const AdvancedFarm = () => {
                 ))}
               </BoxCover>
             ) : activeMainTag === 3 ? (
-              <EarningsHistory tokenSymbol={id} historyData={historyData} />
+              <EarningsHistory historyData={historyData} isDashboard="false" noData />
             ) : (
               <></>
             )}

@@ -917,38 +917,45 @@ const BeginnersFarm = () => {
 
   useEffect(() => {
     const initData = async () => {
-      const address =
-        token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
-      const chainId = token.chain || token.data.chain
-      const {
-        balanceFlag,
-        vaultHFlag,
-        sumNetChange,
-        sumNetChangeUsd,
-        sumLatestNetChange,
-        sumLatestNetChangeUsd,
-        enrichedData,
-      } = await initBalanceAndDetailData(
-        address,
-        chainId,
-        account,
-        tokenDecimals,
-        underlyingPrice,
-        currencySym,
-        currencyRate,
-      )
+      if (account && token && vaultPool && id) {
+        const address =
+          token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+        const chainId = token.chain || token.data.chain
+        const {
+          balanceFlag,
+          vaultHFlag,
+          sumNetChange,
+          sumNetChangeUsd,
+          sumLatestNetChange,
+          sumLatestNetChangeUsd,
+          enrichedData,
+        } = await initBalanceAndDetailData(
+          address,
+          chainId,
+          account,
+          tokenDecimals,
+          underlyingPrice,
+          currencySym,
+          currencyRate,
+        )
 
-      if (balanceFlag && vaultHFlag) {
-        setUnderlyingEarnings(sumNetChange)
-        setUsdEarnings(sumNetChangeUsd)
-        setUnderlyingEarningsLatest(sumLatestNetChange)
-        setUsdEarningsLatest(sumLatestNetChangeUsd)
-        setHistoryData(enrichedData)
+        if (balanceFlag && vaultHFlag) {
+          setUnderlyingEarnings(sumNetChange)
+          setUsdEarnings(sumNetChangeUsd)
+          setUnderlyingEarningsLatest(sumLatestNetChange)
+          setUsdEarningsLatest(sumLatestNetChangeUsd)
+          const enrichedDataWithSymbol = enrichedData.map(data => ({
+            ...data,
+            tokenSymbol: id,
+          }))
+          setHistoryData(enrichedDataWithSymbol)
+        }
       }
     }
 
     initData()
   }, [
+    id,
     account,
     token,
     vaultPool,
@@ -1715,7 +1722,7 @@ const BeginnersFarm = () => {
                 ))}
               </BoxCover>
             ) : (
-              <EarningsHistory tokenSymbol={id} historyData={historyData} />
+              <EarningsHistory historyData={historyData} isDashboard="false" noData />
             )}
             <MainSection height={activeMainTag === 0 ? '100%' : 'fit-content'}>
               {activeMainTag === 0 ? (
