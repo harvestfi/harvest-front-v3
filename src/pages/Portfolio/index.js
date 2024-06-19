@@ -893,7 +893,7 @@ const Portfolio = () => {
 
         <SwitchView onClick={() => setViewPositions(prev => !prev)} darkMode={darkMode}>
           <img src={BankNote} alt="money" />
-          {viewPositions ? 'View Positions' : 'View History'}
+          {viewPositions ? 'View History' : 'View Positions'}
         </SwitchView>
 
         <DescInfo fontColor={fontColor} borderColor={borderColor}>
