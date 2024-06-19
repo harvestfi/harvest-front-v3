@@ -73,7 +73,6 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
 
   return (
     <TransactionDetails
-      show={isDashboard === 'true' ? 'none' : 'block'}
       hasData={(connected && historyData?.length > 0) || isDashboard === 'true' ? 'unset' : '80vh'}
     >
       <TableContent borderColor={borderColor}>
@@ -151,7 +150,14 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
           <EmptyPanel borderColor={borderColor}>
             {connected ? (
               !noData ? (
-                <EmptyInfo weight={500} size={14} height={20} color={fontColor} gap="2px">
+                <EmptyInfo
+                  display="block"
+                  weight={500}
+                  size={14}
+                  height={20}
+                  color={fontColor}
+                  gap="2px"
+                >
                   <div>Loading data</div>
                   <AnimatedDots />
                 </EmptyInfo>

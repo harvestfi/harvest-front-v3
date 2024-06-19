@@ -91,6 +91,10 @@ const TransactionDetails = styled.div`
   border-radius: 15px;
   transition: 0.25s;
   margin-top: 25px;
+
+  @media screen and (max-width: 992px) {
+    margin-top: 0px;
+  }
 `
 
 const MyFarm = styled.div`
@@ -174,12 +178,20 @@ const EmptyInfo = styled.div`
   display: flex;
   justify-content: center;
   text-align: center;
+
   @media screen and (max-width: 992px) {
     display: flex;
     justify-content: center;
     flex-flow: column;
     font-size: 10px;
     line-height: 18px;
+
+    ${props =>
+      props.display
+        ? `
+      display: ${props.display};
+    `
+        : ''}
   }
 `
 
@@ -499,6 +511,7 @@ const DescInfo = styled.div`
     color: ${props => props.fontColor};
     padding-bottom: 10px;
     border-bottom: 2px solid ${props => props.borderColor};
+    margin-bottom: 25px;
   }
 `
 
@@ -698,10 +711,6 @@ const SwitchView = styled.div`
       props.darkMode
         ? 'invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%)'
         : 'invert(48%) sepia(4%) saturate(2341%) hue-rotate(183deg) brightness(87%) contrast(80%)'};
-  }
-
-  @media screen and (max-width: 992px) {
-    display: none;
   }
 `
 

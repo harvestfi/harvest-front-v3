@@ -7,7 +7,6 @@ const TransactionDetails = styled.div`
 
   @media screen and (max-width: 992px) {
     height: ${props => props.hasData};
-    display: ${props => props.show};
   }
 `
 
@@ -207,6 +206,7 @@ const EmptyInfo = styled.div`
   display: flex;
   justify-content: center;
   text-align: center;
+
   @media screen and (max-width: 992px) {
     display: flex;
     justify-content: center;
@@ -214,6 +214,13 @@ const EmptyInfo = styled.div`
     font-size: 10px;
     line-height: 18px;
     padding-top: 35px;
+
+    ${props =>
+      props.display
+        ? `
+      display: ${props.display};
+    `
+        : ''}
   }
 `
 

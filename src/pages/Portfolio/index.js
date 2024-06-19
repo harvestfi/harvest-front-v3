@@ -897,7 +897,9 @@ const Portfolio = () => {
         </SwitchView>
 
         <DescInfo fontColor={fontColor} borderColor={borderColor}>
-          Preview farms with your active deposits below.
+          {viewPositions
+            ? 'Preview farms with your active deposits below.'
+            : 'Preview event activity from all farms with which your wallet has ever interacted.'}
         </DescInfo>
 
         {viewPositions ? (
@@ -1003,7 +1005,14 @@ const Portfolio = () => {
                 <EmptyPanel borderColor={borderColor}>
                   {connected ? (
                     !noFarm ? (
-                      <EmptyInfo weight={500} size={14} height={20} color={fontColor} gap="2px">
+                      <EmptyInfo
+                        display="block"
+                        weight={500}
+                        size={14}
+                        height={20}
+                        color={fontColor}
+                        gap="2px"
+                      >
                         <div>Syncing positions</div>
                         <AnimatedDots />
                       </EmptyInfo>
