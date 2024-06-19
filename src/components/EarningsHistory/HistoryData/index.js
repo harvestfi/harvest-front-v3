@@ -150,16 +150,12 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
           <EmptyPanel borderColor={borderColor}>
             {connected ? (
               !noData ? (
-                <EmptyInfo
-                  display="block"
-                  weight={500}
-                  size={14}
-                  height={20}
-                  color={fontColor}
-                  gap="2px"
-                >
-                  <div>Loading data</div>
-                  <AnimatedDots />
+                <EmptyInfo weight={500} size={14} height={20} color={fontColor} gap="2px">
+                  <div>
+                    Loading data on all events for the connected wallet.
+                    <br />
+                    It might take up to 30s <AnimatedDots />
+                  </div>
                 </EmptyInfo>
               ) : (
                 <EmptyInfo weight={500} size={14} height={20} color={fontColor}>

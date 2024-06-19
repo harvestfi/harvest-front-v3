@@ -214,13 +214,6 @@ const EmptyInfo = styled.div`
     font-size: 10px;
     line-height: 18px;
     padding-top: 35px;
-
-    ${props =>
-      props.display
-        ? `
-      display: ${props.display};
-    `
-        : ''}
   }
 `
 

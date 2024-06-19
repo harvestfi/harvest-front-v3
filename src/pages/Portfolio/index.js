@@ -1005,16 +1005,10 @@ const Portfolio = () => {
                 <EmptyPanel borderColor={borderColor}>
                   {connected ? (
                     !noFarm ? (
-                      <EmptyInfo
-                        display="block"
-                        weight={500}
-                        size={14}
-                        height={20}
-                        color={fontColor}
-                        gap="2px"
-                      >
-                        <div>Syncing positions</div>
-                        <AnimatedDots />
+                      <EmptyInfo weight={500} size={14} height={20} color={fontColor} gap="2px">
+                        <div>
+                          Syncing positions <AnimatedDots />
+                        </div>
                       </EmptyInfo>
                     ) : (
                       <EmptyInfo weight={500} size={14} height={20} color={fontColor}>

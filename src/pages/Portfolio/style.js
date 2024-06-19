@@ -185,13 +185,6 @@ const EmptyInfo = styled.div`
     flex-flow: column;
     font-size: 10px;
     line-height: 18px;
-
-    ${props =>
-      props.display
-        ? `
-      display: ${props.display};
-    `
-        : ''}
   }
 `
 
