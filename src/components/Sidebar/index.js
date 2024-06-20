@@ -148,9 +148,10 @@ const sideLinksBottom = [
     name: 'Tutorial',
     imgPath: FAQ,
     external: false,
+    newTab: true,
   },
   {
-    path: 'https://docs.harvest.finance',
+    path: ROUTES.DOC,
     name: 'Docs',
     imgPath: Docs,
     external: false,
@@ -222,9 +223,10 @@ const sideLinksMobileBottom = [
     path: ROUTES.TUTORIAL,
     name: 'Tutorial',
     imgPath: FAQMobile,
+    newTab: true,
   },
   {
-    path: 'https://docs.harvest.finance',
+    path: ROUTES.DOC,
     name: 'Docs',
     imgPath: DocsMobile,
     newTab: true,

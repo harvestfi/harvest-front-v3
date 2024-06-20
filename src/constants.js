@@ -6,7 +6,8 @@ export const SOCIAL_LINKS = {
   TELEGRAM: 'https://t.me/Breadforthepeople',
   TWITTER: 'https://twitter.com/harvest_finance',
   MEDIUM: 'https://medium.com/harvest-finance',
-  Tutorial: 'https://docs.harvest.finance/other/coinbase-wallet-quest-tutorial',
+  Tutorial: 'https://docs.harvest.finance/get-started-farming',
+  TutorialQuest: 'https://docs.harvest.finance/other/coinbase-wallet-quest-tutorial',
   DISCORD: 'https://discord.gg/ePZKmST7yn',
   REDDIT: 'https://www.reddit.com/r/HarvestFinance/',
   GITHUB: 'https://github.com/harvest-finance',
@@ -46,11 +47,11 @@ export const AVRList = {
 
 export const ROUTES = {
   PORTFOLIO: '/',
-  TUTORIAL: '/get-started',
+  TUTORIAL: 'https://docs.harvest.finance/get-started-farming',
   ADVANCED: '/farms',
   LiveSupport: '/live-support',
   ANALYTIC: '/analytics',
-  DOC: '/doc',
+  DOC: 'https://docs.harvest.finance',
   FAQ: '/faq',
   ADVANCEDFARM: '/:network/:paramAddress',
   BEGINNERSFARM: '/beginners',
