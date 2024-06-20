@@ -163,6 +163,21 @@ export const showUsdValue = (value, currencySym) => {
   return `${currencySym}${value.toFixed(2)}`
 }
 
+export const formatFrequency = value => {
+  // Convert frequency (harvests per day) to interval in hours
+  const totalHours = 24 / value
+
+  const days = Math.floor(totalHours / 24)
+  const hours = Math.floor(totalHours % 24)
+  const minutes = Math.floor((totalHours % 1) * 60)
+
+  const daysText = days > 0 ? `${days} day${days > 1 ? 's' : ''}` : ''
+  const hoursText = hours > 0 ? `${hours} hour${hours > 1 ? 's' : ''}` : ''
+  const minutesText = minutes > 0 ? `${minutes} minute${minutes > 1 ? 's' : ''}` : ''
+
+  return [daysText, hoursText, minutesText].filter(Boolean).join(' ')
+}
+
 export const showTokenBalance = balance => {
   let value = parseFloat(balance)
   if (value === 0) {

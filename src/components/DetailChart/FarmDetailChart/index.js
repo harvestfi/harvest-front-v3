@@ -50,6 +50,7 @@ const FarmDetailChart = ({
   setVaultBirthday,
   setVaultTotalPeriod,
   setLatestSharePrice,
+  setHarvestFrequency,
 }) => {
   const { fontColor3, fontColor4 } = useThemeContext()
 
@@ -128,6 +129,8 @@ const FarmDetailChart = ({
               Number(updatedData.generalApies[updatedData.generalApies.length - 1].timestamp)) /
             (24 * 3600)
 
+          const frequencyOfHarvest = updatedData.vaultHistories.length / totalPeriod
+
           let [sevenDaysApy, thirtyDaysApy, oneEightyDaysApy, threeSixtyFiveDaysApy] = Array(
               4,
             ).fill('-'),
@@ -199,6 +202,7 @@ const FarmDetailChart = ({
           setVaultBirthday(vaultInitialDate)
           setVaultTotalPeriod(totalPeriod.toFixed())
           setLatestSharePrice(latestSharePriceValue)
+          setHarvestFrequency(frequencyOfHarvest)
 
           if (isMounted) {
             setApiData(updatedData)
