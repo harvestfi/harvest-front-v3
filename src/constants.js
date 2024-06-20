@@ -94,7 +94,11 @@ export const GRAPH_URL_ARBITRUM =
   'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance-arbitrum'
 export const GRAPH_URL_BASE =
   process.env.REACT_APP_GRAPH_URL_BASE ||
-  'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance-base'
+  'https://api.studio.thegraph.com/query/48757/harvest-base/version/latest'
+
+export const GRAPH_URL_BASE_MOONWELL =
+  process.env.REACT_APP_GRAPH_URL_BASE_MOONWELL ||
+  'https://api.studio.thegraph.com/query/48757/harvest-base-moon/v0.0.6'
 
 export const ETHERSCAN_URL = 'https://etherscan.io'
 
