@@ -6,7 +6,8 @@ export const SOCIAL_LINKS = {
   TELEGRAM: 'https://t.me/Breadforthepeople',
   TWITTER: 'https://twitter.com/harvest_finance',
   MEDIUM: 'https://medium.com/harvest-finance',
-  Tutorial: 'https://docs.harvest.finance/other/coinbase-wallet-quest-tutorial',
+  Tutorial: 'https://docs.harvest.finance/get-started-farming',
+  TutorialQuest: 'https://docs.harvest.finance/other/coinbase-wallet-quest-tutorial',
   DISCORD: 'https://discord.gg/ePZKmST7yn',
   REDDIT: 'https://www.reddit.com/r/HarvestFinance/',
   GITHUB: 'https://github.com/harvest-finance',
@@ -46,11 +47,11 @@ export const AVRList = {
 
 export const ROUTES = {
   PORTFOLIO: '/',
-  TUTORIAL: '/get-started',
+  TUTORIAL: 'https://docs.harvest.finance/get-started-farming',
   ADVANCED: '/farms',
   LiveSupport: '/live-support',
   ANALYTIC: '/analytics',
-  DOC: '/doc',
+  DOC: 'https://docs.harvest.finance',
   FAQ: '/faq',
   ADVANCEDFARM: '/:network/:paramAddress',
   BEGINNERSFARM: '/beginners',
@@ -93,7 +94,11 @@ export const GRAPH_URL_ARBITRUM =
   'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance-arbitrum'
 export const GRAPH_URL_BASE =
   process.env.REACT_APP_GRAPH_URL_BASE ||
-  'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance-base'
+  'https://api.studio.thegraph.com/query/48757/harvest-base/version/latest'
+
+export const GRAPH_URL_BASE_MOONWELL =
+  process.env.REACT_APP_GRAPH_URL_BASE_MOONWELL ||
+  'https://api.studio.thegraph.com/query/48757/harvest-base-moon/v0.0.6'
 
 export const ETHERSCAN_URL = 'https://etherscan.io'
 
