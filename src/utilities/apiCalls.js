@@ -6,11 +6,14 @@ import {
   GRAPH_URL_POLYGON,
   GRAPH_URL_ARBITRUM,
   GRAPH_URL_BASE,
+  GRAPH_URL_BASE_MOONWELL,
   TOTAL_TVL_API_ENDPOINT,
   HISTORICAL_RATES_API_ENDPOINT,
 } from '../constants'
 import { fromWei } from '../services/web3'
 import { showUsdValue, getCurrencyRate } from './formats'
+
+const moonwellWeth = '0x0b0193fad49de45f5e2b0a9f5d6bc3bb7d281688'
 
 export const getLastHarvestInfo = async (address, chainId) => {
   // eslint-disable-next-line no-unused-vars
@@ -55,7 +58,9 @@ export const getLastHarvestInfo = async (address, chainId) => {
       : chainId === CHAIN_IDS.POLYGON_MAINNET
       ? GRAPH_URL_POLYGON
       : chainId === CHAIN_IDS.BASE
-      ? GRAPH_URL_BASE
+      ? address.toLowerCase() === moonwellWeth.toLowerCase()
+        ? GRAPH_URL_BASE_MOONWELL
+        : GRAPH_URL_BASE
       : GRAPH_URL_ARBITRUM
 
   try {
@@ -225,7 +230,9 @@ export const getSequenceId = async (address, chainId) => {
       : chainId === CHAIN_IDS.POLYGON_MAINNET
       ? GRAPH_URL_POLYGON
       : chainId === CHAIN_IDS.BASE
-      ? GRAPH_URL_BASE
+      ? address.toLowerCase() === moonwellWeth.toLowerCase()
+        ? GRAPH_URL_BASE_MOONWELL
+        : GRAPH_URL_BASE
       : GRAPH_URL_ARBITRUM
 
   try {
@@ -294,7 +301,9 @@ export const getVaultHistories = async (address, chainId) => {
       : chainId === CHAIN_IDS.POLYGON_MAINNET
       ? GRAPH_URL_POLYGON
       : chainId === CHAIN_IDS.BASE
-      ? GRAPH_URL_BASE
+      ? address.toLowerCase() === moonwellWeth.toLowerCase()
+        ? GRAPH_URL_BASE_MOONWELL
+        : GRAPH_URL_BASE
       : GRAPH_URL_ARBITRUM
 
   try {
@@ -405,7 +414,9 @@ export const getDataQuery = async (
       : chainId === CHAIN_IDS.POLYGON_MAINNET
       ? GRAPH_URL_POLYGON
       : chainId === CHAIN_IDS.BASE
-      ? GRAPH_URL_BASE
+      ? address.toLowerCase() === moonwellWeth.toLowerCase()
+        ? GRAPH_URL_BASE_MOONWELL
+        : GRAPH_URL_BASE
       : GRAPH_URL_ARBITRUM
 
   try {
@@ -482,7 +493,9 @@ export const getUserBalanceHistories = async (address, chainId, account) => {
       : chainId === CHAIN_IDS.POLYGON_MAINNET
       ? GRAPH_URL_POLYGON
       : chainId === CHAIN_IDS.BASE
-      ? GRAPH_URL_BASE
+      ? address.toLowerCase() === moonwellWeth.toLowerCase()
+        ? GRAPH_URL_BASE_MOONWELL
+        : GRAPH_URL_BASE
       : GRAPH_URL_ARBITRUM
 
   try {
@@ -571,7 +584,9 @@ export const getPriceFeeds = async (
       : chainId === CHAIN_IDS.POLYGON_MAINNET
       ? GRAPH_URL_POLYGON
       : chainId === CHAIN_IDS.BASE
-      ? GRAPH_URL_BASE
+      ? address.toLowerCase() === moonwellWeth.toLowerCase()
+        ? GRAPH_URL_BASE_MOONWELL
+        : GRAPH_URL_BASE
       : GRAPH_URL_ARBITRUM
 
   try {
