@@ -11,7 +11,7 @@ import { Content, DetailView, FlexDiv, IconWrapper, Badge, NetImg, NewLabel } fr
 
 const ActionRow = ({ info, tokenSymbol, showTotalBalance }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const { switchMode, backColor, borderColor, hoverColor, fontColor } = useThemeContext()
+  const { darkMode, switchMode, backColor, borderColor, hoverColor, fontColor } = useThemeContext()
 
   return (
     <DetailView
@@ -49,15 +49,14 @@ const ActionRow = ({ info, tokenSymbol, showTotalBalance }) => {
               <PiQuestion className="question" data-tip data-for="harvest-event-minus" />
               <ReactTooltip
                 id="harvest-event-minus"
-                backgroundColor="#101828"
-                borderColor="black"
-                textColor="white"
+                backgroundColor={darkMode ? 'white' : '#101828'}
+                borderColor={darkMode ? 'white' : 'black'}
+                textColor={darkMode ? 'black' : 'white'}
               >
                 <NewLabel
                   size={isMobile ? '12px' : '12px'}
                   height={isMobile ? '18px' : '18px'}
                   weight="500"
-                  color="white"
                 >
                   In certain strategies, a negative yield event might occur, resulting in a minor
                   reduction of the underlying.
