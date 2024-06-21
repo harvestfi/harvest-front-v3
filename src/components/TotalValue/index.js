@@ -9,7 +9,7 @@ import { Container, Div, Price, NewLabel } from './style'
 import { useRate } from '../../providers/Rate'
 
 const TotalValue = ({ content, price, toolTipTitle, toolTip, connected, farmTokenListLength }) => {
-  const { borderColor, backColor, fontColor1, fontColor3 } = useThemeContext()
+  const { darkMode, borderColor, backColor, fontColor1, fontColor3 } = useThemeContext()
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
@@ -32,16 +32,15 @@ const TotalValue = ({ content, price, toolTipTitle, toolTip, connected, farmToke
         <PiQuestion className="question" data-tip data-for={toolTipTitle} />
         <ReactTooltip
           id={toolTipTitle}
-          backgroundColor="#101828"
-          borderColor="black"
-          textColor="white"
+          backgroundColor={darkMode ? 'white' : '#101828'}
+          borderColor={darkMode ? 'white' : 'black'}
+          textColor={darkMode ? 'black' : 'white'}
           place="bottom"
         >
           <NewLabel
             size={isMobile ? '10px' : '12px'}
             height={isMobile ? '15px' : '18px'}
             weight="600"
-            color="white"
           >
             {toolTip}
           </NewLabel>

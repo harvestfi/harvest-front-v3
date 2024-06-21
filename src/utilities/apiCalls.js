@@ -7,11 +7,14 @@ import {
   GRAPH_URL_ARBITRUM,
   GRAPH_URL_BASE,
   GRAPH_URL_ZKSYNC,
+  GRAPH_URL_BASE_MOONWELL,
   TOTAL_TVL_API_ENDPOINT,
   HISTORICAL_RATES_API_ENDPOINT,
 } from '../constants'
 import { fromWei } from '../services/web3'
 import { showUsdValue, getCurrencyRate } from './formats'
+
+const moonwellWeth = '0x0b0193fad49de45f5e2b0a9f5d6bc3bb7d281688'
 
 export const getLastHarvestInfo = async (address, chainId) => {
   // eslint-disable-next-line no-unused-vars
@@ -56,7 +59,9 @@ export const getLastHarvestInfo = async (address, chainId) => {
       : chainId === CHAIN_IDS.POLYGON_MAINNET
       ? GRAPH_URL_POLYGON
       : chainId === CHAIN_IDS.BASE
-      ? GRAPH_URL_BASE
+      ? address.toLowerCase() === moonwellWeth.toLowerCase()
+        ? GRAPH_URL_BASE_MOONWELL
+        : GRAPH_URL_BASE
       : chainId === CHAIN_IDS.ZKSYNC
       ? GRAPH_URL_ZKSYNC
       : GRAPH_URL_ARBITRUM
@@ -228,7 +233,9 @@ export const getSequenceId = async (address, chainId) => {
       : chainId === CHAIN_IDS.POLYGON_MAINNET
       ? GRAPH_URL_POLYGON
       : chainId === CHAIN_IDS.BASE
-      ? GRAPH_URL_BASE
+      ? address.toLowerCase() === moonwellWeth.toLowerCase()
+        ? GRAPH_URL_BASE_MOONWELL
+        : GRAPH_URL_BASE
       : GRAPH_URL_ARBITRUM
 
   try {
@@ -297,7 +304,9 @@ export const getVaultHistories = async (address, chainId) => {
       : chainId === CHAIN_IDS.POLYGON_MAINNET
       ? GRAPH_URL_POLYGON
       : chainId === CHAIN_IDS.BASE
-      ? GRAPH_URL_BASE
+      ? address.toLowerCase() === moonwellWeth.toLowerCase()
+        ? GRAPH_URL_BASE_MOONWELL
+        : GRAPH_URL_BASE
       : chainId === CHAIN_IDS.ZKSYNC
       ? GRAPH_URL_ZKSYNC
       : GRAPH_URL_ARBITRUM
@@ -410,7 +419,9 @@ export const getDataQuery = async (
       : chainId === CHAIN_IDS.POLYGON_MAINNET
       ? GRAPH_URL_POLYGON
       : chainId === CHAIN_IDS.BASE
-      ? GRAPH_URL_BASE
+      ? address.toLowerCase() === moonwellWeth.toLowerCase()
+        ? GRAPH_URL_BASE_MOONWELL
+        : GRAPH_URL_BASE
       : chainId === CHAIN_IDS.ZKSYNC
       ? GRAPH_URL_ZKSYNC
       : GRAPH_URL_ARBITRUM
@@ -489,7 +500,9 @@ export const getUserBalanceHistories = async (address, chainId, account) => {
       : chainId === CHAIN_IDS.POLYGON_MAINNET
       ? GRAPH_URL_POLYGON
       : chainId === CHAIN_IDS.BASE
-      ? GRAPH_URL_BASE
+      ? address.toLowerCase() === moonwellWeth.toLowerCase()
+        ? GRAPH_URL_BASE_MOONWELL
+        : GRAPH_URL_BASE
       : chainId === CHAIN_IDS.ZKSYNC
       ? GRAPH_URL_ZKSYNC
       : GRAPH_URL_ARBITRUM
@@ -543,6 +556,8 @@ export const getPriceFeeds = async (
     vaultPriceFeedCount > 1000 ? `priceFeedSequenceId_in: [${sequenceIdsArray}]` : ''
 
   address = address.toLowerCase()
+  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
+  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
   const timestampQuery = timestamp && asQuery ? `timestamp_lt: "${timestamp}"` : ''
 
   const myHeaders = new Headers()
@@ -553,7 +568,7 @@ export const getPriceFeeds = async (
         priceFeeds(
           first: 1000,
           where: {
-            vault: "${address}",
+            vault: "${address === ifarm ? farm : address}",
             ${timestampQuery},
             ${priceFeedSequenceId}
           },
@@ -578,7 +593,9 @@ export const getPriceFeeds = async (
       : chainId === CHAIN_IDS.POLYGON_MAINNET
       ? GRAPH_URL_POLYGON
       : chainId === CHAIN_IDS.BASE
-      ? GRAPH_URL_BASE
+      ? address.toLowerCase() === moonwellWeth.toLowerCase()
+        ? GRAPH_URL_BASE_MOONWELL
+        : GRAPH_URL_BASE
       : chainId === CHAIN_IDS.ZKSYNC
       ? GRAPH_URL_ZKSYNC
       : GRAPH_URL_ARBITRUM

@@ -64,7 +64,13 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { useRate } from '../../providers/Rate'
-import { displayAPY, formatNumber, formatNumberWido, showUsdValue } from '../../utilities/formats'
+import {
+  displayAPY,
+  formatNumber,
+  formatNumberWido,
+  showTokenBalance,
+  showUsdValue,
+} from '../../utilities/formats'
 import { getTotalApy, getVaultValue } from '../../utilities/parsers'
 import { getAdvancedRewardText } from '../../utilities/html'
 import { getLastHarvestInfo, initBalanceAndDetailData } from '../../utilities/apiCalls'
@@ -301,6 +307,7 @@ const AdvancedFarm = () => {
   const [lifetimeApy, setLifetimeApy] = useState('')
   const [vaultBirthday, setVaultBirthday] = useState('')
   const [vaultTotalPeriod, setVaultTotalPeriod] = useState('')
+  const [latestSharePrice, setLatestSharePrice] = useState('')
 
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
@@ -1704,15 +1711,14 @@ const AdvancedFarm = () => {
                               ? 'tooltip-latest-earning'
                               : 'tooltip-lifetime-earning'
                           }
-                          backgroundColor="#101828"
-                          borderColor="black"
-                          textColor="white"
+                          backgroundColor={darkMode ? 'white' : '#101828'}
+                          borderColor={darkMode ? 'white' : 'black'}
+                          textColor={darkMode ? 'black' : 'white'}
                         >
                           <NewLabel
                             size={isMobile ? '12px' : '12px'}
                             height={isMobile ? '18px' : '18px'}
                             weight="500"
-                            color="white"
                           >
                             {showLatestEarnings ? (
                               <>
@@ -1803,8 +1809,27 @@ const AdvancedFarm = () => {
                         align="right"
                         marginBottom={isMobile ? '12px' : '0px'}
                       >
-                        {showLatestEarnings ? underlyingEarningsLatest : underlyingEarnings}
-                        <br />
+                        <div data-tip data-for="earnings-underlying">
+                          {showLatestEarnings
+                            ? showTokenBalance(underlyingEarningsLatest)
+                            : showTokenBalance(underlyingEarnings)}
+                        </div>
+                        <ReactTooltip
+                          id="earnings-underlying"
+                          backgroundColor={darkMode ? 'white' : '#101828'}
+                          borderColor={darkMode ? 'white' : 'black'}
+                          textColor={darkMode ? 'black' : 'white'}
+                          place="top"
+                          effect="solid"
+                        >
+                          <NewLabel
+                            size={isMobile ? '10px' : '10px'}
+                            height={isMobile ? '14px' : '14px'}
+                            weight="500"
+                          >
+                            {showLatestEarnings ? underlyingEarningsLatest : underlyingEarnings}
+                          </NewLabel>
+                        </ReactTooltip>
                         <span className="symbol">{id}</span>
                       </NewLabel>
                     </FlexDiv>
@@ -1830,15 +1855,14 @@ const AdvancedFarm = () => {
                       <PiQuestion className="question" data-tip data-for="tooltip-total-balance" />
                       <ReactTooltip
                         id="tooltip-total-balance"
-                        backgroundColor="#101828"
-                        borderColor="black"
-                        textColor="white"
+                        backgroundColor={darkMode ? 'white' : '#101828'}
+                        borderColor={darkMode ? 'white' : 'black'}
+                        textColor={darkMode ? 'black' : 'white'}
                       >
                         <NewLabel
                           size={isMobile ? '12px' : '12px'}
                           height={isMobile ? '18px' : '18px'}
                           weight="500"
-                          color="white"
                         >
                           Total Balance reflects the fTokens in connected wallet, alongside their
                           USD value, which can change with the market.
@@ -1900,18 +1924,31 @@ const AdvancedFarm = () => {
                         align="right"
                         marginBottom={isMobile ? '12px' : '0px'}
                       >
-                        {!connected ? (
-                          0
-                        ) : lpTokenBalance ? (
-                          totalValue === 0 ? (
-                            '0.00'
+                        <div className="question" data-tip data-for="fToken-total-balance">
+                          {!connected ? (
+                            0
+                          ) : lpTokenBalance ? (
+                            showTokenBalance(totalValue)
                           ) : (
-                            totalValue
-                          )
-                        ) : (
-                          <AnimatedDots />
-                        )}
-                        <br />
+                            <AnimatedDots />
+                          )}
+                        </div>
+                        <ReactTooltip
+                          id="fToken-total-balance"
+                          backgroundColor={darkMode ? 'white' : '#101828'}
+                          borderColor={darkMode ? 'white' : 'black'}
+                          textColor={darkMode ? 'black' : 'white'}
+                          place="top"
+                          effect="solid"
+                        >
+                          <NewLabel
+                            size={isMobile ? '10px' : '10px'}
+                            height={isMobile ? '14px' : '14px'}
+                            weight="500"
+                          >
+                            {totalValue}
+                          </NewLabel>
+                        </ReactTooltip>
                         <span className="symbol">{useIFARM ? `i${id}` : `f${id}`}</span>
                       </NewLabel>
                     </FlexDiv>
@@ -1937,15 +1974,14 @@ const AdvancedFarm = () => {
                       <PiQuestion className="question" data-tip data-for="tooltip-yield-estimate" />
                       <ReactTooltip
                         id="tooltip-yield-estimate"
-                        backgroundColor="#101828"
-                        borderColor="black"
-                        textColor="white"
+                        backgroundColor={darkMode ? 'white' : '#101828'}
+                        borderColor={darkMode ? 'white' : 'black'}
+                        textColor={darkMode ? 'black' : 'white'}
                       >
                         <NewLabel
                           size={isMobile ? '12px' : '12px'}
                           height={isMobile ? '18px' : '18px'}
                           weight="500"
-                          color="white"
                         >
                           Estimated yield on your fTokens of this farm based on live APY,
                           denominated in USD. Subject to market fluctuations.
@@ -2103,6 +2139,7 @@ const AdvancedFarm = () => {
                       setLifetimeApy={setLifetimeApy}
                       setVaultBirthday={setVaultBirthday}
                       setVaultTotalPeriod={setVaultTotalPeriod}
+                      setLatestSharePrice={setLatestSharePrice}
                     />
                   </HalfInfo>
                   {!isMobile && (
@@ -2430,15 +2467,14 @@ const AdvancedFarm = () => {
                         />
                         <ReactTooltip
                           id="tooltip-unstaked-desc"
-                          backgroundColor="#101828"
-                          borderColor="black"
-                          textColor="white"
+                          backgroundColor={darkMode ? 'white' : '#101828'}
+                          borderColor={darkMode ? 'white' : 'black'}
+                          textColor={darkMode ? 'black' : 'white'}
                         >
                           <NewLabel
                             size={isMobile ? '12px' : '12px'}
                             height={isMobile ? '18px' : '18px'}
                             weight="500"
-                            color="white"
                           >
                             {useIFARM
                               ? `The number of i${id} you hold, but entitled to extra token rewards.`
@@ -2480,15 +2516,14 @@ const AdvancedFarm = () => {
                         <PiQuestion className="question" data-tip data-for="tooltip-staked-desc" />
                         <ReactTooltip
                           id="tooltip-staked-desc"
-                          backgroundColor="#101828"
-                          borderColor="black"
-                          textColor="white"
+                          backgroundColor={darkMode ? 'white' : '#101828'}
+                          borderColor={darkMode ? 'white' : 'black'}
+                          textColor={darkMode ? 'black' : 'white'}
                         >
                           <NewLabel
                             size={isMobile ? '12px' : '12px'}
                             height={isMobile ? '18px' : '18px'}
                             weight="500"
-                            color="white"
                           >
                             {useIFARM
                               ? `The number of i${id} you hold, but entitled to extra token rewards.`
@@ -2567,15 +2602,14 @@ const AdvancedFarm = () => {
                             />
                             <ReactTooltip
                               id="tooltip-totalValue"
-                              backgroundColor="#101828"
-                              borderColor="black"
-                              textColor="white"
+                              backgroundColor={darkMode ? 'white' : '#101828'}
+                              borderColor={darkMode ? 'white' : 'black'}
+                              textColor={darkMode ? 'black' : 'white'}
                             >
                               <NewLabel
                                 size={isMobile ? '10px' : '12px'}
                                 height={isMobile ? '15px' : '18px'}
                                 weight="500"
-                                color="white"
                               >
                                 Total Value of your Staked and Unstaked FARM
                               </NewLabel>
@@ -2714,7 +2748,6 @@ const AdvancedFarm = () => {
                     <FlexDiv
                       justifyContent="space-between"
                       padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom="1px solid #F3F6FF"
                     >
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}
@@ -2732,6 +2765,49 @@ const AdvancedFarm = () => {
                       >
                         {vaultBirthday}{' '}
                         <span className="total-days">({vaultTotalPeriod} days)</span>
+                      </NewLabel>
+                    </FlexDiv>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
+                      borderBottom="1px solid #F3F6FF"
+                    >
+                      <NewLabel
+                        size={isMobile ? '12px' : '14px'}
+                        weight="500"
+                        height={isMobile ? '24px' : '24px'}
+                        color={fontColor3}
+                      >
+                        SharePrice
+                      </NewLabel>
+                      <NewLabel
+                        size={isMobile ? '12px' : '14px'}
+                        weight="600"
+                        height={isMobile ? '24px' : '24px'}
+                        color={fontColor1}
+                      >
+                        <div className="question" data-tip data-for="tooltip-sharePrice">
+                          {latestSharePrice === '' ? (
+                            <AnimatedDots />
+                          ) : (
+                            Number(latestSharePrice).toFixed(5)
+                          )}
+                        </div>
+                        <ReactTooltip
+                          id="tooltip-sharePrice"
+                          backgroundColor={darkMode ? 'white' : '#101828'}
+                          borderColor={darkMode ? 'white' : 'black'}
+                          textColor={darkMode ? 'black' : 'white'}
+                          place="top"
+                        >
+                          <NewLabel
+                            size={isMobile ? '12px' : '12px'}
+                            height={isMobile ? '18px' : '18px'}
+                            weight="500"
+                          >
+                            {latestSharePrice}
+                          </NewLabel>
+                        </ReactTooltip>
                       </NewLabel>
                     </FlexDiv>
                     <NewLabel
@@ -2847,9 +2923,9 @@ const AdvancedFarm = () => {
                           />
                           <ReactTooltip
                             id="tooltip-last-harvest"
-                            backgroundColor="#101828"
-                            borderColor="black"
-                            textColor="white"
+                            backgroundColor={darkMode ? 'white' : '#101828'}
+                            borderColor={darkMode ? 'white' : 'black'}
+                            textColor={darkMode ? 'black' : 'white'}
                             place={isMobile ? 'left' : 'top'}
                           >
                             <NewLabel

@@ -26,7 +26,7 @@ import { usePortals } from '../../../../providers/Portals'
 import { useRate } from '../../../../providers/Rate'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { getWeb3, fromWei } from '../../../../services/web3'
-import { formatNumberWido } from '../../../../utilities/formats'
+import { formatNumberWido, showTokenBalance } from '../../../../utilities/formats'
 import AnimatedDots from '../../../AnimatedDots'
 import { addresses } from '../../../../data'
 import {
@@ -412,16 +412,15 @@ const WithdrawStart = ({
                     <PiQuestion className="question" data-tip data-for="min-help" />
                     <ReactTooltip
                       id="min-help"
-                      backgroundColor="#101828"
-                      borderColor="black"
-                      textColor="white"
+                      backgroundColor={darkMode ? 'white' : '#101828'}
+                      borderColor={darkMode ? 'white' : 'black'}
+                      textColor={darkMode ? 'black' : 'white'}
                       place="right"
                     >
                       <NewLabel
                         size={isMobile ? '12px' : '12px'}
                         height={isMobile ? '18px' : '18px'}
                         weight="600"
-                        color={fontColor2}
                       >
                         The estimated number of tokens you will receive in your wallet. The default
                         slippage is set as &lsquo;Auto&lsquo;.
@@ -432,22 +431,55 @@ const WithdrawStart = ({
               </NewLabel>
               <NewLabel display="flex" flexFlow="column" weight="600" textAlign="right">
                 <>
-                  {!pickedDefaultToken && progressStep === 4 ? (
-                    revertedAmount !== '' ? (
-                      revertedAmount
-                    ) : (
-                      <AnimateDotDiv>
-                        <AnimatedDots />
-                      </AnimateDotDiv>
-                    )
-                  ) : revertMinReceivedAmount !== '' ? (
-                    revertMinReceivedAmount
-                  ) : (
-                    <AnimateDotDiv>
-                      <AnimatedDots />
-                    </AnimateDotDiv>
-                  )}
-                  {(revertMinReceivedAmount + pickedToken.symbol).length > 20 ? <br /> : ' '}
+                  <>
+                    <div data-tip data-for="modal-fToken-receive-revert">
+                      {!pickedDefaultToken && progressStep === 4 ? (
+                        revertedAmount !== '' ? (
+                          showTokenBalance(revertedAmount)
+                        ) : (
+                          <AnimateDotDiv>
+                            <AnimatedDots />
+                          </AnimateDotDiv>
+                        )
+                      ) : revertMinReceivedAmount !== '' ? (
+                        showTokenBalance(revertMinReceivedAmount)
+                      ) : (
+                        <AnimateDotDiv>
+                          <AnimatedDots />
+                        </AnimateDotDiv>
+                      )}
+                    </div>
+                    <ReactTooltip
+                      id="modal-fToken-receive-revert"
+                      backgroundColor={darkMode ? 'white' : '#101828'}
+                      borderColor={darkMode ? 'white' : 'black'}
+                      textColor={darkMode ? 'black' : 'white'}
+                      place="top"
+                    >
+                      <NewLabel
+                        size={isMobile ? '10px' : '10px'}
+                        height={isMobile ? '14px' : '14px'}
+                        weight="500"
+                      >
+                        {!pickedDefaultToken && progressStep === 4 ? (
+                          revertedAmount !== '' ? (
+                            revertedAmount
+                          ) : (
+                            <AnimateDotDiv>
+                              <AnimatedDots />
+                            </AnimateDotDiv>
+                          )
+                        ) : revertMinReceivedAmount !== '' ? (
+                          revertMinReceivedAmount
+                        ) : (
+                          <AnimateDotDiv>
+                            <AnimatedDots />
+                          </AnimateDotDiv>
+                        )}
+                      </NewLabel>
+                    </ReactTooltip>
+                  </>
+                  {/* {(revertMinReceivedAmount + pickedToken.symbol).length > 20 ? <br /> : ' '} */}
                   {pickedToken.symbol}
                 </>
                 <span>
