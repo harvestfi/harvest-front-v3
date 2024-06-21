@@ -50,6 +50,10 @@ const FarmDetailChart = ({
   setVaultBirthday,
   setVaultTotalPeriod,
   setLatestSharePrice,
+  set7DHarvest,
+  set30DHarvest,
+  set180DHarvest,
+  set360DHarvest,
   setHarvestFrequency,
 }) => {
   const { fontColor3, fontColor4 } = useThemeContext()
@@ -129,12 +133,24 @@ const FarmDetailChart = ({
               Number(updatedData.generalApies[updatedData.generalApies.length - 1].timestamp)) /
             (24 * 3600)
 
-          const frequencyOfHarvest = updatedData.vaultHistories.length / totalPeriod
+          const totalPeriodBasedOnSharePrice =
+            (Number(updatedData.vaultHistories[0].timestamp) -
+              Number(updatedData.vaultHistories[updatedData.vaultHistories.length - 1].timestamp)) /
+            (24 * 3600)
 
           let [sevenDaysApy, thirtyDaysApy, oneEightyDaysApy, threeSixtyFiveDaysApy] = Array(
               4,
             ).fill('-'),
-            lifetimeApyValue = 0
+            [
+              sevenDaysHarvest,
+              thirtyDaysHarvest,
+              oneEightyDaysHarvest,
+              threeSixtyFiveDaysHarvest,
+            ] = Array(4).fill('-'),
+            lifetimeApyValue = 0,
+            frequencyOfHarvest = 0
+
+          frequencyOfHarvest = updatedData.vaultHistories.length / totalPeriodBasedOnSharePrice
 
           updatedData.generalApies.forEach(item => {
             lifetimeApyValue += Number(item.apy)
@@ -142,6 +158,44 @@ const FarmDetailChart = ({
           lifetimeApyValue /= updatedData.generalApies.length
           lifetimeApyValue = `${lifetimeApyValue.toFixed(2)}%`
 
+          // Calculate Harvest Frequency
+          if (totalPeriodBasedOnSharePrice >= 7) {
+            const lastSevenDaysData = updatedData.vaultHistories.filter(
+              entry =>
+                Number(entry.timestamp) >=
+                Number(updatedData.vaultHistories[0].timestamp) - 7 * 24 * 3600,
+            )
+            sevenDaysHarvest = lastSevenDaysData.length / 7
+          }
+
+          if (totalPeriodBasedOnSharePrice >= 30) {
+            const lastSevenDaysData = updatedData.vaultHistories.filter(
+              entry =>
+                Number(entry.timestamp) >=
+                Number(updatedData.vaultHistories[0].timestamp) - 30 * 24 * 3600,
+            )
+            thirtyDaysHarvest = lastSevenDaysData.length / 30
+          }
+
+          if (totalPeriodBasedOnSharePrice >= 180) {
+            const lastSevenDaysData = updatedData.vaultHistories.filter(
+              entry =>
+                Number(entry.timestamp) >=
+                Number(updatedData.vaultHistories[0].timestamp) - 180 * 24 * 3600,
+            )
+            oneEightyDaysHarvest = lastSevenDaysData.length / 180
+          }
+
+          if (totalPeriodBasedOnSharePrice >= 365) {
+            const lastSevenDaysData = updatedData.vaultHistories.filter(
+              entry =>
+                Number(entry.timestamp) >=
+                Number(updatedData.vaultHistories[0].timestamp) - 365 * 24 * 3600,
+            )
+            threeSixtyFiveDaysHarvest = lastSevenDaysData.length / 365
+          }
+
+          // Calculate APY - Live & Historical Average
           if (totalPeriod >= 7) {
             const lastSevenDaysData = updatedData.generalApies.filter(
               entry =>
@@ -202,6 +256,10 @@ const FarmDetailChart = ({
           setVaultBirthday(vaultInitialDate)
           setVaultTotalPeriod(totalPeriod.toFixed())
           setLatestSharePrice(latestSharePriceValue)
+          set7DHarvest(sevenDaysHarvest)
+          set30DHarvest(thirtyDaysHarvest)
+          set180DHarvest(oneEightyDaysHarvest)
+          set360DHarvest(threeSixtyFiveDaysHarvest)
           setHarvestFrequency(frequencyOfHarvest)
 
           if (isMounted) {

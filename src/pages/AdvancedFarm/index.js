@@ -136,6 +136,7 @@ import {
   NetDetailImg,
   RewardValue,
   ThemeMode,
+  SwitchMode,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 // import { array } from 'prop-types'
@@ -222,6 +223,7 @@ const AdvancedFarm = () => {
   // Switch Tag (Convert/Revert)
   const [activeDepo, setActiveDepo] = useState(true)
   const [showLatestEarnings, setShowLatestEarnings] = useState(true)
+  const [showApyHistory, setShowApyHistory] = useState(true)
   const [showGenomesVaultInfo, setShowGenomesVaultInfo] = useState(false)
   const [showSeamlessVaultInfo, setShowSeamlessVaultInfo] = useState(false)
   const [showGBVaultInfo, setShowGBVaultInfo] = useState(false)
@@ -310,6 +312,11 @@ const AdvancedFarm = () => {
   const [vaultBirthday, setVaultBirthday] = useState('')
   const [vaultTotalPeriod, setVaultTotalPeriod] = useState('')
   const [latestSharePrice, setLatestSharePrice] = useState('')
+
+  const [sevenDHarvest, setSevenDHarvest] = useState('')
+  const [thirtyDHarvest, setThirtyDHarvest] = useState('')
+  const [oneEightyDHarvest, setOneEightyDHarvest] = useState('')
+  const [threeSixtyDHarvest, setThreeSixtyDHarvest] = useState('')
   const [harvestFrequency, setHarvestFrequency] = useState('')
 
   const { rates } = useRate()
@@ -490,6 +497,7 @@ const AdvancedFarm = () => {
   const underlyingPrice = get(token, 'usdPrice', get(token, 'data.lpTokenData.price', 0))
 
   const switchEarnings = () => setShowLatestEarnings(prev => !prev)
+  const switchHistory = () => setShowApyHistory(prev => !prev)
 
   const mainTags = [
     { name: 'Manage', img: Safe },
@@ -1374,6 +1382,18 @@ const AdvancedFarm = () => {
     { label: 'Lifetime', value: lifetimeApy },
   ]
 
+  const harvestFrequencies = [
+    {
+      label: 'Latest',
+      value: useIFARM ? '-' : lastHarvest !== '' ? `${lastHarvest} ago` : '-',
+    },
+    { label: '7d', value: formatFrequency(sevenDHarvest) },
+    { label: '30d', value: formatFrequency(thirtyDHarvest) },
+    { label: '180d', value: formatFrequency(oneEightyDHarvest) },
+    { label: '365d', value: formatFrequency(threeSixtyDHarvest) },
+    { label: 'Lifetime', value: formatFrequency(harvestFrequency) },
+  ]
+
   const rewardTxt = getAdvancedRewardText(
     token,
     vaultPool,
@@ -2170,6 +2190,10 @@ const AdvancedFarm = () => {
                       setVaultBirthday={setVaultBirthday}
                       setVaultTotalPeriod={setVaultTotalPeriod}
                       setLatestSharePrice={setLatestSharePrice}
+                      set7DHarvest={setSevenDHarvest}
+                      set30DHarvest={setThirtyDHarvest}
+                      set180DHarvest={setOneEightyDHarvest}
+                      set360DHarvest={setThreeSixtyDHarvest}
                       setHarvestFrequency={setHarvestFrequency}
                     />
                   </HalfInfo>
@@ -2801,6 +2825,7 @@ const AdvancedFarm = () => {
                     <FlexDiv
                       justifyContent="space-between"
                       padding={isMobile ? '10px 15px' : '10px 15px'}
+                      borderBottom="1px solid #F3F6FF"
                     >
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}
@@ -2840,33 +2865,9 @@ const AdvancedFarm = () => {
                         </ReactTooltip>
                       </NewLabel>
                     </FlexDiv>
-                    <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom="1px solid #F3F6FF"
-                    >
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="500"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor3}
-                      >
-                        Harvest frequency
-                      </NewLabel>
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="600"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor1}
-                      >
-                        {latestSharePrice === '' ? (
-                          <AnimatedDots />
-                        ) : (
-                          formatFrequency(harvestFrequency)
-                        )}
-                      </NewLabel>
-                    </FlexDiv>
                     <NewLabel
+                      display="flex"
+                      justifyContent="space-between"
                       size={isMobile ? '12px' : '14px'}
                       weight={isMobile ? '600' : '600'}
                       height={isMobile ? '20px' : '24px'}
@@ -2874,32 +2875,70 @@ const AdvancedFarm = () => {
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom="1px solid #F3F6FF"
                     >
-                      APY - Live & Historical Average
+                      {showApyHistory ? 'APY - Live & Historical Average' : 'Harvest Frequency'}
+                      <SwitchMode mode={showApyHistory ? 'apy' : 'harvest'}>
+                        <div id="theme-switch">
+                          <div className="switch-track">
+                            <div className="switch-thumb" />
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={showApyHistory}
+                            onChange={switchHistory}
+                            aria-label="Switch between APY and Harvest frequency"
+                          />
+                        </div>
+                      </SwitchMode>
                     </NewLabel>
-                    {apyPeriods.map((period, index) => (
-                      <FlexDiv
-                        key={index}
-                        justifyContent="space-between"
-                        padding={isMobile ? '10px 15px' : '10px 15px'}
-                      >
-                        <NewLabel
-                          size={isMobile ? '12px' : '14px'}
-                          weight="500"
-                          height={isMobile ? '24px' : '24px'}
-                          color={fontColor3}
-                        >
-                          {period.label}
-                        </NewLabel>
-                        <NewLabel
-                          size={isMobile ? '12px' : '14px'}
-                          weight="600"
-                          height={isMobile ? '24px' : '24px'}
-                          color={fontColor1}
-                        >
-                          {period.value === '' ? <AnimatedDots /> : period.value}
-                        </NewLabel>
-                      </FlexDiv>
-                    ))}
+                    {showApyHistory
+                      ? apyPeriods.map((period, index) => (
+                          <FlexDiv
+                            key={index}
+                            justifyContent="space-between"
+                            padding={isMobile ? '10px 15px' : '10px 15px'}
+                          >
+                            <NewLabel
+                              size={isMobile ? '12px' : '14px'}
+                              weight="500"
+                              height={isMobile ? '24px' : '24px'}
+                              color={fontColor3}
+                            >
+                              {period.label}
+                            </NewLabel>
+                            <NewLabel
+                              size={isMobile ? '12px' : '14px'}
+                              weight="600"
+                              height={isMobile ? '24px' : '24px'}
+                              color={fontColor1}
+                            >
+                              {period.value === '' ? <AnimatedDots /> : period.value}
+                            </NewLabel>
+                          </FlexDiv>
+                        ))
+                      : harvestFrequencies.map((period, index) => (
+                          <FlexDiv
+                            key={index}
+                            justifyContent="space-between"
+                            padding={isMobile ? '10px 15px' : '10px 15px'}
+                          >
+                            <NewLabel
+                              size={isMobile ? '12px' : '14px'}
+                              weight="500"
+                              height={isMobile ? '24px' : '24px'}
+                              color={fontColor3}
+                            >
+                              {period.label}
+                            </NewLabel>
+                            <NewLabel
+                              size={isMobile ? '12px' : '14px'}
+                              weight="600"
+                              height={isMobile ? '24px' : '24px'}
+                              color={fontColor1}
+                            >
+                              {period.value === '' ? <AnimatedDots /> : period.value}
+                            </NewLabel>
+                          </FlexDiv>
+                        ))}
                   </LastHarvestInfo>
                   {!useIFARM && (
                     <MyBalance

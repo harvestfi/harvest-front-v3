@@ -164,6 +164,14 @@ export const showUsdValue = (value, currencySym) => {
 }
 
 export const formatFrequency = value => {
+  if (value === '-') {
+    return '-'
+  }
+
+  if (value === '') {
+    return ''
+  }
+
   const totalHours = 24 / value
 
   const days = Math.floor(totalHours / 24)

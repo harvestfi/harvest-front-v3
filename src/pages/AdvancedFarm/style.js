@@ -397,6 +397,108 @@ const ThemeMode = styled.div`
   }
 `
 
+const SwitchMode = styled.div`
+  display: flex;
+  align-items: center;
+
+  #theme-switch {
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+    touch-action: pan-x;
+    user-select: none;
+
+    input {
+      cursor: pointer;
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      opacity: 0;
+    }
+
+    .switch-track {
+      background: #036666;
+      height: 16px;
+      width: 32px;
+      border-radius: 30px;
+      transition: all 0.2s ease 0s;
+    }
+    .switch-thumb {
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-color: white;
+      height: 14px;
+      left: 1px;
+      position: absolute;
+      top: 1px;
+      width: 14px;
+      border-radius: 50%;
+      transition: all 0.25s ease 0s;
+    }
+
+    &:hover .switch-thumb {
+      box-shadow: 0 0 2px 3px #ff9400;
+    }
+  }
+
+  ${props =>
+    props.mode === 'apy'
+      ? `
+      #theme-switch {
+        .switch-check {
+          opacity: 1;
+        }
+        .switch-x {
+          opacity: 0;
+        }
+        .switch-thumb {
+          left: 17px;
+        }
+        .switch-track {
+          background: #6B8AFF;
+        }
+      }
+    `
+      : `
+      #theme-switch {
+        .switch-thumb {
+        }
+      }
+    `}
+
+  @media screen and (max-width: 992px) {
+    #theme-switch {
+      .switch-track {
+        width: 24px;
+        height: 12px;
+      }
+
+      .switch-thumb {
+        width: 10px;
+        height: 10px;
+        top: 1px;
+      }
+    }
+
+    ${props =>
+      props.mode === 'apy'
+        ? `
+        #theme-switch {
+          .switch-thumb {
+            left: 12px;
+          }
+      `
+        : `
+        #theme-switch {
+        .switch-thumb {
+          left: 2px;
+        }
+      `}
+  }
+`
+
 const TopDesc = styled(NewLabel)`
   color: ${props => props.fontColor2};
   margin: auto 0px auto 35px;
@@ -1323,6 +1425,7 @@ export {
   EarningsBadge,
   MyTotalReward,
   ThemeMode,
+  SwitchMode,
   GuideSection,
   GuidePart,
   DepositSection,
