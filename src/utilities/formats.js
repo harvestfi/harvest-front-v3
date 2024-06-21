@@ -180,7 +180,7 @@ export const formatFrequency = value => {
 
   const daysText = days > 0 ? `${days}d` : ''
   const hoursText = hours > 0 ? `${hours}h` : ''
-  const minutesText = minutes > 0 ? `${minutes}m` : ''
+  const minutesText = minutes > 0 ? `${minutes}m` : '0m'
 
   return [daysText, hoursText, minutesText].filter(Boolean).join(' ')
 }
