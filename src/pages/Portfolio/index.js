@@ -714,7 +714,6 @@ const Portfolio = () => {
               tokenSymbol: symbol,
             }))
             combinedEnrichedData = combinedEnrichedData.concat(enrichedDataWithSymbol)
-            console.log({ symbol, token, combinedEnrichedData })
             totalNetProfitUSD += sumNetChangeUsd
           }
         }
