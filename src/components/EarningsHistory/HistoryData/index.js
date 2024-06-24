@@ -152,7 +152,7 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
               !noData ? (
                 <EmptyInfo weight={500} size={14} height={20} color={fontColor} gap="2px">
                   <div>
-                    Loading data on all events for the connected wallet.
+                    Loading all events data for the connected wallet
                     <br />
                     It might take up to 30s <AnimatedDots />
                   </div>
