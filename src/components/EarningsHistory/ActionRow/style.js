@@ -41,6 +41,12 @@ const IconWrapper = styled.div`
   display: flex;
   padding-left: 6px;
   margin: auto 0px;
+
+  @media screen and (max-width: 992px) {
+    position: absolute;
+    top: 55px;
+    left: 3px;
+  }
 `
 
 const Content = styled.div`
