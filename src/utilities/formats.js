@@ -232,6 +232,11 @@ export const stringToArray = value => (isArray(value) ? value : [value])
 export const displayAPY = (apy, ...args) =>
   new BigNumber(apy).isGreaterThan(MAX_APY_DISPLAY)
     ? `${MAX_APY_DISPLAY}%+`
+    : `${truncateNumberString(apy, ...args)}%`
+
+export const displayApyRefusingNegative = (apy, ...args) =>
+  new BigNumber(apy).isGreaterThan(MAX_APY_DISPLAY)
+    ? `${MAX_APY_DISPLAY}%+`
     : new BigNumber(apy).isLessThanOrEqualTo(0)
     ? '0.00%'
     : `${truncateNumberString(apy, ...args)}%`
