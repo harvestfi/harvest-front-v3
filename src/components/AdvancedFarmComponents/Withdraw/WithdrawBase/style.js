@@ -125,6 +125,7 @@ const NewLabel = styled.div`
   span.token-symbol {
     font-weight: 400;
     font-size: 10px;
+    line-height: 12px;
   }
 `
 

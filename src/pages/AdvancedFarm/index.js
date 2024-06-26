@@ -2362,6 +2362,7 @@ const AdvancedFarm = () => {
                         convertDailyYieldUSD={convertDailyYieldUSD}
                         minReceiveAmountString={minReceiveAmountString}
                         setMinReceiveAmountString={setMinReceiveAmountString}
+                        minReceiveUsdAmount={minReceiveUsdAmount}
                         setMinReceiveUsdAmount={setMinReceiveUsdAmount}
                         setConvertMonthlyYieldUSD={setConvertMonthlyYieldUSD}
                         setConvertDailyYieldUSD={setConvertDailyYieldUSD}
@@ -2371,7 +2372,6 @@ const AdvancedFarm = () => {
                         setFailureCount={setFailureCountConvert}
                         supportedVault={supportedVault}
                         setSupportedVault={setSupportedVault}
-                        hasPortalsError={hasPortalsError}
                       />
                       <DepositSelectToken
                         selectToken={selectTokenDepo}
@@ -2430,10 +2430,10 @@ const AdvancedFarm = () => {
                         setRevertFromInfoUsdAmount={setRevertFromInfoUsdAmount}
                         setRevertMinReceivedAmount={setRevertMinReceivedAmount}
                         revertMinReceivedAmount={revertMinReceivedAmount}
+                        revertMinReceivedUsdAmount={revertMinReceivedUsdAmount}
                         setRevertMinReceivedUsdAmount={setRevertMinReceivedUsdAmount}
                         hasErrorOccurred={hasErrorOccurredRevert}
                         setHasErrorOccurred={setHasErrorOccurredRevert}
-                        hasPortalsError={hasPortalsError}
                       />
                       <WithdrawSelectToken
                         selectToken={selectTokenWith}
