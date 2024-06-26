@@ -195,11 +195,18 @@ const EmptyInfo = styled.div`
     margin-top: ${props.marginTop};
   `
       : ''}
+  
+  ${props =>
+    props.gap
+      ? `
+    gap: ${props.gap};
+  `
+      : 'gap: 23px;'}
 
   display: flex;
   justify-content: center;
   text-align: center;
-  gap: 23px;
+
   @media screen and (max-width: 992px) {
     display: flex;
     justify-content: center;

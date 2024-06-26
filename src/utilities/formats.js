@@ -163,6 +163,28 @@ export const showUsdValue = (value, currencySym) => {
   return `${currencySym}${value.toFixed(2)}`
 }
 
+export const formatFrequency = value => {
+  if (value === '-') {
+    return '-'
+  }
+
+  if (value === '') {
+    return ''
+  }
+
+  const totalHours = 24 / value
+
+  const days = Math.floor(totalHours / 24)
+  const hours = Math.floor(totalHours % 24)
+  const minutes = Math.floor((totalHours % 1) * 60)
+
+  const daysText = days > 0 ? `${days}d` : ''
+  const hoursText = hours > 0 ? `${hours}h` : ''
+  const minutesText = minutes > 0 ? `${minutes}m` : '0m'
+
+  return [daysText, hoursText, minutesText].filter(Boolean).join(' ')
+}
+
 export const showTokenBalance = balance => {
   let value = parseFloat(balance)
   if (value === 0) {
@@ -208,6 +230,11 @@ export const formatAddress = address => {
 export const stringToArray = value => (isArray(value) ? value : [value])
 
 export const displayAPY = (apy, ...args) =>
+  new BigNumber(apy).isGreaterThan(MAX_APY_DISPLAY)
+    ? `${MAX_APY_DISPLAY}%+`
+    : `${truncateNumberString(apy, ...args)}%`
+
+export const displayApyRefusingNegative = (apy, ...args) =>
   new BigNumber(apy).isGreaterThan(MAX_APY_DISPLAY)
     ? `${MAX_APY_DISPLAY}%+`
     : new BigNumber(apy).isLessThanOrEqualTo(0)

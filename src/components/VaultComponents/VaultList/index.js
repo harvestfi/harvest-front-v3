@@ -18,6 +18,7 @@ import {
   IFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
   MAX_DECIMALS,
+  chainList,
 } from '../../../constants'
 import { fromWei } from '../../../services/web3'
 import { CHAIN_IDS } from '../../../data/constants'
@@ -52,6 +53,26 @@ const SortsList = [
   { id: 1, name: 'TVL', type: 'deposits', img: SortBank },
   { id: 2, name: 'My Balance', type: 'balance', img: SortCurrency },
 ]
+
+const getNetworkNames = selChain => {
+  if (selChain.length === chainList.length) {
+    return ''
+  }
+
+  const selectedChains = chainList.filter(chain => selChain.includes(chain.chainId.toString()))
+
+  if (selectedChains.length === 1) {
+    return `in ${selectedChains[0].name} network`
+  }
+
+  const networkNames = selectedChains.map(chain => chain.name)
+
+  if (selectedChains.length === 2) {
+    return `in ${networkNames[0]} and ${networkNames[1]} networks`
+  }
+
+  return `in ${networkNames.slice(0, -1).join(', ')} and ${networkNames.slice(-1)} networks`
+}
 
 const formatVaults = (
   groupOfVaults,
@@ -397,6 +418,7 @@ const VaultList = () => {
   } = usePools()
 
   const { account, chain, selChain, getWalletBalances, balances, chainId } = useWallet()
+  const showNetworks = getNetworkNames(selChain)
   const [openVault, setOpen] = useState(null)
   const [loaded, setLoaded] = useState(null)
   const [sortParam, setSortParam] = useState(null)
@@ -702,7 +724,7 @@ const VaultList = () => {
           : selectedActiveType[0] === 'Active'
           ? 'active'
           : 'inactive'}{' '}
-        farms
+        farms {showNetworks}
       </DisplayCount>
       <VaultsListBody borderColor={borderColor} backColor={backColor}>
         <MobileListFilter
