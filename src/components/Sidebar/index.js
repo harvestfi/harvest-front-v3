@@ -28,6 +28,7 @@ import WalletInactive from '../../assets/images/logos/sidebar/wallet_inactive.sv
 import Toggle from '../../assets/images/logos/sidebar/more-mobile.svg'
 import Arbitrum from '../../assets/images/chains/arbitrum.svg'
 import Base from '../../assets/images/chains/base.svg'
+import Zksync from '../../assets/images/chains/zksync.svg'
 import Ethereum from '../../assets/images/chains/ethereum.svg'
 import Polygon from '../../assets/images/chains/polygon.svg'
 import HomeMobile from '../../assets/images/logos/sidebar/home-mobile.svg'
@@ -315,6 +316,9 @@ const getChainIcon = chainNum => {
       case CHAIN_IDS.BASE:
         icon = Base
         break
+      case CHAIN_IDS.ZKSYNC:
+        icon = Zksync
+        break
       default:
         icon = Ethereum
         break
@@ -410,6 +414,8 @@ const Sidebar = ({ width }) => {
         ? ['WETH_polygon', 'USDC_polygon']
         : chainId === CHAIN_IDS.ARBITRUM_ONE
         ? ['WETH_arbitrum', 'USDC_arbitrum']
+        : chainId === CHAIN_IDS.ZKSYNC
+        ? ['WETH_zksync', 'USDC_zksync']
         : ['WETH', 'USDC']
     handleMobileWalletShow()
     await getWalletBalances(showBalanceTokens, false, true)
@@ -423,6 +429,8 @@ const Sidebar = ({ width }) => {
         ? balances.WETH_polygon
         : chainId === CHAIN_IDS.ARBITRUM_ONE
         ? balances.WETH_arbitrum
+        : chainId === CHAIN_IDS.ZKSYNC
+        ? balances.WETH_zksync
         : balances.WETH,
       18,
     )
@@ -433,6 +441,8 @@ const Sidebar = ({ width }) => {
         ? balances.USDC_polygon
         : chainId === CHAIN_IDS.ARBITRUM_ONE
         ? balances.USDC_arbitrum
+        : chainId === CHAIN_IDS.ZKSYNC
+        ? balances.USDC_zksync
         : balances.USDC,
       6,
     )
@@ -447,6 +457,7 @@ const Sidebar = ({ width }) => {
         CHAIN_IDS.POLYGON_MAINNET,
         CHAIN_IDS.ARBITRUM_ONE,
         CHAIN_IDS.BASE,
+        CHAIN_IDS.ZKSYNC,
       ])
     }
     push(path)

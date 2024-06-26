@@ -52,6 +52,9 @@ const getChainName = chain => {
     case CHAIN_IDS.BASE:
       chainName = 'Base'
       break
+    case CHAIN_IDS.ZKSYNC:
+      chainName = 'Zksync'
+      break
     default:
       chainName = 'Ethereum'
       break

@@ -17,6 +17,7 @@ import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import BASE from '../../assets/images/chains/base.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
+import ZKSYNC from '../../assets/images/chains/zksync.svg'
 import Safe from '../../assets/images/logos/beginners/safe.svg'
 import Diamond from '../../assets/images/logos/beginners/diamond.svg'
 import BarChart from '../../assets/images/logos/beginners/bar-chart-01.svg'
@@ -43,9 +44,7 @@ import {
   GECKO_URL,
   COINGECKO_API_KEY,
   DECIMAL_PRECISION,
-  FARM_GRAIN_TOKEN_SYMBOL,
   FARM_TOKEN_SYMBOL,
-  FARM_WETH_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
   ROUTES,
   SPECIAL_VAULTS,
@@ -344,8 +343,6 @@ const AdvancedFarm = () => {
   const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )
-  const farmWethPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_WETH_POOL_ID)
-  const farmGrainPool = pools.find(pool => pool.id === SPECIAL_VAULTS.FARM_GRAIN_POOL_ID)
 
   const poolVaults = useMemo(
     () => ({
@@ -360,28 +357,8 @@ const AdvancedFarm = () => {
         decimals: 18,
         tokenNames: ['FARM'],
       },
-      [FARM_WETH_TOKEN_SYMBOL]: {
-        liquidityPoolVault: true,
-        tokenNames: ['FARM, ETH'], // 'FARM/ETH',
-        platform: ['Uniswap'],
-        data: farmWethPool,
-        vaultAddress: addresses.FARM_WETH_LP,
-        logoUrl: ['./icons/farm.svg', './icons/eth.svg'],
-        rewardSymbol: FARM_TOKEN_SYMBOL,
-        decimals: 18,
-      },
-      [FARM_GRAIN_TOKEN_SYMBOL]: {
-        liquidityPoolVault: true,
-        tokenNames: ['FARM, GRAIN'], // 'FARM/GRAIN',
-        platform: ['Uniswap'],
-        data: farmGrainPool,
-        vaultAddress: addresses.FARM_GRAIN_LP,
-        logoUrl: ['./icons/farm.svg', './icons/grain.svg'],
-        rewardSymbol: FARM_TOKEN_SYMBOL,
-        decimals: 18,
-      },
     }),
-    [farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
+    [farmProfitSharingPool, profitShareAPY],
   )
 
   const groupOfVaults = { ...vaultsData, ...poolVaults }
@@ -411,7 +388,7 @@ const AdvancedFarm = () => {
 
   const { logoUrl } = token
 
-  const isSpecialVault = token.liquidityPoolVault || token.poolVault
+  const isSpecialVault = token.poolVault
   const tokenVault = get(vaultsData, token.hodlVaultId || id)
 
   const vaultPool = isSpecialVault
@@ -428,7 +405,7 @@ const AdvancedFarm = () => {
 
   const chain = token.chain || token.data.chain
 
-  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE]
+  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
 
   useEffect(() => {
     const getBadge = () => {

@@ -58,6 +58,12 @@ const web3Onboard = init({
       label: 'Arbitrum One',
       rpcUrl: 'https://rpc.ankr.com/arbitrum',
     },
+    {
+      id: 324,
+      token: 'ZETH',
+      label: 'Zksync',
+      rpcUrl: 'https://rpc.ankr.com/zksync_era',
+    },
   ],
   appMetadata: {
     name: 'Harvest',

@@ -23,6 +23,9 @@ import ReaderArbitrumMethods from './reader-arbitrum/methods'
 import ReaderBaseContract from './reader-base/contract.json'
 import ReaderBaseMethods from './reader-base/methods'
 
+import ReaderZksyncContract from './reader-zksync/contract.json'
+import ReaderZksyncMethods from './reader-zksync/methods'
+
 import { CHAIN_IDS } from '../../../data/constants'
 
 const { tokens } = require('../../../data')
@@ -83,6 +86,12 @@ export default {
     contract: ReaderBaseContract,
     methods: ReaderBaseMethods,
     chain: CHAIN_IDS.BASE,
+  },
+
+  readerZksync: {
+    contract: ReaderZksyncContract,
+    methods: ReaderZksyncMethods,
+    chain: CHAIN_IDS.ZKSYNC,
   },
   ...getTokensContracts(),
 }

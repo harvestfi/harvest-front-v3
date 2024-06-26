@@ -271,10 +271,11 @@ const VaultsProvider = _ref => {
           if (chainId === CHAIN_IDS.ETH_MAINNET) await setFormattedVaults(apiData.eth)
           else if (chainId === CHAIN_IDS.POLYGON_MAINNET) await setFormattedVaults(apiData.matic)
           else if (chainId === CHAIN_IDS.BASE) await setFormattedVaults(apiData.base)
+          else if (chainId === CHAIN_IDS.ZKSYNC) await setFormattedVaults(apiData.zksync)
           else await setFormattedVaults(apiData.arbitrum)
         } else {
           await setFormattedVaults(
-            merge(apiData.eth, apiData.matic, apiData.arbitrum, apiData.base),
+            merge(apiData.eth, apiData.matic, apiData.arbitrum, apiData.base, apiData.zksync),
           )
         }
         setLoadingVaults(false)

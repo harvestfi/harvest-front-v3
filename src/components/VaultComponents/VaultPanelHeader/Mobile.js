@@ -4,6 +4,7 @@ import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
 import BASE from '../../../assets/images/chains/base.svg'
 import ETHEREUM from '../../../assets/images/chains/ethereum.svg'
 import POLYGON from '../../../assets/images/chains/polygon.svg'
+import ZKSYNC from '../../../assets/images/chains/zksync.svg'
 import APYIcon from '../../../assets/images/logos/farm/sortAPY.svg'
 import TVLIcon from '../../../assets/images/logos/farm/sortBank.svg'
 import DailyIcon from '../../../assets/images/logos/farm/sortCurrency.svg'
@@ -37,7 +38,7 @@ const MobilePanelHeader = ({
   desciToken,
 }) => {
   const location = useLocation()
-  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE]
+  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
 
   const chainId = token.chain || token.data.chain
   const [badgeId, setBadgeId] = useState(-1)

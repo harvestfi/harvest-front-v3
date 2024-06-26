@@ -36,6 +36,7 @@ const WalletProvider = _ref => {
     CHAIN_IDS.POLYGON_MAINNET,
     CHAIN_IDS.ARBITRUM_ONE,
     CHAIN_IDS.BASE,
+    CHAIN_IDS.ZKSYNC,
   ])
   const [balances, setBalances] = useState({})
   const [logout, setLogout] = useState(false)

@@ -61,7 +61,7 @@ function generateChartDataWithSlots(slots, apiData) {
               : prev,
           )
         } else {
-          data[key] = 0
+          data[key] = { value: 0 }
         }
       }
     }
@@ -200,8 +200,14 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
         unitBtw,
         roundNum
 
-      if (data && data.ETH && data.MATIC && data.ARBITRUM) {
-        if (data.ETH.length === 0 && data.MATIC.length === 0 && data.ARBITRUM.length === 0) {
+      if (data && data.ETH && data.MATIC && data.ARBITRUM && data.BASE && data.ZKSYNC) {
+        if (
+          data.ETH.length === 0 &&
+          data.MATIC.length === 0 &&
+          data.ARBITRUM.length === 0 &&
+          data.BASE.length === 0 &&
+          data.ZKSYNC.length === 0
+        ) {
           setIsDataReady(false)
           return
         }

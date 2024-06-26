@@ -10,6 +10,7 @@ import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import BASE from '../../assets/images/chains/base.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
+import ZKSYNC from '../../assets/images/chains/zksync.svg'
 import Safe from '../../assets/images/logos/dashboard/safe.svg'
 import Coin1 from '../../assets/images/logos/dashboard/coins-stacked-02.svg'
 import Coin2 from '../../assets/images/logos/dashboard/coins-stacked-04.svg'
@@ -23,9 +24,7 @@ import TotalValue from '../../components/TotalValue'
 import {
   GECKO_URL,
   COINGECKO_API_KEY,
-  FARM_GRAIN_TOKEN_SYMBOL,
   FARM_TOKEN_SYMBOL,
-  FARM_WETH_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
   MAX_DECIMALS,
@@ -80,6 +79,9 @@ const getChainIcon = chain => {
       break
     case CHAIN_IDS.BASE:
       chainLogo = BASE
+      break
+    case CHAIN_IDS.ZKSYNC:
+      chainLogo = ZKSYNC
       break
     default:
       chainLogo = ETHEREUM
@@ -176,8 +178,7 @@ const Portfolio = () => {
   const farmProfitSharingPool = totalPools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )
-  const farmWethPool = totalPools.find(pool => pool.id === SPECIAL_VAULTS.FARM_WETH_POOL_ID)
-  const farmGrainPool = totalPools.find(pool => pool.id === SPECIAL_VAULTS.FARM_GRAIN_POOL_ID)
+
   const poolVaults = useMemo(
     () => ({
       [FARM_TOKEN_SYMBOL]: {
@@ -191,28 +192,8 @@ const Portfolio = () => {
         platform: ['Harvest'],
         decimals: 18,
       },
-      [FARM_WETH_TOKEN_SYMBOL]: {
-        liquidityPoolVault: true,
-        tokenNames: ['FARM, ETH'], // 'FARM/ETH',
-        platform: ['Uniswap'],
-        data: farmWethPool,
-        vaultAddress: addresses.FARM_WETH_LP,
-        logoUrl: ['./icons/farm.svg', './icons/eth.svg'],
-        rewardSymbol: FARM_TOKEN_SYMBOL,
-        decimals: 18,
-      },
-      [FARM_GRAIN_TOKEN_SYMBOL]: {
-        liquidityPoolVault: true,
-        tokenNames: ['FARM, GRAIN'], // 'FARM/GRAIN',
-        platform: ['Uniswap'],
-        data: farmGrainPool,
-        vaultAddress: addresses.FARM_GRAIN_LP,
-        logoUrl: ['./icons/farm.svg', './icons/grain.svg'],
-        rewardSymbol: FARM_TOKEN_SYMBOL,
-        decimals: 18,
-      },
     }),
-    [farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
+    [farmProfitSharingPool, profitShareAPY],
   )
 
   const groupOfVaults = { ...vaultsData, ...poolVaults }

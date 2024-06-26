@@ -14,9 +14,7 @@ import sortDescIcon from '../../../assets/images/ui/desc.svg'
 import sortIcon from '../../../assets/images/ui/sort.svg'
 import MobileSortCheckedIcon from '../../../assets/images/logos/filter/mobile-sort-checked.svg'
 import {
-  FARM_GRAIN_TOKEN_SYMBOL,
   FARM_TOKEN_SYMBOL,
-  FARM_WETH_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
   MAX_DECIMALS,
@@ -441,8 +439,6 @@ const VaultList = () => {
   const farmProfitSharingPool = totalPools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )
-  const farmWethPool = totalPools.find(pool => pool.id === SPECIAL_VAULTS.FARM_WETH_POOL_ID)
-  const farmGrainPool = totalPools.find(pool => pool.id === SPECIAL_VAULTS.FARM_GRAIN_POOL_ID)
 
   const poolVaults = useMemo(
     () => ({
@@ -457,29 +453,8 @@ const VaultList = () => {
         platform: ['Uniswap'],
         tags: ['Beginners'],
       },
-      [FARM_WETH_TOKEN_SYMBOL]: {
-        liquidityPoolVault: true,
-        platform: ['Uniswap'],
-        data: farmWethPool,
-        logoUrl: ['./icons/farm.svg', './icons/eth.svg'],
-        decimals: 18,
-        rewardSymbol: FARM_TOKEN_SYMBOL,
-        tokenNames: ['FARM', 'ETH'],
-        assetType: 'LP Token',
-        tags: ['Advanced'],
-      },
-      [FARM_GRAIN_TOKEN_SYMBOL]: {
-        liquidityPoolVault: true,
-        tokenNames: ['FARM', 'GRAIN'],
-        platform: ['Uniswap'],
-        data: farmGrainPool,
-        logoUrl: ['./icons/farm.svg', './icons/grain.svg'],
-        decimals: 18,
-        rewardSymbol: FARM_TOKEN_SYMBOL,
-        tags: ['Advanced'],
-      },
     }),
-    [farmGrainPool, farmWethPool, farmProfitSharingPool, profitShareAPY],
+    [farmProfitSharingPool, profitShareAPY],
   )
 
   let groupOfVaults = []
@@ -577,10 +552,7 @@ const VaultList = () => {
     ],
   )
 
-  const hasLoadedSpecialEthPools =
-    !!get(farmWethPool, 'contractInstance') &&
-    !!get(farmGrainPool, 'contractInstance') &&
-    !!get(farmProfitSharingPool, 'contractInstance')
+  const hasLoadedSpecialEthPools = !!get(farmProfitSharingPool, 'contractInstance')
 
   const firstPoolsBalancesLoad = useRef(true)
   const firstVaultsBalancesLoad = useRef(true)
@@ -607,11 +579,7 @@ const VaultList = () => {
       ) {
         const fetchUserTotalStakedInFarmAndFarmUsdc = async () => {
           firstPoolsBalancesLoad.current = false
-          await fetchUserPoolStats(
-            [farmWethPool, farmGrainPool, farmProfitSharingPool],
-            account,
-            userStats,
-          )
+          await fetchUserPoolStats([farmProfitSharingPool], account, userStats)
         }
 
         fetchUserTotalStakedInFarmAndFarmUsdc()
@@ -633,12 +601,7 @@ const VaultList = () => {
             selChain.includes(CHAIN_IDS.ETH_MAINNET)
           ) {
             // firstVaultsBalancesLoad.current = false
-            balancesToLoad = [
-              FARM_TOKEN_SYMBOL,
-              IFARM_TOKEN_SYMBOL,
-              FARM_GRAIN_TOKEN_SYMBOL,
-              FARM_WETH_TOKEN_SYMBOL,
-            ]
+            balancesToLoad = [FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL]
           } else if (selectedVault) {
             if (isArray(tokens[selectedVault].tokenAddress)) {
               const multipleAssets = tokens[selectedVault].tokenAddress.map(address => {
@@ -653,13 +616,7 @@ const VaultList = () => {
             }
 
             if (chain === CHAIN_IDS.ETH_MAINNET) {
-              balancesToLoad = [
-                ...balancesToLoad,
-                FARM_TOKEN_SYMBOL,
-                IFARM_TOKEN_SYMBOL,
-                FARM_GRAIN_TOKEN_SYMBOL,
-                FARM_WETH_TOKEN_SYMBOL,
-              ]
+              balancesToLoad = [...balancesToLoad, FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL]
             }
           }
 
@@ -680,8 +637,6 @@ const VaultList = () => {
       loadedUserPoolsWeb3Provider,
       loadedUserVaultsWeb3Provider,
       farmProfitSharingPool,
-      farmWethPool,
-      farmGrainPool,
       fetchUserPoolStats,
       userStats,
       hasLoadedSpecialEthPools,
