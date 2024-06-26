@@ -1375,7 +1375,7 @@ const BeginnersFarm = () => {
                       borderBottom="1px solid #F2F5FF"
                     >
                       <FlexDiv>
-                        {showLatestEarnings ? 'Latest Earnings' : 'Lifetime Earnings'}
+                        {showLatestEarnings ? 'Latest Yield' : 'Lifetime Yield'}
                         <EarningsBadge>Beta</EarningsBadge>
                         <PiQuestion
                           className="question"
@@ -1403,8 +1403,8 @@ const BeginnersFarm = () => {
                           >
                             {showLatestEarnings ? (
                               <>
-                                Your latest earnings in this farm since the last interaction (revert
-                                or convert).
+                                Your latest yield in this farm since the last interaction (revert or
+                                convert).
                                 <br />
                                 <br />
                                 USD value is subject to market fluctuations. Claimable rewards are
@@ -1415,7 +1415,7 @@ const BeginnersFarm = () => {
                               </>
                             ) : (
                               <>
-                                Your lifetime earnings in this farm expressed in USD and Underlying
+                                Your lifetime yield in this farm expressed in USD and Underlying
                                 token. USD value is subject to market fluctuations. Claimable
                                 rewards are not part of this estimation.
                                 <br />
@@ -1436,7 +1436,7 @@ const BeginnersFarm = () => {
                             type="checkbox"
                             checked={showLatestEarnings}
                             onChange={switchEarnings}
-                            aria-label="Switch between lifetime and latest earnings"
+                            aria-label="Switch between lifetime and latest yields"
                           />
                         </div>
                       </ThemeMode>
