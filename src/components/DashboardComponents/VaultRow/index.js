@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useMediaQuery } from 'react-responsive'
 import ListItem from '../ListItem'
-import { formatNumber, formatNumberWido } from '../../../utilities/formats'
+import { displayAPY, formatNumber, formatNumberWido } from '../../../utilities/formats'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { chainList, directDetailUrl } from '../../../constants'
 import { useRate } from '../../../providers/Rate'
@@ -113,7 +113,7 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
                 ? 'Inactive'
                 : Number.isNaN(info.apy)
                 ? '-'
-                : `${formatNumberWido(info.apy, 2)}%`
+                : `${displayAPY(info.apy)}`
             }
           />
         </Content>

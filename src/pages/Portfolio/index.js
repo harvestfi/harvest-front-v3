@@ -15,8 +15,10 @@ import Coin1 from '../../assets/images/logos/dashboard/coins-stacked-02.svg'
 import Coin2 from '../../assets/images/logos/dashboard/coins-stacked-04.svg'
 import Diamond from '../../assets/images/logos/dashboard/diamond-01.svg'
 import Sort from '../../assets/images/logos/dashboard/sort.svg'
+import BankNote from '../../assets/images/logos/dashboard/bank-note.svg'
 import ConnectDisableIcon from '../../assets/images/logos/sidebar/connect-disable.svg'
 import VaultRow from '../../components/DashboardComponents/VaultRow'
+import EarningsHistory from '../../components/EarningsHistory/HistoryData'
 import TotalValue from '../../components/TotalValue'
 import {
   GECKO_URL,
@@ -40,6 +42,7 @@ import { fromWei } from '../../services/web3'
 import { parseValue, isLedgerLive } from '../../utilities/formats'
 import { initBalanceAndDetailData } from '../../utilities/apiCalls'
 import { getTotalApy } from '../../utilities/parsers'
+import AnimatedDots from '../../components/AnimatedDots'
 import {
   Column,
   Container,
@@ -60,10 +63,11 @@ import {
   TableContent,
   ConnectButtonStyle,
   CheckBoxDiv,
+  SwitchView,
 } from './style'
-import AnimatedDots from '../../components/AnimatedDots'
 
 const totalNetProfitKey = 'TOTAL_NET_PROFIT'
+const totalHistoryDataKey = 'TOTAL_HISTORY_DATA'
 
 const getChainIcon = chain => {
   let chainLogo = ETHEREUM
@@ -125,7 +129,7 @@ const Portfolio = () => {
   /* eslint-disable global-require */
   const { tokens } = require('../../data')
   const {
-    // darkMode,
+    darkMode,
     bgColor,
     backColor,
     fontColor,
@@ -140,6 +144,7 @@ const Portfolio = () => {
   const [filteredFarmList, setFilteredFarmList] = useState([])
   const [noFarm, setNoFarm] = useState(false)
   const [totalNetProfit, setTotalNetProfit] = useState(0)
+  const [totalHistoryData, setTotalHistoryData] = useState([])
   const [totalDeposit, setTotalDeposit] = useState(0)
   const [totalRewards, setTotalRewards] = useState(0)
   const [totalYieldDaily, setTotalYieldDaily] = useState(0)
@@ -150,6 +155,7 @@ const Portfolio = () => {
   const [sortOrder, setSortOrder] = useState(false)
   const [showDetail, setShowDetail] = useState(Array(farmTokenList.length).fill(false))
   const [showInactiveFarms, setShowInactiveFarms] = useState(false)
+  const [viewPositions, setViewPositions] = useState(true)
   const [expandAll, setExpandAll] = useState(false)
 
   useEffect(() => {
@@ -162,6 +168,9 @@ const Portfolio = () => {
 
     const prevTotalProfit = Number(localStorage.getItem(totalNetProfitKey) || '0')
     setTotalNetProfit(prevTotalProfit)
+
+    const prevTotalHistoryData = JSON.parse(localStorage.getItem(totalHistoryDataKey) || '[]')
+    setTotalHistoryData(prevTotalHistoryData)
   }, [])
 
   const farmProfitSharingPool = totalPools.find(
@@ -633,7 +642,8 @@ const Portfolio = () => {
     if (!isEmpty(userStats) && account) {
       const getNetProfitValue = async () => {
         let stakedVaults = [],
-          totalNetProfitUSD = 0
+          totalNetProfitUSD = 0,
+          combinedEnrichedData = []
 
         if (showInactiveFarms) {
           stakedVaults = Object.keys(userStats).filter(
@@ -692,13 +702,18 @@ const Portfolio = () => {
               : token.vaultAddress || token.tokenAddress
 
             // eslint-disable-next-line no-await-in-loop
-            const { sumNetChangeUsd } = await initBalanceAndDetailData(
+            const { sumNetChangeUsd, enrichedData } = await initBalanceAndDetailData(
               paramAddress,
               useIFARM ? token.data.chain : token.chain,
               account,
               token.decimals,
               underlyingPrice,
             )
+            const enrichedDataWithSymbol = enrichedData.map(data => ({
+              ...data,
+              tokenSymbol: symbol,
+            }))
+            combinedEnrichedData = combinedEnrichedData.concat(enrichedDataWithSymbol)
             totalNetProfitUSD += sumNetChangeUsd
           }
         }
@@ -706,12 +721,18 @@ const Portfolio = () => {
         totalNetProfitUSD = totalNetProfitUSD === 0 ? -1 : totalNetProfitUSD
         setTotalNetProfit(totalNetProfitUSD)
         localStorage.setItem(totalNetProfitKey, totalNetProfitUSD.toString())
+
+        combinedEnrichedData.sort((a, b) => b.timestamp - a.timestamp)
+        setTotalHistoryData(combinedEnrichedData)
+        localStorage.setItem(totalHistoryDataKey, JSON.stringify(combinedEnrichedData))
       }
 
       getNetProfitValue()
     } else {
       setTotalNetProfit(0)
       localStorage.setItem(totalNetProfitKey, '0')
+      setTotalHistoryData([])
+      localStorage.setItem(totalHistoryDataKey, JSON.stringify([]))
     }
   }, [account, userStats, balances, showInactiveFarms]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -744,7 +765,7 @@ const Portfolio = () => {
           <br />
           <br />
           For detailed information on your yield earnings, see the &apos;Underlying&apos; value in
-          the Lifetime Earnings box on each farm&apos;s page.
+          the Lifetime Yield box on each farm&apos;s page.
           <br />
           <br />
           By default, it does not consider inactive farms.
@@ -817,7 +838,7 @@ const Portfolio = () => {
                   <br />
                   <br />
                   For detailed information on your yield earnings, see the &apos;Underlying&apos;
-                  value in the Lifetime Earnings box on each farm&apos;s page.
+                  value in the Lifetime Yield box on each farm&apos;s page.
                   <br />
                   <br />
                   By default, it does not consider inactive farms.
@@ -869,180 +890,192 @@ const Portfolio = () => {
           </MobileDiv>
         </MobileSubPart>
 
+        <SwitchView onClick={() => setViewPositions(prev => !prev)} darkMode={darkMode}>
+          <img src={BankNote} alt="money" />
+          {viewPositions ? 'View History' : 'View Positions'}
+        </SwitchView>
+
         <DescInfo fontColor={fontColor} borderColor={borderColor}>
-          Preview farms with your active deposits below.
+          {viewPositions
+            ? 'Preview farms with your active deposits below.'
+            : 'Preview event activity from all farms with which your wallet has ever interacted.'}
         </DescInfo>
 
-        <TransactionDetails>
-          <TableContent borderColor={borderColor} count={farmTokenList.length}>
-            <Header borderColor={borderColor} backColor={backColor}>
-              <Column width={isMobile ? '23%' : '40%'} color={fontColor}>
-                <Col
-                  onClick={() => {
-                    sortCol('symbol')
-                  }}
-                >
-                  Farm
-                </Col>
-              </Column>
-              <Column width={isMobile ? '12%' : '11%'} color={fontColor}>
-                <Col
-                  onClick={() => {
-                    sortCol('apy')
-                  }}
-                >
-                  Live APY
-                  <img className="sortIcon" src={Sort} alt="sort" />
-                </Col>
-              </Column>
-              <Column width={isMobile ? '20%' : '11%'} color={fontColor}>
-                <Col
-                  onClick={() => {
-                    sortCol('balance')
-                  }}
-                >
-                  My Balance
-                  <img className="sortIcon" src={Sort} alt="sort" />
-                </Col>
-              </Column>
-              <Column width={isMobile ? '20%' : '11%'} color={fontColor}>
-                <Col
-                  onClick={() => {
-                    sortCol('monthlyYield')
-                  }}
-                >
-                  Monthly Yield
-                  <img className="sortIcon" src={Sort} alt="sort" />
-                </Col>
-              </Column>
-              <Column width={isMobile ? '20%' : '11%'} color={fontColor}>
-                <Col
-                  onClick={() => {
-                    sortCol('dailyYield')
-                  }}
-                >
-                  Daily Yield
-                  <img className="sortIcon" src={Sort} alt="sort" />
-                </Col>
-              </Column>
-              <Column width={isMobile ? '20%' : '11%'} color={fontColor}>
-                <Col
-                  onClick={() => {
-                    sortCol('totalRewardUsd')
-                  }}
-                >
-                  Rewards
-                  <img className="sortIcon" src={Sort} alt="sort" />
-                </Col>
-              </Column>
-              <Column width={isMobile ? '20%' : '5%'} color={fontColor}>
-                <Col />
-              </Column>
-            </Header>
-            {connected && farmTokenList.length > 0 ? (
-              <>
-                {showInactiveFarms
-                  ? farmTokenList.map((el, i) => {
-                      const info = farmTokenList[i]
-                      return (
-                        <VaultRow
-                          key={i}
-                          info={info}
-                          firstElement={i === 0 ? 'yes' : 'no'}
-                          lastElement={i === farmTokenList.length - 1 ? 'yes' : 'no'}
-                          showDetail={showDetail}
-                          setShowDetail={setShowDetail}
-                          cKey={i}
-                        />
-                      )
-                    })
-                  : filteredFarmList.map((el, i) => {
-                      const info = filteredFarmList[i]
-                      return (
-                        <VaultRow
-                          key={i}
-                          info={info}
-                          firstElement={i === 0 ? 'yes' : 'no'}
-                          lastElement={i === filteredFarmList.length - 1 ? 'yes' : 'no'}
-                          showDetail={showDetail}
-                          setShowDetail={setShowDetail}
-                          cKey={i}
-                        />
-                      )
-                    })}
-              </>
-            ) : (
-              <EmptyPanel borderColor={borderColor}>
-                {connected ? (
-                  !noFarm ? (
-                    <EmptyInfo weight={500} size={14} height={20} color={fontColor} gap="2px">
-                      <div>Syncing positions</div>
-                      <AnimatedDots />
-                    </EmptyInfo>
+        {viewPositions ? (
+          <TransactionDetails>
+            <TableContent borderColor={borderColor} count={farmTokenList.length}>
+              <Header borderColor={borderColor} backColor={backColor}>
+                <Column width={isMobile ? '23%' : '40%'} color={fontColor}>
+                  <Col
+                    onClick={() => {
+                      sortCol('symbol')
+                    }}
+                  >
+                    Farm
+                  </Col>
+                </Column>
+                <Column width={isMobile ? '12%' : '11%'} color={fontColor}>
+                  <Col
+                    onClick={() => {
+                      sortCol('apy')
+                    }}
+                  >
+                    Live APY
+                    <img className="sortIcon" src={Sort} alt="sort" />
+                  </Col>
+                </Column>
+                <Column width={isMobile ? '20%' : '11%'} color={fontColor}>
+                  <Col
+                    onClick={() => {
+                      sortCol('balance')
+                    }}
+                  >
+                    My Balance
+                    <img className="sortIcon" src={Sort} alt="sort" />
+                  </Col>
+                </Column>
+                <Column width={isMobile ? '20%' : '11%'} color={fontColor}>
+                  <Col
+                    onClick={() => {
+                      sortCol('monthlyYield')
+                    }}
+                  >
+                    Monthly Yield
+                    <img className="sortIcon" src={Sort} alt="sort" />
+                  </Col>
+                </Column>
+                <Column width={isMobile ? '20%' : '11%'} color={fontColor}>
+                  <Col
+                    onClick={() => {
+                      sortCol('dailyYield')
+                    }}
+                  >
+                    Daily Yield
+                    <img className="sortIcon" src={Sort} alt="sort" />
+                  </Col>
+                </Column>
+                <Column width={isMobile ? '20%' : '11%'} color={fontColor}>
+                  <Col
+                    onClick={() => {
+                      sortCol('totalRewardUsd')
+                    }}
+                  >
+                    Rewards
+                    <img className="sortIcon" src={Sort} alt="sort" />
+                  </Col>
+                </Column>
+                <Column width={isMobile ? '20%' : '5%'} color={fontColor}>
+                  <Col />
+                </Column>
+              </Header>
+              {connected && farmTokenList.length > 0 ? (
+                <>
+                  {showInactiveFarms
+                    ? farmTokenList.map((el, i) => {
+                        const info = farmTokenList[i]
+                        return (
+                          <VaultRow
+                            key={i}
+                            info={info}
+                            firstElement={i === 0 ? 'yes' : 'no'}
+                            lastElement={i === farmTokenList.length - 1 ? 'yes' : 'no'}
+                            showDetail={showDetail}
+                            setShowDetail={setShowDetail}
+                            cKey={i}
+                          />
+                        )
+                      })
+                    : filteredFarmList.map((el, i) => {
+                        const info = filteredFarmList[i]
+                        return (
+                          <VaultRow
+                            key={i}
+                            info={info}
+                            firstElement={i === 0 ? 'yes' : 'no'}
+                            lastElement={i === filteredFarmList.length - 1 ? 'yes' : 'no'}
+                            showDetail={showDetail}
+                            setShowDetail={setShowDetail}
+                            cKey={i}
+                          />
+                        )
+                      })}
+                </>
+              ) : (
+                <EmptyPanel borderColor={borderColor}>
+                  {connected ? (
+                    !noFarm ? (
+                      <EmptyInfo weight={500} size={14} height={20} color={fontColor} gap="2px">
+                        <div>
+                          Syncing positions <AnimatedDots />
+                        </div>
+                      </EmptyInfo>
+                    ) : (
+                      <EmptyInfo weight={500} size={14} height={20} color={fontColor}>
+                        You&apos;re not farming anywhere. Let&apos;s put your assets to work!
+                      </EmptyInfo>
+                    )
                   ) : (
-                    <EmptyInfo weight={500} size={14} height={20} color={fontColor}>
-                      You&apos;re not farming anywhere. Let&apos;s put your assets to work!
-                    </EmptyInfo>
-                  )
-                ) : (
-                  <>
-                    <EmptyInfo weight={500} size={14} height={20} color={fontColor}>
-                      Connect wallet to see your positions.
-                    </EmptyInfo>
-                    <ConnectButtonStyle
-                      color="connectwallet"
+                    <>
+                      <EmptyInfo weight={500} size={14} height={20} color={fontColor}>
+                        Connect wallet to see your positions.
+                      </EmptyInfo>
+                      <ConnectButtonStyle
+                        color="connectwallet"
+                        onClick={() => {
+                          connectAction()
+                        }}
+                        minWidth="190px"
+                        inputBorderColor={inputBorderColor}
+                        fontColor2={fontColor2}
+                        backColor={backColor}
+                        bordercolor={fontColor}
+                        disabled={disableWallet}
+                        hoverColorButton={hoverColorButton}
+                      >
+                        <img src={ConnectDisableIcon} className="connect-wallet" alt="" />
+                        Connect Wallet
+                      </ConnectButtonStyle>
+                    </>
+                  )}
+                </EmptyPanel>
+              )}
+            </TableContent>
+            {connected && farmTokenList.length > 0 && (
+              <>
+                <CheckBoxDiv>
+                  {showInactiveFarms ? (
+                    <FaRegSquareCheck onClick={() => setShowInactiveFarms(false)} color="#15B088" />
+                  ) : (
+                    <FaRegSquare onClick={() => setShowInactiveFarms(true)} color="#15B088" />
+                  )}
+                  <div>Show inactive positions</div>
+                </CheckBoxDiv>
+                <CheckBoxDiv>
+                  {expandAll ? (
+                    <FaRegSquareCheck
                       onClick={() => {
-                        connectAction()
+                        setExpandAll(false)
+                        setShowDetail(Array(farmTokenList.length).fill(false))
                       }}
-                      minWidth="190px"
-                      inputBorderColor={inputBorderColor}
-                      fontColor2={fontColor2}
-                      backColor={backColor}
-                      bordercolor={fontColor}
-                      disabled={disableWallet}
-                      hoverColorButton={hoverColorButton}
-                    >
-                      <img src={ConnectDisableIcon} className="connect-wallet" alt="" />
-                      Connect Wallet
-                    </ConnectButtonStyle>
-                  </>
-                )}
-              </EmptyPanel>
+                      color="#15B088"
+                    />
+                  ) : (
+                    <FaRegSquare
+                      onClick={() => {
+                        setExpandAll(true)
+                        setShowDetail(Array(farmTokenList.length).fill(true))
+                      }}
+                      color="#15B088"
+                    />
+                  )}
+                  <div>Expand All</div>
+                </CheckBoxDiv>
+              </>
             )}
-          </TableContent>
-          {connected && farmTokenList.length > 0 && (
-            <>
-              <CheckBoxDiv>
-                {showInactiveFarms ? (
-                  <FaRegSquareCheck onClick={() => setShowInactiveFarms(false)} color="#15B088" />
-                ) : (
-                  <FaRegSquare onClick={() => setShowInactiveFarms(true)} color="#15B088" />
-                )}
-                <div>Show inactive positions</div>
-              </CheckBoxDiv>
-              <CheckBoxDiv>
-                {expandAll ? (
-                  <FaRegSquareCheck
-                    onClick={() => {
-                      setExpandAll(false)
-                      setShowDetail(Array(farmTokenList.length).fill(false))
-                    }}
-                    color="#15B088"
-                  />
-                ) : (
-                  <FaRegSquare
-                    onClick={() => {
-                      setExpandAll(true)
-                      setShowDetail(Array(farmTokenList.length).fill(true))
-                    }}
-                    color="#15B088"
-                  />
-                )}
-                <div>Expand All</div>
-              </CheckBoxDiv>
-            </>
-          )}
-        </TransactionDetails>
+          </TransactionDetails>
+        ) : (
+          <EarningsHistory historyData={totalHistoryData} isDashboard="true" noData={noFarm} />
+        )}
         {connected && farmTokenList.length > 0 ? (
           <></>
         ) : (

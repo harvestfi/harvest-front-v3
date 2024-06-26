@@ -9,7 +9,7 @@ import TrendDown from '../../../assets/images/logos/advancedfarm/trend-down.svg'
 import { formatDateTime, formatDateTimeMobile } from '../../../utilities/formats'
 import { Content, DetailView, FlexDiv, IconWrapper, Badge, NetImg, NewLabel } from './style'
 
-const ActionRow = ({ info, tokenSymbol, showTotalBalance }) => {
+const ActionRow = ({ info, showTotalBalance }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const { darkMode, switchMode, backColor, borderColor, hoverColor, fontColor } = useThemeContext()
 
@@ -93,7 +93,13 @@ const ActionRow = ({ info, tokenSymbol, showTotalBalance }) => {
                 color="#5FCF76"
                 value={`≈${info.balanceUsd}`}
               />
-              <ListItem weight={400} size={14} height={20} color={fontColor} value={tokenSymbol} />
+              <ListItem
+                weight={400}
+                size={14}
+                height={20}
+                color={fontColor}
+                value={info.tokenSymbol}
+              />
             </Content>
             <Content display={isMobile ? 'none' : 'flex'} width="30%">
               <NetImg>
@@ -119,7 +125,7 @@ const ActionRow = ({ info, tokenSymbol, showTotalBalance }) => {
                   size={14}
                   height={20}
                   color={fontColor}
-                  value={tokenSymbol}
+                  value={info.tokenSymbol}
                 />
               </div>
             </Content>
@@ -134,7 +140,13 @@ const ActionRow = ({ info, tokenSymbol, showTotalBalance }) => {
               color="#5FCF76"
               value={`≈${info.balanceUsd}`}
             />
-            <ListItem weight={400} size={12} height={20} color={fontColor} value={tokenSymbol} />
+            <ListItem
+              weight={400}
+              size={12}
+              height={20}
+              color={fontColor}
+              value={info.tokenSymbol}
+            />
           </Content>
         ) : (
           <Content display="flex" width="57%">
@@ -150,7 +162,13 @@ const ActionRow = ({ info, tokenSymbol, showTotalBalance }) => {
                 color="#5FCF76"
                 value={`${info.netChangeUsd === '<$0.01' ? '' : '≈'}${info.netChangeUsd}`}
               />
-              <ListItem weight={400} size={12} height={20} color={fontColor} value={tokenSymbol} />
+              <ListItem
+                weight={400}
+                size={12}
+                height={20}
+                color={fontColor}
+                value={info.tokenSymbol}
+              />
             </div>
           </Content>
         )}

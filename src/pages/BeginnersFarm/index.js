@@ -55,6 +55,7 @@ import { useWallet } from '../../providers/Wallet'
 import { useRate } from '../../providers/Rate'
 import {
   displayAPY,
+  formatFrequency,
   formatNumber,
   formatNumberWido,
   showTokenBalance,
@@ -117,6 +118,7 @@ import {
   LinksContainer,
   Logo,
   ThemeMode,
+  SwitchMode,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 // import { array } from 'prop-types'
@@ -169,6 +171,7 @@ const BeginnersFarm = () => {
   // Switch Tag (Deposit/Withdraw)
   const [activeDepo, setActiveDepo] = useState(true)
   const [showLatestEarnings, setShowLatestEarnings] = useState(true)
+  const [showApyHistory, setShowApyHistory] = useState(true)
   const [welcomeMessage, setWelcomeMessage] = useState(true)
   const [showBadge, setShowBadge] = useState(false)
   const [supportedVault, setSupportedVault] = useState(true)
@@ -236,6 +239,12 @@ const BeginnersFarm = () => {
   const [vaultBirthday, setVaultBirthday] = useState('')
   const [vaultTotalPeriod, setVaultTotalPeriod] = useState('')
   const [latestSharePrice, setLatestSharePrice] = useState('')
+
+  const [sevenDHarvest, setSevenDHarvest] = useState('')
+  const [thirtyDHarvest, setThirtyDHarvest] = useState('')
+  const [oneEightyDHarvest, setOneEightyDHarvest] = useState('')
+  const [threeSixtyDHarvest, setThreeSixtyDHarvest] = useState('')
+  const [harvestFrequency, setHarvestFrequency] = useState('')
 
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
@@ -391,6 +400,7 @@ const BeginnersFarm = () => {
   const underlyingPrice = get(token, 'usdPrice', get(token, 'data.lpTokenData.price', 0))
 
   const switchEarnings = () => setShowLatestEarnings(prev => !prev)
+  const switchHistory = () => setShowApyHistory(prev => !prev)
 
   useEffect(() => {
     const queryParams = new URLSearchParams(window.location.search)
@@ -917,38 +927,45 @@ const BeginnersFarm = () => {
 
   useEffect(() => {
     const initData = async () => {
-      const address =
-        token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
-      const chainId = token.chain || token.data.chain
-      const {
-        balanceFlag,
-        vaultHFlag,
-        sumNetChange,
-        sumNetChangeUsd,
-        sumLatestNetChange,
-        sumLatestNetChangeUsd,
-        enrichedData,
-      } = await initBalanceAndDetailData(
-        address,
-        chainId,
-        account,
-        tokenDecimals,
-        underlyingPrice,
-        currencySym,
-        currencyRate,
-      )
+      if (account && token && vaultPool && id) {
+        const address =
+          token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+        const chainId = token.chain || token.data.chain
+        const {
+          balanceFlag,
+          vaultHFlag,
+          sumNetChange,
+          sumNetChangeUsd,
+          sumLatestNetChange,
+          sumLatestNetChangeUsd,
+          enrichedData,
+        } = await initBalanceAndDetailData(
+          address,
+          chainId,
+          account,
+          tokenDecimals,
+          underlyingPrice,
+          currencySym,
+          currencyRate,
+        )
 
-      if (balanceFlag && vaultHFlag) {
-        setUnderlyingEarnings(sumNetChange)
-        setUsdEarnings(sumNetChangeUsd)
-        setUnderlyingEarningsLatest(sumLatestNetChange)
-        setUsdEarningsLatest(sumLatestNetChangeUsd)
-        setHistoryData(enrichedData)
+        if (balanceFlag && vaultHFlag) {
+          setUnderlyingEarnings(sumNetChange)
+          setUsdEarnings(sumNetChangeUsd)
+          setUnderlyingEarningsLatest(sumLatestNetChange)
+          setUsdEarningsLatest(sumLatestNetChangeUsd)
+          const enrichedDataWithSymbol = enrichedData.map(data => ({
+            ...data,
+            tokenSymbol: id,
+          }))
+          setHistoryData(enrichedDataWithSymbol)
+        }
       }
     }
 
     initData()
   }, [
+    id,
     account,
     token,
     vaultPool,
@@ -1056,6 +1073,18 @@ const BeginnersFarm = () => {
     { label: '180d', value: oneEightyDApy },
     { label: '365d', value: threeSixtyDApy },
     { label: 'Lifetime', value: lifetimeApy },
+  ]
+
+  const harvestFrequencies = [
+    {
+      label: 'Latest',
+      value: useIFARM ? '-' : lastHarvest !== '' ? `${lastHarvest} ago` : '-',
+    },
+    { label: '7d', value: formatFrequency(sevenDHarvest) },
+    { label: '30d', value: formatFrequency(thirtyDHarvest) },
+    { label: '180d', value: formatFrequency(oneEightyDHarvest) },
+    { label: '365d', value: formatFrequency(threeSixtyDHarvest) },
+    { label: 'Lifetime', value: formatFrequency(harvestFrequency) },
   ]
 
   const rewardTxt = getAdvancedRewardText(
@@ -1346,7 +1375,7 @@ const BeginnersFarm = () => {
                       borderBottom="1px solid #F2F5FF"
                     >
                       <FlexDiv>
-                        {showLatestEarnings ? 'Latest Earnings' : 'Lifetime Earnings'}
+                        {showLatestEarnings ? 'Latest Yield' : 'Lifetime Yield'}
                         <EarningsBadge>Beta</EarningsBadge>
                         <PiQuestion
                           className="question"
@@ -1374,8 +1403,8 @@ const BeginnersFarm = () => {
                           >
                             {showLatestEarnings ? (
                               <>
-                                Your latest earnings in this farm since the last interaction (revert
-                                or convert).
+                                Your latest yield in this farm since the last interaction (revert or
+                                convert).
                                 <br />
                                 <br />
                                 USD value is subject to market fluctuations. Claimable rewards are
@@ -1386,7 +1415,7 @@ const BeginnersFarm = () => {
                               </>
                             ) : (
                               <>
-                                Your lifetime earnings in this farm expressed in USD and Underlying
+                                Your lifetime yield in this farm expressed in USD and Underlying
                                 token. USD value is subject to market fluctuations. Claimable
                                 rewards are not part of this estimation.
                                 <br />
@@ -1407,7 +1436,7 @@ const BeginnersFarm = () => {
                             type="checkbox"
                             checked={showLatestEarnings}
                             onChange={switchEarnings}
-                            aria-label="Switch between lifetime and latest earnings"
+                            aria-label="Switch between lifetime and latest yields"
                           />
                         </div>
                       </ThemeMode>
@@ -1715,7 +1744,7 @@ const BeginnersFarm = () => {
                 ))}
               </BoxCover>
             ) : (
-              <EarningsHistory tokenSymbol={id} historyData={historyData} />
+              <EarningsHistory historyData={historyData} isDashboard="false" noData />
             )}
             <MainSection height={activeMainTag === 0 ? '100%' : 'fit-content'}>
               {activeMainTag === 0 ? (
@@ -1752,6 +1781,11 @@ const BeginnersFarm = () => {
                       setVaultBirthday={setVaultBirthday}
                       setVaultTotalPeriod={setVaultTotalPeriod}
                       setLatestSharePrice={setLatestSharePrice}
+                      set7DHarvest={setSevenDHarvest}
+                      set30DHarvest={setThirtyDHarvest}
+                      set180DHarvest={setOneEightyDHarvest}
+                      set360DHarvest={setThreeSixtyDHarvest}
+                      setHarvestFrequency={setHarvestFrequency}
                     />
                   </HalfInfo>
                   {!isMobile && (
@@ -2120,6 +2154,8 @@ const BeginnersFarm = () => {
                       </NewLabel>
                     </FlexDiv>
                     <NewLabel
+                      display="flex"
+                      justifyContent="space-between"
                       size={isMobile ? '12px' : '14px'}
                       weight={isMobile ? '600' : '600'}
                       height={isMobile ? '20px' : '24px'}
@@ -2127,32 +2163,70 @@ const BeginnersFarm = () => {
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom="1px solid #F3F6FF"
                     >
-                      APY - Live & Historical Average
+                      {showApyHistory ? 'APY - Live & Historical Average' : 'Harvest Frequency'}
+                      <SwitchMode mode={showApyHistory ? 'apy' : 'harvest'}>
+                        <div id="theme-switch">
+                          <div className="switch-track">
+                            <div className="switch-thumb" />
+                          </div>
+                          <input
+                            type="checkbox"
+                            checked={showApyHistory}
+                            onChange={switchHistory}
+                            aria-label="Switch between APY and Harvest frequency"
+                          />
+                        </div>
+                      </SwitchMode>
                     </NewLabel>
-                    {apyPeriods.map((period, index) => (
-                      <FlexDiv
-                        key={index}
-                        justifyContent="space-between"
-                        padding={isMobile ? '10px 15px' : '10px 15px'}
-                      >
-                        <NewLabel
-                          size={isMobile ? '12px' : '14px'}
-                          weight="500"
-                          height={isMobile ? '24px' : '24px'}
-                          color={fontColor3}
-                        >
-                          {period.label}
-                        </NewLabel>
-                        <NewLabel
-                          size={isMobile ? '12px' : '14px'}
-                          weight="600"
-                          height={isMobile ? '24px' : '24px'}
-                          color={fontColor1}
-                        >
-                          {period.value === '' ? <AnimatedDots /> : period.value}
-                        </NewLabel>
-                      </FlexDiv>
-                    ))}
+                    {showApyHistory
+                      ? apyPeriods.map((period, index) => (
+                          <FlexDiv
+                            key={index}
+                            justifyContent="space-between"
+                            padding={isMobile ? '10px 15px' : '10px 15px'}
+                          >
+                            <NewLabel
+                              size={isMobile ? '12px' : '14px'}
+                              weight="500"
+                              height={isMobile ? '24px' : '24px'}
+                              color={fontColor3}
+                            >
+                              {period.label}
+                            </NewLabel>
+                            <NewLabel
+                              size={isMobile ? '12px' : '14px'}
+                              weight="600"
+                              height={isMobile ? '24px' : '24px'}
+                              color={fontColor1}
+                            >
+                              {period.value === '' ? <AnimatedDots /> : period.value}
+                            </NewLabel>
+                          </FlexDiv>
+                        ))
+                      : harvestFrequencies.map((period, index) => (
+                          <FlexDiv
+                            key={index}
+                            justifyContent="space-between"
+                            padding={isMobile ? '10px 15px' : '10px 15px'}
+                          >
+                            <NewLabel
+                              size={isMobile ? '12px' : '14px'}
+                              weight="500"
+                              height={isMobile ? '24px' : '24px'}
+                              color={fontColor3}
+                            >
+                              {period.label}
+                            </NewLabel>
+                            <NewLabel
+                              size={isMobile ? '12px' : '14px'}
+                              weight="600"
+                              height={isMobile ? '24px' : '24px'}
+                              color={fontColor1}
+                            >
+                              {period.value === '' ? <AnimatedDots /> : period.value}
+                            </NewLabel>
+                          </FlexDiv>
+                        ))}
                   </LastHarvestInfo>
                   <MyBalance
                     marginBottom={isMobile ? '20px' : '25px'}
