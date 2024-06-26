@@ -85,20 +85,19 @@ export const ARBITRUM_URL = `https://arb-mainnet.g.alchemy.com/v2/${process.env.
 
 export const GRAPH_URL_MAINNET =
   process.env.REACT_APP_GRAPH_URL_MAINNET ||
-  'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance'
+  'https://api.studio.thegraph.com/query/48757/harvest-mainnet-test/version/latest'
 export const GRAPH_URL_POLYGON =
   process.env.REACT_APP_GRAPH_URL_POLYGON ||
-  'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance-polygon'
+  'https://api.studio.thegraph.com/query/48757/l2-polygon-test/version/latest'
 export const GRAPH_URL_ARBITRUM =
   process.env.REACT_APP_GRAPH_URL_ARBITRUM ||
-  'https://api.thegraph.com/subgraphs/name/harvestfi/harvest-finance-arbitrum'
+  'https://api.studio.thegraph.com/query/48757/harvest-arbitrum/version/latest'
 export const GRAPH_URL_BASE =
   process.env.REACT_APP_GRAPH_URL_BASE ||
   'https://api.studio.thegraph.com/query/48757/harvest-base/version/latest'
-
 export const GRAPH_URL_BASE_MOONWELL =
   process.env.REACT_APP_GRAPH_URL_BASE_MOONWELL ||
-  'https://api.studio.thegraph.com/query/48757/harvest-base-moon/v0.0.6'
+  'https://api.studio.thegraph.com/query/48757/harvest-base/version/latest'
 
 export const ETHERSCAN_URL = 'https://etherscan.io'
 
