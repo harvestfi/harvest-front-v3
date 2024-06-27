@@ -160,7 +160,12 @@ export const showUsdValue = (value, currencySym) => {
   if (value < 0.01) {
     return `<${currencySym}0.01`
   }
-  return `${currencySym}${value.toFixed(2)}`
+  const formattedValue = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value)
+
+  return `${currencySym}${formattedValue}`
 }
 
 export const formatFrequency = value => {
