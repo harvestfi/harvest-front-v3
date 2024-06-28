@@ -160,7 +160,12 @@ export const showUsdValue = (value, currencySym) => {
   if (value < 0.01) {
     return `<${currencySym}0.01`
   }
-  return `${currencySym}${value.toFixed(2)}`
+  const formattedValue = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value)
+
+  return `${currencySym}${formattedValue}`
 }
 
 export const formatFrequency = value => {
@@ -186,7 +191,10 @@ export const formatFrequency = value => {
 }
 
 export const showTokenBalance = balance => {
-  let value = parseFloat(balance)
+  let value = parseFloat(balance.toString().replace(/,/g, ''))
+  if (isNaN(value)) {
+    return '0'
+  }
   if (value === 0) {
     return '0'
   }
@@ -194,7 +202,10 @@ export const showTokenBalance = balance => {
     return '<0.000001'
   }
   value = value.toFixed(6).replace(/\.?0+$/, '')
-  return value
+  return new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 6,
+  }).format(value)
 }
 
 export const getCurrencyRate = (sym, item, rateData) => {
