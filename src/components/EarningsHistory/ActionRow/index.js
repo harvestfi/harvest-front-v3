@@ -28,7 +28,7 @@ const ActionRow = ({ info, showTotalBalance }) => {
                 ? '#FEF3F2'
                 : info.event === 'Convert'
                 ? '#fdeccf'
-                : info.netChange > 0
+                : info.netChange >= 0
                 ? '#ecfdf3'
                 : '#FEF3F2'
             }
@@ -37,7 +37,7 @@ const ActionRow = ({ info, showTotalBalance }) => {
                 ? '#B42318'
                 : info.event === 'Convert'
                 ? '#FF9400'
-                : info.netChange > 0
+                : info.netChange >= 0
                 ? '#027a48'
                 : '#B42318'
             }
@@ -103,7 +103,7 @@ const ActionRow = ({ info, showTotalBalance }) => {
             </Content>
             <Content display={isMobile ? 'none' : 'flex'} width="30%">
               <NetImg>
-                <img src={info.netChange > 0 ? TrendUp : TrendDown} alt="trend" />
+                <img src={info.netChange >= 0 ? TrendUp : TrendDown} alt="trend" />
               </NetImg>
               <div>
                 <ListItem
@@ -151,7 +151,7 @@ const ActionRow = ({ info, showTotalBalance }) => {
         ) : (
           <Content display="flex" width="57%">
             <NetImg>
-              <img src={info.netChange > 0 ? TrendUp : TrendDown} alt="trend" />
+              <img src={info.netChange >= 0 ? TrendUp : TrendDown} alt="trend" />
             </NetImg>
             <div>
               <ListItem weight={500} size={12} height={20} color="#8884D8" value={info.netChange} />
