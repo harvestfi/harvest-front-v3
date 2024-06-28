@@ -685,7 +685,11 @@ export const initBalanceAndDetailData = async (
 
   if (balanceFlag && vaultHFlag) {
     let uniqueData = [],
-      lastUserEvent = false
+      uniqueFixedData = [],
+      lastUserEvent = false,
+      lastKnownSharePrice = null,
+      lastKnownPriceUnderlying = null
+
     if (balanceData[0].timestamp > uniqueVaultHData[0].timestamp) {
       let i = 0,
         z = 0,
@@ -793,7 +797,24 @@ export const initBalanceAndDetailData = async (
     uniqueData = Array.from(map.values())
     uniqueData.sort((a, b) => b.timestamp - a.timestamp)
 
-    enrichedData = uniqueData
+    uniqueFixedData = uniqueData.map(item => {
+      if (item.sharePrice === '0') {
+        item.sharePrice = lastKnownSharePrice !== null ? lastKnownSharePrice : item.sharePrice
+      } else {
+        lastKnownSharePrice = item.sharePrice
+      }
+
+      if (item.priceUnderlying === '0') {
+        item.priceUnderlying =
+          lastKnownPriceUnderlying !== null ? lastKnownPriceUnderlying : item.priceUnderlying
+      } else {
+        lastKnownPriceUnderlying = item.priceUnderlying
+      }
+
+      return item
+    })
+
+    enrichedData = uniqueFixedData
       .map((item, index, array) => {
         const nextItem = array[index + 1]
         let event, balance, balanceUsd, netChange, netChangeUsd

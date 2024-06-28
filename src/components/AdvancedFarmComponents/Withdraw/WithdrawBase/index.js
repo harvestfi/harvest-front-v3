@@ -86,6 +86,7 @@ const WithdrawBase = ({
   setRevertFromInfoUsdAmount,
   setRevertMinReceivedAmount,
   revertMinReceivedAmount,
+  revertMinReceivedUsdAmount,
   setRevertMinReceivedUsdAmount,
   hasErrorOccurred,
   setHasErrorOccurred,
@@ -607,41 +608,56 @@ const WithdrawBase = ({
               items="flex-end"
               flexFlow="column"
             >
-              <TokenInfo>
-                <div data-tip data-for="est-fToken-receive-revert">
-                  {account &&
-                  pickedToken.symbol !== 'Select Token' &&
-                  !new BigNumber(unstakeBalance.toString()).isEqualTo(0) &&
-                  curChain === tokenChain ? (
-                    revertMinReceivedAmount !== '' ? (
-                      showTokenBalance(revertMinReceivedAmount)
+              <>
+                <TokenInfo>
+                  <div data-tip data-for="est-fToken-receive-revert">
+                    {account &&
+                    pickedToken.symbol !== 'Select Token' &&
+                    !new BigNumber(unstakeBalance.toString()).isEqualTo(0) &&
+                    curChain === tokenChain ? (
+                      revertMinReceivedAmount !== '' ? (
+                        showTokenBalance(revertMinReceivedAmount)
+                      ) : (
+                        <TokenInfo>
+                          <AnimatedDots />
+                        </TokenInfo>
+                      )
                     ) : (
-                      <TokenInfo>
-                        <AnimatedDots />
-                      </TokenInfo>
-                    )
-                  ) : (
-                    '-'
-                  )}
-                </div>
-                <ReactTooltip
-                  id="est-fToken-receive-revert"
-                  backgroundColor={darkMode ? 'white' : '#101828'}
-                  borderColor={darkMode ? 'white' : 'black'}
-                  textColor={darkMode ? 'black' : 'white'}
-                  place="top"
-                >
-                  <NewLabel
-                    size={isMobile ? '10px' : '10px'}
-                    height={isMobile ? '14px' : '14px'}
-                    weight="500"
+                      '-'
+                    )}
+                  </div>
+                  <ReactTooltip
+                    id="est-fToken-receive-revert"
+                    backgroundColor={darkMode ? 'white' : '#101828'}
+                    borderColor={darkMode ? 'white' : 'black'}
+                    textColor={darkMode ? 'black' : 'white'}
+                    place="top"
                   >
-                    {revertMinReceivedAmount}
-                  </NewLabel>
-                </ReactTooltip>
-              </TokenInfo>
+                    <NewLabel
+                      size={isMobile ? '10px' : '10px'}
+                      height={isMobile ? '14px' : '14px'}
+                      weight="500"
+                    >
+                      {revertMinReceivedAmount}
+                    </NewLabel>
+                  </ReactTooltip>
+                </TokenInfo>
+                <span className="token-symbol">
+                  {pickedToken.symbol !== 'Select' ? pickedToken.symbol : 'Output Token'}
+                </span>
+              </>
               <span className="token-symbol">
-                {pickedToken.symbol !== 'Select' ? pickedToken.symbol : 'Output Token'}
+                {unstakeInputValue === '0' ||
+                unstakeInputValue === '' ||
+                pickedToken.symbol === 'Select' ||
+                revertMinReceivedUsdAmount === 'NaN' ||
+                revertMinReceivedUsdAmount === '-' ? (
+                  '-'
+                ) : revertMinReceivedUsdAmount !== '' ? (
+                  `≈${revertMinReceivedUsdAmount}`
+                ) : (
+                  <AnimatedDots />
+                )}
               </span>
             </NewLabel>
           </NewLabel>

@@ -86,6 +86,7 @@ const DepositBase = ({
   convertDailyYieldUSD,
   minReceiveAmountString,
   setMinReceiveAmountString,
+  minReceiveUsdAmount,
   setMinReceiveUsdAmount,
   setConvertMonthlyYieldUSD,
   setConvertDailyYieldUSD,
@@ -770,9 +771,20 @@ const DepositBase = ({
                   </NewLabel>
                 </ReactTooltip>
               </>
-              <span className="token-symbol">
-                {useIFARM ? `i${tokenSymbol}` : `f${tokenSymbol}`}
-              </span>
+              <NewLabel display="flex" flexFlow="column" weight="600" align="right">
+                <span className="token-symbol">
+                  {useIFARM ? `i${tokenSymbol}` : `f${tokenSymbol}`}
+                </span>
+                <span className="token-symbol">
+                  {minReceiveUsdAmount === 'NaN' || minReceiveUsdAmount === '-' ? (
+                    '-'
+                  ) : minReceiveUsdAmount !== '' ? (
+                    `${minReceiveUsdAmount}`
+                  ) : (
+                    <AnimatedDots />
+                  )}
+                </span>
+              </NewLabel>
             </NewLabel>
           </NewLabel>
         </NewLabel>
