@@ -112,10 +112,14 @@ const formatVaults = (
     (!isSpecialApp && selChain.includes(CHAIN_IDS.ETH_MAINNET))
   ) {
     const farmIdx = vaultsSymbol.findIndex(symbol => symbol === FARM_TOKEN_SYMBOL)
-    vaultsSymbol = move(vaultsSymbol, farmIdx, 0)
+    if (farmIdx !== -1) {
+      vaultsSymbol = move(vaultsSymbol, farmIdx, 0)
+    }
 
     const wethIdx = vaultsSymbol.findIndex(symbol => symbol === 'WETH')
-    vaultsSymbol = move(vaultsSymbol, wethIdx, 1)
+    if (wethIdx !== -1) {
+      vaultsSymbol = move(vaultsSymbol, wethIdx, 1)
+    }
   }
 
   vaultsSymbol = vaultsSymbol.filter(
@@ -354,7 +358,7 @@ const formatVaults = (
       // console.log('New Filter: ', groupOfVaults)
     } else if (selectFarmType === 'PopularNow') {
       vaultsSymbol = orderBy(
-        orderBy(vaultsSymbol, v => get(groupOfVaults, `${v}.publishDate`), 'desc').slice(0, 20),
+        orderBy(vaultsSymbol, v => get(groupOfVaults, `${v}.publishDate`), 'desc').slice(0, 10),
         v => Number(getVaultValue(groupOfVaults[v])),
         'desc',
       )
