@@ -170,6 +170,17 @@ const TokenInfo = styled.div`
 
 const TokenInput = styled.div`
   position: relative;
+
+  input[type='text'] {
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+  }
+
+  input[type='text']::-webkit-outer-spin-button,
+  input[type='text']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 `
 
 const TokenAmount = styled.input`

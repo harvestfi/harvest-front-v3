@@ -371,7 +371,7 @@ const DepositBase = ({
   }, [balance, setInputAmount, pickedToken, deposit])
 
   const onInputBalance = e => {
-    const inputValue = e.currentTarget.value.replace(/,/g, '.')
+    const inputValue = e.currentTarget.value.replace(/,/g, '.').replace(/[^0-9.]/g, '')
     setInputAmount(inputValue)
   }
 
@@ -440,12 +440,14 @@ const DepositBase = ({
             </NewLabel>
             <TokenInput>
               <TokenAmount
-                type="number"
-                value={Number(inputAmount)}
+                type="text"
+                value={inputAmount}
                 onChange={onInputBalance}
                 bgColor={bgColor}
                 fontColor2={fontColor2}
+                pattern="[0-9]*"
               />
+              <input type="hidden" value={Number(inputAmount)} />
               <TokenUSDAmount fontColor3={fontColor3}>
                 {inputAmount === '0' || inputAmount === '' ? (
                   `${currencySym}0`

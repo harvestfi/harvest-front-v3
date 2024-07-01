@@ -179,12 +179,14 @@ const StakeBase = ({
         </NewLabel>
         <AmountInputSection fontColor5={fontColor5}>
           <TokenAmount
-            type="number"
-            value={Number(inputAmount)}
+            type="text"
+            value={inputAmount}
             onChange={onInputBalance}
             bgColor={bgColor}
             fontColor2={fontColor2}
+            pattern="[0-9]*"
           />
+          <input type="hidden" value={Number(inputAmount)} />
           <button
             className="max-btn"
             type="button"
