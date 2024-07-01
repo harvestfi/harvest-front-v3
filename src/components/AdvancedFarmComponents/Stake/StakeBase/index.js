@@ -184,6 +184,7 @@ const StakeBase = ({
             onChange={onInputBalance}
             bgColor={bgColor}
             fontColor2={fontColor2}
+            inputmode="numeric"
             pattern="[0-9]*"
           />
           <input type="hidden" value={Number(inputAmount)} />

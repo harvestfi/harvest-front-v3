@@ -426,6 +426,7 @@ const WithdrawBase = ({
                 onChange={onInputUnstake}
                 bgColor={bgColor}
                 fontColor2={fontColor2}
+                inputmode="numeric"
                 pattern="[0-9]*"
               />
               <input type="hidden" value={Number(unstakeInputValue)} />
