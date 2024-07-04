@@ -382,6 +382,17 @@ const ImgBtn = styled.img`
 const AmountInputSection = styled.div`
   position: relative;
 
+  input[type='text'] {
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+  }
+
+  input[type='text']::-webkit-outer-spin-button,
+  input[type='text']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
   button.max-btn {
     position: absolute;
     right: 14px;

@@ -1,6 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react'
 import ReactTooltip from 'react-tooltip'
 import { useMediaQuery } from 'react-responsive'
+import Slider from 'rc-slider'
+import 'rc-slider/assets/index.css'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -291,6 +293,14 @@ const UserBalanceData = ({
     pricePerFullShare,
   ])
 
+  const marks = {
+    0: `${formatDate(1715676559000)}`,
+    25: `${formatDate(1716727297000)}`,
+    50: `${formatDate(1717413133000)}`,
+    75: `${formatDate(1718635299000)}`,
+    100: `${formatDate(1720013688000)}`,
+  }
+
   return (
     <Container backColor={backColor} borderColor={borderColor}>
       <Header>
@@ -362,6 +372,14 @@ const UserBalanceData = ({
         />
       </ChartDiv>
       <ButtonGroup>
+        <div className="chart-slider-wrapper">
+          <Slider
+            className="chart-slider"
+            // min={vaultBirthday}
+            marks={marks}
+            defaultValue={[20, 40]}
+          />
+        </div>
         {recommendLinks.map((item, i) => (
           <ChartRangeSelect
             key={i}
