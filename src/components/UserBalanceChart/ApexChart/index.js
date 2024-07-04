@@ -299,8 +299,8 @@ const ApexChart = ({
           slotCount = 100
         }
       } else if (range === 'ALL') {
-        for (let i = 1; i < data.length; i += 1) {
-          if (data[i].value === 0) {
+        for (let i = data.length - 1; i >= 0; i -= 1) {
+          if (data[i].value !== 0) {
             firstDate = data[i].timestamp
             break
           }
