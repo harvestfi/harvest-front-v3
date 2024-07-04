@@ -418,6 +418,18 @@ export const formatDate = value => {
   return `${month} ${day} ${year}`
 }
 
+export const formatXAxis = (value, hourUnit) => {
+  const date = new Date(value)
+
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+
+  const hour = date.getHours()
+  const mins = date.getMinutes()
+
+  return hourUnit ? `${hour}:${mins}` : `${month} / ${day}`
+}
+
 export const formatDateTime = value => {
   const date = new Date(value * 1000) // Multiply by 1000 to convert seconds to milliseconds
   const year = date.getFullYear()

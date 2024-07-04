@@ -421,12 +421,15 @@ const WithdrawBase = ({
             </NewLabel>
             <TokenInput>
               <TokenAmount
-                type="number"
-                value={Number(unstakeInputValue)}
+                type="text"
+                value={unstakeInputValue}
                 onChange={onInputUnstake}
                 bgColor={bgColor}
                 fontColor2={fontColor2}
+                inputmode="numeric"
+                pattern="[0-9]*"
               />
+              <input type="hidden" value={Number(unstakeInputValue)} />
               <TokenUSDAmount fontColor3={fontColor3}>
                 {unstakeInputValue === '0' || unstakeInputValue === '' ? (
                   `${currencySym}0`
