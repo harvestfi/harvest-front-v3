@@ -11,7 +11,14 @@ import {
 import { useWindowWidth } from '@react-hook/window-size'
 import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { ceil10, floor10, round10, numberWithCommas, formatDate } from '../../../utilities/formats'
+import {
+  ceil10,
+  floor10,
+  round10,
+  numberWithCommas,
+  formatDate,
+  formatXAxis,
+} from '../../../utilities/formats'
 import { getTimeSlots } from '../../../utilities/parsers'
 import { LoadingDiv, NoData, FakeChartWrapper } from './style'
 import { useWallet } from '../../../providers/Wallet'
@@ -72,18 +79,6 @@ function generateChartDataWithSlots(slots, apiData, balance, priceUnderlying, sh
   }
 
   return seriesData
-}
-
-function formatXAxis(value, hourUnit) {
-  const date = new Date(value)
-
-  const month = date.getMonth() + 1
-  const day = date.getDate()
-
-  const hour = date.getHours()
-  const mins = date.getMinutes()
-
-  return hourUnit ? `${hour}:${mins}` : `${month} / ${day}`
 }
 
 function getYAxisValues(min, max, roundNum) {

@@ -2795,8 +2795,10 @@ const AdvancedFarm = () => {
                         height={isMobile ? '24px' : '24px'}
                         color={fontColor1}
                       >
-                        {vaultBirthday}{' '}
-                        <span className="total-days">({vaultTotalPeriod} days)</span>
+                        {vaultBirthday === '' ? <AnimatedDots /> : vaultBirthday}{' '}
+                        {vaultTotalPeriod !== '' && (
+                          <span className="total-days">({vaultTotalPeriod} days)</span>
+                        )}
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
@@ -2821,6 +2823,8 @@ const AdvancedFarm = () => {
                         <div className="question" data-tip data-for="tooltip-sharePrice">
                           {latestSharePrice === '' ? (
                             <AnimatedDots />
+                          ) : latestSharePrice === '-' ? (
+                            '-'
                           ) : (
                             Number(latestSharePrice).toFixed(5)
                           )}
