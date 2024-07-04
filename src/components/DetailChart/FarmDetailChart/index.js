@@ -117,6 +117,12 @@ const FarmDetailChart = ({
             history => history.sharePrice !== '0',
           )
 
+          updatedData.vaultHistories.forEach(item => {
+            if (item.sharePrice === '1') {
+              item.sharePrice = '1000000000000000000'
+            }
+          })
+
           let [sevenDaysApy, thirtyDaysApy, oneEightyDaysApy, threeSixtyFiveDaysApy] = Array(
               4,
             ).fill('-'),
