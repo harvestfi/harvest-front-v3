@@ -1079,7 +1079,7 @@ const Portfolio = () => {
             <ExploreFarm
               bgImage="second"
               onClick={() => {
-                push(ROUTES.TUTORIAL)
+                window.open(ROUTES.TUTORIAL, '_blank')
               }}
             >
               <ExploreContent>
