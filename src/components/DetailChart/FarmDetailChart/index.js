@@ -117,6 +117,12 @@ const FarmDetailChart = ({
             history => history.sharePrice !== '0',
           )
 
+          updatedData.vaultHistories.forEach(item => {
+            if (item.sharePrice === '1') {
+              item.sharePrice = '1000000000000000000'
+            }
+          })
+
           let [sevenDaysApy, thirtyDaysApy, oneEightyDaysApy, threeSixtyFiveDaysApy] = Array(
               4,
             ).fill('-'),
@@ -126,7 +132,7 @@ const FarmDetailChart = ({
               oneEightyDaysHarvest,
               threeSixtyFiveDaysHarvest,
             ] = Array(4).fill('-'),
-            lifetimeApyValue = '-',
+            lifetimeApyValue = 0,
             frequencyOfHarvest = '-',
             latestSharePriceValue = '-',
             vaultInitialDate = '-',
@@ -199,7 +205,7 @@ const FarmDetailChart = ({
               (24 * 3600)
 
             updatedData.generalApies.forEach(item => {
-              lifetimeApyValue += Number(item.apy)
+              lifetimeApyValue += parseFloat(item.apy)
             })
             lifetimeApyValue /= updatedData.generalApies.length
             lifetimeApyValue = `${lifetimeApyValue.toFixed(2)}%`
@@ -262,7 +268,7 @@ const FarmDetailChart = ({
           set30DApy(thirtyDaysApy)
           set180DApy(oneEightyDaysApy)
           set360DApy(threeSixtyFiveDaysApy)
-          setLifetimeApy(lifetimeApyValue)
+          setLifetimeApy(lifetimeApyValue === 0 ? '-' : lifetimeApyValue)
           setVaultBirthday(vaultInitialDate)
           setVaultTotalPeriod(totalPeriod === '-' ? '' : totalPeriod.toFixed())
           setLatestSharePrice(latestSharePriceValue)

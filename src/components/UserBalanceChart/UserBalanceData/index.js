@@ -31,6 +31,20 @@ const recommendLinks = [
   { name: 'LAST', type: 4, state: 'LAST' },
 ]
 
+const calculateMarks = data => {
+  const length = data.length
+  if (length === 0) {
+    return ''
+  }
+  return {
+    0: formatDate(data[length - 1].timestamp * 1000),
+    25: formatDate(data[Math.floor(length * 0.75)].timestamp * 1000),
+    50: formatDate(data[Math.floor(length * 0.5)].timestamp * 1000),
+    75: formatDate(data[Math.floor(length * 0.25)].timestamp * 1000),
+    100: formatDate(data[0].timestamp * 1000),
+  }
+}
+
 const UserBalanceData = ({
   token,
   vaultPool,
@@ -266,7 +280,17 @@ const UserBalanceData = ({
               value: totalValueRef.current,
             }
             const apiAllData = [firstObject, ...mergedData]
-            setApiData(apiAllData)
+
+            let firstNonZeroIndex = -1
+            for (let i = apiAllData.length - 1; i >= 0; i -= 1) {
+              if (apiAllData[i].value !== 0) {
+                firstNonZeroIndex = i
+                break
+              }
+            }
+            const filteredData =
+              firstNonZeroIndex === -1 ? apiAllData : apiAllData.slice(0, firstNonZeroIndex + 1)
+            setApiData(filteredData)
           }
           if (isMounted) {
             setLoadComplete(balanceFlag && priceFeedFlag)
@@ -293,13 +317,7 @@ const UserBalanceData = ({
     pricePerFullShare,
   ])
 
-  const marks = {
-    0: `${formatDate(1715676559000)}`,
-    25: `${formatDate(1716727297000)}`,
-    50: `${formatDate(1717413133000)}`,
-    75: `${formatDate(1718635299000)}`,
-    100: `${formatDate(1720013688000)}`,
-  }
+  const marks = calculateMarks(apiData)
 
   return (
     <Container backColor={backColor} borderColor={borderColor}>
@@ -373,12 +391,7 @@ const UserBalanceData = ({
       </ChartDiv>
       <ButtonGroup>
         <div className="chart-slider-wrapper">
-          <Slider
-            className="chart-slider"
-            // min={vaultBirthday}
-            marks={marks}
-            defaultValue={[20, 40]}
-          />
+          <Slider className="chart-slider" range marks={marks} defaultValue={[75, 100]} />
         </div>
         {recommendLinks.map((item, i) => (
           <ChartRangeSelect
