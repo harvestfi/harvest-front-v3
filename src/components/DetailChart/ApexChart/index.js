@@ -16,7 +16,6 @@ import { useWindowWidth } from '@react-hook/window-size'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { ceil10, floor10, round10, numberWithCommas, formatDate } from '../../../utilities/formats'
 import { getTimeSlots } from '../../../utilities/parsers'
-import { MAX_DECIMALS } from '../../../constants'
 import { LoadingDiv, NoData } from './style'
 import { fromWei } from '../../../services/web3'
 import { useRate } from '../../../providers/Rate'
@@ -61,7 +60,7 @@ function generateChartDataWithSlots(slots, apiData, kind, filter, decimals) {
 
       seriesData.push({
         x: slots[i] * 1000,
-        y: fromWei(parseFloat(data.sharePrice), decimals, MAX_DECIMALS, true),
+        y: fromWei(parseFloat(data.sharePrice), decimals, decimals, true),
       })
     }
   } else {
