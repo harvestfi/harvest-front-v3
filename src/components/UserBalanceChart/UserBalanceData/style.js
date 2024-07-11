@@ -52,7 +52,6 @@ const ButtonGroup = styled.div`
   padding-top: 10px;
 
   .chart-slider-wrapper {
-    /* display: none; */
     width: 100%;
 
     .chart-slider {

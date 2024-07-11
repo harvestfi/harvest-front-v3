@@ -8,12 +8,7 @@ import ChartRangeSelect from '../ChartRangeSelect'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { useRate } from '../../../providers/Rate'
-import {
-  calculateMarks,
-  formatDate,
-  numberWithCommas,
-  showTokenBalance,
-} from '../../../utilities/formats'
+import { formatDate, numberWithCommas, showTokenBalance } from '../../../utilities/formats'
 import { getPriceFeeds, getSequenceId, getUserBalanceHistories } from '../../../utilities/apiCalls'
 import {
   ButtonGroup,
@@ -71,6 +66,7 @@ const UserBalanceData = ({
   const [curContentUnderlying, setCurContentUnderlying] = useState('0')
   const [fixedLen, setFixedLen] = useState(0)
   const [lastFarmingTimeStamp, setLastFarmingTimeStamp] = useState('-')
+  const [marks, setMarks] = useState()
 
   const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
   const chainId = token.chain || token.data.chain
@@ -158,8 +154,8 @@ const UserBalanceData = ({
             priceFeedData.forEach(obj => {
               if (!timestamps.includes(obj.timestamp)) {
                 timestamps.push(obj.timestamp)
-                const modifiedObj = { ...obj, priceUnderlying: obj.price } // Rename the 'price' property to 'priceUnderlying'
-                delete modifiedObj.price // Remove the 'value' property from modifiedObj
+                const modifiedObj = { ...obj, priceUnderlying: obj.price }
+                delete modifiedObj.price
                 uniqueData2.push(modifiedObj)
               }
             })
@@ -316,8 +312,6 @@ const UserBalanceData = ({
     setEndPoint(value[1])
   }
 
-  const marks = calculateMarks(apiData, isMobile)
-
   return (
     <Container backColor={backColor} borderColor={borderColor}>
       <Header>
@@ -390,6 +384,7 @@ const UserBalanceData = ({
           setStartPoint={setStartPoint}
           endPoint={endPoint}
           setEndPoint={setEndPoint}
+          setMarks={setMarks}
         />
       </ChartDiv>
       <ButtonGroup>

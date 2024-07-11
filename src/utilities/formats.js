@@ -430,18 +430,18 @@ export const calculateMarks = (data, isMobile) => {
 
   if (isMobile) {
     return {
-      0: formatDate(data[length - 1].timestamp * 1000),
-      50: formatDate(data[Math.floor(length * 0.5)].timestamp * 1000),
-      100: formatDate(data[0].timestamp * 1000),
+      100: formatDate(data[length - 1].x),
+      50: formatDate(data[Math.floor(length * 0.5)].x),
+      0: formatDate(data[0].x),
     }
   }
 
   return {
-    0: formatDate(data[length - 1].timestamp * 1000),
-    25: formatDate(data[Math.floor(length * 0.75)].timestamp * 1000),
-    50: formatDate(data[Math.floor(length * 0.5)].timestamp * 1000),
-    75: formatDate(data[Math.floor(length * 0.25)].timestamp * 1000),
-    100: formatDate(data[0].timestamp * 1000),
+    100: formatDate(data[length - 1].x),
+    75: formatDate(data[Math.floor(length * 0.75)].x),
+    50: formatDate(data[Math.floor(length * 0.5)].x),
+    25: formatDate(data[Math.floor(length * 0.25)].x),
+    0: formatDate(data[0].x),
   }
 }
 

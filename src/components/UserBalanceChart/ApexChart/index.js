@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useMediaQuery } from 'react-responsive'
 import {
   ComposedChart,
   XAxis,
@@ -18,6 +19,7 @@ import {
   formatXAxis,
   normalizeSliderValue,
   denormalizeSliderValue,
+  calculateMarks,
 } from '../../../utilities/formats'
 import { getChartDomain, getTimeSlots } from '../../../utilities/parsers'
 import { LoadingDiv, NoData, FakeChartWrapper } from './style'
@@ -108,7 +110,9 @@ const ApexChart = ({
   setStartPoint,
   endPoint,
   setEndPoint,
+  setMarks,
 }) => {
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const { fontColor, fontColor5 } = useThemeContext()
   const { connected } = useWallet()
 
@@ -498,6 +502,9 @@ const ApexChart = ({
       setZAxisTicks(zAxisAry)
       setMainSeries(mainData)
       setAllMainSeries(allMainData)
+
+      const markPoints = calculateMarks(allMainData, isMobile)
+      setMarks(markPoints)
     }
 
     init()
