@@ -418,6 +418,33 @@ export const formatDate = value => {
   return `${month} ${day} ${year}`
 }
 
+export const normalizeSliderValue = (value, min, max) => ((value - min) / (max - min)) * 100
+export const denormalizeSliderValue = (value, min, max) =>
+  ((value / 100) * (max - min) + min) / 1000
+
+export const calculateMarks = (data, isMobile) => {
+  const length = data.length
+  if (length === 0) {
+    return ''
+  }
+
+  if (isMobile) {
+    return {
+      0: formatDate(data[length - 1].timestamp * 1000),
+      50: formatDate(data[Math.floor(length * 0.5)].timestamp * 1000),
+      100: formatDate(data[0].timestamp * 1000),
+    }
+  }
+
+  return {
+    0: formatDate(data[length - 1].timestamp * 1000),
+    25: formatDate(data[Math.floor(length * 0.75)].timestamp * 1000),
+    50: formatDate(data[Math.floor(length * 0.5)].timestamp * 1000),
+    75: formatDate(data[Math.floor(length * 0.25)].timestamp * 1000),
+    100: formatDate(data[0].timestamp * 1000),
+  }
+}
+
 export const formatXAxis = (value, hourUnit) => {
   const date = new Date(value)
 

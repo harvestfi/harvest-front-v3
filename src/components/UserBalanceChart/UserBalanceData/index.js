@@ -8,7 +8,12 @@ import ChartRangeSelect from '../ChartRangeSelect'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { useRate } from '../../../providers/Rate'
-import { formatDate, numberWithCommas, showTokenBalance } from '../../../utilities/formats'
+import {
+  calculateMarks,
+  formatDate,
+  numberWithCommas,
+  showTokenBalance,
+} from '../../../utilities/formats'
 import { getPriceFeeds, getSequenceId, getUserBalanceHistories } from '../../../utilities/apiCalls'
 import {
   ButtonGroup,
@@ -31,20 +36,6 @@ const recommendLinks = [
   { name: 'LAST', type: 4, state: 'LAST' },
 ]
 
-const calculateMarks = data => {
-  const length = data.length
-  if (length === 0) {
-    return ''
-  }
-  return {
-    0: formatDate(data[length - 1].timestamp * 1000),
-    25: formatDate(data[Math.floor(length * 0.75)].timestamp * 1000),
-    50: formatDate(data[Math.floor(length * 0.5)].timestamp * 1000),
-    75: formatDate(data[Math.floor(length * 0.25)].timestamp * 1000),
-    100: formatDate(data[0].timestamp * 1000),
-  }
-}
-
 const UserBalanceData = ({
   token,
   vaultPool,
@@ -62,6 +53,8 @@ const UserBalanceData = ({
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
+  const [startPoint, setStartPoint] = useState(0)
+  const [endPoint, setEndPoint] = useState(0)
 
   useEffect(() => {
     if (rates.rateData) {
@@ -317,7 +310,13 @@ const UserBalanceData = ({
     pricePerFullShare,
   ])
 
-  const marks = calculateMarks(apiData)
+  const handleSliderChange = value => {
+    setSelectedState('CUSTOM')
+    setStartPoint(value[0])
+    setEndPoint(value[1])
+  }
+
+  const marks = calculateMarks(apiData, isMobile)
 
   return (
     <Container backColor={backColor} borderColor={borderColor}>
@@ -387,12 +386,24 @@ const UserBalanceData = ({
           lastFarmingTimeStamp={lastFarmingTimeStamp}
           lpTokenBalance={lpTokenBalance}
           totalValue={totalValue}
+          startPoint={startPoint}
+          setStartPoint={setStartPoint}
+          endPoint={endPoint}
+          setEndPoint={setEndPoint}
         />
       </ChartDiv>
       <ButtonGroup>
-        <div className="chart-slider-wrapper">
-          <Slider className="chart-slider" range marks={marks} defaultValue={[75, 100]} />
-        </div>
+        {apiData.length > 0 && (
+          <div className="chart-slider-wrapper">
+            <Slider
+              className="chart-slider"
+              range
+              marks={marks}
+              value={[startPoint, endPoint]}
+              onChange={handleSliderChange}
+            />
+          </div>
+        )}
         {recommendLinks.map((item, i) => (
           <ChartRangeSelect
             key={i}

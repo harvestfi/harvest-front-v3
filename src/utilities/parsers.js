@@ -9,6 +9,7 @@ import {
   SPECIAL_VAULTS,
 } from '../constants'
 import { CHAIN_IDS } from '../data/constants'
+import { ceil10, floor10 } from './formats'
 
 export const getNextEmissionsCutDate = () => {
   const result = new Date()
@@ -191,4 +192,73 @@ export const getTimeSlots = (ago, slotCount) => {
   }
 
   return slots
+}
+
+export const getChartDomain = (maxValue, minValue, maxValueUnderlying, minValueUnderlying) => {
+  let len = 0,
+    lenUnderlying = 0,
+    unitBtw,
+    unitBtwUnderlying
+
+  minValue /= 1.01
+  const between = maxValue - minValue
+  const betweenUnderlying = maxValueUnderlying - minValueUnderlying
+  unitBtw = between / 4
+  unitBtwUnderlying = betweenUnderlying / 4
+  if (unitBtw >= 1) {
+    unitBtw = Math.ceil(unitBtw)
+    len = 2
+    // len = unitBtw.toString().length
+    unitBtw = ceil10(unitBtw, len - 1)
+    // maxValue = ceil10(maxValue, len - 1)
+    // minValue = floor10(minValue, len - 1)
+  } else if (unitBtw === 0) {
+    len = Math.ceil(maxValue).toString().length
+    maxValue += 10 ** (len - 1)
+    minValue -= 10 ** (len - 1)
+  } else {
+    len = Math.ceil(1 / unitBtw).toString().length + 1
+    unitBtw = ceil10(unitBtw, -len)
+    maxValue = ceil10(maxValue, -len)
+    minValue = floor10(minValue, -len + 1)
+  }
+
+  if (unitBtwUnderlying >= 1) {
+    unitBtwUnderlying = Math.ceil(unitBtwUnderlying)
+    lenUnderlying = unitBtwUnderlying.toString().length
+    unitBtwUnderlying = ceil10(unitBtwUnderlying, lenUnderlying - 1)
+    maxValueUnderlying = ceil10(maxValueUnderlying, lenUnderlying - 1)
+    minValueUnderlying = floor10(minValueUnderlying, lenUnderlying - 1)
+  } else if (unitBtwUnderlying === 0) {
+    lenUnderlying = Math.ceil(maxValueUnderlying).toString().length
+    maxValueUnderlying += 10 ** (lenUnderlying - 1)
+    minValueUnderlying -= 10 ** (lenUnderlying - 1)
+  } else {
+    lenUnderlying = Math.ceil(1 / unitBtwUnderlying).toString().length + 1
+    unitBtwUnderlying = ceil10(unitBtwUnderlying, -lenUnderlying)
+    maxValueUnderlying = ceil10(maxValueUnderlying, -lenUnderlying)
+    minValueUnderlying = floor10(minValueUnderlying, -lenUnderlying + 1)
+  }
+  if (unitBtw !== 0) {
+    if (minValue === 0) {
+      maxValue *= 1.1
+    } else {
+      maxValue += between / 5
+    }
+  } else {
+    unitBtw = (maxValue - minValue) / 4
+  }
+
+  if (unitBtwUnderlying !== 0) {
+    if (minValueUnderlying === 0) {
+      maxValueUnderlying *= 1.5
+    } else {
+      maxValueUnderlying += betweenUnderlying * 2
+    }
+    // minValueUnderlying = 0
+  } else {
+    unitBtwUnderlying = (maxValueUnderlying - minValueUnderlying) / 4
+  }
+
+  return { maxValue, minValue, maxValueUnderlying, minValueUnderlying, len, lenUnderlying }
 }
