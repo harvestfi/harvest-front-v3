@@ -2,7 +2,7 @@ import styled from 'styled-components'
 
 const ChartWrapper = styled.div`
   .bottom-chart {
-    background: repeating-linear-gradient(90deg, ${props => props.bgColorChart}, transparent 25%);
+    background: ${props => props.bgColorChart};
     border-radius: 5px;
     border: 2px dotted ${props => props.activeColor};
   }
