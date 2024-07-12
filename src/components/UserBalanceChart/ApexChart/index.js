@@ -432,9 +432,6 @@ const ApexChart = ({
         mainData.unshift(firstObject)
       }
 
-      const startSliderPoint = mainData[0].x
-      const endSliderPoint = mainData[mainData.length - 1].x
-
       const maxValue = findMax(mainData)
       const minValue = findMin(mainData)
       const maxValueUnderlying = findMaxUnderlying(mainData)
@@ -461,10 +458,28 @@ const ApexChart = ({
         minValueUnderlying: minAllDomainUnderlying,
       } = getChartDomain(maxAllValue, minAllValue, maxAllValueUnderlying, minAllValueUnderlying)
 
-      if (range !== 'CUSTOM') {
-        setStartPoint(normalizeSliderValue(startSliderPoint, minTimestamp, maxTimestamp))
-        setEndPoint(normalizeSliderValue(endSliderPoint, minTimestamp, maxTimestamp))
+      // Set date and price with latest value by default
+      if (mainData.length > 0) {
+        setCurDate(formatDate(mainData[mainData.length - 1].x))
+        const balanceUnderlying = numberWithCommas(Number(mainData[mainData.length - 1].z))
+        setCurContent(
+          `${currencySym}${numberWithCommas(
+            (Number(mainData[mainData.length - 1].y) * Number(currencyRate)).toFixed(fixedLen),
+          )}`,
+        )
+        setCurContentUnderlying(balanceUnderlying)
+
+        const startSliderPoint = mainData[0].x
+        const endSliderPoint = mainData[mainData.length - 1].x
+
+        if (range !== 'CUSTOM') {
+          setStartPoint(normalizeSliderValue(startSliderPoint, minTimestamp, maxTimestamp))
+          setEndPoint(normalizeSliderValue(endSliderPoint, minTimestamp, maxTimestamp))
+        }
+      } else {
+        console.log('The chart data is either undefined or empty.')
       }
+
       setRoundedDecimal(-len)
       setFixedLen(len)
       setRoundedDecimalUnderlying(-lenUnderlying)
@@ -476,20 +491,6 @@ const ApexChart = ({
       setMaxAllVal(maxAllDomain)
       setMaxAllValUnderlying(maxAllDomainUnderlying)
       setMinAllValUnderlying(minAllDomainUnderlying)
-
-      // Set date and price with latest value by default
-      if (mainData.length > 0) {
-        setCurDate(formatDate(mainData[mainData.length - 1].x))
-        const balanceUnderlying = numberWithCommas(Number(mainData[mainData.length - 1].z))
-        setCurContent(
-          `${currencySym}${numberWithCommas(
-            (Number(mainData[mainData.length - 1].y) * Number(currencyRate)).toFixed(fixedLen),
-          )}`,
-        )
-        setCurContentUnderlying(balanceUnderlying)
-      } else {
-        console.log('The chart data is either undefined or empty.')
-      }
 
       const yAxisAry = getYAxisValues(minDomain, maxDomain, roundedDecimal)
       setYAxisTicks(yAxisAry)
