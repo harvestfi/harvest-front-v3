@@ -11,6 +11,8 @@ import {
 } from 'recharts'
 import { useWindowWidth } from '@react-hook/window-size'
 import { ClipLoader } from 'react-spinners'
+import Slider from 'rc-slider'
+import 'rc-slider/assets/index.css'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import {
   round10,
@@ -22,7 +24,7 @@ import {
   calculateMarks,
 } from '../../../utilities/formats'
 import { getChartDomain, getTimeSlots } from '../../../utilities/parsers'
-import { LoadingDiv, NoData, FakeChartWrapper } from './style'
+import { ChartWrapper, LoadingDiv, NoData, FakeChartWrapper, LoaderWrapper } from './style'
 import { useWallet } from '../../../providers/Wallet'
 import { useRate } from '../../../providers/Rate'
 
@@ -106,14 +108,10 @@ const ApexChart = ({
   lastFarmingTimeStamp,
   lpTokenBalance,
   totalValue,
-  startPoint,
-  setStartPoint,
-  endPoint,
-  setEndPoint,
-  setMarks,
+  setSelectedState,
 }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const { fontColor, fontColor5 } = useThemeContext()
+  const { fontColor, fontColor5, activeColor, bgColorChart } = useThemeContext()
   const { connected } = useWallet()
 
   const [mainSeries, setMainSeries] = useState([])
@@ -154,7 +152,8 @@ const ApexChart = ({
   const [roundedDecimal, setRoundedDecimal] = useState(2)
   const [roundedDecimalUnderlying, setRoundedDecimalUnderlying] = useState(2)
   const [hourUnit, setHourUnit] = useState(false)
-
+  const [startPoint, setStartPoint] = useState(0)
+  const [endPoint, setEndPoint] = useState(0)
   const [minVal, setMinVal] = useState(0)
   const [maxVal, setMaxVal] = useState(0)
   const [minValUnderlying, setMinValUnderlying] = useState(0)
@@ -165,6 +164,7 @@ const ApexChart = ({
   const [maxAllValUnderlying, setMaxAllValUnderlying] = useState(0)
   const [yAxisTicks, setYAxisTicks] = useState([])
   const [zAxisTicks, setZAxisTicks] = useState([])
+  const [marks, setMarks] = useState({})
 
   const CustomTooltip = ({ active, payload, onTooltipContentChange }) => {
     useEffect(() => {
@@ -526,24 +526,17 @@ const ApexChart = ({
     endPoint,
   ])
 
+  const handleSliderChange = value => {
+    setSelectedState('CUSTOM')
+    setStartPoint(value[0])
+    setEndPoint(value[1])
+  }
+
   return (
     <>
       {isDataReady === 'true' ? (
-        <>
-          <ResponsiveContainer
-            width="100%"
-            height={
-              onlyWidth > 1291
-                ? 346
-                : onlyWidth > 1262
-                ? 365
-                : onlyWidth > 1035
-                ? 365
-                : onlyWidth > 992
-                ? 365
-                : 365
-            }
-          >
+        <ChartWrapper activeColor={activeColor} bgColorChart={bgColorChart}>
+          <ResponsiveContainer width="100%" height={onlyWidth > 1291 ? 346 : 365}>
             <ComposedChart
               data={mainSeries}
               margin={{
@@ -619,7 +612,18 @@ const ApexChart = ({
               />
             </ComposedChart>
           </ResponsiveContainer>
-          <ResponsiveContainer width="100%" height={50}>
+          {mainSeries.length > 0 && (
+            <div className="chart-slider-wrapper">
+              <Slider
+                className="chart-slider"
+                range
+                marks={marks}
+                value={[startPoint, endPoint]}
+                onChange={handleSliderChange}
+              />
+            </div>
+          )}
+          <ResponsiveContainer className="bottom-chart" width="100%" height={50}>
             <ComposedChart data={allMainSeries} margin={{ top: 10, right: 0, bottom: 0, left: 0 }}>
               <defs>
                 <linearGradient id="colorUvSmallChart" x1="0" y1="0" x2="0" y2="1">
@@ -668,11 +672,13 @@ const ApexChart = ({
               />
             </ComposedChart>
           </ResponsiveContainer>
-        </>
+        </ChartWrapper>
       ) : (
         <LoadingDiv>
           {isDataReady === 'loading' ? (
-            <ClipLoader size={30} margin={2} color={fontColor} />
+            <LoaderWrapper height={onlyWidth > 1291 ? '346px' : '365px'}>
+              <ClipLoader size={30} margin={2} color={fontColor} />
+            </LoaderWrapper>
           ) : (
             <>
               {connected ? (
@@ -683,20 +689,7 @@ const ApexChart = ({
                 <NoData color={fontColor}>Connect wallet to see your balance chart</NoData>
               )}
               <FakeChartWrapper>
-                <ResponsiveContainer
-                  width="100%"
-                  height={
-                    onlyWidth > 1291
-                      ? 346
-                      : onlyWidth > 1262
-                      ? 365
-                      : onlyWidth > 1035
-                      ? 365
-                      : onlyWidth > 992
-                      ? 365
-                      : 365
-                  }
-                >
+                <ResponsiveContainer width="100%" height={onlyWidth > 1291 ? 346 : 365}>
                   <ComposedChart
                     data={fakeChartData}
                     margin={{

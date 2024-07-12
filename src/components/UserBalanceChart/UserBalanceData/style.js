@@ -50,96 +50,9 @@ const ButtonGroup = styled.div`
   color: #fff;
   justify-content: end;
   padding-top: 10px;
-
-  .chart-slider-wrapper {
-    width: 100%;
-
-    .chart-slider {
-      margin: 0px auto 25px auto;
-
-      .rc-slider-track {
-        background-color: #15b088;
-      }
-
-      .rc-slider-step {
-        .rc-slider-dot-active {
-          border-color: #15b088;
-        }
-      }
-
-      .rc-slider-handle {
-        border-color: #15b088;
-      }
-
-      .rc-slider-mark {
-        .rc-slider-mark-text {
-          width: 100%;
-        }
-        .rc-slider-mark-text:first-child {
-          left: 5% !important;
-        }
-        .rc-slider-mark-text:last-child {
-          left: 96% !important;
-        }
-        @media screen and (max-width: 992px) {
-          .rc-slider-mark-text:first-child {
-            left: 3% !important;
-          }
-          .rc-slider-mark-text:last-child {
-            left: 97% !important;
-          }
-        }
-        @media screen and (max-width: 768px) {
-          .rc-slider-mark-text:first-child {
-            left: 4% !important;
-          }
-          .rc-slider-mark-text:last-child {
-            left: 96% !important;
-          }
-        }
-        @media screen and (max-width: 620px) {
-          .rc-slider-mark-text:first-child {
-            left: 6% !important;
-          }
-          .rc-slider-mark-text:last-child {
-            left: 95% !important;
-          }
-        }
-        @media screen and (max-width: 480px) {
-          .rc-slider-mark-text:first-child {
-            left: 8% !important;
-          }
-          .rc-slider-mark-text:last-child {
-            left: 93% !important;
-          }
-        }
-        .rc-slider-mark-text-active {
-          color: #15b088;
-        }
-      }
-    }
-  }
 `
 
-const ChartDiv = styled.div`
-  height: 400px;
-
-  /* @media screen and (max-width: 1797px) {
-    height: 365px;
-  }
-
-  @media screen and (max-width: 1262px) {
-    height: 365px;
-  }
-
-  @media screen and (max-width: 1035px) {
-    height: 365px;
-  }
-
-  @media screen and (max-width: 992px) {
-    height: 365px;
-  } */
-`
+const ChartDiv = styled.div``
 
 const PriceShow = styled.div`
   display: flex;

@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import ReactTooltip from 'react-tooltip'
 import { useMediaQuery } from 'react-responsive'
-import Slider from 'rc-slider'
-import 'rc-slider/assets/index.css'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -48,8 +46,6 @@ const UserBalanceData = ({
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
-  const [startPoint, setStartPoint] = useState(0)
-  const [endPoint, setEndPoint] = useState(0)
 
   useEffect(() => {
     if (rates.rateData) {
@@ -66,7 +62,6 @@ const UserBalanceData = ({
   const [curContentUnderlying, setCurContentUnderlying] = useState('0')
   const [fixedLen, setFixedLen] = useState(0)
   const [lastFarmingTimeStamp, setLastFarmingTimeStamp] = useState('-')
-  const [marks, setMarks] = useState()
 
   const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
   const chainId = token.chain || token.data.chain
@@ -306,12 +301,6 @@ const UserBalanceData = ({
     pricePerFullShare,
   ])
 
-  const handleSliderChange = value => {
-    setSelectedState('CUSTOM')
-    setStartPoint(value[0])
-    setEndPoint(value[1])
-  }
-
   return (
     <Container backColor={backColor} borderColor={borderColor}>
       <Header>
@@ -380,25 +369,10 @@ const UserBalanceData = ({
           lastFarmingTimeStamp={lastFarmingTimeStamp}
           lpTokenBalance={lpTokenBalance}
           totalValue={totalValue}
-          startPoint={startPoint}
-          setStartPoint={setStartPoint}
-          endPoint={endPoint}
-          setEndPoint={setEndPoint}
-          setMarks={setMarks}
+          setSelectedState={setSelectedState}
         />
       </ChartDiv>
       <ButtonGroup>
-        {apiData.length > 0 && (
-          <div className="chart-slider-wrapper">
-            <Slider
-              className="chart-slider"
-              range
-              marks={marks}
-              value={[startPoint, endPoint]}
-              onChange={handleSliderChange}
-            />
-          </div>
-        )}
         {recommendLinks.map((item, i) => (
           <ChartRangeSelect
             key={i}
