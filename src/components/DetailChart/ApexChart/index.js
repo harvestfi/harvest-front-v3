@@ -15,37 +15,10 @@ import { ClipLoader } from 'react-spinners'
 import { useWindowWidth } from '@react-hook/window-size'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { ceil10, floor10, round10, numberWithCommas, formatDate } from '../../../utilities/formats'
-import { getTimeSlots } from '../../../utilities/parsers'
+import { findMax, findMin, getRangeNumber, getTimeSlots } from '../../../utilities/parsers'
 import { LoadingDiv, NoData } from './style'
 import { fromWei } from '../../../services/web3'
 import { useRate } from '../../../providers/Rate'
-
-function getRangeNumber(strRange) {
-  let ago = 30
-  if (strRange === '1W') {
-    ago = 7
-  } else if (strRange === '1M') {
-    ago = 30
-  } else if (strRange === '1Y') {
-    ago = 365
-  } else if (strRange === 'ALL') {
-    ago = 365
-  }
-
-  return ago
-}
-
-function findMax(data) {
-  const ary = data.map(el => el.y)
-  const max = Math.max(...ary)
-  return max
-}
-
-function findMin(data) {
-  const ary = data.map(el => el.y)
-  const min = Math.min(...ary)
-  return min
-}
 
 // kind: "value" - TVL, "apy" - APY
 function generateChartDataWithSlots(slots, apiData, kind, filter, decimals) {

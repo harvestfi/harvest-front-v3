@@ -9,7 +9,7 @@ import {
   SPECIAL_VAULTS,
 } from '../constants'
 import { CHAIN_IDS } from '../data/constants'
-import { ceil10, floor10 } from './formats'
+import { ceil10, floor10, round10 } from './formats'
 
 export const getNextEmissionsCutDate = () => {
   const result = new Date()
@@ -261,4 +261,43 @@ export const getChartDomain = (maxValue, minValue, maxValueUnderlying, minValueU
   }
 
   return { maxValue, minValue, maxValueUnderlying, minValueUnderlying, len, lenUnderlying }
+}
+
+export const getRangeNumber = strRange => {
+  let ago = 30
+  if (strRange === '1D') {
+    ago = 1
+  } else if (strRange === '1W') {
+    ago = 7
+  } else if (strRange === '1M') {
+    ago = 30
+  } else if (strRange === '1Y') {
+    ago = 365
+  } else if (strRange === 'ALL') {
+    ago = 365
+  }
+
+  return ago
+}
+
+export const findMax = data => {
+  const ary = data.map(el => el.y)
+  const max = Math.max(...ary)
+  return max
+}
+
+export const findMin = data => {
+  const ary = data.map(el => el.y)
+  const min = Math.min(...ary)
+  return min
+}
+
+export const getYAxisValues = (min, max, roundNum) => {
+  const duration = Number(max - min)
+  const ary = []
+  for (let i = min; i <= max; i += duration / 4) {
+    const val = round10(i, roundNum)
+    ary.push(val)
+  }
+  return ary
 }

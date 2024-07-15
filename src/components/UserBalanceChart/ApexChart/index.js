@@ -15,7 +15,6 @@ import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import {
-  round10,
   numberWithCommas,
   formatDate,
   formatXAxis,
@@ -23,36 +22,18 @@ import {
   denormalizeSliderValue,
   calculateMarks,
 } from '../../../utilities/formats'
-import { getChartDomain, getTimeSlots } from '../../../utilities/parsers'
+import {
+  findMax,
+  findMin,
+  getChartDomain,
+  getRangeNumber,
+  getTimeSlots,
+  getYAxisValues,
+} from '../../../utilities/parsers'
 import { ChartWrapper, LoadingDiv, NoData, FakeChartWrapper, LoaderWrapper } from './style'
 import { useWallet } from '../../../providers/Wallet'
 import { useRate } from '../../../providers/Rate'
-
-function getRangeNumber(strRange) {
-  let ago = 30
-  if (strRange === '1D') {
-    ago = 1
-  } else if (strRange === '1W') {
-    ago = 7
-  } else if (strRange === '1M') {
-    ago = 30
-  } else if (strRange === 'ALL') {
-    ago = 365
-  }
-
-  return ago
-}
-
-function findMax(data) {
-  const ary = data.map(el => el.y)
-  const max = Math.max(...ary)
-  return max
-}
-function findMin(data) {
-  const ary = data.map(el => el.y)
-  const min = Math.min(...ary)
-  return min
-}
+import { fakeChartData } from '../../../constants'
 
 function findMaxUnderlying(data) {
   const ary = data.map(el => el.z)
@@ -83,16 +64,6 @@ function generateChartDataWithSlots(slots, apiData, balance, priceUnderlying, sh
   }
 
   return seriesData
-}
-
-function getYAxisValues(min, max, roundNum) {
-  const bet = Number(max - min)
-  const ary = []
-  for (let i = min; i <= max; i += bet / 4) {
-    const val = round10(i, roundNum)
-    ary.push(val)
-  }
-  return ary
 }
 
 const ApexChart = ({
@@ -126,25 +97,6 @@ const ApexChart = ({
       setCurrencyRate(rates.rateData[rates.currency.symbol])
     }
   }, [rates])
-
-  const fakeChartData = [
-    { x: 1691637444000, y: 5, z: 1.5 },
-    { x: 1691780004000, y: 6, z: 2 },
-    { x: 1691922564000, y: 7, z: 2.5 },
-    { x: 1692065124000, y: 7, z: 2.5 },
-    { x: 1692207684000, y: 7.5, z: 3 },
-    { x: 1692350244000, y: 8, z: 3 },
-    { x: 1692492804000, y: 8.5, z: 3 },
-    { x: 1692635364000, y: 9, z: 3.5 },
-    { x: 1692777924000, y: 10, z: 3.5 },
-    { x: 1692920484000, y: 11, z: 3.7 },
-    { x: 1693063044000, y: 11, z: 3.7 },
-    { x: 1693205604000, y: 11.5, z: 4 },
-    { x: 1693348164000, y: 11.5, z: 4.2 },
-    { x: 1693490724000, y: 12, z: 4.3 },
-    { x: 1693633284000, y: 14, z: 4.5 },
-    { x: 1693775844000, y: 15, z: 4.5 },
-  ]
 
   const onlyWidth = useWindowWidth()
 
