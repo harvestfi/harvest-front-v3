@@ -274,7 +274,32 @@ const UserBalanceData = ({
             }
             const filteredData =
               firstNonZeroIndex === -1 ? apiAllData : apiAllData.slice(0, firstNonZeroIndex + 1)
-            setApiData(filteredData)
+
+            const enrichedData = filteredData
+              .map((item, index, array) => {
+                const nextItem = array[index + 1]
+                let event
+
+                if (nextItem) {
+                  if (Number(item.value) === Number(nextItem.value)) {
+                    event = 'Harvest'
+                  } else if (Number(item.value) > Number(nextItem.value)) {
+                    event = 'Convert'
+                  } else {
+                    event = 'Revert'
+                  }
+                } else {
+                  event = 'Convert'
+                }
+
+                return {
+                  ...item,
+                  event,
+                }
+              })
+              .filter(Boolean)
+
+            setApiData(enrichedData)
           }
           if (isMounted) {
             setLoadComplete(balanceFlag && priceFeedFlag)

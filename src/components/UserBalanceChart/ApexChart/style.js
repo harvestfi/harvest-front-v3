@@ -32,44 +32,6 @@ const ChartWrapper = styled.div`
         .rc-slider-mark-text {
           width: 100%;
         }
-        .rc-slider-mark-text:first-child {
-          left: 5% !important;
-        }
-        .rc-slider-mark-text:last-child {
-          left: 96% !important;
-        }
-        @media screen and (max-width: 992px) {
-          .rc-slider-mark-text:first-child {
-            left: 3% !important;
-          }
-          .rc-slider-mark-text:last-child {
-            left: 97% !important;
-          }
-        }
-        @media screen and (max-width: 768px) {
-          .rc-slider-mark-text:first-child {
-            left: 4% !important;
-          }
-          .rc-slider-mark-text:last-child {
-            left: 96% !important;
-          }
-        }
-        @media screen and (max-width: 620px) {
-          .rc-slider-mark-text:first-child {
-            left: 6% !important;
-          }
-          .rc-slider-mark-text:last-child {
-            left: 95% !important;
-          }
-        }
-        @media screen and (max-width: 480px) {
-          .rc-slider-mark-text:first-child {
-            left: 8% !important;
-          }
-          .rc-slider-mark-text:last-child {
-            left: 93% !important;
-          }
-        }
         .rc-slider-mark-text-active {
           color: #15b088;
         }

@@ -1,8 +1,10 @@
+import React from 'react'
 import axios from 'axios'
 import axiosRetry from 'axios-retry'
 import BigNumber from 'bignumber.js'
 import mobile from 'is-mobile'
 import { get, isArray, isNaN, isEmpty } from 'lodash'
+import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
 import {
   DECIMAL_PRECISION,
   DISABLED_DEPOSITS,
@@ -422,27 +424,32 @@ export const normalizeSliderValue = (value, min, max) => ((value - min) / (max -
 export const denormalizeSliderValue = (value, min, max) =>
   ((value / 100) * (max - min) + min) / 1000
 
-export const calculateMarks = (data, isMobile) => {
+export const calculateMarks = (data, minTimestamp, maxTimestamp) => {
   const length = data.length
   if (length === 0) {
     return ''
   }
 
-  if (isMobile) {
-    return {
-      100: formatDate(data[length - 1].x),
-      50: formatDate(data[Math.floor(length * 0.5)].x),
-      0: formatDate(data[0].x),
-    }
-  }
+  const marks = {}
+  data.forEach(item => {
+    if (item.event !== 'Harvest') {
+      const timestamp = parseFloat(item.timestamp) * 1000
+      const position = normalizeSliderValue(timestamp, minTimestamp, maxTimestamp)
+      let dotColor = '',
+        labelIcon
+      if (item.event === 'Convert') {
+        dotColor = '#00D26B'
+        labelIcon = <BsArrowDown />
+      } else if (item.event === 'Revert') {
+        dotColor = '#FF5733'
+        labelIcon = <BsArrowUp />
+      }
 
-  return {
-    100: formatDate(data[length - 1].x),
-    75: formatDate(data[Math.floor(length * 0.75)].x),
-    50: formatDate(data[Math.floor(length * 0.5)].x),
-    25: formatDate(data[Math.floor(length * 0.25)].x),
-    0: formatDate(data[0].x),
-  }
+      marks[position] = { style: { color: dotColor }, label: labelIcon }
+    }
+  })
+
+  return marks
 }
 
 export const formatXAxis = (value, hourUnit) => {

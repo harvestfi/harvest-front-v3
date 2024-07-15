@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { useMediaQuery } from 'react-responsive'
 import {
   ComposedChart,
   XAxis,
@@ -81,7 +80,6 @@ const ApexChart = ({
   totalValue,
   setSelectedState,
 }) => {
-  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const { fontColor, fontColor5, activeColor, bgColorChart } = useThemeContext()
   const { connected } = useWallet()
 
@@ -456,7 +454,7 @@ const ApexChart = ({
       setMainSeries(mainData)
       setAllMainSeries(allMainData)
 
-      const markPoints = calculateMarks(allMainData, isMobile)
+      const markPoints = calculateMarks(data, minTimestamp, maxTimestamp)
       setMarks(markPoints)
     }
 
