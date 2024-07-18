@@ -82,7 +82,7 @@ const ApexChart = ({
   totalValue,
   setSelectedState,
 }) => {
-  const { fontColor, fontColor5, activeColor, bgColorChart } = useThemeContext()
+  const { fontColor, fontColor5, bgColorChart } = useThemeContext()
   const { connected } = useWallet()
 
   const [mainSeries, setMainSeries] = useState([])
@@ -497,7 +497,7 @@ const ApexChart = ({
   return (
     <>
       {isDataReady === 'true' ? (
-        <ChartWrapper activeColor={activeColor} bgColorChart={bgColorChart}>
+        <ChartWrapper bgColorChart={bgColorChart}>
           <ResponsiveContainer width="100%" height={onlyWidth > 1291 ? 346 : 365}>
             <ComposedChart
               data={mainSeries}
