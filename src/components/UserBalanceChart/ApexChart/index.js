@@ -7,6 +7,7 @@ import {
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
+  ReferenceLine,
 } from 'recharts'
 import { useWindowWidth } from '@react-hook/window-size'
 import { ClipLoader } from 'react-spinners'
@@ -22,6 +23,7 @@ import {
   calculateMarks,
 } from '../../../utilities/formats'
 import {
+  findClosestIndex,
   findMax,
   findMin,
   getChartDomain,
@@ -114,6 +116,8 @@ const ApexChart = ({
   const [maxAllValUnderlying, setMaxAllValUnderlying] = useState(0)
   const [yAxisTicks, setYAxisTicks] = useState([])
   const [zAxisTicks, setZAxisTicks] = useState([])
+  const [startTimeStampPos, setStartTimeStampPos] = useState()
+  const [endTimeStampPos, setEndTimeStampPos] = useState()
   const [marks, setMarks] = useState({})
 
   const CustomTooltip = ({ active, payload, onTooltipContentChange }) => {
@@ -442,6 +446,13 @@ const ApexChart = ({
       setMaxAllValUnderlying(maxAllDomainUnderlying)
       setMinAllValUnderlying(minAllDomainUnderlying)
 
+      if (allMainSeries.length > 0) {
+        const startIndex = findClosestIndex(allMainSeries, startTimestamp * 1000)
+        const endIndex = findClosestIndex(allMainSeries, endTimestamp * 1000)
+        setStartTimeStampPos(startIndex)
+        setEndTimeStampPos(endIndex)
+      }
+
       const yAxisAry = getYAxisValues(minDomain, maxDomain, roundedDecimal)
       setYAxisTicks(yAxisAry)
 
@@ -582,6 +593,24 @@ const ApexChart = ({
                   <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1} />
                 </linearGradient>
               </defs>
+              <YAxis
+                dataKey="y"
+                tickCount={0}
+                domain={[minAllVal, maxAllVal]}
+                stroke="#00D26B"
+                yAxisId="left"
+                orientation="left"
+                mirror
+              />
+              <YAxis
+                dataKey="z"
+                tickCount={0}
+                domain={[minAllValUnderlying, maxAllValUnderlying]}
+                stroke="#8884d8"
+                yAxisId="right"
+                orientation="right"
+                mirror
+              />
               <Line
                 dataKey="y"
                 type="monotone"
@@ -603,24 +632,8 @@ const ApexChart = ({
                 legendType="none"
                 yAxisId="right"
               />
-              <YAxis
-                dataKey="y"
-                tickCount={0}
-                domain={[minAllVal, maxAllVal]}
-                stroke="#00D26B"
-                yAxisId="left"
-                orientation="left"
-                mirror
-              />
-              <YAxis
-                dataKey="z"
-                tickCount={0}
-                domain={[minAllValUnderlying, maxAllValUnderlying]}
-                stroke="#8884d8"
-                yAxisId="right"
-                orientation="right"
-                mirror
-              />
+              <ReferenceLine x={startTimeStampPos} stroke="#00D26B" label="" yAxisId="left" />
+              <ReferenceLine x={endTimeStampPos} stroke="#00D26B" label="" yAxisId="left" />
             </ComposedChart>
           </ResponsiveContainer>
         </ChartWrapper>

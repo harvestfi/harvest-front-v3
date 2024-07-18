@@ -292,6 +292,21 @@ export const findMin = data => {
   return min
 }
 
+export const findClosestIndex = (data, target) => {
+  let closestIndex = 0,
+    closestDistance = Math.abs(data[0].x - target)
+
+  for (let i = 1; i < data.length; i += 1) {
+    const distance = Math.abs(data[i].x - target)
+    if (distance < closestDistance) {
+      closestIndex = i
+      closestDistance = distance
+    }
+  }
+
+  return closestIndex
+}
+
 export const getYAxisValues = (min, max, roundNum) => {
   const duration = Number(max - min)
   const ary = []
