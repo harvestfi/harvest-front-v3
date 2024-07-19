@@ -4,7 +4,7 @@ import axiosRetry from 'axios-retry'
 import BigNumber from 'bignumber.js'
 import mobile from 'is-mobile'
 import { get, isArray, isNaN, isEmpty } from 'lodash'
-import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
+import { GoDotFill } from 'react-icons/go'
 import {
   DECIMAL_PRECISION,
   DISABLED_DEPOSITS,
@@ -439,10 +439,10 @@ export const calculateMarks = (data, minTimestamp, maxTimestamp) => {
         labelIcon
       if (item.event === 'Convert') {
         dotColor = '#00D26B'
-        labelIcon = <BsArrowDown />
+        labelIcon = <GoDotFill />
       } else if (item.event === 'Revert') {
         dotColor = '#FF5733'
-        labelIcon = <BsArrowUp />
+        labelIcon = <GoDotFill />
       }
 
       marks[position] = { style: { color: dotColor }, label: labelIcon }

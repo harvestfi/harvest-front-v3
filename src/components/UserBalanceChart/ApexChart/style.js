@@ -36,6 +36,9 @@ const ChartWrapper = styled.div`
       }
 
       .rc-slider-mark {
+        top: -8px;
+        font-size: 18px;
+
         .rc-slider-mark-text {
           width: 100%;
         }
