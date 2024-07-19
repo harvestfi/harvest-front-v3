@@ -2,8 +2,16 @@ import styled from 'styled-components'
 
 const ChartWrapper = styled.div`
   .bottom-chart {
-    background: ${props => props.bgColorChart};
     border-radius: 5px;
+
+    .recharts-wrapper {
+      .recharts-reference-area {
+        path {
+          stroke: ${props => props.bgColorChart};
+          fill: ${props => props.bgColorChart};
+        }
+      }
+    }
   }
 
   .chart-slider-wrapper {

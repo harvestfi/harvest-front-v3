@@ -8,6 +8,7 @@ import {
   CartesianGrid,
   ResponsiveContainer,
   ReferenceLine,
+  ReferenceArea,
 } from 'recharts'
 import { useWindowWidth } from '@react-hook/window-size'
 import { ClipLoader } from 'react-spinners'
@@ -634,6 +635,16 @@ const ApexChart = ({
               />
               <ReferenceLine x={startTimeStampPos} stroke="grey" label="" yAxisId="left" />
               <ReferenceLine x={endTimeStampPos} stroke="grey" label="" yAxisId="left" />
+              <ReferenceArea
+                x1={startTimeStampPos}
+                x2={endTimeStampPos}
+                y1={minAllVal}
+                y2={maxAllVal}
+                stroke="#161B26"
+                fill="#161B26"
+                strokeOpacity={1}
+                yAxisId="left"
+              />
             </ComposedChart>
           </ResponsiveContainer>
         </ChartWrapper>
