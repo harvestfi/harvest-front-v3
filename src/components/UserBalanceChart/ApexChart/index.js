@@ -632,8 +632,8 @@ const ApexChart = ({
                 legendType="none"
                 yAxisId="right"
               />
-              <ReferenceLine x={startTimeStampPos} stroke="#00D26B" label="" yAxisId="left" />
-              <ReferenceLine x={endTimeStampPos} stroke="#00D26B" label="" yAxisId="left" />
+              <ReferenceLine x={startTimeStampPos} stroke="grey" label="" yAxisId="left" />
+              <ReferenceLine x={endTimeStampPos} stroke="grey" label="" yAxisId="left" />
             </ComposedChart>
           </ResponsiveContainer>
         </ChartWrapper>
