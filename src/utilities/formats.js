@@ -1,10 +1,8 @@
-import React from 'react'
 import axios from 'axios'
 import axiosRetry from 'axios-retry'
 import BigNumber from 'bignumber.js'
 import mobile from 'is-mobile'
 import { get, isArray, isNaN, isEmpty } from 'lodash'
-import { GoDotFill } from 'react-icons/go'
 import {
   DECIMAL_PRECISION,
   DISABLED_DEPOSITS,
@@ -434,18 +432,19 @@ export const calculateMarks = (data, minTimestamp, maxTimestamp) => {
   data.forEach(item => {
     if (item.event !== 'Harvest') {
       const timestamp = parseFloat(item.timestamp) * 1000
-      const position = normalizeSliderValue(timestamp, minTimestamp, maxTimestamp)
-      let dotColor = '',
-        labelIcon
+      const position = formatNumber(normalizeSliderValue(timestamp, minTimestamp, maxTimestamp), 2)
+      let dotColor = ''
       if (item.event === 'Convert') {
         dotColor = '#00D26B'
-        labelIcon = <GoDotFill />
       } else if (item.event === 'Revert') {
         dotColor = '#FF5733'
-        labelIcon = <GoDotFill />
       }
 
-      marks[position] = { style: { color: dotColor }, label: labelIcon }
+      marks[position] = {
+        style: { borderColor: dotColor, color: dotColor },
+        label: ' ',
+        dotColor,
+      }
     }
   })
 

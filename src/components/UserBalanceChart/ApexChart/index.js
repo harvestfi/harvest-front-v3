@@ -22,6 +22,7 @@ import {
   normalizeSliderValue,
   denormalizeSliderValue,
   calculateMarks,
+  formatNumber,
 } from '../../../utilities/formats'
 import {
   findClosestIndex,
@@ -468,6 +469,14 @@ const ApexChart = ({
 
       const markPoints = calculateMarks(data, minTimestamp, maxTimestamp)
       setMarks(markPoints)
+
+      const dots = document.querySelectorAll('.rc-slider-dot')
+      dots.forEach(dot => {
+        const position = formatNumber(parseFloat(dot.style.left.replace('%', '')), 2)
+        if (markPoints[position]) {
+          dot.style.borderColor = markPoints[position].dotColor
+        }
+      })
     }
 
     init()
