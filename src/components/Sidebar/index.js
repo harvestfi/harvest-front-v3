@@ -26,11 +26,6 @@ import WalletOff from '../../assets/images/logos/sidebar/wallet_off.svg'
 import WalletActive from '../../assets/images/logos/sidebar/wallet_active.svg'
 import WalletInactive from '../../assets/images/logos/sidebar/wallet_inactive.svg'
 import Toggle from '../../assets/images/logos/sidebar/more-mobile.svg'
-import Arbitrum from '../../assets/images/chains/arbitrum.svg'
-import Base from '../../assets/images/chains/base.svg'
-import Zksync from '../../assets/images/chains/zksync.svg'
-import Ethereum from '../../assets/images/chains/ethereum.svg'
-import Polygon from '../../assets/images/chains/polygon.svg'
 import HomeMobile from '../../assets/images/logos/sidebar/home-mobile.svg'
 import BeginnersMobile from '../../assets/images/logos/sidebar/beginners-mobile.svg'
 import AdvancedMobile from '../../assets/images/logos/sidebar/advanced-mobile.svg'
@@ -51,6 +46,7 @@ import { useRate } from '../../providers/Rate'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { fromWei } from '../../services/web3'
+import { getChainIcon } from '../../utilities/parsers'
 import { formatAddress, isLedgerLive, isSpecialApp } from '../../utilities/formats'
 import Social from '../Social'
 import DropDownIcon from '../../assets/images/logos/advancedfarm/drop-down.svg'
@@ -298,33 +294,6 @@ const MobileMenu = ({
       {item.new ? <NewTag>New</NewTag> : <></>}
     </LinkMobile>
   )
-}
-
-const getChainIcon = chainNum => {
-  let icon = null
-  if (chainNum) {
-    switch (chainNum) {
-      case CHAIN_IDS.ETH_MAINNET:
-        icon = Ethereum
-        break
-      case CHAIN_IDS.POLYGON_MAINNET:
-        icon = Polygon
-        break
-      case CHAIN_IDS.ARBITRUM_ONE:
-        icon = Arbitrum
-        break
-      case CHAIN_IDS.BASE:
-        icon = Base
-        break
-      case CHAIN_IDS.ZKSYNC:
-        icon = Zksync
-        break
-      default:
-        icon = Ethereum
-        break
-    }
-  }
-  return icon
 }
 
 const Sidebar = ({ width }) => {

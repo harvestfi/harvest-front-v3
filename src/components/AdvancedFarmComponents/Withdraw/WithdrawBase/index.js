@@ -18,7 +18,6 @@ import { formatNumberWido, isSpecialApp, showTokenBalance } from '../../../../ut
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import AnimatedDots from '../../../AnimatedDots'
 import Button from '../../../Button'
-import { CHAIN_IDS } from '../../../../data/constants'
 import {
   BaseWidoDiv,
   NewLabel,
@@ -39,28 +38,7 @@ import {
   FlexDiv,
 } from './style'
 import { usePortals } from '../../../../providers/Portals'
-
-const getChainName = chain => {
-  let chainName = 'Ethereum'
-  switch (chain) {
-    case CHAIN_IDS.POLYGON_MAINNET:
-      chainName = 'Polygon'
-      break
-    case CHAIN_IDS.ARBITRUM_ONE:
-      chainName = 'Arbitrum'
-      break
-    case CHAIN_IDS.BASE:
-      chainName = 'Base'
-      break
-    case CHAIN_IDS.ZKSYNC:
-      chainName = 'Zksync'
-      break
-    default:
-      chainName = 'Ethereum'
-      break
-  }
-  return chainName
-}
+import { getChainName } from '../../../../utilities/parsers'
 
 const WithdrawBase = ({
   setSelectToken,

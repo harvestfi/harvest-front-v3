@@ -10,6 +10,11 @@ import {
 } from '../constants'
 import { CHAIN_IDS } from '../data/constants'
 import { ceil10, floor10, round10 } from './formats'
+import Arbitrum from '../assets/images/chains/arbitrum.svg'
+import Base from '../assets/images/chains/base.svg'
+import Zksync from '../assets/images/chains/zksync.svg'
+import Ethereum from '../assets/images/chains/ethereum.svg'
+import Polygon from '../assets/images/chains/polygon.svg'
 
 export const getNextEmissionsCutDate = () => {
   const result = new Date()
@@ -178,6 +183,55 @@ export const getChainNamePortals = chain => {
       break
   }
   return chainName
+}
+
+export const getChainName = chain => {
+  let chainName = 'Ethereum'
+  switch (chain) {
+    case CHAIN_IDS.POLYGON_MAINNET:
+      chainName = 'Polygon'
+      break
+    case CHAIN_IDS.ARBITRUM_ONE:
+      chainName = 'Arbitrum'
+      break
+    case CHAIN_IDS.BASE:
+      chainName = 'Base'
+      break
+    case CHAIN_IDS.ZKSYNC:
+      chainName = 'Zksync'
+      break
+    default:
+      chainName = 'Ethereum'
+      break
+  }
+  return chainName
+}
+
+export const getChainIcon = chainNum => {
+  let icon = null
+  if (chainNum) {
+    switch (chainNum) {
+      case CHAIN_IDS.ETH_MAINNET:
+        icon = Ethereum
+        break
+      case CHAIN_IDS.POLYGON_MAINNET:
+        icon = Polygon
+        break
+      case CHAIN_IDS.ARBITRUM_ONE:
+        icon = Arbitrum
+        break
+      case CHAIN_IDS.BASE:
+        icon = Base
+        break
+      case CHAIN_IDS.ZKSYNC:
+        icon = Zksync
+        break
+      default:
+        icon = Ethereum
+        break
+    }
+  }
+  return icon
 }
 
 export const getTimeSlots = (ago, slotCount) => {
