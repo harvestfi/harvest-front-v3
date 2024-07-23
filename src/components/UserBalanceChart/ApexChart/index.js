@@ -592,6 +592,7 @@ const ApexChart = ({
                 marks={marks}
                 value={[startPoint, endPoint]}
                 onChange={handleSliderChange}
+                pushable={1}
               />
             </div>
           )}
