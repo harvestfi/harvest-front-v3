@@ -27,6 +27,7 @@ export function ThemeProvider({ children }) {
   const bgColorButton = darkMode ? '#242c3c' : '#eaf1ff'
   const bgColorSlippage = darkMode ? '#1F242F' : '#15b088'
   const bgColorChart = darkMode ? '#161B26' : '#f3f6ff'
+  const bgColorSide = darkMode ? '#242c3c' : '#E0E7FF'
 
   const fontColor = darkMode ? '#fff' : '#475467'
   const fontColor1 = darkMode ? '#fff' : '#101828'
@@ -46,6 +47,7 @@ export function ThemeProvider({ children }) {
   const hoverColor = darkMode ? '#1F242F' : '#e9f0f7'
   const hoverColorButton = darkMode ? '#1F242F' : '#f2f4f7'
   const hoverColorAVR = darkMode ? '#1F242F' : '#fbe7ef'
+  const hoverColorSide = darkMode ? '#161b26' : '#f6f6f6'
   const activeColor = darkMode ? '#242C3C' : '#F3F6FF'
   const activeColorModal = darkMode ? '#242C3C' : '#ECFDF3'
   const modalInputColor = darkMode ? '#242C3C' : '#ffffff'
@@ -91,7 +93,6 @@ export function ThemeProvider({ children }) {
   const mobileFilterDisableColor = darkMode ? '#94949f' : 'rgba(21, 32, 43, 0.5)'
 
   const toggleBackColor = darkMode ? '#24272C' : '#E9EAF0'
-  const toggleCircleBgColor = darkMode ? '#E9EAF0' : '#24272C'
 
   const [switchBalance, setSwitchBalance] = useState(false) // true : USD, false: Token
 
@@ -185,6 +186,7 @@ export function ThemeProvider({ children }) {
         hoverColor,
         hoverColorButton,
         hoverColorAVR,
+        hoverColorSide,
         activeColor,
         activeColorModal,
         modalInputColor,
@@ -194,6 +196,7 @@ export function ThemeProvider({ children }) {
         bgColorButton,
         bgColorSlippage,
         bgColorChart,
+        bgColorSide,
         filterColor,
         boxShadowColor,
         hoverImgColor,
@@ -213,7 +216,6 @@ export function ThemeProvider({ children }) {
         mobileFilterBorderColor,
         mobileFilterDisableColor,
         toggleBackColor,
-        toggleCircleBgColor,
         switchBalance,
         setSwitchBalance,
         connectWalletBtnHoverBackColor,

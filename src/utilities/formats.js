@@ -230,7 +230,7 @@ export const getCurrencyRate = (sym, item, rateData) => {
 
 export const formatAddress = address => {
   if (address) {
-    return `${address.substring(0, mobile() ? 4 : 6)}...${address.substring(
+    return `${address.substring(0, mobile() ? 6 : 7)}...${address.substring(
       address.length - 4,
       address.length,
     )}`

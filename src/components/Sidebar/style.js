@@ -66,10 +66,10 @@ const LinksContainer = styled.div`
     align-items: inherit;
     text-decoration: none;
     font-weight: 700;
-    font-size: 24px;
+    font-size: 16.7px;
 
     &:after {
-      margin-left: 22px;
+      margin-left: 15px;
       display: block;
       content: 'Harvest';
       color: ${props => props.fontColor};
@@ -100,9 +100,9 @@ const LinkContainer = styled.div`
 `
 
 const Link = styled.button`
-  color: ${props => props.fontColor2};
+  color: ${props => props.fontColor1};
   transition: 0.25s;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
   line-height: 24px;
   transition: 0.25s;
@@ -123,7 +123,7 @@ const Link = styled.button`
     filter: ${props =>
       props.darkMode
         ? 'invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%)'
-        : 'invert(48%) sepia(4%) saturate(2341%) hue-rotate(183deg) brightness(87%) contrast(80%)'};
+        : ''};
   }
 
   ${props =>
@@ -141,11 +141,7 @@ const Link = styled.button`
   ${props =>
     props.active
       ? `
-    color: #15b088;
-    background: rgba(187, 187, 187, 0.07);
-    .sideIcon {
-      filter: invert(46%) sepia(96%) saturate(382%) hue-rotate(114deg) brightness(99%) contrast(89%);
-    }
+    background: ${props.bgColorSide};
     ${
       props.darkMode
         ? `
@@ -153,11 +149,7 @@ const Link = styled.button`
         filter: invert(46%) sepia(96%) saturate(382%) hue-rotate(114deg) brightness(99%) contrast(89%);
       }
     `
-        : `
-        img {
-          filter: invert(46%) sepia(96%) saturate(382%) hue-rotate(114deg) brightness(99%) contrast(89%);
-        }
-      `
+        : ``
     }
   `
       : `
@@ -203,10 +195,7 @@ const Link = styled.button`
   }
 
   &:hover {
-    color: #15b088;
-    img {
-      filter: invert(46%) sepia(96%) saturate(382%) hue-rotate(114deg) brightness(99%) contrast(89%);
-    }
+    background: ${props => props.hoverColorSide};
   }
 `
 
@@ -228,7 +217,7 @@ const FlexDiv = styled.div`
   }
 
   .detail-info {
-    align-self: center;
+    margin: auto;
   }
 
   input[type='checkbox'] {
@@ -246,12 +235,13 @@ const ConnectButtonStyle = styled.button`
   font-weight: 600;
   margin: 25px 0px;
   width: 100%;
-  background: ${props => props.backColor};
+  background: #ffcd05;
   border-radius: 8px;
-  border: 1px solid ${props => props.inputBorderColor};
-  color: ${props => props.fontColor2};
+  border: none;
+  color: #1d2939;
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
   cursor: pointer;
+  transition: 0.7s;
 
   ${props =>
     props.connected
@@ -268,43 +258,11 @@ const ConnectButtonStyle = styled.button`
     `}
 
   &:hover {
-    box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05),
-      0px 0px 0px 4px ${props => props.hoverColorButton};
-    img.connect-wallet {
-      filter: brightness(0) saturate(100%) invert(69%) sepia(55%) saturate(4720%) hue-rotate(110deg)
-        brightness(91%) contrast(86%);
-    }
+    background: #ffe16a;
   }
 
   img.connect-wallet {
     margin-right: 25px;
-  }
-
-  @media screen and (max-width: 992px) {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0 0 20px 13px;
-
-    ${props =>
-      props.connected
-        ? `
-      background: none;
-      color: ${props.fontcolor};
-      font-size: 11px;
-      padding: 2px 16px 2px 7px;
-      border: 1px solid ${props.bordercolor};
-      `
-        : `
-      padding: 10px 11px;
-      font-size: 13px;
-      `}
-
-    img.connect-wallet {
-      margin-right: 15px;
-      width: 14px;
-      height: 14px;
-    }
   }
 `
 
@@ -498,7 +456,6 @@ const MobileFollow = styled.div`
   display: flex;
   justify-content: space-between;
   width: 90%;
-  margin-top: 15px;
 
   @media screen and (max-width: 992px) {
     width: 95%;
@@ -510,13 +467,14 @@ const ConnectAvatar = styled.div`
   display: flex;
   align-items: center;
   margin-right: ${props => (props.avatar ? '13px' : '-13px')};
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 14px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 24px;
   transition: 0.25s;
+  letter-spacing: -0.15px;
+  color: ${props => props.color};
+
   img {
-    width: 39px;
-    height: 39px;
     margin-right: 5px;
   }
 
@@ -527,9 +485,12 @@ const ConnectAvatar = styled.div`
 `
 
 const Address = styled.span`
-  font-size: 16px;
-  font-weight: 600;
-  line-height: 22px;
+  display: flex;
+  color: ${props => props.color};
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 12px;
+  letter-spacing: -0.12px;
 
   @media screen and (max-width: 992px) {
     text-align: center;
@@ -565,26 +526,42 @@ const ThemeMode = styled.div`
     .switch-track {
       background: ${props => props.backColor};
       border: 1px solid ${props => props.borderColor};
-      height: 28px;
-      width: 58px;
+      width: 108px;
+      height: 40px;
       border-radius: 30px;
       transition: all 0.2s ease 0s;
     }
 
     .switch-thumb {
-      color: ${props => props.backColor};
-      background: ${props => props.circleBgColor};
+      color: #000;
+      background: #fff;
       background-size: cover;
-      height: 20px;
-      left: 5px;
+      height: 32px;
+      right: 5px;
       position: absolute;
       top: 4px;
-      width: 20px;
-      border-radius: 50%;
+      width: 48px;
+      border-radius: 32px;
       transition: all 0.25s ease 0s;
 
       svg {
-        margin: -7px 0px 0px 2px;
+        font-size: 24px;
+        margin: 4px 0px 0px 12px;
+      }
+    }
+
+    .switch-icon {
+      color: ${props => props.color};
+      height: 32px;
+      ${props => (props.mode === 'dark' ? 'left: 5px;' : 'right: 5px;')}
+      position: absolute;
+      top: 4px;
+      width: 48px;
+      transition: all 0.25s ease 0s;
+
+      svg {
+        font-size: 24px;
+        margin: 4px 0px 0px 12px;
       }
     }
 
@@ -604,7 +581,7 @@ const ThemeMode = styled.div`
           opacity: 0;
         }
         .switch-thumb {
-          left: 33px;
+          left: 6px;
         }
       }
     `
@@ -653,10 +630,14 @@ const UserDropDown = styled(Dropdown.Toggle)`
     margin-left: 5px;
   }
 
-  img.narrow {
-    position: absolute;
-    right: 15px;
-    top: 15px;
+  img.chain-icon {
+    width: 14px;
+    height: 14px;
+    border-radius: 2.278px;
+    border: 1.139px solid #29ce84;
+    background: rgba(255, 255, 255, 0.6);
+    box-shadow: 0px 0px 1.139px 0px rgba(0, 0, 0, 0.15);
+    padding: 1.708px 1.706px 1.709px 1.71px;
   }
 
   @media screen and (max-width: 992px) {
@@ -884,92 +865,6 @@ const MoreBtn = styled.button`
   padding: 0px;
 `
 
-const CurrencyDropDown = styled(Dropdown.Toggle)`
-  left: 12px;
-  background: ${props => props.bgcolor} !important;
-  border: none !important;
-  border-radius: 10px !important;
-  color: ${props => props.fontcolor2} !important;
-  align-items: center;
-  width: 100%;
-  display: flex !important;
-  justify-content: space-between;
-  text-align: left;
-  position: relative;
-  margin: 0px 0px;
-  &:after {
-    display: none !important;
-  }
-
-  &:hover {
-    background: ${props => props.hovercolor} !important;
-    color: black;
-    font-weight: 500;
-  }
-
-  &:active {
-    background: green;
-    color: black;
-  }
-
-  .chain-name {
-    font-weight: 400;
-    font-size: 12px;
-    line-height: 16px;
-    margin-left: 5px;
-  }
-
-  img.narrow {
-    position: absolute;
-    right: 15px;
-    top: 15px;
-  }
-
-  @media screen and (max-width: 992px) {
-    margin-left: 13px;
-  }
-`
-
-const CurrencySelect = styled.div`
-  width: 100%;
-  background: ${props => props.bgcolor} !important;
-  border: 1px solid #d0d5dd;
-  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-  transition: 0.25s;
-
-  border-radius: 8px;
-  padding: 5px 7px;
-  font-weight: 600;
-  font-size: 13px;
-  line-height: 24px;
-  text-align: right;
-  color: ${props => props.fontcolor2} !important;
-
-  display: flex;
-  align-items: center;
-
-  &:hover {
-    background: ${props => props.hovercolor} !important;
-  }
-
-  img.logo {
-    margin-right: 7.5px;
-  }
-
-  img.logo-dark {
-    margin-right: 7.5px;
-    filter: invert(100%);
-  }
-
-  span {
-    max-width: 150px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    margin-right: 4px;
-  }
-`
-
 const CurrencyDiv = styled.div`
   left: 12px;
   display: flex;
@@ -981,93 +876,6 @@ const CurrencyDiv = styled.div`
   @media screen and (max-width: 992px) {
     width: 95%;
     margin: 0px auto 35px auto;
-  }
-`
-
-const CurrencyDropDownMenu = styled(Dropdown.Menu)`
-  background-color: ${props => props.backcolor} !important;
-  border: 1px solid ${props => props.bordercolor} !important;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
-  border-radius: 12px !important;
-  padding: 0;
-  min-width: 6rem;
-  width: 100% !important;
-  z-index: 120;
-
-  &:focus {
-    box-shadow: none;
-  }
-`
-
-const CurrencyDropDownItem = styled(Dropdown.Item)`
-  text-align: left;
-  display: flex !important;
-  justify-content: start;
-  align-items: center;
-  font-size: 12px;
-  padding: 5px 0px;
-  ${props =>
-    props.bordercolor
-      ? `
-    border-bottom: 0.5px solid ${props.bordercolor} !important;
-  `
-      : `
-  `}
-  width: auto !important;
-  color: ${props => props.fontcolor} !important;
-
-  img {
-    filter: ${props => props.filtercolor};
-  }
-
-  &:hover {
-    background: none !important;
-
-    img {
-      filter: invert(63%) sepia(58%) saturate(3702%) hue-rotate(0deg) brightness(107%)
-        contrast(105%);
-    }
-
-    img.logo-dark {
-      filter: invert(63%) sepia(58%) saturate(3702%) hue-rotate(0deg) brightness(107%)
-        contrast(105%);
-    }
-
-    span {
-      filter: invert(37%) sepia(58%) saturate(3702%) hue-rotate(0deg) brightness(107%)
-        contrast(105%);
-    }
-
-    div {
-      color: #ff9400;
-    }
-  }
-
-  img {
-    margin-right: 15px;
-    margin-left: 10px;
-  }
-
-  img.logo {
-    margin-right: 7.5px;
-  }
-
-  img.logo-dark {
-    margin-right: 7.5px;
-    filter: invert(100%);
-  }
-
-  div {
-    align-self: center;
-    font-weight: 700;
-    font-size: 14px;
-    line-height: 18px;
-  }
-
-  img.check-icon {
-    width: 8px;
-    height: 6px;
-    margin-right: 2px;
   }
 `
 
@@ -1113,9 +921,5 @@ export {
   Mobile,
   ConnectSection,
   MoreBtn,
-  CurrencyDropDown,
-  CurrencySelect,
   CurrencyDiv,
-  CurrencyDropDownMenu,
-  CurrencyDropDownItem,
 }

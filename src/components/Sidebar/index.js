@@ -1,20 +1,17 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
-import { TbSun } from 'react-icons/tb'
-import { LuMoon } from 'react-icons/lu'
+import { PiSunDimFill, PiMoonBold } from 'react-icons/pi'
 import { IoCloseCircleOutline } from 'react-icons/io5'
-import ConnectDisableIcon from '../../assets/images/logos/sidebar/connect-disable.svg'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 import ConnectFailureIcon from '../../assets/images/logos/sidebar/connect-failure.svg'
-import connectAvatar from '../../assets/images/logos/sidebar/connectavatar.png'
+import connectAvatar from '../../assets/images/logos/sidebar/happyavatar.png'
 import connectAvatarMobile from '../../assets/images/logos/sidebar/connectavatarmobile.svg'
-// import Portfolio from '../../assets/images/logos/sidebar/portfolio.svg'
-import Docs from '../../assets/images/logos/sidebar/docs.svg'
+// import Docs from '../../assets/images/logos/sidebar/docs.svg'
 import FAQ from '../../assets/images/logos/sidebar/faq.svg'
 import Home from '../../assets/images/logos/sidebar/home-line.svg'
 import Beginners from '../../assets/images/logos/sidebar/beginners.svg'
-// import LiveSupport from '../../assets/images/logos/sidebar/message-chat.svg'
+import Support from '../../assets/images/logos/sidebar/support.svg'
 import Analytics from '../../assets/images/logos/sidebar/analytics.svg'
 // import Collaborations from '../../assets/images/logos/sidebar/collaborations.svg'
 import Advanced from '../../assets/images/logos/sidebar/advanced.svg'
@@ -35,21 +32,15 @@ import AdvancedMobileSM from '../../assets/images/logos/sidebar/advanced-mobile_
 import AnalyticsMobile from '../../assets/images/logos/sidebar/analytics-mobile.svg'
 import FAQMobile from '../../assets/images/logos/sidebar/faq-mobile.svg'
 import DocsMobile from '../../assets/images/logos/sidebar/docs-mobile.svg'
-import Dollar from '../../assets/images/logos/sidebar/dollar.svg'
-import Pound from '../../assets/images/logos/sidebar/pound.svg'
-import Euro from '../../assets/images/logos/sidebar/euro.svg'
-import Check from '../../assets/images/logos/sidebar/check.svg'
-import { ROUTES, SUPPORTED_CURRENCY } from '../../constants'
+import { ROUTES } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
 import { usePools } from '../../providers/Pools'
-import { useRate } from '../../providers/Rate'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { fromWei } from '../../services/web3'
 import { getChainIcon } from '../../utilities/parsers'
 import { formatAddress, isLedgerLive, isSpecialApp } from '../../utilities/formats'
 import Social from '../Social'
-import DropDownIcon from '../../assets/images/logos/advancedfarm/drop-down.svg'
 import {
   Address,
   ConnectAvatar,
@@ -89,17 +80,13 @@ import {
   Mobile,
   ConnectSection,
   MoreBtn,
-  CurrencySelect,
-  CurrencyDropDown,
   CurrencyDiv,
-  CurrencyDropDownMenu,
-  CurrencyDropDownItem,
 } from './style'
 
 const sideLinksTop = [
   {
     path: ROUTES.PORTFOLIO,
-    name: 'Dashboard',
+    name: 'My Positions',
     imgPath: Home,
   },
   {
@@ -119,21 +106,9 @@ const sideLinksTop = [
   //   new: true,
   //   enabled: false,
   // },
-  // {
-  //   path: ROUTES.PORTFOLIO,
-  //   name: 'My Earnings',
-  //   imgPath: Portfolio,
-  // },
 ]
 
 const sideLinksBottom = [
-  // {
-  //   path: ROUTES.LiveSupport,
-  //   name: 'AI Support',
-  //   imgPath: LiveSupport,
-  //   external: false,
-  //   new: true,
-  // },
   {
     path: ROUTES.ANALYTIC,
     name: 'Analytics',
@@ -147,33 +122,19 @@ const sideLinksBottom = [
     external: false,
     newTab: true,
   },
+  // {
+  //   path: ROUTES.DOC,
+  //   name: 'Docs',
+  //   imgPath: Docs,
+  //   external: false,
+  //   newTab: true,
+  // },
   {
-    path: ROUTES.DOC,
-    name: 'Docs',
-    imgPath: Docs,
+    path: ROUTES.LiveSupport,
+    name: 'Support',
+    imgPath: Support,
     external: false,
-    newTab: true,
-  },
-]
-
-const supportedCurrencies = [
-  {
-    id: SUPPORTED_CURRENCY.USD,
-    symbol: 'USD',
-    icon: '$',
-    imgPath: Dollar,
-  },
-  {
-    id: SUPPORTED_CURRENCY.GBP,
-    symbol: 'GBP',
-    icon: '£',
-    imgPath: Pound,
-  },
-  {
-    id: SUPPORTED_CURRENCY.EUR,
-    symbol: 'EUR',
-    icon: '€',
-    imgPath: Euro,
+    // new: true,
   },
 ]
 
@@ -230,11 +191,20 @@ const sideLinksMobileBottom = [
   },
 ]
 
-const SideLink = ({ item, subItem, isDropdownLink, fontColor2, activeIconColor, darkMode }) => {
+const SideLink = ({
+  item,
+  subItem,
+  isDropdownLink,
+  fontColor1,
+  activeIconColor,
+  darkMode,
+  bgColorSide,
+  hoverColorSide,
+}) => {
   const { pathname } = useLocation()
   const pageName =
     pathname === '/'
-      ? 'dashboard'
+      ? 'my positions'
       : pathname === ROUTES.ADVANCED
       ? 'all farms'
       : pathname === ROUTES.TUTORIAL
@@ -243,13 +213,15 @@ const SideLink = ({ item, subItem, isDropdownLink, fontColor2, activeIconColor, 
   return (
     /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
     <Link
-      fontColor2={fontColor2}
+      fontColor1={fontColor1}
       active={pageName.includes(item.name.toLowerCase().trim())}
       subItem={subItem}
       isDropdownLink={isDropdownLink}
       activeIconColor={activeIconColor}
       darkMode={darkMode}
       enabled={item.enabled === false ? 'false' : 'true'}
+      bgColorSide={bgColorSide}
+      hoverColorSide={hoverColorSide}
     >
       <div className="item">
         <SideIcons
@@ -302,7 +274,9 @@ const Sidebar = ({ width }) => {
     setDarkMode,
     backColor,
     bgColor,
+    bgColorSide,
     fontColor,
+    fontColor1,
     fontColor2,
     filterColor,
     fontColor5,
@@ -312,8 +286,8 @@ const Sidebar = ({ width }) => {
     borderColor,
     hoverColor,
     hoverColorButton,
+    hoverColorSide,
     toggleBackColor,
-    toggleCircleBgColor,
     sidebarFontColor,
     sidebarActiveFontColor,
     sidebarActiveIconColor,
@@ -331,9 +305,6 @@ const Sidebar = ({ width }) => {
   } = useWallet()
 
   const { disableWallet } = usePools()
-  const { rates, updateCurrency } = useRate()
-
-  const [curCurrency, setCurCurrency] = useState(supportedCurrencies[0])
 
   const switchTheme = () => setDarkMode(prev => !prev)
   useEffect(() => {
@@ -343,10 +314,6 @@ const Sidebar = ({ width }) => {
       document.documentElement.removeAttribute('darkMode', '')
     }
   }, [darkMode])
-
-  useEffect(() => {
-    setCurCurrency(supportedCurrencies[rates.currency.id])
-  }, [rates])
 
   const { pathname } = useLocation()
   const { push } = useHistory()
@@ -443,14 +410,14 @@ const Sidebar = ({ width }) => {
       <Desktop>
         <Layout>
           <MiddleActionsContainer>
-            <LinksContainer fontColor={fontColor} totalItems={sideLinksTop.length + 2}>
+            <LinksContainer fontColor={fontColor2} totalItems={sideLinksTop.length + 2}>
               <Logo
                 className="logo"
                 onClick={() => {
                   push('/')
                 }}
               >
-                <img src={darkMode ? logoNewDark : logoNew} width={52} height={52} alt="Harvest" />
+                <img src={darkMode ? logoNewDark : logoNew} width={36} height={36} alt="Harvest" />
               </Logo>
 
               {(() => {
@@ -463,13 +430,10 @@ const Sidebar = ({ width }) => {
                       }}
                       minWidth="190px"
                       inputBorderColor={inputBorderColor}
-                      fontColor2={fontColor2}
-                      backColor={backColor}
                       bordercolor={fontColor}
                       disabled={disableWallet}
                       hoverColorButton={hoverColorButton}
                     >
-                      <img src={ConnectDisableIcon} className="connect-wallet" alt="" />
                       Connect Wallet
                     </ConnectButtonStyle>
                   )
@@ -496,23 +460,16 @@ const Sidebar = ({ width }) => {
                           <img src={connectAvatar} alt="" />
                         </ConnectAvatar>
                         <div className="detail-info">
-                          <Address>{formatAddress(account)}</Address>
-                          <br />
-                          <ConnectAvatar>
-                            <img
-                              alt="Chain icon"
-                              src={ConnectSuccessIcon}
-                              style={{ width: 8, height: 8 }}
-                            />
-                            Connected
+                          <ConnectAvatar color={fontColor1}>
+                            Hello, farmer{' '}
+                            <span role="img" aria-label="hand" aria-labelledby="hand">
+                              👋
+                            </span>
                           </ConnectAvatar>
+                          <Address color={fontColor}>{formatAddress(account)}</Address>
                         </div>
                       </FlexDiv>
-                      <img
-                        alt="chain icon"
-                        src={getChainIcon(chainId)}
-                        style={{ width: 17, height: 17 }}
-                      />
+                      <img alt="chain icon" src={getChainIcon(chainId)} className="chain-icon" />
                     </UserDropDown>
                     {!isSpecialApp ? (
                       <UserDropDownMenu backcolor={backColor} bordercolor={borderColor}>
@@ -555,9 +512,11 @@ const Sidebar = ({ width }) => {
                       <SideLink
                         item={item}
                         isDropdownLink={item.path === '#'}
-                        fontColor2={fontColor2}
+                        fontColor1={fontColor1}
                         activeIconColor={sidebarActiveIconColor}
                         darkMode={darkMode}
+                        bgColorSide={bgColorSide}
+                        hoverColorSide={hoverColorSide}
                       />
                     </LinkContainer>
                   </Fragment>
@@ -587,89 +546,31 @@ const Sidebar = ({ width }) => {
                   <SideLink
                     item={item}
                     isDropdownLink={item.path === '#'}
-                    fontColor2={fontColor2}
+                    fontColor1={fontColor1}
                     activeFontColor={sidebarActiveFontColor}
                     activeIconColor={sidebarActiveIconColor}
                     darkMode={darkMode}
+                    bgColorSide={bgColorSide}
+                    hoverColorSide={hoverColorSide}
                   />
                 </LinkContainer>
               </Fragment>
             ))}
           </LinksContainer>
-          <MobileFollow>
-            <Social />
-          </MobileFollow>
           <CurrencyDiv>
-            <Dropdown>
-              <CurrencyDropDown
-                id="dropdown-basic"
-                bgcolor={backColor}
-                fontcolor2={fontColor2}
-                hovercolor={hoverColor}
-                style={{ padding: 0 }}
-              >
-                {curCurrency ? (
-                  <CurrencySelect
-                    bgcolor={backColor}
-                    fontcolor2={fontColor2}
-                    hovercolor={hoverColor}
-                  >
-                    <img
-                      className={darkMode ? 'logo-dark' : 'logo'}
-                      src={curCurrency.imgPath}
-                      width={16}
-                      height={16}
-                      alt=""
-                    />
-                    <span>{curCurrency.symbol}</span>
-                    <img className="dropdown-icon" src={DropDownIcon} alt="" />
-                  </CurrencySelect>
-                ) : (
-                  <></>
-                )}
-              </CurrencyDropDown>
-              {!isSpecialApp ? (
-                <CurrencyDropDownMenu backcolor={backColor} bordercolor={borderColor}>
-                  {supportedCurrencies.map(elem => {
-                    return (
-                      <CurrencyDropDownItem
-                        onClick={() => {
-                          updateCurrency(elem.id)
-                        }}
-                        fontcolor={fontColor}
-                        filtercolor={filterColor}
-                        key={elem.id}
-                      >
-                        <img
-                          className={darkMode ? 'logo-dark' : 'logo'}
-                          src={elem.imgPath}
-                          width={14}
-                          height={14}
-                          alt=""
-                        />
-                        <span>{elem.symbol}</span>
-                        {curCurrency.id === elem.id ? (
-                          <img className="check-icon" src={Check} alt="" />
-                        ) : (
-                          <></>
-                        )}
-                      </CurrencyDropDownItem>
-                    )
-                  })}
-                </CurrencyDropDownMenu>
-              ) : (
-                <></>
-              )}
-            </Dropdown>
+            <MobileFollow>
+              <Social />
+            </MobileFollow>
             <ThemeMode
               mode={darkMode ? 'dark' : 'light'}
               backColor={toggleBackColor}
-              circleBgColor={toggleCircleBgColor}
               borderColor={borderColor}
+              color={fontColor5}
             >
               <div id="theme-switch">
                 <div className="switch-track">
-                  <div className="switch-thumb">{darkMode ? <LuMoon /> : <TbSun />}</div>
+                  <div className="switch-thumb">{darkMode ? <PiMoonBold /> : <PiSunDimFill />}</div>
+                  <div className="switch-icon">{darkMode ? <PiSunDimFill /> : <PiMoonBold />}</div>
                 </div>
 
                 <input
@@ -726,10 +627,12 @@ const Sidebar = ({ width }) => {
                       <SideLink
                         item={item}
                         isDropdownLink={item.path === '#'}
-                        fontColor2={fontColor2}
+                        fontColor1={fontColor1}
                         activeFontColor={sidebarActiveFontColor}
                         activeIconColor={sidebarActiveIconColor}
                         darkMode={darkMode}
+                        bgColorSide={bgColorSide}
+                        hoverColorSide={hoverColorSide}
                       />
                     </MobileLinkContainer>
                     {item.subItems ? (
@@ -738,10 +641,12 @@ const Sidebar = ({ width }) => {
                           <SideLink
                             key={subItem.name}
                             item={subItem}
-                            fontColor2={fontColor2}
+                            fontColor1={fontColor1}
                             activeFontColor={sidebarActiveFontColor}
                             activeIconColor={sidebarActiveIconColor}
                             darkMode={darkMode}
+                            bgColorSide={bgColorSide}
+                            hoverColorSide={hoverColorSide}
                           />
                         ))}
                       </LinkContainer>
@@ -753,12 +658,13 @@ const Sidebar = ({ width }) => {
                   <ThemeMode
                     mode={darkMode ? 'dark' : 'light'}
                     backColor={toggleBackColor}
-                    circleBgColor={toggleCircleBgColor}
                     borderColor={borderColor}
                   >
                     <div id="theme-switch">
                       <div className="switch-track">
-                        <div className="switch-thumb">{darkMode ? <LuMoon /> : <TbSun />}</div>
+                        <div className="switch-thumb">
+                          {darkMode ? <PiMoonBold /> : <PiSunDimFill />}
+                        </div>
                       </div>
 
                       <input

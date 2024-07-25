@@ -1,4 +1,7 @@
 import React from 'react'
+import Dollar from './assets/images/logos/sidebar/dollar.svg'
+import Pound from './assets/images/logos/sidebar/pound.svg'
+import Euro from './assets/images/logos/sidebar/euro.svg'
 
 export const HARVEST_LAUNCH_DATE = new Date(1598986800000)
 
@@ -827,4 +830,25 @@ export const fakeChartData = [
   { x: 1693490724000, y: 12, z: 4.3 },
   { x: 1693633284000, y: 14, z: 4.5 },
   { x: 1693775844000, y: 15, z: 4.5 },
+]
+
+export const supportedCurrencies = [
+  {
+    id: SUPPORTED_CURRENCY.USD,
+    symbol: 'USD',
+    icon: '$',
+    imgPath: Dollar,
+  },
+  {
+    id: SUPPORTED_CURRENCY.GBP,
+    symbol: 'GBP',
+    icon: '£',
+    imgPath: Pound,
+  },
+  {
+    id: SUPPORTED_CURRENCY.EUR,
+    symbol: 'EUR',
+    icon: '€',
+    imgPath: Euro,
+  },
 ]
