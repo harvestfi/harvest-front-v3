@@ -2,17 +2,9 @@ import styled from 'styled-components'
 
 const DetailView = styled.div`
   width: 100%;
-  padding: 16px 24px;
+  padding: 7px 25px;
   cursor: pointer;
   background: ${props => props.background};
-  ${props =>
-    props.mode === 'dark'
-      ? `
-        ${props.lastElement === 'yes' ? '' : ''}
-      `
-      : `
-        ${props.lastElement === 'yes' ? `` : ``}
-  `}
   transition: 0.25s;
 
   &:hover {
@@ -23,12 +15,12 @@ const DetailView = styled.div`
     padding: 0px;
     border: unset;
     border-bottom: 1px solid ${props => props.borderColor};
-    ${props => (props.firstElement === 'yes' ? `border-radius: 16px 16px 0px 0px;` : ``)}
   }
 `
 
 const FlexDiv = styled.div`
   display: flex;
+  justify-content: space-between;
   flex-wrap: wrap;
   position: relative;
   width: ${props => (props.width ? props.width : 'auto')};
@@ -43,6 +35,7 @@ const FlexDiv = styled.div`
         : ``};
   }
 `
+
 const Content = styled.div`
   width: ${props => props.width};
   ${props =>
@@ -64,6 +57,12 @@ const Content = styled.div`
   `
       : ''}
   ${props =>
+    props.paddingRight
+      ? `
+    padding-right: ${props.paddingRight};
+  `
+      : ''}
+  ${props =>
     props.marginTop
       ? `
     margin-top: ${props.marginTop};
@@ -73,6 +72,10 @@ const Content = styled.div`
   font-size: 20px;
   line-height: 23px;
   align-self: center;
+
+  #harvest-event-minus {
+    max-width: 300px;
+  }
 
   &.mobile-extender {
     width: unset;
@@ -86,6 +89,17 @@ const Content = styled.div`
 
     img.active-file-icon {
       padding: 6px;
+    }
+  }
+
+  div.timestamp {
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    color: ${props => props.color};
+
+    @media screen and (max-width: 992px) {
+      font-size: 12px;
     }
   }
 
@@ -112,59 +126,12 @@ const Content = styled.div`
   }
 `
 
-const BadgeIcon = styled.div`
-  margin: auto 17px auto 0px;
-  width: 23px;
-  height: 23px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  border-radius: 8px;
-  border: 1px solid ${props => props.borderColor};
-  box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.15);
+const NetImg = styled.div`
+  margin: auto 12px auto 0px;
 
-  &.network-badge {
-    @media screen and (max-width: 992px) {
-      margin-bottom: 15px;
-    }
+  @media screen and (max-width: 992px) {
+    margin: auto 5px auto 0px;
   }
 `
-const LogoImg = styled.img`
-  z-index: 10;
-  width: 37px;
-  height: 37px;
 
-  ${props =>
-    props.marginLeft
-      ? `
-    margin-left: ${props.marginLeft}
-  `
-      : ``};
-`
-
-const ContentInner = styled.div`
-  ${props =>
-    props.width
-      ? `
-    width: ${props.width}
-  `
-      : ``};
-  ${props =>
-    props.display
-      ? `
-    display: ${props.display};
-  `
-      : ''}
-  ${props =>
-    props.marginLeft
-      ? `
-    margin-left: ${props.marginLeft};
-  `
-      : ''}
-  font-weight: 400;
-  font-size: 20px;
-  line-height: 23px;
-  align-self: center;
-`
-
-export { DetailView, FlexDiv, BadgeIcon, Content, LogoImg, ContentInner }
+export { DetailView, FlexDiv, Content, NetImg }

@@ -3,10 +3,7 @@ import styled from 'styled-components'
 const Container = styled.div`
   width: 20%;
   font-weight: 700;
-  background: ${props => props.backColor};
-  padding: 24px;
-  border: 2px solid ${props => props.borderColor};
-  border-radius: 12px;
+  padding: 24px 24px 24px 0px;
 
   @media screen and (max-width: 1350px) {
     padding: 15px;

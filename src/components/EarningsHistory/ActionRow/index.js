@@ -11,12 +11,19 @@ import { Content, DetailView, FlexDiv, IconWrapper, Badge, NetImg, NewLabel } fr
 
 const ActionRow = ({ info, showTotalBalance }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const { darkMode, switchMode, backColor, borderColor, hoverColor, fontColor } = useThemeContext()
+  const {
+    darkMode,
+    switchMode,
+    backColor,
+    borderColor,
+    hoverColorSoft,
+    fontColor,
+  } = useThemeContext()
 
   return (
     <DetailView
       borderColor={borderColor}
-      hoverColor={hoverColor}
+      hoverColor={hoverColorSoft}
       mode={switchMode}
       background={backColor}
     >

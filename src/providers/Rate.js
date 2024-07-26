@@ -1,34 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { get } from 'lodash'
-import Dollar from '../assets/images/logos/sidebar/dollar.svg'
-import Pound from '../assets/images/logos/sidebar/pound.svg'
-import Euro from '../assets/images/logos/sidebar/euro.svg'
-import { CURRENCY_RATES_API_ENDPOINT, SUPPORTED_CURRENCY } from '../constants'
+import { CURRENCY_RATES_API_ENDPOINT, supportedCurrencies } from '../constants'
 
 const RateContext = createContext()
 const useRate = () => useContext(RateContext)
-
-const supportedCurrencies = [
-  {
-    id: SUPPORTED_CURRENCY.USD,
-    symbol: 'USD',
-    icon: '$',
-    imgPath: Dollar,
-  },
-  {
-    id: SUPPORTED_CURRENCY.GBP,
-    symbol: 'GBP',
-    icon: '£',
-    imgPath: Pound,
-  },
-  {
-    id: SUPPORTED_CURRENCY.EUR,
-    symbol: 'EUR',
-    icon: '€',
-    imgPath: Euro,
-  },
-]
 
 const fetchDataFromAPI = (endpoint, defaultValue = null) =>
   axios

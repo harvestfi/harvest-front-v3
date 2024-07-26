@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { Dropdown } from 'react-bootstrap'
 import UsdIcon from '../../assets/images/ui/usd-port.svg'
 import TokensIcon from '../../assets/images/ui/tokens-port.svg'
 import BoxBgOne from '../../assets/images/logos/dashboard/box-bg-1.png'
@@ -29,7 +30,7 @@ const Container = styled.div`
 `
 
 const Inner = styled.div`
-  padding: 100px;
+  padding: 50px 75px 75px 75px;
   width: 100%;
 
   @media screen and (min-width: 1921px) {
@@ -38,7 +39,7 @@ const Inner = styled.div`
 
   @media screen and (max-width: 1480px) {
     width: 100%;
-    padding: 70px 30px 40px;
+    padding: 50px 30px;
   }
 
   @media screen and (max-width: 992px) {
@@ -50,6 +51,8 @@ const SubPart = styled.div`
   display: flex;
   justify-content: space-between;
   gap: 10px;
+  margin-bottom: 30px;
+  border-top: 1px solid ${props => props.color};
 
   @media screen and (max-width: 992px) {
     display: none;
@@ -74,6 +77,33 @@ const MobileDiv = styled.div`
   }
 `
 
+const HeaderWrap = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding-bottom: 20px;
+`
+
+const HeaderTitle = styled.div`
+  .title {
+    color: ${props => props.fontColor1};
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 28px;
+  }
+  .desc {
+    color: ${props => props.fontColor};
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 24px;
+  }
+`
+
+const HeaderButton = styled.div`
+  display: flex;
+  margin: auto 0px;
+  gap: 15px;
+`
+
 const FarmTitle = styled.span`
   display: flex;
   justify-content: space-between;
@@ -90,7 +120,7 @@ const TransactionDetails = styled.div`
   width: 100%;
   border-radius: 15px;
   transition: 0.25s;
-  margin-top: 25px;
+  margin-top: 20px;
 
   @media screen and (max-width: 992px) {
     margin-top: 0px;
@@ -508,6 +538,36 @@ const DescInfo = styled.div`
   }
 `
 
+const TableWrap = styled.div`
+  display: flex;
+  gap: 35px;
+
+  .table-title {
+    color: ${props => props.fontColor1};
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 28px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid ${props => props.color};
+  }
+
+  @media screen and (max-width: 1480px) {
+    gap: 20px;
+  }
+`
+
+const PositionTable = styled.div`
+  width: 70%;
+`
+
+const YieldTable = styled.div`
+  width: 30%;
+`
+
+const ContentBox = styled.div`
+  border: 1px solid ${props => props.borderColor};
+`
+
 const NewLabel = styled.div`
   font-weight: ${props => props.weight || '400'};
   font-size: ${props => props.size || '20px'};
@@ -655,46 +715,24 @@ const CheckBoxDiv = styled.div`
 const SwitchView = styled.div`
   display: flex;
   justify-content: end;
-  padding: 8px 14px;
+  padding: 10px;
   gap: 8px;
   width: fit-content;
+  height: 40px;
   align-items: center;
-  margin: 25px 0px 25px auto;
+  color: ${props => props.color};
   font-size: 14px;
   font-weight: 600;
   line-height: 20px;
   position: relative;
-
-  /* border-radius: 8px;
-  border: 1px solid transparent;
-  border-image: linear-gradient(to right, #fc5c7d, #6a82fb) 1; */
-  background: linear-gradient(to right, #fc5c7d, #6a82fb);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  /* background-image: linear-gradient(black, black), linear-gradient(to right, #fc5c7d, #6a82fb);
-  background-origin: border-box;
-  background-clip: content-box, border-box; */
-
-  ::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 8px;
-    padding: 2px;
-    background: linear-gradient(to right, #fc5c7d, #6a82fb);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 1;
-    transition: opacity 0.3s ease;
-  }
-
-  :hover::before {
-    opacity: 0.7;
-  }
+  border-radius: 8px;
+  border: 1px solid ${props => props.borderColor};
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  background: ${props => props.backColor};
 
   :hover {
     cursor: pointer;
+    background: ${props => props.hovercolor};
   }
 
   img {
@@ -707,12 +745,187 @@ const SwitchView = styled.div`
   }
 `
 
+const BackArrow = styled.div`
+  display: flex;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+
+  :hover {
+    cursor: pointer;
+  }
+`
+
+const CurrencySelect = styled.div`
+  width: 100%;
+  height: 40px;
+  background: ${props => props.backColor} !important;
+  border: 1px solid ${props => props.borderColor};
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  transition: 0.25s;
+
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 24px;
+  text-align: right;
+  color: ${props => props.fontcolor2} !important;
+
+  display: flex;
+  align-items: center;
+
+  &:hover {
+    background: ${props => props.hovercolor} !important;
+  }
+
+  img.logo {
+    margin-right: 7.5px;
+  }
+
+  img.logo-dark {
+    margin-right: 7.5px;
+  }
+
+  span {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 4px;
+  }
+`
+
+const CurrencyDropDown = styled(Dropdown.Toggle)`
+  background: ${props => props.bgcolor} !important;
+  border: none !important;
+  border-radius: 8px !important;
+  color: ${props => props.fontcolor2} !important;
+  align-items: center;
+  width: 100%;
+  display: flex !important;
+  justify-content: space-between;
+  text-align: left;
+  position: relative;
+  margin: 0px 0px;
+  &:after {
+    display: none !important;
+  }
+
+  &:hover {
+    background: ${props => props.hovercolor} !important;
+    color: black;
+    font-weight: 500;
+  }
+
+  &:active {
+    background: green;
+    color: black;
+  }
+
+  .chain-name {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    margin-left: 5px;
+  }
+
+  img.narrow {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+  }
+
+  @media screen and (max-width: 992px) {
+    margin-left: 13px;
+  }
+`
+
+const CurrencyDropDownMenu = styled(Dropdown.Menu)`
+  background-color: ${props => props.backcolor} !important;
+  border: 1px solid ${props => props.bordercolor} !important;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 8px !important;
+  padding: 0;
+  min-width: 6rem;
+  width: 100% !important;
+  z-index: 120;
+  top: 5px !important;
+
+  &:focus {
+    box-shadow: none;
+  }
+`
+
+const CurrencyDropDownItem = styled(Dropdown.Item)`
+  text-align: left;
+  display: flex !important;
+  justify-content: start;
+  align-items: center;
+  font-size: 14px;
+  padding: 10px 5px;
+  ${props =>
+    props.bordercolor
+      ? `
+    border-bottom: 0.5px solid ${props.bordercolor} !important;
+  `
+      : `
+  `}
+  width: auto !important;
+  color: ${props => props.fontcolor} !important;
+
+  :first-child {
+    border-radius: 8px 8px 0px 0px;
+  }
+
+  :last-child {
+    border-radius: 0px 0px 8px 8px;
+  }
+
+  &:hover {
+    background: ${props => props.hovercolor} !important;
+
+    div {
+      color: #ff9400;
+    }
+  }
+
+  img {
+    margin-right: 15px;
+    margin-left: 10px;
+  }
+
+  img.logo {
+    margin-right: 7.5px;
+  }
+
+  img.logo-dark {
+    margin-right: 7.5px;
+  }
+
+  div {
+    align-self: center;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 18px;
+  }
+
+  svg.check-icon {
+    margin-left: 10px;
+    color: #6988ff;
+  }
+`
+
 export {
   Container,
   SubPart,
   MobileSubPart,
   MobileDiv,
   TransactionDetails,
+  HeaderWrap,
+  HeaderTitle,
+  HeaderButton,
   FarmTitle,
   MyFarm,
   FarmPic,
@@ -732,8 +945,17 @@ export {
   Col,
   TableContent,
   DescInfo,
+  TableWrap,
+  PositionTable,
+  YieldTable,
+  ContentBox,
   NewLabel,
   ConnectButtonStyle,
   CheckBoxDiv,
   SwitchView,
+  BackArrow,
+  CurrencyDropDown,
+  CurrencySelect,
+  CurrencyDropDownMenu,
+  CurrencyDropDownItem,
 }

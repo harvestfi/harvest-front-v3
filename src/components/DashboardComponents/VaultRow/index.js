@@ -6,20 +6,16 @@ import { displayAPY, formatNumber, formatNumberWido } from '../../../utilities/f
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { chainList, directDetailUrl } from '../../../constants'
 import { useRate } from '../../../providers/Rate'
-import File from '../../../assets/images/logos/dashboard/file-02.svg'
-import MobileFile from '../../../assets/images/logos/dashboard/file-01.svg'
-import { BadgeIcon, Content, DetailView, FlexDiv, LogoImg, Img, ContentInner } from './style'
+import { BadgeIcon, Content, DetailView, FlexDiv, LogoImg, ContentInner } from './style'
 
-const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, cKey }) => {
+const VaultRow = ({ info, firstElement, lastElement, cKey }) => {
   const { push } = useHistory()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const {
     switchMode,
     backColor,
-    bgColorButton,
     borderColor,
-    hoverColor,
-    activeColor,
+    hoverColorSoft,
     fontColor1,
     fontColor,
   } = useThemeContext()
@@ -40,10 +36,10 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
       firstElement={firstElement}
       lastElement={lastElement}
       borderColor={borderColor}
-      hoverColor={hoverColor}
+      hoverColor={hoverColorSoft}
       key={cKey}
       mode={switchMode}
-      background={showDetail[cKey] ? activeColor : backColor}
+      background={backColor}
       onClick={() => {
         let badgeId = -1
         const token = info.token
@@ -99,27 +95,9 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
             />
           </ContentInner>
         </Content>
-        <Content width={isMobile ? '33%' : '11%'} marginTop={isMobile ? '15px' : 'unset'}>
-          {isMobile && (
-            <ListItem color={fontColor} weight={500} size={12} height={18} value="Live APY" />
-          )}
-          <ListItem
-            color={isMobile ? fontColor1 : fontColor}
-            weight={500}
-            size={14}
-            height={20}
-            value={
-              info.apy === -1
-                ? 'Inactive'
-                : Number.isNaN(info.apy)
-                ? '-'
-                : `${displayAPY(info.apy)}`
-            }
-          />
-        </Content>
         {isMobile && (
           <>
-            <Content width={isMobile ? '33%' : '11%'} marginTop={isMobile ? '15px' : 'unset'}>
+            <Content width={isMobile ? '33%' : '20%'} marginTop={isMobile ? '15px' : 'unset'}>
               <ListItem color={fontColor} weight={500} size={12} height={18} value="My Balance" />
               <ListItem
                 weight={500}
@@ -135,7 +113,7 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
                 }`}
               />
             </Content>
-            <Content width={isMobile ? '33%' : '11%'} marginTop={isMobile ? '15px' : 'unset'}>
+            <Content width={isMobile ? '33%' : '20%'} marginTop={isMobile ? '15px' : 'unset'}>
               <ListItem color={fontColor} weight={500} size={12} height={18} value="Rewards" />
               <ListItem
                 weight={500}
@@ -157,7 +135,7 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
           </>
         )}
         {!isMobile && (
-          <Content width={isMobile ? '33%' : '11%'}>
+          <Content width={isMobile ? '33%' : '15%'}>
             <ListItem
               weight={500}
               size={14}
@@ -173,7 +151,7 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
             />
           </Content>
         )}
-        <Content width={isMobile ? '33%' : '11%'} marginTop={isMobile ? '15px' : 'unset'}>
+        <Content width={isMobile ? '33%' : '15%'} marginTop={isMobile ? '15px' : 'unset'}>
           {isMobile && (
             <ListItem color={fontColor} weight={500} size={12} height={18} value="Monthly Yield" />
           )}
@@ -191,26 +169,8 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
             }`}
           />
         </Content>
-        <Content width={isMobile ? '33%' : '11%'} marginTop={isMobile ? '15px' : 'unset'}>
-          {isMobile && (
-            <ListItem color={fontColor} weight={500} size={12} height={18} value="Daily Yield" />
-          )}
-          <ListItem
-            weight={500}
-            size={14}
-            height={20}
-            color={isMobile ? fontColor1 : fontColor}
-            value={`${
-              info.dailyYield === 0
-                ? `${currencySym}0.00`
-                : info.dailyYield < 0.01
-                ? `<${currencySym}0.01`
-                : `${currencySym}${formatNumber(info.dailyYield * Number(currencyRate), 2)}`
-            }`}
-          />
-        </Content>
         {!isMobile && (
-          <Content width={isMobile ? '33%' : '11%'}>
+          <Content width={isMobile ? '33%' : '15%'}>
             <ListItem
               weight={500}
               size={14}
@@ -226,115 +186,25 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
             />
           </Content>
         )}
-        <Content
-          onClick={event => {
-            event.stopPropagation()
-            const updatedShowDetail = [...showDetail]
-            updatedShowDetail[cKey] = !updatedShowDetail[cKey]
-            setShowDetail(updatedShowDetail)
-          }}
-          width={isMobile ? '5%' : '5%'}
-          cursor="pointer"
-          className={isMobile && 'mobile-extender'}
-          backColor={backColor}
-          bgColorButton={bgColorButton}
-          borderColor={borderColor}
-        >
-          {showDetail[cKey] ? (
-            <img src={isMobile ? MobileFile : File} className="active-file-icon" alt="file" />
-          ) : (
-            <img src={isMobile ? MobileFile : File} className="file-icon" alt="file" />
+        <Content width={isMobile ? '33%' : '15%'} marginTop={isMobile ? '15px' : 'unset'}>
+          {isMobile && (
+            <ListItem color={fontColor} weight={500} size={12} height={18} value="Live APY" />
           )}
+          <ListItem
+            color={isMobile ? fontColor1 : fontColor}
+            weight={500}
+            size={14}
+            height={20}
+            value={
+              info.apy === -1
+                ? 'Inactive'
+                : Number.isNaN(info.apy)
+                ? '-'
+                : `${displayAPY(info.apy)}`
+            }
+          />
         </Content>
       </FlexDiv>
-      {showDetail[cKey] && (
-        <FlexDiv padding={isMobile ? '0px 10px 10px' : '16px 0'}>
-          <Content width={isMobile ? '100%' : '40%'} display={isMobile ? 'flex' : 'flex'}>
-            <ContentInner width={isMobile ? '33%' : '50%'}>
-              <ListItem
-                weight={600}
-                size={isMobile ? 12 : 14}
-                height={isMobile ? 18 : 20}
-                value="Unstaked"
-                marginTop={isMobile ? 10 : 0}
-                color={fontColor1}
-              />
-              <ListItem
-                weight={500}
-                size={isMobile ? 14 : 14}
-                height={isMobile ? 20 : 20}
-                value={info.unstake === 0 ? '0.00' : `${formatNumberWido(info.unstake, 6)}`}
-                color={fontColor}
-              />
-            </ContentInner>
-            <ContentInner width={isMobile ? '33%' : '50%'} marginLeft={isMobile ? '0px' : '11px'}>
-              <ListItem
-                weight={600}
-                size={isMobile ? 12 : 14}
-                height={isMobile ? 18 : 20}
-                value="Staked"
-                marginTop={isMobile ? 10 : 0}
-                color={fontColor1}
-              />
-              <ListItem
-                weight={500}
-                size={isMobile ? 14 : 14}
-                height={isMobile ? 20 : 20}
-                value={info.stake === 0 ? '0.00' : `${formatNumberWido(info.stake, 6)}`}
-                color={fontColor}
-              />
-            </ContentInner>
-          </Content>
-          {isMobile && (
-            <Content width={isMobile ? '100%' : '11%'} display={isMobile ? 'flex' : 'block'}>
-              <ListItem
-                weight={600}
-                size={isMobile ? 12 : 14}
-                height={isMobile ? 18 : 20}
-                value={isMobile ? 'Rewards Breakdown' : 'Rewards'}
-                marginTop={isMobile ? 15 : 0}
-                color={fontColor1}
-              />
-            </Content>
-          )}
-          {info.reward.map((rw, key) => (
-            <Content
-              key={key}
-              width={isMobile ? '35%' : '15%'}
-              display="flex"
-              marginTop={isMobile ? '15px' : 'unset'}
-            >
-              <Img src={`/icons/${info.rewardSymbol[key].toLowerCase()}.svg`} alt="jeur" />
-              <div>
-                <ListItem
-                  weight={isMobile ? 400 : 500}
-                  size={isMobile ? 14 : 14}
-                  height={isMobile ? 20 : 20}
-                  value={`${info.reward[key] === 0 ? '0.00' : `${info.reward[key].toFixed(6)}`}`}
-                  color={isMobile ? fontColor : fontColor1}
-                />
-                <ListItem
-                  weight={400}
-                  size={isMobile ? 14 : 14}
-                  height={isMobile ? 20 : 20}
-                  value={`${
-                    info.rewardUSD[key] === 0
-                      ? `${currencySym}0.00`
-                      : info.rewardUSD[key] < 0.01
-                      ? `<${currencySym}0.01`
-                      : `${currencySym}${formatNumber(
-                          info.rewardUSD[key] * Number(currencyRate),
-                          2,
-                        )}`
-                  }`}
-                  color={isMobile ? fontColor1 : fontColor}
-                />
-              </div>
-            </Content>
-          ))}
-          <Content width={isMobile ? '20%' : '5%'} />
-        </FlexDiv>
-      )}
     </DetailView>
   )
 }

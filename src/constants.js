@@ -1,7 +1,7 @@
 import React from 'react'
-import Dollar from './assets/images/logos/sidebar/dollar.svg'
-import Pound from './assets/images/logos/sidebar/pound.svg'
-import Euro from './assets/images/logos/sidebar/euro.svg'
+import Dollar from './assets/images/logos/dashboard/flag_usd.svg'
+import Pound from './assets/images/logos/dashboard/flag_gbp.svg'
+import Euro from './assets/images/logos/dashboard/flag_euro.svg'
 
 export const HARVEST_LAUNCH_DATE = new Date(1598986800000)
 
