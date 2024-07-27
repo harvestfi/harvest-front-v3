@@ -115,6 +115,7 @@ const Link = styled.button`
   padding: 8px 12px;
   border-width: 0;
   border-radius: 6px;
+  transition: 0.5s;
 
   .sideIcon {
     width: 24px;
@@ -124,6 +125,10 @@ const Link = styled.button`
       props.darkMode
         ? 'invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%)'
         : ''};
+  }
+
+  &:hover {
+    background: ${props => props.hoverColorSide};
   }
 
   ${props =>
@@ -141,15 +146,10 @@ const Link = styled.button`
   ${props =>
     props.active
       ? `
-    background: ${props.bgColorSide};
-    ${
-      props.darkMode
-        ? `
-      img {
-        filter: invert(46%) sepia(96%) saturate(382%) hue-rotate(114deg) brightness(99%) contrast(89%);
-      }
-    `
-        : ``
+    background: #6988FF !important;
+    color: #fff;
+    img.sideIcon {
+      filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%);
     }
   `
       : `
@@ -193,10 +193,6 @@ const Link = styled.button`
       height: 20px;
     }
   }
-
-  &:hover {
-    background: ${props => props.hoverColorSide};
-  }
 `
 
 const MiddleActionsContainer = styled.div`
@@ -235,10 +231,10 @@ const ConnectButtonStyle = styled.button`
   font-weight: 600;
   margin: 25px 0px;
   width: 100%;
-  background: #ffcd05;
   border-radius: 8px;
-  border: none;
-  color: #1d2939;
+  border: 2px solid #6988ff;
+  background: none;
+  color: #6888ff;
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
   cursor: pointer;
   transition: 0.7s;
@@ -256,10 +252,6 @@ const ConnectButtonStyle = styled.button`
       : `
       padding: 15px 0px 15px 0px;
     `}
-
-  &:hover {
-    background: #ffe16a;
-  }
 
   img.connect-wallet {
     margin-right: 25px;
@@ -486,7 +478,7 @@ const ConnectAvatar = styled.div`
 
 const Address = styled.span`
   display: flex;
-  color: ${props => props.color};
+  color: #8ba3ff;
   font-size: 12px;
   font-weight: 500;
   line-height: 12px;
@@ -595,7 +587,7 @@ const SideIcons = styled.img`
 `
 
 const UserDropDown = styled(Dropdown.Toggle)`
-  background: ${props => props.bgcolor} !important;
+  background: none !important;
   border: none !important;
   border-radius: 10px !important;
   color: ${props => props.fontcolor2} !important;
@@ -607,6 +599,7 @@ const UserDropDown = styled(Dropdown.Toggle)`
   text-align: left;
   position: relative;
   margin: 20px 0px;
+  transition: 0.5s;
 
   &:after {
     display: none !important;
@@ -631,13 +624,8 @@ const UserDropDown = styled(Dropdown.Toggle)`
   }
 
   img.chain-icon {
-    width: 14px;
-    height: 14px;
-    border-radius: 2.278px;
-    border: 1.139px solid #29ce84;
-    background: rgba(255, 255, 255, 0.6);
-    box-shadow: 0px 0px 1.139px 0px rgba(0, 0, 0, 0.15);
-    padding: 1.708px 1.706px 1.709px 1.71px;
+    width: 11px;
+    height: 11px;
   }
 
   @media screen and (max-width: 992px) {

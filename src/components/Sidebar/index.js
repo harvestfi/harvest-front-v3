@@ -5,7 +5,7 @@ import { PiSunDimFill, PiMoonBold } from 'react-icons/pi'
 import { IoCloseCircleOutline } from 'react-icons/io5'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 import ConnectFailureIcon from '../../assets/images/logos/sidebar/connect-failure.svg'
-import connectAvatar from '../../assets/images/logos/sidebar/happyavatar.png'
+import connectAvatar from '../../assets/images/logos/sidebar/connect-frame.png'
 import connectAvatarMobile from '../../assets/images/logos/sidebar/connectavatarmobile.svg'
 // import Docs from '../../assets/images/logos/sidebar/docs.svg'
 import FAQ from '../../assets/images/logos/sidebar/faq.svg'
@@ -198,7 +198,6 @@ const SideLink = ({
   fontColor1,
   activeIconColor,
   darkMode,
-  bgColorSide,
   hoverColorSide,
 }) => {
   const { pathname } = useLocation()
@@ -220,7 +219,6 @@ const SideLink = ({
       activeIconColor={activeIconColor}
       darkMode={darkMode}
       enabled={item.enabled === false ? 'false' : 'true'}
-      bgColorSide={bgColorSide}
       hoverColorSide={hoverColorSide}
     >
       <div className="item">
@@ -274,7 +272,6 @@ const Sidebar = ({ width }) => {
     setDarkMode,
     backColor,
     bgColor,
-    bgColorSide,
     fontColor,
     fontColor1,
     fontColor2,
@@ -451,7 +448,6 @@ const Sidebar = ({ width }) => {
                   <Dropdown>
                     <UserDropDown
                       id="dropdown-basic"
-                      bgcolor={bgColor}
                       fontcolor2={fontColor2}
                       hovercolor={hoverColor}
                     >
@@ -466,7 +462,7 @@ const Sidebar = ({ width }) => {
                               👋
                             </span>
                           </ConnectAvatar>
-                          <Address color={fontColor}>{formatAddress(account)}</Address>
+                          <Address>{formatAddress(account)}</Address>
                         </div>
                       </FlexDiv>
                       <img alt="chain icon" src={getChainIcon(chainId)} className="chain-icon" />
@@ -515,7 +511,6 @@ const Sidebar = ({ width }) => {
                         fontColor1={fontColor1}
                         activeIconColor={sidebarActiveIconColor}
                         darkMode={darkMode}
-                        bgColorSide={bgColorSide}
                         hoverColorSide={hoverColorSide}
                       />
                     </LinkContainer>
@@ -550,7 +545,6 @@ const Sidebar = ({ width }) => {
                     activeFontColor={sidebarActiveFontColor}
                     activeIconColor={sidebarActiveIconColor}
                     darkMode={darkMode}
-                    bgColorSide={bgColorSide}
                     hoverColorSide={hoverColorSide}
                   />
                 </LinkContainer>
@@ -631,7 +625,6 @@ const Sidebar = ({ width }) => {
                         activeFontColor={sidebarActiveFontColor}
                         activeIconColor={sidebarActiveIconColor}
                         darkMode={darkMode}
-                        bgColorSide={bgColorSide}
                         hoverColorSide={hoverColorSide}
                       />
                     </MobileLinkContainer>
@@ -645,7 +638,6 @@ const Sidebar = ({ width }) => {
                             activeFontColor={sidebarActiveFontColor}
                             activeIconColor={sidebarActiveIconColor}
                             darkMode={darkMode}
-                            bgColorSide={bgColorSide}
                             hoverColorSide={hoverColorSide}
                           />
                         ))}

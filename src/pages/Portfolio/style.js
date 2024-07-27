@@ -729,6 +729,7 @@ const SwitchView = styled.div`
   border: 1px solid ${props => props.borderColor};
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
   background: ${props => props.backColor};
+  transition: 0.5s;
 
   :hover {
     cursor: pointer;
@@ -763,8 +764,7 @@ const CurrencySelect = styled.div`
   background: ${props => props.backColor} !important;
   border: 1px solid ${props => props.borderColor};
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-  transition: 0.25s;
-
+  transition: 0.5s;
   border-radius: 8px;
   padding: 10px 16px;
   font-weight: 600;
@@ -809,6 +809,7 @@ const CurrencyDropDown = styled(Dropdown.Toggle)`
   text-align: left;
   position: relative;
   margin: 0px 0px;
+
   &:after {
     display: none !important;
   }
