@@ -225,6 +225,7 @@ const ApexChart = ({
         unitBtw,
         roundNum,
         firstDate,
+        slotCount = 100,
         ago
 
       if (range === 'ALL' || range === '1Y') {
@@ -251,9 +252,26 @@ const ApexChart = ({
         } else {
           ago = Math.ceil(periodDate)
         }
+        if (ago > 700) {
+          slotCount = 500
+        } else if (ago > 365) {
+          slotCount = 400
+        } else if (ago > 180) {
+          slotCount = 300
+        } else if (ago > 90) {
+          slotCount = 150
+        } else if (ago > 60) {
+          slotCount = 100
+        } else if (ago > 30) {
+          slotCount = 100
+        } else {
+          slotCount = 50
+        }
       } else {
         ago = getRangeNumber(range)
       }
+
+      const slots = getTimeSlots(ago, slotCount)
 
       if (filter === 1) {
         if (isIFARM) {
@@ -294,9 +312,6 @@ const ApexChart = ({
         }
         userPriceFeedData = data && data.vaultHistories ? data.vaultHistories : []
       }
-
-      const slotCount = 100,
-        slots = getTimeSlots(ago, slotCount)
 
       if (filter === 1) {
         if (isIFARM) {
