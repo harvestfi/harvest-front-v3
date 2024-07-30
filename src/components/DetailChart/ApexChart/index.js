@@ -20,32 +20,20 @@ import { LoadingDiv, NoData } from './style'
 import { fromWei } from '../../../services/web3'
 import { useRate } from '../../../providers/Rate'
 
-// kind: "value" - TVL, "apy" - APY
 function generateChartDataWithSlots(slots, apiData, kind, filter, decimals) {
   const seriesData = []
-  if (filter === 2) {
-    for (let i = 0; i < slots.length; i += 1) {
-      const data = apiData.reduce((prev, curr) =>
-        Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
-          ? curr
-          : prev,
-      )
-
-      seriesData.push({
-        x: slots[i] * 1000,
-        y: fromWei(parseFloat(data.sharePrice), decimals, decimals, true),
-      })
-    }
-  } else {
-    for (let i = 0; i < slots.length; i += 1) {
-      for (let j = 0; j < apiData.length; j += 1) {
-        if (slots[i] > parseInt(apiData[j].timestamp, 10)) {
-          const value = parseFloat(apiData[j][kind])
+  for (let i = 0; i < slots.length; i += 1) {
+    for (let j = 0; j < apiData.length; j += 1) {
+      if (slots[i] > parseInt(apiData[j].timestamp, 10)) {
+        const value = parseFloat(apiData[j][kind])
+        if (filter === 2) {
+          seriesData.push({ x: slots[i] * 1000, y: fromWei(value, decimals, decimals, true) })
+        } else {
           seriesData.push({ x: slots[i] * 1000, y: value })
-          break
-        } else if (j === apiData.length - 1) {
-          seriesData.push({ x: slots[i] * 1000, y: 0 })
         }
+        break
+      } else if (j === apiData.length - 1) {
+        seriesData.push({ x: slots[i] * 1000, y: 0 })
       }
     }
   }
