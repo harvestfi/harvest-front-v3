@@ -14,8 +14,8 @@ import Coin2 from '../../assets/images/logos/dashboard/coins-stacked-04.svg'
 import Diamond from '../../assets/images/logos/dashboard/diamond-01.svg'
 import Sort from '../../assets/images/logos/dashboard/sort.svg'
 import BankNote from '../../assets/images/logos/dashboard/bank-note.svg'
-import ConnectDisableIcon from '../../assets/images/logos/sidebar/connect-disable.svg'
 import DropDownIcon from '../../assets/images/logos/advancedfarm/drop-down.svg'
+import AdvancedImg from '../../assets/images/logos/sidebar/advanced.svg'
 import VaultRow from '../../components/DashboardComponents/VaultRow'
 import EarningsHistory from '../../components/EarningsHistory/HistoryData'
 import EarningsHistoryLatest from '../../components/EarningsHistoryLatest/HistoryDataLatest'
@@ -29,7 +29,6 @@ import {
   supportedCurrencies,
 } from '../../constants'
 import { addresses } from '../../data'
-import { CHAIN_IDS } from '../../data/constants'
 import { usePools } from '../../providers/Pools'
 import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
@@ -37,7 +36,7 @@ import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { useRate } from '../../providers/Rate'
 import { fromWei } from '../../services/web3'
-import { parseValue, isLedgerLive, isSpecialApp } from '../../utilities/formats'
+import { parseValue, isSpecialApp } from '../../utilities/formats'
 import {
   getCoinListFromApi,
   getTokenPriceFromApi,
@@ -50,15 +49,9 @@ import {
   Container,
   EmptyInfo,
   EmptyPanel,
-  ExploreFarm,
-  ExploreContent,
-  ExploreTitle,
   Header,
   Inner,
   SubPart,
-  MobileSubPart,
-  MobileDiv,
-  DescInfo,
   // ThemeMode,
   TransactionDetails,
   Col,
@@ -78,6 +71,7 @@ import {
   YieldTable,
   ContentBox,
   BackArrow,
+  ExploreButtonStyle,
 } from './style'
 
 const totalNetProfitKey = 'TOTAL_NET_PROFIT'
@@ -85,7 +79,7 @@ const totalHistoryDataKey = 'TOTAL_HISTORY_DATA'
 
 const Portfolio = () => {
   const { push } = useHistory()
-  const { connected, connectAction, account, balances, getWalletBalances, chainId } = useWallet()
+  const { connected, connectAction, account, balances, getWalletBalances } = useWallet()
   const { userStats, fetchUserPoolStats, totalPools, disableWallet } = usePools()
   const { profitShareAPY } = useStats()
   const { vaultsData, loadingVaults, getFarmingBalances } = useVaults()
@@ -94,8 +88,10 @@ const Portfolio = () => {
   const {
     darkMode,
     bgColor,
+    bgColorTable,
+    backColorButton,
     hoverColor,
-    hoverColorSoft,
+    hoverColorNew,
     filterColor,
     backColor,
     fontColor,
@@ -763,13 +759,7 @@ const Portfolio = () => {
         <HeaderWrap>
           <HeaderTitle fontColor={fontColor} fontColor1={fontColor1}>
             {!viewPositions && (
-              <BackArrow
-                backColor={backColor}
-                hovercolor={hoverColorSoft}
-                borderColor={inputBorderColor}
-                onClick={() => setViewPositions(prev => !prev)}
-                darkMode={darkMode}
-              >
+              <BackArrow onClick={() => setViewPositions(prev => !prev)}>
                 <BiLeftArrowAlt fontSize={20} />
                 Back
               </BackArrow>
@@ -786,9 +776,9 @@ const Portfolio = () => {
               <Dropdown>
                 <CurrencyDropDown
                   id="dropdown-basic"
-                  bgcolor={backColor}
+                  bgcolor={backColorButton}
                   fontcolor2={fontColor2}
-                  hovercolor={hoverColorSoft}
+                  hovercolor={hoverColorNew}
                   style={{ padding: 0 }}
                 >
                   {curCurrency ? (
@@ -796,7 +786,6 @@ const Portfolio = () => {
                       backColor={backColor}
                       fontcolor2={fontColor2}
                       hovercolor={hoverColor}
-                      borderColor={inputBorderColor}
                     >
                       <img
                         className={darkMode ? 'logo-dark' : 'logo'}
@@ -813,7 +802,7 @@ const Portfolio = () => {
                   )}
                 </CurrencyDropDown>
                 {!isSpecialApp ? (
-                  <CurrencyDropDownMenu backcolor={backColor} bordercolor={inputBorderColor}>
+                  <CurrencyDropDownMenu backcolor={backColorButton}>
                     {supportedCurrencies.map(elem => {
                       return (
                         <CurrencyDropDownItem
@@ -822,7 +811,7 @@ const Portfolio = () => {
                           }}
                           fontcolor={fontColor}
                           filtercolor={filterColor}
-                          hovercolor={hoverColorSoft}
+                          hovercolor={hoverColorNew}
                           key={elem.id}
                         >
                           <img
@@ -848,9 +837,8 @@ const Portfolio = () => {
               </Dropdown>
               <SwitchView
                 color={fontColor2}
-                backColor={backColor}
-                hovercolor={hoverColorSoft}
-                borderColor={inputBorderColor}
+                backColor={backColorButton}
+                hovercolor={hoverColorNew}
                 onClick={() => setViewPositions(prev => !prev)}
                 darkMode={darkMode}
               >
@@ -861,7 +849,7 @@ const Portfolio = () => {
           )}
         </HeaderWrap>
         {viewPositions && (
-          <SubPart color={hoverColor}>
+          <SubPart>
             {TopBoxData.map((data, index) => (
               <TotalValue
                 key={index}
@@ -877,85 +865,28 @@ const Portfolio = () => {
           </SubPart>
         )}
 
-        <MobileSubPart>
-          <MobileDiv borderColor={borderColor}>
-            <TotalValue
-              icon={Safe}
-              content="Total Net Profit"
-              price={totalNetProfit}
-              toolTipTitle="tt-total-profit"
-              toolTip={
-                <>
-                  Total yield earnings in USD from all farms listed below, excluding claimable
-                  rewards. Subject to change with market fluctuations.
-                  <br />
-                  <br />
-                  For detailed information on your yield earnings, see the &apos;Underlying&apos;
-                  value in the Lifetime Yield box on each farm&apos;s page.
-                  <br />
-                  <br />
-                  By default, it does not consider inactive farms.
-                </>
-              }
-              connected={connected}
-              farmTokenListLength={farmTokenList.length}
-            />
-          </MobileDiv>
-          <MobileDiv borderColor={borderColor}>
-            <TotalValue
-              icon={Safe}
-              content="Portfolio Balance"
-              price={totalDeposit}
-              toolTipTitle="tt-total-balance"
-              toolTip="Sum of your wallet's staked and unstaked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
-              connected={connected}
-              farmTokenListLength={farmTokenList.length}
-            />
-            <TotalValue
-              icon={Diamond}
-              content="Rewards"
-              price={totalRewards}
-              toolTipTitle="tt-rewards"
-              toolTip="Accrued rewards on all your staked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
-              connected={connected}
-              farmTokenListLength={farmTokenList.length}
-            />
-          </MobileDiv>
-          <MobileDiv borderColor={borderColor}>
-            <TotalValue
-              icon={Coin1}
-              content="Est. Monthly Yield"
-              price={totalYieldMonthly}
-              toolTipTitle="tt-monthly-yield"
-              toolTip="Estimated monthly yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
-              connected={connected}
-              farmTokenListLength={farmTokenList.length}
-            />
-            <TotalValue
-              icon={Coin2}
-              content="Est. Daily Yield"
-              price={totalYieldDaily}
-              toolTipTitle="tt-daily-yield"
-              toolTip="Estimated daily yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens."
-              connected={connected}
-              farmTokenListLength={farmTokenList.length}
-            />
-          </MobileDiv>
-        </MobileSubPart>
-
-        <DescInfo fontColor={fontColor} borderColor={borderColor}>
-          {viewPositions
-            ? 'Preview farms with your active deposits below.'
-            : 'Preview event activity from all farms with which your wallet has ever interacted.'}
-        </DescInfo>
-
         {viewPositions ? (
-          <TableWrap fontColor1={fontColor1} color={hoverColor}>
+          <TableWrap fontColor1={fontColor1}>
             <PositionTable>
-              <div className="table-title">Positions</div>
+              <div className="table-title">
+                <div>Positions</div>
+                {connected && isMobile && farmTokenList.length > 0 && (
+                  <CheckBoxDiv>
+                    {showInactiveFarms ? (
+                      <FaRegSquareCheck
+                        onClick={() => setShowInactiveFarms(false)}
+                        color="#15B088"
+                      />
+                    ) : (
+                      <FaRegSquare onClick={() => setShowInactiveFarms(true)} color="#15B088" />
+                    )}
+                    <div>Show inactive</div>
+                  </CheckBoxDiv>
+                )}
+              </div>
               <TransactionDetails>
                 <TableContent borderColor={borderColor} count={farmTokenList.length}>
-                  <Header borderColor={borderColor} backColor={backColor}>
+                  <Header borderColor={borderColor} backColor={bgColorTable}>
                     <Column width={isMobile ? '23%' : '40%'} color={fontColor}>
                       <Col
                         onClick={() => {
@@ -1038,19 +969,51 @@ const Portfolio = () => {
                     <EmptyPanel borderColor={borderColor}>
                       {connected ? (
                         !noFarm ? (
-                          <EmptyInfo weight={500} size={14} height={20} color={fontColor} gap="2px">
+                          <EmptyInfo
+                            height="100%"
+                            weight={500}
+                            size={14}
+                            lineHeight={20}
+                            color={fontColor}
+                            gap="2px"
+                          >
                             <div>
                               Syncing positions <AnimatedDots />
                             </div>
                           </EmptyInfo>
                         ) : (
-                          <EmptyInfo weight={500} size={14} height={20} color={fontColor}>
-                            You&apos;re not farming anywhere. Let&apos;s put your assets to work!
+                          <EmptyInfo
+                            height="100%"
+                            weight={500}
+                            size={14}
+                            lineHeight={20}
+                            flexFlow="column"
+                            color={fontColor}
+                            gap="0px"
+                          >
+                            <div>
+                              Looks like you are not farming anywhere. Let&apos;s put your assets to
+                              work!
+                            </div>
+                            <ExploreButtonStyle
+                              color="connectwallet"
+                              onClick={() => {
+                                push(ROUTES.ADVANCED)
+                              }}
+                              minWidth="190px"
+                              inputBorderColor={inputBorderColor}
+                              bordercolor={fontColor}
+                              disabled={disableWallet}
+                              hoverColorButton={hoverColorButton}
+                            >
+                              <img src={AdvancedImg} className="explore-farms" alt="" />
+                              Explore Farms
+                            </ExploreButtonStyle>
                           </EmptyInfo>
                         )
                       ) : (
-                        <>
-                          <EmptyInfo weight={500} size={14} height={20} color={fontColor}>
+                        <EmptyInfo height="100%" flexFlow="column" gap="0px">
+                          <EmptyInfo weight={500} size={14} lineHeight={20} color={fontColor}>
                             Connect wallet to see your positions.
                           </EmptyInfo>
                           <ConnectButtonStyle
@@ -1060,21 +1023,18 @@ const Portfolio = () => {
                             }}
                             minWidth="190px"
                             inputBorderColor={inputBorderColor}
-                            fontColor2={fontColor2}
-                            backColor={backColor}
                             bordercolor={fontColor}
                             disabled={disableWallet}
                             hoverColorButton={hoverColorButton}
                           >
-                            <img src={ConnectDisableIcon} className="connect-wallet" alt="" />
                             Connect Wallet
                           </ConnectButtonStyle>
-                        </>
+                        </EmptyInfo>
                       )}
                     </EmptyPanel>
                   )}
                 </TableContent>
-                {connected && farmTokenList.length > 0 && (
+                {connected && !isMobile && farmTokenList.length > 0 && (
                   <CheckBoxDiv>
                     {showInactiveFarms ? (
                       <FaRegSquareCheck
@@ -1084,7 +1044,7 @@ const Portfolio = () => {
                     ) : (
                       <FaRegSquare onClick={() => setShowInactiveFarms(true)} color="#15B088" />
                     )}
-                    <div>Show inactive positions</div>
+                    <div>Show inactive</div>
                   </CheckBoxDiv>
                 )}
               </TransactionDetails>
@@ -1100,49 +1060,6 @@ const Portfolio = () => {
           </TableWrap>
         ) : (
           <EarningsHistory historyData={totalHistoryData} isDashboard="true" noData={noFarm} />
-        )}
-        {connected && farmTokenList.length > 0 ? (
-          <></>
-        ) : (
-          <EmptyInfo weight={500} size={16} height={21} marginTop="25px">
-            {!isLedgerLive() || (isLedgerLive() && chainId === CHAIN_IDS.BASE) ? (
-              <ExploreFarm
-                bgImage="first"
-                onClick={() => {
-                  push(ROUTES.BEGINNERSFARM)
-                }}
-              >
-                <ExploreContent>
-                  <ExploreTitle>Farm for Beginners</ExploreTitle>
-                  <div>Get started with a simple ETH farm on Base.</div>
-                </ExploreContent>
-              </ExploreFarm>
-            ) : (
-              <></>
-            )}
-            <ExploreFarm
-              bgImage="second"
-              onClick={() => {
-                window.open(ROUTES.TUTORIAL, '_blank')
-              }}
-            >
-              <ExploreContent>
-                <ExploreTitle>New to Crypto Farming?</ExploreTitle>
-                <div>Learn how to earn yield.</div>
-              </ExploreContent>
-            </ExploreFarm>
-            <ExploreFarm
-              bgImage="third"
-              onClick={() => {
-                push(ROUTES.ADVANCED)
-              }}
-            >
-              <ExploreContent>
-                <ExploreTitle>Advanced Farms</ExploreTitle>
-                <div>Over 100 farms to explore.</div>
-              </ExploreContent>
-            </ExploreFarm>
-          </EmptyInfo>
         )}
       </Inner>
     </Container>

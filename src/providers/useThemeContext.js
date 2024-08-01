@@ -18,6 +18,8 @@ export function ThemeProvider({ children }) {
 
   const pageBackColor = darkMode ? '#15202B' : '#fff'
   const backColor = darkMode ? '#0C111D' : '#fff'
+  const backColorButton = darkMode ? '#1E293B' : '#fff'
+  const bgColorTable = darkMode ? '#20273A' : '#fff'
   const bgColorModal = darkMode ? '#0C111D' : '#F2F5FF'
   const bgColor = darkMode ? '#161B26' : '#fff'
   const bgColorTooltip = darkMode ? '#59607A' : '#fff'
@@ -44,10 +46,11 @@ export function ThemeProvider({ children }) {
   const borderColor = darkMode ? '#1F242F' : '#F3F6FF'
   const inputBorderColor = darkMode ? '#1F242F' : '#d0d5dd'
   const hoverColor = darkMode ? '#1F242F' : '#e9f0f7'
-  const hoverColorSoft = darkMode ? '#1F242F' : '#F7F9FF'
+  const hoverColorRow = darkMode ? '#282D3A' : '#F7F9FF'
+  const hoverColorNew = darkMode ? '#313E55' : '#F7F9FF'
   const hoverColorButton = darkMode ? '#1F242F' : '#f2f4f7'
   const hoverColorAVR = darkMode ? '#1F242F' : '#fbe7ef'
-  const hoverColorSide = darkMode ? '#161b26' : '#F7F9FF'
+  const hoverColorSide = darkMode ? '#212c51' : '#F7F9FF'
   const activeColor = darkMode ? '#242C3C' : '#F3F6FF'
   const activeColorModal = darkMode ? '#242C3C' : '#ECFDF3'
   const modalInputColor = darkMode ? '#242C3C' : '#ffffff'
@@ -165,7 +168,9 @@ export function ThemeProvider({ children }) {
         setDarkMode,
         switchMode,
         pageBackColor,
+        backColorButton,
         bgColorModal,
+        bgColorTable,
         fontColor,
         fontColor1,
         fontColor2,
@@ -184,7 +189,8 @@ export function ThemeProvider({ children }) {
         borderColor,
         inputBorderColor,
         hoverColor,
-        hoverColorSoft,
+        hoverColorRow,
+        hoverColorNew,
         hoverColorButton,
         hoverColorAVR,
         hoverColorSide,

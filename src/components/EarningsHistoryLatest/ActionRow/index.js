@@ -7,12 +7,12 @@ import { Content, DetailView, FlexDiv } from './style'
 
 const ActionRow = ({ info }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const { switchMode, backColor, borderColor, hoverColorSoft, fontColor } = useThemeContext()
+  const { switchMode, backColor, borderColor, hoverColorRow, fontColor } = useThemeContext()
 
   return (
     <DetailView
       borderColor={borderColor}
-      hoverColor={hoverColorSoft}
+      hoverColor={hoverColorRow}
       mode={switchMode}
       background={backColor}
     >

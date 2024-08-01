@@ -1,13 +1,15 @@
 import React, { useState, useMemo, useCallback } from 'react'
 import ReactPaginate from 'react-paginate'
 import { useMediaQuery } from 'react-responsive'
+import { useHistory } from 'react-router-dom'
 import { IoArrowBackSharp, IoArrowForwardSharp } from 'react-icons/io5'
-import ConnectDisableIcon from '../../../assets/images/logos/sidebar/connect-disable.svg'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { usePools } from '../../../providers/Pools'
 import { useWallet } from '../../../providers/Wallet'
 import ActionRow from '../ActionRow'
 import AnimatedDots from '../../AnimatedDots'
+import AdvancedImg from '../../../assets/images/logos/sidebar/advanced.svg'
+import { ROUTES } from '../../../constants'
 import {
   TransactionDetails,
   HistoryPagination,
@@ -19,15 +21,17 @@ import {
   EmptyInfo,
   ConnectButtonStyle,
   ThemeMode,
+  ExploreButtonStyle,
 } from './style'
 
 const HistoryData = ({ historyData, isDashboard, noData }) => {
+  const { push } = useHistory()
   const itemsPerPage = isDashboard === 'true' ? 10 : 5
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const {
     borderColor,
-    backColor,
+    bgColorTable,
     bgColorFarm,
     fontColor,
     fontColor1,
@@ -76,7 +80,7 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
       hasData={(connected && historyData?.length > 0) || isDashboard === 'true' ? 'unset' : '80vh'}
     >
       <TableContent borderColor={borderColor}>
-        <Header borderColor={borderColor} backColor={backColor}>
+        <Header borderColor={borderColor} backColor={bgColorTable}>
           <Column width={isMobile ? '22%' : '20%'} color={fontColor}>
             <Col>Event</Col>
           </Column>
@@ -150,7 +154,7 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
           <EmptyPanel borderColor={borderColor}>
             {connected ? (
               !noData ? (
-                <EmptyInfo weight={500} size={14} height={20} color={fontColor} gap="2px">
+                <EmptyInfo weight={500} size={14} lineHeight={20} color={fontColor} gap="2px">
                   <div>
                     Loading all events data for the connected wallet
                     <br />
@@ -158,14 +162,35 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
                   </div>
                 </EmptyInfo>
               ) : (
-                <EmptyInfo weight={500} size={14} height={20} color={fontColor}>
-                  No interaction history found for this wallet.
+                <EmptyInfo
+                  weight={500}
+                  size={14}
+                  lineHeight={20}
+                  color={fontColor}
+                  flexFlow="column"
+                  gap="0px"
+                >
+                  <div>No activity found for this wallet.</div>
+                  <ExploreButtonStyle
+                    color="connectwallet"
+                    onClick={() => {
+                      push(ROUTES.ADVANCED)
+                    }}
+                    minWidth="190px"
+                    inputBorderColor={inputBorderColor}
+                    bordercolor={fontColor}
+                    disabled={disableWallet}
+                    hoverColorButton={hoverColorButton}
+                  >
+                    <img src={AdvancedImg} className="explore-farms" alt="" />
+                    Explore Farms
+                  </ExploreButtonStyle>
                 </EmptyInfo>
               )
             ) : (
               <>
-                <EmptyInfo weight={500} size={14} height={20} color={fontColor}>
-                  Connect wallet to see your positions.
+                <EmptyInfo weight={500} size={14} lineHeight={20} color={fontColor}>
+                  Connect wallet to see full event history.
                 </EmptyInfo>
                 <ConnectButtonStyle
                   color="connectwallet"
@@ -174,13 +199,10 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
                   }}
                   minWidth="190px"
                   inputBorderColor={inputBorderColor}
-                  fontColor2={fontColor2}
-                  backColor={backColor}
                   bordercolor={fontColor}
                   disabled={disableWallet}
                   hoverColorButton={hoverColorButton}
                 >
-                  <img src={ConnectDisableIcon} className="connect-wallet" alt="" />
                   Connect Wallet
                 </ConnectButtonStyle>
               </>

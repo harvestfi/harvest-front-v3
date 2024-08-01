@@ -15,14 +15,21 @@ const Container = styled.div`
 
   @media screen and (max-width: 992px) {
     width: 50%;
-    ${props => (props.isNetProfit === 'true' ? 'width: 100%;' : 'width: 50%;')}
     border: unset;
     border-radius: 0px 6.5px 6.5px 0px;
     padding: 8px 13px;
+    margin-top: 24px;
 
     &:first-child {
-      border-right: 0.821px solid ${props => props.borderColor};
+      border-right: 0.821px solid #eaecf0;
       border-radius: 6.5px 0px 0px 6.5px;
+    }
+    &:nth-child(3) {
+      border-right: 0.821px solid #eaecf0;
+      border-radius: 6.5px 0px 0px 6.5px;
+    }
+    &:last-child {
+      display: none;
     }
   }
 `

@@ -2,9 +2,6 @@ import styled from 'styled-components'
 import { Dropdown } from 'react-bootstrap'
 import UsdIcon from '../../assets/images/ui/usd-port.svg'
 import TokensIcon from '../../assets/images/ui/tokens-port.svg'
-import BoxBgOne from '../../assets/images/logos/dashboard/box-bg-1.png'
-import BoxBgTwo from '../../assets/images/logos/dashboard/box-bg-2.png'
-import BoxBgThree from '../../assets/images/logos/dashboard/box-bg-3.png'
 
 const Container = styled.div`
   width: 100%;
@@ -52,28 +49,11 @@ const SubPart = styled.div`
   justify-content: space-between;
   gap: 10px;
   margin-bottom: 30px;
-  border-top: 1px solid ${props => props.color};
+  border-top: 1px solid #eaecf0;
 
   @media screen and (max-width: 992px) {
-    display: none;
-  }
-`
-
-const MobileSubPart = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-`
-
-const MobileDiv = styled.div`
-  display: none;
-
-  @media screen and (max-width: 992px) {
-    display: flex;
     flex-wrap: wrap;
-    border: 2px solid ${props => props.borderColor};
-    border-radius: 6.5px;
-    width: 100%;
-    margin-bottom: 10px;
+    gap: 0px;
   }
 `
 
@@ -84,6 +64,8 @@ const HeaderWrap = styled.div`
 `
 
 const HeaderTitle = styled.div`
+  margin: auto 0px;
+
   .title {
     color: ${props => props.fontColor1};
     font-size: 18px;
@@ -96,12 +78,22 @@ const HeaderTitle = styled.div`
     font-weight: 400;
     line-height: 24px;
   }
+  @media screen and (max-width: 992px) {
+    .title {
+      font-size: 16px;
+    }
+  }
 `
 
 const HeaderButton = styled.div`
   display: flex;
   margin: auto 0px;
   gap: 15px;
+
+  @media screen and (max-width: 992px) {
+    flex-direction: column-reverse;
+    gap: 9px;
+  }
 `
 
 const FarmTitle = styled.span`
@@ -123,7 +115,7 @@ const TransactionDetails = styled.div`
   margin-top: 20px;
 
   @media screen and (max-width: 992px) {
-    margin-top: 0px;
+    margin-top: 24px;
   }
 `
 
@@ -150,8 +142,7 @@ const FarmPic = styled.img`
 `
 
 const EmptyPanel = styled.div`
-  padding-top: 12%;
-  padding-bottom: 12%;
+  height: 400px;
   border-radius: 5px;
   border-right: 1px solid ${props => props.borderColor};
   border-bottom: 1px solid ${props => props.borderColor};
@@ -180,9 +171,15 @@ const EmptyInfo = styled.div`
   `
       : ''}
   ${props =>
+    props.lineHeight
+      ? `
+    line-height: ${props.lineHeight}px;
+  `
+      : ''}
+  ${props =>
     props.height
       ? `
-    line-height: ${props.height}px;
+    height: ${props.height};
   `
       : ''}
   ${props =>
@@ -197,7 +194,12 @@ const EmptyInfo = styled.div`
     margin-top: ${props.marginTop};
   `
       : ''}
-
+  ${props =>
+    props.flexFlow
+      ? `
+    flex-flow: ${props.flexFlow};
+  `
+      : ''}
   ${props =>
     props.gap
       ? `
@@ -208,6 +210,7 @@ const EmptyInfo = styled.div`
   display: flex;
   justify-content: center;
   text-align: center;
+  align-items: center;
 
   @media screen and (max-width: 992px) {
     display: flex;
@@ -224,12 +227,12 @@ const ConnectButtonStyle = styled.button`
   font-weight: 600;
   display: flex;
   justify-content: center;
-  margin: 25px auto;
+  margin: 15px auto;
   width: 250px;
-  background: ${props => props.backColor};
+  background: none;
   border-radius: 8px;
-  border: 1px solid ${props => props.inputBorderColor};
-  color: ${props => props.fontColor2};
+  border: 2px solid #6988ff;
+  color: #6988ff;
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
   cursor: pointer;
 
@@ -246,19 +249,6 @@ const ConnectButtonStyle = styled.button`
       : `
       padding: 15px 0px 15px 0px;
     `}
-
-  &:hover {
-    box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05),
-      0px 0px 0px 4px ${props => props.hoverColorButton};
-    img.connect-wallet {
-      filter: brightness(0) saturate(100%) invert(69%) sepia(55%) saturate(4720%) hue-rotate(110deg)
-        brightness(91%) contrast(86%);
-    }
-  }
-
-  img.connect-wallet {
-    margin: auto 25px auto 0px;
-  }
 
   @media screen and (max-width: 992px) {
     display: flex;
@@ -278,55 +268,37 @@ const ConnectButtonStyle = styled.button`
       padding: 10px 11px;
       font-size: 13px;
       `}
-
-    img.connect-wallet {
-      margin-right: 15px;
-      width: 14px;
-      height: 14px;
-    }
   }
 `
 
-const ExploreFarm = styled.div`
-  /* background-image: url(${props =>
-    props.bgImage === 'first' ? BoxBgOne : props.bgImage === 'second' ? BoxBgTwo : BoxBgThree}); */
-  background-image: ${props =>
-    `url('${
-      props.bgImage === 'first' ? BoxBgOne : props.bgImage === 'second' ? BoxBgTwo : BoxBgThree
-    }')`};
-  background-repeat: no-repeat;
-  background-size: cover;
-  width: 100%;
-  height: 175px;
-  border-radius: 12.18px;
-  border: none;
-  box-shadow: 0px 4.06px 4.06px -2.03px rgba(16, 24, 40, 0.03),
-    0px 10.15px 12.18px -2.03px rgba(16, 24, 40, 0.08);
-  color: #fff;
-  padding: 0px 25px;
-  font-weight: 400;
+const ExploreButtonStyle = styled.button`
   font-size: 15px;
-  line-height: 14px;
+  line-height: 24px;
+  font-weight: 600;
   display: flex;
-  align-self: center;
+  justify-content: center;
+  margin: 15px auto;
+  padding: 12px 0px 12px 0px;
+  width: 250px;
+  background: #6988ff;
+  border-radius: 8px;
+  border: 2px solid #6988ff;
+  color: white;
+  box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
   cursor: pointer;
+  gap: 8px;
+
+  img.explore-farms {
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%);
+  }
 
   @media screen and (max-width: 992px) {
-    padding: 8px 13px;
-    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 11px;
+    font-size: 13px;
   }
-`
-
-const ExploreContent = styled.div`
-  margin: auto 0px;
-  text-align: left;
-`
-
-const ExploreTitle = styled.div`
-  font-weight: 600;
-  font-size: 21px;
-  line-height: 20px;
-  padding-bottom: 10px;
 `
 
 const ThemeMode = styled.div`
@@ -524,20 +496,6 @@ const TableContent = styled.div`
   }
 `
 
-const DescInfo = styled.div`
-  display: none;
-  @media screen and (max-width: 992px) {
-    display: block;
-    font-size: 12px;
-    line-height: 24px;
-    font-weight: 400;
-    color: ${props => props.fontColor};
-    padding-bottom: 10px;
-    border-bottom: 2px solid ${props => props.borderColor};
-    margin-bottom: 25px;
-  }
-`
-
 const TableWrap = styled.div`
   display: flex;
   gap: 35px;
@@ -547,25 +505,47 @@ const TableWrap = styled.div`
     font-size: 18px;
     font-weight: 600;
     line-height: 28px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid ${props => props.color};
+
+    @media screen and (max-width: 992px) {
+      display: flex;
+      justify-content: space-between;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #eaecf0;
+    }
   }
 
   @media screen and (max-width: 1480px) {
     gap: 20px;
   }
+
+  @media screen and (max-width: 992px) {
+    flex-direction: column;
+  }
 `
 
 const PositionTable = styled.div`
   width: 70%;
+
+  @media screen and (max-width: 992px) {
+    width: 100%;
+  }
 `
 
 const YieldTable = styled.div`
   width: 30%;
+
+  @media screen and (max-width: 992px) {
+    width: 100%;
+    margin-top: 35px;
+  }
 `
 
 const ContentBox = styled.div`
   border: 1px solid ${props => props.borderColor};
+
+  @media screen and (max-width: 992px) {
+    border: none;
+  }
 `
 
 const NewLabel = styled.div`
@@ -710,6 +690,14 @@ const CheckBoxDiv = styled.div`
   div {
     padding-left: 23px;
   }
+
+  @media screen and (max-width: 992px) {
+    margin: unset;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    margin: auto 0px;
+  }
 `
 
 const SwitchView = styled.div`
@@ -726,7 +714,7 @@ const SwitchView = styled.div`
   line-height: 20px;
   position: relative;
   border-radius: 8px;
-  border: 1px solid ${props => props.borderColor};
+  border: 1px solid #d0d5dd;
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
   background: ${props => props.backColor};
   transition: 0.5s;
@@ -743,6 +731,20 @@ const SwitchView = styled.div`
       props.darkMode
         ? 'invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%)'
         : 'invert(48%) sepia(4%) saturate(2341%) hue-rotate(183deg) brightness(87%) contrast(80%)'};
+  }
+
+  @media screen and (max-width: 992px) {
+    height: unset;
+    border-radius: 5px;
+    font-size: 8.75px;
+    line-height: 12.5px;
+    padding: 6.25px 10px;
+    gap: 5px;
+
+    img {
+      width: 12.5px;
+      height: 12.5px;
+    }
   }
 `
 
@@ -761,8 +763,7 @@ const BackArrow = styled.div`
 const CurrencySelect = styled.div`
   width: 100%;
   height: 40px;
-  background: ${props => props.backColor} !important;
-  border: 1px solid ${props => props.borderColor};
+  border: 1px solid #d0d5dd;
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
   transition: 0.5s;
   border-radius: 8px;
@@ -775,10 +776,6 @@ const CurrencySelect = styled.div`
 
   display: flex;
   align-items: center;
-
-  &:hover {
-    background: ${props => props.hovercolor} !important;
-  }
 
   img.logo {
     margin-right: 7.5px;
@@ -794,6 +791,20 @@ const CurrencySelect = styled.div`
     overflow: hidden;
     text-overflow: ellipsis;
     margin-right: 4px;
+  }
+
+  @media screen and (max-width: 992px) {
+    height: unset;
+    border-radius: 5px;
+    font-size: 8.75px;
+    line-height: 12.5px;
+    padding: 6.25px 10px;
+    gap: 5px;
+
+    img {
+      width: 12.5px;
+      height: 12.5px;
+    }
   }
 `
 
@@ -837,15 +848,11 @@ const CurrencyDropDown = styled(Dropdown.Toggle)`
     right: 15px;
     top: 15px;
   }
-
-  @media screen and (max-width: 992px) {
-    margin-left: 13px;
-  }
 `
 
 const CurrencyDropDownMenu = styled(Dropdown.Menu)`
   background-color: ${props => props.backcolor} !important;
-  border: 1px solid ${props => props.bordercolor} !important;
+  border: 1px solid #d0d5dd;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
   border-radius: 8px !important;
   padding: 0;
@@ -856,6 +863,10 @@ const CurrencyDropDownMenu = styled(Dropdown.Menu)`
 
   &:focus {
     box-shadow: none;
+  }
+
+  @media screen and (max-width: 992px) {
+    min-width: unset;
   }
 `
 
@@ -916,13 +927,32 @@ const CurrencyDropDownItem = styled(Dropdown.Item)`
     margin-left: 10px;
     color: #6988ff;
   }
+
+  @media screen and (max-width: 992px) {
+    font-size: 8.75px;
+    line-height: 12.5px;
+    padding: 6.25px 10px;
+    gap: 5px;
+
+    :first-child {
+      border-radius: 5px 5px 0px 0px;
+    }
+
+    :last-child {
+      border-radius: 0px 0px 5px 5px;
+    }
+
+    img {
+      width: 12.5px;
+      height: 12.5px;
+      margin-left: 0px;
+    }
+  }
 `
 
 export {
   Container,
   SubPart,
-  MobileSubPart,
-  MobileDiv,
   TransactionDetails,
   HeaderWrap,
   HeaderTitle,
@@ -934,9 +964,6 @@ export {
   EmptyPanel,
   EmptyInfo,
   EmptyImg,
-  ExploreFarm,
-  ExploreContent,
-  ExploreTitle,
   ThemeMode,
   Div,
   Counter,
@@ -945,13 +972,13 @@ export {
   Status,
   Col,
   TableContent,
-  DescInfo,
   TableWrap,
   PositionTable,
   YieldTable,
   ContentBox,
   NewLabel,
   ConnectButtonStyle,
+  ExploreButtonStyle,
   CheckBoxDiv,
   SwitchView,
   BackArrow,

@@ -16,14 +16,14 @@ const ActionRow = ({ info, showTotalBalance }) => {
     switchMode,
     backColor,
     borderColor,
-    hoverColorSoft,
+    hoverColorRow,
     fontColor,
   } = useThemeContext()
 
   return (
     <DetailView
       borderColor={borderColor}
-      hoverColor={hoverColorSoft}
+      hoverColor={hoverColorRow}
       mode={switchMode}
       background={backColor}
     >

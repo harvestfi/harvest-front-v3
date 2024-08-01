@@ -15,7 +15,7 @@ const VaultRow = ({ info, firstElement, lastElement, cKey }) => {
     switchMode,
     backColor,
     borderColor,
-    hoverColorSoft,
+    hoverColorRow,
     fontColor1,
     fontColor,
   } = useThemeContext()
@@ -36,7 +36,7 @@ const VaultRow = ({ info, firstElement, lastElement, cKey }) => {
       firstElement={firstElement}
       lastElement={lastElement}
       borderColor={borderColor}
-      hoverColor={hoverColorSoft}
+      hoverColor={hoverColorRow}
       key={cKey}
       mode={switchMode}
       background={backColor}
@@ -95,63 +95,25 @@ const VaultRow = ({ info, firstElement, lastElement, cKey }) => {
             />
           </ContentInner>
         </Content>
-        {isMobile && (
-          <>
-            <Content width={isMobile ? '33%' : '20%'} marginTop={isMobile ? '15px' : 'unset'}>
-              <ListItem color={fontColor} weight={500} size={12} height={18} value="My Balance" />
-              <ListItem
-                weight={500}
-                size={14}
-                height={20}
-                color={fontColor1}
-                value={`${
-                  info.balance === 0
-                    ? `${currencySym}0.00`
-                    : info.balance < 0.01
-                    ? `<${currencySym}0.01`
-                    : `${currencySym}${formatNumber(info.balance * Number(currencyRate), 2)}`
-                }`}
-              />
-            </Content>
-            <Content width={isMobile ? '33%' : '20%'} marginTop={isMobile ? '15px' : 'unset'}>
-              <ListItem color={fontColor} weight={500} size={12} height={18} value="Rewards" />
-              <ListItem
-                weight={500}
-                size={14}
-                height={20}
-                color={fontColor1}
-                value={`${
-                  info.totalRewardUsd === 0
-                    ? `${currencySym}0.00`
-                    : info.totalRewardUsd < 0.01
-                    ? `<${currencySym}0.01`
-                    : `${currencySym}${formatNumberWido(
-                        info.totalRewardUsd * Number(currencyRate),
-                        2,
-                      )}`
-                }`}
-              />
-            </Content>
-          </>
-        )}
-        {!isMobile && (
-          <Content width={isMobile ? '33%' : '15%'}>
-            <ListItem
-              weight={500}
-              size={14}
-              height={20}
-              color={fontColor}
-              value={`${
-                info.balance === 0
-                  ? `${currencySym}0.00`
-                  : info.balance < 0.01
-                  ? `<${currencySym}0.01`
-                  : `${currencySym}${formatNumber(info.balance * Number(currencyRate), 2)}`
-              }`}
-            />
-          </Content>
-        )}
-        <Content width={isMobile ? '33%' : '15%'} marginTop={isMobile ? '15px' : 'unset'}>
+        <Content width={isMobile ? '25%' : '15%'} marginTop={isMobile ? '15px' : 'unset'}>
+          {isMobile && (
+            <ListItem color={fontColor} weight={500} size={12} height={18} value="Balance" />
+          )}
+          <ListItem
+            weight={500}
+            size={14}
+            height={20}
+            color={isMobile ? fontColor1 : fontColor}
+            value={`${
+              info.balance === 0
+                ? `${currencySym}0.00`
+                : info.balance < 0.01
+                ? `<${currencySym}0.01`
+                : `${currencySym}${formatNumber(info.balance * Number(currencyRate), 2)}`
+            }`}
+          />
+        </Content>
+        <Content width={isMobile ? '25%' : '15%'} marginTop={isMobile ? '15px' : 'unset'}>
           {isMobile && (
             <ListItem color={fontColor} weight={500} size={12} height={18} value="Monthly Yield" />
           )}
@@ -169,32 +131,33 @@ const VaultRow = ({ info, firstElement, lastElement, cKey }) => {
             }`}
           />
         </Content>
-        {!isMobile && (
-          <Content width={isMobile ? '33%' : '15%'}>
-            <ListItem
-              weight={500}
-              size={14}
-              height={20}
-              color={fontColor}
-              value={`${
-                info.totalRewardUsd === 0
-                  ? `${currencySym}0.00`
-                  : info.totalRewardUsd < 0.01
-                  ? `<${currencySym}0.01`
-                  : `${currencySym}${formatNumber(info.totalRewardUsd * Number(currencyRate), 2)}`
-              }`}
-            />
-          </Content>
-        )}
-        <Content width={isMobile ? '33%' : '15%'} marginTop={isMobile ? '15px' : 'unset'}>
+        <Content width={isMobile ? '25%' : '15%'} marginTop={isMobile ? '15px' : 'unset'}>
+          {isMobile && (
+            <ListItem color={fontColor} weight={500} size={12} height={18} value="Rewards" />
+          )}
+          <ListItem
+            weight={500}
+            size={14}
+            height={20}
+            color={isMobile ? fontColor1 : fontColor}
+            value={`${
+              info.totalRewardUsd === 0
+                ? `${currencySym}0.00`
+                : info.totalRewardUsd < 0.01
+                ? `<${currencySym}0.01`
+                : `${currencySym}${formatNumberWido(info.totalRewardUsd * Number(currencyRate), 2)}`
+            }`}
+          />
+        </Content>
+        <Content width={isMobile ? '25%' : '15%'} marginTop={isMobile ? '15px' : 'unset'}>
           {isMobile && (
             <ListItem color={fontColor} weight={500} size={12} height={18} value="Live APY" />
           )}
           <ListItem
-            color={isMobile ? fontColor1 : fontColor}
             weight={500}
             size={14}
             height={20}
+            color={isMobile ? fontColor1 : fontColor}
             value={
               info.apy === -1
                 ? 'Inactive'

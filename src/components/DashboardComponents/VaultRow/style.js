@@ -114,18 +114,24 @@ const Content = styled.div`
 
 const BadgeIcon = styled.div`
   margin: auto 17px auto 0px;
-  width: 23px;
-  height: 23px;
+  width: 13.096px;
+  height: 13.096px;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 8px;
-  border: 1px solid ${props => props.borderColor};
+  border-radius: 2.278px;
+  border: 1.139px solid ${props => props.borderColor};
   box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.15);
+
+  img {
+    width: 9px;
+    height: 9px;
+  }
 
   &.network-badge {
     @media screen and (max-width: 992px) {
       margin-bottom: 15px;
+      display: inline-flex;
     }
   }
 `
