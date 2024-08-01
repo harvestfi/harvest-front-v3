@@ -46,7 +46,7 @@ const ButtonStyle = styled.button`
   &:hover {
     ${props =>
       props.isBoosted === 'true'
-        ? 'background: linear-gradient(to right, #f9a43c, #a36304);'
+        ? 'background: linear-gradient(to right, #fbbd71, #ea9c27);'
         : `background: ${props.hoverColor};`}
   }
 

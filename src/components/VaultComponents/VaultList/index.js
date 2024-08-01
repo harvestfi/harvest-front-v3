@@ -482,20 +482,31 @@ const VaultList = () => {
   }
 
   useEffect(() => {
+    const setBoostedVaults = async () => {
+      if (groupOfVaults) {
+        const vaultsKey = Object.keys(groupOfVaults)
+        vaultsKey.map(async symbol => {
+          // Add 'boosted' item to vaults that participate in campaign
+          for (let i = 0; i < boostedVaults.length; i += 1) {
+            if (symbol === boostedVaults[i]) {
+              groupOfVaults[symbol].boosted = true
+              return
+            }
+          }
+        })
+      }
+    }
+
+    setBoostedVaults()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
     const getCreatedAtData = async () => {
       if (groupOfVaults) {
         const { data, flag } = await getPublishDate()
         if (flag) {
           const vaultsKey = Object.keys(groupOfVaults)
           vaultsKey.map(async symbol => {
-            // Add 'boosted' item to vaults that participate in campaign
-            for (let i = 0; i < boostedVaults.length; i += 1) {
-              if (symbol === boostedVaults[i]) {
-                groupOfVaults[symbol].boosted = true
-                return
-              }
-            }
-
             // Add 'publishDate' to every vault
             const token = groupOfVaults[symbol]
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
