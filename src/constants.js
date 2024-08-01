@@ -828,3 +828,12 @@ export const fakeChartData = [
   { x: 1693633284000, y: 14, z: 4.5 },
   { x: 1693775844000, y: 15, z: 4.5 },
 ]
+
+export const boostedVaults = [
+  'lodestar_WBTC',
+  'lodestarHodl_WBTC',
+  'lodestar_ETH',
+  'lodestar_USDCe',
+  'lodestar_wstETH',
+  'xGRAIL',
+]

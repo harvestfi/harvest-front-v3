@@ -11,7 +11,6 @@ import ZKSYNC from '../../assets/images/chains/zksync.svg'
 import SpecNarrowDown from '../../assets/images/logos/filter/spec-narrowdown.svg'
 import DesciBack from '../../assets/images/logos/filter/desciback.jpg'
 import LSDBack from '../../assets/images/logos/filter/lsdback.jpg'
-import Rocket from '../../assets/images/logos/filter/rocket-01.svg'
 import Zap from '../../assets/images/logos/filter/zap.svg'
 import { CHAIN_IDS } from '../../data/constants'
 import { useThemeContext } from '../../providers/useThemeContext'
@@ -64,7 +63,14 @@ const FarmsList = [
 
 const RiskList = [
   { id: 1, name: 'New', img: Zap, filter: 'new' },
-  { id: 2, name: 'Popular Now', img: Rocket, filter: 'popular' },
+  { id: 2, name: 'Popular', filter: 'popular' },
+  { id: 3, name: 'Boosted 🔥', img: ARBITRUM, filter: 'boost' },
+]
+
+const RiskListMobile = [
+  { id: 1, name: 'New', filter: 'new' },
+  { id: 2, name: 'Popular', filter: 'popular' },
+  { id: 3, name: 'Boosted', filter: 'boost' },
 ]
 
 const AssetsList = [
@@ -203,6 +209,9 @@ const QuickFilter = ({
         break
       case 1:
         text = 'PopularNow'
+        break
+      case 2:
+        text = 'Boosted'
         break
       default:
         break
@@ -513,7 +522,7 @@ const QuickFilter = ({
                   fontColor={fontColor2}
                 />
               </DivWidth>
-              <DivWidth marginRight="15px" height="fit-content">
+              <DivWidth display="none" marginRight="15px" height="fit-content">
                 <Dropdown>
                   <TrendDropDown
                     num={trendsBackNum}
@@ -684,7 +693,7 @@ const QuickFilter = ({
               >
                 <DivWidth mobileMarginBottom="10px">
                   <ButtonGroup
-                    buttons={RiskList}
+                    buttons={RiskListMobile}
                     doSomethingAfterClick={() => {}}
                     clickedId={riskId}
                     setClickedId={setRiskId}
@@ -701,7 +710,7 @@ const QuickFilter = ({
                     fontColor={fontColor2}
                   />
                 </DivWidth>
-                <DivWidth mobileMarginBottom="10px" height="fit-content">
+                <DivWidth display="none" mobileMarginBottom="10px" height="fit-content">
                   <Dropdown>
                     <TrendDropDown
                       num={trendsBackNum}

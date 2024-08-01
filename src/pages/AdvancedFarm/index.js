@@ -52,6 +52,7 @@ import {
   SOCIAL_LINKS,
   feeList,
   chainList,
+  boostedVaults,
 } from '../../constants'
 import { fromWei, newContractInstance, getWeb3, getExplorerLink } from '../../services/web3'
 import { addresses } from '../../data'
@@ -193,6 +194,8 @@ const AdvancedFarm = () => {
   const [activeDepo, setActiveDepo] = useState(true)
   const [showLatestEarnings, setShowLatestEarnings] = useState(true)
   const [showApyHistory, setShowApyHistory] = useState(true)
+  const [showArbCampInfo, setShowArbCampInfo] = useState(false)
+  const [showArbCampVault, setShowArbCampVault] = useState(false)
   const [showGenomesVaultInfo, setShowGenomesVaultInfo] = useState(false)
   const [showSeamlessVaultInfo, setShowSeamlessVaultInfo] = useState(false)
   const [showGBVaultInfo, setShowGBVaultInfo] = useState(false)
@@ -333,6 +336,17 @@ const AdvancedFarm = () => {
 
   const groupOfVaults = { ...vaultsData, ...poolVaults }
   const vaultsKey = Object.keys(groupOfVaults)
+
+  // Add 'boosted' item to vaults that participate in campaign
+  vaultsKey.map(async symbol => {
+    for (let i = 0; i < boostedVaults.length; i += 1) {
+      if (symbol === boostedVaults[i]) {
+        groupOfVaults[symbol].boosted = true
+        return
+      }
+    }
+  })
+
   const vaultIds = vaultsKey.filter(vaultId => {
     const tokenAddress = groupOfVaults[vaultId].tokenAddress || groupOfVaults[vaultId].vaultAddress
 
@@ -448,7 +462,7 @@ const AdvancedFarm = () => {
 
   const mainTags = [
     { name: 'Manage', img: Safe },
-    { name: 'Rewards', img: Diamond },
+    { name: showArbCampVault ? 'Rewards 🔥' : 'Rewards', img: Diamond },
     { name: 'Details', img: BarChart },
     { name: 'History', img: History },
   ]
@@ -458,10 +472,17 @@ const AdvancedFarm = () => {
     const platform = useIFARM ? 'Harvest' : token.platform?.[0]?.toLowerCase() ?? ''
     const firstToken = token.tokenNames?.[0]?.toLowerCase() ?? ''
     const firstViewIFarm = localStorage.getItem('firstViewIFarm')
+    const firstViewArbCampVault = localStorage.getItem('firstViewArbCampVault')
     const firstViewSeamless = localStorage.getItem('firstViewSeamless')
     const firstViewGenomes = localStorage.getItem('firstViewGenomes')
     const firstViewGB = localStorage.getItem('firstViewGB')
-    if (platform === 'Harvest' && (firstViewIFarm === null || firstViewIFarm === 'true')) {
+
+    const campaign = token.boosted
+    if (campaign) setShowArbCampVault(true)
+    if (campaign && (firstViewArbCampVault === null || firstViewArbCampVault === 'true')) {
+      localStorage.setItem('firstViewArbCampVault', true)
+      setShowArbCampInfo(true)
+    } else if (platform === 'Harvest' && (firstViewIFarm === null || firstViewIFarm === 'true')) {
       localStorage.setItem('firstViewIFarm', true)
       setShowIFARMInfo(true)
     } else if (
@@ -480,7 +501,7 @@ const AdvancedFarm = () => {
       localStorage.setItem('firstViewGB', true)
       setShowGBVaultInfo(true)
     }
-  }, [token.platform, token.tokenNames, useIFARM])
+  }, [token.platform, token.tokenNames, token.boosted, useIFARM])
 
   const closeIFARMBadge = () => {
     setShowIFARMInfo(false)
@@ -489,6 +510,11 @@ const AdvancedFarm = () => {
   const closeBadgeGenomes = () => {
     setShowGenomesVaultInfo(false)
     localStorage.setItem('firstViewGenomes', 'false')
+  }
+
+  const closeBadgeArbCamp = () => {
+    setShowArbCampInfo(false)
+    // localStorage.setItem('firstViewArbCampVault', 'false')
   }
 
   const closeBadgeSeamless = () => {
@@ -1483,7 +1509,42 @@ const AdvancedFarm = () => {
           <InternalSection>
             {activeMainTag === 0 ? (
               <>
-                {showGenomesVaultInfo ? (
+                {showArbCampInfo ? (
+                  <WelcomeBox
+                    bgColorTooltip="#f2fcf8"
+                    fontColorTooltip="#07B466"
+                    borderColor="#29CE84"
+                  >
+                    <WelcomeContent>
+                      <WelcomeTitle>
+                        <span role="img" aria-label="thumb" aria-labelledby="thumb">
+                          🔥
+                        </span>{' '}
+                        Boost Note
+                      </WelcomeTitle>
+                      <WelcomeText>
+                        This yield strategy receives additional ARB rewards. Stake your fTokens
+                        under the Rewards tab to be entitled to them. The campaign will end on
+                        [date] UTC.{' '}
+                        <WelcomeBottom>
+                          <WelcomeKnow onClick={closeBadgeArbCamp}>Got it!</WelcomeKnow>
+                          <WelcomeTicket
+                            href={SOCIAL_LINKS.DISCORD}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            linkColor="#07B466"
+                            linkColorOnHover="#29CE84"
+                          >
+                            Still having questions? Open Discord ticket.
+                          </WelcomeTicket>
+                        </WelcomeBottom>
+                      </WelcomeText>
+                    </WelcomeContent>
+                    <WelcomeClose>
+                      <RxCross2 onClick={closeBadgeArbCamp} />
+                    </WelcomeClose>
+                  </WelcomeBox>
+                ) : showGenomesVaultInfo ? (
                   <WelcomeBox
                     bgColorTooltip={bgColorTooltip}
                     fontColorTooltip={fontColorTooltip}
