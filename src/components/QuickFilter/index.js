@@ -216,7 +216,7 @@ const QuickFilter = ({
       default:
         break
     }
-    const updateValue = { risk: RiskList[id].filter }
+    const updateValue = { filter: RiskList[id].filter }
     setParamObj(newParamObj => ({
       ...newParamObj,
       ...updateValue,
