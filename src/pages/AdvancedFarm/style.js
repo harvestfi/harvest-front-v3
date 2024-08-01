@@ -1098,7 +1098,7 @@ const MainTag = styled.div`
   display: flex;
   justify-content: center;
   width: ${props => (props.useIFARM ? '33%' : '25%')};
-  padding: 12px 15px;
+  padding: 12px 0px;
   align-items: center;
   font-size: 14px;
   font-weight: 600;
@@ -1134,7 +1134,14 @@ const MainTag = styled.div`
     padding-left: 8px;
 
     @media screen and (max-width: 992px) {
-      display: ${props => (props.useIFARM ? 'block' : props.active === 'true' ? 'block' : 'none')};
+      display: ${props =>
+        props.useIFARM
+          ? 'block'
+          : props.active === 'true'
+          ? 'block'
+          : props.campMobileRewards
+          ? 'block'
+          : 'none'};
     }
   }
 

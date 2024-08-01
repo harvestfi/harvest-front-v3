@@ -1470,6 +1470,9 @@ const AdvancedFarm = () => {
                     bgColor={bgColor}
                     bgColorFarm={bgColorFarm}
                     active={activeMainTag === i ? 'true' : 'false'}
+                    campMobileRewards={
+                      showArbCampVault && activeMainTag !== i && i === 1 && isMobile
+                    }
                     mode={darkMode ? 'dark' : 'light'}
                     useIFARM={useIFARM}
                     onClick={() => {
@@ -1482,7 +1485,7 @@ const AdvancedFarm = () => {
                     }}
                   >
                     <img src={tag.img} alt="logo" />
-                    <p>{tag.name}</p>
+                    <p>{showArbCampVault && activeMainTag !== i && isMobile ? '🔥' : tag.name}</p>
                   </MainTag>
                 ))}
               </MainTagPanel>
