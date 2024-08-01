@@ -8,6 +8,7 @@ import { chainList, directDetailUrl } from '../../../constants'
 import { useRate } from '../../../providers/Rate'
 import File from '../../../assets/images/logos/dashboard/file-02.svg'
 import MobileFile from '../../../assets/images/logos/dashboard/file-01.svg'
+import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
 import { BadgeIcon, Content, DetailView, FlexDiv, LogoImg, Img, ContentInner } from './style'
 
 const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, cKey }) => {
@@ -68,12 +69,7 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
               borderColor={info.status === 'Active' ? '#29ce84' : 'orange'}
               className="network-badge"
             >
-              <img
-                src={info.chain ? info.chain : '/static/media/ethereum.3caea18c.svg'}
-                width="15px"
-                height="15px"
-                alt=""
-              />
+              <img src={info.chain ? info.chain : ETHEREUM} width="15px" height="15px" alt="" />
             </BadgeIcon>
             {info.logos.length > 0 &&
               info.logos.map((elem, index) => (
