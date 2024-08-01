@@ -68,7 +68,12 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
               borderColor={info.status === 'Active' ? '#29ce84' : 'orange'}
               className="network-badge"
             >
-              <img src={info.chain} width="15px" height="15px" alt="" />
+              <img
+                src={info.chain ? info.chain : '/static/media/ethereum.3caea18c.svg'}
+                width="15px"
+                height="15px"
+                alt=""
+              />
             </BadgeIcon>
             {info.logos.length > 0 &&
               info.logos.map((elem, index) => (
