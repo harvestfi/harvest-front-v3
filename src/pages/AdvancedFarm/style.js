@@ -618,6 +618,7 @@ const WelcomeTitle = styled.div`
 const WelcomeText = styled.div`
   @media screen and (max-width: 992px) {
     font-size: 12px;
+    margin-top: 12px;
   }
 
   a.badge-body {

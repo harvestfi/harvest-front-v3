@@ -195,7 +195,7 @@ const AdvancedFarm = () => {
   const [showLatestEarnings, setShowLatestEarnings] = useState(true)
   const [showApyHistory, setShowApyHistory] = useState(true)
   const [showArbCampInfo, setShowArbCampInfo] = useState(false)
-  const [showArbCampVault, setShowArbCampVault] = useState(false)
+  const [isArbCampVault, setIsArbCampVault] = useState(false)
   const [showGenomesVaultInfo, setShowGenomesVaultInfo] = useState(false)
   const [showSeamlessVaultInfo, setShowSeamlessVaultInfo] = useState(false)
   const [showGBVaultInfo, setShowGBVaultInfo] = useState(false)
@@ -462,7 +462,7 @@ const AdvancedFarm = () => {
 
   const mainTags = [
     { name: 'Manage', img: Safe },
-    { name: showArbCampVault ? 'Rewards 🔥' : 'Rewards', img: Diamond },
+    { name: isArbCampVault ? 'Rewards 🔥' : 'Rewards', img: Diamond },
     { name: 'Details', img: BarChart },
     { name: 'History', img: History },
   ]
@@ -478,7 +478,7 @@ const AdvancedFarm = () => {
     const firstViewGB = localStorage.getItem('firstViewGB')
 
     const campaign = token.boosted
-    if (campaign) setShowArbCampVault(true)
+    if (campaign) setIsArbCampVault(true)
     if (campaign && (firstViewArbCampVault === null || firstViewArbCampVault === 'true')) {
       localStorage.setItem('firstViewArbCampVault', true)
       setShowArbCampInfo(true)
@@ -1470,9 +1470,7 @@ const AdvancedFarm = () => {
                     bgColor={bgColor}
                     bgColorFarm={bgColorFarm}
                     active={activeMainTag === i ? 'true' : 'false'}
-                    campMobileRewards={
-                      showArbCampVault && activeMainTag !== i && i === 1 && isMobile
-                    }
+                    campMobileRewards={isArbCampVault && activeMainTag !== i && i === 1 && isMobile}
                     mode={darkMode ? 'dark' : 'light'}
                     useIFARM={useIFARM}
                     onClick={() => {
@@ -1485,7 +1483,7 @@ const AdvancedFarm = () => {
                     }}
                   >
                     <img src={tag.img} alt="logo" />
-                    <p>{showArbCampVault && activeMainTag !== i && isMobile ? '🔥' : tag.name}</p>
+                    <p>{isArbCampVault && activeMainTag !== i && isMobile ? '🔥' : tag.name}</p>
                   </MainTag>
                 ))}
               </MainTagPanel>
