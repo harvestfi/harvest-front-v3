@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
+import { get } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import ListItem from '../ListItem'
 import { displayAPY, formatNumber, formatNumberWido } from '../../../utilities/formats'
@@ -28,6 +29,7 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
+  const boostedToken = get(info, 'boosted')
 
   useEffect(() => {
     if (rates.rateData) {
@@ -105,7 +107,7 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
             <ListItem color={fontColor} weight={500} size={12} height={18} value="Live APY" />
           )}
           <ListItem
-            color={isMobile ? fontColor1 : fontColor}
+            color={boostedToken ? '#FD7300' : isMobile ? fontColor1 : fontColor}
             weight={500}
             size={14}
             height={20}
@@ -116,6 +118,7 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
                 ? '-'
                 : `${displayAPY(info.apy)}`
             }
+            boostedToken={boostedToken}
           />
         </Content>
         {isMobile && (
