@@ -6,7 +6,7 @@ import { displayAPY } from '../../../../utilities/formats'
 import { getTotalApy } from '../../../../utilities/parsers'
 import AnimatedDots from '../../../AnimatedDots'
 import { RewardsContainer } from '../style'
-import ARBITRUM from '../../../../assets/images/chains/arbitrum.svg'
+import ARBball from '../../../../assets/images/chains/ARBball.svg'
 
 const VaultApy = ({ token, tokenSymbol, vaultPool, isSpecialVault, fontColor1, boostedToken }) => {
   const { loadingVaults, vaultsData } = useVaults()
@@ -40,7 +40,7 @@ const VaultApy = ({ token, tokenSymbol, vaultPool, isSpecialVault, fontColor1, b
         <div className="boost-apy">
           <>{displayAPY(totalApy, DECIMAL_PRECISION, 10)}</>
           <div className="boost-img">
-            <img src={ARBITRUM} alt="" /> 🔥
+            <img src={ARBball} alt="" />
           </div>
         </div>
       ) : (

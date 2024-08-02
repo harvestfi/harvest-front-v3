@@ -93,16 +93,15 @@ const RewardsContainer = styled.div`
     display: flex;
 
     div.boost-img {
-      font-size: 7px;
-      padding: 3.7px;
-      background: #f5a12c;
-      border-radius: 2.326px;
-      line-height: 10px;
-      margin: auto;
-      margin-left: 5px;
+      margin: auto 0px auto 5px;
 
       img {
-        width: 7px;
+        width: 16px;
+        margin-top: -2px;
+
+        @media screen and (max-width: 992px) {
+          margin-top: -4px;
+        }
       }
     }
   }

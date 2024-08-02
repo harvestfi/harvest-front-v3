@@ -3,6 +3,7 @@ import { useWindowWidth } from '@react-hook/window-size'
 import { debounce } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
+import ARBball from '../../assets/images/chains/ARBball.svg'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import BASE from '../../assets/images/chains/base.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
@@ -64,7 +65,7 @@ const FarmsList = [
 const RiskList = [
   { id: 1, name: 'New', img: Zap, filter: 'new' },
   { id: 2, name: 'Popular', filter: 'popular' },
-  { id: 3, name: 'Boosted 🔥', img: ARBITRUM, filter: 'boost' },
+  { id: 3, name: 'Boosted', img: ARBball, filter: 'boost' },
 ]
 
 const RiskListMobile = [
