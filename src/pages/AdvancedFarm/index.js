@@ -729,8 +729,6 @@ const AdvancedFarm = () => {
             //     item => item.address.toLowerCase() !== tokenAddress.toLowerCase(),
             //   ),
             // )
-            console.log({ portalsRawBalances, portalsBaseTokens })
-            console.log({ curSortedBalances, curNoBalances })
             setBalanceList(curSortedBalances)
 
             curSortedBalances.forEach(balanceToken => {
