@@ -2163,7 +2163,7 @@ const AdvancedFarm = () => {
                           Earn more on your claimed ARB rewards with the ARB farm.
                         </div>
                         <div className="box-text-second">
-                          Your ARB wallet balance: <span>{arbBalance}</span>
+                          Your ARB wallet balance: <span>{formatNumber(arbBalance, 6)}</span>
                         </div>
                       </div>
                       <div className="box-btn-wrap">
