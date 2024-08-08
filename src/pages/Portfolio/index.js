@@ -72,6 +72,9 @@ import {
   ContentBox,
   BackArrow,
   ExploreButtonStyle,
+  MobileSwitch,
+  SwitchBtn,
+  SubBtnWrap,
 } from './style'
 
 const totalNetProfitKey = 'TOTAL_NET_PROFIT'
@@ -121,6 +124,7 @@ const Portfolio = () => {
   const [sortOrder, setSortOrder] = useState(false)
   const [showInactiveFarms, setShowInactiveFarms] = useState(false)
   const [viewPositions, setViewPositions] = useState(true)
+  const [showLatestYield, setShowLatestYield] = useState(false)
 
   useEffect(() => {
     setCurCurrency(supportedCurrencies[rates.currency.id])
@@ -835,16 +839,18 @@ const Portfolio = () => {
                   <></>
                 )}
               </Dropdown>
-              <SwitchView
-                color={fontColor2}
-                backColor={backColorButton}
-                hovercolor={hoverColorNew}
-                onClick={() => setViewPositions(prev => !prev)}
-                darkMode={darkMode}
-              >
-                <img src={BankNote} alt="money" />
-                {viewPositions ? 'Full History' : 'View Positions'}
-              </SwitchView>
+              {!isMobile && (
+                <SwitchView
+                  color={fontColor2}
+                  backColor={backColorButton}
+                  hovercolor={hoverColorNew}
+                  onClick={() => setViewPositions(prev => !prev)}
+                  darkMode={darkMode}
+                >
+                  <img src={BankNote} alt="money" />
+                  Full History
+                </SwitchView>
+              )}
             </HeaderButton>
           )}
         </HeaderWrap>
@@ -867,23 +873,36 @@ const Portfolio = () => {
 
         {viewPositions ? (
           <TableWrap fontColor1={fontColor1}>
-            <PositionTable>
-              <div className="table-title">
-                <div>Positions</div>
-                {connected && isMobile && farmTokenList.length > 0 && (
-                  <CheckBoxDiv>
-                    {showInactiveFarms ? (
-                      <FaRegSquareCheck
-                        onClick={() => setShowInactiveFarms(false)}
-                        color="#15B088"
-                      />
-                    ) : (
-                      <FaRegSquare onClick={() => setShowInactiveFarms(true)} color="#15B088" />
-                    )}
-                    <div>Show inactive</div>
-                  </CheckBoxDiv>
-                )}
-              </div>
+            {isMobile && (
+              <MobileSwitch>
+                <SwitchBtn
+                  color={showLatestYield ? 'unset' : '#fff'}
+                  backColor={showLatestYield ? 'none' : '#6988ff'}
+                  boxShadow={
+                    showLatestYield
+                      ? 'none'
+                      : '0px 1px 3px 0px rgba(16, 24, 40, 0.1), 0px 1px 2px 0px rgba(16, 24, 40, 0.06)'
+                  }
+                  onClick={() => setShowLatestYield(false)}
+                >
+                  Positions
+                </SwitchBtn>
+                <SwitchBtn
+                  color={showLatestYield ? '#fff' : 'unset'}
+                  backColor={showLatestYield ? '#6988ff' : 'none'}
+                  boxShadow={
+                    showLatestYield
+                      ? '0px 1px 3px 0px rgba(16, 24, 40, 0.1), 0px 1px 2px 0px rgba(16, 24, 40, 0.06)'
+                      : 'none'
+                  }
+                  onClick={() => setShowLatestYield(true)}
+                >
+                  Latest Yield
+                </SwitchBtn>
+              </MobileSwitch>
+            )}
+            <PositionTable display={showLatestYield ? 'none' : 'block'}>
+              <div className="table-title">Positions</div>
               <TransactionDetails>
                 <TableContent borderColor={borderColor} count={farmTokenList.length}>
                   <Header borderColor={borderColor} backColor={bgColorTable}>
@@ -1049,7 +1068,7 @@ const Portfolio = () => {
                 )}
               </TransactionDetails>
             </PositionTable>
-            <YieldTable>
+            <YieldTable display={showLatestYield ? 'block' : 'none'}>
               <div className="table-title">Latest Yield</div>
               <EarningsHistoryLatest
                 historyData={totalHistoryData}
@@ -1057,6 +1076,40 @@ const Portfolio = () => {
                 noData={noFarm}
               />
             </YieldTable>
+            {isMobile && (
+              <SubBtnWrap>
+                {!showLatestYield ? (
+                  <div>
+                    {connected && farmTokenList.length > 0 && (
+                      <CheckBoxDiv>
+                        {showInactiveFarms ? (
+                          <FaRegSquareCheck
+                            onClick={() => setShowInactiveFarms(false)}
+                            color="#15B088"
+                          />
+                        ) : (
+                          <FaRegSquare onClick={() => setShowInactiveFarms(true)} color="#15B088" />
+                        )}
+                        <div>Show inactive</div>
+                      </CheckBoxDiv>
+                    )}
+                  </div>
+                ) : (
+                  <div>
+                    <SwitchView
+                      color={fontColor2}
+                      backColor={backColorButton}
+                      hovercolor={hoverColorNew}
+                      onClick={() => setViewPositions(prev => !prev)}
+                      darkMode={darkMode}
+                    >
+                      <img src={BankNote} alt="money" />
+                      Full History
+                    </SwitchView>
+                  </div>
+                )}
+              </SubBtnWrap>
+            )}
           </TableWrap>
         ) : (
           <EarningsHistory historyData={totalHistoryData} isDashboard="true" noData={noFarm} />

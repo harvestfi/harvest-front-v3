@@ -2,10 +2,11 @@ import styled from 'styled-components'
 
 const DetailView = styled.div`
   width: 100%;
-  padding: 7px 25px;
+  padding: 15px 25px;
   cursor: pointer;
   background: ${props => props.background};
   transition: 0.25s;
+  border-bottom: 1px solid ${props => props.borderColor};
 
   &:hover {
     background: ${props => props.hoverColor};
@@ -14,7 +15,7 @@ const DetailView = styled.div`
   @media screen and (max-width: 992px) {
     padding: 0px;
     border: unset;
-    border-bottom: 1px solid ${props => props.borderColor};
+    /* border-bottom: 1px solid ${props => props.borderColor}; */
   }
 `
 
@@ -34,6 +35,103 @@ const FlexDiv = styled.div`
     `
         : ``};
   }
+`
+
+const NewLabel = styled.div`
+  font-weight: ${props => props.weight || '400'};
+  font-size: ${props => props.size || '20px'};
+  line-height: ${props => props.height || '0px'};
+
+  ${props =>
+    props.borderBottom
+      ? `
+    border-bottom: ${props.borderBottom};
+  `
+      : ''}
+  ${props =>
+    props.color
+      ? `
+    color: ${props.color};
+  `
+      : ''}
+  ${props =>
+    props.position
+      ? `
+    position: ${props.position};
+  `
+      : ''}
+  ${props =>
+    props.align
+      ? `
+    text-align: ${props.align};
+  `
+      : ''}
+  ${props =>
+    props.justifyContent
+      ? `
+    justify-content: ${props.justifyContent};
+  `
+      : ''}
+  ${props =>
+    props.marginTop
+      ? `
+    margin-top: ${props.marginTop};
+  `
+      : ''}
+  ${props =>
+    props.marginLeft
+      ? `
+    margin-left: ${props.marginLeft};
+  `
+      : ''}
+  ${props =>
+    props.marginBottom
+      ? `
+    margin-bottom: ${props.marginBottom};
+  `
+      : ''}
+  ${props =>
+    props.marginRight
+      ? `
+    margin-right: ${props.marginRight};
+  `
+      : ''}
+  ${props =>
+    props.display
+      ? `
+    display: ${props.display};
+  `
+      : ''}
+  ${props =>
+    props.items
+      ? `
+    align-items: ${props.items};
+  `
+      : ''}
+  ${props =>
+    props.self
+      ? `
+    align-self: ${props.self};
+  `
+      : ''}
+  ${props =>
+    props.padding
+      ? `
+    padding: ${props.padding};
+  `
+      : ''}
+  ${props =>
+    props.width
+      ? `
+    width: ${props.width};
+  `
+      : ''}
+  ${props =>
+    props.borderRadius
+      ? `
+    border-radius: ${props.borderRadius};
+    `
+      : ``}
 `
 
 const Content = styled.div`
@@ -134,4 +232,4 @@ const NetImg = styled.div`
   }
 `
 
-export { DetailView, FlexDiv, Content, NetImg }
+export { DetailView, FlexDiv, Content, NetImg, NewLabel }

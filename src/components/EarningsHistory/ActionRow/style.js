@@ -58,6 +58,12 @@ const Content = styled.div`
   `
       : ``}
   ${props =>
+    props.justifyContent
+      ? `
+    justify-content: ${props.justifyContent};
+  `
+      : ``}
+  ${props =>
     props.cursor
       ? `
       cursor: ${props.cursor};

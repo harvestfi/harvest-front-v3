@@ -81,16 +81,16 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
     >
       <TableContent borderColor={borderColor}>
         <Header borderColor={borderColor} backColor={bgColorTable}>
-          <Column width={isMobile ? '22%' : '20%'} color={fontColor}>
+          <Column width={isMobile ? '25%' : '20%'} color={fontColor}>
             <Col>Event</Col>
           </Column>
-          <Column width={isMobile ? '20%' : '20%'} color={fontColor}>
+          <Column width={isMobile ? '35%' : '20%'} color={fontColor}>
             <Col>Date</Col>
           </Column>
           <Column
             display="flex"
             justifyContent="space-between"
-            width={isMobile ? '57%' : '30%'}
+            width={isMobile ? '40%' : '30%'}
             color={fontColor}
           >
             <Col>{showTotalBalance ? 'Total Balance' : 'Net change'}</Col>

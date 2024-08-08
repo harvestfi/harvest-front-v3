@@ -27,8 +27,8 @@ const ActionRow = ({ info, showTotalBalance }) => {
       mode={switchMode}
       background={backColor}
     >
-      <FlexDiv padding={isMobile ? '10px' : '0'}>
-        <Content display="flex" width={isMobile ? '23%' : '20%'}>
+      <FlexDiv padding={isMobile ? '10px 15px' : '0'}>
+        <Content display="flex" width={isMobile ? '25%' : '20%'}>
           <Badge
             bgColor={
               info.event === 'Revert'
@@ -76,7 +76,7 @@ const ActionRow = ({ info, showTotalBalance }) => {
           )}
         </Content>
         <Content
-          width={isMobile ? '20%' : '20%'}
+          width={isMobile ? '30%' : '20%'}
           color={fontColor}
           paddingRight={isMobile ? '8px' : '0px'}
         >
@@ -92,7 +92,6 @@ const ActionRow = ({ info, showTotalBalance }) => {
         {!isMobile ? (
           <>
             <Content width="30%">
-              <ListItem weight={500} size={14} height={20} color="#8884D8" value={info.balance} />
               <ListItem
                 weight={500}
                 size={14}
@@ -100,6 +99,7 @@ const ActionRow = ({ info, showTotalBalance }) => {
                 color="#5FCF76"
                 value={`≈${info.balanceUsd}`}
               />
+              <ListItem weight={500} size={14} height={20} color="#8884D8" value={info.balance} />
               <ListItem
                 weight={400}
                 size={14}
@@ -117,15 +117,15 @@ const ActionRow = ({ info, showTotalBalance }) => {
                   weight={500}
                   size={14}
                   height={20}
-                  color="#8884D8"
-                  value={info.netChange}
+                  color="#5FCF76"
+                  value={`${info.netChangeUsd}`}
                 />
                 <ListItem
                   weight={500}
                   size={14}
                   height={20}
-                  color="#5FCF76"
-                  value={`${info.netChangeUsd}`}
+                  color="#8884D8"
+                  value={info.netChange}
                 />
                 <ListItem
                   weight={400}
@@ -138,42 +138,60 @@ const ActionRow = ({ info, showTotalBalance }) => {
             </Content>
           </>
         ) : showTotalBalance ? (
-          <Content width="57%">
-            <ListItem weight={500} size={12} height={20} color="#8884D8" value={info.balance} />
+          <Content width="45%">
             <ListItem
               weight={500}
               size={12}
               height={20}
               color="#5FCF76"
+              justifyContent="end"
               value={`≈${info.balanceUsd}`}
             />
             <ListItem
-              weight={400}
-              size={12}
+              weight={500}
+              size={10}
               height={20}
-              color={fontColor}
+              color="#6988FF"
+              justifyContent="end"
+              value={info.balance}
+            />
+            <ListItem
+              weight={500}
+              size={10}
+              height={20}
+              color="#6988FF"
+              justifyContent="end"
               value={info.tokenSymbol}
             />
           </Content>
         ) : (
-          <Content display="flex" width="57%">
+          <Content display="flex" width="45%" justifyContent="space-between">
             <NetImg>
               <img src={info.netChange >= 0 ? TrendUp : TrendDown} alt="trend" />
             </NetImg>
             <div>
-              <ListItem weight={500} size={12} height={20} color="#8884D8" value={info.netChange} />
               <ListItem
                 weight={500}
                 size={12}
                 height={20}
                 color="#5FCF76"
+                justifyContent="end"
                 value={`${info.netChangeUsd === '<$0.01' ? '' : '≈'}${info.netChangeUsd}`}
               />
               <ListItem
-                weight={400}
-                size={12}
+                weight={500}
+                size={10}
                 height={20}
-                color={fontColor}
+                color="#6988FF"
+                justifyContent="end"
+                value={info.netChange}
+              />
+              <ListItem
+                weight={500}
+                size={10}
+                height={20}
+                color="#6988FF"
+                justifyContent="end"
                 value={info.tokenSymbol}
               />
             </div>

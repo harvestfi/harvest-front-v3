@@ -8,14 +8,14 @@ const TransactionDetails = styled.div`
 
   @media screen and (max-width: 992px) {
     height: ${props => props.hasData};
+    margin-top: 24px;
   }
 `
 
 const TableContent = styled.div`
   @media screen and (max-width: 992px) {
     // overflow-x: scroll;
-    border-radius: 15px 15px 0px 0px;
-    border: 1px solid ${props => props.borderColor};
+    /* border: 1px solid ${props => props.borderColor}; */
     ${props =>
       props.count === 0
         ? `
@@ -37,12 +37,23 @@ const Header = styled.div`
   border-top-right-radius: 15px;
 
   @media screen and (max-width: 992px) {
-    padding: 10px;
+    padding: 12px 24px;
+    border-radius: 0px;
+    border: unset;
+    border-top: 1px solid ${props => props.borderColor};
+    border-bottom: 1px solid ${props => props.borderColor};
   }
 `
 
 const ContentBox = styled.div`
   border: 1px solid ${props => props.borderColor};
+  border-top: none;
+  border-bottom: none;
+
+  @media screen and (max-width: 992px) {
+    border: unset;
+    border-bottom: 1px solid ${props => props.borderColor};
+  }
 `
 
 const Column = styled.div`

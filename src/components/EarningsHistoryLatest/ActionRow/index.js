@@ -1,13 +1,21 @@
 import React from 'react'
 import { useMediaQuery } from 'react-responsive'
+import ReactTooltip from 'react-tooltip'
 import ListItem from '../ListItem'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { formatDateTimeMobile } from '../../../utilities/formats'
-import { Content, DetailView, FlexDiv } from './style'
+import { formatAge, formatDateTime } from '../../../utilities/formats'
+import { Content, DetailView, FlexDiv, NewLabel } from './style'
 
 const ActionRow = ({ info }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const { switchMode, backColor, borderColor, hoverColorRow, fontColor } = useThemeContext()
+  const {
+    darkMode,
+    switchMode,
+    backColor,
+    borderColor,
+    hoverColorRow,
+    fontColor,
+  } = useThemeContext()
 
   return (
     <DetailView
@@ -16,12 +24,22 @@ const ActionRow = ({ info }) => {
       mode={switchMode}
       background={backColor}
     >
-      <FlexDiv padding={isMobile ? '10px' : '0'}>
+      <FlexDiv padding={isMobile ? '15px 25px' : '0'}>
         <Content width="30%" color={fontColor} paddingRight={isMobile ? '8px' : '0px'}>
-          <div
-            className="timestamp"
-            dangerouslySetInnerHTML={formatDateTimeMobile(info.timestamp)}
-          />
+          <div className="timestamp" data-tip data-for="tooltip-latest-yield">
+            {formatAge(info.timestamp)} ago
+          </div>
+          <ReactTooltip
+            id="tooltip-latest-yield"
+            backgroundColor={darkMode ? 'white' : '#101828'}
+            borderColor={darkMode ? 'white' : 'black'}
+            textColor={darkMode ? 'black' : 'white'}
+            place="top"
+          >
+            <NewLabel size="8px" height="11px" weight="600">
+              <div dangerouslySetInnerHTML={formatDateTime(info.timestamp)} />
+            </NewLabel>
+          </ReactTooltip>
         </Content>
         <Content width="57%">
           <ListItem
@@ -36,15 +54,7 @@ const ActionRow = ({ info }) => {
             weight={500}
             size={10}
             height={20}
-            color="#8884D8"
-            justifyContent="end"
-            value={info.netChange}
-          />
-          <ListItem
-            weight={400}
-            size={10}
-            height={20}
-            color="#8884D8"
+            color="#6988FF"
             justifyContent="end"
             value={info.tokenSymbol}
           />

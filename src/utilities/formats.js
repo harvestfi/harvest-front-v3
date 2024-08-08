@@ -530,3 +530,40 @@ export const formatDateTimeMobile = value => {
 
   return { __html: `${time}<br /> ${month} ${day}<br /> ${year}` }
 }
+
+export const formatAge = timestamp => {
+  let nowDate = new Date(),
+    result = '',
+    duration = 0,
+    day = 0,
+    hour = 0,
+    min = 0,
+    week = 0,
+    month = 0
+
+  nowDate = Math.floor(nowDate.getTime() / 1000)
+  duration = Number(nowDate) - Number(timestamp)
+
+  month = Math.floor(duration / 2592000)
+  duration -= month * 2592000
+
+  week = Math.floor(duration / 604800)
+  duration -= week * 604800
+
+  day = Math.floor(duration / 86400)
+  duration -= day * 86400
+
+  hour = Math.floor(duration / 3600) % 24
+  duration -= hour * 3600
+
+  min = Math.floor(duration / 60) % 60
+
+  const monthString = month > 0 ? `${month}m` : ''
+  const weekString = week > 0 ? `${week}w` : ''
+  const dayString = day > 0 ? `${day}d` : ''
+  const hourString = hour > 0 ? `${hour}h` : ''
+  const minString = min > 0 ? `${min}m` : ''
+  result = monthString || weekString || dayString || hourString || minString
+
+  return result
+}

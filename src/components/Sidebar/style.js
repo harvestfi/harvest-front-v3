@@ -182,7 +182,6 @@ const Link = styled.button`
         ? `
         font-weight: bold;
         background: unset;
-        color: #15b088;
     `
         : `
     `}
@@ -754,6 +753,7 @@ const Logo = styled.div`
   @media screen and (max-width: 992px) {
     display: flex;
     justify-content: end;
+    margin-bottom: 24px;
   }
 `
 

@@ -57,7 +57,7 @@ const VaultRow = ({ info, firstElement, lastElement, cKey }) => {
         push(`${directDetailUrl + network}/${address}?from=portfolio`)
       }}
     >
-      <FlexDiv padding={isMobile ? '10px' : '0'}>
+      <FlexDiv padding={isMobile ? '10px 15px 15px 15px' : '0'}>
         <Content width={isMobile ? '100%' : '40%'} display={isMobile ? 'block' : 'flex'}>
           <ContentInner width={isMobile ? '100%' : '50%'} display={isMobile ? 'block' : 'flex'}>
             <BadgeIcon

@@ -21,9 +21,6 @@ const DetailView = styled.div`
 
   @media screen and (max-width: 992px) {
     padding: 0px;
-    border: unset;
-    border-bottom: 1px solid ${props => props.borderColor};
-    ${props => (props.firstElement === 'yes' ? `border-radius: 16px 16px 0px 0px;` : ``)}
   }
 `
 

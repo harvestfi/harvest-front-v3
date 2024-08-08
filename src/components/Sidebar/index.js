@@ -23,15 +23,7 @@ import WalletOff from '../../assets/images/logos/sidebar/wallet_off.svg'
 import WalletActive from '../../assets/images/logos/sidebar/wallet_active.svg'
 import WalletInactive from '../../assets/images/logos/sidebar/wallet_inactive.svg'
 import Toggle from '../../assets/images/logos/sidebar/more-mobile.svg'
-import HomeMobile from '../../assets/images/logos/sidebar/home-mobile.svg'
-import BeginnersMobile from '../../assets/images/logos/sidebar/beginners-mobile.svg'
-import AdvancedMobile from '../../assets/images/logos/sidebar/advanced-mobile.svg'
-import HomeMobileSM from '../../assets/images/logos/sidebar/home-mobile_sm.svg'
-import BeginnersMobileSM from '../../assets/images/logos/sidebar/beginners-mobile_sm.svg'
-import AdvancedMobileSM from '../../assets/images/logos/sidebar/advanced-mobile_sm.svg'
-import AnalyticsMobile from '../../assets/images/logos/sidebar/analytics-mobile.svg'
-import FAQMobile from '../../assets/images/logos/sidebar/faq-mobile.svg'
-import DocsMobile from '../../assets/images/logos/sidebar/docs-mobile.svg'
+// import DocsMobile from '../../assets/images/logos/sidebar/docs-mobile.svg'
 import { ROUTES } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
 import { usePools } from '../../providers/Pools'
@@ -141,54 +133,60 @@ const sideLinksBottom = [
 const sideLinksMobile = [
   {
     path: ROUTES.PORTFOLIO,
-    name: 'Dashboard',
-    imgPath: HomeMobileSM,
+    name: 'My Positions',
+    imgPath: Home,
   },
   {
     path: ROUTES.BEGINNERSFARM,
     name: 'Beginners',
-    imgPath: BeginnersMobileSM,
+    imgPath: Beginners,
   },
   {
     path: ROUTES.ADVANCED,
     name: 'All Farms',
-    imgPath: AdvancedMobileSM,
+    imgPath: Advanced,
   },
 ]
 
 const sideLinksMobileBottom = [
   {
     path: ROUTES.PORTFOLIO,
-    name: 'Dashboard',
-    imgPath: HomeMobile,
+    name: 'My Positions',
+    imgPath: Home,
   },
   {
     path: ROUTES.BEGINNERSFARM,
     name: 'Beginners',
-    imgPath: BeginnersMobile,
+    imgPath: Beginners,
   },
   {
     path: ROUTES.ADVANCED,
     name: 'All Farms',
-    imgPath: AdvancedMobile,
+    imgPath: Advanced,
   },
   {
     path: ROUTES.ANALYTIC,
     name: 'Analytics',
-    imgPath: AnalyticsMobile,
+    imgPath: Analytics,
   },
   {
     path: ROUTES.TUTORIAL,
     name: 'Tutorial',
-    imgPath: FAQMobile,
+    imgPath: FAQ,
     newTab: true,
   },
   {
-    path: ROUTES.DOC,
-    name: 'Docs',
-    imgPath: DocsMobile,
-    newTab: true,
+    path: ROUTES.LiveSupport,
+    name: 'Support',
+    imgPath: Support,
+    newTab: false,
   },
+  // {
+  //   path: ROUTES.DOC,
+  //   name: 'Docs',
+  //   imgPath: DocsMobile,
+  //   newTab: true,
+  // },
 ]
 
 const SideLink = ({
@@ -248,7 +246,7 @@ const MobileMenu = ({
 }) => {
   const { pathname } = useLocation()
   const pageName =
-    pathname === '/' ? 'dashboard' : pathname === ROUTES.ADVANCED ? 'all farms' : pathname
+    pathname === '/' ? 'my positions' : pathname === ROUTES.ADVANCED ? 'all farms' : pathname
   return (
     <LinkMobile
       fontColor={fontColor}

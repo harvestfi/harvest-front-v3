@@ -40,7 +40,7 @@ const Inner = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 25px 15px;
+    padding: 25px 0px;
   }
 `
 
@@ -54,6 +54,7 @@ const SubPart = styled.div`
   @media screen and (max-width: 992px) {
     flex-wrap: wrap;
     gap: 0px;
+    margin: 0px 15px 24px 15px;
   }
 `
 
@@ -61,6 +62,10 @@ const HeaderWrap = styled.div`
   display: flex;
   justify-content: space-between;
   padding-bottom: 20px;
+
+  @media screen and (max-width: 992px) {
+    padding: 0px 15px 20px 15px;
+  }
 `
 
 const HeaderTitle = styled.div`
@@ -484,8 +489,8 @@ const TableContent = styled.div`
       : ``}
   @media screen and (max-width: 992px) {
     // overflow-x: scroll;
-    border-radius: 15px 15px 0px 0px;
-    border: 1px solid ${props => props.borderColor};
+    border-top: 1px solid ${props => props.borderColor};
+    border-bottom: 1px solid ${props => props.borderColor};
     ${props =>
       props.count === 0
         ? `
@@ -507,15 +512,16 @@ const TableWrap = styled.div`
     line-height: 28px;
 
     @media screen and (max-width: 992px) {
-      display: flex;
+      display: none;
+      /* display: flex;
       justify-content: space-between;
       padding-bottom: 20px;
-      border-bottom: 1px solid #eaecf0;
+      border-bottom: 1px solid #eaecf0; */
     }
   }
 
   @media screen and (max-width: 1480px) {
-    gap: 20px;
+    gap: 0px;
   }
 
   @media screen and (max-width: 992px) {
@@ -523,11 +529,38 @@ const TableWrap = styled.div`
   }
 `
 
+const SubBtnWrap = styled.div`
+  margin-top: 24px;
+  display: flex;
+  justify-content: end;
+  padding-right: 15px;
+`
+
+const MobileSwitch = styled.div`
+  display: flex;
+  padding: 0px 15px;
+`
+
+const SwitchBtn = styled.div`
+  width: 50%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  text-align: center;
+  background: ${props => props.backColor};
+  box-shadow: ${props => props.boxShadow};
+  color: ${props => props.color};
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  margin: auto;
+`
+
 const PositionTable = styled.div`
   width: 70%;
 
   @media screen and (max-width: 992px) {
     width: 100%;
+    display: ${props => props.display};
   }
 `
 
@@ -536,12 +569,13 @@ const YieldTable = styled.div`
 
   @media screen and (max-width: 992px) {
     width: 100%;
-    margin-top: 35px;
+    display: ${props => props.display};
   }
 `
 
 const ContentBox = styled.div`
   border: 1px solid ${props => props.borderColor};
+  border-top: none;
 
   @media screen and (max-width: 992px) {
     border: none;
@@ -725,8 +759,8 @@ const SwitchView = styled.div`
   }
 
   img {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     filter: ${props =>
       props.darkMode
         ? 'invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%)'
@@ -735,16 +769,7 @@ const SwitchView = styled.div`
 
   @media screen and (max-width: 992px) {
     height: unset;
-    border-radius: 5px;
-    font-size: 8.75px;
-    line-height: 12.5px;
-    padding: 6.25px 10px;
-    gap: 5px;
-
-    img {
-      width: 12.5px;
-      height: 12.5px;
-    }
+    padding: 10px 16px;
   }
 `
 
@@ -795,15 +820,14 @@ const CurrencySelect = styled.div`
 
   @media screen and (max-width: 992px) {
     height: unset;
-    border-radius: 5px;
-    font-size: 8.75px;
-    line-height: 12.5px;
-    padding: 6.25px 10px;
+    border-radius: 8px;
+    line-height: 20px;
+    padding: 10px 16px;
     gap: 5px;
 
     img {
-      width: 12.5px;
-      height: 12.5px;
+      width: 17.6px;
+      height: 17.6px;
     }
   }
 `
@@ -929,22 +953,11 @@ const CurrencyDropDownItem = styled(Dropdown.Item)`
   }
 
   @media screen and (max-width: 992px) {
-    font-size: 8.75px;
-    line-height: 12.5px;
-    padding: 6.25px 10px;
+    line-height: 20px;
+    padding: 10px 16px;
     gap: 5px;
 
-    :first-child {
-      border-radius: 5px 5px 0px 0px;
-    }
-
-    :last-child {
-      border-radius: 0px 0px 5px 5px;
-    }
-
     img {
-      width: 12.5px;
-      height: 12.5px;
       margin-left: 0px;
     }
   }
@@ -973,6 +986,9 @@ export {
   Col,
   TableContent,
   TableWrap,
+  MobileSwitch,
+  SubBtnWrap,
+  SwitchBtn,
   PositionTable,
   YieldTable,
   ContentBox,

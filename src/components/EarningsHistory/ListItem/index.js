@@ -2,10 +2,26 @@ import React from 'react'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { Container, Content, Label } from './style'
 
-const ListItem = ({ weight, size, height, color, label, icon, value, marginBottom, marginTop }) => {
+const ListItem = ({
+  weight,
+  size,
+  height,
+  color,
+  label,
+  icon,
+  value,
+  marginBottom,
+  marginTop,
+  justifyContent,
+}) => {
   const { fontColor } = useThemeContext()
   return (
-    <Container fontColor={fontColor} marginBottom={marginBottom} marginTop={marginTop}>
+    <Container
+      fontColor={fontColor}
+      marginBottom={marginBottom}
+      marginTop={marginTop}
+      justifyContent={justifyContent}
+    >
       {label ? (
         <Label>
           {icon && icon !== '' ? (
