@@ -404,11 +404,8 @@ const DepositStart = ({
             >
               <NewLabel weight="500">{progressStep === 4 ? 'Converted' : 'Converting'}</NewLabel>
               <NewLabel display="flex" flexFlow="column" weight="600" textAlign="right">
-                <>
-                  {fromInfoAmount !== '' ? fromInfoAmount : inputAmount}
-                  {(fromInfoAmount + pickedToken.symbol).length > 20 ? <br /> : ' '}{' '}
-                  {pickedToken.symbol}
-                </>
+                {fromInfoAmount !== '' ? fromInfoAmount : inputAmount}
+                <span>{pickedToken.symbol}</span>
                 <span>
                   {fromInfoUsdAmount !== '' ? <>{fromInfoUsdAmount}</> : <AnimatedDots />}
                 </span>

@@ -15,64 +15,25 @@ import { ClipLoader } from 'react-spinners'
 import { useWindowWidth } from '@react-hook/window-size'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { ceil10, floor10, round10, numberWithCommas, formatDate } from '../../../utilities/formats'
-import { getTimeSlots } from '../../../utilities/parsers'
+import { findMax, findMin, getRangeNumber, getTimeSlots } from '../../../utilities/parsers'
 import { LoadingDiv, NoData } from './style'
 import { fromWei } from '../../../services/web3'
 import { useRate } from '../../../providers/Rate'
 
-function getRangeNumber(strRange) {
-  let ago = 30
-  if (strRange === '1W') {
-    ago = 7
-  } else if (strRange === '1M') {
-    ago = 30
-  } else if (strRange === '1Y') {
-    ago = 365
-  } else if (strRange === 'ALL') {
-    ago = 365
-  }
-
-  return ago
-}
-
-function findMax(data) {
-  const ary = data.map(el => el.y)
-  const max = Math.max(...ary)
-  return max
-}
-
-function findMin(data) {
-  const ary = data.map(el => el.y)
-  const min = Math.min(...ary)
-  return min
-}
-
-// kind: "value" - TVL, "apy" - APY
 function generateChartDataWithSlots(slots, apiData, kind, filter, decimals) {
   const seriesData = []
-  if (filter === 2) {
-    for (let i = 0; i < slots.length; i += 1) {
-      const data = apiData.reduce((prev, curr) =>
-        Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
-          ? curr
-          : prev,
-      )
-
-      seriesData.push({
-        x: slots[i] * 1000,
-        y: fromWei(parseFloat(data.sharePrice), decimals, decimals, true),
-      })
-    }
-  } else {
-    for (let i = 0; i < slots.length; i += 1) {
-      for (let j = 0; j < apiData.length; j += 1) {
-        if (slots[i] > parseInt(apiData[j].timestamp, 10)) {
-          const value = parseFloat(apiData[j][kind])
+  for (let i = 0; i < slots.length; i += 1) {
+    for (let j = 0; j < apiData.length; j += 1) {
+      if (slots[i] > parseInt(apiData[j].timestamp, 10)) {
+        const value = parseFloat(apiData[j][kind])
+        if (filter === 2) {
+          seriesData.push({ x: slots[i] * 1000, y: fromWei(value, decimals, decimals, true) })
+        } else {
           seriesData.push({ x: slots[i] * 1000, y: value })
-          break
-        } else if (j === apiData.length - 1) {
-          seriesData.push({ x: slots[i] * 1000, y: 0 })
         }
+        break
+      } else if (j === apiData.length - 1) {
+        seriesData.push({ x: slots[i] * 1000, y: 0 })
       }
     }
   }
@@ -264,6 +225,7 @@ const ApexChart = ({
         unitBtw,
         roundNum,
         firstDate,
+        slotCount = 100,
         ago
 
       if (range === 'ALL' || range === '1Y') {
@@ -290,9 +252,26 @@ const ApexChart = ({
         } else {
           ago = Math.ceil(periodDate)
         }
+        if (ago > 700) {
+          slotCount = 500
+        } else if (ago > 365) {
+          slotCount = 400
+        } else if (ago > 180) {
+          slotCount = 300
+        } else if (ago > 90) {
+          slotCount = 150
+        } else if (ago > 60) {
+          slotCount = 100
+        } else if (ago > 30) {
+          slotCount = 100
+        } else {
+          slotCount = 50
+        }
       } else {
         ago = getRangeNumber(range)
       }
+
+      const slots = getTimeSlots(ago, slotCount)
 
       if (filter === 1) {
         if (isIFARM) {
@@ -333,9 +312,6 @@ const ApexChart = ({
         }
         userPriceFeedData = data && data.vaultHistories ? data.vaultHistories : []
       }
-
-      const slotCount = 100,
-        slots = getTimeSlots(ago, slotCount)
 
       if (filter === 1) {
         if (isIFARM) {

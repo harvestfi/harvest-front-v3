@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
+import { get } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import ListItem from '../ListItem'
 import { displayAPY, formatNumber, formatNumberWido } from '../../../utilities/formats'
@@ -8,6 +9,7 @@ import { chainList, directDetailUrl } from '../../../constants'
 import { useRate } from '../../../providers/Rate'
 import File from '../../../assets/images/logos/dashboard/file-02.svg'
 import MobileFile from '../../../assets/images/logos/dashboard/file-01.svg'
+import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
 import { BadgeIcon, Content, DetailView, FlexDiv, LogoImg, Img, ContentInner } from './style'
 
 const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, cKey }) => {
@@ -27,6 +29,7 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
+  const boostedToken = get(info, 'boosted')
 
   useEffect(() => {
     if (rates.rateData) {
@@ -68,7 +71,7 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
               borderColor={info.status === 'Active' ? '#29ce84' : 'orange'}
               className="network-badge"
             >
-              <img src={info.chain} width="15px" height="15px" alt="" />
+              <img src={info.chain ? info.chain : ETHEREUM} width="15px" height="15px" alt="" />
             </BadgeIcon>
             {info.logos.length > 0 &&
               info.logos.map((elem, index) => (
@@ -104,7 +107,7 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
             <ListItem color={fontColor} weight={500} size={12} height={18} value="Live APY" />
           )}
           <ListItem
-            color={isMobile ? fontColor1 : fontColor}
+            color={boostedToken ? '#FD7300' : isMobile ? fontColor1 : fontColor}
             weight={500}
             size={14}
             height={20}
@@ -115,6 +118,7 @@ const VaultRow = ({ info, firstElement, lastElement, showDetail, setShowDetail, 
                 ? '-'
                 : `${displayAPY(info.apy)}`
             }
+            boostedToken={boostedToken}
           />
         </Content>
         {isMobile && (

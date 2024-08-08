@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { find, get, isEqual, isArray, isNaN } from 'lodash'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import axios from 'axios'
 import { useMediaQuery } from 'react-responsive'
 import ReactHtmlParser from 'react-html-parser'
 import ReactTooltip from 'react-tooltip'
@@ -22,6 +21,7 @@ import Safe from '../../assets/images/logos/beginners/safe.svg'
 import Diamond from '../../assets/images/logos/beginners/diamond.svg'
 import BarChart from '../../assets/images/logos/beginners/bar-chart-01.svg'
 import History from '../../assets/images/logos/beginners/history.svg'
+import ARBball from '../../assets/images/chains/ARBball-lg.png'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/AdvancedFarmComponents/Deposit/DepositBase'
 import DepositSelectToken from '../../components/AdvancedFarmComponents/Deposit/DepositSelectToken'
@@ -41,8 +41,6 @@ import UnstakeResult from '../../components/AdvancedFarmComponents/Unstake/Unsta
 import EarningsHistory from '../../components/EarningsHistory/HistoryData'
 import {
   AVRList,
-  GECKO_URL,
-  COINGECKO_API_KEY,
   DECIMAL_PRECISION,
   FARM_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
@@ -55,6 +53,7 @@ import {
   SOCIAL_LINKS,
   feeList,
   chainList,
+  boostedVaults,
 } from '../../constants'
 import { fromWei, newContractInstance, getWeb3, getExplorerLink } from '../../services/web3'
 import { addresses } from '../../data'
@@ -74,7 +73,12 @@ import {
 } from '../../utilities/formats'
 import { getTotalApy, getVaultValue } from '../../utilities/parsers'
 import { getAdvancedRewardText } from '../../utilities/html'
-import { getLastHarvestInfo, initBalanceAndDetailData } from '../../utilities/apiCalls'
+import {
+  getCoinListFromApi,
+  getLastHarvestInfo,
+  getTokenPriceFromApi,
+  initBalanceAndDetailData,
+} from '../../utilities/apiCalls'
 import {
   BackBtnRect,
   BackText,
@@ -94,6 +98,7 @@ import {
   TopPart,
   MyBalance,
   MyTotalReward,
+  TotalRewardBox,
   GuideSection,
   GuidePart,
   DepositSection,
@@ -140,38 +145,6 @@ import {
 import { CHAIN_IDS } from '../../data/constants'
 // import { array } from 'prop-types'
 import { usePortals } from '../../providers/Portals'
-
-const getCoinListFromApi = async () => {
-  try {
-    const response = await axios.get(`${GECKO_URL}coins/list`, {
-      headers: {
-        'x-cg-pro-api-key': COINGECKO_API_KEY,
-      },
-    })
-    return response.data
-  } catch (err) {
-    console.log('Fetch Chart Data error: ', err)
-    return []
-  }
-}
-const getTokenPriceFromApi = async tokenID => {
-  try {
-    const response = await axios.get(`${GECKO_URL}simple/price`, {
-      params: {
-        ids: tokenID,
-        // eslint-disable-next-line camelcase
-        vs_currencies: 'usd',
-      },
-      headers: {
-        'x-cg-pro-api-key': COINGECKO_API_KEY,
-      },
-    })
-    return response.data[tokenID].usd
-  } catch (err) {
-    console.log('Fetch Chart Data error: ', err)
-    return null
-  }
-}
 
 const AdvancedFarm = () => {
   const {
@@ -223,6 +196,8 @@ const AdvancedFarm = () => {
   const [activeDepo, setActiveDepo] = useState(true)
   const [showLatestEarnings, setShowLatestEarnings] = useState(true)
   const [showApyHistory, setShowApyHistory] = useState(true)
+  const [showArbCampInfo, setShowArbCampInfo] = useState(false)
+  const [isArbCampVault, setIsArbCampVault] = useState(false)
   const [showGenomesVaultInfo, setShowGenomesVaultInfo] = useState(false)
   const [showSeamlessVaultInfo, setShowSeamlessVaultInfo] = useState(false)
   const [showGBVaultInfo, setShowGBVaultInfo] = useState(false)
@@ -279,6 +254,7 @@ const AdvancedFarm = () => {
   const [supTokenNoBalanceList, setSupTokenNoBalanceList] = useState([])
   const [defaultToken, setDefaultToken] = useState(null)
   const [soonToSupList, setSoonToSupList] = useState([])
+  const [arbBalance, setArbBalance] = useState('0')
 
   const [vaultValue, setVaultValue] = useState(null)
   const [loadingFarmingBalance, setFarmingLoading] = useState(false)
@@ -363,6 +339,17 @@ const AdvancedFarm = () => {
 
   const groupOfVaults = { ...vaultsData, ...poolVaults }
   const vaultsKey = Object.keys(groupOfVaults)
+
+  // Add 'boosted' item to vaults that participate in campaign
+  vaultsKey.map(async symbol => {
+    for (let i = 0; i < boostedVaults.length; i += 1) {
+      if (symbol === boostedVaults[i]) {
+        groupOfVaults[symbol].boosted = true
+        return
+      }
+    }
+  })
+
   const vaultIds = vaultsKey.filter(vaultId => {
     const tokenAddress = groupOfVaults[vaultId].tokenAddress || groupOfVaults[vaultId].vaultAddress
 
@@ -478,7 +465,7 @@ const AdvancedFarm = () => {
 
   const mainTags = [
     { name: 'Manage', img: Safe },
-    { name: 'Rewards', img: Diamond },
+    { name: isArbCampVault ? 'Rewards 🔥' : 'Rewards', img: Diamond },
     { name: 'Details', img: BarChart },
     { name: 'History', img: History },
   ]
@@ -488,10 +475,17 @@ const AdvancedFarm = () => {
     const platform = useIFARM ? 'Harvest' : token.platform?.[0]?.toLowerCase() ?? ''
     const firstToken = token.tokenNames?.[0]?.toLowerCase() ?? ''
     const firstViewIFarm = localStorage.getItem('firstViewIFarm')
+    const firstViewArbCampVault = localStorage.getItem('firstViewArbCampVault')
     const firstViewSeamless = localStorage.getItem('firstViewSeamless')
     const firstViewGenomes = localStorage.getItem('firstViewGenomes')
     const firstViewGB = localStorage.getItem('firstViewGB')
-    if (platform === 'Harvest' && (firstViewIFarm === null || firstViewIFarm === 'true')) {
+
+    const campaign = token.boosted
+    if (campaign) setIsArbCampVault(true)
+    if (campaign && (firstViewArbCampVault === null || firstViewArbCampVault === 'true')) {
+      localStorage.setItem('firstViewArbCampVault', true)
+      setShowArbCampInfo(true)
+    } else if (platform === 'Harvest' && (firstViewIFarm === null || firstViewIFarm === 'true')) {
       localStorage.setItem('firstViewIFarm', true)
       setShowIFARMInfo(true)
     } else if (
@@ -510,7 +504,7 @@ const AdvancedFarm = () => {
       localStorage.setItem('firstViewGB', true)
       setShowGBVaultInfo(true)
     }
-  }, [token.platform, token.tokenNames, useIFARM])
+  }, [token.platform, token.tokenNames, token.boosted, useIFARM])
 
   const closeIFARMBadge = () => {
     setShowIFARMInfo(false)
@@ -519,6 +513,11 @@ const AdvancedFarm = () => {
   const closeBadgeGenomes = () => {
     setShowGenomesVaultInfo(false)
     localStorage.setItem('firstViewGenomes', 'false')
+  }
+
+  const closeBadgeArbCamp = () => {
+    setShowArbCampInfo(false)
+    // localStorage.setItem('firstViewArbCampVault', 'false')
   }
 
   const closeBadgeSeamless = () => {
@@ -731,6 +730,12 @@ const AdvancedFarm = () => {
             //   ),
             // )
             setBalanceList(curSortedBalances)
+
+            curSortedBalances.forEach(balanceToken => {
+              if (balanceToken.symbol === 'ARB') {
+                setArbBalance(balanceToken.balance)
+              }
+            })
 
             supList = [...curBalances, ...curNoBalances]
 
@@ -1474,6 +1479,7 @@ const AdvancedFarm = () => {
                     bgColor={bgColor}
                     bgColorFarm={bgColorFarm}
                     active={activeMainTag === i ? 'true' : 'false'}
+                    campMobileRewards={isArbCampVault && activeMainTag !== i && i === 1 && isMobile}
                     mode={darkMode ? 'dark' : 'light'}
                     useIFARM={useIFARM}
                     onClick={() => {
@@ -1486,7 +1492,7 @@ const AdvancedFarm = () => {
                     }}
                   >
                     <img src={tag.img} alt="logo" />
-                    <p>{tag.name}</p>
+                    <p>{isArbCampVault && activeMainTag !== i && isMobile ? '🔥' : tag.name}</p>
                   </MainTag>
                 ))}
               </MainTagPanel>
@@ -1513,7 +1519,42 @@ const AdvancedFarm = () => {
           <InternalSection>
             {activeMainTag === 0 ? (
               <>
-                {showGenomesVaultInfo ? (
+                {showArbCampInfo ? (
+                  <WelcomeBox
+                    bgColorTooltip="#f2fcf8"
+                    fontColorTooltip="#07B466"
+                    borderColor="#29CE84"
+                  >
+                    <WelcomeContent>
+                      <WelcomeTitle>
+                        <span role="img" aria-label="thumb" aria-labelledby="thumb">
+                          🔥
+                        </span>{' '}
+                        Boost Note
+                      </WelcomeTitle>
+                      <WelcomeText>
+                        This yield strategy receives additional ARB rewards. Stake your fTokens
+                        under the Rewards tab to be entitled to them. The campaign will end on
+                        [date] UTC.{' '}
+                        <WelcomeBottom>
+                          <WelcomeKnow onClick={closeBadgeArbCamp}>Got it!</WelcomeKnow>
+                          <WelcomeTicket
+                            href={SOCIAL_LINKS.DISCORD}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            linkColor="#07B466"
+                            linkColorOnHover="#29CE84"
+                          >
+                            Still having questions? Open Discord ticket.
+                          </WelcomeTicket>
+                        </WelcomeBottom>
+                      </WelcomeText>
+                    </WelcomeContent>
+                    <WelcomeClose>
+                      <RxCross2 onClick={closeBadgeArbCamp} />
+                    </WelcomeClose>
+                  </WelcomeBox>
+                ) : showGenomesVaultInfo ? (
                   <WelcomeBox
                     bgColorTooltip={bgColorTooltip}
                     fontColorTooltip={fontColorTooltip}
@@ -2109,43 +2150,120 @@ const AdvancedFarm = () => {
                   />
                 )
               ) : activeMainTag === 1 ? (
-                <>
-                  <MyTotalReward
-                    marginBottom={isMobile ? '20px' : '25px'}
-                    backColor={backColor}
-                    borderColor={borderColor}
-                  >
-                    <BoxTitle fontColor3={fontColor3}>Rewards</BoxTitle>
-                    <RewardValue>
-                      <BoxValue fontColor1={fontColor1}>
-                        {!connected ? (
-                          `${currencySym}0`
-                        ) : userStats ? (
-                          showUsdValue(totalReward, currencySym)
-                        ) : (
-                          <AnimatedDots />
-                        )}
-                      </BoxValue>
-                    </RewardValue>
-                  </MyTotalReward>
-                  {!isMobile && (
-                    <MyBalance marginBottom="25px" backColor={backColor} borderColor={borderColor}>
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="600"
-                        height={isMobile ? '20px' : '24px'}
-                        color={fontColor4}
-                        padding={isMobile ? '10px 15px' : '10px 15px'}
-                        borderBottom="1px solid #F3F6FF"
+                isArbCampVault ? (
+                  <>
+                    <MyTotalReward marginBottom={isMobile ? '20px' : '25px'}>
+                      <div className="box-image">
+                        <img src={ARBball} alt="" />
+                      </div>
+                      <div className="box-text">
+                        <div className="box-text-first">
+                          Earn more on your claimed ARB rewards with the ARB farm.
+                        </div>
+                        <div className="box-text-second">
+                          Your ARB wallet balance: <span>{showTokenBalance(arbBalance)}</span>
+                        </div>
+                      </div>
+                      <div className="box-btn-wrap">
+                        <div
+                          className="box-btn"
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => {
+                            window.open(
+                              '/arbitrum/0x32DB5Cbac1C278696875eB9F27eD4cD7423dd126',
+                              '_blank',
+                            )
+                          }}
+                          onKeyDown={e => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              window.open(
+                                '/arbitrum/0x32DB5Cbac1C278696875eB9F27eD4cD7423dd126',
+                                '_blank',
+                              )
+                            }
+                          }}
+                        >
+                          Open ARB farm
+                        </div>
+                      </div>
+                    </MyTotalReward>
+                    {!isMobile && (
+                      <MyBalance
+                        marginBottom="25px"
+                        backColor={backColor}
+                        borderColor={borderColor}
                       >
-                        My Token Rewards
-                      </NewLabel>
-                      <FlexDiv>
-                        <VaultPanelActionsFooter {...viewComponentProps} />
-                      </FlexDiv>
-                    </MyBalance>
-                  )}
-                </>
+                        <NewLabel
+                          size={isMobile ? '12px' : '14px'}
+                          weight="600"
+                          height={isMobile ? '20px' : '24px'}
+                          color={fontColor4}
+                          padding={isMobile ? '10px 15px' : '10px 15px'}
+                          borderBottom="1px solid #F3F6FF"
+                          display="flex"
+                          justifyContent="space-between"
+                        >
+                          <div>My Token Rewards</div>
+                          <div>
+                            {!connected ? (
+                              `${currencySym}0`
+                            ) : userStats ? (
+                              showUsdValue(totalReward, currencySym)
+                            ) : (
+                              <AnimatedDots />
+                            )}
+                          </div>
+                        </NewLabel>
+                        <FlexDiv>
+                          <VaultPanelActionsFooter {...viewComponentProps} />
+                        </FlexDiv>
+                      </MyBalance>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <TotalRewardBox
+                      marginBottom={isMobile ? '20px' : '25px'}
+                      backColor={backColor}
+                      borderColor={borderColor}
+                    >
+                      <BoxTitle fontColor3={fontColor3}>Rewards</BoxTitle>
+                      <RewardValue>
+                        <BoxValue fontColor1={fontColor1}>
+                          {!connected ? (
+                            `${currencySym}0`
+                          ) : userStats ? (
+                            showUsdValue(totalReward, currencySym)
+                          ) : (
+                            <AnimatedDots />
+                          )}
+                        </BoxValue>
+                      </RewardValue>
+                    </TotalRewardBox>
+                    {!isMobile && (
+                      <MyBalance
+                        marginBottom="25px"
+                        backColor={backColor}
+                        borderColor={borderColor}
+                      >
+                        <NewLabel
+                          size={isMobile ? '12px' : '14px'}
+                          weight="600"
+                          height={isMobile ? '20px' : '24px'}
+                          color={fontColor4}
+                          padding={isMobile ? '10px 15px' : '10px 15px'}
+                          borderBottom="1px solid #F3F6FF"
+                        >
+                          My Token Rewards
+                        </NewLabel>
+                        <FlexDiv>
+                          <VaultPanelActionsFooter {...viewComponentProps} />
+                        </FlexDiv>
+                      </MyBalance>
+                    )}
+                  </>
+                )
               ) : activeMainTag === 2 ? (
                 <>
                   <HalfInfo

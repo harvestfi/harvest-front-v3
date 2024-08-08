@@ -9,6 +9,12 @@ import {
   SPECIAL_VAULTS,
 } from '../constants'
 import { CHAIN_IDS } from '../data/constants'
+import { ceil10, floor10, round10 } from './formats'
+import Arbitrum from '../assets/images/chains/arbitrum.svg'
+import Base from '../assets/images/chains/base.svg'
+import Zksync from '../assets/images/chains/zksync.svg'
+import Ethereum from '../assets/images/chains/ethereum.svg'
+import Polygon from '../assets/images/chains/polygon.svg'
 
 export const getNextEmissionsCutDate = () => {
   const result = new Date()
@@ -179,6 +185,55 @@ export const getChainNamePortals = chain => {
   return chainName
 }
 
+export const getChainName = chain => {
+  let chainName = 'Ethereum'
+  switch (chain) {
+    case CHAIN_IDS.POLYGON_MAINNET:
+      chainName = 'Polygon'
+      break
+    case CHAIN_IDS.ARBITRUM_ONE:
+      chainName = 'Arbitrum'
+      break
+    case CHAIN_IDS.BASE:
+      chainName = 'Base'
+      break
+    case CHAIN_IDS.ZKSYNC:
+      chainName = 'Zksync'
+      break
+    default:
+      chainName = 'Ethereum'
+      break
+  }
+  return chainName
+}
+
+export const getChainIcon = chainNum => {
+  let icon = null
+  if (chainNum) {
+    switch (chainNum) {
+      case CHAIN_IDS.ETH_MAINNET:
+        icon = Ethereum
+        break
+      case CHAIN_IDS.POLYGON_MAINNET:
+        icon = Polygon
+        break
+      case CHAIN_IDS.ARBITRUM_ONE:
+        icon = Arbitrum
+        break
+      case CHAIN_IDS.BASE:
+        icon = Base
+        break
+      case CHAIN_IDS.ZKSYNC:
+        icon = Zksync
+        break
+      default:
+        icon = Ethereum
+        break
+    }
+  }
+  return icon
+}
+
 export const getTimeSlots = (ago, slotCount) => {
   const slots = [],
     nowDate = new Date(),
@@ -191,4 +246,127 @@ export const getTimeSlots = (ago, slotCount) => {
   }
 
   return slots
+}
+
+export const getChartDomain = (maxValue, minValue, maxValueUnderlying, minValueUnderlying) => {
+  let len = 0,
+    lenUnderlying = 0,
+    unitBtw,
+    unitBtwUnderlying
+
+  minValue /= 1.01
+  const between = maxValue - minValue
+  const betweenUnderlying = maxValueUnderlying - minValueUnderlying
+  unitBtw = between / 4
+  unitBtwUnderlying = betweenUnderlying / 4
+  if (unitBtw >= 1) {
+    unitBtw = Math.ceil(unitBtw)
+    len = 2
+    // len = unitBtw.toString().length
+    unitBtw = ceil10(unitBtw, len - 1)
+    // maxValue = ceil10(maxValue, len - 1)
+    // minValue = floor10(minValue, len - 1)
+  } else if (unitBtw === 0) {
+    len = Math.ceil(maxValue).toString().length
+    maxValue += 10 ** (len - 1)
+    minValue -= 10 ** (len - 1)
+  } else {
+    len = Math.ceil(1 / unitBtw).toString().length + 1
+    unitBtw = ceil10(unitBtw, -len)
+    maxValue = ceil10(maxValue, -len)
+    minValue = floor10(minValue, -len + 1)
+  }
+
+  if (unitBtwUnderlying >= 1) {
+    unitBtwUnderlying = Math.ceil(unitBtwUnderlying)
+    lenUnderlying = unitBtwUnderlying.toString().length
+    unitBtwUnderlying = ceil10(unitBtwUnderlying, lenUnderlying - 1)
+    maxValueUnderlying = ceil10(maxValueUnderlying, lenUnderlying - 1)
+    minValueUnderlying = floor10(minValueUnderlying, lenUnderlying - 1)
+  } else if (unitBtwUnderlying === 0) {
+    lenUnderlying = Math.ceil(maxValueUnderlying).toString().length
+    maxValueUnderlying += 10 ** (lenUnderlying - 1)
+    minValueUnderlying -= 10 ** (lenUnderlying - 1)
+  } else {
+    lenUnderlying = Math.ceil(1 / unitBtwUnderlying).toString().length + 1
+    unitBtwUnderlying = ceil10(unitBtwUnderlying, -lenUnderlying)
+    maxValueUnderlying = ceil10(maxValueUnderlying, -lenUnderlying)
+    minValueUnderlying = floor10(minValueUnderlying, -lenUnderlying + 1)
+  }
+  if (unitBtw !== 0) {
+    if (minValue === 0) {
+      maxValue *= 1.1
+    } else {
+      maxValue += between / 5
+    }
+  } else {
+    unitBtw = (maxValue - minValue) / 4
+  }
+
+  if (unitBtwUnderlying !== 0) {
+    if (minValueUnderlying === 0) {
+      maxValueUnderlying *= 1.5
+    } else {
+      maxValueUnderlying += betweenUnderlying * 2
+    }
+    // minValueUnderlying = 0
+  } else {
+    unitBtwUnderlying = (maxValueUnderlying - minValueUnderlying) / 4
+  }
+
+  return { maxValue, minValue, maxValueUnderlying, minValueUnderlying, len, lenUnderlying }
+}
+
+export const getRangeNumber = strRange => {
+  let ago = 30
+  if (strRange === '1D') {
+    ago = 1
+  } else if (strRange === '1W') {
+    ago = 7
+  } else if (strRange === '1M') {
+    ago = 30
+  } else if (strRange === '1Y') {
+    ago = 365
+  } else if (strRange === 'ALL') {
+    ago = 365
+  }
+
+  return ago
+}
+
+export const findMax = data => {
+  const ary = data.map(el => el.y)
+  const max = Math.max(...ary)
+  return max
+}
+
+export const findMin = data => {
+  const ary = data.map(el => el.y)
+  const min = Math.min(...ary)
+  return min
+}
+
+export const findClosestIndex = (data, target) => {
+  let closestIndex = 0,
+    closestDistance = Math.abs(data[0].x - target)
+
+  for (let i = 1; i < data.length; i += 1) {
+    const distance = Math.abs(data[i].x - target)
+    if (distance < closestDistance) {
+      closestIndex = i
+      closestDistance = distance
+    }
+  }
+
+  return closestIndex
+}
+
+export const getYAxisValues = (min, max, roundNum) => {
+  const duration = Number(max - min)
+  const ary = []
+  for (let i = min; i <= max; i += duration / 4) {
+    const val = round10(i, roundNum)
+    ary.push(val)
+  }
+  return ary
 }

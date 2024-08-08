@@ -3,19 +3,7 @@ import { useWindowWidth } from '@react-hook/window-size'
 import Chart from 'react-apexcharts'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { ceil10, floor10 } from '../../utilities/formats'
-import { getTimeSlots } from '../../utilities/parsers'
-
-function findMax(data) {
-  const ary = data.map(el => el[1])
-  const max = Math.max(...ary)
-  return max
-}
-
-function findMin(data) {
-  const ary = data.map(el => el[1])
-  const min = Math.min(...ary)
-  return min
-}
+import { findMax, findMin, getTimeSlots } from '../../utilities/parsers'
 
 function generateChartDataWithSlots(slots, apiData, kind) {
   const seriesData = []

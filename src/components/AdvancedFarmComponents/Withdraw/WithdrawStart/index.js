@@ -479,8 +479,7 @@ const WithdrawStart = ({
                       </NewLabel>
                     </ReactTooltip>
                   </>
-                  {/* {(revertMinReceivedAmount + pickedToken.symbol).length > 20 ? <br /> : ' '} */}
-                  {pickedToken.symbol}
+                  <span>{pickedToken.symbol}</span>
                 </>
                 <span>
                   {!pickedDefaultToken && progressStep === 4 ? (
