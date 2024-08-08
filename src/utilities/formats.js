@@ -418,6 +418,39 @@ export const formatDate = value => {
   return `${month} ${day} ${year}`
 }
 
+export const normalizeSliderValue = (value, min, max) => ((value - min) / (max - min)) * 100
+export const denormalizeSliderValue = (value, min, max) =>
+  ((value / 100) * (max - min) + min) / 1000
+
+export const calculateMarks = (data, minTimestamp, maxTimestamp) => {
+  const length = data.length
+  if (length === 0) {
+    return ''
+  }
+
+  const marks = {}
+  data.forEach(item => {
+    if (item.event !== 'Harvest') {
+      const timestamp = parseFloat(item.timestamp) * 1000
+      const position = formatNumber(normalizeSliderValue(timestamp, minTimestamp, maxTimestamp), 2)
+      let dotColor = ''
+      if (item.event === 'Convert') {
+        dotColor = '#00D26B'
+      } else if (item.event === 'Revert') {
+        dotColor = '#FF5733'
+      }
+
+      marks[position] = {
+        style: { borderColor: dotColor, color: dotColor },
+        label: ' ',
+        dotColor,
+      }
+    }
+  })
+
+  return marks
+}
+
 export const formatXAxis = (value, hourUnit) => {
   const date = new Date(value)
 

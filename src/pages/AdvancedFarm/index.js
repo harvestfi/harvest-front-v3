@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { find, get, isEqual, isArray, isNaN } from 'lodash'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import axios from 'axios'
 import { useMediaQuery } from 'react-responsive'
 import ReactHtmlParser from 'react-html-parser'
 import ReactTooltip from 'react-tooltip'
@@ -41,8 +40,6 @@ import UnstakeResult from '../../components/AdvancedFarmComponents/Unstake/Unsta
 import EarningsHistory from '../../components/EarningsHistory/HistoryData'
 import {
   AVRList,
-  GECKO_URL,
-  COINGECKO_API_KEY,
   DECIMAL_PRECISION,
   FARM_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
@@ -74,7 +71,12 @@ import {
 } from '../../utilities/formats'
 import { getTotalApy, getVaultValue } from '../../utilities/parsers'
 import { getAdvancedRewardText } from '../../utilities/html'
-import { getLastHarvestInfo, initBalanceAndDetailData } from '../../utilities/apiCalls'
+import {
+  getCoinListFromApi,
+  getLastHarvestInfo,
+  getTokenPriceFromApi,
+  initBalanceAndDetailData,
+} from '../../utilities/apiCalls'
 import {
   BackBtnRect,
   BackText,
@@ -140,38 +142,6 @@ import {
 import { CHAIN_IDS } from '../../data/constants'
 // import { array } from 'prop-types'
 import { usePortals } from '../../providers/Portals'
-
-const getCoinListFromApi = async () => {
-  try {
-    const response = await axios.get(`${GECKO_URL}coins/list`, {
-      headers: {
-        'x-cg-pro-api-key': COINGECKO_API_KEY,
-      },
-    })
-    return response.data
-  } catch (err) {
-    console.log('Fetch Chart Data error: ', err)
-    return []
-  }
-}
-const getTokenPriceFromApi = async tokenID => {
-  try {
-    const response = await axios.get(`${GECKO_URL}simple/price`, {
-      params: {
-        ids: tokenID,
-        // eslint-disable-next-line camelcase
-        vs_currencies: 'usd',
-      },
-      headers: {
-        'x-cg-pro-api-key': COINGECKO_API_KEY,
-      },
-    })
-    return response.data[tokenID].usd
-  } catch (err) {
-    console.log('Fetch Chart Data error: ', err)
-    return null
-  }
-}
 
 const AdvancedFarm = () => {
   const {

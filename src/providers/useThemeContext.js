@@ -26,6 +26,7 @@ export function ThemeProvider({ children }) {
   const bgColorMessage = darkMode ? '#242c3c' : '#fcfcfd'
   const bgColorButton = darkMode ? '#242c3c' : '#eaf1ff'
   const bgColorSlippage = darkMode ? '#1F242F' : '#15b088'
+  const bgColorChart = darkMode ? '#161B26' : '#f3f6ff'
 
   const fontColor = darkMode ? '#fff' : '#475467'
   const fontColor1 = darkMode ? '#fff' : '#101828'
@@ -192,6 +193,7 @@ export function ThemeProvider({ children }) {
         bgColorMessage,
         bgColorButton,
         bgColorSlippage,
+        bgColorChart,
         filterColor,
         boxShadowColor,
         hoverImgColor,
