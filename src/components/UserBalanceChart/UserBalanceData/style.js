@@ -50,60 +50,9 @@ const ButtonGroup = styled.div`
   color: #fff;
   justify-content: end;
   padding-top: 10px;
-
-  .chart-slider-wrapper {
-    display: none;
-    width: 100%;
-
-    .chart-slider {
-      width: 90%;
-      margin: 0px auto 25px auto;
-
-      .rc-slider-track {
-        background-color: #15b088;
-      }
-
-      .rc-slider-step {
-        .rc-slider-dot-active {
-          border-color: #15b088;
-        }
-      }
-
-      .rc-slider-handle {
-        border-color: #15b088;
-      }
-
-      .rc-slider-mark {
-        .rc-slider-mark-text {
-          width: 100%;
-        }
-        .rc-slider-mark-text-active {
-          color: #15b088;
-        }
-      }
-    }
-  }
 `
 
-const ChartDiv = styled.div`
-  height: 346px;
-
-  @media screen and (max-width: 1797px) {
-    height: 365px;
-  }
-
-  @media screen and (max-width: 1262px) {
-    height: 365px;
-  }
-
-  @media screen and (max-width: 1035px) {
-    height: 365px;
-  }
-
-  @media screen and (max-width: 992px) {
-    height: 365px;
-  }
-`
+const ChartDiv = styled.div``
 
 const PriceShow = styled.div`
   display: flex;

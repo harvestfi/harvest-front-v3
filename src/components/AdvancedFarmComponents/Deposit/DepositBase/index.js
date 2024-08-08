@@ -14,7 +14,6 @@ import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { useWallet } from '../../../../providers/Wallet'
 import { useRate } from '../../../../providers/Rate'
-import { CHAIN_IDS } from '../../../../data/constants'
 import { fromWei, toWei, checkNativeToken } from '../../../../services/web3'
 import { addresses } from '../../../../data'
 import { isSpecialApp, showTokenBalance } from '../../../../utilities/formats'
@@ -40,28 +39,7 @@ import {
   SwitchTabTag,
 } from './style'
 import { usePortals } from '../../../../providers/Portals'
-
-const getChainName = chain => {
-  let chainName = 'Ethereum'
-  switch (chain) {
-    case CHAIN_IDS.POLYGON_MAINNET:
-      chainName = 'Polygon'
-      break
-    case CHAIN_IDS.ARBITRUM_ONE:
-      chainName = 'Arbitrum'
-      break
-    case CHAIN_IDS.BASE:
-      chainName = 'Base'
-      break
-    case CHAIN_IDS.ZKSYNC:
-      chainName = 'Zksync'
-      break
-    default:
-      chainName = 'Ethereum'
-      break
-  }
-  return chainName
-}
+import { getChainName } from '../../../../utilities/parsers'
 
 const DepositBase = ({
   setSelectToken,

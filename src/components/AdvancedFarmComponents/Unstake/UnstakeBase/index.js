@@ -10,7 +10,6 @@ import AlertIcon from '../../../../assets/images/logos/beginners/alert-triangle.
 import AlertCloseIcon from '../../../../assets/images/logos/beginners/alert-close.svg'
 import AnimatedDots from '../../../AnimatedDots'
 import { useWallet } from '../../../../providers/Wallet'
-import { CHAIN_IDS } from '../../../../data/constants'
 import { isSpecialApp } from '../../../../utilities/formats'
 import { fromWei, toWei } from '../../../../services/web3'
 import Button from '../../../Button'
@@ -30,30 +29,9 @@ import {
   SwitchTabTag,
 } from './style'
 import { useThemeContext } from '../../../../providers/useThemeContext'
+import { getChainName } from '../../../../utilities/parsers'
 
 const { tokens } = require('../../../../data')
-
-const getChainName = chain => {
-  let chainName = 'Ethereum'
-  switch (chain) {
-    case CHAIN_IDS.POLYGON_MAINNET:
-      chainName = 'Polygon'
-      break
-    case CHAIN_IDS.ARBITRUM_ONE:
-      chainName = 'Arbitrum'
-      break
-    case CHAIN_IDS.BASE:
-      chainName = 'Base'
-      break
-    case CHAIN_IDS.ZKSYNC:
-      chainName = 'Zksync'
-      break
-    default:
-      chainName = 'Ethereum'
-      break
-  }
-  return chainName
-}
 
 const UnstakeBase = ({
   setUnstakeStart,

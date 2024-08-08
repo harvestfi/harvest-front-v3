@@ -10,6 +10,8 @@ import {
   GRAPH_URL_BASE_MOONWELL,
   TOTAL_TVL_API_ENDPOINT,
   HISTORICAL_RATES_API_ENDPOINT,
+  GECKO_URL,
+  COINGECKO_API_KEY,
 } from '../constants'
 import { fromWei } from '../services/web3'
 import { showUsdValue, getCurrencyRate } from './formats'
@@ -936,6 +938,39 @@ export const getTotalTVLData = async () => {
     return apiData
   } catch (err) {
     console.log(err)
+  }
+}
+
+export const getCoinListFromApi = async () => {
+  try {
+    const response = await axios.get(`${GECKO_URL}coins/list`, {
+      headers: {
+        'x-cg-pro-api-key': COINGECKO_API_KEY,
+      },
+    })
+    return response.data
+  } catch (err) {
+    console.log('Fetch Chart Data error: ', err)
+    return []
+  }
+}
+
+export const getTokenPriceFromApi = async tokenID => {
+  try {
+    const response = await axios.get(`${GECKO_URL}simple/price`, {
+      params: {
+        ids: tokenID,
+        // eslint-disable-next-line camelcase
+        vs_currencies: 'usd',
+      },
+      headers: {
+        'x-cg-pro-api-key': COINGECKO_API_KEY,
+      },
+    })
+    return response.data[tokenID].usd
+  } catch (err) {
+    console.log('Fetch Chart Data error: ', err)
+    return null
   }
 }
 

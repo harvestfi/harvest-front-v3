@@ -7,7 +7,6 @@ import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import AnimatedDots from '../../../AnimatedDots'
 import { useWallet } from '../../../../providers/Wallet'
-import { CHAIN_IDS } from '../../../../data/constants'
 import { isSpecialApp } from '../../../../utilities/formats'
 import { fromWei, toWei } from '../../../../services/web3'
 import Button from '../../../Button'
@@ -25,28 +24,7 @@ import {
   SwitchTabTag,
 } from './style'
 import { useThemeContext } from '../../../../providers/useThemeContext'
-
-const getChainName = chain => {
-  let chainName = 'Ethereum'
-  switch (chain) {
-    case CHAIN_IDS.POLYGON_MAINNET:
-      chainName = 'Polygon'
-      break
-    case CHAIN_IDS.ARBITRUM_ONE:
-      chainName = 'Arbitrum'
-      break
-    case CHAIN_IDS.BASE:
-      chainName = 'Base'
-      break
-    case CHAIN_IDS.ZKSYNC:
-      chainName = 'Zksync'
-      break
-    default:
-      chainName = 'Ethereum'
-      break
-  }
-  return chainName
-}
+import { getChainName } from '../../../../utilities/parsers'
 
 const StakeBase = ({
   setStakeStart,
