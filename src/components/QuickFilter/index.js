@@ -31,6 +31,7 @@ import {
   FilterOffCanvasBody,
   FilterOffCanvasHeader,
   MobileClearFilter,
+  BoostBtn,
   MobileListHeaderSearch,
   MobileView,
   QuickFilterContainer,
@@ -266,6 +267,11 @@ const QuickFilter = ({
     setTrendName('Trends')
     setTrendStatus('')
     setCollabBswapStatus('')
+  }
+
+  const filterBoost = () => {
+    setRiskId(2)
+    printRisk(2)
   }
 
   useEffect(() => {
@@ -652,6 +658,12 @@ const QuickFilter = ({
               setInputText={setInputText}
             />
           </MobileListHeaderSearch>
+
+          <BoostBtn onClick={() => filterBoost()}>
+            Filter by
+            <img src={ARBball} alt="" />
+            <span>Boosted</span>
+          </BoostBtn>
 
           <FarmFiltersPart
             backColor={backColor}
