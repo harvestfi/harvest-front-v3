@@ -26,17 +26,17 @@ const ActionRow = ({ info }) => {
     >
       <FlexDiv padding={isMobile ? '15px 25px' : '0'}>
         <Content width="30%" color={fontColor} paddingRight={isMobile ? '8px' : '0px'}>
-          <div className="timestamp" data-tip data-for="tooltip-latest-yield">
+          <div className="timestamp" data-tip data-for={`tooltip-latest-yield-${info.timestamp}`}>
             {formatAge(info.timestamp)} ago
           </div>
           <ReactTooltip
-            id="tooltip-latest-yield"
+            id={`tooltip-latest-yield-${info.timestamp}`}
             backgroundColor={darkMode ? 'white' : '#101828'}
             borderColor={darkMode ? 'white' : 'black'}
             textColor={darkMode ? 'black' : 'white'}
             place="top"
           >
-            <NewLabel size="8px" height="11px" weight="600">
+            <NewLabel size="10px" height="14px" weight="600">
               <div dangerouslySetInnerHTML={formatDateTime(info.timestamp)} />
             </NewLabel>
           </ReactTooltip>
