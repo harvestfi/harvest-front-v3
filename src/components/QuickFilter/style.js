@@ -547,6 +547,26 @@ const MobileListHeaderSearch = styled.div`
   }
 `
 
+const BoostBtn = styled.div`
+  padding: 11px;
+  text-align: center;
+  background: linear-gradient(to right, #d27318, #fdbe5f);
+  border-radius: 8px;
+  border: 1px #f3f6ff;
+  color: #fff;
+  font-size: 14px;
+  line-height: 20px;
+  margin-bottom: 15px;
+
+  img {
+    padding: 0px 4px;
+  }
+
+  span {
+    font-weight: 600;
+  }
+`
+
 const MobileClearFilter = styled(ClearFilter)`
   font-size: 14px;
   font-weight: 600;
@@ -1199,6 +1219,7 @@ export {
   FarmFiltersPart,
   MobileClearFilter,
   MobileListHeaderSearch,
+  BoostBtn,
   FarmFilter,
   FilterOffCanvas,
   FilterOffCanvasHeader,
