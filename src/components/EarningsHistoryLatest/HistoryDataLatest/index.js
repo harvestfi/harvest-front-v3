@@ -19,7 +19,7 @@ const HistoryDataLatest = ({ historyData, isDashboard, noData }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const filteredHistoryData = historyData.filter(el => el.event === 'Harvest' && el.netChange >= 0)
 
-  const { borderColor, bgColorTable, fontColor } = useThemeContext()
+  const { borderColorTable, bgColorTable, fontColor } = useThemeContext()
   const { connected } = useWallet()
 
   return (
@@ -28,8 +28,8 @@ const HistoryDataLatest = ({ historyData, isDashboard, noData }) => {
         (connected && filteredHistoryData?.length > 0) || isDashboard === 'true' ? 'unset' : '80vh'
       }
     >
-      <TableContent borderColor={borderColor}>
-        <Header borderColor={borderColor} backColor={bgColorTable}>
+      <TableContent borderColor={borderColorTable}>
+        <Header borderColor={borderColorTable} backColor={bgColorTable}>
           <Column width={isMobile ? '20%' : '20%'} color={fontColor}>
             <Col>Date</Col>
           </Column>
@@ -38,7 +38,7 @@ const HistoryDataLatest = ({ historyData, isDashboard, noData }) => {
           </Column>
         </Header>
         {connected && filteredHistoryData?.length > 0 ? (
-          <ContentBox borderColor={borderColor}>
+          <ContentBox borderColor={borderColorTable}>
             {filteredHistoryData
               .map((el, i) => {
                 const info = filteredHistoryData[i]
@@ -47,7 +47,7 @@ const HistoryDataLatest = ({ historyData, isDashboard, noData }) => {
               .slice(0, 7)}
           </ContentBox>
         ) : (
-          <EmptyPanel borderColor={borderColor}>
+          <EmptyPanel borderColor={borderColorTable}>
             {connected ? (
               !noData ? (
                 <EmptyInfo

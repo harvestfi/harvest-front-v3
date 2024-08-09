@@ -13,8 +13,6 @@ const TransactionDetails = styled.div`
 const TableContent = styled.div`
   @media screen and (max-width: 992px) {
     // overflow-x: scroll;
-    /* border-radius: 15px 15px 0px 0px;
-    border: 1px solid ${props => props.borderColor}; */
     ${props =>
       props.count === 0
         ? `
@@ -155,10 +153,9 @@ const Col = styled.div`
 const EmptyPanel = styled.div`
   padding-top: 12%;
   padding-bottom: 12%;
-  border-radius: 5px;
-  border-right: 1px solid ${props => props.borderColor};
-  border-bottom: 1px solid ${props => props.borderColor};
-  border-left: 1px solid ${props => props.borderColor};
+  border: 1px solid ${props => props.borderColor};
+  border-top: none;
+
   @media screen and (max-width: 992px) {
     padding: 0px;
     border: none;
@@ -292,14 +289,19 @@ const ExploreButtonStyle = styled.button`
   width: 250px;
   background: #6988ff;
   border-radius: 8px;
-  border: 2px solid #6988ff;
+  border: none;
   color: white;
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
   cursor: pointer;
   gap: 8px;
+  transition: 0.5s;
 
   img.explore-farms {
     filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%);
+  }
+
+  &:hover {
+    background: #7692fb;
   }
 
   @media screen and (max-width: 992px) {

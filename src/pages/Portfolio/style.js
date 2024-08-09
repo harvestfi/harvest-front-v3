@@ -49,7 +49,7 @@ const SubPart = styled.div`
   justify-content: space-between;
   gap: 10px;
   margin-bottom: 30px;
-  border-top: 1px solid #eaecf0;
+  border-top: 1px solid #ced3e6;
 
   @media screen and (max-width: 992px) {
     flex-wrap: wrap;
@@ -148,10 +148,9 @@ const FarmPic = styled.img`
 
 const EmptyPanel = styled.div`
   height: 400px;
-  border-radius: 5px;
-  border-right: 1px solid ${props => props.borderColor};
-  border-bottom: 1px solid ${props => props.borderColor};
-  border-left: 1px solid ${props => props.borderColor};
+  border: 1px solid ${props => props.borderColor};
+  border-top: none;
+
   @media screen and (max-width: 992px) {
     padding: 0px;
     border: none;
@@ -287,11 +286,16 @@ const ExploreButtonStyle = styled.button`
   width: 250px;
   background: #6988ff;
   border-radius: 8px;
-  border: 2px solid #6988ff;
+  border: none;
   color: white;
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
   cursor: pointer;
   gap: 8px;
+  transition: 0.5s;
+
+  &:hover {
+    background: #7692fb;
+  }
 
   img.explore-farms {
     filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%);
@@ -521,7 +525,11 @@ const TableWrap = styled.div`
   }
 
   @media screen and (max-width: 1480px) {
-    gap: 0px;
+    gap: 15px;
+  }
+
+  @media screen and (max-width: 1320px) {
+    flex-direction: column;
   }
 
   @media screen and (max-width: 992px) {
@@ -558,6 +566,10 @@ const SwitchBtn = styled.div`
 const PositionTable = styled.div`
   width: 70%;
 
+  @media screen and (max-width: 1320px) {
+    width: 100%;
+  }
+
   @media screen and (max-width: 992px) {
     width: 100%;
     display: ${props => props.display};
@@ -566,6 +578,10 @@ const PositionTable = styled.div`
 
 const YieldTable = styled.div`
   width: 30%;
+
+  @media screen and (max-width: 1320px) {
+    width: 100%;
+  }
 
   @media screen and (max-width: 992px) {
     width: 100%;

@@ -44,13 +44,14 @@ export function ThemeProvider({ children }) {
   const linkColorOnHover = darkMode ? '#00d26b' : '#5318db'
 
   const borderColor = darkMode ? '#1F242F' : '#F3F6FF'
+  const borderColorTable = darkMode ? '#1F242F' : '#ced3e6'
   const inputBorderColor = darkMode ? '#1F242F' : '#d0d5dd'
   const hoverColor = darkMode ? '#1F242F' : '#e9f0f7'
   const hoverColorRow = darkMode ? '#282D3A' : '#F7F9FF'
   const hoverColorNew = darkMode ? '#313E55' : '#F7F9FF'
   const hoverColorButton = darkMode ? '#1F242F' : '#f2f4f7'
   const hoverColorAVR = darkMode ? '#1F242F' : '#fbe7ef'
-  const hoverColorSide = darkMode ? '#212c51' : '#F7F9FF'
+  const hoverColorSide = darkMode ? '#212c51' : '#E9EFFF'
   const activeColor = darkMode ? '#242C3C' : '#F3F6FF'
   const activeColorModal = darkMode ? '#242C3C' : '#ECFDF3'
   const modalInputColor = darkMode ? '#242C3C' : '#ffffff'
@@ -187,6 +188,7 @@ export function ThemeProvider({ children }) {
         bgColor,
         bgColorTooltip,
         borderColor,
+        borderColorTable,
         inputBorderColor,
         hoverColor,
         hoverColorRow,

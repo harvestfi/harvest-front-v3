@@ -97,10 +97,9 @@ const Col = styled.div`
 
 const EmptyPanel = styled.div`
   height: 400px;
-  border-radius: 5px;
-  border-right: 1px solid ${props => props.borderColor};
-  border-bottom: 1px solid ${props => props.borderColor};
-  border-left: 1px solid ${props => props.borderColor};
+  border: 1px solid ${props => props.borderColor};
+  border-top: none;
+
   @media screen and (max-width: 992px) {
     padding: 0px;
     border: none;

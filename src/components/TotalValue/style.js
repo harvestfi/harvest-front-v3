@@ -48,7 +48,7 @@ const Div = styled.div`
     margin: auto 0px auto 5px;
   }
 
-  @media screen and (max-width: 1350px) {
+  @media screen and (max-width: 1375px) {
     font-size: 12px;
   }
 

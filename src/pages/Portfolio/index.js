@@ -100,7 +100,7 @@ const Portfolio = () => {
     fontColor,
     fontColor1,
     fontColor2,
-    borderColor,
+    borderColorTable,
     inputBorderColor,
     hoverColorButton,
   } = useThemeContext()
@@ -904,8 +904,8 @@ const Portfolio = () => {
             <PositionTable display={showLatestYield ? 'none' : 'block'}>
               <div className="table-title">Positions</div>
               <TransactionDetails>
-                <TableContent borderColor={borderColor} count={farmTokenList.length}>
-                  <Header borderColor={borderColor} backColor={bgColorTable}>
+                <TableContent borderColor={borderColorTable} count={farmTokenList.length}>
+                  <Header borderColor={borderColorTable} backColor={bgColorTable}>
                     <Column width={isMobile ? '23%' : '40%'} color={fontColor}>
                       <Col
                         onClick={() => {
@@ -957,7 +957,7 @@ const Portfolio = () => {
                     </Column>
                   </Header>
                   {connected && farmTokenList.length > 0 ? (
-                    <ContentBox borderColor={borderColor}>
+                    <ContentBox borderColor={borderColorTable}>
                       {showInactiveFarms
                         ? farmTokenList.map((el, i) => {
                             const info = farmTokenList[i]
@@ -985,7 +985,7 @@ const Portfolio = () => {
                           })}
                     </ContentBox>
                   ) : (
-                    <EmptyPanel borderColor={borderColor}>
+                    <EmptyPanel borderColor={borderColorTable}>
                       {connected ? (
                         !noFarm ? (
                           <EmptyInfo

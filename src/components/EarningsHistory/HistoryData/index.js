@@ -30,7 +30,7 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const {
-    borderColor,
+    borderColorTable,
     bgColorTable,
     bgColorFarm,
     fontColor,
@@ -79,8 +79,8 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
     <TransactionDetails
       hasData={(connected && historyData?.length > 0) || isDashboard === 'true' ? 'unset' : '80vh'}
     >
-      <TableContent borderColor={borderColor}>
-        <Header borderColor={borderColor} backColor={bgColorTable}>
+      <TableContent>
+        <Header borderColor={borderColorTable} backColor={bgColorTable}>
           <Column width={isMobile ? '25%' : '20%'} color={fontColor}>
             <Col>Event</Col>
           </Column>
@@ -151,7 +151,7 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
             </HistoryPagination>
           </>
         ) : (
-          <EmptyPanel borderColor={borderColor}>
+          <EmptyPanel borderColor={borderColorTable}>
             {connected ? (
               !noData ? (
                 <EmptyInfo weight={500} size={14} lineHeight={20} color={fontColor} gap="2px">
