@@ -6,11 +6,11 @@ const Container = styled.div`
   padding: 24px 24px 24px 0px;
 
   @media screen and (max-width: 1350px) {
-    padding: 15px;
+    padding: 15px 15px 15px 0px;
   }
 
   @media screen and (max-width: 1200px) {
-    padding: 10px;
+    padding: 10px 10px 10px 0px;
   }
 
   @media screen and (max-width: 992px) {
@@ -52,7 +52,7 @@ const Div = styled.div`
     font-size: 12px;
   }
 
-  @media screen and (max-width: 1200px) {
+  @media screen and (max-width: 1300px) {
     display: flex;
     flex-flow: column;
   }

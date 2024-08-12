@@ -517,10 +517,6 @@ const TableWrap = styled.div`
 
     @media screen and (max-width: 992px) {
       display: none;
-      /* display: flex;
-      justify-content: space-between;
-      padding-bottom: 20px;
-      border-bottom: 1px solid #eaecf0; */
     }
   }
 
@@ -530,6 +526,7 @@ const TableWrap = styled.div`
 
   @media screen and (max-width: 1320px) {
     flex-direction: column;
+    gap: 50px;
   }
 
   @media screen and (max-width: 992px) {
