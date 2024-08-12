@@ -1,28 +1,39 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { PiQuestion } from 'react-icons/pi'
 import ReactTooltip from 'react-tooltip'
 import ListItem from '../ListItem'
+import { useRate } from '../../../providers/Rate'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import TrendUp from '../../../assets/images/logos/advancedfarm/trend-up.svg'
 import TrendDown from '../../../assets/images/logos/advancedfarm/trend-down.svg'
-import { formatDateTime, formatDateTimeMobile } from '../../../utilities/formats'
+import { formatDateTime, formatDateTimeMobile, formatNumber } from '../../../utilities/formats'
 import { Content, DetailView, FlexDiv, IconWrapper, Badge, NetImg, NewLabel } from './style'
 
 const ActionRow = ({ info, showTotalBalance }) => {
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const {
     darkMode,
     switchMode,
     backColor,
-    borderColor,
+    borderColorTable,
     hoverColorRow,
     fontColor,
   } = useThemeContext()
 
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
+
   return (
     <DetailView
-      borderColor={borderColor}
+      borderColor={borderColorTable}
       hoverColor={hoverColorRow}
       mode={switchMode}
       background={backColor}
@@ -97,7 +108,11 @@ const ActionRow = ({ info, showTotalBalance }) => {
                 size={14}
                 height={20}
                 color="#5FCF76"
-                value={`≈${info.balanceUsd}`}
+                value={`${
+                  info.balanceUsd < 0.01
+                    ? `<${currencySym}0.01`
+                    : `≈${currencySym}${formatNumber(info.balanceUsd * Number(currencyRate), 2)}`
+                }`}
               />
               <ListItem weight={500} size={14} height={20} color="#8884D8" value={info.balance} />
               <ListItem
@@ -118,7 +133,14 @@ const ActionRow = ({ info, showTotalBalance }) => {
                   size={14}
                   height={20}
                   color="#5FCF76"
-                  value={`${info.netChangeUsd}`}
+                  value={`${
+                    info.netChangeUsd < 0.01
+                      ? `<${currencySym}0.01`
+                      : `≈${currencySym}${formatNumber(
+                          info.netChangeUsd * Number(currencyRate),
+                          2,
+                        )}`
+                  }`}
                 />
                 <ListItem
                   weight={500}
@@ -145,7 +167,11 @@ const ActionRow = ({ info, showTotalBalance }) => {
               height={20}
               color="#5FCF76"
               justifyContent="end"
-              value={`≈${info.balanceUsd}`}
+              value={`${
+                info.balanceUsd < 0.01
+                  ? `<${currencySym}0.01`
+                  : `≈${currencySym}${formatNumber(info.balanceUsd * Number(currencyRate), 2)}`
+              }`}
             />
             <ListItem
               weight={500}
@@ -176,7 +202,11 @@ const ActionRow = ({ info, showTotalBalance }) => {
                 height={20}
                 color="#5FCF76"
                 justifyContent="end"
-                value={`${info.netChangeUsd === '<$0.01' ? '' : '≈'}${info.netChangeUsd}`}
+                value={`${
+                  info.netChangeUsd < 0.01
+                    ? `<${currencySym}0.01`
+                    : `${currencySym}${formatNumber(info.netChangeUsd * Number(currencyRate), 2)}`
+                }`}
               />
               <ListItem
                 weight={500}
