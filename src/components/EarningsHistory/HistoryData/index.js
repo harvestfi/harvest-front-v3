@@ -26,7 +26,7 @@ import {
 
 const HistoryData = ({ historyData, isDashboard, noData }) => {
   const { push } = useHistory()
-  const itemsPerPage = isDashboard === 'true' ? 10 : 5
+  const itemsPerPage = 5
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const {
@@ -126,7 +126,7 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
                 const info = currentItems[i]
                 return <ActionRow key={i} info={info} showTotalBalance={showTotalBalance} />
               })
-              .slice(0, 10)}
+              .slice(0, 5)}
             <HistoryPagination
               bgColor={bgColorFarm}
               fontColor={fontColor}

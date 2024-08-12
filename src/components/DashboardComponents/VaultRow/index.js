@@ -14,7 +14,7 @@ const VaultRow = ({ info, firstElement, lastElement, cKey }) => {
   const {
     switchMode,
     backColor,
-    borderColor,
+    borderColorTable,
     hoverColorRow,
     fontColor1,
     fontColor,
@@ -35,7 +35,7 @@ const VaultRow = ({ info, firstElement, lastElement, cKey }) => {
     <DetailView
       firstElement={firstElement}
       lastElement={lastElement}
-      borderColor={borderColor}
+      borderColor={borderColorTable}
       hoverColor={hoverColorRow}
       key={cKey}
       mode={switchMode}

@@ -494,7 +494,6 @@ const TableContent = styled.div`
   @media screen and (max-width: 992px) {
     // overflow-x: scroll;
     border-top: 1px solid ${props => props.borderColor};
-    border-bottom: 1px solid ${props => props.borderColor};
     ${props =>
       props.count === 0
         ? `
@@ -531,6 +530,7 @@ const TableWrap = styled.div`
 
   @media screen and (max-width: 992px) {
     flex-direction: column;
+    gap: 0px;
   }
 `
 
@@ -835,8 +835,8 @@ const CurrencySelect = styled.div`
     height: unset;
     border-radius: 8px;
     line-height: 20px;
-    padding: 10px 16px;
-    gap: 5px;
+    padding: 10px;
+    gap: 0px;
 
     img {
       width: 17.6px;

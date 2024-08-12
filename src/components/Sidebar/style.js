@@ -146,14 +146,13 @@ const Link = styled.button`
   ${props =>
     props.active
       ? `
-    background: #6988FF !important;
-    color: #fff;
-    img.sideIcon {
-      filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%);
-    }
-  `
-      : `
-      `}
+      background: #6988FF !important;
+      color: #fff;
+      img.sideIcon {
+        filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%);
+      }
+    `
+      : ``}
 
   .external-link {
     margin-left: 5px;
