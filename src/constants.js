@@ -831,9 +831,9 @@ export const fakeChartData = [
 
 export const boostedVaults = [
   'lodestar_WBTC',
-  'lodestarHodl_WBTC',
-  'lodestar_ETH',
   'lodestar_USDCe',
-  'lodestar_wstETH',
-  'xGRAIL',
+  'lodestar_ARB',
+  'lodestar_ETH',
+  'lodestar_USDT',
+  'lodestar_PENDLE',
 ]
