@@ -1,8 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import ReactTooltip from 'react-tooltip'
 import { useMediaQuery } from 'react-responsive'
-import Slider from 'rc-slider'
-import 'rc-slider/assets/index.css'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -30,20 +28,6 @@ const recommendLinks = [
   { name: 'ALL', type: 3, state: 'ALL' },
   { name: 'LAST', type: 4, state: 'LAST' },
 ]
-
-const calculateMarks = data => {
-  const length = data.length
-  if (length === 0) {
-    return ''
-  }
-  return {
-    0: formatDate(data[length - 1].timestamp * 1000),
-    25: formatDate(data[Math.floor(length * 0.75)].timestamp * 1000),
-    50: formatDate(data[Math.floor(length * 0.5)].timestamp * 1000),
-    75: formatDate(data[Math.floor(length * 0.25)].timestamp * 1000),
-    100: formatDate(data[0].timestamp * 1000),
-  }
-}
 
 const UserBalanceData = ({
   token,
@@ -165,8 +149,8 @@ const UserBalanceData = ({
             priceFeedData.forEach(obj => {
               if (!timestamps.includes(obj.timestamp)) {
                 timestamps.push(obj.timestamp)
-                const modifiedObj = { ...obj, priceUnderlying: obj.price } // Rename the 'price' property to 'priceUnderlying'
-                delete modifiedObj.price // Remove the 'value' property from modifiedObj
+                const modifiedObj = { ...obj, priceUnderlying: obj.price }
+                delete modifiedObj.price
                 uniqueData2.push(modifiedObj)
               }
             })
@@ -290,7 +274,32 @@ const UserBalanceData = ({
             }
             const filteredData =
               firstNonZeroIndex === -1 ? apiAllData : apiAllData.slice(0, firstNonZeroIndex + 1)
-            setApiData(filteredData)
+
+            const enrichedData = filteredData
+              .map((item, index, array) => {
+                const nextItem = array[index + 1]
+                let event
+
+                if (nextItem) {
+                  if (Number(item.value) === Number(nextItem.value)) {
+                    event = 'Harvest'
+                  } else if (Number(item.value) > Number(nextItem.value)) {
+                    event = 'Convert'
+                  } else {
+                    event = 'Revert'
+                  }
+                } else {
+                  event = 'Convert'
+                }
+
+                return {
+                  ...item,
+                  event,
+                }
+              })
+              .filter(Boolean)
+
+            setApiData(enrichedData)
           }
           if (isMounted) {
             setLoadComplete(balanceFlag && priceFeedFlag)
@@ -316,8 +325,6 @@ const UserBalanceData = ({
     farmPrice,
     pricePerFullShare,
   ])
-
-  const marks = calculateMarks(apiData)
 
   return (
     <Container backColor={backColor} borderColor={borderColor}>
@@ -387,12 +394,10 @@ const UserBalanceData = ({
           lastFarmingTimeStamp={lastFarmingTimeStamp}
           lpTokenBalance={lpTokenBalance}
           totalValue={totalValue}
+          setSelectedState={setSelectedState}
         />
       </ChartDiv>
       <ButtonGroup>
-        <div className="chart-slider-wrapper">
-          <Slider className="chart-slider" range marks={marks} defaultValue={[75, 100]} />
-        </div>
         {recommendLinks.map((item, i) => (
           <ChartRangeSelect
             key={i}

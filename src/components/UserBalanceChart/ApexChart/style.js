@@ -1,5 +1,54 @@
 import styled from 'styled-components'
 
+const ChartWrapper = styled.div`
+  .bottom-chart {
+    border-radius: 5px;
+    display: none;
+
+    .recharts-wrapper {
+      .recharts-reference-area {
+        path {
+          stroke: ${props => props.bgColorChart};
+          fill: ${props => props.bgColorChart};
+        }
+      }
+    }
+  }
+
+  .chart-slider-wrapper {
+    display: none;
+    width: 100%;
+    margin-top: 10px;
+
+    .chart-slider {
+      margin: 0px auto 25px auto;
+
+      .rc-slider-track {
+        background-color: #15b088;
+      }
+
+      .rc-slider-step {
+        .rc-slider-dot-active {
+          border-color: #15b088;
+        }
+      }
+
+      .rc-slider-handle {
+        border-color: #15b088;
+      }
+
+      .rc-slider-mark {
+        .rc-slider-mark-text {
+          width: 100%;
+        }
+        .rc-slider-mark-text-active {
+          color: #15b088;
+        }
+      }
+    }
+  }
+`
+
 const LoadingDiv = styled.div`
   height: 100%;
   text-align: center;
@@ -34,4 +83,11 @@ const FakeChartWrapper = styled.div`
   filter: blur(4px);
 `
 
-export { LoadingDiv, NoData, FakeChartWrapper }
+const LoaderWrapper = styled.div`
+  height: ${props => props.height};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
+export { ChartWrapper, LoadingDiv, NoData, FakeChartWrapper, LoaderWrapper }

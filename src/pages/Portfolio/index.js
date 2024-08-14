@@ -1,16 +1,10 @@
 import { BigNumber } from 'bignumber.js'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import axios from 'axios'
 import { find, get, isEmpty, orderBy, isEqual, isNaN } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import React, { useRef, useEffect, useMemo, useState } from 'react'
 import { useHistory } from 'react-router-dom'
 import { FaRegSquare, FaRegSquareCheck } from 'react-icons/fa6'
-import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
-import BASE from '../../assets/images/chains/base.svg'
-import ETHEREUM from '../../assets/images/chains/ethereum.svg'
-import POLYGON from '../../assets/images/chains/polygon.svg'
-import ZKSYNC from '../../assets/images/chains/zksync.svg'
 import Safe from '../../assets/images/logos/dashboard/safe.svg'
 import Coin1 from '../../assets/images/logos/dashboard/coins-stacked-02.svg'
 import Coin2 from '../../assets/images/logos/dashboard/coins-stacked-04.svg'
@@ -22,13 +16,12 @@ import VaultRow from '../../components/DashboardComponents/VaultRow'
 import EarningsHistory from '../../components/EarningsHistory/HistoryData'
 import TotalValue from '../../components/TotalValue'
 import {
-  GECKO_URL,
-  COINGECKO_API_KEY,
   FARM_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
   MAX_DECIMALS,
   ROUTES,
+  boostedVaults,
 } from '../../constants'
 import { addresses } from '../../data'
 import { CHAIN_IDS } from '../../data/constants'
@@ -39,8 +32,12 @@ import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { fromWei } from '../../services/web3'
 import { parseValue, isLedgerLive } from '../../utilities/formats'
-import { initBalanceAndDetailData } from '../../utilities/apiCalls'
-import { getTotalApy } from '../../utilities/parsers'
+import {
+  getCoinListFromApi,
+  getTokenPriceFromApi,
+  initBalanceAndDetailData,
+} from '../../utilities/apiCalls'
+import { getChainIcon, getTotalApy } from '../../utilities/parsers'
 import AnimatedDots from '../../components/AnimatedDots'
 import {
   Column,
@@ -67,60 +64,6 @@ import {
 
 const totalNetProfitKey = 'TOTAL_NET_PROFIT'
 const totalHistoryDataKey = 'TOTAL_HISTORY_DATA'
-
-const getChainIcon = chain => {
-  let chainLogo = ETHEREUM
-  switch (chain) {
-    case CHAIN_IDS.POLYGON_MAINNET:
-      chainLogo = POLYGON
-      break
-    case CHAIN_IDS.ARBITRUM_ONE:
-      chainLogo = ARBITRUM
-      break
-    case CHAIN_IDS.BASE:
-      chainLogo = BASE
-      break
-    case CHAIN_IDS.ZKSYNC:
-      chainLogo = ZKSYNC
-      break
-    default:
-      chainLogo = ETHEREUM
-      break
-  }
-  return chainLogo
-}
-
-const getCoinListFromApi = async () => {
-  try {
-    const response = await axios.get(`${GECKO_URL}coins/list`, {
-      headers: {
-        'x-cg-pro-api-key': COINGECKO_API_KEY,
-      },
-    })
-    return response.data
-  } catch (err) {
-    console.log('Fetch Chart Data error: ', err)
-    return []
-  }
-}
-const getTokenPriceFromApi = async tokenID => {
-  try {
-    const response = await axios.get(`${GECKO_URL}simple/price`, {
-      params: {
-        ids: tokenID,
-        // eslint-disable-next-line camelcase
-        vs_currencies: 'usd',
-      },
-      headers: {
-        'x-cg-pro-api-key': COINGECKO_API_KEY,
-      },
-    })
-    return response.data[tokenID].usd
-  } catch (err) {
-    console.log('Fetch Chart Data error: ', err)
-    return null
-  }
-}
 
 const Portfolio = () => {
   const { push } = useHistory()
@@ -226,6 +169,25 @@ const Portfolio = () => {
       setTotalYieldMonthly(0)
     }
   }, [connected])
+
+  useEffect(() => {
+    const setBoostedVaults = async () => {
+      if (groupOfVaults) {
+        const vaultsKey = Object.keys(groupOfVaults)
+        vaultsKey.map(async symbol => {
+          // Add 'boosted' item to vaults that participate in campaign
+          for (let i = 0; i < boostedVaults.length; i += 1) {
+            if (symbol === boostedVaults[i]) {
+              groupOfVaults[symbol].boosted = true
+              return
+            }
+          }
+        })
+      }
+    }
+
+    setBoostedVaults()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (account && !isEmpty(userStats) && !isEmpty(depositToken)) {
@@ -351,6 +313,7 @@ const Portfolio = () => {
                 tokenName += ', '
               }
             }
+            stats.boosted = token.boosted
             stats.token = token
             stats.symbol = tokenName
             stats.logos = token.logoUrl

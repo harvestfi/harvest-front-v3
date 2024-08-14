@@ -87,6 +87,24 @@ const RewardsContainer = styled.div`
     justify-content: center;
     align-items: center;
   }
+
+  div.boost-apy {
+    font-weight: 600;
+    display: flex;
+
+    div.boost-img {
+      margin: auto 0px auto 5px;
+
+      img {
+        width: 16px;
+        margin-top: -2px;
+
+        @media screen and (max-width: 992px) {
+          margin-top: -4px;
+        }
+      }
+    }
+  }
 `
 
 const ValueContainer = styled.div`
@@ -101,6 +119,7 @@ const ValueContainer = styled.div`
   padding-left: ${props => props.paddingLeft || '0px'};
 
   .tag {
+    display: none;
     position: absolute;
     left: 53px;
     top: 31px;
@@ -280,6 +299,7 @@ const FlexDiv = styled.div`
       : ''}
 
   .tag {
+    display: none;
     position: absolute;
     left: 6px;
   }

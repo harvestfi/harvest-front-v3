@@ -14,36 +14,15 @@ import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { CHAIN_IDS } from '../../../data/constants'
 import { useRate } from '../../../providers/Rate'
-import { ceil10, floor10, round10, numberWithCommas, formatDate } from '../../../utilities/formats'
-import { getTimeSlots } from '../../../utilities/parsers'
+import { ceil10, floor10, numberWithCommas, formatDate } from '../../../utilities/formats'
+import {
+  findMax,
+  findMin,
+  getRangeNumber,
+  getTimeSlots,
+  getYAxisValues,
+} from '../../../utilities/parsers'
 import { LoadingDiv, NoData } from './style'
-
-function getRangeNumber(strRange) {
-  let ago = 30
-  if (strRange === '1D') {
-    ago = 1
-  } else if (strRange === '1W') {
-    ago = 7
-  } else if (strRange === '1M') {
-    ago = 30
-  } else if (strRange === '1Y') {
-    ago = 365
-  }
-
-  return ago
-}
-
-function findMax(data) {
-  const ary = data.map(el => el.y)
-  const max = Math.max(...ary)
-  return max
-}
-
-function findMin(data) {
-  const ary = data.map(el => el.y)
-  const min = Math.min(...ary)
-  return min
-}
 
 // kind: "value" - TVL, "apy" - APY
 function generateChartDataWithSlots(slots, apiData) {
@@ -86,16 +65,6 @@ function formatXAxis(value, range) {
   const mins = date.getMinutes()
 
   return range === '1D' ? `${hour}:${mins}` : `${month} / ${day}`
-}
-
-function getYAxisValues(min, max, roundNum) {
-  const duration = max - min
-  const ary = []
-  for (let i = min; i <= max; i += duration / 4) {
-    const val = round10(i, roundNum)
-    ary.push(val)
-  }
-  return ary
 }
 
 const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
