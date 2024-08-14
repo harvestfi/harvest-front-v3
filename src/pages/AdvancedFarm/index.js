@@ -1534,8 +1534,7 @@ const AdvancedFarm = () => {
                       </WelcomeTitle>
                       <WelcomeText>
                         This yield strategy receives additional ARB rewards. Stake your fTokens
-                        under the Rewards tab to be entitled to them. The campaign will end on
-                        [date] UTC.{' '}
+                        under the Rewards tab to be entitled to them.{' '}
                         <WelcomeBottom>
                           <WelcomeKnow onClick={closeBadgeArbCamp}>Got it!</WelcomeKnow>
                           <WelcomeTicket
