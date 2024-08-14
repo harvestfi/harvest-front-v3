@@ -385,8 +385,7 @@ const Portfolio = () => {
                 rewards,
                 rewardToken,
                 usdRewardPrice = 0,
-                // rewardDecimal = 18
-                rewardDecimal = get(tokens[symbol], 'decimals', 18)
+                rewardDecimal = 18
 
               if (rewardTokenSymbols.includes(FARM_TOKEN_SYMBOL)) {
                 rewardSymbol = FARM_TOKEN_SYMBOL
