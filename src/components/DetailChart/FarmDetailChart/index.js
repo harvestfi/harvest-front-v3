@@ -195,11 +195,7 @@ const FarmDetailChart = ({
 
           if (updatedData.generalApies.length !== 0) {
             // Calculate Detailed APY Breakdown values
-            vaultInitialDate = formatDate(
-              Number(updatedData.generalApies[updatedData.generalApies.length - 1].timestamp) *
-                1000,
-            )
-            totalPeriod =
+            const totalPeriodBasedOnApy =
               (Number(updatedData.generalApies[0].timestamp) -
                 Number(updatedData.generalApies[updatedData.generalApies.length - 1].timestamp)) /
               (24 * 3600)
@@ -211,7 +207,7 @@ const FarmDetailChart = ({
             lifetimeApyValue = `${lifetimeApyValue.toFixed(2)}%`
 
             // Calculate APY - Live & Historical Average
-            if (totalPeriod >= 7) {
+            if (totalPeriodBasedOnApy >= 7) {
               const lastSevenDaysData = updatedData.generalApies.filter(
                 entry =>
                   Number(entry.timestamp) >=
@@ -224,7 +220,7 @@ const FarmDetailChart = ({
               sevenDaysApy = `${(sumApy / lastSevenDaysData.length).toFixed(2)}%`
             }
 
-            if (totalPeriod >= 30) {
+            if (totalPeriodBasedOnApy >= 30) {
               const lastThirtyDaysData = updatedData.generalApies.filter(
                 entry =>
                   Number(entry.timestamp) >=
@@ -237,7 +233,7 @@ const FarmDetailChart = ({
               thirtyDaysApy = `${(sumApy / lastThirtyDaysData.length).toFixed(2)}%`
             }
 
-            if (totalPeriod >= 180) {
+            if (totalPeriodBasedOnApy >= 180) {
               const lastOneEightyDaysData = updatedData.generalApies.filter(
                 entry =>
                   Number(entry.timestamp) >=
@@ -250,7 +246,7 @@ const FarmDetailChart = ({
               oneEightyDaysApy = `${(sumApy / lastOneEightyDaysData.length).toFixed(2)}%`
             }
 
-            if (totalPeriod >= 365) {
+            if (totalPeriodBasedOnApy >= 365) {
               const lastThreeSixtyFiveDaysData = updatedData.generalApies.filter(
                 entry =>
                   Number(entry.timestamp) >=
@@ -262,6 +258,40 @@ const FarmDetailChart = ({
               )
               threeSixtyFiveDaysApy = `${(sumApy / lastThreeSixtyFiveDaysData.length).toFixed(2)}%`
             }
+          }
+
+          if (updatedData.tvls.length !== 0) {
+            vaultInitialDate = formatDate(
+              Number(updatedData.tvls[updatedData.tvls.length - 1].timestamp) * 1000,
+            )
+            totalPeriod =
+              (Number(updatedData.tvls[0].timestamp) -
+                Number(updatedData.tvls[updatedData.tvls.length - 1].timestamp)) /
+              (24 * 3600)
+          } else if (updatedData.tvls.length === 0 && updatedData.vaultHistories.length !== 0) {
+            vaultInitialDate = formatDate(
+              Number(updatedData.vaultHistories[updatedData.vaultHistories.length - 1].timestamp) *
+                1000,
+            )
+            totalPeriod =
+              (Number(updatedData.vaultHistories[0].timestamp) -
+                Number(
+                  updatedData.vaultHistories[updatedData.vaultHistories.length - 1].timestamp,
+                )) /
+              (24 * 3600)
+          } else if (
+            updatedData.tvls.length === 0 &&
+            updatedData.vaultHistories.length === 0 &&
+            updatedData.generalApies.length !== 0
+          ) {
+            vaultInitialDate = formatDate(
+              Number(updatedData.generalApies[updatedData.generalApies.length - 1].timestamp) *
+                1000,
+            )
+            totalPeriod =
+              (Number(updatedData.generalApies[0].timestamp) -
+                Number(updatedData.generalApies[updatedData.generalApies.length - 1].timestamp)) /
+              (24 * 3600)
           }
 
           set7DApy(sevenDaysApy)
