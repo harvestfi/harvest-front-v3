@@ -33,6 +33,7 @@ const ActionRow = ({ info, showTotalBalance }) => {
 
   return (
     <DetailView
+      className="yield-row"
       borderColor={borderColorTable}
       hoverColor={hoverColorRow}
       mode={switchMode}

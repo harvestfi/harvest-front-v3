@@ -101,8 +101,8 @@ const Header = styled.div`
   background: ${props => props.backColor};
   display: flex;
   border: 1px solid ${props => props.borderColor};
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 
   @media screen and (max-width: 992px) {
     border-radius: 0px;
@@ -155,12 +155,21 @@ const EmptyPanel = styled.div`
   padding-bottom: 12%;
   border: 1px solid ${props => props.borderColor};
   border-top: none;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
 
   @media screen and (max-width: 992px) {
     padding: 0px;
     border: none;
     height: 100%;
     margin: auto;
+  }
+`
+
+const ContentBox = styled.div`
+  div.yield-row:last-child {
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
   }
 `
 
@@ -242,6 +251,11 @@ const ConnectButtonStyle = styled.button`
   color: #6988ff;
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
   cursor: pointer;
+  transition: 0.5s;
+
+  &:hover {
+    background: ${props => props.hoverColor};
+  }
 
   ${props =>
     props.connected
@@ -422,6 +436,7 @@ export {
   Header,
   Column,
   Col,
+  ContentBox,
   EmptyPanel,
   EmptyInfo,
   ConnectButtonStyle,

@@ -33,6 +33,7 @@ const VaultRow = ({ info, firstElement, lastElement, cKey }) => {
 
   return (
     <DetailView
+      className="position-row"
       firstElement={firstElement}
       lastElement={lastElement}
       borderColor={borderColorTable}

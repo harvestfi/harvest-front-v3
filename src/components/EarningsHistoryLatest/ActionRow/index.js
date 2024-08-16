@@ -30,6 +30,7 @@ const ActionRow = ({ info }) => {
 
   return (
     <DetailView
+      className="latest-yield-row"
       borderColor={borderColorTable}
       hoverColor={hoverColorRow}
       mode={switchMode}

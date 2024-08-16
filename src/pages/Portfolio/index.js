@@ -703,6 +703,14 @@ const Portfolio = () => {
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
+  const positionHeader = [
+    { width: isMobile ? '23%' : '40%', sort: 'symbol', name: 'Farm' },
+    { width: isMobile ? '20%' : '15%', sort: 'balance', name: 'Balance', img: Sort },
+    { width: isMobile ? '20%' : '15%', sort: 'monthlyYield', name: 'Monthly Yield', img: Sort },
+    { width: isMobile ? '20%' : '15%', sort: 'totalRewardUsd', name: 'Rewards', img: Sort },
+    { width: isMobile ? '12%' : '15%', sort: 'apy', name: 'Live APY', img: Sort },
+  ]
+
   const TopBoxData = [
     {
       icon: Safe,
@@ -906,55 +914,18 @@ const Portfolio = () => {
               <TransactionDetails>
                 <TableContent borderColor={borderColorTable} count={farmTokenList.length}>
                   <Header borderColor={borderColorTable} backColor={bgColorTable}>
-                    <Column width={isMobile ? '23%' : '40%'} color={fontColor}>
-                      <Col
-                        onClick={() => {
-                          sortCol('symbol')
-                        }}
-                      >
-                        Farm
-                      </Col>
-                    </Column>
-                    <Column width={isMobile ? '20%' : '15%'} color={fontColor}>
-                      <Col
-                        onClick={() => {
-                          sortCol('balance')
-                        }}
-                      >
-                        Balance
-                        <img className="sortIcon" src={Sort} alt="sort" />
-                      </Col>
-                    </Column>
-                    <Column width={isMobile ? '20%' : '15%'} color={fontColor}>
-                      <Col
-                        onClick={() => {
-                          sortCol('monthlyYield')
-                        }}
-                      >
-                        Monthly Yield
-                        <img className="sortIcon" src={Sort} alt="sort" />
-                      </Col>
-                    </Column>
-                    <Column width={isMobile ? '20%' : '15%'} color={fontColor}>
-                      <Col
-                        onClick={() => {
-                          sortCol('totalRewardUsd')
-                        }}
-                      >
-                        Rewards
-                        <img className="sortIcon" src={Sort} alt="sort" />
-                      </Col>
-                    </Column>
-                    <Column width={isMobile ? '12%' : '15%'} color={fontColor}>
-                      <Col
-                        onClick={() => {
-                          sortCol('apy')
-                        }}
-                      >
-                        Live APY
-                        <img className="sortIcon" src={Sort} alt="sort" />
-                      </Col>
-                    </Column>
+                    {positionHeader.map((data, index) => (
+                      <Column key={index} width={data.width} color={fontColor}>
+                        <Col
+                          onClick={() => {
+                            sortCol(data.sort)
+                          }}
+                        >
+                          {data.name}
+                          {data.img && <img className="sortIcon" src={data.img} alt="sort" />}
+                        </Col>
+                      </Column>
+                    ))}
                   </Header>
                   {connected && farmTokenList.length > 0 ? (
                     <ContentBox borderColor={borderColorTable}>
@@ -1023,7 +994,6 @@ const Portfolio = () => {
                               inputBorderColor={inputBorderColor}
                               bordercolor={fontColor}
                               disabled={disableWallet}
-                              hoverColorButton={hoverColorButton}
                             >
                               <img src={AdvancedImg} className="explore-farms" alt="" />
                               Explore Farms
@@ -1044,7 +1014,7 @@ const Portfolio = () => {
                             inputBorderColor={inputBorderColor}
                             bordercolor={fontColor}
                             disabled={disableWallet}
-                            hoverColorButton={hoverColorButton}
+                            hoverColor={hoverColorButton}
                           >
                             Connect Wallet
                           </ConnectButtonStyle>

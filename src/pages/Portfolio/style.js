@@ -150,6 +150,8 @@ const EmptyPanel = styled.div`
   height: 400px;
   border: 1px solid ${props => props.borderColor};
   border-top: none;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
 
   @media screen and (max-width: 992px) {
     padding: 0px;
@@ -239,6 +241,11 @@ const ConnectButtonStyle = styled.button`
   color: #6988ff;
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
   cursor: pointer;
+  transition: 0.5s;
+
+  &:hover {
+    background: ${props => props.hoverColor};
+  }
 
   ${props =>
     props.connected
@@ -403,8 +410,8 @@ const Header = styled.div`
   background: ${props => props.backColor};
   display: flex;
   border: 1px solid ${props => props.borderColor};
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 
   @media screen and (max-width: 992px) {
     display: none;
@@ -419,6 +426,11 @@ const Column = styled.div`
   display: flex;
   justify-content: start;
   color: ${props => props.color};
+  transition: 0.5s;
+
+  &:hover {
+    color: #44699e;
+  }
 `
 
 const Status = styled.div`
@@ -589,6 +601,13 @@ const YieldTable = styled.div`
 const ContentBox = styled.div`
   border: 1px solid ${props => props.borderColor};
   border-top: none;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+
+  div.position-row:last-child {
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+  }
 
   @media screen and (max-width: 992px) {
     border: none;

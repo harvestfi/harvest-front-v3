@@ -235,7 +235,11 @@ const ConnectButtonStyle = styled.button`
   color: #6888ff;
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
   cursor: pointer;
-  transition: 0.7s;
+  transition: 0.5s;
+
+  &:hover {
+    background: ${props => props.hoverColor};
+  }
 
   ${props =>
     props.connected

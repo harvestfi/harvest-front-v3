@@ -17,6 +17,7 @@ import {
   Header,
   Column,
   Col,
+  ContentBox,
   EmptyPanel,
   EmptyInfo,
   ConnectButtonStyle,
@@ -120,13 +121,15 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
           </Column>
         </Header>
         {connected && historyData?.length > 0 ? (
-          <>
-            {currentItems
-              .map((el, i) => {
-                const info = currentItems[i]
-                return <ActionRow key={i} info={info} showTotalBalance={showTotalBalance} />
-              })
-              .slice(0, 5)}
+          <div>
+            <ContentBox>
+              {currentItems
+                .map((el, i) => {
+                  const info = currentItems[i]
+                  return <ActionRow key={i} info={info} showTotalBalance={showTotalBalance} />
+                })
+                .slice(0, 5)}
+            </ContentBox>
             <HistoryPagination
               bgColor={bgColorFarm}
               fontColor={fontColor}
@@ -149,7 +152,7 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
                 pageLinkClassName="paginate-item-link"
               />
             </HistoryPagination>
-          </>
+          </div>
         ) : (
           <EmptyPanel borderColor={borderColorTable}>
             {connected ? (
@@ -180,7 +183,6 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
                     inputBorderColor={inputBorderColor}
                     bordercolor={fontColor}
                     disabled={disableWallet}
-                    hoverColorButton={hoverColorButton}
                   >
                     <img src={AdvancedImg} className="explore-farms" alt="" />
                     Explore Farms
@@ -201,7 +203,7 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
                   inputBorderColor={inputBorderColor}
                   bordercolor={fontColor}
                   disabled={disableWallet}
-                  hoverColorButton={hoverColorButton}
+                  hoverColor={hoverColorButton}
                 >
                   Connect Wallet
                 </ConnectButtonStyle>

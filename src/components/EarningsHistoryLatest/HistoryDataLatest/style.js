@@ -33,8 +33,8 @@ const Header = styled.div`
   display: flex;
   justify-content: space-between;
   border: 1px solid ${props => props.borderColor};
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 
   @media screen and (max-width: 992px) {
     padding: 12px 24px;
@@ -49,6 +49,13 @@ const ContentBox = styled.div`
   border: 1px solid ${props => props.borderColor};
   border-top: none;
   border-bottom: none;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+
+  div.latest-yield-row:last-child {
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+  }
 
   @media screen and (max-width: 992px) {
     border: unset;
@@ -99,6 +106,8 @@ const EmptyPanel = styled.div`
   height: 400px;
   border: 1px solid ${props => props.borderColor};
   border-top: none;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
 
   @media screen and (max-width: 992px) {
     padding: 0px;

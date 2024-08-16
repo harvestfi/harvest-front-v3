@@ -427,7 +427,7 @@ const Sidebar = ({ width }) => {
                       inputBorderColor={inputBorderColor}
                       bordercolor={fontColor}
                       disabled={disableWallet}
-                      hoverColorButton={hoverColorButton}
+                      hoverColor={hoverColorButton}
                     >
                       Connect Wallet
                     </ConnectButtonStyle>
