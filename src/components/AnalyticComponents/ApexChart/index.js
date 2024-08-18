@@ -26,8 +26,10 @@ import { LoadingDiv, NoData } from './style'
 
 // kind: "value" - TVL, "apy" - APY
 function generateChartDataWithSlots(slots, apiData) {
-  const seriesData = []
-  for (let i = 0; i < slots.length; i += 1) {
+  const seriesData = [],
+    sl = slots.length
+
+  for (let i = 0; i < sl; i += 1) {
     const data = {}
     for (let j = 0; j < Object.keys(apiData).length; j += 1) {
       const key = Object.keys(apiData)[j]

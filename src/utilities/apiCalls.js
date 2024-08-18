@@ -244,14 +244,15 @@ export const getSequenceId = async (address, chainId) => {
       .then(response => response.json())
       .then(res => {
         const vaultsData = res.data.vaults
-        for (let i = 0; i < vaultsData.length; i += 1) {
+        const vl = vaultsData.length
+        for (let i = 0; i < vl; i += 1) {
           if (vaultAddress === vaultsData[i].id) {
             vaultTVLCount = vaultsData[i].tvlSequenceId
             vaultPriceFeedCount = vaultsData[i].priceFeedSequenceId
             return
           }
         }
-        if (vaultsData.length === 0) {
+        if (vl === 0) {
           vaultsFlag = false
         }
       })
@@ -639,7 +640,8 @@ export const getPriceFeeds = async (
 
 const removeZeroValueObjects = data => {
   let nonZeroValueEncountered = false
-  for (let i = data.length - 1; i >= 0; i -= 1) {
+  const dl = data.length
+  for (let i = dl - 1; i >= 0; i -= 1) {
     if (parseFloat(data[i].value) === 0 || data[i].value === '0') {
       if (!nonZeroValueEncountered) {
         data.splice(i, 1)
@@ -688,6 +690,8 @@ export const initBalanceAndDetailData = async (
       lastKnownSharePrice = null,
       lastKnownPriceUnderlying = null
 
+    const bl = balanceData.length,
+      ul = uniqueVaultHData.length
     if (balanceData[0].timestamp > uniqueVaultHData[0].timestamp) {
       let i = 0,
         z = 0,
@@ -699,8 +703,8 @@ export const initBalanceAndDetailData = async (
         mergedData.push(balanceData[i])
         i += 1
       }
-      while (i < balanceData.length) {
-        if (z < uniqueVaultHData.length) {
+      while (i < bl) {
+        if (z < ul) {
           while (uniqueVaultHData[z].timestamp >= balanceData[i].timestamp) {
             uniqueVaultHData[z].value = balanceData[i].value
             mergedData.push(uniqueVaultHData[z])
@@ -711,24 +715,21 @@ export const initBalanceAndDetailData = async (
           }
         }
         if (!addFlag) {
-          balanceData[i].priceUnderlying =
-            uniqueVaultHData[z === uniqueVaultHData.length ? z - 1 : z].priceUnderlying
-          balanceData[i].sharePrice =
-            uniqueVaultHData[z === uniqueVaultHData.length ? z - 1 : z].sharePrice
+          balanceData[i].priceUnderlying = uniqueVaultHData[z === ul ? z - 1 : z].priceUnderlying
+          balanceData[i].sharePrice = uniqueVaultHData[z === ul ? z - 1 : z].sharePrice
           mergedData.push(balanceData[i])
         }
         addFlag = false
         i += 1
       }
-      while (z < uniqueVaultHData.length) {
+      while (z < ul) {
         uniqueVaultHData[z].value = 0
         mergedData.push(uniqueVaultHData[z])
         z += 1
       }
-      while (i < balanceData.length) {
-        balanceData[i].priceUnderlying =
-          uniqueVaultHData[uniqueVaultHData.length - 1].priceUnderlying
-        balanceData[i].sharePrice = uniqueVaultHData[uniqueVaultHData.length - 1].sharePrice
+      while (i < bl) {
+        balanceData[i].priceUnderlying = uniqueVaultHData[ul - 1].priceUnderlying
+        balanceData[i].sharePrice = uniqueVaultHData[ul - 1].sharePrice
         mergedData.push(balanceData[i])
         i += 1
       }
@@ -736,21 +737,18 @@ export const initBalanceAndDetailData = async (
       let i = 0,
         z = 0,
         addFlag = false
-      while (
-        i < uniqueVaultHData.length &&
-        uniqueVaultHData[i].timestamp > balanceData[0].timestamp
-      ) {
+      while (i < ul && uniqueVaultHData[i].timestamp > balanceData[0].timestamp) {
         uniqueVaultHData[i].value = balanceData[0].value
         mergedData.push(uniqueVaultHData[i])
         i += 1
       }
-      while (z < balanceData.length) {
-        if (i < uniqueVaultHData.length) {
+      while (z < bl) {
+        if (i < ul) {
           while (uniqueVaultHData[i].timestamp >= balanceData[z].timestamp) {
             uniqueVaultHData[i].value = balanceData[z].value
             mergedData.push(uniqueVaultHData[i])
             i += 1
-            if (i >= uniqueVaultHData.length) {
+            if (i >= ul) {
               break
             }
             if (!addFlag && uniqueVaultHData[i].timestamp === balanceData[z].timestamp) {
@@ -759,24 +757,21 @@ export const initBalanceAndDetailData = async (
           }
         }
         if (!addFlag) {
-          balanceData[z].priceUnderlying =
-            uniqueVaultHData[i === uniqueVaultHData.length ? i - 1 : i].priceUnderlying
-          balanceData[z].sharePrice =
-            uniqueVaultHData[i === uniqueVaultHData.length ? i - 1 : i].sharePrice
+          balanceData[z].priceUnderlying = uniqueVaultHData[i === ul ? i - 1 : i].priceUnderlying
+          balanceData[z].sharePrice = uniqueVaultHData[i === ul ? i - 1 : i].sharePrice
           mergedData.push(balanceData[z])
         }
         addFlag = false
         z += 1
       }
-      while (i < uniqueVaultHData.length) {
+      while (i < ul) {
         uniqueVaultHData[i].value = 0
         mergedData.push(uniqueVaultHData[i])
         i += 1
       }
-      while (z < balanceData.length) {
-        balanceData[z].priceUnderlying =
-          uniqueVaultHData[uniqueVaultHData.length - 1].priceUnderlying
-        balanceData[z].sharePrice = uniqueVaultHData[uniqueVaultHData.length - 1].sharePrice
+      while (z < bl) {
+        balanceData[z].priceUnderlying = uniqueVaultHData[ul - 1].priceUnderlying
+        balanceData[z].sharePrice = uniqueVaultHData[ul - 1].sharePrice
         mergedData.push(balanceData[z])
         z += 1
       }

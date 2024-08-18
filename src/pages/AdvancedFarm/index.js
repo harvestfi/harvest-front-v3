@@ -570,8 +570,9 @@ const AdvancedFarm = () => {
     const vaultAPR = ((1 + estimatedApy) ** (1 / 365) - 1) * 365
     const vaultAPRDaily = vaultAPR / 365
     const vaultAPRMonthly = vaultAPR / 12
+    const frl = fAssetPool.rewardAPR?.length
 
-    for (let j = 0; j < fAssetPool.rewardAPR?.length; j += 1) {
+    for (let j = 0; j < frl; j += 1) {
       totalRewardAPRByPercent += Number(fAssetPool.rewardAPR[j])
     }
     const totalRewardAPR = totalRewardAPRByPercent / 100
@@ -727,7 +728,8 @@ const AdvancedFarm = () => {
             supList = supList.sort(function reducer(a, b) {
               return b.usdValue - a.usdValue
             })
-            for (let j = 0; j < curBalances.length; j += 1) {
+            const cl = curBalances.length
+            for (let j = 0; j < cl; j += 1) {
               if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
                 if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
                   directInBalance = curBalances[j]
@@ -813,9 +815,10 @@ const AdvancedFarm = () => {
             // supList.shift()
             setSupTokenList(supList)
 
-            const supNoBalanceList = []
-            if (supList.length > 0) {
-              for (let i = 0; i < supList.length; i += 1) {
+            const supNoBalanceList = [],
+              sl = supList.length
+            if (sl > 0) {
+              for (let i = 0; i < sl; i += 1) {
                 if (Number(supList[i].balance) === 0) {
                   supNoBalanceList.push(supList[i])
                 }
@@ -976,9 +979,10 @@ const AdvancedFarm = () => {
 
   useEffect(() => {
     const fetchTokenPrices = async () => {
-      const usdPrices = []
+      const usdPrices = [],
+        rl = rewardTokenSymbols.length
 
-      for (let l = 0; l < rewardTokenSymbols.length; l += 1) {
+      for (let l = 0; l < rl; l += 1) {
         let usdRewardPrice = 0,
           rewardToken
         const rewardSymbol = rewardTokenSymbols[l].toUpperCase()
@@ -1033,7 +1037,8 @@ const AdvancedFarm = () => {
                 fromWei(pricePerFullShareInVault, decimalsInVault, decimalsInVault, true)
         } else {
           try {
-            for (let ids = 0; ids < apiData.length; ids += 1) {
+            const al = apiData.length
+            for (let ids = 0; ids < al; ids += 1) {
               const tempData = apiData[ids]
               const tempSymbol = tempData.symbol
               if (
@@ -1068,11 +1073,12 @@ const AdvancedFarm = () => {
   useEffect(() => {
     const calculateTotalReward = () => {
       let totalRewardSum = 0
-      for (let l = 0; l < rewardTokenSymbols.length; l += 1) {
+      const rl = rewardTokenSymbols.length
+      for (let l = 0; l < rl; l += 1) {
         const rewardDecimal = get(tokens[rewardTokenSymbols[l]], 'decimals', 18)
 
         const totalRewardUsd =
-          rewardTokenSymbols.length === 1
+          rl === 1
             ? Number(
                 totalRewardsEarned === undefined
                   ? 0

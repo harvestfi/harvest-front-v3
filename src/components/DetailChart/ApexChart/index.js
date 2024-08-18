@@ -21,9 +21,12 @@ import { fromWei } from '../../../services/web3'
 import { useRate } from '../../../providers/Rate'
 
 function generateChartDataWithSlots(slots, apiData, kind, filter, decimals) {
-  const seriesData = []
-  for (let i = 0; i < slots.length; i += 1) {
-    for (let j = 0; j < apiData.length; j += 1) {
+  const seriesData = [],
+    sl = slots.length,
+    al = apiData.length
+
+  for (let i = 0; i < sl; i += 1) {
+    for (let j = 0; j < al; j += 1) {
       if (slots[i] > parseInt(apiData[j].timestamp, 10)) {
         const value = parseFloat(apiData[j][kind])
         if (filter === 2) {
@@ -32,7 +35,7 @@ function generateChartDataWithSlots(slots, apiData, kind, filter, decimals) {
           seriesData.push({ x: slots[i] * 1000, y: value })
         }
         break
-      } else if (j === apiData.length - 1) {
+      } else if (j === al - 1) {
         seriesData.push({ x: slots[i] * 1000, y: 0 })
       }
     }
@@ -85,8 +88,10 @@ function getYAxisValues(min, max, roundNum, filter) {
 }
 
 function generateIFARMTVLWithSlots(slots, apiData) {
-  const seriesData = []
-  for (let i = 0; i < slots.length; i += 1) {
+  const seriesData = [],
+    sl = slots.length
+
+  for (let i = 0; i < sl; i += 1) {
     const data = apiData.FARM.reduce((prev, curr) =>
       Math.abs(Number(curr.timestamp) - slots[i]) < Math.abs(Number(prev.timestamp) - slots[i])
         ? curr

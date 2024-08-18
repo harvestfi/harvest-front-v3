@@ -576,7 +576,8 @@ const BeginnersFarm = () => {
               return b.usdValue - a.usdValue
             })
 
-            for (let j = 0; j < curBalances.length; j += 1) {
+            const cl = curBalances.length
+            for (let j = 0; j < cl; j += 1) {
               if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
                 if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
                   directInBalance = curBalances[j]
@@ -661,9 +662,10 @@ const BeginnersFarm = () => {
             // supList.shift()
             setSupTokenList(supList)
 
-            const supNoBalanceList = []
-            if (supList.length > 0) {
-              for (let i = 0; i < supList.length; i += 1) {
+            const supNoBalanceList = [],
+              sl = supList.length
+            if (sl > 0) {
+              for (let i = 0; i < sl; i += 1) {
                 if (Number(supList[i].balance) === 0) {
                   supNoBalanceList.push(supList[i])
                 }

@@ -41,13 +41,14 @@ export const toAPYPercentage = number => {
 
 export const abbreaviteNumber = (number, decPlaces) => {
   const signs = ['K', 'M', 'B', 'T']
+  const sl = signs.length
   const adjDecPlaces = 10 ** decPlaces
 
   if (number < 1 / adjDecPlaces) {
     return number.toFixed(decPlaces)
   }
 
-  for (let i = signs.length - 1; i >= 0; i -= 1) {
+  for (let i = sl - 1; i >= 0; i -= 1) {
     const size = 10 ** ((i + 1) * 3)
     if (size <= number) {
       number = (Math.floor((number * adjDecPlaces) / size) / adjDecPlaces).toFixed(decPlaces)

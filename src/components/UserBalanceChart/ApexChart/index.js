@@ -50,9 +50,12 @@ function findMinUnderlying(data) {
 }
 
 function generateChartDataWithSlots(slots, apiData, balance, priceUnderlying, sharePrice) {
-  const seriesData = []
-  for (let i = 0; i < slots.length; i += 1) {
-    for (let j = 0; j < apiData.length; j += 1) {
+  const seriesData = [],
+    sl = slots.length,
+    al = apiData.length
+
+  for (let i = 0; i < sl; i += 1) {
+    for (let j = 0; j < al; j += 1) {
       if (slots[i] >= parseInt(apiData[j].timestamp, 10)) {
         const value1 = parseFloat(apiData[j][balance])
         const value2 = parseFloat(apiData[j][priceUnderlying])
@@ -60,7 +63,7 @@ function generateChartDataWithSlots(slots, apiData, balance, priceUnderlying, sh
         seriesData.push({ x: slots[i] * 1000, y: value1 * value2 * value3, z: value1 * value3 })
         break
       }
-      // else if (j === apiData.length - 1) {
+      // else if (j === al - 1) {
       //   seriesData.push({ x: slots[i] * 1000, y: 0, z: 0 })
       // }
     }
@@ -217,39 +220,40 @@ const ApexChart = ({
         filteredData,
         filteredSlot
 
+      const dl = data.length
       if (!connected) {
         setIsDataReady('false')
       } else if (lpTokenBalance === 0) {
         setIsDataReady('loading')
-      } else if (lpTokenBalance === '0' && totalValue !== 0 && data.length === 0) {
+      } else if (lpTokenBalance === '0' && totalValue !== 0 && dl === 0) {
         setIsDataReady('loading')
-      } else if (lpTokenBalance === '0' && totalValue === 0 && data.length === 0) {
+      } else if (lpTokenBalance === '0' && totalValue === 0 && dl === 0) {
         setIsDataReady('false')
-      } else if (totalValue !== '0' && data.length === 0) {
+      } else if (totalValue !== '0' && dl === 0) {
         setIsDataReady('loading')
-      } else if (data.length !== 0) {
+      } else if (dl !== 0) {
         setIsDataReady('true')
       }
 
-      if ((Object.keys(data).length === 0 && data.constructor === Object) || data.length === 0) {
+      if ((Object.keys(data).length === 0 && data.constructor === Object) || dl === 0) {
         return
       }
 
       const maxTimestamp = data[0].timestamp * 1000
-      const minTimestamp = data[data.length - 1].timestamp * 1000
+      const minTimestamp = data[dl - 1].timestamp * 1000
       const startTimestamp = denormalizeSliderValue(startPoint, minTimestamp, maxTimestamp)
       const endTimestamp = denormalizeSliderValue(endPoint, minTimestamp, maxTimestamp)
       const nowDate = new Date()
       const currentTimeStamp = Math.floor(nowDate.getTime() / 1000)
 
-      for (let i = data.length - 1; i >= 0; i -= 1) {
+      for (let i = dl - 1; i >= 0; i -= 1) {
         if (data[i].value !== 0) {
           firstDate = data[i].timestamp
           break
         }
       }
       if (firstDate === undefined) {
-        firstDate = data[data.length - 1].timestamp
+        firstDate = data[dl - 1].timestamp
       }
       const allPeriodDate = (currentTimeStamp - Number(firstDate)) / (24 * 60 * 60)
       const allAgo = Math.ceil(allPeriodDate)

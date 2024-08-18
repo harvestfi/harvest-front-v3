@@ -200,8 +200,9 @@ const Portfolio = () => {
   useEffect(() => {
     if (account && !isEmpty(userStats) && !isEmpty(depositToken)) {
       const loadUserPoolsStats = async () => {
-        const poolsToLoad = []
-        for (let i = 0; i < depositToken.length; i += 1) {
+        const poolsToLoad = [],
+          dl = depositToken.length
+        for (let i = 0; i < dl; i += 1) {
           let fAssetPool =
             depositToken[i] === FARM_TOKEN_SYMBOL
               ? groupOfVaults[depositToken[i]].data
@@ -270,9 +271,10 @@ const Portfolio = () => {
           setDepositToken(symbols)
         }
 
-        const newStats = []
+        const newStats = [],
+          sl = stakedVaults.length
 
-        for (let i = 0; i < stakedVaults.length; i += 1) {
+        for (let i = 0; i < sl; i += 1) {
           const stats = {
             chain: '',
             symbol: '',
@@ -315,9 +317,10 @@ const Portfolio = () => {
               iFARMBalance = 0,
               usdPrice = 1
 
-            for (let k = 0; k < token.tokenNames.length; k += 1) {
+            const ttl = token.tokenNames.length
+            for (let k = 0; k < ttl; k += 1) {
               tokenName += token.tokenNames[k]
-              if (k !== token.tokenNames.length - 1) {
+              if (k !== ttl - 1) {
                 tokenName += ', '
               }
             }
@@ -465,7 +468,8 @@ const Portfolio = () => {
                     rewardToken.data.lpTokenData.decimals)
               } else {
                 try {
-                  for (let ids = 0; ids < apiData.length; ids += 1) {
+                  const al = apiData.length
+                  for (let ids = 0; ids < al; ids += 1) {
                     const tempData = apiData[ids]
                     const tempSymbol = tempData.symbol
                     if (
@@ -540,8 +544,9 @@ const Portfolio = () => {
             const vaultAPR = ((1 + estimatedApy) ** (1 / 365) - 1) * 365
             const vaultAPRDaily = vaultAPR / 365
             const vaultAPRMonthly = vaultAPR / 12
+            const frl = fAssetPool.rewardAPR.length
 
-            for (let j = 0; j < fAssetPool.rewardAPR.length; j += 1) {
+            for (let j = 0; j < frl; j += 1) {
               totalRewardAPRByPercent += Number(fAssetPool.rewardAPR[j])
             }
             const totalRewardAPR = totalRewardAPRByPercent / 100
@@ -620,7 +625,8 @@ const Portfolio = () => {
           )
         }
 
-        for (let i = 0; i < stakedVaults.length; i += 1) {
+        const sl = stakedVaults.length
+        for (let i = 0; i < sl; i += 1) {
           let symbol = '',
             fAssetPool = {}
 
