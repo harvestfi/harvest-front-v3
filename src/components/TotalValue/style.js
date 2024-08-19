@@ -79,8 +79,8 @@ const Div = styled.div`
 
 const Price = styled.div`
   font-weight: 600;
-  font-size: 30px;
-  line-height: 44px;
+  font-size: 25px;
+  line-height: 38px;
   color: ${props => props.fontColor1};
 
   @media screen and (max-width: 1350px) {

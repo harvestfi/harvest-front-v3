@@ -81,19 +81,13 @@ const VaultRow = ({ info, firstElement, lastElement, cKey }) => {
           <ContentInner width={isMobile ? '100%' : '50%'} marginLeft={isMobile ? '0px' : '11px'}>
             <ListItem
               weight={500}
-              size={isMobile ? 14 : 14}
-              height={isMobile ? 20 : 20}
+              size={12}
+              height={18}
               value={info.symbol}
               marginTop={isMobile ? 15 : 0}
               color={fontColor1}
             />
-            <ListItem
-              weight={400}
-              size={isMobile ? 14 : 14}
-              height={isMobile ? 20 : 20}
-              value={info.platform}
-              color={fontColor}
-            />
+            <ListItem weight={400} size={12} height={18} value={info.platform} color={fontColor} />
           </ContentInner>
         </Content>
         <Content width={isMobile ? '25%' : '15%'} marginTop={isMobile ? '15px' : 'unset'}>
@@ -102,8 +96,8 @@ const VaultRow = ({ info, firstElement, lastElement, cKey }) => {
           )}
           <ListItem
             weight={500}
-            size={14}
-            height={20}
+            size={12}
+            height={18}
             color={isMobile ? fontColor1 : fontColor}
             value={`${
               info.balance === 0
@@ -120,8 +114,8 @@ const VaultRow = ({ info, firstElement, lastElement, cKey }) => {
           )}
           <ListItem
             weight={500}
-            size={14}
-            height={20}
+            size={12}
+            height={18}
             color={isMobile ? fontColor1 : fontColor}
             value={`${
               info.monthlyYield === 0
@@ -138,8 +132,8 @@ const VaultRow = ({ info, firstElement, lastElement, cKey }) => {
           )}
           <ListItem
             weight={500}
-            size={14}
-            height={20}
+            size={12}
+            height={18}
             color={isMobile ? fontColor1 : fontColor}
             value={`${
               info.totalRewardUsd === 0
@@ -156,8 +150,8 @@ const VaultRow = ({ info, firstElement, lastElement, cKey }) => {
           )}
           <ListItem
             weight={500}
-            size={14}
-            height={20}
+            size={12}
+            height={18}
             color={isMobile ? fontColor1 : fontColor}
             value={
               info.apy === -1

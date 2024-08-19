@@ -106,8 +106,8 @@ const ActionRow = ({ info, showTotalBalance }) => {
             <Content width="30%">
               <ListItem
                 weight={500}
-                size={14}
-                height={20}
+                size={12}
+                height={18}
                 color="#5FCF76"
                 value={`${
                   info.balanceUsd < 0.01
@@ -115,11 +115,11 @@ const ActionRow = ({ info, showTotalBalance }) => {
                     : `≈${currencySym}${formatNumber(info.balanceUsd * Number(currencyRate), 2)}`
                 }`}
               />
-              <ListItem weight={500} size={14} height={20} color="#8884D8" value={info.balance} />
+              <ListItem weight={500} size={12} height={18} color="#8884D8" value={info.balance} />
               <ListItem
                 weight={400}
-                size={14}
-                height={20}
+                size={12}
+                height={18}
                 color={fontColor}
                 value={info.tokenSymbol}
               />
@@ -131,8 +131,8 @@ const ActionRow = ({ info, showTotalBalance }) => {
               <div>
                 <ListItem
                   weight={500}
-                  size={14}
-                  height={20}
+                  size={12}
+                  height={18}
                   color="#5FCF76"
                   value={`${
                     info.netChangeUsd < 0.01
@@ -145,15 +145,15 @@ const ActionRow = ({ info, showTotalBalance }) => {
                 />
                 <ListItem
                   weight={500}
-                  size={14}
-                  height={20}
+                  size={12}
+                  height={18}
                   color="#8884D8"
                   value={info.netChange}
                 />
                 <ListItem
                   weight={400}
-                  size={14}
-                  height={20}
+                  size={12}
+                  height={18}
                   color={fontColor}
                   value={info.tokenSymbol}
                 />

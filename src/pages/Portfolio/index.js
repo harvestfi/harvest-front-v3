@@ -929,7 +929,7 @@ const Portfolio = () => {
                           }}
                         >
                           {data.name}
-                          {data.img && <img className="sortIcon" src={data.img} alt="sort" />}
+                          {/* {data.img && <img className="sortIcon" src={data.img} alt="sort" />} */}
                         </Col>
                       </Column>
                     ))}
