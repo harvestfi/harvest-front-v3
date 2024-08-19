@@ -1,9 +1,10 @@
 import React from 'react'
 import { useMediaQuery } from 'react-responsive'
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import ActionRow from '../ActionRow'
-import AnimatedDots from '../../AnimatedDots'
 import {
   TransactionDetails,
   TableContent,
@@ -13,13 +14,14 @@ import {
   EmptyPanel,
   EmptyInfo,
   ContentBox,
+  SkeletonItem,
 } from './style'
 
 const HistoryDataLatest = ({ historyData, isDashboard, noData }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const filteredHistoryData = historyData.filter(el => el.event === 'Harvest' && el.netChange >= 0)
 
-  const { borderColorTable, bgColorTable, fontColor } = useThemeContext()
+  const { borderColorTable, bgColorTable, fontColor, highlightColor } = useThemeContext()
   const { connected } = useWallet()
 
   return (
@@ -46,35 +48,34 @@ const HistoryDataLatest = ({ historyData, isDashboard, noData }) => {
               })
               .slice(0, 7)}
           </ContentBox>
+        ) : connected ? (
+          !noData ? (
+            <EmptyPanel borderColor={borderColorTable}>
+              <SkeletonTheme baseColor="#ECECEC" highlightColor={highlightColor}>
+                {[...Array(6)].map((_, index) => (
+                  <SkeletonItem key={index}>
+                    <div>
+                      <Skeleton containerClassName="skeleton" width="50%" height={10} />
+                    </div>
+                    <div>
+                      <Skeleton containerClassName="skeleton" width="25%" height={10} />
+                    </div>
+                  </SkeletonItem>
+                ))}
+              </SkeletonTheme>
+            </EmptyPanel>
+          ) : (
+            <EmptyPanel borderColor={borderColorTable} height="400px">
+              <EmptyInfo height="100%" weight={500} size={14} lineHeight={20} color={fontColor}>
+                No activity found for this wallet.
+              </EmptyInfo>
+            </EmptyPanel>
+          )
         ) : (
-          <EmptyPanel borderColor={borderColorTable}>
-            {connected ? (
-              !noData ? (
-                <EmptyInfo
-                  height="100%"
-                  weight={500}
-                  size={14}
-                  lineHeight={20}
-                  color={fontColor}
-                  gap="2px"
-                >
-                  <div className="desc-text">
-                    Loading latest yield data for the connected wallet. It might take up to 30s{' '}
-                    <AnimatedDots />
-                  </div>
-                </EmptyInfo>
-              ) : (
-                <EmptyInfo height="100%" weight={500} size={14} lineHeight={20} color={fontColor}>
-                  No activity found for this wallet.
-                </EmptyInfo>
-              )
-            ) : (
-              <>
-                <EmptyInfo height="100%" weight={500} size={14} lineHeight={20} color={fontColor}>
-                  Connect wallet to see your latest yield
-                </EmptyInfo>
-              </>
-            )}
+          <EmptyPanel borderColor={borderColorTable} height="400px">
+            <EmptyInfo height="100%" weight={500} size={14} lineHeight={20} color={fontColor}>
+              Connect wallet to see your latest yield
+            </EmptyInfo>
           </EmptyPanel>
         )}
       </TableContent>

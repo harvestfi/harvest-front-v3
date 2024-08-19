@@ -147,7 +147,7 @@ const FarmPic = styled.img`
 `
 
 const EmptyPanel = styled.div`
-  height: 400px;
+  height: ${props => props.height};
   border: 1px solid ${props => props.borderColor};
   border-top: none;
   border-bottom-right-radius: 5px;

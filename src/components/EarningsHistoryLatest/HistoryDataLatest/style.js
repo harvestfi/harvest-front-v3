@@ -103,7 +103,7 @@ const Col = styled.div`
 `
 
 const EmptyPanel = styled.div`
-  height: 400px;
+  height: ${props => props.height};
   border: 1px solid ${props => props.borderColor};
   border-top: none;
   border-bottom-right-radius: 5px;
@@ -113,6 +113,17 @@ const EmptyPanel = styled.div`
     padding: 0px;
     border: none;
     min-height: 100px;
+  }
+`
+
+const SkeletonItem = styled.div`
+  padding: 22px 25px;
+  display: grid;
+  gap: 6px;
+
+  .skeleton {
+    display: flex;
+    height: 10px;
   }
 `
 
@@ -180,4 +191,14 @@ const EmptyInfo = styled.div`
   }
 `
 
-export { TransactionDetails, TableContent, ContentBox, Header, Column, Col, EmptyPanel, EmptyInfo }
+export {
+  TransactionDetails,
+  TableContent,
+  ContentBox,
+  Header,
+  Column,
+  Col,
+  EmptyPanel,
+  EmptyInfo,
+  SkeletonItem,
+}

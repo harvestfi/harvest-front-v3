@@ -3,11 +3,11 @@ import ReactPaginate from 'react-paginate'
 import { useMediaQuery } from 'react-responsive'
 import { useHistory } from 'react-router-dom'
 import { IoArrowBackSharp, IoArrowForwardSharp } from 'react-icons/io5'
+import SkeletonLoader from '../../DashboardComponents/SkeletonLoader'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { usePools } from '../../../providers/Pools'
 import { useWallet } from '../../../providers/Wallet'
 import ActionRow from '../ActionRow'
-import AnimatedDots from '../../AnimatedDots'
 import AdvancedImg from '../../../assets/images/logos/sidebar/advanced.svg'
 import { ROUTES } from '../../../constants'
 import {
@@ -153,62 +153,54 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
               />
             </HistoryPagination>
           </div>
-        ) : (
-          <EmptyPanel borderColor={borderColorTable}>
-            {connected ? (
-              !noData ? (
-                <EmptyInfo weight={500} size={14} lineHeight={20} color={fontColor} gap="2px">
-                  <div>
-                    Loading all events data for the connected wallet
-                    <br />
-                    It might take up to 30s <AnimatedDots />
-                  </div>
-                </EmptyInfo>
-              ) : (
-                <EmptyInfo
-                  weight={500}
-                  size={14}
-                  lineHeight={20}
-                  color={fontColor}
-                  flexFlow="column"
-                  gap="0px"
-                >
-                  <div>No activity found for this wallet.</div>
-                  <ExploreButtonStyle
-                    color="connectwallet"
-                    onClick={() => {
-                      push(ROUTES.ADVANCED)
-                    }}
-                    minWidth="190px"
-                    inputBorderColor={inputBorderColor}
-                    bordercolor={fontColor}
-                    disabled={disableWallet}
-                  >
-                    <img src={AdvancedImg} className="explore-farms" alt="" />
-                    Explore Farms
-                  </ExploreButtonStyle>
-                </EmptyInfo>
-              )
-            ) : (
-              <>
-                <EmptyInfo weight={500} size={14} lineHeight={20} color={fontColor}>
-                  Connect wallet to see full event history.
-                </EmptyInfo>
-                <ConnectButtonStyle
+        ) : connected ? (
+          !noData ? (
+            <SkeletonLoader isPosition="false" />
+          ) : (
+            <EmptyPanel borderColor={borderColorTable}>
+              <EmptyInfo
+                weight={500}
+                size={14}
+                lineHeight={20}
+                color={fontColor}
+                flexFlow="column"
+                gap="0px"
+              >
+                <div>No activity found for this wallet.</div>
+                <ExploreButtonStyle
                   color="connectwallet"
                   onClick={() => {
-                    connectAction()
+                    push(ROUTES.ADVANCED)
                   }}
                   minWidth="190px"
                   inputBorderColor={inputBorderColor}
                   bordercolor={fontColor}
                   disabled={disableWallet}
-                  hoverColor={hoverColorButton}
                 >
-                  Connect Wallet
-                </ConnectButtonStyle>
-              </>
-            )}
+                  <img src={AdvancedImg} className="explore-farms" alt="" />
+                  Explore Farms
+                </ExploreButtonStyle>
+              </EmptyInfo>
+            </EmptyPanel>
+          )
+        ) : (
+          <EmptyPanel>
+            <EmptyInfo weight={500} size={14} lineHeight={20} color={fontColor}>
+              Connect wallet to see full event history.
+            </EmptyInfo>
+            <ConnectButtonStyle
+              color="connectwallet"
+              onClick={() => {
+                connectAction()
+              }}
+              minWidth="190px"
+              inputBorderColor={inputBorderColor}
+              bordercolor={fontColor}
+              disabled={disableWallet}
+              hoverColor={hoverColorButton}
+            >
+              Connect Wallet
+            </ConnectButtonStyle>
           </EmptyPanel>
         )}
       </TableContent>

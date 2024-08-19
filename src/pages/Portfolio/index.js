@@ -8,6 +8,7 @@ import { useHistory } from 'react-router-dom'
 import { FaRegSquare, FaRegSquareCheck } from 'react-icons/fa6'
 import { BiLeftArrowAlt } from 'react-icons/bi'
 import { IoCheckmark } from 'react-icons/io5'
+import 'react-loading-skeleton/dist/skeleton.css'
 import Safe from '../../assets/images/logos/dashboard/safe.svg'
 import Coin1 from '../../assets/images/logos/dashboard/coins-stacked-02.svg'
 import Coin2 from '../../assets/images/logos/dashboard/coins-stacked-04.svg'
@@ -17,6 +18,7 @@ import BankNote from '../../assets/images/logos/dashboard/bank-note.svg'
 import DropDownIcon from '../../assets/images/logos/advancedfarm/drop-down.svg'
 import AdvancedImg from '../../assets/images/logos/sidebar/advanced.svg'
 import VaultRow from '../../components/DashboardComponents/VaultRow'
+import SkeletonLoader from '../../components/DashboardComponents/SkeletonLoader'
 import EarningsHistory from '../../components/EarningsHistory/HistoryData'
 import EarningsHistoryLatest from '../../components/EarningsHistoryLatest/HistoryDataLatest'
 import TotalValue from '../../components/TotalValue'
@@ -43,7 +45,6 @@ import {
   initBalanceAndDetailData,
 } from '../../utilities/apiCalls'
 import { getChainIcon, getTotalApy } from '../../utilities/parsers'
-import AnimatedDots from '../../components/AnimatedDots'
 import {
   Column,
   Container,
@@ -961,71 +962,60 @@ const Portfolio = () => {
                             )
                           })}
                     </ContentBox>
-                  ) : (
-                    <EmptyPanel borderColor={borderColorTable}>
-                      {connected ? (
-                        !noFarm ? (
-                          <EmptyInfo
-                            height="100%"
-                            weight={500}
-                            size={14}
-                            lineHeight={20}
-                            color={fontColor}
-                            gap="2px"
-                          >
-                            <div>
-                              Syncing positions <AnimatedDots />
-                            </div>
-                          </EmptyInfo>
-                        ) : (
-                          <EmptyInfo
-                            height="100%"
-                            weight={500}
-                            size={14}
-                            lineHeight={20}
-                            flexFlow="column"
-                            color={fontColor}
-                            gap="0px"
-                          >
-                            <div>
-                              Looks like you are not farming anywhere. Let&apos;s put your assets to
-                              work!
-                            </div>
-                            <ExploreButtonStyle
-                              color="connectwallet"
-                              onClick={() => {
-                                push(ROUTES.ADVANCED)
-                              }}
-                              minWidth="190px"
-                              inputBorderColor={inputBorderColor}
-                              bordercolor={fontColor}
-                              disabled={disableWallet}
-                            >
-                              <img src={AdvancedImg} className="explore-farms" alt="" />
-                              Explore Farms
-                            </ExploreButtonStyle>
-                          </EmptyInfo>
-                        )
-                      ) : (
-                        <EmptyInfo height="100%" flexFlow="column" gap="0px">
-                          <EmptyInfo weight={500} size={14} lineHeight={20} color={fontColor}>
-                            Connect wallet to see your positions.
-                          </EmptyInfo>
-                          <ConnectButtonStyle
+                  ) : connected ? (
+                    !noFarm ? (
+                      <SkeletonLoader isPosition="true" />
+                    ) : (
+                      <EmptyPanel borderColor={borderColorTable} height="400px">
+                        <EmptyInfo
+                          height="100%"
+                          weight={500}
+                          size={14}
+                          lineHeight={20}
+                          flexFlow="column"
+                          color={fontColor}
+                          gap="0px"
+                        >
+                          <div>
+                            Looks like you are not farming anywhere. Let&apos;s put your assets to
+                            work!
+                          </div>
+                          <ExploreButtonStyle
                             color="connectwallet"
                             onClick={() => {
-                              connectAction()
+                              push(ROUTES.ADVANCED)
                             }}
                             minWidth="190px"
                             inputBorderColor={inputBorderColor}
                             bordercolor={fontColor}
                             disabled={disableWallet}
-                            hoverColor={hoverColorButton}
                           >
-                            Connect Wallet
-                          </ConnectButtonStyle>
+                            <img src={AdvancedImg} className="explore-farms" alt="" />
+                            Explore Farms
+                          </ExploreButtonStyle>
                         </EmptyInfo>
-                      )}
+                      </EmptyPanel>
+                    )
+                  ) : (
+                    <EmptyPanel borderColor={borderColorTable} height="400px">
+                      <EmptyInfo height="100%" flexFlow="column" gap="0px">
+                        <EmptyInfo weight={500} size={14} lineHeight={20} color={fontColor}>
+                          Connect wallet to see your positions.
+                        </EmptyInfo>
+                        <ConnectButtonStyle
+                          color="connectwallet"
+                          onClick={() => {
+                            connectAction()
+                          }}
+                          minWidth="190px"
+                          inputBorderColor={inputBorderColor}
+                          bordercolor={fontColor}
+                          disabled={disableWallet}
+                          hoverColor={hoverColorButton}
+                        >
+                          Connect Wallet
+                        </ConnectButtonStyle>
+                      </EmptyInfo>
                     </EmptyPanel>
                   )}
                 </TableContent>

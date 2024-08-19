@@ -56,6 +56,8 @@ export function ThemeProvider({ children }) {
   const activeColorModal = darkMode ? '#242C3C' : '#ECFDF3'
   const modalInputColor = darkMode ? '#242C3C' : '#ffffff'
 
+  const highlightColor = darkMode ? '#bfbfbf' : '#F4F4F4'
+
   const filterColor = darkMode
     ? 'invert(100%) sepia(20%) saturate(0%) hue-rotate(40deg) brightness(104%) contrast(101%)'
     : ''
@@ -199,6 +201,7 @@ export function ThemeProvider({ children }) {
         activeColor,
         activeColorModal,
         modalInputColor,
+        highlightColor,
         bgColorFarm,
         bgColorSup,
         bgColorMessage,
