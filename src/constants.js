@@ -840,6 +840,6 @@ export const boostedVaults = [
   'lodestar_wstETH',
   'lodestar_USDC',
   'xGRAIL',
-  'iFARM_arbitrum',
+  'IFARM_arbitrum',
   'lodestar_LODE'
 ]
