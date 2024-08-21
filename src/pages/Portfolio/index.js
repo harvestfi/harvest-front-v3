@@ -43,6 +43,8 @@ import {
   getCoinListFromApi,
   getTokenPriceFromApi,
   initBalanceAndDetailData,
+  getUserTotalProfit,
+  getVaultTotalProfit,
 } from '../../utilities/apiCalls'
 import { getChainIcon, getTotalApy } from '../../utilities/parsers'
 import {
@@ -78,7 +80,6 @@ import {
   SubBtnWrap,
 } from './style'
 
-const totalNetProfitKey = 'TOTAL_NET_PROFIT'
 const totalHistoryDataKey = 'TOTAL_HISTORY_DATA'
 
 const Portfolio = () => {
@@ -111,9 +112,11 @@ const Portfolio = () => {
 
   const [apiData, setApiData] = useState([])
   const [farmTokenList, setFarmTokenList] = useState([])
+  const [updatedTokenList, setUpdatedTokenList] = useState([])
+  const isInitialRender = useRef(true)
   const [filteredFarmList, setFilteredFarmList] = useState([])
   const [noFarm, setNoFarm] = useState(false)
-  const [totalNetProfit, setTotalNetProfit] = useState(0)
+  const [totalLifetimeYield, setTotalLifetimeYield] = useState(0)
   const [totalHistoryData, setTotalHistoryData] = useState([])
   const [totalDeposit, setTotalDeposit] = useState(0)
   const [totalRewards, setTotalRewards] = useState(0)
@@ -138,9 +141,6 @@ const Portfolio = () => {
     }
 
     getCoinList()
-
-    const prevTotalProfit = Number(localStorage.getItem(totalNetProfitKey) || '0')
-    setTotalNetProfit(prevTotalProfit)
 
     const prevTotalHistoryData = JSON.parse(localStorage.getItem(totalHistoryDataKey) || '[]')
     setTotalHistoryData(prevTotalHistoryData)
@@ -599,7 +599,6 @@ const Portfolio = () => {
     if (!isEmpty(userStats) && account) {
       const getNetProfitValue = async () => {
         let stakedVaults = [],
-          totalNetProfitUSD = 0,
           combinedEnrichedData = []
 
         if (showInactiveFarms) {
@@ -660,7 +659,7 @@ const Portfolio = () => {
               : token.vaultAddress || token.tokenAddress
 
             // eslint-disable-next-line no-await-in-loop
-            const { sumNetChangeUsd, enrichedData } = await initBalanceAndDetailData(
+            const { enrichedData } = await initBalanceAndDetailData(
               paramAddress,
               useIFARM ? token.data.chain : token.chain,
               account,
@@ -672,13 +671,8 @@ const Portfolio = () => {
               tokenSymbol: symbol,
             }))
             combinedEnrichedData = combinedEnrichedData.concat(enrichedDataWithSymbol)
-            totalNetProfitUSD += sumNetChangeUsd
           }
         }
-
-        totalNetProfitUSD = totalNetProfitUSD === 0 ? -1 : totalNetProfitUSD
-        setTotalNetProfit(totalNetProfitUSD)
-        localStorage.setItem(totalNetProfitKey, totalNetProfitUSD.toString())
 
         combinedEnrichedData.sort((a, b) => b.timestamp - a.timestamp)
         setTotalHistoryData(combinedEnrichedData)
@@ -687,33 +681,67 @@ const Portfolio = () => {
 
       getNetProfitValue()
     } else {
-      setTotalNetProfit(0)
-      localStorage.setItem(totalNetProfitKey, '0')
       setTotalHistoryData([])
       localStorage.setItem(totalHistoryDataKey, JSON.stringify([]))
     }
   }, [account, userStats, balances, showInactiveFarms]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    if (account) {
+      const getUserTotalProfitData = async () => {
+        const { userTotalProfit } = await getUserTotalProfit(account)
+        const userTotalProfitValue = userTotalProfit === 0 ? -1 : userTotalProfit
+        setTotalLifetimeYield(userTotalProfitValue)
+      }
+      getUserTotalProfitData()
+    }
+  }, [account])
+
   const sortCol = field => {
-    const tokenList = orderBy(farmTokenList, [field], [sortOrder ? 'asc' : 'desc'])
-    setFarmTokenList(tokenList)
+    const tokenList = orderBy(updatedTokenList, [field], [sortOrder ? 'asc' : 'desc'])
+    setUpdatedTokenList(tokenList)
     setSortOrder(!sortOrder)
     localStorage.setItem('sortingDashboard', JSON.stringify(field))
   }
 
   useEffect(() => {
     const filteredVaultList = showInactiveFarms
-      ? farmTokenList
-      : farmTokenList.filter(farm => farm.status === 'Active')
+      ? updatedTokenList
+      : updatedTokenList.filter(farm => farm.status === 'Active')
     setFilteredFarmList(filteredVaultList)
-  }, [showInactiveFarms, farmTokenList])
+  }, [showInactiveFarms, updatedTokenList])
+
+  useEffect(() => {
+    if (account && farmTokenList.length !== 0 && (isInitialRender.current || showInactiveFarms)) {
+      const getVaultTotalProfitData = async () => {
+        const updatedFarmTokenList = await Promise.all(
+          farmTokenList.map(async vault => {
+            const useIFARM = vault.symbol === FARM_TOKEN_SYMBOL
+            const isSpecialVault = vault.token.liquidityPoolVault || vault.token.poolVault
+            const address = isSpecialVault
+              ? vault.token.data.collateralAddress
+              : vault.token.vaultAddress || vault.token.tokenAddress
+            const chainId = useIFARM ? vault.token.data.chain : vault.token.chain
+            const { vaultTotalProfit } = await getVaultTotalProfit(address, chainId, account)
+            return {
+              ...vault,
+              lifetimeYield: Number(vaultTotalProfit),
+            }
+          }),
+        )
+        setUpdatedTokenList(updatedFarmTokenList)
+        isInitialRender.current = false
+      }
+      getVaultTotalProfitData()
+    }
+  }, [account, farmTokenList, showInactiveFarms])
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const positionHeader = [
     { width: isMobile ? '23%' : '40%', sort: 'symbol', name: 'Farm' },
     { width: isMobile ? '20%' : '15%', sort: 'balance', name: 'Balance', img: Sort },
-    { width: isMobile ? '20%' : '15%', sort: 'monthlyYield', name: 'Monthly Yield', img: Sort },
+    { width: isMobile ? '20%' : '15%', sort: 'lifetimeYield', name: 'Lifetime Yield', img: Sort },
     { width: isMobile ? '20%' : '15%', sort: 'totalRewardUsd', name: 'Rewards', img: Sort },
     { width: isMobile ? '12%' : '15%', sort: 'apy', name: 'Live APY', img: Sort },
   ]
@@ -729,8 +757,8 @@ const Portfolio = () => {
     },
     {
       icon: Safe,
-      content: 'Total Net Profit',
-      price: totalNetProfit,
+      content: 'Lifetime Yield',
+      price: totalLifetimeYield,
       toolTipTitle: 'tt-total-profit',
       toolTip: (
         <>
@@ -934,17 +962,17 @@ const Portfolio = () => {
                       </Column>
                     ))}
                   </Header>
-                  {connected && farmTokenList.length > 0 ? (
+                  {connected && updatedTokenList.length > 0 ? (
                     <ContentBox borderColor={borderColorTable}>
                       {showInactiveFarms
-                        ? farmTokenList.map((el, i) => {
-                            const info = farmTokenList[i]
+                        ? updatedTokenList.map((el, i) => {
+                            const info = updatedTokenList[i]
                             return (
                               <VaultRow
                                 key={i}
                                 info={info}
                                 firstElement={i === 0 ? 'yes' : 'no'}
-                                lastElement={i === farmTokenList.length - 1 ? 'yes' : 'no'}
+                                lastElement={i === updatedTokenList.length - 1 ? 'yes' : 'no'}
                                 cKey={i}
                               />
                             )
@@ -1019,7 +1047,7 @@ const Portfolio = () => {
                     </EmptyPanel>
                   )}
                 </TableContent>
-                {connected && !isMobile && farmTokenList.length > 0 && (
+                {connected && !isMobile && updatedTokenList.length > 0 && (
                   <CheckBoxDiv>
                     {showInactiveFarms ? (
                       <FaRegSquareCheck
@@ -1046,7 +1074,7 @@ const Portfolio = () => {
               <SubBtnWrap>
                 {!showLatestYield ? (
                   <div>
-                    {connected && farmTokenList.length > 0 && (
+                    {connected && updatedTokenList.length > 0 && (
                       <CheckBoxDiv>
                         {showInactiveFarms ? (
                           <FaRegSquareCheck
