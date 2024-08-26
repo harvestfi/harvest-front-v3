@@ -459,6 +459,133 @@ export const getDataQuery = async (
   return chartData
 }
 
+export const getUserTotalProfit = async account => {
+  let userTotalProfit = 0
+  if (account) {
+    account = account.toLowerCase()
+  }
+
+  const myHeaders = new Headers()
+  myHeaders.append('Content-Type', 'application/json')
+
+  const graphql = JSON.stringify({
+      query: `{
+        userTotalProfits(
+          where: {
+            id: "${account}"
+          }
+        ) {
+          id, value
+        }
+      }`,
+      variables: {},
+    }),
+    requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: graphql,
+      redirect: 'follow',
+    }
+
+  const urls = [
+    GRAPH_URL_MAINNET,
+    GRAPH_URL_POLYGON,
+    GRAPH_URL_BASE,
+    GRAPH_URL_ARBITRUM,
+    GRAPH_URL_ZKSYNC,
+  ]
+
+  try {
+    const results = await Promise.all(
+      urls.map(url =>
+        fetch(url, requestOptions)
+          .then(response => response.json())
+          .then(res => res.data.userTotalProfits)
+          .catch(error => {
+            console.log('error', error)
+            return []
+          }),
+      ),
+    )
+
+    results.forEach(userTotalProfitData => {
+      if (userTotalProfitData.length > 0) {
+        userTotalProfit += Number(userTotalProfitData[0].value)
+      }
+    })
+  } catch (err) {
+    console.log('Fetch data about user balance histories: ', err)
+  }
+  return { userTotalProfit }
+}
+
+export const getVaultTotalProfit = async (address, chainId, account) => {
+  let vaultTotalProfit = '0'
+
+  address = address.toLowerCase()
+  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
+  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
+  if (account) {
+    account = account.toLowerCase()
+  }
+
+  const myHeaders = new Headers()
+  myHeaders.append('Content-Type', 'application/json')
+
+  const graphql = JSON.stringify({
+      query: `{
+        userProfits(
+          where: {
+            vault: "${address === farm ? ifarm : address}",
+            userAddress: "${account}"
+          }
+        ) {
+          vault {
+            id
+          }
+          value
+        }
+      }`,
+      variables: {},
+    }),
+    requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: graphql,
+      redirect: 'follow',
+    }
+
+  const url =
+    chainId === CHAIN_IDS.ETH_MAINNET
+      ? GRAPH_URL_MAINNET
+      : chainId === CHAIN_IDS.POLYGON_MAINNET
+      ? GRAPH_URL_POLYGON
+      : chainId === CHAIN_IDS.BASE
+      ? address.toLowerCase() === moonwellWeth.toLowerCase()
+        ? GRAPH_URL_BASE_MOONWELL
+        : GRAPH_URL_BASE
+      : chainId === CHAIN_IDS.ZKSYNC
+      ? GRAPH_URL_ZKSYNC
+      : GRAPH_URL_ARBITRUM
+
+  try {
+    await fetch(url, requestOptions)
+      .then(response => response.json())
+      .then(res => {
+        const userProfitData = res.data.userProfits
+        if (userProfitData.length !== 0) {
+          vaultTotalProfit = userProfitData[0].value
+        }
+      })
+      .catch(error => {
+        console.log('error', error)
+      })
+  } catch (err) {
+    console.log('Fetch data about vault profits: ', err)
+  }
+  return { vaultTotalProfit }
+}
+
 export const getUserBalanceHistories = async (address, chainId, account) => {
   let balanceData = {},
     balanceFlag = true
