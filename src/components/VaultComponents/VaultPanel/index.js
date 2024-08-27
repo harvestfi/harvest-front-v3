@@ -74,13 +74,13 @@ const VaultPanel = ({ token, loaded, tokenSymbol, tokenNum, vaultsCount, ...prop
     <>
       <VaultContainer hoverColor={hoverColor} lastElement={vaultsCount === tokenNum}>
         <VaultPanelHeader
+          isSpecialVault={isSpecialVault}
           token={token}
           tokenSymbol={tokenSymbol}
           useIFARM={useIFARM}
-          isSpecialVault={isSpecialVault}
-          multipleAssets={multipleAssets}
-          loadedVault={loaded}
           loadingFarmingBalance={loadingFarmingBalance}
+          loadedVault={loaded}
+          multipleAssets={multipleAssets}
           {...props}
         />
       </VaultContainer>

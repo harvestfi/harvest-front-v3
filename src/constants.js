@@ -852,18 +852,3 @@ export const supportedCurrencies = [
     imgPath: Euro,
   },
 ]
-
-export const boostedVaults = [
-  'lodestar_WBTC',
-  'lodestar_USDCe',
-  'lodestar_ARB',
-  'lodestar_ETH',
-  'lodestar_USDT',
-  'lodestar_PENDLE',
-  'camelot_iFARM_ETH',
-  'lodestar_wstETH',
-  'lodestar_USDC',
-  'xGRAIL',
-  'IFARM_arbitrum',
-  'lodestar_LODE',
-]

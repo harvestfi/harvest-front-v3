@@ -36,7 +36,6 @@ const MobilePanelHeader = ({
   loadingFarmingBalance,
   lsdToken,
   desciToken,
-  boostedToken,
 }) => {
   const location = useLocation()
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
@@ -74,7 +73,7 @@ const MobilePanelHeader = ({
         push(url)
       }}
     >
-      <FlexDiv className="token-icons" width="10%">
+      <FlexDiv className="token-icons" width="20%">
         <BadgeIcon badgeBack={badgeIconBackColor}>
           {BadgeAry[badgeId] ? (
             <img src={BadgeAry[badgeId]} width="10" height="10" alt="" />
@@ -95,7 +94,7 @@ const MobilePanelHeader = ({
           <VaultName token={token} tokenSymbol={tokenSymbol} useIFARM={useIFARM} />
         </TokenLogoContainer>
       </FlexDiv>
-      <FlexDiv width="30%">
+      <FlexDiv width="20%">
         <MobileVaultInfoContainer>
           <MobileVaultValueContainer filterColor={filterColor}>
             <VaultApy
@@ -104,7 +103,6 @@ const MobilePanelHeader = ({
               vaultPool={vaultPool}
               isSpecialVault={isSpecialVault}
               mobile
-              boostedToken={boostedToken}
             />
             <div className="title">
               <img src={APYIcon} alt="" />

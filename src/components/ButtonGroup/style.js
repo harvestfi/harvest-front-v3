@@ -26,12 +26,7 @@ const ButtonStyle = styled.button`
   cursor: pointer;
   padding: 10px 16px;
   position: relative;
-  transition: 0.5s;
-
-  ${props =>
-    props.isBoosted === 'true'
-      ? 'background: linear-gradient(to right, #ffb65d, #ed9005); color: white;'
-      : ''}
+  transition: 0.25s;
 
   &:first-child {
     border-radius: 8px 0 0 8px;
@@ -44,11 +39,9 @@ const ButtonStyle = styled.button`
 
   &.active,
   &:hover {
-    ${props =>
-      props.isBoosted === 'true'
-        ? 'background: linear-gradient(to right, #fbbd71, #ea9c27);'
-        : `background: ${props.hoverColor};`}
+    background: ${props => props.hoverColor};
   }
+  transition: 0.25s;
 
   img {
     filter: ${props => props.filterColor};

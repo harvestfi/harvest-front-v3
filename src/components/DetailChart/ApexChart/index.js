@@ -323,20 +323,14 @@ const ApexChart = ({
           if (iFarmTVL.length === 0) {
             return
           }
-          const filteredSlots = slots.filter(
-            timestamp => timestamp > Number(iFarmTVL[iFarmTVL.length - 1].timestamp),
-          )
-          mainData = generateIFARMTVLWithSlots(filteredSlots, iFarmTVL, 'value')
+          mainData = generateIFARMTVLWithSlots(slots, iFarmTVL, 'value')
         } else {
           if (tvlData.length === 0) {
             // setIsDataReady(false)
             return
           }
-          const filteredSlots = slots.filter(
-            timestamp => timestamp > Number(tvlData[tvlData.length - 1].timestamp),
-          )
           mainData = generateChartDataWithSlots(
-            filteredSlots,
+            slots,
             tvlData,
             'value',
             filter,
@@ -350,11 +344,8 @@ const ApexChart = ({
           setIsDataReady(false)
           return
         }
-        const filteredSlots = slots.filter(
-          timestamp => timestamp > Number(apyData[apyData.length - 1].timestamp),
-        )
         mainData = generateChartDataWithSlots(
-          filteredSlots,
+          slots,
           apyData,
           'apy',
           filter,
@@ -366,12 +357,8 @@ const ApexChart = ({
         if (userPriceFeedData.length === 0) {
           return
         }
-        const filteredSlots = slots.filter(
-          timestamp =>
-            timestamp > Number(userPriceFeedData[userPriceFeedData.length - 1].timestamp),
-        )
         mainData = generateChartDataWithSlots(
-          filteredSlots,
+          slots,
           userPriceFeedData,
           'sharePrice',
           filter,
@@ -457,11 +444,11 @@ const ApexChart = ({
       setFixedLen(filter === 1 ? 0 : len)
       setRoundNumber(roundNum)
 
-      setCurDate(formatDate(mainData[mainData.length - 1].x))
+      setCurDate(formatDate(mainData[slotCount - 1].x))
       const content = numberWithCommas(
-        (
-          Number(mainData[mainData.length - 1].y) * (filter === 1 ? Number(currencyRate) : 1)
-        ).toFixed(filter === 1 ? 2 : filter === 0 ? fixedLen : roundNum),
+        (Number(mainData[slotCount - 1].y) * (filter === 1 ? Number(currencyRate) : 1)).toFixed(
+          filter === 1 ? 2 : filter === 0 ? fixedLen : roundNum,
+        ),
       )
       setCurContent(content)
 

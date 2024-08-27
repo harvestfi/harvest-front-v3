@@ -160,8 +160,8 @@ const BeginnersFarm = () => {
 
   const { pathname } = useLocation()
 
-  const { allVaultsData, loadingVaults } = useVaults()
-  const { allPools, userStats, fetchUserPoolStats } = usePools()
+  const { vaultsData, loadingVaults } = useVaults()
+  const { pools, userStats, fetchUserPoolStats } = usePools()
   const { connected, account, balances, getWalletBalances } = useWallet()
   const { profitShareAPY } = useStats()
   /* eslint-disable global-require */
@@ -258,7 +258,7 @@ const BeginnersFarm = () => {
     }
   }, [rates])
 
-  const farmProfitSharingPool = allPools.find(
+  const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )
   const poolVaults = useMemo(
@@ -278,7 +278,7 @@ const BeginnersFarm = () => {
     [farmProfitSharingPool, profitShareAPY],
   )
 
-  const groupOfVaults = { ...allVaultsData, ...poolVaults }
+  const groupOfVaults = { ...vaultsData, ...poolVaults }
   const vaultsKey = Object.keys(groupOfVaults)
   const vaultIds = vaultsKey.filter(vaultId => {
     const tokenAddress = groupOfVaults[vaultId].tokenAddress || groupOfVaults[vaultId].vaultAddress
@@ -306,11 +306,11 @@ const BeginnersFarm = () => {
   const { logoUrl } = token
 
   const isSpecialVault = token.poolVault
-  const tokenVault = get(allVaultsData, token.hodlVaultId || id)
+  const tokenVault = get(vaultsData, token.hodlVaultId || id)
 
   const vaultPool = isSpecialVault
     ? token.data
-    : find(allPools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
+    : find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
 
   const farmAPY = get(vaultPool, 'totalRewardAPY', 0)
   const tradingApy = get(vaultPool, 'tradingApy', 0)
@@ -344,7 +344,7 @@ const BeginnersFarm = () => {
   const useIFARM = id === FARM_TOKEN_SYMBOL
   const fAssetPool = isSpecialVault
     ? token.data
-    : find(allPools, pool => pool.collateralAddress === tokens[id].vaultAddress)
+    : find(pools, pool => pool.collateralAddress === tokens[id].vaultAddress)
   const multipleAssets = useMemo(
     () =>
       isArray(tokens[id].tokenAddress) &&
@@ -364,7 +364,7 @@ const BeginnersFarm = () => {
   const totalStaked = get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)
 
   const tempPricePerFullShare = useIFARM
-    ? get(allVaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
+    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
     : get(token, `pricePerFullShare`, 0)
   const pricePerFullShare = fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals)
 
@@ -886,12 +886,12 @@ const BeginnersFarm = () => {
 
   useEffect(() => {
     const hasZeroValue = underlyingValue === 0
-    if (account && hasZeroValue && (firstUnderlyingBalance.current || !isEmpty(allVaultsData))) {
+    if (account && hasZeroValue && (firstUnderlyingBalance.current || !isEmpty(vaultsData))) {
       const getUnderlyingBalance = async () => {
         firstUnderlyingBalance.current = false
         const val = Number(
           fromWei(
-            get(allVaultsData, `${IFARM_TOKEN_SYMBOL}.underlyingBalanceWithInvestmentForHolder`, 0),
+            get(vaultsData, `${IFARM_TOKEN_SYMBOL}.underlyingBalanceWithInvestmentForHolder`, 0),
             tokens[IFARM_TOKEN_SYMBOL].decimals,
             WIDO_BALANCES_DECIMALS,
           ),
@@ -901,7 +901,7 @@ const BeginnersFarm = () => {
 
       getUnderlyingBalance()
     }
-  }, [account, allVaultsData, underlyingValue, tokens])
+  }, [account, vaultsData, underlyingValue, tokens])
 
   useEffect(() => {
     const initData = async () => {
