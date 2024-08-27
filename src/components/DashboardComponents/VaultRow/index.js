@@ -7,10 +7,7 @@ import { displayAPY, formatNumber, formatNumberWido } from '../../../utilities/f
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { chainList, directDetailUrl } from '../../../constants'
 import { useRate } from '../../../providers/Rate'
-import File from '../../../assets/images/logos/dashboard/file-02.svg'
-import MobileFile from '../../../assets/images/logos/dashboard/file-01.svg'
 import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
-import { BadgeIcon, Content, DetailView, FlexDiv, LogoImg, Img, ContentInner } from './style'
 import { BadgeIcon, Content, DetailView, FlexDiv, LogoImg, ContentInner } from './style'
 
 const VaultRow = ({ info, firstElement, lastElement, cKey }) => {
