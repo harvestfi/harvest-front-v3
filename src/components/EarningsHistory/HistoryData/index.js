@@ -27,8 +27,8 @@ import {
 
 const HistoryData = ({ historyData, isDashboard, noData }) => {
   const { push } = useHistory()
-  const itemsPerPage = 5
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+  const itemsPerPage = isMobile ? 6 : 5
 
   const {
     borderColorTable,
