@@ -27,8 +27,8 @@ import {
 
 const HistoryData = ({ historyData, isDashboard, noData }) => {
   const { push } = useHistory()
+  const itemsPerPage = 5
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const itemsPerPage = isMobile ? 6 : 5
 
   const {
     borderColorTable,
@@ -128,7 +128,7 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
                   const info = currentItems[i]
                   return <ActionRow key={i} info={info} showTotalBalance={showTotalBalance} />
                 })
-                .slice(0, 6)}
+                .slice(0, 5)}
             </ContentBox>
             <HistoryPagination
               bgColor={bgColorFarm}

@@ -118,11 +118,11 @@ const VaultRow = ({ info, firstElement, lastElement, cKey }) => {
             height={18}
             color={isMobile ? fontColor1 : fontColor}
             value={`${
-              info.lifetimeYield === 0
+              info.monthlyYield === 0
                 ? `${currencySym}0.00`
-                : info.lifetimeYield < 0.01
+                : info.monthlyYield < 0.01
                 ? `<${currencySym}0.01`
-                : `${currencySym}${formatNumber(info.lifetimeYield * Number(currencyRate), 2)}`
+                : `${currencySym}${formatNumber(info.monthlyYield * Number(currencyRate), 2)}`
             }`}
           />
         </Content>

@@ -811,7 +811,6 @@ const BackArrow = styled.div`
   font-size: 14px;
   font-weight: 600;
   line-height: 20px;
-  margin-bottom: 10px;
 
   :hover {
     cursor: pointer;
