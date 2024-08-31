@@ -459,6 +459,66 @@ export const getDataQuery = async (
   return chartData
 }
 
+export const getUserBalanceVaults = async account => {
+  const userBalanceVaults = []
+  if (account) {
+    account = account.toLowerCase()
+  }
+
+  const myHeaders = new Headers()
+  myHeaders.append('Content-Type', 'application/json')
+
+  const graphql = JSON.stringify({
+      query: `{
+        userBalances(
+          where: {
+            userAddress: "${account}"
+          }
+        ) {
+          vault { id }
+        }
+      }`,
+      variables: {},
+    }),
+    requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: graphql,
+      redirect: 'follow',
+    }
+
+  const urls = [
+    GRAPH_URL_MAINNET,
+    GRAPH_URL_POLYGON,
+    GRAPH_URL_BASE,
+    GRAPH_URL_ARBITRUM,
+    GRAPH_URL_ZKSYNC,
+  ]
+
+  try {
+    const results = await Promise.all(
+      urls.map(url =>
+        fetch(url, requestOptions)
+          .then(response => response.json())
+          .then(res => res.data.userBalances)
+          .catch(error => {
+            console.log('error', error)
+            return []
+          }),
+      ),
+    )
+
+    results.forEach(userBalanceVaultData => {
+      userBalanceVaultData.forEach(balance => {
+        userBalanceVaults.push(balance.vault.id)
+      })
+    })
+  } catch (err) {
+    console.log('Fetch data about user balance histories: ', err)
+  }
+  return { userBalanceVaults }
+}
+
 export const getUserBalanceHistories = async (address, chainId, account) => {
   let balanceData = {},
     balanceFlag = true

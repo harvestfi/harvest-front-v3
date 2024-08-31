@@ -42,6 +42,7 @@ import { parseValue, isSpecialApp } from '../../utilities/formats'
 import {
   getCoinListFromApi,
   getTokenPriceFromApi,
+  getUserBalanceVaults,
   initBalanceAndDetailData,
 } from '../../utilities/apiCalls'
 import { getChainIcon, getTotalApy } from '../../utilities/parsers'
@@ -113,6 +114,7 @@ const Portfolio = () => {
   const [farmTokenList, setFarmTokenList] = useState([])
   const [filteredFarmList, setFilteredFarmList] = useState([])
   const [noFarm, setNoFarm] = useState(false)
+  const [vaultNetChangeList, setVaultNetChangeList] = useState([])
   const [totalNetProfit, setTotalNetProfit] = useState(0)
   const [totalHistoryData, setTotalHistoryData] = useState([])
   const [totalDeposit, setTotalDeposit] = useState(0)
@@ -598,40 +600,33 @@ const Portfolio = () => {
   useEffect(() => {
     if (!isEmpty(userStats) && account) {
       const getNetProfitValue = async () => {
-        let stakedVaults = [],
-          totalNetProfitUSD = 0,
+        let totalNetProfitUSD = 0,
           combinedEnrichedData = []
 
-        if (showInactiveFarms) {
-          stakedVaults = Object.keys(userStats).filter(
-            poolId =>
-              new BigNumber(userStats[poolId].totalStaked).gt(0) ||
-              new BigNumber(userStats[poolId].lpTokenBalance).gt(0) ||
-              (poolId === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID &&
-                new BigNumber(balances[IFARM_TOKEN_SYMBOL]).gt(0)),
-          )
-        } else {
-          const stakedVaultsTemp = Object.keys(userStats).filter(
-            poolId =>
-              new BigNumber(userStats[poolId].totalStaked).gt(0) ||
-              new BigNumber(userStats[poolId].lpTokenBalance).gt(0) ||
-              (poolId === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID &&
-                new BigNumber(balances[IFARM_TOKEN_SYMBOL]).gt(0)),
-          )
+        const { userBalanceVaults } = await getUserBalanceVaults(account)
+        const stakedVaults = []
+        for (let j = 0; j < userBalanceVaults.length; j += 1) {
+          Object.keys(groupOfVaults).forEach(key => {
+            const isSpecialVaultAll =
+              groupOfVaults[key].liquidityPoolVault || groupOfVaults[key].poolVault
+            const paramAddressAll = isSpecialVaultAll
+              ? groupOfVaults[key].data.collateralAddress
+              : groupOfVaults[key].vaultAddress || groupOfVaults[key].tokenAddress
 
-          stakedVaults = stakedVaultsTemp.filter(
-            poolId =>
-              groupOfVaults[poolId === 'profit-sharing-farm' ? 'IFARM' : poolId] &&
-              groupOfVaults[poolId === 'profit-sharing-farm' ? 'IFARM' : poolId].inactive !== true,
-          )
+            if (userBalanceVaults[j] === paramAddressAll.toLowerCase()) {
+              stakedVaults.push(key)
+            }
+          })
         }
 
+        const vaultNetChanges = []
         const sl = stakedVaults.length
         for (let i = 0; i < sl; i += 1) {
           let symbol = '',
             fAssetPool = {}
 
-          if (stakedVaults[i] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
+          // When getting stakedVault using userStats -> if (stakedVaults[i] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
+          if (stakedVaults[i] === IFARM_TOKEN_SYMBOL) {
             symbol = FARM_TOKEN_SYMBOL
           } else {
             symbol = stakedVaults[i]
@@ -644,7 +639,7 @@ const Portfolio = () => {
           const token = find(
             groupOfVaults,
             vault =>
-              vault.vaultAddress === fAssetPool.collateralAddress ||
+              vault.vaultAddress === fAssetPool?.collateralAddress ||
               (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress),
           )
           if (token) {
@@ -667,6 +662,7 @@ const Portfolio = () => {
               token.decimals,
               underlyingPrice,
             )
+            vaultNetChanges.push({ id: symbol, sumNetChangeUsd })
             const enrichedDataWithSymbol = enrichedData.map(data => ({
               ...data,
               tokenSymbol: symbol,
@@ -676,6 +672,7 @@ const Portfolio = () => {
           }
         }
 
+        setVaultNetChangeList(vaultNetChanges)
         totalNetProfitUSD = totalNetProfitUSD === 0 ? -1 : totalNetProfitUSD
         setTotalNetProfit(totalNetProfitUSD)
         localStorage.setItem(totalNetProfitKey, totalNetProfitUSD.toString())
@@ -713,7 +710,7 @@ const Portfolio = () => {
   const positionHeader = [
     { width: isMobile ? '23%' : '40%', sort: 'symbol', name: 'Farm' },
     { width: isMobile ? '20%' : '15%', sort: 'balance', name: 'Balance', img: Sort },
-    { width: isMobile ? '20%' : '15%', sort: 'monthlyYield', name: 'Monthly Yield', img: Sort },
+    { width: isMobile ? '20%' : '15%', sort: 'lifetimeYield', name: 'Lifetime Yield', img: Sort },
     { width: isMobile ? '20%' : '15%', sort: 'totalRewardUsd', name: 'Rewards', img: Sort },
     { width: isMobile ? '12%' : '15%', sort: 'apy', name: 'Live APY', img: Sort },
   ]
@@ -729,7 +726,7 @@ const Portfolio = () => {
     },
     {
       icon: Safe,
-      content: 'Total Net Profit',
+      content: 'Lifetime Yield',
       price: totalNetProfit,
       toolTipTitle: 'tt-total-profit',
       toolTip: (
@@ -939,10 +936,22 @@ const Portfolio = () => {
                       {showInactiveFarms
                         ? farmTokenList.map((el, i) => {
                             const info = farmTokenList[i]
+                            let lifetimeYield = -1
+                            vaultNetChangeList.some(item => {
+                              if (
+                                (item.id === FARM_TOKEN_SYMBOL && item.id === info.symbol) ||
+                                item.id === info.token?.pool?.id
+                              ) {
+                                lifetimeYield = item.sumNetChangeUsd
+                                return true
+                              }
+                              return false
+                            })
                             return (
                               <VaultRow
                                 key={i}
                                 info={info}
+                                lifetimeYield={lifetimeYield}
                                 firstElement={i === 0 ? 'yes' : 'no'}
                                 lastElement={i === farmTokenList.length - 1 ? 'yes' : 'no'}
                                 cKey={i}
@@ -951,10 +960,22 @@ const Portfolio = () => {
                           })
                         : filteredFarmList.map((el, i) => {
                             const info = filteredFarmList[i]
+                            let lifetimeYield = -1
+                            vaultNetChangeList.some(item => {
+                              if (
+                                (item.id === FARM_TOKEN_SYMBOL && item.id === info.symbol) ||
+                                item.id === info.token?.pool?.id
+                              ) {
+                                lifetimeYield = item.sumNetChangeUsd
+                                return true
+                              }
+                              return false
+                            })
                             return (
                               <VaultRow
                                 key={i}
                                 info={info}
+                                lifetimeYield={lifetimeYield}
                                 firstElement={i === 0 ? 'yes' : 'no'}
                                 lastElement={i === filteredFarmList.length - 1 ? 'yes' : 'no'}
                                 cKey={i}

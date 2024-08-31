@@ -51,12 +51,12 @@ const TotalValue = ({ content, price, toolTipTitle, toolTip, connected, farmToke
         ) : farmTokenListLength === 0 ? (
           `${currencySym}0.00`
         ) : parseFloat(price) === 0 ? (
-          content === 'Rewards' ? (
+          content === 'Claimable Rewards' ? (
             `${currencySym}0.00`
           ) : (
             <AnimatedDots />
           )
-        ) : content === 'Total Net Profit' && parseFloat(price) === -1 ? (
+        ) : content === 'Lifetime Yield' && parseFloat(price) === -1 ? (
           `${currencySym}0.00`
         ) : parseFloat(price) < 0.01 ? (
           `<${currencySym}0.01`

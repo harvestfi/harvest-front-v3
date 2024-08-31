@@ -8,7 +8,7 @@ import { chainList, directDetailUrl } from '../../../constants'
 import { useRate } from '../../../providers/Rate'
 import { BadgeIcon, Content, DetailView, FlexDiv, LogoImg, ContentInner } from './style'
 
-const VaultRow = ({ info, firstElement, lastElement, cKey }) => {
+const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey }) => {
   const { push } = useHistory()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const {
@@ -110,7 +110,7 @@ const VaultRow = ({ info, firstElement, lastElement, cKey }) => {
         </Content>
         <Content width={isMobile ? '25%' : '15%'} marginTop={isMobile ? '15px' : 'unset'}>
           {isMobile && (
-            <ListItem color={fontColor} weight={500} size={12} height={18} value="Monthly Yield" />
+            <ListItem color={fontColor} weight={500} size={12} height={18} value="Lifetime Yield" />
           )}
           <ListItem
             weight={500}
@@ -118,11 +118,13 @@ const VaultRow = ({ info, firstElement, lastElement, cKey }) => {
             height={18}
             color={isMobile ? fontColor1 : fontColor}
             value={`${
-              info.monthlyYield === 0
+              lifetimeYield === -1
+                ? '-1'
+                : lifetimeYield === 0
                 ? `${currencySym}0.00`
-                : info.monthlyYield < 0.01
+                : lifetimeYield < 0.01
                 ? `<${currencySym}0.01`
-                : `${currencySym}${formatNumber(info.monthlyYield * Number(currencyRate), 2)}`
+                : `${currencySym}${formatNumber(lifetimeYield * Number(currencyRate), 2)}`
             }`}
           />
         </Content>
