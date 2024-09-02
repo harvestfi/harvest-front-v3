@@ -581,7 +581,7 @@ const Portfolio = () => {
         setTotalYieldMonthly(totalMonthlyYield)
 
         const storedSortingDashboard = localStorage.getItem('sortingDashboard')
-        if (storedSortingDashboard) {
+        if (storedSortingDashboard && JSON.parse(storedSortingDashboard) !== 'lifetimeYield') {
           sortedTokenList = orderBy(newStats, [JSON.parse(storedSortingDashboard)], ['desc'])
         } else {
           sortedTokenList = orderBy(newStats, ['balance'], ['desc'])
@@ -692,9 +692,33 @@ const Portfolio = () => {
   }, [account, userStats, balances, showInactiveFarms]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const sortCol = field => {
-    const tokenList = orderBy(farmTokenList, [field], [sortOrder ? 'asc' : 'desc'])
-    setFarmTokenList(tokenList)
-    setSortOrder(!sortOrder)
+    if (field === 'lifetimeYield') {
+      const sortedVaultList = orderBy(
+        vaultNetChangeList,
+        ['sumNetChangeUsd'],
+        [sortOrder ? 'asc' : 'desc'],
+      )
+
+      const idIndexMap = {}
+      sortedVaultList.forEach((vault, index) => {
+        idIndexMap[vault.id] = index
+      })
+
+      const sortedFarmTokenList = [...farmTokenList].sort((a, b) => {
+        const aIndex =
+          idIndexMap[a.token.pool.id] !== undefined ? idIndexMap[a.token.pool.id] : Infinity
+        const bIndex =
+          idIndexMap[b.token.pool.id] !== undefined ? idIndexMap[b.token.pool.id] : Infinity
+        return aIndex - bIndex
+      })
+
+      setFarmTokenList(sortedFarmTokenList)
+      setSortOrder(!sortOrder)
+    } else {
+      const tokenList = orderBy(farmTokenList, [field], [sortOrder ? 'asc' : 'desc'])
+      setFarmTokenList(tokenList)
+      setSortOrder(!sortOrder)
+    }
     localStorage.setItem('sortingDashboard', JSON.stringify(field))
   }
 
