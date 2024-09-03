@@ -21,12 +21,22 @@ const Container = styled.div`
     margin-top: 24px;
 
     &:first-child {
+      width: 46%;
+      padding: 8px 13px 8px 0px;
       border-right: 0.821px solid #eaecf0;
       border-radius: 6.5px 0px 0px 6.5px;
     }
+    &:nth-child(2) {
+      width: 54%;
+    }
     &:nth-child(3) {
+      width: 46%;
+      padding: 8px 13px 8px 0px;
       border-right: 0.821px solid #eaecf0;
       border-radius: 6.5px 0px 0px 6.5px;
+    }
+    &:nth-child(4) {
+      width: 54%;
     }
     &:last-child {
       display: none;

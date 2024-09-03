@@ -108,7 +108,7 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey }) => {
             }`}
           />
         </Content>
-        <Content width={isMobile ? '25%' : '15%'} marginTop={isMobile ? '15px' : 'unset'}>
+        <Content width={isMobile ? '30%' : '15%'} marginTop={isMobile ? '15px' : 'unset'}>
           {isMobile && (
             <ListItem color={fontColor} weight={500} size={12} height={18} value="Lifetime Yield" />
           )}
@@ -146,7 +146,7 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey }) => {
             }`}
           />
         </Content>
-        <Content width={isMobile ? '25%' : '15%'} marginTop={isMobile ? '15px' : 'unset'}>
+        <Content width={isMobile ? '20%' : '15%'} marginTop={isMobile ? '15px' : 'unset'}>
           {isMobile && (
             <ListItem color={fontColor} weight={500} size={12} height={18} value="Live APY" />
           )}
