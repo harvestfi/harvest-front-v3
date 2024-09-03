@@ -224,8 +224,8 @@ const SideLink = ({
           className="sideIcon"
           src={item.imgPath}
           alt="Harvest"
-          width="27px"
-          height="27px"
+          width={item.name === 'My Positions' ? '20px' : '24px'}
+          height={item.name === 'My Positions' ? '20px' : '24px'}
         />
       </div>
       <div className="item-name">{item.name}</div>
@@ -258,7 +258,13 @@ const MobileMenu = ({
       enabled={item.enabled === false ? 'false' : 'true'}
       isMobile={isMobile}
     >
-      <SideIcons className="sideIcon" src={item.imgPath} alt="Harvest" width="21px" height="21px" />
+      <SideIcons
+        className="sideIcon"
+        src={item.imgPath}
+        alt="Harvest"
+        width={item.name === 'My Positions' ? '18px' : '21px'}
+        height={item.name === 'My Positions' ? '18px' : '21px'}
+      />
       {item.new ? <NewTag>New</NewTag> : <></>}
     </LinkMobile>
   )

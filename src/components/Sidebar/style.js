@@ -118,8 +118,6 @@ const Link = styled.button`
   transition: 0.5s;
 
   .sideIcon {
-    width: 24px;
-    height: 24px;
     margin-right: 12px;
     filter: ${props =>
       props.darkMode
@@ -586,6 +584,8 @@ const ThemeMode = styled.div`
 
 const SideIcons = styled.img`
   transition: 0.25s;
+  width: ${props => props.width};
+  height: ${props => props.height};
 `
 
 const UserDropDown = styled(Dropdown.Toggle)`
