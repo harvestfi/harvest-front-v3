@@ -649,7 +649,6 @@ const Portfolio = () => {
               fAssetPool = token.data
             }
 
-            const underlyingPrice = get(token, 'usdPrice', get(token, 'data.lpTokenData.price', 0))
             const paramAddress = isSpecialVault
               ? token.data.collateralAddress
               : token.vaultAddress || token.tokenAddress
@@ -660,7 +659,6 @@ const Portfolio = () => {
               useIFARM ? token.data.chain : token.chain,
               account,
               token.decimals,
-              underlyingPrice,
             )
             vaultNetChanges.push({ id: symbol, sumNetChangeUsd })
             const enrichedDataWithSymbol = enrichedData.map(data => ({

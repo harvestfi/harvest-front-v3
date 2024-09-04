@@ -922,7 +922,6 @@ const BeginnersFarm = () => {
           chainId,
           account,
           tokenDecimals,
-          underlyingPrice,
           currencySym,
           currencyRate,
         )
@@ -948,7 +947,6 @@ const BeginnersFarm = () => {
     token,
     vaultPool,
     tokenDecimals,
-    underlyingPrice,
     currencySym,
     currencyRate,
     setUnderlyingEarnings,

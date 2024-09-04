@@ -1204,7 +1204,6 @@ const AdvancedFarm = () => {
           chainId,
           account,
           tokenDecimals,
-          underlyingPrice,
           currencySym,
           currencyRate,
         )
@@ -1230,7 +1229,6 @@ const AdvancedFarm = () => {
     account,
     vaultPool,
     tokenDecimals,
-    underlyingPrice,
     currencySym,
     currencyRate,
     setUnderlyingEarnings,

@@ -713,13 +713,7 @@ const removeZeroValueObjects = data => {
   return data
 }
 
-export const initBalanceAndDetailData = async (
-  address,
-  chainId,
-  account,
-  tokenDecimals,
-  underlyingPrice,
-) => {
+export const initBalanceAndDetailData = async (address, chainId, account, tokenDecimals) => {
   const timestamps = []
   const uniqueVaultHData = []
   const mergedData = []
@@ -747,6 +741,7 @@ export const initBalanceAndDetailData = async (
     let uniqueData = [],
       uniqueFixedData = [],
       lastUserEvent = false,
+      lastUserEventUsd = false,
       lastKnownSharePrice = null,
       lastKnownPriceUnderlying = null
 
@@ -918,7 +913,12 @@ export const initBalanceAndDetailData = async (
       }
       return sumValue
     }, 0)
-    sumNetChangeUsd = Number(sumNetChange) * underlyingPrice
+    sumNetChangeUsd = enrichedData.reduce((sumUsdValue, item) => {
+      if (item.event === 'Harvest') {
+        return sumUsdValue + item.netChangeUsd
+      }
+      return sumUsdValue
+    }, 0)
 
     enrichedData.forEach(item => {
       if (!lastUserEvent) {
@@ -929,7 +929,15 @@ export const initBalanceAndDetailData = async (
         }
       }
     })
-    sumLatestNetChangeUsd = Number(sumLatestNetChange) * underlyingPrice
+    enrichedData.forEach(item => {
+      if (!lastUserEventUsd) {
+        if (item.event === 'Harvest') {
+          sumLatestNetChangeUsd += item.netChangeUsd
+        } else if (item.event === 'Convert' || item.event === 'Revert') {
+          lastUserEventUsd = true
+        }
+      }
+    })
   }
 
   return {
