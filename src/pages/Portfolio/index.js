@@ -81,6 +81,7 @@ import {
 
 const totalNetProfitKey = 'TOTAL_NET_PROFIT'
 const totalHistoryDataKey = 'TOTAL_HISTORY_DATA'
+const vaultProfitDataKey = 'VAULT_LIFETIME_YIELD'
 
 const Portfolio = () => {
   const { push } = useHistory()
@@ -146,6 +147,9 @@ const Portfolio = () => {
 
     const prevTotalHistoryData = JSON.parse(localStorage.getItem(totalHistoryDataKey) || '[]')
     setTotalHistoryData(prevTotalHistoryData)
+
+    const prevVaultProfitData = JSON.parse(localStorage.getItem(vaultProfitDataKey) || '[]')
+    setVaultNetChangeList(prevVaultProfitData)
   }, [])
 
   const farmProfitSharingPool = totalPools.find(
@@ -670,10 +674,12 @@ const Portfolio = () => {
           }
         }
 
-        setVaultNetChangeList(vaultNetChanges)
         totalNetProfitUSD = totalNetProfitUSD === 0 ? -1 : totalNetProfitUSD
         setTotalNetProfit(totalNetProfitUSD)
         localStorage.setItem(totalNetProfitKey, totalNetProfitUSD.toString())
+
+        setVaultNetChangeList(vaultNetChanges)
+        localStorage.setItem(vaultProfitDataKey, JSON.stringify(vaultNetChanges))
 
         combinedEnrichedData.sort((a, b) => b.timestamp - a.timestamp)
         setTotalHistoryData(combinedEnrichedData)
@@ -684,6 +690,8 @@ const Portfolio = () => {
     } else {
       setTotalNetProfit(0)
       localStorage.setItem(totalNetProfitKey, '0')
+      setVaultNetChangeList([])
+      localStorage.setItem(vaultProfitDataKey, JSON.stringify([]))
       setTotalHistoryData([])
       localStorage.setItem(totalHistoryDataKey, JSON.stringify([]))
     }
