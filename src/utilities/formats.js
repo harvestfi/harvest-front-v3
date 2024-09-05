@@ -169,6 +169,22 @@ export const showUsdValue = (value, currencySym) => {
   return `${currencySym}${formattedValue}`
 }
 
+export const showUsdValueCurrency = (value, currencySym, currencyRate) => {
+  if (value === 0) {
+    return `${currencySym}0`
+  }
+  value *= currencyRate
+  if (value < 0.01) {
+    return `<${currencySym}0.01`
+  }
+  const formattedValue = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value)
+
+  return `${currencySym}${formattedValue}`
+}
+
 export const formatFrequency = value => {
   if (value === '-') {
     return '-'

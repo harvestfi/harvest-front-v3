@@ -59,6 +59,7 @@ import {
   formatNumberWido,
   showTokenBalance,
   showUsdValue,
+  showUsdValueCurrency,
 } from '../../utilities/formats'
 import { getTotalApy, getVaultValue } from '../../utilities/parsers'
 import { getAdvancedRewardText } from '../../utilities/html'
@@ -917,14 +918,7 @@ const BeginnersFarm = () => {
           sumLatestNetChange,
           sumLatestNetChangeUsd,
           enrichedData,
-        } = await initBalanceAndDetailData(
-          address,
-          chainId,
-          account,
-          tokenDecimals,
-          currencySym,
-          currencyRate,
-        )
+        } = await initBalanceAndDetailData(address, chainId, account, tokenDecimals)
 
         if (balanceFlag && vaultHFlag) {
           setUnderlyingEarnings(sumNetChange)
@@ -1436,9 +1430,10 @@ const BeginnersFarm = () => {
                         weight="600"
                         color={fontColor1}
                       >
-                        {showUsdValue(
+                        {showUsdValueCurrency(
                           showLatestEarnings ? usdEarningsLatest : usdEarnings,
                           currencySym,
+                          currencyRate,
                         )}
                       </NewLabel>
                     </FlexDiv>
