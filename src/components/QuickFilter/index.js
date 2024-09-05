@@ -476,6 +476,7 @@ const QuickFilter = ({
                   setRiskId(-1)
                   setAssetsId(-1)
                   setFarmId(-1)
+                  onDepositedOnlyClick(false)
                   setSelectedClass([0, 1, 2, 3, 4])
                   onSelectStableCoin(false)
                   onAssetClick('')
