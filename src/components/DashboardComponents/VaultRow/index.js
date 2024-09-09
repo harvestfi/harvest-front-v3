@@ -7,6 +7,7 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { chainList, directDetailUrl } from '../../../constants'
 import { useRate } from '../../../providers/Rate'
 import { BadgeIcon, Content, DetailView, FlexDiv, LogoImg, ContentInner } from './style'
+import AnimatedDots from '../../AnimatedDots'
 
 const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey }) => {
   const { push } = useHistory()
@@ -156,11 +157,13 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey }) => {
             height={18}
             color={isMobile ? fontColor1 : fontColor}
             value={
-              info.apy === -1
-                ? 'Inactive'
-                : Number.isNaN(info.apy)
-                ? '-'
-                : `${displayAPY(info.apy)}`
+              info.apy === -1 ? (
+                'Inactive'
+              ) : Number.isNaN(info.apy) ? (
+                <AnimatedDots />
+              ) : (
+                `${displayAPY(info.apy)}`
+              )
             }
           />
         </Content>

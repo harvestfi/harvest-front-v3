@@ -527,12 +527,13 @@ const Portfolio = () => {
             const showAPY = isSpecialVault
               ? token.data &&
                 token.data.loaded &&
+                // !loadingVaults &&
                 (token.data.dataFetched === false || totalApy !== null)
                 ? token.inactive
                   ? 'Inactive'
                   : totalApy || null
                 : '-'
-              : vaultPool.loaded && totalApy !== null && !loadingVaults
+              : vaultPool.loaded && totalApy !== null
               ? token.inactive || token.testInactive || token.hideTotalApy || !token.dataFetched
                 ? token.inactive || token.testInactive
                   ? 'Inactive'
