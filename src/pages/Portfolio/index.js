@@ -88,7 +88,7 @@ const Portfolio = () => {
   const { connected, connectAction, account, balances, getWalletBalances } = useWallet()
   const { userStats, fetchUserPoolStats, totalPools, disableWallet } = usePools()
   const { profitShareAPY } = useStats()
-  const { vaultsData, loadingVaults, getFarmingBalances } = useVaults()
+  const { vaultsData, getFarmingBalances } = useVaults()
   /* eslint-disable global-require */
   const { tokens } = require('../../data')
   const {
