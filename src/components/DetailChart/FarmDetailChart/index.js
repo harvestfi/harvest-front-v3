@@ -195,27 +195,19 @@ const FarmDetailChart = ({
 
           if (updatedData.generalApies.length !== 0) {
             // Calculate Detailed APY Breakdown values
-            vaultInitialDate = formatDate(
-              Number(updatedData.generalApies[updatedData.generalApies.length - 1].timestamp) *
-                1000,
-            )
-            totalPeriod =
+            const totalPeriodBasedOnApy =
               (Number(updatedData.generalApies[0].timestamp) -
                 Number(updatedData.generalApies[updatedData.generalApies.length - 1].timestamp)) /
               (24 * 3600)
 
             const sharePriceVal = latestSharePriceValue === '-' ? 1 : Number(latestSharePriceValue)
-            const totalPeriodBasedOnApy =
-              (Number(updatedData.generalApies[0].timestamp) -
-                Number(updatedData.generalApies[updatedData.generalApies.length - 1].timestamp)) /
-              (24 * 3600)
             lifetimeApyValue = `${(
               ((sharePriceVal - 1) / (totalPeriodBasedOnApy / 365)) *
               100
             ).toFixed(2)}%`
 
             // Calculate APY - Live & Historical Average
-            if (totalPeriod >= 7) {
+            if (totalPeriodBasedOnApy >= 7) {
               const lastSevenDaysData = updatedData.generalApies.filter(
                 entry =>
                   Number(entry.timestamp) >=
@@ -228,7 +220,7 @@ const FarmDetailChart = ({
               sevenDaysApy = `${(sumApy / lastSevenDaysData.length).toFixed(2)}%`
             }
 
-            if (totalPeriod >= 30) {
+            if (totalPeriodBasedOnApy >= 30) {
               const lastThirtyDaysData = updatedData.generalApies.filter(
                 entry =>
                   Number(entry.timestamp) >=
@@ -241,7 +233,7 @@ const FarmDetailChart = ({
               thirtyDaysApy = `${(sumApy / lastThirtyDaysData.length).toFixed(2)}%`
             }
 
-            if (totalPeriod >= 180) {
+            if (totalPeriodBasedOnApy >= 180) {
               const lastOneEightyDaysData = updatedData.generalApies.filter(
                 entry =>
                   Number(entry.timestamp) >=
@@ -254,7 +246,7 @@ const FarmDetailChart = ({
               oneEightyDaysApy = `${(sumApy / lastOneEightyDaysData.length).toFixed(2)}%`
             }
 
-            if (totalPeriod >= 365) {
+            if (totalPeriodBasedOnApy >= 365) {
               const lastThreeSixtyFiveDaysData = updatedData.generalApies.filter(
                 entry =>
                   Number(entry.timestamp) >=
