@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
+import { get } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import ListItem from '../ListItem'
 import { displayAPY, formatNumber, formatNumberWido } from '../../../utilities/formats'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { chainList, directDetailUrl } from '../../../constants'
 import { useRate } from '../../../providers/Rate'
+import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
 import { BadgeIcon, Content, DetailView, FlexDiv, LogoImg, ContentInner } from './style'
-import AnimatedDots from '../../AnimatedDots'
+// import AnimatedDots from '../../AnimatedDots'
 
 const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey }) => {
   const { push } = useHistory()
@@ -24,6 +26,7 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey }) => {
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
+  const boostedToken = get(info, 'boosted')
 
   useEffect(() => {
     if (rates.rateData) {
@@ -66,7 +69,7 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey }) => {
               borderColor={info.status === 'Active' ? '#29ce84' : 'orange'}
               className="network-badge"
             >
-              <img src={info.chain} width="15px" height="15px" alt="" />
+              <img src={info.chain ? info.chain : ETHEREUM} width="15px" height="15px" alt="" />
             </BadgeIcon>
             {info.logos.length > 0 &&
               info.logos.map((elem, index) => (
@@ -99,7 +102,7 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey }) => {
             weight={500}
             size={12}
             height={18}
-            color={isMobile ? fontColor1 : fontColor}
+            color={fontColor1}
             value={`${
               info.balance === 0
                 ? `${currencySym}0.00`
@@ -152,19 +155,18 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey }) => {
             <ListItem color={fontColor} weight={500} size={12} height={18} value="Live APY" />
           )}
           <ListItem
+            color={boostedToken ? '#FD7300' : isMobile ? fontColor1 : fontColor}
             weight={500}
             size={12}
             height={18}
-            color={isMobile ? fontColor1 : fontColor}
             value={
-              info.apy === -1 ? (
-                'Inactive'
-              ) : Number.isNaN(info.apy) ? (
-                <AnimatedDots />
-              ) : (
-                `${displayAPY(info.apy)}`
-              )
+              info.apy === -1
+                ? 'Inactive'
+                : Number.isNaN(info.apy)
+                ? '-'
+                : `${displayAPY(info.apy)}`
             }
+            boostedToken={boostedToken}
           />
         </Content>
       </FlexDiv>

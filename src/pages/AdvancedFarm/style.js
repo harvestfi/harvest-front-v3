@@ -618,6 +618,7 @@ const WelcomeTitle = styled.div`
 const WelcomeText = styled.div`
   @media screen and (max-width: 992px) {
     font-size: 12px;
+    margin-top: 12px;
   }
 
   a.badge-body {
@@ -849,6 +850,105 @@ const EarningsBadge = styled.div`
 `
 
 const MyTotalReward = styled.div`
+  background: linear-gradient(to right, #d17218, #fdc165);
+  display: flex;
+  color: white;
+  border-radius: 12px;
+  justify-content: center;
+  height: 120px;
+  padding: 24px;
+
+  ${props =>
+    props.marginTop
+      ? `
+      margin-top: ${props.marginTop};
+    `
+      : ``}
+
+  ${props =>
+    props.marginBottom
+      ? `
+      margin-bottom: ${props.marginBottom};
+    `
+      : ``}
+
+  .box-image {
+    margin: auto 0px;
+  }
+
+  .box-text {
+    font-size: 14px;
+    line-height: 20px;
+    margin: auto 0px;
+    padding: 0px 24px 0px 15px;
+
+    .box-text-first {
+      font-weight: 700;
+    }
+    .box-text-second {
+      font-weight: 500;
+      padding-top: 8px;
+
+      span {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .box-btn-wrap {
+    margin: auto;
+
+    .box-btn {
+      font-size: 14px;
+      line-height: 20px;
+      font-weight: 600;
+      border-radius: 6.801px;
+      background: linear-gradient(90deg, #28a0f0 0%, #96bedc 100%);
+      box-shadow: 0px 0.85px 1.7px 0px rgba(16, 24, 40, 0.05);
+      width: 176.82px;
+      height: 46.755px;
+      padding: 8.501px 15.302px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: 0.5s;
+
+      &:hover {
+        background: linear-gradient(90deg, #39a8f1 0%, #96bedc 100%);
+      }
+    }
+  }
+
+  @media screen and (max-width: 992px) {
+    flex-wrap: wrap;
+    height: auto;
+
+    .box-image {
+      width: 15%;
+
+      img {
+        margin-left: -5px;
+      }
+    }
+
+    .box-text {
+      width: 85%;
+      padding: 0px 0px 0px 15px;
+    }
+
+    .box-btn-wrap {
+      width: 100%;
+
+      .box-btn {
+        width: 100%;
+        margin-top: 25px;
+      }
+    }
+  }
+`
+
+const TotalRewardBox = styled.div`
   background: ${props => props.backColor};
   border-radius: 12px;
   border: 2px solid ${props => props.borderColor};
@@ -1094,7 +1194,7 @@ const MainTag = styled.div`
   display: flex;
   justify-content: center;
   width: ${props => (props.useIFARM ? '33%' : '25%')};
-  padding: 12px 15px;
+  padding: 12px 0px;
   align-items: center;
   font-size: 14px;
   font-weight: 600;
@@ -1130,7 +1230,14 @@ const MainTag = styled.div`
     padding-left: 8px;
 
     @media screen and (max-width: 992px) {
-      display: ${props => (props.useIFARM ? 'block' : props.active === 'true' ? 'block' : 'none')};
+      display: ${props =>
+        props.useIFARM
+          ? 'block'
+          : props.active === 'true'
+          ? 'block'
+          : props.campMobileRewards
+          ? 'block'
+          : 'none'};
     }
   }
 
@@ -1420,6 +1527,7 @@ export {
   MyBalance,
   EarningsBadge,
   MyTotalReward,
+  TotalRewardBox,
   ThemeMode,
   SwitchMode,
   GuideSection,

@@ -27,6 +27,7 @@ const DesktopPanelHeader = ({
   loadingFarmingBalance,
   lsdToken,
   desciToken,
+  boostedToken,
 }) => {
   const location = useLocation()
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
@@ -84,7 +85,7 @@ const DesktopPanelHeader = ({
         onMouseDown={mouseDownHandler}
       >
         <ValueContainer width="5%" />
-        <ValueContainer width="20%" textAlign="left" paddingLeft="25px">
+        <ValueContainer width="20%" textAlign="left">
           {logoUrl.map((el, i) => (
             <LogoImg key={i} className="logo-img" zIndex={10 - i} src={el} alt={tokenSymbol} />
           ))}
@@ -113,6 +114,7 @@ const DesktopPanelHeader = ({
             vaultPool={vaultPool}
             isSpecialVault={isSpecialVault}
             fontColor1={fontColor1}
+            boostedToken={boostedToken}
           />
         </ValueContainer>
         <ValueContainer width="15%">

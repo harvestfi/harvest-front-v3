@@ -1,9 +1,21 @@
 import React from 'react'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { Container, Content, Label } from './style'
+import ARBball from '../../../assets/images/chains/ARBball.svg'
 import AnimatedDots from '../../AnimatedDots'
 
-const ListItem = ({ weight, size, height, color, label, icon, value, marginBottom, marginTop }) => {
+const ListItem = ({
+  weight,
+  size,
+  height,
+  color,
+  label,
+  icon,
+  value,
+  marginBottom,
+  marginTop,
+  boostedToken,
+}) => {
   const { fontColor } = useThemeContext()
   return (
     <Container fontColor={fontColor} marginBottom={marginBottom} marginTop={marginTop}>
@@ -22,7 +34,12 @@ const ListItem = ({ weight, size, height, color, label, icon, value, marginBotto
         ''
       )}
       {value ? (
-        value === '-1' ? (
+        boostedToken ? (
+          <Content weight={weight} size={size} height={height} color={color}>
+            {value}
+            <img src={ARBball} className="boost-img" alt="" />
+          </Content>
+        ) : value === '-1' ? (
           <Content height={height}>
             <AnimatedDots />
           </Content>

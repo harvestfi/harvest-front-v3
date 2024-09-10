@@ -478,6 +478,7 @@ const PoolsProvider = _ref => {
     {
       value: {
         pools: loadedPools,
+        allPools: pools,
         fetchUserPoolStats,
         userStats,
         loadedUserPoolsWeb3Provider: loadedUserPoolsWeb3Provider.current,

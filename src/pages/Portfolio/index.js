@@ -29,6 +29,7 @@ import {
   MAX_DECIMALS,
   ROUTES,
   supportedCurrencies,
+  boostedVaults,
 } from '../../constants'
 import { addresses } from '../../data'
 import { usePools } from '../../providers/Pools'
@@ -205,6 +206,25 @@ const Portfolio = () => {
   }, [connected])
 
   useEffect(() => {
+    const setBoostedVaults = async () => {
+      if (groupOfVaults) {
+        const vaultsKey = Object.keys(groupOfVaults)
+        vaultsKey.map(async symbol => {
+          // Add 'boosted' item to vaults that participate in campaign
+          for (let i = 0; i < boostedVaults.length; i += 1) {
+            if (symbol === boostedVaults[i]) {
+              groupOfVaults[symbol].boosted = true
+              return
+            }
+          }
+        })
+      }
+    }
+
+    setBoostedVaults()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
     if (account && !isEmpty(userStats) && !isEmpty(depositToken)) {
       const loadUserPoolsStats = async () => {
         const poolsToLoad = [],
@@ -331,6 +351,7 @@ const Portfolio = () => {
                 tokenName += ', '
               }
             }
+            stats.boosted = token.boosted
             stats.token = token
             stats.symbol = tokenName
             stats.logos = token.logoUrl
