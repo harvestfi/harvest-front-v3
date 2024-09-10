@@ -846,6 +846,8 @@ export const boostedVaults = [
   'IFARM_arbitrum',
   'lodestar_LODE',
   'lodestar_GMX',
+]
+
 export const supportedCurrencies = [
   {
     id: SUPPORTED_CURRENCY.USD,
