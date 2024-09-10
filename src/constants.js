@@ -832,6 +832,20 @@ export const fakeChartData = [
   { x: 1693775844000, y: 15, z: 4.5 },
 ]
 
+export const boostedVaults = [
+  'lodestar_WBTC',
+  'lodestar_USDCe',
+  'lodestar_ARB',
+  'lodestar_ETH',
+  'lodestar_USDT',
+  'lodestar_PENDLE',
+  'camelot_iFARM_ETH',
+  'lodestar_wstETH',
+  'lodestar_USDC',
+  'xGRAIL',
+  'IFARM_arbitrum',
+  'lodestar_LODE',
+  'lodestar_GMX',
 export const supportedCurrencies = [
   {
     id: SUPPORTED_CURRENCY.USD,

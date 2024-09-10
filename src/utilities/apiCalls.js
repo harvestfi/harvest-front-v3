@@ -246,12 +246,15 @@ export const getSequenceId = async (address, chainId) => {
         const vaultsData = res.data.vaults
         const vl = vaultsData.length
         for (let i = 0; i < vl; i += 1) {
+        const vl = vaultsData.length
+        for (let i = 0; i < vl; i += 1) {
           if (vaultAddress === vaultsData[i].id) {
             vaultTVLCount = vaultsData[i].tvlSequenceId
             vaultPriceFeedCount = vaultsData[i].priceFeedSequenceId
             return
           }
         }
+        if (vl === 0) {
         if (vl === 0) {
           vaultsFlag = false
         }
@@ -519,6 +522,66 @@ export const getUserBalanceVaults = async account => {
   return { userBalanceVaults }
 }
 
+export const getUserBalanceVaults = async account => {
+  const userBalanceVaults = []
+  if (account) {
+    account = account.toLowerCase()
+  }
+
+  const myHeaders = new Headers()
+  myHeaders.append('Content-Type', 'application/json')
+
+  const graphql = JSON.stringify({
+      query: `{
+        userBalances(
+          where: {
+            userAddress: "${account}"
+          }
+        ) {
+          vault { id }
+        }
+      }`,
+      variables: {},
+    }),
+    requestOptions = {
+      method: 'POST',
+      headers: myHeaders,
+      body: graphql,
+      redirect: 'follow',
+    }
+
+  const urls = [
+    GRAPH_URL_MAINNET,
+    GRAPH_URL_POLYGON,
+    GRAPH_URL_BASE,
+    GRAPH_URL_ARBITRUM,
+    GRAPH_URL_ZKSYNC,
+  ]
+
+  try {
+    const results = await Promise.all(
+      urls.map(url =>
+        fetch(url, requestOptions)
+          .then(response => response.json())
+          .then(res => res.data.userBalances)
+          .catch(error => {
+            console.log('error', error)
+            return []
+          }),
+      ),
+    )
+
+    results.forEach(userBalanceVaultData => {
+      userBalanceVaultData.forEach(balance => {
+        userBalanceVaults.push(balance.vault.id)
+      })
+    })
+  } catch (err) {
+    console.log('Fetch data about user balance histories: ', err)
+  }
+  return { userBalanceVaults }
+}
+
 export const getUserBalanceHistories = async (address, chainId, account) => {
   let balanceData = {},
     balanceFlag = true
@@ -702,6 +765,8 @@ const removeZeroValueObjects = data => {
   let nonZeroValueEncountered = false
   const dl = data.length
   for (let i = dl - 1; i >= 0; i -= 1) {
+  const dl = data.length
+  for (let i = dl - 1; i >= 0; i -= 1) {
     if (parseFloat(data[i].value) === 0 || data[i].value === '0') {
       if (!nonZeroValueEncountered) {
         data.splice(i, 1)
@@ -713,6 +778,7 @@ const removeZeroValueObjects = data => {
   return data
 }
 
+export const initBalanceAndDetailData = async (address, chainId, account, tokenDecimals) => {
 export const initBalanceAndDetailData = async (address, chainId, account, tokenDecimals) => {
   const timestamps = []
   const uniqueVaultHData = []
@@ -742,9 +808,12 @@ export const initBalanceAndDetailData = async (address, chainId, account, tokenD
       uniqueFixedData = [],
       lastUserEvent = false,
       lastUserEventUsd = false,
+      lastUserEventUsd = false,
       lastKnownSharePrice = null,
       lastKnownPriceUnderlying = null
 
+    const bl = balanceData.length,
+      ul = uniqueVaultHData.length
     const bl = balanceData.length,
       ul = uniqueVaultHData.length
     if (balanceData[0].timestamp > uniqueVaultHData[0].timestamp) {
@@ -760,6 +829,8 @@ export const initBalanceAndDetailData = async (address, chainId, account, tokenD
       }
       while (i < bl) {
         if (z < ul) {
+      while (i < bl) {
+        if (z < ul) {
           while (uniqueVaultHData[z].timestamp >= balanceData[i].timestamp) {
             uniqueVaultHData[z].value = balanceData[i].value
             mergedData.push(uniqueVaultHData[z])
@@ -772,16 +843,22 @@ export const initBalanceAndDetailData = async (address, chainId, account, tokenD
         if (!addFlag) {
           balanceData[i].priceUnderlying = uniqueVaultHData[z === ul ? z - 1 : z].priceUnderlying
           balanceData[i].sharePrice = uniqueVaultHData[z === ul ? z - 1 : z].sharePrice
+          balanceData[i].priceUnderlying = uniqueVaultHData[z === ul ? z - 1 : z].priceUnderlying
+          balanceData[i].sharePrice = uniqueVaultHData[z === ul ? z - 1 : z].sharePrice
           mergedData.push(balanceData[i])
         }
         addFlag = false
         i += 1
       }
       while (z < ul) {
+      while (z < ul) {
         uniqueVaultHData[z].value = 0
         mergedData.push(uniqueVaultHData[z])
         z += 1
       }
+      while (i < bl) {
+        balanceData[i].priceUnderlying = uniqueVaultHData[ul - 1].priceUnderlying
+        balanceData[i].sharePrice = uniqueVaultHData[ul - 1].sharePrice
       while (i < bl) {
         balanceData[i].priceUnderlying = uniqueVaultHData[ul - 1].priceUnderlying
         balanceData[i].sharePrice = uniqueVaultHData[ul - 1].sharePrice
@@ -793,16 +870,20 @@ export const initBalanceAndDetailData = async (address, chainId, account, tokenD
         z = 0,
         addFlag = false
       while (i < ul && uniqueVaultHData[i].timestamp > balanceData[0].timestamp) {
+      while (i < ul && uniqueVaultHData[i].timestamp > balanceData[0].timestamp) {
         uniqueVaultHData[i].value = balanceData[0].value
         mergedData.push(uniqueVaultHData[i])
         i += 1
       }
       while (z < bl) {
         if (i < ul) {
+      while (z < bl) {
+        if (i < ul) {
           while (uniqueVaultHData[i].timestamp >= balanceData[z].timestamp) {
             uniqueVaultHData[i].value = balanceData[z].value
             mergedData.push(uniqueVaultHData[i])
             i += 1
+            if (i >= ul) {
             if (i >= ul) {
               break
             }
@@ -814,16 +895,22 @@ export const initBalanceAndDetailData = async (address, chainId, account, tokenD
         if (!addFlag) {
           balanceData[z].priceUnderlying = uniqueVaultHData[i === ul ? i - 1 : i].priceUnderlying
           balanceData[z].sharePrice = uniqueVaultHData[i === ul ? i - 1 : i].sharePrice
+          balanceData[z].priceUnderlying = uniqueVaultHData[i === ul ? i - 1 : i].priceUnderlying
+          balanceData[z].sharePrice = uniqueVaultHData[i === ul ? i - 1 : i].sharePrice
           mergedData.push(balanceData[z])
         }
         addFlag = false
         z += 1
       }
       while (i < ul) {
+      while (i < ul) {
         uniqueVaultHData[i].value = 0
         mergedData.push(uniqueVaultHData[i])
         i += 1
       }
+      while (z < bl) {
+        balanceData[z].priceUnderlying = uniqueVaultHData[ul - 1].priceUnderlying
+        balanceData[z].sharePrice = uniqueVaultHData[ul - 1].sharePrice
       while (z < bl) {
         balanceData[z].priceUnderlying = uniqueVaultHData[ul - 1].priceUnderlying
         balanceData[z].sharePrice = uniqueVaultHData[ul - 1].sharePrice
@@ -872,9 +959,11 @@ export const initBalanceAndDetailData = async (address, chainId, account, tokenD
             return false
           }
           balance = '0'
+          balanceUsd = '0'
           balanceUsd = `0`
         } else {
           balance = Number(item.value) * Number(item.sharePrice)
+          balanceUsd = balance * Number(item.priceUnderlying)
           balanceUsd = balance * Number(item.priceUnderlying)
         }
 
@@ -890,9 +979,11 @@ export const initBalanceAndDetailData = async (address, chainId, account, tokenD
           const nextBalance = Number(nextItem.value) * Number(nextItem.sharePrice)
           netChange = balance - nextBalance
           netChangeUsd = Math.abs(netChange) * Number(item.priceUnderlying)
+          netChangeUsd = Math.abs(netChange) * Number(item.priceUnderlying)
         } else {
           event = 'Convert'
           netChange = balance
+          netChangeUsd = netChange * Number(item.priceUnderlying)
           netChangeUsd = netChange * Number(item.priceUnderlying)
         }
 
@@ -926,6 +1017,15 @@ export const initBalanceAndDetailData = async (address, chainId, account, tokenD
           sumLatestNetChange += item.netChange
         } else if (item.event === 'Convert' || item.event === 'Revert') {
           lastUserEvent = true
+        }
+      }
+    })
+    enrichedData.forEach(item => {
+      if (!lastUserEventUsd) {
+        if (item.event === 'Harvest') {
+          sumLatestNetChangeUsd += item.netChangeUsd
+        } else if (item.event === 'Convert' || item.event === 'Revert') {
+          lastUserEventUsd = true
         }
       }
     })
