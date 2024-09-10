@@ -205,6 +205,10 @@ const FarmDetailChart = ({
               (24 * 3600)
 
             const sharePriceVal = latestSharePriceValue === '-' ? 1 : Number(latestSharePriceValue)
+            const totalPeriodBasedOnApy =
+              (Number(updatedData.generalApies[0].timestamp) -
+                Number(updatedData.generalApies[updatedData.generalApies.length - 1].timestamp)) /
+              (24 * 3600)
             lifetimeApyValue = `${(
               ((sharePriceVal - 1) / (totalPeriodBasedOnApy / 365)) *
               100
