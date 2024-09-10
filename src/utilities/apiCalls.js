@@ -872,7 +872,7 @@ export const initBalanceAndDetailData = async (address, chainId, account, tokenD
             return false
           }
           balance = '0'
-          balanceUsd = `0`
+          balanceUsd = '0'
         } else {
           balance = Number(item.value) * Number(item.sharePrice)
           balanceUsd = balance * Number(item.priceUnderlying)

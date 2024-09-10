@@ -50,6 +50,7 @@ const Div = styled.div`
   line-height: 20px;
   color: ${props => props.fontColor3};
   margin-bottom: 8px;
+  display: flex;
 
   svg.question {
     font-size: 16px;
@@ -233,5 +234,17 @@ const NewLabel = styled.div`
     }
   }
 `
+const BetaBadge = styled.span`
+  background-color: #ecfdf3;
+  color: #027a48;
+  font-weight: 500;
+  padding: 2px 4px;
+  border-radius: 8px;
+  font-size: 8px;
+  line-height: 12px;
+  padding: 1.4px 5px;
+  height: fit-content;
+  margin: auto 2px auto 8px;
+`
 
-export { Container, Div, Price, BoxIcon, NewLabel }
+export { Container, Div, Price, BoxIcon, NewLabel, BetaBadge }
