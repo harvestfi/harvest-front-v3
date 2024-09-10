@@ -842,4 +842,5 @@ export const boostedVaults = [
   'xGRAIL',
   'IFARM_arbitrum',
   'lodestar_LODE',
+  'lodestar_GMX',
 ]
