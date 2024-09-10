@@ -58,6 +58,12 @@ const Content = styled.div`
   `
       : ``}
   ${props =>
+    props.justifyContent
+      ? `
+    justify-content: ${props.justifyContent};
+  `
+      : ``}
+  ${props =>
     props.cursor
       ? `
       cursor: ${props.cursor};
@@ -106,9 +112,9 @@ const Content = styled.div`
   }
 
   div.timestamp {
-    font-size: 14px;
+    font-size: 12px;
     font-weight: 500;
-    line-height: 20px;
+    line-height: 18px;
     color: ${props => props.color};
 
     @media screen and (max-width: 992px) {

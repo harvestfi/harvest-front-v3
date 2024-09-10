@@ -1,27 +1,46 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { PiQuestion } from 'react-icons/pi'
 import ReactTooltip from 'react-tooltip'
 import ListItem from '../ListItem'
+import { useRate } from '../../../providers/Rate'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import TrendUp from '../../../assets/images/logos/advancedfarm/trend-up.svg'
 import TrendDown from '../../../assets/images/logos/advancedfarm/trend-down.svg'
-import { formatDateTime, formatDateTimeMobile } from '../../../utilities/formats'
+import { formatDateTime, formatDateTimeMobile, formatNumber } from '../../../utilities/formats'
 import { Content, DetailView, FlexDiv, IconWrapper, Badge, NetImg, NewLabel } from './style'
 
 const ActionRow = ({ info, showTotalBalance }) => {
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const { darkMode, switchMode, backColor, borderColor, hoverColor, fontColor } = useThemeContext()
+  const {
+    darkMode,
+    switchMode,
+    backColor,
+    borderColorTable,
+    hoverColorRow,
+    fontColor,
+  } = useThemeContext()
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
 
   return (
     <DetailView
-      borderColor={borderColor}
-      hoverColor={hoverColor}
+      className="yield-row"
+      borderColor={borderColorTable}
+      hoverColor={hoverColorRow}
       mode={switchMode}
       background={backColor}
     >
-      <FlexDiv padding={isMobile ? '10px' : '0'}>
-        <Content display="flex" width={isMobile ? '23%' : '20%'}>
+      <FlexDiv padding={isMobile ? '10px 15px' : '0'}>
+        <Content display="flex" width={isMobile ? '25%' : '20%'}>
           <Badge
             bgColor={
               info.event === 'Revert'
@@ -69,7 +88,7 @@ const ActionRow = ({ info, showTotalBalance }) => {
           )}
         </Content>
         <Content
-          width={isMobile ? '20%' : '20%'}
+          width={isMobile ? '30%' : '20%'}
           color={fontColor}
           paddingRight={isMobile ? '8px' : '0px'}
         >
@@ -85,18 +104,22 @@ const ActionRow = ({ info, showTotalBalance }) => {
         {!isMobile ? (
           <>
             <Content width="30%">
-              <ListItem weight={500} size={14} height={20} color="#8884D8" value={info.balance} />
               <ListItem
                 weight={500}
-                size={14}
-                height={20}
+                size={12}
+                height={18}
                 color="#5FCF76"
-                value={`≈${info.balanceUsd}`}
+                value={`${
+                  info.balanceUsd < 0.01
+                    ? `<${currencySym}0.01`
+                    : `≈${currencySym}${formatNumber(info.balanceUsd * Number(currencyRate), 2)}`
+                }`}
               />
+              <ListItem weight={500} size={12} height={18} color="#8884D8" value={info.balance} />
               <ListItem
                 weight={400}
-                size={14}
-                height={20}
+                size={12}
+                height={18}
                 color={fontColor}
                 value={info.tokenSymbol}
               />
@@ -108,22 +131,29 @@ const ActionRow = ({ info, showTotalBalance }) => {
               <div>
                 <ListItem
                   weight={500}
-                  size={14}
-                  height={20}
+                  size={12}
+                  height={18}
+                  color="#5FCF76"
+                  value={`${
+                    info.netChangeUsd < 0.01
+                      ? `<${currencySym}0.01`
+                      : `≈${currencySym}${formatNumber(
+                          info.netChangeUsd * Number(currencyRate),
+                          2,
+                        )}`
+                  }`}
+                />
+                <ListItem
+                  weight={500}
+                  size={12}
+                  height={18}
                   color="#8884D8"
                   value={info.netChange}
                 />
                 <ListItem
-                  weight={500}
-                  size={14}
-                  height={20}
-                  color="#5FCF76"
-                  value={`${info.netChangeUsd}`}
-                />
-                <ListItem
                   weight={400}
-                  size={14}
-                  height={20}
+                  size={12}
+                  height={18}
                   color={fontColor}
                   value={info.tokenSymbol}
                 />
@@ -131,42 +161,68 @@ const ActionRow = ({ info, showTotalBalance }) => {
             </Content>
           </>
         ) : showTotalBalance ? (
-          <Content width="57%">
-            <ListItem weight={500} size={12} height={20} color="#8884D8" value={info.balance} />
+          <Content width="45%">
             <ListItem
               weight={500}
               size={12}
               height={20}
               color="#5FCF76"
-              value={`≈${info.balanceUsd}`}
+              justifyContent="end"
+              value={`${
+                info.balanceUsd < 0.01
+                  ? `<${currencySym}0.01`
+                  : `≈${currencySym}${formatNumber(info.balanceUsd * Number(currencyRate), 2)}`
+              }`}
             />
             <ListItem
-              weight={400}
-              size={12}
+              weight={500}
+              size={10}
               height={20}
-              color={fontColor}
+              color="#6988FF"
+              justifyContent="end"
+              value={info.balance}
+            />
+            <ListItem
+              weight={500}
+              size={10}
+              height={20}
+              color="#6988FF"
+              justifyContent="end"
               value={info.tokenSymbol}
             />
           </Content>
         ) : (
-          <Content display="flex" width="57%">
+          <Content display="flex" width="45%" justifyContent="space-between">
             <NetImg>
               <img src={info.netChange >= 0 ? TrendUp : TrendDown} alt="trend" />
             </NetImg>
             <div>
-              <ListItem weight={500} size={12} height={20} color="#8884D8" value={info.netChange} />
               <ListItem
                 weight={500}
                 size={12}
                 height={20}
                 color="#5FCF76"
-                value={`${info.netChangeUsd === '<$0.01' ? '' : '≈'}${info.netChangeUsd}`}
+                justifyContent="end"
+                value={`${
+                  info.netChangeUsd < 0.01
+                    ? `<${currencySym}0.01`
+                    : `${currencySym}${formatNumber(info.netChangeUsd * Number(currencyRate), 2)}`
+                }`}
               />
               <ListItem
-                weight={400}
-                size={12}
+                weight={500}
+                size={10}
                 height={20}
-                color={fontColor}
+                color="#6988FF"
+                justifyContent="end"
+                value={info.netChange}
+              />
+              <ListItem
+                weight={500}
+                size={10}
+                height={20}
+                color="#6988FF"
+                justifyContent="end"
                 value={info.tokenSymbol}
               />
             </div>

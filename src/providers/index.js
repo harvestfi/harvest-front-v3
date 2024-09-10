@@ -88,7 +88,7 @@ const web3Onboard = init({
   accountCenter: {
     desktop: {
       position: 'topRight',
-      enabled: true,
+      enabled: false,
       minimal: true,
     },
     mobile: {

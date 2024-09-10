@@ -239,9 +239,10 @@ export const getTimeSlots = (ago, slotCount) => {
     nowDate = new Date(),
     toDate = Math.floor(nowDate.getTime() / 1000),
     fromDate = Math.floor(nowDate.setDate(nowDate.getDate() - ago) / 1000),
-    between = (toDate - fromDate) / slotCount
+    between = (toDate - fromDate) / slotCount,
+    sl = slots.length
 
-  for (let i = fromDate + between; i <= toDate && slots.length < slotCount; i += between) {
+  for (let i = fromDate + between; i <= toDate && sl < slotCount; i += between) {
     slots.push(i)
   }
 
@@ -350,7 +351,8 @@ export const findClosestIndex = (data, target) => {
   let closestIndex = 0,
     closestDistance = Math.abs(data[0].x - target)
 
-  for (let i = 1; i < data.length; i += 1) {
+  const dl = data.length
+  for (let i = 1; i < dl; i += 1) {
     const distance = Math.abs(data[i].x - target)
     if (distance < closestDistance) {
       closestIndex = i

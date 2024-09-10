@@ -492,6 +492,7 @@ const QuickFilter = ({
                   setRiskId(-1)
                   setAssetsId(-1)
                   setFarmId(-1)
+                  onDepositedOnlyClick(false)
                   setSelectedClass([0, 1, 2, 3, 4])
                   onSelectStableCoin(false)
                   onAssetClick('')
@@ -607,7 +608,8 @@ const QuickFilter = ({
                     if (!tempIds.includes(i)) {
                       tempIds.push(i)
                     } else {
-                      for (let el = 0; el < tempIds.length; el += 1) {
+                      const tl = tempIds.length
+                      for (let el = 0; el < tl; el += 1) {
                         if (tempIds[el] === i) {
                           tempIds.splice(el, 1)
                         }
@@ -623,8 +625,9 @@ const QuickFilter = ({
                     tempIds.map(tempId => {
                       return selectedClasses.push(ChainsList[tempId].name)
                     })
-                    const tempChains = []
-                    for (let j = 0; j < tempIds.length; j += 1) {
+                    const tempChains = [],
+                      tl = tempIds.length
+                    for (let j = 0; j < tl; j += 1) {
                       tempChains.push(ChainsList[tempIds[j]].chainId)
                     }
                     setSelChain(tempChains)

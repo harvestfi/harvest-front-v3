@@ -46,7 +46,6 @@ const DepositBase = ({
   deposit,
   setDeposit,
   balance,
-  balanceList,
   pickedToken,
   defaultToken,
   inputAmount,
@@ -141,7 +140,6 @@ const DepositBase = ({
         pickedToken.symbol !== 'Select Token' &&
         !new BigNumber(amount.toString()).isEqualTo(0) &&
         curChain === tokenChain &&
-        (balanceList.length !== 0 || pickedToken.balance !== '0') &&
         failureCount < 5
       ) {
         setFromInfoAmount('')
@@ -294,7 +292,6 @@ const DepositBase = ({
     curChain,
     currencyRate,
     currencySym,
-    balanceList.length,
     defaultToken,
     token,
     tokenChain,
@@ -428,7 +425,9 @@ const DepositBase = ({
               />
               <input type="hidden" value={Number(inputAmount)} />
               <TokenUSDAmount fontColor3={fontColor3}>
-                {inputAmount === '0' || inputAmount === '' ? (
+                {inputAmount === '0' ||
+                inputAmount === '' ||
+                pickedToken.symbol === 'Select Token' ? (
                   `${currencySym}0`
                 ) : fromInfoUsdAmount === '' ? (
                   <TokenInfo>
@@ -586,8 +585,7 @@ const DepositBase = ({
             >
               {account &&
               pickedToken.symbol !== 'Select Token' &&
-              !new BigNumber(amount).isEqualTo(0) &&
-              balanceList.length !== 0 ? (
+              !new BigNumber(amount).isEqualTo(0) ? (
                 minReceiveAmountString !== '' ? (
                   convertMonthlyYieldUSD === '0' ? (
                     `${currencySym}0.00`
@@ -653,8 +651,7 @@ const DepositBase = ({
             >
               {account &&
               pickedToken.symbol !== 'Select Token' &&
-              !new BigNumber(amount).isEqualTo(0) &&
-              balanceList.length !== 0 ? (
+              !new BigNumber(amount).isEqualTo(0) ? (
                 minReceiveAmountString !== '' ? (
                   convertDailyYieldUSD === '0' ? (
                     `${currencySym}0.00`
@@ -722,8 +719,7 @@ const DepositBase = ({
                 <div data-tip data-for="est-fToken-receive">
                   {account &&
                   pickedToken.symbol !== 'Select Token' &&
-                  !new BigNumber(amount).isEqualTo(0) &&
-                  balanceList.length !== 0 ? (
+                  !new BigNumber(amount).isEqualTo(0) ? (
                     minReceiveAmountString !== '' ? (
                       showTokenBalance(minReceiveAmountString)
                     ) : (
@@ -757,12 +753,16 @@ const DepositBase = ({
                   {useIFARM ? `i${tokenSymbol}` : `f${tokenSymbol}`}
                 </span>
                 <span className="token-symbol">
-                  {minReceiveUsdAmount === 'NaN' || minReceiveUsdAmount === '-' ? (
-                    '-'
-                  ) : minReceiveUsdAmount !== '' ? (
-                    `${minReceiveUsdAmount}`
+                  {account &&
+                  pickedToken.symbol !== 'Select Token' &&
+                  !new BigNumber(amount).isEqualTo(0) ? (
+                    minReceiveUsdAmount !== '' ? (
+                      `${minReceiveUsdAmount}`
+                    ) : (
+                      <AnimatedDots />
+                    )
                   ) : (
-                    <AnimatedDots />
+                    '-'
                   )}
                 </span>
               </NewLabel>

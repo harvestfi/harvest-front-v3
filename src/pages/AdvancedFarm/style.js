@@ -1125,10 +1125,6 @@ const ValueBox = styled.div`
       display: none;
     }
   }
-
-  @media screen and (max-width: 400px) {
-    padding: 5px;
-  }
 `
 
 const BoxTitle = styled.div`

@@ -2,6 +2,7 @@ import React from 'react'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { Container, Content, Label } from './style'
 import ARBball from '../../../assets/images/chains/ARBball.svg'
+import AnimatedDots from '../../AnimatedDots'
 
 const ListItem = ({
   weight,
@@ -37,6 +38,10 @@ const ListItem = ({
           <Content weight={weight} size={size} height={height} color={color}>
             {value}
             <img src={ARBball} className="boost-img" alt="" />
+          </Content>
+        ) : value === '-1' ? (
+          <Content height={height}>
+            <AnimatedDots />
           </Content>
         ) : (
           <Content weight={weight} size={size} height={height} color={color}>

@@ -525,7 +525,9 @@ const VaultList = () => {
               : find(totalPools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
             const address =
               token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
-            for (let i = 0; i < data.length; i += 1) {
+
+            const dl = data.length
+            for (let i = 0; i < dl; i += 1) {
               if (address.toLowerCase() === data[i].id) {
                 groupOfVaults[symbol].publishDate = data[i].timestamp
                 return

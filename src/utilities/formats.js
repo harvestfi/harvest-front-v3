@@ -41,13 +41,14 @@ export const toAPYPercentage = number => {
 
 export const abbreaviteNumber = (number, decPlaces) => {
   const signs = ['K', 'M', 'B', 'T']
+  const sl = signs.length
   const adjDecPlaces = 10 ** decPlaces
 
   if (number < 1 / adjDecPlaces) {
     return number.toFixed(decPlaces)
   }
 
-  for (let i = signs.length - 1; i >= 0; i -= 1) {
+  for (let i = sl - 1; i >= 0; i -= 1) {
     const size = 10 ** ((i + 1) * 3)
     if (size <= number) {
       number = (Math.floor((number * adjDecPlaces) / size) / adjDecPlaces).toFixed(decPlaces)
@@ -168,6 +169,22 @@ export const showUsdValue = (value, currencySym) => {
   return `${currencySym}${formattedValue}`
 }
 
+export const showUsdValueCurrency = (value, currencySym, currencyRate) => {
+  if (value === 0) {
+    return `${currencySym}0`
+  }
+  value *= currencyRate
+  if (value < 0.01) {
+    return `<${currencySym}0.01`
+  }
+  const formattedValue = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value)
+
+  return `${currencySym}${formattedValue}`
+}
+
 export const formatFrequency = value => {
   if (value === '-') {
     return '-'
@@ -230,7 +247,7 @@ export const getCurrencyRate = (sym, item, rateData) => {
 
 export const formatAddress = address => {
   if (address) {
-    return `${address.substring(0, mobile() ? 4 : 6)}...${address.substring(
+    return `${address.substring(0, mobile() ? 6 : 7)}...${address.substring(
       address.length - 4,
       address.length,
     )}`
@@ -529,4 +546,41 @@ export const formatDateTimeMobile = value => {
   const time = `${hours}:${minutes < 10 ? `0${minutes}` : minutes} ${ampm}`
 
   return { __html: `${time}<br /> ${month} ${day}<br /> ${year}` }
+}
+
+export const formatAge = timestamp => {
+  let nowDate = new Date(),
+    result = '',
+    duration = 0,
+    day = 0,
+    hour = 0,
+    min = 0,
+    week = 0,
+    month = 0
+
+  nowDate = Math.floor(nowDate.getTime() / 1000)
+  duration = Number(nowDate) - Number(timestamp)
+
+  month = Math.floor(duration / 2592000)
+  duration -= month * 2592000
+
+  week = Math.floor(duration / 604800)
+  duration -= week * 604800
+
+  day = Math.floor(duration / 86400)
+  duration -= day * 86400
+
+  hour = Math.floor(duration / 3600) % 24
+  duration -= hour * 3600
+
+  min = Math.floor(duration / 60) % 60
+
+  const monthString = month > 0 ? `${month}m` : ''
+  const weekString = week > 0 ? `${week}w` : ''
+  const dayString = day > 0 ? `${day}d` : ''
+  const hourString = hour > 0 ? `${hour}h` : ''
+  const minString = min > 0 ? `${min}m` : ''
+  result = monthString || weekString || dayString || hourString || minString
+
+  return result
 }
