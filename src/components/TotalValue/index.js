@@ -5,7 +5,7 @@ import { PiQuestion } from 'react-icons/pi'
 import { formatNumber } from '../../utilities/formats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import AnimatedDots from '../AnimatedDots'
-import { Container, Div, Price, NewLabel } from './style'
+import { Container, Div, Price, NewLabel, BetaBadge } from './style'
 import { useRate } from '../../providers/Rate'
 
 const TotalValue = ({ content, price, toolTipTitle, toolTip, connected, farmTokenListLength }) => {
@@ -28,6 +28,7 @@ const TotalValue = ({ content, price, toolTipTitle, toolTip, connected, farmToke
     >
       <Div fontColor3={fontColor3}>
         {content}
+        {content === 'Lifetime Yield' && <BetaBadge>Beta</BetaBadge>}
         <PiQuestion className="question" data-tip data-for={toolTipTitle} />
         <ReactTooltip
           id={toolTipTitle}

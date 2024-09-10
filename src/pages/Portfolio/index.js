@@ -762,15 +762,8 @@ const Portfolio = () => {
       toolTipTitle: 'tt-total-profit',
       toolTip: (
         <>
-          Total yield earnings in USD from all farms listed below, excluding claimable rewards.
-          Subject to change with market fluctuations.
-          <br />
-          <br />
-          For detailed information on your yield earnings, see the &apos;Underlying&apos; value in
-          the Lifetime Yield box on each farm&apos;s page.
-          <br />
-          <br />
-          By default, it does not consider inactive farms.
+          Your wallet&apos;s lifetime yield, shown in USD at the time of each harvest event. It
+          includes all yield from any farm on Harvest.
         </>
       ),
     },
