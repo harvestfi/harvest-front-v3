@@ -19,7 +19,6 @@ import {
   SPECIAL_VAULTS,
   MAX_DECIMALS,
   chainList,
-  boostedVaults,
 } from '../../../constants'
 import { fromWei } from '../../../services/web3'
 import { CHAIN_IDS } from '../../../data/constants'
@@ -364,8 +363,6 @@ const formatVaults = (
         'desc',
       )
       // console.log('Popular Now Filter: ', groupOfVaults)
-    } else if (selectFarmType === 'Boosted') {
-      vaultsSymbol = vaultsSymbol.filter(tokenSymbol => get(groupOfVaults[tokenSymbol], 'boosted'))
     }
     // vaultsSymbol = vaultsSymbol.filter(
     //   tokenSymbol =>
@@ -482,32 +479,12 @@ const VaultList = () => {
   }
 
   useEffect(() => {
-    const setBoostedVaults = async () => {
-      if (groupOfVaults) {
-        const vaultsKey = Object.keys(groupOfVaults)
-        vaultsKey.map(async symbol => {
-          // Add 'boosted' item to vaults that participate in campaign
-          for (let i = 0; i < boostedVaults.length; i += 1) {
-            if (symbol === boostedVaults[i]) {
-              groupOfVaults[symbol].boosted = true
-              return
-            }
-          }
-        })
-      }
-    }
-
-    setBoostedVaults()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
     const getCreatedAtData = async () => {
       if (groupOfVaults) {
         const { data, flag } = await getPublishDate()
         if (flag) {
           const vaultsKey = Object.keys(groupOfVaults)
           vaultsKey.map(async symbol => {
-            // Add 'publishDate' to every vault
             const token = groupOfVaults[symbol]
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
             const paramAddress = isSpecialVault
@@ -525,7 +502,9 @@ const VaultList = () => {
               : find(totalPools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
             const address =
               token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
-            for (let i = 0; i < data.length; i += 1) {
+
+            const dl = data.length
+            for (let i = 0; i < dl; i += 1) {
               if (address.toLowerCase() === data[i].id) {
                 groupOfVaults[symbol].publishDate = data[i].timestamp
                 return

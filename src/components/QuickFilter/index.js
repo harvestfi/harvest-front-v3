@@ -3,7 +3,6 @@ import { useWindowWidth } from '@react-hook/window-size'
 import { debounce } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
-import ARBball from '../../assets/images/chains/ARBball.svg'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import BASE from '../../assets/images/chains/base.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
@@ -12,6 +11,7 @@ import ZKSYNC from '../../assets/images/chains/zksync.svg'
 import SpecNarrowDown from '../../assets/images/logos/filter/spec-narrowdown.svg'
 import DesciBack from '../../assets/images/logos/filter/desciback.jpg'
 import LSDBack from '../../assets/images/logos/filter/lsdback.jpg'
+import Rocket from '../../assets/images/logos/filter/rocket-01.svg'
 import Zap from '../../assets/images/logos/filter/zap.svg'
 import { CHAIN_IDS } from '../../data/constants'
 import { useThemeContext } from '../../providers/useThemeContext'
@@ -31,7 +31,6 @@ import {
   FilterOffCanvasBody,
   FilterOffCanvasHeader,
   MobileClearFilter,
-  BoostBtn,
   MobileListHeaderSearch,
   MobileView,
   QuickFilterContainer,
@@ -65,14 +64,7 @@ const FarmsList = [
 
 const RiskList = [
   { id: 1, name: 'New', img: Zap, filter: 'new' },
-  { id: 2, name: 'Popular', filter: 'popular' },
-  { id: 3, name: 'Boosted', img: ARBball, filter: 'boost' },
-]
-
-const RiskListMobile = [
-  { id: 1, name: 'New', filter: 'new' },
-  { id: 2, name: 'Popular', filter: 'popular' },
-  { id: 3, name: 'Boosted', filter: 'boost' },
+  { id: 2, name: 'Popular Now', img: Rocket, filter: 'popular' },
 ]
 
 const AssetsList = [
@@ -212,13 +204,10 @@ const QuickFilter = ({
       case 1:
         text = 'PopularNow'
         break
-      case 2:
-        text = 'Boosted'
-        break
       default:
         break
     }
-    const updateValue = { filter: RiskList[id].filter }
+    const updateValue = { risk: RiskList[id].filter }
     setParamObj(newParamObj => ({
       ...newParamObj,
       ...updateValue,
@@ -267,11 +256,6 @@ const QuickFilter = ({
     setTrendName('Trends')
     setTrendStatus('')
     setCollabBswapStatus('')
-  }
-
-  const filterBoost = () => {
-    setRiskId(2)
-    printRisk(2)
   }
 
   useEffect(() => {
@@ -492,6 +476,7 @@ const QuickFilter = ({
                   setRiskId(-1)
                   setAssetsId(-1)
                   setFarmId(-1)
+                  onDepositedOnlyClick(false)
                   setSelectedClass([0, 1, 2, 3, 4])
                   onSelectStableCoin(false)
                   onAssetClick('')
@@ -529,7 +514,7 @@ const QuickFilter = ({
                   fontColor={fontColor2}
                 />
               </DivWidth>
-              <DivWidth display="none" marginRight="15px" height="fit-content">
+              <DivWidth marginRight="15px" height="fit-content">
                 <Dropdown>
                   <TrendDropDown
                     num={trendsBackNum}
@@ -607,7 +592,8 @@ const QuickFilter = ({
                     if (!tempIds.includes(i)) {
                       tempIds.push(i)
                     } else {
-                      for (let el = 0; el < tempIds.length; el += 1) {
+                      const tl = tempIds.length
+                      for (let el = 0; el < tl; el += 1) {
                         if (tempIds[el] === i) {
                           tempIds.splice(el, 1)
                         }
@@ -623,8 +609,9 @@ const QuickFilter = ({
                     tempIds.map(tempId => {
                       return selectedClasses.push(ChainsList[tempId].name)
                     })
-                    const tempChains = []
-                    for (let j = 0; j < tempIds.length; j += 1) {
+                    const tempChains = [],
+                      tl = tempIds.length
+                    for (let j = 0; j < tl; j += 1) {
                       tempChains.push(ChainsList[tempIds[j]].chainId)
                     }
                     setSelChain(tempChains)
@@ -658,12 +645,6 @@ const QuickFilter = ({
               setInputText={setInputText}
             />
           </MobileListHeaderSearch>
-
-          <BoostBtn onClick={() => filterBoost()}>
-            Filter by
-            <img src={ARBball} alt="" />
-            <span>Boosted</span>
-          </BoostBtn>
 
           <FarmFiltersPart
             backColor={backColor}
@@ -706,7 +687,7 @@ const QuickFilter = ({
               >
                 <DivWidth mobileMarginBottom="10px">
                   <ButtonGroup
-                    buttons={RiskListMobile}
+                    buttons={RiskList}
                     doSomethingAfterClick={() => {}}
                     clickedId={riskId}
                     setClickedId={setRiskId}
@@ -723,7 +704,7 @@ const QuickFilter = ({
                     fontColor={fontColor2}
                   />
                 </DivWidth>
-                <DivWidth display="none" mobileMarginBottom="10px" height="fit-content">
+                <DivWidth mobileMarginBottom="10px" height="fit-content">
                   <Dropdown>
                     <TrendDropDown
                       num={trendsBackNum}

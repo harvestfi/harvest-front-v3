@@ -1,13 +1,15 @@
 import React, { useState, useMemo, useCallback } from 'react'
 import ReactPaginate from 'react-paginate'
 import { useMediaQuery } from 'react-responsive'
+import { useHistory } from 'react-router-dom'
 import { IoArrowBackSharp, IoArrowForwardSharp } from 'react-icons/io5'
-import ConnectDisableIcon from '../../../assets/images/logos/sidebar/connect-disable.svg'
+import SkeletonLoader from '../../DashboardComponents/SkeletonLoader'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { usePools } from '../../../providers/Pools'
 import { useWallet } from '../../../providers/Wallet'
 import ActionRow from '../ActionRow'
-import AnimatedDots from '../../AnimatedDots'
+import AdvancedImg from '../../../assets/images/logos/sidebar/advanced.svg'
+import { ROUTES } from '../../../constants'
 import {
   TransactionDetails,
   HistoryPagination,
@@ -15,19 +17,22 @@ import {
   Header,
   Column,
   Col,
+  ContentBox,
   EmptyPanel,
   EmptyInfo,
   ConnectButtonStyle,
   ThemeMode,
+  ExploreButtonStyle,
 } from './style'
 
 const HistoryData = ({ historyData, isDashboard, noData }) => {
-  const itemsPerPage = isDashboard === 'true' ? 10 : 5
+  const { push } = useHistory()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+  const itemsPerPage = isMobile ? 6 : 5
 
   const {
-    borderColor,
-    backColor,
+    borderColorTable,
+    bgColorTable,
     bgColorFarm,
     fontColor,
     fontColor1,
@@ -75,18 +80,18 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
     <TransactionDetails
       hasData={(connected && historyData?.length > 0) || isDashboard === 'true' ? 'unset' : '80vh'}
     >
-      <TableContent borderColor={borderColor}>
-        <Header borderColor={borderColor} backColor={backColor}>
-          <Column width={isMobile ? '22%' : '20%'} color={fontColor}>
+      <TableContent>
+        <Header borderColor={borderColorTable} backColor={bgColorTable}>
+          <Column width={isMobile ? '25%' : '20%'} color={fontColor}>
             <Col>Event</Col>
           </Column>
-          <Column width={isMobile ? '20%' : '20%'} color={fontColor}>
+          <Column width={isMobile ? '35%' : '20%'} color={fontColor}>
             <Col>Date</Col>
           </Column>
           <Column
             display="flex"
             justifyContent="space-between"
-            width={isMobile ? '57%' : '30%'}
+            width={isMobile ? '40%' : '30%'}
             color={fontColor}
           >
             <Col>{showTotalBalance ? 'Total Balance' : 'Net change'}</Col>
@@ -116,13 +121,15 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
           </Column>
         </Header>
         {connected && historyData?.length > 0 ? (
-          <>
-            {currentItems
-              .map((el, i) => {
-                const info = currentItems[i]
-                return <ActionRow key={i} info={info} showTotalBalance={showTotalBalance} />
-              })
-              .slice(0, 10)}
+          <div>
+            <ContentBox>
+              {currentItems
+                .map((el, i) => {
+                  const info = currentItems[i]
+                  return <ActionRow key={i} info={info} showTotalBalance={showTotalBalance} />
+                })
+                .slice(0, 5)}
+            </ContentBox>
             <HistoryPagination
               bgColor={bgColorFarm}
               fontColor={fontColor}
@@ -145,46 +152,55 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
                 pageLinkClassName="paginate-item-link"
               />
             </HistoryPagination>
-          </>
-        ) : (
-          <EmptyPanel borderColor={borderColor}>
-            {connected ? (
-              !noData ? (
-                <EmptyInfo weight={500} size={14} height={20} color={fontColor} gap="2px">
-                  <div>
-                    Loading all events data for the connected wallet
-                    <br />
-                    It might take up to 30s <AnimatedDots />
-                  </div>
-                </EmptyInfo>
-              ) : (
-                <EmptyInfo weight={500} size={14} height={20} color={fontColor}>
-                  No interaction history found for this wallet.
-                </EmptyInfo>
-              )
-            ) : (
-              <>
-                <EmptyInfo weight={500} size={14} height={20} color={fontColor}>
-                  Connect wallet to see your positions.
-                </EmptyInfo>
-                <ConnectButtonStyle
+          </div>
+        ) : connected ? (
+          !noData ? (
+            <SkeletonLoader isPosition="false" />
+          ) : (
+            <EmptyPanel borderColor={borderColorTable}>
+              <EmptyInfo
+                weight={500}
+                size={14}
+                lineHeight={20}
+                color={fontColor}
+                flexFlow="column"
+                gap="0px"
+              >
+                <div>No activity found for this wallet.</div>
+                <ExploreButtonStyle
                   color="connectwallet"
                   onClick={() => {
-                    connectAction()
+                    push(ROUTES.ADVANCED)
                   }}
                   minWidth="190px"
                   inputBorderColor={inputBorderColor}
-                  fontColor2={fontColor2}
-                  backColor={backColor}
                   bordercolor={fontColor}
                   disabled={disableWallet}
-                  hoverColorButton={hoverColorButton}
                 >
-                  <img src={ConnectDisableIcon} className="connect-wallet" alt="" />
-                  Connect Wallet
-                </ConnectButtonStyle>
-              </>
-            )}
+                  <img src={AdvancedImg} className="explore-farms" alt="" />
+                  Explore Farms
+                </ExploreButtonStyle>
+              </EmptyInfo>
+            </EmptyPanel>
+          )
+        ) : (
+          <EmptyPanel>
+            <EmptyInfo weight={500} size={14} lineHeight={20} color={fontColor}>
+              Connect wallet to see full event history.
+            </EmptyInfo>
+            <ConnectButtonStyle
+              color="connectwallet"
+              onClick={() => {
+                connectAction()
+              }}
+              minWidth="190px"
+              inputBorderColor={inputBorderColor}
+              bordercolor={fontColor}
+              disabled={disableWallet}
+              hoverColor={hoverColorButton}
+            >
+              Connect Wallet
+            </ConnectButtonStyle>
           </EmptyPanel>
         )}
       </TableContent>

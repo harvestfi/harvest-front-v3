@@ -7,18 +7,18 @@ import twitter from '../../assets/images/logos/sidebar/twitter.svg'
 import medium from '../../assets/images/logos/sidebar/medium.svg'
 
 const Socials = () => {
-  const { socialBackColor, socialIconColor } = useThemeContext()
+  const { darkMode, socialBackColor, socialIconColor } = useThemeContext()
 
   return (
     <SocialsContainer iconColor={socialIconColor} backColor={socialBackColor}>
-      <Social href={SOCIAL_LINKS.DISCORD} target="_blank">
-        <img src={discord} alt="" />
+      <Social darkMode={darkMode} href={SOCIAL_LINKS.MEDIUM} target="_blank">
+        <img src={medium} alt="" />
       </Social>
-      <Social href={SOCIAL_LINKS.TWITTER} target="_blank">
+      <Social darkMode={darkMode} href={SOCIAL_LINKS.TWITTER} target="_blank">
         <img src={twitter} alt="" />
       </Social>
-      <Social href={SOCIAL_LINKS.MEDIUM} target="_blank">
-        <img src={medium} alt="" />
+      <Social darkMode={darkMode} href={SOCIAL_LINKS.DISCORD} target="_blank">
+        <img src={discord} alt="" />
       </Social>
     </SocialsContainer>
   )

@@ -1,4 +1,7 @@
 import React from 'react'
+import Dollar from './assets/images/logos/dashboard/flag_usd.svg'
+import Pound from './assets/images/logos/dashboard/flag_gbp.svg'
+import Euro from './assets/images/logos/dashboard/flag_euro.svg'
 
 export const HARVEST_LAUNCH_DATE = new Date(1598986800000)
 
@@ -829,17 +832,23 @@ export const fakeChartData = [
   { x: 1693775844000, y: 15, z: 4.5 },
 ]
 
-export const boostedVaults = [
-  'lodestar_WBTC',
-  'lodestar_USDCe',
-  'lodestar_ARB',
-  'lodestar_ETH',
-  'lodestar_USDT',
-  'lodestar_PENDLE',
-  'camelot_iFARM_ETH',
-  'lodestar_wstETH',
-  'lodestar_USDC',
-  'xGRAIL',
-  'IFARM_arbitrum',
-  'lodestar_LODE',
+export const supportedCurrencies = [
+  {
+    id: SUPPORTED_CURRENCY.USD,
+    symbol: 'USD',
+    icon: '$',
+    imgPath: Dollar,
+  },
+  {
+    id: SUPPORTED_CURRENCY.GBP,
+    symbol: 'GBP',
+    icon: '£',
+    imgPath: Pound,
+  },
+  {
+    id: SUPPORTED_CURRENCY.EUR,
+    symbol: 'EUR',
+    icon: '€',
+    imgPath: Euro,
+  },
 ]

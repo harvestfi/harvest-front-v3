@@ -321,7 +321,8 @@ const PoolsProvider = _ref => {
           const chains = isSpecialApp ? [chainId] : selChain
           // selChain.forEach( async (ch)=> {
           /* eslint-disable no-await-in-loop */
-          for (let i = 0; i < chains.length; i += 1) {
+          const cl = chains.length
+          for (let i = 0; i < cl; i += 1) {
             const ch = chains[i]
             const readerType = getReader(ch, contracts)
             const poolAddresses = []
@@ -477,7 +478,6 @@ const PoolsProvider = _ref => {
     {
       value: {
         pools: loadedPools,
-        allPools: pools,
         fetchUserPoolStats,
         userStats,
         loadedUserPoolsWeb3Provider: loadedUserPoolsWeb3Provider.current,

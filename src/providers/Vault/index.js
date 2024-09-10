@@ -319,7 +319,6 @@ const VaultsProvider = _ref => {
         loadingVaults,
         loadingFarmingBalances,
         vaultsData: loadedVaults,
-        allVaultsData: vaultsData,
         symbols: Object.keys(loadedVaults),
         farmingBalances,
         getFarmingBalances,

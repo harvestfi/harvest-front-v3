@@ -1,9 +1,7 @@
 import styled from 'styled-components'
+import { Dropdown } from 'react-bootstrap'
 import UsdIcon from '../../assets/images/ui/usd-port.svg'
 import TokensIcon from '../../assets/images/ui/tokens-port.svg'
-import BoxBgOne from '../../assets/images/logos/dashboard/box-bg-1.png'
-import BoxBgTwo from '../../assets/images/logos/dashboard/box-bg-2.png'
-import BoxBgThree from '../../assets/images/logos/dashboard/box-bg-3.png'
 
 const Container = styled.div`
   width: 100%;
@@ -29,7 +27,7 @@ const Container = styled.div`
 `
 
 const Inner = styled.div`
-  padding: 100px;
+  padding: 50px 75px 75px 75px;
   width: 100%;
 
   @media screen and (min-width: 1921px) {
@@ -38,11 +36,11 @@ const Inner = styled.div`
 
   @media screen and (max-width: 1480px) {
     width: 100%;
-    padding: 70px 30px 40px;
+    padding: 50px 30px;
   }
 
   @media screen and (max-width: 992px) {
-    padding: 25px 15px;
+    padding: 25px 0px;
   }
 `
 
@@ -50,27 +48,56 @@ const SubPart = styled.div`
   display: flex;
   justify-content: space-between;
   gap: 10px;
+  margin-bottom: 30px;
+  border-top: 1px solid #ced3e6;
 
   @media screen and (max-width: 992px) {
-    display: none;
+    flex-wrap: wrap;
+    gap: 0px;
+    margin: 0px 15px 24px 15px;
   }
 `
 
-const MobileSubPart = styled.div`
+const HeaderWrap = styled.div`
   display: flex;
-  flex-wrap: wrap;
-`
-
-const MobileDiv = styled.div`
-  display: none;
+  justify-content: space-between;
+  padding-bottom: 20px;
 
   @media screen and (max-width: 992px) {
-    display: flex;
-    flex-wrap: wrap;
-    border: 2px solid ${props => props.borderColor};
-    border-radius: 6.5px;
-    width: 100%;
-    margin-bottom: 10px;
+    padding: 0px 15px 20px 15px;
+  }
+`
+
+const HeaderTitle = styled.div`
+  margin: auto 0px;
+
+  .title {
+    color: ${props => props.fontColor1};
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 28px;
+  }
+  .desc {
+    color: ${props => props.fontColor};
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 24px;
+  }
+  @media screen and (max-width: 992px) {
+    .title {
+      font-size: 16px;
+    }
+  }
+`
+
+const HeaderButton = styled.div`
+  display: flex;
+  margin: auto 0px;
+  gap: 15px;
+
+  @media screen and (max-width: 992px) {
+    flex-direction: column-reverse;
+    gap: 9px;
   }
 `
 
@@ -90,10 +117,10 @@ const TransactionDetails = styled.div`
   width: 100%;
   border-radius: 15px;
   transition: 0.25s;
-  margin-top: 25px;
+  margin-top: 20px;
 
   @media screen and (max-width: 992px) {
-    margin-top: 0px;
+    margin-top: 24px;
   }
 `
 
@@ -120,12 +147,12 @@ const FarmPic = styled.img`
 `
 
 const EmptyPanel = styled.div`
-  padding-top: 12%;
-  padding-bottom: 12%;
-  border-radius: 5px;
-  border-right: 1px solid ${props => props.borderColor};
-  border-bottom: 1px solid ${props => props.borderColor};
-  border-left: 1px solid ${props => props.borderColor};
+  height: ${props => props.height};
+  border: 1px solid ${props => props.borderColor};
+  border-top: none;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+
   @media screen and (max-width: 992px) {
     padding: 0px;
     border: none;
@@ -150,9 +177,15 @@ const EmptyInfo = styled.div`
   `
       : ''}
   ${props =>
+    props.lineHeight
+      ? `
+    line-height: ${props.lineHeight}px;
+  `
+      : ''}
+  ${props =>
     props.height
       ? `
-    line-height: ${props.height}px;
+    height: ${props.height};
   `
       : ''}
   ${props =>
@@ -167,7 +200,12 @@ const EmptyInfo = styled.div`
     margin-top: ${props.marginTop};
   `
       : ''}
-
+  ${props =>
+    props.flexFlow
+      ? `
+    flex-flow: ${props.flexFlow};
+  `
+      : ''}
   ${props =>
     props.gap
       ? `
@@ -178,6 +216,7 @@ const EmptyInfo = styled.div`
   display: flex;
   justify-content: center;
   text-align: center;
+  align-items: center;
 
   @media screen and (max-width: 992px) {
     display: flex;
@@ -194,14 +233,19 @@ const ConnectButtonStyle = styled.button`
   font-weight: 600;
   display: flex;
   justify-content: center;
-  margin: 25px auto;
+  margin: 15px auto;
   width: 250px;
-  background: ${props => props.backColor};
+  background: none;
   border-radius: 8px;
-  border: 1px solid ${props => props.inputBorderColor};
-  color: ${props => props.fontColor2};
+  border: 2px solid #6988ff;
+  color: #6988ff;
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
   cursor: pointer;
+  transition: 0.5s;
+
+  &:hover {
+    background: ${props => props.hoverColor};
+  }
 
   ${props =>
     props.connected
@@ -216,19 +260,6 @@ const ConnectButtonStyle = styled.button`
       : `
       padding: 15px 0px 15px 0px;
     `}
-
-  &:hover {
-    box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05),
-      0px 0px 0px 4px ${props => props.hoverColorButton};
-    img.connect-wallet {
-      filter: brightness(0) saturate(100%) invert(69%) sepia(55%) saturate(4720%) hue-rotate(110deg)
-        brightness(91%) contrast(86%);
-    }
-  }
-
-  img.connect-wallet {
-    margin: auto 25px auto 0px;
-  }
 
   @media screen and (max-width: 992px) {
     display: flex;
@@ -248,55 +279,42 @@ const ConnectButtonStyle = styled.button`
       padding: 10px 11px;
       font-size: 13px;
       `}
-
-    img.connect-wallet {
-      margin-right: 15px;
-      width: 14px;
-      height: 14px;
-    }
   }
 `
 
-const ExploreFarm = styled.div`
-  /* background-image: url(${props =>
-    props.bgImage === 'first' ? BoxBgOne : props.bgImage === 'second' ? BoxBgTwo : BoxBgThree}); */
-  background-image: ${props =>
-    `url('${
-      props.bgImage === 'first' ? BoxBgOne : props.bgImage === 'second' ? BoxBgTwo : BoxBgThree
-    }')`};
-  background-repeat: no-repeat;
-  background-size: cover;
-  width: 100%;
-  height: 175px;
-  border-radius: 12.18px;
-  border: none;
-  box-shadow: 0px 4.06px 4.06px -2.03px rgba(16, 24, 40, 0.03),
-    0px 10.15px 12.18px -2.03px rgba(16, 24, 40, 0.08);
-  color: #fff;
-  padding: 0px 25px;
-  font-weight: 400;
+const ExploreButtonStyle = styled.button`
   font-size: 15px;
-  line-height: 14px;
+  line-height: 24px;
+  font-weight: 600;
   display: flex;
-  align-self: center;
+  justify-content: center;
+  margin: 15px auto;
+  padding: 12px 0px 12px 0px;
+  width: 250px;
+  background: #6988ff;
+  border-radius: 8px;
+  border: none;
+  color: white;
+  box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
   cursor: pointer;
+  gap: 8px;
+  transition: 0.5s;
+
+  &:hover {
+    background: #7692fb;
+  }
+
+  img.explore-farms {
+    filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%);
+  }
 
   @media screen and (max-width: 992px) {
-    padding: 8px 13px;
-    font-size: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 11px;
+    font-size: 13px;
   }
-`
-
-const ExploreContent = styled.div`
-  margin: auto 0px;
-  text-align: left;
-`
-
-const ExploreTitle = styled.div`
-  font-weight: 600;
-  font-size: 21px;
-  line-height: 20px;
-  padding-bottom: 10px;
 `
 
 const ThemeMode = styled.div`
@@ -392,8 +410,8 @@ const Header = styled.div`
   background: ${props => props.backColor};
   display: flex;
   border: 1px solid ${props => props.borderColor};
-  border-top-left-radius: 15px;
-  border-top-right-radius: 15px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 
   @media screen and (max-width: 992px) {
     display: none;
@@ -408,6 +426,11 @@ const Column = styled.div`
   display: flex;
   justify-content: start;
   color: ${props => props.color};
+  transition: 0.5s;
+
+  &:hover {
+    color: #44699e;
+  }
 `
 
 const Status = styled.div`
@@ -482,8 +505,7 @@ const TableContent = styled.div`
       : ``}
   @media screen and (max-width: 992px) {
     // overflow-x: scroll;
-    border-radius: 15px 15px 0px 0px;
-    border: 1px solid ${props => props.borderColor};
+    border-top: 1px solid ${props => props.borderColor};
     ${props =>
       props.count === 0
         ? `
@@ -494,17 +516,101 @@ const TableContent = styled.div`
   }
 `
 
-const DescInfo = styled.div`
-  display: none;
+const TableWrap = styled.div`
+  display: flex;
+  gap: 35px;
+
+  .table-title {
+    color: ${props => props.fontColor1};
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 28px;
+
+    @media screen and (max-width: 992px) {
+      display: none;
+    }
+  }
+
+  @media screen and (max-width: 1480px) {
+    gap: 15px;
+  }
+
+  @media screen and (max-width: 1320px) {
+    flex-direction: column;
+    gap: 50px;
+  }
+
   @media screen and (max-width: 992px) {
-    display: block;
-    font-size: 12px;
-    line-height: 24px;
-    font-weight: 400;
-    color: ${props => props.fontColor};
-    padding-bottom: 10px;
-    border-bottom: 2px solid ${props => props.borderColor};
-    margin-bottom: 25px;
+    flex-direction: column;
+    gap: 0px;
+  }
+`
+
+const SubBtnWrap = styled.div`
+  margin-top: 24px;
+  display: flex;
+  justify-content: end;
+  padding-right: 15px;
+`
+
+const MobileSwitch = styled.div`
+  display: flex;
+  padding: 0px 15px;
+`
+
+const SwitchBtn = styled.div`
+  width: 50%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  text-align: center;
+  background: ${props => props.backColor};
+  box-shadow: ${props => props.boxShadow};
+  color: ${props => props.color};
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  margin: auto;
+`
+
+const PositionTable = styled.div`
+  width: 70%;
+
+  @media screen and (max-width: 1320px) {
+    width: 100%;
+  }
+
+  @media screen and (max-width: 992px) {
+    width: 100%;
+    display: ${props => props.display};
+  }
+`
+
+const YieldTable = styled.div`
+  width: 30%;
+
+  @media screen and (max-width: 1320px) {
+    width: 100%;
+  }
+
+  @media screen and (max-width: 992px) {
+    width: 100%;
+    display: ${props => props.display};
+  }
+`
+
+const ContentBox = styled.div`
+  border: 1px solid ${props => props.borderColor};
+  border-top: none;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+
+  div.position-row:last-child {
+    border-bottom-right-radius: 5px;
+    border-bottom-left-radius: 5px;
+  }
+
+  @media screen and (max-width: 992px) {
+    border: none;
   }
 `
 
@@ -650,69 +756,253 @@ const CheckBoxDiv = styled.div`
   div {
     padding-left: 23px;
   }
+
+  @media screen and (max-width: 992px) {
+    margin: unset;
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 500;
+    margin: auto 0px;
+  }
 `
 
 const SwitchView = styled.div`
   display: flex;
   justify-content: end;
-  padding: 8px 14px;
+  padding: 10px;
   gap: 8px;
   width: fit-content;
+  height: 40px;
   align-items: center;
-  margin: 25px 0px 25px auto;
+  color: ${props => props.color};
   font-size: 14px;
   font-weight: 600;
   line-height: 20px;
   position: relative;
-
-  /* border-radius: 8px;
-  border: 1px solid transparent;
-  border-image: linear-gradient(to right, #fc5c7d, #6a82fb) 1; */
-  background: linear-gradient(to right, #fc5c7d, #6a82fb);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  /* background-image: linear-gradient(black, black), linear-gradient(to right, #fc5c7d, #6a82fb);
-  background-origin: border-box;
-  background-clip: content-box, border-box; */
-
-  ::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 8px;
-    padding: 2px;
-    background: linear-gradient(to right, #fc5c7d, #6a82fb);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 1;
-    transition: opacity 0.3s ease;
-  }
-
-  :hover::before {
-    opacity: 0.7;
-  }
+  border-radius: 8px;
+  border: 1px solid #d0d5dd;
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  background: ${props => props.backColor};
+  transition: 0.5s;
 
   :hover {
     cursor: pointer;
+    background: ${props => props.hovercolor};
   }
 
   img {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     filter: ${props =>
       props.darkMode
         ? 'invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%)'
         : 'invert(48%) sepia(4%) saturate(2341%) hue-rotate(183deg) brightness(87%) contrast(80%)'};
+  }
+
+  @media screen and (max-width: 992px) {
+    height: unset;
+    padding: 10px 16px;
+  }
+`
+
+const BackArrow = styled.div`
+  display: flex;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 20px;
+  margin-bottom: 10px;
+
+  :hover {
+    cursor: pointer;
+  }
+`
+
+const CurrencySelect = styled.div`
+  width: 100%;
+  height: 40px;
+  border: 1px solid #d0d5dd;
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  transition: 0.5s;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 24px;
+  text-align: right;
+  color: ${props => props.fontcolor2} !important;
+
+  display: flex;
+  align-items: center;
+
+  img.logo {
+    margin-right: 7.5px;
+  }
+
+  img.logo-dark {
+    margin-right: 7.5px;
+  }
+
+  span {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 4px;
+  }
+
+  @media screen and (max-width: 992px) {
+    height: unset;
+    border-radius: 8px;
+    line-height: 20px;
+    padding: 10px;
+    gap: 0px;
+
+    img {
+      width: 17.6px;
+      height: 17.6px;
+    }
+  }
+`
+
+const CurrencyDropDown = styled(Dropdown.Toggle)`
+  background: ${props => props.bgcolor} !important;
+  border: none !important;
+  border-radius: 8px !important;
+  color: ${props => props.fontcolor2} !important;
+  align-items: center;
+  width: 100%;
+  display: flex !important;
+  justify-content: space-between;
+  text-align: left;
+  position: relative;
+  margin: 0px 0px;
+
+  &:after {
+    display: none !important;
+  }
+
+  &:hover {
+    background: ${props => props.hovercolor} !important;
+    color: black;
+    font-weight: 500;
+  }
+
+  &:active {
+    background: green;
+    color: black;
+  }
+
+  .chain-name {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    margin-left: 5px;
+  }
+
+  img.narrow {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+  }
+`
+
+const CurrencyDropDownMenu = styled(Dropdown.Menu)`
+  background-color: ${props => props.backcolor} !important;
+  border: 1px solid #d0d5dd;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 8px !important;
+  padding: 0;
+  min-width: 6rem;
+  width: 100% !important;
+  z-index: 120;
+  top: 5px !important;
+
+  &:focus {
+    box-shadow: none;
+  }
+
+  @media screen and (max-width: 992px) {
+    min-width: unset;
+  }
+`
+
+const CurrencyDropDownItem = styled(Dropdown.Item)`
+  text-align: left;
+  display: flex !important;
+  justify-content: start;
+  align-items: center;
+  font-size: 14px;
+  padding: 10px 5px;
+  ${props =>
+    props.bordercolor
+      ? `
+    border-bottom: 0.5px solid ${props.bordercolor} !important;
+  `
+      : `
+  `}
+  width: auto !important;
+  color: ${props => props.fontcolor} !important;
+
+  :first-child {
+    border-radius: 8px 8px 0px 0px;
+  }
+
+  :last-child {
+    border-radius: 0px 0px 8px 8px;
+  }
+
+  &:hover {
+    background: ${props => props.hovercolor} !important;
+
+    div {
+      color: #ff9400;
+    }
+  }
+
+  img {
+    margin-right: 15px;
+    margin-left: 10px;
+  }
+
+  img.logo {
+    margin-right: 7.5px;
+  }
+
+  img.logo-dark {
+    margin-right: 7.5px;
+  }
+
+  div {
+    align-self: center;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 18px;
+  }
+
+  svg.check-icon {
+    margin-left: 10px;
+    color: #6988ff;
+  }
+
+  @media screen and (max-width: 992px) {
+    line-height: 20px;
+    padding: 10px 16px;
+    gap: 5px;
+
+    img {
+      margin-left: 0px;
+    }
   }
 `
 
 export {
   Container,
   SubPart,
-  MobileSubPart,
-  MobileDiv,
   TransactionDetails,
+  HeaderWrap,
+  HeaderTitle,
+  HeaderButton,
   FarmTitle,
   MyFarm,
   FarmPic,
@@ -720,9 +1010,6 @@ export {
   EmptyPanel,
   EmptyInfo,
   EmptyImg,
-  ExploreFarm,
-  ExploreContent,
-  ExploreTitle,
   ThemeMode,
   Div,
   Counter,
@@ -731,9 +1018,21 @@ export {
   Status,
   Col,
   TableContent,
-  DescInfo,
+  TableWrap,
+  MobileSwitch,
+  SubBtnWrap,
+  SwitchBtn,
+  PositionTable,
+  YieldTable,
+  ContentBox,
   NewLabel,
   ConnectButtonStyle,
+  ExploreButtonStyle,
   CheckBoxDiv,
   SwitchView,
+  BackArrow,
+  CurrencyDropDown,
+  CurrencySelect,
+  CurrencyDropDownMenu,
+  CurrencyDropDownItem,
 }

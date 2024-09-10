@@ -59,6 +59,7 @@ import {
   formatNumberWido,
   showTokenBalance,
   showUsdValue,
+  showUsdValueCurrency,
 } from '../../utilities/formats'
 import { getTotalApy, getVaultValue } from '../../utilities/parsers'
 import { getAdvancedRewardText } from '../../utilities/html'
@@ -160,8 +161,8 @@ const BeginnersFarm = () => {
 
   const { pathname } = useLocation()
 
-  const { allVaultsData, loadingVaults } = useVaults()
-  const { allPools, userStats, fetchUserPoolStats } = usePools()
+  const { vaultsData, loadingVaults } = useVaults()
+  const { pools, userStats, fetchUserPoolStats } = usePools()
   const { connected, account, balances, getWalletBalances } = useWallet()
   const { profitShareAPY } = useStats()
   /* eslint-disable global-require */
@@ -258,7 +259,7 @@ const BeginnersFarm = () => {
     }
   }, [rates])
 
-  const farmProfitSharingPool = allPools.find(
+  const farmProfitSharingPool = pools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )
   const poolVaults = useMemo(
@@ -278,7 +279,7 @@ const BeginnersFarm = () => {
     [farmProfitSharingPool, profitShareAPY],
   )
 
-  const groupOfVaults = { ...allVaultsData, ...poolVaults }
+  const groupOfVaults = { ...vaultsData, ...poolVaults }
   const vaultsKey = Object.keys(groupOfVaults)
   const vaultIds = vaultsKey.filter(vaultId => {
     const tokenAddress = groupOfVaults[vaultId].tokenAddress || groupOfVaults[vaultId].vaultAddress
@@ -306,11 +307,11 @@ const BeginnersFarm = () => {
   const { logoUrl } = token
 
   const isSpecialVault = token.poolVault
-  const tokenVault = get(allVaultsData, token.hodlVaultId || id)
+  const tokenVault = get(vaultsData, token.hodlVaultId || id)
 
   const vaultPool = isSpecialVault
     ? token.data
-    : find(allPools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
+    : find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
 
   const farmAPY = get(vaultPool, 'totalRewardAPY', 0)
   const tradingApy = get(vaultPool, 'tradingApy', 0)
@@ -344,7 +345,7 @@ const BeginnersFarm = () => {
   const useIFARM = id === FARM_TOKEN_SYMBOL
   const fAssetPool = isSpecialVault
     ? token.data
-    : find(allPools, pool => pool.collateralAddress === tokens[id].vaultAddress)
+    : find(pools, pool => pool.collateralAddress === tokens[id].vaultAddress)
   const multipleAssets = useMemo(
     () =>
       isArray(tokens[id].tokenAddress) &&
@@ -364,7 +365,7 @@ const BeginnersFarm = () => {
   const totalStaked = get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)
 
   const tempPricePerFullShare = useIFARM
-    ? get(allVaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
+    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
     : get(token, `pricePerFullShare`, 0)
   const pricePerFullShare = fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals)
 
@@ -576,7 +577,8 @@ const BeginnersFarm = () => {
               return b.usdValue - a.usdValue
             })
 
-            for (let j = 0; j < curBalances.length; j += 1) {
+            const cl = curBalances.length
+            for (let j = 0; j < cl; j += 1) {
               if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
                 if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
                   directInBalance = curBalances[j]
@@ -661,9 +663,10 @@ const BeginnersFarm = () => {
             // supList.shift()
             setSupTokenList(supList)
 
-            const supNoBalanceList = []
-            if (supList.length > 0) {
-              for (let i = 0; i < supList.length; i += 1) {
+            const supNoBalanceList = [],
+              sl = supList.length
+            if (sl > 0) {
+              for (let i = 0; i < sl; i += 1) {
                 if (Number(supList[i].balance) === 0) {
                   supNoBalanceList.push(supList[i])
                 }
@@ -884,12 +887,12 @@ const BeginnersFarm = () => {
 
   useEffect(() => {
     const hasZeroValue = underlyingValue === 0
-    if (account && hasZeroValue && (firstUnderlyingBalance.current || !isEmpty(allVaultsData))) {
+    if (account && hasZeroValue && (firstUnderlyingBalance.current || !isEmpty(vaultsData))) {
       const getUnderlyingBalance = async () => {
         firstUnderlyingBalance.current = false
         const val = Number(
           fromWei(
-            get(allVaultsData, `${IFARM_TOKEN_SYMBOL}.underlyingBalanceWithInvestmentForHolder`, 0),
+            get(vaultsData, `${IFARM_TOKEN_SYMBOL}.underlyingBalanceWithInvestmentForHolder`, 0),
             tokens[IFARM_TOKEN_SYMBOL].decimals,
             WIDO_BALANCES_DECIMALS,
           ),
@@ -899,7 +902,7 @@ const BeginnersFarm = () => {
 
       getUnderlyingBalance()
     }
-  }, [account, allVaultsData, underlyingValue, tokens])
+  }, [account, vaultsData, underlyingValue, tokens])
 
   useEffect(() => {
     const initData = async () => {
@@ -915,15 +918,7 @@ const BeginnersFarm = () => {
           sumLatestNetChange,
           sumLatestNetChangeUsd,
           enrichedData,
-        } = await initBalanceAndDetailData(
-          address,
-          chainId,
-          account,
-          tokenDecimals,
-          underlyingPrice,
-          currencySym,
-          currencyRate,
-        )
+        } = await initBalanceAndDetailData(address, chainId, account, tokenDecimals)
 
         if (balanceFlag && vaultHFlag) {
           setUnderlyingEarnings(sumNetChange)
@@ -946,7 +941,6 @@ const BeginnersFarm = () => {
     token,
     vaultPool,
     tokenDecimals,
-    underlyingPrice,
     currencySym,
     currencyRate,
     setUnderlyingEarnings,
@@ -1436,9 +1430,10 @@ const BeginnersFarm = () => {
                         weight="600"
                         color={fontColor1}
                       >
-                        {showUsdValue(
+                        {showUsdValueCurrency(
                           showLatestEarnings ? usdEarningsLatest : usdEarnings,
                           currencySym,
+                          currencyRate,
                         )}
                       </NewLabel>
                     </FlexDiv>
