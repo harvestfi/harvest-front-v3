@@ -86,6 +86,7 @@ const ApexChart = ({
   lpTokenBalance,
   totalValue,
   setSelectedState,
+  isExpanded,
 }) => {
   const { fontColor, fontColor5, bgColorChart } = useThemeContext()
   const { connected } = useWallet()
@@ -588,79 +589,86 @@ const ApexChart = ({
               />
             </ComposedChart>
           </ResponsiveContainer>
-          {mainSeries.length > 0 && (
-            <div className="chart-slider-wrapper">
-              <Slider
-                className="chart-slider"
-                range
-                marks={marks}
-                value={[startPoint, endPoint]}
-                onChange={handleSliderChange}
-                pushable={1}
-              />
-            </div>
+          {isExpanded && (
+            <>
+              {mainSeries.length > 0 && (
+                <div className="chart-slider-wrapper">
+                  <Slider
+                    className="chart-slider"
+                    range
+                    marks={marks}
+                    value={[startPoint, endPoint]}
+                    onChange={handleSliderChange}
+                    pushable={1}
+                  />
+                </div>
+              )}
+              <ResponsiveContainer className="bottom-chart" width="100%" height={50}>
+                <ComposedChart
+                  data={allMainSeries}
+                  margin={{ top: 10, right: 0, bottom: 0, left: 0 }}
+                >
+                  <defs>
+                    <linearGradient id="colorUvSmallChart" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#00D26B" stopOpacity={0.1} />
+                      <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1} />
+                    </linearGradient>
+                  </defs>
+                  <YAxis
+                    dataKey="y"
+                    tickCount={0}
+                    domain={[minAllVal, maxAllVal]}
+                    stroke="#00D26B"
+                    yAxisId="left"
+                    orientation="left"
+                    mirror
+                  />
+                  <YAxis
+                    dataKey="z"
+                    tickCount={0}
+                    domain={[minAllValUnderlying, maxAllValUnderlying]}
+                    stroke="#8884d8"
+                    yAxisId="right"
+                    orientation="right"
+                    mirror
+                  />
+                  <Line
+                    dataKey="y"
+                    type="monotone"
+                    unit="$"
+                    strokeLinecap="round"
+                    strokeWidth={1}
+                    stroke="#00D26B"
+                    dot={false}
+                    legendType="none"
+                    yAxisId="left"
+                  />
+                  <Line
+                    dataKey="z"
+                    type="monotone"
+                    strokeLinecap="round"
+                    strokeWidth={1}
+                    stroke="#8884d8"
+                    dot={false}
+                    legendType="none"
+                    yAxisId="right"
+                  />
+                  <ReferenceLine x={startTimeStampPos} stroke="grey" label="" yAxisId="left" />
+                  <ReferenceLine x={endTimeStampPos} stroke="grey" label="" yAxisId="left" />
+                  <ReferenceArea
+                    x1={startTimeStampPos}
+                    x2={endTimeStampPos}
+                    y1={minAllVal}
+                    y2={maxAllVal}
+                    stroke="#161B26"
+                    fill="#161B26"
+                    strokeOpacity={1}
+                    yAxisId="left"
+                  />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </>
           )}
-          <ResponsiveContainer className="bottom-chart" width="100%" height={50}>
-            <ComposedChart data={allMainSeries} margin={{ top: 10, right: 0, bottom: 0, left: 0 }}>
-              <defs>
-                <linearGradient id="colorUvSmallChart" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#00D26B" stopOpacity={0.1} />
-                  <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1} />
-                </linearGradient>
-              </defs>
-              <YAxis
-                dataKey="y"
-                tickCount={0}
-                domain={[minAllVal, maxAllVal]}
-                stroke="#00D26B"
-                yAxisId="left"
-                orientation="left"
-                mirror
-              />
-              <YAxis
-                dataKey="z"
-                tickCount={0}
-                domain={[minAllValUnderlying, maxAllValUnderlying]}
-                stroke="#8884d8"
-                yAxisId="right"
-                orientation="right"
-                mirror
-              />
-              <Line
-                dataKey="y"
-                type="monotone"
-                unit="$"
-                strokeLinecap="round"
-                strokeWidth={1}
-                stroke="#00D26B"
-                dot={false}
-                legendType="none"
-                yAxisId="left"
-              />
-              <Line
-                dataKey="z"
-                type="monotone"
-                strokeLinecap="round"
-                strokeWidth={1}
-                stroke="#8884d8"
-                dot={false}
-                legendType="none"
-                yAxisId="right"
-              />
-              <ReferenceLine x={startTimeStampPos} stroke="grey" label="" yAxisId="left" />
-              <ReferenceLine x={endTimeStampPos} stroke="grey" label="" yAxisId="left" />
-              <ReferenceArea
-                x1={startTimeStampPos}
-                x2={endTimeStampPos}
-                y1={minAllVal}
-                y2={maxAllVal}
-                stroke="#161B26"
-                fill="#161B26"
-                strokeOpacity={1}
-                yAxisId="left"
-              />
-            </ComposedChart>
-          </ResponsiveContainer>
         </ChartWrapper>
       ) : (
         <LoadingDiv>

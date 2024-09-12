@@ -324,6 +324,27 @@ const NewLabel = styled.div`
     padding-left: 5px;
   }
 `
+const ToggleButton = styled.div`
+  color: ${props => (props.color ? props.color : '')};
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 18px;
+  padding: 3px 15px;
+  border-radius: 3px;
+  &:hover {
+    background: ${props => (props.backColor ? props.backColor : '')};
+    .chevron {
+      opacity: 1;
+    }
+  }
+  .chevron {
+    opacity: 0;
+  }
+`
+
+const ChevronIcon = styled.span`
+  margin-left: 5px;
+`
 
 export {
   Container,
@@ -346,4 +367,6 @@ export {
   ChartBottomHide,
   ChartClose,
   NewLabel,
+  ToggleButton,
+  ChevronIcon,
 }
