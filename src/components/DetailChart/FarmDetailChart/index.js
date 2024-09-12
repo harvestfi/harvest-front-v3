@@ -200,11 +200,11 @@ const FarmDetailChart = ({
                 Number(updatedData.generalApies[updatedData.generalApies.length - 1].timestamp)) /
               (24 * 3600)
 
-            updatedData.generalApies.forEach(item => {
-              lifetimeApyValue += parseFloat(item.apy)
-            })
-            lifetimeApyValue /= updatedData.generalApies.length
-            lifetimeApyValue = `${lifetimeApyValue.toFixed(2)}%`
+            const sharePriceVal = latestSharePriceValue === '-' ? 1 : Number(latestSharePriceValue)
+            lifetimeApyValue = `${(
+              ((sharePriceVal - 1) / (totalPeriodBasedOnApy / 365)) *
+              100
+            ).toFixed(2)}%`
 
             // Calculate APY - Live & Historical Average
             if (totalPeriodBasedOnApy >= 7) {
@@ -260,15 +260,7 @@ const FarmDetailChart = ({
             }
           }
 
-          if (updatedData.tvls.length !== 0) {
-            vaultInitialDate = formatDate(
-              Number(updatedData.tvls[updatedData.tvls.length - 1].timestamp) * 1000,
-            )
-            totalPeriod =
-              (Number(updatedData.tvls[0].timestamp) -
-                Number(updatedData.tvls[updatedData.tvls.length - 1].timestamp)) /
-              (24 * 3600)
-          } else if (updatedData.tvls.length === 0 && updatedData.vaultHistories.length !== 0) {
+          if (updatedData.vaultHistories.length !== 0) {
             vaultInitialDate = formatDate(
               Number(updatedData.vaultHistories[updatedData.vaultHistories.length - 1].timestamp) *
                 1000,
@@ -279,9 +271,17 @@ const FarmDetailChart = ({
                   updatedData.vaultHistories[updatedData.vaultHistories.length - 1].timestamp,
                 )) /
               (24 * 3600)
+          } else if (updatedData.vaultHistories.length === 0 && updatedData.tvls.length !== 0) {
+            vaultInitialDate = formatDate(
+              Number(updatedData.tvls[updatedData.tvls.length - 1].timestamp) * 1000,
+            )
+            totalPeriod =
+              (Number(updatedData.tvls[0].timestamp) -
+                Number(updatedData.tvls[updatedData.tvls.length - 1].timestamp)) /
+              (24 * 3600)
           } else if (
-            updatedData.tvls.length === 0 &&
             updatedData.vaultHistories.length === 0 &&
+            updatedData.tvls.length === 0 &&
             updatedData.generalApies.length !== 0
           ) {
             vaultInitialDate = formatDate(

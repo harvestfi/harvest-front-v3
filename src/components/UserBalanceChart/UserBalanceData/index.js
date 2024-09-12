@@ -100,10 +100,11 @@ const UserBalanceData = ({
   }
 
   const findLastMatchingTimestamp = data => {
-    if (data && data.length > 0) {
+    const dl = data.length
+    if (data && dl > 0) {
       const firstValue = data[0].value
 
-      for (let i = data.length - 1; i >= 0; i -= 1) {
+      for (let i = dl - 1; i >= 0; i -= 1) {
         if (data[i].value === firstValue) {
           return data[i].timestamp
         }
@@ -162,8 +163,10 @@ const UserBalanceData = ({
           }
 
           if (balanceFlag && priceFeedFlag) {
-            const nowDate = new Date()
-            const currentTimeStamp = Math.floor(nowDate.getTime() / 1000)
+            const nowDate = new Date(),
+              currentTimeStamp = Math.floor(nowDate.getTime() / 1000),
+              bl = balanceData.length,
+              ul = uniqueData2.length
 
             if (balanceData[0].timestamp > uniqueData2[0].timestamp) {
               let i = 0,
@@ -176,8 +179,8 @@ const UserBalanceData = ({
                 mergedData.push(balanceData[i])
                 i += 1
               }
-              while (i < balanceData.length) {
-                if (z < uniqueData2.length) {
+              while (i < bl) {
+                if (z < ul) {
                   while (uniqueData2[z].timestamp >= balanceData[i].timestamp) {
                     uniqueData2[z].value = balanceData[i].value
                     mergedData.push(uniqueData2[z])
@@ -188,23 +191,21 @@ const UserBalanceData = ({
                   }
                 }
                 if (!addFlag) {
-                  balanceData[i].priceUnderlying =
-                    uniqueData2[z === uniqueData2.length ? z - 1 : z].priceUnderlying
-                  balanceData[i].sharePrice =
-                    uniqueData2[z === uniqueData2.length ? z - 1 : z].sharePrice
+                  balanceData[i].priceUnderlying = uniqueData2[z === ul ? z - 1 : z].priceUnderlying
+                  balanceData[i].sharePrice = uniqueData2[z === ul ? z - 1 : z].sharePrice
                   mergedData.push(balanceData[i])
                 }
                 addFlag = false
                 i += 1
               }
-              while (z < uniqueData2.length) {
+              while (z < ul) {
                 uniqueData2[z].value = 0
                 mergedData.push(uniqueData2[z])
                 z += 1
               }
-              while (i < balanceData.length) {
-                balanceData[i].priceUnderlying = uniqueData2[uniqueData2.length - 1].priceUnderlying
-                balanceData[i].sharePrice = uniqueData2[uniqueData2.length - 1].sharePrice
+              while (i < bl) {
+                balanceData[i].priceUnderlying = uniqueData2[ul - 1].priceUnderlying
+                balanceData[i].sharePrice = uniqueData2[ul - 1].sharePrice
                 mergedData.push(balanceData[i])
                 i += 1
               }
@@ -212,21 +213,18 @@ const UserBalanceData = ({
               let i = 0,
                 z = 0,
                 addFlag = false
-              while (
-                i < uniqueData2.length &&
-                uniqueData2[i].timestamp > balanceData[0].timestamp
-              ) {
+              while (i < ul && uniqueData2[i].timestamp > balanceData[0].timestamp) {
                 uniqueData2[i].value = balanceData[0].value
                 mergedData.push(uniqueData2[i])
                 i += 1
               }
-              while (z < balanceData.length) {
-                if (i < uniqueData2.length) {
+              while (z < bl) {
+                if (i < ul) {
                   while (uniqueData2[i].timestamp >= balanceData[z].timestamp) {
                     uniqueData2[i].value = balanceData[z].value
                     mergedData.push(uniqueData2[i])
                     i += 1
-                    if (i >= uniqueData2.length) {
+                    if (i >= ul) {
                       break
                     }
                     if (!addFlag && uniqueData2[i].timestamp === balanceData[z].timestamp) {
@@ -235,23 +233,21 @@ const UserBalanceData = ({
                   }
                 }
                 if (!addFlag) {
-                  balanceData[z].priceUnderlying =
-                    uniqueData2[i === uniqueData2.length ? i - 1 : i].priceUnderlying
-                  balanceData[z].sharePrice =
-                    uniqueData2[i === uniqueData2.length ? i - 1 : i].sharePrice
+                  balanceData[z].priceUnderlying = uniqueData2[i === ul ? i - 1 : i].priceUnderlying
+                  balanceData[z].sharePrice = uniqueData2[i === ul ? i - 1 : i].sharePrice
                   mergedData.push(balanceData[z])
                 }
                 addFlag = false
                 z += 1
               }
-              while (i < uniqueData2.length) {
+              while (i < ul) {
                 uniqueData2[i].value = 0
                 mergedData.push(uniqueData2[i])
                 i += 1
               }
-              while (z < balanceData.length) {
-                balanceData[z].priceUnderlying = uniqueData2[uniqueData2.length - 1].priceUnderlying
-                balanceData[z].sharePrice = uniqueData2[uniqueData2.length - 1].sharePrice
+              while (z < bl) {
+                balanceData[z].priceUnderlying = uniqueData2[ul - 1].priceUnderlying
+                balanceData[z].sharePrice = uniqueData2[ul - 1].sharePrice
                 mergedData.push(balanceData[z])
                 z += 1
               }
@@ -266,7 +262,8 @@ const UserBalanceData = ({
             const apiAllData = [firstObject, ...mergedData]
 
             let firstNonZeroIndex = -1
-            for (let i = apiAllData.length - 1; i >= 0; i -= 1) {
+            const al = apiAllData.length
+            for (let i = al - 1; i >= 0; i -= 1) {
               if (apiAllData[i].value !== 0) {
                 firstNonZeroIndex = i
                 break

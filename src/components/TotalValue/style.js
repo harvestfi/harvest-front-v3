@@ -3,29 +3,43 @@ import styled from 'styled-components'
 const Container = styled.div`
   width: 20%;
   font-weight: 700;
-  background: ${props => props.backColor};
-  padding: 24px;
-  border: 2px solid ${props => props.borderColor};
-  border-radius: 12px;
+  padding: 24px 24px 24px 0px;
 
   @media screen and (max-width: 1350px) {
-    padding: 15px;
+    padding: 15px 15px 15px 0px;
   }
 
   @media screen and (max-width: 1200px) {
-    padding: 10px;
+    padding: 10px 10px 10px 0px;
   }
 
   @media screen and (max-width: 992px) {
     width: 50%;
-    ${props => (props.isNetProfit === 'true' ? 'width: 100%;' : 'width: 50%;')}
     border: unset;
     border-radius: 0px 6.5px 6.5px 0px;
     padding: 8px 13px;
+    margin-top: 24px;
 
     &:first-child {
-      border-right: 0.821px solid ${props => props.borderColor};
+      width: 46%;
+      padding: 8px 13px 8px 0px;
+      border-right: 0.821px solid #eaecf0;
       border-radius: 6.5px 0px 0px 6.5px;
+    }
+    &:nth-child(2) {
+      width: 54%;
+    }
+    &:nth-child(3) {
+      width: 46%;
+      padding: 8px 13px 8px 0px;
+      border-right: 0.821px solid #eaecf0;
+      border-radius: 6.5px 0px 0px 6.5px;
+    }
+    &:nth-child(4) {
+      width: 54%;
+    }
+    &:last-child {
+      display: none;
     }
   }
 `
@@ -36,6 +50,7 @@ const Div = styled.div`
   line-height: 20px;
   color: ${props => props.fontColor3};
   margin-bottom: 8px;
+  display: flex;
 
   svg.question {
     font-size: 16px;
@@ -44,11 +59,11 @@ const Div = styled.div`
     margin: auto 0px auto 5px;
   }
 
-  @media screen and (max-width: 1350px) {
+  @media screen and (max-width: 1375px) {
     font-size: 12px;
   }
 
-  @media screen and (max-width: 1200px) {
+  @media screen and (max-width: 1300px) {
     display: flex;
     flex-flow: column;
   }
@@ -75,8 +90,8 @@ const Div = styled.div`
 
 const Price = styled.div`
   font-weight: 600;
-  font-size: 30px;
-  line-height: 44px;
+  font-size: 25px;
+  line-height: 38px;
   color: ${props => props.fontColor1};
 
   @media screen and (max-width: 1350px) {
@@ -219,5 +234,17 @@ const NewLabel = styled.div`
     }
   }
 `
+const BetaBadge = styled.span`
+  background-color: #ecfdf3;
+  color: #027a48;
+  font-weight: 500;
+  padding: 2px 4px;
+  border-radius: 8px;
+  font-size: 8px;
+  line-height: 12px;
+  padding: 1.4px 5px;
+  height: fit-content;
+  margin: auto 2px auto 8px;
+`
 
-export { Container, Div, Price, BoxIcon, NewLabel }
+export { Container, Div, Price, BoxIcon, NewLabel, BetaBadge }

@@ -18,6 +18,8 @@ export function ThemeProvider({ children }) {
 
   const pageBackColor = darkMode ? '#15202B' : '#fff'
   const backColor = darkMode ? '#0C111D' : '#fff'
+  const backColorButton = darkMode ? '#1E293B' : '#fff'
+  const bgColorTable = darkMode ? '#20273A' : '#fff'
   const bgColorModal = darkMode ? '#0C111D' : '#F2F5FF'
   const bgColor = darkMode ? '#161B26' : '#fff'
   const bgColorTooltip = darkMode ? '#59607A' : '#fff'
@@ -42,13 +44,19 @@ export function ThemeProvider({ children }) {
   const linkColorOnHover = darkMode ? '#00d26b' : '#5318db'
 
   const borderColor = darkMode ? '#1F242F' : '#F3F6FF'
+  const borderColorTable = darkMode ? '#1F242F' : '#E6ECFF'
   const inputBorderColor = darkMode ? '#1F242F' : '#d0d5dd'
   const hoverColor = darkMode ? '#1F242F' : '#e9f0f7'
-  const hoverColorButton = darkMode ? '#1F242F' : '#f2f4f7'
+  const hoverColorRow = darkMode ? '#282D3A' : '#F7F9FF'
+  const hoverColorNew = darkMode ? '#313E55' : '#F7F9FF'
+  const hoverColorButton = darkMode ? '#1F242F' : '#F7F9FF'
   const hoverColorAVR = darkMode ? '#1F242F' : '#fbe7ef'
+  const hoverColorSide = darkMode ? '#212c51' : '#E9EFFF'
   const activeColor = darkMode ? '#242C3C' : '#F3F6FF'
   const activeColorModal = darkMode ? '#242C3C' : '#ECFDF3'
   const modalInputColor = darkMode ? '#242C3C' : '#ffffff'
+
+  const highlightColor = darkMode ? '#bfbfbf' : '#F4F4F4'
 
   const filterColor = darkMode
     ? 'invert(100%) sepia(20%) saturate(0%) hue-rotate(40deg) brightness(104%) contrast(101%)'
@@ -91,7 +99,6 @@ export function ThemeProvider({ children }) {
   const mobileFilterDisableColor = darkMode ? '#94949f' : 'rgba(21, 32, 43, 0.5)'
 
   const toggleBackColor = darkMode ? '#24272C' : '#E9EAF0'
-  const toggleCircleBgColor = darkMode ? '#E9EAF0' : '#24272C'
 
   const [switchBalance, setSwitchBalance] = useState(false) // true : USD, false: Token
 
@@ -164,7 +171,9 @@ export function ThemeProvider({ children }) {
         setDarkMode,
         switchMode,
         pageBackColor,
+        backColorButton,
         bgColorModal,
+        bgColorTable,
         fontColor,
         fontColor1,
         fontColor2,
@@ -181,13 +190,18 @@ export function ThemeProvider({ children }) {
         bgColor,
         bgColorTooltip,
         borderColor,
+        borderColorTable,
         inputBorderColor,
         hoverColor,
+        hoverColorRow,
+        hoverColorNew,
         hoverColorButton,
         hoverColorAVR,
+        hoverColorSide,
         activeColor,
         activeColorModal,
         modalInputColor,
+        highlightColor,
         bgColorFarm,
         bgColorSup,
         bgColorMessage,
@@ -213,7 +227,6 @@ export function ThemeProvider({ children }) {
         mobileFilterBorderColor,
         mobileFilterDisableColor,
         toggleBackColor,
-        toggleCircleBgColor,
         switchBalance,
         setSwitchBalance,
         connectWalletBtnHoverBackColor,

@@ -5,8 +5,6 @@ const DetailView = styled.div`
   padding: 16px 24px;
   cursor: pointer;
   background: ${props => props.background};
-  border: 1px solid ${props => props.borderColor};
-  border-top: 0px;
   ${props =>
     props.mode === 'dark'
       ? `
@@ -22,10 +20,8 @@ const DetailView = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 0px;
-    border: unset;
     border-bottom: 1px solid ${props => props.borderColor};
-    ${props => (props.firstElement === 'yes' ? `border-radius: 16px 16px 0px 0px;` : ``)}
+    padding: 0px;
   }
 `
 
@@ -116,18 +112,24 @@ const Content = styled.div`
 
 const BadgeIcon = styled.div`
   margin: auto 17px auto 0px;
-  width: 23px;
-  height: 23px;
+  width: 13.096px;
+  height: 13.096px;
   display: flex;
   justify-content: center;
   align-items: center;
-  border-radius: 8px;
-  border: 1px solid ${props => props.borderColor};
+  border-radius: 2.278px;
+  border: 1.139px solid ${props => props.borderColor};
   box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.15);
+
+  img {
+    width: 9px;
+    height: 9px;
+  }
 
   &.network-badge {
     @media screen and (max-width: 992px) {
       margin-bottom: 15px;
+      display: inline-flex;
     }
   }
 `
@@ -142,16 +144,6 @@ const LogoImg = styled.img`
     margin-left: ${props.marginLeft}
   `
       : ``};
-`
-
-const Img = styled.img`
-  width: 37px;
-  height: 37px;
-  margin: auto 6px auto 0px;
-  @media screen and (max-width: 992px) {
-    width: 26px;
-    height: 26px;
-  }
 `
 
 const ContentInner = styled.div`
@@ -179,4 +171,4 @@ const ContentInner = styled.div`
   align-self: center;
 `
 
-export { DetailView, FlexDiv, BadgeIcon, Content, LogoImg, Img, ContentInner }
+export { DetailView, FlexDiv, BadgeIcon, Content, LogoImg, ContentInner }
