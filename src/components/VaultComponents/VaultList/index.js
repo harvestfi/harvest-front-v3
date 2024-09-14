@@ -358,12 +358,18 @@ const formatVaults = (
       vaultsSymbol = orderBy(vaultsSymbol, v => get(groupOfVaults, `${v}.publishDate`), 'desc')
       // console.log('New Filter: ', groupOfVaults)
     } else if (selectFarmType === 'PopularNow') {
-      vaultsSymbol = orderBy(
-        orderBy(vaultsSymbol, v => get(groupOfVaults, `${v}.publishDate`), 'desc').slice(0, 10),
-        v => Number(getVaultValue(groupOfVaults[v])),
-        'desc',
-      )
+      // vaultsSymbol = orderBy(
+      //   orderBy(vaultsSymbol, v => get(groupOfVaults, `${v}.publishDate`), 'desc').slice(0, 10),
+      //   v => Number(getVaultValue(groupOfVaults[v])),
+      //   'desc',
+      // )
       // console.log('Popular Now Filter: ', groupOfVaults)
+
+      vaultsSymbol = orderBy(
+        vaultsSymbol,
+        [v => Number(getVaultValue(groupOfVaults[v])), v => get(groupOfVaults, `${v}.publishDate`)],
+        ['desc', 'desc'],
+      ).slice(0, 10)
     } else if (selectFarmType === 'Boosted') {
       vaultsSymbol = vaultsSymbol.filter(tokenSymbol => get(groupOfVaults[tokenSymbol], 'boosted'))
     }
