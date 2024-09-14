@@ -784,7 +784,8 @@ const Portfolio = () => {
       toolTip: (
         <>
           Your wallet&apos;s lifetime yield, shown in USD at the time of each harvest event. It
-          includes all yield from any farm on Harvest. It does not consider claimable rewards.
+          includes all yield from any farm on Harvest. It does not consider claimable rewards and
+          BSChain data
         </>
       ),
     },
