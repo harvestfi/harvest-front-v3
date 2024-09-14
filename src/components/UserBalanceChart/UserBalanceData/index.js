@@ -410,10 +410,10 @@ const UserBalanceData = ({
           backColor={darkMode ? '#3b3c3e' : '#e9f0f7'}
           color={darkMode ? 'white' : 'black'}
         >
-          Custom
           <ChevronIcon className="chevron">
             {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
           </ChevronIcon>
+          Custom
         </ToggleButton>
         {recommendLinks.map((item, i) => (
           <ChartRangeSelect

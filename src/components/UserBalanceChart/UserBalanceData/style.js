@@ -343,7 +343,7 @@ const ToggleButton = styled.div`
 `
 
 const ChevronIcon = styled.span`
-  margin-left: 5px;
+  margin-right: 5px;
 `
 
 export {
