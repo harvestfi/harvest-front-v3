@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import ReactTooltip from 'react-tooltip'
 import { useMediaQuery } from 'react-responsive'
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -19,6 +20,8 @@ import {
   FlexDiv,
   CurContent,
   NewLabel,
+  ToggleButton,
+  ChevronIcon,
 } from './style'
 
 const recommendLinks = [
@@ -62,6 +65,7 @@ const UserBalanceData = ({
   const [curContentUnderlying, setCurContentUnderlying] = useState('0')
   const [fixedLen, setFixedLen] = useState(0)
   const [lastFarmingTimeStamp, setLastFarmingTimeStamp] = useState('-')
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
   const chainId = token.chain || token.data.chain
@@ -70,6 +74,8 @@ const UserBalanceData = ({
   const farmPriceRef = useRef(farmPrice)
   const usdPriceRef = useRef(underlyingPrice)
   const pricePerFullShareRef = useRef(pricePerFullShare)
+
+  const toggleExpand = () => setIsExpanded(prev => !prev)
 
   useEffect(() => {
     totalValueRef.current = totalValue
@@ -392,9 +398,23 @@ const UserBalanceData = ({
           lpTokenBalance={lpTokenBalance}
           totalValue={totalValue}
           setSelectedState={setSelectedState}
+          isExpanded={isExpanded}
+          toggleExpand={toggleExpand}
         />
       </ChartDiv>
       <ButtonGroup>
+        <ToggleButton
+          type="button"
+          onClick={toggleExpand}
+          className="collapse-button"
+          backColor={darkMode ? '#3b3c3e' : '#e9f0f7'}
+          color={darkMode ? 'white' : 'black'}
+        >
+          <ChevronIcon className="chevron">
+            {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
+          </ChevronIcon>
+          Custom
+        </ToggleButton>
         {recommendLinks.map((item, i) => (
           <ChartRangeSelect
             key={i}
