@@ -584,3 +584,8 @@ export const formatAge = timestamp => {
 
   return result
 }
+
+export const truncateAddress = address => {
+  if (!address) return ''
+  return `${address.slice(0, 6)}...`
+}

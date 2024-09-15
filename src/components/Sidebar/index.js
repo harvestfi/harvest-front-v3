@@ -102,6 +102,12 @@ const sideLinksTop = [
 
 const sideLinksBottom = [
   {
+    path: ROUTES.LEADERBOARD,
+    name: 'Leaderboard',
+    imgPath: Analytics,
+    external: false,
+  },
+  {
     path: ROUTES.ANALYTIC,
     name: 'Analytics',
     imgPath: Analytics,

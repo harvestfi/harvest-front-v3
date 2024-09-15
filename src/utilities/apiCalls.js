@@ -1038,3 +1038,23 @@ export const getTokenPriceFromApi = async tokenID => {
 //   }
 //   return null;
 // }
+
+export const fetchTopHolders = async (networkId, tokenAddress) => {
+  const topTokenList = {
+    url: `https://api.chainbase.online/v1/token/top-holders?chain_id=${networkId}&contract_address=${tokenAddress.toLowerCase()}&page=1&limit=100`,
+    method: 'GET',
+    headers: {
+      'x-api-key': '2lqDxKylmVBmDxzYgD6pAGaHoBA',
+      accept: 'application/json',
+    },
+  }
+
+  try {
+    const response = await axios(topTokenList)
+    // setTokenHolders(response.data.data)
+    return response.data.data
+  } catch (error) {
+    console.error('Error fetching token holders:', error)
+    return null
+  }
+}
