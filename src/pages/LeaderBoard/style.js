@@ -78,7 +78,7 @@ const Column = styled.div`
 
 const Col = styled.div`
   display: flex;
-  cursor: pointer;
+  cursor: ${props => props.cursor};
   width: fit-content;
   @media screen and (max-width: 1200px) {
     flex-flow: column;
@@ -130,7 +130,7 @@ const TableContent = styled.div`
         : ``}
   }
 `
-const SortingIcon = styled.div`
+const DownIcon = styled.div`
   margin-left: 4px;
 `
 
@@ -286,7 +286,7 @@ export {
   Column,
   Col,
   TableContent,
-  SortingIcon,
+  DownIcon,
   TableTitle,
   TableIntro,
   SpaceLine,

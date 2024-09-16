@@ -1,10 +1,12 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState, useCallback } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { PiQuestion } from 'react-icons/pi'
 import ReactTooltip from 'react-tooltip'
 import DownArrow from '../../assets/images/ui/down-icon.svg'
 import { useThemeContext } from '../../providers/useThemeContext'
-import Sort from '../../assets/images/logos/dashboard/sort.svg'
+import sortDescIcon from '../../assets/images/ui/desc.svg'
+import sortAscIcon from '../../assets/images/ui/asc.svg'
+import sortIcon from '../../assets/images/ui/sort.svg'
 import {
   Column,
   Container,
@@ -13,7 +15,7 @@ import {
   TransactionDetails,
   Col,
   TableContent,
-  SortingIcon,
+  DownIcon,
   TableTitle,
   TableIntro,
   SpaceLine,
@@ -30,9 +32,10 @@ const LeaderBoard = () => {
   const { vaultsData } = useVaults()
   const { profitShareAPY } = useStats()
   const { totalPools } = usePools()
-
   const { bgColor, backColor, fontColor, borderColor, darkMode } = useThemeContext()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' })
 
   const farmProfitSharingPool = totalPools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
@@ -55,152 +58,7 @@ const LeaderBoard = () => {
     [farmProfitSharingPool, profitShareAPY],
   )
 
-  // eslint-disable-next-line no-unused-vars
   const groupOfVaults = { ...vaultsData, ...poolVaults }
-
-  // const vaultDataObject = Object.entries(groupOfVaults).reduce((acc, [vaultSymbol, vault]) => {
-  //   const networkId = vault.poolvault ? vault.data.chain : vault.chain
-  //   const tokenAddress = vault.poolVault
-  //     ? '0x1571eD0bed4D987fe2b498DdBaE7DFA19519F651'
-  //     : vault.vaultAddress
-
-  //   acc[vaultSymbol] = { networkId, tokenAddress }
-  //   return acc
-  // }, {})
-
-  // useEffect(() => {
-  //   const getTokenHolders = async () => {
-  //     if (!hasCalledApi.current) {
-  //       try {
-  //         const holders = await Promise.all(
-  //           Object.values(groupOfVaultsTest).map(async vault => {
-  //             const networkId = vault.poolvault ? vault.data.chain : vault.chain
-  //             const tokenAddress = vault.poolVault
-  //               ? vault.data.collateralAddress
-  //               : vault.vaultAddress
-  //             const holderData = await fetchTopHolders(networkId, tokenAddress)
-  //             return holderData
-  //           }),
-  //         )
-
-  //         setTokenHolders(holders)
-  //         hasCalledApi.current = true
-  //       } catch (error) {
-  //         console.error('Error fetching holders:', error)
-  //       }
-  //     }
-  //   }
-
-  //   getTokenHolders()
-  // }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  // useEffect(() => {
-  //   const getTokenHolders = async () => {
-  //     try {
-  //       const holders = []
-  //       const vaultDataArray = Object.values(vaultDataObject)
-
-  //       for (let i = 0; i < vaultDataArray.length; i += 1) {
-  //         const { networkId, tokenAddress } = vaultDataArray[i]
-  //         // eslint-disable-next-line no-await-in-loop
-  //         const holderData = await fetchTopHolders(networkId, tokenAddress)
-  //         holders.push(holderData)
-  //       }
-
-  //       console.log('holders', holders)
-  //       setTokenHolders(holders)
-  //     } catch (error) {
-  //       console.error('Error fetching holders:', error)
-  //     }
-  //   }
-
-  //   getTokenHolders()
-  // }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  // const transformHoldersData = (holdersData, vaultsInfo) => {
-  //   const walletMap = {}
-
-  //   Object.keys(vaultsInfo).forEach((vaultSymbol, index) => {
-  //     const holders = holdersData[index]
-  //     const { tokenNames } = vaultsInfo[vaultSymbol]
-  //     let tempPricePerFullShare
-
-  //     if (vaultSymbol === 'FARM') {
-  //       tempPricePerFullShare = get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
-  //     } else {
-  //       tempPricePerFullShare = get(vaultsInfo[vaultSymbol], `pricePerFullShare`, 0)
-  //     }
-
-  //     const tokenDecimals = vaultsInfo[vaultSymbol].decimals
-  //     const pricePerFullShare = fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals)
-
-  //     const tokenUsdPrice =
-  //       Number(vaultsInfo[vaultSymbol].vaultPrice) ||
-  //       Number(
-  //         vaultsInfo[vaultSymbol].data &&
-  //           vaultsInfo[vaultSymbol].data.lpTokenData &&
-  //           vaultsInfo[vaultSymbol].data.lpTokenData.price,
-  //       ) * Number(pricePerFullShare)
-
-  //     if (holders) {
-  //       holders.forEach(holder => {
-  //         let usdValue = 0
-  //         // eslint-disable-next-line camelcase
-  //         const { wallet_address, amount, original_amount, usd_value } = holder
-
-  //         if (vaultSymbol === 'FARM') {
-  //           // eslint-disable-next-line camelcase
-  //           usdValue = usd_value
-  //         } else {
-  //           usdValue = parseFloat(amount) * tokenUsdPrice * Number(currencyRate)
-  //         }
-
-  //         if (!walletMap[wallet_address]) {
-  //           // eslint-disable-next-line camelcase
-  //           walletMap[wallet_address] = {
-  //             // eslint-disable-next-line camelcase
-  //             wallet_address,
-  //             entries: [],
-  //             // eslint-disable-next-line camelcase
-  //             total_value: 0,
-  //           }
-  //         }
-
-  //         walletMap[wallet_address].entries.push({
-  //           amount,
-  //           // eslint-disable-next-line camelcase
-  //           original_amount,
-  //           // eslint-disable-next-line camelcase
-  //           usdValue,
-  //           vaultSymbol,
-  //           tokenNames,
-  //         })
-
-  //         // eslint-disable-next-line camelcase
-  //         walletMap[wallet_address].total_value += parseFloat(usdValue)
-  //       })
-  //     }
-  //   })
-
-  //   return Object.values(walletMap)
-  //     .map(wallet => {
-  //       const walletObject = {
-  //         // eslint-disable-next-line camelcase
-  //         wallet_address: wallet.wallet_address,
-  //         // eslint-disable-next-line camelcase
-  //         total_value: wallet.total_value,
-  //       }
-
-  //       walletObject.entries = wallet.entries.sort(
-  //         (a, b) => parseFloat(b.usd_value) - parseFloat(a.usd_value),
-  //       )
-
-  //       return walletObject
-  //     })
-  //     .sort((a, b) => b.total_value - a.total_value)
-  // }
-
-  // const formattedData = transformHoldersData(tokenHolders, groupOfVaultsTest)
 
   const testApiEndpoint = {
     '0x62933bf74e3c3a3adea1ce935a9ccf5919c992de': {
@@ -227,18 +85,8 @@ const LeaderBoard = () => {
     '0x8ccc40030365274f98d19b4c343fcebd0a2c37bc': {
       totalBalance: 709379.275375685,
       vaults: {
-        '0x5Ff62fb3fC1dFBcC5Bd01593d811192E3b8050e3': {
+        '0x32db5cbac1c278696875eb9f27ed4cd7423dd126': {
           balance: 709379.275375685,
-          dailyYield: 48.371,
-        },
-      },
-      totalDailyYield: 48.371,
-    },
-    '0x4161fa43eaa1ac3882aeed12c5fc05249e533e67': {
-      totalBalance: 619615.927458208,
-      vaults: {
-        '0xc3f7ffb5d5869b3ade9448d094d81b0521e8326f': {
-          balance: 619615.927458208,
           dailyYield: 48.371,
         },
       },
@@ -266,6 +114,52 @@ const LeaderBoard = () => {
     },
   }
 
+  const handleSort = useCallback(
+    key => {
+      let direction = 'ascending'
+      if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+        direction = 'descending'
+      }
+      setSortConfig({ key, direction })
+    },
+    [sortConfig],
+  )
+
+  const sortedData = useMemo(() => {
+    const sortableItems = Object.entries(testApiEndpoint)
+    if (sortConfig.key !== null) {
+      sortableItems.sort((a, b) => {
+        let valueA, valueB
+
+        if (sortConfig.key === 'totalBalance') {
+          valueA = a[1][sortConfig.key]
+          valueB = b[1][sortConfig.key]
+        } else if (sortConfig.key === 'Efficiency') {
+          const monthlyYieldA = (a[1].totalDailyYield * 365) / 12
+          const monthlyYieldB = (b[1].totalDailyYield * 365) / 12
+          valueA = (monthlyYieldA / a[1].totalBalance) * 12 * 100 || 0
+          valueB = (monthlyYieldB / b[1].totalBalance) * 12 * 100 || 0
+        } else if (sortConfig.key === 'MonthlyYield') {
+          valueA = (a[1].totalDailyYield * 365) / 12
+          valueB = (b[1].totalDailyYield * 365) / 12
+        } else {
+          valueA = Object.values(a[1].vaults).reduce(
+            (acc, vault) => acc + (vault[sortConfig.key] || 0),
+            0,
+          )
+          valueB = Object.values(b[1].vaults).reduce(
+            (acc, vault) => acc + (vault[sortConfig.key] || 0),
+            0,
+          )
+        }
+        if (valueA < valueB) return sortConfig.direction === 'ascending' ? -1 : 1
+        if (valueA > valueB) return sortConfig.direction === 'ascending' ? 1 : -1
+        return 0
+      })
+    }
+    return sortableItems
+  }, [testApiEndpoint, sortConfig])
+
   return (
     <Container bgColor={bgColor} fontColor={fontColor}>
       <Inner>
@@ -276,24 +170,29 @@ const LeaderBoard = () => {
           <TableContent borderColor={borderColor} count={100}>
             <Header borderColor={borderColor} backColor={backColor}>
               <Column width={isMobile ? '5%' : '10%'} color={fontColor}>
-                <Col>#</Col>
-                <SortingIcon>
-                  <img className="sortIcon" src={DownArrow} alt="sort" />
-                </SortingIcon>
+                <Col cursor="pointer">
+                  #
+                  <DownIcon onClick={() => handleSort('index')}>
+                    <img className="downArrow" src={DownArrow} alt="sort" />
+                  </DownIcon>
+                </Col>
               </Column>
               <Column width={isMobile ? '5%' : '16%'} color={fontColor}>
                 <Col>Wallet</Col>
               </Column>
               <Column width={isMobile ? '5%' : '16%'} color={fontColor}>
-                <Col>
+                <Col onClick={() => handleSort('totalBalance')} cursor="pointer">
                   Balance
-                  <img className="sortIcon" src={Sort} alt="sort" />
+                  <SortingIcon
+                    sortType={sortConfig.direction}
+                    sortField={sortConfig.key}
+                    selectedField="totalBalance"
+                  />
                 </Col>
               </Column>
               <Column width={isMobile ? '5%' : '16%'} color={fontColor}>
                 <Col>
                   # of Farms
-                  <img className="sortIcon" src={Sort} alt="sort" />
                   <PiQuestion className="question" data-tip />
                   <ReactTooltip
                     backgroundColor={darkMode ? 'white' : '#101828'}
@@ -306,17 +205,29 @@ const LeaderBoard = () => {
                       height={isMobile ? '15px' : '18px'}
                       weight="600"
                     >
-                      ToolTop
+                      ToolTip
                     </NewLabel>
                   </ReactTooltip>
                 </Col>
               </Column>
               <Column width={isMobile ? '5%' : '16%'} color={fontColor}>
-                <Col>Highest allocation</Col>
+                <Col onClick={() => handleSort('dailyYield')} cursor="pointer">
+                  Highest allocation
+                  <SortingIcon
+                    sortType={sortConfig.direction}
+                    sortField={sortConfig.key}
+                    selectedField="dailyYield"
+                  />
+                </Col>
               </Column>
               <Column width={isMobile ? '5%' : '16%'} color={fontColor}>
-                <Col>
+                <Col onClick={() => handleSort('Efficiency')} cursor="pointer">
                   Efficiency
+                  <SortingIcon
+                    sortType={sortConfig.direction}
+                    sortField={sortConfig.key}
+                    selectedField="Efficiency"
+                  />
                   <PiQuestion className="question" data-tip />
                   <ReactTooltip
                     backgroundColor={darkMode ? 'white' : '#101828'}
@@ -329,26 +240,30 @@ const LeaderBoard = () => {
                       height={isMobile ? '15px' : '18px'}
                       weight="600"
                     >
-                      ToolTop
+                      ToolTip
                     </NewLabel>
                   </ReactTooltip>
                 </Col>
               </Column>
               <Column width={isMobile ? '5%' : '16%'} color={fontColor}>
-                <Col>
+                <Col onClick={() => handleSort('MonthlyYield')} cursor="pointer">
                   Monthly Yield
-                  <img className="sortIcon" src={Sort} alt="sort" />
+                  <SortingIcon
+                    sortType={sortConfig.direction}
+                    sortField={sortConfig.key}
+                    selectedField="MonthlyYield"
+                  />
                 </Col>
               </Column>
             </Header>
-            {testApiEndpoint &&
-              Object.entries(testApiEndpoint).map(([key, value], i, array) => {
-                const lastItem = i === array.length - 1
+            {sortedData &&
+              sortedData.map(([key, value], index) => {
+                const lastItem = index === sortedData.lendth - 1
                 return (
                   <HolderRow
                     key={key}
                     value={value}
-                    cKey={i}
+                    cKey={index + 1}
                     accounts={key}
                     groupOfVaults={groupOfVaults}
                     lastItem={lastItem}
@@ -359,6 +274,32 @@ const LeaderBoard = () => {
         </TransactionDetails>
       </Inner>
     </Container>
+  )
+}
+
+const SortingIcon = ({ sortType, sortField, selectedField }) => {
+  return (
+    <>
+      {sortType === 'ascending' && sortField === selectedField && (
+        <img
+          className="sort-icon"
+          src={sortDescIcon}
+          alt="Sort ASC"
+          style={{ marginLeft: '5px' }}
+        />
+      )}
+      {sortType === 'descending' && sortField === selectedField && (
+        <img
+          className="sort-icon"
+          src={sortAscIcon}
+          alt="Sort DESC"
+          style={{ marginLeft: '5px' }}
+        />
+      )}
+      {sortType !== selectedField && sortField !== selectedField && (
+        <img className="sort-icon" src={sortIcon} alt="Sort" style={{ marginLeft: '5px' }} />
+      )}
+    </>
   )
 }
 

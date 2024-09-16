@@ -93,7 +93,7 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
               size={isMobile ? 12 : 14}
               marginTop={isMobile ? 10 : 0}
               color={fontColor1}
-              value={`#${cKey + 1}`}
+              value={`#${cKey}`}
             />
           </ContentInner>
           <ContentInner width={isMobile ? '5%' : '15%'}>
