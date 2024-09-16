@@ -163,7 +163,7 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
               size={isMobile ? 12 : 10}
               marginTop={isMobile ? 10 : 0}
               color="#6988FF"
-              value={`${currencySym}${formatNumber(allocationValue, 2)} per $1 allocated`}
+              value={`${currencySym}${formatNumber(allocationValue, 2)}/yr per $1 allocated`}
               allocationValue={allocationValue}
             />
           </ContentInner>
