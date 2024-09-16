@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react'
 import { useMediaQuery } from 'react-responsive'
-// import axios from 'axios'
+import { PiQuestion } from 'react-icons/pi'
+import ReactTooltip from 'react-tooltip'
+import DownArrow from '../../assets/images/ui/down-icon.svg'
 import { useThemeContext } from '../../providers/useThemeContext'
 import Sort from '../../assets/images/logos/dashboard/sort.svg'
 import {
@@ -8,10 +10,14 @@ import {
   Container,
   Header,
   Inner,
-  // ThemeMode,
   TransactionDetails,
   Col,
   TableContent,
+  SortingIcon,
+  TableTitle,
+  TableIntro,
+  SpaceLine,
+  NewLabel,
 } from './style'
 import HolderRow from '../../components/LeaderboardComponents/HolderRow'
 import { useVaults } from '../../providers/Vault'
@@ -25,7 +31,7 @@ const LeaderBoard = () => {
   const { profitShareAPY } = useStats()
   const { totalPools } = usePools()
 
-  const { bgColor, backColor, fontColor, borderColor } = useThemeContext()
+  const { bgColor, backColor, fontColor, borderColor, darkMode } = useThemeContext()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const farmProfitSharingPool = totalPools.find(
@@ -263,39 +269,81 @@ const LeaderBoard = () => {
   return (
     <Container bgColor={bgColor} fontColor={fontColor}>
       <Inner>
+        <TableTitle>Farmer&apos;s Leaderboard</TableTitle>
+        <TableIntro>Displaying top farmers across all networks. </TableIntro>
+        <SpaceLine />
         <TransactionDetails>
           <TableContent borderColor={borderColor} count={100}>
             <Header borderColor={borderColor} backColor={backColor}>
-              <Column width={isMobile ? '5%' : '5%'} color={fontColor}>
-                <Col>No.</Col>
+              <Column width={isMobile ? '5%' : '10%'} color={fontColor}>
+                <Col>#</Col>
+                <SortingIcon>
+                  <img className="sortIcon" src={DownArrow} alt="sort" />
+                </SortingIcon>
               </Column>
-              <Column width={isMobile ? '5%' : '15%'} color={fontColor}>
-                <Col>Wallet/ENS name</Col>
+              <Column width={isMobile ? '5%' : '16%'} color={fontColor}>
+                <Col>Wallet</Col>
               </Column>
-              <Column width={isMobile ? '5%' : '20%'} color={fontColor}>
+              <Column width={isMobile ? '5%' : '16%'} color={fontColor}>
                 <Col>
-                  Portfolio Balance
+                  Balance
                   <img className="sortIcon" src={Sort} alt="sort" />
                 </Col>
               </Column>
-              <Column width={isMobile ? '5%' : '20%'} color={fontColor}>
+              <Column width={isMobile ? '5%' : '16%'} color={fontColor}>
                 <Col>
-                  Farms a user is in
+                  # of Farms
                   <img className="sortIcon" src={Sort} alt="sort" />
+                  <PiQuestion className="question" data-tip />
+                  <ReactTooltip
+                    backgroundColor={darkMode ? 'white' : '#101828'}
+                    borderColor={darkMode ? 'white' : 'black'}
+                    textColor={darkMode ? 'black' : 'white'}
+                    place="top"
+                  >
+                    <NewLabel
+                      size={isMobile ? '10px' : '12px'}
+                      height={isMobile ? '15px' : '18px'}
+                      weight="600"
+                    >
+                      ToolTop
+                    </NewLabel>
+                  </ReactTooltip>
                 </Col>
               </Column>
-              <Column width={isMobile ? '5%' : '30%'} color={fontColor}>
+              <Column width={isMobile ? '5%' : '16%'} color={fontColor}>
                 <Col>Highest allocation</Col>
               </Column>
-              <Column width={isMobile ? '5%' : '10%'} color={fontColor}>
+              <Column width={isMobile ? '5%' : '16%'} color={fontColor}>
                 <Col>
-                  Daily Yield
+                  Efficiency
+                  <PiQuestion className="question" data-tip />
+                  <ReactTooltip
+                    backgroundColor={darkMode ? 'white' : '#101828'}
+                    borderColor={darkMode ? 'white' : 'black'}
+                    textColor={darkMode ? 'black' : 'white'}
+                    place="top"
+                  >
+                    <NewLabel
+                      size={isMobile ? '10px' : '12px'}
+                      height={isMobile ? '15px' : '18px'}
+                      weight="600"
+                    >
+                      ToolTop
+                    </NewLabel>
+                  </ReactTooltip>
+                </Col>
+              </Column>
+              <Column width={isMobile ? '5%' : '16%'} color={fontColor}>
+                <Col>
+                  Monthly Yield
                   <img className="sortIcon" src={Sort} alt="sort" />
                 </Col>
               </Column>
             </Header>
             {testApiEndpoint &&
-              Object.entries(testApiEndpoint).map(([key, value], i) => {
+              Object.entries(testApiEndpoint).map(([key, value], i, array) => {
+                const lastItem = i === array.length - 1
                 return (
                   <HolderRow
                     key={key}
@@ -303,6 +351,7 @@ const LeaderBoard = () => {
                     cKey={i}
                     accounts={key}
                     groupOfVaults={groupOfVaults}
+                    lastItem={lastItem}
                   />
                 )
               })}

@@ -2,16 +2,21 @@ import styled from 'styled-components'
 
 const Container = styled.div`
   display: flex;
-  margin-bottom: ${props => props.marginBottom}px;
   margin-top: ${props => props.marginTop}px;
   color: ${props => props.fontColor};
+  line-height: ${props => props.lineHeight};
+  font-weight: ${props => props.fontWeight};
+  font-size: ${props => props.fontSize}px;
 `
 
 const Label = styled.div`
   display: flex;
-  color: ${props => props.color};
+  color: ${props => props.fontColor};
+  background: ${props => props.backColor};
+  border-radius: ${props => props.borderRadius};
+  padding: ${props => props.padding};
   img {
-    margin-right: 5px;
+    margin-left: 3px;
     align-self: center;
   }
 `

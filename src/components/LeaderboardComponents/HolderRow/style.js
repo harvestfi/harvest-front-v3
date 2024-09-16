@@ -4,8 +4,9 @@ const DetailView = styled.div`
   width: 100%;
   padding: 16px 24px;
   background: ${props => props.background};
-  border: 1px solid ${props => props.borderColor};
+  border: 1px solid #eaecf0;
   border-top: 0px;
+  border-radius: ${props => (props.lastItem ? `0 0 12px 12px` : ``)};
   ${props =>
     props.mode === 'dark'
       ? `
@@ -24,7 +25,6 @@ const DetailView = styled.div`
     padding: 0px;
     border: unset;
     border-bottom: 1px solid ${props => props.borderColor};
-    ${props => (props.firstElement === 'yes' ? `border-radius: 16px 16px 0px 0px;` : ``)}
   }
 `
 
@@ -134,7 +134,7 @@ const ContentInner = styled.div`
       : ''}
   font-weight: 400;
   font-size: 12px;
-  line-height: 23px;
+  line-height: 20px;
   align-self: center;
 `
 

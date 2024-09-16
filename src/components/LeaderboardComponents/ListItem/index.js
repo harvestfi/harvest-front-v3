@@ -1,26 +1,26 @@
 import React from 'react'
-import { useThemeContext } from '../../../providers/useThemeContext'
 import { Container, Label } from './style'
+import AnimatedDots from '../../AnimatedDots'
 
-const ListItem = ({ value, marginBottom, marginTop, vaultValue }) => {
-  const { fontColor } = useThemeContext()
-
+const ListItem = ({
+  value,
+  marginTop,
+  weight,
+  size,
+  color,
+  platform,
+  chain,
+  backColor,
+  borderRadius,
+  padding,
+}) => {
   return (
-    <Container fontColor={fontColor} marginBottom={marginBottom} marginTop={marginTop}>
-      {vaultValue ? (
-        <>
-          {value !== undefined ? (
-            <>
-              <Label>{`${value}:`}&nbsp;</Label>
-              <Label color="#4caf50">{vaultValue}</Label>
-            </>
-          ) : (
-            <Label color="#4caf50">{vaultValue}</Label>
-          )}
-        </>
-      ) : (
-        <Label>{value}</Label>
-      )}
+    <Container marginTop={marginTop} fontWeight={weight} fontSize={size} fontColor={color}>
+      <Label backColor={backColor} borderRadius={borderRadius} padding={padding}>
+        {value === 'InfinityT%' || value === undefined ? <AnimatedDots /> : value}
+        {platform ? ` (${platform})` : ''}
+        {chain ? <img src={chain} width="12px" height="12px" alt="" /> : <></>}
+      </Label>
     </Container>
   )
 }
