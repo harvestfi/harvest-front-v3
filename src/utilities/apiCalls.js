@@ -1039,22 +1039,18 @@ export const getTokenPriceFromApi = async tokenID => {
 //   return null;
 // }
 
-export const fetchTopHolders = async (networkId, tokenAddress) => {
-  const topTokenList = {
-    url: `https://api.chainbase.online/v1/token/top-holders?chain_id=${networkId}&contract_address=${tokenAddress.toLowerCase()}&page=1&limit=100`,
-    method: 'GET',
-    headers: {
-      'x-api-key': '2lqDxKylmVBmDxzYgD6pAGaHoBA',
-      accept: 'application/json',
-    },
-  }
-
+export const fetchLeaderboardData = async () => {
   try {
-    const response = await axios(topTokenList)
-    // setTokenHolders(response.data.data)
-    return response.data.data
+    const response = await fetch(
+      `https://api.harvest.finance/leaderboard?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`,
+    )
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`)
+    }
+    const data = await response.json()
+    return data
   } catch (error) {
-    console.error('Error fetching token holders:', error)
+    console.log('Error fetching leaderboard data', error)
     return null
   }
 }

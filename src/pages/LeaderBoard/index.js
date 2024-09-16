@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react'
+import React, { useMemo, useState, useCallback, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { PiQuestion } from 'react-icons/pi'
 import ReactTooltip from 'react-tooltip'
@@ -6,6 +6,7 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import sortDescIcon from '../../assets/images/ui/desc.svg'
 import sortAscIcon from '../../assets/images/ui/asc.svg'
 import sortIcon from '../../assets/images/ui/sort.svg'
+import { fetchLeaderboardData } from '../../utilities/apiCalls'
 import {
   Column,
   Container,
@@ -34,7 +35,22 @@ const LeaderBoard = () => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' })
+  const [leadersApiData, setLeadersApiData] = useState(null)
 
+  let correctedApiData = {}
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const data = await fetchLeaderboardData()
+        setLeadersApiData(data)
+      } catch (error) {
+        console.error('Error fetching leaderboard data:', error)
+      }
+    }
+
+    getData()
+  }, [])
   const farmProfitSharingPool = totalPools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )
@@ -58,58 +74,28 @@ const LeaderBoard = () => {
 
   const groupOfVaults = { ...vaultsData, ...poolVaults }
 
-  const testApiEndpoint = {
-    '0x62933bf74e3c3a3adea1ce935a9ccf5919c992de': {
-      totalBalance: 1009113.39182823,
-      vaults: {
-        '0x2ec0160246461f0ce477887dde2c931ee8233de7': {
-          balance: 620345.92,
-          dailyYield: 116.7485,
-          dailyReward: 122.6533,
-        },
-        '0x0d15225454474ab3cb124083278c7be03f8a99ff': {
-          balance: 304885.746828233,
-          dailyYield: 33.3251,
-          dailyReward: 81.2921,
-        },
-        '0xbcc2b58ab9a4f6bb576f80def62ea2bc91fc49c2': {
-          balance: 83881.725,
-          dailyYield: 10.5118,
-          dailyReward: 21.4578,
-        },
-      },
-      totalDailyYield: 385.9886,
-    },
-    '0x8ccc40030365274f98d19b4c343fcebd0a2c37bc': {
-      totalBalance: 709379.275375685,
-      vaults: {
-        '0x32db5cbac1c278696875eb9f27ed4cd7423dd126': {
-          balance: 709379.275375685,
-          dailyYield: 48.371,
-        },
-      },
-      totalDailyYield: 48.371,
-    },
-    '0xd1621a7040cd9d0be444ef07621bead1c1166ad4': {
-      totalBalance: 602904.442795107,
-      vaults: {
-        '0xbcc2b58ab9a4f6bb576f80def62ea2bc91fc49c2': {
-          balance: 379006.77482403,
-          dailyYield: 47.496,
-          dailyReward: 96.9536,
-        },
-        '0x24174022d382cd155c33a847404cda5bc7978802': {
-          balance: 223896.920436909,
-          dailyYield: 14.0691,
-          dailyReward: 36.0229,
-        },
-        '0x0d15225454474ab3cb124083278c7be03f8a99ff': {
-          balance: 0.74753416851,
-          dailyYield: 0.0001,
-        },
-      },
-      totalDailyYield: 194.5417,
-    },
+  const rearrangeApiData = apiData => {
+    const sortedEntries = Object.entries(apiData).sort(
+      ([, a], [, b]) => b.totalBalance - a.totalBalance,
+    )
+
+    sortedEntries.forEach(([, value]) => {
+      if (value.vaults) {
+        value.vaults = Object.fromEntries(
+          Object.entries(value.vaults).sort(([, a], [, b]) => b.balance - a.balance),
+        )
+      }
+    })
+
+    const top100Data = sortedEntries.slice(0, 100)
+
+    const sortedApiData = Object.fromEntries(top100Data)
+
+    return sortedApiData
+  }
+
+  if (leadersApiData) {
+    correctedApiData = rearrangeApiData(leadersApiData)
   }
 
   const handleSort = useCallback(
@@ -124,7 +110,7 @@ const LeaderBoard = () => {
   )
 
   const sortedData = useMemo(() => {
-    const sortableItems = Object.entries(testApiEndpoint)
+    const sortableItems = Object.entries(correctedApiData)
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
         let valueA, valueB
@@ -156,7 +142,7 @@ const LeaderBoard = () => {
       })
     }
     return sortableItems
-  }, [testApiEndpoint, sortConfig])
+  }, [correctedApiData, sortConfig])
 
   return (
     <Container bgColor={bgColor} fontColor={fontColor}>
