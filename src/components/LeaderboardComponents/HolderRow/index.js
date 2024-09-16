@@ -154,7 +154,7 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
               weight={400}
               size={isMobile ? 12 : 14}
               marginTop={isMobile ? 10 : 0}
-              color="#475467"
+              color="#5FCF76"
               value={`${formatNumber(walletApy, 2)}%`}
               allocationValue={allocationValue}
             />
@@ -163,7 +163,7 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
               size={isMobile ? 12 : 10}
               marginTop={isMobile ? 10 : 0}
               color="#6988FF"
-              value={`${currencySym}${formatNumber(allocationValue, 2)}`}
+              value={`${currencySym}${formatNumber(allocationValue, 2)} per $1 allocated`}
               allocationValue={allocationValue}
             />
           </ContentInner>

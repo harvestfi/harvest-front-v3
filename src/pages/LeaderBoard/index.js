@@ -2,7 +2,6 @@ import React, { useMemo, useState, useCallback } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { PiQuestion } from 'react-icons/pi'
 import ReactTooltip from 'react-tooltip'
-import DownArrow from '../../assets/images/ui/down-icon.svg'
 import { useThemeContext } from '../../providers/useThemeContext'
 import sortDescIcon from '../../assets/images/ui/desc.svg'
 import sortAscIcon from '../../assets/images/ui/asc.svg'
@@ -15,7 +14,6 @@ import {
   TransactionDetails,
   Col,
   TableContent,
-  DownIcon,
   TableTitle,
   TableIntro,
   SpaceLine,
@@ -170,12 +168,7 @@ const LeaderBoard = () => {
           <TableContent borderColor={borderColor} count={100}>
             <Header borderColor={borderColor} backColor={backColor}>
               <Column width={isMobile ? '5%' : '10%'} color={fontColor}>
-                <Col cursor="pointer">
-                  #
-                  <DownIcon onClick={() => handleSort('index')}>
-                    <img className="downArrow" src={DownArrow} alt="sort" />
-                  </DownIcon>
-                </Col>
+                <Col>#</Col>
               </Column>
               <Column width={isMobile ? '5%' : '16%'} color={fontColor}>
                 <Col>Wallet</Col>
@@ -228,21 +221,6 @@ const LeaderBoard = () => {
                     sortField={sortConfig.key}
                     selectedField="Efficiency"
                   />
-                  <PiQuestion className="question" data-tip />
-                  <ReactTooltip
-                    backgroundColor={darkMode ? 'white' : '#101828'}
-                    borderColor={darkMode ? 'white' : 'black'}
-                    textColor={darkMode ? 'black' : 'white'}
-                    place="top"
-                  >
-                    <NewLabel
-                      size={isMobile ? '10px' : '12px'}
-                      height={isMobile ? '15px' : '18px'}
-                      weight="600"
-                    >
-                      ToolTip
-                    </NewLabel>
-                  </ReactTooltip>
                 </Col>
               </Column>
               <Column width={isMobile ? '5%' : '16%'} color={fontColor}>
