@@ -1,10 +1,11 @@
 import React from 'react'
-import { Container, Label } from './style'
+import { Container, Label, ChainImage } from './style'
 import AnimatedDots from '../../AnimatedDots'
 
 const ListItem = ({
   value,
   marginTop,
+  marginRight,
   weight,
   size,
   color,
@@ -13,13 +14,30 @@ const ListItem = ({
   backColor,
   borderRadius,
   padding,
+  textDecoration,
+  imgMargin,
 }) => {
   return (
-    <Container marginTop={marginTop} fontWeight={weight} fontSize={size} fontColor={color}>
-      <Label backColor={backColor} borderRadius={borderRadius} padding={padding}>
+    <Container
+      marginTop={marginTop}
+      fontWeight={weight}
+      fontSize={size}
+      fontColor={color}
+      marginRight={marginRight}
+    >
+      <Label
+        backColor={backColor}
+        borderRadius={borderRadius}
+        padding={padding}
+        textDecoration={textDecoration}
+      >
         {value === 'InfinityT%' || value === undefined ? <AnimatedDots /> : value}
         {platform ? ` (${platform})` : ''}
-        {chain ? <img src={chain} width="12px" height="12px" alt="" /> : <></>}
+        {chain ? (
+          <ChainImage src={chain} imgMargin={imgMargin} className="chainImage" alt="" />
+        ) : (
+          <></>
+        )}
       </Label>
     </Container>
   )

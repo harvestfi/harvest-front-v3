@@ -51,25 +51,31 @@ const Content = styled.div`
       ? `
     display: ${props.display};
   `
-      : ``}
+      : ``};
   ${props =>
     props.cursor
       ? `
       cursor: ${props.cursor};
   `
-      : ''}
+      : ''};
   ${props =>
     props.marginLeft
       ? `
     margin-left: ${props.marginLeft};
   `
-      : ''}
+      : ''};
   ${props =>
     props.marginTop
       ? `
     margin-top: ${props.marginTop};
   `
-      : ''}
+      : ''};
+  ${props =>
+    props.padding
+      ? `
+        padding: ${props.padding};
+      `
+      : ''};
   font-weight: 400;
   font-size: 20px;
   line-height: 23px;
@@ -121,21 +127,38 @@ const ContentInner = styled.div`
   `
       : ``};
   ${props =>
+    props.justifyContent
+      ? `
+        justify-content: ${props.justifyContent};
+      `
+      : ''}
+  ${props =>
     props.display
       ? `
     display: ${props.display};
   `
-      : ''}
+      : ''};
   ${props =>
     props.marginLeft
       ? `
     margin-left: ${props.marginLeft};
   `
-      : ''}
+      : ''};
   font-weight: 400;
   font-size: 12px;
   line-height: 20px;
   align-self: center;
+
+  img.eyeIcon {
+    cursor: pointer;
+  }
 `
 
-export { DetailView, FlexDiv, Content, ContentInner }
+const TopFiveText = styled.div`
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #101828;
+`
+
+export { DetailView, FlexDiv, Content, ContentInner, TopFiveText }

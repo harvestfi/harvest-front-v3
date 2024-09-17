@@ -72,8 +72,13 @@ const Column = styled.div`
   font-size: 12px;
   line-height: 18px;
   display: flex;
-  justify-content: start;
   color: ${props => props.color};
+  ${props =>
+    props.justifyContent
+      ? `
+  justify-content: ${props.justifyContent}
+`
+      : `start`};
 `
 
 const Col = styled.div`

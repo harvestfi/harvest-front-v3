@@ -6,6 +6,7 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import sortDescIcon from '../../assets/images/ui/desc.svg'
 import sortAscIcon from '../../assets/images/ui/asc.svg'
 import sortIcon from '../../assets/images/ui/sort.svg'
+import expandIcon from '../../assets/images/ui/expand.svg'
 import { fetchLeaderboardData } from '../../utilities/apiCalls'
 import {
   Column,
@@ -156,10 +157,10 @@ const LeaderBoard = () => {
               <Column width={isMobile ? '5%' : '10%'} color={fontColor}>
                 <Col>#</Col>
               </Column>
-              <Column width={isMobile ? '5%' : '16%'} color={fontColor}>
+              <Column width={isMobile ? '5%' : '15%'} color={fontColor}>
                 <Col>Wallet</Col>
               </Column>
-              <Column width={isMobile ? '5%' : '16%'} color={fontColor}>
+              <Column width={isMobile ? '5%' : '15%'} color={fontColor}>
                 <Col onClick={() => handleSort('totalBalance')} cursor="pointer">
                   Balance
                   <SortingIcon
@@ -169,7 +170,7 @@ const LeaderBoard = () => {
                   />
                 </Col>
               </Column>
-              <Column width={isMobile ? '5%' : '16%'} color={fontColor}>
+              <Column width={isMobile ? '5%' : '15%'} color={fontColor}>
                 <Col>
                   # of Farms
                   <PiQuestion className="question" data-tip />
@@ -189,7 +190,7 @@ const LeaderBoard = () => {
                   </ReactTooltip>
                 </Col>
               </Column>
-              <Column width={isMobile ? '5%' : '16%'} color={fontColor}>
+              <Column width={isMobile ? '5%' : '15%'} color={fontColor}>
                 <Col onClick={() => handleSort('dailyYield')} cursor="pointer">
                   Highest allocation
                   <SortingIcon
@@ -199,7 +200,7 @@ const LeaderBoard = () => {
                   />
                 </Col>
               </Column>
-              <Column width={isMobile ? '5%' : '16%'} color={fontColor}>
+              <Column width={isMobile ? '5%' : '15%'} color={fontColor}>
                 <Col onClick={() => handleSort('Efficiency')} cursor="pointer">
                   Efficiency
                   <SortingIcon
@@ -209,7 +210,7 @@ const LeaderBoard = () => {
                   />
                 </Col>
               </Column>
-              <Column width={isMobile ? '5%' : '16%'} color={fontColor}>
+              <Column width={isMobile ? '5%' : '15%'} color={fontColor}>
                 <Col onClick={() => handleSort('MonthlyYield')} cursor="pointer">
                   Monthly Yield
                   <SortingIcon
@@ -217,6 +218,11 @@ const LeaderBoard = () => {
                     sortField={sortConfig.key}
                     selectedField="MonthlyYield"
                   />
+                </Col>
+              </Column>
+              <Column width={isMobile ? '5%' : '5%'} color={fontColor} justifyContent="center">
+                <Col cursor="pointer">
+                  <img src={expandIcon} alt="expand-icon" />
                 </Col>
               </Column>
             </Header>

@@ -3,6 +3,7 @@ import styled from 'styled-components'
 const Container = styled.div`
   display: flex;
   margin-top: ${props => props.marginTop}px;
+  margin-right: ${props => props.marginRight}px;
   color: ${props => props.fontColor};
   line-height: ${props => props.lineHeight};
   font-weight: ${props => props.fontWeight};
@@ -15,8 +16,9 @@ const Label = styled.div`
   background: ${props => props.backColor};
   border-radius: ${props => props.borderRadius};
   padding: ${props => props.padding};
+  text-decoration: ${props => props.textDecoration};
   img {
-    margin-left: 3px;
+    margin-left: ${props => (props.imgMargin ? `${props.imgMargin}px` : '3px')};
     align-self: center;
   }
 `
@@ -61,5 +63,10 @@ const TextInner = styled.div`
     font-size: 10px;
   }
 `
+const ChainImage = styled.img`
+  width: 12px;
+  height: 12px;
+  margin-left: ${props => (props.imgMargin ? `${props.imgMargin}px!important` : '3px')};
+`
 
-export { Container, Label, Content, Percent, TextInner }
+export { Container, Label, Content, Percent, TextInner, ChainImage }

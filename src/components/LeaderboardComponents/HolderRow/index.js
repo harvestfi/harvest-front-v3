@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { Content, DetailView, FlexDiv, ContentInner } from './style'
+import { Content, DetailView, FlexDiv, ContentInner, TopFiveText } from './style'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
 import BASE from '../../../assets/images/chains/base.svg'
 import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
 import POLYGON from '../../../assets/images/logos/badge/polygon.svg'
 import ZKSYNC from '../../../assets/images/logos/badge/zksync.svg'
+import eyeIcon from '../../../assets/images/ui/eye.svg'
 import ListItem from '../ListItem'
 import { truncateAddress, formatNumber } from '../../../utilities/formats'
 import { useRate } from '../../../providers/Rate'
@@ -16,6 +17,7 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
   const [badgeId, setBadgeId] = useState(-1)
   const [chainId, setChainId] = useState(-1)
   const [platform, setPlatform] = useState('')
+  const [isExpand, setIsExpand] = useState(false)
 
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
 
@@ -56,6 +58,10 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
     setPlatform(platformName)
   }, [groupOfVaults, value.vaults])
 
+  const handleExpand = () => {
+    setIsExpand(prev => !prev)
+  }
+
   const monthlyYield = (value.totalDailyYield * 365) / 12
   const walletApy = (monthlyYield / value.totalBalance) * 12 * 100
   const allocationValue = (monthlyYield / value.totalBalance) * 12
@@ -84,7 +90,15 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
   const matchedTokenNames = getTokenNames(value, groupOfVaults)
 
   return (
-    <DetailView borderColor={borderColor} hoverColor={hoverColor} key={cKey} lastItem={lastItem}>
+    <DetailView
+      borderColor={borderColor}
+      hoverColor={hoverColor}
+      key={cKey}
+      lastItem={lastItem}
+      onClick={() => {
+        handleExpand()
+      }}
+    >
       <FlexDiv padding={isMobile ? '10px' : '0'}>
         <Content width={isMobile ? '100%' : '100%'} display={isMobile ? 'block' : 'flex'}>
           <ContentInner width={isMobile ? '100%' : '10%'} display={isMobile ? 'block' : 'flex'}>
@@ -130,7 +144,7 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
                 return (
                   <React.Fragment key={vaultKey}>
                     <ListItem
-                      value={formatNumber(vaultValue.balance, 2)}
+                      value={`${currencySym}${formatNumber(vaultValue.balance, 2)}`}
                       weight={400}
                       size={isMobile ? 12 : 14}
                       marginTop={isMobile ? 10 : 0}
@@ -180,8 +194,101 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
               value={`${currencySym}${formatNumber(monthlyYield, 2)}/mo`}
             />
           </ContentInner>
+          <ContentInner width={isMobile ? '5%' : '5%'} display="flex" justifyContent="center">
+            <img src={eyeIcon} alt="eye-icon" className="eyeIcon" />
+          </ContentInner>
         </Content>
       </FlexDiv>
+      {isExpand && (
+        <>
+          <FlexDiv>
+            <Content padding="12px 0px 16px 0px">
+              <ContentInner
+                width={isMobile ? '100%' : '100%'}
+                display={isMobile ? 'block' : 'flex'}
+              >
+                <TopFiveText>Displaying top5 positions</TopFiveText>
+              </ContentInner>
+            </Content>
+          </FlexDiv>
+          <Content padding="12px 0px 16px 0px">
+            <ContentInner width={isMobile ? '100%' : '100%'} display={isMobile ? 'block' : 'flex'}>
+              <div style={{ paddingLeft: '0px', margin: 0 }}>
+                {Object.entries(value.vaults)
+                  .slice(0, 5)
+                  .map(([vaultKey, vaultValue]) => {
+                    return (
+                      <div
+                        key={vaultKey}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          marginBottom: '10px',
+                          position: 'relative',
+                          paddingLeft: '10px',
+                        }}
+                      >
+                        <span
+                          style={{
+                            content: '""',
+                            width: '4px',
+                            height: '4px',
+                            backgroundColor: 'rgb(84, 88, 99)',
+                            borderRadius: '50%',
+                            position: 'absolute',
+                            left: 0,
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                          }}
+                        />
+                        <ListItem
+                          value={`${currencySym}${formatNumber(vaultValue.balance, 2)}`}
+                          weight={500}
+                          size={isMobile ? 12 : 12}
+                          marginTop={isMobile ? 10 : 0}
+                          marginRight={10}
+                          color="#5FCF76"
+                        />
+                        <ListItem
+                          value={matchedTokenNames[0]}
+                          weight={500}
+                          size={isMobile ? 12 : 12}
+                          marginTop={isMobile ? 10 : 0}
+                          marginRight={10}
+                          imgMargin={10}
+                          color="#6988FF"
+                          platform={platform}
+                          chain={BadgeAry[badgeId]}
+                          textDecoration="underline"
+                        />
+                        <ListItem
+                          weight={500}
+                          size={isMobile ? 12 : 12}
+                          marginTop={isMobile ? 10 : 0}
+                          marginRight={10}
+                          color="#5FCF76"
+                          value={`${formatNumber(walletApy, 2)}%`}
+                          allocationValue={allocationValue}
+                        />
+                        <ListItem
+                          weight={500}
+                          size={isMobile ? 12 : 12}
+                          marginTop={isMobile ? 10 : 0}
+                          color="#6988FF"
+                          value={`${currencySym}${formatNumber(
+                            allocationValue,
+                            2,
+                          )}/yr per $1 allocated`}
+                          allocationValue={allocationValue}
+                        />
+                      </div>
+                    )
+                  })}
+              </div>
+            </ContentInner>
+          </Content>
+        </>
+      )}
     </DetailView>
   )
 }
