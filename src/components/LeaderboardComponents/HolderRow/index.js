@@ -13,10 +13,11 @@ import { truncateAddress, formatNumber } from '../../../utilities/formats'
 import { useRate } from '../../../providers/Rate'
 import { chainList } from '../../../constants'
 
-const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
+const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, getTokenNames }) => {
   const [isExpand, setIsExpand] = useState(false)
 
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
+  const networkNames = ['ethereum', 'polygon', 'arbitrum', 'base', 'zksync']
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const { borderColor, hoverColor, fontColor1 } = useThemeContext()
@@ -76,27 +77,6 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
     const totalDailyYield = vaultDailyYield + vaultDailyReward
     const vaultAllocatedValue = ((totalDailyYield * 365) / 12 / vaultBalance) * 12
     return vaultAllocatedValue
-  }
-
-  const getTokenNames = (userVault, dataVaults) => {
-    const vaults = userVault.vaults
-    const tokenNames = []
-
-    Object.entries(vaults).forEach(([vaultKey]) => {
-      Object.entries(dataVaults).forEach(([, vaultData]) => {
-        if (vaultData.vaultAddress) {
-          if (vaultData.vaultAddress.toLowerCase() === vaultKey.toLowerCase()) {
-            if (vaultData.tokenNames.length > 1) {
-              tokenNames.push(vaultData.tokenNames.join(', '))
-            } else {
-              tokenNames.push(...vaultData.tokenNames)
-            }
-          }
-        }
-      })
-    })
-
-    return tokenNames
   }
 
   const matchedTokenNames = getTokenNames(value, groupOfVaults)
@@ -277,6 +257,8 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
                           color="#6988FF"
                           platform={getPlatformName(vaultKey)}
                           chain={BadgeAry[getBadgeId(vaultKey)]}
+                          networkName={networkNames[getBadgeId(vaultKey)]}
+                          vaultAddress={vaultKey}
                           textDecoration="underline"
                         />
                         <ListItem

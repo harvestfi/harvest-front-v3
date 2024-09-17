@@ -71,10 +71,10 @@ const ChainImage = styled.img`
 `
 
 const AddressLink = styled.a`
-  font-weight: 400;
-  font-size: 14px;
+  font-weight: ${props => props.fontWeight};
+  font-size: ${props => props.fontSize};
   line-height: 20px;
-  color: #101828;
+  color: ${props => props.color};
 `
 
 export { Container, Label, Content, Percent, TextInner, ChainImage, AddressLink }

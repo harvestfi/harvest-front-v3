@@ -75,6 +75,33 @@ const LeaderBoard = () => {
 
   const groupOfVaults = { ...vaultsData, ...poolVaults }
 
+  const getTokenNames = (userVault, dataVaults) => {
+    const vaults = userVault.vaults
+    const tokenNames = []
+    const matchedVaults = {}
+
+    Object.entries(vaults).forEach(([vaultKey]) => {
+      const match = Object.entries(dataVaults).find(([, vaultData]) => {
+        return (
+          vaultData.vaultAddress && vaultData.vaultAddress.toLowerCase() === vaultKey.toLowerCase()
+        )
+      })
+
+      if (match) {
+        const [, vaultData] = match
+        if (vaultData.tokenNames.length > 1) {
+          tokenNames.push(vaultData.tokenNames.join(', '))
+        } else {
+          tokenNames.push(...vaultData.tokenNames)
+        }
+        matchedVaults[vaultKey] = vaults[vaultKey]
+      }
+    })
+
+    userVault.vaults = matchedVaults
+    return tokenNames
+  }
+
   const rearrangeApiData = apiData => {
     const sortedEntries = Object.entries(apiData).sort(
       ([, a], [, b]) => b.totalBalance - a.totalBalance,
@@ -88,7 +115,19 @@ const LeaderBoard = () => {
       }
     })
 
-    const top100Data = sortedEntries.slice(0, 100)
+    const allWalletInfo = Object.fromEntries(sortedEntries.slice(0, 150))
+
+    const filteredWalletInfo = Object.entries(allWalletInfo).reduce((acc, [key, value]) => {
+      const countMatchingVaults = getTokenNames(value, groupOfVaults)
+
+      if (countMatchingVaults.length !== 0) {
+        acc[key] = value
+      }
+
+      return acc
+    }, {})
+
+    const top100Data = Object.entries(filteredWalletInfo).slice(0, 100)
 
     const sortedApiData = Object.fromEntries(top100Data)
 
@@ -237,6 +276,7 @@ const LeaderBoard = () => {
                     accounts={key}
                     groupOfVaults={groupOfVaults}
                     lastItem={lastItem}
+                    getTokenNames={getTokenNames}
                   />
                 )
               })}

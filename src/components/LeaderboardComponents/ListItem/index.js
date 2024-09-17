@@ -19,6 +19,8 @@ const ListItem = ({
   marginLeft,
   addressValue,
   showAddress,
+  networkName,
+  vaultAddress,
 }) => {
   const stopPropagation = event => {
     event.stopPropagation()
@@ -44,14 +46,40 @@ const ListItem = ({
             href={`https://etherscan.io/address/${addressValue}`}
             target="blank"
             onClick={stopPropagation}
+            color="#101828"
+            fontSize="14px"
+            fontWeight="400"
           >
             ${showAddress}
           </AddressLink>
         ) : (
           <></>
         )}
-        {value === 'InfinityT%' || value === 'NaN%' || value === 'Here' ? <AnimatedDots /> : value}
-        {platform ? ` (${platform})` : ''}
+        {value === 'InfinityT%' || value === 'NaN%' || value === 'Here' ? (
+          <AnimatedDots />
+        ) : vaultAddress ? (
+          <></>
+        ) : (
+          value
+        )}
+        {networkName && vaultAddress && platform ? (
+          <AddressLink
+            href={
+              vaultAddress !== '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
+                ? `${window.location.origin}/${networkName}/${vaultAddress}`
+                : `${window.location.origin}/${networkName}/0xa0246c9032bc3a600820415ae600c6388619a14d`
+            }
+            target="blank"
+            onClick={stopPropagation}
+            color="#6988FF"
+            fontSize="12px"
+            fontWeight="500"
+          >
+            {`${value} (${platform})`}
+          </AddressLink>
+        ) : (
+          <></>
+        )}
         {chain ? (
           <ChainImage src={chain} imgMargin={imgMargin} className="chainImage" alt="" />
         ) : (
