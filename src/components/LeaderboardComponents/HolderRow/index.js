@@ -14,7 +14,7 @@ import { useRate } from '../../../providers/Rate'
 import { chainList } from '../../../constants'
 
 const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
-  // const [isExpand, setIsExpand] = useState(false)
+  const [isExpand, setIsExpand] = useState(false)
 
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
 
@@ -29,9 +29,9 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
     }
   }, [rates])
 
-  // const handleExpand = () => {
-  //   setIsExpand(prev => !prev)
-  // }
+  const handleExpand = () => {
+    setIsExpand(prev => !prev)
+  }
 
   const monthlyYield = (value.totalDailyYield * 365) / 12
   const walletApy = (monthlyYield / value.totalBalance) * 12 * 100
@@ -105,9 +105,9 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
       hoverColor={hoverColor}
       key={cKey}
       lastItem={lastItem}
-      // onClick={() => {
-      //   handleExpand()
-      // }}
+      onClick={() => {
+        handleExpand()
+      }}
     >
       <FlexDiv padding={isMobile ? '10px' : '0'}>
         <Content width={isMobile ? '100%' : '100%'} display={isMobile ? 'block' : 'flex'}>
@@ -214,126 +214,111 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
           </ContentInner>
         </Content>
       </FlexDiv>
-      {/* {isExpand && ( */}
-      <>
-        <FlexDiv>
-          <Content padding="12px 0px 0px 0px">
+      {isExpand && (
+        <>
+          <FlexDiv>
+            <Content padding="12px 0px 0px 0px">
+              <ContentInner
+                width={isMobile ? '100%' : '100%'}
+                display={isMobile ? 'block' : 'flex'}
+              >
+                <TopFiveText>Displaying top5 positions</TopFiveText>
+              </ContentInner>
+            </Content>
+          </FlexDiv>
+          <Content padding="12px 0px 16px 0px">
             <ContentInner width={isMobile ? '100%' : '100%'} display={isMobile ? 'block' : 'flex'}>
-              <TopFiveText>Displaying top5 positions</TopFiveText>
-            </ContentInner>
-          </Content>
-        </FlexDiv>
-        <Content padding="12px 0px 16px 0px">
-          <ContentInner width={isMobile ? '100%' : '100%'} display={isMobile ? 'block' : 'flex'}>
-            <div style={{ paddingLeft: '0px', margin: 0 }}>
-              {Object.entries(value.vaults)
-                .slice(0, 5)
-                .map(([vaultKey, vaultValue], index) => {
-                  return (
-                    <div
-                      key={vaultKey}
-                      style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        marginBottom: '10px',
-                        position: 'relative',
-                        paddingLeft: '10px',
-                      }}
-                    >
-                      <span
+              <div style={{ paddingLeft: '0px', margin: 0 }}>
+                {Object.entries(value.vaults)
+                  .slice(0, 5)
+                  .map(([vaultKey, vaultValue], index) => {
+                    return (
+                      <div
+                        key={vaultKey}
                         style={{
-                          content: '""',
-                          width: '4px',
-                          height: '4px',
-                          backgroundColor: 'rgb(84, 88, 99)',
-                          borderRadius: '50%',
-                          position: 'absolute',
-                          left: 0,
-                          top: '50%',
-                          transform: 'translateY(-50%)',
+                          display: 'flex',
+                          alignItems: 'center',
+                          marginBottom: '10px',
+                          position: 'relative',
+                          paddingLeft: '10px',
                         }}
-                      />
-                      <ListItem
-                        value={`${currencySym}${formatNumber(vaultValue.balance, 2)}`}
-                        weight={500}
-                        size={isMobile ? 12 : 12}
-                        marginTop={isMobile ? 10 : 0}
-                        marginRight={10}
-                        color="#5FCF76"
-                      />
-                      <ListItem
-                        value={matchedTokenNames[index]}
-                        weight={500}
-                        size={isMobile ? 12 : 12}
-                        marginTop={isMobile ? 10 : 0}
-                        marginRight={10}
-                        imgMargin={10}
-                        color="#6988FF"
-                        platform={getPlatformName(vaultKey)}
-                        chain={BadgeAry[getBadgeId(vaultKey)]}
-                        textDecoration="underline"
-                      />
-                      <ListItem
-                        weight={500}
-                        size={isMobile ? 12 : 12}
-                        marginTop={isMobile ? 10 : 0}
-                        marginRight={10}
-                        color="#5FCF76"
-                        value={`${formatNumber(
-                          getVaultWalletApy(vaultValue.balance, vaultValue.dailyYield),
-                          2,
-                        )}%`}
-                      />
-                      <ListItem
-                        weight={500}
-                        size={isMobile ? 12 : 12}
-                        marginTop={isMobile ? 10 : 0}
-                        color="#6988FF"
-                        value={
-                          // eslint-disable-next-line no-restricted-globals
-                          !isNaN(
-                            formatNumber(
-                              getAllocatedValue(vaultValue.balance, vaultValue.dailyYield),
-                              2,
-                            ),
-                          )
-                            ? `${currencySym}${formatNumber(
+                      >
+                        <span
+                          style={{
+                            content: '""',
+                            width: '4px',
+                            height: '4px',
+                            backgroundColor: 'rgb(84, 88, 99)',
+                            borderRadius: '50%',
+                            position: 'absolute',
+                            left: 0,
+                            top: '50%',
+                            transform: 'translateY(-50%)',
+                          }}
+                        />
+                        <ListItem
+                          value={`${currencySym}${formatNumber(vaultValue.balance, 2)}`}
+                          weight={500}
+                          size={isMobile ? 12 : 12}
+                          marginTop={isMobile ? 10 : 0}
+                          marginRight={10}
+                          color="#5FCF76"
+                        />
+                        <ListItem
+                          value={matchedTokenNames[index]}
+                          weight={500}
+                          size={isMobile ? 12 : 12}
+                          marginTop={isMobile ? 10 : 0}
+                          marginRight={10}
+                          imgMargin={10}
+                          color="#6988FF"
+                          platform={getPlatformName(vaultKey)}
+                          chain={BadgeAry[getBadgeId(vaultKey)]}
+                          textDecoration="underline"
+                        />
+                        <ListItem
+                          weight={500}
+                          size={isMobile ? 12 : 12}
+                          marginTop={isMobile ? 10 : 0}
+                          marginRight={10}
+                          color="#5FCF76"
+                          value={`${formatNumber(
+                            getVaultWalletApy(vaultValue.balance, vaultValue.dailyYield),
+                            2,
+                          )}%`}
+                        />
+                        <ListItem
+                          weight={500}
+                          size={isMobile ? 12 : 12}
+                          marginTop={isMobile ? 10 : 0}
+                          color="#6988FF"
+                          value={
+                            // eslint-disable-next-line no-restricted-globals
+                            !isNaN(
+                              formatNumber(
                                 getAllocatedValue(vaultValue.balance, vaultValue.dailyYield),
                                 2,
-                              )} per $1 allocated`
-                            : 'Here'
-                        }
-                        allocationValue={getAllocatedValue(
-                          vaultValue.balance,
-                          vaultValue.dailyYield,
-                        )}
-                      />
-                      <ListItem
-                        value={vaultKey}
-                        weight={500}
-                        size={isMobile ? 12 : 12}
-                        marginTop={isMobile ? 10 : 0}
-                        marginRight={10}
-                        marginLeft={10}
-                        color="#5FCF76"
-                      />
-                      <ListItem
-                        value={accounts}
-                        weight={500}
-                        size={isMobile ? 12 : 12}
-                        marginTop={isMobile ? 10 : 0}
-                        marginRight={10}
-                        marginLeft={10}
-                        color="#5FCF76"
-                      />
-                    </div>
-                  )
-                })}
-            </div>
-          </ContentInner>
-        </Content>
-      </>
-      {/* )} */}
+                              ),
+                            )
+                              ? `${currencySym}${formatNumber(
+                                  getAllocatedValue(vaultValue.balance, vaultValue.dailyYield),
+                                  2,
+                                )} per $1 allocated`
+                              : 'Here'
+                          }
+                          allocationValue={getAllocatedValue(
+                            vaultValue.balance,
+                            vaultValue.dailyYield,
+                          )}
+                        />
+                      </div>
+                    )
+                  })}
+              </div>
+            </ContentInner>
+          </Content>
+        </>
+      )}
     </DetailView>
   )
 }
