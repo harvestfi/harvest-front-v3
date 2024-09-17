@@ -4,15 +4,15 @@ const Container = styled.div`
   display: flex;
   margin-top: ${props => props.marginTop}px;
   margin-right: ${props => props.marginRight}px;
-  color: ${props => props.fontColor};
+  color: ${props => props.fontColor}!important;
   line-height: ${props => props.lineHeight};
-  font-weight: ${props => props.fontWeight};
+  font-weight: ${props => props.fontWeight}!important;
   font-size: ${props => props.fontSize}px;
 `
 
 const Label = styled.div`
   display: flex;
-  color: ${props => props.fontColor};
+  color: ${props => props.fontColor}!important;
   background: ${props => props.backColor};
   border-radius: ${props => props.borderRadius};
   padding: ${props => props.padding};
@@ -70,4 +70,11 @@ const ChainImage = styled.img`
   margin-left: ${props => (props.imgMargin ? `${props.imgMargin}px!important` : '3px')};
 `
 
-export { Container, Label, Content, Percent, TextInner, ChainImage }
+const AddressLink = styled.a`
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  color: #101828;
+`
+
+export { Container, Label, Content, Percent, TextInner, ChainImage, AddressLink }

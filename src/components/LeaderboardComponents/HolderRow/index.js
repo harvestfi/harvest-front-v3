@@ -66,13 +66,15 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
     return -1
   }
 
-  const getVaultWalletApy = (vaultBalance, vaultDailyYield) => {
-    const vaultwalletApy = ((vaultDailyYield * 365) / 12 / vaultBalance) * 12 * 100
-    return vaultwalletApy
+  const getVaultWalletApy = (vaultBalance, vaultDailyYield, vaultDailyReward) => {
+    const totalDailyYield = vaultDailyYield + vaultDailyReward
+    const vaultWalletApy = ((totalDailyYield * 365) / 12 / vaultBalance) * 12 * 100
+    return vaultWalletApy
   }
 
-  const getAllocatedValue = (vaultBalance, vaultDailyYield) => {
-    const vaultAllocatedValue = ((vaultDailyYield * 365) / 12 / vaultBalance) * 12
+  const getAllocatedValue = (vaultBalance, vaultDailyYield, vaultDailyReward) => {
+    const totalDailyYield = vaultDailyYield + vaultDailyReward
+    const vaultAllocatedValue = ((totalDailyYield * 365) / 12 / vaultBalance) * 12
     return vaultAllocatedValue
   }
 
@@ -126,7 +128,8 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
               size={isMobile ? 12 : 14}
               marginTop={isMobile ? 10 : 0}
               color={fontColor1}
-              value={truncateAddress(accounts)}
+              showAddress={truncateAddress(accounts)}
+              addressValue={accounts}
             />
           </ContentInner>
           <ContentInner width={isMobile ? '5%' : '15%'}>
@@ -283,7 +286,11 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
                           marginRight={10}
                           color="#5FCF76"
                           value={`${formatNumber(
-                            getVaultWalletApy(vaultValue.balance, vaultValue.dailyYield),
+                            getVaultWalletApy(
+                              vaultValue.balance,
+                              vaultValue.dailyYield,
+                              vaultValue.dailyReward,
+                            ),
                             2,
                           )}%`}
                         />
@@ -296,12 +303,20 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
                             // eslint-disable-next-line no-restricted-globals
                             !isNaN(
                               formatNumber(
-                                getAllocatedValue(vaultValue.balance, vaultValue.dailyYield),
+                                getAllocatedValue(
+                                  vaultValue.balance,
+                                  vaultValue.dailyYield,
+                                  vaultValue.dailyReward,
+                                ),
                                 2,
                               ),
                             )
                               ? `${currencySym}${formatNumber(
-                                  getAllocatedValue(vaultValue.balance, vaultValue.dailyYield),
+                                  getAllocatedValue(
+                                    vaultValue.balance,
+                                    vaultValue.dailyYield,
+                                    vaultValue.dailyReward,
+                                  ),
                                   2,
                                 )} per $1 allocated`
                               : 'Here'

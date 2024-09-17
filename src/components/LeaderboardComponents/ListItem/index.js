@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Label, ChainImage } from './style'
+import { Container, Label, ChainImage, AddressLink } from './style'
 import AnimatedDots from '../../AnimatedDots'
 
 const ListItem = ({
@@ -17,7 +17,13 @@ const ListItem = ({
   textDecoration,
   imgMargin,
   marginLeft,
+  addressValue,
+  showAddress,
 }) => {
+  const stopPropagation = event => {
+    event.stopPropagation()
+  }
+
   return (
     <Container
       marginTop={marginTop}
@@ -33,11 +39,18 @@ const ListItem = ({
         textDecoration={textDecoration}
         marginLeft={marginLeft}
       >
-        {value === 'InfinityT%' || value === undefined || value === 'NaN%' || value === 'Here' ? (
-          <AnimatedDots />
+        {addressValue ? (
+          <AddressLink
+            href={`https://etherscan.io/address/${addressValue}`}
+            target="blank"
+            onClick={stopPropagation}
+          >
+            ${showAddress}
+          </AddressLink>
         ) : (
-          value
+          <></>
         )}
+        {value === 'InfinityT%' || value === 'NaN%' || value === 'Here' ? <AnimatedDots /> : value}
         {platform ? ` (${platform})` : ''}
         {chain ? (
           <ChainImage src={chain} imgMargin={imgMargin} className="chainImage" alt="" />
