@@ -232,7 +232,6 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
                 {Object.entries(value.vaults)
                   .slice(0, 5)
                   .map(([vaultKey, vaultValue], index) => {
-                    console.log(value)
                     return (
                       <div
                         key={vaultKey}
