@@ -17,6 +17,7 @@ const Label = styled.div`
   border-radius: ${props => props.borderRadius};
   padding: ${props => props.padding};
   text-decoration: ${props => props.textDecoration};
+  margin-left: ${props => props.marginLeft}px;
   img {
     margin-left: ${props => (props.imgMargin ? `${props.imgMargin}px` : '3px')};
     align-self: center;

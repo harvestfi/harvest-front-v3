@@ -16,6 +16,7 @@ const ListItem = ({
   padding,
   textDecoration,
   imgMargin,
+  marginLeft,
 }) => {
   return (
     <Container
@@ -30,6 +31,7 @@ const ListItem = ({
         borderRadius={borderRadius}
         padding={padding}
         textDecoration={textDecoration}
+        marginLeft={marginLeft}
       >
         {value === 'InfinityT%' || value === undefined || value === 'NaN%' || value === 'Here' ? (
           <AnimatedDots />
