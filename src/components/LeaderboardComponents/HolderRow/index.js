@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { LuEye, LuEyeOff } from 'react-icons/lu'
+import { LuEye } from 'react-icons/lu'
 import { Content, DetailView, FlexDiv, ContentInner, TopFiveText } from './style'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
@@ -14,9 +14,6 @@ import { useRate } from '../../../providers/Rate'
 import { chainList } from '../../../constants'
 
 const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
-  const [badgeId, setBadgeId] = useState(-1)
-  const [chainId, setChainId] = useState(-1)
-  const [platform, setPlatform] = useState('')
   const [isExpand, setIsExpand] = useState(false)
 
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
@@ -32,32 +29,6 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
     }
   }, [rates])
 
-  useEffect(() => {
-    const getBadge = () => {
-      chainList.forEach((el, i) => {
-        if (el.chainId === Number(chainId)) {
-          setBadgeId(i)
-        }
-      })
-    }
-    getBadge()
-  }, [chainId])
-
-  useEffect(() => {
-    const vaultKey = Object.keys(value.vaults)[0]
-    const vaultData = Object.values(groupOfVaults).find(vault => {
-      if (vault.vaultAddress && vaultKey) {
-        return vault.vaultAddress.toLowerCase() === vaultKey.toLowerCase()
-      }
-      return false
-    })
-    const chain = vaultData ? vaultData.chain : ''
-    const platformName = vaultData ? vaultData.platform : ''
-
-    setChainId(chain)
-    setPlatform(platformName)
-  }, [groupOfVaults, value.vaults])
-
   const handleExpand = () => {
     setIsExpand(prev => !prev)
   }
@@ -65,6 +36,45 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
   const monthlyYield = (value.totalDailyYield * 365) / 12
   const walletApy = (monthlyYield / value.totalBalance) * 12 * 100
   const allocationValue = (monthlyYield / value.totalBalance) * 12
+
+  const getPlatformName = vaultAddress => {
+    const vaultData = Object.values(groupOfVaults).find(vault => {
+      if (vault.vaultAddress && vaultAddress) {
+        return vault.vaultAddress.toLowerCase() === vaultAddress.toLowerCase()
+      }
+      return false
+    })
+    const platformName = vaultData ? vaultData.platform : ''
+
+    return platformName
+  }
+
+  const getBadgeId = vaultAddress => {
+    const vaultData = Object.values(groupOfVaults).find(vault => {
+      if (vault.vaultAddress && vaultAddress) {
+        return vault.vaultAddress.toLowerCase() === vaultAddress.toLowerCase()
+      }
+      return false
+    })
+    const chain = vaultData ? vaultData.chain : ''
+
+    for (let i = 0; i < chainList.length; i += 1) {
+      if (chainList[i].chainId === Number(chain)) {
+        return i
+      }
+    }
+    return -1
+  }
+
+  const getVaultWalletApy = (vaultBalance, vaultDailyYield) => {
+    const vaultwalletApy = ((vaultDailyYield * 365) / 12 / vaultBalance) * 12 * 100
+    return vaultwalletApy
+  }
+
+  const getAllocatedValue = (vaultBalance, vaultDailyYield) => {
+    const vaultAllocatedValue = ((vaultDailyYield * 365) / 12 / vaultBalance) * 12
+    return vaultAllocatedValue
+  }
 
   const getTokenNames = (userVault, dataVaults) => {
     const vaults = userVault.vaults
@@ -156,8 +166,8 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
                       size={isMobile ? 12 : 10}
                       marginTop={isMobile ? 10 : 0}
                       color="#6988FF"
-                      platform={platform}
-                      chain={BadgeAry[badgeId]}
+                      platform={getPlatformName(vaultKey)}
+                      chain={BadgeAry[getBadgeId(vaultKey)]}
                     />
                   </React.Fragment>
                 )
@@ -200,14 +210,14 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
             justifyContent="center"
             fontSize="18px"
           >
-            {isExpand ? <LuEye /> : <LuEyeOff />}
+            <LuEye />
           </ContentInner>
         </Content>
       </FlexDiv>
       {isExpand && (
         <>
           <FlexDiv>
-            <Content padding="12px 0px 16px 0px">
+            <Content padding="12px 0px 0px 0px">
               <ContentInner
                 width={isMobile ? '100%' : '100%'}
                 display={isMobile ? 'block' : 'flex'}
@@ -221,7 +231,8 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
               <div style={{ paddingLeft: '0px', margin: 0 }}>
                 {Object.entries(value.vaults)
                   .slice(0, 5)
-                  .map(([vaultKey, vaultValue]) => {
+                  .map(([vaultKey, vaultValue], index) => {
+                    console.log(value)
                     return (
                       <div
                         key={vaultKey}
@@ -255,15 +266,15 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
                           color="#5FCF76"
                         />
                         <ListItem
-                          value={matchedTokenNames[0]}
+                          value={matchedTokenNames[index]}
                           weight={500}
                           size={isMobile ? 12 : 12}
                           marginTop={isMobile ? 10 : 0}
                           marginRight={10}
                           imgMargin={10}
                           color="#6988FF"
-                          platform={platform}
-                          chain={BadgeAry[badgeId]}
+                          platform={getPlatformName(vaultKey)}
+                          chain={BadgeAry[getBadgeId(vaultKey)]}
                           textDecoration="underline"
                         />
                         <ListItem
@@ -272,19 +283,34 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
                           marginTop={isMobile ? 10 : 0}
                           marginRight={10}
                           color="#5FCF76"
-                          value={`${formatNumber(walletApy, 2)}%`}
-                          allocationValue={allocationValue}
+                          value={`${formatNumber(
+                            getVaultWalletApy(vaultValue.balance, vaultValue.dailyYield),
+                            2,
+                          )}%`}
                         />
                         <ListItem
                           weight={500}
                           size={isMobile ? 12 : 12}
                           marginTop={isMobile ? 10 : 0}
                           color="#6988FF"
-                          value={`${currencySym}${formatNumber(
-                            allocationValue,
-                            2,
-                          )}/yr per $1 allocated`}
-                          allocationValue={allocationValue}
+                          value={
+                            // eslint-disable-next-line no-restricted-globals
+                            !isNaN(
+                              formatNumber(
+                                getAllocatedValue(vaultValue.balance, vaultValue.dailyYield),
+                                2,
+                              ),
+                            )
+                              ? `${currencySym}${formatNumber(
+                                  getAllocatedValue(vaultValue.balance, vaultValue.dailyYield),
+                                  2,
+                                )} per $1 allocated`
+                              : 'Here'
+                          }
+                          allocationValue={getAllocatedValue(
+                            vaultValue.balance,
+                            vaultValue.dailyYield,
+                          )}
                         />
                       </div>
                     )

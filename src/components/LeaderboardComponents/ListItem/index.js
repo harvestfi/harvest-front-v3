@@ -31,7 +31,11 @@ const ListItem = ({
         padding={padding}
         textDecoration={textDecoration}
       >
-        {value === 'InfinityT%' || value === undefined ? <AnimatedDots /> : value}
+        {value === 'InfinityT%' || value === undefined || value === 'NaN%' || value === 'Here' ? (
+          <AnimatedDots />
+        ) : (
+          value
+        )}
         {platform ? ` (${platform})` : ''}
         {chain ? (
           <ChainImage src={chain} imgMargin={imgMargin} className="chainImage" alt="" />
