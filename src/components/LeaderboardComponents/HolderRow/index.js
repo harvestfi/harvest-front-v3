@@ -14,7 +14,7 @@ import { useRate } from '../../../providers/Rate'
 import { chainList } from '../../../constants'
 
 const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
-  const [isExpand, setIsExpand] = useState(false)
+  // const [isExpand, setIsExpand] = useState(false)
 
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
 
@@ -29,9 +29,9 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
     }
   }, [rates])
 
-  const handleExpand = () => {
-    setIsExpand(prev => !prev)
-  }
+  // const handleExpand = () => {
+  //   setIsExpand(prev => !prev)
+  // }
 
   const monthlyYield = (value.totalDailyYield * 365) / 12
   const walletApy = (monthlyYield / value.totalBalance) * 12 * 100
@@ -105,9 +105,9 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
       hoverColor={hoverColor}
       key={cKey}
       lastItem={lastItem}
-      onClick={() => {
-        handleExpand()
-      }}
+      // onClick={() => {
+      //   handleExpand()
+      // }}
     >
       <FlexDiv padding={isMobile ? '10px' : '0'}>
         <Content width={isMobile ? '100%' : '100%'} display={isMobile ? 'block' : 'flex'}>
