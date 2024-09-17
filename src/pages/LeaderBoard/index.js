@@ -52,6 +52,7 @@ const LeaderBoard = () => {
 
     getData()
   }, [])
+
   const farmProfitSharingPool = totalPools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )
