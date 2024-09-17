@@ -144,8 +144,13 @@ const ContentInner = styled.div`
     margin-left: ${props.marginLeft};
   `
       : ''};
+  ${props =>
+    props.fontSize
+      ? `
+        font-size: ${props.fontSize};
+      `
+      : '12px'};
   font-weight: 400;
-  font-size: 12px;
   line-height: 20px;
   align-self: center;
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
+import { LuEye, LuEyeOff } from 'react-icons/lu'
 import { Content, DetailView, FlexDiv, ContentInner, TopFiveText } from './style'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
@@ -7,7 +8,6 @@ import BASE from '../../../assets/images/chains/base.svg'
 import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
 import POLYGON from '../../../assets/images/logos/badge/polygon.svg'
 import ZKSYNC from '../../../assets/images/logos/badge/zksync.svg'
-import eyeIcon from '../../../assets/images/ui/eye.svg'
 import ListItem from '../ListItem'
 import { truncateAddress, formatNumber } from '../../../utilities/formats'
 import { useRate } from '../../../providers/Rate'
@@ -194,8 +194,13 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem }) => {
               value={`${currencySym}${formatNumber(monthlyYield, 2)}/mo`}
             />
           </ContentInner>
-          <ContentInner width={isMobile ? '5%' : '5%'} display="flex" justifyContent="center">
-            <img src={eyeIcon} alt="eye-icon" className="eyeIcon" />
+          <ContentInner
+            width={isMobile ? '5%' : '5%'}
+            display="flex"
+            justifyContent="center"
+            fontSize="18px"
+          >
+            {isExpand ? <LuEye /> : <LuEyeOff />}
           </ContentInner>
         </Content>
       </FlexDiv>
