@@ -84,7 +84,9 @@ const LeaderBoard = () => {
     Object.entries(vaults).forEach(([vaultKey]) => {
       const match = Object.entries(dataVaults).find(([, vaultData]) => {
         return (
-          vaultData.vaultAddress && vaultData.vaultAddress.toLowerCase() === vaultKey.toLowerCase()
+          vaultData.vaultAddress &&
+          vaultData.vaultAddress.toLowerCase() === vaultKey.toLowerCase() &&
+          !vaultData.inactive
         )
       })
 
