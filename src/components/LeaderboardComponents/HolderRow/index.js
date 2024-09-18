@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { LuEye } from 'react-icons/lu'
+import { get, find } from 'lodash'
 import { Content, DetailView, FlexDiv, ContentInner, TopFiveText } from './style'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
@@ -12,17 +13,24 @@ import ListItem from '../ListItem'
 import { truncateAddress, formatNumber } from '../../../utilities/formats'
 import { useRate } from '../../../providers/Rate'
 import { chainList } from '../../../constants'
+import { usePools } from '../../../providers/Pools'
+import { useVaults } from '../../../providers/Vault'
+import { getTotalApy } from '../../../utilities/parsers'
 
 const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, getTokenNames }) => {
   const [isExpand, setIsExpand] = useState(false)
+  const [currencySym, setCurrencySym] = useState('$')
 
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
   const networkNames = ['ethereum', 'polygon', 'arbitrum', 'base', 'zksync']
-
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+
+  let vaultPool
+
   const { borderColor, hoverColor, fontColor1 } = useThemeContext()
-  const [currencySym, setCurrencySym] = useState('$')
   const { rates } = useRate()
+  const { pools } = usePools()
+  const { vaultsData } = useVaults()
 
   useEffect(() => {
     if (rates.rateData) {
@@ -37,6 +45,8 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, getTokenNam
   const monthlyYield = (value.totalDailyYield * 365) / 12
   const walletApy = (monthlyYield / value.totalBalance) * 12 * 100
   const allocationValue = (monthlyYield / value.totalBalance) * 12
+
+  const matchedTokenNames = getTokenNames(value, groupOfVaults)
 
   const getPlatformName = vaultAddress => {
     const vaultData = Object.values(groupOfVaults).find(vault => {
@@ -67,19 +77,47 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, getTokenNam
     return -1
   }
 
-  const getVaultWalletApy = (vaultBalance, vaultDailyYield, vaultDailyReward) => {
-    const totalDailyYield = vaultDailyYield + vaultDailyReward
-    const vaultWalletApy = ((totalDailyYield * 365) / 12 / vaultBalance) * 12 * 100
-    return vaultWalletApy
-  }
+  const getVaultApy = (vaultKey, vaultsGroup) => {
+    let token = null,
+      tokenSymbol = null,
+      specialVaultFlag = false
 
-  const getAllocatedValue = (vaultBalance, vaultDailyYield, vaultDailyReward) => {
-    const totalDailyYield = vaultDailyYield + vaultDailyReward
-    const vaultAllocatedValue = ((totalDailyYield * 365) / 12 / vaultBalance) * 12
-    return vaultAllocatedValue
-  }
+    if (vaultKey === '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651') {
+      vaultKey = '0xa0246c9032bc3a600820415ae600c6388619a14d'
+      specialVaultFlag = true
+    }
 
-  const matchedTokenNames = getTokenNames(value, groupOfVaults)
+    Object.entries(vaultsGroup).forEach(([key, vaultData]) => {
+      if (specialVaultFlag && vaultData.data) {
+        if (vaultData.data.collateralAddress.toLowerCase() === vaultKey.toLowerCase()) {
+          token = vaultData
+          tokenSymbol = key
+        }
+      } else if (
+        vaultData.vaultAddress &&
+        vaultData.vaultAddress.toLowerCase() === vaultKey.toLowerCase()
+      ) {
+        token = vaultData
+        tokenSymbol = key
+      }
+    })
+
+    const isSpecialVault = token.liquidityPoolVault || token.poolVault
+
+    const tokenVault = get(vaultsData, token.hodlVaultId || tokenSymbol)
+
+    if (isSpecialVault) {
+      vaultPool = token.data
+    } else {
+      vaultPool = find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
+    }
+
+    const totalApy = isSpecialVault
+      ? getTotalApy(null, token, true)
+      : getTotalApy(vaultPool, tokenVault)
+
+    return totalApy
+  }
 
   return (
     <DetailView
@@ -162,7 +200,11 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, getTokenNam
               size={isMobile ? 12 : 14}
               marginTop={isMobile ? 10 : 0}
               color="#5FCF76"
-              value={`${formatNumber(walletApy, 2)}%`}
+              value={
+                walletApy > 0 && walletApy < 0.001
+                  ? `<0.001% APY`
+                  : `${formatNumber(walletApy, 2)}% APY`
+              }
               allocationValue={allocationValue}
             />
             <ListItem
@@ -267,46 +309,17 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, getTokenNam
                           marginTop={isMobile ? 10 : 0}
                           marginRight={10}
                           color="#5FCF76"
-                          value={`${formatNumber(
-                            getVaultWalletApy(
-                              vaultValue.balance,
-                              vaultValue.dailyYield,
-                              vaultValue.dailyReward,
-                            ),
-                            2,
-                          )}%`}
+                          value={`${getVaultApy(vaultKey, groupOfVaults)}%`}
                         />
                         <ListItem
                           weight={500}
                           size={isMobile ? 12 : 12}
                           marginTop={isMobile ? 10 : 0}
                           color="#6988FF"
-                          value={
-                            // eslint-disable-next-line no-restricted-globals
-                            !isNaN(
-                              formatNumber(
-                                getAllocatedValue(
-                                  vaultValue.balance,
-                                  vaultValue.dailyYield,
-                                  vaultValue.dailyReward,
-                                ),
-                                2,
-                              ),
-                            )
-                              ? `${currencySym}${formatNumber(
-                                  getAllocatedValue(
-                                    vaultValue.balance,
-                                    vaultValue.dailyYield,
-                                    vaultValue.dailyReward,
-                                  ),
-                                  2,
-                                )} per $1 allocated`
-                              : 'Here'
-                          }
-                          allocationValue={getAllocatedValue(
-                            vaultValue.balance,
-                            vaultValue.dailyYield,
-                          )}
+                          value={`${formatNumber(
+                            getVaultApy(vaultKey, groupOfVaults) / 100,
+                            2,
+                          )}/yr per $1 allocated`}
                         />
                       </div>
                     )

@@ -81,7 +81,11 @@ const LeaderBoard = () => {
     const tokenNames = []
     const matchedVaults = {}
 
-    Object.entries(vaults).forEach(([vaultKey]) => {
+    Object.entries(vaults).forEach(([vaultKey, vaultValue]) => {
+      if (vaultValue.dailyYield === 0 || vaultValue.dailyReward + vaultValue.dailyReward === 0) {
+        return
+      }
+
       const match = Object.entries(dataVaults).find(([, vaultData]) => {
         return (
           vaultData.vaultAddress &&
@@ -143,9 +147,9 @@ const LeaderBoard = () => {
 
   const handleSort = useCallback(
     key => {
-      let direction = 'ascending'
-      if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-        direction = 'descending'
+      let direction = 'descending'
+      if (sortConfig.key === key && sortConfig.direction === 'descending') {
+        direction = 'ascending'
       }
       setSortConfig({ key, direction })
     },
@@ -169,6 +173,9 @@ const LeaderBoard = () => {
         } else if (sortConfig.key === 'MonthlyYield') {
           valueA = (a[1].totalDailyYield * 365) / 12
           valueB = (b[1].totalDailyYield * 365) / 12
+        } else if (sortConfig.key === 'balance') {
+          valueA = Math.max(...Object.values(a[1].vaults).map(vault => vault.balance))
+          valueB = Math.max(...Object.values(b[1].vaults).map(vault => vault.balance))
         } else {
           valueA = Object.values(a[1].vaults).reduce(
             (acc, vault) => acc + (vault[sortConfig.key] || 0),
@@ -233,12 +240,12 @@ const LeaderBoard = () => {
                 </Col>
               </Column>
               <Column width={isMobile ? '5%' : '15%'} color={fontColor}>
-                <Col onClick={() => handleSort('dailyYield')} cursor="pointer">
-                  Highest allocation
+                <Col onClick={() => handleSort('balance')} cursor="pointer">
+                  Highest Allocation
                   <SortingIcon
                     sortType={sortConfig.direction}
                     sortField={sortConfig.key}
-                    selectedField="dailyYield"
+                    selectedField="balance"
                   />
                 </Col>
               </Column>
