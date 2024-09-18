@@ -35,7 +35,7 @@ const LeaderBoard = () => {
   const { bgColor, backColor, fontColor, borderColor, darkMode } = useThemeContext()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
-  const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' })
+  const [sortConfig, setSortConfig] = useState({ key: 'totalBalance', direction: 'descending' })
   const [leadersApiData, setLeadersApiData] = useState(null)
 
   let correctedApiData = {}
@@ -301,17 +301,12 @@ const SortingIcon = ({ sortType, sortField, selectedField }) => {
   return (
     <>
       {sortType === 'ascending' && sortField === selectedField && (
-        <img
-          className="sort-icon"
-          src={sortDescIcon}
-          alt="Sort ASC"
-          style={{ marginLeft: '5px' }}
-        />
+        <img className="sort-icon" src={sortAscIcon} alt="Sort ASC" style={{ marginLeft: '5px' }} />
       )}
       {sortType === 'descending' && sortField === selectedField && (
         <img
           className="sort-icon"
-          src={sortAscIcon}
+          src={sortDescIcon}
           alt="Sort DESC"
           style={{ marginLeft: '5px' }}
         />
