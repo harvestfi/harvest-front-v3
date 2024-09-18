@@ -846,6 +846,10 @@ export const boostedVaults = [
   'IFARM_arbitrum',
   'lodestar_LODE',
   'lodestar_GMX',
+  'camelotV3_GRAIL_ETH',
+  'camelotV3_ARB_USDC',
+  'camelotV3_ETH_USDT',
+  'camelotV3_ETH_USDC',
 ]
 
 export const supportedCurrencies = [
