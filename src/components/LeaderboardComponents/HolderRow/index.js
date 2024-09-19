@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { LuEye } from 'react-icons/lu'
 import { get, find } from 'lodash'
 import { Content, DetailView, FlexDiv, ContentInner, TopFiveText } from './style'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -16,6 +15,8 @@ import { chainList } from '../../../constants'
 import { usePools } from '../../../providers/Pools'
 import { useVaults } from '../../../providers/Vault'
 import { getTotalApy } from '../../../utilities/parsers'
+import ChevronUp from '../../../assets/images/ui/chevron-up.svg'
+import ChevronDown from '../../../assets/images/ui/chevron-down.svg'
 
 const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, getTokenNames }) => {
   const [isExpand, setIsExpand] = useState(false)
@@ -119,6 +120,17 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, getTokenNam
     return totalApy
   }
 
+  const getBalance = () => {
+    const valueVaults = Object.entries(value.vaults)
+    let harvestBalance = 0
+    for (let i = 0; i < valueVaults.length; i += 1) {
+      harvestBalance += valueVaults[i][1].balance
+    }
+    return harvestBalance
+  }
+
+  const userHarvestBalance = getBalance()
+
   return (
     <DetailView
       borderColor={borderColor}
@@ -156,7 +168,7 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, getTokenNam
               size={isMobile ? 12 : 14}
               marginTop={isMobile ? 10 : 0}
               color="#475467"
-              value={`${currencySym}${formatNumber(value.totalBalance, 2)}`}
+              value={`${currencySym}${formatNumber(userHarvestBalance, 2)}`}
             />
           </ContentInner>
           <ContentInner width={isMobile ? '5%' : '15%'}>
@@ -235,7 +247,11 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, getTokenNam
             justifyContent="center"
             fontSize="18px"
           >
-            <LuEye />
+            {!isExpand ? (
+              <img src={ChevronDown} alt="Chevron Down" />
+            ) : (
+              <img src={ChevronUp} alt="Chevron Up" />
+            )}
           </ContentInner>
         </Content>
       </FlexDiv>
@@ -316,7 +332,7 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, getTokenNam
                           size={isMobile ? 12 : 12}
                           marginTop={isMobile ? 10 : 0}
                           color="#6988FF"
-                          value={`${formatNumber(
+                          value={`${currencySym}${formatNumber(
                             getVaultApy(vaultKey, groupOfVaults) / 100,
                             2,
                           )}/yr per $1 allocated`}

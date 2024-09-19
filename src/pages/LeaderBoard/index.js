@@ -6,7 +6,6 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import sortDescIcon from '../../assets/images/ui/desc.svg'
 import sortAscIcon from '../../assets/images/ui/asc.svg'
 import sortIcon from '../../assets/images/ui/sort.svg'
-import expandIcon from '../../assets/images/ui/expand.svg'
 import { fetchLeaderboardData } from '../../utilities/apiCalls'
 import {
   Column,
@@ -160,11 +159,18 @@ const LeaderBoard = () => {
     const sortableItems = Object.entries(correctedApiData)
     if (sortConfig.key !== null) {
       sortableItems.sort((a, b) => {
-        let valueA, valueB
+        let valueA = 0,
+          valueB = 0
 
         if (sortConfig.key === 'totalBalance') {
-          valueA = a[1][sortConfig.key]
-          valueB = b[1][sortConfig.key]
+          const vaultAArray = Object.entries(a[1].vaults)
+          const vaultBArray = Object.entries(b[1].vaults)
+          for (let i = 0; i < vaultAArray.length; i += 1) {
+            valueA += vaultAArray[i][1].balance
+          }
+          for (let i = 0; i < vaultBArray.length; i += 1) {
+            valueB += vaultBArray[i][1].balance
+          }
         } else if (sortConfig.key === 'Efficiency') {
           const monthlyYieldA = (a[1].totalDailyYield * 365) / 12
           const monthlyYieldB = (b[1].totalDailyYield * 365) / 12
@@ -220,24 +226,7 @@ const LeaderBoard = () => {
                 </Col>
               </Column>
               <Column width={isMobile ? '5%' : '15%'} color={fontColor}>
-                <Col>
-                  # of Farms
-                  <PiQuestion className="question" data-tip />
-                  <ReactTooltip
-                    backgroundColor={darkMode ? 'white' : '#101828'}
-                    borderColor={darkMode ? 'white' : 'black'}
-                    textColor={darkMode ? 'black' : 'white'}
-                    place="top"
-                  >
-                    <NewLabel
-                      size={isMobile ? '10px' : '12px'}
-                      height={isMobile ? '15px' : '18px'}
-                      weight="600"
-                    >
-                      ToolTip
-                    </NewLabel>
-                  </ReactTooltip>
-                </Col>
+                <Col># of Farms</Col>
               </Column>
               <Column width={isMobile ? '5%' : '15%'} color={fontColor}>
                 <Col onClick={() => handleSort('balance')} cursor="pointer">
@@ -252,6 +241,34 @@ const LeaderBoard = () => {
               <Column width={isMobile ? '5%' : '15%'} color={fontColor}>
                 <Col onClick={() => handleSort('Efficiency')} cursor="pointer">
                   Efficiency
+                  <PiQuestion className="question" data-tip />
+                  <ReactTooltip
+                    backgroundColor={darkMode ? 'white' : '#101828'}
+                    borderColor={darkMode ? 'white' : 'black'}
+                    textColor={darkMode ? 'black' : 'white'}
+                    place="top"
+                  >
+                    <NewLabel
+                      size={isMobile ? '10px' : '12px'}
+                      height={isMobile ? '15px' : '18px'}
+                      weight="600"
+                      width="296px"
+                    >
+                      <div>
+                        <p>This metric shows how effectively a wallet generates yield:</p>
+                        <ul style={{ paddingLeft: '20px' }}>
+                          <li>
+                            <strong>APY:</strong> The estimated yearly growth based on wallet&apos;s
+                            balance on Harvest.
+                          </li>
+                          <li>
+                            <strong>$ per $1 Allocated:</strong> Yearly yield for every $1 allocated
+                            in Harvest.
+                          </li>
+                        </ul>
+                      </div>
+                    </NewLabel>
+                  </ReactTooltip>
                   <SortingIcon
                     sortType={sortConfig.direction}
                     sortField={sortConfig.key}
@@ -270,9 +287,7 @@ const LeaderBoard = () => {
                 </Col>
               </Column>
               <Column width={isMobile ? '5%' : '5%'} color={fontColor} justifyContent="center">
-                <Col cursor="pointer">
-                  <img src={expandIcon} alt="expand-icon" />
-                </Col>
+                <Col cursor="pointer" />
               </Column>
             </Header>
             {sortedData &&
