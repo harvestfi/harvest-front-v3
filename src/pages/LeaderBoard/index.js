@@ -109,11 +109,21 @@ const LeaderBoard = () => {
   }
 
   const rearrangeApiData = apiData => {
-    const sortedEntries = Object.entries(apiData).sort(
-      ([, a], [, b]) => b.totalBalance - a.totalBalance,
-    )
+    const vaultBalanceSortedData = Object.entries(apiData)
+      .map(([address, data]) => {
+        const totalVaultBalance = Object.values(data.vaults).reduce((sum, vault) => {
+          return sum + vault.balance
+        }, 0)
 
-    sortedEntries.forEach(([, value]) => {
+        return { address, data, totalVaultBalance }
+      })
+      .sort((a, b) => b.totalVaultBalance - a.totalVaultBalance)
+      .reduce((acc, { address, data }) => {
+        acc[address] = data
+        return acc
+      }, {})
+
+    Object.entries(vaultBalanceSortedData).forEach(([, value]) => {
       if (value.vaults) {
         value.vaults = Object.fromEntries(
           Object.entries(value.vaults).sort(([, a], [, b]) => b.balance - a.balance),
@@ -121,19 +131,9 @@ const LeaderBoard = () => {
       }
     })
 
-    const allWalletInfo = Object.fromEntries(sortedEntries.slice(0, 150))
+    const allWalletInfo = Object.entries(vaultBalanceSortedData).slice(0, 150)
 
-    const filteredWalletInfo = Object.entries(allWalletInfo).reduce((acc, [key, value]) => {
-      const countMatchingVaults = getTokenNames(value, groupOfVaults)
-
-      if (countMatchingVaults.length !== 0) {
-        acc[key] = value
-      }
-
-      return acc
-    }, {})
-
-    const top100Data = Object.entries(filteredWalletInfo).slice(0, 100)
+    const top100Data = allWalletInfo.slice(0, 100)
 
     const sortedApiData = Object.fromEntries(top100Data)
 
