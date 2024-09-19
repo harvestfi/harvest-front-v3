@@ -309,7 +309,7 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, getTokenNam
                           marginTop={isMobile ? 10 : 0}
                           marginRight={10}
                           color="#5FCF76"
-                          value={`${getVaultApy(vaultKey, groupOfVaults)}%`}
+                          value={`${getVaultApy(vaultKey, groupOfVaults)}% APY`}
                         />
                         <ListItem
                           weight={500}

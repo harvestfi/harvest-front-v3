@@ -50,7 +50,7 @@ const ListItem = ({
             fontSize="14px"
             fontWeight="400"
           >
-            ${showAddress}
+            {showAddress}
           </AddressLink>
         ) : (
           <></>
