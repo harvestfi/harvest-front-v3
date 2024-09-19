@@ -1041,13 +1041,12 @@ export const getTokenPriceFromApi = async tokenID => {
 
 export const fetchLeaderboardData = async () => {
   try {
-    const response = await fetch(
-      `https://api.harvest.finance/leaderboard?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`,
-    )
+    const response = await fetch(`https://api.harvest.finance/leaderboard?key=harvest-key`)
     if (!response.ok) {
       throw new Error(`HTTP error! Status: ${response.status}`)
     }
     const data = await response.json()
+    console.log(data)
     return data
   } catch (error) {
     console.log('Error fetching leaderboard data', error)
