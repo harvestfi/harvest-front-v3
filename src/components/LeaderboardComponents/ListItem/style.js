@@ -2,22 +2,28 @@ import styled from 'styled-components'
 
 const Container = styled.div`
   display: flex;
-  margin-top: ${props => props.marginTop}px;
-  margin-right: ${props => props.marginRight}px;
+  flex-direction: ${props => (props.flexDirection ? props.flexDirection : '')};
+  margin-top: ${props => props.marginTop};
+  margin-right: ${props => props.marginRight};
   color: ${props => props.fontColor}!important;
   line-height: ${props => props.lineHeight};
   font-weight: ${props => props.fontWeight}!important;
-  font-size: ${props => props.fontSize}px;
+  font-size: ${props => props.fontSize};
+  width: ${props => (props.width ? props.width : '')};
+  justify-content: ${props => (props.justifyContent ? props.justifyContent : 'space-between')};
 `
 
 const Label = styled.div`
   display: flex;
+  justify-content: ${props => (props.justifyContent ? props.justifyContent : '')};
   color: ${props => props.fontColor}!important;
   background: ${props => props.backColor};
   border-radius: ${props => props.borderRadius};
   padding: ${props => props.padding};
   text-decoration: ${props => props.textDecoration};
-  margin-left: ${props => props.marginLeft}px;
+  font-size: ${props => (props.fontSize ? props.fontSize : '')};
+  font-weight: ${props => (props.fontWeight ? props.fontWeight : '')};
+  margin-left: ${props => props.marginLeft};
   img {
     margin-left: ${props => (props.imgMargin ? `${props.imgMargin}px` : '3px')};
     align-self: center;
@@ -25,9 +31,9 @@ const Label = styled.div`
 `
 
 const Content = styled.div`
-  font-size: ${props => props.size}px;
+  font-size: ${props => props.size};
   font-weight: ${props => (props.weight ? prop => prop.weight : 'normal')};
-  line-height: ${props => props.height}px;
+  line-height: ${props => props.height};
   color: ${props => props.color};
   align-self: center;
 
@@ -67,7 +73,7 @@ const TextInner = styled.div`
 const ChainImage = styled.img`
   width: 12px;
   height: 12px;
-  margin-left: ${props => (props.imgMargin ? `${props.imgMargin}px!important` : '3px')};
+  margin-left: ${props => (props.imgMargin ? `${props.imgMargin}!important` : '3px')};
 `
 
 const AddressLink = styled.a`

@@ -2,6 +2,8 @@ import React, { useMemo, useState, useCallback, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { PiQuestion } from 'react-icons/pi'
 import ReactTooltip from 'react-tooltip'
+import { Dropdown } from 'react-bootstrap'
+import { IoCheckmark } from 'react-icons/io5'
 import { useThemeContext } from '../../providers/useThemeContext'
 import sortDescIcon from '../../assets/images/ui/desc.svg'
 import sortAscIcon from '../../assets/images/ui/asc.svg'
@@ -19,6 +21,12 @@ import {
   TableIntro,
   SpaceLine,
   NewLabel,
+  BetaBadge,
+  HeaderButton,
+  CurrencyDropDown,
+  CurrencySelect,
+  CurrencyDropDownMenu,
+  CurrencyDropDownItem,
 } from './style'
 import HolderRow from '../../components/LeaderboardComponents/HolderRow'
 import { useVaults } from '../../providers/Vault'
@@ -26,18 +34,34 @@ import { FARM_TOKEN_SYMBOL, SPECIAL_VAULTS } from '../../constants'
 import { useStats } from '../../providers/Stats'
 import { usePools } from '../../providers/Pools'
 import { addresses } from '../../data'
+import ChevronDown from '../../assets/images/ui/chevron-down.svg'
 
 const LeaderBoard = () => {
   const { vaultsData } = useVaults()
   const { profitShareAPY } = useStats()
   const { totalPools } = usePools()
-  const { bgColor, backColor, fontColor, borderColor, darkMode } = useThemeContext()
+  const {
+    bgColor,
+    backColor,
+    fontColor,
+    borderColor,
+    darkMode,
+    backColorButton,
+    hoverColorNew,
+    fontColor2,
+    hoverColor,
+  } = useThemeContext()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const [sortConfig, setSortConfig] = useState({ key: 'totalBalance', direction: 'descending' })
   const [leadersApiData, setLeadersApiData] = useState(null)
+  const [selectedItem, setSelectedItem] = useState('Top Allocation')
 
   let correctedApiData = {}
+
+  const handleItemClick = useCallback(item => {
+    setSelectedItem(item)
+  }, [])
 
   useEffect(() => {
     const getData = async () => {
@@ -200,15 +224,115 @@ const LeaderBoard = () => {
     return sortableItems
   }, [correctedApiData, sortConfig])
 
-  return (
+  return isMobile ? (
+    <Container>
+      <Inner style={{ display: 'flex', justifyContent: 'space-between' }}>
+        <div>
+          <TableTitle>
+            Leaderboard <BetaBadge>Beta</BetaBadge>
+          </TableTitle>
+          <TableIntro marginBottom="0px">Displaying data from all networks. </TableIntro>
+        </div>
+        <HeaderButton style={{ width: '42%' }}>
+          <Dropdown>
+            <CurrencyDropDown
+              id="dropdown-basic"
+              bgcolor={backColorButton}
+              fontcolor2={fontColor2}
+              hovercolor={hoverColorNew}
+              style={{ padding: 0 }}
+            >
+              <CurrencySelect backColor={backColor} fontcolor2={fontColor2} hovercolor={hoverColor}>
+                <div>{selectedItem}</div>
+                <img src={ChevronDown} alt="Chevron Down" />
+              </CurrencySelect>
+            </CurrencyDropDown>
+            <CurrencyDropDownMenu>
+              <CurrencyDropDownItem
+                onClick={() => {
+                  handleItemClick('Top Allocation')
+                  handleSort('balance')
+                }}
+              >
+                <div>Top Allocation</div>
+                {selectedItem === 'Top Allocation' && <IoCheckmark className="check-icon" />}
+              </CurrencyDropDownItem>
+              <CurrencyDropDownItem
+                onClick={() => {
+                  handleItemClick('Efficiency')
+                  handleSort('Efficiency')
+                }}
+              >
+                <div>Efficiency</div>
+                {selectedItem === 'Efficiency' && <IoCheckmark className="check-icon" />}
+              </CurrencyDropDownItem>
+              <CurrencyDropDownItem
+                onClick={() => {
+                  handleItemClick('Monthly Yield')
+                  handleSort('MonthlyYield')
+                }}
+              >
+                <div>Monthly Yield</div>
+                {selectedItem === 'Monthly Yield' && <IoCheckmark className="check-icon" />}
+              </CurrencyDropDownItem>
+            </CurrencyDropDownMenu>
+          </Dropdown>
+        </HeaderButton>
+      </Inner>
+      <Inner style={{ padding: '0px', borderRadius: '0px' }}>
+        <TableContent borderColor={borderColor} count={100}>
+          <Header borderColor={borderColor} backColor="#ffffff" borderRadius="0px" padding="0px">
+            <Column width="50%" color={fontColor} fontSize="14px" padding="14px 28px">
+              <Col># User</Col>
+            </Column>
+            <Column
+              width="50%"
+              color={fontColor}
+              fontSize="14px"
+              padding="14px 28px"
+              onClick={() => {
+                if (selectedItem === 'Top Allocation') {
+                  handleSort('balance')
+                } else if (selectedItem === 'Efficiency') {
+                  handleSort('Efficiency')
+                } else if (selectedItem === 'Monthly Yield') {
+                  handleSort('MonthlyYield')
+                }
+              }}
+            >
+              <Col>{selectedItem}</Col>
+            </Column>
+          </Header>
+          {sortedData &&
+            sortedData.map(([key, value], index) => {
+              const lastItem = index === sortedData.lendth - 1
+              return (
+                <HolderRow
+                  key={key}
+                  value={value}
+                  cKey={index + 1}
+                  accounts={key}
+                  groupOfVaults={groupOfVaults}
+                  lastItem={lastItem}
+                  getTokenNames={getTokenNames}
+                  selectedItem={selectedItem}
+                />
+              )
+            })}
+        </TableContent>
+      </Inner>
+    </Container>
+  ) : (
     <Container bgColor={bgColor} fontColor={fontColor}>
       <Inner>
-        <TableTitle>Farmer&apos;s Leaderboard</TableTitle>
-        <TableIntro>Displaying top farmers across all networks. </TableIntro>
+        <TableTitle>
+          Leaderboard <BetaBadge>Beta</BetaBadge>
+        </TableTitle>
+        <TableIntro>Displaying data from all networks. </TableIntro>
         <SpaceLine />
         <TransactionDetails>
           <TableContent borderColor={borderColor} count={100}>
-            <Header borderColor={borderColor} backColor={backColor}>
+            <Header borderColor={borderColor} backColor="#f9fafb">
               <Column width={isMobile ? '5%' : '10%'} color={fontColor}>
                 <Col>#</Col>
               </Column>
@@ -230,7 +354,7 @@ const LeaderBoard = () => {
               </Column>
               <Column width={isMobile ? '5%' : '15%'} color={fontColor}>
                 <Col onClick={() => handleSort('balance')} cursor="pointer">
-                  Highest Allocation
+                  Top Allocation
                   <SortingIcon
                     sortType={sortConfig.direction}
                     sortField={sortConfig.key}
@@ -292,7 +416,7 @@ const LeaderBoard = () => {
             </Header>
             {sortedData &&
               sortedData.map(([key, value], index) => {
-                const lastItem = index === sortedData.lendth - 1
+                const lastItem = index === sortedData.length - 1
                 return (
                   <HolderRow
                     key={key}

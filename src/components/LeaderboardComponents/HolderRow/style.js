@@ -150,6 +150,18 @@ const ContentInner = styled.div`
         font-size: ${props.fontSize};
       `
       : '12px'};
+  ${props =>
+    props.padding
+      ? `
+            padding: ${props.padding};
+          `
+      : ''};
+  ${props =>
+    props.flexDirection
+      ? `
+            flex-direction: ${props.flexDirection};
+              `
+      : ''};
   font-weight: 400;
   line-height: 20px;
   align-self: center;
