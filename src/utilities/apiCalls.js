@@ -1046,7 +1046,6 @@ export const fetchLeaderboardData = async () => {
       throw new Error(`HTTP error! Status: ${response.status}`)
     }
     const data = await response.json()
-    console.log(data)
     return data
   } catch (error) {
     console.log('Error fetching leaderboard data', error)
