@@ -26,6 +26,7 @@ const HolderRow = ({
   lastItem,
   getTokenNames,
   selectedItem,
+  darkMode,
 }) => {
   const [isExpand, setIsExpand] = useState(false)
   const [currencySym, setCurrencySym] = useState('$')
@@ -374,7 +375,7 @@ const HolderRow = ({
               weight={400}
               size="14px"
               marginTop="0px"
-              color="#475467"
+              color={darkMode ? '#ffffff' : '#475467'}
               value={`${currencySym}${formatNumber(userHarvestBalance, 2)}`}
             />
           </ContentInner>
@@ -384,7 +385,7 @@ const HolderRow = ({
               weight={400}
               size="14px"
               marginTop="0px"
-              color="#475467"
+              color={darkMode ? '#ffffff' : '#475467'}
             />
           </ContentInner>
           <ContentInner width="15%">
@@ -455,9 +456,25 @@ const HolderRow = ({
             fontSize="18px"
           >
             {!isExpand ? (
-              <img src={ChevronDown} alt="Chevron Down" />
+              <img
+                src={ChevronDown}
+                alt="Chevron Down"
+                style={{
+                  filter: darkMode
+                    ? 'invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%)'
+                    : '',
+                }}
+              />
             ) : (
-              <img src={ChevronUp} alt="Chevron Up" />
+              <img
+                src={ChevronUp}
+                alt="Chevron Up"
+                style={{
+                  filter: darkMode
+                    ? 'invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%)'
+                    : '',
+                }}
+              />
             )}
           </ContentInner>
         </Content>
@@ -496,7 +513,7 @@ const HolderRow = ({
                             content: '""',
                             width: '4px',
                             height: '4px',
-                            backgroundColor: 'rgb(84, 88, 99)',
+                            backgroundColor: darkMode ? '#ffffff' : 'rgb(84, 88, 99)',
                             borderRadius: '50%',
                             position: 'absolute',
                             left: 0,

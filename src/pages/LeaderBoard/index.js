@@ -57,6 +57,7 @@ const LeaderBoard = () => {
     hoverColor,
     inputBorderColor,
     bgColorFarm,
+    filterColor,
   } = useThemeContext()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
@@ -314,7 +315,7 @@ const LeaderBoard = () => {
       )
     }
     return false
-  }, [sortedByBalance, account])
+  }, [sortedByBalance, account]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const efficiencyRank = useMemo(() => {
     if (account && Object.entries(correctedApiData).length > 0) {
@@ -324,16 +325,18 @@ const LeaderBoard = () => {
       )
     }
     return false
-  }, [sortedByEfficiency, account])
+  }, [sortedByEfficiency, account]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return isMobile ? (
     <Container>
       <Inner style={{ display: 'flex', justifyContent: 'space-between' }}>
         <div>
-          <TableTitle>
+          <TableTitle color={darkMode ? '#ffffff' : '#101828'}>
             Leaderboard <BetaBadge>Beta</BetaBadge>
           </TableTitle>
-          <TableIntro marginBottom="0px">Displaying data from all networks. </TableIntro>
+          <TableIntro marginBottom="0px" color={darkMode ? '#ffffff' : '#475467'}>
+            Displaying data from all networks.
+          </TableIntro>
         </div>
         <HeaderButton style={{ width: '42%' }}>
           <Dropdown>
@@ -429,10 +432,12 @@ const LeaderBoard = () => {
       <Inner>
         <LeaderBoardTop>
           <div>
-            <TableTitle>
+            <TableTitle color={darkMode ? '#ffffff' : '#101828'}>
               Leaderboard <BetaBadge>Beta</BetaBadge>
             </TableTitle>
-            <TableIntro>Displaying data from all networks. </TableIntro>
+            <TableIntro color={darkMode ? '#ffffff' : '#475467'}>
+              Displaying data from all networks.
+            </TableIntro>
           </div>
           <div>
             {balanceRank > 0 && efficiencyRank > 0 ? (
@@ -450,7 +455,7 @@ const LeaderBoard = () => {
         <SpaceLine />
         <TransactionDetails>
           <TableContent borderColor={borderColor} count={100}>
-            <Header borderColor={borderColor} backColor="#f9fafb">
+            <Header borderColor={borderColor} backColor={darkMode ? '#20273A' : '#f9fafb'}>
               <Column width={isMobile ? '5%' : '10%'} color={fontColor}>
                 <Col>#</Col>
               </Column>
@@ -458,7 +463,11 @@ const LeaderBoard = () => {
                 <Col>Wallet</Col>
               </Column>
               <Column width={isMobile ? '5%' : '15%'} color={fontColor}>
-                <Col onClick={() => handleSort('totalBalance')} cursor="pointer">
+                <Col
+                  onClick={() => handleSort('totalBalance')}
+                  cursor="pointer"
+                  filterColor={filterColor}
+                >
                   Balance
                   <SortingIcon
                     sortType={sortConfig.direction}
@@ -471,7 +480,11 @@ const LeaderBoard = () => {
                 <Col># of Farms</Col>
               </Column>
               <Column width={isMobile ? '5%' : '15%'} color={fontColor}>
-                <Col onClick={() => handleSort('balance')} cursor="pointer">
+                <Col
+                  onClick={() => handleSort('balance')}
+                  cursor="pointer"
+                  filterColor={filterColor}
+                >
                   Top Allocation
                   <SortingIcon
                     sortType={sortConfig.direction}
@@ -481,7 +494,11 @@ const LeaderBoard = () => {
                 </Col>
               </Column>
               <Column width={isMobile ? '5%' : '15%'} color={fontColor}>
-                <Col onClick={() => handleSort('Efficiency')} cursor="pointer">
+                <Col
+                  onClick={() => handleSort('Efficiency')}
+                  cursor="pointer"
+                  filterColor={filterColor}
+                >
                   Efficiency
                   <PiQuestion className="question" data-tip />
                   <ReactTooltip
@@ -519,7 +536,11 @@ const LeaderBoard = () => {
                 </Col>
               </Column>
               <Column width={isMobile ? '5%' : '15%'} color={fontColor}>
-                <Col onClick={() => handleSort('MonthlyYield')} cursor="pointer">
+                <Col
+                  onClick={() => handleSort('MonthlyYield')}
+                  cursor="pointer"
+                  filterColor={filterColor}
+                >
                   Monthly Yield
                   <SortingIcon
                     sortType={sortConfig.direction}
@@ -544,6 +565,7 @@ const LeaderBoard = () => {
                     groupOfVaults={groupOfVaults}
                     lastItem={lastItem}
                     getTokenNames={getTokenNames}
+                    darkMode={darkMode}
                   />
                 )
               })}

@@ -4,7 +4,7 @@ const DetailView = styled.div`
   width: 100%;
   padding: 16px 24px;
   background: ${props => props.background};
-  border: 1px solid #eaecf0;
+  border: 1px solid ${props => props.borderColor};
   border-top: 0px;
   border-radius: ${props => (props.lastItem ? `0 0 12px 12px` : ``)};
   ${props =>

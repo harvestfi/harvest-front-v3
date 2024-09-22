@@ -208,7 +208,7 @@ const ListItem = ({
             href={`https://etherscan.io/address/${addressValue}`}
             target="blank"
             onClick={stopPropagation}
-            color="#101828"
+            color={color}
             fontSize="14px"
             fontWeight="400"
           >

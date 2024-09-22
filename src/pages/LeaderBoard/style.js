@@ -58,7 +58,8 @@ const Header = styled.div`
   padding: ${props => (props.padding ? props.padding : '12px 24px')};
   background: ${props => props.backColor};
   display: flex;
-  border: 1px solid #eaecf0;
+  border: 1px solid;
+  border-color: ${props => (props.borderColor ? props.borderColor : '')};
   border-top-left-radius: ${props => (props.borderRadius ? props.borderRadius : '12px')};
   border-top-right-radius: ${props => (props.borderRadius ? props.borderRadius : '12px')};
 `
@@ -111,6 +112,10 @@ const Col = styled.div`
     cursor: pointer;
     margin: auto 0px auto 5px;
   }
+
+  img.sort-icon {
+    filter: ${props => props.filterColor};
+  }
 `
 
 const TableContent = styled.div`
@@ -141,7 +146,7 @@ const TableTitle = styled.div`
   font-weight: 600;
   font-size: 18px;
   line-height: 28px;
-  color: rgba(16, 24, 40, 1);
+  color: ${props => (props.color ? props.color : '')};
   display: flex;
 `
 
@@ -149,7 +154,7 @@ const TableIntro = styled.div`
   font-weight: 400;
   font-size: 12px;
   line-height: 24px;
-  color: rgba(71, 84, 103, 1);
+  color: ${props => (props.color ? props.color : '')};
   margin-bottom: ${props => (props.marginBottom ? props.marginBottom : '20px')};
 `
 const SpaceLine = styled.div`

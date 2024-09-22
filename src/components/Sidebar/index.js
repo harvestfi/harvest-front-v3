@@ -13,6 +13,7 @@ import Home from '../../assets/images/logos/sidebar/home-line.svg'
 import Beginners from '../../assets/images/logos/sidebar/beginners.svg'
 import Support from '../../assets/images/logos/sidebar/support.svg'
 import Analytics from '../../assets/images/logos/sidebar/analytics.svg'
+import BlackLeader from '../../assets/images/logos/sidebar/leader_icon_black.svg'
 // import Collaborations from '../../assets/images/logos/sidebar/collaborations.svg'
 import Advanced from '../../assets/images/logos/sidebar/advanced.svg'
 import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
@@ -104,7 +105,7 @@ const sideLinksBottom = [
   {
     path: ROUTES.LEADERBOARD,
     name: 'Leaderboard',
-    imgPath: Analytics,
+    imgPath: BlackLeader,
     external: false,
   },
   {
