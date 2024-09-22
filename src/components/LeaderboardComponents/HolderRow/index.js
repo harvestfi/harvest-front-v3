@@ -282,7 +282,7 @@ const HolderRow = ({
                             content: '""',
                             width: '4px',
                             height: '4px',
-                            backgroundColor: 'rgb(84, 88, 99)',
+                            backgroundColor: darkMode ? '#ffffff' : 'rgb(84, 88, 99)',
                             borderRadius: '50%',
                             position: 'absolute',
                             left: 0,
@@ -487,7 +487,9 @@ const HolderRow = ({
                 width={isMobile ? '100%' : '100%'}
                 display={isMobile ? 'block' : 'flex'}
               >
-                <TopFiveText>Displaying top5 positions</TopFiveText>
+                <TopFiveText color={darkMode ? '#ffffff' : '#101828'}>
+                  Displaying top5 positions
+                </TopFiveText>
               </ContentInner>
             </Content>
           </FlexDiv>

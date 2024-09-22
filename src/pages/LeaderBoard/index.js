@@ -8,6 +8,7 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import sortDescIcon from '../../assets/images/ui/desc.svg'
 import sortAscIcon from '../../assets/images/ui/asc.svg'
 import sortIcon from '../../assets/images/ui/sort.svg'
+import dropDown from '../../assets/images/ui/drop-down.e85f7fdc.svg'
 import { fetchLeaderboardData } from '../../utilities/apiCalls'
 import {
   Column,
@@ -36,7 +37,7 @@ import { FARM_TOKEN_SYMBOL, SPECIAL_VAULTS } from '../../constants'
 import { useStats } from '../../providers/Stats'
 import { usePools } from '../../providers/Pools'
 import { addresses } from '../../data'
-import ChevronDown from '../../assets/images/ui/chevron-down.svg'
+// import ChevronDown from '../../assets/images/ui/chevron-down.svg'
 import Pagination from '../../components/LeaderboardComponents/Pagination'
 import { useWallet } from '../../providers/Wallet'
 
@@ -328,7 +329,7 @@ const LeaderBoard = () => {
   }, [sortedByEfficiency, account]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return isMobile ? (
-    <Container>
+    <Container bgColor={bgColor} fontColor={fontColor}>
       <Inner style={{ display: 'flex', justifyContent: 'space-between' }}>
         <div>
           <TableTitle color={darkMode ? '#ffffff' : '#101828'}>
@@ -349,15 +350,16 @@ const LeaderBoard = () => {
             >
               <CurrencySelect backColor={backColor} fontcolor2={fontColor2} hovercolor={hoverColor}>
                 <div>{selectedItem}</div>
-                <img src={ChevronDown} alt="Chevron Down" />
+                <img src={dropDown} alt="Chevron Down" />
               </CurrencySelect>
             </CurrencyDropDown>
-            <CurrencyDropDownMenu>
+            <CurrencyDropDownMenu backColor={backColorButton}>
               <CurrencyDropDownItem
                 onClick={() => {
                   handleItemClick('Top Allocation')
                   handleSort('balance')
                 }}
+                fontColor={fontColor2}
               >
                 <div>Top Allocation</div>
                 {selectedItem === 'Top Allocation' && <IoCheckmark className="check-icon" />}
@@ -367,6 +369,7 @@ const LeaderBoard = () => {
                   handleItemClick('Efficiency')
                   handleSort('Efficiency')
                 }}
+                fontColor={fontColor2}
               >
                 <div>Efficiency</div>
                 {selectedItem === 'Efficiency' && <IoCheckmark className="check-icon" />}
@@ -376,6 +379,7 @@ const LeaderBoard = () => {
                   handleItemClick('Monthly Yield')
                   handleSort('MonthlyYield')
                 }}
+                fontColor={fontColor2}
               >
                 <div>Monthly Yield</div>
                 {selectedItem === 'Monthly Yield' && <IoCheckmark className="check-icon" />}
@@ -386,7 +390,12 @@ const LeaderBoard = () => {
       </Inner>
       <Inner style={{ padding: '0px', borderRadius: '0px' }}>
         <TableContent borderColor={borderColor} count={100}>
-          <Header borderColor={borderColor} backColor="#ffffff" borderRadius="0px" padding="0px">
+          <Header
+            borderColor={borderColor}
+            backColor={darkMode ? '#20273A' : '#ffffff'}
+            borderRadius="0px"
+            padding="0px"
+          >
             <Column width="50%" color={fontColor} fontSize="14px" padding="14px 28px">
               <Col># User</Col>
             </Column>
@@ -421,6 +430,7 @@ const LeaderBoard = () => {
                   lastItem={lastItem}
                   getTokenNames={getTokenNames}
                   selectedItem={selectedItem}
+                  darkMode={darkMode}
                 />
               )
             })}

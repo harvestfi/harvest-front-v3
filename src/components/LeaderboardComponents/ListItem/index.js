@@ -72,7 +72,7 @@ const ListItem = ({
               href={`https://etherscan.io/address/${walletAddress}`}
               target="blank"
               onClick={stopPropagation}
-              color="#475467"
+              color={color}
             >
               {walletAddress}
             </AddressLink>

@@ -436,7 +436,7 @@ const CurrencyDropDownItem = styled(Dropdown.Item)`
       : `
   `}
   width: auto !important;
-  color: ${props => props.fontcolor} !important;
+  color: ${props => props.fontColor} !important;
 
   :first-child {
     border-radius: 8px 8px 0px 0px;

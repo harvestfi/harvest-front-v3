@@ -175,7 +175,7 @@ const TopFiveText = styled.div`
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
-  color: #101828;
+  color: ${props => props.color};
 `
 
 export { DetailView, FlexDiv, Content, ContentInner, TopFiveText }
