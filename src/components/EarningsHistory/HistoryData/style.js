@@ -429,6 +429,86 @@ const ThemeMode = styled.div`
   }
 `
 
+const LeaderboardPagination = styled.div`
+  margin-top: 25px;
+
+  ul.paginate-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    list-style: none;
+    padding: 12px 24px 16px 24px;
+    margin-bottom: 0px;
+    gap: 5px;
+  }
+
+  li.previous,
+  li.next {
+    border-radius: 8px;
+    border: 1px solid ${props => props.borderColor};
+    background: ${props => props.bgColor};
+    box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+    display: flex;
+    padding: 8px 14px;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+  }
+
+  li.previous {
+    margin-right: 100px;
+  }
+
+  li.next {
+    margin-left: 100px;
+  }
+
+  li.paginate-item {
+    margin: auto 0px;
+  }
+
+  li.break {
+    margin: auto 0px;
+  }
+
+  li.previous a,
+  li.next a {
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 20px;
+    color: ${props => props.fontColor2};
+  }
+
+  li.previous a svg,
+  li.next a svg {
+    margin-top: -2px;
+  }
+
+  a.paginate-item-link {
+    text-decoration: none;
+    color: ${props => props.fontColor};
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+    display: flex;
+    width: 40px;
+    height: 40px;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+  }
+
+  li.disabled a {
+    color: #b2b2b2;
+  }
+
+  li.selected a {
+    color: #1d2939;
+    background: #f9fafb;
+  }
+`
+
 export {
   TransactionDetails,
   HistoryPagination,
@@ -442,4 +522,5 @@ export {
   ConnectButtonStyle,
   ExploreButtonStyle,
   ThemeMode,
+  LeaderboardPagination,
 }

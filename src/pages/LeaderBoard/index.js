@@ -35,6 +35,7 @@ import { useStats } from '../../providers/Stats'
 import { usePools } from '../../providers/Pools'
 import { addresses } from '../../data'
 import ChevronDown from '../../assets/images/ui/chevron-down.svg'
+import Pagination from '../../components/LeaderboardComponents/Pagination'
 
 const LeaderBoard = () => {
   const { vaultsData } = useVaults()
@@ -48,14 +49,19 @@ const LeaderBoard = () => {
     darkMode,
     backColorButton,
     hoverColorNew,
+    fontColor1,
     fontColor2,
     hoverColor,
+    inputBorderColor,
+    bgColorFarm,
   } = useThemeContext()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const [sortConfig, setSortConfig] = useState({ key: 'totalBalance', direction: 'descending' })
   const [leadersApiData, setLeadersApiData] = useState(null)
   const [selectedItem, setSelectedItem] = useState('Top Allocation')
+  const [itemOffset, setItemOffset] = useState(0)
+  const itemsPerPage = 100
 
   let correctedApiData = {}
 
@@ -133,7 +139,19 @@ const LeaderBoard = () => {
   }
 
   const rearrangeApiData = apiData => {
-    const vaultBalanceSortedData = Object.entries(apiData)
+    const vaultsFilteredData = Object.entries(apiData)
+      .map(([wallet, entry]) => {
+        const vaultTokenNames = getTokenNames(entry, groupOfVaults)
+        if (vaultTokenNames.length > 0) {
+          return [wallet, entry]
+        }
+        return null
+      })
+      .filter(item => item != null)
+
+    const filteredApiData = Object.fromEntries(vaultsFilteredData)
+
+    const vaultBalanceSortedData = Object.entries(filteredApiData)
       .map(([address, data]) => {
         const totalVaultBalance = Object.values(data.vaults).reduce((sum, vault) => {
           return sum + vault.balance
@@ -155,13 +173,15 @@ const LeaderBoard = () => {
       }
     })
 
-    const allWalletInfo = Object.entries(vaultBalanceSortedData).slice(0, 150)
+    // const allWalletInfo = Object.entries(vaultBalanceSortedData).slice(0, 150)
 
-    const top100Data = allWalletInfo.slice(0, 100)
+    // const top100Data = allWalletInfo.slice(0, 100)
 
-    const sortedApiData = Object.fromEntries(top100Data)
+    // const sortedApiData = Object.fromEntries(top100Data)
 
-    return sortedApiData
+    // console.log('sortedApiData', sortedApiData)
+
+    return vaultBalanceSortedData
   }
 
   if (leadersApiData) {
@@ -178,6 +198,32 @@ const LeaderBoard = () => {
     },
     [sortConfig],
   )
+
+  const SortingIcon = ({ sortType, sortField, selectedField }) => {
+    return (
+      <>
+        {sortType === 'ascending' && sortField === selectedField && (
+          <img
+            className="sort-icon"
+            src={sortAscIcon}
+            alt="Sort ASC"
+            style={{ marginLeft: '5px' }}
+          />
+        )}
+        {sortType === 'descending' && sortField === selectedField && (
+          <img
+            className="sort-icon"
+            src={sortDescIcon}
+            alt="Sort DESC"
+            style={{ marginLeft: '5px' }}
+          />
+        )}
+        {sortType !== selectedField && sortField !== selectedField && (
+          <img className="sort-icon" src={sortIcon} alt="Sort" style={{ marginLeft: '5px' }} />
+        )}
+      </>
+    )
+  }
 
   const sortedData = useMemo(() => {
     const sortableItems = Object.entries(correctedApiData)
@@ -223,6 +269,21 @@ const LeaderBoard = () => {
     }
     return sortableItems
   }, [correctedApiData, sortConfig])
+
+  const { currentItems, pageCount } = useMemo(() => {
+    const endOffset = itemOffset + itemsPerPage
+    const currentItems1 = Object.entries(sortedData).slice(itemOffset, endOffset)
+    const pageCount1 = Math.ceil(Object.entries(sortedData).length / itemsPerPage)
+    return { currentItems: currentItems1, pageCount: pageCount1 }
+  }, [sortedData, itemOffset, itemsPerPage])
+
+  const handlePageClick = useCallback(
+    event => {
+      const newOffset = (event.selected * itemsPerPage) % Object.entries(sortedData).length
+      setItemOffset(newOffset)
+    },
+    [sortedData, itemsPerPage],
+  )
 
   return isMobile ? (
     <Container>
@@ -414,15 +475,15 @@ const LeaderBoard = () => {
                 <Col cursor="pointer" />
               </Column>
             </Header>
-            {sortedData &&
-              sortedData.map(([key, value], index) => {
-                const lastItem = index === sortedData.length - 1
+            {currentItems &&
+              currentItems.map(([key, [accounts, value]], index) => {
+                const lastItem = index === currentItems.length - 1
                 return (
                   <HolderRow
                     key={key}
                     value={value}
-                    cKey={index + 1}
-                    accounts={key}
+                    cKey={Number(key) + 1}
+                    accounts={accounts}
                     groupOfVaults={groupOfVaults}
                     lastItem={lastItem}
                     getTokenNames={getTokenNames}
@@ -430,30 +491,19 @@ const LeaderBoard = () => {
                 )
               })}
           </TableContent>
+          <Pagination
+            pageCount={pageCount}
+            onPageChange={handlePageClick}
+            isMobile={isMobile}
+            bgColor={bgColorFarm}
+            fontColor={fontColor}
+            fontColor1={fontColor1}
+            fontColor2={fontColor2}
+            inputBorderColor={inputBorderColor}
+          />
         </TransactionDetails>
       </Inner>
     </Container>
-  )
-}
-
-const SortingIcon = ({ sortType, sortField, selectedField }) => {
-  return (
-    <>
-      {sortType === 'ascending' && sortField === selectedField && (
-        <img className="sort-icon" src={sortAscIcon} alt="Sort ASC" style={{ marginLeft: '5px' }} />
-      )}
-      {sortType === 'descending' && sortField === selectedField && (
-        <img
-          className="sort-icon"
-          src={sortDescIcon}
-          alt="Sort DESC"
-          style={{ marginLeft: '5px' }}
-        />
-      )}
-      {sortType !== selectedField && sortField !== selectedField && (
-        <img className="sort-icon" src={sortIcon} alt="Sort" style={{ marginLeft: '5px' }} />
-      )}
-    </>
   )
 }
 
