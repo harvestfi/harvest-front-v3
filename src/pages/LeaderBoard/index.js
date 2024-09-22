@@ -27,6 +27,8 @@ import {
   CurrencySelect,
   CurrencyDropDownMenu,
   CurrencyDropDownItem,
+  LeaderBoardTop,
+  RankIntro,
 } from './style'
 import HolderRow from '../../components/LeaderboardComponents/HolderRow'
 import { useVaults } from '../../providers/Vault'
@@ -36,6 +38,7 @@ import { usePools } from '../../providers/Pools'
 import { addresses } from '../../data'
 import ChevronDown from '../../assets/images/ui/chevron-down.svg'
 import Pagination from '../../components/LeaderboardComponents/Pagination'
+import { useWallet } from '../../providers/Wallet'
 
 const LeaderBoard = () => {
   const { vaultsData } = useVaults()
@@ -62,6 +65,7 @@ const LeaderBoard = () => {
   const [selectedItem, setSelectedItem] = useState('Top Allocation')
   const [itemOffset, setItemOffset] = useState(0)
   const itemsPerPage = 100
+  const { account } = useWallet()
 
   let correctedApiData = {}
 
@@ -179,8 +183,6 @@ const LeaderBoard = () => {
 
     // const sortedApiData = Object.fromEntries(top100Data)
 
-    // console.log('sortedApiData', sortedApiData)
-
     return vaultBalanceSortedData
   }
 
@@ -285,6 +287,45 @@ const LeaderBoard = () => {
     [sortedData, itemsPerPage],
   )
 
+  const sortedByBalance = useMemo(() => {
+    return Object.entries(correctedApiData).sort((a, b) => {
+      const vaultAArray = Object.entries(a[1].vaults)
+      const vaultBArray = Object.entries(b[1].vaults)
+      const balanceA = vaultAArray.reduce((acc, [, vault]) => acc + vault.balance, 0)
+      const balanceB = vaultBArray.reduce((acc, [, vault]) => acc + vault.balance, 0)
+      return balanceB - balanceA
+    })
+  }, [correctedApiData])
+
+  const sortedByEfficiency = useMemo(() => {
+    return Object.entries(correctedApiData).sort((a, b) => {
+      const monthlyYieldA = (a[1].totalDailyYield * 365) / 12
+      const monthlyYieldB = (b[1].totalDailyYield * 365) / 12
+      const efficiencyA = (monthlyYieldA / a[1].totalBalance) * 12 * 100 || 0
+      const efficiencyB = (monthlyYieldB / b[1].totalBalance) * 12 * 100 || 0
+      return efficiencyB - efficiencyA
+    })
+  }, [correctedApiData])
+
+  const balanceRank = useMemo(() => {
+    if (account && Object.entries(correctedApiData).length > 0) {
+      return (
+        sortedByBalance.findIndex(([wallet]) => wallet.toLowerCase() === account.toLowerCase()) + 1
+      )
+    }
+    return false
+  }, [sortedByBalance, account])
+
+  const efficiencyRank = useMemo(() => {
+    if (account && Object.entries(correctedApiData).length > 0) {
+      return (
+        sortedByEfficiency.findIndex(([wallet]) => wallet.toLowerCase() === account.toLowerCase()) +
+        1
+      )
+    }
+    return false
+  }, [sortedByEfficiency, account])
+
   return isMobile ? (
     <Container>
       <Inner style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -386,10 +427,26 @@ const LeaderBoard = () => {
   ) : (
     <Container bgColor={bgColor} fontColor={fontColor}>
       <Inner>
-        <TableTitle>
-          Leaderboard <BetaBadge>Beta</BetaBadge>
-        </TableTitle>
-        <TableIntro>Displaying data from all networks. </TableIntro>
+        <LeaderBoardTop>
+          <div>
+            <TableTitle>
+              Leaderboard <BetaBadge>Beta</BetaBadge>
+            </TableTitle>
+            <TableIntro>Displaying data from all networks. </TableIntro>
+          </div>
+          <div>
+            {balanceRank > 0 && efficiencyRank > 0 ? (
+              <RankIntro>
+                You are ranked <b>#{efficiencyRank}</b> by efficiency and <b>#{balanceRank}</b> by
+                balance.
+              </RankIntro>
+            ) : (
+              <RankIntro>
+                You&apos;re user <b>&lt; #1000</b> by efficiency, and <b>&lt; #1000</b> by balance.
+              </RankIntro>
+            )}
+          </div>
+        </LeaderBoardTop>
         <SpaceLine />
         <TransactionDetails>
           <TableContent borderColor={borderColor} count={100}>

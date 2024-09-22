@@ -485,6 +485,21 @@ const CurrencyDropDownItem = styled(Dropdown.Item)`
   }
 `
 
+const LeaderBoardTop = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: end;
+  justify-content: space-between;
+`
+
+const RankIntro = styled.div`
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 23px;
+  margin-bottom: 20px;
+  color: #6988ff;
+`
+
 export {
   Container,
   TransactionDetails,
@@ -504,4 +519,6 @@ export {
   CurrencySelect,
   CurrencyDropDownMenu,
   CurrencyDropDownItem,
+  LeaderBoardTop,
+  RankIntro,
 }
