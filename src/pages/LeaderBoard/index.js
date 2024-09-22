@@ -417,15 +417,15 @@ const LeaderBoard = () => {
               <Col>{selectedItem}</Col>
             </Column>
           </Header>
-          {sortedData &&
-            sortedData.map(([key, value], index) => {
-              const lastItem = index === sortedData.lendth - 1
+          {currentItems &&
+            currentItems.map(([key, [accounts, value]], index) => {
+              const lastItem = index === currentItems.lendth - 1
               return (
                 <HolderRow
                   key={key}
                   value={value}
-                  cKey={index + 1}
-                  accounts={key}
+                  cKey={Number(key) + 1}
+                  accounts={accounts}
                   groupOfVaults={groupOfVaults}
                   lastItem={lastItem}
                   getTokenNames={getTokenNames}
@@ -435,6 +435,16 @@ const LeaderBoard = () => {
               )
             })}
         </TableContent>
+        <Pagination
+          pageCount={pageCount}
+          onPageChange={handlePageClick}
+          isMobile={isMobile}
+          bgColor={bgColorFarm}
+          fontColor={fontColor}
+          fontColor1={fontColor1}
+          fontColor2={fontColor2}
+          inputBorderColor={inputBorderColor}
+        />
       </Inner>
     </Container>
   ) : (

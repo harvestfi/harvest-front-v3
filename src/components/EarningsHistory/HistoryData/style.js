@@ -507,6 +507,16 @@ const LeaderboardPagination = styled.div`
     color: #1d2939;
     background: #f9fafb;
   }
+
+  @media screen and (max-width: 992px) {
+    li.previous {
+      margin-right: 20px;
+    }
+
+    li.next {
+      margin-left: 20px;
+    }
+  }
 `
 
 export {
