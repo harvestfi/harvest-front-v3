@@ -155,7 +155,7 @@ const ListItem = ({
           marginLeft={marginLeft}
           justifyContent="end"
         >
-          {value === 'InfinityT%' || value === 'NaN%' || value === 'Here' ? (
+          {value === 'InfinityT%' || value === 'NaN%' || value === 'Here' || value === '0%' ? (
             <AnimatedDots />
           ) : vaultAddress ? (
             <></>
@@ -217,7 +217,7 @@ const ListItem = ({
         ) : (
           <></>
         )}
-        {value === 'InfinityT%' || value === 'NaN%' || value === 'Here' ? (
+        {value === 'InfinityT%' || value === 'NaN%' || value === 'Here' || value === 'Apy Zero' ? (
           <AnimatedDots />
         ) : vaultAddress ? (
           <></>

@@ -2,6 +2,7 @@ import React, { useMemo, useState, useCallback, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { PiQuestion } from 'react-icons/pi'
 import ReactTooltip from 'react-tooltip'
+import { get, find } from 'lodash'
 import { Dropdown } from 'react-bootstrap'
 import { IoCheckmark } from 'react-icons/io5'
 import { useThemeContext } from '../../providers/useThemeContext'
@@ -10,6 +11,7 @@ import sortAscIcon from '../../assets/images/ui/asc.svg'
 import sortIcon from '../../assets/images/ui/sort.svg'
 import dropDown from '../../assets/images/ui/drop-down.e85f7fdc.svg'
 import { fetchLeaderboardData } from '../../utilities/apiCalls'
+import { getTotalApy } from '../../utilities/parsers'
 import {
   Column,
   Container,
@@ -67,7 +69,9 @@ const LeaderBoard = () => {
   const [selectedItem, setSelectedItem] = useState('Top Allocation')
   const [itemOffset, setItemOffset] = useState(0)
   const itemsPerPage = 100
+
   const { account } = useWallet()
+  const { pools } = usePools()
 
   let correctedApiData = {}
 
@@ -241,6 +245,63 @@ const LeaderBoard = () => {
       .map(([wallet], index) => ({ wallet, rank: index + 1 }))
   }, [correctedApiData])
 
+  const getVaultApy = (vaultKey, vaultsGroup) => {
+    let token = null,
+      tokenSymbol = null,
+      specialVaultFlag = false,
+      vaultPool
+
+    if (vaultKey === '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651') {
+      vaultKey = '0xa0246c9032bc3a600820415ae600c6388619a14d'
+      specialVaultFlag = true
+    }
+
+    Object.entries(vaultsGroup).forEach(([key, vaultData]) => {
+      if (specialVaultFlag && vaultData.data) {
+        if (vaultData.data.collateralAddress.toLowerCase() === vaultKey.toLowerCase()) {
+          token = vaultData
+          tokenSymbol = key
+        }
+      } else if (
+        vaultData.vaultAddress &&
+        vaultData.vaultAddress.toLowerCase() === vaultKey.toLowerCase()
+      ) {
+        token = vaultData
+        tokenSymbol = key
+      }
+    })
+
+    const isSpecialVault = token.liquidityPoolVault || token.poolVault
+
+    const tokenVault = get(vaultsData, token.hodlVaultId || tokenSymbol)
+
+    if (isSpecialVault) {
+      vaultPool = token.data
+    } else {
+      vaultPool = find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
+    }
+
+    const totalApy = isSpecialVault
+      ? getTotalApy(null, token, true)
+      : getTotalApy(vaultPool, tokenVault)
+
+    return totalApy
+  }
+
+  const getWalletApy = value => {
+    let totalMonthlyYield = 0,
+      walletTotalBalance = 0
+    Object.entries(value.vaults).map(([vaultKey, vaultValue]) => {
+      const vaultApy = getVaultApy(vaultKey, groupOfVaults)
+      const vaultMonthlyYield = (vaultApy / 12 / 100) * vaultValue.balance
+      totalMonthlyYield += vaultMonthlyYield
+      walletTotalBalance += vaultValue.balance
+      return true
+    })
+    const realWalletApy = (totalMonthlyYield / walletTotalBalance) * 12 * 100
+    return [realWalletApy, totalMonthlyYield]
+  }
+
   const sortedData = useMemo(() => {
     const sortableItems = Object.entries(correctedApiData)
     if (sortConfig.key !== null) {
@@ -258,13 +319,15 @@ const LeaderBoard = () => {
             valueB += vaultBArray[i][1].balance
           }
         } else if (sortConfig.key === 'Efficiency') {
-          const monthlyYieldA = (a[1].totalDailyYield * 365) / 12
-          const monthlyYieldB = (b[1].totalDailyYield * 365) / 12
-          valueA = (monthlyYieldA / a[1].totalBalance) * 12 * 100 || 0
-          valueB = (monthlyYieldB / b[1].totalBalance) * 12 * 100 || 0
+          const [realWalletApyA] = getWalletApy(a[1])
+          const [realWalletApyB] = getWalletApy(b[1])
+          valueA = realWalletApyA
+          valueB = realWalletApyB
         } else if (sortConfig.key === 'MonthlyYield') {
-          valueA = (a[1].totalDailyYield * 365) / 12
-          valueB = (b[1].totalDailyYield * 365) / 12
+          const [, totalMonthlyYieldA] = getWalletApy(a[1])
+          const [, totalMonthlyYieldB] = getWalletApy(b[1])
+          valueA = totalMonthlyYieldA
+          valueB = totalMonthlyYieldB
         } else if (sortConfig.key === 'balance') {
           valueA = Math.max(...Object.values(a[1].vaults).map(vault => vault.balance))
           valueB = Math.max(...Object.values(b[1].vaults).map(vault => vault.balance))
@@ -604,6 +667,8 @@ const LeaderBoard = () => {
                     lastItem={lastItem}
                     getTokenNames={getTokenNames}
                     darkMode={darkMode}
+                    getVaultApy={getVaultApy}
+                    getWalletApy={getWalletApy}
                   />
                 )
               })}

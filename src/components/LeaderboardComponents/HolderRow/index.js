@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { get, find } from 'lodash'
 import { Content, DetailView, FlexDiv, ContentInner, TopFiveText } from './style'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
@@ -12,9 +11,6 @@ import ListItem from '../ListItem'
 import { truncateAddress, formatNumber } from '../../../utilities/formats'
 import { useRate } from '../../../providers/Rate'
 import { chainList } from '../../../constants'
-import { usePools } from '../../../providers/Pools'
-import { useVaults } from '../../../providers/Vault'
-import { getTotalApy } from '../../../utilities/parsers'
 import ChevronUp from '../../../assets/images/ui/chevron-up.svg'
 import ChevronDown from '../../../assets/images/ui/chevron-down.svg'
 
@@ -27,20 +23,20 @@ const HolderRow = ({
   getTokenNames,
   selectedItem,
   darkMode,
+  getVaultApy,
+  getWalletApy,
 }) => {
   const [isExpand, setIsExpand] = useState(false)
   const [currencySym, setCurrencySym] = useState('$')
+  const [walletApy, setWalletApy] = useState(0)
+  const [monthlyYield, setMonthlyYield] = useState(0)
 
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
   const networkNames = ['ethereum', 'polygon', 'arbitrum', 'base', 'zksync']
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
-  let vaultPool
-
   const { borderColor, hoverColor, fontColor1 } = useThemeContext()
   const { rates } = useRate()
-  const { pools } = usePools()
-  const { vaultsData } = useVaults()
 
   useEffect(() => {
     if (rates.rateData) {
@@ -51,10 +47,6 @@ const HolderRow = ({
   const handleExpand = () => {
     setIsExpand(prev => !prev)
   }
-
-  const monthlyYield = (value.totalDailyYield * 365) / 12
-  const walletApy = (monthlyYield / value.totalBalance) * 12 * 100
-  const allocationValue = (monthlyYield / value.totalBalance) * 12
 
   const matchedTokenNames = getTokenNames(value, groupOfVaults)
 
@@ -87,48 +79,6 @@ const HolderRow = ({
     return -1
   }
 
-  const getVaultApy = (vaultKey, vaultsGroup) => {
-    let token = null,
-      tokenSymbol = null,
-      specialVaultFlag = false
-
-    if (vaultKey === '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651') {
-      vaultKey = '0xa0246c9032bc3a600820415ae600c6388619a14d'
-      specialVaultFlag = true
-    }
-
-    Object.entries(vaultsGroup).forEach(([key, vaultData]) => {
-      if (specialVaultFlag && vaultData.data) {
-        if (vaultData.data.collateralAddress.toLowerCase() === vaultKey.toLowerCase()) {
-          token = vaultData
-          tokenSymbol = key
-        }
-      } else if (
-        vaultData.vaultAddress &&
-        vaultData.vaultAddress.toLowerCase() === vaultKey.toLowerCase()
-      ) {
-        token = vaultData
-        tokenSymbol = key
-      }
-    })
-
-    const isSpecialVault = token.liquidityPoolVault || token.poolVault
-
-    const tokenVault = get(vaultsData, token.hodlVaultId || tokenSymbol)
-
-    if (isSpecialVault) {
-      vaultPool = token.data
-    } else {
-      vaultPool = find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
-    }
-
-    const totalApy = isSpecialVault
-      ? getTotalApy(null, token, true)
-      : getTotalApy(vaultPool, tokenVault)
-
-    return totalApy
-  }
-
   const getBalance = () => {
     const valueVaults = Object.entries(value.vaults)
     let harvestBalance = 0
@@ -139,6 +89,16 @@ const HolderRow = ({
   }
 
   const userHarvestBalance = getBalance()
+
+  useEffect(() => {
+    if (value && value.vaults && groupOfVaults) {
+      const [calculatedApy, calculatedYield] = getWalletApy(value)
+      setWalletApy(calculatedApy)
+      setMonthlyYield(calculatedYield)
+    }
+  }, [value, groupOfVaults])
+
+  const allocationValue = walletApy / 100
 
   return isMobile ? (
     <DetailView
@@ -431,6 +391,8 @@ const HolderRow = ({
               value={
                 walletApy > 0 && walletApy < 0.01
                   ? `<0.01% APY`
+                  : walletApy === 0
+                  ? `Apy Zero`
                   : `${formatNumber(walletApy, 2)}% APY`
               }
               allocationValue={allocationValue}
@@ -443,6 +405,8 @@ const HolderRow = ({
               value={
                 allocationValue > 0 && allocationValue < 0.01
                   ? `<${currencySym}0.01/yr per $1 allocated`
+                  : allocationValue === 0
+                  ? 'Apy Zero'
                   : `${currencySym}${formatNumber(allocationValue, 2)}/yr per $1 allocated`
               }
               allocationValue={allocationValue}
@@ -458,7 +422,11 @@ const HolderRow = ({
               borderRadius="16px"
               padding="2px 8px"
               justifyContent="center"
-              value={`${currencySym}${formatNumber(monthlyYield, 2)}/mo`}
+              value={
+                monthlyYield > 0 && monthlyYield < 0.01
+                  ? `<${currencySym}0.01/mo`
+                  : `${currencySym}${formatNumber(monthlyYield, 2)}/mo`
+              }
             />
           </ContentInner>
           <ContentInner
