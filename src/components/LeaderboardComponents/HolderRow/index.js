@@ -194,8 +194,8 @@ const HolderRow = ({
                   marginTop="0px"
                   color="#5FCF76"
                   value={
-                    walletApy > 0 && walletApy < 0.001
-                      ? `<0.001% APY`
+                    walletApy > 0 && walletApy < 0.01
+                      ? `<0.01% APY`
                       : `${formatNumber(walletApy, 2)}% APY`
                   }
                   allocationValue={allocationValue}
@@ -206,7 +206,11 @@ const HolderRow = ({
                   size="10px"
                   marginTop="0px"
                   color="#6988FF"
-                  value={`${currencySym}${formatNumber(allocationValue, 2)}/yr per $1 allocated`}
+                  value={
+                    allocationValue > 0 && allocationValue < 0.01
+                      ? `<${currencySym}0.01/yr per $1 allocated`
+                      : `${currencySym}${formatNumber(allocationValue, 2)}/yr per $1 allocated`
+                  }
                   allocationValue={allocationValue}
                   justifyContent="end"
                 />
@@ -238,7 +242,11 @@ const HolderRow = ({
                       borderRadius="16px"
                       padding="2px 8px"
                       justifyContent="end"
-                      value={`${currencySym}${formatNumber(monthlyYield, 2)}/mo`}
+                      value={
+                        monthlyYield > 0 && monthlyYield < 0.01
+                          ? `<${currencySym}0.01/mo`
+                          : `${currencySym}${formatNumber(monthlyYield, 2)}/mo`
+                      }
                     />
                   ) : (
                     <></>
@@ -421,8 +429,8 @@ const HolderRow = ({
               marginTop="0px"
               color="#5FCF76"
               value={
-                walletApy > 0 && walletApy < 0.001
-                  ? `<0.001% APY`
+                walletApy > 0 && walletApy < 0.01
+                  ? `<0.01% APY`
                   : `${formatNumber(walletApy, 2)}% APY`
               }
               allocationValue={allocationValue}
@@ -432,7 +440,11 @@ const HolderRow = ({
               size="10px"
               marginTop="0px"
               color="#6988FF"
-              value={`${currencySym}${formatNumber(allocationValue, 2)}/yr per $1 allocated`}
+              value={
+                allocationValue > 0 && allocationValue < 0.01
+                  ? `<${currencySym}0.01/yr per $1 allocated`
+                  : `${currencySym}${formatNumber(allocationValue, 2)}/yr per $1 allocated`
+              }
               allocationValue={allocationValue}
             />
           </ContentInner>
