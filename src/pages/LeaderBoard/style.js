@@ -402,7 +402,7 @@ const CurrencySelect = styled.div`
 `
 
 const CurrencyDropDownMenu = styled(Dropdown.Menu)`
-  background-color: ${props => props.backColor} !important;
+  background-color: ${props => props.backcolor} !important;
   border: 1px solid #d0d5dd;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
   border-radius: 8px !important;
@@ -436,7 +436,7 @@ const CurrencyDropDownItem = styled(Dropdown.Item)`
       : `
   `}
   width: auto !important;
-  color: ${props => props.fontColor} !important;
+  color: ${props => props.fontcolor} !important;
 
   :first-child {
     border-radius: 8px 8px 0px 0px;

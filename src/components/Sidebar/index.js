@@ -172,6 +172,12 @@ const sideLinksMobileBottom = [
     imgPath: Advanced,
   },
   {
+    path: ROUTES.LEADERBOARD,
+    name: 'Leaderboard',
+    imgPath: BlackLeader,
+    external: false,
+  },
+  {
     path: ROUTES.ANALYTIC,
     name: 'Analytics',
     imgPath: Analytics,

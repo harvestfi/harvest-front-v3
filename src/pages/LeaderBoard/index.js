@@ -229,6 +229,18 @@ const LeaderBoard = () => {
     )
   }
 
+  const fixedBalanceRanks = useMemo(() => {
+    return Object.entries(correctedApiData)
+      .sort((a, b) => {
+        const vaultAArray = Object.entries(a[1].vaults)
+        const vaultBArray = Object.entries(b[1].vaults)
+        const balanceA = vaultAArray.reduce((acc, [, vault]) => acc + vault.balance, 0)
+        const balanceB = vaultBArray.reduce((acc, [, vault]) => acc + vault.balance, 0)
+        return balanceB - balanceA
+      })
+      .map(([wallet], index) => ({ wallet, rank: index + 1 }))
+  }, [correctedApiData])
+
   const sortedData = useMemo(() => {
     const sortableItems = Object.entries(correctedApiData)
     if (sortConfig.key !== null) {
@@ -348,18 +360,18 @@ const LeaderBoard = () => {
               hovercolor={hoverColorNew}
               style={{ padding: 0 }}
             >
-              <CurrencySelect backColor={backColor} fontcolor2={fontColor2} hovercolor={hoverColor}>
+              <CurrencySelect backcolor={backColor} fontcolor2={fontColor2} hovercolor={hoverColor}>
                 <div>{selectedItem}</div>
                 <img src={dropDown} alt="Chevron Down" />
               </CurrencySelect>
             </CurrencyDropDown>
-            <CurrencyDropDownMenu backColor={backColorButton}>
+            <CurrencyDropDownMenu backcolor={backColorButton}>
               <CurrencyDropDownItem
                 onClick={() => {
                   handleItemClick('Top Allocation')
                   handleSort('balance')
                 }}
-                fontColor={fontColor2}
+                fontcolor={fontColor2}
               >
                 <div>Top Allocation</div>
                 {selectedItem === 'Top Allocation' && <IoCheckmark className="check-icon" />}
@@ -369,7 +381,7 @@ const LeaderBoard = () => {
                   handleItemClick('Efficiency')
                   handleSort('Efficiency')
                 }}
-                fontColor={fontColor2}
+                fontcolor={fontColor2}
               >
                 <div>Efficiency</div>
                 {selectedItem === 'Efficiency' && <IoCheckmark className="check-icon" />}
@@ -379,7 +391,7 @@ const LeaderBoard = () => {
                   handleItemClick('Monthly Yield')
                   handleSort('MonthlyYield')
                 }}
-                fontColor={fontColor2}
+                fontcolor={fontColor2}
               >
                 <div>Monthly Yield</div>
                 {selectedItem === 'Monthly Yield' && <IoCheckmark className="check-icon" />}
@@ -420,11 +432,13 @@ const LeaderBoard = () => {
           {currentItems &&
             currentItems.map(([key, [accounts, value]], index) => {
               const lastItem = index === currentItems.lendth - 1
+              const totalBalance =
+                fixedBalanceRanks.find(item => item.wallet === accounts)?.rank || null
               return (
                 <HolderRow
                   key={key}
                   value={value}
-                  cKey={Number(key) + 1}
+                  cKey={totalBalance}
                   accounts={accounts}
                   groupOfVaults={groupOfVaults}
                   lastItem={lastItem}
@@ -578,11 +592,13 @@ const LeaderBoard = () => {
             {currentItems &&
               currentItems.map(([key, [accounts, value]], index) => {
                 const lastItem = index === currentItems.length - 1
+                const totalBalanceRank =
+                  fixedBalanceRanks.find(item => item.wallet === accounts)?.rank || null
                 return (
                   <HolderRow
                     key={key}
                     value={value}
-                    cKey={Number(key) + 1}
+                    cKey={totalBalanceRank}
                     accounts={accounts}
                     groupOfVaults={groupOfVaults}
                     lastItem={lastItem}
