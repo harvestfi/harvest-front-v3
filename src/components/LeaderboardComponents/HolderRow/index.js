@@ -96,7 +96,7 @@ const HolderRow = ({
       setWalletApy(calculatedApy)
       setMonthlyYield(calculatedYield)
     }
-  }, [value, groupOfVaults])
+  }, [value, groupOfVaults]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const allocationValue = walletApy / 100
 

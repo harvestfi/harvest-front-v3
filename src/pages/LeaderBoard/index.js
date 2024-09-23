@@ -347,7 +347,7 @@ const LeaderBoard = () => {
       })
     }
     return sortableItems
-  }, [correctedApiData, sortConfig])
+  }, [correctedApiData, sortConfig]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const { currentItems, pageCount } = useMemo(() => {
     const endOffset = itemOffset + itemsPerPage
