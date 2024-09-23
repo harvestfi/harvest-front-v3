@@ -15,8 +15,8 @@ const Container = styled.div`
 
 const Label = styled.div`
   display: flex;
-  justify-content: ${props => (props.justifyContent ? props.justifyContent : '')};
-  color: ${props => props.fontColor}!important;
+  justify-content: ${props => (props.justifyContent ? props.justifyContent : 'start')};
+  color: ${props => (props.fontColor ? props.fontColor : '')}!important;
   background: ${props => props.backColor};
   border-radius: ${props => props.borderRadius};
   padding: ${props => props.padding};
@@ -24,6 +24,7 @@ const Label = styled.div`
   font-size: ${props => (props.fontSize ? props.fontSize : '')};
   font-weight: ${props => (props.fontWeight ? props.fontWeight : '')};
   margin-left: ${props => props.marginLeft};
+  width: ${props => (props.width ? props.width : '')};
   img {
     margin-left: ${props => (props.imgMargin ? `${props.imgMargin}px` : '3px')};
     align-self: center;

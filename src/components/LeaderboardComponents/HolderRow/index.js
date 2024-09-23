@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { Content, DetailView, FlexDiv, ContentInner, TopFiveText } from './style'
+import {
+  Content,
+  DetailView,
+  FlexDiv,
+  ContentInner,
+  TopFiveText,
+  MobileGranularBlock,
+} from './style'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
 import BASE from '../../../assets/images/chains/base.svg'
@@ -123,7 +130,7 @@ const HolderRow = ({
               size="12px"
               marginTop="0px"
               lineHeight="23px"
-              color={fontColor1}
+              color={darkMode ? '#ffffff' : '#475467'}
               rankingValue={`#${cKey}`}
               walletAddress={truncateAddress(accounts)}
             />
@@ -254,46 +261,52 @@ const HolderRow = ({
                             transform: 'translateY(-50%)',
                           }}
                         />
-                        <ListItem
-                          value={`${currencySym}${formatNumber(vaultValue.balance, 2)}`}
-                          weight={500}
-                          size="12px"
-                          marginTop="0px"
-                          marginRight="10px"
-                          color="#5FCF76"
-                        />
-                        <ListItem
-                          value={matchedTokenNames[index]}
-                          weight={500}
-                          size="12px"
-                          marginTop="0px"
-                          marginRight="10px"
-                          imgMargin="10px"
-                          color="#6988FF"
-                          platform={getPlatformName(vaultKey)}
-                          chain={BadgeAry[getBadgeId(vaultKey)]}
-                          networkName={networkNames[getBadgeId(vaultKey)]}
-                          vaultAddress={vaultKey}
-                          textDecoration="underline"
-                        />
-                        <ListItem
-                          weight={500}
-                          size="12px"
-                          marginTop="0px"
-                          marginRight="10px"
-                          color="#5FCF76"
-                          value={`${getVaultApy(vaultKey, groupOfVaults)}% APY`}
-                        />
-                        <ListItem
-                          weight={500}
-                          size="12px"
-                          marginTop="0px"
-                          color="#6988FF"
-                          value={`${currencySym}${formatNumber(
-                            getVaultApy(vaultKey, groupOfVaults) / 100,
-                            2,
-                          )}/yr per $1 allocated`}
-                        />
+                        <MobileGranularBlock>
+                          <ListItem
+                            value={`${currencySym}${formatNumber(vaultValue.balance, 2)}`}
+                            weight={500}
+                            size="10px"
+                            marginTop="0px"
+                            marginRight="10px"
+                            color="#5FCF76"
+                          />
+                          <ListItem
+                            value={matchedTokenNames[index]}
+                            weight={500}
+                            size="12px"
+                            marginTop="0px"
+                            marginRight="10px"
+                            imgMargin="10px"
+                            color={darkMode ? '#ffffff' : '#414141'}
+                            platform={getPlatformName(vaultKey)}
+                            chain={BadgeAry[getBadgeId(vaultKey)]}
+                            networkName={networkNames[getBadgeId(vaultKey)]}
+                            vaultAddress={vaultKey}
+                            textDecoration="underline"
+                          />
+                        </MobileGranularBlock>
+                        <MobileGranularBlock>
+                          <ListItem
+                            weight={500}
+                            size="10px"
+                            marginTop="0px"
+                            marginRight="10px"
+                            color="#5FCF76"
+                            value={`${getVaultApy(vaultKey, groupOfVaults)}% APY`}
+                            justifyContent="end"
+                          />
+                          <ListItem
+                            weight={500}
+                            size="10px"
+                            marginTop="0px"
+                            color="#6988FF"
+                            value={`${currencySym}${formatNumber(
+                              getVaultApy(vaultKey, groupOfVaults) / 100,
+                              2,
+                            )}/yr per $1 allocated`}
+                            justifyContent="end"
+                          />
+                        </MobileGranularBlock>
                       </div>
                     )
                   })}
@@ -514,7 +527,7 @@ const HolderRow = ({
                           marginTop="0px"
                           marginRight="10px"
                           imgMargin="10px"
-                          color="#6988FF"
+                          color={darkMode ? '#ffffff' : '#414141'}
                           platform={getPlatformName(vaultKey)}
                           chain={BadgeAry[getBadgeId(vaultKey)]}
                           networkName={networkNames[getBadgeId(vaultKey)]}

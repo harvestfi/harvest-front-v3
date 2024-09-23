@@ -173,9 +173,14 @@ const ContentInner = styled.div`
 
 const TopFiveText = styled.div`
   font-weight: 400;
-  font-size: 14px;
+  font-size: 10px;
   line-height: 20px;
   color: ${props => props.color};
 `
+const MobileGranularBlock = styled.div`
+  width: 100%;
+  padding-right: 28px;
+  margin-left: 5px;
+`
 
-export { DetailView, FlexDiv, Content, ContentInner, TopFiveText }
+export { DetailView, FlexDiv, Content, ContentInner, TopFiveText, MobileGranularBlock }

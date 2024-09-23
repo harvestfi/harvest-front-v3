@@ -44,7 +44,7 @@ const ListItem = ({
       fontWeight={weight}
       fontSize={size}
       fontColor={color}
-      marginRight={marginRight}
+      // marginRight={marginRight}
       justifyContent={justifyContent}
       lineHeight={lineHeight}
       flexDirection={flexDirection}
@@ -153,7 +153,8 @@ const ListItem = ({
           padding={padding}
           textDecoration={textDecoration}
           marginLeft={marginLeft}
-          justifyContent="end"
+          justifyContent={justifyContent}
+          width="100%"
         >
           {value === 'InfinityT%' || value === 'NaN%' || value === 'Here' || value === '0%' ? (
             <AnimatedDots />
@@ -171,8 +172,8 @@ const ListItem = ({
               }
               target="blank"
               onClick={stopPropagation}
-              color="#6988FF"
-              fontSize="12px"
+              color={color}
+              fontSize="10px"
               fontWeight="500"
             >
               {`${value} (${platform})`}
@@ -233,7 +234,7 @@ const ListItem = ({
             }
             target="blank"
             onClick={stopPropagation}
-            color="#6988FF"
+            color={color}
             fontSize="12px"
             fontWeight="500"
           >
