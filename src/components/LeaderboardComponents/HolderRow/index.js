@@ -202,11 +202,7 @@ const HolderRow = ({
                       borderRadius="16px"
                       padding="2px 8px"
                       justifyContent="end"
-                      value={
-                        monthlyYield > 0 && monthlyYield < 0.01
-                          ? `<${currencySym}0.01/mo`
-                          : `${currencySym}${formatNumber(monthlyYield, 2)}/mo`
-                      }
+                      value={`${currencySym}${formatNumber(monthlyYield, 2)}/mo`}
                     />
                   ) : (
                     <></>
