@@ -557,8 +557,8 @@ const LeaderBoard = () => {
                 </RankIntro>
               ) : (
                 <RankIntro>
-                  You&apos;re user <b>&lt; #1000</b> by efficiency, and <b>&lt; #1000</b> by
-                  balance.
+                  You&apos;re user <b>&lt; #1000</b> by balance, and <b>&lt; #1000</b> by
+                  efficiency.
                 </RankIntro>
               ))}
           </div>
