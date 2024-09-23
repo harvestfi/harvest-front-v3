@@ -460,16 +460,18 @@ const LeaderBoard = () => {
             </TableIntro>
           </div>
           <div>
-            {balanceRank > 0 && efficiencyRank > 0 ? (
-              <RankIntro>
-                You are ranked <b>#{efficiencyRank}</b> by efficiency and <b>#{balanceRank}</b> by
-                balance.
-              </RankIntro>
-            ) : (
-              <RankIntro>
-                You&apos;re user <b>&lt; #1000</b> by efficiency, and <b>&lt; #1000</b> by balance.
-              </RankIntro>
-            )}
+            {account &&
+              (balanceRank > 0 && efficiencyRank > 0 ? (
+                <RankIntro>
+                  You are ranked <b>#{efficiencyRank}</b> by efficiency and <b>#{balanceRank}</b> by
+                  balance.
+                </RankIntro>
+              ) : (
+                <RankIntro>
+                  You&apos;re user <b>&lt; #1000</b> by efficiency, and <b>&lt; #1000</b> by
+                  balance.
+                </RankIntro>
+              ))}
           </div>
         </LeaderBoardTop>
         <SpaceLine />
