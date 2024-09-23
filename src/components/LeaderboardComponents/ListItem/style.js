@@ -16,7 +16,8 @@ const Container = styled.div`
 const Label = styled.div`
   display: flex;
   justify-content: ${props => (props.justifyContent ? props.justifyContent : 'start')};
-  color: ${props => (props.fontColor ? props.fontColor : '')}!important;
+  align-items: center;
+  color: ${props => (props.fontColor ? `${props.fontColor}!important` : '')};
   background: ${props => props.backColor};
   border-radius: ${props => props.borderRadius};
   padding: ${props => props.padding};
@@ -75,6 +76,11 @@ const ChainImage = styled.img`
   width: 12px;
   height: 12px;
   margin-left: ${props => (props.imgMargin ? `${props.imgMargin}!important` : '3px')};
+
+  @media screen and (max-width: 992px) {
+    margin-left: 0px !important;
+    margin-right: ${props => (props.imgMargin ? `${props.imgMargin}!important` : '3px')};
+  }
 `
 
 const AddressLink = styled.a`

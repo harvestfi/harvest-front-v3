@@ -73,6 +73,7 @@ const ListItem = ({
               target="blank"
               onClick={stopPropagation}
               color={color}
+              fontSize="11px"
             >
               {walletAddress}
             </AddressLink>
@@ -163,6 +164,11 @@ const ListItem = ({
           ) : (
             value
           )}
+          {chain ? (
+            <ChainImage src={chain} imgMargin={imgMargin} className="chainImage" alt="" />
+          ) : (
+            <></>
+          )}
           {networkName && vaultAddress && platform ? (
             <AddressLink
               href={
@@ -178,11 +184,6 @@ const ListItem = ({
             >
               {`${value} (${platform})`}
             </AddressLink>
-          ) : (
-            <></>
-          )}
-          {chain ? (
-            <ChainImage src={chain} imgMargin={imgMargin} className="chainImage" alt="" />
           ) : (
             <></>
           )}
