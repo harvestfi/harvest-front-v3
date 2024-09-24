@@ -89,6 +89,7 @@ const AddressLink = styled.a`
   font-size: ${props => props.fontSize};
   line-height: 20px;
   color: ${props => props.color};
+  white-space: nowrap;
 `
 
 export { Container, Label, Content, Percent, TextInner, ChainImage, AddressLink }

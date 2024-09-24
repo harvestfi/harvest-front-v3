@@ -510,11 +510,11 @@ const LeaderboardPagination = styled.div`
 
   @media screen and (max-width: 992px) {
     li.previous {
-      margin-right: 20px;
+      margin-right: 0px;
     }
 
     li.next {
-      margin-left: 20px;
+      margin-left: 0px;
     }
   }
 `
