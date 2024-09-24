@@ -503,6 +503,11 @@ const RankIntro = styled.div`
   line-height: 23px;
   margin-bottom: 20px;
   color: #6988ff;
+  @media screen and (max-width: 992px) {
+    margin-bottom: 0px;
+    margin-top: 20px;
+    font-size: 10px;
+  }
 `
 
 export {

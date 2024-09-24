@@ -415,63 +415,82 @@ const LeaderBoard = () => {
 
   return isMobile ? (
     <Container bgColor={bgColor} fontColor={fontColor}>
-      <Inner style={{ display: 'flex', justifyContent: 'space-between' }}>
+      <Inner style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
+        <LeaderBoardTop>
+          <div>
+            <TableTitle color={darkMode ? '#ffffff' : '#101828'}>
+              Leaderboard <BetaBadge>Beta</BetaBadge>
+            </TableTitle>
+            <TableIntro color={darkMode ? '#ffffff' : '#475467'} marginBottom="0px">
+              Displaying data from all networks.
+            </TableIntro>
+          </div>
+          <HeaderButton style={{ width: '42%' }}>
+            <Dropdown>
+              <CurrencyDropDown
+                id="dropdown-basic"
+                bgcolor={backColorButton}
+                fontcolor2={fontColor2}
+                hovercolor={hoverColorNew}
+                style={{ padding: 0 }}
+              >
+                <CurrencySelect
+                  backcolor={backColor}
+                  fontcolor2={fontColor2}
+                  hovercolor={hoverColor}
+                >
+                  <div>{selectedItem}</div>
+                  <img src={dropDown} alt="Chevron Down" />
+                </CurrencySelect>
+              </CurrencyDropDown>
+              <CurrencyDropDownMenu backcolor={backColorButton}>
+                <CurrencyDropDownItem
+                  onClick={() => {
+                    handleItemClick('Top Allocation')
+                    handleSort('balance')
+                  }}
+                  fontcolor={fontColor2}
+                >
+                  <div>Top Allocation</div>
+                  {selectedItem === 'Top Allocation' && <IoCheckmark className="check-icon" />}
+                </CurrencyDropDownItem>
+                <CurrencyDropDownItem
+                  onClick={() => {
+                    handleItemClick('Efficiency')
+                    handleSort('Efficiency')
+                  }}
+                  fontcolor={fontColor2}
+                >
+                  <div>Efficiency</div>
+                  {selectedItem === 'Efficiency' && <IoCheckmark className="check-icon" />}
+                </CurrencyDropDownItem>
+                <CurrencyDropDownItem
+                  onClick={() => {
+                    handleItemClick('Monthly Yield')
+                    handleSort('MonthlyYield')
+                  }}
+                  fontcolor={fontColor2}
+                >
+                  <div>Monthly Yield</div>
+                  {selectedItem === 'Monthly Yield' && <IoCheckmark className="check-icon" />}
+                </CurrencyDropDownItem>
+              </CurrencyDropDownMenu>
+            </Dropdown>
+          </HeaderButton>
+        </LeaderBoardTop>
         <div>
-          <TableTitle color={darkMode ? '#ffffff' : '#101828'}>
-            Leaderboard <BetaBadge>Beta</BetaBadge>
-          </TableTitle>
-          <TableIntro marginBottom="0px" color={darkMode ? '#ffffff' : '#475467'}>
-            Displaying data from all networks.
-          </TableIntro>
+          {account &&
+            (balanceRank > 0 && efficiencyRank > 0 ? (
+              <RankIntro>
+                You are ranked <b>#{balanceRank}</b> by balance and<b>#{efficiencyRank}</b> by
+                efficiency .
+              </RankIntro>
+            ) : (
+              <RankIntro>
+                You&apos;re user <b>&lt; #1000</b> by balance, and <b>&lt; #1000</b> by efficiency.
+              </RankIntro>
+            ))}
         </div>
-        <HeaderButton style={{ width: '42%' }}>
-          <Dropdown>
-            <CurrencyDropDown
-              id="dropdown-basic"
-              bgcolor={backColorButton}
-              fontcolor2={fontColor2}
-              hovercolor={hoverColorNew}
-              style={{ padding: 0 }}
-            >
-              <CurrencySelect backcolor={backColor} fontcolor2={fontColor2} hovercolor={hoverColor}>
-                <div>{selectedItem}</div>
-                <img src={dropDown} alt="Chevron Down" />
-              </CurrencySelect>
-            </CurrencyDropDown>
-            <CurrencyDropDownMenu backcolor={backColorButton}>
-              <CurrencyDropDownItem
-                onClick={() => {
-                  handleItemClick('Top Allocation')
-                  handleSort('balance')
-                }}
-                fontcolor={fontColor2}
-              >
-                <div>Top Allocation</div>
-                {selectedItem === 'Top Allocation' && <IoCheckmark className="check-icon" />}
-              </CurrencyDropDownItem>
-              <CurrencyDropDownItem
-                onClick={() => {
-                  handleItemClick('Efficiency')
-                  handleSort('Efficiency')
-                }}
-                fontcolor={fontColor2}
-              >
-                <div>Efficiency</div>
-                {selectedItem === 'Efficiency' && <IoCheckmark className="check-icon" />}
-              </CurrencyDropDownItem>
-              <CurrencyDropDownItem
-                onClick={() => {
-                  handleItemClick('Monthly Yield')
-                  handleSort('MonthlyYield')
-                }}
-                fontcolor={fontColor2}
-              >
-                <div>Monthly Yield</div>
-                {selectedItem === 'Monthly Yield' && <IoCheckmark className="check-icon" />}
-              </CurrencyDropDownItem>
-            </CurrencyDropDownMenu>
-          </Dropdown>
-        </HeaderButton>
       </Inner>
       <Inner style={{ padding: '0px', borderRadius: '0px' }}>
         <TableContent borderColor={borderColor} count={100}>
