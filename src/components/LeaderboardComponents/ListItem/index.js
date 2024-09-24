@@ -71,7 +71,7 @@ const ListItem = ({
             fontWeight="500"
           >
             <AddressLink
-              href={`https://etherscan.io/address/${walletAddress}`}
+              href={`https://etherscan.io/address/${addressValue}`}
               target="blank"
               onClick={stopPropagation}
               color={color}

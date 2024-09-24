@@ -133,6 +133,7 @@ const HolderRow = ({
               color={darkMode ? '#ffffff' : '#475467'}
               rankingValue={`#${cKey}`}
               walletAddress={truncateAddress(accounts)}
+              addressValue={accounts}
             />
             <ListItem
               weight={400}
