@@ -194,7 +194,7 @@ const HolderRow = ({
                 .map(([vaultKey, vaultValue]) => {
                   return selectedItem === 'Top Allocation' ? (
                     <ListItem
-                      key={vaultKey}
+                      key={`${vaultKey}-${cKey}`}
                       topAllocation={`${currencySym}${formatNumber(vaultValue.balance, 2)}`}
                       tokenName={matchedTokenNames[0]}
                       platform={getPlatformName(vaultKey)}
@@ -207,7 +207,7 @@ const HolderRow = ({
                     />
                   ) : selectedItem === 'Monthly Yield' ? (
                     <ListItem
-                      key={vaultKey}
+                      key={`${vaultKey}-${vaultKey}`}
                       weight={400}
                       size="12px"
                       color="#5FCF76"

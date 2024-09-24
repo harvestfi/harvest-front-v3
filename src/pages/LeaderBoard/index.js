@@ -185,7 +185,6 @@ const LeaderBoard = () => {
             valueB += vaultBArray[i][1].balance
           }
         } else if (sortConfig.key === 'Efficiency') {
-          console.log('groupOfVaults', groupOfVaults)
           const [realWalletApyA] = getWalletApy(a[1], groupOfVaults, vaultsData, pools)
           const [realWalletApyB] = getWalletApy(b[1], groupOfVaults, vaultsData, pools)
           valueA = realWalletApyA
@@ -380,20 +379,22 @@ const LeaderBoard = () => {
           </Header>
           {currentItems &&
             currentItems.map(([key, [accounts, value]], index) => {
-              const lastItem = index === currentItems.lendth - 1
-              const totalBalance =
+              const lastItem = index === currentItems.length - 1
+              const totalBalanceRank =
                 fixedBalanceRanks.find(item => item.wallet === accounts)?.rank || null
               return (
                 <HolderRow
                   key={key}
                   value={value}
-                  cKey={totalBalance}
+                  cKey={totalBalanceRank}
                   accounts={accounts}
                   groupOfVaults={groupOfVaults}
                   lastItem={lastItem}
                   // getTokenNames={getTokenNames}
-                  selectedItem={selectedItem}
                   darkMode={darkMode}
+                  pools={pools}
+                  vaultsData={vaultsData}
+                  selectedItem={selectedItem}
                 />
               )
             })}
