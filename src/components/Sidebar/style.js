@@ -708,6 +708,7 @@ const MobileToggle = styled.img`
   filter: ${props => props.toggleColor};
   &.wallet-btn {
     margin-top: -3px;
+    filter: invert(39%) sepia(83%) saturate(1585%) hue-rotate(137deg) brightness(103%) contrast(84%);
   }
   &.connected-wallet-btn {
     filter: invert(39%) sepia(83%) saturate(1585%) hue-rotate(137deg) brightness(103%) contrast(84%);
@@ -827,6 +828,17 @@ const LinkMobile = styled.button`
             filter: invert(56%) sepia(65%) saturate(2880%) hue-rotate(127deg) brightness(93%) contrast(84%);
           }
       `
+      : `font-weight: 400;`}
+
+  ${props =>
+    props.darkMode && props.active
+      ? `
+              font-weight: 500;
+              color: #15B088;
+              img.sideIcon {
+                filter: invert(39%) sepia(83%) saturate(1585%) hue-rotate(137deg) brightness(103%) contrast(84%);
+              }
+          `
       : `font-weight: 400;`}
 `
 
