@@ -26,6 +26,7 @@ const Label = styled.div`
   font-weight: ${props => (props.fontWeight ? props.fontWeight : '')};
   margin-left: ${props => props.marginLeft};
   width: ${props => (props.width ? props.width : '')};
+  white-space: ${props => (props.whiteSpace ? props.whiteSpace : '')};
   img {
     margin-left: ${props => (props.imgMargin ? `${props.imgMargin}px` : '3px')};
     align-self: center;
