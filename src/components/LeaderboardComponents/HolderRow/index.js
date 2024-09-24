@@ -20,6 +20,7 @@ import { useRate } from '../../../providers/Rate'
 import { chainList } from '../../../constants'
 import ChevronUp from '../../../assets/images/ui/chevron-up.svg'
 import ChevronDown from '../../../assets/images/ui/chevron-down.svg'
+import { getTokenNames, getVaultApy, getWalletApy } from '../../../utilities/parsers'
 
 const HolderRow = ({
   value,
@@ -27,11 +28,10 @@ const HolderRow = ({
   accounts,
   groupOfVaults,
   lastItem,
-  getTokenNames,
   selectedItem,
   darkMode,
-  getVaultApy,
-  getWalletApy,
+  pools,
+  vaultsData,
 }) => {
   const [isExpand, setIsExpand] = useState(false)
   const [currencySym, setCurrencySym] = useState('$')
@@ -99,7 +99,7 @@ const HolderRow = ({
 
   useEffect(() => {
     if (value && value.vaults && groupOfVaults) {
-      const [calculatedApy, calculatedYield] = getWalletApy(value)
+      const [calculatedApy, calculatedYield] = getWalletApy(value, groupOfVaults, vaultsData, pools)
       setWalletApy(calculatedApy)
       setMonthlyYield(calculatedYield)
     }
@@ -286,7 +286,12 @@ const HolderRow = ({
                             marginTop="0px"
                             marginRight="10px"
                             color="#5FCF76"
-                            value={`${getVaultApy(vaultKey, groupOfVaults)}% APY`}
+                            value={`${getVaultApy(
+                              vaultKey,
+                              groupOfVaults,
+                              vaultsData,
+                              pools,
+                            )}% APY`}
                             justifyContent="end"
                           />
                           <ListItem
@@ -295,7 +300,7 @@ const HolderRow = ({
                             marginTop="0px"
                             color="#6988FF"
                             value={`${currencySym}${formatNumber(
-                              getVaultApy(vaultKey, groupOfVaults) / 100,
+                              getVaultApy(vaultKey, groupOfVaults, vaultsData, pools) / 100,
                               2,
                             )}/yr per $1 allocated`}
                             justifyContent="end"
@@ -520,7 +525,7 @@ const HolderRow = ({
                           marginTop="0px"
                           marginRight="10px"
                           color="#5FCF76"
-                          value={`${getVaultApy(vaultKey, groupOfVaults)}% APY`}
+                          value={`${getVaultApy(vaultKey, groupOfVaults, vaultsData, pools)}% APY`}
                         />
                         <ListItem
                           weight={500}
@@ -528,7 +533,7 @@ const HolderRow = ({
                           marginTop="0px"
                           color="#6988FF"
                           value={`${currencySym}${formatNumber(
-                            getVaultApy(vaultKey, groupOfVaults) / 100,
+                            getVaultApy(vaultKey, groupOfVaults, vaultsData, pools) / 100,
                             2,
                           )}/yr per $1 allocated`}
                         />

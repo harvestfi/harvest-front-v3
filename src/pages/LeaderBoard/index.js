@@ -2,7 +2,7 @@ import React, { useMemo, useState, useCallback, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { PiQuestion } from 'react-icons/pi'
 import ReactTooltip from 'react-tooltip'
-import { get, find } from 'lodash'
+// import { get, find } from 'lodash'
 import { Dropdown } from 'react-bootstrap'
 import { IoCheckmark } from 'react-icons/io5'
 import { useThemeContext } from '../../providers/useThemeContext'
@@ -11,7 +11,7 @@ import sortAscIcon from '../../assets/images/ui/asc.svg'
 import sortIcon from '../../assets/images/ui/sort.svg'
 import dropDown from '../../assets/images/ui/drop-down.e85f7fdc.svg'
 import { fetchLeaderboardData } from '../../utilities/apiCalls'
-import { getTotalApy } from '../../utilities/parsers'
+import { getWalletApy, rearrangeApiData } from '../../utilities/parsers'
 import {
   Column,
   Container,
@@ -115,152 +115,8 @@ const LeaderBoard = () => {
 
   const groupOfVaults = { ...vaultsData, ...poolVaults }
 
-  const getTokenNames = (userVault, dataVaults) => {
-    const vaults = userVault.vaults
-    const tokenNames = []
-    const matchedVaults = {}
-
-    Object.entries(vaults).forEach(([vaultKey, vaultValue]) => {
-      if (vaultValue.dailyYield === 0 || vaultValue.dailyReward + vaultValue.dailyReward === 0) {
-        return
-      }
-
-      const match = Object.entries(dataVaults).find(([, vaultData]) => {
-        return (
-          vaultData.vaultAddress &&
-          vaultData.vaultAddress.toLowerCase() === vaultKey.toLowerCase() &&
-          !vaultData.inactive
-        )
-      })
-
-      if (match) {
-        const [, vaultData] = match
-        if (vaultData.tokenNames.length > 1) {
-          tokenNames.push(vaultData.tokenNames.join(', '))
-        } else {
-          tokenNames.push(...vaultData.tokenNames)
-        }
-        matchedVaults[vaultKey] = vaults[vaultKey]
-      }
-    })
-
-    userVault.vaults = matchedVaults
-    return tokenNames
-  }
-
-  const getVaultApy = (vaultKey, vaultsGroup) => {
-    let token = null,
-      tokenSymbol = null,
-      specialVaultFlag = false,
-      vaultPool
-
-    if (vaultKey === '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651') {
-      vaultKey = '0xa0246c9032bc3a600820415ae600c6388619a14d'
-      specialVaultFlag = true
-    }
-
-    Object.entries(vaultsGroup).forEach(([key, vaultData]) => {
-      if (specialVaultFlag && vaultData.data) {
-        if (vaultData.data.collateralAddress.toLowerCase() === vaultKey.toLowerCase()) {
-          token = vaultData
-          tokenSymbol = key
-        }
-      } else if (
-        vaultData.vaultAddress &&
-        vaultData.vaultAddress.toLowerCase() === vaultKey.toLowerCase()
-      ) {
-        token = vaultData
-        tokenSymbol = key
-      }
-    })
-
-    const isSpecialVault = token.liquidityPoolVault || token.poolVault
-
-    const tokenVault = get(vaultsData, token.hodlVaultId || tokenSymbol)
-
-    if (isSpecialVault) {
-      vaultPool = token.data
-    } else {
-      vaultPool = find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
-    }
-
-    const totalApy = isSpecialVault
-      ? getTotalApy(null, token, true)
-      : getTotalApy(vaultPool, tokenVault)
-
-    return totalApy
-  }
-
-  const getWalletApy = value => {
-    let totalMonthlyYield = 0,
-      walletTotalBalance = 0
-    Object.entries(value.vaults).map(([vaultKey, vaultValue]) => {
-      const vaultApy = getVaultApy(vaultKey, groupOfVaults)
-      const vaultMonthlyYield = (vaultApy / 12 / 100) * vaultValue.balance
-      totalMonthlyYield += vaultMonthlyYield
-      walletTotalBalance += vaultValue.balance
-      return true
-    })
-    const realWalletApy = (totalMonthlyYield / walletTotalBalance) * 12 * 100
-    return [realWalletApy, totalMonthlyYield]
-  }
-
-  const rearrangeApiData = apiData => {
-    const vaultsFilteredData = Object.entries(apiData)
-      .map(([wallet, entry]) => {
-        const vaultTokenNames = getTokenNames(entry, groupOfVaults)
-        if (vaultTokenNames.length > 0) {
-          return [wallet, entry]
-        }
-        return null
-      })
-      .filter(item => item != null)
-
-    const removeLowMonthlyYieldData = vaultsFilteredData
-      .map(([wallet, entry]) => {
-        const [, totalMonthlyYield] = getWalletApy(entry)
-        if (totalMonthlyYield >= 0.01) {
-          return [wallet, entry]
-        }
-        return null
-      })
-      .filter(item => item != null)
-
-    const filteredApiData = Object.fromEntries(removeLowMonthlyYieldData)
-
-    const vaultBalanceSortedData = Object.entries(filteredApiData)
-      .map(([address, data]) => {
-        const totalVaultBalance = Object.values(data.vaults).reduce((sum, vault) => {
-          return sum + vault.balance
-        }, 0)
-
-        return { address, data, totalVaultBalance }
-      })
-      .sort((a, b) => b.totalVaultBalance - a.totalVaultBalance)
-      .reduce((acc, { address, data }) => {
-        acc[address] = data
-        return acc
-      }, {})
-
-    Object.entries(vaultBalanceSortedData).forEach(([, value]) => {
-      if (value.vaults) {
-        value.vaults = Object.fromEntries(
-          Object.entries(value.vaults).sort(([, a], [, b]) => b.balance - a.balance),
-        )
-      }
-    })
-
-    // const allWalletInfo = Object.entries(vaultBalanceSortedData).slice(0, 150)
-
-    // const top100Data = allWalletInfo.slice(0, 100)
-
-    // const sortedApiData = Object.fromEntries(top100Data)
-
-    return vaultBalanceSortedData
-  }
-
   if (leadersApiData) {
-    correctedApiData = rearrangeApiData(leadersApiData)
+    correctedApiData = rearrangeApiData(leadersApiData, groupOfVaults, vaultsData, pools)
   }
 
   const handleSort = useCallback(
@@ -329,13 +185,14 @@ const LeaderBoard = () => {
             valueB += vaultBArray[i][1].balance
           }
         } else if (sortConfig.key === 'Efficiency') {
-          const [realWalletApyA] = getWalletApy(a[1])
-          const [realWalletApyB] = getWalletApy(b[1])
+          console.log('groupOfVaults', groupOfVaults)
+          const [realWalletApyA] = getWalletApy(a[1], groupOfVaults, vaultsData, pools)
+          const [realWalletApyB] = getWalletApy(b[1], groupOfVaults, vaultsData, pools)
           valueA = realWalletApyA
           valueB = realWalletApyB
         } else if (sortConfig.key === 'MonthlyYield') {
-          const [, totalMonthlyYieldA] = getWalletApy(a[1])
-          const [, totalMonthlyYieldB] = getWalletApy(b[1])
+          const [, totalMonthlyYieldA] = getWalletApy(a[1], groupOfVaults, vaultsData, pools)
+          const [, totalMonthlyYieldB] = getWalletApy(b[1], groupOfVaults, vaultsData, pools)
           valueA = totalMonthlyYieldA
           valueB = totalMonthlyYieldB
         } else if (sortConfig.key === 'balance') {
@@ -534,11 +391,9 @@ const LeaderBoard = () => {
                   accounts={accounts}
                   groupOfVaults={groupOfVaults}
                   lastItem={lastItem}
-                  getTokenNames={getTokenNames}
+                  // getTokenNames={getTokenNames}
                   selectedItem={selectedItem}
                   darkMode={darkMode}
-                  getVaultApy={getVaultApy}
-                  getWalletApy={getWalletApy}
                 />
               )
             })}
@@ -696,10 +551,10 @@ const LeaderBoard = () => {
                     accounts={accounts}
                     groupOfVaults={groupOfVaults}
                     lastItem={lastItem}
-                    getTokenNames={getTokenNames}
+                    // getTokenNames={getTokenNames}
                     darkMode={darkMode}
-                    getVaultApy={getVaultApy}
-                    getWalletApy={getWalletApy}
+                    pools={pools}
+                    vaultsData={vaultsData}
                   />
                 )
               })}
