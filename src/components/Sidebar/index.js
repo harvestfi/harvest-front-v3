@@ -29,6 +29,7 @@ import { ROUTES } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
 import { usePools } from '../../providers/Pools'
 import { useThemeContext } from '../../providers/useThemeContext'
+import usePersistedState from '../../providers/usePersistedState'
 import { useWallet } from '../../providers/Wallet'
 import { fromWei } from '../../services/web3'
 import { getChainIcon } from '../../utilities/parsers'
@@ -210,6 +211,7 @@ const SideLink = ({
   activeIconColor,
   darkMode,
   hoverColorSide,
+  className,
 }) => {
   const { pathname } = useLocation()
   const pageName =
@@ -231,6 +233,7 @@ const SideLink = ({
       darkMode={darkMode}
       enabled={item.enabled === false ? 'false' : 'true'}
       hoverColorSide={hoverColorSide}
+      className={className}
     >
       <div className="item">
         <SideIcons
@@ -339,6 +342,7 @@ const Sidebar = ({ width }) => {
   const [copyAddress, setCopyAddress] = useState('Copy Address')
   const [balanceETH, setBalanceETH] = useState('')
   const [balanceUSDC, setBalanceUSDC] = useState('')
+  const [leaderboardClick, setLeaderboardClick] = usePersistedState('leaderboardClick', false)
 
   const handleMobileClose = () => setMobileShow(false)
   const handleMobileShow = () => setMobileShow(true)
@@ -413,6 +417,8 @@ const Sidebar = ({ width }) => {
     push(path)
   }
 
+  const handleLeaderboardClick = () => setLeaderboardClick(prev => !prev)
+
   return (
     <Container
       width={width}
@@ -460,7 +466,6 @@ const Sidebar = ({ width }) => {
                     </button>
                   )
                 }
-
                 return (
                   <Dropdown>
                     <UserDropDown
@@ -521,6 +526,7 @@ const Sidebar = ({ width }) => {
                           directAction(item.path)
                         }
                       }}
+                      darkMode={darkMode}
                     >
                       <SideLink
                         item={item}
@@ -553,6 +559,9 @@ const Sidebar = ({ width }) => {
                     } else {
                       directAction(item.path)
                     }
+                    if (item.name === 'Leaderboard') {
+                      handleLeaderboardClick()
+                    }
                   }}
                 >
                   <SideLink
@@ -563,6 +572,13 @@ const Sidebar = ({ width }) => {
                     activeIconColor={sidebarActiveIconColor}
                     darkMode={darkMode}
                     hoverColorSide={hoverColorSide}
+                    className={
+                      item.name === 'Leaderboard' && !leaderboardClick && darkMode
+                        ? 'leaderboard-dark-btn'
+                        : item.name === 'Leaderboard' && !leaderboardClick && !darkMode
+                        ? 'leaderboard-white-icon'
+                        : ''
+                    }
                   />
                 </LinkContainer>
               </Fragment>

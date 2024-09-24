@@ -97,6 +97,72 @@ const LinkContainer = styled.div`
   @media screen and (min-width: 992px) {
     display: flex;
   }
+
+  .leaderboard-dark-btn {
+    --border-angle: 0turn;
+    --main-bg: conic-gradient(from var(--border-angle), #213, #112 5%, #112 60%, #213 95%);
+
+    border: solid 5px transparent;
+    --gradient-border: conic-gradient(
+      from var(--border-angle),
+      transparent 25%,
+      #08f,
+      #f03 99%,
+      transparent
+    );
+
+    background: var(--main-bg) padding-box, var(--gradient-border) border-box,
+      var(--main-bg) border-box !important;
+
+    background-position: center center;
+
+    animation: bg-spin 3s linear infinite;
+    @keyframes bg-spin {
+      to {
+        --border-angle: 1turn;
+      }
+    }
+
+    &:hover {
+      animation-play-state: paused;
+    }
+  }
+
+  .leaderboard-white-icon {
+    --border-angle: 0turn;
+    --main-bg: conic-gradient(from var(--border-angle), #fff, #fff 5%, #fff 60%, #fff 95%);
+
+    border: solid 5px transparent;
+    --gradient-border: conic-gradient(
+      from var(--border-angle),
+      transparent 25%,
+      #08f,
+      #f03 99%,
+      transparent
+    );
+
+    background: var(--main-bg) padding-box, var(--gradient-border) border-box,
+      var(--main-bg) border-box !important;
+
+    background-position: center center;
+
+    animation: bg-spin 3s linear infinite;
+    @keyframes bg-spin {
+      to {
+        --border-angle: 1turn;
+      }
+    }
+
+    &:hover {
+      animation-play-state: paused;
+    }
+  }
+
+  @property --border-angle {
+    syntax: '<angle>';
+    inherits: true;
+    initial-value: 0turn;
+  }
 `
 
 const Link = styled.button`
