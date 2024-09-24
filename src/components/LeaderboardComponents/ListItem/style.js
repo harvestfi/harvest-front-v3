@@ -78,7 +78,7 @@ const ChainImage = styled.img`
   margin-left: ${props => (props.imgMargin ? `${props.imgMargin}!important` : '3px')};
 
   @media screen and (max-width: 992px) {
-    margin-left: 0px !important;
+    margin-left: ${props => (props.marginLeft ? `${props.marginLeft}!important` : '')};
     margin-right: ${props => (props.imgMargin ? `${props.imgMargin}!important` : '3px')};
   }
 `

@@ -122,7 +122,7 @@ const HolderRow = ({
             width="50%"
             display="flex"
             justifyContent="space-between"
-            padding="18px 28px"
+            padding="18px 28px 18px 16px"
             flexDirection="column"
           >
             <ListItem
@@ -152,7 +152,12 @@ const HolderRow = ({
               farmsNumber={matchedTokenNames.length}
             />
           </ContentInner>
-          <ContentInner width="50%" display="flex" padding="18px 28px" flexDirection="column">
+          <ContentInner
+            width="50%"
+            display="flex"
+            padding="18px 16px 18px 28px"
+            flexDirection="column"
+          >
             {selectedItem === 'Efficiency' ? (
               <>
                 <ListItem
@@ -222,7 +227,7 @@ const HolderRow = ({
       {isExpand && (
         <>
           <FlexDiv>
-            <Content padding="0px 0px 0px 28px">
+            <Content padding="0px 0px 0px 16px">
               <ContentInner
                 width={isMobile ? '100%' : '100%'}
                 display={isMobile ? 'block' : 'flex'}
@@ -231,7 +236,7 @@ const HolderRow = ({
               </ContentInner>
             </Content>
           </FlexDiv>
-          <Content padding="12px 0px 16px 28px">
+          <Content padding="12px 0px 16px 16px">
             <ContentInner width={isMobile ? '100%' : '100%'} display={isMobile ? 'block' : 'flex'}>
               <div style={{ paddingLeft: '0px', margin: 0 }}>
                 {Object.entries(value.vaults)
@@ -245,22 +250,8 @@ const HolderRow = ({
                           alignItems: 'center',
                           marginBottom: '10px',
                           position: 'relative',
-                          paddingLeft: '10px',
                         }}
                       >
-                        <span
-                          style={{
-                            content: '""',
-                            width: '4px',
-                            height: '4px',
-                            backgroundColor: darkMode ? '#ffffff' : 'rgb(84, 88, 99)',
-                            borderRadius: '50%',
-                            position: 'absolute',
-                            left: 0,
-                            top: '50%',
-                            transform: 'translateY(-50%)',
-                          }}
-                        />
                         <MobileGranularBlock>
                           <ListItem
                             value={`${currencySym}${formatNumber(vaultValue.balance, 2)}`}
@@ -283,9 +274,11 @@ const HolderRow = ({
                             networkName={networkNames[getBadgeId(vaultKey)]}
                             vaultAddress={vaultKey}
                             textDecoration="underline"
+                            marginLeft="0px"
+                            width="115%"
                           />
                         </MobileGranularBlock>
-                        <MobileGranularBlock>
+                        <MobileGranularBlock paddingRight="16px">
                           <ListItem
                             weight={500}
                             size="10px"
@@ -496,22 +489,8 @@ const HolderRow = ({
                           alignItems: 'center',
                           marginBottom: '10px',
                           position: 'relative',
-                          paddingLeft: '10px',
                         }}
                       >
-                        <span
-                          style={{
-                            content: '""',
-                            width: '4px',
-                            height: '4px',
-                            backgroundColor: darkMode ? '#ffffff' : 'rgb(84, 88, 99)',
-                            borderRadius: '50%',
-                            position: 'absolute',
-                            left: 0,
-                            top: '50%',
-                            transform: 'translateY(-50%)',
-                          }}
-                        />
                         <ListItem
                           value={`${currencySym}${formatNumber(vaultValue.balance, 2)}`}
                           weight={500}

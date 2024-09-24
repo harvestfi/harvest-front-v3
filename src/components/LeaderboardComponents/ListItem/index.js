@@ -31,6 +31,7 @@ const ListItem = ({
   tokenName,
   flexDirection,
   justifyContent,
+  width,
 }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
@@ -48,6 +49,7 @@ const ListItem = ({
       justifyContent={justifyContent}
       lineHeight={lineHeight}
       flexDirection={flexDirection}
+      width={width}
     >
       {rankingValue && walletAddress ? (
         <>
@@ -165,7 +167,13 @@ const ListItem = ({
             value
           )}
           {chain ? (
-            <ChainImage src={chain} imgMargin={imgMargin} className="chainImage" alt="" />
+            <ChainImage
+              src={chain}
+              imgMargin={imgMargin}
+              className="chainImage"
+              alt=""
+              marginLeft={marginLeft}
+            />
           ) : (
             <></>
           )}

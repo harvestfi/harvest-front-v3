@@ -179,8 +179,7 @@ const TopFiveText = styled.div`
 `
 const MobileGranularBlock = styled.div`
   width: 100%;
-  padding-right: 28px;
-  margin-left: 5px;
+  padding-right: ${props => (props.paddingRight ? props.paddingRight : '')};
 `
 
 export { DetailView, FlexDiv, Content, ContentInner, TopFiveText, MobileGranularBlock }
