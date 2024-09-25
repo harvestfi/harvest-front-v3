@@ -102,7 +102,7 @@ const LinkContainer = styled.div`
     --border-angle: 0turn;
     --main-bg: conic-gradient(from var(--border-angle), #213, #112 5%, #112 60%, #213 95%);
 
-    border: solid 5px transparent;
+    border: solid 2px transparent;
     --gradient-border: conic-gradient(
       from var(--border-angle),
       transparent 25%,
@@ -132,7 +132,7 @@ const LinkContainer = styled.div`
     --border-angle: 0turn;
     --main-bg: conic-gradient(from var(--border-angle), #fff, #fff 5%, #fff 60%, #fff 95%);
 
-    border: solid 5px transparent;
+    border: solid 2px transparent;
     --gradient-border: conic-gradient(
       from var(--border-angle),
       transparent 25%,

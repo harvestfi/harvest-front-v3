@@ -338,8 +338,8 @@ const LeaderBoard = () => {
           {account &&
             (balanceRank > 0 && efficiencyRank > 0 ? (
               <RankIntro>
-                You are ranked <b>#{balanceRank}</b> by balance and<b>#{efficiencyRank}</b> by
-                efficiency .
+                You are ranked <b>#{balanceRank}</b> by balance and <b>#{efficiencyRank}</b> by
+                efficiency.
               </RankIntro>
             ) : (
               <RankIntro>
