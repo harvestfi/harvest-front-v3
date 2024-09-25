@@ -417,7 +417,11 @@ const Sidebar = ({ width }) => {
     push(path)
   }
 
-  const handleLeaderboardClick = () => setLeaderboardClick(prev => !prev)
+  const handleLeaderboardClick = () => {
+    if (leaderboardClick === false) {
+      setLeaderboardClick(prev => !prev)
+    }
+  }
 
   return (
     <Container
