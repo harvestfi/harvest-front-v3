@@ -418,9 +418,7 @@ const Sidebar = ({ width }) => {
   }
 
   const handleLeaderboardClick = () => {
-    if (leaderboardClick === false) {
-      setLeaderboardClick(prev => !prev)
-    }
+    setLeaderboardClick(true)
   }
 
   return (
