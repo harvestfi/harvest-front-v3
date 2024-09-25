@@ -161,6 +161,18 @@ export const getPublishDate = async () => {
         }
       }`,
     },
+    {
+      url: GRAPH_URL_ZKSYNC,
+      query: `{
+        vaults(
+          first: 1000,
+          orderBy: timestamp,
+          orderDirection: desc
+        ) {
+          id, timestamp
+        }
+      }`,
+    },
   ]
 
   try {
