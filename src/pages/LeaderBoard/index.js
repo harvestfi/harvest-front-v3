@@ -242,10 +242,10 @@ const LeaderBoard = () => {
 
   const sortedByEfficiency = useMemo(() => {
     return Object.entries(correctedApiData).sort((a, b) => {
-      const monthlyYieldA = (a[1].totalDailyYield * 365) / 12
-      const monthlyYieldB = (b[1].totalDailyYield * 365) / 12
-      const efficiencyA = (monthlyYieldA / a[1].totalBalance) * 12 * 100 || 0
-      const efficiencyB = (monthlyYieldB / b[1].totalBalance) * 12 * 100 || 0
+      const [realWalletApyA] = getWalletApy(a[1], groupOfVaults, vaultsData, pools)
+      const [realWalletApyB] = getWalletApy(b[1], groupOfVaults, vaultsData, pools)
+      const efficiencyA = realWalletApyA
+      const efficiencyB = realWalletApyB
       return efficiencyB - efficiencyA
     })
   }, [correctedApiData])
@@ -343,7 +343,7 @@ const LeaderBoard = () => {
               </RankIntro>
             ) : (
               <RankIntro>
-                You&apos;re user <b>&lt; #1000</b> by balance, and <b>&lt; #1000</b> by efficiency.
+                You&apos;re user <b>&lt;#1000</b> by balance, and <b>&lt;#1000</b> by efficiency.
               </RankIntro>
             ))}
         </div>
@@ -427,13 +427,12 @@ const LeaderBoard = () => {
             {account &&
               (balanceRank > 0 && efficiencyRank > 0 ? (
                 <RankIntro>
-                  You are ranked <b>#{balanceRank}</b> by balance and<b>#{efficiencyRank}</b> by
-                  efficiency .
+                  You are ranked <b>#{balanceRank}</b> by balance and <b>#{efficiencyRank}</b> by
+                  efficiency.
                 </RankIntro>
               ) : (
                 <RankIntro>
-                  You&apos;re user <b>&lt; #1000</b> by balance, and <b>&lt; #1000</b> by
-                  efficiency.
+                  You&apos;re user <b>&lt;#1000</b> by balance, and <b>&lt;#1000</b> by efficiency.
                 </RankIntro>
               ))}
           </div>
