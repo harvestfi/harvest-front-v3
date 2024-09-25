@@ -579,7 +579,7 @@ const LeaderBoard = () => {
                   />
                 </Col>
               </Column>
-              <Column width={isMobile ? '5%' : '5%'} color={fontColor} justifyContent="center">
+              <Column width={isMobile ? '5%' : '2%'} color={fontColor} justifyContent="center">
                 <Col cursor="pointer" />
               </Column>
             </Header>

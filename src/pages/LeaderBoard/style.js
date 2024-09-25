@@ -25,7 +25,7 @@ const Container = styled.div`
 `
 
 const Inner = styled.div`
-  padding: 100px;
+  padding: 50px 75px 75px 75px;
   width: 100%;
 
   @media screen and (min-width: 1921px) {

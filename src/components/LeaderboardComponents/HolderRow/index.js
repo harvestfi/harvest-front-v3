@@ -438,7 +438,7 @@ const HolderRow = ({
             />
           </ContentInner>
           <ContentInner
-            width={isMobile ? '5%' : '5%'}
+            width={isMobile ? '5%' : '2%'}
             display="flex"
             justifyContent="center"
             fontSize="18px"
