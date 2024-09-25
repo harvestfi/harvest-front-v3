@@ -248,7 +248,7 @@ const LeaderBoard = () => {
       const efficiencyB = realWalletApyB
       return efficiencyB - efficiencyA
     })
-  }, [correctedApiData])
+  }, [correctedApiData]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const balanceRank = useMemo(() => {
     if (account && Object.entries(correctedApiData).length > 0) {
