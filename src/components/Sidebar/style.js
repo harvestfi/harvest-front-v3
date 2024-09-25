@@ -99,6 +99,7 @@ const LinkContainer = styled.div`
   }
 
   .leaderboard-dark-btn {
+    color: rgb(255, 255, 255);
     --border-angle: 0turn;
     --main-bg: conic-gradient(from var(--border-angle), #213, #112 5%, #112 60%, #213 95%);
 
@@ -129,6 +130,7 @@ const LinkContainer = styled.div`
   }
 
   .leaderboard-white-icon {
+    color: rgb(16, 24, 40);
     --border-angle: 0turn;
     --main-bg: conic-gradient(from var(--border-angle), #fff, #fff 5%, #fff 60%, #fff 95%);
 
