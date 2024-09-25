@@ -395,7 +395,7 @@ const CurrencySelect = styled.div`
     height: unset;
     border-radius: 8px;
     line-height: 20px;
-    padding: 10px 16px;
+    padding: 10px 10px;
     gap: 0px;
     justify-content: space-between;
 
@@ -485,7 +485,7 @@ const CurrencyDropDownItem = styled(Dropdown.Item)`
 
   @media screen and (max-width: 992px) {
     line-height: 20px;
-    padding: 10px 16px;
+    padding: 10px 10px;
     gap: 5px;
     justify-content: space-between;
 
