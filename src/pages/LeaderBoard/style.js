@@ -70,6 +70,7 @@ const Column = styled.div`
   font-size: ${props => (props.fontSize ? props.fontSize : '12px')};
   line-height: 18px;
   display: flex;
+  align-items: ${props => props.alighItems};
   color: ${props => props.color};
   padding: ${props => (props.padding ? props.padding : '')};
   ${props =>
@@ -78,6 +79,10 @@ const Column = styled.div`
   justify-content: ${props.justifyContent}
 `
       : `start`};
+
+  .mobileTooltip {
+    left: 50px !important;
+  }
 `
 
 const Col = styled.div`

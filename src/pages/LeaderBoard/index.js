@@ -79,6 +79,10 @@ const LeaderBoard = () => {
     setSelectedItem(item)
   }, [])
 
+  const stopPropagation = event => {
+    event.stopPropagation()
+  }
+
   useEffect(() => {
     const getData = async () => {
       try {
@@ -356,14 +360,15 @@ const LeaderBoard = () => {
             borderRadius="0px"
             padding="0px"
           >
-            <Column width="50%" color={fontColor} fontSize="14px" padding="14px 28px">
+            <Column width="50%" color={fontColor} fontSize="14px" padding="14px 28px 14px 16px">
               <Col># User</Col>
             </Column>
             <Column
               width="50%"
               color={fontColor}
               fontSize="14px"
-              padding="14px 28px"
+              padding="14px 28px 14px 16px"
+              alighItems="center"
               onClick={() => {
                 if (selectedItem === 'Top Allocation') {
                   handleSort('balance')
@@ -375,6 +380,45 @@ const LeaderBoard = () => {
               }}
             >
               <Col>{selectedItem}</Col>
+              {selectedItem === 'Efficiency' && (
+                <>
+                  <PiQuestion
+                    className="question"
+                    data-tip
+                    onClick={stopPropagation}
+                    style={{ marginLeft: '5px' }}
+                  />
+                  <ReactTooltip
+                    backgroundColor={darkMode ? 'white' : '#101828'}
+                    borderColor={darkMode ? 'white' : 'black'}
+                    textColor={darkMode ? 'black' : 'white'}
+                    place="top"
+                    className="mobileTooltip"
+                  >
+                    <NewLabel
+                      size={isMobile ? '10px' : '12px'}
+                      height={isMobile ? '15px' : '18px'}
+                      weight="600"
+                      width="296px"
+                    >
+                      <div>
+                        <p>This metric shows how effectively a wallet generates yield:</p>
+                        <ul style={{ paddingLeft: '20px', marginBottom: '0px' }}>
+                          <li>
+                            <strong>APY:</strong> The estimated yearly growth based on wallet&apos;s
+                            balance on Harvest.
+                          </li>
+                          <li>
+                            <strong>$ per $1 Allocated:</strong> Yearly yield for every $1 allocated
+                            in Harvest.
+                          </li>
+                          <li>The Efficiency metric considers Live APYs.</li>
+                        </ul>
+                      </div>
+                    </NewLabel>
+                  </ReactTooltip>
+                </>
+              )}
             </Column>
           </Header>
           {currentItems &&
@@ -509,6 +553,7 @@ const LeaderBoard = () => {
                             <strong>$ per $1 Allocated:</strong> Yearly yield for every $1 allocated
                             in Harvest.
                           </li>
+                          <li>The Efficiency metric considers Live APYs.</li>
                         </ul>
                       </div>
                     </NewLabel>
