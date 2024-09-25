@@ -920,7 +920,7 @@ const Sidebar = ({ width }) => {
                   <ConnectSection>
                     <MobileConnectBtn color="connectwallet">
                       <MobileToggle
-                        className={`wallet-btn ${connected && 'connected-wallet-btn'}`}
+                        className={connected ? 'connected-wallet-btn' : 'wallet-btn'}
                         toggleColor={toggleColor}
                         width={27}
                         height={21}
@@ -993,7 +993,7 @@ const Sidebar = ({ width }) => {
               }
             >
               <MobileToggle
-                className="wallet-btn"
+                className={connected ? 'connected-wallet-btn' : 'wallet-btn'}
                 toggleColor={toggleColor}
                 width={27}
                 height={21}

@@ -158,7 +158,7 @@ const ListItem = ({
           textDecoration={textDecoration}
           marginLeft={marginLeft}
           justifyContent={justifyContent}
-          width="100%"
+          width={width}
         >
           {value === 'InfinityT%' || value === 'NaN%' || value === 'Here' || value === '0%' ? (
             <AnimatedDots />

@@ -774,8 +774,8 @@ const MobileToggle = styled.img`
   filter: ${props => props.toggleColor};
   &.wallet-btn {
     margin-top: -3px;
-    filter: invert(39%) sepia(83%) saturate(1585%) hue-rotate(137deg) brightness(103%) contrast(84%);
   }
+
   &.connected-wallet-btn {
     filter: invert(39%) sepia(83%) saturate(1585%) hue-rotate(137deg) brightness(103%) contrast(84%);
   }
