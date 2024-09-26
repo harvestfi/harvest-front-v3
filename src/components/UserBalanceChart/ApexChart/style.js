@@ -3,7 +3,6 @@ import styled from 'styled-components'
 const ChartWrapper = styled.div`
   .bottom-chart {
     border-radius: 5px;
-    display: none;
 
     .recharts-wrapper {
       .recharts-reference-area {
@@ -16,7 +15,6 @@ const ChartWrapper = styled.div`
   }
 
   .chart-slider-wrapper {
-    display: none;
     width: 100%;
     margin-top: 10px;
 

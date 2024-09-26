@@ -91,7 +91,7 @@ const StatsBox = styled.div`
   align-items: ${props => props.align || 'center'};
 
   transition: 0.25s;
-  border: 1px solid ${props => props.borderColor};
+  border: 2px solid rgb(243, 246, 255);
   color: ${props => props.fontColor};
   background: ${props => props.backColor};
 
@@ -300,8 +300,7 @@ const BigStatsExchange = styled(BigStatsSubheader)`
 `
 
 const ValueComponent = styled.div`
-  box-shadow: 0px 1px 3px rgba(16, 24, 40, 0.1), 0px 1px 2px rgba(16, 24, 40, 0.06);
-  border: 1px solid ${props => props.borderColor};
+  border: 2px solid rgb(243, 246, 255);
   background: ${props => props.backColor};
   color: ${props => props.fontColor};
   padding: 28px 24px;

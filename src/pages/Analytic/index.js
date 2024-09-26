@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import Countdown from 'react-countdown'
+// import Countdown from 'react-countdown'
 import CountUp from 'react-countup'
 import { useMediaQuery } from 'react-responsive'
 import ReactTooltip from 'react-tooltip'
@@ -17,19 +17,19 @@ import Farm from '../../assets/images/logos/analytics/farm.svg'
 import IFarm from '../../assets/images/logos/iFarm.svg'
 import GasSavedImage from '../../assets/images/logos/analytics/GasFeeSave.svg'
 import AutoHarvest from '../../assets/images/logos/analytics/AutoHarvest.svg'
-import TotalDeposit from '../../assets/images/logos/analytics/TotalDeposit.svg'
-import MonthlyProfit from '../../assets/images/logos/analytics/MonthlyProfit.svg'
+// import TotalDeposit from '../../assets/images/logos/analytics/TotalDeposit.svg'
+// import MonthlyProfit from '../../assets/images/logos/analytics/MonthlyProfit.svg'
 import ExternalLink from '../../assets/images/logos/analytics/ExternalLink.svg'
 import AnalyticChart from '../../components/AnalyticComponents/AnalyticChart'
 import AnimatedDots from '../../components/AnimatedDots'
-import CountdownLabel from '../../components/CountdownLabel'
+// import CountdownLabel from '../../components/CountdownLabel'
 import { Divider, Monospace, TextContainer } from '../../components/GlobalStyle'
 import { CURVE_APY } from '../../constants'
 import { useStats } from '../../providers/Stats'
 import { useRate } from '../../providers/Rate'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { truncateNumberString } from '../../utilities/formats'
-import { getNextEmissionsCutDate } from '../../utilities/parsers'
+// import { getNextEmissionsCutDate } from '../../utilities/parsers'
 import {
   BigStatsExchange,
   Container,
@@ -37,7 +37,7 @@ import {
   DataSource,
   DataSourceDirect,
   DataSourceInner,
-  EmissionsCountdownText,
+  // EmissionsCountdownText,
   FarmStatsContainer,
   FarmSubTitle,
   ImgList,
@@ -54,7 +54,7 @@ import {
 } from './style'
 
 const MemoizedCounter = React.memo(CountUp)
-const MemoizedCountdown = React.memo(Countdown)
+// const MemoizedCountdown = React.memo(Countdown)
 const imgList = [
   { url: 'https://pro.coinbase.com/trade/FARM-USD', img: ExchangeCoinbase },
   { url: 'https://pro.kraken.com/app/trade/farm-usd', img: ExchangeKraken },
@@ -144,8 +144,8 @@ const Analytic = () => {
             width={onlyWidth <= 1310 ? '48%' : '25%'}
           >
             <CompHeader darkMode={darkMode} fontColor={analyticTitleColor}>
-              <img src={TotalDeposit} alt="total deposit" />
-              Total Deposits
+              {/* <img src={TotalDeposit} alt="total value locked" /> */}
+              Total Value Locked
             </CompHeader>
             <FarmSubTitle bold={600} size="30px" lineHeight="38px">
               {Number(totalValueLocked) === 0 ? (
@@ -177,8 +177,8 @@ const Analytic = () => {
             width={onlyWidth <= 1310 ? '48%' : '25%'}
           >
             <CompHeader darkMode={darkMode} fontColor={analyticTitleColor}>
-              <img src={MonthlyProfit} alt="monthly profit" />
-              Monthly Profits to Farmers
+              {/* <img src={MonthlyProfit} alt="monthly crops" /> */}
+              Monthly Crops to Farmers
             </CompHeader>
             <FarmSubTitle
               data-tip
@@ -220,8 +220,8 @@ const Analytic = () => {
             width={onlyWidth <= 1310 ? '48%' : '25%'}
           >
             <CompHeader fontColor={analyticTitleColor}>
-              <img src={Farm} width="32px" height="32px" alt="" />
-              FARM staking APY:
+              {/* <img src={Farm} width="32px" height="32px" alt="" /> */}
+              iFARM/FARM staking APY:
             </CompHeader>
             <FarmSubTitle data-tip data-for="details-box" bold={600} size="30px" lineHeight="38px">
               {profitShareAPY ? `${Number(profitShareAPY).toFixed(2)}%` : <AnimatedDots />}
@@ -234,7 +234,7 @@ const Analytic = () => {
             width={onlyWidth <= 1310 ? '48%' : '25%'}
           >
             <CompHeader fontColor={analyticTitleColor}>
-              <img src={Farm} width="32px" height="32px" alt="" />
+              {/* <img src={Farm} width="32px" height="32px" alt="" /> */}
               Total FARM staked:
             </CompHeader>
             <FarmSubTitle data-tip data-for="details-box" bold={600} size="30px" lineHeight="38px">
@@ -271,7 +271,7 @@ const Analytic = () => {
         <Divider height="20px" />
         <FarmStatsLastContainer>
           <StatsBox
-            width={isMobile ? '100%' : '50%'}
+            width={isMobile ? '100%' : '100%'}
             align="flex-start"
             direction="row"
             height="450px"
@@ -281,7 +281,7 @@ const Analytic = () => {
           >
             {loadComplete && <AnalyticChart />}
           </StatsBox>
-          <StatsBox
+          {/* <StatsBox
             width={isMobile ? '100%' : '50%'}
             align="flex-start"
             compNum={2}
@@ -324,7 +324,7 @@ const Analytic = () => {
                 )
               }}
             />
-          </StatsBox>
+          </StatsBox> */}
         </FarmStatsLastContainer>
         <Divider height="30px" />
         <FarmStatsLastContainer>

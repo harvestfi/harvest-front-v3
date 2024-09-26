@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import ReactTooltip from 'react-tooltip'
 import { useMediaQuery } from 'react-responsive'
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -19,6 +20,8 @@ import {
   FlexDiv,
   CurContent,
   NewLabel,
+  ToggleButton,
+  ChevronIcon,
 } from './style'
 
 const recommendLinks = [
@@ -38,6 +41,7 @@ const UserBalanceData = ({
   underlyingPrice,
   pricePerFullShare,
   lpTokenBalance,
+  chartData,
 }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const { darkMode, backColor, borderColor, fontColor3 } = useThemeContext()
@@ -62,6 +66,7 @@ const UserBalanceData = ({
   const [curContentUnderlying, setCurContentUnderlying] = useState('0')
   const [fixedLen, setFixedLen] = useState(0)
   const [lastFarmingTimeStamp, setLastFarmingTimeStamp] = useState('-')
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
   const chainId = token.chain || token.data.chain
@@ -70,6 +75,8 @@ const UserBalanceData = ({
   const farmPriceRef = useRef(farmPrice)
   const usdPriceRef = useRef(underlyingPrice)
   const pricePerFullShareRef = useRef(pricePerFullShare)
+
+  const toggleExpand = () => setIsExpanded(prev => !prev)
 
   useEffect(() => {
     totalValueRef.current = totalValue
@@ -259,44 +266,50 @@ const UserBalanceData = ({
               timestamp: currentTimeStamp,
               value: totalValueRef.current,
             }
-            const apiAllData = [firstObject, ...mergedData]
+            const apiAllData = [firstObject, ...chartData]
 
-            let firstNonZeroIndex = -1
+            let firstNonZeroIndex = -1,
+              filteredData,
+              enrichedData
+
             const al = apiAllData.length
-            for (let i = al - 1; i >= 0; i -= 1) {
-              if (apiAllData[i].value !== 0) {
-                firstNonZeroIndex = i
-                break
+            if (apiAllData.length > 1) {
+              for (let i = al - 1; i >= 0; i -= 1) {
+                if (apiAllData[i].value !== 0) {
+                  firstNonZeroIndex = i
+                  break
+                }
               }
-            }
-            const filteredData =
-              firstNonZeroIndex === -1 ? apiAllData : apiAllData.slice(0, firstNonZeroIndex + 1)
 
-            const enrichedData = filteredData
-              .map((item, index, array) => {
-                const nextItem = array[index + 1]
-                let event
+              filteredData =
+                firstNonZeroIndex === -1 ? apiAllData : apiAllData.slice(0, firstNonZeroIndex + 1)
 
-                if (nextItem) {
-                  if (Number(item.value) === Number(nextItem.value)) {
-                    event = 'Harvest'
-                  } else if (Number(item.value) > Number(nextItem.value)) {
-                    event = 'Convert'
+              enrichedData = filteredData
+                .map((item, index, array) => {
+                  const nextItem = array[index + 1]
+                  let event
+
+                  if (nextItem) {
+                    if (Number(item.value) === Number(nextItem.value)) {
+                      event = 'Harvest'
+                    } else if (Number(item.value) > Number(nextItem.value)) {
+                      event = 'Convert'
+                    } else {
+                      event = 'Revert'
+                    }
                   } else {
-                    event = 'Revert'
+                    event = 'Convert'
                   }
-                } else {
-                  event = 'Convert'
-                }
 
-                return {
-                  ...item,
-                  event,
-                }
-              })
-              .filter(Boolean)
+                  return {
+                    ...item,
+                    event,
+                  }
+                })
+                .filter(Boolean)
 
-            setApiData(enrichedData)
+              setApiData(enrichedData)
+            }
           }
           if (isMounted) {
             setLoadComplete(balanceFlag && priceFeedFlag)
@@ -321,6 +334,7 @@ const UserBalanceData = ({
     useIFARM,
     farmPrice,
     pricePerFullShare,
+    chartData,
   ])
 
   return (
@@ -392,9 +406,23 @@ const UserBalanceData = ({
           lpTokenBalance={lpTokenBalance}
           totalValue={totalValue}
           setSelectedState={setSelectedState}
+          isExpanded={isExpanded}
+          toggleExpand={toggleExpand}
         />
       </ChartDiv>
       <ButtonGroup>
+        <ToggleButton
+          type="button"
+          onClick={toggleExpand}
+          className="collapse-button"
+          backColor={darkMode ? '#3b3c3e' : '#e9f0f7'}
+          color={darkMode ? 'white' : 'black'}
+        >
+          <ChevronIcon className="chevron">
+            {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
+          </ChevronIcon>
+          Custom
+        </ToggleButton>
         {recommendLinks.map((item, i) => (
           <ChartRangeSelect
             key={i}

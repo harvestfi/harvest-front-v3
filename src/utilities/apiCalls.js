@@ -161,6 +161,18 @@ export const getPublishDate = async () => {
         }
       }`,
     },
+    {
+      url: GRAPH_URL_ZKSYNC,
+      query: `{
+        vaults(
+          first: 1000,
+          orderBy: timestamp,
+          orderDirection: desc
+        ) {
+          id, timestamp
+        }
+      }`,
+    },
   ]
 
   try {
@@ -948,6 +960,7 @@ export const initBalanceAndDetailData = async (address, chainId, account, tokenD
     sumLatestNetChange,
     sumLatestNetChangeUsd,
     enrichedData,
+    uniqueVaultHData,
   }
 }
 
@@ -1038,3 +1051,17 @@ export const getTokenPriceFromApi = async tokenID => {
 //   }
 //   return null;
 // }
+
+export const fetchLeaderboardData = async () => {
+  try {
+    const response = await fetch(`https://api.harvest.finance/leaderboard?key=harvest-key`)
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`)
+    }
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.log('Error fetching leaderboard data', error)
+    return null
+  }
+}
