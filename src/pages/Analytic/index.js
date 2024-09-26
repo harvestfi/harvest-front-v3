@@ -144,8 +144,8 @@ const Analytic = () => {
             width={onlyWidth <= 1310 ? '48%' : '25%'}
           >
             <CompHeader darkMode={darkMode} fontColor={analyticTitleColor}>
-              <img src={TotalDeposit} alt="total deposit" />
-              Total Deposits
+              <img src={TotalDeposit} alt="total value locked" />
+              Total Value Locked
             </CompHeader>
             <FarmSubTitle bold={600} size="30px" lineHeight="38px">
               {Number(totalValueLocked) === 0 ? (
@@ -177,8 +177,8 @@ const Analytic = () => {
             width={onlyWidth <= 1310 ? '48%' : '25%'}
           >
             <CompHeader darkMode={darkMode} fontColor={analyticTitleColor}>
-              <img src={MonthlyProfit} alt="monthly profit" />
-              Monthly Profits to Farmers
+              <img src={MonthlyProfit} alt="monthly crops" />
+              Monthly Crops to Farmers
             </CompHeader>
             <FarmSubTitle
               data-tip
