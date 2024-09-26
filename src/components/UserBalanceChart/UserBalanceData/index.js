@@ -334,6 +334,7 @@ const UserBalanceData = ({
     useIFARM,
     farmPrice,
     pricePerFullShare,
+    chartData,
   ])
 
   return (
