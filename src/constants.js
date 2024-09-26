@@ -67,6 +67,7 @@ export const ROUTES = {
   WIKI_ZH: 'https://farm.chainwiki.dev/zh/%E7%AD%96%E7%95%A5',
   CLAIM_EXT: 'https://claim.harvest.finance',
   STATS: 'https://farmdashboard.xyz',
+  LEADERBOARD: '/leaderboard',
 }
 
 export const KEY_CODES = {

@@ -19,6 +19,7 @@ import '@fontsource/work-sans'
 import '@fontsource/dm-sans'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { useThemeContext } from './providers/useThemeContext'
+import LeaderBoard from './pages/LeaderBoard'
 
 const NewLoginModal = () => {
   const newLogin = localStorage.getItem('newLogin')
@@ -83,6 +84,7 @@ const App = () => (
           <Route path={ROUTES.ADVANCEDFARM} component={AdvancedFarm} />
           <Route path={ROUTES.FAQ} component={FAQ} />
           <Route exact path={ROUTES.CHARTS} component={Charts} />
+          <Route exact path={ROUTES.LEADERBOARD} component={LeaderBoard} />
         </Switch>
       </Body>
     </Providers>
