@@ -1229,7 +1229,7 @@ const AdvancedFarm = () => {
         const chainId = token.chain || token.data.chain
         const {
           balanceFlag,
-          priceFeedFlag,
+          vaultHFlag,
           sumNetChange,
           sumNetChangeUsd,
           sumLatestNetChange,
@@ -1237,7 +1237,7 @@ const AdvancedFarm = () => {
           enrichedData,
         } = await initBalanceAndDetailData(address, chainId, account, tokenDecimals)
 
-        if (balanceFlag && priceFeedFlag) {
+        if (balanceFlag && vaultHFlag) {
           setUnderlyingEarnings(sumNetChange)
           setUsdEarnings(sumNetChangeUsd)
           setUnderlyingEarningsLatest(sumLatestNetChange)

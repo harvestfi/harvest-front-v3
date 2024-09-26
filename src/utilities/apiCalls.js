@@ -13,7 +13,7 @@ import {
   GECKO_URL,
   COINGECKO_API_KEY,
 } from '../constants'
-// import { fromWei } from '../services/web3'
+import { fromWei } from '../services/web3'
 
 const moonwellWeth = '0x0b0193fad49de45f5e2b0a9f5d6bc3bb7d281688'
 
@@ -151,18 +151,6 @@ export const getPublishDate = async () => {
     },
     {
       url: GRAPH_URL_ARBITRUM,
-      query: `{
-        vaults(
-          first: 1000,
-          orderBy: timestamp,
-          orderDirection: desc
-        ) {
-          id, timestamp
-        }
-      }`,
-    },
-    {
-      url: GRAPH_URL_ZKSYNC,
       query: `{
         vaults(
           first: 1000,
@@ -725,78 +713,31 @@ const removeZeroValueObjects = data => {
   return data
 }
 
-// export const initBalanceAndDetailData = async (address, chainId, account, tokenDecimals) => {
-export const initBalanceAndDetailData = async (address, chainId, account) => {
+export const initBalanceAndDetailData = async (address, chainId, account, tokenDecimals) => {
   const timestamps = []
   const uniqueVaultHData = []
   const mergedData = []
   let enrichedData = [],
-    transformedData = [],
-    priceFeedData = [],
-    priceFeedFlag = false,
-    transformFlag = false,
     sumNetChange = 0,
     sumNetChangeUsd = 0,
     sumLatestNetChange = 0,
-    sumLatestNetChangeUsd = 0,
-    firstTimeStamp
+    sumLatestNetChangeUsd = 0
 
   const { balanceData, balanceFlag } = await getUserBalanceHistories(address, chainId, account)
-  // const { vaultHData, vaultHFlag } = await getVaultHistories(address, chainId)
+  const { vaultHData, vaultHFlag } = await getVaultHistories(address, chainId)
 
-  if (balanceData.length > 0) {
-    firstTimeStamp = balanceData[balanceData.length - 1].timestamp
-  }
-
-  const { vaultPriceFeedCount } = await getSequenceId(address, chainId)
-
-  if (firstTimeStamp) {
-    const result = await getPriceFeeds(
-      address,
-      chainId,
-      vaultPriceFeedCount,
-      firstTimeStamp,
-      null,
-      false,
-    )
-    if (result) {
-      priceFeedData = result.priceFeedData
-      priceFeedFlag = result.priceFeedFlag
-    }
-  }
-
-  if (priceFeedFlag) {
-    transformedData = priceFeedData.map(item => ({
-      priceUnderlying: item.price === 1 ? '1' : String(item.price),
-      sharePrice: item.sharePrice,
-      timestamp: item.timestamp,
-    }))
-    transformFlag = true
-  }
-
-  if (transformFlag) {
-    transformedData.forEach(obj => {
+  if (vaultHFlag) {
+    vaultHData.forEach(obj => {
       if (!timestamps.includes(obj.timestamp)) {
         timestamps.push(obj.timestamp)
-        const sharePriceDecimals = obj.sharePrice
+        const sharePriceDecimals = fromWei(obj.sharePrice, tokenDecimals, tokenDecimals)
         const modifiedObj = { ...obj, sharePrice: sharePriceDecimals }
         uniqueVaultHData.push(modifiedObj)
       }
     })
   }
 
-  // if (vaultHFlag) {
-  //   vaultHData.forEach(obj => {
-  //     if (!timestamps.includes(obj.timestamp)) {
-  //       timestamps.push(obj.timestamp)
-  //       const sharePriceDecimals = fromWei(obj.sharePrice, tokenDecimals, tokenDecimals)
-  //       const modifiedObj = { ...obj, sharePrice: sharePriceDecimals }
-  //       uniqueVaultHData.push(modifiedObj)
-  //     }
-  //   })
-  // }
-
-  if (balanceFlag && priceFeedFlag) {
+  if (balanceFlag && vaultHFlag) {
     let uniqueData = [],
       uniqueFixedData = [],
       lastUserEvent = false,
@@ -1001,7 +942,7 @@ export const initBalanceAndDetailData = async (address, chainId, account) => {
 
   return {
     balanceFlag,
-    priceFeedFlag,
+    vaultHFlag,
     sumNetChange,
     sumNetChangeUsd,
     sumLatestNetChange,
