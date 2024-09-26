@@ -2578,6 +2578,7 @@ const AdvancedFarm = () => {
                       underlyingPrice={underlyingPrice}
                       pricePerFullShare={pricePerFullShare}
                       lpTokenBalance={lpTokenBalance}
+                      chartData={chartData}
                     />
                   ) : (
                     <></>
