@@ -948,6 +948,7 @@ export const initBalanceAndDetailData = async (address, chainId, account, tokenD
     sumLatestNetChange,
     sumLatestNetChangeUsd,
     enrichedData,
+    uniqueVaultHData,
   }
 }
 
