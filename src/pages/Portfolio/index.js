@@ -733,10 +733,18 @@ const Portfolio = () => {
       })
 
       const sortedFarmTokenList = [...farmTokenList].sort((a, b) => {
-        const aIndex =
-          idIndexMap[a.token.pool.id] !== undefined ? idIndexMap[a.token.pool.id] : Infinity
-        const bIndex =
-          idIndexMap[b.token.pool.id] !== undefined ? idIndexMap[b.token.pool.id] : Infinity
+        const aIndex = a.token.data
+          ? idIndexMap[a.symbol]
+          : idIndexMap[a.token.pool.id] !== undefined
+          ? idIndexMap[a.token.pool.id]
+          : Infinity
+
+        const bIndex = b.token.data
+          ? idIndexMap[b.symbol]
+          : idIndexMap[b.token.pool.id] !== undefined
+          ? idIndexMap[b.token.pool.id]
+          : Infinity
+
         return aIndex - bIndex
       })
 
