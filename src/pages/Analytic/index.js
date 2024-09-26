@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import Countdown from 'react-countdown'
+// import Countdown from 'react-countdown'
 import CountUp from 'react-countup'
 import { useMediaQuery } from 'react-responsive'
 import ReactTooltip from 'react-tooltip'
@@ -22,14 +22,14 @@ import MonthlyProfit from '../../assets/images/logos/analytics/MonthlyProfit.svg
 import ExternalLink from '../../assets/images/logos/analytics/ExternalLink.svg'
 import AnalyticChart from '../../components/AnalyticComponents/AnalyticChart'
 import AnimatedDots from '../../components/AnimatedDots'
-import CountdownLabel from '../../components/CountdownLabel'
+// import CountdownLabel from '../../components/CountdownLabel'
 import { Divider, Monospace, TextContainer } from '../../components/GlobalStyle'
 import { CURVE_APY } from '../../constants'
 import { useStats } from '../../providers/Stats'
 import { useRate } from '../../providers/Rate'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { truncateNumberString } from '../../utilities/formats'
-import { getNextEmissionsCutDate } from '../../utilities/parsers'
+// import { getNextEmissionsCutDate } from '../../utilities/parsers'
 import {
   BigStatsExchange,
   Container,
@@ -37,7 +37,7 @@ import {
   DataSource,
   DataSourceDirect,
   DataSourceInner,
-  EmissionsCountdownText,
+  // EmissionsCountdownText,
   FarmStatsContainer,
   FarmSubTitle,
   ImgList,
@@ -54,7 +54,7 @@ import {
 } from './style'
 
 const MemoizedCounter = React.memo(CountUp)
-const MemoizedCountdown = React.memo(Countdown)
+// const MemoizedCountdown = React.memo(Countdown)
 const imgList = [
   { url: 'https://pro.coinbase.com/trade/FARM-USD', img: ExchangeCoinbase },
   { url: 'https://pro.kraken.com/app/trade/farm-usd', img: ExchangeKraken },
@@ -271,7 +271,7 @@ const Analytic = () => {
         <Divider height="20px" />
         <FarmStatsLastContainer>
           <StatsBox
-            width={isMobile ? '100%' : '50%'}
+            width={isMobile ? '100%' : '100%'}
             align="flex-start"
             direction="row"
             height="450px"
@@ -281,7 +281,7 @@ const Analytic = () => {
           >
             {loadComplete && <AnalyticChart />}
           </StatsBox>
-          <StatsBox
+          {/* <StatsBox
             width={isMobile ? '100%' : '50%'}
             align="flex-start"
             compNum={2}
@@ -324,7 +324,7 @@ const Analytic = () => {
                 )
               }}
             />
-          </StatsBox>
+          </StatsBox> */}
         </FarmStatsLastContainer>
         <Divider height="30px" />
         <FarmStatsLastContainer>
