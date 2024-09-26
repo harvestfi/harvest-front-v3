@@ -17,8 +17,8 @@ import Farm from '../../assets/images/logos/analytics/farm.svg'
 import IFarm from '../../assets/images/logos/iFarm.svg'
 import GasSavedImage from '../../assets/images/logos/analytics/GasFeeSave.svg'
 import AutoHarvest from '../../assets/images/logos/analytics/AutoHarvest.svg'
-import TotalDeposit from '../../assets/images/logos/analytics/TotalDeposit.svg'
-import MonthlyProfit from '../../assets/images/logos/analytics/MonthlyProfit.svg'
+// import TotalDeposit from '../../assets/images/logos/analytics/TotalDeposit.svg'
+// import MonthlyProfit from '../../assets/images/logos/analytics/MonthlyProfit.svg'
 import ExternalLink from '../../assets/images/logos/analytics/ExternalLink.svg'
 import AnalyticChart from '../../components/AnalyticComponents/AnalyticChart'
 import AnimatedDots from '../../components/AnimatedDots'
@@ -144,7 +144,7 @@ const Analytic = () => {
             width={onlyWidth <= 1310 ? '48%' : '25%'}
           >
             <CompHeader darkMode={darkMode} fontColor={analyticTitleColor}>
-              <img src={TotalDeposit} alt="total value locked" />
+              {/* <img src={TotalDeposit} alt="total value locked" /> */}
               Total Value Locked
             </CompHeader>
             <FarmSubTitle bold={600} size="30px" lineHeight="38px">
@@ -177,7 +177,7 @@ const Analytic = () => {
             width={onlyWidth <= 1310 ? '48%' : '25%'}
           >
             <CompHeader darkMode={darkMode} fontColor={analyticTitleColor}>
-              <img src={MonthlyProfit} alt="monthly crops" />
+              {/* <img src={MonthlyProfit} alt="monthly crops" /> */}
               Monthly Crops to Farmers
             </CompHeader>
             <FarmSubTitle
@@ -220,8 +220,8 @@ const Analytic = () => {
             width={onlyWidth <= 1310 ? '48%' : '25%'}
           >
             <CompHeader fontColor={analyticTitleColor}>
-              <img src={Farm} width="32px" height="32px" alt="" />
-              FARM staking APY:
+              {/* <img src={Farm} width="32px" height="32px" alt="" /> */}
+              iFARM/FARM staking APY:
             </CompHeader>
             <FarmSubTitle data-tip data-for="details-box" bold={600} size="30px" lineHeight="38px">
               {profitShareAPY ? `${Number(profitShareAPY).toFixed(2)}%` : <AnimatedDots />}
@@ -234,7 +234,7 @@ const Analytic = () => {
             width={onlyWidth <= 1310 ? '48%' : '25%'}
           >
             <CompHeader fontColor={analyticTitleColor}>
-              <img src={Farm} width="32px" height="32px" alt="" />
+              {/* <img src={Farm} width="32px" height="32px" alt="" /> */}
               Total FARM staked:
             </CompHeader>
             <FarmSubTitle data-tip data-for="details-box" bold={600} size="30px" lineHeight="38px">
