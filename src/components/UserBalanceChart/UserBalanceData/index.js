@@ -341,6 +341,7 @@ const UserBalanceData = ({
     farmPrice,
     pricePerFullShare,
     chartData,
+    token.inactive,
   ])
 
   return (
