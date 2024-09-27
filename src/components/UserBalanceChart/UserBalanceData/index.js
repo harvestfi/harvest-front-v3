@@ -266,11 +266,17 @@ const UserBalanceData = ({
               timestamp: currentTimeStamp,
               value: totalValueRef.current,
             }
-            const apiAllData = [firstObject, ...chartData]
 
-            let firstNonZeroIndex = -1,
+            let apiAllData = [],
+              firstNonZeroIndex = -1,
               filteredData,
               enrichedData
+
+            if (token.inactive) {
+              apiAllData = [firstObject, ...mergedData]
+            } else {
+              apiAllData = [firstObject, ...chartData]
+            }
 
             const al = apiAllData.length
             if (apiAllData.length > 1) {
