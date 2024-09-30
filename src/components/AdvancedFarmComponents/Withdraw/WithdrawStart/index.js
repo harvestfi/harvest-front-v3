@@ -612,6 +612,25 @@ const WithdrawStart = ({
               Successful
             </ProgressText>
           </ProgressLabel>
+          <NewLabel
+            color={darkMode ? '#ffffff' : '#344054'}
+            size={isMobile ? '14px' : '14px'}
+            height={isMobile ? '20px' : '28px'}
+            weight="600"
+            padding="20px 24px 0px 24px"
+          >
+            Psst, looking for alternatives?
+          </NewLabel>
+          <NewLabel
+            color={darkMode ? '#ffffff' : '#15202b'}
+            size={isMobile ? '14px' : '10px'}
+            height={isMobile ? '20px' : '20px'}
+            weight="400"
+            marginBottom="5px"
+            padding="0px 24px"
+          >
+            Click on the new opportunity below to open a Migrate tool.
+          </NewLabel>
           {!isEmpty(altVaultData) && progressStep === 4 && (
             <>
               <NewLabel
