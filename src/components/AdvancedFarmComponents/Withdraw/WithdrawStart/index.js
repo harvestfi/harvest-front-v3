@@ -29,6 +29,7 @@ import { getWeb3, fromWei } from '../../../../services/web3'
 import { formatNumberWido, showTokenBalance } from '../../../../utilities/formats'
 import AnimatedDots from '../../../AnimatedDots'
 import { addresses } from '../../../../data'
+import { getVaultApy } from '../../../../utilities/parsers'
 import {
   Buttons,
   FTokenInfo,
@@ -53,9 +54,16 @@ import {
   ApyValue,
   TopLogo,
   LogoImg,
+  BigLogoImg,
+  VaultContainer,
+  HighestVault,
+  ImagePart,
+  NamePart,
+  ImageName,
 } from './style'
 
 const WithdrawStart = ({
+  groupOfVaults,
   unstakeInputValue,
   withdrawStart,
   setWithdrawStart,
@@ -89,7 +97,7 @@ const WithdrawStart = ({
     hoverColorAVR,
   } = useThemeContext()
   const { account, web3 } = useWallet()
-  const { fetchUserPoolStats, userStats } = usePools()
+  const { fetchUserPoolStats, userStats, pools } = usePools()
   const [slippagePercentage, setSlippagePercentage] = useState(null)
   const [slippageSetting, setSlippageSetting] = useState(false)
   const [customSlippage, setCustomSlippage] = useState(null)
@@ -106,6 +114,10 @@ const WithdrawStart = ({
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
+  const [highestApyLogo, setHighestApyLogo] = useState([])
+  const [tokenNames, setTokenNames] = useState([])
+  const [platformNames, setPlatformNames] = useState([])
+  const [topApyVault, setTopApyVault] = useState()
 
   useEffect(() => {
     if (rates.rateData) {
@@ -298,6 +310,34 @@ const WithdrawStart = ({
       setPickedToken({ symbol: 'Select' })
     }
   }
+
+  const getHighestApy = (allVaults, chainName) => {
+    const sameNetworkVautls = []
+
+    Object.entries(allVaults).map(vault => {
+      if (vault[1].chain === chainName) {
+        const vaultApy = getVaultApy(vault[1].vaultAddress, allVaults, vaultsData, pools)
+        sameNetworkVautls.push({ vaultApy: Number(vaultApy), vault: vault[1] })
+      }
+      return true
+    })
+    sameNetworkVautls.sort((a, b) => b.vaultApy - a.vaultApy)
+    if (sameNetworkVautls[0].vaultApy) {
+      return sameNetworkVautls[0]
+    }
+    return null
+  }
+
+  const highestApyVault = getHighestApy(groupOfVaults, chainId)
+
+  useEffect(() => {
+    if (highestApyVault !== null) {
+      setHighestApyLogo(highestApyVault.vault.logoUrl)
+      setTokenNames(highestApyVault.vault.tokenNames)
+      setPlatformNames(highestApyVault.vault.platform)
+      setTopApyVault(highestApyVault.vaultApy)
+    }
+  }, [highestApyVault])
 
   return (
     <Modal
@@ -612,24 +652,65 @@ const WithdrawStart = ({
               Successful
             </ProgressText>
           </ProgressLabel>
-          <NewLabel
-            color={darkMode ? '#ffffff' : '#344054'}
-            size={isMobile ? '14px' : '14px'}
-            height={isMobile ? '20px' : '28px'}
-            weight="600"
-            padding="20px 24px 0px 24px"
-          >
-            Psst, looking for alternatives?
-          </NewLabel>
-          <NewLabel
-            color={darkMode ? '#ffffff' : '#15202b'}
-            size={isMobile ? '14px' : '10px'}
-            height={isMobile ? '20px' : '20px'}
-            weight="400"
-            marginBottom="5px"
-            padding="0px 24px"
-          >
-            Click on the new opportunity below to open a Migrate tool.
+          <NewLabel>
+            <NewLabel
+              color={darkMode ? '#ffffff' : '#344054'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '20px' : '28px'}
+              weight="600"
+              padding="20px 24px 0px 24px"
+            >
+              Psst, looking for alternatives?
+            </NewLabel>
+            <NewLabel
+              color={darkMode ? '#ffffff' : '#15202b'}
+              size={isMobile ? '14px' : '10px'}
+              height={isMobile ? '20px' : '20px'}
+              weight="400"
+              padding="0px 24px"
+            >
+              Click on the new opportunity below to open a Migrate tool.
+            </NewLabel>
+            <VaultContainer>
+              <HighestVault className="highest-vault">
+                <ImageName>
+                  <ImagePart>
+                    {highestApyLogo.map((el, i) => {
+                      return (
+                        <BigLogoImg
+                          key={i}
+                          className="logo-img"
+                          zIndex={10 - i}
+                          src={`.${el}`}
+                          alt={tokenNames[i]}
+                        />
+                      )
+                    })}
+                  </ImagePart>
+                  <NamePart>
+                    <NewLabel
+                      color={darkMode ? '#ffffff' : '#15202b'}
+                      size={isMobile ? '14px' : '14px'}
+                      height={isMobile ? '20px' : '20px'}
+                      weight="600"
+                      padding="0px 10px"
+                    >
+                      {tokenNames.join(' - ')}
+                    </NewLabel>
+                    <NewLabel
+                      color={darkMode ? '#ffffff' : '#15202b'}
+                      size={isMobile ? '14px' : '10px'}
+                      height={isMobile ? '20px' : '20px'}
+                      weight="400"
+                      padding="0px 10px"
+                    >
+                      {platformNames.join(', ')}
+                    </NewLabel>
+                  </NamePart>
+                </ImageName>
+                <ImageName className="top-apy">{topApyVault}% APY</ImageName>
+              </HighestVault>
+            </VaultContainer>
           </NewLabel>
           {!isEmpty(altVaultData) && progressStep === 4 && (
             <>
