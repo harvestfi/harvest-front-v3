@@ -49,7 +49,7 @@ const TotalValue = ({ content, price, toolTipTitle, toolTip, connected, farmToke
       <Price fontColor1={fontColor1}>
         {!connected ? (
           `${currencySym}0.00`
-        ) : farmTokenListLength === 0 ? (
+        ) : farmTokenListLength === 0 && price === 0 ? (
           `${currencySym}0.00`
         ) : parseFloat(price) === 0 ? (
           content === 'Claimable Rewards' ? (

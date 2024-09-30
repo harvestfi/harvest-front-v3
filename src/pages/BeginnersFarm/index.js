@@ -177,6 +177,7 @@ const BeginnersFarm = () => {
   const [supportedVault, setSupportedVault] = useState(true)
   const [hasPortalsError, setHasPortalsError] = useState(true)
   const [badgeId, setBadgeId] = useState(-1)
+  const [chartData, setChartData] = useState([])
 
   // Deposit
   const [depositStart, setDepositStart] = useState(false)
@@ -918,6 +919,7 @@ const BeginnersFarm = () => {
           sumLatestNetChange,
           sumLatestNetChangeUsd,
           enrichedData,
+          uniqueVaultHData,
         } = await initBalanceAndDetailData(address, chainId, account, tokenDecimals)
 
         if (balanceFlag && vaultHFlag) {
@@ -930,6 +932,7 @@ const BeginnersFarm = () => {
             tokenSymbol: id,
           }))
           setHistoryData(enrichedDataWithSymbol)
+          setChartData(uniqueVaultHData)
         }
       }
     }
@@ -1729,6 +1732,7 @@ const BeginnersFarm = () => {
                     underlyingPrice={underlyingPrice}
                     pricePerFullShare={pricePerFullShare}
                     lpTokenBalance={lpTokenBalance}
+                    chartData={chartData}
                   />
                 )
               ) : activeMainTag === 1 ? (
@@ -2041,6 +2045,7 @@ const BeginnersFarm = () => {
                       underlyingPrice={underlyingPrice}
                       pricePerFullShare={pricePerFullShare}
                       lpTokenBalance={lpTokenBalance}
+                      chartData={chartData}
                     />
                   ) : (
                     <></>

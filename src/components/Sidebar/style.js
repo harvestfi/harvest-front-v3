@@ -97,6 +97,74 @@ const LinkContainer = styled.div`
   @media screen and (min-width: 992px) {
     display: flex;
   }
+
+  .leaderboard-dark-btn {
+    color: rgb(255, 255, 255);
+    --border-angle: 0turn;
+    --main-bg: conic-gradient(from var(--border-angle), #213, #112 5%, #112 60%, #213 95%);
+
+    border: solid 2px transparent;
+    --gradient-border: conic-gradient(
+      from var(--border-angle),
+      transparent 25%,
+      #08f,
+      #f03 99%,
+      transparent
+    );
+
+    background: var(--main-bg) padding-box, var(--gradient-border) border-box,
+      var(--main-bg) border-box !important;
+
+    background-position: center center;
+
+    animation: bg-spin 3s linear infinite;
+    @keyframes bg-spin {
+      to {
+        --border-angle: 1turn;
+      }
+    }
+
+    &:hover {
+      animation-play-state: paused;
+    }
+  }
+
+  .leaderboard-white-icon {
+    color: rgb(16, 24, 40);
+    --border-angle: 0turn;
+    --main-bg: conic-gradient(from var(--border-angle), #fff, #fff 5%, #fff 60%, #fff 95%);
+
+    border: solid 2px transparent;
+    --gradient-border: conic-gradient(
+      from var(--border-angle),
+      transparent 25%,
+      #08f,
+      #f03 99%,
+      transparent
+    );
+
+    background: var(--main-bg) padding-box, var(--gradient-border) border-box,
+      var(--main-bg) border-box !important;
+
+    background-position: center center;
+
+    animation: bg-spin 3s linear infinite;
+    @keyframes bg-spin {
+      to {
+        --border-angle: 1turn;
+      }
+    }
+
+    &:hover {
+      animation-play-state: paused;
+    }
+  }
+
+  @property --border-angle {
+    syntax: '<angle>';
+    inherits: true;
+    initial-value: 0turn;
+  }
 `
 
 const Link = styled.button`
@@ -709,6 +777,7 @@ const MobileToggle = styled.img`
   &.wallet-btn {
     margin-top: -3px;
   }
+
   &.connected-wallet-btn {
     filter: invert(39%) sepia(83%) saturate(1585%) hue-rotate(137deg) brightness(103%) contrast(84%);
   }
@@ -827,6 +896,17 @@ const LinkMobile = styled.button`
             filter: invert(56%) sepia(65%) saturate(2880%) hue-rotate(127deg) brightness(93%) contrast(84%);
           }
       `
+      : `font-weight: 400;`}
+
+  ${props =>
+    props.darkMode && props.active
+      ? `
+              font-weight: 500;
+              color: #15B088;
+              img.sideIcon {
+                filter: invert(39%) sepia(83%) saturate(1585%) hue-rotate(137deg) brightness(103%) contrast(84%);
+              }
+          `
       : `font-weight: 400;`}
 `
 

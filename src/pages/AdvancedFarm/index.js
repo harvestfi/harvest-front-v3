@@ -192,6 +192,7 @@ const AdvancedFarm = () => {
 
   const [apiData, setApiData] = useState([])
   const [altVaultData, setAltVaultData] = useState({})
+  const [chartData, setChartData] = useState([])
 
   // Switch Tag (Convert/Revert)
   const [activeDepo, setActiveDepo] = useState(true)
@@ -1235,6 +1236,7 @@ const AdvancedFarm = () => {
           sumLatestNetChange,
           sumLatestNetChangeUsd,
           enrichedData,
+          uniqueVaultHData,
         } = await initBalanceAndDetailData(address, chainId, account, tokenDecimals)
 
         if (balanceFlag && vaultHFlag) {
@@ -1247,6 +1249,7 @@ const AdvancedFarm = () => {
             tokenSymbol: id,
           }))
           setHistoryData(enrichedDataWithSymbol)
+          setChartData(uniqueVaultHData)
         }
       }
     }
@@ -2145,6 +2148,7 @@ const AdvancedFarm = () => {
                     underlyingPrice={underlyingPrice}
                     pricePerFullShare={pricePerFullShare}
                     lpTokenBalance={lpTokenBalance}
+                    chartData={chartData}
                   />
                 )
               ) : activeMainTag === 1 ? (
@@ -2574,6 +2578,7 @@ const AdvancedFarm = () => {
                       underlyingPrice={underlyingPrice}
                       pricePerFullShare={pricePerFullShare}
                       lpTokenBalance={lpTokenBalance}
+                      chartData={chartData}
                     />
                   ) : (
                     <></>

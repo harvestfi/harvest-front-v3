@@ -733,10 +733,18 @@ const Portfolio = () => {
       })
 
       const sortedFarmTokenList = [...farmTokenList].sort((a, b) => {
-        const aIndex =
-          idIndexMap[a.token.pool.id] !== undefined ? idIndexMap[a.token.pool.id] : Infinity
-        const bIndex =
-          idIndexMap[b.token.pool.id] !== undefined ? idIndexMap[b.token.pool.id] : Infinity
+        const aIndex = a.token.data
+          ? idIndexMap[a.symbol]
+          : idIndexMap[a.token.pool.id] !== undefined
+          ? idIndexMap[a.token.pool.id]
+          : Infinity
+
+        const bIndex = b.token.data
+          ? idIndexMap[b.symbol]
+          : idIndexMap[b.token.pool.id] !== undefined
+          ? idIndexMap[b.token.pool.id]
+          : Infinity
+
         return aIndex - bIndex
       })
 
@@ -784,7 +792,8 @@ const Portfolio = () => {
       toolTip: (
         <>
           Your wallet&apos;s lifetime yield, shown in USD at the time of each harvest event. It
-          includes all yield from any farm on Harvest. It does not consider claimable rewards.
+          includes all yield from any farm on Harvest. It does not consider claimable rewards and
+          BSChain data
         </>
       ),
     },

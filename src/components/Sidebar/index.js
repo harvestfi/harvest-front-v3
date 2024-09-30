@@ -13,6 +13,7 @@ import Home from '../../assets/images/logos/sidebar/home-line.svg'
 import Beginners from '../../assets/images/logos/sidebar/beginners.svg'
 import Support from '../../assets/images/logos/sidebar/support.svg'
 import Analytics from '../../assets/images/logos/sidebar/analytics.svg'
+import BlackLeader from '../../assets/images/logos/sidebar/leader_icon_black.svg'
 // import Collaborations from '../../assets/images/logos/sidebar/collaborations.svg'
 import Advanced from '../../assets/images/logos/sidebar/advanced.svg'
 import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
@@ -28,6 +29,7 @@ import { ROUTES } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
 import { usePools } from '../../providers/Pools'
 import { useThemeContext } from '../../providers/useThemeContext'
+import usePersistedState from '../../providers/usePersistedState'
 import { useWallet } from '../../providers/Wallet'
 import { fromWei } from '../../services/web3'
 import { getChainIcon } from '../../utilities/parsers'
@@ -102,6 +104,12 @@ const sideLinksTop = [
 
 const sideLinksBottom = [
   {
+    path: ROUTES.LEADERBOARD,
+    name: 'Leaderboard',
+    imgPath: BlackLeader,
+    external: false,
+  },
+  {
     path: ROUTES.ANALYTIC,
     name: 'Analytics',
     imgPath: Analytics,
@@ -165,6 +173,12 @@ const sideLinksMobileBottom = [
     imgPath: Advanced,
   },
   {
+    path: ROUTES.LEADERBOARD,
+    name: 'Leaderboard',
+    imgPath: BlackLeader,
+    external: false,
+  },
+  {
     path: ROUTES.ANALYTIC,
     name: 'Analytics',
     imgPath: Analytics,
@@ -197,6 +211,7 @@ const SideLink = ({
   activeIconColor,
   darkMode,
   hoverColorSide,
+  className,
 }) => {
   const { pathname } = useLocation()
   const pageName =
@@ -218,6 +233,7 @@ const SideLink = ({
       darkMode={darkMode}
       enabled={item.enabled === false ? 'false' : 'true'}
       hoverColorSide={hoverColorSide}
+      className={className}
     >
       <div className="item">
         <SideIcons
@@ -326,6 +342,7 @@ const Sidebar = ({ width }) => {
   const [copyAddress, setCopyAddress] = useState('Copy Address')
   const [balanceETH, setBalanceETH] = useState('')
   const [balanceUSDC, setBalanceUSDC] = useState('')
+  const [leaderboardClick, setLeaderboardClick] = usePersistedState('leaderboardClick', false)
 
   const handleMobileClose = () => setMobileShow(false)
   const handleMobileShow = () => setMobileShow(true)
@@ -400,6 +417,10 @@ const Sidebar = ({ width }) => {
     push(path)
   }
 
+  const handleLeaderboardClick = () => {
+    setLeaderboardClick(true)
+  }
+
   return (
     <Container
       width={width}
@@ -447,7 +468,6 @@ const Sidebar = ({ width }) => {
                     </button>
                   )
                 }
-
                 return (
                   <Dropdown>
                     <UserDropDown
@@ -508,6 +528,7 @@ const Sidebar = ({ width }) => {
                           directAction(item.path)
                         }
                       }}
+                      darkMode={darkMode}
                     >
                       <SideLink
                         item={item}
@@ -540,6 +561,9 @@ const Sidebar = ({ width }) => {
                     } else {
                       directAction(item.path)
                     }
+                    if (item.name === 'Leaderboard') {
+                      handleLeaderboardClick()
+                    }
                   }}
                 >
                   <SideLink
@@ -550,6 +574,13 @@ const Sidebar = ({ width }) => {
                     activeIconColor={sidebarActiveIconColor}
                     darkMode={darkMode}
                     hoverColorSide={hoverColorSide}
+                    className={
+                      item.name === 'Leaderboard' && !leaderboardClick && darkMode
+                        ? 'leaderboard-dark-btn'
+                        : item.name === 'Leaderboard' && !leaderboardClick && !darkMode
+                        ? 'leaderboard-white-icon'
+                        : ''
+                    }
                   />
                 </LinkContainer>
               </Fragment>
@@ -889,7 +920,7 @@ const Sidebar = ({ width }) => {
                   <ConnectSection>
                     <MobileConnectBtn color="connectwallet">
                       <MobileToggle
-                        className={`wallet-btn ${connected && 'connected-wallet-btn'}`}
+                        className={connected ? 'connected-wallet-btn' : 'wallet-btn'}
                         toggleColor={toggleColor}
                         width={27}
                         height={21}
@@ -962,7 +993,7 @@ const Sidebar = ({ width }) => {
               }
             >
               <MobileToggle
-                className="wallet-btn"
+                className={connected ? 'connected-wallet-btn' : 'wallet-btn'}
                 toggleColor={toggleColor}
                 width={27}
                 height={21}
