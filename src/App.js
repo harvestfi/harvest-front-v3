@@ -20,6 +20,7 @@ import '@fontsource/dm-sans'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { useThemeContext } from './providers/useThemeContext'
 import LeaderBoard from './pages/LeaderBoard'
+import Migrate from './pages/Migrate'
 
 const NewLoginModal = () => {
   const newLogin = localStorage.getItem('newLogin')
@@ -85,6 +86,7 @@ const App = () => (
           <Route path={ROUTES.FAQ} component={FAQ} />
           <Route exact path={ROUTES.CHARTS} component={Charts} />
           <Route exact path={ROUTES.LEADERBOARD} component={LeaderBoard} />
+          <Route exact path={ROUTES.MIGRATE} component={Migrate} />
         </Switch>
       </Body>
     </Providers>

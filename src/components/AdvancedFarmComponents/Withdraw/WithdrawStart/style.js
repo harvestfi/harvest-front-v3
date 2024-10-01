@@ -450,6 +450,7 @@ const HighestVault = styled.div`
   justify-content: space-between;
   align-items: center;
   background: #F8FFFC;
+  cursor: pointer;
 
   .top-apy {
     position: relative;

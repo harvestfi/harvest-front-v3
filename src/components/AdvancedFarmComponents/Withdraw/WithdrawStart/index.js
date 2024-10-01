@@ -9,6 +9,7 @@ import { PiQuestion } from 'react-icons/pi'
 import { IoIosArrowUp } from 'react-icons/io'
 import ReactTooltip from 'react-tooltip'
 import { Spinner } from 'react-bootstrap'
+import { useHistory } from 'react-router-dom'
 import AlertIcon from '../../../../assets/images/logos/beginners/alert-triangle.svg'
 import AlertCloseIcon from '../../../../assets/images/logos/beginners/alert-close.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
@@ -29,7 +30,7 @@ import { getWeb3, fromWei } from '../../../../services/web3'
 import { formatNumberWido, showTokenBalance } from '../../../../utilities/formats'
 import AnimatedDots from '../../../AnimatedDots'
 import { addresses } from '../../../../data'
-import { getVaultApy } from '../../../../utilities/parsers'
+import { getHighestApy } from '../../../../utilities/parsers'
 import {
   Buttons,
   FTokenInfo,
@@ -98,6 +99,7 @@ const WithdrawStart = ({
   } = useThemeContext()
   const { account, web3 } = useWallet()
   const { fetchUserPoolStats, userStats, pools } = usePools()
+  const { push } = useHistory()
   const [slippagePercentage, setSlippagePercentage] = useState(null)
   const [slippageSetting, setSlippageSetting] = useState(false)
   const [customSlippage, setCustomSlippage] = useState(null)
@@ -165,6 +167,7 @@ const WithdrawStart = ({
   const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+  const highestApyVault = getHighestApy(groupOfVaults, Number(chainId), vaultsData, pools)
 
   const approveZap = async amnt => {
     const { approve } = await portalsApprove(chainId, account, fromToken, amnt.toString())
@@ -310,25 +313,6 @@ const WithdrawStart = ({
       setPickedToken({ symbol: 'Select' })
     }
   }
-
-  const getHighestApy = (allVaults, chainName) => {
-    const sameNetworkVautls = []
-
-    Object.entries(allVaults).map(vault => {
-      if (vault[1].chain === chainName) {
-        const vaultApy = getVaultApy(vault[1].vaultAddress, allVaults, vaultsData, pools)
-        sameNetworkVautls.push({ vaultApy: Number(vaultApy), vault: vault[1] })
-      }
-      return true
-    })
-    sameNetworkVautls.sort((a, b) => b.vaultApy - a.vaultApy)
-    if (sameNetworkVautls[0].vaultApy) {
-      return sameNetworkVautls[0]
-    }
-    return null
-  }
-
-  const highestApyVault = getHighestApy(groupOfVaults, chainId)
 
   useEffect(() => {
     if (highestApyVault !== null) {
@@ -672,7 +656,17 @@ const WithdrawStart = ({
               Click on the new opportunity below to open a Migrate tool.
             </NewLabel>
             <VaultContainer>
-              <HighestVault className="highest-vault">
+              <HighestVault
+                className="highest-vault"
+                onClick={e => {
+                  const url = `/migrate?from=${token.vaultAddress.toLowerCase()}?to=${highestApyVault.vault.vaultAddress.toLowerCase()}`
+                  if (e.ctrlKey) {
+                    window.open(url, '_blank')
+                  } else {
+                    push(url)
+                  }
+                }}
+              >
                 <ImageName>
                   <ImagePart>
                     {highestApyLogo.map((el, i) => {

@@ -511,3 +511,20 @@ export const rearrangeApiData = (apiData, groupOfVaults, vaultsData, pools) => {
 
   return vaultBalanceSortedData
 }
+
+export const getHighestApy = (allVaults, chainName, vaultsData, pools) => {
+  const sameNetworkVautls = []
+
+  Object.entries(allVaults).map(vault => {
+    if (Number(vault[1].chain) === chainName) {
+      const vaultApy = getVaultApy(vault[1].vaultAddress, allVaults, vaultsData, pools)
+      sameNetworkVautls.push({ vaultApy: Number(vaultApy), vault: vault[1] })
+    }
+    return true
+  })
+  sameNetworkVautls.sort((a, b) => b.vaultApy - a.vaultApy)
+  if (sameNetworkVautls[0].vaultApy) {
+    return sameNetworkVautls[0]
+  }
+  return null
+}
