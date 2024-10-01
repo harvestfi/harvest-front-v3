@@ -677,6 +677,7 @@ const Migrate = () => {
 
   useEffect(() => {
     if (filteredFarmList && positionVaultAddress) {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       matchedVault = filteredFarmList.map(stakedVault => {
         const eachTokenAddress = stakedVault.token.data
           ? stakedVault.token.tokenAddress.toLowerCase()
