@@ -92,7 +92,7 @@ const MigrateBox = styled.div`
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
-    z-index: -1;
+    z-index: 0;
   }
 `
 const BoxTitle = styled.div`
@@ -120,6 +120,8 @@ const ToVault = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: #f8fffc;
+  border-radius: 5px;
 `
 
 const MigrateIcon = styled.div`
@@ -191,6 +193,7 @@ const Token = styled.a`
   line-height: 20px;
   color: #414141;
   cursor: pointer;
+  z-index: 1;
 `
 
 export {

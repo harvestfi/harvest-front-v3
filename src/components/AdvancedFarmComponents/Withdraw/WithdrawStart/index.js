@@ -659,7 +659,7 @@ const WithdrawStart = ({
               <HighestVault
                 className="highest-vault"
                 onClick={e => {
-                  const url = `/migrate?from=${token.vaultAddress.toLowerCase()}?to=${highestApyVault.vault.vaultAddress.toLowerCase()}`
+                  const url = `/migrate?from=${token.vaultAddress.toLowerCase()}&to=${highestApyVault.vault.vaultAddress.toLowerCase()}`
                   if (e.ctrlKey) {
                     window.open(url, '_blank')
                   } else {

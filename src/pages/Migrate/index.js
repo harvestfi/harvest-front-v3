@@ -1,6 +1,9 @@
 import React, { useMemo, useEffect, useState, useRef } from 'react'
 import { isEmpty, find, get, isNaN, orderBy, isEqual } from 'lodash'
 import BigNumber from 'bignumber.js'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import queryString from 'query-string'
+import { useLocation } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { useVaults } from '../../providers/Vault'
 import { useStats } from '../../providers/Stats'
@@ -57,6 +60,9 @@ const totalHistoryDataKey = 'TOTAL_HISTORY_DATA'
 const vaultProfitDataKey = 'VAULT_LIFETIME_YIELD'
 
 const Migrate = () => {
+  const location = useLocation()
+  const { search } = useLocation()
+
   const { vaultsData, getFarmingBalances } = useVaults()
   const { profitShareAPY } = useStats()
   const { account, balances, getWalletBalances } = useWallet()
@@ -81,6 +87,9 @@ const Migrate = () => {
   const [highestVaultAddress, setHighestVaultAddress] = useState('')
   const [chainId, setChainId] = useState()
   const [highestApyVault, setHighestApyVault] = useState('')
+  const [fromVault, setFromVault] = useState()
+
+  const isFromAdvanced = location.search.includes('from=')
 
   let matchedVault
 
@@ -647,19 +656,50 @@ const Migrate = () => {
       : farmTokenList.filter(farm => farm.status === 'Active')
     setFilteredFarmList(filteredVaultList)
 
-    if (filteredFarmList.length > 0) {
-      setHighestPosition(filteredFarmList[0])
-      if (
-        highestPosition &&
-        highestPosition.token.vaultAddress === '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
-      ) {
-        setPositionVaultAddress('0xa0246c9032bc3a600820415ae600c6388619a14d')
+    if (isFromAdvanced && filteredFarmList.length > 0) {
+      const values = queryString.parse(search)
+      // eslint-disable-next-line array-callback-return, consistent-return
+      const selectedPosition = filteredFarmList.filter(vault => {
+        const oneVaultAddress = vault.token.data
+          ? vault.token.tokenAddress
+          : vault.token.vaultAddress
+        if (oneVaultAddress && values) {
+          if (oneVaultAddress.toLowerCase() === values.from.toLowerCase()) {
+            return vault
+          }
+        }
+      })
+
+      setFromVault(selectedPosition[0])
+
+      if (fromVault) {
+        setHighestPosition(fromVault)
+        if (fromVault.token.data) {
+          setPositionVaultAddress(fromVault.token.tokenAddress)
+        } else if (fromVault.token.vaultAddress) {
+          setPositionVaultAddress(fromVault.token.vaultAddress)
+        }
+      }
+
+      if (highestPosition && highestPosition.token.poolVault) {
+        setChainId(Number(highestPosition.token.data.chain))
       } else if (highestPosition) {
+        setChainId(Number(highestPosition.token.chain))
+      }
+    }
+
+    if (!isFromAdvanced && filteredFarmList.length > 0) {
+      setHighestPosition(filteredFarmList[0])
+      if (highestPosition && highestPosition.token.data) {
+        console.log('highestPosition', highestPosition)
+        setPositionVaultAddress(highestPosition.token.tokenAddress)
+      } else if (highestPosition) {
+        console.log('highestPosition', highestPosition)
         setPositionVaultAddress(highestPosition.token.vaultAddress)
       }
 
-      if (highestPosition && highestPosition.poolVault) {
-        setChainId(Number(highestPosition.data.chain))
+      if (highestPosition && highestPosition.token.poolVault) {
+        setChainId(Number(highestPosition.token.data.chain))
       } else if (highestPosition) {
         setChainId(Number(highestPosition.token.chain))
       }
@@ -668,12 +708,25 @@ const Migrate = () => {
     if (chainId) {
       setHighestApyVault(getHighestApy(groupOfVaults, chainId, vaultsData, pools))
     }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    showInactiveFarms,
+    farmTokenList,
+    highestPosition,
+    pools,
+    vaultsData,
+    chainId,
+    fromVault,
+    isFromAdvanced,
+    search,
+  ])
+
+  useEffect(() => {
     if (highestApyVault) {
       setHighestVaultAddress(highestApyVault.vault.vaultAddress)
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showInactiveFarms, farmTokenList, highestPosition, pools, vaultsData, chainId])
+  }, [highestApyVault])
 
   useEffect(() => {
     if (filteredFarmList && positionVaultAddress) {
