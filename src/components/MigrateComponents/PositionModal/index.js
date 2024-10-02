@@ -12,7 +12,6 @@ const PositionModal = ({
   showPositionModal,
   setShowPositionModal,
   networkName,
-  positionVaultAddress,
   setPositionVaultAddress,
   filteredFarmList,
   chainId,
@@ -55,7 +54,7 @@ const PositionModal = ({
         <FTokenInfo>
           <div className="modal-header-part">
             <NewLabel margin="auto 16px auto 0px">
-              <IconCard>
+              <IconCard bgColor="#6988ff">
                 <BsArrowDown />
               </IconCard>
             </NewLabel>
@@ -109,7 +108,7 @@ const PositionModal = ({
             height={isMobile ? '20px' : '20px'}
             weight="400"
             padding="15px"
-            borderBottom="1px solid #ECECEC"
+            borderBottom={darkMode ? '1px solid #1F242F' : '1px solid #ECECEC'}
             display="flex"
             justifyContent="center"
           >
@@ -124,7 +123,7 @@ const PositionModal = ({
               height={isMobile ? '20px' : '20px'}
               weight="400"
               padding="15px"
-              borderBottom="1px solid #ECECEC"
+              borderBottom={darkMode ? '1px solid #1F242F' : '1px solid #ECECEC'}
             >
               {`${countFarm} Opportunities found on ${formatNetworkName(networkName)}`}
             </NewLabel>
@@ -136,11 +135,11 @@ const PositionModal = ({
                   currencySym={currencySym}
                   networkName={networkName}
                   setShowPositionModal={setShowPositionModal}
-                  positionVaultAddress={positionVaultAddress}
                   setPositionVaultAddress={setPositionVaultAddress}
                   setHighestPosition={setHighestPosition}
                   setIsFromModal={setIsFromModal}
                   stopPropagation={stopPropagation}
+                  darkMode={darkMode}
                 />
               )
             })}

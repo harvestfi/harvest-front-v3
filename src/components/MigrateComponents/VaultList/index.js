@@ -1,38 +1,53 @@
 import React from 'react'
-import { VaultBox, Content, InfoText, BadgeIcon, Token, ApyDownIcon, BadgeToken } from './style'
 import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
 import { formatNumber } from '../../../utilities/formats'
+import {
+  VaultBox,
+  Content,
+  InfoText,
+  BadgeIcon,
+  BadgeToken,
+  Token,
+  ApyDownIcon,
+} from '../PositionList/style'
 
-const PositionList = ({
+const VaultList = ({
   matchVault,
   currencySym,
   networkName,
-  setShowPositionModal,
-  setPositionVaultAddress,
-  setHighestPosition,
+  setShowVaultModal,
+  setHighestVaultAddress,
+  setHighestApyVault,
   setIsFromModal,
   stopPropagation,
   darkMode,
+  filteredFarmList,
 }) => {
-  const vaultAddress = matchVault.token.poolVault
-    ? matchVault.token.tokenAddress
-    : matchVault.token.vaultAddress
-  const vaultName = matchVault.token.tokenNames
+  const vaultAddress = matchVault.vault.vaultAddress
+  const vaultName = matchVault.vault.tokenNames
+  let matchingFarm
+
+  filteredFarmList.forEach(farm => {
+    const farmAddress = farm.token.poolVault ? farm.token.tokenAddress : farm.token.vaultAddress
+    if (farmAddress.toLowerCase() === vaultAddress.toLowerCase()) {
+      matchingFarm = farm
+    }
+  })
 
   return (
     <VaultBox
       borderBottom={darkMode ? '1px solid #1F242F' : '1px solid #ECECEC'}
       onClick={() => {
-        setShowPositionModal(false)
-        setHighestPosition(matchVault)
-        setPositionVaultAddress(vaultAddress)
+        setShowVaultModal(false)
+        setHighestApyVault(matchVault)
+        setHighestVaultAddress(vaultAddress)
         setIsFromModal(true)
       }}
       hoverBgColor={darkMode ? '#1F242F' : '#e9f0f7'}
     >
       <Content alignItems="start">
         <InfoText fontSize="10px" fontWeight="500" color="#5fCf76">
-          {`${currencySym}${formatNumber(matchVault.balance)}`}
+          {matchingFarm ? `${currencySym}${formatNumber(matchingFarm.balance)}` : '-'}
         </InfoText>
         <BadgeToken>
           <BadgeIcon>
@@ -50,10 +65,10 @@ const PositionList = ({
       <ApyDownIcon>
         <Content alignItems="end">
           <InfoText fontSize="10px" fontWeight="700" color="#5fCf76">
-            {`${matchVault.apy}% Live APY`}
+            {`${matchVault.vaultApy}% Live APY`}
           </InfoText>
           <InfoText fontSize="10px" fontWeight="500" color="#6988ff">
-            {`${currencySym}${formatNumber(matchVault.apy / 100)}/yr per $1 allocated`}
+            {`${currencySym}${formatNumber(matchVault.vaultApy / 100)}/yr per $1 allocated`}
           </InfoText>
         </Content>
       </ApyDownIcon>
@@ -61,4 +76,4 @@ const PositionList = ({
   )
 }
 
-export default PositionList
+export default VaultList

@@ -21,6 +21,7 @@ import { useRate } from '../../providers/Rate'
 import AnimatedDots from '../../components/AnimatedDots'
 import { formatNumber } from '../../utilities/formats'
 import PositionModal from '../../components/MigrateComponents/PositionModal'
+import VaultModal from '../../components/MigrateComponents/VaultModal'
 import {
   getTokenPriceFromApi,
   getUserBalanceVaults,
@@ -71,7 +72,7 @@ const Migrate = () => {
   const { rates } = useRate()
   /* eslint-disable global-require */
   const { tokens } = require('../../data')
-  const { darkMode } = useThemeContext()
+  const { darkMode, bgColor } = useThemeContext()
   const networkNames = ['ethereum', 'polygon', 'arbitrum', 'base', 'zksync']
 
   const [currencySym, setCurrencySym] = useState('$')
@@ -90,12 +91,12 @@ const Migrate = () => {
   const [highestApyVault, setHighestApyVault] = useState()
   const [fromVault, setFromVault] = useState()
   const [showPositionModal, setShowPositionModal] = useState(false)
+  const [showVaultModal, setShowVaultModal] = useState(false)
   const [isFromModal, setIsFromModal] = useState(false)
+  const [matchedVault, setMatchedVault] = useState()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const isFromAdvanced = location.search.includes('from=')
-
-  let matchedVault
 
   useEffect(() => {
     if (rates.rateData) {
@@ -731,19 +732,17 @@ const Migrate = () => {
   }, [highestApyVault])
 
   useEffect(() => {
-    if (filteredFarmList && positionVaultAddress) {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      matchedVault = filteredFarmList.map(stakedVault => {
+    if (filteredFarmList && highestVaultAddress) {
+      filteredFarmList.forEach(stakedVault => {
         const eachTokenAddress = stakedVault.token.data
           ? stakedVault.token.tokenAddress.toLowerCase()
           : stakedVault.token.vaultAddress.toLowerCase()
-        if (eachTokenAddress === positionVaultAddress.toLowerCase()) {
-          return stakedVault
+        if (eachTokenAddress === highestVaultAddress.toLowerCase()) {
+          setMatchedVault(stakedVault)
         }
-        return false
       })
     }
-  }, [positionVaultAddress]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [highestVaultAddress]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const getBadgeId = vaultAddress => {
     const vaultData = Object.values(groupOfVaults).find(vault => {
@@ -767,19 +766,19 @@ const Migrate = () => {
   }
 
   return (
-    <Container>
+    <Container bgColor={bgColor}>
       <Inner>
         <MigrateTop>
-          <PageTitle color="#101828">Migrate</PageTitle>
+          <PageTitle color={darkMode ? '#ffffff' : '"#101828"'}>Migrate</PageTitle>
         </MigrateTop>
-        <PageIntro color="#475467">
+        <PageIntro color={darkMode ? '#ffffff' : '#475467'}>
           Find alternatives for your existing positions and migrate in once click.
         </PageIntro>
         <SpaceLine />
       </Inner>
       <Inner display="flex" justifyContent="center" alignItems="center" height="50%">
         <MigrateBox>
-          <BoxTitle color="#475467">My existing position</BoxTitle>
+          <BoxTitle color={darkMode ? '#ffffff' : '#475467'}>My existing position</BoxTitle>
           <VaultBox
             bgColor="#f4f6ff"
             border="2px solid #7f9bff"
@@ -831,9 +830,6 @@ const Migrate = () => {
                 alt="Chevron Down"
                 style={{
                   marginLeft: '20px',
-                  filter: darkMode
-                    ? 'invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%)'
-                    : '',
                 }}
               />
             </ApyDownIcon>
@@ -842,7 +838,6 @@ const Migrate = () => {
             showPositionModal={showPositionModal}
             setShowPositionModal={setShowPositionModal}
             networkName={networkNames[getBadgeId(positionVaultAddress)]}
-            positionVaultAddress={positionVaultAddress}
             setPositionVaultAddress={setPositionVaultAddress}
             filteredFarmList={filteredFarmList}
             chainId={chainId}
@@ -853,10 +848,24 @@ const Migrate = () => {
             stopPropagation={stopPropagation}
           />
           <MigrateIcon>
-            <img src={MigrateDown} alt="migrate down" />
+            <img
+              src={MigrateDown}
+              alt="migrate down"
+              style={{
+                filter: darkMode
+                  ? 'invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%)'
+                  : '',
+              }}
+            />
           </MigrateIcon>
-          <BoxTitle color="#475467">Migrate to</BoxTitle>
-          <VaultBox className="from-vault" bgColor="#f8fffc">
+          <BoxTitle color={darkMode ? '#ffffff' : '#475467'}>Migrate to</BoxTitle>
+          <VaultBox
+            className="from-vault"
+            bgColor="#f8fffc"
+            onClick={() => {
+              setShowVaultModal(true)
+            }}
+          >
             <Content alignItems="start">
               <InfoText fontSize="10px" fontWeight="500" color="#5fCf76">
                 {matchedVault ? `${currencySym}${formatNumber(matchedVault.balance)}` : '-'}
@@ -905,13 +914,26 @@ const Migrate = () => {
                 alt="Chevron Down"
                 style={{
                   marginLeft: '20px',
-                  filter: darkMode
-                    ? 'invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%)'
-                    : '',
                 }}
               />
             </ApyDownIcon>
           </VaultBox>
+          <VaultModal
+            showVaultModal={showVaultModal}
+            setShowVaultModal={setShowVaultModal}
+            networkName={networkNames[getBadgeId(positionVaultAddress)]}
+            setHighestApyVault={setHighestApyVault}
+            setHighestVaultAddress={setHighestVaultAddress}
+            filteredFarmList={filteredFarmList}
+            chainId={chainId}
+            isMobile={isMobile}
+            currencySym={currencySym}
+            setIsFromModal={setIsFromModal}
+            stopPropagation={stopPropagation}
+            groupOfVaults={groupOfVaults}
+            vaultsData={vaultsData}
+            pools={pools}
+          />
           <ButtonDiv>
             <Button>Preview & Migrate</Button>
           </ButtonDiv>

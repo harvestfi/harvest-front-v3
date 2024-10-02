@@ -8,10 +8,10 @@ const VaultBox = styled.div`
   background: ${props => (props.bgColor ? props.bgColor : '')};
   border: ${props => (props.border ? props.border : '')};
   border-bottom: ${props => (props.borderBottom ? props.borderBottom : '')};
-  cursor: ${props => (props.cursorType ? props.cursorType : '')};
+  cursor: pointer;
 
   &:hover {
-    background: #f2f5ff;
+    background: ${props => (props.hoverBgColor ? props.hoverBgColor : '')};
   }
 `
 
@@ -46,7 +46,7 @@ const Token = styled.a`
   font-weight: 500;
   font-size: 10px;
   line-height: 20px;
-  color: #414141;
+  color: ${props => (props.color ? props.color : '')};
   cursor: pointer;
   z-index: 1;
 `

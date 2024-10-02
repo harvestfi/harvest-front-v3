@@ -57,7 +57,6 @@ const PageTitle = styled.div`
   font-size: 18px;
   line-height: 28px;
   color: ${props => (props.color ? props.color : '')};
-  margin-bottom: ${props => (props.marginBottom ? props.marginBottom : '10px')};
 `
 
 const PageIntro = styled.div`

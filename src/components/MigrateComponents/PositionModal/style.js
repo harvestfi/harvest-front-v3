@@ -15,7 +15,7 @@ const IconCard = styled.div`
   height: 48px;
   border-radius: 50%;
   padding: 14px;
-  background: #6988ff;
+  background: ${props => (props.bgColor ? props.bgColor : '')};
   box-shadow: 0px 1px 2px 0px #1018280d;
   justify-content: center;
 `

@@ -517,7 +517,7 @@ html {
       }
 
       .modal-header {
-        background: #FFB54F;
+        background: ${props => props.bgColorModal};
         font-weight: 600;
         font-size: 18px;
         line-height: 28px;
@@ -548,7 +548,7 @@ html {
         flex-flow: column;
       }
       .migrate-position-modal-header {
-        background: #f2f5ff;
+        background: ${props => props.bgColorModal};
         border-bottom: 1px solid ${props => props.inputBorderColor};
         padding: 24px;
         display: flex;
@@ -568,6 +568,18 @@ html {
         padding: unset;
         height: 328px;
         border-radius: 0px 0px 12px 12px;
+        overflow-y: auto;
+      }
+      .migrate-position-modal-body::-webkit-scrollbar {
+          width: 5px;
+      }
+      .migrate-position-modal-body::-webkit-scrollbar-track {
+        background: none;
+      }
+      .migrate-position-modal-body::-webkit-scrollbar-thumb {
+        background-color: #caf1d5;
+        border-radius: 6px;
+        border: none;
       }
       .modal-footer {
         justify-content: center;
