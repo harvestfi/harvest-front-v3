@@ -5,6 +5,7 @@ import BigNumber from 'bignumber.js'
 import queryString from 'query-string'
 import { useLocation } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
+import { useMediaQuery } from 'react-responsive'
 import { useVaults } from '../../providers/Vault'
 import { useStats } from '../../providers/Stats'
 import { fromWei } from '../../services/web3'
@@ -19,6 +20,7 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import { useRate } from '../../providers/Rate'
 import AnimatedDots from '../../components/AnimatedDots'
 import { formatNumber } from '../../utilities/formats'
+import PositionModal from '../../components/MigrateComponents/PositionModal'
 import {
   getTokenPriceFromApi,
   getUserBalanceVaults,
@@ -41,8 +43,7 @@ import {
   PageTitle,
   SpaceLine,
   MigrateBox,
-  FromVault,
-  ToVault,
+  VaultBox,
   BoxTitle,
   MigrateIcon,
   Button,
@@ -86,8 +87,11 @@ const Migrate = () => {
   const [positionVaultAddress, setPositionVaultAddress] = useState('')
   const [highestVaultAddress, setHighestVaultAddress] = useState('')
   const [chainId, setChainId] = useState()
-  const [highestApyVault, setHighestApyVault] = useState('')
+  const [highestApyVault, setHighestApyVault] = useState()
   const [fromVault, setFromVault] = useState()
+  const [showPositionModal, setShowPositionModal] = useState(false)
+  const [isFromModal, setIsFromModal] = useState(false)
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const isFromAdvanced = location.search.includes('from=')
 
@@ -656,7 +660,7 @@ const Migrate = () => {
       : farmTokenList.filter(farm => farm.status === 'Active')
     setFilteredFarmList(filteredVaultList)
 
-    if (isFromAdvanced && filteredFarmList.length > 0) {
+    if (!isFromModal && isFromAdvanced && filteredFarmList.length > 0) {
       const values = queryString.parse(search)
       // eslint-disable-next-line array-callback-return, consistent-return
       const selectedPosition = filteredFarmList.filter(vault => {
@@ -688,13 +692,11 @@ const Migrate = () => {
       }
     }
 
-    if (!isFromAdvanced && filteredFarmList.length > 0) {
+    if (!isFromModal && !isFromAdvanced && filteredFarmList.length > 0) {
       setHighestPosition(filteredFarmList[0])
       if (highestPosition && highestPosition.token.data) {
-        console.log('highestPosition', highestPosition)
         setPositionVaultAddress(highestPosition.token.tokenAddress)
       } else if (highestPosition) {
-        console.log('highestPosition', highestPosition)
         setPositionVaultAddress(highestPosition.token.vaultAddress)
       }
 
@@ -760,6 +762,10 @@ const Migrate = () => {
     return -1
   }
 
+  const stopPropagation = event => {
+    event.stopPropagation()
+  }
+
   return (
     <Container>
       <Inner>
@@ -774,7 +780,13 @@ const Migrate = () => {
       <Inner display="flex" justifyContent="center" alignItems="center" height="50%">
         <MigrateBox>
           <BoxTitle color="#475467">My existing position</BoxTitle>
-          <FromVault>
+          <VaultBox
+            bgColor="#f4f6ff"
+            border="2px solid #7f9bff"
+            onClick={() => {
+              setShowPositionModal(true)
+            }}
+          >
             <Content alignItems="start">
               <InfoText fontSize="10px" fontWeight="500" color="#5fCf76">
                 {highestPosition ? (
@@ -795,6 +807,7 @@ const Migrate = () => {
                   href={`${window.location.origin}/${
                     networkNames[getBadgeId(positionVaultAddress)]
                   }/${positionVaultAddress}`}
+                  onClick={stopPropagation}
                 >
                   {highestPosition ? highestPosition.token.tokenNames.join(', ') : <AnimatedDots />}
                 </Token>
@@ -824,12 +837,26 @@ const Migrate = () => {
                 }}
               />
             </ApyDownIcon>
-          </FromVault>
+          </VaultBox>
+          <PositionModal
+            showPositionModal={showPositionModal}
+            setShowPositionModal={setShowPositionModal}
+            networkName={networkNames[getBadgeId(positionVaultAddress)]}
+            positionVaultAddress={positionVaultAddress}
+            setPositionVaultAddress={setPositionVaultAddress}
+            filteredFarmList={filteredFarmList}
+            chainId={chainId}
+            isMobile={isMobile}
+            currencySym={currencySym}
+            setHighestPosition={setHighestPosition}
+            setIsFromModal={setIsFromModal}
+            stopPropagation={stopPropagation}
+          />
           <MigrateIcon>
             <img src={MigrateDown} alt="migrate down" />
           </MigrateIcon>
           <BoxTitle color="#475467">Migrate to</BoxTitle>
-          <ToVault className="from-vault">
+          <VaultBox className="from-vault" bgColor="#f8fffc">
             <Content alignItems="start">
               <InfoText fontSize="10px" fontWeight="500" color="#5fCf76">
                 {matchedVault ? `${currencySym}${formatNumber(matchedVault.balance)}` : '-'}
@@ -846,6 +873,7 @@ const Migrate = () => {
                   href={`${window.location.origin}/${
                     networkNames[getBadgeId(highestVaultAddress)]
                   }/${highestVaultAddress}`}
+                  onClick={stopPropagation}
                 >
                   {highestApyVault ? (
                     `${highestApyVault.vault.tokenNames.join(
@@ -883,7 +911,7 @@ const Migrate = () => {
                 }}
               />
             </ApyDownIcon>
-          </ToVault>
+          </VaultBox>
           <ButtonDiv>
             <Button>Preview & Migrate</Button>
           </ButtonDiv>

@@ -683,7 +683,7 @@ const WithdrawStart = ({
                   </ImagePart>
                   <NamePart>
                     <NewLabel
-                      color={darkMode ? '#ffffff' : '#15202b'}
+                      color="#15202b"
                       size={isMobile ? '14px' : '14px'}
                       height={isMobile ? '20px' : '20px'}
                       weight="600"
@@ -692,7 +692,7 @@ const WithdrawStart = ({
                       {tokenNames.join(' - ')}
                     </NewLabel>
                     <NewLabel
-                      color={darkMode ? '#ffffff' : '#15202b'}
+                      color="#15202b"
                       size={isMobile ? '14px' : '10px'}
                       height={isMobile ? '20px' : '20px'}
                       weight="400"

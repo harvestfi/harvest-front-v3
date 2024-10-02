@@ -451,6 +451,12 @@ const HighestVault = styled.div`
   align-items: center;
   background: #F8FFFC;
   cursor: pointer;
+  border-radius: 12px;
+  transition: 0.3s;
+  
+  &:hover {
+      background: #ffffff;
+  }
 
   .top-apy {
     position: relative;

@@ -103,25 +103,16 @@ const BoxTitle = styled.div`
   color: ${props => (props.color ? props.color : '')};
 `
 
-const FromVault = styled.div`
-  border: 2px solid #7f9bff;
-  padding: 15px;
-  border-radius: 5px;
-  margin-bottom: 25px;
+const VaultBox = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #f4f6ff;
-`
-
-const ToVault = styled.div`
   padding: 15px;
-  margin-bottom: 25px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #f8fffc;
   border-radius: 5px;
+  margin-bottom: 25px;
+  background: ${props => (props.bgColor ? props.bgColor : '')};
+  border: ${props => (props.border ? props.border : '')};
+  cursor: pointer;
 `
 
 const MigrateIcon = styled.div`
@@ -204,8 +195,7 @@ export {
   PageIntro,
   SpaceLine,
   MigrateBox,
-  FromVault,
-  ToVault,
+  VaultBox,
   BoxTitle,
   MigrateIcon,
   Button,
