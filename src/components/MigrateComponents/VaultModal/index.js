@@ -108,7 +108,7 @@ const VaultModal = ({
             display="flex"
             justifyContent="center"
           >
-            Loading Position List
+            Loading Strategy List
             <AnimatedDots />
           </NewLabel>
         ) : (

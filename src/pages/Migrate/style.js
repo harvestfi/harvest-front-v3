@@ -1,9 +1,13 @@
 import styled from 'styled-components'
 
 const Container = styled.div`
+  padding: 50px 75px 75px 75px;
   width: 100%;
   min-height: 100vh;
   color: ${props => props.fontColor};
+  display: flex;
+  align-items: center;
+  flex-direction: column;
 
   background: ${props => props.bgColor};
   transition: 0.25s;
@@ -24,12 +28,12 @@ const Container = styled.div`
 `
 
 const Inner = styled.div`
-  padding: 50px 75px 75px 75px;
   width: 100%;
   display: ${props => (props.display ? props.display : '')};
   justify-content: ${props => (props.justifyContent ? props.justifyContent : '')};
   align-items: ${props => (props.alignItems ? props.alignItems : '')};
   height: ${props => (props.height ? props.height : '')};
+  margin-bottom: ${props => (props.marginBottom ? props.marginBottom : '')};
 
   @media screen and (min-width: 1921px) {
     width: 1450px;
@@ -42,6 +46,22 @@ const Inner = styled.div`
 
   @media screen and (max-width: 992px) {
     padding: 25px 15px;
+  }
+
+  .migrate-box {
+    position: relative;
+  }
+
+  .migrate-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    padding: 4px;
+    background: linear-gradient(90deg, #ffd6a6 0%, #a1b5ff 48.9%, #73df88 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
   }
 `
 
@@ -72,9 +92,8 @@ const SpaceLine = styled.div`
 `
 
 const MigrateBox = styled.div`
-  width: 451px;
+  width: 521px;
   border-radius: 12px;
-  border: 2px solid #f2f5ff;
   padding: 25px;
 
   .from-vault {
@@ -112,6 +131,8 @@ const VaultBox = styled.div`
   background: ${props => (props.bgColor ? props.bgColor : '')};
   border: ${props => (props.border ? props.border : '')};
   cursor: pointer;
+  position: relative;
+  z-index: 1;
 `
 
 const MigrateIcon = styled.div`
@@ -127,7 +148,7 @@ const Button = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #6988ff;
+  background: linear-gradient(90deg, #ffc580 0%, #6083ff 48.9%, #6af686 100%);
   color: white;
   width: 100%;
 `
@@ -137,6 +158,9 @@ const ButtonDiv = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
+  pointer: cursor;
+  position: relative;
+  z-index: 1;
 `
 
 const Content = styled.div`

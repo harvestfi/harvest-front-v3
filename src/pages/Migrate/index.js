@@ -12,6 +12,8 @@ import { fromWei } from '../../services/web3'
 import MigrateDown from '../../assets/images/ui/migrate-down.svg'
 import ChevronDown from '../../assets/images/ui/chevron-down.svg'
 import ETHEREUM from '../../assets/images/logos/badge/ethereum.svg'
+import EXPANDED from '../../assets/images/ui/minus.svg'
+import COLLAPSED from '../../assets/images/ui/plus.svg'
 import { usePools } from '../../providers/Pools'
 import { addresses } from '../../data'
 import { useWallet } from '../../providers/Wallet'
@@ -22,6 +24,8 @@ import AnimatedDots from '../../components/AnimatedDots'
 import { formatNumber } from '../../utilities/formats'
 import PositionModal from '../../components/MigrateComponents/PositionModal'
 import VaultModal from '../../components/MigrateComponents/VaultModal'
+import { NewLabel } from '../../components/MigrateComponents/PositionModal/style'
+import Accordian from '../../components/MigrateComponents/Accordian'
 import {
   getTokenPriceFromApi,
   getUserBalanceVaults,
@@ -732,14 +736,22 @@ const Migrate = () => {
   }, [highestApyVault])
 
   useEffect(() => {
+    let isFound = false
     if (filteredFarmList && highestVaultAddress) {
-      filteredFarmList.forEach(stakedVault => {
+      filteredFarmList.map(stakedVault => {
         const eachTokenAddress = stakedVault.token.data
           ? stakedVault.token.tokenAddress.toLowerCase()
           : stakedVault.token.vaultAddress.toLowerCase()
         if (eachTokenAddress === highestVaultAddress.toLowerCase()) {
           setMatchedVault(stakedVault)
+          isFound = true
+          return true
         }
+        if (!isFound && eachTokenAddress !== highestVaultAddress.toLowerCase()) {
+          setMatchedVault()
+          return true
+        }
+        return false
       })
     }
   }, [highestVaultAddress]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -765,9 +777,76 @@ const Migrate = () => {
     event.stopPropagation()
   }
 
+  const accordianText = [
+    {
+      question: <>What is the Migrate tool about?</>,
+      answer: (
+        <>The migrate pool allows you to switch between Harvest strategies in just a few clicks.</>
+      ),
+    },
+    {
+      question: <>If I don&apos;t like the new strategy, can I exit at any time?</>,
+      answer: (
+        <>
+          Yes, you can switch back to your original strategy or another at any time without any
+          platform fees.
+        </>
+      ),
+    },
+    {
+      question: <>What should I know about the new APY that I&apos;ll be getting?</>,
+      answer: (
+        <>
+          APYs vary between strategies because each one carries different risks and exposures.
+          Before migrating, it&apos;s good to learn about the new strategy&apos;s mechanics. For
+          example, some strategies might offer a higher APY but involve assets with more price
+          fluctuations. Our Migrate tool provides this flexibility, but remember that APYs can
+          change based on market conditions and strategy performance.
+        </>
+      ),
+    },
+    {
+      question: <>What is the cost of migrating?</>,
+      answer: (
+        <>The migrate pool allows you to switch between Harvest strategies in just a few clicks.</>
+      ),
+    },
+    {
+      question: <>What is the Migrate tool about?</>,
+      answer: (
+        <>
+          There are no platform fees associated with using the Migrate tool. However, gas fees may
+          still apply depending on the network.
+        </>
+      ),
+    },
+    {
+      question: <>What happens when I click on &apos;Preview & Migrate&apos;?</>,
+      answer: (
+        <>
+          You&apos;ll be prompted with a preview of the fToken conversion between the involved
+          strategies.
+        </>
+      ),
+    },
+    {
+      question: <>I can&apos;t find a strategy on the &apos;Migrate to&apos; list.</>,
+      answer: (
+        <>
+          If a strategy you&apos;re looking for is not listed, it might be on a different network or
+          not yet supported by the Migrate tool.
+        </>
+      ),
+    },
+    {
+      question: <>Encountering issues?</>,
+      answer: <>Please open a Discord ticket and we&apos;ll help.</>,
+    },
+  ]
+
   return (
     <Container bgColor={bgColor}>
-      <Inner>
+      <Inner marginBottom="55px">
         <MigrateTop>
           <PageTitle color={darkMode ? '#ffffff' : '"#101828"'}>Migrate</PageTitle>
         </MigrateTop>
@@ -776,8 +855,8 @@ const Migrate = () => {
         </PageIntro>
         <SpaceLine />
       </Inner>
-      <Inner display="flex" justifyContent="center" alignItems="center" height="50%">
-        <MigrateBox>
+      <Inner display="flex" justifyContent="center" alignItems="flex-start">
+        <MigrateBox className="migrate-box">
           <BoxTitle color={darkMode ? '#ffffff' : '#475467'}>My existing position</BoxTitle>
           <VaultBox
             bgColor="#f4f6ff"
@@ -934,10 +1013,88 @@ const Migrate = () => {
             vaultsData={vaultsData}
             pools={pools}
           />
+          <NewLabel
+            display="flex"
+            justifyContent="space-between"
+            alignItems="center"
+            flexDirection="column"
+            marginBottom="20px"
+          >
+            <NewLabel
+              weight="600"
+              size="14px"
+              height="24px"
+              marginBottom="10px"
+              color={darkMode ? '#ffffff' : '#344054'}
+            >
+              Migration details
+            </NewLabel>
+            <NewLabel display="flex" justifyContent="space-between" marginBottom="10px">
+              <NewLabel
+                display="flex"
+                justifyContent="start"
+                size="14px"
+                weight="400"
+                height="24px"
+                color={darkMode ? '#ffffff' : '#344054'}
+              >
+                APY change
+              </NewLabel>
+              <NewLabel
+                display="flex"
+                justifyContent="end"
+                size="14px"
+                weight="600"
+                height="24px"
+                color={darkMode ? '#ffffff' : '#344054'}
+              >
+                {highestPosition ? `${highestPosition.apy}%` : <AnimatedDots />}{' '}
+                <span style={{ marginLeft: '5px', marginRight: '5px' }}>
+                  {highestPosition ? '→' : ''}
+                </span>
+                <span style={{ color: '#5fCf76' }}>
+                  {highestApyVault ? `${highestApyVault.vaultApy}%` : <AnimatedDots />}
+                </span>
+              </NewLabel>
+            </NewLabel>
+            <NewLabel display="flex" justifyContent="space-between" marginBottom="10px">
+              <NewLabel
+                display="flex"
+                justifyContent="start"
+                size="14px"
+                weight="400"
+                height="24px"
+                color={darkMode ? '#ffffff' : '#344054'}
+              >
+                Platform Fees
+              </NewLabel>
+              <NewLabel
+                display="flex"
+                justifyContent="end"
+                size="14px"
+                weight="600"
+                height="24px"
+                color={darkMode ? '#ffffff' : '#344054'}
+              >{`${currencySym}0.00`}</NewLabel>
+            </NewLabel>
+          </NewLabel>
           <ButtonDiv>
             <Button>Preview & Migrate</Button>
           </ButtonDiv>
         </MigrateBox>
+        <NewLabel marginLeft="32px" width="100%">
+          {accordianText.map((text, i) => {
+            return (
+              <Accordian
+                key={i}
+                text={text}
+                EXPANDED={EXPANDED}
+                COLLAPSED={COLLAPSED}
+                darkMode={darkMode}
+              />
+            )
+          })}
+        </NewLabel>
       </Inner>
     </Container>
   )

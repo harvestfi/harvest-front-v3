@@ -449,17 +449,16 @@ const HighestVault = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: #F8FFFC;
+  background: #f8fffc;
   cursor: pointer;
   border-radius: 12px;
-  
+
   &:hover {
-      background: #ffffff;
+    background: #ffffff;
   }
 
   .top-apy {
     position: relative;
-    1.66px 8.3px 1.66px 6.64px;
     padding: 1.66px 8.3px 1.66px 6.64px;
   }
 

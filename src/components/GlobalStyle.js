@@ -503,8 +503,6 @@ html {
     .modal-content {
       border: none;
       border-radius: 12px;
-      position: absolute;
-      left: 130px;
 
       @media screen and (max-width: 992px) {
         left: 0;

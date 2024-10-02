@@ -24,11 +24,18 @@ const NewLabel = styled.div`
   font-weight: ${props => props.weight || '400'};
   font-size: ${props => props.size || '20px'};
   line-height: ${props => props.height || '0px'};
+  padding-bottom: ${props => (props.paddingBottom ? props.paddingBottom : '')};
   ${props =>
     props.width
       ? `
       width: ${props.width};
   `
+      : ''}
+  ${props =>
+    props.flexDirection
+      ? `
+          flex-direction: ${props.flexDirection};
+      `
       : ''}
   ${props =>
     props.borderBottom
