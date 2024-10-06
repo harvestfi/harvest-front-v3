@@ -1,5 +1,9 @@
 import React from 'react'
 import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
+import ARBITRUM from '../../../assets/images/logos/badge/arbitrum.svg'
+import POLIGON from '../../../assets/images/logos/badge/polygon.svg'
+import ZKSYNC from '../../../assets/images/logos/badge/zksync.svg'
+import BASE from '../../../assets/images/logos/badge/base.svg'
 import { formatNumber } from '../../../utilities/formats'
 import {
   VaultBox,
@@ -22,9 +26,20 @@ const VaultList = ({
   stopPropagation,
   darkMode,
   filteredFarmList,
+  chainId,
 }) => {
   const vaultAddress = matchVault.vault.vaultAddress
   const vaultName = matchVault.vault.tokenNames
+  const chainUrl =
+    chainId === 42161
+      ? ARBITRUM
+      : chainId === 8453
+      ? BASE
+      : chainId === 324
+      ? ZKSYNC
+      : chainId === 137
+      ? POLIGON
+      : ETHEREUM
   let matchingFarm
 
   filteredFarmList.forEach(farm => {
@@ -51,7 +66,7 @@ const VaultList = ({
         </InfoText>
         <BadgeToken>
           <BadgeIcon>
-            <img src={matchVault.chain ? matchVault.chain : ETHEREUM} alt="" />
+            <img src={chainUrl} alt="" />
           </BadgeIcon>
           <Token
             color={darkMode ? '#ffffff' : '#414141'}

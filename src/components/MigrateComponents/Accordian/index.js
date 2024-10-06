@@ -11,8 +11,8 @@ const Accordian = ({ text, EXPANDED, COLLAPSED, darkMode }) => {
   return (
     <NewLabel
       display="flex"
-      paddingBottom="30px"
-      marginBottom="20px"
+      paddingBottom="32px"
+      marginBottom="24px"
       flexDirection="column"
       borderBottom="1px solid #EAECF0"
       cursorType="pointer"

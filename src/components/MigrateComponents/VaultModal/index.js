@@ -24,10 +24,11 @@ const VaultModal = ({
   groupOfVaults,
   vaultsData,
   pools,
+  matchVaultList,
+  setMatchVaultList,
 }) => {
   const { darkMode, inputFontColor, fontColor } = useThemeContext()
   const [countFarm, setCountFarm] = useState(0)
-  const [mathchVaultList, setMatchVaultList] = useState()
 
   useEffect(() => {
     let matchingList = []
@@ -123,7 +124,7 @@ const VaultModal = ({
             >
               {`${countFarm} Opportunities found on ${formatNetworkName(networkName)}`}
             </NewLabel>
-            {mathchVaultList.map((item, i) => {
+            {matchVaultList.map((item, i) => {
               return (
                 <VaultList
                   key={i}
@@ -137,6 +138,7 @@ const VaultModal = ({
                   stopPropagation={stopPropagation}
                   darkMode={darkMode}
                   filteredFarmList={filteredFarmList}
+                  chainId={chainId}
                 />
               )
             })}

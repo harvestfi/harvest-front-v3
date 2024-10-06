@@ -98,6 +98,7 @@ const Migrate = () => {
   const [showVaultModal, setShowVaultModal] = useState(false)
   const [isFromModal, setIsFromModal] = useState(false)
   const [matchedVault, setMatchedVault] = useState()
+  const [matchVaultList, setMatchVaultList] = useState([])
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const isFromAdvanced = location.search.includes('from=')
@@ -1012,6 +1013,8 @@ const Migrate = () => {
             groupOfVaults={groupOfVaults}
             vaultsData={vaultsData}
             pools={pools}
+            setMatchVaultList={setMatchVaultList}
+            matchVaultList={matchVaultList}
           />
           <NewLabel
             display="flex"
@@ -1082,7 +1085,7 @@ const Migrate = () => {
             <Button>Preview & Migrate</Button>
           </ButtonDiv>
         </MigrateBox>
-        <NewLabel marginLeft="32px" width="100%">
+        <NewLabel marginLeft="32px" width="60%">
           {accordianText.map((text, i) => {
             return (
               <Accordian

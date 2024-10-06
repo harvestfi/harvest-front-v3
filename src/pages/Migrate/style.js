@@ -92,7 +92,7 @@ const SpaceLine = styled.div`
 `
 
 const MigrateBox = styled.div`
-  width: 521px;
+  width: 40%;
   border-radius: 12px;
   padding: 25px;
 
@@ -117,7 +117,7 @@ const BoxTitle = styled.div`
   font-weight: 500;
   font-size: 14px;
   line-height: 20px;
-  margin-bottom: 25px;
+  margin-bottom: 10px;
   color: ${props => (props.color ? props.color : '')};
 `
 
@@ -127,7 +127,7 @@ const VaultBox = styled.div`
   align-items: center;
   padding: 15px;
   border-radius: 5px;
-  margin-bottom: 25px;
+  margin-bottom: 21px;
   background: ${props => (props.bgColor ? props.bgColor : '')};
   border: ${props => (props.border ? props.border : '')};
   cursor: pointer;
@@ -139,7 +139,7 @@ const MigrateIcon = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 25px;
+  margin-bottom: 24px;
 `
 const Button = styled.button`
   padding: 10px 18px;
