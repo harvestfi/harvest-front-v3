@@ -851,6 +851,11 @@ export const boostedVaults = [
   'camelotV3_ARB_USDC',
   'camelotV3_ETH_USDT',
   'camelotV3_ETH_USDC',
+  'aave_GHO_arbitrum',
+  'fluid_USDC_arbitrum',
+  'fluid_USDT_arbitrum',
+  'dolomite_DAI',
+  'dolomite_WBTC'
 ]
 
 export const supportedCurrencies = [
