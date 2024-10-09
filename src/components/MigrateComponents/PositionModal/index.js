@@ -33,15 +33,13 @@ const PositionModal = ({
   // balances,
   // ethers,
   id,
-  setId,
   addresses,
+  setId,
   setToken,
   groupOfVaults,
   // setDefaultToken,
   // defaultToken,
   // setAllTokenList,
-  setIsDifferentPosition,
-  urlPositionAddress,
   setCurSupportedVault,
   setNetworkMatchList,
   networkMatchList,
@@ -163,8 +161,6 @@ const PositionModal = ({
         setId={setId}
         setToken={setToken}
         groupOfVaults={groupOfVaults}
-        setIsDifferentPosition={setIsDifferentPosition}
-        urlPositionAddress={urlPositionAddress}
       />
     )
   })

@@ -16,8 +16,6 @@ const PositionList = ({
   setId,
   setToken,
   groupOfVaults,
-  setIsDifferentPosition,
-  urlPositionAddress,
 }) => {
   const vaultAddress = matchVault.token.poolVault
     ? matchVault.token.tokenAddress
@@ -35,9 +33,6 @@ const PositionList = ({
         setPositionVaultAddress(vaultAddress)
         setIsFromModal(true)
         setToken(groupOfVaults[id.toString()])
-        if (urlPositionAddress !== vaultAddress) {
-          setIsDifferentPosition(true)
-        }
       }}
       hoverBgColor={darkMode ? '#1F242F' : '#e9f0f7'}
     >

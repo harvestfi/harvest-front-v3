@@ -71,7 +71,7 @@ const Migrate = () => {
 
   const { vaultsData, getFarmingBalances } = useVaults()
   const { profitShareAPY } = useStats()
-  const { account, balances, getWalletBalances, web3, chainId } = useWallet()
+  const { account, balances, getWalletBalances, chainId } = useWallet()
   const { userStats, fetchUserPoolStats, totalPools, pools } = usePools()
   const { rates } = useRate()
   /* eslint-disable global-require */
@@ -103,10 +103,8 @@ const Migrate = () => {
   const [tokenWith, setTokenWith] = useState()
   const [tokenDepo, setTokenDepo] = useState()
   const [pickedTokenWith, setPickedTokenWith] = useState()
-  const [defaultTokenWith, setDefaultTokenWith] = useState(null)
-  const [tokensListWith, setTokensListWith] = useState([])
+  const [defaultTokenWith] = useState(null)
   const [curSupportedVaultWith, setCurSupportedVaultWith] = useState(false)
-  const [isDifferentPosition, setIsDifferentPosition] = useState(false)
   const [urlPositionAddress, setUrlPositionAddress] = useState('')
   const [showMigrate, setShowMigrate] = useState(false)
   const [balance, setBalance] = useState('0')
@@ -1125,27 +1123,12 @@ const Migrate = () => {
             setIsFromModal={setIsFromModal}
             stopPropagation={stopPropagation}
             token={tokenWith}
-            account={account}
-            balances={balances}
-            ethers={ethers}
             id={positionId}
             addresses={addresses}
-            setPickedToken={setPickedTokenWith}
-            positionAddress={positionVaultAddress}
-            get={get}
-            find={find}
-            vaultsData={vaultsData}
-            pools={pools}
-            currencyRate={currencyRate}
-            web3={web3}
             setId={setPositionId}
             setToken={setTokenWith}
             groupOfVaults={groupOfVaults}
-            defaultToken={defaultTokenWith}
-            setDefaultToken={setDefaultTokenWith}
-            setAllTokenList={setTokensListWith}
             setCurSupportedVault={setCurSupportedVaultWith}
-            setIsDifferentPosition={setIsDifferentPosition}
             urlPositionAddress={urlPositionAddress}
             setNetworkMatchList={setNetworkMatchList}
             networkMatchList={networkMatchList}
@@ -1250,13 +1233,10 @@ const Migrate = () => {
             ethers={ethers}
             positionAddress={positionVaultAddress}
             setPickedToken={setPickedTokenWith}
-            tokensListWith={tokensListWith}
-            curSupportedVaultWith={curSupportedVaultWith}
             setBalance={setBalance}
             pickedToken={pickedTokenWith}
             setInputAmount={setInputAmount}
             balance={balance}
-            supportedVault={supportedVaultDepo}
             setSupportedVault={setSupportedVaultDepo}
             convertSuccess={convertSuccess}
           />
@@ -1382,8 +1362,6 @@ const Migrate = () => {
             vaultsData={vaultsData}
             currencySym={currencySym}
             currencyRate={currencyRate}
-            balances={balances}
-            isDifferentPosition={isDifferentPosition}
             showMigrate={showMigrate}
             setShowMigrate={setShowMigrate}
             toId={highVaultId}
