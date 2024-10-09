@@ -81,13 +81,12 @@ const VaultModal = ({
     if (chain) {
       matchingList = getMatchedVaultList(groupOfVaults, chain, vaultsData, pools)
     }
-    const testAry = matchingList.slice(0, 10)
     const fetchSupportedMatches = async () => {
       const filteredMatchList = []
 
-      if (testAry.length > 0) {
+      if (matchingList.length > 0) {
         // eslint-disable-next-line no-restricted-syntax
-        for (const item of testAry) {
+        for (const item of matchingList) {
           const mToken = item.vault
           const tokenAddress = useIFARM
             ? addresses.iFARM
