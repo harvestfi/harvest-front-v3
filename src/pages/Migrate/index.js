@@ -828,8 +828,6 @@ const Migrate = () => {
           : 'ethereum'
       let newPositionAddress, newVaultAddress
 
-      console.log('targetNet', targetNet)
-
       if (networkMatchList.length > 0 && matchVaultList.length > 0) {
         newPositionAddress = networkMatchList[0].token.vaultAddress
         newVaultAddress = matchVaultList[0].vault.vaultAddress
