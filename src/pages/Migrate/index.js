@@ -6,10 +6,11 @@ import queryString from 'query-string'
 import { useLocation } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { useMediaQuery } from 'react-responsive'
+import { ethers } from 'ethers'
+import { useSetChain } from '@web3-onboard/react'
 import { useVaults } from '../../providers/Vault'
 import { useStats } from '../../providers/Stats'
 import { fromWei } from '../../services/web3'
-import MigrateDown from '../../assets/images/ui/migrate-down.svg'
 import ChevronDown from '../../assets/images/ui/chevron-down.svg'
 import ETHEREUM from '../../assets/images/logos/badge/ethereum.svg'
 import EXPANDED from '../../assets/images/ui/minus.svg'
@@ -21,7 +22,8 @@ import { getChainIcon, getTotalApy, getHighestApy } from '../../utilities/parser
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useRate } from '../../providers/Rate'
 import AnimatedDots from '../../components/AnimatedDots'
-import { formatNumber } from '../../utilities/formats'
+import { formatNumber, formatNetworkName, isSpecialApp } from '../../utilities/formats'
+import MigrateStart from '../../components/MigrateComponents/MigrateStart'
 import PositionModal from '../../components/MigrateComponents/PositionModal'
 import VaultModal from '../../components/MigrateComponents/VaultModal'
 import { NewLabel } from '../../components/MigrateComponents/PositionModal/style'
@@ -50,16 +52,14 @@ import {
   MigrateBox,
   VaultBox,
   BoxTitle,
-  MigrateIcon,
   Button,
   ButtonDiv,
   Content,
-  InfoText,
   BadgeToken,
   BadgeIcon,
   Token,
-  ApyDownIcon,
 } from './style'
+// import { ConnectButtonStyle } from '../../components/EarningsHistory/HistoryData/style'
 
 const totalNetProfitKey = 'TOTAL_NET_PROFIT'
 const totalHistoryDataKey = 'TOTAL_HISTORY_DATA'
@@ -71,7 +71,7 @@ const Migrate = () => {
 
   const { vaultsData, getFarmingBalances } = useVaults()
   const { profitShareAPY } = useStats()
-  const { account, balances, getWalletBalances } = useWallet()
+  const { account, balances, getWalletBalances, web3, chainId } = useWallet()
   const { userStats, fetchUserPoolStats, totalPools, pools } = usePools()
   const { rates } = useRate()
   /* eslint-disable global-require */
@@ -80,7 +80,7 @@ const Migrate = () => {
   const networkNames = ['ethereum', 'polygon', 'arbitrum', 'base', 'zksync']
 
   const [currencySym, setCurrencySym] = useState('$')
-  const [, setCurrencyRate] = useState(1)
+  const [currencyRate, setCurrencyRate] = useState(1)
   const [apiData, setApiData] = useState([])
   const [farmTokenList, setFarmTokenList] = useState([])
   const [filteredFarmList, setFilteredFarmList] = useState([])
@@ -91,17 +91,39 @@ const Migrate = () => {
   const [highestPosition, setHighestPosition] = useState()
   const [positionVaultAddress, setPositionVaultAddress] = useState('')
   const [highestVaultAddress, setHighestVaultAddress] = useState('')
-  const [chainId, setChainId] = useState()
+  const [curChain, setCurChain] = useState()
   const [highestApyVault, setHighestApyVault] = useState()
-  const [fromVault, setFromVault] = useState()
   const [showPositionModal, setShowPositionModal] = useState(false)
   const [showVaultModal, setShowVaultModal] = useState(false)
   const [isFromModal, setIsFromModal] = useState(false)
-  const [matchedVault, setMatchedVault] = useState()
+  const [, setMatchedVault] = useState()
   const [matchVaultList, setMatchVaultList] = useState([])
-  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+  const [positionId, setPositionId] = useState()
+  const [highVaultId, setHighVaultId] = useState()
+  const [tokenWith, setTokenWith] = useState()
+  const [tokenDepo, setTokenDepo] = useState()
+  const [pickedTokenWith, setPickedTokenWith] = useState()
+  const [defaultTokenWith, setDefaultTokenWith] = useState(null)
+  const [tokensListWith, setTokensListWith] = useState([])
+  const [curSupportedVaultWith, setCurSupportedVaultWith] = useState(false)
+  const [isDifferentPosition, setIsDifferentPosition] = useState(false)
+  const [urlPositionAddress, setUrlPositionAddress] = useState('')
+  const [showMigrate, setShowMigrate] = useState(false)
+  const [balance, setBalance] = useState('0')
+  const [inputAmount, setInputAmount] = useState('0')
+  const [supportedVaultDepo, setSupportedVaultDepo] = useState(false)
+  const [failureCount, setFailureCount] = useState(0)
+  const [convertSuccess, setConvertSuccess] = useState(false)
+  const [networkMatchList, setNetworkMatchList] = useState([])
+  const [buttonName, setButtonName] = useState(<AnimatedDots />)
+  const [networkName, setNetworkName] = useState('')
 
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const isFromAdvanced = location.search.includes('from=')
+  const [
+    ,
+    setChain, // function to call to initiate user to switch chains in their wallet
+  ] = useSetChain()
 
   useEffect(() => {
     if (rates.rateData) {
@@ -183,6 +205,23 @@ const Migrate = () => {
 
     setBoostedVaults()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const getBadgeId = vaultAddress => {
+    const vaultData = Object.values(groupOfVaults).find(vault => {
+      if (vault.vaultAddress && vaultAddress) {
+        return vault.vaultAddress.toLowerCase() === vaultAddress.toLowerCase()
+      }
+      return false
+    })
+    const chain = vaultData ? vaultData.chain : ''
+
+    for (let i = 0; i < chainList.length; i += 1) {
+      if (chainList[i].chainId === Number(chain)) {
+        return i
+      }
+    }
+    return -1
+  }
 
   useEffect(() => {
     if (account && !isEmpty(userStats) && !isEmpty(depositToken)) {
@@ -664,58 +703,172 @@ const Migrate = () => {
     const filteredVaultList = showInactiveFarms
       ? farmTokenList
       : farmTokenList.filter(farm => farm.status === 'Active')
-    setFilteredFarmList(filteredVaultList)
+    let values
 
-    if (!isFromModal && isFromAdvanced && filteredFarmList.length > 0) {
-      const values = queryString.parse(search)
+    if (!isFromModal && isFromAdvanced) {
+      values = queryString.parse(search)
       // eslint-disable-next-line array-callback-return, consistent-return
-      const selectedPosition = filteredFarmList.filter(vault => {
-        const oneVaultAddress = vault.token.data
-          ? vault.token.tokenAddress
-          : vault.token.vaultAddress
+      const position = Object.entries(groupOfVaults).filter(vault => {
+        const oneVaultAddress = vault[1].vaultAddress
         if (oneVaultAddress && values) {
           if (oneVaultAddress.toLowerCase() === values.from.toLowerCase()) {
             return vault
           }
         }
       })
+      // eslint-disable-next-line array-callback-return, consistent-return
+      const targetApy = Object.entries(groupOfVaults).filter(vault => {
+        const oneVaultAddress = vault[1].vaultAddress
+        if (oneVaultAddress && values) {
+          if (oneVaultAddress.toLowerCase() === values.to.toLowerCase()) {
+            return vault
+          }
+        }
+      })
 
-      setFromVault(selectedPosition[0])
+      const chain = Number(position[0][1].chain)
 
-      if (fromVault) {
+      setCurChain(chain)
+      if (positionVaultAddress) {
+        setNetworkName(networkNames[getBadgeId(positionVaultAddress)])
+      }
+
+      if (chain.toString() === chainId.toString()) {
+        setButtonName('Preview & Migrate')
+      } else if (positionVaultAddress && networkName) {
+        setButtonName(`Change Network to ${formatNetworkName(networkName)}`)
+      }
+
+      if (position[0][0] === 'IFARM') {
+        setPositionId('FARM')
+      } else {
+        setPositionId(position[0][0])
+      }
+
+      if (targetApy[0][0] === 'IFARM') {
+        setHighVaultId('FARM')
+      } else {
+        setHighVaultId(targetApy[0][0])
+      }
+
+      setPositionVaultAddress(values.from)
+      setUrlPositionAddress(values.from)
+      setHighestVaultAddress(values.to)
+
+      if (filteredVaultList.length > 0) {
+        // eslint-disable-next-line array-callback-return, consistent-return
+        const selectedPosition = filteredVaultList.filter(vault => {
+          const oneVaultAddress = vault.token.data
+            ? vault.token.tokenAddress
+            : vault.token.vaultAddress
+          if (oneVaultAddress && values) {
+            if (oneVaultAddress.toLowerCase() === values.from.toLowerCase()) {
+              return vault
+            }
+          }
+        })
+
+        const fromVault = selectedPosition[0]
+
+        if (fromVault && positionId && highVaultId) {
+          let newPositionAddress, newVaultAddress
+          const highApy = getHighestApy(groupOfVaults, chain, vaultsData, pools)
+
+          if (networkMatchList.length > 0 && matchVaultList.length > 0) {
+            newPositionAddress = networkMatchList[0].token.vaultAddress
+            newVaultAddress = matchVaultList[0].vault.vaultAddress
+          }
+          if (supportedVaultDepo && curSupportedVaultWith) {
+            setHighestPosition(fromVault)
+            setHighestApyVault(highApy)
+          } else if (supportedVaultDepo && !curSupportedVaultWith) {
+            if (networkMatchList.length > 0) {
+              setHighestPosition(networkMatchList[0])
+              setPositionVaultAddress(newPositionAddress)
+              setHighestApyVault(highApy)
+            }
+          } else if (!supportedVaultDepo && curSupportedVaultWith) {
+            if (matchVaultList.length > 0) {
+              setHighestPosition(fromVault)
+              setHighestVaultAddress(newVaultAddress)
+              setHighestApyVault(matchVaultList[0])
+            }
+          } else if (!supportedVaultDepo && !curSupportedVaultWith) {
+            if (matchVaultList.length > 0 && networkMatchList.lenght > 0) {
+              setHighestPosition(networkMatchList[0])
+              setHighestApyVault(matchVaultList[0])
+              setPositionVaultAddress(newPositionAddress)
+              setHighestVaultAddress(newVaultAddress)
+            }
+          }
+
+          setTokenWith(groupOfVaults[positionId])
+          setTokenDepo(groupOfVaults[highVaultId])
+        }
+      }
+    }
+
+    if (!isFromModal && !isFromAdvanced && filteredVaultList.length > 0) {
+      const fromVault = filteredVaultList[0]
+      const id = fromVault.token.data ? 'FARM' : fromVault.token.pool.id
+      const chain = fromVault.token.data
+        ? Number(fromVault.token.data.chain)
+        : Number(fromVault.token.chain)
+      const positionAddress = fromVault.token.data
+        ? fromVault.token.tokenAddress
+        : fromVault.token.vaultAddress
+      const highApy = getHighestApy(groupOfVaults, chain, vaultsData, pools)
+      const choosenId = highApy.vault.pool === undefined ? 'IFARM' : highApy.vault.pool.id
+      let newPositionAddress, newVaultAddress
+
+      if (networkMatchList.length > 0 && matchVaultList.length > 0) {
+        newPositionAddress = networkMatchList[0].token.vaultAddress
+        newVaultAddress = matchVaultList[0].vault.vaultAddress
+      }
+      if (supportedVaultDepo && curSupportedVaultWith) {
         setHighestPosition(fromVault)
-        if (fromVault.token.data) {
-          setPositionVaultAddress(fromVault.token.tokenAddress)
-        } else if (fromVault.token.vaultAddress) {
-          setPositionVaultAddress(fromVault.token.vaultAddress)
+        setHighestApyVault(highApy)
+      } else if (supportedVaultDepo && !curSupportedVaultWith) {
+        if (networkMatchList.length > 0) {
+          setHighestPosition(networkMatchList[0])
+          setPositionVaultAddress(newPositionAddress)
+          setHighestApyVault(highApy)
+        }
+      } else if (!supportedVaultDepo && curSupportedVaultWith) {
+        if (matchVaultList.length > 0) {
+          setHighestPosition(fromVault)
+          setHighestVaultAddress(newVaultAddress)
+          setHighestApyVault(matchVaultList[0])
+        }
+      } else if (!supportedVaultDepo && !curSupportedVaultWith) {
+        if (matchVaultList.length > 0 && networkMatchList.lenght > 0) {
+          setHighestPosition(networkMatchList[0])
+          setHighestApyVault(matchVaultList[0])
+          setPositionVaultAddress(newPositionAddress)
+          setHighestVaultAddress(newVaultAddress)
         }
       }
 
-      if (highestPosition && highestPosition.token.poolVault) {
-        setChainId(Number(highestPosition.token.data.chain))
-      } else if (highestPosition) {
-        setChainId(Number(highestPosition.token.chain))
-      }
-    }
-
-    if (!isFromModal && !isFromAdvanced && filteredFarmList.length > 0) {
-      setHighestPosition(filteredFarmList[0])
-      if (highestPosition && highestPosition.token.data) {
-        setPositionVaultAddress(highestPosition.token.tokenAddress)
-      } else if (highestPosition) {
-        setPositionVaultAddress(highestPosition.token.vaultAddress)
+      if (chain.toString() === chainId.toString()) {
+        setButtonName('Preview & Migrate')
+      } else if (positionVaultAddress && networkName) {
+        setButtonName(`Change Network to ${formatNetworkName(networkName)}`)
       }
 
-      if (highestPosition && highestPosition.token.poolVault) {
-        setChainId(Number(highestPosition.token.data.chain))
-      } else if (highestPosition) {
-        setChainId(Number(highestPosition.token.chain))
+      if (positionVaultAddress) {
+        setNetworkName(networkNames[getBadgeId(positionVaultAddress)])
       }
+
+      setPositionId(id)
+      setPositionVaultAddress(positionAddress)
+      setCurChain(chain)
+      setTokenWith(groupOfVaults[id.toString()])
+      setHighestVaultAddress(highApy.vault.vaultAddress)
+      setHighVaultId(choosenId)
+      setTokenDepo(groupOfVaults[choosenId.toString()])
     }
 
-    if (chainId) {
-      setHighestApyVault(getHighestApy(groupOfVaults, chainId, vaultsData, pools))
-    }
+    setFilteredFarmList(filteredVaultList)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
@@ -724,31 +877,30 @@ const Migrate = () => {
     highestPosition,
     pools,
     vaultsData,
-    chainId,
-    fromVault,
     isFromAdvanced,
     search,
+    isFromModal,
+    curSupportedVaultWith,
+    networkMatchList,
+    supportedVaultDepo,
+    curSupportedVaultWith,
+    networkMatchList,
+    matchVaultList,
   ])
-
-  useEffect(() => {
-    if (highestApyVault) {
-      setHighestVaultAddress(highestApyVault.vault.vaultAddress)
-    }
-  }, [highestApyVault])
 
   useEffect(() => {
     let isFound = false
     if (filteredFarmList && highestVaultAddress) {
       filteredFarmList.map(stakedVault => {
         const eachTokenAddress = stakedVault.token.data
-          ? stakedVault.token.tokenAddress.toLowerCase()
-          : stakedVault.token.vaultAddress.toLowerCase()
-        if (eachTokenAddress === highestVaultAddress.toLowerCase()) {
+          ? stakedVault.token.tokenAddress
+          : stakedVault.token.vaultAddress
+        if (eachTokenAddress.toLowerCase() === highestVaultAddress.toLowerCase()) {
           setMatchedVault(stakedVault)
           isFound = true
           return true
         }
-        if (!isFound && eachTokenAddress !== highestVaultAddress.toLowerCase()) {
+        if (!isFound && eachTokenAddress.toLowerCase() !== highestVaultAddress.toLowerCase()) {
           setMatchedVault()
           return true
         }
@@ -757,25 +909,19 @@ const Migrate = () => {
     }
   }, [highestVaultAddress]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const getBadgeId = vaultAddress => {
-    const vaultData = Object.values(groupOfVaults).find(vault => {
-      if (vault.vaultAddress && vaultAddress) {
-        return vault.vaultAddress.toLowerCase() === vaultAddress.toLowerCase()
-      }
-      return false
-    })
-    const chain = vaultData ? vaultData.chain : ''
-
-    for (let i = 0; i < chainList.length; i += 1) {
-      if (chainList[i].chainId === Number(chain)) {
-        return i
-      }
-    }
-    return -1
-  }
-
   const stopPropagation = event => {
     event.stopPropagation()
+  }
+
+  const onClickMigrate = async () => {
+    if (chainId.toString() !== curChain.toString()) {
+      const chainHex = `0x${Number(curChain).toString(16)}`
+      if (!isSpecialApp) {
+        await setChain({ chainId: chainHex })
+      }
+    } else {
+      setShowMigrate(true)
+    }
   }
 
   const accordianText = [
@@ -856,24 +1002,34 @@ const Migrate = () => {
         </PageIntro>
         <SpaceLine />
       </Inner>
-      <Inner display="flex" justifyContent="center" alignItems="flex-start">
+      <Inner display="flex" justifyContent="center" alignItems="flex-start" padding="0px 100px">
         <MigrateBox className="migrate-box">
+          <NewLabel weight="600" height="28px" size="18px" color={darkMode ? '#ffffff' : '#101828'}>
+            Migrate Position
+          </NewLabel>
+          <NewLabel weight="400" height="20px" size="14px" color={darkMode ? '#ffffff' : '#475467'}>
+            Displaying{' '}
+            <span
+              style={{ fontWight: 500, fontSize: '14px', lineHeight: '20px' }}
+            >{`${formatNetworkName(networkName)}`}</span>{' '}
+            strategies.
+          </NewLabel>
           <BoxTitle color={darkMode ? '#ffffff' : '#475467'}>My existing position</BoxTitle>
           <VaultBox
-            bgColor="#f4f6ff"
-            border="2px solid #7f9bff"
+            bgColor="#ffffff"
+            border="1px solid #D0D5DD"
             onClick={() => {
               setShowPositionModal(true)
             }}
           >
             <Content alignItems="start">
-              <InfoText fontSize="10px" fontWeight="500" color="#5fCf76">
+              {/* <InfoText fontSize="10px" fontWeight="500" color="#5fCf76">
                 {highestPosition ? (
                   `${currencySym}${formatNumber(highestPosition.balance)}`
                 ) : (
                   <AnimatedDots />
                 )}
-              </InfoText>
+              </InfoText> */}
               <BadgeToken>
                 <BadgeIcon>
                   {highestPosition ? (
@@ -882,17 +1038,30 @@ const Migrate = () => {
                     <AnimatedDots />
                   )}
                 </BadgeIcon>
-                <Token
-                  href={`${window.location.origin}/${
-                    networkNames[getBadgeId(positionVaultAddress)]
-                  }/${positionVaultAddress}`}
-                  onClick={stopPropagation}
-                >
-                  {highestPosition ? highestPosition.token.tokenNames.join(', ') : <AnimatedDots />}
-                </Token>
+                {highestPosition ? (
+                  <Token
+                    href={`${window.location.origin}/${
+                      networkNames[getBadgeId(positionVaultAddress)]
+                    }/${
+                      positionVaultAddress === '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
+                        ? '0xa0246c9032bc3a600820415ae600c6388619a14d'
+                        : positionVaultAddress
+                    }`}
+                    onClick={stopPropagation}
+                  >
+                    <>
+                      <span>{highestPosition.token.tokenNames.join(', ')}</span>
+                      <span
+                        style={{ fontWeight: '300', marginLeft: '5px' }}
+                      >{`(${highestPosition.token.platform.join(', ')})`}</span>
+                    </>
+                  </Token>
+                ) : (
+                  <AnimatedDots />
+                )}
               </BadgeToken>
             </Content>
-            <ApyDownIcon>
+            {/* <ApyDownIcon>
               <Content alignItems="end">
                 <InfoText fontSize="10px" fontWeight="700" color="#5fCf76">
                   {highestPosition ? `${highestPosition.apy}% Live APY` : <AnimatedDots />}
@@ -912,44 +1081,68 @@ const Migrate = () => {
                   marginLeft: '20px',
                 }}
               />
-            </ApyDownIcon>
+            </ApyDownIcon> */}
+            <Content alignItems="end">
+              <img
+                src={ChevronDown}
+                alt="Chevron Down"
+                style={{
+                  marginLeft: '20px',
+                }}
+              />
+            </Content>
           </VaultBox>
           <PositionModal
             showPositionModal={showPositionModal}
             setShowPositionModal={setShowPositionModal}
-            networkName={networkNames[getBadgeId(positionVaultAddress)]}
+            networkName={networkName}
             setPositionVaultAddress={setPositionVaultAddress}
             filteredFarmList={filteredFarmList}
-            chainId={chainId}
+            chain={curChain}
             isMobile={isMobile}
             currencySym={currencySym}
             setHighestPosition={setHighestPosition}
             setIsFromModal={setIsFromModal}
             stopPropagation={stopPropagation}
+            token={tokenWith}
+            account={account}
+            balances={balances}
+            ethers={ethers}
+            id={positionId}
+            addresses={addresses}
+            setPickedToken={setPickedTokenWith}
+            positionAddress={positionVaultAddress}
+            get={get}
+            find={find}
+            vaultsData={vaultsData}
+            pools={pools}
+            currencyRate={currencyRate}
+            web3={web3}
+            setId={setPositionId}
+            setToken={setTokenWith}
+            groupOfVaults={groupOfVaults}
+            defaultToken={defaultTokenWith}
+            setDefaultToken={setDefaultTokenWith}
+            setAllTokenList={setTokensListWith}
+            setCurSupportedVault={setCurSupportedVaultWith}
+            setIsDifferentPosition={setIsDifferentPosition}
+            urlPositionAddress={urlPositionAddress}
+            setNetworkMatchList={setNetworkMatchList}
+            networkMatchList={networkMatchList}
           />
-          <MigrateIcon>
-            <img
-              src={MigrateDown}
-              alt="migrate down"
-              style={{
-                filter: darkMode
-                  ? 'invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%)'
-                  : '',
-              }}
-            />
-          </MigrateIcon>
           <BoxTitle color={darkMode ? '#ffffff' : '#475467'}>Migrate to</BoxTitle>
           <VaultBox
             className="from-vault"
-            bgColor="#f8fffc"
+            bgColor="#ffffff"
+            border="1px solid #D0D5DD"
             onClick={() => {
               setShowVaultModal(true)
             }}
           >
             <Content alignItems="start">
-              <InfoText fontSize="10px" fontWeight="500" color="#5fCf76">
+              {/* <InfoText fontSize="10px" fontWeight="500" color="#5fCf76">
                 {matchedVault ? `${currencySym}${formatNumber(matchedVault.balance)}` : '-'}
-              </InfoText>
+              </InfoText> */}
               <BadgeToken>
                 <BadgeIcon>
                   {highestPosition ? (
@@ -958,23 +1151,26 @@ const Migrate = () => {
                     <AnimatedDots />
                   )}
                 </BadgeIcon>
-                <Token
-                  href={`${window.location.origin}/${
-                    networkNames[getBadgeId(highestVaultAddress)]
-                  }/${highestVaultAddress}`}
-                  onClick={stopPropagation}
-                >
-                  {highestApyVault ? (
-                    `${highestApyVault.vault.tokenNames.join(
-                      ', ',
-                    )} (${highestApyVault.vault.platform.join(', ')})`
-                  ) : (
-                    <AnimatedDots />
-                  )}
-                </Token>
+                {highestApyVault ? (
+                  <Token
+                    href={`${window.location.origin}/${
+                      networkNames[getBadgeId(highestVaultAddress)]
+                    }/${highestVaultAddress}`}
+                    onClick={stopPropagation}
+                  >
+                    <>
+                      <span>{highestApyVault.vault.tokenNames.join(', ')}</span>
+                      <span
+                        style={{ fontWeight: '300', marginLeft: '5px' }}
+                      >{`(${highestApyVault.vault.platform.join(', ')})`}</span>
+                    </>
+                  </Token>
+                ) : (
+                  <AnimatedDots />
+                )}
               </BadgeToken>
             </Content>
-            <ApyDownIcon>
+            {/* <ApyDownIcon>
               <Content alignItems="end">
                 <InfoText fontSize="10px" fontWeight="700" color="#5fCf76">
                   {highestApyVault ? `${highestApyVault.vaultApy}% Live APY` : <AnimatedDots />}
@@ -996,16 +1192,25 @@ const Migrate = () => {
                   marginLeft: '20px',
                 }}
               />
-            </ApyDownIcon>
+            </ApyDownIcon> */}
+            <Content alignItems="end">
+              <img
+                src={ChevronDown}
+                alt="Chevron Down"
+                style={{
+                  marginLeft: '20px',
+                }}
+              />
+            </Content>
           </VaultBox>
           <VaultModal
             showVaultModal={showVaultModal}
             setShowVaultModal={setShowVaultModal}
-            networkName={networkNames[getBadgeId(positionVaultAddress)]}
+            networkName={networkName}
             setHighestApyVault={setHighestApyVault}
             setHighestVaultAddress={setHighestVaultAddress}
             filteredFarmList={filteredFarmList}
-            chainId={chainId}
+            chain={curChain}
             isMobile={isMobile}
             currencySym={currencySym}
             setIsFromModal={setIsFromModal}
@@ -1015,6 +1220,25 @@ const Migrate = () => {
             pools={pools}
             setMatchVaultList={setMatchVaultList}
             matchVaultList={matchVaultList}
+            id={highVaultId}
+            setId={setHighVaultId}
+            setToken={setTokenDepo}
+            token={tokenDepo}
+            addresses={addresses}
+            account={account}
+            balances={balances}
+            ethers={ethers}
+            positionAddress={positionVaultAddress}
+            setPickedToken={setPickedTokenWith}
+            tokensListWith={tokensListWith}
+            curSupportedVaultWith={curSupportedVaultWith}
+            setBalance={setBalance}
+            pickedToken={pickedTokenWith}
+            setInputAmount={setInputAmount}
+            balance={balance}
+            supportedVault={supportedVaultDepo}
+            setSupportedVault={setSupportedVaultDepo}
+            convertSuccess={convertSuccess}
           />
           <NewLabel
             display="flex"
@@ -1028,9 +1252,10 @@ const Migrate = () => {
               size="14px"
               height="24px"
               marginBottom="10px"
+              marginTop="32px"
               color={darkMode ? '#ffffff' : '#344054'}
             >
-              Migration details
+              Details
             </NewLabel>
             <NewLabel display="flex" justifyContent="space-between" marginBottom="10px">
               <NewLabel
@@ -1069,6 +1294,42 @@ const Migrate = () => {
                 height="24px"
                 color={darkMode ? '#ffffff' : '#344054'}
               >
+                Yield per $1 allocated
+              </NewLabel>
+              <NewLabel
+                display="flex"
+                justifyContent="end"
+                size="14px"
+                weight="600"
+                height="24px"
+                color={darkMode ? '#ffffff' : '#344054'}
+              >
+                {highestPosition ? (
+                  `${currencySym}${formatNumber(highestPosition.apy / 100)}/yr`
+                ) : (
+                  <AnimatedDots />
+                )}{' '}
+                <span style={{ marginLeft: '5px', marginRight: '5px' }}>
+                  {highestPosition ? '→' : ''}
+                </span>
+                <span style={{ color: '#5fCf76' }}>
+                  {highestApyVault ? (
+                    `${currencySym}${formatNumber(highestApyVault.vaultApy / 100)}/yr`
+                  ) : (
+                    <AnimatedDots />
+                  )}
+                </span>
+              </NewLabel>
+            </NewLabel>
+            <NewLabel display="flex" justifyContent="space-between" marginBottom="10px">
+              <NewLabel
+                display="flex"
+                justifyContent="start"
+                size="14px"
+                weight="400"
+                height="24px"
+                color={darkMode ? '#ffffff' : '#344054'}
+              >
                 Platform Fees
               </NewLabel>
               <NewLabel
@@ -1081,9 +1342,41 @@ const Migrate = () => {
               >{`${currencySym}0.00`}</NewLabel>
             </NewLabel>
           </NewLabel>
-          <ButtonDiv>
-            <Button>Preview & Migrate</Button>
+          <ButtonDiv
+            onClick={async () => {
+              onClickMigrate()
+            }}
+          >
+            <Button>{buttonName}</Button>
           </ButtonDiv>
+          <MigrateStart
+            find={find}
+            get={get}
+            pickedToken={pickedTokenWith}
+            token={tokenDepo}
+            id={positionId}
+            addresses={addresses}
+            pools={pools}
+            tokens={tokens}
+            defaultToken={defaultTokenWith}
+            vaultsData={vaultsData}
+            currencySym={currencySym}
+            currencyRate={currencyRate}
+            balances={balances}
+            isDifferentPosition={isDifferentPosition}
+            showMigrate={showMigrate}
+            setShowMigrate={setShowMigrate}
+            toId={highVaultId}
+            supportedVault={supportedVaultDepo}
+            setSupportedVault={setSupportedVaultDepo}
+            inputAmount={inputAmount}
+            failureCount={failureCount}
+            setFailureCount={setFailureCount}
+            setConvertSuccess={setConvertSuccess}
+            isNaN={isNaN}
+            highestVaultAddress={highestVaultAddress}
+            networkName={networkName}
+          />
         </MigrateBox>
         <NewLabel marginLeft="32px" width="60%">
           {accordianText.map((text, i) => {
@@ -1094,6 +1387,7 @@ const Migrate = () => {
                 EXPANDED={EXPANDED}
                 COLLAPSED={COLLAPSED}
                 darkMode={darkMode}
+                find={find}
               />
             )
           })}

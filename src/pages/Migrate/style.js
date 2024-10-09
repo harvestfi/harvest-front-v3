@@ -34,14 +34,10 @@ const Inner = styled.div`
   align-items: ${props => (props.alignItems ? props.alignItems : '')};
   height: ${props => (props.height ? props.height : '')};
   margin-bottom: ${props => (props.marginBottom ? props.marginBottom : '')};
+  padding: ${props => (props.padding ? props.padding : '')};
 
   @media screen and (min-width: 1921px) {
     width: 1450px;
-  }
-
-  @media screen and (max-width: 1480px) {
-    width: 100%;
-    padding: 70px 30px 40px;
   }
 
   @media screen and (max-width: 992px) {
@@ -50,19 +46,20 @@ const Inner = styled.div`
 
   .migrate-box {
     position: relative;
+    border: 1px solid #eaefff;
   }
 
-  .migrate-box::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 12px;
-    padding: 4px;
-    background: linear-gradient(90deg, #ffd6a6 0%, #a1b5ff 48.9%, #73df88 100%);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-  }
+  // .migrate-box::before {
+  //   content: '';
+  //   position: absolute;
+  //   inset: 0;
+  //   border-radius: 12px;
+  //   padding: 4px;
+  //   background: linear-gradient(90deg, #ffd6a6 0%, #a1b5ff 48.9%, #73df88 100%);
+  //   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  //   -webkit-mask-composite: xor;
+  //   mask-composite: exclude;
+  // }
 `
 
 const MigrateTop = styled.div`
@@ -100,33 +97,35 @@ const MigrateBox = styled.div`
     position: relative;
   }
 
-  .from-vault::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 5px;
-    padding: 2px;
-    background: linear-gradient(90deg, #ffd6a6 0%, #a1b5ff 48.9%, #73df88 100%);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    z-index: 0;
-  }
+  // .from-vault::before {
+  //   content: '';
+  //   position: absolute;
+  //   inset: 0;
+  //   border-radius: 8px;
+  //   padding: 2px;
+  //   background: linear-gradient(90deg, #ffd6a6 0%, #a1b5ff 48.9%, #73df88 100%);
+  //   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  //   -webkit-mask-composite: xor;
+  //   mask-composite: exclude;
+  //   z-index: 0;
+  // }
 `
 const BoxTitle = styled.div`
   font-weight: 500;
   font-size: 14px;
   line-height: 20px;
   margin-bottom: 10px;
+  margin-top: 20px;
   color: ${props => (props.color ? props.color : '')};
 `
 
 const VaultBox = styled.div`
+  box-shadow: 0px 1px 2px 0px #1018280d;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px;
-  border-radius: 5px;
+  padding: 10px 14px 10px 14px;
+  border-radius: 8px;
   margin-bottom: 21px;
   background: ${props => (props.bgColor ? props.bgColor : '')};
   border: ${props => (props.border ? props.border : '')};
@@ -151,6 +150,10 @@ const Button = styled.button`
   background: linear-gradient(90deg, #ffc580 0%, #6083ff 48.9%, #6af686 100%);
   color: white;
   width: 100%;
+
+  &:hover {
+    background: linear-gradient(90deg, #ffc5ff 0%, #6083ff 48.9%, #6af6d5 100%);
+  }
 `
 
 const ButtonDiv = styled.div`
@@ -183,7 +186,7 @@ const BadgeToken = styled.div`
 `
 
 const BadgeIcon = styled.div`
-  margin: 0px 5px -1px 0px;
+  margin: 0px 5px 0px 0px;
   width: 13.096px;
   height: 13.096px;
   display: flex;
@@ -203,11 +206,12 @@ const ApyDownIcon = styled.div`
 `
 const Token = styled.a`
   font-weight: 500;
-  font-size: 10px;
+  font-size: 14px;
   line-height: 20px;
   color: #414141;
   cursor: pointer;
   z-index: 1;
+  text-decoration: none;
 `
 
 export {

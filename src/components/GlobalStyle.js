@@ -568,6 +568,12 @@ html {
         border-radius: 0px 0px 12px 12px;
         overflow-y: auto;
       }
+      .migrate-start-modal-body {
+        background: ${props => props.backColor};
+        padding: unset;
+        border-radius: 0px 0px 12px 12px;
+        overflow-y: auto;
+      }
       .migrate-position-modal-body::-webkit-scrollbar {
           width: 5px;
       }

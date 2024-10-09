@@ -18,6 +18,8 @@ const IconCard = styled.div`
   background: ${props => (props.bgColor ? props.bgColor : '')};
   box-shadow: 0px 1px 2px 0px #1018280d;
   justify-content: center;
+  display: ${props => (props.display ? props.display : '')};
+  align-items: ${props => (props.items ? props.items : '')};
 `
 
 const NewLabel = styled.div`
@@ -157,6 +159,16 @@ const NewLabel = styled.div`
       : ''}
   img.icon {
     margin-right: 5px;
+  }
+
+  img.progressbar-img {
+    width: 100%;
+  }
+
+  span.auto-slippage {
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 24px;
   }
 
   img.info {

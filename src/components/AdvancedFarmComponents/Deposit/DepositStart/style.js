@@ -300,6 +300,7 @@ const SlippageInput = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    font-size: ${props => (props.size ? props.size : '')};
 
     &::-webkit-outer-spin-button,
     &::-webkit-inner-spin-button {

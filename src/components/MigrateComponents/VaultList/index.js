@@ -27,6 +27,9 @@ const VaultList = ({
   darkMode,
   filteredFarmList,
   chainId,
+  setToken,
+  setId,
+  groupOfVaults,
 }) => {
   const vaultAddress = matchVault.vault.vaultAddress
   const vaultName = matchVault.vault.tokenNames
@@ -41,6 +44,7 @@ const VaultList = ({
       ? POLIGON
       : ETHEREUM
   let matchingFarm
+  const id = matchVault.vault.pool === undefined ? 'IFARM' : matchVault.vault.pool.id
 
   filteredFarmList.forEach(farm => {
     const farmAddress = farm.token.poolVault ? farm.token.tokenAddress : farm.token.vaultAddress
@@ -57,6 +61,8 @@ const VaultList = ({
         setHighestApyVault(matchVault)
         setHighestVaultAddress(vaultAddress)
         setIsFromModal(true)
+        setId(id.toString())
+        setToken(groupOfVaults[id.toString()])
       }}
       hoverBgColor={darkMode ? '#1F242F' : '#e9f0f7'}
     >

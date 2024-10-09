@@ -13,11 +13,17 @@ const PositionList = ({
   setIsFromModal,
   stopPropagation,
   darkMode,
+  setId,
+  setToken,
+  groupOfVaults,
+  setIsDifferentPosition,
+  urlPositionAddress,
 }) => {
   const vaultAddress = matchVault.token.poolVault
     ? matchVault.token.tokenAddress
     : matchVault.token.vaultAddress
   const vaultName = matchVault.token.tokenNames
+  const id = matchVault.token.poolVault ? 'FARM' : matchVault.token.pool.id
 
   return (
     <VaultBox
@@ -25,8 +31,13 @@ const PositionList = ({
       onClick={() => {
         setShowPositionModal(false)
         setHighestPosition(matchVault)
+        setId(id.toString())
         setPositionVaultAddress(vaultAddress)
         setIsFromModal(true)
+        setToken(groupOfVaults[id.toString()])
+        if (urlPositionAddress !== vaultAddress) {
+          setIsDifferentPosition(true)
+        }
       }}
       hoverBgColor={darkMode ? '#1F242F' : '#e9f0f7'}
     >
