@@ -814,37 +814,42 @@ const Migrate = () => {
       const chain = fromVault.token.data
         ? Number(fromVault.token.data.chain)
         : Number(fromVault.token.chain)
-      const positionAddress = fromVault.token.data
-        ? fromVault.token.tokenAddress
-        : fromVault.token.vaultAddress
       const highApy = getHighestApy(groupOfVaults, chain, vaultsData, pools)
       const choosenId = highApy.vault.pool === undefined ? 'IFARM' : highApy.vault.pool.id
+      const targetNet =
+        Number(chain) === 42161
+          ? 'arbitrum'
+          : Number(chain) === 8453
+          ? 'base'
+          : Number(chain) === 324
+          ? 'zkaync'
+          : Number(chain) === 137
+          ? 'polygon'
+          : 'ethereum'
       let newPositionAddress, newVaultAddress
+
+      console.log('targetNet', targetNet)
 
       if (networkMatchList.length > 0 && matchVaultList.length > 0) {
         newPositionAddress = networkMatchList[0].token.vaultAddress
         newVaultAddress = matchVaultList[0].vault.vaultAddress
       }
       if (supportedVaultDepo && curSupportedVaultWith) {
-        console.log('a')
         setHighestPosition(fromVault)
         setHighestApyVault(highApy)
       } else if (supportedVaultDepo && !curSupportedVaultWith) {
-        console.log('b')
         if (networkMatchList.length > 0) {
           setHighestPosition(networkMatchList[0])
           setPositionVaultAddress(newPositionAddress)
           setHighestApyVault(highApy)
         }
       } else if (!supportedVaultDepo && curSupportedVaultWith) {
-        console.log('c')
         if (matchVaultList.length > 0) {
           setHighestPosition(fromVault)
           setHighestVaultAddress(newVaultAddress)
           setHighestApyVault(matchVaultList[0])
         }
       } else if (!supportedVaultDepo && !curSupportedVaultWith) {
-        console.log('d')
         if (matchVaultList.length > 0 && networkMatchList.lenght > 0) {
           setHighestPosition(networkMatchList[0])
           setHighestApyVault(matchVaultList[0])
@@ -853,14 +858,14 @@ const Migrate = () => {
         }
       }
 
-      if (chain.toString() === chainId.toString()) {
-        setButtonName('Preview & Migrate')
-      } else if (positionVaultAddress && networkName) {
-        setButtonName(`Change Network to ${formatNetworkName(networkName)}`)
-      }
-
       if (positionVaultAddress) {
         setNetworkName(networkNames[getBadgeId(positionVaultAddress)])
+      }
+
+      if (chain.toString() === chainId.toString()) {
+        setButtonName('Preview & Migrate')
+      } else if (targetNet) {
+        setButtonName(`Change Network to ${formatNetworkName(targetNet)}`)
       }
 
       setPositionId(id)
@@ -871,7 +876,6 @@ const Migrate = () => {
     }
 
     setFilteredFarmList(filteredVaultList)
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     showInactiveFarms,
@@ -888,6 +892,11 @@ const Migrate = () => {
     curSupportedVaultWith,
     networkMatchList,
     matchVaultList,
+    chainId,
+    highVaultId,
+    networkName,
+    positionId,
+    positionVaultAddress,
   ])
 
   useEffect(() => {
