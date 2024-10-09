@@ -144,7 +144,7 @@ const MigrateStart = ({
     pickedDefaultToken
 
   const slippage = 0.5 // Default slippage Percent
-  if (token) {
+  if (token && id) {
     tokenDecimals = token.decimals || tokens[id].decimals
     isSpecialVault = token.poolVault
     tempPricePerFullShare = useIFARM
