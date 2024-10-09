@@ -826,21 +826,25 @@ const Migrate = () => {
         newVaultAddress = matchVaultList[0].vault.vaultAddress
       }
       if (supportedVaultDepo && curSupportedVaultWith) {
+        console.log('a')
         setHighestPosition(fromVault)
         setHighestApyVault(highApy)
       } else if (supportedVaultDepo && !curSupportedVaultWith) {
+        console.log('b')
         if (networkMatchList.length > 0) {
           setHighestPosition(networkMatchList[0])
           setPositionVaultAddress(newPositionAddress)
           setHighestApyVault(highApy)
         }
       } else if (!supportedVaultDepo && curSupportedVaultWith) {
+        console.log('c')
         if (matchVaultList.length > 0) {
           setHighestPosition(fromVault)
           setHighestVaultAddress(newVaultAddress)
           setHighestApyVault(matchVaultList[0])
         }
       } else if (!supportedVaultDepo && !curSupportedVaultWith) {
+        console.log('d')
         if (matchVaultList.length > 0 && networkMatchList.lenght > 0) {
           setHighestPosition(networkMatchList[0])
           setHighestApyVault(matchVaultList[0])
@@ -860,10 +864,8 @@ const Migrate = () => {
       }
 
       setPositionId(id)
-      setPositionVaultAddress(positionAddress)
       setCurChain(chain)
       setTokenWith(groupOfVaults[id.toString()])
-      setHighestVaultAddress(highApy.vault.vaultAddress)
       setHighVaultId(choosenId)
       setTokenDepo(groupOfVaults[choosenId.toString()])
     }

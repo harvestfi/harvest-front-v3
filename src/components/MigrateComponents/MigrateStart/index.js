@@ -306,9 +306,9 @@ const MigrateStart = ({
             setFailureCount(prevCount => prevCount + 1)
 
             if (failureCount === 4) {
-              setMinReceiveAmountString('0')
-              setMinReceiveUsdAmount('0')
-              setFromInfoUsdAmount('0')
+              setMinReceiveAmountString('-')
+              setMinReceiveUsdAmount('-')
+              setFromInfoUsdAmount('-')
               if (
                 portalsEstimate &&
                 (portalsEstimate.res.message === 'outputToken not found' ||
@@ -616,14 +616,26 @@ const MigrateStart = ({
             </NewLabel>
             <NewLabel display="flex" flexFlow="column">
               <NewLabel weight="600" size="14px" height="20px" textAlign="right">
-                {fromInfoAmount !== '' ? fromInfoAmount : inputAmount}
+                {fromInfoAmount === '-' ? (
+                  <AnimatedDots />
+                ) : fromInfoAmount !== '' ? (
+                  fromInfoAmount
+                ) : (
+                  inputAmount
+                )}
               </NewLabel>
               <NewLabel display="flex" flexFlow="column" weight="600" textAlign="right">
                 <NewLabel weight="400" height="20px" size="12px">
-                  {useIFARM ? `i${id}` : `f${id}`}
+                  {id ? useIFARM ? `i${id}` : `f${id}` : <AnimatedDots />}
                 </NewLabel>
                 <NewLabel weight="400" size="12px" height="20px">
-                  {fromInfoUsdAmount !== '' ? <>{fromInfoUsdAmount}</> : <AnimatedDots />}
+                  {fromInfoAmount === '-' ? (
+                    <AnimatedDots />
+                  ) : fromInfoUsdAmount !== '' ? (
+                    <>{fromInfoUsdAmount}</>
+                  ) : (
+                    <AnimatedDots />
+                  )}
                 </NewLabel>
               </NewLabel>
             </NewLabel>
@@ -656,6 +668,8 @@ const MigrateStart = ({
                       <AnimatedDots />
                     </AnimateDotDiv>
                   )
+                ) : minReceiveAmountString === '-' ? (
+                  <AnimatedDots />
                 ) : minReceiveAmountString !== '' ? (
                   showTokenBalance(minReceiveAmountString)
                 ) : (
@@ -676,7 +690,7 @@ const MigrateStart = ({
                       <>{`≈${currencySym}0`}</>
                     )
                   ) : minReceiveUsdAmount === 'NaN' || minReceiveUsdAmount === '-' ? (
-                    '-'
+                    <AnimatedDots />
                   ) : minReceiveUsdAmount !== '' ? (
                     `${minReceiveUsdAmount}`
                   ) : (
