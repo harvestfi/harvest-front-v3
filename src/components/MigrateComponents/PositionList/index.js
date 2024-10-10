@@ -38,7 +38,9 @@ const PositionList = ({
     >
       <Content alignItems="start">
         <InfoText fontSize="10px" fontWeight="500" color="#5fCf76">
-          {`${currencySym}${formatNumber(matchVault.balance)}`}
+          {matchVault.balance >= 0.01
+            ? `${currencySym}${formatNumber(matchVault.balance)}`
+            : `<${currencySym}0.01`}
         </InfoText>
         <BadgeToken>
           <BadgeIcon>

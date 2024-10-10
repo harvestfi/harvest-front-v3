@@ -85,6 +85,8 @@ const PositionModal = ({
       })
     }
 
+    matchListAry.sort((a, b) => b.balance - a.balance)
+
     const fetchSupportedMatches = async () => {
       const filteredMatchList = []
 
@@ -105,8 +107,10 @@ const PositionModal = ({
           }
         }
       }
+
+      filteredMatchList.sort((a, b) => b.balance - a.balance)
+
       if (filteredMatchList.length > 0) {
-        filteredMatchList.sort((a, b) => b.apy - a.apy)
         setNetworkMatchList(filteredMatchList)
         setCountFarm(filteredMatchList.length)
       }

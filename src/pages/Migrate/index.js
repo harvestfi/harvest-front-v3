@@ -105,7 +105,6 @@ const Migrate = () => {
   const [pickedTokenWith, setPickedTokenWith] = useState()
   const [defaultTokenWith] = useState(null)
   const [curSupportedVaultWith, setCurSupportedVaultWith] = useState(false)
-  const [urlPositionAddress, setUrlPositionAddress] = useState('')
   const [showMigrate, setShowMigrate] = useState(false)
   const [balance, setBalance] = useState('0')
   const [inputAmount, setInputAmount] = useState('0')
@@ -220,6 +219,20 @@ const Migrate = () => {
     }
     return -1
   }
+
+  useEffect(() => {
+    const network =
+      Number(chainId) === 42161
+        ? 'arbitrum'
+        : Number(chainId) === 8453
+        ? 'base'
+        : Number(chainId) === 324
+        ? 'zksync'
+        : Number(chainId) === 137
+        ? 'poligon'
+        : 'ethereum'
+    setNetworkName(network)
+  }, [chainId])
 
   useEffect(() => {
     if (account && !isEmpty(userStats) && !isEmpty(depositToken)) {
@@ -701,7 +714,16 @@ const Migrate = () => {
     const filteredVaultList = showInactiveFarms
       ? farmTokenList
       : farmTokenList.filter(farm => farm.status === 'Active')
-    let values, newPositionAddress, newVaultAddress, newPositionId, newVaultId
+    let values, newPositionAddress, newVaultAddress, newPositionId, newVaultId, newPosition
+    const chainMatchingList = []
+
+    filteredFarmList.sort((a, b) => b.balance - a.balance)
+    filteredFarmList.forEach(farm => {
+      const hChain = farm.token.poolVault ? farm.token.data.chain : farm.token.chain
+      if (hChain === chainId) {
+        chainMatchingList.push(farm)
+      }
+    })
 
     if (networkMatchList.length > 0) {
       newPositionAddress = networkMatchList[0].token.vaultAddress
@@ -715,6 +737,10 @@ const Migrate = () => {
         matchVaultList[0].vault.poolVault === undefined
           ? 'FARM'
           : matchVaultList[0].vault.token.pool.id
+    }
+
+    if (chainMatchingList.length > 0) {
+      newPosition = chainMatchingList[0]
     }
 
     if (!isFromModal && isFromAdvanced) {
@@ -741,15 +767,6 @@ const Migrate = () => {
       const chain = Number(position[0][1].chain)
 
       setCurChain(chain)
-      if (positionVaultAddress) {
-        setNetworkName(networkNames[getBadgeId(positionVaultAddress)])
-      }
-
-      if (chain.toString() === chainId.toString()) {
-        setButtonName('Preview & Migrate')
-      } else if (positionVaultAddress && networkName) {
-        setButtonName(`Change Network to ${formatNetworkName(networkName)}`)
-      }
 
       if (position[0][0] === 'IFARM') {
         setPositionId('FARM')
@@ -762,10 +779,6 @@ const Migrate = () => {
       } else {
         setHighVaultId(targetApy[0][0])
       }
-
-      setPositionVaultAddress(values.from)
-      setUrlPositionAddress(values.from)
-      setHighestVaultAddress(values.to)
 
       if (filteredVaultList.length > 0) {
         // eslint-disable-next-line array-callback-return, consistent-return
@@ -782,7 +795,7 @@ const Migrate = () => {
 
         const fromVault = selectedPosition[0]
 
-        if (fromVault && positionId && highVaultId) {
+        if (fromVault && positionId && highVaultId && chainId.toString() === chain.toString()) {
           const highApy = getHighestApy(groupOfVaults, chain, vaultsData, pools)
 
           if (supportedVaultDepo && curSupportedVaultWith) {
@@ -811,75 +824,150 @@ const Migrate = () => {
 
           setTokenWith(groupOfVaults[positionId])
           setTokenDepo(groupOfVaults[highVaultId])
+        } else if (
+          newPosition &&
+          positionId &&
+          highVaultId &&
+          chainId.toString() !== chain.toString()
+        ) {
+          const id = newPosition.token.data ? 'FARM' : newPosition.token.pool.id
+          const highApy = getHighestApy(groupOfVaults, Number(chainId), vaultsData, pools)
+          const choosenId = highApy.vault.pool === undefined ? 'IFARM' : highApy.vault.pool.id
+          const newChain = newPosition.token.data
+            ? Number(newPosition.token.data.chain)
+            : Number(newPosition.token.chain)
+          const targetNet =
+            Number(chain) === 42161
+              ? 'arbitrum'
+              : Number(chain) === 8453
+              ? 'base'
+              : Number(chain) === 324
+              ? 'zkaync'
+              : Number(chain) === 137
+              ? 'polygon'
+              : 'ethereum'
+
+          if (supportedVaultDepo && curSupportedVaultWith) {
+            setHighestPosition(newPosition)
+            setHighestApyVault(highApy)
+            setPositionId(id)
+            setHighVaultId(choosenId)
+            setPositionVaultAddress(newPosition.token.vaultAddress)
+            setHighestVaultAddress(highApy.vault.vaultAddress)
+          } else if (supportedVaultDepo && !curSupportedVaultWith) {
+            if (networkMatchList.length > 0) {
+              setHighestPosition(networkMatchList[0])
+              setPositionVaultAddress(newPositionAddress)
+              setHighestVaultAddress(highApy.vault.vaultAddress)
+              setHighestApyVault(highApy)
+              setPositionId(newPositionId)
+              setHighVaultId(choosenId)
+            }
+          } else if (!supportedVaultDepo && curSupportedVaultWith) {
+            if (matchVaultList.length > 0) {
+              setHighestPosition(newPosition)
+              setHighestVaultAddress(newVaultAddress)
+              setPositionVaultAddress(newPosition.token.vaultAddress)
+              setHighestApyVault(matchVaultList[0])
+              setPositionId(id)
+              setHighVaultId(newVaultId)
+            }
+          } else if (!supportedVaultDepo && !curSupportedVaultWith) {
+            if (matchVaultList.length > 0 && networkMatchList.lenght > 0) {
+              setHighestPosition(networkMatchList[0])
+              setHighestApyVault(matchVaultList[0])
+              setPositionVaultAddress(newPositionAddress)
+              setHighestVaultAddress(newVaultAddress)
+              setPositionId(newPositionId)
+              setHighVaultId(newVaultId)
+            }
+          }
+
+          if (newChain.toString() === chainId.toString()) {
+            setButtonName('Preview & Migrate')
+          } else if (targetNet) {
+            setButtonName(`Change Network to ${formatNetworkName(targetNet)}`)
+          }
+
+          setCurChain(newChain)
+          setTokenWith(groupOfVaults[id.toString()])
+          setHighVaultId(choosenId)
+          setTokenDepo(groupOfVaults[choosenId.toString()])
         }
       }
     }
 
     if (!isFromModal && !isFromAdvanced && filteredVaultList.length > 0) {
-      const fromVault = filteredVaultList[0]
-      const id = fromVault.token.data ? 'FARM' : fromVault.token.pool.id
-      const chain = fromVault.token.data
-        ? Number(fromVault.token.data.chain)
-        : Number(fromVault.token.chain)
-      const highApy = getHighestApy(groupOfVaults, chain, vaultsData, pools)
-      const choosenId = highApy.vault.pool === undefined ? 'IFARM' : highApy.vault.pool.id
-      const targetNet =
-        Number(chain) === 42161
-          ? 'arbitrum'
-          : Number(chain) === 8453
-          ? 'base'
-          : Number(chain) === 324
-          ? 'zkaync'
-          : Number(chain) === 137
-          ? 'polygon'
-          : 'ethereum'
+      let fromVault
+      if (chainMatchingList.length > 0) {
+        fromVault = chainMatchingList[0]
+      }
 
-      if (supportedVaultDepo && curSupportedVaultWith) {
-        setHighestPosition(fromVault)
-        setHighestApyVault(highApy)
-        setPositionId(id)
-        setHighVaultId(choosenId)
-      } else if (supportedVaultDepo && !curSupportedVaultWith) {
-        if (networkMatchList.length > 0) {
-          setHighestPosition(networkMatchList[0])
-          setPositionVaultAddress(newPositionAddress)
-          setHighestApyVault(highApy)
-          setPositionId(newPositionId)
-          setHighVaultId(choosenId)
-        }
-      } else if (!supportedVaultDepo && curSupportedVaultWith) {
-        if (matchVaultList.length > 0) {
+      if (fromVault) {
+        const id = fromVault.token.data ? 'FARM' : fromVault.token.pool.id
+        const chain = fromVault.token.data
+          ? Number(fromVault.token.data.chain)
+          : Number(fromVault.token.chain)
+        const highApy = getHighestApy(groupOfVaults, chain, vaultsData, pools)
+        const choosenId = highApy.vault.pool === undefined ? 'IFARM' : highApy.vault.pool.id
+        const targetNet =
+          Number(chain) === 42161
+            ? 'arbitrum'
+            : Number(chain) === 8453
+            ? 'base'
+            : Number(chain) === 324
+            ? 'zkaync'
+            : Number(chain) === 137
+            ? 'polygon'
+            : 'ethereum'
+
+        if (supportedVaultDepo && curSupportedVaultWith) {
           setHighestPosition(fromVault)
-          setHighestVaultAddress(newVaultAddress)
-          setHighestApyVault(matchVaultList[0])
+          setHighestApyVault(highApy)
           setPositionId(id)
-          setHighVaultId(newVaultId)
+          setHighVaultId(choosenId)
+          setPositionVaultAddress(fromVault.token.vaultAddress)
+          setHighestVaultAddress(highApy.vault.vaultAddress)
+        } else if (supportedVaultDepo && !curSupportedVaultWith) {
+          if (networkMatchList.length > 0) {
+            setHighestPosition(networkMatchList[0])
+            setPositionVaultAddress(newPositionAddress)
+            setHighestVaultAddress(highApy.vault.vaultAddress)
+            setHighestApyVault(highApy)
+            setPositionId(newPositionId)
+            setHighVaultId(choosenId)
+          }
+        } else if (!supportedVaultDepo && curSupportedVaultWith) {
+          if (matchVaultList.length > 0) {
+            setHighestPosition(fromVault)
+            setHighestVaultAddress(newVaultAddress)
+            setPositionVaultAddress(fromVault.token.vaultAddress)
+            setHighestApyVault(matchVaultList[0])
+            setPositionId(id)
+            setHighVaultId(newVaultId)
+          }
+        } else if (!supportedVaultDepo && !curSupportedVaultWith) {
+          if (matchVaultList.length > 0 && networkMatchList.lenght > 0) {
+            setHighestPosition(networkMatchList[0])
+            setHighestApyVault(matchVaultList[0])
+            setPositionVaultAddress(newPositionAddress)
+            setHighestVaultAddress(newVaultAddress)
+            setPositionId(newPositionId)
+            setHighVaultId(newVaultId)
+          }
         }
-      } else if (!supportedVaultDepo && !curSupportedVaultWith) {
-        if (matchVaultList.length > 0 && networkMatchList.lenght > 0) {
-          setHighestPosition(networkMatchList[0])
-          setHighestApyVault(matchVaultList[0])
-          setPositionVaultAddress(newPositionAddress)
-          setHighestVaultAddress(newVaultAddress)
-          setPositionId(newPositionId)
-          setHighVaultId(newVaultId)
+
+        if (chain.toString() === chainId.toString()) {
+          setButtonName('Preview & Migrate')
+        } else if (targetNet) {
+          setButtonName(`Change Network to ${formatNetworkName(targetNet)}`)
         }
-      }
 
-      if (positionVaultAddress) {
-        setNetworkName(networkNames[getBadgeId(positionVaultAddress)])
+        setCurChain(chain)
+        setTokenWith(groupOfVaults[id.toString()])
+        setHighVaultId(choosenId)
+        setTokenDepo(groupOfVaults[choosenId.toString()])
       }
-
-      if (chain.toString() === chainId.toString()) {
-        setButtonName('Preview & Migrate')
-      } else if (targetNet) {
-        setButtonName(`Change Network to ${formatNetworkName(targetNet)}`)
-      }
-
-      setCurChain(chain)
-      setTokenWith(groupOfVaults[id.toString()])
-      setHighVaultId(choosenId)
-      setTokenDepo(groupOfVaults[choosenId.toString()])
     }
 
     setFilteredFarmList(filteredVaultList)
@@ -1026,11 +1114,11 @@ const Migrate = () => {
             Migrate Position
           </NewLabel>
           <NewLabel weight="400" height="20px" size="14px" color={darkMode ? '#ffffff' : '#475467'}>
-            Displaying{' '}
+            Displaying strategies on{' '}
             <span
-              style={{ fontWight: 500, fontSize: '14px', lineHeight: '20px' }}
-            >{`${formatNetworkName(networkName)}`}</span>{' '}
-            strategies.
+              style={{ fontWeight: '500', fontSize: '14px', lineHeight: '20px' }}
+            >{`${formatNetworkName(networkName)}`}</span>
+            .
           </NewLabel>
           <BoxTitle color={darkMode ? '#ffffff' : '#475467'}>My existing position</BoxTitle>
           <VaultBox
@@ -1129,7 +1217,6 @@ const Migrate = () => {
             setToken={setTokenWith}
             groupOfVaults={groupOfVaults}
             setCurSupportedVault={setCurSupportedVaultWith}
-            urlPositionAddress={urlPositionAddress}
             setNetworkMatchList={setNetworkMatchList}
             networkMatchList={networkMatchList}
           />

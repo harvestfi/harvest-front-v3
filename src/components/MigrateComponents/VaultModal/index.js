@@ -85,8 +85,9 @@ const VaultModal = ({
       const filteredMatchList = []
 
       if (matchingList.length > 0) {
+        const test = matchingList.slice(0, 2)
         // eslint-disable-next-line no-restricted-syntax
-        for (const item of matchingList) {
+        for (const item of test) {
           const mToken = item.vault
           const tokenAddress = useIFARM
             ? addresses.iFARM
