@@ -822,6 +822,8 @@ const Migrate = () => {
             }
           }
 
+          setButtonName('Preview & Migrate')
+
           setTokenWith(groupOfVaults[positionId])
           setTokenDepo(groupOfVaults[highVaultId])
         } else if (
@@ -836,16 +838,6 @@ const Migrate = () => {
           const newChain = newPosition.token.data
             ? Number(newPosition.token.data.chain)
             : Number(newPosition.token.chain)
-          const targetNet =
-            Number(chain) === 42161
-              ? 'arbitrum'
-              : Number(chain) === 8453
-              ? 'base'
-              : Number(chain) === 324
-              ? 'zkaync'
-              : Number(chain) === 137
-              ? 'polygon'
-              : 'ethereum'
 
           if (supportedVaultDepo && curSupportedVaultWith) {
             setHighestPosition(newPosition)
@@ -883,11 +875,7 @@ const Migrate = () => {
             }
           }
 
-          if (newChain.toString() === chainId.toString()) {
-            setButtonName('Preview & Migrate')
-          } else if (targetNet) {
-            setButtonName(`Change Network to ${formatNetworkName(targetNet)}`)
-          }
+          setButtonName('Preview & Migrate')
 
           setCurChain(newChain)
           setTokenWith(groupOfVaults[id.toString()])
@@ -910,16 +898,6 @@ const Migrate = () => {
           : Number(fromVault.token.chain)
         const highApy = getHighestApy(groupOfVaults, chain, vaultsData, pools)
         const choosenId = highApy.vault.pool === undefined ? 'IFARM' : highApy.vault.pool.id
-        const targetNet =
-          Number(chain) === 42161
-            ? 'arbitrum'
-            : Number(chain) === 8453
-            ? 'base'
-            : Number(chain) === 324
-            ? 'zkaync'
-            : Number(chain) === 137
-            ? 'polygon'
-            : 'ethereum'
 
         if (supportedVaultDepo && curSupportedVaultWith) {
           setHighestPosition(fromVault)
@@ -957,11 +935,7 @@ const Migrate = () => {
           }
         }
 
-        if (chain.toString() === chainId.toString()) {
-          setButtonName('Preview & Migrate')
-        } else if (targetNet) {
-          setButtonName(`Change Network to ${formatNetworkName(targetNet)}`)
-        }
+        setButtonName('Preview & Migrate')
 
         setCurChain(chain)
         setTokenWith(groupOfVaults[id.toString()])
