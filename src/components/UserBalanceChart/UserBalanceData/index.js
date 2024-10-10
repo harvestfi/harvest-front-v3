@@ -60,6 +60,7 @@ const UserBalanceData = ({
 
   const [selectedState, setSelectedState] = useState('LAST')
   const [apiData, setApiData] = useState([])
+  const [apiData1, setApiData1] = useState([])
   const [loadComplete, setLoadComplete] = useState(false)
   const [curDate, setCurDate] = useState('')
   const [curContent, setCurContent] = useState(`${currencySym}0`)
@@ -263,22 +264,63 @@ const UserBalanceData = ({
             const firstObject = {
               priceUnderlying: useIFARM ? farmPriceRef.current : usdPriceRef.current,
               sharePrice: mergedData[0].sharePrice,
-              timestamp: currentTimeStamp,
+              timestamp: currentTimeStamp.toString(),
               value: totalValueRef.current,
             }
 
             let apiAllData = [],
+              apiAllData1 = [],
               firstNonZeroIndex = -1,
+              firstNonZeroIndex1 = -1,
               filteredData,
-              enrichedData
-
-            if (token.inactive) {
-              apiAllData = [firstObject, ...mergedData]
-            } else {
-              apiAllData = [firstObject, ...chartData]
-            }
+              filteredData1,
+              enrichedData,
+              enrichedData1
+            apiAllData = [firstObject, ...mergedData]
+            apiAllData1 = [firstObject, ...chartData]
 
             const al = apiAllData.length
+            const al1 = apiAllData1.length
+            if (apiAllData1.length > 1) {
+              for (let i = al1 - 1; i >= 0; i -= 1) {
+                if (apiAllData1[i].value !== 0) {
+                  firstNonZeroIndex1 = i
+                  break
+                }
+              }
+
+              filteredData1 =
+                firstNonZeroIndex1 === -1
+                  ? apiAllData1
+                  : apiAllData1.slice(0, firstNonZeroIndex1 + 1)
+
+              enrichedData1 = filteredData1
+                .map((item, index, array) => {
+                  const nextItem = array[index + 1]
+                  let event
+
+                  if (nextItem) {
+                    if (Number(item.value) === Number(nextItem.value)) {
+                      event = 'Harvest'
+                    } else if (Number(item.value) > Number(nextItem.value)) {
+                      event = 'Convert'
+                    } else {
+                      event = 'Revert'
+                    }
+                  } else {
+                    event = 'Convert'
+                  }
+
+                  return {
+                    ...item,
+                    event,
+                  }
+                })
+                .filter(Boolean)
+
+              setApiData1(enrichedData1)
+            }
+
             if (apiAllData.length > 1) {
               for (let i = al - 1; i >= 0; i -= 1) {
                 if (apiAllData[i].value !== 0) {
@@ -401,6 +443,7 @@ const UserBalanceData = ({
       <ChartDiv className="advanced-price">
         <ApexChart
           data={apiData}
+          data1={apiData1}
           loadComplete={loadComplete}
           range={selectedState}
           setCurDate={setCurDate}
@@ -415,6 +458,7 @@ const UserBalanceData = ({
           setSelectedState={setSelectedState}
           isExpanded={isExpanded}
           toggleExpand={toggleExpand}
+          isInactive={token.inactive}
         />
       </ChartDiv>
       <ButtonGroup>
