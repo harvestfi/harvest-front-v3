@@ -838,13 +838,16 @@ const Migrate = () => {
           const newChain = newPosition.token.data
             ? Number(newPosition.token.data.chain)
             : Number(newPosition.token.chain)
+          const newAddressPosition = newPosition.token.poolVault
+            ? newPosition.token.tokenAddress
+            : newPosition.token.vaultAddress
 
           if (supportedVaultDepo && curSupportedVaultWith) {
             setHighestPosition(newPosition)
             setHighestApyVault(highApy)
             setPositionId(id)
             setHighVaultId(choosenId)
-            setPositionVaultAddress(newPosition.token.vaultAddress)
+            setPositionVaultAddress(newAddressPosition)
             setHighestVaultAddress(highApy.vault.vaultAddress)
           } else if (supportedVaultDepo && !curSupportedVaultWith) {
             if (networkMatchList.length > 0) {
@@ -859,7 +862,7 @@ const Migrate = () => {
             if (matchVaultList.length > 0) {
               setHighestPosition(newPosition)
               setHighestVaultAddress(newVaultAddress)
-              setPositionVaultAddress(newPosition.token.vaultAddress)
+              setPositionVaultAddress(newAddressPosition)
               setHighestApyVault(matchVaultList[0])
               setPositionId(id)
               setHighVaultId(newVaultId)
@@ -1178,7 +1181,7 @@ const Migrate = () => {
             networkName={networkName}
             setPositionVaultAddress={setPositionVaultAddress}
             filteredFarmList={filteredFarmList}
-            chain={curChain}
+            chain={Number(chainId)}
             isMobile={isMobile}
             currencySym={currencySym}
             setHighestPosition={setHighestPosition}
@@ -1274,7 +1277,7 @@ const Migrate = () => {
             setHighestApyVault={setHighestApyVault}
             setHighestVaultAddress={setHighestVaultAddress}
             filteredFarmList={filteredFarmList}
-            chain={curChain}
+            chain={Number(chainId)}
             isMobile={isMobile}
             currencySym={currencySym}
             setIsFromModal={setIsFromModal}
