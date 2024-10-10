@@ -133,8 +133,8 @@ const sideLinksBottom = [
     path: ROUTES.LiveSupport,
     name: 'Support',
     imgPath: Support,
-    external: false,
-    // new: true,
+    external: true,
+    newTab: true,
   },
 ]
 
@@ -193,7 +193,8 @@ const sideLinksMobileBottom = [
     path: ROUTES.LiveSupport,
     name: 'Support',
     imgPath: Support,
-    newTab: false,
+    external: true,
+    newTab: true,
   },
   // {
   //   path: ROUTES.DOC,
