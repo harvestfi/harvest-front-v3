@@ -568,12 +568,19 @@ html {
         height: 328px;
         border-radius: 0px 0px 12px 12px;
         overflow-y: auto;
+        @media screen and (max-width: 576px) {
+          border-radius: 0px 0px 0px 0px;
+        }
       }
       .migrate-start-modal-body {
         background: ${props => props.backColor};
         padding: unset;
         border-radius: 0px 0px 12px 12px;
         overflow-y: auto;
+
+        @media screen and (max-width: 576px) {
+          border-radius: 0px 0px 0px 0px;
+        }
       }
       .migrate-position-modal-body::-webkit-scrollbar {
           width: 5px;
