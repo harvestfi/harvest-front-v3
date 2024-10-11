@@ -24,6 +24,9 @@ const Container = styled.div`
     height: 100%;
     margin: 0;
     padding-bottom: 100px;
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 0px;
   }
 `
 
@@ -42,6 +45,7 @@ const Inner = styled.div`
 
   @media screen and (max-width: 992px) {
     padding: 25px 15px;
+    flex-direction: column;
   }
 
   .migrate-box {
@@ -89,9 +93,10 @@ const SpaceLine = styled.div`
 `
 
 const MigrateBox = styled.div`
-  width: 40%;
+  width: ${props => (props.width ? props.width : '')};
   border-radius: 12px;
   padding: 25px;
+  margin-bottom: ${props => (props.marginBottom ? props.marginBottom : '')};
 
   .from-vault {
     position: relative;
@@ -153,6 +158,27 @@ const Button = styled.button`
 
   &:hover {
     background: linear-gradient(90deg, #ffc5ff 0%, #6083ff 48.9%, #6af6d5 100%);
+  }
+`
+
+const Buttons = styled.button`
+  background: #6988ff;
+  border: none;
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  color: white;
+  border-radius: 8px;
+  padding: 15px 18px;
+  align-items: center;
+  width: 100%;
+
+  &:hover {
+    background: #6988ff;
+    opacity: 0.8;
+  }
+
+  &:active {
+    background: #6988ff;
+    opacity: 1;
   }
 `
 
@@ -233,4 +259,5 @@ export {
   BadgeIcon,
   ApyDownIcon,
   Token,
+  Buttons,
 }

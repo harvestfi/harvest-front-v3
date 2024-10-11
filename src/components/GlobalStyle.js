@@ -512,6 +512,7 @@ html {
         bottom: 0;
         border-bottom-right-radius: 0px;
         border-bottom-left-radius: 0px;
+        position: absolute;
       }
 
       .modal-header {

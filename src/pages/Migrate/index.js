@@ -1076,7 +1076,7 @@ const Migrate = () => {
 
   return (
     <Container bgColor={bgColor}>
-      <Inner marginBottom="55px">
+      <Inner marginBottom={isMobile ? '0px' : '55px'}>
         <MigrateTop>
           <PageTitle color={darkMode ? '#ffffff' : '"#101828"'}>Migrate</PageTitle>
         </MigrateTop>
@@ -1086,7 +1086,11 @@ const Migrate = () => {
         <SpaceLine />
       </Inner>
       <Inner display="flex" justifyContent="center" alignItems="flex-start" padding="0px 100px">
-        <MigrateBox className="migrate-box">
+        <MigrateBox
+          className="migrate-box"
+          width={isMobile ? '100%' : '40%'}
+          marginBottom={isMobile ? '70px' : '0px'}
+        >
           <NewLabel weight="600" height="28px" size="18px" color={darkMode ? '#ffffff' : '#101828'}>
             Migrate Position
           </NewLabel>
@@ -1440,7 +1444,7 @@ const Migrate = () => {
             networkName={networkName}
           />
         </MigrateBox>
-        <NewLabel marginLeft="32px" width="60%">
+        <NewLabel marginLeft={isMobile ? '0px' : '32px'} width={isMobile ? '100%' : '60%'}>
           {accordianText.map((text, i) => {
             return (
               <Accordian

@@ -18,12 +18,12 @@ import ClockIcon from '../../../assets/images/ui/clock.svg'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import AnimatedDots from '../../AnimatedDots'
 import { usePools } from '../../../providers/Pools'
+import { Buttons } from '../../../pages/Migrate/style'
 import {
   AnimateDotDiv,
   FTokenWrong,
   ProgressText,
   SlippageBox,
-  Buttons,
   MiddleLine,
   SlippageRow,
   SlipValue,
@@ -823,7 +823,7 @@ const MigrateStart = ({
             display="flex"
             width="100%"
           >
-            <SlippageBox onClick={() => setSlippageSetting(!slippageSetting)}>
+            <SlippageBox onClick={() => setSlippageSetting(!slippageSetting)} display="none">
               {slippageSetting ? (
                 <IoIosArrowUp color="#6F78AA" fontSize={20} />
               ) : (

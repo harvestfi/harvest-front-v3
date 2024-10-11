@@ -256,6 +256,7 @@ const SlippageBox = styled.div`
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
   margin-right: 12px;
   cursor: pointer;
+  display: ${props => (props.display ? props.display : '')};
 `
 
 const MiddleLine = styled.hr`
