@@ -146,7 +146,7 @@ const MigrateIcon = styled.div`
   margin-bottom: 24px;
 `
 const Button = styled.button`
-  padding: 10px 18px;
+  padding: 15px 18px;
   border: 1px solid #6988ff;
   border-radius: 8px;
   display: flex;

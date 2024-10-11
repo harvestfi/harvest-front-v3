@@ -1320,7 +1320,7 @@ const Migrate = () => {
               size="14px"
               height="24px"
               marginBottom="10px"
-              marginTop="32px"
+              marginTop="16px"
               color={darkMode ? '#ffffff' : '#344054'}
             >
               Details
