@@ -997,13 +997,15 @@ const Migrate = () => {
   }
 
   const onClickMigrate = async () => {
-    if (chainId.toString() !== curChain.toString()) {
-      const chainHex = `0x${Number(curChain).toString(16)}`
-      if (!isSpecialApp) {
-        await setChain({ chainId: chainHex })
+    if (chainId && curChain) {
+      if (chainId.toString() !== curChain.toString()) {
+        const chainHex = `0x${Number(curChain).toString(16)}`
+        if (!isSpecialApp) {
+          await setChain({ chainId: chainHex })
+        }
+      } else {
+        setShowMigrate(true)
       }
-    } else {
-      setShowMigrate(true)
     }
   }
 
