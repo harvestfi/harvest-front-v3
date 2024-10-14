@@ -126,12 +126,13 @@ const PositionModal = ({
         const chainId = token.chain || token.data.chain
 
         const portalsToken = await getPortalsSupport(chainId, tokenAddress)
-
-        if (portalsToken.status === 200) {
-          if (portalsToken.data.totalItems === 0) {
-            setCurSupportedVault(false)
-          } else {
-            setCurSupportedVault(true)
+        if (portalsToken) {
+          if (portalsToken.status === 200) {
+            if (portalsToken.data.totalItems === 0) {
+              setCurSupportedVault(false)
+            } else {
+              setCurSupportedVault(true)
+            }
           }
         }
       }
