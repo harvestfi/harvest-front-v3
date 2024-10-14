@@ -734,7 +734,7 @@ const VaultModal = ({
         setBalance(tokenForPick.balance)
       }
     }
-  }, [balanceTokenList, positionAddress, setPickedToken, setBalance])
+  }, [balanceTokenList, positionAddress, setPickedToken, setBalance]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Modal
