@@ -26,6 +26,7 @@ const Accordian = ({ text, EXPANDED, COLLAPSED, darkMode }) => {
           height="23.91px"
           weight="500"
           color={darkMode ? '#ffffff' : '#101828'}
+          marginRight="10px"
         >
           {text.question}
         </NewLabel>

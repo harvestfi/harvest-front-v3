@@ -43,9 +43,49 @@ const Inner = styled.div`
     width: 1450px;
   }
 
+  @media screen and (max-width: 1660px) {
+    &.box-faq {
+      padding: 0px 50px;
+    }
+  }
+
+  @media screen and (max-width: 1600px) {
+    &.box-faq {
+      padding: 0px;
+    }
+  }
+
+  @media screen and (max-width: 1265px) {
+    &.box-faq {
+      flex-direction: column;
+      padding: 0px 50px;
+    }
+
+    .migrate-faq {
+      width: 100%;
+      margin-left: 0px;
+      margin-top: 70px;
+    }
+  }
+
   @media screen and (max-width: 992px) {
+    &.box-faq {
+      flex-direction: column;
+      padding: 0px 150px;
+    }
+
     padding: 25px 15px;
     flex-direction: column;
+
+    .migrate-faq {
+      margin-top: 0px;
+    }
+  }
+
+  @media screen and (max-width: 570px) {
+    &.box-faq {
+      padding: 15px;
+    }
   }
 
   .migrate-box {
@@ -100,6 +140,14 @@ const MigrateBox = styled.div`
 
   .from-vault {
     position: relative;
+  }
+
+  @media screen and (max-width: 1380px) {
+    width: 50%;
+  }
+
+  @media screen and (max-width: 1265px) {
+    width: 100%;
   }
 
   // .from-vault::before {
@@ -230,7 +278,7 @@ const ApyDownIcon = styled.div`
   justify-content: space-between;
   align-items: center;
 `
-const Token = styled.a`
+const Token = styled.div`
   font-weight: 500;
   font-size: 14px;
   line-height: 20px;

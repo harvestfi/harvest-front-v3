@@ -169,6 +169,9 @@ const VaultModal = ({
         setStartSpinner(false)
       }
 
+      console.log('nextArray', nextArray)
+      console.log('matchingList', matchingList)
+
       if (
         nextArray[nextArray.length - 1].vault.vaultAddress.toLowerCase() ===
         matchingList[matchingList.length - 1].vault.vaultAddress.toLowerCase()

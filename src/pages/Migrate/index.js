@@ -40,7 +40,7 @@ import {
   IFARM_TOKEN_SYMBOL,
   MAX_DECIMALS,
   boostedVaults,
-  chainList,
+  // chainList,
 } from '../../constants'
 import {
   Container,
@@ -77,7 +77,7 @@ const Migrate = () => {
   /* eslint-disable global-require */
   const { tokens } = require('../../data')
   const { darkMode, bgColor } = useThemeContext()
-  const networkNames = ['ethereum', 'polygon', 'arbitrum', 'base', 'zksync']
+  // const networkNames = ['ethereum', 'polygon', 'arbitrum', 'base', 'zksync']
 
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
@@ -204,22 +204,22 @@ const Migrate = () => {
     setBoostedVaults()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const getBadgeId = vaultAddress => {
-    const vaultData = Object.values(groupOfVaults).find(vault => {
-      if (vault.vaultAddress && vaultAddress) {
-        return vault.vaultAddress.toLowerCase() === vaultAddress.toLowerCase()
-      }
-      return false
-    })
-    const chain = vaultData ? vaultData.chain : ''
+  // const getBadgeId = vaultAddress => {
+  //   const vaultData = Object.values(groupOfVaults).find(vault => {
+  //     if (vault.vaultAddress && vaultAddress) {
+  //       return vault.vaultAddress.toLowerCase() === vaultAddress.toLowerCase()
+  //     }
+  //     return false
+  //   })
+  //   const chain = vaultData ? vaultData.chain : ''
 
-    for (let i = 0; i < chainList.length; i += 1) {
-      if (chainList[i].chainId === Number(chain)) {
-        return i
-      }
-    }
-    return -1
-  }
+  //   for (let i = 0; i < chainList.length; i += 1) {
+  //     if (chainList[i].chainId === Number(chain)) {
+  //       return i
+  //     }
+  //   }
+  //   return -1
+  // }
 
   useEffect(() => {
     const network =
@@ -1088,7 +1088,13 @@ const Migrate = () => {
         </PageIntro>
         <SpaceLine />
       </Inner>
-      <Inner display="flex" justifyContent="center" alignItems="flex-start" padding="0px 100px">
+      <Inner
+        display="flex"
+        justifyContent="center"
+        alignItems="flex-start"
+        padding="0px 100px"
+        className="box-faq"
+      >
         <MigrateBox
           className="migrate-box"
           width={isMobile ? '100%' : '40%'}
@@ -1130,14 +1136,14 @@ const Migrate = () => {
                 </BadgeIcon>
                 {highestPosition ? (
                   <Token
-                    href={`${window.location.origin}/${
-                      networkNames[getBadgeId(positionVaultAddress)]
-                    }/${
-                      positionVaultAddress === '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
-                        ? '0xa0246c9032bc3a600820415ae600c6388619a14d'
-                        : positionVaultAddress
-                    }`}
-                    onClick={stopPropagation}
+                  // href={`${window.location.origin}/${
+                  //   networkNames[getBadgeId(positionVaultAddress)]
+                  // }/${
+                  //   positionVaultAddress === '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
+                  //     ? '0xa0246c9032bc3a600820415ae600c6388619a14d'
+                  //     : positionVaultAddress
+                  // }`}
+                  // onClick={stopPropagation}
                   >
                     <>
                       <span>{highestPosition.token.tokenNames.join(', ')}</span>
@@ -1227,10 +1233,10 @@ const Migrate = () => {
                 </BadgeIcon>
                 {highestApyVault ? (
                   <Token
-                    href={`${window.location.origin}/${
-                      networkNames[getBadgeId(highestVaultAddress)]
-                    }/${highestVaultAddress}`}
-                    onClick={stopPropagation}
+                  // href={`${window.location.origin}/${
+                  //   networkNames[getBadgeId(highestVaultAddress)]
+                  // }/${highestVaultAddress}`}
+                  // onClick={stopPropagation}
                   >
                     <>
                       <span>{highestApyVault.vault.tokenNames.join(', ')}</span>
@@ -1449,7 +1455,11 @@ const Migrate = () => {
             networkName={networkName}
           />
         </MigrateBox>
-        <NewLabel marginLeft={isMobile ? '0px' : '32px'} width={isMobile ? '100%' : '60%'}>
+        <NewLabel
+          marginLeft={isMobile ? '0px' : '32px'}
+          width={isMobile ? '100%' : '60%'}
+          className="migrate-faq"
+        >
           {accordianText.map((text, i) => {
             return (
               <Accordian
