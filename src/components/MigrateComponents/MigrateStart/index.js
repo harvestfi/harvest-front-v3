@@ -626,7 +626,7 @@ const MigrateStart = ({
               </NewLabel>
               <NewLabel display="flex" flexFlow="column" weight="600" textAlign="right">
                 <NewLabel weight="400" height="20px" size="12px">
-                  {id ? useIFARM ? `i${id}` : `f${id}` : <AnimatedDots />}
+                  {pickedToken ? `${pickedToken.symbol}` : <AnimatedDots />}
                 </NewLabel>
                 <NewLabel weight="400" size="12px" height="20px">
                   {fromInfoAmount === '-' ? (

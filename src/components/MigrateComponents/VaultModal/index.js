@@ -725,7 +725,13 @@ const VaultModal = ({
       })
       if (matchingVault) {
         tokenForPick = balanceTokenList.find(item => {
-          return item.address.toLowerCase() === matchingVault[1].tokenAddress.toLowerCase()
+          if (item.address.toLowerCase() === matchingVault[1].tokenAddress.toLowerCase()) {
+            return item
+          }
+          if (item.address.toLowerCase() === positionAddress.toLowerCase()) {
+            return item
+          }
+          return null
         })
       }
 
