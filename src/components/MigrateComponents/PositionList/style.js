@@ -8,6 +8,7 @@ const VaultBox = styled.div`
   background: ${props => (props.bgColor ? props.bgColor : '')};
   border: ${props => (props.border ? props.border : '')};
   border-bottom: ${props => (props.borderBottom ? props.borderBottom : '')};
+  color: ${props => (props.color ? props.color : '')};
   cursor: pointer;
 
   &:hover {

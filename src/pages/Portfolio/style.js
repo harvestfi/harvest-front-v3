@@ -101,6 +101,49 @@ const HeaderButton = styled.div`
   }
 `
 
+const RankContainer = styled.div`
+  width: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding-top: 2.83px;
+  padding-right: 2.83px;
+  padding-bottom: 2.83px;
+  padding-left: 10px;
+  background: #f9f9ff;
+  border-radius: 30px;
+
+  .rank-box::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 30px;
+    padding: 2px;
+    background: linear-gradient(90deg, #ffd6a6 0%, #a1b5ff 48.9%, #73df88 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+`
+
+const RankImg = styled.div`
+  display: flex;
+  align-items: center;
+`
+
+const Rank = styled.div`
+  background: #21262d;
+  color: #ffffff;
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 14.15px;
+  border-radius: 30px;
+  -webkit-fill-available;
+  display: flex;
+  align-items: center;
+`
+
 const FarmTitle = styled.span`
   display: flex;
   justify-content: space-between;
@@ -1035,4 +1078,7 @@ export {
   CurrencySelect,
   CurrencyDropDownMenu,
   CurrencyDropDownItem,
+  RankContainer,
+  RankImg,
+  Rank,
 }

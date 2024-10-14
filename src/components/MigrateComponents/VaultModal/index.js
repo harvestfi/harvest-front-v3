@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import { BsArrowDown } from 'react-icons/bs'
 import BigNumber from 'bignumber.js'
+import { Spinner } from 'react-bootstrap'
 import { FTokenInfo, NewLabel, IconCard, ImgBtn } from '../PositionModal/style'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import CloseIcon from '../../../assets/images/logos/beginners/close.svg'
@@ -12,6 +13,7 @@ import VaultList from '../VaultList'
 import { getMatchedVaultList } from '../../../utilities/parsers'
 import { FARM_TOKEN_SYMBOL, BEGINNERS_BALANCES_DECIMALS } from '../../../constants'
 import { usePortals } from '../../../providers/Portals'
+import { VaultBox } from '../PositionList/style'
 
 const VaultModal = ({
   showVaultModal,
@@ -46,6 +48,8 @@ const VaultModal = ({
   balance,
   setSupportedVault,
   convertSuccess,
+  startPoint,
+  setStartPoint,
 }) => {
   const { darkMode, inputFontColor, fontColor } = useThemeContext()
   const [countFarm, setCountFarm] = useState(0)
@@ -57,6 +61,11 @@ const VaultModal = ({
   const [supTokenNoBalanceList, setSupTokenNoBalanceList] = useState([])
   const [defaultCurToken, setDefaultCurToken] = useState(defaultToken)
   const [balanceTokenList, setBalanceTokenList] = useState(balanceList)
+  const [isLoadingMore, setIsLoadingMore] = useState(false)
+  const [newMatchesList, setNewMatchesList] = useState([])
+  const [matchingList, setMatchingList] = useState([])
+  const [startSpinner, setStartSpinner] = useState(false)
+  const [isEnd, setIsEnd] = useState(false)
 
   const {
     getPortalsSupport,
@@ -72,21 +81,36 @@ const VaultModal = ({
   const filterWord = ''
 
   let tokenDecimals
+
   if (token) {
     tokenDecimals = token.decimals || tokens[id].decimals
   }
 
   useEffect(() => {
-    let matchingList = []
+    let matched = []
+    const activedList = []
     if (chain) {
-      matchingList = getMatchedVaultList(groupOfVaults, chain, vaultsData, pools)
+      matched = getMatchedVaultList(groupOfVaults, chain, vaultsData, pools)
+      if (matched.length > 0) {
+        matched.forEach(item => {
+          if (Number(item.vaultApy) !== 0) {
+            activedList.push(item)
+          }
+        })
+        if (activedList.length > 0) {
+          setMatchingList(activedList)
+        }
+      }
     }
+
     const fetchSupportedMatches = async () => {
       const filteredMatchList = []
 
-      if (matchingList.length > 0) {
+      if (matched.length > 0) {
+        matched.sort((a, b) => b.vaultApy - a.vaultApy)
+        const newArray = matched.slice(0, 10)
         // eslint-disable-next-line no-restricted-syntax
-        for (const item of matchingList) {
+        for (const item of newArray) {
           const mToken = item.vault
           const tokenAddress = useIFARM
             ? addresses.iFARM
@@ -96,7 +120,7 @@ const VaultModal = ({
           const portalsToken = await getPortalsSupport(chainId, tokenAddress)
           if (portalsToken) {
             if (portalsToken.status === 200) {
-              if (portalsToken.data.totalItems !== 0) {
+              if (portalsToken.data.totalItems !== 0 && Number(item.vaultApy) !== 0) {
                 filteredMatchList.push(item)
               }
             }
@@ -106,7 +130,6 @@ const VaultModal = ({
         }
       }
       if (filteredMatchList.length > 0) {
-        filteredMatchList.sort((a, b) => b.apy - a.apy)
         setMatchVaultList(filteredMatchList)
         setCountFarm(filteredMatchList.length)
       }
@@ -115,7 +138,69 @@ const VaultModal = ({
     fetchSupportedMatches()
   }, [chain, pools, setMatchVaultList]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  const fetchMoreMatches = async () => {
+    if (!isEnd) {
+      setStartSpinner(true)
+      const filteredMatchList = []
+      const nextArray = matchingList.slice(startPoint, startPoint + 10)
+      // eslint-disable-next-line no-restricted-syntax
+      for (const item of nextArray) {
+        const mToken = item.vault
+        const tokenAddress = useIFARM ? addresses.iFARM : mToken.vaultAddress || mToken.tokenAddress
+        const chainId = mToken.chain || mToken.data.chain
+        // eslint-disable-next-line no-await-in-loop
+        const portalsToken = await getPortalsSupport(chainId, tokenAddress)
+        if (portalsToken) {
+          if (portalsToken.status === 200) {
+            if (portalsToken.data.totalItems !== 0) {
+              filteredMatchList.push(item)
+            }
+          }
+        } else {
+          console.log('Error in fetching Portals supported')
+        }
+      }
+
+      const newMathcing = [...newMatchesList, ...filteredMatchList]
+      setStartPoint(startPoint + 10)
+      setNewMatchesList(newMathcing)
+      setCountFarm(countFarm + filteredMatchList.length)
+      if (newMathcing.length > 0) {
+        setStartSpinner(false)
+      }
+
+      if (
+        nextArray[nextArray.length - 1].vault.vaultAddress.toLowerCase() ===
+        matchingList[matchingList.length - 1].vault.vaultAddress.toLowerCase()
+      ) {
+        setIsEnd(true)
+      }
+    }
+  }
+
   const positions = matchVaultList.map((item, i) => {
+    return (
+      <VaultList
+        key={i}
+        matchVault={item}
+        currencySym={currencySym}
+        networkName={networkName}
+        setShowVaultModal={setShowVaultModal}
+        setHighestVaultAddress={setHighestVaultAddress}
+        setHighestApyVault={setHighestApyVault}
+        setIsFromModal={setIsFromModal}
+        stopPropagation={stopPropagation}
+        darkMode={darkMode}
+        filteredFarmList={filteredFarmList}
+        chainId={chain}
+        setToken={setToken}
+        setId={setId}
+        groupOfVaults={groupOfVaults}
+      />
+    )
+  })
+
+  const newPositions = newMatchesList.map((item, i) => {
     return (
       <VaultList
         key={i}
@@ -144,14 +229,16 @@ const VaultModal = ({
         const chainId = token.chain || token.data.chain
         const portalsToken = await getPortalsSupport(chainId, tokenAddress)
 
-        if (portalsToken === undefined || portalsToken.status !== 200) {
-          setHasPortalsError(true)
-        } else if (portalsToken.status === 200) {
-          setHasPortalsError(false)
-          if (portalsToken.data.totalItems === 0) {
-            setSupportedVault(false)
-          } else {
-            setSupportedVault(true)
+        if (portalsToken) {
+          if (portalsToken === undefined || portalsToken.status !== 200) {
+            setHasPortalsError(true)
+          } else if (portalsToken.status === 200) {
+            setHasPortalsError(false)
+            if (portalsToken.data.totalItems === 0) {
+              setSupportedVault(false)
+            } else {
+              setSupportedVault(true)
+            }
           }
         }
       }
@@ -630,10 +717,18 @@ const VaultModal = ({
   }, [supTokenNoBalanceList, balanceList, chain, defaultCurToken, defaultToken, getPortalsToken])
 
   useEffect(() => {
+    let tokenForPick
     if (balanceTokenList.length > 0 && positionAddress) {
-      const tokenForPick = balanceTokenList.find(item => {
-        return item.address.toLowerCase() === positionAddress.toLowerCase()
+      const matchingVault = Object.entries(groupOfVaults).find(item => {
+        const compareAddress = item[1].poolVault ? item[1].tokenAddress : item[1].vaultAddress
+        return compareAddress.toLowerCase() === positionAddress.toLowerCase()
       })
+      if (matchingVault) {
+        tokenForPick = balanceTokenList.find(item => {
+          return item.address.toLowerCase() === matchingVault[1].tokenAddress.toLowerCase()
+        })
+      }
+
       if (tokenForPick) {
         setPickedToken(tokenForPick)
         setBalance(tokenForPick.balance)
@@ -727,6 +822,31 @@ const VaultModal = ({
               {`${countFarm} Opportunities found on ${formatNetworkName(networkName)}`}
             </NewLabel>
             {positions}
+            {isLoadingMore && newPositions}
+            {matchingList.length > 0 && (
+              <VaultBox
+                borderBottom={darkMode ? '1px solid #1F242F' : '1px solid #ECECEC'}
+                hoverBgColor={darkMode ? '#1F242F' : '#e9f0f7'}
+                color={darkMode ? '#ffffff' : '#414141'}
+                onClick={() => {
+                  setIsLoadingMore(true)
+                  fetchMoreMatches()
+                }}
+              >
+                {!isEnd ? 'Display more results' : 'All results are loaded'}
+                {!startSpinner ? (
+                  <></>
+                ) : (
+                  <Spinner
+                    as="span"
+                    animation="border"
+                    size="sm"
+                    role="status"
+                    aria-hidden="true"
+                  />
+                )}
+              </VaultBox>
+            )}
           </>
         )}
       </Modal.Body>

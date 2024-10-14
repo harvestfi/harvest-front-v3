@@ -114,6 +114,7 @@ const Migrate = () => {
   const [networkMatchList, setNetworkMatchList] = useState([])
   const [buttonName, setButtonName] = useState(<AnimatedDots />)
   const [networkName, setNetworkName] = useState('')
+  const [startPoint, setStartPoint] = useState(10)
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const isFromAdvanced = location.search.includes('from=')
@@ -1309,6 +1310,8 @@ const Migrate = () => {
             balance={balance}
             setSupportedVault={setSupportedVaultDepo}
             convertSuccess={convertSuccess}
+            setStartPoint={setStartPoint}
+            startPoint={startPoint}
           />
           <NewLabel
             display="flex"
