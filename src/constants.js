@@ -52,7 +52,7 @@ export const ROUTES = {
   PORTFOLIO: '/',
   TUTORIAL: 'https://docs.harvest.finance/get-started-farming',
   ADVANCED: '/farms',
-  LiveSupport: '/live-support',
+  LiveSupport: 'https://discord.com/channels/748967094745563176/749862621188194328',
   ANALYTIC: '/analytics',
   DOC: 'https://docs.harvest.finance',
   FAQ: '/faq',
@@ -851,6 +851,11 @@ export const boostedVaults = [
   'camelotV3_ARB_USDC',
   'camelotV3_ETH_USDT',
   'camelotV3_ETH_USDC',
+  'aave_GHO_arbitrum',
+  'fluid_USDC_arbitrum',
+  'fluid_USDT_arbitrum',
+  'dolomite_DAI',
+  'dolomite_WBTC',
 ]
 
 export const supportedCurrencies = [
