@@ -186,7 +186,7 @@ const DepositBase = ({
           }
 
           if (pickedDefaultToken || portalsEstimate.succeed) {
-            let fromTokenUsdPrice, toTokenUsdPrice
+            let fromTokenUsdPrice, toTokenUsdPrice, newInputAmount
             if (pickedDefaultToken) {
               fromTokenUsdPrice = pickedToken.usdPrice
               toTokenUsdPrice = Number(pickedToken.usdPrice) * Number(pricePerFullShare)
@@ -197,8 +197,18 @@ const DepositBase = ({
               toTokenUsdPrice = toTokenDetail?.price
             }
 
+            if (checkNativeToken(pickedToken)) {
+              newInputAmount = new BigNumber(
+                Math.floor(Number(balance) * 0.95 * 100000) / 100000,
+              ).toString()
+            } else {
+              newInputAmount = new BigNumber(balance).toString()
+            }
+
+            const newAmount = toWei(newInputAmount, pickedToken.decimals, 0)
+
             const quoteResult = {
-              fromTokenAmount: amount,
+              fromTokenAmount: newAmount,
               fromTokenUsdPrice,
               minToTokenAmount: pickedDefaultToken
                 ? outputAmountDefault

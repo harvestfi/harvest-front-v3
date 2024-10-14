@@ -646,28 +646,28 @@ const Portfolio = () => {
         }
 
         const vaultNetChanges = []
-        const sl = stakedVaults.length
-        for (let i = 0; i < sl; i += 1) {
+        const promises = stakedVaults.map(async stakedVault => {
           let symbol = '',
             fAssetPool = {}
 
-          // When getting stakedVault using userStats -> if (stakedVaults[i] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
-          if (stakedVaults[i] === IFARM_TOKEN_SYMBOL) {
+          if (stakedVault === IFARM_TOKEN_SYMBOL) {
             symbol = FARM_TOKEN_SYMBOL
           } else {
-            symbol = stakedVaults[i]
+            symbol = stakedVault
           }
 
           fAssetPool =
             symbol === FARM_TOKEN_SYMBOL
               ? groupOfVaults[symbol].data
               : find(totalPools, pool => pool.id === symbol)
+
           const token = find(
             groupOfVaults,
             vault =>
               vault.vaultAddress === fAssetPool?.collateralAddress ||
               (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress),
           )
+
           if (token) {
             const useIFARM = symbol === FARM_TOKEN_SYMBOL
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
@@ -679,13 +679,13 @@ const Portfolio = () => {
               ? token.data.collateralAddress
               : token.vaultAddress || token.tokenAddress
 
-            // eslint-disable-next-line no-await-in-loop
             const { sumNetChangeUsd, enrichedData } = await initBalanceAndDetailData(
               paramAddress,
               useIFARM ? token.data.chain : token.chain,
               account,
               token.decimals,
             )
+
             vaultNetChanges.push({ id: symbol, sumNetChangeUsd })
             const enrichedDataWithSymbol = enrichedData.map(data => ({
               ...data,
@@ -694,7 +694,9 @@ const Portfolio = () => {
             combinedEnrichedData = combinedEnrichedData.concat(enrichedDataWithSymbol)
             totalNetProfitUSD += sumNetChangeUsd
           }
-        }
+        })
+
+        await Promise.all(promises)
 
         totalNetProfitUSD = totalNetProfitUSD === 0 ? -1 : totalNetProfitUSD
         setTotalNetProfit(totalNetProfitUSD)

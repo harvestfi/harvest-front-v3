@@ -88,7 +88,7 @@ export function ThemeProvider({ children }) {
     : ''
 
   const toggleColor = darkMode
-    ? 'invert(100%) sepia(100%) saturate(0%) hue-rotate(288deg) brightness(102%) contrast(102%)'
+    ? 'invert(100%) sepia(100%) saturate(300%) hue-rotate(288deg) brightness(120%) contrast(102%)'
     : ''
 
   const mobileFilterBackColor = darkMode ? 'none' : 'white'
