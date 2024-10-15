@@ -181,7 +181,7 @@ const MigrateStart = ({
 
   useEffect(() => {
     setFailureCount(0)
-  }, [token, setFailureCount, supportedVault])
+  }, [token, setFailureCount, supportedVault, pickedToken])
 
   useEffect(() => {
     const getQuoteResult = async () => {

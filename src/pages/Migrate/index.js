@@ -124,6 +124,10 @@ const Migrate = () => {
   ] = useSetChain()
 
   useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
+
+  useEffect(() => {
     if (rates.rateData) {
       setCurrencySym(rates.currency.icon)
       setCurrencyRate(rates.rateData[rates.currency.symbol])

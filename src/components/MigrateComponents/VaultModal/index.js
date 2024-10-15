@@ -738,6 +738,8 @@ const VaultModal = ({
       if (tokenForPick) {
         setPickedToken(tokenForPick)
         setBalance(tokenForPick.balance)
+      } else {
+        setPickedToken(null)
       }
     }
   }, [balanceTokenList, positionAddress, setPickedToken, setBalance]) // eslint-disable-line react-hooks/exhaustive-deps

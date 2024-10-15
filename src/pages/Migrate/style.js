@@ -200,12 +200,12 @@ const Button = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  background: linear-gradient(90deg, #ffc580 0%, #6083ff 48.9%, #6af686 100%);
+  background: #6988ff;
   color: white;
   width: 100%;
 
   &:hover {
-    background: linear-gradient(90deg, #ffc5ff 0%, #6083ff 48.9%, #6af6d5 100%);
+    background: #809aff;
   }
 `
 
@@ -220,12 +220,11 @@ const Buttons = styled.button`
   width: 100%;
 
   &:hover {
-    background: #6988ff;
-    opacity: 0.8;
+    background: #809aff;
   }
 
   &:active {
-    background: #6988ff;
+    background: #809aff;
     opacity: 1;
   }
 `

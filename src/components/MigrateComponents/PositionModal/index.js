@@ -100,9 +100,11 @@ const PositionModal = ({
           const chainId = mToken.chain || mToken.data.chain
           // eslint-disable-next-line no-await-in-loop
           const portalsToken = await getPortalsSupport(chainId, tokenAddress)
-          if (portalsToken.status === 200) {
-            if (portalsToken.data.totalItems !== 0) {
-              filteredMatchList.push(item)
+          if (portalsToken) {
+            if (portalsToken.status === 200) {
+              if (portalsToken.data.totalItems !== 0) {
+                filteredMatchList.push(item)
+              }
             }
           }
         }
