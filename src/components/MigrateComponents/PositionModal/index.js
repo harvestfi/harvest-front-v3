@@ -76,6 +76,7 @@ const PositionModal = ({
 
   useEffect(() => {
     const matchListAry = []
+    const correctMatchList = []
     if (filteredFarmList.length > 0) {
       filteredFarmList.forEach(vault => {
         const findingChain = vault.token.poolVault ? vault.token.data.chain : vault.token.chain
@@ -111,10 +112,16 @@ const PositionModal = ({
       }
 
       filteredMatchList.sort((a, b) => b.balance - a.balance)
+      filteredMatchList.forEach(item => {
+        const unstakeAmount = item.token.poolVault ? item.stake : item.unstake
+        if (Number(unstakeAmount) !== 0) {
+          correctMatchList.push(item)
+        }
+      })
 
       if (filteredMatchList.length > 0) {
-        setNetworkMatchList(filteredMatchList)
-        setCountFarm(filteredMatchList.length)
+        setNetworkMatchList(correctMatchList)
+        setCountFarm(correctMatchList.length)
       }
     }
 

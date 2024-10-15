@@ -153,7 +153,7 @@ const MigrateStart = ({
       : get(token, `pricePerFullShare`, 0)
     pricePerFullShare = fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals)
     tokenChain = token.chain || token.data.chain
-    toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
+    toToken = toUseIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
     fAssetPool = isSpecialVault
       ? token.data
       : find(pools, pool => pool.collateralAddress === tokens[id].vaultAddress)

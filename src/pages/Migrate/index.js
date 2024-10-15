@@ -18,7 +18,7 @@ import COLLAPSED from '../../assets/images/ui/plus.svg'
 import { usePools } from '../../providers/Pools'
 import { addresses } from '../../data'
 import { useWallet } from '../../providers/Wallet'
-import { getChainIcon, getTotalApy, getHighestApy } from '../../utilities/parsers'
+import { getChainIcon, getTotalApy } from '../../utilities/parsers'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useRate } from '../../providers/Rate'
 import AnimatedDots from '../../components/AnimatedDots'
@@ -719,236 +719,82 @@ const Migrate = () => {
     const filteredVaultList = showInactiveFarms
       ? farmTokenList
       : farmTokenList.filter(farm => farm.status === 'Active')
-    let values, newPositionAddress, newVaultAddress, newPositionId, newVaultId, newPosition
-    const chainMatchingList = []
+    const values = queryString.parse(search)
+    const advanceChain = values.chain
 
-    filteredFarmList.sort((a, b) => b.balance - a.balance)
-    filteredFarmList.forEach(farm => {
-      const hChain = farm.token.poolVault ? farm.token.data.chain : farm.token.chain
-      if (hChain === chainId) {
-        chainMatchingList.push(farm)
-      }
-    })
-
-    if (networkMatchList.length > 0) {
-      newPositionAddress = networkMatchList[0].token.vaultAddress
-      newPositionId =
-        networkMatchList[0].token.pool === undefined ? 'FARM' : networkMatchList[0].token.pool.id
-    }
-
-    if (matchVaultList.length > 0) {
-      newVaultAddress = matchVaultList[0].vault.vaultAddress
-      newVaultId =
-        matchVaultList[0].vault.poolVault === undefined
-          ? 'FARM'
-          : matchVaultList[0].vault.token.pool.id
-    }
-
-    if (chainMatchingList.length > 0) {
-      newPosition = chainMatchingList[0]
-    }
-
-    if (!isFromModal && isFromAdvanced) {
-      values = queryString.parse(search)
-      // eslint-disable-next-line array-callback-return, consistent-return
-      const position = Object.entries(groupOfVaults).filter(vault => {
-        const oneVaultAddress = vault[1].vaultAddress
-        if (oneVaultAddress && values) {
-          if (oneVaultAddress.toLowerCase() === values.from.toLowerCase()) {
-            return vault
-          }
-        }
-      })
-      // eslint-disable-next-line array-callback-return, consistent-return
-      const targetApy = Object.entries(groupOfVaults).filter(vault => {
-        const oneVaultAddress = vault[1].vaultAddress
-        if (oneVaultAddress && values) {
-          if (oneVaultAddress.toLowerCase() === values.to.toLowerCase()) {
-            return vault
-          }
-        }
-      })
-
-      const chain = Number(position[0][1].chain)
-
-      setCurChain(chain)
-
-      if (position[0][0] === 'IFARM') {
-        setPositionId('FARM')
-      } else {
-        setPositionId(position[0][0])
-      }
-
-      if (targetApy[0][0] === 'IFARM') {
-        setHighVaultId('FARM')
-      } else {
-        setHighVaultId(targetApy[0][0])
-      }
-
-      if (filteredVaultList.length > 0) {
-        // eslint-disable-next-line array-callback-return, consistent-return
-        const selectedPosition = filteredVaultList.filter(vault => {
-          const oneVaultAddress = vault.token.data
-            ? vault.token.tokenAddress
-            : vault.token.vaultAddress
-          if (oneVaultAddress && values) {
-            if (oneVaultAddress.toLowerCase() === values.from.toLowerCase()) {
-              return vault
-            }
-          }
+    if (!isFromModal && isFromAdvanced && Number(advanceChain) === Number(chainId)) {
+      let fromVault, toVault
+      const urlFromAddress = values.from
+      if (networkMatchList.length > 0 && matchVaultList.length > 0) {
+        const urlFrom = networkMatchList.find(item => {
+          const compareAddress = item.token.poolVault
+            ? item.token.tokenAddress
+            : item.token.vaultAddress
+          return compareAddress.toLowerCase() === urlFromAddress.toLowerCase()
         })
-
-        const fromVault = selectedPosition[0]
-
-        if (fromVault && positionId && highVaultId && chainId.toString() === chain.toString()) {
-          const highApy = getHighestApy(groupOfVaults, chain, vaultsData, pools)
-
-          if (supportedVaultDepo && curSupportedVaultWith) {
-            setHighestPosition(fromVault)
-            setHighestApyVault(highApy)
-          } else if (supportedVaultDepo && !curSupportedVaultWith) {
-            if (networkMatchList.length > 0) {
-              setHighestPosition(networkMatchList[0])
-              setPositionVaultAddress(newPositionAddress)
-              setHighestApyVault(highApy)
-            }
-          } else if (!supportedVaultDepo && curSupportedVaultWith) {
-            if (matchVaultList.length > 0) {
-              setHighestPosition(fromVault)
-              setHighestVaultAddress(newVaultAddress)
-              setHighestApyVault(matchVaultList[0])
-            }
-          } else if (!supportedVaultDepo && !curSupportedVaultWith) {
-            if (matchVaultList.length > 0 && networkMatchList.lenght > 0) {
-              setHighestPosition(networkMatchList[0])
-              setHighestApyVault(matchVaultList[0])
-              setPositionVaultAddress(newPositionAddress)
-              setHighestVaultAddress(newVaultAddress)
-            }
-          }
-
-          setButtonName('Preview & Migrate')
-
-          setTokenWith(groupOfVaults[positionId])
-          setTokenDepo(groupOfVaults[highVaultId])
-        } else if (
-          newPosition &&
-          positionId &&
-          highVaultId &&
-          chainId.toString() !== chain.toString()
-        ) {
-          const id = newPosition.token.data ? 'FARM' : newPosition.token.pool.id
-          const highApy = getHighestApy(groupOfVaults, Number(chainId), vaultsData, pools)
-          const choosenId = highApy.vault.pool === undefined ? 'IFARM' : highApy.vault.pool.id
-          const newChain = newPosition.token.data
-            ? Number(newPosition.token.data.chain)
-            : Number(newPosition.token.chain)
-          const newAddressPosition = newPosition.token.poolVault
-            ? newPosition.token.tokenAddress
-            : newPosition.token.vaultAddress
-
-          if (supportedVaultDepo && curSupportedVaultWith) {
-            setHighestPosition(newPosition)
-            setHighestApyVault(highApy)
-            setPositionId(id)
-            setHighVaultId(choosenId)
-            setPositionVaultAddress(newAddressPosition)
-            setHighestVaultAddress(highApy.vault.vaultAddress)
-          } else if (supportedVaultDepo && !curSupportedVaultWith) {
-            if (networkMatchList.length > 0) {
-              setHighestPosition(networkMatchList[0])
-              setPositionVaultAddress(newPositionAddress)
-              setHighestVaultAddress(highApy.vault.vaultAddress)
-              setHighestApyVault(highApy)
-              setPositionId(newPositionId)
-              setHighVaultId(choosenId)
-            }
-          } else if (!supportedVaultDepo && curSupportedVaultWith) {
-            if (matchVaultList.length > 0) {
-              setHighestPosition(newPosition)
-              setHighestVaultAddress(newVaultAddress)
-              setPositionVaultAddress(newAddressPosition)
-              setHighestApyVault(matchVaultList[0])
-              setPositionId(id)
-              setHighVaultId(newVaultId)
-            }
-          } else if (!supportedVaultDepo && !curSupportedVaultWith) {
-            if (matchVaultList.length > 0 && networkMatchList.lenght > 0) {
-              setHighestPosition(networkMatchList[0])
-              setHighestApyVault(matchVaultList[0])
-              setPositionVaultAddress(newPositionAddress)
-              setHighestVaultAddress(newVaultAddress)
-              setPositionId(newPositionId)
-              setHighVaultId(newVaultId)
-            }
-          }
-
-          setButtonName('Preview & Migrate')
-
-          setCurChain(newChain)
-          setTokenWith(groupOfVaults[id.toString()])
-          setHighVaultId(choosenId)
-          setTokenDepo(groupOfVaults[choosenId.toString()])
+        if (urlFrom) {
+          fromVault = urlFrom
+        } else {
+          fromVault = networkMatchList[0]
         }
-      }
-    }
-
-    if (!isFromModal && !isFromAdvanced && filteredVaultList.length > 0) {
-      let fromVault
-      if (chainMatchingList.length > 0) {
-        fromVault = chainMatchingList[0]
+        toVault = matchVaultList[0]
       }
 
-      if (fromVault) {
-        const id = fromVault.token.data ? 'FARM' : fromVault.token.pool.id
+      if (fromVault && toVault) {
+        const fromId = fromVault.token.poolVault ? 'FARM' : fromVault.token.pool.id
+        const toId = toVault.vault.poolVault ? 'Farm' : toVault.vault.pool.id
+        const fromAddress = fromVault.token.poolVault
+          ? fromVault.token.tokenAddress
+          : fromVault.token.vaultAddress
+        const toAddress = toVault.vault.vaultAddress
         const chain = fromVault.token.data
           ? Number(fromVault.token.data.chain)
           : Number(fromVault.token.chain)
-        const highApy = getHighestApy(groupOfVaults, chain, vaultsData, pools)
-        const choosenId = highApy.vault.pool === undefined ? 'IFARM' : highApy.vault.pool.id
 
-        if (supportedVaultDepo && curSupportedVaultWith) {
-          setHighestPosition(fromVault)
-          setHighestApyVault(highApy)
-          setPositionId(id)
-          setHighVaultId(choosenId)
-          setPositionVaultAddress(fromVault.token.vaultAddress)
-          setHighestVaultAddress(highApy.vault.vaultAddress)
-        } else if (supportedVaultDepo && !curSupportedVaultWith) {
-          if (networkMatchList.length > 0) {
-            setHighestPosition(networkMatchList[0])
-            setPositionVaultAddress(newPositionAddress)
-            setHighestVaultAddress(highApy.vault.vaultAddress)
-            setHighestApyVault(highApy)
-            setPositionId(newPositionId)
-            setHighVaultId(choosenId)
-          }
-        } else if (!supportedVaultDepo && curSupportedVaultWith) {
-          if (matchVaultList.length > 0) {
-            setHighestPosition(fromVault)
-            setHighestVaultAddress(newVaultAddress)
-            setPositionVaultAddress(fromVault.token.vaultAddress)
-            setHighestApyVault(matchVaultList[0])
-            setPositionId(id)
-            setHighVaultId(newVaultId)
-          }
-        } else if (!supportedVaultDepo && !curSupportedVaultWith) {
-          if (matchVaultList.length > 0 && networkMatchList.lenght > 0) {
-            setHighestPosition(networkMatchList[0])
-            setHighestApyVault(matchVaultList[0])
-            setPositionVaultAddress(newPositionAddress)
-            setHighestVaultAddress(newVaultAddress)
-            setPositionId(newPositionId)
-            setHighVaultId(newVaultId)
-          }
-        }
-
+        setHighestPosition(fromVault)
+        setHighestApyVault(toVault)
+        setPositionVaultAddress(fromAddress)
+        setHighestVaultAddress(toAddress)
+        setPositionId(fromId)
+        setHighVaultId(toId)
+        setTokenWith(groupOfVaults[fromId.toString()])
+        setTokenDepo(groupOfVaults[toId.toString()])
         setButtonName('Preview & Migrate')
-
         setCurChain(chain)
-        setTokenWith(groupOfVaults[id.toString()])
-        setHighVaultId(choosenId)
-        setTokenDepo(groupOfVaults[choosenId.toString()])
+      }
+    }
+
+    if (
+      (!isFromModal && !isFromAdvanced && filteredVaultList.length > 0) ||
+      Number(advanceChain) !== Number(chainId)
+    ) {
+      let fromVault, toVault
+      if (networkMatchList.length > 0 && matchVaultList.length > 0) {
+        fromVault = networkMatchList[0]
+        toVault = matchVaultList[0]
+      }
+
+      if (fromVault && toVault) {
+        const fromId = fromVault.token.poolVault ? 'FARM' : fromVault.token.pool.id
+        const toId = toVault.vault.poolVault ? 'Farm' : toVault.vault.pool.id
+        const fromAddress = fromVault.token.poolVault
+          ? fromVault.token.tokenAddress
+          : fromVault.token.vaultAddress
+        const toAddress = toVault.vault.vaultAddress
+        const chain = fromVault.token.data
+          ? Number(fromVault.token.data.chain)
+          : Number(fromVault.token.chain)
+
+        setHighestPosition(fromVault)
+        setHighestApyVault(toVault)
+        setPositionVaultAddress(fromAddress)
+        setHighestVaultAddress(toAddress)
+        setPositionId(fromId)
+        setHighVaultId(toId)
+        setTokenWith(groupOfVaults[fromId.toString()])
+        setTokenDepo(groupOfVaults[toId.toString()])
+        setButtonName('Preview & Migrate')
+        setCurChain(chain)
       }
     }
 
@@ -1308,6 +1154,7 @@ const Migrate = () => {
             setId={setHighVaultId}
             setToken={setTokenDepo}
             token={tokenDepo}
+            tokenWith={tokenWith}
             addresses={addresses}
             account={account}
             balances={balances}
@@ -1322,6 +1169,8 @@ const Migrate = () => {
             convertSuccess={convertSuccess}
             setStartPoint={setStartPoint}
             startPoint={startPoint}
+            currencyRate={currencyRate}
+            userStats={userStats}
           />
           <NewLabel
             display="flex"

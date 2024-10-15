@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react'
+// import { get, find } from 'lodash'
+import { get } from 'lodash'
 import Modal from 'react-bootstrap/Modal'
 import { BsArrowDown } from 'react-icons/bs'
 import BigNumber from 'bignumber.js'
@@ -11,7 +13,7 @@ import AnimatedDots from '../../AnimatedDots'
 import { formatNetworkName, formatNumber, formatNumberWido } from '../../../utilities/formats'
 import VaultList from '../VaultList'
 import { getMatchedVaultList } from '../../../utilities/parsers'
-import { FARM_TOKEN_SYMBOL, BEGINNERS_BALANCES_DECIMALS } from '../../../constants'
+import { FARM_TOKEN_SYMBOL, BEGINNERS_BALANCES_DECIMALS, MAX_DECIMALS } from '../../../constants'
 import { usePortals } from '../../../providers/Portals'
 import { VaultBox } from '../PositionList/style'
 
@@ -50,6 +52,7 @@ const VaultModal = ({
   convertSuccess,
   startPoint,
   setStartPoint,
+  // userStats,
 }) => {
   const { darkMode, inputFontColor, fontColor } = useThemeContext()
   const [countFarm, setCountFarm] = useState(0)
@@ -717,29 +720,82 @@ const VaultModal = ({
   }, [supTokenNoBalanceList, balanceList, chain, defaultCurToken, defaultToken, getPortalsToken])
 
   useEffect(() => {
-    let tokenForPick
-    if (balanceTokenList.length > 0 && positionAddress) {
-      const matchingVault = Object.entries(groupOfVaults).find(item => {
-        const compareAddress = item[1].poolVault ? item[1].tokenAddress : item[1].vaultAddress
+    // let tokenForPick
+    // if (balanceTokenList.length > 0 && positionAddress) {
+    //   const matchingVault = Object.entries(groupOfVaults).find(item => {
+    //     const compareAddress = item[1].poolVault ? item[1].tokenAddress : item[1].vaultAddress
+    //     return compareAddress.toLowerCase() === positionAddress.toLowerCase()
+    //   })
+    //   if (matchingVault) {
+    //     tokenForPick = balanceTokenList.find(item => {
+    //       if (item.address.toLowerCase() === matchingVault[1].tokenAddress.toLowerCase()) {
+    //         return item
+    //       }
+    //       if (item.address.toLowerCase() === positionAddress.toLowerCase()) {
+    //         return item
+    //       }
+    //       return null
+    //     })
+    //   }
+
+    //   if (tokenForPick) {
+    //     setPickedToken(tokenForPick)
+    //     setBalance(tokenForPick.balance)
+    //   } else {
+    //     setPickedToken(null)
+    //   }
+    // }
+
+    if (filteredFarmList.length > 0 && positionAddress) {
+      const matchingVault = filteredFarmList.find(item => {
+        const compareAddress = item.token.poolVault
+          ? item.token.tokenAddress
+          : item.token.vaultAddress
         return compareAddress.toLowerCase() === positionAddress.toLowerCase()
       })
-      if (matchingVault) {
-        tokenForPick = balanceTokenList.find(item => {
-          if (item.address.toLowerCase() === matchingVault[1].tokenAddress.toLowerCase()) {
-            return item
-          }
-          if (item.address.toLowerCase() === positionAddress.toLowerCase()) {
-            return item
-          }
-          return null
-        })
-      }
 
-      if (tokenForPick) {
-        setPickedToken(tokenForPick)
-        setBalance(tokenForPick.balance)
-      } else {
-        setPickedToken(null)
+      if (matchingVault) {
+        let staked, unstaked, total
+        const useIFARM1 = matchingVault.token.poolVault
+
+        if (useIFARM1) {
+          staked = matchingVault.stake
+          unstaked = Number(
+            fromWei(
+              get(balances, FARM_TOKEN_SYMBOL, 0),
+              tokens[FARM_TOKEN_SYMBOL].decimals,
+              MAX_DECIMALS,
+              true,
+            ),
+          )
+          total = staked
+        } else {
+          staked = matchingVault.stake
+
+          unstaked = matchingVault.unstake
+
+          total = unstaked
+          // amountBalanceUSD = total * usdPrice * Number(currencyRate)
+        }
+        const newAddress = matchingVault.token.poolVault
+          ? matchingVault.token.tokenAddress
+          : matchingVault.token.vaultAddress
+        const newSymbol = matchingVault.token.poolVault
+          ? 'iFARM'
+          : `f${matchingVault.token.pool.id}`
+        const newToken = {
+          address: newAddress,
+          balance: total,
+          chain,
+          decimals: Number(matchingVault.token.decimals),
+          default: false,
+          symbol: newSymbol,
+        }
+
+        if (newToken) {
+          setPickedToken(newToken)
+          setBalance(newToken.balance)
+        }
       }
     }
   }, [balanceTokenList, positionAddress, setPickedToken, setBalance]) // eslint-disable-line react-hooks/exhaustive-deps
