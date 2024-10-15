@@ -9,7 +9,7 @@ import { useHistory } from 'react-router-dom'
 import { Spinner } from 'react-bootstrap'
 import { useWallet } from '../../../providers/Wallet'
 import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../../constants'
-import { toWei, fromWei, getWeb3 } from '../../../services/web3'
+import { toWei, fromWei, getWeb3, checkNativeToken } from '../../../services/web3'
 import { isSpecialApp, showTokenBalance } from '../../../utilities/formats'
 import { FTokenInfo, IconCard, ImgBtn } from '../PositionModal/style'
 import { usePortals } from '../../../providers/Portals'
@@ -66,6 +66,7 @@ const MigrateStart = ({
   isNaN,
   highestVaultAddress,
   networkName,
+  balance,
 }) => {
   // const [hasErrorOccurred, setHasErrorOccurred] = useState(0)
   const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('0')
@@ -214,24 +215,38 @@ const MigrateStart = ({
               .toString()
             outputAmountDefault = toWei(outputAmountDefaultDecimals, pickedToken.decimals, 0)
           } else if (supportedVault) {
+            let newInputAmount
+
+            if (checkNativeToken(pickedToken)) {
+              newInputAmount = new BigNumber(
+                Math.floor(Number(balance) * 0.95 * 100000) / 100000,
+              ).toString()
+            } else {
+              newInputAmount = new BigNumber(balance).toString()
+            }
+
+            const newAmount = toWei(newInputAmount, pickedToken.decimals, 0)
+
             portalsEstimate = await getPortalsEstimate({
               chainId,
               tokenIn: fromToken,
-              inputAmount: amount,
+              inputAmount: newAmount,
               tokenOut: toToken,
               slippage,
               sender: overBalance ? null : account,
             })
 
-            if (portalsEstimate && portalsEstimate.res.message === 'outputToken not found') {
-              setSupportedVault(false)
-            } else {
-              setSupportedVault(true)
+            if (portalsEstimate) {
+              if (portalsEstimate.res.message === 'outputToken not found') {
+                setSupportedVault(false)
+              } else {
+                setSupportedVault(true)
+              }
             }
           }
 
           if (pickedDefaultToken || (portalsEstimate && portalsEstimate.succeed)) {
-            let fromTokenUsdPrice, toTokenUsdPrice
+            let fromTokenUsdPrice, toTokenUsdPrice, newInputAmount
             if (pickedDefaultToken) {
               fromTokenUsdPrice = pickedToken.usdPrice
               toTokenUsdPrice = Number(pickedToken.usdPrice) * Number(pricePerFullShare)
@@ -242,8 +257,18 @@ const MigrateStart = ({
               toTokenUsdPrice = toTokenDetail?.price
             }
 
+            if (checkNativeToken(pickedToken)) {
+              newInputAmount = new BigNumber(
+                Math.floor(Number(balance) * 0.95 * 100000) / 100000,
+              ).toString()
+            } else {
+              newInputAmount = new BigNumber(balance).toString()
+            }
+
+            const newAmount = toWei(newInputAmount, pickedToken.decimals, 0)
+
             const quoteResult = {
-              fromTokenAmount: amount,
+              fromTokenAmount: newAmount,
               fromTokenUsdPrice,
               minToTokenAmount: pickedDefaultToken
                 ? outputAmountDefault
@@ -670,7 +695,7 @@ const MigrateStart = ({
                   )
                 ) : minReceiveAmountString === '-' ? (
                   <AnimatedDots />
-                ) : minReceiveAmountString !== '' ? (
+                ) : minReceiveAmountString !== '' && fromInfoAmount !== '-' ? (
                   showTokenBalance(minReceiveAmountString)
                 ) : (
                   <AnimateDotDiv>
@@ -691,7 +716,7 @@ const MigrateStart = ({
                     )
                   ) : minReceiveUsdAmount === 'NaN' || minReceiveUsdAmount === '-' ? (
                     <AnimatedDots />
-                  ) : minReceiveUsdAmount !== '' ? (
+                  ) : minReceiveUsdAmount !== '' && fromInfoAmount !== '-' ? (
                     `${minReceiveUsdAmount}`
                   ) : (
                     <AnimatedDots />

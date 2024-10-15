@@ -1453,6 +1453,7 @@ const Migrate = () => {
             isNaN={isNaN}
             highestVaultAddress={highestVaultAddress}
             networkName={networkName}
+            balance={balance}
           />
         </MigrateBox>
         <NewLabel
