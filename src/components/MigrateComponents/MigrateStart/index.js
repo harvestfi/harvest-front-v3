@@ -380,6 +380,7 @@ const MigrateStart = ({
     setFailureCount,
     pickedDefaultToken,
     toToken,
+    balance,
   ])
 
   const onDeposit = async () => {
