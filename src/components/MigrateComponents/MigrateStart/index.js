@@ -357,9 +357,8 @@ const MigrateStart = ({
     }
 
     getQuoteResult()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    amount,
-    inputAmount,
     account,
     chainId,
     curChain,
@@ -370,14 +369,6 @@ const MigrateStart = ({
     tokenChain,
     useIFARM,
     failureCount,
-    getPortalsEstimate,
-    getPortalsToken,
-    pickedToken,
-    pricePerFullShare,
-    setSupportedVault,
-    supportedVault,
-    addresses,
-    setFailureCount,
     pickedDefaultToken,
     toToken,
     balance,
