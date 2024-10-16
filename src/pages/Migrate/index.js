@@ -766,7 +766,7 @@ const Migrate = () => {
 
     if (
       (!isFromModal && !isFromAdvanced && filteredVaultList.length > 0) ||
-      Number(advanceChain) !== Number(chainId)
+      (Number(advanceChain) !== Number(chainId) && !isFromModal)
     ) {
       let fromVault, toVault
       if (networkMatchList.length > 0 && matchVaultList.length > 0) {
