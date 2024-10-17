@@ -18,7 +18,7 @@ const PositionList = ({
   groupOfVaults,
 }) => {
   const vaultAddress = matchVault.token.poolVault
-    ? matchVault.token.tokenAddress
+    ? '0xa0246c9032bC3A600820415aE600c6388619A14D'
     : matchVault.token.vaultAddress
   const vaultName = matchVault.token.tokenNames
   const id = matchVault.token.poolVault ? 'FARM' : matchVault.token.pool.id
