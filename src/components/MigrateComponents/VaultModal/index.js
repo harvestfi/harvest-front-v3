@@ -123,7 +123,11 @@ const VaultModal = ({
         const newArray = activedList.slice(0, 10)
         // eslint-disable-next-line no-restricted-syntax
         for (const item of newArray) {
-          if (item.vaultApy !== 0) {
+          if (
+            item.vaultApy !== 0 &&
+            item.vault.vaultAddress !== '0x47e3daF382C4603450905fb68766DB8308315407'
+          ) {
+            console.log('item', item)
             const mToken = item.vault
             const tokenAddress = useIFARM
               ? addresses.iFARM

@@ -830,8 +830,8 @@ const Migrate = () => {
         toVault = matchVaultList[0]
         toId = toVault.vault.poolVault ? 'Farm' : toVault.vault.pool.id
         toAddress = toVault.vault.vaultAddress
-        secToVault = matchVaultList[0]
-        secToId = secToVault.vault.poolVault ? 'Farm' : toVault.vault.pool.id
+        secToVault = matchVaultList[1]
+        secToId = secToVault.vault.poolVault ? 'Farm' : secToVault.vault.pool.id
         secToAddress = secToVault.vault.vaultAddress
       }
 
