@@ -31,7 +31,9 @@ const VaultList = ({
   setId,
   groupOfVaults,
 }) => {
-  const vaultAddress = matchVault.vault.vaultAddress
+  const vaultAddress = matchVault.vault.poolVault
+    ? matchVault.vault.tokenAddress
+    : matchVault.vault.vaultAddress
   const vaultName = matchVault.vault.tokenNames
   const chainUrl =
     chainId === 42161

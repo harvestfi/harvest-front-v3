@@ -82,6 +82,7 @@ const VaultModal = ({
 
   const useIFARM = id === FARM_TOKEN_SYMBOL
   const filterWord = ''
+  const specialToken = groupOfVaults[FARM_TOKEN_SYMBOL]
 
   let tokenDecimals
 
@@ -109,9 +110,9 @@ const VaultModal = ({
     const fetchSupportedMatches = async () => {
       const filteredMatchList = []
 
-      if (matched.length > 0) {
-        matched.sort((a, b) => b.vaultApy - a.vaultApy)
-        const newArray = matched.slice(0, 10)
+      if (activedList.length > 0) {
+        activedList.sort((a, b) => b.vaultApy - a.vaultApy)
+        const newArray = activedList.slice(0, 10)
         // eslint-disable-next-line no-restricted-syntax
         for (const item of newArray) {
           if (item.vaultApy !== 0) {
@@ -141,7 +142,7 @@ const VaultModal = ({
     }
 
     fetchSupportedMatches()
-  }, [chain, pools, setMatchVaultList]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [chain, pools, setMatchVaultList, specialToken.profitShareAPY]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchMoreMatches = async () => {
     if (!isEnd) {
