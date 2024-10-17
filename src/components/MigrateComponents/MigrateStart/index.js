@@ -638,7 +638,7 @@ const MigrateStart = ({
         </FTokenInfo>
       </Modal.Header>
       <Modal.Body className="migrate-start-modal-body">
-        {showNote && (
+        {showNote && highestPosition && (
           <NewLabel
             display="flex"
             justifyContent="space-between"

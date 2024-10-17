@@ -845,6 +845,7 @@ const Migrate = () => {
       } else if (connected) {
         setButtonName(<AnimatedDots />)
         setHighestApyVault()
+        setHighestPosition()
         if (fromVault && toVault) {
           const chain = fromVault.token.data
             ? Number(fromVault.token.data.chain)
@@ -1162,6 +1163,7 @@ const Migrate = () => {
             setNetworkMatchList={setNetworkMatchList}
             networkMatchList={networkMatchList}
             setNoPosition={setNoPosition}
+            connected={connected}
           />
           <BoxTitle color={darkMode ? '#ffffff' : '#475467'}>Migrate to</BoxTitle>
           <VaultBox

@@ -44,6 +44,7 @@ const PositionModal = ({
   setNetworkMatchList,
   networkMatchList,
   setNoPosition,
+  connected,
 }) => {
   const [countFarm, setCountFarm] = useState(0)
   // const [balanceList, setBalanceList] = useState([])
@@ -74,6 +75,11 @@ const PositionModal = ({
   // }
 
   const useIFARM = id === FARM_TOKEN_SYMBOL
+
+  useEffect(() => {
+    setNetworkMatchList([])
+    setNoPosition(false)
+  }, [connected]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const matchListAry = []
