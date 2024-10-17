@@ -836,12 +836,6 @@ const Migrate = () => {
           setTokenDepo(groupOfVaults[toId.toString()])
           setButtonName('Connect Wallet')
         }
-      } else if (!fromVault && toVault) {
-        setNoPosition(true)
-        setHighestApyVault(toVault)
-        setHighestVaultAddress(toAddress)
-        setTokenDepo(groupOfVaults[toId.toString()])
-        setButtonName('Preview & Migrate')
       } else if (fromVault && toVault) {
         const chain = fromVault.token.data
           ? Number(fromVault.token.data.chain)
@@ -864,12 +858,20 @@ const Migrate = () => {
         setTokenWith(groupOfVaults[fromId.toString()])
         setButtonName('Preview & Migrate')
         setCurChain(chain)
+        setNoPosition(false)
+      } else if (!fromVault && toVault) {
+        setNoPosition(true)
+        setHighestApyVault(toVault)
+        setHighestVaultAddress(toAddress)
+        setTokenDepo(groupOfVaults[toId.toString()])
+        setButtonName('Preview & Migrate')
       }
     }
 
     setFilteredFarmList(filteredVaultList)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
+    connected,
     showInactiveFarms,
     farmTokenList,
     highestPosition,
@@ -889,6 +891,7 @@ const Migrate = () => {
     networkName,
     positionId,
     positionVaultAddress,
+    pickedTokenWith,
   ])
 
   useEffect(() => {
@@ -1400,6 +1403,8 @@ const Migrate = () => {
             highestVaultAddress={highestVaultAddress}
             networkName={networkName}
             balance={balance}
+            highestPosition={highestPosition}
+            positionAddress={positionVaultAddress}
           />
         </MigrateBox>
         <NewLabel

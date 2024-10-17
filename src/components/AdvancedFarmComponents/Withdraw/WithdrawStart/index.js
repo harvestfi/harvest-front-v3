@@ -333,7 +333,7 @@ const WithdrawStart = ({
       setPlatformNames(secHighApyVault.vault.platform)
       setTopApyVault(secHighApyVault.vaultApy)
     }
-  }, [highestApyVault, secHighApyVault])
+  }, [highestApyVault, secHighApyVault, token])
 
   return (
     <Modal

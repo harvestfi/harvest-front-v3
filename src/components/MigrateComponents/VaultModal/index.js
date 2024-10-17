@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 // import { get, find } from 'lodash'
-import { get } from 'lodash'
+// import { get } from 'lodash'
 import Modal from 'react-bootstrap/Modal'
 import { BsArrowDown } from 'react-icons/bs'
 import BigNumber from 'bignumber.js'
@@ -13,7 +13,7 @@ import AnimatedDots from '../../AnimatedDots'
 import { formatNetworkName, formatNumber, formatNumberWido } from '../../../utilities/formats'
 import VaultList from '../VaultList'
 import { getMatchedVaultList } from '../../../utilities/parsers'
-import { FARM_TOKEN_SYMBOL, BEGINNERS_BALANCES_DECIMALS, MAX_DECIMALS } from '../../../constants'
+import { FARM_TOKEN_SYMBOL, BEGINNERS_BALANCES_DECIMALS } from '../../../constants'
 import { usePortals } from '../../../providers/Portals'
 import { VaultBox } from '../PositionList/style'
 
@@ -755,26 +755,21 @@ const VaultModal = ({
       })
 
       if (matchingVault) {
-        let staked, unstaked, total
+        let staked, unstaked, total, hasStakeUnstake
         const useIFARM1 = matchingVault.token.poolVault
 
         if (useIFARM1) {
           staked = matchingVault.stake
-          unstaked = Number(
-            fromWei(
-              get(balances, FARM_TOKEN_SYMBOL, 0),
-              tokens[FARM_TOKEN_SYMBOL].decimals,
-              MAX_DECIMALS,
-              true,
-            ),
-          )
+          unstaked = matchingVault.unstake
           total = staked
+          hasStakeUnstake = unstaked
         } else {
           staked = matchingVault.stake
 
           unstaked = matchingVault.unstake
 
           total = unstaked
+          hasStakeUnstake = staked
           // amountBalanceUSD = total * usdPrice * Number(currencyRate)
         }
         const newAddress = matchingVault.token.poolVault
@@ -790,6 +785,7 @@ const VaultModal = ({
           decimals: Number(matchingVault.token.decimals),
           default: false,
           symbol: newSymbol,
+          staked: Number(hasStakeUnstake),
         }
 
         if (newToken) {

@@ -18,6 +18,8 @@ import ClockIcon from '../../../assets/images/ui/clock.svg'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import AnimatedDots from '../../AnimatedDots'
 import { usePools } from '../../../providers/Pools'
+import StakeIcon from '../../../assets/images/ui/last.svg'
+import StakeCross from '../../../assets/images/ui/purple-cross.svg'
 import { Buttons } from '../../../pages/Migrate/style'
 import {
   AnimateDotDiv,
@@ -30,6 +32,7 @@ import {
   SlippageInput,
   SlippageBtn,
   NewLabel,
+  StakeIconBox,
 } from '../../AdvancedFarmComponents/Deposit/DepositStart/style'
 import AlertIcon from '../../../assets/images/logos/beginners/alert-triangle.svg'
 import AlertCloseIcon from '../../../assets/images/logos/beginners/alert-close.svg'
@@ -67,6 +70,8 @@ const MigrateStart = ({
   highestVaultAddress,
   networkName,
   balance,
+  highestPosition,
+  positionAddress,
 }) => {
   // const [hasErrorOccurred, setHasErrorOccurred] = useState(0)
   const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('0')
@@ -84,6 +89,7 @@ const MigrateStart = ({
   const [slippagePercentage, setSlippagePercentage] = useState(null)
   const [customSlippage, setCustomSlippage] = useState(null)
   const [slippageBtnLabel, setSlippageBtnLabel] = useState('Save')
+  const [showNote, setShowNote] = useState(false)
 
   const { account, chainId, web3, approvedBalances, getWalletBalances } = useWallet()
   const {
@@ -182,6 +188,14 @@ const MigrateStart = ({
   useEffect(() => {
     setFailureCount(0)
   }, [token, setFailureCount, supportedVault, pickedToken])
+
+  useEffect(() => {
+    if (pickedToken) {
+      if (pickedToken.staked !== 0) {
+        setShowNote(true)
+      }
+    }
+  }, [pickedToken])
 
   useEffect(() => {
     const getQuoteResult = async () => {
@@ -560,6 +574,10 @@ const MigrateStart = ({
     }
   }
 
+  const crossNote = () => {
+    setShowNote(false)
+  }
+
   return (
     <Modal
       show={showMigrate}
@@ -619,11 +637,56 @@ const MigrateStart = ({
         </FTokenInfo>
       </Modal.Header>
       <Modal.Body className="migrate-start-modal-body">
+        {showNote && (
+          <NewLabel
+            display="flex"
+            justifyContent="space-between"
+            flexFlow="column"
+            items="center"
+            padding="15px 24px 0px 24px"
+          >
+            <NewLabel
+              display="flex"
+              justifyContent="space-between"
+              padding="16px"
+              align="flex-start"
+              bgColor="#FCFAFF"
+              border="1px solid #D6BBFB"
+              borderRadius="12px"
+            >
+              <StakeIconBox src={StakeIcon} alt="stake Icon" width="17px" height="17px" />
+              <NewLabel marginRight="12px" marginLeft="12px">
+                <NewLabel weight="600" size="12px" height="20px" color="#6941C6">
+                  Note: Staked fTokens Detected
+                </NewLabel>
+                <NewLabel weight="400" color="#6941C6" height="20px" size="10px">
+                  To fully migrate your position, unstake fTokens of the{' '}
+                  <a
+                    href={`${window.location.origin}/${networkName}/${positionAddress}#rewards`}
+                    style={{ fontWeight: '600', color: '#6941C6' }}
+                  >
+                    {highestPosition.token.tokenNames.join(', ')} Strategy
+                  </a>{' '}
+                  via the Rewards tab first. You can also proceed with partial migration with
+                  unstaked fTokens of the selected strategy.
+                </NewLabel>
+              </NewLabel>
+              <StakeIconBox
+                src={StakeCross}
+                alt="stake Icon"
+                width="10px"
+                height="10px"
+                onClick={crossNote}
+                cursor="pointer"
+              />
+            </NewLabel>
+          </NewLabel>
+        )}
         <NewLabel display="flex" justifyContent="space-between" flexFlow="column" items="center">
           <NewLabel
             display="flex"
             justifyContent="space-between"
-            marginTop="30px"
+            marginTop="15px"
             padding="10px 24px"
             color={darkMode ? '#ffffff' : '#344054'}
             width="100%"
