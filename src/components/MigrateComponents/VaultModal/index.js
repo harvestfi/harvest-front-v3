@@ -92,6 +92,12 @@ const VaultModal = ({
   }
 
   useEffect(() => {
+    setNewMatchesList([])
+    setIsEnd(false)
+    setStartPoint(10)
+  }, [connected])
+
+  useEffect(() => {
     let matched = []
     const activedList = []
     if (chain) {
