@@ -28,6 +28,10 @@ import PositionModal from '../../components/MigrateComponents/PositionModal'
 import VaultModal from '../../components/MigrateComponents/VaultModal'
 import { NewLabel } from '../../components/MigrateComponents/PositionModal/style'
 import Accordian from '../../components/MigrateComponents/Accordian'
+import ARBITRUM from '../../assets/images/logos/badge/arbitrum.svg'
+import POLIGON from '../../assets/images/logos/badge/polygon.svg'
+import ZKSYNC from '../../assets/images/logos/badge/zksync.svg'
+import BASE from '../../assets/images/logos/badge/base.svg'
 import {
   getTokenPriceFromApi,
   getUserBalanceVaults,
@@ -71,7 +75,7 @@ const Migrate = () => {
 
   const { vaultsData, getFarmingBalances } = useVaults()
   const { profitShareAPY } = useStats()
-  const { account, balances, getWalletBalances, chainId } = useWallet()
+  const { account, balances, getWalletBalances, chainId, connected, connectAction } = useWallet()
   const { userStats, fetchUserPoolStats, totalPools, pools } = usePools()
   const { rates } = useRate()
   /* eslint-disable global-require */
@@ -115,6 +119,7 @@ const Migrate = () => {
   const [buttonName, setButtonName] = useState(<AnimatedDots />)
   const [networkName, setNetworkName] = useState('')
   const [startPoint, setStartPoint] = useState(10)
+  const [chainUrl, setChainUrl] = useState()
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const isFromAdvanced = location.search.includes('from=')
@@ -122,6 +127,20 @@ const Migrate = () => {
     ,
     setChain, // function to call to initiate user to switch chains in their wallet
   ] = useSetChain()
+
+  useEffect(() => {
+    const badgeUrl =
+      Number(chainId) === 42161
+        ? ARBITRUM
+        : Number(chainId) === 8453
+        ? BASE
+        : Number(chainId) === 324
+        ? ZKSYNC
+        : Number(chainId) === 137
+        ? POLIGON
+        : ETHEREUM
+    setChainUrl(badgeUrl)
+  }, [chainId])
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -768,19 +787,28 @@ const Migrate = () => {
       (!isFromModal && !isFromAdvanced && filteredVaultList.length > 0) ||
       (Number(advanceChain) !== Number(chainId) && !isFromModal)
     ) {
-      let fromVault, toVault
-      if (networkMatchList.length > 0 && matchVaultList.length > 0) {
+      let fromVault, toVault, fromId, toId, fromAddress, toAddress
+      if (networkMatchList.length > 0) {
         fromVault = networkMatchList[0]
-        toVault = matchVaultList[0]
-      }
-
-      if (fromVault && toVault) {
-        const fromId = fromVault.token.poolVault ? 'FARM' : fromVault.token.pool.id
-        const toId = toVault.vault.poolVault ? 'Farm' : toVault.vault.pool.id
-        const fromAddress = fromVault.token.poolVault
+        fromId = fromVault.token.poolVault ? 'FARM' : fromVault.token.pool.id
+        fromAddress = fromVault.token.poolVault
           ? fromVault.token.tokenAddress
           : fromVault.token.vaultAddress
-        const toAddress = toVault.vault.vaultAddress
+      }
+      if (matchVaultList.length > 0) {
+        toVault = matchVaultList[0]
+        toId = toVault.vault.poolVault ? 'Farm' : toVault.vault.pool.id
+        toAddress = toVault.vault.vaultAddress
+      }
+
+      if (!connected) {
+        if (toVault) {
+          setHighestApyVault(toVault)
+          setHighestVaultAddress(toAddress)
+          setTokenDepo(groupOfVaults[toId.toString()])
+          setButtonName('Connect Wallet')
+        }
+      } else if (fromVault && toVault) {
         const chain = fromVault.token.data
           ? Number(fromVault.token.data.chain)
           : Number(fromVault.token.chain)
@@ -848,6 +876,10 @@ const Migrate = () => {
   }
 
   const onClickMigrate = async () => {
+    if (!connected) {
+      connectAction()
+      return
+    }
     if (chainId && curChain) {
       if (chainId.toString() !== curChain.toString()) {
         const chainHex = `0x${Number(curChain).toString(16)}`
@@ -968,46 +1000,55 @@ const Migrate = () => {
               setShowPositionModal(true)
             }}
           >
-            <Content alignItems="start">
-              {/* <InfoText fontSize="10px" fontWeight="500" color="#5fCf76">
+            {!connected ? (
+              <NewLabel size="12px" height="20px" weight="500">
+                No positions found.
+              </NewLabel>
+            ) : (
+              <>
+                <Content alignItems="start">
+                  {/* <InfoText fontSize="10px" fontWeight="500" color="#5fCf76">
                 {highestPosition ? (
                   `${currencySym}${formatNumber(highestPosition.balance)}`
                 ) : (
                   <AnimatedDots />
                 )}
               </InfoText> */}
-              <BadgeToken>
-                <BadgeIcon>
-                  {highestPosition ? (
-                    <img src={highestPosition.chain ? highestPosition.chain : ETHEREUM} alt="" />
-                  ) : (
-                    <AnimatedDots />
-                  )}
-                </BadgeIcon>
-                {highestPosition ? (
-                  <Token
-                  // href={`${window.location.origin}/${
-                  //   networkNames[getBadgeId(positionVaultAddress)]
-                  // }/${
-                  //   positionVaultAddress === '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
-                  //     ? '0xa0246c9032bc3a600820415ae600c6388619a14d'
-                  //     : positionVaultAddress
-                  // }`}
-                  // onClick={stopPropagation}
-                  >
-                    <>
-                      <span>{highestPosition.token.tokenNames.join(', ')}</span>
-                      <span
-                        style={{ fontWeight: '300', marginLeft: '5px' }}
-                      >{`(${highestPosition.token.platform.join(', ')})`}</span>
-                    </>
-                  </Token>
-                ) : (
-                  <AnimatedDots />
-                )}
-              </BadgeToken>
-            </Content>
-            {/* <ApyDownIcon>
+                  <BadgeToken>
+                    <BadgeIcon>
+                      {highestPosition ? (
+                        <img
+                          src={highestPosition.chain ? highestPosition.chain : ETHEREUM}
+                          alt=""
+                        />
+                      ) : (
+                        <AnimatedDots />
+                      )}
+                    </BadgeIcon>
+                    {highestPosition ? (
+                      <Token
+                      // href={`${window.location.origin}/${
+                      //   networkNames[getBadgeId(positionVaultAddress)]
+                      // }/${
+                      //   positionVaultAddress === '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
+                      //     ? '0xa0246c9032bc3a600820415ae600c6388619a14d'
+                      //     : positionVaultAddress
+                      // }`}
+                      // onClick={stopPropagation}
+                      >
+                        <>
+                          <span>{highestPosition.token.tokenNames.join(', ')}</span>
+                          <span
+                            style={{ fontWeight: '300', marginLeft: '5px' }}
+                          >{`(${highestPosition.token.platform.join(', ')})`}</span>
+                        </>
+                      </Token>
+                    ) : (
+                      <AnimatedDots />
+                    )}
+                  </BadgeToken>
+                </Content>
+                {/* <ApyDownIcon>
               <Content alignItems="end">
                 <InfoText fontSize="10px" fontWeight="700" color="#5fCf76">
                   {highestPosition ? `${highestPosition.apy}% Live APY` : <AnimatedDots />}
@@ -1028,15 +1069,17 @@ const Migrate = () => {
                 }}
               />
             </ApyDownIcon> */}
-            <Content alignItems="end">
-              <img
-                src={ChevronDown}
-                alt="Chevron Down"
-                style={{
-                  marginLeft: '20px',
-                }}
-              />
-            </Content>
+                <Content alignItems="end">
+                  <img
+                    src={ChevronDown}
+                    alt="Chevron Down"
+                    style={{
+                      marginLeft: '20px',
+                    }}
+                  />
+                </Content>
+              </>
+            )}
           </VaultBox>
           <PositionModal
             showPositionModal={showPositionModal}
@@ -1075,11 +1118,7 @@ const Migrate = () => {
               </InfoText> */}
               <BadgeToken>
                 <BadgeIcon>
-                  {highestPosition ? (
-                    <img src={highestPosition.chain ? highestPosition.chain : ETHEREUM} alt="" />
-                  ) : (
-                    <AnimatedDots />
-                  )}
+                  {highestApyVault ? <img src={chainUrl} alt="" /> : <AnimatedDots />}
                 </BadgeIcon>
                 {highestApyVault ? (
                   <Token
@@ -1208,9 +1247,9 @@ const Migrate = () => {
                 height="24px"
                 color={darkMode ? '#ffffff' : '#344054'}
               >
-                {highestPosition ? `${highestPosition.apy}%` : <AnimatedDots />}{' '}
+                {!connected ? '0%' : highestPosition ? `${highestPosition.apy}%` : <AnimatedDots />}{' '}
                 <span style={{ marginLeft: '5px', marginRight: '5px' }}>
-                  {highestPosition ? '→' : ''}
+                  {highestPosition || !connected ? '→' : ''}
                 </span>
                 <span style={{ color: '#5fCf76' }}>
                   {highestApyVault ? `${highestApyVault.vaultApy}%` : <AnimatedDots />}
@@ -1236,13 +1275,15 @@ const Migrate = () => {
                 height="24px"
                 color={darkMode ? '#ffffff' : '#344054'}
               >
-                {highestPosition ? (
+                {!connected ? (
+                  `${currencySym}0.00/yr`
+                ) : highestPosition ? (
                   `${currencySym}${formatNumber(highestPosition.apy / 100)}/yr`
                 ) : (
                   <AnimatedDots />
                 )}{' '}
                 <span style={{ marginLeft: '5px', marginRight: '5px' }}>
-                  {highestPosition ? '→' : ''}
+                  {highestPosition || !connected ? '→' : ''}
                 </span>
                 <span style={{ color: '#5fCf76' }}>
                   {highestApyVault ? (
