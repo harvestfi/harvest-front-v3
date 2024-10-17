@@ -95,6 +95,7 @@ const VaultModal = ({
     setNewMatchesList([])
     setIsEnd(false)
     setStartPoint(10)
+    setMatchVaultList([])
   }, [connected])
 
   useEffect(() => {
