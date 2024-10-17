@@ -386,6 +386,7 @@ const MigrateStart = ({
     pickedDefaultToken,
     toToken,
     balance,
+    pickedToken,
   ])
 
   const onDeposit = async () => {
