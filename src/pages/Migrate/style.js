@@ -265,12 +265,12 @@ const InfoText = styled.div`
 const BadgeToken = styled.div`
   display: flex;
   justify-content: start;
-  align-items: center;
+  align-items: baseline;
 `
 
 const BadgeIcon = styled.div`
-  margin: 0px 5px 0px 0px;
-  width: 13.096px;
+  margin: ${props => props.margin};
+  width: ${props => props.width};
   height: 13.096px;
   display: flex;
   justify-content: center;

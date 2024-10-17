@@ -1075,14 +1075,19 @@ const Migrate = () => {
                 )}
               </InfoText> */}
                   <BadgeToken>
-                    <BadgeIcon>
+                    <BadgeIcon
+                      width={!highestPosition ? 'auto' : '13.096px'}
+                      margin={!highestPosition ? '0px' : '0px 5px 0px 0px'}
+                    >
                       {highestPosition ? (
                         <img
                           src={highestPosition.chain ? highestPosition.chain : ETHEREUM}
                           alt=""
                         />
                       ) : (
-                        <AnimatedDots />
+                        <NewLabel size="12px" height="20px" weight="500">
+                          Scanning your positions
+                        </NewLabel>
                       )}
                     </BadgeIcon>
                     {highestPosition ? (
@@ -1179,8 +1184,17 @@ const Migrate = () => {
                 {matchedVault ? `${currencySym}${formatNumber(matchedVault.balance)}` : '-'}
               </InfoText> */}
               <BadgeToken>
-                <BadgeIcon>
-                  {highestApyVault ? <img src={chainUrl} alt="" /> : <AnimatedDots />}
+                <BadgeIcon
+                  width={!highestApyVault ? 'auto' : '13.096px'}
+                  margin={!highestApyVault ? '0px' : '0px 5px 0px 0px'}
+                >
+                  {highestApyVault ? (
+                    <img src={chainUrl} alt="" />
+                  ) : (
+                    <NewLabel size="12px" height="20px" weight="500">
+                      Searching new opportunities
+                    </NewLabel>
+                  )}
                 </BadgeIcon>
                 {highestApyVault ? (
                   <Token
