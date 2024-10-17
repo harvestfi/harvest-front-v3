@@ -1389,7 +1389,9 @@ const Migrate = () => {
               onClickMigrate()
             }}
           >
-            <Button className={noPosition && connected ? 'inactive-btn' : ''}>{buttonName}</Button>
+            <Button className={noPosition && highestApyVault && connected ? 'inactive-btn' : ''}>
+              {buttonName}
+            </Button>
           </ButtonDiv>
           <MigrateStart
             find={find}
