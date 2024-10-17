@@ -14,6 +14,7 @@ import Beginners from '../../assets/images/logos/sidebar/beginners.svg'
 import Support from '../../assets/images/logos/sidebar/support.svg'
 import Analytics from '../../assets/images/logos/sidebar/analytics.svg'
 import BlackLeader from '../../assets/images/logos/sidebar/leader_icon_black.svg'
+import BlackMigrate from '../../assets/images/logos/sidebar/Migrate_black.svg'
 // import Collaborations from '../../assets/images/logos/sidebar/collaborations.svg'
 import Advanced from '../../assets/images/logos/sidebar/advanced.svg'
 import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
@@ -104,6 +105,12 @@ const sideLinksTop = [
 
 const sideLinksBottom = [
   {
+    path: ROUTES.MIGRATE,
+    name: 'Migrate',
+    imgPath: BlackMigrate,
+    external: false,
+  },
+  {
     path: ROUTES.LEADERBOARD,
     name: 'Leaderboard',
     imgPath: BlackLeader,
@@ -171,6 +178,12 @@ const sideLinksMobileBottom = [
     path: ROUTES.ADVANCED,
     name: 'All Farms',
     imgPath: Advanced,
+  },
+  {
+    path: ROUTES.MIGRATE,
+    name: 'Migrate',
+    imgPath: BlackMigrate,
+    external: false,
   },
   {
     path: ROUTES.LEADERBOARD,
