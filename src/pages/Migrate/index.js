@@ -860,8 +860,7 @@ const Migrate = () => {
         setButtonName('Preview & Migrate')
         setCurChain(chain)
         setNoPosition(false)
-      } else if (!fromVault && toVault && !isPosition) {
-        setNoPosition(true)
+      } else if (noPosition && toVault && !isPosition) {
         setHighestApyVault(toVault)
         setHighestVaultAddress(toAddress)
         setTokenDepo(groupOfVaults[toId.toString()])
@@ -1153,6 +1152,7 @@ const Migrate = () => {
             setNetworkMatchList={setNetworkMatchList}
             networkMatchList={networkMatchList}
             setIsPosition={setIsPosition}
+            setNoPosition={setNoPosition}
           />
           <BoxTitle color={darkMode ? '#ffffff' : '#475467'}>Migrate to</BoxTitle>
           <VaultBox

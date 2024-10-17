@@ -44,6 +44,7 @@ const PositionModal = ({
   setNetworkMatchList,
   networkMatchList,
   setIsPosition,
+  setNoPosition,
 }) => {
   const [countFarm, setCountFarm] = useState(0)
   // const [balanceList, setBalanceList] = useState([])
@@ -91,6 +92,7 @@ const PositionModal = ({
 
     const fetchSupportedMatches = async () => {
       const filteredMatchList = []
+      let flag = 0
 
       if (matchListAry.length > 0) {
         // eslint-disable-next-line no-restricted-syntax
@@ -106,11 +108,13 @@ const PositionModal = ({
             if (portalsToken.status === 200) {
               if (portalsToken.data.totalItems !== 0) {
                 setIsPosition(true)
+                setNoPosition(false)
                 filteredMatchList.push(item)
               }
             }
           }
         }
+        flag = 1
       }
 
       filteredMatchList.sort((a, b) => b.balance - a.balance)
@@ -124,6 +128,8 @@ const PositionModal = ({
       if (filteredMatchList.length > 0) {
         setNetworkMatchList(correctMatchList)
         setCountFarm(correctMatchList.length)
+      } else if (flag === 1 && filteredMatchList.length === 0) {
+        setNoPosition(true)
       }
     }
 
