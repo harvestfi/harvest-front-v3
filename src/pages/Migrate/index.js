@@ -1054,7 +1054,7 @@ const Migrate = () => {
             onClick={() => {
               if (!connected || noPosition) {
                 setShowPositionModal(false)
-              } else if (noPosition) {
+              } else if (!noPosition) {
                 setShowPositionModal(true)
               }
             }}
