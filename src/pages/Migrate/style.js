@@ -185,6 +185,10 @@ const VaultBox = styled.div`
   cursor: pointer;
   position: relative;
   z-index: 1;
+
+  &.inactive {
+    cursor: not-allowed;
+  }
 `
 
 const MigrateIcon = styled.div`
@@ -206,6 +210,12 @@ const Button = styled.button`
 
   &:hover {
     background: #809aff;
+  }
+
+  &.inactive-btn {
+    background: #535763;
+    cursor: not-allowed;
+    border: 1px solid #535763;
   }
 `
 

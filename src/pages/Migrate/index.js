@@ -120,6 +120,7 @@ const Migrate = () => {
   const [networkName, setNetworkName] = useState('')
   const [startPoint, setStartPoint] = useState(10)
   const [chainUrl, setChainUrl] = useState()
+  const [noPosition, setNoPosition] = useState(false)
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const isFromAdvanced = location.search.includes('from=')
@@ -823,6 +824,12 @@ const Migrate = () => {
         setTokenDepo(groupOfVaults[toId.toString()])
         setButtonName('Preview & Migrate')
         setCurChain(chain)
+      } else if (!fromVault && toVault) {
+        setNoPosition(true)
+        setHighestApyVault(toVault)
+        setHighestVaultAddress(toAddress)
+        setTokenDepo(groupOfVaults[toId.toString()])
+        setButtonName('Preview & Migrate')
       }
     }
 
@@ -997,10 +1004,15 @@ const Migrate = () => {
             bgColor="#ffffff"
             border="1px solid #D0D5DD"
             onClick={() => {
-              setShowPositionModal(true)
+              if (!connected || noPosition) {
+                setShowPositionModal(false)
+              } else {
+                setShowPositionModal(true)
+              }
             }}
+            className={!connected || noPosition ? 'inactive' : ''}
           >
-            {!connected ? (
+            {!connected || noPosition ? (
               <NewLabel size="12px" height="20px" weight="500">
                 No positions found.
               </NewLabel>
@@ -1247,9 +1259,15 @@ const Migrate = () => {
                 height="24px"
                 color={darkMode ? '#ffffff' : '#344054'}
               >
-                {!connected ? '0%' : highestPosition ? `${highestPosition.apy}%` : <AnimatedDots />}{' '}
+                {!connected || noPosition ? (
+                  '0%'
+                ) : highestPosition ? (
+                  `${highestPosition.apy}%`
+                ) : (
+                  <AnimatedDots />
+                )}{' '}
                 <span style={{ marginLeft: '5px', marginRight: '5px' }}>
-                  {highestPosition || !connected ? '→' : ''}
+                  {highestPosition || !connected || noPosition ? '→' : ''}
                 </span>
                 <span style={{ color: '#5fCf76' }}>
                   {highestApyVault ? `${highestApyVault.vaultApy}%` : <AnimatedDots />}
@@ -1275,7 +1293,7 @@ const Migrate = () => {
                 height="24px"
                 color={darkMode ? '#ffffff' : '#344054'}
               >
-                {!connected ? (
+                {!connected || noPosition ? (
                   `${currencySym}0.00/yr`
                 ) : highestPosition ? (
                   `${currencySym}${formatNumber(highestPosition.apy / 100)}/yr`
@@ -1283,7 +1301,7 @@ const Migrate = () => {
                   <AnimatedDots />
                 )}{' '}
                 <span style={{ marginLeft: '5px', marginRight: '5px' }}>
-                  {highestPosition || !connected ? '→' : ''}
+                  {highestPosition || !connected || noPosition ? '→' : ''}
                 </span>
                 <span style={{ color: '#5fCf76' }}>
                   {highestApyVault ? (
@@ -1320,7 +1338,7 @@ const Migrate = () => {
               onClickMigrate()
             }}
           >
-            <Button>{buttonName}</Button>
+            <Button className={noPosition && connected ? 'inactive-btn' : ''}>{buttonName}</Button>
           </ButtonDiv>
           <MigrateStart
             find={find}
