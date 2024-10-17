@@ -30,7 +30,7 @@ import { getWeb3, fromWei } from '../../../../services/web3'
 import { formatNumberWido, showTokenBalance } from '../../../../utilities/formats'
 import AnimatedDots from '../../../AnimatedDots'
 import { addresses } from '../../../../data'
-import { getHighestApy } from '../../../../utilities/parsers'
+import { getHighestApy, getSecondApy } from '../../../../utilities/parsers'
 import {
   Buttons,
   FTokenInfo,
@@ -168,6 +168,7 @@ const WithdrawStart = ({
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const highestApyVault = getHighestApy(groupOfVaults, Number(chainId), vaultsData, pools)
+  const secHighApyVault = getSecondApy(groupOfVaults, Number(chainId), vaultsData, pools)
 
   const approveZap = async amnt => {
     const { approve } = await portalsApprove(chainId, account, fromToken, amnt.toString())
@@ -315,13 +316,24 @@ const WithdrawStart = ({
   }
 
   useEffect(() => {
-    if (highestApyVault !== null) {
+    if (
+      highestApyVault !== null &&
+      token.vaultAddress.toLowerCase() !== highestApyVault.vault.vaultAddress.toLowerCase()
+    ) {
       setHighestApyLogo(highestApyVault.vault.logoUrl)
       setTokenNames(highestApyVault.vault.tokenNames)
       setPlatformNames(highestApyVault.vault.platform)
       setTopApyVault(highestApyVault.vaultApy)
+    } else if (
+      highestApyVault !== null &&
+      token.vaultAddress.toLowerCase() === highestApyVault.vault.vaultAddress.toLowerCase()
+    ) {
+      setHighestApyLogo(secHighApyVault.vault.logoUrl)
+      setTokenNames(secHighApyVault.vault.tokenNames)
+      setPlatformNames(secHighApyVault.vault.platform)
+      setTopApyVault(secHighApyVault.vaultApy)
     }
-  }, [highestApyVault])
+  }, [highestApyVault, secHighApyVault])
 
   return (
     <Modal
@@ -659,7 +671,11 @@ const WithdrawStart = ({
               <HighestVault
                 className="highest-vault"
                 onClick={e => {
-                  const url = `/migrate?from=${token.vaultAddress.toLowerCase()}&to=${highestApyVault.vault.vaultAddress.toLowerCase()}&chain=${chainId}`
+                  const url =
+                    token.vaultAddress.toLowerCase() !==
+                    highestApyVault.vault.vaultAddress.toLowerCase()
+                      ? `/migrate?from=${token.vaultAddress.toLowerCase()}&to=${highestApyVault.vault.vaultAddress.toLowerCase()}&chain=${chainId}`
+                      : `/migrate?from=${token.vaultAddress.toLowerCase()}&to=${secHighApyVault.vault.vaultAddress.toLowerCase()}&chain=${chainId}`
                   if (e.ctrlKey) {
                     window.open(url, '_blank')
                   } else {

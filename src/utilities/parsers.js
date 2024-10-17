@@ -529,6 +529,23 @@ export const getHighestApy = (allVaults, chainName, vaultsData, pools) => {
   return null
 }
 
+export const getSecondApy = (allVaults, chainName, vaultsData, pools) => {
+  const sameNetworkVautls = []
+
+  Object.entries(allVaults).map(vault => {
+    if (Number(vault[1].chain) === chainName) {
+      const vaultApy = getVaultApy(vault[1].vaultAddress, allVaults, vaultsData, pools)
+      sameNetworkVautls.push({ vaultApy: Number(vaultApy), vault: vault[1] })
+    }
+    return true
+  })
+  sameNetworkVautls.sort((a, b) => b.vaultApy - a.vaultApy)
+  if (sameNetworkVautls[1].vaultApy) {
+    return sameNetworkVautls[1]
+  }
+  return null
+}
+
 export const getMatchedVaultList = (allVaults, chainName, vaultsData, pools) => {
   const sameNetworkVautls = []
 
