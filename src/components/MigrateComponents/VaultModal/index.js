@@ -114,21 +114,23 @@ const VaultModal = ({
         const newArray = matched.slice(0, 10)
         // eslint-disable-next-line no-restricted-syntax
         for (const item of newArray) {
-          const mToken = item.vault
-          const tokenAddress = useIFARM
-            ? addresses.iFARM
-            : mToken.vaultAddress || mToken.tokenAddress
-          const chainId = mToken.chain || mToken.data.chain
-          // eslint-disable-next-line no-await-in-loop
-          const portalsToken = await getPortalsSupport(chainId, tokenAddress)
-          if (portalsToken) {
-            if (portalsToken.status === 200) {
-              if (portalsToken.data.totalItems !== 0 && Number(item.vaultApy) !== 0) {
-                filteredMatchList.push(item)
+          if (item.vaultApy !== 0) {
+            const mToken = item.vault
+            const tokenAddress = useIFARM
+              ? addresses.iFARM
+              : mToken.vaultAddress || mToken.tokenAddress
+            const chainId = mToken.chain || mToken.data.chain
+            // eslint-disable-next-line no-await-in-loop
+            const portalsToken = await getPortalsSupport(chainId, tokenAddress)
+            if (portalsToken) {
+              if (portalsToken.status === 200) {
+                if (portalsToken.data.totalItems !== 0) {
+                  filteredMatchList.push(item)
+                }
               }
+            } else {
+              console.log('Error in fetching Portals supported')
             }
-          } else {
-            console.log('Error in fetching Portals supported')
           }
         }
       }

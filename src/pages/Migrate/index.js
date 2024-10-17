@@ -121,6 +121,7 @@ const Migrate = () => {
   const [startPoint, setStartPoint] = useState(10)
   const [chainUrl, setChainUrl] = useState()
   const [noPosition, setNoPosition] = useState(false)
+  const [isPosition, setIsPosition] = useState(false)
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const isFromAdvanced = location.search.includes('from=')
@@ -859,7 +860,7 @@ const Migrate = () => {
         setButtonName('Preview & Migrate')
         setCurChain(chain)
         setNoPosition(false)
-      } else if (!fromVault && toVault) {
+      } else if (!fromVault && toVault && !isPosition) {
         setNoPosition(true)
         setHighestApyVault(toVault)
         setHighestVaultAddress(toAddress)
@@ -1151,6 +1152,7 @@ const Migrate = () => {
             setCurSupportedVault={setCurSupportedVaultWith}
             setNetworkMatchList={setNetworkMatchList}
             networkMatchList={networkMatchList}
+            setIsPosition={setIsPosition}
           />
           <BoxTitle color={darkMode ? '#ffffff' : '#475467'}>Migrate to</BoxTitle>
           <VaultBox

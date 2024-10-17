@@ -43,6 +43,7 @@ const PositionModal = ({
   setCurSupportedVault,
   setNetworkMatchList,
   networkMatchList,
+  setIsPosition,
 }) => {
   const [countFarm, setCountFarm] = useState(0)
   // const [balanceList, setBalanceList] = useState([])
@@ -104,6 +105,7 @@ const PositionModal = ({
           if (portalsToken) {
             if (portalsToken.status === 200) {
               if (portalsToken.data.totalItems !== 0) {
+                setIsPosition(true)
                 filteredMatchList.push(item)
               }
             }
