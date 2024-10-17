@@ -52,6 +52,7 @@ const VaultModal = ({
   convertSuccess,
   startPoint,
   setStartPoint,
+  connected,
   // userStats,
 }) => {
   const { darkMode, inputFontColor, fontColor } = useThemeContext()
@@ -142,7 +143,7 @@ const VaultModal = ({
     }
 
     fetchSupportedMatches()
-  }, [chain, pools, setMatchVaultList, specialToken.profitShareAPY]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [chain, pools, setMatchVaultList, specialToken.profitShareAPY, connected]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchMoreMatches = async () => {
     if (!isEnd) {

@@ -665,6 +665,7 @@ const MigrateStart = ({
                   <a
                     href={`${window.location.origin}/${networkName}/${positionAddress}#rewards`}
                     style={{ fontWeight: '600', color: '#6941C6' }}
+                    target="blank"
                   >
                     {highestPosition.token.tokenNames.join(', ')} Strategy
                   </a>{' '}

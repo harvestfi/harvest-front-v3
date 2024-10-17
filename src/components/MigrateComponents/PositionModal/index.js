@@ -43,7 +43,6 @@ const PositionModal = ({
   setCurSupportedVault,
   setNetworkMatchList,
   networkMatchList,
-  setIsPosition,
   setNoPosition,
 }) => {
   const [countFarm, setCountFarm] = useState(0)
@@ -79,6 +78,7 @@ const PositionModal = ({
   useEffect(() => {
     const matchListAry = []
     const correctMatchList = []
+    let firstFlag = 0
     if (filteredFarmList.length > 0) {
       filteredFarmList.forEach(vault => {
         const findingChain = vault.token.poolVault ? vault.token.data.chain : vault.token.chain
@@ -86,6 +86,7 @@ const PositionModal = ({
           matchListAry.push(vault)
         }
       })
+      firstFlag = 1
     }
 
     matchListAry.sort((a, b) => b.balance - a.balance)
@@ -107,7 +108,6 @@ const PositionModal = ({
           if (portalsToken) {
             if (portalsToken.status === 200) {
               if (portalsToken.data.totalItems !== 0) {
-                setIsPosition(true)
                 setNoPosition(false)
                 filteredMatchList.push(item)
               }
@@ -128,7 +128,10 @@ const PositionModal = ({
       if (filteredMatchList.length > 0) {
         setNetworkMatchList(correctMatchList)
         setCountFarm(correctMatchList.length)
-      } else if (flag === 1 && filteredMatchList.length === 0) {
+      } else if (
+        (flag === 1 && filteredMatchList.length === 0) ||
+        (firstFlag === 1 && matchListAry.length === 0)
+      ) {
         setNoPosition(true)
       }
     }

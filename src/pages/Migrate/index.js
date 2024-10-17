@@ -121,7 +121,6 @@ const Migrate = () => {
   const [startPoint, setStartPoint] = useState(10)
   const [chainUrl, setChainUrl] = useState()
   const [noPosition, setNoPosition] = useState(false)
-  const [isPosition, setIsPosition] = useState(false)
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const isFromAdvanced = location.search.includes('from=')
@@ -143,6 +142,12 @@ const Migrate = () => {
         : ETHEREUM
     setChainUrl(badgeUrl)
   }, [chainId])
+
+  useEffect(() => {
+    if (highestApyVault && connected) {
+      setIsFromModal(false)
+    }
+  }, [connected]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -835,36 +840,40 @@ const Migrate = () => {
           setHighestApyVault(toVault)
           setHighestVaultAddress(toAddress)
           setTokenDepo(groupOfVaults[toId.toString()])
-          setButtonName('Connect Wallet')
         }
-      } else if (fromVault && toVault) {
-        const chain = fromVault.token.data
-          ? Number(fromVault.token.data.chain)
-          : Number(fromVault.token.chain)
+        setButtonName('Connect Wallet')
+      } else if (connected) {
+        setButtonName(<AnimatedDots />)
+        setHighestApyVault()
+        if (fromVault && toVault) {
+          const chain = fromVault.token.data
+            ? Number(fromVault.token.data.chain)
+            : Number(fromVault.token.chain)
 
-        if (fromAddress !== toAddress) {
+          if (fromAddress !== toAddress) {
+            setHighestApyVault(toVault)
+            setHighestVaultAddress(toAddress)
+            setHighVaultId(toId)
+            setTokenDepo(groupOfVaults[toId.toString()])
+          } else if (fromAddress.toLowerCase() === toAddress.toLowerCase()) {
+            setHighestApyVault(secToVault)
+            setHighestVaultAddress(secToAddress)
+            setHighVaultId(secToId)
+            setTokenDepo(groupOfVaults[secToId.toString()])
+          }
+          setHighestPosition(fromVault)
+          setPositionVaultAddress(fromAddress)
+          setPositionId(fromId)
+          setTokenWith(groupOfVaults[fromId.toString()])
+          setButtonName('Preview & Migrate')
+          setCurChain(chain)
+          setNoPosition(false)
+        } else if (noPosition && toVault) {
           setHighestApyVault(toVault)
           setHighestVaultAddress(toAddress)
-          setHighVaultId(toId)
           setTokenDepo(groupOfVaults[toId.toString()])
-        } else if (fromAddress.toLowerCase() === toAddress.toLowerCase()) {
-          setHighestApyVault(secToVault)
-          setHighestVaultAddress(secToAddress)
-          setHighVaultId(secToId)
-          setTokenDepo(groupOfVaults[secToId.toString()])
+          setButtonName('Preview & Migrate')
         }
-        setHighestPosition(fromVault)
-        setPositionVaultAddress(fromAddress)
-        setPositionId(fromId)
-        setTokenWith(groupOfVaults[fromId.toString()])
-        setButtonName('Preview & Migrate')
-        setCurChain(chain)
-        setNoPosition(false)
-      } else if (noPosition && toVault && !isPosition) {
-        setHighestApyVault(toVault)
-        setHighestVaultAddress(toAddress)
-        setTokenDepo(groupOfVaults[toId.toString()])
-        setButtonName('Preview & Migrate')
       }
     }
 
@@ -892,6 +901,7 @@ const Migrate = () => {
     positionId,
     positionVaultAddress,
     pickedTokenWith,
+    noPosition,
   ])
 
   useEffect(() => {
@@ -1049,7 +1059,7 @@ const Migrate = () => {
             }}
             className={!connected || noPosition ? 'inactive' : ''}
           >
-            {!connected || noPosition ? (
+            {!connected || (noPosition && highestApyVault) ? (
               <NewLabel size="12px" height="20px" weight="500">
                 No positions found.
               </NewLabel>
@@ -1151,7 +1161,6 @@ const Migrate = () => {
             setCurSupportedVault={setCurSupportedVaultWith}
             setNetworkMatchList={setNetworkMatchList}
             networkMatchList={networkMatchList}
-            setIsPosition={setIsPosition}
             setNoPosition={setNoPosition}
           />
           <BoxTitle color={darkMode ? '#ffffff' : '#475467'}>Migrate to</BoxTitle>
@@ -1261,6 +1270,7 @@ const Migrate = () => {
             startPoint={startPoint}
             currencyRate={currencyRate}
             userStats={userStats}
+            connected={connected}
           />
           <NewLabel
             display="flex"
