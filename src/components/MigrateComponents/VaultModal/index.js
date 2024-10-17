@@ -127,7 +127,6 @@ const VaultModal = ({
             item.vaultApy !== 0 &&
             item.vault.vaultAddress !== '0x47e3daF382C4603450905fb68766DB8308315407'
           ) {
-            console.log('item', item)
             const mToken = item.vault
             const tokenAddress = useIFARM
               ? addresses.iFARM
