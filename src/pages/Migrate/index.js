@@ -951,7 +951,10 @@ const Migrate = () => {
     {
       question: <>What is the Migrate tool about?</>,
       answer: (
-        <>The migrate pool allows you to switch between Harvest strategies in just a few clicks.</>
+        <>
+          The migrate pool allows you to switch between Harvest strategies on the same network at
+          ease.
+        </>
       ),
     },
     {
@@ -978,15 +981,9 @@ const Migrate = () => {
     {
       question: <>What is the cost of migrating?</>,
       answer: (
-        <>The migrate pool allows you to switch between Harvest strategies in just a few clicks.</>
-      ),
-    },
-    {
-      question: <>What is the Migrate tool about?</>,
-      answer: (
         <>
-          There are no platform fees associated with using the Migrate tool. However, gas fees may
-          still apply depending on the network.
+          There are no platform fees when migrating a position. Only network and standard swap fees
+          apply.
         </>
       ),
     },
@@ -1021,7 +1018,7 @@ const Migrate = () => {
           <PageTitle color={darkMode ? '#ffffff' : '"#101828"'}>Migrate</PageTitle>
         </MigrateTop>
         <PageIntro color={darkMode ? '#ffffff' : '#475467'}>
-          Find alternatives for your existing positions and migrate in once click.
+          Find alternatives for your existing positions and migrate in one click.
         </PageIntro>
         <SpaceLine />
       </Inner>
