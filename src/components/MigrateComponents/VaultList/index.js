@@ -46,7 +46,7 @@ const VaultList = ({
       ? POLIGON
       : ETHEREUM
   let matchingFarm
-  const id = matchVault.vault.pool === undefined ? 'IFARM' : matchVault.vault.pool.id
+  const id = matchVault.vault.pool === undefined ? 'FARM' : matchVault.vault.pool.id
 
   filteredFarmList.forEach(farm => {
     const farmAddress = farm.token.poolVault ? farm.token.tokenAddress : farm.token.vaultAddress

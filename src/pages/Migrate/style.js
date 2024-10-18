@@ -300,7 +300,11 @@ const Token = styled.div`
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  width: 170px;
+  width: 260px;
+
+  @media screen and (max-width: 992px) {
+    width: 170px;
+  }
 `
 
 const ChainGroup = styled.div`
