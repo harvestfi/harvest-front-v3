@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { Dropdown } from 'react-bootstrap'
 
 const Container = styled.div`
   padding: 50px 75px 75px 75px;
@@ -287,6 +288,7 @@ const ApyDownIcon = styled.div`
   justify-content: space-between;
   align-items: center;
 `
+
 const Token = styled.div`
   font-weight: 500;
   font-size: 14px;
@@ -295,6 +297,267 @@ const Token = styled.div`
   cursor: pointer;
   z-index: 1;
   text-decoration: none;
+`
+
+const ChainGroup = styled.div`
+  display: flex;
+  border-radius: 10px;
+  width: 40%;
+  justify-content: right;
+`
+
+const ChainButton = styled.button`
+  width: 50px;
+  align-items: center;
+  padding: 9px 0px;
+  display: flex;
+  justify-content: center;
+  transition: 0.25s;
+  border: 1px solid ${props => props.borderColor};
+  background: ${props => props.backColor};
+
+  &:first-child {
+    border-radius: 10px 0 0 10px;
+    border-right: none;
+  }
+
+  &:nth-child(2) {
+    border-right: none;
+  }
+
+  &:last-child {
+    border-radius: 0 10px 10px 0;
+    border-left: none;
+  }
+
+  &:hover {
+    background: ${props => props.hoverColor} !important;
+  }
+
+  &.active {
+    background: ${props => props.backColor};
+
+    img {
+      opacity: 1;
+    }
+  }
+
+  img {
+    opacity: 0.3;
+    width: 22px;
+    height: 22px;
+  }
+
+  @media screen and (max-width: 1480px) {
+    img {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  @media screen and (max-width: 1280px) {
+    img {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  @media screen and (max-width: 992px) {
+    width: 25%;
+    img {
+      width: 22px;
+      height: 22px;
+    }
+  }
+`
+
+const BoxHeading = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`
+
+const CurrencyDropDownItem = styled(Dropdown.Item)`
+  text-align: left;
+  display: flex !important;
+  justify-content: start;
+  align-items: center;
+  font-size: 14px;
+  padding: 10px 5px;
+  ${props =>
+    props.bordercolor
+      ? `
+    border-bottom: 0.5px solid ${props.bordercolor} !important;
+  `
+      : `
+  `}
+  width: auto !important;
+  color: ${props => props.fontcolor} !important;
+
+  :first-child {
+    border-radius: 8px 8px 0px 0px;
+  }
+
+  :last-child {
+    border-radius: 0px 0px 8px 8px;
+  }
+
+  &:hover {
+    background: ${props => props.hovercolor} !important;
+
+    div {
+      color: #ff9400;
+    }
+  }
+
+  img {
+    margin-right: 15px;
+    margin-left: 10px;
+    width: 17.6px;
+    height: 17.6px;
+  }
+
+  img.logo {
+    margin-right: 7.5px;
+  }
+
+  img.logo-dark {
+    margin-right: 7.5px;
+  }
+
+  div {
+    align-self: center;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 18px;
+  }
+
+  svg.check-icon {
+    margin-left: 10px;
+    color: #6988ff;
+  }
+
+  @media screen and (max-width: 992px) {
+    line-height: 20px;
+    padding: 10px 16px;
+    background: ${props => (props.bgcolor ? props.bgcolor : '')};
+    gap: 5px;
+
+    img {
+      margin-left: 0px;
+    }
+  }
+`
+
+const CurrencySelect = styled.div`
+  width: 100%;
+  height: 40px;
+  border: 1px solid #d0d5dd;
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  transition: 0.5s;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 24px;
+  text-align: right;
+  color: ${props => props.fontcolor2} !important;
+
+  display: flex;
+  align-items: center;
+
+  img.logo {
+    margin-right: 7.5px;
+  }
+
+  img.logo-dark {
+    margin-right: 7.5px;
+  }
+
+  span {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 4px;
+  }
+
+  @media screen and (max-width: 992px) {
+    height: unset;
+    border-radius: 8px;
+    line-height: 20px;
+    padding: 10px;
+    gap: 0px;
+    justify-content: space-between;
+    width: 60px;
+
+    img {
+      width: 17.6px;
+      height: 17.6px;
+    }
+  }
+`
+
+const CurrencyDropDownMenu = styled(Dropdown.Menu)`
+  background-color: ${props => props.backcolor} !important;
+  border: 1px solid #d0d5dd;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
+  border-radius: 8px !important;
+  padding: 0;
+  min-width: 6rem;
+  width: 100% !important;
+  z-index: 120;
+  top: 5px !important;
+
+  &:focus {
+    box-shadow: none;
+  }
+
+  @media screen and (max-width: 992px) {
+    min-width: unset;
+  }
+`
+
+const CurrencyDropDown = styled(Dropdown.Toggle)`
+  background: ${props => props.bgcolor} !important;
+  border: none !important;
+  border-radius: 8px !important;
+  color: ${props => props.fontcolor2} !important;
+  align-items: center;
+  width: 100%;
+  display: flex !important;
+  justify-content: space-between;
+  text-align: left;
+  position: relative;
+  margin: 0px 0px;
+
+  &:after {
+    display: none !important;
+  }
+
+  &:hover {
+    background: ${props => props.hovercolor} !important;
+    color: black;
+    font-weight: 500;
+  }
+
+  &:active {
+    background: green;
+    color: black;
+  }
+
+  .chain-name {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    margin-left: 5px;
+  }
+
+  img.narrow {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+  }
 `
 
 export {
@@ -317,4 +580,11 @@ export {
   ApyDownIcon,
   Token,
   Buttons,
+  ChainGroup,
+  ChainButton,
+  BoxHeading,
+  CurrencyDropDownItem,
+  CurrencySelect,
+  CurrencyDropDownMenu,
+  CurrencyDropDown,
 }

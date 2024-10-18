@@ -82,17 +82,25 @@ const PositionModal = ({
   }, [connected]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    setNetworkMatchList([])
+  }, [chain])
+
+  useEffect(() => {
     const matchListAry = []
     const correctMatchList = []
     let firstFlag = 0
     if (filteredFarmList.length > 0) {
       filteredFarmList.forEach(vault => {
         const findingChain = vault.token.poolVault ? vault.token.data.chain : vault.token.chain
-        if (Number(findingChain) === chain) {
+        if (Number(findingChain) === Number(chain)) {
           matchListAry.push(vault)
         }
       })
       firstFlag = 1
+      if (matchListAry.length === 0) {
+        setNetworkMatchList([])
+        setNoPosition(true)
+      }
     }
 
     matchListAry.sort((a, b) => b.balance - a.balance)
@@ -174,6 +182,7 @@ const PositionModal = ({
     setHighestPosition,
     setPositionVaultAddress,
     networkMatchList,
+    chain,
   ])
 
   const positions = networkMatchList.map((item, i) => {

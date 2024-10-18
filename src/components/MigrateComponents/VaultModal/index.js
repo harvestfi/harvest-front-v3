@@ -99,6 +99,10 @@ const VaultModal = ({
   }, [connected]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    setMatchVaultList([])
+  }, [chain])
+
+  useEffect(() => {
     let matched = []
     const activedList = []
     if (chain) {

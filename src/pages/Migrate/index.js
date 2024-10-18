@@ -8,6 +8,7 @@ import useEffectWithPrevious from 'use-effect-with-previous'
 import { useMediaQuery } from 'react-responsive'
 import { ethers } from 'ethers'
 import { useSetChain } from '@web3-onboard/react'
+import { Dropdown } from 'react-bootstrap'
 import { useVaults } from '../../providers/Vault'
 import { useStats } from '../../providers/Stats'
 import { fromWei } from '../../services/web3'
@@ -19,6 +20,7 @@ import { usePools } from '../../providers/Pools'
 import { addresses } from '../../data'
 import { useWallet } from '../../providers/Wallet'
 import { getChainIcon, getTotalApy } from '../../utilities/parsers'
+import dropDown from '../../assets/images/ui/drop-down.e85f7fdc.svg'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useRate } from '../../providers/Rate'
 import AnimatedDots from '../../components/AnimatedDots'
@@ -29,9 +31,10 @@ import VaultModal from '../../components/MigrateComponents/VaultModal'
 import { NewLabel } from '../../components/MigrateComponents/PositionModal/style'
 import Accordian from '../../components/MigrateComponents/Accordian'
 import ARBITRUM from '../../assets/images/logos/badge/arbitrum.svg'
-import POLIGON from '../../assets/images/logos/badge/polygon.svg'
+import POLYGON from '../../assets/images/logos/badge/polygon.svg'
 import ZKSYNC from '../../assets/images/logos/badge/zksync.svg'
 import BASE from '../../assets/images/logos/badge/base.svg'
+import { CHAIN_IDS } from '../../data/constants'
 import {
   getTokenPriceFromApi,
   getUserBalanceVaults,
@@ -62,6 +65,13 @@ import {
   BadgeToken,
   BadgeIcon,
   Token,
+  ChainGroup,
+  ChainButton,
+  BoxHeading,
+  CurrencyDropDown,
+  CurrencySelect,
+  CurrencyDropDownMenu,
+  CurrencyDropDownItem,
 } from './style'
 // import { ConnectButtonStyle } from '../../components/EarningsHistory/HistoryData/style'
 
@@ -80,7 +90,17 @@ const Migrate = () => {
   const { rates } = useRate()
   /* eslint-disable global-require */
   const { tokens } = require('../../data')
-  const { darkMode, bgColor } = useThemeContext()
+  const {
+    darkMode,
+    bgColor,
+    backColor,
+    filterChainHoverColor,
+    borderColor,
+    backColorButton,
+    fontColor2,
+    hoverColorNew,
+    hoverColor,
+  } = useThemeContext()
   // const networkNames = ['ethereum', 'polygon', 'arbitrum', 'base', 'zksync']
 
   const [currencySym, setCurrencySym] = useState('$')
@@ -121,6 +141,7 @@ const Migrate = () => {
   const [startPoint, setStartPoint] = useState(10)
   const [chainUrl, setChainUrl] = useState()
   const [noPosition, setNoPosition] = useState(false)
+  const [selectedChain, setSelectedChain] = useState(chainId)
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const isFromAdvanced = location.search.includes('from=')
@@ -129,18 +150,45 @@ const Migrate = () => {
     setChain, // function to call to initiate user to switch chains in their wallet
   ] = useSetChain()
 
+  const ChainsList = [
+    { id: 0, name: 'Ethereum', img: ETHEREUM, chainId: CHAIN_IDS.ETH_MAINNET },
+    { id: 1, name: 'Polygon', img: POLYGON, chainId: CHAIN_IDS.POLYGON_MAINNET },
+    { id: 2, name: 'Arbitrum', img: ARBITRUM, chainId: CHAIN_IDS.ARBITRUM_ONE },
+    { id: 3, name: 'Base', img: BASE, chainId: CHAIN_IDS.BASE },
+  ]
+
   useEffect(() => {
     const badgeUrl =
-      Number(chainId) === 42161
+      Number(selectedChain) === 42161
         ? ARBITRUM
-        : Number(chainId) === 8453
+        : Number(selectedChain) === 8453
         ? BASE
-        : Number(chainId) === 324
+        : Number(selectedChain) === 324
         ? ZKSYNC
-        : Number(chainId) === 137
-        ? POLIGON
+        : Number(selectedChain) === 137
+        ? POLYGON
         : ETHEREUM
+
+    const network =
+      Number(selectedChain) === 42161
+        ? 'arbitrum'
+        : Number(selectedChain) === 8453
+        ? 'base'
+        : Number(selectedChain) === 324
+        ? 'zksync'
+        : Number(selectedChain) === 137
+        ? 'poligon'
+        : 'ethereum'
     setChainUrl(badgeUrl)
+    setNetworkName(network)
+    // setHighestPosition()
+    // setHighestApyVault()
+    // setNetworkMatchList([])
+    // setMatchVaultList([])
+  }, [selectedChain])
+
+  useEffect(() => {
+    setSelectedChain(chainId)
   }, [chainId])
 
   useEffect(() => {
@@ -250,20 +298,6 @@ const Migrate = () => {
   //   }
   //   return -1
   // }
-
-  useEffect(() => {
-    const network =
-      Number(chainId) === 42161
-        ? 'arbitrum'
-        : Number(chainId) === 8453
-        ? 'base'
-        : Number(chainId) === 324
-        ? 'zksync'
-        : Number(chainId) === 137
-        ? 'poligon'
-        : 'ethereum'
-    setNetworkName(network)
-  }, [chainId])
 
   useEffect(() => {
     if (account && !isEmpty(userStats) && !isEmpty(depositToken)) {
@@ -894,7 +928,6 @@ const Migrate = () => {
     networkMatchList,
     supportedVaultDepo,
     curSupportedVaultWith,
-    networkMatchList,
     matchVaultList,
     chainId,
     highVaultId,
@@ -1034,16 +1067,83 @@ const Migrate = () => {
           width={isMobile ? '100%' : '40%'}
           marginBottom={isMobile ? '70px' : '0px'}
         >
-          <NewLabel weight="600" height="28px" size="18px" color={darkMode ? '#ffffff' : '#101828'}>
-            Migrate Position
-          </NewLabel>
-          <NewLabel weight="400" height="20px" size="14px" color={darkMode ? '#ffffff' : '#475467'}>
-            Displaying strategies on{' '}
-            <span
-              style={{ fontWeight: '500', fontSize: '14px', lineHeight: '20px' }}
-            >{`${formatNetworkName(networkName)}`}</span>
-            .
-          </NewLabel>
+          <BoxHeading>
+            <div>
+              <NewLabel
+                weight="600"
+                height="28px"
+                size="16px"
+                color={darkMode ? '#ffffff' : '#101828'}
+              >
+                Migrate Position
+              </NewLabel>
+              <NewLabel
+                weight="400"
+                height="20px"
+                size="14px"
+                color={darkMode ? '#ffffff' : '#475467'}
+              >
+                Displaying strategies on{' '}
+                <span
+                  style={{ fontWeight: '500', fontSize: '14px', lineHeight: '20px' }}
+                >{`${formatNetworkName(networkName)}`}</span>
+                .
+              </NewLabel>
+            </div>
+            {isMobile ? (
+              <Dropdown>
+                <CurrencyDropDown
+                  id="dropdown-basic"
+                  bgcolor={backColorButton}
+                  fontcolor2={fontColor2}
+                  hovercolor={hoverColorNew}
+                  style={{ padding: 0 }}
+                >
+                  <CurrencySelect
+                    backcolor={backColor}
+                    fontcolor2={fontColor2}
+                    hovercolor={hoverColor}
+                  >
+                    <img src={chainUrl} alt={networkName} />
+                    <img src={dropDown} alt="Chevron Down" />
+                  </CurrencySelect>
+                </CurrencyDropDown>
+                <CurrencyDropDownMenu backcolor={backColorButton}>
+                  {ChainsList.map((item, i) => (
+                    <CurrencyDropDownItem
+                      key={i}
+                      bgcolor={Number(selectedChain) === Number(item.chainId) ? '#F7F9FF' : ''}
+                      onClick={() => {
+                        setSelectedChain(item.chainId)
+                      }}
+                      fontcolor={fontColor2}
+                    >
+                      <img src={item.img} alt={item.name} />
+                    </CurrencyDropDownItem>
+                  ))}
+                </CurrencyDropDownMenu>
+              </Dropdown>
+            ) : (
+              <ChainGroup>
+                {ChainsList.map((item, i) => (
+                  <ChainButton
+                    backColor={backColor}
+                    hoverColor={filterChainHoverColor}
+                    borderColor={borderColor}
+                    className={selectedChain.toString() === item.chainId.toString() ? 'active' : ''}
+                    data-tip
+                    data-for={`chain-${item.name}`}
+                    key={i}
+                    onClick={() => {
+                      setSelectedChain(item.chainId)
+                    }}
+                  >
+                    <img src={item.img} alt="" />
+                  </ChainButton>
+                ))}
+              </ChainGroup>
+            )}
+          </BoxHeading>
           <BoxTitle color={darkMode ? '#ffffff' : '#475467'}>My existing position</BoxTitle>
           <VaultBox
             bgColor="#ffffff"
@@ -1149,7 +1249,7 @@ const Migrate = () => {
             networkName={networkName}
             setPositionVaultAddress={setPositionVaultAddress}
             filteredFarmList={filteredFarmList}
-            chain={Number(chainId)}
+            chain={Number(selectedChain)}
             isMobile={isMobile}
             currencySym={currencySym}
             setHighestPosition={setHighestPosition}
@@ -1252,7 +1352,7 @@ const Migrate = () => {
             setHighestApyVault={setHighestApyVault}
             setHighestVaultAddress={setHighestVaultAddress}
             filteredFarmList={filteredFarmList}
-            chain={Number(chainId)}
+            chain={Number(selectedChain)}
             isMobile={isMobile}
             currencySym={currencySym}
             setIsFromModal={setIsFromModal}
@@ -1321,7 +1421,7 @@ const Migrate = () => {
                 height="24px"
                 color={darkMode ? '#ffffff' : '#344054'}
               >
-                {!connected || noPosition ? (
+                {!connected || (noPosition && highestApyVault) ? (
                   '0%'
                 ) : highestPosition ? (
                   `${highestPosition.apy}%`
@@ -1329,7 +1429,7 @@ const Migrate = () => {
                   <AnimatedDots />
                 )}{' '}
                 <span style={{ marginLeft: '5px', marginRight: '5px' }}>
-                  {highestPosition || !connected || noPosition ? '→' : ''}
+                  {highestPosition || !connected || (noPosition && highestApyVault) ? '→' : ''}
                 </span>
                 <span style={{ color: '#5fCf76' }}>
                   {highestApyVault ? `${highestApyVault.vaultApy}%` : <AnimatedDots />}
@@ -1355,7 +1455,7 @@ const Migrate = () => {
                 height="24px"
                 color={darkMode ? '#ffffff' : '#344054'}
               >
-                {!connected || noPosition ? (
+                {!connected || (noPosition && highestApyVault) ? (
                   `${currencySym}0.00/yr`
                 ) : highestPosition ? (
                   `${currencySym}${formatNumber(highestPosition.apy / 100)}/yr`
@@ -1363,7 +1463,7 @@ const Migrate = () => {
                   <AnimatedDots />
                 )}{' '}
                 <span style={{ marginLeft: '5px', marginRight: '5px' }}>
-                  {highestPosition || !connected || noPosition ? '→' : ''}
+                  {highestPosition || !connected || (noPosition && highestApyVault) ? '→' : ''}
                 </span>
                 <span style={{ color: '#5fCf76' }}>
                   {highestApyVault ? (
