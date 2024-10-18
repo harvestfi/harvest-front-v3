@@ -980,6 +980,13 @@ const Migrate = () => {
     }
   }
 
+  const onNetworkChange = chain => {
+    const chainHex = `0x${Number(chain).toString(16)}`
+    if (!isSpecialApp) {
+      setChain({ chainId: chainHex })
+    }
+  }
+
   const accordianText = [
     {
       question: <>What is the Migrate tool about?</>,
@@ -1115,6 +1122,7 @@ const Migrate = () => {
                       bgcolor={Number(selectedChain) === Number(item.chainId) ? '#F7F9FF' : ''}
                       onClick={() => {
                         setSelectedChain(item.chainId)
+                        onNetworkChange(item.chainId)
                       }}
                       fontcolor={fontColor2}
                     >
@@ -1136,6 +1144,7 @@ const Migrate = () => {
                     key={i}
                     onClick={() => {
                       setSelectedChain(item.chainId)
+                      onNetworkChange(item.chainId)
                     }}
                   >
                     <img src={item.img} alt="" />

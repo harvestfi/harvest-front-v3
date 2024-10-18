@@ -297,6 +297,10 @@ const Token = styled.div`
   cursor: pointer;
   z-index: 1;
   text-decoration: none;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 170px;
 `
 
 const ChainGroup = styled.div`
@@ -411,8 +415,6 @@ const CurrencyDropDownItem = styled(Dropdown.Item)`
   }
 
   img {
-    margin-right: 15px;
-    margin-left: 10px;
     width: 17.6px;
     height: 17.6px;
   }
@@ -442,6 +444,7 @@ const CurrencyDropDownItem = styled(Dropdown.Item)`
     padding: 10px 16px;
     background: ${props => (props.bgcolor ? props.bgcolor : '')};
     gap: 5px;
+    justify-content: center;
 
     img {
       margin-left: 0px;
