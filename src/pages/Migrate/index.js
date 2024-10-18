@@ -1241,13 +1241,7 @@ const Migrate = () => {
               />
             </ApyDownIcon> */}
                 <Content alignItems="end">
-                  <img
-                    src={ChevronDown}
-                    alt="Chevron Down"
-                    style={{
-                      marginLeft: '20px',
-                    }}
-                  />
+                  <img src={ChevronDown} alt="Chevron Down" />
                 </Content>
               </>
             )}
@@ -1345,13 +1339,7 @@ const Migrate = () => {
               />
             </ApyDownIcon> */}
             <Content alignItems="end">
-              <img
-                src={ChevronDown}
-                alt="Chevron Down"
-                style={{
-                  marginLeft: '20px',
-                }}
-              />
+              <img src={ChevronDown} alt="Chevron Down" />
             </Content>
           </VaultBox>
           <VaultModal

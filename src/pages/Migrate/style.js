@@ -302,7 +302,11 @@ const Token = styled.div`
   overflow: hidden;
   width: 260px;
 
-  @media screen and (max-width: 992px) {
+  @media screen and (max-width: 415px) {
+    width: 200px;
+  }
+
+  @media screen and (max-width: 355px) {
     width: 170px;
   }
 `
