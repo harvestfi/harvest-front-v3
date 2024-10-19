@@ -50,6 +50,13 @@ const Token = styled.a`
   color: ${props => (props.color ? props.color : '')};
   cursor: pointer;
   z-index: 1;
+
+  @media screen and (max-width: 360px) {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    width: 150px;
+  }
 `
 
 const ApyDownIcon = styled.div`

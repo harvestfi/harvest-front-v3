@@ -81,7 +81,7 @@ const VaultList = ({
             href={`${window.location.origin}/${networkName}/${vaultAddress}`}
             onClick={stopPropagation}
           >
-            {vaultName.join(', ')}
+            {`${vaultName.join(', ')} (${matchVault.vault.platform})`}
           </Token>
         </BadgeToken>
       </Content>
