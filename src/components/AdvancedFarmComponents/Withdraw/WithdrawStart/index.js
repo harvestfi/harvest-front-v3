@@ -30,7 +30,12 @@ import { getWeb3, fromWei } from '../../../../services/web3'
 import { formatNumberWido, showTokenBalance } from '../../../../utilities/formats'
 import AnimatedDots from '../../../AnimatedDots'
 import { addresses } from '../../../../data'
-import { getHighestApy, getSecondApy, addressMatchVault } from '../../../../utilities/parsers'
+import {
+  // getHighestApy,
+  // getSecondApy,
+  addressMatchVault,
+  getMatchedVaultList,
+} from '../../../../utilities/parsers'
 import {
   Buttons,
   FTokenInfo,
@@ -123,6 +128,7 @@ const WithdrawStart = ({
   const [fromTokenAddress, setFromTokenAddress] = useState()
   const [toVaultAddress, setToVaultAddress] = useState()
   const [isSpecialToken, setIsSpecialToken] = useState(false)
+  const [matchVaultList, setMatchVaultList] = useState([])
 
   useEffect(() => {
     if (rates.rateData) {
@@ -131,7 +137,7 @@ const WithdrawStart = ({
     }
   }, [rates])
 
-  const { getPortalsApproval, portalsApprove, getPortals } = usePortals()
+  const { getPortalsApproval, portalsApprove, getPortals, getPortalsSupport } = usePortals()
 
   let pickedDefaultToken,
     totalApy = 0
@@ -170,8 +176,8 @@ const WithdrawStart = ({
   const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const highestApyVault = getHighestApy(groupOfVaults, Number(chainId), vaultsData, pools)
-  const secHighApyVault = getSecondApy(groupOfVaults, Number(chainId), vaultsData, pools)
+  // const highestApyVault = getHighestApy(groupOfVaults, Number(chainId), vaultsData, pools)
+  // const secHighApyVault = getSecondApy(groupOfVaults, Number(chainId), vaultsData, pools)
 
   const approveZap = async amnt => {
     const { approve } = await portalsApprove(chainId, account, fromToken, amnt.toString())
@@ -319,30 +325,81 @@ const WithdrawStart = ({
   }
 
   useEffect(() => {
-    if (
-      highestApyVault !== null &&
-      token.vaultAddress.toLowerCase() !== highestApyVault.vault.vaultAddress.toLowerCase() &&
-      !isSpecialToken
-    ) {
-      setHighestApyLogo(highestApyVault.vault.logoUrl)
-      setTokenNames(highestApyVault.vault.tokenNames)
-      setPlatformNames(highestApyVault.vault.platform)
-      setTopApyVault(highestApyVault.vaultApy)
-      setFromTokenAddress(token.vaultAddress.toLowerCase())
-      setToVaultAddress(highestApyVault.vault.vaultAddress.toLowerCase())
-    } else if (
-      highestApyVault !== null &&
-      token.vaultAddress.toLowerCase() === highestApyVault.vault.vaultAddress.toLowerCase() &&
-      !isSpecialToken
-    ) {
-      setHighestApyLogo(secHighApyVault.vault.logoUrl)
-      setTokenNames(secHighApyVault.vault.tokenNames)
-      setPlatformNames(secHighApyVault.vault.platform)
-      setTopApyVault(secHighApyVault.vaultApy)
-      setFromTokenAddress(token.vaultAddress.toLowerCase())
-      setToVaultAddress(secHighApyVault.vault.vaultAddress.toLowerCase())
+    const activedList = []
+    if (chainId) {
+      const matched = getMatchedVaultList(groupOfVaults, chainId, vaultsData, pools)
+      if (matched.length > 0) {
+        matched.forEach(item => {
+          if (Number(item.vaultApy) !== 0) {
+            activedList.push(item)
+          }
+        })
+      }
     }
-  }, [highestApyVault, secHighApyVault, token, isSpecialToken])
+
+    const fetchSupportedMatches = async () => {
+      const filteredMatchList = []
+
+      if (activedList.length > 0) {
+        activedList.sort((a, b) => b.vaultApy - a.vaultApy)
+        const newArray = activedList.slice(0, 10)
+        // eslint-disable-next-line no-restricted-syntax
+        for (const item of newArray) {
+          if (
+            item.vaultApy !== 0 &&
+            item.vault.vaultAddress.toLowerCase() !== '0x47e3daf382c4603450905fb68766db8308315407'
+          ) {
+            const mToken = item.vault
+            const tokenAddress = useIFARM
+              ? addresses.iFARM
+              : mToken.vaultAddress || mToken.tokenAddress
+            // eslint-disable-next-line no-await-in-loop
+            const portalsToken = await getPortalsSupport(chainId, tokenAddress)
+            if (portalsToken) {
+              if (portalsToken.status === 200) {
+                if (portalsToken.data.totalItems !== 0) {
+                  filteredMatchList.push(item)
+                }
+              }
+            } else {
+              console.log('Error in fetching Portals supported')
+            }
+          }
+        }
+      }
+      if (filteredMatchList.length > 0) {
+        setMatchVaultList(filteredMatchList)
+      }
+    }
+
+    fetchSupportedMatches()
+  }, [chainId, pools, setMatchVaultList, token]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (
+      matchVaultList.length > 0 &&
+      token.vaultAddress.toLowerCase() !== matchVaultList[0].vault.vaultAddress.toLowerCase() &&
+      !isSpecialToken
+    ) {
+      setHighestApyLogo(matchVaultList[0].vault.logoUrl)
+      setTokenNames(matchVaultList[0].vault.tokenNames)
+      setPlatformNames(matchVaultList[0].vault.platform)
+      setTopApyVault(matchVaultList[0].vaultApy)
+      setFromTokenAddress(token.vaultAddress.toLowerCase())
+      setToVaultAddress(matchVaultList[0].vault.vaultAddress.toLowerCase())
+    } else if (
+      matchVaultList.length > 0 &&
+      token.vaultAddress.toLowerCase() === matchVaultList[0].vault.vaultAddress.toLowerCase() &&
+      !isSpecialToken
+    ) {
+      setHighestApyLogo(matchVaultList[1].vault.logoUrl)
+      setTokenNames(matchVaultList[1].vault.tokenNames)
+      setPlatformNames(matchVaultList[1].vault.platform)
+      setTopApyVault(matchVaultList[1].vaultApy)
+      setFromTokenAddress(token.vaultAddress.toLowerCase())
+      setToVaultAddress(matchVaultList[1].vault.vaultAddress.toLowerCase())
+    }
+  }, [matchVaultList, token, isSpecialToken])
 
   useEffect(() => {
     let migrate
@@ -811,17 +868,21 @@ const WithdrawStart = ({
               >
                 <ImageName>
                   <ImagePart>
-                    {highestApyLogo.map((el, i) => {
-                      return (
-                        <BigLogoImg
-                          key={i}
-                          className="logo-img"
-                          zIndex={10 - i}
-                          src={`.${el}`}
-                          alt={tokenNames[i]}
-                        />
-                      )
-                    })}
+                    {highestApyLogo.length === 0 ? (
+                      <AnimatedDots />
+                    ) : (
+                      highestApyLogo.map((el, i) => {
+                        return (
+                          <BigLogoImg
+                            key={i}
+                            className="logo-img"
+                            zIndex={10 - i}
+                            src={`.${el}`}
+                            alt={tokenNames[i]}
+                          />
+                        )
+                      })
+                    )}
                   </ImagePart>
                   <NamePart>
                     <NewLabel
@@ -831,7 +892,7 @@ const WithdrawStart = ({
                       weight="600"
                       padding="0px 10px"
                     >
-                      {tokenNames.join(' - ')}
+                      {tokenNames.length === 0 ? <AnimatedDots /> : tokenNames.join(' - ')}
                     </NewLabel>
                     <NewLabel
                       color="#15202b"
@@ -840,11 +901,13 @@ const WithdrawStart = ({
                       weight="400"
                       padding="0px 10px"
                     >
-                      {platformNames.join(', ')}
+                      {platformNames.length === 0 ? <AnimatedDots /> : platformNames.join(', ')}
                     </NewLabel>
                   </NamePart>
                 </ImageName>
-                <ImageName className="top-apy">{topApyVault}% APY</ImageName>
+                <ImageName className="top-apy">
+                  {topApyVault ? `${topApyVault}% APY` : <AnimatedDots />}
+                </ImageName>
               </HighestVault>
             </VaultContainer>
           </NewLabel>
