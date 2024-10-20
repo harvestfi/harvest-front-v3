@@ -835,15 +835,11 @@ export const fakeChartData = [
 ]
 
 export const boostedVaults = [
-  'lodestar_WBTC',
-  'lodestar_USDCe',
   'lodestar_ARB',
   'lodestar_ETH',
-  'lodestar_USDT',
   'lodestar_PENDLE',
   'camelot_iFARM_ETH',
   'lodestar_wstETH',
-  'lodestar_USDC',
   'xGRAIL',
   'IFARM_arbitrum',
   'lodestar_LODE',
@@ -855,8 +851,11 @@ export const boostedVaults = [
   'aave_GHO_arbitrum',
   'fluid_USDC_arbitrum',
   'fluid_USDT_arbitrum',
+  'fluid_ETH_arbitrum',
   'dolomite_DAI',
   'dolomite_WBTC',
+  'dolomite_USDC',
+  'dolomite_USDT',
 ]
 
 export const supportedCurrencies = [
