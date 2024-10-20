@@ -122,6 +122,7 @@ const WithdrawStart = ({
   const [topApyVault, setTopApyVault] = useState()
   const [fromTokenAddress, setFromTokenAddress] = useState()
   const [toVaultAddress, setToVaultAddress] = useState()
+  const [isSpecialToken, setIsSpecialToken] = useState(false)
 
   useEffect(() => {
     if (rates.rateData) {
@@ -320,7 +321,8 @@ const WithdrawStart = ({
   useEffect(() => {
     if (
       highestApyVault !== null &&
-      token.vaultAddress.toLowerCase() !== highestApyVault.vault.vaultAddress.toLowerCase()
+      token.vaultAddress.toLowerCase() !== highestApyVault.vault.vaultAddress.toLowerCase() &&
+      !isSpecialToken
     ) {
       setHighestApyLogo(highestApyVault.vault.logoUrl)
       setTokenNames(highestApyVault.vault.tokenNames)
@@ -330,7 +332,8 @@ const WithdrawStart = ({
       setToVaultAddress(highestApyVault.vault.vaultAddress.toLowerCase())
     } else if (
       highestApyVault !== null &&
-      token.vaultAddress.toLowerCase() === highestApyVault.vault.vaultAddress.toLowerCase()
+      token.vaultAddress.toLowerCase() === highestApyVault.vault.vaultAddress.toLowerCase() &&
+      !isSpecialToken
     ) {
       setHighestApyLogo(secHighApyVault.vault.logoUrl)
       setTokenNames(secHighApyVault.vault.tokenNames)
@@ -339,7 +342,7 @@ const WithdrawStart = ({
       setFromTokenAddress(token.vaultAddress.toLowerCase())
       setToVaultAddress(secHighApyVault.vault.vaultAddress.toLowerCase())
     }
-  }, [highestApyVault, secHighApyVault, token])
+  }, [highestApyVault, secHighApyVault, token, isSpecialToken])
 
   useEffect(() => {
     let migrate
@@ -454,6 +457,7 @@ const WithdrawStart = ({
       setTopApyVault(migrate.vaultApy)
       setFromTokenAddress(token.vaultAddress.toLowerCase())
       setToVaultAddress(migrate.vault.vaultAddress.toLowerCase())
+      setIsSpecialToken(true)
     }
   }, [token]) // eslint-disable-line react-hooks/exhaustive-deps
 
