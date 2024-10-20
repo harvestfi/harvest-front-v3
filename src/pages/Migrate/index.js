@@ -1049,6 +1049,15 @@ const Migrate = () => {
       question: <>Encountering issues?</>,
       answer: <>Please open a Discord ticket and we&apos;ll help.</>,
     },
+    {
+      question: <>I can&apos;t find my position on the &quot;My existing position&quot; list.</>,
+      answer: (
+        <>
+          A position cannot be migrated if all its fTokens of are staked. Unstake fTokens partially,
+          or in full (via the Rewards tab), to use it with the Migrate tool.
+        </>
+      ),
+    },
   ]
 
   return (

@@ -106,7 +106,7 @@ const sideLinksTop = [
 const sideLinksBottom = [
   {
     path: ROUTES.MIGRATE,
-    name: 'Migrate',
+    name: 'Migrate Position',
     imgPath: BlackMigrate,
     external: false,
   },
