@@ -565,9 +565,17 @@ export const getMatchedVaultList = (allVaults, chainName, vaultsData, pools) => 
   const sameNetworkVautls = []
 
   Object.entries(allVaults).map(vault => {
-    const compareChain = vault[1].poolVault ? vault[1].data.chain : vault[1].chain
+    const compareChain = vault[1].poolVault
+      ? vault[1].data
+        ? vault[1].data.chain
+        : null
+      : vault[1].chain
     const address = vault[1].poolVault ? vault[1].tokenAddress : vault[1].vaultAddress
-    if (Number(compareChain) === Number(chainName) && vault[0] !== 'IFARM') {
+    if (
+      Number(compareChain) === Number(chainName) &&
+      vault[0] !== 'IFARM' &&
+      compareChain !== null
+    ) {
       const vaultApy = getVaultApy(address, allVaults, vaultsData, pools)
       sameNetworkVautls.push({ vaultApy: Number(vaultApy), vault: vault[1] })
     }
