@@ -405,16 +405,16 @@ export const getTokenNames = (userVault, dataVaults) => {
 export const getVaultApy = (vaultKey, vaultsGroup, vaultsData, pools) => {
   let token = null,
     tokenSymbol = null,
-    specialVaultFlag = false,
+    // specialVaultFlag = false,
     vaultPool
 
-  if (vaultKey.toLowerCase() === '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651') {
-    vaultKey = '0xa0246c9032bc3a600820415ae600c6388619a14d'
-    specialVaultFlag = true
-  }
+  // if (vaultKey.toLowerCase() === '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651') {
+  //   vaultKey = '0xa0246c9032bc3a600820415ae600c6388619a14d'
+  //   specialVaultFlag = true
+  // }
 
   Object.entries(vaultsGroup).forEach(([key, vaultData]) => {
-    if (specialVaultFlag && vaultData.data) {
+    if (vaultData.data) {
       if (vaultData.data.collateralAddress.toLowerCase() === vaultKey.toLowerCase()) {
         token = vaultData
         tokenSymbol = key
