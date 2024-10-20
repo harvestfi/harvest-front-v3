@@ -181,7 +181,7 @@ const sideLinksMobileBottom = [
   },
   {
     path: ROUTES.MIGRATE,
-    name: 'Migrate',
+    name: 'Migrate Position',
     imgPath: BlackMigrate,
     external: false,
   },
