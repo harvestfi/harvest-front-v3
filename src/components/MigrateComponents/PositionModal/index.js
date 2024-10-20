@@ -654,7 +654,7 @@ const PositionModal = ({
                 weight="400"
                 marginBottom="5px"
               >
-                Pick existing position to migrate
+                Displaying positions with any amount of unstaked fTokens.
               </NewLabel>
             </NewLabel>
           </div>
@@ -704,7 +704,7 @@ const PositionModal = ({
               padding="15px"
               borderBottom={darkMode ? '1px solid #1F242F' : '1px solid #ECECEC'}
             >
-              {`${countFarm} Opportunities found on ${formatNetworkName(networkName)}`}
+              {`${countFarm} eligible positions found on ${formatNetworkName(networkName)}`}
             </NewLabel>
             {positions}
           </>

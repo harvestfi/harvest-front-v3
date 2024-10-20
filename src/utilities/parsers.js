@@ -546,6 +546,21 @@ export const getSecondApy = (allVaults, chainName, vaultsData, pools) => {
   return null
 }
 
+export const addressMatchVault = (allVaults, vaultAddress, vaultsData, pools) => {
+  const matchVault = []
+  Object.entries(allVaults).map(vault => {
+    if (vault[1].vaultAddress.toLowerCase() === vaultAddress.toLowerCase()) {
+      const vaultApy = getVaultApy(vault[1].vaultAddress, allVaults, vaultsData, pools)
+      matchVault.push({ vaultApy: Number(vaultApy), vault: vault[1] })
+    }
+    return true
+  })
+  if (matchVault.length > 0) {
+    return matchVault[0]
+  }
+  return null
+}
+
 export const getMatchedVaultList = (allVaults, chainName, vaultsData, pools) => {
   const sameNetworkVautls = []
 

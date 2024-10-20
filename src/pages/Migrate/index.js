@@ -177,7 +177,7 @@ const Migrate = () => {
         : Number(selectedChain) === 324
         ? 'zksync'
         : Number(selectedChain) === 137
-        ? 'poligon'
+        ? 'polygon'
         : 'ethereum'
     setChainUrl(badgeUrl)
     setNetworkName(network)
@@ -1489,7 +1489,9 @@ const Migrate = () => {
                 weight="600"
                 height="24px"
                 color={darkMode ? '#ffffff' : '#344054'}
-              >{`${currencySym}0.00`}</NewLabel>
+              >
+                Free
+              </NewLabel>
             </NewLabel>
           </NewLabel>
           <ButtonDiv

@@ -30,7 +30,7 @@ import { getWeb3, fromWei } from '../../../../services/web3'
 import { formatNumberWido, showTokenBalance } from '../../../../utilities/formats'
 import AnimatedDots from '../../../AnimatedDots'
 import { addresses } from '../../../../data'
-import { getHighestApy, getSecondApy } from '../../../../utilities/parsers'
+import { getHighestApy, getSecondApy, addressMatchVault } from '../../../../utilities/parsers'
 import {
   Buttons,
   FTokenInfo,
@@ -120,6 +120,8 @@ const WithdrawStart = ({
   const [tokenNames, setTokenNames] = useState([])
   const [platformNames, setPlatformNames] = useState([])
   const [topApyVault, setTopApyVault] = useState()
+  const [fromTokenAddress, setFromTokenAddress] = useState()
+  const [toVaultAddress, setToVaultAddress] = useState()
 
   useEffect(() => {
     if (rates.rateData) {
@@ -324,6 +326,8 @@ const WithdrawStart = ({
       setTokenNames(highestApyVault.vault.tokenNames)
       setPlatformNames(highestApyVault.vault.platform)
       setTopApyVault(highestApyVault.vaultApy)
+      setFromTokenAddress(token.vaultAddress.toLowerCase())
+      setToVaultAddress(highestApyVault.vault.vaultAddress.toLowerCase())
     } else if (
       highestApyVault !== null &&
       token.vaultAddress.toLowerCase() === highestApyVault.vault.vaultAddress.toLowerCase()
@@ -332,8 +336,126 @@ const WithdrawStart = ({
       setTokenNames(secHighApyVault.vault.tokenNames)
       setPlatformNames(secHighApyVault.vault.platform)
       setTopApyVault(secHighApyVault.vaultApy)
+      setFromTokenAddress(token.vaultAddress.toLowerCase())
+      setToVaultAddress(secHighApyVault.vault.vaultAddress.toLowerCase())
     }
   }, [highestApyVault, secHighApyVault, token])
+
+  useEffect(() => {
+    let migrate
+    if (token.vaultAddress.toLowerCase() === '0x6adebe9a4c8df4e6bfd09263ab7e2edf67288763') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0x7f7e98E5FA2ef1dE3b747b55dd81f73960Ce92C2',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0xc54a552ada1871417b6569a512f748b023ed49be') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0xc05374A286143BA88984AF1a103aceD8b587c96b',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0x85050bedc80ea28e53db5f80f165d87f29d2a1bc') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0x1d8D049CFC65695aa37b17B4Fbc8c5861263C027',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0xd691d8e3bc5008708786114481714b9c636f766f') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0x85050BEdC80eA28e53dB5F80F165d87F29d2A1bC',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0xb01a958d8e9dba566c6d71f66ef566ccf5fac859') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0x85050BEdC80eA28e53dB5F80F165d87F29d2A1bC',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0x95e96dade6cc960f3cbe3a71cae8413af5a3d9f4') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0x85050BEdC80eA28e53dB5F80F165d87F29d2A1bC',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0x58677351d11f8941c7199c49aa7379a156404972') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0x85050BEdC80eA28e53dB5F80F165d87F29d2A1bC',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0x5189dcb7cdab823915865817778032d2a6fc8108') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0x85050BEdC80eA28e53dB5F80F165d87F29d2A1bC',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0xe351c30c1b7da09df89d1c8528ce7110d0702d23') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0xe6b284e58E0D9f660503dD0E5579Cc8fbc954C6c',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0x0d15225454474ab3cb124083278c7be03f8a99ff') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0x85050BEdC80eA28e53dB5F80F165d87F29d2A1bC',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0xef39ef2069a9a65cd6476b6c9a6fb7dd2910f370') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0xe6b284e58E0D9f660503dD0E5579Cc8fbc954C6c',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0x2b70238022589f17e7b266bc753e74027d57009f') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0xe6b284e58E0D9f660503dD0E5579Cc8fbc954C6c',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0x24174022d382cd155c33a847404cda5bc7978802') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0xf54537b19796d2c75EcB6760a299B8482eA717fB',
+        vaultsData,
+        pools,
+      )
+    }
+    if (migrate) {
+      setHighestApyLogo(migrate.vault.logoUrl)
+      setTokenNames(migrate.vault.tokenNames)
+      setPlatformNames(migrate.vault.platform)
+      setTopApyVault(migrate.vaultApy)
+      setFromTokenAddress(token.vaultAddress.toLowerCase())
+      setToVaultAddress(migrate.vault.vaultAddress.toLowerCase())
+    }
+  }, [token])
 
   return (
     <Modal
@@ -671,11 +793,11 @@ const WithdrawStart = ({
               <HighestVault
                 className="highest-vault"
                 onClick={e => {
-                  const url =
-                    token.vaultAddress.toLowerCase() !==
-                    highestApyVault.vault.vaultAddress.toLowerCase()
-                      ? `/migrate?from=${token.vaultAddress.toLowerCase()}&to=${highestApyVault.vault.vaultAddress.toLowerCase()}&chain=${chainId}`
-                      : `/migrate?from=${token.vaultAddress.toLowerCase()}&to=${secHighApyVault.vault.vaultAddress.toLowerCase()}&chain=${chainId}`
+                  const url = `/migrate?from=${fromTokenAddress}&to=${toVaultAddress}&chain=${chainId}`
+                  // token.vaultAddress.toLowerCase() !==
+                  // highestApyVault.vault.vaultAddress.toLowerCase()
+                  //   ? `/migrate?from=${token.vaultAddress.toLowerCase()}&to=${highestApyVault.vault.vaultAddress.toLowerCase()}&chain=${chainId}`
+                  //   : `/migrate?from=${token.vaultAddress.toLowerCase()}&to=${secHighApyVault.vault.vaultAddress.toLowerCase()}&chain=${chainId}`
                   if (e.ctrlKey) {
                     window.open(url, '_blank')
                   } else {
