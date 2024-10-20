@@ -455,7 +455,7 @@ const WithdrawStart = ({
       setFromTokenAddress(token.vaultAddress.toLowerCase())
       setToVaultAddress(migrate.vault.vaultAddress.toLowerCase())
     }
-  }, [token])
+  }, [token]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Modal
