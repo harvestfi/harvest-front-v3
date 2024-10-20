@@ -1,7 +1,7 @@
 import React from 'react'
 import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
 import ARBITRUM from '../../../assets/images/logos/badge/arbitrum.svg'
-import POLIGON from '../../../assets/images/logos/badge/polygon.svg'
+import POLYGON from '../../../assets/images/logos/badge/polygon.svg'
 import ZKSYNC from '../../../assets/images/logos/badge/zksync.svg'
 import BASE from '../../../assets/images/logos/badge/base.svg'
 import { formatNumber } from '../../../utilities/formats'
@@ -43,7 +43,7 @@ const VaultList = ({
       : chainId === 324
       ? ZKSYNC
       : chainId === 137
-      ? POLIGON
+      ? POLYGON
       : ETHEREUM
   let matchingFarm
   const id = matchVault.vault.pool === undefined ? 'FARM' : matchVault.vault.pool.id
