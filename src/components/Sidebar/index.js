@@ -106,7 +106,7 @@ const sideLinksTop = [
 const sideLinksBottom = [
   {
     path: ROUTES.MIGRATE,
-    name: 'Migrate Position',
+    name: 'Migrate',
     imgPath: BlackMigrate,
     external: false,
   },
@@ -181,7 +181,7 @@ const sideLinksMobileBottom = [
   },
   {
     path: ROUTES.MIGRATE,
-    name: 'Migrate Position',
+    name: 'Migrate',
     imgPath: BlackMigrate,
     external: false,
   },
@@ -235,6 +235,8 @@ const SideLink = ({
       ? 'all farms'
       : pathname === ROUTES.TUTORIAL
       ? 'tutorial'
+      : pathname === 'migrate'
+      ? 'migrate position'
       : pathname
   return (
     /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
