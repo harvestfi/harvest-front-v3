@@ -53,6 +53,7 @@ const VaultModal = ({
   startPoint,
   setStartPoint,
   connected,
+  setAllMatchVaultList,
   // userStats,
 }) => {
   const { darkMode, inputFontColor, fontColor } = useThemeContext()
@@ -115,6 +116,7 @@ const VaultModal = ({
         })
         if (activedList.length > 0) {
           setMatchingList(activedList)
+          setAllMatchVaultList(activedList)
         }
       }
     }

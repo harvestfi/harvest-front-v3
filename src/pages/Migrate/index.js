@@ -142,6 +142,7 @@ const Migrate = () => {
   const [chainUrl, setChainUrl] = useState()
   const [noPosition, setNoPosition] = useState(false)
   const [selectedChain, setSelectedChain] = useState(chainId)
+  const [allMatchVaultList, setAllMatchVaultList] = useState([])
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const isFromAdvanced = location.search.includes('from=')
@@ -785,6 +786,7 @@ const Migrate = () => {
     if (!isFromModal && isFromAdvanced && Number(advanceChain) === Number(chainId)) {
       let fromVault, toVault, secToVault
       const urlFromAddress = values.from
+      const urlToAddress = values.to
       if (networkMatchList.length > 0 && matchVaultList.length > 0) {
         const urlFrom = networkMatchList.find(item => {
           const compareAddress = item.token.poolVault
@@ -797,7 +799,17 @@ const Migrate = () => {
         } else {
           fromVault = networkMatchList[0]
         }
-        toVault = matchVaultList[0]
+        const urlTo = allMatchVaultList.find(item => {
+          const compareAddress = item.vault.poolVault
+            ? item.vault.tokenAddress
+            : item.vault.vaultAddress
+          return compareAddress.toLowerCase() === urlToAddress.toLowerCase()
+        })
+        if (urlTo) {
+          toVault = urlTo
+        } else {
+          toVault = matchVaultList[0]
+        }
         secToVault = matchVaultList[1]
       }
 
@@ -1390,6 +1402,7 @@ const Migrate = () => {
             currencyRate={currencyRate}
             userStats={userStats}
             connected={connected}
+            setAllMatchVaultList={setAllMatchVaultList}
           />
           <NewLabel
             display="flex"
