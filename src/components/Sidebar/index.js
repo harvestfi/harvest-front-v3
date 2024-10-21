@@ -359,6 +359,7 @@ const Sidebar = ({ width }) => {
   const [balanceETH, setBalanceETH] = useState('')
   const [balanceUSDC, setBalanceUSDC] = useState('')
   const [leaderboardClick, setLeaderboardClick] = usePersistedState('leaderboardClick', false)
+  const [migrateClick, setMigrateClick] = usePersistedState('migrateClic', false)
 
   const handleMobileClose = () => setMobileShow(false)
   const handleMobileShow = () => setMobileShow(true)
@@ -435,6 +436,10 @@ const Sidebar = ({ width }) => {
 
   const handleLeaderboardClick = () => {
     setLeaderboardClick(true)
+  }
+
+  const handleMigrateClick = () => {
+    setMigrateClick(true)
   }
 
   return (
@@ -580,6 +585,9 @@ const Sidebar = ({ width }) => {
                     if (item.name === 'Leaderboard') {
                       handleLeaderboardClick()
                     }
+                    if (item.name === 'Migrate Position') {
+                      handleMigrateClick()
+                    }
                   }}
                 >
                   <SideLink
@@ -591,10 +599,18 @@ const Sidebar = ({ width }) => {
                     darkMode={darkMode}
                     hoverColorSide={hoverColorSide}
                     className={
-                      item.name === 'Leaderboard' && !leaderboardClick && darkMode
-                        ? 'leaderboard-dark-btn'
-                        : item.name === 'Leaderboard' && !leaderboardClick && !darkMode
-                        ? 'leaderboard-white-icon'
+                      item.name === 'Leaderboard'
+                        ? !leaderboardClick && darkMode
+                          ? 'leaderboard-dark-btn'
+                          : !leaderboardClick && !darkMode
+                          ? 'leaderboard-white-icon'
+                          : ''
+                        : item.name === 'Migrate Position'
+                        ? !migrateClick && darkMode
+                          ? 'leaderboard-dark-btn'
+                          : !migrateClick && !darkMode
+                          ? 'leaderboard-white-icon'
+                          : ''
                         : ''
                     }
                   />
