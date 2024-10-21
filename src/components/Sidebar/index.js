@@ -442,6 +442,12 @@ const Sidebar = ({ width }) => {
     setMigrateClick(true)
   }
 
+  useEffect(() => {
+    if (pathname.includes('migrate')) {
+      setMigrateClick(true)
+    }
+  }, [pathname])
+
   return (
     <Container
       width={width}
