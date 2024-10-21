@@ -446,7 +446,7 @@ const Sidebar = ({ width }) => {
     if (pathname.includes('migrate')) {
       setMigrateClick(true)
     }
-  }, [pathname]) // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Container
