@@ -359,7 +359,7 @@ const Sidebar = ({ width }) => {
   const [balanceETH, setBalanceETH] = useState('')
   const [balanceUSDC, setBalanceUSDC] = useState('')
   const [leaderboardClick, setLeaderboardClick] = usePersistedState('leaderboardClick', false)
-  const [migrateClick, setMigrateClick] = usePersistedState('migrateClic', false)
+  const [migrateClick, setMigrateClick] = usePersistedState('migrateClick', false)
 
   const handleMobileClose = () => setMobileShow(false)
   const handleMobileShow = () => setMobileShow(true)
