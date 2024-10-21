@@ -13,6 +13,7 @@ import AnimatedDots from '../../AnimatedDots'
 import { formatNetworkName } from '../../../utilities/formats'
 // import tokenMethods from '../../../services/web3/contracts/token/methods'
 import PositionList from '../PositionList'
+import { getVaultValue } from '../../../utilities/parsers'
 import { usePortals } from '../../../providers/Portals'
 // import { fromWei } from '../../../services/web3'
 
@@ -91,8 +92,10 @@ const PositionModal = ({
     let firstFlag = 0
     if (filteredFarmList.length > 0) {
       filteredFarmList.forEach(vault => {
+        const eachToken = vault.token
+        const eachTvl = getVaultValue(eachToken)
         const findingChain = vault.token.poolVault ? vault.token.data.chain : vault.token.chain
-        if (Number(findingChain) === Number(chain)) {
+        if (Number(findingChain) === Number(chain) && Number(eachTvl) > 500) {
           matchListAry.push(vault)
         }
       })

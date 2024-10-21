@@ -12,7 +12,7 @@ import { fromWei, checkNativeToken } from '../../../services/web3'
 import AnimatedDots from '../../AnimatedDots'
 import { formatNetworkName, formatNumber, formatNumberWido } from '../../../utilities/formats'
 import VaultList from '../VaultList'
-import { getMatchedVaultList } from '../../../utilities/parsers'
+import { getMatchedVaultList, getVaultValue } from '../../../utilities/parsers'
 import { FARM_TOKEN_SYMBOL, BEGINNERS_BALANCES_DECIMALS } from '../../../constants'
 import { usePortals } from '../../../providers/Portals'
 import { VaultBox } from '../PositionList/style'
@@ -110,7 +110,8 @@ const VaultModal = ({
       matched = getMatchedVaultList(groupOfVaults, chain, vaultsData, pools)
       if (matched.length > 0) {
         matched.forEach(item => {
-          if (Number(item.vaultApy) !== 0) {
+          const vaultValue = getVaultValue(item.vault)
+          if (Number(item.vaultApy) !== 0 && Number(vaultValue) > 500) {
             activedList.push(item)
           }
         })
@@ -120,6 +121,8 @@ const VaultModal = ({
         }
       }
     }
+
+    activedList.sort((a, b) => b.vaultApy - a.vaultApy)
 
     const fetchSupportedMatches = async () => {
       const filteredMatchList = []

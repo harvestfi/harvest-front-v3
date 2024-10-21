@@ -35,6 +35,7 @@ import {
   // getSecondApy,
   addressMatchVault,
   getMatchedVaultList,
+  getVaultValue,
 } from '../../../../utilities/parsers'
 import {
   Buttons,
@@ -330,7 +331,8 @@ const WithdrawStart = ({
       const matched = getMatchedVaultList(groupOfVaults, chainId, vaultsData, pools)
       if (matched.length > 0) {
         matched.forEach(item => {
-          if (Number(item.vaultApy) !== 0) {
+          const vaultValue = getVaultValue(item.vault)
+          if (Number(item.vaultApy) !== 0 && Number(vaultValue) > 500) {
             activedList.push(item)
           }
         })
