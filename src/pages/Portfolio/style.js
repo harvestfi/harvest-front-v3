@@ -101,49 +101,6 @@ const HeaderButton = styled.div`
   }
 `
 
-const RankContainer = styled.div`
-  width: 100px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  position: relative;
-  padding-top: 2.83px;
-  padding-right: 2.83px;
-  padding-bottom: 2.83px;
-  padding-left: 10px;
-  background: #f9f9ff;
-  border-radius: 30px;
-
-  .rank-box::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 30px;
-    padding: 2px;
-    background: linear-gradient(90deg, #ffd6a6 0%, #a1b5ff 48.9%, #73df88 100%);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-  }
-`
-
-const RankImg = styled.div`
-  display: flex;
-  align-items: center;
-`
-
-const Rank = styled.div`
-  background: #21262d;
-  color: #ffffff;
-  font-weight: 500;
-  font-size: 10px;
-  line-height: 14.15px;
-  border-radius: 30px;
-  -webkit-fill-available;
-  display: flex;
-  align-items: center;
-`
-
 const FarmTitle = styled.span`
   display: flex;
   justify-content: space-between;
@@ -657,133 +614,6 @@ const ContentBox = styled.div`
   }
 `
 
-const NewLabel = styled.div`
-  font-weight: ${props => props.weight || '400'};
-  font-size: ${props => props.size || '20px'};
-  line-height: ${props => props.height || '0px'};
-  ${props =>
-    props.borderBottom
-      ? `
-    border-bottom: ${props.borderBottom};
-  `
-      : ''}
-
-  ${props =>
-    props.color
-      ? `
-    color: ${props.color};
-  `
-      : ''}
-  ${props =>
-    props.position
-      ? `
-    position: ${props.position};
-  `
-      : ''}
-  ${props =>
-    props.align
-      ? `
-    text-align: ${props.align};
-  `
-      : ''}
-  ${props =>
-    props.justifyContent
-      ? `
-    justify-content: ${props.justifyContent};
-  `
-      : ''}
-  ${props =>
-    props.marginTop
-      ? `
-    margin-top: ${props.marginTop};
-  `
-      : ''}
-  ${props =>
-    props.marginLeft
-      ? `
-    margin-left: ${props.marginLeft};
-  `
-      : ''}
-  ${props =>
-    props.marginBottom
-      ? `
-    margin-bottom: ${props.marginBottom};
-  `
-      : ''}
-  ${props =>
-    props.marginRight
-      ? `
-    margin-right: ${props.marginRight};
-  `
-      : ''}
-  ${props =>
-    props.display
-      ? `
-    display: ${props.display};
-  `
-      : ''}
-  ${props =>
-    props.items
-      ? `
-    align-items: ${props.items};
-  `
-      : ''}
-  ${props =>
-    props.self
-      ? `
-    align-self: ${props.self};
-  `
-      : ''}
-  ${props =>
-    props.padding
-      ? `
-    padding: ${props.padding};
-  `
-      : ''}
-  ${props =>
-    props.width
-      ? `
-    width: ${props.width};
-  `
-      : ''}
-  ${props =>
-    props.borderRadius
-      ? `
-    border-radius: ${props.borderRadius};
-    `
-      : ``}
-  img.icon {
-    margin-right: 10px;
-  }
-
-  img.thumbs-up {
-    margin-right: 10px;
-  }
-
-  img.info-icon {
-    margin-left: 15px;
-  }
-
-  #info .tooltip-inner {
-    background: black;
-  }
-
-  @media screen and (max-width: 992px) {
-    img.icon {
-      margin-right: 5px;
-    }
-
-    img.info {
-      margin-left: 5px;
-    }
-
-    img.thumbs-up {
-      margin-right: 5px;
-      width: 11px;
-    }
-  }
-`
-
 const CheckBoxDiv = styled.div`
   cursor: pointer;
   margin-top: 25px;
@@ -1068,7 +898,6 @@ export {
   PositionTable,
   YieldTable,
   ContentBox,
-  NewLabel,
   ConnectButtonStyle,
   ExploreButtonStyle,
   CheckBoxDiv,
@@ -1078,7 +907,4 @@ export {
   CurrencySelect,
   CurrencyDropDownMenu,
   CurrencyDropDownItem,
-  RankContainer,
-  RankImg,
-  Rank,
 }

@@ -46,9 +46,8 @@ import {
   getTokenPriceFromApi,
   getUserBalanceVaults,
   initBalanceAndDetailData,
-  fetchLeaderboardData,
 } from '../../utilities/apiCalls'
-import { getChainIcon, getTotalApy, rearrangeApiData } from '../../utilities/parsers'
+import { getChainIcon, getTotalApy } from '../../utilities/parsers'
 import {
   Column,
   Container,
@@ -80,10 +79,6 @@ import {
   MobileSwitch,
   SwitchBtn,
   SubBtnWrap,
-  // NewLabel,
-  // RankContainer,
-  // RankImg,
-  // Rank,
 } from './style'
 
 const totalNetProfitKey = 'TOTAL_NET_PROFIT'
@@ -93,7 +88,7 @@ const vaultProfitDataKey = 'VAULT_LIFETIME_YIELD'
 const Portfolio = () => {
   const { push } = useHistory()
   const { connected, connectAction, account, balances, getWalletBalances } = useWallet()
-  const { userStats, fetchUserPoolStats, totalPools, disableWallet, pools } = usePools()
+  const { userStats, fetchUserPoolStats, totalPools, disableWallet } = usePools()
   const { profitShareAPY } = useStats()
   const { vaultsData, getFarmingBalances } = useVaults()
   /* eslint-disable global-require */
@@ -136,22 +131,6 @@ const Portfolio = () => {
   const [showInactiveFarms, setShowInactiveFarms] = useState(false)
   const [viewPositions, setViewPositions] = useState(true)
   const [showLatestYield, setShowLatestYield] = useState(false)
-  const [leadersApiData, setLeadersApiData] = useState(null)
-
-  let correctedApiData = {}
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const data = await fetchLeaderboardData()
-        setLeadersApiData(data)
-      } catch (error) {
-        console.error('Error fetching leaderboard data:', error)
-      }
-    }
-
-    getData()
-  }, [])
 
   useEffect(() => {
     setCurCurrency(supportedCurrencies[rates.currency.id])
@@ -245,30 +224,6 @@ const Portfolio = () => {
 
     setBoostedVaults()
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
-  if (leadersApiData) {
-    correctedApiData = rearrangeApiData(leadersApiData, groupOfVaults, vaultsData, pools)
-  }
-
-  const sortedByBalance = useMemo(() => {
-    return Object.entries(correctedApiData).sort((a, b) => {
-      const vaultAArray = Object.entries(a[1].vaults)
-      const vaultBArray = Object.entries(b[1].vaults)
-      const balanceA = vaultAArray.reduce((acc, [, vault]) => acc + vault.balance, 0)
-      const balanceB = vaultBArray.reduce((acc, [, vault]) => acc + vault.balance, 0)
-      return balanceB - balanceA
-    })
-  }, [correctedApiData])
-
-  // eslint-disable-next-line no-unused-vars
-  const balanceRank = useMemo(() => {
-    if (account && Object.entries(correctedApiData).length > 0) {
-      return (
-        sortedByBalance.findIndex(([wallet]) => wallet.toLowerCase() === account.toLowerCase()) + 1
-      )
-    }
-    return false
-  }, [sortedByBalance, account]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (account && !isEmpty(userStats) && !isEmpty(depositToken)) {
