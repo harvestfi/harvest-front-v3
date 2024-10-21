@@ -828,7 +828,7 @@ const VaultModal = ({
         <FTokenInfo>
           <div className="modal-header-part">
             <NewLabel margin="auto 16px auto 0px">
-              <IconCard bgColor="linear-gradient(90deg, #ffd6a6 0%, #a1b5ff 48.9%, #73df88 100%)">
+              <IconCard bgColor="#6988ff">
                 <BsArrowDown />
               </IconCard>
             </NewLabel>
@@ -899,7 +899,7 @@ const VaultModal = ({
               padding="15px"
               borderBottom={darkMode ? '1px solid #1F242F' : '1px solid #ECECEC'}
             >
-              {`${countFarm} Opportunities found on ${formatNetworkName(networkName)}`}
+              {`25+ Opportunities found on ${formatNetworkName(networkName)}`}
             </NewLabel>
             {positions}
             {isLoadingMore && newPositions}
