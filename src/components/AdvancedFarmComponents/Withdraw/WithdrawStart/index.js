@@ -424,7 +424,7 @@ const WithdrawStart = ({
     if (token.vaultAddress.toLowerCase() === '0x85050bedc80ea28e53db5f80f165d87f29d2a1bc') {
       migrate = addressMatchVault(
         groupOfVaults,
-        '0x1d8D049CFC65695aa37b17B4Fbc8c5861263C027',
+        '0x0D15225454474ab3cb124083278c7bE03f8a99Ff',
         vaultsData,
         pools,
       )
