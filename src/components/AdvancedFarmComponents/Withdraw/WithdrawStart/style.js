@@ -407,6 +407,84 @@ const ProgressText = styled.div`
   text-align: center;
 `
 
+const BigLogoImg = styled.img`
+  z-index: 10;
+  width: 37px;
+  height: 37px;
+  &:not(:first-child) {
+    margin-left: -7px;
+    ${props =>
+      props.zIndex
+        ? `
+      z-index: ${props.zIndex};
+    `
+        : ``};
+  }
+
+  @media screen and (max-width: 1480px) {
+    width: 25px;
+    height: 25px;
+  }
+`
+const VaultContainer = styled.div`
+  padding: 15px 24px;
+
+  .highest-vault::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+    padding: 2px;
+    background: linear-gradient(90deg, #ffd6a6 0%, #a1b5ff 48.9%, #73df88 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+`
+
+const HighestVault = styled.div`
+  padding: 16px;
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fffc;
+  cursor: pointer;
+  border-radius: 12px;
+
+  &:hover {
+    background: #ffffff;
+  }
+
+  .top-apy {
+    position: relative;
+    padding: 1.66px 8.3px 1.66px 6.64px;
+  }
+
+  .top-apy::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 4.15px;
+    padding: 2px;
+    background: linear-gradient(90deg, #ffd6a6 0%, #a1b5ff 48.9%, #73df88 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+`
+
+const ImagePart = styled.div``
+
+const NamePart = styled.div``
+
+const ImageName = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`
+
 export {
   SelectTokenWido,
   FTokenInfo,
@@ -432,4 +510,10 @@ export {
   ApyValue,
   TopLogo,
   LogoImg,
+  BigLogoImg,
+  VaultContainer,
+  HighestVault,
+  ImagePart,
+  NamePart,
+  ImageName,
 }

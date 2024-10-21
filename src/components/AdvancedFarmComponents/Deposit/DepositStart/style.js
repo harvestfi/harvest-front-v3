@@ -18,6 +18,24 @@ const NewLabel = styled.div`
   `
       : ''}
   ${props =>
+    props.bgColor
+      ? `
+        background: ${props.bgColor};
+      `
+      : ''}
+  ${props =>
+    props.border
+      ? `
+        border: ${props.border};
+        `
+      : ''}
+  ${props =>
+    props.borderRadius
+      ? `
+        border-radius: ${props.borderRadius};
+        `
+      : ''}
+  ${props =>
     props.size
       ? `
     font-size: ${props.size};
@@ -256,6 +274,7 @@ const SlippageBox = styled.div`
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
   margin-right: 12px;
   cursor: pointer;
+  display: ${props => (props.display ? props.display : '')};
 `
 
 const MiddleLine = styled.hr`
@@ -300,6 +319,7 @@ const SlippageInput = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
+    font-size: ${props => (props.size ? props.size : '')};
 
     &::-webkit-outer-spin-button,
     &::-webkit-inner-spin-button {
@@ -337,6 +357,12 @@ const ProgressText = styled.div`
   text-align: center;
 `
 
+const StakeIconBox = styled.img`
+  width: ${props => (props.width ? props.width : '')};
+  height: ${props => (props.height ? props.height : '')};
+  cursor: ${props => (props.cursor ? props.cursor : '')};
+`
+
 export {
   SelectTokenWido,
   ImgBtn,
@@ -356,4 +382,5 @@ export {
   SlippageInput,
   ProgressLabel,
   ProgressText,
+  StakeIconBox,
 }

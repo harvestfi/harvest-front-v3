@@ -14,6 +14,7 @@ import Beginners from '../../assets/images/logos/sidebar/beginners.svg'
 import Support from '../../assets/images/logos/sidebar/support.svg'
 import Analytics from '../../assets/images/logos/sidebar/analytics.svg'
 import BlackLeader from '../../assets/images/logos/sidebar/leader_icon_black.svg'
+import BlackMigrate from '../../assets/images/logos/sidebar/Migrate_black.svg'
 // import Collaborations from '../../assets/images/logos/sidebar/collaborations.svg'
 import Advanced from '../../assets/images/logos/sidebar/advanced.svg'
 import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
@@ -104,6 +105,12 @@ const sideLinksTop = [
 
 const sideLinksBottom = [
   {
+    path: ROUTES.MIGRATE,
+    name: 'Migrate Position',
+    imgPath: BlackMigrate,
+    external: false,
+  },
+  {
     path: ROUTES.LEADERBOARD,
     name: 'Leaderboard',
     imgPath: BlackLeader,
@@ -173,6 +180,12 @@ const sideLinksMobileBottom = [
     imgPath: Advanced,
   },
   {
+    path: ROUTES.MIGRATE,
+    name: 'Migrate Position',
+    imgPath: BlackMigrate,
+    external: false,
+  },
+  {
     path: ROUTES.LEADERBOARD,
     name: 'Leaderboard',
     imgPath: BlackLeader,
@@ -222,6 +235,8 @@ const SideLink = ({
       ? 'all farms'
       : pathname === ROUTES.TUTORIAL
       ? 'tutorial'
+      : pathname === ROUTES.MIGRATE
+      ? 'migrate position'
       : pathname
   return (
     /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
@@ -344,6 +359,7 @@ const Sidebar = ({ width }) => {
   const [balanceETH, setBalanceETH] = useState('')
   const [balanceUSDC, setBalanceUSDC] = useState('')
   const [leaderboardClick, setLeaderboardClick] = usePersistedState('leaderboardClick', false)
+  const [migrateClick, setMigrateClick] = usePersistedState('migrateClick', false)
 
   const handleMobileClose = () => setMobileShow(false)
   const handleMobileShow = () => setMobileShow(true)
@@ -421,6 +437,16 @@ const Sidebar = ({ width }) => {
   const handleLeaderboardClick = () => {
     setLeaderboardClick(true)
   }
+
+  const handleMigrateClick = () => {
+    setMigrateClick(true)
+  }
+
+  useEffect(() => {
+    if (pathname.includes('migrate')) {
+      setMigrateClick(true)
+    }
+  }, [pathname]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Container
@@ -565,6 +591,9 @@ const Sidebar = ({ width }) => {
                     if (item.name === 'Leaderboard') {
                       handleLeaderboardClick()
                     }
+                    if (item.name === 'Migrate Position') {
+                      handleMigrateClick()
+                    }
                   }}
                 >
                   <SideLink
@@ -576,10 +605,18 @@ const Sidebar = ({ width }) => {
                     darkMode={darkMode}
                     hoverColorSide={hoverColorSide}
                     className={
-                      item.name === 'Leaderboard' && !leaderboardClick && darkMode
-                        ? 'leaderboard-dark-btn'
-                        : item.name === 'Leaderboard' && !leaderboardClick && !darkMode
-                        ? 'leaderboard-white-icon'
+                      item.name === 'Leaderboard'
+                        ? !leaderboardClick && darkMode
+                          ? 'leaderboard-dark-btn'
+                          : !leaderboardClick && !darkMode
+                          ? 'leaderboard-white-icon'
+                          : ''
+                        : item.name === 'Migrate Position'
+                        ? !migrateClick && darkMode
+                          ? 'leaderboard-dark-btn'
+                          : !migrateClick && !darkMode
+                          ? 'leaderboard-white-icon'
+                          : ''
                         : ''
                     }
                   />

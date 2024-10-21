@@ -405,16 +405,16 @@ export const getTokenNames = (userVault, dataVaults) => {
 export const getVaultApy = (vaultKey, vaultsGroup, vaultsData, pools) => {
   let token = null,
     tokenSymbol = null,
-    specialVaultFlag = false,
+    // specialVaultFlag = false,
     vaultPool
 
-  if (vaultKey === '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651') {
-    vaultKey = '0xa0246c9032bc3a600820415ae600c6388619a14d'
-    specialVaultFlag = true
-  }
+  // if (vaultKey.toLowerCase() === '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651') {
+  //   vaultKey = '0xa0246c9032bc3a600820415ae600c6388619a14d'
+  //   specialVaultFlag = true
+  // }
 
   Object.entries(vaultsGroup).forEach(([key, vaultData]) => {
-    if (specialVaultFlag && vaultData.data) {
+    if (vaultData.data) {
       if (vaultData.data.collateralAddress.toLowerCase() === vaultKey.toLowerCase()) {
         token = vaultData
         tokenSymbol = key
@@ -510,4 +510,80 @@ export const rearrangeApiData = (apiData, groupOfVaults, vaultsData, pools) => {
   })
 
   return vaultBalanceSortedData
+}
+
+export const getHighestApy = (allVaults, chainName, vaultsData, pools) => {
+  const sameNetworkVautls = []
+
+  Object.entries(allVaults).map(vault => {
+    if (Number(vault[1].chain) === chainName) {
+      const vaultApy = getVaultApy(vault[1].vaultAddress, allVaults, vaultsData, pools)
+      sameNetworkVautls.push({ vaultApy: Number(vaultApy), vault: vault[1] })
+    }
+    return true
+  })
+  sameNetworkVautls.sort((a, b) => b.vaultApy - a.vaultApy)
+  if (sameNetworkVautls[0].vaultApy) {
+    return sameNetworkVautls[0]
+  }
+  return null
+}
+
+export const getSecondApy = (allVaults, chainName, vaultsData, pools) => {
+  const sameNetworkVautls = []
+
+  Object.entries(allVaults).map(vault => {
+    if (Number(vault[1].chain) === chainName) {
+      const vaultApy = getVaultApy(vault[1].vaultAddress, allVaults, vaultsData, pools)
+      sameNetworkVautls.push({ vaultApy: Number(vaultApy), vault: vault[1] })
+    }
+    return true
+  })
+  sameNetworkVautls.sort((a, b) => b.vaultApy - a.vaultApy)
+  if (sameNetworkVautls[1].vaultApy) {
+    return sameNetworkVautls[1]
+  }
+  return null
+}
+
+export const addressMatchVault = (allVaults, vaultAddress, vaultsData, pools) => {
+  const matchVault = []
+  Object.entries(allVaults).map(vault => {
+    if (vault[1].vaultAddress.toLowerCase() === vaultAddress.toLowerCase()) {
+      const vaultApy = getVaultApy(vault[1].vaultAddress, allVaults, vaultsData, pools)
+      matchVault.push({ vaultApy: Number(vaultApy), vault: vault[1] })
+    }
+    return true
+  })
+  if (matchVault.length > 0) {
+    return matchVault[0]
+  }
+  return null
+}
+
+export const getMatchedVaultList = (allVaults, chainName, vaultsData, pools) => {
+  const sameNetworkVautls = []
+
+  Object.entries(allVaults).map(vault => {
+    const compareChain = vault[1].poolVault
+      ? vault[1].data
+        ? vault[1].data.chain
+        : null
+      : vault[1].chain
+    const address = vault[1].poolVault ? vault[1].tokenAddress : vault[1].vaultAddress
+    if (
+      Number(compareChain) === Number(chainName) &&
+      vault[0] !== 'IFARM' &&
+      compareChain !== null
+    ) {
+      const vaultApy = getVaultApy(address, allVaults, vaultsData, pools)
+      sameNetworkVautls.push({ vaultApy: Number(vaultApy), vault: vault[1] })
+    }
+    return true
+  })
+  sameNetworkVautls.sort((a, b) => b.vaultApy - a.vaultApy)
+  if (sameNetworkVautls) {
+    return sameNetworkVautls
+  }
+  return false
 }

@@ -594,3 +594,15 @@ export const truncateAddress = address => {
 
   return `${start}...${end}`
 }
+
+export const formatNetworkName = networkName => {
+  let splitName = []
+  if (networkName) {
+    splitName = networkName.toLowerCase().split(' ')
+    for (let i = 0; i < splitName.length; i += 1) {
+      splitName[i] = splitName[i].charAt(0).toUpperCase() + splitName[i].substring(1)
+    }
+  }
+
+  return splitName.join(' ')
+}

@@ -9,6 +9,7 @@ import { PiQuestion } from 'react-icons/pi'
 import { IoIosArrowUp } from 'react-icons/io'
 import ReactTooltip from 'react-tooltip'
 import { Spinner } from 'react-bootstrap'
+import { useHistory } from 'react-router-dom'
 import AlertIcon from '../../../../assets/images/logos/beginners/alert-triangle.svg'
 import AlertCloseIcon from '../../../../assets/images/logos/beginners/alert-close.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
@@ -29,6 +30,13 @@ import { getWeb3, fromWei } from '../../../../services/web3'
 import { formatNumberWido, showTokenBalance } from '../../../../utilities/formats'
 import AnimatedDots from '../../../AnimatedDots'
 import { addresses } from '../../../../data'
+import {
+  // getHighestApy,
+  // getSecondApy,
+  addressMatchVault,
+  getMatchedVaultList,
+  getVaultValue,
+} from '../../../../utilities/parsers'
 import {
   Buttons,
   FTokenInfo,
@@ -53,9 +61,16 @@ import {
   ApyValue,
   TopLogo,
   LogoImg,
+  BigLogoImg,
+  VaultContainer,
+  HighestVault,
+  ImagePart,
+  NamePart,
+  ImageName,
 } from './style'
 
 const WithdrawStart = ({
+  groupOfVaults,
   unstakeInputValue,
   withdrawStart,
   setWithdrawStart,
@@ -89,7 +104,8 @@ const WithdrawStart = ({
     hoverColorAVR,
   } = useThemeContext()
   const { account, web3 } = useWallet()
-  const { fetchUserPoolStats, userStats } = usePools()
+  const { fetchUserPoolStats, userStats, pools } = usePools()
+  const { push } = useHistory()
   const [slippagePercentage, setSlippagePercentage] = useState(null)
   const [slippageSetting, setSlippageSetting] = useState(false)
   const [customSlippage, setCustomSlippage] = useState(null)
@@ -106,6 +122,14 @@ const WithdrawStart = ({
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
+  const [highestApyLogo, setHighestApyLogo] = useState([])
+  const [tokenNames, setTokenNames] = useState([])
+  const [platformNames, setPlatformNames] = useState([])
+  const [topApyVault, setTopApyVault] = useState()
+  const [fromTokenAddress, setFromTokenAddress] = useState()
+  const [toVaultAddress, setToVaultAddress] = useState()
+  const [isSpecialToken, setIsSpecialToken] = useState(false)
+  const [matchVaultList, setMatchVaultList] = useState([])
 
   useEffect(() => {
     if (rates.rateData) {
@@ -114,7 +138,7 @@ const WithdrawStart = ({
     }
   }, [rates])
 
-  const { getPortalsApproval, portalsApprove, getPortals } = usePortals()
+  const { getPortalsApproval, portalsApprove, getPortals, getPortalsSupport } = usePortals()
 
   let pickedDefaultToken,
     totalApy = 0
@@ -153,6 +177,8 @@ const WithdrawStart = ({
   const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+  // const highestApyVault = getHighestApy(groupOfVaults, Number(chainId), vaultsData, pools)
+  // const secHighApyVault = getSecondApy(groupOfVaults, Number(chainId), vaultsData, pools)
 
   const approveZap = async amnt => {
     const { approve } = await portalsApprove(chainId, account, fromToken, amnt.toString())
@@ -298,6 +324,201 @@ const WithdrawStart = ({
       setPickedToken({ symbol: 'Select' })
     }
   }
+
+  useEffect(() => {
+    const activedList = []
+    if (chainId) {
+      const matched = getMatchedVaultList(groupOfVaults, chainId, vaultsData, pools)
+      if (matched.length > 0) {
+        matched.forEach(item => {
+          const vaultValue = getVaultValue(item.vault)
+          if (Number(item.vaultApy) !== 0 && Number(vaultValue) > 500) {
+            activedList.push(item)
+          }
+        })
+      }
+    }
+
+    const fetchSupportedMatches = async () => {
+      const filteredMatchList = []
+
+      if (activedList.length > 0) {
+        activedList.sort((a, b) => b.vaultApy - a.vaultApy)
+        const newArray = activedList.slice(0, 10)
+        // eslint-disable-next-line no-restricted-syntax
+        for (const item of newArray) {
+          if (
+            item.vaultApy !== 0 &&
+            item.vault.vaultAddress.toLowerCase() !== '0x47e3daf382c4603450905fb68766db8308315407'
+          ) {
+            const mToken = item.vault
+            const tokenAddress = useIFARM
+              ? addresses.iFARM
+              : mToken.vaultAddress || mToken.tokenAddress
+            // eslint-disable-next-line no-await-in-loop
+            const portalsToken = await getPortalsSupport(chainId, tokenAddress)
+            if (portalsToken) {
+              if (portalsToken.status === 200) {
+                if (portalsToken.data.totalItems !== 0) {
+                  filteredMatchList.push(item)
+                }
+              }
+            } else {
+              console.log('Error in fetching Portals supported')
+            }
+          }
+        }
+      }
+      if (filteredMatchList.length > 0) {
+        setMatchVaultList(filteredMatchList)
+      }
+    }
+
+    fetchSupportedMatches()
+  }, [chainId, pools, setMatchVaultList, token]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (
+      matchVaultList.length > 0 &&
+      token.vaultAddress.toLowerCase() !== matchVaultList[0].vault.vaultAddress.toLowerCase() &&
+      !isSpecialToken
+    ) {
+      setHighestApyLogo(matchVaultList[0].vault.logoUrl)
+      setTokenNames(matchVaultList[0].vault.tokenNames)
+      setPlatformNames(matchVaultList[0].vault.platform)
+      setTopApyVault(matchVaultList[0].vaultApy)
+      setFromTokenAddress(token.vaultAddress.toLowerCase())
+      setToVaultAddress(matchVaultList[0].vault.vaultAddress.toLowerCase())
+    } else if (
+      matchVaultList.length > 0 &&
+      token.vaultAddress.toLowerCase() === matchVaultList[0].vault.vaultAddress.toLowerCase() &&
+      !isSpecialToken
+    ) {
+      setHighestApyLogo(matchVaultList[1].vault.logoUrl)
+      setTokenNames(matchVaultList[1].vault.tokenNames)
+      setPlatformNames(matchVaultList[1].vault.platform)
+      setTopApyVault(matchVaultList[1].vaultApy)
+      setFromTokenAddress(token.vaultAddress.toLowerCase())
+      setToVaultAddress(matchVaultList[1].vault.vaultAddress.toLowerCase())
+    }
+  }, [matchVaultList, token, isSpecialToken])
+
+  useEffect(() => {
+    let migrate
+    if (token.vaultAddress.toLowerCase() === '0x6adebe9a4c8df4e6bfd09263ab7e2edf67288763') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0x7f7e98E5FA2ef1dE3b747b55dd81f73960Ce92C2',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0xc54a552ada1871417b6569a512f748b023ed49be') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0xc05374A286143BA88984AF1a103aceD8b587c96b',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0x85050bedc80ea28e53db5f80f165d87f29d2a1bc') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0x0D15225454474ab3cb124083278c7bE03f8a99Ff',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0xd691d8e3bc5008708786114481714b9c636f766f') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0x85050BEdC80eA28e53dB5F80F165d87F29d2A1bC',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0xb01a958d8e9dba566c6d71f66ef566ccf5fac859') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0x85050BEdC80eA28e53dB5F80F165d87F29d2A1bC',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0x95e96dade6cc960f3cbe3a71cae8413af5a3d9f4') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0x85050BEdC80eA28e53dB5F80F165d87F29d2A1bC',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0x58677351d11f8941c7199c49aa7379a156404972') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0x85050BEdC80eA28e53dB5F80F165d87F29d2A1bC',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0x5189dcb7cdab823915865817778032d2a6fc8108') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0x85050BEdC80eA28e53dB5F80F165d87F29d2A1bC',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0xe351c30c1b7da09df89d1c8528ce7110d0702d23') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0xe6b284e58E0D9f660503dD0E5579Cc8fbc954C6c',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0x0d15225454474ab3cb124083278c7be03f8a99ff') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0x85050BEdC80eA28e53dB5F80F165d87F29d2A1bC',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0xef39ef2069a9a65cd6476b6c9a6fb7dd2910f370') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0xe6b284e58E0D9f660503dD0E5579Cc8fbc954C6c',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0x2b70238022589f17e7b266bc753e74027d57009f') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0xe6b284e58E0D9f660503dD0E5579Cc8fbc954C6c',
+        vaultsData,
+        pools,
+      )
+    }
+    if (token.vaultAddress.toLowerCase() === '0x24174022d382cd155c33a847404cda5bc7978802') {
+      migrate = addressMatchVault(
+        groupOfVaults,
+        '0xf54537b19796d2c75EcB6760a299B8482eA717fB',
+        vaultsData,
+        pools,
+      )
+    }
+    if (migrate) {
+      setHighestApyLogo(migrate.vault.logoUrl)
+      setTokenNames(migrate.vault.tokenNames)
+      setPlatformNames(migrate.vault.platform)
+      setTopApyVault(migrate.vaultApy)
+      setFromTokenAddress(token.vaultAddress.toLowerCase())
+      setToVaultAddress(migrate.vault.vaultAddress.toLowerCase())
+      setIsSpecialToken(true)
+    }
+  }, [token]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Modal
@@ -612,6 +833,86 @@ const WithdrawStart = ({
               Successful
             </ProgressText>
           </ProgressLabel>
+          <NewLabel>
+            <NewLabel
+              color={darkMode ? '#ffffff' : '#344054'}
+              size={isMobile ? '14px' : '14px'}
+              height={isMobile ? '20px' : '28px'}
+              weight="600"
+              padding="20px 24px 0px 24px"
+            >
+              Psst, looking for alternatives?
+            </NewLabel>
+            <NewLabel
+              color={darkMode ? '#ffffff' : '#15202b'}
+              size={isMobile ? '14px' : '10px'}
+              height={isMobile ? '20px' : '20px'}
+              weight="400"
+              padding="0px 24px"
+            >
+              Click on the new opportunity below to open a Migrate tool.
+            </NewLabel>
+            <VaultContainer>
+              <HighestVault
+                className="highest-vault"
+                onClick={e => {
+                  const url = `/migrate?from=${fromTokenAddress}&to=${toVaultAddress}&chain=${chainId}`
+                  // token.vaultAddress.toLowerCase() !==
+                  // highestApyVault.vault.vaultAddress.toLowerCase()
+                  //   ? `/migrate?from=${token.vaultAddress.toLowerCase()}&to=${highestApyVault.vault.vaultAddress.toLowerCase()}&chain=${chainId}`
+                  //   : `/migrate?from=${token.vaultAddress.toLowerCase()}&to=${secHighApyVault.vault.vaultAddress.toLowerCase()}&chain=${chainId}`
+                  if (e.ctrlKey) {
+                    window.open(url, '_blank')
+                  } else {
+                    push(url)
+                  }
+                }}
+              >
+                <ImageName>
+                  <ImagePart>
+                    {highestApyLogo.length === 0 ? (
+                      <AnimatedDots />
+                    ) : (
+                      highestApyLogo.map((el, i) => {
+                        return (
+                          <BigLogoImg
+                            key={i}
+                            className="logo-img"
+                            zIndex={10 - i}
+                            src={`.${el}`}
+                            alt={tokenNames[i]}
+                          />
+                        )
+                      })
+                    )}
+                  </ImagePart>
+                  <NamePart>
+                    <NewLabel
+                      color="#15202b"
+                      size={isMobile ? '14px' : '14px'}
+                      height={isMobile ? '20px' : '20px'}
+                      weight="600"
+                      padding="0px 10px"
+                    >
+                      {tokenNames.length === 0 ? <AnimatedDots /> : tokenNames.join(' - ')}
+                    </NewLabel>
+                    <NewLabel
+                      color="#15202b"
+                      size={isMobile ? '14px' : '10px'}
+                      height={isMobile ? '20px' : '20px'}
+                      weight="400"
+                      padding="0px 10px"
+                    >
+                      {platformNames.length === 0 ? <AnimatedDots /> : platformNames.join(', ')}
+                    </NewLabel>
+                  </NamePart>
+                </ImageName>
+                <ImageName className="top-apy">
+                  {topApyVault ? `${topApyVault}% APY` : <AnimatedDots />}
+                </ImageName>
+              </HighestVault>
+            </VaultContainer>
+          </NewLabel>
           {!isEmpty(altVaultData) && progressStep === 4 && (
             <>
               <NewLabel

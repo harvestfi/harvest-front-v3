@@ -2544,6 +2544,7 @@ const AdvancedFarm = () => {
                         hasPortalsError={hasPortalsError}
                       />
                       <WithdrawStart
+                        groupOfVaults={groupOfVaults}
                         unstakeInputValue={unstakeInputValue}
                         withdrawStart={withdrawStart}
                         setWithdrawStart={setWithdrawStart}

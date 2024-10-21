@@ -68,6 +68,7 @@ export const ROUTES = {
   CLAIM_EXT: 'https://claim.harvest.finance',
   STATS: 'https://farmdashboard.xyz',
   LEADERBOARD: '/leaderboard',
+  MIGRATE: '/migrate',
 }
 
 export const KEY_CODES = {

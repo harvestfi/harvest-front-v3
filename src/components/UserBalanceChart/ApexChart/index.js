@@ -69,11 +69,16 @@ function generateChartDataWithSlots(slots, apiData, balance, priceUnderlying, sh
     }
   }
 
+  if (seriesData.length === 1) {
+    seriesData.push(seriesData[0])
+  }
+
   return seriesData
 }
 
 const ApexChart = ({
   data,
+  data1,
   loadComplete,
   range,
   setCurDate,
@@ -87,6 +92,7 @@ const ApexChart = ({
   totalValue,
   setSelectedState,
   isExpanded,
+  isInactive,
 }) => {
   const { fontColor, fontColor5, bgColorChart } = useThemeContext()
   const { connected } = useWallet()
@@ -162,7 +168,7 @@ const ApexChart = ({
 
     if (payload.value !== '') {
       path = `${currencySym}${numberWithCommas(
-        (Number(payload.value) * Number(currencyRate)).toFixed(fixedLen),
+        (Number(payload.value) * Number(currencyRate)).toFixed(2),
       )}`
     }
     return (
@@ -214,14 +220,20 @@ const ApexChart = ({
     const init = async () => {
       let mainData = [],
         allMainData = [],
+        useData = [],
         firstDate,
+        firstDate1,
+        firstDate2,
         ago,
         slotCount = 50,
         allSlotCount = 50,
         filteredData,
-        filteredSlot
+        filteredSlot = [],
+        maxTimestamp,
+        minTimestamp
 
       const dl = data.length
+      const dl1 = data1.length
       if (!connected) {
         setIsDataReady('false')
       } else if (lpTokenBalance === 0) {
@@ -232,30 +244,58 @@ const ApexChart = ({
         setIsDataReady('false')
       } else if (totalValue !== '0' && dl === 0) {
         setIsDataReady('loading')
-      } else if (dl !== 0) {
+      } else if (dl !== 0 && dl1 !== 0) {
         setIsDataReady('true')
       }
 
-      if ((Object.keys(data).length === 0 && data.constructor === Object) || dl === 0) {
+      if (
+        (Object.keys(data).length === 0 && data.constructor === Object) ||
+        dl === 0 ||
+        (Object.keys(data1).length === 0 && data1.constructor === Object) ||
+        dl1 === 0
+      ) {
         return
       }
 
-      const maxTimestamp = data[0].timestamp * 1000
-      const minTimestamp = data[dl - 1].timestamp * 1000
-      const startTimestamp = denormalizeSliderValue(startPoint, minTimestamp, maxTimestamp)
-      const endTimestamp = denormalizeSliderValue(endPoint, minTimestamp, maxTimestamp)
-      const nowDate = new Date()
-      const currentTimeStamp = Math.floor(nowDate.getTime() / 1000)
-
       for (let i = dl - 1; i >= 0; i -= 1) {
         if (data[i].value !== 0) {
-          firstDate = data[i].timestamp
+          firstDate1 = data[i].timestamp
           break
         }
       }
-      if (firstDate === undefined) {
-        firstDate = data[dl - 1].timestamp
+      if (firstDate1 === undefined) {
+        firstDate1 = data[dl1 - 1].timestamp
       }
+
+      for (let i = dl1 - 1; i >= 0; i -= 1) {
+        if (data1[i].value !== 0) {
+          firstDate2 = data1[i].timestamp
+          break
+        }
+      }
+      if (firstDate2 === undefined) {
+        firstDate2 = data1[dl1 - 1].timestamp
+      }
+
+      const nowDate = new Date()
+      const currentTimeStamp = Math.floor(nowDate.getTime() / 1000)
+
+      const checkPeriod = (currentTimeStamp - Number(firstDate1)) / (24 * 60 * 60)
+
+      if (isInactive || checkPeriod < 100) {
+        useData = data
+        firstDate = firstDate1
+        maxTimestamp = useData[0].timestamp * 1000
+        minTimestamp = useData[dl - 1].timestamp * 1000
+      } else {
+        useData = data1
+        firstDate = firstDate2
+        maxTimestamp = useData[0].timestamp * 1000
+        minTimestamp = useData[dl1 - 1].timestamp * 1000
+      }
+
+      const startTimestamp = denormalizeSliderValue(startPoint, minTimestamp, maxTimestamp)
+      const endTimestamp = denormalizeSliderValue(endPoint, minTimestamp, maxTimestamp)
       const allPeriodDate = (currentTimeStamp - Number(firstDate)) / (24 * 60 * 60)
       const allAgo = Math.ceil(allPeriodDate)
       if (allAgo > 700) {
@@ -339,13 +379,13 @@ const ApexChart = ({
       const allSlots = getTimeSlots(allAgo, allSlotCount)
 
       if (range === 'LAST') {
-        filteredData = data.filter(obj => parseInt(obj.timestamp, 10) >= lastFarmingTimeStamp)
+        filteredData = useData.filter(obj => parseInt(obj.timestamp, 10) >= lastFarmingTimeStamp)
         filteredSlot = slots.filter(obj => parseInt(obj, 10) >= lastFarmingTimeStamp)
       } else if (range === 'ALL') {
-        filteredData = data.filter(obj => parseInt(obj.timestamp, 10) >= firstDate)
+        filteredData = useData.filter(obj => parseInt(obj.timestamp, 10) >= firstDate)
         filteredSlot = slots.filter(obj => parseInt(obj, 10) >= firstDate)
       } else if (range === 'CUSTOM') {
-        filteredData = data.filter(obj => {
+        filteredData = useData.filter(obj => {
           const timestamp = parseInt(obj.timestamp, 10)
           return timestamp >= startTimestamp && timestamp <= endTimestamp
         })
@@ -355,7 +395,7 @@ const ApexChart = ({
         })
       }
 
-      const allChartData = data.filter(obj => parseInt(obj.timestamp, 10) >= firstDate)
+      const allChartData = useData.filter(obj => parseInt(obj.timestamp, 10) >= firstDate)
       const allChartSlot = allSlots.filter(obj => parseInt(obj, 10) >= firstDate)
       allMainData = generateChartDataWithSlots(
         allChartSlot,
@@ -379,7 +419,7 @@ const ApexChart = ({
           : slots,
         range === 'LAST' || (range === 'ALL' && ago > 2) || range === 'CUSTOM'
           ? filteredData
-          : data,
+          : useData,
         'value',
         'priceUnderlying',
         'sharePrice',
@@ -472,7 +512,7 @@ const ApexChart = ({
       setMainSeries(mainData)
       setAllMainSeries(allMainData)
 
-      const markPoints = calculateMarks(data, minTimestamp, maxTimestamp)
+      const markPoints = calculateMarks(useData, minTimestamp, maxTimestamp)
       setMarks(markPoints)
 
       const dots = document.querySelectorAll('.rc-slider-dot')
@@ -501,6 +541,7 @@ const ApexChart = ({
     fixedLen,
     startPoint,
     endPoint,
+    data1,
   ])
 
   const handleSliderChange = value => {
