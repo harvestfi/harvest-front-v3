@@ -1512,7 +1512,7 @@ const Migrate = () => {
                 height="24px"
                 color={darkMode ? '#ffffff' : '#344054'}
               >
-                Expected yield change
+                Yield per $1 allocated
               </NewLabel>
               <NewLabel
                 display="flex"
