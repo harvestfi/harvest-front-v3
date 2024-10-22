@@ -358,7 +358,6 @@ const Sidebar = ({ width }) => {
   const [copyAddress, setCopyAddress] = useState('Copy Address')
   const [balanceETH, setBalanceETH] = useState('')
   const [balanceUSDC, setBalanceUSDC] = useState('')
-  const [leaderboardClick, setLeaderboardClick] = usePersistedState('leaderboardClick', false)
   const [migrateClick, setMigrateClick] = usePersistedState('migrateClick', false)
 
   const handleMobileClose = () => setMobileShow(false)
@@ -432,10 +431,6 @@ const Sidebar = ({ width }) => {
       ])
     }
     push(path)
-  }
-
-  const handleLeaderboardClick = () => {
-    setLeaderboardClick(true)
   }
 
   const handleMigrateClick = () => {
@@ -588,9 +583,6 @@ const Sidebar = ({ width }) => {
                     } else {
                       directAction(item.path)
                     }
-                    if (item.name === 'Leaderboard') {
-                      handleLeaderboardClick()
-                    }
                     if (item.name === 'Migrate Position') {
                       handleMigrateClick()
                     }
@@ -605,13 +597,7 @@ const Sidebar = ({ width }) => {
                     darkMode={darkMode}
                     hoverColorSide={hoverColorSide}
                     className={
-                      item.name === 'Leaderboard'
-                        ? !leaderboardClick && darkMode
-                          ? 'leaderboard-dark-btn'
-                          : !leaderboardClick && !darkMode
-                          ? 'leaderboard-white-icon'
-                          : ''
-                        : item.name === 'Migrate Position'
+                      item.name === 'Migrate Position'
                         ? !migrateClick && darkMode
                           ? 'leaderboard-dark-btn'
                           : !migrateClick && !darkMode

@@ -1098,6 +1098,8 @@ const Migrate = () => {
     },
   ]
 
+  console.log('highestPosition', highestPosition)
+
   return (
     <Container bgColor={bgColor}>
       <Inner marginBottom={isMobile ? '0px' : '55px'}>
@@ -1490,7 +1492,7 @@ const Migrate = () => {
                 height="24px"
                 color={darkMode ? '#ffffff' : '#344054'}
               >
-                Yield per $1 allocated
+                Expected yield change
               </NewLabel>
               <NewLabel
                 display="flex"
