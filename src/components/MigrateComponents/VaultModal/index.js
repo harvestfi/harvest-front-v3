@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 // import { get, find } from 'lodash'
-// import { get } from 'lodash'
+import { isEmpty } from 'lodash'
 import Modal from 'react-bootstrap/Modal'
 import { BsArrowDown } from 'react-icons/bs'
 import BigNumber from 'bignumber.js'
@@ -54,7 +54,7 @@ const VaultModal = ({
   setStartPoint,
   connected,
   setAllMatchVaultList,
-  // userStats,
+  userStats,
 }) => {
   const { darkMode, inputFontColor, fontColor } = useThemeContext()
   const [countFarm, setCountFarm] = useState(0)
@@ -107,7 +107,7 @@ const VaultModal = ({
   useEffect(() => {
     let matched = []
     const activedList = []
-    if (chain) {
+    if (chain && !isEmpty(userStats)) {
       matched = getMatchedVaultList(groupOfVaults, chain, vaultsData, pools)
       if (matched.length > 0) {
         matched.forEach(item => {
@@ -169,7 +169,7 @@ const VaultModal = ({
     }
 
     fetchSupportedMatches()
-  }, [chain, pools, setMatchVaultList, specialToken.profitShareAPY, connected]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [chain, pools, setMatchVaultList, specialToken.profitShareAPY, connected, userStats]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchMoreMatches = async () => {
     if (!isEnd) {
