@@ -13,7 +13,6 @@ import AnimatedDots from '../../AnimatedDots'
 import { formatNetworkName } from '../../../utilities/formats'
 // import tokenMethods from '../../../services/web3/contracts/token/methods'
 import PositionList from '../PositionList'
-import { getVaultValue } from '../../../utilities/parsers'
 import { usePortals } from '../../../providers/Portals'
 // import { fromWei } from '../../../services/web3'
 
@@ -88,73 +87,27 @@ const PositionModal = ({
 
   useEffect(() => {
     const matchListAry = []
-    const correctMatchList = []
-    let firstFlag = 0
     if (filteredFarmList.length > 0) {
       filteredFarmList.forEach(vault => {
-        const eachToken = vault.token
-        const eachTvl = getVaultValue(eachToken)
         const findingChain = vault.token.poolVault ? vault.token.data.chain : vault.token.chain
-        if (Number(findingChain) === Number(chain) && Number(eachTvl) > 500) {
+        if (Number(findingChain) === Number(chain)) {
           matchListAry.push(vault)
         }
+        matchListAry.sort((a, b) => b.balance - a.balance)
       })
-      firstFlag = 1
+
+      if (matchListAry.length > 0) {
+        setNoPosition(false)
+        setNetworkMatchList(matchListAry)
+        setCountFarm(matchListAry.length)
+      }
+
       if (matchListAry.length === 0) {
         setNetworkMatchList([])
         setNoPosition(true)
       }
     }
-
-    matchListAry.sort((a, b) => b.balance - a.balance)
-
-    const fetchSupportedMatches = async () => {
-      const filteredMatchList = []
-      let flag = 0
-
-      if (matchListAry.length > 0) {
-        // eslint-disable-next-line no-restricted-syntax
-        for (const item of matchListAry) {
-          const mToken = item.token || item.data
-          const tokenAddress = useIFARM
-            ? addresses.iFARM
-            : mToken.vaultAddress || mToken.tokenAddress
-          const chainId = mToken.chain || mToken.data.chain
-          // eslint-disable-next-line no-await-in-loop
-          const portalsToken = await getPortalsSupport(chainId, tokenAddress)
-          if (portalsToken) {
-            if (portalsToken.status === 200) {
-              if (portalsToken.data.totalItems !== 0) {
-                setNoPosition(false)
-                filteredMatchList.push(item)
-              }
-            }
-          }
-        }
-        flag = 1
-      }
-
-      filteredMatchList.sort((a, b) => b.balance - a.balance)
-      filteredMatchList.forEach(item => {
-        const unstakeAmount = item.token.poolVault ? item.stake : item.unstake
-        if (Number(unstakeAmount) !== 0) {
-          correctMatchList.push(item)
-        }
-      })
-
-      if (filteredMatchList.length > 0) {
-        setNetworkMatchList(correctMatchList)
-        setCountFarm(correctMatchList.length)
-      } else if (
-        (flag === 1 && filteredMatchList.length === 0) ||
-        (firstFlag === 1 && matchListAry.length === 0)
-      ) {
-        setNoPosition(true)
-      }
-    }
-
-    fetchSupportedMatches()
-  }, [chain, filteredFarmList.length, getPortalsSupport, useIFARM, setNetworkMatchList]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [chain, filteredFarmList.length]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     async function fetchData() {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 // import { get, find } from 'lodash'
 // import { get } from 'lodash'
 import Modal from 'react-bootstrap/Modal'
@@ -71,6 +71,7 @@ const VaultModal = ({
   const [matchingList, setMatchingList] = useState([])
   const [startSpinner, setStartSpinner] = useState(false)
   const [isEnd, setIsEnd] = useState(false)
+  const isFetchingRef = useRef(false) // Cache to track ongoing API fetches
 
   const {
     getPortalsSupport,
@@ -125,6 +126,10 @@ const VaultModal = ({
     activedList.sort((a, b) => b.vaultApy - a.vaultApy)
 
     const fetchSupportedMatches = async () => {
+      if (isFetchingRef.current) {
+        return
+      }
+      isFetchingRef.current = true
       const filteredMatchList = []
 
       if (activedList.length > 0) {
@@ -159,6 +164,8 @@ const VaultModal = ({
         setMatchVaultList(filteredMatchList)
         setCountFarm(filteredMatchList.length)
       }
+
+      isFetchingRef.current = false
     }
 
     fetchSupportedMatches()
