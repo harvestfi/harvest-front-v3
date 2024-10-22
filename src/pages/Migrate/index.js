@@ -162,7 +162,7 @@ const Migrate = () => {
   ]
 
   useEffect(() => {
-    let badgeUrl
+    let badgeUrl, network
     if (connected) {
       badgeUrl =
         Number(selectedChain) === 42161
@@ -178,23 +178,28 @@ const Migrate = () => {
       badgeUrl = BASE
     }
 
-    const network =
-      Number(selectedChain) === 42161
-        ? 'arbitrum'
-        : Number(selectedChain) === 8453
-        ? 'base'
-        : Number(selectedChain) === 324
-        ? 'zksync'
-        : Number(selectedChain) === 137
-        ? 'polygon'
-        : 'ethereum'
+    if (connected) {
+      network =
+        Number(selectedChain) === 42161
+          ? 'arbitrum'
+          : Number(selectedChain) === 8453
+          ? 'base'
+          : Number(selectedChain) === 324
+          ? 'zksync'
+          : Number(selectedChain) === 137
+          ? 'polygon'
+          : 'ethereum'
+    } else if (!connected) {
+      network = 'base'
+    }
+
     setChainUrl(badgeUrl)
     setNetworkName(network)
     // setHighestPosition()
     // setHighestApyVault()
     // setNetworkMatchList([])
     // setMatchVaultList([])
-  }, [selectedChain])
+  }, [selectedChain, connected])
 
   useEffect(() => {
     setSelectedChain(chainId)
