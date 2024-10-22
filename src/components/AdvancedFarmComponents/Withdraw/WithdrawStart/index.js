@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import { useMediaQuery } from 'react-responsive'
 import { isEmpty, isNaN } from 'lodash'
@@ -130,6 +130,23 @@ const WithdrawStart = ({
   const [toVaultAddress, setToVaultAddress] = useState()
   const [isSpecialToken, setIsSpecialToken] = useState(false)
   const [matchVaultList, setMatchVaultList] = useState([])
+  const [networkName, setNetworkName] = useState('')
+  const isFetchingRef = useRef(false)
+
+  useEffect(() => {
+    const tokenChain = token.poolVault ? token.data.chain : token.chain
+    const network =
+      Number(tokenChain) === 42161
+        ? 'Arbitrum'
+        : Number(tokenChain) === 8453
+        ? 'Base'
+        : Number(tokenChain) === 324
+        ? 'Zksync'
+        : Number(tokenChain) === 137
+        ? 'Polygon'
+        : 'Ethereum'
+    setNetworkName(network)
+  }, [token])
 
   useEffect(() => {
     if (rates.rateData) {
@@ -340,6 +357,10 @@ const WithdrawStart = ({
     }
 
     const fetchSupportedMatches = async () => {
+      if (isFetchingRef.current) {
+        return
+      }
+      isFetchingRef.current = true
       const filteredMatchList = []
 
       if (activedList.length > 0) {
@@ -372,6 +393,8 @@ const WithdrawStart = ({
       if (filteredMatchList.length > 0) {
         setMatchVaultList(filteredMatchList)
       }
+
+      isFetchingRef.current = false
     }
 
     fetchSupportedMatches()
@@ -841,7 +864,7 @@ const WithdrawStart = ({
               weight="600"
               padding="20px 24px 0px 24px"
             >
-              Psst, looking for alternatives?
+              Psst, looking for alternatives on {networkName}?
             </NewLabel>
             <NewLabel
               color={darkMode ? '#ffffff' : '#15202b'}

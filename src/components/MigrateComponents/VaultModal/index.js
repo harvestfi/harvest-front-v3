@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 // import { get, find } from 'lodash'
-// import { get } from 'lodash'
+import { isEmpty } from 'lodash'
 import Modal from 'react-bootstrap/Modal'
 import { BsArrowDown } from 'react-icons/bs'
 import BigNumber from 'bignumber.js'
@@ -54,7 +54,7 @@ const VaultModal = ({
   setStartPoint,
   connected,
   setAllMatchVaultList,
-  // userStats,
+  userStats,
 }) => {
   const { darkMode, inputFontColor, fontColor } = useThemeContext()
   const [countFarm, setCountFarm] = useState(0)
@@ -71,6 +71,7 @@ const VaultModal = ({
   const [matchingList, setMatchingList] = useState([])
   const [startSpinner, setStartSpinner] = useState(false)
   const [isEnd, setIsEnd] = useState(false)
+  const isFetchingRef = useRef(false)
 
   const {
     getPortalsSupport,
@@ -106,8 +107,22 @@ const VaultModal = ({
   useEffect(() => {
     let matched = []
     const activedList = []
-    if (chain) {
+    if (chain && !isEmpty(userStats) && connected) {
       matched = getMatchedVaultList(groupOfVaults, chain, vaultsData, pools)
+      if (matched.length > 0) {
+        matched.forEach(item => {
+          const vaultValue = getVaultValue(item.vault)
+          if (Number(item.vaultApy) !== 0 && Number(vaultValue) > 500) {
+            activedList.push(item)
+          }
+        })
+        if (activedList.length > 0) {
+          setMatchingList(activedList)
+          setAllMatchVaultList(activedList)
+        }
+      }
+    } else if (!connected) {
+      matched = getMatchedVaultList(groupOfVaults, 8453, vaultsData, pools)
       if (matched.length > 0) {
         matched.forEach(item => {
           const vaultValue = getVaultValue(item.vault)
@@ -125,6 +140,10 @@ const VaultModal = ({
     activedList.sort((a, b) => b.vaultApy - a.vaultApy)
 
     const fetchSupportedMatches = async () => {
+      if (isFetchingRef.current) {
+        return
+      }
+      isFetchingRef.current = true
       const filteredMatchList = []
 
       if (activedList.length > 0) {
@@ -159,10 +178,12 @@ const VaultModal = ({
         setMatchVaultList(filteredMatchList)
         setCountFarm(filteredMatchList.length)
       }
+
+      isFetchingRef.current = false
     }
 
     fetchSupportedMatches()
-  }, [chain, pools, setMatchVaultList, specialToken.profitShareAPY, connected]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [chain, pools, setMatchVaultList, specialToken.profitShareAPY, connected, userStats]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const fetchMoreMatches = async () => {
     if (!isEnd) {
@@ -222,6 +243,7 @@ const VaultModal = ({
         setToken={setToken}
         setId={setId}
         groupOfVaults={groupOfVaults}
+        connected={connected}
       />
     )
   })
@@ -244,6 +266,7 @@ const VaultModal = ({
         setToken={setToken}
         setId={setId}
         groupOfVaults={groupOfVaults}
+        connected={connected}
       />
     )
   })

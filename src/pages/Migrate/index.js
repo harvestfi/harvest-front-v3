@@ -19,7 +19,8 @@ import COLLAPSED from '../../assets/images/ui/plus.svg'
 import { usePools } from '../../providers/Pools'
 import { addresses } from '../../data'
 import { useWallet } from '../../providers/Wallet'
-import { getChainIcon, getTotalApy } from '../../utilities/parsers'
+import { getChainIcon, getTotalApy, getVaultApy, getVaultValue } from '../../utilities/parsers'
+import { usePortals } from '../../providers/Portals'
 import dropDown from '../../assets/images/ui/drop-down.e85f7fdc.svg'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useRate } from '../../providers/Rate'
@@ -88,6 +89,7 @@ const Migrate = () => {
   const { account, balances, getWalletBalances, chainId, connected, connectAction } = useWallet()
   const { userStats, fetchUserPoolStats, totalPools, pools } = usePools()
   const { rates } = useRate()
+  const { getPortalsSupport } = usePortals()
   /* eslint-disable global-require */
   const { tokens } = require('../../data')
   const {
@@ -143,6 +145,7 @@ const Migrate = () => {
   const [noPosition, setNoPosition] = useState(false)
   const [selectedChain, setSelectedChain] = useState(chainId)
   const [allMatchVaultList, setAllMatchVaultList] = useState([])
+  const isFetchingRef = useRef(false)
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const isFromAdvanced = location.search.includes('from=')
@@ -159,34 +162,44 @@ const Migrate = () => {
   ]
 
   useEffect(() => {
-    const badgeUrl =
-      Number(selectedChain) === 42161
-        ? ARBITRUM
-        : Number(selectedChain) === 8453
-        ? BASE
-        : Number(selectedChain) === 324
-        ? ZKSYNC
-        : Number(selectedChain) === 137
-        ? POLYGON
-        : ETHEREUM
+    let badgeUrl, network
+    if (connected) {
+      badgeUrl =
+        Number(selectedChain) === 42161
+          ? ARBITRUM
+          : Number(selectedChain) === 8453
+          ? BASE
+          : Number(selectedChain) === 324
+          ? ZKSYNC
+          : Number(selectedChain) === 137
+          ? POLYGON
+          : ETHEREUM
+    } else if (!connected) {
+      badgeUrl = BASE
+    }
 
-    const network =
-      Number(selectedChain) === 42161
-        ? 'arbitrum'
-        : Number(selectedChain) === 8453
-        ? 'base'
-        : Number(selectedChain) === 324
-        ? 'zksync'
-        : Number(selectedChain) === 137
-        ? 'polygon'
-        : 'ethereum'
+    if (connected) {
+      network =
+        Number(selectedChain) === 42161
+          ? 'arbitrum'
+          : Number(selectedChain) === 8453
+          ? 'base'
+          : Number(selectedChain) === 324
+          ? 'zksync'
+          : Number(selectedChain) === 137
+          ? 'polygon'
+          : 'ethereum'
+    } else if (!connected) {
+      network = 'base'
+    }
+
     setChainUrl(badgeUrl)
     setNetworkName(network)
     // setHighestPosition()
     // setHighestApyVault()
     // setNetworkMatchList([])
     // setMatchVaultList([])
-  }, [selectedChain])
+  }, [selectedChain, connected])
 
   useEffect(() => {
     setSelectedChain(chainId)
@@ -335,6 +348,8 @@ const Migrate = () => {
   useEffect(() => {
     if (!isEmpty(userStats) && account) {
       const getFarmTokenInfo = async () => {
+        if (isFetchingRef.current) return
+        isFetchingRef.current = true
         let stakedVaults = [],
           sortedTokenList
 
@@ -386,6 +401,7 @@ const Migrate = () => {
             rewardSymbol: [],
             rewardUSD: [],
             totalRewardUsd: 0,
+            tvl: 0,
             token: {},
           }
           let symbol = '',
@@ -414,7 +430,8 @@ const Migrate = () => {
             let tokenName = '',
               totalRewardAPRByPercent = 0,
               iFARMBalance = 0,
-              usdPrice = 1
+              usdPrice = 1,
+              portalsToken
 
             const ttl = token.tokenNames.length
             for (let k = 0; k < ttl; k += 1) {
@@ -423,6 +440,8 @@ const Migrate = () => {
                 tokenName += ', '
               }
             }
+            const statsTvl = getVaultValue(token)
+            stats.tvl = statsTvl
             stats.boosted = token.boosted
             stats.token = token
             stats.symbol = tokenName
@@ -660,8 +679,20 @@ const Migrate = () => {
 
             stats.dailyYield = dailyYield
             stats.monthlyYield = monthlyYield
-
-            newStats.push(stats)
+            const statsAddress = stats.token.poolVault
+              ? stats.token.tokenAddress
+              : stats.token.vaultAddress
+            if (Number(statsTvl) > 500) {
+              // eslint-disable-next-line no-await-in-loop
+              portalsToken = await getPortalsSupport(chainId, statsAddress)
+            }
+            if (portalsToken) {
+              if (portalsToken.status === 200) {
+                if (portalsToken.data.totalItems !== 0) {
+                  newStats.push(stats)
+                }
+              }
+            }
           }
         }
 
@@ -671,15 +702,20 @@ const Migrate = () => {
         } else {
           sortedTokenList = orderBy(newStats, ['balance'], ['desc'])
         }
+        if (newStats.length === 0) {
+          setNoPosition(true)
+        }
         setFarmTokenList(sortedTokenList)
         if (sortedTokenList.length === 0) {
           setNoFarm(true)
         }
+
+        isFetchingRef.current = false
       }
 
       getFarmTokenInfo()
     }
-  }, [account, userStats, balances, showInactiveFarms]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, userStats, balances]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!isEmpty(userStats) && account) {
@@ -883,9 +919,19 @@ const Migrate = () => {
 
       if (!connected) {
         if (toVault) {
-          setHighestApyVault(toVault)
-          setHighestVaultAddress(toAddress)
-          setTokenDepo(groupOfVaults[toId.toString()])
+          const defaultVault = {
+            vaultApy: 0,
+            vault: {},
+          }
+          toId = 'moonwell_USDC'
+          const noConToken = groupOfVaults[toId.toString()]
+          const noConAddress = '0x90613e167D42CA420942082157B42AF6fc6a8087'
+          const defaultApy = getVaultApy(noConAddress, groupOfVaults, vaultsData, pools)
+          defaultVault.vaultApy = defaultApy
+          defaultVault.vault = noConToken
+          setHighestApyVault(defaultVault)
+          setHighestVaultAddress(noConAddress)
+          setTokenDepo(noConToken)
         }
         setButtonName('Connect Wallet')
       } else if (connected) {
@@ -1118,7 +1164,7 @@ const Migrate = () => {
                 .
               </NewLabel>
             </div>
-            {isMobile ? (
+            {isMobile && connected ? (
               <Dropdown>
                 <CurrencyDropDown
                   id="dropdown-basic"
@@ -1152,7 +1198,7 @@ const Migrate = () => {
                   ))}
                 </CurrencyDropDownMenu>
               </Dropdown>
-            ) : (
+            ) : connected ? (
               <ChainGroup>
                 {ChainsList.map((item, i) => (
                   <ChainButton
@@ -1172,6 +1218,8 @@ const Migrate = () => {
                   </ChainButton>
                 ))}
               </ChainGroup>
+            ) : (
+              ''
             )}
           </BoxHeading>
           <BoxTitle color={darkMode ? '#ffffff' : '#475467'}>My existing position</BoxTitle>
@@ -1464,7 +1512,7 @@ const Migrate = () => {
                 height="24px"
                 color={darkMode ? '#ffffff' : '#344054'}
               >
-                Yield per $1 allocated
+                Expected yield change
               </NewLabel>
               <NewLabel
                 display="flex"
