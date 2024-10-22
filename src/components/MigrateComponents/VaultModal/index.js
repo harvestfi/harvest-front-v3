@@ -121,6 +121,20 @@ const VaultModal = ({
           setAllMatchVaultList(activedList)
         }
       }
+    } else if (!connected) {
+      matched = getMatchedVaultList(groupOfVaults, chain, vaultsData, pools)
+      if (matched.length > 0) {
+        matched.forEach(item => {
+          const vaultValue = getVaultValue(item.vault)
+          if (Number(item.vaultApy) !== 0 && Number(vaultValue) > 500) {
+            activedList.push(item)
+          }
+        })
+        if (activedList.length > 0) {
+          setMatchingList(activedList)
+          setAllMatchVaultList(activedList)
+        }
+      }
     }
 
     activedList.sort((a, b) => b.vaultApy - a.vaultApy)

@@ -1098,8 +1098,6 @@ const Migrate = () => {
     },
   ]
 
-  console.log('highestPosition', highestPosition)
-
   return (
     <Container bgColor={bgColor}>
       <Inner marginBottom={isMobile ? '0px' : '55px'}>
