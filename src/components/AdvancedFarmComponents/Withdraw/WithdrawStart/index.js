@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import { useMediaQuery } from 'react-responsive'
 import { isEmpty, isNaN } from 'lodash'
@@ -131,6 +131,7 @@ const WithdrawStart = ({
   const [isSpecialToken, setIsSpecialToken] = useState(false)
   const [matchVaultList, setMatchVaultList] = useState([])
   const [networkName, setNetworkName] = useState('')
+  const isFetchingRef = useRef(false)
 
   useEffect(() => {
     const tokenChain = token.poolVault ? token.data.chain : token.chain
@@ -356,6 +357,10 @@ const WithdrawStart = ({
     }
 
     const fetchSupportedMatches = async () => {
+      if (isFetchingRef.current) {
+        return
+      }
+      isFetchingRef.current = true
       const filteredMatchList = []
 
       if (activedList.length > 0) {
@@ -388,6 +393,8 @@ const WithdrawStart = ({
       if (filteredMatchList.length > 0) {
         setMatchVaultList(filteredMatchList)
       }
+
+      isFetchingRef.current = false
     }
 
     fetchSupportedMatches()
@@ -535,8 +542,6 @@ const WithdrawStart = ({
       setIsSpecialToken(true)
     }
   }, [token]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  console.log()
 
   return (
     <Modal

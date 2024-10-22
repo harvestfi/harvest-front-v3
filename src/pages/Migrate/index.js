@@ -19,7 +19,7 @@ import COLLAPSED from '../../assets/images/ui/plus.svg'
 import { usePools } from '../../providers/Pools'
 import { addresses } from '../../data'
 import { useWallet } from '../../providers/Wallet'
-import { getChainIcon, getTotalApy, getVaultValue } from '../../utilities/parsers'
+import { getChainIcon, getTotalApy, getVaultApy, getVaultValue } from '../../utilities/parsers'
 import { usePortals } from '../../providers/Portals'
 import dropDown from '../../assets/images/ui/drop-down.e85f7fdc.svg'
 import { useThemeContext } from '../../providers/useThemeContext'
@@ -162,16 +162,21 @@ const Migrate = () => {
   ]
 
   useEffect(() => {
-    const badgeUrl =
-      Number(selectedChain) === 42161
-        ? ARBITRUM
-        : Number(selectedChain) === 8453
-        ? BASE
-        : Number(selectedChain) === 324
-        ? ZKSYNC
-        : Number(selectedChain) === 137
-        ? POLYGON
-        : ETHEREUM
+    let badgeUrl
+    if (connected) {
+      badgeUrl =
+        Number(selectedChain) === 42161
+          ? ARBITRUM
+          : Number(selectedChain) === 8453
+          ? BASE
+          : Number(selectedChain) === 324
+          ? ZKSYNC
+          : Number(selectedChain) === 137
+          ? POLYGON
+          : ETHEREUM
+    } else if (!connected) {
+      badgeUrl = BASE
+    }
 
     const network =
       Number(selectedChain) === 42161
@@ -909,9 +914,19 @@ const Migrate = () => {
 
       if (!connected) {
         if (toVault) {
-          setHighestApyVault(toVault)
-          setHighestVaultAddress(toAddress)
-          setTokenDepo(groupOfVaults[toId.toString()])
+          const defaultVault = {
+            vaultApy: 0,
+            vault: {},
+          }
+          toId = 'moonwell_USDC'
+          const noConToken = groupOfVaults[toId.toString()]
+          const noConAddress = '0x90613e167D42CA420942082157B42AF6fc6a8087'
+          const defaultApy = getVaultApy(noConAddress, groupOfVaults, vaultsData, pools)
+          defaultVault.vaultApy = defaultApy
+          defaultVault.vault = noConToken
+          setHighestApyVault(defaultVault)
+          setHighestVaultAddress(noConAddress)
+          setTokenDepo(noConToken)
         }
         setButtonName('Connect Wallet')
       } else if (connected) {
@@ -1144,7 +1159,7 @@ const Migrate = () => {
                 .
               </NewLabel>
             </div>
-            {isMobile ? (
+            {isMobile && connected ? (
               <Dropdown>
                 <CurrencyDropDown
                   id="dropdown-basic"
@@ -1178,7 +1193,7 @@ const Migrate = () => {
                   ))}
                 </CurrencyDropDownMenu>
               </Dropdown>
-            ) : (
+            ) : connected ? (
               <ChainGroup>
                 {ChainsList.map((item, i) => (
                   <ChainButton
@@ -1198,6 +1213,8 @@ const Migrate = () => {
                   </ChainButton>
                 ))}
               </ChainGroup>
+            ) : (
+              ''
             )}
           </BoxHeading>
           <BoxTitle color={darkMode ? '#ffffff' : '#475467'}>My existing position</BoxTitle>

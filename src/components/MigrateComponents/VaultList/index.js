@@ -30,22 +30,27 @@ const VaultList = ({
   setToken,
   setId,
   groupOfVaults,
+  connected,
 }) => {
+  let chainUrl, matchingFarm
   const vaultAddress = matchVault.vault.poolVault
     ? matchVault.vault.tokenAddress
     : matchVault.vault.vaultAddress
   const vaultName = matchVault.vault.tokenNames
-  const chainUrl =
-    chainId === 42161
-      ? ARBITRUM
-      : chainId === 8453
-      ? BASE
-      : chainId === 324
-      ? ZKSYNC
-      : chainId === 137
-      ? POLYGON
-      : ETHEREUM
-  let matchingFarm
+  if (connected) {
+    chainUrl =
+      chainId === 42161
+        ? ARBITRUM
+        : chainId === 8453
+        ? BASE
+        : chainId === 324
+        ? ZKSYNC
+        : chainId === 137
+        ? POLYGON
+        : ETHEREUM
+  } else if (!connected) {
+    chainUrl = BASE
+  }
   const id = matchVault.vault.pool === undefined ? 'FARM' : matchVault.vault.pool.id
 
   filteredFarmList.forEach(farm => {

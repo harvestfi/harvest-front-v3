@@ -71,7 +71,7 @@ const VaultModal = ({
   const [matchingList, setMatchingList] = useState([])
   const [startSpinner, setStartSpinner] = useState(false)
   const [isEnd, setIsEnd] = useState(false)
-  const isFetchingRef = useRef(false) // Cache to track ongoing API fetches
+  const isFetchingRef = useRef(false)
 
   const {
     getPortalsSupport,
@@ -107,7 +107,7 @@ const VaultModal = ({
   useEffect(() => {
     let matched = []
     const activedList = []
-    if (chain && !isEmpty(userStats)) {
+    if (chain && !isEmpty(userStats) && connected) {
       matched = getMatchedVaultList(groupOfVaults, chain, vaultsData, pools)
       if (matched.length > 0) {
         matched.forEach(item => {
@@ -122,7 +122,7 @@ const VaultModal = ({
         }
       }
     } else if (!connected) {
-      matched = getMatchedVaultList(groupOfVaults, chain, vaultsData, pools)
+      matched = getMatchedVaultList(groupOfVaults, 8453, vaultsData, pools)
       if (matched.length > 0) {
         matched.forEach(item => {
           const vaultValue = getVaultValue(item.vault)
@@ -243,6 +243,7 @@ const VaultModal = ({
         setToken={setToken}
         setId={setId}
         groupOfVaults={groupOfVaults}
+        connected={connected}
       />
     )
   })
@@ -265,6 +266,7 @@ const VaultModal = ({
         setToken={setToken}
         setId={setId}
         groupOfVaults={groupOfVaults}
+        connected={connected}
       />
     )
   })
