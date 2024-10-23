@@ -144,7 +144,7 @@ const Migrate = () => {
   const [noPosition, setNoPosition] = useState(false)
   const [selectedChain, setSelectedChain] = useState(chainId)
   const [allMatchVaultList, setAllMatchVaultList] = useState([])
-  const [positionBalance, setPositionBalance] = useState()
+  const [positionBalance, setPositionBalance] = useState(0)
   const isFetchingRef = useRef(false)
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
