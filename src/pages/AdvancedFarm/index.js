@@ -1482,6 +1482,7 @@ const AdvancedFarm = () => {
                     }}
                   >
                     <img src={tag.img} alt="logo" />
+                    <p>{activeMainTag !== i && isMobile ? '' : tag.name}</p>
                   </MainTag>
                 ))}
               </MainTagPanel>
