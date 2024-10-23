@@ -6,9 +6,8 @@ import { displayAPY } from '../../../../utilities/formats'
 import { getTotalApy } from '../../../../utilities/parsers'
 import AnimatedDots from '../../../AnimatedDots'
 import { RewardsContainer } from '../style'
-import ARBball from '../../../../assets/images/chains/ARBball.svg'
 
-const VaultApy = ({ token, tokenSymbol, vaultPool, isSpecialVault, fontColor1, boostedToken }) => {
+const VaultApy = ({ token, tokenSymbol, vaultPool, isSpecialVault, fontColor1 }) => {
   const { loadingVaults, vaultsData } = useVaults()
   const tokenVault = get(vaultsData, token.hodlVaultId || tokenSymbol)
 
@@ -31,18 +30,11 @@ const VaultApy = ({ token, tokenSymbol, vaultPool, isSpecialVault, fontColor1, b
       </b>
     )
   ) : totalApy !== null && !loadingVaults ? (
-    <RewardsContainer fontColor1={boostedToken ? '#FF7D10' : fontColor1}>
+    <RewardsContainer fontColor1={fontColor1}>
       {token.inactive || token.testInactive || token.hideTotalApy || !token.dataFetched ? (
         token.inactive || token.testInactive ? (
           'Inactive'
         ) : null
-      ) : boostedToken ? (
-        <div className="boost-apy">
-          <>{displayAPY(totalApy, DECIMAL_PRECISION, 10)}</>
-          <div className="boost-img">
-            <img src={ARBball} alt="" />
-          </div>
-        </div>
       ) : (
         <>{displayAPY(totalApy, DECIMAL_PRECISION, 10)}</>
       )}

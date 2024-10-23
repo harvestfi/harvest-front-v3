@@ -36,7 +36,6 @@ const MobilePanelHeader = ({
   loadingFarmingBalance,
   lsdToken,
   desciToken,
-  boostedToken,
 }) => {
   const location = useLocation()
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
@@ -104,7 +103,6 @@ const MobilePanelHeader = ({
               vaultPool={vaultPool}
               isSpecialVault={isSpecialVault}
               mobile
-              boostedToken={boostedToken}
             />
             <div className="title">
               <img src={APYIcon} alt="" />

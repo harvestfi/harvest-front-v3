@@ -3,7 +3,6 @@ import { useWindowWidth } from '@react-hook/window-size'
 import { debounce } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { Dropdown } from 'react-bootstrap'
-import ARBball from '../../assets/images/chains/ARBball.svg'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import BASE from '../../assets/images/chains/base.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
@@ -31,7 +30,6 @@ import {
   FilterOffCanvasBody,
   FilterOffCanvasHeader,
   MobileClearFilter,
-  BoostBtn,
   MobileListHeaderSearch,
   MobileView,
   QuickFilterContainer,
@@ -66,13 +64,11 @@ const FarmsList = [
 const RiskList = [
   { id: 1, name: 'New', img: Zap, filter: 'new' },
   { id: 2, name: 'Popular', filter: 'popular' },
-  { id: 3, name: 'Boosted', img: ARBball, filter: 'boost' },
 ]
 
 const RiskListMobile = [
   { id: 1, name: 'New', filter: 'new' },
   { id: 2, name: 'Popular', filter: 'popular' },
-  { id: 3, name: 'Boosted', filter: 'boost' },
 ]
 
 const AssetsList = [
@@ -212,9 +208,6 @@ const QuickFilter = ({
       case 1:
         text = 'PopularNow'
         break
-      case 2:
-        text = 'Boosted'
-        break
       default:
         break
     }
@@ -267,11 +260,6 @@ const QuickFilter = ({
     setTrendName('Trends')
     setTrendStatus('')
     setCollabBswapStatus('')
-  }
-
-  const filterBoost = () => {
-    setRiskId(2)
-    printRisk(2)
   }
 
   useEffect(() => {
@@ -661,12 +649,6 @@ const QuickFilter = ({
               setInputText={setInputText}
             />
           </MobileListHeaderSearch>
-
-          <BoostBtn onClick={() => filterBoost()}>
-            Filter by
-            <img src={ARBball} alt="" />
-            <span>Boosted</span>
-          </BoostBtn>
 
           <FarmFiltersPart
             backColor={backColor}

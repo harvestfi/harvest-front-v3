@@ -27,7 +27,6 @@ const DesktopPanelHeader = ({
   loadingFarmingBalance,
   lsdToken,
   desciToken,
-  boostedToken,
 }) => {
   const location = useLocation()
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
@@ -114,7 +113,6 @@ const DesktopPanelHeader = ({
             vaultPool={vaultPool}
             isSpecialVault={isSpecialVault}
             fontColor1={fontColor1}
-            boostedToken={boostedToken}
           />
         </ValueContainer>
         <ValueContainer width="15%">
