@@ -1152,7 +1152,7 @@ const Migrate = () => {
     if (vaultPlatform) {
       setHighVaultPlatform(vaultPlatform)
     }
-  }, [highestPosition, highestApyVault])
+  }, [highestPosition, highestApyVault]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Container bgColor={bgColor}>
