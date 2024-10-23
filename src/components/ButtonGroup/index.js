@@ -10,7 +10,7 @@ const ButtonGroup = ({
   fontColor,
   unsetWidth,
 }) => {
-  const { backColor, borderColor, filterColor, filterChainHoverColor } = useThemeContext()
+  const { backColor, borderColor, filterChainHoverColor } = useThemeContext()
 
   const handleClick = (event, id) => {
     if (buttons[id].name !== 'Labs') {
@@ -39,11 +39,9 @@ const ButtonGroup = ({
           num={i}
           className={i === clickedId || i === focusId ? 'active' : ''}
           fontColor={fontColor}
-          filterColor={button.name === 'Boosted 🔥' || button.name === 'Boosted' ? '' : filterColor}
           borderColor={borderColor}
           hoverColor={filterChainHoverColor}
           unsetWidth={unsetWidth}
-          isBoosted={button.name === 'Boosted 🔥' || button.name === 'Boosted' ? 'true' : 'false'}
         >
           {button.img && <img src={button.img} width="18" height="18" alt="" />}
           <div>{button.name}</div>

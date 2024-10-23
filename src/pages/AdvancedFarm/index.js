@@ -198,7 +198,6 @@ const AdvancedFarm = () => {
   const [activeDepo, setActiveDepo] = useState(true)
   const [showLatestEarnings, setShowLatestEarnings] = useState(true)
   const [showApyHistory, setShowApyHistory] = useState(true)
-  const [showArbCampInfo, setShowArbCampInfo] = useState(false)
   const [isArbCampVault, setIsArbCampVault] = useState(false)
   const [showGenomesVaultInfo, setShowGenomesVaultInfo] = useState(false)
   const [showSeamlessVaultInfo, setShowSeamlessVaultInfo] = useState(false)
@@ -467,7 +466,7 @@ const AdvancedFarm = () => {
 
   const mainTags = [
     { name: 'Manage', img: Safe },
-    { name: isArbCampVault ? 'Rewards 🔥' : 'Rewards', img: Diamond },
+    { name: 'Rewards', img: Diamond },
     { name: 'Details', img: BarChart },
     { name: 'History', img: History },
   ]
@@ -477,17 +476,13 @@ const AdvancedFarm = () => {
     const platform = useIFARM ? 'Harvest' : token.platform?.[0]?.toLowerCase() ?? ''
     const firstToken = token.tokenNames?.[0]?.toLowerCase() ?? ''
     const firstViewIFarm = localStorage.getItem('firstViewIFarm')
-    const firstViewArbCampVault = localStorage.getItem('firstViewArbCampVault')
     const firstViewSeamless = localStorage.getItem('firstViewSeamless')
     const firstViewGenomes = localStorage.getItem('firstViewGenomes')
     const firstViewGB = localStorage.getItem('firstViewGB')
 
     const campaign = token.boosted
     if (campaign) setIsArbCampVault(true)
-    if (campaign && (firstViewArbCampVault === null || firstViewArbCampVault === 'true')) {
-      localStorage.setItem('firstViewArbCampVault', true)
-      setShowArbCampInfo(true)
-    } else if (platform === 'Harvest' && (firstViewIFarm === null || firstViewIFarm === 'true')) {
+    if (platform === 'Harvest' && (firstViewIFarm === null || firstViewIFarm === 'true')) {
       localStorage.setItem('firstViewIFarm', true)
       setShowIFARMInfo(true)
     } else if (
@@ -515,11 +510,6 @@ const AdvancedFarm = () => {
   const closeBadgeGenomes = () => {
     setShowGenomesVaultInfo(false)
     localStorage.setItem('firstViewGenomes', 'false')
-  }
-
-  const closeBadgeArbCamp = () => {
-    setShowArbCampInfo(false)
-    // localStorage.setItem('firstViewArbCampVault', 'false')
   }
 
   const closeBadgeSeamless = () => {
@@ -1480,7 +1470,6 @@ const AdvancedFarm = () => {
                     bgColor={bgColor}
                     bgColorFarm={bgColorFarm}
                     active={activeMainTag === i ? 'true' : 'false'}
-                    campMobileRewards={isArbCampVault && activeMainTag !== i && i === 1 && isMobile}
                     mode={darkMode ? 'dark' : 'light'}
                     useIFARM={useIFARM}
                     onClick={() => {
@@ -1493,7 +1482,6 @@ const AdvancedFarm = () => {
                     }}
                   >
                     <img src={tag.img} alt="logo" />
-                    <p>{isArbCampVault && activeMainTag !== i && isMobile ? '🔥' : tag.name}</p>
                   </MainTag>
                 ))}
               </MainTagPanel>
@@ -1520,41 +1508,7 @@ const AdvancedFarm = () => {
           <InternalSection>
             {activeMainTag === 0 ? (
               <>
-                {showArbCampInfo ? (
-                  <WelcomeBox
-                    bgColorTooltip="#f2fcf8"
-                    fontColorTooltip="#07B466"
-                    borderColor="#29CE84"
-                  >
-                    <WelcomeContent>
-                      <WelcomeTitle>
-                        <span role="img" aria-label="thumb" aria-labelledby="thumb">
-                          🔥
-                        </span>{' '}
-                        Boost Note
-                      </WelcomeTitle>
-                      <WelcomeText>
-                        This yield strategy receives additional ARB rewards. Stake your fTokens
-                        under the Rewards tab to be entitled to them.{' '}
-                        <WelcomeBottom>
-                          <WelcomeKnow onClick={closeBadgeArbCamp}>Got it!</WelcomeKnow>
-                          <WelcomeTicket
-                            href={SOCIAL_LINKS.DISCORD}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            linkColor="#07B466"
-                            linkColorOnHover="#29CE84"
-                          >
-                            Still having questions? Open Discord ticket.
-                          </WelcomeTicket>
-                        </WelcomeBottom>
-                      </WelcomeText>
-                    </WelcomeContent>
-                    <WelcomeClose>
-                      <RxCross2 onClick={closeBadgeArbCamp} />
-                    </WelcomeClose>
-                  </WelcomeBox>
-                ) : showGenomesVaultInfo ? (
+                {showGenomesVaultInfo ? (
                   <WelcomeBox
                     bgColorTooltip={bgColorTooltip}
                     fontColorTooltip={fontColorTooltip}
