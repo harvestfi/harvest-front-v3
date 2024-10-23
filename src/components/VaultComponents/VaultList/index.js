@@ -19,7 +19,6 @@ import {
   SPECIAL_VAULTS,
   MAX_DECIMALS,
   chainList,
-  boostedVaults,
 } from '../../../constants'
 import { fromWei } from '../../../services/web3'
 import { CHAIN_IDS } from '../../../data/constants'
@@ -370,8 +369,6 @@ const formatVaults = (
         [v => Number(getVaultValue(groupOfVaults[v])), v => get(groupOfVaults, `${v}.publishDate`)],
         ['desc', 'desc'],
       ).slice(0, 10)
-    } else if (selectFarmType === 'Boosted') {
-      vaultsSymbol = vaultsSymbol.filter(tokenSymbol => get(groupOfVaults[tokenSymbol], 'boosted'))
     }
     // vaultsSymbol = vaultsSymbol.filter(
     //   tokenSymbol =>
@@ -486,25 +483,6 @@ const VaultList = () => {
   } else {
     groupOfVaults = { ...vaultsData, ...poolVaults }
   }
-
-  useEffect(() => {
-    const setBoostedVaults = async () => {
-      if (groupOfVaults) {
-        const vaultsKey = Object.keys(groupOfVaults)
-        vaultsKey.map(async symbol => {
-          // Add 'boosted' item to vaults that participate in campaign
-          for (let i = 0; i < boostedVaults.length; i += 1) {
-            if (symbol === boostedVaults[i]) {
-              groupOfVaults[symbol].boosted = true
-              return
-            }
-          }
-        })
-      }
-    }
-
-    setBoostedVaults()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const getCreatedAtData = async () => {

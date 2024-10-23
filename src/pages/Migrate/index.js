@@ -47,7 +47,6 @@ import {
   SPECIAL_VAULTS,
   IFARM_TOKEN_SYMBOL,
   MAX_DECIMALS,
-  boostedVaults,
   // chainList,
 } from '../../constants'
 import {
@@ -277,25 +276,6 @@ const Migrate = () => {
     [account, balances],
   )
 
-  useEffect(() => {
-    const setBoostedVaults = async () => {
-      if (groupOfVaults) {
-        const vaultsKey = Object.keys(groupOfVaults)
-        vaultsKey.map(async symbol => {
-          // Add 'boosted' item to vaults that participate in campaign
-          for (let i = 0; i < boostedVaults.length; i += 1) {
-            if (symbol === boostedVaults[i]) {
-              groupOfVaults[symbol].boosted = true
-              return
-            }
-          }
-        })
-      }
-    }
-
-    setBoostedVaults()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
-
   // const getBadgeId = vaultAddress => {
   //   const vaultData = Object.values(groupOfVaults).find(vault => {
   //     if (vault.vaultAddress && vaultAddress) {
@@ -442,7 +422,6 @@ const Migrate = () => {
             }
             const statsTvl = getVaultValue(token)
             stats.tvl = statsTvl
-            stats.boosted = token.boosted
             stats.token = token
             stats.symbol = tokenName
             stats.logos = token.logoUrl
