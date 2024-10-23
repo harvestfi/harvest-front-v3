@@ -105,9 +105,7 @@ const HolderRow = ({
     }
   }, [value, groupOfVaults]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const firstVault = Object.entries(value.vaults).slice(0, 1)
-  const topBalance = firstVault[0][1].balance
-  const allocationValue = (walletApy * topBalance) / 100
+  const allocationValue = (walletApy * userHarvestBalance) / 100
 
   return isMobile ? (
     <DetailView
