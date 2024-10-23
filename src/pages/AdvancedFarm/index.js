@@ -501,7 +501,7 @@ const AdvancedFarm = () => {
       localStorage.setItem('firstViewGB', true)
       setShowGBVaultInfo(true)
     }
-  }, [token.platform, token.tokenNames, useIFARM])
+  }, [token.platform, token.tokenNames, token.boosted, useIFARM])
 
   const closeIFARMBadge = () => {
     setShowIFARMInfo(false)
