@@ -183,8 +183,8 @@ const HolderRow = ({
                   color="#6988FF"
                   value={
                     allocationValue > 0 && allocationValue < 0.01
-                      ? `<${currencySym}0.01/yr per $1 allocated`
-                      : `${currencySym}${formatNumber(allocationValue, 2)}/yr per $1 allocated`
+                      ? `<${currencySym}0.01/yr`
+                      : `${currencySym}${formatNumber(allocationValue, 2)}/yr`
                   }
                   allocationValue={allocationValue}
                   justifyContent="end"
@@ -298,9 +298,9 @@ const HolderRow = ({
                             marginTop="0px"
                             color="#6988FF"
                             value={`${currencySym}${formatNumber(
-                              itemApy * vaultValue.balance,
+                              (itemApy * vaultValue.balance) / 100,
                               2,
-                            )}/yr per $1 allocated`}
+                            )}/yr`}
                             justifyContent="end"
                           />
                         </MobileGranularBlock>
@@ -410,10 +410,10 @@ const HolderRow = ({
               color="#6988FF"
               value={
                 allocationValue > 0 && allocationValue < 0.01
-                  ? `<${currencySym}0.01/yr per $1 allocated`
+                  ? `<${currencySym}0.01/yr`
                   : allocationValue === 0
                   ? 'Apy Zero'
-                  : `${currencySym}${formatNumber(allocationValue, 2)}/yr per $1 allocated`
+                  : `${currencySym}${formatNumber(allocationValue, 2)}/yr`
               }
               allocationValue={allocationValue}
             />
@@ -534,7 +534,7 @@ const HolderRow = ({
                           value={`${currencySym}${formatNumber(
                             (itemApy * vaultValue.balance) / 100,
                             2,
-                          )}/yr per $1 allocated`}
+                          )}/yr`}
                         />
                       </div>
                     )
