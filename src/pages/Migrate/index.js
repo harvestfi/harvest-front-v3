@@ -144,6 +144,7 @@ const Migrate = () => {
   const [noPosition, setNoPosition] = useState(false)
   const [selectedChain, setSelectedChain] = useState(chainId)
   const [allMatchVaultList, setAllMatchVaultList] = useState([])
+  const [positionBalance, setPositionBalance] = useState(0)
   const isFetchingRef = useRef(false)
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
@@ -996,6 +997,12 @@ const Migrate = () => {
     }
   }, [highestVaultAddress]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  useEffect(() => {
+    if (highestPosition) {
+      setPositionBalance(highestPosition.balance)
+    }
+  }, [highestPosition])
+
   const stopPropagation = event => {
     event.stopPropagation()
   }
@@ -1491,7 +1498,7 @@ const Migrate = () => {
                 height="24px"
                 color={darkMode ? '#ffffff' : '#344054'}
               >
-                Yield per $1 allocated
+                Expected Yield Change
               </NewLabel>
               <NewLabel
                 display="flex"
@@ -1504,7 +1511,7 @@ const Migrate = () => {
                 {!connected || (noPosition && highestApyVault) ? (
                   `${currencySym}0.00/yr`
                 ) : highestPosition ? (
-                  `${currencySym}${formatNumber(highestPosition.apy / 100)}/yr`
+                  `${currencySym}${formatNumber((highestPosition.apy * positionBalance) / 100)}/yr`
                 ) : (
                   <AnimatedDots />
                 )}{' '}
@@ -1513,7 +1520,9 @@ const Migrate = () => {
                 </span>
                 <span style={{ color: '#5fCf76' }}>
                   {highestApyVault ? (
-                    `${currencySym}${formatNumber(highestApyVault.vaultApy / 100)}/yr`
+                    `${currencySym}${formatNumber(
+                      (highestApyVault.vaultApy * positionBalance) / 100,
+                    )}/yr`
                   ) : (
                     <AnimatedDots />
                   )}
