@@ -105,7 +105,9 @@ const HolderRow = ({
     }
   }, [value, groupOfVaults]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const allocationValue = walletApy / 100
+  const firstVault = Object.entries(value.vaults).slice(0, 1)
+  const topBalance = firstVault[0][1].balance
+  const allocationValue = (walletApy * topBalance) / 100
 
   return isMobile ? (
     <DetailView
@@ -243,6 +245,7 @@ const HolderRow = ({
                 {Object.entries(value.vaults)
                   .slice(0, 5)
                   .map(([vaultKey, vaultValue], index) => {
+                    const itemApy = getVaultApy(vaultKey, groupOfVaults, vaultsData, pools)
                     return (
                       <div
                         key={vaultKey}
@@ -286,12 +289,7 @@ const HolderRow = ({
                             marginTop="0px"
                             marginRight="10px"
                             color="#5FCF76"
-                            value={`${getVaultApy(
-                              vaultKey,
-                              groupOfVaults,
-                              vaultsData,
-                              pools,
-                            )}% APY`}
+                            value={`${itemApy}% APY`}
                             justifyContent="end"
                           />
                           <ListItem
@@ -300,7 +298,7 @@ const HolderRow = ({
                             marginTop="0px"
                             color="#6988FF"
                             value={`${currencySym}${formatNumber(
-                              getVaultApy(vaultKey, groupOfVaults, vaultsData, pools) / 100,
+                              itemApy * vaultValue.balance,
                               2,
                             )}/yr per $1 allocated`}
                             justifyContent="end"
@@ -487,6 +485,7 @@ const HolderRow = ({
                 {Object.entries(value.vaults)
                   .slice(0, 5)
                   .map(([vaultKey, vaultValue], index) => {
+                    const itemApy = getVaultApy(vaultKey, groupOfVaults, vaultsData, pools)
                     return (
                       <div
                         key={vaultKey}
@@ -525,7 +524,7 @@ const HolderRow = ({
                           marginTop="0px"
                           marginRight="10px"
                           color="#5FCF76"
-                          value={`${getVaultApy(vaultKey, groupOfVaults, vaultsData, pools)}% APY`}
+                          value={`${itemApy}% APY`}
                         />
                         <ListItem
                           weight={500}
@@ -533,7 +532,7 @@ const HolderRow = ({
                           marginTop="0px"
                           color="#6988FF"
                           value={`${currencySym}${formatNumber(
-                            getVaultApy(vaultKey, groupOfVaults, vaultsData, pools) / 100,
+                            (itemApy * vaultValue.balance) / 100,
                             2,
                           )}/yr per $1 allocated`}
                         />
