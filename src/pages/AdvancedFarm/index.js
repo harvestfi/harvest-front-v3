@@ -998,6 +998,7 @@ const AdvancedFarm = () => {
     SUPPORTED_TOKEN_LIST,
     supportedVault,
     hasPortalsError,
+    pickedTokenDepo,
   ])
 
   const firstUserPoolsLoad = useRef(true)
