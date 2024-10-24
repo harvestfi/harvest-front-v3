@@ -1324,6 +1324,7 @@ const Migrate = () => {
             networkMatchList={networkMatchList}
             setNoPosition={setNoPosition}
             connected={connected}
+            currencyRate={currencyRate}
           />
           <BoxTitle color={darkMode ? '#ffffff' : '#475467'}>Migrate to</BoxTitle>
           <VaultBox
