@@ -399,7 +399,7 @@ const WithdrawBase = ({
             </NewLabel>
             <TokenInput>
               <TokenAmount
-                type="number"
+                type="text"
                 value={unstakeInputValue}
                 onChange={onInputUnstake}
                 bgColor={bgColor}
