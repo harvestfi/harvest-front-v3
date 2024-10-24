@@ -944,9 +944,7 @@ const AdvancedFarm = () => {
 
         // Check if defaultToken is present in the balanceList
         if (defaultToken.balance !== '0' || !supportedVault || hasPortalsError) {
-          if (!pickedTokenDepo) {
-            setPickedTokenDepo(defaultToken)
-          }
+          setPickedTokenDepo(defaultToken)
           setBalanceDepo(defaultToken.balance)
           return
         }
@@ -971,7 +969,7 @@ const AdvancedFarm = () => {
         }
 
         // Set the pickedTokenDepo and balanceDepo based on the determined tokenToSet
-        if (tokenToSet && !pickedTokenDepo) {
+        if (tokenToSet) {
           setPickedTokenDepo(tokenToSet)
           setBalanceDepo(
             fromWei(
@@ -982,9 +980,7 @@ const AdvancedFarm = () => {
           )
         }
       } else if (supTokenList.length !== 0) {
-        if (!pickedTokenDepo) {
-          setPickedTokenDepo(supTokenList.find(coin => coin.symbol === 'USDC'))
-        }
+        setPickedTokenDepo(supTokenList.find(coin => coin.symbol === 'USDC'))
         setBalanceDepo('0')
       }
     }, 3000)
@@ -998,7 +994,6 @@ const AdvancedFarm = () => {
     SUPPORTED_TOKEN_LIST,
     supportedVault,
     hasPortalsError,
-    pickedTokenDepo,
   ])
 
   const firstUserPoolsLoad = useRef(true)
