@@ -2,6 +2,8 @@ import React from 'react'
 import Dollar from './assets/images/logos/dashboard/flag_usd.svg'
 import Pound from './assets/images/logos/dashboard/flag_gbp.svg'
 import Euro from './assets/images/logos/dashboard/flag_euro.svg'
+import Franc from './assets/images/logos/dashboard/flag_chf.svg'
+import Yen from './assets/images/logos/dashboard/flag_jpy.svg'
 
 export const HARVEST_LAUNCH_DATE = new Date(1598986800000)
 
@@ -883,12 +885,12 @@ export const supportedCurrencies = [
     id: SUPPORTED_CURRENCY.CHF,
     symbol: 'CHF',
     icon: '₣',
-    imgPath: Euro,
+    imgPath: Franc,
   },
   {
     id: SUPPORTED_CURRENCY.JPY,
     symbol: 'JPY',
     icon: '¥',
-    imgPath: Euro,
+    imgPath: Yen,
   },
 ]
