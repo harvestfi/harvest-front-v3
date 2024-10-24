@@ -144,6 +144,8 @@ const Migrate = () => {
   const [noPosition, setNoPosition] = useState(false)
   const [selectedChain, setSelectedChain] = useState(chainId)
   const [allMatchVaultList, setAllMatchVaultList] = useState([])
+  const [highPositionPlatform, setHighPositionPlatform] = useState('')
+  const [highVaultPlatform, setHighVaultPlatform] = useState('')
   const [positionBalance, setPositionBalance] = useState(0)
   const isFetchingRef = useRef(false)
 
@@ -1104,6 +1106,40 @@ const Migrate = () => {
     },
   ]
 
+  useEffect(() => {
+    let positionToken, vaultToken, positionPlatform, vaultPlatform
+    if (highestPosition) {
+      positionToken = highestPosition.token
+      const id = highestPosition.token.poolVault ? 'FARM' : highestPosition.token.pool.id
+      const positionUseFARM = id === FARM_TOKEN_SYMBOL
+      positionPlatform = positionUseFARM
+        ? tokens[IFARM_TOKEN_SYMBOL].subLabel
+          ? `${tokens[IFARM_TOKEN_SYMBOL].platform[0]} - ${tokens[IFARM_TOKEN_SYMBOL].subLabel}`
+          : tokens[IFARM_TOKEN_SYMBOL].platform[0]
+        : positionToken.subLabel
+        ? positionToken.platform[0] && `${positionToken.platform[0]} - ${positionToken.subLabel}`
+        : positionToken.platform[0] && positionToken.platform[0]
+    }
+    if (highestApyVault) {
+      vaultToken = highestApyVault.vault
+      const id = highestApyVault.vault.poolVault ? 'FARM' : highestApyVault.vault.pool.id
+      const vaultUseFARM = id === FARM_TOKEN_SYMBOL
+      vaultPlatform = vaultUseFARM
+        ? tokens[IFARM_TOKEN_SYMBOL].subLabel
+          ? `${tokens[IFARM_TOKEN_SYMBOL].platform[0]} - ${tokens[IFARM_TOKEN_SYMBOL].subLabel}`
+          : tokens[IFARM_TOKEN_SYMBOL].platform[0]
+        : vaultToken.subLabel
+        ? vaultToken.platform[0] && `${vaultToken.platform[0]} - ${vaultToken.subLabel}`
+        : vaultToken.platform[0] && vaultToken.platform[0]
+    }
+    if (highestPosition) {
+      setHighPositionPlatform(positionPlatform)
+    }
+    if (vaultPlatform) {
+      setHighVaultPlatform(vaultPlatform)
+    }
+  }, [highestPosition, highestApyVault]) // eslint-disable-line react-hooks/exhaustive-deps
+
   return (
     <Container bgColor={bgColor}>
       <Inner marginBottom={isMobile ? '0px' : '55px'}>
@@ -1266,7 +1302,7 @@ const Migrate = () => {
                           <span>{highestPosition.token.tokenNames.join(', ')}</span>
                           <span
                             style={{ fontWeight: '300', marginLeft: '5px' }}
-                          >{`(${highestPosition.token.platform.join(', ')})`}</span>
+                          >{`(${highPositionPlatform})`}</span>
                         </>
                       </Token>
                     ) : (
@@ -1363,7 +1399,7 @@ const Migrate = () => {
                       <span>{highestApyVault.vault.tokenNames.join(', ')}</span>
                       <span
                         style={{ fontWeight: '300', marginLeft: '5px' }}
-                      >{`(${highestApyVault.vault.platform.join(', ')})`}</span>
+                      >{`(${highVaultPlatform})`}</span>
                     </>
                   </Token>
                 ) : (
