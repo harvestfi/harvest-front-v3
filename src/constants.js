@@ -805,6 +805,8 @@ export const SUPPORTED_CURRENCY = {
   USD: 0,
   GBP: 1,
   EUR: 2,
+  CHF: 3,
+  JPY: 4,
 }
 
 export const chainList = [
@@ -875,6 +877,18 @@ export const supportedCurrencies = [
     id: SUPPORTED_CURRENCY.EUR,
     symbol: 'EUR',
     icon: '€',
+    imgPath: Euro,
+  },
+  {
+    id: SUPPORTED_CURRENCY.CHF,
+    symbol: 'CHF',
+    icon: 'CHF',
+    imgPath: Euro,
+  },
+  {
+    id: SUPPORTED_CURRENCY.JPY,
+    symbol: 'JPY',
+    icon: '¥',
     imgPath: Euro,
   },
 ]
