@@ -882,7 +882,7 @@ export const supportedCurrencies = [
   {
     id: SUPPORTED_CURRENCY.CHF,
     symbol: 'CHF',
-    icon: 'CHF',
+    icon: '₣',
     imgPath: Euro,
   },
   {
