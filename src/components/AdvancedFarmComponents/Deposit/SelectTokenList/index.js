@@ -28,6 +28,7 @@ const SelectTokenList = ({
   filterWord,
   supportedVault,
   hasPortalsError,
+  setFromTokenList,
 }) => {
   const { fontColor, fontColor2, hoverColor, activeColorModal } = useThemeContext()
   const [showList, setShowList] = useState(false)
@@ -213,6 +214,7 @@ const SelectTokenList = ({
                 <Container
                   onClick={() => {
                     handleDefaultToken()
+                    setFromTokenList(true)
                   }}
                   hoverColor={hoverColor}
                   activeColor={activeColorModal}
@@ -249,6 +251,7 @@ const SelectTokenList = ({
                   className={i === clickBalanceListId ? 'active' : ''}
                   onClick={() => {
                     if (curSupportedVault) handleBalanceListClick(i)
+                    setFromTokenList(true)
                   }}
                   cursor={curSupportedVault ? 'pointer' : 'not-allowed'}
                   hoverColor={hoverColor}
@@ -289,6 +292,7 @@ const SelectTokenList = ({
                   className={i === clicksupTokenNoBalanceListId ? 'active' : ''}
                   onClick={() => {
                     if (curSupportedVault) handleSupTokenNoBalanceListClick(i)
+                    setFromTokenList(true)
                   }}
                   cursor={curSupportedVault ? 'pointer' : 'not-allowed'}
                   hoverColor={hoverColor}

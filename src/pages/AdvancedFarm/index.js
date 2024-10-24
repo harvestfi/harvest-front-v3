@@ -220,6 +220,7 @@ const AdvancedFarm = () => {
   const [convertSuccess, setConvertSuccess] = useState(false)
   const [hasErrorOccurredConvert, setHasErrorOccurredConvert] = useState(0)
   const [failureCountConvert, setFailureCountConvert] = useState(0)
+  const [fromTokenList, setFromTokenList] = useState(false)
 
   // Withdraw
   const [withdrawStart, setWithdrawStart] = useState(false)
@@ -944,9 +945,11 @@ const AdvancedFarm = () => {
 
         // Check if defaultToken is present in the balanceList
         if (defaultToken.balance !== '0' || !supportedVault || hasPortalsError) {
-          setPickedTokenDepo(defaultToken)
-          setBalanceDepo(defaultToken.balance)
-          return
+          if (!fromTokenList) {
+            setPickedTokenDepo(defaultToken)
+            setBalanceDepo(defaultToken.balance)
+            return
+          }
         }
 
         // If defaultToken is not found, find the token with the highest USD value among those in the SUPPORTED_TOKEN_LIST and balanceList
@@ -970,22 +973,27 @@ const AdvancedFarm = () => {
 
         // Set the pickedTokenDepo and balanceDepo based on the determined tokenToSet
         if (tokenToSet) {
-          setPickedTokenDepo(tokenToSet)
-          setBalanceDepo(
-            fromWei(
-              tokenToSet.rawBalance ? tokenToSet.rawBalance : 0,
-              tokenToSet.decimals,
-              tokenToSet.decimals,
-            ),
-          )
+          if (!fromTokenList) {
+            setPickedTokenDepo(tokenToSet)
+            setBalanceDepo(
+              fromWei(
+                tokenToSet.rawBalance ? tokenToSet.rawBalance : 0,
+                tokenToSet.decimals,
+                tokenToSet.decimals,
+              ),
+            )
+          }
         }
       } else if (supTokenList.length !== 0) {
-        setPickedTokenDepo(supTokenList.find(coin => coin.symbol === 'USDC'))
-        setBalanceDepo('0')
+        if (!fromTokenList) {
+          setPickedTokenDepo(supTokenList.find(coin => coin.symbol === 'USDC'))
+          setBalanceDepo('0')
+        }
       }
     }, 3000)
 
     return () => clearTimeout(timer)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     balanceList,
     supTokenList,
@@ -994,6 +1002,7 @@ const AdvancedFarm = () => {
     SUPPORTED_TOKEN_LIST,
     supportedVault,
     hasPortalsError,
+    fromTokenList,
   ])
 
   const firstUserPoolsLoad = useRef(true)
@@ -2435,6 +2444,7 @@ const AdvancedFarm = () => {
                         soonToSupList={soonToSupList}
                         supportedVault={supportedVault}
                         hasPortalsError={hasPortalsError}
+                        setFromTokenList={setFromTokenList}
                       />
                       <DepositStart
                         pickedToken={pickedTokenDepo}
