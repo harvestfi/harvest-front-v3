@@ -230,9 +230,9 @@ const SideLink = ({
   const { pathname } = useLocation()
   const pageName =
     pathname === '/'
-      ? 'my positions'
-      : pathname === ROUTES.ADVANCED
       ? 'all farms'
+      : pathname === ROUTES.PORTFOLIO
+      ? 'my positions'
       : pathname === ROUTES.TUTORIAL
       ? 'tutorial'
       : pathname === ROUTES.MIGRATE
