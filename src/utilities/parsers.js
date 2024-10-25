@@ -445,6 +445,47 @@ export const getVaultApy = (vaultKey, vaultsGroup, vaultsData, pools) => {
   return totalApy
 }
 
+export const getMigrateVaultApy = (vaultKey, vaultsGroup, vaultsData, pools) => {
+  let token = null,
+    tokenSymbol = null,
+    vaultPool
+
+  if (vaultKey.toLowerCase() === '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651') {
+    vaultKey = '0xa0246c9032bc3a600820415ae600c6388619a14d'
+  }
+
+  Object.entries(vaultsGroup).forEach(([key, vaultData]) => {
+    if (vaultData.data) {
+      if (vaultData.data.collateralAddress.toLowerCase() === vaultKey.toLowerCase()) {
+        token = vaultData
+        tokenSymbol = key
+      }
+    } else if (
+      vaultData.vaultAddress &&
+      vaultData.vaultAddress.toLowerCase() === vaultKey.toLowerCase()
+    ) {
+      token = vaultData
+      tokenSymbol = key
+    }
+  })
+
+  const isSpecialVault = token.liquidityPoolVault || token.poolVault
+
+  const tokenVault = get(vaultsData, token.hodlVaultId || tokenSymbol)
+
+  if (isSpecialVault) {
+    vaultPool = token.data
+  } else {
+    vaultPool = find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
+  }
+
+  const totalApy = isSpecialVault
+    ? getTotalApy(null, token, true)
+    : getTotalApy(vaultPool, tokenVault)
+
+  return totalApy
+}
+
 export const getWalletApy = (value, groupOfVaults, vaultsData, pools) => {
   let totalMonthlyYield = 0,
     walletTotalBalance = 0
@@ -576,7 +617,7 @@ export const getMatchedVaultList = (allVaults, chainName, vaultsData, pools) => 
       vault[0] !== 'IFARM' &&
       compareChain !== null
     ) {
-      const vaultApy = getVaultApy(address, allVaults, vaultsData, pools)
+      const vaultApy = getMigrateVaultApy(address, allVaults, vaultsData, pools)
       sameNetworkVautls.push({ vaultApy: Number(vaultApy), vault: vault[1] })
     }
     return true

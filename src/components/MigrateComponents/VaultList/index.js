@@ -5,6 +5,7 @@ import POLYGON from '../../../assets/images/logos/badge/polygon.svg'
 import ZKSYNC from '../../../assets/images/logos/badge/zksync.svg'
 import BASE from '../../../assets/images/logos/badge/base.svg'
 import { formatNumber } from '../../../utilities/formats'
+import { tokens } from '../../../data'
 import {
   VaultBox,
   Content,
@@ -14,6 +15,7 @@ import {
   Token,
   ApyDownIcon,
 } from '../PositionList/style'
+import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../../constants'
 
 const VaultList = ({
   matchVault,
@@ -53,6 +55,15 @@ const VaultList = ({
     chainUrl = BASE
   }
   const id = matchVault.vault.pool === undefined ? 'FARM' : matchVault.vault.pool.id
+  const useIFARM = id === FARM_TOKEN_SYMBOL
+  const token = matchVault.vault
+  const platformName = useIFARM
+    ? tokens[IFARM_TOKEN_SYMBOL].subLabel
+      ? `${tokens[IFARM_TOKEN_SYMBOL].platform[0]} - ${tokens[IFARM_TOKEN_SYMBOL].subLabel}`
+      : tokens[IFARM_TOKEN_SYMBOL].platform[0]
+    : token.subLabel
+    ? token.platform[0] && `${token.platform[0]} - ${token.subLabel}`
+    : token.platform[0] && token.platform[0]
 
   filteredFarmList.forEach(farm => {
     const farmAddress = farm.token.poolVault ? farm.token.tokenAddress : farm.token.vaultAddress
@@ -89,7 +100,7 @@ const VaultList = ({
             href={`${window.location.origin}/${networkName}/${vaultAddress}`}
             onClick={stopPropagation}
           >
-            {`${vaultName.join(', ')} (${matchVault.vault.platform})`}
+            {`${vaultName.join(', ')} (${platformName})`}
           </Token>
         </BadgeToken>
       </Content>
