@@ -278,7 +278,7 @@ const MobileMenu = ({
 }) => {
   const { pathname } = useLocation()
   const pageName =
-    pathname === '/' ? 'my positions' : pathname === ROUTES.ADVANCED ? 'all farms' : pathname
+    pathname === '/' ? 'all farms' : pathname === ROUTES.PORTFOLIO ? 'my positions' : pathname
   return (
     <LinkMobile
       fontColor={fontColor}
