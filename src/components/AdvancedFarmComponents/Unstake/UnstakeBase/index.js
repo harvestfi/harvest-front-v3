@@ -200,7 +200,7 @@ const UnstakeBase = ({
         </NewLabel>
         <AmountInputSection fontColor5={fontColor5}>
           <TokenAmount
-            type="text"
+            type="number"
             value={inputAmount}
             onChange={onInputBalance}
             bgColor={bgColor}
