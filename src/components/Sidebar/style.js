@@ -290,18 +290,18 @@ const FlexDiv = styled.div`
 `
 
 const ConnectButtonStyle = styled.button`
-  font-size: 16px;
+  font-size: 15px;
   line-height: 20px;
-  font-weight: 600;
-  margin: 25px 0px;
-  width: 100%;
-  border-radius: 8px;
-  border: 2px solid #6988ff;
-  background: none;
-  color: #6888ff;
+  font-weight: 400;
+  border-radius: 9px;
+  background: #20d099;
+  color: #ffffff;
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
   cursor: pointer;
   transition: 0.5s;
+  padding: 9.19px 16.08px 9.19px 16.08px;
+  border: none;
+  margin-left: 10px;
 
   &:hover {
     background: ${props => props.hoverColor};
@@ -310,20 +310,18 @@ const ConnectButtonStyle = styled.button`
   ${props =>
     props.connected
       ? `
-      padding: 7px 45px 7px 11px;
-      filter: drop-shadow(0px 4px 52px rgba(0, 0, 0, 0.25));
+      // padding: 7px 45px 7px 11px;
+      // filter: drop-shadow(0px 4px 52px rgba(0, 0, 0, 0.25));
 
-      &:hover {
-        background: #E6F8EB;
-      }
+      // &:hover {
+      //   background: #E6F8EB;
+      // }
     `
       : `
-      padding: 15px 0px 15px 0px;
-    `}
-
-  img.connect-wallet {
-    margin-right: 25px;
-  }
+      // padding: 15px 0px 15px 0px;
+    `}// img.connect-wallet {
+  //   margin-right: 25px;
+  // }
 `
 
 const AboutHarvest = styled.div`
@@ -376,7 +374,11 @@ const MobileView = styled.div`
   }
 `
 
-const MobileConnectBtn = styled.div``
+const MobileConnectBtn = styled.div`
+  display: ${props => (props.display ? props.display : '')};
+  justify-content: ${props => (props.justifyContent ? props.justifyContent : '')};
+  align-items: ${props => (props.alignItems ? props.alignItems : '')};
+`
 
 const MobileActionsContainer = styled.div`
   bottom: 0;
@@ -456,10 +458,14 @@ const MobileWalletButton = styled.div`
   font-size: 16px;
   line-height: 24px;
   font-weight: 600;
-  padding: 10px 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: ${props => (props.marginLeft ? props.marginLeft : '')};
+  // padding: 10px 18px;
   background: ${props => props.backColor};
-  border-radius: 5px;
-  border: 1px solid ${props => props.borderColor};
+  // border-radius: 5px;
+  // border: 1px solid ${props => props.borderColor};
   cursor: pointer;
   width: 45%;
   text-align: center;
@@ -546,16 +552,16 @@ const ConnectAvatar = styled.div`
 
 const Address = styled.span`
   display: flex;
-  color: #8ba3ff;
-  font-size: 12px;
+  color: ${props => (props.color ? props.color : '')};
+  font-size: 15px;
   font-weight: 500;
-  line-height: 12px;
+  line-height: 25px;
   letter-spacing: -0.12px;
 
   @media screen and (max-width: 992px) {
     text-align: center;
     line-height: 28px;
-    margin: 4px auto;
+    margin-left: 10px;
   }
 `
 
@@ -654,6 +660,7 @@ const SideIcons = styled.img`
   transition: 0.25s;
   width: ${props => props.width};
   height: ${props => props.height};
+  margin-top: ${props => (props.marginTop ? props.marginTop : '')};
 `
 
 const UserDropDown = styled(Dropdown.Toggle)`
@@ -824,8 +831,9 @@ const Logo = styled.div`
 
   @media screen and (max-width: 992px) {
     display: flex;
-    justify-content: end;
+    justify-content: space-between;
     margin-bottom: 24px;
+    padding-left: 12px;
   }
 `
 
@@ -851,6 +859,14 @@ const NewTag = styled.div`
   margin-left: 10px;
 `
 
+const LinkName = styled.div`
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 25px;
+  color: ${props => (props.color ? props.color : '')};
+  margin-top: ${props => (props.marginTop ? props.marginTop : '')};
+`
+
 const LinkMobile = styled.button`
   font-size: 10px;
   line-height: 13px;
@@ -866,24 +882,15 @@ const LinkMobile = styled.button`
   flex-direction: column;
   display: ${props => (props.isDropdownLink ? 'none' : 'flex')};
 
-  ${props =>
-    props.darkMode
-      ? `
-          img.sideIcon {
-            filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%);
-          }
-      `
-      : ``}
+  img {
+    filter: ${props => (props.farmsFilter ? props.farmsFilter : '')};
+  }
 
   ${props =>
     props.enabled === 'false'
       ? `
       pointer-events: none;
       color: #a4a4a4;
-
-      img.sideIcon {
-        filter: invert(81%) sepia(0%) saturate(1%) hue-rotate(315deg) brightness(82%) contrast(85%);
-      }
     `
       : ``}
 
@@ -892,21 +899,7 @@ const LinkMobile = styled.button`
       ? `
           font-weight: 500;
           color: #15B088;
-          img {
-            filter: invert(56%) sepia(65%) saturate(2880%) hue-rotate(127deg) brightness(93%) contrast(84%);
-          }
       `
-      : `font-weight: 400;`}
-
-  ${props =>
-    props.darkMode && props.active
-      ? `
-              font-weight: 500;
-              color: #15B088;
-              img.sideIcon {
-                filter: invert(39%) sepia(83%) saturate(1585%) hue-rotate(137deg) brightness(103%) contrast(84%);
-              }
-          `
       : `font-weight: 400;`}
 `
 
@@ -920,7 +913,7 @@ const MobileMenuContainer = styled.div`
 
 const ConnectSection = styled.div`
   cursor: pointer;
-  display: flex;
+  display: ${props => (props.display ? props.display : 'flex')};
 `
 
 const MoreBtn = styled.button`
@@ -931,9 +924,8 @@ const MoreBtn = styled.button`
   font-size: 10.229px;
   font-style: normal;
   font-weight: 400;
-  width: 21px;
-  height: 21px;
   padding: 0px;
+  align-items: center;
 `
 
 const CurrencyDiv = styled.div`
@@ -948,6 +940,11 @@ const CurrencyDiv = styled.div`
     width: 95%;
     margin: 0px auto 35px auto;
   }
+`
+
+const MobileMoreTop = styled.div`
+  display: flex;
+  align-items: center;
 `
 
 export {
@@ -993,4 +990,6 @@ export {
   ConnectSection,
   MoreBtn,
   CurrencyDiv,
+  LinkName,
+  MobileMoreTop,
 }
