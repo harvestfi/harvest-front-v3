@@ -203,7 +203,7 @@ const Migrate = () => {
     // setHighestApyVault()
     // setNetworkMatchList([])
     // setMatchVaultList([])
-  }, [selectedChain, connected, chainId, userStats])
+  }, [selectedChain, connected, chainId, userStats, isSpecialChain])
 
   useEffect(() => {
     if (isSpecialChain) {
@@ -211,7 +211,7 @@ const Migrate = () => {
     } else {
       setSelectedChain(chainId)
     }
-  }, [chainId])
+  }, [chainId, isSpecialChain])
 
   useEffect(() => {
     if (highestApyVault && connected) {
