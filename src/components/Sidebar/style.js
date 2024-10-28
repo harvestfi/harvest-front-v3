@@ -553,15 +553,16 @@ const ConnectAvatar = styled.div`
 const Address = styled.span`
   display: flex;
   color: ${props => (props.color ? props.color : '')};
-  font-size: 15px;
+  font-size: 12px;
   font-weight: 500;
-  line-height: 25px;
+  line-height: 12px;
   letter-spacing: -0.12px;
 
   @media screen and (max-width: 992px) {
     text-align: center;
-    line-height: 28px;
+    line-height: 25px;
     margin-left: 10px;
+    font-size: 15px;
   }
 `
 
