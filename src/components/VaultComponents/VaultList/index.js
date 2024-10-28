@@ -702,11 +702,11 @@ const VaultList = () => {
     [chain, account, userStats],
   )
 
-  const [sortId, setSortId] = useState(2)
+  const [sortId, setSortId] = useState(1)
 
   const updateSortQuery = sort => {
     const debouncedFn = debounce(() => {
-      if (sort === 'balance') {
+      if (sort === 'deposits') {
         if (account) {
           setSortingParams(sort)
         }
