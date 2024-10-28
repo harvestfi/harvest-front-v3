@@ -358,10 +358,10 @@ const Mobile = styled.div`
 
 const MobileView = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   position: relative;
   width: 100%;
-  padding: 10px 0px;
+  padding: 10px 0px 5px 0px;
 
   &.connect-modal {
     padding: 10px 25px;
@@ -862,7 +862,7 @@ const NewTag = styled.div`
 
 const LinkName = styled.div`
   font-weight: 400;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 25px;
   color: ${props => (props.color ? props.color : '')};
   margin-top: ${props => (props.marginTop ? props.marginTop : '')};
