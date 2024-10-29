@@ -23,7 +23,7 @@ const Container = styled.div`
     &:first-child {
       width: 46%;
       padding: 8px 13px 8px 0px;
-      border-right: 0.821px solid #eaecf0;
+      // border-right: 0.821px solid #eaecf0;
       border-radius: 6.5px 0px 0px 6.5px;
     }
     &:nth-child(2) {
@@ -32,7 +32,7 @@ const Container = styled.div`
     &:nth-child(3) {
       width: 46%;
       padding: 8px 13px 8px 0px;
-      border-right: 0.821px solid #eaecf0;
+      // border-right: 0.821px solid #eaecf0;
       border-radius: 6.5px 0px 0px 6.5px;
     }
     &:nth-child(4) {
@@ -48,7 +48,7 @@ const Div = styled.div`
   font-weight: 500;
   font-size: 14px;
   line-height: 20px;
-  color: ${props => props.fontColor3};
+  color: #718bc5;
   margin-bottom: 8px;
   display: flex;
 

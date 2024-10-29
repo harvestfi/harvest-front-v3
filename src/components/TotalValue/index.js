@@ -29,7 +29,7 @@ const TotalValue = ({ content, price, toolTipTitle, toolTip, connected, farmToke
       <Div fontColor3={fontColor3}>
         {content}
         {content === 'Lifetime Yield' && <BetaBadge>Beta</BetaBadge>}
-        <PiQuestion className="question" data-tip data-for={toolTipTitle} />
+        <PiQuestion className="question" data-tip data-for={toolTipTitle} color="#718BC5" />
         <ReactTooltip
           id={toolTipTitle}
           backgroundColor={darkMode ? 'white' : '#101828'}

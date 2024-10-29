@@ -3,7 +3,9 @@ import { BigNumber } from 'bignumber.js'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { find, get, isEmpty, orderBy, isEqual, isNaN } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
-import { Dropdown } from 'react-bootstrap'
+import { Dropdown, Spinner } from 'react-bootstrap'
+import { PiQuestion } from 'react-icons/pi'
+import ReactTooltip from 'react-tooltip'
 import { useHistory } from 'react-router-dom'
 import { FaRegSquare, FaRegSquareCheck } from 'react-icons/fa6'
 import { BiLeftArrowAlt } from 'react-icons/bi'
@@ -18,10 +20,14 @@ import BankNote from '../../assets/images/logos/dashboard/bank-note.svg'
 import DropDownIcon from '../../assets/images/logos/advancedfarm/drop-down.svg'
 import AdvancedImg from '../../assets/images/logos/sidebar/advanced.svg'
 import VaultRow from '../../components/DashboardComponents/VaultRow'
+import Eye from '../../assets/images/logos/eye-icon.svg'
 import SkeletonLoader from '../../components/DashboardComponents/SkeletonLoader'
 import EarningsHistory from '../../components/EarningsHistory/HistoryData'
+import UpperIcon from '../../assets/images/logos/dashboard-upper.svg'
 import EarningsHistoryLatest from '../../components/EarningsHistoryLatest/HistoryDataLatest'
 import TotalValue from '../../components/TotalValue'
+import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
+import MobileBackImage from '../../assets/images/logos/portfolio-mobile-background.png'
 import {
   FARM_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
@@ -38,7 +44,8 @@ import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { useRate } from '../../providers/Rate'
 import { fromWei } from '../../services/web3'
-import { parseValue, isSpecialApp } from '../../utilities/formats'
+import { parseValue, isSpecialApp, formatAddress, formatNumber } from '../../utilities/formats'
+import PhoneLogo from '../../assets/images/logos/farm-icon.svg'
 import {
   getCoinListFromApi,
   getTokenPriceFromApi,
@@ -77,6 +84,14 @@ import {
   MobileSwitch,
   SwitchBtn,
   SubBtnWrap,
+  MobileHeader,
+  HeaderTop,
+  LifetimeValue,
+  LifetimeSub,
+  LogoDiv,
+  Address,
+  NewLabel,
+  GreenBox,
 } from './style'
 
 const totalNetProfitKey = 'TOTAL_NET_PROFIT'
@@ -129,6 +144,22 @@ const Portfolio = () => {
   const [showInactiveFarms, setShowInactiveFarms] = useState(false)
   const [viewPositions, setViewPositions] = useState(true)
   const [showLatestYield, setShowLatestYield] = useState(false)
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    if (totalNetProfit !== 0) {
+      setIsLoading(false)
+    }
+  }, [totalNetProfit])
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
 
   useEffect(() => {
     setCurCurrency(supportedCurrencies[rates.currency.id])
@@ -328,7 +359,7 @@ const Portfolio = () => {
             for (let k = 0; k < ttl; k += 1) {
               tokenName += token.tokenNames[k]
               if (k !== ttl - 1) {
-                tokenName += ', '
+                tokenName += ' - '
               }
             }
             stats.token = token
@@ -772,9 +803,13 @@ const Portfolio = () => {
       toolTipTitle: 'tt-total-profit',
       toolTip: (
         <>
-          Your wallet&apos;s lifetime yield, shown in USD at the time of each harvest event. It
-          includes all yield from any farm on Harvest. It does not consider claimable rewards and
-          BSChain data
+          Your wallet&apos;s lifetime yield with Harvest originating from &apos;harvest&apos;
+          events. It shows the value of your accumulated yield in the currency you chose (USD, EUR,
+          etc.) at the time of each harvest event.
+          <br />
+          <br />
+          Note: This does not include Claimable Rewards or yield originating from Liquidity
+          Provision.
         </>
       ),
     },
@@ -806,86 +841,148 @@ const Portfolio = () => {
 
   return (
     <Container bgColor={bgColor} fontColor={fontColor}>
-      <Inner>
-        <HeaderWrap>
-          <HeaderTitle fontColor={fontColor} fontColor1={fontColor1}>
-            {!viewPositions && (
-              <BackArrow onClick={() => setViewPositions(prev => !prev)}>
-                <BiLeftArrowAlt fontSize={20} />
-                Back
-              </BackArrow>
-            )}
-            <div className="title">{viewPositions ? 'Overview' : 'Full History'}</div>
-            <div className="desc">
-              {viewPositions
-                ? 'Displaying data from across all networks.'
-                : 'Displaying all harvest, convert & revert events for the connected wallet.'}
-            </div>
-          </HeaderTitle>
+      <Inner bgColor={darkMode ? '#171b25' : '#fff'}>
+        <HeaderWrap backImg={MobileBackImage}>
+          {!isMobile && (
+            <HeaderTitle fontColor={fontColor} fontColor1={fontColor1}>
+              {!viewPositions && (
+                <BackArrow onClick={() => setViewPositions(prev => !prev)}>
+                  <BiLeftArrowAlt fontSize={20} />
+                  Back
+                </BackArrow>
+              )}
+              <div className="title">{viewPositions ? 'Overview' : 'Full History'}</div>
+              <div className="desc">
+                {viewPositions
+                  ? 'Displaying data from across all networks.'
+                  : 'Displaying all harvest, convert & revert events for the connected wallet.'}
+              </div>
+            </HeaderTitle>
+          )}
+          {isMobile && (
+            <MobileHeader>
+              <HeaderTop>
+                <LogoDiv>
+                  <img src={PhoneLogo} alt="harvest logo" />
+                  <div style={{ marginLeft: '10px', fontWeight: '700', fontSize: '16px' }}>
+                    Harvest
+                  </div>
+                </LogoDiv>
+                <LogoDiv bgColor="#F8F8F8" borderRadius="16px" padding="3px 8px">
+                  <img src={ConnectSuccessIcon} alt="connect success" width={6} height={6} />
+                  <Address>{formatAddress(account)}</Address>
+                  <img src={Eye} alt="eye icon" style={{ marginLeft: '5px' }} />
+                </LogoDiv>
+              </HeaderTop>
+              <LifetimeValue isLoading={isLoading}>
+                {isLoading ? (
+                  <Spinner
+                    as="span"
+                    animation="border"
+                    style={{ width: '2rem', height: '2rem' }}
+                    role="status"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  `${currencySym}${formatNumber(totalNetProfit * Number(currencyRate))}`
+                )}
+              </LifetimeValue>
+              <LifetimeSub>
+                Lifetime Yield
+                <PiQuestion
+                  className="question"
+                  data-tip
+                  data-for={`mobile=${TopBoxData[1].toolTipTitle}`}
+                />
+                <ReactTooltip
+                  id={`mobile=${TopBoxData[1].toolTipTitle}`}
+                  backgroundColor={darkMode ? 'white' : '#101828'}
+                  borderColor={darkMode ? 'white' : 'black'}
+                  textColor={darkMode ? 'black' : 'white'}
+                  className="mobile-top-tooltip"
+                  place="top"
+                >
+                  <NewLabel
+                    size={isMobile ? '10px' : '12px'}
+                    height={isMobile ? '15px' : '18px'}
+                    weight="600"
+                  >
+                    {TopBoxData[1].toolTip}
+                  </NewLabel>
+                </ReactTooltip>
+                <GreenBox>
+                  <img src={UpperIcon} alt="upper icon" />
+                  Hello (24h)
+                </GreenBox>
+              </LifetimeSub>
+            </MobileHeader>
+          )}
           {viewPositions && (
             <HeaderButton>
-              <Dropdown>
-                <CurrencyDropDown
-                  id="dropdown-basic"
-                  bgcolor={backColorButton}
-                  fontcolor2={fontColor2}
-                  hovercolor={hoverColorNew}
-                  style={{ padding: 0 }}
-                >
-                  {curCurrency ? (
-                    <CurrencySelect
-                      backColor={backColor}
-                      fontcolor2={fontColor2}
-                      hovercolor={hoverColor}
-                    >
-                      <img
-                        className={darkMode ? 'logo-dark' : 'logo'}
-                        src={curCurrency.imgPath}
-                        width={16}
-                        height={16}
-                        alt=""
-                      />
-                      <span>{curCurrency.symbol}</span>
-                      <img className="dropdown-icon" src={DropDownIcon} alt="" />
-                    </CurrencySelect>
+              {!isMobile && (
+                <Dropdown>
+                  <CurrencyDropDown
+                    id="dropdown-basic"
+                    bgcolor={backColorButton}
+                    fontcolor2={fontColor2}
+                    hovercolor={hoverColorNew}
+                    style={{ padding: 0 }}
+                  >
+                    {curCurrency ? (
+                      <CurrencySelect
+                        backColor={backColor}
+                        fontcolor2={fontColor2}
+                        hovercolor={hoverColor}
+                      >
+                        <img
+                          className={darkMode ? 'logo-dark' : 'logo'}
+                          src={curCurrency.imgPath}
+                          width={16}
+                          height={16}
+                          alt=""
+                        />
+                        <span>{curCurrency.symbol}</span>
+                        <img className="dropdown-icon" src={DropDownIcon} alt="" />
+                      </CurrencySelect>
+                    ) : (
+                      <></>
+                    )}
+                  </CurrencyDropDown>
+                  {!isSpecialApp ? (
+                    <CurrencyDropDownMenu backcolor={backColorButton}>
+                      {supportedCurrencies.map(elem => {
+                        return (
+                          <CurrencyDropDownItem
+                            onClick={() => {
+                              updateCurrency(elem.id)
+                            }}
+                            fontcolor={fontColor}
+                            filtercolor={filterColor}
+                            hovercolor={hoverColorNew}
+                            key={elem.id}
+                          >
+                            <img
+                              className={darkMode ? 'logo-dark' : 'logo'}
+                              src={elem.imgPath}
+                              width={14}
+                              height={14}
+                              alt=""
+                            />
+                            <span>{elem.symbol}</span>
+                            {curCurrency.id === elem.id ? (
+                              <IoCheckmark className="check-icon" />
+                            ) : (
+                              <></>
+                            )}
+                          </CurrencyDropDownItem>
+                        )
+                      })}
+                    </CurrencyDropDownMenu>
                   ) : (
                     <></>
                   )}
-                </CurrencyDropDown>
-                {!isSpecialApp ? (
-                  <CurrencyDropDownMenu backcolor={backColorButton}>
-                    {supportedCurrencies.map(elem => {
-                      return (
-                        <CurrencyDropDownItem
-                          onClick={() => {
-                            updateCurrency(elem.id)
-                          }}
-                          fontcolor={fontColor}
-                          filtercolor={filterColor}
-                          hovercolor={hoverColorNew}
-                          key={elem.id}
-                        >
-                          <img
-                            className={darkMode ? 'logo-dark' : 'logo'}
-                            src={elem.imgPath}
-                            width={14}
-                            height={14}
-                            alt=""
-                          />
-                          <span>{elem.symbol}</span>
-                          {curCurrency.id === elem.id ? (
-                            <IoCheckmark className="check-icon" />
-                          ) : (
-                            <></>
-                          )}
-                        </CurrencyDropDownItem>
-                      )
-                    })}
-                  </CurrencyDropDownMenu>
-                ) : (
-                  <></>
-                )}
-              </Dropdown>
+                </Dropdown>
+              )}
               {!isMobile && (
                 <SwitchView
                   color={fontColor2}
@@ -921,10 +1018,10 @@ const Portfolio = () => {
         {viewPositions ? (
           <TableWrap fontColor1={fontColor1}>
             {isMobile && (
-              <MobileSwitch>
+              <MobileSwitch darkMode={darkMode}>
                 <SwitchBtn
-                  color={showLatestYield ? 'unset' : '#fff'}
-                  backColor={showLatestYield ? 'none' : '#6988ff'}
+                  color={darkMode ? '#fff' : showLatestYield ? '#131313' : '#fff'}
+                  backColor={showLatestYield ? 'unset' : darkMode ? '#171B25' : '#6988ff'}
                   boxShadow={
                     showLatestYield
                       ? 'none'
@@ -935,8 +1032,8 @@ const Portfolio = () => {
                   Positions
                 </SwitchBtn>
                 <SwitchBtn
-                  color={showLatestYield ? '#fff' : 'unset'}
-                  backColor={showLatestYield ? '#6988ff' : 'none'}
+                  color={darkMode ? '#fff' : showLatestYield ? '#fff' : '#131313'}
+                  backColor={showLatestYield ? (darkMode ? '#171B25' : '#6988ff') : 'none'}
                   boxShadow={
                     showLatestYield
                       ? '0px 1px 3px 0px rgba(16, 24, 40, 0.1), 0px 1px 2px 0px rgba(16, 24, 40, 0.06)'
@@ -951,7 +1048,7 @@ const Portfolio = () => {
             <PositionTable display={showLatestYield ? 'none' : 'block'}>
               <div className="table-title">Positions</div>
               <TransactionDetails>
-                <TableContent borderColor={borderColorTable} count={farmTokenList.length}>
+                <TableContent count={farmTokenList.length}>
                   <Header borderColor={borderColorTable} backColor={bgColorTable}>
                     {positionHeader.map((data, index) => (
                       <Column key={index} width={data.width} color={fontColor}>
@@ -990,6 +1087,7 @@ const Portfolio = () => {
                                 firstElement={i === 0 ? 'yes' : 'no'}
                                 lastElement={i === farmTokenList.length - 1 ? 'yes' : 'no'}
                                 cKey={i}
+                                darkMode={darkMode}
                               />
                             )
                           })
@@ -1014,6 +1112,7 @@ const Portfolio = () => {
                                 firstElement={i === 0 ? 'yes' : 'no'}
                                 lastElement={i === filteredFarmList.length - 1 ? 'yes' : 'no'}
                                 cKey={i}
+                                darkMode={darkMode}
                               />
                             )
                           })}

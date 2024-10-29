@@ -606,7 +606,7 @@ const ThemeMode = styled.div`
     .switch-track {
       background: ${props => props.backColor};
       border: 1px solid ${props => props.borderColor};
-      width: 108px;
+      width: 98px;
       height: 40px;
       border-radius: 30px;
       transition: all 0.2s ease 0s;
