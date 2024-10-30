@@ -17,7 +17,7 @@ const Socials = () => {
       <Social darkMode={darkMode} href={SOCIAL_LINKS.TWITTER} target="_blank">
         <img src={twitter} alt="" />
       </Social>
-      <Social darkMode={darkMode} href={SOCIAL_LINKS.DISCORD} target="_blank">
+      <Social darkMode={darkMode} href={SOCIAL_LINKS.DISCORD} target="_blank" marginRight="0px">
         <img src={discord} alt="" />
       </Social>
     </SocialsContainer>

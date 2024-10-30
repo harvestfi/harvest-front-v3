@@ -844,6 +844,9 @@ const Sidebar = ({ width }) => {
                         <div className="switch-thumb">
                           {darkMode ? <PiMoonBold /> : <PiSunDimFill />}
                         </div>
+                        <div className="switch-icon">
+                          {darkMode ? <PiSunDimFill /> : <PiMoonBold />}
+                        </div>
                       </div>
 
                       <input
