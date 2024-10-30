@@ -4,7 +4,6 @@ const DetailView = styled.div`
   width: 100%;
   padding: 15px 25px;
   cursor: pointer;
-  background: ${props => props.background};
   transition: 0.25s;
   border-bottom: 1px solid ${props => props.borderColor};
 
@@ -145,7 +144,7 @@ const Content = styled.div`
   ${props =>
     props.cursor
       ? `
-      cursor: ${props.cursor};
+    cursor: ${props.cursor};
   `
       : ''}
   ${props =>
@@ -164,6 +163,18 @@ const Content = styled.div`
     props.marginTop
       ? `
     margin-top: ${props.marginTop};
+  `
+      : ''}
+  ${props =>
+    props.flexDirection
+      ? `
+    flex-direction: ${props.flexDirection};
+  `
+      : ''}
+  ${props =>
+    props.alignItems
+      ? `
+    align-items: ${props.alignItems};
   `
       : ''}
   font-weight: 400;
@@ -232,4 +243,28 @@ const NetImg = styled.div`
   }
 `
 
-export { DetailView, FlexDiv, Content, NetImg, NewLabel }
+const MobileGreenBox = styled.div`
+  padding: 5.35px 9.37px;
+  border-radius: 5.35px;
+  background: #5dcf46;
+  display: flex;
+  width: fit-content;
+
+  img {
+    margin-right: 5px;
+    width: 13px;
+  }
+`
+
+const BadgePart = styled.div`
+  display: flex;
+  justify-content: end;
+  margin-top: 10px;
+  align-items: center;
+
+  img {
+    margin-right: 5px;
+  }
+`
+
+export { DetailView, FlexDiv, Content, NetImg, NewLabel, MobileGreenBox, BadgePart }

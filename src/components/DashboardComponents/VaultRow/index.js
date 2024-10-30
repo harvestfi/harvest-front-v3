@@ -213,7 +213,7 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey, darkMo
                   size={12}
                   height={18}
                   value={info.symbol}
-                  marginTop={5}
+                  marginTop={10}
                   color={darkMode ? '#D9D9D9' : '#101828'}
                 />
               </ContentInner>

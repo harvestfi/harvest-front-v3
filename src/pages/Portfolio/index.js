@@ -93,6 +93,7 @@ import {
   NewLabel,
   GreenBox,
 } from './style'
+import AnimatedDots from '../../components/AnimatedDots'
 
 const totalNetProfitKey = 'TOTAL_NET_PROFIT'
 const totalHistoryDataKey = 'TOTAL_HISTORY_DATA'
@@ -137,6 +138,7 @@ const Portfolio = () => {
   const [totalRewards, setTotalRewards] = useState(0)
   const [totalYieldDaily, setTotalYieldDaily] = useState(0)
   const [totalYieldMonthly, setTotalYieldMonthly] = useState(0)
+  const [totalYieldYearly, setTotalYieldYearly] = useState(0)
 
   const [depositToken, setDepositToken] = useState([])
 
@@ -147,12 +149,20 @@ const Portfolio = () => {
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
+  const [oneDayYield, setOneDayYield] = useState(0)
+
+  const onceVisit = localStorage.getItem('portfolioVisit')
+
+  const [visit, setVisit] = useState(onceVisit)
 
   useEffect(() => {
-    if (totalNetProfit !== 0) {
+    if (totalNetProfit !== 0 || !connected) {
       setIsLoading(false)
     }
-  }, [totalNetProfit])
+    if (connected && totalNetProfit === 0) {
+      setIsLoading(true)
+    }
+  }, [totalNetProfit, connected])
 
   useEffect(() => {
     if (rates.rateData) {
@@ -232,6 +242,7 @@ const Portfolio = () => {
       setTotalRewards(0)
       setTotalYieldDaily(0)
       setTotalYieldMonthly(0)
+      setTotalYieldYearly(0)
     }
   }, [connected])
 
@@ -275,6 +286,7 @@ const Portfolio = () => {
           valueRewards = 0,
           totalDailyYield = 0,
           totalMonthlyYield = 0,
+          totalYearlyYield = 0,
           sortedTokenList
 
         if (showInactiveFarms) {
@@ -601,12 +613,16 @@ const Portfolio = () => {
             const monthlyYield =
               Number(stake) * usdPrice * (vaultAPRMonthly + poolAPRMonthly + swapFeeAPRMonthly) +
               Number(unstake) * usdPrice * (vaultAPRMonthly + swapFeeAPRMonthly)
+            const yearlyYield =
+              Number(stake) * usdPrice * (vaultAPR + totalRewardAPR + swapFeeAPRYearly) +
+              Number(unstake) * usdPrice * (vaultAPR + swapFeeAPRYearly)
 
             stats.dailyYield = dailyYield
             stats.monthlyYield = monthlyYield
 
             totalDailyYield += dailyYield
             totalMonthlyYield += monthlyYield
+            totalYearlyYield += yearlyYield
             newStats.push(stats)
           }
         }
@@ -615,6 +631,7 @@ const Portfolio = () => {
         setTotalRewards(valueRewards)
         setTotalYieldDaily(totalDailyYield)
         setTotalYieldMonthly(totalMonthlyYield)
+        setTotalYieldYearly(totalYearlyYield)
 
         const storedSortingDashboard = localStorage.getItem('sortingDashboard')
         if (storedSortingDashboard && JSON.parse(storedSortingDashboard) !== 'lifetimeYield') {
@@ -633,7 +650,13 @@ const Portfolio = () => {
   }, [account, userStats, balances, showInactiveFarms]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!isEmpty(userStats) && account) {
+    if (visit === 'true') {
+      setTimeout(() => {
+        setVisit('false')
+      }, 4000)
+    }
+
+    if (!isEmpty(userStats) && account && visit === 'false') {
       const getNetProfitValue = async () => {
         let totalNetProfitUSD = 0,
           combinedEnrichedData = []
@@ -681,6 +704,9 @@ const Portfolio = () => {
           if (token) {
             const useIFARM = symbol === FARM_TOKEN_SYMBOL
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
+            const tokenName = token.poolVault ? 'FARM' : token.tokenNames.join(' - ')
+            const tokenPlatform = token.platform.join(', ')
+            const tokenChain = token.poolVault ? token.data.chain : token.chain
             if (isSpecialVault) {
               fAssetPool = token.data
             }
@@ -688,7 +714,6 @@ const Portfolio = () => {
             const paramAddress = isSpecialVault
               ? token.data.collateralAddress
               : token.vaultAddress || token.tokenAddress
-
             const { sumNetChangeUsd, enrichedData } = await initBalanceAndDetailData(
               paramAddress,
               useIFARM ? token.data.chain : token.chain,
@@ -700,6 +725,9 @@ const Portfolio = () => {
             const enrichedDataWithSymbol = enrichedData.map(data => ({
               ...data,
               tokenSymbol: symbol,
+              name: tokenName,
+              platform: tokenPlatform,
+              chain: tokenChain,
             }))
             combinedEnrichedData = combinedEnrichedData.concat(enrichedDataWithSymbol)
             totalNetProfitUSD += sumNetChangeUsd
@@ -721,6 +749,7 @@ const Portfolio = () => {
       }
 
       getNetProfitValue()
+      localStorage.setItem('portfolioVisit', true)
     } else {
       setTotalNetProfit(0)
       localStorage.setItem(totalNetProfitKey, '0')
@@ -729,7 +758,7 @@ const Portfolio = () => {
       setTotalHistoryData([])
       localStorage.setItem(totalHistoryDataKey, JSON.stringify([]))
     }
-  }, [account, userStats, balances, showInactiveFarms]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, userStats, showInactiveFarms]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const sortCol = field => {
     if (field === 'lifetimeYield') {
@@ -839,6 +868,49 @@ const Portfolio = () => {
     },
   ]
 
+  const MobileTopBoxData = [
+    {
+      icon: Safe,
+      content: 'Total Balance',
+      price: totalDeposit,
+      toolTipTitle: 'tt-total-balance',
+      toolTip:
+        "Sum of your wallet's staked and unstaked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.",
+    },
+    {
+      icon: Diamond,
+      content: 'Claimable Rewards',
+      price: totalRewards,
+      toolTipTitle: 'tt-rewards',
+      toolTip:
+        'Accrued rewards on all your staked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.',
+    },
+    {
+      icon: Coin1,
+      content: 'Monthly Yield Forecast',
+      price: totalYieldMonthly,
+      toolTipTitle: 'tt-monthly-yield',
+      toolTip:
+        'Estimated monthly yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.',
+    },
+    {
+      icon: Safe,
+      content: 'Yearly Forecast',
+      price: totalYieldYearly,
+      toolTipTitle: 'tt-yearly-yield',
+      toolTip:
+        'Estimated yearly yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.',
+    },
+    {
+      icon: Coin2,
+      content: 'Daily Yield Forecast',
+      price: totalYieldDaily,
+      toolTipTitle: 'tt-daily-yield',
+      toolTip:
+        'Estimated daily yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.',
+    },
+  ]
+
   return (
     <Container bgColor={bgColor} fontColor={fontColor}>
       <Inner bgColor={darkMode ? '#171b25' : '#fff'}>
@@ -868,11 +940,13 @@ const Portfolio = () => {
                     Harvest
                   </div>
                 </LogoDiv>
-                <LogoDiv bgColor="#F8F8F8" borderRadius="16px" padding="3px 8px">
-                  <img src={ConnectSuccessIcon} alt="connect success" width={6} height={6} />
-                  <Address>{formatAddress(account)}</Address>
-                  <img src={Eye} alt="eye icon" style={{ marginLeft: '5px' }} />
-                </LogoDiv>
+                {connected && (
+                  <LogoDiv bgColor="#F8F8F8" borderRadius="16px" padding="3px 8px">
+                    <img src={ConnectSuccessIcon} alt="connect success" width={6} height={6} />
+                    <Address>{formatAddress(account)}</Address>
+                    <img src={Eye} alt="eye icon" style={{ marginLeft: '5px' }} />
+                  </LogoDiv>
+                )}
               </HeaderTop>
               <LifetimeValue isLoading={isLoading}>
                 {isLoading ? (
@@ -911,8 +985,16 @@ const Portfolio = () => {
                   </NewLabel>
                 </ReactTooltip>
                 <GreenBox>
-                  <img src={UpperIcon} alt="upper icon" />
-                  Hello (24h)
+                  <img src={UpperIcon} alt="upper icon" width={13} />
+                  {!connected ? (
+                    '0.00'
+                  ) : oneDayYield === 0 ? (
+                    <AnimatedDots />
+                  ) : oneDayYield * currencyRate >= 0.01 ? (
+                    `${currencySym}${formatNumber(oneDayYield * currencyRate)} (24h)`
+                  ) : (
+                    `<${currencySym}0.01 (24h)`
+                  )}
                 </GreenBox>
               </LifetimeSub>
             </MobileHeader>
@@ -1000,18 +1082,31 @@ const Portfolio = () => {
         </HeaderWrap>
         {viewPositions && (
           <SubPart>
-            {TopBoxData.map((data, index) => (
-              <TotalValue
-                key={index}
-                icon={data.icon}
-                content={data.content}
-                price={data.price}
-                toolTipTitle={data.toolTipTitle}
-                toolTip={data.toolTip}
-                connected={connected}
-                farmTokenListLength={farmTokenList.length}
-              />
-            ))}
+            {!isMobile
+              ? TopBoxData.map((data, index) => (
+                  <TotalValue
+                    key={index}
+                    icon={data.icon}
+                    content={data.content}
+                    price={data.price}
+                    toolTipTitle={data.toolTipTitle}
+                    toolTip={data.toolTip}
+                    connected={connected}
+                    farmTokenListLength={farmTokenList.length}
+                  />
+                ))
+              : MobileTopBoxData.map((data, index) => (
+                  <TotalValue
+                    key={index}
+                    icon={data.icon}
+                    content={data.content}
+                    price={data.price}
+                    toolTipTitle={data.toolTipTitle}
+                    toolTip={data.toolTip}
+                    connected={connected}
+                    farmTokenListLength={farmTokenList.length}
+                  />
+                ))}
           </SubPart>
         )}
 
@@ -1195,6 +1290,7 @@ const Portfolio = () => {
                 historyData={totalHistoryData}
                 isDashboard="true"
                 noData={noFarm}
+                setOneDayYield={setOneDayYield}
               />
             </YieldTable>
             {isMobile && (
