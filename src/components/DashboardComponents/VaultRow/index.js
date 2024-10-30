@@ -21,7 +21,14 @@ import {
 const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey, darkMode }) => {
   const { push } = useHistory()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const { switchMode, backColor, hoverColorRow, fontColor1, fontColor } = useThemeContext()
+  const {
+    switchMode,
+    backColor,
+    hoverColorRow,
+    fontColor1,
+    fontColor,
+    borderColorTable,
+  } = useThemeContext()
 
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
@@ -39,7 +46,7 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey, darkMo
       className="position-row"
       firstElement={firstElement}
       lastElement={lastElement}
-      borderColor="transparent"
+      borderColor={borderColorTable}
       hoverColor={hoverColorRow}
       key={cKey}
       mode={switchMode}
@@ -61,7 +68,7 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey, darkMo
         push(`${directDetailUrl + network}/${address}?from=portfolio`)
       }}
     >
-      <FlexDiv padding={isMobile ? '10px 25px 25px 25px' : '0'}>
+      <FlexDiv padding={isMobile ? '25px' : '0'}>
         {!isMobile && (
           <>
             <Content width={isMobile ? '100%' : '40%'} display={isMobile ? 'block' : 'flex'}>

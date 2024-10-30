@@ -956,7 +956,7 @@ const Portfolio = () => {
                           setShowAddress(prev => !prev)
                         }
                       }}
-                      style={{ cursor: 'pointer' }}
+                      style={{ cursor: 'pointer', alignItems: 'center', display: 'flex' }}
                       aria-label="Toggle address visibility"
                       role="button"
                       tabIndex="0"

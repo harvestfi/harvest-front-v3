@@ -13,8 +13,7 @@ const DetailView = styled.div`
 
   @media screen and (max-width: 992px) {
     padding: 0px;
-    border: unset;
-    /* border-bottom: 1px solid ${props => props.borderColor}; */
+    border-bottom: 1px solid ${props => props.borderColor};
   }
 `
 
