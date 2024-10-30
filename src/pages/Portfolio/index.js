@@ -659,7 +659,18 @@ const Portfolio = () => {
     }
 
     const visited = localStorage.getItem(totalNetProfitKey)
-    if (visited === 0) {
+    let safeCount = localStorage.getItem('safe')
+
+    if (Number(visited) !== 0 || visited !== null) {
+      safeCount = Number(safeCount) + 1
+      localStorage.setItem('safe', safeCount)
+    }
+    if (safeCount > 20) {
+      localStorage.setItem('safe', 0)
+      localStorage.setItem(totalNetProfitKey, 0)
+      setIsLoading(true)
+    }
+    if (Number(visited) === 0 || visited === null || safeCount > 20) {
       if (!isEmpty(userStats) && account && visit === 'false') {
         const getNetProfitValue = async () => {
           let totalNetProfitUSD = 0,
