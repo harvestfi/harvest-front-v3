@@ -8,7 +8,15 @@ import AnimatedDots from '../AnimatedDots'
 import { Container, Div, Price, NewLabel, BetaBadge } from './style'
 import { useRate } from '../../providers/Rate'
 
-const TotalValue = ({ content, price, toolTipTitle, toolTip, connected, farmTokenListLength }) => {
+const TotalValue = ({
+  content,
+  price,
+  toolTipTitle,
+  toolTip,
+  connected,
+  farmTokenListLength,
+  isLoading,
+}) => {
   const { darkMode, borderColor, fontColor1, fontColor3 } = useThemeContext()
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
@@ -47,7 +55,7 @@ const TotalValue = ({ content, price, toolTipTitle, toolTip, connected, farmToke
         </ReactTooltip>
       </Div>
       <Price fontColor1={fontColor1}>
-        {!connected ? (
+        {!connected || isLoading ? (
           `${currencySym}0.00`
         ) : farmTokenListLength === 0 && price === 0 ? (
           `${currencySym}0.00`

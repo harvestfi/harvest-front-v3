@@ -17,7 +17,7 @@ import {
   SkeletonItem,
 } from './style'
 
-const HistoryDataLatest = ({ historyData, isDashboard, noData, setOneDayYield }) => {
+const HistoryDataLatest = ({ historyData, isDashboard, noData, setOneDayYield, isLoading }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const filteredHistoryData = historyData.filter(el => el.event === 'Harvest' && el.netChange >= 0)
   const totalLength = filteredHistoryData.length
@@ -66,7 +66,7 @@ const HistoryDataLatest = ({ historyData, isDashboard, noData, setOneDayYield })
             </Column>
           </Header>
         )}
-        {connected && filteredHistoryData?.length > 0 ? (
+        {connected && !isLoading && filteredHistoryData?.length > 0 ? (
           <ContentBox borderColor={borderColorTable}>
             {filteredHistoryData
               .map((el, i) => {

@@ -902,8 +902,8 @@ const HeaderTop = styled.div`
 const LifetimeValue = styled.div`
   text-align: center;
   margin-top: 30px;
-  font-size: ${props => (props.isLoading ? '18px' : '45px')};
-  margin-bottom: ${props => (props.isLoading ? '15px' : '0px')};
+  font-size: ${props => (props.isLoading && props.connected ? '18px' : '45px')};
+  margin-bottom: ${props => (props.isLoading && props.connected ? '15px' : '0px')};
   color: #fff;
   font-weight: 700;
 `
@@ -1065,6 +1065,8 @@ const GreenBox = styled.div`
   border-radius: 5.35px;
   background: #5dcf46;
   margin-left: 10px;
+  font-size: 12px;
+  align-items: center;
 
   img {
     margin-right: 5px;
