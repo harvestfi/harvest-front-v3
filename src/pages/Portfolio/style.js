@@ -66,9 +66,9 @@ const HeaderWrap = styled.div`
   padding-bottom: 20px;
 
   @media screen and (max-width: 992px) {
-    padding: 25px 25px 40px 25px;
+    padding: ${props => (props.padding ? props.padding : '')};
     background-image: ${props => (props.backImg ? `url(${props.backImg})` : '')};
-    height: 234px;
+    height: ${props => (props.height ? props.height : '')};
   }
 `
 

@@ -930,7 +930,11 @@ const Portfolio = () => {
   return (
     <Container bgColor={bgColor} fontColor={fontColor}>
       <Inner bgColor={darkMode ? '#171b25' : '#fff'}>
-        <HeaderWrap backImg={MobileBackImage}>
+        <HeaderWrap
+          backImg={viewPositions ? MobileBackImage : ''}
+          padding={viewPositions ? '25px 25px 40px 25px' : '25px 15px 20px'}
+          height={viewPositions ? '234px' : ''}
+        >
           {!isMobile && (
             <HeaderTitle fontColor={fontColor} fontColor1={fontColor1}>
               {!viewPositions && (
@@ -947,7 +951,7 @@ const Portfolio = () => {
               </div>
             </HeaderTitle>
           )}
-          {isMobile && (
+          {isMobile && viewPositions ? (
             <MobileHeader>
               <HeaderTop>
                 <LogoDiv>
@@ -1033,6 +1037,21 @@ const Portfolio = () => {
                 </GreenBox>
               </LifetimeSub>
             </MobileHeader>
+          ) : (
+            <HeaderTitle fontColor={fontColor} fontColor1={fontColor1}>
+              {!viewPositions && (
+                <BackArrow onClick={() => setViewPositions(prev => !prev)}>
+                  <BiLeftArrowAlt fontSize={20} />
+                  Back
+                </BackArrow>
+              )}
+              <div className="title">{viewPositions ? 'Overview' : 'Full History'}</div>
+              <div className="desc">
+                {viewPositions
+                  ? 'Displaying data from across all networks.'
+                  : 'Displaying all harvest, convert & revert events for the connected wallet.'}
+              </div>
+            </HeaderTitle>
           )}
           {viewPositions && (
             <HeaderButton>
