@@ -67,8 +67,9 @@ const HeaderWrap = styled.div`
 
   @media screen and (max-width: 992px) {
     padding: ${props => (props.padding ? props.padding : '')};
-    background-image: ${props => (props.backImg ? `url(${props.backImg})` : '')};
+    // background-image: ${props => (props.backImg ? `url(${props.backImg})` : '')};
     height: ${props => (props.height ? props.height : '')};
+    background: linear-gradient(to right, #5b86e5, #36d1dc);
   }
 `
 

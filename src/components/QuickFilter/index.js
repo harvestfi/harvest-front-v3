@@ -8,6 +8,7 @@ import BASE from '../../assets/images/chains/base.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
 import ZKSYNC from '../../assets/images/chains/zksync.svg'
+import FilterIcon from '../../assets/images/logos/filters-icon.svg'
 import SpecNarrowDown from '../../assets/images/logos/filter/spec-narrowdown.svg'
 import DesciBack from '../../assets/images/logos/filter/desciback.jpg'
 import LSDBack from '../../assets/images/logos/filter/lsdback.jpg'
@@ -56,8 +57,8 @@ const TrendsList = [
 ]
 
 const FarmsList = [
-  { id: 1, name: 'All Farms', filter: 'allfarm' },
-  { id: 2, name: 'My Farms', filter: 'myfarm' },
+  { id: 1, name: 'All', filter: 'allfarm' },
+  { id: 2, name: 'Wallet', filter: 'myfarm' },
   { id: 3, name: 'Inactive', filter: 'inactive' },
 ]
 
@@ -393,6 +394,7 @@ const QuickFilter = ({
     filterChainHoverColor,
     mobileFilterDisableColor,
     mobileFilterHoverColor,
+    darkMode,
   } = useThemeContext()
 
   return (
@@ -582,7 +584,7 @@ const QuickFilter = ({
                 <ChainButton
                   backColor={backColor}
                   hoverColor={filterChainHoverColor}
-                  borderColor={borderColor}
+                  borderColor={darkMode ? '#1F242F' : '#D1DBFB'}
                   className={`${selectedClass.includes(i) ? 'active' : ''}`}
                   data-tip
                   data-for={`chain-${item.name}`}
@@ -653,18 +655,21 @@ const QuickFilter = ({
           <FarmFiltersPart
             backColor={backColor}
             fontColor={fontColor}
-            borderColor={borderColor}
+            mobileColor={darkMode ? '#fff' : '#000'}
+            borderColor={darkMode ? '#1F242F' : '#d1dbfb'}
             filterColor={filterColor}
           >
             <div className="filter-part">
               <button
                 type="button"
                 placeholder="Filters"
+                className="filters-btn"
                 color={fontColor2}
                 onClick={() => {
                   handleFilterShow()
                 }}
               >
+                <img src={FilterIcon} alt="filter icon" />
                 Filters
               </button>
             </div>
@@ -678,7 +683,17 @@ const QuickFilter = ({
               className="farm-mobile-filter offcanvas-bottom"
             >
               <FilterOffCanvasHeader closeButton>
-                <FarmFilter>Filters</FarmFilter>
+                <FarmFilter
+                  color={darkMode ? '#fff' : '#000'}
+                  imgFilter={
+                    darkMode
+                      ? 'invert(100%) sepia(6%) saturate(2%) hue-rotate(223deg) brightness(115%) contrast(100%)'
+                      : ''
+                  }
+                >
+                  <img src={FilterIcon} alt="filter icon" style={{ marginRight: '10px' }} />
+                  Filters
+                </FarmFilter>
               </FilterOffCanvasHeader>
               <FilterOffCanvasBody
                 className="filter-show"
@@ -689,17 +704,17 @@ const QuickFilter = ({
                 hovercolor={mobileFilterHoverColor}
                 mobilefilterdisablecolor={mobileFilterDisableColor}
               >
-                <DivWidth mobileMarginBottom="10px">
+                <DivWidth mobileMarginBottom="25px">
                   <ButtonGroup
                     buttons={RiskListMobile}
                     doSomethingAfterClick={() => {}}
                     clickedId={riskId}
                     setClickedId={setRiskId}
                     fontColor={fontColor2}
-                    unsetWidth
+                    unsetWidth={false}
                   />
                 </DivWidth>
-                <DivWidth mobileMarginBottom="10px">
+                <DivWidth mobileMarginBottom="25px">
                   <ButtonGroup
                     buttons={AssetsList}
                     doSomethingAfterClick={() => {}}
@@ -760,9 +775,10 @@ const QuickFilter = ({
                       setInputText(trendStatus)
                       onClickSearch(trendStatus)
                     }
+                    handleFilterClose()
                   }}
                 >
-                  Apply Filters
+                  Save
                 </ApplyFilterBtn>
               </FilterOffCanvasBody>
             </FilterOffCanvas>
@@ -795,8 +811,9 @@ const QuickFilter = ({
                   ])
                   clearFilter()
                 }}
-                borderColor={borderColor}
+                borderColor={darkMode ? '#1F242F' : '#d1dbfb'}
                 fontColor={fontColor2}
+                mobileColor={darkMode ? '#fff' : '#000'}
                 backColor={backColor}
               >
                 <Counter count={mobileFilterCount}>

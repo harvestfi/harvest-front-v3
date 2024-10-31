@@ -359,6 +359,10 @@ const DisplayCount = styled.div`
   span {
     font-weight: 500;
   }
+
+  @media screen and (max-width: 992px) {
+    color: ${props => (props.mobileColor ? props.mobileColor : '')};
+  }
 `
 
 export {

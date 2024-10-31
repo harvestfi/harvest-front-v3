@@ -39,7 +39,7 @@ html {
 
     @media screen and (max-width: 992px) {
       .offcanvas {
-        display: block;
+        display: flex;
         width: 100% !important;
         height: fit-content !important;
         top: unset!important;

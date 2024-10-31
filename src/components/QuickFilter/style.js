@@ -268,6 +268,10 @@ const ChainButton = styled.button`
     border-right: none;
   }
 
+  &:nth-child(3) {
+    border-right: none;
+  }
+
   &:last-child {
     border-radius: 0 10px 10px 0;
     border-left: none;
@@ -393,11 +397,11 @@ const Counter = styled.div`
   ${props =>
     props.count > 0
       ? `
-  background: #15B088;
+  background: #6988FF;
   color: white;
   `
       : `
-  background: #15B088;
+  background: #6988FF;
   color: #1F2937;
   `}
   width: 20px;
@@ -520,6 +524,15 @@ const FarmFiltersPart = styled.div`
   .clear-filter {
     width: 100%;
   }
+
+  @media screen and (max-width: 992px) {
+    button.filters-btn {
+      border: 1px solid ${props => props.borderColor};
+      font-size: 12px;
+      font-weight: 400;
+      color: ${props => (props.mobileColor ? props.mobileColor : '')};
+    }
+  }
 `
 
 const MobileListHeaderSearch = styled.div`
@@ -576,24 +589,40 @@ const MobileClearFilter = styled(ClearFilter)`
   color: ${props => props.fontColor};
   background: ${props => props.backColor};
   justify-content: center;
+
+  @media screen and (max-width: 992px) {
+    font-size: 12px;
+    font-weight: 400;
+    color: ${props => (props.mobileColor ? props.mobileColor : '')};
+    border: 1px solid ${props => props.borderColor};
+  }
 `
 
 const FilterOffCanvas = styled(Offcanvas)`
-  width: 300px !important;
   background: ${props => props.backcolor} !important;
+  border: none !important;
+  align-items: center;
   .offcanvas-header {
     .btn-close {
       filter: ${props => props.filtercolor};
     }
   }
+
+  .btn-close {
+    opacity: 1;
+  }
 `
 
 const FilterOffCanvasHeader = styled(Offcanvas.Header)`
-  padding: 15px 15px 19px 15px !important;
+  padding: 25px 15px 25px 15px !important;
+  width: 90%;
+  border-top: 2px solid #ced3e6;
+  border-radius: 3px;
 `
 
 const FilterOffCanvasBody = styled(Offcanvas.Body)`
   padding: 0px 15px 15px 15px !important;
+  width: 90%;
 
   &.filter-show {
     height: 100% !important;
@@ -671,13 +700,16 @@ const FilterOffCanvasBody = styled(Offcanvas.Body)`
 `
 
 const FarmFilter = styled.div`
-  color: #344054;
+  color: ${props => props.color};
   font-weight: 700;
   font-size: 16px;
   line-height: 21px;
+  display: flex;
+  align-items: center;
 
   img {
     margin-right: 15px;
+    filter: ${props => (props.imgFilter ? props.imgFilter : '')};
   }
 `
 
@@ -1186,7 +1218,7 @@ const ApplyFilterBtn = styled.button`
   display: flex;
   justify-content: center;
   padding: 10px 16px;
-  background: #000;
+  background: #6988ff;
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
   border-radius: 8px;
   width: 100%;

@@ -730,7 +730,7 @@ const VaultList = () => {
           onSelectActiveType={selectActiveType}
         />
       )}
-      <DisplayCount color={fontColor}>
+      <DisplayCount color={fontColor} mobileColor={darkMode ? '#fff' : '#000'}>
         Displaying <span>{vaultsSymbol.length}</span> of <span>{totalVaultsCount}</span>{' '}
         {selectedActiveType.length === 0
           ? 'my'

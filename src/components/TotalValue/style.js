@@ -77,6 +77,7 @@ const Div = styled.div`
   #tt-total-profit,
   #tt-total-balance,
   #tt-monthly-yield,
+  #tt-yearly-yield,
   #tt-daily-yield,
   #tt-rewards {
     max-width: 300px;

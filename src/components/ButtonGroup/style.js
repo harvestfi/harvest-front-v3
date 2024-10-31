@@ -67,9 +67,11 @@ const ButtonStyle = styled.button`
   }
 
   @media screen and (max-width: 992px) {
-    font-size: 14px;
+    font-size: 12px;
     line-height: 20px;
     padding: 10px 16px;
+    font-weight: 400;
+    color: ${props => (props.mobileFontColor ? props.mobileFontColor : '')};
     ${props => (props.unsetWidth ? `width: unset` : `width: ${props.percent}%`)};
   }
 `
