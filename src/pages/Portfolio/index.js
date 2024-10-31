@@ -894,6 +894,14 @@ const Portfolio = () => {
         "Sum of your wallet's staked and unstaked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.",
     },
     {
+      icon: Safe,
+      content: 'Yearly Forecast',
+      price: totalYieldYearly,
+      toolTipTitle: 'tt-yearly-yield',
+      toolTip:
+        'Estimated yearly yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.',
+    },
+    {
       icon: Diamond,
       content: 'Claimable Rewards',
       price: totalRewards,
@@ -908,14 +916,6 @@ const Portfolio = () => {
       toolTipTitle: 'tt-monthly-yield',
       toolTip:
         'Estimated monthly yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.',
-    },
-    {
-      icon: Safe,
-      content: 'Yearly Forecast',
-      price: totalYieldYearly,
-      toolTipTitle: 'tt-yearly-yield',
-      toolTip:
-        'Estimated yearly yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.',
     },
     {
       icon: Coin2,

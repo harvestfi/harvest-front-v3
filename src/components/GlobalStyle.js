@@ -50,9 +50,6 @@ html {
         }
       }
       .farm-mobile-filter {
-        width: 65%!important;
-        height: 100%!important;
-        right: 0;
         background: #FFF;
         box-shadow: -3px 4px 4px 0px rgba(0, 0, 0, 0.10);
       }

@@ -675,7 +675,7 @@ const QuickFilter = ({
               placement="left"
               backcolor={backColor}
               filtercolor={filterColor}
-              className="farm-mobile-filter"
+              className="farm-mobile-filter offcanvas-bottom"
             >
               <FilterOffCanvasHeader closeButton>
                 <FarmFilter>Filters</FarmFilter>
