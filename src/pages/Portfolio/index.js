@@ -128,7 +128,20 @@ const Portfolio = () => {
   const [sortOrder, setSortOrder] = useState(false)
   const [showInactiveFarms, setShowInactiveFarms] = useState(false)
   const [viewPositions, setViewPositions] = useState(true)
+  const [isLoading, setIsLoading] = useState(true)
   const [showLatestYield, setShowLatestYield] = useState(false)
+  const onceVisit = localStorage.getItem('portfolioVisit')
+
+  const [visit, setVisit] = useState(onceVisit)
+
+  useEffect(() => {
+    if (totalDeposit !== 0 && totalNetProfit !== 0 && totalYieldMonthly !== 0 && totalYieldDaily) {
+      setIsLoading(false)
+    }
+    if (connected && totalNetProfit === 0) {
+      setIsLoading(true)
+    }
+  }, [totalNetProfit, connected, totalDeposit, totalYieldMonthly, totalYieldDaily]) // eslint-disable-next-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     setCurCurrency(supportedCurrencies[rates.currency.id])
@@ -602,103 +615,129 @@ const Portfolio = () => {
   }, [account, userStats, balances, showInactiveFarms]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!isEmpty(userStats) && account) {
-      const getNetProfitValue = async () => {
-        let totalNetProfitUSD = 0,
-          combinedEnrichedData = []
+    if (visit === 'true') {
+      setTimeout(() => {
+        setVisit('false')
+      }, 4000)
+    }
 
-        const { userBalanceVaults } = await getUserBalanceVaults(account)
-        const stakedVaults = []
-        const ul = userBalanceVaults.length
-        for (let j = 0; j < ul; j += 1) {
-          Object.keys(groupOfVaults).forEach(key => {
-            const isSpecialVaultAll =
-              groupOfVaults[key].liquidityPoolVault || groupOfVaults[key].poolVault
-            const paramAddressAll = isSpecialVaultAll
-              ? groupOfVaults[key].data.collateralAddress
-              : groupOfVaults[key].vaultAddress || groupOfVaults[key].tokenAddress
+    const visited = localStorage.getItem(totalNetProfitKey)
+    let safeCount = localStorage.getItem('safe')
 
-            if (userBalanceVaults[j] === paramAddressAll.toLowerCase()) {
-              stakedVaults.push(key)
-            }
-          })
-        }
+    if (Number(visited) !== 0 || visited !== null) {
+      safeCount = Number(safeCount) + 1
+      localStorage.setItem('safe', safeCount)
+    }
+    if (safeCount > 20) {
+      localStorage.setItem('safe', 0)
+      localStorage.setItem(totalNetProfitKey, 0)
+      setIsLoading(true)
+    }
+    if (Number(visited) === 0 || visited === null || safeCount > 20) {
+      if (!isEmpty(userStats) && account && visit === 'false') {
+        const getNetProfitValue = async () => {
+          let totalNetProfitUSD = 0,
+            combinedEnrichedData = []
 
-        const vaultNetChanges = []
-        const promises = stakedVaults.map(async stakedVault => {
-          let symbol = '',
-            fAssetPool = {}
+          const { userBalanceVaults } = await getUserBalanceVaults(account)
+          const stakedVaults = []
+          const ul = userBalanceVaults.length
+          for (let j = 0; j < ul; j += 1) {
+            Object.keys(groupOfVaults).forEach(key => {
+              const isSpecialVaultAll =
+                groupOfVaults[key].liquidityPoolVault || groupOfVaults[key].poolVault
+              const paramAddressAll = isSpecialVaultAll
+                ? groupOfVaults[key].data.collateralAddress
+                : groupOfVaults[key].vaultAddress || groupOfVaults[key].tokenAddress
 
-          if (stakedVault === IFARM_TOKEN_SYMBOL) {
-            symbol = FARM_TOKEN_SYMBOL
-          } else {
-            symbol = stakedVault
+              if (userBalanceVaults[j] === paramAddressAll.toLowerCase()) {
+                stakedVaults.push(key)
+              }
+            })
           }
 
-          fAssetPool =
-            symbol === FARM_TOKEN_SYMBOL
-              ? groupOfVaults[symbol].data
-              : find(totalPools, pool => pool.id === symbol)
+          const vaultNetChanges = []
+          const promises = stakedVaults.map(async stakedVault => {
+            let symbol = '',
+              fAssetPool = {}
 
-          const token = find(
-            groupOfVaults,
-            vault =>
-              vault.vaultAddress === fAssetPool?.collateralAddress ||
-              (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress),
-          )
-
-          if (token) {
-            const useIFARM = symbol === FARM_TOKEN_SYMBOL
-            const isSpecialVault = token.liquidityPoolVault || token.poolVault
-            if (isSpecialVault) {
-              fAssetPool = token.data
+            if (stakedVault === IFARM_TOKEN_SYMBOL) {
+              symbol = FARM_TOKEN_SYMBOL
+            } else {
+              symbol = stakedVault
             }
 
-            const paramAddress = isSpecialVault
-              ? token.data.collateralAddress
-              : token.vaultAddress || token.tokenAddress
+            fAssetPool =
+              symbol === FARM_TOKEN_SYMBOL
+                ? groupOfVaults[symbol].data
+                : find(totalPools, pool => pool.id === symbol)
 
-            const { sumNetChangeUsd, enrichedData } = await initBalanceAndDetailData(
-              paramAddress,
-              useIFARM ? token.data.chain : token.chain,
-              account,
-              token.decimals,
+            const token = find(
+              groupOfVaults,
+              vault =>
+                vault.vaultAddress === fAssetPool?.collateralAddress ||
+                (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress),
             )
 
-            vaultNetChanges.push({ id: symbol, sumNetChangeUsd })
-            const enrichedDataWithSymbol = enrichedData.map(data => ({
-              ...data,
-              tokenSymbol: symbol,
-            }))
-            combinedEnrichedData = combinedEnrichedData.concat(enrichedDataWithSymbol)
-            totalNetProfitUSD += sumNetChangeUsd
-          }
-        })
+            if (token) {
+              const useIFARM = symbol === FARM_TOKEN_SYMBOL
+              const isSpecialVault = token.liquidityPoolVault || token.poolVault
+              const tokenName = token.poolVault ? 'FARM' : token.tokenNames.join(' - ')
+              const tokenPlatform = token.platform.join(', ')
+              const tokenChain = token.poolVault ? token.data.chain : token.chain
+              if (isSpecialVault) {
+                fAssetPool = token.data
+              }
 
-        await Promise.all(promises)
+              const paramAddress = isSpecialVault
+                ? token.data.collateralAddress
+                : token.vaultAddress || token.tokenAddress
+              const { sumNetChangeUsd, enrichedData } = await initBalanceAndDetailData(
+                paramAddress,
+                useIFARM ? token.data.chain : token.chain,
+                account,
+                token.decimals,
+              )
 
-        totalNetProfitUSD = totalNetProfitUSD === 0 ? -1 : totalNetProfitUSD
-        setTotalNetProfit(totalNetProfitUSD)
-        localStorage.setItem(totalNetProfitKey, totalNetProfitUSD.toString())
+              vaultNetChanges.push({ id: symbol, sumNetChangeUsd })
+              const enrichedDataWithSymbol = enrichedData.map(data => ({
+                ...data,
+                tokenSymbol: symbol,
+                name: tokenName,
+                platform: tokenPlatform,
+                chain: tokenChain,
+              }))
+              combinedEnrichedData = combinedEnrichedData.concat(enrichedDataWithSymbol)
+              totalNetProfitUSD += sumNetChangeUsd
+            }
+          })
 
-        setVaultNetChangeList(vaultNetChanges)
-        localStorage.setItem(vaultProfitDataKey, JSON.stringify(vaultNetChanges))
+          await Promise.all(promises)
 
-        combinedEnrichedData.sort((a, b) => b.timestamp - a.timestamp)
-        setTotalHistoryData(combinedEnrichedData)
-        localStorage.setItem(totalHistoryDataKey, JSON.stringify(combinedEnrichedData))
+          totalNetProfitUSD = totalNetProfitUSD === 0 ? -1 : totalNetProfitUSD
+          setTotalNetProfit(totalNetProfitUSD)
+          localStorage.setItem(totalNetProfitKey, totalNetProfitUSD.toString())
+
+          setVaultNetChangeList(vaultNetChanges)
+          localStorage.setItem(vaultProfitDataKey, JSON.stringify(vaultNetChanges))
+
+          combinedEnrichedData.sort((a, b) => b.timestamp - a.timestamp)
+          setTotalHistoryData(combinedEnrichedData)
+          localStorage.setItem(totalHistoryDataKey, JSON.stringify(combinedEnrichedData))
+        }
+
+        getNetProfitValue()
+        localStorage.setItem('portfolioVisit', true)
+      } else {
+        setTotalNetProfit(0)
+        localStorage.setItem(totalNetProfitKey, '0')
+        setVaultNetChangeList([])
+        localStorage.setItem(vaultProfitDataKey, JSON.stringify([]))
+        setTotalHistoryData([])
+        localStorage.setItem(totalHistoryDataKey, JSON.stringify([]))
       }
-
-      getNetProfitValue()
-    } else {
-      setTotalNetProfit(0)
-      localStorage.setItem(totalNetProfitKey, '0')
-      setVaultNetChangeList([])
-      localStorage.setItem(vaultProfitDataKey, JSON.stringify([]))
-      setTotalHistoryData([])
-      localStorage.setItem(totalHistoryDataKey, JSON.stringify([]))
     }
-  }, [account, userStats, balances, showInactiveFarms]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, userStats, showInactiveFarms]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const sortCol = field => {
     if (field === 'lifetimeYield') {
@@ -913,6 +952,7 @@ const Portfolio = () => {
                 toolTip={data.toolTip}
                 connected={connected}
                 farmTokenListLength={farmTokenList.length}
+                isLoading={isLoading}
               />
             ))}
           </SubPart>
