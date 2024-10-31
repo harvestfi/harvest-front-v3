@@ -190,7 +190,7 @@ const MobileListFilter = styled.div`
         img.sort-icon {
           width: 15px;
           height: 15px;
-          margin-right: 6px;
+          margin-left: 6px;
           filter: ${props => props.filterColor};
         }
 

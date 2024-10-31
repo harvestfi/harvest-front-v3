@@ -305,7 +305,7 @@ const FlexDiv = styled.div`
   }
   &.token-icons {
     display: flex;
-    margin: auto;
+    margin: auto 0px auto 5px;
     img {
       position: relative;
     }

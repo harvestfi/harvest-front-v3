@@ -2172,7 +2172,7 @@ const AdvancedFarm = () => {
                         >
                           <div>My Token Rewards</div>
                           <div>
-                            {!connected ? (
+                            {!connected || isNaN(totalReward) ? (
                               `${currencySym}0`
                             ) : userStats ? (
                               showUsdValue(totalReward, currencySym)
