@@ -295,7 +295,7 @@ const QuickFilter = ({
       setInactiveId(-1)
       printFarm(farmId)
     }
-  }, [farmId])
+  }, [farmId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     const setUrlData = () => {
