@@ -19,7 +19,7 @@ const Container = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    padding: 16px 10px;
+    padding: 25px 0px 0px 0px;
   }
 `
 
@@ -157,7 +157,6 @@ const MobileListFilter = styled.div`
       background: ${props => props.mobileBackColor} !important;
       border: 1px solid ${props => props.borderColor};
       border-radius: 8px;
-      position: relative;
 
       .toggle {
         background: ${props => props.mobileBackColor};
@@ -362,6 +361,7 @@ const DisplayCount = styled.div`
 
   @media screen and (max-width: 992px) {
     color: ${props => (props.mobileColor ? props.mobileColor : '')};
+    padding-left: 15px;
   }
 `
 

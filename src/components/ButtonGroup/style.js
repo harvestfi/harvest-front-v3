@@ -10,11 +10,15 @@ const ButtonsGroup = styled.div`
 
   @media screen and (max-width: 992px) {
     width: 100%;
+
+    &.time-filter {
+      width: 65%;
+    }
   }
 `
 
 const ButtonStyle = styled.button`
-  display: flex;
+  display: ${props => props.display};
   justify-content: center;
   background: transparent;
   ${props => (props.fontColor ? `color: ${props.fontColor}` : '')};
@@ -22,7 +26,7 @@ const ButtonStyle = styled.button`
   line-height: 20px;
   font-weight: 600;
   border: none;
-  border-right: 1px solid ${props => props.borderColor};
+  border-right: ${props => (props.borderDisplay ? 'none' : `1px solid ${props.borderColor}`)};
   cursor: pointer;
   padding: 10px 16px;
   position: relative;
