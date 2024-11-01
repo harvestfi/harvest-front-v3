@@ -463,7 +463,7 @@ const DepositTokenSection = styled.div`
 const ThumbUp = styled.div`
   background: #f6fef9;
   border: 1px solid #6ce9a6;
-  padding: 16px;
+  padding: ${props => props.padding};
   border-radius: 12px;
   margin-top: 10px;
   margin-bottom: 25px;

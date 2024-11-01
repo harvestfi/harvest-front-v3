@@ -769,9 +769,9 @@ const DepositBase = ({
               </NewLabel>
             </NewLabel>
           </NewLabel>
-          <ThumbUp>
+          <ThumbUp padding={isMobile ? '15px' : '16px'}>
             <img src={ThumbUpIcon} alt="thumb-up" style={{ marginRight: '15px' }} />
-            <NewLabel size="12px" weight="600" height="20px" color="#027A48">
+            <NewLabel size={isMobile ? '10px' : '12px'} weight="600" height="20px" color="#027A48">
               You can exit this position anytime, in full, at no cost.
             </NewLabel>
           </ThumbUp>

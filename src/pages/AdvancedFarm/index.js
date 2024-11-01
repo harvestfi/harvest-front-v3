@@ -1530,26 +1530,15 @@ const AdvancedFarm = () => {
             <StakingInfo display={showStakingInfo ? 'flex' : 'none'}>
               <img src={StakingIcon} alt="staking icon" style={{ marginRight: '15px' }} />
               <StakingInfoText>
-                <NewLabel
-                  size="14px"
-                  weight="600"
-                  height="20px"
-                  color={darkMode ? '#fff' : '#344054'}
-                  marginBottom="5px"
-                >
+                <NewLabel size="14px" weight="600" height="20px" color="#344054" marginBottom="5px">
                   Staking Information
                 </NewLabel>
-                <NewLabel
-                  size="14px"
-                  weight="400"
-                  height="20px"
-                  color={darkMode ? '#fff' : '#344054'}
-                >
+                <NewLabel size="14px" weight="400" height="20px" color="#344054">
                   Currently, no extra rewards are streamed to this farm, so staking fTokens
                   isn&apos;t needed. See this article on &quot;
                   <a
                     href="https://docs.harvest.finance/general-info/yield-sources-on-harvest-how-to-get-and-track-them"
-                    style={{ fontWeight: '600', color: darkMode ? '#fff' : '#475467' }}
+                    style={{ fontWeight: '600', color: '#475467' }}
                     target="_blank"
                     rel="noopener noreferrer"
                   >
@@ -1561,7 +1550,7 @@ const AdvancedFarm = () => {
                   size="14px"
                   weight="600"
                   height="20px"
-                  color={darkMode ? '#fff' : '#344054'}
+                  color="#344054"
                   marginTop="15px"
                   cursor="pointer"
                   width="fit-content"

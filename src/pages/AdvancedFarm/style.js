@@ -1535,6 +1535,7 @@ const TipTop = styled.div`
 `
 
 const CrossDiv = styled.div`
+  display: flex;
   cursor: pointer;
 `
 
