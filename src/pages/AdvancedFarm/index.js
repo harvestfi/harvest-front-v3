@@ -3055,6 +3055,8 @@ const AdvancedFarm = () => {
                           <a
                             href="https://docs.harvest.finance/general-info/yield-sources-on-harvest-how-to-get-and-track-them"
                             style={{ fontWeight: '600', color: '#027A48' }}
+                            target="_blank"
+                            rel="noreferrer noopener"
                           >
                             Yield Sources on Harvest &ndash; How to Track Them.
                           </a>
