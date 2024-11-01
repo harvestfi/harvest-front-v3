@@ -1305,7 +1305,7 @@ const MobileListFilter = styled.div`
         align-items: center;
 
         span {
-          font-weight: 400;
+          font-weight: 500;
           padding-left: 4px;
         }
 
