@@ -1502,8 +1502,36 @@ const BorderBottomDiv = styled.div`
   right: 0;
 `
 
+const Tip = styled.div`
+  background: #f6fef9;
+  border: 1px solid #6ce9a6;
+  border-radius: 12px;
+  padding: 16px;
+  margin: 0px 15px 15px 15px;
+  display: ${props => props.display};
+`
+
+const IconPart = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`
+
+const TipTop = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+`
+
+const CrossDiv = styled.div`
+  cursor: pointer;
+`
+
 export {
   DetailView,
+  CrossDiv,
+  IconPart,
+  TipTop,
   TopPart,
   TopButton,
   TopDesc,
@@ -1570,4 +1598,5 @@ export {
   NetDetailContent,
   NetDetailImg,
   RewardValue,
+  Tip,
 }

@@ -21,6 +21,8 @@ import Safe from '../../assets/images/logos/beginners/safe.svg'
 import Diamond from '../../assets/images/logos/beginners/diamond.svg'
 import BarChart from '../../assets/images/logos/beginners/bar-chart-01.svg'
 import History from '../../assets/images/logos/beginners/history.svg'
+import TickIcon from '../../assets/images/logos/tick-icon.svg'
+import TickCross from '../../assets/images/logos/tick-cross.svg'
 import ARBball from '../../assets/images/chains/ARBball-lg.png'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/AdvancedFarmComponents/Deposit/DepositBase'
@@ -142,6 +144,10 @@ import {
   RewardValue,
   ThemeMode,
   SwitchMode,
+  Tip,
+  IconPart,
+  TipTop,
+  CrossDiv,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 // import { array } from 'prop-types'
@@ -300,6 +306,7 @@ const AdvancedFarm = () => {
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyName, setCurrencyName] = useState('USD')
   const [currencyRate, setCurrencyRate] = useState(1)
+  const [showTip, setShowTip] = useState(true)
 
   useEffect(() => {
     if (rates.rateData) {
@@ -3026,6 +3033,34 @@ const AdvancedFarm = () => {
                       <NewLabel padding={isMobile ? '0px 15px 10px' : '0px 15px 10px'}>
                         <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
                       </NewLabel>
+                      <Tip display={showTip ? 'block' : 'none'}>
+                        <TipTop>
+                          <IconPart>
+                            <img src={TickIcon} alt="tick icon" style={{ marginRight: '5px' }} />
+                            <NewLabel size="14px" weight="600" height="20px" color="#027A48">
+                              Tip
+                            </NewLabel>
+                          </IconPart>
+                          <CrossDiv
+                            onClick={() => {
+                              setShowTip(false)
+                            }}
+                          >
+                            <img src={TickCross} alt="tick cross" />
+                          </CrossDiv>
+                        </TipTop>
+                        <NewLabel size="14px" height="20px" weight="400" color="#027A48">
+                          For a quick guide on tracking yield sources in your Portfolio, check out
+                          our 5-minute article &quot;
+                          <a
+                            href="https://docs.harvest.finance/general-info/yield-sources-on-harvest-how-to-get-and-track-them"
+                            style={{ fontWeight: '600', color: '#027A48' }}
+                          >
+                            Yield Sources on Harvest &ndash; How to Track Them.
+                          </a>
+                          &quot;
+                        </NewLabel>
+                      </Tip>
                     </MyBalance>
                   )}
                   <LastHarvestInfo backColor={backColor} borderColor={borderColor}>
