@@ -1286,7 +1286,7 @@ const MobileListFilter = styled.div`
       position: relative;
       width: 100%;
       display: block;
-      background: ${props => props.mobileBackColor} !important;
+      background: ${props => props.backColor} !important;
       border: 1px solid ${props => props.borderColor};
       border-radius: 8px;
       position: relative;
@@ -1298,14 +1298,14 @@ const MobileListFilter = styled.div`
         border: none;
         width: 100%;
         color: ${props => props.fontColor4};
-        font-size: 14px;
+        font-size: 12px;
         line-height: 24px;
         font-weight: 400;
         padding: 0px 0px 0px 10px;
         align-items: center;
 
         span {
-          font-weight: 600;
+          font-weight: 400;
           padding-left: 4px;
         }
 
@@ -1347,7 +1347,7 @@ const MobileListFilter = styled.div`
           }
           div {
             color: ${props => props.fontColor1};
-            font-size: 14px;
+            font-size: 12px;
             font-style: normal;
             font-weight: 500;
             line-height: 24px;
