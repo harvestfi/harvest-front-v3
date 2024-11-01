@@ -1531,6 +1531,7 @@ const TipTop = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 5px;
 `
 
 const CrossDiv = styled.div`

@@ -10,6 +10,7 @@ import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
 import DropDownIcon from '../../../../assets/images/logos/advancedfarm/drop-down.svg'
 // import WalletIcon from '../../../../assets/images/logos/beginners/wallet-in-button.svg'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
+import ThumbUpIcon from '../../../../assets/images/logos/thumb-up.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { useWallet } from '../../../../providers/Wallet'
@@ -37,6 +38,7 @@ import {
   CloseBtn,
   DepositTokenSection,
   SwitchTabTag,
+  ThumbUp,
 } from './style'
 import { usePortals } from '../../../../providers/Portals'
 import { getChainName } from '../../../../utilities/parsers'
@@ -767,6 +769,12 @@ const DepositBase = ({
               </NewLabel>
             </NewLabel>
           </NewLabel>
+          <ThumbUp>
+            <img src={ThumbUpIcon} alt="thumb-up" style={{ marginRight: '15px' }} />
+            <NewLabel size="12px" weight="600" height="20px" color="#027A48">
+              You can exit this position anytime, in full, at no cost.
+            </NewLabel>
+          </ThumbUp>
         </NewLabel>
         <NewLabel>
           <Button
