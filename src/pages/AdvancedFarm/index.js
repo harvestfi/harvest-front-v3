@@ -23,6 +23,8 @@ import BarChart from '../../assets/images/logos/beginners/bar-chart-01.svg'
 import History from '../../assets/images/logos/beginners/history.svg'
 import TickIcon from '../../assets/images/logos/tick-icon.svg'
 import TickCross from '../../assets/images/logos/tick-cross.svg'
+import StakingIcon from '../../assets/images/logos/staking-icon.svg'
+import StakingCross from '../../assets/images/logos/staking-cross.svg'
 import ARBball from '../../assets/images/chains/ARBball-lg.png'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/AdvancedFarmComponents/Deposit/DepositBase'
@@ -148,6 +150,8 @@ import {
   IconPart,
   TipTop,
   CrossDiv,
+  StakingInfo,
+  StakingInfoText,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 // import { array } from 'prop-types'
@@ -307,6 +311,7 @@ const AdvancedFarm = () => {
   const [currencyName, setCurrencyName] = useState('USD')
   const [currencyRate, setCurrencyRate] = useState(1)
   const [showTip, setShowTip] = useState(true)
+  const [showStakingInfo, setShowStakingInfo] = useState(true)
 
   useEffect(() => {
     if (rates.rateData) {
@@ -1521,6 +1526,58 @@ const AdvancedFarm = () => {
       </TopInner>
       <Inner>
         <BigDiv>
+          <StakingInfo display={showStakingInfo ? 'flex' : 'none'}>
+            <img src={StakingIcon} alt="staking icon" style={{ marginRight: '15px' }} />
+            <StakingInfoText>
+              <NewLabel
+                size="14px"
+                weight="600"
+                height="20px"
+                color={darkMode ? '#fff' : '#344054'}
+              >
+                Staking Information
+              </NewLabel>
+              <NewLabel
+                size="14px"
+                weight="400"
+                height="20px"
+                color={darkMode ? '#fff' : '#344054'}
+              >
+                Currently, no extra rewards are streamed to this farm, so staking fTokens isn&apos;t
+                needed. See this article on &quot;
+                <a
+                  href="https://docs.harvest.finance/general-info/yield-sources-on-harvest-how-to-get-and-track-them"
+                  style={{ fontWeight: '600', color: darkMode ? '#fff' : '#475467' }}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Yield Sources on Harvest &ndash; How to Get and Track Them
+                </a>
+                &quot; to better understand yield sources and staking.
+              </NewLabel>
+              <NewLabel
+                size="14px"
+                weight="600"
+                height="20px"
+                color={darkMode ? '#fff' : '#344054'}
+                marginTop="15px"
+                cursor="pointer"
+                width="fit-content"
+                onClick={() => {
+                  setShowStakingInfo(false)
+                }}
+              >
+                Got it
+              </NewLabel>
+            </StakingInfoText>
+            <CrossDiv
+              onClick={() => {
+                setShowStakingInfo(false)
+              }}
+            >
+              <img src={StakingCross} alt="staking icon" />
+            </CrossDiv>
+          </StakingInfo>
           <InternalSection>
             {activeMainTag === 0 ? (
               <>

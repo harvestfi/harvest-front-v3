@@ -140,6 +140,12 @@ const NewLabel = styled.div`
   line-height: ${props => props.height || '0px'};
 
   ${props =>
+    props.cursor
+      ? `
+    cursor: ${props.cursor};
+  `
+      : ''}
+  ${props =>
     props.borderBottom
       ? `
     border-bottom: ${props.borderBottom};
@@ -292,6 +298,10 @@ const NewLabel = styled.div`
       margin-right: 5px;
       width: 11px;
     }
+  }
+
+  a:hover {
+    color: #0d6efd !important;
   }
 `
 
@@ -1527,8 +1537,26 @@ const CrossDiv = styled.div`
   cursor: pointer;
 `
 
+const StakingInfo = styled.div`
+  padding: 16px;
+  background: #fcfcfd;
+  border: 1px solid #d0d5dd;
+  border-radius: 12px;
+  display: ${props => props.display};
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 25px;
+`
+
+const StakingInfoText = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
 export {
   DetailView,
+  StakingInfo,
+  StakingInfoText,
   CrossDiv,
   IconPart,
   TipTop,
