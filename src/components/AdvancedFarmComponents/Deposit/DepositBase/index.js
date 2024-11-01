@@ -61,12 +61,14 @@ const DepositBase = ({
   setFromInfoAmount,
   setFromInfoUsdAmount,
   fromInfoUsdAmount,
-  convertMonthlyYieldUSD,
-  convertDailyYieldUSD,
+  convertYearlyYieldUSD,
+  // convertMonthlyYieldUSD,
+  // convertDailyYieldUSD,
   minReceiveAmountString,
   setMinReceiveAmountString,
   minReceiveUsdAmount,
   setMinReceiveUsdAmount,
+  setConvertYearlyYieldUSD,
   setConvertMonthlyYieldUSD,
   setConvertDailyYieldUSD,
   hasErrorOccurred,
@@ -263,6 +265,7 @@ const DepositBase = ({
             setFailureCount(prevCount => prevCount + 1)
 
             if (failureCount === 4) {
+              setConvertYearlyYieldUSD('-')
               setConvertMonthlyYieldUSD('-')
               setConvertDailyYieldUSD('-')
               setMinReceiveAmountString('-')
@@ -555,7 +558,7 @@ const DepositBase = ({
               color={fontColor3}
               weight="500"
             >
-              Est. Monthly Yield
+              Est. Yearly Yield
               <PiQuestion className="question" data-tip data-for="monthly-yield" />
               <ReactTooltip
                 id="monthly-yield"
@@ -588,16 +591,16 @@ const DepositBase = ({
               pickedToken.symbol !== 'Select Token' &&
               !new BigNumber(amount).isEqualTo(0) ? (
                 minReceiveAmountString !== '' ? (
-                  convertMonthlyYieldUSD === '0' ? (
+                  convertYearlyYieldUSD === '0' ? (
                     `${currencySym}0.00`
-                  ) : convertMonthlyYieldUSD === '-' ? (
+                  ) : convertYearlyYieldUSD === '-' ? (
                     '-'
-                  ) : convertMonthlyYieldUSD === 'NaN' ? (
+                  ) : convertYearlyYieldUSD === 'NaN' ? (
                     '-'
-                  ) : Number(convertMonthlyYieldUSD) < 0.01 ? (
+                  ) : Number(convertYearlyYieldUSD) < 0.01 ? (
                     `<${currencySym}0.01`
                   ) : (
-                    `${currencySym}${round(convertMonthlyYieldUSD * Number(currencyRate), 2)}`
+                    `${currencySym}${round(convertYearlyYieldUSD * Number(currencyRate), 2)}`
                   )
                 ) : (
                   <TokenInfo>
@@ -609,7 +612,7 @@ const DepositBase = ({
               )}
             </NewLabel>
           </NewLabel>
-          <NewLabel
+          {/* <NewLabel
             display="flex"
             justifyContent="space-between"
             padding={isMobile ? '10px 0' : '10px 0'}
@@ -674,7 +677,7 @@ const DepositBase = ({
                 '-'
               )}
             </NewLabel>
-          </NewLabel>
+          </NewLabel> */}
           <NewLabel
             display="flex"
             justifyContent="space-between"

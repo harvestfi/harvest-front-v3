@@ -258,6 +258,7 @@ const AdvancedFarm = () => {
 
   const [yieldDaily, setYieldDaily] = useState(0)
   const [yieldMonthly, setYieldMonthly] = useState(0)
+  const [convertYearlyYieldUSD, setConvertYearlyYieldUSD] = useState('0')
   const [convertMonthlyYieldUSD, setConvertMonthlyYieldUSD] = useState('0')
   const [convertDailyYieldUSD, setConvertDailyYieldUSD] = useState('0')
 
@@ -638,8 +639,14 @@ const AdvancedFarm = () => {
       Number(usdPrice) *
       Number(currencyRate) *
       (vaultAPRDaily + poolAPRDaily + swapFeeAPRDaily)
+    const convertYearlyYieldYieldValue =
+      Number(minReceiveAmountString) *
+      Number(usdPrice) *
+      Number(currencyRate) *
+      (vaultAPR + totalRewardAPR + swapFeeAPRYearly)
     setConvertMonthlyYieldUSD(convertMonthlyYieldValue.toString())
     setConvertDailyYieldUSD(convertDailyYieldYieldValue.toString())
+    setConvertYearlyYieldUSD(convertYearlyYieldYieldValue.toString())
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     fAssetPool,
@@ -2474,12 +2481,14 @@ const AdvancedFarm = () => {
                         setFromInfoAmount={setFromInfoAmount}
                         setFromInfoUsdAmount={setFromInfoUsdAmount}
                         fromInfoUsdAmount={fromInfoUsdAmount}
+                        convertYearlyYieldUSD={convertYearlyYieldUSD}
                         convertMonthlyYieldUSD={convertMonthlyYieldUSD}
                         convertDailyYieldUSD={convertDailyYieldUSD}
                         minReceiveAmountString={minReceiveAmountString}
                         setMinReceiveAmountString={setMinReceiveAmountString}
                         minReceiveUsdAmount={minReceiveUsdAmount}
                         setMinReceiveUsdAmount={setMinReceiveUsdAmount}
+                        setConvertYearlyYieldUSD={setConvertYearlyYieldUSD}
                         setConvertMonthlyYieldUSD={setConvertMonthlyYieldUSD}
                         setConvertDailyYieldUSD={setConvertDailyYieldUSD}
                         hasErrorOccurred={hasErrorOccurredConvert}
