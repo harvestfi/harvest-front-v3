@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useMediaQuery } from 'react-responsive'
 import { useHistory, useLocation } from 'react-router-dom'
 import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
 import BASE from '../../../assets/images/chains/base.svg'
@@ -13,7 +14,7 @@ import DESCI from '../../../assets/images/logos/DeSci.svg'
 import { chainList, directDetailUrl } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import {
-  BadgeIcon,
+  // BadgeIcon,
   FlexDiv,
   MobileVaultInfoContainer,
   MobileVaultValueContainer,
@@ -39,6 +40,7 @@ const MobilePanelHeader = ({
 }) => {
   const location = useLocation()
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const chainId = token.chain || token.data.chain
   const [badgeId, setBadgeId] = useState(-1)
@@ -73,7 +75,7 @@ const MobilePanelHeader = ({
         push(url)
       }}
     >
-      <FlexDiv className="token-icons" width="10%">
+      {/* <FlexDiv className="token-icons" width="10%">
         <BadgeIcon badgeBack={badgeIconBackColor}>
           {BadgeAry[badgeId] ? (
             <img src={BadgeAry[badgeId]} width="10" height="10" alt="" />
@@ -83,7 +85,7 @@ const MobilePanelHeader = ({
         </BadgeIcon>
         {lsdToken ? <img className="tag" src={LSD} alt="" /> : null}
         {desciToken ? <img className="tag" src={DESCI} alt="" /> : null}
-      </FlexDiv>
+      </FlexDiv> */}
       <FlexDiv className="token-symbols" width="60%" alignSelf="center" marginRight="18px">
         <div>
           {logoUrl.map((el, i) => (
@@ -91,7 +93,19 @@ const MobilePanelHeader = ({
           ))}
         </div>
         <TokenLogoContainer>
-          <VaultName token={token} tokenSymbol={tokenSymbol} useIFARM={useIFARM} />
+          <VaultName
+            token={token}
+            tokenSymbol={tokenSymbol}
+            useIFARM={useIFARM}
+            BadgeAry={BadgeAry}
+            badgeId={badgeId}
+            badgeIconBackColor={badgeIconBackColor}
+            lsdToken={lsdToken}
+            LSD={LSD}
+            desciToken={desciToken}
+            DESCI={DESCI}
+            isMobile={isMobile}
+          />
         </TokenLogoContainer>
       </FlexDiv>
       <FlexDiv width="30%">

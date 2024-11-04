@@ -935,7 +935,7 @@ const QuickFilter = ({
                 <Counter count={mobileFilterCount}>
                   {mobileFilterCount > 0 ? mobileFilterCount : ''}
                 </Counter>
-                &nbsp;Clear Filters
+                &nbsp;Clear
               </MobileClearFilter>
             </div>
           </MobileListHeaderSearch>
