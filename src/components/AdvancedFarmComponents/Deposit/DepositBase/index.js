@@ -576,7 +576,7 @@ const DepositBase = ({
                     ? `Based on live USD prices of tokens involved in this farm. Subject to change due to market fluctuations and the number of users in this farm.`
                     : useIFARM
                     ? 'Based on live USD price of iFARM. Considers live APY. Subject to change.'
-                    : 'Based on live USD prices of underlying and reward tokens. Considers live APY and assumes staked fTokens. Subject to change.'}
+                    : 'Calculated using live APY and current values of underlying and reward tokens. Subject to market fluctuations; performance may vary.'}
                 </NewLabel>
               </ReactTooltip>
             </NewLabel>
