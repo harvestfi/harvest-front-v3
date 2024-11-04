@@ -607,7 +607,7 @@ const MobileClearFilter = styled(ClearFilter)`
     color: ${props => (props.mobileColor ? props.mobileColor : '')};
     border: 1px solid ${props => props.borderColor};
     padding: 10px 18px;
-    width: 50%;
+    width: 40%;
   }
 `
 
@@ -1280,7 +1280,7 @@ const MobileListFilter = styled.div`
     display: flex;
     justify-content: space-between;
     flex-direction: column;
-    width: 50%;
+    width: 60%;
     margin-right: 10px;
     .filter-sort {
       position: relative;
