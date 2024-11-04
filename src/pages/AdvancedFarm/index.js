@@ -315,6 +315,9 @@ const AdvancedFarm = () => {
   const [currencyRate, setCurrencyRate] = useState(1)
   const [showTip, setShowTip] = useState(true)
   const [showStakingInfo, setShowStakingInfo] = useState(true)
+  const [isFarmToken, setIsFarmToken] = useState(false)
+  const [isReward, setIsReward] = useState(false)
+  const [noNeedStaking, setNoNeedStaking] = useState(false)
 
   useEffect(() => {
     const getData = async () => {
@@ -424,11 +427,40 @@ const AdvancedFarm = () => {
 
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
   const tokenChain = token.chain || token.data.chain
-  const chainName = getChainName(tokenChain).toLowerCase()
-
-  if (rewardTokenData) {
-    console.log(rewardTokenData[chainName])
+  const tokenSelfAddress = token.poolVault ? token.tokenAddress : token.vaultAddress
+  let chainName = getChainName(tokenChain).toLowerCase()
+  if (chainName === 'ethereum') {
+    chainName = 'eth'
   }
+
+  useEffect(() => {
+    if (rewardTokenData) {
+      let selectedToken
+      const rewardChainList = rewardTokenData[chainName]
+      rewardChainList.map(item => {
+        if (item.collateralAddress.toLowerCase() === tokenSelfAddress.toLowerCase()) {
+          selectedToken = item
+          return true
+        }
+        return false
+      })
+      const rewardAPR = selectedToken.rewardAPR
+      const sum = rewardAPR.reduce((acc, value) => acc + Number(value), 0)
+      const rewardTokenSymbol = selectedToken.rewardTokenSymbols
+      rewardTokenSymbol.map(symbol => {
+        if (rewardTokenSymbol !== 'FARM' && Array.from(symbol.trim().toLowerCase())[0] === 'f') {
+          setIsFarmToken(true)
+        }
+        return null
+      })
+      if (Number(sum) > 0) {
+        setIsReward(true)
+      }
+      if (isReward || isFarmToken) {
+        setNoNeedStaking(true)
+      }
+    }
+  }, [chainName, tokenSelfAddress, rewardTokenData, isReward, isFarmToken])
 
   useEffect(() => {
     const getBadge = () => {
@@ -1554,7 +1586,7 @@ const AdvancedFarm = () => {
       </TopInner>
       <Inner>
         <BigDiv>
-          {activeMainTag === 1 && (
+          {activeMainTag === 1 && !noNeedStaking && rewardTokenData && (
             <StakingInfo display={showStakingInfo ? 'flex' : 'none'}>
               <img src={StakingIcon} alt="staking icon" style={{ marginRight: '15px' }} />
               <StakingInfoText>
