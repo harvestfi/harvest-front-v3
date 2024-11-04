@@ -1355,7 +1355,7 @@ const MobileListFilter = styled.div`
               width: 14px;
               height: 14px;
               margin-right: 4px;
-              margin-top: -2px;
+              // margin-top: -2px;
               filter: ${props => props.filterColor};
             }
           }
@@ -1399,8 +1399,16 @@ const MobileFilterBtn = styled.div`
   }
 `
 
+const DropdownRow = styled.div`
+  display: flex;
+  width: fit-content;
+  justify-content: space-between;
+  align-items: center;
+`
+
 export {
   QuickFilterContainer,
+  DropdownRow,
   InputsContainer,
   Counter,
   UserDropDown,

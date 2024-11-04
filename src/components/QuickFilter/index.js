@@ -48,6 +48,7 @@ import {
   CheckBoxDiv,
   MobileListFilter,
   MobileFilterBtn,
+  DropdownRow,
 } from './style'
 
 const ChainsList = [
@@ -892,7 +893,15 @@ const QuickFilter = ({
                           updateSortQuery(item.type)
                         }}
                       >
-                        <div>{item.name}</div>
+                        <DropdownRow>
+                          <div>{item.name}</div>
+                          <img
+                            src={item.img}
+                            className="sort-icon"
+                            alt="sort"
+                            style={{ marginLeft: '5px' }}
+                          />
+                        </DropdownRow>
                         <img className="checked" src={MobileSortCheckedIcon} alt="" />
                       </Dropdown.Item>
                     ))}
