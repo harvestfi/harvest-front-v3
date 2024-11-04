@@ -287,6 +287,12 @@ const FlexDiv = styled.div`
   `
       : ''}
   ${props =>
+    props.paddingBottom
+      ? `
+        padding-bottom: ${props.paddingBottom};
+      `
+      : ''}
+  ${props =>
     props.width
       ? `
     width: ${props.width};

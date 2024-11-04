@@ -76,13 +76,14 @@ import {
   showUsdValue,
   showUsdValueCurrency,
 } from '../../utilities/formats'
-import { getTotalApy, getVaultValue } from '../../utilities/parsers'
+import { getTotalApy, getVaultValue, getChainName } from '../../utilities/parsers'
 import { getAdvancedRewardText } from '../../utilities/html'
 import {
   getCoinListFromApi,
   getLastHarvestInfo,
   getTokenPriceFromApi,
   initBalanceAndDetailData,
+  fetchRewardToken,
 } from '../../utilities/apiCalls'
 import {
   BackBtnRect,
@@ -306,6 +307,7 @@ const AdvancedFarm = () => {
   const [oneEightyDHarvest, setOneEightyDHarvest] = useState('')
   const [threeSixtyDHarvest, setThreeSixtyDHarvest] = useState('')
   const [harvestFrequency, setHarvestFrequency] = useState('')
+  const [rewardTokenData, setRewardTokenData] = useState()
 
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
@@ -313,6 +315,19 @@ const AdvancedFarm = () => {
   const [currencyRate, setCurrencyRate] = useState(1)
   const [showTip, setShowTip] = useState(true)
   const [showStakingInfo, setShowStakingInfo] = useState(true)
+
+  useEffect(() => {
+    const getData = async () => {
+      try {
+        const data = await fetchRewardToken()
+        setRewardTokenData(data)
+      } catch (error) {
+        console.error('Error fetching leaderboard data:', error)
+      }
+    }
+
+    getData()
+  }, [])
 
   useEffect(() => {
     if (rates.rateData) {
@@ -408,6 +423,12 @@ const AdvancedFarm = () => {
   const chain = token.chain || token.data.chain
 
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
+  const tokenChain = token.chain || token.data.chain
+  const chainName = getChainName(tokenChain).toLowerCase()
+
+  if (rewardTokenData) {
+    console.log(rewardTokenData[chainName])
+  }
 
   useEffect(() => {
     const getBadge = () => {

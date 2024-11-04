@@ -86,7 +86,13 @@ const MobilePanelHeader = ({
         {lsdToken ? <img className="tag" src={LSD} alt="" /> : null}
         {desciToken ? <img className="tag" src={DESCI} alt="" /> : null}
       </FlexDiv> */}
-      <FlexDiv className="token-symbols" width="60%" alignSelf="center" marginRight="18px">
+      <FlexDiv
+        className="token-symbols"
+        width="60%"
+        alignSelf="center"
+        marginRight="18px"
+        paddingBottom="5px"
+      >
         <div>
           {logoUrl.map((el, i) => (
             <img key={i} src={el} width={19} alt={tokenSymbol} />

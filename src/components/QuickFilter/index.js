@@ -868,9 +868,10 @@ const QuickFilter = ({
               >
                 <Dropdown className="filter-sort">
                   <Dropdown.Toggle className="toggle">
-                    <div>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
                       Sort By:
                       <span>{sortId === -1 ? '' : SortsList[sortId].name}</span>
+                      <img src={SortsList[sortId].img} className="sort-icon" alt="sort" />
                     </div>
                     <MobileFilterBtn
                       inputBorderColor={inputBorderColor}
@@ -899,7 +900,7 @@ const QuickFilter = ({
                             src={item.img}
                             className="sort-icon"
                             alt="sort"
-                            style={{ marginLeft: '5px' }}
+                            style={{ marginLeft: '10px' }}
                           />
                         </DropdownRow>
                         <img className="checked" src={MobileSortCheckedIcon} alt="" />

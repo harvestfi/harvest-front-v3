@@ -1280,7 +1280,7 @@ const MobileListFilter = styled.div`
     display: flex;
     justify-content: space-between;
     flex-direction: column;
-    width: 60%;
+    width: 80%;
     margin-right: 10px;
     .filter-sort {
       position: relative;
