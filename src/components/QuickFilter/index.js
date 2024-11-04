@@ -863,7 +863,7 @@ const QuickFilter = ({
                 fontColor={fontColor}
                 fontColor1={fontColor1}
                 fontColor4={fontColor4}
-                filterColor={filterColor}
+                // filterColor={filterColor}
                 hoverColor={hoverColor}
               >
                 <Dropdown className="filter-sort">
