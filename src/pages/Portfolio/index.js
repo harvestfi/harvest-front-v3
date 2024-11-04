@@ -153,9 +153,7 @@ const Portfolio = () => {
   const [oneDayYield, setOneDayYield] = useState(0)
   const [showAddress, setShowAddress] = useState(true)
 
-  const onceVisit = localStorage.getItem('portfolioVisit')
-
-  const [visit, setVisit] = useState(onceVisit)
+  const beforeAccount = localStorage.getItem('address')
 
   useEffect(() => {
     if (totalDeposit !== 0 && totalNetProfit !== 0 && totalYieldMonthly !== 0 && totalYieldDaily) {
@@ -652,26 +650,27 @@ const Portfolio = () => {
   }, [account, userStats, balances, showInactiveFarms]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (visit === 'true') {
-      setTimeout(() => {
-        setVisit('false')
-      }, 4000)
-    }
-
     const visited = localStorage.getItem(totalNetProfitKey)
     let safeCount = localStorage.getItem('safe')
+
+    if (beforeAccount !== null && account !== null && beforeAccount !== account) {
+      localStorage.setItem('address', account)
+      safeCount = 21
+      window.location.reload()
+    }
 
     if (Number(visited) !== 0 || visited !== null) {
       safeCount = Number(safeCount) + 1
       localStorage.setItem('safe', safeCount)
     }
+
     if (safeCount > 20) {
       localStorage.setItem('safe', 0)
       localStorage.setItem(totalNetProfitKey, 0)
       setIsLoading(true)
     }
-    if (Number(visited) === 0 || visited === null || safeCount > 20) {
-      if (!isEmpty(userStats) && account && visit === 'false') {
+    if (Number(visited) === 0 || visited === null || Number(visited) === -1 || safeCount > 20) {
+      if (!isEmpty(userStats) && account) {
         const getNetProfitValue = async () => {
           let totalNetProfitUSD = 0,
             combinedEnrichedData = []
@@ -774,7 +773,7 @@ const Portfolio = () => {
         localStorage.setItem(totalHistoryDataKey, JSON.stringify([]))
       }
     }
-  }, [account, userStats, showInactiveFarms]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, userStats, showInactiveFarms, connected]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const sortCol = field => {
     if (field === 'lifetimeYield') {
