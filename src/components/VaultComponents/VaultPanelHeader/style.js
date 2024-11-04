@@ -267,7 +267,7 @@ const MobileVaultValueContainer = styled.div`
   .title {
     img {
       margin-left: 7px;
-      margin-top: -4px;
+      margin-top: -2px;
       filter: ${props => props.filterColor};
     }
   }
