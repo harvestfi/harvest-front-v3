@@ -40,7 +40,7 @@ const RateProvider = ({ children }) => {
       fetchRates()
       firstRateRender.current = false
     }
-  }, [])
+  }, [setRates])
 
   const updateCurrency = value => {
     setRates({
