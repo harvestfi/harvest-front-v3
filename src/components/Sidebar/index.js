@@ -2,7 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { PiSunDimFill, PiMoonBold } from 'react-icons/pi'
-import { IoCloseCircleOutline } from 'react-icons/io5'
+import { IoCloseCircleOutline, IoCheckmark } from 'react-icons/io5'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 import ConnectFailureIcon from '../../assets/images/logos/sidebar/connect-failure.svg'
 import connectAvatar from '../../assets/images/logos/sidebar/connect-frame.svg'
@@ -11,6 +11,7 @@ import connectAvatarMobile from '../../assets/images/logos/sidebar/connectavatar
 import FAQ from '../../assets/images/logos/sidebar/faq.svg'
 import ActiveDarkMobileBottomHome from '../../assets/images/logos/sidebar/active-dark-home.svg'
 import ActiveWhiteMobileBottomHome from '../../assets/images/logos/sidebar/active-white-home.svg'
+import { useRate } from '../../providers/Rate'
 import ActiveWhiteMobileBottomAdvanced from '../../assets/images/logos/sidebar/active-white-farms.svg'
 import Home from '../../assets/images/logos/sidebar/home-line.svg'
 import MobileBottomHome from '../../assets/images/logos/sidebar/bottom-home.svg'
@@ -30,8 +31,9 @@ import WalletActive from '../../assets/images/logos/sidebar/wallet_active.svg'
 import WalletInactive from '../../assets/images/logos/sidebar/wallet_inactive.svg'
 import Toggle from '../../assets/images/logos/sidebar/more-mobile.svg'
 // import DocsMobile from '../../assets/images/logos/sidebar/docs-mobile.svg'
-import { ROUTES } from '../../constants'
+import { ROUTES, supportedCurrencies } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
+import DropDownIcon from '../../assets/images/logos/advancedfarm/drop-down.svg'
 import { usePools } from '../../providers/Pools'
 import { useThemeContext } from '../../providers/useThemeContext'
 import usePersistedState from '../../providers/usePersistedState'
@@ -87,6 +89,13 @@ import {
   LinkName,
   MobileMoreTop,
 } from './style'
+import {
+  HeaderButton,
+  CurrencyDropDown,
+  CurrencySelect,
+  CurrencyDropDownMenu,
+  CurrencyDropDownItem,
+} from '../../pages/Portfolio/style'
 
 const sideLinksTop = [
   {
@@ -361,6 +370,8 @@ const Sidebar = ({ width }) => {
     sidebarFontColor,
     sidebarActiveFontColor,
     sidebarActiveIconColor,
+    backColorButton,
+    hoverColorNew,
   } = useThemeContext()
 
   const {
@@ -395,6 +406,8 @@ const Sidebar = ({ width }) => {
   const [copyAddress, setCopyAddress] = useState('Copy Address')
   const [balanceETH, setBalanceETH] = useState('')
   const [balanceUSDC, setBalanceUSDC] = useState('')
+  const { rates, updateCurrency } = useRate()
+  const [curCurrency, setCurCurrency] = useState(supportedCurrencies[0])
   const [migrateClick, setMigrateClick] = usePersistedState('migrateClick', false)
 
   const handleMobileClose = () => setMobileShow(false)
@@ -412,6 +425,10 @@ const Sidebar = ({ width }) => {
       }, 1500)
     })
   }
+
+  useEffect(() => {
+    setCurCurrency(supportedCurrencies[rates.currency.id])
+  }, [rates])
 
   const handleMobileWalletDetailShow = async () => {
     const showBalanceTokens =
@@ -827,6 +844,9 @@ const Sidebar = ({ width }) => {
                         <div className="switch-thumb">
                           {darkMode ? <PiMoonBold /> : <PiSunDimFill />}
                         </div>
+                        <div className="switch-icon">
+                          {darkMode ? <PiSunDimFill /> : <PiMoonBold />}
+                        </div>
                       </div>
 
                       <input
@@ -837,6 +857,70 @@ const Sidebar = ({ width }) => {
                       />
                     </div>
                   </ThemeMode>
+                  <HeaderButton>
+                    <Dropdown>
+                      <CurrencyDropDown
+                        id="dropdown-basic"
+                        bgcolor={backColorButton}
+                        fontcolor2={fontColor2}
+                        hovercolor={hoverColorNew}
+                        style={{ padding: 0 }}
+                      >
+                        {curCurrency ? (
+                          <CurrencySelect
+                            backColor={backColor}
+                            fontcolor2={fontColor2}
+                            hovercolor={hoverColor}
+                          >
+                            <img
+                              className={darkMode ? 'logo-dark' : 'logo'}
+                              src={curCurrency.imgPath}
+                              width={16}
+                              height={16}
+                              alt=""
+                            />
+                            <span>{curCurrency.symbol}</span>
+                            <img className="dropdown-icon" src={DropDownIcon} alt="" />
+                          </CurrencySelect>
+                        ) : (
+                          <></>
+                        )}
+                      </CurrencyDropDown>
+                      {!isSpecialApp ? (
+                        <CurrencyDropDownMenu backcolor={backColorButton}>
+                          {supportedCurrencies.map(elem => {
+                            return (
+                              <CurrencyDropDownItem
+                                onClick={() => {
+                                  updateCurrency(elem.id)
+                                }}
+                                fontcolor={fontColor}
+                                filtercolor={filterColor}
+                                hovercolor={hoverColorNew}
+                                key={elem.id}
+                              >
+                                <img
+                                  className={darkMode ? 'logo-dark' : 'logo'}
+                                  src={elem.imgPath}
+                                  width={14}
+                                  height={14}
+                                  alt=""
+                                />
+                                <span>{elem.symbol}</span>
+                                {curCurrency.id === elem.id ? (
+                                  <IoCheckmark className="check-icon" />
+                                ) : (
+                                  <></>
+                                )}
+                              </CurrencyDropDownItem>
+                            )
+                          })}
+                        </CurrencyDropDownMenu>
+                      ) : (
+                        <></>
+                      )}
+                    </Dropdown>
+                  </HeaderButton>
                 </MobileFollow>
               </MobileActionsContainer>
             </Offcanvas.Body>
