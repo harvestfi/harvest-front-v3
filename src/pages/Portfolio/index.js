@@ -653,6 +653,10 @@ const Portfolio = () => {
     const visited = localStorage.getItem(totalNetProfitKey)
     let safeCount = localStorage.getItem('safe')
 
+    if (beforeAccount === null && account !== null) {
+      localStorage.setItem('address', account)
+    }
+
     if (beforeAccount !== null && account !== null && beforeAccount !== account) {
       localStorage.setItem('address', account)
       safeCount = 21
@@ -763,7 +767,6 @@ const Portfolio = () => {
         }
 
         getNetProfitValue()
-        localStorage.setItem('portfolioVisit', true)
       } else {
         setTotalNetProfit(0)
         localStorage.setItem(totalNetProfitKey, '0')
@@ -773,7 +776,7 @@ const Portfolio = () => {
         localStorage.setItem(totalHistoryDataKey, JSON.stringify([]))
       }
     }
-  }, [account, userStats, showInactiveFarms, connected]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, userStats, showInactiveFarms, connected, beforeAccount]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const sortCol = field => {
     if (field === 'lifetimeYield') {
