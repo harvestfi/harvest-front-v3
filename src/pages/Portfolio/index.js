@@ -146,10 +146,10 @@ const Portfolio = () => {
   const [sortOrder, setSortOrder] = useState(false)
   const [showInactiveFarms, setShowInactiveFarms] = useState(false)
   const [viewPositions, setViewPositions] = useState(true)
-  const [isLoading, setIsLoading] = useState(true)
   const [showLatestYield, setShowLatestYield] = useState(false)
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
+  const [isLoading, setIsLoading] = useState(true)
   const [oneDayYield, setOneDayYield] = useState(0)
   const [showAddress, setShowAddress] = useState(true)
 
