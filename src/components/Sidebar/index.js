@@ -100,7 +100,7 @@ import {
 const sideLinksTop = [
   {
     path: ROUTES.PORTFOLIO,
-    name: 'My Positions',
+    name: 'Portfolio',
     imgPath: Home,
   },
   {
@@ -167,7 +167,7 @@ const sideLinksBottom = [
 const sideLinksMobile = [
   {
     path: ROUTES.PORTFOLIO,
-    name: 'My Positions',
+    name: 'Portfolio',
     imgPath: MobileBottomHome,
     darkImg: ActiveDarkMobileBottomHome,
     whiteImg: ActiveWhiteMobileBottomHome,
@@ -185,7 +185,7 @@ const sideLinksMobile = [
 const sideLinksMobileBottom = [
   {
     path: ROUTES.PORTFOLIO,
-    name: 'My Positions',
+    name: 'Portfolio',
     imgPath: Home,
   },
   {
@@ -275,8 +275,8 @@ const SideLink = ({
           className="sideIcon"
           src={item.imgPath}
           alt="Harvest"
-          width={item.name === 'My Positions' ? '20px' : '24px'}
-          height={item.name === 'My Positions' ? '20px' : '24px'}
+          width={item.name === 'Portfolio' ? '20px' : '24px'}
+          height={item.name === 'Portfolio' ? '20px' : '24px'}
         />
       </div>
       <div className="item-name">{item.name}</div>
@@ -333,13 +333,13 @@ const MobileMenu = ({
             : item.imgPath
         }
         alt="Harvest"
-        width={item.name === 'My Positions' ? '18px' : '22px'}
-        height={item.name === 'My Positions' ? '18px' : '22px'}
+        width={item.name === 'Portfolio' ? '18px' : '22px'}
+        height={item.name === 'Portfolio' ? '18px' : '22px'}
         marginTop={item.name === 'All Farms' ? '-1px' : ''}
       />
       <LinkName
         color={active ? (darkMode ? '#ffffff' : '#000000') : '#7A7A7A'}
-        marginTop={item.name === 'My Positions' ? '5px' : ' 2px'}
+        marginTop={item.name === 'Portfolio' ? '5px' : ' 2px'}
       >
         {item.linkName}
       </LinkName>
