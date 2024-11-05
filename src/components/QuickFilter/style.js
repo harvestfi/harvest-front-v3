@@ -317,6 +317,7 @@ const ChainButton = styled.button`
 
   @media screen and (max-width: 992px) {
     width: 25%;
+    padding: 9px 16px;
     img {
       width: 22px;
       height: 22px;
