@@ -251,7 +251,7 @@ const SideLink = ({
     pathname === '/'
       ? 'all farms'
       : pathname === ROUTES.PORTFOLIO
-      ? 'my positions'
+      ? 'portfolio'
       : pathname === ROUTES.TUTORIAL
       ? 'tutorial'
       : pathname === ROUTES.MIGRATE
@@ -298,7 +298,7 @@ const MobileMenu = ({
 }) => {
   const { pathname } = useLocation()
   const pageName =
-    pathname === '/' ? 'all farms' : pathname === ROUTES.PORTFOLIO ? 'my positions' : pathname
+    pathname === '/' ? 'all farms' : pathname === ROUTES.PORTFOLIO ? 'portfolio' : pathname
   const active = !isWallet && pageName.includes(item.name.toLowerCase())
   const isFarms = item.isFarms
   const farmsFilter =
