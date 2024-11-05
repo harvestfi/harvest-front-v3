@@ -1037,20 +1037,22 @@ const Portfolio = () => {
               </LifetimeSub>
             </MobileHeader>
           ) : (
-            <HeaderTitle fontColor={fontColor} fontColor1={fontColor1}>
-              {!viewPositions && (
-                <BackArrow onClick={() => setViewPositions(prev => !prev)}>
-                  <BiLeftArrowAlt fontSize={20} />
-                  Back
-                </BackArrow>
-              )}
-              <div className="title">{viewPositions ? 'Overview' : 'Full History'}</div>
-              <div className="desc">
-                {viewPositions
-                  ? 'Displaying data from across all networks.'
-                  : 'Displaying all harvest, convert & revert events for the connected wallet.'}
-              </div>
-            </HeaderTitle>
+            isMobile && (
+              <HeaderTitle fontColor={fontColor} fontColor1={fontColor1}>
+                {!viewPositions && (
+                  <BackArrow onClick={() => setViewPositions(prev => !prev)}>
+                    <BiLeftArrowAlt fontSize={20} color={isMobile && '#fff'} />
+                    Back
+                  </BackArrow>
+                )}
+                <div className="title">{viewPositions ? 'Overview' : 'Full History'}</div>
+                <div className="desc">
+                  {viewPositions
+                    ? 'Displaying data from across all networks.'
+                    : 'Displaying all harvest, convert & revert events for the connected wallet.'}
+                </div>
+              </HeaderTitle>
+            )
           )}
           {viewPositions && (
             <HeaderButton>

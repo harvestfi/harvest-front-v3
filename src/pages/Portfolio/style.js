@@ -89,8 +89,13 @@ const HeaderTitle = styled.div`
     line-height: 24px;
   }
   @media screen and (max-width: 992px) {
+    color: #fff;
     .title {
       font-size: 16px;
+      color: #fff;
+    }
+    .desc {
+      color: #fff;
     }
   }
 `
