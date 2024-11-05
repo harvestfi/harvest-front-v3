@@ -258,7 +258,7 @@ const DivWidth = styled.div`
 const ChainButton = styled.button`
   width: 50px;
   align-items: center;
-  padding: 9px 16px;
+  padding: 7px 16px;
   display: flex;
   justify-content: center;
   transition: 0.25s;
