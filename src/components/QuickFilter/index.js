@@ -105,6 +105,7 @@ const QuickFilter = ({
   updateSortQuery,
   riskId,
   setRiskId,
+  setSortOrder,
 }) => {
   // Search string is null, it will be false, otherwise true.
   const [stringSearch, setStringSearch] = useState(false)
@@ -561,6 +562,7 @@ const QuickFilter = ({
                   clickedId={riskId}
                   setClickedId={setRiskId}
                   fontColor={fontColor2}
+                  setSortOrder={setSortOrder}
                 />
               </DivWidth>
               <DivWidth display="none" marginRight="15px" height="fit-content">

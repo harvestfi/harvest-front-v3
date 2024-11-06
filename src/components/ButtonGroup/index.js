@@ -12,6 +12,7 @@ const ButtonGroup = ({
   prevFocusId,
   isMobile,
   oneClass,
+  setSortOrder,
 }) => {
   const { backColor, filterChainHoverColor, darkMode } = useThemeContext()
 
@@ -19,6 +20,9 @@ const ButtonGroup = ({
     if (buttons[id].name !== 'Labs') {
       setClickedId(id)
       doSomethingAfterClick(id)
+      if (setSortOrder) {
+        setSortOrder('asc')
+      }
     }
   }
   const [focusId, setFocusId] = React.useState(prevFocusId)

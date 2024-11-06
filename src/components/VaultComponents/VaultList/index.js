@@ -737,6 +737,7 @@ const VaultList = () => {
           updateSortQuery={updateSortQuery}
           riskId={riskId}
           setRiskId={setRiskId}
+          setSortOrder={setSortOrder}
         />
       )}
       <DisplayCount color={fontColor} mobileColor={darkMode ? '#fff' : '#000'}>
