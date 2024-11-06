@@ -1348,14 +1348,21 @@ const Portfolio = () => {
                   )}
                 </TableContent>
                 {connected && !isMobile && farmTokenList.length > 0 && (
-                  <CheckBoxDiv>
+                  <CheckBoxDiv
+                    bgColor={darkMode ? '' : '#f9f5ff'}
+                    fontColor={darkMode ? '#ffffff' : '#344054'}
+                    onClick={() => {
+                      if (showInactiveFarms) {
+                        setShowInactiveFarms(prev => !prev)
+                      } else {
+                        setShowInactiveFarms(prev => !prev)
+                      }
+                    }}
+                  >
                     {showInactiveFarms ? (
-                      <FaRegSquareCheck
-                        onClick={() => setShowInactiveFarms(false)}
-                        color="#15B088"
-                      />
+                      <FaRegSquareCheck color="#15B088" />
                     ) : (
-                      <FaRegSquare onClick={() => setShowInactiveFarms(true)} color="#15B088" />
+                      <FaRegSquare color="#15B088" />
                     )}
                     <div>Show inactive</div>
                   </CheckBoxDiv>

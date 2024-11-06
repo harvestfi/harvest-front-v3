@@ -58,7 +58,7 @@ const ButtonGroup = ({
             display={isMobile && button.name === 'Inactive' ? 'none' : 'flex'}
             borderDisplay={isMobile && button.border}
           >
-            {button.img && <img src={button.img} width="18" height="15" alt="" />}
+            {/* {button.img && <img src={button.img} width="18" height="15" alt="" />} */}
             <div>{button.name}</div>
           </ButtonStyle>
         )

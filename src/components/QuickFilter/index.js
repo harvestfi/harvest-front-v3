@@ -103,6 +103,8 @@ const QuickFilter = ({
   sortId,
   setSortId,
   updateSortQuery,
+  riskId,
+  setRiskId,
 }) => {
   // Search string is null, it will be false, otherwise true.
   const [stringSearch, setStringSearch] = useState(false)
@@ -244,7 +246,6 @@ const QuickFilter = ({
   const [filterCount, setFilterCount] = useState(0)
   const [mobileFilterCount, setMobileFilterCount] = useState(0)
 
-  const [riskId, setRiskId] = useState(-1) // for risk id
   const [assetsId, setAssetsId] = useState(-1) // for asset id
   const [farmId, setFarmId] = useState(-1) // for chain
 
