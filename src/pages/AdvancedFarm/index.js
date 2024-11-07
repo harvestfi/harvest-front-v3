@@ -431,6 +431,8 @@ const AdvancedFarm = () => {
   let chainName = getChainName(tokenChain).toLowerCase()
   if (chainName === 'ethereum') {
     chainName = 'eth'
+  } else if (chainName === 'polygon') {
+    chainName = 'matic'
   }
 
   useEffect(() => {
