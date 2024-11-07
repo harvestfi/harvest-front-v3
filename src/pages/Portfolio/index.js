@@ -6,7 +6,6 @@ import { useMediaQuery } from 'react-responsive'
 import { Dropdown, Spinner } from 'react-bootstrap'
 import { PiQuestion } from 'react-icons/pi'
 import ReactTooltip from 'react-tooltip'
-import { toast } from 'react-toastify'
 import { useHistory } from 'react-router-dom'
 import { FaRegSquare, FaRegSquareCheck } from 'react-icons/fa6'
 import { BiLeftArrowAlt } from 'react-icons/bi'
@@ -668,9 +667,6 @@ const Portfolio = () => {
       !balanceFlag ||
       !correctRun
     ) {
-      toast.error('Oops, something went wrong. We will refresh page after 2 minutes', {
-        toastId: 'api-error',
-      })
       localStorage.setItem('address', account)
       setTimeout(() => {
         window.location.reload()
