@@ -1,4 +1,4 @@
-import injectedModule, { ProviderLabel } from '@web3-onboard/injected-wallets'
+import injectedModule from '@web3-onboard/injected-wallets'
 import gnosisModule from '@web3-onboard/gnosis'
 import { init, Web3OnboardProvider } from '@web3-onboard/react'
 import walletConnectModule from '@web3-onboard/walletconnect'
@@ -15,15 +15,7 @@ import { WalletProvider } from './Wallet'
 import { PortalsProvider } from './Portals'
 import HavestLogo from '../assets/images/logos/Harvest_Standard.svg'
 
-const injected = injectedModule({
-  displayUnavailable: [
-    ProviderLabel.MetaMask,
-    ProviderLabel.Trust,
-    ProviderLabel.Coinbase,
-    ProviderLabel.Phantom,
-    ProviderLabel.OKXWallet,
-  ],
-})
+const injected = injectedModule()
 const gnosis = gnosisModule()
 const ledger = ledgerModule({
   projectId: '6931eace1272646ed84e46c55fac0311',
