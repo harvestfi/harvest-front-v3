@@ -562,6 +562,7 @@ export const TVL_API_ENDPOINT = `${HARVEST_EXTERNAL_API_URL}/gmv/total?key=${pro
 export const TOTAL_TVL_API_ENDPOINT = `${HARVEST_API_URL}/tvl?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`
 export const CURRENCY_RATES_API_ENDPOINT = `${HARVEST_API_URL}/rates?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`
 export const HISTORICAL_RATES_API_ENDPOINT = `${HARVEST_API_URL}/historical-rates?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`
+export const LEADERBOARD_API_ENDPOINT = `${HARVEST_API_URL}/leaderboard?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`
 export const COINGECKO_API_KEY = `${process.env.REACT_APP_COINGECKO_API_KEY}`
 
 export const BEGINNERS_BALANCES_DECIMALS = 2
