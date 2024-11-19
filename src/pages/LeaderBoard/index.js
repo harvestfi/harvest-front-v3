@@ -2,7 +2,6 @@ import React, { useMemo, useState, useCallback, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { PiQuestion } from 'react-icons/pi'
 import ReactTooltip from 'react-tooltip'
-// import { get, find } from 'lodash'
 import { Dropdown } from 'react-bootstrap'
 import { IoCheckmark } from 'react-icons/io5'
 import { useThemeContext } from '../../providers/useThemeContext'
@@ -11,7 +10,7 @@ import sortAscIcon from '../../assets/images/ui/asc.svg'
 import sortIcon from '../../assets/images/ui/sort.svg'
 import dropDown from '../../assets/images/ui/drop-down.e85f7fdc.svg'
 import { fetchLeaderboardData } from '../../utilities/apiCalls'
-import { getWalletApy, rearrangeApiData } from '../../utilities/parsers'
+import { rearrangeApiData } from '../../utilities/parsers'
 import {
   Column,
   Container,
@@ -39,7 +38,6 @@ import { FARM_TOKEN_SYMBOL, SPECIAL_VAULTS } from '../../constants'
 import { useStats } from '../../providers/Stats'
 import { usePools } from '../../providers/Pools'
 import { addresses } from '../../data'
-// import ChevronDown from '../../assets/images/ui/chevron-down.svg'
 import Pagination from '../../components/LeaderboardComponents/Pagination'
 import { useWallet } from '../../providers/Wallet'
 
@@ -71,7 +69,6 @@ const LeaderBoard = () => {
   const itemsPerPage = 100
 
   const { account } = useWallet()
-  const { pools } = usePools()
 
   let correctedApiData = {}
 
@@ -87,7 +84,7 @@ const LeaderBoard = () => {
     const getData = async () => {
       try {
         const data = await fetchLeaderboardData()
-        setLeadersApiData(data)
+        setLeadersApiData(JSON.parse(JSON.stringify(data)))
       } catch (error) {
         console.error('Error fetching leaderboard data:', error)
       }
@@ -120,7 +117,7 @@ const LeaderBoard = () => {
   const groupOfVaults = { ...vaultsData, ...poolVaults }
 
   if (leadersApiData) {
-    correctedApiData = rearrangeApiData(leadersApiData, groupOfVaults, vaultsData, pools)
+    correctedApiData = rearrangeApiData(JSON.parse(JSON.stringify(leadersApiData)), groupOfVaults)
   }
 
   const handleSort = useCallback(
@@ -163,10 +160,8 @@ const LeaderBoard = () => {
   const fixedBalanceRanks = useMemo(() => {
     return Object.entries(correctedApiData)
       .sort((a, b) => {
-        const vaultAArray = Object.entries(a[1].vaults)
-        const vaultBArray = Object.entries(b[1].vaults)
-        const balanceA = vaultAArray.reduce((acc, [, vault]) => acc + vault.balance, 0)
-        const balanceB = vaultBArray.reduce((acc, [, vault]) => acc + vault.balance, 0)
+        const balanceA = a[1].totalBalance
+        const balanceB = b[1].totalBalance
         return balanceB - balanceA
       })
       .map(([wallet], index) => ({ wallet, rank: index + 1 }))
@@ -180,24 +175,14 @@ const LeaderBoard = () => {
           valueB = 0
 
         if (sortConfig.key === 'totalBalance') {
-          const vaultAArray = Object.entries(a[1].vaults)
-          const vaultBArray = Object.entries(b[1].vaults)
-          for (let i = 0; i < vaultAArray.length; i += 1) {
-            valueA += vaultAArray[i][1].balance
-          }
-          for (let i = 0; i < vaultBArray.length; i += 1) {
-            valueB += vaultBArray[i][1].balance
-          }
+          valueA = a[1].totalBalance
+          valueB = b[1].totalBalance
         } else if (sortConfig.key === 'Efficiency') {
-          const [realWalletApyA] = getWalletApy(a[1], groupOfVaults, vaultsData, pools)
-          const [realWalletApyB] = getWalletApy(b[1], groupOfVaults, vaultsData, pools)
-          valueA = realWalletApyA
-          valueB = realWalletApyB
+          valueA = a[1].totalDailyYield / a[1].totalBalance
+          valueB = b[1].totalDailyYield / b[1].totalBalance
         } else if (sortConfig.key === 'MonthlyYield') {
-          const [, totalMonthlyYieldA] = getWalletApy(a[1], groupOfVaults, vaultsData, pools)
-          const [, totalMonthlyYieldB] = getWalletApy(b[1], groupOfVaults, vaultsData, pools)
-          valueA = totalMonthlyYieldA
-          valueB = totalMonthlyYieldB
+          valueA = a[1].totalDailyYield
+          valueB = b[1].totalDailyYield
         } else if (sortConfig.key === 'balance') {
           valueA = Math.max(...Object.values(a[1].vaults).map(vault => vault.balance))
           valueB = Math.max(...Object.values(b[1].vaults).map(vault => vault.balance))
@@ -236,20 +221,16 @@ const LeaderBoard = () => {
 
   const sortedByBalance = useMemo(() => {
     return Object.entries(correctedApiData).sort((a, b) => {
-      const vaultAArray = Object.entries(a[1].vaults)
-      const vaultBArray = Object.entries(b[1].vaults)
-      const balanceA = vaultAArray.reduce((acc, [, vault]) => acc + vault.balance, 0)
-      const balanceB = vaultBArray.reduce((acc, [, vault]) => acc + vault.balance, 0)
+      const balanceA = a[1].totalBalance
+      const balanceB = b[1].totalBalance
       return balanceB - balanceA
     })
   }, [correctedApiData])
 
   const sortedByEfficiency = useMemo(() => {
     return Object.entries(correctedApiData).sort((a, b) => {
-      const [realWalletApyA] = getWalletApy(a[1], groupOfVaults, vaultsData, pools)
-      const [realWalletApyB] = getWalletApy(b[1], groupOfVaults, vaultsData, pools)
-      const efficiencyA = realWalletApyA
-      const efficiencyB = realWalletApyB
+      const efficiencyA = a[1].totalDailyYield / a[1].totalBalance
+      const efficiencyB = b[1].totalDailyYield / b[1].totalBalance
       return efficiencyB - efficiencyA
     })
   }, [correctedApiData]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -434,10 +415,7 @@ const LeaderBoard = () => {
                   accounts={accounts}
                   groupOfVaults={groupOfVaults}
                   lastItem={lastItem}
-                  // getTokenNames={getTokenNames}
                   darkMode={darkMode}
-                  pools={pools}
-                  vaultsData={vaultsData}
                   selectedItem={selectedItem}
                 />
               )
@@ -596,10 +574,7 @@ const LeaderBoard = () => {
                     accounts={accounts}
                     groupOfVaults={groupOfVaults}
                     lastItem={lastItem}
-                    // getTokenNames={getTokenNames}
                     darkMode={darkMode}
-                    pools={pools}
-                    vaultsData={vaultsData}
                   />
                 )
               })}

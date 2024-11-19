@@ -13,6 +13,7 @@ import {
   GECKO_URL,
   COINGECKO_API_KEY,
   POOLS_API_ENDPOINT,
+  LEADERBOARD_API_ENDPOINT,
 } from '../constants'
 import { fromWei } from '../services/web3'
 
@@ -1057,11 +1058,12 @@ export const getTokenPriceFromApi = async tokenID => {
 
 export const fetchLeaderboardData = async () => {
   try {
-    const response = await fetch(`https://api.harvest.finance/leaderboard?key=harvest-key`)
-    if (!response.ok) {
+    const response = await axios.get(LEADERBOARD_API_ENDPOINT)
+    if (!response.status === 200) {
       throw new Error(`HTTP error! Status: ${response.status}`)
     }
-    const data = await response.json()
+    const data = response.data
+
     return data
   } catch (error) {
     console.log('Error fetching leaderboard data', error)
@@ -1071,11 +1073,11 @@ export const fetchLeaderboardData = async () => {
 
 export const fetchRewardToken = async () => {
   try {
-    const response = await fetch(POOLS_API_ENDPOINT)
-    if (!response.ok) {
+    const response = await axios.get(POOLS_API_ENDPOINT)
+    if (!response.status === 200) {
       throw new Error(`HTTP error! Status: ${response.status}`)
     }
-    const data = await response.json()
+    const data = await response.data
 
     // Log and return only if data is valid
     if (data) {

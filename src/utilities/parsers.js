@@ -490,21 +490,7 @@ export const getMigrateVaultApy = (vaultKey, vaultsGroup, vaultsData, pools) => 
   return totalApy
 }
 
-export const getWalletApy = (value, groupOfVaults, vaultsData, pools) => {
-  let totalMonthlyYield = 0,
-    walletTotalBalance = 0
-  Object.entries(value.vaults).map(([vaultKey, vaultValue]) => {
-    const vaultApy = getVaultApy(vaultKey, groupOfVaults, vaultsData, pools)
-    const vaultMonthlyYield = (vaultApy / 12 / 100) * vaultValue.balance
-    totalMonthlyYield += vaultMonthlyYield
-    walletTotalBalance += vaultValue.balance
-    return true
-  })
-  const realWalletApy = (totalMonthlyYield / walletTotalBalance) * 12 * 100
-  return [realWalletApy, totalMonthlyYield]
-}
-
-export const rearrangeApiData = (apiData, groupOfVaults, vaultsData, pools) => {
+export const rearrangeApiData = (apiData, groupOfVaults) => {
   const vaultsFilteredData = Object.entries(apiData)
     .map(([wallet, entry]) => {
       const vaultsNumber = Object.entries(entry.vaults).length
@@ -518,12 +504,9 @@ export const rearrangeApiData = (apiData, groupOfVaults, vaultsData, pools) => {
 
   const removeLowMonthlyYieldData = vaultsFilteredData
     .map(([wallet, entry]) => {
-      const result = getWalletApy(entry, groupOfVaults, vaultsData, pools)
-      if (Array.isArray(result)) {
-        const [, totalMonthlyYield] = result
-        if (totalMonthlyYield >= 0.01) {
-          return [wallet, entry]
-        }
+      const result = (entry.totalDailyYield * 365) / 12
+      if (result >= 0.01) {
+        return [wallet, entry]
       }
       return null
     })
@@ -537,7 +520,7 @@ export const rearrangeApiData = (apiData, groupOfVaults, vaultsData, pools) => {
       const totalVaultBalance = Object.values(data.vaults).reduce((sum, vault) => {
         return sum + vault.balance
       }, 0)
-
+      data.totalBalance = totalVaultBalance
       return { address, data, totalVaultBalance }
     })
     .sort((a, b) => b.totalVaultBalance - a.totalVaultBalance)
@@ -553,7 +536,6 @@ export const rearrangeApiData = (apiData, groupOfVaults, vaultsData, pools) => {
       )
     }
   })
-
   return vaultBalanceSortedData
 }
 
