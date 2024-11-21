@@ -1314,17 +1314,8 @@ const AdvancedFarm = () => {
     }
 
     initData()
-  }, [
-    id,
-    token,
-    account,
-    vaultPool,
-    tokenDecimals,
-    currencySym,
-    currencyRate,
-    setUnderlyingEarnings,
-    setUsdEarnings,
-  ])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [account])
 
   const apyDaily = totalApy
     ? (((Number(totalApy) / 100 + 1) ** (1 / 365) - 1) * 100).toFixed(3)
@@ -2214,7 +2205,6 @@ const AdvancedFarm = () => {
                     useIFARM={useIFARM}
                     farmPrice={farmPrice}
                     underlyingPrice={underlyingPrice}
-                    pricePerFullShare={pricePerFullShare}
                     lpTokenBalance={lpTokenBalance}
                     chartData={chartData}
                   />
@@ -2648,7 +2638,6 @@ const AdvancedFarm = () => {
                       useIFARM={useIFARM}
                       farmPrice={farmPrice}
                       underlyingPrice={underlyingPrice}
-                      pricePerFullShare={pricePerFullShare}
                       lpTokenBalance={lpTokenBalance}
                       chartData={chartData}
                     />
