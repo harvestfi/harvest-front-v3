@@ -20,7 +20,7 @@ import { fromWei } from '../services/web3'
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 const moonwellWeth = '0x0b0193fad49de45f5e2b0a9f5d6bc3bb7d281688'
 
-export const getLastHarvestInfo = async (address, chainId, retries = 3, delayMs = 30000) => {
+export const getLastHarvestInfo = async (address, chainId, retries = 3, delayMs = 40000) => {
   let result = ''
   const nowDate = Math.floor(new Date().getTime() / 1000)
 
@@ -128,7 +128,7 @@ export const getLastHarvestInfo = async (address, chainId, retries = 3, delayMs 
   return fetchData(0)
 }
 
-export const getPublishDate = async (retries = 3, delayMs = 30000) => {
+export const getPublishDate = async (retries = 3, delayMs = 40000) => {
   const allData = [],
     allFlags = []
 
@@ -254,7 +254,7 @@ export const getPublishDate = async (retries = 3, delayMs = 30000) => {
   return { data: allData, flag: combinedFlags }
 }
 
-export const getSequenceId = async (address, chainId, retries = 3, delayMs = 30000) => {
+export const getSequenceId = async (address, chainId, retries = 3, delayMs = 40000) => {
   let vaultTVLCount,
     vaultPriceFeedCount,
     vaultsFlag = true
@@ -345,7 +345,7 @@ export const getSequenceId = async (address, chainId, retries = 3, delayMs = 300
   return fetchData(0)
 }
 
-export const getVaultHistories = async (address, chainId, retries = 3, delayMs = 30000) => {
+export const getVaultHistories = async (address, chainId, retries = 3, delayMs = 40000) => {
   let vaultHData = {},
     vaultHFlag = true
 
@@ -449,7 +449,7 @@ export const getDataQuery = async (
   timestamp,
   chartData = {},
   retries = 3,
-  delayMs = 30000,
+  delayMs = 40000,
 ) => {
   const sequenceIdsArray = []
   if (vaultTVLCount > 10000) {
@@ -589,7 +589,7 @@ export const getDataQuery = async (
   return chartData
 }
 
-export const getUserBalanceVaults = async (account, retries = 3, delayMs = 30000) => {
+export const getUserBalanceVaults = async (account, retries = 3, delayMs = 40000) => {
   const userBalanceVaults = []
   let userBalanceFlag = true
   if (account) {
@@ -670,7 +670,7 @@ export const getUserBalanceHistories = async (
   chainId,
   account,
   retries = 3,
-  delayMs = 30000,
+  delayMs = 40000,
 ) => {
   let balanceData = {},
     balanceFlag = true
@@ -772,7 +772,7 @@ export const getPriceFeeds = async (
   asQuery,
   priceFeedData = [],
   retries = 3,
-  delayMs = 30000,
+  delayMs = 40000,
 ) => {
   let priceFeedFlag = true,
     sequenceIdsArray = [],
