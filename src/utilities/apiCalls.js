@@ -14,7 +14,7 @@ import { fromWei } from '../services/web3'
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-const executeGraphCall = async (url, query, variables, retries = 5, delayMs = 5000) => {
+const executeGraphCall = async (url, query, variables, retries = 5, delayMs = 10000) => {
   let retry = 0,
     response
   try {
@@ -28,8 +28,6 @@ const executeGraphCall = async (url, query, variables, retries = 5, delayMs = 50
 
   while (retry < retries && (!response || response.status !== 200)) {
     console.warn(`Error in subgraph call. Retry ${retry + 1}. Retrying after ${delayMs}ms...`)
-    console.log(query)
-    console.log(variables)
     // eslint-disable-next-line no-await-in-loop
     await delay(delayMs)
     try {
