@@ -14,7 +14,7 @@ import { fromWei } from '../services/web3'
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-const executeGraphCall = async (url, query, variables, retries = 5, delayMs = 10000) => {
+const executeGraphCall = async (url, query, variables, retries = 5, delayMs = 5000) => {
   let retry = 0,
     response
   try {
