@@ -16,6 +16,10 @@ import Zksync from '../assets/images/chains/zksync.svg'
 import Ethereum from '../assets/images/chains/ethereum.svg'
 import Polygon from '../assets/images/chains/polygon.svg'
 
+export const totalNetProfitKey = 'TOTAL_NET_PROFIT'
+export const totalHistoryDataKey = 'TOTAL_HISTORY_DATA'
+export const vaultProfitDataKey = 'VAULT_LIFETIME_YIELD'
+
 export const getNextEmissionsCutDate = () => {
   const result = new Date()
   result.setUTCHours(19)

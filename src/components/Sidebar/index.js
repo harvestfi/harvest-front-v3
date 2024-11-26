@@ -39,7 +39,12 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import usePersistedState from '../../providers/usePersistedState'
 import { useWallet } from '../../providers/Wallet'
 import { fromWei } from '../../services/web3'
-import { getChainIcon } from '../../utilities/parsers'
+import {
+  getChainIcon,
+  totalHistoryDataKey,
+  totalNetProfitKey,
+  vaultProfitDataKey,
+} from '../../utilities/parsers'
 import { formatAddress, isLedgerLive, isSpecialApp } from '../../utilities/formats'
 import Social from '../Social'
 import CopyIcon from '../../assets/images/logos/sidebar/copy.svg'
@@ -425,6 +430,28 @@ const Sidebar = ({ width }) => {
       }, 1500)
     })
   }
+
+  const beforeAccount = localStorage.getItem('address')
+
+  useEffect(() => {
+    if (!connected) {
+      localStorage.setItem(totalNetProfitKey, '0')
+      localStorage.setItem(vaultProfitDataKey, JSON.stringify([]))
+      localStorage.setItem(totalHistoryDataKey, JSON.stringify([]))
+    }
+
+    if (beforeAccount === null && account !== null) {
+      localStorage.setItem('address', account)
+    }
+
+    if (beforeAccount !== null && account !== null && beforeAccount !== account) {
+      localStorage.setItem('address', account)
+      localStorage.setItem(totalNetProfitKey, '0')
+      localStorage.setItem(vaultProfitDataKey, JSON.stringify([]))
+      localStorage.setItem(totalHistoryDataKey, JSON.stringify([]))
+      window.location.reload()
+    }
+  }, [connected, account, beforeAccount])
 
   useEffect(() => {
     setCurCurrency(supportedCurrencies[rates.currency.id])

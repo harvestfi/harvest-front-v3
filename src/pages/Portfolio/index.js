@@ -53,7 +53,13 @@ import {
   getUserBalanceVaults,
   initBalanceAndDetailData,
 } from '../../utilities/apiCalls'
-import { getChainIcon, getTotalApy } from '../../utilities/parsers'
+import {
+  getChainIcon,
+  getTotalApy,
+  totalHistoryDataKey,
+  totalNetProfitKey,
+  vaultProfitDataKey,
+} from '../../utilities/parsers'
 import {
   Column,
   Container,
@@ -94,10 +100,6 @@ import {
   GreenBox,
 } from './style'
 import AnimatedDots from '../../components/AnimatedDots'
-
-const totalNetProfitKey = 'TOTAL_NET_PROFIT'
-const totalHistoryDataKey = 'TOTAL_HISTORY_DATA'
-const vaultProfitDataKey = 'VAULT_LIFETIME_YIELD'
 
 const Portfolio = () => {
   const { push } = useHistory()
@@ -156,7 +158,22 @@ const Portfolio = () => {
   const [balanceFlag, setBalanceFlag] = useState(true)
   const [correctRun, setCorrectRun] = useState(true)
 
-  const beforeAccount = localStorage.getItem('address')
+  useEffect(() => {
+    const prevTotalProfit = Number(localStorage.getItem(totalNetProfitKey) || '0')
+    setTotalNetProfit(prevTotalProfit)
+
+    const prevTotalHistoryData = JSON.parse(localStorage.getItem(totalHistoryDataKey) || '[]')
+    setTotalHistoryData(prevTotalHistoryData)
+
+    const prevVaultProfitData = JSON.parse(localStorage.getItem(vaultProfitDataKey) || '[]')
+    setVaultNetChangeList(prevVaultProfitData)
+
+    const getCoinList = async () => {
+      const data = await getCoinListFromApi()
+      setApiData(data)
+    }
+    getCoinList()
+  }, [])
 
   useEffect(() => {
     if (totalDeposit !== 0 && totalNetProfit !== 0 && totalYieldMonthly !== 0 && totalYieldDaily) {
@@ -177,24 +194,6 @@ const Portfolio = () => {
   useEffect(() => {
     setCurCurrency(supportedCurrencies[rates.currency.id])
   }, [rates])
-
-  useEffect(() => {
-    const getCoinList = async () => {
-      const data = await getCoinListFromApi()
-      setApiData(data)
-    }
-
-    getCoinList()
-
-    const prevTotalProfit = Number(localStorage.getItem(totalNetProfitKey) || '0')
-    setTotalNetProfit(prevTotalProfit)
-
-    const prevTotalHistoryData = JSON.parse(localStorage.getItem(totalHistoryDataKey) || '[]')
-    setTotalHistoryData(prevTotalHistoryData)
-
-    const prevVaultProfitData = JSON.parse(localStorage.getItem(vaultProfitDataKey) || '[]')
-    setVaultNetChangeList(prevVaultProfitData)
-  }, [])
 
   const farmProfitSharingPool = totalPools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
@@ -656,16 +655,7 @@ const Portfolio = () => {
     const visited = localStorage.getItem(totalNetProfitKey)
     let safeCount = localStorage.getItem('safe')
 
-    if (beforeAccount === null && account !== null) {
-      localStorage.setItem('address', account)
-    }
-
-    if (
-      (beforeAccount !== null && account !== null && beforeAccount !== account) ||
-      !safeFlag ||
-      !balanceFlag ||
-      !correctRun
-    ) {
+    if (!safeFlag || !balanceFlag || !correctRun) {
       localStorage.setItem('address', account)
       setTimeout(() => {
         window.location.reload()
@@ -683,6 +673,7 @@ const Portfolio = () => {
       localStorage.setItem(totalNetProfitKey, 0)
       setIsLoading(true)
     }
+
     if (Number(visited) === 0 || visited === null || Number(visited) === -1 || safeCount > 30) {
       if (!isEmpty(userStats) && account && !onceRun) {
         setOnceRun(true)
@@ -791,16 +782,7 @@ const Portfolio = () => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    account,
-    userStats,
-    showInactiveFarms,
-    connected,
-    beforeAccount,
-    safeFlag,
-    correctRun,
-    balanceFlag,
-  ])
+  }, [account, userStats, showInactiveFarms, connected, safeFlag, correctRun, balanceFlag])
 
   const sortCol = field => {
     if (field === 'lifetimeYield') {

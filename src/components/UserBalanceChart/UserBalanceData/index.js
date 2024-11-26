@@ -39,7 +39,6 @@ const UserBalanceData = ({
   useIFARM,
   farmPrice,
   underlyingPrice,
-  pricePerFullShare,
   lpTokenBalance,
   chartData,
 }) => {
@@ -75,7 +74,6 @@ const UserBalanceData = ({
   const totalValueRef = useRef(totalValue)
   const farmPriceRef = useRef(farmPrice)
   const usdPriceRef = useRef(underlyingPrice)
-  const pricePerFullShareRef = useRef(pricePerFullShare)
 
   const toggleExpand = () => setIsExpanded(prev => !prev)
 
@@ -83,8 +81,7 @@ const UserBalanceData = ({
     totalValueRef.current = totalValue
     farmPriceRef.current = farmPrice
     usdPriceRef.current = underlyingPrice
-    pricePerFullShareRef.current = pricePerFullShare
-  }, [totalValue, underlyingPrice, farmPrice, pricePerFullShare])
+  }, [totalValue, underlyingPrice, farmPrice])
 
   const handleTooltipContent = payload => {
     if (payload && payload.length) {
@@ -127,7 +124,7 @@ const UserBalanceData = ({
   useEffect(() => {
     let isMounted = true
     const initData = async () => {
-      if (account && address && chainId && pricePerFullShare) {
+      if (account && address && chainId && usdPriceRef.current > 0) {
         try {
           const uniqueData2 = []
           const timestamps = []
@@ -381,7 +378,6 @@ const UserBalanceData = ({
     underlyingPrice,
     useIFARM,
     farmPrice,
-    pricePerFullShare,
     chartData,
     token.inactive,
   ])
