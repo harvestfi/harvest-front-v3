@@ -2,12 +2,7 @@ import axios from 'axios'
 import { get } from 'lodash'
 import { CHAIN_IDS } from '../data/constants'
 import {
-  GRAPH_URL_MAINNET,
-  GRAPH_URL_POLYGON,
-  GRAPH_URL_ARBITRUM,
-  GRAPH_URL_BASE,
-  GRAPH_URL_ZKSYNC,
-  GRAPH_URL_BASE_MOONWELL,
+  GRAPH_URLS,
   TOTAL_TVL_API_ENDPOINT,
   HISTORICAL_RATES_API_ENDPOINT,
   GECKO_URL,
@@ -18,7 +13,6 @@ import {
 import { fromWei } from '../services/web3'
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
-const moonwellWeth = '0x0b0193fad49de45f5e2b0a9f5d6bc3bb7d281688'
 
 export const getLastHarvestInfo = async (address, chainId, retries = 3, delayMs = 2000) => {
   let result = ''
@@ -53,18 +47,7 @@ export const getLastHarvestInfo = async (address, chainId, retries = 3, delayMs 
       redirect: 'follow',
     }
 
-  const url =
-    chainId === CHAIN_IDS.ETH_MAINNET
-      ? GRAPH_URL_MAINNET
-      : chainId === CHAIN_IDS.POLYGON_MAINNET
-      ? GRAPH_URL_POLYGON
-      : chainId === CHAIN_IDS.BASE
-      ? address.toLowerCase() === moonwellWeth.toLowerCase()
-        ? GRAPH_URL_BASE_MOONWELL
-        : GRAPH_URL_BASE
-      : chainId === CHAIN_IDS.ZKSYNC
-      ? GRAPH_URL_ZKSYNC
-      : GRAPH_URL_ARBITRUM
+  const url = GRAPH_URLS[chainId]
 
   const fetchData = async attempt => {
     try {
@@ -137,7 +120,7 @@ export const getPublishDate = async (retries = 3, delayMs = 2000) => {
 
   const graphqlQueries = [
     {
-      url: GRAPH_URL_MAINNET,
+      url: GRAPH_URLS[CHAIN_IDS.ETH_MAINNET],
       query: `{
         vaults(
           first: 1000,
@@ -149,7 +132,7 @@ export const getPublishDate = async (retries = 3, delayMs = 2000) => {
       }`,
     },
     {
-      url: GRAPH_URL_POLYGON,
+      url: GRAPH_URLS[CHAIN_IDS.POLYGON_MAINNET],
       query: `{
         vaults(
           first: 1000,
@@ -161,7 +144,7 @@ export const getPublishDate = async (retries = 3, delayMs = 2000) => {
       }`,
     },
     {
-      url: GRAPH_URL_BASE,
+      url: GRAPH_URLS[CHAIN_IDS.BASE],
       query: `{
         vaults(
           first: 1000,
@@ -173,7 +156,7 @@ export const getPublishDate = async (retries = 3, delayMs = 2000) => {
       }`,
     },
     {
-      url: GRAPH_URL_ARBITRUM,
+      url: GRAPH_URLS[CHAIN_IDS.ARBITRUM_ONE],
       query: `{
         vaults(
           first: 1000,
@@ -185,7 +168,7 @@ export const getPublishDate = async (retries = 3, delayMs = 2000) => {
       }`,
     },
     {
-      url: GRAPH_URL_ZKSYNC,
+      url: GRAPH_URLS[CHAIN_IDS.ZKSYNC],
       query: `{
         vaults(
           first: 1000,
@@ -286,16 +269,7 @@ export const getSequenceId = async (address, chainId, retries = 3, delayMs = 200
       redirect: 'follow',
     }
 
-  const url =
-    chainId === CHAIN_IDS.ETH_MAINNET
-      ? GRAPH_URL_MAINNET
-      : chainId === CHAIN_IDS.POLYGON_MAINNET
-      ? GRAPH_URL_POLYGON
-      : chainId === CHAIN_IDS.BASE
-      ? address.toLowerCase() === moonwellWeth.toLowerCase()
-        ? GRAPH_URL_BASE_MOONWELL
-        : GRAPH_URL_BASE
-      : GRAPH_URL_ARBITRUM
+  const url = GRAPH_URLS[chainId]
 
   const fetchData = async attempt => {
     try {
@@ -378,18 +352,7 @@ export const getVaultHistories = async (address, chainId, retries = 3, delayMs =
       redirect: 'follow',
     }
 
-  const url =
-    chainId === CHAIN_IDS.ETH_MAINNET
-      ? GRAPH_URL_MAINNET
-      : chainId === CHAIN_IDS.POLYGON_MAINNET
-      ? GRAPH_URL_POLYGON
-      : chainId === CHAIN_IDS.BASE
-      ? address.toLowerCase() === moonwellWeth.toLowerCase()
-        ? GRAPH_URL_BASE_MOONWELL
-        : GRAPH_URL_BASE
-      : chainId === CHAIN_IDS.ZKSYNC
-      ? GRAPH_URL_ZKSYNC
-      : GRAPH_URL_ARBITRUM
+  const url = GRAPH_URLS[chainId]
 
   const fetchData = async attempt => {
     try {
@@ -405,6 +368,9 @@ export const getVaultHistories = async (address, chainId, retries = 3, delayMs =
         vaultHFlag = false
         return { vaultHData, vaultHFlag }
       }
+
+      console.log(url)
+      console.log(response)
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -518,18 +484,7 @@ export const getDataQuery = async (
       redirect: 'follow',
     }
 
-  const url =
-    chainId === CHAIN_IDS.ETH_MAINNET
-      ? GRAPH_URL_MAINNET
-      : chainId === CHAIN_IDS.POLYGON_MAINNET
-      ? GRAPH_URL_POLYGON
-      : chainId === CHAIN_IDS.BASE
-      ? address.toLowerCase() === moonwellWeth.toLowerCase()
-        ? GRAPH_URL_BASE_MOONWELL
-        : GRAPH_URL_BASE
-      : chainId === CHAIN_IDS.ZKSYNC
-      ? GRAPH_URL_ZKSYNC
-      : GRAPH_URL_ARBITRUM
+  const url = GRAPH_URLS[chainId]
 
   // eslint-disable-next-line consistent-return
   const fetchData = async (attempt = 0) => {
@@ -619,11 +574,11 @@ export const getUserBalanceVaults = async (account, retries = 3, delayMs = 2000)
     }
 
   const urls = [
-    GRAPH_URL_MAINNET,
-    GRAPH_URL_POLYGON,
-    GRAPH_URL_BASE,
-    GRAPH_URL_ARBITRUM,
-    GRAPH_URL_ZKSYNC,
+    GRAPH_URLS[CHAIN_IDS.ETH_MAINNET],
+    GRAPH_URLS[CHAIN_IDS.POLYGON_MAINNET],
+    GRAPH_URLS[CHAIN_IDS.BASE],
+    GRAPH_URLS[CHAIN_IDS.ARBITRUM_ONE],
+    GRAPH_URLS[CHAIN_IDS.ZKSYNC],
   ]
 
   const fetchWithRetry = async (url, attempt = 0) => {
@@ -708,18 +663,7 @@ export const getUserBalanceHistories = async (
       redirect: 'follow',
     }
 
-  const url =
-    chainId === CHAIN_IDS.ETH_MAINNET
-      ? GRAPH_URL_MAINNET
-      : chainId === CHAIN_IDS.POLYGON_MAINNET
-      ? GRAPH_URL_POLYGON
-      : chainId === CHAIN_IDS.BASE
-      ? address.toLowerCase() === moonwellWeth.toLowerCase()
-        ? GRAPH_URL_BASE_MOONWELL
-        : GRAPH_URL_BASE
-      : chainId === CHAIN_IDS.ZKSYNC
-      ? GRAPH_URL_ZKSYNC
-      : GRAPH_URL_ARBITRUM
+  const url = GRAPH_URLS[chainId]
 
   const fetchData = async attempt => {
     try {
@@ -826,18 +770,7 @@ export const getPriceFeeds = async (
       redirect: 'follow',
     }
 
-  const url =
-    chainId === CHAIN_IDS.ETH_MAINNET
-      ? GRAPH_URL_MAINNET
-      : chainId === CHAIN_IDS.POLYGON_MAINNET
-      ? GRAPH_URL_POLYGON
-      : chainId === CHAIN_IDS.BASE
-      ? address.toLowerCase() === moonwellWeth.toLowerCase()
-        ? GRAPH_URL_BASE_MOONWELL
-        : GRAPH_URL_BASE
-      : chainId === CHAIN_IDS.ZKSYNC
-      ? GRAPH_URL_ZKSYNC
-      : GRAPH_URL_ARBITRUM
+  const url = GRAPH_URLS[chainId]
 
   // eslint-disable-next-line consistent-return
   const fetchData = async () => {
@@ -1164,33 +1097,6 @@ export const initBalanceAndDetailData = async (address, chainId, account, tokenD
   }
 }
 
-export const getTVLData = async (ago, address) => {
-  let nowDate = new Date(),
-    data = []
-  nowDate = Math.floor(nowDate.setDate(nowDate.getDate() - 1) / 1000)
-  const startDate = nowDate - 3600 * 24 * ago
-
-  const api = `https://ethparser-api.herokuapp.com/api/transactions/history/tvl/${address}?reduce=1&start=${startDate}&network=eth`
-  try {
-    await fetch(api)
-      .then(async res => {
-        res = await res.json()
-        if (res.length > 0) {
-          data = res.map(a => {
-            return [a.calculateTime, a.lastTvl]
-          })
-        }
-      })
-      .catch(err => {
-        console.log(err)
-      })
-  } catch (err) {
-    console.log('Fetch Chart Data error: ', err)
-  }
-
-  return data
-}
-
 export const getTotalTVLData = async () => {
   try {
     const apiResponse = await axios.get(TOTAL_TVL_API_ENDPOINT)
@@ -1234,23 +1140,6 @@ export const getTokenPriceFromApi = async tokenID => {
     return null
   }
 }
-
-// /**
-//  * @param symbol token symbol
-//  * @param apiData coingeko data
-//  * @dev get token id from api data
-//  * ** */
-// export function getTokenIdBySymbolInApiData(symbol, apiData) {
-//   const symbol = symbol.toLowerCase();
-//   for (let ids = 0; ids < apiData.length; ids += 1) {
-//     const tempData = apiData[ids]
-//     const tempSymbol = tempData.symbol
-//     if (tempSymbol.toLowerCase() === symbol.toLowerCase()) {
-//       return tempData.id
-//     }
-//   }
-//   return null;
-// }
 
 export const fetchLeaderboardData = async () => {
   try {

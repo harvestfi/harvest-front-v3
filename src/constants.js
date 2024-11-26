@@ -91,24 +91,18 @@ export const BASE_URL = `https://base-mainnet.g.alchemy.com/v2/${process.env.REA
 export const ARBITRUM_URL = `https://arb-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 export const ZKSYNC_URL = `https://zksync-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 
-export const GRAPH_URL_MAINNET =
-  process.env.REACT_APP_GRAPH_URL_MAINNET ||
-  'https://api.studio.thegraph.com/query/48757/harvest-mainnet-test/version/latest'
-export const GRAPH_URL_POLYGON =
-  process.env.REACT_APP_GRAPH_URL_POLYGON ||
-  'https://api.studio.thegraph.com/query/48757/l2-polygon-test/version/latest'
-export const GRAPH_URL_ARBITRUM =
-  process.env.REACT_APP_GRAPH_URL_ARBITRUM ||
-  'https://api.studio.thegraph.com/query/48757/harvest-arbitrum/version/latest'
-export const GRAPH_URL_BASE =
-  process.env.REACT_APP_GRAPH_URL_BASE ||
-  'https://api.studio.thegraph.com/query/48757/harvest-base/version/latest'
-export const GRAPH_URL_BASE_MOONWELL =
-  process.env.REACT_APP_GRAPH_URL_BASE_MOONWELL ||
-  'https://api.studio.thegraph.com/query/48757/harvest-base/version/latest'
-export const GRAPH_URL_ZKSYNC =
-  process.env.REACT_APP_GRAPH_URL_ZKSYNC ||
-  'https://api.studio.thegraph.com/query/48757/l2-zksync-era/version/latest'
+export const GRAPH_URLS = {
+  1: process.env.REACT_APP_GRAPH_URL_MAINNET || 'https://monkfish-app-mhcjl.ondigitalocean.app/1',
+  137:
+    process.env.REACT_APP_GRAPH_URL_POLYGON || 'https://monkfish-app-mhcjl.ondigitalocean.app/137',
+  324:
+    process.env.REACT_APP_GRAPH_URL_ZKSYNC || 'https://monkfish-app-mhcjl.ondigitalocean.app/324',
+  8453:
+    process.env.REACT_APP_GRAPH_URL_BASE || 'https://monkfish-app-mhcjl.ondigitalocean.app/8453',
+  42161:
+    process.env.REACT_APP_GRAPH_URL_ARBITRUM ||
+    'https://monkfish-app-mhcjl.ondigitalocean.app/42161',
+}
 
 export const ETHERSCAN_URL = 'https://etherscan.io'
 
