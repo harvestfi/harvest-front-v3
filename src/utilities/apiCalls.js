@@ -369,9 +369,6 @@ export const getVaultHistories = async (address, chainId, retries = 3, delayMs =
         return { vaultHData, vaultHFlag }
       }
 
-      console.log(url)
-      console.log(response)
-
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
