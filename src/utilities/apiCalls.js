@@ -14,109 +14,100 @@ import { fromWei } from '../services/web3'
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
-export const getLastHarvestInfo = async (address, chainId, retries = 3, delayMs = 2000) => {
+const executeGraphCall = async (url, query, variables, retries = 5, delayMs = 5000) => {
+  let retry = 0,
+    response
+  try {
+    response = await axios.post(url, {
+      query,
+      variables,
+    })
+  } catch (error) {
+    response = error.response
+  }
+
+  while (retry < retries && (!response || response.status !== 200)) {
+    console.warn(`Error in subgraph call. Retry ${retry + 1}. Retrying after ${delayMs}ms...`)
+    console.log(query)
+    console.log(variables)
+    // eslint-disable-next-line no-await-in-loop
+    await delay(delayMs)
+    try {
+      // eslint-disable-next-line no-await-in-loop
+      response = await axios.post(url, {
+        query,
+        variables,
+      })
+    } catch (error) {
+      response = error.response
+    }
+    retry += 1
+  }
+  const data = get(response, 'data.data')
+  if (data) {
+    return data
+  }
+  return null
+}
+
+export const getLastHarvestInfo = async (address, chainId) => {
   let result = ''
   const nowDate = Math.floor(new Date().getTime() / 1000)
-
-  const myHeaders = new Headers()
-  myHeaders.append('Content-Type', 'application/json')
 
   address = address.toLowerCase()
   const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
   const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
 
-  const graphql = JSON.stringify({
-      query: `{
-        vaultHistories(
-          first: 1,
-          where: {
-            vault: "${address === farm ? ifarm : address}",
-          },
-          orderBy: timestamp,
-          orderDirection: desc
-        ) {
-          timestamp
-        }
-      }`,
-      variables: {},
-    }),
-    requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: graphql,
-      redirect: 'follow',
+  const query = `
+    query getLastHarvestInfo($vault: String!) {
+      vaultHistories(
+        first: 1,
+        where: {
+          vault: $vault,
+        },
+        orderBy: timestamp,
+        orderDirection: desc
+      ) {
+        timestamp
+      }
     }
-
+  `
+  const variables = address === farm ? { vault: ifarm } : { vault: address }
   const url = GRAPH_URLS[chainId]
 
-  const fetchData = async attempt => {
-    try {
-      const response = await fetch(url, requestOptions)
+  const data = await executeGraphCall(url, query, variables)
+  const hisData = data.vaultHistories
 
-      if (response.status === 429) {
-        if (attempt < retries) {
-          console.warn(`429 Too Many Requests to vaultHistories. Retrying after ${delayMs}ms...`)
-          await delay(delayMs)
-          return fetchData(attempt + 1)
-        }
-        console.error('Max retries reached due to 429. Exiting...')
-        return result
-      }
+  if (hisData && hisData.length !== 0) {
+    const timeStamp = hisData[0].timestamp
+    let duration = Number(nowDate) - Number(timeStamp),
+      day = 0,
+      hour = 0,
+      min = 0
+    // calculate (and subtract) whole days
+    day = Math.floor(duration / 86400)
+    duration -= day * 86400
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
+    // calculate (and subtract) whole hours
+    hour = Math.floor(duration / 3600) % 24
+    duration -= hour * 3600
 
-      const res = await response.json()
-      const data = res.data.vaultHistories
+    // calculate (and subtract) whole minutes
+    min = Math.floor(duration / 60) % 60
 
-      if (data && data.length !== 0) {
-        const timeStamp = data[0].timestamp
-        let duration = Number(nowDate) - Number(timeStamp),
-          day = 0,
-          hour = 0,
-          min = 0
-        // calculate (and subtract) whole days
-        day = Math.floor(duration / 86400)
-        duration -= day * 86400
-
-        // calculate (and subtract) whole hours
-        hour = Math.floor(duration / 3600) % 24
-        duration -= hour * 3600
-
-        // calculate (and subtract) whole minutes
-        min = Math.floor(duration / 60) % 60
-
-        const dayString = `${day > 0 ? `${day}d` : ''}`
-        const hourString = `${hour > 0 ? `${hour}h` : ''}`
-        const minString = `${min > 0 ? `${min}m` : ''}`
-        result = `${
-          `${dayString !== '' ? `${dayString} ` : ''}` +
-          `${hourString !== '' ? `${hourString} ` : ''}`
-        }${minString}`
-      }
-      return result
-    } catch (err) {
-      console.error(`Attempt ${attempt + 1} failed:`, err)
-
-      if (attempt < retries) {
-        console.warn(`Retrying after ${delayMs}ms...`)
-        await delay(delayMs)
-        return fetchData(attempt + 1)
-      }
-      console.error('Max retries reached. Exiting...')
-      return result
-    }
+    const dayString = `${day > 0 ? `${day}d` : ''}`
+    const hourString = `${hour > 0 ? `${hour}h` : ''}`
+    const minString = `${min > 0 ? `${min}m` : ''}`
+    result = `${`${dayString !== '' ? `${dayString} ` : ''}${
+      hourString !== '' ? `${hourString} ` : ''
+    }`}${minString}`
   }
-  return fetchData(0)
+  return result
 }
 
-export const getPublishDate = async (retries = 3, delayMs = 2000) => {
+export const getPublishDate = async () => {
   const allData = [],
     allFlags = []
-
-  const myHeaders = new Headers()
-  myHeaders.append('Content-Type', 'application/json')
 
   const graphqlQueries = [
     {
@@ -181,52 +172,14 @@ export const getPublishDate = async (retries = 3, delayMs = 2000) => {
     },
   ]
 
-  const fetchWithRetry = async (url, query, attempt = 0) => {
-    const requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: JSON.stringify({ query }),
-      redirect: 'follow',
-    }
-
-    try {
-      const response = await fetch(url, requestOptions)
-
-      if (response.status === 429 && attempt < retries) {
-        console.warn(
-          `Attempt ${attempt + 1}: Too Many Requests on ${url}. Retrying in ${delayMs}ms...`,
-        )
-        await new Promise(resolve => setTimeout(resolve, delayMs))
-        return fetchWithRetry(url, query, attempt + 1)
-      }
-
-      const res = await response.json()
-      const data = res.data.vaults || []
-      const flag = data.length > 0
-
-      return { data, flag }
-    } catch (error) {
-      console.warn(`Attempt ${attempt + 1} failed for ${url}: ${error.message}`)
-
-      if (attempt < retries) {
-        console.warn(`Retrying in ${delayMs}ms...`)
-        await new Promise(resolve => setTimeout(resolve, delayMs))
-        return fetchWithRetry(url, query, attempt + 1)
-      }
-
-      console.error(`All ${retries} retries failed for ${url}.`)
-      return { data: [], flag: false }
-    }
-  }
-
   try {
     const results = await Promise.all(
-      graphqlQueries.map(({ url, query }) => fetchWithRetry(url, query)),
+      graphqlQueries.map(({ url, query }) => executeGraphCall(url, query, {})),
     )
 
-    results.forEach(({ data, flag }) => {
-      allData.push(...data)
-      allFlags.push(flag)
+    results.forEach(data => {
+      allData.push(...data.vaults)
+      allFlags.push(data.vaults.length > 0)
     })
   } catch (err) {
     console.error('Error fetching data:', err)
@@ -237,165 +190,78 @@ export const getPublishDate = async (retries = 3, delayMs = 2000) => {
   return { data: allData, flag: combinedFlags }
 }
 
-export const getSequenceId = async (address, chainId, retries = 3, delayMs = 2000) => {
+export const getSequenceId = async (address, chainId) => {
   let vaultTVLCount,
     vaultPriceFeedCount,
     vaultsFlag = true
-
-  const myHeaders = new Headers()
-  myHeaders.append('Content-Type', 'application/json')
 
   address = address.toLowerCase()
   const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
   const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
   const vaultAddress = address === farm ? ifarm : address
 
-  const graphql = JSON.stringify({
-      query: `{
-        vaults(
-          first: 1000,
-          orderBy: timestamp,
-          orderDirection: desc
-        ) {
-          id, tvlSequenceId, priceFeedSequenceId
-        }
-      }`,
-      variables: {},
-    }),
-    requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: graphql,
-      redirect: 'follow',
+  const query = `
+    {
+      vaults(
+        first: 1000,
+        orderBy: timestamp,
+        orderDirection: desc
+      ) {
+        id, tvlSequenceId, priceFeedSequenceId
+      }
     }
-
+  `
   const url = GRAPH_URLS[chainId]
 
-  const fetchData = async attempt => {
-    try {
-      const response = await fetch(url, requestOptions)
-      if (response.status === 429) {
-        if (attempt < retries) {
-          console.warn(`429 Too Many Requests to vaults. Retrying after ${delayMs}ms...`)
-          await delay(delayMs)
-          return fetchData(attempt + 1)
-        }
-        console.error('Max retries reached due to 429. Exiting...')
-        vaultsFlag = false
-        return { vaultTVLCount, vaultPriceFeedCount, vaultsFlag }
-      }
+  const data = await executeGraphCall(url, query, {})
+  const vaultsData = data ? data.vaults : []
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-
-      const res = await response.json()
-      const vaultsData = res.data.vaults
-
-      if (!vaultsData || vaultsData.length === 0) {
-        vaultsFlag = false
-      } else {
-        const matchingVault = vaultsData.find(vault => vault.id === vaultAddress)
-        if (matchingVault) {
-          vaultTVLCount = matchingVault.tvlSequenceId
-          vaultPriceFeedCount = matchingVault.priceFeedSequenceId
-        }
-      }
-
-      return { vaultTVLCount, vaultPriceFeedCount, vaultsFlag }
-    } catch (err) {
-      console.error(`Attempt ${attempt + 1} failed:`, err)
-
-      if (attempt < retries) {
-        console.warn(`Retrying after ${delayMs}ms...`)
-        await delay(delayMs)
-        return fetchData(attempt + 1) // Recursive retry
-      }
-      console.error('Max retries reached. Exiting...')
-      vaultsFlag = false
-      return { vaultTVLCount, vaultPriceFeedCount, vaultsFlag }
+  if (!vaultsData || vaultsData.length === 0) {
+    vaultsFlag = false
+  } else {
+    const matchingVault = vaultsData.find(vault => vault.id === vaultAddress)
+    if (matchingVault) {
+      vaultTVLCount = matchingVault.tvlSequenceId
+      vaultPriceFeedCount = matchingVault.priceFeedSequenceId
     }
   }
-  return fetchData(0)
+
+  return { vaultTVLCount, vaultPriceFeedCount, vaultsFlag }
 }
 
-export const getVaultHistories = async (address, chainId, retries = 3, delayMs = 2000) => {
+export const getVaultHistories = async (address, chainId) => {
   let vaultHData = {},
     vaultHFlag = true
-
-  const myHeaders = new Headers()
-  myHeaders.append('Content-Type', 'application/json')
 
   address = address.toLowerCase()
   const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
   const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
 
-  const graphql = JSON.stringify({
-      query: `{
-        vaultHistories(
-          first: 1000,
-          where: {
-            vault: "${address === farm ? ifarm : address}",
-          },
-          orderBy: timestamp,
-          orderDirection: desc
-        ) {
-          priceUnderlying, sharePrice, timestamp
-        }
-      }`,
-      variables: {},
-    }),
-    requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: graphql,
-      redirect: 'follow',
+  const query = `
+    query getVaultHistories($vault: String!) {
+      vaultHistories(
+        first: 1000,
+        where: {
+          vault: $vault,
+        },
+        orderBy: timestamp,
+        orderDirection: desc
+      ) {
+        priceUnderlying, sharePrice, timestamp
+      }
     }
-
+  `
+  const variables = address === farm ? { vault: ifarm } : { vault: address }
   const url = GRAPH_URLS[chainId]
 
-  const fetchData = async attempt => {
-    try {
-      const response = await fetch(url, requestOptions)
+  const data = await executeGraphCall(url, query, variables)
+  vaultHData = data.vaultHistories
 
-      if (response.status === 429) {
-        if (attempt < retries) {
-          console.warn(`429 Too Many Requests to vaultHistories. Retrying after ${delayMs}ms...`)
-          await delay(delayMs)
-          return fetchData(attempt + 1) // Recursive retry
-        }
-        console.error('Max retries reached due to 429. Exiting...')
-        vaultHFlag = false
-        return { vaultHData, vaultHFlag }
-      }
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-
-      const res = await response.json()
-      vaultHData = res.data.vaultHistories
-
-      if (!vaultHData || vaultHData.length === 0) {
-        vaultHFlag = false
-      }
-
-      return { vaultHData, vaultHFlag }
-    } catch (err) {
-      console.error(`Attempt ${attempt + 1} failed:`, err)
-
-      if (attempt < retries) {
-        console.warn(`Retrying after ${delayMs}ms...`)
-        await delay(delayMs)
-        return fetchData(attempt + 1)
-      }
-      console.error('Max retries reached. Exiting...')
-      vaultHFlag = false
-      return { vaultHData, vaultHFlag }
-    }
+  if (!vaultHData || vaultHData.length === 0) {
+    vaultHFlag = false
   }
 
-  return fetchData(0)
+  return { vaultHData, vaultHFlag }
 }
 
 export const getCurrencyRateHistories = async () => {
@@ -411,8 +277,6 @@ export const getDataQuery = async (
   asQuery,
   timestamp,
   chartData = {},
-  retries = 3,
-  delayMs = 2000,
 ) => {
   const sequenceIdsArray = []
   if (vaultTVLCount > 10000) {
@@ -425,151 +289,102 @@ export const getDataQuery = async (
     for (let i = 1; i <= vaultTVLCount; i += step) {
       sequenceIdsArray.push(i)
     }
+  } else {
+    for (let i = 1; i <= vaultTVLCount; i += 1) {
+      sequenceIdsArray.push(i)
+    }
   }
 
-  const tvlSequenceId = vaultTVLCount > 1000 ? `tvlSequenceId_in: [${sequenceIdsArray}]` : ''
-
-  const timestampQuery = asQuery ? `timestamp_lt: "${timestamp}"` : ''
+  const nowTime = Math.floor(new Date().getTime() / 1000)
+  const timestampQuery = asQuery ? timestamp : nowTime
   address = address.toLowerCase()
   const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
   const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
 
-  const myHeaders = new Headers()
-  myHeaders.append('Content-Type', 'application/json')
-
-  const graphql = JSON.stringify({
-      query: `{
-        generalApies(
-          first: 1000,
-          where: {
-            vault: "${address === farm ? ifarm : address}",
-          }, 
-          orderBy: timestamp, 
-          orderDirection: desc
-        ) { 
-          apy, timestamp
-        }
-        tvls(
-          first: 1000,
-          where: {
-            vault: "${address === farm ? ifarm : address}", 
-            ${timestampQuery},
-            ${tvlSequenceId}
-          },
-          orderBy: timestamp,
-          orderDirection: desc
-        ) {
-          value, timestamp
+  const query = `
+    query getData($vault: String!, $endTime: BigInt, $sequenceIds: [Int!]) {
+      generalApies(
+        first: 1000,
+        where: {
+          vault: $vault,
+        }, 
+        orderBy: timestamp, 
+        orderDirection: desc
+      ) { 
+        apy, timestamp
+      }
+      tvls(
+        first: 1000,
+        where: {
+          vault: $vault, 
+          timestamp_lt: $endTime,
+          tvlSequenceId_in: $sequenceIds
         },
-        vaultHistories(
-          first: 1000,
-          where: {
-            vault: "${address === farm ? ifarm : address}",
-          },
-          orderBy: timestamp,
-          orderDirection: desc
-        ) {
-          priceUnderlying, sharePrice, timestamp
-        }
-      }`,
-      variables: {},
-    }),
-    requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: graphql,
-      redirect: 'follow',
+        orderBy: timestamp,
+        orderDirection: desc
+      ) {
+        value, timestamp
+      },
+      vaultHistories(
+        first: 1000,
+        where: {
+          vault: $vault,
+        },
+        orderBy: timestamp,
+        orderDirection: desc
+      ) {
+        priceUnderlying, sharePrice, timestamp
+      }
     }
-
+  `
+  const variables =
+    address === farm
+      ? { vault: ifarm, endTime: timestampQuery, sequenceIds: sequenceIdsArray }
+      : { vault: address, endTime: timestampQuery, sequenceIds: sequenceIdsArray }
   const url = GRAPH_URLS[chainId]
 
-  // eslint-disable-next-line consistent-return
-  const fetchData = async (attempt = 0) => {
-    try {
-      const response = await fetch(url, requestOptions)
-
-      if (response.status === 429 && attempt < retries) {
-        console.warn(`Attempt ${attempt + 1}: Too Many Requests. Retrying in ${delayMs}ms...`)
-        await new Promise(resolve => setTimeout(resolve, delayMs))
-        return fetchData(attempt + 1)
-      }
-
-      const responseJson = await response.json()
-
-      // To merge the response data into the chartData object
-      Object.keys(responseJson.data).forEach(key => {
-        if (!Object.prototype.hasOwnProperty.call(chartData, key)) {
-          chartData[key] = responseJson.data[key]
-        } else if (Array.isArray(chartData[key]) && Array.isArray(responseJson.data[key])) {
-          chartData[key].push(...responseJson.data[key])
-        } else if (
-          typeof chartData[key] === 'object' &&
-          typeof responseJson.data[key] === 'object'
-        ) {
-          Object.assign(chartData[key], responseJson.data[key])
-        } else {
-          chartData[key] = responseJson.data[key]
-        }
-      })
-
-      const dataTimestamp = Number(chartData.tvls[chartData.tvls.length - 1].timestamp)
-      const initTimestamp = Number(
-        chartData.generalApies[chartData.generalApies.length - 1].timestamp,
-      )
-      if (responseJson.data.tvls.length === 1000 && dataTimestamp > initTimestamp) {
-        await getDataQuery(
-          address,
-          chainId,
-          vaultTVLCount,
-          true,
-          dataTimestamp,
-          chartData,
-          retries,
-          delayMs,
-        )
-      }
-    } catch (err) {
-      if (attempt < retries) {
-        console.warn(`Attempt ${attempt + 1} failed. Retrying in ${delayMs}ms...`)
-        await new Promise(resolve => setTimeout(resolve, delayMs))
-        return fetchData(attempt + 1)
-      }
-      console.error(`All ${retries} retries failed.`)
+  const data = await executeGraphCall(url, query, variables)
+  // To merge the response data into the chartData object
+  Object.keys(data).forEach(key => {
+    if (!Object.prototype.hasOwnProperty.call(chartData, key)) {
+      chartData[key] = data[key]
+    } else if (Array.isArray(chartData[key]) && Array.isArray(data[key])) {
+      chartData[key].push(...data[key])
+    } else if (typeof chartData[key] === 'object' && typeof data[key] === 'object') {
+      Object.assign(chartData[key], data[key])
+    } else {
+      chartData[key] = data[key]
     }
+  })
+
+  const dataTimestamp = Number(chartData.tvls[chartData.tvls.length - 1].timestamp)
+  const initTimestamp = Number(chartData.generalApies[chartData.generalApies.length - 1].timestamp)
+
+  if (data.tvls.length === 1000 && dataTimestamp > initTimestamp) {
+    await getDataQuery(address, chainId, vaultTVLCount, true, dataTimestamp, chartData)
   }
-  await fetchData()
   return chartData
 }
 
-export const getUserBalanceVaults = async (account, retries = 3, delayMs = 2000) => {
+export const getUserBalanceVaults = async account => {
   const userBalanceVaults = []
   let userBalanceFlag = true
   if (account) {
     account = account.toLowerCase()
   }
 
-  const myHeaders = new Headers()
-  myHeaders.append('Content-Type', 'application/json')
-
-  const graphql = JSON.stringify({
-      query: `{
-        userBalances(
-          where: {
-            userAddress: "${account}"
-          }
-        ) {
-          vault { id }
+  const query = `
+    query getUserVaults($account: String!) {
+      userBalances(
+        where: {
+          userAddress: $account,
         }
-      }`,
-      variables: {},
-    }),
-    requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: graphql,
-      redirect: 'follow',
+      ) {
+        vault{ id }
+      }
     }
-
+  `
+  const variables = { account }
   const urls = [
     GRAPH_URLS[CHAIN_IDS.ETH_MAINNET],
     GRAPH_URLS[CHAIN_IDS.POLYGON_MAINNET],
@@ -578,35 +393,12 @@ export const getUserBalanceVaults = async (account, retries = 3, delayMs = 2000)
     GRAPH_URLS[CHAIN_IDS.ZKSYNC],
   ]
 
-  const fetchWithRetry = async (url, attempt = 0) => {
-    try {
-      const response = await fetch(url, requestOptions)
-      if (response.status === 429 && attempt < retries) {
-        console.warn(
-          `Attempt ${attempt + 1}: Too Many Requests on ${url}. Retrying in ${delayMs}ms...`,
-        )
-        await new Promise(resolve => setTimeout(resolve, delayMs))
-        return fetchWithRetry(url, attempt + 1)
-      }
-      const responseData = await response.json()
-      return responseData.data.userBalances || []
-    } catch (error) {
-      console.warn(`Attempt ${attempt + 1} failed for ${url}:`, error)
-      if (attempt < retries) {
-        console.warn(`Retrying in ${delayMs}ms...`)
-        await new Promise(resolve => setTimeout(resolve, delayMs))
-        return fetchWithRetry(url, attempt + 1)
-      }
-      console.error(`All ${retries} retries failed for ${url}.`)
-      return []
-    }
-  }
-
   try {
-    const results = await Promise.all(urls.map(url => fetchWithRetry(url)))
+    const results = await Promise.all(urls.map(url => executeGraphCall(url, query, variables)))
 
     results.forEach(userBalanceVaultData => {
-      userBalanceVaultData.forEach(balance => {
+      const balances = userBalanceVaultData.userBalances
+      balances.forEach(balance => {
         userBalanceVaults.push(balance.vault.id)
       })
     })
@@ -617,13 +409,7 @@ export const getUserBalanceVaults = async (account, retries = 3, delayMs = 2000)
   return { userBalanceVaults, userBalanceFlag }
 }
 
-export const getUserBalanceHistories = async (
-  address,
-  chainId,
-  account,
-  retries = 3,
-  delayMs = 2000,
-) => {
+export const getUserBalanceHistories = async (address, chainId, account) => {
   let balanceData = {},
     balanceFlag = true
 
@@ -634,74 +420,31 @@ export const getUserBalanceHistories = async (
     account = account.toLowerCase()
   }
 
-  const myHeaders = new Headers()
-  myHeaders.append('Content-Type', 'application/json')
-
-  const graphql = JSON.stringify({
-      query: `{
-        userBalanceHistories(
-          first: 1000,
-          where: {
-            vault: "${address === farm ? ifarm : address}",
-            userAddress: "${account}"
-          },
-          orderBy: timestamp,
-          orderDirection: desc,
-        ) {
-          value, timestamp
-        }
-      }`,
-      variables: {},
-    }),
-    requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: graphql,
-      redirect: 'follow',
+  const query = `
+    query getUserBalanceHistories($vault: String!, $account: String!) {
+      userBalanceHistories(
+        first: 1000,
+        where: {
+          vault: $vault,
+          userAddress: $account,
+        },
+        orderBy: timestamp,
+        orderDirection: desc,
+      ) {
+        value, timestamp
+      }
     }
-
+  `
+  const variables = address === farm ? { vault: ifarm, account } : { vault: address, account }
   const url = GRAPH_URLS[chainId]
 
-  const fetchData = async attempt => {
-    try {
-      const response = await fetch(url, requestOptions)
-      if (response.status === 429) {
-        if (attempt < retries) {
-          console.warn(
-            `429 Too Many Requests to userBalanceHistories. Retrying after ${delayMs}ms...`,
-          )
-          await delay(delayMs)
-          return fetchData(attempt + 1)
-        }
-        console.error('Max retries reached due to 429. Exiting...')
-        balanceFlag = false
-        return { balanceData, balanceFlag }
-      }
+  const data = await executeGraphCall(url, query, variables)
+  balanceData = data.userBalanceHistories
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      const res = await response.json()
-      balanceData = res.data.userBalanceHistories
-
-      if (!balanceData || balanceData.length === 0) {
-        balanceFlag = false
-      }
-      return { balanceData, balanceFlag }
-    } catch (err) {
-      console.error(`Attempt ${attempt + 1} failed:`, err)
-
-      if (attempt < retries) {
-        console.warn(`Retrying after ${delayMs}ms...`)
-        await delay(delayMs)
-        return fetchData(attempt + 1)
-      }
-      console.error('Max retries reached. Exiting...')
-      balanceFlag = false
-      return { balanceData, balanceFlag }
-    }
+  if (!balanceData || balanceData.length === 0) {
+    balanceFlag = false
   }
-  return fetchData(0)
+  return { balanceData, balanceFlag }
 }
 
 export const getPriceFeeds = async (
@@ -712,12 +455,9 @@ export const getPriceFeeds = async (
   timestamp,
   asQuery,
   priceFeedData = [],
-  retries = 3,
-  delayMs = 2000,
 ) => {
-  let priceFeedFlag = true,
-    sequenceIdsArray = [],
-    attempt = 0
+  let priceFeedFlag = true
+  const sequenceIdsArray = []
 
   if (vaultPriceFeedCount > 10000) {
     const step = Math.ceil(vaultPriceFeedCount / 2000)
@@ -730,114 +470,64 @@ export const getPriceFeeds = async (
       sequenceIdsArray.push(i)
     }
   } else {
-    sequenceIdsArray = []
+    for (let i = 1; i <= vaultPriceFeedCount; i += 1) {
+      sequenceIdsArray.push(i)
+    }
   }
-  const priceFeedSequenceId =
-    vaultPriceFeedCount > 1000 ? `priceFeedSequenceId_in: [${sequenceIdsArray}]` : ''
 
   address = address.toLowerCase()
   const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
   const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
-  const timestampQuery = timestamp && asQuery ? `timestamp_lt: "${timestamp}"` : ''
+  const nowTime = Math.floor(new Date().getTime() / 1000)
+  const timestampQuery = timestamp && asQuery ? timestamp : nowTime
 
-  const myHeaders = new Headers()
-  myHeaders.append('Content-Type', 'application/json')
-
-  const graphql = JSON.stringify({
-      query: `{
-        priceFeeds(
-          first: 1000,
-          where: {
-            vault: "${address === ifarm ? farm : address}",
-            ${timestampQuery},
-            ${priceFeedSequenceId}
-          },
-          orderBy: timestamp,
-          orderDirection: desc,
-        ) {
-          sharePrice, price, timestamp
-        }
-      }`,
-      variables: {},
-    }),
-    requestOptions = {
-      method: 'POST',
-      headers: myHeaders,
-      body: graphql,
-      redirect: 'follow',
+  const query = `
+    query getPriceFeeds($vault: String!, $endTime: BigInt, $sequenceIds: [Int!]) {
+      priceFeeds(
+        first: 1000,
+        where: {
+          vault: $vault,
+          timestamp_lt: $endTime,
+          priceFeedSequenceId_in: $sequenceIds,
+        },
+        orderBy: timestamp,
+        orderDirection: desc,
+      ) {
+        sharePrice, price, timestamp
+      }
     }
-
+  `
+  const variables =
+    address === farm
+      ? { vault: ifarm, endTime: timestampQuery, sequenceIds: sequenceIdsArray }
+      : { vault: address, endTime: timestampQuery, sequenceIds: sequenceIdsArray }
   const url = GRAPH_URLS[chainId]
 
-  // eslint-disable-next-line consistent-return
-  const fetchData = async () => {
-    try {
-      const response = await fetch(url, requestOptions)
+  const data = await executeGraphCall(url, query, variables)
 
-      if (response.status === 429) {
-        if (attempt < retries - 1) {
-          console.warn(`429 Too Many Requests to priceFeeds. Retrying after ${delayMs}ms...`)
-          await delay(delayMs)
-          attempt += 1
-          return fetchData()
-        }
-        console.error('Max retries reached. Exiting...')
-        priceFeedFlag = false
-        return { priceFeedData, priceFeedFlag }
-      }
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-
-      const responseJson = await response.json()
-
-      if (
-        responseJson.data &&
-        responseJson.data.priceFeeds &&
-        Array.isArray(responseJson.data.priceFeeds)
-      ) {
-        priceFeedData.push(...responseJson.data.priceFeeds)
-        const dataTimestamp = priceFeedData[priceFeedData.length - 1].timestamp
-        if (Number(dataTimestamp) > Number(firstTimeStamp)) {
-          return getPriceFeeds(
-            address,
-            chainId,
-            vaultPriceFeedCount,
-            firstTimeStamp,
-            dataTimestamp,
-            true,
-            priceFeedData,
-            retries,
-            delayMs,
-          )
-        }
-      } else {
-        console.error('Error: Unable to retrieve price feeds from the response.')
-        priceFeedFlag = false
-      }
-
-      if (priceFeedData.length === 0) {
-        priceFeedFlag = false
-      }
-      return { priceFeedData, priceFeedFlag }
-    } catch (err) {
-      console.log('Fetch data about user balance histories: ', err)
-      priceFeedFlag = false
-      console.error(`Attempt ${attempt + 1} failed:`, err)
-
-      if (attempt < retries - 1) {
-        console.warn(`Retrying after ${delayMs}ms...`)
-        await delay(delayMs)
-        attempt += 1
-        return fetchData()
-      }
-      console.error('Max retries reached. Exiting...')
-      priceFeedFlag = false
-      return { priceFeedData, priceFeedFlag }
+  if (data && data.priceFeeds && Array.isArray(data.priceFeeds)) {
+    priceFeedData.push(...data.priceFeeds)
+    const dataTimestamp = priceFeedData[priceFeedData.length - 1].timestamp
+    if (Number(dataTimestamp) > Number(firstTimeStamp)) {
+      return getPriceFeeds(
+        address,
+        chainId,
+        vaultPriceFeedCount,
+        firstTimeStamp,
+        dataTimestamp,
+        true,
+        priceFeedData,
+      )
     }
+  } else {
+    console.error('Error: Unable to retrieve price feeds from the response.')
+    priceFeedFlag = false
   }
-  return fetchData()
+
+  if (priceFeedData.length === 0) {
+    priceFeedFlag = false
+  }
+  return { priceFeedData, priceFeedFlag }
 }
 
 const removeZeroValueObjects = data => {
