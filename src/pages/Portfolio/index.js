@@ -784,7 +784,6 @@ const Portfolio = () => {
           const sortedCombinedEnrichedArray = combinedEnrichedArray.sort(
             (a, b) => Number(b.timestamp) - Number(a.timestamp),
           )
-          console.log('Data --------', sortedCombinedEnrichedArray)
           setTotalHistoryData(sortedCombinedEnrichedArray)
           localStorage.setItem(totalHistoryDataKey, JSON.stringify(sortedCombinedEnrichedArray))
         }
