@@ -58,13 +58,13 @@ const HistoryDataLatest = ({ historyData, isDashboard, noData, setOneDayYield, i
                 const info = filteredHistoryData[i]
                 return <ActionRow key={i} info={info} />
               })
-              .slice(0, 4)}
+              .slice(0, 5)}
           </ContentBox>
         ) : connected ? (
           !noData ? (
             <EmptyPanel>
               <SkeletonTheme baseColor="#ECECEC" highlightColor={highlightColor}>
-                {[...Array(4)].map((_, index) => (
+                {[...Array(5)].map((_, index) => (
                   <SkeletonItem key={index}>
                     <div>
                       <Skeleton containerClassName="skeleton" width="50%" height={10} />
