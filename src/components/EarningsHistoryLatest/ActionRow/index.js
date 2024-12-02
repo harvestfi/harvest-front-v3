@@ -19,14 +19,7 @@ const ActionRow = ({ info }) => {
   const [currencyRate, setCurrencyRate] = useState(1)
   const [badgeUrl, setBadgeUrl] = useState(ETHEREUM)
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const {
-    darkMode,
-    switchMode,
-    backColor,
-    borderColorTable,
-    hoverColorRow,
-    fontColor,
-  } = useThemeContext()
+  const { darkMode, switchMode, borderColorTable, hoverColorRow } = useThemeContext()
 
   useEffect(() => {
     const chainId = info.chain
@@ -57,38 +50,39 @@ const ActionRow = ({ info }) => {
       hoverColor={hoverColorRow}
       mode={switchMode}
       style={{
-        background: isMobile ? (darkMode ? '#171B25' : '#ffffff') : backColor,
+        background: isMobile ? (darkMode ? '#171B25' : '#ffffff') : 'none',
       }}
     >
       <FlexDiv padding={isMobile ? '15px 25px' : '0'}>
-        {!isMobile && (
-          <>
-            <Content width="30%" color={fontColor} paddingRight={isMobile ? '8px' : '0px'}>
-              <div
-                className="timestamp"
-                data-tip
-                data-for={`tooltip-latest-yield-${info.timestamp}`}
-              >
-                {formatAge(info.timestamp)} ago
-              </div>
-              <ReactTooltip
-                id={`tooltip-latest-yield-${info.timestamp}`}
-                backgroundColor={darkMode ? 'white' : '#101828'}
-                borderColor={darkMode ? 'white' : 'black'}
-                textColor={darkMode ? 'black' : 'white'}
-                place="top"
-              >
-                <NewLabel size="10px" height="14px" weight="600">
-                  <div dangerouslySetInnerHTML={formatDateTime(info.timestamp)} />
-                </NewLabel>
-              </ReactTooltip>
-            </Content>
-            <Content width="57%">
+        <>
+          <Content
+            width="30%"
+            color={darkMode ? '#e8e8e8' : '#202020'}
+            paddingRight={isMobile ? '8px' : '0px'}
+          >
+            <div className="timestamp" data-tip data-for={`tooltip-latest-yield-${info.timestamp}`}>
+              {formatAge(info.timestamp)} ago
+            </div>
+            <ReactTooltip
+              id={`tooltip-latest-yield-${info.timestamp}`}
+              backgroundColor={darkMode ? 'white' : '#101828'}
+              borderColor={darkMode ? 'white' : 'black'}
+              textColor={darkMode ? 'black' : 'white'}
+              place="top"
+            >
+              <NewLabel size="10px" height="14px" weight="600">
+                <div dangerouslySetInnerHTML={formatDateTime(info.timestamp)} />
+              </NewLabel>
+            </ReactTooltip>
+          </Content>
+          <Content display="flex" flexDirection="column" alignItems="end">
+            <MobileGreenBox>
+              <img src={UpperIcon} alt="upper icon" />
               <ListItem
                 weight={600}
                 size={12}
-                height={20}
-                color="#5FCF76"
+                height={13.38}
+                color="#fff"
                 justifyContent="end"
                 value={`${
                   info.netChangeUsd < 0.01
@@ -96,76 +90,20 @@ const ActionRow = ({ info }) => {
                     : `≈${currencySym}${formatNumber(info.netChangeUsd * Number(currencyRate), 2)}`
                 }`}
               />
+            </MobileGreenBox>
+            <BadgePart>
+              <img src={badgeUrl} alt="badge" width={9.7} height={9.7} />
               <ListItem
-                weight={500}
+                weight={400}
                 size={10}
                 height={20}
-                color="#6988FF"
+                color={darkMode ? '#D9D9D9' : '#6F78AA'}
                 justifyContent="end"
-                value={info.tokenSymbol}
+                value={`${info.name} (${info.platform})`}
               />
-            </Content>
-          </>
-        )}
-        {isMobile && (
-          <>
-            <Content
-              width="30%"
-              color={darkMode ? '#e8e8e8' : '#202020'}
-              paddingRight={isMobile ? '8px' : '0px'}
-            >
-              <div
-                className="timestamp"
-                data-tip
-                data-for={`tooltip-latest-yield-${info.timestamp}`}
-              >
-                {formatAge(info.timestamp)} ago
-              </div>
-              <ReactTooltip
-                id={`tooltip-latest-yield-${info.timestamp}`}
-                backgroundColor={darkMode ? 'white' : '#101828'}
-                borderColor={darkMode ? 'white' : 'black'}
-                textColor={darkMode ? 'black' : 'white'}
-                place="top"
-              >
-                <NewLabel size="10px" height="14px" weight="600">
-                  <div dangerouslySetInnerHTML={formatDateTime(info.timestamp)} />
-                </NewLabel>
-              </ReactTooltip>
-            </Content>
-            <Content display="flex" flexDirection="column" alignItems="end">
-              <MobileGreenBox>
-                <img src={UpperIcon} alt="upper icon" />
-                <ListItem
-                  weight={600}
-                  size={12}
-                  height={13.38}
-                  color="#fff"
-                  justifyContent="end"
-                  value={`${
-                    info.netChangeUsd < 0.01
-                      ? `<${currencySym}0.01`
-                      : `≈${currencySym}${formatNumber(
-                          info.netChangeUsd * Number(currencyRate),
-                          2,
-                        )}`
-                  }`}
-                />
-              </MobileGreenBox>
-              <BadgePart>
-                <img src={badgeUrl} alt="badge" width={9.7} height={9.7} />
-                <ListItem
-                  weight={400}
-                  size={10}
-                  height={20}
-                  color={darkMode ? '#D9D9D9' : '#6F78AA'}
-                  justifyContent="end"
-                  value={`${info.name} (${info.platform})`}
-                />
-              </BadgePart>
-            </Content>
-          </>
-        )}
+            </BadgePart>
+          </Content>
+        </>
       </FlexDiv>
     </DetailView>
   )

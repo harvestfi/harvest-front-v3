@@ -1,9 +1,13 @@
 import styled from 'styled-components'
 
 const Container = styled.div`
-  width: 20%;
+  width: 25%;
   font-weight: 700;
   padding: 24px 24px 24px 0px;
+
+  &:nth-child(2) {
+    display: none;
+  }
 
   @media screen and (max-width: 1350px) {
     padding: 15px 15px 15px 0px;
@@ -27,6 +31,7 @@ const Container = styled.div`
       border-radius: 6.5px 0px 0px 6.5px;
     }
     &:nth-child(2) {
+      display: block;
       width: 54%;
     }
     &:nth-child(3) {

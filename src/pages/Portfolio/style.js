@@ -45,16 +45,48 @@ const Inner = styled.div`
   }
 `
 
+const ChartSection = styled.div`
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding-bottom: 24px;
+
+  @media screen and (max-width: 992px) {
+    padding: unset;
+  }
+`
+
+const ChartBox = styled.div`
+  display: flex;
+  width: ${props => props.width || '-webkit-fill-available'};
+  flex-direction: ${props => props.direction || 'column'};
+  justify-content: start;
+  position: relative;
+  align-items: ${props => props.align || 'center'};
+  transition: 0.25s;
+  color: ${props => props.fontColor};
+  height: ${props => props.height};
+  min-height: ${props => props.minHeight || '152px'};
+  margin: ${props => props.margin || 'unset'};
+  border-right: 0.556px solid rgba(255, 255, 255, 0.3);
+
+  h2 {
+    text-align: left;
+  }
+
+  @media screen and (max-width: 992px) {
+    order: ${props => props.mobileOrder || 'unset'};
+  }
+`
+
 const SubPart = styled.div`
   display: flex;
   justify-content: space-between;
-  gap: 10px;
   margin-bottom: 30px;
   border-top: 1px solid #ced3e6;
 
   @media screen and (max-width: 992px) {
     flex-wrap: wrap;
-    gap: 0px;
     margin: 0px 25px 25px 25px;
     border: none;
   }
@@ -526,9 +558,6 @@ const TableContent = styled.div`
 `
 
 const TableWrap = styled.div`
-  display: flex;
-  gap: 35px;
-
   .table-title {
     color: ${props => props.fontColor1};
     font-size: 18px;
@@ -585,20 +614,19 @@ const SwitchBtn = styled.div`
 `
 
 const PositionTable = styled.div`
-  width: 70%;
-
-  @media screen and (max-width: 1320px) {
-    width: 100%;
-  }
-
   @media screen and (max-width: 992px) {
-    width: 100%;
     display: ${props => props.display};
   }
 `
 
 const YieldTable = styled.div`
   width: 30%;
+
+  div.table-title {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 20px;
+  }
 
   @media screen and (max-width: 1320px) {
     width: 100%;
@@ -1125,4 +1153,6 @@ export {
   Address,
   NewLabel,
   GreenBox,
+  ChartSection,
+  ChartBox,
 }

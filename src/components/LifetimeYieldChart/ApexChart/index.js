@@ -1,0 +1,211 @@
+import React, { useEffect, useState } from 'react'
+import { ComposedChart, XAxis, Line, Area, Tooltip, ResponsiveContainer } from 'recharts'
+import { useWindowWidth } from '@react-hook/window-size'
+import { ClipLoader } from 'react-spinners'
+import { useThemeContext } from '../../../providers/useThemeContext'
+import { useWallet } from '../../../providers/Wallet'
+import { useRate } from '../../../providers/Rate'
+import { numberWithCommas, formatDate } from '../../../utilities/formats'
+import { getTimeSlots } from '../../../utilities/parsers'
+import { EmptyInfo, LoadingDiv, NoData } from './style'
+
+function generateChartDataWithSlots(slots, apiData, lifetimeYield) {
+  const seriesData = [],
+    sl = slots.length,
+    al = apiData.length
+
+  for (let i = 0; i < sl; i += 1) {
+    for (let j = 0; j < al; j += 1) {
+      if (slots[i] >= parseInt(apiData[j].timestamp, 10)) {
+        const value = parseFloat(apiData[j][lifetimeYield])
+        seriesData.push({ x: slots[i] * 1000, y: value })
+        break
+      }
+      // else if (j === al - 1) {
+      //   seriesData.push({ x: slots[i] * 1000, y: 0, z: 0 })
+      // }
+    }
+  }
+
+  if (seriesData.length === 1) {
+    seriesData.push(seriesData[0])
+  }
+
+  return seriesData
+}
+
+function formatXAxis(value, range) {
+  const date = new Date(value)
+
+  const month = date.getMonth() + 1
+  const day = date.getDate()
+
+  const hour = date.getHours()
+  const mins = date.getMinutes()
+
+  return range === 1 ? `${hour}:${mins}` : `${month} / ${day}`
+}
+
+const ApexChart = ({ noData, data, range, setCurDate, setCurContent }) => {
+  const { fontColor, inputFontColor } = useThemeContext()
+  const { connected } = useWallet()
+
+  const [mainSeries, setMainSeries] = useState([])
+
+  const onlyWidth = useWindowWidth()
+
+  const [loading, setLoading] = useState(false)
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
+
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      setCurDate(formatDate(payload[0].payload.x))
+      const content = `
+      <div style="font-size: 13px; line-height: 16px;">
+        <div style="color: #15B088; font-weight: 500;">| &nbsp;${currencySym}
+          ${numberWithCommas((Number(payload[0].payload.y) * Number(currencyRate)).toFixed(2))}
+        </div>
+      </div>`
+      setCurContent(content)
+    }
+
+    return null
+  }
+
+  const renderCustomXAxisTick = ({ x, y, payload }) => {
+    let path = ''
+
+    if (payload.value !== '') {
+      path = formatXAxis(payload.value, range)
+    }
+    return (
+      <text
+        orientation="bottom"
+        x={x - 12}
+        y={y + 4}
+        width={24}
+        height={24}
+        viewBox="0 0 1024 1024"
+        fill={inputFontColor}
+      >
+        <tspan dy="0.71em">{path}</tspan>
+      </text>
+    )
+  }
+
+  useEffect(() => {
+    const init = async () => {
+      setLoading(true)
+      if (data === undefined) {
+        return
+      }
+
+      let mainData = []
+
+      const slotCount = 50,
+        slots = getTimeSlots(range, slotCount)
+
+      if (data.length === 0) {
+        return
+      }
+      mainData = generateChartDataWithSlots(slots, data, 'lifetimeYield')
+
+      if (mainData.length > 0) {
+        setCurDate(formatDate(mainData[mainData.length - 1].x))
+        const content = `
+        <div style="font-size: 13px; line-height: 16px;">
+          <div style="color: #15B088; font-weight: 500;">| &nbsp;${currencySym}
+            ${numberWithCommas(
+              (Number(mainData[mainData.length - 1].y) * Number(currencyRate)).toFixed(2),
+            )}
+          </div>
+        </div>`
+        setCurContent(content)
+      }
+
+      setMainSeries(mainData)
+      setLoading(false)
+    }
+
+    init()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [range, data])
+
+  return (
+    <>
+      {connected && !loading ? (
+        <ResponsiveContainer
+          width="100%"
+          height={onlyWidth > 1250 ? 380 : onlyWidth > 992 ? 350 : 330}
+        >
+          <ComposedChart
+            data={mainSeries}
+            margin={{
+              top: 20,
+              right: 20,
+              bottom: 20,
+              left: 20,
+            }}
+          >
+            <defs>
+              <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="5%" stopColor="#00D26B" stopOpacity={0.1} />
+                <stop offset="95%" stopColor="#161B26" stopOpacity={0.1} />
+              </linearGradient>
+            </defs>
+            <XAxis dataKey="x" tickLine={false} tickCount={5} tick={renderCustomXAxisTick} />
+            <Line
+              dataKey="y"
+              type="monotone"
+              unit="M"
+              strokeLinecap="round"
+              strokeWidth={2}
+              stroke="#00D26B"
+              dot={false}
+              legendType="none"
+            />
+            <Area
+              type="monotone"
+              dataKey="y"
+              stroke="#00D26B"
+              strokeWidth={2}
+              fillOpacity={1}
+              fill="url(#colorUv)"
+            />
+            <Tooltip
+              content={CustomTooltip}
+              cursor={{
+                stroke: '#00D26B',
+                strokeDasharray: 3,
+                strokeLinecap: 'butt',
+              }}
+            />
+          </ComposedChart>
+        </ResponsiveContainer>
+      ) : connected ? (
+        <LoadingDiv>
+          {!noData ? (
+            <ClipLoader size={30} margin={2} color={fontColor} />
+          ) : (
+            <NoData color={fontColor}>No activity found for this wallet.</NoData>
+          )}
+        </LoadingDiv>
+      ) : (
+        <EmptyInfo height="100%" weight={500} size={14} lineHeight={20} color={fontColor}>
+          Connect wallet to see your lifetime yield chart
+        </EmptyInfo>
+      )}
+    </>
+  )
+}
+
+export default ApexChart

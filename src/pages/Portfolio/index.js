@@ -11,6 +11,8 @@ import { FaRegSquare, FaRegSquareCheck } from 'react-icons/fa6'
 import { BiLeftArrowAlt } from 'react-icons/bi'
 import { IoCheckmark } from 'react-icons/io5'
 import 'react-loading-skeleton/dist/skeleton.css'
+import VaultRow from '../../components/DashboardComponents/VaultRow'
+import LifetimeYieldData from '../../components/LifetimeYieldChart/LifetimeYieldData'
 import Safe from '../../assets/images/logos/dashboard/safe.svg'
 import Coin1 from '../../assets/images/logos/dashboard/coins-stacked-02.svg'
 import Coin2 from '../../assets/images/logos/dashboard/coins-stacked-04.svg'
@@ -19,7 +21,6 @@ import Sort from '../../assets/images/logos/dashboard/sort.svg'
 import BankNote from '../../assets/images/logos/dashboard/bank-note.svg'
 import DropDownIcon from '../../assets/images/logos/advancedfarm/drop-down.svg'
 import AdvancedImg from '../../assets/images/logos/sidebar/advanced.svg'
-import VaultRow from '../../components/DashboardComponents/VaultRow'
 import Eye from '../../assets/images/logos/eye-icon.svg'
 import ClosedEye from '../../assets/images/logos/eye_closed.svg'
 import SkeletonLoader from '../../components/DashboardComponents/SkeletonLoader'
@@ -29,6 +30,7 @@ import EarningsHistoryLatest from '../../components/EarningsHistoryLatest/Histor
 import TotalValue from '../../components/TotalValue'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 import MobileBackImage from '../../assets/images/logos/portfolio-mobile-background.png'
+import PhoneLogo from '../../assets/images/logos/farm-icon.svg'
 import {
   FARM_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
@@ -46,7 +48,6 @@ import { useWallet } from '../../providers/Wallet'
 import { useRate } from '../../providers/Rate'
 import { fromWei } from '../../services/web3'
 import { parseValue, isSpecialApp, formatAddress, formatNumber } from '../../utilities/formats'
-import PhoneLogo from '../../assets/images/logos/farm-icon.svg'
 import {
   getCoinListFromApi,
   getTokenPriceFromApi,
@@ -98,6 +99,8 @@ import {
   Address,
   NewLabel,
   GreenBox,
+  ChartSection,
+  ChartBox,
 } from './style'
 import AnimatedDots from '../../components/AnimatedDots'
 
@@ -121,6 +124,7 @@ const Portfolio = () => {
     fontColor,
     fontColor1,
     fontColor2,
+    borderColor,
     borderColorTable,
     inputBorderColor,
     hoverColorButton,
@@ -679,7 +683,8 @@ const Portfolio = () => {
         setOnceRun(true)
         const getNetProfitValue = async () => {
           let totalNetProfitUSD = 0,
-            combinedEnrichedData = []
+            combinedEnrichedData = [],
+            cumulativeLifetimeYield = 0
 
           const { userBalanceVaults, userBalanceFlag } = await getUserBalanceVaults(account)
           setBalanceFlag(userBalanceFlag)
@@ -766,9 +771,22 @@ const Portfolio = () => {
           setVaultNetChangeList(vaultNetChanges)
           localStorage.setItem(vaultProfitDataKey, JSON.stringify(vaultNetChanges))
 
-          combinedEnrichedData.sort((a, b) => b.timestamp - a.timestamp)
-          setTotalHistoryData(combinedEnrichedData)
-          localStorage.setItem(totalHistoryDataKey, JSON.stringify(combinedEnrichedData))
+          const combinedEnrichedArray = combinedEnrichedData
+            .sort((a, b) => Number(a.timestamp) - Number(b.timestamp))
+            .map(item => {
+              if (item.event === 'Harvest') {
+                cumulativeLifetimeYield += Number(item.netChangeUsd)
+                return { ...item, lifetimeYield: cumulativeLifetimeYield.toString() }
+              }
+              return { ...item, lifetimeYield: cumulativeLifetimeYield.toString() }
+            })
+
+          const sortedCombinedEnrichedArray = combinedEnrichedArray.sort(
+            (a, b) => Number(b.timestamp) - Number(a.timestamp),
+          )
+          console.log('Data --------', sortedCombinedEnrichedArray)
+          setTotalHistoryData(sortedCombinedEnrichedArray)
+          localStorage.setItem(totalHistoryDataKey, JSON.stringify(sortedCombinedEnrichedArray))
         }
 
         getNetProfitValue()
@@ -1145,34 +1163,60 @@ const Portfolio = () => {
           )}
         </HeaderWrap>
         {viewPositions && (
-          <SubPart>
-            {!isMobile
-              ? TopBoxData.map((data, index) => (
-                  <TotalValue
-                    key={index}
-                    icon={data.icon}
-                    content={data.content}
-                    price={data.price}
-                    toolTipTitle={data.toolTipTitle}
-                    toolTip={data.toolTip}
-                    connected={connected}
+          <div>
+            <ChartSection>
+              <ChartBox
+                width={isMobile ? '100%' : '70%'}
+                align="flex-start"
+                direction="row"
+                fontColor={fontColor}
+                backColor={backColor}
+                borderColor={borderColor}
+              >
+                <LifetimeYieldData noData={noFarm} totalHistoryData={totalHistoryData} />
+              </ChartBox>
+              {!isMobile && (
+                <YieldTable display={showLatestYield ? 'block' : 'none'}>
+                  <div className="table-title">Latest Yield</div>
+                  <EarningsHistoryLatest
+                    historyData={totalHistoryData}
+                    isDashboard="true"
+                    noData={noFarm}
+                    setOneDayYield={setOneDayYield}
                     isLoading={isLoading}
-                    farmTokenListLength={farmTokenList.length}
                   />
-                ))
-              : MobileTopBoxData.map((data, index) => (
-                  <TotalValue
-                    key={index}
-                    icon={data.icon}
-                    content={data.content}
-                    price={data.price}
-                    toolTipTitle={data.toolTipTitle}
-                    toolTip={data.toolTip}
-                    connected={connected}
-                    farmTokenListLength={farmTokenList.length}
-                  />
-                ))}
-          </SubPart>
+                </YieldTable>
+              )}
+            </ChartSection>
+            <SubPart>
+              {!isMobile
+                ? TopBoxData.map((data, index) => (
+                    <TotalValue
+                      key={index}
+                      icon={data.icon}
+                      content={data.content}
+                      price={data.price}
+                      toolTipTitle={data.toolTipTitle}
+                      toolTip={data.toolTip}
+                      connected={connected}
+                      isLoading={isLoading}
+                      farmTokenListLength={farmTokenList.length}
+                    />
+                  ))
+                : MobileTopBoxData.map((data, index) => (
+                    <TotalValue
+                      key={index}
+                      icon={data.icon}
+                      content={data.content}
+                      price={data.price}
+                      toolTipTitle={data.toolTipTitle}
+                      toolTip={data.toolTip}
+                      connected={connected}
+                      farmTokenListLength={farmTokenList.length}
+                    />
+                  ))}
+            </SubPart>
+          </div>
         )}
 
         {viewPositions ? (
@@ -1357,54 +1401,56 @@ const Portfolio = () => {
                 )}
               </TransactionDetails>
             </PositionTable>
-            <YieldTable display={showLatestYield ? 'block' : 'none'}>
-              <div className="table-title">Latest Yield</div>
-              <EarningsHistoryLatest
-                historyData={totalHistoryData}
-                isDashboard="true"
-                noData={noFarm}
-                setOneDayYield={setOneDayYield}
-                isLoading={isLoading}
-              />
-            </YieldTable>
             {isMobile && (
-              <SubBtnWrap>
-                {!showLatestYield ? (
-                  <div>
-                    {connected && farmTokenList.length > 0 && (
-                      <CheckBoxDiv
-                        onClick={() => {
-                          if (showInactiveFarms) {
-                            setShowInactiveFarms(prev => !prev)
-                          } else {
-                            setShowInactiveFarms(prev => !prev)
-                          }
-                        }}
+              <>
+                <YieldTable display={showLatestYield ? 'block' : 'none'}>
+                  <div className="table-title">Latest Yield</div>
+                  <EarningsHistoryLatest
+                    historyData={totalHistoryData}
+                    isDashboard="true"
+                    noData={noFarm}
+                    setOneDayYield={setOneDayYield}
+                    isLoading={isLoading}
+                  />
+                </YieldTable>
+                <SubBtnWrap>
+                  {!showLatestYield ? (
+                    <div>
+                      {connected && farmTokenList.length > 0 && (
+                        <CheckBoxDiv
+                          onClick={() => {
+                            if (showInactiveFarms) {
+                              setShowInactiveFarms(prev => !prev)
+                            } else {
+                              setShowInactiveFarms(prev => !prev)
+                            }
+                          }}
+                        >
+                          {showInactiveFarms ? (
+                            <FaRegSquareCheck color="#15B088" />
+                          ) : (
+                            <FaRegSquare color="#15B088" />
+                          )}
+                          <div>Show inactive</div>
+                        </CheckBoxDiv>
+                      )}
+                    </div>
+                  ) : (
+                    <div>
+                      <SwitchView
+                        color={fontColor2}
+                        backColor={backColorButton}
+                        hovercolor={hoverColorNew}
+                        onClick={() => setViewPositions(prev => !prev)}
+                        darkMode={darkMode}
                       >
-                        {showInactiveFarms ? (
-                          <FaRegSquareCheck color="#15B088" />
-                        ) : (
-                          <FaRegSquare color="#15B088" />
-                        )}
-                        <div>Show inactive</div>
-                      </CheckBoxDiv>
-                    )}
-                  </div>
-                ) : (
-                  <div>
-                    <SwitchView
-                      color={fontColor2}
-                      backColor={backColorButton}
-                      hovercolor={hoverColorNew}
-                      onClick={() => setViewPositions(prev => !prev)}
-                      darkMode={darkMode}
-                    >
-                      <img src={BankNote} alt="money" />
-                      Full History
-                    </SwitchView>
-                  </div>
-                )}
-              </SubBtnWrap>
+                        <img src={BankNote} alt="money" />
+                        Full History
+                      </SwitchView>
+                    </div>
+                  )}
+                </SubBtnWrap>
+              </>
             )}
           </TableWrap>
         ) : (
