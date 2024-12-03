@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { PiQuestion } from 'react-icons/pi'
 import { useThemeContext } from '../../../providers/useThemeContext'
+import { useRate } from '../../../providers/Rate'
 import { Container, Header, ChartDiv, TooltipContent, CurDate } from './style'
 import ApexChart from '../ApexChart'
+import { formatDate, numberWithCommas } from '../../../utilities/formats'
 
 const LifetimeYieldData = ({ noData, totalHistoryData }) => {
   const { fontColor } = useThemeContext()
@@ -14,6 +16,31 @@ const LifetimeYieldData = ({ noData, totalHistoryData }) => {
   const firstDate = totalHistoryData[totalHistoryData.length - 1]?.timestamp
   const allPeriodDate = ((currentTimeStamp - Number(firstDate)) / (24 * 60 * 60)).toFixed(2)
 
+  const { rates } = useRate()
+  const [currencySym, setCurrencySym] = useState('$')
+  const [currencyRate, setCurrencyRate] = useState(1)
+
+  useEffect(() => {
+    if (rates.rateData) {
+      setCurrencySym(rates.currency.icon)
+      setCurrencyRate(rates.rateData[rates.currency.symbol])
+    }
+  }, [rates])
+
+  const handleTooltipContent = payload => {
+    if (payload && payload.length) {
+      const currentDate = formatDate(payload[0].payload.x)
+      const content = `
+          <div style="font-size: 25px; line-height: 38px;">
+            <div style="color: #5DCF46; font-weight: 600;">${currencySym}
+              ${numberWithCommas((Number(payload[0].payload.y) * Number(currencyRate)).toFixed(2))}
+            </div>
+          </div>`
+      setCurContent(content)
+      setCurDate(currentDate)
+    }
+  }
+
   return (
     <Container fontColor={fontColor}>
       <Header>
@@ -23,8 +50,8 @@ const LifetimeYieldData = ({ noData, totalHistoryData }) => {
             <PiQuestion />
           </div>
           <div className="content">
-            <CurDate>{curDate}</CurDate>
             <div dangerouslySetInnerHTML={{ __html: curContent }} />
+            <CurDate>{curDate}</CurDate>
           </div>
         </TooltipContent>
       </Header>
@@ -33,6 +60,7 @@ const LifetimeYieldData = ({ noData, totalHistoryData }) => {
           noData={noData}
           data={totalHistoryData}
           range={allPeriodDate}
+          handleTooltipContent={handleTooltipContent}
           setCurDate={setCurDate}
           setCurContent={setCurContent}
         />

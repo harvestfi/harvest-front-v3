@@ -6,7 +6,7 @@ import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { useRate } from '../../../providers/Rate'
-import { numberWithCommas, formatDate } from '../../../utilities/formats'
+import { numberWithCommas } from '../../../utilities/formats'
 import { getTimeSlots } from '../../../utilities/parsers'
 import { BoxWrapper, EmptyInfo, LoadingDiv, NoData } from './style'
 import MagicChart from '../MagicChart'
@@ -48,7 +48,7 @@ function formatXAxis(value, range) {
   return range < 1 ? `${hour}:${mins}` : `${month} / ${day}`
 }
 
-const ApexChart = ({ noData, data, range, setCurDate, setCurContent }) => {
+const ApexChart = ({ noData, data, range, handleTooltipContent, setCurDate, setCurContent }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const { fontColor, inputFontColor } = useThemeContext()
   const { connected } = useWallet()
@@ -69,17 +69,21 @@ const ApexChart = ({ noData, data, range, setCurDate, setCurContent }) => {
     }
   }, [rates])
 
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      setCurDate(formatDate(payload[0].payload.x))
-      const content = `
-      <div style="font-size: 13px; line-height: 16px;">
-        <div style="color: #15B088; font-weight: 500;">| &nbsp;${currencySym}
-          ${numberWithCommas((Number(payload[0].payload.y) * Number(currencyRate)).toFixed(2))}
-        </div>
-      </div>`
-      setCurContent(content)
-    }
+  const CustomTooltip = ({ active, payload, onTooltipContentChange }) => {
+    useEffect(() => {
+      if (active && payload && payload.length) {
+        onTooltipContentChange(payload)
+      } else {
+        setCurDate('')
+        const content = `
+        <div style="font-size: 25px; line-height: 38px;">
+          <div style="color: #5DCF46; font-weight: 600;">${currencySym}
+            ${numberWithCommas((Number(data[0].lifetimeYield) * Number(currencyRate)).toFixed(2))}
+          </div>
+        </div>`
+        setCurContent(content)
+      }
+    }, [active, payload, onTooltipContentChange])
 
     return null
   }
@@ -139,10 +143,9 @@ const ApexChart = ({ noData, data, range, setCurDate, setCurContent }) => {
       mainData = generateChartDataWithSlots(slots, data, 'lifetimeYield')
 
       if (mainData.length > 0) {
-        setCurDate(formatDate(mainData[mainData.length - 1].x))
         const content = `
-        <div style="font-size: 13px; line-height: 16px;">
-          <div style="color: #15B088; font-weight: 500;">| &nbsp;${currencySym}
+        <div style="font-size: 25px; line-height: 38px;">
+          <div style="color: #5DCF46; font-weight: 600;">${currencySym}
             ${numberWithCommas(
               (Number(mainData[mainData.length - 1].y) * Number(currencyRate)).toFixed(2),
             )}
@@ -201,7 +204,7 @@ const ApexChart = ({ noData, data, range, setCurDate, setCurContent }) => {
               fill="url(#colorUv)"
             />
             <Tooltip
-              content={CustomTooltip}
+              content={<CustomTooltip onTooltipContentChange={handleTooltipContent} />}
               cursor={{
                 stroke: '#00D26B',
                 strokeDasharray: 3,

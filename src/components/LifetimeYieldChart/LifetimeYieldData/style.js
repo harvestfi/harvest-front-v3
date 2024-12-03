@@ -271,13 +271,15 @@ const TooltipContent = styled.div`
 
   div.content {
     display: flex;
-    gap: 8px;
+    flex-direction: column;
   }
 `
 
 const CurDate = styled.div`
   font-size: 12px;
   line-height: 16px;
+  position: absolute;
+  margin-top: 35px;
 `
 
 export {
