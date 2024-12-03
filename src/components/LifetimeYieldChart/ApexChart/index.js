@@ -45,7 +45,7 @@ function formatXAxis(value, range) {
   const hour = date.getHours()
   const mins = date.getMinutes()
 
-  return range === 1 ? `${hour}:${mins}` : `${month} / ${day}`
+  return range < 1 ? `${hour}:${mins}` : `${month} / ${day}`
 }
 
 const ApexChart = ({ noData, data, range, setCurDate, setCurContent }) => {
@@ -112,10 +112,26 @@ const ApexChart = ({ noData, data, range, setCurDate, setCurContent }) => {
         return
       }
 
-      let mainData = []
+      let mainData = [],
+        slotCount = 50
 
-      const slotCount = 50,
-        slots = getTimeSlots(range, slotCount)
+      if (range > 700) {
+        slotCount = 500
+      } else if (range > 365) {
+        slotCount = 400
+      } else if (range > 180) {
+        slotCount = 300
+      } else if (range > 90) {
+        slotCount = 150
+      } else if (range > 60) {
+        slotCount = 100
+      } else if (range > 30) {
+        slotCount = 100
+      } else {
+        slotCount = 50
+      }
+
+      const slots = getTimeSlots(range, slotCount)
 
       if (data.length === 0) {
         return
