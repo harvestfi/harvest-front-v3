@@ -10,6 +10,21 @@ const LoadingDiv = styled.div`
 
 const NoData = styled.div`
   color: ${props => props.fontColor};
+  font-size: 14px;
+`
+
+const BoxWrapper = styled.div`
+  width: 100%;
+  position: relative;
+
+  div.message {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    flex-flow: column;
+  }
 `
 
 const EmptyInfo = styled.div`
@@ -76,4 +91,4 @@ const EmptyInfo = styled.div`
   }
 `
 
-export { LoadingDiv, EmptyInfo, NoData }
+export { LoadingDiv, EmptyInfo, BoxWrapper, NoData }

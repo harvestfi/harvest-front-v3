@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { useMediaQuery } from 'react-responsive'
 import { ComposedChart, XAxis, Line, Area, Tooltip, ResponsiveContainer } from 'recharts'
 import { useWindowWidth } from '@react-hook/window-size'
 import { ClipLoader } from 'react-spinners'
@@ -7,7 +8,8 @@ import { useWallet } from '../../../providers/Wallet'
 import { useRate } from '../../../providers/Rate'
 import { numberWithCommas, formatDate } from '../../../utilities/formats'
 import { getTimeSlots } from '../../../utilities/parsers'
-import { EmptyInfo, LoadingDiv, NoData } from './style'
+import { BoxWrapper, EmptyInfo, LoadingDiv, NoData } from './style'
+import MagicChart from '../MagicChart'
 
 function generateChartDataWithSlots(slots, apiData, lifetimeYield) {
   const seriesData = [],
@@ -47,6 +49,7 @@ function formatXAxis(value, range) {
 }
 
 const ApexChart = ({ noData, data, range, setCurDate, setCurContent }) => {
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const { fontColor, inputFontColor } = useThemeContext()
   const { connected } = useWallet()
 
@@ -150,10 +153,10 @@ const ApexChart = ({ noData, data, range, setCurDate, setCurContent }) => {
           <ComposedChart
             data={mainSeries}
             margin={{
-              top: 20,
-              right: 20,
-              bottom: 20,
-              left: 20,
+              top: 0,
+              right: isMobile ? 20 : 0,
+              bottom: 0,
+              left: isMobile ? 20 : 0,
             }}
           >
             <defs>
@@ -196,13 +199,28 @@ const ApexChart = ({ noData, data, range, setCurDate, setCurContent }) => {
           {!noData ? (
             <ClipLoader size={30} margin={2} color={fontColor} />
           ) : (
-            <NoData color={fontColor}>No activity found for this wallet.</NoData>
+            <BoxWrapper>
+              <NoData className="message" color={fontColor}>
+                No activity found for this wallet.
+              </NoData>
+              <MagicChart />
+            </BoxWrapper>
           )}
         </LoadingDiv>
       ) : (
-        <EmptyInfo height="100%" weight={500} size={14} lineHeight={20} color={fontColor}>
-          Connect wallet to see your lifetime yield chart
-        </EmptyInfo>
+        <BoxWrapper>
+          <EmptyInfo
+            className="message"
+            height="100%"
+            weight={500}
+            size={14}
+            lineHeight={20}
+            color={fontColor}
+          >
+            Connect wallet to see your lifetime yield chart
+          </EmptyInfo>
+          <MagicChart />
+        </BoxWrapper>
       )}
     </>
   )
