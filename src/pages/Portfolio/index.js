@@ -1010,8 +1010,8 @@ const Portfolio = () => {
                   </LogoDiv>
                 )}
               </HeaderTop>
-              <LifetimeValue isLoading={isLoading} connected={connected}>
-                {!connected ? (
+              <LifetimeValue isLoading={isLoading} noFarm={noFarm} connected={connected}>
+                {!connected || noFarm ? (
                   `${currencySym}0.00`
                 ) : isLoading ? (
                   <Spinner
@@ -1050,7 +1050,7 @@ const Portfolio = () => {
                 </ReactTooltip>
                 <GreenBox>
                   <img src={UpperIcon} alt="upper icon" width={13} height={13} />
-                  {!connected ? (
+                  {!connected || noFarm ? (
                     `${currencySym}0.00`
                   ) : oneDayYield === 0 ? (
                     <AnimatedDots />
