@@ -40,12 +40,19 @@ const ContentBox = styled.div`
 
 const EmptyPanel = styled.div`
   height: ${props => props.height};
+  position: relative;
 
   @media screen and (max-width: 992px) {
     padding: 0px;
     border: none;
     min-height: 100px;
   }
+`
+
+const FakeBoxWrapper = styled.div`
+  height: 100%;
+  overflow: hidden;
+  filter: blur(4px);
 `
 
 const SkeletonItem = styled.div`
@@ -108,10 +115,9 @@ const EmptyInfo = styled.div`
   justify-content: center;
   text-align: center;
   align-items: center;
-
-  .desc-text {
-    padding: 0px 25px;
-  }
+  position: absolute;
+  width: 100%;
+  z-index: 1;
 
   @media screen and (max-width: 992px) {
     display: flex;
@@ -123,4 +129,12 @@ const EmptyInfo = styled.div`
   }
 `
 
-export { TransactionDetails, TableContent, ContentBox, EmptyPanel, EmptyInfo, SkeletonItem }
+export {
+  TransactionDetails,
+  TableContent,
+  ContentBox,
+  EmptyPanel,
+  FakeBoxWrapper,
+  EmptyInfo,
+  SkeletonItem,
+}

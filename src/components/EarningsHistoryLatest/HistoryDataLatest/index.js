@@ -4,6 +4,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import ActionRow from '../ActionRow'
+import { fakeYieldData } from '../../../constants'
 import {
   TransactionDetails,
   TableContent,
@@ -11,6 +12,7 @@ import {
   EmptyInfo,
   ContentBox,
   SkeletonItem,
+  FakeBoxWrapper,
 } from './style'
 
 const HistoryDataLatest = ({ historyData, isDashboard, noData, setOneDayYield, isLoading }) => {
@@ -81,6 +83,14 @@ const HistoryDataLatest = ({ historyData, isDashboard, noData, setOneDayYield, i
               <EmptyInfo height="100%" weight={500} size={14} lineHeight={20} color={fontColor}>
                 No activity found for this wallet.
               </EmptyInfo>
+              <FakeBoxWrapper>
+                {fakeYieldData
+                  .map((el, i) => {
+                    const info = fakeYieldData[i]
+                    return <ActionRow key={i} info={info} />
+                  })
+                  .slice(0, 5)}
+              </FakeBoxWrapper>
             </EmptyPanel>
           )
         ) : (
@@ -88,6 +98,14 @@ const HistoryDataLatest = ({ historyData, isDashboard, noData, setOneDayYield, i
             <EmptyInfo height="100%" weight={500} size={14} lineHeight={20} color={fontColor}>
               Connect wallet to see your latest yield
             </EmptyInfo>
+            <FakeBoxWrapper>
+              {fakeYieldData
+                .map((el, i) => {
+                  const info = fakeYieldData[i]
+                  return <ActionRow key={i} info={info} />
+                })
+                .slice(0, 5)}
+            </FakeBoxWrapper>
           </EmptyPanel>
         )}
       </TableContent>
