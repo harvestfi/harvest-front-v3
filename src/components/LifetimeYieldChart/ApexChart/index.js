@@ -77,8 +77,10 @@ const ApexChart = ({ noData, data, range, handleTooltipContent, setCurDate, setC
         setCurDate('')
         const content = `
         <div style="font-size: 25px; line-height: 38px;">
-          <div style="color: #5DCF46; font-weight: 600;">${currencySym}
-            ${numberWithCommas((Number(data[0].lifetimeYield) * Number(currencyRate)).toFixed(2))}
+          <div style="color: #5DCF46; font-weight: 600;">
+            ${currencySym}${numberWithCommas(
+          (Number(data[0].lifetimeYield) * Number(currencyRate)).toFixed(2),
+        )}
           </div>
         </div>`
         setCurContent(content)
@@ -145,10 +147,10 @@ const ApexChart = ({ noData, data, range, handleTooltipContent, setCurDate, setC
       if (mainData.length > 0) {
         const content = `
         <div style="font-size: 25px; line-height: 38px;">
-          <div style="color: #5DCF46; font-weight: 600;">${currencySym}
-            ${numberWithCommas(
-              (Number(mainData[mainData.length - 1].y) * Number(currencyRate)).toFixed(2),
-            )}
+          <div style="color: #5DCF46; font-weight: 600;">
+            ${currencySym}${numberWithCommas(
+          (Number(mainData[mainData.length - 1].y) * Number(currencyRate)).toFixed(2),
+        )}
           </div>
         </div>`
         setCurContent(content)

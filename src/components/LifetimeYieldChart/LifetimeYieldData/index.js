@@ -34,8 +34,10 @@ const LifetimeYieldData = ({ noData, totalHistoryData }) => {
       const currentDate = formatDate(payload[0].payload.x)
       const content = `
           <div style="font-size: 25px; line-height: 38px;">
-            <div style="color: #5DCF46; font-weight: 600;">${currencySym}
-              ${numberWithCommas((Number(payload[0].payload.y) * Number(currencyRate)).toFixed(2))}
+            <div style="color: #5DCF46; font-weight: 600;">
+              ${currencySym}${numberWithCommas(
+        (Number(payload[0].payload.y) * Number(currencyRate)).toFixed(2),
+      )}
             </div>
           </div>`
       setCurContent(content)
