@@ -35,6 +35,7 @@ import WithdrawSelectToken from '../../components/AdvancedFarmComponents/Withdra
 import WithdrawStart from '../../components/AdvancedFarmComponents/Withdraw/WithdrawStart'
 import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
 import UserBalanceData from '../../components/UserBalanceChart/UserBalanceData'
+import PerformanceChart from '../../components/PerformanceChart/PerformanceChart'
 import VaultPanelActionsFooter from '../../components/AdvancedFarmComponents/Rewards/VaultPanelActionsFooter'
 import StakeBase from '../../components/AdvancedFarmComponents/Stake/StakeBase'
 import StakeStart from '../../components/AdvancedFarmComponents/Stake/StakeStart'
@@ -2631,7 +2632,7 @@ const AdvancedFarm = () => {
                     </WithdrawSection>
                   </HalfContent>
                   {isMobile ? (
-                    <UserBalanceData
+                    <PerformanceChart
                       token={token}
                       vaultPool={vaultPool}
                       totalValue={totalValue}
