@@ -18,8 +18,8 @@ const ActionRow = ({ info, showTotalBalance }) => {
   const {
     darkMode,
     switchMode,
-    backColor,
-    borderColorTable,
+    bgColorNew,
+    borderColorBox,
     hoverColorRow,
     fontColor,
   } = useThemeContext()
@@ -34,10 +34,10 @@ const ActionRow = ({ info, showTotalBalance }) => {
   return (
     <DetailView
       className="yield-row"
-      borderColor={borderColorTable}
+      borderColor={borderColorBox}
       hoverColor={hoverColorRow}
       mode={switchMode}
-      background={backColor}
+      background={bgColorNew}
     >
       <FlexDiv padding={isMobile ? '10px 15px' : '0'}>
         <Content display="flex" width={isMobile ? '25%' : '20%'}>

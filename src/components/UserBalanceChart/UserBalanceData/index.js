@@ -43,7 +43,7 @@ const UserBalanceData = ({
   chartData,
 }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const { darkMode, backColor, borderColor, fontColor3 } = useThemeContext()
+  const { darkMode, bgColorNew, borderColorBox, fontColor3 } = useThemeContext()
   const { account } = useWallet()
 
   const { rates } = useRate()
@@ -383,7 +383,7 @@ const UserBalanceData = ({
   ])
 
   return (
-    <Container backColor={backColor} borderColor={borderColor}>
+    <Container backColor={bgColorNew} borderColor={borderColorBox}>
       <Header>
         <Total>
           <FlexDiv>

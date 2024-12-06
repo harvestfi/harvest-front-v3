@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
 
 const Container = styled.div`
-  border-right: 1px solid #eaecf0;
+  border-right: 1px solid ${props => props.borderColor};
 
   a.logo {
     color: ${props => props.fontColor};

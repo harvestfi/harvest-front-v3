@@ -22,7 +22,9 @@ export function ThemeProvider({ children }) {
   const bgColorTable = darkMode ? '#20273A' : '#fff'
   const bgColorModal = darkMode ? '#0C111D' : '#F2F5FF'
   const bgColor = darkMode ? '#161B26' : '#fff'
+  const bgColorTop = darkMode ? '#191d21' : '#fff'
   const bgColorTooltip = darkMode ? '#59607A' : '#fff'
+  const bgColorNew = darkMode ? '#15191C' : '#fff'
   const bgColorFarm = darkMode ? '#213662' : '#f2f5ff'
   const bgColorSup = darkMode ? '#213662' : '#7289da'
   const bgColorMessage = darkMode ? '#242c3c' : '#fcfcfd'
@@ -44,6 +46,7 @@ export function ThemeProvider({ children }) {
   const linkColorOnHover = darkMode ? '#00d26b' : '#5318db'
 
   const borderColor = darkMode ? '#1F242F' : '#F3F6FF'
+  const borderColorBox = darkMode ? '#414141' : '#F2F5FF'
   const borderColorTable = darkMode ? '#1F242F' : '#E6ECFF'
   const inputBorderColor = darkMode ? '#1F242F' : '#d0d5dd'
   const hoverColor = darkMode ? '#1F242F' : '#e9f0f7'
@@ -53,6 +56,7 @@ export function ThemeProvider({ children }) {
   const hoverColorAVR = darkMode ? '#1F242F' : '#fbe7ef'
   const hoverColorSide = darkMode ? '#212c51' : '#E9EFFF'
   const activeColor = darkMode ? '#242C3C' : '#F3F6FF'
+  const activeColorNew = darkMode ? '#5DCF46' : '#F2F5FF'
   const activeColorModal = darkMode ? '#242C3C' : '#ECFDF3'
   const modalInputColor = darkMode ? '#242C3C' : '#ffffff'
 
@@ -188,8 +192,11 @@ export function ThemeProvider({ children }) {
         fontColorTooltip,
         backColor,
         bgColor,
+        bgColorTop,
+        bgColorNew,
         bgColorTooltip,
         borderColor,
+        borderColorBox,
         borderColorTable,
         inputBorderColor,
         hoverColor,
@@ -199,6 +206,7 @@ export function ThemeProvider({ children }) {
         hoverColorAVR,
         hoverColorSide,
         activeColor,
+        activeColorNew,
         activeColorModal,
         modalInputColor,
         highlightColor,

@@ -31,9 +31,8 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
   const itemsPerPage = isMobile ? 6 : 5
 
   const {
-    borderColorTable,
-    bgColorTable,
-    bgColorFarm,
+    borderColorBox,
+    bgColorNew,
     fontColor,
     fontColor1,
     fontColor2,
@@ -81,7 +80,7 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
       hasData={(connected && historyData?.length > 0) || isDashboard === 'true' ? 'unset' : '80vh'}
     >
       <TableContent>
-        <Header borderColor={borderColorTable} backColor={bgColorTable}>
+        <Header borderColor={borderColorBox} backColor={bgColorNew}>
           <Column width={isMobile ? '25%' : '20%'} color={fontColor}>
             <Col>Event</Col>
           </Column>
@@ -131,11 +130,11 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
                 .slice(0, 5)}
             </ContentBox>
             <HistoryPagination
-              bgColor={bgColorFarm}
+              bgColor={bgColorNew}
               fontColor={fontColor}
               fontColor1={fontColor1}
               fontColor2={fontColor2}
-              borderColor={inputBorderColor}
+              borderColor={borderColorBox}
             >
               <ReactPaginate
                 breakLabel="..."
@@ -157,7 +156,7 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
           !noData ? (
             <SkeletonLoader isPosition="false" />
           ) : (
-            <EmptyPanel borderColor={borderColorTable}>
+            <EmptyPanel borderColor={borderColorBox}>
               <EmptyInfo
                 weight={500}
                 size={14}

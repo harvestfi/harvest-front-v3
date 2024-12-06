@@ -23,8 +23,6 @@ import BarChart from '../../assets/images/logos/beginners/bar-chart-01.svg'
 import History from '../../assets/images/logos/beginners/history.svg'
 import TickIcon from '../../assets/images/logos/tick-icon.svg'
 import TickCross from '../../assets/images/logos/tick-cross.svg'
-import StakingIcon from '../../assets/images/logos/staking-icon.svg'
-import StakingCross from '../../assets/images/logos/staking-cross.svg'
 import ARBball from '../../assets/images/chains/ARBball-lg.png'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/AdvancedFarmComponents/Deposit/DepositBase'
@@ -164,7 +162,10 @@ const AdvancedFarm = () => {
     darkMode,
     backColor,
     bgColor,
+    bgColorTop,
+    bgColorNew,
     borderColor,
+    borderColorBox,
     bgColorTooltip,
     fontColorTooltip,
     fontColor,
@@ -176,7 +177,6 @@ const AdvancedFarm = () => {
     linkColorTooltip,
     linkColorOnHover,
     hoverColor,
-    bgColorFarm,
   } = useThemeContext()
 
   const { paramAddress } = useParams()
@@ -1464,8 +1464,8 @@ const AdvancedFarm = () => {
   }
 
   return (
-    <DetailView bgColor={bgColor} fontColor={fontColor}>
-      <TopInner bgColorFarm={bgColorFarm}>
+    <DetailView backColor={bgColorTop} fontColor={fontColor}>
+      <TopInner darkMode={darkMode}>
         <TopPart>
           <FlexTopDiv>
             <TopButton className="back-btn">
@@ -1528,8 +1528,7 @@ const AdvancedFarm = () => {
                     key={i}
                     fontColor3={fontColor3}
                     fontColor4={fontColor4}
-                    bgColor={bgColor}
-                    bgColorFarm={bgColorFarm}
+                    backColor={bgColorNew}
                     active={activeMainTag === i ? 'true' : 'false'}
                     mode={darkMode ? 'dark' : 'light'}
                     useIFARM={useIFARM}
@@ -1565,33 +1564,45 @@ const AdvancedFarm = () => {
           </FlexTopDiv>
         </TopPart>
       </TopInner>
-      <Inner>
+      <Inner backColor={bgColorNew}>
         <BigDiv>
           {activeMainTag === 1 && !noNeedStaking && rewardTokenData && (
-            <StakingInfo display={showStakingInfo ? 'flex' : 'none'}>
-              <img src={StakingIcon} alt="staking icon" style={{ marginRight: '15px' }} />
+            <StakingInfo
+              bgColorTooltip={bgColorTooltip}
+              borderColor={borderColor}
+              display={showStakingInfo ? 'flex' : 'none'}
+              fontColorTooltip={fontColorTooltip}
+            >
+              <BiInfoCircle className="info-circle" fontSize={20} />
               <StakingInfoText>
-                <NewLabel size="14px" weight="600" height="20px" color="#344054" marginBottom="5px">
+                <NewLabel
+                  size="14px"
+                  weight="600"
+                  height="20px"
+                  color={fontColor2}
+                  marginBottom="5px"
+                >
                   Staking Information
                 </NewLabel>
-                <NewLabel size="14px" weight="400" height="20px" color="#344054">
+                <NewLabel size="14px" weight="400" height="20px" color={fontColor2}>
                   Currently, no extra rewards are streamed to this farm, so staking fTokens
                   isn&apos;t needed. See this article on &quot;
-                  <a
+                  <WelcomeTicket
                     href="https://docs.harvest.finance/general-info/yield-sources-on-harvest-how-to-get-and-track-them"
-                    style={{ fontWeight: '600', color: '#475467' }}
                     target="_blank"
                     rel="noopener noreferrer"
+                    linkColor={linkColorTooltip}
+                    linkColorOnHover={linkColorOnHover}
                   >
                     Yield Sources on Harvest &ndash; How to Get and Track Them
-                  </a>
+                  </WelcomeTicket>
                   &quot; to better understand yield sources and staking.
                 </NewLabel>
                 <NewLabel
                   size="14px"
                   weight="600"
                   height="20px"
-                  color="#344054"
+                  color={fontColor2}
                   marginTop="15px"
                   cursor="pointer"
                   width="fit-content"
@@ -1607,7 +1618,7 @@ const AdvancedFarm = () => {
                   setShowStakingInfo(false)
                 }}
               >
-                <img src={StakingCross} alt="staking icon" />
+                <RxCross2 onClick={closeBadgeGenomes} />
               </CrossDiv>
             </StakingInfo>
           )}
@@ -1805,8 +1816,8 @@ const AdvancedFarm = () => {
                 )}
                 <ManageBoxWrapper>
                   <MyBalance
-                    backColor={backColor}
-                    borderColor={borderColor}
+                    backColor={bgColorNew}
+                    borderColor={borderColorBox}
                     marginBottom={isMobile ? '20px' : '25px'}
                     marginTop={isMobile ? '0px' : '0'}
                     height={isMobile ? 'unset' : '120px'}
@@ -1819,7 +1830,7 @@ const AdvancedFarm = () => {
                       height={isMobile ? '20px' : '20px'}
                       color={fontColor4}
                       padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom="1px solid #F2F5FF"
+                      borderBottom={`1px solid ${borderColorBox}`}
                     >
                       <FlexDiv>
                         {showLatestEarnings ? 'Latest Yield' : 'Lifetime Yield'}
@@ -1964,8 +1975,8 @@ const AdvancedFarm = () => {
                     </FlexDiv>
                   </MyBalance>
                   <MyBalance
-                    backColor={backColor}
-                    borderColor={borderColor}
+                    backColor={bgColorNew}
+                    borderColor={borderColorBox}
                     marginBottom={isMobile ? '20px' : '25px'}
                     marginTop={isMobile ? '0px' : '0'}
                     height={isMobile ? 'unset' : '120px'}
@@ -1978,7 +1989,7 @@ const AdvancedFarm = () => {
                       height={isMobile ? '20px' : '20px'}
                       color={fontColor4}
                       padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom="1px solid #F2F5FF"
+                      borderBottom={`1px solid ${borderColorBox}`}
                     >
                       Total Balance
                       <PiQuestion className="question" data-tip data-for="tooltip-total-balance" />
@@ -2083,8 +2094,8 @@ const AdvancedFarm = () => {
                     </FlexDiv>
                   </MyBalance>
                   <MyBalance
-                    backColor={backColor}
-                    borderColor={borderColor}
+                    backColor={bgColorNew}
+                    borderColor={borderColorBox}
                     marginBottom={isMobile ? '20px' : '25px'}
                     marginTop={isMobile ? '0px' : '0'}
                     height={isMobile ? 'unset' : '120px'}
@@ -2097,7 +2108,7 @@ const AdvancedFarm = () => {
                       height={isMobile ? '20px' : '20px'}
                       color={fontColor4}
                       padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom="1px solid #F2F5FF"
+                      borderBottom={`1px solid ${borderColorBox}`}
                     >
                       Yield Estimates
                       <PiQuestion className="question" data-tip data-for="tooltip-yield-estimate" />
@@ -2183,8 +2194,8 @@ const AdvancedFarm = () => {
                     key={index}
                     width="24%"
                     className={className}
-                    backColor={backColor}
-                    borderColor={borderColor}
+                    backColor={bgColorNew}
+                    borderColor={borderColorBox}
                   >
                     <BoxTitle fontColor3={fontColor3}>{title}</BoxTitle>
                     <BoxValue fontColor1={fontColor1}>{showValue()}</BoxValue>
@@ -2261,7 +2272,7 @@ const AdvancedFarm = () => {
                           height={isMobile ? '20px' : '24px'}
                           color={fontColor4}
                           padding={isMobile ? '10px 15px' : '10px 15px'}
-                          borderBottom="1px solid #F3F6FF"
+                          borderBottom={`1px solid ${borderColorBox}`}
                           display="flex"
                           justifyContent="space-between"
                         >
@@ -2286,8 +2297,8 @@ const AdvancedFarm = () => {
                   <>
                     <TotalRewardBox
                       marginBottom={isMobile ? '20px' : '25px'}
-                      backColor={backColor}
-                      borderColor={borderColor}
+                      backColor={bgColorNew}
+                      borderColor={borderColorBox}
                     >
                       <BoxTitle fontColor3={fontColor3}>Rewards</BoxTitle>
                       <RewardValue>
@@ -2305,8 +2316,8 @@ const AdvancedFarm = () => {
                     {!isMobile && (
                       <MyBalance
                         marginBottom="25px"
-                        backColor={backColor}
-                        borderColor={borderColor}
+                        backColor={bgColorNew}
+                        borderColor={borderColorBox}
                       >
                         <NewLabel
                           size={isMobile ? '12px' : '14px'}
@@ -2314,7 +2325,7 @@ const AdvancedFarm = () => {
                           height={isMobile ? '20px' : '24px'}
                           color={fontColor4}
                           padding={isMobile ? '10px 15px' : '10px 15px'}
-                          borderBottom="1px solid #F3F6FF"
+                          borderBottom={`1px solid ${borderColorBox}`}
                         >
                           My Token Rewards
                         </NewLabel>
@@ -2330,8 +2341,8 @@ const AdvancedFarm = () => {
                   <HalfInfo
                     padding="25px 18px"
                     marginBottom={isMobile ? '20px' : '25px'}
-                    backColor={backColor}
-                    borderColor={borderColor}
+                    backColor={bgColorNew}
+                    borderColor={borderColorBox}
                   >
                     <FarmDetailChart
                       token={token}
@@ -2354,14 +2365,18 @@ const AdvancedFarm = () => {
                     />
                   </HalfInfo>
                   {!isMobile && (
-                    <HalfInfo marginBottom="20px" backColor={backColor} borderColor={borderColor}>
+                    <HalfInfo
+                      marginBottom="20px"
+                      backColor={bgColorNew}
+                      borderColor={borderColorBox}
+                    >
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}
                         weight={isMobile ? '600' : '600'}
                         height={isMobile ? '20px' : '24px'}
                         color={fontColor4}
                         padding={isMobile ? '10px 15px' : '10px 15px'}
-                        borderBottom="1px solid #F3F6FF"
+                        borderBottom={`1px solid ${borderColorBox}`}
                       >
                         Source of Yield
                       </NewLabel>
@@ -2393,7 +2408,7 @@ const AdvancedFarm = () => {
                             target="_blank"
                             onClick={e => e.stopPropagation()}
                             rel="noopener noreferrer"
-                            bgColor={bgColor}
+                            bgColor={bgColorNew}
                             hoverColor={hoverColor}
                             borderColor={borderColor}
                           >
@@ -2417,7 +2432,7 @@ const AdvancedFarm = () => {
                             target="_blank"
                             onClick={e => e.stopPropagation()}
                             rel="noopener noreferrer"
-                            bgColor={bgColor}
+                            bgColor={bgColorNew}
                             hoverColor={hoverColor}
                             borderColor={borderColor}
                           >
@@ -2440,7 +2455,7 @@ const AdvancedFarm = () => {
                           onClick={e => e.stopPropagation()}
                           rel="noopener noreferrer"
                           target="_blank"
-                          bgColor={bgColor}
+                          bgColor={bgColorNew}
                           hoverColor={hoverColor}
                           borderColor={borderColor}
                         >
@@ -2488,8 +2503,8 @@ const AdvancedFarm = () => {
               {activeMainTag === 0 ? (
                 <FirstPartSection>
                   <HalfContent
-                    backColor={backColor}
-                    borderColor={borderColor}
+                    backColor={bgColorNew}
+                    borderColor={borderColorBox}
                     marginBottom={isMobile ? '20px' : '0px'}
                     borderRadius={isMobile ? '12px' : '12px'}
                   >
@@ -2649,8 +2664,8 @@ const AdvancedFarm = () => {
               ) : activeMainTag === 1 ? (
                 <SecondPartSection>
                   <MyBalance
-                    backColor={backColor}
-                    borderColor={borderColor}
+                    backColor={bgColorNew}
+                    borderColor={borderColorBox}
                     height={isMobile ? 'unset' : useIFARM ? 'unset' : '120px'}
                     marginBottom={isMobile ? '20px' : '25px'}
                   >
@@ -2660,7 +2675,7 @@ const AdvancedFarm = () => {
                       height={isMobile ? '20px' : '20px'}
                       color={fontColor4}
                       padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom="1px solid #F2F5FF "
+                      borderBottom={`1px solid ${borderColorBox}`}
                     >
                       {useIFARM ? 'Farm (Legacy)' : `f${id}`}
                     </NewLabel>
@@ -2853,14 +2868,18 @@ const AdvancedFarm = () => {
                     )}
                   </MyBalance>
                   {isMobile && (
-                    <MyBalance marginBottom="20px" backColor={backColor} borderColor={borderColor}>
+                    <MyBalance
+                      marginBottom="20px"
+                      backColor={bgColorNew}
+                      borderColor={borderColorBox}
+                    >
                       <NewLabel
                         size={isMobile ? '14px' : '14px'}
                         weight="600"
                         height={isMobile ? '24px' : '24px'}
                         color={fontColor4}
                         padding={isMobile ? '10px 15px' : '10px 15px'}
-                        borderBottom="1px solid #F3F6FF"
+                        borderBottom={`1px solid ${borderColorBox}`}
                       >
                         My Token Rewards
                       </NewLabel>
@@ -2870,8 +2889,8 @@ const AdvancedFarm = () => {
                     </MyBalance>
                   )}
                   <HalfContent
-                    backColor={backColor}
-                    borderColor={borderColor}
+                    backColor={bgColorNew}
+                    borderColor={borderColorBox}
                     marginBottom={isMobile ? '20px' : '0px'}
                     borderRadius={isMobile ? '12px' : '12px'}
                   >
@@ -2949,14 +2968,14 @@ const AdvancedFarm = () => {
                 </SecondPartSection>
               ) : activeMainTag === 2 ? (
                 <RestInternal>
-                  <LastHarvestInfo backColor={backColor} borderColor={borderColor}>
+                  <LastHarvestInfo backColor={bgColorNew} borderColor={borderColorBox}>
                     <NewLabel
                       size={isMobile ? '12px' : '14px'}
                       weight={isMobile ? '600' : '600'}
                       height={isMobile ? '20px' : '24px'}
                       color={fontColor4}
                       padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom="1px solid #F3F6FF"
+                      borderBottom={`1px solid ${borderColorBox}`}
                     >
                       Info
                     </NewLabel>
@@ -2987,7 +3006,7 @@ const AdvancedFarm = () => {
                     <FlexDiv
                       justifyContent="space-between"
                       padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom="1px solid #F3F6FF"
+                      borderBottom={`1px solid ${borderColorBox}`}
                     >
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}
@@ -3037,7 +3056,7 @@ const AdvancedFarm = () => {
                       height={isMobile ? '20px' : '24px'}
                       color={fontColor4}
                       padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom="1px solid #F3F6FF"
+                      borderBottom={`1px solid ${borderColorBox}`}
                     >
                       {showApyHistory ? 'APY - Live & Historical Average' : 'Harvest Frequency'}
                       <SwitchMode mode={showApyHistory ? 'apy' : 'harvest'}>
@@ -3107,8 +3126,8 @@ const AdvancedFarm = () => {
                   {!useIFARM && (
                     <MyBalance
                       marginBottom={isMobile ? '20px' : '25px'}
-                      backColor={backColor}
-                      borderColor={borderColor}
+                      backColor={bgColorNew}
+                      borderColor={borderColorBox}
                     >
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}
@@ -3116,7 +3135,7 @@ const AdvancedFarm = () => {
                         height={isMobile ? '20px' : '24px'}
                         color={fontColor4}
                         padding={isMobile ? '10px 15px' : '10px 15px'}
-                        borderBottom="1px solid #F3F6FF"
+                        borderBottom={`1px solid ${borderColorBox}`}
                       >
                         APY Breakdown
                       </NewLabel>
@@ -3155,14 +3174,14 @@ const AdvancedFarm = () => {
                       </Tip>
                     </MyBalance>
                   )}
-                  <LastHarvestInfo backColor={backColor} borderColor={borderColor}>
+                  <LastHarvestInfo backColor={bgColorNew} borderColor={borderColorBox}>
                     <NewLabel
                       size={isMobile ? '12px' : '14px'}
                       weight={isMobile ? '600' : '600'}
                       height={isMobile ? '20px' : '24px'}
                       color={fontColor4}
                       padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom="1px solid #F3F6FF"
+                      borderBottom={`1px solid ${borderColorBox}`}
                     >
                       Fees
                     </NewLabel>
@@ -3237,14 +3256,18 @@ const AdvancedFarm = () => {
                     )}
                   </LastHarvestInfo>
                   {isMobile && (
-                    <HalfInfo marginBottom="20px" backColor={backColor} borderColor={borderColor}>
+                    <HalfInfo
+                      marginBottom="20px"
+                      backColor={bgColorNew}
+                      borderColor={borderColorBox}
+                    >
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}
                         weight="600"
                         height={isMobile ? '20px' : '24px'}
                         color={fontColor4}
                         padding={isMobile ? '10px 15px' : '10px 15px'}
-                        borderBottom="1px solid #F3F6FF"
+                        borderBottom={`1px solid ${borderColorBox}`}
                       >
                         Source of Yield
                       </NewLabel>

@@ -7,11 +7,17 @@ const BaseWidoDiv = styled.div`
 
   &:nth-child(2) {
     padding: 10px 15px 15px 15px;
-    border-top: 1px solid #e3e3e3;
+    border-top: 1px solid ${props => props.borderColor};
   }
 `
 
 const NewLabel = styled.div`
+  ${props =>
+    props.bg
+      ? `
+      background: ${props.bg};
+    `
+      : ''}
   ${props =>
     props.padding
       ? `
@@ -223,7 +229,7 @@ const TokenAmount = styled.input`
   white-space: nowrap;
   overflow: hidden;
   background: ${props => props.bgColor};
-  border: 1px solid #d0d5dd;
+  border: 1px solid ${props => props.borderColor};
   outline: 0;
   padding: 7px 14px 13px 14px;
   border-radius: 8px;

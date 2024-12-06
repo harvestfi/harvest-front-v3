@@ -205,7 +205,7 @@ ${props =>
     ${props =>
       props.color === 'wido-deposit'
         ? `
-        background: #15B088;
+        background: #5DCF46;
         font-weight: 600;
         font-size: 16px;
         line-height: 24px;
@@ -224,13 +224,13 @@ ${props =>
           !props.disabled
             ? `
         &:hover {
-          background: #2ccda4;
+          background: #56d73c;
         }`
             : ''
         }
   
         &:active {
-          background: #4fdfbb;
+          background: #4bd72f;
         }
         `
         : ''}
