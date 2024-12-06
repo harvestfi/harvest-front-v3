@@ -453,7 +453,7 @@ const ApexChart = ({
     <>
       {isDataReady === 'true' ? (
         <ChartWrapper bgColorChart={bgColorChart}>
-          <ResponsiveContainer width="100%" height={onlyWidth > 1291 ? 346 : 365}>
+          <ResponsiveContainer width="100%" height={onlyWidth > 1291 ? 346 : 230}>
             <ComposedChart
               data={mainSeries}
               margin={{
@@ -527,7 +527,7 @@ const ApexChart = ({
       ) : (
         <LoadingDiv>
           {isDataReady === 'loading' ? (
-            <LoaderWrapper height={onlyWidth > 1291 ? '346px' : '365px'}>
+            <LoaderWrapper height={onlyWidth > 1291 ? '346px' : '230px'}>
               <ClipLoader size={30} margin={2} color={fontColor} />
             </LoaderWrapper>
           ) : (
@@ -540,7 +540,7 @@ const ApexChart = ({
                 <NoData color={fontColor}>Connect wallet to see your balance chart</NoData>
               )}
               <FakeChartWrapper>
-                <ResponsiveContainer width="100%" height={onlyWidth > 1291 ? 346 : 365}>
+                <ResponsiveContainer width="100%" height={onlyWidth > 1291 ? 346 : 230}>
                   <ComposedChart
                     data={fakeChartData}
                     margin={{
