@@ -58,6 +58,10 @@ const SubPart = styled.div`
     margin: 0px 25px 25px 25px;
     border: none;
   }
+
+  @media screen and (max-width: 992px) {
+    margin: 0px 10px 10px 10px;
+  }
 `
 
 const HeaderWrap = styled.div`

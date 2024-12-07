@@ -868,11 +868,6 @@ const GuideSection = styled.div`
     display: flex;
     justify-content: center;
   }
-
-  @media screen and (max-width: 343px) {
-    flex-direction: column;
-    gap: 10px;
-  }
 `
 
 const GuidePart = styled.div`
