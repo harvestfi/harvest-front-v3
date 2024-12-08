@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import BgImage from '../../assets/images/logos/advancedfarm/texture.png'
+import BgImage from '../../assets/images/logos/advancedfarm/texture.webp'
 
 const DetailView = styled.div`
   width: 100%;
@@ -36,8 +36,6 @@ const Inner = styled.div`
 
 const TopInner = styled.div`
   background: ${props => (props.darkMode ? `url(${BgImage})` : '#f2f5ff')};
-  /* background-size: cover;
-  background-repeat: no-repeat; */
   padding: 50px 72px 0px 76px;
   display: flex;
   justify-content: center;
