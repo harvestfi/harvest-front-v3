@@ -1211,6 +1211,20 @@ const MainTag = styled.div`
   line-height: 20px;
   cursor: pointer;
   color: ${props => props.fontColor4};
+  transition: 0.25s;
+
+  &:hover {
+    background: ${props => props.backColor};
+    ${props => (props.active === 'true' ? 'opacity: 1;' : 'opacity: 0.8;')}
+
+    &:first-child {
+      border-radius: 8px 0px 0px 0px;
+    }
+
+    &:nth-child(4) {
+      border-radius: 0px 8px 0px 0px;
+    }
+  }
 
   ${props =>
     props.active === 'true'
