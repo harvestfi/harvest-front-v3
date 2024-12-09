@@ -126,21 +126,27 @@ const ApexChart = ({
     return null
   }
 
-  const renderCustomXAxisTick = ({ x, y, payload }) => {
-    let path = ''
+  const renderCustomXAxisTick = ({ x, y, payload, index }) => {
+    let path = '',
+      dx = 0
 
     if (payload.value !== '') {
       path = formatXAxis(payload.value, hourUnit)
     }
+
+    if (index === 0) dx = 5 // Adjust the first tick
+    if (index === payload.length - 1) dx = -10 // Adjust the last tick
     return (
       <text
         orientation="bottom"
-        x={x - 12}
+        x={x + dx}
         y={y + 4}
         width={24}
         height={24}
+        textAnchor={index === 0 ? 'start' : index === payload.length - 1 ? 'end' : 'middle'}
         viewBox="0 0 1024 1024"
         fill={fontColor5}
+        fontSize="10px"
       >
         <tspan dy="0.71em">{path}</tspan>
       </text>
@@ -490,7 +496,13 @@ const ApexChart = ({
                 legendType="none"
                 yAxisId="right"
               />
-              <XAxis dataKey="x" tickLine={false} tickCount={5} tick={renderCustomXAxisTick} />
+              <XAxis
+                dataKey="x"
+                tickLine={false}
+                tickCount={5}
+                tick={renderCustomXAxisTick}
+                interval={8}
+              />
               <YAxis
                 dataKey="y"
                 tickCount={5}
