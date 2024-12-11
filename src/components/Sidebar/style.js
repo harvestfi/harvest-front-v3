@@ -313,8 +313,8 @@ const ConnectButtonStyle = styled.button`
     font-size: 15px;
     font-weight: 400;
     border-radius: 9px;
-    background: #20d099;
-    color: #ffffff;
+    background: #5dcf46;
+    color: #fff;
     padding: 9.19px 16.08px 9.19px 16.08px;
     border: none;
     margin: auto 0px auto 10px;

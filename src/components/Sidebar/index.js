@@ -9,13 +9,9 @@ import connectAvatar from '../../assets/images/logos/sidebar/connect-frame.svg'
 import connectAvatarMobile from '../../assets/images/logos/sidebar/connectavatarmobile.svg'
 // import Docs from '../../assets/images/logos/sidebar/docs.svg'
 import FAQ from '../../assets/images/logos/sidebar/faq.svg'
-import ActiveDarkMobileBottomHome from '../../assets/images/logos/sidebar/active-dark-home.svg'
 import ActiveWhiteMobileBottomHome from '../../assets/images/logos/sidebar/active-white-home.svg'
-import { useRate } from '../../providers/Rate'
 import ActiveWhiteMobileBottomAdvanced from '../../assets/images/logos/sidebar/active-white-farms.svg'
-// import ActiveDarkMobileBottomAdvanced from '../../assets/images/logos/sidebar/active-dark-farms.svg'
 import Home from '../../assets/images/logos/sidebar/home-line.svg'
-import MobileBottomHome from '../../assets/images/logos/sidebar/bottom-home.svg'
 import Beginners from '../../assets/images/logos/sidebar/beginners.svg'
 import Support from '../../assets/images/logos/sidebar/support.svg'
 import Analytics from '../../assets/images/logos/sidebar/analytics.svg'
@@ -36,6 +32,7 @@ import { ROUTES, supportedCurrencies } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
 import DropDownIcon from '../../assets/images/logos/advancedfarm/drop-down.svg'
 import { usePools } from '../../providers/Pools'
+import { useRate } from '../../providers/Rate'
 import { useThemeContext } from '../../providers/useThemeContext'
 import usePersistedState from '../../providers/usePersistedState'
 import { useWallet } from '../../providers/Wallet'
@@ -174,9 +171,7 @@ const sideLinksMobile = [
   {
     path: ROUTES.PORTFOLIO,
     name: 'Portfolio',
-    imgPath: MobileBottomHome,
-    darkImg: ActiveDarkMobileBottomHome,
-    whiteImg: ActiveWhiteMobileBottomHome,
+    imgPath: ActiveWhiteMobileBottomHome,
     linkName: 'Portfolio',
   },
   {
@@ -300,21 +295,14 @@ const MobileMenu = ({
   darkMode,
   isWallet,
   isMobile,
-  isMobileBottom,
 }) => {
   const { pathname } = useLocation()
   const pageName =
     pathname === '/' ? 'all farms' : pathname === ROUTES.PORTFOLIO ? 'portfolio' : pathname
   const active = !isWallet && pageName.includes(item.name.toLowerCase())
-  const isFarms = item.isFarms
-  const farmsFilter =
-    active && isFarms
-      ? darkMode
-        ? 'invert(100%) sepia(1%) saturate(3890%) hue-rotate(51deg) brightness(113%) contrast(100%);'
-        : ''
-      : !active && isFarms
-      ? 'invert(51%) sepia(1%) saturate(2273%) hue-rotate(333deg) brightness(93%) contrast(81%)'
-      : ''
+  const farmsFilter = active
+    ? 'invert(75%) sepia(89%) saturate(343%) hue-rotate(52deg) brightness(89%) contrast(86%)'
+    : 'invert(51%) sepia(1%) saturate(2273%) hue-rotate(333deg) brightness(93%) contrast(81%)'
   return (
     <LinkMobile
       fontColor={fontColor}
@@ -329,7 +317,7 @@ const MobileMenu = ({
     >
       <SideIcons
         className="sideIcon"
-        src={isMobileBottom && !isFarms ? (active ? item.darkImg : item.imgPath) : item.imgPath}
+        src={item.imgPath}
         alt="Harvest"
         width={item.name === 'Portfolio' ? '18px' : '22px'}
         height={item.name === 'Portfolio' ? '18px' : '22px'}
@@ -369,7 +357,6 @@ const Sidebar = ({ width }) => {
     sidebarFontColor,
     sidebarActiveFontColor,
     sidebarActiveIconColor,
-    backColorButton,
     hoverColorNew,
   } = useThemeContext()
 
@@ -882,7 +869,7 @@ const Sidebar = ({ width }) => {
                     <Dropdown>
                       <CurrencyDropDown
                         id="dropdown-basic"
-                        bgcolor={backColorButton}
+                        bgcolor={bgColorNew}
                         fontcolor2={fontColor2}
                         hovercolor={hoverColorNew}
                         style={{ padding: 0 }}
@@ -908,7 +895,7 @@ const Sidebar = ({ width }) => {
                         )}
                       </CurrencyDropDown>
                       {!isSpecialApp ? (
-                        <CurrencyDropDownMenu backcolor={backColorButton}>
+                        <CurrencyDropDownMenu backcolor={bgColorNew}>
                           {supportedCurrencies.map(elem => {
                             return (
                               <CurrencyDropDownItem
@@ -1212,7 +1199,6 @@ const Sidebar = ({ width }) => {
                   activeIconColor={sidebarActiveIconColor}
                   darkMode={darkMode}
                   isWallet={false}
-                  isMobileBottom
                   isMobile
                 />
               </MobileMenuContainer>
