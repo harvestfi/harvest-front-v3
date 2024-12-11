@@ -13,7 +13,7 @@ import ActiveDarkMobileBottomHome from '../../assets/images/logos/sidebar/active
 import ActiveWhiteMobileBottomHome from '../../assets/images/logos/sidebar/active-white-home.svg'
 import { useRate } from '../../providers/Rate'
 import ActiveWhiteMobileBottomAdvanced from '../../assets/images/logos/sidebar/active-white-farms.svg'
-import ActiveDarkMobileBottomAdvanced from '../../assets/images/logos/sidebar/active-dark-farms.svg'
+// import ActiveDarkMobileBottomAdvanced from '../../assets/images/logos/sidebar/active-dark-farms.svg'
 import Home from '../../assets/images/logos/sidebar/home-line.svg'
 import MobileBottomHome from '../../assets/images/logos/sidebar/bottom-home.svg'
 import Beginners from '../../assets/images/logos/sidebar/beginners.svg'
