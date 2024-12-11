@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { ComposedChart, XAxis, Line, Area, Tooltip, ResponsiveContainer } from 'recharts'
+import { ComposedChart, XAxis, Line, Area, Tooltip, ResponsiveContainer, YAxis } from 'recharts'
 import { useWindowWidth } from '@react-hook/window-size'
 import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { useRate } from '../../../providers/Rate'
-import { numberWithCommas } from '../../../utilities/formats'
-import { getTimeSlots } from '../../../utilities/parsers'
+import { ceil10, floor10, numberWithCommas } from '../../../utilities/formats'
+import { findMax, findMin, getTimeSlots, getYAxisValues } from '../../../utilities/parsers'
 import { BoxWrapper, EmptyInfo, LoadingDiv, NoData } from './style'
 import MagicChart from '../MagicChart'
 
@@ -61,6 +61,10 @@ const ApexChart = ({ noData, data, range, handleTooltipContent, setCurDate, setC
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
+
+  const [minVal, setMinVal] = useState(0)
+  const [maxVal, setMaxVal] = useState(0)
+  const [yAxisTicks, setYAxisTicks] = useState([])
 
   useEffect(() => {
     if (rates.rateData) {
@@ -121,6 +125,33 @@ const ApexChart = ({ noData, data, range, handleTooltipContent, setCurDate, setC
     )
   }
 
+  const renderCustomYAxisTick = ({ x, y, payload }) => {
+    let path = ''
+
+    if (payload.value !== '') {
+      path = `${currencySym}${numberWithCommas(
+        (Number(payload.value) * Number(currencyRate)).toFixed(0),
+      )}`
+    }
+    return (
+      <text
+        orientation="left"
+        className="recharts-text recharts-cartesian-axis-tick-value"
+        x={x}
+        y={y}
+        width={60}
+        height={310}
+        stroke="none"
+        fill={inputFontColor}
+        textAnchor="end"
+      >
+        <tspan dx={0} dy="0.355em">
+          {path}
+        </tspan>
+      </text>
+    )
+  }
+
   useEffect(() => {
     const init = async () => {
       setLoading(true)
@@ -129,6 +160,11 @@ const ApexChart = ({ noData, data, range, handleTooltipContent, setCurDate, setC
       }
 
       let mainData = [],
+        maxValue,
+        minValue,
+        len = 0,
+        unitBtw,
+        roundNum,
         slotCount = 50
 
       if (range > 700) {
@@ -153,6 +189,40 @@ const ApexChart = ({ noData, data, range, handleTooltipContent, setCurDate, setC
         return
       }
       mainData = generateChartDataWithSlots(slots, data, 'lifetimeYield')
+      maxValue = findMax(mainData)
+      minValue = findMin(mainData)
+
+      const between = maxValue - minValue
+      unitBtw = between / 4
+      if (unitBtw >= 1) {
+        unitBtw = Math.ceil(unitBtw)
+        len = unitBtw.toString().length
+        unitBtw = ceil10(unitBtw, len - 1)
+        maxValue = ceil10(maxValue, len - 1)
+        minValue = floor10(minValue, len - 1)
+      } else if (unitBtw === 0) {
+        len = Math.ceil(maxValue).toString().length
+        maxValue += 10 ** (len - 1)
+        minValue -= 10 ** (len - 1)
+      } else {
+        len = Math.ceil(1 / unitBtw).toString().length + 1
+        unitBtw = ceil10(unitBtw, -len)
+        maxValue = ceil10(maxValue, -len)
+        minValue = floor10(minValue, -len + 1)
+      }
+
+      if (unitBtw !== 0) {
+        maxValue *= 1.5
+        minValue = 0
+      } else {
+        unitBtw = (maxValue - minValue) / 4
+      }
+
+      if (unitBtw === 0) {
+        roundNum = 0
+      } else {
+        roundNum = len - 2
+      }
 
       if (mainData.length > 0) {
         const content = `
@@ -166,6 +236,12 @@ const ApexChart = ({ noData, data, range, handleTooltipContent, setCurDate, setC
         setCurContent(content)
       }
 
+      setMinVal(minValue)
+      setMaxVal(maxValue)
+
+      const yAxisAry = getYAxisValues(minValue, maxValue, roundNum)
+      setYAxisTicks(yAxisAry)
+
       setMainSeries(mainData)
       setLoading(false)
     }
@@ -177,10 +253,7 @@ const ApexChart = ({ noData, data, range, handleTooltipContent, setCurDate, setC
   return (
     <>
       {connected && !loading ? (
-        <ResponsiveContainer
-          width="100%"
-          height={onlyWidth > 1250 ? 380 : onlyWidth > 992 ? 350 : 120}
-        >
+        <ResponsiveContainer width="100%" height={onlyWidth > 992 ? 300 : 120}>
           <ComposedChart
             data={mainSeries}
             margin={{
@@ -192,17 +265,10 @@ const ApexChart = ({ noData, data, range, handleTooltipContent, setCurDate, setC
           >
             <defs>
               <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#00D26B" stopOpacity={1} />
-                <stop offset="100%" stopColor={darkMode ? '#161B26' : '#fff'} stopOpacity={1} />
+                <stop offset="5%" stopColor="#00D26B" stopOpacity={0.1} />
+                <stop offset="95%" stopColor={darkMode ? '#161B26' : '#fff'} stopOpacity={0.1} />
               </linearGradient>
             </defs>
-            <XAxis
-              dataKey="x"
-              tickLine={false}
-              tickCount={5}
-              tick={renderCustomXAxisTick}
-              interval={50}
-            />
             <Line
               dataKey="y"
               type="monotone"
@@ -220,6 +286,22 @@ const ApexChart = ({ noData, data, range, handleTooltipContent, setCurDate, setC
               strokeWidth={2}
               fillOpacity={1}
               fill="url(#colorUv)"
+            />
+            <XAxis
+              dataKey="x"
+              tickLine={false}
+              tickCount={5}
+              tick={renderCustomXAxisTick}
+              interval={50}
+            />
+            <YAxis
+              hide
+              dataKey="y"
+              tickLine={false}
+              tickCount={5}
+              tick={renderCustomYAxisTick}
+              ticks={yAxisTicks}
+              domain={[minVal, maxVal]}
             />
             <Tooltip
               content={<CustomTooltip onTooltipContentChange={handleTooltipContent} />}

@@ -34,7 +34,7 @@ const MagicChart = () => {
   }
   return (
     <FakeChartWrapper>
-      <ResponsiveContainer width="100%" height={onlyWidth > 1291 ? 346 : 365}>
+      <ResponsiveContainer width="100%" height={onlyWidth > 992 ? 300 : 120}>
         <ComposedChart
           data={magicChartData}
           margin={{

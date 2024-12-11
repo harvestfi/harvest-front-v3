@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { useMediaQuery } from 'react-responsive'
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -16,6 +17,7 @@ import {
 } from './style'
 
 const HistoryDataLatest = ({ historyData, isDashboard, noData, setOneDayYield, isLoading }) => {
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const filteredHistoryData = historyData.filter(el => el.event === 'Harvest' && el.netChange >= 0)
   const totalLength = filteredHistoryData.length
   useEffect(() => {
@@ -60,13 +62,13 @@ const HistoryDataLatest = ({ historyData, isDashboard, noData, setOneDayYield, i
                 const info = filteredHistoryData[i]
                 return <ActionRow key={i} info={info} />
               })
-              .slice(0, 5)}
+              .slice(0, isMobile ? 6 : 4)}
           </ContentBox>
         ) : connected ? (
           !noData ? (
             <EmptyPanel>
               <SkeletonTheme baseColor="#ECECEC" highlightColor={highlightColor}>
-                {[...Array(5)].map((_, index) => (
+                {[...Array(isMobile ? 6 : 4)].map((_, index) => (
                   <SkeletonItem key={index}>
                     <div>
                       <Skeleton containerClassName="skeleton" width="50%" height={10} />
@@ -89,7 +91,7 @@ const HistoryDataLatest = ({ historyData, isDashboard, noData, setOneDayYield, i
                     const info = fakeYieldData[i]
                     return <ActionRow key={i} info={info} />
                   })
-                  .slice(0, 5)}
+                  .slice(0, isMobile ? 6 : 4)}
               </FakeBoxWrapper>
             </EmptyPanel>
           )
@@ -104,7 +106,7 @@ const HistoryDataLatest = ({ historyData, isDashboard, noData, setOneDayYield, i
                   const info = fakeYieldData[i]
                   return <ActionRow key={i} info={info} />
                 })
-                .slice(0, 5)}
+                .slice(0, isMobile ? 6 : 4)}
             </FakeBoxWrapper>
           </EmptyPanel>
         )}
