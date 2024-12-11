@@ -48,6 +48,7 @@ export const calculateFarmingBalance = async (pools, userStats, vaultSymbol, vau
     }
   } catch (err) {
     console.error(err)
+    console.log('vaultSymbol: ', vaultSymbol)
     farmedBalance = 'error'
   }
 

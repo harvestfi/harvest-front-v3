@@ -65,6 +65,7 @@ export const ROUTES = {
   FAQ: '/faq',
   ADVANCEDFARM: '/:network/:paramAddress',
   BEGINNERSFARM: '/beginners',
+  AUTOPILOT: '/autopilot',
   CHARTS: '/charts',
   WORK: '/work',
   POOL: '/pool',
