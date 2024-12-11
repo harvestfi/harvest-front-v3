@@ -13,7 +13,7 @@ const Container = styled.div`
   color: ${props => props.fontColor};
 
   @media screen and (max-width: 992px) {
-    padding: 20px 0px 0px 0px;
+    padding: 0px;
   }
 `
 
@@ -23,6 +23,7 @@ const Header = styled.div`
   justify-content: space-between;
 
   @media screen and (max-width: 992px) {
+    display: none;
     padding-left: 15px;
   }
 `

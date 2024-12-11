@@ -4,12 +4,10 @@ import useEffectWithPrevious from 'use-effect-with-previous'
 import { find, get, isEmpty, orderBy, isEqual, isNaN } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import { Dropdown, Spinner } from 'react-bootstrap'
-import { PiQuestion } from 'react-icons/pi'
-import ReactTooltip from 'react-tooltip'
 import { useHistory } from 'react-router-dom'
 import { FaRegSquare, FaRegSquareCheck } from 'react-icons/fa6'
 import { BiLeftArrowAlt } from 'react-icons/bi'
-import { IoCheckmark } from 'react-icons/io5'
+import { IoArrowUpCircleOutline, IoCheckmark } from 'react-icons/io5'
 import 'react-loading-skeleton/dist/skeleton.css'
 import VaultRow from '../../components/DashboardComponents/VaultRow'
 import LifetimeYieldData from '../../components/LifetimeYieldChart/LifetimeYieldData'
@@ -25,7 +23,6 @@ import Eye from '../../assets/images/logos/eye-icon.svg'
 import ClosedEye from '../../assets/images/logos/eye_closed.svg'
 import SkeletonLoader from '../../components/DashboardComponents/SkeletonLoader'
 import EarningsHistory from '../../components/EarningsHistory/HistoryData'
-import UpperIcon from '../../assets/images/logos/dashboard-upper.svg'
 import EarningsHistoryLatest from '../../components/EarningsHistoryLatest/HistoryDataLatest'
 import TotalValue from '../../components/TotalValue'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
@@ -97,7 +94,6 @@ import {
   LifetimeSub,
   LogoDiv,
   Address,
-  NewLabel,
   GreenBox,
   ChartSection,
   ChartBox,
@@ -114,9 +110,7 @@ const Portfolio = () => {
   const { tokens } = require('../../data')
   const {
     darkMode,
-    bgColor,
-    bgColorTable,
-    backColorButton,
+    bgColorNew,
     hoverColor,
     hoverColorNew,
     filterColor,
@@ -912,11 +906,19 @@ const Portfolio = () => {
   const MobileTopBoxData = [
     {
       icon: Safe,
-      content: 'Total Balance',
+      content: 'Balance',
       price: totalDeposit,
       toolTipTitle: 'tt-total-balance',
       toolTip:
         "Sum of your wallet's staked and unstaked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.",
+    },
+    {
+      icon: Diamond,
+      content: 'Rewards',
+      price: totalRewards,
+      toolTipTitle: 'tt-rewards',
+      toolTip:
+        'Accrued rewards on all your staked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.',
     },
     {
       icon: Safe,
@@ -926,39 +928,30 @@ const Portfolio = () => {
       toolTip:
         'Estimated yearly yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.',
     },
-    {
-      icon: Diamond,
-      content: 'Claimable Rewards',
-      price: totalRewards,
-      toolTipTitle: 'tt-rewards',
-      toolTip:
-        'Accrued rewards on all your staked fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.',
-    },
-    {
-      icon: Coin1,
-      content: 'Monthly Forecast',
-      price: totalYieldMonthly,
-      toolTipTitle: 'tt-monthly-yield',
-      toolTip:
-        'Estimated monthly yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.',
-    },
-    {
-      icon: Coin2,
-      content: 'Daily Yield Forecast',
-      price: totalYieldDaily,
-      toolTipTitle: 'tt-daily-yield',
-      toolTip:
-        'Estimated daily yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.',
-    },
+    // {
+    //   icon: Coin1,
+    //   content: 'Monthly Forecast',
+    //   price: totalYieldMonthly,
+    //   toolTipTitle: 'tt-monthly-yield',
+    //   toolTip:
+    //     'Estimated monthly yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.',
+    // },
+    // {
+    //   icon: Coin2,
+    //   content: 'Daily Yield Forecast',
+    //   price: totalYieldDaily,
+    //   toolTipTitle: 'tt-daily-yield',
+    //   toolTip:
+    //     'Estimated daily yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.',
+    // },
   ]
 
   return (
-    <Container bgColor={bgColor} fontColor={fontColor}>
-      <Inner bgColor={darkMode ? '#171b25' : '#fff'}>
+    <Container bgColor={bgColorNew} fontColor={fontColor}>
+      <Inner>
         <HeaderWrap
           backImg={viewPositions ? MobileBackImage : ''}
-          padding={viewPositions ? '25px 25px 40px 25px' : '25px 15px 20px'}
-          height={viewPositions ? '234px' : ''}
+          padding={viewPositions ? '25px 25px 0px 25px' : '25px 15px 20px'}
         >
           {!isMobile && (
             <HeaderTitle fontColor={fontColor} fontColor1={fontColor1}>
@@ -1010,7 +1003,12 @@ const Portfolio = () => {
                   </LogoDiv>
                 )}
               </HeaderTop>
-              <LifetimeValue isLoading={isLoading} noFarm={noFarm} connected={connected}>
+              <LifetimeValue
+                isLoading={isLoading}
+                noFarm={noFarm}
+                connected={connected}
+                color={fontColor1}
+              >
                 {!connected || noFarm ? (
                   `${currencySym}0.00`
                 ) : isLoading ? (
@@ -1025,31 +1023,10 @@ const Portfolio = () => {
                   `${currencySym}${formatNumber(totalNetProfit * Number(currencyRate))}`
                 )}
               </LifetimeValue>
-              <LifetimeSub>
+              <LifetimeSub color={fontColor1}>
                 Lifetime Yield
-                <PiQuestion
-                  className="question"
-                  data-tip
-                  data-for={`mobile=${TopBoxData[1].toolTipTitle}`}
-                />
-                <ReactTooltip
-                  id={`mobile=${TopBoxData[1].toolTipTitle}`}
-                  backgroundColor={darkMode ? 'white' : '#101828'}
-                  borderColor={darkMode ? 'white' : 'black'}
-                  textColor={darkMode ? 'black' : 'white'}
-                  className="mobile-top-tooltip"
-                  place="top"
-                >
-                  <NewLabel
-                    size={isMobile ? '10px' : '12px'}
-                    height={isMobile ? '15px' : '18px'}
-                    weight="600"
-                  >
-                    {TopBoxData[1].toolTip}
-                  </NewLabel>
-                </ReactTooltip>
                 <GreenBox>
-                  <img src={UpperIcon} alt="upper icon" width={13} height={13} />
+                  <IoArrowUpCircleOutline fontSize={14} />
                   {!connected || noFarm ? (
                     `${currencySym}0.00`
                   ) : oneDayYield === 0 ? (
@@ -1086,7 +1063,7 @@ const Portfolio = () => {
                 <Dropdown>
                   <CurrencyDropDown
                     id="dropdown-basic"
-                    bgcolor={backColorButton}
+                    bgcolor={bgColorNew}
                     fontcolor2={fontColor2}
                     hovercolor={hoverColorNew}
                     style={{ padding: 0 }}
@@ -1112,7 +1089,7 @@ const Portfolio = () => {
                     )}
                   </CurrencyDropDown>
                   {!isSpecialApp ? (
-                    <CurrencyDropDownMenu backcolor={backColorButton}>
+                    <CurrencyDropDownMenu backcolor={bgColorNew}>
                       {supportedCurrencies.map(elem => {
                         return (
                           <CurrencyDropDownItem
@@ -1149,7 +1126,7 @@ const Portfolio = () => {
               {!isMobile && (
                 <SwitchView
                   color={fontColor2}
-                  backColor={backColorButton}
+                  backColor={bgColorNew}
                   hovercolor={hoverColorNew}
                   onClick={() => setViewPositions(prev => !prev)}
                   darkMode={darkMode}
@@ -1223,8 +1200,16 @@ const Portfolio = () => {
             {isMobile && (
               <MobileSwitch darkMode={darkMode}>
                 <SwitchBtn
-                  color={darkMode ? '#fff' : showLatestYield ? '#131313' : '#fff'}
-                  backColor={showLatestYield ? 'unset' : darkMode ? '#171B25' : '#6988ff'}
+                  color={
+                    darkMode
+                      ? showLatestYield
+                        ? '#fff'
+                        : '#15191C'
+                      : showLatestYield
+                      ? '#15191C'
+                      : '#fff'
+                  }
+                  backColor={showLatestYield ? 'unset' : '#5DCF46'}
                   boxShadow={
                     showLatestYield
                       ? 'none'
@@ -1235,8 +1220,16 @@ const Portfolio = () => {
                   Positions
                 </SwitchBtn>
                 <SwitchBtn
-                  color={darkMode ? '#fff' : showLatestYield ? '#fff' : '#131313'}
-                  backColor={showLatestYield ? (darkMode ? '#171B25' : '#6988ff') : 'none'}
+                  color={
+                    darkMode
+                      ? showLatestYield
+                        ? '#15191C'
+                        : '#fff'
+                      : showLatestYield
+                      ? '#fff'
+                      : '#15191C'
+                  }
+                  backColor={showLatestYield ? '#5DCF46' : 'unset'}
                   boxShadow={
                     showLatestYield
                       ? '0px 1px 3px 0px rgba(16, 24, 40, 0.1), 0px 1px 2px 0px rgba(16, 24, 40, 0.06)'
@@ -1252,7 +1245,7 @@ const Portfolio = () => {
               <div className="table-title">Positions</div>
               <TransactionDetails>
                 <TableContent count={farmTokenList.length}>
-                  <Header borderColor={borderColorTable} backColor={bgColorTable}>
+                  <Header borderColor={borderColorTable} backColor={bgColorNew}>
                     {positionHeader.map((data, index) => (
                       <Column key={index} width={data.width} color={fontColor}>
                         <Col
@@ -1438,7 +1431,7 @@ const Portfolio = () => {
                     <div>
                       <SwitchView
                         color={fontColor2}
-                        backColor={backColorButton}
+                        backColor={bgColorNew}
                         hovercolor={hoverColorNew}
                         onClick={() => setViewPositions(prev => !prev)}
                         darkMode={darkMode}

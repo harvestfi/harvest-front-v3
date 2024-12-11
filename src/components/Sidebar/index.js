@@ -13,6 +13,7 @@ import ActiveDarkMobileBottomHome from '../../assets/images/logos/sidebar/active
 import ActiveWhiteMobileBottomHome from '../../assets/images/logos/sidebar/active-white-home.svg'
 import { useRate } from '../../providers/Rate'
 import ActiveWhiteMobileBottomAdvanced from '../../assets/images/logos/sidebar/active-white-farms.svg'
+import ActiveDarkMobileBottomAdvanced from '../../assets/images/logos/sidebar/active-dark-farms.svg'
 import Home from '../../assets/images/logos/sidebar/home-line.svg'
 import MobileBottomHome from '../../assets/images/logos/sidebar/bottom-home.svg'
 import Beginners from '../../assets/images/logos/sidebar/beginners.svg'
@@ -328,22 +329,14 @@ const MobileMenu = ({
     >
       <SideIcons
         className="sideIcon"
-        src={
-          isMobileBottom && !isFarms
-            ? active
-              ? darkMode
-                ? item.darkImg
-                : item.whiteImg
-              : item.imgPath
-            : item.imgPath
-        }
+        src={isMobileBottom && !isFarms ? (active ? item.darkImg : item.imgPath) : item.imgPath}
         alt="Harvest"
         width={item.name === 'Portfolio' ? '18px' : '22px'}
         height={item.name === 'Portfolio' ? '18px' : '22px'}
         marginTop={item.name === 'All Farms' ? '-1px' : ''}
       />
       <LinkName
-        color={active ? (darkMode ? '#ffffff' : '#000000') : '#7A7A7A'}
+        color={active ? '#6ED459' : '#7A7A7A'}
         marginTop={item.name === 'Portfolio' ? '5px' : ' 2px'}
       >
         {item.linkName}

@@ -19,7 +19,7 @@ const ActionRow = ({ info }) => {
   const [currencyRate, setCurrencyRate] = useState(1)
   const [badgeUrl, setBadgeUrl] = useState(ETHEREUM)
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const { darkMode, switchMode, borderColorTable, hoverColorRow } = useThemeContext()
+  const { darkMode, switchMode, borderColorTable, hoverColorRow, bgColorNew } = useThemeContext()
 
   useEffect(() => {
     const chainId = info.chain
@@ -50,7 +50,7 @@ const ActionRow = ({ info }) => {
       hoverColor={hoverColorRow}
       mode={switchMode}
       style={{
-        background: isMobile ? (darkMode ? '#171B25' : '#ffffff') : 'none',
+        background: isMobile ? bgColorNew : 'none',
       }}
     >
       <FlexDiv padding={isMobile ? '15px 25px' : '0'}>

@@ -18,33 +18,14 @@ const Container = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    width: 50%;
+    width: 33.3%;
     border: unset;
     border-radius: 0px 6.5px 6.5px 0px;
-    padding: 8px 13px;
+    padding: 0px 5px 0px 0px;
     margin-top: 24px;
 
-    &:first-child {
-      width: 46%;
-      padding: 8px 13px 8px 0px;
-      // border-right: 0.821px solid #eaecf0;
-      border-radius: 6.5px 0px 0px 6.5px;
-    }
     &:nth-child(2) {
       display: block;
-      width: 54%;
-    }
-    &:nth-child(3) {
-      width: 46%;
-      padding: 8px 13px 8px 0px;
-      // border-right: 0.821px solid #eaecf0;
-      border-radius: 6.5px 0px 0px 6.5px;
-    }
-    &:nth-child(4) {
-      width: 54%;
-    }
-    &:last-child {
-      display: none;
     }
   }
 `
@@ -77,6 +58,10 @@ const Div = styled.div`
     flex-flow: row;
     font-size: 12px;
     margin-bottom: 0px;
+
+    svg {
+      display: none;
+    }
   }
 
   #tt-total-profit,

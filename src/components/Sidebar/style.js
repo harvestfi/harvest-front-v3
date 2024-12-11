@@ -212,7 +212,7 @@ const Link = styled.button`
   ${props =>
     props.active
       ? `
-      background: #6988FF !important;
+      background: #5dcf46 !important;
       color: #fff;
       img.sideIcon {
         filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%);

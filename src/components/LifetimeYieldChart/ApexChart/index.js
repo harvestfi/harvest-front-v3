@@ -50,7 +50,7 @@ function formatXAxis(value, range) {
 
 const ApexChart = ({ noData, data, range, handleTooltipContent, setCurDate, setCurContent }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const { fontColor, inputFontColor } = useThemeContext()
+  const { darkMode, fontColor, inputFontColor } = useThemeContext()
   const { connected } = useWallet()
 
   const [mainSeries, setMainSeries] = useState([])
@@ -90,21 +90,31 @@ const ApexChart = ({ noData, data, range, handleTooltipContent, setCurDate, setC
     return null
   }
 
-  const renderCustomXAxisTick = ({ x, y, payload }) => {
-    let path = ''
+  const renderCustomXAxisTick = ({ x, y, payload, index }) => {
+    let path = '',
+      dx = 0
+
+    if (index === 0) {
+      return null
+    }
 
     if (payload.value !== '') {
       path = formatXAxis(payload.value, range)
     }
+
+    // if (index === 0) dx = 5 // Adjust the first tick
+    if (index === payload.length - 1) dx = -10 // Adjust the last tick
     return (
       <text
         orientation="bottom"
-        x={x - 12}
+        x={x + dx}
         y={y + 4}
         width={24}
         height={24}
+        textAnchor={index === 0 ? 'start' : index === payload.length - 1 ? 'end' : 'middle'}
         viewBox="0 0 1024 1024"
         fill={inputFontColor}
+        fontSize={isMobile ? '10px' : '12px'}
       >
         <tspan dy="0.71em">{path}</tspan>
       </text>
@@ -169,7 +179,7 @@ const ApexChart = ({ noData, data, range, handleTooltipContent, setCurDate, setC
       {connected && !loading ? (
         <ResponsiveContainer
           width="100%"
-          height={onlyWidth > 1250 ? 380 : onlyWidth > 992 ? 350 : 330}
+          height={onlyWidth > 1250 ? 380 : onlyWidth > 992 ? 350 : 120}
         >
           <ComposedChart
             data={mainSeries}
@@ -182,11 +192,17 @@ const ApexChart = ({ noData, data, range, handleTooltipContent, setCurDate, setC
           >
             <defs>
               <linearGradient id="colorUv" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="5%" stopColor="#00D26B" stopOpacity={0.1} />
-                <stop offset="95%" stopColor="#161B26" stopOpacity={0.1} />
+                <stop offset="0%" stopColor="#00D26B" stopOpacity={1} />
+                <stop offset="100%" stopColor={darkMode ? '#161B26' : '#fff'} stopOpacity={1} />
               </linearGradient>
             </defs>
-            <XAxis dataKey="x" tickLine={false} tickCount={5} tick={renderCustomXAxisTick} />
+            <XAxis
+              dataKey="x"
+              tickLine={false}
+              tickCount={5}
+              tick={renderCustomXAxisTick}
+              interval={50}
+            />
             <Line
               dataKey="y"
               type="monotone"
@@ -218,7 +234,11 @@ const ApexChart = ({ noData, data, range, handleTooltipContent, setCurDate, setC
       ) : connected ? (
         <LoadingDiv>
           {!noData ? (
-            <ClipLoader size={30} margin={2} color={fontColor} />
+            isMobile ? (
+              <></>
+            ) : (
+              <ClipLoader size={30} margin={2} color={fontColor} />
+            )
           ) : (
             <BoxWrapper>
               <NoData className="message" color={fontColor}>

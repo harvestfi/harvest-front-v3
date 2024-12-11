@@ -20,8 +20,12 @@ const DetailView = styled.div`
   }
 
   @media screen and (max-width: 992px) {
-    border-bottom: 1px solid ${props => props.borderColor};
+    border-top: 1px solid ${props => props.borderColor};
     padding: 0px;
+
+    &:last-child {
+      border-bottom: 1px solid ${props => props.borderColor};
+    }
   }
 `
 

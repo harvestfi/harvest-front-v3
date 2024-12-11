@@ -31,7 +31,7 @@ const VaultRow = ({
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const {
     switchMode,
-    backColor,
+    bgColorNew,
     hoverColorRow,
     fontColor1,
     fontColor,
@@ -64,7 +64,7 @@ const VaultRow = ({
       hoverColor={hoverColorRow}
       key={cKey}
       mode={switchMode}
-      background={isMobile ? (darkMode ? '#171B25' : '#fff') : backColor}
+      background={bgColorNew}
       onClick={() => {
         let badgeId = -1
         const token = info.token

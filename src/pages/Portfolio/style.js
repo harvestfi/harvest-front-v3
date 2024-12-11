@@ -7,7 +7,6 @@ const Container = styled.div`
   width: 100%;
   min-height: 100vh;
   color: ${props => props.fontColor};
-
   background: ${props => props.bgColor};
   transition: 0.25s;
   position: relative;
@@ -41,7 +40,6 @@ const Inner = styled.div`
 
   @media screen and (max-width: 992px) {
     padding: 0px 0px 25px 0px;
-    background: ${props => (props.bgColor ? props.bgColor : '')};
   }
 `
 
@@ -52,6 +50,7 @@ const ChartSection = styled.div`
   padding-bottom: 24px;
 
   @media screen and (max-width: 992px) {
+    margin-top: -30px;
     padding: unset;
   }
 `
@@ -66,7 +65,6 @@ const ChartBox = styled.div`
   transition: 0.25s;
   color: ${props => props.fontColor};
   height: ${props => props.height};
-  min-height: ${props => props.minHeight || '152px'};
   margin: ${props => props.margin || 'unset'};
   border-right: 0.556px solid rgba(255, 255, 255, 0.3);
 
@@ -99,9 +97,6 @@ const HeaderWrap = styled.div`
 
   @media screen and (max-width: 992px) {
     padding: ${props => (props.padding ? props.padding : '')};
-    // background-image: ${props => (props.backImg ? `url(${props.backImg})` : '')};
-    height: ${props => (props.height ? props.height : '')};
-    background: linear-gradient(to right, #5b86e5, #36d1dc);
   }
 `
 
@@ -934,18 +929,17 @@ const HeaderTop = styled.div`
   align-items: center;
 `
 const LifetimeValue = styled.div`
-  text-align: center;
-  margin-top: 30px;
-  font-size: ${props => (props.isLoading && props.connected && !props.noFarm ? '18px' : '45px')};
+  margin-top: 55px;
+  font-size: ${props => (props.isLoading && props.connected && !props.noFarm ? '18px' : '55px')};
   margin-bottom: ${props => (props.isLoading && props.connected && !props.noFarm ? '15px' : '0px')};
-  color: #fff;
+  color: ${props => props.color};
   font-weight: 700;
 `
 const LifetimeSub = styled.div`
   display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
+  color: ${props => props.color};
+  line-height: 27px;
+  font-size: 12px;
 
   svg.question {
     font-size: 16px;
@@ -966,143 +960,15 @@ const LifetimeSub = styled.div`
   }
 `
 
-const NewLabel = styled.div`
-  font-weight: ${props => props.weight || '400'};
-  font-size: ${props => props.size || '20px'};
-  line-height: ${props => props.height || '0px'};
-  ${props =>
-    props.borderBottom
-      ? `
-    border-bottom: ${props.borderBottom};
-  `
-      : ''}
-
-  ${props =>
-    props.color
-      ? `
-    color: ${props.color};
-  `
-      : ''}
-  ${props =>
-    props.position
-      ? `
-    position: ${props.position};
-  `
-      : ''}
-  ${props =>
-    props.align
-      ? `
-    text-align: ${props.align};
-  `
-      : ''}
-  ${props =>
-    props.justifyContent
-      ? `
-    justify-content: ${props.justifyContent};
-  `
-      : ''}
-  ${props =>
-    props.marginTop
-      ? `
-    margin-top: ${props.marginTop};
-  `
-      : ''}
-  ${props =>
-    props.marginLeft
-      ? `
-    margin-left: ${props.marginLeft};
-  `
-      : ''}
-  ${props =>
-    props.marginBottom
-      ? `
-    margin-bottom: ${props.marginBottom};
-  `
-      : ''}
-  ${props =>
-    props.marginRight
-      ? `
-    margin-right: ${props.marginRight};
-  `
-      : ''}
-  ${props =>
-    props.display
-      ? `
-    display: ${props.display};
-  `
-      : ''}
-  ${props =>
-    props.items
-      ? `
-    align-items: ${props.items};
-  `
-      : ''}
-  ${props =>
-    props.self
-      ? `
-    align-self: ${props.self};
-  `
-      : ''}
-  ${props =>
-    props.padding
-      ? `
-    padding: ${props.padding};
-  `
-      : ''}
-  ${props =>
-    props.width
-      ? `
-    width: ${props.width};
-  `
-      : ''}
-  ${props =>
-    props.borderRadius
-      ? `
-    border-radius: ${props.borderRadius};
-    `
-      : ``}
-  img.icon {
-    margin-right: 10px;
-  }
-
-  img.thumbs-up {
-    margin-right: 10px;
-  }
-
-  img.info-icon {
-    margin-left: 15px;
-  }
-
-  #info .tooltip-inner {
-    background: black;
-  }
-
-  @media screen and (max-width: 992px) {
-    img.icon {
-      margin-right: 5px;
-    }
-
-    img.info {
-      margin-left: 5px;
-    }
-
-    img.thumbs-up {
-      margin-right: 5px;
-      width: 11px;
-    }
-  }
-`
 const GreenBox = styled.div`
   display: flex;
   justify-content: space-between;
-  padding: 5.35px 9.37px;
-  border-radius: 5.35px;
-  background: #5dcf46;
+  color: #5dcf46;
   margin-left: 10px;
   font-size: 12px;
   align-items: center;
 
-  img {
+  svg {
     margin-right: 5px;
   }
 `
@@ -1151,7 +1017,6 @@ export {
   LifetimeSub,
   LogoDiv,
   Address,
-  NewLabel,
   GreenBox,
   ChartSection,
   ChartBox,
