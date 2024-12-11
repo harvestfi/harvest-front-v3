@@ -50,6 +50,7 @@ const ChartSection = styled.div`
   padding-bottom: 24px;
 
   @media screen and (max-width: 992px) {
+    display: none;
     margin-top: -30px;
     padding: unset;
   }
