@@ -44,7 +44,13 @@ import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { useRate } from '../../providers/Rate'
 import { fromWei } from '../../services/web3'
-import { parseValue, isSpecialApp, formatAddress, formatNumber } from '../../utilities/formats'
+import {
+  parseValue,
+  isSpecialApp,
+  formatAddress,
+  formatNumber,
+  showUsdValueCurrency,
+} from '../../utilities/formats'
 import {
   getCoinListFromApi,
   getTokenPriceFromApi,
@@ -1022,7 +1028,7 @@ const Portfolio = () => {
                     aria-hidden="true"
                   />
                 ) : (
-                  `${currencySym}${formatNumber(totalNetProfit * Number(currencyRate))}`
+                  showUsdValueCurrency(totalNetProfit, currencySym, currencyRate)
                 )}
               </LifetimeValue>
               <LifetimeSub color={fontColor1}>
