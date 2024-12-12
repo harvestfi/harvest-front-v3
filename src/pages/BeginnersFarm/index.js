@@ -133,7 +133,7 @@ const mainTags = [
 const BeginnersFarm = () => {
   const {
     darkMode,
-    bgColor,
+    bgColorNew,
     hoverColor,
     fontColor,
     fontColor1,
@@ -141,9 +141,8 @@ const BeginnersFarm = () => {
     fontColor3,
     fontColor4,
     fontColor6,
-    borderColor,
+    borderColorBox,
     bgColorTooltip,
-    backColor,
   } = useThemeContext()
 
   const paramAddress = '0x0B0193fAD49DE45F5E2B0A9f5D6Bc3BB7D281688'
@@ -1068,7 +1067,7 @@ const BeginnersFarm = () => {
     chain === CHAIN_IDS.ETH_MAINNET ? '5' : chain === CHAIN_IDS.POLYGON_MAINNET ? '3' : '3'
 
   return (
-    <DetailView bgColor={bgColor} fontColor={fontColor}>
+    <DetailView bgColor={bgColorNew} fontColor={fontColor}>
       <TopInner>
         <TopPart>
           <FlexTopDiv>
@@ -1127,7 +1126,7 @@ const BeginnersFarm = () => {
                 {mainTags.map((tag, i) => (
                   <MainTag
                     fontColor4={fontColor4}
-                    bgColor={bgColor}
+                    bgColor={bgColorNew}
                     key={i}
                     active={activeMainTag === i ? 'true' : 'false'}
                     mode={darkMode ? 'dark' : 'light'}
@@ -1161,14 +1160,14 @@ const BeginnersFarm = () => {
           </FlexTopDiv>
         </TopPart>
       </TopInner>
-      <Inner>
+      <Inner backColor={bgColorNew}>
         <BigDiv>
           <InternalSection>
             {activeMainTag === 0 ? (
               <>
                 {welcomeMessage &&
                   (isMobile ? (
-                    <WelcomeBox bgColorTooltip={bgColorTooltip} borderColor={borderColor}>
+                    <WelcomeBox bgColorTooltip={bgColorTooltip} borderColor={borderColorBox}>
                       <WelcomeTop>
                         <FarmerImage src={FarmerAvatar} alt="avatar" />
                         <WelcomeTitle>
@@ -1245,7 +1244,7 @@ const BeginnersFarm = () => {
                       </WelcomeContent>
                     </WelcomeBox>
                   ) : (
-                    <WelcomeBox bgColorTooltip={bgColorTooltip} borderColor={borderColor}>
+                    <WelcomeBox bgColorTooltip={bgColorTooltip} borderColor={borderColorBox}>
                       <FarmerImage src={FarmerAvatar} alt="avatar" />
                       <WelcomeContent>
                         <WelcomeTitle fontColor1={fontColor1}>
@@ -1322,8 +1321,8 @@ const BeginnersFarm = () => {
                   ))}
                 <ManageBoxWrapper>
                   <MyBalance
-                    backColor={backColor}
-                    borderColor={borderColor}
+                    backColor={bgColorNew}
+                    borderColor={borderColorBox}
                     marginBottom={isMobile ? '20px' : '25px'}
                     marginTop={isMobile ? '0px' : '0'}
                     height={isMobile ? 'unset' : '120px'}
@@ -1336,7 +1335,7 @@ const BeginnersFarm = () => {
                       height={isMobile ? '20px' : '20px'}
                       color={fontColor4}
                       padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom="1px solid #F2F5FF"
+                      borderBottom={`1px solid ${borderColorBox}`}
                     >
                       <FlexDiv>
                         {showLatestEarnings ? 'Latest Yield' : 'Lifetime Yield'}
@@ -1481,8 +1480,8 @@ const BeginnersFarm = () => {
                     </FlexDiv>
                   </MyBalance>
                   <MyBalance
-                    backColor={backColor}
-                    borderColor={borderColor}
+                    backColor={bgColorNew}
+                    borderColor={borderColorBox}
                     marginBottom={isMobile ? '20px' : '25px'}
                     marginTop={isMobile ? '0px' : '0'}
                     height={isMobile ? 'unset' : '120px'}
@@ -1495,7 +1494,7 @@ const BeginnersFarm = () => {
                       height={isMobile ? '20px' : '20px'}
                       color={fontColor4}
                       padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom="1px solid #F2F5FF"
+                      borderBottom={`1px solid ${borderColorBox}`}
                     >
                       Total Balance
                       <PiQuestion className="question" data-tip data-for="tooltip-total-balance" />
@@ -1600,8 +1599,8 @@ const BeginnersFarm = () => {
                     </FlexDiv>
                   </MyBalance>
                   <MyBalance
-                    backColor={backColor}
-                    borderColor={borderColor}
+                    backColor={bgColorNew}
+                    borderColor={borderColorBox}
                     marginBottom={isMobile ? '20px' : '25px'}
                     marginTop={isMobile ? '0px' : '0'}
                     height={isMobile ? 'unset' : '120px'}
@@ -1614,7 +1613,7 @@ const BeginnersFarm = () => {
                       height={isMobile ? '20px' : '20px'}
                       color={fontColor4}
                       padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom="1px solid #F2F5FF"
+                      borderBottom={`1px solid ${borderColorBox}`}
                     >
                       Yield Estimates
                       <PiQuestion className="question" data-tip data-for="tooltip-yield-estimate" />
@@ -1694,14 +1693,14 @@ const BeginnersFarm = () => {
                 </ManageBoxWrapper>
               </>
             ) : activeMainTag === 1 ? (
-              <BoxCover borderColor={borderColor}>
+              <BoxCover borderColor={borderColorBox}>
                 {detailBoxes.map(({ title, showValue, className }, index) => (
                   <ValueBox
                     key={index}
                     width="24%"
                     className={className}
-                    backColor={backColor}
-                    borderColor={borderColor}
+                    backColor={bgColorNew}
+                    borderColor={borderColorBox}
                   >
                     <BoxTitle fontColor3={fontColor3}>{title}</BoxTitle>
                     <BoxValue fontColor1={fontColor1}>{showValue()}</BoxValue>
@@ -1730,8 +1729,8 @@ const BeginnersFarm = () => {
                   <HalfInfo
                     padding="25px 18px"
                     marginBottom={isMobile ? '20px' : '25px'}
-                    backColor={backColor}
-                    borderColor={borderColor}
+                    backColor={bgColorNew}
+                    borderColor={borderColorBox}
                   >
                     <FarmDetailChart
                       token={token}
@@ -1754,14 +1753,18 @@ const BeginnersFarm = () => {
                     />
                   </HalfInfo>
                   {!isMobile && (
-                    <HalfInfo marginBottom="20px" backColor={backColor} borderColor={borderColor}>
+                    <HalfInfo
+                      marginBottom="20px"
+                      backColor={bgColorNew}
+                      borderColor={borderColorBox}
+                    >
                       <NewLabel
                         weight={700}
                         size="14px"
                         height="24px"
                         color={fontColor4}
                         padding="10px 15px"
-                        borderBottom="1px solid #F3F6FF"
+                        borderBottom={`1px solid ${borderColorBox}`}
                       >
                         Source of Yield
                       </NewLabel>
@@ -1813,9 +1816,9 @@ const BeginnersFarm = () => {
                             target="_blank"
                             onClick={e => e.stopPropagation()}
                             rel="noopener noreferrer"
-                            bgColor={bgColor}
+                            bgColor={bgColorNew}
                             hoverColor={hoverColor}
-                            borderColor={borderColor}
+                            borderColor={borderColorBox}
                           >
                             <NewLabel
                               size="12px"
@@ -1837,9 +1840,9 @@ const BeginnersFarm = () => {
                             target="_blank"
                             onClick={e => e.stopPropagation()}
                             rel="noopener noreferrer"
-                            bgColor={bgColor}
+                            bgColor={bgColorNew}
                             hoverColor={hoverColor}
-                            borderColor={borderColor}
+                            borderColor={borderColorBox}
                           >
                             <NewLabel
                               size="12px"
@@ -1861,9 +1864,9 @@ const BeginnersFarm = () => {
                           onClick={e => e.stopPropagation()}
                           rel="noopener noreferrer"
                           target="_blank"
-                          bgColor={bgColor}
+                          bgColor={bgColorNew}
                           hoverColor={hoverColor}
-                          borderColor={borderColor}
+                          borderColor={borderColorBox}
                         >
                           <NewLabel
                             size="12px"
@@ -1887,8 +1890,8 @@ const BeginnersFarm = () => {
               {activeMainTag === 0 ? (
                 <FirstPartSection>
                   <HalfContent
-                    backColor={backColor}
-                    borderColor={borderColor}
+                    backColor={bgColorNew}
+                    borderColor={borderColorBox}
                     marginBottom={isMobile ? '20px' : '0px'}
                     borderRadius={isMobile ? '12px' : '12px'}
                   >
@@ -2043,14 +2046,14 @@ const BeginnersFarm = () => {
                 </FirstPartSection>
               ) : activeMainTag === 1 ? (
                 <RestInternal>
-                  <LastHarvestInfo backColor={backColor} borderColor={borderColor}>
+                  <LastHarvestInfo backColor={bgColorNew} borderColor={borderColorBox}>
                     <NewLabel
                       size={isMobile ? '12px' : '14px'}
                       weight={isMobile ? '600' : '600'}
                       height={isMobile ? '20px' : '24px'}
                       color={fontColor4}
                       padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom="1px solid #F3F6FF"
+                      borderBottom={`1px solid ${borderColorBox}`}
                     >
                       Info
                     </NewLabel>
@@ -2081,7 +2084,7 @@ const BeginnersFarm = () => {
                     <FlexDiv
                       justifyContent="space-between"
                       padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom="1px solid #F3F6FF"
+                      borderBottom={`1px solid ${borderColorBox}`}
                     >
                       <NewLabel
                         size={isMobile ? '12px' : '14px'}
@@ -2131,7 +2134,7 @@ const BeginnersFarm = () => {
                       height={isMobile ? '20px' : '24px'}
                       color={fontColor4}
                       padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom="1px solid #F3F6FF"
+                      borderBottom={`1px solid ${borderColorBox}`}
                     >
                       {showApyHistory ? 'APY - Live & Historical Average' : 'Harvest Frequency'}
                       <SwitchMode mode={showApyHistory ? 'apy' : 'harvest'}>
@@ -2200,8 +2203,8 @@ const BeginnersFarm = () => {
                   </LastHarvestInfo>
                   <MyBalance
                     marginBottom={isMobile ? '20px' : '25px'}
-                    backColor={backColor}
-                    borderColor={borderColor}
+                    backColor={bgColorNew}
+                    borderColor={borderColorBox}
                   >
                     <NewLabel
                       size={isMobile ? '12px' : '14px'}
@@ -2209,7 +2212,7 @@ const BeginnersFarm = () => {
                       height={isMobile ? '20px' : '24px'}
                       color={fontColor4}
                       padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom="1px solid #F3F6FF"
+                      borderBottom={`1px solid ${borderColorBox}`}
                     >
                       APY Breakdown
                     </NewLabel>
@@ -2217,14 +2220,14 @@ const BeginnersFarm = () => {
                       <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
                     </NewLabel>
                   </MyBalance>
-                  <LastHarvestInfo backColor={backColor} borderColor={borderColor}>
+                  <LastHarvestInfo backColor={bgColorNew} borderColor={borderColorBox}>
                     <NewLabel
                       size={isMobile ? '12px' : '14px'}
                       weight="600"
                       height={isMobile ? '20px' : '24px'}
                       color={fontColor4}
                       padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom="1px solid #F3F6FF"
+                      borderBottom={`1px solid ${borderColorBox}`}
                     >
                       Fees
                     </NewLabel>
@@ -2293,13 +2296,17 @@ const BeginnersFarm = () => {
                     </FlexDiv>
                   </LastHarvestInfo>
                   {isMobile && (
-                    <HalfInfo marginBottom="20px" backColor={backColor} borderColor={borderColor}>
+                    <HalfInfo
+                      marginBottom="20px"
+                      backColor={bgColorNew}
+                      borderColor={borderColorBox}
+                    >
                       <NewLabel
                         weight={700}
                         size="14px"
                         height="24px"
                         padding="10px 15px"
-                        borderBottom="1px solid #F3F6FF"
+                        borderBottom={`1px solid ${borderColorBox}`}
                       >
                         Source of Yield
                       </NewLabel>
@@ -2351,9 +2358,9 @@ const BeginnersFarm = () => {
                             target="_blank"
                             onClick={e => e.stopPropagation()}
                             rel="noopener noreferrer"
-                            bgColor={bgColor}
+                            bgColor={bgColorNew}
                             hoverColor={hoverColor}
-                            borderColor={borderColor}
+                            borderColor={borderColorBox}
                           >
                             <NewLabel
                               size="12px"
@@ -2375,9 +2382,9 @@ const BeginnersFarm = () => {
                             target="_blank"
                             onClick={e => e.stopPropagation()}
                             rel="noopener noreferrer"
-                            bgColor={bgColor}
+                            bgColor={bgColorNew}
                             hoverColor={hoverColor}
-                            borderColor={borderColor}
+                            borderColor={borderColorBox}
                           >
                             <NewLabel
                               size="12px"
@@ -2398,9 +2405,9 @@ const BeginnersFarm = () => {
                           onClick={e => e.stopPropagation()}
                           rel="noopener noreferrer"
                           target="_blank"
-                          bgColor={bgColor}
+                          bgColor={bgColorNew}
                           hoverColor={hoverColor}
-                          borderColor={borderColor}
+                          borderColor={borderColorBox}
                         >
                           <NewLabel
                             size="12px"

@@ -15,6 +15,7 @@ const DetailView = styled.div`
 `
 
 const Inner = styled.div`
+  background: ${props => props.backColor};
   padding: 25px 72px 200px 76px;
   display: flex;
   justify-content: center;

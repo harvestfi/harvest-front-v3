@@ -94,14 +94,14 @@ const App = () => (
 )
 
 const GlobalStyleWrapper = () => {
-  const { bgColorModal, fontColor3, fontColor1, backColor, inputBorderColor } = useThemeContext()
+  const { bgColorModal, fontColor3, fontColor1, bgColorNew, inputBorderColor } = useThemeContext()
 
   return (
     <GlobalStyle
       bgColorModal={bgColorModal}
       fontColor3={fontColor3}
       fontColor1={fontColor1}
-      backColor={backColor}
+      backColor={bgColorNew}
       inputBorderColor={inputBorderColor}
     />
   )

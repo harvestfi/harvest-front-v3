@@ -19,7 +19,7 @@ export function ThemeProvider({ children }) {
   const pageBackColor = darkMode ? '#15202B' : '#fff'
   const backColor = darkMode ? '#0C111D' : '#fff'
   const backColorButton = darkMode ? '#1E293B' : '#fff'
-  const bgColorModal = darkMode ? '#0C111D' : '#F2F5FF'
+  const bgColorModal = darkMode ? '#15191C' : '#F2F5FF'
   const bgColor = darkMode ? '#161B26' : '#fff'
   const bgColorTop = darkMode ? '#191d21' : '#fff'
   const bgColorTooltip = darkMode ? '#59607A' : '#fff'
