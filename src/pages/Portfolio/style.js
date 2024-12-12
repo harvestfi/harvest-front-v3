@@ -932,7 +932,7 @@ const HeaderTop = styled.div`
 `
 const LifetimeValue = styled.div`
   margin-top: 40px;
-  font-size: ${props => (props.isLoading && props.connected && !props.noFarm ? '18px' : '65px')};
+  font-size: ${props => (props.isLoading && props.connected && !props.noFarm ? '18px' : '50px')};
   margin-bottom: ${props => (props.isLoading && props.connected && !props.noFarm ? '15px' : '0px')};
   color: ${props => props.color};
   font-weight: 700;
