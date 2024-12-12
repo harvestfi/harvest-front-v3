@@ -120,6 +120,7 @@ const Portfolio = () => {
     fontColor2,
     borderColor,
     borderColorTable,
+    borderColorBox,
     inputBorderColor,
     hoverColorButton,
   } = useThemeContext()
@@ -951,7 +952,8 @@ const Portfolio = () => {
       <Inner>
         <HeaderWrap
           backImg={viewPositions ? MobileBackImage : ''}
-          padding={viewPositions ? '25px 25px 0px 25px' : '25px 15px 20px'}
+          padding={viewPositions ? '25px' : '25px 15px 20px'}
+          borderColor={borderColorBox}
         >
           {!isMobile && (
             <HeaderTitle fontColor={fontColor} fontColor1={fontColor1}>
@@ -1026,7 +1028,7 @@ const Portfolio = () => {
               <LifetimeSub color={fontColor1}>
                 Lifetime Yield
                 <GreenBox>
-                  <IoArrowUpCircleOutline fontSize={14} />
+                  <IoArrowUpCircleOutline color="#14ff00" fontSize={14} />
                   {!connected || noFarm ? (
                     `${currencySym}0.00`
                   ) : oneDayYield === 0 ? (

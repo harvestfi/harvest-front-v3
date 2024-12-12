@@ -98,6 +98,7 @@ const HeaderWrap = styled.div`
 
   @media screen and (max-width: 992px) {
     padding: ${props => (props.padding ? props.padding : '')};
+    border-bottom: 1px solid ${props => props.borderColor};
   }
 `
 
@@ -930,8 +931,8 @@ const HeaderTop = styled.div`
   align-items: center;
 `
 const LifetimeValue = styled.div`
-  margin-top: 55px;
-  font-size: ${props => (props.isLoading && props.connected && !props.noFarm ? '18px' : '55px')};
+  margin-top: 40px;
+  font-size: ${props => (props.isLoading && props.connected && !props.noFarm ? '18px' : '65px')};
   margin-bottom: ${props => (props.isLoading && props.connected && !props.noFarm ? '15px' : '0px')};
   color: ${props => props.color};
   font-weight: 700;
