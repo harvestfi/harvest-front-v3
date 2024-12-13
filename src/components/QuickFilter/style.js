@@ -35,7 +35,6 @@ const QuickFilterContainer = styled.div`
       : ''}
 
   @media screen and (max-width: 950px) {
-    background: white;
     padding: 30px;
     overflow: hidden;
     flex-direction: column;
@@ -404,11 +403,11 @@ const Counter = styled.div`
   ${props =>
     props.count > 0
       ? `
-  background: #6988FF;
+  background: #5dcf46;
   color: white;
   `
       : `
-  background: #6988FF;
+  background: #5dcf46;
   color: #1F2937;
   `}
   width: 20px;
@@ -614,8 +613,9 @@ const MobileClearFilter = styled(ClearFilter)`
 
 const FilterOffCanvas = styled(Offcanvas)`
   background: ${props => props.backcolor} !important;
-  border: none !important;
   align-items: center;
+  border-top: 2px solid ${props => props.borderColor} !important;
+  border-radius: 15px;
   .offcanvas-header {
     .btn-close {
       filter: ${props => props.filtercolor};
@@ -630,8 +630,6 @@ const FilterOffCanvas = styled(Offcanvas)`
 const FilterOffCanvasHeader = styled(Offcanvas.Header)`
   padding: 25px 15px 25px 15px !important;
   width: 95%;
-  border-top: 2px solid #ced3e6;
-  border-radius: 3px;
 `
 
 const FilterOffCanvasBody = styled(Offcanvas.Body)`

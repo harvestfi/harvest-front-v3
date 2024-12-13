@@ -381,7 +381,7 @@ const SortingIcon = ({ sortType, sortField, selectedField, riskId }) => {
 }
 
 const VaultList = () => {
-  const { fontColor, filterColor, backColor, borderColor, darkMode } = useThemeContext()
+  const { fontColor, filterColor, bgColorNew, borderColorBox, darkMode } = useThemeContext()
 
   const {
     vaultsData,
@@ -717,8 +717,8 @@ const VaultList = () => {
           : 'inactive'}{' '}
         farms {showNetworks}
       </DisplayCount>
-      <VaultsListBody borderColor={borderColor} backColor={backColor}>
-        <Header borderColor={borderColor} fontColor={fontColor} filterColor={filterColor}>
+      <VaultsListBody borderColor={borderColorBox} backColor={bgColorNew}>
+        <Header borderColor={borderColorBox} fontColor={fontColor} filterColor={filterColor}>
           <HeaderCol width="45%" justifyContent="start">
             Farm
           </HeaderCol>

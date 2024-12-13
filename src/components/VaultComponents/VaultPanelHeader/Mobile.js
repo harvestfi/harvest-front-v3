@@ -60,11 +60,11 @@ const MobilePanelHeader = ({
 
   const { logoUrl } = token
 
-  const { badgeIconBackColor, fontColor, borderColor, setPrevPage } = useThemeContext()
+  const { badgeIconBackColor, fontColor, borderColorBox, setPrevPage } = useThemeContext()
   return (
     <PanelContainer
       fontColor={fontColor}
-      borderColor={borderColor}
+      borderColor={borderColorBox}
       onClick={() => {
         const network = chainList[badgeId].name.toLowerCase()
         const address = isSpecialVault

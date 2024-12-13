@@ -423,8 +423,8 @@ const QuickFilter = ({
   }, [onlyWidth])
 
   const {
-    backColor,
-    borderColor,
+    bgColorNew,
+    borderColorBox,
     fontColor,
     fontColor2,
     filterColor,
@@ -437,7 +437,6 @@ const QuickFilter = ({
     fontColor1,
     fontColor4,
     hoverColor,
-    inputBorderColor,
     inputFontColor,
   } = useThemeContext()
 
@@ -446,14 +445,14 @@ const QuickFilter = ({
       {windowMode ? (
         <WebView>
           <QuickFilterContainer>
-            <DivWidth className="chain" width="100%" marginBottom="15px" backColor={backColor}>
+            <DivWidth className="chain" width="100%" marginBottom="15px" backColor={bgColorNew}>
               <DivWidth
                 className="chain"
                 background="none"
                 width="100%"
                 display="flex"
                 justifyContent="start"
-                backColor={backColor}
+                backColor={bgColorNew}
               >
                 {isSpecialApp ? (
                   <></>
@@ -461,9 +460,9 @@ const QuickFilter = ({
                   <ChainGroup>
                     {ChainsList.map((item, i) => (
                       <ChainButton
-                        backColor={backColor}
+                        backColor={bgColorNew}
                         hoverColor={filterChainHoverColor}
-                        borderColor={darkMode ? '#1F242F' : '#d1dbfb'}
+                        borderColor={borderColorBox}
                         className={`${selectedClass.includes(i) ? 'active' : ''}`}
                         data-tip
                         data-for={`chain-${item.name}`}
@@ -510,11 +509,11 @@ const QuickFilter = ({
                 )}
               </DivWidth>
             </DivWidth>
-            <DivWidth right="0" borderRadius="10" backColor={backColor}>
+            <DivWidth right="0" borderRadius="10" backColor={bgColorNew}>
               <ClearFilter
                 fontColor={fontColor2}
-                backColor={backColor}
-                borderColor={darkMode ? '#1F242F' : '#d1dbfb'}
+                backColor={bgColorNew}
+                borderColor={borderColorBox}
                 onClick={() => {
                   document.getElementById('search-input').value = ''
                   setSearchQuery('')
@@ -555,7 +554,7 @@ const QuickFilter = ({
                 inputText={inputText}
                 setInputText={setInputText}
               />
-              <DivWidth borderRadius="10" marginRight="15px" backColor={backColor}>
+              <DivWidth borderRadius="10" marginRight="15px" backColor={bgColorNew}>
                 <ButtonGroup
                   buttons={RiskList}
                   doSomethingAfterClick={printRisk}
@@ -569,7 +568,7 @@ const QuickFilter = ({
                 <Dropdown>
                   <TrendDropDown
                     num={trendsBackNum}
-                    bordercolor={borderColor}
+                    bordercolor={borderColorBox}
                     fontcolor={fontColor}
                   >
                     <div className="name">{trendName}</div>
@@ -599,7 +598,7 @@ const QuickFilter = ({
                   )}
                 </Dropdown>
               </DivWidth>
-              <DivWidth borderRadius="10" marginRight="15px" backColor={backColor}>
+              <DivWidth borderRadius="10" marginRight="15px" backColor={bgColorNew}>
                 <ButtonGroup
                   buttons={AssetsList}
                   doSomethingAfterClick={printAsset}
@@ -624,12 +623,12 @@ const QuickFilter = ({
       ) : (
         <MobileView>
           <FarmButtonPart justifyContent="start">
-            <ChainGroup borderColor={borderColor}>
+            <ChainGroup borderColor={borderColorBox}>
               {ChainsList.map((item, i) => (
                 <ChainButton
-                  backColor={backColor}
+                  backColor={bgColorNew}
                   hoverColor={filterChainHoverColor}
-                  borderColor={darkMode ? '#1F242F' : '#D1DBFB'}
+                  borderColor={borderColorBox}
                   className={`${selectedClass.includes(i) ? 'active' : ''}`}
                   data-tip
                   data-for={`chain-${item.name}`}
@@ -689,10 +688,10 @@ const QuickFilter = ({
               oneClass="time-filter"
             />
             <FarmFiltersPart
-              backColor={backColor}
+              backColor={bgColorNew}
               fontColor={fontColor}
               mobileColor={darkMode ? '#fff' : '#000'}
-              borderColor={darkMode ? '#1F242F' : '#d1dbfb'}
+              borderColor={borderColorBox}
               filterColor={filterColor}
             >
               <div className="filter-part">
@@ -714,7 +713,8 @@ const QuickFilter = ({
                 show={filterShow}
                 onHide={handleFilterClose}
                 placement="left"
-                backcolor={backColor}
+                backcolor={bgColorNew}
+                borderColor={borderColorBox}
                 filtercolor={filterColor}
                 className="farm-mobile-filter offcanvas-bottom"
               >
@@ -734,9 +734,9 @@ const QuickFilter = ({
                 <FilterOffCanvasBody
                   className="filter-show"
                   filtercolor={filterColor}
-                  backcolor={backColor}
+                  backcolor={bgColorNew}
                   fontcolor={fontColor}
-                  bordercolor={borderColor}
+                  bordercolor={borderColorBox}
                   hovercolor={mobileFilterHoverColor}
                   mobilefilterdisablecolor={mobileFilterDisableColor}
                 >
@@ -763,7 +763,7 @@ const QuickFilter = ({
                     <Dropdown>
                       <TrendDropDown
                         num={trendsBackNum}
-                        bordercolor={borderColor}
+                        bordercolor={borderColorBox}
                         fontcolor={fontColor}
                       >
                         <div className="name">{trendName}</div>
@@ -860,9 +860,9 @@ const QuickFilter = ({
             <div className="clear-filter">
               <MobileListFilter
                 mobileBackColor={mobileFilterBackColor}
-                backColor={backColor}
+                backColor={bgColorNew}
                 bgColor={bgColor}
-                borderColor={darkMode ? '#1F242F' : '#d1dbfb'}
+                borderColor={borderColorBox}
                 fontColor={fontColor}
                 fontColor1={fontColor1}
                 fontColor4={fontColor4}
@@ -877,7 +877,7 @@ const QuickFilter = ({
                       <img src={SortsList[sortId].img} className="sort-icon" alt="sort" />
                     </div>
                     <MobileFilterBtn
-                      inputBorderColor={inputBorderColor}
+                      inputBorderColor={borderColorBox}
                       type="button"
                       darkmode={darkMode ? 'true' : 'false'}
                     >
@@ -940,10 +940,10 @@ const QuickFilter = ({
                   ])
                   clearFilter()
                 }}
-                borderColor={darkMode ? '#1F242F' : '#d1dbfb'}
+                borderColor={borderColorBox}
                 fontColor={fontColor2}
                 mobileColor={darkMode ? '#fff' : '#000'}
-                backColor={backColor}
+                backColor={bgColorNew}
               >
                 <Counter count={mobileFilterCount}>
                   {mobileFilterCount > 0 ? mobileFilterCount : ''}
