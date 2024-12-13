@@ -91,7 +91,7 @@ const Inner = styled.div`
 
   .migrate-box {
     position: relative;
-    border: 1px solid #eaefff;
+    border: 1px solid ${props => props.borderColor};
   }
 
   // .migrate-box::before {
@@ -130,7 +130,7 @@ const PageIntro = styled.div`
 `
 
 const SpaceLine = styled.div`
-  border-bottom: 1px solid rgba(234, 236, 240, 1);
+  border-bottom: 1px solid ${props => props.borderColor};
 `
 
 const MigrateBox = styled.div`
@@ -200,28 +200,27 @@ const MigrateIcon = styled.div`
 `
 const Button = styled.button`
   padding: 15px 18px;
-  border: 1px solid #6988ff;
+  border: unset;
   border-radius: 8px;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #6988ff;
+  background: #5dcf46;
   color: white;
   width: 100%;
 
   &:hover {
-    background: #809aff;
+    background: #4ddd30;
   }
 
   &.inactive-btn {
     background: #535763;
     cursor: not-allowed;
-    border: 1px solid #535763;
   }
 `
 
 const Buttons = styled.button`
-  background: #6988ff;
+  background: #5dcf46;
   border: none;
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
   color: white;

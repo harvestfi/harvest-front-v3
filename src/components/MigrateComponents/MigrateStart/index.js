@@ -591,13 +591,13 @@ const MigrateStart = ({
         <FTokenInfo>
           <div className="modal-header-part">
             <NewLabel margin="auto 16px auto 0px" display="flex" items="center">
-              <IconCard bgColor="#6988ff" display="flex" items="center">
+              <IconCard bgColor="#5dcf46" display="flex" items="center">
                 {progressStep === 4 ? <BsArrowDown /> : <img src={ClockIcon} alt="clock" />}
               </IconCard>
             </NewLabel>
             <NewLabel textAlign="left" marginRight="12px">
               <NewLabel
-                color="#6988FF"
+                color="#5dcf46"
                 size={isMobile ? '18px' : '18px'}
                 height={isMobile ? '28px' : '28px'}
                 weight="600"

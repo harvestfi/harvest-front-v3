@@ -93,10 +93,10 @@ const Migrate = () => {
   const { tokens } = require('../../data')
   const {
     darkMode,
-    bgColor,
+    bgColorNew,
     backColor,
     filterChainHoverColor,
-    borderColor,
+    borderColorBox,
     backColorButton,
     fontColor2,
     hoverColorNew,
@@ -1081,7 +1081,7 @@ const Migrate = () => {
   }, [highestPosition, highestApyVault, chainId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Container bgColor={bgColor}>
+    <Container bgColor={bgColorNew}>
       <Inner marginBottom={isMobile ? '0px' : '55px'}>
         <MigrateTop>
           <PageTitle color={darkMode ? '#ffffff' : '"#101828"'}>Migrate</PageTitle>
@@ -1089,14 +1089,15 @@ const Migrate = () => {
         <PageIntro color={darkMode ? '#ffffff' : '#475467'}>
           Find alternatives for your existing positions and migrate in one click.
         </PageIntro>
-        <SpaceLine />
+        <SpaceLine borderColor={borderColorBox} />
       </Inner>
       <Inner
+        className="box-faq"
         display="flex"
         justifyContent="center"
         alignItems="flex-start"
         padding="0px 100px"
-        className="box-faq"
+        borderColor={borderColorBox}
       >
         <MigrateBox
           className="migrate-box"
@@ -1130,7 +1131,7 @@ const Migrate = () => {
               <Dropdown>
                 <CurrencyDropDown
                   id="dropdown-basic"
-                  bgcolor={backColorButton}
+                  bgcolor={bgColorNew}
                   fontcolor2={fontColor2}
                   hovercolor={hoverColorNew}
                   style={{ padding: 0 }}
@@ -1164,9 +1165,9 @@ const Migrate = () => {
               <ChainGroup>
                 {ChainsList.map((item, i) => (
                   <ChainButton
-                    backColor={backColor}
+                    backColor={bgColorNew}
                     hoverColor={filterChainHoverColor}
-                    borderColor={borderColor}
+                    borderColor={borderColorBox}
                     className={chainId.toString() === item.chainId.toString() ? 'active' : ''}
                     data-tip
                     data-for={`chain-${item.name}`}
