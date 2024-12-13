@@ -98,7 +98,7 @@ const ApexChart = ({ noData, data, range, handleTooltipContent, setCurDate, setC
     let path = '',
       dx = 0
 
-    if (index === 0) {
+    if (isMobile && index === 0) {
       return null
     }
 
@@ -106,8 +106,8 @@ const ApexChart = ({ noData, data, range, handleTooltipContent, setCurDate, setC
       path = formatXAxis(payload.value, range)
     }
 
-    // if (index === 0) dx = 5 // Adjust the first tick
-    if (index === payload.length - 1) dx = -10 // Adjust the last tick
+    // if (isMobile && index === 0) dx = 5 // Adjust the first tick
+    if (isMobile && index === payload.length - 1) dx = -10 // Adjust the last tick
     return (
       <text
         orientation="bottom"
@@ -292,7 +292,7 @@ const ApexChart = ({ noData, data, range, handleTooltipContent, setCurDate, setC
               tickLine={false}
               tickCount={5}
               tick={renderCustomXAxisTick}
-              interval={50}
+              interval={isMobile ? 50 : 'auto'}
             />
             <YAxis
               hide
