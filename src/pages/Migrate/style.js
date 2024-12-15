@@ -230,11 +230,11 @@ const Buttons = styled.button`
   width: 100%;
 
   &:hover {
-    background: #809aff;
+    background: #4ddd30;
   }
 
   &:active {
-    background: #809aff;
+    background: #4ddd30;
     opacity: 1;
   }
 `

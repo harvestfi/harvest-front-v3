@@ -33,7 +33,7 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, selectedIte
   const networkNames = ['ethereum', 'polygon', 'arbitrum', 'base', 'zksync']
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
-  const { borderColor, hoverColor, fontColor1 } = useThemeContext()
+  const { borderColorBox, hoverColor, fontColor1 } = useThemeContext()
   const { rates } = useRate()
 
   useEffect(() => {
@@ -94,7 +94,7 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, selectedIte
 
   return isMobile ? (
     <DetailView
-      borderColor={borderColor}
+      borderColor={borderColorBox}
       hoverColor={hoverColor}
       key={cKey}
       onClick={() => {
@@ -314,7 +314,7 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, selectedIte
     </DetailView>
   ) : (
     <DetailView
-      borderColor={borderColor}
+      borderColor={borderColorBox}
       hoverColor={hoverColor}
       key={cKey}
       lastItem={lastItem}
