@@ -102,10 +102,9 @@ const Analytic = () => {
   } = useStats()
   const {
     darkMode,
-    pageBackColor,
+    bgColorNew,
     fontColor,
-    borderColor,
-    backColor,
+    borderColorBox,
     boxShadowColor,
     analyticTitleColor,
   } = useThemeContext()
@@ -134,12 +133,12 @@ const Analytic = () => {
   }, [])
 
   return (
-    <Container pageBackColor={pageBackColor}>
+    <Container pageBackColor={bgColorNew}>
       <Content>
         <FarmStatsContainer firstLine>
           <ValueComponent
-            borderColor={borderColor}
-            backColor={backColor}
+            borderColor={borderColorBox}
+            backColor={bgColorNew}
             fontColor={fontColor}
             width={onlyWidth <= 1310 ? '48%' : '25%'}
           >
@@ -171,8 +170,8 @@ const Analytic = () => {
           </ValueComponent>
 
           <ValueComponent
-            borderColor={borderColor}
-            backColor={backColor}
+            borderColor={borderColorBox}
+            backColor={bgColorNew}
             fontColor={fontColor}
             width={onlyWidth <= 1310 ? '48%' : '25%'}
           >
@@ -214,8 +213,8 @@ const Analytic = () => {
           </ValueComponent>
 
           <ValueComponent
-            borderColor={borderColor}
-            backColor={backColor}
+            borderColor={borderColorBox}
+            backColor={bgColorNew}
             fontColor={fontColor}
             width={onlyWidth <= 1310 ? '48%' : '25%'}
           >
@@ -229,8 +228,8 @@ const Analytic = () => {
           </ValueComponent>
           <ValueComponent
             fontColor={fontColor}
-            borderColor={borderColor}
-            backColor={backColor}
+            borderColor={borderColorBox}
+            backColor={bgColorNew}
             width={onlyWidth <= 1310 ? '48%' : '25%'}
           >
             <CompHeader fontColor={analyticTitleColor}>
@@ -276,8 +275,8 @@ const Analytic = () => {
             direction="row"
             height="450px"
             fontColor={fontColor}
-            backColor={backColor}
-            borderColor={borderColor}
+            backColor={bgColorNew}
+            borderColor={borderColorBox}
           >
             {loadComplete && <AnalyticChart />}
           </StatsBox>
@@ -331,9 +330,9 @@ const Analytic = () => {
           <StatsValue width={isMobile ? '100%' : '50%'}>
             <StatsValue width="100%" direction="row" fontColor={fontColor}>
               <ValueComponent
-                borderColor={borderColor}
+                borderColor={borderColorBox}
                 fontColor={fontColor}
-                backColor={backColor}
+                backColor={bgColorNew}
                 width="49%"
                 className="child first-comp"
               >
@@ -371,8 +370,8 @@ const Analytic = () => {
               </ValueComponent>
 
               <ValueComponent
-                borderColor={borderColor}
-                backColor={backColor}
+                borderColor={borderColorBox}
+                backColor={bgColorNew}
                 fontColor={fontColor}
                 width="49%"
                 className="child"
@@ -417,8 +416,8 @@ const Analytic = () => {
               align="flex-start"
               direction="column"
               fontColor={fontColor}
-              backColor={backColor}
-              borderColor={borderColor}
+              backColor={bgColorNew}
+              borderColor={borderColorBox}
             >
               <StatsContainerRow margin="27px 29px">
                 <DataSourceInner>
@@ -452,8 +451,8 @@ const Analytic = () => {
             width={isMobile ? '100%' : '50%'}
             direction="row"
             fontColor={fontColor}
-            backColor={backColor}
-            borderColor={borderColor}
+            backColor={bgColorNew}
+            borderColor={borderColorBox}
           >
             <StatsContainer>
               <BigStatsExchange fontColor={fontColor}>
