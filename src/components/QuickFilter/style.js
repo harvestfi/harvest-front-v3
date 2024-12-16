@@ -1086,7 +1086,7 @@ const SpecDropDownItem = styled(Dropdown.Item)`
 `
 
 const TrendDropDown = styled(Dropdown.Toggle)`
-  background: #15b088;
+  background: #5dcf46;
   background-size: 100% !important;
   border: 1px solid ${props => props.bordercolor} !important;
   color: white;
@@ -1230,7 +1230,7 @@ const ApplyFilterBtn = styled.button`
   display: flex;
   justify-content: center;
   padding: 10px 16px;
-  background: #6988ff;
+  background: #5dcf46;
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
   border-radius: 8px;
   width: 100%;
@@ -1242,7 +1242,7 @@ const ApplyFilterBtn = styled.button`
   opacity: 1;
 
   &:hover {
-    opacity: 0.8;
+    background: #56d73c;
   }
 `
 
@@ -1359,7 +1359,7 @@ const MobileListFilter = styled.div`
             }
           }
 
-          img.checked {
+          svg.checked {
             display: none;
           }
         }
@@ -1368,7 +1368,7 @@ const MobileListFilter = styled.div`
           display: flex;
           justify-content: space-between;
           background: transparent;
-          img.checked {
+          svg.checked {
             display: block;
           }
         }

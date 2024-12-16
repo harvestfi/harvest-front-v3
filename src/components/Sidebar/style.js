@@ -674,6 +674,7 @@ const SideIcons = styled.img`
   transition: 0.25s;
   width: ${props => props.width};
   height: ${props => props.height};
+  filter: ${props => props.filterColor};
   margin-top: ${props => (props.marginTop ? props.marginTop : '')};
 `
 

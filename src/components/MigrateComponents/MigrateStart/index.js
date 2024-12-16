@@ -977,7 +977,7 @@ const MigrateStart = ({
                 fontColor2={fontColor2}
                 backColor={backColor}
                 borderColor={
-                  customSlippage === null || customSlippage === 0 ? borderColor : '#15b088'
+                  customSlippage === null || customSlippage === 0 ? borderColor : '#5dcf46'
                 }
                 size="12px"
               >
@@ -998,7 +998,7 @@ const MigrateStart = ({
                     ? '#0C111D'
                     : '#fff'
                 }
-                bgColor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#15b088'}
+                bgColor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#5dcf46'}
                 cursor={customSlippage === null || customSlippage === 0 ? 'not-allowed' : 'pointer'}
                 hoverColor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#2ccda4'}
                 activeColor={

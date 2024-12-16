@@ -144,8 +144,8 @@ ${props =>
   ${props =>
     props.color === 'advanced-reward'
       ? `
-      background: #15B088;
-      border: 1px solid #15B088;
+      background: #5dcf46;
+      border: 1px solid #5dcf46;
       font-weight: 600;
       font-size: 16px;
       line-height: 24px;

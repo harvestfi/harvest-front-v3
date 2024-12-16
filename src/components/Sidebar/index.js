@@ -26,7 +26,7 @@ import Wallet from '../../assets/images/logos/sidebar/wallet.svg'
 import WalletOff from '../../assets/images/logos/sidebar/wallet_off.svg'
 import WalletActive from '../../assets/images/logos/sidebar/wallet_active.svg'
 import WalletInactive from '../../assets/images/logos/sidebar/wallet_inactive.svg'
-import Toggle from '../../assets/images/logos/sidebar/more-mobile.svg'
+import Toggle from '../../assets/images/logos/sidebar/dots-grid.svg'
 // import DocsMobile from '../../assets/images/logos/sidebar/docs-mobile.svg'
 import { ROUTES, supportedCurrencies } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
@@ -291,6 +291,7 @@ const MobileMenu = ({
   subItem,
   isDropdownLink,
   fontColor,
+  filterColor,
   activeIconColor,
   darkMode,
   isWallet,
@@ -302,7 +303,7 @@ const MobileMenu = ({
   const active = !isWallet && pageName.includes(item.name.toLowerCase())
   const farmsFilter = active
     ? 'invert(75%) sepia(89%) saturate(343%) hue-rotate(52deg) brightness(89%) contrast(86%)'
-    : 'invert(51%) sepia(1%) saturate(2273%) hue-rotate(333deg) brightness(93%) contrast(81%)'
+    : filterColor
   return (
     <LinkMobile
       fontColor={fontColor}
@@ -324,7 +325,7 @@ const MobileMenu = ({
         marginTop={item.name === 'All Farms' ? '-1px' : ''}
       />
       <LinkName
-        color={active ? '#6ED459' : '#7A7A7A'}
+        color={active ? '#6ED459' : darkMode ? '#fff' : '#7A7A7A'}
         marginTop={item.name === 'Portfolio' ? '5px' : ' 2px'}
       >
         {item.linkName}
@@ -344,6 +345,7 @@ const Sidebar = ({ width }) => {
     fontColor1,
     fontColor2,
     filterColor,
+    filterColorBottom,
     fontColor5,
     inputBorderColor,
     hoverImgColor,
@@ -1195,6 +1197,7 @@ const Sidebar = ({ width }) => {
                   item={item}
                   isDropdownLink={item.path === '#'}
                   fontColor={sidebarFontColor}
+                  filterColor={filterColorBottom}
                   activeFontColor={sidebarActiveFontColor}
                   activeIconColor={sidebarActiveIconColor}
                   darkMode={darkMode}
@@ -1232,8 +1235,15 @@ const Sidebar = ({ width }) => {
           <>
             <MobileMenuContainer display="flex" justifyContent="center" alignItems="center">
               <LinkMobile type="button" onClick={handleMobileShow}>
-                <SideIcons toggleColor={toggleColor} width={16} height={18} src={Toggle} alt="" />
-                <LinkName marginTop="5px" color="#7A7A7A">
+                <SideIcons
+                  toggleColor={toggleColor}
+                  filterColor={filterColorBottom}
+                  width="18px"
+                  height="18px"
+                  src={Toggle}
+                  alt=""
+                />
+                <LinkName marginTop="5px" color={darkMode ? '#fff' : '#7A7A7A'}>
                   More
                 </LinkName>
               </LinkMobile>

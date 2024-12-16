@@ -2,7 +2,6 @@ import React from 'react'
 import { IFARM_TOKEN_SYMBOL } from '../../../../constants'
 import { tokens } from '../../../../data'
 import { TokenDescriptionContainer, TokenNameContainer, BadgeIcon, BadgePlatform } from '../style'
-import { useThemeContext } from '../../../../providers/useThemeContext'
 
 const VaultName = ({
   token,
@@ -17,7 +16,6 @@ const VaultName = ({
   DESCI,
   isMobile,
 }) => {
-  const { darkMode } = useThemeContext()
   return (
     <TokenDescriptionContainer>
       <TokenNameContainer fontColor1={fontColor1}>
@@ -27,7 +25,7 @@ const VaultName = ({
       </TokenNameContainer>
       {isMobile ? (
         <BadgePlatform>
-          <BadgeIcon badgeBack={darkMode ? 'transparent' : 'rgba(255, 255, 255, 0.6)'}>
+          <BadgeIcon>
             {BadgeAry[badgeId] ? (
               <img src={BadgeAry[badgeId]} width="10" height="10" alt="" />
             ) : (

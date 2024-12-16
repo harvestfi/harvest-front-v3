@@ -2188,7 +2188,7 @@ const AdvancedFarm = () => {
                 </ManageBoxWrapper>
               </>
             ) : activeMainTag === 2 ? (
-              <BoxCover borderColor={borderColor}>
+              <BoxCover borderColor={borderColorBox}>
                 {detailBoxes.map(({ title, showValue, className }, index) => (
                   <ValueBox
                     key={index}
@@ -2264,7 +2264,7 @@ const AdvancedFarm = () => {
                       <MyBalance
                         marginBottom="25px"
                         backColor={backColor}
-                        borderColor={borderColor}
+                        borderColor={borderColorBox}
                       >
                         <NewLabel
                           size={isMobile ? '12px' : '14px'}
@@ -2410,7 +2410,7 @@ const AdvancedFarm = () => {
                             rel="noopener noreferrer"
                             bgColor={bgColorNew}
                             hoverColor={hoverColor}
-                            borderColor={borderColor}
+                            borderColor={borderColorBox}
                           >
                             <NewLabel
                               size="12px"
@@ -2434,7 +2434,7 @@ const AdvancedFarm = () => {
                             rel="noopener noreferrer"
                             bgColor={bgColorNew}
                             hoverColor={hoverColor}
-                            borderColor={borderColor}
+                            borderColor={borderColorBox}
                           >
                             <NewLabel
                               size="12px"
@@ -2457,7 +2457,7 @@ const AdvancedFarm = () => {
                           target="_blank"
                           bgColor={bgColorNew}
                           hoverColor={hoverColor}
-                          borderColor={borderColor}
+                          borderColor={borderColorBox}
                         >
                           <NewLabel
                             size="12px"
@@ -2478,7 +2478,7 @@ const AdvancedFarm = () => {
                             rel="noopener noreferrer"
                             bgColor={bgColor}
                             hoverColor={hoverColor}
-                            borderColor={borderColor}
+                            borderColor={borderColorBox}
                           >
                             <NewLabel
                               size="12px"
@@ -3282,9 +3282,9 @@ const AdvancedFarm = () => {
                             target="_blank"
                             onClick={e => e.stopPropagation()}
                             rel="noopener noreferrer"
-                            bgColor={bgColor}
+                            bgColor={bgColorNew}
                             hoverColor={hoverColor}
-                            borderColor={borderColor}
+                            borderColor={borderColorBox}
                           >
                             <NewLabel
                               size="12px"
@@ -3306,9 +3306,9 @@ const AdvancedFarm = () => {
                             target="_blank"
                             onClick={e => e.stopPropagation()}
                             rel="noopener noreferrer"
-                            bgColor={bgColor}
+                            bgColor={bgColorNew}
                             hoverColor={hoverColor}
-                            borderColor={borderColor}
+                            borderColor={borderColorBox}
                           >
                             <NewLabel
                               size="12px"
@@ -3329,9 +3329,9 @@ const AdvancedFarm = () => {
                           onClick={e => e.stopPropagation()}
                           rel="noopener noreferrer"
                           target="_blank"
-                          bgColor={bgColor}
+                          bgColor={bgColorNew}
                           hoverColor={hoverColor}
-                          borderColor={borderColor}
+                          borderColor={borderColorBox}
                         >
                           <NewLabel
                             size="12px"

@@ -350,7 +350,7 @@ const DepositStart = ({
             </NewLabel>
             <NewLabel textAlign="left" marginRight="12px">
               <NewLabel
-                color="#15B088"
+                color="#5dcf46"
                 size={isMobile ? '18px' : '18px'}
                 height={isMobile ? '28px' : '28px'}
                 weight="600"
@@ -696,7 +696,7 @@ const DepositStart = ({
                 fontColor2={fontColor2}
                 backColor={backColor}
                 borderColor={
-                  customSlippage === null || customSlippage === 0 ? borderColor : '#15b088'
+                  customSlippage === null || customSlippage === 0 ? borderColor : '#5dcf46'
                 }
               >
                 <input
@@ -716,11 +716,11 @@ const DepositStart = ({
                     ? '#0C111D'
                     : '#fff'
                 }
-                bgColor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#15b088'}
+                bgColor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#5dcf46'}
                 cursor={customSlippage === null || customSlippage === 0 ? 'not-allowed' : 'pointer'}
-                hoverColor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#2ccda4'}
+                hoverColor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#56d73c'}
                 activeColor={
-                  customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#4fdfbb'
+                  customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#46eb25'
                 }
               >
                 {slippageBtnLabel}

@@ -21,7 +21,7 @@ const IconCard = styled.div`
   height: 48px;
   border-radius: 50%;
   padding: 8px;
-  background: #15b088;
+  background: #5dcf46;
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
   justify-content: center;
 `
@@ -186,7 +186,7 @@ const NewLabel = styled.div`
 `
 
 const Buttons = styled.button`
-  background: #15b088;
+  background: #5dcf46;
   border: none;
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
   color: white;
@@ -196,11 +196,11 @@ const Buttons = styled.button`
   width: 100%;
 
   &:hover {
-    background: #2ccda4;
+    background: #56d73c;
   }
 
   &:active {
-    background: #4fdfbb;
+    background: #46eb25;
   }
 `
 

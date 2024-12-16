@@ -1,6 +1,7 @@
 import { useHistory, useLocation } from 'react-router-dom'
 import { useWindowWidth } from '@react-hook/window-size'
 import { debounce } from 'lodash'
+import { MdCheck } from 'react-icons/md'
 import React, { useEffect, useState } from 'react'
 import { FaRegSquare, FaRegSquareCheck } from 'react-icons/fa6'
 import { useMediaQuery } from 'react-responsive'
@@ -13,7 +14,6 @@ import POLYGON from '../../assets/images/chains/polygon.svg'
 import ZKSYNC from '../../assets/images/chains/zksync.svg'
 import FilterIcon from '../../assets/images/logos/filters-icon.svg'
 import SpecNarrowDown from '../../assets/images/logos/filter/spec-narrowdown.svg'
-import MobileSortCheckedIcon from '../../assets/images/logos/filter/mobile-sort-checked.svg'
 import DesciBack from '../../assets/images/logos/filter/desciback.jpg'
 import LSDBack from '../../assets/images/logos/filter/lsdback.jpg'
 import Zap from '../../assets/images/logos/filter/zap.svg'
@@ -73,7 +73,6 @@ const FarmsList = [
 const MobileFarmsList = [
   { id: 1, name: 'All', filter: 'allfarm' },
   { id: 2, name: 'Wallet', filter: 'myfarm', border: 'none' },
-  { id: 3, name: 'Inactive', filter: 'inactive' },
 ]
 
 const RiskList = [
@@ -808,9 +807,9 @@ const QuickFilter = ({
                     }}
                   >
                     {showInactiveFarms ? (
-                      <FaRegSquareCheck color="#6988FF" />
+                      <FaRegSquareCheck color="#5dcf46" />
                     ) : (
-                      <FaRegSquare color="#6988FF" />
+                      <FaRegSquare color="#5dcf46" />
                     )}
                     <div>Show inactive</div>
                   </CheckBoxDiv>
@@ -906,7 +905,7 @@ const QuickFilter = ({
                             style={{ marginLeft: '10px' }}
                           />
                         </DropdownRow>
-                        <img className="checked" src={MobileSortCheckedIcon} alt="" />
+                        <MdCheck color="#5dcf46" className="checked" />
                       </Dropdown.Item>
                     ))}
                   </Dropdown.Menu>
