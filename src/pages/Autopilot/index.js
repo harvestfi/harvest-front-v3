@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Dropdown } from 'react-bootstrap'
-import { isEqual } from 'lodash'
 import { BiLeftArrowAlt } from 'react-icons/bi'
 import { IoCheckmark } from 'react-icons/io5'
-import useEffectWithPrevious from 'use-effect-with-previous'
 import 'react-loading-skeleton/dist/skeleton.css'
 import BankNote from '../../assets/images/logos/dashboard/bank-note.svg'
 import DropDownIcon from '../../assets/images/logos/advancedfarm/drop-down.svg'
@@ -48,22 +46,14 @@ const Autopilot = () => {
   const [vaultsData, setVaultsData] = useState([])
 
   const [viewPositions, setViewPositions] = useState(true)
-
-  useEffectWithPrevious(
-    ([, prevAllVaultsData]) => {
-      if (!loadingVaults) {
-        if (!isEqual(prevAllVaultsData, allVaultsData)) {
-          const filteredVaults = Object.values(allVaultsData).filter((vaultData, index) => {
-            vaultData.id = Object.keys(allVaultsData)[index]
-            if (Object.prototype.hasOwnProperty.call(vaultData, 'isIPORVault')) return true
-            return false
-          })
-          setVaultsData(filteredVaults)
-        }
-      }
-    },
-    [loadingVaults, allVaultsData],
-  )
+  useEffect(() => {
+    const filteredVaults = Object.values(allVaultsData).filter((vaultData, index) => {
+      vaultData.id = Object.keys(allVaultsData)[index]
+      if (Object.prototype.hasOwnProperty.call(vaultData, 'isIPORVault')) return true
+      return false
+    })
+    setVaultsData(filteredVaults)
+  }, [allVaultsData])
 
   useEffect(() => {
     if (rates.rateData) {
@@ -171,7 +161,14 @@ const Autopilot = () => {
         <SubPart>
           {!loadingVaults && vaultsData.length > 0 ? (
             vaultsData?.map((vault, index) => {
-              return <AutopilotPanel vaultData={vault} key={index} index={index} />
+              return (
+                <AutopilotPanel
+                  allVaultsData={allVaultsData}
+                  vaultData={vault}
+                  key={index}
+                  index={index}
+                />
+              )
             })
           ) : (
             <></>

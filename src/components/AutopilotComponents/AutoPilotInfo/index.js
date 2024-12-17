@@ -19,7 +19,7 @@ import {
   PilotInfoClose,
 } from './style'
 
-const AutopilotInfo = ({ vaultData, setPilotInfoShow }) => {
+const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
   const { pilotBorderColor1, pilotButtonColor1, backColor, fontColor2 } = useThemeContext()
   const { rates } = useRate()
 
@@ -209,7 +209,7 @@ const AutopilotInfo = ({ vaultData, setPilotInfoShow }) => {
                   weight="500"
                   cursor="pointer"
                   onClick={() => {
-                    window.location.href = `https://arbiscan.io/address/${vaultData.vaultAddress}`
+                    window.open(`https://arbiscan.io/address/${vaultData.vaultAddress}`, '_blank')
                   }}
                 >
                   {vaultToken}
@@ -230,15 +230,26 @@ const AutopilotInfo = ({ vaultData, setPilotInfoShow }) => {
           <GeneralDiv key={activeMainTag}>
             {vaultData.allocPointData && vaultData.allocPointData.length > 0 ? (
               vaultData.allocPointData.map((data, index) => {
+                let vaultName = data.hVaultId.split('_')[0]
+                vaultName = `${vaultName.charAt(0).toUpperCase() + vaultName.slice(1)} USDC`
                 return (
                   <RowDiv key={index}>
                     <NewLabel
                       size="13.4px"
                       height="20px"
                       weight="500"
+                      cursor="pointer"
                       borderBottom="0.5px dotted white"
+                      onClick={() => {
+                        window.open(
+                          `https://app.harvest.finance/arbitrum/${
+                            allVaultsData[data.hVaultId]?.vaultAddress
+                          }`,
+                          '_blank',
+                        )
+                      }}
                     >
-                      {data.hVaultId}
+                      {vaultName}
                     </NewLabel>
                     <NewLabel size="13.4px" height="20px" weight="500">
                       {Number(data.allocPoint).toFixed(2)}%

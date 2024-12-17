@@ -39,7 +39,7 @@ import {
   TokenName,
 } from './style'
 
-const AutopilotPanel = ({ vaultData, index }) => {
+const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
   const {
     pilotBorderColor1,
     pilotBorderColor2,
@@ -415,7 +415,13 @@ const AutopilotPanel = ({ vaultData, index }) => {
           </PanelSubscribe>
         </BasePanelBox>
       )}
-      {pilotInfoShow && <AutopilotInfo vaultData={vaultData} setPilotInfoShow={setPilotInfoShow} />}
+      {pilotInfoShow && (
+        <AutopilotInfo
+          allVaultsData={allVaultsData}
+          vaultData={vaultData}
+          setPilotInfoShow={setPilotInfoShow}
+        />
+      )}
       {modalShow && subscribe && (
         <SubscribeModal
           inputAmount={inputAmount}
