@@ -158,13 +158,16 @@ const BadgeIcon = styled.div`
   position: absolute;
   top: 26px;
   left: 24px;
-  border: 2px solid ${props => props.borderColor};
-  border-radius: 8px;
   width: 23px;
   height: 23px;
   display: flex;
   justify-content: center;
   align-items: center;
+
+  img {
+    width: 16px;
+    height: 16px;
+  }
 
   @media screen and (max-width: 992px) {
     position: inherit;
