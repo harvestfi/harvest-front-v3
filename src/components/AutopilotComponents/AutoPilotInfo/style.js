@@ -22,7 +22,7 @@ const ThemeMode = styled.div`
     }
 
     .switch-track {
-      background: #7F9BFF;
+      background: #7f9bff;
       height: 16px;
       width: 32px;
       border-radius: 30px;
@@ -103,15 +103,79 @@ const ThemeMode = styled.div`
 `
 
 const PanelHeader = styled.div`
-  background: url(${props => props.background});
   display: flex;
-  flex-direction: row;
-  height: 145px;
+  flex-direction: column;
   justify-content: space-between;
   background-size: cover;
   background-position: center;
-  border-radius: 15px;
   overflow: hidden;
+`
+
+const PanelTitle = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`
+
+const RowDiv = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+  padding-left: 20px;
+  padding-right: 20px;
+`
+
+const ColumnDiv = styled.div`
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding-left: 20px;
+  padding-right: 20px;
+  gap: 20px;
+`
+
+const GeneralDiv = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  margin-top: 25px;
+`
+
+const PanelTags = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 28px;
+  border-radius: 4.72px;
+  gap: 7.86px;
+  margin-top: 25px;
+  margin-left: 20px;
+  margin-right: 20px;
+  background: #4040428c;
+`
+
+const MainTag = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 33%;
+  border-radius: 4.72px;
+  gap: 6.29px;
+  cursor: pointer;
+  ${props =>
+    props.active === 'true'
+      ? `
+      color: #15191C;
+      background: ${props.bgColor};
+    `
+      : `
+      color: #fff;
+      background: transparent;
+    `}
 `
 
 const PanelBalance = styled.div`
@@ -130,10 +194,10 @@ const PanelSubscribe = styled.div`
 
 const BasePanelBox = styled.div`
   width: 450px;
+  height: 490px;
   margin-top: 50px;
   display: flex;
   flex-direction: column;
-  height: fit-content;
   background: ${props => props.backColor};
   key: ${props => props.key};
   border: 1px solid ${props => props.borderColor};
@@ -158,12 +222,6 @@ const BasePanelBox = styled.div`
       : ''}
 `
 
-const TokenInfo = styled.div`
-  display: flex;
-  flex-direction: row;
-  margin: 28px 22px;
-  justify-content: space-between;
-`
 const ApyInfo = styled.div`
   display: flex;
   flex-direction: column;
@@ -171,12 +229,12 @@ const ApyInfo = styled.div`
   justify-content: center;
 `
 
-const PilotInfo = styled.div`
+const PilotInfoClose = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
   position: relative;
-  
+
   svg.pilot-info {
     position: absolute;
     cursor: pointer;
@@ -184,8 +242,8 @@ const PilotInfo = styled.div`
     right: 0;
     width: 16px;
     height: 16px;
-    margin-top: 15px;
-    margin-right: 15px;
+    margin-top: 25px;
+    margin-right: 20px;
   }
 `
 
@@ -290,10 +348,24 @@ const NewLabel = styled.div`
   `
       : ''}
 
+   ${props =>
+    props.borderBottom
+      ? `
+      border-bottom: ${props.borderBottom};
+    `
+      : ''}
+
   ${props =>
     props.borderRadius
       ? `
     border-radius: ${props.borderRadius};
+  `
+      : ''}
+
+  ${props =>
+    props.cursor
+      ? `
+    cursor: ${props.cursor};
   `
       : ''}
 
@@ -372,7 +444,6 @@ const FlexDiv = styled.div`
     flex-direction: ${props.flexDirection};
   `
       : ''}
-
 `
 
 const TokenInput = styled.div`
@@ -399,7 +470,7 @@ const TokenAmount = styled.input`
   white-space: nowrap;
   overflow: hidden;
   background: ${props => props.bgColor};
-  border: 1px solid #D7DFFA8C;
+  border: 1px solid #d7dffa8c;
   outline: 0;
   padding: 7px 14px 7px 14px;
   border-radius: 8px;
@@ -425,7 +496,7 @@ const TokenUSDAmount = styled.div`
 
 const TokenType = styled.div`
   position: relative;
-  border: 1px solid #D7DFFA8C;
+  border: 1px solid #d7dffa8c;
   border-radius: 9px;
   width: 195px;
   img.token-symbol {
@@ -447,11 +518,16 @@ const TokenName = styled.div`
 export {
   ThemeMode,
   PanelHeader,
+  RowDiv,
+  ColumnDiv,
+  PanelTitle,
+  GeneralDiv,
+  PanelTags,
+  MainTag,
   BasePanelBox,
-  TokenInfo,
   ApyInfo,
   NewLabel,
-  PilotInfo,
+  PilotInfoClose,
   PanelBalance,
   FlexDiv,
   PanelSubscribe,

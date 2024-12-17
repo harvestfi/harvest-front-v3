@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { Dropdown } from 'react-bootstrap'
+import { isEqual } from 'lodash'
 import { BiLeftArrowAlt } from 'react-icons/bi'
 import { IoCheckmark } from 'react-icons/io5'
+import useEffectWithPrevious from 'use-effect-with-previous'
 import 'react-loading-skeleton/dist/skeleton.css'
 import BankNote from '../../assets/images/logos/dashboard/bank-note.svg'
 import DropDownIcon from '../../assets/images/logos/advancedfarm/drop-down.svg'
@@ -10,7 +12,7 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import { useRate } from '../../providers/Rate'
 import { isSpecialApp } from '../../utilities/formats'
 import { useVaults } from '../../providers/Vault'
-import AutopilotPanel from '../../components/AutopilotPanel'
+import AutopilotPanel from '../../components/AutopilotComponents/AutopilotPanel'
 import {
   Container,
   Inner,
@@ -41,30 +43,30 @@ const Autopilot = () => {
   } = useThemeContext()
 
   const { rates, updateCurrency } = useRate()
-  const [currencySym, setCurrencySym] = useState('$')
-  const [currencyRate, setCurrencyRate] = useState(1)
   const [curCurrency, setCurCurrency] = useState(supportedCurrencies[0])
   const { allVaultsData, loadingVaults } = useVaults()
   const [vaultsData, setVaultsData] = useState([])
 
   const [viewPositions, setViewPositions] = useState(true)
 
-  useEffect(() => {
-    if(!loadingVaults) {
-      setVaultsData(Object.values(allVaultsData).filter((vaultData, index) => {
-        vaultData.id = Object.keys(allVaultsData)[index]
-        if(Object.prototype.hasOwnProperty.call(vaultData, 'isIPORVault'))
-          return true
-        return false
-      }))
-    }
-  }, [loadingVaults, allVaultsData])
-
+  useEffectWithPrevious(
+    ([, prevAllVaultsData]) => {
+      if (!loadingVaults) {
+        if (!isEqual(prevAllVaultsData, allVaultsData)) {
+          const filteredVaults = Object.values(allVaultsData).filter((vaultData, index) => {
+            vaultData.id = Object.keys(allVaultsData)[index]
+            if (Object.prototype.hasOwnProperty.call(vaultData, 'isIPORVault')) return true
+            return false
+          })
+          setVaultsData(filteredVaults)
+        }
+      }
+    },
+    [loadingVaults, allVaultsData],
+  )
 
   useEffect(() => {
     if (rates.rateData) {
-      setCurrencySym(rates.currency.icon)
-      setCurrencyRate(rates.rateData[rates.currency.symbol])
       setCurCurrency(supportedCurrencies[rates.currency.id])
     }
   }, [rates])
@@ -73,11 +75,11 @@ const Autopilot = () => {
     <Container bgColor={bgColor} fontColor={fontColor}>
       <Inner bgColor={darkMode ? '#171b25' : '#fff'}>
         <HeaderWrap
-          backImg=''
+          backImg=""
           padding={viewPositions ? '25px 25px 40px 25px' : '25px 15px 20px'}
           height={viewPositions ? '234px' : ''}
         >
-        <HeaderTitle fontColor={fontColor} fontColor1={fontColor1}>
+          <HeaderTitle fontColor={fontColor} fontColor1={fontColor1}>
             {!viewPositions && (
               <BackArrow onClick={() => setViewPositions(prev => !prev)}>
                 <BiLeftArrowAlt fontSize={20} />
@@ -86,7 +88,7 @@ const Autopilot = () => {
             )}
             <div className="title">Autopilot</div>
             <div className="desc">
-              Maximized yield efficiency with our 1-click autopilot vaults. 
+              Maximized yield efficiency with our 1-click autopilot vaults.
             </div>
           </HeaderTitle>
           {viewPositions && (
@@ -167,20 +169,13 @@ const Autopilot = () => {
           )}
         </HeaderWrap>
         <SubPart>
-          {!loadingVaults ? vaultsData?.map((vault, index) => {
-            return (
-             <AutopilotPanel
-                vaultData={vault}
-                currencyRate={currencyRate}
-                currencySym={currencySym}
-                key={index}
-                index={index}
-             />
+          {!loadingVaults && vaultsData.length > 0 ? (
+            vaultsData?.map((vault, index) => {
+              return <AutopilotPanel vaultData={vault} key={index} index={index} />
+            })
+          ) : (
+            <></>
           )}
-          )
-          :
-          <></>
-        }
         </SubPart>
       </Inner>
     </Container>

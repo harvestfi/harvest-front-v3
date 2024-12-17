@@ -280,6 +280,7 @@ const WalletProvider = _ref => {
               }
             }),
         )
+
         setBalancesToLoad([])
         setBalances(currBalances => ({ ...(newAccount ? {} : currBalances), ...fetchedBalances }))
         setApprovedBalances(currApprovedBalances => ({
