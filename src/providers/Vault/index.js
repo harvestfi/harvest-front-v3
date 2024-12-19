@@ -91,6 +91,8 @@ const VaultsProvider = _ref => {
             underlyingBalanceWithInvestmentForHolder = '0',
             pricePerFullShare = '0',
             totalSupply = '0',
+            totalValueLocked = '0',
+            allocPointData = [],
             boostedEstimatedAPY = null,
             uniswapV3PositionId = null,
             uniswapV3UnderlyingTokenPrices = [],
@@ -124,6 +126,12 @@ const VaultsProvider = _ref => {
             usdPrice = apiData[vaultSymbol].usdPrice
             underlyingBalanceWithInvestment = apiData[vaultSymbol].underlyingBalanceWithInvestment
             totalSupply = apiData[vaultSymbol].totalSupply
+            totalValueLocked = apiData[vaultSymbol].totalValueLocked
+              ? apiData[vaultSymbol].totalValueLocked
+              : '0'
+            allocPointData = apiData[vaultSymbol].allocPointData
+              ? apiData[vaultSymbol].allocPointData
+              : []
             pricePerFullShare = importedVaults[vaultSymbol].pricePerFullShareOverride
               ? importedVaults[vaultSymbol].pricePerFullShareOverride
               : apiData[vaultSymbol].pricePerFullShare
@@ -184,6 +192,8 @@ const VaultsProvider = _ref => {
             underlyingBalanceWithInvestmentForHolder,
             pricePerFullShare,
             totalSupply,
+            totalValueLocked,
+            allocPointData,
             instance,
             uniswapV3PositionId,
             dataFetched,

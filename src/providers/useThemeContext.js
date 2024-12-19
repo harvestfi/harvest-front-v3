@@ -46,6 +46,10 @@ export function ThemeProvider({ children }) {
 
   const borderColor = darkMode ? '#1F242F' : '#F3F6FF'
   const borderColorBox = darkMode ? '#414141' : '#F2F5FF'
+  const pilotBorderColor1 = darkMode ? '#FFFFFF' : '#F3F6FF'
+  const pilotBorderColor2 = darkMode ? '#F2F5FF' : '#F3F6FF'
+  const pilotButtonColor1 = '#5DCF46'
+  const pilotButtonColor2 = '#7F9BFF'
   const borderColorTable = darkMode ? '#1F242F' : '#E6ECFF'
   const inputBorderColor = darkMode ? '#1F242F' : '#d0d5dd'
   const hoverColor = darkMode ? '#1F242F' : '#e9f0f7'
@@ -198,6 +202,10 @@ export function ThemeProvider({ children }) {
         bgColorTooltip,
         borderColor,
         borderColorBox,
+        pilotBorderColor1,
+        pilotBorderColor2,
+        pilotButtonColor1,
+        pilotButtonColor2,
         borderColorTable,
         inputBorderColor,
         hoverColor,

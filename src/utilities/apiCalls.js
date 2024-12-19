@@ -498,6 +498,119 @@ export const getUserBalanceHistories = async (address, chainId, account) => {
   return { balanceData, balanceFlag }
 }
 
+export const getIPORUserBalanceHistories = async (chainId, account) => {
+  let balanceData = {},
+    balanceFlag = true
+
+  if (account) {
+    account = account.toLowerCase()
+  }
+
+  const query = `
+    query getUserBalanceHistories($account: String!) {
+      userBalanceHistories(
+        first: 1000,
+        where: {
+          userAddress: $account,
+        },
+        orderBy: timestamp,
+        orderDirection: desc,
+      ) {
+        value, timestamp
+      }
+    }
+  `
+  const url = GRAPH_URLS[chainId]
+
+  try {
+    const data = await executeGraphCall(url, query, { account })
+    balanceData = data?.userBalanceHistories
+  } catch (e) {
+    return e
+  }
+
+  if (!balanceData || balanceData.length === 0) {
+    balanceFlag = false
+  }
+  return { balanceData, balanceFlag }
+}
+
+export const getIPORLastHarvestInfo = async () => {
+  let result = ''
+  const nowDate = Math.floor(new Date().getTime() / 1000)
+
+  const query = `
+    query {
+      plasmaVaultHistories(
+        first: 1,
+        orderBy: timestamp,
+        orderDirection: desc
+      ) {
+        timestamp
+      }
+    }
+`
+  const variables = {}
+  const url = GRAPH_URLS.IPOR
+
+  const data = await executeGraphCall(url, query, variables)
+  const hisData = data.plasmaVaultHistories
+
+  if (hisData && hisData.length !== 0) {
+    const timeStamp = hisData[0].timestamp
+    let duration = Number(nowDate) - Number(timeStamp),
+      day = 0,
+      hour = 0,
+      min = 0
+    // calculate (and subtract) whole days
+    day = Math.floor(duration / 86400)
+    duration -= day * 86400
+
+    // calculate (and subtract) whole hours
+    hour = Math.floor(duration / 3600) % 24
+    duration -= hour * 3600
+
+    // calculate (and subtract) whole minutes
+    min = Math.floor(duration / 60) % 60
+
+    const dayString = `${day > 0 ? `${day}d` : ''}`
+    const hourString = `${hour > 0 ? `${hour}h` : ''}`
+    const minString = `${min > 0 ? `${min}m` : ''}`
+    result = `${`${dayString !== '' ? `${dayString} ` : ''}${
+      hourString !== '' ? `${hourString} ` : ''
+    }`}${minString}`
+  }
+  return result
+}
+
+export const getIPORVaultHistories = async () => {
+  let vaultHData = {},
+    vaultHFlag = true
+
+  const query = `
+    query {
+      plasmaVaultHistories(
+        first: 1000,
+        orderBy: timestamp,
+        orderDirection: desc
+      ) {
+        tvl, apy, timestamp
+      }
+    }
+  `
+  const variables = {}
+  const url = GRAPH_URLS.IPOR
+
+  const data = await executeGraphCall(url, query, variables)
+  vaultHData = data.plasmaVaultHistories
+
+  if (!vaultHData || vaultHData.length === 0) {
+    vaultHFlag = false
+  }
+
+  return { vaultHData, vaultHFlag }
+}
+
 export const getPriceFeeds = async (
   address,
   chainId,

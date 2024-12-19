@@ -62,6 +62,12 @@ export const getUserVaultBalanceInDetail = (tokenSymbol, totalStakedInPool, iFAR
 }
 
 export const getVaultValue = token => {
+  if (token.isIPORVault) {
+    if (token.totalValueLocked) {
+      return new BigNumber(get(token, 'totalValueLocked', 0))
+    }
+    return new BigNumber(0)
+  }
   const poolId = get(token, 'data.id')
 
   switch (poolId) {
