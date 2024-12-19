@@ -42,6 +42,7 @@ import UnstakeBase from '../../components/AdvancedFarmComponents/Unstake/Unstake
 import UnstakeStart from '../../components/AdvancedFarmComponents/Unstake/UnstakeStart'
 import UnstakeResult from '../../components/AdvancedFarmComponents/Unstake/UnstakeResult'
 import EarningsHistory from '../../components/EarningsHistory/HistoryData'
+import RewardsHistory from '../../components/RewardsHistory/RewardsData'
 import {
   AVRList,
   DECIMAL_PRECISION,
@@ -152,6 +153,7 @@ import {
   CrossDiv,
   StakingInfo,
   StakingInfoText,
+  SwitchTabTag,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 // import { array } from 'prop-types'
@@ -177,6 +179,7 @@ const AdvancedFarm = () => {
     linkColorTooltip,
     linkColorOnHover,
     hoverColor,
+    activeColorNew,
   } = useThemeContext()
 
   const { paramAddress } = useParams()
@@ -293,6 +296,7 @@ const AdvancedFarm = () => {
   const [usdEarningsLatest, setUsdEarningsLatest] = useState(0)
 
   // Chart & Table API data
+  const [activeHarvests, setActiveHarvests] = useState(true)
   const [historyData, setHistoryData] = useState([])
   const [sevenDApy, setSevenDApy] = useState('')
   const [thirtyDApy, setThirtyDApy] = useState('')
@@ -540,6 +544,8 @@ const AdvancedFarm = () => {
     { name: 'Details', img: BarChart },
     { name: 'History', img: History },
   ]
+
+  const historyTags = [{ name: 'Harvests' }, { name: 'Rewards' }]
 
   // Show vault info badge when platform is 'Seamless' or 'Harvest' and first visit
   useEffect(() => {
@@ -1248,6 +1254,9 @@ const AdvancedFarm = () => {
 
   // Deposit / Stake / Details
   const [activeMainTag, setActiveMainTag] = useState(0)
+
+  // Switch Harvests / Rewards
+  const switchHistoryMethod = () => setActiveHarvests(prev => !prev)
 
   const curUrl = document.location.href
   useEffect(() => {
@@ -2203,7 +2212,56 @@ const AdvancedFarm = () => {
                 ))}
               </BoxCover>
             ) : activeMainTag === 3 ? (
-              <EarningsHistory historyData={historyData} isDashboard="false" noData />
+              <>
+                <NewLabel
+                  backColor={darkMode ? '#373737' : '#ebebeb'}
+                  width={isMobile ? '100%' : '40%'}
+                  size={isMobile ? '16px' : '16px'}
+                  height={isMobile ? '24px' : '24px'}
+                  weight="600"
+                  color={fontColor1}
+                  display="flex"
+                  justifyContent="center"
+                  marginBottom="13px"
+                  borderRadius="8px"
+                  transition="0.25s"
+                >
+                  {historyTags.map((tag, i) => (
+                    <SwitchTabTag
+                      key={i}
+                      num={i}
+                      onClick={() => {
+                        if ((i === 0 && !activeHarvests) || (i === 1 && activeHarvests))
+                          switchHistoryMethod()
+                      }}
+                      color={
+                        (i === 0 && activeHarvests) || (i === 1 && !activeHarvests)
+                          ? fontColor4
+                          : fontColor3
+                      }
+                      backColor={
+                        (i === 0 && activeHarvests) || (i === 1 && !activeHarvests)
+                          ? activeColorNew
+                          : ''
+                      }
+                      boxShadow={
+                        (i === 0 && activeHarvests) || (i === 1 && !activeHarvests)
+                          ? darkMode
+                            ? '0px 1px 2px 0px rgb(15 85 211), 0px 1px 3px 0px rgb(122 247 7)'
+                            : '0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10)'
+                          : ''
+                      }
+                    >
+                      <p>{tag.name}</p>
+                    </SwitchTabTag>
+                  ))}
+                </NewLabel>
+                {activeHarvests ? (
+                  <EarningsHistory historyData={historyData} isDashboard="false" noData />
+                ) : (
+                  <RewardsHistory account={account} token={token} noData />
+                )}
+              </>
             ) : (
               <></>
             )}

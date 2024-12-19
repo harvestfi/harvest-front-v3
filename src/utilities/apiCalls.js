@@ -364,6 +364,59 @@ export const getDataQuery = async (
   return chartData
 }
 
+export const getRewardEntities = async (account, address, chainId) => {
+  let matchingData = [],
+    rewardsFlag = true
+
+  address = address.toLowerCase()
+  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
+  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
+  const vaultAddress = address === farm ? ifarm : address
+
+  if (account) {
+    account = account.toLowerCase()
+  }
+
+  const query = `
+    query getRewardEntities($account: String!) {
+      rewardPaidEntities(
+        first:1000,
+        where: {
+          userAddress: $account,
+        },
+        orderBy: timestamp,
+        orderDirection: desc,
+      ) {
+        price,
+        value,
+        pool {
+          vault {
+            id
+          }
+        },
+        token {
+          name,
+          decimals,
+        },
+        timestamp,
+      }
+    }
+  `
+  const variables = { account }
+  const url = GRAPH_URLS[chainId]
+
+  const data = await executeGraphCall(url, query, variables)
+  const rewardsData = data ? data.rewardPaidEntities : []
+
+  if (!rewardsData || rewardsData.length === 0) {
+    rewardsFlag = false
+  } else {
+    matchingData = rewardsData.filter(reward => reward.pool.vault.id === vaultAddress)
+  }
+
+  return { matchingData, rewardsFlag }
+}
+
 export const getUserBalanceVaults = async account => {
   const userBalanceVaults = []
   let userBalanceFlag = true
