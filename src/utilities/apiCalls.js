@@ -365,7 +365,7 @@ export const getDataQuery = async (
 }
 
 export const getRewardEntities = async (account, address, chainId) => {
-  let matchingData = [],
+  let rewardsData = [],
     rewardsFlag = true
 
   address = address.toLowerCase()
@@ -378,11 +378,14 @@ export const getRewardEntities = async (account, address, chainId) => {
   }
 
   const query = `
-    query getRewardEntities($account: String!) {
+    query getRewardEntities($vault: String!, $account: String!) {
       rewardPaidEntities(
         first:1000,
         where: {
           userAddress: $account,
+          pool_: {
+            vault: $vault,
+          }
         },
         orderBy: timestamp,
         orderDirection: desc,
@@ -402,19 +405,17 @@ export const getRewardEntities = async (account, address, chainId) => {
       }
     }
   `
-  const variables = { account }
+  const variables = { vault: vaultAddress, account }
   const url = GRAPH_URLS[chainId]
 
   const data = await executeGraphCall(url, query, variables)
-  const rewardsData = data ? data.rewardPaidEntities : []
+  rewardsData = data ? data.rewardPaidEntities : []
 
   if (!rewardsData || rewardsData.length === 0) {
     rewardsFlag = false
-  } else {
-    matchingData = rewardsData.filter(reward => reward.pool.vault.id === vaultAddress)
   }
 
-  return { matchingData, rewardsFlag }
+  return { rewardsData, rewardsFlag }
 }
 
 export const getUserBalanceVaults = async account => {

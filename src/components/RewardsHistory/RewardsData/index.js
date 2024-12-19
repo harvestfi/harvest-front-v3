@@ -78,14 +78,14 @@ const RewardsData = ({ account, token, noData }) => {
     const initData = async () => {
       if (account && token) {
         try {
-          const { matchingData, rewardsFlag } = await getRewardEntities(
+          const { rewardsData: rewardsAPIData, rewardsFlag } = await getRewardEntities(
             account,
             token.vaultAddress,
             token.chain || token.data.chain,
           )
 
           if (isMounted && rewardsFlag) {
-            setRewardsData(matchingData)
+            setRewardsData(rewardsAPIData)
           }
         } catch (error) {
           console.log('An error ocurred', error)
