@@ -90,7 +90,7 @@ const ActionRow = ({ info }) => {
               height={18}
               color={fontColor}
               justifyContent={isMobile ? 'end' : 'start'}
-              value={info.token.name}
+              value={info.token.symbol}
             />
           </div>
         </Content>

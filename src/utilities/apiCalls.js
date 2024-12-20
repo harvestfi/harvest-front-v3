@@ -398,7 +398,7 @@ export const getRewardEntities = async (account, address, chainId) => {
           }
         },
         token {
-          name,
+          symbol,
           decimals,
         },
         timestamp,
@@ -410,6 +410,63 @@ export const getRewardEntities = async (account, address, chainId) => {
 
   const data = await executeGraphCall(url, query, variables)
   rewardsData = data ? data.rewardPaidEntities : []
+
+  if (!rewardsData || rewardsData.length === 0) {
+    rewardsFlag = false
+  }
+
+  return { rewardsData, rewardsFlag }
+}
+
+export const getAllRewardEntities = async account => {
+  let rewardsData = [],
+    rewardsFlag = true
+
+  if (account) {
+    account = account.toLowerCase()
+  }
+
+  const query = `
+    query getRewardEntities($account: String!) {
+      rewardPaidEntities(
+        first:1000,
+        where: {
+          userAddress: $account,
+        },
+        orderBy: timestamp,
+        orderDirection: desc,
+      ) {
+        price,
+        value,
+        pool {
+          vault {
+            id
+          }
+        },
+        token {
+          symbol,
+          decimals,
+        },
+        timestamp,
+      }
+    }
+  `
+  const variables = { account }
+  const urls = [
+    GRAPH_URLS[CHAIN_IDS.ETH_MAINNET],
+    GRAPH_URLS[CHAIN_IDS.POLYGON_MAINNET],
+    GRAPH_URLS[CHAIN_IDS.BASE],
+    GRAPH_URLS[CHAIN_IDS.ARBITRUM_ONE],
+  ]
+
+  const results = await Promise.all(urls.map(url => executeGraphCall(url, query, variables)))
+  results.forEach(userRewardsData => {
+    const rewardEntities = userRewardsData.rewardPaidEntities
+    rewardEntities.forEach(reward => {
+      rewardsData.push(reward)
+    })
+  })
+  rewardsData.sort((a, b) => b.timestamp - a.timestamp)
 
   if (!rewardsData || rewardsData.length === 0) {
     rewardsFlag = false

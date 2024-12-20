@@ -180,6 +180,7 @@ const AdvancedFarm = () => {
     linkColorOnHover,
     hoverColor,
     activeColorNew,
+    boxShadowColor2,
   } = useThemeContext()
 
   const { paramAddress } = useParams()
@@ -2246,9 +2247,7 @@ const AdvancedFarm = () => {
                       }
                       boxShadow={
                         (i === 0 && activeHarvests) || (i === 1 && !activeHarvests)
-                          ? darkMode
-                            ? '0px 1px 2px 0px rgb(15 85 211), 0px 1px 3px 0px rgb(122 247 7)'
-                            : '0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10)'
+                          ? boxShadowColor2
                           : ''
                       }
                     >
@@ -2259,7 +2258,7 @@ const AdvancedFarm = () => {
                 {activeHarvests ? (
                   <EarningsHistory historyData={historyData} isDashboard="false" noData />
                 ) : (
-                  <RewardsHistory account={account} token={token} noData />
+                  <RewardsHistory account={account} token={token} isDashboard={false} noData />
                 )}
               </>
             ) : (

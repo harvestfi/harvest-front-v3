@@ -8,7 +8,7 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { usePools } from '../../../providers/Pools'
 import { useWallet } from '../../../providers/Wallet'
 import ActionRow from '../ActionRow'
-import { getRewardEntities } from '../../../utilities/apiCalls'
+import { getAllRewardEntities, getRewardEntities } from '../../../utilities/apiCalls'
 import AdvancedImg from '../../../assets/images/logos/sidebar/advanced.svg'
 import { ROUTES } from '../../../constants'
 import {
@@ -25,7 +25,7 @@ import {
   ExploreButtonStyle,
 } from './style'
 
-const RewardsData = ({ account, token, noData }) => {
+const RewardsData = ({ account, token, isDashboard, noData }) => {
   const { push } = useHistory()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const itemsPerPage = isMobile ? 6 : 5
@@ -76,13 +76,11 @@ const RewardsData = ({ account, token, noData }) => {
   useEffect(() => {
     let isMounted = true
     const initData = async () => {
-      if (account && token) {
+      if (account) {
         try {
-          const { rewardsData: rewardsAPIData, rewardsFlag } = await getRewardEntities(
-            account,
-            token.vaultAddress,
-            token.chain || token.data.chain,
-          )
+          const { rewardsData: rewardsAPIData, rewardsFlag } = isDashboard
+            ? await getAllRewardEntities(account)
+            : await getRewardEntities(account, token.vaultAddress, token.chain || token.data.chain)
 
           if (isMounted && rewardsFlag) {
             setRewardsData(rewardsAPIData)
@@ -98,7 +96,7 @@ const RewardsData = ({ account, token, noData }) => {
     return () => {
       isMounted = false
     }
-  }, [account, token])
+  }, [account, token, isDashboard])
 
   return (
     <TransactionDetails hasData={(connected && rewardsData?.length > 0) || '80vh'}>
@@ -160,7 +158,11 @@ const RewardsData = ({ account, token, noData }) => {
                 flexFlow="column"
                 gap="0px"
               >
-                <div>No Claimed Rewards found for this wallet in this strategy.</div>
+                <div>
+                  {isDashboard
+                    ? 'No Claimed Rewards found for this wallet.'
+                    : 'No Claimed Rewards found for this wallet in this strategy.'}
+                </div>
                 <ExploreButtonStyle
                   color="connectwallet"
                   onClick={() => {

@@ -24,6 +24,7 @@ import ClosedEye from '../../assets/images/logos/eye_closed.svg'
 import SkeletonLoader from '../../components/DashboardComponents/SkeletonLoader'
 import EarningsHistory from '../../components/EarningsHistory/HistoryData'
 import EarningsHistoryLatest from '../../components/EarningsHistoryLatest/HistoryDataLatest'
+import RewardsHistory from '../../components/RewardsHistory/RewardsData'
 import TotalValue from '../../components/TotalValue'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 import MobileBackImage from '../../assets/images/logos/portfolio-mobile-background.png'
@@ -103,6 +104,8 @@ import {
   GreenBox,
   ChartSection,
   ChartBox,
+  NewLabel,
+  SwitchTabTag,
 } from './style'
 import AnimatedDots from '../../components/AnimatedDots'
 
@@ -124,13 +127,18 @@ const Portfolio = () => {
     fontColor,
     fontColor1,
     fontColor2,
+    fontColor3,
+    fontColor4,
+    activeColorNew,
     borderColor,
     borderColorTable,
     borderColorBox,
     inputBorderColor,
     hoverColorButton,
+    boxShadowColor2,
   } = useThemeContext()
 
+  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const { rates, updateCurrency } = useRate()
   const [curCurrency, setCurCurrency] = useState(supportedCurrencies[0])
 
@@ -162,6 +170,10 @@ const Portfolio = () => {
   const [safeFlag, setSafeFlag] = useState(true)
   const [balanceFlag, setBalanceFlag] = useState(true)
   const [correctRun, setCorrectRun] = useState(true)
+
+  const [activeHarvests, setActiveHarvests] = useState(true)
+  const switchHistoryMethod = () => setActiveHarvests(prev => !prev)
+  const historyTags = [{ name: 'Harvests' }, { name: 'Rewards' }]
 
   useEffect(() => {
     const prevTotalProfit = Number(localStorage.getItem(totalNetProfitKey) || '0')
@@ -848,8 +860,6 @@ const Portfolio = () => {
     setFilteredFarmList(filteredVaultList)
   }, [showInactiveFarms, farmTokenList])
 
-  const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-
   const positionHeader = [
     { width: isMobile ? '23%' : '40%', sort: 'symbol', name: 'Farm' },
     { width: isMobile ? '20%' : '15%', sort: 'balance', name: 'Balance', img: Sort },
@@ -1146,7 +1156,8 @@ const Portfolio = () => {
             </HeaderButton>
           )}
         </HeaderWrap>
-        {viewPositions && (
+
+        {viewPositions ? (
           <div>
             <ChartSection>
               <ChartBox
@@ -1201,6 +1212,44 @@ const Portfolio = () => {
                   ))}
             </SubPart>
           </div>
+        ) : (
+          <NewLabel
+            backColor={darkMode ? '#373737' : '#ebebeb'}
+            width={isMobile ? '100%' : '40%'}
+            size={isMobile ? '16px' : '16px'}
+            height={isMobile ? '24px' : '24px'}
+            weight="600"
+            color={fontColor1}
+            display="flex"
+            justifyContent="center"
+            marginBottom="13px"
+            borderRadius="8px"
+            transition="0.25s"
+          >
+            {historyTags.map((tag, i) => (
+              <SwitchTabTag
+                key={i}
+                num={i}
+                onClick={() => {
+                  if ((i === 0 && !activeHarvests) || (i === 1 && activeHarvests))
+                    switchHistoryMethod()
+                }}
+                color={
+                  (i === 0 && activeHarvests) || (i === 1 && !activeHarvests)
+                    ? fontColor4
+                    : fontColor3
+                }
+                backColor={
+                  (i === 0 && activeHarvests) || (i === 1 && !activeHarvests) ? activeColorNew : ''
+                }
+                boxShadow={
+                  (i === 0 && activeHarvests) || (i === 1 && !activeHarvests) ? boxShadowColor2 : ''
+                }
+              >
+                <p>{tag.name}</p>
+              </SwitchTabTag>
+            ))}
+          </NewLabel>
         )}
 
         {viewPositions ? (
@@ -1453,8 +1502,10 @@ const Portfolio = () => {
               </>
             )}
           </TableWrap>
-        ) : (
+        ) : activeHarvests ? (
           <EarningsHistory historyData={totalHistoryData} isDashboard="true" noData={noFarm} />
+        ) : (
+          <RewardsHistory account={account} token={null} isDashboard noData />
         )}
       </Inner>
     </Container>

@@ -72,6 +72,9 @@ export function ThemeProvider({ children }) {
     ? 'invert(100%) sepia(20%) saturate(0%) hue-rotate(40deg) brightness(104%) contrast(101%)'
     : 'invert(57%) sepia(22%) saturate(0%) hue-rotate(197deg) brightness(79%) contrast(90%)'
   const boxShadowColor = darkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)'
+  const boxShadowColor2 = darkMode
+    ? '0px 1px 2px 0px rgb(15 85 211), 0px 1px 3px 0px rgb(122 247 7)'
+    : '0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10)'
   const hoverImgColor =
     'invert(57%) sepia(61%) saturate(2063%) hue-rotate(1deg) brightness(103%) contrast(105%)'
 
@@ -228,6 +231,7 @@ export function ThemeProvider({ children }) {
         filterColor,
         filterColorBottom,
         boxShadowColor,
+        boxShadowColor2,
         hoverImgColor,
         switchDarkIconFilter,
         switchLightIconFilter,
