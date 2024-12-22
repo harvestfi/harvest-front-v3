@@ -8,7 +8,7 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { usePools } from '../../../providers/Pools'
 import { useWallet } from '../../../providers/Wallet'
 import ActionRow from '../ActionRow'
-import { getAllRewardEntities, getRewardEntities } from '../../../utilities/apiCalls'
+import { getRewardEntities } from '../../../utilities/apiCalls'
 import AdvancedImg from '../../../assets/images/logos/sidebar/advanced.svg'
 import { ROUTES } from '../../../constants'
 import {
@@ -25,7 +25,7 @@ import {
   ExploreButtonStyle,
 } from './style'
 
-const RewardsData = ({ account, token, isDashboard, noData }) => {
+const RewardsData = ({ rewardsData: rewardsTotalData, account, token, isDashboard, noData }) => {
   const { push } = useHistory()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const itemsPerPage = isMobile ? 6 : 5
@@ -77,16 +77,22 @@ const RewardsData = ({ account, token, isDashboard, noData }) => {
     let isMounted = true
     const initData = async () => {
       if (account) {
-        try {
-          const { rewardsData: rewardsAPIData, rewardsFlag } = isDashboard
-            ? await getAllRewardEntities(account)
-            : await getRewardEntities(account, token.vaultAddress, token.chain || token.data.chain)
+        if (isDashboard) {
+          setRewardsData(rewardsTotalData)
+        } else {
+          try {
+            const { rewardsData: rewardsAPIData, rewardsFlag } = await getRewardEntities(
+              account,
+              token.vaultAddress,
+              token.chain || token.data.chain,
+            )
 
-          if (isMounted && rewardsFlag) {
-            setRewardsData(rewardsAPIData)
+            if (isMounted && rewardsFlag) {
+              setRewardsData(rewardsAPIData)
+            }
+          } catch (error) {
+            console.log('An error ocurred', error)
           }
-        } catch (error) {
-          console.log('An error ocurred', error)
         }
       }
     }
@@ -96,7 +102,7 @@ const RewardsData = ({ account, token, isDashboard, noData }) => {
     return () => {
       isMounted = false
     }
-  }, [account, token, isDashboard])
+  }, [account, token, isDashboard, rewardsTotalData])
 
   return (
     <TransactionDetails hasData={(connected && rewardsData?.length > 0) || '80vh'}>

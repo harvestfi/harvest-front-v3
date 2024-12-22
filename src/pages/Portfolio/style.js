@@ -194,6 +194,12 @@ const NewLabel = styled.div`
   `
       : ''}
   ${props =>
+    props.margin
+      ? `
+    margin: ${props.margin};
+  `
+      : ''}
+  ${props =>
     props.marginTop
       ? `
     margin-top: ${props.marginTop};

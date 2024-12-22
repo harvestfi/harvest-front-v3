@@ -164,7 +164,6 @@ const AdvancedFarm = () => {
     darkMode,
     backColor,
     bgColor,
-    bgColorTop,
     bgColorNew,
     borderColor,
     borderColorBox,
@@ -1474,7 +1473,7 @@ const AdvancedFarm = () => {
   }
 
   return (
-    <DetailView backColor={bgColorTop} fontColor={fontColor}>
+    <DetailView backColor={bgColorNew} fontColor={fontColor}>
       <TopInner darkMode={darkMode}>
         <TopPart>
           <FlexTopDiv>

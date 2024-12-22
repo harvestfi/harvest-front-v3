@@ -53,6 +53,7 @@ import {
   showUsdValueCurrency,
 } from '../../utilities/formats'
 import {
+  getAllRewardEntities,
   getCoinListFromApi,
   getTokenPriceFromApi,
   getUserBalanceVaults,
@@ -61,6 +62,7 @@ import {
 import {
   getChainIcon,
   getTotalApy,
+  mergeArrays,
   totalHistoryDataKey,
   totalNetProfitKey,
   vaultProfitDataKey,
@@ -151,6 +153,7 @@ const Portfolio = () => {
   const [totalHistoryData, setTotalHistoryData] = useState([])
   const [totalDeposit, setTotalDeposit] = useState(0)
   const [totalRewards, setTotalRewards] = useState(0)
+  const [rewardsData, setRewardsData] = useState([])
   const [totalYieldDaily, setTotalYieldDaily] = useState(0)
   const [totalYieldMonthly, setTotalYieldMonthly] = useState(0)
   const [totalYieldYearly, setTotalYieldYearly] = useState(0)
@@ -784,11 +787,22 @@ const Portfolio = () => {
           setVaultNetChangeList(vaultNetChanges)
           localStorage.setItem(vaultProfitDataKey, JSON.stringify(vaultNetChanges))
 
+          const { rewardsAPIData } = await getAllRewardEntities(account)
+          setRewardsData(rewardsAPIData)
+
+          if (rewardsAPIData.length !== 0) {
+            combinedEnrichedData = mergeArrays(rewardsAPIData, combinedEnrichedData)
+          }
+
           const combinedEnrichedArray = combinedEnrichedData
             .sort((a, b) => Number(a.timestamp) - Number(b.timestamp))
             .map(item => {
               if (item.event === 'Harvest') {
                 cumulativeLifetimeYield += Number(item.netChangeUsd)
+                return { ...item, lifetimeYield: cumulativeLifetimeYield.toString() }
+              }
+              if (item.event === 'Rewards') {
+                cumulativeLifetimeYield += Number(item.rewardsUSD)
                 return { ...item, lifetimeYield: cumulativeLifetimeYield.toString() }
               }
               return { ...item, lifetimeYield: cumulativeLifetimeYield.toString() }
@@ -969,7 +983,7 @@ const Portfolio = () => {
         <HeaderWrap
           backImg={viewPositions ? MobileBackImage : ''}
           padding={viewPositions ? '25px' : '25px 15px 20px'}
-          borderColor={borderColorBox}
+          borderColor={viewPositions ? borderColorBox : 'unset'}
         >
           {!isMobile && (
             <HeaderTitle fontColor={fontColor} fontColor1={fontColor1}>
@@ -1213,42 +1227,47 @@ const Portfolio = () => {
             </SubPart>
           </div>
         ) : (
-          <NewLabel
-            backColor={darkMode ? '#373737' : '#ebebeb'}
-            width={isMobile ? '100%' : '40%'}
-            size={isMobile ? '16px' : '16px'}
-            height={isMobile ? '24px' : '24px'}
-            weight="600"
-            color={fontColor1}
-            display="flex"
-            justifyContent="center"
-            marginBottom="13px"
-            borderRadius="8px"
-            transition="0.25s"
-          >
-            {historyTags.map((tag, i) => (
-              <SwitchTabTag
-                key={i}
-                num={i}
-                onClick={() => {
-                  if ((i === 0 && !activeHarvests) || (i === 1 && activeHarvests))
-                    switchHistoryMethod()
-                }}
-                color={
-                  (i === 0 && activeHarvests) || (i === 1 && !activeHarvests)
-                    ? fontColor4
-                    : fontColor3
-                }
-                backColor={
-                  (i === 0 && activeHarvests) || (i === 1 && !activeHarvests) ? activeColorNew : ''
-                }
-                boxShadow={
-                  (i === 0 && activeHarvests) || (i === 1 && !activeHarvests) ? boxShadowColor2 : ''
-                }
-              >
-                <p>{tag.name}</p>
-              </SwitchTabTag>
-            ))}
+          <NewLabel width={isMobile ? '90%' : '40%'} margin={isMobile ? 'auto' : 'unset'}>
+            <NewLabel
+              backColor={darkMode ? '#373737' : '#ebebeb'}
+              size={isMobile ? '16px' : '16px'}
+              height={isMobile ? '24px' : '24px'}
+              weight="600"
+              color={fontColor1}
+              display="flex"
+              justifyContent="center"
+              marginBottom="13px"
+              borderRadius="8px"
+              transition="0.25s"
+            >
+              {historyTags.map((tag, i) => (
+                <SwitchTabTag
+                  key={i}
+                  num={i}
+                  onClick={() => {
+                    if ((i === 0 && !activeHarvests) || (i === 1 && activeHarvests))
+                      switchHistoryMethod()
+                  }}
+                  color={
+                    (i === 0 && activeHarvests) || (i === 1 && !activeHarvests)
+                      ? fontColor4
+                      : fontColor3
+                  }
+                  backColor={
+                    (i === 0 && activeHarvests) || (i === 1 && !activeHarvests)
+                      ? activeColorNew
+                      : ''
+                  }
+                  boxShadow={
+                    (i === 0 && activeHarvests) || (i === 1 && !activeHarvests)
+                      ? boxShadowColor2
+                      : ''
+                  }
+                >
+                  <p>{tag.name}</p>
+                </SwitchTabTag>
+              ))}
+            </NewLabel>
           </NewLabel>
         )}
 
@@ -1505,7 +1524,13 @@ const Portfolio = () => {
         ) : activeHarvests ? (
           <EarningsHistory historyData={totalHistoryData} isDashboard="true" noData={noFarm} />
         ) : (
-          <RewardsHistory account={account} token={null} isDashboard noData />
+          <RewardsHistory
+            rewardsData={rewardsData}
+            account={account}
+            token={null}
+            isDashboard
+            noData
+          />
         )}
       </Inner>
     </Container>

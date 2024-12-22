@@ -29,6 +29,7 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
   const { push } = useHistory()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const itemsPerPage = isMobile ? 6 : 5
+  const filteredHistoryData = historyData.filter(el => el.event !== 'Rewards')
 
   const {
     borderColorBox,
@@ -49,18 +50,18 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
 
   const { currentItems, pageCount } = useMemo(() => {
     const endOffset = itemOffset + itemsPerPage
-    const currentItems1 = historyData?.slice(itemOffset, endOffset)
-    const pageCount1 = Math.ceil(historyData?.length / itemsPerPage)
+    const currentItems1 = filteredHistoryData?.slice(itemOffset, endOffset)
+    const pageCount1 = Math.ceil(filteredHistoryData?.length / itemsPerPage)
 
     return { currentItems: currentItems1, pageCount: pageCount1 }
-  }, [historyData, itemOffset, itemsPerPage])
+  }, [filteredHistoryData, itemOffset, itemsPerPage])
 
   const handlePageClick = useCallback(
     event => {
-      const newOffset = (event.selected * itemsPerPage) % historyData.length
+      const newOffset = (event.selected * itemsPerPage) % filteredHistoryData.length
       setItemOffset(newOffset)
     },
-    [historyData, itemsPerPage],
+    [filteredHistoryData, itemsPerPage],
   )
 
   const CustomPreviousComponent = () => (
@@ -77,7 +78,9 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
 
   return (
     <TransactionDetails
-      hasData={(connected && historyData?.length > 0) || isDashboard === 'true' ? 'unset' : '80vh'}
+      hasData={
+        (connected && filteredHistoryData?.length > 0) || isDashboard === 'true' ? 'unset' : '80vh'
+      }
     >
       <TableContent>
         <Header borderColor={borderColorBox} backColor={bgColorNew}>
@@ -119,7 +122,7 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
             <Col>Net change</Col>
           </Column>
         </Header>
-        {connected && historyData?.length > 0 ? (
+        {connected && filteredHistoryData?.length > 0 ? (
           <div>
             <ContentBox>
               {currentItems

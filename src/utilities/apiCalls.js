@@ -419,8 +419,7 @@ export const getRewardEntities = async (account, address, chainId) => {
 }
 
 export const getAllRewardEntities = async account => {
-  let rewardsData = [],
-    rewardsFlag = true
+  const rewardsAPIData = []
 
   if (account) {
     account = account.toLowerCase()
@@ -463,16 +462,12 @@ export const getAllRewardEntities = async account => {
   results.forEach(userRewardsData => {
     const rewardEntities = userRewardsData.rewardPaidEntities
     rewardEntities.forEach(reward => {
-      rewardsData.push(reward)
+      rewardsAPIData.push(reward)
     })
   })
-  rewardsData.sort((a, b) => b.timestamp - a.timestamp)
+  rewardsAPIData.sort((a, b) => b.timestamp - a.timestamp)
 
-  if (!rewardsData || rewardsData.length === 0) {
-    rewardsFlag = false
-  }
-
-  return { rewardsData, rewardsFlag }
+  return { rewardsAPIData }
 }
 
 export const getUserBalanceVaults = async account => {
