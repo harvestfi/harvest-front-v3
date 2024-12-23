@@ -16,6 +16,7 @@ import { forEach } from 'promised-loops'
 import { useInterval } from 'react-interval-hook'
 import { toast } from 'react-toastify'
 import useEffectWithPrevious from 'use-effect-with-previous'
+import BigNumber from 'bignumber.js'
 import { POLL_POOL_DATA_INTERVAL_MS, POOLS_API_ENDPOINT, SPECIAL_VAULTS } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
 import { getWeb3, ledgerWeb3, newContractInstance, safeProvider } from '../../services/web3'
@@ -378,6 +379,23 @@ const PoolsProvider = _ref => {
                 totalStaked: balances[1][index],
               }
             })
+          }
+
+          const vaultContract = contracts.iporVault
+          const vaultBalance = await vaultContract.methods.getBalanceOf(
+            vaultContract.instance,
+            account,
+          )
+          const AssetBalance = await vaultContract.methods.convertToAssets(
+            vaultContract.instance,
+            vaultBalance,
+          )
+          if (new BigNumber(AssetBalance).gt(0)) {
+            // eslint-disable-next-line camelcase
+            stats.IPOR_USDC_arbitrum = {
+              lpTokenBalance: 0,
+              totalStaked: AssetBalance,
+            }
           }
           /* eslint-enable no-await-in-loop */
           // })
