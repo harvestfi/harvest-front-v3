@@ -3,9 +3,10 @@ import { IoIosCloseCircleOutline } from 'react-icons/io'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useRate } from '../../../providers/Rate'
+import { fromWei } from '../../../services/web3'
 import { useContracts } from '../../../providers/Contracts'
 import { getIPORVaultHistories, getIPORLastHarvestInfo } from '../../../utilities/apiCalls'
-import { abbreaviteNumber } from '../../../utilities/formats'
+import { abbreaviteNumber, formatFrequency } from '../../../utilities/formats'
 import {
   PanelHeader,
   PanelTitle,
@@ -17,6 +18,7 @@ import {
   BasePanelBox,
   NewLabel,
   PilotInfoClose,
+  SwitchMode,
 } from './style'
 
 const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
@@ -36,6 +38,17 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
   const [totalValueLocked, setTotalValueLocked] = useState('-')
   const [vaultToken, setVaultToken] = useState('-')
   const mainTags = ['General', 'Allocation', 'Historical Rates']
+  const [showApyHistory, setShowApyHistory] = useState(true)
+
+  const [lifetimeApy, setLifetimeApy] = useState('')
+  const [sevenDApy, set7DApy] = useState('')
+  const [thirtyDApy, set30DApy] = useState('')
+  const [oneEightyDApy, set180DApy] = useState('')
+  const [threeSixtyDApy, set360DApy] = useState('')
+  const [sevenDHarvest, set7DHarvest] = useState('')
+  const [thirtyDHarvest, set30DHarvest] = useState('')
+  const [oneEightyDHarvest, set180DHarvest] = useState('')
+  const [threeSixtyDHarvest, set360DHarvest] = useState('')
 
   useEffect(() => {
     if (rates.rateData) {
@@ -44,21 +57,36 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
     }
   }, [rates])
 
+  const switchHistory = () => setShowApyHistory(prev => !prev)
+
   useEffect(() => {
     const initData = async () => {
       const lHarvestDate = await getIPORLastHarvestInfo()
       setLastHarvest(lHarvestDate)
-      const { vaultHData, vaultHFlag } = await getIPORVaultHistories()
-      if (vaultHFlag) {
+      const { vaultHIPORData, vaultHIPORFlag } = await getIPORVaultHistories()
+      if (vaultHIPORFlag) {
         const totalPeriod =
-          Number(vaultHData[0].timestamp) - Number(vaultHData[vaultHData.length - 1].timestamp)
+          Number(vaultHIPORData[0].timestamp) -
+          Number(vaultHIPORData[vaultHIPORData.length - 1].timestamp)
 
         const totalPeriodInDay = Math.round(totalPeriod / (24 * 3600))
         setPeriodInDay(totalPeriodInDay)
-        let duration = totalPeriod / vaultHData.length,
+        let duration = totalPeriod / vaultHIPORData.length,
           day = 0,
           hour = 0,
-          min = 0
+          min = 0,
+          [sevenDaysApy, thirtyDaysApy, oneEightyDaysApy, threeSixtyFiveDaysApy] = Array(4).fill(
+            '-',
+          ),
+          [
+            sevenDaysHarvest,
+            thirtyDaysHarvest,
+            oneEightyDaysHarvest,
+            threeSixtyFiveDaysHarvest,
+          ] = Array(4).fill('-'),
+          latestSharePriceValue = '-',
+          lifetimeApyValue = 0
+
         // calculate (and subtract) whole days
         day = Math.floor(duration / 86400)
         duration -= day * 86400
@@ -80,7 +108,7 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
         setHarvestFrequency(result)
 
         // calculate operating since
-        const date = new Date(Number(vaultHData[vaultHData.length - 1].timestamp) * 1000) // Convert to milliseconds
+        const date = new Date(Number(vaultHIPORData[vaultHIPORData.length - 1].timestamp) * 1000) // Convert to milliseconds
         const formattedDate = date.toLocaleDateString('en-GB', {
           day: 'numeric',
           month: 'short',
@@ -95,6 +123,87 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
         const vaultContract = contracts.iporVault
         const symbol = await vaultContract.methods.symbol(vaultContract.instance)
         setVaultToken(symbol)
+
+        latestSharePriceValue = fromWei(
+          vaultHIPORData[0].sharePrice,
+          vaultData.decimals,
+          vaultData.decimals,
+          false,
+        )
+
+        const totalPeriodBasedOnApy =
+          (Number(vaultHIPORData[0].timestamp) -
+            Number(vaultHIPORData[vaultHIPORData.length - 1].timestamp)) /
+          (24 * 3600)
+
+        const sharePriceVal = latestSharePriceValue === '-' ? 1 : Number(latestSharePriceValue)
+        lifetimeApyValue = `${(((sharePriceVal - 1) / (totalPeriodBasedOnApy / 365)) * 100).toFixed(
+          2,
+        )}%`
+
+        if (totalPeriodBasedOnApy >= 7) {
+          const lastSevenDaysData = vaultHIPORData.filter(
+            entry => Number(entry.timestamp) >= Number(vaultHIPORData[0].timestamp) - 7 * 24 * 3600,
+          )
+          sevenDaysHarvest = lastSevenDaysData.length / 7
+
+          const sumApy = lastSevenDaysData.reduce(
+            (accumulator, currentValue) => accumulator + parseFloat(currentValue.apy),
+            0,
+          )
+          sevenDaysApy = `${(sumApy / lastSevenDaysData.length).toFixed(2)}%`
+        }
+
+        if (totalPeriodBasedOnApy >= 30) {
+          const lastThirtyDaysData = vaultHIPORData.filter(
+            entry =>
+              Number(entry.timestamp) >= Number(vaultHIPORData[0].timestamp) - 30 * 24 * 3600,
+          )
+          thirtyDaysHarvest = lastThirtyDaysData.length / 30
+
+          const sumApy = lastThirtyDaysData.reduce(
+            (accumulator, currentValue) => accumulator + parseFloat(currentValue.apy),
+            0,
+          )
+          thirtyDaysApy = `${(sumApy / lastThirtyDaysData.length).toFixed(2)}%`
+        }
+
+        if (totalPeriodBasedOnApy >= 180) {
+          const lastOneEightyDaysData = vaultHIPORData.filter(
+            entry =>
+              Number(entry.timestamp) >= Number(vaultHIPORData[0].timestamp) - 180 * 24 * 3600,
+          )
+          oneEightyDaysHarvest = lastOneEightyDaysData.length / 180
+
+          const sumApy = lastOneEightyDaysData.reduce(
+            (accumulator, currentValue) => accumulator + parseFloat(currentValue.apy),
+            0,
+          )
+          oneEightyDaysApy = `${(sumApy / lastOneEightyDaysData.length).toFixed(2)}%`
+        }
+
+        if (totalPeriodBasedOnApy >= 365) {
+          const lastThreeSixtyFiveDaysData = vaultHIPORData.filter(
+            entry =>
+              Number(entry.timestamp) >= Number(vaultHIPORData[0].timestamp) - 365 * 24 * 3600,
+          )
+          threeSixtyFiveDaysHarvest = lastThreeSixtyFiveDaysData.length / 365
+
+          const sumApy = lastThreeSixtyFiveDaysData.reduce(
+            (accumulator, currentValue) => accumulator + parseFloat(currentValue.apy),
+            0,
+          )
+          threeSixtyFiveDaysApy = `${(sumApy / lastThreeSixtyFiveDaysData.length).toFixed(2)}%`
+        }
+        set7DApy(sevenDaysApy)
+        set30DApy(thirtyDaysApy)
+        set180DApy(oneEightyDaysApy)
+        set360DApy(threeSixtyFiveDaysApy)
+        setLifetimeApy(lifetimeApyValue === 0 ? '-' : lifetimeApyValue)
+        set7DHarvest(formatFrequency(sevenDaysHarvest))
+        set30DHarvest(formatFrequency(thirtyDaysHarvest))
+        set180DHarvest(formatFrequency(oneEightyDaysHarvest))
+        set360DHarvest(formatFrequency(threeSixtyFiveDaysHarvest))
       }
     }
 
@@ -266,10 +375,28 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
           <GeneralDiv key={activeMainTag}>
             <RowDiv>
               <NewLabel size="13.4px" height="20px" weight="500">
-                Live
+                {showApyHistory ? 'APY' : 'Harvest Frequency'}
+              </NewLabel>
+              <SwitchMode mode={showApyHistory ? 'apy' : 'harvest'}>
+                <div id="theme-switch">
+                  <div className="switch-track">
+                    <div className="switch-thumb" />
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={showApyHistory}
+                    onChange={switchHistory}
+                    aria-label="Switch between APY and Harvest frequency"
+                  />
+                </div>
+              </SwitchMode>
+            </RowDiv>
+            <RowDiv>
+              <NewLabel size="13.4px" height="20px" weight="500">
+                {showApyHistory ? 'Live' : 'Latest'}
               </NewLabel>
               <NewLabel size="13.4px" height="20px" weight="500">
-                {vaultData.estimatedApy}%
+                {showApyHistory ? `${vaultData.estimatedApy}%` : `${lastHarvest} ago`}
               </NewLabel>
             </RowDiv>
             <RowDiv>
@@ -277,7 +404,7 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
                 7d
               </NewLabel>
               <NewLabel size="13.4px" height="20px" weight="500">
-                20%
+                {showApyHistory ? sevenDApy : sevenDHarvest}
               </NewLabel>
             </RowDiv>
             <RowDiv>
@@ -285,7 +412,7 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
                 30d
               </NewLabel>
               <NewLabel size="13.4px" height="20px" weight="500">
-                19%
+                {showApyHistory ? thirtyDApy : thirtyDHarvest}
               </NewLabel>
             </RowDiv>
             <RowDiv>
@@ -293,15 +420,15 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
                 180d
               </NewLabel>
               <NewLabel size="13.4px" height="20px" weight="500">
-                22.15%
+                {showApyHistory ? oneEightyDApy : oneEightyDHarvest}
               </NewLabel>
             </RowDiv>
             <RowDiv>
               <NewLabel size="13.4px" height="20px" weight="500">
-                1Y
+                360d
               </NewLabel>
               <NewLabel size="13.4px" height="20px" weight="500">
-                22.46%
+                {showApyHistory ? threeSixtyDApy : threeSixtyDHarvest}
               </NewLabel>
             </RowDiv>
             <RowDiv>
@@ -309,7 +436,7 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
                 Lifetime
               </NewLabel>
               <NewLabel size="13.4px" height="20px" weight="500">
-                20%
+                {showApyHistory ? lifetimeApy : harvestFrequency}
               </NewLabel>
             </RowDiv>
           </GeneralDiv>

@@ -129,7 +129,7 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
                 weight="400"
                 marginBottom="5px"
               >
-                Unstake your fTokens
+                Unsubscribe your token
               </NewLabel>
             </NewLabel>
           </FTokenDiv>

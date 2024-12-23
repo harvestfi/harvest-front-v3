@@ -52,6 +52,7 @@ import {
   getTokenPriceFromApi,
   getUserBalanceVaults,
   initBalanceAndDetailData,
+  checkIPORUserBalance,
 } from '../../utilities/apiCalls'
 import {
   getChainIcon,
@@ -262,15 +263,15 @@ const Portfolio = () => {
           const token = find(
             groupOfVaults,
             vault =>
-              vault.vaultAddress === fAssetPool.collateralAddress ||
-              (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress),
+              vault.vaultAddress === fAssetPool?.collateralAddress ||
+              (vault.data && vault.data.collateralAddress === fAssetPool?.collateralAddress),
           )
           if (token) {
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
             if (isSpecialVault) {
               fAssetPool = token.data
             }
-            poolsToLoad.push(fAssetPool)
+            if (!token.isIPORVault) poolsToLoad.push(fAssetPool)
           }
         }
         await fetchUserPoolStats(poolsToLoad, account, userStats)
@@ -342,7 +343,8 @@ const Portfolio = () => {
             token: {},
           }
           let symbol = '',
-            fAssetPool = {}
+            fAssetPool = {},
+            token = null
 
           if (stakedVaults[i] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
             symbol = FARM_TOKEN_SYMBOL
@@ -355,19 +357,24 @@ const Portfolio = () => {
               ? groupOfVaults[symbol].data
               : find(totalPools, pool => pool.id === symbol)
 
-          const token = find(
-            groupOfVaults,
-            vault =>
-              vault.vaultAddress === fAssetPool.collateralAddress ||
-              (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress),
-          )
+          if (symbol === 'IPOR_USDC_arbitrum') {
+            token = groupOfVaults.IPOR_USDC_arbitrum
+          } else {
+            token = find(
+              groupOfVaults,
+              vault =>
+                vault.vaultAddress === fAssetPool.collateralAddress ||
+                (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress),
+            )
+          }
 
           if (token) {
             const useIFARM = symbol === FARM_TOKEN_SYMBOL
             let tokenName = '',
               totalRewardAPRByPercent = 0,
               iFARMBalance = 0,
-              usdPrice = 1
+              usdPrice = 1,
+              showAPY = null
 
             const ttl = token.tokenNames.length
             for (let k = 0; k < ttl; k += 1) {
@@ -567,24 +574,30 @@ const Portfolio = () => {
 
             const totalApy = isSpecialVault
               ? getTotalApy(null, token, true)
+              : token.isIPORVault
+              ? token.estimatedApy
               : getTotalApy(vaultPool, tokenVault)
 
-            const showAPY = isSpecialVault
-              ? token.data &&
-                token.data.loaded &&
-                // !loadingVaults &&
-                (token.data.dataFetched === false || totalApy !== null)
-                ? token.inactive
-                  ? 'Inactive'
-                  : totalApy || null
+            if (token.isIPORVault) {
+              showAPY = totalApy
+            } else {
+              showAPY = isSpecialVault
+                ? token.data &&
+                  token.data.loaded &&
+                  // !loadingVaults &&
+                  (token.data.dataFetched === false || totalApy !== null)
+                  ? token.inactive
+                    ? 'Inactive'
+                    : totalApy || null
+                  : '-'
+                : vaultPool.loaded && totalApy !== null
+                ? token.inactive || token.testInactive || token.hideTotalApy || !token.dataFetched
+                  ? token.inactive || token.testInactive
+                    ? 'Inactive'
+                    : null
+                  : totalApy
                 : '-'
-              : vaultPool.loaded && totalApy !== null
-              ? token.inactive || token.testInactive || token.hideTotalApy || !token.dataFetched
-                ? token.inactive || token.testInactive
-                  ? 'Inactive'
-                  : null
-                : totalApy
-              : '-'
+            }
             if (showAPY === 'Inactive' || showAPY === null) {
               stats.apy = Number(-1)
             } else {
@@ -596,16 +609,18 @@ const Portfolio = () => {
             const vaultAPR = ((1 + estimatedApy) ** (1 / 365) - 1) * 365
             const vaultAPRDaily = vaultAPR / 365
             const vaultAPRMonthly = vaultAPR / 12
-            const frl = fAssetPool.rewardAPR.length
+            if (!token.isIPORVault) {
+              const frl = fAssetPool.rewardAPR.length
 
-            for (let j = 0; j < frl; j += 1) {
-              totalRewardAPRByPercent += Number(fAssetPool.rewardAPR[j])
+              for (let j = 0; j < frl; j += 1) {
+                totalRewardAPRByPercent += Number(fAssetPool.rewardAPR[j])
+              }
             }
             const totalRewardAPR = totalRewardAPRByPercent / 100
             const poolAPRDaily = totalRewardAPR / 365
             const poolAPRMonthly = totalRewardAPR / 12
 
-            const swapFeeAPRYearly = Number(fAssetPool.tradingApy) / 100
+            const swapFeeAPRYearly = token.isIPORVault ? 0 : Number(fAssetPool.tradingApy) / 100
             const swapFeeAPRDaily = swapFeeAPRYearly / 365
             const swapFeeAPRMonthly = swapFeeAPRYearly / 12
 
@@ -682,6 +697,7 @@ const Portfolio = () => {
             combinedEnrichedData = []
 
           const { userBalanceVaults, userBalanceFlag } = await getUserBalanceVaults(account)
+          const iporBalCheck = await checkIPORUserBalance(account)
           setBalanceFlag(userBalanceFlag)
           const stakedVaults = []
           const ul = userBalanceVaults.length
@@ -696,13 +712,17 @@ const Portfolio = () => {
               if (userBalanceVaults[j] === paramAddressAll.toLowerCase()) {
                 stakedVaults.push(key)
               }
+              if (groupOfVaults[key].isIPORVault && iporBalCheck) {
+                if (!stakedVaults.includes(key)) stakedVaults.push(key)
+              }
             })
           }
 
           const vaultNetChanges = []
           const promises = stakedVaults.map(async stakedVault => {
             let symbol = '',
-              fAssetPool = {}
+              fAssetPool = {},
+              token = null
 
             if (stakedVault === IFARM_TOKEN_SYMBOL) {
               symbol = FARM_TOKEN_SYMBOL
@@ -715,12 +735,14 @@ const Portfolio = () => {
                 ? groupOfVaults[symbol].data
                 : find(totalPools, pool => pool.id === symbol)
 
-            const token = find(
-              groupOfVaults,
-              vault =>
-                vault.vaultAddress === fAssetPool?.collateralAddress ||
-                (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress),
-            )
+            if (symbol === 'IPOR_USDC_arbitrum') token = groupOfVaults.IPOR_USDC_arbitrum
+            else
+              token = find(
+                groupOfVaults,
+                vault =>
+                  vault.vaultAddress === fAssetPool?.collateralAddress ||
+                  (vault.data && vault.data.collateralAddress === fAssetPool?.collateralAddress),
+              )
 
             if (token) {
               const useIFARM = symbol === FARM_TOKEN_SYMBOL
@@ -735,11 +757,18 @@ const Portfolio = () => {
               const paramAddress = isSpecialVault
                 ? token.data.collateralAddress
                 : token.vaultAddress || token.tokenAddress
-              const { sumNetChangeUsd, enrichedData, vaultHFlag } = await initBalanceAndDetailData(
+
+              const iporVFlag = symbol === 'IPOR_USDC_arbitrum'
+              const {
+                sumNetChangeUsd,
+                enrichedData,
+                vHFlag: vaultHFlag,
+              } = await initBalanceAndDetailData(
                 paramAddress,
                 useIFARM ? token.data.chain : token.chain,
                 account,
                 token.decimals,
+                iporVFlag,
               )
 
               setSafeFlag(vaultHFlag)
@@ -1231,7 +1260,8 @@ const Portfolio = () => {
                             vaultNetChangeList.some(item => {
                               if (
                                 (item.id === FARM_TOKEN_SYMBOL && item.id === info.symbol) ||
-                                item.id === info.token?.pool?.id
+                                item.id === info.token?.pool?.id ||
+                                item.id === 'IPOR_USDC_arbitrum'
                               ) {
                                 lifetimeYield = item.sumNetChangeUsd
                                 return true
@@ -1258,7 +1288,8 @@ const Portfolio = () => {
                             vaultNetChangeList.some(item => {
                               if (
                                 (item.id === FARM_TOKEN_SYMBOL && item.id === info.symbol) ||
-                                item.id === info.token?.pool?.id
+                                item.id === info.token?.pool?.id ||
+                                item.id === 'IPOR_USDC_arbitrum'
                               ) {
                                 lifetimeYield = item.sumNetChangeUsd
                                 return true

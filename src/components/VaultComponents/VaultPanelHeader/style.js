@@ -362,6 +362,24 @@ const BadgePlatform = styled.div`
   width: fit-content;
 `
 
+const Autopilot = styled.div`
+  display: flex;
+  flex-flow: row;
+  border-radius: 13px;
+  justify-content: space-between;
+  align-items: center;
+  background: #ecfdf3;
+  color: #5dcf46;
+  padding: 3px 10px;
+  gap: 5px;
+`
+
+const NewLabel = styled.div`
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 15px;
+`
+
 export {
   PanelContainer,
   BadgePlatform,
@@ -383,4 +401,6 @@ export {
   DetailModal,
   Value,
   LogoImg,
+  Autopilot,
+  NewLabel,
 }
