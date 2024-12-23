@@ -131,13 +131,13 @@ const sideLinksTop = [
     path: ROUTES.Activity,
     name: 'Activity',
     imgPath: Activity,
-    enabled: false,
+    // enabled: false,
   },
   {
     path: ROUTES.Settings,
     name: 'Settings',
     imgPath: Settings,
-    enabled: false,
+    // enabled: false,
   },
 ]
 
