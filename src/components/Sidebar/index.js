@@ -3,21 +3,23 @@ import { Dropdown, Offcanvas } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { PiSunDimFill, PiMoonBold } from 'react-icons/pi'
 import { IoCloseCircleOutline, IoCheckmark } from 'react-icons/io5'
+import { SlArrowDown } from 'react-icons/sl'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 import ConnectFailureIcon from '../../assets/images/logos/sidebar/connect-failure.svg'
-import connectAvatar from '../../assets/images/logos/sidebar/connect-frame.svg'
+import connectAvatar from '../../assets/images/logos/sidebar/ellipse.svg'
 import connectAvatarMobile from '../../assets/images/logos/sidebar/connectavatarmobile.svg'
-// import Docs from '../../assets/images/logos/sidebar/docs.svg'
+import Docs from '../../assets/images/logos/sidebar/file-search.svg'
 import FAQ from '../../assets/images/logos/sidebar/faq.svg'
 import ActiveWhiteMobileBottomHome from '../../assets/images/logos/sidebar/active-white-home.svg'
 import ActiveWhiteMobileBottomAdvanced from '../../assets/images/logos/sidebar/active-white-farms.svg'
-import Home from '../../assets/images/logos/sidebar/home-line.svg'
+import Home from '../../assets/images/logos/sidebar/bar-chart-square.svg'
 import Diamond from '../../assets/images/logos/sidebar/diamond.svg'
-import Support from '../../assets/images/logos/sidebar/support.svg'
-import Analytics from '../../assets/images/logos/sidebar/analytics.svg'
+import Activity from '../../assets/images/logos/sidebar/layout.svg'
+import Settings from '../../assets/images/logos/sidebar/settings.svg'
+import Support from '../../assets/images/logos/sidebar/discord-side.svg'
+import Analytics from '../../assets/images/logos/sidebar/pie-chart.svg'
 import BlackLeader from '../../assets/images/logos/sidebar/leader_icon_black.svg'
 import BlackMigrate from '../../assets/images/logos/sidebar/Migrate_black.svg'
-// import Collaborations from '../../assets/images/logos/sidebar/collaborations.svg'
 import Advanced from '../../assets/images/logos/sidebar/advanced.svg'
 import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
 import logoNewDark from '../../assets/images/logos/sidebar/ifarm_dark.svg'
@@ -34,7 +36,6 @@ import DropDownIcon from '../../assets/images/logos/advancedfarm/drop-down.svg'
 import { usePools } from '../../providers/Pools'
 import { useRate } from '../../providers/Rate'
 import { useThemeContext } from '../../providers/useThemeContext'
-import usePersistedState from '../../providers/usePersistedState'
 import { useWallet } from '../../providers/Wallet'
 import { fromWei } from '../../services/web3'
 import {
@@ -91,6 +92,7 @@ import {
   CurrencyDiv,
   LinkName,
   MobileMoreTop,
+  CategoryRow,
 } from './style'
 import {
   HeaderButton,
@@ -107,6 +109,10 @@ const sideLinksTop = [
     imgPath: Home,
   },
   {
+    category: true,
+    name: 'Products',
+  },
+  {
     path: ROUTES.AUTOPILOT,
     name: 'Autopilot',
     imgPath: Diamond,
@@ -114,29 +120,36 @@ const sideLinksTop = [
   },
   {
     path: ROUTES.ADVANCED,
-    name: 'All Farms',
+    name: 'All Vaults',
     imgPath: Advanced,
   },
-  // {
-  //   path: ROUTES.COLLABORATIONS,
-  //   name: 'Collaborations',
-  //   imgPath: Collaborations,
-  //   new: true,
-  //   enabled: false,
-  // },
+  {
+    category: true,
+    name: 'User',
+  },
+  {
+    path: ROUTES.Activity,
+    name: 'Activity',
+    imgPath: Activity,
+    enabled: false,
+  },
+  {
+    path: ROUTES.Settings,
+    name: 'Settings',
+    imgPath: Settings,
+    enabled: false,
+  },
 ]
 
 const sideLinksBottom = [
   {
-    path: ROUTES.MIGRATE,
-    name: 'Migrate Position',
-    imgPath: BlackMigrate,
-    external: false,
+    category: true,
+    name: 'Tools',
   },
   {
-    path: ROUTES.LEADERBOARD,
-    name: 'Leaderboard',
-    imgPath: BlackLeader,
+    path: ROUTES.MIGRATE,
+    name: 'Migrate',
+    imgPath: BlackMigrate,
     external: false,
   },
   {
@@ -146,22 +159,32 @@ const sideLinksBottom = [
     external: false,
   },
   {
-    path: ROUTES.TUTORIAL,
-    name: 'Tutorial',
-    imgPath: FAQ,
+    path: ROUTES.LEADERBOARD,
+    name: 'Leaderboard',
+    imgPath: BlackLeader,
     external: false,
-    newTab: true,
+  },
+  {
+    category: true,
+    name: 'Support',
   },
   // {
-  //   path: ROUTES.DOC,
-  //   name: 'Docs',
-  //   imgPath: Docs,
+  //   path: ROUTES.TUTORIAL,
+  //   name: 'Tutorial',
+  //   imgPath: FAQ,
   //   external: false,
   //   newTab: true,
   // },
   {
+    path: ROUTES.DOC,
+    name: 'Docs',
+    imgPath: Docs,
+    external: false,
+    newTab: true,
+  },
+  {
     path: ROUTES.LiveSupport,
-    name: 'Support',
+    name: 'Open Ticket',
     imgPath: Support,
     external: true,
     newTab: true,
@@ -177,7 +200,7 @@ const sideLinksMobile = [
   },
   {
     path: ROUTES.ADVANCED,
-    name: 'All Farms',
+    name: 'All Vaults',
     imgPath: ActiveWhiteMobileBottomAdvanced,
     isFarms: true,
     linkName: 'Farms',
@@ -192,12 +215,12 @@ const sideLinksMobileBottom = [
   },
   {
     path: ROUTES.ADVANCED,
-    name: 'All Farms',
+    name: 'All Vaults',
     imgPath: Advanced,
   },
   {
     path: ROUTES.MIGRATE,
-    name: 'Migrate Position',
+    name: 'Migrate',
     imgPath: BlackMigrate,
     external: false,
   },
@@ -241,18 +264,17 @@ const SideLink = ({
   activeIconColor,
   darkMode,
   hoverColorSide,
-  className,
 }) => {
   const { pathname } = useLocation()
   const pageName =
     pathname === '/'
-      ? 'all farms'
+      ? 'all vaults'
       : pathname === ROUTES.PORTFOLIO
       ? 'portfolio'
       : pathname === ROUTES.TUTORIAL
       ? 'tutorial'
       : pathname === ROUTES.MIGRATE
-      ? 'migrate position'
+      ? 'migrate'
       : pathname
   return (
     /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
@@ -265,15 +287,14 @@ const SideLink = ({
       darkMode={darkMode}
       enabled={item.enabled === false ? 'false' : 'true'}
       hoverColorSide={hoverColorSide}
-      className={className}
     >
       <div className="item">
         <SideIcons
           className="sideIcon"
           src={item.imgPath}
           alt="Harvest"
-          width={item.name === 'Portfolio' ? '20px' : '24px'}
-          height={item.name === 'Portfolio' ? '20px' : '24px'}
+          width="25px"
+          height="25px"
         />
       </div>
       <div className="item-name">{item.name}</div>
@@ -295,7 +316,7 @@ const MobileMenu = ({
 }) => {
   const { pathname } = useLocation()
   const pageName =
-    pathname === '/' ? 'all farms' : pathname === ROUTES.PORTFOLIO ? 'portfolio' : pathname
+    pathname === '/' ? 'all vaults' : pathname === ROUTES.PORTFOLIO ? 'portfolio' : pathname
   const active = !isWallet && pageName.includes(item.name.toLowerCase())
   const farmsFilter = active
     ? 'invert(75%) sepia(89%) saturate(343%) hue-rotate(52deg) brightness(89%) contrast(86%)'
@@ -318,7 +339,7 @@ const MobileMenu = ({
         alt="Harvest"
         width={item.name === 'Portfolio' ? '18px' : '22px'}
         height={item.name === 'Portfolio' ? '18px' : '22px'}
-        marginTop={item.name === 'All Farms' ? '-1px' : ''}
+        marginTop={item.name === 'All Vaults' ? '-1px' : ''}
       />
       <LinkName
         color={active ? '#6ED459' : darkMode ? '#fff' : '#7A7A7A'}
@@ -343,6 +364,7 @@ const Sidebar = ({ width }) => {
     filterColor,
     filterColorBottom,
     fontColor5,
+    fontColor7,
     inputBorderColor,
     hoverImgColor,
     toggleColor,
@@ -392,7 +414,6 @@ const Sidebar = ({ width }) => {
   const [balanceUSDC, setBalanceUSDC] = useState('')
   const { rates, updateCurrency } = useRate()
   const [curCurrency, setCurCurrency] = useState(supportedCurrencies[0])
-  const [migrateClick, setMigrateClick] = usePersistedState('migrateClick', false)
 
   const handleMobileClose = () => setMobileShow(false)
   const handleMobileShow = () => setMobileShow(true)
@@ -481,7 +502,7 @@ const Sidebar = ({ width }) => {
   }, [balances, chainId])
 
   const directAction = path => {
-    if (path === ROUTES.PORTFOLIO || path === ROUTES.ANALYTIC || path === ROUTES.BEGINNERS) {
+    if (path === ROUTES.PORTFOLIO || path === ROUTES.ANALYTIC) {
       setSelChain([
         CHAIN_IDS.ETH_MAINNET,
         CHAIN_IDS.POLYGON_MAINNET,
@@ -492,16 +513,6 @@ const Sidebar = ({ width }) => {
     }
     push(path)
   }
-
-  const handleMigrateClick = () => {
-    setMigrateClick(true)
-  }
-
-  useEffect(() => {
-    if (pathname.includes('migrate')) {
-      setMigrateClick(true)
-    }
-  }, [pathname]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <Container
@@ -514,7 +525,7 @@ const Sidebar = ({ width }) => {
       <Desktop>
         <Layout>
           <MiddleActionsContainer>
-            <LinksContainer fontColor={fontColor2} totalItems={sideLinksTop.length + 2}>
+            <LinksContainer fontColor={fontColor2}>
               <Logo
                 className="logo"
                 onClick={() => {
@@ -554,6 +565,7 @@ const Sidebar = ({ width }) => {
                   <Dropdown>
                     <UserDropDown
                       id="dropdown-basic"
+                      backColor={toggleBackColor}
                       fontcolor2={fontColor2}
                       hovercolor={hoverColor}
                     >
@@ -562,16 +574,17 @@ const Sidebar = ({ width }) => {
                           <img src={connectAvatar} alt="" />
                         </ConnectAvatar>
                         <div className="detail-info">
-                          <ConnectAvatar color={fontColor1}>
-                            Hello, farmer{' '}
-                            <span role="img" aria-label="hand" aria-labelledby="hand">
-                              👋
-                            </span>
-                          </ConnectAvatar>
+                          <img
+                            alt="chain icon"
+                            src={getChainIcon(chainId)}
+                            className="chain-icon"
+                          />
                           <Address>{formatAddress(account)}</Address>
                         </div>
                       </FlexDiv>
-                      <img alt="chain icon" src={getChainIcon(chainId)} className="chain-icon" />
+                      <div>
+                        <SlArrowDown />
+                      </div>
                     </UserDropDown>
                     {!isSpecialApp ? (
                       <UserDropDownMenu backcolor={bgColorNew} bordercolor={borderColorBox}>
@@ -595,33 +608,35 @@ const Sidebar = ({ width }) => {
 
               {sideLinksTop.map(item =>
                 !isLedgerLive() ||
-                (isLedgerLive() &&
-                  (chainId === CHAIN_IDS.BASE ||
-                    (chainId !== CHAIN_IDS.BASE && item.name !== 'Beginners'))) ? (
-                  <Fragment key={item.name}>
-                    <LinkContainer
-                      active={pathname.includes(item.path)}
-                      activeColor={item.activeColor}
-                      hoverImgColor={hoverImgColor}
-                      onClick={() => {
-                        if (item.newTab) {
-                          window.open(item.path, '_blank')
-                        } else if (item.enabled !== false) {
-                          directAction(item.path)
-                        }
-                      }}
-                      darkMode={darkMode}
-                    >
-                      <SideLink
-                        item={item}
-                        isDropdownLink={item.path === '#'}
-                        fontColor1={fontColor1}
-                        activeIconColor={sidebarActiveIconColor}
+                (isLedgerLive() && (chainId === CHAIN_IDS.BASE || chainId !== CHAIN_IDS.BASE)) ? (
+                  item.category === true ? (
+                    <CategoryRow color={fontColor7}>{item.name}</CategoryRow>
+                  ) : (
+                    <Fragment key={item.name}>
+                      <LinkContainer
+                        active={pathname.includes(item.path)}
+                        activeColor={item.activeColor}
+                        hoverImgColor={hoverImgColor}
+                        onClick={() => {
+                          if (item.newTab) {
+                            window.open(item.path, '_blank')
+                          } else if (item.enabled !== false) {
+                            directAction(item.path)
+                          }
+                        }}
                         darkMode={darkMode}
-                        hoverColorSide={hoverColorSide}
-                      />
-                    </LinkContainer>
-                  </Fragment>
+                      >
+                        <SideLink
+                          item={item}
+                          isDropdownLink={item.path === '#'}
+                          fontColor1={fontColor1}
+                          activeIconColor={sidebarActiveIconColor}
+                          darkMode={darkMode}
+                          hoverColorSide={hoverColorSide}
+                        />
+                      </LinkContainer>
+                    </Fragment>
+                  )
                 ) : (
                   <></>
                 ),
@@ -631,44 +646,36 @@ const Sidebar = ({ width }) => {
         </Layout>
 
         <BottomPart>
-          <LinksContainer totalItems={sideLinksBottom.length + 2}>
-            {sideLinksBottom.map(item => (
-              <Fragment key={item.name}>
-                <LinkContainer
-                  active={pathname.includes(item.path)}
-                  hoverImgColor={hoverImgColor}
-                  onClick={() => {
-                    if (item.newTab) {
-                      window.open(item.path, '_blank')
-                    } else {
-                      directAction(item.path)
-                    }
-                    if (item.name === 'Migrate Position') {
-                      handleMigrateClick()
-                    }
-                  }}
-                >
-                  <SideLink
-                    item={item}
-                    isDropdownLink={item.path === '#'}
-                    fontColor1={fontColor1}
-                    activeFontColor={sidebarActiveFontColor}
-                    activeIconColor={sidebarActiveIconColor}
-                    darkMode={darkMode}
-                    hoverColorSide={hoverColorSide}
-                    className={
-                      item.name === 'Migrate Position'
-                        ? !migrateClick && darkMode
-                          ? 'leaderboard-dark-btn'
-                          : !migrateClick && !darkMode
-                          ? 'leaderboard-white-icon'
-                          : ''
-                        : ''
-                    }
-                  />
-                </LinkContainer>
-              </Fragment>
-            ))}
+          <LinksContainer>
+            {sideLinksBottom.map(item =>
+              item.category === true ? (
+                <CategoryRow color={fontColor7}>{item.name}</CategoryRow>
+              ) : (
+                <Fragment key={item.name}>
+                  <LinkContainer
+                    active={pathname.includes(item.path)}
+                    hoverImgColor={hoverImgColor}
+                    onClick={() => {
+                      if (item.newTab) {
+                        window.open(item.path, '_blank')
+                      } else {
+                        directAction(item.path)
+                      }
+                    }}
+                  >
+                    <SideLink
+                      item={item}
+                      isDropdownLink={item.path === '#'}
+                      fontColor1={fontColor1}
+                      activeFontColor={sidebarActiveFontColor}
+                      activeIconColor={sidebarActiveIconColor}
+                      darkMode={darkMode}
+                      hoverColorSide={hoverColorSide}
+                    />
+                  </LinkContainer>
+                </Fragment>
+              ),
+            )}
           </LinksContainer>
           <CurrencyDiv>
             <MobileFollow>

@@ -29,6 +29,7 @@ export function ThemeProvider({ children }) {
   const bgColorButton = darkMode ? '#242c3c' : '#eaf1ff'
   const bgColorSlippage = darkMode ? '#1F242F' : '#15b088'
   const bgColorChart = darkMode ? '#161B26' : '#f3f6ff'
+  const toggleBackColor = darkMode ? '#181f27' : '#E9EAF0'
 
   const fontColor = darkMode ? '#fff' : '#475467'
   const fontColor1 = darkMode ? '#fff' : '#101828'
@@ -37,6 +38,7 @@ export function ThemeProvider({ children }) {
   const fontColor4 = darkMode ? '#fff' : '#1F2937'
   const fontColor5 = darkMode ? '#fff' : '#000'
   const fontColor6 = darkMode ? '#15b088' : '#000'
+  const fontColor7 = darkMode ? '#D9D9D9' : '#15191C'
   const fontColorTooltip = darkMode ? '#fff' : '#6941c6'
   const inputFontColor = darkMode ? '#fff' : '#667085'
   const linkColor = darkMode ? '#FF9400' : '#6941c6'
@@ -56,7 +58,7 @@ export function ThemeProvider({ children }) {
   const hoverColorNew = darkMode ? '#313E55' : '#F7F9FF'
   const hoverColorButton = darkMode ? '#1F242F' : '#F7F9FF'
   const hoverColorAVR = darkMode ? '#1F242F' : '#fbe7ef'
-  const hoverColorSide = darkMode ? '#212c51' : '#E9EFFF'
+  const hoverColorSide = darkMode ? '#1E2225' : '#F0F1FA'
   const activeColor = darkMode ? '#242C3C' : '#F3F6FF'
   const activeColorNew = darkMode ? '#5DCF46' : '#F2F5FF'
   const activeColorModal = darkMode ? '#242C3C' : '#ECFDF3'
@@ -109,8 +111,6 @@ export function ThemeProvider({ children }) {
     : '1px solid #d0d5dd'
 
   const mobileFilterDisableColor = darkMode ? '#94949f' : 'rgba(21, 32, 43, 0.5)'
-
-  const toggleBackColor = darkMode ? '#24272C' : '#E9EAF0'
 
   const [switchBalance, setSwitchBalance] = useState(false) // true : USD, false: Token
 
@@ -192,6 +192,7 @@ export function ThemeProvider({ children }) {
         fontColor4,
         fontColor5,
         fontColor6,
+        fontColor7,
         inputFontColor,
         linkColor,
         linkColorTooltip,

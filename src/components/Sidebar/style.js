@@ -85,85 +85,21 @@ const LinksContainer = styled.div`
   }
 `
 
+const CategoryRow = styled.div`
+  color: ${props => props.color};
+  font-size: 13.176px;
+  font-weight: 300;
+  line-height: 26.352px;
+  padding-left: 13.18px;
+  margin-top: 25px;
+`
+
 const LinkContainer = styled.div`
   position: relative;
-  margin-bottom: 10px;
   cursor: pointer;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
 
   @media screen and (min-width: 992px) {
     display: flex;
-  }
-
-  .leaderboard-dark-btn {
-    color: rgb(255, 255, 255);
-    --border-angle: 0turn;
-    --main-bg: conic-gradient(from var(--border-angle), #213, #112 5%, #112 60%, #213 95%);
-
-    border: solid 2px transparent;
-    --gradient-border: conic-gradient(
-      from var(--border-angle),
-      transparent 25%,
-      #08f,
-      #f03 99%,
-      transparent
-    );
-
-    background: var(--main-bg) padding-box, var(--gradient-border) border-box,
-      var(--main-bg) border-box !important;
-
-    background-position: center center;
-
-    animation: bg-spin 3s linear infinite;
-    @keyframes bg-spin {
-      to {
-        --border-angle: 1turn;
-      }
-    }
-
-    &:hover {
-      animation-play-state: paused;
-    }
-  }
-
-  .leaderboard-white-icon {
-    color: rgb(16, 24, 40);
-    --border-angle: 0turn;
-    --main-bg: conic-gradient(from var(--border-angle), #fff, #fff 5%, #fff 60%, #fff 95%);
-
-    border: solid 2px transparent;
-    --gradient-border: conic-gradient(
-      from var(--border-angle),
-      transparent 25%,
-      #08f,
-      #f03 99%,
-      transparent
-    );
-
-    background: var(--main-bg) padding-box, var(--gradient-border) border-box,
-      var(--main-bg) border-box !important;
-
-    background-position: center center;
-
-    animation: bg-spin 3s linear infinite;
-    @keyframes bg-spin {
-      to {
-        --border-angle: 1turn;
-      }
-    }
-
-    &:hover {
-      animation-play-state: paused;
-    }
-  }
-
-  @property --border-angle {
-    syntax: '<angle>';
-    inherits: true;
-    initial-value: 0turn;
   }
 `
 
@@ -212,10 +148,9 @@ const Link = styled.button`
   ${props =>
     props.active
       ? `
-      background: #5dcf46 !important;
-      color: #fff;
+      color: #5dcf46;
       img.sideIcon {
-        filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%);
+        filter: invert(68%) sepia(97%) saturate(463%) hue-rotate(54deg) brightness(93%) contrast(97%);
       }
     `
       : ``}
@@ -277,6 +212,7 @@ const FlexDiv = styled.div`
   }
 
   .detail-info {
+    display: flex;
     margin: auto;
   }
 
@@ -315,22 +251,6 @@ const ConnectButtonStyle = styled.button`
     padding: 9.19px 16.08px 9.19px 16.08px;
     margin: auto 0px auto 10px;
   }
-
-  ${props =>
-    props.connected
-      ? `
-      // padding: 7px 45px 7px 11px;
-      // filter: drop-shadow(0px 4px 52px rgba(0, 0, 0, 0.25));
-
-      // &:hover {
-      //   background: #E6F8EB;
-      // }
-    `
-      : `
-      // padding: 15px 0px 15px 0px;
-    `}// img.connect-wallet {
-  //   margin-right: 25px;
-  // }
 `
 
 const AboutHarvest = styled.div`
@@ -541,17 +461,13 @@ const MobileFollow = styled.div`
 const ConnectAvatar = styled.div`
   display: flex;
   align-items: center;
-  margin-right: ${props => (props.avatar ? '13px' : '-13px')};
+  margin-right: ${props => (props.avatar ? '10px' : '-10px')};
   font-size: 15px;
   font-weight: 600;
   line-height: 24px;
   transition: 0.25s;
   letter-spacing: -0.15px;
   color: ${props => props.color};
-
-  img {
-    margin-right: 5px;
-  }
 
   @media screen and (max-width: 992px) {
     justify-content: center;
@@ -562,10 +478,11 @@ const ConnectAvatar = styled.div`
 const Address = styled.span`
   display: flex;
   color: ${props => (props.color ? props.color : '')};
-  font-size: 12px;
   font-weight: 500;
-  line-height: 12px;
   letter-spacing: -0.12px;
+  font-size: 14.64px;
+  font-weight: 500;
+  line-height: 29.28px;
 
   @media screen and (max-width: 992px) {
     text-align: center;
@@ -675,9 +592,9 @@ const SideIcons = styled.img`
 `
 
 const UserDropDown = styled(Dropdown.Toggle)`
-  background: none !important;
+  border-radius: 11px;
+  background: ${props => props.backColor};
   border: none !important;
-  border-radius: 10px !important;
   color: ${props => props.fontcolor2} !important;
   align-items: center;
   padding: 8px 18px 8px 5px !important;
@@ -712,8 +629,9 @@ const UserDropDown = styled(Dropdown.Toggle)`
   }
 
   img.chain-icon {
-    width: 11px;
-    height: 11px;
+    width: 16.47px;
+    height: 16.47px;
+    margin: auto 8.78px auto 0px;
   }
 
   @media screen and (max-width: 992px) {
@@ -860,12 +778,12 @@ const Desktop = styled.div`
 `
 
 const NewTag = styled.div`
-  border-radius: 16px;
-  background: #00d26b;
-  padding: 2px 8px;
-  font-size: 12px;
-  line-height: 18px;
+  font-size: 8.637px;
   font-weight: 500;
+  line-height: 12.955px;
+  border-radius: 16px;
+  background: #5dcf46;
+  padding: 2px 8px;
   color: white !important;
   margin-left: 10px;
 `
@@ -1003,4 +921,5 @@ export {
   CurrencyDiv,
   LinkName,
   MobileMoreTop,
+  CategoryRow,
 }

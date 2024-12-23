@@ -61,6 +61,8 @@ export const ROUTES = {
   PORTFOLIO: '/portfolio',
   TUTORIAL: 'https://docs.harvest.finance/get-started-farming',
   ADVANCED: '/',
+  Activity: '/activity',
+  Settings: '/settings',
   LiveSupport: 'https://discord.com/channels/748967094745563176/749862621188194328',
   ANALYTIC: '/analytics',
   DOC: 'https://docs.harvest.finance',
