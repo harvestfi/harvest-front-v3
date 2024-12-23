@@ -500,7 +500,6 @@ const AdvancedFarm = () => {
     }
   }, [groupOfVaults, paramAddress])
 
-  const useBeginnersFarm = false
   const useIFARM = id === FARM_TOKEN_SYMBOL
   const fAssetPool = isSpecialVault
     ? token.data
@@ -2579,7 +2578,6 @@ const AdvancedFarm = () => {
                         switchMethod={switchDepoMethod}
                         tokenSymbol={id}
                         useIFARM={useIFARM}
-                        useBeginnersFarm={useBeginnersFarm}
                         balanceList={balanceList}
                         setFromInfoAmount={setFromInfoAmount}
                         setFromInfoUsdAmount={setFromInfoUsdAmount}

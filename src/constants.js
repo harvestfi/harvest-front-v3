@@ -66,7 +66,6 @@ export const ROUTES = {
   DOC: 'https://docs.harvest.finance',
   FAQ: '/faq',
   ADVANCEDFARM: '/:network/:paramAddress',
-  BEGINNERSFARM: '/beginners',
   AUTOPILOT: '/autopilot',
   CHARTS: '/charts',
   WORK: '/work',

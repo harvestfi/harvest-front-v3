@@ -57,7 +57,6 @@ const DepositBase = ({
   switchMethod,
   tokenSymbol,
   useIFARM,
-  useBeginnersFarm,
   setFromInfoAmount,
   setFromInfoUsdAmount,
   fromInfoUsdAmount,
@@ -403,9 +402,7 @@ const DepositBase = ({
           ))}
         </NewLabel>
         <DepoTitle fontColor={fontColor}>
-          {useBeginnersFarm
-            ? `Convert your crypto into interest-bearing f${tokenSymbol} to earn yield`
-            : useIFARM
+          {useIFARM
             ? `Convert your crypto into interest-bearing i${tokenSymbol}.`
             : 'Convert your crypto into interest-bearing fTokens.'}
         </DepoTitle>
@@ -576,9 +573,7 @@ const DepositBase = ({
                   height={isMobile ? '18px' : '18px'}
                   weight="500"
                 >
-                  {useBeginnersFarm
-                    ? `Based on live USD prices of tokens involved in this farm. Subject to change due to market fluctuations and the number of users in this farm.`
-                    : useIFARM
+                  {useIFARM
                     ? 'Based on live USD price of iFARM. Considers live APY. Subject to change.'
                     : 'Calculated using live APY and current values of underlying and reward tokens. Subject to market fluctuations; performance may vary.'}
                 </NewLabel>
@@ -641,9 +636,8 @@ const DepositBase = ({
                   height={isMobile ? '14px' : '14px'}
                   weight="500"
                 >
-                  {useBeginnersFarm
-                    ? `The estimated number of interest-bearing fTokens you will receive in your wallet. The default slippage is set as 'Auto'.`
-                    : `The estimated number of fTokens you will receive in your wallet. The default slippage is set as 'Auto'.`}
+                  The estimated number of fTokens you will receive in your wallet. The default
+                  slippage is set as &apos;Auto&apos;.
                 </NewLabel>
               </ReactTooltip>
             </NewLabel>

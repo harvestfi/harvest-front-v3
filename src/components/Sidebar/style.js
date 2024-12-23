@@ -290,33 +290,29 @@ const FlexDiv = styled.div`
 `
 
 const ConnectButtonStyle = styled.button`
-  font-size: 16px;
-  line-height: 20px;
-  font-weight: 600;
+  font-size: 15px;
+  line-height: 30px;
+  font-weight: 700;
   margin: 25px 0px;
   width: 100%;
-  border-radius: 8px;
-  border: 2px solid #6988ff;
-  background: none;
-  color: #6888ff;
-  border-radius: 9px;
-  box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
+  border: none;
+  background: #5dcf46;
+  color: #fff;
+  border-radius: 11px;
   cursor: pointer;
   transition: 0.5s;
-  padding: 15px 0px;
+  padding: 7.32px 10.98px;
 
   &:hover {
-    background: ${props => props.hoverColor};
+    background: #56d73c;
   }
 
   @media screen and (max-width: 992px) {
     font-size: 15px;
     font-weight: 400;
     border-radius: 9px;
-    background: #5dcf46;
     color: #fff;
     padding: 9.19px 16.08px 9.19px 16.08px;
-    border: none;
     margin: auto 0px auto 10px;
   }
 

@@ -12,7 +12,6 @@ import FAQ from '../../assets/images/logos/sidebar/faq.svg'
 import ActiveWhiteMobileBottomHome from '../../assets/images/logos/sidebar/active-white-home.svg'
 import ActiveWhiteMobileBottomAdvanced from '../../assets/images/logos/sidebar/active-white-farms.svg'
 import Home from '../../assets/images/logos/sidebar/home-line.svg'
-import Beginners from '../../assets/images/logos/sidebar/beginners.svg'
 import Diamond from '../../assets/images/logos/sidebar/diamond.svg'
 import Support from '../../assets/images/logos/sidebar/support.svg'
 import Analytics from '../../assets/images/logos/sidebar/analytics.svg'
@@ -108,11 +107,6 @@ const sideLinksTop = [
     imgPath: Home,
   },
   {
-    path: ROUTES.BEGINNERSFARM,
-    name: 'Beginners',
-    imgPath: Beginners,
-  },
-  {
     path: ROUTES.AUTOPILOT,
     name: 'Autopilot',
     imgPath: Diamond,
@@ -195,11 +189,6 @@ const sideLinksMobileBottom = [
     path: ROUTES.PORTFOLIO,
     name: 'Portfolio',
     imgPath: Home,
-  },
-  {
-    path: ROUTES.BEGINNERSFARM,
-    name: 'Beginners',
-    imgPath: Beginners,
   },
   {
     path: ROUTES.ADVANCED,
@@ -549,7 +538,7 @@ const Sidebar = ({ width }) => {
                       disabled={disableWallet}
                       hoverColor={hoverColorButton}
                     >
-                      Connect Wallet
+                      Connect
                     </ConnectButtonStyle>
                   )
                 }
