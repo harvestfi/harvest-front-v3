@@ -22,6 +22,8 @@ export const SOCIAL_LINKS = {
   BUG_BOUNTY: 'https://immunefi.com/bounty/harvest/',
 }
 
+export const historyTags = [{ name: 'Harvests' }, { name: 'Rewards' }]
+
 // Alternative Vault Recommendation List
 export const AVRList = {
   '0x24174022D382CD155C33A847404cDA5Bc7978802': '0x3646B87C7DD1c87fe6663FFCAD167b8E5175F001',

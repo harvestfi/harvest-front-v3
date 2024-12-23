@@ -36,6 +36,7 @@ import {
   MAX_DECIMALS,
   ROUTES,
   supportedCurrencies,
+  historyTags,
 } from '../../constants'
 import { addresses } from '../../data'
 import { usePools } from '../../providers/Pools'
@@ -176,7 +177,6 @@ const Portfolio = () => {
 
   const [activeHarvests, setActiveHarvests] = useState(true)
   const switchHistoryMethod = () => setActiveHarvests(prev => !prev)
-  const historyTags = [{ name: 'Harvests' }, { name: 'Rewards' }]
 
   useEffect(() => {
     const prevTotalProfit = Number(localStorage.getItem(totalNetProfitKey) || '0')

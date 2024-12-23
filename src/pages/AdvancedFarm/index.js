@@ -58,6 +58,7 @@ import {
   feeList,
   chainList,
   boostedVaults,
+  historyTags,
 } from '../../constants'
 import { fromWei, newContractInstance, getWeb3, getExplorerLink } from '../../services/web3'
 import { addresses } from '../../data'
@@ -544,8 +545,6 @@ const AdvancedFarm = () => {
     { name: 'Details', img: BarChart },
     { name: 'History', img: History },
   ]
-
-  const historyTags = [{ name: 'Harvests' }, { name: 'Rewards' }]
 
   // Show vault info badge when platform is 'Seamless' or 'Harvest' and first visit
   useEffect(() => {

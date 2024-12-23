@@ -156,11 +156,48 @@ const Logo = styled.div`
   }
 `
 
+const SwitchTabTag = styled.div`
+  width: 50%;
+  transition: 0.25s;
+  color: ${props => props.color};
+  background: ${props => props.backColor};
+  box-shadow: ${props => props.boxShadow};
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+
+  svg {
+    font-size: 16px;
+    margin: auto 0px;
+  }
+
+  p {
+    margin-bottom: 0px;
+    padding-left: 5px;
+    font-size: 14px;
+    line-height: 20px;
+  }
+`
+
 const NewLabel = styled.div`
   font-weight: ${props => props.weight || '400'};
   font-size: ${props => props.size || '20px'};
   line-height: ${props => props.height || '0px'};
 
+  ${props =>
+    props.backColor
+      ? `
+    background: ${props.backColor};
+  `
+      : ''}
+  ${props =>
+    props.border
+      ? `
+    border: ${props.border};
+  `
+      : ''}
   ${props =>
     props.borderBottom
       ? `
@@ -249,6 +286,12 @@ const NewLabel = styled.div`
     props.borderRadius
       ? `
     border-radius: ${props.borderRadius};
+    `
+      : ``}
+  ${props =>
+    props.transition
+      ? `
+    transition: ${props.transition};
     `
       : ``}
 
@@ -1422,4 +1465,5 @@ export {
   NetDetailImg,
   LinksContainer,
   Logo,
+  SwitchTabTag,
 }

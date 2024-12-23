@@ -31,6 +31,7 @@ import WithdrawStart from '../../components/AdvancedFarmComponents/Withdraw/With
 import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
 import UserBalanceData from '../../components/UserBalanceChart/UserBalanceData'
 import EarningsHistory from '../../components/EarningsHistory/HistoryData'
+import RewardsHistory from '../../components/RewardsHistory/RewardsData'
 import {
   DECIMAL_PRECISION,
   FARM_TOKEN_SYMBOL,
@@ -43,6 +44,7 @@ import {
   SOCIAL_LINKS,
   feeList,
   chainList,
+  historyTags,
 } from '../../constants'
 import { fromWei, newContractInstance, getWeb3, getExplorerLink } from '../../services/web3'
 import { addresses } from '../../data'
@@ -119,6 +121,7 @@ import {
   Logo,
   ThemeMode,
   SwitchMode,
+  SwitchTabTag,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 // import { array } from 'prop-types'
@@ -143,6 +146,8 @@ const BeginnersFarm = () => {
     fontColor6,
     borderColorBox,
     bgColorTooltip,
+    activeColorNew,
+    boxShadowColor2,
   } = useThemeContext()
 
   const paramAddress = '0x0B0193fAD49DE45F5E2B0A9f5D6Bc3BB7D281688'
@@ -230,6 +235,7 @@ const BeginnersFarm = () => {
   const [usdEarningsLatest, setUsdEarningsLatest] = useState(0)
 
   // Chart & Table API data
+  const [activeHarvests, setActiveHarvests] = useState(true)
   const [historyData, setHistoryData] = useState([])
   const [sevenDApy, setSevenDApy] = useState('')
   const [thirtyDApy, setThirtyDApy] = useState('')
@@ -250,6 +256,8 @@ const BeginnersFarm = () => {
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyName, setCurrencyName] = useState('USD')
   const [currencyRate, setCurrencyRate] = useState(1)
+
+  const switchHistoryMethod = () => setActiveHarvests(prev => !prev)
 
   useEffect(() => {
     if (rates.rateData) {
@@ -1708,7 +1716,54 @@ const BeginnersFarm = () => {
                 ))}
               </BoxCover>
             ) : (
-              <EarningsHistory historyData={historyData} isDashboard="false" noData />
+              <>
+                <NewLabel
+                  backColor={darkMode ? '#373737' : '#ebebeb'}
+                  width={isMobile ? '100%' : '40%'}
+                  size={isMobile ? '16px' : '16px'}
+                  height={isMobile ? '24px' : '24px'}
+                  weight="600"
+                  color={fontColor1}
+                  display="flex"
+                  justifyContent="center"
+                  marginBottom="13px"
+                  borderRadius="8px"
+                  transition="0.25s"
+                >
+                  {historyTags.map((tag, i) => (
+                    <SwitchTabTag
+                      key={i}
+                      num={i}
+                      onClick={() => {
+                        if ((i === 0 && !activeHarvests) || (i === 1 && activeHarvests))
+                          switchHistoryMethod()
+                      }}
+                      color={
+                        (i === 0 && activeHarvests) || (i === 1 && !activeHarvests)
+                          ? fontColor4
+                          : fontColor3
+                      }
+                      backColor={
+                        (i === 0 && activeHarvests) || (i === 1 && !activeHarvests)
+                          ? activeColorNew
+                          : ''
+                      }
+                      boxShadow={
+                        (i === 0 && activeHarvests) || (i === 1 && !activeHarvests)
+                          ? boxShadowColor2
+                          : ''
+                      }
+                    >
+                      <p>{tag.name}</p>
+                    </SwitchTabTag>
+                  ))}
+                </NewLabel>
+                {activeHarvests ? (
+                  <EarningsHistory historyData={historyData} isDashboard="false" noData />
+                ) : (
+                  <RewardsHistory account={account} token={token} isDashboard={false} noData />
+                )}
+              </>
             )}
             <MainSection height={activeMainTag === 0 ? '100%' : 'fit-content'}>
               {activeMainTag === 0 ? (
