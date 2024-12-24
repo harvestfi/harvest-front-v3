@@ -852,20 +852,6 @@ const MoreBtn = styled.button`
   align-items: center;
 `
 
-const CurrencyDiv = styled.div`
-  left: 12px;
-  display: flex;
-  justify-content: space-between;
-  width: 90%;
-  align-items: center;
-  margin-top: 15px;
-
-  @media screen and (max-width: 992px) {
-    width: 95%;
-    margin: 0px auto 35px auto;
-  }
-`
-
 const MobileMoreTop = styled.div`
   display: flex;
   align-items: center;
@@ -913,7 +899,6 @@ export {
   Mobile,
   ConnectSection,
   MoreBtn,
-  CurrencyDiv,
   LinkName,
   MobileMoreTop,
   CategoryRow,

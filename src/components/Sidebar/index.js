@@ -89,7 +89,6 @@ import {
   Mobile,
   ConnectSection,
   MoreBtn,
-  CurrencyDiv,
   LinkName,
   MobileMoreTop,
   CategoryRow,
@@ -134,7 +133,7 @@ const sideLinksTop = [
     // enabled: false,
   },
   {
-    path: ROUTES.Settings,
+    path: ROUTES.SETTINGS,
     name: 'Settings',
     imgPath: Settings,
   },
@@ -367,7 +366,6 @@ const Sidebar = ({ width }) => {
     inputBorderColor,
     hoverImgColor,
     toggleColor,
-    borderColor,
     borderColorBox,
     hoverColor,
     hoverColorButton,
@@ -676,31 +674,6 @@ const Sidebar = ({ width }) => {
               ),
             )}
           </LinksContainer>
-          <CurrencyDiv>
-            <MobileFollow>
-              <Social />
-            </MobileFollow>
-            <ThemeMode
-              mode={darkMode ? 'dark' : 'light'}
-              backColor={toggleBackColor}
-              borderColor={borderColor}
-              color={fontColor5}
-            >
-              <div id="theme-switch">
-                <div className="switch-track">
-                  <div className="switch-thumb">{darkMode ? <PiMoonBold /> : <PiSunDimFill />}</div>
-                  <div className="switch-icon">{darkMode ? <PiSunDimFill /> : <PiMoonBold />}</div>
-                </div>
-
-                <input
-                  type="checkbox"
-                  checked={darkMode}
-                  onChange={switchTheme}
-                  aria-label="Switch between dark and light mode"
-                />
-              </div>
-            </ThemeMode>
-          </CurrencyDiv>
         </BottomPart>
       </Desktop>
       <Mobile>

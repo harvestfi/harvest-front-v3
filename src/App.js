@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import Tutorial from './pages/Tutorial'
+import Settings from './pages/Settings'
 import Autopilot from './pages/Autopilot'
 import Portfolio from './pages/Portfolio'
 import Farm from './pages/Farm'
@@ -87,6 +88,7 @@ const App = () => (
           <Route exact path={ROUTES.CHARTS} component={Charts} />
           <Route exact path={ROUTES.LEADERBOARD} component={LeaderBoard} />
           <Route exact path={ROUTES.MIGRATE} component={Migrate} />
+          <Route exact path={ROUTES.SETTINGS} component={Settings} />
         </Switch>
       </Body>
     </Providers>
