@@ -137,7 +137,6 @@ const sideLinksTop = [
     path: ROUTES.Settings,
     name: 'Settings',
     imgPath: Settings,
-    // enabled: false,
   },
 ]
 

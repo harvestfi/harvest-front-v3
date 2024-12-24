@@ -593,7 +593,7 @@ const SideIcons = styled.img`
 
 const UserDropDown = styled(Dropdown.Toggle)`
   border-radius: 11px;
-  background: ${props => props.backColor};
+  background: ${props => props.backColor} !important;
   border: none !important;
   color: ${props => props.fontcolor2} !important;
   align-items: center;
@@ -610,15 +610,10 @@ const UserDropDown = styled(Dropdown.Toggle)`
     display: none !important;
   }
 
-  &:hover {
+  &:hover,
+  &:active,
+  &:focus {
     background: ${props => props.hovercolor} !important;
-    color: black;
-    font-weight: 500;
-  }
-
-  &:active {
-    background: green;
-    color: black;
   }
 
   .chain-name {
@@ -678,11 +673,11 @@ const UserDropDownItem = styled(Dropdown.Item)`
     background: none !important;
 
     img {
-      filter: invert(63%) sepia(58%) saturate(3702%) hue-rotate(0deg) brightness(107%)
-        contrast(105%);
+      filter: invert(39%) sepia(83%) saturate(1585%) hue-rotate(137deg) brightness(103%)
+        contrast(84%);
     }
     div {
-      color: #ff9400;
+      color: #5dcf46;
     }
   }
 
@@ -693,7 +688,7 @@ const UserDropDownItem = styled(Dropdown.Item)`
 
   div {
     align-self: center;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 14px;
     line-height: 18px;
   }
