@@ -161,6 +161,18 @@ const Link = styled.button`
     margin-top: 0;
   }
 
+  @media screen and (max-width: 1536px) {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 22px;
+    padding: 6px 12px;
+
+    .sideIcon {
+      width: 22px;
+      height: 22px;
+    }
+  }
+
   @media screen and (max-width: 992px) {
     text-align: center;
     font-size: 16px;
