@@ -2,13 +2,13 @@ import styled from 'styled-components'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
 
 const Container = styled.div`
-  border-right: 1px solid ${props => props.borderColor};
+  border-right: 1px solid ${props => props.bordercolor};
 
   a.logo {
     color: ${props => props.fontColor};
   }
   transition: 0.25s;
-  background: ${props => props.backColor};
+  background: ${props => props.backcolor};
   color: ${props => props.fontColor};
 
   min-height: 652px;
@@ -29,7 +29,7 @@ const Container = styled.div`
     border: none;
     bottom: 0;
     height: fit-content;
-    border-top: 1px solid ${props => props.borderColor};
+    border-top: 1px solid ${props => props.bordercolor};
     padding: 0px 25px;
   }
 `
@@ -306,7 +306,7 @@ const MobileView = styled.div`
 
   &.connect-modal {
     padding: 10px 25px;
-    border-top: 1px solid ${props => props.borderColor};
+    border-top: 1px solid ${props => props.bordercolor};
   }
 
   button {
@@ -327,7 +327,7 @@ const MobileActionsContainer = styled.div`
   width: 100%;
   border-radius: 15px 15px 0px 0px;
   background: ${props => props.bgColor};
-  box-shadow: 0px -4px 4px 0px ${props => props.borderColor};
+  box-shadow: 0px -4px 4px 0px ${props => props.bordercolor};
   &.full-menu-container {
     padding: 19px 19px 0px;
   }
@@ -404,9 +404,9 @@ const MobileWalletButton = styled.div`
   align-items: center;
   margin-left: ${props => (props.marginLeft ? props.marginLeft : '')};
   // padding: 10px 18px;
-  background: ${props => props.backColor};
+  background: ${props => props.backcolor};
   // border-radius: 5px;
-  // border: 1px solid ${props => props.borderColor};
+  // border: 1px solid ${props => props.bordercolor};
   cursor: pointer;
   width: 45%;
   text-align: center;
@@ -529,8 +529,8 @@ const ThemeMode = styled.div`
     }
 
     .switch-track {
-      background: ${props => props.backColor};
-      border: 1px solid ${props => props.borderColor};
+      background: ${props => props.backcolor};
+      border: 1px solid ${props => props.bordercolor};
       width: 105px;
       height: 40px;
       border-radius: 30px;
@@ -605,7 +605,7 @@ const SideIcons = styled.img`
 
 const UserDropDown = styled(Dropdown.Toggle)`
   border-radius: 11px;
-  background: ${props => props.backColor} !important;
+  background: ${props => props.backcolor} !important;
   border: none !important;
   color: ${props => props.fontcolor2} !important;
   align-items: center;

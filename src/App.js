@@ -11,6 +11,7 @@ import Analytic from './pages/Analytic'
 import FAQ from './pages/FAQ'
 import Sidebar from './components/Sidebar'
 import AdvancedFarm from './pages/AdvancedFarm'
+import Activity from './pages/Activity'
 import Charts from './pages/Charts'
 import { ROUTES } from './constants'
 import { Body, GlobalStyle } from './components/GlobalStyle'
@@ -89,6 +90,7 @@ const App = () => (
           <Route exact path={ROUTES.LEADERBOARD} component={LeaderBoard} />
           <Route exact path={ROUTES.MIGRATE} component={Migrate} />
           <Route exact path={ROUTES.SETTINGS} component={Settings} />
+          <Route exact path={ROUTES.ACTIVITY} component={Activity} />
         </Switch>
       </Body>
     </Providers>

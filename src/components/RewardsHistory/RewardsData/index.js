@@ -186,7 +186,7 @@ const RewardsData = ({ rewardsData: rewardsTotalData, account, token, isDashboar
             </EmptyPanel>
           )
         ) : (
-          <EmptyPanel>
+          <EmptyPanel borderColor={borderColorBox}>
             <EmptyInfo weight={500} size={14} lineHeight={20} color={fontColor}>
               Connect wallet to see full event history.
             </EmptyInfo>

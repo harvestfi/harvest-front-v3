@@ -127,7 +127,7 @@ const sideLinksTop = [
     name: 'User',
   },
   {
-    path: ROUTES.Activity,
+    path: ROUTES.ACTIVITY,
     name: 'Activity',
     imgPath: Activity,
     // enabled: false,
@@ -354,7 +354,6 @@ const Sidebar = ({ width }) => {
   const {
     darkMode,
     setDarkMode,
-    backColor,
     bgColorNew,
     fontColor,
     fontColor1,
@@ -515,8 +514,8 @@ const Sidebar = ({ width }) => {
     <Container
       width={width}
       darkMode={darkMode}
-      backColor={bgColorNew}
-      borderColor={borderColorBox}
+      backcolor={bgColorNew}
+      bordercolor={borderColorBox}
       fontColor={fontColor}
     >
       <Desktop>
@@ -562,7 +561,7 @@ const Sidebar = ({ width }) => {
                   <Dropdown>
                     <UserDropDown
                       id="dropdown-basic"
-                      backColor={toggleBackColor}
+                      backcolor={toggleBackColor}
                       fontcolor2={fontColor2}
                       hovercolor={hoverColor}
                     >
@@ -607,7 +606,9 @@ const Sidebar = ({ width }) => {
                 !isLedgerLive() ||
                 (isLedgerLive() && (chainId === CHAIN_IDS.BASE || chainId !== CHAIN_IDS.BASE)) ? (
                   item.category === true ? (
-                    <CategoryRow color={fontColor7}>{item.name}</CategoryRow>
+                    <CategoryRow key={item.name} color={fontColor7}>
+                      {item.name}
+                    </CategoryRow>
                   ) : (
                     <Fragment key={item.name}>
                       <LinkContainer
@@ -646,7 +647,9 @@ const Sidebar = ({ width }) => {
           <LinksContainer>
             {sideLinksBottom.map(item =>
               item.category === true ? (
-                <CategoryRow color={fontColor7}>{item.name}</CategoryRow>
+                <CategoryRow key={item.name} color={fontColor7}>
+                  {item.name}
+                </CategoryRow>
               ) : (
                 <Fragment key={item.name}>
                   <LinkContainer
@@ -677,7 +680,7 @@ const Sidebar = ({ width }) => {
         </BottomPart>
       </Desktop>
       <Mobile>
-        <MobileView borderColor={borderColorBox}>
+        <MobileView bordercolor={borderColorBox}>
           {/* Full Menu */}
           <OffcanvasDiv
             show={mobileShow}
@@ -690,7 +693,7 @@ const Sidebar = ({ width }) => {
               <MobileActionsContainer
                 className="full-menu-container"
                 bgColor={bgColorNew}
-                borderColor={borderColorBox}
+                bordercolor={borderColorBox}
               >
                 <Logo
                   color={fontColor5}
@@ -719,8 +722,8 @@ const Sidebar = ({ width }) => {
                         </Address>
                         <MobileWalletButton
                           fontColor5={fontColor5}
-                          backColor={bgColorNew}
-                          borderColor={borderColorBox}
+                          backcolor={bgColorNew}
+                          bordercolor={borderColorBox}
                           onClick={handleCopyAddress}
                           marginLeft="10px"
                         >
@@ -733,8 +736,8 @@ const Sidebar = ({ width }) => {
                         </MobileWalletButton>
                         <MobileWalletButton
                           fontColor5={fontColor5}
-                          backColor={bgColorNew}
-                          borderColor={borderColorBox}
+                          backcolor={bgColorNew}
+                          bordercolor={borderColorBox}
                           onClick={() => {
                             disconnectAction()
                             handleMobileWalletClose()
@@ -821,8 +824,8 @@ const Sidebar = ({ width }) => {
                   <Social />
                   <ThemeMode
                     mode={darkMode ? 'dark' : 'light'}
-                    backColor={toggleBackColor}
-                    borderColor={borderColorBox}
+                    backcolor={toggleBackColor}
+                    bordercolor={borderColorBox}
                   >
                     <div id="theme-switch">
                       <div className="switch-track">
@@ -852,11 +855,7 @@ const Sidebar = ({ width }) => {
                         style={{ padding: 0 }}
                       >
                         {curCurrency ? (
-                          <CurrencySelect
-                            backColor={backColor}
-                            fontcolor2={fontColor2}
-                            hovercolor={hoverColor}
-                          >
+                          <CurrencySelect fontcolor2={fontColor2} hovercolor={hoverColor}>
                             <img
                               className={darkMode ? 'logo-dark' : 'logo'}
                               src={curCurrency.imgPath}
@@ -919,7 +918,7 @@ const Sidebar = ({ width }) => {
             filtercolor={filterColor}
           >
             <Offcanvas.Body>
-              <MobileActionsContainer bgColor={bgColorNew} borderColor={borderColorBox}>
+              <MobileActionsContainer bgColor={bgColorNew} bordercolor={borderColorBox}>
                 <MobileWalletTop>
                   <MobileWalletTopNet>
                     <img
@@ -949,7 +948,7 @@ const Sidebar = ({ width }) => {
                   <MobileWalletBtn>
                     <MobileWalletButton
                       className="connect-button"
-                      borderColor={borderColorBox}
+                      bordercolor={borderColorBox}
                       onClick={() => {
                         connectAction()
                         handleMobileConnectClose()
@@ -959,7 +958,7 @@ const Sidebar = ({ width }) => {
                     </MobileWalletButton>
                   </MobileWalletBtn>
                 </MobileWalletBody>
-                <MobileView borderColor={borderColorBox} className="connect-modal">
+                <MobileView bordercolor={borderColorBox} className="connect-modal">
                   {sideLinksMobile.map(item => (
                     <Fragment key={item.name}>
                       <MobileMenuContainer
@@ -1029,7 +1028,7 @@ const Sidebar = ({ width }) => {
             filtercolor={filterColor}
           >
             <Offcanvas.Body>
-              <MobileActionsContainer bgColor={bgColorNew} borderColor={borderColorBox}>
+              <MobileActionsContainer bgColor={bgColorNew} bordercolor={borderColorBox}>
                 <MobileWalletTop>
                   <MobileWalletTopNet>
                     <img
@@ -1072,16 +1071,16 @@ const Sidebar = ({ width }) => {
                   <MobileWalletBtn>
                     <MobileWalletButton
                       fontColor5={fontColor5}
-                      backColor={bgColorNew}
-                      borderColor={borderColorBox}
+                      backcolor={bgColorNew}
+                      bordercolor={borderColorBox}
                       onClick={handleCopyAddress}
                     >
                       {copyAddress}
                     </MobileWalletButton>
                     <MobileWalletButton
                       fontColor5={fontColor5}
-                      backColor={bgColorNew}
-                      borderColor={borderColorBox}
+                      backcolor={bgColorNew}
+                      bordercolor={borderColorBox}
                       onClick={() => {
                         disconnectAction()
                         handleMobileWalletClose()
@@ -1091,7 +1090,7 @@ const Sidebar = ({ width }) => {
                     </MobileWalletButton>
                   </MobileWalletBtn>
                 </MobileWalletBody>
-                <MobileView borderColor={borderColorBox} className="connect-modal">
+                <MobileView bordercolor={borderColorBox} className="connect-modal">
                   {sideLinksMobile.map(item => (
                     <Fragment key={item.name}>
                       <MobileMenuContainer
