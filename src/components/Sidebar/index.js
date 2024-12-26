@@ -358,6 +358,7 @@ const Sidebar = ({ width }) => {
     fontColor,
     fontColor1,
     fontColor2,
+    filterColorNew,
     filterColor,
     filterColorBottom,
     fontColor5,
@@ -590,6 +591,7 @@ const Sidebar = ({ width }) => {
                           }}
                           fontcolor={fontColor}
                           filtercolor={filterColor}
+                          filterColorNew={filterColorNew}
                         >
                           <img src={LogoutIcon} width="18px" height="18px" alt="" />
                           <div>Log Out</div>

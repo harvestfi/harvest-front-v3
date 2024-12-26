@@ -150,7 +150,7 @@ const Link = styled.button`
       ? `
       color: #5dcf46;
       img.sideIcon {
-        filter: invert(68%) sepia(97%) saturate(463%) hue-rotate(54deg) brightness(93%) contrast(97%);
+        filter: invert(75%) sepia(25%) saturate(1160%) hue-rotate(59deg) brightness(91%) contrast(89%);
       }
     `
       : ``}
@@ -685,8 +685,7 @@ const UserDropDownItem = styled(Dropdown.Item)`
     background: none !important;
 
     img {
-      filter: invert(39%) sepia(83%) saturate(1585%) hue-rotate(137deg) brightness(103%)
-        contrast(84%);
+      filter: ${props => props.filterColorNew};
     }
     div {
       color: #5dcf46;

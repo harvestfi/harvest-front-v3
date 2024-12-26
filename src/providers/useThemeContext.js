@@ -66,6 +66,8 @@ export function ThemeProvider({ children }) {
 
   const highlightColor = darkMode ? '#bfbfbf' : '#F4F4F4'
 
+  const filterColorNew =
+    'invert(75%) sepia(25%) saturate(1160%) hue-rotate(59deg) brightness(91%) contrast(89%)'
   const filterColor = darkMode
     ? 'invert(100%) sepia(20%) saturate(0%) hue-rotate(40deg) brightness(104%) contrast(101%)'
     : ''
@@ -227,6 +229,7 @@ export function ThemeProvider({ children }) {
         bgColorButton,
         bgColorSlippage,
         bgColorChart,
+        filterColorNew,
         filterColor,
         filterColorBottom,
         boxShadowColor,
