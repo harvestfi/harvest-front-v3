@@ -28,7 +28,7 @@ import {
 const HistoryData = ({ historyData, isDashboard, noData }) => {
   const { push } = useHistory()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const itemsPerPage = isMobile ? 6 : 5
+  const itemsPerPage = isMobile ? 5 : isDashboard ? 25 : 5
   const filteredHistoryData = historyData.filter(el => el.event !== 'Rewards')
 
   const {
@@ -79,7 +79,7 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
   return (
     <TransactionDetails
       hasData={
-        (connected && filteredHistoryData?.length > 0) || isDashboard === 'true' ? 'unset' : '80vh'
+        (connected && filteredHistoryData?.length > 0) || isDashboard === true ? 'unset' : '80vh'
       }
     >
       <TableContent>
@@ -130,7 +130,7 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
                   const info = currentItems[i]
                   return <ActionRow key={i} info={info} showTotalBalance={showTotalBalance} />
                 })
-                .slice(0, 5)}
+                .slice(0, isMobile ? 5 : isDashboard ? 25 : 5)}
             </ContentBox>
             <HistoryPagination
               bgColor={bgColorNew}

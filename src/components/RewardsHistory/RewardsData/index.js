@@ -28,7 +28,7 @@ import {
 const RewardsData = ({ rewardsData: rewardsTotalData, account, token, isDashboard, noData }) => {
   const { push } = useHistory()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const itemsPerPage = isMobile ? 6 : 5
+  const itemsPerPage = isMobile ? 5 : isDashboard ? 25 : 5
 
   const {
     borderColorBox,
@@ -126,7 +126,7 @@ const RewardsData = ({ rewardsData: rewardsTotalData, account, token, isDashboar
                   const info = currentItems[i]
                   return <ActionRow key={i} info={info} />
                 })
-                .slice(0, 5)}
+                .slice(0, isMobile ? 5 : isDashboard ? 25 : 5)}
             </ContentBox>
             <HistoryPagination
               bgColor={bgColorNew}

@@ -16,7 +16,7 @@ import {
   FakeBoxWrapper,
 } from './style'
 
-const HistoryDataLatest = ({ historyData, isDashboard, noData, setOneDayYield, isLoading }) => {
+const HistoryDataLatest = ({ historyData, noData, setOneDayYield, isLoading }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const filteredHistoryData = historyData.filter(el => el.event === 'Harvest' && el.netChange >= 0)
   const totalLength = filteredHistoryData.length
@@ -49,11 +49,7 @@ const HistoryDataLatest = ({ historyData, isDashboard, noData, setOneDayYield, i
   const { connected } = useWallet()
 
   return (
-    <TransactionDetails
-      hasData={
-        (connected && filteredHistoryData?.length > 0) || isDashboard === 'true' ? 'unset' : '80vh'
-      }
-    >
+    <TransactionDetails hasData={(connected && filteredHistoryData?.length > 0) || 'unset'}>
       <TableContent>
         {connected && !isLoading && filteredHistoryData?.length > 0 ? (
           <ContentBox borderColor={borderColorTable}>

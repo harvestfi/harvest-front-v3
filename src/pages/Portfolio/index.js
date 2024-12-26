@@ -1124,7 +1124,6 @@ const Portfolio = () => {
                 <div className="table-title">Latest Yield</div>
                 <EarningsHistoryLatest
                   historyData={totalHistoryData}
-                  isDashboard="true"
                   noData={noFarm}
                   setOneDayYield={setOneDayYield}
                   isLoading={isLoading}

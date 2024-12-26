@@ -243,7 +243,8 @@ const Activity = () => {
           <HeaderTitle fontColor={fontColor} fontColor1={fontColor1}>
             <div className="title">Full History</div>
             <div className="desc">
-              Displaying all harvest, convert & revert events for the connected wallet
+              History of all harvests, claimed rewards, and convert/revert events for your connected
+              wallet.
             </div>
           </HeaderTitle>
         </HeaderWrap>
@@ -288,7 +289,7 @@ const Activity = () => {
         </NewLabel>
 
         {activeHarvests ? (
-          <EarningsHistory historyData={totalHistoryData} isDashboard="true" noData />
+          <EarningsHistory historyData={totalHistoryData} isDashboard noData />
         ) : (
           <RewardsHistory
             rewardsData={rewardsData}

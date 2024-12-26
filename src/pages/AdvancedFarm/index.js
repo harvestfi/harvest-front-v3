@@ -2253,7 +2253,7 @@ const AdvancedFarm = () => {
                   ))}
                 </NewLabel>
                 {activeHarvests ? (
-                  <EarningsHistory historyData={historyData} isDashboard="false" noData />
+                  <EarningsHistory historyData={historyData} isDashboard={false} noData />
                 ) : (
                   <RewardsHistory account={account} token={token} isDashboard={false} noData />
                 )}
