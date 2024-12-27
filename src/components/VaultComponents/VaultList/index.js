@@ -336,6 +336,11 @@ const formatVaults = (
       if (assetLength === 2 && selectAsset === 'LP Token') {
         return true
       }
+
+      if (assetLength === 1 && selectAsset === 'Autopilot') {
+        return get(groupOfVaults[tokenSymbol], 'isIPORVault')
+      }
+
       return false
     })
   }
