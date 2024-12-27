@@ -37,7 +37,8 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
     fontColor,
     fontColor1,
     fontColor2,
-    hoverColorButton,
+    btnHoverColor,
+    btnColor,
     inputBorderColor,
   } = useThemeContext()
 
@@ -178,9 +179,11 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
                   inputBorderColor={inputBorderColor}
                   bordercolor={fontColor}
                   disabled={disableWallet}
+                  backColor={btnColor}
+                  hoverColor={btnHoverColor}
                 >
                   <img src={AdvancedImg} className="explore-farms" alt="" />
-                  Explore Farms
+                  Explore Vaults
                 </ExploreButtonStyle>
               </EmptyInfo>
             </EmptyPanel>
@@ -199,9 +202,10 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
               inputBorderColor={inputBorderColor}
               bordercolor={fontColor}
               disabled={disableWallet}
-              hoverColor={hoverColorButton}
+              hoverColor={btnHoverColor}
+              backColor={btnColor}
             >
-              Connect Wallet
+              Connect
             </ConnectButtonStyle>
           </EmptyPanel>
         )}

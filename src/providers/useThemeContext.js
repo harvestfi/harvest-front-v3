@@ -64,6 +64,9 @@ export function ThemeProvider({ children }) {
   const activeColorModal = darkMode ? '#242C3C' : '#ECFDF3'
   const modalInputColor = darkMode ? '#242C3C' : '#ffffff'
 
+  const btnColor = '#5dcf46'
+  const btnHoverColor = '#56d73c'
+  const btnActiveColor = '#4bd72f'
   const highlightColor = darkMode ? '#bfbfbf' : '#F4F4F4'
 
   const filterColorNew =
@@ -210,6 +213,9 @@ export function ThemeProvider({ children }) {
         pilotBorderColor2,
         pilotButtonColor1,
         pilotButtonColor2,
+        btnColor,
+        btnHoverColor,
+        btnActiveColor,
         borderColorTable,
         inputBorderColor,
         hoverColor,

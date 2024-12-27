@@ -31,12 +31,13 @@ const RewardsData = ({ rewardsData: rewardsTotalData, account, token, isDashboar
   const itemsPerPage = isMobile ? 5 : isDashboard ? 25 : 5
 
   const {
+    btnColor,
     borderColorBox,
     bgColorNew,
     fontColor,
     fontColor1,
     fontColor2,
-    hoverColorButton,
+    btnHoverColor,
     inputBorderColor,
   } = useThemeContext()
 
@@ -178,9 +179,11 @@ const RewardsData = ({ rewardsData: rewardsTotalData, account, token, isDashboar
                   inputBorderColor={inputBorderColor}
                   bordercolor={fontColor}
                   disabled={disableWallet}
+                  backColor={btnColor}
+                  hoverColor={btnHoverColor}
                 >
                   <img src={AdvancedImg} className="explore-farms" alt="" />
-                  Explore Farms
+                  Explore Vaults
                 </ExploreButtonStyle>
               </EmptyInfo>
             </EmptyPanel>
@@ -199,9 +202,10 @@ const RewardsData = ({ rewardsData: rewardsTotalData, account, token, isDashboar
               inputBorderColor={inputBorderColor}
               bordercolor={fontColor}
               disabled={disableWallet}
-              hoverColor={hoverColorButton}
+              hoverColor={btnHoverColor}
+              backColor={btnColor}
             >
-              Connect Wallet
+              Connect
             </ConnectButtonStyle>
           </EmptyPanel>
         )}
