@@ -237,7 +237,7 @@ const Activity = () => {
           <HeaderTitle fontColor={fontColor} fontColor1={fontColor1}>
             <div className="title">Full History</div>
             <div className="desc">
-              History of all harvests, claimed rewards, and convert/revert events for your connected
+              History of all harvest, claimed rewards, and convert/revert events for connected
               wallet.
             </div>
           </HeaderTitle>
