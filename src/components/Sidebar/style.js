@@ -411,6 +411,10 @@ const MobileWalletButton = styled.div`
   width: 45%;
   text-align: center;
 
+  img.disconnect {
+    filter: ${props => props.filterColor};
+  }
+
   &.connect-button {
     padding: 10px 40px;
   }

@@ -74,6 +74,9 @@ export function ThemeProvider({ children }) {
   const filterColor = darkMode
     ? 'invert(100%) sepia(20%) saturate(0%) hue-rotate(40deg) brightness(104%) contrast(101%)'
     : ''
+  const filterColor2 = darkMode
+    ? 'invert(100%) sepia(20%) saturate(0%) hue-rotate(40deg) brightness(104%) contrast(101%)'
+    : 'invert(33%) sepia(11%) saturate(950%) hue-rotate(176deg) brightness(92%) contrast(91%)'
   const filterColorBottom = darkMode
     ? 'invert(100%) sepia(20%) saturate(0%) hue-rotate(40deg) brightness(104%) contrast(101%)'
     : 'invert(57%) sepia(22%) saturate(0%) hue-rotate(197deg) brightness(79%) contrast(90%)'
@@ -237,6 +240,7 @@ export function ThemeProvider({ children }) {
         bgColorChart,
         filterColorNew,
         filterColor,
+        filterColor2,
         filterColorBottom,
         boxShadowColor,
         boxShadowColor2,

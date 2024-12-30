@@ -23,7 +23,6 @@ import BlackMigrate from '../../assets/images/logos/sidebar/Migrate_black.svg'
 import Advanced from '../../assets/images/logos/sidebar/advanced.svg'
 import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
 import logoNewDark from '../../assets/images/logos/sidebar/ifarm_dark.svg'
-import LogoutIcon from '../../assets/images/logos/sidebar/logout.svg'
 import Wallet from '../../assets/images/logos/sidebar/wallet.svg'
 import WalletOff from '../../assets/images/logos/sidebar/wallet_off.svg'
 import WalletActive from '../../assets/images/logos/sidebar/wallet_active.svg'
@@ -48,8 +47,7 @@ import { formatAddress, isLedgerLive, isSpecialApp } from '../../utilities/forma
 import Social from '../Social'
 import CopyIcon from '../../assets/images/logos/sidebar/copy.svg'
 import WhiteCopyIcon from '../../assets/images/logos/sidebar/white-copy.svg'
-import WhiteOnOff from '../../assets/images/logos/sidebar/white-on-off.svg'
-import OnOff from '../../assets/images/logos/sidebar/on-off.svg'
+import OnOff from '../../assets/images/logos/sidebar/power-02black.svg'
 import {
   Address,
   ConnectAvatar,
@@ -360,6 +358,7 @@ const Sidebar = ({ width }) => {
     fontColor2,
     filterColorNew,
     filterColor,
+    filterColor2,
     filterColorBottom,
     fontColor5,
     fontColor7,
@@ -590,11 +589,11 @@ const Sidebar = ({ width }) => {
                             disconnectAction()
                           }}
                           fontcolor={fontColor}
-                          filtercolor={filterColor}
+                          filtercolor={filterColor2}
                           filterColorNew={filterColorNew}
                         >
-                          <img src={LogoutIcon} width="18px" height="18px" alt="" />
-                          <div>Log Out</div>
+                          <img src={OnOff} width="18px" height="18px" alt="" />
+                          <div>Disconnect</div>
                         </UserDropDownItem>
                       </UserDropDownMenu>
                     ) : (
@@ -740,6 +739,7 @@ const Sidebar = ({ width }) => {
                           fontColor5={fontColor5}
                           backcolor={bgColorNew}
                           bordercolor={borderColorBox}
+                          filterColor={filterColor2}
                           onClick={() => {
                             disconnectAction()
                             handleMobileWalletClose()
@@ -747,9 +747,9 @@ const Sidebar = ({ width }) => {
                           marginLeft="15px"
                         >
                           <img
-                            className="chainIcon"
+                            className="chainIcon disconnect"
                             alt="chain icon"
-                            src={darkMode ? WhiteOnOff : OnOff}
+                            src={OnOff}
                             style={{ width: 18, height: 18 }}
                           />
                         </MobileWalletButton>
