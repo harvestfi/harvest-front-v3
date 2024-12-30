@@ -580,7 +580,7 @@ const Sidebar = ({ width }) => {
                         </div>
                       </FlexDiv>
                       <div>
-                        <SlArrowDown />
+                        <SlArrowDown fontSize={13} />
                       </div>
                     </UserDropDown>
                     {!isSpecialApp ? (

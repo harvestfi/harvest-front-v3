@@ -17,7 +17,7 @@ const Container = styled.div`
   max-width: 100%;
   position: fixed;
   z-index: 10;
-  padding: 25px 25px;
+  padding: 24px;
 
   @media screen and (max-width: 992px) {
     display: flex;
@@ -492,9 +492,9 @@ const Address = styled.span`
   color: ${props => (props.color ? props.color : '')};
   font-weight: 500;
   letter-spacing: -0.12px;
-  font-size: 14.64px;
+  font-size: 13px;
   font-weight: 500;
-  line-height: 29.28px;
+  line-height: 26px;
 
   @media screen and (max-width: 992px) {
     text-align: center;

@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import Pattern from '../../assets/images/logos/pattern.png'
 
 const Container = styled.div`
-  margin-left: 280px;
+  margin-left: 260px;
   width: 100%;
   min-height: 100vh;
 

@@ -1,7 +1,6 @@
 import axios from 'axios'
 import axiosRetry from 'axios-retry'
 import BigNumber from 'bignumber.js'
-import mobile from 'is-mobile'
 import { get, isArray, isNaN, isEmpty } from 'lodash'
 import {
   DECIMAL_PRECISION,
@@ -247,10 +246,7 @@ export const getCurrencyRate = (sym, item, rateData) => {
 
 export const formatAddress = address => {
   if (address) {
-    return `${address.substring(0, mobile() ? 6 : 7)}...${address.substring(
-      address.length - 4,
-      address.length,
-    )}`
+    return `${address.substring(0, 6)}...${address.substring(address.length - 4, address.length)}`
   }
   return '0x...0'
 }

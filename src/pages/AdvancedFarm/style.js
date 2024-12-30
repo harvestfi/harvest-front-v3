@@ -3,7 +3,7 @@ import BgImage from '../../assets/images/logos/advancedfarm/texture.webp'
 
 const DetailView = styled.div`
   width: 100%;
-  margin-left: 280px;
+  margin-left: 260px;
   background: ${props => props.backColor};
   color: ${props => props.fontColor};
   transition: 0.25s;

@@ -76,7 +76,7 @@ const App = () => (
       <ToastContainer />
       <NewLoginModal />
       <Body id="page-content">
-        <Sidebar width="280px" />
+        <Sidebar width="260px" />
         <Switch>
           <Route exact path={ROUTES.PORTFOLIO} component={Portfolio} />
           <Route exact path={ROUTES.TUTORIAL} component={Tutorial} />
