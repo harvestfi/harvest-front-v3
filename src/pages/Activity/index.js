@@ -17,7 +17,7 @@ import {
   getUserBalanceVaults,
   initBalanceAndDetailData,
 } from '../../utilities/apiCalls'
-import { mergeArrays, totalHistoryDataKey, totalNetProfitKey } from '../../utilities/parsers'
+import { mergeArrays, totalHistoryDataKey, totalRewardsDataKey } from '../../utilities/parsers'
 import { Container, Inner, HeaderWrap, HeaderTitle, NewLabel, SwitchTabTag } from './style'
 
 const Activity = () => {
@@ -45,9 +45,19 @@ const Activity = () => {
   const [onceRun, setOnceRun] = useState(false)
   const [safeFlag, setSafeFlag] = useState(true)
   const [balanceFlag, setBalanceFlag] = useState(true)
+  const [noHarvestsData, setNoHarvestsData] = useState(false)
+  const [noRewardsData, setNoRewardsData] = useState(false)
 
   const [activeHarvests, setActiveHarvests] = useState(true)
   const switchHistoryMethod = () => setActiveHarvests(prev => !prev)
+
+  useEffect(() => {
+    const prevTotalHistoryData = JSON.parse(localStorage.getItem(totalHistoryDataKey) || '[]')
+    setTotalHistoryData(prevTotalHistoryData)
+
+    const prevTotalRewardsData = JSON.parse(localStorage.getItem(totalRewardsDataKey) || '[]')
+    setRewardsData(prevTotalRewardsData)
+  }, [])
 
   const farmProfitSharingPool = totalPools.find(
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
@@ -93,145 +103,129 @@ const Activity = () => {
   )
 
   useEffect(() => {
-    const visited = localStorage.getItem(totalNetProfitKey)
-    let safeCount = localStorage.getItem('safe')
+    if (!isEmpty(userStats) && account && !onceRun) {
+      setOnceRun(true)
+      const getNetProfitValue = async () => {
+        let combinedEnrichedData = [],
+          cumulativeLifetimeYield = 0
 
-    if (!safeFlag || !balanceFlag) {
-      localStorage.setItem('address', account)
-      setTimeout(() => {
-        window.location.reload()
-        localStorage.setItem('safe', 31)
-      }, 120000)
-    }
+        const { userBalanceVaults, userBalanceFlag } = await getUserBalanceVaults(account)
+        setBalanceFlag(userBalanceFlag)
+        const stakedVaults = []
+        const ul = userBalanceVaults.length
+        for (let j = 0; j < ul; j += 1) {
+          Object.keys(groupOfVaults).forEach(key => {
+            const isSpecialVaultAll =
+              groupOfVaults[key].liquidityPoolVault || groupOfVaults[key].poolVault
+            const paramAddressAll = isSpecialVaultAll
+              ? groupOfVaults[key].data.collateralAddress
+              : groupOfVaults[key].vaultAddress || groupOfVaults[key].tokenAddress
 
-    if (Number(visited) !== 0 || visited !== null) {
-      safeCount = Number(safeCount) + 1
-      localStorage.setItem('safe', safeCount)
-    }
-
-    if (safeCount > 30) {
-      localStorage.setItem('safe', 0)
-      localStorage.setItem(totalNetProfitKey, 0)
-    }
-
-    if (Number(visited) === 0 || visited === null || Number(visited) === -1 || safeCount > 30) {
-      if (!isEmpty(userStats) && account && !onceRun) {
-        setOnceRun(true)
-        const getNetProfitValue = async () => {
-          let combinedEnrichedData = [],
-            cumulativeLifetimeYield = 0
-
-          const { userBalanceVaults, userBalanceFlag } = await getUserBalanceVaults(account)
-          setBalanceFlag(userBalanceFlag)
-          const stakedVaults = []
-          const ul = userBalanceVaults.length
-          for (let j = 0; j < ul; j += 1) {
-            Object.keys(groupOfVaults).forEach(key => {
-              const isSpecialVaultAll =
-                groupOfVaults[key].liquidityPoolVault || groupOfVaults[key].poolVault
-              const paramAddressAll = isSpecialVaultAll
-                ? groupOfVaults[key].data.collateralAddress
-                : groupOfVaults[key].vaultAddress || groupOfVaults[key].tokenAddress
-
-              if (userBalanceVaults[j] === paramAddressAll.toLowerCase()) {
-                stakedVaults.push(key)
-              }
-            })
-          }
-
-          const vaultNetChanges = []
-          const promises = stakedVaults.map(async stakedVault => {
-            let symbol = '',
-              fAssetPool = {}
-
-            if (stakedVault === IFARM_TOKEN_SYMBOL) {
-              symbol = FARM_TOKEN_SYMBOL
-            } else {
-              symbol = stakedVault
-            }
-
-            fAssetPool =
-              symbol === FARM_TOKEN_SYMBOL
-                ? groupOfVaults[symbol].data
-                : find(totalPools, pool => pool.id === symbol)
-
-            const token = find(
-              groupOfVaults,
-              vault =>
-                vault.vaultAddress === fAssetPool?.collateralAddress ||
-                (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress),
-            )
-
-            if (token) {
-              const useIFARM = symbol === FARM_TOKEN_SYMBOL
-              const isSpecialVault = token.liquidityPoolVault || token.poolVault
-              const tokenName = token.poolVault ? 'FARM' : token.tokenNames.join(' - ')
-              const tokenPlatform = token.platform.join(', ')
-              const tokenChain = token.poolVault ? token.data.chain : token.chain
-              if (isSpecialVault) {
-                fAssetPool = token.data
-              }
-
-              const paramAddress = isSpecialVault
-                ? token.data.collateralAddress
-                : token.vaultAddress || token.tokenAddress
-              const { sumNetChangeUsd, enrichedData, vaultHFlag } = await initBalanceAndDetailData(
-                paramAddress,
-                useIFARM ? token.data.chain : token.chain,
-                account,
-                token.decimals,
-              )
-
-              setSafeFlag(vaultHFlag)
-
-              vaultNetChanges.push({ id: symbol, sumNetChangeUsd })
-              const enrichedDataWithSymbol = enrichedData.map(data => ({
-                ...data,
-                tokenSymbol: symbol,
-                name: tokenName,
-                platform: tokenPlatform,
-                chain: tokenChain,
-              }))
-              combinedEnrichedData = combinedEnrichedData.concat(enrichedDataWithSymbol)
+            if (userBalanceVaults[j] === paramAddressAll.toLowerCase()) {
+              stakedVaults.push(key)
             }
           })
-
-          await Promise.all(promises)
-
-          const { rewardsAPIData } = await getAllRewardEntities(account)
-          setRewardsData(rewardsAPIData)
-
-          if (rewardsAPIData.length !== 0) {
-            combinedEnrichedData = mergeArrays(rewardsAPIData, combinedEnrichedData)
-          }
-
-          const combinedEnrichedArray = combinedEnrichedData
-            .sort((a, b) => Number(a.timestamp) - Number(b.timestamp))
-            .map(item => {
-              if (item.event === 'Harvest') {
-                cumulativeLifetimeYield += Number(item.netChangeUsd)
-                return { ...item, lifetimeYield: cumulativeLifetimeYield.toString() }
-              }
-              if (item.event === 'Rewards') {
-                cumulativeLifetimeYield += Number(item.rewardsUSD)
-                return { ...item, lifetimeYield: cumulativeLifetimeYield.toString() }
-              }
-              return { ...item, lifetimeYield: cumulativeLifetimeYield.toString() }
-            })
-
-          const sortedCombinedEnrichedArray = combinedEnrichedArray.sort(
-            (a, b) => Number(b.timestamp) - Number(a.timestamp),
-          )
-          setTotalHistoryData(sortedCombinedEnrichedArray)
-          console.log('History Data ----------', sortedCombinedEnrichedArray)
-          localStorage.setItem(totalHistoryDataKey, JSON.stringify(sortedCombinedEnrichedArray))
         }
 
-        getNetProfitValue()
-      } else {
-        setTotalHistoryData([])
-        localStorage.setItem(totalHistoryDataKey, JSON.stringify([]))
+        if (stakedVaults.length === 0) {
+          setNoHarvestsData(true)
+        }
+
+        const vaultNetChanges = []
+        const promises = stakedVaults.map(async stakedVault => {
+          let symbol = '',
+            fAssetPool = {}
+
+          if (stakedVault === IFARM_TOKEN_SYMBOL) {
+            symbol = FARM_TOKEN_SYMBOL
+          } else {
+            symbol = stakedVault
+          }
+
+          fAssetPool =
+            symbol === FARM_TOKEN_SYMBOL
+              ? groupOfVaults[symbol].data
+              : find(totalPools, pool => pool.id === symbol)
+
+          const token = find(
+            groupOfVaults,
+            vault =>
+              vault.vaultAddress === fAssetPool?.collateralAddress ||
+              (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress),
+          )
+
+          if (token) {
+            const useIFARM = symbol === FARM_TOKEN_SYMBOL
+            const isSpecialVault = token.liquidityPoolVault || token.poolVault
+            const tokenName = token.poolVault ? 'FARM' : token.tokenNames.join(' - ')
+            const tokenPlatform = token.platform.join(', ')
+            const tokenChain = token.poolVault ? token.data.chain : token.chain
+            if (isSpecialVault) {
+              fAssetPool = token.data
+            }
+
+            const paramAddress = isSpecialVault
+              ? token.data.collateralAddress
+              : token.vaultAddress || token.tokenAddress
+            const { sumNetChangeUsd, enrichedData, vaultHFlag } = await initBalanceAndDetailData(
+              paramAddress,
+              useIFARM ? token.data.chain : token.chain,
+              account,
+              token.decimals,
+            )
+
+            setSafeFlag(vaultHFlag)
+
+            vaultNetChanges.push({ id: symbol, sumNetChangeUsd })
+            const enrichedDataWithSymbol = enrichedData.map(data => ({
+              ...data,
+              tokenSymbol: symbol,
+              name: tokenName,
+              platform: tokenPlatform,
+              chain: tokenChain,
+            }))
+            combinedEnrichedData = combinedEnrichedData.concat(enrichedDataWithSymbol)
+          }
+        })
+
+        await Promise.all(promises)
+
+        const { rewardsAPIData } = await getAllRewardEntities(account)
+        setRewardsData(rewardsAPIData)
+        localStorage.setItem(totalRewardsDataKey, JSON.stringify(rewardsAPIData))
+
+        if (rewardsAPIData.length !== 0) {
+          combinedEnrichedData = mergeArrays(rewardsAPIData, combinedEnrichedData)
+        } else {
+          setNoRewardsData(true)
+        }
+
+        const combinedEnrichedArray = combinedEnrichedData
+          .sort((a, b) => Number(a.timestamp) - Number(b.timestamp))
+          .map(item => {
+            if (item.event === 'Harvest') {
+              cumulativeLifetimeYield += Number(item.netChangeUsd)
+              return { ...item, lifetimeYield: cumulativeLifetimeYield.toString() }
+            }
+            if (item.event === 'Rewards') {
+              cumulativeLifetimeYield += Number(item.rewardsUSD)
+              return { ...item, lifetimeYield: cumulativeLifetimeYield.toString() }
+            }
+            return { ...item, lifetimeYield: cumulativeLifetimeYield.toString() }
+          })
+
+        const sortedCombinedEnrichedArray = combinedEnrichedArray.sort(
+          (a, b) => Number(b.timestamp) - Number(a.timestamp),
+        )
+        setTotalHistoryData(sortedCombinedEnrichedArray)
+        localStorage.setItem(totalHistoryDataKey, JSON.stringify(sortedCombinedEnrichedArray))
       }
+
+      getNetProfitValue()
+    } else {
+      setTotalHistoryData([])
+      localStorage.setItem(totalHistoryDataKey, JSON.stringify([]))
+      localStorage.setItem(totalRewardsDataKey, JSON.stringify([]))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, userStats, connected, safeFlag, balanceFlag])
@@ -289,14 +283,14 @@ const Activity = () => {
         </NewLabel>
 
         {activeHarvests ? (
-          <EarningsHistory historyData={totalHistoryData} isDashboard noData />
+          <EarningsHistory historyData={totalHistoryData} isDashboard noData={noHarvestsData} />
         ) : (
           <RewardsHistory
             rewardsData={rewardsData}
             account={account}
             token={null}
             isDashboard
-            noData
+            noData={noRewardsData}
           />
         )}
       </Inner>

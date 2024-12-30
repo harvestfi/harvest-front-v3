@@ -20,6 +20,7 @@ import { fromWei } from '../services/web3'
 export const totalNetProfitKey = 'TOTAL_NET_PROFIT'
 export const totalHistoryDataKey = 'TOTAL_HISTORY_DATA'
 export const vaultProfitDataKey = 'VAULT_LIFETIME_YIELD'
+export const totalRewardsDataKey = 'TOTAL_REWARDS_DATA'
 
 export const getNextEmissionsCutDate = () => {
   const result = new Date()
