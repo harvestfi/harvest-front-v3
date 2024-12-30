@@ -79,7 +79,9 @@ const VaultRow = ({
         const address = isSpecialVault
           ? token.data.collateralAddress
           : token.vaultAddress || token.tokenAddress
-        push(`${directDetailUrl + network}/${address}?from=portfolio`)
+
+        if (info.token.isIPORVault) push(`${directDetailUrl}autopilot`)
+        else push(`${directDetailUrl + network}/${address}?from=portfolio`)
       }}
     >
       <FlexDiv padding={isMobile ? '25px' : '0'}>

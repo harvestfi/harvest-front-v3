@@ -1296,8 +1296,8 @@ const AdvancedFarm = () => {
           token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
         const chainId = token.chain || token.data.chain
         const {
-          balanceFlag,
-          vaultHFlag,
+          bFlag: balanceFlag,
+          vHFlag: vaultHFlag,
           sumNetChange,
           sumNetChangeUsd,
           sumLatestNetChange,

@@ -194,7 +194,7 @@ const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModa
                 weight="400"
                 marginBottom="5px"
               >
-                Deposit your token to earn extra token rewards
+                Subscribe your token to earn extra token rewards
               </NewLabel>
             </NewLabel>
           </FTokenDiv>
