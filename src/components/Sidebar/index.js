@@ -2,6 +2,7 @@ import React, { Fragment, useEffect, useState } from 'react'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
 import { SlArrowDown } from 'react-icons/sl'
+import { IoCloseCircleOutline } from 'react-icons/io5'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
 import connectAvatar from '../../assets/images/logos/sidebar/ellipse.svg'
 import Docs from '../../assets/images/logos/sidebar/file-search.svg'
@@ -711,6 +712,15 @@ const Sidebar = ({ width }) => {
                 )}
                 <MobileFollow>
                   <Social />
+                  <div>
+                    <IoCloseCircleOutline
+                      className="close"
+                      fontSize={22}
+                      onClick={() => {
+                        handleMobileClose()
+                      }}
+                    />
+                  </div>
                 </MobileFollow>
               </MobileActionsContainer>
             </Offcanvas.Body>
