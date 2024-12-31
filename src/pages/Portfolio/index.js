@@ -1054,7 +1054,7 @@ const Portfolio = () => {
               <LifetimeSub color={fontColor1}>
                 Lifetime Yield
                 <GreenBox>
-                  <IoArrowUpCircleOutline color="#14ff00" fontSize={14} />
+                  <IoArrowUpCircleOutline color="#5dcf46" fontSize={14} />
                   {!connected || noFarm ? (
                     `${currencySym}0.00`
                   ) : oneDayYield === 0 ? (

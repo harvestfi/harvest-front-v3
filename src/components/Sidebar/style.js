@@ -261,7 +261,7 @@ const ConnectButtonStyle = styled.button`
     border-radius: 9px;
     color: #fff;
     padding: 9.19px 16.08px 9.19px 16.08px;
-    margin: auto 0px auto 10px;
+    margin: auto 0px;
   }
 `
 
@@ -315,12 +315,6 @@ const MobileView = styled.div`
   }
 `
 
-const MobileConnectBtn = styled.div`
-  display: ${props => (props.display ? props.display : '')};
-  justify-content: ${props => (props.justifyContent ? props.justifyContent : '')};
-  align-items: ${props => (props.alignItems ? props.alignItems : '')};
-`
-
 const MobileActionsContainer = styled.div`
   bottom: 0;
   position: absolute;
@@ -330,67 +324,6 @@ const MobileActionsContainer = styled.div`
   box-shadow: 0px -4px 4px 0px ${props => props.bordercolor};
   &.full-menu-container {
     padding: 19px 19px 0px;
-  }
-`
-
-const MobileWalletTop = styled.div`
-  display: flex;
-  justify-content: space-between;
-  padding: 19px 19px 0px;
-`
-
-const MobileWalletTopNet = styled.div`
-  display: flex;
-  margin: auto 0px;
-
-  img.chainIcon {
-    padding: 3px 5px;
-    border-radius: 2px;
-    background: #fff;
-  }
-
-  img.chainStatus {
-    margin: auto 5px;
-  }
-`
-
-const MobileWalletBody = styled.div`
-  display: flex;
-  flex-flow: column;
-  padding: 25px 25px 0px;
-  &.connect-body {
-    padding: 80px 25px;
-  }
-`
-
-const MobileWalletBtn = styled.div`
-  display: flex;
-  justify-content: space-evenly;
-  padding: 25px 0px;
-`
-
-const MobileAmount = styled.div`
-  display: none;
-  /* display: flex; */
-  color: ${props => props.fontColor2};
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 28px;
-`
-
-const MobileAmountDiv = styled.div`
-  display: inline-block;
-  width: 50%;
-  text-align: center;
-  &.middle-letter {
-    width: 10%;
-    margin-top: -1px;
-  }
-  &.eth-letter {
-    text-align: end;
-  }
-  &.usdc-letter {
-    text-align: start;
   }
 `
 
@@ -408,7 +341,7 @@ const MobileWalletButton = styled.div`
   // border-radius: 5px;
   // border: 1px solid ${props => props.bordercolor};
   cursor: pointer;
-  width: 45%;
+  width: 10%;
   text-align: center;
 
   img.disconnect {
@@ -423,7 +356,6 @@ const MobileWalletButton = styled.div`
 const MobileLinkContainer = styled.div`
   display: flex;
   position: relative;
-  padding-bottom: 12px;
   margin: auto;
   width: 95%;
 
@@ -470,7 +402,7 @@ const MobileFollow = styled.div`
 
   @media screen and (max-width: 992px) {
     width: 95%;
-    margin: 0px auto 35px auto;
+    margin: 20px auto 35px auto;
   }
 `
 
@@ -718,17 +650,6 @@ const UserDropDownItem = styled(Dropdown.Item)`
   }
 `
 
-const MobileToggle = styled.img`
-  filter: ${props => props.toggleColor};
-  &.wallet-btn {
-    margin-top: -3px;
-  }
-
-  &.connected-wallet-btn {
-    filter: invert(39%) sepia(83%) saturate(1585%) hue-rotate(137deg) brightness(103%) contrast(84%);
-  }
-`
-
 const OffcanvasDiv = styled(Offcanvas)`
   background-color: #f2f5ff !important;
   box-shadow: 0px -4px 4px 0px rgba(0, 0, 0, 0.1);
@@ -772,7 +693,6 @@ const Logo = styled.div`
     display: flex;
     justify-content: space-between;
     margin-bottom: 24px;
-    padding-left: 12px;
   }
 `
 
@@ -821,6 +741,10 @@ const LinkMobile = styled.button`
   flex-direction: column;
   display: ${props => (props.isDropdownLink ? 'none' : 'flex')};
 
+  &.more {
+    margin-top: -1px;
+  }
+
   img {
     filter: ${props => (props.farmsFilter ? props.farmsFilter : '')};
   }
@@ -850,26 +774,19 @@ const MobileMenuContainer = styled.div`
   }
 `
 
-const ConnectSection = styled.div`
-  cursor: pointer;
-  display: ${props => (props.display ? props.display : 'flex')};
-`
-
-const MoreBtn = styled.button`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  color: #484c52;
-  font-size: 10.229px;
-  font-style: normal;
-  font-weight: 400;
-  padding: 0px;
-  align-items: center;
-`
-
 const MobileMoreTop = styled.div`
+  width: 100%;
   display: flex;
   align-items: center;
+`
+
+const MobileMoreHeader = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 7px 11px;
+  width: 70%;
+  border-radius: 10.98px;
+  background: ${props => props.backcolor};
 `
 
 export {
@@ -884,15 +801,7 @@ export {
   ConnectButtonStyle,
   AboutHarvest,
   MobileView,
-  MobileConnectBtn,
-  MobileToggle,
   OffcanvasDiv,
-  MobileWalletTop,
-  MobileWalletTopNet,
-  MobileWalletBody,
-  MobileWalletBtn,
-  MobileAmount,
-  MobileAmountDiv,
   MobileWalletButton,
   MobileActionsContainer,
   MobileLinkContainer,
@@ -912,9 +821,8 @@ export {
   LinkMobile,
   MobileMenuContainer,
   Mobile,
-  ConnectSection,
-  MoreBtn,
   LinkName,
   MobileMoreTop,
   CategoryRow,
+  MobileMoreHeader,
 }

@@ -1,17 +1,10 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
 import { useHistory, useLocation } from 'react-router-dom'
-import { PiSunDimFill, PiMoonBold } from 'react-icons/pi'
-import { IoCloseCircleOutline, IoCheckmark } from 'react-icons/io5'
 import { SlArrowDown } from 'react-icons/sl'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
-import ConnectFailureIcon from '../../assets/images/logos/sidebar/connect-failure.svg'
 import connectAvatar from '../../assets/images/logos/sidebar/ellipse.svg'
-import connectAvatarMobile from '../../assets/images/logos/sidebar/connectavatarmobile.svg'
 import Docs from '../../assets/images/logos/sidebar/file-search.svg'
-import FAQ from '../../assets/images/logos/sidebar/faq.svg'
-import ActiveWhiteMobileBottomHome from '../../assets/images/logos/sidebar/active-white-home.svg'
-import ActiveWhiteMobileBottomAdvanced from '../../assets/images/logos/sidebar/active-white-farms.svg'
 import Home from '../../assets/images/logos/sidebar/bar-chart-square.svg'
 import Diamond from '../../assets/images/logos/sidebar/diamond.svg'
 import Activity from '../../assets/images/logos/sidebar/layout.svg'
@@ -23,20 +16,12 @@ import BlackMigrate from '../../assets/images/logos/sidebar/Migrate_black.svg'
 import Advanced from '../../assets/images/logos/sidebar/advanced.svg'
 import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
 import logoNewDark from '../../assets/images/logos/sidebar/ifarm_dark.svg'
-import Wallet from '../../assets/images/logos/sidebar/wallet.svg'
-import WalletOff from '../../assets/images/logos/sidebar/wallet_off.svg'
-import WalletActive from '../../assets/images/logos/sidebar/wallet_active.svg'
-import WalletInactive from '../../assets/images/logos/sidebar/wallet_inactive.svg'
 import Toggle from '../../assets/images/logos/sidebar/dots-grid.svg'
-// import DocsMobile from '../../assets/images/logos/sidebar/docs-mobile.svg'
-import { ROUTES, supportedCurrencies } from '../../constants'
+import { ROUTES } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
-import DropDownIcon from '../../assets/images/logos/advancedfarm/drop-down.svg'
 import { usePools } from '../../providers/Pools'
-import { useRate } from '../../providers/Rate'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
-import { fromWei } from '../../services/web3'
 import {
   getChainIcon,
   totalHistoryDataKey,
@@ -61,20 +46,11 @@ import {
   MobileFollow,
   MiddleActionsContainer,
   MobileActionsContainer,
-  MobileWalletTop,
-  MobileWalletTopNet,
-  MobileWalletBody,
-  MobileAmount,
-  MobileAmountDiv,
-  MobileWalletBtn,
   MobileWalletButton,
-  MobileConnectBtn,
   MobileLinkContainer,
-  MobileToggle,
   MobileView,
   OffcanvasDiv,
   SideIcons,
-  ThemeMode,
   UserDropDown,
   UserDropDownItem,
   UserDropDownMenu,
@@ -85,19 +61,11 @@ import {
   LinkMobile,
   MobileMenuContainer,
   Mobile,
-  ConnectSection,
-  MoreBtn,
   LinkName,
   MobileMoreTop,
   CategoryRow,
+  MobileMoreHeader,
 } from './style'
-import {
-  HeaderButton,
-  CurrencyDropDown,
-  CurrencySelect,
-  CurrencyDropDownMenu,
-  CurrencyDropDownItem,
-} from '../../pages/Portfolio/style'
 
 const sideLinksTop = [
   {
@@ -164,13 +132,6 @@ const sideLinksBottom = [
     category: true,
     name: 'Support',
   },
-  // {
-  //   path: ROUTES.TUTORIAL,
-  //   name: 'Tutorial',
-  //   imgPath: FAQ,
-  //   external: false,
-  //   newTab: true,
-  // },
   {
     path: ROUTES.DOC,
     name: 'Docs',
@@ -191,28 +152,36 @@ const sideLinksMobile = [
   {
     path: ROUTES.PORTFOLIO,
     name: 'Portfolio',
-    imgPath: ActiveWhiteMobileBottomHome,
+    imgPath: Home,
     linkName: 'Portfolio',
   },
   {
     path: ROUTES.ADVANCED,
     name: 'All Vaults',
-    imgPath: ActiveWhiteMobileBottomAdvanced,
+    imgPath: Advanced,
     isFarms: true,
-    linkName: 'Farms',
+    linkName: 'All Vaults',
   },
 ]
 
 const sideLinksMobileBottom = [
   {
-    path: ROUTES.PORTFOLIO,
-    name: 'Portfolio',
-    imgPath: Home,
+    category: true,
+    name: 'User',
   },
   {
-    path: ROUTES.ADVANCED,
-    name: 'All Vaults',
-    imgPath: Advanced,
+    path: ROUTES.ACTIVITY,
+    name: 'Activity',
+    imgPath: Activity,
+  },
+  {
+    path: ROUTES.SETTINGS,
+    name: 'Settings',
+    imgPath: Settings,
+  },
+  {
+    category: true,
+    name: 'Tools',
   },
   {
     path: ROUTES.MIGRATE,
@@ -221,35 +190,33 @@ const sideLinksMobileBottom = [
     external: false,
   },
   {
+    path: ROUTES.ANALYTIC,
+    name: 'Analytics',
+    imgPath: Analytics,
+  },
+  {
     path: ROUTES.LEADERBOARD,
     name: 'Leaderboard',
     imgPath: BlackLeader,
     external: false,
   },
   {
-    path: ROUTES.ANALYTIC,
-    name: 'Analytics',
-    imgPath: Analytics,
+    category: true,
+    name: 'Support',
   },
   {
-    path: ROUTES.TUTORIAL,
-    name: 'Tutorial',
-    imgPath: FAQ,
+    path: ROUTES.DOC,
+    name: 'Docs',
+    imgPath: Docs,
     newTab: true,
   },
   {
     path: ROUTES.LiveSupport,
-    name: 'Support',
+    name: 'Open Ticket',
     imgPath: Support,
     external: true,
     newTab: true,
   },
-  // {
-  //   path: ROUTES.DOC,
-  //   name: 'Docs',
-  //   imgPath: DocsMobile,
-  //   newTab: true,
-  // },
 ]
 
 const SideLink = ({
@@ -329,18 +296,8 @@ const MobileMenu = ({
       isMobile={isMobile}
       farmsFilter={farmsFilter}
     >
-      <SideIcons
-        className="sideIcon"
-        src={item.imgPath}
-        alt="Harvest"
-        width={item.name === 'Portfolio' ? '18px' : '22px'}
-        height={item.name === 'Portfolio' ? '18px' : '22px'}
-        marginTop={item.name === 'All Vaults' ? '-1px' : ''}
-      />
-      <LinkName
-        color={active ? '#6ED459' : darkMode ? '#fff' : '#7A7A7A'}
-        marginTop={item.name === 'Portfolio' ? '5px' : ' 2px'}
-      >
+      <SideIcons className="sideIcon" src={item.imgPath} alt="Harvest" width="25px" height="25px" />
+      <LinkName color={active ? '#6ED459' : darkMode ? '#fff' : '#7A7A7A'} marginTop="2px">
         {item.linkName}
       </LinkName>
       {item.new ? <NewTag>New</NewTag> : <></>}
@@ -351,7 +308,6 @@ const MobileMenu = ({
 const Sidebar = ({ width }) => {
   const {
     darkMode,
-    setDarkMode,
     bgColorNew,
     fontColor,
     fontColor1,
@@ -373,23 +329,12 @@ const Sidebar = ({ width }) => {
     sidebarFontColor,
     sidebarActiveFontColor,
     sidebarActiveIconColor,
-    hoverColorNew,
   } = useThemeContext()
 
-  const {
-    account,
-    connectAction,
-    disconnectAction,
-    chainId,
-    connected,
-    setSelChain,
-    balances,
-    getWalletBalances,
-  } = useWallet()
+  const { account, connectAction, disconnectAction, chainId, connected, setSelChain } = useWallet()
 
   const { disableWallet } = usePools()
 
-  const switchTheme = () => setDarkMode(prev => !prev)
   useEffect(() => {
     if (darkMode) {
       document.documentElement.setAttribute('darkMode', '')
@@ -403,20 +348,11 @@ const Sidebar = ({ width }) => {
 
   // Show sidebar for mobile
   const [mobileShow, setMobileShow] = useState(false)
-  const [mobileWalletShow, setMobileWalletShow] = useState(false)
-  const [mobileConnectShow, setMobileConnectShow] = useState(false)
-  const [copyAddress, setCopyAddress] = useState('Copy Address')
-  const [balanceETH, setBalanceETH] = useState('')
-  const [balanceUSDC, setBalanceUSDC] = useState('')
-  const { rates, updateCurrency } = useRate()
-  const [curCurrency, setCurCurrency] = useState(supportedCurrencies[0])
+  const [, setCopyAddress] = useState('Copy Address')
 
   const handleMobileClose = () => setMobileShow(false)
   const handleMobileShow = () => setMobileShow(true)
-  const handleMobileWalletClose = () => setMobileWalletShow(false)
-  const handleMobileWalletShow = () => setMobileWalletShow(true)
-  const handleMobileConnectClose = () => setMobileConnectShow(false)
-  const handleMobileConnectShow = () => setMobileConnectShow(true)
+  const handleMobileWalletClose = () => setMobileShow(false)
   const handleCopyAddress = () => {
     navigator.clipboard.writeText(account).then(() => {
       setCopyAddress('Copied Address')
@@ -448,54 +384,6 @@ const Sidebar = ({ width }) => {
       window.location.reload()
     }
   }, [connected, account, beforeAccount])
-
-  useEffect(() => {
-    setCurCurrency(supportedCurrencies[rates.currency.id])
-  }, [rates])
-
-  const handleMobileWalletDetailShow = async () => {
-    const showBalanceTokens =
-      chainId === CHAIN_IDS.BASE
-        ? ['WETH_base', 'USDC_base']
-        : chainId === CHAIN_IDS.POLYGON_MAINNET
-        ? ['WETH_polygon', 'USDC_polygon']
-        : chainId === CHAIN_IDS.ARBITRUM_ONE
-        ? ['WETH_arbitrum', 'USDC_arbitrum']
-        : chainId === CHAIN_IDS.ZKSYNC
-        ? ['WETH_zksync', 'USDC_zksync']
-        : ['WETH', 'USDC']
-    handleMobileWalletShow()
-    await getWalletBalances(showBalanceTokens, false, true)
-  }
-
-  useEffect(() => {
-    const ethBalance = fromWei(
-      chainId === CHAIN_IDS.BASE
-        ? balances.WETH_base
-        : chainId === CHAIN_IDS.POLYGON_MAINNET
-        ? balances.WETH_polygon
-        : chainId === CHAIN_IDS.ARBITRUM_ONE
-        ? balances.WETH_arbitrum
-        : chainId === CHAIN_IDS.ZKSYNC
-        ? balances.WETH_zksync
-        : balances.WETH,
-      18,
-    )
-    const usdcBalance = fromWei(
-      chainId === CHAIN_IDS.BASE
-        ? balances.USDC_base
-        : chainId === CHAIN_IDS.POLYGON_MAINNET
-        ? balances.USDC_polygon
-        : chainId === CHAIN_IDS.ARBITRUM_ONE
-        ? balances.USDC_arbitrum
-        : chainId === CHAIN_IDS.ZKSYNC
-        ? balances.USDC_zksync
-        : balances.USDC,
-      6,
-    )
-    setBalanceETH(ethBalance)
-    setBalanceUSDC(usdcBalance)
-  }, [balances, chainId])
 
   const directAction = path => {
     if (path === ROUTES.PORTFOLIO || path === ROUTES.ANALYTIC) {
@@ -706,21 +594,23 @@ const Sidebar = ({ width }) => {
                   <MobileMoreTop>
                     {connected ? (
                       <>
-                        <img
-                          className="chainIcon"
-                          alt="chain icon"
-                          src={getChainIcon(chainId)}
-                          style={{ width: 21, height: 21 }}
-                        />
-                        <img
-                          className="chainStatus"
-                          alt="Chain icon"
-                          src={ConnectSuccessIcon}
-                          style={{ width: 6, height: 6, marginLeft: '10px' }}
-                        />
-                        <Address color={darkMode ? '#ffffff' : '#000000'}>
-                          {formatAddress(account)}
-                        </Address>
+                        <MobileMoreHeader backcolor={hoverColorSide}>
+                          <img
+                            className="chainStatus"
+                            alt="Chain icon"
+                            src={ConnectSuccessIcon}
+                            style={{ width: 8, height: 8, marginRight: '10px' }}
+                          />
+                          <img
+                            className="chainIcon"
+                            alt="chain icon"
+                            src={getChainIcon(chainId)}
+                            style={{ width: 16, height: 16 }}
+                          />
+                          <Address color={darkMode ? '#ffffff' : '#000000'}>
+                            {formatAddress(account)}
+                          </Address>
+                        </MobileMoreHeader>
                         <MobileWalletButton
                           fontColor5={fontColor5}
                           backcolor={bgColorNew}
@@ -755,404 +645,77 @@ const Sidebar = ({ width }) => {
                         </MobileWalletButton>
                       </>
                     ) : (
-                      <>
-                        <img
-                          className="chainStatus"
-                          alt="Chain icon"
-                          src={ConnectFailureIcon}
-                          style={{ width: 6, height: 6 }}
-                        />
-                        <ConnectButtonStyle
-                          color="connectwallet"
-                          onClick={() => {
-                            connectAction()
-                          }}
-                          minWidth="190px"
-                          inputBorderColor={inputBorderColor}
-                          bordercolor={fontColor}
-                          disabled={disableWallet}
-                          hoverColor={hoverColorButton}
-                        >
-                          Connect Wallet
-                        </ConnectButtonStyle>
-                      </>
+                      <ConnectButtonStyle
+                        color="connectwallet"
+                        onClick={() => {
+                          connectAction()
+                        }}
+                        minWidth="190px"
+                        inputBorderColor={inputBorderColor}
+                        bordercolor={fontColor}
+                        disabled={disableWallet}
+                        hoverColor={hoverColorButton}
+                      >
+                        Connect
+                      </ConnectButtonStyle>
                     )}
                   </MobileMoreTop>
-                  <IoCloseCircleOutline className="close" />
                 </Logo>
-                {sideLinksMobileBottom.map(item => (
-                  <Fragment key={item.name}>
-                    <MobileLinkContainer
-                      active={pathname.includes(item.path)}
-                      activeColor={item.activeColor}
-                      hoverImgColor={hoverImgColor}
-                      onClick={() => {
-                        if (item.newTab) {
-                          window.open(item.path, '_blank')
-                        } else if (item.enabled !== false) {
-                          directAction(item.path)
-                          handleMobileClose()
-                        }
-                      }}
-                    >
-                      <SideLink
-                        item={item}
-                        isDropdownLink={item.path === '#'}
-                        fontColor1={fontColor1}
-                        activeFontColor={sidebarActiveFontColor}
-                        activeIconColor={sidebarActiveIconColor}
-                        darkMode={darkMode}
-                        hoverColorSide={hoverColorSide}
-                      />
-                    </MobileLinkContainer>
-                    {item.subItems ? (
-                      <LinkContainer hideOnDesktop>
-                        {item.subItems.map(subItem => (
-                          <SideLink
-                            key={subItem.name}
-                            item={subItem}
-                            fontColor1={fontColor1}
-                            activeFontColor={sidebarActiveFontColor}
-                            activeIconColor={sidebarActiveIconColor}
-                            darkMode={darkMode}
-                            hoverColorSide={hoverColorSide}
-                          />
-                        ))}
-                      </LinkContainer>
-                    ) : null}
-                  </Fragment>
-                ))}
+                {sideLinksMobileBottom.map(item =>
+                  item.category === true ? (
+                    <CategoryRow key={item.name} color={fontColor7}>
+                      {item.name}
+                    </CategoryRow>
+                  ) : (
+                    <Fragment key={item.name}>
+                      <MobileLinkContainer
+                        active={pathname.includes(item.path)}
+                        activeColor={item.activeColor}
+                        hoverImgColor={hoverImgColor}
+                        onClick={() => {
+                          if (item.newTab) {
+                            window.open(item.path, '_blank')
+                          } else if (item.enabled !== false) {
+                            directAction(item.path)
+                            handleMobileClose()
+                          }
+                        }}
+                      >
+                        <SideLink
+                          item={item}
+                          isDropdownLink={item.path === '#'}
+                          fontColor1={fontColor1}
+                          activeFontColor={sidebarActiveFontColor}
+                          activeIconColor={sidebarActiveIconColor}
+                          darkMode={darkMode}
+                          hoverColorSide={hoverColorSide}
+                        />
+                      </MobileLinkContainer>
+                      {item.subItems ? (
+                        <LinkContainer hideOnDesktop>
+                          {item.subItems.map(subItem => (
+                            <SideLink
+                              key={subItem.name}
+                              item={subItem}
+                              fontColor1={fontColor1}
+                              activeFontColor={sidebarActiveFontColor}
+                              activeIconColor={sidebarActiveIconColor}
+                              darkMode={darkMode}
+                              hoverColorSide={hoverColorSide}
+                            />
+                          ))}
+                        </LinkContainer>
+                      ) : null}
+                    </Fragment>
+                  ),
+                )}
                 <MobileFollow>
                   <Social />
-                  <ThemeMode
-                    mode={darkMode ? 'dark' : 'light'}
-                    backcolor={toggleBackColor}
-                    bordercolor={borderColorBox}
-                  >
-                    <div id="theme-switch">
-                      <div className="switch-track">
-                        <div className="switch-thumb">
-                          {darkMode ? <PiMoonBold /> : <PiSunDimFill />}
-                        </div>
-                        <div className="switch-icon">
-                          {darkMode ? <PiSunDimFill /> : <PiMoonBold />}
-                        </div>
-                      </div>
-
-                      <input
-                        type="checkbox"
-                        checked={darkMode}
-                        onChange={switchTheme}
-                        aria-label="Switch between dark and light mode"
-                      />
-                    </div>
-                  </ThemeMode>
-                  <HeaderButton>
-                    <Dropdown>
-                      <CurrencyDropDown
-                        id="dropdown-basic"
-                        bgcolor={bgColorNew}
-                        fontcolor2={fontColor2}
-                        hovercolor={hoverColorNew}
-                        style={{ padding: 0 }}
-                      >
-                        {curCurrency ? (
-                          <CurrencySelect fontcolor2={fontColor2} hovercolor={hoverColor}>
-                            <img
-                              className={darkMode ? 'logo-dark' : 'logo'}
-                              src={curCurrency.imgPath}
-                              width={16}
-                              height={16}
-                              alt=""
-                            />
-                            <span>{curCurrency.symbol}</span>
-                            <img className="dropdown-icon" src={DropDownIcon} alt="" />
-                          </CurrencySelect>
-                        ) : (
-                          <></>
-                        )}
-                      </CurrencyDropDown>
-                      {!isSpecialApp ? (
-                        <CurrencyDropDownMenu backcolor={bgColorNew}>
-                          {supportedCurrencies.map(elem => {
-                            return (
-                              <CurrencyDropDownItem
-                                onClick={() => {
-                                  updateCurrency(elem.id)
-                                }}
-                                fontcolor={fontColor}
-                                filtercolor={filterColor}
-                                hovercolor={hoverColorNew}
-                                key={elem.id}
-                              >
-                                <img
-                                  className={darkMode ? 'logo-dark' : 'logo'}
-                                  src={elem.imgPath}
-                                  width={14}
-                                  height={14}
-                                  alt=""
-                                />
-                                <span>{elem.symbol}</span>
-                                {curCurrency.id === elem.id ? (
-                                  <IoCheckmark className="check-icon" />
-                                ) : (
-                                  <></>
-                                )}
-                              </CurrencyDropDownItem>
-                            )
-                          })}
-                        </CurrencyDropDownMenu>
-                      ) : (
-                        <></>
-                      )}
-                    </Dropdown>
-                  </HeaderButton>
                 </MobileFollow>
               </MobileActionsContainer>
             </Offcanvas.Body>
           </OffcanvasDiv>
-          {/* Wallet Connect */}
-          <OffcanvasDiv
-            show={mobileConnectShow}
-            onHide={handleMobileConnectClose}
-            placement="bottom"
-            fontcolor={fontColor}
-            filtercolor={filterColor}
-          >
-            <Offcanvas.Body>
-              <MobileActionsContainer bgColor={bgColorNew} bordercolor={borderColorBox}>
-                <MobileWalletTop>
-                  <MobileWalletTopNet>
-                    <img
-                      className="chainIcon"
-                      alt="chain icon"
-                      src={getChainIcon(chainId)}
-                      style={{ width: 21, height: 21 }}
-                    />
-                    <img
-                      className="chainStatus"
-                      alt="Chain icon"
-                      src={ConnectFailureIcon}
-                      style={{ width: 6, height: 6 }}
-                    />
-                  </MobileWalletTopNet>
-                  <Logo
-                    color={fontColor5}
-                    className="logo"
-                    onClick={() => {
-                      handleMobileConnectClose()
-                    }}
-                  >
-                    <IoCloseCircleOutline className="close" />
-                  </Logo>
-                </MobileWalletTop>
-                <MobileWalletBody className="connect-body">
-                  <MobileWalletBtn>
-                    <MobileWalletButton
-                      className="connect-button"
-                      bordercolor={borderColorBox}
-                      onClick={() => {
-                        connectAction()
-                        handleMobileConnectClose()
-                      }}
-                    >
-                      Connect
-                    </MobileWalletButton>
-                  </MobileWalletBtn>
-                </MobileWalletBody>
-                <MobileView bordercolor={borderColorBox} className="connect-modal">
-                  {sideLinksMobile.map(item => (
-                    <Fragment key={item.name}>
-                      <MobileMenuContainer
-                        active={pathname.includes(item.path)}
-                        activeColor={item.activeColor}
-                        hoverImgColor={hoverImgColor}
-                        onClick={() => {
-                          if (item.newTab) {
-                            window.open(item.path, '_blank')
-                          } else {
-                            directAction(item.path)
-                          }
-                          handleMobileConnectClose()
-                        }}
-                      >
-                        <MobileMenu
-                          item={item}
-                          isDropdownLink={item.path === '#'}
-                          fontColor={sidebarFontColor}
-                          activeFontColor={sidebarActiveFontColor}
-                          activeIconColor={sidebarActiveIconColor}
-                          darkMode={darkMode}
-                          isWallet
-                          isMobile
-                        />
-                      </MobileMenuContainer>
-                    </Fragment>
-                  ))}
 
-                  <ConnectSection>
-                    <MobileConnectBtn color="connectwallet">
-                      <MobileToggle
-                        className="wallet-btn"
-                        toggleColor={toggleColor}
-                        width={27}
-                        height={21}
-                        src={WalletInactive}
-                        alt=""
-                      />
-                    </MobileConnectBtn>
-                  </ConnectSection>
-                  <MoreBtn
-                    type="button"
-                    onClick={() => {
-                      handleMobileConnectClose()
-                      handleMobileShow()
-                    }}
-                  >
-                    <MobileToggle
-                      toggleColor={toggleColor}
-                      width={21}
-                      height={21}
-                      src={Toggle}
-                      alt=""
-                    />
-                  </MoreBtn>
-                </MobileView>
-              </MobileActionsContainer>
-            </Offcanvas.Body>
-          </OffcanvasDiv>
-          {/* Wallet Connection Detail */}
-          <OffcanvasDiv
-            show={mobileWalletShow}
-            onHide={handleMobileWalletClose}
-            placement="bottom"
-            fontcolor={fontColor}
-            filtercolor={filterColor}
-          >
-            <Offcanvas.Body>
-              <MobileActionsContainer bgColor={bgColorNew} bordercolor={borderColorBox}>
-                <MobileWalletTop>
-                  <MobileWalletTopNet>
-                    <img
-                      className="chainIcon"
-                      alt="chain icon"
-                      src={getChainIcon(chainId)}
-                      style={{ width: 21, height: 21 }}
-                    />
-                    <img
-                      className="chainStatus"
-                      alt="Chain icon"
-                      src={ConnectSuccessIcon}
-                      style={{ width: 6, height: 6 }}
-                    />
-                  </MobileWalletTopNet>
-                  <Logo
-                    color={fontColor5}
-                    className="logo"
-                    onClick={() => {
-                      handleMobileWalletClose()
-                    }}
-                  >
-                    <IoCloseCircleOutline className="close" />
-                  </Logo>
-                </MobileWalletTop>
-                <MobileWalletBody>
-                  <ConnectAvatar avatar>
-                    <img src={connectAvatarMobile} alt="" />
-                  </ConnectAvatar>
-                  <Address>{formatAddress(account)}</Address>
-                  <MobileAmount fontColor2={fontColor2}>
-                    <MobileAmountDiv className="eth-letter">
-                      {Number(balanceETH).toFixed(5)} ETH
-                    </MobileAmountDiv>
-                    <MobileAmountDiv className="middle-letter">|</MobileAmountDiv>
-                    <MobileAmountDiv className="usdc-letter">
-                      {Number(balanceUSDC).toFixed(2)} USDC
-                    </MobileAmountDiv>
-                  </MobileAmount>
-                  <MobileWalletBtn>
-                    <MobileWalletButton
-                      fontColor5={fontColor5}
-                      backcolor={bgColorNew}
-                      bordercolor={borderColorBox}
-                      onClick={handleCopyAddress}
-                    >
-                      {copyAddress}
-                    </MobileWalletButton>
-                    <MobileWalletButton
-                      fontColor5={fontColor5}
-                      backcolor={bgColorNew}
-                      bordercolor={borderColorBox}
-                      onClick={() => {
-                        disconnectAction()
-                        handleMobileWalletClose()
-                      }}
-                    >
-                      Disconnect
-                    </MobileWalletButton>
-                  </MobileWalletBtn>
-                </MobileWalletBody>
-                <MobileView bordercolor={borderColorBox} className="connect-modal">
-                  {sideLinksMobile.map(item => (
-                    <Fragment key={item.name}>
-                      <MobileMenuContainer
-                        active={pathname.includes(item.path)}
-                        activeColor={item.activeColor}
-                        hoverImgColor={hoverImgColor}
-                        onClick={() => {
-                          if (item.newTab) {
-                            window.open(item.path, '_blank')
-                          } else {
-                            directAction(item.path)
-                          }
-                          handleMobileWalletClose()
-                        }}
-                      >
-                        <MobileMenu
-                          item={item}
-                          isDropdownLink={item.path === '#'}
-                          fontColor={sidebarFontColor}
-                          activeFontColor={sidebarActiveFontColor}
-                          activeIconColor={sidebarActiveIconColor}
-                          darkMode={darkMode}
-                          isWallet
-                          isMobile
-                        />
-                      </MobileMenuContainer>
-                    </Fragment>
-                  ))}
-
-                  <ConnectSection>
-                    <MobileConnectBtn color="connectwallet">
-                      <MobileToggle
-                        className={connected ? 'connected-wallet-btn' : 'wallet-btn'}
-                        toggleColor={toggleColor}
-                        width={27}
-                        height={21}
-                        src={WalletActive}
-                        alt=""
-                      />
-                    </MobileConnectBtn>
-                  </ConnectSection>
-                  <MoreBtn
-                    type="button"
-                    onClick={() => {
-                      handleMobileWalletClose()
-                      handleMobileShow()
-                    }}
-                  >
-                    <MobileToggle
-                      toggleColor={toggleColor}
-                      width={21}
-                      height={21}
-                      src={Toggle}
-                      alt=""
-                    />
-                  </MoreBtn>
-                </MobileView>
-              </MobileActionsContainer>
-            </Offcanvas.Body>
-          </OffcanvasDiv>
           {/* Bottom Menu */}
           {sideLinksMobile.map(item => (
             <Fragment key={item.name}>
@@ -1184,47 +747,21 @@ const Sidebar = ({ width }) => {
             </Fragment>
           ))}
 
-          <ConnectSection display="none">
-            <MobileConnectBtn
-              color="connectwallet"
-              connected={connected}
-              onClick={
-                connected
-                  ? () => {
-                      handleMobileWalletDetailShow()
-                    }
-                  : () => {
-                      handleMobileConnectShow()
-                    }
-              }
-            >
-              <MobileToggle
-                className={connected ? 'connected-wallet-btn' : 'wallet-btn'}
+          <MobileMenuContainer display="flex" justifyContent="center" alignItems="center">
+            <LinkMobile className="more" type="button" onClick={handleMobileShow}>
+              <SideIcons
                 toggleColor={toggleColor}
-                width={27}
-                height={21}
-                src={connected ? Wallet : WalletOff}
+                filterColor={filterColorBottom}
+                width="25px"
+                height="25px"
+                src={Toggle}
                 alt=""
               />
-            </MobileConnectBtn>
-          </ConnectSection>
-          <>
-            <MobileMenuContainer display="flex" justifyContent="center" alignItems="center">
-              <LinkMobile type="button" onClick={handleMobileShow}>
-                <SideIcons
-                  toggleColor={toggleColor}
-                  filterColor={filterColorBottom}
-                  width="18px"
-                  height="18px"
-                  src={Toggle}
-                  alt=""
-                />
-                <LinkName marginTop="5px" color={darkMode ? '#fff' : '#7A7A7A'}>
-                  More
-                </LinkName>
-              </LinkMobile>
-            </MobileMenuContainer>
-          </>
+              <LinkName marginTop="2px" color={darkMode ? '#fff' : '#7A7A7A'}>
+                More
+              </LinkName>
+            </LinkMobile>
+          </MobileMenuContainer>
         </MobileView>
       </Mobile>
     </Container>
