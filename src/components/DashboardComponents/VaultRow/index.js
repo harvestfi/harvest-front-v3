@@ -74,10 +74,7 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey, darkMo
           <>
             <Content width={isMobile ? '100%' : '40%'} display={isMobile ? 'block' : 'flex'}>
               <ContentInner width={isMobile ? '100%' : '50%'} display={isMobile ? 'block' : 'flex'}>
-                <BadgeIcon
-                  borderColor={info.status === 'Active' ? '#29ce84' : 'orange'}
-                  className="network-badge"
-                >
+                <BadgeIcon className="network-badge">
                   <img src={info.chain ? info.chain : ETHEREUM} width="15px" height="15px" alt="" />
                 </BadgeIcon>
                 {info.logos.length > 0 &&
