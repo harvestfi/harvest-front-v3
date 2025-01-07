@@ -125,7 +125,8 @@ const Portfolio = () => {
     borderColorTable,
     borderColorBox,
     inputBorderColor,
-    hoverColorButton,
+    btnHoverColor,
+    btnColor,
   } = useThemeContext()
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
@@ -1306,6 +1307,8 @@ const Portfolio = () => {
                           inputBorderColor={inputBorderColor}
                           bordercolor={fontColor}
                           disabled={disableWallet}
+                          backColor={btnColor}
+                          hoverColor={btnHoverColor}
                         >
                           <img src={AdvancedImg} className="explore-farms" alt="" />
                           Explore Farms
@@ -1328,9 +1331,10 @@ const Portfolio = () => {
                         inputBorderColor={inputBorderColor}
                         bordercolor={fontColor}
                         disabled={disableWallet}
-                        hoverColor={hoverColorButton}
+                        hoverColor={btnHoverColor}
+                        backColor={btnColor}
                       >
-                        Connect Wallet
+                        Connect
                       </ConnectButtonStyle>
                     </EmptyInfo>
                   </EmptyPanel>

@@ -274,10 +274,10 @@ const ConnectButtonStyle = styled.button`
   justify-content: center;
   margin: 15px auto;
   width: 250px;
-  background: none;
   border-radius: 8px;
-  border: 2px solid #6988ff;
-  color: #6988ff;
+  border: none;
+  color: #fff;
+  background: ${props => props.backColor};
   box-shadow: 0px 1px 2px rgba(16, 24, 40, 0.05);
   cursor: pointer;
   transition: 0.5s;
@@ -330,7 +330,7 @@ const ExploreButtonStyle = styled.button`
   margin: 15px auto;
   padding: 12px 0px 12px 0px;
   width: 250px;
-  background: #6988ff;
+  background: ${props => props.backColor};
   border-radius: 8px;
   border: none;
   color: white;
@@ -340,7 +340,7 @@ const ExploreButtonStyle = styled.button`
   transition: 0.5s;
 
   &:hover {
-    background: #7692fb;
+    background: ${props => props.hoverColor};
   }
 
   img.explore-farms {
