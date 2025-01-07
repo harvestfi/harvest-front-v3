@@ -23,6 +23,7 @@ import {
   ToggleButton,
   ChevronIcon,
 } from './style'
+import { handleToggle } from '../../../utilities/parsers'
 
 const recommendLinks = [
   { name: '1D', type: 0, state: '1D' },
@@ -74,8 +75,6 @@ const UserBalanceData = ({
   const totalValueRef = useRef(totalValue)
   const farmPriceRef = useRef(farmPrice)
   const usdPriceRef = useRef(underlyingPrice)
-
-  const toggleExpand = () => setIsExpanded(prev => !prev)
 
   useEffect(() => {
     totalValueRef.current = totalValue
@@ -453,14 +452,14 @@ const UserBalanceData = ({
           totalValue={totalValue}
           setSelectedState={setSelectedState}
           isExpanded={isExpanded}
-          toggleExpand={toggleExpand}
+          toggleExpand={handleToggle(setIsExpanded)}
           isInactive={token.inactive}
         />
       </ChartDiv>
       <ButtonGroup>
         <ToggleButton
           type="button"
-          onClick={toggleExpand}
+          onClick={handleToggle(setIsExpanded)}
           className="collapse-button"
           backColor={darkMode ? '#3b3c3e' : '#e9f0f7'}
           color={darkMode ? 'white' : 'black'}

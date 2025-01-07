@@ -20,6 +20,7 @@ import {
   PilotInfoClose,
   SwitchMode,
 } from './style'
+import { handleToggle } from '../../../utilities/parsers'
 
 const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
   const { pilotBorderColor1, pilotButtonColor1, backColor, fontColor2 } = useThemeContext()
@@ -56,8 +57,6 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
       setCurrencyRate(rates.rateData[rates.currency.symbol])
     }
   }, [rates])
-
-  const switchHistory = () => setShowApyHistory(prev => !prev)
 
   useEffect(() => {
     const initData = async () => {
@@ -385,7 +384,7 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
                   <input
                     type="checkbox"
                     checked={showApyHistory}
-                    onChange={switchHistory}
+                    onChange={handleToggle(setShowApyHistory)}
                     aria-label="Switch between APY and Harvest frequency"
                   />
                 </div>

@@ -139,23 +139,29 @@ const ThemeMode = styled.div`
       transition: all 0.25s ease 0s;
 
       svg {
-        font-size: 24px;
-        margin: 4px 0px 0px 12px;
+        ${props => (props.className === 'inactive' ? 'font-size: 18px;' : 'font-size: 24px;')}
+        ${props =>
+          props.className === 'inactive'
+            ? 'margin: 4px 0px 0px 15px;'
+            : 'margin: 4px 0px 0px 12px;'}
       }
     }
 
     .switch-icon {
       color: ${props => props.color};
       height: 32px;
-      ${props => (props.mode === 'dark' ? 'left: 5px;' : 'right: 5px;')}
+      ${props => (props.mode === 'dark' || props.mode === 'show' ? 'left: 5px;' : 'right: 5px;')}
       position: absolute;
       top: 4px;
       width: 48px;
       transition: all 0.25s ease 0s;
 
       svg {
-        font-size: 24px;
-        margin: 4px 0px 0px 12px;
+        ${props => (props.className === 'inactive' ? 'font-size: 18px;' : 'font-size: 24px;')}
+        ${props =>
+          props.className === 'inactive'
+            ? 'margin: 4px 0px 0px 15px;'
+            : 'margin: 4px 0px 0px 12px;'}
       }
     }
 
@@ -165,7 +171,7 @@ const ThemeMode = styled.div`
   }
 
   ${props =>
-    props.mode === 'light'
+    props.mode === 'light' || props.mode === 'hide'
       ? `
       #theme-switch {
         .switch-check {

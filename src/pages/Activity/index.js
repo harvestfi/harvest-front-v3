@@ -46,9 +46,7 @@ const Activity = () => {
   const [safeFlag, setSafeFlag] = useState(true)
   const [noHarvestsData, setNoHarvestsData] = useState(false)
   const [noRewardsData, setNoRewardsData] = useState(false)
-
   const [activeHarvests, setActiveHarvests] = useState(true)
-  const switchHistoryMethod = () => setActiveHarvests(prev => !prev)
 
   useEffect(() => {
     const prevTotalHistoryData = JSON.parse(localStorage.getItem(totalHistoryDataKey) || '[]')
@@ -260,7 +258,7 @@ const Activity = () => {
                 num={i}
                 onClick={() => {
                   if ((i === 0 && !activeHarvests) || (i === 1 && activeHarvests))
-                    switchHistoryMethod()
+                    setActiveHarvests(prev => !prev)
                 }}
                 color={
                   (i === 0 && activeHarvests) || (i === 1 && !activeHarvests)

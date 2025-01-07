@@ -24,6 +24,7 @@ import {
   ThemeMode,
   ExploreButtonStyle,
 } from './style'
+import { handleToggle } from '../../../utilities/parsers'
 
 const HistoryData = ({ historyData, isDashboard, noData }) => {
   const { push } = useHistory()
@@ -46,8 +47,6 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
   const { connected, connectAction } = useWallet()
   const [itemOffset, setItemOffset] = useState(0)
   const [showTotalBalance, setShowTotalBalance] = useState(true)
-
-  const switchEarnings = () => setShowTotalBalance(prev => !prev)
 
   const { currentItems, pageCount } = useMemo(() => {
     const endOffset = itemOffset + itemsPerPage
@@ -108,7 +107,7 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
                   <input
                     type="checkbox"
                     checked={showTotalBalance}
-                    onChange={switchEarnings}
+                    onChange={handleToggle(setShowTotalBalance)}
                     aria-label="Switch between balance and netChange earnings"
                   />
                 </div>

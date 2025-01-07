@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { PiSunDimFill, PiMoonBold } from 'react-icons/pi'
+import { FiEye, FiEyeOff } from 'react-icons/fi'
 import { Dropdown } from 'react-bootstrap'
 import { IoCheckmark } from 'react-icons/io5'
 
@@ -23,9 +24,12 @@ import {
   CateName,
 } from './style'
 import { isSpecialApp } from '../../utilities/formats'
+import { handleToggle } from '../../utilities/parsers'
 
 const Settings = () => {
   const {
+    showInactiveFarms,
+    setShowInactiveFarms,
     darkMode,
     setDarkMode,
     backColor,
@@ -41,7 +45,6 @@ const Settings = () => {
     toggleBackColor,
   } = useThemeContext()
 
-  const switchTheme = () => setDarkMode(prev => !prev)
   const { rates, updateCurrency } = useRate()
 
   const [curCurrency, setCurCurrency] = useState(supportedCurrencies[0])
@@ -81,7 +84,7 @@ const Settings = () => {
                     <input
                       type="checkbox"
                       checked={darkMode}
-                      onChange={switchTheme}
+                      onChange={handleToggle(setDarkMode)}
                       aria-label="Switch between dark and light mode"
                     />
                   </div>
@@ -153,6 +156,36 @@ const Settings = () => {
                     <></>
                   )}
                 </Dropdown>
+              </div>
+            </RowWrap>
+            <RowWrap>
+              <CateName>Show Inactive Positions in Portfolio</CateName>
+              <div>
+                <ThemeMode
+                  className="inactive"
+                  mode={showInactiveFarms ? 'show' : 'hide'}
+                  backColor={toggleBackColor}
+                  borderColor={borderColor}
+                  color={fontColor5}
+                >
+                  <div id="theme-switch">
+                    <div className="switch-track">
+                      <div className="switch-thumb">
+                        {showInactiveFarms ? <FiEye /> : <FiEyeOff />}
+                      </div>
+                      <div className="switch-icon">
+                        {showInactiveFarms ? <FiEyeOff /> : <FiEye />}
+                      </div>
+                    </div>
+
+                    <input
+                      type="checkbox"
+                      checked={showInactiveFarms}
+                      onChange={handleToggle(setShowInactiveFarms)}
+                      aria-label="Switch between dark and light mode"
+                    />
+                  </div>
+                </ThemeMode>
               </div>
             </RowWrap>
           </WrapperDiv>

@@ -1,14 +1,11 @@
 import React, { useState } from 'react'
 import { NewLabel } from '../PositionModal/style'
 import { useThemeContext } from '../../../providers/useThemeContext'
+import { handleToggle } from '../../../utilities/parsers'
 
 const Accordian = ({ text, EXPANDED, COLLAPSED, darkMode }) => {
   const { borderColorBox } = useThemeContext()
   const [isExpanded, setIsExpanded] = useState(false)
-
-  const handleExpand = () => {
-    setIsExpanded(prev => !prev)
-  }
 
   return (
     <NewLabel
@@ -18,9 +15,7 @@ const Accordian = ({ text, EXPANDED, COLLAPSED, darkMode }) => {
       flexDirection="column"
       borderBottom={`1px solid ${borderColorBox}`}
       cursorType="pointer"
-      onClick={() => {
-        handleExpand()
-      }}
+      onClick={handleToggle(setIsExpanded)}
     >
       <NewLabel display="flex" justifyContent="space-between" alignItems="center">
         <NewLabel

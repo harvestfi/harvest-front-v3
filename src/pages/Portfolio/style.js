@@ -581,13 +581,6 @@ const TableWrap = styled.div`
   }
 `
 
-const SubBtnWrap = styled.div`
-  margin-top: 24px;
-  display: flex;
-  justify-content: end;
-  padding-right: 15px;
-`
-
 const MobileSwitch = styled.div`
   display: flex;
   padding: 4px;
@@ -648,31 +641,6 @@ const ContentBox = styled.div`
 
   @media screen and (max-width: 992px) {
     border: none;
-  }
-`
-
-const CheckBoxDiv = styled.div`
-  cursor: pointer;
-  margin-top: 25px;
-  margin-right: 25px;
-  display: inline-block;
-  position: relative;
-
-  svg {
-    position: absolute;
-    top: 4px;
-  }
-
-  div {
-    padding-left: 23px;
-  }
-
-  @media screen and (max-width: 992px) {
-    margin: unset;
-    font-size: 14px;
-    line-height: 20px;
-    font-weight: 500;
-    margin: auto 0px;
   }
 `
 
@@ -947,14 +915,12 @@ export {
   TableContent,
   TableWrap,
   MobileSwitch,
-  SubBtnWrap,
   SwitchBtn,
   PositionTable,
   YieldTable,
   ContentBox,
   ConnectButtonStyle,
   ExploreButtonStyle,
-  CheckBoxDiv,
   CurrencyDropDown,
   CurrencySelect,
   CurrencyDropDownMenu,

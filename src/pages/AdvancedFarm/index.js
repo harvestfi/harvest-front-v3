@@ -77,7 +77,7 @@ import {
   showUsdValue,
   showUsdValueCurrency,
 } from '../../utilities/formats'
-import { getTotalApy, getVaultValue, getChainName } from '../../utilities/parsers'
+import { getTotalApy, getVaultValue, getChainName, handleToggle } from '../../utilities/parsers'
 import { getAdvancedRewardText } from '../../utilities/html'
 import {
   getCoinListFromApi,
@@ -282,7 +282,6 @@ const AdvancedFarm = () => {
   const loaded = true
   const [lastHarvest, setLastHarvest] = useState('')
   const [activeStake, setActiveStake] = useState(true)
-  const switchStakeMethod = () => setActiveStake(prev => !prev)
 
   const [totalValue, setTotalValue] = useState(0)
   const [depositedValueUSD, setDepositUsdValue] = useState(0)
@@ -534,9 +533,6 @@ const AdvancedFarm = () => {
       Number(pricePerFullShare)
   const farmPrice = token.data && token.data.lpTokenData && token.data.lpTokenData.price
   const underlyingPrice = get(token, 'usdPrice', get(token, 'data.lpTokenData.price', 0))
-
-  const switchEarnings = () => setShowLatestEarnings(prev => !prev)
-  const switchHistory = () => setShowApyHistory(prev => !prev)
 
   const mainTags = [
     { name: 'Manage', img: Safe },
@@ -1247,14 +1243,8 @@ const AdvancedFarm = () => {
     [account, userStats, balances],
   )
 
-  // Switch Deposit / Withdraw
-  const switchDepoMethod = () => setActiveDepo(prev => !prev)
-
   // Deposit / Stake / Details
   const [activeMainTag, setActiveMainTag] = useState(0)
-
-  // Switch Harvests / Rewards
-  const switchHistoryMethod = () => setActiveHarvests(prev => !prev)
 
   const curUrl = document.location.href
   useEffect(() => {
@@ -1900,7 +1890,7 @@ const AdvancedFarm = () => {
                           <input
                             type="checkbox"
                             checked={showLatestEarnings}
-                            onChange={switchEarnings}
+                            onChange={handleToggle(setShowLatestEarnings)}
                             aria-label="Switch between lifetime and latest yields"
                           />
                         </div>
@@ -2230,7 +2220,7 @@ const AdvancedFarm = () => {
                       num={i}
                       onClick={() => {
                         if ((i === 0 && !activeHarvests) || (i === 1 && activeHarvests))
-                          switchHistoryMethod()
+                          setActiveHarvests(prev => !prev)
                       }}
                       color={
                         (i === 0 && activeHarvests) || (i === 1 && !activeHarvests)
@@ -2575,7 +2565,7 @@ const AdvancedFarm = () => {
                         setInputAmount={setInputAmountDepo}
                         token={token}
                         supTokenList={supTokenList}
-                        switchMethod={switchDepoMethod}
+                        switchMethod={handleToggle(setActiveDepo)}
                         tokenSymbol={id}
                         useIFARM={useIFARM}
                         balanceList={balanceList}
@@ -2650,7 +2640,7 @@ const AdvancedFarm = () => {
                         stakedAmount={stakedAmount}
                         token={token}
                         supTokenList={supTokenList}
-                        switchMethod={switchDepoMethod}
+                        switchMethod={handleToggle(setActiveDepo)}
                         useIFARM={useIFARM}
                         setRevertFromInfoAmount={setRevertFromInfoAmount}
                         revertFromInfoUsdAmount={revertFromInfoUsdAmount}
@@ -2953,7 +2943,7 @@ const AdvancedFarm = () => {
                         inputAmount={inputAmountStake}
                         setInputAmount={setInputAmountStake}
                         token={token}
-                        switchMethod={switchStakeMethod}
+                        switchMethod={handleToggle(setActiveStake)}
                         tokenSymbol={id}
                         lpTokenBalance={lpTokenBalance}
                         fAssetPool={fAssetPool}
@@ -2986,7 +2976,7 @@ const AdvancedFarm = () => {
                         inputAmount={inputAmountUnstake}
                         setInputAmount={setInputAmountUnstake}
                         token={token}
-                        switchMethod={switchStakeMethod}
+                        switchMethod={handleToggle(setActiveStake)}
                         tokenSymbol={id}
                         totalStaked={totalStaked}
                         fAssetPool={fAssetPool}
@@ -3001,7 +2991,7 @@ const AdvancedFarm = () => {
                         inputAmount={inputAmountUnstake}
                         setInputAmount={setInputAmountUnstake}
                         token={token}
-                        switchMethod={switchStakeMethod}
+                        switchMethod={handleToggle(setActiveStake)}
                         tokenSymbol={id}
                         totalStaked={totalStaked}
                         fAssetPool={fAssetPool}
@@ -3120,7 +3110,7 @@ const AdvancedFarm = () => {
                           <input
                             type="checkbox"
                             checked={showApyHistory}
-                            onChange={switchHistory}
+                            onChange={handleToggle(setShowApyHistory)}
                             aria-label="Switch between APY and Harvest frequency"
                           />
                         </div>

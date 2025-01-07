@@ -5,7 +5,6 @@ import { find, get, isEmpty, orderBy, isEqual, isNaN } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import { Dropdown, Spinner } from 'react-bootstrap'
 import { useHistory } from 'react-router-dom'
-import { FaRegSquare, FaRegSquareCheck } from 'react-icons/fa6'
 import { IoArrowUpCircleOutline, IoCheckmark } from 'react-icons/io5'
 import 'react-loading-skeleton/dist/skeleton.css'
 import VaultRow from '../../components/DashboardComponents/VaultRow'
@@ -59,6 +58,7 @@ import {
 import {
   getChainIcon,
   getTotalApy,
+  handleToggle,
   mergeArrays,
   totalHistoryDataKey,
   totalNetProfitKey,
@@ -76,7 +76,6 @@ import {
   Col,
   TableContent,
   ConnectButtonStyle,
-  CheckBoxDiv,
   CurrencyDropDown,
   CurrencySelect,
   CurrencyDropDownMenu,
@@ -91,7 +90,6 @@ import {
   ExploreButtonStyle,
   MobileSwitch,
   SwitchBtn,
-  SubBtnWrap,
   MobileHeader,
   HeaderTop,
   LifetimeValue,
@@ -113,6 +111,7 @@ const Portfolio = () => {
   /* eslint-disable global-require */
   const { tokens } = require('../../data')
   const {
+    showInactiveFarms,
     darkMode,
     bgColorNew,
     hoverColor,
@@ -149,7 +148,6 @@ const Portfolio = () => {
   const [depositToken, setDepositToken] = useState([])
 
   const [sortOrder, setSortOrder] = useState(false)
-  const [showInactiveFarms, setShowInactiveFarms] = useState(false)
   const [showLatestYield, setShowLatestYield] = useState(false)
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
@@ -986,10 +984,10 @@ const Portfolio = () => {
                     <img src={ConnectSuccessIcon} alt="connect success" width={6} height={6} />
                     <Address>{showAddress ? formatAddress(account) : '**********'}</Address>
                     <div
-                      onClick={() => setShowAddress(prev => !prev)}
+                      onClick={handleToggle(setShowAddress)}
                       onKeyDown={e => {
                         if (e.key === 'Enter' || e.key === ' ') {
-                          setShowAddress(prev => !prev)
+                          handleToggle(setShowAddress)
                         }
                       }}
                       style={{ cursor: 'pointer', alignItems: 'center', display: 'flex' }}
@@ -1338,63 +1336,19 @@ const Portfolio = () => {
                   </EmptyPanel>
                 )}
               </TableContent>
-              {connected && !isMobile && farmTokenList.length > 0 && (
-                <CheckBoxDiv
-                  onClick={() => {
-                    if (showInactiveFarms) {
-                      setShowInactiveFarms(prev => !prev)
-                    } else {
-                      setShowInactiveFarms(prev => !prev)
-                    }
-                  }}
-                >
-                  {showInactiveFarms ? (
-                    <FaRegSquareCheck color="#15B088" />
-                  ) : (
-                    <FaRegSquare color="#15B088" />
-                  )}
-                  <div>Show inactive</div>
-                </CheckBoxDiv>
-              )}
             </TransactionDetails>
           </PositionTable>
           {isMobile && (
-            <>
-              <YieldTable display={showLatestYield ? 'block' : 'none'}>
-                <div className="table-title">Latest Yield</div>
-                <EarningsHistoryLatest
-                  historyData={totalHistoryData}
-                  isDashboard="true"
-                  noData={noFarm}
-                  setOneDayYield={setOneDayYield}
-                  isLoading={isLoading}
-                />
-              </YieldTable>
-              <SubBtnWrap>
-                {!showLatestYield && (
-                  <div>
-                    {connected && farmTokenList.length > 0 && (
-                      <CheckBoxDiv
-                        onClick={() => {
-                          if (showInactiveFarms) {
-                            setShowInactiveFarms(prev => !prev)
-                          } else {
-                            setShowInactiveFarms(prev => !prev)
-                          }
-                        }}
-                      >
-                        {showInactiveFarms ? (
-                          <FaRegSquareCheck color="#15B088" />
-                        ) : (
-                          <FaRegSquare color="#15B088" />
-                        )}
-                        <div>Show inactive</div>
-                      </CheckBoxDiv>
-                    )}
-                  </div>
-                )}
-              </SubBtnWrap>
-            </>
+            <YieldTable display={showLatestYield ? 'block' : 'none'}>
+              <div className="table-title">Latest Yield</div>
+              <EarningsHistoryLatest
+                historyData={totalHistoryData}
+                isDashboard="true"
+                noData={noFarm}
+                setOneDayYield={setOneDayYield}
+                isLoading={isLoading}
+              />
+            </YieldTable>
           )}
         </TableWrap>
       </Inner>

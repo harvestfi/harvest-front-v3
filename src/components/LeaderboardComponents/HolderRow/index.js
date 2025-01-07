@@ -20,7 +20,7 @@ import { useRate } from '../../../providers/Rate'
 import { chainList } from '../../../constants'
 import ChevronUp from '../../../assets/images/ui/chevron-up.svg'
 import ChevronDown from '../../../assets/images/ui/chevron-down.svg'
-import { getTokenNames } from '../../../utilities/parsers'
+import { getTokenNames, handleToggle } from '../../../utilities/parsers'
 
 const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, selectedItem, darkMode }) => {
   const [isExpand, setIsExpand] = useState(false)
@@ -42,10 +42,6 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, selectedIte
       setCurrencyRate(rates.rateData[rates.currency.symbol])
     }
   }, [rates])
-
-  const handleExpand = () => {
-    setIsExpand(prev => !prev)
-  }
 
   const matchedTokenNames = getTokenNames(value, groupOfVaults)
 
@@ -97,9 +93,7 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, selectedIte
       borderColor={borderColorBox}
       hoverColor={hoverColor}
       key={cKey}
-      onClick={() => {
-        handleExpand()
-      }}
+      onClick={handleToggle(setIsExpand)}
     >
       <FlexDiv>
         <Content display="flex" width="100%">
@@ -318,9 +312,7 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, selectedIte
       hoverColor={hoverColor}
       key={cKey}
       lastItem={lastItem}
-      onClick={() => {
-        handleExpand()
-      }}
+      onClick={handleToggle(setIsExpand)}
     >
       <FlexDiv>
         <Content width="100%" display="flex">

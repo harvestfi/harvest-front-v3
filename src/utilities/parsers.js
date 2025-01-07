@@ -638,3 +638,5 @@ export const mergeArrays = (rewardsAPIData, totalHistoryData) => {
 
   return combinedArray
 }
+
+export const handleToggle = setter => () => setter(prev => !prev)
