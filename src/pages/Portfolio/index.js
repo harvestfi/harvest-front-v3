@@ -157,9 +157,6 @@ const Portfolio = () => {
   const [oneDayYield, setOneDayYield] = useState(0)
   const [showAddress, setShowAddress] = useState(true)
   const [onceRun, setOnceRun] = useState(false)
-  const [safeFlag, setSafeFlag] = useState(true)
-  const [balanceFlag, setBalanceFlag] = useState(true)
-  const [correctRun, setCorrectRun] = useState(true)
 
   useEffect(() => {
     const prevTotalProfit = Number(localStorage.getItem(totalNetProfitKey) || '0')
@@ -669,29 +666,13 @@ const Portfolio = () => {
   }, [account, userStats, balances, showInactiveFarms]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    const visited = localStorage.getItem(totalNetProfitKey)
-    let safeCount = localStorage.getItem('safe')
+    const totalNetProfitValue = localStorage.getItem(totalNetProfitKey)
 
-    if (!safeFlag || !balanceFlag || !correctRun) {
-      localStorage.setItem('address', account)
-      setTimeout(() => {
-        window.location.reload()
-        localStorage.setItem('safe', 31)
-      }, 120000)
-    }
-
-    if (Number(visited) !== 0 || visited !== null) {
-      safeCount = Number(safeCount) + 1
-      localStorage.setItem('safe', safeCount)
-    }
-
-    if (safeCount > 30) {
-      localStorage.setItem('safe', 0)
-      localStorage.setItem(totalNetProfitKey, 0)
-      setIsLoading(true)
-    }
-
-    if (Number(visited) === 0 || visited === null || Number(visited) === -1 || safeCount > 30) {
+    if (
+      Number(totalNetProfitValue) === 0 ||
+      totalNetProfitValue === null ||
+      Number(totalNetProfitValue) === -1
+    ) {
       if (!isEmpty(userStats) && account && !onceRun) {
         setOnceRun(true)
         const getNetProfitValue = async () => {
@@ -699,9 +680,8 @@ const Portfolio = () => {
             combinedEnrichedData = [],
             cumulativeLifetimeYield = 0
 
-          const { userBalanceVaults, userBalanceFlag } = await getUserBalanceVaults(account)
+          const { userBalanceVaults } = await getUserBalanceVaults(account)
           const iporBalCheck = await checkIPORUserBalance(account)
-          setBalanceFlag(userBalanceFlag)
           const stakedVaults = []
           const ul = userBalanceVaults.length
           for (let j = 0; j < ul; j += 1) {
@@ -762,19 +742,13 @@ const Portfolio = () => {
                 : token.vaultAddress || token.tokenAddress
 
               const iporVFlag = symbol === 'IPOR_USDC_arbitrum'
-              const {
-                sumNetChangeUsd,
-                enrichedData,
-                vHFlag: vaultHFlag,
-              } = await initBalanceAndDetailData(
+              const { sumNetChangeUsd, enrichedData } = await initBalanceAndDetailData(
                 paramAddress,
                 useIFARM ? token.data.chain : token.chain,
                 account,
                 token.decimals,
                 iporVFlag,
               )
-
-              setSafeFlag(vaultHFlag)
 
               vaultNetChanges.push({ id: symbol, sumNetChangeUsd })
               const enrichedDataWithSymbol = enrichedData.map(data => ({
@@ -835,8 +809,9 @@ const Portfolio = () => {
         localStorage.setItem(totalHistoryDataKey, JSON.stringify([]))
       }
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, userStats, showInactiveFarms, connected, safeFlag, correctRun, balanceFlag])
+  }, [account, userStats, showInactiveFarms, connected])
 
   const sortCol = field => {
     if (field === 'lifetimeYield') {
@@ -1277,8 +1252,6 @@ const Portfolio = () => {
                               lastElement={i === farmTokenList.length - 1 ? 'yes' : 'no'}
                               cKey={i}
                               darkMode={darkMode}
-                              onceRun={onceRun}
-                              setCorrectRun={setCorrectRun}
                             />
                           )
                         })
@@ -1304,8 +1277,6 @@ const Portfolio = () => {
                               lastElement={i === filteredFarmList.length - 1 ? 'yes' : 'no'}
                               cKey={i}
                               darkMode={darkMode}
-                              onceRun={onceRun}
-                              setCorrectRun={setCorrectRun}
                             />
                           )
                         })}

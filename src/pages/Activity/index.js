@@ -44,7 +44,6 @@ const Activity = () => {
 
   const [onceRun, setOnceRun] = useState(false)
   const [safeFlag, setSafeFlag] = useState(true)
-  const [balanceFlag, setBalanceFlag] = useState(true)
   const [noHarvestsData, setNoHarvestsData] = useState(false)
   const [noRewardsData, setNoRewardsData] = useState(false)
 
@@ -109,8 +108,7 @@ const Activity = () => {
         let combinedEnrichedData = [],
           cumulativeLifetimeYield = 0
 
-        const { userBalanceVaults, userBalanceFlag } = await getUserBalanceVaults(account)
-        setBalanceFlag(userBalanceFlag)
+        const { userBalanceVaults } = await getUserBalanceVaults(account)
         const stakedVaults = []
         const ul = userBalanceVaults.length
         for (let j = 0; j < ul; j += 1) {
@@ -228,7 +226,7 @@ const Activity = () => {
       localStorage.setItem(totalRewardsDataKey, JSON.stringify([]))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, userStats, connected, safeFlag, balanceFlag])
+  }, [account, userStats, connected, safeFlag])
 
   return (
     <Container bgColor={bgColorNew} fontColor={fontColor}>

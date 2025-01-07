@@ -17,16 +17,7 @@ import {
   MobileContentContainer,
 } from './style'
 
-const VaultRow = ({
-  info,
-  lifetimeYield,
-  firstElement,
-  lastElement,
-  cKey,
-  darkMode,
-  onceRun,
-  setCorrectRun,
-}) => {
+const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey, darkMode }) => {
   const { push } = useHistory()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const {
@@ -48,12 +39,6 @@ const VaultRow = ({
       setCurrencyRate(rates.rateData[rates.currency.symbol])
     }
   }, [rates])
-
-  useEffect(() => {
-    if (!onceRun && Number(lifetimeYield) === -1) {
-      setCorrectRun(false)
-    }
-  }, [onceRun, lifetimeYield, setCorrectRun])
 
   return (
     <DetailView
