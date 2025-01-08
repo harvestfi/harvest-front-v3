@@ -33,21 +33,14 @@ import { NewLabel } from '../../components/MigrateComponents/PositionModal/style
 import Accordian from '../../components/MigrateComponents/Accordian'
 import ARBITRUM from '../../assets/images/logos/badge/arbitrum.svg'
 import POLYGON from '../../assets/images/logos/badge/polygon.svg'
-// import ZKSYNC from '../../assets/images/logos/badge/zksync.svg'
 import BASE from '../../assets/images/logos/badge/base.svg'
 import { CHAIN_IDS } from '../../data/constants'
-import {
-  getTokenPriceFromApi,
-  // getUserBalanceVaults,
-  // initBalanceAndDetailData,
-  getCoinListFromApi,
-} from '../../utilities/apiCalls'
+import { getTokenPriceFromApi, getCoinListFromApi } from '../../utilities/apiCalls'
 import {
   FARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
   IFARM_TOKEN_SYMBOL,
   MAX_DECIMALS,
-  // chainList,
 } from '../../constants'
 import {
   Container,
@@ -73,10 +66,7 @@ import {
   CurrencyDropDownMenu,
   CurrencyDropDownItem,
 } from './style'
-// import { ConnectButtonStyle } from '../../components/EarningsHistory/HistoryData/style'
 
-// const totalNetProfitKey = 'TOTAL_NET_PROFIT'
-// const totalHistoryDataKey = 'TOTAL_HISTORY_DATA'
 const vaultProfitDataKey = 'VAULT_LIFETIME_YIELD'
 
 const Migrate = () => {
@@ -102,7 +92,6 @@ const Migrate = () => {
     hoverColorNew,
     hoverColor,
   } = useThemeContext()
-  // const networkNames = ['ethereum', 'polygon', 'arbitrum', 'base', 'zksync']
 
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
@@ -284,23 +273,6 @@ const Migrate = () => {
     },
     [account, balances],
   )
-
-  // const getBadgeId = vaultAddress => {
-  //   const vaultData = Object.values(groupOfVaults).find(vault => {
-  //     if (vault.vaultAddress && vaultAddress) {
-  //       return vault.vaultAddress.toLowerCase() === vaultAddress.toLowerCase()
-  //     }
-  //     return false
-  //   })
-  //   const chain = vaultData ? vaultData.chain : ''
-
-  //   for (let i = 0; i < chainList.length; i += 1) {
-  //     if (chainList[i].chainId === Number(chain)) {
-  //       return i
-  //     }
-  //   }
-  //   return -1
-  // }
 
   useEffect(() => {
     if (account && !isEmpty(userStats) && !isEmpty(depositToken)) {
