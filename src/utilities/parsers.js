@@ -79,7 +79,7 @@ export const getVaultValue = token => {
       return get(token, 'data.totalValueLocked')
     default:
       return token.usdPrice
-        ? new BigNumber(token.underlyingBalanceWithInvestment.toString())
+        ? new BigNumber(token.underlyingBalanceWithInvestment?.toString())
             .times(token.usdPrice)
             .dividedBy(new BigNumber(10).pow(token.decimals))
         : null
