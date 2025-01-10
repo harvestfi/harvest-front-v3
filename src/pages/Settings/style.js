@@ -65,6 +65,10 @@ const Title = styled.div`
   font-size: 20px;
   font-weight: 600;
   line-height: 30px;
+
+  @media screen and (max-width: 992px) {
+    font-size: 16px;
+  }
 `
 
 const DescText = styled.div`
@@ -72,6 +76,10 @@ const DescText = styled.div`
   font-size: 16px;
   font-weight: 400;
   line-height: 22px;
+
+  @media screen and (max-width: 992px) {
+    font-size: 12px;
+  }
 `
 
 const RowWrap = styled.div`
@@ -84,6 +92,11 @@ const CateName = styled.div`
   font-size: 18px;
   font-weight: 600;
   line-height: 27px;
+  margin: auto 0px;
+
+  @media screen and (max-width: 992px) {
+    font-size: 12px;
+  }
 `
 
 const CoinSection = styled.div`
