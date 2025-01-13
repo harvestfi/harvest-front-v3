@@ -9,8 +9,11 @@ import { supportedCurrencies } from '../../constants'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useRate } from '../../providers/Rate'
 import { isSpecialApp } from '../../utilities/formats'
+import { initBalanceAndDetailData } from '../../utilities/apiCalls'
 import { useVaults } from '../../providers/Vault'
+import { useWallet } from '../../providers/Wallet'
 import AutopilotPanel from '../../components/AutopilotComponents/AutopilotPanel'
+import EarningsHistory from '../../components/EarningsHistory/HistoryData'
 import {
   Container,
   Inner,
@@ -40,20 +43,56 @@ const Autopilot = () => {
     fontColor2,
   } = useThemeContext()
 
+  const { account } = useWallet()
+
   const { rates, updateCurrency } = useRate()
   const [curCurrency, setCurCurrency] = useState(supportedCurrencies[0])
   const { allVaultsData, loadingVaults } = useVaults()
   const [vaultsData, setVaultsData] = useState([])
+  const [totalHistoryData, setTotalHistoryData] = useState([])
 
   const [viewPositions, setViewPositions] = useState(true)
+
   useEffect(() => {
-    const filteredVaults = Object.values(allVaultsData).filter((vaultData, index) => {
-      vaultData.id = Object.keys(allVaultsData)[index]
-      if (Object.prototype.hasOwnProperty.call(vaultData, 'isIPORVault')) return true
-      return false
-    })
-    setVaultsData(filteredVaults)
-  }, [allVaultsData])
+    const initData = async () => {
+      let combinedEnrichedData = []
+      const filteredVaults = Object.values(allVaultsData).filter((vaultData, index) => {
+        vaultData.id = Object.keys(allVaultsData)[index]
+        if (Object.prototype.hasOwnProperty.call(vaultData, 'isIPORVault')) return true
+        return false
+      })
+      const promises = filteredVaults.map(async token => {
+        if (account && token) {
+          const address = token.vaultAddress
+          const chainId = token.chain
+          const iporVFlag = token.isIPORVault ?? false
+          const { bIPORFlag, vHIPORFlag, enrichedData } = await initBalanceAndDetailData(
+            address,
+            chainId,
+            account,
+            token.decimals,
+            iporVFlag,
+          )
+
+          if (bIPORFlag && vHIPORFlag) {
+            const enrichedDataWithSymbol = enrichedData.map(data => ({
+              ...data,
+              tokenSymbol: token.id,
+            }))
+
+            combinedEnrichedData = combinedEnrichedData.concat(enrichedDataWithSymbol)
+          }
+        }
+      })
+
+      await Promise.all(promises)
+      combinedEnrichedData.sort((a, b) => b.timestamp - a.timestamp)
+      setTotalHistoryData(combinedEnrichedData)
+      setVaultsData(filteredVaults)
+    }
+
+    initData()
+  }, [allVaultsData, account])
 
   useEffect(() => {
     if (rates.rateData) {
@@ -159,19 +198,30 @@ const Autopilot = () => {
           )}
         </HeaderWrap>
         <SubPart>
-          {!loadingVaults && vaultsData.length > 0 ? (
-            vaultsData?.map((vault, index) => {
-              return (
-                <AutopilotPanel
-                  allVaultsData={allVaultsData}
-                  vaultData={vault}
-                  key={index}
-                  index={index}
-                />
-              )
-            })
+          {viewPositions ? (
+            !loadingVaults && vaultsData.length > 0 ? (
+              vaultsData?.map((vault, index) => {
+                return (
+                  <AutopilotPanel
+                    allVaultsData={allVaultsData}
+                    vaultData={vault}
+                    key={index}
+                    index={index}
+                  />
+                )
+              })
+            ) : (
+              <></>
+            )
           ) : (
-            <></>
+            !loadingVaults &&
+            vaultsData.length > 0 && (
+              <EarningsHistory
+                historyData={totalHistoryData}
+                isDashboard="true"
+                noData={!(vaultsData.length > 0)}
+              />
+            )
           )}
         </SubPart>
       </Inner>

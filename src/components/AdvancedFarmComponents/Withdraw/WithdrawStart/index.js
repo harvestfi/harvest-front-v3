@@ -101,7 +101,7 @@ const WithdrawStart = ({
     bgColorMessage,
     hoverColorAVR,
   } = useThemeContext()
-  const { account, web3 } = useWallet()
+  const { account, web3, getWalletBalances } = useWallet()
   const { fetchUserPoolStats, userStats, pools } = usePools()
   const { push } = useHistory()
   const [slippagePercentage, setSlippagePercentage] = useState(null)
@@ -313,6 +313,7 @@ const WithdrawStart = ({
         setWithdrawFailed(false)
         setProgressStep(4)
         setButtonName('Success! Close this window.')
+        await getWalletBalances([token.id], false, true)
       }
     } else if (progressStep === 4) {
       setRevertSuccess(true)

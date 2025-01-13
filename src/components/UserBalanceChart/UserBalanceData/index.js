@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react'
+import { BigNumber } from 'bignumber.js'
 import ReactTooltip from 'react-tooltip'
 import { useMediaQuery } from 'react-responsive'
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
@@ -8,7 +9,13 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { useRate } from '../../../providers/Rate'
 import { formatDate, numberWithCommas, showTokenBalance } from '../../../utilities/formats'
-import { getPriceFeeds, getSequenceId, getUserBalanceHistories } from '../../../utilities/apiCalls'
+import {
+  getPriceFeeds,
+  getSequenceId,
+  getUserBalanceHistories,
+  getIPORUserBalanceHistories,
+  getIPORVaultHistories,
+} from '../../../utilities/apiCalls'
 import {
   ButtonGroup,
   ChartDiv,
@@ -131,12 +138,20 @@ const UserBalanceData = ({
           const mergedData = []
           let priceFeedData, priceFeedFlag
 
-          const { balanceData, balanceFlag } = await getUserBalanceHistories(
-            address,
-            chainId,
-            account,
-          )
-          if (balanceFlag) {
+          const data = token.isIPORVault
+            ? await getIPORUserBalanceHistories('IPOR', account)
+            : await getUserBalanceHistories(address, chainId, account)
+
+          const balanceData = token.isIPORVault ? data.balanceIPORData : data.balanceData
+          const balanceFlag = token.isIPORVault ? data.balanceIPORFlag : data.balanceFlag
+          if (token.isIPORVault) {
+            balanceData.map(obj => {
+              obj.value = new BigNumber(obj.value).div(new BigNumber(10 ** 8)).toFixed()
+              return obj
+            })
+          }
+
+          if (balanceFlag && !token.isIPORVault) {
             const firstTimeStamp = balanceData[balanceData.length - 1].timestamp
             const { vaultPriceFeedCount } = await getSequenceId(address, chainId)
             const result = await getPriceFeeds(
@@ -149,14 +164,32 @@ const UserBalanceData = ({
             )
             priceFeedData = result.priceFeedData
             priceFeedFlag = result.priceFeedFlag
+          } else if (balanceFlag && token.isIPORVault) {
+            const result = await getIPORVaultHistories()
+            priceFeedFlag = result.vaultHIPORFlag
+            priceFeedData = result.vaultHIPORData
           }
 
-          if (priceFeedFlag) {
+          if (priceFeedFlag && !token.isIPORVault) {
             priceFeedData.forEach(obj => {
               if (!timestamps.includes(obj.timestamp)) {
                 timestamps.push(obj.timestamp)
                 const modifiedObj = { ...obj, priceUnderlying: obj.price }
                 delete modifiedObj.price
+                uniqueData2.push(modifiedObj)
+              }
+            })
+          } else if (priceFeedFlag && token.isIPORVault) {
+            priceFeedData.forEach(obj => {
+              if (!timestamps.includes(obj.timestamp)) {
+                timestamps.push(obj.timestamp)
+                const modifiedObj = {
+                  timestamp: obj.timestamp,
+                  sharePrice: new BigNumber(obj.sharePrice)
+                    .div(new BigNumber(10 ** Number(token.decimals)))
+                    .toFixed(),
+                  priceUnderlying: Number(obj.priceUnderlying),
+                }
                 uniqueData2.push(modifiedObj)
               }
             })
@@ -379,7 +412,7 @@ const UserBalanceData = ({
     useIFARM,
     farmPrice,
     chartData,
-    token.inactive,
+    token,
   ])
 
   return (
@@ -438,6 +471,7 @@ const UserBalanceData = ({
       </Header>
       <ChartDiv className="advanced-price">
         <ApexChart
+          token={token}
           data={apiData}
           data1={apiData1}
           loadComplete={loadComplete}
