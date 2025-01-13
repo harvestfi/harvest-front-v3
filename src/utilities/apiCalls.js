@@ -228,6 +228,34 @@ export const getSequenceId = async (address, chainId) => {
   return { vaultTVLCount, vaultPriceFeedCount, vaultsFlag }
 }
 
+export const getIPORSequenceId = async () => {
+  let vaultTVLCount
+
+  const query = `
+    {
+      plasmaVaultHistories(
+        first: 1000,
+        orderBy: timestamp,
+        orderDirection: desc
+      ) {
+        historySequenceId
+      }
+    }
+  `
+  const url = GRAPH_URLS.IPOR
+
+  const data = await executeGraphCall(url, query, {})
+  const vaultsData = data ? data.plasmaVaultHistories : []
+
+  if (!vaultsData || vaultsData.length === 0) {
+    vaultTVLCount = 0
+  } else if (vaultsData) {
+    vaultTVLCount = vaultsData[0].historySequenceId
+  }
+
+  return { vaultTVLCount }
+}
+
 export const getVaultHistories = async (address, chainId) => {
   let vaultHData = {},
     vaultHFlag = true
@@ -362,6 +390,88 @@ export const getDataQuery = async (
   if (data.tvls.length === 1000 && dataTimestamp > initTimestamp) {
     await getDataQuery(address, chainId, vaultTVLCount, true, dataTimestamp, chartData)
   }
+  return chartData
+}
+
+export const getIPORDataQuery = async (vaultTVLCount, asQuery, timestamp, chartData = {}) => {
+  const sequenceIdsArray = []
+  if (vaultTVLCount > 10000) {
+    const step = Math.ceil(vaultTVLCount / 2000)
+    for (let i = 1; i <= vaultTVLCount; i += step) {
+      sequenceIdsArray.push(i)
+    }
+  } else if (vaultTVLCount > 1000) {
+    const step = Math.ceil(vaultTVLCount / 1000)
+    for (let i = 1; i <= vaultTVLCount; i += step) {
+      sequenceIdsArray.push(i)
+    }
+  } else {
+    for (let i = 1; i <= vaultTVLCount; i += 1) {
+      sequenceIdsArray.push(i)
+    }
+  }
+
+  const nowTime = Math.floor(new Date().getTime() / 1000)
+  const timestampQuery = asQuery ? timestamp : nowTime
+
+  const query = `
+    query getData($endTime: BigInt, $sequenceIds: [Int!]) {
+    generalApies: plasmaVaultHistories(
+        first: 1000,
+        orderBy: timestamp, 
+        orderDirection: desc
+      ) { 
+        apy, timestamp
+      }
+      tvls: plasmaVaultHistories(
+        first: 1000,
+        where: {
+          timestamp_lt: $endTime,
+          historySequenceId_in: $sequenceIds
+        },
+        orderBy: timestamp,
+        orderDirection: desc
+      ) {
+        tvl, timestamp
+      },
+      vaultHistories: plasmaVaultHistories(
+        first: 1000,
+        orderBy: timestamp,
+        orderDirection: desc
+      ) {
+        priceUnderlying, sharePrice, timestamp
+      }
+    }
+  `
+  const variables = { endTime: timestampQuery, sequenceIds: sequenceIdsArray }
+  const url = GRAPH_URLS.IPOR
+
+  const data = await executeGraphCall(url, query, variables)
+  // To merge the response data into the chartData object
+  Object.keys(data).forEach(key => {
+    if (!Object.prototype.hasOwnProperty.call(chartData, key)) {
+      chartData[key] = data[key]
+    } else if (Array.isArray(chartData[key]) && Array.isArray(data[key])) {
+      chartData[key].push(...data[key])
+    } else if (typeof chartData[key] === 'object' && typeof data[key] === 'object') {
+      Object.assign(chartData[key], data[key])
+    } else {
+      chartData[key] = data[key]
+    }
+  })
+
+  const dataTimestamp = Number(chartData.tvls[chartData.tvls.length - 1].timestamp)
+  const initTimestamp = Number(chartData.generalApies[chartData.generalApies.length - 1].timestamp)
+
+  if (data.tvls.length === 1000 && dataTimestamp > initTimestamp) {
+    await getDataQuery(vaultTVLCount, true, dataTimestamp, chartData)
+  }
+
+  chartData.tvls.forEach(obj => {
+    obj.value = obj.tvl
+    delete obj.tvl
+  })
+
   return chartData
 }
 
@@ -649,7 +759,7 @@ export const getPriceFeeds = async (
 
   if (data && data.priceFeeds && Array.isArray(data.priceFeeds)) {
     priceFeedData.push(...data.priceFeeds)
-    const dataTimestamp = priceFeedData[priceFeedData.length - 1].timestamp
+    const dataTimestamp = priceFeedData[priceFeedData.length - 1]?.timestamp
     if (Number(dataTimestamp) > Number(firstTimeStamp)) {
       return getPriceFeeds(
         address,
@@ -968,7 +1078,7 @@ export const initBalanceAndDetailData = async (
         while (i < bl) {
           if (z < ul) {
             while (uniqueVaultHIPORData[z].timestamp >= balanceIPORData[i].timestamp) {
-              uniqueVaultHData[z].value = balanceIPORData[i].value
+              uniqueVaultHIPORData[z].value = balanceIPORData[i].value
               mergedIPORData.push(uniqueVaultHIPORData[z])
               z += 1
               if (!addFlag && uniqueVaultHIPORData[z].timestamp === balanceIPORData[i].timestamp) {

@@ -59,6 +59,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
   const [subscribeLabel, setSubscribeLabel] = useState('Subscribe')
   const [walletBalance, setWalletBalance] = useState('-')
   const [userVBalance, setUserVBalance] = useState('-')
+  const [userAssetBalance, setUserAssetBalance] = useState('-')
   const [yeildValue, setYeildValue] = useState('-')
 
   const {
@@ -118,7 +119,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
           } else {
             setSubscribeName('Unsubscribe')
           }
-          setWalletBalance(fromWei(balances[vaultData.id], vaultData.decimals, 2))
+          setWalletBalance(fromWei(balances.aave_USDC_arbitrum, vaultData.decimals, 2)) // to get USDC value in user's wallet
         }
       } else {
         setSubscribeName('Connect Wallet to Get Started')
@@ -126,7 +127,16 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
       }
     }
     updateData()
-  }, [account, curChain, tokenChain, subscribe, vaultData, setWalletBalance, balances])
+  }, [
+    account,
+    curChain,
+    tokenChain,
+    subscribe,
+    vaultData,
+    setWalletBalance,
+    balances,
+    getWalletBalances,
+  ])
 
   useEffectWithPrevious(
     ([prevAccount, prevBalances, prevVBalance]) => {
@@ -140,7 +150,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
       ) {
         const getBalance = async () => {
           firstWalletBalanceLoad.current = false
-          await getWalletBalances([vaultData.id], account, true)
+          await getWalletBalances([vaultData.id, 'aave_USDC_arbitrum'], account, true) // to get USDC value in user's wallet
           const vaultContract = contracts.iporVault
           const vaultBalance = await vaultContract.methods.getBalanceOf(
             vaultContract.instance,
@@ -152,16 +162,19 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
           )
 
           if (new BigNumber(AssetBalance).gt(0)) {
-            const userBal = fromWei(new BigNumber(AssetBalance), Number(vaultData.decimals))
+            const userBal = fromWei(new BigNumber(vaultBalance), Number(vaultData.vaultDecimals))
+            const userAssetBal = fromWei(new BigNumber(AssetBalance), Number(vaultData.decimals))
             const yieldV = fromWei(
               new BigNumber(AssetBalance)
                 .multipliedBy(new BigNumber(vaultData.estimatedApy))
                 .dividedBy(new BigNumber(100)),
               Number(vaultData.decimals),
             )
+            setUserAssetBalance(userAssetBal)
             setUserVBalance(userBal)
             setYeildValue(yieldV)
           } else {
+            setUserAssetBalance(0)
             setUserVBalance(0)
             setYeildValue(0)
           }
@@ -303,7 +316,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
                 marginBottom="10px"
                 marginRight="25px"
               >
-                {userVBalance}&nbsp;{vaultData?.tokenNames[0]}
+                {userAssetBalance}&nbsp;{vaultData?.tokenNames[0]}
               </NewLabel>
             </FlexDiv>
             <FlexDiv flexDirection="row" justifyContent="space-between">
@@ -390,7 +403,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
             </FlexDiv>
             <FlexDiv flexDirection="row" justifyContent="space-between" marginTop="12px">
               <NewLabel size="12px" height="20px" weight="400" color={fontColor2}>
-                Balance: {subscribe ? walletBalance : userVBalance}
+                Balance: {subscribe ? `${walletBalance} USDC` : `${userVBalance} ffUSDC`}
               </NewLabel>
             </FlexDiv>
             <FlexDiv marginTop="18px">
