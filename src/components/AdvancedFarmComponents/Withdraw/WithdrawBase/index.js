@@ -83,7 +83,7 @@ const WithdrawBase = ({
   const [withdrawName, setWithdrawName] = useState('Preview & Revert')
   const [showWarning, setShowWarning] = useState(false)
 
-  const { account, web3, connected, chainId } = useWallet()
+  const { account, web3, connected, chainId, balances } = useWallet()
   const { getPortalsEstimate, getPortalsToken } = usePortals()
 
   const { rates } = useRate()
@@ -306,7 +306,14 @@ const WithdrawBase = ({
     const inputValue = e.currentTarget.value.replace(/,/g, '.')
     setUnstakeInputValue(inputValue)
     setUnstakeBalance(
-      toWei(inputValue, useIFARM ? fAssetPool.lpTokenData.decimals : token.decimals),
+      toWei(
+        inputValue,
+        useIFARM
+          ? fAssetPool.lpTokenData.decimals
+          : token.isIPORVault
+          ? token.vaultDecimals
+          : token.decimals,
+      ),
     )
   }
 
@@ -328,7 +335,9 @@ const WithdrawBase = ({
         setShowWarning(true)
       }
     } else if (
-      !new BigNumber(unstakeBalance.toString()).isLessThanOrEqualTo(lpTokenBalance.toString())
+      !new BigNumber(unstakeBalance.toString()).isLessThanOrEqualTo(
+        token.isIPORVault ? balances[token.id].toString() : lpTokenBalance.toString(),
+      )
     ) {
       setShowWarning(true)
       return
@@ -472,14 +481,16 @@ const WithdrawBase = ({
               0
             ) : useIFARM ? (
               stakedAmount || <AnimatedDots />
-            ) : lpTokenBalance ? (
+            ) : lpTokenBalance || token.isIPORVault ? (
               new BigNumber(
-                fromWei(
-                  lpTokenBalance,
-                  fAssetPool.lpTokenData.decimals,
-                  fAssetPool.lpTokenData.decimals,
-                  false,
-                ),
+                token.isIPORVault
+                  ? fromWei(balances[token.id], token.vaultDecimals, token.vaultDecimals, false)
+                  : fromWei(
+                      lpTokenBalance,
+                      fAssetPool.lpTokenData.decimals,
+                      fAssetPool.lpTokenData.decimals,
+                      false,
+                    ),
               ).toString()
             ) : (
               <AnimatedDots />

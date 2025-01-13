@@ -3,7 +3,13 @@ import apyActive from '../../../assets/images/logos/earn/percent-circle.svg'
 import tvlActive from '../../../assets/images/logos/earn/bank.svg'
 import myBalanceActive from '../../../assets/images/logos/earn/chart-graph.svg'
 import { addresses } from '../../../data/index'
-import { getDataQuery, getSequenceId, getTotalTVLData } from '../../../utilities/apiCalls'
+import {
+  getDataQuery,
+  getSequenceId,
+  getTotalTVLData,
+  getIPORSequenceId,
+  getIPORDataQuery,
+} from '../../../utilities/apiCalls'
 import { formatDate, numberWithCommas } from '../../../utilities/formats'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import ApexChart from '../ApexChart'
@@ -106,8 +112,12 @@ const FarmDetailChart = ({
     const initData = async () => {
       if (address && chainId) {
         try {
-          const { vaultTVLCount } = await getSequenceId(address, chainId)
-          const data = await getDataQuery(address, chainId, vaultTVLCount, false)
+          const { vaultTVLCount } = token.isIPORVault
+            ? await getIPORSequenceId()
+            : await getSequenceId(address, chainId)
+          const data = token.isIPORVault
+            ? await getIPORDataQuery(vaultTVLCount, false)
+            : await getDataQuery(address, chainId, vaultTVLCount, false)
           const filteredData = {
             ...data,
             generalApies: data.generalApies.filter(entry => parseFloat(entry.apy) <= 100000),

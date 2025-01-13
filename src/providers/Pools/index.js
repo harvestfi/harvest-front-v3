@@ -427,59 +427,61 @@ const PoolsProvider = _ref => {
       setLoadingUserPoolStats(true)
       await Promise.all(
         selectedPools.map(async pool => {
-          const web3Client = await getWeb3(pool.chain, false)
-          const contractInstance = await newContractInstance(
-            null,
-            pool.contractAddress,
-            poolContractData.abi,
-            web3Client,
-          )
-          const autoStakeContractInstance = await newContractInstance(
-            null,
-            pool.autoStakePoolAddress,
-            poolContractData.abi,
-            web3Client,
-          )
-          // const lpSymbol = Object.keys(tokens).filter(
-          //   symbol => tokens[symbol].tokenAddress === pool.lpTokenData.address || tokens[symbol].vaultAddress === pool.lpTokenData.address,
-          // )
-          // if(lpSymbol.length !== 0) {
-          const tokenInstance = await newContractInstance(
-            null,
-            pool.lpTokenData.address,
-            poolContractData.abi,
-            web3Client,
-          )
-
-          const fetchedStats = await getUserStats(
-            contractInstance,
-            tokenInstance,
-            pool.contractAddress,
-            pool.autoStakePoolAddress,
-            selectedAccount,
-            autoStakeContractInstance,
-          )
-
-          if (!isEqual(fetchedStats, currentStats[pool.id])) {
-            stats[pool.id] = fetchedStats
-          } else {
-            await pollUpdatedUserStats(
-              getUserStats(
-                contractInstance,
-                tokenInstance,
-                pool.contractAddress,
-                pool.autoStakePoolAddress,
-                selectedAccount,
-                autoStakeContractInstance,
-              ),
-              currentStats,
-              () => {
-                console.error(`Something went wrong during the fetching of ${pool.id} user stats`)
-              },
-              updatedStats => {
-                stats[pool.id] = updatedStats
-              },
+          if (pool) {
+            const web3Client = await getWeb3(pool.chain, false)
+            const contractInstance = await newContractInstance(
+              null,
+              pool.contractAddress,
+              poolContractData.abi,
+              web3Client,
             )
+            const autoStakeContractInstance = await newContractInstance(
+              null,
+              pool.autoStakePoolAddress,
+              poolContractData.abi,
+              web3Client,
+            )
+            // const lpSymbol = Object.keys(tokens).filter(
+            //   symbol => tokens[symbol].tokenAddress === pool.lpTokenData.address || tokens[symbol].vaultAddress === pool.lpTokenData.address,
+            // )
+            // if(lpSymbol.length !== 0) {
+            const tokenInstance = await newContractInstance(
+              null,
+              pool.lpTokenData.address,
+              poolContractData.abi,
+              web3Client,
+            )
+
+            const fetchedStats = await getUserStats(
+              contractInstance,
+              tokenInstance,
+              pool.contractAddress,
+              pool.autoStakePoolAddress,
+              selectedAccount,
+              autoStakeContractInstance,
+            )
+
+            if (!isEqual(fetchedStats, currentStats[pool.id])) {
+              stats[pool.id] = fetchedStats
+            } else {
+              await pollUpdatedUserStats(
+                getUserStats(
+                  contractInstance,
+                  tokenInstance,
+                  pool.contractAddress,
+                  pool.autoStakePoolAddress,
+                  selectedAccount,
+                  autoStakeContractInstance,
+                ),
+                currentStats,
+                () => {
+                  console.error(`Something went wrong during the fetching of ${pool.id} user stats`)
+                },
+                updatedStats => {
+                  stats[pool.id] = updatedStats
+                },
+              )
+            }
           }
           // }
         }),

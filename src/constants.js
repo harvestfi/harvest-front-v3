@@ -110,7 +110,7 @@ export const GRAPH_URLS = {
     'https://monkfish-app-mhcjl.ondigitalocean.app/42161',
   IPOR:
     process.env.REACT_APP_GRAPH_URL_IPOR ||
-    'https://api.studio.thegraph.com/query/48757/harvest-plasma-usdc-arbitrum-test/version/latest',
+    'https://api.studio.thegraph.com/query/48757/harvest-plasma-usdc-arbitrum/version/latest',
 }
 
 export const ETHERSCAN_URL = 'https://etherscan.io'
