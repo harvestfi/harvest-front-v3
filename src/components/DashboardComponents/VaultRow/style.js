@@ -201,4 +201,33 @@ const MobileContentContainer = styled.div`
   width: 100%;
 `
 
-export { DetailView, FlexDiv, BadgeIcon, Content, LogoImg, ContentInner, MobileContentContainer }
+const Autopilot = styled.div`
+  display: flex;
+  flex-flow: row;
+  border-radius: 13px;
+  justify-content: left;
+  align-items: center;
+  background: #ecfdf3;
+  color: #5dcf46;
+  padding: 3px 10px;
+  gap: 5px;
+  width: 85px;
+`
+
+const NewLabel = styled.div`
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 15px;
+`
+
+export {
+  DetailView,
+  FlexDiv,
+  BadgeIcon,
+  Content,
+  LogoImg,
+  ContentInner,
+  MobileContentContainer,
+  Autopilot,
+  NewLabel,
+}
