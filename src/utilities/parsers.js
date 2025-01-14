@@ -20,7 +20,6 @@ import { fromWei } from '../services/web3'
 export const totalNetProfitKey = 'TOTAL_NET_PROFIT'
 export const totalHistoryDataKey = 'TOTAL_HISTORY_DATA'
 export const vaultProfitDataKey = 'VAULT_LIFETIME_YIELD'
-export const totalRewardsDataKey = 'TOTAL_REWARDS_DATA'
 
 export const getNextEmissionsCutDate = () => {
   const result = new Date()
@@ -626,7 +625,9 @@ export const getMatchedVaultList = (allVaults, chainName, vaultsData, pools) => 
 export const mergeArrays = (rewardsAPIData, totalHistoryData) => {
   const rewardsData = rewardsAPIData.map(reward => ({
     event: 'Rewards',
+    symbol: reward.token.symbol,
     timestamp: reward.timestamp,
+    rewards: fromWei(reward.value, reward.token.decimals, reward.token.decimals, true),
     rewardsUSD:
       parseFloat(reward.price) *
       fromWei(reward.value, reward.token.decimals, reward.token.decimals, true),

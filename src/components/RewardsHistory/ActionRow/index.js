@@ -6,7 +6,6 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import GiftIcon from '../../../assets/images/logos/advancedfarm/gift-01.svg'
 import { formatDateTime, formatDateTimeMobile, formatNumber } from '../../../utilities/formats'
 import { Content, DetailView, FlexDiv, Badge, NetImg } from './style'
-import { fromWei } from '../../../services/web3'
 
 const ActionRow = ({ info }) => {
   const { rates } = useRate()
@@ -66,14 +65,9 @@ const ActionRow = ({ info }) => {
               color="#5FCF76"
               justifyContent={isMobile ? 'end' : 'start'}
               value={`${
-                info.price < 0.01
+                info.rewardsUSD < 0.01
                   ? `<${currencySym}0.01`
-                  : `≈${currencySym}${formatNumber(
-                      info.price *
-                        fromWei(info.value, info.token.decimals, info.token.decimals, true) *
-                        Number(currencyRate),
-                      2,
-                    )}`
+                  : `≈${currencySym}${formatNumber(info.rewardsUSD * Number(currencyRate), 2)}`
               }`}
             />
             <ListItem
@@ -82,7 +76,7 @@ const ActionRow = ({ info }) => {
               height={18}
               color="#8884D8"
               justifyContent={isMobile ? 'end' : 'start'}
-              value={fromWei(info.value, info.token.decimals, info.token.decimals, true)}
+              value={info.rewards}
             />
             <ListItem
               weight={400}
@@ -90,7 +84,7 @@ const ActionRow = ({ info }) => {
               height={18}
               color={fontColor}
               justifyContent={isMobile ? 'end' : 'start'}
-              value={info.token.symbol}
+              value={info.symbol}
             />
           </div>
         </Content>

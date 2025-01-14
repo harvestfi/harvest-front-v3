@@ -19,7 +19,13 @@ import COLLAPSED from '../../assets/images/ui/plus.svg'
 import { usePools } from '../../providers/Pools'
 import { addresses } from '../../data'
 import { useWallet } from '../../providers/Wallet'
-import { getChainIcon, getTotalApy, getVaultApy, getVaultValue } from '../../utilities/parsers'
+import {
+  getChainIcon,
+  getTotalApy,
+  getVaultApy,
+  getVaultValue,
+  vaultProfitDataKey,
+} from '../../utilities/parsers'
 import { usePortals } from '../../providers/Portals'
 import dropDown from '../../assets/images/ui/drop-down.e85f7fdc.svg'
 import { useThemeContext } from '../../providers/useThemeContext'
@@ -66,8 +72,6 @@ import {
   CurrencyDropDownMenu,
   CurrencyDropDownItem,
 } from './style'
-
-const vaultProfitDataKey = 'VAULT_LIFETIME_YIELD'
 
 const Migrate = () => {
   const location = useLocation()

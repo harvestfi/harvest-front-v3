@@ -11,6 +11,7 @@ import ActionRow from '../ActionRow'
 import { getRewardEntities } from '../../../utilities/apiCalls'
 import AdvancedImg from '../../../assets/images/logos/sidebar/advanced.svg'
 import { ROUTES } from '../../../constants'
+import { fromWei } from '../../../services/web3'
 import {
   TransactionDetails,
   HistoryPagination,
@@ -25,7 +26,7 @@ import {
   ExploreButtonStyle,
 } from './style'
 
-const RewardsData = ({ rewardsData: rewardsTotalData, account, token, isDashboard, noData }) => {
+const RewardsData = ({ historyData, account, token, isDashboard, noData, setNoData }) => {
   const { push } = useHistory()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const itemsPerPage = isMobile ? 5 : isDashboard ? 25 : 5
@@ -79,7 +80,9 @@ const RewardsData = ({ rewardsData: rewardsTotalData, account, token, isDashboar
     const initData = async () => {
       if (account) {
         if (isDashboard) {
+          const rewardsTotalData = historyData.filter(item => item.event === 'Rewards')
           setRewardsData(rewardsTotalData)
+          if (rewardsTotalData.length === 0) setNoData(true)
         } else {
           try {
             const { rewardsData: rewardsAPIData, rewardsFlag } = await getRewardEntities(
@@ -89,7 +92,17 @@ const RewardsData = ({ rewardsData: rewardsTotalData, account, token, isDashboar
             )
 
             if (isMounted && rewardsFlag) {
-              setRewardsData(rewardsAPIData)
+              const filteredRewardsData = rewardsAPIData.map(reward => ({
+                event: 'Rewards',
+                symbol: reward.token.symbol,
+                timestamp: reward.timestamp,
+                rewards: fromWei(reward.value, reward.token.decimals, reward.token.decimals, true),
+                rewardsUSD:
+                  parseFloat(reward.price) *
+                  fromWei(reward.value, reward.token.decimals, reward.token.decimals, true),
+              }))
+              setRewardsData(filteredRewardsData)
+              if (filteredRewardsData.length === 0) setNoData(true)
             }
           } catch (error) {
             console.log('An error ocurred', error)
@@ -103,7 +116,7 @@ const RewardsData = ({ rewardsData: rewardsTotalData, account, token, isDashboar
     return () => {
       isMounted = false
     }
-  }, [account, token, isDashboard, rewardsTotalData])
+  }, [account, token, isDashboard, historyData, setNoData])
 
   return (
     <TransactionDetails hasData={(connected && rewardsData?.length > 0) || '80vh'}>

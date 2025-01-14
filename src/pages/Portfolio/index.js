@@ -132,22 +132,16 @@ const Portfolio = () => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const { rates, updateCurrency } = useRate()
   const [curCurrency, setCurCurrency] = useState(supportedCurrencies[0])
-
   const [apiData, setApiData] = useState([])
   const [farmTokenList, setFarmTokenList] = useState([])
   const [filteredFarmList, setFilteredFarmList] = useState([])
   const [noFarm, setNoFarm] = useState(false)
-  const [vaultNetChangeList, setVaultNetChangeList] = useState([])
-  const [totalNetProfit, setTotalNetProfit] = useState(0)
-  const [totalHistoryData, setTotalHistoryData] = useState([])
   const [totalDeposit, setTotalDeposit] = useState(0)
   const [totalRewards, setTotalRewards] = useState(0)
   const [totalYieldDaily, setTotalYieldDaily] = useState(0)
   const [totalYieldMonthly, setTotalYieldMonthly] = useState(0)
   const [totalYieldYearly, setTotalYieldYearly] = useState(0)
-
   const [depositToken, setDepositToken] = useState([])
-
   const [sortOrder, setSortOrder] = useState(false)
   const [showLatestYield, setShowLatestYield] = useState(false)
   const [currencySym, setCurrencySym] = useState('$')
@@ -156,17 +150,17 @@ const Portfolio = () => {
   const [oneDayYield, setOneDayYield] = useState(0)
   const [showAddress, setShowAddress] = useState(true)
   const [onceRun, setOnceRun] = useState(false)
+  const [totalNetProfit, setTotalNetProfit] = useState(() => {
+    return Number(localStorage.getItem(totalNetProfitKey) || '0')
+  })
+  const [vaultNetChangeList, setVaultNetChangeList] = useState(() => {
+    return JSON.parse(localStorage.getItem(vaultProfitDataKey) || '[]')
+  })
+  const [totalHistoryData, setTotalHistoryData] = useState(() => {
+    return JSON.parse(localStorage.getItem(totalHistoryDataKey) || '[]')
+  })
 
   useEffect(() => {
-    const prevTotalProfit = Number(localStorage.getItem(totalNetProfitKey) || '0')
-    setTotalNetProfit(prevTotalProfit)
-
-    const prevTotalHistoryData = JSON.parse(localStorage.getItem(totalHistoryDataKey) || '[]')
-    setTotalHistoryData(prevTotalHistoryData)
-
-    const prevVaultProfitData = JSON.parse(localStorage.getItem(vaultProfitDataKey) || '[]')
-    setVaultNetChangeList(prevVaultProfitData)
-
     const getCoinList = async () => {
       const data = await getCoinListFromApi()
       setApiData(data)
@@ -796,6 +790,7 @@ const Portfolio = () => {
           )
           setTotalHistoryData(sortedCombinedEnrichedArray)
           localStorage.setItem(totalHistoryDataKey, JSON.stringify(sortedCombinedEnrichedArray))
+          console.log(sortedCombinedEnrichedArray)
         }
 
         getNetProfitValue()
@@ -943,22 +938,6 @@ const Portfolio = () => {
       toolTip:
         'Estimated yearly yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.',
     },
-    // {
-    //   icon: Coin1,
-    //   content: 'Monthly Forecast',
-    //   price: totalYieldMonthly,
-    //   toolTipTitle: 'tt-monthly-yield',
-    //   toolTip:
-    //     'Estimated monthly yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.',
-    // },
-    // {
-    //   icon: Coin2,
-    //   content: 'Daily Yield Forecast',
-    //   price: totalYieldDaily,
-    //   toolTipTitle: 'tt-daily-yield',
-    //   toolTip:
-    //     'Estimated daily yield on all your fTokens, denominated in USD. Note that displayed amounts are subject to change due to the live pricing of underlying tokens.',
-    // },
   ]
 
   return (
@@ -1129,7 +1108,6 @@ const Portfolio = () => {
                   historyData={totalHistoryData}
                   noData={noFarm}
                   setOneDayYield={setOneDayYield}
-                  isLoading={isLoading}
                 />
               </YieldTable>
             )}

@@ -313,6 +313,7 @@ const AdvancedFarm = () => {
   const [threeSixtyDHarvest, setThreeSixtyDHarvest] = useState('')
   const [harvestFrequency, setHarvestFrequency] = useState('')
   const [rewardTokenData, setRewardTokenData] = useState()
+  const [noRewardsData, setNoRewardsData] = useState(false)
 
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
@@ -2245,7 +2246,13 @@ const AdvancedFarm = () => {
                 {activeHarvests ? (
                   <EarningsHistory historyData={historyData} isDashboard={false} noData />
                 ) : (
-                  <RewardsHistory account={account} token={token} isDashboard={false} noData />
+                  <RewardsHistory
+                    account={account}
+                    token={token}
+                    isDashboard={false}
+                    noData={noRewardsData}
+                    setNoData={setNoRewardsData}
+                  />
                 )}
               </>
             ) : (
