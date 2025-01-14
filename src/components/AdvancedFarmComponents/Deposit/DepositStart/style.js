@@ -188,7 +188,7 @@ const Buttons = styled.button`
   width: 100%;
 
   &:hover {
-    background: #56d73c;
+    background: ${props => props.hoverColor};
   }
 
   &:active {

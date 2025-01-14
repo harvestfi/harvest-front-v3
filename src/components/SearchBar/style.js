@@ -70,7 +70,7 @@ const SearchBtn = styled.button`
   border: none;
 
   &:hover {
-    background: #56d73c;
+    background: ${props => props.hoverColor};
   }
 
   img {

@@ -441,6 +441,7 @@ const QuickFilter = ({
     fontColor4,
     hoverColor,
     inputFontColor,
+    btnHoverColor,
   } = useThemeContext()
 
   return (
@@ -818,6 +819,7 @@ const QuickFilter = ({
                     <div>Show inactive</div>
                   </CheckBoxDiv>
                   <ApplyFilterBtn
+                    hoverColor={btnHoverColor}
                     type="button"
                     onClick={() => {
                       if (riskId !== -1) {

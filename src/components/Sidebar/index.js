@@ -324,7 +324,7 @@ const Sidebar = ({ width }) => {
     toggleColor,
     borderColorBox,
     hoverColor,
-    hoverColorButton,
+    btnHoverColor,
     hoverColorSide,
     toggleBackColor,
     sidebarFontColor,
@@ -432,7 +432,7 @@ const Sidebar = ({ width }) => {
                       inputBorderColor={inputBorderColor}
                       bordercolor={fontColor}
                       disabled={disableWallet}
-                      hoverColor={hoverColorButton}
+                      hoverColor={btnHoverColor}
                     >
                       Connect
                     </ConnectButtonStyle>
@@ -655,7 +655,7 @@ const Sidebar = ({ width }) => {
                         inputBorderColor={inputBorderColor}
                         bordercolor={fontColor}
                         disabled={disableWallet}
-                        hoverColor={hoverColorButton}
+                        hoverColor={btnHoverColor}
                       >
                         Connect
                       </ConnectButtonStyle>

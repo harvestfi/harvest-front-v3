@@ -74,6 +74,7 @@ const DepositStart = ({
     fontColor3,
     bgColorSlippage,
     borderColor,
+    btnHoverColor,
   } = useThemeContext()
   const { account, web3, approvedBalances, getWalletBalances } = useWallet()
 
@@ -635,6 +636,7 @@ const DepositStart = ({
               )}
             </SlippageBox>
             <Buttons
+              hoverColor={btnHoverColor}
               onClick={() => {
                 startDeposit()
               }}
@@ -718,7 +720,7 @@ const DepositStart = ({
                 }
                 bgColor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#5dcf46'}
                 cursor={customSlippage === null || customSlippage === 0 ? 'not-allowed' : 'pointer'}
-                hoverColor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#56d73c'}
+                hoverColor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#51e932'}
                 activeColor={
                   customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#46eb25'
                 }

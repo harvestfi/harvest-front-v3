@@ -252,7 +252,7 @@ const ConnectButtonStyle = styled.button`
   padding: 7.32px 10.98px;
 
   &:hover {
-    background: #56d73c;
+    background: ${props => props.hoverColor};
   }
 
   @media screen and (max-width: 992px) {

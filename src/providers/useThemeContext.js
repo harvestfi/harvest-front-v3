@@ -66,7 +66,7 @@ export function ThemeProvider({ children }) {
   const modalInputColor = darkMode ? '#242C3C' : '#ffffff'
 
   const btnColor = '#5dcf46'
-  const btnHoverColor = '#56d73c'
+  const btnHoverColor = '#51e932'
   const btnActiveColor = '#4bd72f'
   const highlightColor = darkMode ? '#bfbfbf' : '#F4F4F4'
 

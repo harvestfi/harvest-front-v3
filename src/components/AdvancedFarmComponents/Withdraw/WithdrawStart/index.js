@@ -100,6 +100,7 @@ const WithdrawStart = ({
     borderColor,
     bgColorMessage,
     hoverColorAVR,
+    btnHoverColor,
   } = useThemeContext()
   const { account, web3 } = useWallet()
   const { fetchUserPoolStats, userStats, pools } = usePools()
@@ -913,6 +914,7 @@ const WithdrawStart = ({
               )}
             </SlippageBox>
             <Buttons
+              hoverColor={btnHoverColor}
               onClick={() => {
                 startWithdraw()
               }}
@@ -996,7 +998,7 @@ const WithdrawStart = ({
                 }
                 bgColor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#5dcf46'}
                 cursor={customSlippage === null || customSlippage === 0 ? 'not-allowed' : 'pointer'}
-                hoverColor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#56d73c'}
+                hoverColor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#51e932'}
                 activeColor={
                   customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#46eb25'
                 }

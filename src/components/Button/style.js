@@ -224,7 +224,7 @@ ${props =>
           !props.disabled
             ? `
         &:hover {
-          background: #56d73c;
+          background: #51e932;
         }`
             : ''
         }

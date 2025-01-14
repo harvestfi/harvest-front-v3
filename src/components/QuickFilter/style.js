@@ -383,7 +383,7 @@ const ClearFilter = styled.div`
   align-items: center;
 
   &:hover {
-    color: #036666;
+    color: #5dcf46;
   }
 
   @media screen and (max-width: 1480px) {
@@ -1242,7 +1242,7 @@ const ApplyFilterBtn = styled.button`
   opacity: 1;
 
   &:hover {
-    background: #56d73c;
+    background: ${props => props.hoverColor};
   }
 `
 
