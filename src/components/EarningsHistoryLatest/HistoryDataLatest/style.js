@@ -34,7 +34,6 @@ const ContentBox = styled.div`
 
   @media screen and (max-width: 992px) {
     border: unset;
-    border-bottom: 1px solid ${props => props.borderColor};
   }
 `
 

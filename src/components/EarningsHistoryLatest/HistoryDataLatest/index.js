@@ -45,14 +45,14 @@ const HistoryDataLatest = ({ historyData, noData, setOneDayYield }) => {
     }
   }, [totalLength]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const { borderColorTable, fontColor, highlightColor } = useThemeContext()
+  const { fontColor, highlightColor } = useThemeContext()
   const { connected } = useWallet()
 
   return (
     <TransactionDetails hasData={(connected && filteredHistoryData?.length > 0) || 'unset'}>
       <TableContent>
         {connected && filteredHistoryData?.length > 0 ? (
-          <ContentBox borderColor={borderColorTable}>
+          <ContentBox>
             {filteredHistoryData
               .map((el, i) => {
                 const info = filteredHistoryData[i]

@@ -52,7 +52,6 @@ export function ThemeProvider({ children }) {
   const pilotBorderColor2 = darkMode ? '#F2F5FF' : '#F3F6FF'
   const pilotButtonColor1 = '#5DCF46'
   const pilotButtonColor2 = '#7F9BFF'
-  const borderColorTable = darkMode ? '#1F242F' : '#E6ECFF'
   const inputBorderColor = darkMode ? '#1F242F' : '#d0d5dd'
   const hoverColor = darkMode ? '#1F242F' : '#e9f0f7'
   const hoverColorRow = darkMode ? '#282D3A' : '#F7F9FF'
@@ -222,7 +221,6 @@ export function ThemeProvider({ children }) {
         btnColor,
         btnHoverColor,
         btnActiveColor,
-        borderColorTable,
         inputBorderColor,
         hoverColor,
         hoverColorRow,

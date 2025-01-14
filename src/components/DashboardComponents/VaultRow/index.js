@@ -26,7 +26,7 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey, darkMo
     hoverColorRow,
     fontColor1,
     fontColor,
-    borderColorTable,
+    borderColorBox,
   } = useThemeContext()
 
   const { rates } = useRate()
@@ -45,7 +45,7 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey, darkMo
       className="position-row"
       firstElement={firstElement}
       lastElement={lastElement}
-      borderColor={borderColorTable}
+      borderColor={borderColorBox}
       hoverColor={hoverColorRow}
       key={cKey}
       mode={switchMode}

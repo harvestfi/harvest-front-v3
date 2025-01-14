@@ -19,7 +19,7 @@ const ActionRow = ({ info }) => {
   const [currencyRate, setCurrencyRate] = useState(1)
   const [badgeUrl, setBadgeUrl] = useState(ETHEREUM)
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const { darkMode, switchMode, borderColorTable, hoverColorRow, bgColorNew } = useThemeContext()
+  const { darkMode, switchMode, borderColorBox, hoverColorRow, bgColorNew } = useThemeContext()
 
   useEffect(() => {
     const chainId = info.chain
@@ -46,7 +46,7 @@ const ActionRow = ({ info }) => {
   return (
     <DetailView
       className="latest-yield-row"
-      borderColor={borderColorTable}
+      borderColor={borderColorBox}
       hoverColor={hoverColorRow}
       mode={switchMode}
       style={{

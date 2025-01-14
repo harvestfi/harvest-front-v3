@@ -122,7 +122,6 @@ const Portfolio = () => {
     fontColor1,
     fontColor2,
     borderColor,
-    borderColorTable,
     borderColorBox,
     inputBorderColor,
     btnHoverColor,
@@ -876,13 +875,12 @@ const Portfolio = () => {
       toolTipTitle: 'tt-total-profit',
       toolTip: (
         <>
-          Your wallet&apos;s lifetime yield with Harvest originating from &apos;harvest&apos;
-          events. It shows the value of your accumulated yield in the currency you chose (USD, EUR,
-          etc.) at the time of each harvest event.
+          This metric represents your wallet&apos;s total lifetime yield from Harvest, including
+          both &apos;harvest&apos; events and claimed rewards.
           <br />
           <br />
-          Note: This does not include Claimable Rewards or yield originating from Liquidity
-          Provision.
+          Note: Yield from Liquidity Provision activities is not included in this metric or its
+          associated chart.
         </>
       ),
     },
@@ -1190,7 +1188,7 @@ const Portfolio = () => {
             <div className="table-title">Positions</div>
             <TransactionDetails>
               <TableContent count={farmTokenList.length}>
-                <Header borderColor={borderColorTable} backColor={bgColorNew}>
+                <Header borderColor={borderColorBox} backColor={bgColorNew}>
                   {positionHeader.map((data, index) => (
                     <Column key={index} width={data.width} color={fontColor}>
                       <Col
@@ -1204,7 +1202,7 @@ const Portfolio = () => {
                   ))}
                 </Header>
                 {connected && farmTokenList.length > 0 ? (
-                  <ContentBox borderColor={borderColorTable}>
+                  <ContentBox borderColor={borderColorBox}>
                     {showInactiveFarms
                       ? farmTokenList.map((el, i) => {
                           const info = farmTokenList[i]
@@ -1261,7 +1259,7 @@ const Portfolio = () => {
                   !noFarm ? (
                     <SkeletonLoader isPosition="true" />
                   ) : (
-                    <EmptyPanel borderColor={borderColorTable} height="400px">
+                    <EmptyPanel borderColor={borderColorBox} height="400px">
                       <EmptyInfo
                         height="100%"
                         weight={500}
@@ -1294,7 +1292,7 @@ const Portfolio = () => {
                     </EmptyPanel>
                   )
                 ) : (
-                  <EmptyPanel borderColor={borderColorTable} height="400px">
+                  <EmptyPanel borderColor={borderColorBox} height="400px">
                     <EmptyInfo height="100%" flexFlow="column" gap="0px">
                       <EmptyInfo weight={500} size={14} lineHeight={20} color={fontColor}>
                         Connect wallet to see your positions.
