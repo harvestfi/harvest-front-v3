@@ -206,8 +206,6 @@ const Activity = () => {
           )
           setTotalHistoryData(sortedCombinedEnrichedArray)
           localStorage.setItem(totalHistoryDataKey, JSON.stringify(sortedCombinedEnrichedArray))
-
-          console.log({ rewardsAPIData, sortedCombinedEnrichedArray })
         }
 
         getNetProfitValue()

@@ -790,7 +790,6 @@ const Portfolio = () => {
           )
           setTotalHistoryData(sortedCombinedEnrichedArray)
           localStorage.setItem(totalHistoryDataKey, JSON.stringify(sortedCombinedEnrichedArray))
-          console.log(sortedCombinedEnrichedArray)
         }
 
         getNetProfitValue()
