@@ -733,7 +733,7 @@ const Portfolio = () => {
                 ? token.data.collateralAddress
                 : token.vaultAddress || token.tokenAddress
 
-              const iporVFlag = symbol === 'IPOR_USDC_arbitrum'
+              const iporVFlag = token.isIPORVault ?? false
               const { sumNetChangeUsd, enrichedData } = await initBalanceAndDetailData(
                 paramAddress,
                 useIFARM ? token.data.chain : token.chain,

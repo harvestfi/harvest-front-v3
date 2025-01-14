@@ -74,12 +74,7 @@ const DesktopPanelHeader = ({
             ? token.data.collateralAddress
             : token.vaultAddress || token.tokenAddress
           setPrevPage(window.location.href)
-          let url
-          if (token.isIPORVault) {
-            url = `${directDetailUrl}autopilot`
-          } else {
-            url = `${directDetailUrl}${network}/${address}${location.search}`
-          }
+          const url = `${directDetailUrl}${network}/${address}${location.search}`
           if (e.ctrlKey) {
             window.open(url, '_blank')
           } else {
