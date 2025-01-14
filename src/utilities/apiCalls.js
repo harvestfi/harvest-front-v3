@@ -755,7 +755,7 @@ export const getPriceFeeds = async (
 
   if (data && data.priceFeeds && Array.isArray(data.priceFeeds)) {
     priceFeedData.push(...data.priceFeeds)
-    const dataTimestamp = priceFeedData[priceFeedData.length - 1].timestamp
+    const dataTimestamp = priceFeedData[priceFeedData.length - 1]?.timestamp
     if (Number(dataTimestamp) > Number(firstTimeStamp)) {
       return getPriceFeeds(
         address,
