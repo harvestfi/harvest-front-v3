@@ -68,13 +68,12 @@ const LifetimeYieldData = ({ noData, totalHistoryData }) => {
                 height={isMobile ? '15px' : '18px'}
                 weight="600"
               >
-                Your wallet&apos;s lifetime yield with Harvest originating from &apos;harvest&apos;
-                events. It shows the value of your accumulated yield in the currency you chose (USD,
-                EUR, etc.) at the time of each harvest event.
+                This metric represents your wallet&apos;s total lifetime yield from Harvest,
+                including both &apos;harvest&apos; events and claimed rewards.
                 <br />
                 <br />
-                Note: This does not include Claimable Rewards or yield originating from Liquidity
-                Provision.
+                Note: Yield from Liquidity Provision activities is not included in this metric or
+                its associated chart.
               </NewLabel>
             </ReactTooltip>
           </div>
