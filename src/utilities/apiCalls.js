@@ -393,6 +393,113 @@ export const getDataQuery = async (
   return chartData
 }
 
+export const getRewardEntities = async (account, address, chainId) => {
+  let rewardsData = [],
+    rewardsFlag = true
+
+  address = address.toLowerCase()
+  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
+  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
+  const vaultAddress = address === farm ? ifarm : address
+
+  if (account) {
+    account = account.toLowerCase()
+  }
+
+  const query = `
+    query getRewardEntities($vault: String!, $account: String!) {
+      rewardPaidEntities(
+        first:1000,
+        where: {
+          userAddress: $account,
+          pool_: {
+            vault: $vault,
+          }
+        },
+        orderBy: timestamp,
+        orderDirection: desc,
+      ) {
+        price,
+        value,
+        pool {
+          vault {
+            id
+          }
+        },
+        token {
+          symbol,
+          decimals,
+        },
+        timestamp,
+      }
+    }
+  `
+  const variables = { vault: vaultAddress, account }
+  const url = GRAPH_URLS[chainId]
+
+  const data = await executeGraphCall(url, query, variables)
+  rewardsData = data ? data.rewardPaidEntities : []
+
+  if (!rewardsData || rewardsData.length === 0) {
+    rewardsFlag = false
+  }
+
+  return { rewardsData, rewardsFlag }
+}
+
+export const getAllRewardEntities = async account => {
+  const rewardsAPIData = []
+
+  if (account) {
+    account = account.toLowerCase()
+  }
+
+  const query = `
+    query getRewardEntities($account: String!) {
+      rewardPaidEntities(
+        first:1000,
+        where: {
+          userAddress: $account,
+        },
+        orderBy: timestamp,
+        orderDirection: desc,
+      ) {
+        price,
+        value,
+        pool {
+          vault {
+            id
+          }
+        },
+        token {
+          symbol,
+          decimals,
+        },
+        timestamp,
+      }
+    }
+  `
+  const variables = { account }
+  const urls = [
+    GRAPH_URLS[CHAIN_IDS.ETH_MAINNET],
+    GRAPH_URLS[CHAIN_IDS.POLYGON_MAINNET],
+    GRAPH_URLS[CHAIN_IDS.BASE],
+    GRAPH_URLS[CHAIN_IDS.ARBITRUM_ONE],
+  ]
+
+  const results = await Promise.all(urls.map(url => executeGraphCall(url, query, variables)))
+  results.forEach(userRewardsData => {
+    if (userRewardsData && Array.isArray(userRewardsData.rewardPaidEntities)) {
+      userRewardsData.rewardPaidEntities.forEach(reward => {
+        rewardsAPIData.push(reward)
+      })
+    }
+  })
+  rewardsAPIData.sort((a, b) => b.timestamp - a.timestamp)
+
+  return { rewardsAPIData }
+}
+
 export const getIPORDataQuery = async (vaultTVLCount, asQuery, timestamp, chartData = {}) => {
   const sequenceIdsArray = []
   if (vaultTVLCount > 10000) {

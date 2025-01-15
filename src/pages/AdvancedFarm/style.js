@@ -1,9 +1,10 @@
 import styled from 'styled-components'
+import BgImage from '../../assets/images/logos/advancedfarm/texture.webp'
 
 const DetailView = styled.div`
   width: 100%;
-  margin-left: 280px;
-  background: ${props => props.bgColor};
+  margin-left: 260px;
+  background: ${props => props.backColor};
   color: ${props => props.fontColor};
   transition: 0.25s;
 
@@ -14,6 +15,7 @@ const DetailView = styled.div`
 `
 
 const Inner = styled.div`
+  background: ${props => props.backColor};
   padding: 25px 72px 200px 76px;
   display: flex;
   justify-content: center;
@@ -33,9 +35,7 @@ const Inner = styled.div`
 `
 
 const TopInner = styled.div`
-  background: ${props => props.bgColorFarm};
-  background-size: cover;
-  background-repeat: no-repeat;
+  background: ${props => (props.darkMode ? `url(${BgImage})` : '#f2f5ff')};
   padding: 50px 72px 0px 76px;
   display: flex;
   justify-content: center;
@@ -134,15 +134,52 @@ const RewardValue = styled.div`
   }
 `
 
+const SwitchTabTag = styled.div`
+  width: 50%;
+  transition: 0.25s;
+  color: ${props => props.color};
+  background: ${props => props.backColor};
+  box-shadow: ${props => props.boxShadow};
+  padding: 8px 12px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+
+  svg {
+    font-size: 16px;
+    margin: auto 0px;
+  }
+
+  p {
+    margin-bottom: 0px;
+    padding-left: 5px;
+    font-size: 14px;
+    line-height: 20px;
+  }
+`
+
 const NewLabel = styled.div`
   font-weight: ${props => props.weight || '400'};
   font-size: ${props => props.size || '20px'};
   line-height: ${props => props.height || '0px'};
 
   ${props =>
+    props.backColor
+      ? `
+    background: ${props.backColor};
+  `
+      : ''}
+  ${props =>
     props.cursor
       ? `
     cursor: ${props.cursor};
+  `
+      : ''}
+  ${props =>
+    props.border
+      ? `
+    border: ${props.border};
   `
       : ''}
   ${props =>
@@ -233,6 +270,12 @@ const NewLabel = styled.div`
     props.borderRadius
       ? `
     border-radius: ${props.borderRadius};
+    `
+      : ``}
+  ${props =>
+    props.transition
+      ? `
+    transition: ${props.transition};
     `
       : ``}
 
@@ -1206,17 +1249,37 @@ const MainTag = styled.div`
   line-height: 20px;
   cursor: pointer;
   color: ${props => props.fontColor4};
+  transition: 0.25s;
+
+  &:hover {
+    background: ${props => props.backColor};
+    ${props => (props.active === 'true' ? 'opacity: 1;' : 'opacity: 0.8;')}
+
+    &:first-child {
+      border-radius: 8px 0px 0px 0px;
+    }
+
+    &:nth-child(4) {
+      border-radius: 0px 8px 0px 0px;
+    }
+  }
 
   ${props =>
     props.active === 'true'
       ? `
-      background: ${props.bgColor};
-      border-radius: 6px 6px 0px 0px;
+      background: ${props.backColor};
     `
       : `
       color: ${props.fontColor3};
-      background: ${props.bgColorFarm};
     `}
+
+  &:first-child {
+    ${props => props.active === 'true' && `border-radius: 8px 0px 0px 0px;`}
+  }
+
+  &:nth-child(4) {
+    ${props => props.active === 'true' && `border-radius: 0px 8px 0px 0px;`}
+  }
 
   &:nth-child(2) {
     display: ${props => (props.useIFARM ? 'none' : 'flex')};
@@ -1418,7 +1481,8 @@ const MainTagPanel = styled.div`
   display: flex;
   justify-content: space-between;
   width: 50%;
-  border-radius: 8px;
+  border-radius: 8px 8px 0px 0px;
+  background: rgba(245, 245, 245, 0.12);
 
   @media screen and (max-width: 1200px) {
     width: 55%;
@@ -1536,13 +1600,15 @@ const CrossDiv = styled.div`
 
 const StakingInfo = styled.div`
   padding: 16px;
-  background: #fcfcfd;
-  border: 1px solid #d0d5dd;
+  background: ${props => props.bgColorTooltip};
+  border: 1px solid ${props => props.borderColor};
+  color: ${props => props.fontColorTooltip};
   border-radius: 12px;
   display: ${props => props.display};
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 25px;
+  gap: 12px;
 `
 
 const StakingInfoText = styled.div`
@@ -1623,5 +1689,6 @@ export {
   NetDetailContent,
   NetDetailImg,
   RewardValue,
+  SwitchTabTag,
   Tip,
 }

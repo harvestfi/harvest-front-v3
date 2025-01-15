@@ -28,6 +28,7 @@ import {
   HeaderButton,
   BackArrow,
 } from './style'
+import { handleToggle } from '../../utilities/parsers'
 
 const Autopilot = () => {
   const {
@@ -110,7 +111,7 @@ const Autopilot = () => {
         >
           <HeaderTitle fontColor={fontColor} fontColor1={fontColor1}>
             {!viewPositions && (
-              <BackArrow onClick={() => setViewPositions(prev => !prev)}>
+              <BackArrow onClick={handleToggle(setViewPositions)}>
                 <BiLeftArrowAlt fontSize={20} />
                 Back
               </BackArrow>
@@ -188,7 +189,7 @@ const Autopilot = () => {
                 color={fontColor2}
                 backColor={backColorButton}
                 hovercolor={hoverColorNew}
-                onClick={() => setViewPositions(prev => !prev)}
+                onClick={handleToggle(setViewPositions)}
                 darkMode={darkMode}
               >
                 <img src={BankNote} alt="money" />

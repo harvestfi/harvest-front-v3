@@ -46,18 +46,15 @@ const LeaderBoard = () => {
   const { profitShareAPY } = useStats()
   const { totalPools } = usePools()
   const {
-    bgColor,
-    backColor,
+    bgColorNew,
     fontColor,
-    borderColor,
+    borderColorBox,
     darkMode,
-    backColorButton,
     hoverColorNew,
     fontColor1,
     fontColor2,
     hoverColor,
     inputBorderColor,
-    bgColorFarm,
     filterColor,
   } = useThemeContext()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
@@ -255,7 +252,7 @@ const LeaderBoard = () => {
   }, [sortedByEfficiency, account]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return isMobile ? (
-    <Container bgColor={bgColor} fontColor={fontColor}>
+    <Container bgColor={bgColorNew} fontColor={fontColor}>
       <Inner style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
         <LeaderBoardTop>
           <div>
@@ -270,13 +267,14 @@ const LeaderBoard = () => {
             <Dropdown>
               <CurrencyDropDown
                 id="dropdown-basic"
-                bgcolor={backColorButton}
+                bgcolor={bgColorNew}
                 fontcolor2={fontColor2}
                 hovercolor={hoverColorNew}
                 style={{ padding: 0 }}
               >
                 <CurrencySelect
-                  backcolor={backColor}
+                  backcolor={bgColorNew}
+                  borderColor={borderColorBox}
                   fontcolor2={fontColor2}
                   hovercolor={hoverColor}
                 >
@@ -284,7 +282,7 @@ const LeaderBoard = () => {
                   <img src={dropDown} alt="Chevron Down" />
                 </CurrencySelect>
               </CurrencyDropDown>
-              <CurrencyDropDownMenu backcolor={backColorButton}>
+              <CurrencyDropDownMenu backcolor={bgColorNew} borderColor={borderColorBox}>
                 <CurrencyDropDownItem
                   onClick={() => {
                     handleItemClick('Top Allocation')
@@ -334,10 +332,10 @@ const LeaderBoard = () => {
         </div>
       </Inner>
       <Inner style={{ padding: '0px', borderRadius: '0px' }}>
-        <TableContent borderColor={borderColor} count={100}>
+        <TableContent borderColor={borderColorBox} count={100}>
           <Header
-            borderColor={borderColor}
-            backColor={darkMode ? '#20273A' : '#ffffff'}
+            borderColor={borderColorBox}
+            backColor={bgColorNew}
             borderRadius="0px"
             padding="0px"
           >
@@ -425,7 +423,7 @@ const LeaderBoard = () => {
           pageCount={pageCount}
           onPageChange={handlePageClick}
           isMobile={isMobile}
-          bgColor={bgColorFarm}
+          bgColor={bgColorNew}
           fontColor={fontColor}
           fontColor1={fontColor1}
           fontColor2={fontColor2}
@@ -434,7 +432,7 @@ const LeaderBoard = () => {
       </Inner>
     </Container>
   ) : (
-    <Container bgColor={bgColor} fontColor={fontColor}>
+    <Container bgColor={bgColorNew} fontColor={fontColor}>
       <Inner>
         <LeaderBoardTop>
           <div>
@@ -459,10 +457,10 @@ const LeaderBoard = () => {
               ))}
           </div>
         </LeaderBoardTop>
-        <SpaceLine />
+        <SpaceLine borderColor={borderColorBox} />
         <TransactionDetails>
-          <TableContent borderColor={borderColor} count={100}>
-            <Header borderColor={borderColor} backColor={darkMode ? '#20273A' : '#f9fafb'}>
+          <TableContent borderColor={borderColorBox} count={100}>
+            <Header borderColor={borderColorBox} backColor={bgColorNew}>
               <Column width={isMobile ? '5%' : '10%'} color={fontColor}>
                 <Col>#</Col>
               </Column>
@@ -583,7 +581,7 @@ const LeaderBoard = () => {
             pageCount={pageCount}
             onPageChange={handlePageClick}
             isMobile={isMobile}
-            bgColor={bgColorFarm}
+            bgColor={bgColorNew}
             fontColor={fontColor}
             fontColor1={fontColor1}
             fontColor2={fontColor2}

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import Tutorial from './pages/Tutorial'
-import BeginnersFarm from './pages/BeginnersFarm'
+import Settings from './pages/Settings'
 import Autopilot from './pages/Autopilot'
 import Portfolio from './pages/Portfolio'
 import Farm from './pages/Farm'
@@ -11,6 +11,7 @@ import Analytic from './pages/Analytic'
 import FAQ from './pages/FAQ'
 import Sidebar from './components/Sidebar'
 import AdvancedFarm from './pages/AdvancedFarm'
+import Activity from './pages/Activity'
 import Charts from './pages/Charts'
 import { ROUTES } from './constants'
 import { Body, GlobalStyle } from './components/GlobalStyle'
@@ -75,11 +76,10 @@ const App = () => (
       <ToastContainer />
       <NewLoginModal />
       <Body id="page-content">
-        <Sidebar width="280px" />
+        <Sidebar width="260px" />
         <Switch>
           <Route exact path={ROUTES.PORTFOLIO} component={Portfolio} />
           <Route exact path={ROUTES.TUTORIAL} component={Tutorial} />
-          <Route exact path={ROUTES.BEGINNERSFARM} component={BeginnersFarm} />
           <Route exact path={ROUTES.AUTOPILOT} component={Autopilot} />
           <Route exact path={ROUTES.ADVANCED} component={Farm} />
           <Route exact path={ROUTES.LiveSupport} component={LiveSupport} />
@@ -89,6 +89,8 @@ const App = () => (
           <Route exact path={ROUTES.CHARTS} component={Charts} />
           <Route exact path={ROUTES.LEADERBOARD} component={LeaderBoard} />
           <Route exact path={ROUTES.MIGRATE} component={Migrate} />
+          <Route exact path={ROUTES.SETTINGS} component={Settings} />
+          <Route exact path={ROUTES.ACTIVITY} component={Activity} />
         </Switch>
       </Body>
     </Providers>
@@ -96,14 +98,14 @@ const App = () => (
 )
 
 const GlobalStyleWrapper = () => {
-  const { bgColorModal, fontColor3, fontColor1, backColor, inputBorderColor } = useThemeContext()
+  const { bgColorModal, fontColor3, fontColor1, bgColorNew, inputBorderColor } = useThemeContext()
 
   return (
     <GlobalStyle
       bgColorModal={bgColorModal}
       fontColor3={fontColor3}
       fontColor1={fontColor1}
-      backColor={backColor}
+      backColor={bgColorNew}
       inputBorderColor={inputBorderColor}
     />
   )

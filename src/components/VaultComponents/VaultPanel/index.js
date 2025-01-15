@@ -72,7 +72,11 @@ const VaultPanel = ({ token, loaded, tokenSymbol, tokenNum, vaultsCount, ...prop
 
   return (
     <>
-      <VaultContainer hoverColor={hoverColor} lastElement={vaultsCount === tokenNum}>
+      <VaultContainer
+        display={token.platform[0] && token.platform[0] === 'Autopilot' ? 'none' : 'flex'}
+        hoverColor={hoverColor}
+        lastElement={vaultsCount === tokenNum}
+      >
         <VaultPanelHeader
           token={token}
           tokenSymbol={tokenSymbol}
