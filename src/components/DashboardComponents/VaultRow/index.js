@@ -7,6 +7,7 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { chainList, directDetailUrl } from '../../../constants'
 import { useRate } from '../../../providers/Rate'
 import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
+import Diamond from '../../../assets/images/logos/diamond.svg'
 import {
   BadgeIcon,
   Content,
@@ -15,6 +16,8 @@ import {
   LogoImg,
   ContentInner,
   MobileContentContainer,
+  Autopilot,
+  NewLabel,
 } from './style'
 
 const VaultRow = ({
@@ -79,6 +82,7 @@ const VaultRow = ({
         const address = isSpecialVault
           ? token.data.collateralAddress
           : token.vaultAddress || token.tokenAddress
+
         push(`${directDetailUrl + network}/${address}?from=portfolio`)
       }}
     >
@@ -116,13 +120,20 @@ const VaultRow = ({
                   marginTop={isMobile ? 15 : 0}
                   color={fontColor1}
                 />
-                <ListItem
-                  weight={400}
-                  size={12}
-                  height={18}
-                  value={info.platform}
-                  color={fontColor}
-                />
+                {info.platform === 'Autopilot' ? (
+                  <Autopilot>
+                    <img src={Diamond} width="12" height="12" alt="" />
+                    <NewLabel>{info.platform}</NewLabel>
+                  </Autopilot>
+                ) : (
+                  <ListItem
+                    weight={400}
+                    size={12}
+                    height={18}
+                    value={info.platform}
+                    color={fontColor}
+                  />
+                )}
               </ContentInner>
             </Content>
             <Content width={isMobile ? '25%' : '15%'} marginTop={isMobile ? '15px' : 'unset'}>

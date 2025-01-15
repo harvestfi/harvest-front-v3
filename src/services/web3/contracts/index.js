@@ -26,6 +26,9 @@ import ReaderBaseMethods from './reader-base/methods'
 import ReaderZksyncContract from './reader-zksync/contract.json'
 import ReaderZksyncMethods from './reader-zksync/methods'
 
+import IporVaultContract from './ipor-vault/contract.json'
+import IporVaultMethods from './ipor-vault/methods'
+
 import { CHAIN_IDS } from '../../../data/constants'
 
 const { tokens } = require('../../../data')
@@ -92,6 +95,12 @@ export default {
     contract: ReaderZksyncContract,
     methods: ReaderZksyncMethods,
     chain: CHAIN_IDS.ZKSYNC,
+  },
+
+  iporVault: {
+    contract: IporVaultContract,
+    methods: IporVaultMethods,
+    chain: CHAIN_IDS.ARBITRUM_ONE,
   },
   ...getTokensContracts(),
 }

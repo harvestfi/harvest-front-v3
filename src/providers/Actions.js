@@ -22,6 +22,8 @@ import amplifierMethods from '../services/web3/contracts/amplifier/methods'
 import boostStakingMethods from '../services/web3/contracts/boost-staking/methods'
 import poolContractData from '../services/web3/contracts/pool/contract.json'
 import poolMethods from '../services/web3/contracts/pool/methods'
+import iporVaultData from '../services/web3/contracts/ipor-vault/contract.json'
+import iporVaultMethods from '../services/web3/contracts/ipor-vault/methods'
 import tokenContractData from '../services/web3/contracts/token/contract.json'
 import tokenMethods from '../services/web3/contracts/token/methods'
 import uniStatusViewerContractData from '../services/web3/contracts/unistatus-viewer/contract.json'
@@ -519,6 +521,60 @@ const ActionsProvider = ({ children }) => {
     [],
   )
 
+  const handleIPORDeposit = useCallback(
+    async (
+      account,
+      token,
+      amount,
+      onSuccessDeposit = async () => {},
+      onFailureDeposit = () => {},
+    ) => {
+      const tokenDisplayName = token.tokenNames[0]
+      const web3Instance = await getWeb3(false, account, web3)
+
+      const iporVaultInstance = await newContractInstance(
+        null,
+        token.vaultAddress,
+        iporVaultData.abi,
+        web3Instance,
+      )
+      try {
+        await iporVaultMethods.deposit(amount, account, iporVaultInstance)
+        toast.success(`${tokenDisplayName} deposit completed`)
+        await onSuccessDeposit()
+      } catch (err) {
+        const errorMessage = formatWeb3PluginErrorMessage(err)
+        toast.error(errorMessage)
+        onFailureDeposit()
+      }
+    },
+    [web3],
+  )
+
+  const handleIPORWithdraw = useCallback(
+    async (account, token, amount, onSuccess = () => {}) => {
+      const tokenDisplayName = token.tokenNames[0]
+      const web3Instance = await getWeb3(false, account, web3)
+
+      const iporVaultInstance = await newContractInstance(
+        null,
+        token.vaultAddress,
+        iporVaultData.abi,
+        web3Instance,
+      )
+
+      try {
+        await iporVaultMethods.withdraw(amount, account, iporVaultInstance)
+        toast.success(`${tokenDisplayName} withdraw completed`)
+        await onSuccess()
+      } catch (err) {
+        const errorMessage = formatWeb3PluginErrorMessage(err)
+        toast.error(errorMessage)
+      }
+    },
+    [web3],
+  )
+
   const handleOldStake = useCallback(
     async (
       token,
@@ -935,6 +991,8 @@ const ActionsProvider = ({ children }) => {
         handleApproval,
         handleOldApproval,
         handleDeposit,
+        handleIPORDeposit,
+        handleIPORWithdraw,
         handleStakeApproval,
         handleStakeTransaction,
         handleOldStake,

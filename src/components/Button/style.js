@@ -234,6 +234,72 @@ ${props =>
         }
         `
         : ''}
+
+    ${props =>
+      props.color === 'subscribe'
+        ? `
+        background: #5DCF46;
+        font-weight: 600;
+        font-size: 16px;
+        line-height: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: white;
+        padding: 15px 18px;
+        box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+        border-radius: 8px;
+        img {
+          margin-left: 8px;
+        }
+        ${
+          !props.disabled
+            ? `
+        &:hover {
+          background: #2d9718;
+        }`
+            : ''
+        }
+  
+        &:active {
+          background: #5DCF46;
+        }
+        `
+        : ''}
+
+    ${props =>
+      props.color === 'unsubscribe'
+        ? `
+        background: #7F9BFF;
+        font-weight: 600;
+        font-size: 16px;
+        line-height: 24px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        color: white;
+        padding: 15px 18px;
+        box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+        border-radius: 8px;
+        img {
+          margin-left: 8px;
+        }
+        ${
+          !props.disabled
+            ? `
+        &:hover {
+          background: #2c3d79;
+        }`
+            : ''
+        }
+  
+        &:active {
+          background: #7F9BFF;
+        }
+        `
+        : ''}
         
     ${props =>
       props.color === 'wido-stake'

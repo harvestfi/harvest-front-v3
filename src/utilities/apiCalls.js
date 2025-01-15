@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { get } from 'lodash'
+import { BigNumber } from 'bignumber.js'
 import { CHAIN_IDS } from '../data/constants'
 import {
   GRAPH_URLS,
@@ -227,6 +228,34 @@ export const getSequenceId = async (address, chainId) => {
   return { vaultTVLCount, vaultPriceFeedCount, vaultsFlag }
 }
 
+export const getIPORSequenceId = async () => {
+  let vaultTVLCount
+
+  const query = `
+    {
+      plasmaVaultHistories(
+        first: 1000,
+        orderBy: timestamp,
+        orderDirection: desc
+      ) {
+        historySequenceId
+      }
+    }
+  `
+  const url = GRAPH_URLS.IPOR
+
+  const data = await executeGraphCall(url, query, {})
+  const vaultsData = data ? data.plasmaVaultHistories : []
+
+  if (!vaultsData || vaultsData.length === 0) {
+    vaultTVLCount = 0
+  } else if (vaultsData) {
+    vaultTVLCount = vaultsData[0].historySequenceId
+  }
+
+  return { vaultTVLCount }
+}
+
 export const getVaultHistories = async (address, chainId) => {
   let vaultHData = {},
     vaultHFlag = true
@@ -364,6 +393,88 @@ export const getDataQuery = async (
   return chartData
 }
 
+export const getIPORDataQuery = async (vaultTVLCount, asQuery, timestamp, chartData = {}) => {
+  const sequenceIdsArray = []
+  if (vaultTVLCount > 10000) {
+    const step = Math.ceil(vaultTVLCount / 2000)
+    for (let i = 1; i <= vaultTVLCount; i += step) {
+      sequenceIdsArray.push(i)
+    }
+  } else if (vaultTVLCount > 1000) {
+    const step = Math.ceil(vaultTVLCount / 1000)
+    for (let i = 1; i <= vaultTVLCount; i += step) {
+      sequenceIdsArray.push(i)
+    }
+  } else {
+    for (let i = 1; i <= vaultTVLCount; i += 1) {
+      sequenceIdsArray.push(i)
+    }
+  }
+
+  const nowTime = Math.floor(new Date().getTime() / 1000)
+  const timestampQuery = asQuery ? timestamp : nowTime
+
+  const query = `
+    query getData($endTime: BigInt, $sequenceIds: [Int!]) {
+    generalApies: plasmaVaultHistories(
+        first: 1000,
+        orderBy: timestamp, 
+        orderDirection: desc
+      ) { 
+        apy, timestamp
+      }
+      tvls: plasmaVaultHistories(
+        first: 1000,
+        where: {
+          timestamp_lt: $endTime,
+          historySequenceId_in: $sequenceIds
+        },
+        orderBy: timestamp,
+        orderDirection: desc
+      ) {
+        tvl, timestamp
+      },
+      vaultHistories: plasmaVaultHistories(
+        first: 1000,
+        orderBy: timestamp,
+        orderDirection: desc
+      ) {
+        priceUnderlying, sharePrice, timestamp
+      }
+    }
+  `
+  const variables = { endTime: timestampQuery, sequenceIds: sequenceIdsArray }
+  const url = GRAPH_URLS.IPOR
+
+  const data = await executeGraphCall(url, query, variables)
+  // To merge the response data into the chartData object
+  Object.keys(data).forEach(key => {
+    if (!Object.prototype.hasOwnProperty.call(chartData, key)) {
+      chartData[key] = data[key]
+    } else if (Array.isArray(chartData[key]) && Array.isArray(data[key])) {
+      chartData[key].push(...data[key])
+    } else if (typeof chartData[key] === 'object' && typeof data[key] === 'object') {
+      Object.assign(chartData[key], data[key])
+    } else {
+      chartData[key] = data[key]
+    }
+  })
+
+  const dataTimestamp = Number(chartData.tvls[chartData.tvls.length - 1].timestamp)
+  const initTimestamp = Number(chartData.generalApies[chartData.generalApies.length - 1].timestamp)
+
+  if (data.tvls.length === 1000 && dataTimestamp > initTimestamp) {
+    await getDataQuery(vaultTVLCount, true, dataTimestamp, chartData)
+  }
+
+  chartData.tvls.forEach(obj => {
+    obj.value = obj.tvl
+    delete obj.tvl
+  })
+
+  return chartData
+}
+
 export const getUserBalanceVaults = async account => {
   const userBalanceVaults = []
   let userBalanceFlag = true
@@ -407,6 +518,36 @@ export const getUserBalanceVaults = async account => {
   return { userBalanceVaults, userBalanceFlag }
 }
 
+export const checkIPORUserBalance = async account => {
+  if (account) {
+    account = account.toLowerCase()
+  }
+
+  const iporquery = `
+    query getUserBalance($account: String!) {
+      userBalances(
+        where: {
+          userAddress: $account,
+        }
+      ) {
+        id, value
+      }
+    }
+  `
+
+  const variables = { account }
+  const url = GRAPH_URLS.IPOR
+
+  try {
+    const result = await executeGraphCall(url, iporquery, variables)
+    if (result.userBalances.length > 0) return true
+    return false
+  } catch (err) {
+    console.error('Fetch data about user balance vaults failed: ', err)
+    return false
+  }
+}
+
 export const getUserBalanceHistories = async (address, chainId, account) => {
   let balanceData = {},
     balanceFlag = true
@@ -443,6 +584,119 @@ export const getUserBalanceHistories = async (address, chainId, account) => {
     balanceFlag = false
   }
   return { balanceData, balanceFlag }
+}
+
+export const getIPORUserBalanceHistories = async (chainId, account) => {
+  let balanceIPORData = {},
+    balanceIPORFlag = true
+
+  if (account) {
+    account = account.toLowerCase()
+  }
+
+  const query = `
+    query getUserBalanceHistories($account: String!) {
+      userBalanceHistories(
+        first: 1000,
+        where: {
+          userAddress: $account,
+        },
+        orderBy: timestamp,
+        orderDirection: desc,
+      ) {
+        value, timestamp
+      }
+    }
+  `
+  const url = GRAPH_URLS[chainId]
+
+  try {
+    const data = await executeGraphCall(url, query, { account })
+    balanceIPORData = data?.userBalanceHistories
+  } catch (e) {
+    return e
+  }
+
+  if (!balanceIPORData || balanceIPORData.length === 0) {
+    balanceIPORFlag = false
+  }
+  return { balanceIPORData, balanceIPORFlag }
+}
+
+export const getIPORLastHarvestInfo = async () => {
+  let result = ''
+  const nowDate = Math.floor(new Date().getTime() / 1000)
+
+  const query = `
+    query {
+      plasmaVaultHistories(
+        first: 1,
+        orderBy: timestamp,
+        orderDirection: desc
+      ) {
+        timestamp
+      }
+    }
+`
+  const variables = {}
+  const url = GRAPH_URLS.IPOR
+
+  const data = await executeGraphCall(url, query, variables)
+  const hisData = data.plasmaVaultHistories
+
+  if (hisData && hisData.length !== 0) {
+    const timeStamp = hisData[0].timestamp
+    let duration = Number(nowDate) - Number(timeStamp),
+      day = 0,
+      hour = 0,
+      min = 0
+    // calculate (and subtract) whole days
+    day = Math.floor(duration / 86400)
+    duration -= day * 86400
+
+    // calculate (and subtract) whole hours
+    hour = Math.floor(duration / 3600) % 24
+    duration -= hour * 3600
+
+    // calculate (and subtract) whole minutes
+    min = Math.floor(duration / 60) % 60
+
+    const dayString = `${day > 0 ? `${day}d` : ''}`
+    const hourString = `${hour > 0 ? `${hour}h` : ''}`
+    const minString = `${min > 0 ? `${min}m` : ''}`
+    result = `${`${dayString !== '' ? `${dayString} ` : ''}${
+      hourString !== '' ? `${hourString} ` : ''
+    }`}${minString}`
+  }
+  return result
+}
+
+export const getIPORVaultHistories = async () => {
+  let vaultHIPORData = {},
+    vaultHIPORFlag = true
+
+  const query = `
+    query {
+      plasmaVaultHistories(
+        first: 1000,
+        orderBy: timestamp,
+        orderDirection: desc
+      ) {
+        tvl, apy, priceUnderlying, sharePrice, timestamp
+      }
+    }
+  `
+  const variables = {}
+  const url = GRAPH_URLS.IPOR
+
+  const data = await executeGraphCall(url, query, variables)
+  vaultHIPORData = data.plasmaVaultHistories
+
+  if (!vaultHIPORData || vaultHIPORData.length === 0) {
+    vaultHIPORFlag = false
+  }
+
+  return { vaultHIPORData, vaultHIPORFlag }
 }
 
 export const getPriceFeeds = async (
@@ -505,7 +759,7 @@ export const getPriceFeeds = async (
 
   if (data && data.priceFeeds && Array.isArray(data.priceFeeds)) {
     priceFeedData.push(...data.priceFeeds)
-    const dataTimestamp = priceFeedData[priceFeedData.length - 1].timestamp
+    const dataTimestamp = priceFeedData[priceFeedData.length - 1]?.timestamp
     if (Number(dataTimestamp) > Number(firstTimeStamp)) {
       return getPriceFeeds(
         address,
@@ -543,242 +797,487 @@ const removeZeroValueObjects = data => {
   return data
 }
 
-export const initBalanceAndDetailData = async (address, chainId, account, tokenDecimals) => {
+export const initBalanceAndDetailData = async (
+  address,
+  chainId,
+  account,
+  tokenDecimals,
+  isIPORVault = false,
+) => {
   const timestamps = []
   const uniqueVaultHData = []
+  const uniqueVaultHIPORData = []
   const mergedData = []
-  let enrichedData = [],
+  const mergedIPORData = []
+  let bFlag = false,
+    vHFlag = false,
+    bIPORFlag = false,
+    vHIPORFlag = false,
+    enrichedData = [],
     sumNetChange = 0,
     sumNetChangeUsd = 0,
     sumLatestNetChange = 0,
     sumLatestNetChangeUsd = 0
 
-  const { balanceData, balanceFlag } = await getUserBalanceHistories(address, chainId, account)
-  const { vaultHData, vaultHFlag } = await getVaultHistories(address, chainId)
+  if (!isIPORVault) {
+    const { balanceData, balanceFlag } = await getUserBalanceHistories(address, chainId, account)
+    const { vaultHData, vaultHFlag } = await getVaultHistories(address, chainId)
+    bFlag = balanceFlag
+    vHFlag = vaultHFlag
 
-  if (vaultHFlag) {
-    vaultHData.forEach(obj => {
-      if (!timestamps.includes(obj.timestamp)) {
-        timestamps.push(obj.timestamp)
-        const sharePriceDecimals = fromWei(obj.sharePrice, tokenDecimals, tokenDecimals)
-        const modifiedObj = { ...obj, sharePrice: sharePriceDecimals }
-        uniqueVaultHData.push(modifiedObj)
-      }
-    })
-  }
-
-  if (balanceFlag && vaultHFlag) {
-    let uniqueData = [],
-      uniqueFixedData = [],
-      lastUserEvent = false,
-      lastUserEventUsd = false,
-      lastKnownSharePrice = null,
-      lastKnownPriceUnderlying = null
-
-    const bl = balanceData.length,
-      ul = uniqueVaultHData.length
-    if (balanceData[0].timestamp > uniqueVaultHData[0].timestamp) {
-      let i = 0,
-        z = 0,
-        addFlag = false
-
-      while (balanceData[i]?.timestamp > uniqueVaultHData[0].timestamp) {
-        balanceData[i].priceUnderlying = uniqueVaultHData[0].priceUnderlying
-        balanceData[i].sharePrice = uniqueVaultHData[0].sharePrice
-        mergedData.push(balanceData[i])
-        i += 1
-      }
-      while (i < bl) {
-        if (z < ul) {
-          while (uniqueVaultHData[z].timestamp >= balanceData[i].timestamp) {
-            uniqueVaultHData[z].value = balanceData[i].value
-            mergedData.push(uniqueVaultHData[z])
-            z += 1
-            if (!addFlag && uniqueVaultHData[z].timestamp === balanceData[i].timestamp) {
-              addFlag = true
-            }
-          }
-        }
-        if (!addFlag) {
-          balanceData[i].priceUnderlying = uniqueVaultHData[z === ul ? z - 1 : z].priceUnderlying
-          balanceData[i].sharePrice = uniqueVaultHData[z === ul ? z - 1 : z].sharePrice
-          mergedData.push(balanceData[i])
-        }
-        addFlag = false
-        i += 1
-      }
-      while (z < ul) {
-        uniqueVaultHData[z].value = 0
-        mergedData.push(uniqueVaultHData[z])
-        z += 1
-      }
-      while (i < bl) {
-        balanceData[i].priceUnderlying = uniqueVaultHData[ul - 1].priceUnderlying
-        balanceData[i].sharePrice = uniqueVaultHData[ul - 1].sharePrice
-        mergedData.push(balanceData[i])
-        i += 1
-      }
-    } else {
-      let i = 0,
-        z = 0,
-        addFlag = false
-      while (i < ul && uniqueVaultHData[i].timestamp > balanceData[0].timestamp) {
-        uniqueVaultHData[i].value = balanceData[0].value
-        mergedData.push(uniqueVaultHData[i])
-        i += 1
-      }
-      while (z < bl) {
-        if (i < ul) {
-          while (uniqueVaultHData[i].timestamp >= balanceData[z].timestamp) {
-            uniqueVaultHData[i].value = balanceData[z].value
-            mergedData.push(uniqueVaultHData[i])
-            i += 1
-            if (i >= ul) {
-              break
-            }
-            if (!addFlag && uniqueVaultHData[i].timestamp === balanceData[z].timestamp) {
-              addFlag = true
-            }
-          }
-        }
-        if (!addFlag) {
-          balanceData[z].priceUnderlying = uniqueVaultHData[i === ul ? i - 1 : i].priceUnderlying
-          balanceData[z].sharePrice = uniqueVaultHData[i === ul ? i - 1 : i].sharePrice
-          mergedData.push(balanceData[z])
-        }
-        addFlag = false
-        z += 1
-      }
-      while (i < ul) {
-        uniqueVaultHData[i].value = 0
-        mergedData.push(uniqueVaultHData[i])
-        i += 1
-      }
-      while (z < bl) {
-        balanceData[z].priceUnderlying = uniqueVaultHData[ul - 1].priceUnderlying
-        balanceData[z].sharePrice = uniqueVaultHData[ul - 1].sharePrice
-        mergedData.push(balanceData[z])
-        z += 1
-      }
-    }
-
-    const filteredData = removeZeroValueObjects(mergedData)
-
-    // Create a map to keep track of unique combinations of 'value' and 'sharePrice'
-    const map = new Map()
-    filteredData.forEach(item => {
-      const key = `${item.value}_${item.sharePrice}`
-      map.set(key, item)
-    })
-
-    // Convert the map back to an array
-    uniqueData = Array.from(map.values())
-    uniqueData.sort((a, b) => b.timestamp - a.timestamp)
-
-    uniqueFixedData = uniqueData.map(item => {
-      if (item.sharePrice === '0') {
-        item.sharePrice = lastKnownSharePrice !== null ? lastKnownSharePrice : item.sharePrice
-      } else {
-        lastKnownSharePrice = item.sharePrice
-      }
-
-      if (item.priceUnderlying === '0') {
-        item.priceUnderlying =
-          lastKnownPriceUnderlying !== null ? lastKnownPriceUnderlying : item.priceUnderlying
-      } else {
-        lastKnownPriceUnderlying = item.priceUnderlying
-      }
-
-      return item
-    })
-
-    enrichedData = uniqueFixedData
-      .map((item, index, array) => {
-        const nextItem = array[index + 1]
-        let event, balance, balanceUsd, netChange, netChangeUsd
-
-        if (Number(item.value) === 0) {
-          if (nextItem && Number(nextItem.value) === 0) {
-            return false
-          }
-          balance = '0'
-          balanceUsd = '0'
-        } else {
-          balance = Number(item.value) * Number(item.sharePrice)
-          balanceUsd = balance * Number(item.priceUnderlying)
-        }
-
-        if (nextItem) {
-          if (Number(item.value) === Number(nextItem.value)) {
-            event = 'Harvest'
-          } else if (Number(item.value) > Number(nextItem.value)) {
-            event = 'Convert'
-          } else {
-            event = 'Revert'
-          }
-
-          const nextBalance = Number(nextItem.value) * Number(nextItem.sharePrice)
-          netChange = balance - nextBalance
-          netChangeUsd = Math.abs(netChange) * Number(item.priceUnderlying)
-        } else {
-          event = 'Convert'
-          netChange = balance
-          netChangeUsd = netChange * Number(item.priceUnderlying)
-        }
-
-        return {
-          ...item,
-          event,
-          balance,
-          balanceUsd,
-          netChange,
-          netChangeUsd,
+    if (vaultHFlag) {
+      vaultHData.forEach(obj => {
+        if (!timestamps.includes(obj.timestamp)) {
+          timestamps.push(obj.timestamp)
+          const sharePriceDecimals = fromWei(obj.sharePrice, tokenDecimals, tokenDecimals)
+          const modifiedObj = { ...obj, sharePrice: sharePriceDecimals }
+          uniqueVaultHData.push(modifiedObj)
         }
       })
-      .filter(Boolean)
+    }
 
-    sumNetChange = enrichedData.reduce((sumValue, item) => {
-      if (item.event === 'Harvest') {
-        return sumValue + item.netChange
-      }
-      return sumValue
-    }, 0)
-    sumNetChangeUsd = enrichedData.reduce((sumUsdValue, item) => {
-      if (item.event === 'Harvest') {
-        return sumUsdValue + item.netChangeUsd
-      }
-      return sumUsdValue
-    }, 0)
+    if (balanceFlag && vaultHFlag) {
+      let uniqueData = [],
+        uniqueFixedData = [],
+        lastUserEvent = false,
+        lastUserEventUsd = false,
+        lastKnownSharePrice = null,
+        lastKnownPriceUnderlying = null
 
-    enrichedData.forEach(item => {
-      if (!lastUserEvent) {
-        if (item.event === 'Harvest') {
-          sumLatestNetChange += item.netChange
-        } else if (item.event === 'Convert' || item.event === 'Revert') {
-          lastUserEvent = true
+      const bl = balanceData.length,
+        ul = uniqueVaultHData.length
+      if (balanceData[0].timestamp > uniqueVaultHData[0].timestamp) {
+        let i = 0,
+          z = 0,
+          addFlag = false
+
+        while (balanceData[i]?.timestamp > uniqueVaultHData[0].timestamp) {
+          balanceData[i].priceUnderlying = uniqueVaultHData[0].priceUnderlying
+          balanceData[i].sharePrice = uniqueVaultHData[0].sharePrice
+          mergedData.push(balanceData[i])
+          i += 1
+        }
+        while (i < bl) {
+          if (z < ul) {
+            while (uniqueVaultHData[z].timestamp >= balanceData[i].timestamp) {
+              uniqueVaultHData[z].value = balanceData[i].value
+              mergedData.push(uniqueVaultHData[z])
+              z += 1
+              if (!addFlag && uniqueVaultHData[z].timestamp === balanceData[i].timestamp) {
+                addFlag = true
+              }
+            }
+          }
+          if (!addFlag) {
+            balanceData[i].priceUnderlying = uniqueVaultHData[z === ul ? z - 1 : z].priceUnderlying
+            balanceData[i].sharePrice = uniqueVaultHData[z === ul ? z - 1 : z].sharePrice
+            mergedData.push(balanceData[i])
+          }
+          addFlag = false
+          i += 1
+        }
+        while (z < ul) {
+          uniqueVaultHData[z].value = 0
+          mergedData.push(uniqueVaultHData[z])
+          z += 1
+        }
+        while (i < bl) {
+          balanceData[i].priceUnderlying = uniqueVaultHData[ul - 1].priceUnderlying
+          balanceData[i].sharePrice = uniqueVaultHData[ul - 1].sharePrice
+          mergedData.push(balanceData[i])
+          i += 1
+        }
+      } else {
+        let i = 0,
+          z = 0,
+          addFlag = false
+        while (i < ul && uniqueVaultHData[i].timestamp > balanceData[0].timestamp) {
+          uniqueVaultHData[i].value = balanceData[0].value
+          mergedData.push(uniqueVaultHData[i])
+          i += 1
+        }
+        while (z < bl) {
+          if (i < ul) {
+            while (uniqueVaultHData[i].timestamp >= balanceData[z].timestamp) {
+              uniqueVaultHData[i].value = balanceData[z].value
+              mergedData.push(uniqueVaultHData[i])
+              i += 1
+              if (i >= ul) {
+                break
+              }
+              if (!addFlag && uniqueVaultHData[i].timestamp === balanceData[z].timestamp) {
+                addFlag = true
+              }
+            }
+          }
+          if (!addFlag) {
+            balanceData[z].priceUnderlying = uniqueVaultHData[i === ul ? i - 1 : i].priceUnderlying
+            balanceData[z].sharePrice = uniqueVaultHData[i === ul ? i - 1 : i].sharePrice
+            mergedData.push(balanceData[z])
+          }
+          addFlag = false
+          z += 1
+        }
+        while (i < ul) {
+          uniqueVaultHData[i].value = 0
+          mergedData.push(uniqueVaultHData[i])
+          i += 1
+        }
+        while (z < bl) {
+          balanceData[z].priceUnderlying = uniqueVaultHData[ul - 1].priceUnderlying
+          balanceData[z].sharePrice = uniqueVaultHData[ul - 1].sharePrice
+          mergedData.push(balanceData[z])
+          z += 1
         }
       }
-    })
-    enrichedData.forEach(item => {
-      if (!lastUserEventUsd) {
+
+      const filteredData = removeZeroValueObjects(mergedData)
+
+      // Create a map to keep track of unique combinations of 'value' and 'sharePrice'
+      const map = new Map()
+      filteredData.forEach(item => {
+        const key = `${item.value}_${item.sharePrice}`
+        map.set(key, item)
+      })
+
+      // Convert the map back to an array
+      uniqueData = Array.from(map.values())
+      uniqueData.sort((a, b) => b.timestamp - a.timestamp)
+
+      uniqueFixedData = uniqueData.map(item => {
+        if (item.sharePrice === '0') {
+          item.sharePrice = lastKnownSharePrice !== null ? lastKnownSharePrice : item.sharePrice
+        } else {
+          lastKnownSharePrice = item.sharePrice
+        }
+
+        if (item.priceUnderlying === '0') {
+          item.priceUnderlying =
+            lastKnownPriceUnderlying !== null ? lastKnownPriceUnderlying : item.priceUnderlying
+        } else {
+          lastKnownPriceUnderlying = item.priceUnderlying
+        }
+
+        return item
+      })
+
+      enrichedData = uniqueFixedData
+        .map((item, index, array) => {
+          const nextItem = array[index + 1]
+          let event, balance, balanceUsd, netChange, netChangeUsd
+
+          if (Number(item.value) === 0) {
+            if (nextItem && Number(nextItem.value) === 0) {
+              return false
+            }
+            balance = '0'
+            balanceUsd = '0'
+          } else {
+            balance = Number(item.value) * Number(item.sharePrice)
+            balanceUsd = balance * Number(item.priceUnderlying)
+          }
+
+          if (nextItem) {
+            if (Number(item.value) === Number(nextItem.value)) {
+              event = 'Harvest'
+            } else if (Number(item.value) > Number(nextItem.value)) {
+              event = 'Convert'
+            } else {
+              event = 'Revert'
+            }
+
+            const nextBalance = Number(nextItem.value) * Number(nextItem.sharePrice)
+            netChange = balance - nextBalance
+            netChangeUsd = Math.abs(netChange) * Number(item.priceUnderlying)
+          } else {
+            event = 'Convert'
+            netChange = balance
+            netChangeUsd = netChange * Number(item.priceUnderlying)
+          }
+
+          return {
+            ...item,
+            event,
+            balance,
+            balanceUsd,
+            netChange,
+            netChangeUsd,
+          }
+        })
+        .filter(Boolean)
+
+      sumNetChange = enrichedData.reduce((sumValue, item) => {
         if (item.event === 'Harvest') {
-          sumLatestNetChangeUsd += item.netChangeUsd
-        } else if (item.event === 'Convert' || item.event === 'Revert') {
-          lastUserEventUsd = true
+          return sumValue + item.netChange
+        }
+        return sumValue
+      }, 0)
+      sumNetChangeUsd = enrichedData.reduce((sumUsdValue, item) => {
+        if (item.event === 'Harvest') {
+          return sumUsdValue + item.netChangeUsd
+        }
+        return sumUsdValue
+      }, 0)
+
+      enrichedData.forEach(item => {
+        if (!lastUserEvent) {
+          if (item.event === 'Harvest') {
+            sumLatestNetChange += item.netChange
+          } else if (item.event === 'Convert' || item.event === 'Revert') {
+            lastUserEvent = true
+          }
+        }
+      })
+      enrichedData.forEach(item => {
+        if (!lastUserEventUsd) {
+          if (item.event === 'Harvest') {
+            sumLatestNetChangeUsd += item.netChangeUsd
+          } else if (item.event === 'Convert' || item.event === 'Revert') {
+            lastUserEventUsd = true
+          }
+        }
+      })
+    }
+  } else {
+    const { balanceIPORData, balanceIPORFlag } = await getIPORUserBalanceHistories('IPOR', account)
+    const { vaultHIPORData, vaultHIPORFlag } = await getIPORVaultHistories()
+    bIPORFlag = balanceIPORFlag
+    vHIPORFlag = vaultHIPORFlag
+    if (vaultHIPORFlag) {
+      vaultHIPORData.forEach(obj => {
+        if (!timestamps.includes(obj.timestamp)) {
+          timestamps.push(obj.timestamp)
+          const sharePriceDecimals = fromWei(obj.sharePrice, tokenDecimals, tokenDecimals)
+          const modifiedObj = { ...obj, sharePrice: sharePriceDecimals }
+          uniqueVaultHIPORData.push(modifiedObj)
+        }
+      })
+    }
+
+    if (balanceIPORFlag && vaultHIPORFlag) {
+      let uniqueData = [],
+        uniqueFixedData = [],
+        lastUserEvent = false,
+        lastUserEventUsd = false,
+        lastKnownSharePrice = null,
+        lastKnownPriceUnderlying = null
+
+      const bl = balanceIPORData.length,
+        ul = uniqueVaultHIPORData.length
+      if (balanceIPORData[0].timestamp > uniqueVaultHIPORData[0].timestamp) {
+        let i = 0,
+          z = 0,
+          addFlag = false
+
+        while (balanceIPORData[i]?.timestamp > uniqueVaultHIPORData[0].timestamp) {
+          balanceIPORData[i].priceUnderlying = uniqueVaultHIPORData[0].priceUnderlying
+          balanceIPORData[i].sharePrice = uniqueVaultHIPORData[0].sharePrice
+          mergedIPORData.push(uniqueVaultHIPORData[i])
+          i += 1
+        }
+        while (i < bl) {
+          if (z < ul) {
+            while (uniqueVaultHIPORData[z].timestamp >= balanceIPORData[i].timestamp) {
+              uniqueVaultHIPORData[z].value = balanceIPORData[i].value
+              mergedIPORData.push(uniqueVaultHIPORData[z])
+              z += 1
+              if (!addFlag && uniqueVaultHIPORData[z].timestamp === balanceIPORData[i].timestamp) {
+                addFlag = true
+              }
+            }
+          }
+          if (!addFlag) {
+            balanceIPORData[i].priceUnderlying =
+              uniqueVaultHIPORData[z === ul ? z - 1 : z].priceUnderlying
+            balanceIPORData[i].sharePrice = uniqueVaultHIPORData[z === ul ? z - 1 : z].sharePrice
+            mergedIPORData.push(balanceIPORData[i])
+          }
+          addFlag = false
+          i += 1
+        }
+        while (z < ul) {
+          uniqueVaultHIPORData[z].value = 0
+          mergedIPORData.push(uniqueVaultHIPORData[z])
+          z += 1
+        }
+        while (i < bl) {
+          balanceIPORData[i].priceUnderlying = uniqueVaultHIPORData[ul - 1].priceUnderlying
+          balanceIPORData[i].sharePrice = uniqueVaultHIPORData[ul - 1].sharePrice
+          mergedIPORData.push(balanceIPORData[i])
+          i += 1
+        }
+      } else {
+        let i = 0,
+          z = 0,
+          addFlag = false
+        while (i < ul && uniqueVaultHIPORData[i].timestamp > balanceIPORData[0].timestamp) {
+          uniqueVaultHIPORData[i].value = balanceIPORData[0].value
+          mergedIPORData.push(uniqueVaultHIPORData[i])
+          i += 1
+        }
+        while (z < bl) {
+          if (i < ul) {
+            while (uniqueVaultHIPORData[i].timestamp >= balanceIPORData[z].timestamp) {
+              uniqueVaultHIPORData[i].value = balanceIPORData[z].value
+              mergedIPORData.push(uniqueVaultHIPORData[i])
+              i += 1
+              if (i >= ul) {
+                break
+              }
+              if (!addFlag && uniqueVaultHIPORData[i].timestamp === balanceIPORData[z].timestamp) {
+                addFlag = true
+              }
+            }
+          }
+          if (!addFlag) {
+            balanceIPORData[z].priceUnderlying =
+              uniqueVaultHIPORData[i === ul ? i - 1 : i].priceUnderlying
+            balanceIPORData[z].sharePrice = uniqueVaultHIPORData[i === ul ? i - 1 : i].sharePrice
+            mergedIPORData.push(balanceIPORData[z])
+          }
+          addFlag = false
+          z += 1
+        }
+        while (i < ul) {
+          uniqueVaultHIPORData[i].value = 0
+          mergedIPORData.push(uniqueVaultHIPORData[i])
+          i += 1
+        }
+        while (z < bl) {
+          balanceIPORData[z].priceUnderlying = uniqueVaultHIPORData[ul - 1].priceUnderlying
+          balanceIPORData[z].sharePrice = uniqueVaultHIPORData[ul - 1].sharePrice
+          mergedIPORData.push(balanceIPORData[z])
+          z += 1
         }
       }
-    })
+
+      const filteredData = removeZeroValueObjects(mergedIPORData)
+
+      // Create a map to keep track of unique combinations of 'value' and 'sharePrice'
+      const map = new Map()
+      filteredData.forEach(item => {
+        const key = `${item.value}_${item.sharePrice}`
+        map.set(key, item)
+      })
+
+      // Convert the map back to an array
+      uniqueData = Array.from(map.values())
+      uniqueData.sort((a, b) => b.timestamp - a.timestamp)
+
+      uniqueFixedData = uniqueData.map(item => {
+        if (item.sharePrice === '0') {
+          item.sharePrice = lastKnownSharePrice !== null ? lastKnownSharePrice : item.sharePrice
+        } else {
+          lastKnownSharePrice = item.sharePrice
+        }
+
+        if (item.priceUnderlying === '0') {
+          item.priceUnderlying =
+            lastKnownPriceUnderlying !== null ? lastKnownPriceUnderlying : item.priceUnderlying
+        } else {
+          lastKnownPriceUnderlying = item.priceUnderlying
+        }
+
+        return item
+      })
+
+      enrichedData = uniqueFixedData
+        .map((item, index, array) => {
+          const nextItem = array[index + 1]
+          let event, balance, balanceUsd, netChange, netChangeUsd
+
+          if (Number(item.value) === 0) {
+            if (nextItem && Number(nextItem.value) === 0) {
+              return false
+            }
+            balance = '0'
+            balanceUsd = '0'
+          } else {
+            balance = new BigNumber(item.value)
+              .times(new BigNumber(item.sharePrice))
+              .div(10 ** 8)
+              .toFixed()
+            balanceUsd = balance * Number(item.priceUnderlying)
+          }
+
+          if (nextItem) {
+            if (Number(item.value) === Number(nextItem.value)) {
+              event = 'Harvest'
+            } else if (Number(item.value) > Number(nextItem.value)) {
+              event = 'Convert'
+            } else {
+              event = 'Revert'
+            }
+
+            const nextBalance = new BigNumber(nextItem.value)
+              .times(new BigNumber(nextItem.sharePrice))
+              .div(10 ** 8)
+              .toFixed()
+            netChange = balance - nextBalance
+            netChangeUsd = Math.abs(netChange) * Number(item.priceUnderlying)
+          } else {
+            event = 'Convert'
+            netChange = balance
+            netChangeUsd = netChange * Number(item.priceUnderlying)
+          }
+
+          return {
+            ...item,
+            event,
+            balance,
+            balanceUsd,
+            netChange,
+            netChangeUsd,
+          }
+        })
+        .filter(Boolean)
+
+      sumNetChange = enrichedData.reduce((sumValue, item) => {
+        if (item.event === 'Harvest') {
+          return sumValue + item.netChange
+        }
+        return sumValue
+      }, 0)
+      sumNetChangeUsd = enrichedData.reduce((sumUsdValue, item) => {
+        if (item.event === 'Harvest') {
+          return sumUsdValue + item.netChangeUsd
+        }
+        return sumUsdValue
+      }, 0)
+
+      enrichedData.forEach(item => {
+        if (!lastUserEvent) {
+          if (item.event === 'Harvest') {
+            sumLatestNetChange += item.netChange
+          } else if (item.event === 'Convert' || item.event === 'Revert') {
+            lastUserEvent = true
+          }
+        }
+      })
+      enrichedData.forEach(item => {
+        if (!lastUserEventUsd) {
+          if (item.event === 'Harvest') {
+            sumLatestNetChangeUsd += item.netChangeUsd
+          } else if (item.event === 'Convert' || item.event === 'Revert') {
+            lastUserEventUsd = true
+          }
+        }
+      })
+    }
   }
 
   return {
-    balanceFlag,
-    vaultHFlag,
+    bFlag,
+    vHFlag,
+    bIPORFlag,
+    vHIPORFlag,
     sumNetChange,
     sumNetChangeUsd,
     sumLatestNetChange,
     sumLatestNetChangeUsd,
     enrichedData,
     uniqueVaultHData,
+    uniqueVaultHIPORData,
   }
 }
 

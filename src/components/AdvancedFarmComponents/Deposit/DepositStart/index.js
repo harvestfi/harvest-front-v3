@@ -166,8 +166,12 @@ const DepositStart = ({
     const receiveString = portalData
       ? fromWei(
           portalData.context?.outputAmount,
-          token.decimals || token.data.lpTokenData.decimals,
-          token.decimals || token.data.lpTokenData.decimals,
+          token.isIPORVault
+            ? token.vaultDecimals
+            : token.decimals || token.data.lpTokenData.decimals,
+          token.isIPORVault
+            ? token.vaultDecimals
+            : token.decimals || token.data.lpTokenData.decimals,
         )
       : ''
     const receiveUsdString = portalData ? portalData.context?.outputAmountUsd : ''

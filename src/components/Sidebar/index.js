@@ -16,6 +16,7 @@ import ActiveWhiteMobileBottomAdvanced from '../../assets/images/logos/sidebar/a
 import Home from '../../assets/images/logos/sidebar/home-line.svg'
 import MobileBottomHome from '../../assets/images/logos/sidebar/bottom-home.svg'
 import Beginners from '../../assets/images/logos/sidebar/beginners.svg'
+import Diamond from '../../assets/images/logos/sidebar/diamond.svg'
 import Support from '../../assets/images/logos/sidebar/support.svg'
 import Analytics from '../../assets/images/logos/sidebar/analytics.svg'
 import BlackLeader from '../../assets/images/logos/sidebar/leader_icon_black.svg'
@@ -112,6 +113,12 @@ const sideLinksTop = [
     path: ROUTES.BEGINNERSFARM,
     name: 'Beginners',
     imgPath: Beginners,
+  },
+  {
+    path: ROUTES.AUTOPILOT,
+    name: 'Autopilot',
+    imgPath: Diamond,
+    new: true,
   },
   {
     path: ROUTES.ADVANCED,
