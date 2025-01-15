@@ -489,10 +489,11 @@ export const getAllRewardEntities = async account => {
 
   const results = await Promise.all(urls.map(url => executeGraphCall(url, query, variables)))
   results.forEach(userRewardsData => {
-    const rewardEntities = userRewardsData.rewardPaidEntities
-    rewardEntities.forEach(reward => {
-      rewardsAPIData.push(reward)
-    })
+    if (userRewardsData && Array.isArray(userRewardsData.rewardPaidEntities)) {
+      userRewardsData.rewardPaidEntities.forEach(reward => {
+        rewardsAPIData.push(reward)
+      })
+    }
   })
   rewardsAPIData.sort((a, b) => b.timestamp - a.timestamp)
 
