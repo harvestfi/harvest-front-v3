@@ -89,7 +89,7 @@ const AssetsList = [
   { id: 1, name: 'LP', filter: 'lptokens' },
   { id: 2, name: 'Single', filter: 'singlestakes' },
   { id: 3, name: 'Stable', filter: 'stablecoins' },
-  { id: 4, name: 'Autopilot', filter: 'autopilot' },
+  // { id: 4, name: 'Autopilot', filter: 'autopilot' },
 ]
 
 const QuickFilter = ({
