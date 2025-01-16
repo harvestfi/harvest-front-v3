@@ -15,6 +15,7 @@ import Base from '../assets/images/chains/base.svg'
 import Zksync from '../assets/images/chains/zksync.svg'
 import Ethereum from '../assets/images/chains/ethereum.svg'
 import Polygon from '../assets/images/chains/polygon.svg'
+import { fromWei } from '../services/web3'
 
 export const totalNetProfitKey = 'TOTAL_NET_PROFIT'
 export const totalHistoryDataKey = 'TOTAL_HISTORY_DATA'
@@ -620,3 +621,23 @@ export const getMatchedVaultList = (allVaults, chainName, vaultsData, pools) => 
   }
   return false
 }
+
+export const mergeArrays = (rewardsAPIData, totalHistoryData) => {
+  const rewardsData = rewardsAPIData.map(reward => ({
+    event: 'Rewards',
+    symbol: reward.token.symbol,
+    timestamp: reward.timestamp,
+    rewards: fromWei(reward.value, reward.token.decimals, reward.token.decimals, true),
+    rewardsUSD:
+      parseFloat(reward.price) *
+      fromWei(reward.value, reward.token.decimals, reward.token.decimals, true),
+  }))
+
+  const combinedArray = [...totalHistoryData, ...rewardsData]
+
+  combinedArray.sort((a, b) => parseInt(b.timestamp, 10) - parseInt(a.timestamp, 10))
+
+  return combinedArray
+}
+
+export const handleToggle = setter => () => setter(prev => !prev)

@@ -73,6 +73,10 @@ const NoData = styled.div`
   @media screen and (max-width: 556px) {
     width: 330px;
   }
+
+  @media screen and (max-width: 400px) {
+    width: 260px;
+  }
 `
 
 const FakeChartWrapper = styled.div`

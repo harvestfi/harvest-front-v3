@@ -5,19 +5,18 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import ActionRow from '../ActionRow'
+import { fakeYieldData } from '../../../constants'
 import {
   TransactionDetails,
   TableContent,
-  Header,
-  Column,
-  Col,
   EmptyPanel,
   EmptyInfo,
   ContentBox,
   SkeletonItem,
+  FakeBoxWrapper,
 } from './style'
 
-const HistoryDataLatest = ({ historyData, isDashboard, noData, setOneDayYield, isLoading }) => {
+const HistoryDataLatest = ({ historyData, noData, setOneDayYield }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const filteredHistoryData = historyData.filter(el => el.event === 'Harvest' && el.netChange >= 0)
   const totalLength = filteredHistoryData.length
@@ -46,40 +45,26 @@ const HistoryDataLatest = ({ historyData, isDashboard, noData, setOneDayYield, i
     }
   }, [totalLength]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const { borderColorTable, bgColorTable, fontColor, highlightColor } = useThemeContext()
+  const { fontColor, highlightColor } = useThemeContext()
   const { connected } = useWallet()
 
   return (
-    <TransactionDetails
-      hasData={
-        (connected && filteredHistoryData?.length > 0) || isDashboard === 'true' ? 'unset' : '80vh'
-      }
-    >
-      <TableContent borderColor={borderColorTable}>
-        {!isMobile && (
-          <Header borderColor={borderColorTable} backColor={bgColorTable}>
-            <Column width={isMobile ? '20%' : '20%'} color={fontColor}>
-              <Col>Date</Col>
-            </Column>
-            <Column width={isMobile ? '0%' : '30%'} color={fontColor} justifyContent="end">
-              <Col>Yield</Col>
-            </Column>
-          </Header>
-        )}
-        {connected && !isLoading && filteredHistoryData?.length > 0 ? (
-          <ContentBox borderColor={borderColorTable}>
+    <TransactionDetails hasData={(connected && filteredHistoryData?.length > 0) || 'unset'}>
+      <TableContent>
+        {connected && filteredHistoryData?.length > 0 ? (
+          <ContentBox>
             {filteredHistoryData
               .map((el, i) => {
                 const info = filteredHistoryData[i]
                 return <ActionRow key={i} info={info} />
               })
-              .slice(0, 7)}
+              .slice(0, isMobile ? 6 : 4)}
           </ContentBox>
         ) : connected ? (
           !noData ? (
-            <EmptyPanel borderColor={borderColorTable}>
+            <EmptyPanel>
               <SkeletonTheme baseColor="#ECECEC" highlightColor={highlightColor}>
-                {[...Array(6)].map((_, index) => (
+                {[...Array(isMobile ? 6 : 4)].map((_, index) => (
                   <SkeletonItem key={index}>
                     <div>
                       <Skeleton containerClassName="skeleton" width="50%" height={10} />
@@ -92,17 +77,33 @@ const HistoryDataLatest = ({ historyData, isDashboard, noData, setOneDayYield, i
               </SkeletonTheme>
             </EmptyPanel>
           ) : (
-            <EmptyPanel borderColor={borderColorTable} height="400px">
+            <EmptyPanel height="300px">
               <EmptyInfo height="100%" weight={500} size={14} lineHeight={20} color={fontColor}>
                 No activity found for this wallet.
               </EmptyInfo>
+              <FakeBoxWrapper>
+                {fakeYieldData
+                  .map((el, i) => {
+                    const info = fakeYieldData[i]
+                    return <ActionRow key={i} info={info} />
+                  })
+                  .slice(0, isMobile ? 6 : 4)}
+              </FakeBoxWrapper>
             </EmptyPanel>
           )
         ) : (
-          <EmptyPanel borderColor={borderColorTable} height="400px">
+          <EmptyPanel height="300px">
             <EmptyInfo height="100%" weight={500} size={14} lineHeight={20} color={fontColor}>
               Connect wallet to see your latest yield
             </EmptyInfo>
+            <FakeBoxWrapper>
+              {fakeYieldData
+                .map((el, i) => {
+                  const info = fakeYieldData[i]
+                  return <ActionRow key={i} info={info} />
+                })
+                .slice(0, isMobile ? 6 : 4)}
+            </FakeBoxWrapper>
           </EmptyPanel>
         )}
       </TableContent>

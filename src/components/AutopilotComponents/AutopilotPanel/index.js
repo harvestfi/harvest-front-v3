@@ -15,7 +15,7 @@ import { usePortals } from '../../../providers/Portals'
 import { useContracts } from '../../../providers/Contracts'
 import AnimatedDots from '../../AnimatedDots'
 import { CHAIN_IDS } from '../../../data/constants'
-import { getChainName } from '../../../utilities/parsers'
+import { getChainName, handleToggle } from '../../../utilities/parsers'
 import { fromWei } from '../../../services/web3'
 import { useRate } from '../../../providers/Rate'
 import SubscribeModal from '../SubscribeModal'
@@ -92,7 +92,6 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
   const [inputAmount, setInputAmount] = useState(0)
   const [inputUSDAmount, setInputUSDAmount] = useState('-')
   const firstWalletBalanceLoad = useRef(true)
-  const switchSubscribe = () => setSubscribe(prev => !prev)
 
   useEffect(() => {
     if (rates.rateData) {
@@ -358,7 +357,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
                   <input
                     type="checkbox"
                     checked={subscribe}
-                    onChange={switchSubscribe}
+                    onChange={handleToggle(setSubscribe)}
                     aria-label="Switch between subscribe and unsubscribe"
                   />
                 </div>

@@ -19,7 +19,13 @@ import COLLAPSED from '../../assets/images/ui/plus.svg'
 import { usePools } from '../../providers/Pools'
 import { addresses } from '../../data'
 import { useWallet } from '../../providers/Wallet'
-import { getChainIcon, getTotalApy, getVaultApy, getVaultValue } from '../../utilities/parsers'
+import {
+  getChainIcon,
+  getTotalApy,
+  getVaultApy,
+  getVaultValue,
+  vaultProfitDataKey,
+} from '../../utilities/parsers'
 import { usePortals } from '../../providers/Portals'
 import dropDown from '../../assets/images/ui/drop-down.e85f7fdc.svg'
 import { useThemeContext } from '../../providers/useThemeContext'
@@ -33,21 +39,14 @@ import { NewLabel } from '../../components/MigrateComponents/PositionModal/style
 import Accordian from '../../components/MigrateComponents/Accordian'
 import ARBITRUM from '../../assets/images/logos/badge/arbitrum.svg'
 import POLYGON from '../../assets/images/logos/badge/polygon.svg'
-// import ZKSYNC from '../../assets/images/logos/badge/zksync.svg'
 import BASE from '../../assets/images/logos/badge/base.svg'
 import { CHAIN_IDS } from '../../data/constants'
-import {
-  getTokenPriceFromApi,
-  // getUserBalanceVaults,
-  // initBalanceAndDetailData,
-  getCoinListFromApi,
-} from '../../utilities/apiCalls'
+import { getTokenPriceFromApi, getCoinListFromApi } from '../../utilities/apiCalls'
 import {
   FARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
   IFARM_TOKEN_SYMBOL,
   MAX_DECIMALS,
-  // chainList,
 } from '../../constants'
 import {
   Container,
@@ -73,11 +72,6 @@ import {
   CurrencyDropDownMenu,
   CurrencyDropDownItem,
 } from './style'
-// import { ConnectButtonStyle } from '../../components/EarningsHistory/HistoryData/style'
-
-// const totalNetProfitKey = 'TOTAL_NET_PROFIT'
-// const totalHistoryDataKey = 'TOTAL_HISTORY_DATA'
-const vaultProfitDataKey = 'VAULT_LIFETIME_YIELD'
 
 const Migrate = () => {
   const location = useLocation()
@@ -93,16 +87,15 @@ const Migrate = () => {
   const { tokens } = require('../../data')
   const {
     darkMode,
-    bgColor,
+    bgColorNew,
     backColor,
     filterChainHoverColor,
-    borderColor,
+    borderColorBox,
     backColorButton,
     fontColor2,
     hoverColorNew,
     hoverColor,
   } = useThemeContext()
-  // const networkNames = ['ethereum', 'polygon', 'arbitrum', 'base', 'zksync']
 
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
@@ -284,23 +277,6 @@ const Migrate = () => {
     },
     [account, balances],
   )
-
-  // const getBadgeId = vaultAddress => {
-  //   const vaultData = Object.values(groupOfVaults).find(vault => {
-  //     if (vault.vaultAddress && vaultAddress) {
-  //       return vault.vaultAddress.toLowerCase() === vaultAddress.toLowerCase()
-  //     }
-  //     return false
-  //   })
-  //   const chain = vaultData ? vaultData.chain : ''
-
-  //   for (let i = 0; i < chainList.length; i += 1) {
-  //     if (chainList[i].chainId === Number(chain)) {
-  //       return i
-  //     }
-  //   }
-  //   return -1
-  // }
 
   useEffect(() => {
     if (account && !isEmpty(userStats) && !isEmpty(depositToken)) {
@@ -1081,7 +1057,7 @@ const Migrate = () => {
   }, [highestPosition, highestApyVault, chainId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <Container bgColor={bgColor}>
+    <Container bgColor={bgColorNew}>
       <Inner marginBottom={isMobile ? '0px' : '55px'}>
         <MigrateTop>
           <PageTitle color={darkMode ? '#ffffff' : '"#101828"'}>Migrate</PageTitle>
@@ -1089,14 +1065,15 @@ const Migrate = () => {
         <PageIntro color={darkMode ? '#ffffff' : '#475467'}>
           Find alternatives for your existing positions and migrate in one click.
         </PageIntro>
-        <SpaceLine />
+        <SpaceLine borderColor={borderColorBox} />
       </Inner>
       <Inner
+        className="box-faq"
         display="flex"
         justifyContent="center"
         alignItems="flex-start"
         padding="0px 100px"
-        className="box-faq"
+        borderColor={borderColorBox}
       >
         <MigrateBox
           className="migrate-box"
@@ -1130,7 +1107,7 @@ const Migrate = () => {
               <Dropdown>
                 <CurrencyDropDown
                   id="dropdown-basic"
-                  bgcolor={backColorButton}
+                  bgcolor={bgColorNew}
                   fontcolor2={fontColor2}
                   hovercolor={hoverColorNew}
                   style={{ padding: 0 }}
@@ -1164,9 +1141,9 @@ const Migrate = () => {
               <ChainGroup>
                 {ChainsList.map((item, i) => (
                   <ChainButton
-                    backColor={backColor}
+                    backColor={bgColorNew}
                     hoverColor={filterChainHoverColor}
-                    borderColor={borderColor}
+                    borderColor={borderColorBox}
                     className={chainId.toString() === item.chainId.toString() ? 'active' : ''}
                     data-tip
                     data-for={`chain-${item.name}`}
