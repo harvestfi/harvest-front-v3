@@ -857,6 +857,10 @@ const AdvancedFarm = () => {
             )
             const directBalance = directData
               ? directData.balance
+              : token.isIPORVault
+              ? balances[token.tokenNames[0]]
+                ? new BigNumber(token.tokenNames[0]).div(10 ** token.decimals).toFixed()
+                : '0'
               : balances[id]
               ? new BigNumber(balances[id]).div(10 ** token.decimals).toFixed()
               : '0'
@@ -1310,31 +1314,25 @@ const AdvancedFarm = () => {
         const {
           bFlag,
           vHFlag,
-          bIPORFlag,
-          vHIPORFlag,
           sumNetChange,
           sumNetChangeUsd,
           sumLatestNetChange,
           sumLatestNetChangeUsd,
           enrichedData,
           uniqueVaultHData,
-          uniqueVaultHIPORData,
         } = await initBalanceAndDetailData(address, chainId, account, tokenDecimals, iporVFlag)
 
-        const balanceFlag = token.isIPORVault ? bIPORFlag : bFlag
-        const vaultHFlag = token.isIPORVault ? vHIPORFlag : vHFlag
-
-        if (balanceFlag && vaultHFlag) {
+        if (bFlag && vHFlag) {
           setUnderlyingEarnings(sumNetChange)
           setUsdEarnings(sumNetChangeUsd)
           setUnderlyingEarningsLatest(sumLatestNetChange)
           setUsdEarningsLatest(sumLatestNetChangeUsd)
           const enrichedDataWithSymbol = enrichedData.map(data => ({
             ...data,
-            tokenSymbol: id,
+            tokenSymbol: token.isIPORVault ? 'ffUSDC' : id,
           }))
           setHistoryData(enrichedDataWithSymbol)
-          setChartData(token.isIPORVault ? uniqueVaultHIPORData : uniqueVaultHData)
+          setChartData(uniqueVaultHData)
         }
       }
     }
@@ -3347,7 +3345,7 @@ const AdvancedFarm = () => {
                         Source of Yield
                       </NewLabel>
                       <DescInfo fontColor6={fontColor6} fontColor3={fontColor3}>
-                        {ReactHtmlParser(vaultPool.stakeAndDepositHelpMessage)}
+                        {ReactHtmlParser(vaultPool?.stakeAndDepositHelpMessage)}
                       </DescInfo>
                       <FlexDiv className="address" padding="0 15px 20px">
                         {token.vaultAddress && (
@@ -3372,7 +3370,7 @@ const AdvancedFarm = () => {
                             </NewLabel>
                           </InfoLabel>
                         )}
-                        {vaultPool.autoStakePoolAddress && (
+                        {vaultPool?.autoStakePoolAddress && (
                           <InfoLabel
                             display="flex"
                             href={`${getExplorerLink(token.chain)}/address/${
@@ -3396,28 +3394,32 @@ const AdvancedFarm = () => {
                             </NewLabel>
                           </InfoLabel>
                         )}
-                        <InfoLabel
-                          display="flex"
-                          href={`${getExplorerLink(token.chain)}/address/${
-                            vaultPool.autoStakePoolAddress || vaultPool.contractAddress
-                          }`}
-                          onClick={e => e.stopPropagation()}
-                          rel="noopener noreferrer"
-                          target="_blank"
-                          bgColor={bgColor}
-                          hoverColor={hoverColor}
-                          borderColor={borderColor}
-                        >
-                          <NewLabel
-                            size="12px"
-                            weight={isMobile ? 600 : 600}
-                            height="16px"
-                            self="center"
-                            color={fontColor1}
+                        {token.isIPORVault ? (
+                          <></>
+                        ) : (
+                          <InfoLabel
+                            display="flex"
+                            href={`${getExplorerLink(token.chain)}/address/${
+                              vaultPool.autoStakePoolAddress || vaultPool.contractAddress
+                            }`}
+                            onClick={e => e.stopPropagation()}
+                            rel="noopener noreferrer"
+                            target="_blank"
+                            bgColor={bgColor}
+                            hoverColor={hoverColor}
+                            borderColor={borderColor}
                           >
-                            Pool Address
-                          </NewLabel>
-                        </InfoLabel>
+                            <NewLabel
+                              size="12px"
+                              weight={isMobile ? 600 : 600}
+                              height="16px"
+                              self="center"
+                              color={fontColor1}
+                            >
+                              Pool Address
+                            </NewLabel>
+                          </InfoLabel>
+                        )}
                       </FlexDiv>
                     </HalfInfo>
                   )}

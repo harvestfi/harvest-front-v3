@@ -66,7 +66,7 @@ const Autopilot = () => {
           const address = token.vaultAddress
           const chainId = token.chain
           const iporVFlag = token.isIPORVault ?? false
-          const { bIPORFlag, vHIPORFlag, enrichedData } = await initBalanceAndDetailData(
+          const { bFlag, vHFlag, enrichedData } = await initBalanceAndDetailData(
             address,
             chainId,
             account,
@@ -74,7 +74,7 @@ const Autopilot = () => {
             iporVFlag,
           )
 
-          if (bIPORFlag && vHIPORFlag) {
+          if (bFlag && vHFlag) {
             const enrichedDataWithSymbol = enrichedData.map(data => ({
               ...data,
               tokenSymbol: token.id,

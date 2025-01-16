@@ -247,7 +247,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
         } else {
           toast.error(`InputAmount exceeds wallet Balance!`)
         }
-      } else if (Number(userVBalance) >= Number(inputAmount)) {
+      } else if (Number(userAssetBalance) >= Number(inputAmount)) {
         setModalShow(true)
       } else {
         toast.error(`InputAmount exceeds deposited Balance!`)
@@ -403,7 +403,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
             </FlexDiv>
             <FlexDiv flexDirection="row" justifyContent="space-between" marginTop="12px">
               <NewLabel size="12px" height="20px" weight="400" color={fontColor2}>
-                Balance: {subscribe ? `${walletBalance} USDC` : `${userVBalance} ffUSDC`}
+                Balance: {subscribe ? `${walletBalance} USDC` : `${userAssetBalance} USDC`}
               </NewLabel>
             </FlexDiv>
             <FlexDiv marginTop="18px">

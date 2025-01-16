@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { get } from 'lodash'
-import { BigNumber } from 'bignumber.js'
 import { CHAIN_IDS } from '../data/constants'
 import {
   GRAPH_URLS,
@@ -806,13 +805,10 @@ export const initBalanceAndDetailData = async (
 ) => {
   const timestamps = []
   const uniqueVaultHData = []
-  const uniqueVaultHIPORData = []
+  const updatedBalanceData = []
   const mergedData = []
-  const mergedIPORData = []
   let bFlag = false,
     vHFlag = false,
-    bIPORFlag = false,
-    vHIPORFlag = false,
     enrichedData = [],
     sumNetChange = 0,
     sumNetChangeUsd = 0,
@@ -1039,131 +1035,89 @@ export const initBalanceAndDetailData = async (
       })
     }
   } else {
-    const { balanceIPORData, balanceIPORFlag } = await getIPORUserBalanceHistories('IPOR', account)
-    const { vaultHIPORData, vaultHIPORFlag } = await getIPORVaultHistories()
-    bIPORFlag = balanceIPORFlag
-    vHIPORFlag = vaultHIPORFlag
-    if (vaultHIPORFlag) {
-      vaultHIPORData.forEach(obj => {
+    const {
+      balanceIPORData: balanceData,
+      balanceIPORFlag: balanceFlag,
+    } = await getIPORUserBalanceHistories('IPOR', account)
+    const { vaultHIPORData: vaultHData, vaultHIPORFlag: vaultHFlag } = await getIPORVaultHistories()
+    bFlag = balanceFlag
+    vHFlag = vaultHFlag
+
+    if (vaultHFlag) {
+      vaultHData.forEach(obj => {
         if (!timestamps.includes(obj.timestamp)) {
           timestamps.push(obj.timestamp)
           const sharePriceDecimals = fromWei(obj.sharePrice, tokenDecimals, tokenDecimals)
           const modifiedObj = { ...obj, sharePrice: sharePriceDecimals }
-          uniqueVaultHIPORData.push(modifiedObj)
+          uniqueVaultHData.push(modifiedObj)
         }
       })
     }
 
-    if (balanceIPORFlag && vaultHIPORFlag) {
+    if (balanceFlag) {
+      balanceData.forEach(obj => {
+        timestamps.push(obj.timestamp)
+        const valueDecimals = fromWei(obj.value, 8, 8)
+        const modifiedObj = { ...obj, value: valueDecimals }
+        updatedBalanceData.push(modifiedObj)
+      })
+    }
+
+    if (balanceFlag && vaultHFlag) {
       let uniqueData = [],
         uniqueFixedData = [],
         lastUserEvent = false,
         lastUserEventUsd = false,
         lastKnownSharePrice = null,
-        lastKnownPriceUnderlying = null
+        lastKnownPriceUnderlying = null,
+        i = 0,
+        z = 0
 
-      const bl = balanceIPORData.length,
-        ul = uniqueVaultHIPORData.length
-      if (balanceIPORData[0].timestamp > uniqueVaultHIPORData[0].timestamp) {
-        let i = 0,
-          z = 0,
-          addFlag = false
+      const bl = updatedBalanceData.length,
+        ul = uniqueVaultHData.length
 
-        while (balanceIPORData[i]?.timestamp > uniqueVaultHIPORData[0].timestamp) {
-          balanceIPORData[i].priceUnderlying = uniqueVaultHIPORData[0].priceUnderlying
-          balanceIPORData[i].sharePrice = uniqueVaultHIPORData[0].sharePrice
-          mergedIPORData.push(uniqueVaultHIPORData[i])
+      // Ensure both datasets are sorted by descending timestamps
+      updatedBalanceData.sort((a, b) => b.timestamp - a.timestamp)
+      uniqueVaultHData.sort((a, b) => b.timestamp - a.timestamp)
+
+      // Merge datasets
+      while (i < bl || z < ul) {
+        if (
+          i < bl &&
+          (z >= ul || updatedBalanceData[i].timestamp > uniqueVaultHData[z]?.timestamp)
+        ) {
+          // Balance entry without a matching Vault entry
+          const balanceEntry = { ...updatedBalanceData[i] }
+          balanceEntry.priceUnderlying =
+            uniqueVaultHData[z - 1]?.priceUnderlying || lastKnownPriceUnderlying
+          balanceEntry.sharePrice = uniqueVaultHData[z - 1]?.sharePrice || lastKnownSharePrice
+          balanceEntry.tvl = uniqueVaultHData[z - 1]?.tvl || 0
+          balanceEntry.apy = uniqueVaultHData[z - 1]?.apy || 0
+          mergedData.push(balanceEntry)
           i += 1
-        }
-        while (i < bl) {
-          if (z < ul) {
-            while (uniqueVaultHIPORData[z].timestamp >= balanceIPORData[i].timestamp) {
-              uniqueVaultHIPORData[z].value = balanceIPORData[i].value
-              mergedIPORData.push(uniqueVaultHIPORData[z])
-              z += 1
-              if (!addFlag && uniqueVaultHIPORData[z].timestamp === balanceIPORData[i].timestamp) {
-                addFlag = true
-              }
-            }
-          }
-          if (!addFlag) {
-            balanceIPORData[i].priceUnderlying =
-              uniqueVaultHIPORData[z === ul ? z - 1 : z].priceUnderlying
-            balanceIPORData[i].sharePrice = uniqueVaultHIPORData[z === ul ? z - 1 : z].sharePrice
-            mergedIPORData.push(balanceIPORData[i])
-          }
-          addFlag = false
-          i += 1
-        }
-        while (z < ul) {
-          uniqueVaultHIPORData[z].value = 0
-          mergedIPORData.push(uniqueVaultHIPORData[z])
-          z += 1
-        }
-        while (i < bl) {
-          balanceIPORData[i].priceUnderlying = uniqueVaultHIPORData[ul - 1].priceUnderlying
-          balanceIPORData[i].sharePrice = uniqueVaultHIPORData[ul - 1].sharePrice
-          mergedIPORData.push(balanceIPORData[i])
-          i += 1
-        }
-      } else {
-        let i = 0,
-          z = 0,
-          addFlag = false
-        while (i < ul && uniqueVaultHIPORData[i].timestamp > balanceIPORData[0].timestamp) {
-          uniqueVaultHIPORData[i].value = balanceIPORData[0].value
-          mergedIPORData.push(uniqueVaultHIPORData[i])
-          i += 1
-        }
-        while (z < bl) {
-          if (i < ul) {
-            while (uniqueVaultHIPORData[i].timestamp >= balanceIPORData[z].timestamp) {
-              uniqueVaultHIPORData[i].value = balanceIPORData[z].value
-              mergedIPORData.push(uniqueVaultHIPORData[i])
-              i += 1
-              if (i >= ul) {
-                break
-              }
-              if (!addFlag && uniqueVaultHIPORData[i].timestamp === balanceIPORData[z].timestamp) {
-                addFlag = true
-              }
-            }
-          }
-          if (!addFlag) {
-            balanceIPORData[z].priceUnderlying =
-              uniqueVaultHIPORData[i === ul ? i - 1 : i].priceUnderlying
-            balanceIPORData[z].sharePrice = uniqueVaultHIPORData[i === ul ? i - 1 : i].sharePrice
-            mergedIPORData.push(balanceIPORData[z])
-          }
-          addFlag = false
-          z += 1
-        }
-        while (i < ul) {
-          uniqueVaultHIPORData[i].value = 0
-          mergedIPORData.push(uniqueVaultHIPORData[i])
-          i += 1
-        }
-        while (z < bl) {
-          balanceIPORData[z].priceUnderlying = uniqueVaultHIPORData[ul - 1].priceUnderlying
-          balanceIPORData[z].sharePrice = uniqueVaultHIPORData[ul - 1].sharePrice
-          mergedIPORData.push(balanceIPORData[z])
+        } else {
+          // Vault entry, possibly matching a Balance entry
+          const vaultEntry = { ...uniqueVaultHData[z] }
+          vaultEntry.value = updatedBalanceData[i]?.value || 0
+          mergedData.push(vaultEntry)
           z += 1
         }
       }
 
-      const filteredData = removeZeroValueObjects(mergedIPORData)
+      // Filter out zero-value objects
+      const filteredData = removeZeroValueObjects(mergedData)
 
-      // Create a map to keep track of unique combinations of 'value' and 'sharePrice'
+      // Create unique data by combining similar entries
       const map = new Map()
       filteredData.forEach(item => {
         const key = `${item.value}_${item.sharePrice}`
         map.set(key, item)
       })
 
-      // Convert the map back to an array
       uniqueData = Array.from(map.values())
       uniqueData.sort((a, b) => b.timestamp - a.timestamp)
 
+      // Fix missing sharePrice and priceUnderlying values
       uniqueFixedData = uniqueData.map(item => {
         if (item.sharePrice === '0') {
           item.sharePrice = lastKnownSharePrice !== null ? lastKnownSharePrice : item.sharePrice
@@ -1181,6 +1135,7 @@ export const initBalanceAndDetailData = async (
         return item
       })
 
+      // Enrich data
       enrichedData = uniqueFixedData
         .map((item, index, array) => {
           const nextItem = array[index + 1]
@@ -1193,10 +1148,7 @@ export const initBalanceAndDetailData = async (
             balance = '0'
             balanceUsd = '0'
           } else {
-            balance = new BigNumber(item.value)
-              .times(new BigNumber(item.sharePrice))
-              .div(10 ** 8)
-              .toFixed()
+            balance = Number(item.value) * Number(item.sharePrice)
             balanceUsd = balance * Number(item.priceUnderlying)
           }
 
@@ -1209,10 +1161,7 @@ export const initBalanceAndDetailData = async (
               event = 'Revert'
             }
 
-            const nextBalance = new BigNumber(nextItem.value)
-              .times(new BigNumber(nextItem.sharePrice))
-              .div(10 ** 8)
-              .toFixed()
+            const nextBalance = Number(nextItem.value) * Number(nextItem.sharePrice)
             netChange = balance - nextBalance
             netChangeUsd = Math.abs(netChange) * Number(item.priceUnderlying)
           } else {
@@ -1232,12 +1181,14 @@ export const initBalanceAndDetailData = async (
         })
         .filter(Boolean)
 
+      // Calculate summary metrics
       sumNetChange = enrichedData.reduce((sumValue, item) => {
         if (item.event === 'Harvest') {
           return sumValue + item.netChange
         }
         return sumValue
       }, 0)
+
       sumNetChangeUsd = enrichedData.reduce((sumUsdValue, item) => {
         if (item.event === 'Harvest') {
           return sumUsdValue + item.netChangeUsd
@@ -1245,6 +1196,7 @@ export const initBalanceAndDetailData = async (
         return sumUsdValue
       }, 0)
 
+      // Calculate latest net change values
       enrichedData.forEach(item => {
         if (!lastUserEvent) {
           if (item.event === 'Harvest') {
@@ -1254,6 +1206,7 @@ export const initBalanceAndDetailData = async (
           }
         }
       })
+
       enrichedData.forEach(item => {
         if (!lastUserEventUsd) {
           if (item.event === 'Harvest') {
@@ -1269,15 +1222,12 @@ export const initBalanceAndDetailData = async (
   return {
     bFlag,
     vHFlag,
-    bIPORFlag,
-    vHIPORFlag,
     sumNetChange,
     sumNetChangeUsd,
     sumLatestNetChange,
     sumLatestNetChangeUsd,
     enrichedData,
     uniqueVaultHData,
-    uniqueVaultHIPORData,
   }
 }
 

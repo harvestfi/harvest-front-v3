@@ -176,7 +176,7 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
               <NewLabel display="flex" flexFlow="column" weight="600" align="right">
                 <>{inputAmount !== '' ? inputAmount : <AnimatedDots />}</>
                 <span>
-                  {token.tokenNames.length > 0 ? `ff${token?.tokenNames[0]}` : <AnimatedDots />}
+                  {token.tokenNames.length > 0 ? `${token?.tokenNames[0]}` : <AnimatedDots />}
                 </span>
               </NewLabel>
             </NewLabel>

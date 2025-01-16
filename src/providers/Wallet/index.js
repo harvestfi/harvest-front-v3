@@ -252,7 +252,8 @@ const WalletProvider = _ref => {
                 )
               }
 
-              const approvalContract = contracts[IFARM_TOKEN_SYMBOL ? FARM_TOKEN_SYMBOL : token]
+              const approvalContract =
+                contracts[token === IFARM_TOKEN_SYMBOL ? FARM_TOKEN_SYMBOL : token]
               const currApprovedAssetBalance = approvedBalances[token]
               const newApprovedAssetBalance = vaultAddress
                 ? await tokenMethods.getApprovedAmount(
