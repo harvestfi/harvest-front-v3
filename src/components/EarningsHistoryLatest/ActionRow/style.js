@@ -5,7 +5,6 @@ const DetailView = styled.div`
   padding: 15px 25px;
   cursor: pointer;
   transition: 0.25s;
-  border-bottom: 1px solid ${props => props.borderColor};
 
   &:hover {
     background: ${props => props.hoverColor};
@@ -14,6 +13,10 @@ const DetailView = styled.div`
   @media screen and (max-width: 992px) {
     padding: 0px;
     border-bottom: 1px solid ${props => props.borderColor};
+
+    &:first-child {
+      border-top: 1px solid ${props => props.borderColor};
+    }
   }
 `
 
@@ -258,7 +261,7 @@ const MobileGreenBox = styled.div`
 const BadgePart = styled.div`
   display: flex;
   justify-content: end;
-  margin-top: 10px;
+  margin-top: 5px;
   align-items: center;
 
   img {

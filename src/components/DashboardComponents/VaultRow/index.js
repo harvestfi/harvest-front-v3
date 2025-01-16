@@ -20,25 +20,16 @@ import {
   NewLabel,
 } from './style'
 
-const VaultRow = ({
-  info,
-  lifetimeYield,
-  firstElement,
-  lastElement,
-  cKey,
-  darkMode,
-  onceRun,
-  setCorrectRun,
-}) => {
+const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey, darkMode }) => {
   const { push } = useHistory()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const {
     switchMode,
-    backColor,
+    bgColorNew,
     hoverColorRow,
     fontColor1,
     fontColor,
-    borderColorTable,
+    borderColorBox,
   } = useThemeContext()
 
   const { rates } = useRate()
@@ -52,22 +43,16 @@ const VaultRow = ({
     }
   }, [rates])
 
-  useEffect(() => {
-    if (!onceRun && Number(lifetimeYield) === -1) {
-      setCorrectRun(false)
-    }
-  }, [onceRun, lifetimeYield, setCorrectRun])
-
   return (
     <DetailView
       className="position-row"
       firstElement={firstElement}
       lastElement={lastElement}
-      borderColor={borderColorTable}
+      borderColor={borderColorBox}
       hoverColor={hoverColorRow}
       key={cKey}
       mode={switchMode}
-      background={isMobile ? (darkMode ? '#171B25' : '#fff') : backColor}
+      background={bgColorNew}
       onClick={() => {
         let badgeId = -1
         const token = info.token
@@ -91,10 +76,7 @@ const VaultRow = ({
           <>
             <Content width={isMobile ? '100%' : '40%'} display={isMobile ? 'block' : 'flex'}>
               <ContentInner width={isMobile ? '100%' : '50%'} display={isMobile ? 'block' : 'flex'}>
-                <BadgeIcon
-                  borderColor={info.status === 'Active' ? '#29ce84' : 'orange'}
-                  className="network-badge"
-                >
+                <BadgeIcon className="network-badge">
                   <img src={info.chain ? info.chain : ETHEREUM} width="15px" height="15px" alt="" />
                 </BadgeIcon>
                 {info.logos.length > 0 &&

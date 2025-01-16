@@ -14,7 +14,7 @@ const ButtonGroup = ({
   oneClass,
   setSortOrder,
 }) => {
-  const { backColor, filterChainHoverColor, darkMode } = useThemeContext()
+  const { bgColorNew, filterChainHoverColor, borderColorBox, darkMode } = useThemeContext()
 
   const handleClick = (event, id) => {
     if (buttons[id].name !== 'Labs') {
@@ -28,11 +28,7 @@ const ButtonGroup = ({
   const [focusId, setFocusId] = React.useState(prevFocusId)
   let tempId = -1
   return (
-    <ButtonsGroup
-      backColor={backColor}
-      borderColor={darkMode ? '#1F242F' : '#d1dbfb'}
-      className={oneClass}
-    >
+    <ButtonsGroup backColor={bgColorNew} borderColor={borderColorBox} className={oneClass}>
       {buttons.map((button, i) => {
         const buttonLength =
           isMobile && buttons[buttons.length - 1].name === 'Inactive'
@@ -55,7 +51,7 @@ const ButtonGroup = ({
             num={i}
             className={i === clickedId || i === focusId ? 'active' : ''}
             fontColor={fontColor}
-            borderColor={darkMode ? '#1F242F' : '#d1dbfb'}
+            borderColor={borderColorBox}
             hoverColor={filterChainHoverColor}
             unsetWidth={unsetWidth}
             mobileFontColor={darkMode ? '#fff' : '#000'}
