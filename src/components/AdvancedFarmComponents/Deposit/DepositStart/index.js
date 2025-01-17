@@ -103,7 +103,7 @@ const DepositStart = ({
   const [buttonName, setButtonName] = useState('Approve Token')
   const [receiveAmount, setReceiveAmount] = useState('')
   const [receiveUsd, setReceiveUsd] = useState('')
-  const { handleApproval, handleDeposit } = useActions()
+  const { handleApproval, handleDeposit, handleIPORDeposit } = useActions()
   const { contracts } = useContracts()
   const { vaultsData } = useVaults()
 
@@ -201,17 +201,18 @@ const DepositStart = ({
   }
 
   const startDeposit = async () => {
+    const tokenSym = token.isIPORVault ? token.id : tokenSymbol
     if (progressStep === 0) {
       setStartSpinner(true)
       setProgressStep(1)
       setButtonName('Pending Approval in Wallet')
       if (pickedDefaultToken) {
-        const allowanceCheck = useIFARM ? approvedBalances.IFARM : approvedBalances[tokenSymbol]
+        const allowanceCheck = useIFARM ? approvedBalances.IFARM : approvedBalances[tokenSym]
         if (!new BigNumber(allowanceCheck.toString()).gte(new BigNumber(amount.toString()))) {
           await handleApproval(
             account,
             contracts,
-            tokenSymbol,
+            tokenSym,
             amount,
             toToken,
             null,
@@ -222,7 +223,7 @@ const DepositStart = ({
               setReceiveAmount(minReceiveAmountString)
               setReceiveUsd(minReceiveUsdAmount)
               await fetchUserPoolStats([fAssetPool], account, userStats)
-              await getWalletBalances([tokenSymbol], false, true)
+              await getWalletBalances([tokenSym], false, true)
             },
             async () => {
               setStartSpinner(false)
@@ -270,29 +271,45 @@ const DepositStart = ({
         if (useIFARM) {
           tokenSymbol = 'IFARM'
         }
-        isSuccess = await handleDeposit(
-          token,
-          account,
-          tokenSymbol,
-          [amount],
-          approvedBalances[tokenSymbol],
-          contracts,
-          vaultsData[tokenSymbol],
-          false,
-          fAssetPool,
-          false,
-          false,
-          async () => {
-            await getWalletBalances([tokenSymbol])
-            await fetchUserPoolStats([fAssetPool], account, userStats)
-          },
-          async () => {
-            setDepositFailed(true)
-            setStartSpinner(false)
-            setProgressStep(0)
-            setButtonName('Approve Token')
-          },
-        )
+        isSuccess = token.isIPORVault
+          ? await handleIPORDeposit(
+              account,
+              token,
+              amount,
+              async () => {
+                await getWalletBalances([token.id], false, true)
+                await fetchUserPoolStats([fAssetPool], account, userStats)
+              },
+              () => {
+                setDepositFailed(true)
+                setStartSpinner(false)
+                setProgressStep(0)
+                setButtonName('Approve Token')
+              },
+            )
+          : await handleDeposit(
+              token,
+              account,
+              tokenSym,
+              [amount],
+              approvedBalances[tokenSym],
+              contracts,
+              vaultsData[tokenSym],
+              false,
+              fAssetPool,
+              false,
+              false,
+              async () => {
+                await getWalletBalances([tokenSym], false, true)
+                await fetchUserPoolStats([fAssetPool], account, userStats)
+              },
+              async () => {
+                setDepositFailed(true)
+                setStartSpinner(false)
+                setProgressStep(0)
+                setButtonName('Approve Token')
+              },
+            )
       } else {
         try {
           setProgressStep(3)
@@ -310,6 +327,7 @@ const DepositStart = ({
       }
       // End Approve and Deposit successfully
       if (isSuccess) {
+        await getWalletBalances([tokenSym], false, true)
         setStartSpinner(false)
         setDepositFailed(false)
         setProgressStep(4)
