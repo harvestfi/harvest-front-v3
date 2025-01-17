@@ -1235,7 +1235,8 @@ const Portfolio = () => {
                           vaultNetChangeList.some(item => {
                             if (
                               (item.id === FARM_TOKEN_SYMBOL && item.id === info.symbol) ||
-                              item.id === info.token?.pool?.id
+                              item.id === info.token?.pool?.id ||
+                              (info.token?.isIPORVault && item.id === info.token?.id)
                             ) {
                               lifetimeYield = item.sumNetChangeUsd
                               return true
