@@ -58,7 +58,7 @@ const ChartSection = styled.div`
 
 const ChartBox = styled.div`
   display: flex;
-  width: ${props => props.width || '-webkit-fill-available'};
+  width: 70%;
   flex-direction: ${props => props.direction || 'column'};
   justify-content: start;
   position: relative;
@@ -69,11 +69,16 @@ const ChartBox = styled.div`
   margin: ${props => props.margin || 'unset'};
   border-right: 0.556px solid rgba(255, 255, 255, 0.3);
 
+  @media screen and (max-width: 1100px) {
+    width: 60%;
+  }
+
   h2 {
     text-align: left;
   }
 
   @media screen and (max-width: 992px) {
+    width: 100%;
     order: ${props => props.mobileOrder || 'unset'};
   }
 `
@@ -618,8 +623,8 @@ const YieldTable = styled.div`
     line-height: 20px;
   }
 
-  @media screen and (max-width: 1320px) {
-    width: 100%;
+  @media screen and (max-width: 1100px) {
+    width: 40%;
   }
 
   @media screen and (max-width: 992px) {
