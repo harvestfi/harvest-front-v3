@@ -83,7 +83,7 @@ const ApexChart = ({ noData, data, range, handleTooltipContent, setCurDate, setC
         <div style="font-size: 25px; line-height: 38px;">
           <div style="color: #5DCF46; font-weight: 600;">
             ${currencySym}${numberWithCommas(
-          (Number(data[0].lifetimeYield) * Number(currencyRate)).toFixed(2),
+          (Number(data[0]?.lifetimeYield) * Number(currencyRate)).toFixed(2),
         )}
           </div>
         </div>`
