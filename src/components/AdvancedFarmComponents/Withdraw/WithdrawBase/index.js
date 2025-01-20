@@ -189,18 +189,19 @@ const WithdrawBase = ({
                 : portalsEstimate.res.outputAmount,
             }
 
+            const defaultDecimal = token.isIPORVault ? token.vaultDecimals : token?.decimals
             fromInfoValue = new BigNumber(
               fromWei(
                 quoteResult.fromTokenAmount,
                 useIFARM
                   ? fAssetPool?.lpTokenData?.decimals
                   : pickedDefaultToken
-                  ? token?.decimals
+                  ? defaultDecimal
                   : fromTokenDetail?.decimals,
                 useIFARM
                   ? fAssetPool?.lpTokenData?.decimals
                   : pickedDefaultToken
-                  ? token?.decimals
+                  ? defaultDecimal
                   : fromTokenDetail?.decimals,
               ),
             ).toString()
@@ -213,19 +214,21 @@ const WithdrawBase = ({
                       useIFARM
                         ? fAssetPool?.lpTokenData?.decimals
                         : pickedDefaultToken
-                        ? token?.decimals
+                        ? defaultDecimal
                         : fromTokenDetail?.decimals,
                       useIFARM
                         ? fAssetPool?.lpTokenData?.decimals
                         : pickedDefaultToken
-                        ? token?.decimals
+                        ? defaultDecimal
                         : fromTokenDetail?.decimals,
                       true,
                     ) * quoteResult.fromTokenUsdPrice,
                     BEGINNERS_BALANCES_DECIMALS,
                   )
+            const pDecimal =
+              token.isIPORVault && pickedDefaultToken ? token.vaultDecimals : pickedToken.decimals
             minReceivedString = new BigNumber(
-              fromWei(quoteResult.minToTokenAmount, pickedToken.decimals, pickedToken.decimals),
+              fromWei(quoteResult.minToTokenAmount, pDecimal, pDecimal),
             ).toString()
             minReceivedUsdString = formatNumberWido(
               parseFloat(minReceivedString) * toTokenUsdPrice,
@@ -465,15 +468,14 @@ const WithdrawBase = ({
           fontColor={fontColor}
           onClick={() => {
             if (account) {
-              setUnstakeBalance(useIFARM ? stakeAmountWei : lpTokenBalance)
+              const bal = token.isIPORVault ? balances[token.id] : lpTokenBalance
+              const decimal = token.isIPORVault
+                ? token.vaultDecimals
+                : fAssetPool.lpTokenData.decimals
+              setUnstakeBalance(useIFARM ? stakeAmountWei : bal)
               setUnstakeInputValue(
                 new BigNumber(
-                  fromWei(
-                    useIFARM ? stakeAmountWei : lpTokenBalance,
-                    fAssetPool.lpTokenData.decimals,
-                    fAssetPool.lpTokenData.decimals,
-                    false,
-                  ),
+                  fromWei(useIFARM ? stakeAmountWei : bal, decimal, decimal, false),
                 ).toString(),
               )
             }

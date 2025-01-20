@@ -542,10 +542,12 @@ const ActionsProvider = ({ children }) => {
         await iporVaultMethods.deposit(amount, account, iporVaultInstance)
         toast.success(`${tokenDisplayName} deposit completed`)
         await onSuccessDeposit()
+        return true
       } catch (err) {
         const errorMessage = formatWeb3PluginErrorMessage(err)
         toast.error(errorMessage)
         onFailureDeposit()
+        return false
       }
     },
     [web3],
@@ -567,9 +569,11 @@ const ActionsProvider = ({ children }) => {
         await iporVaultMethods.withdraw(amount, account, iporVaultInstance)
         toast.success(`${tokenDisplayName} withdraw completed`)
         await onSuccess()
+        return true
       } catch (err) {
         const errorMessage = formatWeb3PluginErrorMessage(err)
         toast.error(errorMessage)
+        return false
       }
     },
     [web3],

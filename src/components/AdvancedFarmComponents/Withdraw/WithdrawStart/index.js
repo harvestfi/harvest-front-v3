@@ -21,6 +21,7 @@ import ProgressFive from '../../../../assets/images/logos/advancedfarm/progress-
 import { chainList, directDetailUrl, IFARM_TOKEN_SYMBOL } from '../../../../constants'
 import { useActions } from '../../../../providers/Actions'
 import { useVaults } from '../../../../providers/Vault'
+import { useContracts } from '../../../../providers/Contracts'
 import { useWallet } from '../../../../providers/Wallet'
 import { usePools } from '../../../../providers/Pools'
 import { usePortals } from '../../../../providers/Portals'
@@ -104,6 +105,7 @@ const WithdrawStart = ({
   } = useThemeContext()
   const { account, web3, getWalletBalances } = useWallet()
   const { fetchUserPoolStats, userStats, pools } = usePools()
+  const { contracts } = useContracts()
   const { push } = useHistory()
   const [slippagePercentage, setSlippagePercentage] = useState(null)
   const [slippageSetting, setSlippageSetting] = useState(false)
@@ -116,7 +118,7 @@ const WithdrawStart = ({
   const [startSpinner, setStartSpinner] = useState(false) // State of Spinner for 'Finalize Deposit' button
   const [revertedAmount, setRevertedAmount] = useState('')
   const [revertedAmountUsd, setRevertedAmountUsd] = useState('')
-  const { handleWithdraw } = useActions()
+  const { handleWithdraw, handleIPORWithdraw } = useActions()
   const { vaultsData } = useVaults()
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
@@ -208,6 +210,7 @@ const WithdrawStart = ({
   }
 
   const startWithdraw = async () => {
+    const tokenSym = token.isIPORVault ? token.id : tokenSymbol
     if (progressStep === 0) {
       setStartSpinner(true)
       setProgressStep(1)
@@ -245,24 +248,37 @@ const WithdrawStart = ({
         setProgressStep(3)
         setButtonName('Pending Confirmation in Wallet')
         setStartSpinner(true)
-        isSuccess = await handleWithdraw(
-          account,
-          useIFARM ? IFARM_TOKEN_SYMBOL : tokenSymbol,
-          unstakeBalance,
-          vaultsData,
-          null,
-          false,
-          null,
-          async () => {
-            await fetchUserPoolStats([fAssetPool], account, userStats)
-          },
-          async () => {
-            setWithdrawFailed(true)
-            setStartSpinner(false)
-            setProgressStep(0)
-            setButtonName('Approve Token')
-          },
-        )
+        let assetBal
+        if (token.isIPORVault) {
+          const vaultContract = contracts.iporVault
+          assetBal = await vaultContract.methods.convertToAssets(
+            vaultContract.instance,
+            unstakeBalance,
+          )
+        }
+        isSuccess = token.isIPORVault
+          ? await handleIPORWithdraw(account, token, assetBal, async () => {
+              await getWalletBalances([token.id], false, true)
+              await fetchUserPoolStats([fAssetPool], account, userStats)
+            })
+          : await handleWithdraw(
+              account,
+              useIFARM ? IFARM_TOKEN_SYMBOL : tokenSym,
+              unstakeBalance,
+              vaultsData,
+              null,
+              false,
+              null,
+              async () => {
+                await fetchUserPoolStats([fAssetPool], account, userStats)
+              },
+              async () => {
+                setWithdrawFailed(true)
+                setStartSpinner(false)
+                setProgressStep(0)
+                setButtonName('Approve Token')
+              },
+            )
       } else {
         try {
           setProgressStep(3)
