@@ -1,5 +1,4 @@
 import styled from 'styled-components'
-import PopularBg from '../../../../assets/images/logos/advancedfarm/popular_bg.png'
 
 const SelectTokenWido = styled.div`
   transition: 0.25s;
@@ -242,48 +241,6 @@ const FTokenWrong = styled.div`
   justify-content: space-between;
 `
 
-const AVRWrapper = styled.div`
-  display: flex;
-  margin: 15px 24px 15px;
-  justify-content: space-between;
-  cursor: pointer;
-
-  background: linear-gradient(${props => props.bgColor}, ${props => props.bgColor}) padding-box,
-    linear-gradient(45deg, #cf1894, #b0229b, #e0439b, #670e78) border-box;
-  border-radius: 12px;
-  border: 2px solid transparent;
-`
-
-const AVRContainer = styled.div`
-  padding: 16px;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  gap: 12px 0;
-  border-radius: 12px;
-
-  &:hover {
-    background: ${props => props.hoverColorAVR};
-    transition: 0.25s;
-  }
-`
-
-const AVRBadge = styled.div`
-  display: flex;
-  padding: 2.429px 7.286px;
-  justify-content: center;
-  align-items: center;
-  gap: 3.643px;
-  border-radius: 9.714px;
-  border: 1px solid #fff;
-  background: url(${PopularBg}) lightgray -36.605px -17.873px / 164.706% 364.888% no-repeat;
-  color: #fff;
-  font-size: 8.5px;
-  font-weight: 500;
-  line-height: 12.143px;
-  height: fit-content;
-`
-
 const ApyValue = styled.div`
   color: ${props => props.color};
   text-align: center;
@@ -296,14 +253,6 @@ const ApyValue = styled.div`
     linear-gradient(45deg, #cf1894, #b0229b, #e0439b, #670e78) border-box;
   border-radius: 4.148px;
   border: 1.078px solid transparent;
-`
-
-const TopLogo = styled.div`
-  display: flex;
-  align-items: flex-start;
-  @media screen and (max-width: 992px) {
-    margin: auto;
-  }
 `
 
 const LogoImg = styled.img`
@@ -504,11 +453,7 @@ export {
   SlippageInput,
   ProgressLabel,
   ProgressText,
-  AVRWrapper,
-  AVRContainer,
-  AVRBadge,
   ApyValue,
-  TopLogo,
   LogoImg,
   BigLogoImg,
   VaultContainer,
