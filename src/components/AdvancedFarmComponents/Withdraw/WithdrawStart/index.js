@@ -28,11 +28,7 @@ import { usePortals } from '../../../../providers/Portals'
 import { useRate } from '../../../../providers/Rate'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { getWeb3, fromWei } from '../../../../services/web3'
-import {
-  formatNumberWido,
-  showTokenBalance,
-  showUsdValueCurrency,
-} from '../../../../utilities/formats'
+import { formatNumberWido, showTokenBalance } from '../../../../utilities/formats'
 import AnimatedDots from '../../../AnimatedDots'
 import { addresses } from '../../../../data'
 import { getMatchedVaultList } from '../../../../utilities/parsers'
@@ -116,7 +112,7 @@ const WithdrawStart = ({
   const [highestApyLogo, setHighestApyLogo] = useState([])
   const [tokenNames, setTokenNames] = useState([])
   const [platformNames, setPlatformNames] = useState([])
-  const [topTvlVault, setTopTvlVault] = useState()
+  const [topApyVault, setTopApyVault] = useState()
   const [fromTokenAddress, setFromTokenAddress] = useState()
   const [toVaultAddress, setToVaultAddress] = useState()
   const [matchVaultList, setMatchVaultList] = useState([])
@@ -344,7 +340,9 @@ const WithdrawStart = ({
     if (chainId) {
       const matched = getMatchedVaultList(groupOfVaults, chainId, vaultsData, pools)
       if (matched.length > 0) {
-        activedList = matched.filter(el => el.vaultApy !== 0 && el.vaultTvl > 500)
+        activedList = matched.filter(
+          el => el.vaultApy !== 0 && el.vaultTvl > 500 && el.vault?.tokenNames.length === 1,
+        )
       }
     }
 
@@ -356,7 +354,7 @@ const WithdrawStart = ({
       const filteredMatchList = []
 
       if (activedList.length > 0) {
-        activedList.sort((a, b) => b.vaultTvl - a.vaultTvl)
+        activedList.sort((a, b) => b.vaultApy - a.vaultApy)
         const newArray = activedList.slice(0, 10)
         // eslint-disable-next-line no-restricted-syntax
         for (const item of newArray) {
@@ -400,7 +398,7 @@ const WithdrawStart = ({
       setHighestApyLogo(matchVaultList[0].vault.logoUrl)
       setTokenNames(matchVaultList[0].vault.tokenNames)
       setPlatformNames(matchVaultList[0].vault.platform)
-      setTopTvlVault(matchVaultList[0].vaultTvl)
+      setTopApyVault(matchVaultList[0].vaultApy)
       setFromTokenAddress(token.vaultAddress.toLowerCase())
       setToVaultAddress(matchVaultList[0].vault.vaultAddress.toLowerCase())
     } else if (
@@ -410,7 +408,7 @@ const WithdrawStart = ({
       setHighestApyLogo(matchVaultList[1].vault.logoUrl)
       setTokenNames(matchVaultList[1].vault.tokenNames)
       setPlatformNames(matchVaultList[1].vault.platform)
-      setTopTvlVault(matchVaultList[1].vaultTvl)
+      setTopApyVault(matchVaultList[1].vaultApy)
       setFromTokenAddress(token.vaultAddress.toLowerCase())
       setToVaultAddress(matchVaultList[1].vault.vaultAddress.toLowerCase())
     }
@@ -805,11 +803,7 @@ const WithdrawStart = ({
                     </NamePart>
                   </ImageName>
                   <ImageName className="top-apy">
-                    {topTvlVault ? (
-                      `${showUsdValueCurrency(topTvlVault, currencySym, currencyRate)} TVL`
-                    ) : (
-                      <AnimatedDots />
-                    )}
+                    {topApyVault ? `${topApyVault}% APY` : <AnimatedDots />}
                   </ImageName>
                 </HighestVault>
               </VaultContainer>

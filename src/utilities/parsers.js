@@ -611,7 +611,7 @@ export const getMatchedVaultList = (allVaults, chainName, vaultsData, pools) => 
     }
     return true
   })
-  sameNetworkVaults.sort((a, b) => b.vaultTvl - a.vaultTvl)
+  sameNetworkVaults.sort((a, b) => b.vaultApy - a.vaultApy)
   if (sameNetworkVaults) {
     return sameNetworkVaults
   }
