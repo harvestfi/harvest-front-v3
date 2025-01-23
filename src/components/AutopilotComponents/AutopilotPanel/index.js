@@ -21,6 +21,7 @@ import { useRate } from '../../../providers/Rate'
 import SubscribeModal from '../SubscribeModal'
 import UnsubscribeModal from '../UnsubscribeModal'
 import AutopilotInfo from '../AutoPilotInfo'
+import { initBalanceAndDetailData } from '../../../utilities/apiCalls'
 import {
   PanelHeader,
   BasePanelBox,
@@ -163,19 +164,24 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
           if (new BigNumber(AssetBalance).gt(0)) {
             const userBal = fromWei(new BigNumber(vaultBalance), Number(vaultData.vaultDecimals))
             const userAssetBal = fromWei(new BigNumber(AssetBalance), Number(vaultData.decimals))
-            const yieldV = fromWei(
-              new BigNumber(AssetBalance)
-                .multipliedBy(new BigNumber(vaultData.estimatedApy))
-                .dividedBy(new BigNumber(100)),
-              Number(vaultData.decimals),
-            )
             setUserAssetBalance(userAssetBal)
             setUserVBalance(userBal)
-            setYeildValue(yieldV)
           } else {
             setUserAssetBalance(0)
             setUserVBalance(0)
-            setYeildValue(0)
+          }
+          const iporVFlag = vaultData.isIPORVault ?? false
+
+          const { bFlag, vHFlag, sumNetChangeUsd } = await initBalanceAndDetailData(
+            vaultData.vaultAddress,
+            chainId,
+            account,
+            vaultData.decimals,
+            iporVFlag,
+          )
+
+          if (bFlag && vHFlag) {
+            setYeildValue(parseFloat(sumNetChangeUsd).toFixed(6))
           }
         }
 
