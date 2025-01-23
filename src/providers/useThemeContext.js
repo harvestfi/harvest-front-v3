@@ -57,7 +57,6 @@ export function ThemeProvider({ children }) {
   const hoverColorRow = darkMode ? '#282D3A' : '#F7F9FF'
   const hoverColorNew = darkMode ? '#313E55' : '#F7F9FF'
   const hoverColorButton = darkMode ? '#1F242F' : '#F7F9FF'
-  const hoverColorAVR = darkMode ? '#1F242F' : '#fbe7ef'
   const hoverColorSide = darkMode ? '#1E2225' : '#F0F1FA'
   const activeColor = darkMode ? '#242C3C' : '#F3F6FF'
   const activeColorNew = darkMode ? '#5DCF46' : '#F2F5FF'
@@ -226,7 +225,6 @@ export function ThemeProvider({ children }) {
         hoverColorRow,
         hoverColorNew,
         hoverColorButton,
-        hoverColorAVR,
         hoverColorSide,
         activeColor,
         activeColorNew,

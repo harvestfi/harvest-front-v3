@@ -44,7 +44,6 @@ import UnstakeResult from '../../components/AdvancedFarmComponents/Unstake/Unsta
 import EarningsHistory from '../../components/EarningsHistory/HistoryData'
 import RewardsHistory from '../../components/RewardsHistory/RewardsData'
 import {
-  AVRList,
   DECIMAL_PRECISION,
   FARM_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
@@ -208,7 +207,6 @@ const AdvancedFarm = () => {
   const { tokens } = require('../../data')
 
   const [apiData, setApiData] = useState([])
-  const [altVaultData, setAltVaultData] = useState({})
   const [chartData, setChartData] = useState([])
 
   // Switch Tag (Convert/Revert)
@@ -487,20 +485,6 @@ const AdvancedFarm = () => {
     // 👇️ scroll to top on page load
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
   }, [])
-
-  useEffect(() => {
-    const AVRVaultAddress = AVRList[paramAddress]
-
-    if (AVRVaultAddress) {
-      const matchingVault = Object.values(groupOfVaults).find(
-        vault => vault.vaultAddress.toLowerCase() === AVRVaultAddress.toLowerCase(),
-      )
-
-      if (matchingVault) {
-        setAltVaultData(matchingVault)
-      }
-    }
-  }, [groupOfVaults, paramAddress])
 
   const useIFARM = id === FARM_TOKEN_SYMBOL
   const fAssetPool = isSpecialVault
@@ -2739,7 +2723,6 @@ const AdvancedFarm = () => {
                         revertMinReceivedUsdAmount={revertMinReceivedUsdAmount}
                         setUnstakeInputValue={setUnstakeInputValue}
                         setRevertSuccess={setRevertSuccess}
-                        altVaultData={altVaultData}
                       />
                     </WithdrawSection>
                   </HalfContent>

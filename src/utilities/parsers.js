@@ -494,7 +494,9 @@ export const getMigrateVaultApy = (vaultKey, vaultsGroup, vaultsData, pools) => 
     ? getTotalApy(null, token, true)
     : getTotalApy(vaultPool, tokenVault)
 
-  return totalApy
+  const vaultTvl = getVaultValue(isSpecialVault ? token : tokenVault)
+
+  return { totalApy, vaultTvl }
 }
 
 export const rearrangeApiData = (apiData, groupOfVaults) => {
@@ -580,23 +582,8 @@ export const getSecondApy = (allVaults, chainName, vaultsData, pools) => {
   return null
 }
 
-export const addressMatchVault = (allVaults, vaultAddress, vaultsData, pools) => {
-  const matchVault = []
-  Object.entries(allVaults).map(vault => {
-    if (vault[1].vaultAddress.toLowerCase() === vaultAddress.toLowerCase()) {
-      const vaultApy = getVaultApy(vault[1].vaultAddress, allVaults, vaultsData, pools)
-      matchVault.push({ vaultApy: Number(vaultApy), vault: vault[1] })
-    }
-    return true
-  })
-  if (matchVault.length > 0) {
-    return matchVault[0]
-  }
-  return null
-}
-
 export const getMatchedVaultList = (allVaults, chainName, vaultsData, pools) => {
-  const sameNetworkVautls = []
+  const sameNetworkVaults = []
 
   Object.entries(allVaults).map(vault => {
     const compareChain = vault[1].poolVault
@@ -610,14 +597,23 @@ export const getMatchedVaultList = (allVaults, chainName, vaultsData, pools) => 
       vault[0] !== 'IFARM' &&
       compareChain !== null
     ) {
-      const vaultApy = getMigrateVaultApy(address, allVaults, vaultsData, pools)
-      sameNetworkVautls.push({ vaultApy: Number(vaultApy), vault: vault[1] })
+      const { totalApy: vaultApy, vaultTvl } = getMigrateVaultApy(
+        address,
+        allVaults,
+        vaultsData,
+        pools,
+      )
+      sameNetworkVaults.push({
+        vaultApy: Number(vaultApy),
+        vaultTvl: Number(vaultTvl),
+        vault: vault[1],
+      })
     }
     return true
   })
-  sameNetworkVautls.sort((a, b) => b.vaultApy - a.vaultApy)
-  if (sameNetworkVautls) {
-    return sameNetworkVautls
+  sameNetworkVaults.sort((a, b) => b.vaultApy - a.vaultApy)
+  if (sameNetworkVaults) {
+    return sameNetworkVaults
   }
   return false
 }
