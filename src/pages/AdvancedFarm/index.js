@@ -1991,7 +1991,7 @@ const AdvancedFarm = () => {
                             {showLatestEarnings ? underlyingEarningsLatest : underlyingEarnings}
                           </NewLabel>
                         </ReactTooltip>
-                        <span className="symbol">{tokenSym}</span>
+                        <span className="symbol">{token.tokenNames[0]}</span>
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
