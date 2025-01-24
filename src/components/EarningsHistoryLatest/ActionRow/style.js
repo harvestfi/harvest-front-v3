@@ -10,6 +10,10 @@ const DetailView = styled.div`
     background: ${props => props.hoverColor};
   }
 
+  @media screen and (max-width: 1100px) {
+    padding: 10px 15px;
+  }
+
   @media screen and (max-width: 992px) {
     padding: 0px;
     border-bottom: 1px solid ${props => props.borderColor};
