@@ -257,7 +257,7 @@ export const getIPORSequenceId = async () => {
 }
 
 export const getVaultHistories = async (address, chainId) => {
-  let vaultHData = {},
+  let vaultHData = [],
     vaultHFlag = true
 
   address = address.toLowerCase()
@@ -282,7 +282,7 @@ export const getVaultHistories = async (address, chainId) => {
   const url = GRAPH_URLS[chainId]
 
   const data = await executeGraphCall(url, query, variables)
-  vaultHData = data.vaultHistories
+  vaultHData = data?.vaultHistories
 
   if (!vaultHData || vaultHData.length === 0) {
     vaultHFlag = false
@@ -656,7 +656,7 @@ export const checkIPORUserBalance = async account => {
 }
 
 export const getUserBalanceHistories = async (address, chainId, account) => {
-  let balanceData = {},
+  let balanceData = [],
     balanceFlag = true
 
   address = address.toLowerCase()
@@ -685,7 +685,7 @@ export const getUserBalanceHistories = async (address, chainId, account) => {
   const url = GRAPH_URLS[chainId]
 
   const data = await executeGraphCall(url, query, variables)
-  balanceData = data.userBalanceHistories
+  balanceData = data?.userBalanceHistories
 
   if (!balanceData || balanceData.length === 0) {
     balanceFlag = false

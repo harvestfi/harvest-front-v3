@@ -1089,7 +1089,6 @@ const Portfolio = () => {
         <div>
           <ChartSection>
             <ChartBox
-              width={isMobile ? '100%' : '70%'}
               align="flex-start"
               direction="row"
               fontColor={fontColor}

@@ -59,6 +59,10 @@ const SkeletonItem = styled.div`
   display: grid;
   gap: 6px;
 
+  @media screen and (max-width: 1100px) {
+    padding: 10px 15px;
+  }
+
   .skeleton {
     display: flex;
     height: 10px;
