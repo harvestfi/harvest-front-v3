@@ -22,7 +22,7 @@ const ListItem = ({ weight, size, height, color, label, icon, value, marginBotto
         ''
       )}
       {value ? (
-        value === -1 ? (
+        value === '-1' ? (
           <Content height={height}>
             <AnimatedDots />
           </Content>

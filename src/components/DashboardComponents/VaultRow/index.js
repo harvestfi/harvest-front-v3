@@ -145,7 +145,11 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey, darkMo
                 size={12}
                 height={18}
                 color={isMobile ? fontColor1 : fontColor}
-                value={showUsdValueCurrency(lifetimeYield, currencySym, currencyRate)}
+                value={
+                  lifetimeYield === -1
+                    ? '-1'
+                    : showUsdValueCurrency(lifetimeYield, currencySym, currencyRate)
+                }
               />
             </Content>
             <Content width={isMobile ? '25%' : '15%'} marginTop={isMobile ? '15px' : 'unset'}>
@@ -266,7 +270,11 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey, darkMo
                   size={12}
                   height={18}
                   color={isMobile ? fontColor1 : fontColor}
-                  value={showUsdValueCurrency(lifetimeYield, currencySym, currencyRate)}
+                  value={
+                    lifetimeYield === -1
+                      ? '-1'
+                      : showUsdValueCurrency(lifetimeYield, currencySym, currencyRate)
+                  }
                 />
               </ContentInner>
               <ContentInner marginTop="25px">
