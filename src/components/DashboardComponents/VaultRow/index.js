@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useHistory } from 'react-router-dom'
 import { useMediaQuery } from 'react-responsive'
 import ListItem from '../ListItem'
-import { displayAPY, formatNumber, formatNumberWido } from '../../../utilities/formats'
+import { displayAPY, showUsdValueCurrency } from '../../../utilities/formats'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { chainList, directDetailUrl } from '../../../constants'
 import { useRate } from '../../../providers/Rate'
@@ -127,13 +127,7 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey, darkMo
                 size={12}
                 height={18}
                 color={fontColor1}
-                value={`${
-                  info.balance === 0
-                    ? `${currencySym}0.00`
-                    : info.balance < 0.01
-                    ? `<${currencySym}0.01`
-                    : `${currencySym}${formatNumber(info.balance * Number(currencyRate), 2)}`
-                }`}
+                value={showUsdValueCurrency(info.balance, currencySym, currencyRate)}
               />
             </Content>
             <Content width={isMobile ? '30%' : '15%'} marginTop={isMobile ? '15px' : 'unset'}>
@@ -151,15 +145,7 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey, darkMo
                 size={12}
                 height={18}
                 color={isMobile ? fontColor1 : fontColor}
-                value={`${
-                  lifetimeYield === -1
-                    ? '-1'
-                    : lifetimeYield === 0
-                    ? `${currencySym}0.00`
-                    : lifetimeYield < 0.01
-                    ? `<${currencySym}0.01`
-                    : `${currencySym}${formatNumber(lifetimeYield * Number(currencyRate), 2)}`
-                }`}
+                value={showUsdValueCurrency(lifetimeYield, currencySym, currencyRate)}
               />
             </Content>
             <Content width={isMobile ? '25%' : '15%'} marginTop={isMobile ? '15px' : 'unset'}>
@@ -171,16 +157,7 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey, darkMo
                 size={12}
                 height={18}
                 color={isMobile ? fontColor1 : fontColor}
-                value={`${
-                  info.totalRewardUsd === 0
-                    ? `${currencySym}0.00`
-                    : info.totalRewardUsd < 0.01
-                    ? `<${currencySym}0.01`
-                    : `${currencySym}${formatNumberWido(
-                        info.totalRewardUsd * Number(currencyRate),
-                        2,
-                      )}`
-                }`}
+                value={showUsdValueCurrency(info.totalRewardUsd, currencySym, currencyRate)}
               />
             </Content>
             <Content width={isMobile ? '20%' : '15%'} marginTop={isMobile ? '15px' : 'unset'}>
@@ -261,13 +238,7 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey, darkMo
                   size={12}
                   height={18}
                   color={fontColor1}
-                  value={`${
-                    info.balance === 0
-                      ? `${currencySym}0.00`
-                      : info.balance < 0.01
-                      ? `<${currencySym}0.01`
-                      : `${currencySym}${formatNumber(info.balance * Number(currencyRate), 2)}`
-                  }`}
+                  value={showUsdValueCurrency(info.balance, currencySym, currencyRate)}
                 />
               </ContentInner>
               <ContentInner marginTop="25px">
@@ -277,16 +248,7 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey, darkMo
                   size={12}
                   height={18}
                   color={isMobile ? fontColor1 : fontColor}
-                  value={`${
-                    info.totalRewardUsd === 0
-                      ? `${currencySym}0.00`
-                      : info.totalRewardUsd < 0.01
-                      ? `<${currencySym}0.01`
-                      : `${currencySym}${formatNumberWido(
-                          info.totalRewardUsd * Number(currencyRate),
-                          2,
-                        )}`
-                  }`}
+                  value={showUsdValueCurrency(info.totalRewardUsd, currencySym, currencyRate)}
                 />
               </ContentInner>
             </Content>
@@ -304,15 +266,7 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey, darkMo
                   size={12}
                   height={18}
                   color={isMobile ? fontColor1 : fontColor}
-                  value={`${
-                    lifetimeYield === -1
-                      ? '-1'
-                      : lifetimeYield === 0
-                      ? `${currencySym}0.00`
-                      : lifetimeYield < 0.01
-                      ? `<${currencySym}0.01`
-                      : `${currencySym}${formatNumber(lifetimeYield * Number(currencyRate), 2)}`
-                  }`}
+                  value={showUsdValueCurrency(lifetimeYield, currencySym, currencyRate)}
                 />
               </ContentInner>
               <ContentInner marginTop="25px">
