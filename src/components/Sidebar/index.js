@@ -7,7 +7,7 @@ import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-succes
 import connectAvatar from '../../assets/images/logos/sidebar/ellipse.svg'
 import Docs from '../../assets/images/logos/sidebar/file-search.svg'
 import Home from '../../assets/images/logos/sidebar/bar-chart-square.svg'
-// import Diamond from '../../assets/images/logos/sidebar/diamond.svg'
+import Diamond from '../../assets/images/logos/sidebar/diamond.svg'
 import Activity from '../../assets/images/logos/sidebar/layout.svg'
 import Settings from '../../assets/images/logos/sidebar/settings.svg'
 import Support from '../../assets/images/logos/sidebar/discord-side.svg'
@@ -78,12 +78,12 @@ const sideLinksTop = [
     category: true,
     name: 'Products',
   },
-  // {
-  //   path: ROUTES.AUTOPILOT,
-  //   name: 'Autopilot',
-  //   imgPath: Diamond,
-  //   new: true,
-  // },
+  {
+    path: ROUTES.AUTOPILOT,
+    name: 'Autopilot',
+    imgPath: Diamond,
+    new: true,
+  },
   {
     path: ROUTES.ADVANCED,
     name: 'All Vaults',

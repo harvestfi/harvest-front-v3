@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { ArrowContainer } from '../VaultPanelHeader/style'
 
 const VaultContainer = styled.div`
-  display: ${props => props.display};
+  display: flex;
   font-size: 16px;
   flex-direction: column;
   position: relative;
