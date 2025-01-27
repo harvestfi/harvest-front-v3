@@ -124,7 +124,6 @@ const formatVaults = (
   vaultsSymbol = vaultsSymbol.filter(
     tokenSymbol =>
       tokenSymbol !== IFARM_TOKEN_SYMBOL &&
-      !groupOfVaults[tokenSymbol]?.isIPORVault &&
       (selChain.includes(groupOfVaults[tokenSymbol]?.chain) ||
         (groupOfVaults[tokenSymbol]?.data &&
           selChain.includes(groupOfVaults[tokenSymbol]?.data.chain))),
