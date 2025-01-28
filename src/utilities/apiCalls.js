@@ -1095,7 +1095,7 @@ export const initBalanceAndDetailData = async (
 
             const nextBalance = Number(nextItem.value) * Number(nextItem.sharePrice)
             netChange = balance - nextBalance
-            netChangeUsd = Math.abs(netChange) * Number(item.priceUnderlying)
+            netChangeUsd = Number(netChange) * Number(item.priceUnderlying)
           } else {
             event = 'Convert'
             netChange = balance
@@ -1321,7 +1321,7 @@ export const initBalanceAndDetailData = async (
               .div(10 ** 8)
               .toFixed()
             netChange = balance - nextBalance
-            netChangeUsd = Math.abs(netChange) * Number(item.priceUnderlying)
+            netChangeUsd = Number(netChange) * Number(item.priceUnderlying)
           } else {
             event = 'Convert'
             netChange = balance
