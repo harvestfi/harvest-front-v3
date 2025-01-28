@@ -169,19 +169,20 @@ export const showUsdValue = (value, currencySym) => {
 }
 
 export const showUsdValueCurrency = (value, currencySym, currencyRate) => {
-  if (value === 0) {
+  let numValue = Number(value)
+  if (numValue === 0) {
     return `${currencySym}0`
   }
-  value *= currencyRate
-  if (value < 0.01) {
+  numValue *= currencyRate
+  if (numValue > 0 && numValue < 0.01) {
     return `<${currencySym}0.01`
   }
   const formattedValue = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: currencySym === '¥' ? 0 : 2,
     maximumFractionDigits: currencySym === '¥' ? 0 : 2,
-  }).format(value)
+  }).format(Math.abs(numValue))
 
-  return `${currencySym}${formattedValue}`
+  return `${numValue < 0 ? '-' : ''}${currencySym}${formattedValue}`
 }
 
 export const formatFrequency = value => {
@@ -214,7 +215,7 @@ export const showTokenBalance = balance => {
   if (value === 0) {
     return '0'
   }
-  if (value < 0.000001) {
+  if (value > 0 && value < 0.000001) {
     return '<0.000001'
   }
   value = value.toFixed(6).replace(/\.?0+$/, '')
