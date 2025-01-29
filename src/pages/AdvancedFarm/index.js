@@ -215,6 +215,7 @@ const AdvancedFarm = () => {
   const [showApyHistory, setShowApyHistory] = useState(true)
   const [isArbCampVault, setIsArbCampVault] = useState(false)
   const [showGenomesVaultInfo, setShowGenomesVaultInfo] = useState(false)
+  const [showSeamlessVaultInfo, setShowSeamlessVaultInfo] = useState(false)
   const [showGBVaultInfo, setShowGBVaultInfo] = useState(false)
   const [showIFARMInfo, setShowIFARMInfo] = useState(false)
   const [supportedVault, setSupportedVault] = useState(false)
@@ -539,6 +540,7 @@ const AdvancedFarm = () => {
     const platform = useIFARM ? 'Harvest' : token.platform?.[0]?.toLowerCase() ?? ''
     const firstToken = token.tokenNames?.[0]?.toLowerCase() ?? ''
     const firstViewIFarm = localStorage.getItem('firstViewIFarm')
+    const firstViewSeamless = localStorage.getItem('firstViewSeamless')
     const firstViewGenomes = localStorage.getItem('firstViewGenomes')
     const firstViewGB = localStorage.getItem('firstViewGB')
 
@@ -547,6 +549,12 @@ const AdvancedFarm = () => {
     if (platform === 'Harvest' && (firstViewIFarm === null || firstViewIFarm === 'true')) {
       localStorage.setItem('firstViewIFarm', true)
       setShowIFARMInfo(true)
+    } else if (
+      platform.includes('seamless') &&
+      (firstViewSeamless === null || firstViewSeamless === 'true')
+    ) {
+      localStorage.setItem('firstViewSeamless', true)
+      setShowSeamlessVaultInfo(true)
     } else if (
       (firstToken.includes('gene') || firstToken.includes('gnome')) &&
       (firstViewGenomes === null || firstViewGenomes === 'true')
@@ -566,6 +574,11 @@ const AdvancedFarm = () => {
   const closeBadgeGenomes = () => {
     setShowGenomesVaultInfo(false)
     localStorage.setItem('firstViewGenomes', 'false')
+  }
+
+  const closeBadgeSeamless = () => {
+    setShowSeamlessVaultInfo(false)
+    localStorage.setItem('firstViewSeamless', 'false')
   }
 
   const closeBadgeGB = () => {
@@ -1682,6 +1695,54 @@ const AdvancedFarm = () => {
                     </WelcomeContent>
                     <WelcomeClose>
                       <RxCross2 onClick={closeBadgeGenomes} />
+                    </WelcomeClose>
+                  </WelcomeBox>
+                ) : showSeamlessVaultInfo ? (
+                  <WelcomeBox
+                    bgColorTooltip={bgColorTooltip}
+                    fontColorTooltip={fontColorTooltip}
+                    borderColor={borderColor}
+                  >
+                    <BiInfoCircle className="info-circle" fontSize={20} />
+                    <WelcomeContent>
+                      <WelcomeTitle>Vault Note</WelcomeTitle>
+                      <WelcomeText>
+                        <p>
+                          Due to new tokenomics introduced by the Seamless project after the launch
+                          of this farm, Harvest is not able to maintain it. We have deactivated the
+                          vault and Harvest has covered the value of the locked esSEAM tokens for
+                          all users of this vault. Farmers can revert funds at any time. More info
+                          can be found in our Discord&apos;s #vault-updates.
+                        </p>
+                        <p>
+                          Looking for alternatives? Check out these single-asset{' '}
+                          <WelcomeTicket
+                            href="https://app.harvest.finance/farms?search=moonwell"
+                            target="_self"
+                            rel="noopener noreferrer"
+                            linkColor={linkColorTooltip}
+                            linkColorOnHover={linkColorOnHover}
+                          >
+                            Moonwell farms
+                          </WelcomeTicket>
+                          , which are on Base and have similar reward rates.
+                        </p>
+                        <WelcomeBottom>
+                          <WelcomeKnow onClick={closeBadgeSeamless}>Got it!</WelcomeKnow>
+                          <WelcomeTicket
+                            href={SOCIAL_LINKS.DISCORD}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            linkColor={linkColorTooltip}
+                            linkColorOnHover={linkColorOnHover}
+                          >
+                            Still having questions? Open Discord ticket.
+                          </WelcomeTicket>
+                        </WelcomeBottom>
+                      </WelcomeText>
+                    </WelcomeContent>
+                    <WelcomeClose>
+                      <RxCross2 onClick={closeBadgeSeamless} />
                     </WelcomeClose>
                   </WelcomeBox>
                 ) : showGBVaultInfo ? (
