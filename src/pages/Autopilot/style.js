@@ -29,6 +29,7 @@ const Inner = styled.div`
 
   @media screen and (min-width: 1921px) {
     width: 1450px;
+    padding: 50px 0px 75px 0px;
   }
 
   @media screen and (max-width: 1480px) {
@@ -45,6 +46,7 @@ const Inner = styled.div`
 const SubPart = styled.div`
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 30px;
   border-top: 1px solid #ced3e6;

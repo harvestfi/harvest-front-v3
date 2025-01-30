@@ -136,6 +136,50 @@ const BasePanelBox = styled.div`
   key: ${props => props.key};
   border-radius: 9px;
   border: 1.5px solid ${props => props.borderColor};
+
+  @media screen and (max-width: 1820px) {
+    width: 420px;
+  }
+
+  @media screen and (max-width: 1710px) {
+    width: 400px;
+  }
+
+  @media screen and (max-width: 1650px) {
+    width: 380px;
+  }
+
+  @media screen and (max-width: 1600px) {
+    width: 360px;
+  }
+
+  @media screen and (max-width: 1540px) {
+    width: 340px;
+  }
+
+  @media screen and (max-width: 1420px) {
+    width: 450px;
+  }
+
+  @media screen and (max-width: 1260px) {
+    width: 420px;
+  }
+
+  @media screen and (max-width: 1190px) {
+    width: 400px;
+  }
+
+  @media screen and (max-width: 1140px) {
+    width: 380px;
+  }
+
+  @media screen and (max-width: 1100px) {
+    width: 360px;
+  }
+
+  @media screen and (max-width: 1060px) {
+    width: 450px;
+  }
 `
 
 const TokenInfo = styled.div`
