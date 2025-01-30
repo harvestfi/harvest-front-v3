@@ -103,14 +103,13 @@ const ThemeMode = styled.div`
 `
 
 const PanelHeader = styled.div`
-  background: url(${props => props.background});
   display: flex;
   flex-direction: row;
-  height: 145px;
   justify-content: space-between;
-  background-size: cover;
-  background-position: center;
-  border-radius: 15px;
+  height: 145px;
+  background: ${props => (props.darkMode ? 'transparent' : '#f2f5ff')};
+  border-radius: 9px 9px 0px 0px;
+  border-bottom: 0.7px solid ${props => props.borderColor};
   overflow: hidden;
 `
 
@@ -118,7 +117,6 @@ const PanelBalance = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border-bottom: 0.7px solid ${props => props.borderColor};
 `
 
 const PanelSubscribe = styled.div`
@@ -136,26 +134,8 @@ const BasePanelBox = styled.div`
   flex-direction: column;
   background: ${props => props.backColor};
   key: ${props => props.key};
-  border: 1px solid ${props => props.borderColor};
-  ${props =>
-    props.borderRadius
-      ? `
-    border-radius: ${props.borderRadius};
-  `
-      : ''}
-  ${props =>
-    props.marginTop
-      ? `
-    margin-top: ${props.marginTop};
-  `
-      : ''}
-
-  ${props =>
-    props.marginBottom
-      ? `
-    margin-bottom: ${props.marginBottom};
-  `
-      : ''}
+  border-radius: 9px;
+  border: 1.5px solid ${props => props.borderColor};
 `
 
 const TokenInfo = styled.div`
@@ -376,7 +356,7 @@ const FlexDiv = styled.div`
 
 const TokenInput = styled.div`
   position: relative;
-  width: 195px;
+  width: 65%;
   input[type='text'] {
     -webkit-appearance: none;
     -moz-appearance: textfield;
@@ -397,7 +377,7 @@ const TokenAmount = styled.input`
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  background: ${props => props.bgColor};
+  background: ${props => props.backColor};
   border: 1px solid #d7dffa8c;
   outline: 0;
   padding: 7px 14px 7px 14px;
@@ -426,7 +406,7 @@ const TokenType = styled.div`
   position: relative;
   border: 1px solid #d7dffa8c;
   border-radius: 9px;
-  width: 195px;
+  width: 35%;
   img.token-symbol {
     position: absolute;
     left: 12px;

@@ -30,6 +30,7 @@ export function ThemeProvider({ children }) {
   const bgColorButton = darkMode ? '#242c3c' : '#eaf1ff'
   const bgColorSlippage = darkMode ? '#1F242F' : '#15b088'
   const bgColorChart = darkMode ? '#161B26' : '#f3f6ff'
+  const bgColorBox = darkMode ? '#202325' : '#fff'
   const toggleBackColor = darkMode ? '#181f27' : '#E9EAF0'
 
   const fontColor = darkMode ? '#fff' : '#475467'
@@ -40,6 +41,7 @@ export function ThemeProvider({ children }) {
   const fontColor5 = darkMode ? '#fff' : '#000'
   const fontColor6 = darkMode ? '#15b088' : '#000'
   const fontColor7 = darkMode ? '#D9D9D9' : '#15191C'
+  const fontColor8 = darkMode ? '#ADADAD' : '#939BC7'
   const fontColorTooltip = darkMode ? '#fff' : '#6941c6'
   const inputFontColor = darkMode ? '#fff' : '#667085'
   const linkColor = darkMode ? '#FF9400' : '#6941c6'
@@ -48,10 +50,7 @@ export function ThemeProvider({ children }) {
 
   const borderColor = darkMode ? '#1F242F' : '#F3F6FF'
   const borderColorBox = darkMode ? '#414141' : '#F2F5FF'
-  const pilotBorderColor1 = darkMode ? '#FFFFFF' : '#F3F6FF'
-  const pilotBorderColor2 = darkMode ? '#F2F5FF' : '#F3F6FF'
-  const pilotButtonColor1 = '#5DCF46'
-  const pilotButtonColor2 = '#7F9BFF'
+  const borderColorBox2 = darkMode ? '#202325' : '#F2F5FF'
   const inputBorderColor = darkMode ? '#1F242F' : '#d0d5dd'
   const hoverColor = darkMode ? '#1F242F' : '#e9f0f7'
   const hoverColorRow = darkMode ? '#282D3A' : '#F7F9FF'
@@ -202,6 +201,7 @@ export function ThemeProvider({ children }) {
         fontColor5,
         fontColor6,
         fontColor7,
+        fontColor8,
         inputFontColor,
         linkColor,
         linkColorTooltip,
@@ -213,10 +213,7 @@ export function ThemeProvider({ children }) {
         bgColorTooltip,
         borderColor,
         borderColorBox,
-        pilotBorderColor1,
-        pilotBorderColor2,
-        pilotButtonColor1,
-        pilotButtonColor2,
+        borderColorBox2,
         btnColor,
         btnHoverColor,
         btnActiveColor,
@@ -237,6 +234,7 @@ export function ThemeProvider({ children }) {
         bgColorButton,
         bgColorSlippage,
         bgColorChart,
+        bgColorBox,
         filterColorNew,
         filterColor,
         filterColor2,

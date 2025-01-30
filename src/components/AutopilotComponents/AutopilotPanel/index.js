@@ -6,7 +6,6 @@ import { PiInfoBold } from 'react-icons/pi'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { toast } from 'react-toastify'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import BackLogo from '../../../assets/images/logos/autopilot/autopilot-background.png'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { isSpecialApp } from '../../../utilities/formats'
 import Button from '../../Button'
@@ -42,12 +41,13 @@ import {
 
 const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
   const {
-    pilotBorderColor1,
-    pilotBorderColor2,
-    bgColor,
-    backColor,
+    darkMode,
+    borderColorBox,
+    borderColorBox2,
+    bgColorBox,
     fontColor2,
     fontColor3,
+    fontColor8,
   } = useThemeContext()
   const { rates } = useRate()
 
@@ -265,27 +265,15 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
   return (
     <>
       {!pilotInfoShow && (
-        <BasePanelBox
-          backColor={backColor}
-          borderColor={pilotBorderColor1}
-          marginBottom="0px"
-          borderRadius="15px"
-          key={index}
-        >
-          <PanelHeader background={BackLogo}>
+        <BasePanelBox key={index} backColor={bgColorBox} borderColor={borderColorBox2}>
+          <PanelHeader borderColor={borderColorBox} darkMode={darkMode}>
             <TokenInfo>
               <img className="logo" src={vaultData?.logoUrl} width={90} height={90} alt="" />
               <ApyInfo>
-                <NewLabel
-                  size="11px"
-                  height="20px"
-                  weight="600"
-                  color={fontColor2}
-                  marginBottom="6px"
-                >
-                  APY
+                <NewLabel size="11px" height="20px" weight="600" color={fontColor8}>
+                  Live APY
                 </NewLabel>
-                <NewLabel size="22px" height="30px" weight="600" color={fontColor2}>
+                <NewLabel size="20px" height="28px" weight="700" color={fontColor3}>
                   {vaultData?.estimatedApy}%
                 </NewLabel>
               </ApyInfo>
@@ -299,7 +287,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
               />
             </PilotInfo>
           </PanelHeader>
-          <PanelBalance borderColor={pilotBorderColor2}>
+          <PanelBalance>
             <FlexDiv flexDirection="row" justifyContent="space-between">
               <NewLabel
                 size="14px"
@@ -369,13 +357,13 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
                 </div>
               </ThemeMode>
             </FlexDiv>
-            <FlexDiv flexDirection="row" justifyContent="space-between" marginTop="10px">
+            <FlexDiv flexDirection="row" justifyContent="space-between" marginTop="10px" gap="10px">
               <TokenInput>
                 <TokenAmount
                   type="number"
                   value={inputAmount}
                   onChange={onInputBalance}
-                  bgColor={bgColor}
+                  backColor={bgColorBox}
                   fontColor2={fontColor2}
                   inputMode="numeric"
                   pattern="[0-9]*"
@@ -408,7 +396,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
             </FlexDiv>
             <FlexDiv flexDirection="row" justifyContent="space-between" marginTop="12px">
               <NewLabel size="12px" height="20px" weight="400" color={fontColor2}>
-                Balance: {subscribe ? `${walletBalance} USDC` : `${userAssetBalance} USDC`}
+                Wallet Balance: {subscribe ? `${walletBalance} USDC` : `${userAssetBalance} USDC`}
               </NewLabel>
             </FlexDiv>
             <FlexDiv marginTop="18px">

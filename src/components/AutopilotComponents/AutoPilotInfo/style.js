@@ -169,12 +169,14 @@ const MainTag = styled.div`
   ${props =>
     props.active === 'true'
       ? `
-      color: #15191C;
-      background: ${props.bgColor};
+      color: #fff;
+      background: ${props.backColor};
+      font-weight: 700;
     `
       : `
       color: #fff;
       background: transparent;
+      font-weight: 700;
     `}
 `
 
@@ -198,7 +200,6 @@ const BasePanelBox = styled.div`
   margin-top: 50px;
   display: flex;
   flex-direction: column;
-  background: ${props => props.backColor};
   key: ${props => props.key};
   border: 1px solid ${props => props.borderColor};
   ${props =>

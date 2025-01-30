@@ -23,7 +23,7 @@ import {
 import { handleToggle } from '../../../utilities/parsers'
 
 const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
-  const { pilotBorderColor1, pilotButtonColor1, backColor, fontColor2 } = useThemeContext()
+  const { borderColorBox, btnColor, fontColor2, fontColor3, fontColor5 } = useThemeContext()
   const { rates } = useRate()
 
   const [activeMainTag, setActiveMainTag] = useState(0)
@@ -50,6 +50,27 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
   const [thirtyDHarvest, set30DHarvest] = useState('')
   const [oneEightyDHarvest, set180DHarvest] = useState('')
   const [threeSixtyDHarvest, set360DHarvest] = useState('')
+
+  const autoPilotInfoData = [
+    { label: 'Last Harvest', value: `${lastHarvest} ago` },
+    { label: 'Harvest Frequency', value: `~${harvestFrequency}` },
+    { label: 'Lifetime avg. APY', value: `${vaultData.estimatedApy}%` },
+    { label: 'Operating Since', value: `${operatingSince} (${periodInday} days)` },
+    { label: 'TVL', value: `${currencySym}${totalValueLocked}` },
+    { label: 'Underlying', value: `${vaultData.tokenNames[0]}` },
+  ]
+
+  const detailData = [
+    {
+      label: showApyHistory ? 'Live' : 'Latest',
+      value: showApyHistory ? `${vaultData.estimatedApy}%` : `${lastHarvest} ago`,
+    },
+    { label: '7d', value: showApyHistory ? sevenDApy : sevenDHarvest },
+    { label: '30d', value: showApyHistory ? thirtyDApy : thirtyDHarvest },
+    { label: '180d', value: showApyHistory ? oneEightyDApy : oneEightyDHarvest },
+    { label: '360d', value: showApyHistory ? threeSixtyDApy : threeSixtyDHarvest },
+    { label: 'Lifetime', value: showApyHistory ? lifetimeApy : harvestFrequency },
+  ]
 
   useEffect(() => {
     if (rates.rateData) {
@@ -215,7 +236,7 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
 
   return (
     <>
-      <BasePanelBox backColor={backColor} borderColor={pilotBorderColor1} borderRadius="15px">
+      <BasePanelBox borderColor={borderColorBox} borderRadius="15px">
         <PanelHeader>
           <PanelTitle>
             <NewLabel
@@ -241,78 +262,38 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
             {mainTags.map((tag, i) => (
               <MainTag
                 fontColor2={fontColor2}
-                bgColor={pilotButtonColor1}
+                backColor={btnColor}
                 key={i}
                 active={activeMainTag === i ? 'true' : 'false'}
                 onClick={() => {
                   setActiveMainTag(i)
                 }}
               >
-                <NewLabel size="11px" weight="600px">
-                  {tag}
-                </NewLabel>
+                <NewLabel size="11px">{tag}</NewLabel>
               </MainTag>
             ))}
           </PanelTags>
         </PanelHeader>
         {activeMainTag === 0 && (
           <GeneralDiv key={activeMainTag}>
+            {autoPilotInfoData.map((item, index) => (
+              <RowDiv key={index}>
+                <NewLabel color={fontColor3} size="12px" height="20px" weight="500">
+                  {item.label}
+                </NewLabel>
+                <NewLabel color={fontColor5} size="12px" height="20px" weight="500">
+                  {item.value}
+                </NewLabel>
+              </RowDiv>
+            ))}
             <RowDiv>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                Last Harvest
-              </NewLabel>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                {lastHarvest}&nbsp;ago
-              </NewLabel>
-            </RowDiv>
-            <RowDiv>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                Harvest Frequency
-              </NewLabel>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                ~{harvestFrequency}
-              </NewLabel>
-            </RowDiv>
-            <RowDiv>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                Lifetime avg. APY
-              </NewLabel>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                {vaultData.estimatedApy}%
-              </NewLabel>
-            </RowDiv>
-            <RowDiv>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                Operating Since
-              </NewLabel>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                {`${operatingSince} (${periodInday} days)`}
-              </NewLabel>
-            </RowDiv>
-            <RowDiv>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                TVL
-              </NewLabel>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                {currencySym}
-                {totalValueLocked}
-              </NewLabel>
-            </RowDiv>
-            <RowDiv>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                Underlying
-              </NewLabel>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                {vaultData.tokenNames[0]}
-              </NewLabel>
-            </RowDiv>
-            <RowDiv>
-              <NewLabel size="13.4px" height="20px" weight="500">
+              <NewLabel color={fontColor3} size="12px" height="20px" weight="500">
                 Vault Token
               </NewLabel>
               <u>
                 <NewLabel
-                  size="13.4px"
+                  color={fontColor5}
+                  size="12px"
                   height="20px"
                   weight="500"
                   cursor="pointer"
@@ -325,10 +306,10 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
               </u>
             </RowDiv>
             <ColumnDiv>
-              <NewLabel size="13.4px" height="20px" weight="700">
+              <NewLabel color={fontColor3} size="12px" height="20px" weight="700">
                 Technology
               </NewLabel>
-              <NewLabel size="13.4px" height="20px" weight="400">
+              <NewLabel color={fontColor5} size="12px" height="20px" weight="400">
                 Autopilot is powered by audited IPOR Fusion Vault technology.
               </NewLabel>
             </ColumnDiv>
@@ -343,7 +324,7 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
                 return (
                   <RowDiv key={index}>
                     <NewLabel
-                      size="13.4px"
+                      size="12px"
                       height="20px"
                       weight="500"
                       cursor="pointer"
@@ -359,7 +340,7 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
                     >
                       {vaultName}
                     </NewLabel>
-                    <NewLabel size="13.4px" height="20px" weight="500">
+                    <NewLabel size="12px" height="20px" weight="500">
                       {Number(data.allocPoint).toFixed(2)}%
                     </NewLabel>
                   </RowDiv>
@@ -373,7 +354,7 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
         {activeMainTag === 2 && (
           <GeneralDiv key={activeMainTag}>
             <RowDiv>
-              <NewLabel size="13.4px" height="20px" weight="500">
+              <NewLabel size="12px" height="20px" weight="500">
                 {showApyHistory ? 'APY' : 'Harvest Frequency'}
               </NewLabel>
               <SwitchMode mode={showApyHistory ? 'apy' : 'harvest'}>
@@ -390,54 +371,16 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
                 </div>
               </SwitchMode>
             </RowDiv>
-            <RowDiv>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                {showApyHistory ? 'Live' : 'Latest'}
-              </NewLabel>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                {showApyHistory ? `${vaultData.estimatedApy}%` : `${lastHarvest} ago`}
-              </NewLabel>
-            </RowDiv>
-            <RowDiv>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                7d
-              </NewLabel>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                {showApyHistory ? sevenDApy : sevenDHarvest}
-              </NewLabel>
-            </RowDiv>
-            <RowDiv>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                30d
-              </NewLabel>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                {showApyHistory ? thirtyDApy : thirtyDHarvest}
-              </NewLabel>
-            </RowDiv>
-            <RowDiv>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                180d
-              </NewLabel>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                {showApyHistory ? oneEightyDApy : oneEightyDHarvest}
-              </NewLabel>
-            </RowDiv>
-            <RowDiv>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                360d
-              </NewLabel>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                {showApyHistory ? threeSixtyDApy : threeSixtyDHarvest}
-              </NewLabel>
-            </RowDiv>
-            <RowDiv>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                Lifetime
-              </NewLabel>
-              <NewLabel size="13.4px" height="20px" weight="500">
-                {showApyHistory ? lifetimeApy : harvestFrequency}
-              </NewLabel>
-            </RowDiv>
+            {detailData.map((item, index) => (
+              <RowDiv key={index}>
+                <NewLabel size="12px" height="20px" weight="500">
+                  {item.label}
+                </NewLabel>
+                <NewLabel size="12px" height="20px" weight="500">
+                  {item.value}
+                </NewLabel>
+              </RowDiv>
+            ))}
           </GeneralDiv>
         )}
       </BasePanelBox>
