@@ -119,7 +119,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
           } else {
             setSubscribeName('Unsubscribe')
           }
-          setWalletBalance(fromWei(balances.aave_USDC_arbitrum, vaultData.decimals, 2)) // to get USDC value in user's wallet
+          setWalletBalance(fromWei(balances.aave_USDC_arbitrum, vaultData.decimals, 6)) // to get USDC value in user's wallet
         }
       } else {
         setSubscribeName('Connect Wallet to Get Started')
@@ -163,7 +163,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
 
           if (new BigNumber(AssetBalance).gt(0)) {
             const userBal = fromWei(new BigNumber(vaultBalance), Number(vaultData.vaultDecimals))
-            const userAssetBal = fromWei(new BigNumber(AssetBalance), Number(vaultData.decimals))
+            const userAssetBal = fromWei(new BigNumber(AssetBalance), Number(vaultData.decimals), 6)
             setUserAssetBalance(userAssetBal)
             setUserVBalance(userBal)
           } else {
@@ -396,7 +396,8 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
             </FlexDiv>
             <FlexDiv flexDirection="row" justifyContent="space-between" marginTop="12px">
               <NewLabel size="12px" height="20px" weight="400" color={fontColor2}>
-                Wallet Balance: {subscribe ? `${walletBalance} USDC` : `${userAssetBalance} USDC`}
+                {subscribe ? 'Wallet Balance' : 'My Balance'}:{' '}
+                {subscribe ? `${walletBalance} USDC` : `${userAssetBalance} USDC`}
               </NewLabel>
             </FlexDiv>
             <FlexDiv marginTop="18px">

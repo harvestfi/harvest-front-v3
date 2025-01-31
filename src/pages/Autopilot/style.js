@@ -29,6 +29,7 @@ const Inner = styled.div`
 
   @media screen and (min-width: 1921px) {
     width: 1450px;
+    padding: 50px 0px 75px 0px;
   }
 
   @media screen and (max-width: 1480px) {
@@ -45,6 +46,7 @@ const Inner = styled.div`
 const SubPart = styled.div`
   display: flex;
   justify-content: space-between;
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 30px;
   border-top: 1px solid #ced3e6;
@@ -94,17 +96,6 @@ const HeaderTitle = styled.div`
     .desc {
       color: #fff;
     }
-  }
-`
-
-const HeaderButton = styled.div`
-  display: none;
-  margin: auto 0px;
-  gap: 15px;
-
-  @media screen and (max-width: 992px) {
-    flex-direction: column-reverse;
-    gap: 9px;
   }
 `
 
@@ -583,58 +574,6 @@ const CheckBoxDiv = styled.div`
   }
 `
 
-const SwitchView = styled.div`
-  display: flex;
-  justify-content: end;
-  padding: 10px;
-  gap: 8px;
-  width: fit-content;
-  height: 40px;
-  align-items: center;
-  color: ${props => props.color};
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 20px;
-  position: relative;
-  border-radius: 8px;
-  border: 1px solid #d0d5dd;
-  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
-  background: ${props => props.backColor};
-  transition: 0.5s;
-
-  :hover {
-    cursor: pointer;
-    background: ${props => props.hovercolor};
-  }
-
-  img {
-    width: 20px;
-    height: 20px;
-    filter: ${props =>
-      props.darkMode
-        ? 'invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%)'
-        : 'invert(48%) sepia(4%) saturate(2341%) hue-rotate(183deg) brightness(87%) contrast(80%)'};
-  }
-
-  @media screen and (max-width: 992px) {
-    height: unset;
-    padding: 10px 16px;
-  }
-`
-
-const BackArrow = styled.div`
-  display: flex;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  line-height: 20px;
-  margin-bottom: 10px;
-
-  :hover {
-    cursor: pointer;
-  }
-`
-
 const MobileHeader = styled.div`
   width: 100%;
 `
@@ -653,7 +592,6 @@ export {
   TransactionDetails,
   HeaderWrap,
   HeaderTitle,
-  HeaderButton,
   FarmTitle,
   MyFarm,
   FarmPic,
@@ -678,8 +616,6 @@ export {
   ConnectButtonStyle,
   ExploreButtonStyle,
   CheckBoxDiv,
-  SwitchView,
-  BackArrow,
   MobileHeader,
   LogoDiv,
 }
