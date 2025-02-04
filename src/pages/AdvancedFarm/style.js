@@ -1283,6 +1283,9 @@ const MainTag = styled.div`
 
   &:nth-child(2) {
     display: ${props => (props.useIFARM ? 'none' : 'flex')};
+  }
+
+  &:nth-child(3) {
     width: ${props => (props.useIFARM ? '34%' : '25%')};
   }
 
