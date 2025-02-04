@@ -16,6 +16,7 @@ import {
   getIPORUserBalanceHistories,
   getIPORVaultHistories,
 } from '../../../utilities/apiCalls'
+import { handleToggle } from '../../../utilities/parsers'
 import {
   ButtonGroup,
   ChartDiv,
@@ -30,7 +31,6 @@ import {
   ToggleButton,
   ChevronIcon,
 } from './style'
-import { handleToggle } from '../../../utilities/parsers'
 
 const recommendLinks = [
   { name: '1D', type: 0, state: '1D' },
@@ -486,7 +486,6 @@ const UserBalanceData = ({
           totalValue={totalValue}
           setSelectedState={setSelectedState}
           isExpanded={isExpanded}
-          toggleExpand={handleToggle(setIsExpanded)}
           isInactive={token.inactive}
         />
       </ChartDiv>

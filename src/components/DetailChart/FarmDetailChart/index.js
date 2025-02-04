@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
 import apyActive from '../../../assets/images/logos/earn/percent-circle.svg'
 import tvlActive from '../../../assets/images/logos/earn/bank.svg'
 import myBalanceActive from '../../../assets/images/logos/earn/chart-graph.svg'
@@ -17,6 +18,7 @@ import ChartButtonsGroup from '../ChartButtonsGroup'
 import ChartRangeSelect from '../../ChartRangeSelect'
 import { useRate } from '../../../providers/Rate'
 import { fromWei } from '../../../services/web3'
+import { handleToggle } from '../../../utilities/parsers'
 import {
   ButtonGroup,
   ChartDiv,
@@ -28,6 +30,8 @@ import {
   TooltipInfo,
   FlexDiv,
   LabelInfo,
+  ToggleButton,
+  ChevronIcon,
 } from './style'
 
 const filterList = [
@@ -62,7 +66,7 @@ const FarmDetailChart = ({
   set360DHarvest,
   setHarvestFrequency,
 }) => {
-  const { fontColor3, fontColor4 } = useThemeContext()
+  const { darkMode, fontColor3, fontColor4 } = useThemeContext()
 
   const [clickedId, setClickedId] = useState(2)
   const [selectedState, setSelectedState] = useState('1Y')
@@ -73,6 +77,7 @@ const FarmDetailChart = ({
   const [tooltipLabel, setTooltipLabel] = useState('')
   const [roundNumber, setRoundNumber] = useState(0)
   const [fixedLen, setFixedLen] = useState(0)
+  const [isExpanded, setIsExpanded] = useState(false)
 
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
@@ -383,9 +388,23 @@ const FarmDetailChart = ({
           setRoundNumber={setRoundNumber}
           setFixedLen={setFixedLen}
           fixedLen={fixedLen}
+          setSelectedState={setSelectedState}
+          isExpanded={isExpanded}
         />
       </ChartDiv>
       <ButtonGroup>
+        <ToggleButton
+          type="button"
+          onClick={handleToggle(setIsExpanded)}
+          className="collapse-button"
+          backColor={darkMode ? '#3b3c3e' : '#e9f0f7'}
+          color={darkMode ? 'white' : 'black'}
+        >
+          <ChevronIcon className="chevron">
+            {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
+          </ChevronIcon>
+          Custom
+        </ToggleButton>
         {recommendLinks.map((item, i) => (
           <ChartRangeSelect
             key={i}
