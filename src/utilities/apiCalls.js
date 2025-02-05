@@ -383,8 +383,10 @@ export const getDataQuery = async (
       chartData[key] = data[key]
     }
   })
-
-  const dataTimestamp = Number(chartData.tvls[chartData.tvls.length - 1].timestamp)
+  console.log(chartData)
+  const dataTimestamp = Number(
+    chartData.vaultHistories[chartData.vaultHistories.length - 1].timestamp,
+  )
   const initTimestamp = Number(chartData.generalApies[chartData.generalApies.length - 1].timestamp)
 
   if (data.tvls.length === 1000 && dataTimestamp > initTimestamp) {
