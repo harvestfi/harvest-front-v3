@@ -39,24 +39,6 @@ const Autopilot = () => {
         </HeaderWrap>
         <SubPart>
           {!loadingVaults && vaultsData.length > 0 ? (
-            Array(3)
-              .fill(0)
-              .map((_, repeatIndex) =>
-                vaultsData?.map((vault, index) => (
-                  <AutopilotPanel
-                    allVaultsData={allVaultsData}
-                    vaultData={vault}
-                    key={`${repeatIndex}-${index}`}
-                    index={index}
-                  />
-                )),
-              )
-          ) : (
-            <></>
-          )}
-        </SubPart>
-        {/* <SubPart>
-          {!loadingVaults && vaultsData.length > 0 ? (
             vaultsData?.map((vault, index) => {
               return (
                 <AutopilotPanel
@@ -70,7 +52,7 @@ const Autopilot = () => {
           ) : (
             <></>
           )}
-        </SubPart> */}
+        </SubPart>
       </Inner>
     </Container>
   )
