@@ -1294,6 +1294,9 @@ const MainTag = styled.div`
     &:nth-child(2) {
       width: ${props => (props.useIFARM ? '34%' : props.active === 'true' ? '40%' : '20%')};
     }
+    &:nth-child(3) {
+      width: ${props => (props.useIFARM ? '33%' : props.active === 'true' ? '40%' : '20%')};
+    }
   }
 
   p {
