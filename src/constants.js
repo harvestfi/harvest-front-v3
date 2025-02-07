@@ -1,9 +1,15 @@
 import React from 'react'
+import { CHAIN_IDS } from './data/constants'
 import Dollar from './assets/images/logos/dashboard/flag_usd.svg'
 import Pound from './assets/images/logos/dashboard/flag_gbp.svg'
 import Euro from './assets/images/logos/dashboard/flag_euro.svg'
 import Franc from './assets/images/logos/dashboard/flag_chf.svg'
 import Yen from './assets/images/logos/dashboard/flag_jpy.svg'
+import ARBITRUM from './assets/images/chains/arbitrum.svg'
+import BASE from './assets/images/chains/base.svg'
+import ETHEREUM from './assets/images/chains/ethereum.svg'
+import POLYGON from './assets/images/chains/polygon.svg'
+import ZKSYNC from './assets/images/chains/zksync.svg'
 
 export const HARVEST_LAUNCH_DATE = new Date(1598986800000)
 
@@ -791,6 +797,14 @@ export const chainList = [
   { id: 3, name: 'Arbitrum', chainId: 42161 },
   { id: 4, name: 'Base', chainId: 8453 },
   { id: 5, name: 'Zksync', chainId: 324 },
+]
+
+export const ChainsList = [
+  { id: 0, name: 'Ethereum', img: ETHEREUM, chainId: CHAIN_IDS.ETH_MAINNET },
+  { id: 1, name: 'Polygon', img: POLYGON, chainId: CHAIN_IDS.POLYGON_MAINNET },
+  { id: 2, name: 'Arbitrum', img: ARBITRUM, chainId: CHAIN_IDS.ARBITRUM_ONE },
+  { id: 3, name: 'Base', img: BASE, chainId: CHAIN_IDS.BASE },
+  { id: 4, name: 'Zksync', img: ZKSYNC, chainId: CHAIN_IDS.ZKSYNC },
 ]
 
 export const fakeChartData = [
