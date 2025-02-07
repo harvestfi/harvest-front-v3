@@ -62,7 +62,7 @@ const VaultUserBalance = ({
 
       const totalStaked = get(userStats, `[${get(vaultPool, 'id')}]['totalStaked']`, 0)
       if (token.isIPORVault && account) {
-        const vaultContract = contracts.iporVault
+        const vaultContract = contracts.iporVaults[token.id]
         const vaultBalance = await vaultContract.methods.getBalanceOf(
           vaultContract.instance,
           account,
@@ -89,7 +89,7 @@ const VaultUserBalance = ({
     farmingBalances,
     balances,
     account,
-    contracts.iporVault,
+    contracts.iporVaults,
     token,
   ])
 

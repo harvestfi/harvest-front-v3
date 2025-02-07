@@ -1260,7 +1260,7 @@ const AdvancedFarm = () => {
   useEffect(() => {
     const getLastHarvest = async () => {
       const value = token.isIPORVault
-        ? await getIPORLastHarvestInfo()
+        ? await getIPORLastHarvestInfo(paramAddress, chain)
         : await getLastHarvestInfo(paramAddress, chain)
       setLastHarvest(value)
     }
@@ -2003,8 +2003,10 @@ const AdvancedFarm = () => {
                       >
                         {!connected ? (
                           `${currencySym}0.00`
-                        ) : lpTokenBalance || (token.isIPORVault && totalStaked) ? (
+                        ) : lpTokenBalance || (token.isIPORVault && totalStaked > 0) ? (
                           showUsdValue(balanceAmount, currencySym)
+                        ) : token.isIPORVault && totalStaked === 0 ? (
+                          `${currencySym}0.00`
                         ) : (
                           <AnimatedDots />
                         )}
@@ -2036,7 +2038,7 @@ const AdvancedFarm = () => {
                         <div className="question" data-tip data-for="fToken-total-balance">
                           {!connected ? (
                             0
-                          ) : lpTokenBalance || (token.isIPORVault && totalStaked) ? (
+                          ) : lpTokenBalance || (token.isIPORVault && totalStaked >= 0) ? (
                             showTokenBalance(totalValue)
                           ) : (
                             <AnimatedDots />

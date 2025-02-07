@@ -51,6 +51,26 @@ const getTokensContracts = () => {
   return tokenContracts
 }
 
+const getIPORVaultContracts = () => {
+  const iporVaultContracts = {}
+  Object.keys(tokens).forEach(token => {
+    if (tokens[token].isIPORVault) {
+      iporVaultContracts[token] = {
+        contract: {
+          address: tokens[token].vaultAddress,
+          abi: IporVaultContract.abi,
+        },
+        methods: IporVaultMethods,
+        chain: tokens[token].chain,
+      }
+    }
+  })
+
+  return {
+    iporVaults: iporVaultContracts,
+  }
+}
+
 export default {
   depositHelper: {
     contract: DepositHelperContract,
@@ -97,10 +117,6 @@ export default {
     chain: CHAIN_IDS.ZKSYNC,
   },
 
-  iporVault: {
-    contract: IporVaultContract,
-    methods: IporVaultMethods,
-    chain: CHAIN_IDS.ARBITRUM_ONE,
-  },
   ...getTokensContracts(),
+  ...getIPORVaultContracts(),
 }

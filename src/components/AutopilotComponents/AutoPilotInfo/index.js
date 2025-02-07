@@ -81,9 +81,12 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
 
   useEffect(() => {
     const initData = async () => {
-      const lHarvestDate = await getIPORLastHarvestInfo()
+      const lHarvestDate = await getIPORLastHarvestInfo(vaultData.vaultAddress, vaultData.chain)
       setLastHarvest(lHarvestDate)
-      const { vaultHIPORData, vaultHIPORFlag } = await getIPORVaultHistories()
+      const { vaultHIPORData, vaultHIPORFlag } = await getIPORVaultHistories(
+        vaultData.chain,
+        vaultData.vaultAddress,
+      )
       if (vaultHIPORFlag) {
         const totalPeriod =
           Number(vaultHIPORData[0].timestamp) -
@@ -140,7 +143,7 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
         const tvl = abbreaviteNumber(Number(vaultData.totalValueLocked) * Number(currencyRate), 2)
         setTotalValueLocked(tvl)
 
-        const vaultContract = contracts.iporVault
+        const vaultContract = contracts.iporVaults[vaultData.id]
         const symbol = await vaultContract.methods.symbol(vaultContract.instance)
         setVaultToken(symbol)
 
