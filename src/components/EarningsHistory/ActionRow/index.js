@@ -199,13 +199,9 @@ const ActionRow = ({ info, showTotalBalance }) => {
                 weight={500}
                 size={12}
                 height={20}
-                color="#5FCF76"
+                color={info.netChangeUsd < 0 ? '#B42318' : '#5FCF76'}
                 justifyContent="end"
-                value={`${
-                  info.netChangeUsd < 0.01
-                    ? `<${currencySym}0.01`
-                    : `${currencySym}${formatNumber(info.netChangeUsd * Number(currencyRate), 2)}`
-                }`}
+                value={showUsdValueCurrency(info.netChangeUsd, currencySym, currencyRate)}
               />
               <ListItem
                 weight={500}
