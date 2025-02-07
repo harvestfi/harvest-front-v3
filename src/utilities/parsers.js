@@ -637,3 +637,8 @@ export const mergeArrays = (rewardsAPIData, totalHistoryData) => {
 }
 
 export const handleToggle = setter => () => setter(prev => !prev)
+
+export const getUnderlyingId = id => {
+  if (id === 'IPOR_WETH_base') return 'aave_ETH_base'
+  return id.replace('IPOR', 'aave')
+}
