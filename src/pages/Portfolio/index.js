@@ -348,8 +348,8 @@ const Portfolio = () => {
               ? groupOfVaults[symbol].data
               : find(totalPools, pool => pool.id === symbol)
 
-          if (symbol === 'IPOR_USDC_arbitrum') {
-            token = groupOfVaults.IPOR_USDC_arbitrum
+          if (symbol.includes('IPOR_')) {
+            token = groupOfVaults[symbol]
           } else {
             token = find(
               groupOfVaults,
@@ -673,11 +673,11 @@ const Portfolio = () => {
             cumulativeLifetimeYield = 0
 
           const { userBalanceVaults } = await getUserBalanceVaults(account)
-          const iporBalCheck = await checkIPORUserBalance(account)
           const stakedVaults = []
           const ul = userBalanceVaults.length
           for (let j = 0; j < ul; j += 1) {
-            Object.keys(groupOfVaults).forEach(key => {
+            /* eslint-disable no-restricted-syntax, no-await-in-loop */
+            for (const key of Object.keys(groupOfVaults)) {
               const isSpecialVaultAll =
                 groupOfVaults[key].liquidityPoolVault || groupOfVaults[key].poolVault
               const paramAddressAll = isSpecialVaultAll
@@ -687,10 +687,20 @@ const Portfolio = () => {
               if (userBalanceVaults[j] === paramAddressAll.toLowerCase()) {
                 stakedVaults.push(key)
               }
-              if (groupOfVaults[key].isIPORVault && iporBalCheck) {
-                if (!stakedVaults.includes(key)) stakedVaults.push(key)
+
+              // eslint-disable-next-line no-await-in-loop
+              const iporBalCheck = groupOfVaults[key].isIPORVault
+                ? await checkIPORUserBalance(
+                    account,
+                    groupOfVaults[key]?.vaultAddress.toLowerCase(),
+                    groupOfVaults[key]?.chain,
+                  )
+                : false
+              if (iporBalCheck && !stakedVaults.includes(key)) {
+                stakedVaults.push(key)
               }
-            })
+            }
+            /* eslint-disable no-restricted-syntax, no-await-in-loop */
           }
 
           const vaultNetChanges = []
@@ -710,7 +720,7 @@ const Portfolio = () => {
                 ? groupOfVaults[symbol].data
                 : find(totalPools, pool => pool.id === symbol)
 
-            if (symbol === 'IPOR_USDC_arbitrum') token = groupOfVaults.IPOR_USDC_arbitrum
+            if (symbol.includes('IPOR')) token = groupOfVaults[symbol]
             else
               token = find(
                 groupOfVaults,

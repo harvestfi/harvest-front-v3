@@ -228,8 +228,9 @@ const WalletProvider = _ref => {
           selectedTokens
             .filter(token => !isArray(tokens[token].tokenAddress))
             .map(async token => {
-              const { methods, instance } =
-                token === 'IPOR_USDC_arbitrum' ? contracts.iporVault : contracts[token]
+              const { methods, instance } = tokens[token].isIPORVault
+                ? contracts.iporVaults[token]
+                : contracts[token]
               const vaultAddress =
                 token === IFARM_TOKEN_SYMBOL
                   ? tokens[token].tokenAddress

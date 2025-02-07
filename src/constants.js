@@ -78,9 +78,14 @@ export const GRAPH_URLS = {
   42161:
     process.env.REACT_APP_GRAPH_URL_ARBITRUM ||
     'https://monkfish-app-mhcjl.ondigitalocean.app/42161',
-  IPOR:
-    process.env.REACT_APP_GRAPH_URL_IPOR ||
-    'https://api.studio.thegraph.com/query/48757/harvest-plasma-usdc-arbitrum/version/latest',
+  IPOR: {
+    8453:
+      process.env.REACT_APP_GRAPH_URL_IPOR_BASE ||
+      'https://api.studio.thegraph.com/query/48757/harvest-plasma-base/v0.0.6',
+    42161:
+      process.env.REACT_APP_GRAPH_URL_IPOR_ARBITRUM ||
+      'https://api.studio.thegraph.com/query/48757/harvest-plasma-usdc-arbitrum/v0.0.17',
+  },
 }
 
 export const ETHERSCAN_URL = 'https://etherscan.io'
