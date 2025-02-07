@@ -227,12 +227,15 @@ export const getSequenceId = async (address, chainId) => {
   return { vaultTVLCount, vaultPriceFeedCount, vaultsFlag }
 }
 
-export const getIPORSequenceId = async () => {
+export const getIPORSequenceId = async (vault, chainId) => {
   let vaultTVLCount
 
   const query = `
-    {
+    query getVaultHistories($vault: String!) {
       plasmaVaultHistories(
+        where: {
+          plasmaVault: $vault,
+        },
         first: 1000,
         orderBy: timestamp,
         orderDirection: desc
@@ -241,9 +244,9 @@ export const getIPORSequenceId = async () => {
       }
     }
   `
-  const url = GRAPH_URLS.IPOR
+  const url = GRAPH_URLS.IPOR[chainId]
 
-  const data = await executeGraphCall(url, query, {})
+  const data = await executeGraphCall(url, query, { vault })
   const vaultsData = data ? data.plasmaVaultHistories : []
 
   if (!vaultsData || vaultsData.length === 0) {
@@ -499,7 +502,14 @@ export const getAllRewardEntities = async account => {
   return { rewardsAPIData }
 }
 
-export const getIPORDataQuery = async (vaultTVLCount, asQuery, timestamp, chartData = {}) => {
+export const getIPORDataQuery = async (
+  vault,
+  chainId,
+  vaultTVLCount,
+  asQuery,
+  timestamp,
+  chartData = {},
+) => {
   const sequenceIdsArray = []
   if (vaultTVLCount > 10000) {
     const step = Math.ceil(vaultTVLCount / 2000)
@@ -521,8 +531,11 @@ export const getIPORDataQuery = async (vaultTVLCount, asQuery, timestamp, chartD
   const timestampQuery = asQuery ? timestamp : nowTime
 
   const query = `
-    query getData($endTime: BigInt, $sequenceIds: [Int!]) {
+    query getData($vault: String!, $endTime: BigInt, $sequenceIds: [Int!]) {
     generalApies: plasmaVaultHistories(
+        where: {
+          plasmaVault: $vault,
+        },
         first: 1000,
         orderBy: timestamp, 
         orderDirection: desc
@@ -532,6 +545,7 @@ export const getIPORDataQuery = async (vaultTVLCount, asQuery, timestamp, chartD
       tvls: plasmaVaultHistories(
         first: 1000,
         where: {
+          plasmaVault: $vault,
           timestamp_lt: $endTime,
           historySequenceId_in: $sequenceIds
         },
@@ -541,6 +555,9 @@ export const getIPORDataQuery = async (vaultTVLCount, asQuery, timestamp, chartD
         tvl, timestamp
       },
       vaultHistories: plasmaVaultHistories(
+        where: {
+          plasmaVault: $vault,
+        },
         first: 1000,
         orderBy: timestamp,
         orderDirection: desc
@@ -549,8 +566,8 @@ export const getIPORDataQuery = async (vaultTVLCount, asQuery, timestamp, chartD
       }
     }
   `
-  const variables = { endTime: timestampQuery, sequenceIds: sequenceIdsArray }
-  const url = GRAPH_URLS.IPOR
+  const variables = { vault, endTime: timestampQuery, sequenceIds: sequenceIdsArray }
+  const url = GRAPH_URLS.IPOR[chainId]
 
   const data = await executeGraphCall(url, query, variables)
   // To merge the response data into the chartData object
@@ -566,8 +583,8 @@ export const getIPORDataQuery = async (vaultTVLCount, asQuery, timestamp, chartD
     }
   })
 
-  const dataTimestamp = Number(chartData.tvls[chartData.tvls.length - 1].timestamp)
-  const initTimestamp = Number(chartData.generalApies[chartData.generalApies.length - 1].timestamp)
+  const dataTimestamp = Number(chartData.tvls[chartData.tvls.length - 1]?.timestamp)
+  const initTimestamp = Number(chartData.generalApies[chartData.generalApies.length - 1]?.timestamp)
 
   if (data.tvls.length === 1000 && dataTimestamp > initTimestamp) {
     await getDataQuery(vaultTVLCount, true, dataTimestamp, chartData)
@@ -624,28 +641,30 @@ export const getUserBalanceVaults = async account => {
   return { userBalanceVaults, userBalanceFlag }
 }
 
-export const checkIPORUserBalance = async account => {
+export const checkIPORUserBalance = async (account, vaultAdr, chainId) => {
   if (account) {
     account = account.toLowerCase()
   }
 
   const iporquery = `
-    query getUserBalance($account: String!) {
+    query getUserBalance($account: String!, $vaultAdr: String!) {
       userBalances(
         where: {
           userAddress: $account,
+          plasmaVault: $vaultAdr,
         }
       ) {
-        id, value
+        id, plasmaVault, value
       }
     }
   `
 
-  const variables = { account }
-  const url = GRAPH_URLS.IPOR
+  const variables = { account, vaultAdr }
+  const url = GRAPH_URLS.IPOR[chainId]
 
   try {
     const result = await executeGraphCall(url, iporquery, variables)
+    console.log('result ; ', result)
     if (result.userBalances.length > 0) return true
     return false
   } catch (err) {
@@ -692,7 +711,7 @@ export const getUserBalanceHistories = async (address, chainId, account) => {
   return { balanceData, balanceFlag }
 }
 
-export const getIPORUserBalanceHistories = async (chainId, account) => {
+export const getIPORUserBalanceHistories = async (vaultAdr, chainId, account) => {
   let balanceIPORData = {},
     balanceIPORFlag = true
 
@@ -701,10 +720,11 @@ export const getIPORUserBalanceHistories = async (chainId, account) => {
   }
 
   const query = `
-    query getUserBalanceHistories($account: String!) {
+    query getUserBalanceHistories($account: String!, $vaultAdr: String!) {
       userBalanceHistories(
         first: 1000,
         where: {
+          plasmaVault: $vaultAdr,
           userAddress: $account,
         },
         orderBy: timestamp,
@@ -714,10 +734,9 @@ export const getIPORUserBalanceHistories = async (chainId, account) => {
       }
     }
   `
-  const url = GRAPH_URLS[chainId]
-
+  const url = GRAPH_URLS.IPOR[chainId]
   try {
-    const data = await executeGraphCall(url, query, { account })
+    const data = await executeGraphCall(url, query, { account, vaultAdr })
     balanceIPORData = data?.userBalanceHistories
   } catch (e) {
     return e
@@ -729,13 +748,16 @@ export const getIPORUserBalanceHistories = async (chainId, account) => {
   return { balanceIPORData, balanceIPORFlag }
 }
 
-export const getIPORLastHarvestInfo = async () => {
+export const getIPORLastHarvestInfo = async (vaultAdr, chainId) => {
   let result = ''
   const nowDate = Math.floor(new Date().getTime() / 1000)
 
   const query = `
-    query {
+    query getLastHarvestInfo($vaultAdr: String!){
       plasmaVaultHistories(
+        where: {
+          plasmaVault: $vaultAdr,
+        },
         first: 1,
         orderBy: timestamp,
         orderDirection: desc
@@ -744,8 +766,8 @@ export const getIPORLastHarvestInfo = async () => {
       }
     }
 `
-  const variables = {}
-  const url = GRAPH_URLS.IPOR
+  const variables = { vaultAdr }
+  const url = GRAPH_URLS.IPOR[chainId]
 
   const data = await executeGraphCall(url, query, variables)
   const hisData = data.plasmaVaultHistories
@@ -777,13 +799,16 @@ export const getIPORLastHarvestInfo = async () => {
   return result
 }
 
-export const getIPORVaultHistories = async () => {
+export const getIPORVaultHistories = async (chainId, vaultAdr) => {
   let vaultHIPORData = {},
     vaultHIPORFlag = true
 
   const query = `
-    query {
+    query  getVaultHistories($vaultAdr: String!){
       plasmaVaultHistories(
+        where: {
+          plasmaVault: $vaultAdr,
+        },
         first: 1000,
         orderBy: timestamp,
         orderDirection: desc
@@ -792,8 +817,8 @@ export const getIPORVaultHistories = async () => {
       }
     }
   `
-  const variables = {}
-  const url = GRAPH_URLS.IPOR
+  const variables = { vaultAdr }
+  const url = GRAPH_URLS.IPOR[chainId]
 
   const data = await executeGraphCall(url, query, variables)
   vaultHIPORData = data.plasmaVaultHistories
@@ -1145,8 +1170,11 @@ export const initBalanceAndDetailData = async (
     const {
       balanceIPORData: balanceData,
       balanceIPORFlag: balanceFlag,
-    } = await getIPORUserBalanceHistories('IPOR', account)
-    const { vaultHIPORData: vaultHData, vaultHIPORFlag: vaultHFlag } = await getIPORVaultHistories()
+    } = await getIPORUserBalanceHistories(address, chainId, account)
+    const { vaultHIPORData: vaultHData, vaultHIPORFlag: vaultHFlag } = await getIPORVaultHistories(
+      chainId,
+      address,
+    )
     bFlag = balanceFlag
     vHFlag = vaultHFlag
 

@@ -381,22 +381,27 @@ const PoolsProvider = _ref => {
             })
           }
 
-          const vaultContract = contracts.iporVault
-          const vaultBalance = await vaultContract.methods.getBalanceOf(
-            vaultContract.instance,
-            account,
-          )
-          const AssetBalance = await vaultContract.methods.convertToAssets(
-            vaultContract.instance,
-            vaultBalance,
-          )
-          if (new BigNumber(AssetBalance).gt(0)) {
-            // eslint-disable-next-line camelcase
-            stats.IPOR_USDC_arbitrum = {
-              lpTokenBalance: 0,
-              totalStaked: AssetBalance,
+          /* eslint-disable no-restricted-syntax, no-await-in-loop */
+          for (const vaultId of Object.keys(contracts.iporVaults)) {
+            const vaultContract = contracts.iporVaults[vaultId]
+            const vaultBalance = await vaultContract.methods.getBalanceOf(
+              vaultContract.instance,
+              account,
+            )
+            const AssetBalance = await vaultContract.methods.convertToAssets(
+              vaultContract.instance,
+              vaultBalance,
+            )
+
+            if (new BigNumber(AssetBalance).gt(0)) {
+              // eslint-disable-next-line camelcase
+              stats[vaultId] = {
+                lpTokenBalance: 0,
+                totalStaked: AssetBalance,
+              }
             }
           }
+          /* eslint-enable no-restricted-syntax, no-await-in-loop */
           /* eslint-enable no-await-in-loop */
           // })
           setUserStats(currStats => ({ ...currStats, ...stats }))

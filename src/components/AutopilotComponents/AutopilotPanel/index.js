@@ -13,7 +13,6 @@ import { useWallet } from '../../../providers/Wallet'
 import { usePortals } from '../../../providers/Portals'
 import { useContracts } from '../../../providers/Contracts'
 import AnimatedDots from '../../AnimatedDots'
-import { CHAIN_IDS } from '../../../data/constants'
 import { getChainName, handleToggle } from '../../../utilities/parsers'
 import { fromWei } from '../../../services/web3'
 import { useRate } from '../../../providers/Rate'
@@ -88,7 +87,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
     ? parseInt(connectedChain.id, 16).toString()
     : ''
 
-  const tokenChain = CHAIN_IDS.ARBITRUM_ONE
+  const tokenChain = vaultData.chain
 
   const [inputAmount, setInputAmount] = useState(0)
   const [inputUSDAmount, setInputUSDAmount] = useState('-')
@@ -119,7 +118,9 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
           } else {
             setSubscribeName('Unsubscribe')
           }
-          setWalletBalance(fromWei(balances.aave_USDC_arbitrum, vaultData.decimals, 6)) // to get USDC value in user's wallet
+          setWalletBalance(
+            fromWei(balances.aave_USDC_arbitrum, vaultData.decimals, vaultData.decimals),
+          ) // to get USDC value in user's wallet
         }
       } else {
         setSubscribeName('Connect Wallet to Get Started')
@@ -151,7 +152,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
         const getBalance = async () => {
           firstWalletBalanceLoad.current = false
           await getWalletBalances([vaultData.id, 'aave_USDC_arbitrum'], account, true) // to get USDC value in user's wallet
-          const vaultContract = contracts.iporVault
+          const vaultContract = contracts.iporVaults[vaultData.id]
           const vaultBalance = await vaultContract.methods.getBalanceOf(
             vaultContract.instance,
             account,
@@ -163,7 +164,11 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
 
           if (new BigNumber(AssetBalance).gt(0)) {
             const userBal = fromWei(new BigNumber(vaultBalance), Number(vaultData.vaultDecimals))
-            const userAssetBal = fromWei(new BigNumber(AssetBalance), Number(vaultData.decimals), 6)
+            const userAssetBal = fromWei(
+              new BigNumber(AssetBalance),
+              Number(vaultData.decimals),
+              Number(vaultData.decimals),
+            )
             setUserAssetBalance(userAssetBal)
             setUserVBalance(userBal)
           } else {
@@ -174,7 +179,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
 
           const { bFlag, vHFlag, sumNetChangeUsd } = await initBalanceAndDetailData(
             vaultData.vaultAddress,
-            chainId,
+            vaultData.chain,
             account,
             vaultData.decimals,
             iporVFlag,
@@ -397,7 +402,9 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
             <FlexDiv flexDirection="row" justifyContent="space-between" marginTop="12px">
               <NewLabel size="12px" height="20px" weight="400" color={fontColor2}>
                 {subscribe ? 'Wallet Balance' : 'My Balance'}:{' '}
-                {subscribe ? `${walletBalance} USDC` : `${userAssetBalance} USDC`}
+                {subscribe
+                  ? `${walletBalance} ${vaultData?.tokenNames[0]}`
+                  : `${userAssetBalance} ${vaultData?.tokenNames[0]}`}
               </NewLabel>
             </FlexDiv>
             <FlexDiv marginTop="18px">

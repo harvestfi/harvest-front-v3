@@ -227,7 +227,7 @@ const WithdrawStart = ({
         setStartSpinner(true)
         let assetBal
         if (token.isIPORVault) {
-          const vaultContract = contracts.iporVault
+          const vaultContract = contracts.iporVaults[token.id]
           assetBal = await vaultContract.methods.convertToAssets(
             vaultContract.instance,
             unstakeBalance,
