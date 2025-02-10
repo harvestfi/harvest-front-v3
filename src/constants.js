@@ -81,10 +81,10 @@ export const GRAPH_URLS = {
   IPOR: {
     8453:
       process.env.REACT_APP_GRAPH_URL_IPOR_BASE ||
-      'https://api.studio.thegraph.com/query/48757/harvest-plasma-base/v0.0.6',
+      'https://api.studio.thegraph.com/query/48757/harvest-plasma-base/version/latest',
     42161:
       process.env.REACT_APP_GRAPH_URL_IPOR_ARBITRUM ||
-      'https://api.studio.thegraph.com/query/48757/harvest-plasma-usdc-arbitrum/v0.0.17',
+      'https://api.studio.thegraph.com/query/48757/harvest-plasma-usdc-arbitrum/version/latest',
   },
 }
 

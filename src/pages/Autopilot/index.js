@@ -39,7 +39,7 @@ const Autopilot = () => {
         </HeaderWrap>
         <SubPart>
           {!loadingVaults && vaultsData.length > 0 ? (
-            Array(3)
+            Array(1)
               .fill(0)
               .map((_, repeatIndex) =>
                 vaultsData?.map((vault, index) => (
