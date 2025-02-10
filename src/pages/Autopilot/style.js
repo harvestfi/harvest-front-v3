@@ -601,7 +601,7 @@ const LogoDiv = styled.div`
 const CurrencySelect = styled.div`
   width: 100%;
   height: 40px;
-  border: 1px solid #d0d5dd;
+  border: 2px solid #6988ff;
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
   transition: 0.5s;
   border-radius: 8px;
@@ -610,7 +610,7 @@ const CurrencySelect = styled.div`
   font-size: 14px;
   line-height: 24px;
   text-align: right;
-  color: ${props => props.fontcolor2} !important;
+  color: #6988ff !important;
 
   display: flex;
   align-items: center;

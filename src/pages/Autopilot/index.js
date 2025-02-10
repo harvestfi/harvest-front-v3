@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Dropdown } from 'react-bootstrap'
+import { MdKeyboardArrowDown } from 'react-icons/md'
 import { IoCheckmark } from 'react-icons/io5'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { useThemeContext } from '../../providers/useThemeContext'
@@ -8,7 +9,6 @@ import { useWallet } from '../../providers/Wallet'
 import { ChainsList } from '../../constants'
 import { isSpecialApp } from '../../utilities/formats'
 import AutopilotPanel from '../../components/AutopilotComponents/AutopilotPanel'
-import DropDownIcon from '../../assets/images/logos/advancedfarm/drop-down.svg'
 import {
   Container,
   Inner,
@@ -25,10 +25,8 @@ import {
 const Autopilot = () => {
   const {
     darkMode,
-    backColor,
     bgColorNew,
     filterColor,
-    hoverColor,
     hoverColorNew,
     fontColor,
     fontColor1,
@@ -80,11 +78,7 @@ const Autopilot = () => {
                 style={{ padding: 0 }}
               >
                 {curChain ? (
-                  <CurrencySelect
-                    backColor={backColor}
-                    fontcolor2={fontColor2}
-                    hovercolor={hoverColor}
-                  >
+                  <CurrencySelect>
                     <img
                       className={darkMode ? 'logo-dark' : 'logo'}
                       src={curChain.img}
@@ -93,7 +87,7 @@ const Autopilot = () => {
                       alt=""
                     />
                     <span>Autopilots</span>
-                    <img className="dropdown-icon" src={DropDownIcon} alt="" />
+                    <MdKeyboardArrowDown color="6988ff" fontSize={20} />
                   </CurrencySelect>
                 ) : (
                   <></>
