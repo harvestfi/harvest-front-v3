@@ -13,7 +13,7 @@ import { useWallet } from '../../../providers/Wallet'
 import { usePortals } from '../../../providers/Portals'
 import { useContracts } from '../../../providers/Contracts'
 import AnimatedDots from '../../AnimatedDots'
-import { getChainName, handleToggle } from '../../../utilities/parsers'
+import { getChainName, handleToggle, getUnderlyingId } from '../../../utilities/parsers'
 import { fromWei } from '../../../services/web3'
 import { useRate } from '../../../providers/Rate'
 import SubscribeModal from '../SubscribeModal'
@@ -118,9 +118,8 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
           } else {
             setSubscribeName('Unsubscribe')
           }
-          setWalletBalance(
-            fromWei(balances.aave_USDC_arbitrum, vaultData.decimals, vaultData.decimals),
-          ) // to get USDC value in user's wallet
+          const underlyingId = getUnderlyingId(vaultData.id)
+          setWalletBalance(fromWei(balances[underlyingId], vaultData.decimals, vaultData.decimals)) // to get USDC value in user's wallet
         }
       } else {
         setSubscribeName('Connect Wallet to Get Started')
@@ -140,18 +139,18 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
   ])
 
   useEffectWithPrevious(
-    ([prevAccount, prevBalances, prevVBalance]) => {
+    ([prevAccount, prevVBalance]) => {
       const hasSwitchedAccount = account !== prevAccount && account
       if (
         connected &&
         (hasSwitchedAccount ||
           firstWalletBalanceLoad.current ||
-          (balances && !isEqual(balances, prevBalances)) ||
           (userVBalance && !isEqual(userVBalance, prevVBalance)))
       ) {
         const getBalance = async () => {
           firstWalletBalanceLoad.current = false
-          await getWalletBalances([vaultData.id, 'aave_USDC_arbitrum'], account, true) // to get USDC value in user's wallet
+          const underlyingId = getUnderlyingId(vaultData.id)
+          await getWalletBalances([vaultData.id, underlyingId], account, true) // to get USDC value in user's wallet
           const vaultContract = contracts.iporVaults[vaultData.id]
           const vaultBalance = await vaultContract.methods.getBalanceOf(
             vaultContract.instance,
@@ -193,7 +192,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
         getBalance()
       }
     },
-    [account, balances, userVBalance],
+    [account, userVBalance],
   )
 
   useEffect(() => {
