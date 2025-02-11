@@ -113,10 +113,10 @@ const FarmDetailChart = ({
       if (address && chainId) {
         try {
           const { vaultTVLCount } = token.isIPORVault
-            ? await getIPORSequenceId(address, chainId)
+            ? await getIPORSequenceId(address.toLowerCase(), chainId)
             : await getSequenceId(address, chainId)
           const data = token.isIPORVault
-            ? await getIPORDataQuery(address, chainId, vaultTVLCount, false)
+            ? await getIPORDataQuery(address.toLowerCase(), chainId, vaultTVLCount, false)
             : await getDataQuery(address, chainId, vaultTVLCount, false)
           const filteredData = {
             ...data,
