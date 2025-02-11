@@ -3,7 +3,7 @@ import { IoIosCloseCircleOutline } from 'react-icons/io'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useRate } from '../../../providers/Rate'
-import { fromWei } from '../../../services/web3'
+import { fromWei, getExplorerLink } from '../../../services/web3'
 import { useContracts } from '../../../providers/Contracts'
 import { getIPORVaultHistories, getIPORLastHarvestInfo } from '../../../utilities/apiCalls'
 import { abbreaviteNumber, formatFrequency } from '../../../utilities/formats'
@@ -20,7 +20,7 @@ import {
   PilotInfoClose,
   SwitchMode,
 } from './style'
-import { handleToggle } from '../../../utilities/parsers'
+import { handleToggle, getChainNamePortals } from '../../../utilities/parsers'
 
 const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
   const { borderColorBox, btnColor, fontColor2, fontColor3, fontColor5 } = useThemeContext()
@@ -81,12 +81,20 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
 
   useEffect(() => {
     const initData = async () => {
-      const lHarvestDate = await getIPORLastHarvestInfo(vaultData.vaultAddress, vaultData.chain)
+      const lHarvestDate = await getIPORLastHarvestInfo(
+        vaultData.vaultAddress.toLowerCase(),
+        vaultData.chain,
+      )
       setLastHarvest(lHarvestDate)
       const { vaultHIPORData, vaultHIPORFlag } = await getIPORVaultHistories(
         vaultData.chain,
-        vaultData.vaultAddress,
+        vaultData.vaultAddress.toLowerCase(),
       )
+
+      const vaultContract = contracts.iporVaults[vaultData.id]
+      const symbol = await vaultContract.methods.symbol(vaultContract.instance)
+      setVaultToken(symbol)
+
       if (vaultHIPORFlag) {
         const totalPeriod =
           Number(vaultHIPORData[0].timestamp) -
@@ -142,10 +150,6 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
         // calculate TVL
         const tvl = abbreaviteNumber(Number(vaultData.totalValueLocked) * Number(currencyRate), 2)
         setTotalValueLocked(tvl)
-
-        const vaultContract = contracts.iporVaults[vaultData.id]
-        const symbol = await vaultContract.methods.symbol(vaultContract.instance)
-        setVaultToken(symbol)
 
         latestSharePriceValue = fromWei(
           vaultHIPORData[0].sharePrice,
@@ -250,7 +254,7 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
               marginLeft="20px"
               color={fontColor2}
             >
-              USDC Autopilot Info
+              {vaultData.tokenNames[0]} Autopilot Info
             </NewLabel>
             <PilotInfoClose>
               <IoIosCloseCircleOutline
@@ -301,7 +305,10 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
                   weight="500"
                   cursor="pointer"
                   onClick={() => {
-                    window.open(`https://arbiscan.io/address/${vaultData.vaultAddress}`, '_blank')
+                    window.open(
+                      `${getExplorerLink(vaultData.chain)}/address/${vaultData.vaultAddress}`,
+                      '_blank',
+                    )
                   }}
                 >
                   {vaultToken}
@@ -323,7 +330,9 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
             {vaultData.allocPointData && vaultData.allocPointData.length > 0 ? (
               vaultData.allocPointData.map((data, index) => {
                 let vaultName = data.hVaultId.split('_')[0]
-                vaultName = `${vaultName.charAt(0).toUpperCase() + vaultName.slice(1)} USDC`
+                vaultName = `${vaultName.charAt(0).toUpperCase() + vaultName.slice(1)} ${
+                  vaultData.tokenNames[0]
+                }`
                 return (
                   <RowDiv key={index}>
                     <NewLabel
@@ -333,12 +342,15 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
                       cursor="pointer"
                       borderBottom="0.5px dotted white"
                       onClick={() => {
-                        window.open(
-                          `https://app.harvest.finance/arbitrum/${
-                            allVaultsData[data.hVaultId]?.vaultAddress
-                          }`,
-                          '_blank',
-                        )
+                        const chainName = getChainNamePortals(vaultData.chain)
+                        return allVaultsData[data.hVaultId]?.vaultAddress
+                          ? window.open(
+                              `https://app.harvest.finance/${chainName}/${
+                                allVaultsData[data.hVaultId]?.vaultAddress
+                              }`,
+                              '_blank',
+                            )
+                          : null
                       }}
                     >
                       {vaultName}

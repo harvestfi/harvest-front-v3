@@ -1172,10 +1172,10 @@ export const initBalanceAndDetailData = async (
     const {
       balanceIPORData: balanceData,
       balanceIPORFlag: balanceFlag,
-    } = await getIPORUserBalanceHistories(address, chainId, account)
+    } = await getIPORUserBalanceHistories(address.toLowerCase(), chainId, account)
     const { vaultHIPORData: vaultHData, vaultHIPORFlag: vaultHFlag } = await getIPORVaultHistories(
       chainId,
-      address,
+      address.toLowerCase(),
     )
     bFlag = balanceFlag
     vHFlag = vaultHFlag

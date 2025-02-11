@@ -76,7 +76,13 @@ import {
   showUsdValue,
   showUsdValueCurrency,
 } from '../../utilities/formats'
-import { getTotalApy, getVaultValue, getChainName, handleToggle } from '../../utilities/parsers'
+import {
+  getTotalApy,
+  getVaultValue,
+  getChainName,
+  handleToggle,
+  getChainNamePortals,
+} from '../../utilities/parsers'
 import { getAdvancedRewardText } from '../../utilities/html'
 import {
   getCoinListFromApi,
@@ -1260,7 +1266,7 @@ const AdvancedFarm = () => {
   useEffect(() => {
     const getLastHarvest = async () => {
       const value = token.isIPORVault
-        ? await getIPORLastHarvestInfo(paramAddress, chain)
+        ? await getIPORLastHarvestInfo(paramAddress.toLowerCase(), chain)
         : await getLastHarvestInfo(paramAddress, chain)
       setLastHarvest(value)
     }
@@ -3298,9 +3304,9 @@ const AdvancedFarm = () => {
                       {token.allocPointData && token.allocPointData.length > 0 ? (
                         token.allocPointData.map((data, index) => {
                           let vaultName = data.hVaultId.split('_')[0]
-                          vaultName = `${
-                            vaultName.charAt(0).toUpperCase() + vaultName.slice(1)
-                          } USDC`
+                          vaultName = `${vaultName.charAt(0).toUpperCase() + vaultName.slice(1)} ${
+                            token.tokenNames[0]
+                          }`
                           return (
                             <FlexDiv
                               key={index}
@@ -3314,12 +3320,15 @@ const AdvancedFarm = () => {
                                 cursor="pointer"
                                 borderBottom="0.5px dotted white"
                                 onClick={() => {
-                                  window.open(
-                                    `https://app.harvest.finance/arbitrum/${
-                                      allVaultsData[data.hVaultId]?.vaultAddress
-                                    }`,
-                                    '_blank',
-                                  )
+                                  const lcChainName = getChainNamePortals(token.chain)
+                                  return allVaultsData[data.hVaultId]?.vaultAddress
+                                    ? window.open(
+                                        `https://app.harvest.finance/${lcChainName}/${
+                                          allVaultsData[data.hVaultId]?.vaultAddress
+                                        }`,
+                                        '_blank',
+                                      )
+                                    : null
                                 }}
                               >
                                 {vaultName}
