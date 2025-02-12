@@ -138,7 +138,7 @@ const UserBalanceData = ({
           let priceFeedData, priceFeedFlag
 
           const data = token.isIPORVault
-            ? await getIPORUserBalanceHistories(address, token.chain, account)
+            ? await getIPORUserBalanceHistories(address.toLowerCase(), token.chain, account)
             : await getUserBalanceHistories(address, chainId, account)
 
           const balanceData = token.isIPORVault ? data.balanceIPORData : data.balanceData
@@ -164,7 +164,7 @@ const UserBalanceData = ({
             priceFeedData = result.priceFeedData
             priceFeedFlag = result.priceFeedFlag
           } else if (balanceFlag && token.isIPORVault) {
-            const result = await getIPORVaultHistories(token.chain, address)
+            const result = await getIPORVaultHistories(token.chain, address.toLowerCase())
             priceFeedFlag = result.vaultHIPORFlag
             priceFeedData = result.vaultHIPORData
           }
