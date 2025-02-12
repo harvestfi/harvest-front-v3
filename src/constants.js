@@ -812,6 +812,11 @@ export const ChainsList = [
   { id: 4, name: 'Zksync', img: ZKSYNC, chainId: CHAIN_IDS.ZKSYNC },
 ]
 
+export const someChainsList = [
+  { id: 2, name: 'Arbitrum', img: ARBITRUM, chainId: CHAIN_IDS.ARBITRUM_ONE },
+  { id: 3, name: 'Base', img: BASE, chainId: CHAIN_IDS.BASE },
+]
+
 export const fakeChartData = [
   { x: 1691637444000, y: 5, z: 1.5 },
   { x: 1691780004000, y: 6, z: 2 },

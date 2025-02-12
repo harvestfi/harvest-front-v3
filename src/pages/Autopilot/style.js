@@ -67,9 +67,7 @@ const HeaderWrap = styled.div`
 
   @media screen and (max-width: 992px) {
     padding: ${props => (props.padding ? props.padding : '')};
-    // background-image: ${props => (props.backImg ? `url(${props.backImg})` : '')};
-    height: ${props => (props.height ? props.height : '')};
-    background: linear-gradient(to right, #5b86e5, #36d1dc);
+    border-bottom: 1px solid ${props => props.borderColor};
   }
 `
 
@@ -600,7 +598,6 @@ const LogoDiv = styled.div`
 
 const CurrencySelect = styled.div`
   width: 100%;
-  height: 40px;
   border: 2px solid #6988ff;
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
   transition: 0.5s;
@@ -608,10 +605,9 @@ const CurrencySelect = styled.div`
   padding: 10px 16px;
   font-weight: 600;
   font-size: 14px;
-  line-height: 24px;
+  line-height: 22px;
   text-align: right;
   color: #6988ff !important;
-
   display: flex;
   align-items: center;
 
@@ -641,6 +637,10 @@ const CurrencySelect = styled.div`
     img {
       width: 17.6px;
       height: 17.6px;
+    }
+
+    span {
+      display: none;
     }
   }
 `
@@ -688,10 +688,8 @@ const CurrencyDropDown = styled(Dropdown.Toggle)`
 `
 
 const CurrencyDropDownMenu = styled(Dropdown.Menu)`
-  background-color: ${props => props.backcolor} !important;
-  border: 1px solid #d0d5dd;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.05);
-  border-radius: 8px !important;
+  background-color: unset !important;
+  border: none;
   padding: 0;
   min-width: 6rem;
   width: 100% !important;
@@ -704,7 +702,10 @@ const CurrencyDropDownMenu = styled(Dropdown.Menu)`
 
   @media screen and (max-width: 992px) {
     min-width: unset;
-    transform: translate3d(0px, -215px, 0px) !important;
+
+    span {
+      display: none;
+    }
   }
 `
 
@@ -715,23 +716,12 @@ const CurrencyDropDownItem = styled(Dropdown.Item)`
   align-items: center;
   font-size: 14px;
   padding: 10px 5px;
-  ${props =>
-    props.bordercolor
-      ? `
-    border-bottom: 0.5px solid ${props.bordercolor} !important;
-  `
-      : `
-  `}
   width: auto !important;
-  color: ${props => props.fontcolor} !important;
-
-  :first-child {
-    border-radius: 8px 8px 0px 0px;
-  }
-
-  :last-child {
-    border-radius: 0px 0px 8px 8px;
-  }
+  color: #6988ff !important;
+  border-radius: 10.98px;
+  border: 2px solid #6988ff;
+  background: ${props => props.backColor};
+  margin-bottom: 8px;
 
   &:hover {
     background: ${props => props.hovercolor} !important;

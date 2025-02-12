@@ -424,7 +424,6 @@ const Sidebar = ({ width }) => {
                 if (!connected) {
                   return (
                     <ConnectButtonStyle
-                      color="connectwallet"
                       onClick={() => {
                         connectAction()
                       }}

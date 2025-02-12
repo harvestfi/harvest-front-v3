@@ -174,7 +174,6 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
                     : 'No activity found for this wallet in this strategy.'}
                 </div>
                 <ExploreButtonStyle
-                  color="connectwallet"
                   onClick={() => {
                     push(ROUTES.ADVANCED)
                   }}
@@ -197,7 +196,6 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
               Connect wallet to see full event history.
             </EmptyInfo>
             <ConnectButtonStyle
-              color="connectwallet"
               onClick={() => {
                 connectAction()
               }}

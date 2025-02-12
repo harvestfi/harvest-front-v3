@@ -122,7 +122,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
           setWalletBalance(fromWei(balances[underlyingId], vaultData.decimals, vaultData.decimals)) // to get USDC value in user's wallet
         }
       } else {
-        setSubscribeName('Connect Wallet to Get Started')
+        setSubscribeName('Connect')
         setSubscribeLabel(`Subscribe`)
       }
     }

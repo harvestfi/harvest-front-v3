@@ -6,7 +6,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
-import { ChainsList } from '../../constants'
+import { someChainsList } from '../../constants'
 import { isSpecialApp } from '../../utilities/formats'
 import AutopilotPanel from '../../components/AutopilotComponents/AutopilotPanel'
 import {
@@ -26,16 +26,16 @@ const Autopilot = () => {
   const {
     darkMode,
     bgColorNew,
-    filterColor,
     hoverColorNew,
     fontColor,
     fontColor1,
     fontColor2,
+    borderColorBox,
   } = useThemeContext()
 
   const { account, chainId } = useWallet()
   const { allVaultsData, loadingVaults } = useVaults()
-  const [curChain, setCurChain] = useState(ChainsList[0])
+  const [curChain, setCurChain] = useState(someChainsList[0])
   const [vaultsData, setVaultsData] = useState([])
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const Autopilot = () => {
   }, [allVaultsData, account])
 
   useEffect(() => {
-    const matchedChain = ChainsList.find(item => item.chainId === chainId)
+    const matchedChain = someChainsList.find(item => item.chainId === chainId)
     if (matchedChain) {
       setCurChain(matchedChain)
     }
@@ -61,7 +61,7 @@ const Autopilot = () => {
   return (
     <Container bgColor={bgColorNew} fontColor={fontColor}>
       <Inner bgColor={darkMode ? '#171b25' : '#fff'}>
-        <HeaderWrap backImg="" padding="25px 25px 40px 25px" height="234px">
+        <HeaderWrap padding="21px 11px 15px 23px" borderColor={borderColorBox}>
           <HeaderTitle fontColor={fontColor} fontColor1={fontColor1}>
             <div className="title">Autopilot</div>
             <div className="desc">
@@ -94,16 +94,15 @@ const Autopilot = () => {
                 )}
               </CurrencyDropDown>
               {!isSpecialApp ? (
-                <CurrencyDropDownMenu backcolor={bgColorNew}>
-                  {ChainsList.map(elem => {
+                <CurrencyDropDownMenu>
+                  {someChainsList.map(elem => {
                     return (
                       <CurrencyDropDownItem
                         onClick={() => {
                           console.log('')
                         }}
-                        fontcolor={fontColor}
-                        filtercolor={filterColor}
                         hovercolor={hoverColorNew}
+                        backColor={bgColorNew}
                         key={elem.id}
                       >
                         <img

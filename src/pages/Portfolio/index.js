@@ -1284,7 +1284,6 @@ const Portfolio = () => {
                           work!
                         </div>
                         <ExploreButtonStyle
-                          color="connectwallet"
                           onClick={() => {
                             push(ROUTES.ADVANCED)
                           }}
@@ -1308,7 +1307,6 @@ const Portfolio = () => {
                         Connect wallet to see your positions.
                       </EmptyInfo>
                       <ConnectButtonStyle
-                        color="connectwallet"
                         onClick={() => {
                           connectAction()
                         }}

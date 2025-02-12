@@ -184,7 +184,6 @@ const RewardsData = ({ historyData, account, token, isDashboard, noData, setNoDa
                     : 'No Claimed Rewards found for this wallet in this strategy.'}
                 </div>
                 <ExploreButtonStyle
-                  color="connectwallet"
                   onClick={() => {
                     push(ROUTES.ADVANCED)
                   }}
@@ -207,7 +206,6 @@ const RewardsData = ({ historyData, account, token, isDashboard, noData, setNoDa
               Connect wallet to see full event history.
             </EmptyInfo>
             <ConnectButtonStyle
-              color="connectwallet"
               onClick={() => {
                 connectAction()
               }}
