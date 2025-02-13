@@ -936,6 +936,7 @@ export const initBalanceAndDetailData = async (
   account,
   tokenDecimals,
   isIPORVault = false,
+  vaultDecimals = 8,
 ) => {
   const timestamps = []
   const uniqueVaultHData = []
@@ -1194,7 +1195,7 @@ export const initBalanceAndDetailData = async (
     if (balanceFlag) {
       balanceData.forEach(obj => {
         timestamps.push(obj.timestamp)
-        const valueDecimals = fromWei(obj.value, 8, 8)
+        const valueDecimals = fromWei(obj.value, vaultDecimals, vaultDecimals)
         const modifiedObj = { ...obj, value: valueDecimals }
         updatedBalanceData.push(modifiedObj)
       })
