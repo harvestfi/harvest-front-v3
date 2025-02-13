@@ -16,6 +16,7 @@ import AnimatedDots from '../../AnimatedDots'
 import { getChainName, handleToggle, getUnderlyingId } from '../../../utilities/parsers'
 import { fromWei } from '../../../services/web3'
 import { useRate } from '../../../providers/Rate'
+import DisclaimersModal from '../DisclaimersModal'
 import SubscribeModal from '../SubscribeModal'
 import UnsubscribeModal from '../UnsubscribeModal'
 import AutopilotInfo from '../AutoPilotInfo'
@@ -47,11 +48,15 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
     fontColor2,
     fontColor3,
     fontColor8,
+    btnColor,
+    btnHoverColor,
+    btnActiveColor,
   } = useThemeContext()
   const { rates } = useRate()
 
   const [subscribe, setSubscribe] = useState(true)
   const [modalShow, setModalShow] = useState(false)
+  const [disclaimersModalShow, setDisclaimersModalShow] = useState(false)
   const [pilotInfoShow, setPilotInfoShow] = useState(false)
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
@@ -92,6 +97,8 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
   const [inputAmount, setInputAmount] = useState(0)
   const [inputUSDAmount, setInputUSDAmount] = useState('-')
   const firstWalletBalanceLoad = useRef(true)
+
+  const firstAutopilot = localStorage.getItem('firstAutopilot')
 
   useEffect(() => {
     if (rates.rateData) {
@@ -251,7 +258,10 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
       }
     } else if (Number(inputAmount) !== 0) {
       if (subscribe) {
-        if (walletBalance >= Number(inputAmount)) {
+        if (firstAutopilot === null || firstAutopilot === 'true') {
+          localStorage.setItem('firstAutopilot', true)
+          setDisclaimersModalShow(true)
+        } else if (walletBalance >= Number(inputAmount)) {
           setModalShow(true)
         } else {
           toast.error(`InputAmount exceeds wallet Balance!`)
@@ -418,6 +428,9 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
                     : 'connectwallet'
                 }
                 width="100%"
+                btnColor={btnColor}
+                btnHoverColor={btnHoverColor}
+                btnActiveColor={btnActiveColor}
                 onClick={() => {
                   onClickSubscribe()
                 }}
@@ -434,6 +447,9 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
           vaultData={vaultData}
           setPilotInfoShow={setPilotInfoShow}
         />
+      )}
+      {disclaimersModalShow && (
+        <DisclaimersModal modalShow={disclaimersModalShow} setModalShow={setDisclaimersModalShow} />
       )}
       {modalShow && subscribe && (
         <SubscribeModal

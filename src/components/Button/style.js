@@ -204,7 +204,7 @@ const ButtonStyle = styled.button`
   ${props =>
     props.color === 'wido-deposit'
       ? `
-      background: #5DCF46;
+      background: ${props.btnColor};
       font-weight: 600;
       font-size: 16px;
       line-height: 24px;
@@ -223,13 +223,13 @@ const ButtonStyle = styled.button`
         !props.disabled
           ? `
       &:hover {
-        background: #51e932;
+        background: ${props.btnHoverColor};
       }`
           : ''
       }
 
       &:active {
-        background: #4bd72f;
+        background: ${props.btnActiveColor};
       }
       `
       : ''}
@@ -237,7 +237,7 @@ const ButtonStyle = styled.button`
   ${props =>
     props.color === 'subscribe'
       ? `
-      background: #5DCF46;
+      background: ${props.btnColor};
       font-weight: 600;
       font-size: 16px;
       line-height: 24px;
@@ -256,13 +256,46 @@ const ButtonStyle = styled.button`
         !props.disabled
           ? `
       &:hover {
-        background: #2d9718;
+        background: ${props.btnHoverColor};
       }`
           : ''
       }
 
       &:active {
-        background: #5DCF46;
+        background: ${props.btnActiveColor};
+      }
+      `
+      : ''}
+
+  ${props =>
+    props.color === 'disclaimers-btn'
+      ? `
+      background: ${props.btnColor};
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: white;
+      padding: 10px 18px;
+      box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+      border-radius: 8px;
+      img {
+        margin-left: 8px;
+      }
+      ${
+        !props.disabled
+          ? `
+      &:hover {
+        background: ${props.btnHoverColor};
+      }`
+          : ''
+      }
+
+      &:active {
+        background: ${props.btnActiveColor};
       }
       `
       : ''}
@@ -373,6 +406,35 @@ const ButtonStyle = styled.button`
       color: #6988FF;
       font-weight: 600;
       line-height: 20.785px;
+
+      ${
+        !props.disabled
+          ? `
+      &:hover {
+        background: rgba(105, 136, 255, 0.15);
+      }`
+          : ''
+      }
+
+      &:active {
+        background: rgba(105, 136, 255, 0.15);
+      }
+      `
+      : ''}
+
+  ${props =>
+    props.color === 'autopilot-cancel'
+      ? `
+      font-size: 16px;
+      background: unset;
+      border-radius: 8px;
+      border: 2px solid ${props.borderColor};
+      box-shadow: 0px 0.866px 1.732px 0px rgba(16, 24, 40, 0.05);
+      color: ${props.btnColor};
+      font-weight: 600;
+      line-height: 24px;
+      margin-top: 12px;
+      padding: 8px 18px;
 
       ${
         !props.disabled

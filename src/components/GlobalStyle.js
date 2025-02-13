@@ -701,6 +701,10 @@ html {
         border-bottom: 1px solid ${props => props.inputBorderColor};
         padding: 24px 24px 20px;
       }
+      .disclaimers-modal {
+        border-bottom: unset;
+        background: ${props => props.backColor};
+      }
       .token-select-modal-header {
         background: ${props => props.bgColorModal};
         border-bottom: 1px solid ${props => props.inputBorderColor};
@@ -718,6 +722,10 @@ html {
       .deposit-modal-body {
         background: ${props => props.backColor};
         padding: unset;
+      }
+      .disclaimers-modal-body {
+        border-bottom-right-radius: 12px;
+        border-bottom-left-radius: 12px;
       }
       .token-select-modal-body {
         background: ${props => props.backColor};
@@ -799,6 +807,10 @@ html {
         }
       }
     }
+  }
+
+  .disclaimers-notification {
+    width: 400px;
   }
 
   .apexcharts-tooltip {

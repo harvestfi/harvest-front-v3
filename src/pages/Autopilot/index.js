@@ -64,9 +64,7 @@ const Autopilot = () => {
         <HeaderWrap padding="21px 11px 15px 23px" borderColor={borderColorBox}>
           <HeaderTitle fontColor={fontColor} fontColor1={fontColor1}>
             <div className="title">Autopilot</div>
-            <div className="desc">
-              Maximized yield efficiency with our 1-click autopilot vaults.
-            </div>
+            <div className="desc">Maximized yield efficiency with 1-click autopilot vaults.</div>
           </HeaderTitle>
           <HeaderButton>
             <Dropdown>
