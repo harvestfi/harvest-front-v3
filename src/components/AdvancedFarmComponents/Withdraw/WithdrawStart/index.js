@@ -121,6 +121,7 @@ const WithdrawStart = ({
   const isFetchingRef = useRef(false)
 
   const curChain = token.poolVault ? token.data.chain : token.chain
+  const tokenName = token.isIPORVault ? tokenSymbol : `f${tokenSymbol}`
 
   useEffect(() => {
     const tokenChain = token.poolVault ? token.data.chain : token.chain
@@ -498,7 +499,7 @@ const WithdrawStart = ({
                   )}
                 </>
                 <NewLabel display="flex" flexFlow="column" weight="600" textAlign="right">
-                  <span>{useIFARM ? `i${tokenSymbol}` : `f${tokenSymbol}`}</span>
+                  <span>{useIFARM ? `i${tokenSymbol}` : tokenName}</span>
                   <span>
                     {revertFromInfoUsdAmount !== '' ? (
                       <>≈{revertFromInfoUsdAmount}</>

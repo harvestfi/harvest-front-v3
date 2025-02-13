@@ -145,7 +145,9 @@ const UserBalanceData = ({
           const balanceFlag = token.isIPORVault ? data.balanceIPORFlag : data.balanceFlag
           if (token.isIPORVault) {
             balanceData.map(obj => {
-              obj.value = new BigNumber(obj.value).div(new BigNumber(10 ** 8)).toFixed()
+              obj.value = new BigNumber(obj.value)
+                .div(new BigNumber(10 ** token.vaultDecimals))
+                .toFixed()
               return obj
             })
           }

@@ -104,6 +104,8 @@ const WithdrawBase = ({
 
   const slippage = 0.5 // Default slippage Percent
 
+  const tokenName = token.isIPORVault ? tokenSymbol : `f${tokenSymbol}`
+
   const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress1
 
   let stakeAmountWei
@@ -519,8 +521,8 @@ const WithdrawBase = ({
               weight="600"
               color={fontColor2}
             >
-              The amount of {useIFARM ? `i${tokenSymbol}` : `f${tokenSymbol}`} you entered exceeds
-              deposited balance.
+              The amount of {useIFARM ? `i${tokenSymbol}` : tokenName} you entered exceeds deposited
+              balance.
             </NewLabel>
           </NewLabel>
           <div>
