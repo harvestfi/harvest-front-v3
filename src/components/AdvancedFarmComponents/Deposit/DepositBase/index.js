@@ -89,6 +89,9 @@ const DepositBase = ({
     activeColorNew,
     borderColorBox,
     bgColorMessage,
+    btnColor,
+    btnHoverColor,
+    btnActiveColor,
   } = useThemeContext()
 
   const { connected, connectAction, account, chainId, setChainId } = useWallet()
@@ -715,6 +718,9 @@ const DepositBase = ({
           <Button
             color="wido-deposit"
             width="100%"
+            btnColor={btnColor}
+            btnHoverColor={btnHoverColor}
+            btnActiveColor={btnActiveColor}
             onClick={() => {
               onClickDeposit()
             }}

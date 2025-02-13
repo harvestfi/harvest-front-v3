@@ -48,7 +48,7 @@ const UnstakeStart = ({
   multipleAssets,
   amountsToExecute,
 }) => {
-  const { fontColor1, fontColor2 } = useThemeContext()
+  const { fontColor1, fontColor2, btnColor, btnHoverColor, btnActiveColor } = useThemeContext()
   const { connected, connectAction, account, chainId, setChainId, getWalletBalances } = useWallet()
 
   const [
@@ -279,6 +279,9 @@ const UnstakeStart = ({
             <Button
               color="wido-deposit"
               width="100%"
+              btnColor={btnColor}
+              btnHoverColor={btnHoverColor}
+              btnActiveColor={btnActiveColor}
               onClick={async () => {
                 if (!connected) {
                   connectAction()
