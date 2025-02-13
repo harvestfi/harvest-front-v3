@@ -411,9 +411,13 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
                 width="80%"
                 margin="auto"
                 color="autopilot"
-                // onClick={() => {
-                //   onClickSubscribe()
-                // }}
+                onClick={() => {
+                  const chainName = getChainNamePortals(vaultData.chain)
+                  return window.open(
+                    `/${chainName}/${vaultData.vaultAddress.toLowerCase()}`,
+                    '_blank',
+                  )
+                }}
               >
                 Open Autopilot in Advanced Mode
               </Button>
