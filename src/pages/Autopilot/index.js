@@ -33,30 +33,40 @@ const Autopilot = () => {
     borderColorBox,
   } = useThemeContext()
 
-  const { account, chainId } = useWallet()
+  const { chainId } = useWallet()
   const { allVaultsData, loadingVaults } = useVaults()
   const [curChain, setCurChain] = useState(someChainsList[0])
   const [vaultsData, setVaultsData] = useState([])
 
   useEffect(() => {
-    const initData = async () => {
-      const filteredVaults = Object.values(allVaultsData).filter((vaultData, index) => {
-        vaultData.id = Object.keys(allVaultsData)[index]
-        if (Object.prototype.hasOwnProperty.call(vaultData, 'isIPORVault')) return true
-        return false
-      })
-      setVaultsData(filteredVaults)
-    }
-
-    initData()
-  }, [allVaultsData, account])
-
-  useEffect(() => {
     const matchedChain = someChainsList.find(item => item.chainId === chainId)
     if (matchedChain) {
       setCurChain(matchedChain)
+    } else {
+      setCurChain(someChainsList[0])
     }
   }, [chainId])
+
+  useEffect(() => {
+    const initData = () => {
+      const filteredVaults = Object.values(allVaultsData)
+        .map((vaultData, index) => ({
+          ...vaultData,
+          id: Object.keys(allVaultsData)[index],
+        }))
+        .filter(vaultData => vaultData.isIPORVault)
+
+      const filteredVaultsData = filteredVaults
+        .filter(item => item.chain === curChain.chainId)
+        .slice(0, 3)
+
+      setVaultsData(filteredVaultsData)
+    }
+
+    if (curChain) {
+      initData()
+    }
+  }, [allVaultsData, curChain])
 
   return (
     <Container bgColor={bgColorNew} fontColor={fontColor}>
@@ -97,10 +107,10 @@ const Autopilot = () => {
                     return (
                       <CurrencyDropDownItem
                         onClick={() => {
-                          console.log('')
+                          setCurChain(elem)
                         }}
                         hovercolor={hoverColorNew}
-                        backColor={bgColorNew}
+                        backcolor={bgColorNew}
                         key={elem.id}
                       >
                         <img
@@ -111,7 +121,7 @@ const Autopilot = () => {
                           alt=""
                         />
                         <span>Autopilots</span>
-                        {curChain.id === elem.id ? <IoCheckmark className="check-icon" /> : <></>}
+                        {curChain?.id === elem.id ? <IoCheckmark className="check-icon" /> : <></>}
                       </CurrencyDropDownItem>
                     )
                   })}

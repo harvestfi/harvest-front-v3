@@ -720,7 +720,7 @@ const CurrencyDropDownItem = styled(Dropdown.Item)`
   color: #6988ff !important;
   border-radius: 10.98px;
   border: 2px solid #6988ff;
-  background: ${props => props.backColor};
+  background: ${props => props.backcolor};
   margin-bottom: 8px;
 
   &:hover {

@@ -813,8 +813,8 @@ export const ChainsList = [
 ]
 
 export const someChainsList = [
-  { id: 2, name: 'Arbitrum', img: ARBITRUM, chainId: CHAIN_IDS.ARBITRUM_ONE },
-  { id: 3, name: 'Base', img: BASE, chainId: CHAIN_IDS.BASE },
+  { id: 0, name: 'Base', img: BASE, chainId: CHAIN_IDS.BASE },
+  { id: 1, name: 'Arbitrum', img: ARBITRUM, chainId: CHAIN_IDS.ARBITRUM_ONE },
 ]
 
 export const fakeChartData = [
