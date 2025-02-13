@@ -416,7 +416,8 @@ const AdvancedFarm = () => {
   })
   const id = vaultIds[0]
   const token = groupOfVaults[id]
-  const tokenSym = token.isIPORVault ? `f${token.tokenNames[0]}` : id
+  const tokenSym = token.isIPORVault ? token.vaultSymbol : id
+  const fTokenName = token.isIPORVault ? tokenSym : `f${tokenSym}`
 
   const { logoUrl } = token
 
@@ -636,7 +637,7 @@ const AdvancedFarm = () => {
       amountBalanceUSD = total * usdPrice * Number(currencyRate)
     } else {
       staked = token.isIPORVault
-        ? fromWei(balances[token.id], 8, 8)
+        ? fromWei(balances[token.id], token.vaultDecimals, token.vaultDecimals)
         : totalStaked && fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)
 
       unstaked =
@@ -1303,16 +1304,23 @@ const AdvancedFarm = () => {
           sumLatestNetChangeUsd,
           enrichedData,
           uniqueVaultHData,
-        } = await initBalanceAndDetailData(address, chainId, account, tokenDecimals, iporVFlag)
+        } = await initBalanceAndDetailData(
+          address,
+          chainId,
+          account,
+          token.decimals,
+          iporVFlag,
+          token.vaultDecimals,
+        )
 
-        if (bFlag && vHFlag) {
+        if (bFlag && vHFlag && !loadingVaults) {
           setUnderlyingEarnings(sumNetChange)
           setUsdEarnings(sumNetChangeUsd)
           setUnderlyingEarningsLatest(sumLatestNetChange)
           setUsdEarningsLatest(sumLatestNetChangeUsd)
           const enrichedDataWithSymbol = enrichedData.map(data => ({
             ...data,
-            tokenSymbol: token.isIPORVault ? 'ffUSDC' : id,
+            tokenSymbol: token.isIPORVault ? tokenSym : id,
           }))
           setHistoryData(enrichedDataWithSymbol)
           setChartData(uniqueVaultHData)
@@ -1322,7 +1330,7 @@ const AdvancedFarm = () => {
 
     initData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account])
+  }, [account, loadingVaults])
 
   const apyDaily = totalApy
     ? (((Number(totalApy) / 100 + 1) ** (1 / 365) - 1) * 100).toFixed(3)
@@ -2066,7 +2074,7 @@ const AdvancedFarm = () => {
                             {totalValue}
                           </NewLabel>
                         </ReactTooltip>
-                        <span className="symbol">{useIFARM ? `i${id}` : `f${tokenSym}`}</span>
+                        <span className="symbol">{useIFARM ? `i${id}` : fTokenName}</span>
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
@@ -2711,7 +2719,7 @@ const AdvancedFarm = () => {
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom={`1px solid ${borderColorBox}`}
                     >
-                      {useIFARM ? 'Farm (Legacy)' : `f${tokenSym}`}
+                      {useIFARM ? 'Farm (Legacy)' : fTokenName}
                     </NewLabel>
                     <FlexDiv
                       justifyContent="space-between"

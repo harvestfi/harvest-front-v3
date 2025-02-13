@@ -103,6 +103,7 @@ const DepositBase = ({
 
   const slippage = 0.5 // Default slippage Percent
   const tokenChain = token.chain || token.data.chain
+  const tokenSym = token.isIPORVault ? tokenSymbol : `f${tokenSymbol}`
   const curChain = isSpecialApp
     ? chainId
     : connectedChain
@@ -685,9 +686,7 @@ const DepositBase = ({
                 </ReactTooltip>
               </>
               <NewLabel display="flex" flexFlow="column" weight="600" align="right">
-                <span className="token-symbol">
-                  {useIFARM ? `i${tokenSymbol}` : `f${tokenSymbol}`}
-                </span>
+                <span className="token-symbol">{useIFARM ? `i${tokenSymbol}` : tokenSym}</span>
                 <span className="token-symbol">
                   {account &&
                   pickedToken.symbol !== 'Select Token' &&

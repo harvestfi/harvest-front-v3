@@ -125,6 +125,7 @@ const DepositStart = ({
   }, [rates])
 
   const SlippageValues = [null, 0.1, 0.5, 1, 5]
+  const tokenName = token.isIPORVault ? tokenSymbol : `f${tokenSymbol}`
 
   const onInputSlippage = e => {
     let inputValue = e.target.value
@@ -458,7 +459,7 @@ const DepositStart = ({
                       >
                         {useIFARM
                           ? `The estimated number of i${tokenSymbol} you will receive in your wallet. The default slippage is set as 'Auto'.`
-                          : `The estimated number of f${tokenSymbol} you will receive in your wallet. The default slippage is set as 'Auto'.`}
+                          : `The estimated number of ${tokenName} you will receive in your wallet. The default slippage is set as 'Auto'.`}
                       </NewLabel>
                     </ReactTooltip>
                   </>
@@ -514,7 +515,7 @@ const DepositStart = ({
                   </ReactTooltip>
                 </>
                 <NewLabel display="flex" flexFlow="column" weight="600" textAlign="right">
-                  <span>{useIFARM ? `i${tokenSymbol}` : `f${tokenSymbol}`}</span>
+                  <span>{useIFARM ? `i${tokenSymbol}` : tokenName}</span>
                   <span>
                     {!pickedDefaultToken && progressStep === 4 ? (
                       receiveUsd !== '' ? (
