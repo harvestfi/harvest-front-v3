@@ -200,7 +200,7 @@ const BasePanelBox = styled.div`
   margin-top: 50px;
   display: flex;
   flex-direction: column;
-  key: ${props => props.key};
+  /* key: ${props => props.key}; */
   border: 1px solid ${props => props.borderColor};
   ${props =>
     props.borderRadius
@@ -502,6 +502,7 @@ const TokenInput = styled.div`
   position: relative;
   width: 195px;
   input[type='text'] {
+    appearance: none;
     -webkit-appearance: none;
     -moz-appearance: textfield;
   }
@@ -531,6 +532,7 @@ const TokenAmount = styled.input`
 
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
+    appearance: none;
     -webkit-appearance: none;
     -moz-appearance: textfield;
     margin: 0;

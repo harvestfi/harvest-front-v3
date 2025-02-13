@@ -133,7 +133,7 @@ const BasePanelBox = styled.div`
   display: flex;
   flex-direction: column;
   background: ${props => props.backColor};
-  key: ${props => props.key};
+  /* key: ${props => props.key}; */
   border-radius: 9px;
   border: 1.5px solid ${props => props.borderColor};
 
@@ -402,6 +402,7 @@ const TokenInput = styled.div`
   position: relative;
   width: 65%;
   input[type='text'] {
+    appearance: none;
     -webkit-appearance: none;
     -moz-appearance: textfield;
   }
@@ -409,6 +410,7 @@ const TokenInput = styled.div`
   input[type='text']::-webkit-outer-spin-button,
   input[type='text']::-webkit-inner-spin-button {
     -webkit-appearance: none;
+    appearance: none;
     margin: 0;
   }
 `
@@ -431,6 +433,7 @@ const TokenAmount = styled.input`
 
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
+    appearance: none;
     -webkit-appearance: none;
     -moz-appearance: textfield;
     margin: 0;
