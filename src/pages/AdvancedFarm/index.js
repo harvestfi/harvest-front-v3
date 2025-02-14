@@ -2434,6 +2434,26 @@ const AdvancedFarm = () => {
                               Harvest.
                             </p>
                           </div>
+                        ) : token.isIPORVault ? (
+                          <div>
+                            <p>
+                              Harvest{' '}
+                              <a
+                                href={`${getExplorerLink(token.chain)}/address/${
+                                  token.vaultAddress
+                                }`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {token.tokenNames[0]}
+                              </a>{' '}
+                              Autopilot plugs into multiple sub-level vaults and uses algorithms to
+                              monitor and adjust positioning based on prevailing interest rates,
+                              liquidity conditions, and network gas costs. It streamlines the
+                              process by selecting optimal opportunities within Harvest, helping
+                              users maximize efficiency without manual oversight.
+                            </p>
+                          </div>
                         ) : (
                           ReactHtmlParser(vaultPool?.stakeAndDepositHelpMessage)
                         )}
@@ -3369,7 +3389,44 @@ const AdvancedFarm = () => {
                         Source of Yield
                       </NewLabel>
                       <DescInfo fontColor6={fontColor6} fontColor3={fontColor3}>
-                        {ReactHtmlParser(vaultPool?.stakeAndDepositHelpMessage)}
+                        {useIFARM ? (
+                          <div>
+                            <p>
+                              This vault enables users to convert their assets into{' '}
+                              <a
+                                href="https://etherscan.io/token/0x1571eD0bed4D987fe2b498DdBaE7DFA19519F651"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                iFARM
+                              </a>
+                              . In doing so, they benefit from a portion of the fees collected by
+                              Harvest.
+                            </p>
+                          </div>
+                        ) : token.isIPORVault ? (
+                          <div>
+                            <p>
+                              Harvest{' '}
+                              <a
+                                href={`${getExplorerLink(token.chain)}/address/${
+                                  token.vaultAddress
+                                }`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                {token.tokenNames[0]}
+                              </a>{' '}
+                              Autopilot plugs into multiple sub-level vaults and uses algorithms to
+                              monitor and adjust positioning based on prevailing interest rates,
+                              liquidity conditions, and network gas costs. It streamlines the
+                              process by selecting optimal opportunities within Harvest, helping
+                              users maximize efficiency without manual oversight.
+                            </p>
+                          </div>
+                        ) : (
+                          ReactHtmlParser(vaultPool?.stakeAndDepositHelpMessage)
+                        )}
                       </DescInfo>
                       <FlexDiv className="address" padding="0 15px 20px">
                         {token.vaultAddress && (
