@@ -1362,85 +1362,6 @@ const HalfInfo = styled.div`
       : ''}
 `
 
-const InfoLabel = styled.a`
-  ${props =>
-    props.weight
-      ? `
-  font-weight: ${props.weight};
-  `
-      : ''}
-  ${props =>
-    props.display
-      ? `
-  display: ${props.display};
-  `
-      : ''}
-  ${props =>
-    props.size
-      ? `
-  font-size: ${props.size};
-  `
-      : ''}
-  ${props =>
-    props.height
-      ? `
-  line-height: ${props.height};
-  `
-      : ''}
-  margin-right: 15px;
-  justify-content: center;
-  background: ${props => props.bgColor};
-  border-radius: 8px;
-  border: 1px solid ${props => props.borderColor};
-  text-decoration: none;
-  padding: 9px 17px;
-  align-self: center;
-  position: relative;
-  color: #15202b;
-
-  img.icon {
-    margin-right: 5px;
-  }
-
-  img.external-link {
-    position: absolute;
-    top: 3px;
-    right: 3px;
-  }
-
-  &:hover {
-    color: #1f2937;
-    background: ${props => props.hoverColor};
-    .address {
-      font-weight: bold;
-    }
-  }
-`
-
-const DescInfo = styled.div`
-  color: ${props => props.fontColor3};
-  font-weight: 400;
-  font-size: 14px;
-  line-height: 24px;
-  padding: 10px 15px;
-  display: flex;
-  align-items: center;
-
-  @media screen and (max-width: 992px) {
-    font-size: 12px;
-  }
-
-  .help-message {
-    margin-top: 0;
-  }
-  p {
-    a {
-      cursor: pointer;
-      color: ${props => props.fontColor6};
-    }
-  }
-`
-
 const LastHarvestInfo = styled.div`
   background: ${props => props.backColor};
   border-radius: 12px;
@@ -1673,8 +1594,6 @@ export {
   WelcomeTicket,
   WelcomeClose,
   HalfInfo,
-  InfoLabel,
-  DescInfo,
   LastHarvestInfo,
   RestInternal,
   StakeSection,
