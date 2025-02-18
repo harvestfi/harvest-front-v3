@@ -244,7 +244,7 @@ export const getIPORSequenceId = async (vault, chainId) => {
       }
     }
   `
-  const url = GRAPH_URLS.IPOR[chainId]
+  const url = GRAPH_URLS[chainId]
 
   const data = await executeGraphCall(url, query, { vault })
   const vaultsData = data ? data.plasmaVaultHistories : []
@@ -569,7 +569,7 @@ export const getIPORDataQuery = async (
     }
   `
   const variables = { vault, endTime: timestampQuery, sequenceIds: sequenceIdsArray }
-  const url = GRAPH_URLS.IPOR[chainId]
+  const url = GRAPH_URLS[chainId]
 
   const data = await executeGraphCall(url, query, variables)
   // To merge the response data into the chartData object
@@ -650,7 +650,7 @@ export const checkIPORUserBalance = async (account, vaultAdr, chainId) => {
 
   const iporquery = `
     query getUserBalance($account: String!, $vaultAdr: String!) {
-      userBalances(
+      plasmaUserBalances(
         where: {
           userAddress: $account,
           plasmaVault: $vaultAdr,
@@ -662,11 +662,10 @@ export const checkIPORUserBalance = async (account, vaultAdr, chainId) => {
   `
 
   const variables = { account, vaultAdr }
-  const url = GRAPH_URLS.IPOR[chainId]
+  const url = GRAPH_URLS[chainId]
 
   try {
     const result = await executeGraphCall(url, iporquery, variables)
-    console.log('result ; ', result)
     if (result.userBalances.length > 0) return true
     return false
   } catch (err) {
@@ -723,7 +722,7 @@ export const getIPORUserBalanceHistories = async (vaultAdr, chainId, account) =>
 
   const query = `
     query getUserBalanceHistories($account: String!, $vaultAdr: String!) {
-      userBalanceHistories(
+      plasmaUserBalanceHistories(
         first: 1000,
         where: {
           plasmaVault: $vaultAdr,
@@ -736,10 +735,10 @@ export const getIPORUserBalanceHistories = async (vaultAdr, chainId, account) =>
       }
     }
   `
-  const url = GRAPH_URLS.IPOR[chainId]
+  const url = GRAPH_URLS[chainId]
   try {
     const data = await executeGraphCall(url, query, { account, vaultAdr })
-    balanceIPORData = data?.userBalanceHistories
+    balanceIPORData = data?.plasmaUserBalanceHistories
   } catch (e) {
     return e
   }
@@ -769,7 +768,7 @@ export const getIPORLastHarvestInfo = async (vaultAdr, chainId) => {
     }
 `
   const variables = { vaultAdr }
-  const url = GRAPH_URLS.IPOR[chainId]
+  const url = GRAPH_URLS[chainId]
 
   const data = await executeGraphCall(url, query, variables)
   const hisData = data.plasmaVaultHistories
@@ -820,7 +819,7 @@ export const getIPORVaultHistories = async (chainId, vaultAdr) => {
     }
   `
   const variables = { vaultAdr }
-  const url = GRAPH_URLS.IPOR[chainId]
+  const url = GRAPH_URLS[chainId]
 
   const data = await executeGraphCall(url, query, variables)
   vaultHIPORData = data.plasmaVaultHistories
