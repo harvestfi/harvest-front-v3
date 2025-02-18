@@ -53,6 +53,8 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
     btnActiveColor,
   } = useThemeContext()
   const { rates } = useRate()
+  const firstWalletBalanceLoad = useRef(true)
+  const firstAutopilot = localStorage.getItem('firstAutopilot')
 
   const [subscribe, setSubscribe] = useState(true)
   const [modalShow, setModalShow] = useState(false)
@@ -65,7 +67,9 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
   const [walletBalance, setWalletBalance] = useState('-')
   const [userVBalance, setUserVBalance] = useState('-')
   const [userAssetBalance, setUserAssetBalance] = useState('-')
-  const [yeildValue, setYeildValue] = useState('-')
+  const [yieldValue, setYieldValue] = useState('-')
+  const [inputAmount, setInputAmount] = useState(0)
+  const [inputUSDAmount, setInputUSDAmount] = useState('-')
 
   const {
     connected,
@@ -93,12 +97,6 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
     : ''
 
   const tokenChain = vaultData.chain
-
-  const [inputAmount, setInputAmount] = useState(0)
-  const [inputUSDAmount, setInputUSDAmount] = useState('-')
-  const firstWalletBalanceLoad = useRef(true)
-
-  const firstAutopilot = localStorage.getItem('firstAutopilot')
 
   useEffect(() => {
     if (rates.rateData) {
@@ -192,7 +190,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
           )
 
           if (bFlag && vHFlag) {
-            setYeildValue(parseFloat(sumNetChangeUsd).toFixed(6))
+            setYieldValue(parseFloat(sumNetChangeUsd).toFixed(6))
           }
         }
 
@@ -347,7 +345,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
                 marginBottom="30px"
                 marginRight="25px"
               >
-                {yeildValue}&nbsp;{vaultData?.tokenNames[0]}
+                {yieldValue}&nbsp;{vaultData?.tokenNames[0]}
               </NewLabel>
             </FlexDiv>
           </PanelBalance>
