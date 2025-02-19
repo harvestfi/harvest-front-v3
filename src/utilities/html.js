@@ -271,7 +271,7 @@ export const getAdvancedRewardText = (
                   : `<div class="detail-desc-auto">Auto harvested&nbsp;`
               symbols = `<span class="detail-token">${token.apyTokenSymbols[i]}</span></div></div>`
               if (token.apyTokenSymbols[i] === 'SHIFT') {
-                apy = `<div class="detail-apy">1x</div></div>`
+                apy = `<div class="detail-apy">x1</div></div>`
               } else {
                 apy = `<div class="detail-apy">${displayAPY(
                   token.estimatedApyBreakdown[i],
