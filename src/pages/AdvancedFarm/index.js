@@ -423,7 +423,6 @@ const AdvancedFarm = () => {
 
   const farmAPY = get(vaultPool, 'totalRewardAPY', 0)
   const tradingApy = get(vaultPool, 'tradingApy', 0)
-  const boostedEstimatedAPY = get(tokenVault, 'boostedEstimatedAPY', 0)
   const boostedRewardAPY = get(vaultPool, 'boostedRewardAPY', 0)
   const totalApy = isSpecialVault
     ? getTotalApy(null, token, true)
@@ -1443,16 +1442,7 @@ const AdvancedFarm = () => {
 
   const rewardTxt = token.isIPORVault
     ? ''
-    : getAdvancedRewardText(
-        token,
-        vaultPool,
-        tradingApy,
-        farmAPY,
-        totalApy,
-        true,
-        boostedEstimatedAPY,
-        boostedRewardAPY,
-      )
+    : getAdvancedRewardText(token, vaultPool, tradingApy, farmAPY, totalApy, true, boostedRewardAPY)
 
   const profitShare =
     chain === CHAIN_IDS.ETH_MAINNET ? '10' : chain === CHAIN_IDS.POLYGON_MAINNET ? '5' : '7'
