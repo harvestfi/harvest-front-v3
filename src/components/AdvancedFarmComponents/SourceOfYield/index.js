@@ -5,7 +5,7 @@ import { HalfInfo, NewLabel, DescInfo, FlexDiv, InfoLabel } from './style'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { getExplorerLink } from '../../../services/web3'
 
-const SourceOfYield = (useIFARM, token, vaultPool) => {
+const SourceOfYield = params => {
   const {
     bgColor,
     bgColorNew,
@@ -17,6 +17,10 @@ const SourceOfYield = (useIFARM, token, vaultPool) => {
     fontColor6,
   } = useThemeContext()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+
+  const useIFARM = params.useIFARM
+  const token = params.token
+  const vaultPool = params.vaultPool
 
   return (
     <HalfInfo marginBottom="20px" backColor={bgColorNew} borderColor={borderColorBox}>
