@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
+import { useHistory, useLocation } from 'react-router-dom'
 import { Dropdown } from 'react-bootstrap'
+import { isEmpty } from 'lodash'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import { IoCheckmark } from 'react-icons/io5'
 import 'react-loading-skeleton/dist/skeleton.css'
@@ -33,19 +35,34 @@ const Autopilot = () => {
     borderColorBox,
   } = useThemeContext()
 
+  const history = useHistory()
+  const location = useLocation()
   const { chainId } = useWallet()
   const { allVaultsData, loadingVaults } = useVaults()
-  const [curChain, setCurChain] = useState(someChainsList[0])
+  const [curChain, setCurChain] = useState({})
   const [vaultsData, setVaultsData] = useState([])
+  const [isManualSelection, setIsManualSelection] = useState(false)
 
   useEffect(() => {
-    const matchedChain = someChainsList.find(item => item.chainId === chainId)
+    const pathSegments = location.pathname.split('/')
+    const networkName = pathSegments[pathSegments.length - 1]
+    const matchedChain = someChainsList.find(item => item.name === networkName)
     if (matchedChain) {
       setCurChain(matchedChain)
     } else {
       setCurChain(someChainsList[0])
+      history.replace('/autopilot/base')
     }
-  }, [chainId])
+  }, [location.pathname, history])
+
+  useEffect(() => {
+    const matchedChain = someChainsList.find(item => item.chainId === chainId)
+    if (matchedChain && matchedChain.chainId !== curChain.chainId && !isManualSelection) {
+      setCurChain(matchedChain)
+      history.replace(`/autopilot/${matchedChain.name}`)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chainId, curChain.chainId, history])
 
   useEffect(() => {
     const initData = () => {
@@ -63,10 +80,16 @@ const Autopilot = () => {
       setVaultsData(filteredVaultsData)
     }
 
-    if (curChain) {
+    if (Object.keys(allVaultsData).length !== 0 && !isEmpty(curChain)) {
       initData()
     }
   }, [allVaultsData, curChain])
+
+  const handleNetworkChange = selectedChain => {
+    setCurChain(selectedChain)
+    setIsManualSelection(true)
+    history.push(`/autopilot/${selectedChain.name}`)
+  }
 
   return (
     <Container bgColor={bgColorNew} fontColor={fontColor}>
@@ -107,7 +130,7 @@ const Autopilot = () => {
                     return (
                       <CurrencyDropDownItem
                         onClick={() => {
-                          setCurChain(elem)
+                          handleNetworkChange(elem)
                         }}
                         hovercolor={hoverColorNew}
                         backcolor={bgColorNew}

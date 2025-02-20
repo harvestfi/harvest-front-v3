@@ -7,7 +7,7 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import { toast } from 'react-toastify'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { isSpecialApp } from '../../../utilities/formats'
+import { isSpecialApp, showTokenBalance } from '../../../utilities/formats'
 import Button from '../../Button'
 import { useWallet } from '../../../providers/Wallet'
 import { usePortals } from '../../../providers/Portals'
@@ -132,16 +132,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
       }
     }
     updateData()
-  }, [
-    account,
-    curChain,
-    tokenChain,
-    subscribe,
-    vaultData,
-    setWalletBalance,
-    balances,
-    getWalletBalances,
-  ])
+  }, [account, curChain, tokenChain, subscribe, balances]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffectWithPrevious(
     ([prevAccount, prevVBalance]) => {
@@ -280,7 +271,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
         <BasePanelBox key={index} backColor={bgColorBox} borderColor={borderColorBox2}>
           <PanelHeader borderColor={borderColorBox} darkMode={darkMode}>
             <TokenInfo>
-              <img className="logo" src={vaultData?.logoUrl} width={90} height={90} alt="" />
+              <img className="logo" src={`.${vaultData?.logoUrl}`} width={90} height={90} alt="" />
               <ApyInfo>
                 <NewLabel size="11px" height="20px" weight="600" color={fontColor8}>
                   Live APY
@@ -398,7 +389,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
               <TokenType>
                 <img
                   className="token-symbol"
-                  src={vaultData?.logoUrl}
+                  src={`.${vaultData?.logoUrl}`}
                   width={26}
                   height={26}
                   alt=""
@@ -410,7 +401,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
               <NewLabel size="12px" height="20px" weight="400" color={fontColor2}>
                 {subscribe ? 'Wallet Balance' : 'My Balance'}:{' '}
                 {subscribe
-                  ? `${walletBalance} ${vaultData?.tokenNames[0]}`
+                  ? `${showTokenBalance(walletBalance)} ${vaultData?.tokenNames[0]}`
                   : `${userAssetBalance} ${vaultData?.tokenNames[0]}`}
               </NewLabel>
             </FlexDiv>
