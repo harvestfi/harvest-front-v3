@@ -80,6 +80,9 @@ const WithdrawBase = ({
     activeColorNew,
     borderColorBox,
     bgColorMessage,
+    btnColor,
+    btnHoverColor,
+    btnActiveColor,
   } = useThemeContext()
 
   const [withdrawName, setWithdrawName] = useState('Preview & Revert')
@@ -665,6 +668,9 @@ const WithdrawBase = ({
           <Button
             color="wido-deposit"
             width="100%"
+            btnColor={btnColor}
+            btnHoverColor={btnHoverColor}
+            btnActiveColor={btnActiveColor}
             size="md"
             onClick={async () => {
               if (curChain !== tokenChain) {

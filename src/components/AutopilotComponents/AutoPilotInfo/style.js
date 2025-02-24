@@ -200,7 +200,7 @@ const BasePanelBox = styled.div`
   margin-top: 50px;
   display: flex;
   flex-direction: column;
-  key: ${props => props.key};
+  /* key: ${props => props.key}; */
   border: 1px solid ${props => props.borderColor};
   ${props =>
     props.borderRadius
@@ -221,6 +221,50 @@ const BasePanelBox = styled.div`
     margin-bottom: ${props.marginBottom};
   `
       : ''}
+
+  @media screen and (max-width: 1820px) {
+    width: 420px;
+  }
+
+  @media screen and (max-width: 1710px) {
+    width: 400px;
+  }
+
+  @media screen and (max-width: 1650px) {
+    width: 380px;
+  }
+
+  @media screen and (max-width: 1600px) {
+    width: 360px;
+  }
+
+  @media screen and (max-width: 1540px) {
+    width: 340px;
+  }
+
+  @media screen and (max-width: 1420px) {
+    width: 450px;
+  }
+
+  @media screen and (max-width: 1260px) {
+    width: 420px;
+  }
+
+  @media screen and (max-width: 1190px) {
+    width: 400px;
+  }
+
+  @media screen and (max-width: 1140px) {
+    width: 380px;
+  }
+
+  @media screen and (max-width: 1100px) {
+    width: 360px;
+  }
+
+  @media screen and (max-width: 1060px) {
+    width: 450px;
+  }
 `
 
 const ApyInfo = styled.div`
@@ -398,6 +442,13 @@ const FlexDiv = styled.div`
   display: flex;
 
   ${props =>
+    props.width
+      ? `
+      width: ${props.width};
+    `
+      : ''}
+
+  ${props =>
     props.gap
       ? `
       gap: ${props.gap};
@@ -451,6 +502,7 @@ const TokenInput = styled.div`
   position: relative;
   width: 195px;
   input[type='text'] {
+    appearance: none;
     -webkit-appearance: none;
     -moz-appearance: textfield;
   }
@@ -480,6 +532,7 @@ const TokenAmount = styled.input`
 
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
+    appearance: none;
     -webkit-appearance: none;
     -moz-appearance: textfield;
     margin: 0;

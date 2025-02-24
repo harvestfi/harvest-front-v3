@@ -2,7 +2,6 @@ import BigNumber from 'bignumber.js'
 import { find, get, isEqual, isArray, isNaN } from 'lodash'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import ReactHtmlParser from 'react-html-parser'
 import ReactTooltip from 'react-tooltip'
 import { RxCross2 } from 'react-icons/rx'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
@@ -59,7 +58,7 @@ import {
   boostedVaults,
   historyTags,
 } from '../../constants'
-import { fromWei, newContractInstance, getWeb3, getExplorerLink } from '../../services/web3'
+import { fromWei, newContractInstance, getWeb3 } from '../../services/web3'
 import { addresses } from '../../data'
 import { usePools } from '../../providers/Pools'
 import { useStats } from '../../providers/Stats'
@@ -129,8 +128,6 @@ import {
   WelcomeTicket,
   WelcomeClose,
   HalfInfo,
-  InfoLabel,
-  DescInfo,
   LastHarvestInfo,
   RestInternal,
   StakeSection,
@@ -165,12 +162,12 @@ import {
 import { CHAIN_IDS } from '../../data/constants'
 // import { array } from 'prop-types'
 import { usePortals } from '../../providers/Portals'
+import SourceOfYield from '../../components/AdvancedFarmComponents/SourceOfYield'
 
 const AdvancedFarm = () => {
   const {
     darkMode,
     backColor,
-    bgColor,
     bgColorNew,
     borderColor,
     borderColorBox,
@@ -181,10 +178,8 @@ const AdvancedFarm = () => {
     fontColor2,
     fontColor3,
     fontColor4,
-    fontColor6,
     linkColorTooltip,
     linkColorOnHover,
-    hoverColor,
     activeColorNew,
     boxShadowColor2,
   } = useThemeContext()
@@ -430,7 +425,6 @@ const AdvancedFarm = () => {
 
   const farmAPY = get(vaultPool, 'totalRewardAPY', 0)
   const tradingApy = get(vaultPool, 'tradingApy', 0)
-  const boostedEstimatedAPY = get(tokenVault, 'boostedEstimatedAPY', 0)
   const boostedRewardAPY = get(vaultPool, 'boostedRewardAPY', 0)
   const totalApy = isSpecialVault
     ? getTotalApy(null, token, true)
@@ -1455,16 +1449,7 @@ const AdvancedFarm = () => {
 
   const rewardTxt = token.isIPORVault
     ? ''
-    : getAdvancedRewardText(
-        token,
-        vaultPool,
-        tradingApy,
-        farmAPY,
-        totalApy,
-        true,
-        boostedEstimatedAPY,
-        boostedRewardAPY,
-      )
+    : getAdvancedRewardText(token, vaultPool, tradingApy, farmAPY, totalApy, true, boostedRewardAPY)
 
   const profitShare =
     chain === CHAIN_IDS.ETH_MAINNET ? '10' : chain === CHAIN_IDS.POLYGON_MAINNET ? '5' : '7'
@@ -2403,140 +2388,7 @@ const AdvancedFarm = () => {
                     />
                   </HalfInfo>
                   {!isMobile && (
-                    <HalfInfo
-                      marginBottom="20px"
-                      backColor={bgColorNew}
-                      borderColor={borderColorBox}
-                    >
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight={isMobile ? '600' : '600'}
-                        height={isMobile ? '20px' : '24px'}
-                        color={fontColor4}
-                        padding={isMobile ? '10px 15px' : '10px 15px'}
-                        borderBottom={`1px solid ${borderColorBox}`}
-                      >
-                        Source of Yield
-                      </NewLabel>
-                      <DescInfo fontColor6={fontColor6} fontColor3={fontColor3}>
-                        {useIFARM ? (
-                          <div>
-                            <p>
-                              This vault enables users to convert their assets into{' '}
-                              <a
-                                href="https://etherscan.io/token/0x1571eD0bed4D987fe2b498DdBaE7DFA19519F651"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                              >
-                                iFARM
-                              </a>
-                              . In doing so, they benefit from a portion of the fees collected by
-                              Harvest.
-                            </p>
-                          </div>
-                        ) : (
-                          ReactHtmlParser(vaultPool?.stakeAndDepositHelpMessage)
-                        )}
-                      </DescInfo>
-                      <FlexDiv className="address" padding="0 15px 20px">
-                        {token.vaultAddress && (
-                          <InfoLabel
-                            display="flex"
-                            href={`${getExplorerLink(token.chain)}/address/${token.vaultAddress}`}
-                            target="_blank"
-                            onClick={e => e.stopPropagation()}
-                            rel="noopener noreferrer"
-                            bgColor={bgColorNew}
-                            hoverColor={hoverColor}
-                            borderColor={borderColorBox}
-                          >
-                            <NewLabel
-                              size="12px"
-                              weight={isMobile ? 600 : 600}
-                              height="16px"
-                              self="center"
-                              color={fontColor1}
-                            >
-                              Vault Address
-                            </NewLabel>
-                          </InfoLabel>
-                        )}
-                        {token.strategyAddress && (
-                          <InfoLabel
-                            display="flex"
-                            href={`${getExplorerLink(token.chain)}/address/${
-                              token.strategyAddress
-                            }`}
-                            target="_blank"
-                            onClick={e => e.stopPropagation()}
-                            rel="noopener noreferrer"
-                            bgColor={bgColorNew}
-                            hoverColor={hoverColor}
-                            borderColor={borderColorBox}
-                          >
-                            <NewLabel
-                              size="12px"
-                              weight={isMobile ? 600 : 600}
-                              height="16px"
-                              self="center"
-                              color={fontColor1}
-                            >
-                              Strategy Address
-                            </NewLabel>
-                          </InfoLabel>
-                        )}
-                        {token.isIPORVault ? (
-                          <></>
-                        ) : (
-                          <>
-                            <InfoLabel
-                              display="flex"
-                              href={`${getExplorerLink(token.chain)}/address/${
-                                vaultPool.autoStakePoolAddress || vaultPool.contractAddress
-                              }`}
-                              onClick={e => e.stopPropagation()}
-                              rel="noopener noreferrer"
-                              target="_blank"
-                              bgColor={bgColorNew}
-                              hoverColor={hoverColor}
-                              borderColor={borderColorBox}
-                            >
-                              <NewLabel
-                                size="12px"
-                                weight={isMobile ? 400 : 600}
-                                height="16px"
-                                self="center"
-                                color={fontColor1}
-                              >
-                                Pool Address
-                              </NewLabel>
-                            </InfoLabel>
-                            {vaultPool.liquidityUrl && (
-                              <InfoLabel
-                                display="flex"
-                                href={`${vaultPool.liquidityUrl}`}
-                                target="_blank"
-                                onClick={e => e.stopPropagation()}
-                                rel="noopener noreferrer"
-                                bgColor={bgColor}
-                                hoverColor={hoverColor}
-                                borderColor={borderColorBox}
-                              >
-                                <NewLabel
-                                  size="12px"
-                                  weight={isMobile ? 600 : 600}
-                                  height="16px"
-                                  self="center"
-                                  color={fontColor1}
-                                >
-                                  Add Liquidity
-                                </NewLabel>
-                              </InfoLabel>
-                            )}
-                          </>
-                        )}
-                      </FlexDiv>
-                    </HalfInfo>
+                    <SourceOfYield useIFARM={useIFARM} token={token} vaultPool={vaultPool} />
                   )}
                 </>
               ) : (
@@ -3353,99 +3205,7 @@ const AdvancedFarm = () => {
                     </LastHarvestInfo>
                   )}
                   {isMobile && (
-                    <HalfInfo
-                      marginBottom="20px"
-                      backColor={bgColorNew}
-                      borderColor={borderColorBox}
-                    >
-                      <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="600"
-                        height={isMobile ? '20px' : '24px'}
-                        color={fontColor4}
-                        padding={isMobile ? '10px 15px' : '10px 15px'}
-                        borderBottom={`1px solid ${borderColorBox}`}
-                      >
-                        Source of Yield
-                      </NewLabel>
-                      <DescInfo fontColor6={fontColor6} fontColor3={fontColor3}>
-                        {ReactHtmlParser(vaultPool?.stakeAndDepositHelpMessage)}
-                      </DescInfo>
-                      <FlexDiv className="address" padding="0 15px 20px">
-                        {token.vaultAddress && (
-                          <InfoLabel
-                            display="flex"
-                            href={`${getExplorerLink(token.chain)}/address/${token.vaultAddress}`}
-                            target="_blank"
-                            onClick={e => e.stopPropagation()}
-                            rel="noopener noreferrer"
-                            bgColor={bgColorNew}
-                            hoverColor={hoverColor}
-                            borderColor={borderColorBox}
-                          >
-                            <NewLabel
-                              size="12px"
-                              weight={isMobile ? 600 : 600}
-                              height="16px"
-                              self="center"
-                              color={fontColor1}
-                            >
-                              Vault Address
-                            </NewLabel>
-                          </InfoLabel>
-                        )}
-                        {vaultPool?.autoStakePoolAddress && (
-                          <InfoLabel
-                            display="flex"
-                            href={`${getExplorerLink(token.chain)}/address/${
-                              vaultPool.contractAddress
-                            }`}
-                            target="_blank"
-                            onClick={e => e.stopPropagation()}
-                            rel="noopener noreferrer"
-                            bgColor={bgColorNew}
-                            hoverColor={hoverColor}
-                            borderColor={borderColorBox}
-                          >
-                            <NewLabel
-                              size="12px"
-                              weight={isMobile ? 600 : 600}
-                              height="16px"
-                              self="center"
-                              color={fontColor1}
-                            >
-                              Strategy Address
-                            </NewLabel>
-                          </InfoLabel>
-                        )}
-                        {token.isIPORVault ? (
-                          <></>
-                        ) : (
-                          <InfoLabel
-                            display="flex"
-                            href={`${getExplorerLink(token.chain)}/address/${
-                              vaultPool.autoStakePoolAddress || vaultPool.contractAddress
-                            }`}
-                            onClick={e => e.stopPropagation()}
-                            rel="noopener noreferrer"
-                            target="_blank"
-                            bgColor={bgColor}
-                            hoverColor={hoverColor}
-                            borderColor={borderColor}
-                          >
-                            <NewLabel
-                              size="12px"
-                              weight={isMobile ? 600 : 600}
-                              height="16px"
-                              self="center"
-                              color={fontColor1}
-                            >
-                              Pool Address
-                            </NewLabel>
-                          </InfoLabel>
-                        )}
-                      </FlexDiv>
-                    </HalfInfo>
+                    <SourceOfYield useIFARM={useIFARM} token={token} vaultPool={vaultPool} />
                   )}
                 </RestInternal>
               ) : (

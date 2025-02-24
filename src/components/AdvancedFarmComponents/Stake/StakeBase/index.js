@@ -49,6 +49,9 @@ const StakeBase = ({
     bgColorMessage,
     borderColorBox,
     activeColorNew,
+    btnColor,
+    btnHoverColor,
+    btnActiveColor,
   } = useThemeContext()
   const { connected, connectAction, account, chainId, setChainId } = useWallet()
 
@@ -259,6 +262,9 @@ const StakeBase = ({
         <Button
           color="wido-deposit"
           width="100%"
+          btnColor={btnColor}
+          btnHoverColor={btnHoverColor}
+          btnActiveColor={btnActiveColor}
           onClick={async () => {
             if (!connected) {
               connectAction()

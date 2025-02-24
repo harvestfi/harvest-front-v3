@@ -11,6 +11,7 @@ import {
   PanelHeader,
   PanelTitle,
   RowDiv,
+  FlexDiv,
   ColumnDiv,
   GeneralDiv,
   PanelTags,
@@ -21,6 +22,7 @@ import {
   SwitchMode,
 } from './style'
 import { handleToggle, getChainNamePortals } from '../../../utilities/parsers'
+import Button from '../../Button'
 
 const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
   const { borderColorBox, btnColor, fontColor2, fontColor3, fontColor5 } = useThemeContext()
@@ -386,16 +388,40 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
                 </div>
               </SwitchMode>
             </RowDiv>
-            {detailData.map((item, index) => (
-              <RowDiv key={index}>
-                <NewLabel size="12px" height="20px" weight="500">
-                  {item.label}
-                </NewLabel>
-                <NewLabel size="12px" height="20px" weight="500">
-                  {item.value}
-                </NewLabel>
-              </RowDiv>
-            ))}
+            {detailData.map(
+              (item, index) =>
+                item.label !== '30d' && (
+                  <RowDiv key={index}>
+                    <NewLabel size="12px" height="20px" weight="500">
+                      {item.label}
+                    </NewLabel>
+                    <NewLabel size="12px" height="20px" weight="500">
+                      {item.value}
+                    </NewLabel>
+                  </RowDiv>
+                ),
+            )}
+            <RowDiv>
+              <NewLabel color={fontColor5} size="13.3px" height="20px" weight="700">
+                Curious about more data and insights?
+              </NewLabel>
+            </RowDiv>
+            <FlexDiv width="100%">
+              <Button
+                width="80%"
+                margin="auto"
+                color="autopilot"
+                onClick={() => {
+                  const chainName = getChainNamePortals(vaultData.chain)
+                  return window.open(
+                    `/${chainName}/${vaultData.vaultAddress.toLowerCase()}`,
+                    '_blank',
+                  )
+                }}
+              >
+                Open Autopilot in Advanced Mode
+              </Button>
+            </FlexDiv>
           </GeneralDiv>
         )}
       </BasePanelBox>

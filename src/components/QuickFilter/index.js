@@ -7,11 +7,6 @@ import { FaRegSquare, FaRegSquareCheck } from 'react-icons/fa6'
 import { useMediaQuery } from 'react-responsive'
 import { IoIosArrowDown } from 'react-icons/io'
 import { Dropdown } from 'react-bootstrap'
-import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
-import BASE from '../../assets/images/chains/base.svg'
-import ETHEREUM from '../../assets/images/chains/ethereum.svg'
-import POLYGON from '../../assets/images/chains/polygon.svg'
-import ZKSYNC from '../../assets/images/chains/zksync.svg'
 import FilterIcon from '../../assets/images/logos/filters-icon.svg'
 import SpecNarrowDown from '../../assets/images/logos/filter/spec-narrowdown.svg'
 import DesciBack from '../../assets/images/logos/filter/desciback.jpg'
@@ -21,6 +16,7 @@ import { CHAIN_IDS } from '../../data/constants'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { isSpecialApp } from '../../utilities/formats'
+import { ChainsList } from '../../constants'
 import ButtonGroup from '../ButtonGroup'
 import SearchBar from '../SearchBar'
 import {
@@ -50,14 +46,6 @@ import {
   MobileFilterBtn,
   DropdownRow,
 } from './style'
-
-const ChainsList = [
-  { id: 0, name: 'Ethereum', img: ETHEREUM, chainId: CHAIN_IDS.ETH_MAINNET },
-  { id: 1, name: 'Polygon', img: POLYGON, chainId: CHAIN_IDS.POLYGON_MAINNET },
-  { id: 2, name: 'Arbitrum', img: ARBITRUM, chainId: CHAIN_IDS.ARBITRUM_ONE },
-  { id: 3, name: 'Base', img: BASE, chainId: CHAIN_IDS.BASE },
-  { id: 4, name: 'Zksync', img: ZKSYNC, chainId: CHAIN_IDS.ZKSYNC },
-]
 
 const TrendsList = [
   { id: 0, name: 'LSD', backImg: LSDBack, status: 'LSD' },

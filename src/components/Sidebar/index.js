@@ -328,7 +328,6 @@ const Sidebar = ({ width }) => {
     hoverColorSide,
     toggleBackColor,
     sidebarFontColor,
-    sidebarActiveFontColor,
     sidebarActiveIconColor,
   } = useThemeContext()
 
@@ -424,7 +423,6 @@ const Sidebar = ({ width }) => {
                 if (!connected) {
                   return (
                     <ConnectButtonStyle
-                      color="connectwallet"
                       onClick={() => {
                         connectAction()
                       }}
@@ -557,7 +555,7 @@ const Sidebar = ({ width }) => {
                       item={item}
                       isDropdownLink={item.path === '#'}
                       fontColor1={fontColor1}
-                      activeFontColor={sidebarActiveFontColor}
+                      activeFontColor={fontColor1}
                       activeIconColor={sidebarActiveIconColor}
                       darkMode={darkMode}
                       hoverColorSide={hoverColorSide}
@@ -686,7 +684,7 @@ const Sidebar = ({ width }) => {
                           item={item}
                           isDropdownLink={item.path === '#'}
                           fontColor1={fontColor1}
-                          activeFontColor={sidebarActiveFontColor}
+                          activeFontColor={fontColor1}
                           activeIconColor={sidebarActiveIconColor}
                           darkMode={darkMode}
                           hoverColorSide={hoverColorSide}
@@ -699,7 +697,7 @@ const Sidebar = ({ width }) => {
                               key={subItem.name}
                               item={subItem}
                               fontColor1={fontColor1}
-                              activeFontColor={sidebarActiveFontColor}
+                              activeFontColor={fontColor1}
                               activeIconColor={sidebarActiveIconColor}
                               darkMode={darkMode}
                               hoverColorSide={hoverColorSide}
@@ -747,7 +745,7 @@ const Sidebar = ({ width }) => {
                   isDropdownLink={item.path === '#'}
                   fontColor={sidebarFontColor}
                   filterColor={filterColorBottom}
-                  activeFontColor={sidebarActiveFontColor}
+                  activeFontColor={fontColor1}
                   activeIconColor={sidebarActiveIconColor}
                   darkMode={darkMode}
                   isWallet={false}

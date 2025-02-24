@@ -16,6 +16,7 @@ import AnimatedDots from '../../AnimatedDots'
 import { getChainName, handleToggle, getUnderlyingId } from '../../../utilities/parsers'
 import { fromWei } from '../../../services/web3'
 import { useRate } from '../../../providers/Rate'
+import DisclaimersModal from '../DisclaimersModal'
 import SubscribeModal from '../SubscribeModal'
 import UnsubscribeModal from '../UnsubscribeModal'
 import AutopilotInfo from '../AutoPilotInfo'
@@ -47,11 +48,17 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
     fontColor2,
     fontColor3,
     fontColor8,
+    btnColor,
+    btnHoverColor,
+    btnActiveColor,
   } = useThemeContext()
   const { rates } = useRate()
+  const firstWalletBalanceLoad = useRef(true)
+  const firstAutopilot = localStorage.getItem('firstAutopilot')
 
   const [subscribe, setSubscribe] = useState(true)
   const [modalShow, setModalShow] = useState(false)
+  const [disclaimersModalShow, setDisclaimersModalShow] = useState(false)
   const [pilotInfoShow, setPilotInfoShow] = useState(false)
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
@@ -60,7 +67,9 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
   const [walletBalance, setWalletBalance] = useState('-')
   const [userVBalance, setUserVBalance] = useState('-')
   const [userAssetBalance, setUserAssetBalance] = useState('-')
-  const [yeildValue, setYeildValue] = useState('-')
+  const [yieldValue, setYieldValue] = useState('-')
+  const [inputAmount, setInputAmount] = useState(0)
+  const [inputUSDAmount, setInputUSDAmount] = useState('-')
 
   const {
     connected,
@@ -88,10 +97,6 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
     : ''
 
   const tokenChain = vaultData.chain
-
-  const [inputAmount, setInputAmount] = useState(0)
-  const [inputUSDAmount, setInputUSDAmount] = useState('-')
-  const firstWalletBalanceLoad = useRef(true)
 
   useEffect(() => {
     if (rates.rateData) {
@@ -122,7 +127,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
           setWalletBalance(fromWei(balances[underlyingId], vaultData.decimals, vaultData.decimals)) // to get USDC value in user's wallet
         }
       } else {
-        setSubscribeName('Connect Wallet to Get Started')
+        setSubscribeName('Connect')
         setSubscribeLabel(`Subscribe`)
       }
     }
@@ -252,7 +257,10 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
       }
     } else if (Number(inputAmount) !== 0) {
       if (subscribe) {
-        if (walletBalance >= Number(inputAmount)) {
+        if (firstAutopilot === null || firstAutopilot === 'true') {
+          localStorage.setItem('firstAutopilot', true)
+          setDisclaimersModalShow(true)
+        } else if (walletBalance >= Number(inputAmount)) {
           setModalShow(true)
         } else {
           toast.error(`InputAmount exceeds wallet Balance!`)
@@ -338,7 +346,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
                 marginBottom="30px"
                 marginRight="25px"
               >
-                {yeildValue}&nbsp;{vaultData?.tokenNames[0]}
+                {yieldValue}&nbsp;{vaultData?.tokenNames[0]}
               </NewLabel>
             </FlexDiv>
           </PanelBalance>
@@ -419,6 +427,9 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
                     : 'connectwallet'
                 }
                 width="100%"
+                btnColor={btnColor}
+                btnHoverColor={btnHoverColor}
+                btnActiveColor={btnActiveColor}
                 onClick={() => {
                   onClickSubscribe()
                 }}
@@ -435,6 +446,9 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
           vaultData={vaultData}
           setPilotInfoShow={setPilotInfoShow}
         />
+      )}
+      {disclaimersModalShow && (
+        <DisclaimersModal modalShow={disclaimersModalShow} setModalShow={setDisclaimersModalShow} />
       )}
       {modalShow && subscribe && (
         <SubscribeModal

@@ -759,7 +759,6 @@ const CurrencyDropDownMenu = styled(Dropdown.Menu)`
 
   @media screen and (max-width: 992px) {
     min-width: unset;
-    transform: translate3d(0px, -215px, 0px) !important;
   }
 `
 

@@ -27,7 +27,6 @@ import Migrate from './pages/Migrate'
 const NewLoginModal = () => {
   const newLogin = localStorage.getItem('newLogin')
   const [open, setOpen] = useState(false)
-  // localStorage.setItem('darkmode', false)
   const [showModal, setShowModal] = useState(true)
 
   useEffect(() => {

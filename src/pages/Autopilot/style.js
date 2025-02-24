@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { Dropdown } from 'react-bootstrap'
 
 const Container = styled.div`
   width: 100%;
@@ -66,9 +67,7 @@ const HeaderWrap = styled.div`
 
   @media screen and (max-width: 992px) {
     padding: ${props => (props.padding ? props.padding : '')};
-    // background-image: ${props => (props.backImg ? `url(${props.backImg})` : '')};
-    height: ${props => (props.height ? props.height : '')};
-    background: linear-gradient(to right, #5b86e5, #36d1dc);
+    border-bottom: 1px solid ${props => props.borderColor};
   }
 `
 
@@ -96,6 +95,17 @@ const HeaderTitle = styled.div`
     .desc {
       color: #fff;
     }
+  }
+`
+
+const HeaderButton = styled.div`
+  display: flex;
+  margin: auto 0px;
+  gap: 15px;
+
+  @media screen and (max-width: 992px) {
+    flex-direction: column-reverse;
+    gap: 9px;
   }
 `
 
@@ -586,12 +596,184 @@ const LogoDiv = styled.div`
   padding: ${props => (props.padding ? props.padding : '')};
 `
 
+const CurrencySelect = styled.div`
+  width: 100%;
+  border: 2px solid #6988ff;
+  box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
+  transition: 0.5s;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 22px;
+  text-align: right;
+  color: #6988ff !important;
+  display: flex;
+  align-items: center;
+
+  img.logo {
+    margin-right: 7.5px;
+  }
+
+  img.logo-dark {
+    margin-right: 7.5px;
+  }
+
+  span {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 4px;
+  }
+
+  @media screen and (max-width: 992px) {
+    height: unset;
+    border-radius: 8px;
+    line-height: 20px;
+    padding: 9px 10px;
+    gap: 0px;
+
+    img {
+      width: 17.6px;
+      height: 17.6px;
+    }
+
+    span {
+      display: none;
+    }
+  }
+`
+
+const CurrencyDropDown = styled(Dropdown.Toggle)`
+  background: ${props => props.bgcolor} !important;
+  border: none !important;
+  border-radius: 8px !important;
+  color: ${props => props.fontcolor2} !important;
+  align-items: center;
+  width: 100%;
+  display: flex !important;
+  justify-content: space-between;
+  text-align: left;
+  position: relative;
+  margin: 0px 0px;
+
+  &:after {
+    display: none !important;
+  }
+
+  &:hover {
+    background: ${props => props.hovercolor} !important;
+    color: black;
+    font-weight: 500;
+  }
+
+  &:active {
+    background: green;
+    color: black;
+  }
+
+  .chain-name {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 16px;
+    margin-left: 5px;
+  }
+
+  img.narrow {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+  }
+`
+
+const CurrencyDropDownMenu = styled(Dropdown.Menu)`
+  background-color: unset !important;
+  border: none;
+  padding: 0;
+  min-width: 6rem;
+  width: 100% !important;
+  z-index: 120;
+  top: 5px !important;
+
+  &:focus {
+    box-shadow: none;
+  }
+
+  @media screen and (max-width: 992px) {
+    min-width: unset;
+
+    span {
+      display: none;
+    }
+  }
+`
+
+const CurrencyDropDownItem = styled(Dropdown.Item)`
+  text-align: left;
+  display: flex !important;
+  justify-content: start;
+  align-items: center;
+  font-size: 14px;
+  padding: 10px 5px;
+  width: auto !important;
+  color: #6988ff !important;
+  border-radius: 10.98px;
+  border: 2px solid #6988ff;
+  background: ${props => props.backcolor};
+  margin-bottom: 8px;
+
+  &:hover {
+    background: ${props => props.hovercolor} !important;
+
+    div {
+      color: #ff9400;
+    }
+  }
+
+  img {
+    margin-right: 15px;
+    margin-left: 10px;
+  }
+
+  img.logo {
+    margin-right: 7.5px;
+  }
+
+  img.logo-dark {
+    margin-right: 7.5px;
+  }
+
+  div {
+    align-self: center;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 18px;
+  }
+
+  svg.check-icon {
+    margin-left: 10px;
+    color: #6988ff;
+  }
+
+  @media screen and (max-width: 992px) {
+    line-height: 20px;
+    padding: 10px 16px;
+    gap: 5px;
+
+    img {
+      margin-left: 0px;
+    }
+  }
+`
+
 export {
   Container,
   SubPart,
   TransactionDetails,
   HeaderWrap,
   HeaderTitle,
+  HeaderButton,
   FarmTitle,
   MyFarm,
   FarmPic,
@@ -618,4 +800,8 @@ export {
   CheckBoxDiv,
   MobileHeader,
   LogoDiv,
+  CurrencyDropDown,
+  CurrencySelect,
+  CurrencyDropDownMenu,
+  CurrencyDropDownItem,
 }
