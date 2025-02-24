@@ -191,7 +191,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
           )
 
           if (bFlag && vHFlag) {
-            setYeildValue(parseFloat(sumNetChange).toFixed(6))
+            setYieldValue(parseFloat(sumNetChange).toFixed(6))
           }
         }
 
