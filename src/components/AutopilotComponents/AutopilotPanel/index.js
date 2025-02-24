@@ -181,16 +181,17 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
           }
           const iporVFlag = vaultData.isIPORVault ?? false
 
-          const { bFlag, vHFlag, sumNetChangeUsd } = await initBalanceAndDetailData(
+          const { bFlag, vHFlag, sumNetChange } = await initBalanceAndDetailData(
             vaultData.vaultAddress,
             vaultData.chain,
             account,
             vaultData.decimals,
             iporVFlag,
+            vaultData.vaultDecimals,
           )
 
           if (bFlag && vHFlag) {
-            setYieldValue(parseFloat(sumNetChangeUsd).toFixed(6))
+            setYieldValue(parseFloat(sumNetChange).toFixed(6))
           }
         }
 
