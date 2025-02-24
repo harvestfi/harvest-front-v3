@@ -409,8 +409,8 @@ const TokenInput = styled.div`
 
   input[type='text']::-webkit-outer-spin-button,
   input[type='text']::-webkit-inner-spin-button {
-    -webkit-appearance: none;
     appearance: none;
+    -webkit-appearance: none;
     margin: 0;
   }
 `

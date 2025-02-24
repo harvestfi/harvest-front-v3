@@ -323,6 +323,7 @@ const SlippageInput = styled.div`
 
     &::-webkit-outer-spin-button,
     &::-webkit-inner-spin-button {
+      appearance: none;
       -webkit-appearance: none;
       -moz-appearance: textfield;
       margin: 0;
