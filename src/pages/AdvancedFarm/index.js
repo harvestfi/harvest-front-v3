@@ -1535,30 +1535,28 @@ const AdvancedFarm = () => {
             </GuideSection>
             <TabRow>
               <MainTagPanel>
-                {mainTags.map((tag, i) =>
-                  i === 1 && token.isIPORVault ? null : (
-                    <MainTag
-                      key={i}
-                      fontColor3={fontColor3}
-                      fontColor4={fontColor4}
-                      backColor={bgColorNew}
-                      active={activeMainTag === i ? 'true' : 'false'}
-                      mode={darkMode ? 'dark' : 'light'}
-                      useIFARM={useIFARM}
-                      onClick={() => {
-                        setActiveMainTag(i)
-                        if (i !== 0) {
-                          push(`${pathname}${location.search}#${tag.name.toLowerCase()}`)
-                        } else {
-                          push(`${pathname}${location.search}`)
-                        }
-                      }}
-                    >
-                      <img src={tag.img} alt="logo" />
-                      <p>{activeMainTag !== i && isMobile ? '' : tag.name}</p>
-                    </MainTag>
-                  ),
-                )}
+                {mainTags.map((tag, i) => (
+                  <MainTag
+                    key={i}
+                    fontColor3={fontColor3}
+                    fontColor4={fontColor4}
+                    backColor={bgColorNew}
+                    active={activeMainTag === i ? 'true' : 'false'}
+                    mode={darkMode ? 'dark' : 'light'}
+                    useIFARM={useIFARM || token.isIPORVault}
+                    onClick={() => {
+                      setActiveMainTag(i)
+                      if (i !== 0) {
+                        push(`${pathname}${location.search}#${tag.name.toLowerCase()}`)
+                      } else {
+                        push(`${pathname}${location.search}`)
+                      }
+                    }}
+                  >
+                    <img src={tag.img} alt="logo" />
+                    <p>{activeMainTag !== i && isMobile ? '' : tag.name}</p>
+                  </MainTag>
+                ))}
               </MainTagPanel>
               <NetDetail>
                 <NetDetailItem>
