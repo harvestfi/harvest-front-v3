@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import BigNumber from 'bignumber.js'
 import { useSetChain } from '@web3-onboard/react'
 import { PiInfoBold } from 'react-icons/pi'
 import 'react-loading-skeleton/dist/skeleton.css'
@@ -324,7 +325,22 @@ const AutopilotPanel = ({
               </TokenType>
             </FlexDiv>
             <FlexDiv flexDirection="row" justifyContent="space-between" marginTop="12px">
-              <NewLabel size="12px" height="20px" weight="400" color={fontColor2}>
+              <NewLabel
+                className="balance-input"
+                size="12px"
+                height="20px"
+                weight="400"
+                color={fontColor2}
+                onClick={() => {
+                  if (account) {
+                    if (subscribe) {
+                      setInputAmount(new BigNumber(walletBalance).toString())
+                    } else {
+                      setInputAmount(new BigNumber(userAssetBalance).toString())
+                    }
+                  }
+                }}
+              >
                 {subscribe ? 'Wallet Balance' : 'My Balance'}:{' '}
                 {subscribe
                   ? `${showTokenBalance(walletBalance)} ${vaultData?.tokenNames[0]}`

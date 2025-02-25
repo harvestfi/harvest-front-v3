@@ -321,6 +321,10 @@ const NewLabel = styled.div`
   `
       : ''}
 
+  &.balance-input {
+    cursor: pointer;
+  }
+
   svg.question {
     font-size: 16px;
     color: ${props => props.color};
