@@ -122,7 +122,6 @@ const Autopilot = () => {
         }
       })
 
-      console.log('Updating Wallet Balances: ', mergedBalances)
       return mergedBalances
     })
   }
@@ -196,7 +195,6 @@ const Autopilot = () => {
           (vaultsData && !isEqual(vaultsData, prevVaultsData)) ||
           (userVBalance && !isEqual(userVBalance, prevVBalance)))
       ) {
-        console.log({ vaultsData, prevVaultsData, userVBalance, prevVBalance })
         firstWalletBalanceLoad.current = false
         fetchBalances(vaultsData, account, contracts)
       }
