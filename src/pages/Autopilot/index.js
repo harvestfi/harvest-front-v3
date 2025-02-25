@@ -1,15 +1,21 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
+import useEffectWithPrevious from 'use-effect-with-previous'
 import { useHistory, useLocation } from 'react-router-dom'
 import { Dropdown } from 'react-bootstrap'
-import { isEmpty } from 'lodash'
+import { isEqual, isEmpty } from 'lodash'
+import BigNumber from 'bignumber.js'
 import { MdKeyboardArrowDown } from 'react-icons/md'
 import { IoCheckmark } from 'react-icons/io5'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
+import { useContracts } from '../../providers/Contracts'
 import { someChainsList } from '../../constants'
 import { isSpecialApp } from '../../utilities/formats'
+import { getUnderlyingId } from '../../utilities/parsers'
+import { initBalanceAndDetailData } from '../../utilities/apiCalls'
+import { fromWei } from '../../services/web3'
 import AutopilotPanel from '../../components/AutopilotComponents/AutopilotPanel'
 import {
   Container,
@@ -35,13 +41,21 @@ const Autopilot = () => {
     borderColorBox,
   } = useThemeContext()
 
+  const { connected, account, balances, getWalletBalances } = useWallet()
+  const { contracts } = useContracts()
   const history = useHistory()
   const location = useLocation()
   const { chainId } = useWallet()
   const { allVaultsData, loadingVaults } = useVaults()
+  const firstWalletBalanceLoad = useRef(true)
+
   const [curChain, setCurChain] = useState({})
   const [vaultsData, setVaultsData] = useState([])
   const [isManualSelection, setIsManualSelection] = useState(false)
+  const [walletBalances, setWalletBalances] = useState({})
+  const [userVBalance, setUserVBalance] = useState({})
+  const [userAssetBalances, setUserAssetBalances] = useState({})
+  const [yieldValues, setYieldValues] = useState({})
 
   useEffect(() => {
     const pathSegments = location.pathname.split('/')
@@ -84,6 +98,111 @@ const Autopilot = () => {
       initData()
     }
   }, [allVaultsData, curChain])
+
+  const fetchWalletBalances = async (vaultsDataValue, accountValue, balancesValue) => {
+    if (!accountValue || vaultsDataValue.length === 0 || !balancesValue) return
+
+    setWalletBalances(prev => {
+      const mergedBalances = { ...prev }
+
+      vaultsDataValue.forEach(vault => {
+        if (!(vault.id in mergedBalances)) {
+          mergedBalances[vault.id] = '0'
+        }
+      })
+
+      Object.keys(balancesValue).forEach(underlyingId => {
+        const vault = vaultsDataValue.find(v => getUnderlyingId(v.id) === underlyingId)
+        if (vault) {
+          mergedBalances[vault.id] = fromWei(
+            balancesValue[underlyingId],
+            vault.decimals,
+            vault.decimals,
+          )
+        }
+      })
+
+      console.log('Updating Wallet Balances: ', mergedBalances)
+      return mergedBalances
+    })
+  }
+
+  useEffect(() => {
+    if (account && vaultsData.length > 0 && !isEmpty(balances)) {
+      fetchWalletBalances(vaultsData, account, balances)
+    }
+  }, [account, vaultsData, balances])
+
+  const fetchBalances = async (vaultsDataVal, accountVal, contractsVal) => {
+    const vBalancesMap = {}
+    const assetBalancesMap = {}
+    const yieldMap = {}
+
+    await Promise.all(
+      vaultsDataVal.map(async vault => {
+        const underlyingId = getUnderlyingId(vault.id)
+        await getWalletBalances([vault.id, underlyingId], accountVal, true)
+
+        const vaultContract = contractsVal.iporVaults[vault.id]
+        const vaultBalance = await vaultContract.methods.getBalanceOf(
+          vaultContract.instance,
+          accountVal,
+        )
+        const AssetBalance = await vaultContract.methods.convertToAssets(
+          vaultContract.instance,
+          vaultBalance,
+        )
+
+        if (new BigNumber(AssetBalance).gt(0)) {
+          vBalancesMap[vault.id] = fromWei(new BigNumber(vaultBalance), Number(vault.vaultDecimals))
+          assetBalancesMap[vault.id] = fromWei(
+            new BigNumber(AssetBalance),
+            Number(vault.decimals),
+            Number(vault.decimals),
+          )
+        } else {
+          vBalancesMap[vault.id] = '0'
+          assetBalancesMap[vault.id] = '0'
+        }
+
+        const iporVFlag = vault.isIPORVault ?? false
+        const { bFlag, vHFlag, sumNetChangeUsd } = await initBalanceAndDetailData(
+          vault.vaultAddress,
+          vault.chain,
+          accountVal,
+          vault.decimals,
+          iporVFlag,
+        )
+
+        if (bFlag && vHFlag) {
+          yieldMap[vault.id] = parseFloat(sumNetChangeUsd).toFixed(6)
+        }
+      }),
+    )
+
+    setUserVBalance(vBalancesMap)
+    setUserAssetBalances(assetBalancesMap)
+    setYieldValues(yieldMap)
+  }
+
+  useEffectWithPrevious(
+    ([prevAccount, prevVaultsData, prevVBalance]) => {
+      const hasSwitchedAccount = account !== prevAccount && account
+      if (
+        connected &&
+        vaultsData.length !== 0 &&
+        (hasSwitchedAccount ||
+          firstWalletBalanceLoad.current ||
+          (vaultsData && !isEqual(vaultsData, prevVaultsData)) ||
+          (userVBalance && !isEqual(userVBalance, prevVBalance)))
+      ) {
+        console.log({ vaultsData, prevVaultsData, userVBalance, prevVBalance })
+        firstWalletBalanceLoad.current = false
+        fetchBalances(vaultsData, account, contracts)
+      }
+    },
+    [account, vaultsData, userVBalance],
+  )
 
   const handleNetworkChange = selectedChain => {
     setCurChain(selectedChain)
@@ -162,6 +281,9 @@ const Autopilot = () => {
                 <AutopilotPanel
                   allVaultsData={allVaultsData}
                   vaultData={vault}
+                  walletBalance={walletBalances[vault.id] || '0'}
+                  userAssetBalance={userAssetBalances[vault.id] || '0'}
+                  yieldValue={yieldValues[vault.id] || '0'}
                   key={index}
                   index={index}
                 />

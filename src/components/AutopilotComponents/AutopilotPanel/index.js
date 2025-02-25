@@ -1,26 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react'
-import BigNumber from 'bignumber.js'
-import { isEqual } from 'lodash'
+import React, { useState, useEffect } from 'react'
 import { useSetChain } from '@web3-onboard/react'
 import { PiInfoBold } from 'react-icons/pi'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { toast } from 'react-toastify'
-import useEffectWithPrevious from 'use-effect-with-previous'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { isSpecialApp, showTokenBalance } from '../../../utilities/formats'
 import Button from '../../Button'
 import { useWallet } from '../../../providers/Wallet'
 import { usePortals } from '../../../providers/Portals'
-import { useContracts } from '../../../providers/Contracts'
 import AnimatedDots from '../../AnimatedDots'
-import { getChainName, handleToggle, getUnderlyingId } from '../../../utilities/parsers'
-import { fromWei } from '../../../services/web3'
+import { getChainName, handleToggle } from '../../../utilities/parsers'
 import { useRate } from '../../../providers/Rate'
 import DisclaimersModal from '../DisclaimersModal'
 import SubscribeModal from '../SubscribeModal'
 import UnsubscribeModal from '../UnsubscribeModal'
 import AutopilotInfo from '../AutoPilotInfo'
-import { initBalanceAndDetailData } from '../../../utilities/apiCalls'
 import {
   PanelHeader,
   BasePanelBox,
@@ -39,7 +33,14 @@ import {
   TokenName,
 } from './style'
 
-const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
+const AutopilotPanel = ({
+  allVaultsData,
+  vaultData,
+  walletBalance,
+  userAssetBalance,
+  yieldValue,
+  index,
+}) => {
   const {
     darkMode,
     borderColorBox,
@@ -53,7 +54,6 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
     btnActiveColor,
   } = useThemeContext()
   const { rates } = useRate()
-  const firstWalletBalanceLoad = useRef(true)
   const firstAutopilot = localStorage.getItem('firstAutopilot')
 
   const [subscribe, setSubscribe] = useState(true)
@@ -64,24 +64,11 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
   const [currencyRate, setCurrencyRate] = useState(1)
   const [subscribeName, setSubscribeName] = useState('Subscribe')
   const [subscribeLabel, setSubscribeLabel] = useState('Subscribe')
-  const [walletBalance, setWalletBalance] = useState('-')
-  const [userVBalance, setUserVBalance] = useState('-')
-  const [userAssetBalance, setUserAssetBalance] = useState('-')
-  const [yieldValue, setYieldValue] = useState('-')
   const [inputAmount, setInputAmount] = useState(0)
   const [inputUSDAmount, setInputUSDAmount] = useState('-')
 
-  const {
-    connected,
-    account,
-    connectAction,
-    balances,
-    getWalletBalances,
-    chainId,
-    setChainId,
-  } = useWallet()
+  const { connected, account, connectAction, chainId, setChainId } = useWallet()
   const { getPortalsToken } = usePortals()
-  const { contracts } = useContracts()
 
   const [
     {
@@ -117,14 +104,10 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
           const chainName = getChainName(tokenChain)
           setSubscribeName(`Change Network to ${chainName}`)
           setSubscribeLabel(`Subscribe`)
+        } else if (subscribe) {
+          setSubscribeName('Subscribe')
         } else {
-          if (subscribe) {
-            setSubscribeName('Subscribe')
-          } else {
-            setSubscribeName('Unsubscribe')
-          }
-          const underlyingId = getUnderlyingId(vaultData.id)
-          setWalletBalance(fromWei(balances[underlyingId], vaultData.decimals, vaultData.decimals)) // to get USDC value in user's wallet
+          setSubscribeName('Unsubscribe')
         }
       } else {
         setSubscribeName('Connect')
@@ -132,64 +115,7 @@ const AutopilotPanel = ({ allVaultsData, vaultData, index }) => {
       }
     }
     updateData()
-  }, [account, curChain, tokenChain, subscribe, balances]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffectWithPrevious(
-    ([prevAccount, prevVBalance]) => {
-      const hasSwitchedAccount = account !== prevAccount && account
-      if (
-        connected &&
-        (hasSwitchedAccount ||
-          firstWalletBalanceLoad.current ||
-          (userVBalance && !isEqual(userVBalance, prevVBalance)))
-      ) {
-        const getBalance = async () => {
-          firstWalletBalanceLoad.current = false
-          const underlyingId = getUnderlyingId(vaultData.id)
-          await getWalletBalances([vaultData.id, underlyingId], account, true) // to get USDC value in user's wallet
-          const vaultContract = contracts.iporVaults[vaultData.id]
-          const vaultBalance = await vaultContract.methods.getBalanceOf(
-            vaultContract.instance,
-            account,
-          )
-          const AssetBalance = await vaultContract.methods.convertToAssets(
-            vaultContract.instance,
-            vaultBalance,
-          )
-
-          if (new BigNumber(AssetBalance).gt(0)) {
-            const userBal = fromWei(new BigNumber(vaultBalance), Number(vaultData.vaultDecimals))
-            const userAssetBal = fromWei(
-              new BigNumber(AssetBalance),
-              Number(vaultData.decimals),
-              Number(vaultData.decimals),
-            )
-            setUserAssetBalance(userAssetBal)
-            setUserVBalance(userBal)
-          } else {
-            setUserAssetBalance(0)
-            setUserVBalance(0)
-          }
-          const iporVFlag = vaultData.isIPORVault ?? false
-
-          const { bFlag, vHFlag, sumNetChangeUsd } = await initBalanceAndDetailData(
-            vaultData.vaultAddress,
-            vaultData.chain,
-            account,
-            vaultData.decimals,
-            iporVFlag,
-          )
-
-          if (bFlag && vHFlag) {
-            setYieldValue(parseFloat(sumNetChangeUsd).toFixed(6))
-          }
-        }
-
-        getBalance()
-      }
-    },
-    [account, userVBalance],
-  )
+  }, [account, curChain, tokenChain, subscribe])
 
   useEffect(() => {
     let isMounted = true
