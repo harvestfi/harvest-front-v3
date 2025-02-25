@@ -166,7 +166,7 @@ const Autopilot = () => {
         }
 
         const iporVFlag = vault.isIPORVault ?? false
-        const { bFlag, vHFlag, sumNetChangeUsd } = await initBalanceAndDetailData(
+        const { bFlag, vHFlag, sumNetChange } = await initBalanceAndDetailData(
           vault.vaultAddress,
           vault.chain,
           accountVal,
@@ -175,7 +175,7 @@ const Autopilot = () => {
         )
 
         if (bFlag && vHFlag) {
-          yieldMap[vault.id] = parseFloat(sumNetChangeUsd).toFixed(6)
+          yieldMap[vault.id] = parseFloat(sumNetChange).toFixed(6)
         }
       }),
     )
