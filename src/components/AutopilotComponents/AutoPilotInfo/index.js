@@ -415,7 +415,7 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
                   const chainName = getChainNamePortals(vaultData.chain)
                   return window.open(
                     `/${chainName}/${vaultData.vaultAddress.toLowerCase()}`,
-                    '_blank',
+                    '_self',
                   )
                 }}
               >
