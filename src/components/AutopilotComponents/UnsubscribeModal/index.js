@@ -121,7 +121,7 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
                 weight="600"
                 marginBottom="4px"
               >
-                Summary
+                Unsubscribe
               </NewLabel>
               <NewLabel
                 color={fontColor1}
@@ -130,7 +130,7 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
                 weight="400"
                 marginBottom="5px"
               >
-                Unsubscribe your token
+                {`You are now unsubscribing from the ${token?.tokenNames[0]} Autopilot`}
               </NewLabel>
             </NewLabel>
           </FTokenDiv>
