@@ -56,7 +56,7 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
   const autoPilotInfoData = [
     { label: 'Last Harvest', value: `${lastHarvest} ago` },
     { label: 'Harvest Frequency', value: `~${harvestFrequency}` },
-    { label: 'Lifetime avg. APY', value: `${vaultData.estimatedApy}%` },
+    { label: 'Lifetime APY', value: lifetimeApy },
     { label: 'Operating Since', value: `${operatingSince} (${periodInday} days)` },
     { label: 'TVL', value: `${currencySym}${totalValueLocked}` },
     { label: 'Underlying', value: `${vaultData.tokenNames[0]}` },
