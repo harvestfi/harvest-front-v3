@@ -15,6 +15,7 @@ import AnimatedDots from '../../AnimatedDots'
 import { useWallet } from '../../../providers/Wallet'
 import { useActions } from '../../../providers/Actions'
 import { isSpecialApp } from '../../../utilities/formats'
+import { useThemeContext } from '../../../providers/useThemeContext'
 import { toWei } from '../../../services/web3'
 import Button from '../../Button'
 import {
@@ -28,7 +29,6 @@ import {
   ProgressLabel,
   ProgressText,
 } from './style'
-import { useThemeContext } from '../../../providers/useThemeContext'
 
 const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModalShow }) => {
   const { fontColor1, fontColor2, btnColor, btnHoverColor, btnActiveColor } = useThemeContext()
@@ -91,6 +91,7 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
       setUnsubscribeFailed(false)
       setModalShow(false)
       setInputAmount('0')
+      window.location.reload()
     }
   }
 
@@ -150,6 +151,9 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
                 setStartSpinner(false)
                 setModalShow(false)
                 setBtnName('Confirm Transaction')
+                if (progressStep === 2) {
+                  window.location.reload()
+                }
               }}
             >
               <ImgBtn src={CloseIcon} alt="" />

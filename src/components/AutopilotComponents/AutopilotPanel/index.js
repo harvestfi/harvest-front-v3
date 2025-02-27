@@ -239,7 +239,7 @@ const AutopilotPanel = ({
                 marginBottom="10px"
                 marginRight="25px"
               >
-                {userAssetBalance}&nbsp;{vaultData?.tokenNames[0]}
+                {showTokenBalance(userAssetBalance)}&nbsp;{vaultData?.tokenNames[0]}
               </NewLabel>
             </FlexDiv>
             <FlexDiv flexDirection="row" justifyContent="space-between">
@@ -263,7 +263,7 @@ const AutopilotPanel = ({
                 marginBottom="30px"
                 marginRight="25px"
               >
-                {yieldValue}&nbsp;{vaultData?.tokenNames[0]}
+                {showTokenBalance(yieldValue)}&nbsp;{vaultData?.tokenNames[0]}
               </NewLabel>
             </FlexDiv>
           </PanelBalance>

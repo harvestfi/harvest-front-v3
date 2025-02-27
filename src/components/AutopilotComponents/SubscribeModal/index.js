@@ -18,6 +18,7 @@ import AnimatedDots from '../../AnimatedDots'
 import { useWallet } from '../../../providers/Wallet'
 import { useActions } from '../../../providers/Actions'
 import { useContracts } from '../../../providers/Contracts'
+import { useThemeContext } from '../../../providers/useThemeContext'
 import { isSpecialApp } from '../../../utilities/formats'
 import { toWei } from '../../../services/web3'
 import Button from '../../Button'
@@ -32,7 +33,6 @@ import {
   ProgressLabel,
   ProgressText,
 } from './style'
-import { useThemeContext } from '../../../providers/useThemeContext'
 
 const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModalShow }) => {
   const { fontColor1, fontColor2, btnColor, btnHoverColor, btnActiveColor } = useThemeContext()
@@ -156,6 +156,7 @@ const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModa
       setSubscribeFailed(false)
       setModalShow(false)
       setInputAmount('0')
+      window.location.reload()
     }
   }
 
@@ -215,6 +216,9 @@ const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModa
                 setSubscribeFailed(false)
                 setStartSpinner(false)
                 setBtnName('Approve Token')
+                if (progressStep === 4) {
+                  window.location.reload()
+                }
               }}
             >
               <ImgBtn src={CloseIcon} alt="" />
