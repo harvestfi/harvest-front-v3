@@ -2179,7 +2179,7 @@ const AdvancedFarm = () => {
                   height={isMobile ? '24px' : '24px'}
                   weight="600"
                   color={fontColor1}
-                  display="flex"
+                  display={token.isIPORVault ? 'none' : 'flex'}
                   justifyContent="center"
                   marginBottom="13px"
                   borderRadius="8px"
