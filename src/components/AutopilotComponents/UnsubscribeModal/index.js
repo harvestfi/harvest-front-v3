@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import { useSetChain } from '@web3-onboard/react'
 import { Spinner } from 'react-bootstrap'
-import { BiGift } from 'react-icons/bi'
 import { useMediaQuery } from 'react-responsive'
+import Diamond from '../../../assets/images/logos/sidebar/diamond.svg'
 import WalletIcon from '../../../assets/images/logos/beginners/wallet-in-button.svg'
 import CloseIcon from '../../../assets/images/logos/beginners/close.svg'
 import AlertIcon from '../../../assets/images/logos/beginners/alert-triangle.svg'
@@ -110,7 +110,7 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
           <FTokenDiv>
             <NewLabel margin="auto 0px">
               <IconCard>
-                <BiGift />
+                <img src={Diamond} alt="diamond" />
               </IconCard>
             </NewLabel>
             <NewLabel align="left" marginRight="12px">

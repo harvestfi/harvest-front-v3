@@ -25,6 +25,11 @@ const IconCard = styled.div`
   background: #5dcf46;
   box-shadow: 0px 1px 2px 0px rgba(16, 24, 40, 0.05);
   justify-content: center;
+
+  img {
+    margin: 4px auto 0px auto;
+    filter: invert(100%) sepia(100%) saturate(2%) hue-rotate(102deg) brightness(107%) contrast(101%);
+  }
 `
 
 const NewLabel = styled.div`
