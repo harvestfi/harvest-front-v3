@@ -240,7 +240,7 @@ const ApexChart = ({
         setIsDataReady('loading')
       } else if (lpTokenBalance === '0' && totalValue !== 0 && dl === 0) {
         setIsDataReady('loading')
-      } else if (lpTokenBalance === '0' && totalValue === 0 && dl === 0) {
+      } else if ((lpTokenBalance === '0' || lpTokenBalance === 0) && totalValue === 0 && dl === 0) {
         setIsDataReady('false')
       } else if (lpTokenBalance === 0 && dl !== 0 && dl1 !== 0 && token.isIPORVault) {
         setIsDataReady('true')

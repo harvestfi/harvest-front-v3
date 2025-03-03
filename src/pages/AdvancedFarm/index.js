@@ -32,6 +32,7 @@ import WithdrawSelectToken from '../../components/AdvancedFarmComponents/Withdra
 import WithdrawStart from '../../components/AdvancedFarmComponents/Withdraw/WithdrawStart'
 import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
 import UserBalanceData from '../../components/UserBalanceChart/UserBalanceData'
+import SharePricesData from '../../components/SharePricesChart/SharePricesData'
 import PerformanceChart from '../../components/PerformanceChart/PerformanceChart'
 import VaultPanelActionsFooter from '../../components/AdvancedFarmComponents/Rewards/VaultPanelActionsFooter'
 import StakeBase from '../../components/AdvancedFarmComponents/Stake/StakeBase'
@@ -81,6 +82,7 @@ import {
   getChainName,
   handleToggle,
   getChainNamePortals,
+  generateColor,
 } from '../../utilities/parsers'
 import { getAdvancedRewardText } from '../../utilities/html'
 import {
@@ -130,6 +132,7 @@ import {
   HalfInfo,
   LastHarvestInfo,
   RestInternal,
+  RestInternalBenchmark,
   StakeSection,
   UnstakeSection,
   MainTagPanel,
@@ -534,6 +537,7 @@ const AdvancedFarm = () => {
     { name: 'Rewards', img: Diamond },
     { name: 'Details', img: BarChart },
     { name: 'History', img: History },
+    { name: 'Benchmark', img: History },
   ]
 
   // Show vault info badge when platform is 'Seamless' or 'Harvest' and first visit
@@ -1255,6 +1259,8 @@ const AdvancedFarm = () => {
       setActiveMainTag(2)
     } else if (curUrl.includes('#history')) {
       setActiveMainTag(3)
+    } else if (curUrl.includes('#benchmark')) {
+      setActiveMainTag(4)
     }
   }, [curUrl])
 
@@ -1317,6 +1323,9 @@ const AdvancedFarm = () => {
             tokenSymbol: token.isIPORVault ? tokenSym : id,
           }))
           setHistoryData(enrichedDataWithSymbol)
+          setChartData(uniqueVaultHData)
+        }
+        if (token.isIPORVault && vHFlag && !loadingVaults) {
           setChartData(uniqueVaultHData)
         }
       }
@@ -1536,7 +1545,7 @@ const AdvancedFarm = () => {
             <TabRow>
               <MainTagPanel>
                 {mainTags.map((tag, i) =>
-                  i === 1 && token.isIPORVault ? null : (
+                  (i === 1 && token.isIPORVault) || (i === 4 && !token.isIPORVault) ? null : (
                     <MainTag
                       key={i}
                       fontColor3={fontColor3}
@@ -2226,6 +2235,102 @@ const AdvancedFarm = () => {
                     setNoData={setNoRewardsData}
                   />
                 )}
+              </>
+            ) : activeMainTag === 4 && token.isIPORVault ? (
+              <>
+                <FlexDiv marginBottom="20px">
+                  A performance comparison between the Autopilot and it&apos;s underlying vaults.
+                </FlexDiv>
+                <MainSection height={activeMainTag === 0 ? '100%' : 'fit-content'}>
+                  <SharePricesData token={token} />
+                </MainSection>
+                <RestInternalBenchmark>
+                  <LastHarvestInfo backColor={backColor} borderColor={borderColor}>
+                    <NewLabel
+                      size={isMobile ? '12px' : '14px'}
+                      weight={isMobile ? '600' : '600'}
+                      height={isMobile ? '20px' : '24px'}
+                      color={fontColor4}
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
+                      borderBottom="1px solid #F3F6FF"
+                    >
+                      APY Performance
+                    </NewLabel>
+                    <FlexDiv
+                      justifyContent="space-between"
+                      padding={isMobile ? '10px 15px' : '10px 15px'}
+                    >
+                      <NewLabel
+                        size="13.4px"
+                        height="20px"
+                        weight="500"
+                        cursor="pointer"
+                        borderBottom="0.5px dotted white"
+                        color={generateColor(token.id)}
+                        onClick={() => {}}
+                      >
+                        Harvest {token.tokenNames[0]}
+                      </NewLabel>
+                      <NewLabel
+                        size="13.4px"
+                        height="20px"
+                        weight="500"
+                        color={generateColor(token.id)}
+                      >
+                        {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
+                      </NewLabel>
+                    </FlexDiv>
+                    {token.allocPointData && token.allocPointData.length > 0 ? (
+                      token.allocPointData
+                        .filter(data => data.hVaultId !== 'Not invested')
+                        .map((data, index) => {
+                          let vaultName = data.hVaultId.split('_')[0]
+                          vaultName = `${vaultName.charAt(0).toUpperCase() + vaultName.slice(1)} ${
+                            token.tokenNames[0]
+                          }`
+                          return (
+                            <FlexDiv
+                              key={index}
+                              justifyContent="space-between"
+                              padding={isMobile ? '10px 15px' : '10px 15px'}
+                            >
+                              <NewLabel
+                                size="13.4px"
+                                height="20px"
+                                weight="500"
+                                cursor="pointer"
+                                borderBottom="0.5px dotted white"
+                                color={generateColor(data.hVaultId)}
+                                onClick={() => {
+                                  const lcChainName = getChainNamePortals(token.chain)
+                                  return allVaultsData[data.hVaultId]?.vaultAddress
+                                    ? window.open(
+                                        `https://app.harvest.finance/${lcChainName}/${
+                                          allVaultsData[data.hVaultId]?.vaultAddress
+                                        }`,
+                                        '_blank',
+                                      )
+                                    : null
+                                }}
+                              >
+                                {vaultName}
+                              </NewLabel>
+                              <NewLabel
+                                size="13.4px"
+                                height="20px"
+                                weight="500"
+                                color={generateColor(data.hVaultId)}
+                              >
+                                {Number(allVaultsData[data.hVaultId]?.estimatedApy).toFixed(2)}%
+                              </NewLabel>
+                            </FlexDiv>
+                          )
+                        })
+                    ) : (
+                      <></>
+                    )}
+                  </LastHarvestInfo>
+                </RestInternalBenchmark>
               </>
             ) : (
               <></>
