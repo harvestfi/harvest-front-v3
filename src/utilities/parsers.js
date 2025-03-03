@@ -640,5 +640,6 @@ export const handleToggle = setter => () => setter(prev => !prev)
 
 export const getUnderlyingId = id => {
   if (id === 'IPOR_WETH_base') return 'aave_ETH_base'
+  if (id === 'IPOR_WETH_arbitrum') return 'aave_ETH_arbitrum'
   return id.replace('IPOR', 'aave')
 }
