@@ -723,6 +723,8 @@ html {
       .deposit-modal-body {
         background: ${props => props.backColor};
         padding: unset;
+        border-bottom-left-radius: 12px;
+        border-bottom-right-radius: 12px;
       }
       .disclaimers-modal-body {
         border-bottom-right-radius: 12px;

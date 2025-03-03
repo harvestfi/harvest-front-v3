@@ -321,6 +321,10 @@ const NewLabel = styled.div`
   `
       : ''}
 
+  &.balance-input {
+    cursor: pointer;
+  }
+
   svg.question {
     font-size: 16px;
     color: ${props => props.color};
@@ -409,8 +413,8 @@ const TokenInput = styled.div`
 
   input[type='text']::-webkit-outer-spin-button,
   input[type='text']::-webkit-inner-spin-button {
-    -webkit-appearance: none;
     appearance: none;
+    -webkit-appearance: none;
     margin: 0;
   }
 `

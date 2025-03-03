@@ -200,6 +200,7 @@ const TokenInput = styled.div`
   position: relative;
 
   input[type='text'] {
+    appearance: none;
     -webkit-appearance: none;
     -moz-appearance: textfield;
   }
@@ -238,6 +239,7 @@ const TokenAmount = styled.input`
 
   &::-webkit-outer-spin-button,
   &::-webkit-inner-spin-button {
+    appearance: none;
     -webkit-appearance: none;
     -moz-appearance: textfield;
     margin: 0;

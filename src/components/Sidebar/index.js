@@ -157,6 +157,12 @@ const sideLinksMobile = [
     linkName: 'Portfolio',
   },
   {
+    path: ROUTES.AUTOPILOT,
+    name: 'Autopilot',
+    imgPath: Diamond,
+    linkName: 'Autopilot',
+  },
+  {
     path: ROUTES.ADVANCED,
     name: 'All Vaults',
     imgPath: Advanced,
@@ -477,7 +483,7 @@ const Sidebar = ({ width }) => {
                           }}
                           fontcolor={fontColor}
                           filtercolor={filterColor2}
-                          filterColorNew={filterColorNew}
+                          filtercolornew={filterColorNew}
                         >
                           <img src={OnOff} width="18px" height="18px" alt="" />
                           <div>Disconnect</div>

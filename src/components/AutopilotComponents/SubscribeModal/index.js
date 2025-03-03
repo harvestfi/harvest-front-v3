@@ -3,8 +3,8 @@ import BigNumber from 'bignumber.js'
 import Modal from 'react-bootstrap/Modal'
 import { useSetChain } from '@web3-onboard/react'
 import { Spinner } from 'react-bootstrap'
-import { BiGift } from 'react-icons/bi'
 import { useMediaQuery } from 'react-responsive'
+import Diamond from '../../../assets/images/logos/sidebar/diamond.svg'
 import WalletIcon from '../../../assets/images/logos/beginners/wallet-in-button.svg'
 import CloseIcon from '../../../assets/images/logos/beginners/close.svg'
 import AlertIcon from '../../../assets/images/logos/beginners/alert-triangle.svg'
@@ -18,6 +18,7 @@ import AnimatedDots from '../../AnimatedDots'
 import { useWallet } from '../../../providers/Wallet'
 import { useActions } from '../../../providers/Actions'
 import { useContracts } from '../../../providers/Contracts'
+import { useThemeContext } from '../../../providers/useThemeContext'
 import { isSpecialApp } from '../../../utilities/formats'
 import { toWei } from '../../../services/web3'
 import Button from '../../Button'
@@ -32,7 +33,6 @@ import {
   ProgressLabel,
   ProgressText,
 } from './style'
-import { useThemeContext } from '../../../providers/useThemeContext'
 
 const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModalShow }) => {
   const { fontColor1, fontColor2, btnColor, btnHoverColor, btnActiveColor } = useThemeContext()
@@ -156,6 +156,7 @@ const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModa
       setSubscribeFailed(false)
       setModalShow(false)
       setInputAmount('0')
+      window.location.reload()
     }
   }
 
@@ -174,18 +175,18 @@ const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModa
           <FTokenDiv>
             <NewLabel margin="auto 0px">
               <IconCard>
-                <BiGift />
+                <img src={Diamond} alt="diamond" />
               </IconCard>
             </NewLabel>
             <NewLabel align="left" marginRight="12px">
               <NewLabel
-                color="#15B088"
+                color="#5dcf46"
                 size={isMobile ? '18px' : '18px'}
                 height={isMobile ? '28px' : '28px'}
                 weight="600"
                 marginBottom="4px"
               >
-                Summary
+                Subscribe
               </NewLabel>
               <NewLabel
                 color={fontColor1}
@@ -194,7 +195,7 @@ const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModa
                 weight="400"
                 marginBottom="5px"
               >
-                Subscribe your token to earn extra token rewards
+                {`You are now subscribing to the ${token?.tokenNames[0]} Autopilot.`}
               </NewLabel>
             </NewLabel>
           </FTokenDiv>
@@ -215,6 +216,9 @@ const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModa
                 setSubscribeFailed(false)
                 setStartSpinner(false)
                 setBtnName('Approve Token')
+                if (progressStep === 4) {
+                  window.location.reload()
+                }
               }}
             >
               <ImgBtn src={CloseIcon} alt="" />

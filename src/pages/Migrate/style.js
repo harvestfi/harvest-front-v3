@@ -244,7 +244,7 @@ const ButtonDiv = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  pointer: cursor;
+  cursor: pointer;
   position: relative;
   z-index: 1;
 `

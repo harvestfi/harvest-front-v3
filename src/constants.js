@@ -41,7 +41,8 @@ export const ROUTES = {
   DOC: 'https://docs.harvest.finance',
   FAQ: '/faq',
   ADVANCEDFARM: '/:network/:paramAddress',
-  AUTOPILOT: '/autopilot',
+  AUTOPILOTNOCHAIN: '/autopilot',
+  AUTOPILOT: '/autopilot/:network',
   CHARTS: '/charts',
   WORK: '/work',
   POOL: '/pool',
@@ -805,8 +806,8 @@ export const ChainsList = [
 ]
 
 export const someChainsList = [
-  { id: 0, name: 'Base', img: BASE, chainId: CHAIN_IDS.BASE },
-  { id: 1, name: 'Arbitrum', img: ARBITRUM, chainId: CHAIN_IDS.ARBITRUM_ONE },
+  { id: 0, name: 'base', img: BASE, chainId: CHAIN_IDS.BASE },
+  { id: 1, name: 'arbitrum', img: ARBITRUM, chainId: CHAIN_IDS.ARBITRUM_ONE },
 ]
 
 export const fakeChartData = [

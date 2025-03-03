@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import Tutorial from './pages/Tutorial'
 import Settings from './pages/Settings'
@@ -79,6 +79,11 @@ const App = () => (
         <Switch>
           <Route exact path={ROUTES.PORTFOLIO} component={Portfolio} />
           <Route exact path={ROUTES.TUTORIAL} component={Tutorial} />
+          <Route
+            exact
+            path={ROUTES.AUTOPILOTNOCHAIN}
+            render={() => <Redirect to={ROUTES.AUTOPILOT} />}
+          />
           <Route exact path={ROUTES.AUTOPILOT} component={Autopilot} />
           <Route exact path={ROUTES.ADVANCED} component={Farm} />
           <Route exact path={ROUTES.LiveSupport} component={LiveSupport} />

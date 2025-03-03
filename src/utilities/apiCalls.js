@@ -771,7 +771,7 @@ export const getIPORLastHarvestInfo = async (vaultAdr, chainId) => {
   const url = GRAPH_URLS[chainId]
 
   const data = await executeGraphCall(url, query, variables)
-  const hisData = data.plasmaVaultHistories
+  const hisData = data?.plasmaVaultHistories
 
   if (hisData && hisData.length !== 0) {
     const timeStamp = hisData[0].timestamp
@@ -822,7 +822,7 @@ export const getIPORVaultHistories = async (chainId, vaultAdr) => {
   const url = GRAPH_URLS[chainId]
 
   const data = await executeGraphCall(url, query, variables)
-  vaultHIPORData = data.plasmaVaultHistories
+  vaultHIPORData = data?.plasmaVaultHistories
 
   if (!vaultHIPORData || vaultHIPORData.length === 0) {
     vaultHIPORFlag = false

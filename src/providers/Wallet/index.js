@@ -212,6 +212,7 @@ const WalletProvider = _ref => {
   const connectAction = useCallback(async () => {
     await connect()
   }, [connect])
+
   const getWalletBalances = useCallback(
     // eslint-disable-next-line func-names
     async function (selectedTokens, newAccount, fresh) {
