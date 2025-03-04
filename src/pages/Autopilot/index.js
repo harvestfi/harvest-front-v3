@@ -112,7 +112,7 @@ const Autopilot = () => {
       })
 
       Object.keys(balancesValue).forEach(underlyingId => {
-        const vault = vaultsDataValue.find(v => getUnderlyingId(v.id) === underlyingId)
+        const vault = vaultsDataValue.find(v => getUnderlyingId(v) === underlyingId)
         if (vault) {
           mergedBalances[vault.id] = fromWei(
             balancesValue[underlyingId],
@@ -139,7 +139,8 @@ const Autopilot = () => {
 
     await Promise.all(
       vaultsDataVal.map(async vault => {
-        const underlyingId = getUnderlyingId(vault.id)
+        const underlyingId = getUnderlyingId(vault)
+        if (underlyingId === '') return
         await getWalletBalances([vault.id, underlyingId], accountVal, true)
 
         const vaultContract = contractsVal.iporVaults[vault.id]

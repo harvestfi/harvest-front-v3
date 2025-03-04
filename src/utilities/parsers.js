@@ -638,8 +638,11 @@ export const mergeArrays = (rewardsAPIData, totalHistoryData) => {
 
 export const handleToggle = setter => () => setter(prev => !prev)
 
-export const getUnderlyingId = id => {
-  if (id === 'IPOR_WETH_base') return 'aave_ETH_base'
-  if (id === 'IPOR_WETH_arbitrum') return 'aave_ETH_arbitrum'
-  return id.replace('IPOR', 'aave')
+export const getUnderlyingId = vaultData => {
+  if (vaultData.isIPORVault && vaultData.allocPointData?.length > 1) {
+    if (vaultData?.allocPointData[0]?.hVaultId !== 'Not invested')
+      return vaultData.allocPointData[0].hVaultId
+    return vaultData.allocPointData[1].hVaultId
+  }
+  return ''
 }
