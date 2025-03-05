@@ -207,7 +207,7 @@ export const formatFrequency = value => {
   return [daysText, hoursText, minutesText].filter(Boolean).join(' ')
 }
 
-export const showTokenBalance = balance => {
+export const showTokenBalance = (balance, decimals = 6) => {
   let value = parseFloat(balance.toString().replace(/,/g, ''))
   if (isNaN(value)) {
     return '0'
@@ -218,10 +218,10 @@ export const showTokenBalance = balance => {
   if (value > 0 && value < 0.000001) {
     return '<0.000001'
   }
-  value = value.toFixed(6).replace(/\.?0+$/, '')
+  value = value.toFixed(decimals).replace(/\.?0+$/, '')
   return new Intl.NumberFormat('en-US', {
     minimumFractionDigits: 0,
-    maximumFractionDigits: 6,
+    maximumFractionDigits: decimals,
   }).format(value)
 }
 

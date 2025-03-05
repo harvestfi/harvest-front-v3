@@ -291,7 +291,7 @@ const AutopilotPanel = ({
               <TokenInput>
                 <TokenAmount
                   type="number"
-                  value={inputAmount}
+                  value={showTokenBalance(inputAmount, 10)}
                   onChange={onInputBalance}
                   backColor={bgColorBox}
                   fontColor2={fontColor2}
