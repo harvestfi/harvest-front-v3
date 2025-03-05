@@ -108,7 +108,9 @@ const ActionRow = ({ info }) => {
                 height={20}
                 color={darkMode ? '#D9D9D9' : '#6F78AA'}
                 justifyContent="end"
-                value={`${info.name} (${info.platform})`}
+                value={
+                  info.platform === 'Autopilot' ? `${info.name}` : `${info.name} (${info.platform})`
+                }
               />
               {info.platform === 'Autopilot' && (
                 <Autopilot>
