@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import BigNumber from 'bignumber.js'
 import { useSetChain } from '@web3-onboard/react'
 import { PiInfoBold } from 'react-icons/pi'
 import 'react-loading-skeleton/dist/skeleton.css'
