@@ -124,18 +124,13 @@ const AutopilotPanel = ({
       if (account && curChain === tokenChain && vaultData) {
         const inputTokenDetail = await getPortalsToken(chainId, vaultData.tokenAddress)
 
-        const inputValue = Number(inputAmount) * Number(currencyRate)
+        const inputValue =
+          Number(inputAmount) * Number(inputTokenDetail?.price) * Number(currencyRate)
         if (isMounted) {
           if (Number(inputValue) < 0.01) {
             setInputUSDAmount(`<${currencySym}0.01`)
           } else {
-            setInputUSDAmount(
-              `≈${currencySym}${(
-                Number(inputValue) *
-                Number(inputTokenDetail?.price) *
-                Number(currencyRate)
-              ).toFixed(2)}`,
-            )
+            setInputUSDAmount(`≈${currencySym}${inputValue.toFixed(2)}`)
           }
         }
       }
