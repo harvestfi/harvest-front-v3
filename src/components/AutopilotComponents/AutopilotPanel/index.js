@@ -286,7 +286,7 @@ const AutopilotPanel = ({
               <TokenInput>
                 <TokenAmount
                   type="number"
-                  value={showTokenBalance(inputAmount, 10)}
+                  value={inputAmount}
                   onChange={onInputBalance}
                   backColor={bgColorBox}
                   fontColor2={fontColor2}
@@ -329,16 +329,16 @@ const AutopilotPanel = ({
                 onClick={() => {
                   if (account) {
                     if (subscribe) {
-                      setInputAmount(new BigNumber(walletBalance).toString())
+                      setInputAmount(showTokenBalance(walletBalance, 8))
                     } else {
-                      setInputAmount(new BigNumber(userAssetBalance).toString())
+                      setInputAmount(showTokenBalance(userAssetBalance, 8))
                     }
                   }
                 }}
               >
                 {subscribe ? 'Wallet Balance' : 'My Balance'}:{' '}
                 {subscribe
-                  ? `${showTokenBalance(walletBalance)} ${vaultData?.tokenNames[0]}`
+                  ? `${showTokenBalance(walletBalance, 8)} ${vaultData?.tokenNames[0]}`
                   : `${userAssetBalance} ${vaultData?.tokenNames[0]}`}
               </NewLabel>
             </FlexDiv>
