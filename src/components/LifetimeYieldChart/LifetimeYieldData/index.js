@@ -9,7 +9,7 @@ import { Container, Header, ChartDiv, TooltipContent, CurDate, NewLabel } from '
 import ApexChart from '../ApexChart'
 import { formatDate, numberWithCommas } from '../../../utilities/formats'
 
-const LifetimeYieldData = ({ noData, totalHistoryData }) => {
+const LifetimeYieldData = ({ noFarm, totalHistoryData }) => {
   const { connected } = useWallet()
   const { darkMode, fontColor } = useThemeContext()
   const [curDate, setCurDate] = useState('')
@@ -85,7 +85,7 @@ const LifetimeYieldData = ({ noData, totalHistoryData }) => {
       </Header>
       <ChartDiv>
         <ApexChart
-          noData={noData}
+          noFarm={noFarm}
           data={totalHistoryData}
           range={allPeriodDate}
           handleTooltipContent={handleTooltipContent}

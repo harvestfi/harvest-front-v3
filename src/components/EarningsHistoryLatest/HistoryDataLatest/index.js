@@ -5,18 +5,10 @@ import 'react-loading-skeleton/dist/skeleton.css'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import ActionRow from '../ActionRow'
-import { fakeYieldData } from '../../../constants'
-import {
-  TransactionDetails,
-  TableContent,
-  EmptyPanel,
-  EmptyInfo,
-  ContentBox,
-  SkeletonItem,
-  FakeBoxWrapper,
-} from './style'
+import NoDataPanel from '../NoDataPanel'
+import { TransactionDetails, TableContent, EmptyPanel, ContentBox, SkeletonItem } from './style'
 
-const HistoryDataLatest = ({ historyData, noData, setOneDayYield }) => {
+const HistoryDataLatest = ({ historyData, noFarm, setOneDayYield }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const filteredHistoryData = historyData.filter(el => el.event === 'Harvest' && el.netChange >= 0)
   const totalLength = filteredHistoryData.length
@@ -45,7 +37,7 @@ const HistoryDataLatest = ({ historyData, noData, setOneDayYield }) => {
     }
   }, [totalLength]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const { fontColor, highlightColor } = useThemeContext()
+  const { highlightColor } = useThemeContext()
   const { connected } = useWallet()
 
   return (
@@ -61,50 +53,30 @@ const HistoryDataLatest = ({ historyData, noData, setOneDayYield }) => {
               .slice(0, isMobile ? 6 : 4)}
           </ContentBox>
         ) : connected ? (
-          !noData ? (
-            <EmptyPanel>
-              <SkeletonTheme baseColor="#ECECEC" highlightColor={highlightColor}>
-                {[...Array(isMobile ? 6 : 4)].map((_, index) => (
-                  <SkeletonItem key={index}>
-                    <div>
-                      <Skeleton containerClassName="skeleton" width="50%" height={10} />
-                    </div>
-                    <div>
-                      <Skeleton containerClassName="skeleton" width="25%" height={10} />
-                    </div>
-                  </SkeletonItem>
-                ))}
-              </SkeletonTheme>
-            </EmptyPanel>
+          !noFarm ? (
+            historyData.length !== 0 && filteredHistoryData.length === 0 ? (
+              <NoDataPanel />
+            ) : (
+              <EmptyPanel>
+                <SkeletonTheme baseColor="#ECECEC" highlightColor={highlightColor}>
+                  {[...Array(isMobile ? 6 : 4)].map((_, index) => (
+                    <SkeletonItem key={index}>
+                      <div>
+                        <Skeleton containerClassName="skeleton" width="50%" height={10} />
+                      </div>
+                      <div>
+                        <Skeleton containerClassName="skeleton" width="25%" height={10} />
+                      </div>
+                    </SkeletonItem>
+                  ))}
+                </SkeletonTheme>
+              </EmptyPanel>
+            )
           ) : (
-            <EmptyPanel height="300px">
-              <EmptyInfo height="100%" weight={500} size={14} lineHeight={20} color={fontColor}>
-                No activity found for this wallet.
-              </EmptyInfo>
-              <FakeBoxWrapper>
-                {fakeYieldData
-                  .map((el, i) => {
-                    const info = fakeYieldData[i]
-                    return <ActionRow key={i} info={info} />
-                  })
-                  .slice(0, isMobile ? 6 : 4)}
-              </FakeBoxWrapper>
-            </EmptyPanel>
+            <NoDataPanel />
           )
         ) : (
-          <EmptyPanel height="300px">
-            <EmptyInfo height="100%" weight={500} size={14} lineHeight={20} color={fontColor}>
-              Connect wallet to see your latest yield
-            </EmptyInfo>
-            <FakeBoxWrapper>
-              {fakeYieldData
-                .map((el, i) => {
-                  const info = fakeYieldData[i]
-                  return <ActionRow key={i} info={info} />
-                })
-                .slice(0, isMobile ? 6 : 4)}
-            </FakeBoxWrapper>
-          </EmptyPanel>
+          <NoDataPanel />
         )}
       </TableContent>
     </TransactionDetails>

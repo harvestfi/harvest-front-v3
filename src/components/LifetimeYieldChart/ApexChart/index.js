@@ -48,7 +48,7 @@ function formatXAxis(value, range) {
   return range < 1 ? `${hour}:${mins}` : `${month} / ${day}`
 }
 
-const ApexChart = ({ noData, data, range, handleTooltipContent, setCurDate, setCurContent }) => {
+const ApexChart = ({ noFarm, data, range, handleTooltipContent, setCurDate, setCurContent }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const { darkMode, fontColor, inputFontColor } = useThemeContext()
   const { connected } = useWallet()
@@ -315,7 +315,7 @@ const ApexChart = ({ noData, data, range, handleTooltipContent, setCurDate, setC
         </ResponsiveContainer>
       ) : connected ? (
         <LoadingDiv>
-          {!noData ? (
+          {!noFarm ? (
             isMobile ? (
               <></>
             ) : (
