@@ -5,13 +5,22 @@ import ListItem from '../ListItem'
 import { useRate } from '../../../providers/Rate'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { formatAge, formatDateTime, formatNumber } from '../../../utilities/formats'
-import { Content, DetailView, FlexDiv, NewLabel, MobileGreenBox, BadgePart } from './style'
+import {
+  Content,
+  DetailView,
+  FlexDiv,
+  NewLabel,
+  MobileGreenBox,
+  BadgePart,
+  Autopilot,
+} from './style'
 import ARBITRUM from '../../../assets/images/logos/badge/arbitrum.svg'
 import POLYGON from '../../../assets/images/logos/badge/polygon.svg'
 import ZKSYNC from '../../../assets/images/logos/badge/zksync.svg'
 import BASE from '../../../assets/images/logos/badge/base.svg'
 import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
 import UpperIcon from '../../../assets/images/logos/history-upper.svg'
+import Diamond from '../../../assets/images/logos/diamond.svg'
 
 const ActionRow = ({ info }) => {
   const { rates } = useRate()
@@ -92,15 +101,25 @@ const ActionRow = ({ info }) => {
               />
             </MobileGreenBox>
             <BadgePart>
-              <img src={badgeUrl} alt="badge" width={9.7} height={9.7} />
+              <img className="network" src={badgeUrl} alt="badge" width={9.7} height={9.7} />
               <ListItem
                 weight={400}
                 size={10}
                 height={20}
                 color={darkMode ? '#D9D9D9' : '#6F78AA'}
                 justifyContent="end"
-                value={`${info.name} (${info.platform})`}
+                value={
+                  info.platform === 'Autopilot' ? `${info.name}` : `${info.name} (${info.platform})`
+                }
               />
+              {info.platform === 'Autopilot' && (
+                <Autopilot>
+                  <img src={Diamond} width="12" height="12" alt="" />
+                  <NewLabel size="10px" weight="500" margin="auto">
+                    {info.platform}
+                  </NewLabel>
+                </Autopilot>
+              )}
             </BadgePart>
           </Content>
         </>

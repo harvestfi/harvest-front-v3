@@ -621,7 +621,7 @@ const UserDropDownItem = styled(Dropdown.Item)`
     background: none !important;
 
     img {
-      filter: ${props => props.filterColorNew};
+      filter: ${props => props.filtercolornew};
     }
     div {
       color: #5dcf46;

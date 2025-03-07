@@ -78,6 +78,12 @@ const NewLabel = styled.div`
   `
       : ''}
   ${props =>
+    props.margin
+      ? `
+    margin: ${props.margin};
+  `
+      : ''}
+  ${props =>
     props.marginTop
       ? `
     margin-top: ${props.marginTop};
@@ -268,9 +274,20 @@ const BadgePart = styled.div`
   margin-top: 5px;
   align-items: center;
 
-  img {
+  img.network {
     margin-right: 5px;
   }
 `
 
-export { DetailView, FlexDiv, Content, NetImg, NewLabel, MobileGreenBox, BadgePart }
+const Autopilot = styled.div`
+  display: flex;
+  justify-content: center;
+  border-radius: 13px;
+  background: #ecfdf3;
+  color: #5dcf46;
+  padding: 3px 10px;
+  margin-left: 5px;
+  width: 85px;
+`
+
+export { DetailView, FlexDiv, Content, NetImg, NewLabel, MobileGreenBox, BadgePart, Autopilot }

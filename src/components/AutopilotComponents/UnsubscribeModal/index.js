@@ -2,8 +2,8 @@ import React, { useState } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import { useSetChain } from '@web3-onboard/react'
 import { Spinner } from 'react-bootstrap'
-import { BiGift } from 'react-icons/bi'
 import { useMediaQuery } from 'react-responsive'
+import Diamond from '../../../assets/images/logos/sidebar/diamond.svg'
 import WalletIcon from '../../../assets/images/logos/beginners/wallet-in-button.svg'
 import CloseIcon from '../../../assets/images/logos/beginners/close.svg'
 import AlertIcon from '../../../assets/images/logos/beginners/alert-triangle.svg'
@@ -15,6 +15,7 @@ import AnimatedDots from '../../AnimatedDots'
 import { useWallet } from '../../../providers/Wallet'
 import { useActions } from '../../../providers/Actions'
 import { isSpecialApp } from '../../../utilities/formats'
+import { useThemeContext } from '../../../providers/useThemeContext'
 import { toWei } from '../../../services/web3'
 import Button from '../../Button'
 import {
@@ -28,7 +29,6 @@ import {
   ProgressLabel,
   ProgressText,
 } from './style'
-import { useThemeContext } from '../../../providers/useThemeContext'
 
 const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModalShow }) => {
   const { fontColor1, fontColor2, btnColor, btnHoverColor, btnActiveColor } = useThemeContext()
@@ -91,6 +91,7 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
       setUnsubscribeFailed(false)
       setModalShow(false)
       setInputAmount('0')
+      window.location.reload()
     }
   }
 
@@ -109,18 +110,18 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
           <FTokenDiv>
             <NewLabel margin="auto 0px">
               <IconCard>
-                <BiGift />
+                <img src={Diamond} alt="diamond" />
               </IconCard>
             </NewLabel>
             <NewLabel align="left" marginRight="12px">
               <NewLabel
-                color="#15B088"
+                color="#5dcf46"
                 size={isMobile ? '18px' : '18px'}
                 height={isMobile ? '28px' : '28px'}
                 weight="600"
                 marginBottom="4px"
               >
-                Summary
+                Unsubscribe
               </NewLabel>
               <NewLabel
                 color={fontColor1}
@@ -129,7 +130,7 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
                 weight="400"
                 marginBottom="5px"
               >
-                Unsubscribe your token
+                {`You are now unsubscribing from the ${token?.tokenNames[0]} Autopilot`}
               </NewLabel>
             </NewLabel>
           </FTokenDiv>
@@ -150,6 +151,9 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
                 setStartSpinner(false)
                 setModalShow(false)
                 setBtnName('Confirm Transaction')
+                if (progressStep === 2) {
+                  window.location.reload()
+                }
               }}
             >
               <ImgBtn src={CloseIcon} alt="" />
