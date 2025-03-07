@@ -1380,6 +1380,17 @@ const RestInternal = styled.div`
   height: 100%;
 `
 
+const RestInternalBenchmark = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 40%;
+  height: 100%;
+  @media screen and (max-width: 992px) {
+    width: 100%;
+    margin-top: 20px;
+  }
+`
+
 const StakeSection = styled.div`
   ${props =>
     props.isShow
@@ -1596,6 +1607,7 @@ export {
   HalfInfo,
   LastHarvestInfo,
   RestInternal,
+  RestInternalBenchmark,
   StakeSection,
   UnstakeSection,
   MainTagPanel,

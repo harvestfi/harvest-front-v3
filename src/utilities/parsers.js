@@ -358,6 +358,46 @@ export const findMin = data => {
   return min
 }
 
+export const findMaxData = data => {
+  let maxVal = -Infinity // Start with the smallest possible value
+
+  Object.values(data).forEach(item => {
+    if (item && item.value !== undefined) {
+      maxVal = Math.max(maxVal, item.value)
+    }
+  })
+
+  return maxVal === -Infinity ? null : maxVal // Return null if no valid value found
+}
+
+export const findMinData = data => {
+  let minVal = Infinity
+
+  Object.values(data).forEach(item => {
+    if (item && item.value !== undefined) {
+      minVal = Math.min(minVal, item.value)
+    }
+  })
+
+  return minVal === Infinity ? null : minVal
+}
+
+export const findMinMax = (data, key) => {
+  const filteredData = data.filter(item => item[key] !== undefined)
+
+  filteredData.sort((a, b) => a[key] - b[key])
+
+  return {
+    min: filteredData[0] ? { x: filteredData[0].x, value: filteredData[0][key] } : null,
+    max: filteredData[filteredData.length - 1]
+      ? {
+          x: filteredData[filteredData.length - 1].x,
+          value: filteredData[filteredData.length - 1][key],
+        }
+      : null,
+  }
+}
+
 export const findClosestIndex = (data, target) => {
   let closestIndex = 0,
     closestDistance = Math.abs(data[0].x - target)
@@ -646,3 +686,23 @@ export const getUnderlyingId = vaultData => {
   }
   return ''
 }
+
+/* eslint-disable no-plusplus, no-bitwise, one-var */
+export const generateColor = key => {
+  let hash = 0
+
+  // Generate a numeric hash from the key
+  for (let i = 0; i < key.length; i++) {
+    hash = key.charCodeAt(i) + ((hash << 5) - hash)
+  }
+
+  // Convert the hash to a hex color
+  let color = '#'
+  for (let i = 0; i < 3; i++) {
+    const value = (hash >> (i * 8)) & 0xff // Extract 8-bit values
+    color += `00${value.toString(16)}`.slice(-2) // Ensure two-digit hex
+  }
+
+  return color.toUpperCase() // Return as uppercase hex code
+}
+/* eslint-enable no-plusplus, no-bitwise, one-var */
