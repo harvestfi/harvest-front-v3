@@ -62,44 +62,79 @@ const SharePricesData = ({ token }) => {
     return '-'
   }
 
-  const adjustTimestamps = (sharepriceData, id) => {
-    const timestamps = sharepriceData[id].map(entry => entry.timestamp)
-
-    // Iterate over all keys except "morphoGC_cbBTC"
-    Object.keys(sharepriceData).forEach(key => {
-      if (key === id) return
-
-      sharepriceData[key].forEach(entry => {
-        // Find the next larger timestamp in morphoGC_cbBTC
-        for (let i = 0; i < timestamps.length - 1; i += 1) {
-          if (entry.timestamp >= timestamps[i + 1] && entry.timestamp < timestamps[i]) {
-            entry.timestamp = timestamps[i + 1]
-            break
-          }
-        }
-        if (entry.timestamp > timestamps[0]) {
-          entry.timestamp = timestamps[0]
-        }
-      })
-
-      // Group by timestamp and keep only the entry with the largest sharePrice
-      const grouped = {}
-      sharepriceData[key].forEach(entry => {
-        const ts = entry.timestamp
-        if (!grouped[ts] || parseFloat(entry.sharePrice) < parseFloat(grouped[ts].sharePrice)) {
-          grouped[ts] = entry
-        }
-      })
-
-      // Convert grouped object back to array
-      sharepriceData[key] = Object.values(grouped)
-    })
-
-    return sharepriceData
-  }
-
   useEffect(() => {
     let isMounted = true
+    const interpolateSharePrice = (prev, next, targetTimestamp) => {
+      if (!prev || !next) return prev ? parseFloat(prev.sharePrice) : parseFloat(next.sharePrice) // Handle edge cases
+
+      const t1 = parseInt(prev.timestamp, 10), // Ensure timestamps are numbers
+        p1 = parseFloat(prev.sharePrice), // Ensure prices are numbers
+        t2 = parseInt(next.timestamp, 10),
+        p2 = parseFloat(next.sharePrice),
+        t = parseInt(targetTimestamp, 10)
+
+      if (t1 === t2) return p1 // Avoid division by zero
+
+      return p1 + ((p2 - p1) * (t - t1)) / (t2 - t1)
+    }
+
+    const adjustTimestamps = (sharepriceData, id) => {
+      const referenceTimestamps = sharepriceData[id].map(entry => entry.timestamp)
+      const referenceStartPrice = parseFloat(
+        sharepriceData[id][sharepriceData[id].length - 1].sharePrice,
+      )
+
+      Object.keys(sharepriceData).forEach(key => {
+        if (key === id) return // Skip itself
+
+        const targetEntries = sharepriceData[key],
+          adjustedEntries = []
+
+        let targetIndex = 0
+
+        referenceTimestamps.forEach(ts => {
+          while (
+            targetIndex < targetEntries.length - 1 &&
+            Number(targetEntries[targetIndex + 1].timestamp) >= ts
+          ) {
+            targetIndex += 1
+          }
+
+          const prev = targetEntries[targetIndex],
+            next = targetEntries[targetIndex + 1] || prev,
+            interpolatedPrice = interpolateSharePrice(prev, next, ts)
+
+          adjustedEntries.push({
+            timestamp: ts,
+            sharePrice: parseFloat(interpolatedPrice.toFixed(5)), // Keep precision
+          })
+        })
+
+        sharepriceData[key] = adjustedEntries
+      })
+      Object.keys(sharepriceData).forEach(key => {
+        if (key === id) return // Skip itself
+
+        const targetEntries = sharepriceData[key],
+          adjustedEntries = [],
+          originalStartPrice = parseFloat(targetEntries[targetEntries.length - 1].sharePrice)
+
+        referenceTimestamps.forEach(ts => {
+          const curData = targetEntries.find(entry => entry.timestamp === ts) ?? 1,
+            adjustedSharePrice =
+              (parseFloat(curData.sharePrice) / originalStartPrice) * referenceStartPrice
+
+          adjustedEntries.push({
+            timestamp: ts,
+            sharePrice: parseFloat(adjustedSharePrice.toFixed(5)), // Keep precision
+          })
+        })
+
+        sharepriceData[key] = adjustedEntries
+      })
+      return sharepriceData
+    }
+
     const initData = async () => {
       if (account && address && chainId) {
         try {
@@ -146,7 +181,9 @@ const SharePricesData = ({ token }) => {
               sharePricesData[token.id] = vaultHIPORData
             }
 
-            sharePricesData = adjustTimestamps(sharePricesData, token.id)
+            if (sharePricesData[token.id].length > 0) {
+              sharePricesData = adjustTimestamps(sharePricesData, token.id)
+            }
 
             setSharePriceData(sharePricesData)
 

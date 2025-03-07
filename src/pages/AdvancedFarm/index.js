@@ -2301,17 +2301,6 @@ const AdvancedFarm = () => {
                                 cursor="pointer"
                                 borderBottom="0.5px dotted white"
                                 color={generateColor(data.hVaultId)}
-                                onClick={() => {
-                                  const lcChainName = getChainNamePortals(token.chain)
-                                  return allVaultsData[data.hVaultId]?.vaultAddress
-                                    ? window.open(
-                                        `https://app.harvest.finance/${lcChainName}/${
-                                          allVaultsData[data.hVaultId]?.vaultAddress
-                                        }`,
-                                        '_blank',
-                                      )
-                                    : null
-                                }}
                               >
                                 {vaultName}
                               </NewLabel>
