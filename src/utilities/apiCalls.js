@@ -666,7 +666,7 @@ export const checkIPORUserBalance = async (account, vaultAdr, chainId) => {
 
   try {
     const result = await executeGraphCall(url, iporquery, variables)
-    if (result.userBalances.length > 0) return true
+    if (result.plasmaUserBalances.length > 0) return true
     return false
   } catch (err) {
     console.error('Fetch data about user balance vaults failed: ', err)
