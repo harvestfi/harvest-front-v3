@@ -6,7 +6,7 @@ import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
 import { useRate } from '../../../providers/Rate'
-import { ceil10, floor10, numberWithCommas } from '../../../utilities/formats'
+import { ceil10, floor10, numberWithCommas, showUsdValueCurrency } from '../../../utilities/formats'
 import { findMax, findMin, getTimeSlots, getYAxisValues } from '../../../utilities/parsers'
 import { BoxWrapper, EmptyInfo, LoadingDiv, NoData } from './style'
 import MagicChart from '../MagicChart'
@@ -79,12 +79,11 @@ const ApexChart = ({ noFarm, data, range, handleTooltipContent, setCurDate, setC
         onTooltipContentChange(payload)
       } else {
         setCurDate('')
+        const value = Number(data[0]?.lifetimeYield) * Number(currencyRate)
         const content = `
         <div style="font-size: 25px; line-height: 38px;">
           <div style="color: #5DCF46; font-weight: 600;">
-            ${currencySym}${numberWithCommas(
-          (Number(data[0]?.lifetimeYield) * Number(currencyRate)).toFixed(2),
-        )}
+            ${showUsdValueCurrency(value, currencySym, currencyRate)}
           </div>
         </div>`
         setCurContent(content)
@@ -225,14 +224,13 @@ const ApexChart = ({ noFarm, data, range, handleTooltipContent, setCurDate, setC
       }
 
       if (mainData.length > 0) {
+        const value = Number(mainData[mainData.length - 1].y) * Number(currencyRate)
         const content = `
-        <div style="font-size: 25px; line-height: 38px;">
-          <div style="color: #5DCF46; font-weight: 600;">
-            ${currencySym}${numberWithCommas(
-          (Number(mainData[mainData.length - 1].y) * Number(currencyRate)).toFixed(2),
-        )}
-          </div>
-        </div>`
+          <div style="font-size: 25px; line-height: 38px;">
+            <div style="color: #5DCF46; font-weight: 600;">
+              ${showUsdValueCurrency(value, currencySym, currencyRate)}
+            </div>
+          </div>`
         setCurContent(content)
       }
 

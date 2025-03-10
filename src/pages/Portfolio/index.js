@@ -1105,7 +1105,7 @@ const Portfolio = () => {
               backColor={backColor}
               borderColor={borderColor}
             >
-              <LifetimeYieldData noData={noFarm} totalHistoryData={totalHistoryData} />
+              <LifetimeYieldData noFarm={noFarm} totalHistoryData={totalHistoryData} />
             </ChartBox>
             {!isMobile && (
               <YieldTable display={showLatestYield ? 'block' : 'none'}>

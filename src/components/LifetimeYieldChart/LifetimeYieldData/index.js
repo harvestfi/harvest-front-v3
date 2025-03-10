@@ -7,7 +7,7 @@ import { useWallet } from '../../../providers/Wallet'
 import { useRate } from '../../../providers/Rate'
 import { Container, Header, ChartDiv, TooltipContent, CurDate, NewLabel } from './style'
 import ApexChart from '../ApexChart'
-import { formatDate, numberWithCommas } from '../../../utilities/formats'
+import { formatDate, showUsdValueCurrency } from '../../../utilities/formats'
 
 const LifetimeYieldData = ({ noFarm, totalHistoryData }) => {
   const { connected } = useWallet()
@@ -35,12 +35,11 @@ const LifetimeYieldData = ({ noFarm, totalHistoryData }) => {
   const handleTooltipContent = payload => {
     if (payload && payload.length) {
       const currentDate = formatDate(payload[0].payload.x)
+      const value = Number(payload[0].payload.y) * Number(currencyRate)
       const content = `
           <div style="font-size: 25px; line-height: 38px;">
             <div style="color: #5DCF46; font-weight: 600;">
-              ${currencySym}${numberWithCommas(
-        (Number(payload[0].payload.y) * Number(currencyRate)).toFixed(2),
-      )}
+              ${showUsdValueCurrency(value, currencySym, currencyRate)}
             </div>
           </div>`
       setCurContent(content)
