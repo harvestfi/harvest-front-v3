@@ -11,14 +11,18 @@ import {
 import { useWindowWidth } from '@react-hook/window-size'
 import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { numberWithCommas, formatDate, formatXAxis } from '../../../utilities/formats'
+import {
+  numberWithCommas,
+  formatDate,
+  formatXAxis,
+  ceil10,
+  floor10,
+} from '../../../utilities/formats'
 import {
   findMaxData,
   findMinData,
   findMinMax,
-  getChartDomain,
   getTimeSlots,
-  getYAxisValues,
   generateColor,
 } from '../../../utilities/parsers'
 import { ChartWrapper, LoadingDiv, NoData, FakeChartWrapper, LoaderWrapper } from './style'
@@ -54,6 +58,24 @@ function generateChartDataWithSlots(slots, apiData, sharePriceData) {
   }
 
   return seriesData
+}
+
+function getYAxisValues(min, max, roundNum) {
+  const result = []
+  const ary = []
+  const bet = Number(max - min)
+  for (let i = min; i <= max; i += bet / 4) {
+    ary.push(i)
+  }
+  if (ary.length === 4) {
+    ary.push(max)
+  }
+
+  for (let j = 0; j < ary.length; j += 1) {
+    const val = ary[j].toFixed(roundNum)
+    result.push(val)
+  }
+  return result
 }
 
 const ApexChart = ({
@@ -142,7 +164,11 @@ const ApexChart = ({
         usedData = [],
         firstDate1,
         slotCount = 50,
-        filteredSlot = []
+        filteredSlot = [],
+        length,
+        minValue,
+        maxValue,
+        unitBtw
 
       const dl = sharePriceData[token.id]?.length ?? 0
       if (!connected) {
@@ -231,10 +257,33 @@ const ApexChart = ({
         minValueData[key] = min
       })
 
-      const minValue = findMinData(minValueData)
-      const maxValue = findMaxData(maxValueData)
+      minValue = findMinData(minValueData)
+      maxValue = findMaxData(maxValueData)
 
-      const { maxValue: maxDomain, minValue: minDomain, len } = getChartDomain(maxValue, minValue)
+      const between = maxValue - minValue
+      unitBtw = between / 4
+      if (unitBtw >= 1) {
+        length = (1 / unitBtw).toString().length
+        maxValue = ceil10(maxValue, -length)
+        minValue = floor10(minValue, -length)
+      } else if (unitBtw === 0) {
+        length = (1 / maxValue).toString().length
+        maxValue += 1
+        minValue -= 1
+      } else {
+        length = (1 / unitBtw).toString().length
+        maxValue = ceil10(maxValue, -length)
+        minValue = floor10(minValue, -length + 1)
+      }
+
+      if (unitBtw === 0) {
+        unitBtw = (maxValue - minValue) / 4
+      } else {
+        const rate = Number(unitBtw / maxValue) + 1
+        maxValue *= rate
+        maxValue = ceil10(maxValue, -length)
+        minValue /= rate
+      }
 
       // Set date and price with latest value by default
       if (mainData.length > 0) {
@@ -246,12 +295,12 @@ const ApexChart = ({
         console.log('The chart data is either undefined or empty.')
       }
 
-      setRoundedDecimal(-5)
-      setFixedLen(len)
-      setMinVal(minDomain)
-      setMaxVal(maxDomain)
+      setRoundedDecimal(5)
+      setFixedLen(5)
+      setMinVal(minValue)
+      setMaxVal(maxValue)
 
-      const yAxisAry = getYAxisValues(minDomain, maxDomain, roundedDecimal)
+      const yAxisAry = getYAxisValues(minValue, maxValue, roundedDecimal)
 
       setYAxisTicks(yAxisAry)
 
