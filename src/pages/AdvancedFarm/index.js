@@ -20,6 +20,7 @@ import Safe from '../../assets/images/logos/beginners/safe.svg'
 import Diamond from '../../assets/images/logos/beginners/diamond.svg'
 import BarChart from '../../assets/images/logos/beginners/bar-chart-01.svg'
 import History from '../../assets/images/logos/beginners/history.svg'
+import Benchmark from '../../assets/images/logos/beginners/benchmark.svg'
 import TickIcon from '../../assets/images/logos/tick-icon.svg'
 import TickCross from '../../assets/images/logos/tick-cross.svg'
 import ARBball from '../../assets/images/chains/ARBball-lg.png'
@@ -537,7 +538,7 @@ const AdvancedFarm = () => {
     { name: 'Rewards', img: Diamond },
     { name: 'Details', img: BarChart },
     { name: 'History', img: History },
-    { name: 'Benchmark', img: History },
+    { name: 'Benchmark', img: Benchmark },
   ]
 
   // Show vault info badge when platform is 'Seamless' or 'Harvest' and first visit
