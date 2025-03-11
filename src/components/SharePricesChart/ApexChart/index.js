@@ -25,9 +25,8 @@ import {
   getTimeSlots,
   generateColor,
 } from '../../../utilities/parsers'
-import { ChartWrapper, LoadingDiv, NoData, FakeChartWrapper, LoaderWrapper } from './style'
+import { ChartWrapper, LoadingDiv, NoData, LoaderWrapper } from './style'
 import { useWallet } from '../../../providers/Wallet'
-import { fakeChartData } from '../../../constants'
 
 function generateChartDataWithSlots(slots, apiData, sharePriceData) {
   const seriesData = [],
@@ -171,9 +170,7 @@ const ApexChart = ({
         unitBtw
 
       const dl = sharePriceData[token.id]?.length ?? 0
-      if (!connected) {
-        setIsDataReady('false')
-      } else if (loadComplete && dl === 0) {
+      if (loadComplete && dl === 0) {
         setIsDataReady('false')
       } else if (!loadComplete && dl === 0) {
         setIsDataReady('loading')
@@ -384,73 +381,7 @@ const ApexChart = ({
               <ClipLoader size={30} margin={2} color={fontColor} />
             </LoaderWrapper>
           ) : (
-            <>
-              {connected ? (
-                <NoData color={fontColor}>
-                  No activity found for this wallet. Convert any token to start farming!
-                </NoData>
-              ) : (
-                <NoData color={fontColor}>Connect wallet to see your balance chart</NoData>
-              )}
-              <FakeChartWrapper>
-                <ResponsiveContainer width="100%" height={onlyWidth > 1291 ? 346 : 365}>
-                  <ComposedChart
-                    data={fakeChartData}
-                    margin={{
-                      top: 20,
-                      right: 0,
-                      bottom: 0,
-                      left: 0,
-                    }}
-                  >
-                    <defs>
-                      <linearGradient id="colorUvPrice" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#00D26B" stopOpacity={0.1} />
-                        <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid
-                      strokeDasharray="0"
-                      strokeLinecap="butt"
-                      stroke="rgba(228, 228, 228, 0.2)"
-                      vertical={false}
-                    />
-                    <Line
-                      dataKey="y"
-                      type="monotone"
-                      strokeLinecap="round"
-                      strokeWidth={2}
-                      stroke="#00D26B"
-                      dot={false}
-                      legendType="none"
-                      yAxisId="left"
-                    />
-                    <XAxis
-                      dataKey="x"
-                      tickLine={false}
-                      tickCount={5}
-                      tick={renderCustomXAxisTick}
-                    />
-                    <YAxis
-                      dataKey="y"
-                      tickCount={5}
-                      stroke="#00D26B"
-                      yAxisId="left"
-                      orientation="left"
-                      mirror
-                    />
-                    <YAxis
-                      dataKey="z"
-                      tickCount={5}
-                      yAxisId="right"
-                      orientation="right"
-                      stroke="#8884d8"
-                      mirror
-                    />
-                  </ComposedChart>
-                </ResponsiveContainer>
-              </FakeChartWrapper>
-            </>
+            <NoData color={fontColor}>Shareprice data soon to be available.</NoData>
           )}
         </LoadingDiv>
       )}
