@@ -108,7 +108,6 @@ const PanelHeader = styled.div`
   justify-content: space-between;
   background-size: cover;
   background-position: center;
-  overflow: hidden;
 `
 
 const PanelTitle = styled.div`
@@ -142,7 +141,25 @@ const GeneralDiv = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 20px;
-  margin-top: 25px;
+  margin: 25px 20px 25px 0px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: ${props => (props.darkMode === 'true' ? '#202325' : '#f2f5ff')};
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: ${props => (props.darkMode === 'true' ? '#586269' : '#c4cbe1')};
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: ${props => (props.darkMode === 'true' ? '#6e7e89' : '#99a2bd')};
+  }
 `
 
 const PanelTags = styled.div`

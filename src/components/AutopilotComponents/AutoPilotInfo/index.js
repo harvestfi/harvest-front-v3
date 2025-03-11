@@ -25,7 +25,14 @@ import { handleToggle, getChainNamePortals } from '../../../utilities/parsers'
 import Button from '../../Button'
 
 const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
-  const { borderColorBox, btnColor, fontColor2, fontColor3, fontColor5 } = useThemeContext()
+  const {
+    darkMode,
+    borderColorBox,
+    btnColor,
+    fontColor2,
+    fontColor3,
+    fontColor5,
+  } = useThemeContext()
   const { rates } = useRate()
 
   const [activeMainTag, setActiveMainTag] = useState(0)
@@ -284,7 +291,7 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
           </PanelTags>
         </PanelHeader>
         {activeMainTag === 0 && (
-          <GeneralDiv key={activeMainTag}>
+          <GeneralDiv key={activeMainTag} darkMode={darkMode ? 'true' : 'false'}>
             {autoPilotInfoData.map((item, index) => (
               <RowDiv key={index}>
                 <NewLabel color={fontColor3} size="12px" height="20px" weight="500">
@@ -328,7 +335,7 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
           </GeneralDiv>
         )}
         {activeMainTag === 1 && (
-          <GeneralDiv key={activeMainTag}>
+          <GeneralDiv key={activeMainTag} darkMode={darkMode ? 'true' : 'false'}>
             {vaultData.allocPointData && vaultData.allocPointData.length > 0 ? (
               vaultData.allocPointData.map((data, index) => {
                 let vaultName = data.hVaultId.split('_')[0]
@@ -369,7 +376,7 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
           </GeneralDiv>
         )}
         {activeMainTag === 2 && (
-          <GeneralDiv key={activeMainTag}>
+          <GeneralDiv key={activeMainTag} darkMode={darkMode ? 'true' : 'false'}>
             <RowDiv>
               <NewLabel size="12px" height="20px" weight="500">
                 {showApyHistory ? 'APY' : 'Harvest Frequency'}
