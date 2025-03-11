@@ -55,7 +55,6 @@ const SubPart = styled.div`
   @media screen and (max-width: 992px) {
     flex-wrap: wrap;
     gap: 0px;
-    margin: 0px 25px 25px 25px;
     border: none;
   }
 `
