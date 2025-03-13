@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import ApexChart from '../ApexChart'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { useWallet } from '../../../providers/Wallet'
 import { formatDate, numberWithCommas } from '../../../utilities/formats'
 import { fromWei } from '../../../services/web3'
 import { getVaultHistories, getIPORVaultHistories } from '../../../utilities/apiCalls'
@@ -20,7 +19,6 @@ const { tokens } = require('../../../data')
 
 const SharePricesData = ({ token }) => {
   const { bgColorNew, borderColorBox, fontColor3 } = useThemeContext()
-  const { account } = useWallet()
 
   const [loadComplete, setLoadComplete] = useState(false)
   const [sharePriceData, setSharePriceData] = useState({})
@@ -136,7 +134,7 @@ const SharePricesData = ({ token }) => {
     }
 
     const initData = async () => {
-      if (account && address && chainId) {
+      if (address && chainId) {
         try {
           let sharePricesData = {}
 
@@ -205,7 +203,7 @@ const SharePricesData = ({ token }) => {
     return () => {
       isMounted = false
     }
-  }, [address, chainId, account, token])
+  }, [address, chainId, token])
 
   return (
     <Container backColor={bgColorNew} borderColor={borderColorBox}>
