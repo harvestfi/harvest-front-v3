@@ -18,7 +18,7 @@ import ChartButtonsGroup from '../ChartButtonsGroup'
 import ChartRangeSelect from '../../ChartRangeSelect'
 import { useRate } from '../../../providers/Rate'
 import { fromWei } from '../../../services/web3'
-import { handleToggle } from '../../../utilities/parsers'
+import { calculateApy, handleToggle } from '../../../utilities/parsers'
 import {
   ButtonGroup,
   ChartDiv,
@@ -208,70 +208,56 @@ const FarmDetailChart = ({
             }
           }
 
-          if (updatedData.generalApies.length !== 0) {
+          if (updatedData.vaultHistories.length !== 0) {
             // Calculate Detailed APY Breakdown values
-            const totalPeriodBasedOnApy =
-              (Number(updatedData.generalApies[0].timestamp) -
-                Number(updatedData.generalApies[updatedData.generalApies.length - 1].timestamp)) /
+            const totalPeriodBasedOnSharePrice =
+              (Number(updatedData.vaultHistories[0].timestamp) -
+                Number(
+                  updatedData.vaultHistories[updatedData.vaultHistories.length - 1].timestamp,
+                )) /
               (24 * 3600)
 
             const sharePriceVal = latestSharePriceValue === '-' ? 1 : Number(latestSharePriceValue)
             lifetimeApyValue = `${(
-              ((sharePriceVal - 1) / (totalPeriodBasedOnApy / 365)) *
+              ((sharePriceVal - 1) / (totalPeriodBasedOnSharePrice / 365)) *
               100
             ).toFixed(2)}%`
 
             // Calculate APY - Live & Historical Average
-            if (totalPeriodBasedOnApy >= 7) {
-              const lastSevenDaysData = updatedData.generalApies.filter(
-                entry =>
-                  Number(entry.timestamp) >=
-                  Number(updatedData.generalApies[0].timestamp) - 7 * 24 * 3600,
+            if (totalPeriodBasedOnSharePrice >= 7) {
+              sevenDaysApy = calculateApy(
+                updatedData.vaultHistories,
+                latestSharePriceValue,
+                token,
+                7,
               )
-              const sumApy = lastSevenDaysData.reduce(
-                (accumulator, currentValue) => accumulator + parseFloat(currentValue.apy),
-                0,
-              )
-              sevenDaysApy = `${(sumApy / lastSevenDaysData.length).toFixed(2)}%`
             }
 
-            if (totalPeriodBasedOnApy >= 30) {
-              const lastThirtyDaysData = updatedData.generalApies.filter(
-                entry =>
-                  Number(entry.timestamp) >=
-                  Number(updatedData.generalApies[0].timestamp) - 30 * 24 * 3600,
+            if (totalPeriodBasedOnSharePrice >= 30) {
+              thirtyDaysApy = calculateApy(
+                updatedData.vaultHistories,
+                latestSharePriceValue,
+                token,
+                30,
               )
-              const sumApy = lastThirtyDaysData.reduce(
-                (accumulator, currentValue) => accumulator + parseFloat(currentValue.apy),
-                0,
-              )
-              thirtyDaysApy = `${(sumApy / lastThirtyDaysData.length).toFixed(2)}%`
             }
 
-            if (totalPeriodBasedOnApy >= 180) {
-              const lastOneEightyDaysData = updatedData.generalApies.filter(
-                entry =>
-                  Number(entry.timestamp) >=
-                  Number(updatedData.generalApies[0].timestamp) - 180 * 24 * 3600,
+            if (totalPeriodBasedOnSharePrice >= 180) {
+              oneEightyDaysApy = calculateApy(
+                updatedData.vaultHistories,
+                latestSharePriceValue,
+                token,
+                180,
               )
-              const sumApy = lastOneEightyDaysData.reduce(
-                (accumulator, currentValue) => accumulator + parseFloat(currentValue.apy),
-                0,
-              )
-              oneEightyDaysApy = `${(sumApy / lastOneEightyDaysData.length).toFixed(2)}%`
             }
 
-            if (totalPeriodBasedOnApy >= 365) {
-              const lastThreeSixtyFiveDaysData = updatedData.generalApies.filter(
-                entry =>
-                  Number(entry.timestamp) >=
-                  Number(updatedData.generalApies[0].timestamp) - 365 * 24 * 3600,
+            if (totalPeriodBasedOnSharePrice >= 365) {
+              threeSixtyFiveDaysApy = calculateApy(
+                updatedData.vaultHistories,
+                latestSharePriceValue,
+                token,
+                365,
               )
-              const sumApy = lastThreeSixtyFiveDaysData.reduce(
-                (accumulator, currentValue) => accumulator + parseFloat(currentValue.apy),
-                0,
-              )
-              threeSixtyFiveDaysApy = `${(sumApy / lastThreeSixtyFiveDaysData.length).toFixed(2)}%`
             }
           }
 

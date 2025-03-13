@@ -9,7 +9,7 @@ import {
   SPECIAL_VAULTS,
 } from '../constants'
 import { CHAIN_IDS } from '../data/constants'
-import { ceil10, floor10, round10 } from './formats'
+import { ceil10, floor10, formatNumber, round10 } from './formats'
 import Arbitrum from '../assets/images/chains/arbitrum.svg'
 import Base from '../assets/images/chains/base.svg'
 import Zksync from '../assets/images/chains/zksync.svg'
@@ -685,6 +685,26 @@ export const getUnderlyingId = vaultData => {
     return vaultData.allocPointData[1].hVaultId
   }
   return ''
+}
+
+export const calculateApy = (vaultHData, latestSharePriceValue, vaultData, periodDays) => {
+  const filteredData = vaultHData.filter(
+    entry => Number(entry.timestamp) >= Number(vaultHData[0].timestamp) - periodDays * 24 * 3600,
+  )
+
+  if (filteredData.length === 0) return '0%'
+
+  const initialSharePrice = fromWei(
+    filteredData[filteredData.length - 1].sharePrice,
+    vaultData.decimals || vaultData.data.watchAsset.decimals,
+    vaultData.decimals || vaultData.data.watchAsset.decimals,
+    false,
+  )
+
+  return `${formatNumber(
+    ((latestSharePriceValue - initialSharePrice) / (periodDays / 365)) * 100,
+    2,
+  )}%`
 }
 
 /* eslint-disable no-plusplus, no-bitwise, one-var */

@@ -21,7 +21,7 @@ import {
   PilotInfoClose,
   SwitchMode,
 } from './style'
-import { handleToggle, getChainNamePortals } from '../../../utilities/parsers'
+import { handleToggle, getChainNamePortals, calculateApy } from '../../../utilities/parsers'
 import Button from '../../Button'
 import AnimatedDots from '../../AnimatedDots'
 
@@ -177,69 +177,53 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
           false,
         )
 
-        const totalPeriodBasedOnApy =
+        const totalPeriodDays =
           (Number(vaultHIPORData[0].timestamp) -
             Number(vaultHIPORData[vaultHIPORData.length - 1].timestamp)) /
           (24 * 3600)
 
         const sharePriceVal = latestSharePriceValue === '-' ? 1 : Number(latestSharePriceValue)
-        lifetimeApyValue = `${(((sharePriceVal - 1) / (totalPeriodBasedOnApy / 365)) * 100).toFixed(
-          2,
-        )}%`
+        lifetimeApyValue = `${(((sharePriceVal - 1) / (totalPeriodDays / 365)) * 100).toFixed(2)}%`
 
-        if (totalPeriodBasedOnApy >= 7) {
-          const lastSevenDaysData = vaultHIPORData.filter(
-            entry => Number(entry.timestamp) >= Number(vaultHIPORData[0].timestamp) - 7 * 24 * 3600,
-          )
-          sevenDaysHarvest = lastSevenDaysData.length / 7
-
-          const sumApy = lastSevenDaysData.reduce(
-            (accumulator, currentValue) => accumulator + parseFloat(currentValue.apy),
-            0,
-          )
-          sevenDaysApy = `${(sumApy / lastSevenDaysData.length).toFixed(2)}%`
+        if (totalPeriodDays >= 7) {
+          sevenDaysHarvest =
+            vaultHIPORData.filter(
+              entry =>
+                Number(entry.timestamp) >= Number(vaultHIPORData[0].timestamp) - 7 * 24 * 3600,
+            ).length / 7
+          sevenDaysApy = calculateApy(vaultHIPORData, latestSharePriceValue, vaultData, 7)
         }
 
-        if (totalPeriodBasedOnApy >= 30) {
-          const lastThirtyDaysData = vaultHIPORData.filter(
-            entry =>
-              Number(entry.timestamp) >= Number(vaultHIPORData[0].timestamp) - 30 * 24 * 3600,
-          )
-          thirtyDaysHarvest = lastThirtyDaysData.length / 30
-
-          const sumApy = lastThirtyDaysData.reduce(
-            (accumulator, currentValue) => accumulator + parseFloat(currentValue.apy),
-            0,
-          )
-          thirtyDaysApy = `${(sumApy / lastThirtyDaysData.length).toFixed(2)}%`
+        if (totalPeriodDays >= 30) {
+          thirtyDaysHarvest =
+            vaultHIPORData.filter(
+              entry =>
+                Number(entry.timestamp) >= Number(vaultHIPORData[0].timestamp) - 30 * 24 * 3600,
+            ).length / 30
+          thirtyDaysApy = calculateApy(vaultHIPORData, latestSharePriceValue, vaultData, 30)
         }
 
-        if (totalPeriodBasedOnApy >= 180) {
-          const lastOneEightyDaysData = vaultHIPORData.filter(
-            entry =>
-              Number(entry.timestamp) >= Number(vaultHIPORData[0].timestamp) - 180 * 24 * 3600,
-          )
-          oneEightyDaysHarvest = lastOneEightyDaysData.length / 180
-
-          const sumApy = lastOneEightyDaysData.reduce(
-            (accumulator, currentValue) => accumulator + parseFloat(currentValue.apy),
-            0,
-          )
-          oneEightyDaysApy = `${(sumApy / lastOneEightyDaysData.length).toFixed(2)}%`
+        if (totalPeriodDays >= 180) {
+          oneEightyDaysHarvest =
+            vaultHIPORData.filter(
+              entry =>
+                Number(entry.timestamp) >= Number(vaultHIPORData[0].timestamp) - 180 * 24 * 3600,
+            ).length / 180
+          oneEightyDaysApy = calculateApy(vaultHIPORData, latestSharePriceValue, vaultData, 180)
         }
 
-        if (totalPeriodBasedOnApy >= 365) {
-          const lastThreeSixtyFiveDaysData = vaultHIPORData.filter(
-            entry =>
-              Number(entry.timestamp) >= Number(vaultHIPORData[0].timestamp) - 365 * 24 * 3600,
+        if (totalPeriodDays >= 365) {
+          threeSixtyFiveDaysHarvest =
+            vaultHIPORData.filter(
+              entry =>
+                Number(entry.timestamp) >= Number(vaultHIPORData[0].timestamp) - 365 * 24 * 3600,
+            ).length / 365
+          threeSixtyFiveDaysApy = calculateApy(
+            vaultHIPORData,
+            latestSharePriceValue,
+            vaultData,
+            365,
           )
-          threeSixtyFiveDaysHarvest = lastThreeSixtyFiveDaysData.length / 365
-
-          const sumApy = lastThreeSixtyFiveDaysData.reduce(
-            (accumulator, currentValue) => accumulator + parseFloat(currentValue.apy),
-            0,
-          )
-          threeSixtyFiveDaysApy = `${(sumApy / lastThreeSixtyFiveDaysData.length).toFixed(2)}%`
         }
         set7DApy(sevenDaysApy)
         set30DApy(thirtyDaysApy)
