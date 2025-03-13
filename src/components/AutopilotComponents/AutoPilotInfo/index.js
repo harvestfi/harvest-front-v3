@@ -6,7 +6,7 @@ import { useRate } from '../../../providers/Rate'
 import { fromWei, getExplorerLink } from '../../../services/web3'
 import { useContracts } from '../../../providers/Contracts'
 import { getIPORVaultHistories, getIPORLastHarvestInfo } from '../../../utilities/apiCalls'
-import { abbreaviteNumber, formatFrequency } from '../../../utilities/formats'
+import { abbreaviteNumber, formatFrequency, formatNumber } from '../../../utilities/formats'
 import {
   PanelHeader,
   PanelTitle,
@@ -23,6 +23,7 @@ import {
 } from './style'
 import { handleToggle, getChainNamePortals } from '../../../utilities/parsers'
 import Button from '../../Button'
+import AnimatedDots from '../../AnimatedDots'
 
 const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
   const {
@@ -50,7 +51,7 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
   const mainTags = ['General', 'Allocation', 'Historical Rates']
   const [showApyHistory, setShowApyHistory] = useState(true)
 
-  const [lifetimeApy, setLifetimeApy] = useState('')
+  const [lifetimeApy, setLifetimeApy] = useState('-')
   const [sevenDApy, set7DApy] = useState('')
   const [thirtyDApy, set30DApy] = useState('')
   const [oneEightyDApy, set180DApy] = useState('')
@@ -61,18 +62,27 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
   const [threeSixtyDHarvest, set360DHarvest] = useState('')
 
   const autoPilotInfoData = [
-    { label: 'Last Harvest', value: `${lastHarvest} ago` },
-    { label: 'Harvest Frequency', value: `~${harvestFrequency}` },
-    { label: 'Lifetime APY', value: lifetimeApy },
-    { label: 'Operating Since', value: `${operatingSince} (${periodInday} days)` },
-    { label: 'TVL', value: `${currencySym}${totalValueLocked}` },
+    { label: 'Last Harvest', value: lastHarvest === '-' ? <AnimatedDots /> : `${lastHarvest} ago` },
+    {
+      label: 'Harvest Frequency',
+      value: harvestFrequency === '-' ? <AnimatedDots /> : `~${harvestFrequency}`,
+    },
+    { label: 'Lifetime APY', value: lifetimeApy === '-' ? <AnimatedDots /> : lifetimeApy },
+    {
+      label: 'Operating Since',
+      value: periodInday === '-' ? <AnimatedDots /> : `${operatingSince} (${periodInday} days)`,
+    },
+    {
+      label: 'TVL',
+      value: totalValueLocked === '-' ? <AnimatedDots /> : `${currencySym}${totalValueLocked}`,
+    },
     { label: 'Underlying', value: `${vaultData.tokenNames[0]}` },
   ]
 
   const detailData = [
     {
       label: showApyHistory ? 'Live' : 'Latest',
-      value: showApyHistory ? `${vaultData.estimatedApy}%` : `${lastHarvest} ago`,
+      value: showApyHistory ? `${formatNumber(vaultData.estimatedApy, 2)}%` : `${lastHarvest} ago`,
     },
     { label: '7d', value: showApyHistory ? sevenDApy : sevenDHarvest },
     { label: '30d', value: showApyHistory ? thirtyDApy : thirtyDHarvest },
@@ -320,7 +330,7 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
                     )
                   }}
                 >
-                  {vaultToken}
+                  {vaultToken === '-' ? <AnimatedDots /> : vaultToken}
                 </NewLabel>
               </u>
             </RowDiv>
