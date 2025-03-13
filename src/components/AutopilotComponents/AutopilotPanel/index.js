@@ -4,7 +4,7 @@ import { PiInfoBold } from 'react-icons/pi'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { toast } from 'react-toastify'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { isSpecialApp, showTokenBalance } from '../../../utilities/formats'
+import { formatNumber, isSpecialApp, showTokenBalance } from '../../../utilities/formats'
 import Button from '../../Button'
 import { useWallet } from '../../../providers/Wallet'
 import { usePortals } from '../../../providers/Portals'
@@ -198,7 +198,7 @@ const AutopilotPanel = ({
                   Live APY
                 </NewLabel>
                 <NewLabel size="20px" height="28px" weight="700" color={fontColor3}>
-                  {vaultData?.estimatedApy}%
+                  {formatNumber(vaultData?.estimatedApy, 2)}%
                 </NewLabel>
               </ApyInfo>
             </TokenInfo>
