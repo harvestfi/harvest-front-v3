@@ -153,6 +153,7 @@ const Activity = () => {
                 fAssetPool = token.data
               }
 
+              const iporVFlag = token.isIPORVault ?? false
               const paramAddress = isSpecialVault
                 ? token.data.collateralAddress
                 : token.vaultAddress || token.tokenAddress
@@ -160,6 +161,8 @@ const Activity = () => {
                 paramAddress,
                 useIFARM ? token.data.chain : token.chain,
                 account,
+                token.decimals,
+                iporVFlag,
                 token.decimals,
               )
 
