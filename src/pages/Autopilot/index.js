@@ -172,6 +172,7 @@ const Autopilot = () => {
           accountVal,
           vault.decimals,
           iporVFlag,
+          vault.decimals,
         )
 
         if (bFlag && vHFlag) {
