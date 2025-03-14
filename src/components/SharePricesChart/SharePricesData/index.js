@@ -17,7 +17,7 @@ import {
 
 const { tokens } = require('../../../data')
 
-const SharePricesData = ({ token }) => {
+const SharePricesData = ({ token, setSharePricesData }) => {
   const { bgColorNew, borderColorBox, fontColor3 } = useThemeContext()
 
   const [loadComplete, setLoadComplete] = useState(false)
@@ -178,6 +178,7 @@ const SharePricesData = ({ token }) => {
               })
               sharePricesData[token.id] = vaultHIPORData
             }
+            setSharePricesData(sharePricesData)
 
             if (sharePricesData[token.id].length > 0) {
               sharePricesData = adjustTimestamps(sharePricesData, token.id)
@@ -203,7 +204,7 @@ const SharePricesData = ({ token }) => {
     return () => {
       isMounted = false
     }
-  }, [address, chainId, token])
+  }, [address, chainId, token, setSharePricesData])
 
   return (
     <Container backColor={bgColorNew} borderColor={borderColorBox}>
