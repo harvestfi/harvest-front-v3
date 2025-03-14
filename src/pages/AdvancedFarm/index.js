@@ -328,7 +328,8 @@ const AdvancedFarm = () => {
   const [isFarmToken, setIsFarmToken] = useState(false)
   const [isReward, setIsReward] = useState(false)
   const [noNeedStaking, setNoNeedStaking] = useState(false)
-
+  const [sharePricesData, setSharePricesData] = useState({})
+  const [iporVaultLFAPY, setIPORVaultLFAPY] = useState('-')
   useEffect(() => {
     const getData = async () => {
       try {
@@ -1000,6 +1001,23 @@ const AdvancedFarm = () => {
   useEffect(() => {
     setFailureCountConvert(0)
   }, [pickedTokenDepo])
+
+  useEffect(() => {
+    if (sharePricesData && sharePricesData[token.id] && token.isIPORVault) {
+      const priceData = sharePricesData[token.id]
+
+      const totalPeriodBasedOnApy =
+        (Number(priceData[0].timestamp) - Number(priceData[priceData.length - 1].timestamp)) /
+        (24 * 3600)
+
+      const sharePriceVal = priceData[0].sharePrice ?? 1
+      const lifetimeApyValue = `${(
+        ((sharePriceVal - 1) / (totalPeriodBasedOnApy / 365)) *
+        100
+      ).toFixed(2)}%`
+      setIPORVaultLFAPY(lifetimeApyValue)
+    }
+  }, [sharePricesData, token])
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -2243,7 +2261,7 @@ const AdvancedFarm = () => {
                   A performance comparison between the Autopilot and it&apos;s underlying vaults.
                 </FlexDiv>
                 <MainSection height={activeMainTag === 0 ? '100%' : 'fit-content'}>
-                  <SharePricesData token={token} />
+                  <SharePricesData token={token} setSharePricesData={setSharePricesData} />
                 </MainSection>
                 <RestInternalBenchmark>
                   <LastHarvestInfo backColor={backColor} borderColor={borderColor}>
@@ -2255,7 +2273,7 @@ const AdvancedFarm = () => {
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom="1px solid #F3F6FF"
                     >
-                      APY Performance
+                      Lifetime avg. APY
                     </NewLabel>
                     <FlexDiv
                       justifyContent="space-between"
@@ -2267,28 +2285,39 @@ const AdvancedFarm = () => {
                         weight="500"
                         cursor="pointer"
                         borderBottom="0.5px dotted white"
-                        color={generateColor(token.id)}
+                        color="#5dcf46"
                         onClick={() => {}}
                       >
                         Harvest {token.tokenNames[0]}
                       </NewLabel>
-                      <NewLabel
-                        size="13.4px"
-                        height="20px"
-                        weight="500"
-                        color={generateColor(token.id)}
-                      >
-                        {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
+                      <NewLabel size="13.4px" height="20px" weight="500" color="#5dcf46">
+                        {iporVaultLFAPY}
                       </NewLabel>
                     </FlexDiv>
                     {token.allocPointData && token.allocPointData.length > 0 ? (
                       token.allocPointData
                         .filter(data => data.hVaultId !== 'Not invested')
                         .map((data, index) => {
-                          let vaultName = data.hVaultId.split('_')[0]
+                          let vaultName = data.hVaultId.split('_')[0],
+                            lifetimeApyValue = '-'
                           vaultName = `${vaultName.charAt(0).toUpperCase() + vaultName.slice(1)} ${
                             token.tokenNames[0]
                           }`
+
+                          if (sharePricesData && sharePricesData[data.hVaultId]) {
+                            const priceData = sharePricesData[data.hVaultId]
+
+                            const totalPeriodBasedOnApy =
+                              (Number(priceData[0].timestamp) -
+                                Number(priceData[priceData.length - 1].timestamp)) /
+                              (24 * 3600)
+
+                            const sharePriceVal = priceData[0].sharePrice ?? 1
+                            lifetimeApyValue = `${(
+                              ((sharePriceVal - 1) / (totalPeriodBasedOnApy / 365)) *
+                              100
+                            ).toFixed(2)}%`
+                          }
                           return (
                             <FlexDiv
                               key={index}
@@ -2311,7 +2340,7 @@ const AdvancedFarm = () => {
                                 weight="500"
                                 color={generateColor(data.hVaultId)}
                               >
-                                {Number(allVaultsData[data.hVaultId]?.estimatedApy).toFixed(2)}%
+                                {lifetimeApyValue}
                               </NewLabel>
                             </FlexDiv>
                           )
