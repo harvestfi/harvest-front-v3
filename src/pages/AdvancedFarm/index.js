@@ -329,7 +329,7 @@ const AdvancedFarm = () => {
   const [isReward, setIsReward] = useState(false)
   const [noNeedStaking, setNoNeedStaking] = useState(false)
   const [sharePricesData, setSharePricesData] = useState({})
-  const [iporVaultLFAPY, setIPORVaultLFAPY] = useState('-')
+  const [iporHvaultsLFAPY, setIPORHvaultsLFAPY] = useState({})
   useEffect(() => {
     const getData = async () => {
       try {
@@ -1003,19 +1003,31 @@ const AdvancedFarm = () => {
   }, [pickedTokenDepo])
 
   useEffect(() => {
-    if (sharePricesData && sharePricesData[token.id] && token.isIPORVault) {
-      const priceData = sharePricesData[token.id]
+    if (sharePricesData && token.isIPORVault) {
+      let avgAPYData = {}
+      Object.keys(sharePricesData).forEach(key => {
+        if (sharePricesData[key]) {
+          const priceData = sharePricesData[key]
 
-      const totalPeriodBasedOnApy =
-        (Number(priceData[0].timestamp) - Number(priceData[priceData.length - 1].timestamp)) /
-        (24 * 3600)
+          const totalPeriodBasedOnApy =
+            (Number(priceData[0].timestamp) - Number(priceData[priceData.length - 1].timestamp)) /
+            (24 * 3600)
 
-      const sharePriceVal = priceData[0].sharePrice ?? 1
-      const lifetimeApyValue = `${(
-        ((sharePriceVal - 1) / (totalPeriodBasedOnApy / 365)) *
-        100
-      ).toFixed(2)}%`
-      setIPORVaultLFAPY(lifetimeApyValue)
+          const sharePriceVal = priceData[0].sharePrice ?? 1
+          const lifetimeApyValue = (
+            ((sharePriceVal - 1) / (totalPeriodBasedOnApy / 365)) *
+            100
+          ).toFixed(2)
+
+          avgAPYData[key] = lifetimeApyValue
+        }
+      })
+      const sortedEntries = Object.entries(avgAPYData).sort(
+        ([, a], [, b]) => parseFloat(b) - parseFloat(a),
+      )
+
+      avgAPYData = Object.fromEntries(sortedEntries)
+      setIPORHvaultsLFAPY(avgAPYData)
     }
   }, [sharePricesData, token])
 
@@ -2291,38 +2303,36 @@ const AdvancedFarm = () => {
                         Harvest {token.tokenNames[0]}
                       </NewLabel>
                       <NewLabel size="13.4px" height="20px" weight="500" color="#5dcf46">
-                        {iporVaultLFAPY}
+                        {iporHvaultsLFAPY && iporHvaultsLFAPY[token.id]
+                          ? `${iporHvaultsLFAPY[token.id]}%`
+                          : '-'}
                       </NewLabel>
                     </FlexDiv>
-                    {token.allocPointData && token.allocPointData.length > 0 ? (
-                      token.allocPointData
-                        .filter(data => data.hVaultId !== 'Not invested')
-                        .map((data, index) => {
-                          let vaultName = data.hVaultId.split('_')[0],
-                            lifetimeApyValue = '-'
-                          vaultName = `${vaultName.charAt(0).toUpperCase() + vaultName.slice(1)} ${
-                            token.tokenNames[0]
-                          }`
+                    {iporHvaultsLFAPY ? (
+                      Object.keys(iporHvaultsLFAPY)
+                        .filter(key => key !== token.id)
+                        .map(apyKey => {
+                          let lifetimeApyValue = '-'
+                          const vaultParts = apyKey
+                              .split('_')
+                              .map(part => part.charAt(0).toUpperCase() + part.slice(1)),
+                            vaultName = vaultParts.join(' ')
 
-                          if (sharePricesData && sharePricesData[data.hVaultId]) {
-                            const priceData = sharePricesData[data.hVaultId]
-
-                            const totalPeriodBasedOnApy =
-                              (Number(priceData[0].timestamp) -
-                                Number(priceData[priceData.length - 1].timestamp)) /
-                              (24 * 3600)
-
-                            const sharePriceVal = priceData[0].sharePrice ?? 1
-                            lifetimeApyValue = `${(
-                              ((sharePriceVal - 1) / (totalPeriodBasedOnApy / 365)) *
-                              100
-                            ).toFixed(2)}%`
-                          }
+                          lifetimeApyValue = `${iporHvaultsLFAPY[apyKey]}%`
                           return (
                             <FlexDiv
-                              key={index}
+                              key={apyKey}
                               justifyContent="space-between"
                               padding={isMobile ? '10px 15px' : '10px 15px'}
+                              onClick={() => {
+                                const lcChainName = getChainNamePortals(token.chain)
+                                return allVaultsData[apyKey]?.vaultAddress
+                                  ? window.open(
+                                      `https://app.harvest.finance/${lcChainName}/${allVaultsData[apyKey]?.vaultAddress}`,
+                                      '_blank',
+                                    )
+                                  : null
+                              }}
                             >
                               <NewLabel
                                 size="13.4px"
@@ -2330,7 +2340,7 @@ const AdvancedFarm = () => {
                                 weight="500"
                                 cursor="pointer"
                                 borderBottom="0.5px dotted white"
-                                color={generateColor(data.hVaultId)}
+                                color={generateColor(apyKey)}
                               >
                                 {vaultName}
                               </NewLabel>
@@ -2338,7 +2348,7 @@ const AdvancedFarm = () => {
                                 size="13.4px"
                                 height="20px"
                                 weight="500"
-                                color={generateColor(data.hVaultId)}
+                                color={generateColor(apyKey)}
                               >
                                 {lifetimeApyValue}
                               </NewLabel>
