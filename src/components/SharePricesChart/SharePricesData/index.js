@@ -77,14 +77,14 @@ const SharePricesData = ({ token, setSharePricesData }) => {
     }
 
     const adjustTimestamps = (sharepriceData, id) => {
-      const referenceTimestamps = sharepriceData[id].map(entry => entry.timestamp)
+      const referenceTimestamps = sharepriceData[id]
+        .map(entry => entry.timestamp)
+        .filter(timestamp => timestamp > 1741284000)
       const referenceStartPrice = parseFloat(
-        sharepriceData[id][sharepriceData[id].length - 1].sharePrice,
+        sharepriceData[id][referenceTimestamps.length - 1].sharePrice,
       )
 
       Object.keys(sharepriceData).forEach(key => {
-        if (key === id) return // Skip itself
-
         const targetEntries = sharepriceData[key],
           adjustedEntries = []
 
