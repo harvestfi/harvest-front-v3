@@ -737,6 +737,7 @@ const Portfolio = () => {
               const tokenName = token.poolVault ? 'FARM' : token.tokenNames.join(' - ')
               const tokenPlatform = token.platform.join(', ')
               const tokenChain = token.poolVault ? token.data.chain : token.chain
+              const tokenSym = token.isIPORVault ? token.vaultSymbol : symbol
               if (isSpecialVault) {
                 fAssetPool = token.data
               }
@@ -758,7 +759,7 @@ const Portfolio = () => {
               vaultNetChanges.push({ id: symbol, sumNetChangeUsd })
               const enrichedDataWithSymbol = enrichedData.map(data => ({
                 ...data,
-                tokenSymbol: symbol,
+                tokenSymbol: tokenSym,
                 name: tokenName,
                 platform: tokenPlatform,
                 chain: tokenChain,
