@@ -720,14 +720,16 @@ const Portfolio = () => {
                 ? groupOfVaults[symbol].data
                 : find(totalPools, pool => pool.id === symbol)
 
-            if (symbol.includes('IPOR')) token = groupOfVaults[symbol]
-            else
+            if (symbol.includes('IPOR')) {
+              token = groupOfVaults[symbol]
+            } else {
               token = find(
                 groupOfVaults,
                 vault =>
                   vault.vaultAddress === fAssetPool?.collateralAddress ||
                   (vault.data && vault.data.collateralAddress === fAssetPool?.collateralAddress),
               )
+            }
 
             if (token) {
               const useIFARM = symbol === FARM_TOKEN_SYMBOL
