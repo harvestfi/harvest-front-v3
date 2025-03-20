@@ -753,7 +753,7 @@ const Portfolio = () => {
                 account,
                 token.decimals,
                 iporVFlag,
-                token.decimals,
+                token.vaultDecimals,
               )
 
               vaultNetChanges.push({ id: symbol, sumNetChangeUsd })

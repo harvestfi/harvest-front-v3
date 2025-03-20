@@ -182,7 +182,7 @@ const Activity = () => {
                 account,
                 token.decimals,
                 iporVFlag,
-                token.decimals,
+                token.vaultDecimals,
               )
 
               setSafeFlag(vaultHFlag)
