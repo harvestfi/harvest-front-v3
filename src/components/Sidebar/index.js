@@ -509,8 +509,10 @@ const Sidebar = ({ width }) => {
                         active={pathname.includes(item.path)}
                         activeColor={item.activeColor}
                         hoverImgColor={hoverImgColor}
-                        onClick={() => {
-                          if (item.newTab) {
+                        onClick={e => {
+                          if (e.ctrlKey) {
+                            window.open(item.path, '_blank')
+                          } else if (item.newTab) {
                             window.open(item.path, '_blank')
                           } else if (item.enabled !== false) {
                             directAction(item.path)
@@ -549,8 +551,10 @@ const Sidebar = ({ width }) => {
                   <LinkContainer
                     active={pathname.includes(item.path)}
                     hoverImgColor={hoverImgColor}
-                    onClick={() => {
-                      if (item.newTab) {
+                    onClick={e => {
+                      if (e.ctrlKey) {
+                        window.open(item.path, '_blank')
+                      } else if (item.newTab) {
                         window.open(item.path, '_blank')
                       } else {
                         directAction(item.path)

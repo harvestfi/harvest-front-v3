@@ -36,6 +36,26 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey, darkMo
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
 
+  const mouseDownHandler = event => {
+    if (event.button === 1) {
+      let badgeId = -1
+      const token = info.token
+      const chain = token.chain || token.data.chain
+      chainList.forEach((obj, j) => {
+        if (obj.chainId === Number(chain)) {
+          badgeId = j
+        }
+      })
+      const isSpecialVault = token.liquidityPoolVault || token.poolVault
+      const network = chainList[badgeId].name.toLowerCase()
+      const address = isSpecialVault
+        ? token.data.collateralAddress
+        : token.vaultAddress || token.tokenAddress
+      const url = `${directDetailUrl + network}/${address}?from=portfolio`
+      window.open(url, '_blank')
+    }
+  }
+
   useEffect(() => {
     if (rates.rateData) {
       setCurrencySym(rates.currency.icon)
@@ -53,7 +73,7 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey, darkMo
       key={cKey}
       mode={switchMode}
       background={bgColorNew}
-      onClick={() => {
+      onClick={e => {
         let badgeId = -1
         const token = info.token
         const chain = token.chain || token.data.chain
@@ -68,8 +88,14 @@ const VaultRow = ({ info, lifetimeYield, firstElement, lastElement, cKey, darkMo
           ? token.data.collateralAddress
           : token.vaultAddress || token.tokenAddress
 
-        push(`${directDetailUrl + network}/${address}?from=portfolio`)
+        const url = `${directDetailUrl + network}/${address}?from=portfolio`
+        if (e.ctrlKey) {
+          window.open(url, '_blank')
+        } else {
+          push(url)
+        }
       }}
+      onMouseDown={mouseDownHandler}
     >
       <FlexDiv padding={isMobile ? '25px' : '0'}>
         {!isMobile && (
