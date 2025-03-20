@@ -176,7 +176,7 @@ const Autopilot = () => {
         )
 
         if (bFlag && vHFlag) {
-          yieldMap[vault.id] = parseFloat(sumNetChange).toFixed(6)
+          yieldMap[vault.id] = sumNetChange
         }
       }),
     )
