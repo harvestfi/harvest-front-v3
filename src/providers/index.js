@@ -2,6 +2,7 @@ import injectedModule from '@web3-onboard/injected-wallets'
 import gnosisModule from '@web3-onboard/gnosis'
 import { init, Web3OnboardProvider } from '@web3-onboard/react'
 import walletConnectModule from '@web3-onboard/walletconnect'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import ledgerModule from '@web3-onboard/ledger'
 import React from 'react'
 import { ActionsProvider } from './Actions'
@@ -13,6 +14,7 @@ import { ThemeProvider } from './useThemeContext'
 import { VaultsProvider } from './Vault'
 import { WalletProvider } from './Wallet'
 import { PortalsProvider } from './Portals'
+import { IporProvider } from './Ipor'
 import HavestLogo from '../assets/images/logos/Harvest_Standard.svg'
 
 const injected = injectedModule()
@@ -102,24 +104,33 @@ const web3Onboard = init({
   },
 })
 
+const queryClient = new QueryClient()
+const QueryProvider = ({ children }) => {
+  return <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+}
+
 const Providers = ({ children }) => (
   <ContractsProvider>
     <Web3OnboardProvider web3Onboard={web3Onboard}>
-      <PortalsProvider>
-        <WalletProvider>
-          <PoolsProvider>
-            <VaultsProvider>
-              <ActionsProvider>
-                <StatsProvider>
-                  <RateProvider>
-                    <ThemeProvider>{children}</ThemeProvider>
-                  </RateProvider>
-                </StatsProvider>
-              </ActionsProvider>
-            </VaultsProvider>
-          </PoolsProvider>
-        </WalletProvider>
-      </PortalsProvider>
+      <IporProvider>
+        <QueryProvider>
+          <PortalsProvider>
+            <WalletProvider>
+              <PoolsProvider>
+                <VaultsProvider>
+                  <ActionsProvider>
+                    <StatsProvider>
+                      <RateProvider>
+                        <ThemeProvider>{children}</ThemeProvider>
+                      </RateProvider>
+                    </StatsProvider>
+                  </ActionsProvider>
+                </VaultsProvider>
+              </PoolsProvider>
+            </WalletProvider>
+          </PortalsProvider>
+        </QueryProvider>
+      </IporProvider>
     </Web3OnboardProvider>
   </ContractsProvider>
 )

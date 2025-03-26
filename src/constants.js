@@ -1003,3 +1003,7 @@ export const supportedCurrencies = [
     imgPath: Yen,
   },
 ]
+
+export const IPOR_API_URL = 'https://api.ipor.io'
+
+export const API_REFRESH_INTERVAL = 60 * 1000 // 1 minute

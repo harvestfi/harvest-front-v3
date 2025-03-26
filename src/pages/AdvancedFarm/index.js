@@ -44,6 +44,7 @@ import UnstakeStart from '../../components/AdvancedFarmComponents/Unstake/Unstak
 import UnstakeResult from '../../components/AdvancedFarmComponents/Unstake/UnstakeResult'
 import EarningsHistory from '../../components/EarningsHistory/HistoryData'
 import RewardsHistory from '../../components/RewardsHistory/RewardsData'
+import AOTChart from '../../components/AOTChart'
 import {
   DECIMAL_PRECISION,
   FARM_TOKEN_SYMBOL,
@@ -2274,6 +2275,7 @@ const AdvancedFarm = () => {
                 </FlexDiv>
                 <MainSection height={activeMainTag === 0 ? '100%' : 'fit-content'}>
                   <SharePricesData token={token} setSharePricesData={setSharePricesData} />
+                  <AOTChart chainId={token.chain} vaultAddress={token.vaultAddress} />
                 </MainSection>
                 <RestInternalBenchmark>
                   <LastHarvestInfo backColor={backColor} borderColor={borderColor}>

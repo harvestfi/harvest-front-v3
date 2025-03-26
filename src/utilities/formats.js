@@ -2,6 +2,7 @@ import axios from 'axios'
 import axiosRetry from 'axios-retry'
 import BigNumber from 'bignumber.js'
 import { get, isArray, isNaN, isEmpty } from 'lodash'
+import { formatUnits } from 'viem'
 import {
   DECIMAL_PRECISION,
   DISABLED_DEPOSITS,
@@ -605,4 +606,105 @@ export const formatNetworkName = networkName => {
   }
 
   return splitName.join(' ')
+}
+
+export const formatNumbers = (value, decimals, visibleDecimals = 2, thousandSeparator = ',') => {
+  const isNegative = value < 0
+  const valueAbsNumber = isNegative ? -value : value
+  const prefix = isNegative ? '-' : ''
+
+  const valueAbsString = formatUnits(valueAbsNumber, decimals)
+
+  const [int = '0', decimalFraction = '0'] = valueAbsString.split('.')
+  const formattedInt = int
+    .split('')
+    .reverse()
+    .flatMap((digit, index) => {
+      if (!thousandSeparator) {
+        return digit
+      }
+
+      if (index === 0 || index % 3) {
+        return digit
+      }
+
+      return [',', digit]
+    })
+    .reverse()
+    .join('')
+  const formattedDecimalFraction = decimalFraction
+    .slice(0, visibleDecimals)
+    .padEnd(visibleDecimals, '0')
+
+  if (formattedDecimalFraction) {
+    return `${prefix}${formattedInt}.${formattedDecimalFraction}`
+  }
+
+  return `${prefix}${formattedInt}`
+}
+
+const formatter = (value, exp) => {
+  const result = value * 10 ** exp
+
+  if (result > 100) {
+    return result.toFixed(0)
+  }
+
+  if (result > 10) {
+    return result.toFixed(1)
+  }
+
+  return result.toFixed(2)
+}
+
+const regularFormatter = value => {
+  return formatter(value, 0)
+}
+
+const thousandFormatter = value => {
+  return formatter(value, -3)
+}
+
+const millionFormatter = value => {
+  return formatter(value, -6)
+}
+
+const billionFormatter = value => {
+  return formatter(value, -9)
+}
+
+const trillionFormatter = value => {
+  return formatter(value, -12)
+}
+
+export const formatNumberDisplay = (value, showSign = true) => {
+  if ([0, Infinity, -Infinity].includes(value)) {
+    return '0'
+  }
+
+  if (isNaN(value)) {
+    return '0'
+  }
+
+  const isNegative = value < 0
+  const prefix = showSign && isNegative ? '-' : ''
+  const absValue = Math.abs(value)
+
+  if (absValue >= 1_000_000_000_000) {
+    return `${prefix}${trillionFormatter(absValue)}T`
+  }
+
+  if (absValue >= 1_000_000_000) {
+    return `${prefix}${billionFormatter(absValue)}B`
+  }
+
+  if (absValue >= 1_000_000) {
+    return `${prefix}${millionFormatter(absValue)}M`
+  }
+
+  if (absValue >= 1_000) {
+    return `${prefix}${thousandFormatter(absValue)}K`
+  }
+
+  return `${prefix}${regularFormatter(absValue)}`
 }
