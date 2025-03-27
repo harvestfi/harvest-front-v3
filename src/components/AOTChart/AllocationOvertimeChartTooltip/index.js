@@ -1,11 +1,8 @@
 import React from 'react'
 import { format } from 'date-fns'
-import { parseEther } from 'viem'
 import { TooltipWithBounds, defaultStyles } from '@visx/tooltip'
 import styled from 'styled-components'
 import ProtocolLabel from '../ProtocolLabel'
-import { MAX_DECIMALS } from '../../../constants'
-import { formatNumbers } from '../../../utilities/formats'
 import { generateColor } from '../../../utilities/parsers'
 import { useVaults } from '../../../providers/Vault'
 
@@ -39,16 +36,6 @@ const ProtocolEntry = styled.div`
 
 // Utility Functions
 const formatTooltipDate = date => format(new Date(date), 'dd/MM/yyyy HH:mm')
-
-const defaultFormatter = (value, visibleDecimals) => value.toFixed(visibleDecimals)
-
-const thousandSeparatedFormatter = (value, visibleDecimals) => {
-  return formatNumbers(
-    parseEther(defaultFormatter(value, visibleDecimals)),
-    MAX_DECIMALS,
-    visibleDecimals,
-  )
-}
 
 const ChartTooltip = ({ tooltipLeft, tooltipTop, children }) => {
   return (
@@ -88,7 +75,6 @@ const AllocationOvertimeChartTooltip = ({
           </ProtocolEntry>
         )
       })}
-      <TooltipText>Total: ${thousandSeparatedFormatter(tooltipData.marketsSum, 2)}</TooltipText>
     </ChartTooltip>
   )
 }

@@ -11,12 +11,18 @@ import { curveStep } from '@visx/curve'
 import { localPoint } from '@visx/event'
 import { formatNumberDisplay } from '../../../utilities/formats'
 import { useIpor } from '../../../providers/Ipor'
+import { useThemeContext } from '../../../providers/useThemeContext'
 
-export const textColor = 'rgba(255,255,255, 0.5)'
-export const tickLineColor = '#364867'
-export const gridLineColor = '#21273E'
-export const tickStyle = {
-  fill: textColor,
+const textColor_dark = 'rgba(255,255,255, 0.5)'
+const textColor_light = 'rgba(0, 0, 0, 0.7)'
+const tickLineColor = '#364867'
+const gridLineColor = '#21273E'
+const tickStyle_dark = {
+  fill: textColor_dark,
+  fontSize: '11px',
+}
+const tickStyle_light = {
+  fill: textColor_light,
   fontSize: '11px',
 }
 const MARGIN = { top: 8, bottom: 34, left: 50, right: 10 }
@@ -34,7 +40,7 @@ const MainChart = ({
   marketDataKeys,
 }) => {
   const { getMapChartData } = useIpor()
-
+  const { darkMode } = useThemeContext()
   const data = getMapChartData({ dataPoints: filteredDataPoints, marketDataKeys })
   const dataKeys = marketDataKeys.map(({ key }) => key)
 
@@ -118,16 +124,16 @@ const MainChart = ({
         tickFormat={value => format(new Date(value), 'M/d')}
         stroke={tickLineColor}
         tickLineProps={{ stroke: tickLineColor }}
-        tickLabelProps={{ style: tickStyle }}
+        tickLabelProps={{ style: darkMode ? tickStyle_dark : tickStyle_light }}
         numTicks={7}
       />
       <AxisLeft
         scale={yScale}
-        tickFormat={value => `$${formatNumberDisplay(value, false)}`}
+        tickFormat={value => `${formatNumberDisplay(value, false)}%`}
         numTicks={5}
         stroke={tickLineColor}
         tickLineProps={{ stroke: tickLineColor }}
-        tickLabelProps={{ style: tickStyle }}
+        tickLabelProps={{ style: darkMode ? tickStyle_dark : tickStyle_light }}
       />
       <Bar
         x={0}

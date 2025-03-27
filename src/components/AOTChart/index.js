@@ -34,6 +34,18 @@ const AOTChart = ({ chainId, vaultAddress }) => {
   const protocolDataKeys = getMarketDataKeys(data)
 
   const dataPoints = getAllocationOvertimeData(data)
+  if (dataPoints?.length > 0) {
+    dataPoints.forEach(item => {
+      if (item.marketsSum !== 0) {
+        Object.keys(item.markets).forEach(key => {
+          item.markets[key] = item.markets[key] === null ? 0 : item.markets[key]
+          item.markets[key] = (item.markets[key] / item.marketsSum) * 100
+        })
+        // Normalize marketsSum to 100
+        item.marketsSum = 100
+      }
+    })
+  }
 
   const {
     tooltipData,

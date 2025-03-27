@@ -715,9 +715,9 @@ export const generateColor = key => {
     hash = key.charCodeAt(i) + ((hash << 5) - hash)
   }
 
-  const r = hash & 0x7f
-  const g = (hash >> 3) & 0x7f
-  const b = 128 + ((hash >> 6) & 0x7f)
+  const r = 180 + (Math.abs(hash) % 75) // 180-255 (Strong red, but not overly dominant)
+  const g = 80 + (Math.abs(hash) % 90) // 80-170 (More warmth, adds yellow/orange undertones)
+  const b = 100 + (Math.abs(hash) % 130) // 100-230 (Purple/pink influences)
 
   const color = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b
     .toString(16)
