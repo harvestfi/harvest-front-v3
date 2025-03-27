@@ -73,15 +73,18 @@ const AllocationOvertimeChartTooltip = ({
       {marketDataKeys?.map(dataKey => {
         const { key, marketId } = dataKey
         const value = tooltipData.markets[key] || 0
+        const sum = tooltipData.marketsSum || 0
         if (value <= 0) return null
 
         const vaultKey = Object.entries(vaultsData).find(
           ([, vault]) => vault.vaultAddress.toLowerCase() === marketId.toLowerCase(),
         )?.[0]
 
+        const percentage = sum === 0 ? 0 : ((value / tooltipData.marketsSum) * 100).toFixed(2)
+
         return (
           <ProtocolEntry key={key} color={generateColor(vaultKey)}>
-            <ProtocolLabel vaultKey={vaultKey} /> ${thousandSeparatedFormatter(value, 2)}
+            <ProtocolLabel vaultKey={vaultKey} /> {percentage}%
           </ProtocolEntry>
         )
       })}
