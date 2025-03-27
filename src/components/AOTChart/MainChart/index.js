@@ -13,16 +13,16 @@ import { formatNumberDisplay } from '../../../utilities/formats'
 import { useIpor } from '../../../providers/Ipor'
 import { useThemeContext } from '../../../providers/useThemeContext'
 
-const textColor_dark = 'rgba(255,255,255, 0.5)'
-const textColor_light = 'rgba(0, 0, 0, 0.7)'
+const textColorDark = 'rgba(255,255,255, 0.5)'
+const textColorLight = 'rgba(0, 0, 0, 0.7)'
 const tickLineColor = '#364867'
 const gridLineColor = '#21273E'
-const tickStyle_dark = {
-  fill: textColor_dark,
+const tickStyleDark = {
+  fill: textColorDark,
   fontSize: '11px',
 }
-const tickStyle_light = {
-  fill: textColor_light,
+const tickStyleLight = {
+  fill: textColorLight,
   fontSize: '11px',
 }
 const MARGIN = { top: 8, bottom: 34, left: 50, right: 10 }
@@ -124,7 +124,7 @@ const MainChart = ({
         tickFormat={value => format(new Date(value), 'M/d')}
         stroke={tickLineColor}
         tickLineProps={{ stroke: tickLineColor }}
-        tickLabelProps={{ style: darkMode ? tickStyle_dark : tickStyle_light }}
+        tickLabelProps={{ style: darkMode ? tickStyleDark : tickStyleLight }}
         numTicks={7}
       />
       <AxisLeft
@@ -133,7 +133,7 @@ const MainChart = ({
         numTicks={5}
         stroke={tickLineColor}
         tickLineProps={{ stroke: tickLineColor }}
-        tickLabelProps={{ style: darkMode ? tickStyle_dark : tickStyle_light }}
+        tickLabelProps={{ style: darkMode ? tickStyleDark : tickStyleLight }}
       />
       <Bar
         x={0}
