@@ -177,6 +177,9 @@ export const showUsdValueCurrency = (value, currencySym, currencyRate) => {
   if (numValue > 0 && numValue < 0.01) {
     return `<${currencySym}0.01`
   }
+  if (numValue < 0 && numValue > -0.01) {
+    return `-<${currencySym}0.01`
+  }
   const formattedValue = new Intl.NumberFormat('en-US', {
     minimumFractionDigits: currencySym === '¥' ? 0 : 2,
     maximumFractionDigits: currencySym === '¥' ? 0 : 2,
