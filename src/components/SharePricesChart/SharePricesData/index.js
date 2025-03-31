@@ -136,7 +136,9 @@ const SharePricesData = ({ token, setSharePricesData }) => {
           if (token.allocPointData && token.allocPointData.length > 0) {
             await Promise.all(
               token.allocPointData
-                .filter(data => data.hVaultId !== 'Not invested')
+                .filter(
+                  data => data.hVaultId !== 'Not invested' && data.hVaultId !== 'morphoGC_ETH',
+                )
                 .map(async data => {
                   const vaultAddress = tokens[data.hVaultId].vaultAddress
                   const vaultChain = tokens[data.hVaultId].chain
