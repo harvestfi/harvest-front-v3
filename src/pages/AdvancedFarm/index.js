@@ -1486,7 +1486,7 @@ const AdvancedFarm = () => {
     { label: '365d', value: formatFrequency(threeSixtyDHarvest) },
     { label: 'Lifetime', value: formatFrequency(harvestFrequency) },
   ]
-  console.log(token, vaultPool, tradingApy, farmAPY, totalApy, boostedRewardAPY)
+
   const rewardTxt = getAdvancedRewardText(
     token,
     vaultPool,
