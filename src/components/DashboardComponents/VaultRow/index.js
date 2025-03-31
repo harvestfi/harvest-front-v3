@@ -36,23 +36,6 @@ const VaultRow = ({ info, lifetimeYield, lastElement, cKey, darkMode }) => {
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
 
-  const token = info.token
-  const chain = token.chain || token.data.chain
-
-  let badgeId = -1
-  chainList.forEach((obj, j) => {
-    if (obj.chainId === Number(chain)) {
-      badgeId = j
-    }
-  })
-
-  const isSpecialVault = token.liquidityPoolVault || token.poolVault
-  const network = chainList[badgeId]?.name.toLowerCase()
-  const address = isSpecialVault
-    ? token.data.collateralAddress
-    : token.vaultAddress || token.tokenAddress
-  const url = `${directDetailUrl}${network}/${address}?from=portfolio`
-
   useEffect(() => {
     if (rates.rateData) {
       setCurrencySym(rates.currency.icon)
