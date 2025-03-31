@@ -1221,7 +1221,6 @@ const Portfolio = () => {
                               key={i}
                               info={info}
                               lifetimeYield={lifetimeYield}
-                              firstElement={i === 0 ? 'yes' : 'no'}
                               lastElement={i === farmTokenList.length - 1 ? 'yes' : 'no'}
                               cKey={i}
                               darkMode={darkMode}
@@ -1246,7 +1245,6 @@ const Portfolio = () => {
                               key={i}
                               info={info}
                               lifetimeYield={lifetimeYield}
-                              firstElement={i === 0 ? 'yes' : 'no'}
                               lastElement={i === filteredFarmList.length - 1 ? 'yes' : 'no'}
                               cKey={i}
                               darkMode={darkMode}
