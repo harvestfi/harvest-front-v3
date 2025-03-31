@@ -2274,8 +2274,16 @@ const AdvancedFarm = () => {
                   A performance comparison between the Autopilot and it&apos;s underlying vaults.
                 </FlexDiv>
                 <MainSection height={activeMainTag === 0 ? '100%' : 'fit-content'}>
-                  <SharePricesData token={token} setSharePricesData={setSharePricesData} />
-                  <AOTChart chainId={token.chain} vaultAddress={token.vaultAddress} />
+                  <SharePricesData
+                    token={token}
+                    setSharePricesData={setSharePricesData}
+                    iporHvaultsLFAPY={iporHvaultsLFAPY}
+                  />
+                  <AOTChart
+                    chainId={token.chain}
+                    vaultAddress={token.vaultAddress}
+                    iporHvaultsLFAPY={iporHvaultsLFAPY}
+                  />
                 </MainSection>
                 <RestInternalBenchmark>
                   <LastHarvestInfo backColor={backColor} borderColor={borderColor}>
@@ -2342,7 +2350,7 @@ const AdvancedFarm = () => {
                                 weight="500"
                                 cursor="pointer"
                                 borderBottom="0.5px dotted white"
-                                color={generateColor(apyKey)}
+                                color={generateColor(iporHvaultsLFAPY, apyKey)}
                               >
                                 {vaultName}
                               </NewLabel>
@@ -2350,7 +2358,7 @@ const AdvancedFarm = () => {
                                 size="13.4px"
                                 height="20px"
                                 weight="500"
-                                color={generateColor(apyKey)}
+                                color={generateColor(iporHvaultsLFAPY, apyKey)}
                               >
                                 {lifetimeApyValue}
                               </NewLabel>

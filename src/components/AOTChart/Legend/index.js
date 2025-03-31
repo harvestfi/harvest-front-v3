@@ -36,7 +36,7 @@ const Label = styled.div`
   color: var(--text-muted); // Assumes CSS variable for muted text
 `
 
-const Legend = ({ marketDataKeys, chainId }) => {
+const Legend = ({ marketDataKeys, chainId, iporHvaultsLFAPY }) => {
   const { vaultsData } = useVaults()
 
   return (
@@ -51,7 +51,7 @@ const Legend = ({ marketDataKeys, chainId }) => {
 
         return (
           <LegendItem key={index}>
-            <ColorDot color={generateColor(vaultKey ?? '')} />
+            <ColorDot color={generateColor(iporHvaultsLFAPY, vaultKey)} />
             <Label>
               <ProtocolLabel vaultKey={vaultKey} />
             </Label>

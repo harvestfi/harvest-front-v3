@@ -708,21 +708,27 @@ export const calculateApy = (vaultHData, latestSharePriceValue, vaultData, perio
 }
 
 /* eslint-disable no-plusplus, no-bitwise, one-var */
-export const generateColor = key => {
-  let hash = 0
+export const generateColor = (vaultList, key) => {
+  const colorPalette = [
+    '#9b7ede', // Dusty Purple
+    '#d6a737', // Goldenrod
+    '#5f9ea0', // Teal Grey
+    '#8a9a5b', // Olive Green
+    '#b68f40', // Spicy Mustard
+    '#708090', // Slate
+    '#b491c8', // Soft Lilac
+    '#c4a000', // Mustard
+    '#a39887', // Taupe
+    '#556b2f', // Forest Moss
+    '#d0893d', // Muted Amber
+    '#77bfa3', // Seafoam
+    '#d08ca7', // Clay Pink
+    '#7a9e9f', // Dust Blue
+    '#b87333', // Copper
+  ]
+  const index = Object.keys(vaultList).indexOf(key)
+  const color = colorPalette[index]
 
-  for (let i = 0; i < key.length; i++) {
-    hash = key.charCodeAt(i) + ((hash << 5) - hash)
-  }
-
-  const r = 180 + (Math.abs(hash) % 75) // 180-255 (Strong red, but not overly dominant)
-  const g = 80 + (Math.abs(hash) % 90) // 80-170 (More warmth, adds yellow/orange undertones)
-  const b = 100 + (Math.abs(hash) % 130) // 100-230 (Purple/pink influences)
-
-  const color = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b
-    .toString(16)
-    .padStart(2, '0')}`
-
-  return color.toUpperCase()
+  return color
 }
 /* eslint-enable no-plusplus, no-bitwise, one-var */

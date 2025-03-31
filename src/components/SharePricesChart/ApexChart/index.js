@@ -88,6 +88,7 @@ const ApexChart = ({
   lastFarmingTimeStamp,
   isInactive,
   sharePriceData,
+  iporHvaultsLFAPY,
 }) => {
   const { fontColor, fontColor5, bgColorChart } = useThemeContext()
   const { connected } = useWallet()
@@ -335,7 +336,7 @@ const ApexChart = ({
                 vertical={false}
               />
               {Object.keys(sharePriceData).map(key => {
-                const color = key === token.id ? '#5dcf46' : generateColor(key)
+                const color = key === token.id ? '#5dcf46' : generateColor(iporHvaultsLFAPY, key)
                 return (
                   <Line
                     key={key}

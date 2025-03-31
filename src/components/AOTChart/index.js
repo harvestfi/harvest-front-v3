@@ -1,17 +1,56 @@
 import React from 'react'
 import { useMeasure } from 'react-use'
-import { useTooltip } from '@visx/tooltip'
-import { Line } from '@visx/shape'
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts'
 import styled from 'styled-components'
-import AllocationOvertimeChartTooltip from './AllocationOvertimeChartTooltip'
-import MainChart from './MainChart'
+import { format } from 'date-fns'
 import Legend from './Legend'
 import { useIpor } from '../../providers/Ipor'
 import { generateColor } from '../../utilities/parsers'
 import usePlasmaVaultHistoryQuery from '../../providers/Ipor/usePlasmaVaultHistoryQuery'
 import { useVaults } from '../../providers/Vault'
+import ProtocolLabel from './ProtocolLabel'
 
-// Styled Components
+// Styled Components for Tooltip
+const TooltipContainer = styled.div`
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 1px;
+  border-radius: 5px;
+  font-size: 12px;
+`
+
+const TooltipTotal = styled.p`
+  margin: 0;
+  font-weight: bold;
+`
+
+const TooltipContent = styled.div`
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background-color: #15191c;
+  padding: 8px;
+  font-size: 12px;
+  color: white;
+`
+
+const ProtocolEntry = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  color: ${({ color }) => color};
+`
+
+const formatTooltipDate = date => format(new Date(date ?? new Date()), 'dd/MM/yyyy HH:mm')
+
+// Styled Component for Chart Container
 const ChartContainer = styled.div`
   position: relative;
   display: flex;
@@ -20,18 +59,47 @@ const ChartContainer = styled.div`
   align-items: center;
   width: 100%;
   margin-top: 50px;
+  opacity: 1; /* Ensures full opacity */
 `
 
-const SvgContainer = styled.svg`
-  width: 100%;
-  height: 100%;
-`
-
-const AOTChart = ({ chainId, vaultAddress }) => {
+const AOTChart = ({ chainId, vaultAddress, iporHvaultsLFAPY }) => {
   const { vaultsData } = useVaults()
   const { data } = usePlasmaVaultHistoryQuery(chainId, vaultAddress.toLowerCase())
   const { getAllocationOvertimeData, getMarketDataKeys } = useIpor()
   const protocolDataKeys = getMarketDataKeys(data)
+
+  const renderTooltipContent = o => {
+    const { payload, label } = o
+
+    return (
+      <TooltipContainer>
+        <TooltipContent>
+          <TooltipTotal>{formatTooltipDate(label)}</TooltipTotal>
+          {payload
+            .filter(entry => entry.value !== 0 && entry.value !== null)
+            .map((entry, index) => {
+              const regex = /0x[a-fA-F0-9]{40}/ // Regular expression to match Ethereum address format
+              const address = entry.dataKey.match(regex)[0] ?? ''
+              const value = entry.value || 0
+
+              if (value <= 0) return null
+
+              const vaultKey = Object.entries(vaultsData).find(
+                ([, vault]) => vault.vaultAddress.toLowerCase() === address.toLowerCase(),
+              )?.[0]
+              return (
+                <ProtocolEntry
+                  key={`item-${index}`}
+                  color={generateColor(iporHvaultsLFAPY, vaultKey)}
+                >
+                  <ProtocolLabel vaultKey={vaultKey} /> {entry.value.toFixed(2)}%
+                </ProtocolEntry>
+              )
+            })}
+        </TooltipContent>
+      </TooltipContainer>
+    )
+  }
 
   const dataPoints = getAllocationOvertimeData(data)
   if (dataPoints?.length > 0) {
@@ -47,15 +115,6 @@ const AOTChart = ({ chainId, vaultAddress }) => {
     })
   }
 
-  const {
-    tooltipData,
-    tooltipLeft = 0,
-    tooltipTop = 0,
-    tooltipOpen,
-    showTooltip,
-    hideTooltip,
-  } = useTooltip()
-
   // Responsive width and height
   const [containerRef, { width }] = useMeasure()
   const chartHeight = width * 0.5 // Maintain 2:1 aspect ratio
@@ -64,8 +123,32 @@ const AOTChart = ({ chainId, vaultAddress }) => {
 
   return (
     <ChartContainer ref={containerRef}>
-      <SvgContainer width={width} height={chartHeight}>
-        <defs>
+      <ResponsiveContainer width="100%" height={chartHeight}>
+        <AreaChart data={dataPoints}>
+          <CartesianGrid strokeDasharray="3 3" />
+          {/* X-Axis with custom date format */}
+          <XAxis
+            dataKey="date"
+            tickFormatter={tick => {
+              const date = new Date(tick)
+              return `${date.getMonth() + 1}/${date.getDate()}` // Format as M/D
+            }}
+            ticks={
+              dataPoints.length > 0
+                ? dataPoints
+                    .filter((_, index) => index % Math.ceil(dataPoints.length / 5) === 0)
+                    .map(item => item.date)
+                : []
+            }
+          />
+          {/* Y-Axis with range from 0 to 100% */}
+          <YAxis
+            domain={[0, 100]} // Set Y-axis to show from 0 to 100%
+            tickFormatter={tick => `${tick}%`} // Format Y-axis ticks as percentages
+            ticks={Array.from({ length: 6 }, (_, index) => index * 20)} // Generates 6 ticks: [0, 20, 40, 60, 80, 100]
+            interval={0} // Show every tick (we are specifying the ticks array manually)
+          />
+          <Tooltip content={renderTooltipContent} />
           {protocolDataKeys?.map(protocolDataKey => {
             const vaultAddr = protocolDataKey.marketId
             const vaultKey = Object.entries(vaultsData).find(
@@ -75,52 +158,23 @@ const AOTChart = ({ chainId, vaultAddress }) => {
             )?.[0]
 
             return (
-              <linearGradient
+              <Area
                 key={protocolDataKey.key}
-                id={`allocation-over-time-${protocolDataKey.key}`}
-                x1="0"
-                y1="0"
-                x2="0"
-                y2="1"
-              >
-                <stop offset="0%" stopColor={generateColor(vaultKey)} stopOpacity={1} />
-                <stop offset="100%" stopColor={generateColor(vaultKey)} stopOpacity={0.8} />
-              </linearGradient>
+                type="monotone"
+                dataKey={`markets.${protocolDataKey.key}`}
+                stackId="1"
+                stroke={generateColor(iporHvaultsLFAPY, vaultKey)}
+                fill={generateColor(iporHvaultsLFAPY, vaultKey)}
+              />
             )
           })}
-          <linearGradient id="allocation-over-time-unallocated" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#808080" stopOpacity={0.7} />
-            <stop offset="100%" stopColor="#353535" stopOpacity={0} />
-          </linearGradient>
-        </defs>
-        <MainChart
-          filteredDataPoints={dataPoints}
-          width={width}
-          height={chartHeight}
-          hideTooltip={hideTooltip}
-          showTooltip={showTooltip}
-          marketDataKeys={protocolDataKeys}
-        />
-        {tooltipData && (
-          <Line
-            from={{ x: tooltipLeft, y: 0 }}
-            to={{ x: tooltipLeft, y: chartHeight - 34 }}
-            stroke="white"
-            strokeWidth={1}
-            pointerEvents="none"
-            strokeDasharray="5,2"
-          />
-        )}
-      </SvgContainer>
-      <Legend marketDataKeys={protocolDataKeys} chainId={chainId} />
-      {tooltipOpen && tooltipData && (
-        <AllocationOvertimeChartTooltip
-          tooltipData={tooltipData}
-          tooltipTop={tooltipTop}
-          tooltipLeft={tooltipLeft}
-          marketDataKeys={protocolDataKeys}
-        />
-      )}
+        </AreaChart>
+      </ResponsiveContainer>
+      <Legend
+        marketDataKeys={protocolDataKeys}
+        chainId={chainId}
+        iporHvaultsLFAPY={iporHvaultsLFAPY}
+      />
     </ChartContainer>
   )
 }

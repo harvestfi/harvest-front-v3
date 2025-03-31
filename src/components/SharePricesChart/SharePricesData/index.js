@@ -17,7 +17,7 @@ import {
 
 const { tokens } = require('../../../data')
 
-const SharePricesData = ({ token, setSharePricesData }) => {
+const SharePricesData = ({ token, setSharePricesData, iporHvaultsLFAPY }) => {
   const { bgColorNew, borderColorBox, fontColor3 } = useThemeContext()
 
   const [loadComplete, setLoadComplete] = useState(false)
@@ -245,6 +245,7 @@ const SharePricesData = ({ token, setSharePricesData }) => {
           lastFarmingTimeStamp={lastFarmingTimeStamp}
           isInactive={token.inactive}
           sharePriceData={sharePriceData}
+          iporHvaultsLFAPY={iporHvaultsLFAPY}
         />
       </ChartDiv>
     </Container>
