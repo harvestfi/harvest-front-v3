@@ -701,7 +701,6 @@ const Portfolio = () => {
                 stakedVaults.push(key)
               }
             }
-            /* eslint-disable no-restricted-syntax, no-await-in-loop */
           }
 
           const vaultNetChanges = []
@@ -743,11 +742,10 @@ const Portfolio = () => {
                 fAssetPool = token.data
               }
 
+              const iporVFlag = token.isIPORVault ?? false
               const paramAddress = isSpecialVault
                 ? token.data.collateralAddress
                 : token.vaultAddress || token.tokenAddress
-
-              const iporVFlag = token.isIPORVault ?? false
               const { sumNetChangeUsd, enrichedData } = await initBalanceAndDetailData(
                 paramAddress,
                 useIFARM ? token.data.chain : token.chain,
