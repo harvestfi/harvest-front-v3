@@ -1,13 +1,10 @@
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { z } from 'zod'
-import { isAddress } from 'viem'
 import { IPOR_API_URL, API_REFRESH_INTERVAL } from '../../constants'
 
 // Schema Definitions
-const AddressTypeSchema = z.custom(address => isAddress(address), {
-  message: 'Incorrect address',
-})
+const AddressTypeSchema = z.string().nullable()
 
 const DateStringSchema = z.string().datetime()
 const NumberStringSchema = z.string().regex(/^-?[0-9]+(\.[0-9]+)?$/)

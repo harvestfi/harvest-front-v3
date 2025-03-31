@@ -27,8 +27,6 @@ A web application to make your hard work easier with [harvest.finance](https://h
 
 4. Run `yarn` in order to install the dependencies and you are ready to become a humble farmer!
 
-5. Set environment for a higher Node.js version: On Windows, run `set NODE_OPTIONS=--openssl-legacy-provider`. On Ubuntu/macOS, use `export NODE_OPTIONS=--openssl-legacy-provider` and add it to ~/.bashrc or ~/.zshrc for persistence.
-
 ## Available Scripts
 
 ### `yarn start`

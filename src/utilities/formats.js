@@ -2,7 +2,6 @@ import axios from 'axios'
 import axiosRetry from 'axios-retry'
 import BigNumber from 'bignumber.js'
 import { get, isArray, isNaN, isEmpty } from 'lodash'
-import { formatUnits } from 'viem'
 import {
   DECIMAL_PRECISION,
   DISABLED_DEPOSITS,
@@ -606,41 +605,6 @@ export const formatNetworkName = networkName => {
   }
 
   return splitName.join(' ')
-}
-
-export const formatNumbers = (value, decimals, visibleDecimals = 2, thousandSeparator = ',') => {
-  const isNegative = value < 0
-  const valueAbsNumber = isNegative ? -value : value
-  const prefix = isNegative ? '-' : ''
-
-  const valueAbsString = formatUnits(valueAbsNumber, decimals)
-
-  const [int = '0', decimalFraction = '0'] = valueAbsString.split('.')
-  const formattedInt = int
-    .split('')
-    .reverse()
-    .flatMap((digit, index) => {
-      if (!thousandSeparator) {
-        return digit
-      }
-
-      if (index === 0 || index % 3) {
-        return digit
-      }
-
-      return [',', digit]
-    })
-    .reverse()
-    .join('')
-  const formattedDecimalFraction = decimalFraction
-    .slice(0, visibleDecimals)
-    .padEnd(visibleDecimals, '0')
-
-  if (formattedDecimalFraction) {
-    return `${prefix}${formattedInt}.${formattedDecimalFraction}`
-  }
-
-  return `${prefix}${formattedInt}`
 }
 
 const formatter = (value, exp) => {
