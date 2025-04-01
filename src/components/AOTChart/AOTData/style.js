@@ -11,6 +11,7 @@ const Container = styled.div`
   border: 2px solid ${props => props.borderColor};
   background: ${props => props.backColor};
   justify-content: space-between;
+  margin-top: 10px;
 
   @media screen and (max-width: 992px) {
     padding: 15px 18px 25px;

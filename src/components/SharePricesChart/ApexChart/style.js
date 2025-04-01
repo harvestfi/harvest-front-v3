@@ -117,9 +117,14 @@ const TooltipContent = styled.div`
 
 const ProtocolEntry = styled.div`
   display: flex;
-  align-items: center;
+  align-items: space-between;
+  width: 100%;
   font-size: 12px;
   color: ${({ color }) => color};
+`
+
+const DottedUnderline = styled.span`
+  text-decoration: underline dotted;
 `
 
 export {
@@ -132,4 +137,5 @@ export {
   TooltipTotal,
   TooltipContent,
   ProtocolEntry,
+  DottedUnderline,
 }

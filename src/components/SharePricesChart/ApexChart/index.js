@@ -28,6 +28,7 @@ import {
   TooltipContent,
   TooltipTotal,
   ProtocolEntry,
+  DottedUnderline,
 } from './style'
 
 function generateChartDataWithSlots(slots, apiData, sharePriceData) {
@@ -104,7 +105,7 @@ const ApexChart = ({ token, loadComplete, sharePriceData, iporHvaultsLFAPY }) =>
     return (
       <TooltipContainer>
         <TooltipContent>
-          <TooltipTotal>{`${day}-${month}-${year} ${hour}:${mins}`}</TooltipTotal>
+          <TooltipTotal>{`${day}/${month}/${year} ${hour}:${mins}`}</TooltipTotal>
           {payload
             .filter(entry => entry.value !== 0 && entry.value !== null)
             .map((entry, index) => {
@@ -112,12 +113,19 @@ const ApexChart = ({ token, loadComplete, sharePriceData, iporHvaultsLFAPY }) =>
 
               if (value <= 0) return null
 
+              const vaultParts = entry.dataKey
+                  .split('_')
+                  .map(part => part.charAt(0).toUpperCase() + part.slice(1)),
+                vaultName = vaultParts.join(' ')
+
               return (
                 <ProtocolEntry
                   key={`item-${index}`}
                   color={generateColor(iporHvaultsLFAPY, entry.dataKey)}
                 >
-                  {entry.dataKey} {entry.value.toFixed(5)}
+                  <DottedUnderline>{vaultName}</DottedUnderline>
+                  &nbsp;&nbsp;
+                  {entry.value.toFixed(5)}
                 </ProtocolEntry>
               )
             })}

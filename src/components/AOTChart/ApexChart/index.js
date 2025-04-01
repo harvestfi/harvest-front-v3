@@ -21,6 +21,7 @@ import {
   TooltipContent,
   TooltipTotal,
   ProtocolEntry,
+  DottedUnderline,
 } from './style'
 import { useVaults } from '../../../providers/Vault'
 
@@ -46,7 +47,7 @@ const ApexChart = ({ token, loadComplete, aotData, dataKeys, iporHvaultsLFAPY })
     return (
       <TooltipContainer>
         <TooltipContent>
-          <TooltipTotal>{`${day}-${month}-${year} ${hour}:${mins}`}</TooltipTotal>
+          <TooltipTotal>{`${day}/${month}/${year} ${hour}:${mins}`}</TooltipTotal>
           {payload
             .filter(entry => entry.value !== 0 && entry.value !== null)
             .map((entry, index) => {
@@ -59,12 +60,19 @@ const ApexChart = ({ token, loadComplete, aotData, dataKeys, iporHvaultsLFAPY })
               const vaultKey = Object.entries(vaultsData).find(
                 ([, vault]) => vault.vaultAddress.toLowerCase() === address.toLowerCase(),
               )?.[0]
+              const vaultParts = vaultKey
+                  .split('_')
+                  .map(part => part.charAt(0).toUpperCase() + part.slice(1)),
+                vaultName = vaultParts.join(' ')
+
               return (
                 <ProtocolEntry
                   key={`item-${index}`}
                   color={generateColor(iporHvaultsLFAPY, vaultKey)}
                 >
-                  {vaultKey} {entry.value.toFixed(2)}%
+                  <DottedUnderline>{vaultName}</DottedUnderline>
+                  &nbsp;&nbsp;
+                  {entry.value.toFixed(2)}%
                 </ProtocolEntry>
               )
             })}
