@@ -122,6 +122,10 @@ const ProtocolEntry = styled.div`
   color: ${({ color }) => color};
 `
 
+const DottedUnderline = styled.span`
+  text-decoration: underline dotted;
+`
+
 export {
   ChartWrapper,
   LoadingDiv,
@@ -132,4 +136,5 @@ export {
   TooltipTotal,
   TooltipContent,
   ProtocolEntry,
+  DottedUnderline,
 }
