@@ -18,6 +18,7 @@ import POLYGON from '../../assets/images/chains/polygon.svg'
 import ZKSYNC from '../../assets/images/chains/zksync.svg'
 import Safe from '../../assets/images/logos/beginners/safe.svg'
 import Diamond from '../../assets/images/logos/beginners/diamond.svg'
+import DiamondSvg from '../../assets/images/logos/diamond.svg'
 import BarChart from '../../assets/images/logos/beginners/bar-chart-01.svg'
 import History from '../../assets/images/logos/beginners/history.svg'
 import Benchmark from '../../assets/images/logos/beginners/benchmark.svg'
@@ -1544,7 +1545,9 @@ const AdvancedFarm = () => {
                 <MobileChain>
                   <NetDetailItem>
                     <NetDetailContent fontColor={fontColor}>
-                      {useIFARM ? 'Harvest' : token.platform && token.platform[0]}
+                      {useIFARM || token.platform[0] === 'Autopilot'
+                        ? 'Harvest'
+                        : token.platform && token.platform[0]}
                     </NetDetailContent>
                   </NetDetailItem>
                   <ChainBack>
@@ -1578,6 +1581,38 @@ const AdvancedFarm = () => {
                 {showTVL()}
                 &nbsp;TVL
               </GuidePart>
+              {token.platform && token.platform[0] === 'Autopilot' && (
+                <GuidePart fontColor4="#5dcf46">
+                  <img src={DiamondSvg} width="14" height="14" alt="" />
+                  Autopilot
+                  <PiQuestion
+                    className="question"
+                    color={fontColor}
+                    fontSize={16}
+                    data-tip
+                    data-for="tooltip-autopilot-badge"
+                  />
+                  <ReactTooltip
+                    id="tooltip-autopilot-badge"
+                    backgroundColor={darkMode ? 'white' : '#101828'}
+                    borderColor={darkMode ? 'white' : 'black'}
+                    textColor={darkMode ? 'black' : 'white'}
+                  >
+                    <NewLabel
+                      size={isMobile ? '12px' : '12px'}
+                      height={isMobile ? '18px' : '18px'}
+                      linkColor={darkMode ? 'black' : 'white'}
+                      weight="400"
+                    >
+                      Automatic allocation optimization to the best performing sub-level
+                      vaults.&nbsp;
+                      <button type="button" className="learn" onClick={() => push('#')}>
+                        Learn more
+                      </button>
+                    </NewLabel>
+                  </ReactTooltip>
+                </GuidePart>
+              )}
             </GuideSection>
             <TabRow>
               <MainTagPanel>
@@ -1610,7 +1645,9 @@ const AdvancedFarm = () => {
                 <NetDetailItem>
                   <NetDetailTitle fontColor={fontColor}>Platform:</NetDetailTitle>
                   <NetDetailContent fontColor={fontColor}>
-                    {useIFARM ? 'Harvest' : token.platform && token.platform[0]}
+                    {useIFARM || token.platform[0] === 'Autopilot'
+                      ? 'Harvest'
+                      : token.platform && token.platform[0]}
                   </NetDetailContent>
                 </NetDetailItem>
                 <NetDetailItem>
