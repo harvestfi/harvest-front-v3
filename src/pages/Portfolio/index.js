@@ -1145,6 +1145,7 @@ const Portfolio = () => {
                     toolTipTitle={data.toolTipTitle}
                     toolTip={data.toolTip}
                     connected={connected}
+                    isLoading={isLoading}
                     farmTokenListLength={farmTokenList.length}
                   />
                 ))}
