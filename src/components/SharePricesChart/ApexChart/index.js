@@ -106,26 +106,33 @@ const ApexChart = ({ token, loadComplete, sharePriceData, iporHvaultsLFAPY }) =>
       <TooltipContainer>
         <TooltipContent>
           <TooltipTotal>{`${day}/${month}/${year} ${hour}:${mins}`}</TooltipTotal>
-          {payload
-            .filter(entry => entry.value !== 0 && entry.value !== null)
+          {Object.keys(iporHvaultsLFAPY) // Get keys in the order of iporHvaultsLFAPY
+            .filter(key => payload.some(entry => entry.dataKey === key)) // Ensure key exists in payload
+            .map(key => payload.find(entry => entry.dataKey === key)) // Find corresponding payload entry
+            .filter(entry => entry && entry.value !== 0 && entry.value !== null) // Filter valid entries
             .map((entry, index) => {
               const value = entry.value || 0
-
               if (value <= 0) return null
 
               const vaultParts = entry.dataKey
-                  .split('_')
-                  .map(part => part.charAt(0).toUpperCase() + part.slice(1)),
-                vaultName = vaultParts.join(' ')
+                .split('_')
+                .map((part, i) => (i === 0 ? part.charAt(0).toUpperCase() + part.slice(1) : part))
+              const vaultName = vaultParts.join(' ')
 
               return (
                 <ProtocolEntry
                   key={`item-${index}`}
-                  color={generateColor(iporHvaultsLFAPY, entry.dataKey)}
+                  color={
+                    entry.dataKey !== token.id
+                      ? generateColor(iporHvaultsLFAPY, entry.dataKey)
+                      : '#5dcf46'
+                  }
                 >
-                  <DottedUnderline>{vaultName}</DottedUnderline>
+                  <DottedUnderline>
+                    {entry.dataKey !== token.id ? vaultName : `Harvest ${token.tokenNames[0]}`}
+                  </DottedUnderline>
                   &nbsp;&nbsp;
-                  {entry.value.toFixed(5)}
+                  {value.toFixed(5)}
                 </ProtocolEntry>
               )
             })}

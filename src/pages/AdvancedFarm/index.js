@@ -2326,9 +2326,11 @@ const AdvancedFarm = () => {
                         .map(apyKey => {
                           let lifetimeApyValue = '-'
                           const vaultParts = apyKey
-                              .split('_')
-                              .map(part => part.charAt(0).toUpperCase() + part.slice(1)),
-                            vaultName = vaultParts.join(' ')
+                            .split('_')
+                            .map((part, index) =>
+                              index === 0 ? part.charAt(0).toUpperCase() + part.slice(1) : part,
+                            )
+                          const vaultName = vaultParts.join(' ')
 
                           lifetimeApyValue = `${iporHvaultsLFAPY[apyKey]}%`
                           return (
