@@ -34,6 +34,7 @@ import WithdrawStart from '../../components/AdvancedFarmComponents/Withdraw/With
 import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
 import UserBalanceData from '../../components/UserBalanceChart/UserBalanceData'
 import SharePricesData from '../../components/SharePricesChart/SharePricesData'
+import AOTData from '../../components/AOTChart/AOTData'
 import PerformanceChart from '../../components/PerformanceChart/PerformanceChart'
 import VaultPanelActionsFooter from '../../components/AdvancedFarmComponents/Rewards/VaultPanelActionsFooter'
 import StakeBase from '../../components/AdvancedFarmComponents/Stake/StakeBase'
@@ -2285,7 +2286,12 @@ const AdvancedFarm = () => {
                   A performance comparison between the Autopilot and its sub-level vaults
                 </FlexDiv>
                 <MainSection height={activeMainTag === 0 ? '100%' : 'fit-content'}>
-                  <SharePricesData token={token} setSharePricesData={setSharePricesData} />
+                  <SharePricesData
+                    token={token}
+                    setSharePricesData={setSharePricesData}
+                    iporHvaultsLFAPY={iporHvaultsLFAPY}
+                  />
+                  <AOTData token={token} iporHvaultsLFAPY={iporHvaultsLFAPY} />
                 </MainSection>
                 <RestInternalBenchmark>
                   <LastHarvestInfo backColor={backColor} borderColor={borderColor}>
@@ -2326,9 +2332,11 @@ const AdvancedFarm = () => {
                         .map(apyKey => {
                           let lifetimeApyValue = '-'
                           const vaultParts = apyKey
-                              .split('_')
-                              .map(part => part.charAt(0).toUpperCase() + part.slice(1)),
-                            vaultName = vaultParts.join(' ')
+                            .split('_')
+                            .map((part, index) =>
+                              index === 0 ? part.charAt(0).toUpperCase() + part.slice(1) : part,
+                            )
+                          const vaultName = vaultParts.join(' ')
 
                           lifetimeApyValue = `${iporHvaultsLFAPY[apyKey]}%`
                           return (
@@ -2352,7 +2360,7 @@ const AdvancedFarm = () => {
                                 weight="500"
                                 cursor="pointer"
                                 borderBottom="0.5px dotted white"
-                                color={generateColor(apyKey)}
+                                color={generateColor(iporHvaultsLFAPY, apyKey)}
                               >
                                 {vaultName}
                               </NewLabel>
@@ -2360,7 +2368,7 @@ const AdvancedFarm = () => {
                                 size="13.4px"
                                 height="20px"
                                 weight="500"
-                                color={generateColor(apyKey)}
+                                color={generateColor(iporHvaultsLFAPY, apyKey)}
                               >
                                 {lifetimeApyValue}
                               </NewLabel>
