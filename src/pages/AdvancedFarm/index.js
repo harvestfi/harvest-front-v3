@@ -183,6 +183,8 @@ const AdvancedFarm = () => {
     fontColor2,
     fontColor3,
     fontColor4,
+    fontColor8,
+    activeColorModal,
     linkColorTooltip,
     linkColorOnHover,
     activeColorNew,
@@ -1582,12 +1584,12 @@ const AdvancedFarm = () => {
                 &nbsp;TVL
               </GuidePart>
               {token.platform && token.platform[0] === 'Autopilot' && (
-                <GuidePart fontColor4="#5dcf46">
+                <GuidePart backcolor={activeColorModal} fontColor4="#5dcf46">
                   <img src={DiamondSvg} width="14" height="14" alt="" />
                   Autopilot
                   <PiQuestion
                     className="question"
-                    color={fontColor}
+                    color={fontColor8}
                     fontSize={16}
                     data-tip
                     data-for="tooltip-autopilot-badge"

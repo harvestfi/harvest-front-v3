@@ -1056,6 +1056,7 @@ const GuideSection = styled.div`
 `
 
 const GuidePart = styled.div`
+  background: ${props => props.backcolor};
   border-radius: 5px;
   border: 1.3px solid ${props => props.fontColor4};
   display: flex;
