@@ -1606,8 +1606,7 @@ const AdvancedFarm = () => {
                       linkColor={darkMode ? 'black' : 'white'}
                       weight="400"
                     >
-                      Automatic allocation optimization to the best performing sub-level
-                      vaults.&nbsp;
+                      Automatic allocation optimization to the best performing sub-vaults.&nbsp;
                       <button type="button" className="learn" onClick={() => push('#')}>
                         Learn more
                       </button>
