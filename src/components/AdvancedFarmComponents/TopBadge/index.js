@@ -20,8 +20,8 @@ const TopBadge = () => {
           {visible && (
             <TooltipBox
               darkMode={darkMode}
-              onMouseEnter={() => setVisible(true)} // Keep tooltip open when mouse enters
-              onMouseLeave={() => setVisible(false)} // Only hide when mouse leaves the tooltip itself
+              onMouseEnter={() => setVisible(true)}
+              onMouseLeave={() => setVisible(false)}
             >
               Automatic allocation optimization to the best performing sub-vaults.&nbsp;
               <LearnLink

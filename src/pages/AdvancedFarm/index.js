@@ -1194,7 +1194,6 @@ const AdvancedFarm = () => {
             console.error('Error:', error)
           }
         }
-        // console.log('USD Vault Price of ', rewardSymbol, ':', usdRewardPrice)
         usdPrices.push(usdRewardPrice)
 
         setRewardTokenPrices(usdPrices)
