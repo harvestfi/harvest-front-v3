@@ -294,15 +294,6 @@ const NewLabel = styled.div`
     top: 13px;
   }
 
-  button.learn {
-    font-weight: 600;
-    cursor: pointer;
-    background: none;
-    border: none;
-    color: ${props => props.linkColor};
-    padding: 0;
-  }
-
   img.icon {
     margin-right: 10px;
   }

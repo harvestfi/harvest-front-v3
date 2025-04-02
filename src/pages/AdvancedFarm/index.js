@@ -18,7 +18,6 @@ import POLYGON from '../../assets/images/chains/polygon.svg'
 import ZKSYNC from '../../assets/images/chains/zksync.svg'
 import Safe from '../../assets/images/logos/beginners/safe.svg'
 import Diamond from '../../assets/images/logos/beginners/diamond.svg'
-import DiamondSvg from '../../assets/images/logos/diamond.svg'
 import BarChart from '../../assets/images/logos/beginners/bar-chart-01.svg'
 import History from '../../assets/images/logos/beginners/history.svg'
 import Benchmark from '../../assets/images/logos/beginners/benchmark.svg'
@@ -165,9 +164,9 @@ import {
   SwitchTabTag,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
-// import { array } from 'prop-types'
 import { usePortals } from '../../providers/Portals'
 import SourceOfYield from '../../components/AdvancedFarmComponents/SourceOfYield'
+import TopBadge from '../../components/AdvancedFarmComponents/TopBadge'
 
 const AdvancedFarm = () => {
   const {
@@ -183,8 +182,6 @@ const AdvancedFarm = () => {
     fontColor2,
     fontColor3,
     fontColor4,
-    fontColor8,
-    activeColorModal,
     linkColorTooltip,
     linkColorOnHover,
     activeColorNew,
@@ -333,6 +330,7 @@ const AdvancedFarm = () => {
   const [noNeedStaking, setNoNeedStaking] = useState(false)
   const [sharePricesData, setSharePricesData] = useState({})
   const [iporHvaultsLFAPY, setIPORHvaultsLFAPY] = useState({})
+
   useEffect(() => {
     const getData = async () => {
       try {
@@ -1583,37 +1581,7 @@ const AdvancedFarm = () => {
                 {showTVL()}
                 &nbsp;TVL
               </GuidePart>
-              {token.platform && token.platform[0] === 'Autopilot' && (
-                <GuidePart backcolor={activeColorModal} fontColor4="#5dcf46">
-                  <img src={DiamondSvg} width="14" height="14" alt="" />
-                  Autopilot
-                  <PiQuestion
-                    className="question"
-                    color={fontColor8}
-                    fontSize={16}
-                    data-tip
-                    data-for="tooltip-autopilot-badge"
-                  />
-                  <ReactTooltip
-                    id="tooltip-autopilot-badge"
-                    backgroundColor={darkMode ? 'white' : '#101828'}
-                    borderColor={darkMode ? 'white' : 'black'}
-                    textColor={darkMode ? 'black' : 'white'}
-                  >
-                    <NewLabel
-                      size={isMobile ? '12px' : '12px'}
-                      height={isMobile ? '18px' : '18px'}
-                      linkColor={darkMode ? 'black' : 'white'}
-                      weight="400"
-                    >
-                      Automatic allocation optimization to the best performing sub-vaults.&nbsp;
-                      <button type="button" className="learn" onClick={() => push('#')}>
-                        Learn more
-                      </button>
-                    </NewLabel>
-                  </ReactTooltip>
-                </GuidePart>
-              )}
+              {token.platform && token.platform[0] === 'Autopilot' && <TopBadge />}
             </GuideSection>
             <TabRow>
               <MainTagPanel>
