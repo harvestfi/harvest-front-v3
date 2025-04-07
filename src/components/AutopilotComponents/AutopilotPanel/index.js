@@ -4,7 +4,12 @@ import { PiInfoBold } from 'react-icons/pi'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { toast } from 'react-toastify'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { formatNumber, isSpecialApp, showTokenBalance } from '../../../utilities/formats'
+import {
+  formatNumber,
+  getRawTokenBalance,
+  isSpecialApp,
+  showTokenBalance,
+} from '../../../utilities/formats'
 import Button from '../../Button'
 import { useWallet } from '../../../providers/Wallet'
 import { usePortals } from '../../../providers/Portals'
@@ -328,9 +333,9 @@ const AutopilotPanel = ({
                 onClick={() => {
                   if (account) {
                     if (subscribe) {
-                      setInputAmount(showTokenBalance(walletBalance, 8))
+                      setInputAmount(getRawTokenBalance(walletBalance, 8))
                     } else {
-                      setInputAmount(showTokenBalance(userAssetBalance, 8))
+                      setInputAmount(getRawTokenBalance(userAssetBalance, 8))
                     }
                   }
                 }}
@@ -338,7 +343,7 @@ const AutopilotPanel = ({
                 {subscribe ? 'Wallet Balance' : 'My Balance'}:{' '}
                 {subscribe
                   ? `${showTokenBalance(walletBalance, 8)} ${vaultData?.tokenNames[0]}`
-                  : `${userAssetBalance} ${vaultData?.tokenNames[0]}`}
+                  : `${showTokenBalance(userAssetBalance, 8)} ${vaultData?.tokenNames[0]}`}
               </NewLabel>
             </FlexDiv>
             <FlexDiv marginTop="18px">

@@ -229,6 +229,16 @@ export const showTokenBalance = (balance, decimals = 6) => {
   }).format(value)
 }
 
+export const getRawTokenBalance = (balance, decimals = 6) => {
+  const value = parseFloat(balance.toString().replace(/,/g, ''))
+  if (isNaN(value)) return '0'
+  if (value === 0) return '0'
+  if (value > 0 && value < 1 / 10 ** decimals) {
+    return (1 / 10 ** decimals).toFixed(decimals)
+  }
+  return value.toFixed(decimals).replace(/\.?0+$/, '')
+}
+
 export const getCurrencyRate = (sym, item, rateData) => {
   const date = new Date(Number(item.timestamp ?? 0))
 
