@@ -9,6 +9,7 @@ import {
   getRawTokenBalance,
   isSpecialApp,
   showTokenBalance,
+  showUsdValueCurrency,
 } from '../../../utilities/formats'
 import Button from '../../Button'
 import { useWallet } from '../../../providers/Wallet'
@@ -128,14 +129,9 @@ const AutopilotPanel = ({
       if (account && curChain === tokenChain && vaultData) {
         const inputTokenDetail = await getPortalsToken(chainId, vaultData.tokenAddress)
 
-        const inputValue =
-          Number(inputAmount) * Number(inputTokenDetail?.price) * Number(currencyRate)
+        const inputValue = Number(inputAmount) * Number(inputTokenDetail?.price)
         if (isMounted) {
-          if (Number(inputValue) < 0.01) {
-            setInputUSDAmount(`<${currencySym}0.01`)
-          } else {
-            setInputUSDAmount(`≈${currencySym}${inputValue.toFixed(2)}`)
-          }
+          setInputUSDAmount(inputValue)
         }
       }
     }
@@ -299,16 +295,12 @@ const AutopilotPanel = ({
                 />
                 <input type="hidden" value={Number(inputAmount)} />
                 <TokenUSDAmount fontColor3={fontColor3}>
-                  {inputAmount === '0' || inputAmount === '' ? (
-                    `${currencySym}0`
-                  ) : inputUSDAmount === '' ? (
+                  {inputUSDAmount === '' ? (
                     <TokenInfo>
                       <AnimatedDots />
                     </TokenInfo>
-                  ) : inputUSDAmount === '-' ? (
-                    '-'
                   ) : (
-                    `${inputUSDAmount}`
+                    showUsdValueCurrency(inputUSDAmount, currencySym, currencyRate, true)
                   )}
                 </TokenUSDAmount>
               </TokenInput>

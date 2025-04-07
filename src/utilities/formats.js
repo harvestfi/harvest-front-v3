@@ -169,7 +169,9 @@ export const showUsdValue = (value, currencySym) => {
   return `${currencySym}${formattedValue}`
 }
 
-export const showUsdValueCurrency = (value, currencySym, currencyRate) => {
+export const showUsdValueCurrency = (value, currencySym, currencyRate, appro = false) => {
+  if (value == null || isNaN(value)) return `${currencySym}0`
+  if (value === '-') return '-'
   let numValue = Number(value)
   if (numValue === 0) {
     return `${currencySym}0`
@@ -186,7 +188,7 @@ export const showUsdValueCurrency = (value, currencySym, currencyRate) => {
     maximumFractionDigits: currencySym === '¥' ? 0 : 2,
   }).format(Math.abs(numValue))
 
-  return `${numValue < 0 ? '-' : ''}${currencySym}${formattedValue}`
+  return `${appro ? '≈' : ''}${numValue < 0 ? '-' : ''}${currencySym}${formattedValue}`
 }
 
 export const formatFrequency = value => {
