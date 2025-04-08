@@ -2282,7 +2282,7 @@ const AdvancedFarm = () => {
             ) : activeMainTag === 4 && token.isIPORVault ? (
               <>
                 <FlexDiv marginBottom="20px">
-                  A performance comparison between the Autopilot and it&apos;s sub-level vaults.
+                  A performance comparison between the Autopilot and its sub-level vaults.
                 </FlexDiv>
                 <MainSection height={activeMainTag === 0 ? '100%' : 'fit-content'}>
                   <SharePricesData
