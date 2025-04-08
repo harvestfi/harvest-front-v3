@@ -453,6 +453,13 @@ const NewLabel = styled.div`
     font-size: 10px;
     line-height: 12px;
   }
+
+  a.audit-link {
+    text-decoration: underline;
+    cursor: pointer;
+    color: unset;
+    font-weight: unset;
+  }
 `
 
 const FlexDiv = styled.div`
