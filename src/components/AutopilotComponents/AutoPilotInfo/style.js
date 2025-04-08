@@ -214,7 +214,7 @@ const PanelSubscribe = styled.div`
 const BasePanelBox = styled.div`
   width: 450px;
   height: 490px;
-  margin-top: 50px;
+  margin-top: 25px;
   display: flex;
   flex-direction: column;
   /* key: ${props => props.key}; */
