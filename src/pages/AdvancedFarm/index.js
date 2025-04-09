@@ -54,7 +54,6 @@ import {
   BEGINNERS_BALANCES_DECIMALS,
   POOL_BALANCES_DECIMALS,
   MAX_DECIMALS,
-  WIDO_BALANCES_DECIMALS,
   SOCIAL_LINKS,
   feeList,
   chainList,
@@ -2713,7 +2712,7 @@ const AdvancedFarm = () => {
                   <MyBalance
                     backColor={bgColorNew}
                     borderColor={borderColorBox}
-                    height={isMobile ? 'unset' : useIFARM ? 'unset' : '120px'}
+                    height={isMobile ? 'unset' : '120px'}
                     marginBottom={isMobile ? '20px' : '25px'}
                   >
                     <NewLabel
@@ -2724,7 +2723,7 @@ const AdvancedFarm = () => {
                       padding={isMobile ? '10px 15px' : '10px 15px'}
                       borderBottom={`1px solid ${borderColorBox}`}
                     >
-                      {useIFARM ? 'Farm (Legacy)' : fTokenName}
+                      {fTokenName}
                     </NewLabel>
                     <FlexDiv
                       justifyContent="space-between"
@@ -2753,9 +2752,8 @@ const AdvancedFarm = () => {
                             height={isMobile ? '18px' : '18px'}
                             weight="500"
                           >
-                            {useIFARM
-                              ? `The number of i${id} you hold, but entitled to extra token rewards.`
-                              : `The number of fTokens you hold, which are not entitled to extra token rewards.`}
+                            The number of fTokens you hold, which are not entitled to extra token
+                            rewards.
                           </NewLabel>
                         </ReactTooltip>
                       </NewLabel>
@@ -2802,9 +2800,8 @@ const AdvancedFarm = () => {
                             height={isMobile ? '18px' : '18px'}
                             weight="500"
                           >
-                            {useIFARM
-                              ? `The number of i${id} you hold, but entitled to extra token rewards.`
-                              : `The number of fTokens you hold, which are entitled to extra token rewards.`}
+                            The number of fTokens you hold, which are entitled to extra token
+                            rewards.
                           </NewLabel>
                         </ReactTooltip>
                       </NewLabel>
@@ -2827,92 +2824,6 @@ const AdvancedFarm = () => {
                         )}
                       </NewLabel>
                     </FlexDiv>
-                    {useIFARM && (
-                      <>
-                        <FlexDiv
-                          justifyContent="space-between"
-                          padding={isMobile ? '7px 11px' : '10px 15px'}
-                        >
-                          <NewLabel
-                            size={isMobile ? '10px' : '14px'}
-                            height={isMobile ? '18px' : '24px'}
-                            weight="500"
-                            color="#344054"
-                            self="center"
-                          >
-                            FARM Price
-                          </NewLabel>
-                          <NewLabel
-                            weight="500"
-                            size={isMobile ? '10px' : '14px'}
-                            height={isMobile ? '18px' : '24px'}
-                            color="black"
-                            self="center"
-                          >
-                            {!account ? (
-                              ''
-                            ) : token.data.lpTokenData ? (
-                              `${currencySym}${
-                                Number(token.data.lpTokenData.price) * Number(currencyRate)
-                              }`
-                            ) : (
-                              <AnimatedDots />
-                            )}
-                          </NewLabel>
-                        </FlexDiv>
-                        <FlexDiv
-                          justifyContent="space-between"
-                          padding={isMobile ? '7px 11px' : '10px 15px'}
-                        >
-                          <NewLabel
-                            size={isMobile ? '10px' : '14px'}
-                            height={isMobile ? '18px' : '24px'}
-                            weight="500"
-                            color="#344054"
-                            self="center"
-                          >
-                            Total Value
-                            <PiQuestion
-                              className="question"
-                              data-tip
-                              data-for="tooltip-totalValue"
-                            />
-                            <ReactTooltip
-                              id="tooltip-totalValue"
-                              backgroundColor={darkMode ? 'white' : '#101828'}
-                              borderColor={darkMode ? 'white' : 'black'}
-                              textColor={darkMode ? 'black' : 'white'}
-                            >
-                              <NewLabel
-                                size={isMobile ? '10px' : '12px'}
-                                height={isMobile ? '15px' : '18px'}
-                                weight="500"
-                              >
-                                Total Value of your Staked and Unstaked FARM
-                              </NewLabel>
-                            </ReactTooltip>
-                          </NewLabel>
-                          <NewLabel
-                            weight="500"
-                            size={isMobile ? '10px' : '14px'}
-                            height={isMobile ? '18px' : '24px'}
-                            color="black"
-                            self="center"
-                          >
-                            {!account ? (
-                              ''
-                            ) : totalValue ? (
-                              `${currencySym}${formatNumberWido(
-                                totalValue * token.data.lpTokenData.price * Number(currencyRate),
-                                WIDO_BALANCES_DECIMALS,
-                              )}`
-                            ) : (
-                              <AnimatedDots />
-                            )}
-                          </NewLabel>
-                        </FlexDiv>
-                      </>
-                    )}
                   </MyBalance>
                   {isMobile && (
                     <MyBalance
