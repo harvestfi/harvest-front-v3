@@ -25,7 +25,7 @@ const TopBadge = () => {
             >
               Automatic allocation optimization to the best performing sub-vaults.&nbsp;
               <LearnLink
-                href="#"
+                href="https://docs.harvest.finance/how-it-works/autopilots"
                 target="_blank"
                 rel="noopener noreferrer"
                 linkColor={darkMode ? 'black' : 'white'}
