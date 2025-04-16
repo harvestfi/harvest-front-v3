@@ -2073,7 +2073,7 @@ const AdvancedFarm = () => {
                         color={fontColor3}
                         self="center"
                       >
-                        {token.isIPORVault ? 'ffToken' : 'fToken'}
+                        fToken
                       </NewLabel>
                       <NewLabel
                         size={isMobile ? '12px' : '12px'}
@@ -2316,7 +2316,7 @@ const AdvancedFarm = () => {
                         color="#5dcf46"
                         onClick={() => {}}
                       >
-                        Harvest {token.tokenNames[0]}
+                        Autopilot {token.tokenNames[0]}
                       </NewLabel>
                       <NewLabel size="13.4px" height="20px" weight="500" color="#5dcf46">
                         {iporHvaultsLFAPY && iporHvaultsLFAPY[token.id]
@@ -3227,10 +3227,15 @@ const AdvancedFarm = () => {
                       </NewLabel>
                       {token.allocPointData && token.allocPointData.length > 0 ? (
                         token.allocPointData.map((data, index) => {
-                          let vaultName = data.hVaultId.split('_')[0]
-                          vaultName = `${vaultName.charAt(0).toUpperCase() + vaultName.slice(1)} ${
-                            token.tokenNames[0]
-                          }`
+                          let vaultName
+                          if (data.hVaultId === 'Not invested') {
+                            vaultName = `'Deployment Buffer' ${token.tokenNames[0]}`
+                          } else {
+                            vaultName = data.hVaultId.split('_')[0]
+                            vaultName = `${
+                              vaultName.charAt(0).toUpperCase() + vaultName.slice(1)
+                            } ${token.tokenNames[0]}`
+                          }
                           return (
                             <FlexDiv
                               key={index}
