@@ -1037,6 +1037,8 @@ const AdvancedFarm = () => {
       if (defaultToken !== null) {
         let tokenToSet = null
 
+        setPickedTokenWith(defaultToken)
+
         // Check if defaultToken is present in the balanceList
         if (defaultToken.balance !== '0' || !supportedVault || hasPortalsError) {
           if (!fromTokenList) {
