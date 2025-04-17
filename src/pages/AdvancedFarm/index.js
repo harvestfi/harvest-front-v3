@@ -24,6 +24,9 @@ import Benchmark from '../../assets/images/logos/beginners/benchmark.svg'
 import TickIcon from '../../assets/images/logos/tick-icon.svg'
 import TickCross from '../../assets/images/logos/tick-cross.svg'
 import ARBball from '../../assets/images/chains/ARBball-lg.png'
+import BaseAutopilotUSDC from '../../assets/images/logos/advancedfarm/BaseAutopilotUSDC.svg'
+import BaseAutopilotcbBTC from '../../assets/images/logos/advancedfarm/BaseAutopilotcbBTC.svg'
+import BaseAutopilotwETH from '../../assets/images/logos/advancedfarm/BaseAutopilotwETH.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/AdvancedFarmComponents/Deposit/DepositBase'
 import DepositSelectToken from '../../components/AdvancedFarmComponents/Deposit/DepositSelectToken'
@@ -765,11 +768,18 @@ const AdvancedFarm = () => {
                   default: false,
                   usdValue: balance.balanceUSD,
                   usdPrice: balance.price,
-                  logoURI: balance.image
-                    ? balance.image
-                    : balance.images
-                    ? balance.images[0]
-                    : 'https://etherscan.io/images/main/empty-token.png',
+                  logoURI:
+                    balance.symbol === 'bAutopilot_wETH'
+                      ? BaseAutopilotwETH
+                      : balance.symbol === 'bAutopilot_USDC'
+                      ? BaseAutopilotUSDC
+                      : balance.symbol === 'bAutopilot_cbBTC'
+                      ? BaseAutopilotcbBTC
+                      : balance.image
+                      ? balance.image
+                      : balance.images
+                      ? balance.images[0]
+                      : 'https://etherscan.io/images/main/empty-token.png',
                   decimals: balance.decimals,
                   chainId: chain,
                 }
