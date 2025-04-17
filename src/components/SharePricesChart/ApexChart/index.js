@@ -117,8 +117,8 @@ const ApexChart = ({ token, loadComplete, sharePriceData, iporHvaultsLFAPY }) =>
               const vaultParts = entry.dataKey
                 .split('_')
                 .map((part, i) => (i === 0 ? part.charAt(0).toUpperCase() + part.slice(1) : part))
-              const vaultName = vaultParts.join(' ')
-
+              let vaultName = vaultParts.join(' ')
+              if (vaultName === 'USDC base') vaultName = 'Compound V3 USDC Base'
               return (
                 <ProtocolEntry
                   key={`item-${index}`}
@@ -129,7 +129,7 @@ const ApexChart = ({ token, loadComplete, sharePriceData, iporHvaultsLFAPY }) =>
                   }
                 >
                   <DottedUnderline>
-                    {entry.dataKey !== token.id ? vaultName : `Harvest ${token.tokenNames[0]}`}
+                    {entry.dataKey !== token.id ? vaultName : `Autopilot ${token.tokenNames[0]}`}
                   </DottedUnderline>
                   &nbsp;&nbsp;
                   {value.toFixed(5)}
