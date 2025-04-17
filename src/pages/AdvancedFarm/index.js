@@ -2285,11 +2285,16 @@ const AdvancedFarm = () => {
                 </FlexDiv>
                 <MainSection height={activeMainTag === 0 ? '100%' : 'fit-content'}>
                   <SharePricesData
+                    chainName={chainName}
                     token={token}
                     setSharePricesData={setSharePricesData}
                     iporHvaultsLFAPY={iporHvaultsLFAPY}
                   />
-                  <AOTData token={token} iporHvaultsLFAPY={iporHvaultsLFAPY} />
+                  <AOTData
+                    chainName={chainName}
+                    token={token}
+                    iporHvaultsLFAPY={iporHvaultsLFAPY}
+                  />
                 </MainSection>
                 <RestInternalBenchmark>
                   <LastHarvestInfo backColor={backColor} borderColor={borderColor}>
@@ -2334,8 +2339,11 @@ const AdvancedFarm = () => {
                               index === 0 ? part.charAt(0).toUpperCase() + part.slice(1) : part,
                             )
                           let lifetimeApyValue = '-',
-                            vaultName = vaultParts.join(' ')
-                          if (vaultName === 'USDC base') vaultName = 'Compound V3 USDC Base'
+                            vaultName = vaultParts
+                              .filter(part => !part.toLowerCase().includes(chainName.toLowerCase()))
+                              .join(' ')
+                          if (vaultName === 'USDC') vaultName = 'Compound V3 USDC'
+                          if (vaultName === 'WETH') vaultName = 'Compound V3 WETH'
 
                           lifetimeApyValue = `${iporHvaultsLFAPY[apyKey]}%`
                           return (
@@ -3237,8 +3245,11 @@ const AdvancedFarm = () => {
                               .map((part, i) =>
                                 i === 0 ? part.charAt(0).toUpperCase() + part.slice(1) : part,
                               )
-                            vaultName = vaultParts.join(' ')
-                            if (vaultName === 'USDC base') vaultName = 'Compound V3 USDC Base'
+                            vaultName = vaultParts
+                              .filter(part => !part.toLowerCase().includes(chainName.toLowerCase()))
+                              .join(' ')
+                            if (vaultName === 'USDC') vaultName = 'Compound V3 USDC'
+                            if (vaultName === 'WETH') vaultName = 'Compound V3 WETH'
                           }
                           return (
                             <FlexDiv

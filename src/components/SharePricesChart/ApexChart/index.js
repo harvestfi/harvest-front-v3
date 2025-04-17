@@ -80,7 +80,7 @@ function getYAxisValues(min, max, roundNum) {
   return result
 }
 
-const ApexChart = ({ token, loadComplete, sharePriceData, iporHvaultsLFAPY }) => {
+const ApexChart = ({ chainName, token, loadComplete, sharePriceData, iporHvaultsLFAPY }) => {
   const { fontColor, fontColor5, bgColorChart } = useThemeContext()
   const onlyWidth = useWindowWidth()
 
@@ -117,8 +117,12 @@ const ApexChart = ({ token, loadComplete, sharePriceData, iporHvaultsLFAPY }) =>
               const vaultParts = entry.dataKey
                 .split('_')
                 .map((part, i) => (i === 0 ? part.charAt(0).toUpperCase() + part.slice(1) : part))
-              let vaultName = vaultParts.join(' ')
-              if (vaultName === 'USDC base') vaultName = 'Compound V3 USDC Base'
+              let vaultName = vaultParts
+                .filter(part => !part.toLowerCase().includes(chainName.toLowerCase()))
+                .join(' ')
+              if (vaultName === 'USDC') vaultName = 'Compound V3 USDC'
+              if (vaultName === 'WETH') vaultName = 'Compound V3 WETH'
+
               return (
                 <ProtocolEntry
                   key={`item-${index}`}
