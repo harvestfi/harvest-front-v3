@@ -2085,7 +2085,7 @@ const AdvancedFarm = () => {
                         color={fontColor3}
                         self="center"
                       >
-                        {token.isIPORVault ? 'ffToken' : 'fToken'}
+                        fToken
                       </NewLabel>
                       <NewLabel
                         size={isMobile ? '12px' : '12px'}
@@ -2297,11 +2297,16 @@ const AdvancedFarm = () => {
                 </FlexDiv>
                 <MainSection height={activeMainTag === 0 ? '100%' : 'fit-content'}>
                   <SharePricesData
+                    chainName={chainName}
                     token={token}
                     setSharePricesData={setSharePricesData}
                     iporHvaultsLFAPY={iporHvaultsLFAPY}
                   />
-                  <AOTData token={token} iporHvaultsLFAPY={iporHvaultsLFAPY} />
+                  <AOTData
+                    chainName={chainName}
+                    token={token}
+                    iporHvaultsLFAPY={iporHvaultsLFAPY}
+                  />
                 </MainSection>
                 <RestInternalBenchmark>
                   <LastHarvestInfo backColor={backColor} borderColor={borderColor}>
@@ -2328,7 +2333,7 @@ const AdvancedFarm = () => {
                         color="#5dcf46"
                         onClick={() => {}}
                       >
-                        Harvest {token.tokenNames[0]}
+                        Autopilot {token.tokenNames[0]}
                       </NewLabel>
                       <NewLabel size="13.4px" height="20px" weight="500" color="#5dcf46">
                         {iporHvaultsLFAPY && iporHvaultsLFAPY[token.id]
@@ -2340,13 +2345,17 @@ const AdvancedFarm = () => {
                       Object.keys(iporHvaultsLFAPY)
                         .filter(key => key !== token.id)
                         .map(apyKey => {
-                          let lifetimeApyValue = '-'
                           const vaultParts = apyKey
                             .split('_')
                             .map((part, index) =>
                               index === 0 ? part.charAt(0).toUpperCase() + part.slice(1) : part,
                             )
-                          const vaultName = vaultParts.join(' ')
+                          let lifetimeApyValue = '-',
+                            vaultName = vaultParts
+                              .filter(part => !part.toLowerCase().includes(chainName.toLowerCase()))
+                              .join(' ')
+                          if (vaultName === 'USDC') vaultName = 'Compound V3 USDC'
+                          if (vaultName === 'WETH') vaultName = 'Compound V3 WETH'
 
                           lifetimeApyValue = `${iporHvaultsLFAPY[apyKey]}%`
                           return (
@@ -3239,10 +3248,21 @@ const AdvancedFarm = () => {
                       </NewLabel>
                       {token.allocPointData && token.allocPointData.length > 0 ? (
                         token.allocPointData.map((data, index) => {
-                          let vaultName = data.hVaultId.split('_')[0]
-                          vaultName = `${vaultName.charAt(0).toUpperCase() + vaultName.slice(1)} ${
-                            token.tokenNames[0]
-                          }`
+                          let vaultName
+                          if (data.hVaultId === 'Not invested') {
+                            vaultName = `Deployment Buffer ${token.tokenNames[0]}`
+                          } else {
+                            const vaultParts = data.hVaultId
+                              .split('_')
+                              .map((part, i) =>
+                                i === 0 ? part.charAt(0).toUpperCase() + part.slice(1) : part,
+                              )
+                            vaultName = vaultParts
+                              .filter(part => !part.toLowerCase().includes(chainName.toLowerCase()))
+                              .join(' ')
+                            if (vaultName === 'USDC') vaultName = 'Compound V3 USDC'
+                            if (vaultName === 'WETH') vaultName = 'Compound V3 WETH'
+                          }
                           return (
                             <FlexDiv
                               key={index}
