@@ -16,7 +16,7 @@ const BaseSection = styled.div`
 `
 
 const LearnLink = styled.a`
-  font-weight: 600;
+  font-weight: 400;
   cursor: pointer;
   background: none;
   border: none;
