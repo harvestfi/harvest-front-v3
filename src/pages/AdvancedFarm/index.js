@@ -24,6 +24,9 @@ import Benchmark from '../../assets/images/logos/beginners/benchmark.svg'
 import TickIcon from '../../assets/images/logos/tick-icon.svg'
 import TickCross from '../../assets/images/logos/tick-cross.svg'
 import ARBball from '../../assets/images/chains/ARBball-lg.png'
+import BaseAutopilotUSDC from '../../assets/images/logos/advancedfarm/BaseAutopilotUSDC.svg'
+import BaseAutopilotcbBTC from '../../assets/images/logos/advancedfarm/BaseAutopilotcbBTC.svg'
+import BaseAutopilotwETH from '../../assets/images/logos/advancedfarm/BaseAutopilotwETH.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/AdvancedFarmComponents/Deposit/DepositBase'
 import DepositSelectToken from '../../components/AdvancedFarmComponents/Deposit/DepositSelectToken'
@@ -232,7 +235,7 @@ const AdvancedFarm = () => {
   const [selectTokenDepo, setSelectTokenDepo] = useState(false)
   const [balanceDepo, setBalanceDepo] = useState('0')
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
-  const [inputAmountDepo, setInputAmountDepo] = useState('0')
+  const [inputAmountDepo, setInputAmountDepo] = useState('')
   const [fromInfoAmount, setFromInfoAmount] = useState('')
   const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('')
   const [minReceiveAmountString, setMinReceiveAmountString] = useState('')
@@ -247,7 +250,7 @@ const AdvancedFarm = () => {
   const [selectTokenWith, setSelectTokenWith] = useState(false)
   const [unstakeBalance, setUnstakeBalance] = useState('0')
   const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select' })
-  const [unstakeInputValue, setUnstakeInputValue] = useState('0')
+  const [unstakeInputValue, setUnstakeInputValue] = useState('')
   const [revertFromInfoAmount, setRevertFromInfoAmount] = useState('')
   const [revertFromInfoUsdAmount, setRevertFromInfoUsdAmount] = useState('')
   const [revertMinReceivedAmount, setRevertMinReceivedAmount] = useState('')
@@ -257,12 +260,12 @@ const AdvancedFarm = () => {
 
   // Stake
   const [stakeStart, setStakeStart] = useState(false)
-  const [inputAmountStake, setInputAmountStake] = useState('0')
+  const [inputAmountStake, setInputAmountStake] = useState('')
   const [stakeFinalStep, setStakeFinalStep] = useState(false)
 
   // Unstake
   const [unstakeStart, setUnstakeStart] = useState(false)
-  const [inputAmountUnstake, setInputAmountUnstake] = useState('0')
+  const [inputAmountUnstake, setInputAmountUnstake] = useState('')
   const [unstakeFinalStep, setUnstakeFinalStep] = useState(false)
   const [amountsToExecuteUnstake, setAmountsToExecuteUnstake] = useState('')
 
@@ -765,11 +768,18 @@ const AdvancedFarm = () => {
                   default: false,
                   usdValue: balance.balanceUSD,
                   usdPrice: balance.price,
-                  logoURI: balance.image
-                    ? balance.image
-                    : balance.images
-                    ? balance.images[0]
-                    : 'https://etherscan.io/images/main/empty-token.png',
+                  logoURI:
+                    balance.symbol === 'bAutopilot_wETH'
+                      ? BaseAutopilotwETH
+                      : balance.symbol === 'bAutopilot_USDC'
+                      ? BaseAutopilotUSDC
+                      : balance.symbol === 'bAutopilot_cbBTC'
+                      ? BaseAutopilotcbBTC
+                      : balance.image
+                      ? balance.image
+                      : balance.images
+                      ? balance.images[0]
+                      : 'https://etherscan.io/images/main/empty-token.png',
                   decimals: balance.decimals,
                   chainId: chain,
                 }
@@ -1036,6 +1046,8 @@ const AdvancedFarm = () => {
     const timer = setTimeout(() => {
       if (defaultToken !== null) {
         let tokenToSet = null
+
+        setPickedTokenWith(defaultToken)
 
         // Check if defaultToken is present in the balanceList
         if (defaultToken.balance !== '0' || !supportedVault || hasPortalsError) {
