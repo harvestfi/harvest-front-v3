@@ -729,7 +729,7 @@ const WithdrawStart = ({
               Successful
             </ProgressText>
           </ProgressLabel>
-          {token.chain === '8453' && token.platform?.[0] !== 'Autopilot' && (
+          {curChain === '8453' && token.platform?.[0] !== 'Autopilot' && (
             <NewLabel>
               <NewLabel
                 color={darkMode ? '#ffffff' : '#344054'}
@@ -780,7 +780,7 @@ const WithdrawStart = ({
               </VaultContainer>
             </NewLabel>
           )}
-          {Number(curChain) !== 324 && (
+          {curChain !== '8453' && curChain !== '324' && (
             <NewLabel>
               <NewLabel
                 color={darkMode ? '#ffffff' : '#344054'}

@@ -131,6 +131,7 @@ const DepositStart = ({
 
   const SlippageValues = [null, 0.1, 0.5, 1, 5]
   const tokenName = token.isIPORVault ? tokenSymbol : `f${tokenSymbol}`
+  const curChain = token.poolVault ? token.data.chain : token.chain
 
   const onInputSlippage = e => {
     let inputValue = e.target.value
@@ -648,7 +649,7 @@ const DepositStart = ({
               Successful
             </ProgressText>
           </ProgressLabel>
-          {token.chain === '8453' && token.platform?.[0] !== 'Autopilot' && (
+          {curChain === '8453' && token.platform?.[0] !== 'Autopilot' && (
             <NewLabel>
               <NewLabel
                 color={darkMode ? '#ffffff' : '#344054'}
