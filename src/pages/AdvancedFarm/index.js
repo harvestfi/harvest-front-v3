@@ -3254,7 +3254,7 @@ const AdvancedFarm = () => {
                         token.allocPointData.map((data, index) => {
                           let vaultName
                           if (data.hVaultId === 'Not invested') {
-                            vaultName = `Deployment Buffer ${token.tokenNames[0]}`
+                            vaultName = `Deployment Buffer`
                           } else {
                             const vaultParts = data.hVaultId
                               .split('_')

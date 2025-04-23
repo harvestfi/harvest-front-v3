@@ -348,9 +348,13 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
             {vaultData.allocPointData && vaultData.allocPointData.length > 0 ? (
               vaultData.allocPointData.map((data, index) => {
                 let vaultName = data.hVaultId.split('_')[0]
-                vaultName = `${vaultName.charAt(0).toUpperCase() + vaultName.slice(1)} ${
-                  vaultData.tokenNames[0]
-                }`
+                if (vaultName === 'Not invested') {
+                  vaultName = 'Deployment buffer'
+                } else {
+                  vaultName = `${vaultName.charAt(0).toUpperCase() + vaultName.slice(1)} ${
+                    vaultData.tokenNames[0]
+                  }`
+                }
                 return (
                   <RowDiv key={index}>
                     <NewLabel
