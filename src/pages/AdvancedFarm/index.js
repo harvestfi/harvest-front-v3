@@ -897,6 +897,10 @@ const AdvancedFarm = () => {
                 web3Client,
               )
               const lpSymbol = await getSymbol(lpInstance)
+              const logoUri =
+                token.logoUrl && token.logoUrl.length > 1
+                  ? 'https://etherscan.io/images/main/empty-token.png'
+                  : token.logoUrl[0].substring(1)
               const direct = {
                 symbol: lpSymbol,
                 address: tokenAddress,
@@ -904,7 +908,7 @@ const AdvancedFarm = () => {
                 default: true,
                 usdPrice: directUsdPrice || '0',
                 usdValue: directUsdValue || '0',
-                logoURI: 'https://etherscan.io/images/main/empty-token.png',
+                logoURI: logoUri,
                 decimals: tokenDecimals,
                 chainId: parseInt(chain, 0),
               }
