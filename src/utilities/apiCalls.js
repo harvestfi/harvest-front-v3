@@ -294,6 +294,43 @@ export const getVaultHistories = async (address, chainId) => {
   return { vaultHData, vaultHFlag }
 }
 
+export const getMultipleVaultHistories = async (vaults, startTime, chainId) => {
+  let vaultHData = [],
+    vaultHFlag = true
+
+  vaults = vaults.map(address => address.toLowerCase())
+  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
+  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
+  vaults = vaults.map(address => (address === farm ? ifarm : address))
+
+  const query = `
+    query getVaultHistories($vaults: [String!], $startTime: BigInt!) {
+      vaultHistories(
+        first: 1000,
+        where: {
+          vault_in: $vaults,
+          timestamp_gte: $startTime,
+        },
+        orderBy: timestamp,
+        orderDirection: desc
+      ) {
+        priceUnderlying, sharePriceDec, timestamp, vault{id}
+      }
+    }
+  `
+  const variables = { vaults, startTime }
+  const url = GRAPH_URLS[chainId]
+
+  const data = await executeGraphCall(url, query, variables)
+  vaultHData = data?.vaultHistories
+
+  if (!vaultHData || vaultHData.length === 0) {
+    vaultHFlag = false
+  }
+
+  return { vaultHData, vaultHFlag }
+}
+
 export const getCurrencyRateHistories = async () => {
   const apiResponse = await axios.get(HISTORICAL_RATES_API_ENDPOINT)
   const apiData = get(apiResponse, 'data')
