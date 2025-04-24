@@ -644,7 +644,7 @@ export const getUserBalanceVaults = async account => {
     account = account.toLowerCase()
   }
 
-  const query = `
+  const query1 = `
     query getUserVaults($account: String!) {
       userBalances(
         where: {
@@ -655,6 +655,26 @@ export const getUserBalanceVaults = async account => {
       }
     }
   `
+
+  const query2 = `
+    query getUserVaults($account: String!) {
+      userBalances(
+        where: {
+          userAddress: $account,
+        }
+      ) {
+        vault{ id }
+      }
+      plasmaUserBalances(
+        where: {
+          userAddress: $account,
+        }
+      ) {
+        plasmaVault{id}
+      }
+    }
+  `
+
   const variables = { account }
   const urls = [
     GRAPH_URLS[CHAIN_IDS.ETH_MAINNET],
@@ -665,12 +685,19 @@ export const getUserBalanceVaults = async account => {
   ]
 
   try {
-    const results = await Promise.all(urls.map(url => executeGraphCall(url, query, variables)))
-
+    const results = await Promise.all(
+      urls.map(url =>
+        url === GRAPH_URLS[CHAIN_IDS.BASE] || url === GRAPH_URLS[CHAIN_IDS.ARBITRUM_ONE]
+          ? executeGraphCall(url, query2, variables)
+          : executeGraphCall(url, query1, variables),
+      ),
+    )
     results.forEach(userBalanceVaultData => {
-      const balances = userBalanceVaultData.userBalances
+      const balances = userBalanceVaultData.userBalances.concat(
+        userBalanceVaultData.plasmaUserBalances ? userBalanceVaultData.plasmaUserBalances : [],
+      )
       balances.forEach(balance => {
-        userBalanceVaults.push(balance.vault.id)
+        userBalanceVaults.push(balance.vault?.id || balance.plasmaVault?.id)
       })
     })
   } catch (err) {
