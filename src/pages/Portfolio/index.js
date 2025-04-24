@@ -53,7 +53,6 @@ import {
   getTokenPriceFromApi,
   getUserBalanceVaults,
   initBalanceAndDetailData,
-  checkIPORUserBalance,
 } from '../../utilities/apiCalls'
 import {
   getChainIcon,
@@ -685,19 +684,6 @@ const Portfolio = () => {
                 : groupOfVaults[key].vaultAddress || groupOfVaults[key].tokenAddress
 
               if (userBalanceVaults[j] === paramAddressAll.toLowerCase()) {
-                stakedVaults.push(key)
-              }
-
-              // eslint-disable-next-line no-await-in-loop
-              const iporBalCheck = groupOfVaults[key].isIPORVault
-                ? await checkIPORUserBalance(
-                    account,
-                    groupOfVaults[key]?.vaultAddress.toLowerCase(),
-                    groupOfVaults[key]?.chain,
-                  )
-                : false
-
-              if (iporBalCheck && !stakedVaults.includes(key)) {
                 stakedVaults.push(key)
               }
             }
