@@ -3226,11 +3226,11 @@ const AdvancedFarm = () => {
                             >
                               <FlexDiv gap="15px" justifyContent="space-between">
                                 <div>Harvest Treasury</div>
-                                <div>{harvestTreasury}%</div>
+                                <div>{token.isIPORVault ? '0' : harvestTreasury}%</div>
                               </FlexDiv>
                               <FlexDiv gap="15px" justifyContent="space-between" marginTop="12px">
                                 <div>Profit Sharing</div>
-                                <div>{profitShare}%</div>
+                                <div>{token.isIPORVault ? '0' : profitShare}%</div>
                               </FlexDiv>
                             </NewLabel>
                           </ReactTooltip>
