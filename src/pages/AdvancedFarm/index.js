@@ -1023,10 +1023,13 @@ const AdvancedFarm = () => {
       Object.keys(sharePricesData).forEach(key => {
         if (sharePricesData[key]) {
           const priceData = sharePricesData[key]
+          const firstItem = priceData.find(item => Number(item.sharePrice) <= 1)
+          const startTime = firstItem
+            ? Number(firstItem.timestamp)
+            : priceData[priceData.length - 1].timestamp
 
           const totalPeriodBasedOnApy =
-            (Number(priceData[0].timestamp) - Number(priceData[priceData.length - 1].timestamp)) /
-            (24 * 3600)
+            (Number(priceData[0].timestamp) - startTime) / (24 * 3600) + 1
 
           const sharePriceVal = priceData[0].sharePrice ?? 1
           const lifetimeApyValue = (
