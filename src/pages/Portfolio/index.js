@@ -47,18 +47,12 @@ import {
   formatNumber,
   showUsdValueCurrency,
 } from '../../utilities/formats'
+import { getCoinListFromApi, getTokenPriceFromApi } from '../../utilities/apiCalls'
 import {
-  getAllRewardEntities,
-  getCoinListFromApi,
-  getTokenPriceFromApi,
-  getUserBalanceVaults,
-  initBalanceAndDetailData,
-} from '../../utilities/apiCalls'
-import {
+  fetchAndParseVaultData,
   getChainIcon,
   getTotalApy,
   handleToggle,
-  mergeArrays,
   totalHistoryDataKey,
   totalNetProfitKey,
   vaultProfitDataKey,
@@ -148,6 +142,9 @@ const Portfolio = () => {
   const [oneDayYield, setOneDayYield] = useState(0)
   const [showAddress, setShowAddress] = useState(true)
   const [onceRun, setOnceRun] = useState(false)
+  const [safeFlag, setSafeFlag] = useState(true)
+  const [, setNoHarvestsData] = useState(false)
+  const [, setNoRewardsData] = useState(false)
   const [totalNetProfit, setTotalNetProfit] = useState(() => {
     return Number(localStorage.getItem(totalNetProfitKey) || '0')
   })
@@ -667,125 +664,33 @@ const Portfolio = () => {
       if (!isEmpty(userStats) && account && !onceRun) {
         setOnceRun(true)
         const getNetProfitValue = async () => {
-          let totalNetProfitUSD = 0,
-            combinedEnrichedData = [],
-            cumulativeLifetimeYield = 0
-
-          const { userBalanceVaults } = await getUserBalanceVaults(account)
-          const stakedVaults = []
-          const ul = userBalanceVaults.length
-          for (let j = 0; j < ul; j += 1) {
-            /* eslint-disable no-restricted-syntax, no-await-in-loop */
-            for (const key of Object.keys(groupOfVaults)) {
-              const isSpecialVaultAll =
-                groupOfVaults[key].liquidityPoolVault || groupOfVaults[key].poolVault
-              const paramAddressAll = isSpecialVaultAll
-                ? groupOfVaults[key].data.collateralAddress
-                : groupOfVaults[key].vaultAddress || groupOfVaults[key].tokenAddress
-
-              if (userBalanceVaults[j] === paramAddressAll.toLowerCase()) {
-                stakedVaults.push(key)
-              }
-            }
-          }
-
-          const vaultNetChanges = []
-          const promises = stakedVaults.map(async stakedVault => {
-            let symbol = '',
-              fAssetPool = {},
-              token = null
-
-            if (stakedVault === IFARM_TOKEN_SYMBOL) {
-              symbol = FARM_TOKEN_SYMBOL
-            } else {
-              symbol = stakedVault
-            }
-
-            fAssetPool =
-              symbol === FARM_TOKEN_SYMBOL
-                ? groupOfVaults[symbol].data
-                : find(totalPools, pool => pool.id === symbol)
-
-            if (symbol.includes('IPOR')) {
-              token = groupOfVaults[symbol]
-            } else {
-              token = find(
-                groupOfVaults,
-                vault =>
-                  vault.vaultAddress === fAssetPool?.collateralAddress ||
-                  (vault.data && vault.data.collateralAddress === fAssetPool?.collateralAddress),
-              )
-            }
-
-            if (token) {
-              const useIFARM = symbol === FARM_TOKEN_SYMBOL
-              const isSpecialVault = token.liquidityPoolVault || token.poolVault
-              const tokenName = token.poolVault ? 'FARM' : token.tokenNames.join(' - ')
-              const tokenPlatform = token.platform.join(', ')
-              const tokenChain = token.poolVault ? token.data.chain : token.chain
-              const tokenSym = token.isIPORVault ? token.vaultSymbol : symbol
-              if (isSpecialVault) {
-                fAssetPool = token.data
-              }
-
-              const iporVFlag = token.isIPORVault ?? false
-              const paramAddress = isSpecialVault
-                ? token.data.collateralAddress
-                : token.vaultAddress || token.tokenAddress
-              const { sumNetChangeUsd, enrichedData } = await initBalanceAndDetailData(
-                paramAddress,
-                useIFARM ? token.data.chain : token.chain,
-                account,
-                token.decimals,
-                iporVFlag,
-                token.vaultDecimals,
-              )
-
-              vaultNetChanges.push({ id: symbol, sumNetChangeUsd })
-              const enrichedDataWithSymbol = enrichedData.map(data => ({
-                ...data,
-                tokenSymbol: tokenSym,
-                name: tokenName,
-                platform: tokenPlatform,
-                chain: tokenChain,
-              }))
-              combinedEnrichedData = combinedEnrichedData.concat(enrichedDataWithSymbol)
-              totalNetProfitUSD += sumNetChangeUsd
-            }
+          const {
+            vaultNetChanges,
+            sortedCombinedEnrichedArray,
+            totalNetProfitUSD,
+            stakedVaults,
+            rewardsAPIDataLength,
+          } = await fetchAndParseVaultData({
+            account,
+            groupOfVaults,
+            totalPools,
+            setSafeFlag,
           })
 
-          await Promise.all(promises)
+          if (stakedVaults.length === 0) {
+            setNoHarvestsData(true)
+          }
 
-          totalNetProfitUSD = totalNetProfitUSD === 0 ? -1 : totalNetProfitUSD
+          if (rewardsAPIDataLength === 0) {
+            setNoRewardsData(true)
+          }
+
           setTotalNetProfit(totalNetProfitUSD)
           localStorage.setItem(totalNetProfitKey, totalNetProfitUSD.toString())
 
           setVaultNetChangeList(vaultNetChanges)
           localStorage.setItem(vaultProfitDataKey, JSON.stringify(vaultNetChanges))
 
-          const { rewardsAPIData } = await getAllRewardEntities(account)
-
-          if (rewardsAPIData.length !== 0) {
-            combinedEnrichedData = mergeArrays(rewardsAPIData, combinedEnrichedData)
-          }
-
-          const combinedEnrichedArray = combinedEnrichedData
-            .sort((a, b) => Number(a.timestamp) - Number(b.timestamp))
-            .map(item => {
-              if (item.event === 'Harvest') {
-                cumulativeLifetimeYield += Number(item.netChangeUsd)
-                return { ...item, lifetimeYield: cumulativeLifetimeYield.toString() }
-              }
-              if (item.event === 'Rewards') {
-                cumulativeLifetimeYield += Number(item.rewardsUSD)
-                return { ...item, lifetimeYield: cumulativeLifetimeYield.toString() }
-              }
-              return { ...item, lifetimeYield: cumulativeLifetimeYield.toString() }
-            })
-
-          const sortedCombinedEnrichedArray = combinedEnrichedArray.sort(
-            (a, b) => Number(b.timestamp) - Number(a.timestamp),
-          )
           setTotalHistoryData(sortedCombinedEnrichedArray)
           localStorage.setItem(totalHistoryDataKey, JSON.stringify(sortedCombinedEnrichedArray))
         }
@@ -802,7 +707,7 @@ const Portfolio = () => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [account, userStats, showInactiveFarms, connected])
+  }, [account, userStats, connected, safeFlag])
 
   const sortCol = field => {
     if (field === 'lifetimeYield') {
