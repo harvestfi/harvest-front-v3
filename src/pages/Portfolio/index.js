@@ -164,11 +164,8 @@ const Portfolio = () => {
   }, [])
 
   useEffect(() => {
-    if (totalDeposit !== 0 && totalNetProfit !== 0 && totalYieldMonthly !== 0 && totalYieldDaily) {
+    if (connected && (totalDeposit !== 0 || totalNetProfit !== 0)) {
       setIsLoading(false)
-    }
-    if (connected && (totalNetProfit === 0 || totalNetProfit === -1)) {
-      setIsLoading(true)
     }
   }, [totalNetProfit, connected, totalDeposit, totalYieldMonthly, totalYieldDaily]) // eslint-disable-next-line react-hooks/exhaustive-deps
 
