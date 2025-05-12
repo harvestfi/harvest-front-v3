@@ -93,7 +93,6 @@ import {
   ChartSection,
   ChartBox,
 } from './style'
-import AnimatedDots from '../../components/AnimatedDots'
 
 const Portfolio = () => {
   const { push } = useHistory()
@@ -906,15 +905,13 @@ const Portfolio = () => {
                 Lifetime Yield
                 <GreenBox>
                   <IoArrowUpCircleOutline color="#5dcf46" fontSize={14} />
-                  {!connected || noFarm ? (
-                    `${currencySym}0.00`
-                  ) : oneDayYield === 0 ? (
-                    <AnimatedDots />
-                  ) : oneDayYield * currencyRate >= 0.01 ? (
-                    `${currencySym}${formatNumber(oneDayYield * currencyRate)} (24h)`
-                  ) : (
-                    `<${currencySym}0.01 (24h)`
-                  )}
+                  {!connected || noFarm
+                    ? `${currencySym}0.00`
+                    : oneDayYield === 0
+                    ? `${currencySym}0.00`
+                    : oneDayYield * currencyRate >= 0.01
+                    ? `${currencySym}${formatNumber(oneDayYield * currencyRate)} (24h)`
+                    : `<${currencySym}0.01 (24h)`}
                 </GreenBox>
               </LifetimeSub>
             </MobileHeader>
