@@ -152,8 +152,9 @@ const Activity = () => {
             setNoHarvestsData(true)
           }
 
+          const uniqueStakedVaults = [...new Set(stakedVaults)]
           const vaultNetChanges = []
-          const promises = stakedVaults.map(async stakedVault => {
+          const promises = uniqueStakedVaults.map(async stakedVault => {
             let symbol = '',
               fAssetPool = {},
               token = null
