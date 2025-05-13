@@ -398,6 +398,8 @@ const Portfolio = () => {
               (symbol === FARM_TOKEN_SYMBOL
                 ? (token.data.lpTokenData && token.data.lpTokenData.price) *
                   Number(pricePerFullShare)
+                : token.isIPORVault
+                ? token.usdPrice
                 : token.vaultPrice) || 1
 
             const unstake = fromWei(
