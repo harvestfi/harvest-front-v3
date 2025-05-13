@@ -28,7 +28,6 @@ import {
   FARM_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
-  MAX_DECIMALS,
   ROUTES,
   supportedCurrencies,
 } from '../../constants'
@@ -399,7 +398,7 @@ const Portfolio = () => {
             const unstake = fromWei(
               get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),
               (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
-              MAX_DECIMALS,
+              (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
             )
             stats.unstake = unstake
             if (isNaN(stats.unstake)) {
@@ -412,7 +411,7 @@ const Portfolio = () => {
             const stake = fromWei(
               useIFARM ? iFARMBalance : stakeTemp,
               token.decimals || token.data.watchAsset.decimals,
-              MAX_DECIMALS,
+              token.decimals || token.data.watchAsset.decimals,
             )
 
             stats.stake = stake
