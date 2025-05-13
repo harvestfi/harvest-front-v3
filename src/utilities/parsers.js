@@ -854,9 +854,9 @@ export async function fetchAndParseVaultData({ account, groupOfVaults, totalPool
       return { ...item, lifetimeYield: cumulativeLifetimeYield.toString() }
     })
 
-  const sortedCombinedEnrichedArray = combinedEnrichedArray.sort(
-    (a, b) => Number(b.timestamp) - Number(a.timestamp),
-  )
+  const sortedCombinedEnrichedArray = combinedEnrichedArray
+    .sort((a, b) => Number(b.timestamp) - Number(a.timestamp))
+    .filter(entry => !(entry.event === 'Harvest' && Number(entry.netChange) === 0))
 
   return {
     vaultNetChanges,

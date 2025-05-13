@@ -28,7 +28,6 @@ import {
   FARM_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
   SPECIAL_VAULTS,
-  MAX_DECIMALS,
   ROUTES,
   supportedCurrencies,
 } from '../../constants'
@@ -93,7 +92,6 @@ import {
   ChartSection,
   ChartBox,
 } from './style'
-import AnimatedDots from '../../components/AnimatedDots'
 
 const Portfolio = () => {
   const { push } = useHistory()
@@ -164,11 +162,8 @@ const Portfolio = () => {
   }, [])
 
   useEffect(() => {
-    if (totalDeposit !== 0 && totalNetProfit !== 0 && totalYieldMonthly !== 0 && totalYieldDaily) {
+    if (connected && (totalDeposit !== 0 || totalNetProfit !== 0)) {
       setIsLoading(false)
-    }
-    if (connected && (totalNetProfit === 0 || totalNetProfit === -1)) {
-      setIsLoading(true)
     }
   }, [totalNetProfit, connected, totalDeposit, totalYieldMonthly, totalYieldDaily]) // eslint-disable-next-line react-hooks/exhaustive-deps
 
@@ -405,7 +400,7 @@ const Portfolio = () => {
             const unstake = fromWei(
               get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),
               (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
-              MAX_DECIMALS,
+              (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
             )
             stats.unstake = unstake
             if (isNaN(stats.unstake)) {
@@ -418,7 +413,7 @@ const Portfolio = () => {
             const stake = fromWei(
               useIFARM ? iFARMBalance : stakeTemp,
               token.decimals || token.data.watchAsset.decimals,
-              MAX_DECIMALS,
+              token.decimals || token.data.watchAsset.decimals,
             )
 
             stats.stake = stake
@@ -911,15 +906,13 @@ const Portfolio = () => {
                 Lifetime Yield
                 <GreenBox>
                   <IoArrowUpCircleOutline color="#5dcf46" fontSize={14} />
-                  {!connected || noFarm ? (
-                    `${currencySym}0.00`
-                  ) : oneDayYield === 0 ? (
-                    <AnimatedDots />
-                  ) : oneDayYield * currencyRate >= 0.01 ? (
-                    `${currencySym}${formatNumber(oneDayYield * currencyRate)} (24h)`
-                  ) : (
-                    `<${currencySym}0.01 (24h)`
-                  )}
+                  {!connected || noFarm
+                    ? `${currencySym}0.00`
+                    : oneDayYield === 0
+                    ? `${currencySym}0.00`
+                    : oneDayYield * currencyRate >= 0.01
+                    ? `${currencySym}${formatNumber(oneDayYield * currencyRate)} (24h)`
+                    : `<${currencySym}0.01 (24h)`}
                 </GreenBox>
               </LifetimeSub>
             </MobileHeader>
