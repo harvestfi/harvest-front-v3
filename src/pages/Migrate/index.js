@@ -6,7 +6,6 @@ import queryString from 'query-string'
 import { useLocation } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { useMediaQuery } from 'react-responsive'
-import { ethers } from 'ethers'
 import { useSetChain } from '@web3-onboard/react'
 import { Dropdown } from 'react-bootstrap'
 import { useVaults } from '../../providers/Vault'
@@ -1308,7 +1307,6 @@ const Migrate = () => {
             addresses={addresses}
             account={account}
             balances={balances}
-            ethers={ethers}
             positionAddress={positionVaultAddress}
             setPickedToken={setPickedTokenWith}
             setBalance={setBalance}

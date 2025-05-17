@@ -5,7 +5,7 @@ import Modal from 'react-bootstrap/Modal'
 import { useSetChain } from '@web3-onboard/react'
 import { IoIosArrowUp } from 'react-icons/io'
 import { CiSettings } from 'react-icons/ci'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Spinner } from 'react-bootstrap'
 import { useWallet } from '../../../providers/Wallet'
 import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../../constants'
@@ -102,7 +102,7 @@ const MigrateStart = ({
   const { userStats, fetchUserPoolStats } = usePools()
   const { handleApproval, handleDeposit } = useActions()
   const { contracts } = useContracts()
-  const { push } = useHistory()
+  const navigate = useNavigate()
 
   const {
     isMobile,
@@ -555,7 +555,7 @@ const MigrateStart = ({
       setShowMigrate(false)
       setProgressStep(0)
       setButtonName('Approve Token')
-      push(`/${networkName}/${highestVaultAddress}`)
+      navigate(`/${networkName}/${highestVaultAddress}`)
     }
   }
 

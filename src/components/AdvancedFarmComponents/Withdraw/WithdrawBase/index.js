@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js'
 import React, { useState, useEffect } from 'react'
 import { useSetChain } from '@web3-onboard/react'
 import { toast } from 'react-toastify'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { useMediaQuery } from 'react-responsive'
 import { PiQuestion } from 'react-icons/pi'
 import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
@@ -584,7 +584,7 @@ const WithdrawBase = ({
             >
               Est. Received
               <PiQuestion className="question" data-tip data-for="min-received" />
-              <ReactTooltip
+              <Tooltip
                 id="min-received"
                 backgroundColor={darkMode ? 'white' : '#101828'}
                 borderColor={darkMode ? 'white' : 'black'}
@@ -599,7 +599,7 @@ const WithdrawBase = ({
                   The estimated number of tokens you will receive in your wallet. The default
                   slippage is set as &lsquo;Auto&lsquo;.
                 </NewLabel>
-              </ReactTooltip>
+              </Tooltip>
             </NewLabel>
             <NewLabel
               size={isMobile ? '14px' : '14px'}
@@ -629,7 +629,7 @@ const WithdrawBase = ({
                       '-'
                     )}
                   </div>
-                  <ReactTooltip
+                  <Tooltip
                     id="est-fToken-receive-revert"
                     backgroundColor={darkMode ? 'white' : '#101828'}
                     borderColor={darkMode ? 'white' : 'black'}
@@ -643,7 +643,7 @@ const WithdrawBase = ({
                     >
                       {revertMinReceivedAmount}
                     </NewLabel>
-                  </ReactTooltip>
+                  </Tooltip>
                 </TokenInfo>
                 <span className="token-symbol">
                   {pickedToken.symbol !== 'Select' ? pickedToken.symbol : 'Output Token'}

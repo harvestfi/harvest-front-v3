@@ -2,11 +2,11 @@ import BigNumber from 'bignumber.js'
 import { find, get, isEqual, isArray, isNaN } from 'lodash'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { RxCross2 } from 'react-icons/rx'
-import { useHistory, useLocation, useParams } from 'react-router-dom'
+import { useNavigate, useLocation, useParams } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import { ethers } from 'ethers'
+import { isAddress } from 'ethers'
 import { BiLeftArrowAlt, BiInfoCircle } from 'react-icons/bi'
 import { PiQuestion } from 'react-icons/pi'
 import tokenMethods from '../../services/web3/contracts/token/methods'
@@ -200,8 +200,8 @@ const AdvancedFarm = () => {
   } = usePortals()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
-  const { push } = useHistory()
-  const history = useHistory()
+  const navigate = useNavigate()
+  const history = useNavigate()
 
   const { pathname } = useLocation()
   const location = useLocation()
@@ -758,7 +758,7 @@ const AdvancedFarm = () => {
 
             const curBalances = portalsRawBalances
               .map(balance => {
-                if (!ethers.utils.isAddress(balance.address))
+                if (!isAddress(balance.address))
                   balance.address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
                 const item = {
                   symbol: balance.symbol,
@@ -1550,9 +1550,9 @@ const AdvancedFarm = () => {
                 fontColor={fontColor}
                 onClick={() => {
                   if (isFromEarningPage) {
-                    history.push(ROUTES.PORTFOLIO)
+                    navigate(ROUTES.PORTFOLIO)
                   } else {
-                    history.push(`${ROUTES.ADVANCED}${location.search}`)
+                    navigate(`${ROUTES.ADVANCED}${location.search}`)
                   }
                 }}
               >
@@ -1616,9 +1616,9 @@ const AdvancedFarm = () => {
                       onClick={() => {
                         setActiveMainTag(i)
                         if (i !== 0) {
-                          push(`${pathname}${location.search}#${tag.name.toLowerCase()}`)
+                          navigate(`${pathname}${location.search}#${tag.name.toLowerCase()}`)
                         } else {
-                          push(`${pathname}${location.search}`)
+                          navigate(`${pathname}${location.search}`)
                         }
                       }}
                     >
@@ -1882,7 +1882,7 @@ const AdvancedFarm = () => {
                               : 'tooltip-lifetime-earning'
                           }
                         />
-                        <ReactTooltip
+                        <Tooltip
                           id={
                             showLatestEarnings
                               ? 'tooltip-latest-earning'
@@ -1920,7 +1920,7 @@ const AdvancedFarm = () => {
                               </>
                             )}
                           </NewLabel>
-                        </ReactTooltip>
+                        </Tooltip>
                       </FlexDiv>
                       <ThemeMode mode={showLatestEarnings ? 'latest' : 'lifetime'}>
                         <div id="theme-switch">
@@ -1992,7 +1992,7 @@ const AdvancedFarm = () => {
                             ? showTokenBalance(underlyingEarningsLatest)
                             : showTokenBalance(underlyingEarnings)}
                         </div>
-                        <ReactTooltip
+                        <Tooltip
                           id="earnings-underlying"
                           backgroundColor={darkMode ? 'white' : '#101828'}
                           borderColor={darkMode ? 'white' : 'black'}
@@ -2007,7 +2007,7 @@ const AdvancedFarm = () => {
                           >
                             {showLatestEarnings ? underlyingEarningsLatest : underlyingEarnings}
                           </NewLabel>
-                        </ReactTooltip>
+                        </Tooltip>
                         <span className="symbol">{token.tokenNames[0]}</span>
                       </NewLabel>
                     </FlexDiv>
@@ -2031,7 +2031,7 @@ const AdvancedFarm = () => {
                     >
                       Total Balance
                       <PiQuestion className="question" data-tip data-for="tooltip-total-balance" />
-                      <ReactTooltip
+                      <Tooltip
                         id="tooltip-total-balance"
                         backgroundColor={darkMode ? 'white' : '#101828'}
                         borderColor={darkMode ? 'white' : 'black'}
@@ -2049,7 +2049,7 @@ const AdvancedFarm = () => {
                           The fToken count stays the same unless you revert or convert more crypto
                           in the farm.
                         </NewLabel>
-                      </ReactTooltip>
+                      </Tooltip>
                     </NewLabel>
                     <FlexDiv
                       justifyContent="space-between"
@@ -2113,7 +2113,7 @@ const AdvancedFarm = () => {
                             <AnimatedDots />
                           )}
                         </div>
-                        <ReactTooltip
+                        <Tooltip
                           id="fToken-total-balance"
                           backgroundColor={darkMode ? 'white' : '#101828'}
                           borderColor={darkMode ? 'white' : 'black'}
@@ -2128,7 +2128,7 @@ const AdvancedFarm = () => {
                           >
                             {totalValue}
                           </NewLabel>
-                        </ReactTooltip>
+                        </Tooltip>
                         <span className="symbol">{useIFARM ? `i${id}` : fTokenName}</span>
                       </NewLabel>
                     </FlexDiv>
@@ -2152,7 +2152,7 @@ const AdvancedFarm = () => {
                     >
                       Yield Estimates
                       <PiQuestion className="question" data-tip data-for="tooltip-yield-estimate" />
-                      <ReactTooltip
+                      <Tooltip
                         id="tooltip-yield-estimate"
                         backgroundColor={darkMode ? 'white' : '#101828'}
                         borderColor={darkMode ? 'white' : 'black'}
@@ -2169,7 +2169,7 @@ const AdvancedFarm = () => {
                           Note: frequency of auto-compounding events vary, so take these numbers as
                           rough guides, not exact figures.
                         </NewLabel>
-                      </ReactTooltip>
+                      </Tooltip>
                     </NewLabel>
                     <FlexDiv
                       justifyContent="space-between"
@@ -2769,7 +2769,7 @@ const AdvancedFarm = () => {
                           data-tip
                           data-for="tooltip-unstaked-desc"
                         />
-                        <ReactTooltip
+                        <Tooltip
                           id="tooltip-unstaked-desc"
                           backgroundColor={darkMode ? 'white' : '#101828'}
                           borderColor={darkMode ? 'white' : 'black'}
@@ -2783,7 +2783,7 @@ const AdvancedFarm = () => {
                             The number of fTokens you hold, which are not entitled to extra token
                             rewards.
                           </NewLabel>
-                        </ReactTooltip>
+                        </Tooltip>
                       </NewLabel>
                       <NewLabel
                         weight="600"
@@ -2817,7 +2817,7 @@ const AdvancedFarm = () => {
                       >
                         Staked
                         <PiQuestion className="question" data-tip data-for="tooltip-staked-desc" />
-                        <ReactTooltip
+                        <Tooltip
                           id="tooltip-staked-desc"
                           backgroundColor={darkMode ? 'white' : '#101828'}
                           borderColor={darkMode ? 'white' : 'black'}
@@ -2831,7 +2831,7 @@ const AdvancedFarm = () => {
                             The number of fTokens you hold, which are entitled to extra token
                             rewards.
                           </NewLabel>
-                        </ReactTooltip>
+                        </Tooltip>
                       </NewLabel>
                       <NewLabel
                         size={isMobile ? '12px' : '12px'}
@@ -3017,7 +3017,7 @@ const AdvancedFarm = () => {
                             Number(latestSharePrice).toFixed(5)
                           )}
                         </div>
-                        <ReactTooltip
+                        <Tooltip
                           id="tooltip-sharePrice"
                           backgroundColor={darkMode ? 'white' : '#101828'}
                           borderColor={darkMode ? 'white' : 'black'}
@@ -3031,7 +3031,7 @@ const AdvancedFarm = () => {
                           >
                             {latestSharePrice}
                           </NewLabel>
-                        </ReactTooltip>
+                        </Tooltip>
                       </NewLabel>
                     </FlexDiv>
                     <NewLabel
@@ -3215,7 +3215,7 @@ const AdvancedFarm = () => {
                             data-tip
                             data-for="tooltip-last-harvest"
                           />
-                          <ReactTooltip
+                          <Tooltip
                             id="tooltip-last-harvest"
                             backgroundColor={darkMode ? 'white' : '#101828'}
                             borderColor={darkMode ? 'white' : 'black'}
@@ -3236,7 +3236,7 @@ const AdvancedFarm = () => {
                                 <div>{token.isIPORVault ? '0' : profitShare}%</div>
                               </FlexDiv>
                             </NewLabel>
-                          </ReactTooltip>
+                          </Tooltip>
                         </NewLabel>
                       </FlexDiv>
                     )}

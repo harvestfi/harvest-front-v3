@@ -1,7 +1,7 @@
 import React from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCheck } from '@fortawesome/free-solid-svg-icons'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { ACTIONS, DISABLED_DEPOSITS } from '../../../constants'
 import { useActions } from '../../../providers/Actions'
 import { usePools } from '../../../providers/Pools'
@@ -90,7 +90,7 @@ const VaultHeadActionsMigrate = ({
       />
       {!token.disableAutoSwap ? (
         <MigrateOptionsContainer>
-          <ReactTooltip
+          <Tooltip
             id="zap-tooltip"
             backgroundColor="#fffce6"
             borderColor="black"

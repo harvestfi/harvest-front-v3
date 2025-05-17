@@ -1,4 +1,4 @@
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useWindowWidth } from '@react-hook/window-size'
 import { debounce } from 'lodash'
 import { MdCheck } from 'react-icons/md'
@@ -109,7 +109,7 @@ const QuickFilter = ({
   }, [flag, onSelectActiveType])
 
   const { pathname } = useLocation()
-  const { push } = useHistory()
+  const navigate = useNavigate()
 
   const [paramObj, setParamObj] = useState({})
 
@@ -372,12 +372,12 @@ const QuickFilter = ({
         }
       }
     }
-    push(`${pathname}?${params.toString()}`)
+    navigate(`${pathname}?${params.toString()}`)
   }, [selectedClass, paramObj]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const clearFilter = () => {
     setParamObj({})
-    push(pathname)
+    navigate(pathname)
   }
 
   useEffect(() => {

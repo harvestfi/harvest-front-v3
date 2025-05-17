@@ -21,11 +21,59 @@ const ledger = ledgerModule({
   projectId: '6931eace1272646ed84e46c55fac0311',
 })
 const walletConnect = walletConnectModule({
-  version: 2,
   projectId: '6931eace1272646ed84e46c55fac0311',
-  bridge: 'https://bridge.walletconnect.org',
-  qrcodeModalOptions: {
-    mobileLinks: ['rainbow', 'metamask', 'argent', 'trust', 'imtoken', 'pillar'],
+  dappUrl: 'https://app.harvest.finance',
+  qrModalOptions: {
+    mobileWallets: [
+      {
+        id: 'rainbow',
+        name: 'Rainbow',
+        links: {
+          universal: 'https://rainbow.me',
+          native: 'rainbow://',
+        },
+      },
+      {
+        id: 'metamask',
+        name: 'MetaMask',
+        links: {
+          universal: 'https://metamask.io',
+          native: 'metamask://',
+        },
+      },
+      {
+        id: 'argent',
+        name: 'Argent',
+        links: {
+          universal: 'https://argent.xyz',
+          native: 'argent://',
+        },
+      },
+      {
+        id: 'trust',
+        name: 'Trust Wallet',
+        links: {
+          universal: 'https://trustwallet.com',
+          native: 'trust://',
+        },
+      },
+      {
+        id: 'imtoken',
+        name: 'imToken',
+        links: {
+          universal: 'https://token.im',
+          native: 'imtokenv2://',
+        },
+      },
+      {
+        id: 'pillar',
+        name: 'Pillar',
+        links: {
+          universal: 'https://pillar.fi',
+          native: 'pillar://',
+        },
+      },
+    ],
   },
 })
 

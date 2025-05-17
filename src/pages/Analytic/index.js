@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 // import Countdown from 'react-countdown'
 import CountUp from 'react-countup'
 import { useMediaQuery } from 'react-responsive'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { useWindowWidth } from '@react-hook/window-size'
 import ExchangeBancor from '../../assets/images/logos/analytics/exchange_bancor.svg'
 import ExchangeBinance from '../../assets/images/logos/analytics/exchange_binance.svg'
@@ -193,7 +193,7 @@ const Analytic = () => {
                 </>
               )}
             </FarmSubTitle>
-            <ReactTooltip
+            <Tooltip
               id="profits-to-farmers"
               backgroundColor={darkMode ? 'white' : '#101828'}
               borderColor={darkMode ? 'white' : 'black'}
@@ -233,7 +233,7 @@ const Analytic = () => {
                 <AnimatedDots />
               )}
             </FarmSubTitle>
-            <ReactTooltip
+            <Tooltip
               id="details-box"
               backgroundColor={darkMode ? 'white' : '#101828'}
               borderColor={darkMode ? 'white' : 'black'}

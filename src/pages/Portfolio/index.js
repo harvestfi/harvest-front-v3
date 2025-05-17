@@ -4,7 +4,7 @@ import useEffectWithPrevious from 'use-effect-with-previous'
 import { find, get, isEmpty, orderBy, isEqual, isNaN } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import { Dropdown, Spinner } from 'react-bootstrap'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { IoArrowUpCircleOutline, IoCheckmark } from 'react-icons/io5'
 import 'react-loading-skeleton/dist/skeleton.css'
 import VaultRow from '../../components/DashboardComponents/VaultRow'
@@ -94,7 +94,7 @@ import {
 } from './style'
 
 const Portfolio = () => {
-  const { push } = useHistory()
+  const navigate = useNavigate()
   const { connected, connectAction, account, balances, getWalletBalances } = useWallet()
   const { userStats, fetchUserPoolStats, totalPools, disableWallet } = usePools()
   const { profitShareAPY } = useStats()
@@ -1188,7 +1188,7 @@ const Portfolio = () => {
                         </div>
                         <ExploreButtonStyle
                           onClick={() => {
-                            push(ROUTES.ADVANCED)
+                            navigate(ROUTES.ADVANCED)
                           }}
                           minWidth="190px"
                           inputBorderColor={inputBorderColor}

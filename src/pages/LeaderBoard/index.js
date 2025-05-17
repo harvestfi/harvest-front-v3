@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { PiQuestion } from 'react-icons/pi'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { Dropdown } from 'react-bootstrap'
 import { IoCheckmark } from 'react-icons/io5'
 import { useThemeContext } from '../../providers/useThemeContext'
@@ -367,7 +367,7 @@ const LeaderBoard = () => {
                     onClick={stopPropagation}
                     style={{ marginLeft: '5px' }}
                   />
-                  <ReactTooltip
+                  <Tooltip
                     backgroundColor={darkMode ? 'white' : '#101828'}
                     borderColor={darkMode ? 'white' : 'black'}
                     textColor={darkMode ? 'black' : 'white'}
@@ -395,7 +395,7 @@ const LeaderBoard = () => {
                         </ul>
                       </div>
                     </NewLabel>
-                  </ReactTooltip>
+                  </Tooltip>
                 </>
               )}
             </Column>
@@ -506,7 +506,7 @@ const LeaderBoard = () => {
                 >
                   Efficiency
                   <PiQuestion className="question" data-tip />
-                  <ReactTooltip
+                  <Tooltip
                     backgroundColor={darkMode ? 'white' : '#101828'}
                     borderColor={darkMode ? 'white' : 'black'}
                     textColor={darkMode ? 'black' : 'white'}
@@ -533,7 +533,7 @@ const LeaderBoard = () => {
                         </ul>
                       </div>
                     </NewLabel>
-                  </ReactTooltip>
+                  </Tooltip>
                   <SortingIcon
                     sortType={sortConfig.direction}
                     sortField={sortConfig.key}

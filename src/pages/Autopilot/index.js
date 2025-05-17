@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Dropdown } from 'react-bootstrap'
 import { isEqual, isEmpty } from 'lodash'
 import BigNumber from 'bignumber.js'
@@ -43,7 +43,7 @@ const Autopilot = () => {
 
   const { connected, account, balances, getWalletBalances } = useWallet()
   const { contracts } = useContracts()
-  const history = useHistory()
+  const navigate = useNavigate()
   const location = useLocation()
   // const { chainId } = useWallet()
   const { allVaultsData } = useVaults()
@@ -63,14 +63,14 @@ const Autopilot = () => {
     const matchedChain = someChainsList.find(item => item.name === networkName)
 
     if (networkName !== 'base') {
-      history.replace('/autopilot/base')
+      navigate('/autopilot/base', { replace: true })
     } else if (matchedChain) {
       setCurChain(matchedChain)
     } else {
       setCurChain(someChainsList[0])
-      // history.replace('/autopilot/base')
+      // navigate('/autopilot/base', { replace: true })
     }
-  }, [location.pathname, history])
+  }, [location.pathname, navigate])
 
   // useEffect(() => {
   //   debugger
@@ -211,7 +211,7 @@ const Autopilot = () => {
   const handleNetworkChange = selectedChain => {
     setCurChain(selectedChain)
     setIsManualSelection(true)
-    history.push(`/autopilot/${selectedChain.name}`)
+    navigate(`/autopilot/${selectedChain.name}`)
   }
 
   return (

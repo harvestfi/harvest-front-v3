@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 // import { get, find } from 'lodash'
+import { isAddress } from 'ethers'
 import { isEmpty } from 'lodash'
 import Modal from 'react-bootstrap/Modal'
 import { BsArrowDown } from 'react-icons/bs'
@@ -341,7 +342,7 @@ const VaultModal = ({
 
             const curBalances = portalsRawBalances
               .map(rawBalance => {
-                if (!ethers.utils.isAddress(rawBalance.address))
+                if (!isAddress(rawBalance.address))
                   rawBalance.address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
                 const item = {
                   symbol: rawBalance.symbol,
@@ -592,7 +593,6 @@ const VaultModal = ({
     tokenDecimals,
     useIFARM,
     addresses.iFARM,
-    ethers.utils,
     convertSuccess,
   ])
 

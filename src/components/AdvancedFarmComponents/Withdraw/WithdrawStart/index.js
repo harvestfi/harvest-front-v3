@@ -7,9 +7,9 @@ import { BsArrowUp } from 'react-icons/bs'
 import { CiSettings } from 'react-icons/ci'
 import { PiQuestion } from 'react-icons/pi'
 import { IoIosArrowUp } from 'react-icons/io'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { Spinner } from 'react-bootstrap'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import AutopilotVaults from '../../../../assets/images/logos/advancedfarm/btc-eth-usdc.svg'
 import AlertIcon from '../../../../assets/images/logos/beginners/alert-triangle.svg'
 import AlertCloseIcon from '../../../../assets/images/logos/beginners/alert-close.svg'
@@ -93,7 +93,7 @@ const WithdrawStart = ({
   const { account, web3, getWalletBalances } = useWallet()
   const { fetchUserPoolStats, userStats, pools } = usePools()
   const { contracts } = useContracts()
-  const { push } = useHistory()
+  const navigate = useNavigate()
   const [slippagePercentage, setSlippagePercentage] = useState(null)
   const [slippageSetting, setSlippageSetting] = useState(false)
   const [customSlippage, setCustomSlippage] = useState(null)
@@ -527,7 +527,7 @@ const WithdrawStart = ({
                 {progressStep !== 4 && (
                   <>
                     <PiQuestion className="question" data-tip data-for="min-help" />
-                    <ReactTooltip
+                    <Tooltip
                       id="min-help"
                       backgroundColor={darkMode ? 'white' : '#101828'}
                       borderColor={darkMode ? 'white' : 'black'}
@@ -542,7 +542,7 @@ const WithdrawStart = ({
                         The estimated number of tokens you will receive in your wallet. The default
                         slippage is set as &lsquo;Auto&lsquo;.
                       </NewLabel>
-                    </ReactTooltip>
+                    </Tooltip>
                   </>
                 )}
               </NewLabel>
@@ -566,7 +566,7 @@ const WithdrawStart = ({
                         </AnimateDotDiv>
                       )}
                     </div>
-                    <ReactTooltip
+                    <Tooltip
                       id="modal-fToken-receive-revert"
                       backgroundColor={darkMode ? 'white' : '#101828'}
                       borderColor={darkMode ? 'white' : 'black'}
@@ -594,7 +594,7 @@ const WithdrawStart = ({
                           </AnimateDotDiv>
                         )}
                       </NewLabel>
-                    </ReactTooltip>
+                    </Tooltip>
                   </>
                   <span>{pickedToken.symbol}</span>
                 </>
@@ -748,7 +748,7 @@ const WithdrawStart = ({
                     if (e.ctrlKey) {
                       window.open(url, '_blank')
                     } else {
-                      push(url)
+                      navigate(url)
                     }
                   }}
                 >
@@ -812,7 +812,7 @@ const WithdrawStart = ({
                     if (e.ctrlKey) {
                       window.open(url, '_blank')
                     } else {
-                      push(url)
+                      navigate(url)
                     }
                   }}
                 >

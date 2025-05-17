@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { PiQuestion } from 'react-icons/pi'
 import { formatNumber } from '../../utilities/formats'
 import { useThemeContext } from '../../providers/useThemeContext'
@@ -38,7 +38,7 @@ const TotalValue = ({
         {content}
         {content === 'Lifetime Yield' && <BetaBadge>Beta</BetaBadge>}
         <PiQuestion className="question" data-tip data-for={toolTipTitle} color="#718BC5" />
-        <ReactTooltip
+        <Tooltip
           id={toolTipTitle}
           backgroundColor={darkMode ? 'white' : '#101828'}
           borderColor={darkMode ? 'white' : 'black'}
@@ -52,7 +52,7 @@ const TotalValue = ({
           >
             {toolTip}
           </NewLabel>
-        </ReactTooltip>
+        </Tooltip>
       </Div>
       <Price fontColor1={fontColor1}>
         {!connected || isLoading ? (

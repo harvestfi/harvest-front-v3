@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useMediaQuery } from 'react-responsive'
 import ListItem from '../ListItem'
 import { displayAPY, showUsdValueCurrency } from '../../../utilities/formats'
@@ -21,7 +21,7 @@ import {
 } from './style'
 
 const VaultRow = ({ info, lifetimeYield, lastElement, cKey, darkMode }) => {
-  const { push } = useHistory()
+  const navigate = useNavigate()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const {
     switchMode,
@@ -73,7 +73,7 @@ const VaultRow = ({ info, lifetimeYield, lastElement, cKey, darkMode }) => {
       onClick={e => {
         if (!e.ctrlKey) {
           e.preventDefault()
-          push(url)
+          navigate(url)
         }
       }}
     >
