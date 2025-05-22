@@ -11,17 +11,17 @@ const ChartRangeSelect = ({ state, type, text, onClick }) => {
   const isWeek = text === '1W'
   return (
     <Container
-      state={state}
       type={type}
-      text={text}
-      mode={switchMode}
-      activeItem={text === state}
+      // state={state}
+      // text={text}
+      $mode={switchMode}
+      $activeitem={text === state}
       onClick={() => {
         onClick()
       }}
-      display={isMobile && isWeek ? 'none' : 'flex'}
+      $display={isMobile && isWeek ? 'none' : 'flex'}
     >
-      <Text activeItem={text === state}>
+      <Text $activeitem={text === state}>
         {text}
         {text === 'LAST' && (
           <>
@@ -40,9 +40,9 @@ const ChartRangeSelect = ({ state, type, text, onClick }) => {
               place="right"
             >
               <NewLabel
-                size={isMobile ? '12px' : '12px'}
-                height={isMobile ? '18px' : '18px'}
-                weight="500"
+                $size={isMobile ? '12px' : '12px'}
+                $height={isMobile ? '18px' : '18px'}
+                $weight="500"
               >
                 When set to &apos;Last&apos;, the performance chart displays your last interaction
                 (convert or revert) with this farm as the starting point.

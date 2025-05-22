@@ -1530,13 +1530,13 @@ const AdvancedFarm = () => {
   }
 
   return (
-    <DetailView backColor={bgColorNew} fontColor={fontColor}>
-      <TopInner darkMode={darkMode}>
+    <DetailView $backcolor={bgColorNew} $fontcolor={fontColor}>
+      <TopInner $darkmode={darkMode}>
         <TopPart>
           <FlexTopDiv>
             <TopButton className="back-btn">
               <BackBtnRect
-                fontColor={fontColor}
+                $fontcolor={fontColor}
                 onClick={() => {
                   if (isFromEarningPage) {
                     history.push(ROUTES.PORTFOLIO)
@@ -1546,12 +1546,12 @@ const AdvancedFarm = () => {
                 }}
               >
                 <BiLeftArrowAlt fontSize={16} />
-                <BackText fontColor={fontColor}>Back</BackText>
+                <BackText $fontcolor={fontColor}>Back</BackText>
               </BackBtnRect>
               {isMobile && (
                 <MobileChain>
                   <NetDetailItem>
-                    <NetDetailContent fontColor={fontColor}>
+                    <NetDetailContent $fontcolor={fontColor}>
                       {useIFARM || token.platform[0] === 'Autopilot'
                         ? 'Harvest'
                         : token.platform && token.platform[0]}
@@ -1570,21 +1570,21 @@ const AdvancedFarm = () => {
                 ))}
               </TopLogo>
               <TopDesc
-                weight={600}
-                fontColor2={fontColor2}
-                size={isMobile ? '19.7px' : '25px'}
-                height={isMobile ? '45px' : '82px'}
-                marginBottom={isMobile ? '5px' : '10px'}
+                $weight={600}
+                $fontcolor2={fontColor2}
+                $size={isMobile ? '19.7px' : '25px'}
+                $height={isMobile ? '45px' : '82px'}
+                $marginbottom={isMobile ? '5px' : '10px'}
               >
                 {useIFARM ? `i${token.tokenNames.join(' • ')}` : token.tokenNames.join(' • ')}
               </TopDesc>
             </FlexDiv>
             <GuideSection>
-              <GuidePart fontColor4={fontColor4}>
+              <GuidePart $fontcolor4={fontColor4}>
                 {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
                 &nbsp;APY
               </GuidePart>
-              <GuidePart fontColor4={fontColor4}>
+              <GuidePart $fontcolor4={fontColor4}>
                 {showTVL()}
                 &nbsp;TVL
               </GuidePart>
@@ -1596,12 +1596,12 @@ const AdvancedFarm = () => {
                   (i === 1 && token.isIPORVault) || (i === 4 && !token.isIPORVault) ? null : (
                     <MainTag
                       key={i}
-                      fontColor3={fontColor3}
-                      fontColor4={fontColor4}
-                      backColor={bgColorNew}
-                      active={activeMainTag === i ? 'true' : 'false'}
-                      mode={darkMode ? 'dark' : 'light'}
-                      useIFARM={useIFARM}
+                      $fontcolor3={fontColor3}
+                      $fontcolor4={fontColor4}
+                      $backcolor={bgColorNew}
+                      $active={activeMainTag === i ? 'true' : 'false'}
+                      $mode={darkMode ? 'dark' : 'light'}
+                      $useifarm={useIFARM}
                       onClick={() => {
                         setActiveMainTag(i)
                         if (i !== 0) {
@@ -1619,16 +1619,16 @@ const AdvancedFarm = () => {
               </MainTagPanel>
               <NetDetail>
                 <NetDetailItem>
-                  <NetDetailTitle fontColor={fontColor}>Platform:</NetDetailTitle>
-                  <NetDetailContent fontColor={fontColor}>
+                  <NetDetailTitle $fontcolor={fontColor}>Platform:</NetDetailTitle>
+                  <NetDetailContent $fontcolor={fontColor}>
                     {useIFARM || token.platform[0] === 'Autopilot'
                       ? 'Harvest'
                       : token.platform && token.platform[0]}
                   </NetDetailContent>
                 </NetDetailItem>
                 <NetDetailItem>
-                  <NetDetailTitle fontColor={fontColor}>Network</NetDetailTitle>
-                  <NetDetailImg fontColor={fontColor}>
+                  <NetDetailTitle $fontcolor={fontColor}>Network</NetDetailTitle>
+                  <NetDetailImg $fontcolor={fontColor}>
                     <img src={BadgeAry[badgeId]} alt="" />
                   </NetDetailImg>
                 </NetDetailItem>
@@ -1637,48 +1637,48 @@ const AdvancedFarm = () => {
           </FlexTopDiv>
         </TopPart>
       </TopInner>
-      <Inner backColor={bgColorNew}>
+      <Inner $backcolor={bgColorNew}>
         <BigDiv>
           {activeMainTag === 1 && !noNeedStaking && rewardTokenData && (
             <StakingInfo
-              bgColorTooltip={bgColorTooltip}
-              borderColor={borderColor}
-              display={showStakingInfo ? 'flex' : 'none'}
-              fontColorTooltip={fontColorTooltip}
+              $bgcolortooltip={bgColorTooltip}
+              $bordercolor={borderColor}
+              $display={showStakingInfo ? 'flex' : 'none'}
+              $fontcolortooltip={fontColorTooltip}
             >
               <BiInfoCircle className="info-circle" fontSize={20} />
               <StakingInfoText>
                 <NewLabel
-                  size="14px"
-                  weight="600"
-                  height="20px"
-                  color={fontColor2}
-                  marginBottom="5px"
+                  $size="14px"
+                  $weight="600"
+                  $height="20px"
+                  $fontcolor={fontColor2}
+                  $marginbottom="5px"
                 >
                   Staking Information
                 </NewLabel>
-                <NewLabel size="14px" weight="400" height="20px" color={fontColor2}>
+                <NewLabel $size="14px" $weight="400" $height="20px" $fontcolor={fontColor2}>
                   Currently, no extra rewards are streamed to this farm, so staking fTokens
                   isn&apos;t needed. See this article on &quot;
                   <WelcomeTicket
                     href="https://docs.harvest.finance/general-info/yield-sources-on-harvest-how-to-get-and-track-them"
                     target="_blank"
                     rel="noopener noreferrer"
-                    linkColor={linkColorTooltip}
-                    linkColorOnHover={linkColorOnHover}
+                    $linkcolor={linkColorTooltip}
+                    $linkcoloronhover={linkColorOnHover}
                   >
                     Yield Sources on Harvest &ndash; How to Get and Track Them
                   </WelcomeTicket>
                   &quot; to better understand yield sources and staking.
                 </NewLabel>
                 <NewLabel
-                  size="14px"
-                  weight="600"
-                  height="20px"
-                  color={fontColor2}
-                  marginTop="15px"
+                  $size="14px"
+                  $weight="600"
+                  $height="20px"
+                  $fontcolor={fontColor2}
+                  $margintop="15px"
                   cursor="pointer"
-                  width="fit-content"
+                  $width="fit-content"
                   onClick={() => {
                     setShowStakingInfo(false)
                   }}
@@ -1700,9 +1700,9 @@ const AdvancedFarm = () => {
               <>
                 {showGenomesVaultInfo ? (
                   <WelcomeBox
-                    bgColorTooltip={bgColorTooltip}
-                    fontColorTooltip={fontColorTooltip}
-                    borderColor={borderColor}
+                    $bgcolortooltip={bgColorTooltip}
+                    $fontcolortooltip={fontColorTooltip}
+                    $bordercolor={borderColor}
                   >
                     <BiInfoCircle className="info-circle" fontSize={20} />
                     <WelcomeContent>
@@ -1714,8 +1714,8 @@ const AdvancedFarm = () => {
                           href="https://app.harvest.finance/base/0x284c60490212DB0dc0b8F93503d35744f8053381"
                           target="_blank"
                           rel="noopener noreferrer"
-                          linkColor={linkColorTooltip}
-                          linkColorOnHover={linkColorOnHover}
+                          $linkcolor={linkColorTooltip}
+                          $linkcoloronhover={linkColorOnHover}
                         >
                           here
                         </WelcomeTicket>
@@ -1724,8 +1724,8 @@ const AdvancedFarm = () => {
                           href={SOCIAL_LINKS.DISCORD}
                           target="_blank"
                           rel="noopener noreferrer"
-                          linkColor={linkColorTooltip}
-                          linkColorOnHover={linkColorOnHover}
+                          $linkcolor={linkColorTooltip}
+                          $linkcoloronhover={linkColorOnHover}
                         >
                           our Discord.
                         </WelcomeTicket>
@@ -1735,8 +1735,8 @@ const AdvancedFarm = () => {
                             href={SOCIAL_LINKS.DISCORD}
                             target="_blank"
                             rel="noopener noreferrer"
-                            linkColor={linkColorTooltip}
-                            linkColorOnHover={linkColorOnHover}
+                            $linkcolor={linkColorTooltip}
+                            $linkcoloronhover={linkColorOnHover}
                           >
                             Still having questions? Open Discord ticket.
                           </WelcomeTicket>
@@ -1751,9 +1751,9 @@ const AdvancedFarm = () => {
                   <></>
                 ) : showGBVaultInfo ? (
                   <WelcomeBox
-                    bgColorTooltip={bgColorTooltip}
-                    fontColorTooltip={fontColorTooltip}
-                    borderColor={borderColor}
+                    $bgcolortooltip={bgColorTooltip}
+                    $fontcolortooltip={fontColorTooltip}
+                    $bordercolor={borderColor}
                   >
                     <BiInfoCircle className="info-circle" fontSize={20} />
                     <WelcomeContent>
@@ -1767,8 +1767,8 @@ const AdvancedFarm = () => {
                             href="https://twitter.com/search?q=%24GB"
                             target="_blank"
                             rel="noopener noreferrer"
-                            linkColor={linkColorTooltip}
-                            linkColorOnHover={linkColorOnHover}
+                            $linkcolor={linkColorTooltip}
+                            $linkcoloronhover={linkColorOnHover}
                           >
                             Twitter/X
                           </WelcomeTicket>
@@ -1782,8 +1782,8 @@ const AdvancedFarm = () => {
                             href="https://aerodrome.finance/withdraw?pair=0x284ddaDA0B71F2D0D4e395B69b1013dBf6f3e6C1"
                             target="_blank"
                             rel="noopener noreferrer"
-                            linkColor={linkColorTooltip}
-                            linkColorOnHover={linkColorOnHover}
+                            $linkcolor={linkColorTooltip}
+                            $linkcoloronhover={linkColorOnHover}
                           >
                             Aerodrome
                           </WelcomeTicket>
@@ -1795,8 +1795,8 @@ const AdvancedFarm = () => {
                             href={SOCIAL_LINKS.DISCORD}
                             target="_blank"
                             rel="noopener noreferrer"
-                            linkColor={linkColorTooltip}
-                            linkColorOnHover={linkColorOnHover}
+                            $linkcolor={linkColorTooltip}
+                            $linkcoloronhover={linkColorOnHover}
                           >
                             Still having questions? Open Discord ticket.
                           </WelcomeTicket>
@@ -1809,9 +1809,9 @@ const AdvancedFarm = () => {
                   </WelcomeBox>
                 ) : showIFARMInfo ? (
                   <WelcomeBox
-                    bgColorTooltip={bgColorTooltip}
-                    fontColorTooltip={fontColorTooltip}
-                    borderColor={borderColor}
+                    $bgcolortooltip={bgColorTooltip}
+                    $fontcolortooltip={fontColorTooltip}
+                    $bordercolor={borderColor}
                   >
                     <BiInfoCircle className="info-circle" fontSize={20} />
                     <WelcomeContent>
@@ -1823,8 +1823,8 @@ const AdvancedFarm = () => {
                           href="https://v3.harvest.finance/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
                           target="_blank"
                           rel="noopener noreferrer"
-                          linkColor={linkColorTooltip}
-                          linkColorOnHover={linkColorOnHover}
+                          $linkcolor={linkColorTooltip}
+                          $linkcoloronhover={linkColorOnHover}
                         >
                           under this link
                         </WelcomeTicket>
@@ -1843,21 +1843,21 @@ const AdvancedFarm = () => {
                 )}
                 <ManageBoxWrapper>
                   <MyBalance
-                    backColor={bgColorNew}
-                    borderColor={borderColorBox}
-                    marginBottom={isMobile ? '20px' : '25px'}
-                    marginTop={isMobile ? '0px' : '0'}
-                    height={isMobile ? 'unset' : '120px'}
+                    $backcolor={bgColorNew}
+                    $bordercolor={borderColorBox}
+                    $marginbottom={isMobile ? '20px' : '25px'}
+                    $margintop={isMobile ? '0px' : '0'}
+                    $height={isMobile ? 'unset' : '120px'}
                   >
                     <NewLabel
-                      display="flex"
-                      justifyContent="space-between"
-                      size={isMobile ? '12px' : '12px'}
-                      weight="600"
-                      height={isMobile ? '20px' : '20px'}
-                      color={fontColor4}
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom={`1px solid ${borderColorBox}`}
+                      $display="flex"
+                      $justifycontent="space-between"
+                      $size={isMobile ? '12px' : '12px'}
+                      $weight="600"
+                      $height={isMobile ? '20px' : '20px'}
+                      $fontcolor={fontColor4}
+                      $padding={isMobile ? '10px 15px' : '10px 15px'}
+                      $borderbottom={`1px solid ${borderColorBox}`}
                     >
                       <FlexDiv>
                         {showLatestEarnings ? 'Latest Yield' : 'Lifetime Yield'}
@@ -1882,9 +1882,9 @@ const AdvancedFarm = () => {
                           textColor={darkMode ? 'black' : 'white'}
                         >
                           <NewLabel
-                            size={isMobile ? '12px' : '12px'}
-                            height={isMobile ? '18px' : '18px'}
-                            weight="500"
+                            $size={isMobile ? '12px' : '12px'}
+                            $height={isMobile ? '18px' : '18px'}
+                            $weight="500"
                           >
                             {showLatestEarnings ? (
                               <>
@@ -1911,7 +1911,7 @@ const AdvancedFarm = () => {
                           </NewLabel>
                         </Tooltip>
                       </FlexDiv>
-                      <ThemeMode mode={showLatestEarnings ? 'latest' : 'lifetime'}>
+                      <ThemeMode $mode={showLatestEarnings ? 'latest' : 'lifetime'}>
                         <div id="theme-switch">
                           <div className="switch-track">
                             <div className="switch-thumb" />
@@ -1927,23 +1927,23 @@ const AdvancedFarm = () => {
                       </ThemeMode>
                     </NewLabel>
                     <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                      $justifycontent="space-between"
+                      $padding={isMobile ? '5px 15px' : '5px 15px'}
                     >
                       <NewLabel
-                        display="flex"
-                        size={isMobile ? '12px' : '12px'}
-                        weight="500"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor3}
+                        $display="flex"
+                        $size={isMobile ? '12px' : '12px'}
+                        $weight="500"
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor={fontColor3}
                       >
                         in {`${currencyName}`}
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        weight="600"
-                        color={fontColor1}
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $weight="600"
+                        $fontcolor={fontColor1}
                       >
                         {showUsdValueCurrency(
                           showLatestEarnings ? usdEarningsLatest : usdEarnings,
@@ -1953,28 +1953,28 @@ const AdvancedFarm = () => {
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                      $justifycontent="space-between"
+                      $padding={isMobile ? '5px 15px' : '5px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        weight="500"
-                        color={fontColor3}
-                        self="center"
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $weight="500"
+                        $fontcolor={fontColor3}
+                        $self="center"
                       >
                         Underlying
                       </NewLabel>
                       <NewLabel
-                        weight="600"
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor1}
-                        self="center"
-                        fontColor2={fontColor2}
-                        position="relative"
-                        align="right"
-                        marginBottom={isMobile ? '12px' : '0px'}
+                        $weight="600"
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor={fontColor1}
+                        $self="center"
+                        $fontcolor2={fontColor2}
+                        $position="relative"
+                        $align="right"
+                        $marginbottom={isMobile ? '12px' : '0px'}
                       >
                         <div data-tip data-for="earnings-underlying">
                           {showLatestEarnings
@@ -1990,9 +1990,9 @@ const AdvancedFarm = () => {
                           effect="solid"
                         >
                           <NewLabel
-                            size={isMobile ? '10px' : '10px'}
-                            height={isMobile ? '14px' : '14px'}
-                            weight="500"
+                            $size={isMobile ? '10px' : '10px'}
+                            $height={isMobile ? '14px' : '14px'}
+                            $weight="500"
                           >
                             {showLatestEarnings ? underlyingEarningsLatest : underlyingEarnings}
                           </NewLabel>
@@ -2002,21 +2002,21 @@ const AdvancedFarm = () => {
                     </FlexDiv>
                   </MyBalance>
                   <MyBalance
-                    backColor={bgColorNew}
-                    borderColor={borderColorBox}
-                    marginBottom={isMobile ? '20px' : '25px'}
-                    marginTop={isMobile ? '0px' : '0'}
-                    height={isMobile ? 'unset' : '120px'}
+                    $backcolor={bgColorNew}
+                    $bordercolor={borderColorBox}
+                    $marginbottom={isMobile ? '20px' : '25px'}
+                    $margintop={isMobile ? '0px' : '0'}
+                    $height={isMobile ? 'unset' : '120px'}
                   >
                     <NewLabel
-                      display="flex"
-                      justifyContent="space-between"
-                      size={isMobile ? '12px' : '12px'}
-                      weight="600"
-                      height={isMobile ? '20px' : '20px'}
-                      color={fontColor4}
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom={`1px solid ${borderColorBox}`}
+                      $display="flex"
+                      $justifycontent="space-between"
+                      $size={isMobile ? '12px' : '12px'}
+                      $weight="600"
+                      $height={isMobile ? '20px' : '20px'}
+                      $fontcolor={fontColor4}
+                      $padding={isMobile ? '10px 15px' : '10px 15px'}
+                      $borderbottom={`1px solid ${borderColorBox}`}
                     >
                       Total Balance
                       <PiQuestion className="question" data-tip data-for="tooltip-total-balance" />
@@ -2027,9 +2027,9 @@ const AdvancedFarm = () => {
                         textColor={darkMode ? 'black' : 'white'}
                       >
                         <NewLabel
-                          size={isMobile ? '12px' : '12px'}
-                          height={isMobile ? '18px' : '18px'}
-                          weight="500"
+                          $size={isMobile ? '12px' : '12px'}
+                          $height={isMobile ? '18px' : '18px'}
+                          $weight="500"
                         >
                           Total Balance reflects the fTokens in connected wallet, alongside their
                           USD value, which can change with the market.
@@ -2041,23 +2041,23 @@ const AdvancedFarm = () => {
                       </Tooltip>
                     </NewLabel>
                     <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                      $justifycontent="space-between"
+                      $padding={isMobile ? '5px 15px' : '5px 15px'}
                     >
                       <NewLabel
-                        display="flex"
-                        size={isMobile ? '12px' : '12px'}
-                        weight="500"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor3}
+                        $display="flex"
+                        $size={isMobile ? '12px' : '12px'}
+                        $weight="500"
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor={fontColor3}
                       >
                         in {`${currencyName}`}
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        weight="600"
-                        color={fontColor1}
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $weight="600"
+                        $fontcolor={fontColor1}
                       >
                         {!connected ? (
                           `${currencySym}0.00`
@@ -2071,27 +2071,27 @@ const AdvancedFarm = () => {
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                      $justifycontent="space-between"
+                      $padding={isMobile ? '5px 15px' : '5px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        weight="500"
-                        color={fontColor3}
-                        self="center"
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $weight="500"
+                        $fontcolor={fontColor3}
+                        $self="center"
                       >
                         fToken
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        weight="600"
-                        color={fontColor1}
-                        fontColor2={fontColor2}
-                        position="relative"
-                        align="right"
-                        marginBottom={isMobile ? '12px' : '0px'}
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $weight="600"
+                        $fontcolor={fontColor1}
+                        $fontcolor2={fontColor2}
+                        $position="relative"
+                        $align="right"
+                        $marginbottom={isMobile ? '12px' : '0px'}
                       >
                         <div className="question" data-tip data-for="fToken-total-balance">
                           {!connected ? (
@@ -2111,9 +2111,9 @@ const AdvancedFarm = () => {
                           effect="solid"
                         >
                           <NewLabel
-                            size={isMobile ? '10px' : '10px'}
-                            height={isMobile ? '14px' : '14px'}
-                            weight="500"
+                            $size={isMobile ? '10px' : '10px'}
+                            $height={isMobile ? '14px' : '14px'}
+                            $weight="500"
                           >
                             {totalValue}
                           </NewLabel>
@@ -2123,21 +2123,21 @@ const AdvancedFarm = () => {
                     </FlexDiv>
                   </MyBalance>
                   <MyBalance
-                    backColor={bgColorNew}
-                    borderColor={borderColorBox}
-                    marginBottom={isMobile ? '20px' : '25px'}
-                    marginTop={isMobile ? '0px' : '0'}
-                    height={isMobile ? 'unset' : '120px'}
+                    $backcolor={bgColorNew}
+                    $bordercolor={borderColorBox}
+                    $marginbottom={isMobile ? '20px' : '25px'}
+                    $margintop={isMobile ? '0px' : '0'}
+                    $height={isMobile ? 'unset' : '120px'}
                   >
                     <NewLabel
-                      display="flex"
-                      justifyContent="space-between"
-                      size={isMobile ? '12px' : '12px'}
-                      weight="600"
-                      height={isMobile ? '20px' : '20px'}
-                      color={fontColor4}
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom={`1px solid ${borderColorBox}`}
+                      $display="flex"
+                      $justifycontent="space-between"
+                      $size={isMobile ? '12px' : '12px'}
+                      $weight="600"
+                      $height={isMobile ? '20px' : '20px'}
+                      $fontcolor={fontColor4}
+                      $padding={isMobile ? '10px 15px' : '10px 15px'}
+                      $borderbottom={`1px solid ${borderColorBox}`}
                     >
                       Yield Estimates
                       <PiQuestion className="question" data-tip data-for="tooltip-yield-estimate" />
@@ -2148,9 +2148,9 @@ const AdvancedFarm = () => {
                         textColor={darkMode ? 'black' : 'white'}
                       >
                         <NewLabel
-                          size={isMobile ? '12px' : '12px'}
-                          height={isMobile ? '18px' : '18px'}
-                          weight="500"
+                          $size={isMobile ? '12px' : '12px'}
+                          $height={isMobile ? '18px' : '18px'}
+                          $weight="500"
                         >
                           Estimated yield on your fTokens of this farm based on live APY,
                           denominated in USD. Subject to market fluctuations.
@@ -2161,23 +2161,23 @@ const AdvancedFarm = () => {
                       </Tooltip>
                     </NewLabel>
                     <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                      $justifycontent="space-between"
+                      $padding={isMobile ? '5px 15px' : '5px 15px'}
                     >
                       <NewLabel
-                        display="flex"
-                        size={isMobile ? '12px' : '12px'}
-                        weight="500"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor3}
+                        $display="flex"
+                        $size={isMobile ? '12px' : '12px'}
+                        $weight="500"
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor={fontColor3}
                       >
                         Daily
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        weight="600"
-                        color={fontColor1}
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $weight="600"
+                        $fontcolor={fontColor1}
                       >
                         {!connected
                           ? `${currencySym}0`
@@ -2187,24 +2187,24 @@ const AdvancedFarm = () => {
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                      $justifycontent="space-between"
+                      $padding={isMobile ? '5px 15px' : '5px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        weight="500"
-                        color={fontColor3}
-                        self="center"
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $weight="500"
+                        $fontcolor={fontColor3}
+                        $self="center"
                       >
                         Monthly
                       </NewLabel>
                       <NewLabel
-                        weight="600"
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor1}
-                        self="center"
+                        $weight="600"
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor={fontColor1}
+                        $self="center"
                       >
                         {!connected
                           ? `${currencySym}0.00`
@@ -2217,54 +2217,53 @@ const AdvancedFarm = () => {
                 </ManageBoxWrapper>
               </>
             ) : activeMainTag === 2 ? (
-              <BoxCover borderColor={borderColorBox}>
+              <BoxCover $bordercolor={borderColorBox}>
                 {detailBoxes.map(({ title, showValue, className }, index) => (
                   <ValueBox
                     key={index}
-                    width="24%"
+                    $width="24%"
                     className={className}
-                    backColor={bgColorNew}
-                    borderColor={borderColorBox}
+                    $backcolor={bgColorNew}
+                    $bordercolor={borderColorBox}
                   >
-                    <BoxTitle fontColor3={fontColor3}>{title}</BoxTitle>
-                    <BoxValue fontColor1={fontColor1}>{showValue()}</BoxValue>
+                    <BoxTitle $fontcolor3={fontColor3}>{title}</BoxTitle>
+                    <BoxValue $fontcolor1={fontColor1}>{showValue()}</BoxValue>
                   </ValueBox>
                 ))}
               </BoxCover>
             ) : activeMainTag === 3 ? (
               <>
                 <NewLabel
-                  backColor={darkMode ? '#373737' : '#ebebeb'}
-                  width={isMobile ? '100%' : '40%'}
-                  size={isMobile ? '16px' : '16px'}
-                  height={isMobile ? '24px' : '24px'}
-                  weight="600"
-                  color={fontColor1}
-                  display={token.isIPORVault ? 'none' : 'flex'}
-                  justifyContent="center"
-                  marginBottom="13px"
-                  borderRadius="8px"
-                  transition="0.25s"
+                  $backcolor={darkMode ? '#373737' : '#ebebeb'}
+                  $width={isMobile ? '100%' : '40%'}
+                  $size={isMobile ? '16px' : '16px'}
+                  $height={isMobile ? '24px' : '24px'}
+                  $weight="600"
+                  $fontcolor={fontColor1}
+                  $display={token.isIPORVault ? 'none' : 'flex'}
+                  $justifycontent="center"
+                  $marginbottom="13px"
+                  $borderradius="8px"
+                  $transition="0.25s"
                 >
                   {historyTags.map((tag, i) => (
                     <SwitchTabTag
                       key={i}
-                      num={i}
                       onClick={() => {
                         if ((i === 0 && !activeHarvests) || (i === 1 && activeHarvests))
                           setActiveHarvests(prev => !prev)
                       }}
-                      color={
+                      $fontcolor={
                         (i === 0 && activeHarvests) || (i === 1 && !activeHarvests)
                           ? fontColor4
                           : fontColor3
                       }
-                      backColor={
+                      $backcolor={
                         (i === 0 && activeHarvests) || (i === 1 && !activeHarvests)
                           ? activeColorNew
                           : ''
                       }
-                      boxShadow={
+                      $boxshadow={
                         (i === 0 && activeHarvests) || (i === 1 && !activeHarvests)
                           ? boxShadowColor2
                           : ''
@@ -2288,10 +2287,10 @@ const AdvancedFarm = () => {
               </>
             ) : activeMainTag === 4 && token.isIPORVault ? (
               <>
-                <FlexDiv marginBottom="20px" width="100%">
+                <FlexDiv $marginbottom="20px" $width="100%">
                   Performance comparison between Autopilot and its sub-vaults.
                 </FlexDiv>
-                <MainSection height={activeMainTag === 0 ? '100%' : 'fit-content'}>
+                <MainSection $height={activeMainTag === 0 ? '100%' : 'fit-content'}>
                   <SharePricesData
                     chainName={chainName}
                     token={token}
@@ -2305,33 +2304,33 @@ const AdvancedFarm = () => {
                   />
                 </MainSection>
                 <RestInternalBenchmark>
-                  <LastHarvestInfo backColor={backColor} borderColor={borderColor}>
+                  <LastHarvestInfo $backcolor={backColor} $bordercolor={borderColor}>
                     <NewLabel
-                      size={isMobile ? '12px' : '14px'}
-                      weight={isMobile ? '600' : '600'}
-                      height={isMobile ? '20px' : '24px'}
-                      color={fontColor4}
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom="1px solid #F3F6FF"
+                      $size={isMobile ? '12px' : '14px'}
+                      $weight={isMobile ? '600' : '600'}
+                      $height={isMobile ? '20px' : '24px'}
+                      $fontcolor={fontColor4}
+                      $padding={isMobile ? '10px 15px' : '10px 15px'}
+                      $borderbottom="1px solid #F3F6FF"
                     >
                       Lifetime avg. APY
                     </NewLabel>
                     <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
+                      $justifycontent="space-between"
+                      $padding={isMobile ? '10px 15px' : '10px 15px'}
                     >
                       <NewLabel
-                        size="13.4px"
-                        height="20px"
-                        weight="500"
+                        $size="13.4px"
+                        $height="20px"
+                        $weight="500"
                         cursor="pointer"
-                        borderBottom="0.5px dotted white"
-                        color="#5dcf46"
+                        $borderbottom="0.5px dotted white"
+                        $fontcolor="#5dcf46"
                         onClick={() => {}}
                       >
                         Autopilot {token.tokenNames[0]}
                       </NewLabel>
-                      <NewLabel size="13.4px" height="20px" weight="500" color="#5dcf46">
+                      <NewLabel $size="13.4px" $height="20px" $weight="500" $fontcolor="#5dcf46">
                         {iporHvaultsLFAPY && iporHvaultsLFAPY[token.id]
                           ? `${iporHvaultsLFAPY[token.id]}%`
                           : '-'}
@@ -2357,8 +2356,8 @@ const AdvancedFarm = () => {
                           return (
                             <FlexDiv
                               key={apyKey}
-                              justifyContent="space-between"
-                              padding={isMobile ? '10px 15px' : '10px 15px'}
+                              $justifycontent="space-between"
+                              $padding={isMobile ? '10px 15px' : '10px 15px'}
                               onClick={() => {
                                 const lcChainName = getChainNamePortals(token.chain)
                                 return allVaultsData[apyKey]?.vaultAddress
@@ -2370,20 +2369,20 @@ const AdvancedFarm = () => {
                               }}
                             >
                               <NewLabel
-                                size="13.4px"
-                                height="20px"
-                                weight="500"
+                                $size="13.4px"
+                                $height="20px"
+                                $weight="500"
                                 cursor="pointer"
-                                borderBottom="0.5px dotted white"
-                                color={generateColor(iporHvaultsLFAPY, apyKey)}
+                                $borderbottom="0.5px dotted white"
+                                $fontcolor={generateColor(iporHvaultsLFAPY, apyKey)}
                               >
                                 {vaultName}
                               </NewLabel>
                               <NewLabel
-                                size="13.4px"
-                                height="20px"
-                                weight="500"
-                                color={generateColor(iporHvaultsLFAPY, apyKey)}
+                                $size="13.4px"
+                                $height="20px"
+                                $weight="500"
+                                $fontcolor={generateColor(iporHvaultsLFAPY, apyKey)}
                               >
                                 {lifetimeApyValue}
                               </NewLabel>
@@ -2399,7 +2398,7 @@ const AdvancedFarm = () => {
             ) : (
               <></>
             )}
-            <MainSection height={activeMainTag === 0 ? '100%' : 'fit-content'}>
+            <MainSection $height={activeMainTag === 0 ? '100%' : 'fit-content'}>
               {activeMainTag === 0 ? (
                 !isMobile && (
                   <UserBalanceData
@@ -2416,7 +2415,7 @@ const AdvancedFarm = () => {
               ) : activeMainTag === 1 && !token.isIPORVault ? (
                 isArbCampVault ? (
                   <>
-                    <MyTotalReward marginBottom={isMobile ? '20px' : '25px'}>
+                    <MyTotalReward $marginbottom={isMobile ? '20px' : '25px'}>
                       <div className="box-image">
                         <img src={ARBball} alt="" />
                       </div>
@@ -2454,19 +2453,19 @@ const AdvancedFarm = () => {
                     </MyTotalReward>
                     {!isMobile && (
                       <MyBalance
-                        marginBottom="25px"
-                        backColor={backColor}
-                        borderColor={borderColorBox}
+                        $marginbottom="25px"
+                        $backcolor={backColor}
+                        $bordercolor={borderColorBox}
                       >
                         <NewLabel
-                          size={isMobile ? '12px' : '14px'}
-                          weight="600"
-                          height={isMobile ? '20px' : '24px'}
-                          color={fontColor4}
-                          padding={isMobile ? '10px 15px' : '10px 15px'}
-                          borderBottom={`1px solid ${borderColorBox}`}
-                          display="flex"
-                          justifyContent="space-between"
+                          $size={isMobile ? '12px' : '14px'}
+                          $weight="600"
+                          $height={isMobile ? '20px' : '24px'}
+                          $fontcolor={fontColor4}
+                          $padding={isMobile ? '10px 15px' : '10px 15px'}
+                          $borderbottom={`1px solid ${borderColorBox}`}
+                          $display="flex"
+                          $justifycontent="space-between"
                         >
                           <div>My Token Rewards</div>
                           <div>
@@ -2488,13 +2487,13 @@ const AdvancedFarm = () => {
                 ) : (
                   <>
                     <TotalRewardBox
-                      marginBottom={isMobile ? '20px' : '25px'}
-                      backColor={bgColorNew}
-                      borderColor={borderColorBox}
+                      $marginbottom={isMobile ? '20px' : '25px'}
+                      $backcolor={bgColorNew}
+                      $bordercolor={borderColorBox}
                     >
-                      <BoxTitle fontColor3={fontColor3}>Rewards</BoxTitle>
+                      <BoxTitle $fontcolor3={fontColor3}>Rewards</BoxTitle>
                       <RewardValue>
-                        <BoxValue fontColor1={fontColor1}>
+                        <BoxValue $fontcolor1={fontColor1}>
                           {!connected ? (
                             `${currencySym}0`
                           ) : userStats ? (
@@ -2507,17 +2506,17 @@ const AdvancedFarm = () => {
                     </TotalRewardBox>
                     {!isMobile && (
                       <MyBalance
-                        marginBottom="25px"
-                        backColor={bgColorNew}
-                        borderColor={borderColorBox}
+                        $marginbottom="25px"
+                        $backcolor={bgColorNew}
+                        $bordercolor={borderColorBox}
                       >
                         <NewLabel
-                          size={isMobile ? '12px' : '14px'}
-                          weight="600"
-                          height={isMobile ? '20px' : '24px'}
-                          color={fontColor4}
-                          padding={isMobile ? '10px 15px' : '10px 15px'}
-                          borderBottom={`1px solid ${borderColorBox}`}
+                          $size={isMobile ? '12px' : '14px'}
+                          $weight="600"
+                          $height={isMobile ? '20px' : '24px'}
+                          $fontcolor={fontColor4}
+                          $padding={isMobile ? '10px 15px' : '10px 15px'}
+                          $borderbottom={`1px solid ${borderColorBox}`}
                         >
                           My Token Rewards
                         </NewLabel>
@@ -2531,10 +2530,10 @@ const AdvancedFarm = () => {
               ) : activeMainTag === 2 ? (
                 <>
                   <HalfInfo
-                    padding="25px 18px"
-                    marginBottom={isMobile ? '20px' : '25px'}
-                    backColor={bgColorNew}
-                    borderColor={borderColorBox}
+                    $padding="25px 18px"
+                    $marginbottom={isMobile ? '20px' : '25px'}
+                    $backcolor={bgColorNew}
+                    $bordercolor={borderColorBox}
                   >
                     <FarmDetailChart
                       token={token}
@@ -2564,16 +2563,16 @@ const AdvancedFarm = () => {
                 <></>
               )}
             </MainSection>
-            <RestContent height={activeMainTag === 0 ? '100%' : 'fit-content'}>
+            <RestContent $height={activeMainTag === 0 ? '100%' : 'fit-content'}>
               {activeMainTag === 0 ? (
                 <FirstPartSection>
                   <HalfContent
-                    backColor={bgColorNew}
-                    borderColor={borderColorBox}
-                    marginBottom={isMobile ? '20px' : '0px'}
-                    borderRadius={isMobile ? '12px' : '12px'}
+                    $backcolor={bgColorNew}
+                    $bordercolor={borderColorBox}
+                    $marginbottom={isMobile ? '20px' : '0px'}
+                    $borderradius={isMobile ? '12px' : '12px'}
                   >
-                    <DepositSection isShow={activeDepo}>
+                    <DepositSection $isshow={activeDepo}>
                       <DepositBase
                         setSelectToken={setSelectTokenDepo}
                         deposit={depositStart}
@@ -2643,7 +2642,7 @@ const AdvancedFarm = () => {
                         setConvertSuccess={setConvertSuccess}
                       />
                     </DepositSection>
-                    <WithdrawSection isShow={!activeDepo}>
+                    <WithdrawSection $isshow={!activeDepo}>
                       <WithdrawBase
                         unstakeInputValue={unstakeInputValue}
                         setUnstakeInputValue={setUnstakeInputValue}
@@ -2727,30 +2726,30 @@ const AdvancedFarm = () => {
               ) : activeMainTag === 1 && !token.isIPORVault ? (
                 <SecondPartSection>
                   <MyBalance
-                    backColor={bgColorNew}
-                    borderColor={borderColorBox}
-                    height={isMobile ? 'unset' : '120px'}
-                    marginBottom={isMobile ? '20px' : '25px'}
+                    $backcolor={bgColorNew}
+                    $bordercolor={borderColorBox}
+                    $height={isMobile ? 'unset' : '120px'}
+                    $marginbottom={isMobile ? '20px' : '25px'}
                   >
                     <NewLabel
-                      size={isMobile ? '12px' : '12px'}
-                      weight="600"
-                      height={isMobile ? '20px' : '20px'}
-                      color={fontColor4}
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom={`1px solid ${borderColorBox}`}
+                      $size={isMobile ? '12px' : '12px'}
+                      $weight="600"
+                      $height={isMobile ? '20px' : '20px'}
+                      $fontcolor={fontColor4}
+                      $padding={isMobile ? '10px 15px' : '10px 15px'}
+                      $borderbottom={`1px solid ${borderColorBox}`}
                     >
                       {fTokenName}
                     </NewLabel>
                     <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                      $justifycontent="space-between"
+                      $padding={isMobile ? '5px 15px' : '5px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        weight="500"
-                        color={fontColor3}
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $weight="500"
+                        $fontcolor={fontColor3}
                       >
                         Unstaked
                         <PiQuestion
@@ -2765,9 +2764,9 @@ const AdvancedFarm = () => {
                           textColor={darkMode ? 'black' : 'white'}
                         >
                           <NewLabel
-                            size={isMobile ? '12px' : '12px'}
-                            height={isMobile ? '18px' : '18px'}
-                            weight="500"
+                            $size={isMobile ? '12px' : '12px'}
+                            $height={isMobile ? '18px' : '18px'}
+                            $weight="500"
                           >
                             The number of fTokens you hold, which are not entitled to extra token
                             rewards.
@@ -2775,10 +2774,10 @@ const AdvancedFarm = () => {
                         </Tooltip>
                       </NewLabel>
                       <NewLabel
-                        weight="600"
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor1}
+                        $weight="600"
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor={fontColor1}
                       >
                         {!connected ? (
                           0
@@ -2794,15 +2793,15 @@ const AdvancedFarm = () => {
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                      $justifycontent="space-between"
+                      $padding={isMobile ? '5px 15px' : '5px 15px'}
                     >
                       <NewLabel
-                        display="flex"
-                        size={isMobile ? '12px' : '12px'}
-                        weight="500"
-                        height={isMobile ? '24px' : '24px'}
-                        color="#15B088"
+                        $display="flex"
+                        $size={isMobile ? '12px' : '12px'}
+                        $weight="500"
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor="#15B088"
                       >
                         Staked
                         <PiQuestion className="question" data-tip data-for="tooltip-staked-desc" />
@@ -2813,9 +2812,9 @@ const AdvancedFarm = () => {
                           textColor={darkMode ? 'black' : 'white'}
                         >
                           <NewLabel
-                            size={isMobile ? '12px' : '12px'}
-                            height={isMobile ? '18px' : '18px'}
-                            weight="500"
+                            $size={isMobile ? '12px' : '12px'}
+                            $height={isMobile ? '18px' : '18px'}
+                            $weight="500"
                           >
                             The number of fTokens you hold, which are entitled to extra token
                             rewards.
@@ -2823,10 +2822,10 @@ const AdvancedFarm = () => {
                         </Tooltip>
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        weight={isMobile ? '600' : '600'}
-                        color={isMobile ? '#15B088' : '#15B088'}
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $weight={isMobile ? '600' : '600'}
+                        $fontcolor={isMobile ? '#15B088' : '#15B088'}
                       >
                         {!connected ? (
                           0
@@ -2844,17 +2843,17 @@ const AdvancedFarm = () => {
                   </MyBalance>
                   {isMobile && (
                     <MyBalance
-                      marginBottom="20px"
-                      backColor={bgColorNew}
-                      borderColor={borderColorBox}
+                      $marginbottom="20px"
+                      $backcolor={bgColorNew}
+                      $bordercolor={borderColorBox}
                     >
                       <NewLabel
-                        size={isMobile ? '14px' : '14px'}
-                        weight="600"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor4}
-                        padding={isMobile ? '10px 15px' : '10px 15px'}
-                        borderBottom={`1px solid ${borderColorBox}`}
+                        $size={isMobile ? '14px' : '14px'}
+                        $weight="600"
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor={fontColor4}
+                        $padding={isMobile ? '10px 15px' : '10px 15px'}
+                        $borderbottom={`1px solid ${borderColorBox}`}
                       >
                         My Token Rewards
                       </NewLabel>
@@ -2864,12 +2863,12 @@ const AdvancedFarm = () => {
                     </MyBalance>
                   )}
                   <HalfContent
-                    backColor={bgColorNew}
-                    borderColor={borderColorBox}
-                    marginBottom={isMobile ? '20px' : '0px'}
-                    borderRadius={isMobile ? '12px' : '12px'}
+                    $backcolor={bgColorNew}
+                    $bordercolor={borderColorBox}
+                    $marginbottom={isMobile ? '20px' : '0px'}
+                    $borderradius={isMobile ? '12px' : '12px'}
                   >
-                    <StakeSection isShow={activeStake}>
+                    <StakeSection $isshow={activeStake}>
                       <StakeBase
                         setStakeStart={setStakeStart}
                         inputAmount={inputAmountStake}
@@ -2901,7 +2900,7 @@ const AdvancedFarm = () => {
                         tokenSymbol={tokenSym}
                       />
                     </StakeSection>
-                    <UnstakeSection isShow={!activeStake}>
+                    <UnstakeSection $isshow={!activeStake}>
                       <UnstakeBase
                         setUnstakeStart={setUnstakeStart}
                         finalStep={unstakeFinalStep}
@@ -2943,34 +2942,34 @@ const AdvancedFarm = () => {
                 </SecondPartSection>
               ) : activeMainTag === 2 ? (
                 <RestInternal>
-                  <LastHarvestInfo backColor={bgColorNew} borderColor={borderColorBox}>
+                  <LastHarvestInfo $backcolor={bgColorNew} $bordercolor={borderColorBox}>
                     <NewLabel
-                      size={isMobile ? '12px' : '14px'}
-                      weight={isMobile ? '600' : '600'}
-                      height={isMobile ? '20px' : '24px'}
-                      color={fontColor4}
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom={`1px solid ${borderColorBox}`}
+                      $size={isMobile ? '12px' : '14px'}
+                      $weight={isMobile ? '600' : '600'}
+                      $height={isMobile ? '20px' : '24px'}
+                      $fontcolor={fontColor4}
+                      $padding={isMobile ? '10px 15px' : '10px 15px'}
+                      $borderbottom={`1px solid ${borderColorBox}`}
                     >
                       Info
                     </NewLabel>
                     <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
+                      $justifycontent="space-between"
+                      $padding={isMobile ? '10px 15px' : '10px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="500"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor3}
+                        $size={isMobile ? '12px' : '14px'}
+                        $weight="500"
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor={fontColor3}
                       >
                         Operating since
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="600"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor1}
+                        $size={isMobile ? '12px' : '14px'}
+                        $weight="600"
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor={fontColor1}
                       >
                         {vaultBirthday === '' ? <AnimatedDots /> : vaultBirthday}{' '}
                         {vaultTotalPeriod !== '' && (
@@ -2979,23 +2978,23 @@ const AdvancedFarm = () => {
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom={`1px solid ${borderColorBox}`}
+                      $justifycontent="space-between"
+                      $padding={isMobile ? '10px 15px' : '10px 15px'}
+                      $borderbottom={`1px solid ${borderColorBox}`}
                     >
                       <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="500"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor3}
+                        $size={isMobile ? '12px' : '14px'}
+                        $weight="500"
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor={fontColor3}
                       >
                         SharePrice
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="600"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor1}
+                        $size={isMobile ? '12px' : '14px'}
+                        $weight="600"
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor={fontColor1}
                       >
                         <div className="question" data-tip data-for="tooltip-sharePrice">
                           {latestSharePrice === '' ? (
@@ -3014,9 +3013,9 @@ const AdvancedFarm = () => {
                           place="top"
                         >
                           <NewLabel
-                            size={isMobile ? '12px' : '12px'}
-                            height={isMobile ? '18px' : '18px'}
-                            weight="500"
+                            $size={isMobile ? '12px' : '12px'}
+                            $height={isMobile ? '18px' : '18px'}
+                            $weight="500"
                           >
                             {latestSharePrice}
                           </NewLabel>
@@ -3024,17 +3023,17 @@ const AdvancedFarm = () => {
                       </NewLabel>
                     </FlexDiv>
                     <NewLabel
-                      display="flex"
-                      justifyContent="space-between"
-                      size={isMobile ? '12px' : '14px'}
-                      weight={isMobile ? '600' : '600'}
-                      height={isMobile ? '20px' : '24px'}
-                      color={fontColor4}
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom={`1px solid ${borderColorBox}`}
+                      $display="flex"
+                      $justifycontent="space-between"
+                      $size={isMobile ? '12px' : '14px'}
+                      $weight={isMobile ? '600' : '600'}
+                      $height={isMobile ? '20px' : '24px'}
+                      $fontcolor={fontColor4}
+                      $padding={isMobile ? '10px 15px' : '10px 15px'}
+                      $borderbottom={`1px solid ${borderColorBox}`}
                     >
                       {showApyHistory ? 'APY - Live & Historical Average' : 'Harvest Frequency'}
-                      <SwitchMode mode={showApyHistory ? 'apy' : 'harvest'}>
+                      <SwitchMode $mode={showApyHistory ? 'apy' : 'harvest'}>
                         <div id="theme-switch">
                           <div className="switch-track">
                             <div className="switch-thumb" />
@@ -3052,22 +3051,22 @@ const AdvancedFarm = () => {
                       ? apyPeriods.map((period, index) => (
                           <FlexDiv
                             key={index}
-                            justifyContent="space-between"
-                            padding={isMobile ? '10px 15px' : '10px 15px'}
+                            $justifycontent="space-between"
+                            $padding={isMobile ? '10px 15px' : '10px 15px'}
                           >
                             <NewLabel
-                              size={isMobile ? '12px' : '14px'}
-                              weight="500"
-                              height={isMobile ? '24px' : '24px'}
-                              color={fontColor3}
+                              $size={isMobile ? '12px' : '14px'}
+                              $weight="500"
+                              $height={isMobile ? '24px' : '24px'}
+                              $fontcolor={fontColor3}
                             >
                               {period.label}
                             </NewLabel>
                             <NewLabel
-                              size={isMobile ? '12px' : '14px'}
-                              weight="600"
-                              height={isMobile ? '24px' : '24px'}
-                              color={fontColor1}
+                              $size={isMobile ? '12px' : '14px'}
+                              $weight="600"
+                              $height={isMobile ? '24px' : '24px'}
+                              $fontcolor={fontColor1}
                             >
                               {period.value === '' ? <AnimatedDots /> : period.value}
                             </NewLabel>
@@ -3076,22 +3075,22 @@ const AdvancedFarm = () => {
                       : harvestFrequencies.map((period, index) => (
                           <FlexDiv
                             key={index}
-                            justifyContent="space-between"
-                            padding={isMobile ? '10px 15px' : '10px 15px'}
+                            $justifycontent="space-between"
+                            $padding={isMobile ? '10px 15px' : '10px 15px'}
                           >
                             <NewLabel
-                              size={isMobile ? '12px' : '14px'}
-                              weight="500"
-                              height={isMobile ? '24px' : '24px'}
-                              color={fontColor3}
+                              $size={isMobile ? '12px' : '14px'}
+                              $weight="500"
+                              $height={isMobile ? '24px' : '24px'}
+                              $fontcolor={fontColor3}
                             >
                               {period.label}
                             </NewLabel>
                             <NewLabel
-                              size={isMobile ? '12px' : '14px'}
-                              weight="600"
-                              height={isMobile ? '24px' : '24px'}
-                              color={fontColor1}
+                              $size={isMobile ? '12px' : '14px'}
+                              $weight="600"
+                              $height={isMobile ? '24px' : '24px'}
+                              $fontcolor={fontColor1}
                             >
                               {period.value === '' ? <AnimatedDots /> : period.value}
                             </NewLabel>
@@ -3100,28 +3099,28 @@ const AdvancedFarm = () => {
                   </LastHarvestInfo>
                   {!useIFARM && (
                     <MyBalance
-                      marginBottom={isMobile ? '20px' : '25px'}
-                      backColor={bgColorNew}
-                      borderColor={borderColorBox}
+                      $marginbottom={isMobile ? '20px' : '25px'}
+                      $backcolor={bgColorNew}
+                      $bordercolor={borderColorBox}
                     >
                       <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="600"
-                        height={isMobile ? '20px' : '24px'}
-                        color={fontColor4}
-                        padding={isMobile ? '10px 15px' : '10px 15px'}
-                        borderBottom={`1px solid ${borderColorBox}`}
+                        $size={isMobile ? '12px' : '14px'}
+                        $weight="600"
+                        $height={isMobile ? '20px' : '24px'}
+                        $fontcolor={fontColor4}
+                        $padding={isMobile ? '10px 15px' : '10px 15px'}
+                        $borderbottom={`1px solid ${borderColorBox}`}
                       >
                         APY Breakdown
                       </NewLabel>
-                      <NewLabel padding={isMobile ? '0px 15px 10px' : '0px 15px 10px'}>
+                      <NewLabel $padding={isMobile ? '0px 15px 10px' : '0px 15px 10px'}>
                         <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
                       </NewLabel>
-                      <Tip display={showTip ? 'block' : 'none'}>
+                      <Tip $display={showTip ? 'block' : 'none'}>
                         <TipTop>
                           <IconPart>
                             <img src={TickIcon} alt="tick icon" style={{ marginRight: '5px' }} />
-                            <NewLabel size="14px" weight="600" height="20px" color="#027A48">
+                            <NewLabel $size="14px" $weight="600" $height="20px" $fontcolor="#027A48">
                               Tip
                             </NewLabel>
                           </IconPart>
@@ -3133,7 +3132,7 @@ const AdvancedFarm = () => {
                             <img src={TickCross} alt="tick cross" />
                           </CrossDiv>
                         </TipTop>
-                        <NewLabel size="14px" height="20px" weight="400" color="#027A48">
+                        <NewLabel $size="14px" $height="20px" $weight="400" $fontcolor="#027A48">
                           For a quick guide on tracking yield sources in your Portfolio, check out
                           our 5-minute article &quot;
                           <a
@@ -3149,36 +3148,36 @@ const AdvancedFarm = () => {
                       </Tip>
                     </MyBalance>
                   )}
-                  <LastHarvestInfo backColor={bgColorNew} borderColor={borderColorBox}>
+                  <LastHarvestInfo $backcolor={bgColorNew} $bordercolor={borderColorBox}>
                     <NewLabel
-                      size={isMobile ? '12px' : '14px'}
-                      weight={isMobile ? '600' : '600'}
-                      height={isMobile ? '20px' : '24px'}
-                      color={fontColor4}
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom={`1px solid ${borderColorBox}`}
+                      $size={isMobile ? '12px' : '14px'}
+                      $weight={isMobile ? '600' : '600'}
+                      $height={isMobile ? '20px' : '24px'}
+                      $fontcolor={fontColor4}
+                      $padding={isMobile ? '10px 15px' : '10px 15px'}
+                      $borderbottom={`1px solid ${borderColorBox}`}
                     >
                       Fees
                     </NewLabel>
                     {feeList.map((feeItem, index) => (
                       <FlexDiv
                         key={index}
-                        justifyContent="space-between"
-                        padding={isMobile ? '10px 15px' : '10px 15px'}
+                        $justifycontent="space-between"
+                        $padding={isMobile ? '10px 15px' : '10px 15px'}
                       >
                         <NewLabel
-                          size={isMobile ? '12px' : '14px'}
-                          weight="500"
-                          height={isMobile ? '24px' : '24px'}
-                          color={fontColor3}
+                          $size={isMobile ? '12px' : '14px'}
+                          $weight="500"
+                          $height={isMobile ? '24px' : '24px'}
+                          $fontcolor={fontColor3}
                         >
                           {feeItem.label}
                         </NewLabel>
                         <NewLabel
-                          size={isMobile ? '12px' : '14px'}
-                          weight="600"
-                          height={isMobile ? '24px' : '24px'}
-                          color={fontColor1}
+                          $size={isMobile ? '12px' : '14px'}
+                          $weight="600"
+                          $height={isMobile ? '24px' : '24px'}
+                          $fontcolor={fontColor1}
                         >
                           {feeItem.value}
                         </NewLabel>
@@ -3186,19 +3185,19 @@ const AdvancedFarm = () => {
                     ))}
                     {!useIFARM && (
                       <FlexDiv
-                        justifyContent="space-between"
-                        padding={isMobile ? '10px 15px' : '10px 15px'}
+                        $justifycontent="space-between"
+                        $padding={isMobile ? '10px 15px' : '10px 15px'}
                       >
                         <NewLabel
-                          size={isMobile ? '13px' : '13px'}
-                          weight="300"
-                          height="normal"
-                          color={fontColor3}
+                          $size={isMobile ? '13px' : '13px'}
+                          $weight="300"
+                          $height="normal"
+                          $fontcolor={fontColor3}
                         >
                           The APY shown already considers the performance fee taken only from
                           generated yield and not deposits.
                         </NewLabel>
-                        <NewLabel display="flex" self="center">
+                        <NewLabel $display="flex" $self="center">
                           <PiQuestion
                             className="question"
                             data-tip
@@ -3212,15 +3211,15 @@ const AdvancedFarm = () => {
                             place={isMobile ? 'left' : 'top'}
                           >
                             <NewLabel
-                              weight="500"
-                              size={isMobile ? '13px' : '13px'}
-                              height={isMobile ? '16px' : '16px'}
+                              $weight="500"
+                              $size={isMobile ? '13px' : '13px'}
+                              $height={isMobile ? '16px' : '16px'}
                             >
-                              <FlexDiv gap="15px" justifyContent="space-between">
+                              <FlexDiv $gap="15px" $justifycontent="space-between">
                                 <div>Harvest Treasury</div>
                                 <div>{token.isIPORVault ? '0' : harvestTreasury}%</div>
                               </FlexDiv>
-                              <FlexDiv gap="15px" justifyContent="space-between" marginTop="12px">
+                              <FlexDiv $gap="15px" $justifycontent="space-between" $margintop="12px">
                                 <div>Profit Sharing</div>
                                 <div>{token.isIPORVault ? '0' : profitShare}%</div>
                               </FlexDiv>
@@ -3231,14 +3230,14 @@ const AdvancedFarm = () => {
                     )}
                   </LastHarvestInfo>
                   {token.isIPORVault && (
-                    <LastHarvestInfo backColor={backColor} borderColor={borderColor}>
+                    <LastHarvestInfo $backcolor={backColor} $bordercolor={borderColor}>
                       <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight={isMobile ? '600' : '600'}
-                        height={isMobile ? '20px' : '24px'}
-                        color={fontColor4}
-                        padding={isMobile ? '10px 15px' : '10px 15px'}
-                        borderBottom="1px solid #F3F6FF"
+                        $size={isMobile ? '12px' : '14px'}
+                        $weight={isMobile ? '600' : '600'}
+                        $height={isMobile ? '20px' : '24px'}
+                        $fontcolor={fontColor4}
+                        $padding={isMobile ? '10px 15px' : '10px 15px'}
+                        $borderbottom="1px solid #F3F6FF"
                       >
                         Allocation
                       </NewLabel>
@@ -3262,15 +3261,15 @@ const AdvancedFarm = () => {
                           return (
                             <FlexDiv
                               key={index}
-                              justifyContent="space-between"
-                              padding={isMobile ? '10px 15px' : '10px 15px'}
+                              $justifycontent="space-between"
+                              $padding={isMobile ? '10px 15px' : '10px 15px'}
                             >
                               <NewLabel
-                                size="13.4px"
-                                height="20px"
-                                weight="500"
+                                $size="13.4px"
+                                $height="20px"
+                                $weight="500"
                                 cursor="pointer"
-                                borderBottom="0.5px dotted white"
+                                $borderbottom="0.5px dotted white"
                                 onClick={() => {
                                   const lcChainName = getChainNamePortals(token.chain)
                                   return allVaultsData[data.hVaultId]?.vaultAddress
@@ -3285,7 +3284,7 @@ const AdvancedFarm = () => {
                               >
                                 {vaultName}
                               </NewLabel>
-                              <NewLabel size="13.4px" height="20px" weight="500">
+                              <NewLabel $size="13.4px" $height="20px" $weight="500">
                                 {Number(data.allocPoint).toFixed(2)}%
                               </NewLabel>
                             </FlexDiv>

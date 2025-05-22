@@ -29,7 +29,7 @@ const ProfitSharingContainer = ({ height }) => {
       onClick={() => {
         navigate(`${directDetailUrl}ethereum/${addresses.FARM}`)
       }}
-      height={height}
+      $height={height}
     >
       <TopDiv>
         <img src={ProfitSharingIcon} alt="profit-sharing" />

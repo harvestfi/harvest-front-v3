@@ -598,7 +598,7 @@ const ApexChart = ({
   return (
     <>
       {!loading ? (
-        <ChartWrapper bgColorChart={bgColorChart}>
+        <ChartWrapper $bgcolorchart={bgColorChart}>
           <ResponsiveContainer
             width="100%"
             // height={onlyWidth > 1250 ? 350 : onlyWidth > 1050 ? 330 : 330}
@@ -641,7 +641,7 @@ const ApexChart = ({
                 // interval={20}
                 tickCount={isMobile ? 7 : 5}
                 tick={renderCustomXAxisTick}
-                padding={{ right: 10 }}
+                $padding={{ right: 10 }}
               />
               <YAxis
                 dataKey="y"
@@ -747,7 +747,7 @@ const ApexChart = ({
           {isDataReady ? (
             <ClipLoader size={30} margin={2} color={fontColor} />
           ) : (
-            <NoData color={fontColor}>Vault data soon to be available.</NoData>
+            <NoData $fontcolor={fontColor}>Vault data soon to be available.</NoData>
           )}
         </LoadingDiv>
       )}

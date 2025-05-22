@@ -129,10 +129,9 @@ const VaultHeadActionsMigrate = ({
         </MigrateOptionsContainer>
       ) : null}
       <Button
-        color="earn"
-        size="md"
-        width="100%"
-        maxHeight="34px"
+        $fontcolor="earn"
+        $size="md"
+        $width="100%"
         onClick={async () => {
           handleMigrate(
             setPendingAction,

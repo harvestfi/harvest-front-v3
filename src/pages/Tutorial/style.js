@@ -4,9 +4,9 @@ import AdvancedImg from '../../assets/images/logos/dashboard/box-bg-2.png'
 const Container = styled.div`
   width: 100%;
   min-height: 100vh;
-  color: ${props => props.fontColor};
+  color: ${props => props.$fontcolor};
 
-  background: ${props => props.bgColor};
+  background: ${props => props.$bgcolor};
   transition: 0.25s;
   position: relative;
   margin-left: 260px;
@@ -101,7 +101,7 @@ const WrapperDiv = styled.div`
 `
 
 const Title = styled.div`
-  color: ${props => props.fontColor1};
+  color: ${props => props.$fontcolor1};
   font-size: 30px;
   font-weight: 600;
   line-height: 38px;
@@ -109,19 +109,19 @@ const Title = styled.div`
 `
 
 const DescText = styled.div`
-  color: ${props => props.fontColor};
+  color: ${props => props.$fontcolor};
   font-size: 18px;
   font-weight: 400;
   line-height: 28px;
 
   div.italic {
-    color: ${props => props.fontColor5};
+    color: ${props => props.$fontcolor5};
     font-style: italic;
     font-family: initial;
   }
 
   div.note {
-    color: ${props => props.fontColor5};
+    color: ${props => props.$fontcolor5};
     font-style: italic;
     font-weight: 600;
     font-family: initial;
@@ -129,7 +129,7 @@ const DescText = styled.div`
 
   div.label {
     display: inline;
-    background: ${props => props.bgColorFarm};
+    background: ${props => props.$bgcolorfarm};
     padding: 0px 5px;
   }
 
@@ -138,7 +138,7 @@ const DescText = styled.div`
   }
 
   a {
-    color: ${props => props.linkColor};
+    color: ${props => props.$linkcolor};
     font-weight: 400;
   }
 

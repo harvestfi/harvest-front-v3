@@ -179,10 +179,9 @@ const VaultHeadActions = ({
               </DepositOptionsContainer>
             ) : null}
             <Button
-              color="earn"
-              size="md"
-              width="100%"
-              maxHeight="34px"
+              $fontcolor="earn"
+              $size="md"
+              $width="100%"
               onClick={async () => {
                 await handleDeposit(
                   token,
@@ -265,11 +264,11 @@ const VaultHeadActions = ({
                   !hasAmountGreaterThanZero(totalStaked)
                 }
               />
-              <Divider height="10px" />
+              <Divider $height="10px" />
               <Button
-                color="earn"
-                size="md"
-                width="100%"
+                $fontcolor="earn"
+                $size="md"
+                $width="100%"
                 onClick={async () => {
                   let autoUnstakeCompleted = null
                   const shouldAutoUnStake = new BigNumber(amountsToExecuteInWei[0]).isGreaterThan(
@@ -346,7 +345,7 @@ const VaultHeadActions = ({
             </div>
             {multipleAssets ? (
               <>
-                <Divider height="15px" />
+                <Divider $height="15px" />
                 <RadioInput
                   options={[
                     ...multipleAssets.map((symbol, symbolIdx) => ({

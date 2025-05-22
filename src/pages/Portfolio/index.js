@@ -22,7 +22,6 @@ import SkeletonLoader from '../../components/DashboardComponents/SkeletonLoader'
 import EarningsHistoryLatest from '../../components/EarningsHistoryLatest/HistoryDataLatest'
 import TotalValue from '../../components/TotalValue'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
-import MobileBackImage from '../../assets/images/logos/portfolio-mobile-background.png'
 import PhoneLogo from '../../assets/images/logos/farm-icon.svg'
 import {
   FARM_TOKEN_SYMBOL,
@@ -933,11 +932,11 @@ const Portfolio = () => {
   ]
 
   return (
-    <Container bgColor={bgColorNew} fontColor={fontColor}>
+    <Container $bgcolor={bgColorNew} $fontcolor={fontColor}>
       <Inner>
-        <HeaderWrap backImg={MobileBackImage} padding="25px" borderColor={borderColorBox}>
+        <HeaderWrap $padding="25px" $bordercolor={borderColorBox}>
           {!isMobile && (
-            <HeaderTitle fontColor={fontColor} fontColor1={fontColor1}>
+            <HeaderTitle $fontcolor={fontColor} $fontcolor1={fontColor1}>
               <div className="title">Overview</div>
               <div className="desc">Displaying data from across all networks.</div>
             </HeaderTitle>
@@ -952,7 +951,7 @@ const Portfolio = () => {
                   </div>
                 </LogoDiv>
                 {connected && (
-                  <LogoDiv bgColor="#F8F8F8" borderRadius="16px" padding="3px 8px">
+                  <LogoDiv $bgcolor="#F8F8F8" $borderradius="16px" $padding="3px 8px">
                     <img src={ConnectSuccessIcon} alt="connect success" width={6} height={6} />
                     <Address>{showAddress ? formatAddress(account) : '**********'}</Address>
                     <div
@@ -977,10 +976,10 @@ const Portfolio = () => {
                 )}
               </HeaderTop>
               <LifetimeValue
-                isLoading={isLoading}
-                noFarm={noFarm}
-                connected={connected}
-                color={fontColor1}
+                $isloading={isLoading}
+                $noFarm={noFarm}
+                $connected={connected}
+                $fontcolor={fontColor1}
               >
                 {!connected || noFarm ? (
                   `${currencySym}0.00`
@@ -996,19 +995,17 @@ const Portfolio = () => {
                   showUsdValueCurrency(totalNetProfit, currencySym, currencyRate)
                 )}
               </LifetimeValue>
-              <LifetimeSub color={fontColor1}>
+              <LifetimeSub $fontcolor={fontColor1}>
                 Lifetime Yield
                 <GreenBox>
-                  <IoArrowUpCircleOutline color="#5dcf46" fontSize={14} />
-                  {!connected || noFarm ? (
-                    `${currencySym}0.00`
-                  ) : oneDayYield === 0 ? (
-                    <AnimatedDots />
-                  ) : oneDayYield * currencyRate >= 0.01 ? (
-                    `${currencySym}${formatNumber(oneDayYield * currencyRate)} (24h)`
-                  ) : (
-                    `<${currencySym}0.01 (24h)`
-                  )}
+                  <IoArrowUpCircleOutline color="#5dcf46" $fontsize={14} />
+                  {!connected || noFarm
+                    ? `${currencySym}0.00`
+                    : oneDayYield === 0
+                    ? `${currencySym}0.00`
+                    : oneDayYield * currencyRate >= 0.01
+                    ? `${currencySym}${formatNumber(oneDayYield * currencyRate)} (24h)`
+                    : `<${currencySym}0.01 (24h)`}
                 </GreenBox>
               </LifetimeSub>
             </MobileHeader>
@@ -1018,16 +1015,16 @@ const Portfolio = () => {
               <Dropdown>
                 <CurrencyDropDown
                   id="dropdown-basic"
-                  bgcolor={bgColorNew}
-                  fontcolor2={fontColor2}
-                  hovercolor={hoverColorNew}
+                  $bgcolor={bgColorNew}
+                  $fontcolor2={fontColor2}
+                  $hovercolor={hoverColorNew}
                   style={{ padding: 0 }}
                 >
                   {curCurrency ? (
                     <CurrencySelect
-                      backColor={backColor}
-                      fontcolor2={fontColor2}
-                      hovercolor={hoverColor}
+                      $backcolor={backColor}
+                      $fontcolor2={fontColor2}
+                      $hovercolor={hoverColor}
                     >
                       <img
                         className={darkMode ? 'logo-dark' : 'logo'}
@@ -1044,16 +1041,16 @@ const Portfolio = () => {
                   )}
                 </CurrencyDropDown>
                 {!isSpecialApp ? (
-                  <CurrencyDropDownMenu backcolor={bgColorNew}>
+                  <CurrencyDropDownMenu $backcolor={bgColorNew}>
                     {supportedCurrencies.map(elem => {
                       return (
                         <CurrencyDropDownItem
                           onClick={() => {
                             updateCurrency(elem.id)
                           }}
-                          fontcolor={fontColor}
-                          filtercolor={filterColor}
-                          hovercolor={hoverColorNew}
+                          $fontcolor={fontColor}
+                          $filtercolor={filterColor}
+                          $hovercolor={hoverColorNew}
                           key={elem.id}
                         >
                           <img
@@ -1084,16 +1081,16 @@ const Portfolio = () => {
         <div>
           <ChartSection>
             <ChartBox
-              align="flex-start"
-              direction="row"
-              fontColor={fontColor}
-              backColor={backColor}
-              borderColor={borderColor}
+              $align="flex-start"
+              $direction="row"
+              $fontcolor={fontColor}
+              $backcolor={backColor}
+              $bordercolor={borderColor}
             >
               <LifetimeYieldData noFarm={noFarm} totalHistoryData={totalHistoryData} />
             </ChartBox>
             {!isMobile && (
-              <YieldTable display={showLatestYield ? 'block' : 'none'}>
+              <YieldTable $display={showLatestYield ? 'block' : 'none'}>
                 <div className="table-title">Latest Yield</div>
                 <EarningsHistoryLatest
                   historyData={totalHistoryData}
@@ -1114,7 +1111,7 @@ const Portfolio = () => {
                     toolTipTitle={data.toolTipTitle}
                     toolTip={data.toolTip}
                     connected={connected}
-                    isLoading={isLoading}
+                    isloading={isLoading}
                     farmTokenListLength={farmTokenList.length}
                   />
                 ))
@@ -1127,18 +1124,18 @@ const Portfolio = () => {
                     toolTipTitle={data.toolTipTitle}
                     toolTip={data.toolTip}
                     connected={connected}
-                    isLoading={isLoading}
+                    isloading={isLoading}
                     farmTokenListLength={farmTokenList.length}
                   />
                 ))}
           </SubPart>
         </div>
 
-        <TableWrap fontColor1={fontColor1}>
+        <TableWrap $fontcolor1={fontColor1}>
           {isMobile && (
-            <MobileSwitch darkMode={darkMode}>
+            <MobileSwitch $darkmode={darkMode}>
               <SwitchBtn
-                color={
+                $fontcolor={
                   darkMode
                     ? showLatestYield
                       ? '#fff'
@@ -1147,8 +1144,8 @@ const Portfolio = () => {
                       ? '#15191C'
                       : '#fff'
                 }
-                backColor={showLatestYield ? 'unset' : '#5DCF46'}
-                boxShadow={
+                $backcolor={showLatestYield ? 'unset' : '#5DCF46'}
+                $boxshadow={
                   showLatestYield
                     ? 'none'
                     : '0px 1px 3px 0px rgba(16, 24, 40, 0.1), 0px 1px 2px 0px rgba(16, 24, 40, 0.06)'
@@ -1158,7 +1155,7 @@ const Portfolio = () => {
                 Positions
               </SwitchBtn>
               <SwitchBtn
-                color={
+                $fontcolor={
                   darkMode
                     ? showLatestYield
                       ? '#15191C'
@@ -1167,8 +1164,8 @@ const Portfolio = () => {
                       ? '#fff'
                       : '#15191C'
                 }
-                backColor={showLatestYield ? '#5DCF46' : 'unset'}
-                boxShadow={
+                $backcolor={showLatestYield ? '#5DCF46' : 'unset'}
+                $boxshadow={
                   showLatestYield
                     ? '0px 1px 3px 0px rgba(16, 24, 40, 0.1), 0px 1px 2px 0px rgba(16, 24, 40, 0.06)'
                     : 'none'
@@ -1179,13 +1176,13 @@ const Portfolio = () => {
               </SwitchBtn>
             </MobileSwitch>
           )}
-          <PositionTable display={showLatestYield ? 'none' : 'block'}>
+          <PositionTable $display={showLatestYield ? 'none' : 'block'}>
             <div className="table-title">Positions</div>
             <TransactionDetails>
-              <TableContent count={farmTokenList.length}>
-                <Header borderColor={borderColorBox} backColor={bgColorNew}>
+              <TableContent $count={farmTokenList.length}>
+                <Header $bordercolor={borderColorBox} $backcolor={bgColorNew}>
                   {positionHeader.map((data, index) => (
-                    <Column key={index} width={data.width} color={fontColor}>
+                    <Column key={index} $width={data.width} $fontcolor={fontColor}>
                       <Col
                         onClick={() => {
                           sortCol(data.sort)
@@ -1197,7 +1194,7 @@ const Portfolio = () => {
                   ))}
                 </Header>
                 {connected && farmTokenList.length > 0 ? (
-                  <ContentBox borderColor={borderColorBox}>
+                  <ContentBox $bordercolor={borderColorBox}>
                     {showInactiveFarms
                       ? farmTokenList.map((el, i) => {
                           const info = farmTokenList[i]
@@ -1268,15 +1265,15 @@ const Portfolio = () => {
                   !noFarm ? (
                     <SkeletonLoader isPosition="true" />
                   ) : (
-                    <EmptyPanel borderColor={borderColorBox} height="400px">
+                    <EmptyPanel $bordercolor={borderColorBox} $height="400px">
                       <EmptyInfo
-                        height="100%"
-                        weight={500}
-                        size={14}
-                        lineHeight={20}
-                        flexFlow="column"
-                        color={fontColor}
-                        gap="0px"
+                        $height="100%"
+                        $weight={500}
+                        $size={14}
+                        $lineheight={20}
+                        $flexflow="column"
+                        $fontcolor={fontColor}
+                        $gap="0px"
                       >
                         <div>
                           Looks like you are not farming anywhere. Let&apos;s put your assets to
@@ -1286,12 +1283,11 @@ const Portfolio = () => {
                           onClick={() => {
                             push(ROUTES.ADVANCED)
                           }}
-                          minWidth="190px"
-                          inputBorderColor={inputBorderColor}
-                          bordercolor={fontColor}
-                          disabled={disableWallet}
-                          backColor={btnColor}
-                          hoverColor={btnHoverColor}
+                          $inputbordercolor={inputBorderColor}
+                          $bordercolor={fontColor}
+                          $disabled={disableWallet}
+                          $backcolor={btnColor}
+                          $hovercolor={btnHoverColor}
                         >
                           <img src={AdvancedImg} className="explore-farms" alt="" />
                           Explore Farms
@@ -1300,21 +1296,20 @@ const Portfolio = () => {
                     </EmptyPanel>
                   )
                 ) : (
-                  <EmptyPanel borderColor={borderColorBox} height="400px">
-                    <EmptyInfo height="100%" flexFlow="column" gap="0px">
-                      <EmptyInfo weight={500} size={14} lineHeight={20} color={fontColor}>
+                  <EmptyPanel $bordercolor={borderColorBox} $height="400px">
+                    <EmptyInfo $height="100%" $flexflow="column" $gap="0px">
+                      <EmptyInfo $weight={500} $size={14} $lineheight={20} $fontcolor={fontColor}>
                         Connect wallet to see your positions.
                       </EmptyInfo>
                       <ConnectButtonStyle
                         onClick={() => {
                           connectAction()
                         }}
-                        minWidth="190px"
-                        inputBorderColor={inputBorderColor}
-                        bordercolor={fontColor}
-                        disabled={disableWallet}
-                        hoverColor={btnHoverColor}
-                        backColor={btnColor}
+                        $inputbordercolor={inputBorderColor}
+                        $bordercolor={fontColor}
+                        $disabled={disableWallet}
+                        $hovercolor={btnHoverColor}
+                        $backcolor={btnColor}
                       >
                         Connect
                       </ConnectButtonStyle>
@@ -1325,14 +1320,14 @@ const Portfolio = () => {
             </TransactionDetails>
           </PositionTable>
           {isMobile && (
-            <YieldTable display={showLatestYield ? 'block' : 'none'}>
+            <YieldTable $display={showLatestYield ? 'block' : 'none'}>
               <div className="table-title">Latest Yield</div>
               <EarningsHistoryLatest
                 historyData={totalHistoryData}
                 isDashboard="true"
                 noData={noFarm}
                 setOneDayYield={setOneDayYield}
-                isLoading={isLoading}
+                isloading={isLoading}
               />
             </YieldTable>
           )}
