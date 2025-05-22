@@ -48,7 +48,7 @@ const LifetimeYieldData = ({ noFarm, totalHistoryData }) => {
   }
 
   return (
-    <Container fontColor={fontColor}>
+    <Container $fontcolor={fontColor}>
       <Header>
         <TooltipContent>
           <div className="title">
@@ -63,9 +63,9 @@ const LifetimeYieldData = ({ noFarm, totalHistoryData }) => {
               place="top"
             >
               <NewLabel
-                size={isMobile ? '10px' : '12px'}
-                height={isMobile ? '15px' : '18px'}
-                weight="600"
+                $size={isMobile ? '10px' : '12px'}
+                $height={isMobile ? '15px' : '18px'}
+                $weight="600"
               >
                 This metric represents your wallet&apos;s total lifetime yield from Harvest,
                 including both &apos;harvest&apos; events and claimed rewards.

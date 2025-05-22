@@ -17,7 +17,7 @@ const TotalValue = ({
   isLoading,
   farmTokenListLength,
 }) => {
-  const { darkMode, borderColor, fontColor1, fontColor3 } = useThemeContext()
+  const { darkMode, fontColor1, fontColor3 } = useThemeContext()
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
@@ -30,11 +30,8 @@ const TotalValue = ({
     }
   }, [rates])
   return (
-    <Container
-      borderColor={borderColor}
-      isNetProfit={content === 'Total Net Profit' ? 'true' : 'false'}
-    >
-      <Div fontColor3={fontColor3}>
+    <Container>
+      <Div $fontcolor3={fontColor3}>
         {content}
         {content === 'Lifetime Yield' && <BetaBadge>Beta</BetaBadge>}
         <PiQuestion className="question" data-tip data-for={toolTipTitle} color="#718BC5" />
@@ -46,15 +43,15 @@ const TotalValue = ({
           place="bottom"
         >
           <NewLabel
-            size={isMobile ? '10px' : '12px'}
-            height={isMobile ? '15px' : '18px'}
-            weight="600"
+            $size={isMobile ? '10px' : '12px'}
+            $height={isMobile ? '15px' : '18px'}
+            $weight="600"
           >
             {toolTip}
           </NewLabel>
         </Tooltip>
       </Div>
-      <Price fontColor1={fontColor1}>
+      <Price $fontcolor1={fontColor1}>
         {!connected || isLoading ? (
           `${currencySym}0.00`
         ) : farmTokenListLength === 0 && price === 0 ? (

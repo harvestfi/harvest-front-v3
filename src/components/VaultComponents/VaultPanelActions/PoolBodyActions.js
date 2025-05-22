@@ -79,7 +79,7 @@ const PoolBodyActions = ({
   const { fontColor, borderColor } = useThemeContext()
 
   return (
-    <SelectedVaultContainer maxWidth="100%" borderWidth="1px 0 0 0" borderColor={borderColor}>
+    <SelectedVaultContainer $maxwidth="100%" $borderwidth="1px 0 0 0" $bordercolor={borderColor}>
       <Tooltip
         id={`${fAssetPool.id}-unstaked-details`}
         backgroundColor="#fffce6"
@@ -153,7 +153,7 @@ const PoolBodyActions = ({
         )
       ) : !hodlVaultId ? (
         <SelectedVault data-tip="" data-for={`${fAssetPool.id}-unstaked-details`}>
-          <SelectedVaultLabel fontColor={fontColor} justifyContent="start">
+          <SelectedVaultLabel $fontcolor={fontColor} $justifycontent="start">
             Your Unstaked <b>{fAssetSymbol}</b>
           </SelectedVaultLabel>
           <SelectedVaultNumber>
@@ -190,7 +190,7 @@ const PoolBodyActions = ({
         data-for={`${fAssetPool.id}-staked-details`}
         order={hodlVaultId ? 2 : 0}
       >
-        <SelectedVaultLabel fontColor={fontColor}>Total Staked</SelectedVaultLabel>
+        <SelectedVaultLabel $fontcolor={fontColor}>Total Staked</SelectedVaultLabel>
         <SelectedVaultNumber>
           <Monospace>
             {!connected ? (
@@ -220,12 +220,12 @@ const PoolBodyActions = ({
         </SelectedVaultNumber>
       </SelectedVault>
       {!isSpecialVault && (
-        <SelectedVault flexDirection="unset" justifyContent="center" alignItems="center">
+        <SelectedVault $flexdirection="unset" $justifycontent="center" $alignitems="center">
           <Button
-            width="50%"
-            height="38px"
-            color="earn"
-            size="md"
+            $width="50%"
+            $height="38px"
+            $fontcolor="earn"
+            $size="md"
             onClick={() =>
               handleOldStake(
                 token,

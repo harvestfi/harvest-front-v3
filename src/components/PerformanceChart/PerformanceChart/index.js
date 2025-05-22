@@ -413,16 +413,16 @@ const PerformanceChart = ({
   ])
 
   return (
-    <Container backColor={bgColorNew} borderColor={borderColorBox}>
+    <Container $backcolor={bgColorNew} $bordercolor={borderColorBox}>
       <Header>
         <Total>
           <FlexDiv>
             <TooltipInfo>
-              <TokenSymbol className="priceshare" color="#15B088">
+              <TokenSymbol className="priceshare" $fontcolor="#15B088">
                 {`${rates?.currency?.symbol ?? 'USD'}`}
               </TokenSymbol>
               <FlexDiv>
-                <CurContent color={fontColor3}>
+                <CurContent $fontcolor={fontColor3}>
                   {curContent === '0' ? (
                     ''
                   ) : (
@@ -431,17 +431,17 @@ const PerformanceChart = ({
                     />
                   )}
                 </CurContent>
-                <CurContent color="#15B088">{curContent}</CurContent>
+                <CurContent $fontcolor="#15B088">{curContent}</CurContent>
               </FlexDiv>
             </TooltipInfo>
           </FlexDiv>
           <FlexDiv>
             <TooltipInfo className="tooltip-underlying">
-              <TokenSymbol className="priceshare" color="#8884d8">
+              <TokenSymbol className="priceshare" $fontcolor="#8884d8">
                 Underlying Token
               </TokenSymbol>
               <FlexDiv>
-                <CurContent color="#8884d8" className="tt-content-underlying">
+                <CurContent $fontcolor="#8884d8" className="tt-content-underlying">
                   <div className="question" data-tip data-for="chart-underlying-balance">
                     {showTokenBalance(curContentUnderlying)} {vaultPool?.id}
                   </div>
@@ -453,9 +453,9 @@ const PerformanceChart = ({
                     place="top"
                   >
                     <NewLabel
-                      size={isMobile ? '10px' : '10px'}
-                      height={isMobile ? '14px' : '14px'}
-                      weight="500"
+                      $size={isMobile ? '10px' : '10px'}
+                      $height={isMobile ? '14px' : '14px'}
+                      $weight="500"
                     >
                       {curContentUnderlying}
                     </NewLabel>

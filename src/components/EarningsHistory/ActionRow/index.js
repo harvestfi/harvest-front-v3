@@ -39,15 +39,15 @@ const ActionRow = ({ info, showTotalBalance }) => {
   return (
     <DetailView
       className="yield-row"
-      borderColor={borderColorBox}
-      hoverColor={hoverColorRow}
-      mode={switchMode}
-      background={bgColorNew}
+      $bordercolor={borderColorBox}
+      $hovercolor={hoverColorRow}
+      $mode={switchMode}
+      $background={bgColorNew}
     >
-      <FlexDiv padding={isMobile ? '10px 15px' : '0'}>
-        <Content display="flex" width={isMobile ? '25%' : '20%'}>
+      <FlexDiv $padding={isMobile ? '10px 15px' : '0'}>
+        <Content $display="flex" $width={isMobile ? '25%' : '20%'}>
           <Badge
-            bgColor={
+            $bgcolor={
               info.event === 'Revert'
                 ? '#FEF3F2'
                 : info.event === 'Convert'
@@ -56,7 +56,7 @@ const ActionRow = ({ info, showTotalBalance }) => {
                 ? '#ecfdf3'
                 : '#FEF3F2'
             }
-            color={
+            $fontcolor={
               info.event === 'Revert'
                 ? '#B42318'
                 : info.event === 'Convert'
@@ -78,9 +78,9 @@ const ActionRow = ({ info, showTotalBalance }) => {
                 textColor={darkMode ? 'black' : 'white'}
               >
                 <NewLabel
-                  size={isMobile ? '12px' : '12px'}
-                  height={isMobile ? '18px' : '18px'}
-                  weight="500"
+                  $height={isMobile ? '18px' : '18px'}
+                  $size={isMobile ? '12px' : '12px'}
+                  $weight="500"
                 >
                   In certain strategies, a negative yield event might occur, resulting in a minor
                   reduction of the underlying.
@@ -93,9 +93,9 @@ const ActionRow = ({ info, showTotalBalance }) => {
           )}
         </Content>
         <Content
-          width={isMobile ? '30%' : '20%'}
-          color={fontColor}
-          paddingRight={isMobile ? '8px' : '0px'}
+          $width={isMobile ? '30%' : '20%'}
+          $fontcolor={fontColor}
+          $paddingright={isMobile ? '8px' : '0px'}
         >
           {isMobile ? (
             <div
@@ -108,7 +108,7 @@ const ActionRow = ({ info, showTotalBalance }) => {
         </Content>
         {!isMobile ? (
           <>
-            <Content width="30%">
+            <Content $width="30%">
               <ListItem
                 weight={500}
                 size={12}
@@ -129,7 +129,7 @@ const ActionRow = ({ info, showTotalBalance }) => {
                 value={info.tokenSymbol}
               />
             </Content>
-            <Content display={isMobile ? 'none' : 'flex'} width="30%">
+            <Content $display={isMobile ? 'none' : 'flex'} $width="30%">
               <NetImg>
                 <img src={info.netChange >= 0 ? TrendUp : TrendDown} alt="trend" />
               </NetImg>
@@ -159,7 +159,7 @@ const ActionRow = ({ info, showTotalBalance }) => {
             </Content>
           </>
         ) : showTotalBalance ? (
-          <Content width="45%">
+          <Content $width="45%">
             <ListItem
               weight={500}
               size={12}
@@ -190,7 +190,7 @@ const ActionRow = ({ info, showTotalBalance }) => {
             />
           </Content>
         ) : (
-          <Content display="flex" width="45%" justifyContent="space-between">
+          <Content $display="flex" $width="45%" $justifycontent="space-between">
             <NetImg>
               <img src={info.netChange >= 0 ? TrendUp : TrendDown} alt="trend" />
             </NetImg>

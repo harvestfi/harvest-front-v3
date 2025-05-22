@@ -92,14 +92,14 @@ const metamaskSDKWallet = metamaskSDK({
   options: {
     extensionOnly: false,
     dappMetadata: {
-      name: 'Demo Web3Onboard'
-    }
-  }
+      name: 'Demo Web3Onboard',
+    },
+  },
 })
 
 const trezor = trezorModule({
   email: 'devstar718@gmail.com',
-  appUrl: 'https://app.harvest.finance'
+  appUrl: 'https://app.harvest.finance',
 })
 
 const coinbaseWalletSdk = coinbaseWalletModule()
@@ -123,7 +123,31 @@ const blocto = bloctoModule()
 export const web3Onboard = init({
   // head to https://explorer.blocknative.com/account to sign up for free
   apiKey: process.env.REACT_APP_BLOCKNATIVE_KEY,
-  wallets: [injected, metamaskSDKWallet, coinbaseWalletSdk, walletConnect, gnosis, ledger, trust, okx, trezor, phantom, taho, bitgetWallet, torus, tallyWallet, xdefiWallet, frontier, infinityWalletSDK, frame, mewWalletModule, blocto, zealWallet, dcent, enrkyptModule],
+  wallets: [
+    injected,
+    metamaskSDKWallet,
+    coinbaseWalletSdk,
+    walletConnect,
+    gnosis,
+    ledger,
+    trust,
+    okx,
+    trezor,
+    phantom,
+    taho,
+    bitgetWallet,
+    torus,
+    tallyWallet,
+    xdefiWallet,
+    frontier,
+    infinityWalletSDK,
+    frame,
+    mewWalletModule,
+    blocto,
+    zealWallet,
+    dcent,
+    enrkyptModule,
+  ],
   chains: [
     {
       id: '0x1',

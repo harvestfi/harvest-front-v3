@@ -109,7 +109,7 @@ const PoolHeadActions = ({
         data-tip=""
         gridItems="1"
         gridRowGap="8px"
-        alignItems={!isFARMVault || withdrawMode ? 'end' : 'center'}
+        $alignitems={!isFARMVault || withdrawMode ? 'end' : 'center'}
       >
         {isFARMVault && (
           <>
@@ -145,9 +145,9 @@ const PoolHeadActions = ({
         {!withdrawMode ? (
           <>
             <Button
-              color="earn"
-              size="md"
-              width="100%"
+              $fontcolor="earn"
+              $size="md"
+              $width="100%"
               onClick={async () => {
                 if (useIFARM && isFARMVault) {
                   await handleDeposit(
@@ -209,9 +209,9 @@ const PoolHeadActions = ({
           </>
         ) : (
           <Button
-            color="earn"
-            size="md"
-            width="100%"
+            $fontcolor="earn"
+            $size="md"
+            $width="100%"
             onClick={async () => {
               if (useIFARM && isFARMVault) {
                 await handleWithdraw(

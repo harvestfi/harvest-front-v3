@@ -79,7 +79,10 @@ const App = () => (
         <Routes>
           <Route path={ROUTES.PORTFOLIO} element={<Portfolio />} />
           <Route path={ROUTES.TUTORIAL} element={<Tutorial />} />
-          <Route path={ROUTES.AUTOPILOTNOCHAIN} element={<Navigate to={ROUTES.AUTOPILOT} replace />} />
+          <Route
+            path={ROUTES.AUTOPILOTNOCHAIN}
+            element={<Navigate to={ROUTES.AUTOPILOT} replace />}
+          />
           <Route path={ROUTES.AUTOPILOT} element={<Autopilot />} />
           <Route path={ROUTES.ADVANCED} element={<Farm />} />
           <Route path={ROUTES.LiveSupport} element={<LiveSupport />} />
@@ -102,11 +105,11 @@ const GlobalStyleWrapper = () => {
 
   return (
     <GlobalStyle
-      bgColorModal={bgColorModal}
-      fontColor3={fontColor3}
-      fontColor1={fontColor1}
-      backColor={bgColorNew}
-      inputBorderColor={inputBorderColor}
+      $bgcolormodal={bgColorModal}
+      $fontcolor3={fontColor3}
+      $fontcolor1={fontColor1}
+      $backcolor={bgColorNew}
+      $inputbordercolor={inputBorderColor}
     />
   )
 }

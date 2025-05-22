@@ -78,7 +78,7 @@ const VaultBodyActions = ({
   const { fontColor, borderColor } = useThemeContext()
 
   return (
-    <SelectedVaultContainer maxWidth="100%" borderWidth="1px 0 0 0" borderColor={borderColor}>
+    <SelectedVaultContainer $maxwidth="100%" $borderwidth="1px 0 0 0" $bordercolor={borderColor}>
       <Tooltip
         id={`${fAssetPool.id}-unstaked-details`}
         backgroundColor="#fffce6"
@@ -150,7 +150,7 @@ const VaultBodyActions = ({
         )
       ) : !hodlVaultId ? (
         <SelectedVault data-tip="" data-for={`${fAssetPool.id}-unstaked-details`}>
-          <SelectedVaultLabel fontColor={fontColor}>
+          <SelectedVaultLabel $fontcolor={fontColor}>
             Your Unstaked <b>{fAssetSymbol}</b>
           </SelectedVaultLabel>
           <SelectedVaultNumber>
@@ -187,7 +187,7 @@ const VaultBodyActions = ({
         data-for={`${fAssetPool.id}-staked-details`}
         order={hodlVaultId ? 2 : 0}
       >
-        <SelectedVaultLabel fontColor={fontColor}>Total Staked</SelectedVaultLabel>
+        <SelectedVaultLabel $fontcolor={fontColor}>Total Staked</SelectedVaultLabel>
         <SelectedVaultNumber>
           <Monospace>
             {!connected ? (
@@ -218,20 +218,20 @@ const VaultBodyActions = ({
       </SelectedVault>
 
       <SelectedVault
-        flexDirection={size(rewardTokenSymbols) >= 2 ? 'row' : 'unset'}
-        alignItems="center"
+        $flexdirection={size(rewardTokenSymbols) >= 2 ? 'row' : 'unset'}
+        $alignitems="center"
       >
         {size(rewardTokenSymbols) >= 2 && (
-          <SelectedVaultLabel fontSize="16px" lineHeight="17px" color="#888E8F">
+          <SelectedVaultLabel $fontsize="16px" $lineheight="17px" $fontcolor="#888E8F">
             Unstaked <b>{fAssetSymbol}</b>
             {/* Total balance */}
           </SelectedVaultLabel>
         )}
         <Button
-          color="earn"
-          width="50%"
-          height="38px"
-          size="md"
+          $fontcolor="earn"
+          $width="50%"
+          $height="38px"
+          $size="md"
           onClick={() =>
             handleOldStake(
               token,
