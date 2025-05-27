@@ -24,6 +24,9 @@ import Benchmark from '../../assets/images/logos/beginners/benchmark.svg'
 import TickIcon from '../../assets/images/logos/tick-icon.svg'
 import TickCross from '../../assets/images/logos/tick-cross.svg'
 import ARBball from '../../assets/images/chains/ARBball-lg.png'
+import BaseAutopilotUSDC from '../../assets/images/logos/advancedfarm/BaseAutopilotUSDC.svg'
+import BaseAutopilotcbBTC from '../../assets/images/logos/advancedfarm/BaseAutopilotcbBTC.svg'
+import BaseAutopilotwETH from '../../assets/images/logos/advancedfarm/BaseAutopilotwETH.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/AdvancedFarmComponents/Deposit/DepositBase'
 import DepositSelectToken from '../../components/AdvancedFarmComponents/Deposit/DepositSelectToken'
@@ -232,7 +235,7 @@ const AdvancedFarm = () => {
   const [selectTokenDepo, setSelectTokenDepo] = useState(false)
   const [balanceDepo, setBalanceDepo] = useState('0')
   const [pickedTokenDepo, setPickedTokenDepo] = useState({ symbol: 'Select Token' })
-  const [inputAmountDepo, setInputAmountDepo] = useState('0')
+  const [inputAmountDepo, setInputAmountDepo] = useState('')
   const [fromInfoAmount, setFromInfoAmount] = useState('')
   const [fromInfoUsdAmount, setFromInfoUsdAmount] = useState('')
   const [minReceiveAmountString, setMinReceiveAmountString] = useState('')
@@ -247,7 +250,7 @@ const AdvancedFarm = () => {
   const [selectTokenWith, setSelectTokenWith] = useState(false)
   const [unstakeBalance, setUnstakeBalance] = useState('0')
   const [pickedTokenWith, setPickedTokenWith] = useState({ symbol: 'Select' })
-  const [unstakeInputValue, setUnstakeInputValue] = useState('0')
+  const [unstakeInputValue, setUnstakeInputValue] = useState('')
   const [revertFromInfoAmount, setRevertFromInfoAmount] = useState('')
   const [revertFromInfoUsdAmount, setRevertFromInfoUsdAmount] = useState('')
   const [revertMinReceivedAmount, setRevertMinReceivedAmount] = useState('')
@@ -257,12 +260,12 @@ const AdvancedFarm = () => {
 
   // Stake
   const [stakeStart, setStakeStart] = useState(false)
-  const [inputAmountStake, setInputAmountStake] = useState('0')
+  const [inputAmountStake, setInputAmountStake] = useState('')
   const [stakeFinalStep, setStakeFinalStep] = useState(false)
 
   // Unstake
   const [unstakeStart, setUnstakeStart] = useState(false)
-  const [inputAmountUnstake, setInputAmountUnstake] = useState('0')
+  const [inputAmountUnstake, setInputAmountUnstake] = useState('')
   const [unstakeFinalStep, setUnstakeFinalStep] = useState(false)
   const [amountsToExecuteUnstake, setAmountsToExecuteUnstake] = useState('')
 
@@ -765,11 +768,18 @@ const AdvancedFarm = () => {
                   default: false,
                   usdValue: balance.balanceUSD,
                   usdPrice: balance.price,
-                  logoURI: balance.image
-                    ? balance.image
-                    : balance.images
-                    ? balance.images[0]
-                    : 'https://etherscan.io/images/main/empty-token.png',
+                  logoURI:
+                    balance.symbol === 'bAutopilot_wETH'
+                      ? BaseAutopilotwETH
+                      : balance.symbol === 'bAutopilot_USDC'
+                      ? BaseAutopilotUSDC
+                      : balance.symbol === 'bAutopilot_cbBTC'
+                      ? BaseAutopilotcbBTC
+                      : balance.image
+                      ? balance.image
+                      : balance.images
+                      ? balance.images[0]
+                      : 'https://etherscan.io/images/main/empty-token.png',
                   decimals: balance.decimals,
                   chainId: chain,
                 }
@@ -887,6 +897,10 @@ const AdvancedFarm = () => {
                 web3Client,
               )
               const lpSymbol = await getSymbol(lpInstance)
+              const logoUri =
+                token.logoUrl && token.logoUrl.length > 1
+                  ? 'https://etherscan.io/images/main/empty-token.png'
+                  : token.logoUrl[0].substring(1)
               const direct = {
                 symbol: lpSymbol,
                 address: tokenAddress,
@@ -894,7 +908,7 @@ const AdvancedFarm = () => {
                 default: true,
                 usdPrice: directUsdPrice || '0',
                 usdValue: directUsdValue || '0',
-                logoURI: 'https://etherscan.io/images/main/empty-token.png',
+                logoURI: logoUri,
                 decimals: tokenDecimals,
                 chainId: parseInt(chain, 0),
               }
@@ -1009,10 +1023,13 @@ const AdvancedFarm = () => {
       Object.keys(sharePricesData).forEach(key => {
         if (sharePricesData[key]) {
           const priceData = sharePricesData[key]
+          const firstItem = priceData.find(item => Number(item.sharePrice) <= 1)
+          const startTime = firstItem
+            ? Number(firstItem.timestamp)
+            : priceData[priceData.length - 1].timestamp
 
           const totalPeriodBasedOnApy =
-            (Number(priceData[0].timestamp) - Number(priceData[priceData.length - 1].timestamp)) /
-            (24 * 3600)
+            (Number(priceData[0].timestamp) - startTime) / (24 * 3600) + 1
 
           const sharePriceVal = priceData[0].sharePrice ?? 1
           const lifetimeApyValue = (
@@ -1036,6 +1053,8 @@ const AdvancedFarm = () => {
     const timer = setTimeout(() => {
       if (defaultToken !== null) {
         let tokenToSet = null
+
+        setPickedTokenWith(defaultToken)
 
         // Check if defaultToken is present in the balanceList
         if (defaultToken.balance !== '0' || !supportedVault || hasPortalsError) {
@@ -2073,7 +2092,7 @@ const AdvancedFarm = () => {
                         color={fontColor3}
                         self="center"
                       >
-                        {token.isIPORVault ? 'ffToken' : 'fToken'}
+                        fToken
                       </NewLabel>
                       <NewLabel
                         size={isMobile ? '12px' : '12px'}
@@ -2285,11 +2304,16 @@ const AdvancedFarm = () => {
                 </FlexDiv>
                 <MainSection height={activeMainTag === 0 ? '100%' : 'fit-content'}>
                   <SharePricesData
+                    chainName={chainName}
                     token={token}
                     setSharePricesData={setSharePricesData}
                     iporHvaultsLFAPY={iporHvaultsLFAPY}
                   />
-                  <AOTData token={token} iporHvaultsLFAPY={iporHvaultsLFAPY} />
+                  <AOTData
+                    chainName={chainName}
+                    token={token}
+                    iporHvaultsLFAPY={iporHvaultsLFAPY}
+                  />
                 </MainSection>
                 <RestInternalBenchmark>
                   <LastHarvestInfo backColor={backColor} borderColor={borderColor}>
@@ -2316,7 +2340,7 @@ const AdvancedFarm = () => {
                         color="#5dcf46"
                         onClick={() => {}}
                       >
-                        Harvest {token.tokenNames[0]}
+                        Autopilot {token.tokenNames[0]}
                       </NewLabel>
                       <NewLabel size="13.4px" height="20px" weight="500" color="#5dcf46">
                         {iporHvaultsLFAPY && iporHvaultsLFAPY[token.id]
@@ -2328,13 +2352,17 @@ const AdvancedFarm = () => {
                       Object.keys(iporHvaultsLFAPY)
                         .filter(key => key !== token.id)
                         .map(apyKey => {
-                          let lifetimeApyValue = '-'
                           const vaultParts = apyKey
                             .split('_')
                             .map((part, index) =>
                               index === 0 ? part.charAt(0).toUpperCase() + part.slice(1) : part,
                             )
-                          const vaultName = vaultParts.join(' ')
+                          let lifetimeApyValue = '-',
+                            vaultName = vaultParts
+                              .filter(part => !part.toLowerCase().includes(chainName.toLowerCase()))
+                              .join(' ')
+                          if (vaultName === 'USDC') vaultName = 'Compound V3 USDC'
+                          if (vaultName === 'WETH') vaultName = 'Compound V3 WETH'
 
                           lifetimeApyValue = `${iporHvaultsLFAPY[apyKey]}%`
                           return (
@@ -3201,11 +3229,11 @@ const AdvancedFarm = () => {
                             >
                               <FlexDiv gap="15px" justifyContent="space-between">
                                 <div>Harvest Treasury</div>
-                                <div>{harvestTreasury}%</div>
+                                <div>{token.isIPORVault ? '0' : harvestTreasury}%</div>
                               </FlexDiv>
                               <FlexDiv gap="15px" justifyContent="space-between" marginTop="12px">
                                 <div>Profit Sharing</div>
-                                <div>{profitShare}%</div>
+                                <div>{token.isIPORVault ? '0' : profitShare}%</div>
                               </FlexDiv>
                             </NewLabel>
                           </ReactTooltip>
@@ -3227,10 +3255,21 @@ const AdvancedFarm = () => {
                       </NewLabel>
                       {token.allocPointData && token.allocPointData.length > 0 ? (
                         token.allocPointData.map((data, index) => {
-                          let vaultName = data.hVaultId.split('_')[0]
-                          vaultName = `${vaultName.charAt(0).toUpperCase() + vaultName.slice(1)} ${
-                            token.tokenNames[0]
-                          }`
+                          let vaultName
+                          if (data.hVaultId === 'Not invested') {
+                            vaultName = `Deployment Buffer`
+                          } else {
+                            const vaultParts = data.hVaultId
+                              .split('_')
+                              .map((part, i) =>
+                                i === 0 ? part.charAt(0).toUpperCase() + part.slice(1) : part,
+                              )
+                            vaultName = vaultParts
+                              .filter(part => !part.toLowerCase().includes(chainName.toLowerCase()))
+                              .join(' ')
+                            if (vaultName === 'USDC') vaultName = 'Compound V3 USDC'
+                            if (vaultName === 'WETH') vaultName = 'Compound V3 WETH'
+                          }
                           return (
                             <FlexDiv
                               key={index}

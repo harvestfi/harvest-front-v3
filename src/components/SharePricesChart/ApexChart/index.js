@@ -80,7 +80,7 @@ function getYAxisValues(min, max, roundNum) {
   return result
 }
 
-const ApexChart = ({ token, loadComplete, sharePriceData, iporHvaultsLFAPY }) => {
+const ApexChart = ({ chainName, token, loadComplete, sharePriceData, iporHvaultsLFAPY }) => {
   const { fontColor, fontColor5, bgColorChart } = useThemeContext()
   const onlyWidth = useWindowWidth()
 
@@ -106,10 +106,10 @@ const ApexChart = ({ token, loadComplete, sharePriceData, iporHvaultsLFAPY }) =>
       <TooltipContainer>
         <TooltipContent>
           <TooltipTotal>{`${day}/${month}/${year} ${hour}:${mins}`}</TooltipTotal>
-          {Object.keys(iporHvaultsLFAPY) // Get keys in the order of iporHvaultsLFAPY
-            .filter(key => payload.some(entry => entry.dataKey === key)) // Ensure key exists in payload
-            .map(key => payload.find(entry => entry.dataKey === key)) // Find corresponding payload entry
-            .filter(entry => entry && entry.value !== 0 && entry.value !== null) // Filter valid entries
+          {payload
+            .filter(entry => Object.keys(iporHvaultsLFAPY).includes(entry.dataKey))
+            .filter(entry => entry?.value)
+            .sort((a, b) => b.value - a.value)
             .map((entry, index) => {
               const value = entry.value || 0
               if (value <= 0) return null
@@ -117,7 +117,11 @@ const ApexChart = ({ token, loadComplete, sharePriceData, iporHvaultsLFAPY }) =>
               const vaultParts = entry.dataKey
                 .split('_')
                 .map((part, i) => (i === 0 ? part.charAt(0).toUpperCase() + part.slice(1) : part))
-              const vaultName = vaultParts.join(' ')
+              let vaultName = vaultParts
+                .filter(part => !part.toLowerCase().includes(chainName.toLowerCase()))
+                .join(' ')
+              if (vaultName === 'USDC') vaultName = 'Compound V3 USDC'
+              if (vaultName === 'WETH') vaultName = 'Compound V3 WETH'
 
               return (
                 <ProtocolEntry
@@ -129,7 +133,7 @@ const ApexChart = ({ token, loadComplete, sharePriceData, iporHvaultsLFAPY }) =>
                   }
                 >
                   <DottedUnderline>
-                    {entry.dataKey !== token.id ? vaultName : `Harvest ${token.tokenNames[0]}`}
+                    {entry.dataKey !== token.id ? vaultName : `Autopilot ${token.tokenNames[0]}`}
                   </DottedUnderline>
                   &nbsp;&nbsp;
                   {value.toFixed(5)}
