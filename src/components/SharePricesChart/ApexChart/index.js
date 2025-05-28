@@ -304,7 +304,6 @@ const ApexChart = ({ chainName, token, loadComplete, sharePriceData, iporHvaults
     }
 
     init()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDataReady, loadComplete])
 
   return (

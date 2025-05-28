@@ -84,7 +84,7 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, selectedIte
       setWalletApy(calculatedApy)
       setMonthlyYield(calculatedYield * currencyRate)
     }
-  }, [value]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [value])
 
   const allocationValue = (walletApy * userHarvestBalance * currencyRate) / 100
 
@@ -229,8 +229,8 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, selectedIte
                       (((vaultValue.dailyYield
                         ? vaultValue.dailyYield
                         : 0 + vaultValue.dailyReward
-                        ? vaultValue.dailyReward
-                        : 0) /
+                          ? vaultValue.dailyReward
+                          : 0) /
                         vaultValue.balance +
                         1) **
                         365 -
@@ -389,8 +389,8 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, selectedIte
                 walletApy > 0 && walletApy < 0.01
                   ? `<0.01% APY`
                   : walletApy === 0
-                  ? `Apy Zero`
-                  : `${formatNumber(walletApy, 2)}% APY`
+                    ? `Apy Zero`
+                    : `${formatNumber(walletApy, 2)}% APY`
               }
               allocationValue={allocationValue}
             />
@@ -403,8 +403,8 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, selectedIte
                 allocationValue > 0 && allocationValue < 0.01
                   ? `<${currencySym}0.01/yr`
                   : allocationValue === 0
-                  ? 'Apy Zero'
-                  : `${currencySym}${formatNumber(allocationValue, 2)}/yr`
+                    ? 'Apy Zero'
+                    : `${currencySym}${formatNumber(allocationValue, 2)}/yr`
               }
               allocationValue={allocationValue}
             />
@@ -480,8 +480,8 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, selectedIte
                       (((vaultValue.dailyYield
                         ? vaultValue.dailyYield
                         : 0 + vaultValue.dailyReward
-                        ? vaultValue.dailyReward
-                        : 0) /
+                          ? vaultValue.dailyReward
+                          : 0) /
                         vaultValue.balance +
                         1) **
                         365 -

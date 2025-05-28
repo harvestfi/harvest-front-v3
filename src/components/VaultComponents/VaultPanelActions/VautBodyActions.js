@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { get, size } from 'lodash'
 import React from 'react'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import {
   ACTIONS,
   FARM_TOKEN_SYMBOL,
@@ -79,7 +79,7 @@ const VaultBodyActions = ({
 
   return (
     <SelectedVaultContainer maxWidth="100%" borderWidth="1px 0 0 0" borderColor={borderColor}>
-      <ReactTooltip
+      <Tooltip
         id={`${fAssetPool.id}-unstaked-details`}
         backgroundColor="#fffce6"
         borderColor="black"
@@ -99,7 +99,7 @@ const VaultBodyActions = ({
           buy more
         </a>
         )
-      </ReactTooltip>
+      </Tooltip>
       {size(rewardTokenSymbols) >= 2 ? (
         rewardTokenSymbols.map((symbol, symbolIdx) =>
           (!hodlVaultId &&
@@ -172,7 +172,7 @@ const VaultBodyActions = ({
         </SelectedVault>
       ) : null}
 
-      <ReactTooltip
+      <Tooltip
         id={`${fAssetPool.id}-staked-details`}
         backgroundColor="#fffce6"
         borderColor="black"
@@ -181,7 +181,7 @@ const VaultBodyActions = ({
         disable={fAssetPool.id !== SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID}
       >
         <b>{FARM_TOKEN_SYMBOL}</b> staked directly into <b>Profit Sharing</b>
-      </ReactTooltip>
+      </Tooltip>
       <SelectedVault
         data-tip=""
         data-for={`${fAssetPool.id}-staked-details`}
@@ -267,7 +267,7 @@ const VaultBodyActions = ({
 
       {fAssetPool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID ? (
         <>
-          <ReactTooltip
+          <Tooltip
             id="ifarm-details"
             backgroundColor="#fffce6"
             borderColor="black"
@@ -284,7 +284,7 @@ const VaultBodyActions = ({
               <b>{tokens[IFARM_TOKEN_SYMBOL].tokenNames.join(', ')}</b> = {iFARMinFARMInEther}{' '}
               <b>{FARM_TOKEN_SYMBOL}</b>
             </>
-          </ReactTooltip>
+          </Tooltip>
           <SelectedVault data-tip="" data-for="ifarm-details">
             <SelectedVaultLabel>
               Your <b>{tokens[IFARM_TOKEN_SYMBOL].tokenNames.join(', ')}</b>&nbsp;

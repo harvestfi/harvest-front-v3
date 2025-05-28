@@ -245,7 +245,6 @@ const ApexChart = ({ noFarm, data, range, handleTooltipContent, setCurDate, setC
     }
 
     init()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [range, data])
 
   return (

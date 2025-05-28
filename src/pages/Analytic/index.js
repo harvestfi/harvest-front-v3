@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 // import Countdown from 'react-countdown'
 import CountUp from 'react-countup'
 import { useMediaQuery } from 'react-responsive'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { useWindowWidth } from '@react-hook/window-size'
 import ExchangeBancor from '../../assets/images/logos/analytics/exchange_bancor.svg'
 import ExchangeBinance from '../../assets/images/logos/analytics/exchange_binance.svg'
@@ -63,8 +63,7 @@ const imgList = [
     img: ExchangeUniswap,
   },
   {
-    url:
-      'https://app.bancor.network/trade?from=0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE&to=0xa0246c9032bC3A600820415aE600c6388619A14D',
+    url: 'https://app.bancor.network/trade?from=0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE&to=0xa0246c9032bC3A600820415aE600c6388619A14D',
     img: ExchangeBancor,
   },
 ]
@@ -98,14 +97,8 @@ const Analytic = () => {
     profitShareAPY,
     profitShareAPYFallback,
   } = useStats()
-  const {
-    darkMode,
-    bgColorNew,
-    fontColor,
-    borderColorBox,
-    boxShadowColor,
-    analyticTitleColor,
-  } = useThemeContext()
+  const { darkMode, bgColorNew, fontColor, borderColorBox, boxShadowColor, analyticTitleColor } =
+    useThemeContext()
 
   const ratePerDay = Number(CURVE_APY) / 365 / 100
   const MINUTE_MS = 60000
@@ -193,7 +186,7 @@ const Analytic = () => {
                 </>
               )}
             </FarmSubTitle>
-            <ReactTooltip
+            <Tooltip
               id="profits-to-farmers"
               backgroundColor={darkMode ? 'white' : '#101828'}
               borderColor={darkMode ? 'white' : 'black'}
@@ -233,7 +226,7 @@ const Analytic = () => {
                 <AnimatedDots />
               )}
             </FarmSubTitle>
-            <ReactTooltip
+            <Tooltip
               id="details-box"
               backgroundColor={darkMode ? 'white' : '#101828'}
               borderColor={darkMode ? 'white' : 'black'}

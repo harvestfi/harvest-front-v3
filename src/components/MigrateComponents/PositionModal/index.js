@@ -59,7 +59,7 @@ const PositionModal = ({
   // const filterWord = ''
 
   const { darkMode, inputFontColor, fontColor } = useThemeContext()
-  // eslint-disable-next-line no-empty-pattern
+
   const {
     // getPortalsBaseTokens,
     // getPortalsBalances,
@@ -67,7 +67,6 @@ const PositionModal = ({
     // getPortalsToken,
   } = usePortals()
 
-  /* eslint-disable global-require */
   // const { tokens } = require('../../../data')
 
   // let tokenDecimals
@@ -80,11 +79,11 @@ const PositionModal = ({
   useEffect(() => {
     setNetworkMatchList([])
     setNoPosition(false)
-  }, [connected]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [connected])
 
   useEffect(() => {
     setNetworkMatchList([])
-  }, [chain]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [chain])
 
   useEffect(() => {
     const matchListAry = []
@@ -108,7 +107,7 @@ const PositionModal = ({
         setNoPosition(true)
       }
     }
-  }, [chain, filteredFarmList.length]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [chain, filteredFarmList.length])
 
   useEffect(() => {
     async function fetchData() {

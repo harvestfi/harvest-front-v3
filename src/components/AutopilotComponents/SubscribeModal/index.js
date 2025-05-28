@@ -57,8 +57,8 @@ const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModa
   const curChain = isSpecialApp
     ? chainId
     : connectedChain
-    ? parseInt(connectedChain.id, 16).toString()
-    : ''
+      ? parseInt(connectedChain.id, 16).toString()
+      : ''
   const [btnName, setBtnName] = useState('Approve Token')
   const [startSpinner, setStartSpinner] = useState(false)
   const [subscribeFailed, setSubscribeFailed] = useState(false)
@@ -73,7 +73,6 @@ const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModa
     }
 
     fetchBalances()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const onSubscribe = async () => {
@@ -302,12 +301,12 @@ const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModa
                 progressStep === 0
                   ? ProgressOne
                   : progressStep === 1
-                  ? ProgressTwo
-                  : progressStep === 2
-                  ? ProgressThree
-                  : progressStep === 3
-                  ? ProgressFour
-                  : ProgressFive
+                    ? ProgressTwo
+                    : progressStep === 2
+                      ? ProgressThree
+                      : progressStep === 3
+                        ? ProgressFour
+                        : ProgressFive
               }
               alt="progress bar"
             />

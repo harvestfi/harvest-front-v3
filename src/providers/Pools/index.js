@@ -7,19 +7,22 @@ import React, {
   useRef,
   useState,
 } from 'react'
-// eslint-disable-next-line import/no-unresolved
 import axios from 'axios'
 import isEqual from 'fast-deep-equal/react'
 import { filter, get, map, sumBy } from 'lodash'
 import { forEach } from 'promised-loops'
-// eslint-disable-next-line import/no-unresolved
 import { useInterval } from 'react-interval-hook'
 import { toast } from 'react-toastify'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import BigNumber from 'bignumber.js'
 import { POLL_POOL_DATA_INTERVAL_MS, POOLS_API_ENDPOINT, SPECIAL_VAULTS } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
-import { getWeb3, ledgerWeb3, newContractInstance, safeProvider } from '../../services/web3'
+import {
+  getWeb3,
+  // ledgerWeb3,
+  newContractInstance,
+  safeProvider,
+} from '../../services/web3'
 import poolContractData from '../../services/web3/contracts/pool/contract.json'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import tokenMethods from '../../services/web3/contracts/token/methods'
@@ -33,9 +36,7 @@ import { useContracts } from '../Contracts'
 import { useWallet } from '../Wallet'
 import { getLpTokenData, getUserStats, pollUpdatedUserStats } from './utils'
 
-/* eslint-disable global-require */
 const { pools: defaultPools, tokens } = require('../../data')
-/* eslint-enable global-require */
 
 const PoolsContext = createContext()
 const usePools = () => useContext(PoolsContext)
@@ -81,10 +82,10 @@ const PoolsProvider = _ref => {
         selectedAccount = account,
         formattedPools
       try {
-        if (isLedgerLive()) {
-          const selectedChain = await ledgerWeb3.eth.net.getId()
-          curChain = selectedChain.toString()
-        }
+        // if (isLedgerLive()) {
+        //   const selectedChain = await ledgerWeb3.eth.net.getId()
+        //   curChain = selectedChain.toString()
+        // }
         if (isSafeApp()) {
           const safeAppProvider = await safeProvider()
           const selectedChain = await safeAppProvider.getNetwork()
@@ -142,7 +143,6 @@ const PoolsProvider = _ref => {
             apiData && apiData.find(fetchedPool => fetchedPool && fetchedPool.id === pool.id)
 
           if (apiPool) {
-            // eslint-disable-next-line prefer-destructuring
             rewardAPY = map(apiPool.rewardAPY, apy => truncateNumberString(apy))
             rewardAPR = map(apiPool.rewardAPR, apr => truncateNumberString(apr))
             tradingApy = truncateNumberString(apiPool.tradingApy)
@@ -321,7 +321,7 @@ const PoolsProvider = _ref => {
           const stats = {}
           const chains = isSpecialApp ? [chainId] : selChain
           // selChain.forEach( async (ch)=> {
-          /* eslint-disable no-await-in-loop */
+
           const cl = chains.length
           for (let i = 0; i < cl; i += 1) {
             const ch = chains[i]
@@ -381,7 +381,6 @@ const PoolsProvider = _ref => {
             })
           }
 
-          /* eslint-disable no-restricted-syntax, no-await-in-loop */
           for (const vaultId of Object.keys(contracts.iporVaults)) {
             const vaultContract = contracts.iporVaults[vaultId]
             const vaultBalance = await vaultContract.methods.getBalanceOf(
@@ -394,15 +393,13 @@ const PoolsProvider = _ref => {
             )
 
             if (new BigNumber(AssetBalance).gt(0)) {
-              // eslint-disable-next-line camelcase
               stats[vaultId] = {
                 lpTokenBalance: 0,
                 totalStaked: AssetBalance,
               }
             }
           }
-          /* eslint-enable no-restricted-syntax, no-await-in-loop */
-          /* eslint-enable no-await-in-loop */
+
           // })
           setUserStats(currStats => ({ ...currStats, ...stats }))
         }
@@ -415,13 +412,12 @@ const PoolsProvider = _ref => {
   useInterval(() => getPoolsData(), POLL_POOL_DATA_INTERVAL_MS, {
     immediate: true,
   })
-  // eslint-disable-next-line func-names
+
   const fetchUserPoolStats = useCallback(async function (
     selectedPools,
     selectedAccount,
     currentStats,
   ) {
-    // eslint-disable-next-line no-void
     if (currentStats === void 0) {
       currentStats = []
     }
@@ -496,8 +492,7 @@ const PoolsProvider = _ref => {
     }
 
     return stats
-  },
-  [])
+  }, [])
   return React.createElement(
     PoolsContext.Provider,
     {

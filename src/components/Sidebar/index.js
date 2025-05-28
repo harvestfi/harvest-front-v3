@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
-import { useHistory, useLocation, Link } from 'react-router-dom'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { SlArrowDown } from 'react-icons/sl'
 import { IoCloseCircleOutline } from 'react-icons/io5'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
@@ -240,14 +240,13 @@ const SideLink = ({
     pathname === '/'
       ? 'all vaults'
       : pathname === ROUTES.PORTFOLIO
-      ? 'portfolio'
-      : pathname === ROUTES.TUTORIAL
-      ? 'tutorial'
-      : pathname === ROUTES.MIGRATE
-      ? 'migrate'
-      : pathname
+        ? 'portfolio'
+        : pathname === ROUTES.TUTORIAL
+          ? 'tutorial'
+          : pathname === ROUTES.MIGRATE
+            ? 'migrate'
+            : pathname
   return (
-    /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
     <LinkWrap
       fontColor1={fontColor1}
       active={pageName.includes(item.name.toLowerCase().trim())}
@@ -350,7 +349,7 @@ const Sidebar = ({ width }) => {
   }, [darkMode])
 
   const { pathname } = useLocation()
-  const { push } = useHistory()
+  const navigate = useNavigate()
 
   // Show sidebar for mobile
   const [mobileShow, setMobileShow] = useState(false)
@@ -401,7 +400,7 @@ const Sidebar = ({ width }) => {
         CHAIN_IDS.ZKSYNC,
       ])
     }
-    push(path)
+    navigate(path)
   }
 
   return (
@@ -419,7 +418,7 @@ const Sidebar = ({ width }) => {
               <Logo
                 className="logo"
                 onClick={() => {
-                  push('/')
+                  navigate('/')
                 }}
               >
                 <img src={darkMode ? logoNewDark : logoNew} width={36} height={36} alt="Harvest" />

@@ -17,13 +17,12 @@ import { addresses } from '../../data'
 
 const formatVaults = (groupOfVaults, chainId) => {
   let vaultsSymbol = sortBy(keys(groupOfVaults), [
-    // eslint-disable-next-line consistent-return
     key => {
       if (get(groupOfVaults, `[${key}].isNew`, get(groupOfVaults, `[${key}].data.isNew`))) {
         return groupOfVaults[key]
       }
     },
-    // eslint-disable-next-line consistent-return
+
     key => {
       if (!get(groupOfVaults, `[${key}].isNew`, get(groupOfVaults, `[${key}].data.isNew`))) {
         return groupOfVaults[key]
@@ -98,19 +97,23 @@ const Charts = () => {
     groupOfVaults = { ...vaultsData, ...poolVaults }
   }
 
-  const ethVaultsSymbol = useMemo(() => formatVaults(groupOfVaults, CHAIN_IDS.ETH_MAINNET), [
-    groupOfVaults,
-  ])
-  const polVaultsSymbol = useMemo(() => formatVaults(groupOfVaults, CHAIN_IDS.POLYGON_MAINNET), [
-    groupOfVaults,
-  ])
-  const arbVaultsSymbol = useMemo(() => formatVaults(groupOfVaults, CHAIN_IDS.ARBITRUM_ONE), [
-    groupOfVaults,
-  ])
+  const ethVaultsSymbol = useMemo(
+    () => formatVaults(groupOfVaults, CHAIN_IDS.ETH_MAINNET),
+    [groupOfVaults],
+  )
+  const polVaultsSymbol = useMemo(
+    () => formatVaults(groupOfVaults, CHAIN_IDS.POLYGON_MAINNET),
+    [groupOfVaults],
+  )
+  const arbVaultsSymbol = useMemo(
+    () => formatVaults(groupOfVaults, CHAIN_IDS.ARBITRUM_ONE),
+    [groupOfVaults],
+  )
 
-  const zksyncVaultsSymbol = useMemo(() => formatVaults(groupOfVaults, CHAIN_IDS.ZKSYNC), [
-    groupOfVaults,
-  ])
+  const zksyncVaultsSymbol = useMemo(
+    () => formatVaults(groupOfVaults, CHAIN_IDS.ZKSYNC),
+    [groupOfVaults],
+  )
 
   const [, setLoadData] = useState(true)
 

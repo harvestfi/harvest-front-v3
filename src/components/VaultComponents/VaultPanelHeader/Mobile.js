@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
 import BASE from '../../../assets/images/chains/base.svg'
 import ETHEREUM from '../../../assets/images/chains/ethereum.svg'
@@ -45,7 +45,7 @@ const MobilePanelHeader = ({
   const chainId = token.chain || token.data.chain
   const [badgeId, setBadgeId] = useState(-1)
 
-  const { push } = useHistory()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const getBadge = () => {
@@ -72,7 +72,7 @@ const MobilePanelHeader = ({
           : token.vaultAddress || token.tokenAddress
         setPrevPage(window.location.href)
         const url = `${directDetailUrl}${network}/${address}${location.search}`
-        push(url)
+        navigate(url)
       }}
     >
       <FlexDiv

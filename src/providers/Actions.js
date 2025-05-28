@@ -196,22 +196,20 @@ const ActionsProvider = ({ children }) => {
             let actualAmount0, actualAmount1
 
             try {
-              const {
-                0: simulationAmount0,
-                1: simulationAmount1,
-              } = await univ3Methods.migrateToNftFromV2(
-                lpAmount,
-                new BigNumber(quote[0]).times(0.95).toFixed(0),
-                new BigNumber(quote[1]).times(0.95).toFixed(0),
-                zap,
-                sqrtRatioX96,
-                UNIV3_TOLERANCE,
-                undefined,
-                undefined,
-                account,
-                vaultData.instance,
-                true,
-              )
+              const { 0: simulationAmount0, 1: simulationAmount1 } =
+                await univ3Methods.migrateToNftFromV2(
+                  lpAmount,
+                  new BigNumber(quote[0]).times(0.95).toFixed(0),
+                  new BigNumber(quote[1]).times(0.95).toFixed(0),
+                  zap,
+                  sqrtRatioX96,
+                  UNIV3_TOLERANCE,
+                  undefined,
+                  undefined,
+                  account,
+                  vaultData.instance,
+                  true,
+                )
               actualAmount0 = simulationAmount0
               actualAmount1 = simulationAmount1
             } catch (err) {

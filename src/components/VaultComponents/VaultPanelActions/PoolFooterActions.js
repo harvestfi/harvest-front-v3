@@ -74,8 +74,8 @@ const PoolFooterActions = ({
   const curChain = isSpecialApp
     ? chainId
     : connectedChain
-    ? parseInt(connectedChain.id, 16).toString()
-    : ''
+      ? parseInt(connectedChain.id, 16).toString()
+      : ''
 
   const poolVaults = useMemo(
     () => ({

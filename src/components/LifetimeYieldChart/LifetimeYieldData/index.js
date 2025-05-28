@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { PiQuestion } from 'react-icons/pi'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { useMediaQuery } from 'react-responsive'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useWallet } from '../../../providers/Wallet'
@@ -54,7 +54,7 @@ const LifetimeYieldData = ({ noFarm, totalHistoryData }) => {
           <div className="title">
             Lifetime Yield
             <PiQuestion className="question" data-tip data-for="lifetime-yield-desktop" />
-            <ReactTooltip
+            <Tooltip
               id="lifetime-yield-desktop"
               backgroundColor={darkMode ? 'white' : '#101828'}
               borderColor={darkMode ? 'white' : 'black'}
@@ -74,7 +74,7 @@ const LifetimeYieldData = ({ noFarm, totalHistoryData }) => {
                 Note: Yield from Liquidity Provision activities is not included in this metric or
                 its associated chart.
               </NewLabel>
-            </ReactTooltip>
+            </Tooltip>
           </div>
           <div className="content">
             <div dangerouslySetInnerHTML={{ __html: connected ? curContent : '' }} />

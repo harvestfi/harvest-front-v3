@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react'
 import ReactPaginate from 'react-paginate'
 import { useMediaQuery } from 'react-responsive'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { IoArrowBackSharp, IoArrowForwardSharp } from 'react-icons/io5'
 import SkeletonLoader from '../../DashboardComponents/SkeletonLoader'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -27,7 +27,7 @@ import {
 import { handleToggle } from '../../../utilities/parsers'
 
 const HistoryData = ({ historyData, isDashboard, noData }) => {
-  const { push } = useHistory()
+  const navigate = useNavigate()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const itemsPerPage = isMobile ? 5 : isDashboard ? 25 : 5
   const filteredHistoryData = historyData.filter(el => el.event !== 'Rewards')
@@ -175,7 +175,7 @@ const HistoryData = ({ historyData, isDashboard, noData }) => {
                 </div>
                 <ExploreButtonStyle
                   onClick={() => {
-                    push(ROUTES.ADVANCED)
+                    navigate(ROUTES.ADVANCED)
                   }}
                   minWidth="190px"
                   inputBorderColor={inputBorderColor}

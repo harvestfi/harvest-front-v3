@@ -980,11 +980,11 @@ const SpecDropDownItem = styled(Dropdown.Item)`
       padding: 21px 15px;
   `
       : props.num === 1
-      ? `
+        ? `
       background-color: #A92A66 !important;
       padding: 8px;
       `
-      : `
+        : `
       padding: 27px 18px;
       background-color: #FFAF1D !important;`}
   color: white !important;
@@ -1017,13 +1017,13 @@ const SpecDropDownItem = styled(Dropdown.Item)`
         }
     `
         : props.num === 1
-        ? `
+          ? `
         padding: 5px;
         img {
           width: 32px;
         }
         `
-        : `
+          : `
         padding: 14px;
         img {
           width: 80px;
@@ -1043,13 +1043,13 @@ const SpecDropDownItem = styled(Dropdown.Item)`
         }
     `
         : props.num === 1
-        ? `
+          ? `
         padding: 2px 8px;
         img {
           width: 30px;
         }
         `
-        : `
+          : `
         padding: 12px 10px;
         img {
           width: 60px;
@@ -1070,13 +1070,13 @@ const SpecDropDownItem = styled(Dropdown.Item)`
         }
     `
         : props.num === 1
-        ? `
+          ? `
         padding: 8px;
         img {
           width: unset;
         }
         `
-        : `
+          : `
         padding: 18px;
         img {
           width: unset;

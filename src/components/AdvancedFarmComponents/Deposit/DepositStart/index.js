@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import BigNumber from 'bignumber.js'
 import { isNaN } from 'lodash'
 import Modal from 'react-bootstrap/Modal'
 import { useMediaQuery } from 'react-responsive'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { Spinner } from 'react-bootstrap'
 import { BsArrowDown } from 'react-icons/bs'
 import { CiSettings } from 'react-icons/ci'
@@ -82,7 +82,7 @@ const DepositStart = ({
     btnHoverColor,
   } = useThemeContext()
   const { account, web3, approvedBalances, getWalletBalances } = useWallet()
-  const { push } = useHistory()
+  const navigate = useNavigate()
   const { fetchUserPoolStats, userStats } = usePools()
   const { getPortalsApproval, portalsApprove, getPortals } = usePortals()
 
@@ -446,7 +446,7 @@ const DepositStart = ({
                 {progressStep !== 4 && (
                   <>
                     <PiQuestion className="question" data-tip data-for="min-help" />
-                    <ReactTooltip
+                    <Tooltip
                       id="min-help"
                       backgroundColor={darkMode ? 'white' : '#101828'}
                       borderColor={darkMode ? 'white' : 'black'}
@@ -462,7 +462,7 @@ const DepositStart = ({
                           ? `The estimated number of i${tokenSymbol} you will receive in your wallet. The default slippage is set as 'Auto'.`
                           : `The estimated number of ${tokenName} you will receive in your wallet. The default slippage is set as 'Auto'.`}
                       </NewLabel>
-                    </ReactTooltip>
+                    </Tooltip>
                   </>
                 )}
               </NewLabel>
@@ -485,7 +485,7 @@ const DepositStart = ({
                       </AnimateDotDiv>
                     )}
                   </div>
-                  <ReactTooltip
+                  <Tooltip
                     id="modal-fToken-receive-convert"
                     backgroundColor={darkMode ? 'white' : '#101828'}
                     borderColor={darkMode ? 'white' : 'black'}
@@ -513,7 +513,7 @@ const DepositStart = ({
                         </AnimateDotDiv>
                       )}
                     </NewLabel>
-                  </ReactTooltip>
+                  </Tooltip>
                 </>
                 <NewLabel display="flex" flexFlow="column" weight="600" textAlign="right">
                   <span>{useIFARM ? `i${tokenSymbol}` : tokenName}</span>
@@ -617,12 +617,12 @@ const DepositStart = ({
                 progressStep === 0
                   ? ProgressOne
                   : progressStep === 1
-                  ? ProgressTwo
-                  : progressStep === 2
-                  ? ProgressThree
-                  : progressStep === 3
-                  ? ProgressFour
-                  : ProgressFive
+                    ? ProgressTwo
+                    : progressStep === 2
+                      ? ProgressThree
+                      : progressStep === 3
+                        ? ProgressFour
+                        : ProgressFive
               }
               alt="progress bar"
             />
@@ -663,7 +663,7 @@ const DepositStart = ({
                     if (e.ctrlKey) {
                       window.open(url, '_blank')
                     } else {
-                      push(url)
+                      navigate(url)
                     }
                   }}
                 >
@@ -790,8 +790,8 @@ const DepositStart = ({
                   !darkMode
                     ? '#fff'
                     : customSlippage === null || customSlippage === 0
-                    ? '#0C111D'
-                    : '#fff'
+                      ? '#0C111D'
+                      : '#fff'
                 }
                 bgColor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#5dcf46'}
                 cursor={customSlippage === null || customSlippage === 0 ? 'not-allowed' : 'pointer'}

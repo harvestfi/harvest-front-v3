@@ -1,6 +1,6 @@
 import React from 'react'
 import { PiQuestion } from 'react-icons/pi'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { useMediaQuery } from 'react-responsive'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { Container, Text, NewLabel } from './style'
@@ -32,7 +32,7 @@ const ChartRangeSelect = ({ state, type, text, onClick }) => {
               data-tip
               data-for="tooltip-last-timeframe"
             />
-            <ReactTooltip
+            <Tooltip
               id="tooltip-last-timeframe"
               backgroundColor={darkMode ? 'white' : '#101828'}
               borderColor={darkMode ? 'white' : 'black'}
@@ -47,7 +47,7 @@ const ChartRangeSelect = ({ state, type, text, onClick }) => {
                 When set to &apos;Last&apos;, the performance chart displays your last interaction
                 (convert or revert) with this farm as the starting point.
               </NewLabel>
-            </ReactTooltip>
+            </Tooltip>
           </>
         )}
       </Text>

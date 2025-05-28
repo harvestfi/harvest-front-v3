@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { PiQuestion } from 'react-icons/pi'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { Dropdown } from 'react-bootstrap'
 import { IoCheckmark } from 'react-icons/io5'
 import { useThemeContext } from '../../providers/useThemeContext'
@@ -199,7 +199,7 @@ const LeaderBoard = () => {
       })
     }
     return sortableItems
-  }, [correctedApiData, sortConfig]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [correctedApiData, sortConfig])
 
   const { currentItems, pageCount } = useMemo(() => {
     const endOffset = itemOffset + itemsPerPage
@@ -230,7 +230,7 @@ const LeaderBoard = () => {
       const efficiencyB = b[1].totalDailyYield / b[1].totalBalance
       return efficiencyB - efficiencyA
     })
-  }, [correctedApiData]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [correctedApiData])
 
   const balanceRank = useMemo(() => {
     if (account && Object.entries(correctedApiData).length > 0) {
@@ -239,7 +239,7 @@ const LeaderBoard = () => {
       )
     }
     return false
-  }, [sortedByBalance, account]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [sortedByBalance, account])
 
   const efficiencyRank = useMemo(() => {
     if (account && Object.entries(correctedApiData).length > 0) {
@@ -249,7 +249,7 @@ const LeaderBoard = () => {
       )
     }
     return false
-  }, [sortedByEfficiency, account]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [sortedByEfficiency, account])
 
   return isMobile ? (
     <Container bgColor={bgColorNew} fontColor={fontColor}>
@@ -367,7 +367,7 @@ const LeaderBoard = () => {
                     onClick={stopPropagation}
                     style={{ marginLeft: '5px' }}
                   />
-                  <ReactTooltip
+                  <Tooltip
                     backgroundColor={darkMode ? 'white' : '#101828'}
                     borderColor={darkMode ? 'white' : 'black'}
                     textColor={darkMode ? 'black' : 'white'}
@@ -395,7 +395,7 @@ const LeaderBoard = () => {
                         </ul>
                       </div>
                     </NewLabel>
-                  </ReactTooltip>
+                  </Tooltip>
                 </>
               )}
             </Column>
@@ -506,7 +506,7 @@ const LeaderBoard = () => {
                 >
                   Efficiency
                   <PiQuestion className="question" data-tip />
-                  <ReactTooltip
+                  <Tooltip
                     backgroundColor={darkMode ? 'white' : '#101828'}
                     borderColor={darkMode ? 'white' : 'black'}
                     textColor={darkMode ? 'black' : 'white'}
@@ -533,7 +533,7 @@ const LeaderBoard = () => {
                         </ul>
                       </div>
                     </NewLabel>
-                  </ReactTooltip>
+                  </Tooltip>
                   <SortingIcon
                     sortType={sortConfig.direction}
                     sortField={sortConfig.key}

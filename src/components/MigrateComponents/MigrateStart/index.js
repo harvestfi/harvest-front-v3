@@ -5,7 +5,7 @@ import Modal from 'react-bootstrap/Modal'
 import { useSetChain } from '@web3-onboard/react'
 import { IoIosArrowUp } from 'react-icons/io'
 import { CiSettings } from 'react-icons/ci'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { Spinner } from 'react-bootstrap'
 import { useWallet } from '../../../providers/Wallet'
 import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../../constants'
@@ -92,17 +92,12 @@ const MigrateStart = ({
   const [showNote, setShowNote] = useState(false)
 
   const { account, chainId, web3, approvedBalances, getWalletBalances } = useWallet()
-  const {
-    getPortalsEstimate,
-    getPortalsToken,
-    getPortals,
-    getPortalsApproval,
-    portalsApprove,
-  } = usePortals()
+  const { getPortalsEstimate, getPortalsToken, getPortals, getPortalsApproval, portalsApprove } =
+    usePortals()
   const { userStats, fetchUserPoolStats } = usePools()
   const { handleApproval, handleDeposit } = useActions()
   const { contracts } = useContracts()
-  const { push } = useHistory()
+  const navigate = useNavigate()
 
   const {
     isMobile,
@@ -182,8 +177,8 @@ const MigrateStart = ({
   const curChain = isSpecialApp
     ? chainId
     : connectedChain
-    ? parseInt(connectedChain.id, 16).toString()
-    : ''
+      ? parseInt(connectedChain.id, 16).toString()
+      : ''
 
   useEffect(() => {
     setFailureCount(0)
@@ -371,7 +366,6 @@ const MigrateStart = ({
     }
 
     getQuoteResult()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     account,
     chainId,
@@ -555,7 +549,7 @@ const MigrateStart = ({
       setShowMigrate(false)
       setProgressStep(0)
       setButtonName('Approve Token')
-      push(`/${networkName}/${highestVaultAddress}`)
+      navigate(`/${networkName}/${highestVaultAddress}`)
     }
   }
 
@@ -857,12 +851,12 @@ const MigrateStart = ({
                 progressStep === 0
                   ? ProgressOne
                   : progressStep === 1
-                  ? ProgressTwo
-                  : progressStep === 2
-                  ? ProgressThree
-                  : progressStep === 3
-                  ? ProgressFour
-                  : ProgressFive
+                    ? ProgressTwo
+                    : progressStep === 2
+                      ? ProgressThree
+                      : progressStep === 3
+                        ? ProgressFour
+                        : ProgressFive
               }
               alt="progress bar"
             />
@@ -990,8 +984,8 @@ const MigrateStart = ({
                   !darkMode
                     ? '#fff'
                     : customSlippage === null || customSlippage === 0
-                    ? '#0C111D'
-                    : '#fff'
+                      ? '#0C111D'
+                      : '#fff'
                 }
                 bgColor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#5dcf46'}
                 cursor={customSlippage === null || customSlippage === 0 ? 'not-allowed' : 'pointer'}

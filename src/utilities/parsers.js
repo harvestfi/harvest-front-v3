@@ -565,7 +565,6 @@ export const rearrangeApiData = (apiData, groupOfVaults) => {
 
   const vaultBalanceSortedData = Object.entries(filteredApiData)
     .map(([address, data]) => {
-      // eslint-disable-next-line no-shadow
       const totalVaultBalance = Object.values(data.vaults).reduce((sum, vault) => {
         return sum + vault.balance
       }, 0)

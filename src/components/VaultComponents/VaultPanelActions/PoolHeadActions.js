@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js'
 import { get } from 'lodash'
 import React, { useCallback } from 'react'
 import ReactHtmlParser from 'react-html-parser'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import {
   ACTIONS,
   DISABLED_DEPOSITS,
@@ -95,7 +95,7 @@ const PoolHeadActions = ({
 
   return (
     <>
-      <ReactTooltip
+      <Tooltip
         id={`disabled-deposit-tooltip-${tokenSymbol}`}
         backgroundColor="white"
         borderColor="black"
@@ -113,7 +113,7 @@ const PoolHeadActions = ({
       >
         {isFARMVault && (
           <>
-            <ReactTooltip
+            <Tooltip
               id={IFARM_TOKEN_SYMBOL}
               backgroundColor="#fffce6"
               borderColor="black"
@@ -121,7 +121,7 @@ const PoolHeadActions = ({
               textColor="black"
             >
               {withdrawMode ? IFARM_WITHDRAW_TOOLTIP : IFARM_DEPOSIT_TOOLTIP}
-            </ReactTooltip>
+            </Tooltip>
             <div data-tip="" data-for={IFARM_TOKEN_SYMBOL}>
               <Checkbox
                 icon={<FontAwesomeIcon size="lg" icon={faCheck} />}
@@ -203,8 +203,8 @@ const PoolHeadActions = ({
               pendingAction === ACTIONS.APPROVE_STAKE
                 ? 'PROCESSING...'
                 : tokenSymbol !== FARM_TOKEN_SYMBOL
-                ? 'STAKE'
-                : 'DEPOSIT'}
+                  ? 'STAKE'
+                  : 'DEPOSIT'}
             </Button>
           </>
         ) : (
@@ -250,8 +250,8 @@ const PoolHeadActions = ({
             {pendingAction === ACTIONS.EXIT || pendingAction === ACTIONS.WITHDRAW
               ? 'PROCESSING...'
               : tokenSymbol !== FARM_TOKEN_SYMBOL
-              ? 'UNSTAKE'
-              : 'WITHDRAW'}
+                ? 'UNSTAKE'
+                : 'WITHDRAW'}
           </Button>
         )}
       </PrimaryActionsContainer>

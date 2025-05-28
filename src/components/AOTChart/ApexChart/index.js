@@ -108,7 +108,6 @@ const ApexChart = ({ chainName, token, loadComplete, aotData, dataKeys, iporHvau
     }
 
     init()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDataReady, loadComplete])
 
   return (

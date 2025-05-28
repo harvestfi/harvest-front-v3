@@ -62,8 +62,8 @@ const UnstakeStart = ({
   const curChain = isSpecialApp
     ? chainId
     : connectedChain
-    ? parseInt(connectedChain.id, 16).toString()
-    : ''
+      ? parseInt(connectedChain.id, 16).toString()
+      : ''
   const [btnName, setBtnName] = useState('Confirm Transaction')
   const [unstakeFailed, setUnstakeFailed] = useState(false)
   const [progressStep, setProgressStep] = useState(0)

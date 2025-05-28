@@ -279,8 +279,8 @@ export const displayApyRefusingNegative = (apy, ...args) =>
   new BigNumber(apy).isGreaterThan(MAX_APY_DISPLAY)
     ? `${MAX_APY_DISPLAY}%+`
     : new BigNumber(apy).isLessThanOrEqualTo(0)
-    ? '0.00%'
-    : `${truncateNumberString(apy, ...args)}%`
+      ? '0.00%'
+      : `${truncateNumberString(apy, ...args)}%`
 
 export const hasValidAmountForInputAndMaxButton = (
   userBalance,

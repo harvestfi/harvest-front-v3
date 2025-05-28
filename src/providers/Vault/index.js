@@ -20,7 +20,7 @@ import {
   hasValidUpdatedBalance,
   newContractInstance,
   pollUpdatedBalance,
-  ledgerWeb3,
+  // ledgerWeb3,
 } from '../../services/web3'
 import univ3ContractData from '../../services/web3/contracts/uniswap-v3/contract.json'
 import vaultContractData from '../../services/web3/contracts/vault/contract.json'
@@ -30,9 +30,7 @@ import { usePools } from '../Pools'
 import { useWallet } from '../Wallet'
 import { calculateFarmingBalance, filterVaults } from './utils'
 
-/* eslint-disable global-require */
 const { tokens, addresses } = require('../../data')
-/* eslint-enable global-require */
 
 const VaultsContext = createContext()
 const useVaults = () => useContext(VaultsContext)
@@ -71,10 +69,10 @@ const VaultsProvider = _ref => {
       const formattedVaults = {}
       let curChainId = chainId
       try {
-        if (isLedgerLive()) {
-          const selectedChain = await ledgerWeb3.eth.net.getId()
-          curChainId = selectedChain.toString()
-        }
+        // if (isLedgerLive()) {
+        //   const selectedChain = await ledgerWeb3.eth.net.getId()
+        //   curChainId = selectedChain.toString()
+        // }
       } catch (e) {
         console.log(e)
       }
@@ -171,11 +169,8 @@ const VaultsProvider = _ref => {
           }
 
           if (isIFARM && account && curChainId === CHAIN_IDS.ETH_MAINNET) {
-            underlyingBalanceWithInvestmentForHolder = await getUnderlyingBalanceWithInvestmentForHolder(
-              account,
-              instance,
-              web3Client,
-            )
+            underlyingBalanceWithInvestmentForHolder =
+              await getUnderlyingBalanceWithInvestmentForHolder(account, instance, web3Client)
           }
 
           formattedVaults[vaultSymbol] = {
@@ -219,9 +214,7 @@ const VaultsProvider = _ref => {
     [pools, account, chainId, web3],
   )
   const getFarmingBalances = useCallback(
-    // eslint-disable-next-line func-names
     async function (selectedVaults, selectedBalances, updatedUserStats) {
-      // eslint-disable-next-line no-void
       if (selectedBalances === void 0) {
         selectedBalances = {}
       }

@@ -26,7 +26,9 @@ const Container = styled.div`
 
 const TopSection = styled.div`
   width: 100%;
-  background: url(${AdvancedImg}), lightgray -163.801px -183.553px / 113.693% 204.76% no-repeat;
+  background:
+    url(${AdvancedImg}),
+    lightgray -163.801px -183.553px / 113.693% 204.76% no-repeat;
   background-repeat: no-repeat;
   background-size: cover;
 

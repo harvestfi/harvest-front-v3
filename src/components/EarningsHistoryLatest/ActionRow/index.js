@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import ListItem from '../ListItem'
 import { useRate } from '../../../providers/Rate'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -36,12 +36,12 @@ const ActionRow = ({ info }) => {
       Number(chainId) === 42161
         ? ARBITRUM
         : Number(chainId) === 8453
-        ? BASE
-        : Number(chainId) === 324
-        ? ZKSYNC
-        : Number(chainId) === 137
-        ? POLYGON
-        : ETHEREUM
+          ? BASE
+          : Number(chainId) === 324
+            ? ZKSYNC
+            : Number(chainId) === 137
+              ? POLYGON
+              : ETHEREUM
     setBadgeUrl(badge)
   }, [info])
 
@@ -72,7 +72,7 @@ const ActionRow = ({ info }) => {
             <div className="timestamp" data-tip data-for={`tooltip-latest-yield-${info.timestamp}`}>
               {formatAge(info.timestamp)} ago
             </div>
-            <ReactTooltip
+            <Tooltip
               id={`tooltip-latest-yield-${info.timestamp}`}
               backgroundColor={darkMode ? 'white' : '#101828'}
               borderColor={darkMode ? 'white' : 'black'}
@@ -82,7 +82,7 @@ const ActionRow = ({ info }) => {
               <NewLabel size="10px" height="14px" weight="600">
                 <div dangerouslySetInnerHTML={formatDateTime(info.timestamp)} />
               </NewLabel>
-            </ReactTooltip>
+            </Tooltip>
           </Content>
           <Content display="flex" flexDirection="column" alignItems="end">
             <MobileGreenBox>

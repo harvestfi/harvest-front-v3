@@ -4,7 +4,7 @@ import useEffectWithPrevious from 'use-effect-with-previous'
 import { find, get, isEmpty, orderBy, isEqual, isNaN } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import { Dropdown, Spinner } from 'react-bootstrap'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { IoArrowUpCircleOutline, IoCheckmark } from 'react-icons/io5'
 import 'react-loading-skeleton/dist/skeleton.css'
 import VaultRow from '../../components/DashboardComponents/VaultRow'
@@ -102,12 +102,12 @@ import {
 import AnimatedDots from '../../components/AnimatedDots'
 
 const Portfolio = () => {
-  const { push } = useHistory()
+  const navigate = useNavigate()
   const { connected, connectAction, account, balances, getWalletBalances } = useWallet()
   const { userStats, fetchUserPoolStats, totalPools, disableWallet } = usePools()
   const { profitShareAPY } = useStats()
   const { vaultsData, getFarmingBalances } = useVaults()
-  /* eslint-disable global-require */
+
   const { tokens } = require('../../data')
   const {
     showInactiveFarms,
@@ -173,7 +173,7 @@ const Portfolio = () => {
     if (connected && (totalNetProfit === 0 || totalNetProfit === -1)) {
       setIsLoading(true)
     }
-  }, [totalNetProfit, connected, totalDeposit, totalYieldMonthly, totalYieldDaily]) // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [totalNetProfit, connected, totalDeposit, totalYieldMonthly, totalYieldDaily])
 
   useEffect(() => {
     if (rates.rateData) {
@@ -269,7 +269,7 @@ const Portfolio = () => {
       }
       loadUserPoolsStats()
     }
-  }, [account, totalPools, depositToken]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, totalPools, depositToken])
 
   useEffect(() => {
     if (!isEmpty(userStats) && account) {
@@ -382,8 +382,8 @@ const Portfolio = () => {
                 ? `${tokens[IFARM_TOKEN_SYMBOL].platform[0]} - ${tokens[IFARM_TOKEN_SYMBOL].subLabel}`
                 : tokens[IFARM_TOKEN_SYMBOL].platform[0]
               : token.subLabel
-              ? token.platform[0] && `${token.platform[0]} - ${token.subLabel}`
-              : token.platform[0] && token.platform[0]
+                ? token.platform[0] && `${token.platform[0]} - ${token.subLabel}`
+                : token.platform[0] && token.platform[0]
             stats.status = token.inactive ? 'Inactive' : 'Active'
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
             if (isSpecialVault) {
@@ -524,10 +524,9 @@ const Portfolio = () => {
                       rewardSymbol === 'ECOCNG'
                         ? tempSymbol.toLowerCase() === 'cng'
                         : rewardSymbol === 'GENE'
-                        ? tempSymbol.toLowerCase() === '$gene'
-                        : rewardSymbol.toLowerCase() === tempSymbol.toLowerCase()
+                          ? tempSymbol.toLowerCase() === '$gene'
+                          : rewardSymbol.toLowerCase() === tempSymbol.toLowerCase()
                     ) {
-                      // eslint-disable-next-line no-await-in-loop
                       usdRewardPrice = await getTokenPriceFromApi(tempData.id)
                       break
                     }
@@ -565,8 +564,8 @@ const Portfolio = () => {
             const totalApy = isSpecialVault
               ? getTotalApy(null, token, true)
               : token.isIPORVault
-              ? token.estimatedApy
-              : getTotalApy(vaultPool, tokenVault)
+                ? token.estimatedApy
+                : getTotalApy(vaultPool, tokenVault)
 
             if (token.isIPORVault) {
               showAPY = totalApy
@@ -581,12 +580,12 @@ const Portfolio = () => {
                     : totalApy || null
                   : '-'
                 : vaultPool.loaded && totalApy !== null
-                ? token.inactive || token.testInactive || token.hideTotalApy || !token.dataFetched
-                  ? token.inactive || token.testInactive
-                    ? 'Inactive'
-                    : null
-                  : totalApy
-                : '-'
+                  ? token.inactive || token.testInactive || token.hideTotalApy || !token.dataFetched
+                    ? token.inactive || token.testInactive
+                      ? 'Inactive'
+                      : null
+                    : totalApy
+                  : '-'
             }
             if (showAPY === 'Inactive' || showAPY === null) {
               stats.apy = Number(-1)
@@ -654,7 +653,7 @@ const Portfolio = () => {
 
       getFarmTokenInfo()
     }
-  }, [account, userStats, balances, showInactiveFarms]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, userStats, balances, showInactiveFarms])
 
   useEffect(() => {
     const totalNetProfitValue = localStorage.getItem(totalNetProfitKey)
@@ -675,7 +674,6 @@ const Portfolio = () => {
           const stakedVaults = []
           const ul = userBalanceVaults.length
           for (let j = 0; j < ul; j += 1) {
-            /* eslint-disable no-restricted-syntax, no-await-in-loop */
             for (const key of Object.keys(groupOfVaults)) {
               const isSpecialVaultAll =
                 groupOfVaults[key].liquidityPoolVault || groupOfVaults[key].poolVault
@@ -800,8 +798,6 @@ const Portfolio = () => {
         localStorage.setItem(totalHistoryDataKey, JSON.stringify([]))
       }
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, userStats, showInactiveFarms, connected])
 
   const sortCol = field => {
@@ -821,14 +817,14 @@ const Portfolio = () => {
         const aIndex = a.token.data
           ? idIndexMap[a.symbol]
           : idIndexMap[a.token.pool.id] !== undefined
-          ? idIndexMap[a.token.pool.id]
-          : Infinity
+            ? idIndexMap[a.token.pool.id]
+            : Infinity
 
         const bIndex = b.token.data
           ? idIndexMap[b.symbol]
           : idIndexMap[b.token.pool.id] !== undefined
-          ? idIndexMap[b.token.pool.id]
-          : Infinity
+            ? idIndexMap[b.token.pool.id]
+            : Infinity
 
         return aIndex - bIndex
       })
@@ -1148,8 +1144,8 @@ const Portfolio = () => {
                       ? '#fff'
                       : '#15191C'
                     : showLatestYield
-                    ? '#15191C'
-                    : '#fff'
+                      ? '#15191C'
+                      : '#fff'
                 }
                 backColor={showLatestYield ? 'unset' : '#5DCF46'}
                 boxShadow={
@@ -1168,8 +1164,8 @@ const Portfolio = () => {
                       ? '#15191C'
                       : '#fff'
                     : showLatestYield
-                    ? '#fff'
-                    : '#15191C'
+                      ? '#fff'
+                      : '#15191C'
                 }
                 backColor={showLatestYield ? '#5DCF46' : 'unset'}
                 boxShadow={

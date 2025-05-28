@@ -249,7 +249,8 @@ const ApyValue = styled.div`
   line-height: 16.591px;
   padding: 1.659px 8.295px 1.659px 6.636px;
 
-  background: linear-gradient(${props => props.bgColor}, ${props => props.bgColor}) padding-box,
+  background:
+    linear-gradient(${props => props.bgColor}, ${props => props.bgColor}) padding-box,
     linear-gradient(45deg, #cf1894, #b0229b, #e0439b, #670e78) border-box;
   border-radius: 4.148px;
   border: 1.078px solid transparent;
@@ -387,8 +388,12 @@ const VaultContainer = styled.div`
     border-radius: 12px;
     padding: 2px;
     background: linear-gradient(90deg, #ffd6a6 0%, #a1b5ff 48.9%, #73df88 100%);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
   }
@@ -421,8 +426,12 @@ const HighestVault = styled.div`
     border-radius: 4.15px;
     padding: 2px;
     background: linear-gradient(90deg, #ffd6a6 0%, #a1b5ff 48.9%, #73df88 100%);
-    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
   }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Dropdown } from 'react-bootstrap'
 import { isEqual, isEmpty } from 'lodash'
 import BigNumber from 'bignumber.js'
@@ -31,19 +31,12 @@ import {
 } from './style'
 
 const Autopilot = () => {
-  const {
-    darkMode,
-    bgColorNew,
-    hoverColorNew,
-    fontColor,
-    fontColor1,
-    fontColor2,
-    borderColorBox,
-  } = useThemeContext()
+  const { darkMode, bgColorNew, hoverColorNew, fontColor, fontColor1, fontColor2, borderColorBox } =
+    useThemeContext()
 
   const { connected, account, balances, getWalletBalances } = useWallet()
   const { contracts } = useContracts()
-  const history = useHistory()
+  const history = useNavigate()
   const location = useLocation()
   // const { chainId } = useWallet()
   const { allVaultsData } = useVaults()

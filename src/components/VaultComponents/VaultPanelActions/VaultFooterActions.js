@@ -2,7 +2,7 @@ import { get } from 'lodash'
 import React, { useMemo, useState, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { useSetChain } from '@web3-onboard/react'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import Info from '../../../assets/images/logos/earn/info.svg'
 import { ACTIONS, FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, SPECIAL_VAULTS } from '../../../constants'
 import { useActions } from '../../../providers/Actions'
@@ -85,8 +85,8 @@ const VaultFooterActions = ({
   const curChain = isSpecialApp
     ? chainId
     : connectedChain
-    ? parseInt(connectedChain.id, 16).toString()
-    : ''
+      ? parseInt(connectedChain.id, 16).toString()
+      : ''
 
   const poolVaults = useMemo(
     () => ({
@@ -229,7 +229,7 @@ const VaultFooterActions = ({
             </SelectedVault>
           )
         })}
-      <ReactTooltip
+      <Tooltip
         id={`claim-tooltip-${tokenSymbol}`}
         backgroundColor="black"
         borderColor="black"

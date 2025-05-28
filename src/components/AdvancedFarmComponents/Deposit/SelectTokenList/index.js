@@ -183,7 +183,7 @@ const SelectTokenList = ({
       }
     }
     fetch()
-  }, [filterWord, supTokenNoBalanceList, balanceList, chainId, setCurSupportedVault]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [filterWord, supTokenNoBalanceList, balanceList, chainId, setCurSupportedVault])
 
   useEffect(() => {
     const count =

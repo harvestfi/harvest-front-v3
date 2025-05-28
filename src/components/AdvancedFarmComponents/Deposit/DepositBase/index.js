@@ -4,7 +4,7 @@ import { useSetChain } from '@web3-onboard/react'
 import { round } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import { toast } from 'react-toastify'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { PiQuestion } from 'react-icons/pi'
 import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
 import DropDownIcon from '../../../../assets/images/logos/advancedfarm/drop-down.svg'
@@ -110,8 +110,8 @@ const DepositBase = ({
   const curChain = isSpecialApp
     ? chainId
     : connectedChain
-    ? parseInt(connectedChain.id, 16).toString()
-    : ''
+      ? parseInt(connectedChain.id, 16).toString()
+      : ''
 
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
@@ -293,7 +293,6 @@ const DepositBase = ({
     }
 
     getQuoteResult()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     inputAmount,
     account,
@@ -566,7 +565,7 @@ const DepositBase = ({
             >
               Est. Yearly Yield
               <PiQuestion className="question" data-tip data-for="monthly-yield" />
-              <ReactTooltip
+              <Tooltip
                 id="monthly-yield"
                 backgroundColor={darkMode ? 'white' : '#101828'}
                 borderColor={darkMode ? 'white' : 'black'}
@@ -582,7 +581,7 @@ const DepositBase = ({
                     ? 'Based on live USD price of iFARM. Considers live APY. Subject to change.'
                     : 'Calculated using live APY and current values of underlying and reward tokens. Subject to market fluctuations; performance may vary.'}
                 </NewLabel>
-              </ReactTooltip>
+              </Tooltip>
             </NewLabel>
             <NewLabel
               size={isMobile ? '12px' : '14px'}
@@ -629,7 +628,7 @@ const DepositBase = ({
             >
               {useIFARM ? 'Est. Received' : 'Est. fTokens Received'}
               <PiQuestion className="question" data-tip data-for="min-received" />
-              <ReactTooltip
+              <Tooltip
                 id="min-received"
                 backgroundColor={darkMode ? 'white' : '#101828'}
                 borderColor={darkMode ? 'white' : 'black'}
@@ -644,7 +643,7 @@ const DepositBase = ({
                   The estimated number of fTokens you will receive in your wallet. The default
                   slippage is set as &apos;Auto&apos;.
                 </NewLabel>
-              </ReactTooltip>
+              </Tooltip>
             </NewLabel>
             <NewLabel
               size={isMobile ? '12px' : '14px'}
@@ -672,7 +671,7 @@ const DepositBase = ({
                     '-'
                   )}
                 </div>
-                <ReactTooltip
+                <Tooltip
                   id="est-fToken-receive"
                   backgroundColor={darkMode ? 'white' : '#101828'}
                   borderColor={darkMode ? 'white' : 'black'}
@@ -687,7 +686,7 @@ const DepositBase = ({
                   >
                     {minReceiveAmountString}
                   </NewLabel>
-                </ReactTooltip>
+                </Tooltip>
               </>
               <NewLabel display="flex" flexFlow="column" weight="600" align="right">
                 <span className="token-symbol">{useIFARM ? `i${tokenSymbol}` : tokenSym}</span>

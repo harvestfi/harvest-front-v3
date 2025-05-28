@@ -1,7 +1,7 @@
 import { get } from 'lodash'
 import React from 'react'
 import { useSetChain } from '@web3-onboard/react'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { ACTIONS } from '../../../constants'
 import { useActions } from '../../../providers/Actions'
 import { usePools } from '../../../providers/Pools'
@@ -63,8 +63,8 @@ const VaultFooterActions = ({
   const curChain = isSpecialApp
     ? chainId
     : connectedChain
-    ? parseInt(connectedChain.id, 16).toString()
-    : ''
+      ? parseInt(connectedChain.id, 16).toString()
+      : ''
 
   return (
     <SelectedVaultContainer
@@ -151,7 +151,7 @@ const VaultFooterActions = ({
             </SelectedVault>
           )
         })}
-      <ReactTooltip
+      <Tooltip
         id={`claim-tooltip-${tokenSymbol}`}
         backgroundColor="black"
         borderColor="black"

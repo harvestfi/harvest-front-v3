@@ -8,7 +8,7 @@ import { CHAIN_IDS } from '../../data/constants'
 import {
   getChainName,
   hasValidUpdatedBalance,
-  ledgerProvider,
+  // ledgerProvider,
   mainWeb3,
   pollUpdatedBalance,
   safeProvider,
@@ -18,9 +18,7 @@ import { isLedgerLive, isSafeApp } from '../../utilities/formats'
 import { useContracts } from '../Contracts'
 import { validateChain } from './utils'
 
-/* eslint-disable global-require */
 const { tokens } = require('../../data')
-/* eslint-enable global-require */
 
 const WalletContext = createContext()
 const useWallet = () => useContext(WalletContext)
@@ -47,13 +45,13 @@ const WalletProvider = _ref => {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (isLedgerLive()) {
-        const selectedChain = await ledgerProvider.getNetwork()
-        setChainId(selectedChain.chainId.toString())
-        const selectedAccount = await ledgerProvider.getSigner().getAddress()
-        setAccount(selectedAccount && selectedAccount.toLowerCase())
-        setConnected(true)
-      }
+      // if (isLedgerLive()) {
+      //   const selectedChain = await ledgerProvider.getNetwork()
+      //   setChainId(selectedChain.chainId.toString())
+      //   const selectedAccount = await ledgerProvider.getSigner().getAddress()
+      //   setAccount(selectedAccount && selectedAccount.toLowerCase())
+      //   setConnected(true)
+      // }
       if (isSafeApp()) {
         const safeAppProvider = await safeProvider()
         const selectedChain = await safeAppProvider.getNetwork()
@@ -113,29 +111,29 @@ const WalletProvider = _ref => {
           },
         )
       } else {
-        validateChain(
-          newChain,
-          chainId,
-          async () => {
-            window.location.href = '/?ledgerLive=true'
-            setConnected(true)
-            const chainNew = parseInt(newChain, 16).toString()
-            setChainId(chainNew)
-            const selectedAccount = await ledgerProvider.getSigner().getAddress()
-            setAccount(selectedAccount && selectedAccount.toLowerCase())
-            setConnected(true)
-          },
-          () => {
-            toast.error(
-              `App network (${getChainName(
-                chainId,
-              )}) doesn't match to network selected in your wallet (${getChainName(
-                newChain,
-              )}).\nSwitch to the correct chain in your wallet`,
-            )
-            setConnected(false)
-          },
-        )
+        // validateChain(
+        //   newChain,
+        //   chainId,
+        //   async () => {
+        //     window.location.href = '/?ledgerLive=true'
+        //     setConnected(true)
+        //     const chainNew = parseInt(newChain, 16).toString()
+        //     setChainId(chainNew)
+        //     const selectedAccount = await ledgerProvider.getSigner().getAddress()
+        //     setAccount(selectedAccount && selectedAccount.toLowerCase())
+        //     setConnected(true)
+        //   },
+        //   () => {
+        //     toast.error(
+        //       `App network (${getChainName(
+        //         chainId,
+        //       )}) doesn't match to network selected in your wallet (${getChainName(
+        //         newChain,
+        //       )}).\nSwitch to the correct chain in your wallet`,
+        //     )
+        //     setConnected(false)
+        //   },
+        // )
       }
     },
     [chainId],
@@ -143,21 +141,21 @@ const WalletProvider = _ref => {
   useEffect(() => {
     let accountEmitter, networkEmitter
     const fetchData = async () => {
-      if (isLedgerLive()) {
-        if (ledgerProvider && ledgerProvider.provider.on) {
-          networkEmitter = ledgerProvider.provider.on('chainChanged', onNetworkChange)
-          accountEmitter = ledgerProvider.provider.on('accountsChanged', accountAddress => {
-            setAccount(accountAddress[0].toLowerCase())
-            setConnected(true)
-          })
-        }
-        return () => {
-          if (accountEmitter && networkEmitter) {
-            accountEmitter.removeAllListeners('accountsChanged')
-            networkEmitter.removeListener('chainChanged', onNetworkChange)
-          }
-        }
-      }
+      // if (isLedgerLive()) {
+      //   if (ledgerProvider && ledgerProvider.provider.on) {
+      //     networkEmitter = ledgerProvider.provider.on('chainChanged', onNetworkChange)
+      //     accountEmitter = ledgerProvider.provider.on('accountsChanged', accountAddress => {
+      //       setAccount(accountAddress[0].toLowerCase())
+      //       setConnected(true)
+      //     })
+      //   }
+      //   return () => {
+      //     if (accountEmitter && networkEmitter) {
+      //       accountEmitter.removeAllListeners('accountsChanged')
+      //       networkEmitter.removeListener('chainChanged', onNetworkChange)
+      //     }
+      //   }
+      // }
       if (isSafeApp()) {
         const safeweb3Provider = await safeProvider()
         if (safeweb3Provider && safeweb3Provider.provider.on) {
@@ -174,8 +172,8 @@ const WalletProvider = _ref => {
           }
         }
       }
-      if (web3 && web3._provider.on && account) {
-        networkEmitter = web3._provider.on('chainChanged', onNetworkChange)
+      if (web3 && web3.currentProvider.on && account) {
+        networkEmitter = web3.currentProvider.on('chainChanged', onNetworkChange)
       }
 
       return () => {
@@ -214,9 +212,7 @@ const WalletProvider = _ref => {
   }, [connect])
 
   const getWalletBalances = useCallback(
-    // eslint-disable-next-line func-names
     async function (selectedTokens, newAccount, fresh) {
-      // eslint-disable-next-line no-void
       if (fresh === void 0) {
         fresh = false
       }

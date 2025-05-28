@@ -16,7 +16,9 @@ const ProfitSharing = styled.div`
   justify-content: center;
 
   &:hover {
-    box-shadow: 4px 3px 3px rgba(16, 24, 40, 0.1), 3px 3px 4px rgba(16, 24, 40, 0.06);
+    box-shadow:
+      4px 3px 3px rgba(16, 24, 40, 0.1),
+      3px 3px 4px rgba(16, 24, 40, 0.06);
   }
 `
 

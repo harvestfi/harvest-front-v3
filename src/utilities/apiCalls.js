@@ -29,10 +29,9 @@ const executeGraphCall = async (url, query, variables, retries = 10, delayMs = 5
 
   while (retry < retries && (!response || response.status !== 200)) {
     console.warn(`Error in subgraph call. Retry ${retry + 1}. Retrying after ${delayMs}ms...`)
-    // eslint-disable-next-line no-await-in-loop
+
     await delay(delayMs)
     try {
-      // eslint-disable-next-line no-await-in-loop
       response = await axios.post(url, {
         query,
         variables,
@@ -1233,10 +1232,8 @@ export const initBalanceAndDetailData = async (
       })
     }
   } else {
-    const {
-      balanceIPORData: balanceData,
-      balanceIPORFlag: balanceFlag,
-    } = await getIPORUserBalanceHistories(address.toLowerCase(), chainId, account)
+    const { balanceIPORData: balanceData, balanceIPORFlag: balanceFlag } =
+      await getIPORUserBalanceHistories(address.toLowerCase(), chainId, account)
     const { vaultHIPORData: vaultHData, vaultHIPORFlag: vaultHFlag } = await getIPORVaultHistories(
       chainId,
       address.toLowerCase(),

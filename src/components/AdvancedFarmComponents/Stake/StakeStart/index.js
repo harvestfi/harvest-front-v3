@@ -63,8 +63,8 @@ const StakeStart = ({
   const curChain = isSpecialApp
     ? chainId
     : connectedChain
-    ? parseInt(connectedChain.id, 16).toString()
-    : ''
+      ? parseInt(connectedChain.id, 16).toString()
+      : ''
   const [btnName, setBtnName] = useState('Approve Token')
   const [startSpinner, setStartSpinner] = useState(false)
   const [stakeFailed, setStakeFailed] = useState(false)
@@ -305,12 +305,12 @@ const StakeStart = ({
                 progressStep === 0
                   ? ProgressOne
                   : progressStep === 1
-                  ? ProgressTwo
-                  : progressStep === 2
-                  ? ProgressThree
-                  : progressStep === 3
-                  ? ProgressFour
-                  : ProgressFive
+                    ? ProgressTwo
+                    : progressStep === 2
+                      ? ProgressThree
+                      : progressStep === 3
+                        ? ProgressFour
+                        : ProgressFive
               }
               alt="progress bar"
             />

@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js'
 import React, { useState, useEffect } from 'react'
 import { useSetChain } from '@web3-onboard/react'
 import { toast } from 'react-toastify'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { useMediaQuery } from 'react-responsive'
 import { PiQuestion } from 'react-icons/pi'
 import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
@@ -127,8 +127,8 @@ const WithdrawBase = ({
   const curChain = isSpecialApp
     ? chainId
     : connectedChain
-    ? parseInt(connectedChain.id, 16).toString()
-    : ''
+      ? parseInt(connectedChain.id, 16).toString()
+      : ''
 
   useEffect(() => {
     if (
@@ -201,13 +201,13 @@ const WithdrawBase = ({
                 useIFARM
                   ? fAssetPool?.lpTokenData?.decimals
                   : pickedDefaultToken
-                  ? defaultDecimal
-                  : fromTokenDetail?.decimals,
+                    ? defaultDecimal
+                    : fromTokenDetail?.decimals,
                 useIFARM
                   ? fAssetPool?.lpTokenData?.decimals
                   : pickedDefaultToken
-                  ? defaultDecimal
-                  : fromTokenDetail?.decimals,
+                    ? defaultDecimal
+                    : fromTokenDetail?.decimals,
               ),
             ).toString()
             fromInfoUsdValue =
@@ -219,13 +219,13 @@ const WithdrawBase = ({
                       useIFARM
                         ? fAssetPool?.lpTokenData?.decimals
                         : pickedDefaultToken
-                        ? defaultDecimal
-                        : fromTokenDetail?.decimals,
+                          ? defaultDecimal
+                          : fromTokenDetail?.decimals,
                       useIFARM
                         ? fAssetPool?.lpTokenData?.decimals
                         : pickedDefaultToken
-                        ? defaultDecimal
-                        : fromTokenDetail?.decimals,
+                          ? defaultDecimal
+                          : fromTokenDetail?.decimals,
                       true,
                     ) * quoteResult.fromTokenUsdPrice,
                     BEGINNERS_BALANCES_DECIMALS,
@@ -277,7 +277,6 @@ const WithdrawBase = ({
       }
       getQuoteResult()
     }
-    // eslint-disable-next-line
   }, [
     account,
     tokenChain,
@@ -321,8 +320,8 @@ const WithdrawBase = ({
         useIFARM
           ? fAssetPool.lpTokenData.decimals
           : token.isIPORVault
-          ? token.vaultDecimals
-          : token.decimals,
+            ? token.vaultDecimals
+            : token.decimals,
       ),
     )
   }
@@ -584,7 +583,7 @@ const WithdrawBase = ({
             >
               Est. Received
               <PiQuestion className="question" data-tip data-for="min-received" />
-              <ReactTooltip
+              <Tooltip
                 id="min-received"
                 backgroundColor={darkMode ? 'white' : '#101828'}
                 borderColor={darkMode ? 'white' : 'black'}
@@ -599,7 +598,7 @@ const WithdrawBase = ({
                   The estimated number of tokens you will receive in your wallet. The default
                   slippage is set as &lsquo;Auto&lsquo;.
                 </NewLabel>
-              </ReactTooltip>
+              </Tooltip>
             </NewLabel>
             <NewLabel
               size={isMobile ? '14px' : '14px'}
@@ -629,7 +628,7 @@ const WithdrawBase = ({
                       '-'
                     )}
                   </div>
-                  <ReactTooltip
+                  <Tooltip
                     id="est-fToken-receive-revert"
                     backgroundColor={darkMode ? 'white' : '#101828'}
                     borderColor={darkMode ? 'white' : 'black'}
@@ -643,7 +642,7 @@ const WithdrawBase = ({
                     >
                       {revertMinReceivedAmount}
                     </NewLabel>
-                  </ReactTooltip>
+                  </Tooltip>
                 </TokenInfo>
                 <span className="token-symbol">
                   {pickedToken.symbol !== 'Select' ? pickedToken.symbol : 'Output Token'}

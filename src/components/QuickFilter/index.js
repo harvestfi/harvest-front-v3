@@ -1,4 +1,4 @@
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { useWindowWidth } from '@react-hook/window-size'
 import { debounce } from 'lodash'
 import { MdCheck } from 'react-icons/md'
@@ -109,7 +109,7 @@ const QuickFilter = ({
   }, [flag, onSelectActiveType])
 
   const { pathname } = useLocation()
-  const { push } = useHistory()
+  const navigate = useNavigate()
 
   const [paramObj, setParamObj] = useState({})
 
@@ -289,14 +289,14 @@ const QuickFilter = ({
       setInactiveId(-1)
       printFarm(farmId)
     }
-  }, [farmId]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [farmId])
 
   useEffect(() => {
     const setUrlData = () => {
       const chains = [],
         chainIds = []
       const params = new URLSearchParams(window.location.search)
-      // eslint-disable-next-line no-restricted-syntax
+
       for (const [key, value] of params.entries()) {
         if (key === 'risk') {
           for (let j = 0; j < RiskList.length; j += 1) {
@@ -359,7 +359,7 @@ const QuickFilter = ({
     }
 
     setUrlData()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     const params = new URLSearchParams(paramObj)
@@ -372,12 +372,12 @@ const QuickFilter = ({
         }
       }
     }
-    push(`${pathname}?${params.toString()}`)
-  }, [selectedClass, paramObj]) // eslint-disable-line react-hooks/exhaustive-deps
+    navigate(`${pathname}?${params.toString()}`)
+  }, [selectedClass, paramObj])
 
   const clearFilter = () => {
     setParamObj({})
-    push(pathname)
+    navigate(pathname)
   }
 
   useEffect(() => {

@@ -8,9 +8,7 @@ import poolMethods from '../../services/web3/contracts/pool/methods'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 
-/* eslint-disable global-require */
 const { pools, tokens } = require('../../data')
-/* eslint-enable global-require */
 
 export const calculateTotalRewardsEarned = async (account, contractInstance) => {
   const { totalEarned: earned } = poolMethods

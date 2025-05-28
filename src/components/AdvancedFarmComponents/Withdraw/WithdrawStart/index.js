@@ -7,9 +7,9 @@ import { BsArrowUp } from 'react-icons/bs'
 import { CiSettings } from 'react-icons/ci'
 import { PiQuestion } from 'react-icons/pi'
 import { IoIosArrowUp } from 'react-icons/io'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { Spinner } from 'react-bootstrap'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import AutopilotVaults from '../../../../assets/images/logos/advancedfarm/btc-eth-usdc.svg'
 import AlertIcon from '../../../../assets/images/logos/beginners/alert-triangle.svg'
 import AlertCloseIcon from '../../../../assets/images/logos/beginners/alert-close.svg'
@@ -93,7 +93,7 @@ const WithdrawStart = ({
   const { account, web3, getWalletBalances } = useWallet()
   const { fetchUserPoolStats, userStats, pools } = usePools()
   const { contracts } = useContracts()
-  const { push } = useHistory()
+  const navigate = useNavigate()
   const [slippagePercentage, setSlippagePercentage] = useState(null)
   const [slippageSetting, setSlippageSetting] = useState(false)
   const [customSlippage, setCustomSlippage] = useState(null)
@@ -117,7 +117,7 @@ const WithdrawStart = ({
   const [fromTokenAddress, setFromTokenAddress] = useState()
   const [toVaultAddress, setToVaultAddress] = useState()
   const [matchVaultList, setMatchVaultList] = useState([])
-  // eslint-disable-next-line no-unused-vars
+
   const [networkName, setNetworkName] = useState('')
   const isFetchingRef = useRef(false)
 
@@ -130,12 +130,12 @@ const WithdrawStart = ({
       Number(tokenChain) === 42161
         ? 'Arbitrum'
         : Number(tokenChain) === 8453
-        ? 'Base'
-        : Number(tokenChain) === 324
-        ? 'Zksync'
-        : Number(tokenChain) === 137
-        ? 'Polygon'
-        : 'Ethereum'
+          ? 'Base'
+          : Number(tokenChain) === 324
+            ? 'Zksync'
+            : Number(tokenChain) === 137
+              ? 'Polygon'
+              : 'Ethereum'
     setNetworkName(network)
   }, [token])
 
@@ -358,7 +358,7 @@ const WithdrawStart = ({
       if (activedList.length > 0) {
         activedList.sort((a, b) => b.vaultApy - a.vaultApy)
         const newArray = activedList.slice(0, 10)
-        // eslint-disable-next-line no-restricted-syntax
+
         for (const item of newArray) {
           if (
             item.vaultApy !== 0 &&
@@ -368,7 +368,7 @@ const WithdrawStart = ({
             const tokenAddress = useIFARM
               ? addresses.iFARM
               : mToken.vaultAddress || mToken.tokenAddress
-            // eslint-disable-next-line no-await-in-loop
+
             const portalsToken = await getPortalsSupport(chainId, tokenAddress)
             if (portalsToken) {
               if (portalsToken.status === 200) {
@@ -390,7 +390,7 @@ const WithdrawStart = ({
     }
 
     fetchSupportedMatches()
-  }, [chainId, pools, setMatchVaultList, token]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [chainId, pools, setMatchVaultList, token])
 
   useEffect(() => {
     if (
@@ -414,7 +414,7 @@ const WithdrawStart = ({
       setFromTokenAddress(token.vaultAddress.toLowerCase())
       setToVaultAddress(matchVaultList[1].vault.vaultAddress.toLowerCase())
     }
-  }, [matchVaultList, token]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [matchVaultList, token])
 
   return (
     <Modal
@@ -527,7 +527,7 @@ const WithdrawStart = ({
                 {progressStep !== 4 && (
                   <>
                     <PiQuestion className="question" data-tip data-for="min-help" />
-                    <ReactTooltip
+                    <Tooltip
                       id="min-help"
                       backgroundColor={darkMode ? 'white' : '#101828'}
                       borderColor={darkMode ? 'white' : 'black'}
@@ -542,7 +542,7 @@ const WithdrawStart = ({
                         The estimated number of tokens you will receive in your wallet. The default
                         slippage is set as &lsquo;Auto&lsquo;.
                       </NewLabel>
-                    </ReactTooltip>
+                    </Tooltip>
                   </>
                 )}
               </NewLabel>
@@ -566,7 +566,7 @@ const WithdrawStart = ({
                         </AnimateDotDiv>
                       )}
                     </div>
-                    <ReactTooltip
+                    <Tooltip
                       id="modal-fToken-receive-revert"
                       backgroundColor={darkMode ? 'white' : '#101828'}
                       borderColor={darkMode ? 'white' : 'black'}
@@ -594,7 +594,7 @@ const WithdrawStart = ({
                           </AnimateDotDiv>
                         )}
                       </NewLabel>
-                    </ReactTooltip>
+                    </Tooltip>
                   </>
                   <span>{pickedToken.symbol}</span>
                 </>
@@ -702,12 +702,12 @@ const WithdrawStart = ({
                 progressStep === 0
                   ? ProgressOne
                   : progressStep === 1
-                  ? ProgressTwo
-                  : progressStep === 2
-                  ? ProgressThree
-                  : progressStep === 3
-                  ? ProgressFour
-                  : ProgressFive
+                    ? ProgressTwo
+                    : progressStep === 2
+                      ? ProgressThree
+                      : progressStep === 3
+                        ? ProgressFour
+                        : ProgressFive
               }
               alt="progress bar"
             />
@@ -748,7 +748,7 @@ const WithdrawStart = ({
                     if (e.ctrlKey) {
                       window.open(url, '_blank')
                     } else {
-                      push(url)
+                      navigate(url)
                     }
                   }}
                 >
@@ -812,7 +812,7 @@ const WithdrawStart = ({
                     if (e.ctrlKey) {
                       window.open(url, '_blank')
                     } else {
-                      push(url)
+                      navigate(url)
                     }
                   }}
                 >
@@ -957,8 +957,8 @@ const WithdrawStart = ({
                   !darkMode
                     ? '#fff'
                     : customSlippage === null || customSlippage === 0
-                    ? '#0C111D'
-                    : '#fff'
+                      ? '#0C111D'
+                      : '#fff'
                 }
                 bgColor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#5dcf46'}
                 cursor={customSlippage === null || customSlippage === 0 ? 'not-allowed' : 'pointer'}

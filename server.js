@@ -1,8 +1,13 @@
-const express = require('express')
-const helmet = require('helmet')
-const path = require('path')
+import express from 'express'
+import helmet from 'helmet'
+import path from 'path'
+import { fileURLToPath } from 'url'
 
-const builtDirectory = path.join(__dirname, 'build')
+// __dirname replacement in ESM
+const filename = fileURLToPath(import.meta.url)
+const dirname = path.dirname(filename)
+
+const builtDirectory = path.join(dirname, 'build')
 const PORT = process.env.PORT || '3000'
 const app = express()
 
@@ -30,16 +35,31 @@ app.use(
   }),
 )
 
-app.use('/manifest.json', function addOrigin(req, res, next) {
+// Allow cross‑origin `GET /manifest.json`
+app.use('/manifest.json', (req, res, next) => {
   res.set({
     'Access-Control-Allow-Origin': '*',
     'Access-Control-Allow-Methods': 'GET',
-    'Access-Control-Allow-Headers': 'X-Requested-With, content-type, Authorization',
+    'Access-Control-Allow-Headers': 'X-Requested-With, Content-Type, Authorization',
   })
   next()
 })
 
-app.use(express.static(builtDirectory))
-app.get('*', (req, res) => res.sendFile(path.join(builtDirectory, 'index.html')))
+// Serve static assets (no fall‑through so 404 for missing files)
+app.use(express.static(builtDirectory, { fallthrough: false }))
 
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`))
+// SPA fallback: always return index.html
+app.get('/{*splat}', async (req, res) => {
+  await res.sendFile(path.join(builtDirectory, 'index.html'))
+})
+
+// Central error handler — catches rejections from async handlers automatically (v5)
+app.use((err, req, res, next) => {
+  console.error(err)
+  if (res.headersSent) return next(err)
+  res.status(500).send('Internal Server Error')
+})
+
+app.listen(PORT, () => {
+  console.log(`Server started on port ${PORT}`)
+})

@@ -25,7 +25,6 @@ const getRewardSymbol = (vault, isIFARM, vaultPool) => {
   }
 }
 
-/* eslint-disable import/prefer-default-export */
 export const getAdvancedRewardText = (
   token,
   vaultPool,
@@ -219,8 +218,8 @@ export const getAdvancedRewardText = (
       `<div class="detail-box">
         <div class="detail-box-main">
           <div class="detail-icon"><img src='/icons/${token.rewardSymbol.toLowerCase()}.svg' width=24 height=24 alt=${
-        token.rewardSymbol
-      } /></div>
+            token.rewardSymbol
+          } /></div>
           <div class="detail-desc">${token.rewardSymbol} rewards</div>
         </div>
         <div class="detail-apy"> ${

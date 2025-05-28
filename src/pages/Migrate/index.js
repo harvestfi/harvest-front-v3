@@ -1,7 +1,6 @@
 import React, { useMemo, useEffect, useState, useRef } from 'react'
 import { isEmpty, find, get, isNaN, orderBy, isEqual } from 'lodash'
 import BigNumber from 'bignumber.js'
-// eslint-disable-next-line import/no-extraneous-dependencies
 import queryString from 'query-string'
 import { useLocation } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
@@ -83,7 +82,7 @@ const Migrate = () => {
   const { userStats, fetchUserPoolStats, totalPools, pools } = usePools()
   const { rates } = useRate()
   const { getPortalsSupport } = usePortals()
-  /* eslint-disable global-require */
+
   const { tokens } = require('../../data')
   const {
     darkMode,
@@ -165,10 +164,10 @@ const Migrate = () => {
         Number(selectedChain) === 42161
           ? ARBITRUM
           : Number(selectedChain) === 8453
-          ? BASE
-          : Number(selectedChain) === 137
-          ? POLYGON
-          : ETHEREUM
+            ? BASE
+            : Number(selectedChain) === 137
+              ? POLYGON
+              : ETHEREUM
     } else if (!isEmpty(userStats) && isSpecialChain) {
       badgeUrl = BASE
     } else if (!connected) {
@@ -180,12 +179,12 @@ const Migrate = () => {
         Number(selectedChain) === 42161
           ? 'arbitrum'
           : Number(selectedChain) === 8453
-          ? 'base'
-          : Number(selectedChain) === 324
-          ? 'zksync'
-          : Number(selectedChain) === 137
-          ? 'polygon'
-          : 'ethereum'
+            ? 'base'
+            : Number(selectedChain) === 324
+              ? 'zksync'
+              : Number(selectedChain) === 137
+                ? 'polygon'
+                : 'ethereum'
     } else if (!connected) {
       network = 'base'
     }
@@ -210,7 +209,7 @@ const Migrate = () => {
     if (highestApyVault && connected) {
       setIsFromModal(false)
     }
-  }, [connected]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [connected])
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -308,7 +307,7 @@ const Migrate = () => {
       }
       loadUserPoolsStats()
     }
-  }, [account, totalPools, depositToken]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, totalPools, depositToken])
 
   useEffect(() => {
     if (!isEmpty(userStats) && account) {
@@ -416,8 +415,8 @@ const Migrate = () => {
                 ? `${tokens[IFARM_TOKEN_SYMBOL].platform[0]} - ${tokens[IFARM_TOKEN_SYMBOL].subLabel}`
                 : tokens[IFARM_TOKEN_SYMBOL].platform[0]
               : token.subLabel
-              ? token.platform[0] && `${token.platform[0]} - ${token.subLabel}`
-              : token.platform[0] && token.platform[0]
+                ? token.platform[0] && `${token.platform[0]} - ${token.subLabel}`
+                : token.platform[0] && token.platform[0]
             stats.status = token.inactive ? 'Inactive' : 'Active'
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
             if (isSpecialVault) {
@@ -553,10 +552,9 @@ const Migrate = () => {
                       rewardSymbol === 'ECOCNG'
                         ? tempSymbol.toLowerCase() === 'cng'
                         : rewardSymbol === 'GENE'
-                        ? tempSymbol.toLowerCase() === '$gene'
-                        : rewardSymbol.toLowerCase() === tempSymbol.toLowerCase()
+                          ? tempSymbol.toLowerCase() === '$gene'
+                          : rewardSymbol.toLowerCase() === tempSymbol.toLowerCase()
                     ) {
-                      // eslint-disable-next-line no-await-in-loop
                       usdRewardPrice = await getTokenPriceFromApi(tempData.id)
                       break
                     }
@@ -604,12 +602,12 @@ const Migrate = () => {
                   : totalApy || null
                 : '-'
               : vaultPool.loaded && totalApy !== null
-              ? token.inactive || token.testInactive || token.hideTotalApy || !token.dataFetched
-                ? token.inactive || token.testInactive
-                  ? 'Inactive'
-                  : null
-                : totalApy
-              : '-'
+                ? token.inactive || token.testInactive || token.hideTotalApy || !token.dataFetched
+                  ? token.inactive || token.testInactive
+                    ? 'Inactive'
+                    : null
+                  : totalApy
+                : '-'
             if (showAPY === 'Inactive' || showAPY === null) {
               stats.apy = Number(-1)
             } else {
@@ -647,7 +645,6 @@ const Migrate = () => {
               ? stats.token.tokenAddress
               : stats.token.vaultAddress
             if (Number(statsTvl) > 500) {
-              // eslint-disable-next-line no-await-in-loop
               portalsToken = await getPortalsSupport(chainId, statsAddress)
             }
             if (portalsToken) {
@@ -679,7 +676,7 @@ const Migrate = () => {
 
       getFarmTokenInfo()
     }
-  }, [account, userStats, balances]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [account, userStats, balances])
 
   useEffect(() => {
     const filteredVaultList = showInactiveFarms
@@ -858,7 +855,6 @@ const Migrate = () => {
     }
 
     setFilteredFarmList(filteredVaultList)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     selectedChain,
     connected,
@@ -904,7 +900,7 @@ const Migrate = () => {
         return false
       })
     }
-  }, [highestVaultAddress]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [highestVaultAddress])
 
   useEffect(() => {
     if (highestPosition) {
@@ -1031,8 +1027,8 @@ const Migrate = () => {
           ? `${tokens[IFARM_TOKEN_SYMBOL].platform[0]} - ${tokens[IFARM_TOKEN_SYMBOL].subLabel}`
           : tokens[IFARM_TOKEN_SYMBOL].platform[0]
         : positionToken.subLabel
-        ? positionToken.platform[0] && `${positionToken.platform[0]} - ${positionToken.subLabel}`
-        : positionToken.platform[0] && positionToken.platform[0]
+          ? positionToken.platform[0] && `${positionToken.platform[0]} - ${positionToken.subLabel}`
+          : positionToken.platform[0] && positionToken.platform[0]
     }
     if (highestApyVault) {
       if (highestApyVault.vault.vaultPrice) {
@@ -1044,8 +1040,8 @@ const Migrate = () => {
             ? `${tokens[IFARM_TOKEN_SYMBOL].platform[0]} - ${tokens[IFARM_TOKEN_SYMBOL].subLabel}`
             : tokens[IFARM_TOKEN_SYMBOL].platform[0]
           : vaultToken.subLabel
-          ? vaultToken.platform[0] && `${vaultToken.platform[0]} - ${vaultToken.subLabel}`
-          : vaultToken.platform[0] && vaultToken.platform[0]
+            ? vaultToken.platform[0] && `${vaultToken.platform[0]} - ${vaultToken.subLabel}`
+            : vaultToken.platform[0] && vaultToken.platform[0]
       }
     }
     if (highestPosition) {
@@ -1054,7 +1050,7 @@ const Migrate = () => {
     if (vaultPlatform) {
       setHighVaultPlatform(vaultPlatform)
     }
-  }, [highestPosition, highestApyVault, chainId]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [highestPosition, highestApyVault, chainId])
 
   return (
     <Container bgColor={bgColorNew}>

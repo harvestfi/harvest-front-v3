@@ -35,7 +35,7 @@ const HistoryDataLatest = ({ historyData, noFarm, setOneDayYield }) => {
         }
       }
     }
-  }, [totalLength]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [totalLength])
 
   const { highlightColor } = useThemeContext()
   const { connected } = useWallet()

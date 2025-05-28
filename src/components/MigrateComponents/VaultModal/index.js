@@ -62,7 +62,7 @@ const VaultModal = ({
   const [hasPortalsError, setHasPortalsError] = useState(true)
   const [balanceList, setBalanceList] = useState([])
   const [defaultToken, setDefaultToken] = useState(null)
-  // eslint-disable-next-line no-unused-vars
+
   const [supTokenList, setSupTokenList] = useState([])
   const [supTokenNoBalanceList, setSupTokenNoBalanceList] = useState([])
   const [defaultCurToken, setDefaultCurToken] = useState(defaultToken)
@@ -74,14 +74,9 @@ const VaultModal = ({
   const [isEnd, setIsEnd] = useState(false)
   const isFetchingRef = useRef(false)
 
-  const {
-    getPortalsSupport,
-    getPortalsBalances,
-    getPortalsBaseTokens,
-    getPortalsToken,
-  } = usePortals()
+  const { getPortalsSupport, getPortalsBalances, getPortalsBaseTokens, getPortalsToken } =
+    usePortals()
 
-  /* eslint-disable global-require */
   const { tokens } = require('../../../data')
 
   const useIFARM = id === FARM_TOKEN_SYMBOL
@@ -99,11 +94,11 @@ const VaultModal = ({
     setIsEnd(false)
     setStartPoint(10)
     setMatchVaultList([])
-  }, [connected]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [connected])
 
   useEffect(() => {
     setMatchVaultList([])
-  }, [chain]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [chain])
 
   useEffect(() => {
     let matched = []
@@ -150,7 +145,7 @@ const VaultModal = ({
       if (activedList.length > 0) {
         activedList.sort((a, b) => b.vaultApy - a.vaultApy)
         const newArray = activedList.slice(0, 10)
-        // eslint-disable-next-line no-restricted-syntax
+
         for (const item of newArray) {
           if (
             item.vaultApy !== 0 &&
@@ -161,7 +156,7 @@ const VaultModal = ({
               ? addresses.iFARM
               : mToken.vaultAddress || mToken.tokenAddress
             const chainId = mToken.chain || mToken.data.chain
-            // eslint-disable-next-line no-await-in-loop
+
             const portalsToken = await getPortalsSupport(chainId, tokenAddress)
             if (portalsToken) {
               if (portalsToken.status === 200) {
@@ -184,19 +179,19 @@ const VaultModal = ({
     }
 
     fetchSupportedMatches()
-  }, [chain, pools, setMatchVaultList, specialToken.profitShareAPY, connected, userStats]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [chain, pools, setMatchVaultList, specialToken.profitShareAPY, connected, userStats])
 
   const fetchMoreMatches = async () => {
     if (!isEnd) {
       setStartSpinner(true)
       const filteredMatchList = []
       const nextArray = matchingList.slice(startPoint, startPoint + 10)
-      // eslint-disable-next-line no-restricted-syntax
+
       for (const item of nextArray) {
         const mToken = item.vault
         const tokenAddress = useIFARM ? addresses.iFARM : mToken.vaultAddress || mToken.tokenAddress
         const chainId = mToken.chain || mToken.data.chain
-        // eslint-disable-next-line no-await-in-loop
+
         const portalsToken = await getPortalsSupport(chainId, tokenAddress)
         if (portalsToken) {
           if (portalsToken.status === 200) {
@@ -297,7 +292,6 @@ const VaultModal = ({
     }
 
     fetchData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token])
 
   useEffect(() => {
@@ -327,8 +321,8 @@ const VaultModal = ({
                     logoURI: baseToken.image
                       ? baseToken.image
                       : baseToken.images
-                      ? baseToken.images[0]
-                      : 'https://etherscan.io/images/main/empty-token.png',
+                        ? baseToken.images[0]
+                        : 'https://etherscan.io/images/main/empty-token.png',
                     decimals: baseToken.decimals,
                     chainId: chain,
                   }
@@ -356,8 +350,8 @@ const VaultModal = ({
                   logoURI: rawBalance.image
                     ? rawBalance.image
                     : rawBalance.images
-                    ? rawBalance.images[0]
-                    : 'https://etherscan.io/images/main/empty-token.png',
+                      ? rawBalance.images[0]
+                      : 'https://etherscan.io/images/main/empty-token.png',
                   decimals: rawBalance.decimals,
                   chainId: chain,
                 }
@@ -373,8 +367,8 @@ const VaultModal = ({
             const fTokenAddr = useIFARM
               ? addresses.iFARM
               : token.vaultAddress
-              ? token.vaultAddress
-              : token.tokenAddress
+                ? token.vaultAddress
+                : token.tokenAddress
             const curSortedBalances = curBalances
               .sort(function reducer(a, b) {
                 return b.usdValue - a.usdValue
@@ -434,8 +428,8 @@ const VaultModal = ({
             const directBalance = directData
               ? directData.balance
               : balances[id]
-              ? new BigNumber(balances[id]).div(10 ** token.decimals).toFixed()
-              : '0'
+                ? new BigNumber(balances[id]).div(10 ** token.decimals).toFixed()
+                : '0'
             const directUsdPrice = id === 'FARM_GRAIN_LP' ? 0 : token.usdPrice
             const directUsdValue = directData
               ? directData.usdValue
@@ -843,7 +837,7 @@ const VaultModal = ({
         }
       }
     }
-  }, [balanceTokenList, positionAddress, setPickedToken, setBalance]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [balanceTokenList, positionAddress, setPickedToken, setBalance])
 
   return (
     <Modal

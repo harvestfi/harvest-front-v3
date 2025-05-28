@@ -92,13 +92,12 @@ const formatVaults = (
   vaultsData,
 ) => {
   let vaultsSymbol = sortBy(keys(groupOfVaults), [
-    // eslint-disable-next-line consistent-return
     key => {
       if (get(groupOfVaults, `[${key}].isNew`, get(groupOfVaults, `[${key}].data.isNew`))) {
         return groupOfVaults[key]
       }
     },
-    // eslint-disable-next-line consistent-return
+
     key => {
       if (!get(groupOfVaults, `[${key}].isNew`, get(groupOfVaults, `[${key}].data.isNew`))) {
         return groupOfVaults[key]
@@ -388,21 +387,12 @@ const SortingIcon = ({ sortType, sortField, selectedField, riskId }) => {
 const VaultList = () => {
   const { fontColor, filterColor, bgColorNew, borderColorBox, darkMode } = useThemeContext()
 
-  const {
-    vaultsData,
-    getFarmingBalances,
-    loadedUserVaultsWeb3Provider,
-    farmingBalances,
-  } = useVaults()
+  const { vaultsData, getFarmingBalances, loadedUserVaultsWeb3Provider, farmingBalances } =
+    useVaults()
 
   const { profitShareAPY } = useStats()
-  const {
-    pools,
-    totalPools,
-    fetchUserPoolStats,
-    userStats,
-    loadedUserPoolsWeb3Provider,
-  } = usePools()
+  const { pools, totalPools, fetchUserPoolStats, userStats, loadedUserPoolsWeb3Provider } =
+    usePools()
 
   const { account, chain, selChain, getWalletBalances, balances, chainId } = useWallet()
   const showNetworks = getNetworkNames(selChain)
@@ -507,7 +497,7 @@ const VaultList = () => {
     }
 
     getCreatedAtData()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])
 
   const { vaultsSymbol, totalVaultsCount } = useMemo(
     () =>
@@ -724,8 +714,8 @@ const VaultList = () => {
         {selectedActiveType.length === 0
           ? 'my'
           : selectedActiveType[0] === 'Active'
-          ? 'active'
-          : 'inactive'}{' '}
+            ? 'active'
+            : 'inactive'}{' '}
         farms {showNetworks}
       </DisplayCount>
       <VaultsListBody borderColor={borderColorBox} backColor={bgColorNew}>

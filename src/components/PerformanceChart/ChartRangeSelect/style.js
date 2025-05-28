@@ -32,11 +32,11 @@ const Container = styled.button`
         color: #15191C;
       `
       : props.mode === 'dark'
-      ? `
+        ? `
       background: rgba(183, 205, 255, 0.33);
       color: white;
     `
-      : `
+        : `
       color: #15191C;
       background: #F2F5FF;
       `}

@@ -26,14 +26,8 @@ import Button from '../../Button'
 import AnimatedDots from '../../AnimatedDots'
 
 const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
-  const {
-    darkMode,
-    borderColorBox,
-    btnColor,
-    fontColor2,
-    fontColor3,
-    fontColor5,
-  } = useThemeContext()
+  const { darkMode, borderColorBox, btnColor, fontColor2, fontColor3, fontColor5 } =
+    useThemeContext()
   const { rates } = useRate()
 
   const [activeMainTag, setActiveMainTag] = useState(0)
@@ -125,15 +119,10 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
           day = 0,
           hour = 0,
           min = 0,
-          [sevenDaysApy, thirtyDaysApy, oneEightyDaysApy, threeSixtyFiveDaysApy] = Array(4).fill(
-            '-',
-          ),
-          [
-            sevenDaysHarvest,
-            thirtyDaysHarvest,
-            oneEightyDaysHarvest,
-            threeSixtyFiveDaysHarvest,
-          ] = Array(4).fill('-'),
+          [sevenDaysApy, thirtyDaysApy, oneEightyDaysApy, threeSixtyFiveDaysApy] =
+            Array(4).fill('-'),
+          [sevenDaysHarvest, thirtyDaysHarvest, oneEightyDaysHarvest, threeSixtyFiveDaysHarvest] =
+            Array(4).fill('-'),
           latestSharePriceValue = '-',
           lifetimeApyValue = 0
 

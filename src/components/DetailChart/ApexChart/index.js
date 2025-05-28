@@ -572,7 +572,6 @@ const ApexChart = ({
     }
 
     init()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     range,
     filter,
@@ -607,12 +606,12 @@ const ApexChart = ({
               onlyWidth > 1291
                 ? 346
                 : onlyWidth > 1262
-                ? 365
-                : onlyWidth > 1035
-                ? 365
-                : onlyWidth > 992
-                ? 365
-                : 365
+                  ? 365
+                  : onlyWidth > 1035
+                    ? 365
+                    : onlyWidth > 992
+                      ? 365
+                      : 365
             }
           >
             <ComposedChart

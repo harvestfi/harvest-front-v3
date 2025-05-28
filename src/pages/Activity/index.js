@@ -31,7 +31,7 @@ const Activity = () => {
   const { userStats, totalPools } = usePools()
   const { profitShareAPY } = useStats()
   const { vaultsData } = useVaults()
-  /* eslint-disable global-require */
+
   const {
     darkMode,
     bgColorNew,
@@ -122,7 +122,6 @@ const Activity = () => {
           const stakedVaults = []
           const ul = userBalanceVaults.length
           for (let j = 0; j < ul; j += 1) {
-            /* eslint-disable no-restricted-syntax, no-await-in-loop */
             for (const key of Object.keys(groupOfVaults)) {
               const isSpecialVaultAll =
                 groupOfVaults[key].liquidityPoolVault || groupOfVaults[key].poolVault
@@ -267,7 +266,6 @@ const Activity = () => {
         localStorage.setItem(totalHistoryDataKey, JSON.stringify([]))
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, userStats, connected, safeFlag])
 
   return (

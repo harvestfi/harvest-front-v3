@@ -45,8 +45,8 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
   const curChain = isSpecialApp
     ? chainId
     : connectedChain
-    ? parseInt(connectedChain.id, 16).toString()
-    : ''
+      ? parseInt(connectedChain.id, 16).toString()
+      : ''
   const [btnName, setBtnName] = useState('Confirm Transaction')
   const [unsubscribeFailed, setUnsubscribeFailed] = useState(false)
   const [progressStep, setProgressStep] = useState(0)

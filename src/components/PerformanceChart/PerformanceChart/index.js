@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import BigNumber from 'bignumber.js'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { useMediaQuery } from 'react-responsive'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../ChartRangeSelect'
@@ -445,7 +445,7 @@ const PerformanceChart = ({
                   <div className="question" data-tip data-for="chart-underlying-balance">
                     {showTokenBalance(curContentUnderlying)} {vaultPool?.id}
                   </div>
-                  <ReactTooltip
+                  <Tooltip
                     id="chart-underlying-balance"
                     backgroundColor={darkMode ? 'white' : '#101828'}
                     borderColor={darkMode ? 'white' : 'black'}
@@ -459,7 +459,7 @@ const PerformanceChart = ({
                     >
                       {curContentUnderlying}
                     </NewLabel>
-                  </ReactTooltip>
+                  </Tooltip>
                 </CurContent>
               </FlexDiv>
             </TooltipInfo>

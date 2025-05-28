@@ -4,7 +4,6 @@ import addresses from './harvest-api-v3/data/mainnet/addresses.json'
 import uniswapContract from '../services/web3/contracts/uniswap/contract.json'
 import uniswapMethods from '../services/web3/contracts/uniswap/methods'
 
-// eslint-disable-next-line import/prefer-default-export
 export const getFarmPriceFromUniswap = async () => {
   const uniswapInstance = await newContractInstance(
     null,

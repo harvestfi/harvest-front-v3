@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { PiQuestion } from 'react-icons/pi'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import ListItem from '../ListItem'
 import { useRate } from '../../../providers/Rate'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -20,14 +20,8 @@ const ActionRow = ({ info, showTotalBalance }) => {
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const {
-    darkMode,
-    switchMode,
-    bgColorNew,
-    borderColorBox,
-    hoverColorRow,
-    fontColor,
-  } = useThemeContext()
+  const { darkMode, switchMode, bgColorNew, borderColorBox, hoverColorRow, fontColor } =
+    useThemeContext()
 
   useEffect(() => {
     if (rates.rateData) {
@@ -51,19 +45,19 @@ const ActionRow = ({ info, showTotalBalance }) => {
               info.event === 'Revert'
                 ? '#FEF3F2'
                 : info.event === 'Convert'
-                ? '#fdeccf'
-                : info.netChange >= 0
-                ? '#ecfdf3'
-                : '#FEF3F2'
+                  ? '#fdeccf'
+                  : info.netChange >= 0
+                    ? '#ecfdf3'
+                    : '#FEF3F2'
             }
             color={
               info.event === 'Revert'
                 ? '#B42318'
                 : info.event === 'Convert'
-                ? '#FF9400'
-                : info.netChange >= 0
-                ? '#027a48'
-                : '#B42318'
+                  ? '#FF9400'
+                  : info.netChange >= 0
+                    ? '#027a48'
+                    : '#B42318'
             }
           >
             {info.event}
@@ -71,7 +65,7 @@ const ActionRow = ({ info, showTotalBalance }) => {
           {info.event === 'Harvest' && info.netChange < 0 && (
             <IconWrapper>
               <PiQuestion className="question" data-tip data-for="harvest-event-minus" />
-              <ReactTooltip
+              <Tooltip
                 id="harvest-event-minus"
                 backgroundColor={darkMode ? 'white' : '#101828'}
                 borderColor={darkMode ? 'white' : 'black'}
@@ -88,7 +82,7 @@ const ActionRow = ({ info, showTotalBalance }) => {
                   <br />
                   If you have any questions, open a ticket in our Discord.
                 </NewLabel>
-              </ReactTooltip>
+              </Tooltip>
             </IconWrapper>
           )}
         </Content>

@@ -45,12 +45,12 @@ const VaultList = ({
       chainId === 42161
         ? ARBITRUM
         : chainId === 8453
-        ? BASE
-        : chainId === 324
-        ? ZKSYNC
-        : chainId === 137
-        ? POLYGON
-        : ETHEREUM
+          ? BASE
+          : chainId === 324
+            ? ZKSYNC
+            : chainId === 137
+              ? POLYGON
+              : ETHEREUM
   } else if (!connected) {
     chainUrl = BASE
   }
@@ -62,8 +62,8 @@ const VaultList = ({
       ? `${tokens[IFARM_TOKEN_SYMBOL].platform[0]} - ${tokens[IFARM_TOKEN_SYMBOL].subLabel}`
       : tokens[IFARM_TOKEN_SYMBOL].platform[0]
     : token.subLabel
-    ? token.platform[0] && `${token.platform[0]} - ${token.subLabel}`
-    : token.platform[0] && token.platform[0]
+      ? token.platform[0] && `${token.platform[0]} - ${token.subLabel}`
+      : token.platform[0] && token.platform[0]
 
   filteredFarmList.forEach(farm => {
     const farmAddress = farm.token.poolVault ? farm.token.tokenAddress : farm.token.vaultAddress

@@ -138,15 +138,10 @@ const FarmDetailChart = ({
             }
           })
 
-          let [sevenDaysApy, thirtyDaysApy, oneEightyDaysApy, threeSixtyFiveDaysApy] = Array(
-              4,
-            ).fill('-'),
-            [
-              sevenDaysHarvest,
-              thirtyDaysHarvest,
-              oneEightyDaysHarvest,
-              threeSixtyFiveDaysHarvest,
-            ] = Array(4).fill('-'),
+          let [sevenDaysApy, thirtyDaysApy, oneEightyDaysApy, threeSixtyFiveDaysApy] =
+              Array(4).fill('-'),
+            [sevenDaysHarvest, thirtyDaysHarvest, oneEightyDaysHarvest, threeSixtyFiveDaysHarvest] =
+              Array(4).fill('-'),
             lifetimeApyValue = 0,
             frequencyOfHarvest = '-',
             latestSharePriceValue = '-',
@@ -330,7 +325,7 @@ const FarmDetailChart = ({
     return () => {
       isMounted = false
     }
-  }, [address, chainId, isIFARM]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [address, chainId, isIFARM])
 
   return (
     <Container>

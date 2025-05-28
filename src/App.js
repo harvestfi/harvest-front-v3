@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Switch, Route, Redirect } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import Tutorial from './pages/Tutorial'
 import Settings from './pages/Settings'
@@ -76,13 +76,13 @@ const App = () => (
       <NewLoginModal />
       <Body id="page-content">
         <Sidebar width="260px" />
-        <Switch>
+        <Routes>
           <Route exact path={ROUTES.PORTFOLIO} component={Portfolio} />
           <Route exact path={ROUTES.TUTORIAL} component={Tutorial} />
           <Route
             exact
             path={ROUTES.AUTOPILOTNOCHAIN}
-            render={() => <Redirect to={ROUTES.AUTOPILOT} />}
+            render={() => <Navigate to={ROUTES.AUTOPILOT} />}
           />
           <Route exact path={ROUTES.AUTOPILOT} component={Autopilot} />
           <Route exact path={ROUTES.ADVANCED} component={Farm} />
@@ -95,7 +95,7 @@ const App = () => (
           <Route exact path={ROUTES.MIGRATE} component={Migrate} />
           <Route exact path={ROUTES.SETTINGS} component={Settings} />
           <Route exact path={ROUTES.ACTIVITY} component={Activity} />
-        </Switch>
+        </Routes>
       </Body>
     </Providers>
   </Router>

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
 import BASE from '../../../assets/images/chains/base.svg'
 import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
@@ -36,7 +36,7 @@ const DesktopPanelHeader = ({
 
   const { logoUrl } = token
 
-  const { push } = useHistory()
+  const navigate = useNavigate()
 
   const { fontColor, fontColor1, borderColorBox, setPrevPage } = useThemeContext()
 
@@ -70,7 +70,7 @@ const DesktopPanelHeader = ({
           if (!e.ctrlKey) {
             e.preventDefault()
             setPrevPage(window.location.href)
-            push(url)
+            navigate(url)
           }
         }}
       >

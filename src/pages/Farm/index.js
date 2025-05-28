@@ -11,7 +11,7 @@ const Farm = () => {
   useEffect(() => {
     const setUrlData = () => {
       const params = new URLSearchParams(window.location.search)
-      // eslint-disable-next-line no-restricted-syntax
+
       for (const [key, value] of params.entries()) {
         if (key === 'search') {
           if (value.toLowerCase() === 'baseswap') {
@@ -26,7 +26,7 @@ const Farm = () => {
     }
 
     setUrlData()
-  }, [window.location.search]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [window.location.search])
   return (
     <FarmContainer bgColor={bgColorNew}>
       {baseswapBG ? <img className="bswap-bg" src={BswapBG} width="100%" alt="" /> : <></>}
