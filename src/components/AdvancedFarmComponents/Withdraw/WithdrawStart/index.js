@@ -962,7 +962,9 @@ const WithdrawStart = ({
                 }
                 $bgcolor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#5dcf46'}
                 cursor={customSlippage === null || customSlippage === 0 ? 'not-allowed' : 'pointer'}
-                $hovercolor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#51e932'}
+                $hovercolor={
+                  customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#51e932'
+                }
                 $activecolor={
                   customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#46eb25'
                 }

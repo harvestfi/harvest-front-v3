@@ -220,7 +220,10 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, selectedIte
             </Content>
           </FlexDiv>
           <Content $padding="12px 0px 16px 16px">
-            <ContentInner $width={isMobile ? '100%' : '100%'} $display={isMobile ? 'block' : 'flex'}>
+            <ContentInner
+              $width={isMobile ? '100%' : '100%'}
+              $display={isMobile ? 'block' : 'flex'}
+            >
               <div style={{ paddingLeft: '0px', margin: 0 }}>
                 {Object.entries(value.vaults)
                   .slice(0, 5)
@@ -471,7 +474,10 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, selectedIte
             </Content>
           </FlexDiv>
           <Content $padding="12px 0px 16px 0px">
-            <ContentInner $width={isMobile ? '100%' : '100%'} $display={isMobile ? 'block' : 'flex'}>
+            <ContentInner
+              $width={isMobile ? '100%' : '100%'}
+              $display={isMobile ? 'block' : 'flex'}
+            >
               <div style={{ paddingLeft: '0px', margin: 0 }}>
                 {Object.entries(value.vaults)
                   .slice(0, 5)

@@ -396,8 +396,8 @@ const Portfolio = () => {
                 ? (token.data.lpTokenData && token.data.lpTokenData.price) *
                   Number(pricePerFullShare)
                 : token.isIPORVault
-                ? token.usdPrice
-                : token.vaultPrice) || 1
+                  ? token.usdPrice
+                  : token.vaultPrice) || 1
 
             const unstake = fromWei(
               get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),
@@ -908,10 +908,10 @@ const Portfolio = () => {
                   {!connected || noFarm
                     ? `${currencySym}0.00`
                     : oneDayYield === 0
-                    ? `${currencySym}0.00`
-                    : oneDayYield * currencyRate >= 0.01
-                    ? `${currencySym}${formatNumber(oneDayYield * currencyRate)} (24h)`
-                    : `<${currencySym}0.01 (24h)`}
+                      ? `${currencySym}0.00`
+                      : oneDayYield * currencyRate >= 0.01
+                        ? `${currencySym}${formatNumber(oneDayYield * currencyRate)} (24h)`
+                        : `<${currencySym}0.01 (24h)`}
                 </GreenBox>
               </LifetimeSub>
             </MobileHeader>

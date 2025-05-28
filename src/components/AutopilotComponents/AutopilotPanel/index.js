@@ -282,7 +282,12 @@ const AutopilotPanel = ({
                 </div>
               </ThemeMode>
             </FlexDiv>
-            <FlexDiv $flexdirection="row" $justifycontent="space-between" $margintop="10px" $gap="10px">
+            <FlexDiv
+              $flexdirection="row"
+              $justifycontent="space-between"
+              $margintop="10px"
+              $gap="10px"
+            >
               <TokenInput>
                 <TokenAmount
                   type="number"

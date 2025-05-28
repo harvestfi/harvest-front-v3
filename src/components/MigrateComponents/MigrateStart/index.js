@@ -673,7 +673,12 @@ const MigrateStart = ({
             </NewLabel>
           </NewLabel>
         )}
-        <NewLabel $display="flex" $justifycontent="space-between" $flexflow="column" $items="center">
+        <NewLabel
+          $display="flex"
+          $justifycontent="space-between"
+          $flexflow="column"
+          $items="center"
+        >
           <NewLabel
             $display="flex"
             $justifycontent="space-between"
@@ -959,7 +964,13 @@ const MigrateStart = ({
               $padding="15px 0px 5px"
               $gap="10px"
             >
-              <NewLabel $fontcolor={fontColor2} $weight="600" $margin="auto" $size="12px" $height="24px">
+              <NewLabel
+                $fontcolor={fontColor2}
+                $weight="600"
+                $margin="auto"
+                $size="12px"
+                $height="24px"
+              >
                 or
               </NewLabel>
               <SlippageInput
@@ -989,7 +1000,9 @@ const MigrateStart = ({
                 }
                 $bgcolor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#5dcf46'}
                 cursor={customSlippage === null || customSlippage === 0 ? 'not-allowed' : 'pointer'}
-                $hovercolor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#2ccda4'}
+                $hovercolor={
+                  customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#2ccda4'
+                }
                 $activecolor={
                   customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#4fdfbb'
                 }

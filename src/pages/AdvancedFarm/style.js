@@ -653,7 +653,9 @@ const WelcomeBox = styled.div`
   border-radius: 12px;
   border: 1px solid ${props => props.$bordercolor};
   background: ${props => props.$bgcolortooltip};
-  box-shadow: 0px 4px 6px -2px rgba(16, 24, 40, 0.03), 0px 12px 16px -4px rgba(16, 24, 40, 0.08);
+  box-shadow:
+    0px 4px 6px -2px rgba(16, 24, 40, 0.03),
+    0px 12px 16px -4px rgba(16, 24, 40, 0.08);
   padding: 16px;
   margin-bottom: 25px;
 `
@@ -1307,10 +1309,10 @@ const MainTag = styled.div`
         props.$useifarm
           ? 'block'
           : props.$active === 'true'
-          ? 'block'
-          : props.campMobileRewards
-          ? 'block'
-          : 'none'};
+            ? 'block'
+            : props.campMobileRewards
+              ? 'block'
+              : 'none'};
     }
   }
 
@@ -1319,7 +1321,7 @@ const MainTag = styled.div`
       props.$mode === 'dark'
         ? 'filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(352deg) brightness(101%) contrast(104%);'
         : props.$active === 'true'
-        ? `
+          ? `
         `
           : `
           filter: invert(52%) sepia(32%) saturate(524%) hue-rotate(193deg) brightness(86%) contrast(84%);

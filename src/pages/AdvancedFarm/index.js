@@ -3120,7 +3120,12 @@ const AdvancedFarm = () => {
                         <TipTop>
                           <IconPart>
                             <img src={TickIcon} alt="tick icon" style={{ marginRight: '5px' }} />
-                            <NewLabel $size="14px" $weight="600" $height="20px" $fontcolor="#027A48">
+                            <NewLabel
+                              $size="14px"
+                              $weight="600"
+                              $height="20px"
+                              $fontcolor="#027A48"
+                            >
                               Tip
                             </NewLabel>
                           </IconPart>
@@ -3219,7 +3224,11 @@ const AdvancedFarm = () => {
                                 <div>Harvest Treasury</div>
                                 <div>{token.isIPORVault ? '0' : harvestTreasury}%</div>
                               </FlexDiv>
-                              <FlexDiv $gap="15px" $justifycontent="space-between" $margintop="12px">
+                              <FlexDiv
+                                $gap="15px"
+                                $justifycontent="space-between"
+                                $margintop="12px"
+                              >
                                 <div>Profit Sharing</div>
                                 <div>{token.isIPORVault ? '0' : profitShare}%</div>
                               </FlexDiv>

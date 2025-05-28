@@ -226,13 +226,7 @@ const sideLinksMobileBottom = [
   },
 ]
 
-const SideLink = ({
-  item,
-  isDropdownLink,
-  fontColor1,
-  darkMode,
-  hoverColorSide,
-}) => {
+const SideLink = ({ item, isDropdownLink, fontColor1, darkMode, hoverColorSide }) => {
   const { pathname } = useLocation()
   const pageName =
     pathname === '/'
@@ -268,14 +262,7 @@ const SideLink = ({
   )
 }
 
-const MobileMenu = ({
-  item,
-  isDropdownLink,
-  fontColor,
-  filterColor,
-  darkMode,
-  isWallet,
-}) => {
+const MobileMenu = ({ item, isDropdownLink, fontColor, filterColor, darkMode, isWallet }) => {
   const { pathname } = useLocation()
   const pageName =
     pathname === '/' ? 'all vaults' : pathname === ROUTES.PORTFOLIO ? 'portfolio' : pathname
@@ -443,7 +430,7 @@ const Sidebar = ({ width }) => {
                       $hovercolor={hoverColor}
                     >
                       <FlexDiv>
-                        <ConnectAvatar $avatar='true'>
+                        <ConnectAvatar $avatar="true">
                           <img src={connectAvatar} alt="" />
                         </ConnectAvatar>
                         <div className="detail-info">

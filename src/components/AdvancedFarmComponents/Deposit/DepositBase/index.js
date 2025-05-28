@@ -707,7 +707,12 @@ const DepositBase = ({
           </NewLabel>
           <ThumbUp $padding={isMobile ? '15px' : '16px'}>
             <img src={ThumbUpIcon} alt="thumb-up" style={{ marginRight: '15px' }} />
-            <NewLabel $size={isMobile ? '10px' : '12px'} $weight="600" $height="20px" $fontcolor="#027A48">
+            <NewLabel
+              $size={isMobile ? '10px' : '12px'}
+              $weight="600"
+              $height="20px"
+              $fontcolor="#027A48"
+            >
               You can exit anytime in full at no cost.
             </NewLabel>
           </ThumbUp>

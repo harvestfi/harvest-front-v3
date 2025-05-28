@@ -746,7 +746,6 @@ export async function fetchAndParseVaultData({ account, groupOfVaults, totalPool
   const stakedVaults = []
 
   for (let j = 0; j < userBalanceVaults.length; j += 1) {
-    /* eslint-disable no-restricted-syntax, no-await-in-loop */
     for (const key of Object.keys(groupOfVaults)) {
       const vault = groupOfVaults[key]
       const isSpecialVaultAll = vault.liquidityPoolVault || vault.poolVault

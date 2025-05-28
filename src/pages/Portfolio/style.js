@@ -856,7 +856,8 @@ const HeaderTop = styled.div`
 const LifetimeValue = styled.div`
   margin-top: 35px;
   font-size: ${props => (props.$isloading && props.$connected && !props.$noFarm ? '18px' : '38px')};
-  margin-bottom: ${props => (props.$isloading && props.$connected && !props.$noFarm ? '15px' : '0px')};
+  margin-bottom: ${props =>
+    props.$isloading && props.$connected && !props.$noFarm ? '15px' : '0px'};
   color: ${props => props.$fontcolor};
   font-weight: 700;
 `

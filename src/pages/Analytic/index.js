@@ -126,7 +126,7 @@ const Analytic = () => {
   return (
     <Container $backcolor={bgColorNew}>
       <Content>
-        <FarmStatsContainer $firstline='true'>
+        <FarmStatsContainer $firstline="true">
           <ValueComponent
             $bordercolor={borderColorBox}
             $backcolor={bgColorNew}
@@ -208,7 +208,13 @@ const Analytic = () => {
             $width={onlyWidth <= 1310 ? '48%' : '25%'}
           >
             <CompHeader $fontcolor={analyticTitleColor}>iFARM/FARM staking APY:</CompHeader>
-            <FarmSubTitle data-tip data-for="details-box" $bold={600} $size="30px" $lineheight="38px">
+            <FarmSubTitle
+              data-tip
+              data-for="details-box"
+              $bold={600}
+              $size="30px"
+              $lineheight="38px"
+            >
               {profitShareAPY ? `${Number(profitShareAPY).toFixed(2)}%` : <AnimatedDots />}
             </FarmSubTitle>
           </ValueComponent>
@@ -219,7 +225,13 @@ const Analytic = () => {
             $width={onlyWidth <= 1310 ? '48%' : '25%'}
           >
             <CompHeader $fontcolor={analyticTitleColor}>Total FARM staked:</CompHeader>
-            <FarmSubTitle data-tip data-for="details-box" $bold={600} $size="30px" $lineheight="38px">
+            <FarmSubTitle
+              data-tip
+              data-for="details-box"
+              $bold={600}
+              $size="30px"
+              $lineheight="38px"
+            >
               {percentOfFarmStaked ? (
                 `${Math.round(Number(percentOfFarmStaked))}%`
               ) : (

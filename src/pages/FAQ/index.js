@@ -47,7 +47,7 @@ const FAQ = () => {
                   lazyRender={item.lazyRender ? item.lazyRender : true}
                   triggerWhenOpen={
                     <Question
-                      $open='true'
+                      $open="true"
                       $backcolor={backColor}
                       $bordercolor={borderColor}
                       $hovercolor={faqQueHoverColor}

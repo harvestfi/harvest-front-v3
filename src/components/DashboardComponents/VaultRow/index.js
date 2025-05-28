@@ -23,13 +23,7 @@ import {
 const VaultRow = ({ info, lifetimeYield, lastElement, cKey, darkMode }) => {
   const navigate = useNavigate()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const {
-    bgColorNew,
-    hoverColorRow,
-    fontColor1,
-    fontColor,
-    borderColorBox,
-  } = useThemeContext()
+  const { bgColorNew, hoverColorRow, fontColor1, fontColor, borderColorBox } = useThemeContext()
 
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
@@ -84,7 +78,10 @@ const VaultRow = ({ info, lifetimeYield, lastElement, cKey, darkMode }) => {
         {!isMobile && (
           <>
             <Content $width={isMobile ? '100%' : '40%'} $display={isMobile ? 'block' : 'flex'}>
-              <ContentInner $width={isMobile ? '100%' : '50%'} $display={isMobile ? 'block' : 'flex'}>
+              <ContentInner
+                $width={isMobile ? '100%' : '50%'}
+                $display={isMobile ? 'block' : 'flex'}
+              >
                 <BadgeIcon className="network-badge">
                   <img src={info.chain ? info.chain : ETHEREUM} width="15px" height="15px" alt="" />
                 </BadgeIcon>
@@ -178,7 +175,10 @@ const VaultRow = ({ info, lifetimeYield, lastElement, cKey, darkMode }) => {
         {isMobile && (
           <MobileContentContainer>
             <Content $width="40%" $display="flex" $flexdirection="column">
-              <ContentInner $width={isMobile ? '100%' : '50%'} $display={isMobile ? 'block' : 'flex'}>
+              <ContentInner
+                $width={isMobile ? '100%' : '50%'}
+                $display={isMobile ? 'block' : 'flex'}
+              >
                 {info.logos.length > 0 &&
                   info.logos.map((elem, index) => (
                     <LogoImg

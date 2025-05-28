@@ -36,7 +36,7 @@ const Container = styled.button`
         font-weight: 700;
       `
       : props.$mode === 'dark'
-      ? `
+        ? `
       background: none;
       border: none;
       color: white;

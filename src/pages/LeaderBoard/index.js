@@ -339,7 +339,12 @@ const LeaderBoard = () => {
             $borderradius="0px"
             $padding="0px"
           >
-            <Column $width="50%" $fontcolor={fontColor} $fontsize="14px" $padding="14px 28px 14px 16px">
+            <Column
+              $width="50%"
+              $fontcolor={fontColor}
+              $fontsize="14px"
+              $padding="14px 28px 14px 16px"
+            >
               <Col># User</Col>
             </Column>
             <Column
@@ -555,7 +560,11 @@ const LeaderBoard = () => {
                   />
                 </Col>
               </Column>
-              <Column $width={isMobile ? '5%' : '2%'} $fontcolor={fontColor} $justifycontent="center">
+              <Column
+                $width={isMobile ? '5%' : '2%'}
+                $fontcolor={fontColor}
+                $justifycontent="center"
+              >
                 <Col cursor="pointer" />
               </Column>
             </Header>
