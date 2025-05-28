@@ -499,7 +499,7 @@ const Sidebar = ({ width }) => {
                       rel="noopener noreferrer"
                       $activecolor={item.activeColor}
                       onClick={e => {
-                        if (e.ctrlKey || e.button === 1) {
+                        if (shouldOpenNewTab || e.ctrlKey || e.button === 1) {
                           e.preventDefault()
                           const newTab = window.open(url, '_blank', 'noopener noreferrer')
                           if (newTab) newTab.opener = null
@@ -543,7 +543,7 @@ const Sidebar = ({ width }) => {
                     target={shouldOpenNewTab ? '_blank' : '_self'}
                     rel="noopener noreferrer"
                     onClick={e => {
-                      if (e.ctrlKey || e.button === 1) {
+                      if (shouldOpenNewTab || e.ctrlKey || e.button === 1) {
                         e.preventDefault()
                         const newTab = window.open(url, '_blank', 'noopener noreferrer')
                         if (newTab) newTab.opener = null
