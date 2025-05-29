@@ -11,7 +11,6 @@ const VaultPanelHeader = ({
   tokenSymbol,
   useIFARM,
   isSpecialVault,
-  multipleAssets,
   loadedVault,
   loadingFarmingBalance,
 }) => {
@@ -38,7 +37,6 @@ const VaultPanelHeader = ({
     useIFARM,
     vaultPool,
     isSpecialVault,
-    multipleAssets,
     loadedVault,
     loadingFarmingBalance,
     lsdToken,

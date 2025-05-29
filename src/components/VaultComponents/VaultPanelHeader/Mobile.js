@@ -32,7 +32,6 @@ const MobilePanelHeader = ({
   vaultPool,
   useIFARM,
   isSpecialVault,
-  multipleAssets,
   loadedVault,
   loadingFarmingBalance,
   lsdToken,
@@ -127,12 +126,9 @@ const MobilePanelHeader = ({
             <VaultUserBalance
               token={token}
               tokenSymbol={tokenSymbol}
-              multipleAssets={multipleAssets}
               isSpecialVault={isSpecialVault}
               loadingFarmingBalance={loadingFarmingBalance}
-              vaultPool={vaultPool}
               loadedVault={loadedVault}
-              useIFARM={useIFARM}
             />
             <div className="title">
               <img src={DailyIcon} alt="" />

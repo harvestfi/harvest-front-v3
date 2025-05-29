@@ -39,7 +39,7 @@ const getTokensContracts = () => {
     if (!isArray(tokens[token].tokenAddress)) {
       tokenContracts[token] = {
         contract: {
-          address: tokens[token].tokenAddress,
+          address: token == 'IFARM' ? tokens[token].vaultAddress : tokens[token].tokenAddress,
           abi: TokenContract.abi,
         },
         methods: TokenMethods,

@@ -1,6 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { debounce, find, get, isArray, isEqual, keys, orderBy, sortBy, uniq } from 'lodash'
-import move from 'lodash-move'
+import { debounce, find, get, isArray, isEqual, keys, orderBy } from 'lodash'
 import React, { useMemo, useRef, useState, useEffect } from 'react'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import EmptyIcon from '../../../assets/images/logos/farm/empty.svg'
@@ -20,11 +19,10 @@ import {
 import { fromWei } from '../../../services/web3'
 import { CHAIN_IDS } from '../../../data/constants'
 import { usePools } from '../../../providers/Pools'
-import { useStats } from '../../../providers/Stats'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
-import { parseValue, isSpecialApp } from '../../../utilities/formats'
+import { isSpecialApp } from '../../../utilities/formats'
 import { getTotalApy, getVaultValue } from '../../../utilities/parsers'
 import { getPublishDate } from '../../../utilities/apiCalls'
 import VaultPanel from '../VaultPanel'
@@ -77,9 +75,7 @@ const formatVaults = (
   groupOfVaults,
   pools,
   userStats,
-  balances,
   selChain,
-  chainId,
   searchQuery = '',
   sortParam,
   sortOrder,
@@ -88,16 +84,14 @@ const formatVaults = (
   selectStableCoin,
   selectFarmType,
   selectedActiveType,
-  vaultsData,
 ) => {
   let vaultsSymbol = keys(groupOfVaults)
 
   vaultsSymbol = vaultsSymbol.filter(
     tokenSymbol =>
-      tokenSymbol !== IFARM_TOKEN_SYMBOL &&
-      (selChain.includes(groupOfVaults[tokenSymbol]?.chain) ||
-        (groupOfVaults[tokenSymbol]?.data &&
-          selChain.includes(groupOfVaults[tokenSymbol]?.data.chain))),
+      selChain.includes(groupOfVaults[tokenSymbol]?.chain) ||
+      (groupOfVaults[tokenSymbol]?.data &&
+        selChain.includes(groupOfVaults[tokenSymbol]?.data.chain)),
   )
 
   if (selectedActiveType.length !== 0) {
@@ -222,18 +216,15 @@ const formatVaults = (
         vaultsSymbol = orderBy(
           vaultsSymbol,
           v => {
-            let vaultPool, usdPrice
-
-            const isSpecialVault = groupOfVaults[v].poolVault
             const token = groupOfVaults[v]
 
-            const userStat = userStats[isSpecialVault ? 'profit-sharing-farm' : v]
+            const userStat = userStats[v]
             const userBalance = Number(
               fromWei(
                 new BigNumber(get(userStat, `lpTokenBalance`, 0))
                   .plus(get(userStat, `totalStaked`, 0))
                   .toFixed(),
-                isSpecialVault ? 18 : token.decimals,
+                token.decimals,
                 MAX_DECIMALS,
               ),
             )
@@ -242,23 +233,10 @@ const formatVaults = (
               return 0
             }
 
-            const tempPricePerFullShare = isSpecialVault
-              ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
-              : get(token, `pricePerFullShare`, 0)
-            const pricePerFullShare = fromWei(
-              tempPricePerFullShare,
-              isSpecialVault
-                ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0)
-                : token.decimals,
-            )
+            const tempPricePerFullShare = get(token, `pricePerFullShare`, 0)
+            const pricePerFullShare = fromWei(tempPricePerFullShare, token.decimals)
 
-            if (isSpecialVault) {
-              usdPrice =
-                (groupOfVaults[v].data && groupOfVaults[v].data.lpTokenData?.price) *
-                pricePerFullShare
-            } else {
-              usdPrice = groupOfVaults[v].usdPrice * pricePerFullShare
-            }
+            const usdPrice = groupOfVaults[v].usdPrice * pricePerFullShare
 
             const usdBalance = Number(new BigNumber(userBalance).times(usdPrice).toFixed())
             return usdBalance
@@ -335,11 +313,10 @@ const VaultList = () => {
   const { vaultsData, getFarmingBalances, loadedUserVaultsWeb3Provider, farmingBalances } =
     useVaults()
 
-  const { profitShareAPY } = useStats()
   const { pools, totalPools, fetchUserPoolStats, userStats, loadedUserPoolsWeb3Provider } =
     usePools()
 
-  const { account, chain, selChain, getWalletBalances, balances, chainId } = useWallet()
+  const { account, chain, selChain, balances, chainId } = useWallet()
   const showNetworks = getNetworkNames(selChain)
   const [loaded, setLoaded] = useState(null)
   const [sortParam, setSortParam] = useState(null)
@@ -362,30 +339,13 @@ const VaultList = () => {
     pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
   )
 
-  const poolVaults = useMemo(
-    () => ({
-      [FARM_TOKEN_SYMBOL]: {
-        poolVault: true,
-        profitShareAPY,
-        data: farmProfitSharingPool,
-        logoUrl: ['./icons/ifarm.svg'],
-        rewardSymbol: FARM_TOKEN_SYMBOL,
-        decimals: 18,
-        tokenNames: ['FARM'],
-        platform: ['Uniswap'],
-        tags: ['Beginners'],
-      },
-    }),
-    [farmProfitSharingPool, profitShareAPY],
-  )
-
   let groupOfVaults = []
   if (isSpecialApp) {
     if (chainId === CHAIN_IDS.ETH_MAINNET) {
       if (selectFarmType !== '') {
         groupOfVaults = { ...vaultsData }
       } else {
-        groupOfVaults = { ...vaultsData, ...poolVaults }
+        groupOfVaults = { ...vaultsData }
       }
     } else {
       groupOfVaults = { ...vaultsData }
@@ -393,7 +353,7 @@ const VaultList = () => {
   } else if (selectFarmType !== '') {
     groupOfVaults = { ...vaultsData }
   } else {
-    groupOfVaults = { ...vaultsData, ...poolVaults }
+    groupOfVaults = { ...vaultsData }
   }
 
   groupOfVaults = Object.fromEntries(
@@ -449,9 +409,7 @@ const VaultList = () => {
         groupOfVaults,
         pools,
         userStats,
-        balances,
         selChain,
-        chainId,
         searchQuery,
         sortParam,
         sortOrder,
@@ -460,15 +418,12 @@ const VaultList = () => {
         selectStableCoin,
         selectFarmType,
         selectedActiveType,
-        vaultsData,
       ),
     [
       groupOfVaults,
       pools,
       userStats,
-      balances,
       selChain,
-      chainId,
       searchQuery,
       sortParam,
       sortOrder,
@@ -477,19 +432,14 @@ const VaultList = () => {
       selectStableCoin,
       selectFarmType,
       selectedActiveType,
-      vaultsData,
     ],
   )
 
-  const firstPoolsBalancesLoad = useRef(true)
-  const firstVaultsBalancesLoad = useRef(true)
   const firstFarmingBalancesLoad = useRef(true)
 
   useEffectWithPrevious(
-    ([prevChain, prevAccount, prevOpenVault]) => {
+    ([prevChain, prevAccount]) => {
       const hasSwitchedChain = chain !== prevChain
-      const hasSwitchedChainToETH = hasSwitchedChain && chain === CHAIN_IDS.ETH_MAINNET
-      const hasSwitchedAccount = account !== prevAccount && account
 
       if (hasSwitchedChain) {
         selectActiveType([])

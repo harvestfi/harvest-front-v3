@@ -350,23 +350,21 @@ const PoolsProvider = _ref => {
             // const stats = {}
             await forEach(chLoadedPools, async (pool, index) => {
               let lpTokenBalance
-              const isSpecialVault = !vaultAddresses.includes(pool.lpTokenData.address)
+              const isSpecialVault = pool.id == 'profit-sharing-farm'
 
               if (isSpecialVault) {
-                const lpSymbol = Object.keys(tokens).filter(
-                  symbol => tokens[symbol].tokenAddress === pool.lpTokenData.address,
-                )
+                pool.id = 'IFARM'
 
                 const instance = await newContractInstance(
-                  lpSymbol[0],
+                  pool.id,
                   null,
                   null,
                   await getWeb3(ch, false),
                 )
 
-                lpTokenBalance = !walletBalances[lpSymbol]
+                lpTokenBalance = !walletBalances[pool.id]
                   ? await tokenMethods.getBalance(account, instance)
-                  : walletBalances[lpSymbol]
+                  : walletBalances[pool.id]
               } else {
                 const lpTokenBalanceIdx = vaultAddresses.findIndex(
                   address => address === pool.lpTokenData.address,

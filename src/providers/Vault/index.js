@@ -107,13 +107,11 @@ const VaultsProvider = _ref => {
           const tokenPool = pools.find(
             pool => pool.collateralAddress === importedVaults[vaultSymbol].vaultAddress,
           )
-          const isIFARM = vaultSymbol === IFARM_TOKEN_SYMBOL
+
           const hasMultipleAssets = isArray(importedVaults[vaultSymbol].tokenAddress)
           const instance = await newContractInstance(
             null,
-            isIFARM
-              ? importedVaults[vaultSymbol].tokenAddress
-              : importedVaults[vaultSymbol].vaultAddress,
+            importedVaults[vaultSymbol].vaultAddress,
             hasMultipleAssets ? univ3ContractData.abi : vaultContractData.abi,
             web3Client,
           )
@@ -157,27 +155,11 @@ const VaultsProvider = _ref => {
               }
             }
             dataFetched = !apiFailed
-          } else if (isIFARM) {
-            totalSupply = await getTotalSupply(instance, web3Client)
-            underlyingBalanceWithInvestment = await getUnderlyingBalanceWithInvestment(
-              instance,
-              web3Client,
-            )
-            pricePerFullShare = importedVaults[vaultSymbol].pricePerFullShareOverride
-              ? importedVaults[vaultSymbol].pricePerFullShareOverride
-              : await getPricePerFullShare(instance, web3Client)
-          }
-
-          if (isIFARM && account && curChainId === CHAIN_IDS.ETH_MAINNET) {
-            underlyingBalanceWithInvestmentForHolder =
-              await getUnderlyingBalanceWithInvestmentForHolder(account, instance, web3Client)
           }
 
           formattedVaults[vaultSymbol] = {
             ...importedVaults[vaultSymbol],
-            vaultAddress: isIFARM
-              ? importedVaults[vaultSymbol].tokenAddress
-              : importedVaults[vaultSymbol].vaultAddress,
+            vaultAddress: importedVaults[vaultSymbol].vaultAddress,
             estimatedApy,
             estimatedApyBreakdown,
             boostedEstimatedAPY,

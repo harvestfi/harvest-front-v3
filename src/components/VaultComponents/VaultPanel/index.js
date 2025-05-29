@@ -1,5 +1,5 @@
-import { find, isArray, isEmpty } from 'lodash'
-import React, { useEffect, useMemo, useState } from 'react'
+import { find, isEmpty } from 'lodash'
+import React, { useEffect, useState } from 'react'
 import { FARM_TOKEN_SYMBOL } from '../../../constants'
 import { usePools } from '../../../providers/Pools'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -23,20 +23,6 @@ const VaultPanel = ({ token, loaded, tokenSymbol, tokenNum, vaultsCount, ...prop
     : find(pools, pool => pool.collateralAddress === tokens[tokenSymbol].vaultAddress)
 
   const [useIFARM] = useState(tokenSymbol === FARM_TOKEN_SYMBOL)
-
-  const multipleAssets = useMemo(
-    () =>
-      isArray(tokens[tokenSymbol].tokenAddress) &&
-      tokens[tokenSymbol].tokenAddress.map(address => {
-        const selectedSymbol = Object.keys(tokens).find(
-          symbol =>
-            !isArray(tokens[symbol].tokenAddress) &&
-            tokens[symbol].tokenAddress.toLowerCase() === address.toLowerCase(),
-        )
-        return selectedSymbol
-      }),
-    [tokenSymbol],
-  )
 
   useEffect(() => {
     if (logout) {
@@ -77,7 +63,6 @@ const VaultPanel = ({ token, loaded, tokenSymbol, tokenNum, vaultsCount, ...prop
           tokenSymbol={tokenSymbol}
           useIFARM={useIFARM}
           isSpecialVault={isSpecialVault}
-          multipleAssets={multipleAssets}
           loadedVault={loaded}
           {...props}
         />

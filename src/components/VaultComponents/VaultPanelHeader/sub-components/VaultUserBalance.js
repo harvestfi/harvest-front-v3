@@ -1,18 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import { get } from 'lodash'
-import {
-  FARM_TOKEN_SYMBOL,
-  IFARM_TOKEN_SYMBOL,
-  SPECIAL_VAULTS,
-  MAX_DECIMALS,
-} from '../../../../constants'
+import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, MAX_DECIMALS } from '../../../../constants'
 import { useVaults } from '../../../../providers/Vault'
 import { fromWei } from '../../../../services/web3'
 import { formatNumber, parseValue } from '../../../../utilities/formats'
 import AnimatedDots from '../../../AnimatedDots'
 import { useWallet } from '../../../../providers/Wallet'
-import { useContracts } from '../../../../providers/Contracts'
 import { Monospace } from '../../../GlobalStyle'
 import { usePools } from '../../../../providers/Pools'
 import { useRate } from '../../../../providers/Rate'
@@ -20,16 +14,12 @@ import { useRate } from '../../../../providers/Rate'
 const VaultUserBalance = ({
   token,
   tokenSymbol,
-  multipleAssets,
   isSpecialVault,
   loadingFarmingBalance,
-  vaultPool,
   loadedVault,
-  useIFARM,
   fontColor1,
 }) => {
   const { vaultsData, farmingBalances } = useVaults()
-  const { contracts } = useContracts()
   const { account, connected } = useWallet()
   const { userStats } = usePools()
   const [userVaultBalance, setUserVaultBalance] = useState(null)
@@ -61,8 +51,6 @@ const VaultUserBalance = ({
       }
       setUserVaultBalance(bal)
     }
-
-    console.log(tokenSymbol, userVaultBalance)
 
     getBalance()
   }, [vaultsData, token, tokenSymbol, farmingBalances, account, userStats])

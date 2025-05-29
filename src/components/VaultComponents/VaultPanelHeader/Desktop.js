@@ -22,7 +22,6 @@ const DesktopPanelHeader = ({
   useIFARM,
   vaultPool,
   isSpecialVault,
-  multipleAssets,
   loadedVault,
   loadingFarmingBalance,
   lsdToken,
@@ -122,12 +121,9 @@ const DesktopPanelHeader = ({
           <VaultUserBalance
             token={token}
             tokenSymbol={tokenSymbol}
-            multipleAssets={multipleAssets}
             isSpecialVault={isSpecialVault}
             loadingFarmingBalance={loadingFarmingBalance}
-            vaultPool={vaultPool}
             loadedVault={loadedVault}
-            useIFARM={useIFARM}
             $fontcolor1={fontColor1}
           />
         </ValueContainer>
