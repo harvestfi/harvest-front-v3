@@ -27,7 +27,7 @@ import poolContractData from '../../services/web3/contracts/pool/contract.json'
 import tokenContract from '../../services/web3/contracts/token/contract.json'
 import tokenMethods from '../../services/web3/contracts/token/methods'
 import {
-  isLedgerLive,
+  // isLedgerLive,
   isSafeApp,
   isSpecialApp,
   truncateNumberString,
@@ -36,7 +36,7 @@ import { useContracts } from '../Contracts'
 import { useWallet } from '../Wallet'
 import { getLpTokenData, getUserStats, pollUpdatedUserStats } from './utils'
 
-const { pools: defaultPools, tokens } = require('../../data')
+const { pools: defaultPools } = require('../../data')
 
 const PoolsContext = createContext()
 const usePools = () => useContext(PoolsContext)

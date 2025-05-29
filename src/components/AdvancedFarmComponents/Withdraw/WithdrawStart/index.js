@@ -118,26 +118,10 @@ const WithdrawStart = ({
   const [toVaultAddress, setToVaultAddress] = useState()
   const [matchVaultList, setMatchVaultList] = useState([])
 
-  const [networkName, setNetworkName] = useState('')
   const isFetchingRef = useRef(false)
 
   const curChain = token.poolVault ? token.data.chain : token.chain
   const tokenName = token.isIPORVault ? tokenSymbol : `f${tokenSymbol}`
-
-  useEffect(() => {
-    const tokenChain = token.poolVault ? token.data.chain : token.chain
-    const network =
-      Number(tokenChain) === 42161
-        ? 'Arbitrum'
-        : Number(tokenChain) === 8453
-          ? 'Base'
-          : Number(tokenChain) === 324
-            ? 'Zksync'
-            : Number(tokenChain) === 137
-              ? 'Polygon'
-              : 'Ethereum'
-    setNetworkName(network)
-  }, [token])
 
   useEffect(() => {
     if (rates.rateData) {

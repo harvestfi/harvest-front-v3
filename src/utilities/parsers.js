@@ -1,9 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { get, sum, sumBy, find } from 'lodash'
 import {
-  FARM_GRAIN_TOKEN_SYMBOL,
   FARM_TOKEN_SYMBOL,
-  FARM_WETH_TOKEN_SYMBOL,
   MAX_APY_DISPLAY,
   HARVEST_LAUNCH_DATE,
   SPECIAL_VAULTS,
@@ -307,6 +305,18 @@ export const findMax = data => {
 
 export const findMin = data => {
   const ary = data.map(el => el.y)
+  const min = Math.min(...ary)
+  return min
+}
+
+export const findMaxTotal = data => {
+  const ary = data.map(el => el.Total)
+  const max = Math.max(...ary)
+  return max
+}
+
+export const findMinTotal = data => {
+  const ary = data.map(el => el.Total)
   const min = Math.min(...ary)
   return min
 }

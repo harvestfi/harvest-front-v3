@@ -7,6 +7,7 @@ import globals from 'globals'
 import babelParser from '@babel/eslint-parser'
 
 export default [
+  js.configs.recommended,
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
@@ -55,6 +56,17 @@ export default [
       'prefer-destructuring': ['error', { object: false, array: false }],
       camelcase: ['error', { allow: ['aa_bb'] }],
       'react/no-danger': 'off',
+      'react/jsx-uses-vars': 'error',
+      'react/jsx-uses-react': 'error',
+      'no-unused-vars': [
+        'error',
+        {
+          vars: 'all',
+          args: 'after-used',
+          ignoreRestSiblings: false,
+          caughtErrors: 'none',
+        },
+      ],
     },
     settings: {
       react: {

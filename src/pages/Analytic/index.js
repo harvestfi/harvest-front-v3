@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-// import Countdown from 'react-countdown'
 import CountUp from 'react-countup'
 import { useMediaQuery } from 'react-responsive'
 import { Tooltip } from 'react-tooltip'
@@ -20,14 +19,12 @@ import AutoHarvest from '../../assets/images/logos/analytics/AutoHarvest.svg'
 import ExternalLink from '../../assets/images/logos/analytics/ExternalLink.svg'
 import AnalyticChart from '../../components/AnalyticComponents/AnalyticChart'
 import AnimatedDots from '../../components/AnimatedDots'
-// import CountdownLabel from '../../components/CountdownLabel'
 import { Divider, Monospace, TextContainer } from '../../components/GlobalStyle'
 import { CURVE_APY } from '../../constants'
 import { useStats } from '../../providers/Stats'
 import { useRate } from '../../providers/Rate'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { truncateNumberString } from '../../utilities/formats'
-// import { getNextEmissionsCutDate } from '../../utilities/parsers'
 import {
   BigStatsExchange,
   Container,
@@ -35,7 +32,6 @@ import {
   DataSource,
   DataSourceDirect,
   DataSourceInner,
-  // EmissionsCountdownText,
   FarmStatsContainer,
   FarmSubTitle,
   ImgList,
@@ -52,7 +48,6 @@ import {
 } from './style'
 
 const MemoizedCounter = React.memo(CountUp)
-// const MemoizedCountdown = React.memo(Countdown)
 const imgList = [
   { url: 'https://pro.coinbase.com/trade/FARM-USD', img: ExchangeCoinbase },
   { url: 'https://pro.kraken.com/app/trade/farm-usd', img: ExchangeKraken },
@@ -275,50 +270,6 @@ const Analytic = () => {
           >
             {loadComplete && <AnalyticChart />}
           </StatsBox>
-          {/* <StatsBox
-            $width={isMobile ? '100%' : '50%'}
-            $align="flex-start"
-            compNum={2}
-            $boxshadow="unset"
-            $height="450px"
-            minHeight="270px"
-            $fontcolor={fontColor}
-            $backcolor={backColor}
-            $bordercolor={borderColor}
-          >
-            <div className="emission-header">
-              <img className="rect" src={Farm} alt="" />
-            </div>
-            <MemoizedCountdown
-              intervalDelay={50}
-              precision={2}
-              date={getNextEmissionsCutDate()}
-              renderer={({ formatted: { days, hours, minutes }, completed }) => {
-                if (completed) {
-                  return (
-                    <span>
-                      Join the <b>Harvest</b>
-                    </span>
-                  )
-                }
-                return (
-                  <>
-                    <EmissionsCountdownText $fontcolor={fontColor}>
-                      Next Emissions Decrease In:
-                    </EmissionsCountdownText>
-                    <CountdownLabel
-                      $display="block"
-                      days={days}
-                      hours={hours}
-                      minutes={minutes}
-                      // seconds={seconds}
-                      // milliseconds={milliseconds}
-                    />
-                  </>
-                )
-              }}
-            />
-          </StatsBox> */}
         </FarmStatsLastContainer>
         <Divider $height="30px" />
         <FarmStatsLastContainer>

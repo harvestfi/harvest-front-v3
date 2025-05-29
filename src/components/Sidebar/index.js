@@ -322,7 +322,6 @@ const Sidebar = ({ width }) => {
     }
   }, [darkMode])
 
-  const { pathname } = useLocation()
   const navigate = useNavigate()
 
   // Show sidebar for mobile

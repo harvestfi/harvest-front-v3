@@ -37,7 +37,6 @@ const getPoolRewardSymbol = chain => {
 }
 
 const VaultPanelActionsFooter = ({
-  type,
   token,
   tokenSymbol,
   tokenDecimals,

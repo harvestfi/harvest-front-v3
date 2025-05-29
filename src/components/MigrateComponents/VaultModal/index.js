@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react'
-// import { get, find } from 'lodash'
 import { isEmpty } from 'lodash'
 import Modal from 'react-bootstrap/Modal'
 import { BsArrowDown } from 'react-icons/bs'
@@ -375,18 +374,7 @@ const VaultModal = ({
               })
               .filter(item => item.address.toLowerCase() !== fTokenAddr.toLowerCase())
 
-            // setBalanceList(
-            //   curSortedBalances.filter(
-            //     item => item.address.toLowerCase() !== tokenAddress.toLowerCase(),
-            //   ),
-            // )
             setBalanceList(curSortedBalances)
-
-            curSortedBalances.forEach(balanceToken => {
-              if (balanceToken.symbol === 'ARB') {
-                // setArbBalance(balanceToken.balance)
-              }
-            })
 
             supList = [...curBalances, ...curNoBalances]
 
@@ -487,7 +475,6 @@ const VaultModal = ({
             } else {
               setDefaultToken({})
             }
-            // supList.shift()
             setSupTokenList(supList)
 
             const supNoBalanceList = [],
@@ -501,22 +488,6 @@ const VaultModal = ({
             }
             supNoBalanceList.shift()
             setSupTokenNoBalanceList(supNoBalanceList)
-
-            // const soonSupList = []
-            // for (let j = 0; j < curBalances.length; j += 1) {
-            //   const supToken = supList.find(el => el.address === curBalances[j].address)
-            //   if (!supToken) {
-            //     soonSupList.push(curBalances[j])
-            //   }
-
-            //   if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
-            //     if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
-            //       directInBalance = curBalances[j]
-            //     }
-            //   }
-            // }
-            // setSoonToSupList(soonSupList)
-            // setSoonToSupList({}) // TODO: remove soonToSupList once confirmed
           } else {
             let tokenSymbol,
               decimals = 18
@@ -580,63 +551,6 @@ const VaultModal = ({
     ethers.utils,
     convertSuccess,
   ])
-
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     if (defaultToken !== null) {
-  //       let tokenToSet = null
-
-  //       // Check if defaultToken is present in the balanceList
-  //       if (defaultToken.balance !== '0' || !supportedVault || hasPortalsError) {
-  //         setBalance(defaultToken.balance)
-  //         return
-  //       }
-
-  //       // If defaultToken is not found, find the token with the highest USD value among those in the SUPPORTED_TOKEN_LIST and balanceList
-  //       const supportedTokens = balanceList.filter(
-  //         balancedToken => SUPPORTED_TOKEN_LIST[chain][balancedToken.symbol],
-  //       )
-  //       if (supportedTokens.length > 0) {
-  //         tokenToSet = supportedTokens.reduce((prevToken, currentToken) =>
-  //           prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
-  //         )
-  //       }
-
-  //       // If no token is found in SUPPORTED_TOKEN_LIST, set the token with the highest USD value in balanceList
-  //       if (!tokenToSet && balanceList.length > 0) {
-  //         tokenToSet = balanceList.reduce(
-  //           (prevToken, currentToken) =>
-  //             prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
-  //           balanceList[0], // Providing the first element as the initial value
-  //         )
-  //       }
-
-  //       // Set the pickedTokenDepo and balanceDepo based on the determined tokenToSet
-  //       if (tokenToSet) {
-  //         setBalance(
-  //           fromWei(
-  //             tokenToSet.rawBalance ? tokenToSet.rawBalance : 0,
-  //             tokenToSet.decimals,
-  //             tokenToSet.decimals,
-  //           ),
-  //         )
-  //       }
-  //     } else if (supTokenList.length !== 0) {
-  //       setBalance('0')
-  //     }
-  //   }, 3000)
-
-  //   return () => clearTimeout(timer)
-  // }, [
-  //   balanceList,
-  //   supTokenList,
-  //   defaultToken,
-  //   chain,
-  //   SUPPORTED_TOKEN_LIST,
-  //   supportedVault,
-  //   hasPortalsError,
-  //   setBalance,
-  // ])
 
   useEffect(() => {
     if (account && pickedToken) {
@@ -754,32 +668,6 @@ const VaultModal = ({
   }, [supTokenNoBalanceList, balanceList, chain, defaultCurToken, defaultToken, getPortalsToken])
 
   useEffect(() => {
-    // let tokenForPick
-    // if (balanceTokenList.length > 0 && positionAddress) {
-    //   const matchingVault = Object.entries(groupOfVaults).find(item => {
-    //     const compareAddress = item[1].poolVault ? item[1].tokenAddress : item[1].vaultAddress
-    //     return compareAddress.toLowerCase() === positionAddress.toLowerCase()
-    //   })
-    //   if (matchingVault) {
-    //     tokenForPick = balanceTokenList.find(item => {
-    //       if (item.address.toLowerCase() === matchingVault[1].tokenAddress.toLowerCase()) {
-    //         return item
-    //       }
-    //       if (item.address.toLowerCase() === positionAddress.toLowerCase()) {
-    //         return item
-    //       }
-    //       return null
-    //     })
-    //   }
-
-    //   if (tokenForPick) {
-    //     setPickedToken(tokenForPick)
-    //     setBalance(tokenForPick.balance)
-    //   } else {
-    //     setPickedToken(null)
-    //   }
-    // }
-
     if (filteredFarmList.length > 0 && positionAddress) {
       const matchingVault = filteredFarmList.find(item => {
         const compareAddress = item.token.poolVault
@@ -804,7 +692,6 @@ const VaultModal = ({
 
           total = unstaked
           hasStakeUnstake = staked
-          // amountBalanceUSD = total * usdPrice * Number(currencyRate)
         }
         const newAddress = matchingVault.token.poolVault
           ? matchingVault.token.tokenAddress
@@ -833,7 +720,6 @@ const VaultModal = ({
   return (
     <Modal
       show={showVaultModal}
-      // onHide={onClose}
       dialogClassName="migrate-modal-notification"
       aria-labelledby="contained-modal-title-vcenter"
       centered

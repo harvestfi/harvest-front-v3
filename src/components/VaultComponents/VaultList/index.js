@@ -310,13 +310,12 @@ const SortingIcon = ({ sortType, sortField, selectedField, riskId }) => {
 const VaultList = () => {
   const { fontColor, filterColor, bgColorNew, borderColorBox, darkMode } = useThemeContext()
 
-  const { vaultsData, getFarmingBalances, loadedUserVaultsWeb3Provider, farmingBalances } =
-    useVaults()
+  const { vaultsData, getFarmingBalances, loadedUserVaultsWeb3Provider } = useVaults()
 
   const { pools, totalPools, fetchUserPoolStats, userStats, loadedUserPoolsWeb3Provider } =
     usePools()
 
-  const { account, chain, selChain, balances, chainId } = useWallet()
+  const { account, chain, selChain, chainId } = useWallet()
   const showNetworks = getNetworkNames(selChain)
   const [loaded, setLoaded] = useState(null)
   const [sortParam, setSortParam] = useState(null)
@@ -438,7 +437,7 @@ const VaultList = () => {
   const firstFarmingBalancesLoad = useRef(true)
 
   useEffectWithPrevious(
-    ([prevChain, prevAccount]) => {
+    ([prevChain]) => {
       const hasSwitchedChain = chain !== prevChain
 
       if (hasSwitchedChain) {

@@ -14,62 +14,73 @@ import { ClipLoader } from 'react-spinners'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { CHAIN_IDS } from '../../../data/constants'
 import { useRate } from '../../../providers/Rate'
-import { ceil10, floor10, numberWithCommas, formatDate } from '../../../utilities/formats'
+import { ceil10, floor10, numberWithCommas } from '../../../utilities/formats'
 import {
-  findMax,
-  findMin,
+  findMaxTotal,
   getRangeNumber,
   getTimeSlots,
   getYAxisValues,
 } from '../../../utilities/parsers'
-import { LoadingDiv, NoData } from './style'
+import {
+  LoadingDiv,
+  NoData,
+  TooltipContainer,
+  TooltipContent,
+  TooltipTotal,
+  ProtocolEntry,
+  DottedUnderline,
+} from './style'
 
-// kind: "value" - TVL, "apy" - APY
+const CHAIN_NAMES = {
+  1: 'Ethereum',
+  137: 'Polygon',
+  42161: 'Arbitrum',
+  8453: 'Base',
+  324: 'ZkSync',
+}
+
 function generateChartDataWithSlots(slots, apiData) {
-  const seriesData = [],
-    sl = slots.length
+  const seriesData = []
 
-  for (let i = 0; i < sl; i += 1) {
-    const data = {}
-    for (let j = 0; j < Object.keys(apiData).length; j += 1) {
-      const key = Object.keys(apiData)[j]
-      if (Object.values(CHAIN_IDS).includes(key)) {
-        if (apiData[key].length > 0) {
-          data[key] = apiData[key].reduce((prev, curr) =>
-            Math.abs(Number(curr.timestamp) - slots[i]) <
-            Math.abs(Number(prev.timestamp) - slots[i])
-              ? curr
-              : prev,
-          )
-        } else {
-          data[key] = { value: 0 }
-        }
+  const chains = Object.keys(apiData).filter(key => Object.values(CHAIN_IDS).includes(key))
+
+  for (const t of slots) {
+    const point = { x: t * 1000 }
+    chains.forEach(chain => {
+      const chainData = apiData[chain]
+      if (!chainData?.length) {
+        point[chain] = 0
+      } else {
+        const closest = chainData.reduce((prev, curr) =>
+          Math.abs(+curr.timestamp - t) < Math.abs(+prev.timestamp - t) ? curr : prev,
+        )
+        point[CHAIN_NAMES[chain]] = +closest.value
       }
-    }
-    let value = 0
-    for (let k = 0; k < Object.keys(data).length; k += 1) {
-      const key = Object.keys(data)[k]
-      value += Number(data[key].value)
-    }
-    seriesData.push({ x: slots[i] * 1000, y: value })
+    })
+    point.Total = chains.reduce((s, c) => s + point[CHAIN_NAMES[c]], 0)
+    seriesData.push(point)
   }
-
   return seriesData
 }
 
 function formatXAxis(value, range) {
   const date = new Date(value)
 
+  const year = date.getFullYear()
   const month = date.getMonth() + 1
   const day = date.getDate()
 
-  const hour = date.getHours()
-  const mins = date.getMinutes()
+  const hour = date.getHours().toString().padStart(2, '0')
+  const mins = date.getMinutes().toString().padStart(2, '0')
 
-  return range === '1D' ? `${hour}:${mins}` : `${month} / ${day}`
+  return range === '1D'
+    ? `${hour}:${mins}`
+    : range === '1Y' || range === 'ALL'
+      ? `${day} / ${month} / ${year}`
+      : `${day} / ${month}`
 }
 
-const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
+const ApexChart = ({ data, range }) => {
   const { fontColor, inputFontColor } = useThemeContext()
 
   const [mainSeries, setMainSeries] = useState([])
@@ -89,18 +100,39 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
     }
   }, [rates])
 
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      setCurDate(formatDate(payload[0].payload.x))
-      const content = `<div style="font-size: 13px; line-height: 16px; display: flex;"><div style="font-weight: 700;">TVL
-      </div><div style="color: #15B088; font-weight: 500;">&nbsp;${currencySym}
-      ${numberWithCommas(
-        (Number(payload[0].payload.y) * Number(currencyRate)).toFixed(0),
-      )}</div></div>`
-      setCurContent(content)
-    }
+  const renderTooltipContent = o => {
+    const { payload, label } = o
 
-    return null
+    const date = new Date(label)
+    const year = date.getFullYear()
+    const month = date.getMonth() + 1
+    const day = date.getDate()
+    const hour = date.getHours().toString().padStart(2, '0')
+    const mins = date.getMinutes().toString().padStart(2, '0')
+
+    return (
+      <TooltipContainer>
+        <TooltipContent>
+          <TooltipTotal>{`${day}/${month}/${year} ${hour}:${mins}`}</TooltipTotal>
+          {payload
+            .filter(entry => entry.value !== 0 && entry.value !== null)
+            .map((entry, index) => {
+              return (
+                <ProtocolEntry
+                  key={`item-${index}`}
+                  color={entry.name == 'Total' ? '#FFFFFF' : entry.stroke}
+                >
+                  <DottedUnderline>{entry.name}</DottedUnderline>
+                  &nbsp;&nbsp;
+                  {`${currencySym}${numberWithCommas(
+                    (Number(entry.value) * Number(currencyRate)).toFixed(0),
+                  )}`}
+                </ProtocolEntry>
+              )
+            })}
+        </TooltipContent>
+      </TooltipContainer>
+    )
   }
 
   const renderCustomXAxisTick = ({ x, y, payload }) => {
@@ -168,8 +200,7 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
         maxValue,
         minValue,
         len = 0,
-        unitBtw,
-        roundNum
+        unitBtw
 
       if (data && data.ETH && data.MATIC && data.ARBITRUM && data.BASE && data.ZKSYNC) {
         if (
@@ -184,15 +215,15 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
         }
       }
 
-      const slotCount = 50,
+      const slotCount = 100,
         slots = getTimeSlots(ago, slotCount)
 
       if (data.length === 0) {
         return
       }
-      mainData = generateChartDataWithSlots(slots, data, 'value')
-      maxValue = findMax(mainData)
-      minValue = findMin(mainData)
+      mainData = generateChartDataWithSlots(slots, data)
+      maxValue = findMaxTotal(mainData)
+      minValue = 0
 
       const between = maxValue - minValue
       unitBtw = between / 4
@@ -213,23 +244,10 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
         minValue = floor10(minValue, -len + 1)
       }
 
-      if (unitBtw !== 0) {
-        maxValue *= 1.5
-        minValue = 0
-      } else {
-        unitBtw = (maxValue - minValue) / 4
-      }
-
-      if (unitBtw === 0) {
-        roundNum = 0
-      } else {
-        roundNum = len - 2
-      }
-
       setMinVal(minValue)
       setMaxVal(maxValue)
 
-      const yAxisAry = getYAxisValues(minValue, maxValue, roundNum)
+      const yAxisAry = getYAxisValues(minValue, maxValue, len - 2)
       setYAxisTicks(yAxisAry)
 
       setMainSeries(mainData)
@@ -270,39 +288,45 @@ const ApexChart = ({ data, range, setCurDate, setCurContent }) => {
             />
             <XAxis dataKey="x" tickLine={false} tickCount={5} tick={renderCustomXAxisTick} />
             <YAxis
-              dataKey="y"
+              dataKey="Total"
               tickLine={false}
               tickCount={5}
               tick={renderCustomYAxisTick}
               ticks={yAxisTicks}
               domain={[minVal, maxVal]}
             />
-            <Line
-              dataKey="y"
-              type="monotone"
-              unit="M"
-              strokeLinecap="round"
-              strokeWidth={2}
-              stroke="#00D26B"
-              dot={false}
-              legendType="none"
+            <Area
+              dataKey="Ethereum"
+              stackId="TVL"
+              stroke="#627EEA"
+              fill="#627EEA"
+              fillOpacity={0.7}
             />
             <Area
-              type="monotone"
-              dataKey="y"
-              stroke="#00D26B"
-              strokeWidth={2}
-              fillOpacity={1}
-              fill="url(#colorUv)"
+              dataKey="Polygon"
+              stackId="TVL"
+              stroke="#8247E5"
+              fill="#8247E5"
+              fillOpacity={0.7}
             />
-            <Tooltip
-              content={CustomTooltip}
-              cursor={{
-                stroke: '#FF9400',
-                strokeDasharray: 3,
-                strokeLinecap: 'butt',
-              }}
+            <Area
+              dataKey="Arbitrum"
+              stackId="TVL"
+              stroke="#28A0EF"
+              fill="#28A0EF"
+              fillOpacity={0.7}
             />
+            <Area dataKey="Base" stackId="TVL" stroke="#0052FF" fill="#0052FF" fillOpacity={0.7} />
+            <Area
+              dataKey="ZkSync"
+              stackId="TVL"
+              stroke="#6990FF"
+              fill="#6990FF"
+              fillOpacity={0.7}
+            />
+            <Line dataKey="Total" stroke="#000000" strokeWidth={1} dot={false} />
+
+            <Tooltip content={renderTooltipContent} />
           </ComposedChart>
         </ResponsiveContainer>
       ) : (

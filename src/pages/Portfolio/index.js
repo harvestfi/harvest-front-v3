@@ -1187,7 +1187,7 @@ const Portfolio = () => {
                         </div>
                         <ExploreButtonStyle
                           onClick={() => {
-                            push(ROUTES.ADVANCED)
+                            navigate(ROUTES.ADVANCED)
                           }}
                           $inputbordercolor={inputBorderColor}
                           $bordercolor={fontColor}

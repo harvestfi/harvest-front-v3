@@ -13,7 +13,7 @@ import React, {
 } from 'react'
 import { toast } from 'react-toastify'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import { IFARM_TOKEN_SYMBOL, VAULTS_API_ENDPOINT } from '../../constants'
+import { VAULTS_API_ENDPOINT } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
 import {
   getWeb3,
@@ -24,8 +24,11 @@ import {
 } from '../../services/web3'
 import univ3ContractData from '../../services/web3/contracts/uniswap-v3/contract.json'
 import vaultContractData from '../../services/web3/contracts/vault/contract.json'
-import vaultMethods from '../../services/web3/contracts/vault/methods'
-import { abbreaviteNumber, isSpecialApp, isLedgerLive } from '../../utilities/formats'
+import {
+  abbreaviteNumber,
+  isSpecialApp,
+  // isLedgerLive
+} from '../../utilities/formats'
 import { usePools } from '../Pools'
 import { useWallet } from '../Wallet'
 import { calculateFarmingBalance, filterVaults } from './utils'
@@ -39,13 +42,6 @@ const importedVaults = pickBy(
   tokens,
   token => token.vaultAddress || token.tokenAddress === addresses.iFARM,
 )
-
-const {
-  getUnderlyingBalanceWithInvestment,
-  getUnderlyingBalanceWithInvestmentForHolder,
-  getPricePerFullShare,
-  getTotalSupply,
-} = vaultMethods
 
 const VaultsProvider = _ref => {
   const { children } = _ref
@@ -62,20 +58,19 @@ const VaultsProvider = _ref => {
       ),
     [selChain, vaultsData, chainId],
   )
-  // const initialFetch = useRef(true)
   const loadedUserVaultsWeb3Provider = useRef(false)
   const setFormattedVaults = useCallback(
     async (apiData, apiFailed) => {
       const formattedVaults = {}
-      let curChainId = chainId
-      try {
-        // if (isLedgerLive()) {
-        //   const selectedChain = await ledgerWeb3.eth.net.getId()
-        //   curChainId = selectedChain.toString()
-        // }
-      } catch (e) {
-        console.log(e)
-      }
+      // let curChainId = chainId
+      // try {
+      //   if (isLedgerLive()) {
+      //     const selectedChain = await ledgerWeb3.eth.net.getId()
+      //     curChainId = selectedChain.toString()
+      //   }
+      // } catch (e) {
+      //   console.log(e)
+      // }
 
       await forEach(Object.keys(importedVaults), async vaultSymbol => {
         const vaultChain = get(importedVaults, `[${vaultSymbol}].chain`)
@@ -284,11 +279,8 @@ const VaultsProvider = _ref => {
       }
     }
 
-    // if (initialFetch.current) {
-    // initialFetch.current = false
     setLoadingVaults(true)
     formatVaults()
-    // }
   }, [setFormattedVaults, chainId])
   useEffectWithPrevious(
     _ref2 => {

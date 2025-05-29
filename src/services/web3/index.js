@@ -1,4 +1,4 @@
-import { IFrameEthereumProvider } from '@ledgerhq/iframe-provider'
+// import { IFrameEthereumProvider } from '@ledgerhq/iframe-provider'
 import { SafeAppProvider } from '@safe-global/safe-apps-provider'
 import SafeAppsSDK from '@safe-global/safe-apps-sdk'
 import BigNumber from 'bignumber.js'
@@ -21,7 +21,10 @@ import {
   POLL_BALANCES_INTERVAL_MS,
 } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
-import { isLedgerLive, isSafeApp } from '../../utilities/formats'
+import {
+  // isLedgerLive,
+  isSafeApp,
+} from '../../utilities/formats'
 import contracts from './contracts'
 
 export const getChainHexadecimal = chainId => `0x${Number(chainId).toString(16)}`

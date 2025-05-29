@@ -1,6 +1,5 @@
 import BigNumber from 'bignumber.js'
 import { forEach } from 'promised-loops'
-import { find } from 'lodash'
 import { FARM_GRAIN_TOKEN_SYMBOL, FARM_TOKEN_SYMBOL, FARM_WETH_TOKEN_SYMBOL } from '../../constants'
 
 export const calculateTotalValueDeposited = async vaults => {

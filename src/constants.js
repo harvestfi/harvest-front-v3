@@ -365,8 +365,8 @@ export const FAQ_ITEMS_SECOND = [
       <>
         Interacting with our farms, whether depositing or withdrawing, comes with network fees.
         Depending on network congestion, the fees can be temporarily higher than usual. We suggest
-        coming back later for lower fees​. (Tip: Sundays are usually low in network activity
-        compared to the rest of the weekdays)
+        coming back later for lower fees. (Tip: Sundays are usually low in network activity compared
+        to the rest of the weekdays)
       </>
     ),
   },

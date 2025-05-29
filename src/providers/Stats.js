@@ -1,9 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react'
-import BigNumber from 'bignumber.js'
 import axios from 'axios'
 import { find, get } from 'lodash'
 import { useContracts } from './Contracts'
-import { getTotalFARMSupply } from '../utilities/parsers'
 import {
   REVENUE_MONTHLY_API_ENDPOINT,
   SPECIAL_VAULTS,
