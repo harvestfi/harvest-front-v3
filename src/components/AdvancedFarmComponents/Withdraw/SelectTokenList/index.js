@@ -271,7 +271,7 @@ const SelectTokenList = ({
               <Label
                 $fontcolor={fontColor}
                 $padding="15px 24px 0px"
-                showLabel={curSupportedVault ? 'block' : 'none'}
+                $showlabel={curSupportedVault ? 'block' : 'none'}
               >
                 Other supported tokens, which you can revert to{' '}
               </Label>

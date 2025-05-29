@@ -10,7 +10,6 @@ import {
 import { useVaults } from '../../../../providers/Vault'
 import { fromWei } from '../../../../services/web3'
 import { formatNumber, parseValue } from '../../../../utilities/formats'
-import { getUserVaultBalance } from '../../../../utilities/parsers'
 import AnimatedDots from '../../../AnimatedDots'
 import { useWallet } from '../../../../providers/Wallet'
 import { useContracts } from '../../../../providers/Contracts'
@@ -31,7 +30,7 @@ const VaultUserBalance = ({
 }) => {
   const { vaultsData, farmingBalances } = useVaults()
   const { contracts } = useContracts()
-  const { account, connected, balances } = useWallet()
+  const { account, connected } = useWallet()
   const { userStats } = usePools()
   const [userVaultBalance, setUserVaultBalance] = useState(null)
   const { rates } = useRate()
@@ -45,64 +44,31 @@ const VaultUserBalance = ({
     }
   }, [rates])
 
-  const tokenDecimals = useIFARM
-    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0)
-    : token.decimals
-  const tempPricePerFullShare = useIFARM
-    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
-    : get(token, `pricePerFullShare`, 0)
-  const pricePerFullShare = fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals)
-
   useEffect(() => {
-    let iFARMBalance
     const getBalance = async () => {
+      let bal
       if (tokenSymbol === FARM_TOKEN_SYMBOL) {
-        iFARMBalance = get(balances, IFARM_TOKEN_SYMBOL, 0)
-      }
-
-      const totalStaked = get(userStats, `[${get(vaultPool, 'id')}]['totalStaked']`, 0)
-      if (token.isIPORVault && account) {
-        const vaultContract = contracts.iporVaults[token.id]
-        const vaultBalance = await vaultContract.methods.getBalanceOf(
-          vaultContract.instance,
-          account,
-        )
-        const AssetBalance = await vaultContract.methods.convertToAssets(
-          vaultContract.instance,
-          vaultBalance,
-        )
-
-        setUserVaultBalance(AssetBalance)
+        if (userStats['profit-sharing-farm']) {
+          bal = new BigNumber(userStats['profit-sharing-farm']['lpTokenBalance'])
+            .times(get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0))
+            .div(1e18)
+            .toFixed()
+        } else {
+          bal = 0
+        }
       } else {
-        setUserVaultBalance(
-          getUserVaultBalance(tokenSymbol, farmingBalances, totalStaked, iFARMBalance),
-        )
+        bal = farmingBalances[tokenSymbol]
       }
+      setUserVaultBalance(bal)
     }
 
+    console.log(tokenSymbol, userVaultBalance)
+
     getBalance()
-  }, [
-    vaultsData,
-    tokenSymbol,
-    vaultPool,
-    userStats,
-    farmingBalances,
-    balances,
-    account,
-    contracts.iporVaults,
-    token,
-  ])
+  }, [vaultsData, token, tokenSymbol, farmingBalances, account, userStats])
 
   const isLoadingUserBalance =
-    loadedVault === false ||
-    loadingFarmingBalance ||
-    (isSpecialVault
-      ? connected &&
-        (!token.data ||
-          !get(userStats, `[${token.data.id}]['totalStaked']`) ||
-          (token.data.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID &&
-            !balances[IFARM_TOKEN_SYMBOL]))
-      : userVaultBalance === false)
+    loadedVault === false || loadingFarmingBalance || userVaultBalance === false
 
   return (
     <Monospace
@@ -118,31 +84,19 @@ const VaultUserBalance = ({
       ) : (
         <>
           {currencySym}
-          {multipleAssets
-            ? `${formatNumber(
-                new BigNumber(fromWei(parseValue(userVaultBalance), token.decimals, MAX_DECIMALS))
-                  .multipliedBy(token.usdPrice || 1)
-                  .multipliedBy(new BigNumber(currencyRate))
-                  .toString(),
-                2,
-              )}`
-            : formatNumber(
-                new BigNumber(
-                  fromWei(
-                    parseValue(userVaultBalance),
-                    isSpecialVault ? get(token, 'data.watchAsset.decimals', 18) : token.decimals,
-                    MAX_DECIMALS,
-                  ),
-                )
-                  .multipliedBy(
-                    (tokenSymbol === FARM_TOKEN_SYMBOL
-                      ? token.data.lpTokenData.price * pricePerFullShare
-                      : token.usdPrice) || 1,
-                  )
-                  .multipliedBy(new BigNumber(currencyRate))
-                  .toString(),
-                2,
-              )}
+          {`${formatNumber(
+            new BigNumber(
+              fromWei(
+                parseValue(userVaultBalance),
+                isSpecialVault ? 18 : token.decimals,
+                MAX_DECIMALS,
+              ),
+            )
+              .multipliedBy((isSpecialVault ? token.data.lpTokenData.price : token.usdPrice) || 1)
+              .multipliedBy(new BigNumber(currencyRate))
+              .toString(),
+            2,
+          )}`}
         </>
       )}
     </Monospace>

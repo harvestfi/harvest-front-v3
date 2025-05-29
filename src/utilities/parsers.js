@@ -38,28 +38,6 @@ export const getNextEmissionsCutDate = () => {
   return result
 }
 
-export const getUserVaultBalance = (
-  tokenSymbol,
-  farmingBalances,
-  totalStakedInPool,
-  iFARMBalance,
-) => {
-  switch (tokenSymbol) {
-    case FARM_TOKEN_SYMBOL:
-      // return new BigNumber(totalStakedInPool).plus(iFARMBalance).toString()
-      return iFARMBalance.toString()
-    case FARM_WETH_TOKEN_SYMBOL:
-    case FARM_GRAIN_TOKEN_SYMBOL:
-      return totalStakedInPool
-    default:
-      return farmingBalances[tokenSymbol]
-        ? farmingBalances[tokenSymbol] === 'error'
-          ? false
-          : farmingBalances[tokenSymbol]
-        : '0'
-  }
-}
-
 export const getUserVaultBalanceInDetail = (tokenSymbol, totalStakedInPool, iFARMinFARM) => {
   switch (tokenSymbol) {
     case FARM_TOKEN_SYMBOL:
@@ -70,33 +48,14 @@ export const getUserVaultBalanceInDetail = (tokenSymbol, totalStakedInPool, iFAR
 }
 
 export const getVaultValue = token => {
-  if (token.isIPORVault) {
-    if (token.totalValueLocked) {
-      return new BigNumber(get(token, 'totalValueLocked', 0))
-    }
-    return new BigNumber(0)
-  }
   const poolId = get(token, 'data.id')
 
   switch (poolId) {
-    case SPECIAL_VAULTS.FARM_WETH_POOL_ID:
-      return get(token, 'data.lpTokenData.liquidity')
     case SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID: {
-      if (!get(token, 'data.lpTokenData.price')) {
-        return null
-      }
-
-      return new BigNumber(get(token, 'data.totalValueLocked', 0))
+      return new BigNumber(get(token, 'data.totalValueLocked', 0)).toString()
     }
-    case SPECIAL_VAULTS.FARM_GRAIN_POOL_ID:
-    case SPECIAL_VAULTS.FARM_USDC_POOL_ID:
-      return get(token, 'data.totalValueLocked')
     default:
-      return token.usdPrice
-        ? new BigNumber(token.underlyingBalanceWithInvestment?.toString())
-            .times(token.usdPrice)
-            .dividedBy(new BigNumber(10).pow(token.decimals))
-        : null
+      return new BigNumber(get(token, 'totalValueLocked', 0))
   }
 }
 
@@ -114,31 +73,14 @@ export const getTotalApy = (vaultPool, token, isSpecialVault) => {
     }
     return Number.isNaN(Number(token.profitShareAPY)) ? 0 : Number(token.profitShareAPY).toFixed(2)
   }
-  // if(token === undefined) {
-  //   return 0;
-  // }
-  let farmAPY = token.hideFarmApy
-      ? sumBy(
-          vaultPool.rewardAPY.filter((_, index) => index !== 0),
-          apy => Number(apy),
-        )
-      : get(vaultData, 'totalRewardAPY', 0),
+  let farmAPY = get(vaultData, 'totalRewardAPY', 0),
     total
 
   const tradingAPY = get(vaultData, 'tradingApy', 0)
   const estimatedApy = get(token, 'estimatedApy', 0)
-  const boostedEstimatedApy = get(token, 'boostedEstimatedAPY', 0)
   const boostedRewardApy = get(vaultData, 'boostedRewardAPY', 0)
 
-  if (new BigNumber(farmAPY).gte(MAX_APY_DISPLAY)) {
-    farmAPY = MAX_APY_DISPLAY
-  }
-
-  total = new BigNumber(tradingAPY).plus(
-    token.fullBuyback && new BigNumber(boostedEstimatedApy).gt(0)
-      ? boostedEstimatedApy
-      : estimatedApy,
-  )
+  total = new BigNumber(tradingAPY).plus(estimatedApy)
 
   if (new BigNumber(farmAPY).gt(0)) {
     if (new BigNumber(boostedRewardApy).gt(0)) {
@@ -150,6 +92,10 @@ export const getTotalApy = (vaultPool, token, isSpecialVault) => {
     } else {
       total = total.plus(farmAPY)
     }
+  }
+
+  if (new BigNumber(total).gte(MAX_APY_DISPLAY)) {
+    total = MAX_APY_DISPLAY
   }
 
   if (total.isNaN()) {

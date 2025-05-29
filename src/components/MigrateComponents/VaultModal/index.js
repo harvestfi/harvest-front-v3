@@ -455,15 +455,6 @@ const VaultModal = ({
               supList.unshift(directInBalance)
               supList[0].default = true
             } else {
-              // const web3Client = await getWeb3(chain, null)
-              // const { getSymbol } = tokenMethods
-              // const lpInstance = await newContractInstance(
-              //   id,
-              //   tokenAddress,
-              //   tokenContract.abi,
-              //   web3Client,
-              // )
-              // const lpSymbol = await getSymbol(lpInstance)
               const direct = {
                 symbol: 'lpSymbol',
                 address: tokenAddress,

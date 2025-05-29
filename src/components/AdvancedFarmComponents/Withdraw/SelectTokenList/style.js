@@ -106,9 +106,9 @@ const Label = styled.div`
   font-weight: 400;
   line-height: 18.972px;
   ${props =>
-    props.showLabel
+    props.$showlabel
       ? `
-        display: ${props.showLabel};
+        display: ${props.$showlabel};
       `
       : ``}
   ${props =>

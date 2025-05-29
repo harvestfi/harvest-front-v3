@@ -113,7 +113,7 @@ const ApexChart = ({ chainName, token, loadComplete, aotData, dataKeys, iporHvau
   return (
     <>
       {isDataReady === 'true' ? (
-        <ChartWrapper bgColorChart={bgColorChart}>
+        <ChartWrapper $bgcolorchart={bgColorChart}>
           <ResponsiveContainer width="100%" height={onlyWidth > 1291 ? 346 : 365}>
             <AreaChart
               data={dataPoints}

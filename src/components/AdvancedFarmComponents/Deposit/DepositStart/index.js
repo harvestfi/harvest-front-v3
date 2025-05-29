@@ -720,7 +720,7 @@ const DepositStart = ({
               {!startSpinner ? (
                 <></>
               ) : (
-                <Spinner as="span" animation="border" $size="sm" role="status" aria-hidden="true" />
+                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" />
               )}
             </Buttons>
           </NewLabel>

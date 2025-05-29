@@ -4,7 +4,6 @@ import axios from 'axios'
 import { find, get } from 'lodash'
 import { useContracts } from './Contracts'
 import { getTotalFARMSupply } from '../utilities/parsers'
-import { getFarmPriceFromUniswap } from '../data/utils'
 import {
   REVENUE_MONTHLY_API_ENDPOINT,
   SPECIAL_VAULTS,
@@ -27,8 +26,6 @@ const fetchDataFromAPI = (endpoint, defaultValue = null) =>
 
 const StatsProvider = ({ children }) => {
   const [stats, setStats] = useState({
-    farmPrice: null,
-    farmMarketCap: null,
     monthlyProfit: null,
     totalValueLocked: null,
     profitShareAPY: null,
@@ -55,9 +52,6 @@ const StatsProvider = ({ children }) => {
         const monthlyProfit = await fetchDataFromAPI(REVENUE_MONTHLY_API_ENDPOINT)
         const totalValueLocked = await fetchDataFromAPI(TVL_API_ENDPOINT)
 
-        const farmTotalSupply = getTotalFARMSupply()
-        const farmPrice = await getFarmPriceFromUniswap()
-
         const historicalAverageProfitSharingAPY = get(
           tokensStatsApiResponse,
           'historicalAverageProfitSharingAPY',
@@ -75,8 +69,6 @@ const StatsProvider = ({ children }) => {
         }
 
         setStats({
-          farmPrice,
-          farmMarketCap: new BigNumber(farmTotalSupply).times(farmPrice).toString(),
           monthlyProfit,
           totalValueLocked,
           profitShareAPY,

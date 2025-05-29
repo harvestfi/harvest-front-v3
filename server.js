@@ -45,19 +45,11 @@ app.use('/manifest.json', (req, res, next) => {
   next()
 })
 
-// Serve static assets (no fall‑through so 404 for missing files)
-app.use(express.static(builtDirectory, { fallthrough: false }))
+app.use(express.static(builtDirectory))
 
 // SPA fallback: always return index.html
 app.get('/{*splat}', async (req, res) => {
   await res.sendFile(path.join(builtDirectory, 'index.html'))
-})
-
-// Central error handler — catches rejections from async handlers automatically (v5)
-app.use((err, req, res, next) => {
-  console.error(err)
-  if (res.headersSent) return next(err)
-  res.status(500).send('Internal Server Error')
 })
 
 app.listen(PORT, () => {

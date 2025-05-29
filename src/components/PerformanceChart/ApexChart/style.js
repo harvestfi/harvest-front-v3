@@ -7,8 +7,8 @@ const ChartWrapper = styled.div`
     .recharts-wrapper {
       .recharts-reference-area {
         path {
-          stroke: ${props => props.bgColorChart};
-          fill: ${props => props.bgColorChart};
+          stroke: ${props => props.$bgcolorchart};
+          fill: ${props => props.$bgcolorchart};
         }
       }
     }

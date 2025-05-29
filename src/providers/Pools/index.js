@@ -394,8 +394,8 @@ const PoolsProvider = _ref => {
 
             if (new BigNumber(AssetBalance).gt(0)) {
               stats[vaultId] = {
-                lpTokenBalance: 0,
-                totalStaked: AssetBalance,
+                lpTokenBalance: AssetBalance,
+                totalStaked: 0,
               }
             }
           }

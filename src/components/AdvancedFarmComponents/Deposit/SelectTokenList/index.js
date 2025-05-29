@@ -282,7 +282,7 @@ const SelectTokenList = ({
               <Label
                 $fontcolor={fontColor}
                 $padding="15px 24px 0px"
-                showLabel={curSupportedVault ? 'block' : 'none'}
+                $showlabel={curSupportedVault ? 'block' : 'none'}
               >
                 {curSupportedVault
                   ? `Other supported convert tokens, which you don't have on your wallet`

@@ -204,7 +204,7 @@ const Autopilot = () => {
   const handleNetworkChange = selectedChain => {
     setCurChain(selectedChain)
     setIsManualSelection(true)
-    history.push(`/autopilot/${selectedChain.name}`)
+    history(`/autopilot/${selectedChain.name}`)
   }
 
   return (

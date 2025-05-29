@@ -554,7 +554,7 @@ const ApexChart = ({
   return (
     <>
       {isDataReady === 'true' ? (
-        <ChartWrapper bgColorChart={bgColorChart}>
+        <ChartWrapper $bgcolorchart={bgColorChart}>
           <ResponsiveContainer width="100%" height={onlyWidth > 1291 ? 346 : 365}>
             <ComposedChart
               data={mainSeries}

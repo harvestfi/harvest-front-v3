@@ -1539,9 +1539,9 @@ const AdvancedFarm = () => {
                 $fontcolor={fontColor}
                 onClick={() => {
                   if (isFromEarningPage) {
-                    history.push(ROUTES.PORTFOLIO)
+                    history(ROUTES.PORTFOLIO)
                   } else {
-                    history.push(`${ROUTES.ADVANCED}${location.search}`)
+                    history(`${ROUTES.ADVANCED}${location.search}`)
                   }
                 }}
               >
