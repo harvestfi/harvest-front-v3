@@ -5,6 +5,27 @@ import { fromWei } from '../../../services/web3'
 import { getMultipleVaultHistories, getIPORVaultHistories } from '../../../utilities/apiCalls'
 import { ChartDiv, Container, Header, Total, TokenSymbol, TooltipInfo, FlexDiv } from './style'
 
+/* eslint-disable camelcase */
+const vaultAdded = {
+  morphoION_USDC: 1746057600,
+  morphoMW_USDC: 1747958400,
+  morphoGC_USDC: 1746921600,
+  morphoSE_USDC: 1747440000,
+  morphoGP_USDC: 1746316800,
+  morphoSH_USDC: 1746662400,
+  morphoSPK_USDC: 1746316800,
+  euler_USDC_AR: 1746520200,
+  arcadia_USDC: 1746520200,
+  fortyAcres_USDC: 1748595000,
+  morpho_AR_USDC: 1748595000,
+  morpho_UN_USDC: 1748595000,
+  morpho_YOG_USDC: 1748595000,
+  arcadia_ETH: 1746520200,
+  morphoSH_ETH: 1747612800,
+  morphoMW_cbBTC: 1747180800,
+  arcadia_cbBTC: 1746520200,
+}
+
 const { tokens } = require('../../../data')
 
 const SharePricesData = ({ chainName, token, setSharePricesData, iporHvaultsLFAPY }) => {
@@ -34,10 +55,12 @@ const SharePricesData = ({ chainName, token, setSharePricesData, iporHvaultsLFAP
     const adjustTimestamps = (sharepriceData, id) => {
       const referenceTimestamps = sharepriceData[id]
         .map(entry => entry.timestamp)
-        .filter(timestamp => timestamp > 1742911200)
+        .filter(timestamp => timestamp > 1746057600)
 
       Object.keys(sharepriceData).forEach(key => {
-        const targetEntries = sharepriceData[key],
+        const targetEntries = sharepriceData[key].filter(
+            entry => Number(entry.timestamp) > (vaultAdded[key] ? vaultAdded[key] : 1746057600),
+          ),
           adjustedEntries = []
 
         let targetIndex = 0
@@ -104,7 +127,7 @@ const SharePricesData = ({ chainName, token, setSharePricesData, iporHvaultsLFAP
             const addresses = vaults.map(vault => vault.address)
             const { vaultHData, vaultHFlag } = await getMultipleVaultHistories(
               addresses,
-              '1742911200',
+              '1746057600',
               chainId,
             )
 
