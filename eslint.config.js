@@ -5,9 +5,11 @@ import jsxA11y from 'eslint-plugin-jsx-a11y'
 import prettier from 'eslint-plugin-prettier'
 import globals from 'globals'
 import babelParser from '@babel/eslint-parser'
+import importPlugin from 'eslint-plugin-import'
 
 export default [
   js.configs.recommended,
+  importPlugin.flatConfigs.recommended,
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
@@ -67,6 +69,8 @@ export default [
           caughtErrors: 'none',
         },
       ],
+      'import/no-unused-modules': 'warn',
+      'import/no-named-as-default': 'off',
     },
     settings: {
       react: {
