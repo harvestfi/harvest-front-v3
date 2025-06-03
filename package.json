@@ -7,6 +7,7 @@
     "yarn": "1.22.x"
   },
   "dependencies": {
+    "@binance/w3w-blocknative-connector": "^1.1.8-alpha.0",
     "@coinbase/wallet-sdk": "3.0.5",
     "@fontsource/dm-sans": "^4.5.8",
     "@fontsource/manrope": "^4.5.12",
