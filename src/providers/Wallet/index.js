@@ -225,13 +225,8 @@ const WalletProvider = _ref => {
           selectedTokens
             .filter(token => !isArray(tokens[token].tokenAddress))
             .map(async token => {
-              const { methods, instance } = tokens[token].isIPORVault
-                ? contracts.iporVaults[token]
-                : contracts[token]
-              const vaultAddress =
-                token === IFARM_TOKEN_SYMBOL
-                  ? tokens[token].tokenAddress
-                  : tokens[token].vaultAddress
+              const { methods, instance } = contracts[token]
+              const vaultAddress = tokens[token].vaultAddress
               const currAssetBalance = balances[token]
               const newAssetBalance = await tokenMethods.getBalance(account, instance)
 

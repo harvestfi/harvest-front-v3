@@ -1,9 +1,10 @@
+import BigNumber from 'bignumber.js'
 import React, { useState, useMemo } from 'react'
 import { find, get, keys, orderBy, sortBy } from 'lodash'
 import move from 'lodash-move'
 import { CHAIN_IDS } from '../../data/constants'
 import { isSpecialApp } from '../../utilities/formats'
-import { getVaultValue, getTotalApy } from '../../utilities/parsers'
+import { getTotalApy } from '../../utilities/parsers'
 import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, SPECIAL_VAULTS } from '../../constants'
 import { useVaults } from '../../providers/Vault'
 import { usePools } from '../../providers/Pools'
@@ -55,7 +56,11 @@ const formatVaults = (groupOfVaults, chainId) => {
         (groupOfVaults[tokenSymbol]?.data && chainId === groupOfVaults[tokenSymbol]?.data.chain)) &&
       !groupOfVaults[tokenSymbol].inactive,
   )
-  vaultsSymbol = orderBy(vaultsSymbol, v => Number(getVaultValue(groupOfVaults[v])), 'desc')
+  vaultsSymbol = orderBy(
+    vaultsSymbol,
+    v => Number(new BigNumber(get(groupOfVaults[v], 'totalValueLocked', 0))),
+    'desc',
+  )
 
   vaultsSymbol = [...new Set(vaultsSymbol)].slice(0, 10)
   return vaultsSymbol
@@ -137,7 +142,7 @@ const Charts = () => {
             )
           }
 
-          const vaultValue = getVaultValue(token)
+          const vaultValue = new BigNumber(get(token, 'totalValueLocked', 0))
           const totalApy = isSpecialVault
             ? getTotalApy(null, token, true)
             : getTotalApy(vaultPool, tokenVault)
@@ -180,7 +185,7 @@ const Charts = () => {
             )
           }
 
-          const vaultValue = getVaultValue(token)
+          const vaultValue = new BigNumber(get(token, 'totalValueLocked', 0))
           const totalApy = isSpecialVault
             ? getTotalApy(null, token, true)
             : getTotalApy(vaultPool, tokenVault)
@@ -223,7 +228,7 @@ const Charts = () => {
             )
           }
 
-          const vaultValue = getVaultValue(token)
+          const vaultValue = new BigNumber(get(token, 'totalValueLocked', 0))
           const totalApy = isSpecialVault
             ? getTotalApy(null, token, true)
             : getTotalApy(vaultPool, tokenVault)
@@ -266,7 +271,7 @@ const Charts = () => {
             )
           }
 
-          const vaultValue = getVaultValue(token)
+          const vaultValue = new BigNumber(get(token, 'totalValueLocked', 0))
           const totalApy = isSpecialVault
             ? getTotalApy(null, token, true)
             : getTotalApy(vaultPool, tokenVault)

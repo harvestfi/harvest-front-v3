@@ -43,7 +43,7 @@ const StakeStart = ({
   setInputAmount,
   token,
   tokenSymbol,
-  fAssetPool,
+  vaultPool,
   lpTokenApprovedBalance,
   setPendingAction,
   multipleAssets,
@@ -80,7 +80,7 @@ const StakeStart = ({
       setStakeFailed(false)
       setProgressStep(1)
       setBtnName('Pending Approval in Wallet')
-      const stakeAmount = toWei(inputAmount, fAssetPool.lpTokenData.decimals)
+      const stakeAmount = toWei(inputAmount, vaultPool.lpTokenData.decimals)
       try {
         await handleStakeApproval(
           token,
@@ -88,12 +88,12 @@ const StakeStart = ({
           tokenSymbol,
           stakeAmount,
           lpTokenApprovedBalance,
-          fAssetPool,
+          vaultPool,
           contracts,
           setPendingAction,
           multipleAssets,
           async () => {
-            await fetchUserPoolStats([fAssetPool], account, userStats)
+            await fetchUserPoolStats([vaultPool], account, userStats)
             bStakeApprovalSuccess = true
           },
           () => {
@@ -127,19 +127,19 @@ const StakeStart = ({
       setProgressStep(3)
       setBtnName('Pending Confirmation in Wallet')
       let bStakeSuccess = false
-      const stakeAmount = toWei(inputAmount, fAssetPool.lpTokenData.decimals)
+      const stakeAmount = toWei(inputAmount, vaultPool.lpTokenData.decimals)
       try {
         await handleStakeTransaction(
           account,
           tokenSymbol,
           stakeAmount,
-          fAssetPool,
+          vaultPool,
           contracts,
           setPendingAction,
           multipleAssets,
           async () => {
             setLoadingDots(false, true)
-            await fetchUserPoolStats([fAssetPool], account, userStats)
+            await fetchUserPoolStats([vaultPool], account, userStats)
             await getWalletBalances([tokenSymbol], false, true)
             setLoadingDots(false, false)
             bStakeSuccess = true
@@ -365,7 +365,7 @@ const StakeStart = ({
                   <Spinner
                     as="span"
                     animation="border"
-                    $size="sm"
+                    size="sm"
                     role="status"
                     aria-hidden="true"
                   />

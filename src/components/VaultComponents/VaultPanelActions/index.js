@@ -50,7 +50,7 @@ const VaultPanelActions = ({
   isSpecialVault,
   multipleAssets,
   withdrawMode,
-  fAssetPool,
+  vaultPool,
   loadingBalances,
   ...props
 }) => {
@@ -68,12 +68,12 @@ const VaultPanelActions = ({
 
   const ratesPerDay = []
 
-  if (fAssetPool) {
+  if (vaultPool) {
     const [, selectedToken] = find(Object.entries(tokens), ([, tokenValues]) =>
-      fAssetPool.rewardTokens.includes(tokenValues.tokenAddress),
+      vaultPool.rewardTokens.includes(tokenValues.tokenAddress),
     )
-    if (fAssetPool.rewardAPY !== null) {
-      fAssetPool.rewardAPY.forEach(rewardApy => {
+    if (vaultPool.rewardAPY !== null) {
+      vaultPool.rewardAPY.forEach(rewardApy => {
         const ratePerDay = new BigNumber(rewardApy).dividedBy(365).dividedBy(100)
         ratesPerDay.push(
           isNaN(ratePerDay.toNumber()) ? 0 : ratePerDay.gte(1) ? 1 : ratePerDay.toFixed(),
@@ -82,13 +82,13 @@ const VaultPanelActions = ({
     }
 
     totalTokensEarned = fromWei(
-      get(userStats, `[${fAssetPool.id}]['totalRewardsEarned']`, 0),
+      get(userStats, `[${vaultPool.id}]['totalRewardsEarned']`, 0),
       selectedToken.decimals,
       4,
     )
   }
 
-  if (fAssetPool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
+  if (vaultPool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
     iFARMBalance = get(balances, IFARM_TOKEN_SYMBOL, 0)
     iFARMBalanceToEther = fromWei(
       get(balances, IFARM_TOKEN_SYMBOL, 0),
@@ -116,7 +116,7 @@ const VaultPanelActions = ({
         const userBalanceInVault = new BigNumber(
           await tokenMethods.getBalance(account, vaultsData[tokenSymbol].instance),
         )
-        const userBalanceInPool = await poolMethods.balanceOf(account, fAssetPool.contractInstance)
+        const userBalanceInPool = await poolMethods.balanceOf(account, vaultPool.contractInstance)
         const totalBalance = userBalanceInVault.plus(userBalanceInPool)
 
         const vaultStrategyAddress = await vaultMethods.getStrategy(
@@ -147,7 +147,7 @@ const VaultPanelActions = ({
         setRewardsEarned(mainRewardsEarned)
       }
     },
-    [account, tokenSymbol, vaultsData, fAssetPool.contractInstance],
+    [account, tokenSymbol, vaultsData, vaultPool.contractInstance],
   )
 
   const hodlVaultId = get(vaultsData, `[${tokenSymbol}].hodlVaultId`)
@@ -160,8 +160,8 @@ const VaultPanelActions = ({
         ? find(pools, selectedPool => selectedPool.collateralAddress === hodlVaultData.vaultAddress)
         : {}
 
-      const mainRewardsEarned = get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`)
-      const mainRewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
+      const mainRewardsEarned = get(userStats, `[${get(vaultPool, 'id')}].rewardsEarned`)
+      const mainRewardTokenSymbols = get(vaultPool, 'rewardTokenSymbols', [])
       const hodlRewardTokenSymbols = get(hodlPool, 'rewardTokenSymbols', [])
 
       setRewardTokenSymbols([...mainRewardTokenSymbols, ...hodlRewardTokenSymbols])
@@ -174,7 +174,7 @@ const VaultPanelActions = ({
     }
 
     fetchRewards()
-  }, [hodlVaultId, userStats, fAssetPool, pools, vaultsData, getRewardsEarned, setLoadingRewards])
+  }, [hodlVaultId, userStats, vaultPool, pools, vaultsData, getRewardsEarned, setLoadingRewards])
 
   const amountsToExecuteInWei = amountsToExecute.map((amount, amountIdx) => {
     if (isEmpty(amount)) {
@@ -191,7 +191,7 @@ const VaultPanelActions = ({
     return toWei(amount, isSpecialVault ? tokenDecimals : token.decimals)
   })
 
-  const isLoadingData = loadingBalances || loadingRewards || !fAssetPool.loaded
+  const isLoadingData = loadingBalances || loadingRewards || !vaultPool.loaded
 
   const componentsProps = {
     token,
@@ -199,7 +199,7 @@ const VaultPanelActions = ({
     multipleAssets,
     withdrawMode,
     isLoadingData,
-    fAssetPool,
+    vaultPool,
     tokenSymbol,
     rewardsEarned,
     rewardTokenSymbols,

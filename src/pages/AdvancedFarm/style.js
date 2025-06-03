@@ -1242,7 +1242,7 @@ const ChainBack = styled.div`
 const MainTag = styled.div`
   display: flex;
   justify-content: center;
-  width: ${props => (props.$useifarm ? '33%' : '25%')};
+  width: ${props => (props.$threetabs ? '33%' : '25%')};
   padding: 12px 0px;
   align-items: center;
   font-size: 14px;
@@ -1282,21 +1282,17 @@ const MainTag = styled.div`
     ${props => props.$active === 'true' && `border-radius: 0px 8px 0px 0px;`}
   }
 
-  &:nth-child(2) {
-    display: ${props => (props.$useifarm ? 'none' : 'flex')};
-  }
-
   &:nth-child(3) {
-    width: ${props => (props.$useifarm ? '34%' : '25%')};
+    width: ${props => (props.$threetabs ? '34%' : '25%')};
   }
 
   @media screen and (max-width: 992px) {
-    width: ${props => (props.$useifarm ? '33%' : props.$active === 'true' ? '40%' : '20%')};
+    width: ${props => (props.$threetabs ? '33%' : props.$active === 'true' ? '40%' : '20%')};
     &:nth-child(2) {
-      width: ${props => (props.$useifarm ? '34%' : props.$active === 'true' ? '40%' : '20%')};
+      width: ${props => (props.$threetabs ? '34%' : props.$active === 'true' ? '40%' : '20%')};
     }
     &:nth-child(3) {
-      width: ${props => (props.$useifarm ? '33%' : props.$active === 'true' ? '40%' : '20%')};
+      width: ${props => (props.$threetabs ? '33%' : props.$active === 'true' ? '40%' : '20%')};
     }
   }
 

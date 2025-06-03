@@ -25,7 +25,7 @@ import { Divider } from '../../GlobalStyle'
 const VaultHeadActions = ({
   token,
   tokenSymbol,
-  fAssetPool,
+  vaultPool,
   amountsToExecuteInWei,
   withdrawMode,
   pendingAction,
@@ -52,8 +52,8 @@ const VaultHeadActions = ({
   const [selectedAsset, selectAsset] = useState(!token.isSingleAssetWithdrawalAllowed ? -1 : 0)
 
   const userBalance = balances[tokenSymbol]
-  const lpTokenBalance = get(userStats, `[${fAssetPool.id}]['lpTokenBalance']`, 0)
-  const totalStaked = get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)
+  const lpTokenBalance = get(userStats, `[${vaultPool.id}]['lpTokenBalance']`, 0)
+  const totalStaked = get(userStats, `[${vaultPool.id}]['totalStaked']`, 0)
 
   let capDisabled = false
 
@@ -194,7 +194,7 @@ const VaultHeadActions = ({
                     setLoadingDots(true, true)
 
                     await getWalletBalances(walletBalancesToCheck)
-                    const updatedStats = await fetchUserPoolStats([fAssetPool], account, userStats)
+                    const updatedStats = await fetchUserPoolStats([vaultPool], account, userStats)
                     await getFarmingBalances([tokenSymbol], farmingBalances, updatedStats)
                     setLoadingDots(false, false)
 
@@ -205,7 +205,7 @@ const VaultHeadActions = ({
                         tokenSymbol,
                         updatedLpTokenBalance,
                         updatedLpTokenApprovedBalance,
-                        fAssetPool,
+                        vaultPool,
                         contracts,
                         setPendingAction,
                         multipleAssets,
@@ -213,14 +213,14 @@ const VaultHeadActions = ({
                           await getWalletBalances(walletBalancesToCheck, false, true)
                         },
                         async () => {
-                          await fetchUserPoolStats([fAssetPool], account, userStats)
+                          await fetchUserPoolStats([vaultPool], account, userStats)
                         },
                       )
                     }
 
                     setAmountsToExecute(['', ''])
                     setLoadingDots(true, true)
-                    await fetchUserPoolStats([fAssetPool], account, userStats)
+                    await fetchUserPoolStats([vaultPool], account, userStats)
                     setLoadingDots(false, false)
                   },
                   async () => {
@@ -285,13 +285,13 @@ const VaultHeadActions = ({
 
                     await handleExit(
                       account,
-                      fAssetPool,
+                      vaultPool,
                       shouldDoPartialUnstake,
                       amountToUnstake,
                       setPendingAction,
                       async () => {
                         autoUnstakeCompleted = true
-                        await fetchUserPoolStats([fAssetPool], account, userStats)
+                        await fetchUserPoolStats([vaultPool], account, userStats)
                         await getWalletBalances(walletBalancesToCheck, false, true)
                       },
                     )
@@ -312,7 +312,7 @@ const VaultHeadActions = ({
                         setAmountsToExecute(['', ''])
                         setLoadingDots(true, true)
                         const updatedStats = await fetchUserPoolStats(
-                          [fAssetPool],
+                          [vaultPool],
                           account,
                           userStats,
                         )

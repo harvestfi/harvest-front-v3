@@ -399,11 +399,11 @@ const ActionsProvider = ({ children }) => {
           // toast.success('Deposit completed')
 
           // if (autoStake) {
-          //   const { instance: lpTokenInstance } = fAssetPool.lpTokenData
+          //   const { instance: lpTokenInstance } = vaultPool.lpTokenData
           //   updatedLpTokenBalance = await tokenMethods.getBalance(account, lpTokenInstance)
           //   updatedLpTokenApprovedBalance = await tokenMethods.getApprovedAmount(
           //     account,
-          //     fAssetPool.contractAddress,
+          //     vaultPool.contractAddress,
           //     lpTokenInstance,
           //   )
           // } else {

@@ -11,7 +11,7 @@ import ButtonSwitch from './ButtonSwitch'
 const VaultPanelModeSwitch = ({
   token,
   tokenSymbol,
-  fAssetPool,
+  vaultPool,
   withdrawMode,
   loaded,
   pendingAction,
@@ -22,8 +22,8 @@ const VaultPanelModeSwitch = ({
   const { userStats } = usePools()
   const { vaultsData } = useVaults()
   const iFARMBalance = get(balances, IFARM_TOKEN_SYMBOL, 0)
-  const lpTokenBalance = get(userStats, `[${fAssetPool.id}]['lpTokenBalance']`, 0)
-  const totalStaked = get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)
+  const lpTokenBalance = get(userStats, `[${vaultPool.id}]['lpTokenBalance']`, 0)
+  const totalStaked = get(userStats, `[${vaultPool.id}]['totalStaked']`, 0)
 
   const isSpecialVault = token.liquidityPoolVault || token.poolVault
 

@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import { get, toArray } from 'lodash'
 import React, { useState, useEffect } from 'react'
-import { BEGINNERS_BALANCES_DECIMALS } from '../constants'
+import { USD_BALANCES_DECIMALS } from '../constants'
 import { fromWei } from '../services/web3'
 import { formatNumber } from '../utilities/formats'
 import { useRate } from '../providers/Rate'
@@ -74,7 +74,7 @@ const CounterUsdPrice = ({
               ? `<${currencySym}0.01`
               : `${currencySym}${formatNumber(
                   RewardUSDCase1 * Number(currencyRate),
-                  BEGINNERS_BALANCES_DECIMALS,
+                  USD_BALANCES_DECIMALS,
                 )}`}
           )
         </>
@@ -90,7 +90,7 @@ const CounterUsdPrice = ({
               ? `<${currencySym}0.01`
               : `${currencySym}${formatNumber(
                   RewardUSDCase2 * Number(currencyRate),
-                  BEGINNERS_BALANCES_DECIMALS,
+                  USD_BALANCES_DECIMALS,
                 )}`}
           )
         </>
@@ -106,7 +106,7 @@ const CounterUsdPrice = ({
               ? `<${currencySym}0.01`
               : `${currencySym}${formatNumber(
                   RewardUSDCase3 * Number(currencyRate),
-                  BEGINNERS_BALANCES_DECIMALS,
+                  USD_BALANCES_DECIMALS,
                 )}`}
           )
         </>

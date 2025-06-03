@@ -3,12 +3,7 @@ import { get, isEmpty, size as arraySize } from 'lodash'
 import { addresses } from '../data/index'
 import { CHAIN_IDS } from '../data/constants'
 import { displayAPY } from './formats'
-import {
-  FARM_TOKEN_SYMBOL,
-  IFARM_TOKEN_SYMBOL,
-  SPECIAL_VAULTS,
-  UNIV3_POOL_ID_REGEX,
-} from '../constants'
+import { FARM_TOKEN_SYMBOL, SPECIAL_VAULTS, UNIV3_POOL_ID_REGEX } from '../constants'
 
 const getRewardSymbol = (vault, isIFARM, vaultPool) => {
   switch (true) {
@@ -29,10 +24,9 @@ export const getAdvancedRewardText = (
   token,
   vaultPool,
   tradingApy,
-  farmAPY,
+  rewardApy,
   specialVaultApy,
   isSpecialVault,
-  boostedRewardAPY,
 ) => {
   const components = []
 
@@ -83,35 +77,10 @@ export const getAdvancedRewardText = (
       })
     }
 
-    const hasBoostedApy = new BigNumber(boostedRewardAPY).isGreaterThan(0)
-
-    if (hasBoostedApy) {
-      components.push(`
-      <div class="detail-box">
-        <div class="detail-box-main>
-          <div class="detail-icon">
-            <img src='/icons/ifarm.svg' width=24 height=24 alt="" />
-          </div>
-          <div class="detail-desc-no-width">
-            iFARM auto-compounding rewards
-          </div>
-        </div>
-        <div class="detail-apy">
-          ${displayAPY(boostedRewardAPY)}
-        </div>
-      </div>`)
-    }
-
-    if (Number(farmAPY) > 0) {
+    if (Number(rewardApy) > 0) {
       vaultPool.rewardTokenSymbols.forEach((symbol, symbolIdx) => {
-        const farmSymbols = [FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL]
-
-        if (token.hideFarmApy && farmSymbols.includes(symbol)) {
-          return
-        }
-
         if (
-          (!hasBoostedApy || !!symbolIdx) &&
+          !!symbolIdx &&
           new BigNumber(get(vaultPool, `rewardAPY[${symbolIdx}]`, 0)).isGreaterThan(0)
         ) {
           components.push(`
@@ -193,7 +162,7 @@ export const getAdvancedRewardText = (
     return tooltipText
   }
   if (vaultPool && vaultPool.id === 'fweth-farm') {
-    components.push(`<b>${displayAPY(farmAPY)}:</b> <b>FARM</b> rewards`)
+    components.push(`<b>${displayAPY(rewardApy)}:</b> <b>FARM</b> rewards`)
     if (Object.keys(get(vaultPool, 'vestingDescriptionOverride', [])).includes(FARM_TOKEN_SYMBOL)) {
       components.push(vaultPool.vestingDescriptionOverride[FARM_TOKEN_SYMBOL])
     }
@@ -291,7 +260,7 @@ export const getAdvancedRewardText = (
       }
     }
 
-    if (!token.hideFarmApy && Number(farmAPY) > 0) {
+    if (!token.hideFarmApy && Number(rewardApy) > 0) {
       let apyString = `<div class="detail-box">
       <div class="detail-box-main">
         <div class="detail-icon"><img src='/icons/${getRewardSymbol(
@@ -303,9 +272,7 @@ export const getAdvancedRewardText = (
         token,
         isIFARM,
         vaultPool,
-      )} rewards</div></div><div class="detail-apy">${
-        isIFARM || Number(boostedRewardAPY) > 0 ? displayAPY(boostedRewardAPY) : displayAPY(farmAPY)
-      }</div>`
+      )} rewards</div></div><div class="detail-apy">${displayAPY(rewardApy)}</div>`
 
       components.push(apyString)
     }

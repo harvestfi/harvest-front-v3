@@ -19,7 +19,7 @@ import {
 const VaultHeadActionsMigrate = ({
   token,
   tokenSymbol,
-  fAssetPool,
+  vaultPool,
   fAssetSymbol,
   pendingAction,
   setPendingAction,
@@ -142,7 +142,7 @@ const VaultHeadActionsMigrate = ({
             account,
             async () => {
               await getWalletBalances([tokenSymbol], false, true)
-              const updatedStats = await fetchUserPoolStats([fAssetPool], account, userStats)
+              const updatedStats = await fetchUserPoolStats([vaultPool], account, userStats)
               await getFarmingBalances([tokenSymbol], farmingBalances, updatedStats)
             },
             autoStake,

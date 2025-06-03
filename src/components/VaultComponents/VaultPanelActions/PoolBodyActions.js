@@ -48,7 +48,7 @@ const getStakeButtonText = action => {
 const PoolBodyActions = ({
   token,
   tokenSymbol,
-  fAssetPool,
+  vaultPool,
   lpTokenApprovedBalance,
   lpTokenBalance,
   setLoadingDots,
@@ -81,12 +81,12 @@ const PoolBodyActions = ({
   return (
     <SelectedVaultContainer $maxwidth="100%" $borderwidth="1px 0 0 0" $bordercolor={borderColor}>
       <Tooltip
-        id={`${fAssetPool.id}-unstaked-details`}
+        id={`${vaultPool.id}-unstaked-details`}
         backgroundColor="#fffce6"
         borderColor="black"
         border
         textColor="black"
-        disable={fAssetPool.id !== SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID}
+        disable={vaultPool.id !== SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID}
         clickable
         effect="solid"
         offset={{ top: -10 }}
@@ -106,9 +106,9 @@ const PoolBodyActions = ({
           !hodlVaultId &&
           rewardTokenSymbols.length > 1 &&
           ((account &&
-            Number(fAssetPool.rewardAPY[symbolIdx] || 0) === 0 &&
+            Number(vaultPool.rewardAPY[symbolIdx] || 0) === 0 &&
             new BigNumber(get(rewardsEarned, symbol, 0)).eq(0)) ||
-            (!account && Number(fAssetPool.rewardAPY[symbolIdx] || 0) === 0)) ? null : (
+            (!account && Number(vaultPool.rewardAPY[symbolIdx] || 0) === 0)) ? null : (
             <SelectedVault key={`${symbol}-rewards-earned`}>
               <SelectedVaultLabel>
                 Total <b>{symbol}</b> Earned
@@ -118,9 +118,9 @@ const PoolBodyActions = ({
                   {!connected ? (
                     formatNumber(0, 8)
                   ) : !isLoadingData &&
-                    get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`) ? (
+                    get(userStats, `[${get(vaultPool, 'id')}].rewardsEarned`) ? (
                     <Counter
-                      pool={fAssetPool}
+                      pool={vaultPool}
                       totalTokensEarned={
                         rewardTokenSymbols.length > 1
                           ? fromWei(
@@ -130,17 +130,17 @@ const PoolBodyActions = ({
                             )
                           : totalTokensEarned
                       }
-                      totalStaked={get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)}
+                      totalStaked={get(userStats, `[${vaultPool.id}]['totalStaked']`, 0)}
                       ratePerDay={get(ratesPerDay, symbolIdx, ratesPerDay[0])}
                       rewardPerToken={get(
-                        fAssetPool,
+                        vaultPool,
                         `rewardPerToken[${symbolIdx}]`,
-                        fAssetPool.rewardPerToken[0],
+                        vaultPool.rewardPerToken[0],
                       )}
                       rewardTokenAddress={get(
-                        fAssetPool,
+                        vaultPool,
                         `rewardTokens[${symbolIdx}]`,
-                        fAssetPool.rewardTokens[0],
+                        vaultPool.rewardTokens[0],
                       )}
                     />
                   ) : (
@@ -152,7 +152,7 @@ const PoolBodyActions = ({
           ),
         )
       ) : !hodlVaultId ? (
-        <SelectedVault data-tip="" data-for={`${fAssetPool.id}-unstaked-details`}>
+        <SelectedVault data-tip="" data-for={`${vaultPool.id}-unstaked-details`}>
           <SelectedVaultLabel $fontcolor={fontColor} $justifycontent="start">
             Your Unstaked <b>{fAssetSymbol}</b>
           </SelectedVaultLabel>
@@ -160,10 +160,10 @@ const PoolBodyActions = ({
             <Monospace>
               {!connected ? (
                 formatNumber(0, 8)
-              ) : !isLoadingData && get(userStats, `[${fAssetPool.id}]['lpTokenBalance']`) ? (
+              ) : !isLoadingData && get(userStats, `[${vaultPool.id}]['lpTokenBalance']`) ? (
                 fromWei(
-                  get(userStats, `[${fAssetPool.id}]['lpTokenBalance']`, 0),
-                  fAssetPool.lpTokenData.decimals,
+                  get(userStats, `[${vaultPool.id}]['lpTokenBalance']`, 0),
+                  vaultPool.lpTokenData.decimals,
                   POOL_BALANCES_DECIMALS,
                   true,
                 )
@@ -176,18 +176,18 @@ const PoolBodyActions = ({
       ) : null}
 
       <Tooltip
-        id={`${fAssetPool.id}-staked-details`}
+        id={`${vaultPool.id}-staked-details`}
         backgroundColor="#fffce6"
         borderColor="black"
         border
         textColor="black"
-        disable={fAssetPool.id !== SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID}
+        disable={vaultPool.id !== SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID}
       >
         <b>{FARM_TOKEN_SYMBOL}</b> staked directly into <b>Profit Sharing</b>
       </Tooltip>
       <SelectedVault
         data-tip=""
-        data-for={`${fAssetPool.id}-staked-details`}
+        data-for={`${vaultPool.id}-staked-details`}
         order={hodlVaultId ? 2 : 0}
       >
         <SelectedVaultLabel $fontcolor={fontColor}>Total Staked</SelectedVaultLabel>
@@ -195,20 +195,20 @@ const PoolBodyActions = ({
           <Monospace>
             {!connected ? (
               formatNumber(0, 8)
-            ) : !isLoadingData && get(userStats, `[${fAssetPool.id}]['totalStaked']`) ? (
-              fAssetPool.autoStakePoolAddress ? (
+            ) : !isLoadingData && get(userStats, `[${vaultPool.id}]['totalStaked']`) ? (
+              vaultPool.autoStakePoolAddress ? (
                 <Counter
-                  pool={fAssetPool}
+                  pool={vaultPool}
                   totalTokensEarned={totalTokensEarned}
-                  totalStaked={get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)}
+                  totalStaked={get(userStats, `[${vaultPool.id}]['totalStaked']`, 0)}
                   ratePerDay={ratesPerDay[0]}
-                  rewardPerToken={fAssetPool.rewardPerToken[0]}
-                  rewardTokenAddress={fAssetPool.rewardTokens[0]}
+                  rewardPerToken={vaultPool.rewardPerToken[0]}
+                  rewardTokenAddress={vaultPool.rewardTokens[0]}
                 />
               ) : (
                 fromWei(
-                  get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0),
-                  fAssetPool.lpTokenData.decimals,
+                  get(userStats, `[${vaultPool.id}]['totalStaked']`, 0),
+                  vaultPool.lpTokenData.decimals,
                   POOL_BALANCES_DECIMALS,
                   true,
                 )
@@ -233,19 +233,19 @@ const PoolBodyActions = ({
                 tokenSymbol,
                 lpTokenBalance,
                 lpTokenApprovedBalance,
-                fAssetPool,
+                vaultPool,
                 contracts,
                 setPendingAction,
                 multipleAssets,
                 async () => {
                   setAmountsToExecute(['', ''])
                   setLoadingDots(false, true)
-                  await fetchUserPoolStats([fAssetPool], account, userStats)
+                  await fetchUserPoolStats([vaultPool], account, userStats)
                   await getWalletBalances([tokenSymbol], false, true)
                   setLoadingDots(false, false)
                 },
                 async () => {
-                  await fetchUserPoolStats([fAssetPool], account, userStats)
+                  await fetchUserPoolStats([vaultPool], account, userStats)
                 },
               )
             }
@@ -259,7 +259,7 @@ const PoolBodyActions = ({
           </Button>
         </SelectedVault>
       )}
-      {fAssetPool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID ? (
+      {vaultPool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID ? (
         <>
           <Tooltip
             id="ifarm-details"

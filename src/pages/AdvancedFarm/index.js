@@ -23,7 +23,6 @@ import History from '../../assets/images/logos/beginners/history.svg'
 import Benchmark from '../../assets/images/logos/beginners/benchmark.svg'
 import TickIcon from '../../assets/images/logos/tick-icon.svg'
 import TickCross from '../../assets/images/logos/tick-cross.svg'
-import ARBball from '../../assets/images/chains/ARBball-lg.png'
 import BaseAutopilotUSDC from '../../assets/images/logos/advancedfarm/BaseAutopilotUSDC.svg'
 import BaseAutopilotcbBTC from '../../assets/images/logos/advancedfarm/BaseAutopilotcbBTC.svg'
 import BaseAutopilotwETH from '../../assets/images/logos/advancedfarm/BaseAutopilotwETH.svg'
@@ -53,20 +52,15 @@ import {
   FARM_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
   ROUTES,
-  SPECIAL_VAULTS,
-  BEGINNERS_BALANCES_DECIMALS,
+  USD_BALANCES_DECIMALS,
   POOL_BALANCES_DECIMALS,
   MAX_DECIMALS,
-  SOCIAL_LINKS,
   feeList,
   chainList,
-  boostedVaults,
   historyTags,
 } from '../../constants'
 import { fromWei, newContractInstance, getWeb3 } from '../../services/web3'
-import { addresses } from '../../data'
 import { usePools } from '../../providers/Pools'
-import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
@@ -81,8 +75,6 @@ import {
   showUsdValueCurrency,
 } from '../../utilities/formats'
 import {
-  getTotalApy,
-  getVaultValue,
   getChainName,
   handleToggle,
   getChainNamePortals,
@@ -94,7 +86,6 @@ import {
   getLastHarvestInfo,
   getTokenPriceFromApi,
   initBalanceAndDetailData,
-  fetchRewardToken,
   getIPORLastHarvestInfo,
 } from '../../utilities/apiCalls'
 import {
@@ -115,7 +106,6 @@ import {
   TopLogo,
   TopPart,
   MyBalance,
-  MyTotalReward,
   TotalRewardBox,
   GuideSection,
   GuidePart,
@@ -162,8 +152,6 @@ import {
   IconPart,
   TipTop,
   CrossDiv,
-  StakingInfo,
-  StakingInfoText,
   SwitchTabTag,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
@@ -206,7 +194,6 @@ const AdvancedFarm = () => {
   const { vaultsData, loadingVaults, allVaultsData } = useVaults()
   const { pools, userStats, fetchUserPoolStats } = usePools()
   const { connected, account, balances, getWalletBalances } = useWallet()
-  const { profitShareAPY } = useStats()
 
   const { tokens } = require('../../data')
 
@@ -215,12 +202,8 @@ const AdvancedFarm = () => {
 
   // Switch Tag (Convert/Revert)
   const [activeDepo, setActiveDepo] = useState(true)
-  const [showLatestEarnings, setShowLatestEarnings] = useState(true)
+  const [showLatestEarnings, setShowLatestEarnings] = useState(false)
   const [showApyHistory, setShowApyHistory] = useState(true)
-  const [isArbCampVault, setIsArbCampVault] = useState(false)
-  const [showGenomesVaultInfo, setShowGenomesVaultInfo] = useState(false)
-  const [showSeamlessVaultInfo, setShowSeamlessVaultInfo] = useState(false)
-  const [showGBVaultInfo, setShowGBVaultInfo] = useState(false)
   const [showIFARMInfo, setShowIFARMInfo] = useState(false)
   const [supportedVault, setSupportedVault] = useState(false)
   const [hasPortalsError, setHasPortalsError] = useState(true)
@@ -276,7 +259,6 @@ const AdvancedFarm = () => {
   const [supTokenNoBalanceList, setSupTokenNoBalanceList] = useState([])
   const [defaultToken, setDefaultToken] = useState(null)
   const [soonToSupList, setSoonToSupList] = useState([])
-  const [arbBalance, setArbBalance] = useState('0')
 
   const [vaultValue, setVaultValue] = useState(null)
   const [loadingFarmingBalance, setFarmingLoading] = useState(false)
@@ -315,7 +297,6 @@ const AdvancedFarm = () => {
   const [oneEightyDHarvest, setOneEightyDHarvest] = useState('')
   const [threeSixtyDHarvest, setThreeSixtyDHarvest] = useState('')
   const [harvestFrequency, setHarvestFrequency] = useState('')
-  const [rewardTokenData, setRewardTokenData] = useState()
   const [noRewardsData, setNoRewardsData] = useState(false)
 
   const { rates } = useRate()
@@ -323,25 +304,9 @@ const AdvancedFarm = () => {
   const [currencyName, setCurrencyName] = useState('USD')
   const [currencyRate, setCurrencyRate] = useState(1)
   const [showTip, setShowTip] = useState(true)
-  const [showStakingInfo, setShowStakingInfo] = useState(true)
-  const [isFarmToken, setIsFarmToken] = useState(false)
-  const [isReward, setIsReward] = useState(false)
-  const [noNeedStaking, setNoNeedStaking] = useState(false)
+  const [showRewardsTab, setShowRewardsTab] = useState(false)
   const [sharePricesData, setSharePricesData] = useState({})
   const [iporHvaultsLFAPY, setIPORHvaultsLFAPY] = useState({})
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const data = await fetchRewardToken()
-        setRewardTokenData(data)
-      } catch (error) {
-        console.error('Error fetching leaderboard data:', error)
-      }
-    }
-
-    getData()
-  }, [])
 
   useEffect(() => {
     if (rates.rateData) {
@@ -360,39 +325,8 @@ const AdvancedFarm = () => {
     getCoinList()
   }, [])
 
-  const farmProfitSharingPool = pools.find(
-    pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
-  )
-
-  const poolVaults = useMemo(
-    () => ({
-      [FARM_TOKEN_SYMBOL]: {
-        poolVault: true,
-        profitShareAPY,
-        data: farmProfitSharingPool,
-        logoUrl: ['./icons/ifarm.svg'],
-        tokenAddress: addresses.FARM,
-        vaultAddress: addresses.iFARM,
-        rewardSymbol: 'iFarm',
-        decimals: 18,
-        tokenNames: ['FARM'],
-      },
-    }),
-    [farmProfitSharingPool, profitShareAPY],
-  )
-
-  const groupOfVaults = { ...vaultsData, ...poolVaults }
+  const groupOfVaults = { ...vaultsData }
   const vaultsKey = Object.keys(groupOfVaults)
-
-  // Add 'boosted' item to vaults that participate in campaign
-  vaultsKey.map(async symbol => {
-    for (let i = 0; i < boostedVaults.length; i += 1) {
-      if (symbol === boostedVaults[i]) {
-        groupOfVaults[symbol].boosted = true
-        return
-      }
-    }
-  })
 
   const vaultIds = vaultsKey.filter(vaultId => {
     const tokenAddress = groupOfVaults[vaultId].tokenAddress || groupOfVaults[vaultId].vaultAddress
@@ -421,25 +355,16 @@ const AdvancedFarm = () => {
 
   const { logoUrl } = token
 
-  const isSpecialVault = token.poolVault
-  const tokenVault = get(vaultsData, token.hodlVaultId || id)
+  const vaultPool = find(pools, pool => pool.collateralAddress === get(token, `vaultAddress`))
 
-  const vaultPool = isSpecialVault
-    ? token.data
-    : find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
-
-  const farmAPY = get(vaultPool, 'totalRewardAPY', 0)
+  const estimatedApy = get(token, `estimatedApy`, 0)
+  const rewardApy = get(vaultPool, 'totalRewardAPY', 0)
   const tradingApy = get(vaultPool, 'tradingApy', 0)
-  const boostedRewardAPY = get(vaultPool, 'boostedRewardAPY', 0)
-  const totalApy = isSpecialVault
-    ? getTotalApy(null, token, true)
-    : getTotalApy(vaultPool, tokenVault)
-
-  const chain = token.chain || token.data.chain
+  const totalApy = Number(estimatedApy) + Number(rewardApy) + Number(tradingApy)
 
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
   const tokenChain = token.chain || token.data.chain
-  const tokenSelfAddress = token.poolVault ? token.tokenAddress : token.vaultAddress
+
   let chainName = getChainName(tokenChain).toLowerCase()
   if (chainName === 'ethereum') {
     chainName = 'eth'
@@ -448,44 +373,15 @@ const AdvancedFarm = () => {
   }
 
   useEffect(() => {
-    if (rewardTokenData) {
-      let selectedToken
-      const rewardChainList = rewardTokenData[chainName]
-      rewardChainList.map(item => {
-        if (item.collateralAddress.toLowerCase() === tokenSelfAddress.toLowerCase()) {
-          selectedToken = item
-          return true
-        }
-        return false
-      })
-      const rewardAPR = token.isIPORVault ? [] : selectedToken.rewardAPR
-      const sum = rewardAPR.reduce((acc, value) => acc + Number(value), 0)
-      const rewardTokenSymbol = token.isIPORVault ? [] : selectedToken.rewardTokenSymbols
-      rewardTokenSymbol.map(symbol => {
-        if (rewardTokenSymbol !== 'FARM' && Array.from(symbol.trim().toLowerCase())[0] === 'f') {
-          setIsFarmToken(true)
-        }
-        return null
-      })
-      if (Number(sum) > 0) {
-        setIsReward(true)
-      }
-      if (isReward || isFarmToken) {
-        setNoNeedStaking(true)
-      }
-    }
-  }, [chainName, tokenSelfAddress, rewardTokenData, isReward, isFarmToken, token.isIPORVault])
-
-  useEffect(() => {
     const getBadge = () => {
       chainList.forEach((el, i) => {
-        if (el.chainId === Number(chain)) {
+        if (el.chainId === Number(tokenChain)) {
           setBadgeId(i)
         }
       })
     }
     getBadge()
-  }, [chain])
+  }, [tokenChain])
 
   useEffect(() => {
     // 👇️ scroll to top on page load
@@ -493,9 +389,6 @@ const AdvancedFarm = () => {
   }, [])
 
   const useIFARM = id === FARM_TOKEN_SYMBOL
-  const fAssetPool = isSpecialVault
-    ? token.data
-    : find(pools, pool => pool.collateralAddress === tokens[id].vaultAddress)
   const multipleAssets = useMemo(
     () =>
       isArray(tokens[id].tokenAddress) &&
@@ -512,27 +405,22 @@ const AdvancedFarm = () => {
 
   const tokenDecimals = token.decimals || tokens[id].decimals
 
-  const lpTokenBalance = token.isIPORVault
+  const lpTokenBalance = token.id
     ? get(userStats, `[${token.id}]['lpTokenBalance']`, 0)
-    : get(userStats, `[${fAssetPool.id}]['lpTokenBalance']`, 0)
-  const totalStaked = token.isIPORVault
+    : get(userStats, `[${vaultPool.id}]['lpTokenBalance']`, 0)
+  const totalStaked = token.id
     ? get(userStats, `[${token.id}]['totalStaked']`, 0)
-    : get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)
-  const lpTokenApprovedBalance = token.isIPORVault
+    : get(userStats, `[${vaultPool.id}]['totalStaked']`, 0)
+  const lpTokenApprovedBalance = token.id
     ? 0
-    : get(userStats, `[${fAssetPool.id}]['lpTokenApprovedBalance']`, 0)
+    : get(userStats, `[${vaultPool.id}]['lpTokenApprovedBalance']`, 0)
 
-  const tempPricePerFullShare = useIFARM
-    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
-    : get(token, `pricePerFullShare`, 0)
+  const tempPricePerFullShare = get(token, `pricePerFullShare`, 0)
   const pricePerFullShare = fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals)
 
   const usdPrice =
-    Number(token.vaultPrice) ||
-    Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price) *
-      Number(pricePerFullShare)
-  const farmPrice = token.data && token.data.lpTokenData && token.data.lpTokenData.price
-  const underlyingPrice = get(token, 'usdPrice', get(token, 'data.lpTokenData.price', 0))
+    Number(token.vaultPrice) || Number(token.usdPrice) * Number(pricePerFullShare) || 0
+  const underlyingPrice = get(token, 'usdPrice', 0)
 
   const mainTags = [
     { name: 'Manage', img: Safe },
@@ -544,55 +432,24 @@ const AdvancedFarm = () => {
 
   // Show vault info badge when platform is 'Seamless' or 'Harvest' and first visit
   useEffect(() => {
-    const platform = useIFARM ? 'Harvest' : (token.platform?.[0]?.toLowerCase() ?? '')
-    const firstToken = token.tokenNames?.[0]?.toLowerCase() ?? ''
     const firstViewIFarm = localStorage.getItem('firstViewIFarm')
-    const firstViewSeamless = localStorage.getItem('firstViewSeamless')
-    const firstViewGenomes = localStorage.getItem('firstViewGenomes')
-    const firstViewGB = localStorage.getItem('firstViewGB')
 
-    const campaign = token.boosted
-    if (campaign) setIsArbCampVault(true)
-    if (platform === 'Harvest' && (firstViewIFarm === null || firstViewIFarm === 'true')) {
+    if (token.id === IFARM_TOKEN_SYMBOL && (firstViewIFarm === null || firstViewIFarm === 'true')) {
       localStorage.setItem('firstViewIFarm', true)
       setShowIFARMInfo(true)
-    } else if (
-      platform.includes('seamless') &&
-      (firstViewSeamless === null || firstViewSeamless === 'true')
-    ) {
-      localStorage.setItem('firstViewSeamless', true)
-      setShowSeamlessVaultInfo(true)
-    } else if (
-      (firstToken.includes('gene') || firstToken.includes('gnome')) &&
-      (firstViewGenomes === null || firstViewGenomes === 'true')
-    ) {
-      localStorage.setItem('firstViewGenomes', true)
-      setShowGenomesVaultInfo(true)
-    } else if (firstToken.includes('gb') && (firstViewGB === null || firstViewGB === 'true')) {
-      localStorage.setItem('firstViewGB', true)
-      setShowGBVaultInfo(true)
     }
-  }, [token.platform, token.tokenNames, token.boosted, useIFARM])
+  }, [token.id])
 
   const closeIFARMBadge = () => {
     setShowIFARMInfo(false)
     localStorage.setItem('firstViewIFarm', 'false')
   }
-  const closeBadgeGenomes = () => {
-    setShowGenomesVaultInfo(false)
-    localStorage.setItem('firstViewGenomes', 'false')
-  }
-  const closeBadgeGB = () => {
-    setShowGBVaultInfo(false)
-    localStorage.setItem('firstViewGB', 'false')
-  }
 
   useEffect(() => {
-    async function fetchData() {
-      const tokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
-      const chainId = token.chain || token.data.chain
+    async function fetchPortalsSupport() {
+      const tokenAddress = token.vaultAddress || token.tokenAddress
 
-      const portalsToken = await getPortalsSupport(chainId, tokenAddress)
+      const portalsToken = await getPortalsSupport(tokenChain, tokenAddress)
 
       if (portalsToken === undefined || portalsToken.status !== 200) {
         setHasPortalsError(true)
@@ -606,68 +463,32 @@ const AdvancedFarm = () => {
       }
     }
 
-    fetchData()
-  }, [token])
+    fetchPortalsSupport()
+  }, [token, tokenChain])
 
   useEffect(() => {
-    let staked,
-      unstaked,
-      total,
-      amountBalanceUSD,
-      totalRewardAPRByPercent = 0
-    if (useIFARM) {
-      staked = Number(
-        fromWei(
-          get(balances, IFARM_TOKEN_SYMBOL, 0),
-          tokens[IFARM_TOKEN_SYMBOL].decimals,
-          MAX_DECIMALS,
-          true,
-        ),
-      )
-      unstaked = Number(
-        fromWei(
-          get(balances, FARM_TOKEN_SYMBOL, 0),
-          tokens[FARM_TOKEN_SYMBOL].decimals,
-          MAX_DECIMALS,
-          true,
-        ),
-      )
-      total = staked
-      amountBalanceUSD = total * usdPrice * Number(currencyRate)
-    } else {
-      staked = token.isIPORVault
-        ? fromWei(balances[token.id], token.vaultDecimals, token.vaultDecimals)
-        : totalStaked && fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)
+    let staked, unstaked, total, amountBalanceUSD
+    staked = totalStaked && fromWei(totalStaked, token.decimals, MAX_DECIMALS, true)
 
-      unstaked =
-        lpTokenBalance &&
-        fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)
+    unstaked =
+      lpTokenBalance &&
+      fromWei(lpTokenBalance, token.vaultDecimals || token.decimals, MAX_DECIMALS, true)
 
-      total = Number(staked) + Number(unstaked)
-      amountBalanceUSD = total * usdPrice * Number(currencyRate)
-    }
+    total = Number(staked) + Number(unstaked)
+    amountBalanceUSD = total * usdPrice * Number(currencyRate)
     setStakedAmount(Number(staked))
     setUnstakedAmount(Number(unstaked))
     setTotalValue(total)
     setBalanceAmount(amountBalanceUSD)
 
-    const estimatedApyByPercent = get(tokenVault, `estimatedApy`, 0)
-    const estimatedApy = estimatedApyByPercent / 100
-    const vaultAPR = ((1 + estimatedApy) ** (1 / 365) - 1) * 365
-    const vaultAPRDaily = vaultAPR / 365
-    const vaultAPRMonthly = vaultAPR / 12
-    const frl = fAssetPool?.rewardAPR?.length
+    const vaultAPRDaily = (1 + estimatedApy) ** (1 / 365) - 1
+    const vaultAPYMonthly = (1 + vaultAPRDaily) ** (365 / 12) - 1
 
-    for (let j = 0; j < frl; j += 1) {
-      totalRewardAPRByPercent += Number(fAssetPool.rewardAPR[j])
-    }
-    const totalRewardAPR = totalRewardAPRByPercent / 100
+    const totalRewardAPR = rewardApy / 100
     const poolAPRDaily = totalRewardAPR / 365
     const poolAPRMonthly = totalRewardAPR / 12
 
-    const swapFeeAPRYearly = token.isIPORVault
-      ? 0
-      : (fAssetPool.tradingApy ? fAssetPool.tradingApy : 0) / 100
+    const swapFeeAPRYearly = tradingApy / 100
     const swapFeeAPRDaily = swapFeeAPRYearly / 365
     const swapFeeAPRMonthly = swapFeeAPRYearly / 12
 
@@ -676,8 +497,8 @@ const AdvancedFarm = () => {
         Number(unstaked) * usdPrice * (vaultAPRDaily + swapFeeAPRDaily)) *
       Number(currencyRate)
     const monthlyYield =
-      (Number(staked) * usdPrice * (vaultAPRMonthly + poolAPRMonthly + swapFeeAPRMonthly) +
-        Number(unstaked) * usdPrice * (vaultAPRMonthly + swapFeeAPRMonthly)) *
+      (Number(staked) * usdPrice * (vaultAPYMonthly + poolAPRMonthly + swapFeeAPRMonthly) +
+        Number(unstaked) * usdPrice * (vaultAPYMonthly + swapFeeAPRMonthly)) *
       Number(currencyRate)
     setYieldDaily(dailyYield)
     setYieldMonthly(monthlyYield)
@@ -686,7 +507,7 @@ const AdvancedFarm = () => {
       Number(minReceiveAmountString) *
       Number(usdPrice) *
       Number(currencyRate) *
-      (vaultAPRMonthly + poolAPRMonthly + swapFeeAPRMonthly)
+      (vaultAPYMonthly + poolAPRMonthly + swapFeeAPRMonthly)
     const convertDailyYieldYieldValue =
       Number(minReceiveAmountString) *
       Number(usdPrice) *
@@ -696,32 +517,33 @@ const AdvancedFarm = () => {
       Number(minReceiveAmountString) *
       Number(usdPrice) *
       Number(currencyRate) *
-      (vaultAPR + totalRewardAPR + swapFeeAPRYearly)
+      (estimatedApy + totalRewardAPR + swapFeeAPRYearly)
     setConvertMonthlyYieldUSD(convertMonthlyYieldValue.toString())
     setConvertDailyYieldUSD(convertDailyYieldYieldValue.toString())
     setConvertYearlyYieldUSD(convertYearlyYieldYieldValue.toString())
   }, [
-    fAssetPool,
-    tokenVault,
+    token,
     usdPrice,
     lpTokenBalance,
     totalStaked,
     minReceiveAmountString,
     currencyRate,
-    balances,
+    estimatedApy,
+    rewardApy,
+    tradingApy,
   ])
 
   useEffect(() => {
     const getTokenBalance = async () => {
       try {
-        if (chain && account && Object.keys(balances).length !== 0) {
+        if (tokenChain && account && Object.keys(balances).length !== 0) {
           if (!hasPortalsError) {
             let supList = [],
               directInSup = {},
               directInBalance = {}
 
-            const portalsRawBalances = await getPortalsBalances(account, chain.toString())
-            const portalsBaseTokens = await getPortalsBaseTokens(chain.toString())
+            const portalsRawBalances = await getPortalsBalances(account, tokenChain.toString())
+            const portalsBaseTokens = await getPortalsBaseTokens(tokenChain.toString())
             const curNoBalances = portalsBaseTokens
               .map(baseToken => {
                 const balToken = portalsRawBalances.find(
@@ -741,7 +563,7 @@ const AdvancedFarm = () => {
                         ? baseToken.images[0]
                         : 'https://etherscan.io/images/main/empty-token.png',
                     decimals: baseToken.decimals,
-                    chainId: chain,
+                    chainId: tokenChain,
                   }
                   return item
                 }
@@ -775,40 +597,22 @@ const AdvancedFarm = () => {
                               ? balance.images[0]
                               : 'https://etherscan.io/images/main/empty-token.png',
                   decimals: balance.decimals,
-                  chainId: chain,
+                  chainId: tokenChain,
                 }
                 return item
               })
               .filter(item => item.address)
 
-            const tokenAddress =
-              token.tokenAddress !== undefined && token.tokenAddress.length !== 2
-                ? token.tokenAddress
-                : token.vaultAddress
+            const tokenAddress = token.tokenAddress ? token.tokenAddress : token.vaultAddress
 
-            const fTokenAddr = useIFARM
-              ? addresses.iFARM
-              : token.vaultAddress
-                ? token.vaultAddress
-                : token.tokenAddress
+            const fTokenAddr = token.vaultAddress ? token.vaultAddress : token.tokenAddress
             const curSortedBalances = curBalances
               .sort(function reducer(a, b) {
                 return b.usdValue - a.usdValue
               })
               .filter(item => item.address.toLowerCase() !== fTokenAddr.toLowerCase())
 
-            // setBalanceList(
-            //   curSortedBalances.filter(
-            //     item => item.address.toLowerCase() !== tokenAddress.toLowerCase(),
-            //   ),
-            // )
             setBalanceList(curSortedBalances)
-
-            curSortedBalances.forEach(balanceToken => {
-              if (balanceToken.symbol === 'ARB') {
-                setArbBalance(balanceToken.balance)
-              }
-            })
 
             supList = [...curBalances, ...curNoBalances]
 
@@ -824,7 +628,7 @@ const AdvancedFarm = () => {
               }
               sup.default = false
 
-              if (Object.keys(directInSup).length === 0 && tokenAddress.length !== 2) {
+              if (Object.keys(directInSup).length === 0 && tokenAddress) {
                 if (sup.address.toLowerCase() === tokenAddress.toLowerCase()) {
                   directInSup = sup
                 }
@@ -837,7 +641,7 @@ const AdvancedFarm = () => {
             })
             const cl = curBalances.length
             for (let j = 0; j < cl; j += 1) {
-              if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
+              if (Object.keys(directInBalance).length === 0 && tokenAddress) {
                 if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
                   directInBalance = curBalances[j]
                 }
@@ -847,19 +651,16 @@ const AdvancedFarm = () => {
             const directData = curBalances.find(
               el => el.address.toLowerCase() === tokenAddress.toLowerCase(),
             )
+
             const directBalance = directData
               ? directData.balance
-              : token.isIPORVault
-                ? balances[token.tokenNames[0]]
-                  ? new BigNumber(token.tokenNames[0]).div(10 ** token.decimals).toFixed()
-                  : '0'
+              : id === IFARM_TOKEN_SYMBOL
+                ? new BigNumber(balances[FARM_TOKEN_SYMBOL]).div(10 ** token.decimals).toFixed()
                 : balances[id]
                   ? new BigNumber(balances[id]).div(10 ** token.decimals).toFixed()
                   : '0'
-            const directUsdPrice = id === 'FARM_GRAIN_LP' ? 0 : token.usdPrice
-            const directUsdValue = directData
-              ? directData.usdValue
-              : new BigNumber(directBalance).times(directUsdPrice).toFixed()
+            const directUsdPrice = token.usdPrice
+            const directUsdValue = new BigNumber(directBalance).times(directUsdPrice).toFixed()
 
             if (!(Object.keys(directInSup).length === 0 && directInSup.constructor === Object)) {
               directInSup.balance = directBalance
@@ -882,7 +683,7 @@ const AdvancedFarm = () => {
               supList.unshift(directInBalance)
               supList[0].default = true
             } else {
-              const web3Client = await getWeb3(chain, null)
+              const web3Client = await getWeb3(tokenChain, null)
               const { getSymbol } = tokenMethods
               const lpInstance = await newContractInstance(
                 id,
@@ -904,7 +705,7 @@ const AdvancedFarm = () => {
                 usdValue: directUsdValue || '0',
                 logoURI: logoUri,
                 decimals: tokenDecimals,
-                chainId: parseInt(chain, 0),
+                chainId: parseInt(tokenChain, 0),
               }
               supList.unshift(direct)
             }
@@ -944,26 +745,24 @@ const AdvancedFarm = () => {
 
             setSoonToSupList({})
           } else {
-            let tokenSymbol,
-              decimals = 18
+            let tokenSymbol
 
-            decimals = useIFARM ? token.data?.watchAsset?.decimals : token.decimals
-            tokenSymbol = useIFARM ? token.tokenNames[0] : token?.pool?.lpTokenData?.symbol
+            const decimals = token.decimals
+            tokenSymbol = id === IFARM_TOKEN_SYMBOL ? FARM_TOKEN_SYMBOL : id
             if (tokenSymbol && tokenSymbol.substring(0, 1) === 'f') {
               tokenSymbol = tokenSymbol.substring(1)
             }
-            // const tokenAddress = useIFARM ? addresses.iFARM : token.tokenAddress
+
             const tokenAddress = token.tokenAddress
-            const tokenId = token?.pool?.id
             const tokenBalance = fromWei(
-              balances[useIFARM ? tokenSymbol : tokenId],
+              balances[id === IFARM_TOKEN_SYMBOL ? FARM_TOKEN_SYMBOL : id] || '0',
               decimals,
               decimals,
             )
-            const tokenPrice = useIFARM ? token?.data?.lpTokenData?.price : token.usdPrice
+            const tokenPrice = token.usdPrice
             const usdValue = formatNumberWido(
               Number(tokenBalance) * Number(tokenPrice),
-              BEGINNERS_BALANCES_DECIMALS,
+              USD_BALANCES_DECIMALS,
             )
             const logoURI =
               token.logoUrl.length === 1
@@ -979,7 +778,7 @@ const AdvancedFarm = () => {
               usdPrice: tokenPrice,
               logoURI,
               decimals,
-              chainId: useIFARM ? token.data.chain : token.chain,
+              chainId: tokenChain,
             }
             setDefaultToken(defaultTokenData)
           }
@@ -993,7 +792,7 @@ const AdvancedFarm = () => {
     getTokenBalance()
   }, [
     account,
-    chain,
+    tokenChain,
     balances,
     hasPortalsError,
     convertSuccess,
@@ -1003,7 +802,6 @@ const AdvancedFarm = () => {
     id,
     token,
     tokenDecimals,
-    useIFARM,
   ])
 
   // To calculate Est. values again when input token is changed
@@ -1061,7 +859,7 @@ const AdvancedFarm = () => {
 
         // If defaultToken is not found, find the token with the highest USD value among those in the SUPPORTED_TOKEN_LIST and balanceList
         const supportedTokens = balanceList.filter(
-          balancedToken => SUPPORTED_TOKEN_LIST[chain][balancedToken.symbol],
+          balancedToken => SUPPORTED_TOKEN_LIST[tokenChain][balancedToken.symbol],
         )
         if (supportedTokens.length > 0) {
           tokenToSet = supportedTokens.reduce((prevToken, currentToken) =>
@@ -1104,7 +902,7 @@ const AdvancedFarm = () => {
     balanceList,
     supTokenList,
     defaultToken,
-    chain,
+    tokenChain,
     SUPPORTED_TOKEN_LIST,
     supportedVault,
     hasPortalsError,
@@ -1114,14 +912,16 @@ const AdvancedFarm = () => {
   const firstUserPoolsLoad = useRef(true)
   const firstWalletBalanceLoad = useRef(true)
 
-  const totalRewardsEarned = token.isIPORVault
-    ? 0
-    : get(userStats, `[${fAssetPool.id}]['totalRewardsEarned']`, 0)
-  const rewardsEarned = token.isIPORVault
-    ? 0
-    : get(userStats, `[${fAssetPool.id}]['rewardsEarned']`, 0)
+  const totalRewardsEarned = get(userStats, `[${vaultPool?.id}]['totalRewardsEarned']`, 0)
+  const rewardsEarned = get(userStats, `[${vaultPool?.id}]['rewardsEarned']`, 0)
 
-  const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
+  const rewardTokenSymbols = get(vaultPool, 'rewardTokenSymbols', [])
+
+  useEffect(() => {
+    if ((vaultPool && rewardApy) || totalStaked || totalRewardsEarned) {
+      setShowRewardsTab(true)
+    }
+  }, [vaultPool, rewardApy, totalStaked, totalRewardsEarned])
 
   useEffect(() => {
     const fetchTokenPrices = async () => {
@@ -1163,7 +963,6 @@ const AdvancedFarm = () => {
             rewardToken = groupOfVaults[underlyingRewardSymbol]
           }
         } else if (rewardSymbol === FARM_TOKEN_SYMBOL) {
-          // Let us get usdPrice of FARM from IFARM, for when no lpTokenData in FARM vault data(when reloading in Advanced farm)
           rewardToken = groupOfVaults[IFARM_TOKEN_SYMBOL]
         } else {
           rewardToken = groupOfVaults[rewardSymbol]
@@ -1171,16 +970,14 @@ const AdvancedFarm = () => {
 
         if (rewardToken) {
           const usdUnderlyingRewardPrice = rewardToken.usdPrice || 0
-          const pricePerFullShareInVault = rewardToken.pricePerFullShare
+          const pricePerFullShareInVault =
+            rewardSymbol === FARM_TOKEN_SYMBOL
+              ? new BigNumber(1e18).toFixed()
+              : rewardToken.pricePerFullShare
           const decimalsInVault = rewardToken.decimals || 18
           usdRewardPrice =
-            rewardSymbol === IFARM_TOKEN_SYMBOL
-              ? Number(usdUnderlyingRewardPrice)
-              : rewardSymbol === FARM_TOKEN_SYMBOL
-                ? Number(usdUnderlyingRewardPrice) /
-                  fromWei(pricePerFullShareInVault, decimalsInVault, decimalsInVault, true)
-                : Number(usdUnderlyingRewardPrice) *
-                  fromWei(pricePerFullShareInVault, decimalsInVault, decimalsInVault, true)
+            Number(usdUnderlyingRewardPrice) *
+            fromWei(pricePerFullShareInVault, decimalsInVault, decimalsInVault, true)
         } else {
           try {
             const al = apiData.length
@@ -1205,13 +1002,12 @@ const AdvancedFarm = () => {
           }
         }
         usdPrices.push(usdRewardPrice)
-
         setRewardTokenPrices(usdPrices)
       }
     }
 
     fetchTokenPrices()
-  }, [apiData, pricePerFullShare, rewardTokenSymbols])
+  }, [apiData, vaultPool, rewardTokenSymbols])
 
   useEffect(() => {
     const calculateTotalReward = () => {
@@ -1248,7 +1044,7 @@ const AdvancedFarm = () => {
   }, [
     account,
     userStats,
-    fAssetPool,
+    vaultPool,
     rewardsEarned,
     totalRewardsEarned,
     rewardTokenSymbols,
@@ -1266,7 +1062,7 @@ const AdvancedFarm = () => {
       ) {
         const loadUserPoolsStats = async () => {
           firstUserPoolsLoad.current = false
-          const poolsToLoad = [fAssetPool]
+          const poolsToLoad = [vaultPool]
           await fetchUserPoolStats(poolsToLoad, account, userStats)
         }
         loadUserPoolsStats()
@@ -1307,33 +1103,30 @@ const AdvancedFarm = () => {
   useEffect(() => {
     const getLastHarvest = async () => {
       const value = token.isIPORVault
-        ? await getIPORLastHarvestInfo(paramAddress.toLowerCase(), chain)
-        : await getLastHarvestInfo(paramAddress, chain)
+        ? await getIPORLastHarvestInfo(paramAddress.toLowerCase(), tokenChain)
+        : await getLastHarvestInfo(paramAddress, tokenChain)
       setLastHarvest(value)
     }
 
     getLastHarvest()
-  }, [paramAddress, chain, token.isIPORVault])
+  }, [paramAddress, tokenChain, token.isIPORVault])
 
   useEffect(() => {
-    setVaultValue(getVaultValue(token))
+    setVaultValue(new BigNumber(get(token, 'totalValueLocked', 0)))
   }, [token])
 
   useEffect(() => {
     const depositUsdValue = formatNumber(
-      fromWei(lpTokenBalance, fAssetPool?.lpTokenData?.decimals, POOL_BALANCES_DECIMALS, true) *
-        usdPrice,
+      fromWei(lpTokenBalance, token.decimals, POOL_BALANCES_DECIMALS, true) * usdPrice,
       POOL_BALANCES_DECIMALS,
     )
     setDepositUsdValue(depositUsdValue)
-  }, [lpTokenBalance, fAssetPool, usdPrice])
+  }, [lpTokenBalance, token.decimals, usdPrice])
 
   useEffect(() => {
     const initData = async () => {
-      if (account && token && (vaultPool || token.isIPORVault) && id) {
-        const address =
-          token.vaultAddress || vaultPool?.autoStakePoolAddress || vaultPool?.contractAddress
-        const chainId = token.chain || token.data.chain
+      if (account && token && id) {
+        const address = token.vaultAddress
         const iporVFlag = token.isIPORVault ?? false
         const {
           bFlag,
@@ -1346,7 +1139,7 @@ const AdvancedFarm = () => {
           uniqueVaultHData,
         } = await initBalanceAndDetailData(
           address,
-          chainId,
+          tokenChain,
           account,
           token.decimals,
           iporVFlag,
@@ -1360,7 +1153,7 @@ const AdvancedFarm = () => {
           setUsdEarningsLatest(sumLatestNetChangeUsd)
           const enrichedDataWithSymbol = enrichedData.map(data => ({
             ...data,
-            tokenSymbol: token.isIPORVault ? tokenSym : id,
+            tokenSymbol: tokenSym,
           }))
           setHistoryData(enrichedDataWithSymbol)
           setChartData(uniqueVaultHData)
@@ -1381,26 +1174,9 @@ const AdvancedFarm = () => {
   const showAPY = () => {
     return (
       <>
-        {isSpecialVault ? (
-          token?.data?.loaded ? (
-            !token.data.dataFetched || totalApy !== null ? (
-              <div>{token.inactive ? 'Inactive' : totalApy ? displayAPY(totalApy) : null}</div>
-            ) : (
-              <div>
-                <AnimatedDots />
-              </div>
-            )
-          ) : (
-            <div>
-              <AnimatedDots />
-            </div>
-          )
-        ) : vaultPool?.loaded && totalApy !== null && !loadingVaults ? (
+        {totalApy !== null && !loadingVaults ? (
           <div>
-            {token?.inactive ||
-            token?.testInactive ||
-            token?.hideTotalApy ||
-            !token?.dataFetched ? (
+            {token?.inactive || token?.testInactive || !token?.dataFetched ? (
               token?.inactive || token?.testInactive ? (
                 'Inactive'
               ) : null
@@ -1408,8 +1184,6 @@ const AdvancedFarm = () => {
               <>{displayAPY(totalApy, DECIMAL_PRECISION, 10)}</>
             )}
           </div>
-        ) : token.isIPORVault && totalApy !== null && !loadingVaults ? (
-          <>{displayAPY(totalApy, DECIMAL_PRECISION, 10)}</>
         ) : (
           <div>
             <AnimatedDots />
@@ -1422,9 +1196,7 @@ const AdvancedFarm = () => {
   const showTVL = () => {
     return (
       <>
-        {token.excludeVaultStats ? (
-          'N/A'
-        ) : vaultValue ? (
+        {vaultValue ? (
           <>{`${currencySym}${formatNumber(Number(vaultValue) * Number(currencyRate), 2)}`}</>
         ) : (
           <AnimatedDots />
@@ -1436,17 +1208,9 @@ const AdvancedFarm = () => {
   const showApyDaily = () => {
     return (
       <>
-        {isSpecialVault ? (
-          token.data &&
-          token.data.loaded &&
-          (token.data.dataFetched === false || totalApy !== null) ? (
-            <div>{token.inactive ? 'Inactive' : <>{totalApy ? `${apyDaily}%` : null}</>}</div>
-          ) : (
-            <AnimatedDots />
-          )
-        ) : vaultPool?.loaded && totalApy !== null && !loadingVaults ? (
+        {apyDaily !== null && !loadingVaults ? (
           <div>
-            {token.inactive || token.testInactive || token.hideTotalApy || !token.dataFetched ? (
+            {token.inactive || token.testInactive || !token.dataFetched ? (
               token.inactive || token.testInactive ? (
                 'Inactive'
               ) : null
@@ -1454,8 +1218,6 @@ const AdvancedFarm = () => {
               <>{apyDaily}%</>
             )}
           </div>
-        ) : token.isIPORVault && totalApy !== null ? (
-          <>{apyDaily}%</>
         ) : (
           <AnimatedDots />
         )}
@@ -1495,20 +1257,20 @@ const AdvancedFarm = () => {
     { label: 'Lifetime', value: formatFrequency(harvestFrequency) },
   ]
 
-  const rewardTxt = getAdvancedRewardText(
-    token,
-    vaultPool,
-    tradingApy,
-    farmAPY,
-    totalApy,
-    true,
-    boostedRewardAPY,
-  )
+  const rewardTxt = getAdvancedRewardText(token, vaultPool, tradingApy, rewardApy, totalApy, true)
 
   const profitShare =
-    chain === CHAIN_IDS.ETH_MAINNET ? '10' : chain === CHAIN_IDS.POLYGON_MAINNET ? '5' : '7'
+    tokenChain === CHAIN_IDS.ETH_MAINNET
+      ? '10'
+      : tokenChain === CHAIN_IDS.POLYGON_MAINNET
+        ? '5'
+        : '7'
   const harvestTreasury =
-    chain === CHAIN_IDS.ETH_MAINNET ? '5' : chain === CHAIN_IDS.POLYGON_MAINNET ? '3' : '3'
+    tokenChain === CHAIN_IDS.ETH_MAINNET
+      ? '5'
+      : tokenChain === CHAIN_IDS.POLYGON_MAINNET
+        ? '3'
+        : '3'
 
   const setLoadingDots = (loadingFarm, loadingLp) => {
     setFarmingLoading(loadingFarm)
@@ -1518,8 +1280,7 @@ const AdvancedFarm = () => {
   const viewComponentProps = {
     token,
     tokenDecimals,
-    isSpecialVault,
-    fAssetPool,
+    vaultPool,
     rewardTokenPrices,
     loadingBalances: loadingLpStats || loadingFarmingBalance,
     pendingAction,
@@ -1593,7 +1354,7 @@ const AdvancedFarm = () => {
             <TabRow>
               <MainTagPanel>
                 {mainTags.map((tag, i) =>
-                  (i === 1 && token.isIPORVault) || (i === 4 && !token.isIPORVault) ? null : (
+                  (i === 1 && !showRewardsTab) || (i === 4 && !token.isIPORVault) ? null : (
                     <MainTag
                       key={i}
                       $fontcolor3={fontColor3}
@@ -1601,7 +1362,7 @@ const AdvancedFarm = () => {
                       $backcolor={bgColorNew}
                       $active={activeMainTag === i ? 'true' : 'false'}
                       $mode={darkMode ? 'dark' : 'light'}
-                      $useifarm={useIFARM}
+                      $threetabs={!showRewardsTab && !token.isIPORVault}
                       onClick={() => {
                         setActiveMainTag(i)
                         if (i !== 0) {
@@ -1639,175 +1400,10 @@ const AdvancedFarm = () => {
       </TopInner>
       <Inner $backcolor={bgColorNew}>
         <BigDiv>
-          {activeMainTag === 1 && !noNeedStaking && rewardTokenData && (
-            <StakingInfo
-              $bgcolortooltip={bgColorTooltip}
-              $bordercolor={borderColor}
-              $display={showStakingInfo ? 'flex' : 'none'}
-              $fontcolortooltip={fontColorTooltip}
-            >
-              <BiInfoCircle className="info-circle" fontSize={20} />
-              <StakingInfoText>
-                <NewLabel
-                  $size="14px"
-                  $weight="600"
-                  $height="20px"
-                  $fontcolor={fontColor2}
-                  $marginbottom="5px"
-                >
-                  Staking Information
-                </NewLabel>
-                <NewLabel $size="14px" $weight="400" $height="20px" $fontcolor={fontColor2}>
-                  Currently, no extra rewards are streamed to this farm, so staking fTokens
-                  isn&apos;t needed. See this article on &quot;
-                  <WelcomeTicket
-                    href="https://docs.harvest.finance/general-info/yield-sources-on-harvest-how-to-get-and-track-them"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    $linkcolor={linkColorTooltip}
-                    $linkcoloronhover={linkColorOnHover}
-                  >
-                    Yield Sources on Harvest &ndash; How to Get and Track Them
-                  </WelcomeTicket>
-                  &quot; to better understand yield sources and staking.
-                </NewLabel>
-                <NewLabel
-                  $size="14px"
-                  $weight="600"
-                  $height="20px"
-                  $fontcolor={fontColor2}
-                  $margintop="15px"
-                  cursor="pointer"
-                  $width="fit-content"
-                  onClick={() => {
-                    setShowStakingInfo(false)
-                  }}
-                >
-                  Got it
-                </NewLabel>
-              </StakingInfoText>
-              <CrossDiv
-                onClick={() => {
-                  setShowStakingInfo(false)
-                }}
-              >
-                <RxCross2 onClick={closeBadgeGenomes} />
-              </CrossDiv>
-            </StakingInfo>
-          )}
           <InternalSection>
             {activeMainTag === 0 ? (
               <>
-                {showGenomesVaultInfo ? (
-                  <WelcomeBox
-                    $bgcolortooltip={bgColorTooltip}
-                    $fontcolortooltip={fontColorTooltip}
-                    $bordercolor={borderColor}
-                  >
-                    <BiInfoCircle className="info-circle" fontSize={20} />
-                    <WelcomeContent>
-                      <WelcomeTitle>Vault Note</WelcomeTitle>
-                      <WelcomeText>
-                        Genomes vaults for GENE and GNOME will be deactivated on the 16th April
-                        2024. A new vault for the GENOME-ETH pool on Base Network can be found{' '}
-                        <WelcomeTicket
-                          href="https://app.harvest.finance/base/0x284c60490212DB0dc0b8F93503d35744f8053381"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          $linkcolor={linkColorTooltip}
-                          $linkcoloronhover={linkColorOnHover}
-                        >
-                          here
-                        </WelcomeTicket>
-                        . For more information, check out the #vault-updates channel on{' '}
-                        <WelcomeTicket
-                          href={SOCIAL_LINKS.DISCORD}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          $linkcolor={linkColorTooltip}
-                          $linkcoloronhover={linkColorOnHover}
-                        >
-                          our Discord.
-                        </WelcomeTicket>
-                        <WelcomeBottom>
-                          <WelcomeKnow onClick={closeBadgeGenomes}>Got it!</WelcomeKnow>
-                          <WelcomeTicket
-                            href={SOCIAL_LINKS.DISCORD}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            $linkcolor={linkColorTooltip}
-                            $linkcoloronhover={linkColorOnHover}
-                          >
-                            Still having questions? Open Discord ticket.
-                          </WelcomeTicket>
-                        </WelcomeBottom>
-                      </WelcomeText>
-                    </WelcomeContent>
-                    <WelcomeClose>
-                      <RxCross2 onClick={closeBadgeGenomes} />
-                    </WelcomeClose>
-                  </WelcomeBox>
-                ) : showSeamlessVaultInfo ? (
-                  <></>
-                ) : showGBVaultInfo ? (
-                  <WelcomeBox
-                    $bgcolortooltip={bgColorTooltip}
-                    $fontcolortooltip={fontColorTooltip}
-                    $bordercolor={borderColor}
-                  >
-                    <BiInfoCircle className="info-circle" fontSize={20} />
-                    <WelcomeContent>
-                      <WelcomeTitle>Vault Note</WelcomeTitle>
-                      <WelcomeText>
-                        <p>
-                          We are following an ongoing situation with the GB token. Before proceeding
-                          with this vault, consider following-up with the latest developments with
-                          one of its token constituents on{' '}
-                          <WelcomeTicket
-                            href="https://twitter.com/search?q=%24GB"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            $linkcolor={linkColorTooltip}
-                            $linkcoloronhover={linkColorOnHover}
-                          >
-                            Twitter/X
-                          </WelcomeTicket>
-                          .
-                        </p>
-                        <p>
-                          At this time USD values and APYs might be inaccurate. Zap reverts might
-                          not be available, but reverts into vAMM-GB/WETH LP-tokens will work. The
-                          LP-tokens can then be withdrawn from{' '}
-                          <WelcomeTicket
-                            href="https://aerodrome.finance/withdraw?pair=0x284ddaDA0B71F2D0D4e395B69b1013dBf6f3e6C1"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            $linkcolor={linkColorTooltip}
-                            $linkcoloronhover={linkColorOnHover}
-                          >
-                            Aerodrome
-                          </WelcomeTicket>
-                          .
-                        </p>
-                        <WelcomeBottom>
-                          <WelcomeKnow onClick={closeBadgeGB}>Got it!</WelcomeKnow>
-                          <WelcomeTicket
-                            href={SOCIAL_LINKS.DISCORD}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            $linkcolor={linkColorTooltip}
-                            $linkcoloronhover={linkColorOnHover}
-                          >
-                            Still having questions? Open Discord ticket.
-                          </WelcomeTicket>
-                        </WelcomeBottom>
-                      </WelcomeText>
-                    </WelcomeContent>
-                    <WelcomeClose>
-                      <RxCross2 onClick={closeBadgeGB} />
-                    </WelcomeClose>
-                  </WelcomeBox>
-                ) : showIFARMInfo ? (
+                {showIFARMInfo ? (
                   <WelcomeBox
                     $bgcolortooltip={bgColorTooltip}
                     $fontcolortooltip={fontColorTooltip}
@@ -2061,12 +1657,10 @@ const AdvancedFarm = () => {
                       >
                         {!connected ? (
                           `${currencySym}0.00`
-                        ) : lpTokenBalance || (token.isIPORVault && totalStaked > 0) ? (
-                          showUsdValue(balanceAmount, currencySym)
-                        ) : token.isIPORVault && totalStaked === 0 ? (
-                          `${currencySym}0.00`
-                        ) : (
+                        ) : userStats.length === 0 ? (
                           <AnimatedDots />
+                        ) : (
+                          showUsdValue(balanceAmount, currencySym)
                         )}
                       </NewLabel>
                     </FlexDiv>
@@ -2096,10 +1690,10 @@ const AdvancedFarm = () => {
                         <div className="question" data-tip data-for="fToken-total-balance">
                           {!connected ? (
                             0
-                          ) : lpTokenBalance || (token.isIPORVault && totalStaked >= 0) ? (
-                            showTokenBalance(totalValue)
-                          ) : (
+                          ) : userStats.length === 0 ? (
                             <AnimatedDots />
+                          ) : (
+                            showTokenBalance(totalValue)
                           )}
                         </div>
                         <Tooltip
@@ -2118,7 +1712,7 @@ const AdvancedFarm = () => {
                             {totalValue}
                           </NewLabel>
                         </Tooltip>
-                        <span className="symbol">{useIFARM ? `i${id}` : fTokenName}</span>
+                        <span className="symbol">{fTokenName}</span>
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
@@ -2359,7 +1953,7 @@ const AdvancedFarm = () => {
                               $justifycontent="space-between"
                               $padding={isMobile ? '10px 15px' : '10px 15px'}
                               onClick={() => {
-                                const lcChainName = getChainNamePortals(token.chain)
+                                const lcChainName = getChainNamePortals(tokenChain)
                                 return allVaultsData[apyKey]?.vaultAddress
                                   ? window.open(
                                       `https://app.harvest.finance/${lcChainName}/${allVaultsData[apyKey]?.vaultAddress}`,
@@ -2406,127 +2000,53 @@ const AdvancedFarm = () => {
                     vaultPool={vaultPool}
                     totalValue={totalValue}
                     useIFARM={useIFARM}
-                    farmPrice={farmPrice}
                     underlyingPrice={underlyingPrice}
                     lpTokenBalance={lpTokenBalance}
                     chartData={chartData}
                   />
                 )
-              ) : activeMainTag === 1 && !token.isIPORVault ? (
-                isArbCampVault ? (
-                  <>
-                    <MyTotalReward $marginbottom={isMobile ? '20px' : '25px'}>
-                      <div className="box-image">
-                        <img src={ARBball} alt="" />
-                      </div>
-                      <div className="box-text">
-                        <div className="box-text-first">
-                          Earn more on your claimed ARB rewards with the ARB farm.
-                        </div>
-                        <div className="box-text-second">
-                          Your ARB wallet balance: <span>{showTokenBalance(arbBalance)}</span>
-                        </div>
-                      </div>
-                      <div className="box-btn-wrap">
-                        <div
-                          className="box-btn"
-                          role="button"
-                          tabIndex={0}
-                          onClick={() => {
-                            window.open(
-                              '/arbitrum/0x32DB5Cbac1C278696875eB9F27eD4cD7423dd126',
-                              '_blank',
-                            )
-                          }}
-                          onKeyDown={e => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              window.open(
-                                '/arbitrum/0x32DB5Cbac1C278696875eB9F27eD4cD7423dd126',
-                                '_blank',
-                              )
-                            }
-                          }}
-                        >
-                          Open ARB farm
-                        </div>
-                      </div>
-                    </MyTotalReward>
-                    {!isMobile && (
-                      <MyBalance
-                        $marginbottom="25px"
-                        $backcolor={backColor}
-                        $bordercolor={borderColorBox}
-                      >
-                        <NewLabel
-                          $size={isMobile ? '12px' : '14px'}
-                          $weight="600"
-                          $height={isMobile ? '20px' : '24px'}
-                          $fontcolor={fontColor4}
-                          $padding={isMobile ? '10px 15px' : '10px 15px'}
-                          $borderbottom={`1px solid ${borderColorBox}`}
-                          $display="flex"
-                          $justifycontent="space-between"
-                        >
-                          <div>My Token Rewards</div>
-                          <div>
-                            {!connected || isNaN(totalReward) ? (
-                              `${currencySym}0`
-                            ) : userStats ? (
-                              showUsdValue(totalReward, currencySym)
-                            ) : (
-                              <AnimatedDots />
-                            )}
-                          </div>
-                        </NewLabel>
-                        <FlexDiv>
-                          <VaultPanelActionsFooter {...viewComponentProps} />
-                        </FlexDiv>
-                      </MyBalance>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <TotalRewardBox
-                      $marginbottom={isMobile ? '20px' : '25px'}
+              ) : activeMainTag === 1 ? (
+                <>
+                  <TotalRewardBox
+                    $marginbottom={isMobile ? '20px' : '25px'}
+                    $backcolor={bgColorNew}
+                    $bordercolor={borderColorBox}
+                  >
+                    <BoxTitle $fontcolor3={fontColor3}>Rewards</BoxTitle>
+                    <RewardValue>
+                      <BoxValue $fontcolor1={fontColor1}>
+                        {!connected ? (
+                          `${currencySym}0`
+                        ) : userStats ? (
+                          showUsdValue(totalReward, currencySym)
+                        ) : (
+                          <AnimatedDots />
+                        )}
+                      </BoxValue>
+                    </RewardValue>
+                  </TotalRewardBox>
+                  {!isMobile && (
+                    <MyBalance
+                      $marginbottom="25px"
                       $backcolor={bgColorNew}
                       $bordercolor={borderColorBox}
                     >
-                      <BoxTitle $fontcolor3={fontColor3}>Rewards</BoxTitle>
-                      <RewardValue>
-                        <BoxValue $fontcolor1={fontColor1}>
-                          {!connected ? (
-                            `${currencySym}0`
-                          ) : userStats ? (
-                            showUsdValue(totalReward, currencySym)
-                          ) : (
-                            <AnimatedDots />
-                          )}
-                        </BoxValue>
-                      </RewardValue>
-                    </TotalRewardBox>
-                    {!isMobile && (
-                      <MyBalance
-                        $marginbottom="25px"
-                        $backcolor={bgColorNew}
-                        $bordercolor={borderColorBox}
+                      <NewLabel
+                        $size={isMobile ? '12px' : '14px'}
+                        $weight="600"
+                        $height={isMobile ? '20px' : '24px'}
+                        $fontcolor={fontColor4}
+                        $padding={isMobile ? '10px 15px' : '10px 15px'}
+                        $borderbottom={`1px solid ${borderColorBox}`}
                       >
-                        <NewLabel
-                          $size={isMobile ? '12px' : '14px'}
-                          $weight="600"
-                          $height={isMobile ? '20px' : '24px'}
-                          $fontcolor={fontColor4}
-                          $padding={isMobile ? '10px 15px' : '10px 15px'}
-                          $borderbottom={`1px solid ${borderColorBox}`}
-                        >
-                          My Token Rewards
-                        </NewLabel>
-                        <FlexDiv>
-                          <VaultPanelActionsFooter {...viewComponentProps} />
-                        </FlexDiv>
-                      </MyBalance>
-                    )}
-                  </>
-                )
+                        My Token Rewards
+                      </NewLabel>
+                      <FlexDiv>
+                        <VaultPanelActionsFooter {...viewComponentProps} />
+                      </FlexDiv>
+                    </MyBalance>
+                  )}
+                </>
               ) : activeMainTag === 2 ? (
                 <>
                   <HalfInfo
@@ -2632,7 +2152,7 @@ const AdvancedFarm = () => {
                         token={token}
                         tokenSymbol={tokenSym}
                         useIFARM={useIFARM}
-                        fAssetPool={fAssetPool}
+                        vaultPool={vaultPool}
                         multipleAssets={multipleAssets}
                         fromInfoAmount={fromInfoAmount}
                         fromInfoUsdAmount={fromInfoUsdAmount}
@@ -2655,7 +2175,7 @@ const AdvancedFarm = () => {
                         setUnstakeBalance={setUnstakeBalance}
                         balanceList={balanceList}
                         tokenSymbol={tokenSym}
-                        fAssetPool={fAssetPool}
+                        vaultPool={vaultPool}
                         lpTokenBalance={lpTokenBalance}
                         stakedAmount={stakedAmount}
                         token={token}
@@ -2694,7 +2214,7 @@ const AdvancedFarm = () => {
                         token={token}
                         unstakeBalance={unstakeBalance}
                         tokenSymbol={tokenSym}
-                        fAssetPool={fAssetPool}
+                        vaultPool={vaultPool}
                         multipleAssets={multipleAssets}
                         useIFARM={useIFARM}
                         depositedValueUSD={depositedValueUSD}
@@ -2714,7 +2234,6 @@ const AdvancedFarm = () => {
                       vaultPool={vaultPool}
                       totalValue={totalValue}
                       useIFARM={useIFARM}
-                      farmPrice={farmPrice}
                       underlyingPrice={underlyingPrice}
                       lpTokenBalance={lpTokenBalance}
                       chartData={chartData}
@@ -2723,7 +2242,7 @@ const AdvancedFarm = () => {
                     <></>
                   )}
                 </FirstPartSection>
-              ) : activeMainTag === 1 && !token.isIPORVault ? (
+              ) : activeMainTag === 1 ? (
                 <SecondPartSection>
                   <MyBalance
                     $backcolor={bgColorNew}
@@ -2781,14 +2300,12 @@ const AdvancedFarm = () => {
                       >
                         {!connected ? (
                           0
-                        ) : lpTokenBalance ? (
-                          unstakedAmount === 0 ? (
-                            '0.00'
-                          ) : (
-                            unstakedAmount
-                          )
-                        ) : (
+                        ) : userStats.length === 0 ? (
                           <AnimatedDots />
+                        ) : unstakedAmount === 0 ? (
+                          '0.00'
+                        ) : (
+                          unstakedAmount
                         )}
                       </NewLabel>
                     </FlexDiv>
@@ -2829,14 +2346,12 @@ const AdvancedFarm = () => {
                       >
                         {!connected ? (
                           0
-                        ) : totalStaked ? (
-                          stakedAmount === 0 ? (
-                            '0.00'
-                          ) : (
-                            stakedAmount
-                          )
-                        ) : (
+                        ) : userStats.length === 0 ? (
                           <AnimatedDots />
+                        ) : stakedAmount === 0 ? (
+                          '0.00'
+                        ) : (
+                          stakedAmount
                         )}
                       </NewLabel>
                     </FlexDiv>
@@ -2877,7 +2392,7 @@ const AdvancedFarm = () => {
                         switchMethod={handleToggle(setActiveStake)}
                         tokenSymbol={tokenSym}
                         lpTokenBalance={lpTokenBalance}
-                        fAssetPool={fAssetPool}
+                        vaultPool={vaultPool}
                       />
                       <StakeStart
                         stakeStart={stakeStart}
@@ -2886,7 +2401,7 @@ const AdvancedFarm = () => {
                         setInputAmount={setInputAmountStake}
                         token={token}
                         tokenSymbol={tokenSym}
-                        fAssetPool={fAssetPool}
+                        vaultPool={vaultPool}
                         lpTokenBalance={lpTokenBalance}
                         lpTokenApprovedBalance={lpTokenApprovedBalance}
                         setPendingAction={setPendingAction}
@@ -2910,7 +2425,7 @@ const AdvancedFarm = () => {
                         switchMethod={handleToggle(setActiveStake)}
                         tokenSymbol={tokenSym}
                         totalStaked={totalStaked}
-                        fAssetPool={fAssetPool}
+                        vaultPool={vaultPool}
                         multipleAssets={multipleAssets}
                         amountsToExecute={amountsToExecuteUnstake}
                         setAmountsToExecute={setAmountsToExecuteUnstake}
@@ -2925,7 +2440,7 @@ const AdvancedFarm = () => {
                         switchMethod={handleToggle(setActiveStake)}
                         tokenSymbol={tokenSym}
                         totalStaked={totalStaked}
-                        fAssetPool={fAssetPool}
+                        vaultPool={vaultPool}
                         setPendingAction={setPendingAction}
                         multipleAssets={multipleAssets}
                         amountsToExecute={amountsToExecuteUnstake}
@@ -3280,7 +2795,7 @@ const AdvancedFarm = () => {
                                 cursor="pointer"
                                 $borderbottom="0.5px dotted white"
                                 onClick={() => {
-                                  const lcChainName = getChainNamePortals(token.chain)
+                                  const lcChainName = getChainNamePortals(tokenChain)
                                   return allVaultsData[data.hVaultId]?.vaultAddress
                                     ? window.open(
                                         `https://app.harvest.finance/${lcChainName}/${

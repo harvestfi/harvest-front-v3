@@ -45,18 +45,6 @@ export const getUserVaultBalanceInDetail = (tokenSymbol, totalStakedInPool, iFAR
   }
 }
 
-export const getVaultValue = token => {
-  const poolId = get(token, 'data.id')
-
-  switch (poolId) {
-    case SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID: {
-      return new BigNumber(get(token, 'data.totalValueLocked', 0)).toString()
-    }
-    default:
-      return new BigNumber(get(token, 'totalValueLocked', 0))
-  }
-}
-
 export const getTotalApy = (vaultPool, token, isSpecialVault) => {
   const vaultData = isSpecialVault ? token.data : vaultPool
 
@@ -497,7 +485,7 @@ export const getMigrateVaultApy = (vaultKey, vaultsGroup, vaultsData, pools) => 
     ? getTotalApy(null, token, true)
     : getTotalApy(vaultPool, tokenVault)
 
-  const vaultTvl = getVaultValue(isSpecialVault ? token : tokenVault)
+  const vaultTvl = new BigNumber(get(isSpecialVault ? token : tokenVault, 'totalValueLocked', 0))
 
   return { totalApy, vaultTvl }
 }
@@ -728,10 +716,10 @@ export async function fetchAndParseVaultData({ account, groupOfVaults, totalPool
 
   const promises = uniqueStakedVaults.map(async symbol => {
     let token = null,
-      fAssetPool = {}
+      vaultPool = {}
 
     const actualSymbol = symbol === IFARM_TOKEN_SYMBOL ? FARM_TOKEN_SYMBOL : symbol
-    fAssetPool =
+    vaultPool =
       actualSymbol === FARM_TOKEN_SYMBOL
         ? groupOfVaults[actualSymbol].data
         : find(totalPools, pool => pool.id === actualSymbol)
@@ -742,8 +730,8 @@ export async function fetchAndParseVaultData({ account, groupOfVaults, totalPool
       token = find(
         groupOfVaults,
         vault =>
-          vault.vaultAddress === fAssetPool?.collateralAddress ||
-          (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress),
+          vault.vaultAddress === vaultPool?.collateralAddress ||
+          (vault.data && vault.data.collateralAddress === vaultPool.collateralAddress),
       )
     }
 
@@ -756,7 +744,7 @@ export async function fetchAndParseVaultData({ account, groupOfVaults, totalPool
       const tokenSym = token.isIPORVault ? token.vaultSymbol : actualSymbol
 
       if (isSpecialVault) {
-        fAssetPool = token.data
+        vaultPool = token.data
       }
 
       const iporVFlag = token.isIPORVault ?? false

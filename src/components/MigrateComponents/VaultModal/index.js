@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { isEmpty } from 'lodash'
+import { isEmpty, get } from 'lodash'
 import Modal from 'react-bootstrap/Modal'
 import { BsArrowDown } from 'react-icons/bs'
 import BigNumber from 'bignumber.js'
@@ -11,8 +11,8 @@ import { fromWei, checkNativeToken } from '../../../services/web3'
 import AnimatedDots from '../../AnimatedDots'
 import { formatNetworkName, formatNumber, formatNumberWido } from '../../../utilities/formats'
 import VaultList from '../VaultList'
-import { getMatchedVaultList, getVaultValue } from '../../../utilities/parsers'
-import { FARM_TOKEN_SYMBOL, BEGINNERS_BALANCES_DECIMALS } from '../../../constants'
+import { getMatchedVaultList } from '../../../utilities/parsers'
+import { FARM_TOKEN_SYMBOL, USD_BALANCES_DECIMALS } from '../../../constants'
 import { usePortals } from '../../../providers/Portals'
 import { VaultBox } from '../PositionList/style'
 
@@ -106,7 +106,7 @@ const VaultModal = ({
       matched = getMatchedVaultList(groupOfVaults, chain, vaultsData, pools)
       if (matched.length > 0) {
         matched.forEach(item => {
-          const vaultValue = getVaultValue(item.vault)
+          const vaultValue = new BigNumber(get(item.vault, 'totalValueLocked', 0))
           if (Number(item.vaultApy) !== 0 && Number(vaultValue) > 500) {
             activedList.push(item)
           }
@@ -120,7 +120,7 @@ const VaultModal = ({
       matched = getMatchedVaultList(groupOfVaults, 8453, vaultsData, pools)
       if (matched.length > 0) {
         matched.forEach(item => {
-          const vaultValue = getVaultValue(item.vault)
+          const vaultValue = new BigNumber(get(item.vault, 'totalValueLocked', 0))
           if (Number(item.vaultApy) !== 0 && Number(vaultValue) > 500) {
             activedList.push(item)
           }
@@ -509,7 +509,7 @@ const VaultModal = ({
             const tokenPrice = useIFARM ? token.data?.lpTokenData?.price : token.usdPrice
             const usdValue = formatNumberWido(
               Number(tokenBalance) * Number(tokenPrice),
-              BEGINNERS_BALANCES_DECIMALS,
+              USD_BALANCES_DECIMALS,
             )
             const logoURI =
               token.logoUrl.length === 1

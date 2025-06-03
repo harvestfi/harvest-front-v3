@@ -63,7 +63,7 @@ const DepositStart = ({
   token,
   tokenSymbol,
   useIFARM,
-  fAssetPool,
+  vaultPool,
   fromInfoAmount,
   fromInfoUsdAmount,
   minReceiveAmountString,
@@ -194,7 +194,7 @@ const DepositStart = ({
     }
     setReceiveAmount(receiveString)
 
-    await fetchUserPoolStats([fAssetPool], account, userStats)
+    await fetchUserPoolStats([vaultPool], account, userStats)
   }
 
   const approveZap = async amnt => {
@@ -229,7 +229,7 @@ const DepositStart = ({
               setStartSpinner(false)
               setReceiveAmount(minReceiveAmountString)
               setReceiveUsd(minReceiveUsdAmount)
-              await fetchUserPoolStats([fAssetPool], account, userStats)
+              await fetchUserPoolStats([vaultPool], account, userStats)
               await getWalletBalances([tokenSym], false, true)
             },
             async () => {
@@ -285,7 +285,7 @@ const DepositStart = ({
               amount,
               async () => {
                 await getWalletBalances([token.id], false, true)
-                await fetchUserPoolStats([fAssetPool], account, userStats)
+                await fetchUserPoolStats([vaultPool], account, userStats)
               },
               () => {
                 setDepositFailed(true)
@@ -303,7 +303,7 @@ const DepositStart = ({
               false,
               async () => {
                 await getWalletBalances([tokenSym], false, true)
-                await fetchUserPoolStats([fAssetPool], account, userStats)
+                await fetchUserPoolStats([vaultPool], account, userStats)
               },
               async () => {
                 setDepositFailed(true)

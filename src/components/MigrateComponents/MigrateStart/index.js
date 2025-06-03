@@ -141,7 +141,7 @@ const MigrateStart = ({
     tokenChain,
     amount,
     toToken,
-    fAssetPool,
+    vaultPool,
     isSpecialVault,
     pickedDefaultToken
 
@@ -155,7 +155,7 @@ const MigrateStart = ({
     pricePerFullShare = fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals)
     tokenChain = token.chain || token.data.chain
     toToken = toUseIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
-    fAssetPool = isSpecialVault
+    vaultPool = isSpecialVault
       ? token.data
       : find(pools, pool => pool.collateralAddress === tokens[id].vaultAddress)
   }
@@ -421,7 +421,7 @@ const MigrateStart = ({
     }
     setReceiveAmount(receiveString)
 
-    await fetchUserPoolStats([fAssetPool], account, userStats)
+    await fetchUserPoolStats([vaultPool], account, userStats)
   }
 
   const approveZap = async amnt => {
@@ -455,7 +455,7 @@ const MigrateStart = ({
               setStartSpinner(false)
               setReceiveAmount(minReceiveAmountString)
               setReceiveUsd(minReceiveUsdAmount)
-              await fetchUserPoolStats([fAssetPool], account, userStats)
+              await fetchUserPoolStats([vaultPool], account, userStats)
               await getWalletBalances([toId], false, true)
             },
             async () => {
@@ -513,7 +513,7 @@ const MigrateStart = ({
           false,
           async () => {
             await getWalletBalances([toId])
-            await fetchUserPoolStats([fAssetPool], account, userStats)
+            await fetchUserPoolStats([vaultPool], account, userStats)
           },
           async () => {
             setDepositFailed(true)

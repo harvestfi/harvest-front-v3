@@ -8,7 +8,6 @@ import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import AlertIcon from '../../../../assets/images/logos/beginners/alert-triangle.svg'
 import AlertCloseIcon from '../../../../assets/images/logos/beginners/alert-close.svg'
-import AnimatedDots from '../../../AnimatedDots'
 import { useWallet } from '../../../../providers/Wallet'
 import { isSpecialApp } from '../../../../utilities/formats'
 import { fromWei, toWei } from '../../../../services/web3'
@@ -42,7 +41,7 @@ const UnstakeBase = ({
   switchMethod,
   tokenSymbol,
   totalStaked,
-  fAssetPool,
+  vaultPool,
   multipleAssets,
   amountsToExecute,
   setAmountsToExecute,
@@ -226,8 +225,8 @@ const UnstakeBase = ({
                   new BigNumber(
                     fromWei(
                       totalStaked,
-                      fAssetPool.lpTokenData.decimals,
-                      fAssetPool.lpTokenData.decimals,
+                      token.decimals || vaultPool.lpTokenData.decimals,
+                      token.decimals || vaultPool.lpTokenData.decimals,
                       false,
                     ),
                   ).toString(),
@@ -236,8 +235,8 @@ const UnstakeBase = ({
                   new BigNumber(
                     fromWei(
                       totalStaked,
-                      fAssetPool.lpTokenData.decimals,
-                      fAssetPool.lpTokenData.decimals,
+                      token.decimals || vaultPool.lpTokenData.decimals,
+                      token.decimals || vaultPool.lpTokenData.decimals,
                       false,
                     ),
                   ).toString(),
@@ -257,8 +256,8 @@ const UnstakeBase = ({
               new BigNumber(
                 fromWei(
                   totalStaked,
-                  fAssetPool.lpTokenData.decimals,
-                  fAssetPool.lpTokenData.decimals,
+                  token.decimals || vaultPool.lpTokenData.decimals,
+                  token.decimals || vaultPool.lpTokenData.decimals,
                   false,
                 ),
               ).toString(),
@@ -267,8 +266,8 @@ const UnstakeBase = ({
               new BigNumber(
                 fromWei(
                   totalStaked,
-                  fAssetPool.lpTokenData.decimals,
-                  fAssetPool.lpTokenData.decimals,
+                  token.decimals || vaultPool.lpTokenData.decimals,
+                  token.decimals || vaultPool.lpTokenData.decimals,
                   false,
                 ),
               ).toString(),
@@ -278,20 +277,16 @@ const UnstakeBase = ({
       >
         Balance Available:
         <span>
-          {!connected ? (
-            0
-          ) : totalStaked ? (
-            new BigNumber(
-              fromWei(
-                totalStaked,
-                fAssetPool.lpTokenData.decimals,
-                fAssetPool.lpTokenData.decimals,
-                false,
-              ),
-            ).toString()
-          ) : (
-            <AnimatedDots />
-          )}
+          {!connected
+            ? 0
+            : new BigNumber(
+                fromWei(
+                  totalStaked,
+                  token.decimals || vaultPool.lpTokenData.decimals,
+                  token.decimals || vaultPool.lpTokenData.decimals,
+                  false,
+                ),
+              ).toString()}
         </span>
       </BalanceInfo>
       <InsufficientSection

@@ -33,15 +33,13 @@ import { usePools } from '../Pools'
 import { useWallet } from '../Wallet'
 import { calculateFarmingBalance, filterVaults } from './utils'
 
-const { tokens, addresses } = require('../../data')
+const { tokens } = require('../../data')
 
 const VaultsContext = createContext()
 const useVaults = () => useContext(VaultsContext)
 
-const importedVaults = pickBy(
-  tokens,
-  token => token.vaultAddress || token.tokenAddress === addresses.iFARM,
-)
+const importedVaults = pickBy(tokens, token => token.vaultAddress)
+importedVaults.IFARM.id = 'IFARM' // Ensure IFARM vault has the correct i
 
 const VaultsProvider = _ref => {
   const { children } = _ref
@@ -148,6 +146,9 @@ const VaultsProvider = _ref => {
                 maxToDeposit: new BigNumber(capLimit).minus(new BigNumber(currentCap)),
                 ranges,
               }
+            }
+            if (vaultSymbol === 'IFARM') {
+              importedVaults[vaultSymbol].id = 'IFARM'
             }
             dataFetched = !apiFailed
           }

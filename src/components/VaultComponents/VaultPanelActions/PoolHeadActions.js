@@ -33,7 +33,7 @@ const { tokens } = require('../../../data')
 const PoolHeadActions = ({
   token,
   tokenSymbol,
-  fAssetPool,
+  vaultPool,
   lpTokenBalance,
   lpTokenApprovedBalance,
   totalStaked,
@@ -72,7 +72,7 @@ const PoolHeadActions = ({
       }
 
       if ((depositedOrTaken && iFARM) || !iFARM) {
-        await fetchUserPoolStats([fAssetPool], account, userStats)
+        await fetchUserPoolStats([vaultPool], account, userStats)
       }
 
       await getWalletBalances(tokensToReload, false, true)
@@ -82,7 +82,7 @@ const PoolHeadActions = ({
     },
     [
       tokenSymbol,
-      fAssetPool,
+      vaultPool,
       setAmountsToExecute,
       setIFARM,
       setLoadingDots,
@@ -171,7 +171,7 @@ const PoolHeadActions = ({
                     tokenSymbol,
                     amountsToExecuteInWei[0],
                     lpTokenApprovedBalance,
-                    fAssetPool,
+                    vaultPool,
                     contracts,
                     setPendingAction,
                     false,
@@ -229,7 +229,7 @@ const PoolHeadActions = ({
               } else {
                 await handleExit(
                   account,
-                  fAssetPool,
+                  vaultPool,
                   shouldDoPartialUnstake,
                   amountsToExecuteInWei[0],
                   setPendingAction,

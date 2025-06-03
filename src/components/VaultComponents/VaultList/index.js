@@ -23,7 +23,7 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
 import { isSpecialApp } from '../../../utilities/formats'
-import { getTotalApy, getVaultValue } from '../../../utilities/parsers'
+import { getTotalApy } from '../../../utilities/parsers'
 import { getPublishDate } from '../../../utilities/apiCalls'
 import VaultPanel from '../VaultPanel'
 import VaultsListHeader from '../VaultsListHeader'
@@ -183,7 +183,7 @@ const formatVaults = (
       case 'deposits':
         vaultsSymbol = orderBy(
           vaultsSymbol,
-          v => Number(getVaultValue(groupOfVaults[v])),
+          v => Number(new BigNumber(get(groupOfVaults[v], 'totalValueLocked', 0))),
           sortOrder,
         )
         break
@@ -284,7 +284,10 @@ const formatVaults = (
     } else if (selectFarmType === 'PopularNow') {
       vaultsSymbol = orderBy(
         vaultsSymbol,
-        [v => Number(getVaultValue(groupOfVaults[v])), v => get(groupOfVaults, `${v}.publishDate`)],
+        [
+          v => Number(new BigNumber(get(groupOfVaults[v], 'totalValueLocked', 0))),
+          v => get(groupOfVaults, `${v}.publishDate`),
+        ],
         ['desc', 'desc'],
       ).slice(0, 10)
     }

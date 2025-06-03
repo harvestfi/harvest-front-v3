@@ -30,7 +30,7 @@ import {
 const { tokens } = require('../../../data')
 
 const VaultFooterActions = ({
-  fAssetPool,
+  vaultPool,
   totalTokensEarned,
   token,
   rewardTokenSymbols,
@@ -90,10 +90,10 @@ const VaultFooterActions = ({
               <Monospace $fontcolor5={fontColor5}>
                 {!connected ? (
                   '0.00'
-                ) : !isLoadingData && get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`) ? (
+                ) : !isLoadingData && get(userStats, `[${get(vaultPool, 'id')}].rewardsEarned`) ? (
                   <>
                     <Counter
-                      pool={fAssetPool}
+                      pool={vaultPool}
                       totalTokensEarned={
                         rewardTokenSymbols.length > 1
                           ? fromWei(
@@ -103,21 +103,21 @@ const VaultFooterActions = ({
                             )
                           : totalTokensEarned
                       }
-                      totalStaked={get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)}
+                      totalStaked={get(userStats, `[${vaultPool.id}]['totalStaked']`, 0)}
                       ratePerDay={get(ratesPerDay, symbolIdx, ratesPerDay[0])}
                       rewardPerToken={get(
-                        fAssetPool,
+                        vaultPool,
                         `rewardPerToken[${symbolIdx}]`,
-                        fAssetPool.rewardPerToken[0],
+                        vaultPool.rewardPerToken[0],
                       )}
                       rewardTokenAddress={get(
-                        fAssetPool,
+                        vaultPool,
                         `rewardTokens[${symbolIdx}]`,
-                        fAssetPool.rewardTokens[0],
+                        vaultPool.rewardTokens[0],
                       )}
                     />
                     <CounterUsdPrice
-                      pool={fAssetPool}
+                      pool={vaultPool}
                       totalTokensEarned={
                         rewardTokenSymbols.length > 1
                           ? fromWei(
@@ -127,17 +127,17 @@ const VaultFooterActions = ({
                             )
                           : totalTokensEarned
                       }
-                      totalStaked={get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)}
+                      totalStaked={get(userStats, `[${vaultPool.id}]['totalStaked']`, 0)}
                       ratePerDay={get(ratesPerDay, symbolIdx, ratesPerDay[0])}
                       rewardPerToken={get(
-                        fAssetPool,
+                        vaultPool,
                         `rewardPerToken[${symbolIdx}]`,
-                        fAssetPool.rewardPerToken[0],
+                        vaultPool.rewardPerToken[0],
                       )}
                       rewardTokenAddress={get(
-                        fAssetPool,
+                        vaultPool,
                         `rewardTokens[${symbolIdx}]`,
-                        fAssetPool.rewardTokens[0],
+                        vaultPool.rewardTokens[0],
                       )}
                       rewardTokenUsdPrice={rewardTokenPrices[symbolIdx]}
                     />
@@ -184,10 +184,10 @@ const VaultFooterActions = ({
               const chainHex = `0x${Number(tokenChain).toString(16)}`
               if (!isSpecialApp) await setChain({ chainId: chainHex })
             } else {
-              handleClaim(account, fAssetPool, setPendingAction, async () => {
+              handleClaim(account, vaultPool, setPendingAction, async () => {
                 await getWalletBalances([poolRewardSymbol])
                 setLoadingDots(false, true)
-                await fetchUserPoolStats([fAssetPool], account, userStats)
+                await fetchUserPoolStats([vaultPool], account, userStats)
                 setLoadingDots(false, false)
               })
             }

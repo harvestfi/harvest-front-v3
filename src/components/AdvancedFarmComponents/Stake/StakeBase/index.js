@@ -5,7 +5,6 @@ import { useMediaQuery } from 'react-responsive'
 import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
-import AnimatedDots from '../../../AnimatedDots'
 import { useWallet } from '../../../../providers/Wallet'
 import { isSpecialApp } from '../../../../utilities/formats'
 import { fromWei, toWei } from '../../../../services/web3'
@@ -34,7 +33,7 @@ const StakeBase = ({
   switchMethod,
   tokenSymbol,
   lpTokenBalance,
-  fAssetPool,
+  vaultPool,
 }) => {
   const {
     darkMode,
@@ -91,7 +90,7 @@ const StakeBase = ({
       setShowWarning(true)
       return
     }
-    const stakeAmount = toWei(inputAmount, fAssetPool.lpTokenData.decimals)
+    const stakeAmount = toWei(inputAmount, vaultPool.lpTokenData.decimals)
     if (new BigNumber(stakeAmount.toString()).isGreaterThan(lpTokenBalance.toString())) {
       setWarningContent(`Insufficient f${tokenSymbol} balance`)
       setShowWarning(true)
@@ -183,8 +182,8 @@ const StakeBase = ({
                   new BigNumber(
                     fromWei(
                       lpTokenBalance,
-                      fAssetPool.lpTokenData.decimals,
-                      fAssetPool.lpTokenData.decimals,
+                      token.decimals || vaultPool.lpTokenData.decimals,
+                      token.decimals || vaultPool.lpTokenData.decimals,
                       false,
                     ),
                   ).toString(),
@@ -204,8 +203,8 @@ const StakeBase = ({
               new BigNumber(
                 fromWei(
                   lpTokenBalance,
-                  fAssetPool.lpTokenData.decimals,
-                  fAssetPool.lpTokenData.decimals,
+                  token.decimals || vaultPool.lpTokenData.decimals,
+                  token.decimals || vaultPool.lpTokenData.decimals,
                   false,
                 ),
               ).toString(),
@@ -215,20 +214,16 @@ const StakeBase = ({
       >
         Balance Available:
         <span>
-          {!connected ? (
-            0
-          ) : lpTokenBalance ? (
-            new BigNumber(
-              fromWei(
-                lpTokenBalance,
-                fAssetPool.lpTokenData.decimals,
-                fAssetPool.lpTokenData.decimals,
-                false,
-              ),
-            ).toString()
-          ) : (
-            <AnimatedDots />
-          )}
+          {!connected
+            ? 0
+            : new BigNumber(
+                fromWei(
+                  lpTokenBalance,
+                  token.decimals || vaultPool.lpTokenData.decimals,
+                  token.decimals || vaultPool.lpTokenData.decimals,
+                  false,
+                ),
+              ).toString()}
         </span>
       </BalanceInfo>
       <InsufficientSection

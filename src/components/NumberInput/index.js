@@ -10,7 +10,6 @@ const NumberInput = ({
   label,
   secondaryLabel,
   logo,
-  interactiveButton,
   buttonLabel,
   onClick,
   disabled,

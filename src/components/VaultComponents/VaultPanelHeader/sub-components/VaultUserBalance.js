@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
-import { get } from 'lodash'
-import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, MAX_DECIMALS } from '../../../../constants'
+import { MAX_DECIMALS } from '../../../../constants'
 import { useVaults } from '../../../../providers/Vault'
 import { fromWei } from '../../../../services/web3'
 import { formatNumber, parseValue } from '../../../../utilities/formats'
 import AnimatedDots from '../../../AnimatedDots'
 import { useWallet } from '../../../../providers/Wallet'
 import { Monospace } from '../../../GlobalStyle'
-import { usePools } from '../../../../providers/Pools'
 import { useRate } from '../../../../providers/Rate'
 
 const VaultUserBalance = ({
@@ -19,9 +17,8 @@ const VaultUserBalance = ({
   loadedVault,
   fontColor1,
 }) => {
-  const { vaultsData, farmingBalances } = useVaults()
-  const { account, connected } = useWallet()
-  const { userStats } = usePools()
+  const { farmingBalances } = useVaults()
+  const { connected } = useWallet()
   const [userVaultBalance, setUserVaultBalance] = useState(null)
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
@@ -36,24 +33,12 @@ const VaultUserBalance = ({
 
   useEffect(() => {
     const getBalance = async () => {
-      let bal
-      if (tokenSymbol === FARM_TOKEN_SYMBOL) {
-        if (userStats['profit-sharing-farm']) {
-          bal = new BigNumber(userStats['profit-sharing-farm']['lpTokenBalance'])
-            .times(get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0))
-            .div(1e18)
-            .toFixed()
-        } else {
-          bal = 0
-        }
-      } else {
-        bal = farmingBalances[tokenSymbol]
-      }
+      let bal = farmingBalances[tokenSymbol]
       setUserVaultBalance(bal)
     }
 
     getBalance()
-  }, [vaultsData, token, tokenSymbol, farmingBalances, account, userStats])
+  }, [tokenSymbol, farmingBalances])
 
   const isLoadingUserBalance =
     loadedVault === false || loadingFarmingBalance || userVaultBalance === false

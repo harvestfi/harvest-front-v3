@@ -298,30 +298,30 @@ const ApexChart = ({ data, range }) => {
             <Area
               dataKey="Ethereum"
               stackId="TVL"
-              stroke="#627EEA"
-              fill="#627EEA"
+              stroke="#d6a737"
+              fill="#d6a737"
               fillOpacity={0.7}
             />
             <Area
               dataKey="Polygon"
               stackId="TVL"
-              stroke="#8247E5"
-              fill="#8247E5"
+              stroke="#9b7ede"
+              fill="#9b7ede"
               fillOpacity={0.7}
             />
             <Area
               dataKey="Arbitrum"
               stackId="TVL"
-              stroke="#28A0EF"
-              fill="#28A0EF"
+              stroke="#5f9ea0"
+              fill="#5f9ea0"
               fillOpacity={0.7}
             />
-            <Area dataKey="Base" stackId="TVL" stroke="#0052FF" fill="#0052FF" fillOpacity={0.7} />
+            <Area dataKey="Base" stackId="TVL" stroke="#b68f40" fill="#b68f40" fillOpacity={0.7} />
             <Area
               dataKey="ZkSync"
               stackId="TVL"
-              stroke="#6990FF"
-              fill="#6990FF"
+              stroke="#8a9a5b"
+              fill="#8a9a5b"
               fillOpacity={0.7}
             />
             <Line dataKey="Total" stroke="#000000" strokeWidth={1} dot={false} />

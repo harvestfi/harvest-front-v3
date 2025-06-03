@@ -43,7 +43,7 @@ const UnstakeStart = ({
   token,
   tokenSymbol,
   totalStaked,
-  fAssetPool,
+  vaultPool,
   setPendingAction,
   multipleAssets,
   amountsToExecute,
@@ -100,12 +100,12 @@ const UnstakeStart = ({
       try {
         await handleExit(
           account,
-          fAssetPool,
+          vaultPool,
           shouldDoPartialUnstake,
           amountsToExecuteInWei[0],
           setPendingAction,
           async () => {
-            await fetchUserPoolStats([fAssetPool], account, userStats)
+            await fetchUserPoolStats([vaultPool], account, userStats)
             await getWalletBalances(walletBalancesToCheck, false, true)
             bSuccessUnstake = true
           },
@@ -308,7 +308,7 @@ const UnstakeStart = ({
                   <Spinner
                     as="span"
                     animation="border"
-                    $size="sm"
+                    size="sm"
                     role="status"
                     aria-hidden="true"
                   />

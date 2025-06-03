@@ -70,7 +70,7 @@ const WithdrawStart = ({
   token,
   unstakeBalance,
   tokenSymbol,
-  fAssetPool,
+  vaultPool,
   useIFARM,
   setRevertFromInfoAmount,
   revertFromInfoAmount,
@@ -222,7 +222,7 @@ const WithdrawStart = ({
         isSuccess = token.isIPORVault
           ? await handleIPORWithdraw(account, token, assetBal, async () => {
               await getWalletBalances([token.id], false, true)
-              await fetchUserPoolStats([fAssetPool], account, userStats)
+              await fetchUserPoolStats([vaultPool], account, userStats)
             })
           : await handleWithdraw(
               account,
@@ -233,7 +233,7 @@ const WithdrawStart = ({
               false,
               null,
               async () => {
-                await fetchUserPoolStats([fAssetPool], account, userStats)
+                await fetchUserPoolStats([vaultPool], account, userStats)
               },
               async () => {
                 setWithdrawFailed(true)
@@ -277,7 +277,7 @@ const WithdrawStart = ({
           setRevertedAmount(receiveString)
           setRevertedAmountUsd(formatNumberWido(receiveUsdString))
 
-          await fetchUserPoolStats([fAssetPool], account, userStats)
+          await fetchUserPoolStats([vaultPool], account, userStats)
         } catch (err) {
           setWithdrawFailed(true)
           setStartSpinner(false)

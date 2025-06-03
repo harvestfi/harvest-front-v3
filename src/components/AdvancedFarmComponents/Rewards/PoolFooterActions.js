@@ -28,7 +28,7 @@ import Counter from '../../Counter'
 const { tokens } = require('../../../data')
 
 const PoolFooterActions = ({
-  fAssetPool,
+  vaultPool,
   token,
   totalTokensEarned,
   rewardTokenSymbols,
@@ -70,7 +70,7 @@ const PoolFooterActions = ({
       $borderwidth="0px"
       $bordercolor={borderColor}
     >
-      {fAssetPool.id !== SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID &&
+      {vaultPool.id !== SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID &&
         rewardTokenSymbols.map((symbol, symbolIdx) => {
           return (
             <div key={symbolIdx}>
@@ -83,9 +83,9 @@ const PoolFooterActions = ({
                   {!connected ? (
                     '0.00'
                   ) : !isLoadingData &&
-                    get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`) ? (
+                    get(userStats, `[${get(vaultPool, 'id')}].rewardsEarned`) ? (
                     <Counter
-                      pool={fAssetPool}
+                      pool={vaultPool}
                       totalTokensEarned={
                         rewardTokenSymbols.length > 1
                           ? fromWei(
@@ -95,17 +95,17 @@ const PoolFooterActions = ({
                             )
                           : totalTokensEarned
                       }
-                      totalStaked={get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)}
+                      totalStaked={get(userStats, `[${vaultPool.id}]['totalStaked']`, 0)}
                       ratePerDay={get(ratesPerDay, symbolIdx, ratesPerDay[0])}
                       rewardPerToken={get(
-                        fAssetPool,
+                        vaultPool,
                         `rewardPerToken[${symbolIdx}]`,
-                        fAssetPool.rewardPerToken[0],
+                        vaultPool.rewardPerToken[0],
                       )}
                       rewardTokenAddress={get(
-                        fAssetPool,
+                        vaultPool,
                         `rewardTokens[${symbolIdx}]`,
-                        fAssetPool.rewardTokens[0],
+                        vaultPool.rewardTokens[0],
                       )}
                     />
                   ) : userStats.length === 0 ? (
@@ -128,10 +128,10 @@ const PoolFooterActions = ({
                       const chainHex = `0x${Number(tokenChain).toString(16)}`
                       if (!isSpecialApp) await setChain({ chainId: chainHex })
                     } else {
-                      handleClaim(account, fAssetPool, setPendingAction, async () => {
+                      handleClaim(account, vaultPool, setPendingAction, async () => {
                         await getWalletBalances([poolRewardSymbol])
                         setLoadingDots(false, true)
-                        await fetchUserPoolStats([fAssetPool], account, userStats)
+                        await fetchUserPoolStats([vaultPool], account, userStats)
                         setLoadingDots(false, false)
                       })
                     }

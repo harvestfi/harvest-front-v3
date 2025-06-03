@@ -239,7 +239,7 @@ const Portfolio = () => {
         const poolsToLoad = [],
           dl = depositToken.length
         for (let i = 0; i < dl; i += 1) {
-          let fAssetPool =
+          let vaultPool =
             depositToken[i] === FARM_TOKEN_SYMBOL
               ? groupOfVaults[depositToken[i]].data
               : find(totalPools, pool => pool.id === depositToken[i])
@@ -247,15 +247,15 @@ const Portfolio = () => {
           const token = find(
             groupOfVaults,
             vault =>
-              vault.vaultAddress === fAssetPool?.collateralAddress ||
-              (vault.data && vault.data.collateralAddress === fAssetPool?.collateralAddress),
+              vault.vaultAddress === vaultPool?.collateralAddress ||
+              (vault.data && vault.data.collateralAddress === vaultPool?.collateralAddress),
           )
           if (token) {
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
             if (isSpecialVault) {
-              fAssetPool = token.data
+              vaultPool = token.data
             }
-            if (!token.isIPORVault) poolsToLoad.push(fAssetPool)
+            if (!token.isIPORVault) poolsToLoad.push(vaultPool)
           }
         }
         await fetchUserPoolStats(poolsToLoad, account, userStats)
@@ -595,17 +595,17 @@ const Portfolio = () => {
             const vaultAPRDaily = vaultAPR / 365
             const vaultAPRMonthly = vaultAPR / 12
             if (!token.isIPORVault) {
-              const frl = fAssetPool.rewardAPR.length
+              const frl = vaultPool.rewardAPR.length
 
               for (let j = 0; j < frl; j += 1) {
-                totalRewardAPRByPercent += Number(fAssetPool.rewardAPR[j])
+                totalRewardAPRByPercent += Number(vaultPool.rewardAPR[j])
               }
             }
             const totalRewardAPR = totalRewardAPRByPercent / 100
             const poolAPRDaily = totalRewardAPR / 365
             const poolAPRMonthly = totalRewardAPR / 12
 
-            const swapFeeAPRYearly = token.isIPORVault ? 0 : Number(fAssetPool.tradingApy) / 100
+            const swapFeeAPRYearly = token.isIPORVault ? 0 : Number(vaultPool.tradingApy) / 100
             const swapFeeAPRDaily = swapFeeAPRYearly / 365
             const swapFeeAPRMonthly = swapFeeAPRYearly / 12
 

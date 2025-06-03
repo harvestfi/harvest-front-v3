@@ -18,13 +18,7 @@ import COLLAPSED from '../../assets/images/ui/plus.svg'
 import { usePools } from '../../providers/Pools'
 import { addresses } from '../../data'
 import { useWallet } from '../../providers/Wallet'
-import {
-  getChainIcon,
-  getTotalApy,
-  getVaultApy,
-  getVaultValue,
-  vaultProfitDataKey,
-} from '../../utilities/parsers'
+import { getChainIcon, getTotalApy, getVaultApy, vaultProfitDataKey } from '../../utilities/parsers'
 import { usePortals } from '../../providers/Portals'
 import dropDown from '../../assets/images/ui/drop-down.e85f7fdc.svg'
 import { useThemeContext } from '../../providers/useThemeContext'
@@ -283,7 +277,7 @@ const Migrate = () => {
         const poolsToLoad = [],
           dl = depositToken.length
         for (let i = 0; i < dl; i += 1) {
-          let fAssetPool =
+          let vaultPool =
             depositToken[i] === FARM_TOKEN_SYMBOL
               ? groupOfVaults[depositToken[i]].data
               : find(totalPools, pool => pool.id === depositToken[i])
@@ -291,15 +285,15 @@ const Migrate = () => {
           const token = find(
             groupOfVaults,
             vault =>
-              vault.vaultAddress === fAssetPool.collateralAddress ||
-              (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress),
+              vault.vaultAddress === vaultPool.collateralAddress ||
+              (vault.data && vault.data.collateralAddress === vaultPool.collateralAddress),
           )
           if (token) {
             const isSpecialVault = token.liquidityPoolVault || token.poolVault
             if (isSpecialVault) {
-              fAssetPool = token.data
+              vaultPool = token.data
             }
-            poolsToLoad.push(fAssetPool)
+            poolsToLoad.push(vaultPool)
           }
         }
         await fetchUserPoolStats(poolsToLoad, account, userStats)
@@ -404,7 +398,7 @@ const Migrate = () => {
                 tokenName += ', '
               }
             }
-            const statsTvl = getVaultValue(token)
+            const statsTvl = new BigNumber(get(token, 'totalValueLocked', 0))
             stats.tvl = statsTvl
             stats.token = token
             stats.symbol = tokenName
@@ -619,16 +613,16 @@ const Migrate = () => {
             const vaultAPR = ((1 + estimatedApy) ** (1 / 365) - 1) * 365
             const vaultAPRDaily = vaultAPR / 365
             const vaultAPRMonthly = vaultAPR / 12
-            const frl = fAssetPool.rewardAPR.length
+            const frl = vaultPool.rewardAPR.length
 
             for (let j = 0; j < frl; j += 1) {
-              totalRewardAPRByPercent += Number(fAssetPool.rewardAPR[j])
+              totalRewardAPRByPercent += Number(vaultPool.rewardAPR[j])
             }
             const totalRewardAPR = totalRewardAPRByPercent / 100
             const poolAPRDaily = totalRewardAPR / 365
             const poolAPRMonthly = totalRewardAPR / 12
 
-            const swapFeeAPRYearly = Number(fAssetPool.tradingApy) / 100
+            const swapFeeAPRYearly = Number(vaultPool.tradingApy) / 100
             const swapFeeAPRDaily = swapFeeAPRYearly / 365
             const swapFeeAPRMonthly = swapFeeAPRYearly / 12
 

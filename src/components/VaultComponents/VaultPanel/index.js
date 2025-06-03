@@ -18,7 +18,7 @@ const VaultPanel = ({ token, loaded, tokenSymbol, tokenNum, vaultsCount, ...prop
 
   const isSpecialVault = token.poolVault
 
-  const fAssetPool = isSpecialVault
+  const vaultPool = isSpecialVault
     ? token.data
     : find(pools, pool => pool.collateralAddress === tokens[tokenSymbol].vaultAddress)
 
@@ -33,9 +33,9 @@ const VaultPanel = ({ token, loaded, tokenSymbol, tokenNum, vaultsCount, ...prop
   }, [logout, chainId, setVaultLoading])
 
   useEffect(() => {
-    if (account && fAssetPool && !isEmpty(userStats) && useIFARM && vaultLoading) {
+    if (account && vaultPool && !isEmpty(userStats) && useIFARM && vaultLoading) {
       const loadUserPoolsStats = async () => {
-        const poolsToLoad = [fAssetPool]
+        const poolsToLoad = [vaultPool]
 
         await fetchUserPoolStats(poolsToLoad, account, userStats)
         setVaultLoading(false)
@@ -45,7 +45,7 @@ const VaultPanel = ({ token, loaded, tokenSymbol, tokenNum, vaultsCount, ...prop
   }, [
     account,
     setVaultLoading,
-    fAssetPool,
+    vaultPool,
     fetchUserPoolStats,
     pools,
     vaultsData,

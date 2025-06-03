@@ -9,11 +9,10 @@ import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
 import DropDownIcon from '../../../../assets/images/logos/advancedfarm/drop-down.svg'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
-import { BEGINNERS_BALANCES_DECIMALS } from '../../../../constants'
+import { USD_BALANCES_DECIMALS } from '../../../../constants'
 import { useWallet } from '../../../../providers/Wallet'
 import { useRate } from '../../../../providers/Rate'
 import { fromWei, toWei } from '../../../../services/web3'
-import { addresses } from '../../../../data'
 import { formatNumberWido, isSpecialApp, showTokenBalance } from '../../../../utilities/formats'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import AnimatedDots from '../../../AnimatedDots'
@@ -52,12 +51,9 @@ const WithdrawBase = ({
   setUnstakeBalance,
   balanceList,
   tokenSymbol,
-  fAssetPool,
   lpTokenBalance,
-  stakedAmount,
   token,
   switchMethod,
-  useIFARM,
   setRevertFromInfoAmount,
   revertFromInfoUsdAmount,
   setRevertFromInfoUsdAmount,
@@ -88,7 +84,7 @@ const WithdrawBase = ({
   const [withdrawName, setWithdrawName] = useState('Preview & Revert')
   const [showWarning, setShowWarning] = useState(false)
 
-  const { account, web3, connected, chainId, balances } = useWallet()
+  const { account, web3, connected, chainId } = useWallet()
   const { getPortalsEstimate, getPortalsToken } = usePortals()
 
   const { rates } = useRate()
@@ -106,15 +102,7 @@ const WithdrawBase = ({
 
   const tokenName = token.isIPORVault ? tokenSymbol : `f${tokenSymbol}`
 
-  const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress1
-
-  let stakeAmountWei
-  if (useIFARM) {
-    stakeAmountWei = toWei(
-      stakedAmount,
-      useIFARM ? fAssetPool?.lpTokenData?.decimals : token.decimals,
-    )
-  }
+  const fromToken = token.vaultAddress
 
   const [
     {
@@ -194,20 +182,12 @@ const WithdrawBase = ({
                 : portalsEstimate.res.outputAmount,
             }
 
-            const defaultDecimal = token.isIPORVault ? token.vaultDecimals : token?.decimals
+            const defaultDecimal = token.vaultDecimals || token.decimals
             fromInfoValue = new BigNumber(
               fromWei(
                 quoteResult.fromTokenAmount,
-                useIFARM
-                  ? fAssetPool?.lpTokenData?.decimals
-                  : pickedDefaultToken
-                    ? defaultDecimal
-                    : fromTokenDetail?.decimals,
-                useIFARM
-                  ? fAssetPool?.lpTokenData?.decimals
-                  : pickedDefaultToken
-                    ? defaultDecimal
-                    : fromTokenDetail?.decimals,
+                pickedDefaultToken ? defaultDecimal : fromTokenDetail?.decimals,
+                pickedDefaultToken ? defaultDecimal : fromTokenDetail?.decimals,
               ),
             ).toString()
             fromInfoUsdValue =
@@ -216,28 +196,21 @@ const WithdrawBase = ({
                 : formatNumberWido(
                     fromWei(
                       quoteResult.fromTokenAmount,
-                      useIFARM
-                        ? fAssetPool?.lpTokenData?.decimals
-                        : pickedDefaultToken
-                          ? defaultDecimal
-                          : fromTokenDetail?.decimals,
-                      useIFARM
-                        ? fAssetPool?.lpTokenData?.decimals
-                        : pickedDefaultToken
-                          ? defaultDecimal
-                          : fromTokenDetail?.decimals,
+                      pickedDefaultToken ? defaultDecimal : fromTokenDetail?.decimals,
+                      pickedDefaultToken ? defaultDecimal : fromTokenDetail?.decimals,
                       true,
                     ) * quoteResult.fromTokenUsdPrice,
-                    BEGINNERS_BALANCES_DECIMALS,
+                    USD_BALANCES_DECIMALS,
                   )
-            const pDecimal =
-              token.isIPORVault && pickedDefaultToken ? token.vaultDecimals : pickedToken.decimals
+            const pDecimal = pickedDefaultToken
+              ? token.vaultDecimals || token.decimals
+              : pickedToken.decimals
             minReceivedString = new BigNumber(
               fromWei(quoteResult.minToTokenAmount, pDecimal, pDecimal),
             ).toString()
             minReceivedUsdString = formatNumberWido(
               parseFloat(minReceivedString) * toTokenUsdPrice,
-              BEGINNERS_BALANCES_DECIMALS,
+              USD_BALANCES_DECIMALS,
             )
 
             if (Number(fromInfoUsdValue) < 0.01) {
@@ -314,16 +287,7 @@ const WithdrawBase = ({
   const onInputUnstake = e => {
     const inputValue = e.currentTarget.value.replace(/,/g, '.')
     setUnstakeInputValue(inputValue)
-    setUnstakeBalance(
-      toWei(
-        inputValue,
-        useIFARM
-          ? fAssetPool.lpTokenData.decimals
-          : token.isIPORVault
-            ? token.vaultDecimals
-            : token.decimals,
-      ),
-    )
+    setUnstakeBalance(toWei(inputValue, token.vaultDecimals || token.decimals))
   }
 
   const onClickWithdraw = async () => {
@@ -337,17 +301,7 @@ const WithdrawBase = ({
       return
     }
 
-    if (useIFARM) {
-      if (
-        !new BigNumber(unstakeBalance.toString()).isLessThanOrEqualTo(stakeAmountWei.toString())
-      ) {
-        setShowWarning(true)
-      }
-    } else if (
-      !new BigNumber(unstakeBalance.toString()).isLessThanOrEqualTo(
-        token.isIPORVault ? balances[token.id].toString() : lpTokenBalance.toString(),
-      )
-    ) {
+    if (!new BigNumber(unstakeBalance.toString()).isLessThanOrEqualTo(lpTokenBalance.toString())) {
       setShowWarning(true)
       return
     }
@@ -400,7 +354,7 @@ const WithdrawBase = ({
           ))}
         </NewLabel>
         <Title $fontcolor={fontColor}>
-          {`Revert your ${useIFARM ? `i${tokenSymbol}` : 'fToken'} into`}{' '}
+          {`Revert your fToken into`}{' '}
           {pickedToken.symbol !== 'Select' ? pickedToken.symbol : 'Output Token'}.
         </Title>
         <TokenInfo>
@@ -472,16 +426,10 @@ const WithdrawBase = ({
           $fontcolor={fontColor}
           onClick={() => {
             if (account) {
-              const bal = token.isIPORVault ? balances[token.id] : lpTokenBalance
-              const decimal = token.isIPORVault
-                ? token.vaultDecimals
-                : fAssetPool.lpTokenData.decimals
-              setUnstakeBalance(useIFARM ? stakeAmountWei : bal)
-              setUnstakeInputValue(
-                new BigNumber(
-                  fromWei(useIFARM ? stakeAmountWei : bal, decimal, decimal, false),
-                ).toString(),
-              )
+              const bal = lpTokenBalance
+              const decimal = token.vaultDecimals || token.decimals
+              setUnstakeBalance(bal)
+              setUnstakeInputValue(new BigNumber(fromWei(bal, decimal, decimal, false)).toString())
             }
           }}
         >
@@ -489,18 +437,14 @@ const WithdrawBase = ({
           <span>
             {!connected ? (
               0
-            ) : useIFARM ? (
-              stakedAmount || <AnimatedDots />
-            ) : lpTokenBalance || token.isIPORVault ? (
+            ) : lpTokenBalance ? (
               new BigNumber(
-                token.isIPORVault
-                  ? fromWei(balances[token.id], token.vaultDecimals, token.vaultDecimals, false)
-                  : fromWei(
-                      lpTokenBalance,
-                      fAssetPool.lpTokenData.decimals,
-                      fAssetPool.lpTokenData.decimals,
-                      false,
-                    ),
+                fromWei(
+                  lpTokenBalance,
+                  token.vaultDecimals || token.decimals,
+                  token.vaultDecimals || token.decimals,
+                  false,
+                ),
               ).toString()
             ) : (
               <AnimatedDots />
@@ -520,8 +464,7 @@ const WithdrawBase = ({
               $weight="600"
               $fontcolor={fontColor2}
             >
-              The amount of {useIFARM ? `i${tokenSymbol}` : tokenName} you entered exceeds deposited
-              balance.
+              The amount of {tokenName} you entered exceeds deposited balance.
             </NewLabel>
           </NewLabel>
           <div>

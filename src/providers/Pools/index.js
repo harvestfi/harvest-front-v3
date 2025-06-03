@@ -320,7 +320,6 @@ const PoolsProvider = _ref => {
           loadedInitialStakedAndUnstakedBalances.current = true
           const stats = {}
           const chains = isSpecialApp ? [chainId] : selChain
-          // selChain.forEach( async (ch)=> {
 
           const cl = chains.length
           for (let i = 0; i < cl; i += 1) {
@@ -385,20 +384,15 @@ const PoolsProvider = _ref => {
               vaultContract.instance,
               account,
             )
-            const AssetBalance = await vaultContract.methods.convertToAssets(
-              vaultContract.instance,
-              vaultBalance,
-            )
 
-            if (new BigNumber(AssetBalance).gt(0)) {
+            if (new BigNumber(vaultBalance).gt(0)) {
               stats[vaultId] = {
-                lpTokenBalance: AssetBalance,
+                lpTokenBalance: vaultBalance,
                 totalStaked: 0,
               }
             }
           }
 
-          // })
           setUserStats(currStats => ({ ...currStats, ...stats }))
         }
 
