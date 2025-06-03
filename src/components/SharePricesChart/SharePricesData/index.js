@@ -22,7 +22,7 @@ const vaultAdded = {
   morpho_YOG_USDC: 1748595000,
   arcadia_ETH: 1746520200,
   morphoSH_ETH: 1747612800,
-  morphoMW_cbBTC: 1747180800,
+  morphoMW_cbBTC: 1748908800,
   arcadia_cbBTC: 1746520200,
 }
 
