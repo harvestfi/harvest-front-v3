@@ -7,7 +7,6 @@ import { ChartDiv, Container, Header, Total, TokenSymbol, TooltipInfo, FlexDiv }
 
 /* eslint-disable camelcase */
 const vaultAdded = {
-  morphoION_USDC: 1746057600,
   morphoMW_USDC: 1747958400,
   morphoGC_USDC: 1746921600,
   morphoSE_USDC: 1747440000,
@@ -24,6 +23,13 @@ const vaultAdded = {
   morphoSH_ETH: 1747612800,
   morphoMW_cbBTC: 1748908800,
   arcadia_cbBTC: 1746520200,
+  IPOR_USDC_base: 1746057600,
+  IPOR_WETH_base: 1746057600,
+  IPOR_cbBTC_base: 1746057600,
+  IPOR_USDC_ethereum: 1748955600,
+  IPOR_USDC_arbitrum: 1743465600,
+  IPOR_WETH_arbitrum: 1743465600,
+  IPOR_WBTC_arbitrum: 1743465600,
 }
 
 const { tokens } = require('../../../data')
@@ -52,14 +58,14 @@ const SharePricesData = ({ chainName, token, setSharePricesData, iporHvaultsLFAP
       return p1 + ((p2 - p1) * (t - t1)) / (t2 - t1)
     }
 
-    const adjustTimestamps = (sharepriceData, id) => {
+    const adjustTimestamps = (sharepriceData, id, baseTime) => {
       const referenceTimestamps = sharepriceData[id]
         .map(entry => entry.timestamp)
-        .filter(timestamp => timestamp > 1746057600)
+        .filter(timestamp => timestamp > baseTime)
 
       Object.keys(sharepriceData).forEach(key => {
         const targetEntries = sharepriceData[key].filter(
-            entry => Number(entry.timestamp) > (vaultAdded[key] ? vaultAdded[key] : 1746057600),
+            entry => Number(entry.timestamp) > (vaultAdded[key] ? vaultAdded[key] : baseTime),
           ),
           adjustedEntries = []
 
@@ -125,9 +131,10 @@ const SharePricesData = ({ chainName, token, setSharePricesData, iporHvaultsLFAP
               .filter(data => data.hVaultId !== 'Not invested')
               .map(data => ({ id: data.hVaultId, address: tokens[data.hVaultId].vaultAddress }))
             const addresses = vaults.map(vault => vault.address)
+            const baseTime = vaultAdded[token.id]
             const { vaultHData, vaultHFlag } = await getMultipleVaultHistories(
               addresses,
-              '1746057600',
+              baseTime,
               chainId,
             )
 
@@ -136,7 +143,7 @@ const SharePricesData = ({ chainName, token, setSharePricesData, iporHvaultsLFAP
                 const vaultData = vaultHData.filter(
                   data => data.vault.id === vault.address.toLowerCase(),
                 )
-                if (vaultData) {
+                if (vaultData.length > 0) {
                   vaultData.forEach((obj, index) => {
                     vaultData[index].sharePrice = obj.sharePriceDec
                   })
@@ -160,7 +167,7 @@ const SharePricesData = ({ chainName, token, setSharePricesData, iporHvaultsLFAP
             setSharePricesData(sharePricesData)
 
             if (sharePricesData[token.id].length > 0) {
-              sharePricesData = adjustTimestamps(sharePricesData, token.id)
+              sharePricesData = adjustTimestamps(sharePricesData, token.id, baseTime)
             }
             setSharePriceData(sharePricesData)
 
