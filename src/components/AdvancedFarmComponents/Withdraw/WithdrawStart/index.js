@@ -19,7 +19,6 @@ import ProgressTwo from '../../../../assets/images/logos/advancedfarm/progress-s
 import ProgressThree from '../../../../assets/images/logos/advancedfarm/progress-step3.png'
 import ProgressFour from '../../../../assets/images/logos/advancedfarm/progress-step4.png'
 import ProgressFive from '../../../../assets/images/logos/advancedfarm/progress-step5.png'
-import { IFARM_TOKEN_SYMBOL } from '../../../../constants'
 import { useActions } from '../../../../providers/Actions'
 import { useVaults } from '../../../../providers/Vault'
 import { useContracts } from '../../../../providers/Contracts'
@@ -31,7 +30,6 @@ import { useThemeContext } from '../../../../providers/useThemeContext'
 import { getWeb3, fromWei } from '../../../../services/web3'
 import { formatNumberWido, showTokenBalance } from '../../../../utilities/formats'
 import AnimatedDots from '../../../AnimatedDots'
-import { addresses } from '../../../../data'
 import { getMatchedVaultList } from '../../../../utilities/parsers'
 import {
   Buttons,
@@ -71,7 +69,6 @@ const WithdrawStart = ({
   unstakeBalance,
   tokenSymbol,
   vaultPool,
-  useIFARM,
   setRevertFromInfoAmount,
   revertFromInfoAmount,
   revertFromInfoUsdAmount,
@@ -157,7 +154,7 @@ const WithdrawStart = ({
   }
 
   const chainId = token.chain || token.data.chain
-  const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
+  const fromToken = token.vaultAddress || token.tokenAddress
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
@@ -226,7 +223,7 @@ const WithdrawStart = ({
             })
           : await handleWithdraw(
               account,
-              useIFARM ? IFARM_TOKEN_SYMBOL : tokenSym,
+              tokenSym,
               unstakeBalance,
               vaultsData,
               null,
@@ -349,9 +346,7 @@ const WithdrawStart = ({
             item.vault.vaultAddress.toLowerCase() !== '0x47e3daf382c4603450905fb68766db8308315407'
           ) {
             const mToken = item.vault
-            const tokenAddress = useIFARM
-              ? addresses.iFARM
-              : mToken.vaultAddress || mToken.tokenAddress
+            const tokenAddress = mToken.vaultAddress || mToken.tokenAddress
 
             const portalsToken = await getPortalsSupport(chainId, tokenAddress)
             if (portalsToken) {
@@ -484,7 +479,7 @@ const WithdrawStart = ({
                   )}
                 </>
                 <NewLabel $display="flex" $flexflow="column" $weight="600" $textalign="right">
-                  <span>{useIFARM ? `i${tokenSymbol}` : tokenName}</span>
+                  <span>{tokenName}</span>
                   <span>
                     {revertFromInfoUsdAmount !== '' ? (
                       <>≈{revertFromInfoUsdAmount}</>

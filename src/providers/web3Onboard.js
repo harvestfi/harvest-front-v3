@@ -1,12 +1,28 @@
 import { init } from '@web3-onboard/react'
-import injectedModule from '@web3-onboard/injected-wallets'
+import injectedModule, { ProviderLabel } from '@web3-onboard/injected-wallets'
 import gnosisModule from '@web3-onboard/gnosis'
+import binanceModule from '@binance/w3w-blocknative-connector'
 import walletConnectModule from '@web3-onboard/walletconnect'
 import ledgerModule from '@web3-onboard/ledger'
 import HavestLogo from '../assets/images/logos/Harvest_Standard.svg'
 
-const injected = injectedModule()
+const injected = injectedModule({
+  displayUnavailable: [ProviderLabel.Zerion, ProviderLabel.Coinbase],
+  sort: wallets => {
+    const rabby = wallets.find(({ label }) => label === ProviderLabel.Rabby)
+    const zerion = wallets.find(({ label }) => label === ProviderLabel.Zerion)
+
+    return [
+      rabby,
+      zerion,
+      ...wallets.filter(
+        ({ label }) => label !== ProviderLabel.Rabby && label !== ProviderLabel.Zerion,
+      ),
+    ]
+  },
+})
 const gnosis = gnosisModule()
+const binance = binanceModule()
 const ledger = ledgerModule({
   projectId: '6931eace1272646ed84e46c55fac0311',
 })
@@ -70,7 +86,7 @@ const walletConnect = walletConnectModule({
 export const web3Onboard = init({
   // head to https://explorer.blocknative.com/account to sign up for free
   apiKey: process.env.REACT_APP_BLOCKNATIVE_KEY,
-  wallets: [injected, walletConnect, gnosis, ledger],
+  wallets: [injected, binance, walletConnect, gnosis, ledger],
   chains: [
     {
       id: '0x1',

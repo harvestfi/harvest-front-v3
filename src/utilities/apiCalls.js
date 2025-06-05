@@ -325,7 +325,7 @@ export const getMultipleVaultHistories = async (vaults, startTime, chainId) => {
   const url = GRAPH_URLS[chainId]
   while (run) {
     const variables = { vaults, startTime, finishTime }
-    // eslint-disable-next-line no-await-in-loop
+
     const data = await executeGraphCall(url, query, variables)
     vaultHData = vaultHData.concat(data?.vaultHistories)
     if (vaultHData.length % 1000 === 0 && vaultHData.length > lastLn) {

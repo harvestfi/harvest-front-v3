@@ -191,23 +191,13 @@ const formatVaults = (
         vaultsSymbol = orderBy(
           vaultsSymbol,
           v => {
-            const isSpecialVault = groupOfVaults[v].poolVault
             const tokenVault = groupOfVaults[v]
-            let vaultPool
-            if (isSpecialVault) {
-              vaultPool = groupOfVaults[v].data
-            } else {
-              vaultPool = find(
-                pools,
-                pool => pool.collateralAddress === get(tokenVault, `vaultAddress`),
-              )
-            }
-
-            return Number(
-              isSpecialVault
-                ? getTotalApy(null, tokenVault, true)
-                : getTotalApy(vaultPool, tokenVault),
+            const vaultPool = find(
+              pools,
+              pool => pool.collateralAddress === get(tokenVault, `vaultAddress`),
             )
+
+            return Number(getTotalApy(vaultPool, tokenVault))
           },
           sortOrder,
         )
@@ -373,10 +363,7 @@ const VaultList = () => {
           vaultsKey.map(async symbol => {
             // Add 'publishDate' to every vault
             const token = groupOfVaults[symbol]
-            const isSpecialVault = token.liquidityPoolVault || token.poolVault
-            const paramAddress = isSpecialVault
-              ? token.data.collateralAddress
-              : token.vaultAddress || token.tokenAddress
+            const paramAddress = token.vaultAddress || token.tokenAddress
             const vaultIds = vaultsKey.filter(
               vaultId =>
                 groupOfVaults[vaultId].vaultAddress === paramAddress ||
@@ -384,9 +371,10 @@ const VaultList = () => {
             )
             const id = vaultIds[0]
             const tokenVault = get(vaultsData, token.hodlVaultId || id)
-            const vaultPool = isSpecialVault
-              ? token.data
-              : find(totalPools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
+            const vaultPool = find(
+              totalPools,
+              pool => pool.collateralAddress === get(tokenVault, `vaultAddress`),
+            )
             const address =
               token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
 

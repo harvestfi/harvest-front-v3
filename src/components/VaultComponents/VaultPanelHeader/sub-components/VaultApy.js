@@ -7,29 +7,13 @@ import { getTotalApy } from '../../../../utilities/parsers'
 import AnimatedDots from '../../../AnimatedDots'
 import { RewardsContainer } from '../style'
 
-const VaultApy = ({ token, tokenSymbol, vaultPool, isSpecialVault, fontColor1 }) => {
+const VaultApy = ({ token, tokenSymbol, vaultPool, fontColor1 }) => {
   const { loadingVaults, vaultsData } = useVaults()
   const tokenVault = get(vaultsData, token.hodlVaultId || tokenSymbol)
 
-  const totalApy = isSpecialVault
-    ? getTotalApy(null, token, true)
-    : getTotalApy(vaultPool, tokenVault)
+  const totalApy = getTotalApy(vaultPool, tokenVault)
 
-  if (token.excludeVaultStats) {
-    return 'N/A'
-  }
-
-  return isSpecialVault ? (
-    token.data && (token.data.dataFetched === false || totalApy !== null) ? (
-      <RewardsContainer $fontcolor1={fontColor1}>
-        {token.inactive ? 'Inactive' : <>{totalApy ? displayAPY(totalApy) : null}</>}
-      </RewardsContainer>
-    ) : (
-      <b>
-        <AnimatedDots />
-      </b>
-    )
-  ) : totalApy !== null && !loadingVaults ? (
+  return totalApy !== null && !loadingVaults ? (
     <RewardsContainer $fontcolor1={fontColor1}>
       {token.inactive || token.testInactive || token.hideTotalApy || !token.dataFetched ? (
         token.inactive || token.testInactive ? (

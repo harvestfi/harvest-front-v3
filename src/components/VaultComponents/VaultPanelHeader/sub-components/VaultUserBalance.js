@@ -12,7 +12,6 @@ import { useRate } from '../../../../providers/Rate'
 const VaultUserBalance = ({
   token,
   tokenSymbol,
-  isSpecialVault,
   loadingFarmingBalance,
   loadedVault,
   fontColor1,
@@ -58,14 +57,8 @@ const VaultUserBalance = ({
         <>
           {currencySym}
           {`${formatNumber(
-            new BigNumber(
-              fromWei(
-                parseValue(userVaultBalance),
-                isSpecialVault ? 18 : token.decimals,
-                MAX_DECIMALS,
-              ),
-            )
-              .multipliedBy((isSpecialVault ? token.data.lpTokenData.price : token.usdPrice) || 1)
+            new BigNumber(fromWei(parseValue(userVaultBalance), token.decimals, MAX_DECIMALS))
+              .multipliedBy(token.usdPrice || 1)
               .multipliedBy(new BigNumber(currencyRate))
               .toString(),
             2,

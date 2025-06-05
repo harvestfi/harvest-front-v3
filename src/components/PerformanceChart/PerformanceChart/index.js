@@ -40,8 +40,6 @@ const PerformanceChart = ({
   token,
   vaultPool,
   totalValue,
-  useIFARM,
-  farmPrice,
   underlyingPrice,
   lpTokenBalance,
   chartData,
@@ -75,14 +73,12 @@ const PerformanceChart = ({
   const chainId = token.chain || token.data.chain
 
   const totalValueRef = useRef(totalValue)
-  const farmPriceRef = useRef(farmPrice)
   const usdPriceRef = useRef(underlyingPrice)
 
   useEffect(() => {
     totalValueRef.current = totalValue
-    farmPriceRef.current = farmPrice
     usdPriceRef.current = underlyingPrice
-  }, [totalValue, underlyingPrice, farmPrice])
+  }, [totalValue, underlyingPrice])
 
   const handleTooltipContent = payload => {
     if (payload && payload.length) {
@@ -289,7 +285,7 @@ const PerformanceChart = ({
             }
 
             const firstObject = {
-              priceUnderlying: useIFARM ? farmPriceRef.current : usdPriceRef.current,
+              priceUnderlying: usdPriceRef.current,
               sharePrice: mergedData[0].sharePrice,
               timestamp: currentTimeStamp.toString(),
               value: totalValueRef.current,
@@ -400,17 +396,7 @@ const PerformanceChart = ({
     return () => {
       isMounted = false
     }
-  }, [
-    address,
-    chainId,
-    account,
-    totalValue,
-    underlyingPrice,
-    useIFARM,
-    farmPrice,
-    chartData,
-    token,
-  ])
+  }, [address, chainId, account, totalValue, underlyingPrice, chartData, token])
 
   return (
     <Container $backcolor={bgColorNew} $bordercolor={borderColorBox}>

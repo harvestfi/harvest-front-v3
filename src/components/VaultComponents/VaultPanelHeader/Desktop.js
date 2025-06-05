@@ -5,8 +5,6 @@ import BASE from '../../../assets/images/chains/base.svg'
 import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
 import POLYGON from '../../../assets/images/logos/badge/polygon.svg'
 import ZKSYNC from '../../../assets/images/logos/badge/zksync.svg'
-import LSD from '../../../assets/images/logos/lsd.svg'
-import DESCI from '../../../assets/images/logos/DeSci.svg'
 import { chainList, directDetailUrl } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { BadgeIcon, LogoImg, PanelContainer, ValueContainer } from './style'
@@ -19,13 +17,9 @@ import VaultValue from './sub-components/VaultValue'
 const DesktopPanelHeader = ({
   token,
   tokenSymbol,
-  useIFARM,
   vaultPool,
-  isSpecialVault,
   loadedVault,
   loadingFarmingBalance,
-  lsdToken,
-  desciToken,
 }) => {
   const location = useLocation()
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
@@ -40,9 +34,7 @@ const DesktopPanelHeader = ({
   const { fontColor, fontColor1, borderColorBox, setPrevPage } = useThemeContext()
 
   const network = chainList[badgeId]?.name.toLowerCase()
-  const address = isSpecialVault
-    ? token.data.collateralAddress
-    : token.vaultAddress || token.tokenAddress
+  const address = token.vaultAddress || token.tokenAddress
   const url = `${directDetailUrl}${network}/${address}${location.search}`
 
   useEffect(() => {
@@ -85,23 +77,15 @@ const DesktopPanelHeader = ({
               <></>
             )}
           </BadgeIcon>
-          {lsdToken ? <img className="tag" src={LSD} alt="" /> : null}
-          {desciToken ? <img className="tag" src={DESCI} alt="" /> : null}
         </ValueContainer>
         <ValueContainer $width="20%" $textalign="left" $paddingleft="0%">
-          <VaultName
-            token={token}
-            tokenSymbol={tokenSymbol}
-            useIFARM={useIFARM}
-            $fontcolor1={fontColor1}
-          />
+          <VaultName token={token} tokenSymbol={tokenSymbol} $fontcolor1={fontColor1} />
         </ValueContainer>
         <ValueContainer $width="15%">
           <VaultApy
             token={token}
             tokenSymbol={tokenSymbol}
             vaultPool={vaultPool}
-            isSpecialVault={isSpecialVault}
             $fontcolor1={fontColor1}
           />
         </ValueContainer>
@@ -110,7 +94,6 @@ const DesktopPanelHeader = ({
             token={token}
             tokenSymbol={tokenSymbol}
             vaultPool={vaultPool}
-            isSpecialVault={isSpecialVault}
             $fontcolor1={fontColor1}
           />
         </ValueContainer>
@@ -121,7 +104,6 @@ const DesktopPanelHeader = ({
           <VaultUserBalance
             token={token}
             tokenSymbol={tokenSymbol}
-            isSpecialVault={isSpecialVault}
             loadingFarmingBalance={loadingFarmingBalance}
             loadedVault={loadedVault}
             $fontcolor1={fontColor1}

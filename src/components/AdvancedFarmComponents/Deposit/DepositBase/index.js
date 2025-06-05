@@ -8,7 +8,6 @@ import { Tooltip } from 'react-tooltip'
 import { PiQuestion } from 'react-icons/pi'
 import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
 import DropDownIcon from '../../../../assets/images/logos/advancedfarm/drop-down.svg'
-// import WalletIcon from '../../../../assets/images/logos/beginners/wallet-in-button.svg'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import ThumbUpIcon from '../../../../assets/images/logos/thumb-up.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
@@ -16,7 +15,6 @@ import { useThemeContext } from '../../../../providers/useThemeContext'
 import { useWallet } from '../../../../providers/Wallet'
 import { useRate } from '../../../../providers/Rate'
 import { fromWei, toWei, checkNativeToken } from '../../../../services/web3'
-import { addresses } from '../../../../data'
 import { isSpecialApp, showTokenBalance } from '../../../../utilities/formats'
 import Button from '../../../Button'
 import AnimatedDots from '../../../AnimatedDots'
@@ -31,7 +29,6 @@ import {
   TokenSelect,
   NewLabel,
   AmountSection,
-  // ThemeMode,
   InsufficientSection,
   HasErrorSection,
   FlexDiv,
@@ -56,13 +53,10 @@ const DepositBase = ({
   token,
   switchMethod,
   tokenSymbol,
-  useIFARM,
   setFromInfoAmount,
   setFromInfoUsdAmount,
   fromInfoUsdAmount,
   convertYearlyYieldUSD,
-  // convertMonthlyYieldUSD,
-  // convertDailyYieldUSD,
   minReceiveAmountString,
   setMinReceiveAmountString,
   minReceiveUsdAmount,
@@ -162,7 +156,7 @@ const DepositBase = ({
             outputAmountDefault = ''
 
           const fromToken = pickedToken.address
-          const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
+          const toToken = token.vaultAddress || token.tokenAddress
           const pickedTokenRawBalance = toWei(pickedToken.balance, pickedToken.decimals, 0)
 
           const overBalance = new BigNumber(amount.toString()).isGreaterThan(
@@ -303,7 +297,6 @@ const DepositBase = ({
     defaultToken,
     token,
     tokenChain,
-    useIFARM,
   ])
 
   const onClickDeposit = async () => {
@@ -404,9 +397,7 @@ const DepositBase = ({
           ))}
         </NewLabel>
         <DepoTitle $fontcolor={fontColor}>
-          {useIFARM
-            ? `Convert your crypto into interest-bearing i${tokenSymbol}.`
-            : 'Convert your crypto into interest-bearing fTokens.'}
+          {'Convert your crypto into interest-bearing fTokens.'}
         </DepoTitle>
         <TokenInfo>
           <AmountSection>
@@ -576,9 +567,9 @@ const DepositBase = ({
                   $height={isMobile ? '18px' : '18px'}
                   $weight="500"
                 >
-                  {useIFARM
-                    ? 'Based on live USD price of iFARM. Considers live APY. Subject to change.'
-                    : 'Calculated using live APY and current values of underlying and reward tokens. Subject to market fluctuations; performance may vary.'}
+                  {
+                    'Calculated using live APY and current values of underlying and reward tokens. Subject to market fluctuations; performance may vary.'
+                  }
                 </NewLabel>
               </Tooltip>
             </NewLabel>
@@ -625,7 +616,7 @@ const DepositBase = ({
               $fontcolor={fontColor3}
               $weight="500"
             >
-              {useIFARM ? 'Est. Received' : 'Est. fTokens Received'}
+              {'Est. Received'}
               <PiQuestion className="question" data-tip data-for="min-received" />
               <Tooltip
                 id="min-received"
@@ -688,7 +679,7 @@ const DepositBase = ({
                 </Tooltip>
               </>
               <NewLabel $display="flex" $flexflow="column" $weight="600" $align="right">
-                <span className="token-symbol">{useIFARM ? `i${tokenSymbol}` : tokenSym}</span>
+                <span className="token-symbol">{tokenSym}</span>
                 <span className="token-symbol">
                   {account &&
                   pickedToken.symbol !== 'Select Token' &&

@@ -62,7 +62,6 @@ const DepositStart = ({
   setInputAmount,
   token,
   tokenSymbol,
-  useIFARM,
   vaultPool,
   fromInfoAmount,
   fromInfoUsdAmount,
@@ -214,7 +213,7 @@ const DepositStart = ({
       setProgressStep(1)
       setButtonName('Pending Approval in Wallet')
       if (pickedDefaultToken) {
-        const allowanceCheck = useIFARM ? approvedBalances.IFARM : approvedBalances[tokenSym]
+        const allowanceCheck = approvedBalances[tokenSym]
         if (!new BigNumber(allowanceCheck.toString()).gte(new BigNumber(amount.toString()))) {
           await handleApproval(
             account,
@@ -275,9 +274,6 @@ const DepositStart = ({
         setProgressStep(3)
         setButtonName('Pending Confirmation in Wallet')
         setStartSpinner(true)
-        if (useIFARM) {
-          tokenSym = 'IFARM'
-        }
         isSuccess = token.isIPORVault
           ? await handleIPORDeposit(
               account,
@@ -458,9 +454,7 @@ const DepositStart = ({
                         $height={isMobile ? '14px' : '14px'}
                         $weight="600"
                       >
-                        {useIFARM
-                          ? `The estimated number of i${tokenSymbol} you will receive in your wallet. The default slippage is set as 'Auto'.`
-                          : `The estimated number of ${tokenName} you will receive in your wallet. The default slippage is set as 'Auto'.`}
+                        {`The estimated number of ${tokenName} you will receive in your wallet. The default slippage is set as 'Auto'.`}
                       </NewLabel>
                     </Tooltip>
                   </>
@@ -516,7 +510,7 @@ const DepositStart = ({
                   </Tooltip>
                 </>
                 <NewLabel $display="flex" $flexflow="column" $weight="600" $textalign="right">
-                  <span>{useIFARM ? `i${tokenSymbol}` : tokenName}</span>
+                  <span>{tokenName}</span>
                   <span>
                     {!pickedDefaultToken && progressStep === 4 ? (
                       receiveUsd !== '' ? (

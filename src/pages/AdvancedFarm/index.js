@@ -388,7 +388,6 @@ const AdvancedFarm = () => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
   }, [])
 
-  const useIFARM = id === IFARM_TOKEN_SYMBOL
   const multipleAssets = useMemo(
     () =>
       isArray(tokens[id].tokenAddress) &&
@@ -1231,7 +1230,7 @@ const AdvancedFarm = () => {
     { title: 'TVL', showValue: showTVL },
     {
       title: 'Last Harvest',
-      showValue: () => (useIFARM ? '-' : lastHarvest !== '' ? `${lastHarvest} ago` : '-'),
+      showValue: () => (lastHarvest !== '' ? `${lastHarvest} ago` : '-'),
       className: 'daily-yield-box',
     },
   ]
@@ -1248,7 +1247,7 @@ const AdvancedFarm = () => {
   const harvestFrequencies = [
     {
       label: 'Latest',
-      value: useIFARM ? '-' : lastHarvest !== '' ? `${lastHarvest} ago` : '-',
+      value: lastHarvest !== '' ? `${lastHarvest} ago` : '-',
     },
     { label: '7d', value: formatFrequency(sevenDHarvest) },
     { label: '30d', value: formatFrequency(thirtyDHarvest) },
@@ -2069,9 +2068,7 @@ const AdvancedFarm = () => {
                       setHarvestFrequency={setHarvestFrequency}
                     />
                   </HalfInfo>
-                  {!isMobile && (
-                    <SourceOfYield useIFARM={useIFARM} token={token} vaultPool={vaultPool} />
-                  )}
+                  {!isMobile && <SourceOfYield token={token} vaultPool={vaultPool} />}
                 </>
               ) : (
                 <></>
@@ -2101,7 +2098,6 @@ const AdvancedFarm = () => {
                         supTokenList={supTokenList}
                         switchMethod={handleToggle(setActiveDepo)}
                         tokenSymbol={tokenSym}
-                        useIFARM={useIFARM}
                         balanceList={balanceList}
                         setFromInfoAmount={setFromInfoAmount}
                         setFromInfoUsdAmount={setFromInfoUsdAmount}
@@ -2145,7 +2141,6 @@ const AdvancedFarm = () => {
                         setInputAmount={setInputAmountDepo}
                         token={token}
                         tokenSymbol={tokenSym}
-                        useIFARM={useIFARM}
                         vaultPool={vaultPool}
                         multipleAssets={multipleAssets}
                         fromInfoAmount={fromInfoAmount}
@@ -2175,7 +2170,6 @@ const AdvancedFarm = () => {
                         token={token}
                         supTokenList={supTokenList}
                         switchMethod={handleToggle(setActiveDepo)}
-                        useIFARM={useIFARM}
                         setRevertFromInfoAmount={setRevertFromInfoAmount}
                         revertFromInfoUsdAmount={revertFromInfoUsdAmount}
                         setRevertFromInfoUsdAmount={setRevertFromInfoUsdAmount}
@@ -2210,7 +2204,6 @@ const AdvancedFarm = () => {
                         tokenSymbol={tokenSym}
                         vaultPool={vaultPool}
                         multipleAssets={multipleAssets}
-                        useIFARM={useIFARM}
                         depositedValueUSD={depositedValueUSD}
                         setRevertFromInfoAmount={setRevertFromInfoAmount}
                         revertFromInfoAmount={revertFromInfoAmount}
@@ -2227,7 +2220,6 @@ const AdvancedFarm = () => {
                       token={token}
                       vaultPool={vaultPool}
                       totalValue={totalValue}
-                      useIFARM={useIFARM}
                       underlyingPrice={underlyingPrice}
                       lpTokenBalance={lpTokenBalance}
                       chartData={chartData}
@@ -2606,7 +2598,7 @@ const AdvancedFarm = () => {
                           </FlexDiv>
                         ))}
                   </LastHarvestInfo>
-                  {!useIFARM && (
+                  {
                     <MyBalance
                       $marginbottom={isMobile ? '20px' : '25px'}
                       $backcolor={bgColorNew}
@@ -2661,7 +2653,7 @@ const AdvancedFarm = () => {
                         </NewLabel>
                       </Tip>
                     </MyBalance>
-                  )}
+                  }
                   <LastHarvestInfo $backcolor={bgColorNew} $bordercolor={borderColorBox}>
                     <NewLabel
                       $size={isMobile ? '12px' : '14px'}
@@ -2697,7 +2689,7 @@ const AdvancedFarm = () => {
                         </NewLabel>
                       </FlexDiv>
                     ))}
-                    {!useIFARM && (
+                    {
                       <FlexDiv
                         $justifycontent="space-between"
                         $padding={isMobile ? '10px 15px' : '10px 15px'}
@@ -2745,7 +2737,7 @@ const AdvancedFarm = () => {
                           </Tooltip>
                         </NewLabel>
                       </FlexDiv>
-                    )}
+                    }
                   </LastHarvestInfo>
                   {token.isIPORVault && (
                     <LastHarvestInfo $backcolor={backColor} $bordercolor={borderColor}>
@@ -2813,9 +2805,7 @@ const AdvancedFarm = () => {
                       )}
                     </LastHarvestInfo>
                   )}
-                  {isMobile && (
-                    <SourceOfYield useIFARM={useIFARM} token={token} vaultPool={vaultPool} />
-                  )}
+                  {isMobile && <SourceOfYield token={token} vaultPool={vaultPool} />}
                 </RestInternal>
               ) : (
                 <></>

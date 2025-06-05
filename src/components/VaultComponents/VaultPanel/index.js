@@ -1,9 +1,7 @@
 import { find, isEmpty } from 'lodash'
-import React, { useEffect, useState } from 'react'
-import { FARM_TOKEN_SYMBOL } from '../../../constants'
+import React, { useEffect } from 'react'
 import { usePools } from '../../../providers/Pools'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
 import VaultPanelHeader from '../VaultPanelHeader'
 import VaultContainer from './style'
@@ -14,15 +12,8 @@ const VaultPanel = ({ token, loaded, tokenSymbol, tokenNum, vaultsCount, ...prop
   const { hoverColor } = useThemeContext()
   const { pools, fetchUserPoolStats, userStats, vaultLoading, setVaultLoading } = usePools()
   const { account, logout, chainId } = useWallet()
-  const { vaultsData } = useVaults()
 
-  const isSpecialVault = token.poolVault
-
-  const vaultPool = isSpecialVault
-    ? token.data
-    : find(pools, pool => pool.collateralAddress === tokens[tokenSymbol].vaultAddress)
-
-  const [useIFARM] = useState(tokenSymbol === FARM_TOKEN_SYMBOL)
+  const vaultPool = find(pools, pool => pool.collateralAddress === tokens[tokenSymbol].vaultAddress)
 
   useEffect(() => {
     if (logout) {
@@ -33,7 +24,7 @@ const VaultPanel = ({ token, loaded, tokenSymbol, tokenNum, vaultsCount, ...prop
   }, [logout, chainId, setVaultLoading])
 
   useEffect(() => {
-    if (account && vaultPool && !isEmpty(userStats) && useIFARM && vaultLoading) {
+    if (account && vaultPool && !isEmpty(userStats) && vaultLoading) {
       const loadUserPoolsStats = async () => {
         const poolsToLoad = [vaultPool]
 
@@ -42,18 +33,7 @@ const VaultPanel = ({ token, loaded, tokenSymbol, tokenNum, vaultsCount, ...prop
       }
       loadUserPoolsStats()
     }
-  }, [
-    account,
-    setVaultLoading,
-    vaultPool,
-    fetchUserPoolStats,
-    pools,
-    vaultsData,
-    tokenSymbol,
-    userStats,
-    useIFARM,
-    vaultLoading,
-  ])
+  }, [account, vaultPool, userStats, vaultLoading])
 
   return (
     <>
@@ -61,9 +41,8 @@ const VaultPanel = ({ token, loaded, tokenSymbol, tokenNum, vaultsCount, ...prop
         <VaultPanelHeader
           token={token}
           tokenSymbol={tokenSymbol}
-          useIFARM={useIFARM}
-          isSpecialVault={isSpecialVault}
           loadedVault={loaded}
+          vaultPool={vaultPool}
           {...props}
         />
       </VaultContainer>

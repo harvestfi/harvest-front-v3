@@ -18,7 +18,6 @@ const SourceOfYield = params => {
   } = useThemeContext()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
-  const useIFARM = params.useIFARM
   const token = params.token
   const vaultPool = params.vaultPool
 
@@ -35,7 +34,7 @@ const SourceOfYield = params => {
         Source of Yield
       </NewLabel>
       <DescInfo $fontcolor6={fontColor6} $fontcolor3={fontColor3}>
-        {useIFARM ? (
+        {token.id === 'IFARM' ? (
           <div>
             <p>
               This vault enables users to convert their assets into{' '}

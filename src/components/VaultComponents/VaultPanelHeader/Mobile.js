@@ -9,12 +9,9 @@ import ZKSYNC from '../../../assets/images/chains/zksync.svg'
 import APYIcon from '../../../assets/images/logos/farm/sortAPY.svg'
 import TVLIcon from '../../../assets/images/logos/farm/sortBank.svg'
 import DailyIcon from '../../../assets/images/logos/farm/sortCurrency.svg'
-import LSD from '../../../assets/images/logos/lsd.svg'
-import DESCI from '../../../assets/images/logos/DeSci.svg'
 import { chainList, directDetailUrl } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import {
-  // BadgeIcon,
   FlexDiv,
   MobileVaultInfoContainer,
   MobileVaultValueContainer,
@@ -30,12 +27,8 @@ const MobilePanelHeader = ({
   token,
   tokenSymbol,
   vaultPool,
-  useIFARM,
-  isSpecialVault,
   loadedVault,
   loadingFarmingBalance,
-  lsdToken,
-  desciToken,
 }) => {
   const location = useLocation()
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
@@ -66,9 +59,7 @@ const MobilePanelHeader = ({
       $bordercolor={borderColorBox}
       onClick={() => {
         const network = chainList[badgeId].name.toLowerCase()
-        const address = isSpecialVault
-          ? token.data.collateralAddress
-          : token.vaultAddress || token.tokenAddress
+        const address = token.vaultAddress || token.tokenAddress
         setPrevPage(window.location.href)
         const url = `${directDetailUrl}${network}/${address}${location.search}`
         navigate(url)
@@ -90,14 +81,9 @@ const MobilePanelHeader = ({
           <VaultName
             token={token}
             tokenSymbol={tokenSymbol}
-            useIFARM={useIFARM}
             BadgeAry={BadgeAry}
             badgeId={badgeId}
             badgeIconBackColor={badgeIconBackColor}
-            lsdToken={lsdToken}
-            LSD={LSD}
-            desciToken={desciToken}
-            DESCI={DESCI}
             isMobile={isMobile}
           />
         </TokenLogoContainer>
@@ -105,13 +91,7 @@ const MobilePanelHeader = ({
       <FlexDiv $width="30%">
         <MobileVaultInfoContainer>
           <MobileVaultValueContainer>
-            <VaultApy
-              token={token}
-              tokenSymbol={tokenSymbol}
-              vaultPool={vaultPool}
-              isSpecialVault={isSpecialVault}
-              mobile
-            />
+            <VaultApy token={token} tokenSymbol={tokenSymbol} vaultPool={vaultPool} mobile />
             <div className="title">
               <img src={APYIcon} alt="" />
             </div>
@@ -126,7 +106,6 @@ const MobilePanelHeader = ({
             <VaultUserBalance
               token={token}
               tokenSymbol={tokenSymbol}
-              isSpecialVault={isSpecialVault}
               loadingFarmingBalance={loadingFarmingBalance}
               loadedVault={loadedVault}
             />

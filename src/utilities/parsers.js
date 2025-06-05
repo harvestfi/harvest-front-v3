@@ -4,7 +4,6 @@ import {
   FARM_TOKEN_SYMBOL,
   MAX_APY_DISPLAY,
   HARVEST_LAUNCH_DATE,
-  SPECIAL_VAULTS,
   IFARM_TOKEN_SYMBOL,
 } from '../constants'
 import { CHAIN_IDS } from '../data/constants'
@@ -45,20 +44,9 @@ export const getUserVaultBalanceInDetail = (tokenSymbol, totalStakedInPool, iFAR
   }
 }
 
-export const getTotalApy = (vaultPool, token, isSpecialVault) => {
-  const vaultData = isSpecialVault ? token.data : vaultPool
+export const getTotalApy = (vaultPool, token) => {
+  const vaultData = vaultPool
 
-  if (
-    isSpecialVault &&
-    vaultData &&
-    vaultData.id &&
-    vaultData.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID
-  ) {
-    if (Number(token.profitShareAPY) <= 0) {
-      return null
-    }
-    return Number.isNaN(Number(token.profitShareAPY)) ? 0 : Number(token.profitShareAPY).toFixed(2)
-  }
   let farmAPY = get(vaultData, 'totalRewardAPY', 0),
     total
 
@@ -407,13 +395,7 @@ export const getTokenNames = (userVault, dataVaults) => {
 export const getVaultApy = (vaultKey, vaultsGroup, vaultsData, pools) => {
   let token = null,
     tokenSymbol = null,
-    // specialVaultFlag = false,
     vaultPool
-
-  // if (vaultKey.toLowerCase() === '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651') {
-  //   vaultKey = '0xa0246c9032bc3a600820415ae600c6388619a14d'
-  //   specialVaultFlag = true
-  // }
 
   Object.entries(vaultsGroup).forEach(([key, vaultData]) => {
     if (vaultData.data) {
@@ -430,19 +412,11 @@ export const getVaultApy = (vaultKey, vaultsGroup, vaultsData, pools) => {
     }
   })
 
-  const isSpecialVault = token.liquidityPoolVault || token.poolVault
-
   const tokenVault = get(vaultsData, token.hodlVaultId || tokenSymbol)
 
-  if (isSpecialVault) {
-    vaultPool = token.data
-  } else {
-    vaultPool = find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
-  }
+  vaultPool = find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
 
-  const totalApy = isSpecialVault
-    ? getTotalApy(null, token, true)
-    : getTotalApy(vaultPool, tokenVault)
+  const totalApy = getTotalApy(vaultPool, tokenVault)
 
   return totalApy
 }
@@ -452,10 +426,6 @@ export const getMigrateVaultApy = (vaultKey, vaultsGroup, vaultsData, pools) => 
     tokenSymbol = null,
     vaultPool
 
-  if (vaultKey.toLowerCase() === '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651') {
-    vaultKey = '0xa0246c9032bc3a600820415ae600c6388619a14d'
-  }
-
   Object.entries(vaultsGroup).forEach(([key, vaultData]) => {
     if (vaultData.data) {
       if (vaultData.data.collateralAddress.toLowerCase() === vaultKey.toLowerCase()) {
@@ -471,21 +441,13 @@ export const getMigrateVaultApy = (vaultKey, vaultsGroup, vaultsData, pools) => 
     }
   })
 
-  const isSpecialVault = token.liquidityPoolVault || token.poolVault
-
   const tokenVault = get(vaultsData, token.hodlVaultId || tokenSymbol)
 
-  if (isSpecialVault) {
-    vaultPool = token.data
-  } else {
-    vaultPool = find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
-  }
+  vaultPool = find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
 
-  const totalApy = isSpecialVault
-    ? getTotalApy(null, token, true)
-    : getTotalApy(vaultPool, tokenVault)
+  const totalApy = getTotalApy(vaultPool, tokenVault)
 
-  const vaultTvl = new BigNumber(get(isSpecialVault ? token : tokenVault, 'totalValueLocked', 0))
+  const vaultTvl = new BigNumber(get(tokenVault, 'totalValueLocked', 0))
 
   return { totalApy, vaultTvl }
 }
