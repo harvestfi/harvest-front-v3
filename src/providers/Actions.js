@@ -1,4 +1,3 @@
-import axios from 'axios'
 import BigNumber from 'bignumber.js'
 import { find, get, isUndefined } from 'lodash'
 // import { forEach } from 'promised-loops'
@@ -10,7 +9,6 @@ import {
   IFARM_TOKEN_SYMBOL,
   UNIV3_SLIPPAGE_TOLERANCE,
   UNIV3_TOLERANCE,
-  ZAPPER_FI_ZAP_IN_ENDPOINT,
 } from '../constants'
 import {
   formatWeb3PluginErrorMessage,
@@ -895,94 +893,6 @@ const ActionsProvider = ({ children }) => {
     [],
   )
 
-  const handleZapAllowanceCheck = useCallback(async (selectedToken, ownerAddress) => {
-    try {
-      const apiResponse = await axios.get(`${ZAPPER_FI_ZAP_IN_ENDPOINT}/approval-state`, {
-        params: {
-          sellTokenAddress: selectedToken.value,
-          ownerAddress,
-          /* eslint-disable camelcase */
-          api_key: process.env.REACT_APP_ZAPPERFI_API_KEY,
-        },
-      })
-      return get(apiResponse, 'data.isApproved')
-    } catch (err) {
-      console.error(err)
-      toast.error('Error checking your allowance. Please make sure your connection is stable')
-      return null
-    }
-  }, [])
-
-  const handleZapAllowanceUpgrade = useCallback(
-    async (selectedToken, ownerAddress, setPendingAction, action = ACTIONS.APPROVE_DEPOSIT) => {
-      try {
-        setPendingAction(action)
-        const mainWeb = await getWeb3(null, true, web3)
-        const gasPrice = mainWeb.eth.getGasPrice()
-        const apiResponse = await axios.get(`${ZAPPER_FI_ZAP_IN_ENDPOINT}/approval-transaction`, {
-          params: {
-            gasPrice,
-            sellTokenAddress: selectedToken.value,
-            ownerAddress,
-            /* eslint-disable camelcase */
-            api_key: process.env.REACT_APP_ZAPPERFI_API_KEY,
-          },
-        })
-        const apiData = get(apiResponse, 'data')
-        await mainWeb.eth.sendTransaction(apiData)
-        toast.success(`${selectedToken.symbol} approval completed`)
-        setPendingAction(null)
-      } catch (err) {
-        console.error(err)
-        toast.error('Error checking your allowance. Please make sure your connection is stable')
-        setPendingAction(null)
-      }
-    },
-    [web3],
-  )
-
-  const handleZapIn = useCallback(
-    async (
-      selectedToken,
-      selectedVault,
-      slippagePercentage,
-      sellAmount,
-      ownerAddress,
-      setPendingAction,
-      onSuccess = Promise.resolve(),
-      action = ACTIONS.DEPOSIT,
-    ) => {
-      try {
-        setPendingAction(action)
-        const mainWeb = await getWeb3(null, true, web3)
-        const gasPrice = mainWeb.eth.getGasPrice()
-        const apiResponse = await axios.get(`${ZAPPER_FI_ZAP_IN_ENDPOINT}/transaction`, {
-          params: {
-            slippagePercentage,
-            gasPrice,
-            poolAddress: selectedVault.value,
-            sellTokenAddress: selectedToken.value,
-            sellAmount,
-            ownerAddress,
-            /* eslint-disable camelcase */
-            api_key: process.env.REACT_APP_ZAPPERFI_API_KEY,
-          },
-        })
-        const apiData = get(apiResponse, 'data')
-        await mainWeb.eth.sendTransaction(apiData)
-        toast.success(`${selectedToken.symbol} deposit completed`)
-        await onSuccess()
-      } catch (err) {
-        console.error(err)
-        toast.error(
-          'Error creating your deposit transaction. Please make sure your connection is stable',
-        )
-        setPendingAction(null)
-      }
-    },
-    [web3],
-  )
-
   return (
     <ActionsContext.Provider
       value={{
@@ -1001,11 +911,6 @@ const ActionsProvider = ({ children }) => {
         handleExit,
         handleWithdraw,
         handleMigrate,
-        zapperFi: {
-          handleZapAllowanceCheck,
-          handleZapAllowanceUpgrade,
-          handleZapIn,
-        },
       }}
     >
       {children}

@@ -43,15 +43,7 @@ export const ROUTES = {
   ADVANCEDFARM: '/:network/:paramAddress',
   AUTOPILOTNOCHAIN: '/autopilot',
   AUTOPILOT: '/autopilot/:network',
-  CHARTS: '/charts',
-  WORK: '/work',
-  POOL: '/pool',
-  ZAPPER: '/zapper',
-  VESTING: 'https://vest.harvest.finance/',
   WIKI: 'https://docs.harvest.finance/',
-  WIKI_ZH: 'https://farm.chainwiki.dev/zh/%E7%AD%96%E7%95%A5',
-  CLAIM_EXT: 'https://claim.harvest.finance',
-  STATS: 'https://farmdashboard.xyz',
   LEADERBOARD: '/leaderboard',
   MIGRATE: '/migrate',
 }
@@ -762,8 +754,6 @@ export const AUDIT_FILE_LINKS = {
   PECKSHIELD:
     'https://github.com/harvest-finance/harvest/blob/master/audits/PeckShield-Harvest.pdf',
 }
-
-export const ZAPPER_FI_ZAP_IN_ENDPOINT = 'https://api.zapper.fi/v1/zap-in/harvest'
 
 export const UNIV3_POOL_ID_REGEX = '[uU]ni[vV]3'
 

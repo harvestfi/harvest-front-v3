@@ -12,7 +12,6 @@ import FAQ from './pages/FAQ'
 import Sidebar from './components/Sidebar'
 import AdvancedFarm from './pages/AdvancedFarm'
 import Activity from './pages/Activity'
-import Charts from './pages/Charts'
 import { ROUTES } from './constants'
 import { Body, GlobalStyle } from './components/GlobalStyle'
 import Modal from './components/Modal'
@@ -89,7 +88,6 @@ const App = () => (
           <Route path={ROUTES.ANALYTIC} element={<Analytic />} />
           <Route path={ROUTES.ADVANCEDFARM} element={<AdvancedFarm />} />
           <Route path={ROUTES.FAQ} element={<FAQ />} />
-          <Route path={ROUTES.CHARTS} element={<Charts />} />
           <Route path={ROUTES.LEADERBOARD} element={<LeaderBoard />} />
           <Route path={ROUTES.MIGRATE} element={<Migrate />} />
           <Route path={ROUTES.SETTINGS} element={<Settings />} />

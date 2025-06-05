@@ -20,7 +20,6 @@ A web application to make your hard work easier with [harvest.finance](https://h
 | REACT_APP_MATIC_INFURA_KEY | djdfdnl1k231 | Infura key that also supports Polygon (Matic). Can be same as `REACT_APP_INFURA_KEY` if it supports Polygon (typically not free).
 | REACT_APP_EXTERNAL_API_KEY | 4daa-a552 | API key of api.harvest.finance (publicly available)
 | REACT_APP_API_KEY | 4daa-a552 | API key of api-ui.harvest.finance (publicly available)
-| REACT_APP_ZAPPERFI_API_KEY | 96e0cc51 | API key for zapperfi support
 | REACT_APP_MODE | `prod` | `debug` value for logs in general. Leave empty to not use debug mode
 
 3.  Retrieve the static data of [harvest-api](https://github.com/harvest-finance/harvest-api) via the following  `git`  commands: `git submodule update --init` and `git submodule foreach git checkout master && git pull` or `git submodule update --remote --merge`. NOTE: please do NOT update the reference to harvest-api submodule in your contributions to avoid conflicts, since a bot automatically pushes latest commit reference of `harvest-api` to this repository's main branch.
