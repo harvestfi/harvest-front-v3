@@ -394,7 +394,6 @@ const ActionsProvider = ({ children }) => {
               )
             }
           } else {
-            console.log(vaultData)
             await vaultMethods.deposit(amountsToExecute[0], account, vaultData.instance)
           }
 
