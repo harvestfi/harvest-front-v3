@@ -295,7 +295,10 @@ export const getVaultHistories = async (address, chainId) => {
 
 export const getMultipleVaultHistories = async (vaults, startTime, chainId) => {
   let vaultHData = [],
-    vaultHFlag = true
+    vaultHFlag = true,
+    run = true,
+    lastLn = 0,
+    finishTime = Math.floor(new Date().getTime() / 1000)
 
   vaults = vaults.map(address => address.toLowerCase())
   const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
@@ -303,12 +306,13 @@ export const getMultipleVaultHistories = async (vaults, startTime, chainId) => {
   vaults = vaults.map(address => (address === farm ? ifarm : address))
 
   const query = `
-    query getVaultHistories($vaults: [String!], $startTime: BigInt!) {
+    query getVaultHistories($vaults: [String!], $startTime: BigInt!, $finishTime: BigInt!) {
       vaultHistories(
         first: 1000,
         where: {
           vault_in: $vaults,
           timestamp_gte: $startTime,
+          timestamp_lte: $finishTime
         },
         orderBy: timestamp,
         orderDirection: desc
@@ -317,11 +321,20 @@ export const getMultipleVaultHistories = async (vaults, startTime, chainId) => {
       }
     }
   `
-  const variables = { vaults, startTime }
-  const url = GRAPH_URLS[chainId]
 
-  const data = await executeGraphCall(url, query, variables)
-  vaultHData = data?.vaultHistories
+  const url = GRAPH_URLS[chainId]
+  while (run) {
+    const variables = { vaults, startTime, finishTime }
+    // eslint-disable-next-line no-await-in-loop
+    const data = await executeGraphCall(url, query, variables)
+    vaultHData = vaultHData.concat(data?.vaultHistories)
+    if (vaultHData.length % 1000 === 0 && vaultHData.length > lastLn) {
+      lastLn = vaultHData.length
+      finishTime = vaultHData[vaultHData.length - 1].timestamp
+    } else {
+      run = false
+    }
+  }
 
   if (!vaultHData || vaultHData.length === 0) {
     vaultHFlag = false
