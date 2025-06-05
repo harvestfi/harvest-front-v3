@@ -388,7 +388,7 @@ const AdvancedFarm = () => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
   }, [])
 
-  const useIFARM = id === FARM_TOKEN_SYMBOL
+  const useIFARM = id === IFARM_TOKEN_SYMBOL
   const multipleAssets = useMemo(
     () =>
       isArray(tokens[id].tokenAddress) &&
@@ -481,7 +481,7 @@ const AdvancedFarm = () => {
     setTotalValue(total)
     setBalanceAmount(amountBalanceUSD)
 
-    const vaultAPRDaily = (1 + estimatedApy) ** (1 / 365) - 1
+    const vaultAPRDaily = (1 + estimatedApy / 100) ** (1 / 365) - 1
     const vaultAPYMonthly = (1 + vaultAPRDaily) ** (365 / 12) - 1
 
     const totalRewardAPR = rewardApy / 100
@@ -1313,9 +1313,7 @@ const AdvancedFarm = () => {
                 <MobileChain>
                   <NetDetailItem>
                     <NetDetailContent $fontcolor={fontColor}>
-                      {useIFARM || token.platform[0] === 'Autopilot'
-                        ? 'Harvest'
-                        : token.platform && token.platform[0]}
+                      {token.platform && token.platform[0]}
                     </NetDetailContent>
                   </NetDetailItem>
                   <ChainBack>
@@ -1337,7 +1335,7 @@ const AdvancedFarm = () => {
                 $height={isMobile ? '45px' : '82px'}
                 $marginbottom={isMobile ? '5px' : '10px'}
               >
-                {useIFARM ? `i${token.tokenNames.join(' • ')}` : token.tokenNames.join(' • ')}
+                {token.tokenNames.join(' • ')}
               </TopDesc>
             </FlexDiv>
             <GuideSection>
@@ -1382,9 +1380,7 @@ const AdvancedFarm = () => {
                 <NetDetailItem>
                   <NetDetailTitle $fontcolor={fontColor}>Platform:</NetDetailTitle>
                   <NetDetailContent $fontcolor={fontColor}>
-                    {useIFARM || token.platform[0] === 'Autopilot'
-                      ? 'Harvest'
-                      : token.platform && token.platform[0]}
+                    {token.platform && token.platform[0]}
                   </NetDetailContent>
                 </NetDetailItem>
                 <NetDetailItem>
@@ -1997,9 +1993,7 @@ const AdvancedFarm = () => {
                 !isMobile && (
                   <UserBalanceData
                     token={token}
-                    vaultPool={vaultPool}
                     totalValue={totalValue}
-                    useIFARM={useIFARM}
                     underlyingPrice={underlyingPrice}
                     lpTokenBalance={lpTokenBalance}
                     chartData={chartData}

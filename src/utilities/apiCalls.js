@@ -196,7 +196,7 @@ export const getSequenceId = async (address, chainId) => {
   address = address.toLowerCase()
   const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
   const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
-  const vaultAddress = address === farm ? ifarm : address
+  const vaultAddress = address === ifarm ? farm : address
 
   const query = `
     {
@@ -945,26 +945,28 @@ export const getPriceFeeds = async (
     }
   `
   const variables =
-    address === farm
-      ? { vault: ifarm, endTime: timestampQuery, sequenceIds: sequenceIdsArray }
+    address === ifarm
+      ? { vault: farm, endTime: timestampQuery, sequenceIds: sequenceIdsArray }
       : { vault: address, endTime: timestampQuery, sequenceIds: sequenceIdsArray }
   const url = GRAPH_URLS[chainId]
 
   const data = await executeGraphCall(url, query, variables)
 
-  if (data && data.priceFeeds && Array.isArray(data.priceFeeds)) {
-    priceFeedData.push(...data.priceFeeds)
-    const dataTimestamp = priceFeedData[priceFeedData.length - 1]?.timestamp
-    if (Number(dataTimestamp) > Number(firstTimeStamp)) {
-      return getPriceFeeds(
-        address,
-        chainId,
-        vaultPriceFeedCount,
-        firstTimeStamp,
-        dataTimestamp,
-        true,
-        priceFeedData,
-      )
+  if (data && data.priceFeeds) {
+    if (data.priceFeeds.length > 0) {
+      priceFeedData.push(...data.priceFeeds)
+      const dataTimestamp = priceFeedData[priceFeedData.length - 1]?.timestamp
+      if (Number(dataTimestamp) > Number(firstTimeStamp)) {
+        return getPriceFeeds(
+          address,
+          chainId,
+          vaultPriceFeedCount,
+          firstTimeStamp,
+          dataTimestamp,
+          true,
+          priceFeedData,
+        )
+      }
     }
   } else {
     console.error('Error: Unable to retrieve price feeds from the response.')

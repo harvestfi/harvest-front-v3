@@ -40,16 +40,7 @@ const recommendLinks = [
   { name: 'LAST', type: 4, state: 'LAST' },
 ]
 
-const UserBalanceData = ({
-  token,
-  vaultPool,
-  totalValue,
-  useIFARM,
-  farmPrice,
-  underlyingPrice,
-  lpTokenBalance,
-  chartData,
-}) => {
+const UserBalanceData = ({ token, totalValue, underlyingPrice, lpTokenBalance, chartData }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const { darkMode, bgColorNew, borderColorBox, fontColor3 } = useThemeContext()
   const { account } = useWallet()
@@ -76,18 +67,16 @@ const UserBalanceData = ({
   const [lastFarmingTimeStamp, setLastFarmingTimeStamp] = useState('-')
   const [isExpanded, setIsExpanded] = useState(false)
 
-  const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
-  const chainId = token.chain || token.data.chain
+  const address = token.vaultAddress
+  const chainId = token.chain
 
   const totalValueRef = useRef(totalValue)
-  const farmPriceRef = useRef(farmPrice)
   const usdPriceRef = useRef(underlyingPrice)
 
   useEffect(() => {
     totalValueRef.current = totalValue
-    farmPriceRef.current = farmPrice
     usdPriceRef.current = underlyingPrice
-  }, [totalValue, underlyingPrice, farmPrice])
+  }, [totalValue, underlyingPrice])
 
   const handleTooltipContent = payload => {
     if (payload && payload.length) {
@@ -220,11 +209,11 @@ const UserBalanceData = ({
               }
               while (i < bl) {
                 if (z < ul) {
-                  while (uniqueData2[z].timestamp >= balanceData[i].timestamp) {
+                  while (uniqueData2[z]?.timestamp >= balanceData[i].timestamp) {
                     uniqueData2[z].value = balanceData[i].value
                     mergedData.push(uniqueData2[z])
                     z += 1
-                    if (!addFlag && uniqueData2[z].timestamp === balanceData[i].timestamp) {
+                    if (!addFlag && uniqueData2[z]?.timestamp === balanceData[i].timestamp) {
                       addFlag = true
                     }
                   }
@@ -293,7 +282,7 @@ const UserBalanceData = ({
             }
 
             const firstObject = {
-              priceUnderlying: useIFARM ? farmPriceRef.current : usdPriceRef.current,
+              priceUnderlying: usdPriceRef.current,
               sharePrice: mergedData[0].sharePrice,
               timestamp: currentTimeStamp.toString(),
               value: totalValueRef.current,
@@ -404,17 +393,7 @@ const UserBalanceData = ({
     return () => {
       isMounted = false
     }
-  }, [
-    address,
-    chainId,
-    account,
-    totalValue,
-    underlyingPrice,
-    useIFARM,
-    farmPrice,
-    chartData,
-    token,
-  ])
+  }, [address, chainId, account, totalValue, underlyingPrice, chartData, token])
 
   return (
     <Container $backcolor={bgColorNew} $bordercolor={borderColorBox}>
