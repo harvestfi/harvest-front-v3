@@ -24,6 +24,9 @@ const withdraw = (amount, address, instance) =>
 const deposit = (amount, address, instance) =>
   instance.methods.deposit(amount, address).send({ from: address })
 
+const redeem = (amount, address, instance) =>
+  instance.methods.redeem(amount, address, address).send({ from: address })
+
 export default {
   name,
   symbol,
@@ -35,4 +38,5 @@ export default {
   getTotalAssets,
   withdraw,
   deposit,
+  redeem,
 }

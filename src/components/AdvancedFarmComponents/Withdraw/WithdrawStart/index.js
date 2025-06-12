@@ -22,7 +22,6 @@ import ProgressFive from '../../../../assets/images/logos/advancedfarm/progress-
 import { IFARM_TOKEN_SYMBOL } from '../../../../constants'
 import { useActions } from '../../../../providers/Actions'
 import { useVaults } from '../../../../providers/Vault'
-import { useContracts } from '../../../../providers/Contracts'
 import { useWallet } from '../../../../providers/Wallet'
 import { usePools } from '../../../../providers/Pools'
 import { usePortals } from '../../../../providers/Portals'
@@ -92,7 +91,6 @@ const WithdrawStart = ({
   } = useThemeContext()
   const { account, web3, getWalletBalances } = useWallet()
   const { fetchUserPoolStats, userStats, pools } = usePools()
-  const { contracts } = useContracts()
   const { push } = useHistory()
   const [slippagePercentage, setSlippagePercentage] = useState(null)
   const [slippageSetting, setSlippageSetting] = useState(false)
@@ -227,16 +225,8 @@ const WithdrawStart = ({
         setProgressStep(3)
         setButtonName('Pending Confirmation in Wallet')
         setStartSpinner(true)
-        let assetBal
-        if (token.isIPORVault) {
-          const vaultContract = contracts.iporVaults[token.id]
-          assetBal = await vaultContract.methods.convertToAssets(
-            vaultContract.instance,
-            unstakeBalance,
-          )
-        }
         isSuccess = token.isIPORVault
-          ? await handleIPORWithdraw(account, token, assetBal, async () => {
+          ? await handleIPORWithdraw(account, token, unstakeBalance, async () => {
               await getWalletBalances([token.id], false, true)
               await fetchUserPoolStats([fAssetPool], account, userStats)
             })
