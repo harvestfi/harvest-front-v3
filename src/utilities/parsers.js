@@ -576,15 +576,6 @@ export const mergeArrays = (rewardsAPIData, totalHistoryData) => {
 
 export const handleToggle = setter => () => setter(prev => !prev)
 
-export const getUnderlyingId = vaultData => {
-  if (vaultData.isIPORVault && vaultData.allocPointData?.length > 1) {
-    if (vaultData?.allocPointData[0]?.hVaultId !== 'Not invested')
-      return vaultData.allocPointData[0].hVaultId
-    return vaultData.allocPointData[1].hVaultId
-  }
-  return ''
-}
-
 export const calculateApy = (vaultHData, latestSharePriceValue, vaultData, periodDays) => {
   const filteredData = vaultHData.filter(
     entry => Number(entry.timestamp) >= Number(vaultHData[0].timestamp) - periodDays * 24 * 3600,

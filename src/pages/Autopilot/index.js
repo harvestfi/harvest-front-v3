@@ -13,7 +13,6 @@ import { useWallet } from '../../providers/Wallet'
 import { useContracts } from '../../providers/Contracts'
 import { someChainsList } from '../../constants'
 import { isSpecialApp } from '../../utilities/formats'
-import { getUnderlyingId } from '../../utilities/parsers'
 import { initBalanceAndDetailData } from '../../utilities/apiCalls'
 import { fromWei } from '../../services/web3'
 import AutopilotPanel from '../../components/AutopilotComponents/AutopilotPanel'
@@ -38,7 +37,6 @@ const Autopilot = () => {
   const { contracts } = useContracts()
   const history = useNavigate()
   const location = useLocation()
-  // const { chainId } = useWallet()
   const { allVaultsData } = useVaults()
   const firstWalletBalanceLoad = useRef(true)
 
@@ -56,12 +54,11 @@ const Autopilot = () => {
     const matchedChain = someChainsList.find(item => item.name === networkName)
 
     if (networkName !== 'base') {
-      history.replace('/autopilot/base')
+      history('/autopilot/base')
     } else if (matchedChain) {
       setCurChain(matchedChain)
     } else {
       setCurChain(someChainsList[0])
-      // history.replace('/autopilot/base')
     }
   }, [location.pathname, history])
 
@@ -82,13 +79,12 @@ const Autopilot = () => {
           ...vaultData,
           id: Object.keys(allVaultsData)[index],
         }))
-        .filter(vaultData => vaultData.isIPORVault)
+        .filter(
+          vaultData =>
+            vaultData.isIPORVault && vaultData.chain === curChain.chainId && !vaultData.inactive,
+        )
 
-      const filteredVaultsData = filteredVaults
-        .filter(item => item.chain === curChain.chainId)
-        .slice(0, 3)
-
-      setVaultsData(filteredVaultsData)
+      setVaultsData(filteredVaults)
     }
 
     if (Object.keys(allVaultsData).length !== 0 && !isEmpty(curChain)) {
@@ -96,36 +92,22 @@ const Autopilot = () => {
     }
   }, [allVaultsData, curChain])
 
-  const fetchWalletBalances = async (vaultsDataValue, accountValue, balancesValue) => {
-    if (!accountValue || vaultsDataValue.length === 0 || !balancesValue) return
-
-    setWalletBalances(prev => {
-      const mergedBalances = { ...prev }
-
-      vaultsDataValue.forEach(vault => {
-        if (!(vault.id in mergedBalances)) {
-          mergedBalances[vault.id] = '0'
-        }
-      })
-
-      Object.keys(balancesValue).forEach(underlyingId => {
-        const vault = vaultsDataValue.find(v => getUnderlyingId(v) === underlyingId)
-        if (vault) {
-          mergedBalances[vault.id] = fromWei(
-            balancesValue[underlyingId],
-            vault.decimals,
-            vault.decimals,
-          )
-        }
-      })
-
-      return mergedBalances
+  const fetchWalletBalances = async (vaultsDataValue, balancesValue) => {
+    const balances = {}
+    vaultsDataValue.forEach(vault => {
+      if (vault.id in balancesValue) {
+        balances[vault.id] = fromWei(balancesValue[vault.id], vault.decimals, vault.decimals)
+      } else {
+        balances[vault.id] = walletBalances[vault.id] || '0'
+      }
     })
+
+    setWalletBalances(balances)
   }
 
   useEffect(() => {
     if (account && vaultsData.length > 0 && !isEmpty(balances)) {
-      fetchWalletBalances(vaultsData, account, balances)
+      fetchWalletBalances(vaultsData, balances)
     }
   }, [account, vaultsData, balances])
 
@@ -134,26 +116,28 @@ const Autopilot = () => {
     const assetBalancesMap = {}
     const yieldMap = {}
 
+    await getWalletBalances(
+      vaultsDataVal.map(item => item.id),
+      accountVal,
+      true,
+    )
+
     await Promise.all(
       vaultsDataVal.map(async vault => {
-        const underlyingId = getUnderlyingId(vault)
-        if (underlyingId === '') return
-        await getWalletBalances([vault.id, underlyingId], accountVal, true)
-
         const vaultContract = contractsVal.iporVaults[vault.id]
         const vaultBalance = await vaultContract.methods.getBalanceOf(
           vaultContract.instance,
           accountVal,
         )
-        const AssetBalance = await vaultContract.methods.convertToAssets(
+        const assetBalance = await vaultContract.methods.convertToAssets(
           vaultContract.instance,
           vaultBalance,
         )
 
-        if (new BigNumber(AssetBalance).gt(0)) {
+        if (new BigNumber(vaultBalance).gt(0)) {
           vBalancesMap[vault.id] = fromWei(new BigNumber(vaultBalance), Number(vault.vaultDecimals))
           assetBalancesMap[vault.id] = fromWei(
-            new BigNumber(AssetBalance),
+            new BigNumber(assetBalance),
             Number(vault.decimals),
             Number(vault.decimals),
           )
@@ -162,13 +146,12 @@ const Autopilot = () => {
           assetBalancesMap[vault.id] = '0'
         }
 
-        const iporVFlag = vault.isIPORVault ?? false
         const { bFlag, vHFlag, sumNetChange } = await initBalanceAndDetailData(
           vault.vaultAddress,
           vault.chain,
           accountVal,
           vault.decimals,
-          iporVFlag,
+          true,
           vault.vaultDecimals,
         )
 
