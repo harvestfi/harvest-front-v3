@@ -557,7 +557,7 @@ const ActionsProvider = ({ children }) => {
       )
 
       try {
-        await iporVaultMethods.withdraw(amount, account, iporVaultInstance)
+        await iporVaultMethods.redeem(amount, account, iporVaultInstance)
         toast.success(`${tokenDisplayName} withdraw completed`)
         await onSuccess()
         return true

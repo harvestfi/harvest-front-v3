@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import BigNumber from 'bignumber.js'
 import Modal from 'react-bootstrap/Modal'
 import { useSetChain } from '@web3-onboard/react'
 import { Spinner } from 'react-bootstrap'
@@ -16,6 +17,7 @@ import { useWallet } from '../../../providers/Wallet'
 import { useActions } from '../../../providers/Actions'
 import { isSpecialApp } from '../../../utilities/formats'
 import { useThemeContext } from '../../../providers/useThemeContext'
+import { useContracts } from '../../../providers/Contracts'
 import { toWei } from '../../../services/web3'
 import Button from '../../Button'
 import {
@@ -33,6 +35,7 @@ import {
 const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModalShow }) => {
   const { fontColor1, fontColor2, btnColor, btnHoverColor, btnActiveColor } = useThemeContext()
   const { connected, connectAction, account, chainId, setChainId, getWalletBalances } = useWallet()
+  const { contracts } = useContracts()
 
   const [
     {
@@ -64,7 +67,17 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
       setBtnName('Pending Confirmation in Wallet')
       let bSuccessUnsubscribe = false
       try {
-        await handleIPORWithdraw(account, token, unsubscribeAmount, async () => {
+        const vaultContract = contracts.iporVaults[token.id]
+        let shareAmt = new BigNumber(
+          await vaultContract.methods.convertToShares(vaultContract.instance, unsubscribeAmount),
+        )
+        const vaultBalanceWei = new BigNumber(
+          await vaultContract.methods.getBalanceOf(vaultContract.instance, account),
+        )
+        if (shareAmt.gt(vaultBalanceWei)) {
+          shareAmt = vaultBalanceWei
+        }
+        await handleIPORWithdraw(account, token, shareAmt.toFixed(), async () => {
           await getWalletBalances([token.id], false, true)
           bSuccessUnsubscribe = true
         })
