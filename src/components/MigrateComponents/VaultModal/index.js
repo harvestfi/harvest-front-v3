@@ -820,7 +820,7 @@ const VaultModal = ({
                   <Spinner
                     as="span"
                     animation="border"
-                    $size="sm"
+                    size="sm"
                     role="status"
                     aria-hidden="true"
                   />

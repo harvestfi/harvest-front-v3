@@ -288,7 +288,7 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
                   <Spinner
                     as="span"
                     animation="border"
-                    $size="sm"
+                    size="sm"
                     role="status"
                     aria-hidden="true"
                   />

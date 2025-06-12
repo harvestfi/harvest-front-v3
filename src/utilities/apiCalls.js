@@ -699,7 +699,9 @@ export const getUserBalanceVaults = async account => {
   try {
     const results = await Promise.all(
       urls.map(url =>
-        url === GRAPH_URLS[CHAIN_IDS.BASE] || url === GRAPH_URLS[CHAIN_IDS.ARBITRUM_ONE]
+        url === GRAPH_URLS[CHAIN_IDS.BASE] ||
+        url === GRAPH_URLS[CHAIN_IDS.ARBITRUM_ONE] ||
+        url === GRAPH_URLS[CHAIN_IDS.ETH_MAINNET]
           ? executeGraphCall(url, query2, variables)
           : executeGraphCall(url, query1, variables),
       ),

@@ -361,7 +361,7 @@ const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModa
                   <Spinner
                     as="span"
                     animation="border"
-                    $size="sm"
+                    size="sm"
                     role="status"
                     aria-hidden="true"
                   />

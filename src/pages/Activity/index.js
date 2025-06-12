@@ -1,29 +1,21 @@
-import React, { useRef, useEffect, useMemo, useState } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { isEmpty, isEqual } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import 'react-loading-skeleton/dist/skeleton.css'
 import EarningsHistory from '../../components/EarningsHistory/HistoryData'
 import RewardsHistory from '../../components/RewardsHistory/RewardsData'
-import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, SPECIAL_VAULTS, historyTags } from '../../constants'
-import { addresses } from '../../data'
+import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, historyTags } from '../../constants'
 import { usePools } from '../../providers/Pools'
-import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
-import {
-  fetchAndParseVaultData,
-  totalHistoryDataKey,
-  totalNetProfitKey,
-  vaultProfitDataKey,
-} from '../../utilities/parsers'
+import { fetchAndParseVaultData } from '../../utilities/parsers'
 import { Container, Inner, HeaderWrap, HeaderTitle, NewLabel, SwitchTabTag } from './style'
 
 const Activity = () => {
-  const { connected, account, balances, getWalletBalances } = useWallet()
-  const { userStats, totalPools } = usePools()
-  const { profitShareAPY } = useStats()
+  const { account, balances, getWalletBalances } = useWallet()
+  const { userStats } = usePools()
   const { vaultsData } = useVaults()
 
   const {
@@ -44,38 +36,9 @@ const Activity = () => {
   const [noHarvestsData, setNoHarvestsData] = useState(false)
   const [noRewardsData, setNoRewardsData] = useState(false)
   const [activeHarvests, setActiveHarvests] = useState(true)
-  const [, setTotalNetProfit] = useState(() => {
-    return Number(localStorage.getItem(totalNetProfitKey) || '0')
-  })
-  const [, setVaultNetChangeList] = useState(() => {
-    return JSON.parse(localStorage.getItem(vaultProfitDataKey) || '[]')
-  })
-  const [totalHistoryData, setTotalHistoryData] = useState(() => {
-    return JSON.parse(localStorage.getItem(totalHistoryDataKey) || '[]')
-  })
+  const [totalHistoryData, setTotalHistoryData] = useState([])
 
-  const farmProfitSharingPool = totalPools.find(
-    pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
-  )
-
-  const poolVaults = useMemo(
-    () => ({
-      [FARM_TOKEN_SYMBOL]: {
-        poolVault: true,
-        profitShareAPY,
-        data: farmProfitSharingPool,
-        logoUrl: ['./icons/ifarm.svg'],
-        tokenAddress: addresses.iFARM,
-        rewardSymbol: 'iFarm',
-        tokenNames: ['FARM'],
-        platform: ['Harvest'],
-        decimals: 18,
-      },
-    }),
-    [farmProfitSharingPool, profitShareAPY],
-  )
-
-  const groupOfVaults = { ...vaultsData, ...poolVaults }
+  const groupOfVaults = { ...vaultsData }
 
   const firstWalletBalanceLoad = useRef(true)
   useEffectWithPrevious(
@@ -98,58 +61,33 @@ const Activity = () => {
   )
 
   useEffect(() => {
-    const totalNetProfitValue = localStorage.getItem(totalNetProfitKey)
-
-    if (
-      Number(totalNetProfitValue) === 0 ||
-      totalNetProfitValue === null ||
-      Number(totalNetProfitValue) === -1
-    ) {
-      if (!isEmpty(userStats) && account && !onceRun) {
-        setOnceRun(true)
-        const getNetProfitValue = async () => {
-          const {
-            vaultNetChanges,
-            sortedCombinedEnrichedArray,
-            totalNetProfitUSD,
-            stakedVaults,
-            rewardsAPIDataLength,
-          } = await fetchAndParseVaultData({
+    if (!isEmpty(userStats) && account && !onceRun) {
+      setOnceRun(true)
+      const getNetProfitValue = async () => {
+        const { sortedCombinedEnrichedArray, stakedVaults, rewardsAPIDataLength } =
+          await fetchAndParseVaultData({
             account,
             groupOfVaults,
-            totalPools,
             setSafeFlag,
           })
 
-          if (stakedVaults.length === 0) {
-            setNoHarvestsData(true)
-          }
-
-          if (rewardsAPIDataLength === 0) {
-            setNoRewardsData(true)
-          }
-
-          setTotalNetProfit(totalNetProfitUSD)
-          localStorage.setItem(totalNetProfitKey, totalNetProfitUSD.toString())
-
-          setVaultNetChangeList(vaultNetChanges)
-          localStorage.setItem(vaultProfitDataKey, JSON.stringify(vaultNetChanges))
-
-          setTotalHistoryData(sortedCombinedEnrichedArray)
-          localStorage.setItem(totalHistoryDataKey, JSON.stringify(sortedCombinedEnrichedArray))
+        if (stakedVaults.length === 0) {
+          setNoHarvestsData(true)
         }
 
-        getNetProfitValue()
-      } else {
-        setTotalNetProfit(0)
-        localStorage.setItem(totalNetProfitKey, '0')
-        setVaultNetChangeList([])
-        localStorage.setItem(vaultProfitDataKey, JSON.stringify([]))
-        setTotalHistoryData([])
-        localStorage.setItem(totalHistoryDataKey, JSON.stringify([]))
+        if (rewardsAPIDataLength === 0) {
+          setNoRewardsData(true)
+        }
+
+        setTotalHistoryData(sortedCombinedEnrichedArray)
       }
+
+      getNetProfitValue()
+      setOnceRun(false)
+    } else {
+      setTotalHistoryData([])
     }
-  }, [account, userStats, connected, safeFlag])
+  }, [account, userStats, safeFlag])
 
   return (
     <Container $bgcolor={bgColorNew} $fontcolor={fontColor}>

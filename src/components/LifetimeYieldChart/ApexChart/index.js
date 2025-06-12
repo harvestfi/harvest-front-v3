@@ -117,7 +117,7 @@ const ApexChart = ({ noFarm, data, range, handleTooltipContent, setCurDate, setC
         textAnchor={index === 0 ? 'start' : index === payload.length - 1 ? 'end' : 'middle'}
         viewBox="0 0 1024 1024"
         fill={inputFontColor}
-        $fontsize={isMobile ? '10px' : '12px'}
+        fontSize={isMobile ? '10px' : '12px'}
       >
         <tspan dy="0.71em">{path}</tspan>
       </text>

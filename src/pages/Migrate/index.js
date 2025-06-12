@@ -18,7 +18,7 @@ import COLLAPSED from '../../assets/images/ui/plus.svg'
 import { usePools } from '../../providers/Pools'
 import { addresses } from '../../data'
 import { useWallet } from '../../providers/Wallet'
-import { getChainIcon, getTotalApy, getVaultApy, vaultProfitDataKey } from '../../utilities/parsers'
+import { getChainIcon, getTotalApy, getVaultApy } from '../../utilities/parsers'
 import { usePortals } from '../../providers/Portals'
 import dropDown from '../../assets/images/ui/drop-down.e85f7fdc.svg'
 import { useThemeContext } from '../../providers/useThemeContext'
@@ -223,9 +223,6 @@ const Migrate = () => {
     }
 
     getCoinList()
-
-    const prevVaultProfitData = JSON.parse(localStorage.getItem(vaultProfitDataKey) || '[]')
-    setVaultNetChangeList(prevVaultProfitData)
   }, [])
 
   const farmProfitSharingPool = totalPools.find(
