@@ -4,10 +4,8 @@ import { CHAIN_IDS } from '../data/constants'
 import {
   GRAPH_URLS,
   TOTAL_TVL_API_ENDPOINT,
-  HISTORICAL_RATES_API_ENDPOINT,
   GECKO_URL,
   COINGECKO_API_KEY,
-  POOLS_API_ENDPOINT,
   LEADERBOARD_API_ENDPOINT,
   IPOR_API_URL,
 } from '../constants'
@@ -258,7 +256,7 @@ export const getIPORSequenceId = async (vault, chainId) => {
   return { vaultTVLCount }
 }
 
-export const getVaultHistories = async (address, chainId) => {
+const getVaultHistories = async (address, chainId) => {
   let vaultHData = [],
     vaultHFlag = true
 
@@ -341,12 +339,6 @@ export const getMultipleVaultHistories = async (vaults, startTime, chainId) => {
   }
 
   return { vaultHData, vaultHFlag }
-}
-
-export const getCurrencyRateHistories = async () => {
-  const apiResponse = await axios.get(HISTORICAL_RATES_API_ENDPOINT)
-  const apiData = get(apiResponse, 'data')
-  return apiData
 }
 
 export const getDataQuery = async (
@@ -719,37 +711,6 @@ export const getUserBalanceVaults = async account => {
     userBalanceFlag = false
   }
   return { userBalanceVaults, userBalanceFlag }
-}
-
-export const checkIPORUserBalance = async (account, vaultAdr, chainId) => {
-  if (account) {
-    account = account.toLowerCase()
-  }
-
-  const iporquery = `
-    query getUserBalance($account: String!, $vaultAdr: String!) {
-      plasmaUserBalances(
-        where: {
-          userAddress: $account,
-          plasmaVault: $vaultAdr,
-        }
-      ) {
-        id, plasmaVault, value
-      }
-    }
-  `
-
-  const variables = { account, vaultAdr }
-  const url = GRAPH_URLS[chainId]
-
-  try {
-    const result = await executeGraphCall(url, iporquery, variables)
-    if (result.plasmaUserBalances.length > 0) return true
-    return false
-  } catch (err) {
-    console.error('Fetch data about user balance vaults failed: ', err)
-    return false
-  }
 }
 
 export const getUserBalanceHistories = async (address, chainId, account) => {
@@ -1501,26 +1462,6 @@ export const fetchLeaderboardData = async () => {
     return data
   } catch (error) {
     console.log('Error fetching leaderboard data', error)
-    return null
-  }
-}
-
-export const fetchRewardToken = async () => {
-  try {
-    const response = await axios.get(POOLS_API_ENDPOINT)
-    if (!response.status === 200) {
-      throw new Error(`HTTP error! Status: ${response.status}`)
-    }
-    const data = await response.data
-
-    // Log and return only if data is valid
-    if (data) {
-      return data
-    }
-    console.log('No data received from API')
-    return null
-  } catch (error) {
-    console.log('Error fetching reward token data', error)
     return null
   }
 }

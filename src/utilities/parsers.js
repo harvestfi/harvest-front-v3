@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
-import { get, sum, sumBy, find, isNaN } from 'lodash'
-import { FARM_TOKEN_SYMBOL, MAX_APY_DISPLAY, HARVEST_LAUNCH_DATE } from '../constants'
+import { get, sumBy, find, isNaN } from 'lodash'
+import { MAX_APY_DISPLAY } from '../constants'
 import { CHAIN_IDS } from '../data/constants'
 import { ceil10, floor10, formatNumber, round10 } from './formats'
 import Arbitrum from '../assets/images/chains/arbitrum.svg'
@@ -10,25 +10,6 @@ import Ethereum from '../assets/images/chains/ethereum.svg'
 import Polygon from '../assets/images/chains/polygon.svg'
 import { fromWei } from '../services/web3'
 import { getAllRewardEntities, getUserBalanceVaults, initBalanceAndDetailData } from './apiCalls'
-
-export const getNextEmissionsCutDate = () => {
-  const result = new Date()
-  result.setUTCHours(19)
-  result.setUTCMinutes(0)
-  result.setUTCSeconds(0)
-  result.setUTCMilliseconds(0)
-  result.setUTCDate(result.getUTCDate() + ((2 - result.getUTCDay() + 7) % 7))
-  return result
-}
-
-export const getUserVaultBalanceInDetail = (tokenSymbol, totalStakedInPool, iFARMinFARM) => {
-  switch (tokenSymbol) {
-    case FARM_TOKEN_SYMBOL:
-      return new BigNumber(totalStakedInPool).plus(iFARMinFARM).toString()
-    default:
-      return totalStakedInPool
-  }
-}
 
 export const getTotalApy = (vaultPool, token) => {
   const vaultData = vaultPool
@@ -63,28 +44,6 @@ export const getTotalApy = (vaultPool, token) => {
   }
 
   return total.toFixed(2)
-}
-
-export const getTotalFARMSupply = () => {
-  const earlyEmissions = [57569.1, 51676.2, 26400.0, 24977.5]
-  const weeksSinceLaunch = Math.floor(
-    (new Date() - HARVEST_LAUNCH_DATE) / (7 * 24 * 60 * 60 * 1000),
-  ) // Get number of weeks (including partial) between now, and the launch date
-  let thisWeeksSupply = 690420
-
-  if (weeksSinceLaunch <= 208) {
-    const emissionsWeek5 = 23555.0
-    const emissionsWeeklyScale = 0.95554375
-
-    const totalOfEarlyEmissions = sum(earlyEmissions)
-
-    thisWeeksSupply =
-      totalOfEarlyEmissions +
-      (emissionsWeek5 * (1 - emissionsWeeklyScale ** (weeksSinceLaunch - 4))) /
-        (1 - emissionsWeeklyScale)
-  }
-
-  return thisWeeksSupply
 }
 
 export const getChainNamePortals = chain => {
@@ -277,12 +236,6 @@ export const findMaxTotal = data => {
   return max
 }
 
-export const findMinTotal = data => {
-  const ary = data.map(el => el.Total)
-  const min = Math.min(...ary)
-  return min
-}
-
 export const findMaxData = data => {
   let maxVal = -Infinity // Start with the smallest possible value
 
@@ -388,7 +341,7 @@ export const getVaultApy = (vaultKey, vaultsData, pools) => {
   return totalApy
 }
 
-export const getMigrateVaultApy = (vaultKey, vaultsData, pools) => {
+const getMigrateVaultApy = (vaultKey, vaultsData, pools) => {
   const tokenVault = get(vaultsData, vaultKey)
 
   const vaultPool = find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
@@ -470,7 +423,7 @@ export const getMatchedVaultList = (allVaults, chainName, pools) => {
   return false
 }
 
-export const mergeArrays = (rewardsAPIData, totalHistoryData) => {
+const mergeArrays = (rewardsAPIData, totalHistoryData) => {
   const rewardsData = rewardsAPIData.map(reward => ({
     event: 'Rewards',
     symbol: reward.token.symbol,

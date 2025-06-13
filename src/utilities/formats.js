@@ -1,7 +1,7 @@
 import axios from 'axios'
 import axiosRetry from 'axios-retry'
 import BigNumber from 'bignumber.js'
-import { get, isArray, isNaN, isEmpty } from 'lodash'
+import { isNaN, isEmpty } from 'lodash'
 import { DECIMAL_PRECISION, KEY_CODES, MAX_APY_DISPLAY } from '../constants'
 
 axiosRetry(axios, {
@@ -19,16 +19,6 @@ export const preventNonNumericPaste = e => {
   if (!/^\d*\.?\d+$/.test(pastedData)) {
     e.preventDefault()
   }
-}
-
-export const toAPYPercentage = number => {
-  let percentage = '0'
-
-  if (number) {
-    percentage = new BigNumber(number).toFixed(2, 1)
-  }
-
-  return `${percentage}%`
 }
 
 export const abbreaviteNumber = (number, decPlaces) => {
@@ -56,21 +46,7 @@ export const abbreaviteNumber = (number, decPlaces) => {
   return number
 }
 
-export const showNumber = (number, decPlaces) => {
-  const adjDecPlaces = 10 ** decPlaces
-
-  if (number < 1 / adjDecPlaces) {
-    return number.toFixed(decPlaces)
-  }
-
-  if (typeof number === 'number' && number < 1000) {
-    return number.toFixed(decPlaces)
-  }
-
-  return number
-}
-
-export const countDecimals = value => {
+const countDecimals = value => {
   if (typeof value === 'string' && value.split('.').length > 1) {
     return value.split('.')[1].length
   }
@@ -143,7 +119,6 @@ export const formatNumberWido = (number, decimals = DECIMAL_PRECISION) => {
     result = result.substring(0, result.indexOf('.') + decimals + 1)
   }
 
-  // return showNumber(Number(result), decimals)
   return result
 }
 
@@ -234,26 +209,6 @@ export const getRawTokenBalance = (balance, decimals = 6) => {
   return value.toFixed(decimals).replace(/\.?0+$/, '')
 }
 
-export const getCurrencyRate = (sym, item, rateData) => {
-  const date = new Date(Number(item.timestamp ?? 0))
-
-  date.setUTCHours(0, 0, 0, 0) // Set hours, minutes, seconds, and milliseconds to 0
-  const curTimeStamp = date.getTime() * 1000
-  if (sym === '£') {
-    const result = rateData.GBP.filter(
-      dataItem => dataItem.timestamp.toString() === curTimeStamp.toString(),
-    )
-    return result[0]?.price ?? 1
-  }
-  if (sym === '€') {
-    const result = rateData.EUR.filter(
-      dataItem => dataItem.timestamp.toString() === curTimeStamp.toString(),
-    )
-    return result[0]?.price ?? 1
-  }
-  return 1
-}
-
 export const formatAddress = address => {
   if (address) {
     return `${address.substring(0, 6)}...${address.substring(address.length - 4, address.length)}`
@@ -261,59 +216,15 @@ export const formatAddress = address => {
   return '0x...0'
 }
 
-export const stringToArray = value => (isArray(value) ? value : [value])
-
 export const displayAPY = (apy, ...args) =>
   new BigNumber(apy).isGreaterThan(MAX_APY_DISPLAY)
     ? `${MAX_APY_DISPLAY}%+`
     : `${truncateNumberString(apy, ...args)}%`
 
-export const displayApyRefusingNegative = (apy, ...args) =>
-  new BigNumber(apy).isGreaterThan(MAX_APY_DISPLAY)
-    ? `${MAX_APY_DISPLAY}%+`
-    : new BigNumber(apy).isLessThanOrEqualTo(0)
-      ? '0.00%'
-      : `${truncateNumberString(apy, ...args)}%`
-
-export const hasValidAmountForWithdraw = (
-  amountToExecute,
-  unstakedBalance,
-  totalStaked,
-  autoUnStake,
-) => {
-  const amountToExecuteInBN = new BigNumber(amountToExecute)
-  const unstakedBalanceInBN = new BigNumber(unstakedBalance)
-  const totalBalanceInBN = new BigNumber(unstakedBalance).plus(totalStaked)
-
-  if (amountToExecuteInBN.isGreaterThan(0)) {
-    if (autoUnStake && amountToExecuteInBN.isGreaterThan(unstakedBalanceInBN)) {
-      const amountToUnStake = amountToExecuteInBN.minus(unstakedBalanceInBN)
-      return (
-        totalBalanceInBN.isGreaterThanOrEqualTo(amountToExecuteInBN) &&
-        amountToUnStake.isLessThanOrEqualTo(totalStaked)
-      )
-    }
-    return unstakedBalanceInBN.isGreaterThanOrEqualTo(amountToExecute)
-  }
-  return false
-}
-
-export const hasAmountLessThanOrEqualTo = (primaryAmount, secondaryAmount) =>
-  new BigNumber(secondaryAmount).isGreaterThanOrEqualTo(primaryAmount)
-
 export const hasAmountGreaterThanZero = amount => new BigNumber(amount).isGreaterThan(0)
 
 export const hasRequirementsForInteraction = (loaded, pendingAction, vaultsData, loadingBalances) =>
   loaded === true && pendingAction === null && !isEmpty(vaultsData) && !loadingBalances
-
-export const convertAmountToFARM = (token, balance, decimals, vaultsData) => {
-  const pricePerFullShare = get(vaultsData, `[${token}].pricePerFullShare`, 0)
-
-  return new BigNumber(balance)
-    .times(pricePerFullShare)
-    .dividedBy(new BigNumber(10).exponentiatedBy(decimals))
-    .toString()
-}
 
 export function CustomException(message, code) {
   this.message = message
@@ -349,7 +260,7 @@ export const floor10 = (value, exp) => decimalAdjust('floor', value, exp)
 // Decimal ceil
 export const ceil10 = (value, exp) => decimalAdjust('ceil', value, exp)
 
-export const isInIframe = () => {
+const isInIframe = () => {
   try {
     return window.self !== window.top
   } catch (e) {
@@ -357,7 +268,7 @@ export const isInIframe = () => {
   }
 }
 
-export const isLoadedInOtherDomain = domain => {
+const isLoadedInOtherDomain = domain => {
   return (
     isInIframe() &&
     (window?.location?.ancestorOrigins?.[0]?.includes(domain) ||
