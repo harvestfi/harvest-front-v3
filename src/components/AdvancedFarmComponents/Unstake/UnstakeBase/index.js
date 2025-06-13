@@ -30,8 +30,6 @@ import {
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { getChainName } from '../../../../utilities/parsers'
 
-const { tokens } = require('../../../../data')
-
 const UnstakeBase = ({
   setUnstakeStart,
   finalStep,
@@ -83,9 +81,6 @@ const UnstakeBase = ({
   const [warningContent, setWarningContent] = useState('')
   const [unstakeFailed, setUnstakeFailed] = useState(false)
 
-  const isSpecialVault = token.liquidityPoolVault || token.poolVault
-  const tokenDecimals = token.decimals || tokens[tokenSymbol].decimals
-
   useEffect(() => {
     if (account) {
       if (curChain !== '' && curChain !== tokenChain) {
@@ -120,7 +115,7 @@ const UnstakeBase = ({
       if (multipleAssets) {
         return toWei(amount, token.decimals, 0)
       }
-      return toWei(amount, isSpecialVault ? tokenDecimals : token.decimals)
+      return toWei(amount, token.decimals)
     })
 
     if (new BigNumber(amountsToExecuteInWei[0].toString()) === 0) {

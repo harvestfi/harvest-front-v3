@@ -2,14 +2,7 @@ import axios from 'axios'
 import axiosRetry from 'axios-retry'
 import BigNumber from 'bignumber.js'
 import { get, isArray, isNaN, isEmpty } from 'lodash'
-import {
-  DECIMAL_PRECISION,
-  DISABLED_DEPOSITS,
-  DISABLED_WITHDRAWS,
-  FARM_TOKEN_SYMBOL,
-  KEY_CODES,
-  MAX_APY_DISPLAY,
-} from '../constants'
+import { DECIMAL_PRECISION, KEY_CODES, MAX_APY_DISPLAY } from '../constants'
 
 axiosRetry(axios, {
   retries: 1,
@@ -281,39 +274,6 @@ export const displayApyRefusingNegative = (apy, ...args) =>
     : new BigNumber(apy).isLessThanOrEqualTo(0)
       ? '0.00%'
       : `${truncateNumberString(apy, ...args)}%`
-
-export const hasValidAmountForInputAndMaxButton = (
-  userBalance,
-  lpTokenBalance,
-  totalStaked,
-  tokenSymbol,
-  withdrawMode,
-  isSpecialVault,
-  iFARMBalance,
-  useIFARM,
-) => {
-  if (tokenSymbol === FARM_TOKEN_SYMBOL && withdrawMode && !useIFARM) {
-    return false
-  }
-
-  if (!withdrawMode) {
-    return (
-      new BigNumber(isSpecialVault ? lpTokenBalance : userBalance).isGreaterThan(0) &&
-      DISABLED_DEPOSITS.indexOf(tokenSymbol) === -1
-    )
-  }
-
-  if (isSpecialVault) {
-    return (
-      new BigNumber(useIFARM ? iFARMBalance : totalStaked).isGreaterThan(0) &&
-      DISABLED_WITHDRAWS.indexOf(tokenSymbol) === -1
-    )
-  }
-  return (
-    new BigNumber(totalStaked).plus(lpTokenBalance).isGreaterThan(0) &&
-    DISABLED_WITHDRAWS.indexOf(tokenSymbol) === -1
-  )
-}
 
 export const hasValidAmountForWithdraw = (
   amountToExecute,

@@ -1256,7 +1256,7 @@ const AdvancedFarm = () => {
     { label: 'Lifetime', value: formatFrequency(harvestFrequency) },
   ]
 
-  const rewardTxt = getAdvancedRewardText(token, vaultPool, tradingApy, rewardApy, totalApy, true)
+  const rewardTxt = getAdvancedRewardText(token, vaultPool, tradingApy, rewardApy)
 
   const profitShare =
     tokenChain === CHAIN_IDS.ETH_MAINNET

@@ -311,7 +311,7 @@ const WithdrawStart = ({
   useEffect(() => {
     let activedList = []
     if (chainId) {
-      const matched = getMatchedVaultList(groupOfVaults, chainId, vaultsData, pools)
+      const matched = getMatchedVaultList(groupOfVaults, chainId, pools)
       if (matched.length > 0) {
         activedList = matched.filter(
           el => el.vaultApy !== 0 && el.vaultTvl > 500 && el.vault?.tokenNames.length === 1,

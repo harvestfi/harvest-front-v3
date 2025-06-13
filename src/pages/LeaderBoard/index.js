@@ -34,17 +34,11 @@ import {
 } from './style'
 import HolderRow from '../../components/LeaderboardComponents/HolderRow'
 import { useVaults } from '../../providers/Vault'
-import { FARM_TOKEN_SYMBOL, SPECIAL_VAULTS } from '../../constants'
-import { useStats } from '../../providers/Stats'
-import { usePools } from '../../providers/Pools'
-import { addresses } from '../../data'
 import Pagination from '../../components/LeaderboardComponents/Pagination'
 import { useWallet } from '../../providers/Wallet'
 
 const LeaderBoard = () => {
   const { vaultsData } = useVaults()
-  const { profitShareAPY } = useStats()
-  const { totalPools } = usePools()
   const {
     bgColorNew,
     fontColor,
@@ -90,28 +84,7 @@ const LeaderBoard = () => {
     getData()
   }, [])
 
-  const farmProfitSharingPool = totalPools.find(
-    pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
-  )
-
-  const poolVaults = useMemo(
-    () => ({
-      [FARM_TOKEN_SYMBOL]: {
-        poolVault: true,
-        profitShareAPY,
-        data: farmProfitSharingPool,
-        logoUrl: ['./icons/ifarm.svg'],
-        tokenAddress: addresses.iFARM,
-        rewardSymbol: 'iFarm',
-        tokenNames: ['FARM'],
-        platform: ['Harvest'],
-        decimals: 18,
-      },
-    }),
-    [farmProfitSharingPool, profitShareAPY],
-  )
-
-  const groupOfVaults = { ...vaultsData, ...poolVaults }
+  const groupOfVaults = { ...vaultsData }
 
   if (leadersApiData) {
     correctedApiData = rearrangeApiData(JSON.parse(JSON.stringify(leadersApiData)), groupOfVaults)

@@ -267,7 +267,7 @@ const QuickFilter = ({
   const selectedClasses = []
 
   const [trendName, setTrendName] = useState('Trends')
-  const [trendsBackNum, setTrendsBackNum] = useState(-1)
+  const [, setTrendsBackNum] = useState(-1)
 
   const [collabBswapStatus, setCollabBswapStatus] = useState('')
   const [trendStatus, setTrendStatus] = useState('')

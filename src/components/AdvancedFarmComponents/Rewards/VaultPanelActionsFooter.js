@@ -13,7 +13,6 @@ import poolMethods from '../../../services/web3/contracts/pool/methods'
 import tokenContract from '../../../services/web3/contracts/token/contract.json'
 import tokenMethods from '../../../services/web3/contracts/token/methods'
 import vaultMethods from '../../../services/web3/contracts/vault/methods'
-import PoolFooterActions from './PoolFooterActions'
 import VaultFooterActions from './VaultFooterActions'
 
 const { addresses, tokens } = require('../../../data')
@@ -33,7 +32,6 @@ const getPoolRewardSymbol = chain => {
 const VaultPanelActionsFooter = ({
   token,
   tokenSymbol,
-  isSpecialVault,
   vaultPool,
   rewardTokenPrices,
   loadingBalances,
@@ -152,20 +150,11 @@ const VaultPanelActionsFooter = ({
     ratesPerDay,
     totalTokensEarned,
     loadingBalances,
-    isSpecialVault,
     poolRewardSymbol: getPoolRewardSymbol(chain),
     setLoadingDots,
     setPendingAction,
     pendingAction,
     loaded,
-  }
-
-  if (isSpecialVault) {
-    return (
-      <>
-        <PoolFooterActions {...componentsProps} />
-      </>
-    )
   }
 
   return (

@@ -33,8 +33,6 @@ import {
 } from './style'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 
-const { tokens } = require('../../../../data')
-
 const UnstakeStart = ({
   unstakeStart,
   setUnstakeStart,
@@ -71,8 +69,6 @@ const UnstakeStart = ({
   const { handleExit } = useActions()
   const { userStats, fetchUserPoolStats } = usePools()
 
-  const isSpecialVault = token.liquidityPoolVault || token.poolVault
-  const tokenDecimals = token.decimals || tokens[tokenSymbol].decimals
   const walletBalancesToCheck = multipleAssets || [tokenSymbol]
 
   const [startSpinner, setStartSpinner] = useState(false)
@@ -86,7 +82,7 @@ const UnstakeStart = ({
       if (multipleAssets) {
         return toWei(amount, token.decimals, 0)
       }
-      return toWei(amount, isSpecialVault ? tokenDecimals : token.decimals)
+      return toWei(amount, token.decimals)
     })
     const shouldDoPartialUnstake = new BigNumber(amountsToExecuteInWei[0].toString()).isLessThan(
       totalStaked.toString(),

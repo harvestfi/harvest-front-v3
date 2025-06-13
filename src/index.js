@@ -1,6 +1,6 @@
 import React from 'react'
 import { createRoot } from 'react-dom/client'
-import 'react-toastify/ReactToastify.css'
+import 'react-toastify/dist/ReactToastify.css'
 import '@fontsource/roboto-mono'
 import '@fontsource/roboto-mono/500.css'
 import App from './App'

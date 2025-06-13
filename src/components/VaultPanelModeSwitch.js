@@ -1,10 +1,9 @@
 import { get } from 'lodash'
 import React from 'react'
 import { Tooltip } from 'react-tooltip'
-import { DISABLED_WITHDRAWS, FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../constants'
+import { DISABLED_WITHDRAWS } from '../constants'
 import { usePools } from '../providers/Pools'
 import { useVaults } from '../providers/Vault'
-import { useWallet } from '../providers/Wallet'
 import { hasAmountGreaterThanZero, hasRequirementsForInteraction } from '../utilities/formats'
 import ButtonSwitch from './ButtonSwitch'
 
@@ -18,14 +17,10 @@ const VaultPanelModeSwitch = ({
   loadingBalances,
   setWithdrawMode,
 }) => {
-  const { balances } = useWallet()
   const { userStats } = usePools()
   const { vaultsData } = useVaults()
-  const iFARMBalance = get(balances, IFARM_TOKEN_SYMBOL, 0)
   const lpTokenBalance = get(userStats, `[${vaultPool.id}]['lpTokenBalance']`, 0)
   const totalStaked = get(userStats, `[${vaultPool.id}]['totalStaked']`, 0)
-
-  const isSpecialVault = token.liquidityPoolVault || token.poolVault
 
   let withdrawalTimestamp = 0,
     timeLimited = false
@@ -77,13 +72,8 @@ const VaultPanelModeSwitch = ({
                   loadingBalances,
                 ) ||
                 DISABLED_WITHDRAWS.indexOf(tokenSymbol) !== -1 ||
-                (isSpecialVault
-                  ? tokenSymbol === FARM_TOKEN_SYMBOL
-                    ? !hasAmountGreaterThanZero(totalStaked) &&
-                      !hasAmountGreaterThanZero(iFARMBalance)
-                    : !hasAmountGreaterThanZero(totalStaked)
-                  : !hasAmountGreaterThanZero(totalStaked) &&
-                    !hasAmountGreaterThanZero(lpTokenBalance)),
+                (!hasAmountGreaterThanZero(totalStaked) &&
+                  !hasAmountGreaterThanZero(lpTokenBalance)),
             },
           }}
           setChecked={checked => {

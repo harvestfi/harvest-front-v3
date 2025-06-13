@@ -9,13 +9,7 @@ import SortCurrency from '../../../assets/images/logos/farm/sortCurrency.svg'
 import sortAscIcon from '../../../assets/images/ui/asc.svg'
 import sortDescIcon from '../../../assets/images/ui/desc.svg'
 import sortIcon from '../../../assets/images/ui/sort.svg'
-import {
-  FARM_TOKEN_SYMBOL,
-  IFARM_TOKEN_SYMBOL,
-  SPECIAL_VAULTS,
-  MAX_DECIMALS,
-  chainList,
-} from '../../../constants'
+import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, MAX_DECIMALS, chainList } from '../../../constants'
 import { fromWei } from '../../../services/web3'
 import { CHAIN_IDS } from '../../../data/constants'
 import { usePools } from '../../../providers/Pools'
@@ -327,10 +321,6 @@ const VaultList = () => {
     setLoadComplete(true)
   }, [])
 
-  const farmProfitSharingPool = totalPools.find(
-    pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
-  )
-
   let groupOfVaults = []
   if (isSpecialApp) {
     if (chainId === CHAIN_IDS.ETH_MAINNET) {
@@ -442,7 +432,6 @@ const VaultList = () => {
       account,
       loadedUserPoolsWeb3Provider,
       loadedUserVaultsWeb3Provider,
-      farmProfitSharingPool,
       fetchUserPoolStats,
       userStats,
       onSelectAsset,

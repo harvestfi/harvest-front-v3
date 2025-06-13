@@ -1,11 +1,9 @@
 import BigNumber from 'bignumber.js'
 import { get, isEmpty, size as arraySize } from 'lodash'
-import { addresses } from '../data/index'
-import { CHAIN_IDS } from '../data/constants'
 import { displayAPY } from './formats'
-import { FARM_TOKEN_SYMBOL, SPECIAL_VAULTS, UNIV3_POOL_ID_REGEX } from '../constants'
+import { FARM_TOKEN_SYMBOL, UNIV3_POOL_ID_REGEX } from '../constants'
 
-const getRewardSymbol = (vault, isIFARM, vaultPool) => {
+const getRewardSymbol = vaultPool => {
   switch (true) {
     case vaultPool && vaultPool.rewardTokenSymbols.length > 1:
       return vaultPool.rewardTokenSymbols
@@ -13,21 +11,12 @@ const getRewardSymbol = (vault, isIFARM, vaultPool) => {
         .join(', ')
     case vaultPool && vaultPool.rewardTokenSymbols.length === 1:
       return vaultPool.rewardTokenSymbols[0]
-    case vault.chain === CHAIN_IDS.POLYGON_MAINNET || isIFARM:
-      return 'iFARM'
     default:
       return 'FARM'
   }
 }
 
-export const getAdvancedRewardText = (
-  token,
-  vaultPool,
-  tradingApy,
-  rewardApy,
-  specialVaultApy,
-  isSpecialVault,
-) => {
+export const getAdvancedRewardText = (token, vaultPool, tradingApy, rewardApy) => {
   const components = []
 
   const isUniv3Vault = !!(vaultPool && new RegExp(UNIV3_POOL_ID_REGEX).test(vaultPool.id))
@@ -180,102 +169,79 @@ export const getAdvancedRewardText = (
     return tooltipText
   }
 
-  const isIFARM = vaultPool && vaultPool.rewardTokens[0] === addresses.iFARM
-
-  if (isSpecialVault && vaultPool && vaultPool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
-    components.push(
-      `<div class="detail-box">
+  if (!token.hideTokenApy) {
+    if (Number(tradingApy) > 0) {
+      components.push(`<div class="detail-box">
         <div class="detail-box-main">
-          <div class="detail-icon"><img src='/icons/${token.rewardSymbol.toLowerCase()}.svg' width=24 height=24 alt=${
-            token.rewardSymbol
-          } /></div>
-          <div class="detail-desc">${token.rewardSymbol} rewards</div>
+          <div class="detail-icon"><img src='/icons/swapfee.svg' width=24 height=24 alt="" /></div>
+          <div class="detail-desc-no-width">Liquidity Provision</div>
         </div>
-        <div class="detail-apy"> ${
-          specialVaultApy > 0 ? `${displayAPY(specialVaultApy)}</div>` : '...</div>'
-        } 
-      </div>`,
-    )
-  } else {
-    if (!token.hideTokenApy) {
-      if (Number(tradingApy) > 0) {
-        components.push(`<div class="detail-box">
-          <div class="detail-box-main">
-            <div class="detail-icon"><img src='/icons/swapfee.svg' width=24 height=24 alt="" /></div>
-            <div class="detail-desc-no-width">Liquidity Provision</div>
-          </div>
-          <div class="detail-apy">${displayAPY(tradingApy)}</div> 
-        </div>`)
-      }
+        <div class="detail-apy">${displayAPY(tradingApy)}</div> 
+      </div>`)
+    }
 
-      if (arraySize(token.apyTokenSymbols)) {
-        if (token.apyOverride) {
-          components.push(`<b>${token.apyOverride}</b>`)
-        } else if (Number(token.estimatedApy) > 0) {
-          let apyString = ''
-          for (let i = 0; i < token.estimatedApyBreakdown.length; i += 1) {
-            let icons, desc, symbols, apy
-            if (token.estimatedApyBreakdown.length === 1) {
-              icons = `${token.apyIconUrls.map(
-                (url, j) =>
-                  `<img key='${j}' width=24 height=24 src='${url.slice(1, url.length)}' />`,
-              )}</div>`
-              desc =
-                token.apyDescriptionOverride && token.apyDescriptionOverride.length
-                  ? `<div class="detail-desc-auto">${token.apyDescriptionOverride[0]}&nbsp;`
-                  : `<div class="detail-desc-auto">Auto harvested&nbsp;`
-              symbols = `<span class="detail-token">${token.apyTokenSymbols.join(
-                ',  ',
-              )}</span></div></div>`
-              apy = `<div class="detail-apy">${displayAPY(token.estimatedApy)}</div></div>`
+    if (arraySize(token.apyTokenSymbols)) {
+      if (token.apyOverride) {
+        components.push(`<b>${token.apyOverride}</b>`)
+      } else if (Number(token.estimatedApy) > 0) {
+        let apyString = ''
+        for (let i = 0; i < token.estimatedApyBreakdown.length; i += 1) {
+          let icons, desc, symbols, apy
+          if (token.estimatedApyBreakdown.length === 1) {
+            icons = `${token.apyIconUrls.map(
+              (url, j) => `<img key='${j}' width=24 height=24 src='${url.slice(1, url.length)}' />`,
+            )}</div>`
+            desc =
+              token.apyDescriptionOverride && token.apyDescriptionOverride.length
+                ? `<div class="detail-desc-auto">${token.apyDescriptionOverride[0]}&nbsp;`
+                : `<div class="detail-desc-auto">Auto harvested&nbsp;`
+            symbols = `<span class="detail-token">${token.apyTokenSymbols.join(
+              ',  ',
+            )}</span></div></div>`
+            apy = `<div class="detail-apy">${displayAPY(token.estimatedApy)}</div></div>`
+          } else {
+            icons = `<img key='${i}' width=24 height=24 src='${token.apyIconUrls[i].slice(
+              1,
+              token.apyIconUrls[i].length,
+            )}' /></div>`
+            desc =
+              token.apyDescriptionOverride && token.apyDescriptionOverride.length
+                ? `<div class="detail-desc-auto">${token.apyDescriptionOverride[i]}&nbsp;`
+                : `<div class="detail-desc-auto">Auto harvested&nbsp;`
+            symbols = `<span class="detail-token">${token.apyTokenSymbols[i]}</span></div></div>`
+            if (token.apyTokenSymbols[i] === 'SHIFT') {
+              apy = `<div class="detail-apy">x1</div></div>`
             } else {
-              icons = `<img key='${i}' width=24 height=24 src='${token.apyIconUrls[i].slice(
-                1,
-                token.apyIconUrls[i].length,
-              )}' /></div>`
-              desc =
-                token.apyDescriptionOverride && token.apyDescriptionOverride.length
-                  ? `<div class="detail-desc-auto">${token.apyDescriptionOverride[i]}&nbsp;`
-                  : `<div class="detail-desc-auto">Auto harvested&nbsp;`
-              symbols = `<span class="detail-token">${token.apyTokenSymbols[i]}</span></div></div>`
-              if (token.apyTokenSymbols[i] === 'SHIFT') {
-                apy = `<div class="detail-apy">x1</div></div>`
-              } else {
-                apy = `<div class="detail-apy">${displayAPY(
-                  token.estimatedApyBreakdown[i],
-                )}</div></div>`
-              }
+              apy = `<div class="detail-apy">${displayAPY(
+                token.estimatedApyBreakdown[i],
+              )}</div></div>`
             }
-            apyString = `
-            <div class="detail-box">
-              <div class="detail-box-main">
-                <div class="detail-icon">`
-            apyString += icons
-            apyString += desc
-            apyString += symbols
-            apyString += apy
-            components.push(apyString)
           }
+          apyString = `
+          <div class="detail-box">
+            <div class="detail-box-main">
+              <div class="detail-icon">`
+          apyString += icons
+          apyString += desc
+          apyString += symbols
+          apyString += apy
+          components.push(apyString)
         }
       }
     }
+  }
 
-    if (!token.hideFarmApy && Number(rewardApy) > 0) {
-      let apyString = `<div class="detail-box">
-      <div class="detail-box-main">
-        <div class="detail-icon"><img src='/icons/${getRewardSymbol(
-          token,
-          isIFARM,
-          vaultPool,
-        ).toLowerCase()}.svg' width=24 height=24 alt='' /></div>`
-      apyString += `<div class="detail-desc">${getRewardSymbol(
-        token,
-        isIFARM,
+  if (!token.hideFarmApy && Number(rewardApy) > 0) {
+    let apyString = `<div class="detail-box">
+    <div class="detail-box-main">
+      <div class="detail-icon"><img src='/icons/${getRewardSymbol(
         vaultPool,
-      )} rewards</div></div><div class="detail-apy">${displayAPY(rewardApy)}</div>`
+      ).toLowerCase()}.svg' width=24 height=24 alt='' /></div>`
+    apyString += `<div class="detail-desc">${getRewardSymbol(
+      vaultPool,
+    )} rewards</div></div><div class="detail-apy">${displayAPY(rewardApy)}</div>`
 
-      components.push(apyString)
-    }
+    components.push(apyString)
   }
 
   const tooltipText = `<div align="left">${components.join('')}</div>`

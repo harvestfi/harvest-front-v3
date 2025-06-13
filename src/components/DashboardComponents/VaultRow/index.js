@@ -46,11 +46,8 @@ const VaultRow = ({ info, lifetimeYield, lastElement, cKey, darkMode }) => {
     }
   })
 
-  const isSpecialVault = token.liquidityPoolVault || token.poolVault
   const network = chainList[badgeId]?.name.toLowerCase()
-  const address = isSpecialVault
-    ? token.data.collateralAddress
-    : token.vaultAddress || token.tokenAddress
+  const address = token.vaultAddress || token.tokenAddress
   const url = `${directDetailUrl}${network}/${address}?from=portfolio`
 
   return (
