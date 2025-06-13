@@ -8,7 +8,6 @@ import { CiSettings } from 'react-icons/ci'
 import { useNavigate } from 'react-router-dom'
 import { Spinner } from 'react-bootstrap'
 import { useWallet } from '../../../providers/Wallet'
-import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../../constants'
 import { toWei, fromWei, getWeb3, checkNativeToken } from '../../../services/web3'
 import { isSpecialApp, showTokenBalance } from '../../../utilities/formats'
 import { FTokenInfo, IconCard, ImgBtn } from '../PositionModal/style'
@@ -41,8 +40,6 @@ import ProgressTwo from '../../../assets/images/logos/advancedfarm/progress-step
 import ProgressThree from '../../../assets/images/logos/advancedfarm/progress-step3.png'
 import ProgressFour from '../../../assets/images/logos/advancedfarm/progress-step4.png'
 import ProgressFive from '../../../assets/images/logos/advancedfarm/progress-step5.png'
-import { useActions } from '../../../providers/Actions'
-import { useContracts } from '../../../providers/Contracts'
 
 const MigrateStart = ({
   find,
@@ -50,12 +47,7 @@ const MigrateStart = ({
   pickedToken,
   id,
   toId,
-  addresses,
   token,
-  get,
-  tokens,
-  defaultToken,
-  vaultsData,
   currencySym,
   currencyRate,
   showMigrate,
@@ -91,12 +83,10 @@ const MigrateStart = ({
   const [slippageBtnLabel, setSlippageBtnLabel] = useState('Save')
   const [showNote, setShowNote] = useState(false)
 
-  const { account, chainId, web3, approvedBalances, getWalletBalances } = useWallet()
+  const { account, chainId, web3 } = useWallet()
   const { getPortalsEstimate, getPortalsToken, getPortals, getPortalsApproval, portalsApprove } =
     usePortals()
   const { userStats, fetchUserPoolStats } = usePools()
-  const { handleApproval, handleDeposit } = useActions()
-  const { contracts } = useContracts()
   const navigate = useNavigate()
 
   const {
@@ -110,9 +100,6 @@ const MigrateStart = ({
     bgColorSlippage,
     backColor,
   } = useThemeContext()
-
-  const useIFARM = id === FARM_TOKEN_SYMBOL
-  const toUseIFARM = toId === FARM_TOKEN_SYMBOL
 
   const SlippageValues = [null, 0.1, 0.5, 1, 5]
 
@@ -135,37 +122,17 @@ const MigrateStart = ({
     }
   }
 
-  let tokenDecimals,
-    tempPricePerFullShare,
-    pricePerFullShare,
-    tokenChain,
-    amount,
-    toToken,
-    vaultPool,
-    isSpecialVault,
-    pickedDefaultToken
+  let tokenChain, amount, toToken, vaultPool
 
   const slippage = 0.5 // Default slippage Percent
-  if (token && id) {
-    tokenDecimals = token.decimals || tokens[id].decimals
-    isSpecialVault = token.poolVault
-    tempPricePerFullShare = useIFARM
-      ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
-      : get(token, `pricePerFullShare`, 0)
-    pricePerFullShare = fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals)
+  if (token) {
     tokenChain = token.chain || token.data.chain
-    toToken = toUseIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
-    vaultPool = isSpecialVault
-      ? token.data
-      : find(pools, pool => pool.collateralAddress === tokens[id].vaultAddress)
+    toToken = token.vaultAddress || token.tokenAddress
+    vaultPool = find(pools, pool => pool.collateralAddress === token.vaultAddress)
   }
 
   if (pickedToken && inputAmount) {
-    amount = toWei(inputAmount, pickedToken.decimals, 0)
-  }
-
-  if (pickedToken && defaultToken) {
-    pickedDefaultToken = pickedToken.address.toLowerCase() === defaultToken.address.toLowerCase()
+    amount = toWei(inputAmount, pickedToken.vaultDecimals || pickedToken.decimals, 0)
   }
 
   const [
@@ -208,8 +175,7 @@ const MigrateStart = ({
           let fromInfoValue = '',
             fromInfoUsdValue = '',
             minReceiveAmount = '',
-            minReceiveUsd = '',
-            outputAmountDefault = ''
+            minReceiveUsd = ''
 
           const fromToken = pickedToken.address
           const pickedTokenRawBalance = toWei(pickedToken.balance, pickedToken.decimals, 0)
@@ -218,12 +184,7 @@ const MigrateStart = ({
             new BigNumber(pickedTokenRawBalance.toString()),
           )
 
-          if (pickedDefaultToken) {
-            const outputAmountDefaultDecimals = new BigNumber(inputAmount.toString())
-              .dividedBy(new BigNumber(pricePerFullShare))
-              .toString()
-            outputAmountDefault = toWei(outputAmountDefaultDecimals, pickedToken.decimals, 0)
-          } else if (supportedVault) {
+          if (supportedVault) {
             let newInputAmount
 
             if (checkNativeToken(pickedToken)) {
@@ -254,17 +215,12 @@ const MigrateStart = ({
             }
           }
 
-          if (pickedDefaultToken || (portalsEstimate && portalsEstimate.succeed)) {
+          if (portalsEstimate && portalsEstimate.succeed) {
             let fromTokenUsdPrice, toTokenUsdPrice, newInputAmount
-            if (pickedDefaultToken) {
-              fromTokenUsdPrice = pickedToken.usdPrice
-              toTokenUsdPrice = Number(pickedToken.usdPrice) * Number(pricePerFullShare)
-            } else {
-              const fromTokenDetail = await getPortalsToken(chainId, fromToken)
-              const toTokenDetail = await getPortalsToken(chainId, toToken)
-              fromTokenUsdPrice = fromTokenDetail?.price
-              toTokenUsdPrice = toTokenDetail?.price
-            }
+            const fromTokenDetail = await getPortalsToken(chainId, fromToken)
+            const toTokenDetail = await getPortalsToken(chainId, toToken)
+            fromTokenUsdPrice = fromTokenDetail?.price
+            toTokenUsdPrice = toTokenDetail?.price
 
             if (checkNativeToken(pickedToken)) {
               newInputAmount = new BigNumber(
@@ -279,12 +235,8 @@ const MigrateStart = ({
             const quoteResult = {
               fromTokenAmount: newAmount,
               fromTokenUsdPrice,
-              minToTokenAmount: pickedDefaultToken
-                ? outputAmountDefault
-                : portalsEstimate.res.outputAmount,
-              outputTokenDecimals: pickedDefaultToken
-                ? pickedToken.decimals
-                : portalsEstimate.res.outputTokenDecimals,
+              minToTokenAmount: portalsEstimate.res.outputAmount,
+              outputTokenDecimals: portalsEstimate.res.outputTokenDecimals,
             }
 
             if (pickedToken) {
@@ -372,12 +324,9 @@ const MigrateStart = ({
     curChain,
     currencyRate,
     currencySym,
-    defaultToken,
     token,
     tokenChain,
-    useIFARM,
     failureCount,
-    pickedDefaultToken,
     toToken,
     balance,
     pickedToken,
@@ -439,103 +388,43 @@ const MigrateStart = ({
       setStartSpinner(true)
       setProgressStep(1)
       setButtonName('Pending Approval in Wallet')
-      if (pickedDefaultToken) {
-        const allowanceCheck = useIFARM ? approvedBalances.IFARM : approvedBalances[toId]
-        if (!new BigNumber(allowanceCheck.toString()).gte(new BigNumber(amount.toString()))) {
-          await handleApproval(
-            account,
-            contracts,
-            toId,
-            amount,
-            toToken,
-            null,
-            async () => {
-              setProgressStep(2)
-              setButtonName('Confirm Transaction')
-              setStartSpinner(false)
-              setReceiveAmount(minReceiveAmountString)
-              setReceiveUsd(minReceiveUsdAmount)
-              await fetchUserPoolStats([vaultPool], account, userStats)
-              await getWalletBalances([toId], false, true)
-            },
-            async () => {
-              setStartSpinner(false)
-              setDepositFailed(true)
-              setProgressStep(0)
-              setButtonName('Approve Token')
-            },
-          )
+      try {
+        let allowanceCheck
+        if (pickedToken.address === '0x0000000000000000000000000000000000000000') {
+          // native token
+          allowanceCheck = amount
         } else {
-          setProgressStep(2)
-          setButtonName('Confirm Transaction')
-          setStartSpinner(false)
-        }
-      } else {
-        try {
-          let allowanceCheck
-          if (pickedToken.address === '0x0000000000000000000000000000000000000000') {
-            // native token
-            allowanceCheck = amount
-          } else {
-            const approval = await getPortalsApproval(chainId, account, pickedToken.address)
+          const approval = await getPortalsApproval(chainId, account, pickedToken.address)
 
-            allowanceCheck = approval ? approval.allowance : 0
-          }
-
-          if (!new BigNumber(allowanceCheck.toString()).gte(new BigNumber(amount.toString()))) {
-            await approveZap(amount) // Approve for Zap
-          }
-          setProgressStep(2)
-          setButtonName('Confirm Transaction')
-          setStartSpinner(false)
-        } catch (err) {
-          setStartSpinner(false)
-          setDepositFailed(true)
-          setProgressStep(0)
-          setButtonName('Approve Token')
+          allowanceCheck = approval ? approval.allowance : 0
         }
+
+        if (!new BigNumber(allowanceCheck.toString()).gte(new BigNumber(amount.toString()))) {
+          await approveZap(amount) // Approve for Zap
+        }
+        setProgressStep(2)
+        setButtonName('Confirm Transaction')
+        setStartSpinner(false)
+      } catch (err) {
+        setStartSpinner(false)
+        setDepositFailed(true)
+        setProgressStep(0)
+        setButtonName('Approve Token')
       }
     } else if (progressStep === 2) {
       let isSuccess = true
-      if (pickedDefaultToken) {
+      try {
         setProgressStep(3)
         setButtonName('Pending Confirmation in Wallet')
         setStartSpinner(true)
-        if (useIFARM) {
-          toId = 'IFARM'
-        }
-        isSuccess = await handleDeposit(
-          token,
-          account,
-          [amount],
-          vaultsData[toId],
-          false,
-          false,
-          async () => {
-            await getWalletBalances([toId])
-            await fetchUserPoolStats([vaultPool], account, userStats)
-          },
-          async () => {
-            setDepositFailed(true)
-            setStartSpinner(false)
-            setProgressStep(0)
-            setButtonName('Approve Token')
-          },
-        )
-      } else {
-        try {
-          setProgressStep(3)
-          setButtonName('Pending Confirmation in Wallet')
-          setStartSpinner(true)
-          await onDeposit()
-        } catch (err) {
-          setDepositFailed(true)
-          setStartSpinner(false)
-          setProgressStep(0)
-          setButtonName('Approve Token')
-          isSuccess = false
-          return
-        }
+        await onDeposit()
+      } catch (err) {
+        setDepositFailed(true)
+        setStartSpinner(false)
+        setProgressStep(0)
+        setButtonName('Approve Token')
+        isSuccess = false
+        return
       }
       // End Approve and Deposit successfully
       if (isSuccess) {
@@ -702,7 +591,7 @@ const MigrateStart = ({
               </NewLabel>
               <NewLabel $display="flex" $flexflow="column" $weight="600" $textalign="right">
                 <NewLabel $weight="400" $height="20px" $size="12px">
-                  {id ? useIFARM ? `i${id}` : `f${id}` : <AnimatedDots />}
+                  {id ? id : <AnimatedDots />}
                 </NewLabel>
                 <NewLabel $weight="400" $size="12px" $height="20px">
                   {fromInfoAmount === '-' ? (
@@ -736,7 +625,7 @@ const MigrateStart = ({
             </NewLabel>
             <NewLabel $display="flex" $flexflow="column">
               <NewLabel $weight="600" $size="14px" $height="20px" $textalign="right">
-                {!pickedDefaultToken && progressStep === 4 ? (
+                {progressStep === 4 ? (
                   receiveAmount !== '' ? (
                     showTokenBalance(receiveAmount)
                   ) : (
@@ -756,10 +645,10 @@ const MigrateStart = ({
               </NewLabel>
               <NewLabel $display="flex" $flexflow="column" $weight="600" $textalign="right">
                 <NewLabel $weight="400" $height="20px" $size="12px">
-                  {id ? toUseIFARM ? `i${toId}` : `f${toId}` : <AnimatedDots />}
+                  {toId ? toId : <AnimatedDots />}
                 </NewLabel>
                 <NewLabel $weight="400" $size="12px" $height="20px">
-                  {!pickedDefaultToken && progressStep === 4 ? (
+                  {progressStep === 4 ? (
                     receiveUsd !== '' ? (
                       `${receiveUsd}`
                     ) : (

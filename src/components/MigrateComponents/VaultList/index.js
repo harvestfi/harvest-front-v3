@@ -5,7 +5,6 @@ import POLYGON from '../../../assets/images/logos/badge/polygon.svg'
 import ZKSYNC from '../../../assets/images/logos/badge/zksync.svg'
 import BASE from '../../../assets/images/logos/badge/base.svg'
 import { formatNumber } from '../../../utilities/formats'
-import { tokens } from '../../../data'
 import {
   VaultBox,
   Content,
@@ -15,7 +14,6 @@ import {
   Token,
   ApyDownIcon,
 } from '../PositionList/style'
-import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../../constants'
 
 const VaultList = ({
   matchVault,
@@ -36,9 +34,7 @@ const VaultList = ({
   currencyRate,
 }) => {
   let chainUrl, matchingFarm
-  const vaultAddress = matchVault.vault.poolVault
-    ? matchVault.vault.tokenAddress
-    : matchVault.vault.vaultAddress
+  const vaultAddress = matchVault.vault.vaultAddress
   const vaultName = matchVault.vault.tokenNames
   if (connected) {
     chainUrl =
@@ -54,19 +50,14 @@ const VaultList = ({
   } else if (!connected) {
     chainUrl = BASE
   }
-  const id = matchVault.vault.pool === undefined ? 'FARM' : matchVault.vault.pool.id
-  const useIFARM = id === FARM_TOKEN_SYMBOL
+  const id = matchVault.vault.id || matchVault.vault.pool.id
   const token = matchVault.vault
-  const platformName = useIFARM
-    ? tokens[IFARM_TOKEN_SYMBOL].subLabel
-      ? `${tokens[IFARM_TOKEN_SYMBOL].platform[0]} - ${tokens[IFARM_TOKEN_SYMBOL].subLabel}`
-      : tokens[IFARM_TOKEN_SYMBOL].platform[0]
-    : token.subLabel
-      ? token.platform[0] && `${token.platform[0]} - ${token.subLabel}`
-      : token.platform[0] && token.platform[0]
+  const platformName = token.subLabel
+    ? token.platform[0] && `${token.platform[0]} - ${token.subLabel}`
+    : token.platform[0] && token.platform[0]
 
   filteredFarmList.forEach(farm => {
-    const farmAddress = farm.token.poolVault ? farm.token.tokenAddress : farm.token.vaultAddress
+    const farmAddress = farm.token.vaultAddress
     if (farmAddress.toLowerCase() === vaultAddress.toLowerCase()) {
       matchingFarm = farm
     }

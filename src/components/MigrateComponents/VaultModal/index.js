@@ -4,6 +4,7 @@ import Modal from 'react-bootstrap/Modal'
 import { BsArrowDown } from 'react-icons/bs'
 import BigNumber from 'bignumber.js'
 import { Spinner } from 'react-bootstrap'
+import { isAddress } from 'ethers'
 import { FTokenInfo, NewLabel, IconCard, ImgBtn } from '../PositionModal/style'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import CloseIcon from '../../../assets/images/logos/beginners/close.svg'
@@ -12,7 +13,7 @@ import AnimatedDots from '../../AnimatedDots'
 import { formatNetworkName, formatNumber, formatNumberWido } from '../../../utilities/formats'
 import VaultList from '../VaultList'
 import { getMatchedVaultList } from '../../../utilities/parsers'
-import { FARM_TOKEN_SYMBOL, USD_BALANCES_DECIMALS } from '../../../constants'
+import { USD_BALANCES_DECIMALS } from '../../../constants'
 import { usePortals } from '../../../providers/Portals'
 import { VaultBox } from '../PositionList/style'
 
@@ -30,7 +31,6 @@ const VaultModal = ({
   setIsFromModal,
   stopPropagation,
   groupOfVaults,
-  vaultsData,
   pools,
   matchVaultList,
   setMatchVaultList,
@@ -38,10 +38,8 @@ const VaultModal = ({
   setId,
   token,
   id,
-  addresses,
   balances,
   account,
-  ethers,
   setPickedToken,
   positionAddress,
   setBalance,
@@ -62,7 +60,7 @@ const VaultModal = ({
   const [balanceList, setBalanceList] = useState([])
   const [defaultToken, setDefaultToken] = useState(null)
 
-  const [supTokenList, setSupTokenList] = useState([])
+  const [, setSupTokenList] = useState([])
   const [supTokenNoBalanceList, setSupTokenNoBalanceList] = useState([])
   const [defaultCurToken, setDefaultCurToken] = useState(defaultToken)
   const [balanceTokenList, setBalanceTokenList] = useState(balanceList)
@@ -78,9 +76,7 @@ const VaultModal = ({
 
   const { tokens } = require('../../../data')
 
-  const useIFARM = id === FARM_TOKEN_SYMBOL
   const filterWord = ''
-  const specialToken = groupOfVaults[FARM_TOKEN_SYMBOL]
 
   let tokenDecimals
 
@@ -103,36 +99,24 @@ const VaultModal = ({
     let matched = []
     const activedList = []
     if (chain && !isEmpty(userStats) && connected) {
-      matched = getMatchedVaultList(groupOfVaults, chain, vaultsData, pools)
-      if (matched.length > 0) {
-        matched.forEach(item => {
-          const vaultValue = new BigNumber(get(item.vault, 'totalValueLocked', 0))
-          if (Number(item.vaultApy) !== 0 && Number(vaultValue) > 500) {
-            activedList.push(item)
-          }
-        })
-        if (activedList.length > 0) {
-          setMatchingList(activedList)
-          setAllMatchVaultList(activedList)
-        }
-      }
+      matched = getMatchedVaultList(groupOfVaults, chain, pools)
     } else if (!connected) {
-      matched = getMatchedVaultList(groupOfVaults, 8453, vaultsData, pools)
-      if (matched.length > 0) {
-        matched.forEach(item => {
-          const vaultValue = new BigNumber(get(item.vault, 'totalValueLocked', 0))
-          if (Number(item.vaultApy) !== 0 && Number(vaultValue) > 500) {
-            activedList.push(item)
-          }
-        })
-        if (activedList.length > 0) {
-          setMatchingList(activedList)
-          setAllMatchVaultList(activedList)
-        }
-      }
+      matched = getMatchedVaultList(groupOfVaults, 8453, pools)
     }
 
-    activedList.sort((a, b) => b.vaultApy - a.vaultApy)
+    if (matched.length > 0) {
+      matched.forEach(item => {
+        const vaultValue = new BigNumber(get(item.vault, 'totalValueLocked', 0))
+        if (Number(item.vaultApy) !== 0 && Number(vaultValue) > 500) {
+          activedList.push(item)
+        }
+      })
+      if (activedList.length > 0) {
+        activedList.sort((a, b) => b.vaultApy - a.vaultApy)
+        setMatchingList(activedList)
+        setAllMatchVaultList(activedList)
+      }
+    }
 
     const fetchSupportedMatches = async () => {
       if (isFetchingRef.current) {
@@ -142,18 +126,12 @@ const VaultModal = ({
       const filteredMatchList = []
 
       if (activedList.length > 0) {
-        activedList.sort((a, b) => b.vaultApy - a.vaultApy)
         const newArray = activedList.slice(0, 10)
 
         for (const item of newArray) {
-          if (
-            item.vaultApy !== 0 &&
-            item.vault.vaultAddress !== '0x47e3daF382C4603450905fb68766DB8308315407'
-          ) {
+          if (item.vaultApy !== 0) {
             const mToken = item.vault
-            const tokenAddress = useIFARM
-              ? addresses.iFARM
-              : mToken.vaultAddress || mToken.tokenAddress
+            const tokenAddress = mToken.vaultAddress || mToken.tokenAddress
             const chainId = mToken.chain || mToken.data.chain
 
             const portalsToken = await getPortalsSupport(chainId, tokenAddress)
@@ -178,7 +156,7 @@ const VaultModal = ({
     }
 
     fetchSupportedMatches()
-  }, [chain, pools, setMatchVaultList, specialToken.profitShareAPY, connected, userStats])
+  }, [chain, connected, userStats])
 
   const fetchMoreMatches = async () => {
     if (!isEnd) {
@@ -188,7 +166,7 @@ const VaultModal = ({
 
       for (const item of nextArray) {
         const mToken = item.vault
-        const tokenAddress = useIFARM ? addresses.iFARM : mToken.vaultAddress || mToken.tokenAddress
+        const tokenAddress = mToken.vaultAddress || mToken.tokenAddress
         const chainId = mToken.chain || mToken.data.chain
 
         const portalsToken = await getPortalsSupport(chainId, tokenAddress)
@@ -271,7 +249,7 @@ const VaultModal = ({
   useEffect(() => {
     async function fetchData() {
       if (token) {
-        const tokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
+        const tokenAddress = token.vaultAddress || token.tokenAddress
         const chainId = token.chain || token.data.chain
         const portalsToken = await getPortalsSupport(chainId, tokenAddress)
 
@@ -334,7 +312,7 @@ const VaultModal = ({
 
             const curBalances = portalsRawBalances
               .map(rawBalance => {
-                if (!ethers.utils.isAddress(rawBalance.address))
+                if (!isAddress(rawBalance.address))
                   rawBalance.address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
                 const item = {
                   symbol: rawBalance.symbol,
@@ -363,11 +341,7 @@ const VaultModal = ({
                 ? token.tokenAddress
                 : token.vaultAddress
 
-            const fTokenAddr = useIFARM
-              ? addresses.iFARM
-              : token.vaultAddress
-                ? token.vaultAddress
-                : token.tokenAddress
+            const fTokenAddr = token.vaultAddress || token.tokenAddress
             const curSortedBalances = curBalances
               .sort(function reducer(a, b) {
                 return b.usdValue - a.usdValue
@@ -492,21 +466,17 @@ const VaultModal = ({
             let tokenSymbol,
               decimals = 18
 
-            decimals = useIFARM ? token.data?.watchAsset?.decimals : token.decimals
-            tokenSymbol = useIFARM ? token.tokenNames[0] : token?.pool?.lpTokenData?.symbol
+            decimals = token.decimals
+            tokenSymbol = id
 
             if (tokenSymbol && tokenSymbol.substring(0, 1) === 'f') {
               tokenSymbol = tokenSymbol.substring(1)
             }
-            // const tokenAddress = useIFARM ? addresses.iFARM : token.tokenAddress
+
             const tokenAddress = token.tokenAddress
-            const tokenId = token?.pool?.id
-            const tokenBalance = fromWei(
-              balances[useIFARM ? tokenSymbol : tokenId],
-              decimals,
-              decimals,
-            )
-            const tokenPrice = useIFARM ? token.data?.lpTokenData?.price : token.usdPrice
+            const tokenId = token?.pool?.id || id
+            const tokenBalance = fromWei(balances[tokenId], decimals, decimals)
+            const tokenPrice = token.usdPrice
             const usdValue = formatNumberWido(
               Number(tokenBalance) * Number(tokenPrice),
               USD_BALANCES_DECIMALS,
@@ -525,7 +495,7 @@ const VaultModal = ({
               usdPrice: tokenPrice,
               logoURI,
               decimals,
-              chainId: useIFARM ? token.data.chain : token.chain,
+              chainId: token.chain,
             }
             setDefaultToken(defaultTokenData)
           }
@@ -546,9 +516,6 @@ const VaultModal = ({
     id,
     token,
     tokenDecimals,
-    useIFARM,
-    addresses.iFARM,
-    ethers.utils,
     convertSuccess,
   ])
 
@@ -678,32 +645,21 @@ const VaultModal = ({
 
       if (matchingVault) {
         let staked, unstaked, total, hasStakeUnstake
-        const useIFARM1 = matchingVault.token.poolVault
 
-        if (useIFARM1) {
-          staked = matchingVault.stake
-          unstaked = matchingVault.unstake
-          total = staked
-          hasStakeUnstake = unstaked
-        } else {
-          staked = matchingVault.stake
+        staked = matchingVault.stake
 
-          unstaked = matchingVault.unstake
+        unstaked = matchingVault.unstake
 
-          total = unstaked
-          hasStakeUnstake = staked
-        }
-        const newAddress = matchingVault.token.poolVault
-          ? matchingVault.token.tokenAddress
-          : matchingVault.token.vaultAddress
-        const newSymbol = matchingVault.token.poolVault
-          ? 'iFARM'
-          : `f${matchingVault.token.pool.id}`
+        total = unstaked
+        hasStakeUnstake = staked
+
+        const newAddress = matchingVault.token.vaultAddress
+        const newSymbol = matchingVault.token.id || matchingVault.token.pool.id
         const newToken = {
           address: newAddress,
           balance: total,
           chain,
-          decimals: Number(matchingVault.token.decimals),
+          decimals: Number(matchingVault.token.vaultDecimals || matchingVault.token.decimals),
           default: false,
           symbol: newSymbol,
           staked: Number(hasStakeUnstake),

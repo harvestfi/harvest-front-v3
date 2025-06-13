@@ -1,22 +1,19 @@
-import React, { useMemo, useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { isEmpty, find, get, isNaN, orderBy, isEqual } from 'lodash'
 import BigNumber from 'bignumber.js'
 import queryString from 'query-string'
 import { useLocation } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
 import { useMediaQuery } from 'react-responsive'
-import { ethers } from 'ethers'
 import { useSetChain } from '@web3-onboard/react'
 import { Dropdown } from 'react-bootstrap'
 import { useVaults } from '../../providers/Vault'
-import { useStats } from '../../providers/Stats'
 import { fromWei } from '../../services/web3'
 import ChevronDown from '../../assets/images/ui/chevron-down.svg'
 import ETHEREUM from '../../assets/images/logos/badge/ethereum.svg'
 import EXPANDED from '../../assets/images/ui/minus.svg'
 import COLLAPSED from '../../assets/images/ui/plus.svg'
 import { usePools } from '../../providers/Pools'
-import { addresses } from '../../data'
 import { useWallet } from '../../providers/Wallet'
 import { getChainIcon, getTotalApy, getVaultApy } from '../../utilities/parsers'
 import { usePortals } from '../../providers/Portals'
@@ -35,12 +32,7 @@ import POLYGON from '../../assets/images/logos/badge/polygon.svg'
 import BASE from '../../assets/images/logos/badge/base.svg'
 import { CHAIN_IDS } from '../../data/constants'
 import { getTokenPriceFromApi, getCoinListFromApi } from '../../utilities/apiCalls'
-import {
-  FARM_TOKEN_SYMBOL,
-  SPECIAL_VAULTS,
-  IFARM_TOKEN_SYMBOL,
-  MAX_DECIMALS,
-} from '../../constants'
+import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../constants'
 import {
   Container,
   Inner,
@@ -71,7 +63,6 @@ const Migrate = () => {
   const { search } = useLocation()
 
   const { vaultsData, getFarmingBalances } = useVaults()
-  const { profitShareAPY } = useStats()
   const { account, balances, getWalletBalances, chainId, connected, connectAction } = useWallet()
   const { userStats, fetchUserPoolStats, totalPools, pools } = usePools()
   const { rates } = useRate()
@@ -94,11 +85,8 @@ const Migrate = () => {
   const [currencyRate, setCurrencyRate] = useState(1)
   const [apiData, setApiData] = useState([])
   const [farmTokenList, setFarmTokenList] = useState([])
-  const [filteredFarmList, setFilteredFarmList] = useState([])
   const [, setNoFarm] = useState(false)
-  const [, setVaultNetChangeList] = useState([])
   const [depositToken, setDepositToken] = useState([])
-  const [showInactiveFarms] = useState(false)
   const [highestPosition, setHighestPosition] = useState()
   const [positionVaultAddress, setPositionVaultAddress] = useState('')
   const [highestVaultAddress, setHighestVaultAddress] = useState('')
@@ -114,8 +102,7 @@ const Migrate = () => {
   const [tokenWith, setTokenWith] = useState()
   const [tokenDepo, setTokenDepo] = useState()
   const [pickedTokenWith, setPickedTokenWith] = useState()
-  const [defaultTokenWith] = useState(null)
-  const [curSupportedVaultWith, setCurSupportedVaultWith] = useState(false)
+  const [, setCurSupportedVaultWith] = useState(false)
   const [showMigrate, setShowMigrate] = useState(false)
   const [balance, setBalance] = useState('0')
   const [inputAmount, setInputAmount] = useState('0')
@@ -185,11 +172,7 @@ const Migrate = () => {
 
     setChainUrl(badgeUrl)
     setNetworkName(network)
-    // setHighestPosition()
-    // setHighestApyVault()
-    // setNetworkMatchList([])
-    // setMatchVaultList([])
-  }, [selectedChain, connected, chainId, userStats, isSpecialChain])
+  }, [selectedChain, connected, userStats])
 
   useEffect(() => {
     if (isSpecialChain) {
@@ -197,7 +180,7 @@ const Migrate = () => {
     } else {
       setSelectedChain(chainId)
     }
-  }, [chainId, isSpecialChain])
+  }, [chainId])
 
   useEffect(() => {
     if (highestApyVault && connected) {
@@ -225,28 +208,7 @@ const Migrate = () => {
     getCoinList()
   }, [])
 
-  const farmProfitSharingPool = totalPools.find(
-    pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
-  )
-
-  const poolVaults = useMemo(
-    () => ({
-      [FARM_TOKEN_SYMBOL]: {
-        poolVault: true,
-        profitShareAPY,
-        data: farmProfitSharingPool,
-        logoUrl: ['./icons/ifarm.svg'],
-        tokenAddress: addresses.iFARM,
-        rewardSymbol: 'iFarm',
-        tokenNames: ['FARM'],
-        platform: ['Harvest'],
-        decimals: 18,
-      },
-    }),
-    [farmProfitSharingPool, profitShareAPY],
-  )
-
-  const groupOfVaults = { ...vaultsData, ...poolVaults }
+  const groupOfVaults = { ...vaultsData }
 
   const firstWalletBalanceLoad = useRef(true)
   useEffectWithPrevious(
@@ -274,22 +236,11 @@ const Migrate = () => {
         const poolsToLoad = [],
           dl = depositToken.length
         for (let i = 0; i < dl; i += 1) {
-          let vaultPool =
-            depositToken[i] === FARM_TOKEN_SYMBOL
-              ? groupOfVaults[depositToken[i]].data
-              : find(totalPools, pool => pool.id === depositToken[i])
+          const token = groupOfVaults[depositToken[i]]
 
-          const token = find(
-            groupOfVaults,
-            vault =>
-              vault.vaultAddress === vaultPool.collateralAddress ||
-              (vault.data && vault.data.collateralAddress === vaultPool.collateralAddress),
-          )
-          if (token) {
-            const isSpecialVault = token.liquidityPoolVault || token.poolVault
-            if (isSpecialVault) {
-              vaultPool = token.data
-            }
+          const vaultPool = find(totalPools, pool => pool.collateralAddress === token.vaultAddress)
+
+          if (vaultPool) {
             poolsToLoad.push(vaultPool)
           }
         }
@@ -308,36 +259,18 @@ const Migrate = () => {
         let stakedVaults = [],
           sortedTokenList
 
-        if (showInactiveFarms) {
-          stakedVaults = Object.keys(userStats).filter(
-            poolId =>
-              new BigNumber(userStats[poolId].totalStaked).gt(0) ||
-              new BigNumber(userStats[poolId].lpTokenBalance).gt(0) ||
-              (poolId === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID &&
-                new BigNumber(balances[IFARM_TOKEN_SYMBOL]).gt(0)),
-          )
-        } else {
-          const stakedVaultsTemp = Object.keys(userStats).filter(
-            poolId =>
-              new BigNumber(userStats[poolId].totalStaked).gt(0) ||
-              new BigNumber(userStats[poolId].lpTokenBalance).gt(0) ||
-              (poolId === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID &&
-                new BigNumber(balances[IFARM_TOKEN_SYMBOL]).gt(0)),
-          )
-
-          stakedVaults = stakedVaultsTemp.filter(
-            poolId =>
-              groupOfVaults[poolId === 'profit-sharing-farm' ? 'IFARM' : poolId] &&
-              groupOfVaults[poolId === 'profit-sharing-farm' ? 'IFARM' : poolId].inactive !== true,
-          )
-        }
-
-        const symbols = stakedVaults.map(poolId =>
-          poolId === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID ? FARM_TOKEN_SYMBOL : poolId,
+        const stakedVaultsTemp = Object.keys(userStats).filter(
+          poolId =>
+            new BigNumber(userStats[poolId].totalStaked).gt(0) ||
+            new BigNumber(userStats[poolId].lpTokenBalance).gt(0),
         )
 
-        if (depositToken.length !== symbols.length) {
-          setDepositToken(symbols)
+        stakedVaults = stakedVaultsTemp.filter(
+          poolId => groupOfVaults[poolId] && groupOfVaults[poolId].inactive !== true,
+        )
+
+        if (depositToken.length !== stakedVaults.length) {
+          setDepositToken(stakedVaults)
         }
 
         const newStats = [],
@@ -356,35 +289,18 @@ const Migrate = () => {
             rewardSymbol: [],
             rewardUSD: [],
             totalRewardUsd: 0,
-            tvl: 0,
             token: {},
           }
-          let symbol = '',
-            fAssetPool = {}
+          let symbol = stakedVaults[i],
+            fAssetPool = {},
+            token = null
 
-          if (stakedVaults[i] === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID) {
-            symbol = FARM_TOKEN_SYMBOL
-          } else {
-            symbol = stakedVaults[i]
-          }
-
-          fAssetPool =
-            symbol === FARM_TOKEN_SYMBOL
-              ? groupOfVaults[symbol].data
-              : find(totalPools, pool => pool.id === symbol)
-
-          const token = find(
-            groupOfVaults,
-            vault =>
-              vault.vaultAddress === fAssetPool.collateralAddress ||
-              (vault.data && vault.data.collateralAddress === fAssetPool.collateralAddress),
-          )
+          token = groupOfVaults[symbol]
+          fAssetPool = find(totalPools, pool => pool.collateralAddress === token?.vaultAddress)
 
           if (token) {
-            const useIFARM = symbol === FARM_TOKEN_SYMBOL
             let tokenName = '',
               totalRewardAPRByPercent = 0,
-              iFARMBalance = 0,
               usdPrice = 1,
               portalsToken
 
@@ -392,7 +308,7 @@ const Migrate = () => {
             for (let k = 0; k < ttl; k += 1) {
               tokenName += token.tokenNames[k]
               if (k !== ttl - 1) {
-                tokenName += ', '
+                tokenName += ' - '
               }
             }
             const statsTvl = new BigNumber(get(token, 'totalValueLocked', 0))
@@ -401,63 +317,31 @@ const Migrate = () => {
             stats.symbol = tokenName
             stats.logos = token.logoUrl
             stats.chain = getChainIcon(token.chain)
-            stats.platform = useIFARM
-              ? tokens[IFARM_TOKEN_SYMBOL].subLabel
-                ? `${tokens[IFARM_TOKEN_SYMBOL].platform[0]} - ${tokens[IFARM_TOKEN_SYMBOL].subLabel}`
-                : tokens[IFARM_TOKEN_SYMBOL].platform[0]
-              : token.subLabel
-                ? token.platform[0] && `${token.platform[0]} - ${token.subLabel}`
-                : token.platform[0] && token.platform[0]
+            stats.platform = token.subLabel
+              ? token.platform[0] && `${token.platform[0]} - ${token.subLabel}`
+              : token.platform[0] && token.platform[0]
             stats.status = token.inactive ? 'Inactive' : 'Active'
-            const isSpecialVault = token.liquidityPoolVault || token.poolVault
-            if (isSpecialVault) {
-              fAssetPool = token.data
-            }
 
-            const tokenDecimals = useIFARM
-              ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.decimals`, 0)
-              : token.decimals
-            const tempPricePerFullShare = useIFARM
-              ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
-              : get(token, `pricePerFullShare`, 0)
-            const pricePerFullShare = fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals)
-            usdPrice =
-              (symbol === FARM_TOKEN_SYMBOL
-                ? (token.data.lpTokenData && token.data.lpTokenData.price) *
-                  Number(pricePerFullShare)
-                : token.vaultPrice) || 1
+            usdPrice = token.vaultPrice
 
             const unstake = fromWei(
-              get(userStats, `[${stakedVaults[i]}]['lpTokenBalance']`, 0),
-              (fAssetPool && fAssetPool.lpTokenData && fAssetPool.lpTokenData.decimals) || 18,
-              MAX_DECIMALS,
+              get(userStats, `[${symbol}]['lpTokenBalance']`, 0),
+              token?.vaultDecimals || token?.decimals || 18,
+              token?.vaultDecimals || token?.decimals || 18,
             )
-            stats.unstake = unstake
-            if (isNaN(stats.unstake)) {
-              stats.unstake = 0
-            }
-            const stakeTemp = get(userStats, `[${stakedVaults[i]}]['totalStaked']`, 0)
-            if (useIFARM) {
-              iFARMBalance = get(balances, IFARM_TOKEN_SYMBOL, 0)
-            }
+            stats.unstake = isNaN(unstake) ? 0 : unstake
+
             const stake = fromWei(
-              useIFARM ? iFARMBalance : stakeTemp,
-              token.decimals || token.data.watchAsset.decimals,
-              MAX_DECIMALS,
+              get(userStats, `[${symbol}]['totalStaked']`, 0),
+              token?.vaultDecimals || token?.decimals,
+              token?.vaultDecimals || token?.decimals,
             )
+            stats.stake = isNaN(stake) ? 0 : stake
 
-            stats.stake = stake
             const finalBalance = Number(stake) + Number(unstake)
-            if (useIFARM) {
-              stats.balance = Number(stake) * usdPrice
-            } else {
-              stats.balance = finalBalance * usdPrice
-            }
-            if (isNaN(stats.stake)) {
-              stats.stake = 0
-            }
-            const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
+            stats.balance = finalBalance * usdPrice
 
+            const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
             for (let l = 0; l < rewardTokenSymbols.length; l += 1) {
               let rewardSymbol = rewardTokenSymbols[l].toUpperCase(),
                 rewards,
@@ -465,8 +349,8 @@ const Migrate = () => {
                 usdRewardPrice = 0,
                 rewardDecimal = get(tokens[rewardSymbol], 'decimals', 18)
 
-              if (rewardTokenSymbols.includes(FARM_TOKEN_SYMBOL)) {
-                rewardSymbol = FARM_TOKEN_SYMBOL
+              if (rewardTokenSymbols.includes(IFARM_TOKEN_SYMBOL)) {
+                rewardSymbol = IFARM_TOKEN_SYMBOL
               }
 
               if (rewardTokenSymbols[l].substring(0, 1) === 'f') {
@@ -515,24 +399,9 @@ const Migrate = () => {
               }
 
               if (rewardToken) {
-                const usdUnderlyingRewardPrice =
-                  (rewardSymbol === FARM_TOKEN_SYMBOL
-                    ? rewardToken.data.lpTokenData && rewardToken.data.lpTokenData.price
-                    : rewardToken.usdPrice) || 0
-                const pricePerFullShareInVault = rewardToken.pricePerFullShare
-                const decimalsInVault = rewardToken.decimals || 18
+                usdRewardPrice = Number(rewardToken.vaultPrice) || 0
 
-                usdRewardPrice =
-                  rewardSymbol === FARM_TOKEN_SYMBOL || rewardSymbol === IFARM_TOKEN_SYMBOL
-                    ? usdUnderlyingRewardPrice
-                    : Number(usdUnderlyingRewardPrice) *
-                      fromWei(pricePerFullShareInVault, decimalsInVault, decimalsInVault, true)
-
-                rewardDecimal =
-                  rewardToken.decimals ||
-                  (rewardToken.data &&
-                    rewardToken.data.lpTokenData &&
-                    rewardToken.data.lpTokenData.decimals)
+                rewardDecimal = rewardToken.decimals
               } else {
                 try {
                   const al = apiData.length
@@ -564,62 +433,25 @@ const Migrate = () => {
               stats.rewardUSD.push(rewardPriceUSD)
             }
 
-            const vaultsKey = Object.keys(groupOfVaults)
-            const paramAddress = isSpecialVault
-              ? token.data.collateralAddress
-              : token.vaultAddress || token.tokenAddress
-            const vaultIds = vaultsKey.filter(
-              vaultId =>
-                groupOfVaults[vaultId].vaultAddress === paramAddress ||
-                groupOfVaults[vaultId].tokenAddress === paramAddress,
-            )
-            const id = vaultIds[0]
-            const tokenVault = get(vaultsData, token.hodlVaultId || id)
-            const vaultPool = isSpecialVault
-              ? token.data
-              : find(totalPools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
+            const totalApy = getTotalApy(fAssetPool, token)
+            stats.apy = totalApy == null ? Number(-1) : Number(totalApy)
 
-            const totalApy = isSpecialVault
-              ? getTotalApy(null, token, true)
-              : getTotalApy(vaultPool, tokenVault)
-
-            const showAPY = isSpecialVault
-              ? token.data &&
-                token.data.loaded &&
-                // !loadingVaults &&
-                (token.data.dataFetched === false || totalApy !== null)
-                ? token.inactive
-                  ? 'Inactive'
-                  : totalApy || null
-                : '-'
-              : vaultPool.loaded && totalApy !== null
-                ? token.inactive || token.testInactive || token.hideTotalApy || !token.dataFetched
-                  ? token.inactive || token.testInactive
-                    ? 'Inactive'
-                    : null
-                  : totalApy
-                : '-'
-            if (showAPY === 'Inactive' || showAPY === null) {
-              stats.apy = Number(-1)
-            } else {
-              stats.apy = Number(showAPY)
-            }
-
-            const estimatedApyByPercent = get(tokenVault, `estimatedApy`, 0)
+            const estimatedApyByPercent = get(token, `estimatedApy`, 0)
             const estimatedApy = estimatedApyByPercent / 100
-            const vaultAPR = ((1 + estimatedApy) ** (1 / 365) - 1) * 365
-            const vaultAPRDaily = vaultAPR / 365
-            const vaultAPRMonthly = vaultAPR / 12
-            const frl = vaultPool.rewardAPR.length
+            const vaultAPRDaily = (1 + estimatedApy) ** (1 / 365) - 1
+            const vaultAPYMonthly = (1 + vaultAPRDaily) ** 30 - 1
+            if (fAssetPool) {
+              const frl = fAssetPool.rewardAPR?.length || 0
 
-            for (let j = 0; j < frl; j += 1) {
-              totalRewardAPRByPercent += Number(vaultPool.rewardAPR[j])
+              for (let j = 0; j < frl; j += 1) {
+                totalRewardAPRByPercent += Number(fAssetPool.rewardAPR[j])
+              }
             }
             const totalRewardAPR = totalRewardAPRByPercent / 100
             const poolAPRDaily = totalRewardAPR / 365
             const poolAPRMonthly = totalRewardAPR / 12
 
-            const swapFeeAPRYearly = Number(vaultPool.tradingApy) / 100
+            const swapFeeAPRYearly = Number(fAssetPool?.tradingApy) / 100 || 0
             const swapFeeAPRDaily = swapFeeAPRYearly / 365
             const swapFeeAPRMonthly = swapFeeAPRYearly / 12
 
@@ -627,16 +459,14 @@ const Migrate = () => {
               Number(stake) * usdPrice * (vaultAPRDaily + poolAPRDaily + swapFeeAPRDaily) +
               Number(unstake) * usdPrice * (vaultAPRDaily + swapFeeAPRDaily)
             const monthlyYield =
-              Number(stake) * usdPrice * (vaultAPRMonthly + poolAPRMonthly + swapFeeAPRMonthly) +
-              Number(unstake) * usdPrice * (vaultAPRMonthly + swapFeeAPRMonthly)
+              Number(stake) * usdPrice * (vaultAPYMonthly + poolAPRMonthly + swapFeeAPRMonthly) +
+              Number(unstake) * usdPrice * (vaultAPYMonthly + swapFeeAPRMonthly)
 
             stats.dailyYield = dailyYield
             stats.monthlyYield = monthlyYield
-            const statsAddress = stats.token.poolVault
-              ? stats.token.tokenAddress
-              : stats.token.vaultAddress
+            const statsAddress = stats.token.vaultAddress
             if (Number(statsTvl) > 500) {
-              portalsToken = await getPortalsSupport(chainId, statsAddress)
+              portalsToken = await getPortalsSupport(selectedChain, statsAddress)
             }
             if (portalsToken) {
               if (portalsToken.status === 200) {
@@ -667,24 +497,19 @@ const Migrate = () => {
 
       getFarmTokenInfo()
     }
-  }, [account, userStats, balances])
+  }, [account, userStats])
 
   useEffect(() => {
-    const filteredVaultList = showInactiveFarms
-      ? farmTokenList
-      : farmTokenList.filter(farm => farm.status === 'Active')
     const values = queryString.parse(search)
     const advanceChain = values.chain
 
-    if (!isFromModal && isFromAdvanced && Number(advanceChain) === Number(chainId)) {
+    if (!isFromModal && isFromAdvanced && Number(advanceChain) === Number(selectedChain)) {
       let fromVault, toVault, secToVault
       const urlFromAddress = values.from
       const urlToAddress = values.to
       if (networkMatchList.length > 0 && matchVaultList.length > 0) {
         const urlFrom = networkMatchList.find(item => {
-          const compareAddress = item.token.poolVault
-            ? item.token.tokenAddress
-            : item.token.vaultAddress
+          const compareAddress = item.token.vaultAddress
           return compareAddress.toLowerCase() === urlFromAddress.toLowerCase()
         })
         if (urlFrom) {
@@ -693,9 +518,7 @@ const Migrate = () => {
           fromVault = networkMatchList[0]
         }
         const urlTo = allMatchVaultList.find(item => {
-          const compareAddress = item.vault.poolVault
-            ? item.vault.tokenAddress
-            : item.vault.vaultAddress
+          const compareAddress = item.vault.vaultAddress
           return compareAddress.toLowerCase() === urlToAddress.toLowerCase()
         })
         if (urlTo) {
@@ -707,50 +530,43 @@ const Migrate = () => {
       }
 
       if (fromVault && toVault) {
-        const fromId = fromVault.token.poolVault ? 'FARM' : fromVault.token.pool.id
-        const toId = toVault.vault.poolVault ? 'Farm' : toVault.vault.pool.id
-        const secId = secToVault.vault.poolVault ? 'Farm' : toVault.vault.pool.id
-        const fromAddress = fromVault.token.poolVault
-          ? fromVault.token.tokenAddress
-          : fromVault.token.vaultAddress
+        console.log('fromVault', fromVault)
+        console.log('toVault', toVault)
+        const fromId = fromVault.token.id || fromVault.token.pool.id
+        const toId = toVault.vault.id || toVault.vault.pool.id
+        const secId = secToVault?.vault.id || secToVault?.vault.pool.id
+        const fromAddress = fromVault.token.vaultAddress
         const toAddress = toVault.vault.vaultAddress
-        const secToAddress = secToVault.vault.vaultAddress
-        const chain = fromVault.token.data
-          ? Number(fromVault.token.data.chain)
-          : Number(fromVault.token.chain)
+        const secToAddress = secToVault?.vault.vaultAddress
+        const chain = Number(fromVault.token.chain)
+
+        setHighestPosition(fromVault)
+        setPositionVaultAddress(fromAddress)
+        setPositionId(fromId)
+        setTokenWith(groupOfVaults[fromId.toString()])
+        setButtonName('Preview & Migrate')
+        setCurChain(chain)
 
         if (
           fromAddress.toLowerCase() === toAddress.toLowerCase() &&
           Number(selectedChain) !== 324
         ) {
-          setHighestPosition(fromVault)
           setHighestApyVault(secToVault)
-          setPositionVaultAddress(fromAddress)
           setHighestVaultAddress(secToAddress)
-          setPositionId(fromId)
           setHighVaultId(secId)
-          setTokenWith(groupOfVaults[fromId.toString()])
           setTokenDepo(groupOfVaults[secId.toString()])
-          setButtonName('Preview & Migrate')
-          setCurChain(chain)
         } else {
-          setHighestPosition(fromVault)
           setHighestApyVault(toVault)
-          setPositionVaultAddress(fromAddress)
           setHighestVaultAddress(toAddress)
-          setPositionId(fromId)
           setHighVaultId(toId)
-          setTokenWith(groupOfVaults[fromId.toString()])
           setTokenDepo(groupOfVaults[toId.toString()])
-          setButtonName('Preview & Migrate')
-          setCurChain(chain)
         }
       }
     }
 
     if (
-      (!isFromModal && !isFromAdvanced && filteredVaultList.length > 0) ||
-      (Number(advanceChain) !== Number(chainId) && !isFromModal)
+      (!isFromModal && !isFromAdvanced && farmTokenList.length > 0) ||
+      (Number(advanceChain) !== Number(selectedChain) && !isFromModal)
     ) {
       let fromVault,
         toVault,
@@ -763,17 +579,15 @@ const Migrate = () => {
         secToAddress
       if (networkMatchList.length > 0) {
         fromVault = networkMatchList[0]
-        fromId = fromVault.token.poolVault ? 'FARM' : fromVault.token.pool.id
-        fromAddress = fromVault.token.poolVault
-          ? fromVault.token.tokenAddress
-          : fromVault.token.vaultAddress
+        fromId = fromVault.token.id || fromVault.token.pool.id
+        fromAddress = fromVault.token.vaultAddress
       }
       if (matchVaultList.length > 0) {
         toVault = matchVaultList[0]
-        toId = toVault.vault.poolVault ? 'Farm' : toVault.vault.pool.id
+        toId = toVault.vault.id || toVault.vault.pool.id
         toAddress = toVault.vault.vaultAddress
         secToVault = matchVaultList[1]
-        secToId = secToVault.vault.poolVault ? 'Farm' : secToVault.vault.pool.id
+        secToId = secToVault.vault.id || secToVault.vault.pool.id
         secToAddress = secToVault.vault.vaultAddress
       }
 
@@ -786,7 +600,7 @@ const Migrate = () => {
           toId = 'moonwell_USDC'
           const noConToken = groupOfVaults[toId.toString()]
           const noConAddress = '0x90613e167D42CA420942082157B42AF6fc6a8087'
-          const defaultApy = getVaultApy(noConAddress, groupOfVaults, vaultsData, pools)
+          const defaultApy = getVaultApy(toId, groupOfVaults, pools)
           defaultVault.vaultApy = defaultApy
           defaultVault.vault = noConToken
           setHighestApyVault(defaultVault)
@@ -802,7 +616,7 @@ const Migrate = () => {
         toId = 'moonwell_USDC'
         const noConToken = groupOfVaults[toId.toString()]
         const noConAddress = '0x90613e167D42CA420942082157B42AF6fc6a8087'
-        const defaultApy = getVaultApy(noConAddress, groupOfVaults, vaultsData, pools)
+        const defaultApy = getVaultApy(toId, groupOfVaults, pools)
         defaultVault.vaultApy = defaultApy
         defaultVault.vault = noConToken
         setHighestApyVault(defaultVault)
@@ -844,41 +658,24 @@ const Migrate = () => {
         }
       }
     }
-
-    setFilteredFarmList(filteredVaultList)
   }, [
     selectedChain,
     connected,
-    showInactiveFarms,
     farmTokenList,
-    highestPosition,
-    pools,
-    vaultsData,
     isFromAdvanced,
     search,
     isFromModal,
-    curSupportedVaultWith,
     networkMatchList,
-    supportedVaultDepo,
-    curSupportedVaultWith,
     matchVaultList,
-    chainId,
-    highVaultId,
-    networkName,
-    positionId,
-    positionVaultAddress,
-    pickedTokenWith,
     noPosition,
     userStats,
   ])
 
   useEffect(() => {
     let isFound = false
-    if (filteredFarmList && highestVaultAddress) {
-      filteredFarmList.map(stakedVault => {
-        const eachTokenAddress = stakedVault.token.data
-          ? stakedVault.token.tokenAddress
-          : stakedVault.token.vaultAddress
+    if (farmTokenList && highestVaultAddress) {
+      farmTokenList.map(stakedVault => {
+        const eachTokenAddress = stakedVault.token.vaultAddress
         if (eachTokenAddress.toLowerCase() === highestVaultAddress.toLowerCase()) {
           setMatchedVault(stakedVault)
           isFound = true
@@ -1011,28 +808,16 @@ const Migrate = () => {
     let positionToken, vaultToken, positionPlatform, vaultPlatform
     if (highestPosition) {
       positionToken = highestPosition.token
-      const id = highestPosition.token.poolVault ? 'FARM' : highestPosition.token.pool.id
-      const positionUseFARM = id === FARM_TOKEN_SYMBOL
-      positionPlatform = positionUseFARM
-        ? tokens[IFARM_TOKEN_SYMBOL].subLabel
-          ? `${tokens[IFARM_TOKEN_SYMBOL].platform[0]} - ${tokens[IFARM_TOKEN_SYMBOL].subLabel}`
-          : tokens[IFARM_TOKEN_SYMBOL].platform[0]
-        : positionToken.subLabel
-          ? positionToken.platform[0] && `${positionToken.platform[0]} - ${positionToken.subLabel}`
-          : positionToken.platform[0] && positionToken.platform[0]
+      positionPlatform = positionToken.subLabel
+        ? positionToken.platform[0] && `${positionToken.platform[0]} - ${positionToken.subLabel}`
+        : positionToken.platform[0] && positionToken.platform[0]
     }
     if (highestApyVault) {
       if (highestApyVault.vault.vaultPrice) {
         vaultToken = highestApyVault.vault
-        const id = highestApyVault.vault.poolVault ? 'FARM' : highestApyVault.vault.pool.id
-        const vaultUseFARM = id === FARM_TOKEN_SYMBOL
-        vaultPlatform = vaultUseFARM
-          ? tokens[IFARM_TOKEN_SYMBOL].subLabel
-            ? `${tokens[IFARM_TOKEN_SYMBOL].platform[0]} - ${tokens[IFARM_TOKEN_SYMBOL].subLabel}`
-            : tokens[IFARM_TOKEN_SYMBOL].platform[0]
-          : vaultToken.subLabel
-            ? vaultToken.platform[0] && `${vaultToken.platform[0]} - ${vaultToken.subLabel}`
-            : vaultToken.platform[0] && vaultToken.platform[0]
+        vaultPlatform = vaultToken.subLabel
+          ? vaultToken.platform[0] && `${vaultToken.platform[0]} - ${vaultToken.subLabel}`
+          : vaultToken.platform[0] && vaultToken.platform[0]
       }
     }
     if (highestPosition) {
@@ -1041,7 +826,7 @@ const Migrate = () => {
     if (vaultPlatform) {
       setHighVaultPlatform(vaultPlatform)
     }
-  }, [highestPosition, highestApyVault, chainId])
+  }, [highestPosition, highestApyVault])
 
   return (
     <Container $bgcolor={bgColorNew}>
@@ -1131,7 +916,7 @@ const Migrate = () => {
                     $backcolor={bgColorNew}
                     $hovercolor={filterChainHoverColor}
                     $bordercolor={borderColorBox}
-                    className={chainId.toString() === item.chainId.toString() ? 'active' : ''}
+                    className={selectedChain.toString() === item.chainId.toString() ? 'active' : ''}
                     data-tip
                     data-for={`chain-${item.name}`}
                     key={i}
@@ -1209,7 +994,7 @@ const Migrate = () => {
             setShowPositionModal={setShowPositionModal}
             networkName={networkName}
             setPositionVaultAddress={setPositionVaultAddress}
-            filteredFarmList={filteredFarmList}
+            filteredFarmList={farmTokenList}
             chain={Number(selectedChain)}
             isMobile={isMobile}
             currencySym={currencySym}
@@ -1217,8 +1002,6 @@ const Migrate = () => {
             setIsFromModal={setIsFromModal}
             stopPropagation={stopPropagation}
             token={tokenWith}
-            id={positionId}
-            addresses={addresses}
             setId={setPositionId}
             setToken={setTokenWith}
             groupOfVaults={groupOfVaults}
@@ -1276,14 +1059,13 @@ const Migrate = () => {
             networkName={networkName}
             setHighestApyVault={setHighestApyVault}
             setHighestVaultAddress={setHighestVaultAddress}
-            filteredFarmList={filteredFarmList}
+            filteredFarmList={farmTokenList}
             chain={Number(selectedChain)}
             isMobile={isMobile}
             currencySym={currencySym}
             setIsFromModal={setIsFromModal}
             stopPropagation={stopPropagation}
             groupOfVaults={groupOfVaults}
-            vaultsData={vaultsData}
             pools={pools}
             setMatchVaultList={setMatchVaultList}
             matchVaultList={matchVaultList}
@@ -1292,10 +1074,8 @@ const Migrate = () => {
             setToken={setTokenDepo}
             token={tokenDepo}
             tokenWith={tokenWith}
-            addresses={addresses}
             account={account}
             balances={balances}
-            ethers={ethers}
             positionAddress={positionVaultAddress}
             setPickedToken={setPickedTokenWith}
             setBalance={setBalance}
@@ -1450,15 +1230,10 @@ const Migrate = () => {
           </ButtonDiv>
           <MigrateStart
             find={find}
-            get={get}
             pickedToken={pickedTokenWith}
             token={tokenDepo}
             id={positionId}
-            addresses={addresses}
             pools={pools}
-            tokens={tokens}
-            defaultToken={defaultTokenWith}
-            vaultsData={vaultsData}
             currencySym={currencySym}
             currencyRate={currencyRate}
             showMigrate={showMigrate}

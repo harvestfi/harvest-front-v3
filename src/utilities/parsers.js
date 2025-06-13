@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { get, sum, sumBy, find } from 'lodash'
+import { get, sum, sumBy, find, isNaN } from 'lodash'
 import { FARM_TOKEN_SYMBOL, MAX_APY_DISPLAY, HARVEST_LAUNCH_DATE } from '../constants'
 import { CHAIN_IDS } from '../data/constants'
 import { ceil10, floor10, formatNumber, round10 } from './formats'
@@ -58,7 +58,7 @@ export const getTotalApy = (vaultPool, token) => {
     total = MAX_APY_DISPLAY
   }
 
-  if (total.isNaN()) {
+  if (isNaN(total)) {
     return null
   }
 
@@ -378,58 +378,20 @@ export const getTokenNames = (userVault, dataVaults) => {
   return tokenNames
 }
 
-export const getVaultApy = (vaultKey, vaultsGroup, vaultsData, pools) => {
-  let token = null,
-    tokenSymbol = null,
-    vaultPool
+export const getVaultApy = (vaultKey, vaultsData, pools) => {
+  const tokenVault = get(vaultsData, vaultKey)
 
-  Object.entries(vaultsGroup).forEach(([key, vaultData]) => {
-    if (vaultData.data) {
-      if (vaultData.data.collateralAddress.toLowerCase() === vaultKey.toLowerCase()) {
-        token = vaultData
-        tokenSymbol = key
-      }
-    } else if (
-      vaultData.vaultAddress &&
-      vaultData.vaultAddress.toLowerCase() === vaultKey.toLowerCase()
-    ) {
-      token = vaultData
-      tokenSymbol = key
-    }
-  })
-
-  const tokenVault = get(vaultsData, token.hodlVaultId || tokenSymbol)
-
-  vaultPool = find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
+  const vaultPool = find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
 
   const totalApy = getTotalApy(vaultPool, tokenVault)
 
   return totalApy
 }
 
-export const getMigrateVaultApy = (vaultKey, vaultsGroup, vaultsData, pools) => {
-  let token = null,
-    tokenSymbol = null,
-    vaultPool
+export const getMigrateVaultApy = (vaultKey, vaultsData, pools) => {
+  const tokenVault = get(vaultsData, vaultKey)
 
-  Object.entries(vaultsGroup).forEach(([key, vaultData]) => {
-    if (vaultData.data) {
-      if (vaultData.data.collateralAddress.toLowerCase() === vaultKey.toLowerCase()) {
-        token = vaultData
-        tokenSymbol = key
-      }
-    } else if (
-      vaultData.vaultAddress &&
-      vaultData.vaultAddress.toLowerCase() === vaultKey.toLowerCase()
-    ) {
-      token = vaultData
-      tokenSymbol = key
-    }
-  })
-
-  const tokenVault = get(vaultsData, token.hodlVaultId || tokenSymbol)
-
-  vaultPool = find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
+  const vaultPool = find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
 
   const totalApy = getTotalApy(vaultPool, tokenVault)
 
@@ -486,65 +448,17 @@ export const rearrangeApiData = (apiData, groupOfVaults) => {
   return vaultBalanceSortedData
 }
 
-export const getHighestApy = (allVaults, chainName, vaultsData, pools) => {
-  const sameNetworkVautls = []
-
-  Object.entries(allVaults).map(vault => {
-    if (Number(vault[1].chain) === chainName) {
-      const vaultApy = getVaultApy(vault[1].vaultAddress, allVaults, vaultsData, pools)
-      sameNetworkVautls.push({ vaultApy: Number(vaultApy), vault: vault[1] })
-    }
-    return true
-  })
-  sameNetworkVautls.sort((a, b) => b.vaultApy - a.vaultApy)
-  if (sameNetworkVautls[0].vaultApy) {
-    return sameNetworkVautls[0]
-  }
-  return null
-}
-
-export const getSecondApy = (allVaults, chainName, vaultsData, pools) => {
-  const sameNetworkVautls = []
-
-  Object.entries(allVaults).map(vault => {
-    if (Number(vault[1].chain) === chainName) {
-      const vaultApy = getVaultApy(vault[1].vaultAddress, allVaults, vaultsData, pools)
-      sameNetworkVautls.push({ vaultApy: Number(vaultApy), vault: vault[1] })
-    }
-    return true
-  })
-  sameNetworkVautls.sort((a, b) => b.vaultApy - a.vaultApy)
-  if (sameNetworkVautls[1].vaultApy) {
-    return sameNetworkVautls[1]
-  }
-  return null
-}
-
-export const getMatchedVaultList = (allVaults, chainName, vaultsData, pools) => {
+export const getMatchedVaultList = (allVaults, chainName, pools) => {
   const sameNetworkVaults = []
 
-  Object.entries(allVaults).map(vault => {
-    const compareChain = vault[1].poolVault
-      ? vault[1].data
-        ? vault[1].data.chain
-        : null
-      : vault[1].chain
-    const address = vault[1].poolVault ? vault[1].tokenAddress : vault[1].vaultAddress
-    if (
-      Number(compareChain) === Number(chainName) &&
-      vault[0] !== 'IFARM' &&
-      compareChain !== null
-    ) {
-      const { totalApy: vaultApy, vaultTvl } = getMigrateVaultApy(
-        address,
-        allVaults,
-        vaultsData,
-        pools,
-      )
+  Object.keys(allVaults).map(vaultKey => {
+    const compareChain = allVaults[vaultKey].chain
+    if (Number(compareChain) === Number(chainName)) {
+      const { totalApy: vaultApy, vaultTvl } = getMigrateVaultApy(vaultKey, allVaults, pools)
       sameNetworkVaults.push({
         vaultApy: Number(vaultApy),
         vaultTvl: Number(vaultTvl),
-        vault: vault[1],
+        vault: allVaults[vaultKey],
       })
     }
     return true

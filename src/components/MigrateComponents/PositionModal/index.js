@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import { BsArrowDown } from 'react-icons/bs'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { FARM_TOKEN_SYMBOL } from '../../../constants'
 import { FTokenInfo, NewLabel, IconCard, ImgBtn } from './style'
 import CloseIcon from '../../../assets/images/logos/beginners/close.svg'
 import AnimatedDots from '../../AnimatedDots'
@@ -23,8 +22,6 @@ const PositionModal = ({
   setIsFromModal,
   stopPropagation,
   token,
-  id,
-  addresses,
   setId,
   setToken,
   groupOfVaults,
@@ -41,8 +38,6 @@ const PositionModal = ({
 
   const { getPortalsSupport } = usePortals()
 
-  const useIFARM = id === FARM_TOKEN_SYMBOL
-
   useEffect(() => {
     setNetworkMatchList([])
     setNoPosition(false)
@@ -56,7 +51,7 @@ const PositionModal = ({
     const matchListAry = []
     if (filteredFarmList.length > 0) {
       filteredFarmList.forEach(vault => {
-        const findingChain = vault.token.poolVault ? vault.token.data.chain : vault.token.chain
+        const findingChain = vault.token.chain
         if (Number(findingChain) === Number(chain)) {
           matchListAry.push(vault)
         }
@@ -74,12 +69,12 @@ const PositionModal = ({
         setNoPosition(true)
       }
     }
-  }, [chain, filteredFarmList.length])
+  }, [chain, filteredFarmList])
 
   useEffect(() => {
     async function fetchData() {
       if (token) {
-        const tokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
+        const tokenAddress = token.vaultAddress || token.tokenAddress
         const chainId = token.chain || token.data.chain
 
         const portalsToken = await getPortalsSupport(chainId, tokenAddress)
@@ -96,17 +91,7 @@ const PositionModal = ({
     }
 
     fetchData()
-  }, [
-    token,
-    getPortalsSupport,
-    addresses,
-    useIFARM,
-    setCurSupportedVault,
-    setHighestPosition,
-    setPositionVaultAddress,
-    networkMatchList,
-    chain,
-  ])
+  }, [token])
 
   const positions = networkMatchList.map((item, i) => {
     return (
